@@ -349,7 +349,7 @@ def composition_algorithm_sha(path):
 def audit_shaping(client, continent, composition, inputs):
     plan_sha=inputs.digest(continent/'diagonal-plan.json')
     require(composition['planSha256']==plan_sha,'Composition uses a different landscape plan')
-    shaping={name:[] for name in ('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py')}
+    shaping={name:[] for name in ('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py')}
     for relative,expected in composition['sources'].items():
         path=Path(relative.replace('\\','/'))
         if path.name in shaping:shaping[path.name].append((path,expected))
@@ -363,7 +363,10 @@ def audit_shaping(client, continent, composition, inputs):
     require(composition.get('compositionAlgorithmSha256')==algorithm_sha,'Composition algorithm changed after composition')
     entrance_sha=inputs.digest(continent/'legacy-server-profile/config/eloria/maps.txt')
     require(composition.get('entranceProfileSha256')==entrance_sha,'Authored entrance profile changed after composition')
-    return {'planSha256':plan_sha,'compositionAlgorithmSha256':algorithm_sha,'entranceProfileSha256':entrance_sha,'shapingModules':list(shaping)}
+    edits_path=continent/'continent-edits.json'
+    edits_sha=inputs.digest(edits_path) if edits_path.exists() else hashlib.sha256(b'').hexdigest()
+    require(composition.get('objectEditsSha256',hashlib.sha256(b'').hexdigest())==edits_sha,'Object edits (continent-edits.json) changed after composition')
+    return {'planSha256':plan_sha,'objectEditsSha256':edits_sha,'compositionAlgorithmSha256':algorithm_sha,'entranceProfileSha256':entrance_sha,'shapingModules':list(shaping)}
 
 
 def exported_frames(client, exports, plan, master_sha, plan_sha, inputs):

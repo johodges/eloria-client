@@ -80,6 +80,7 @@ Use these source responsibilities when changing the world:
 | `manymouth_village_streets.py` | Graded timber streets connecting the other delta hamlets to their actual porch floors. |
 | `grey_crossings.py` | Retirement of the three duplicate Grey Moors boardwalk spans, the four pinned server positions they anchored, and their landmark identities on the actual continental crossing floors. |
 | `four_gates_sage.py` | The six Four Gates tutorial Sage records pinned 48 tiles from the arrival beside the plaza approach, keeping their surveyed layout. |
+| `object_edits.py`, `continent-edits.json` | Authored object edits from the continent plan editor: retained placements removed before grouping, rotated/scaled on their source roots and moved on their shift before footings and routing; copies cloned into their own territory's document with their own footing and collision identity; vegetation areas that clear or thin ecological scatter without renumbering anything outside them. `python object_edits.py --library <library>` checks the file before composing. |
 | `door_approaches.py` | Authored road ends for doors inside retained pavilions (the Shrine of the Nine Lost on the South Quay), shared by the server-declared discovery branch to the same door, so the road meets the pavilion's open side and no deck is built onto its threshold. |
 | `crossing_contracts.py` | Contracts-stage declaration of each continental bridge floor's two standing points from the served collision fold, with every floor's walkable parts reported. |
 | `ferry_export.py`, `ferry_support.py` | Actual quay/boat fit and preservation of its complete shoreline footprint through road grading. |
@@ -250,7 +251,8 @@ shaping modules (`landscape`, `world_layout`, `content`, `assemblies`,
 `mirror_support`, `manymouth_support`, `mirror_streets`, `four_gates_support`,
 `amberwood_support`, `amberwood_access`, `mirror_lake_support`,
 `ssarathi_bank_support`, `manymouth_boats`, `terrain_export`, `scene_io`,
-`grey_crossings`, `four_gates_sage`, `door_approaches`, `hull_settle`, `resource_trails`),
+`grey_crossings`, `four_gates_sage`, `door_approaches`, `hull_settle`, `resource_trails`, `object_edits`),
+the object edits file `continent-edits.json` (absent means no edits),
 the composition algorithm, the authoritative
 entrance profile and each retained library certificate. A changed source must
 be recomposed rather than accepted by editing a certificate.

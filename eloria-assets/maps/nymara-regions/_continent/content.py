@@ -5,6 +5,7 @@ import json
 import math
 import re
 from pathlib import Path
+import object_edits as OE
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator
 from scipy.spatial import cKDTree
@@ -96,6 +97,7 @@ class Content:
         self.companions={}
         self.assembly_records={}
         self.ids=world.ids
+        self.edits=OE.ObjectEdits(OE.load_edits(),world.ids)
 
     def mapped_xz(self,region,points):
         points=np.asarray(points,float)
@@ -140,6 +142,10 @@ class Content:
             if region=='amberwood':
                 from amberwood_access import prepare_camp_source
                 document,metadata=prepare_camp_source(document,body,metadata,folder)
+            # Authored object edits (continent-edits.json): removals before
+            # grouping and bounds, rotation/scale on the source roots.
+            metadata['placements']=self.edits.filter_placements(region,metadata['placements'])
+            document=self.edits.prepare_document(region,document,body,metadata['placements'])
             self.documents[region]=(document,body)
             self.metadata[region]=metadata
             matrices,parents=S.GR.hierarchy(document)
@@ -296,6 +302,9 @@ class Content:
                     shift=group_shifts[assembly_id].copy();new_xz=old_xz+shift[[0,2]]
                     target_ground=source_ground+shift[1]
                     if region=='manymouth_delta' and groups[assembly_id].datum=='water':target_ground=min(source_ground,1.)+shift[1]
+                edit=self.edits.translation(region,name)
+                if edit is not None:
+                    new_xz,shift,target_ground=self.edits.apply_translation(self.world,region,edit,assembly_id,old_xz,new_xz,source_ground)
                 all_names={document['nodes'][i].get('name','') for i in S.descendants(document,[index])}
                 obj={'region':region,'index':index,'indices':[index,*self.companions.get((region,index),[])],'shift':shift,'low':low+shift,'high':high+shift,
                      'kind':kind,'node':name,'names':all_names,'collides':p.get('collides',False),
@@ -316,6 +325,9 @@ class Content:
             self.objects.extend(retained)
             self.prototypes[region]=natural
             print(f'{region}: retained {len(retained)} structures/landmarks, {len(natural)} natural prototypes',flush=True)
+        self.edits.check_loaded(self)
+        self.edits.add_copies(self.world,self)
+        if self.edits:print(f"Object edits: {len(self.edits.report['removed'])} removed, {len(self.edits.report['transformed'])} transformed, {len(self.edits.report['added'])} added",flush=True)
 
     def mapped_point(self,region,point,node=None,landmark=None):
         point=np.array(point,float)
@@ -404,6 +416,7 @@ class Content:
             shift=np.array([x[i]-center[0],h[i]-low[1]+.025,z[i]-center[2]])
             doc,_=self.documents[source]
             count+=1
+            if self.edits.skips_scatter('tree',x[i],z[i]):continue
             self.objects.append({'region':region,'libraryRegion':source,'index':index,'shift':shift,
                 'indices':[index,*self.companions.get((source,index),[])],
                 'low':low+shift,'high':high+shift,'kind':'tree','node':f'Grove_{count:05d}',
@@ -424,6 +437,7 @@ class Content:
             for j,(p,index,low,high) in enumerate(selected):
                 xx=x[i]+(rng.uniform(-4,4) if j else 0);zz=z[i]+(rng.uniform(-4,4) if j else 0)
                 if int(self.world.owner_at(xx,zz))!=self.ids.index(region):continue
+                if self.edits.skips_scatter('rock',xx,zz):continue
                 y=float(self.world.height_at(xx,zz));center=(low+high)*.5
                 shift=np.array([xx-center[0],y-low[1]-.12,zz-center[2]])
                 self.objects.append({'region':region,'libraryRegion':region,'index':index,'shift':shift,
@@ -440,6 +454,7 @@ class Content:
             p,index,low,high=pool[int(rng.integers(len(pool)))];center=(low+high)*.5
             shift=np.array([x[i]-center[0],h[i]-low[1]-.025,z[i]-center[2]])
             undergrowth+=1
+            if self.edits.skips_scatter('undergrowth',x[i],z[i]):continue
             self.objects.append({'region':region,'libraryRegion':source,'index':index,'shift':shift,
                 'low':low+shift,'high':high+shift,'kind':'undergrowth','node':f'WoodlandFloor_{undergrowth:04d}',
                 'nodePrefix':f'WoodlandFloor_{undergrowth:04d}_','names':set(),'collides':False,'walk':False})
