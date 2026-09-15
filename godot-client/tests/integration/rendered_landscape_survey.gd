@@ -116,7 +116,8 @@ func _run() -> void:
 		main.call("_sync_world")
 		var rig: Node3D = main.get("camera_rig")
 		rig.set("yaw_degrees", float(spec.get("yaw", 0)))
-		rig.set("pitch_degrees", -60.0)
+		# The spec may ask for a lower view (a wall or a horn above a site); the rig accepts -80..-15.
+		rig.set("pitch_degrees", clampf(float(spec.get("pitch", -60.0)), -80.0, -15.0))
 		rig.set("distance", float(spec.get("distance", 26)))
 		# Let camera interpolation and the HUD's one-second FPS window settle
 		# after a large package load before taking a composition/performance view.
