@@ -13,6 +13,8 @@ from pathlib import Path
 import subprocess
 import sys
 
+from build_progress import Progress
+
 HERE=Path(__file__).resolve().parent
 CLIENT=HERE.parents[3]
 
@@ -47,11 +49,13 @@ def main():
     args=parser.parse_args();limit_cores(args.cores)
     server=args.server.resolve();artifacts=args.artifacts.resolve();artifacts.mkdir(parents=True,exist_ok=True)
     library=(args.library or artifacts/'library').resolve();output=HERE/'generated';output.mkdir(exist_ok=True)
+    progress=Progress(output/'progress.json').watch()
     def run(script,*arguments,cwd=CLIENT):
         subprocess.run([sys.executable,'-u',str(script),*map(str,arguments)],cwd=cwd,check=True)
     stages=('libraries','compose','geometry','contracts','publish','atlas','verify') if args.stage=='all' else (args.stage,)
     for stage in stages:
         print(f'Continent stage: {stage}',flush=True)
+        progress.start(stage)
         if stage=='libraries':
             import build_library
             def one(region):run(HERE/'build_library.py','--region',region,'--output',library)
@@ -77,6 +81,7 @@ def main():
         elif stage=='verify':
             run(HERE/'audit_continent.py','--server',server,'--output',artifacts/'continent-audit.json')
             run(CLIENT/'eloria-assets/tools/build_continent_map.py','--check')
+        progress.finish(0)
     print('Requested continent build stages completed.',flush=True)
 
 

@@ -3,3 +3,4 @@ generated/continent.glb
 .pytest_cache/
 generated/collision-cache/
 generated/amber-access-qa/
+generated/progress.json

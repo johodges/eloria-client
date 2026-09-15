@@ -381,3 +381,104 @@ building activity, water edges and landmark rhythm by the table above. Work
 from broad landforms to routes, major structures, vegetation and finally
 surface detail, revisiting earlier steps from the gameplay camera. Neither
 equal territory sizes nor a repeated settlement/attraction template is a goal.
+
+## Authored terrain edits
+
+`diagonal-plan.json` may carry a `terrain_edits` list of authored corrections to
+the modelled ground. `landscape.height_at` applies them in the plan's own list
+order after the natural ground, drainage, relief sources and dry basins, and
+before the foundations, so a building pad still settles last. An absent or empty
+list changes nothing. The plan editor previews an edit by importing `landscape`
+and calling the same `height_at`, so what it draws is what `compose` builds.
+
+```json
+{"id": "camp_shelf", "name": "Ridge camp shelf", "op": "flatten",
+ "shape": {"circle": {"center": [640, 700], "radius": 26}},
+ "target": 42.7, "feather": 12, "strength": 1}
+```
+
+`op` is `raise`, `lower` or `flatten`. `shape` holds exactly one of `circle`
+(`center`, `radius`), `polyline` (`points`, `width`, the whole band measured
+across the straight segments between the authored vertices, not a curve) or
+`polygon` (`points`, closed, even-odd containment); every point is `[x, z]` in
+continent metres. `feather` is the metres over which the effect fades outside
+the shape (`weight = 1 - smoothstep(0, feather, distance outside)`, so a feather
+of 0 is a hard edge) and the optional `strength` in 0..1 multiplies that weight.
+`raise` adds `amount * weight` metres, `lower` subtracts them, and `flatten`
+blends the ground toward `target` metres. A `smooth` op is deliberately not part
+of v1: a pass that reads its neighbours cannot be evaluated at one broadcast
+point, and the validator rejects it by name.
+
+A stored plan always carries numeric targets. `resolve_terrain_edit_targets(plan)`
+returns a copy in which a flatten `target` of `"min"`, `"max"` or `"mean"` has
+become that statistic of the natural ground, which is the plan with every
+terrain edit removed, sampled on the composed 2 m grid inside the shape and
+rounded to 0.1 m; numbers are kept. `validate_terrain_edits(plan)` returns the
+problems the editor shows: missing or duplicate ids, unknown keys or op, a shape
+that is not exactly one of the three, a polygon under three points, a polyline
+under two, a radius or width of zero, and points outside the plan `bounds` by
+more than their feather. `height_at` itself refuses an unresolved string target,
+an unknown op or shape, a negative amount or feather and a strength outside
+0..1, naming the edit in the message.
+
+```powershell
+python landscape.py --check-terrain-edits [plan]              # exit 1 on problems
+python landscape.py --resolve-terrain-edits <plan_in> <plan_out>
+```
+
+`relief_outline(source)` returns the four `[x, z]` continent-metre corners of a
+relief source's crop rectangle, in the order `x0z0`, `x1z0`, `x1z1`, `x0z1`,
+carried by that source's own translation and squeeze (the whole sampled extent
+when it declares no `crop`). The plan editor draws that polygon instead of
+repeating the retained transform's arithmetic.
+
+## Build progress and composition freshness
+
+`build_pipeline.py` and `build_continent.py` write `generated/progress.json`
+while they work, so a separate tool can follow a running build without parsing
+the console. Every record replaces the file atomically:
+
+```json
+{
+  "stage": "compose",
+  "step": "roads and routing",
+  "fraction": 0.25,
+  "status": "running",
+  "startedAt": "2026-09-15T20:12:31.004Z",
+  "updatedAt": "2026-09-15T20:18:02.560Z",
+  "exit": null,
+  "pid": 8124
+}
+```
+
+The stage runner writes one record as each stage starts and one as it ends
+(`status` `done` with `exit` 0, or `failed` with the failing stage's exit code),
+so a stage with no inner steps still reports. The composer adds inner steps: the
+four compose phases (loading libraries and content, roads and routing, supports
+and ground, writing the composition), and one step for each exported territory
+during geometry, where `fraction` is territories exported over their total.
+`fraction` is always 0..1 and `pid` identifies the process that wrote the
+record, since the composer runs as its own process. Progress is reporting only:
+a record that cannot be written (a locked file, a read-only directory) prints a
+warning and the build continues.
+
+`python build_continent.py --freshness [--output <generated>]` reports whether
+the composition on disk still matches the inputs it recorded, without composing
+or exporting anything. It prints the report as JSON and exits `0` when fresh,
+`1` when stale and `2` when nothing is composed:
+
+```json
+{"fresh": false, "composed": true, "changed": ["plan"], "missing": [],
+ "unknown": [], "recorded": {"plan": "9325..."}, "current": {"plan": "44c1..."}}
+```
+
+The digests are exactly those the composed cache is loaded against: the plan,
+the entrance profile, the composition algorithm, every shaping module, and any
+other single-file digest recorded under a `*Sha256` key that this branch can
+name (an optional `continent-edits.json` beside the plan, recorded as
+`objectEditsSha256`). `changed` lists inputs whose bytes differ, `missing` lists
+recorded inputs that no longer exist, and `unknown` lists recorded `*Sha256`
+keys that cannot be mapped to a file, such as one written by another branch;
+all three read as stale rather than raising. Retained content libraries are not
+covered, because their cache path is a `--library` argument the composition does
+not record: the `compose` and `geometry` stages remain the authority there.

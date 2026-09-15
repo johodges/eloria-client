@@ -33,7 +33,11 @@ from terrain_export import partition_surface
 from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
+from build_progress import Progress
 SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py')
+
+# Reporting only: the command line attaches this to the output directory.
+PROGRESS=Progress(None)
 
 
 def package(region):return MAPS/'four-gates' if region=='four_gates' else REGIONS/region
@@ -48,6 +52,11 @@ def json_write(path,data):
     Path(path).write_text(json.dumps(data,indent=2,default=clean,ensure_ascii=False)+'\n',encoding='utf-8',newline='\n')
 
 def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def composition_algorithm_sha():
+    """Digest of the composition algorithm recorded in composition.json."""
+    return hashlib.sha256((inspect.getsource(prepare)+inspect.getsource(ferry_landing)).encode()).hexdigest()
 
 
 def ferry_landing(world,region,toward):
@@ -90,9 +99,10 @@ def ferry_landing(world,region,toward):
 
 
 def prepare(library,output):
+    PROGRESS.start('compose',4);PROGRESS.step('loading libraries and content',0,4)
     plan_sha=digest(HERE/'diagonal-plan.json')
     profile_sha=digest(HERE/'legacy-server-profile/config/eloria/maps.txt')
-    algorithm_sha=hashlib.sha256((inspect.getsource(prepare)+inspect.getsource(ferry_landing)).encode()).hexdigest()
+    algorithm_sha=composition_algorithm_sha()
     sources={str(p.relative_to(CLIENT)):digest(p) for p in HERE.glob('*.py')}
     shaping={name:sources[str((HERE/name).relative_to(CLIENT))] for name in SHAPING_SOURCES}
     templates=json.loads((HERE/'legacy-contracts.json').read_text())
@@ -100,6 +110,7 @@ def prepare(library,output):
     started=time.monotonic();world=World()
     print(f'Global landform sampled in {time.monotonic()-started:.1f}s',flush=True)
     content=Content(world,library,templates,legacy);content.load()
+    PROGRESS.step('roads and routing',1,4)
     from amberwood_access import prepare_amberwood_access,refresh_amberwood_access_heights
     from amberwood_support import prepare_amberwood_routes,apply_amberwood_support
     prepare_amberwood_access(world,content)
@@ -219,6 +230,7 @@ def prepare(library,output):
     world.road_solid_crossings=world.solid_crossings(content.solid_boxes())
     print(f'Roads through retained solids: {len(world.road_solid_crossings)} (solid fallbacks {len(world.routing_report()["solidFallbacks"])})',flush=True)
     world.settle_roads()
+    PROGRESS.step('supports and ground',2,4)
     from mirror_support import apply_mirror_support
     from four_gates_support import apply_four_gates_support
     apply_four_gates_support(world,content)
@@ -244,6 +256,7 @@ def prepare(library,output):
         raise ValueError('Landscape shaping source changed during composition; run prepare again')
     if digest(HERE/'diagonal-plan.json')!=plan_sha:raise ValueError('Landscape plan changed during composition')
     if digest(profile)!=profile_sha:raise ValueError('Authored entrances changed during composition')
+    PROGRESS.step('writing the composition',3,4)
     # Cache is local generated state with exact source certificates. Never load
     # an arbitrary downloaded pickle as an authored continent.
     with (output/'composed.pkl').open('wb') as handle:pickle.dump((world,content),handle,protocol=5)
@@ -256,6 +269,7 @@ def prepare(library,output):
         'doorApproaches':world.door_approaches,'hullSettle':world.hull_settle,'roadGradingPasses':world.road_grading_passes,'resourceTrails':world.resource_trails,
         'routing':{**world.routing_report(),'solidCrossings':world.road_solid_crossings},
         'elapsedSeconds':round(time.monotonic()-started,2)})
+    PROGRESS.step('composition written',4,4)
     return world,content
 
 
@@ -263,7 +277,7 @@ def load_composed(output,library):
     certificate=json.loads((output/'composition.json').read_text())
     if certificate['planSha256']!=digest(HERE/'diagonal-plan.json'):raise ValueError('Landscape plan changed; recompose before export')
     if certificate.get('entranceProfileSha256')!=digest(HERE/'legacy-server-profile/config/eloria/maps.txt'):raise ValueError('Authored entrance profile changed; recompose before export')
-    algorithm_sha=hashlib.sha256((inspect.getsource(prepare)+inspect.getsource(ferry_landing)).encode()).hexdigest()
+    algorithm_sha=composition_algorithm_sha()
     if certificate.get('compositionAlgorithmSha256')!=algorithm_sha:raise ValueError('Composition algorithm changed; recompose before export')
     for region,sha in certificate['library'].items():
         if sha!=digest(Path(library)/region/'source-certificate.json'):raise ValueError(f'{region}: source content changed; recompose')
@@ -382,6 +396,7 @@ def prune_retired_exports(manifests):
 
 
 def export_geometry(world,content,output):
+    PROGRESS.start('geometry',len(world.ids))
     composition_sha=digest(output/'composition.json')
     export_sources={name:digest(HERE/name) for name in ('build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py')}
     prepare_contracts(world)
@@ -473,6 +488,7 @@ def export_geometry(world,content,output):
                 'geometryResidentBytes':geometry_bytes,'sharedResourceResidentBytes':shared_bytes})
         json_write(root/'world.json',manifest);manifests[region]=manifest
         print(f'{region}: exported {len(chunks)} independent chunks from the shared master',flush=True)
+        PROGRESS.step(region,world.ids.index(region)+1,len(world.ids))
     prune_retired_exports(manifests)
     if any(digest(HERE/name)!=sha for name,sha in export_sources.items()):
         raise ValueError('Geometry export source changed during the build; export again before publication')
@@ -550,14 +566,64 @@ def publish_geography(world,manifests,output):
         'note':'One common-world master render; geographic centres label the named nonrectangular territories.'})
 
 
+# Single-file digests composition.json records. A branch may add its own (an
+# optional object-edit file beside the plan); every recorded digest is
+# compared against the file it names, and anything unrecognised is reported.
+COMPOSITION_INPUTS={'planSha256':('plan','diagonal-plan.json'),
+    'entranceProfileSha256':('entranceProfile','legacy-server-profile/config/eloria/maps.txt'),
+    'objectEditsSha256':('objectEdits','continent-edits.json')}
+
+
+def composition_freshness(output=None):
+    """Does the composition on disk still match the inputs it recorded?
+
+    The same digests the compose and export stages refuse to work without,
+    reported instead of raised, so an editor can show why a rebuild is due.
+    Changed, missing and unrecognised inputs all read as stale. The verified
+    content library is not covered: its cache path is a build argument the
+    composition does not record.
+    """
+    output=Path(output) if output is not None else HERE/'generated'
+    state={'fresh':False,'composed':False,'changed':[],'missing':[],'unknown':[],'recorded':{},'current':{}}
+    path=output/'composition.json'
+    if not path.exists():return state
+    composition=json.loads(path.read_text(encoding='utf-8'));state['composed']=True
+    def compare(name,recorded,current):
+        state['recorded'][name]=recorded;state['current'][name]=current
+        if current is None:state['missing'].append(name)
+        elif recorded!=current:state['changed'].append(name)
+    for key,(name,relative) in COMPOSITION_INPUTS.items():
+        source=HERE/relative;current=digest(source) if source.exists() else None
+        if composition.get(key) is None and current is None:continue
+        compare(name,composition.get(key),current)
+    compare('compositionAlgorithm',composition.get('compositionAlgorithmSha256'),composition_algorithm_sha())
+    for relative,recorded in sorted(composition.get('sources',{}).items()):
+        relative=relative.replace('\\','/')
+        if Path(relative).name not in SHAPING_SOURCES:continue
+        source=CLIENT/relative;compare(relative,recorded,digest(source) if source.exists() else None)
+    for key,value in sorted(composition.items()):
+        if key.endswith('Sha256') and key not in COMPOSITION_INPUTS and key!='compositionAlgorithmSha256':
+            state['unknown'].append(key);state['recorded'][key]=value;state['current'][key]=None
+    state['fresh']=not (state['changed'] or state['missing'] or state['unknown'])
+    return state
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--library',type=Path,required=True)
+    parser.add_argument('--library',type=Path)
     parser.add_argument('--output',type=Path,default=HERE/'generated')
     parser.add_argument('--stage',choices=['prepare','geometry','all'],default='all')
-    args=parser.parse_args();args.output.mkdir(parents=True,exist_ok=True)
+    parser.add_argument('--freshness',action='store_true',help='Report whether the composition still matches its inputs, then exit: 0 fresh, 1 stale, 2 nothing composed')
+    args=parser.parse_args()
+    if args.freshness:
+        state=composition_freshness(args.output);print(json.dumps(state,indent=2))
+        raise SystemExit(0 if state['fresh'] else 1 if state['composed'] else 2)
+    if args.library is None:parser.error('--library is required to compose or export')
+    args.output.mkdir(parents=True,exist_ok=True)
+    PROGRESS.attach(args.output/'progress.json').watch()
     if args.stage in ('prepare','all'):world,content=prepare(args.library.resolve(),args.output.resolve())
     else:world,content=load_composed(args.output.resolve(),args.library.resolve())
     if args.stage in ('geometry','all'):export_geometry(world,content,args.output.resolve())
+    PROGRESS.finish(0)
 
 if __name__=='__main__':main()
