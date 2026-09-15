@@ -1,0 +1,207 @@
+extends SceneTree
+## Actors on the maps adjoining the player's across a land seam render like the
+## actors of the player's own map: their packets carry the neighbour's handle in
+## the stock "z" field, the state tags them with the neighbour's name once, and
+## Main places them through the neighbour's adapter carried by the frame its
+## resident scene stands in. A seamless crossing keeps every actor. The Tab map
+## and the minimap draw the region's own picture on a map-only layer.
+
+var failures: int = 0
+
+func _init() -> void:
+	call_deferred("_run")
+
+func _run() -> void:
+	_protocol()
+	_framed_adapter()
+	_map_picture_geometry()
+	await _state_and_main()
+	print("test_adjacent_actors failures=%d" % failures)
+	quit(failures)
+
+func _expect(ok: bool, message: String) -> void:
+	if not ok:
+		failures += 1
+		push_error("FAIL: " + message)
+	else:
+		print("PASS: " + message)
+
+## Whether a flat mesh's bounds cover `extent` on X and Z at `height`, within
+## the tolerance a mesh AABB carries (a flat surface may be padded a little).
+static func _spans(aabb: AABB, extent: Rect2, height: float) -> bool:
+	return (absf(aabb.position.x - extent.position.x) < 0.05 and absf(aabb.position.z - extent.position.y) < 0.05
+		and absf(aabb.end.x - extent.end.x) < 0.05 and absf(aabb.end.z - extent.end.y) < 0.05
+		and absf(aabb.position.y - height) < 0.05 and aabb.size.y < 0.05)
+
+static func _u16(value: int) -> PackedByteArray:
+	return PackedByteArray([value & 0xff, (value >> 8) & 0xff])
+
+## A stock ADD_NEW_ACTOR payload with `handle` in the "z" field.
+static func _creature_payload(actor_id: int, x: int, y: int, handle: int, actor_name: String) -> PackedByteArray:
+	var payload := PackedByteArray()
+	payload.append_array(_u16(actor_id))
+	payload.append_array(_u16(x))
+	payload.append_array(_u16(y))
+	payload.append_array(_u16(handle))
+	payload.append_array(_u16(0))          # rotation
+	payload.append(6)                      # actor type
+	payload.append(0)                      # frame
+	payload.append_array(_u16(50))         # max health
+	payload.append_array(_u16(50))         # health
+	payload.append(1)                      # kind
+	payload.append_array(actor_name.to_ascii_buffer())
+	payload.append(0)
+	return payload
+
+static func _adjacent_payload(entries: Dictionary) -> PackedByteArray:
+	var payload := PackedByteArray([entries.size()])
+	for handle: Variant in entries:
+		payload.append_array(_u16(int(handle)))
+		payload.append_array(str(entries[handle]).to_ascii_buffer())
+		payload.append(0)
+	return payload
+
+func _protocol() -> void:
+	var maps: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.ELORIA_ADJACENT_MAPS,
+		_adjacent_payload({1: "whitehorn_range", 2: "grey_moors"}))
+	_expect(maps.get("type") == "adjacent_maps" and maps.get("maps", {}).get(1) == "whitehorn_range"
+		and maps.get("maps", {}).get(2) == "grey_moors", "ELORIA_ADJACENT_MAPS decodes handle -> map name")
+	var bad: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.ELORIA_ADJACENT_MAPS, PackedByteArray([1, 1, 0]))
+	_expect(bad.get("type") == "invalid", "a truncated handle table is invalid, not a crash")
+	var creature: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.ADD_NEW_ACTOR, _creature_payload(1000, 100, 120, 1, "Hound"))
+	_expect(creature.get("type") == "actor_spawn" and int(creature.get("map_handle", -1)) == 1
+		and int(creature.get("x", 0)) == 100 and int(creature.get("y", 0)) == 120,
+		"an actor packet's stock z field decodes as the map handle without disturbing the tile")
+	_expect("adjacent_actors_v1" in EloriaProtocol.CLIENT_CAPABILITIES,
+		"the client advertises adjacent_actors_v1")
+
+func _framed_adapter() -> void:
+	var base := CoordinateAdapter.new({"metresPerTile": 1.0, "serverOrigin": [10, 20],
+		"invertServerY": true, "walkingHeight": 5.0, "origin": [0, 0, 0]})
+	var frame := Transform3D(Basis(Vector3.UP, PI / 2.0), Vector3(100.0, 2.0, 50.0))
+	var framed := FramedCoordinateAdapter.wrap(base, frame)
+	var expected: Vector3 = frame * base.tile_center(12, 22)
+	_expect(framed.tile_center(12, 22).is_equal_approx(expected),
+		"a neighbour tile is placed through the neighbour's adapter and then its frame")
+	_expect(framed.footprint_center(12, 22, Vector2i(2, 2)).is_equal_approx(frame * base.footprint_center(12, 22, Vector2i(2, 2))),
+		"footprint centres ride the frame too")
+	_expect(framed.godot_to_server(expected) == Vector2i(12, 22),
+		"the inverse undoes the frame before the neighbour's own conversion")
+	_expect(is_equal_approx(framed.rotation_to_godot(0), base.rotation_to_godot(0) + PI / 2.0),
+		"rotations gain the frame's yaw")
+	_expect(is_equal_approx(framed.fallback_height(), 7.0),
+		"the fallback height is the neighbour's walking height where the frame puts it")
+	_expect(is_equal_approx(base.fallback_height(), 5.0), "a plain adapter falls back to its walking height")
+
+func _map_picture_geometry() -> void:
+	var minimap := {"worldMin": [-224.0, -246.0], "worldMax": [232.0, 346.0], "pixelsPerMetre": 1,
+		"bounds": {"min": [-224.0, -23.0, -246.0], "max": [232.0, 289.6, 346.0]}}
+	var whole := MapPicture.extent(minimap, {"region": [0, 0, 456, 592]})
+	_expect(whole.is_equal_approx(Rect2(-224.0, -246.0, 456.0, 592.0)),
+		"the picture covers the region's minimap frame")
+	var cropped := MapPicture.extent(minimap, {"region": [10, 20, 100, 200]})
+	_expect(cropped.is_equal_approx(Rect2(-214.0, -226.0, 100.0, 200.0)),
+		"a cartography crop maps back to world metres")
+	_expect(MapPicture.extent({}, {}) == Rect2(), "a map without a minimap frame has no picture extent")
+	_expect(is_equal_approx(MapPicture.height_below({"minimap": minimap}), -24.0),
+		"the picture lies a metre under the lowest ground")
+	var texture := ImageTexture.create_from_image(Image.create(4, 4, false, Image.FORMAT_RGB8))
+	var picture := MapPicture.build(texture, whole, -24.0, 8)
+	var aabb := picture.mesh.get_aabb()
+	_expect(picture.layers == 8 and picture.name == "MapPicture", "the picture stands on the map layer")
+	_expect(_spans(aabb, whole, -24.0), "the quad spans the extent at the given height (%s)" % aabb)
+	var mesh := picture.mesh as ArrayMesh
+	var arrays: Array = mesh.surface_get_arrays(0)
+	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var uvs: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV]
+	_expect(vertices[0].z < vertices[3].z and uvs[0].y < uvs[3].y,
+		"the top row of the picture lies at the north edge")
+	picture.free()
+
+func _state_and_main() -> void:
+	var scene_resource: Resource = load("res://src/app/main.tscn")
+	_expect(scene_resource is PackedScene, "main scene loads")
+	if not scene_resource is PackedScene:
+		return
+	var main: Control = (scene_resource as PackedScene).instantiate() as Control
+	root.add_child(main)
+	await process_frame
+	var app_state: Node = root.get_node("AppState")
+	# The server names the map, then the neighbours' handles, then the actors.
+	app_state.call("_on_packet", EloriaProtocol.ServerMessage.CHANGE_MAP, "amberwood".to_ascii_buffer() + PackedByteArray([0]))
+	app_state.call("_on_packet", EloriaProtocol.ServerMessage.ELORIA_ADJACENT_MAPS, _adjacent_payload({1: "whitehorn_range"}))
+	app_state.call("_on_packet", EloriaProtocol.ServerMessage.ADD_NEW_ACTOR, _creature_payload(1000, 100, 120, 1, "Hound"))
+	app_state.call("_on_packet", EloriaProtocol.ServerMessage.ADD_NEW_ACTOR, _creature_payload(1001, 30, 40, 0, "Stag"))
+	var actors: Dictionary = app_state.get("actors")
+	_expect(str(actors.get(1000, {}).get("map", "")) == "whitehorn_range",
+		"an actor with a neighbour handle is tagged with the neighbour's map")
+	_expect(str(actors.get(1001, {}).get("map", "")) == "amberwood",
+		"an actor with handle 0 is tagged with the map the client stands on")
+	# A seamless crossing: the server changes the map without KILL_ALL_ACTORS.
+	app_state.call("_on_packet", EloriaProtocol.ServerMessage.CHANGE_MAP, "whitehorn_range".to_ascii_buffer() + PackedByteArray([0]))
+	actors = app_state.get("actors")
+	_expect(actors.has(1000) and actors.has(1001) and str(actors[1000].get("map")) == "whitehorn_range",
+		"a change of map keeps the actors and their tags")
+	_expect((app_state.get("adjacent_maps") as Dictionary).is_empty(), "the old handle table is dropped at a change of map")
+	app_state.call("_on_packet", EloriaProtocol.ServerMessage.KILL_ALL_ACTORS, PackedByteArray())
+	_expect((app_state.get("actors") as Dictionary).is_empty(), "KILL_ALL_ACTORS still empties the table")
+	# Main places a neighbour's actor through the resident frame.
+	app_state.call("_on_packet", EloriaProtocol.ServerMessage.CHANGE_MAP, "amberwood".to_ascii_buffer() + PackedByteArray([0]))
+	var active := CoordinateAdapter.new({"metresPerTile": 1.0, "serverOrigin": [0, 0], "invertServerY": true, "walkingHeight": 1.0})
+	main.set("adapter", active)
+	var neighbour_root := Node3D.new()
+	neighbour_root.transform = Transform3D(Basis(Vector3.UP, PI / 2.0), Vector3(700.0, 0.0, -20.0))
+	root.add_child(neighbour_root)
+	var neighbour_manifest := WorldManifest.new()
+	neighbour_manifest.data = {"schemaVersion": "1.0", "asset": {"origin": [0, 0, 0]},
+		"coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [362, 186], "invertServerY": true, "walkingHeight": 3.0, "origin": [0, 0, 0]}}
+	var stream: Node = main.get("exterior_stream")
+	(stream.get("residents") as Dictionary)["whitehorn_range"] = {"root": neighbour_root, "manifest": neighbour_manifest}
+	var own: CoordinateAdapter = main.call("_adapter_for_actor", {"map": "amberwood"})
+	_expect(own == active, "an actor on the client's own map uses the active adapter")
+	var framed: CoordinateAdapter = main.call("_adapter_for_actor", {"map": "whitehorn_range"})
+	_expect(framed is FramedCoordinateAdapter, "an actor on a resident neighbour gets a framed adapter")
+	if framed is FramedCoordinateAdapter:
+		var expected: Vector3 = neighbour_root.transform * neighbour_manifest.coordinate_adapter().tile_center(192, 93)
+		_expect(framed.tile_center(192, 93).is_equal_approx(expected),
+			"the neighbour's tile lands where its resident scene stands")
+		var again: CoordinateAdapter = main.call("_adapter_for_actor", {"map": "whitehorn_range"})
+		_expect(again == framed, "the framed adapter is reused while the root stands still")
+		neighbour_root.transform = neighbour_root.transform.translated(Vector3(1, 0, 0))
+		var moved: CoordinateAdapter = main.call("_adapter_for_actor", {"map": "whitehorn_range"})
+		_expect(moved != framed and moved.tile_center(192, 93).is_equal_approx(expected + Vector3(1, 0, 0)),
+			"a moved root rebuilds the framed adapter")
+	_expect(main.call("_adapter_for_actor", {"map": "grey_moors"}) == null,
+		"an actor on a neighbour that is not resident waits for its ground")
+	# The map picture: the current region's own picture on the map layer, and the
+	# map cameras render that layer alone; a map without a picture keeps the live render.
+	app_state.call("_on_packet", EloriaProtocol.ServerMessage.CHANGE_MAP, "mirrorhold".to_ascii_buffer() + PackedByteArray([0]))
+	var manifest := WorldManifest.new()
+	manifest.data = {"schemaVersion": "1.0", "asset": {"id": "mirrorhold", "origin": [0, 0, 0]},
+		"minimap": {"worldMin": [-224.0, -246.0], "worldMax": [232.0, 346.0], "pixelsPerMetre": 1, "northUp": true,
+			"bounds": {"min": [-224.0, -23.0, -246.0], "max": [232.0, 289.6, 346.0]}}}
+	main.call("_install_map_picture", manifest)
+	var picture: Variant = main.get("_map_picture")
+	var map_camera: Camera3D = main.get("map_camera")
+	var full_map_camera: Camera3D = main.get("full_map_camera")
+	_expect(picture is MeshInstance3D and is_instance_valid(picture),
+		"the current region's picture is installed")
+	if picture is MeshInstance3D:
+		var aabb: AABB = (picture as MeshInstance3D).mesh.get_aabb()
+		_expect(_spans(aabb, Rect2(-224.0, -246.0, 456.0, 592.0), -24.0),
+			"the picture spans the region's minimap frame (%s)" % aabb)
+		_expect((picture as MeshInstance3D).layers == main.get("MAP_PICTURE_LAYER"), "the picture is on the map layer")
+	_expect(map_camera.cull_mask == main.get("MAP_PICTURE_LAYER") and full_map_camera.cull_mask == main.get("MAP_PICTURE_LAYER"),
+		"the map cameras render the picture layer alone")
+	var interior := WorldManifest.new()
+	interior.data = {"schemaVersion": "1.0", "asset": {"id": "amberwood_estate", "origin": [0, 0, 0]}}
+	app_state.call("_on_packet", EloriaProtocol.ServerMessage.CHANGE_MAP, "amberwood_estate".to_ascii_buffer() + PackedByteArray([0]))
+	main.call("_install_map_picture", interior)
+	_expect(main.get("_map_picture") == null, "a map without a picture installs none")
+	_expect(map_camera.cull_mask == 1 and full_map_camera.cull_mask == 1,
+		"the map cameras return to the live render on a map without a picture")
+	main.queue_free()
+	await process_frame

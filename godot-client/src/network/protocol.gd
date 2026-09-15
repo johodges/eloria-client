@@ -114,6 +114,10 @@ enum ServerMessage {
 	# downward run below 211.
 	ELORIA_MAP_DIGEST = 209,
 	ELORIA_LANTERN_STATE = 207,
+	# The land neighbours of the map the client stands on, with the handle each
+	# one's actors carry in the stock "z" field of the actor packets (0 is the
+	# client's own map). The next free number of the downward run.
+	ELORIA_ADJACENT_MAPS = 214,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -209,6 +213,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"spell_ring_v1",
 	"followup_tutorials_v1",
 	"actor16_v1",
+	"adjacent_actors_v1",
 	"almanac_v1",
 	"combat_hud_v1",
 	"inventory_names_v1",
@@ -1025,6 +1030,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_achievements_catalog(payload)
 		ServerMessage.ELORIA_ACTOR_TITLES:
 			return decode_actor_titles(payload)
+		ServerMessage.ELORIA_ADJACENT_MAPS:
+			return decode_adjacent_maps(payload)
 		ServerMessage.ELORIA_MAP_DIGEST:
 			return decode_map_digest(payload)
 		ServerMessage.ELORIA_LANTERN_STATE:
@@ -2620,6 +2627,25 @@ const ACTOR_SCALE_STEPS_PER_OCTAVE := 2048.0
 static func decode_actor_scale(value: int) -> float:
 	return pow(2.0, (float(value) - ACTOR_SCALE_ZERO) / ACTOR_SCALE_STEPS_PER_OCTAVE)
 
+## The land neighbours of the map the client stands on: handle -> server map
+## name. Actor packets carry the handle in their stock "z" field; 0 is never
+## listed and means the client's own map.
+static func decode_adjacent_maps(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 1:
+		return {"type": "invalid", "error": "adjacent_maps_length"}
+	var maps: Dictionary = {}
+	var offset: int = 1
+	for _index in range(int(payload[0])):
+		if payload.size() < offset + 3:
+			return {"type": "invalid", "error": "adjacent_maps_length"}
+		var handle: int = u16(payload, offset)
+		var end: int = payload.find(0, offset + 2)
+		if end < 0:
+			return {"type": "invalid", "error": "adjacent_maps_name"}
+		maps[handle] = payload.slice(offset + 2, end).get_string_from_ascii()
+		offset = end + 1
+	return {"type": "adjacent_maps", "maps": maps}
+
 static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := false) -> Dictionary:
 	var minimum := 31 if enhanced else (19 if extended else 18)
 	if payload.size() < minimum:
@@ -2629,6 +2655,9 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		"type": "actor_spawn", "enhanced": enhanced, "actor_id": u16(payload),
 		"x": u16(payload, 2) & 0x7ff, "y": u16(payload, 4) & 0x7ff,
 		"rotation": s16(payload, 8),
+		# The stock "z" field, which no client read: the handle of the neighbour
+		# map the actor stands on (ELORIA_ADJACENT_MAPS names it), 0 for our own.
+		"map_handle": u16(payload, 6),
 		"actor_type": u16(payload, 10) if extended else int(payload[10]),
 		"scale": 1.0}
 	if enhanced:
