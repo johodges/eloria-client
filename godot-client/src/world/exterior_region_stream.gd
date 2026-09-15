@@ -502,18 +502,86 @@ func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction:
 		var height := int(dimensions[1]) if dimensions is Array else width
 		if tile.x < 0 or tile.y < 0 or (width > 0 and (tile.x >= width or tile.y >= height)):
 			return null
-		var leg := _first_walk_leg(active_map, map_id)
-		if leg.is_empty():
-			return null
-		pending_walk = {"map": map_id, "tile": tile, "run": run, "world_point": point,
-			"routed": true, "issued_from": active_map, "next_map": str(leg.there.map)}
-		var here_adapter := CoordinateAdapter.new(leg.here.get("coordinateTransform",
-			active_manifest.data.get("coordinateTransform", {})))
-		_arm_walk_leg(active_map, here_adapter.godot_to_server(_vector(leg.here.position)), _local_walk_actor(active_map))
 		# Route through the centre of the surveyed road. The server decides
 		# whether the approach and the continuation are walkable.
-		return _vector(leg.here.position)
+		return arm_walk_to(map_id, tile, run, point)
 	return null
+
+## A walk order to a tile of a neighbour: the first leg to the surveyed seam
+## crossing, the rest carried by take_continuation at the map change. Returns
+## the leg's target point in the active map, or null when the tile lies
+## outside that map's served cells or no seamless road leads there.
+func arm_walk_to(map_id: String, tile: Vector2i, run: bool, world_point: Vector3) -> Variant:
+	pending_walk.clear()
+	if not tile_inside(neighbour_coordinates(map_id), tile):
+		return null
+	var leg := _first_walk_leg(active_map, map_id)
+	if leg.is_empty():
+		return null
+	pending_walk = {"map": map_id, "tile": tile, "run": run, "world_point": world_point,
+		"routed": true, "issued_from": active_map, "next_map": str(leg.there.map)}
+	var fallback: Dictionary = active_manifest.data.get("coordinateTransform", {}) if active_manifest != null else {}
+	var here_adapter := CoordinateAdapter.new(leg.here.get("coordinateTransform", fallback))
+	_arm_walk_leg(active_map, here_adapter.godot_to_server(_vector(leg.here.position)), _local_walk_actor(active_map))
+	return _vector(leg.here.position)
+
+## The direct seamless links out of the active map, as {map, here, there}.
+func _direct_links() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for link: Dictionary in links:
+		if not bool(link.get("seamless", false)):
+			continue
+		var ends: Array = link.ends
+		for index: int in 2:
+			if str(ends[index].map) == active_map:
+				result.append({"map": str(ends[1 - index].map), "here": ends[index], "there": ends[1 - index]})
+	return result
+
+## A neighbour's rigid frame in the active map: its resident root's while it
+## stands, else the surveyed join of the direct seamless link. Null with neither.
+func neighbour_transform(map_id: String) -> Variant:
+	var resident: Variant = residents.get(map_id)
+	if resident is Dictionary and is_instance_valid((resident as Dictionary).get("root") as Node3D):
+		return ((resident as Dictionary).get("root") as Node3D).transform
+	for candidate: Dictionary in _direct_links():
+		if str(candidate.map) == map_id:
+			return frame_transform(candidate.here.frame, candidate.there.frame)
+	return null
+
+## A neighbour's coordinate transform: the resident manifest's, else the link end's.
+func neighbour_coordinates(map_id: String) -> Dictionary:
+	var resident: Variant = residents.get(map_id)
+	if resident is Dictionary and (resident as Dictionary).get("manifest") is WorldManifest:
+		return ((resident as Dictionary).get("manifest") as WorldManifest).data.get("coordinateTransform", {}) as Dictionary
+	for candidate: Dictionary in _direct_links():
+		if str(candidate.map) == map_id:
+			return candidate.there.get("coordinateTransform", {}) as Dictionary
+	return {}
+
+## Whether a server tile lies inside a map's served cells (unknown cells accept every non-negative tile).
+static func tile_inside(coordinates: Dictionary, tile: Vector2i) -> bool:
+	if tile.x < 0 or tile.y < 0:
+		return false
+	var dimensions: Variant = coordinates.get("serverCells", 0)
+	var width := int(dimensions[0]) if dimensions is Array else int(dimensions)
+	var height := int(dimensions[1]) if dimensions is Array else width
+	return width <= 0 or (tile.x < width and tile.y < height)
+
+## The direct neighbour whose served tiles hold a point of the active map's
+## frame, with that tile: what a map click past the seam means. Empty when
+## no neighbour holds the point.
+func map_at_local(point: Vector3) -> Dictionary:
+	for candidate: Dictionary in _direct_links():
+		var map_id := str(candidate.map)
+		var frame_value: Variant = neighbour_transform(map_id)
+		var coordinates := neighbour_coordinates(map_id)
+		if not frame_value is Transform3D or coordinates.is_empty():
+			continue
+		var local_point: Vector3 = (frame_value as Transform3D).affine_inverse() * point
+		var tile: Vector2i = CoordinateAdapter.new(coordinates).godot_to_server(local_point)
+		if tile_inside(coordinates, tile):
+			return {"map": map_id, "tile": tile}
+	return {}
 
 func _local_walk_actor(map_id: String) -> Dictionary:
 	var tree := Engine.get_main_loop() as SceneTree

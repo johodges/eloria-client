@@ -3489,6 +3489,12 @@ func _handle_map_gui_input(event: InputEvent, map_control: TextureRect,
 	print_debug("map_input source=", source, " local_click=", mouse_button.position,
 		" viewport=", viewport_position, " server_tile=", target_value,
 		" command=", "RUN_TO" if mouse_button.shift_pressed else "MOVE_TO")
+	if target_value is Vector2i and not _tile_inside_current_map(target_value as Vector2i):
+		# Past the seam: the neighbour whose served tiles hold the point is
+		# walked to in legs, the way a world click on its resident ground is.
+		_map_click_beyond(camera, viewport_position, mouse_button.shift_pressed, source)
+		map_control.accept_event()
+		return
 	if target_value is Vector2i:
 		exterior_stream.pending_walk.clear()
 		_clear_keyboard_movement_tracking()
@@ -3500,6 +3506,15 @@ func _handle_map_gui_input(event: InputEvent, map_control: TextureRect,
 	map_control.accept_event()
 
 func _map_target_tile(camera: Camera3D, viewport_position: Vector2) -> Variant:
+	var point: Variant = _map_click_point(camera, viewport_position)
+	if not point is Vector3:
+		return null
+	return adapter.godot_to_server(point as Vector3)
+
+## The ground under a map click: the navigation surface where the ray meets
+## one, else the walking-height plane (the map cameras look straight down, so
+## the plane gives the same x and z past the current map's ground).
+func _map_click_point(camera: Camera3D, viewport_position: Vector2) -> Variant:
 	if not is_instance_valid(camera):
 		return null
 	var ray_origin: Vector3 = camera.project_ray_origin(viewport_position)
@@ -3512,7 +3527,40 @@ func _map_target_tile(camera: Camera3D, viewport_position: Vector2) -> Variant:
 		if distance_to_ground < 0.0:
 			return null
 		point = ray_origin + ray_direction * distance_to_ground
-	return adapter.godot_to_server(point as Vector3)
+	return point
+
+## Whether a tile lies inside the current map's served cells.
+func _tile_inside_current_map(tile: Vector2i) -> bool:
+	var manifest: WorldManifest = world_loader.manifest if world_loader != null else null
+	var coordinates: Dictionary = manifest.data.get("coordinateTransform", {}) as Dictionary if manifest != null else {}
+	return ExteriorRegionStream.tile_inside(coordinates, tile)
+
+## A map click past the seam: the neighbour that holds the point gets the walk
+## order in legs (the first to the surveyed crossing, the rest at the map
+## change); a point no neighbour holds is not a place to walk to.
+func _map_click_beyond(camera: Camera3D, viewport_position: Vector2, run: bool, source: String) -> void:
+	var point_value: Variant = _map_click_point(camera, viewport_position)
+	if not point_value is Vector3 or _movement_locked(false):
+		return
+	var point: Vector3 = point_value as Vector3
+	var beyond: Dictionary = exterior_stream.map_at_local(point)
+	if beyond.is_empty():
+		print_debug("map_input source=", source, " beyond the seam, no neighbour holds ", point)
+		return
+	var leg_value: Variant = exterior_stream.arm_walk_to(str(beyond.map), beyond.tile as Vector2i, run, point)
+	if not leg_value is Vector3:
+		print_debug("map_input source=", source, " no seamless road to ", beyond.map)
+		return
+	var leg: Vector3 = leg_value as Vector3
+	_clear_keyboard_movement_tracking()
+	_clear_local_turn_prediction()
+	var move_error: Error = Network.move_to(adapter.godot_to_server(leg), run)
+	if move_error != OK:
+		exterior_stream.pending_walk.clear()
+		push_warning("%s MOVE_TO failed: %s" % [source, error_string(move_error)])
+		return
+	print_debug("map_input source=", source, " walk to ", beyond.map, " tile=", beyond.tile, " via seam leg=", leg)
+	_show_walk_highlight(adapter.godot_to_server(point), point.y)
 
 static func _control_to_viewport_position(local_position: Vector2,
 		control_size: Vector2, target_size: Vector2i) -> Vector2:
@@ -4401,6 +4449,46 @@ func _remove_map_picture() -> void:
 		_map_picture.queue_free()
 	_map_picture = null
 
+## The region boundaries in the current map's frame: every region's cartography
+## polygon (continent picture pixels, north up) turned into metres of this map,
+## with its name at its label point and the current region flagged. Both map
+## overlays draw them as dashed lines; the Tab map names the neighbours.
+func _map_boundaries() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var region_index: int = _region_index_for_map(AppState.current_map)
+	if region_index < 0 or not cartography is Dictionary:
+		return result
+	var continent: Dictionary = (cartography as Dictionary).get("continent", {}) as Dictionary
+	var origin: Array = continent.get("originMetres", []) as Array
+	var metres_per_pixel: float = float(continent.get("metresPerPixel", 0.0))
+	var translation: Array = (cartography_regions[region_index] as Dictionary).get("globalTranslation", []) as Array
+	if origin.size() != 2 or metres_per_pixel <= 0.0 or translation.size() != 3:
+		return result
+	var height: float = adapter.walking_height if adapter != null else 0.0
+	for index: int in range(cartography_regions.size()):
+		var region: Dictionary = cartography_regions[index] as Dictionary
+		var polygon: Array = region.get("continentPolygon", []) as Array
+		if polygon.size() < 3:
+			continue
+		var points := PackedVector3Array()
+		for pixel: Variant in polygon:
+			var pair: Array = pixel as Array
+			points.append(Vector3(float(origin[0]) + float(pair[0]) * metres_per_pixel - float(translation[0]), height,
+				float(origin[1]) + float(pair[1]) * metres_per_pixel - float(translation[2])))
+		var label_pixel: Array = region.get("continentLabel", []) as Array
+		var label := Vector3.INF
+		if label_pixel.size() == 2:
+			label = Vector3(float(origin[0]) + float(label_pixel[0]) * metres_per_pixel - float(translation[0]), height,
+				float(origin[1]) + float(label_pixel[1]) * metres_per_pixel - float(translation[2]))
+		result.append({"name": str(region.get("name", "")), "points": points, "label": label, "current": index == region_index})
+	return result
+
+func _update_map_boundaries() -> void:
+	var boundaries: Array[Dictionary] = _map_boundaries()
+	map_marker_overlay.set_boundaries(boundaries)
+	if minimap_marker_overlay != null:
+		minimap_marker_overlay.set_boundaries(boundaries)
+
 ## The neighbours' pictures beside the current one: the minimap's window
 ## reaches past the seam, and the grey background there read as a hole in the
 ## world. Every resident neighbour of the exterior stream gets a quad of its
@@ -5225,9 +5313,12 @@ func _configure_interior_cutaway(manifest: WorldManifest) -> void:
 
 
 func _configure_full_map(manifest: WorldManifest) -> void:
+	# A continent exterior shows a buffer of its neighbours around it.
+	var buffer: float = MapViewScript.NEIGHBOUR_BUFFER_METRES if manifest.data.has("continentGeography") else 0.0
 	MapViewScript.configure(full_map_camera, full_map_viewport,
-		MapViewScript.bounds_for(manifest, secret_sections.current_section()))
+		MapViewScript.bounds_for(manifest, secret_sections.current_section()), buffer)
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
+	_update_map_boundaries()
 	player_map_marker.scale = Vector3(.18,1,.18) if manifest.asset_id() in ["lantern_reach", "bellwatch", "stillglass", "reedway", "cinderbank", "echo_court", "wayfarer_bastion", "lantern_exchange", "waystone_yard"] else Vector3.ONE
 
 ## The map window's cartography: the continent picture and the regions on it.

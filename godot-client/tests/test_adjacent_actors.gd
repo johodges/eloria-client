@@ -217,6 +217,50 @@ func _state_and_main() -> void:
 	(stream.get("residents") as Dictionary).erase("whitehorn_range")
 	stream.emit_signal("residents_changed")
 	_expect(not (main.get("_neighbour_pictures") as Dictionary).has("whitehorn_range"), "a neighbour that leaves takes its picture with it")
+	# A map click past the seam: the direct neighbour whose served tiles hold
+	# the point is found through the surveyed join, and the walk is armed in legs.
+	stream.set("active_map", "mirrorhold")
+	var coordinates := {"metresPerTile": 1.0, "serverOrigin": [0, 0], "serverCells": [400, 400], "invertServerY": true, "walkingHeight": 2.0, "origin": [0, 0, 0]}
+	var here := {"map": "mirrorhold", "position": [100.0, 2.0, -200.0], "coordinateTransform": coordinates,
+		"frame": {"anchor": [100.0, 2.0, -209.0], "outward": [0.0, -1.0], "globalTranslation": [0, 0, 0]}}
+	var there_coordinates := {"metresPerTile": 1.0, "serverOrigin": [0, 400], "serverCells": [400, 400], "invertServerY": true, "walkingHeight": 2.0, "origin": [0, 0, 0]}
+	var there := {"map": "whitehorn_range", "position": [100.0, 2.0, 200.0], "coordinateTransform": there_coordinates,
+		"frame": {"anchor": [100.0, 2.0, 209.0], "outward": [0.0, 1.0], "globalTranslation": [0, 0, -418]}}
+	stream.set("links", [{"id": "mirrorhold--whitehorn_range", "seamless": true, "ends": [here, there]}])
+	var frame_value: Variant = stream.call("neighbour_transform", "whitehorn_range")
+	_expect(frame_value is Transform3D and ((frame_value as Transform3D).origin - Vector3(0, 0, -418)).length() < 0.01,
+		"a neighbour that is not resident is framed by the surveyed join (%s)" % frame_value)
+	var beyond: Dictionary = stream.call("map_at_local", Vector3(150.0, 2.0, -300.0))
+	_expect(str(beyond.get("map", "")) == "whitehorn_range" and (beyond.get("tile") as Vector2i).x == 150 and absi((beyond.get("tile") as Vector2i).y - 282) <= 1,
+		"a point past the seam belongs to the neighbour, in its own tiles (%s)" % beyond)
+	_expect((stream.call("map_at_local", Vector3(150.0, 2.0, -900.0)) as Dictionary).is_empty(),
+		"a point beyond the neighbour's served cells belongs to no one")
+	var leg_value: Variant = stream.call("arm_walk_to", "whitehorn_range", Vector2i(150, 282), false, Vector3(150.0, 2.0, -300.0))
+	var pending: Dictionary = stream.get("pending_walk")
+	_expect(leg_value is Vector3 and (leg_value as Vector3).is_equal_approx(Vector3(100.0, 2.0, -200.0)),
+		"the walk's first leg ends at the surveyed crossing (%s)" % leg_value)
+	_expect(str(pending.get("map", "")) == "whitehorn_range" and pending.get("tile") == Vector2i(150, 282)
+		and str(pending.get("next_map", "")) == "whitehorn_range" and str(pending.get("issued_from", "")) == "mirrorhold",
+		"the pending walk carries the neighbour, its tile and the next map (%s)" % pending)
+	_expect(stream.call("arm_walk_to", "whitehorn_range", Vector2i(900, 900), false, Vector3.ZERO) == null,
+		"a tile outside the neighbour's cells is refused")
+	# The region boundaries: every cartography polygon in this map's metres, the
+	# current one flagged; the first point of a polygon converts through the continent frame.
+	var boundaries: Array = main.call("_map_boundaries")
+	var regions: Array = main.get("cartography_regions")
+	_expect(boundaries.size() == regions.size() and boundaries.size() > 0, "one boundary a region (%d)" % boundaries.size())
+	var continent: Dictionary = (main.get("cartography") as Dictionary).get("continent", {})
+	var current_index: int = main.call("_region_index_for_map", "mirrorhold")
+	if current_index >= 0 and boundaries.size() == regions.size():
+		var mirror: Dictionary = regions[current_index]
+		var first: Array = (regions[0] as Dictionary).get("continentPolygon", [[0, 0]])[0]
+		var expected := Vector3(float(continent.originMetres[0]) + float(first[0]) * float(continent.metresPerPixel) - float(mirror.globalTranslation[0]), 0,
+			float(continent.originMetres[1]) + float(first[1]) * float(continent.metresPerPixel) - float(mirror.globalTranslation[2]))
+		var got: Vector3 = (boundaries[0].get("points") as PackedVector3Array)[0]
+		_expect(Vector2(got.x, got.z).is_equal_approx(Vector2(expected.x, expected.z)),
+			"a polygon pixel converts through the continent frame into this map's metres (%s vs %s)" % [got, expected])
+		_expect(bool(boundaries[current_index].get("current", false)) and str(boundaries[current_index].get("name", "")) == str(mirror.get("name", "")),
+			"the current region is flagged with its name")
 	var interior := WorldManifest.new()
 	interior.data = {"schemaVersion": "1.0", "asset": {"id": "amberwood_estate", "origin": [0, 0, 0]}}
 	app_state.call("_on_packet", EloriaProtocol.ServerMessage.CHANGE_MAP, "amberwood_estate".to_ascii_buffer() + PackedByteArray([0]))
