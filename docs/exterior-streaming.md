@@ -17,10 +17,20 @@ landscapes also load into view. These are `visualConnections`, kept separate
 from the server's travel graph. Seven ferry links and
 interior/magical portals retain their own travel behavior.
 
-This is scene streaming with authoritative map handoff. Networked players,
-enemies, NPCs, harvest objects, audio and dynamic lamps still belong to the
-active server map. Cross-border actor visibility, combat and resource selection
-need a separate server interest protocol; scenery does not simulate those actors.
+This is scene streaming with authoritative map handoff. Harvest objects, audio
+and dynamic lamps still belong to the active server map. Actors are the
+exception: a client that advertises `adjacent_actors_v1` is told about the
+creatures, NPCs and players on the maps adjoining its own across a seamless
+land crossing, within the same perception radius that gates creatures on its
+own map. Their packets carry the neighbour's handle in the stock "z" field
+(`ELORIA_ADJACENT_MAPS` names the handles per map), `AppState` tags each actor
+with its map once, and `Main` places a neighbour's actor through that map's
+adapter carried by the frame its resident scene stands in
+(`FramedCoordinateAdapter`). A seamless crossing keeps every actor on both
+sides: the server re-files the ones on the map arrived at as the client's own
+and the ones on the map left as its neighbours, sends no `KILL_ALL_ACTORS`,
+and the client rides every actor node through the rebase. Combat and resource
+selection across the seam still need their own rules.
 The minimap changes to the active region's existing coordinate system.
 Crowded arrivals can still be adjusted by the server's existing free-tile rule;
 the current live proof uses one QA traveller, not a multiplayer border crowd.

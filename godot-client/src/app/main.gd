@@ -586,6 +586,11 @@ var _local_placement_logged := false
 ## Set when `_sync_world` ran out of spawn budget with actors still to
 ## build; the next frame picks them up.
 var _spawn_backlog := false
+## The region's picture under the map cameras, or null on a map without one.
+var _map_picture: MeshInstance3D
+## Neighbour map id -> {transform, adapter}: the framed adapters actors on
+## resident neighbours are placed through, rebuilt when the root moves.
+var _neighbour_adapters: Dictionary = {}
 ## Decides which actors animate this frame, and how often; see AnimationGate.
 var animation_gate: AnimationGate = AnimationGate.new()
 var _animation_gate_refresh_msec := 0
@@ -858,6 +863,9 @@ const ANIMATION_GATE_REFRESH_MSEC := 100
 ## open enough to read the names of everyone on a pavilion a hundred and sixty
 ## metres away, stacked over the water in front of the player.
 const ACTOR_DRAW_DISTANCE_METRES := 80.0
+## The visual layer the region's own map picture is drawn on, and the only
+## layer the map cameras render while a picture is installed.
+const MAP_PICTURE_LAYER := 8
 ## How far from the player another actor's name, title and health bar still
 ## show. The block is drawn at a fixed screen size so it stays readable at any
 ## zoom, which also means a name sixty metres off is as large as one at arm's
@@ -3820,8 +3828,14 @@ func _load_server_map() -> void:
 	# in the far corner
 	# of the map instead of the middle of it.
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
+	_neighbour_adapters.clear()
+	# A seamless crossing keeps every actor node: the server keeps their
+	# records too, re-filing the ones on the map arrived at as its own and
+	# the ones on the map left as its neighbours, and _rebase_streamed_world
+	# has carried the nodes into the new frame. Any other change of map
+	# empties the table, as the server's KILL_ALL_ACTORS empties AppState's.
 	for actor_id: Variant in actor_nodes.keys():
-		if int(actor_id) == _retained_traveller:
+		if _continuous_map_handoff or int(actor_id) == _retained_traveller:
 			continue
 		var raw_actor_node: Variant = actor_nodes[actor_id]
 		if is_instance_valid(raw_actor_node):
@@ -3861,9 +3875,14 @@ func _rebase_streamed_world(rebase: Transform3D) -> void:
 	# The destination may use rotated coordinates. Transform the sun with the
 	# terrain and camera so crossing the seam keeps the same physical direction.
 	world_sun.global_basis = rebase.basis * world_sun.global_basis
+	# Every actor node rides the rebase: the world moved under all of them, and
+	# the ones on the map just left are placed through its resident frame next.
+	for actor_id: Variant in actor_nodes.keys():
+		var carried: Variant = actor_nodes[actor_id]
+		if is_instance_valid(carried):
+			(carried as ReplicatedActor3D).rebase_world(rebase)
 	var traveller: Variant = actor_nodes.get(_retained_traveller)
 	if is_instance_valid(traveller):
-		(traveller as ReplicatedActor3D).rebase_world(rebase)
 		exterior_stream.last_handoff["traveller_at_rebase"] = traveller.global_position
 		exterior_stream.last_handoff["target_at_rebase"] = traveller.server_target
 
@@ -3902,6 +3921,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	_configure_secret_sections(manifest)
 	_configure_occluder_fade(manifest)
 	_configure_full_map(manifest)
+	_install_map_picture(manifest)
 	_request_map_redraw()
 	_sync_world()
 	_sync_ground_bags()
@@ -4139,34 +4159,42 @@ func _sync_world(changed: Variant = null) -> void:
 func _present_actor(id: Variant) -> void:
 	var dto: Dictionary = _presentation_dto(AppState.actors[id])
 	var existing_actor: ReplicatedActor3D = actor_nodes[id] as ReplicatedActor3D
-	existing_actor.apply_server_state(dto, adapter)
+	var actor_adapter: CoordinateAdapter = _adapter_for_actor(dto)
+	if actor_adapter == null:
+		return
+	existing_actor.apply_server_state(dto, actor_adapter)
 	# Before apply_vitals, which is what overwrites the old value.
 	_report_health_change(int(id), int(dto.get("health", 0)),
 		int(dto.get("max_health", 0)), existing_actor)
 	existing_actor.apply_vitals(int(dto.get("health", 0)),
 		int(dto.get("max_health", 0)))
 	existing_actor.set_nameplate_visible(_nameplate_visible_for(int(id)))
-	_place_actor_on_surface(existing_actor)
+	_place_actor_on_surface(existing_actor, false, actor_adapter.fallback_height())
 
 ## Builds the node for an actor that has none yet.
 func _spawn_actor(id: Variant) -> void:
 	var dto: Dictionary = _presentation_dto(AppState.actors[id])
+	var actor_adapter: CoordinateAdapter = _adapter_for_actor(dto)
+	if actor_adapter == null:
+		# Its map is a neighbour that is not resident yet: built on a later pass.
+		_spawn_backlog = true
+		return
 	var node := ReplicatedActor3D.new()
 	node.name = "Actor_%d" % id
 	world_root.add_child(node)
 	actor_nodes[id] = node
 	var model_id := _model_for_actor(dto)
 	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
-	var errors := node.configure(dto, adapter, model_config,
+	var errors := node.configure(dto, actor_adapter, model_config,
 		_animation_for_model(model_config), equipment_config)
 	if not errors.is_empty():
 		push_warning("Actor %d: %s" % [id, "; ".join(errors)])
-	node.apply_server_state(dto, adapter, true)
+	node.apply_server_state(dto, actor_adapter, true)
 	_fit_lantern_map_marker(node, "MapDot")
 	node.set_combat_effects_enabled(_effects_enabled)
 	node.set_nameplate_visible(_nameplate_visible_for(int(id)))
 	node.set_title(str(AppState.actor_titles.get(int(id), "")))
-	_place_actor_on_surface(node, true)
+	_place_actor_on_surface(node, true, actor_adapter.fallback_height())
 	if int(id) == AppState.local_actor_id:
 		_sync_harvest_sparkle()
 
@@ -4215,7 +4243,7 @@ func _update_local_actor_follow() -> void:
 ## queries a second on a populated map. The sample is now cached per actor and
 ## repeated only when its tile moves, or when the caller forces it after a map
 ## load.
-func _place_actor_on_surface(actor: ReplicatedActor3D, force := false) -> void:
+func _place_actor_on_surface(actor: ReplicatedActor3D, force := false, fallback_height := NAN) -> void:
 	if not is_instance_valid(actor) or gameplay_world == null:
 		return
 	var actor_position: Vector3 = actor.server_target
@@ -4225,8 +4253,11 @@ func _place_actor_on_surface(actor: ReplicatedActor3D, force := false) -> void:
 	_actor_surface_samples[actor.actor_id] = sample
 	var ray_start: Vector3 = Vector3(actor_position.x, 400.0, actor_position.z)
 	var ray_end: Vector3 = Vector3(actor_position.x, -100.0, actor_position.z)
+	# A neighbour's ground stands on the preview layer while its map is not
+	# the active one; an actor across the seam is placed on it all the same.
 	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
-		ray_start, ray_end, WorldLoader.NAVIGATION_SURFACE_LAYER)
+		ray_start, ray_end,
+		WorldLoader.NAVIGATION_SURFACE_LAYER | ExteriorRegionStream.PREVIEW_SURFACE_LAYER)
 	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
 	var hit_position_value: Variant = hit.get("position")
 	if hit_position_value is Vector3:
@@ -4242,10 +4273,75 @@ func _place_actor_on_surface(actor: ReplicatedActor3D, force := false) -> void:
 				" navigation_hit=", hit_position, " render=", actor.render_diagnostics(),
 				" camera=", camera_rig.camera_diagnostics())
 	else:
-		actor.set_surface_height(adapter.walking_height + 0.02)
+		var fallback: float = adapter.walking_height if is_nan(fallback_height) else fallback_height
+		actor.set_surface_height(fallback + 0.02)
 		if actor.actor_id == AppState.local_actor_id:
 			push_warning("local_actor_placement navigation_miss map=%s actor_id=%d target=%s fallback_y=%.3f" % [
-				AppState.current_map, actor.actor_id, actor_position, adapter.walking_height + 0.02])
+				AppState.current_map, actor.actor_id, actor_position, fallback + 0.02])
+
+## The adapter that places an actor: the active map's for an actor on it, and
+## for an actor on a neighbouring map, that map's own adapter carried through
+## the rigid frame its resident root stands in. Null while the neighbour is
+## not resident: the actor waits for its ground rather than standing on ours.
+func _adapter_for_actor(dto: Dictionary) -> CoordinateAdapter:
+	var actor_map: String = str(dto.get("map", ""))
+	if actor_map.is_empty() or actor_map == AppState.current_map:
+		return adapter
+	var normalized: String = MapRegistry.normalize_server_map_id(actor_map)
+	if normalized == MapRegistry.normalize_server_map_id(AppState.current_map):
+		return adapter
+	var resident: Variant = exterior_stream.residents.get(normalized)
+	if not resident is Dictionary:
+		return null
+	var root: Node3D = (resident as Dictionary).get("root") as Node3D
+	var manifest: WorldManifest = (resident as Dictionary).get("manifest") as WorldManifest
+	if not is_instance_valid(root) or manifest == null:
+		return null
+	var cached: Variant = _neighbour_adapters.get(normalized)
+	if cached is Dictionary and (cached as Dictionary).get("transform") == root.transform:
+		return (cached as Dictionary).get("adapter") as CoordinateAdapter
+	var framed := FramedCoordinateAdapter.wrap(manifest.coordinate_adapter(), root.transform)
+	_neighbour_adapters[normalized] = {"transform": root.transform, "adapter": framed}
+	return framed
+
+## The Tab map and the minimap draw the region's own picture, not the resident
+## chunks. A chunk-streamed territory holds only the chunks around the player,
+## so a live render of the world framed to the whole region showed the
+## resident chunks in a field of nothing. Every region ships its picture
+## (minimap.webp, one pixel a metre, north up, framed by cartography.json as
+## the full-map camera frames the region); it is laid on the ground on a
+## visual layer only the map cameras render, and while it stands they render
+## nothing else. The dots and marks are drawn over it as before. A map
+## without a picture (an interior) keeps the live render.
+func _install_map_picture(manifest: WorldManifest) -> void:
+	_remove_map_picture()
+	var region_index: int = _region_index_for_map(AppState.current_map)
+	var minimap: Dictionary = manifest.data.get("minimap", {}) as Dictionary
+	var texture: Texture2D = null
+	var tab_map: Dictionary = {}
+	if region_index >= 0 and not minimap.is_empty():
+		var region: Dictionary = cartography_regions[region_index] as Dictionary
+		texture = _tab_map_texture(region)
+		tab_map = region.get("tabMap", {}) as Dictionary
+	var extent: Rect2 = MapPicture.extent(minimap, tab_map) if texture != null else Rect2()
+	if texture == null or extent.size.x <= 0.0 or extent.size.y <= 0.0:
+		_set_map_cameras_picture(false)
+		return
+	_map_picture = MapPicture.build(texture, extent, MapPicture.height_below(manifest.data), MAP_PICTURE_LAYER)
+	world_root.add_child(_map_picture)
+	_set_map_cameras_picture(true)
+
+func _remove_map_picture() -> void:
+	if is_instance_valid(_map_picture):
+		_map_picture.queue_free()
+	_map_picture = null
+
+## What the map cameras render: the picture alone while one stands, else the
+## live world on layer 1 as they always did.
+func _set_map_cameras_picture(picture: bool) -> void:
+	var mask: int = MAP_PICTURE_LAYER if picture else 1
+	map_camera.cull_mask = mask
+	full_map_camera.cull_mask = mask
 
 func _footstep_surface_at(tile: Vector2i) -> String:
 	if gameplay_world == null or adapter == null:
