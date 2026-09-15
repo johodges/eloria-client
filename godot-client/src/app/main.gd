@@ -591,6 +591,9 @@ var _map_picture: MeshInstance3D
 ## Regions whose tab-map textures are still to be decoded ahead of a crossing.
 var _map_picture_warmup: Array[String] = []
 var _map_picture_warmup_armed := false
+## The resident neighbours' pictures, keyed by normalized map id: a quad under
+## each resident's root, so it stands in that map's rigid frame.
+var _neighbour_pictures: Dictionary = {}
 ## Neighbour map id -> {transform, adapter}: the framed adapters actors on
 ## resident neighbours are placed through, rebuilt when the root moves.
 var _neighbour_adapters: Dictionary = {}
@@ -4391,11 +4394,53 @@ func _install_map_picture(manifest: WorldManifest) -> void:
 	_map_picture = MapPicture.build(texture, extent, MapPicture.height_below(manifest.data), MAP_PICTURE_LAYER)
 	world_root.add_child(_map_picture)
 	_set_map_cameras_picture(true)
+	_install_neighbour_pictures()
 
 func _remove_map_picture() -> void:
 	if is_instance_valid(_map_picture):
 		_map_picture.queue_free()
 	_map_picture = null
+
+## The neighbours' pictures beside the current one: the minimap's window
+## reaches past the seam, and the grey background there read as a hole in the
+## world. Every resident neighbour of the exterior stream gets a quad of its
+## own picture under its root (the rigid frame it stands in), at its own
+## picture height on the map layer; the current map's picture is built first
+## and stands in its own frame as before. Called after the current picture
+## is laid and whenever the stream's resident table changes.
+func _install_neighbour_pictures() -> void:
+	if exterior_stream != null and not exterior_stream.residents_changed.is_connected(_install_neighbour_pictures):
+		exterior_stream.residents_changed.connect(_install_neighbour_pictures)
+	var residents: Dictionary = exterior_stream.residents if exterior_stream != null else {}
+	for stale_id: String in _neighbour_pictures.keys():
+		var stale: Variant = _neighbour_pictures[stale_id]
+		var resident_root: Node3D = (residents.get(stale_id, {}) as Dictionary).get("root") as Node3D
+		if not residents.has(stale_id) or not is_instance_valid(stale) or (stale as Node).get_parent() != resident_root:
+			if is_instance_valid(stale):
+				(stale as Node).queue_free()
+			_neighbour_pictures.erase(stale_id)
+	for map_id: String in residents.keys():
+		if _neighbour_pictures.has(map_id):
+			continue
+		var resident: Dictionary = residents[map_id] as Dictionary
+		var root: Node3D = resident.get("root") as Node3D
+		var manifest: WorldManifest = resident.get("manifest") as WorldManifest
+		if not is_instance_valid(root) or manifest == null:
+			continue
+		var region_index: int = _region_index_for_map(map_id)
+		var minimap: Dictionary = manifest.data.get("minimap", {}) as Dictionary
+		if region_index < 0 or minimap.is_empty():
+			continue
+		var region: Dictionary = cartography_regions[region_index] as Dictionary
+		var texture: Texture2D = _tab_map_texture(region)
+		if texture == null:
+			continue
+		var extent: Rect2 = MapPicture.extent(minimap, region.get("tabMap", {}) as Dictionary)
+		if extent.size.x <= 0.0 or extent.size.y <= 0.0:
+			continue
+		var picture := MapPicture.build(texture, extent, MapPicture.height_below(manifest.data), MAP_PICTURE_LAYER)
+		root.add_child(picture)
+		_neighbour_pictures[map_id] = picture
 
 ## The neighbours' pictures ahead of the crossing: a seamless handoff must not
 ## pay for a webp decode and an upload while the traveller drifts to its

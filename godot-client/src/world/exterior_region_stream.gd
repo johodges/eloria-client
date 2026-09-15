@@ -41,6 +41,10 @@ var _retiring: Array[Dictionary] = []
 const RETIRE_NODES_PER_FRAME := 64
 const RETIRE_BUDGET_USEC := 2000
 
+## The resident table changed: a neighbour arrived, left, or the maps swapped
+## at a crossing. Main lays the neighbours' map pictures by it.
+signal residents_changed
+
 func configure(maps: Dictionary) -> void:
 	registry = maps
 	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(CONNECTIONS))
@@ -148,6 +152,7 @@ func _process(_delta: float) -> void:
 	MapSceneCache.note_local_digest((resident.manifest as WorldManifest).asset_id(), str(resident.digest))
 	_record("ready", map_id, {"load_ms": float(resident.phases.get(&"total", 0)) / 1000.0})
 	_refresh_views()
+	residents_changed.emit()
 
 func _nearby(map_id: String) -> bool:
 	return _wanted_neighbours(_candidates(_last_position)).has(map_id)
@@ -229,6 +234,7 @@ func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> 
 		_set_collision(old, false)
 		old.transform = rebase
 		residents[active_map] = previous
+		residents_changed.emit()
 	else:
 		for stale: String in residents.keys():
 			_evict(stale)
@@ -333,6 +339,7 @@ func _evict(map_id: String) -> void:
 	residents.erase(map_id)
 	_retire(resident, map_id)
 	_record("evicted", map_id, {"retiring": _retiring.size()})
+	residents_changed.emit()
 
 func _can_dispatch_preload() -> bool:
 	return (_thread == null and _retiring.is_empty()

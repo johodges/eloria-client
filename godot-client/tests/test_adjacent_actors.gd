@@ -156,8 +156,10 @@ func _state_and_main() -> void:
 	neighbour_root.transform = Transform3D(Basis(Vector3.UP, PI / 2.0), Vector3(700.0, 0.0, -20.0))
 	root.add_child(neighbour_root)
 	var neighbour_manifest := WorldManifest.new()
-	neighbour_manifest.data = {"schemaVersion": "1.0", "asset": {"origin": [0, 0, 0]},
-		"coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [362, 186], "invertServerY": true, "walkingHeight": 3.0, "origin": [0, 0, 0]}}
+	neighbour_manifest.data = {"schemaVersion": "1.0", "asset": {"id": "whitehorn_range", "origin": [0, 0, 0]},
+		"coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [362, 186], "invertServerY": true, "walkingHeight": 3.0, "origin": [0, 0, 0]},
+		"minimap": {"worldMin": [-362.0, -522.0], "worldMax": [346.0, 186.0], "pixelsPerMetre": 1, "northUp": true,
+			"bounds": {"min": [-362.0, -22.0, -522.0], "max": [346.0, 176.0, 186.0]}}}
 	var stream: Node = main.get("exterior_stream")
 	(stream.get("residents") as Dictionary)["whitehorn_range"] = {"root": neighbour_root, "manifest": neighbour_manifest}
 	var own: CoordinateAdapter = main.call("_adapter_for_actor", {"map": "amberwood"})
@@ -196,6 +198,25 @@ func _state_and_main() -> void:
 		_expect((picture as MeshInstance3D).layers == main.get("MAP_PICTURE_LAYER"), "the picture is on the map layer")
 	_expect(map_camera.cull_mask == main.get("MAP_PICTURE_LAYER") and full_map_camera.cull_mask == main.get("MAP_PICTURE_LAYER"),
 		"the map cameras render the picture layer alone")
+	# The resident neighbour's picture stands under its root, in its frame, on the
+	# same layer, so the minimap window past the seam shows that map and not the background.
+	var neighbour_pictures: Dictionary = main.get("_neighbour_pictures")
+	var neighbour_picture: Variant = neighbour_pictures.get("whitehorn_range")
+	_expect(neighbour_picture is MeshInstance3D and is_instance_valid(neighbour_picture),
+		"a resident neighbour's picture is installed")
+	if neighbour_picture is MeshInstance3D:
+		_expect((neighbour_picture as Node).get_parent() == neighbour_root, "the neighbour's picture stands under its resident root")
+		_expect((neighbour_picture as MeshInstance3D).layers == main.get("MAP_PICTURE_LAYER"), "the neighbour's picture is on the map layer")
+		var neighbour_aabb: AABB = (neighbour_picture as MeshInstance3D).mesh.get_aabb()
+		var neighbour_region: Dictionary = (main.get("cartography_regions") as Array)[main.call("_region_index_for_map", "whitehorn_range")] as Dictionary
+		var neighbour_extent: Rect2 = MapPicture.extent(neighbour_manifest.data.get("minimap", {}) as Dictionary, neighbour_region.get("tabMap", {}) as Dictionary)
+		_expect(neighbour_extent.size.x > 0.0 and Rect2(-362.0, -522.0, 708.0, 708.0).encloses(neighbour_extent),
+			"the neighbour's cartography frames its picture inside its minimap (%s)" % neighbour_extent)
+		_expect(_spans(neighbour_aabb, neighbour_extent, -23.0),
+			"the neighbour's picture spans its framed minimap a metre under its lowest ground (%s)" % neighbour_aabb)
+	(stream.get("residents") as Dictionary).erase("whitehorn_range")
+	stream.emit_signal("residents_changed")
+	_expect(not (main.get("_neighbour_pictures") as Dictionary).has("whitehorn_range"), "a neighbour that leaves takes its picture with it")
 	var interior := WorldManifest.new()
 	interior.data = {"schemaVersion": "1.0", "asset": {"id": "amberwood_estate", "origin": [0, 0, 0]}}
 	app_state.call("_on_packet", EloriaProtocol.ServerMessage.CHANGE_MAP, "amberwood_estate".to_ascii_buffer() + PackedByteArray([0]))
