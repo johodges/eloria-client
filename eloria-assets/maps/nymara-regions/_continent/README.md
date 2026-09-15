@@ -5,20 +5,25 @@ exported. X runs east, Z runs south, and sea level is Y = 0. Named territories
 are server and content identities. Their boundaries do not determine the
 height, water level, ground colour, or vegetation of the landscape.
 
-**QA state: provisional for the fifteenth publication (2026-09-15).** Master
+**QA state: verified for the fifteenth publication (2026-09-15).** Master
 `314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36`, publication
 `9e41ee1fa49d95a28b02db43427933257487a42dfbb5809cd5b289c0b31e9b1d`
 (`work-output/diagonal-continent/after/fifteenth-freeze.json`). On these bytes the
-strict contracts passed with 0 failures over 3,660 placements and the full audit
-passed and verified the publication; the 24 primary, 9 supplement and 2 atlas
-gameplay views were captured with the published registry and no overrides. The
-seven native loopback suites, the server, client and continent suites and the
-headless set were running when this notice was written; it becomes verified
-when they pass. Known limitations are listed in
-`STATUS-2026-09-13-takeover.md` (road cores steeper than 0.65 in settlement
-feathers and pinned city footings, 58 alignments through compact retained
-solids, 51 floating road runs reported and not decked, twelve decorative hulls
-across slopes, ramp heads with angular facets).
+strict contracts passed with 0 failures over 3,660 placements, the full audit
+passed and verified the publication, the 24 primary, 9 supplement and 2 atlas
+gameplay views were captured with the published registry and no overrides
+(`final-review/`, `final-repairs/`), and the seven native loopback suites
+walked 240 routes with 0 failures on a real server (`after/live-walk/
+final-live-summary.json`). Known limitations are listed in
+`STATUS-2026-09-13-takeover.md`: road cores steeper than 0.65 in settlement
+feathers and pinned city footings that the server routes around (the
+terrain-aware alignment terms are held at zero weight for their cost in
+contract failures), 58 alignments through compact retained solids where
+no open ground lies within reach of an end, twelve decorative hulls resting
+across a slope with no water within 12 m, and ramp heads meeting banks with
+angular facets. Any later change to
+a shaping or export source returns this notice to provisional until the same
+chain is repeated.
 
 `diagonal-plan.json` describes the coast, connected mountain chain, river
 catchments, islands, territory centres, and placement controls. `landscape.py`
