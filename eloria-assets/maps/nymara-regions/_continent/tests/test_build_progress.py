@@ -162,10 +162,25 @@ class CompositionFreshnessTests(unittest.TestCase):
             self.write(generated/'composition.json',composition)
             state=self.freshness(client,continent,generated)
             self.assertFalse(state['fresh'])
-            self.assertEqual(sorted(state['missing']),
-                ['eloria-assets/maps/nymara-regions/_continent/hull_settle.py','objectEdits'])
-            self.assertEqual(state['changed'],[])
-            self.assertIsNone(state['current']['objectEdits'])
+            self.assertEqual(state['missing'],['eloria-assets/maps/nymara-regions/_continent/hull_settle.py'])
+            # A deleted edit file is the empty edit set, so a composition made with edits reads as changed.
+            self.assertEqual(state['changed'],['objectEdits'])
+            self.assertEqual(state['current']['objectEdits'],B.EMPTY_SHA256)
+
+    def test_an_absent_edit_file_is_the_empty_edit_set(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            client,continent,generated=self.fixture(Path(tmp))
+            # A composition from before object edits existed records no digest: fresh without a file.
+            self.assertTrue(self.freshness(client,continent,generated)['fresh'])
+            composition=json.loads((generated/'composition.json').read_text(encoding='utf-8'))
+            composition['objectEditsSha256']=B.EMPTY_SHA256
+            self.write(generated/'composition.json',composition)
+            state=self.freshness(client,continent,generated)
+            self.assertTrue(state['fresh']);self.assertEqual(state['current']['objectEdits'],B.EMPTY_SHA256)
+            # Edits written after the compose read as changed.
+            self.write(continent/'continent-edits.json',{'version':1,'objects':[]})
+            state=self.freshness(client,continent,generated)
+            self.assertFalse(state['fresh']);self.assertEqual(state['changed'],['objectEdits'])
 
     def test_a_recorded_digest_from_another_branch_is_reported_not_raised(self):
         with tempfile.TemporaryDirectory() as tmp:

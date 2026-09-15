@@ -604,9 +604,12 @@ def composition_freshness(output=None):
         if current is None:state['missing'].append(name)
         elif recorded!=current:state['changed'].append(name)
     for key,(name,relative) in COMPOSITION_INPUTS.items():
-        source=HERE/relative;current=digest(source) if source.exists() else None
-        if composition.get(key) is None and current is None:continue
-        compare(name,composition.get(key),current)
+        source=HERE/relative;current=digest(source) if source.exists() else None;recorded=composition.get(key)
+        if key=='objectEditsSha256':
+            # An absent edit file, and a composition made before edits existed, are both the empty edit set.
+            current=EMPTY_SHA256 if current is None else current;recorded=EMPTY_SHA256 if recorded is None else recorded
+        if recorded is None and current is None:continue
+        compare(name,recorded,current)
     compare('compositionAlgorithm',composition.get('compositionAlgorithmSha256'),composition_algorithm_sha())
     for relative,recorded in sorted(composition.get('sources',{}).items()):
         relative=relative.replace('\\','/')
