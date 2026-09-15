@@ -275,6 +275,14 @@ def _relief_height(x, z, source):
     fx = (cx - sx[ix]) / (sx[ix + 1] - sx[ix]); fz = (cz - sz[iz]) / (sz[iz + 1] - sz[iz])
     h = (sh[iz, ix] * (1 - fx) * (1 - fz) + sh[iz, ix + 1] * fx * (1 - fz)
          + sh[iz + 1, ix] * (1 - fx) * fz + sh[iz + 1, ix + 1] * fx * fz)
+    # A knee in the source's own heights: above it the relief keeps only
+    # ``above_scale`` of its rise, blended in over ``knee_width`` either side,
+    # so a surveyed bowl's rim walls stand above its floor without towering.
+    if source.get("knee") is not None:
+        knee = float(source["knee"]); above = float(source.get("above_scale", 0.5))
+        width = float(source.get("knee_width", 10.0))
+        t = smoothstep(knee - width, knee + width, h)
+        h = h * (1 - t) + (knee + (h - knee) * above) * t
     # Vertical exaggeration about a pivot in the source's own heights: the
     # base (a gate court) keeps its level while the relief above it grows.
     pivot = float(source.get("pivot", 0.0))

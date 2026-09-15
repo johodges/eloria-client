@@ -110,6 +110,23 @@ class ContinentGeographyTests(unittest.TestCase):
             height, _ = landscape._relief_height(np.array([477.]), np.array([72.]), dict(source, squeeze_z=1., about_z=0.))
             self.assertAlmostEqual(float(height[0]), 20. + 70., places=6)
 
+    def test_relief_knee_lowers_the_rim_and_leaves_the_floor(self):
+        rows = (np.array([-10., 0., 10.]), np.array([-300., -200., -100.]), np.array([[178.] * 3, [70.] * 3, [40.] * 3]))
+        with patch.object(landscape, "_relief_samples", lambda name: rows):
+            source = {"samples": "x.npz", "translation": [0., 0., 0.], "crop": [-10, -300, 10, -100], "feather": 10,
+                      "knee": 70., "above_scale": .4, "knee_width": 10.}
+            z = np.array([-300., -200., -100.]); x = np.zeros(3)
+            height, _ = landscape._relief_height(x, z, source)
+            # The crown keeps 40 % of its rise above the knee, the knee row and the floor are untouched.
+            np.testing.assert_allclose(height, [70. + 108. * .4, 70., 40.])
+            # Compressed heights stay in order: a taller row is still taller.
+            fine = (np.array([-10., 0., 10.]), np.linspace(-300., -100., 41), np.tile(np.linspace(178., 40., 41)[:, None], (1, 3)))
+        with patch.object(landscape, "_relief_samples", lambda name: fine):
+            height, _ = landscape._relief_height(np.zeros(41), np.linspace(-300., -100., 41), source)
+            self.assertTrue(np.all(np.diff(height) < 0.))
+            without, _ = landscape._relief_height(np.zeros(41), np.linspace(-300., -100., 41), dict(source, knee=None))
+            np.testing.assert_allclose(without, np.linspace(178., 40., 41))
+
     def test_optional_foundation_feathers_into_shared_surface(self):
         plan = copy.deepcopy(landscape.load_plan())
         target = float(landscape.height_at(740, 1030)) + 2
