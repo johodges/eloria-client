@@ -43,10 +43,15 @@ ROAD_ENDS = {
 # the windmill, the banner shrine and two standing stones. Pinned to the
 # pocket north of the animal pen and to the open ground north of the spring,
 # their routed parts cross nothing and the straight runs only the markers'
-# own boxes (the banner focus stands at the pen's box edge).
+# own boxes (the banner focus stands at the pen's box edge). The mill-cache
+# branch (307) took the new banner line as its nearest station and looped
+# west through the pen, the spring and two tents (86 m): pinned to the pen 02
+# margin north-east of the windmill it comes through the same pocket; its
+# marker stands inside the windmill's box and 4 m inside round tent 06's
+# footprint, which no pin avoids.
 SERVER_ROAD_ENDS = {
     ('amberwood', 'amberwood', 'amberwood_estate'): (600., 590.),
-    ('sunmane_steppe', 'sunmane_steppe', 'sunmane_steppe_secrets'): [(1216., 732.), (1196., 760.)],
+    ('sunmane_steppe', 'sunmane_steppe', 'sunmane_steppe_secrets'): [(1216., 732.), (1196., 760.), (1232., 734.)],
 }
 SERVER_ROAD_END_LEG_METRES = 2.   # a pin closer than this to its portal is the road's end itself
 MINIMUM_DRY_METRES = .8

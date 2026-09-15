@@ -59,3 +59,18 @@ def test_the_chapel_bank_approach_climbs_from_the_hub_side_ground_to_the_plateau
     assert path[0][1] > 517. and path[-1][1] < 506.   # from below the bank (z > 517) up to the plateau edge
     length = np.sum(np.linalg.norm(np.diff(path, axis=0), axis=1))
     assert 8. / length < A.APPROACH_GRADE   # 8 m of rise within the corridor grade
+
+
+def test_a_branch_is_regraded_along_its_steep_runs_only():
+    stations = np.array([0., 10., 20., 30., 40., 50.])
+    levels = np.array([80., 84., 88., 97., 100., 102.])   # one steep segment (.9) between 20 and 30 m
+    profile, runs = A.branch_runs(levels, stations)
+    assert profile[0] == 80. and profile[-1] == 102.
+    assert np.max(np.abs(np.diff(profile)) / np.diff(stations)) <= A.APPROACH_GRADE + 1e-9
+    assert profile[3] < 97.
+    assert runs == [[0., 50.]]   # padded by 6 m, then widened until its ends' rise fits the grade
+    gentle = np.array([80., 82., 84., 86.])
+    profile, runs = A.branch_runs(gentle, stations[:4])
+    np.testing.assert_array_equal(profile, gentle); assert runs == []
+    need = A.branch_need(np.array([-5., 0., 25., 50., 51.5, 53., 60.]), [[0., 50.]])
+    np.testing.assert_allclose(need, [0., 1., 1., 1., .5, 0., 0.])

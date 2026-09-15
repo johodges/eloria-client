@@ -6,7 +6,7 @@ canopy compound, kiln buildings and authored discovery identities stay fixed.
 from __future__ import annotations
 import numpy as np
 import landscape as L
-from world_layout import corridor_grade,graded_profile
+from world_layout import corridor_grade,graded_profile,SOLID_MAXIMUM_AREA_SQUARE_METRES
 from four_gates_support import path_field
 
 REGION='amberwood'
@@ -31,6 +31,16 @@ APPROACH_GRADE=.45
 # its served corridor.
 APPROACH_OTHER_ROAD_CLEAR=2.5
 APPROACH_OTHER_ROAD_FADE=7.
+# A branch approach is regraded along its steep runs only: each run of
+# stations steeper than the grade, padded by APPROACH_RUN_PAD_METRES and
+# widened until its ends stay on the natural ground, gets a local bounded
+# profile; the corridor weight fades to nothing APPROACH_RUN_FADE_METRES past
+# a run. Measured with the whole line regraded: the branches' shoulders
+# imposed their level on the chapel plateau's south side (2-3 m of fill at
+# x 596-624, z 494-502) and the step at its north edge cut the plateau, the
+# chapel foot and the camp approach off the hub reach.
+APPROACH_RUN_PAD_METRES=6.
+APPROACH_RUN_FADE_METRES=3.
 
 
 def branch_routes(world):
@@ -46,6 +56,40 @@ def branch_routes(world):
 def branch_profile(levels,stations,maximum_grade=APPROACH_GRADE):
     """A routed branch keeps its ends and its general rise; the feather step is cut and filled to the grade."""
     return graded_profile(levels,stations,maximum_grade=maximum_grade)
+
+
+def branch_runs(levels,stations,maximum_grade=APPROACH_GRADE,pad=APPROACH_RUN_PAD_METRES):
+    """(profile, runs): the station levels with every steep run regraded locally, and the along-line
+    intervals [start, stop] the runs cover once padded and widened to keep their ends on the natural ground.
+    """
+    levels=np.asarray(levels,float);stations=np.asarray(stations,float);profile=levels.copy()
+    grades=np.abs(np.diff(levels))/np.maximum(np.diff(stations),1e-6)
+    runs=[];i=0
+    while i<len(grades):
+        if grades[i]<=maximum_grade:i+=1;continue
+        j=i
+        while j+1<len(grades) and grades[j+1]>maximum_grade:j+=1
+        start,stop=stations[i]-pad,stations[j+1]+pad
+        if runs and start<=runs[-1][1]:runs[-1][1]=stop
+        else:runs.append([start,stop])
+        i=j+1
+    for run in runs:
+        ia=int(np.searchsorted(stations,run[0]));ib=int(np.searchsorted(stations,run[1],side='right'))-1
+        ia=max(0,min(ia,len(stations)-2));ib=min(len(stations)-1,max(ib,ia+1))
+        while abs(levels[ib]-levels[ia])/max(stations[ib]-stations[ia],1e-6)>maximum_grade and (ia>0 or ib<len(stations)-1):
+            ia=max(0,ia-1);ib=min(len(stations)-1,ib+1)
+        profile[ia:ib+1]=branch_profile(levels[ia:ib+1],stations[ia:ib+1],maximum_grade)
+        run[0],run[1]=float(stations[ia]),float(stations[ib])
+    return profile,runs
+
+
+def branch_need(along,runs,fade=APPROACH_RUN_FADE_METRES):
+    """How much of the corridor regrade each vertex takes: 1 inside a steep run, fading to 0 within ``fade`` metres."""
+    along=np.asarray(along,float);need=np.zeros(along.shape)
+    for start,stop in runs:
+        outside=np.maximum(0.,np.maximum(start-along,along-stop))
+        need=np.maximum(need,np.clip(1.-outside/fade,0.,1.))
+    return need
 
 
 def other_road_distance(world,exclude,x,z,margin=20.):
@@ -109,8 +153,9 @@ def apply_amberwood_support(world,content):
         # Final road ends join the actual current earth, not a cached camera Y.
         levels=world.height_at(points[:,0],points[:,1])
         stations=np.r_[0,np.cumsum(np.linalg.norm(np.diff(points,axis=0),axis=1))]
-        branch=name in APPROACH_BRANCHES
-        profile=branch_profile(levels,stations) if branch else np.interp(stations,[0,stations[-1]],[levels[0],levels[-1]])
+        branch=name in APPROACH_BRANCHES;runs=[]
+        if branch:profile,runs=branch_runs(levels,stations)
+        else:profile=np.interp(stations,[0,stations[-1]],[levels[0],levels[-1]])
         if abs(levels[-1]-levels[0])/stations[-1]>(APPROACH_GRADE if branch else .48):
             raise ValueError(f'{name}: authored climb must be lengthened')
         half_width=3.6;shoulder=10.
@@ -126,15 +171,20 @@ def apply_amberwood_support(world,content):
         weight*=world.owner_at(gx,gz)==world.ids.index(REGION)
         # Architectural interiors keep their foundation. The Motherroot's
         # surface roots remain visible outside the small worn path opening.
+        # Boxes larger than the router's compact-solid area (the Great Tree's
+        # hollow hall and its wood, 61 m across) cover open ground: they are
+        # not interiors, and the roads already cross them.
         occupied=np.zeros_like(weight,dtype=bool)
         for obj in content.objects:
             if obj['region']!=REGION or not obj.get('collides') or obj.get('assembly'):continue
             if obj['node'].startswith(('Stone_RuinFragment','LogPile_','Cart_')):continue
             if obj.get('kind') in ('tree','rock','foliage','undergrowth','scrub'):continue
             a,b=obj['low'],obj['high']
+            if (b[0]-a[0])*(b[2]-a[2])>SOLID_MAXIMUM_AREA_SQUARE_METRES:continue
             occupied|=(gx>=a[0]-.25)&(gx<=b[0]+.25)&(gz>=a[2]-.25)&(gz<=b[2]+.25)
         weight*=~occupied
         if branch:
+            weight*=branch_need(along,runs)
             siblings=set(APPROACH_BRANCHES)|set(APPROACH_BRANCHES.values())
             weight*=L.smoothstep(APPROACH_OTHER_ROAD_CLEAR,APPROACH_OTHER_ROAD_FADE,other_road_distance(world,siblings,gx,gz))
         # Routed roads crossing an approach are regraded with it: the approach
