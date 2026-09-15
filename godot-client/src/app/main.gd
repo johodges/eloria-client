@@ -588,6 +588,9 @@ var _local_placement_logged := false
 var _spawn_backlog := false
 ## The region's picture under the map cameras, or null on a map without one.
 var _map_picture: MeshInstance3D
+## Regions whose tab-map textures are still to be decoded ahead of a crossing.
+var _map_picture_warmup: Array[String] = []
+var _map_picture_warmup_armed := false
 ## Neighbour map id -> {transform, adapter}: the framed adapters actors on
 ## resident neighbours are placed through, rebuilt when the root moves.
 var _neighbour_adapters: Dictionary = {}
@@ -2631,6 +2634,10 @@ func _close_client() -> void:
 
 func _exit_tree() -> void:
 	occluder_fade.reset()
+	# Released here, before the rendering server goes: otherwise the picture's
+	# and the cached tab-map textures are reported leaked at exit.
+	_remove_map_picture()
+	_tab_map_textures.clear()
 
 func _on_login_succeeded() -> void:
 	spell_loadout.load_profile("%s:%d/%s" % [host_edit.text.strip_edges().to_lower(), int(port_edit.value), user_edit.text.strip_edges().to_lower()])
@@ -3649,6 +3656,8 @@ func _on_state_changed(path: StringName) -> void:
 	if not AppState.authenticated:
 		return
 	match path:
+		&"adjacent_maps":
+			_queue_map_picture_warmup()
 		&"lantern_tutorial":
 			if AppState.lantern_tutorial.get("active", false) and AppState.lantern_tutorial.get("ring_training", false):
 				if spell_loadout.mode != "wheel": spell_loadout.set_mode("wheel")
@@ -3922,6 +3931,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	_configure_occluder_fade(manifest)
 	_configure_full_map(manifest)
 	_install_map_picture(manifest)
+	_queue_map_picture_warmup()
 	_request_map_redraw()
 	_sync_world()
 	_sync_ground_bags()
@@ -4335,6 +4345,40 @@ func _remove_map_picture() -> void:
 	if is_instance_valid(_map_picture):
 		_map_picture.queue_free()
 	_map_picture = null
+
+## The neighbours' pictures ahead of the crossing: a seamless handoff must not
+## pay for a webp decode and an upload while the traveller drifts to its
+## server target, so the textures of the maps the server lists as adjacent
+## are decoded on the frames after a map load, one a frame, into the same
+## cache the Tab map reads. The crossing then builds a quad over a cached
+## texture. Called after each world load and whenever the adjacency changes.
+func _queue_map_picture_warmup() -> void:
+	for name_value: Variant in AppState.adjacent_maps.values():
+		var name := str(name_value)
+		var region_index: int = _region_index_for_map(name)
+		if region_index < 0:
+			continue
+		var key: String = str((cartography_regions[region_index] as Dictionary).get("serverMap", ""))
+		if _tab_map_textures.has(key) or _map_picture_warmup.has(name):
+			continue
+		_map_picture_warmup.append(name)
+	if _map_picture_warmup.is_empty() or _map_picture_warmup_armed:
+		return
+	_map_picture_warmup_armed = true
+	get_tree().create_timer(0.1).timeout.connect(_warm_one_map_picture, CONNECT_ONE_SHOT)
+
+## Decodes one queued region's texture; re-arms for the next on a later frame.
+func _warm_one_map_picture() -> void:
+	_map_picture_warmup_armed = false
+	if _map_picture_warmup.is_empty():
+		return
+	var name: String = _map_picture_warmup.pop_front()
+	var region_index: int = _region_index_for_map(name)
+	if region_index >= 0:
+		_tab_map_texture(cartography_regions[region_index] as Dictionary)
+	if not _map_picture_warmup.is_empty():
+		_map_picture_warmup_armed = true
+		get_tree().create_timer(0.1).timeout.connect(_warm_one_map_picture, CONNECT_ONE_SHOT)
 
 ## What the map cameras render: the picture alone while one stands, else the
 ## live world on layer 1 as they always did.

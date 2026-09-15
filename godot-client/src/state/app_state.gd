@@ -523,6 +523,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			state_changed.emit(&"map")
 		"adjacent_maps":
 			adjacent_maps = (event.maps as Dictionary).duplicate()
+			state_changed.emit(&"adjacent_maps")
 		"actor_spawn":
 			# Which map the actor stands on: its packet's handle names a neighbour,
 			# 0 the map the client stands on. Resolved here, once, so neither a

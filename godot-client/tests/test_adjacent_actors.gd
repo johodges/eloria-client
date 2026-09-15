@@ -203,5 +203,18 @@ func _state_and_main() -> void:
 	_expect(main.get("_map_picture") == null, "a map without a picture installs none")
 	_expect(map_camera.cull_mask == 1 and full_map_camera.cull_mask == 1,
 		"the map cameras return to the live render on a map without a picture")
+	# The neighbours' pictures are decoded ahead of a crossing, one a frame, into the Tab map's cache.
+	var textures: Dictionary = main.get("_tab_map_textures")
+	textures.erase("whitehorn_range")
+	app_state.set("adjacent_maps", {1: "whitehorn_range", 2: "no_such_region"})
+	main.call("_queue_map_picture_warmup")
+	var queued: Array = main.get("_map_picture_warmup")
+	_expect(queued == ["whitehorn_range"], "an adjacent region without a cached picture is queued, an unknown map is not (%s)" % [queued])
+	_expect(not textures.has("whitehorn_range"), "queueing decodes nothing on the handoff frame")
+	main.call("_warm_one_map_picture")
+	_expect(textures.has("whitehorn_range") and textures["whitehorn_range"] is Texture2D, "the queued region's texture is decoded on a later frame")
+	_expect((main.get("_map_picture_warmup") as Array).is_empty(), "the queue is drained")
+	main.call("_queue_map_picture_warmup")
+	_expect((main.get("_map_picture_warmup") as Array).is_empty(), "a cached region is not queued again")
 	main.queue_free()
 	await process_frame
