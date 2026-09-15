@@ -20,12 +20,12 @@ def authored_routes(world):
         'amber-motherroot-yard':np.array([[510,522],[510,517],[512,513]],float)+offset,
         'amber-moot-path':np.array([[496,500],[495,505],[500,508],[503,504]],float)+offset,
         'amber-ridge-camp':np.array([[604,435],[605,445],[599,452],[591,456],[584,456],[578,450]],float)+offset,
-        # With the structures registered where they stand (content.register_obstacles,
-        # not called yet) the cinder chapel door road takes a direct line up the hill
-        # and the chapel foot at (626, 491) lies 26 m lower: this 28 m line then
-        # climbs at .54 and must bend east between the two ruins, for instance
-        # [[626,491],[634,491],[641,487],[647,486],[650,481],[647,476]] (33.8 m, .45).
-        'amber-undercut-path':np.array([[626,491],[634,491],[640,485],[646,480],[647,476]],float)+offset,
+        # The undercut path bends east between the two ruins (33.8 m, end-to-end
+        # grade .45): with the structures registered where they stand
+        # (content.register_obstacles) the cinder chapel door road takes its direct
+        # line up the hill and the chapel foot at (626, 491) lies 26 m lower than
+        # the fourteenth left it; the former 28 m line climbed at .54.
+        'amber-undercut-path':np.array([[626,491],[634,491],[641,487],[647,486],[650,481],[647,476]],float)+offset,
     }
 
 

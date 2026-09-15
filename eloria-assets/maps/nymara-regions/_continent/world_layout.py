@@ -34,15 +34,18 @@ ROUTE_EXIT_SEARCH_METRES=30.
 ROUTE_END_CANDIDATES=6
 ROUTE_END_CANDIDATES_PER_CLASS=2
 ROUTE_END_SOLID_RADIUS_METRES=6.
-# Terrain terms of the alignment cost. All four are available and tested but
-# stand at zero for the fifteenth publication: with them on (cross-slope 25/40,
-# relief 25, step 600, seam terminal 60) six of ten public roads re-align by
+# Terrain terms of the alignment cost. The seam-terminal term is on since the
+# sixteenth: the fifteenth's amberwood--mirrorhold crossing put its Amberwood
+# terminal inside Watchtower 5 and the amberwood--four_gates crossing its
+# terminal in a retained solid, and the entry legs cut through them. The three
+# station terms are available and tested but stand at zero: with them on
+# (cross-slope 25/40, relief 25, step 600) six of ten public roads re-align by
 # more than 6 m, steep road-core samples fall from 8,827 to 4,712, and the
 # strict contracts lose 59 records to site arrangements tuned around the
 # former alignments (the Mirrorhold civic junction, the Ssarathi temple entry,
 # the Amberwood--Four Gates seam approach, the Amberwood estate posts, the
 # Whitehorn and Manymouth doors). Turning them on is per-site work.
-SEAM_TERMINAL_SOLID_PENALTY=0.  # metres per road terminal of a seam crossing standing in a retained solid
+SEAM_TERMINAL_SOLID_PENALTY=60.  # metres per road terminal of a seam crossing standing in a retained solid
 ROUTE_CROSS_SLOPE_START=.55
 ROUTE_CROSS_SLOPE_LINEAR=0.     # per metre of station cross-slope beyond the start
 ROUTE_CROSS_SLOPE_SQUARE=0.     # per metre, times the square of that excess

@@ -73,7 +73,7 @@ Use these source responsibilities when changing the world:
 | `manymouth_boats.py` | Actual hull contact with water or ground for independent decorative dugouts. |
 | `hull_settle.py` | Every other decorative watercraft, standalone or inside a rigid assembly, settled by rigid Y only onto the actual water surface or hauled up on the ground, with rigs and cargo standing within a hull following it. |
 | `resource_trails.py` | A narrow trail from the nearest road station to every cluster of authored harvest nodes and territory markers that stands on ground steeper than the walkable grade with no road corridor within 12 m, so the served fold keeps a walkable corridor at each site. |
-| `amberwood_support.py`, `amberwood_access.py` | Woodland workyard paths, coherent camp layout and visible canopy/root entrance construction. |
+| `amberwood_support.py`, `amberwood_access.py` | Woodland workyard paths, coherent camp layout and visible canopy/root entrance construction; the market stair and the root ramp onto the Great Tree's root plateau, both built on the final ground with their strips reserved before routing. |
 | `manymouth_access.py` | Visible tidal fishing boardwalks linking retained porches and the landing. |
 | `manymouth_village_streets.py` | Graded timber streets connecting the other delta hamlets to their actual porch floors. |
 | `grey_crossings.py` | Retirement of the three duplicate Grey Moors boardwalk spans, the four pinned server positions they anchored, and their landmark identities on the actual continental crossing floors. |

@@ -11,6 +11,7 @@ import numpy as np
 import scene_io as S
 from bridge_export import G,M
 from ferry_export import ribbon
+from mirror_access_geometry import ramp_mesh,foundation_faces
 
 REGION='amberwood'
 HATCH='Motherroot_RootHatch'
@@ -22,6 +23,27 @@ MARKET_STAIR_MAXIMUM_METRES=45.   # the line runs down the natural hillside: 12 
 MARKET_STAIR_GRADE=.58
 MARKET_STAIR_LEVEL_METRES=4.
 MARKET_STAIR_CLEARANCE_METRES=2.6
+# The root ramp climbs the Great Tree's west root flank from the village yard
+# onto the root plateau: a rigid footing nine metres above the yard whose
+# flank blends at grade 1.1, which no corridor can grade. Its timber deck is
+# the .45 lower envelope over the final ground (mirror_access_geometry.
+# ramp_mesh), so the run starts on the flat yard west of x 486 to land at the
+# grade. The yard itself is a served hollow: the canopy walkway's shadow on
+# its west, the market decks on its north and the cliff on its south fence it
+# in the served grid (one height per tile), and the fifteenth reached it only
+# where a road happened to lift the ground at the walkway's foot into the
+# 2.8 m code step. So the Motherroot Voice stands at the Motherroot mouth
+# (MOTHERROOT_VOICE_POST), which the door road serves; the ramp joins the
+# plateau to the yard for the day the yard gets its own approach.
+ROOT_RAMP_FOOT=np.array([484.,472.])
+ROOT_RAMP_HEAD=np.array([505.,472.])
+ROOT_RAMP_HALF_WIDTH=1.8
+ROOT_RAMP_CLEARANCE_METRES=2.6   # beyond the deck edge, for the reserve and the loose props
+ROOT_RAMP_POST_SPACING_METRES=3
+# The Motherroot Voice's post: the yard in front of the root hatch, three
+# metres from the door's threshold, on the ground the door road serves.
+MOTHERROOT_VOICE='Motherroot Voice Sillow'
+MOTHERROOT_VOICE_POST=np.array([508.5,515.5])
 
 
 def market_stair_line(world):
@@ -39,6 +61,58 @@ def market_stair_run(height_at,landing,direction,deck):
         if abs(deck-ground)/(length-MARKET_STAIR_LEVEL_METRES)<=MARKET_STAIR_GRADE:
             return float(length),start,ground
     raise ValueError(f'Market stair needs a longer actual approach: {abs(deck-ground):.2f} m of rise within {MARKET_STAIR_MAXIMUM_METRES:.0f} m')
+
+
+def root_ramp_line(world):
+    """(foot, head) of the root ramp in continent metres: the authored line, placed with the region."""
+    offset=np.asarray(world.regions[REGION]['center'])-[510.,540.]
+    return ROOT_RAMP_FOOT+offset,ROOT_RAMP_HEAD+offset
+
+
+def motherroot_voice_post(world):
+    """The Motherroot Voice's post in continent metres (x, ground height, z), placed with the region."""
+    offset=np.asarray(world.regions[REGION]['center'])-[510.,540.]
+    x,z=MOTHERROOT_VOICE_POST+offset
+    return np.array([x,float(world.height_at(x,z)),z])
+
+
+def root_ramp_reserve(foot,head,half_width=ROOT_RAMP_HALF_WIDTH,clearance=ROOT_RAMP_CLEARANCE_METRES):
+    """(low, high) XZ box no road alignment or grove enters: the deck and its clearance."""
+    return np.minimum(foot,head)-half_width-clearance,np.maximum(foot,head)+half_width+clearance
+
+
+def clear_strip_props(content,origin,direction,near,far,clearance):
+    """Move the loose props off a strip, sideways to the clearance, as the stall row was moved.
+
+    The strip runs from ``near`` to ``far`` metres from ``origin`` along the unit
+    ``direction``; assemblies and everything but props stay. Returns the moves.
+    """
+    perp=np.array([-direction[1],direction[0]]);cleared=[]
+    for obj in content.objects:
+        if obj['region']!=REGION or obj.get('assembly') or obj.get('kind')!='prop':continue
+        centre=((np.asarray(obj['low'])+np.asarray(obj['high']))*.5)[[0,2]];rel=centre-origin
+        along=float(rel@direction);across=float(rel@perp)
+        half=float(np.hypot(obj['high'][0]-obj['low'][0],obj['high'][2]-obj['low'][2])*.5)
+        if not (near<along<far and abs(across)-half<clearance):continue
+        move=perp*(1. if across>=0 else -1.)*(clearance+half-abs(across))
+        delta=np.array([move[0],0.,move[1]]);obj['shift']+=delta;obj['low']+=delta;obj['high']+=delta
+        content.mapping[(REGION,obj['node'])]=obj['shift'];content.bounds_by_name[(REGION,obj['node'])]=(obj['low'],obj['high'])
+        cleared.append({'node':obj['node'],'displacement':[round(float(v),2) for v in delta]})
+    return cleared
+
+
+def root_ramp_rails(world,deck,rows):
+    """Posts every third metre on both deck edges, from below the ground up to a handrail band along the edge."""
+    grid=deck.positions.reshape(rows,-1,3);posts=[];rails=[]
+    for edge in (grid[:,0],grid[:,-1]):
+        for p in edge[::ROOT_RAMP_POST_SPACING_METRES]:
+            ground=float(world.height_at(p[0],p[2]));top=p[1]+1.;height=top-(ground-.3)
+            posts.append(M.box((.18,height,.18),center=(p[0],top-height*.5,p[2]),material='amber_access_dark'))
+        n=len(edge);vertices=np.concatenate([edge+[0.,.86,0.],edge+[0.,.98,0.]])
+        i=np.arange(n-1);indices=np.c_[i,i+1,n+i,i+1,n+i+1,n+i].ravel()
+        rail=M.Mesh(positions=vertices,normals=np.zeros_like(vertices),uvs=vertices[:,[0,1]],indices=indices,material='amber_access_timber')
+        rail.recompute_normals(180);rails.append(rail)
+    return M.merge(posts,material='amber_access_dark'),M.merge(rails,material='amber_access_timber')
 
 
 def prepare_camp_source(document,body,metadata,folder):
@@ -209,15 +283,23 @@ def prepare_amberwood_access(world,content):
     if not hasattr(content,'authored_server_points'):content.authored_server_points={}
     content.authored_server_points[(REGION,(221,320))]=target.copy()
     content.authored_server_points[(REGION,(221,318))]=target+np.array([-1.,0.,1.])
+    # The Motherroot Voice keeps the mouth (npcs.txt: Motherroot Voice Sillow).
+    if not hasattr(content,'authored_actor_points'):content.authored_actor_points={}
+    content.authored_actor_points[(REGION,MOTHERROOT_VOICE)]=motherroot_voice_post(world)
     # The charcoal discovery is a physical hatch in the kiln side yard, rather
     # than the compressed legacy marker overlapping the adjacent lodge.
     cache=content.placement_by_name[(REGION,'Secret_amber_charcoal_cache')]
     delta=np.array([7.,0.,0.]);cache['shift']+=delta;cache['low']+=delta;cache['high']+=delta
     content.mapping[(REGION,cache['node'])]=cache['shift'];content.bounds_by_name[(REGION,cache['node'])]=(cache['low'],cache['high'])
-    # Make space for the sloped market stair beside the existing stall row.
-    stall=content.placement_by_name[(REGION,'Prop_MarketStall_6')]
-    delta=np.array([15.,0.,4.]);stall['shift']+=delta;stall['low']+=delta;stall['high']+=delta
-    content.mapping[(REGION,stall['node'])]=stall['shift'];content.bounds_by_name[(REGION,stall['node'])]=(stall['low'],stall['high'])
+    # Make space for the sloped market stair beside the existing stall row, and
+    # take stall 3 off the line the Motherroot mouth door road takes north past
+    # the platform's east side (the road clipped the stall's west edge; the
+    # platform's own solid covers the stall's cells, so the router cannot see
+    # it there): 2.5 m east and 2 m north, clear of stall 4 and the guild awning.
+    for name,delta in (('Prop_MarketStall_6',np.array([15.,0.,4.])),('Prop_MarketStall_3',np.array([2.5,0.,-2.]))):
+        stall=content.placement_by_name[(REGION,name)]
+        stall['shift']+=delta;stall['low']+=delta;stall['high']+=delta
+        content.mapping[(REGION,stall['node'])]=stall['shift'];content.bounds_by_name[(REGION,stall['node'])]=(stall['low'],stall['high'])
     # The stair's length follows the final ground (build_amberwood_access).
     # Reserve its longest strip now, so no road alignment or grove crosses
     # it, and move loose props off it as the stall row was moved.
@@ -225,17 +307,13 @@ def prepare_amberwood_access(world,content):
     far=landing-direction*MARKET_STAIR_MAXIMUM_METRES
     reserve_low=np.minimum(landing,far)-MARKET_STAIR_CLEARANCE_METRES;reserve_high=np.maximum(landing,far)+MARKET_STAIR_CLEARANCE_METRES
     world.structure_obstacle([reserve_low[0],0.,reserve_low[1]],[reserve_high[0],0.,reserve_high[1]])
-    cleared=[]
-    for obj in content.objects:
-        if obj['region']!=REGION or obj.get('assembly') or obj.get('kind')!='prop':continue
-        centre=((np.asarray(obj['low'])+np.asarray(obj['high']))*.5)[[0,2]];rel=centre-landing
-        along=-float(rel@direction);across=float(rel@perp)
-        half=float(np.hypot(obj['high'][0]-obj['low'][0],obj['high'][2]-obj['low'][2])*.5)
-        if not (6.<along<MARKET_STAIR_MAXIMUM_METRES and abs(across)-half<MARKET_STAIR_CLEARANCE_METRES):continue
-        move=perp*(1. if across>=0 else -1.)*(MARKET_STAIR_CLEARANCE_METRES+half-abs(across))
-        delta=np.array([move[0],0.,move[1]]);obj['shift']+=delta;obj['low']+=delta;obj['high']+=delta
-        content.mapping[(REGION,obj['node'])]=obj['shift'];content.bounds_by_name[(REGION,obj['node'])]=(obj['low'],obj['high'])
-        cleared.append({'node':obj['node'],'displacement':[round(float(v),2) for v in delta]})
+    cleared=clear_strip_props(content,landing,-direction,6.,MARKET_STAIR_MAXIMUM_METRES,MARKET_STAIR_CLEARANCE_METRES)
+    # The root ramp's deck follows the final ground too (build_amberwood_access):
+    # reserve its strip and clear it the same way.
+    foot,head=root_ramp_line(world);ramp_low,ramp_high=root_ramp_reserve(foot,head)
+    world.structure_obstacle([ramp_low[0],0.,ramp_low[1]],[ramp_high[0],0.,ramp_high[1]])
+    ramp_run=head-foot;ramp_length=float(np.linalg.norm(ramp_run))
+    ramp_cleared=clear_strip_props(content,foot,ramp_run/ramp_length,0.,ramp_length,ROOT_RAMP_HALF_WIDTH+ROOT_RAMP_CLEARANCE_METRES)
     doc,body=content.documents[REGION]
     upper=content.placement_by_name[(REGION,'Landmark_CanopyWalkway_0')]
     lower=content.placement_by_name[(REGION,'Landmark_CanopyWalkway_2')]
@@ -249,8 +327,10 @@ def prepare_amberwood_access(world,content):
     matrices,_=S.GR.hierarchy(doc);low,high=S.subtree_bounds(doc,body,lower['index'],matrices)
     lower['low'][...]=low+lower['shift'];lower['high'][...]=high+lower['shift']
     content.bounds_by_name[(REGION,lower['node'])]=(lower['low'],lower['high'])
-    world.amberwood_access={'hatch':target.tolist(),'canopyJunction':report,'marketRailOpening':opening,'marketStallDisplacement':[15,0,4],'charcoalHatchDisplacement':[7,0,0],
-        'marketStairReserve':[reserve_low.tolist(),reserve_high.tolist()],'marketStairClearance':cleared}
+    world.amberwood_access={'hatch':target.tolist(),'canopyJunction':report,'marketRailOpening':opening,'marketStallDisplacement':[15,0,4],'marketStall3Displacement':[2.5,0,-2],'charcoalHatchDisplacement':[7,0,0],
+        'marketStairReserve':[reserve_low.tolist(),reserve_high.tolist()],'marketStairClearance':cleared,
+        'rootRampReserve':[ramp_low.tolist(),ramp_high.tolist()],'rootRampClearance':ramp_cleared,
+        'motherrootVoice':{'identity':MOTHERROOT_VOICE,'post':content.authored_actor_points[(REGION,MOTHERROOT_VOICE)].tolist()}}
     return world.amberwood_access
 
 
@@ -286,6 +366,15 @@ def build_amberwood_access(world,content,path):
             q=p+side*(1.9*sign);ground=float(world.height_at(*q));height=max(.12,y-ground+.85)
             supports.append(M.box((.22,height,.22),center=(q[0],y+.85-height*.5,q[1]),material='amber_access_dark'))
     add('Amber_MarketCanopyStair_Posts',M.merge(supports,material='amber_access_dark'),True)
+    # The root ramp: its deck is a Walk_ floor the collision export serves over
+    # the flank's grade; the skirt, posts and rails are solids beside it.
+    foot,head=root_ramp_line(world);rows=int(np.ceil(np.linalg.norm(head-foot)))+1
+    deck_mesh,ramp=ramp_mesh(world,content,foot,head,'amber_access_timber',half_width=ROOT_RAMP_HALF_WIDTH,region=REGION)
+    add('Walk_Amber_RootRamp',deck_mesh)
+    add('Amber_RootRamp_Skirt',foundation_faces(world,deck_mesh,'amber_access_dark'),True)
+    posts,rails=root_ramp_rails(world,deck_mesh,rows)
+    add('Amber_RootRamp_Posts',posts,True);add('Amber_RootRamp_Rails',rails,True)
+    centre=deck_mesh.positions.reshape(rows,-1,3)[:,4]
     hatch_parent=builder.add_node(G.Node(HATCH))
     hatch=np.asarray(world.amberwood_access['hatch'])[[0,2]];ground=float(world.height_at(*hatch))
     # An east-facing root-side door, with a broad short timber threshold.
@@ -303,6 +392,8 @@ def build_amberwood_access(world,content,path):
     Path(path).parent.mkdir(parents=True,exist_ok=True);builder.write_glb(str(path))
     world.amberwood_access['marketRamp']={'start':[float(start[0]),h0,float(start[1])],'landing':[float(landing[0]),deck,float(landing[1])],'levelLandingMetres':level_length,
         'lengthMetres':float(length),'grade':float(abs(deck-h0)/(length-level_length))}
+    world.amberwood_access['rootRamp']={**ramp,'foot':centre[0].tolist(),'head':centre[-1].tolist(),'halfWidthMetres':ROOT_RAMP_HALF_WIDTH,
+        'lengthMetres':float(np.linalg.norm(head-foot)),'riseMetres':float(centre[-1,1]-centre[0,1])}
     return parts
 
 
@@ -314,3 +405,5 @@ def refresh_amberwood_access_heights(world,content):
     content.mapping[(REGION,HATCH)][1]=point[1]-entry['position'][1]
     for tile in ((221,320),(221,318)):
         p=content.authored_server_points[(REGION,tile)];p[1]=float(world.height_at(p[0],p[2]))
+    post=content.authored_actor_points[(REGION,MOTHERROOT_VOICE)];post[1]=float(world.height_at(post[0],post[2]))
+    world.amberwood_access['motherrootVoice']['post']=post.tolist()

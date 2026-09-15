@@ -120,9 +120,9 @@ def prepare(library,output):
     world.settle_foundations()
     from mirror_lake_support import prepare_mirror_lake_support,finish_mirror_lake_support
     prepare_mirror_lake_support(world,content)
-    # content.register_obstacles would register the structures here, where
-    # they finally stand; see its docstring for why the fifteenth left the
-    # load-time registration in place.
+    # Every prepare stage that moves retained content has run: the router
+    # sees each structure where it finally stands.
+    world.registered_obstacles=content.register_obstacles()
     world.plan_connections()
     add_mirror_streets(world,content)
     from ferry_export import fit_landing

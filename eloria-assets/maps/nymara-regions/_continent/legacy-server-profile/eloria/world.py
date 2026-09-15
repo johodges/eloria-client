@@ -747,6 +747,8 @@ PATH_TICK_FRACTION = 0.4
 # rest still receive movement for what they already see, so a creature enters
 # or leaves view up to this many ticks late and never mid-animation.
 VISIBILITY_REFRESH_TICKS = 4
+# The client capability that asks for the actors of adjoining maps across land seams.
+ADJACENT_ACTORS_CAPABILITY = "adjacent_actors_v1"
 # Actor ids travel as an unsigned 16-bit field in every actor packet.
 MAX_ACTOR_ID = 0xFFFF
 # A recycled id must not collide with a REMOVE_ACTOR still on its way to a
@@ -989,6 +991,9 @@ class Session:
     potion_cooldowns: dict[str, float] = None
     visible_animals: set[int] = None
     visible_npcs: set[int] = None
+    # Actors shown from the maps adjoining this client's own across a land
+    # seam (creatures, NPCs and players alike): actor id -> the map it stands on.
+    visible_adjacent: dict[int, str] = None
     storage_open: bool = False
     storage_category: int = 0
     # Whether the open storage window is the invasion-master #god_storage
@@ -1082,6 +1087,8 @@ class Session:
             self.visible_animals = set()
         if self.visible_npcs is None:
             self.visible_npcs = set()
+        if self.visible_adjacent is None:
+            self.visible_adjacent = {}
         if self.combat_xp_events is None:
             self.combat_xp_events = {}
         if self.trade_offers is None:
@@ -1310,6 +1317,9 @@ class World(MagicRuntime):
         from .exterior_connections import load_land_connections
         self.land_connections = load_land_connections(
             Path(map_path).with_name("exterior_connections.json"))
+        from .exterior_connections import load_land_frames
+        self.land_frames = load_land_frames(
+            Path(map_path).with_name("exterior_connections.json"))
         self.spells = spells or {}
         self.spell_balance = load_spell_balance(spell_balance_path)
         self.harvest_resources, self.harvest_nodes = load_harvesting(harvesting_path)
@@ -1466,6 +1476,9 @@ class World(MagicRuntime):
         # actor id -> the sessions currently showing that creature, so an
         # update reaches its viewers without scanning every session.
         self.animal_viewers: dict[int, set[Session]] = defaultdict(set)
+        # Sessions shown an actor across a land seam, by actor id: creatures,
+        # NPCs and players. A creature's adjacent viewers are in animal_viewers too.
+        self.adjacent_viewers: dict[int, set[Session]] = defaultdict(set)
         # actor id -> the Rotbrand burning through that creature. Kept so a
         # second cast refreshes the rot instead of stacking a second one, the
         # way `start_poison` refuses to stack on a player.
@@ -3295,6 +3308,12 @@ class World(MagicRuntime):
         """
         awake = set(players_by_map)
         awake |= self_driven
+        # A map whose creatures a player watches across a land seam steps them
+        # too, or they would stand frozen until the seam was crossed.
+        for session in self.sessions:
+            watched = getattr(session, "visible_adjacent", None)
+            if watched:
+                awake.update(watched.values())
         for active in self.active_spawn_groups.values():
             if active.invasion or active.instance_name:
                 awake.add(active.map_id
@@ -3866,6 +3885,9 @@ class World(MagicRuntime):
         if actor_id in session.visible_animals:
             self.animal_viewers[actor_id].add(session)
             return
+        if actor_id in (getattr(session, "visible_adjacent", None) or {}):
+            self.animal_viewers[actor_id].add(session)
+            return
         character = session.character
         if character is None or character.map_id != animal.map_id:
             return
@@ -3921,6 +3943,10 @@ class World(MagicRuntime):
             recipients = [session for session in self.sessions
                           if session.character is not None
                           and session.character.map_id == map_id]
+            # And the clients watching this actor across a land seam.
+            for viewer in tuple(self.adjacent_viewer_table().get(actor_id, ())):
+                if viewer not in recipients:
+                    recipients.append(viewer)
         for session in recipients:
             if session.character is not None:
                 await self.deliver(session, data)
@@ -4046,6 +4072,7 @@ class World(MagicRuntime):
             commands = movement_for(desired & previous, moved)
             if commands:
                 await session.send(p.actor_commands(commands))
+        await self.sync_visible_adjacent(session)
 
     async def sync_visible_npcs(self, session: Session):
         # NPCs replicate map-wide, not within the perception/light radius that
@@ -4070,9 +4097,7 @@ class World(MagicRuntime):
         for actor_id in sorted(desired - previous):
             npc = self.npcs[actor_id][0]
             visible.add(actor_id)
-            added.append(p.actor_packet(npc)
-                         if npc.actor_type == 6 or npc.actor_type > 0xFF
-                         else p.enhanced_actor_packet(npc))
+            added.append(self.npc_actor_packet(npc))
         await session.send_many(added)
 
     async def send_stats(self, session: Session, *, force: bool = False):
@@ -4349,7 +4374,201 @@ class World(MagicRuntime):
                     or getattr(target, "username", "")).strip().casefold()
         return bool(owner) and owner in allies
 
-    def creature_actor_packet(self, recipient: Session, animal: Animal) -> bytes:
+    # ------------------------------------------------------------------
+    # Actors across land seams.
+    #
+    # A client that advertised ADJACENT_ACTORS_CAPABILITY is told about the
+    # creatures, NPCs and players on the maps adjoining its own across a
+    # seamless land crossing, within the perception radius that gates the
+    # creatures of its own map, so that a seam shows no actor appearing or
+    # vanishing as it is crossed. Their packets carry the neighbour's handle
+    # in the stock "z" field; ELORIA_ADJACENT_MAPS names the handles per map.
+    # Players on the client's own map keep their map-wide replication.
+
+    def adjacent_viewer_table(self) -> dict:
+        """actor id -> sessions shown it across a seam; made on first use for worlds built without __init__."""
+        table = self.__dict__.get("adjacent_viewers")
+        if table is None:
+            table = self.adjacent_viewers = defaultdict(set)
+        return table
+
+    def adjacent_maps(self, map_id: str) -> list[str]:
+        """The land neighbours of a map with continent frames, in handle order."""
+        frames = getattr(self, "land_frames", None) or {}
+        return sorted(far for near, far in frames if near == map_id)
+
+    def adjacent_handles(self, map_id: str) -> dict[str, int]:
+        return {far: handle for handle, far in enumerate(self.adjacent_maps(map_id), 1)}
+
+    def adjacent_actors_enabled(self, session: Session) -> bool:
+        return (ADJACENT_ACTORS_CAPABILITY in (getattr(session, "client_capabilities", None) or ())
+                and bool(getattr(self, "land_frames", None)))
+
+    async def send_adjacent_maps(self, session: Session) -> None:
+        """Name the handles the actor packets of this client's neighbours carry."""
+        c = session.character
+        if not c or not self.adjacent_actors_enabled(session):
+            return
+        entries = [(handle, self.maps[far].client_name)
+                   for far, handle in self.adjacent_handles(c.map_id).items() if far in self.maps]
+        await session.send(p.adjacent_maps_packet(entries))
+
+    def actor_map(self, actor_id: int) -> str | None:
+        animal = self.animals.get(actor_id)
+        if animal is not None:
+            return animal.map_id
+        npc = self.npcs.get(actor_id)
+        if npc is not None:
+            return npc[1]
+        player = self.find_player_by_actor(actor_id)
+        return player.character.map_id if player and player.character else None
+
+    def adjacent_candidates(self, session: Session) -> dict:
+        """actor id -> (map, actor) for the neighbours' actors within this viewer's radius."""
+        from .exterior_connections import neighbour_tile
+        c = session.character
+        radius = self.creature_visibility_distance(session)
+        found: dict[int, tuple] = {}
+        for far in self.adjacent_maps(c.map_id):
+            frames = self.land_frames[c.map_id, far]
+            fx, fy = neighbour_tile(frames, c.x, c.y)
+            cells = frames[1].cells
+            if fx < -radius or fy < -radius or fx >= cells[0] + radius or fy >= cells[1] + radius:
+                continue
+            for animal in self.creatures_near(far, fx, fy, radius):
+                if animal.alive and abs(animal.x - fx) <= radius and abs(animal.y - fy) <= radius:
+                    found[animal.actor_id] = (far, animal)
+            for actor_id, (npc, npc_map, _, _) in self.npcs.items():
+                if npc_map == far and abs(npc.x - fx) <= radius and abs(npc.y - fy) <= radius:
+                    found[actor_id] = (far, npc)
+            for other in self.sessions:
+                oc = other.character
+                if (other is not session and oc and oc.map_id == far
+                        and abs(oc.x - fx) <= radius and abs(oc.y - fy) <= radius):
+                    found[oc.actor_id] = (far, oc)
+        return found
+
+    def npc_actor_packet(self, npc, map_handle: int = 0) -> bytes:
+        return (p.actor_packet(npc, map_handle=map_handle)
+                if npc.actor_type == 6 or npc.actor_type > 0xFF
+                else p.enhanced_actor_packet(npc, map_handle=map_handle))
+
+    def drop_adjacent_viewer(self, session: Session, actor_id: int) -> None:
+        watching = self.adjacent_viewer_table().get(actor_id)
+        if watching is None:
+            return
+        watching.discard(session)
+        if not watching:
+            del self.adjacent_viewers[actor_id]
+
+    def forget_adjacent(self, session: Session) -> None:
+        """Forget every actor this session was shown across a seam."""
+        if not getattr(session, "visible_adjacent", None):
+            return
+        for actor_id in list(session.visible_adjacent):
+            self.drop_adjacent_viewer(session, actor_id)
+        self.drop_animal_viewer(session, tuple(session.visible_adjacent))
+        session.visible_adjacent.clear()
+
+    async def sync_visible_adjacent(self, session: Session) -> None:
+        """Reconcile the actors this client sees across the land seams of its map."""
+        c = session.character
+        if not c or not self.adjacent_actors_enabled(session):
+            return
+        candidates = self.adjacent_candidates(session)
+        visible = session.visible_adjacent
+        gone: list[int] = []
+        for actor_id, far in list(visible.items()):
+            if actor_id in candidates and candidates[actor_id][0] == far:
+                continue
+            visible.pop(actor_id, None)
+            self.drop_adjacent_viewer(session, actor_id)
+            if self.actor_map(actor_id) == c.map_id:
+                # It walked onto this client's own map: the map-wide path
+                # sends it afresh, and a removal here would take that back.
+                continue
+            gone.append(actor_id)
+        if gone:
+            await session.send(p.packet(p.REMOVE_ACTOR, b"".join(struct.pack("<H", actor_id) for actor_id in sorted(gone))))
+            self.drop_animal_viewer(session, gone)
+        handles = self.adjacent_handles(c.map_id)
+        added: list[bytes] = []
+        for actor_id in sorted(candidates):
+            if actor_id in visible or actor_id in session.visible_animals or actor_id in session.visible_npcs:
+                continue
+            far, actor = candidates[actor_id]
+            visible[actor_id] = far
+            self.adjacent_viewer_table()[actor_id].add(session)
+            handle = handles[far]
+            if actor_id in self.animals:
+                self.animal_viewers[actor_id].add(session)
+                added.append(self.creature_actor_packet(session, actor, map_handle=handle))
+                if actor.summoned:
+                    added.append(p.actor_health(actor.actor_id, actor.max_health))
+            elif actor_id in self.npcs:
+                added.append(self.npc_actor_packet(actor, map_handle=handle))
+            else:
+                added.append(self.player_actor_packet(session, actor, map_handle=handle))
+        await session.send_many(added)
+
+    async def forward_adjacent_movement(self, session: Session, movement_commands: dict) -> None:
+        """Send this tick's steps of the neighbours' creatures the client watches."""
+        moved: dict[int, int] = {}
+        for actor_id, far in session.visible_adjacent.items():
+            commands = movement_commands.get(far)
+            if commands:
+                command = commands.get(actor_id)
+                if command is not None:
+                    moved[actor_id] = command
+        if moved:
+            await session.send(p.actor_commands(sorted(moved.items())))
+
+    def carry_actors_across(self, session: Session, old_map: str, map_id: str) -> set[int]:
+        """Re-file a client's actor sets for a land crossing it renders seamlessly.
+
+        The actors it already shows on the map it arrives on become its own,
+        those on the map it leaves become its neighbours, and the syncs that
+        follow send only the difference. Returns the players it already
+        holds that now stand on its own map, which need no fresh packet.
+        """
+        visible = session.visible_adjacent
+        own_creatures = {a for a, m in visible.items() if m == map_id and a in self.animals}
+        own_npcs = {a for a, m in visible.items() if m == map_id and a in self.npcs}
+        carried_players = {a for a, m in visible.items()
+                           if m == map_id and a not in self.animals and a not in self.npcs}
+        adjacent = {a: m for a, m in visible.items() if m != map_id}
+        for actor_id in list(visible):
+            self.drop_adjacent_viewer(session, actor_id)
+        for actor_id in session.visible_animals:
+            adjacent[actor_id] = old_map
+        for actor_id in session.visible_npcs:
+            adjacent[actor_id] = old_map
+        for other in self.sessions:
+            oc = other.character
+            if other is not session and oc and oc.map_id == old_map:
+                adjacent[oc.actor_id] = old_map
+        session.visible_animals = own_creatures
+        session.visible_npcs = own_npcs
+        session.visible_adjacent = adjacent
+        for actor_id in adjacent:
+            self.adjacent_viewer_table()[actor_id].add(session)
+        return carried_players
+
+    async def remove_creature_from_clients(self, animal: Animal) -> None:
+        """Take a creature off every client showing it, on its own map or across a seam."""
+        removal = p.packet(p.REMOVE_ACTOR, struct.pack("<H", animal.actor_id))
+        for session in self.sessions:
+            if animal.actor_id in session.visible_animals:
+                await session.send(removal)
+                session.visible_animals.discard(animal.actor_id)
+                self.drop_animal_viewer(session, (animal.actor_id,))
+            elif animal.actor_id in (getattr(session, "visible_adjacent", None) or {}):
+                await session.send(removal)
+                session.visible_adjacent.pop(animal.actor_id, None)
+                self.drop_adjacent_viewer(session, animal.actor_id)
+                self.drop_animal_viewer(session, (animal.actor_id,))
+
+    def creature_actor_packet(self, recipient: Session, animal: Animal, map_handle: int = 0) -> bytes:
         """One creature as this viewer should see it.
 
         Only a summon carries a guild tag, and its colour is the viewer's
@@ -4362,9 +4581,9 @@ class World(MagicRuntime):
             owner = self.find_player_by_actor(animal.owner_id)
             if owner and owner.character:
                 color = self.guild_tag_color_for(recipient.character, owner.character)
-        return p.actor_packet(animal, guild_tag_color=color)
+        return p.actor_packet(animal, guild_tag_color=color, map_handle=map_handle)
 
-    def player_actor_packet(self, recipient: Session, character: Character) -> bytes:
+    def player_actor_packet(self, recipient: Session, character: Character, map_handle: int = 0) -> bytes:
         color = None
         if self.guild_tag_color_for and recipient.character:
             color = self.guild_tag_color_for(recipient.character, character)
@@ -4378,7 +4597,8 @@ class World(MagicRuntime):
                       else character.actor_type)
         return p.enhanced_actor_packet(
             character, guild_tag_color=color, actor_type=actor_type,
-            wardrobe="actor_wardrobe_v1" in recipient.client_capabilities)
+            wardrobe="actor_wardrobe_v1" in recipient.client_capabilities,
+            map_handle=map_handle)
 
     async def refresh_player_view(self, session: Session) -> None:
         """Refresh player names using this recipient's guild-color preferences."""
@@ -4414,6 +4634,7 @@ class World(MagicRuntime):
         await session.send(p.sync_clock(int(time.monotonic() * 1000)))
         await session.send(p.new_minute(self.game_minute))
         await session.send(p.packet(p.YOU_ARE, struct.pack("<H", character.actor_id)))
+        await self.send_adjacent_maps(session)
         for other in self.sessions:
             if (other is not session and other.character
                     and other.character.map_id == character.map_id):
@@ -4492,6 +4713,7 @@ class World(MagicRuntime):
         self.drop_animal_viewer(session, tuple(session.visible_animals))
         session.visible_animals.clear()
         session.visible_npcs.clear()
+        self.forget_adjacent(session)
         await session.send(self.player_actor_packet(session, c))
         for other in self.sessions:
             if (other is not session and other.character
@@ -5259,26 +5481,39 @@ class World(MagicRuntime):
         old_map = c.map_id
         if old_map == wt.HOME_MAP and map_id != wt.HOME_MAP:
             await self.walkthrough_event(session, "travel")
+        land_crossing = (self.adjacent_actors_enabled(session)
+                         and (old_map, map_id) in (getattr(self, "land_frames", None) or {}))
         await self.broadcast_except(p.packet(p.REMOVE_ACTOR, struct.pack("<H", c.actor_id)), session)
         x, y = self.free_player_tile(map_id, x, y, exclude=c)
         c.map_id, c.x, c.y = map_id, x, y
         await gauntlets.on_map_change(self, session, old_map)
-        self.drop_animal_viewer(session, tuple(session.visible_animals))
-        session.visible_animals.clear()
-        session.visible_npcs.clear()
+        carried_players: set[int] = set()
+        if land_crossing:
+            # A seamless crossing keeps every actor the client already shows:
+            # KILL_ALL_ACTORS would empty its table and repopulate it, which is
+            # the discontinuity the adjacency exists to remove.
+            carried_players = self.carry_actors_across(session, old_map, map_id)
+        else:
+            self.drop_animal_viewer(session, tuple(session.visible_animals))
+            session.visible_animals.clear()
+            session.visible_npcs.clear()
+            self.forget_adjacent(session)
         session.open_bag = session.pending_bag = None
         await session.send(p.packet(p.CLOSE_BAG))
-        # CHANGE_MAP does not reliably discard the stock client's old actor
-        # table. Clear it explicitly, then repopulate destination-map actors.
-        await session.send(p.packet(p.KILL_ALL_ACTORS))
+        if not land_crossing:
+            # CHANGE_MAP does not reliably discard the stock client's old actor
+            # table. Clear it explicitly, then repopulate destination-map actors.
+            await session.send(p.packet(p.KILL_ALL_ACTORS))
         await session.send(p.packet(p.CHANGE_MAP, self.maps[map_id].client_name.encode() + b"\0"))
         # Immediately behind the map change rather than with the scenery below:
         # the client starts loading the package the moment CHANGE_MAP arrives,
         # and the digest is what it checks that package against.
         await self.send_map_digest(session)
         await session.send(p.packet(p.YOU_ARE, struct.pack("<H", c.actor_id)))
+        await self.send_adjacent_maps(session)
         for other in self.sessions:
-            if other is not session and other.character and other.character.map_id == map_id:
+            if (other is not session and other.character and other.character.map_id == map_id
+                    and other.character.actor_id not in carried_players):
                 await session.send(self.player_actor_packet(session, other.character))
         await self.sync_visible_animals(session)
         await self.sync_visible_npcs(session)
@@ -5363,6 +5598,10 @@ class World(MagicRuntime):
             if other and other.map_id == character.map_id:
                 await recipient.send(remove)
                 await recipient.send(self.player_actor_packet(recipient, character))
+            elif other and character.actor_id in (getattr(recipient, "visible_adjacent", None) or {}):
+                handle = self.adjacent_handles(other.map_id).get(character.map_id, 0)
+                await recipient.send(remove)
+                await recipient.send(self.player_actor_packet(recipient, character, map_handle=handle))
 
     def find_player_by_actor(self, actor_id: int) -> Session | None:
         return next((session for session in self.sessions
@@ -15392,6 +15631,8 @@ class World(MagicRuntime):
                         if commands or refresh:
                             await self.sync_visible_animals(
                                 session, commands, refresh=refresh)
+                        if getattr(session, "visible_adjacent", None):
+                            await self.forward_adjacent_movement(session, movement_commands)
                 await self.flush_sessions()
             finally:
                 self._index_pinned = False
@@ -15422,11 +15663,7 @@ class World(MagicRuntime):
         if self.special_day_has("faster_respawns"):
             delay = max(1, delay // 2)
         await asyncio.sleep(delay)
-        for session in self.sessions:
-            if animal.actor_id in session.visible_animals:
-                await session.send(p.packet(p.REMOVE_ACTOR, struct.pack("<H", animal.actor_id)))
-                session.visible_animals.discard(animal.actor_id)
-                self.drop_animal_viewer(session, (animal.actor_id,))
+        await self.remove_creature_from_clients(animal)
         # Roll again. A creature that comes back is a fresh one as far as the
         # world is concerned, so the ordinary bear can return as the named one
         # and the named one can return ordinary - otherwise the variants would
@@ -15445,14 +15682,11 @@ class World(MagicRuntime):
         animal.health, animal.alive = animal.max_health, True
         self.invalidate_creature_index(animal.map_id)
         for session in self.sessions:
-            if session.character and session.character.map_id == animal.map_id:
+            if session.character and (session.character.map_id == animal.map_id
+                                      or animal.map_id in self.adjacent_maps(session.character.map_id)):
                 await self.sync_visible_animals(session)
 
     async def _remove_dead_invasion(self, animal: Animal):
         await asyncio.sleep(3)
-        for session in self.sessions:
-            if animal.actor_id in session.visible_animals:
-                await session.send(p.packet(p.REMOVE_ACTOR,
-                                            struct.pack("<H", animal.actor_id)))
-                session.visible_animals.discard(animal.actor_id)
+        await self.remove_creature_from_clients(animal)
         self.remove_animal(animal)

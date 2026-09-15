@@ -96,23 +96,21 @@ class Content:
     def register_obstacles(self):
         """Register every retained colliding structure with the router where it finally stands.
 
-        Meant to run after the prepare stages have moved what they move (the
-        Amberwood stall row, the props cleared off the market stair strip):
+        Runs after the prepare stages have moved what they move (the Amberwood
+        stall row, the props cleared off the market stair and root ramp strips):
         a structure registered at load and moved afterwards leaves the router
         a phantom solid where nothing stands and none where the structure
         does, and the fifteenth's hub roads were aligned through two moved
-        market stalls. Not called yet: with the structures registered where
-        they stand, the Amberwood hub roads left the platform east and the
-        cinder chapel door road took a direct line up the hill (234 m, a 21 m
-        cut, in place of a 495 m loop with a 45 m cut), the discovery
-        branches south of the Great Tree moved with them, and the Motherroot
-        Voice lost the only hub-connected ground within her 12 m budget: the
-        Great Tree's root plateau is a rigid footing nine metres above the
-        village floor whose flanks no corridor can grade, reached only where
-        a branch corridor happened to pass. The switch waits for a served
-        approach to that plateau. A gate, arch, arcade, colonnade, causeway
-        or portal is built to be passed: it keeps the soft clearance but is
-        no solid for alignment.
+        market stalls. With the structures registered where they stand the
+        Amberwood hub roads leave the platform east, the cinder chapel door
+        road takes a direct line up the hill (234 m, a 21 m cut, in place of a
+        495 m loop with a 45 m cut) and the discovery branches south of the
+        Great Tree move with them; the Motherroot Voice, whose root plateau
+        one of those branches used to reach, stands at the Motherroot mouth
+        (amberwood_access.MOTHERROOT_VOICE_POST), and the root ramp joins the
+        plateau to the village yard. A gate, arch, arcade, colonnade, causeway
+        or portal is built to be passed: it keeps the soft clearance but is no
+        solid for alignment.
         """
         count=0
         for o in self.objects:
@@ -284,14 +282,9 @@ class Content:
                 self.mapping[(region,name)]=shift
                 self.placement_by_name[(region,name)]=obj
                 self.bounds_by_name[(region,name)]=(low+shift,high+shift)
-                if p.get('collides',False) and not p.get('walk_surface',False):
-                    # A gate, arch, arcade, colonnade, causeway or portal is
-                    # built to be passed: it keeps the soft clearance but is no
-                    # solid for road alignment. Registration happens here, at
-                    # load: register_obstacles below would do it after the
-                    # prepare stages have moved what they move, and the
-                    # fifteenth publication measured why it is not called yet.
-                    self.world.structure_obstacle(low+shift,high+shift,solid=not walk_through(name))
+                # Obstacles reach the router through register_obstacles once the
+                # prepare stages have moved what they move (build_continent,
+                # before plan_connections).
                 # Avoid raising seabed for docks; their piers are authored to
                 # support the walk surface above the common estuary water.
                 if not assembly_id and (source_ground>=1.5 or target_ground>=1.5 or region not in ('manymouth_delta','crownwater')):

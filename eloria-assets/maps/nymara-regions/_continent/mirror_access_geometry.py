@@ -76,12 +76,13 @@ def open_sanctuary_landing(content):
     return content.mirror_landing_opening
 
 
-def existing_floor(world,content,x,z):
+def existing_floor(world,content,x,z,region=REGION):
+    """The ground, lifted to any authored Walk_ floor of the region standing over the point."""
     result=world.height_at(x,z)
     lo=np.array([x.min(),z.min()])-1;hi=np.array([x.max(),z.max()])+1
-    doc,body=content.documents[REGION]
+    doc,body=content.documents[region]
     for obj in content.objects:
-        if obj['region']!=REGION or np.any(obj['high'][[0,2]]<lo) or np.any(obj['low'][[0,2]]>hi):continue
+        if obj['region']!=region or np.any(obj['high'][[0,2]]<lo) or np.any(obj['low'][[0,2]]>hi):continue
         indices=[i for i in S.descendants(doc,[obj['index']]) if 'mesh' in doc['nodes'][i]
                  and doc['nodes'][i].get('name','').startswith('Walk_')]
         if not indices:continue
@@ -109,12 +110,13 @@ def stone_texture():
     return output.getvalue()
 
 
-def ramp_mesh(world,content,start,stop,material,half_width=1.8):
+def ramp_mesh(world,content,start,stop,material,half_width=1.8,region=REGION):
+    """A walking deck between two points: the .45 lower envelope over the region's ground and authored floors."""
     start,stop=np.asarray(start,float),np.asarray(stop,float)
     vector=stop-start;length=np.linalg.norm(vector);normal=np.array([-vector[1],vector[0]])/length
     along=np.linspace(0,1,int(np.ceil(length))+1);across=np.linspace(-half_width,half_width,9)
     points=start+along[:,None,None]*vector+across[None,:,None]*normal
-    floor=existing_floor(world,content,points[:,:,0],points[:,:,1])
+    floor=existing_floor(world,content,points[:,:,0],points[:,:,1],region)
     flat=points.reshape(-1,2)
     # A Euclidean lower envelope raises only the stone surface over the local
     # bank. .45 bounds both axes of every linear triangle below .65 grade.
@@ -128,9 +130,9 @@ def ramp_mesh(world,content,start,stop,material,half_width=1.8):
     mesh.recompute_normals(180)
     tri=vertices.astype(np.float32).astype(float)[indices.reshape(-1,3)];n=np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0])
     grade=np.hypot(n[:,0],n[:,2])/n[:,1]
-    if n[:,1].min()<=0 or grade.max()>.65:raise ValueError('Mirror bank ramp violates actual triangle walking grade')
+    if n[:,1].min()<=0 or grade.max()>.65:raise ValueError('Access ramp violates actual triangle walking grade')
     contact=(upper[[0,-1]]-floor[[0,-1]]).max(axis=1)
-    if contact.max()>.08:raise ValueError('Mirror bank ramp needs a better ground/deck contact')
+    if contact.max()>.08:raise ValueError('Access ramp needs a better ground/deck contact')
     return mesh,{'start':start.tolist(),'stop':stop.tolist(),'maximumGrade':float(grade.max()),
         'maximumSupportHeight':float((upper-floor).max()),'contactLift':(upper[[0,-1]]-floor[[0,-1]]).max(axis=1).tolist()}
 
