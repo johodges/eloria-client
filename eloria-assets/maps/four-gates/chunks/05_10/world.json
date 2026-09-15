@@ -18,7 +18,7 @@
     ],
     "bounds": {
       "min": [
-        -50.50138817486504,
+        -50.0,
         1.1951766722912058,
         120.0
       ],
@@ -39,7 +39,7 @@
       ],
       "max": [
         276.0,
-        289.57038202907705,
+        289.5820514595254,
         160.0
       ]
     },
@@ -52,7 +52,7 @@
       ],
       "max": [
         276.0,
-        289.57038202907705,
+        289.5820514595254,
         160.0
       ]
     }
@@ -239,7 +239,7 @@
       ],
       "max": [
         276.0,
-        289.57038202907705,
+        289.5820514595254,
         160.0
       ]
     },
@@ -278,9 +278,9 @@
     "defaultSpawn": "continent-arrival"
   },
   "performance": {
-    "glbBytes": 54952,
-    "nodes": 13,
-    "meshes": 5,
+    "glbBytes": 51944,
+    "nodes": 10,
+    "meshes": 4,
     "externalResources": {
       "../../../nymara-regions/_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../../../nymara-regions/_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -304,7 +304,7 @@
   "knownLimitations": [],
   "bounds": {
     "min": [
-      -50.50138817486504,
+      -50.0,
       1.1951766722912058,
       120.0
     ],
@@ -320,14 +320,14 @@
       "portal": "road-to-amberwood",
       "destination": "amberwood",
       "anchor": [
-        13.0,
-        21.18082054620793,
-        -152.0
+        -43.0,
+        7.122167964021928,
+        -148.0
       ],
       "globalAnchor": [
-        543.0,
-        21.18082054620793,
-        688.0
+        487.0,
+        7.122167964021928,
+        692.0
       ],
       "globalTranslation": [
         530.0,
@@ -2115,7 +2115,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:f4d5719e01e29541b666521e21ef5e7642468b2e9360758e82e1038b7cf1762c",
+  "terrainRevision": "diagonal-spine-v1:41e9d9494ee73f52e3a1f9efc3099a7717b62009f60a64b444baacd97c8b413b",
   "externalResources": {
     "../../../nymara-regions/_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../nymara-regions/_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -2125,13 +2125,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
     "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
-    "collisionSha256": "c961366c07bb60deb44bf53837c02297ef69edd889de15038d8c2dd0a0a4bdd9",
-    "terrainRevision": "diagonal-spine-v1:f4d5719e01e29541b666521e21ef5e7642468b2e9360758e82e1038b7cf1762c"
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
+    "collisionSha256": "a2088d8befad298581da50e02273ecfe32dde405ee8a975eadfb3a0f000d4aa8",
+    "terrainRevision": "diagonal-spine-v1:41e9d9494ee73f52e3a1f9efc3099a7717b62009f60a64b444baacd97c8b413b"
   }
 }

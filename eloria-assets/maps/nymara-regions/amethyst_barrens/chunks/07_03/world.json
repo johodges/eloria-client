@@ -19,7 +19,7 @@
     "bounds": {
       "min": [
         -232.0,
-        50.128353611480065,
+        50.12728928686349,
         -112.0
       ],
       "max": [
@@ -36,7 +36,7 @@
       ],
       "max": [
         550.0,
-        289.57038202907705,
+        289.5820514595254,
         162.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         550.0,
-        289.57038202907705,
+        289.5820514595254,
         162.0
       ]
     }
@@ -376,7 +376,7 @@
       ],
       "max": [
         550.0,
-        289.57038202907705,
+        289.5820514595254,
         162.0
       ]
     },
@@ -3146,7 +3146,7 @@
   "bounds": {
     "min": [
       -232.0,
-      50.128353611480065,
+      50.12728928686349,
       -112.0
     ],
     "max": [
@@ -3155,19 +3155,19 @@
       -16.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:905236ae3600d092d69a44b6500296124382fd8337965b55e5ac16f6698dac0b",
+  "terrainRevision": "diagonal-spine-v1:f56874bd9c3b4f2a7ba07d335a9abe029c79e5a076dacc85f3f8f44874413a46",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
     "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
-    "collisionSha256": "6f0a303357e7885a8cea944bfd1dfbf54028a1e27af51327a3fa1738bef1983d",
-    "terrainRevision": "diagonal-spine-v1:905236ae3600d092d69a44b6500296124382fd8337965b55e5ac16f6698dac0b"
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
+    "collisionSha256": "56cbaae9b1bbbebc51608ceb3dc65d5c8b15b3122276940245f6171fc8c7e796",
+    "terrainRevision": "diagonal-spine-v1:f56874bd9c3b4f2a7ba07d335a9abe029c79e5a076dacc85f3f8f44874413a46"
   }
 }

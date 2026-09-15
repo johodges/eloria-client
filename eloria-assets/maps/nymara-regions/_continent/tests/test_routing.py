@@ -263,6 +263,25 @@ class RoutingTests(unittest.TestCase):
         self.assertEqual([(c['road'],c['node']) for c in report],[('through','Hall')])
         self.assertGreaterEqual(report[0]['metres'],30)
 
+    def test_a_caller_may_name_the_own_solids_a_road_may_cross(self):
+        world=make_world()
+        world.structure_obstacle([60,0,-10],[64,8,250])   # a wall across the whole map, far from both ends
+        world.route([26,120],[120,120],region='test')
+        self.assertTrue(world.routing[-1]['solidFallback'])   # no hard alignment exists: the fallback crosses it as a heavy penalty
+        world.routing=[]
+        # A trail names the solids of its site as its own; a caller naming the wall lets the alignment through it.
+        through=world.route([26,120],[120,120],region='test',own=world.solids_at_ends([62,120]))
+        self.assertFalse(world.routing[-1]['solidFallback']);self.assertTrue(inside(samples(through,.5),[57,0],[67,240]).any())
+        self.assertEqual(world.solids_at_ends([120,120]),set())
+
+    def test_the_station_terrain_terms_are_per_territory(self):
+        # The wild territories take the measured weights; the six with tuned sites and any test territory keep the module weights.
+        self.assertEqual(W.terrain_terms('grey_moors'),(25.,40.,25.,600.))
+        for region in ('mirrorhold','ssarathi_ruins','amberwood','four_gates','whitehorn_range','manymouth_delta','westhaven','test'):
+            self.assertEqual(W.terrain_terms(region),(W.ROUTE_CROSS_SLOPE_LINEAR,W.ROUTE_CROSS_SLOPE_SQUARE,W.ROUTE_RELIEF_PENALTY,W.ROUTE_STEP_PENALTY))
+        with patch.object(W,'ROUTE_CROSS_SLOPE_LINEAR',25.):
+            self.assertEqual(W.terrain_terms('test')[0],25.)
+
 
 if __name__=='__main__':
     unittest.main()

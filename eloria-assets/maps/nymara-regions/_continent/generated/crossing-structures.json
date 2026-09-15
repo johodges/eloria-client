@@ -1,9 +1,9 @@
 {
   "bridges": {
-    "components": 40,
-    "visibleCells": 22297,
-    "visibleTriangles": 80409,
-    "wetCells": 5048,
+    "components": 38,
+    "visibleCells": 23679,
+    "visibleTriangles": 80029,
+    "wetCells": 6799,
     "spanCells": 18,
     "floatingRunsSpanned": [
       {
@@ -41,28 +41,28 @@
         ]
       },
       {
-        "cells": 24,
-        "extentMetres": 9.9,
-        "maximumLiftMetres": 2.93,
-        "dipMetres": 0.85,
+        "cells": 7,
+        "extentMetres": 6.4,
+        "maximumLiftMetres": 1.46,
+        "dipMetres": null,
         "deepWater": true,
-        "centrelineFloats": true,
+        "centrelineFloats": false,
         "bounds": [
           1031.0,
-          211.0,
-          1038.0,
+          213.0,
+          1035.0,
           218.0
         ],
         "reasons": [
           "holds deep water",
-          "no dip below its landings"
+          "road on the ground, only a shoulder floats"
         ]
       },
       {
-        "cells": 208,
+        "cells": 210,
         "extentMetres": 31.1,
-        "maximumLiftMetres": 7.95,
-        "dipMetres": 5.69,
+        "maximumLiftMetres": 8.76,
+        "dipMetres": 6.49,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
@@ -77,39 +77,22 @@
         ]
       },
       {
-        "cells": 227,
-        "extentMetres": 42.7,
-        "maximumLiftMetres": 3.08,
+        "cells": 210,
+        "extentMetres": 38.9,
+        "maximumLiftMetres": 2.41,
         "dipMetres": 0.92,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
           251.0,
-          332.0,
-          266.0,
+          343.0,
+          277.0,
           372.0
         ],
         "reasons": [
           "longer than a gap",
           "holds deep water",
           "no dip below its landings"
-        ]
-      },
-      {
-        "cells": 83,
-        "extentMetres": 18.4,
-        "maximumLiftMetres": 2.41,
-        "dipMetres": 1.06,
-        "deepWater": true,
-        "centrelineFloats": true,
-        "bounds": [
-          268.0,
-          343.0,
-          277.0,
-          359.0
-        ],
-        "reasons": [
-          "holds deep water"
         ]
       },
       {
@@ -166,8 +149,8 @@
         ]
       },
       {
-        "cells": 498,
-        "extentMetres": 82.4,
+        "cells": 386,
+        "extentMetres": 49.8,
         "maximumLiftMetres": 2.93,
         "dipMetres": 0.55,
         "deepWater": true,
@@ -175,6 +158,44 @@
         "bounds": [
           239.0,
           429.0,
+          270.0,
+          468.0
+        ],
+        "reasons": [
+          "longer than a gap",
+          "holds deep water",
+          "no dip below its landings"
+        ]
+      },
+      {
+        "cells": 399,
+        "extentMetres": 52.4,
+        "maximumLiftMetres": 2.27,
+        "dipMetres": 0.5,
+        "deepWater": true,
+        "centrelineFloats": true,
+        "bounds": [
+          230.0,
+          452.0,
+          251.0,
+          500.0
+        ],
+        "reasons": [
+          "longer than a gap",
+          "holds deep water",
+          "no dip below its landings"
+        ]
+      },
+      {
+        "cells": 93,
+        "extentMetres": 32.6,
+        "maximumLiftMetres": 1.88,
+        "dipMetres": -0.1,
+        "deepWater": true,
+        "centrelineFloats": true,
+        "bounds": [
+          266.0,
+          471.0,
           287.0,
           496.0
         ],
@@ -185,17 +206,17 @@
         ]
       },
       {
-        "cells": 179,
-        "extentMetres": 26.2,
-        "maximumLiftMetres": 3.76,
-        "dipMetres": 1.81,
+        "cells": 1678,
+        "extentMetres": 157.0,
+        "maximumLiftMetres": 20.81,
+        "dipMetres": 20.54,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
-          394.0,
-          509.0,
-          412.0,
-          528.0
+          560.0,
+          507.0,
+          648.0,
+          637.0
         ],
         "reasons": [
           "longer than a gap",
@@ -203,17 +224,17 @@
         ]
       },
       {
-        "cells": 1470,
-        "extentMetres": 129.3,
-        "maximumLiftMetres": 16.68,
-        "dipMetres": 14.62,
+        "cells": 1588,
+        "extentMetres": 159.2,
+        "maximumLiftMetres": 5.56,
+        "dipMetres": 2.34,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
-          580.0,
-          509.0,
-          648.0,
-          619.0
+          383.0,
+          545.0,
+          453.0,
+          688.0
         ],
         "reasons": [
           "longer than a gap",
@@ -239,24 +260,6 @@
         ]
       },
       {
-        "cells": 572,
-        "extentMetres": 76.6,
-        "maximumLiftMetres": 18.22,
-        "dipMetres": 17.8,
-        "deepWater": true,
-        "centrelineFloats": true,
-        "bounds": [
-          551.0,
-          570.0,
-          609.0,
-          620.0
-        ],
-        "reasons": [
-          "longer than a gap",
-          "holds deep water"
-        ]
-      },
-      {
         "cells": 75,
         "extentMetres": 18.0,
         "maximumLiftMetres": 2.57,
@@ -274,36 +277,35 @@
         ]
       },
       {
-        "cells": 717,
-        "extentMetres": 82.9,
-        "maximumLiftMetres": 11.49,
-        "dipMetres": 0.52,
+        "cells": 351,
+        "extentMetres": 76.2,
+        "maximumLiftMetres": 13.08,
+        "dipMetres": 12.64,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
-          504.0,
-          649.0,
-          573.0,
-          695.0
+          508.0,
+          641.0,
+          574.0,
+          679.0
         ],
         "reasons": [
           "longer than a gap",
-          "holds deep water",
-          "no dip below its landings"
+          "holds deep water"
         ]
       },
       {
-        "cells": 321,
-        "extentMetres": 52.5,
-        "maximumLiftMetres": 4.8,
-        "dipMetres": 2.45,
+        "cells": 778,
+        "extentMetres": 106.1,
+        "maximumLiftMetres": 3.62,
+        "dipMetres": 3.06,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
-          424.0,
-          659.0,
-          469.0,
-          686.0
+          376.0,
+          708.0,
+          449.0,
+          785.0
         ],
         "reasons": [
           "longer than a gap",
@@ -314,7 +316,7 @@
         "cells": 96,
         "extentMetres": 17.7,
         "maximumLiftMetres": 2.73,
-        "dipMetres": 1.45,
+        "dipMetres": 1.58,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
@@ -416,15 +418,15 @@
         ]
       },
       {
-        "cells": 261,
-        "extentMetres": 48.1,
-        "maximumLiftMetres": 2.61,
+        "cells": 245,
+        "extentMetres": 42.4,
+        "maximumLiftMetres": 2.6,
         "dipMetres": 1.05,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
           1272.0,
-          1012.0,
+          1018.0,
           1286.0,
           1058.0
         ],
@@ -662,17 +664,17 @@
         ]
       },
       {
-        "cells": 231,
-        "extentMetres": 51.9,
-        "maximumLiftMetres": 9.93,
-        "dipMetres": 9.33,
+        "cells": 486,
+        "extentMetres": 93.1,
+        "maximumLiftMetres": 10.23,
+        "dipMetres": 9.31,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
           313.0,
-          1402.0,
-          346.0,
-          1442.0
+          1400.0,
+          398.0,
+          1438.0
         ],
         "reasons": [
           "longer than a gap",
@@ -680,17 +682,17 @@
         ]
       },
       {
-        "cells": 134,
-        "extentMetres": 30.5,
-        "maximumLiftMetres": 10.01,
-        "dipMetres": 8.98,
+        "cells": 184,
+        "extentMetres": 44.9,
+        "maximumLiftMetres": 5.9,
+        "dipMetres": 4.69,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
-          369.0,
-          1403.0,
-          392.0,
-          1423.0
+          452.0,
+          1417.0,
+          476.0,
+          1455.0
         ],
         "reasons": [
           "longer than a gap",
@@ -716,24 +718,6 @@
         ]
       },
       {
-        "cells": 315,
-        "extentMetres": 75.2,
-        "maximumLiftMetres": 5.95,
-        "dipMetres": 5.31,
-        "deepWater": true,
-        "centrelineFloats": true,
-        "bounds": [
-          432.0,
-          1419.0,
-          476.0,
-          1480.0
-        ],
-        "reasons": [
-          "longer than a gap",
-          "holds deep water"
-        ]
-      },
-      {
         "cells": 13,
         "extentMetres": 7.1,
         "maximumLiftMetres": 2.35,
@@ -752,39 +736,20 @@
         ]
       },
       {
-        "cells": 27,
-        "extentMetres": 10.0,
-        "maximumLiftMetres": 3.98,
-        "dipMetres": 0.28,
-        "deepWater": true,
+        "cells": 28,
+        "extentMetres": 10.6,
+        "maximumLiftMetres": 4.08,
+        "dipMetres": 0.54,
+        "deepWater": false,
         "centrelineFloats": true,
         "bounds": [
-          438.0,
+          437.0,
           1487.0,
-          446.0,
-          1493.0
+          445.0,
+          1494.0
         ],
         "reasons": [
-          "holds deep water",
           "no dip below its landings"
-        ]
-      },
-      {
-        "cells": 120,
-        "extentMetres": 34.2,
-        "maximumLiftMetres": 5.75,
-        "dipMetres": 4.54,
-        "deepWater": true,
-        "centrelineFloats": true,
-        "bounds": [
-          428.0,
-          1501.0,
-          460.0,
-          1513.0
-        ],
-        "reasons": [
-          "longer than a gap",
-          "holds deep water"
         ]
       },
       {
@@ -806,68 +771,66 @@
         ]
       },
       {
-        "cells": 121,
-        "extentMetres": 28.8,
-        "maximumLiftMetres": 4.62,
-        "dipMetres": 5.0,
+        "cells": 36,
+        "extentMetres": 12.2,
+        "maximumLiftMetres": 4.07,
+        "dipMetres": 3.52,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
-          461.0,
-          1513.0,
-          485.0,
-          1529.0
+          479.0,
+          1511.0,
+          486.0,
+          1521.0
         ],
         "reasons": [
-          "longer than a gap",
-          "holds deep water"
-        ]
-      },
-      {
-        "cells": 115,
-        "extentMetres": 42.1,
-        "maximumLiftMetres": 5.7,
-        "dipMetres": 2.9,
-        "deepWater": true,
-        "centrelineFloats": true,
-        "bounds": [
-          321.0,
-          1532.0,
-          361.0,
-          1545.0
-        ],
-        "reasons": [
-          "longer than a gap",
           "holds deep water"
         ]
       },
       {
         "cells": 40,
-        "extentMetres": 18.4,
-        "maximumLiftMetres": 4.87,
-        "dipMetres": 0.61,
-        "deepWater": false,
+        "extentMetres": 18.0,
+        "maximumLiftMetres": 5.06,
+        "dipMetres": 4.81,
+        "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
-          386.0,
-          1532.0,
-          402.0,
-          1541.0
+          321.0,
+          1531.0,
+          338.0,
+          1537.0
         ],
         "reasons": [
-          "no dip below its landings"
+          "holds deep water"
         ]
       },
       {
-        "cells": 175,
-        "extentMetres": 41.9,
-        "maximumLiftMetres": 5.86,
-        "dipMetres": 4.95,
+        "cells": 37,
+        "extentMetres": 19.2,
+        "maximumLiftMetres": 5.69,
+        "dipMetres": 2.65,
+        "deepWater": true,
+        "centrelineFloats": true,
+        "bounds": [
+          331.0,
+          1533.0,
+          346.0,
+          1545.0
+        ],
+        "reasons": [
+          "holds deep water"
+        ]
+      },
+      {
+        "cells": 168,
+        "extentMetres": 38.9,
+        "maximumLiftMetres": 5.82,
+        "dipMetres": 4.86,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
           462.0,
-          1554.0,
+          1558.0,
           489.0,
           1586.0
         ],
@@ -877,15 +840,15 @@
         ]
       },
       {
-        "cells": 467,
-        "extentMetres": 87.7,
+        "cells": 263,
+        "extentMetres": 59.4,
         "maximumLiftMetres": 5.81,
         "dipMetres": 4.55,
         "deepWater": true,
         "centrelineFloats": true,
         "bounds": [
-          308.0,
-          1557.0,
+          309.0,
+          1591.0,
           350.0,
           1634.0
         ],
@@ -933,7 +896,7 @@
     "approachCoverage": {
       "amberwood": {
         "requestedMetres": 42.0,
-        "additionalCells": 2473
+        "additionalCells": 1885
       },
       "ssarathi_ruins": {
         "requestedMetres": 12.0,
@@ -947,10 +910,10 @@
         "additionalCells": 539
       }
     },
-    "maximumBankErrorMetres": 0.0929241074711662,
+    "maximumBankErrorMetres": 0.10909070260911591,
     "maximumGrade": 0.65,
     "outlineMaximumInsetFraction": 0.008555138626189618,
-    "precisionCleanupAreaSquareMetres": 7.162398354270931e-05,
+    "precisionCleanupAreaSquareMetres": 0.0002119674132609928,
     "supports": [
       {
         "component": 1,
@@ -965,8 +928,8 @@
         "component": 2,
         "supportsBefore": 0,
         "supportsAfter": 0,
-        "oldMaximumUnsupportedSpanEstimateMetres": 6.811308212624824,
-        "maximumUnsupportedSpanEstimateMetres": 6.811308212624824,
+        "oldMaximumUnsupportedSpanEstimateMetres": 2.1143338491007504,
+        "maximumUnsupportedSpanEstimateMetres": 2.1143338491007504,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": []
       },
@@ -1001,7 +964,7 @@
               332.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 85.59759346977808,
+            "minimumDeck": 85.77930858382024,
             "status": "supported"
           },
           {
@@ -1014,7 +977,7 @@
               340.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 83.8499984741211,
+            "minimumDeck": 83.9051013244316,
             "status": "supported"
           },
           {
@@ -1027,7 +990,7 @@
               348.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 85.57667908607982,
+            "minimumDeck": 86.43349427822977,
             "status": "supported"
           }
         ]
@@ -1036,44 +999,8 @@
         "component": 4,
         "supportsBefore": 2,
         "supportsAfter": 2,
-        "oldMaximumUnsupportedSpanEstimateMetres": 24.941962757173606,
-        "maximumUnsupportedSpanEstimateMetres": 24.941962757173606,
-        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
-        "piers": [
-          {
-            "planned": [
-              260.5,
-              340.5
-            ],
-            "position": [
-              260.5,
-              340.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 27.850000381469727,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              260.5,
-              364.5
-            ],
-            "position": [
-              260.5,
-              364.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 27.850000381469727,
-            "status": "supported"
-          }
-        ]
-      },
-      {
-        "component": 5,
-        "supportsBefore": 2,
-        "supportsAfter": 2,
-        "oldMaximumUnsupportedSpanEstimateMetres": 11.930956158196894,
-        "maximumUnsupportedSpanEstimateMetres": 11.930956158196894,
+        "oldMaximumUnsupportedSpanEstimateMetres": 22.105478698771446,
+        "maximumUnsupportedSpanEstimateMetres": 22.105478698771446,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
           {
@@ -1105,7 +1032,7 @@
         ]
       },
       {
-        "component": 6,
+        "component": 5,
         "supportsBefore": 1,
         "supportsAfter": 1,
         "oldMaximumUnsupportedSpanEstimateMetres": 9.067647005823636,
@@ -1128,7 +1055,7 @@
         ]
       },
       {
-        "component": 7,
+        "component": 6,
         "supportsBefore": 7,
         "supportsAfter": 7,
         "oldMaximumUnsupportedSpanEstimateMetres": 14.816071761992289,
@@ -1229,49 +1156,696 @@
         ]
       },
       {
-        "component": 8,
-        "supportsBefore": 2,
-        "supportsAfter": 2,
-        "oldMaximumUnsupportedSpanEstimateMetres": 12.907648857038943,
-        "maximumUnsupportedSpanEstimateMetres": 12.907648857038943,
+        "component": 7,
+        "supportsBefore": 7,
+        "supportsAfter": 7,
+        "oldMaximumUnsupportedSpanEstimateMetres": 12.152413689172365,
+        "maximumUnsupportedSpanEstimateMetres": 12.152413689172365,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
           {
             "planned": [
+              236.5,
+              452.5
+            ],
+            "position": [
+              236.5,
+              452.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 22.850000381469727,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              236.5,
+              460.5
+            ],
+            "position": [
+              236.5,
+              460.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 22.850000381469727,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              236.5,
+              468.5
+            ],
+            "position": [
+              236.5,
+              468.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 22.850000381469727,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              236.5,
+              476.5
+            ],
+            "position": [
+              236.5,
+              476.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 22.850000381469727,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              236.5,
+              484.5
+            ],
+            "position": [
+              236.5,
+              484.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 22.850000381469727,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              236.5,
+              492.5
+            ],
+            "position": [
+              236.7,
+              492.3
+            ],
+            "shiftMetres": 0.282842712474619,
+            "minimumDeck": 22.533210570691153,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              244.5,
+              492.5
+            ],
+            "position": [
+              244.5,
+              492.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 22.850000381469727,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 8,
+        "supportsBefore": 43,
+        "supportsAfter": 43,
+        "oldMaximumUnsupportedSpanEstimateMetres": 15.710600547861983,
+        "maximumUnsupportedSpanEstimateMetres": 15.651728660225702,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              388.5,
+              548.5
+            ],
+            "position": [
+              388.5,
+              548.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 24.731820059532765,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              388.5,
+              556.5
+            ],
+            "position": [
+              388.5,
+              556.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 24.192354138125665,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              388.5,
+              564.5
+            ],
+            "position": [
+              388.5,
+              564.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 23.644760639348533,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              388.5,
+              572.5
+            ],
+            "position": [
+              388.5,
+              572.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 23.108302953711245,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              388.5,
+              580.5
+            ],
+            "position": [
+              388.5,
+              580.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 22.550620915659238,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              388.5,
+              588.5
+            ],
+            "position": [
+              388.5,
+              588.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 21.992929341562558,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              388.5,
+              596.5
+            ],
+            "position": [
+              388.5,
+              596.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 21.418634351401124,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              388.5,
+              604.5
+            ],
+            "position": [
+              388.5,
+              604.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 20.828243192343507,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              388.5,
+              612.5
+            ],
+            "position": [
+              388.5,
+              612.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 20.224619104003068,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              388.5,
+              620.5
+            ],
+            "position": [
+              388.5,
+              620.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 19.585332490620203,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              388.5,
+              628.5
+            ],
+            "position": [
+              388.5,
+              628.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 18.94597606395837,
+            "status": "supported"
+          },
+          {
+            "planned": [
               396.5,
-              516.5
+              636.5
             ],
             "position": [
               396.5,
-              516.5
+              636.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 27.167247720819432,
+            "minimumDeck": 18.43816701968899,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              396.5,
+              644.5
+            ],
+            "position": [
+              396.5,
+              644.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 18.097873135411646,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              396.5,
+              652.5
+            ],
+            "position": [
+              396.5,
+              652.3
+            ],
+            "shiftMetres": 0.2,
+            "minimumDeck": 17.81484756634203,
             "status": "supported"
           },
           {
             "planned": [
               404.5,
-              516.5
+              652.5
             ],
             "position": [
               404.5,
-              516.5
+              652.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 27.305059572157916,
+            "minimumDeck": 17.605139818799216,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              404.5,
+              660.5
+            ],
+            "position": [
+              404.5,
+              660.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 17.332739916455466,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              412.5,
+              660.5
+            ],
+            "position": [
+              412.5,
+              660.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 17.116473080124706,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              412.5,
+              668.5
+            ],
+            "position": [
+              412.5,
+              668.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 16.869783020752948,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              420.5,
+              668.5
+            ],
+            "position": [
+              420.5,
+              668.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 16.647018051880877,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              420.5,
+              676.5
+            ],
+            "position": [
+              420.5,
+              676.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 16.404071427125018,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              428.5,
+              676.5
+            ],
+            "position": [
+              428.5,
+              676.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 16.176405470003374,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              428.5,
+              684.5
+            ],
+            "position": [
+              428.7,
+              684.1
+            ],
+            "shiftMetres": 0.447213595499958,
+            "minimumDeck": 15.921846541120512,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              436.5,
+              684.5
+            ],
+            "position": [
+              436.5,
+              684.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 15.687323146441486,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              476.5,
+              692.5
+            ],
+            "position": [
+              476.5,
+              692.9
+            ],
+            "shiftMetres": 0.4,
+            "minimumDeck": 9.483065274751844,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              484.5,
+              692.5
+            ],
+            "position": [
+              484.5,
+              692.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 12.217400275287218,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              452.5,
+              700.5
+            ],
+            "position": [
+              452.9,
+              700.9
+            ],
+            "shiftMetres": 0.565685424949238,
+            "minimumDeck": 14.323149393165622,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              460.5,
+              700.5
+            ],
+            "position": [
+              460.5,
+              700.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 10.793262015416985,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              468.5,
+              700.5
+            ],
+            "position": [
+              468.1,
+              700.1
+            ],
+            "shiftMetres": 0.565685424949238,
+            "minimumDeck": 8.940015778760426,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              484.5,
+              700.5
+            ],
+            "position": [
+              484.5,
+              700.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 15.837787352618761,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              444.5,
+              708.5
+            ],
+            "position": [
+              444.5,
+              708.7
+            ],
+            "shiftMetres": 0.2,
+            "minimumDeck": 14.48796504875645,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              452.5,
+              708.5
+            ],
+            "position": [
+              452.5,
+              708.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 14.030899469391443,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              436.5,
+              716.5
+            ],
+            "position": [
+              436.5,
+              716.7
+            ],
+            "shiftMetres": 0.2,
+            "minimumDeck": 13.620642146182945,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              444.5,
+              716.5
+            ],
+            "position": [
+              444.5,
+              716.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 14.031909127574181,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              436.5,
+              724.5
+            ],
+            "position": [
+              436.5,
+              724.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 13.486205200606491,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              428.5,
+              732.5
+            ],
+            "position": [
+              428.5,
+              732.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 12.979701524745906,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              420.5,
+              740.5
+            ],
+            "position": [
+              420.5,
+              740.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 12.608784806565382,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              412.5,
+              748.5
+            ],
+            "position": [
+              412.5,
+              748.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 12.265559149702312,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              404.5,
+              756.5
+            ],
+            "position": [
+              404.5,
+              756.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 11.951136542280437,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              396.5,
+              764.5
+            ],
+            "position": [
+              396.5,
+              764.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 11.640083848295035,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              388.5,
+              772.5
+            ],
+            "position": [
+              388.5,
+              772.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 11.330880700406851,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              396.5,
+              772.5
+            ],
+            "position": [
+              396.1,
+              772.3
+            ],
+            "shiftMetres": 0.447213595499958,
+            "minimumDeck": 11.512226014980115,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              380.5,
+              780.5
+            ],
+            "position": [
+              380.5,
+              780.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 10.987670578004327,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              388.5,
+              780.5
+            ],
+            "position": [
+              388.5,
+              780.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 10.807693106908118,
             "status": "supported"
           }
         ]
       },
       {
         "component": 9,
-        "supportsBefore": 19,
+        "supportsBefore": 17,
         "supportsAfter": 17,
-        "oldMaximumUnsupportedSpanEstimateMetres": 30.929680732259953,
-        "maximumUnsupportedSpanEstimateMetres": 31.588497242066296,
+        "oldMaximumUnsupportedSpanEstimateMetres": 20.378234847834033,
+        "maximumUnsupportedSpanEstimateMetres": 20.437944322824908,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
+          {
+            "planned": [
+              612.5,
+              516.5
+            ],
+            "position": [
+              612.5,
+              516.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 87.5667002061382,
+            "status": "supported"
+          },
           {
             "planned": [
               604.5,
@@ -1282,7 +1856,7 @@
               524.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 86.34093242231756,
+            "minimumDeck": 87.11043452192098,
             "status": "supported"
           },
           {
@@ -1295,8 +1869,8 @@
               532.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 83.02888270653784,
-            "status": "grounded bank stub"
+            "minimumDeck": 81.88881035707891,
+            "status": "supported"
           },
           {
             "planned": [
@@ -1305,23 +1879,23 @@
             ],
             "position": [
               604.3,
-              532.5
+              532.3
+            ],
+            "shiftMetres": 0.282842712474619,
+            "minimumDeck": 83.55624676449224,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              596.5,
+              540.5
+            ],
+            "position": [
+              596.3,
+              540.5
             ],
             "shiftMetres": 0.2,
-            "minimumDeck": 82.74287928857416,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              596.5,
-              540.5
-            ],
-            "position": [
-              596.5,
-              540.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 79.4084923863411,
+            "minimumDeck": 78.22488971427083,
             "status": "supported"
           },
           {
@@ -1334,7 +1908,7 @@
               548.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 73.64000150933862,
+            "minimumDeck": 72.3436447577551,
             "status": "supported"
           },
           {
@@ -1347,7 +1921,33 @@
               556.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 70.01961729303002,
+            "minimumDeck": 68.7232605414465,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              596.5,
+              556.5
+            ],
+            "position": [
+              596.5,
+              556.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 68.48273852281272,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              604.5,
+              556.5
+            ],
+            "position": [
+              604.5,
+              556.7
+            ],
+            "shiftMetres": 0.2,
+            "minimumDeck": 64.77186584472656,
             "status": "supported"
           },
           {
@@ -1360,7 +1960,20 @@
               556.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 57.250010709278286,
+            "minimumDeck": 56.26393435429782,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              620.5,
+              564.5
+            ],
+            "position": [
+              620.1,
+              564.9
+            ],
+            "shiftMetres": 0.565685424949238,
+            "minimumDeck": 57.018629070684604,
             "status": "supported"
           },
           {
@@ -1373,7 +1986,7 @@
               572.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 58.38696215581149,
+            "minimumDeck": 54.637480191886425,
             "status": "supported"
           },
           {
@@ -1386,20 +1999,7 @@
               580.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 54.76657412480563,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              572.5,
-              588.5
-            ],
-            "position": [
-              572.5,
-              588.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 50.17704583099112,
+            "minimumDeck": 51.017092923633754,
             "status": "supported"
           },
           {
@@ -1412,7 +2012,7 @@
               588.7
             ],
             "shiftMetres": 0.2,
-            "minimumDeck": 43.87593609513345,
+            "minimumDeck": 54.726318359375,
             "status": "supported"
           },
           {
@@ -1425,98 +2025,33 @@
               588.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 51.863814572803676,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              556.5,
-              596.5
-            ],
-            "position": [
-              556.5,
-              596.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 52.855014075059444,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              564.5,
-              596.5
-            ],
-            "position": [
-              564.5,
-              596.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 49.23462642543018,
+            "minimumDeck": 51.25554583501071,
             "status": "supported"
           },
           {
             "planned": [
               636.5,
-              596.5
+              588.5
             ],
             "position": [
-              636.5,
-              596.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 58.860893504694104,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              556.5,
-              604.5
-            ],
-            "position": [
-              556.9,
-              604.5
+              636.1,
+              588.5
             ],
             "shiftMetres": 0.4,
-            "minimumDeck": 52.862579924985766,
+            "minimumDeck": 54.443441308801994,
             "status": "supported"
           },
           {
             "planned": [
               636.5,
-              604.5
+              596.5
             ],
             "position": [
               636.5,
-              604.5
+              596.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 62.481281535699964,
-            "status": "grounded bank stub"
-          },
-          {
-            "planned": [
-              556.5,
-              612.5
-            ],
-            "position": [
-              556.1,
-              612.9
-            ],
-            "shiftMetres": 0.565685424949238,
-            "minimumDeck": 49.42322558653543,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              628.5,
-              612.5
-            ],
-            "position": [
-              628.5,
-              612.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 61.25227733934298,
+            "minimumDeck": 58.181308871135116,
             "status": "supported"
           }
         ]
@@ -1541,91 +2076,15 @@
       },
       {
         "component": 12,
-        "supportsBefore": 2,
-        "supportsAfter": 2,
-        "oldMaximumUnsupportedSpanEstimateMetres": 13.674496922036187,
-        "maximumUnsupportedSpanEstimateMetres": 13.674496922036187,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 13.352807878509886,
+        "maximumUnsupportedSpanEstimateMetres": 13.352807878509886,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
-        "piers": [
-          {
-            "planned": [
-              428.5,
-              676.5
-            ],
-            "position": [
-              428.5,
-              676.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 16.176405470003374,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              436.5,
-              684.5
-            ],
-            "position": [
-              436.5,
-              684.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 15.687323146441486,
-            "status": "supported"
-          }
-        ]
+        "piers": []
       },
       {
         "component": 13,
-        "supportsBefore": 3,
-        "supportsAfter": 3,
-        "oldMaximumUnsupportedSpanEstimateMetres": 11.886569771536657,
-        "maximumUnsupportedSpanEstimateMetres": 11.886569771536657,
-        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
-        "piers": [
-          {
-            "planned": [
-              516.5,
-              660.5
-            ],
-            "position": [
-              516.5,
-              660.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 32.000500516500324,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              524.5,
-              660.5
-            ],
-            "position": [
-              524.5,
-              660.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 28.38011477421969,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              540.5,
-              676.5
-            ],
-            "position": [
-              540.5,
-              676.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 21.42209570808336,
-            "status": "supported"
-          }
-        ]
-      },
-      {
-        "component": 14,
         "supportsBefore": 1,
         "supportsAfter": 1,
         "oldMaximumUnsupportedSpanEstimateMetres": 11.276413116327943,
@@ -1648,11 +2107,11 @@
         ]
       },
       {
-        "component": 15,
+        "component": 14,
         "supportsBefore": 1,
         "supportsAfter": 1,
-        "oldMaximumUnsupportedSpanEstimateMetres": 11.541121181403144,
-        "maximumUnsupportedSpanEstimateMetres": 11.541121181403144,
+        "oldMaximumUnsupportedSpanEstimateMetres": 11.54095028382293,
+        "maximumUnsupportedSpanEstimateMetres": 11.54095028382293,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
           {
@@ -1671,7 +2130,7 @@
         ]
       },
       {
-        "component": 16,
+        "component": 15,
         "supportsBefore": 5,
         "supportsAfter": 5,
         "oldMaximumUnsupportedSpanEstimateMetres": 11.879933185839052,
@@ -1746,7 +2205,7 @@
         ]
       },
       {
-        "component": 17,
+        "component": 16,
         "supportsBefore": 2,
         "supportsAfter": 2,
         "oldMaximumUnsupportedSpanEstimateMetres": 15.384809215628556,
@@ -1782,7 +2241,7 @@
         ]
       },
       {
-        "component": 18,
+        "component": 17,
         "supportsBefore": 1,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 12.432647026727283,
@@ -1805,7 +2264,7 @@
         ]
       },
       {
-        "component": 19,
+        "component": 18,
         "supportsBefore": 11,
         "supportsAfter": 11,
         "oldMaximumUnsupportedSpanEstimateMetres": 15.157600433558276,
@@ -1958,11 +2417,11 @@
         ]
       },
       {
-        "component": 20,
+        "component": 19,
         "supportsBefore": 4,
         "supportsAfter": 2,
-        "oldMaximumUnsupportedSpanEstimateMetres": 16.604490403833026,
-        "maximumUnsupportedSpanEstimateMetres": 16.604490403833026,
+        "oldMaximumUnsupportedSpanEstimateMetres": 17.421193809288223,
+        "maximumUnsupportedSpanEstimateMetres": 17.421193809288223,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
           {
@@ -1997,11 +2456,11 @@
               1052.5
             ],
             "position": [
-              1276.9,
-              1052.9
+              1276.5,
+              1052.5
             ],
-            "shiftMetres": 0.565685424949238,
-            "minimumDeck": 11.548220287254773,
+            "shiftMetres": 0.0,
+            "minimumDeck": 11.380896075977944,
             "status": "supported"
           },
           {
@@ -2020,7 +2479,7 @@
         ]
       },
       {
-        "component": 21,
+        "component": 20,
         "supportsBefore": 1,
         "supportsAfter": 1,
         "oldMaximumUnsupportedSpanEstimateMetres": 21.561373644596646,
@@ -2043,7 +2502,7 @@
         ]
       },
       {
-        "component": 22,
+        "component": 21,
         "supportsBefore": 9,
         "supportsAfter": 8,
         "oldMaximumUnsupportedSpanEstimateMetres": 34.27061215376306,
@@ -2170,7 +2629,7 @@
         ]
       },
       {
-        "component": 23,
+        "component": 22,
         "supportsBefore": 1,
         "supportsAfter": 1,
         "oldMaximumUnsupportedSpanEstimateMetres": 21.347442856234256,
@@ -2193,7 +2652,7 @@
         ]
       },
       {
-        "component": 24,
+        "component": 23,
         "supportsBefore": 6,
         "supportsAfter": 6,
         "oldMaximumUnsupportedSpanEstimateMetres": 25.840846062148106,
@@ -2281,7 +2740,7 @@
         ]
       },
       {
-        "component": 25,
+        "component": 24,
         "supportsBefore": 0,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 6.410047625331364,
@@ -2290,7 +2749,7 @@
         "piers": []
       },
       {
-        "component": 26,
+        "component": 25,
         "supportsBefore": 3,
         "supportsAfter": 2,
         "oldMaximumUnsupportedSpanEstimateMetres": 12.083045973594572,
@@ -2339,7 +2798,7 @@
         ]
       },
       {
-        "component": 27,
+        "component": 26,
         "supportsBefore": 1,
         "supportsAfter": 1,
         "oldMaximumUnsupportedSpanEstimateMetres": 14.041944819307544,
@@ -2362,7 +2821,7 @@
         ]
       },
       {
-        "component": 28,
+        "component": 27,
         "supportsBefore": 0,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 12.028290255457618,
@@ -2371,11 +2830,11 @@
         "piers": []
       },
       {
-        "component": 29,
-        "supportsBefore": 5,
-        "supportsAfter": 5,
-        "oldMaximumUnsupportedSpanEstimateMetres": 18.819151349766077,
-        "maximumUnsupportedSpanEstimateMetres": 18.819151349766077,
+        "component": 28,
+        "supportsBefore": 10,
+        "supportsAfter": 9,
+        "oldMaximumUnsupportedSpanEstimateMetres": 19.075896675825206,
+        "maximumUnsupportedSpanEstimateMetres": 19.075896675825206,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
           {
@@ -2394,11 +2853,11 @@
           {
             "planned": [
               324.5,
-              1420.5
+              1404.5
             ],
             "position": [
               324.5,
-              1420.5
+              1404.5
             ],
             "shiftMetres": 0.0,
             "minimumDeck": 0.8500000238418579,
@@ -2407,63 +2866,53 @@
           {
             "planned": [
               332.5,
-              1428.5
+              1404.5
             ],
             "position": [
               332.5,
-              1428.5
+              1404.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 2.452528903177314,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              348.5,
-              1436.5
-            ],
-            "position": [
-              348.5,
-              1436.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 11.601679431012599,
+            "minimumDeck": 0.8500000238418579,
             "status": "supported"
           },
           {
             "planned": [
               340.5,
-              1444.5
-            ],
-            "position": [
-              340.1,
-              1444.1
-            ],
-            "shiftMetres": 0.565685424949238,
-            "minimumDeck": 10.355565540899988,
-            "status": "supported"
-          }
-        ]
-      },
-      {
-        "component": 30,
-        "supportsBefore": 3,
-        "supportsAfter": 3,
-        "oldMaximumUnsupportedSpanEstimateMetres": 13.087685377762794,
-        "maximumUnsupportedSpanEstimateMetres": 13.139918929917581,
-        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
-        "piers": [
-          {
-            "planned": [
-              388.5,
               1404.5
             ],
             "position": [
-              388.5,
+              340.5,
               1404.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 0.8938469616114162,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              396.5,
+              1404.5
+            ],
+            "position": [
+              396.5,
+              1404.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              356.5,
+              1412.5
+            ],
+            "position": [
+              356.5,
+              1412.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
             "status": "supported"
           },
           {
@@ -2473,10 +2922,23 @@
             ],
             "position": [
               380.5,
-              1412.3
+              1412.5
             ],
-            "shiftMetres": 0.2,
+            "shiftMetres": 0.0,
             "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              364.5,
+              1420.5
+            ],
+            "position": [
+              364.5,
+              1420.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 1.7541260833386332,
             "status": "supported"
           },
           {
@@ -2491,11 +2953,24 @@
             "shiftMetres": 0.0,
             "minimumDeck": 3.689377714850707,
             "status": "supported"
+          },
+          {
+            "planned": [
+              380.5,
+              1428.5
+            ],
+            "position": [
+              380.5,
+              1428.3
+            ],
+            "shiftMetres": 0.2,
+            "minimumDeck": 7.565132600342622,
+            "status": "grounded bank stub"
           }
         ]
       },
       {
-        "component": 31,
+        "component": 29,
         "supportsBefore": 4,
         "supportsAfter": 4,
         "oldMaximumUnsupportedSpanEstimateMetres": 19.09907715275608,
@@ -2557,170 +3032,30 @@
         ]
       },
       {
-        "component": 32,
-        "supportsBefore": 6,
-        "supportsAfter": 6,
-        "oldMaximumUnsupportedSpanEstimateMetres": 13.227289798481896,
-        "maximumUnsupportedSpanEstimateMetres": 13.227289798481896,
+        "component": 30,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 25.912959299951535,
+        "maximumUnsupportedSpanEstimateMetres": 25.8159537973567,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
           {
             "planned": [
               460.5,
-              1428.5
+              1436.5
             ],
             "position": [
               460.7,
-              1428.3
+              1436.7
             ],
             "shiftMetres": 0.282842712474619,
-            "minimumDeck": 2.033904849192132,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              468.5,
-              1428.5
-            ],
-            "position": [
-              468.5,
-              1428.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 1.472129546233191,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              468.5,
-              1436.5
-            ],
-            "position": [
-              468.5,
-              1436.5
-            ],
-            "shiftMetres": 0.0,
             "minimumDeck": 0.8500000238418579,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              444.5,
-              1460.5
-            ],
-            "position": [
-              444.9,
-              1460.9
-            ],
-            "shiftMetres": 0.565685424949238,
-            "minimumDeck": 0.8500000238418579,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              436.5,
-              1468.5
-            ],
-            "position": [
-              436.5,
-              1468.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 1.0451817022076284,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              444.5,
-              1468.5
-            ],
-            "position": [
-              444.5,
-              1468.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 1.4883649931653053,
             "status": "supported"
           }
         ]
       },
       {
-        "component": 33,
-        "supportsBefore": 5,
-        "supportsAfter": 4,
-        "oldMaximumUnsupportedSpanEstimateMetres": 17.56512151538896,
-        "maximumUnsupportedSpanEstimateMetres": 17.56512151538896,
-        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
-        "piers": [
-          {
-            "planned": [
-              436.5,
-              1500.5
-            ],
-            "position": [
-              436.5,
-              1500.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 2.8469062551812385,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              452.5,
-              1508.5
-            ],
-            "position": [
-              452.5,
-              1508.3
-            ],
-            "shiftMetres": 0.2,
-            "minimumDeck": 1.4000686109715863,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              468.5,
-              1516.5
-            ],
-            "position": [
-              468.7,
-              1516.7
-            ],
-            "shiftMetres": 0.282842712474619,
-            "minimumDeck": 0.8500000238418579,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              476.5,
-              1516.5
-            ],
-            "position": [
-              476.5,
-              1516.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 0.8500000238418579,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              484.5,
-              1524.5
-            ],
-            "position": [
-              484.5,
-              1524.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 2.7656876055552857,
-            "status": "grounded bank stub"
-          }
-        ]
-      },
-      {
-        "component": 34,
+        "component": 31,
         "supportsBefore": 1,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 23.596195926796444,
@@ -2743,35 +3078,36 @@
         ]
       },
       {
-        "component": 35,
-        "supportsBefore": 0,
-        "supportsAfter": 0,
-        "oldMaximumUnsupportedSpanEstimateMetres": 6.0038436222333535,
-        "maximumUnsupportedSpanEstimateMetres": 6.0038436222333535,
-        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
-        "piers": []
-      },
-      {
-        "component": 36,
-        "supportsBefore": 2,
-        "supportsAfter": 2,
-        "oldMaximumUnsupportedSpanEstimateMetres": 11.306641932387183,
-        "maximumUnsupportedSpanEstimateMetres": 11.306641932387183,
+        "component": 32,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 6.812376525398634,
+        "maximumUnsupportedSpanEstimateMetres": 6.812376525398634,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
           {
             "planned": [
-              332.5,
-              1532.5
+              484.5,
+              1516.5
             ],
             "position": [
-              332.5,
-              1532.5
+              484.5,
+              1516.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 2.4526765928967507,
+            "minimumDeck": 1.2418578253491432,
             "status": "supported"
-          },
+          }
+        ]
+      },
+      {
+        "component": 33,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 10.040322084484936,
+        "maximumUnsupportedSpanEstimateMetres": 10.040322084484936,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
           {
             "planned": [
               332.5,
@@ -2788,7 +3124,16 @@
         ]
       },
       {
-        "component": 37,
+        "component": 34,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 6.0038436222333535,
+        "maximumUnsupportedSpanEstimateMetres": 6.0038436222333535,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 35,
         "supportsBefore": 1,
         "supportsAfter": 1,
         "oldMaximumUnsupportedSpanEstimateMetres": 5.350909859863711,
@@ -2811,26 +3156,13 @@
         ]
       },
       {
-        "component": 38,
+        "component": 36,
         "supportsBefore": 2,
         "supportsAfter": 2,
-        "oldMaximumUnsupportedSpanEstimateMetres": 26.7436884137217,
-        "maximumUnsupportedSpanEstimateMetres": 26.7436884137217,
+        "oldMaximumUnsupportedSpanEstimateMetres": 16.340995199008212,
+        "maximumUnsupportedSpanEstimateMetres": 16.340995199008212,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
-          {
-            "planned": [
-              484.5,
-              1556.5
-            ],
-            "position": [
-              484.7,
-              1556.5
-            ],
-            "shiftMetres": 0.2,
-            "minimumDeck": 0.4426954504605886,
-            "status": "supported"
-          },
           {
             "planned": [
               484.5,
@@ -2843,28 +3175,41 @@
             "shiftMetres": 0.0,
             "minimumDeck": 0.8500000238418579,
             "status": "supported"
+          },
+          {
+            "planned": [
+              476.5,
+              1572.5
+            ],
+            "position": [
+              476.5,
+              1572.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
           }
         ]
       },
       {
-        "component": 39,
+        "component": 37,
         "supportsBefore": 3,
         "supportsAfter": 3,
-        "oldMaximumUnsupportedSpanEstimateMetres": 21.19440050901409,
-        "maximumUnsupportedSpanEstimateMetres": 21.19440050901409,
+        "oldMaximumUnsupportedSpanEstimateMetres": 18.930257948838026,
+        "maximumUnsupportedSpanEstimateMetres": 18.930257948838026,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
           {
             "planned": [
-              332.5,
-              1588.5
+              316.5,
+              1596.5
             ],
             "position": [
-              332.5,
-              1588.5
+              316.5,
+              1596.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 1.4834410773000855,
+            "minimumDeck": 0.8500000238418579,
             "status": "supported"
           },
           {
@@ -2896,7 +3241,7 @@
         ]
       },
       {
-        "component": 40,
+        "component": 38,
         "supportsBefore": 10,
         "supportsAfter": 10,
         "oldMaximumUnsupportedSpanEstimateMetres": 18.72812817759863,
@@ -3243,6 +3588,11 @@
       0,
       4
     ],
+    "marketStall3Displacement": [
+      1.5,
+      0,
+      0
+    ],
     "charcoalHatchDisplacement": [
       7,
       0,
@@ -3300,10 +3650,29 @@
         ]
       }
     ],
+    "rootRampReserve": [
+      [
+        479.59999999999997,
+        467.59999999999997
+      ],
+      [
+        509.40000000000003,
+        476.40000000000003
+      ]
+    ],
+    "rootRampClearance": [],
+    "motherrootVoice": {
+      "identity": "Motherroot Voice Sillow",
+      "post": [
+        508.5,
+        47.045038454345004,
+        515.5
+      ]
+    },
     "marketRamp": {
       "start": [
         496.41763815992556,
-        41.827617541296966,
+        41.30728209825509,
         571.5752297887362
       ],
       "landing": [
@@ -3313,7 +3682,36 @@
       ],
       "levelLandingMetres": 4.0,
       "lengthMetres": 33.0,
-      "grade": 0.5418034786458632
+      "grade": 0.559746080130066
+    },
+    "rootRamp": {
+      "start": [
+        484.0,
+        472.0
+      ],
+      "stop": [
+        505.0,
+        472.0
+      ],
+      "maximumGrade": 0.460249332752386,
+      "maximumSupportHeight": 3.5867607554528504,
+      "contactLift": [
+        0.02499999999999858,
+        0.02499999999999858
+      ],
+      "foot": [
+        484.0,
+        41.16474844976319,
+        472.0
+      ],
+      "head": [
+        505.0,
+        49.92451550045764,
+        472.0
+      ],
+      "halfWidthMetres": 1.8,
+      "lengthMetres": 21.0,
+      "riseMetres": 8.75976705069445
     }
   },
   "manymouthAccess": {
@@ -3655,7 +4053,7 @@
         ],
         [
           421.7997373182018,
-          2.013888243771816,
+          2.013888243804039,
           1068.0209083423686
         ],
         [
@@ -3670,7 +4068,7 @@
         ],
         [
           418.1580808019334,
-          1.9991614233150352,
+          1.9991614233287638,
           1070.8869051702663
         ],
         [
@@ -4288,7 +4686,7 @@
               444.4508,
               1173.7395
             ],
-            "bottom": -0.5575272865529549,
+            "bottom": -0.5575272865517484,
             "top": 1.951829651924219,
             "floorGap": 0.08000000000000007
           },
@@ -4315,7 +4713,7 @@
               446.4225,
               1172.8573
             ],
-            "bottom": -0.39751589867850046,
+            "bottom": -0.397515898632599,
             "top": 1.9545003689377154,
             "floorGap": 0.08000000000000007
           },
@@ -4906,7 +5304,7 @@
               695.8741,
               1084.7025
             ],
-            "bottom": 12.439536405969736,
+            "bottom": 12.439536405969742,
             "top": 15.719747781033046,
             "floorGap": 0.08000000000000007
           },
@@ -4951,7 +5349,7 @@
               704.6348,
               1076.6098
             ],
-            "bottom": 13.04561997557481,
+            "bottom": 13.04561997557477,
             "top": 15.121594504588922,
             "floorGap": 0.08000000000000007
           },
@@ -4960,7 +5358,7 @@
               705.6427,
               1078.5202
             ],
-            "bottom": 13.19129013322597,
+            "bottom": 13.191290133227204,
             "top": 15.123551314572403,
             "floorGap": 0.08000000000000007
           },
@@ -4978,7 +5376,7 @@
               709.1805,
               1076.6535
             ],
-            "bottom": 13.42308595451052,
+            "bottom": 13.423085954511206,
             "top": 14.834028941018229,
             "floorGap": 0.08000000000000007
           },
@@ -5014,7 +5412,7 @@
               729.9933,
               1097.3706
             ],
-            "bottom": 13.56412884604351,
+            "bottom": 13.564128846092336,
             "top": 15.113283088214832,
             "floorGap": 0.08000000000000007
           },
@@ -5023,7 +5421,7 @@
               731.9222,
               1096.3984
             ],
-            "bottom": 13.564214665120177,
+            "bottom": 13.56421466512247,
             "top": 15.113040213666428,
             "floorGap": 0.08000000000000007
           },
@@ -5469,7 +5867,7 @@
               614.5262,
               1180.9101
             ],
-            "bottom": 0.052509315719057786,
+            "bottom": 0.05250931566440896,
             "top": 3.9546994843578256,
             "floorGap": 0.08000000000000007
           },

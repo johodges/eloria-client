@@ -2,7 +2,7 @@
   "schema": 1,
   "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2",
   "entranceProfileSha256": "874627beb1c09d24ea6761924e59bb9bd569848bf92658b70083ddbf3cd0c0c9",
-  "compositionAlgorithmSha256": "ef2c6322dfb676f70f75875e15abf5269e26d83f1d8ff7d1507b16e4e23f2f9b",
+  "compositionAlgorithmSha256": "e00e7a93f9852ab5cc4eded2959343f3c674daefb39a1d4e06bfa69c0eccda01",
   "library": {
     "whitehorn_range": "42e087f58943b5db56a4c42027ac3ef64b7681fdf4945d10893d0d5325f68ed9",
     "grey_moors": "909e457b10da47d0282067578931521d40c9a4d993bf5d7a3721f97ff24b4101",
@@ -18,17 +18,17 @@
     "ssarathi_ruins": "feb38c3f51245b40fe51b46d4c1a0dec927045547e5471d1a04aee9a77bc8aeb"
   },
   "sources": {
-    "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_access.py": "c918350e8fec2d7d10b68c372d3383e44146ab536e5adf62f5f0a03939cf85ef",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_support.py": "5725868ac3dc39f57fc5520ee12c9e2f038feacc14ebfe11e6c72c23f4b9d192",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_access.py": "6ec87f8995ce94bc7f0420a1d3e148dbe63823de52a00f8ec949f63785ea5065",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_support.py": "385db181ee1753eca2fef629925f0a5382c3619ca58b8a1a081ce8ec1d9670cb",
     "eloria-assets\\maps\\nymara-regions\\_continent\\assemblies.py": "e82b4786be226739af59d3746aa3a05ae999a8ac9e2ddce2bb908ae6f79dd2f7",
     "eloria-assets\\maps\\nymara-regions\\_continent\\atlas_export.py": "a19b270692eb12e5bba7e8a63dc10888134d48b807af22afbc7a1ed6305f6799",
     "eloria-assets\\maps\\nymara-regions\\_continent\\audit_continent.py": "5f2205a96d1aff2b217e9e72f7da330125e929e9be3a6c2113d5df2230147293",
     "eloria-assets\\maps\\nymara-regions\\_continent\\bridge_export.py": "5101240f104d7cd9ce3f9bdda88c2f8e51b54ddaac84ca6fae5ccb6923e58ed8",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\build_continent.py": "6e0784bbe5643dacb22077470989c64f9294675b60ba7b5686dc8406b485ae47",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\build_continent.py": "00d3ecd3dff06d9e13c6264983fac8025b86fddceadaa733e2f5705e8de47e82",
     "eloria-assets\\maps\\nymara-regions\\_continent\\build_library.py": "0b97ef43268c4e08fa05884b1e781c34bb76d806ae3766a5ae8ed811e4374a08",
     "eloria-assets\\maps\\nymara-regions\\_continent\\build_pipeline.py": "0e6d5ec550a83b362834d4a12db2fc087bc72fdabfed4e06fb500a4a25e4dff8",
     "eloria-assets\\maps\\nymara-regions\\_continent\\collision_export.py": "7a360c964db0524b61892d200916344a0c2238cb31357b2dec1573c371038609",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\content.py": "304f578311e5783c8bc3304f163357b2a301f1e1b5041862410b05e35bc46e19",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\content.py": "c28578391721cf3fb6e07b2bb3fae7d8f18bcf6a8c0ac0e3e0bbb70a939b54b4",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crossings.py": "330edbd6b57112e6c903963396c110e233393578da34dff33d4864ca237b50d2",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crossing_contracts.py": "6b823b5e20895375129b7590e77f8d0de6d7093ebcab6191e6dbdbfb2702794f",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crown_support.py": "b5b2ea4de9abb1bafca495bdf06f779b1ebb376b01ab9b4558e4a9e41945ae59",
@@ -45,18 +45,18 @@
     "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_boats.py": "f484f0804942fd52004e0991510978b3dafe93245e532a9d9552ff09a162c2bd",
     "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_support.py": "eae7acdb0aa0aeb0a714114ad769f807cb336118b1f6506ce02a59223d081380",
     "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_village_streets.py": "e693e424b4269174e38b1cca80eb51c7d2f0243a12deb6b95e46aa232cbe8ea7",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_access_geometry.py": "0e80b614cc1215c9536e9930a47ef1921889414d17d103cd03572724e71bb2fe",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_access_geometry.py": "9af6bf043c07e834b8238ec0b930c78c7d46bfe655560cd7833127b84357be8c",
     "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_lake_support.py": "a473fc8ce7add5b39fcf2ad564216405f92353f8649072ed9df6478185150fc2",
     "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_streets.py": "fd503b08be603a28d478896937af2d550a39bc09a1982d4601d6e5fc58a2ed0d",
     "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_support.py": "c14e24c8e135ebe77a5a4f5aed6e1fb1b05c7884239fa8e49da39ff00c4162e7",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\resource_trails.py": "73f2a5b967536fbaa04a16f369911883c051d2d8bbced142748b537a1a3b7465",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\resource_trails.py": "1d6a4b9c6d060a7288039cc542325fadb42c58153e64665821fc0bc6d6042116",
     "eloria-assets\\maps\\nymara-regions\\_continent\\scene_io.py": "9691cc8d611cf1fd6939c9de9ac20dd013c34f62c1cdc9833791d9416481f9dc",
     "eloria-assets\\maps\\nymara-regions\\_continent\\ssarathi_bank_support.py": "4e49194746047e52664c3a868631f43680db3fcce25ace0372a6bbe5f16d55d1",
     "eloria-assets\\maps\\nymara-regions\\_continent\\terrain_export.py": "8172b53f4fc2b65780120e68b945e86991aa8ea2f70e4bfa05a49af809cbccb6",
     "eloria-assets\\maps\\nymara-regions\\_continent\\westhaven_support.py": "9e69ff36cca87f91effdc72ee87ead30e23db76b93110323846580a26b15d19a",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\world_layout.py": "756919cf33f3c82f34d8622666bb43e06774b8bce1a50a64c4f300fea4aa455a"
+    "eloria-assets\\maps\\nymara-regions\\_continent\\world_layout.py": "f9f94f334c9c881ba7462a14cb724f4bccd07fc7fb85783b32528aabad264f39"
   },
-  "objects": 5097,
+  "objects": 5072,
   "roads": 309,
   "assemblies": {
     "amberwood.great-arch": {
@@ -2444,11 +2444,11 @@
           1.260926525439447
         ],
         "minimumGroundClearance": 0.014999999999999791,
-        "maximumGroundClearance": 2.155791327689796,
+        "maximumGroundClearance": 2.155791336619952,
         "terrainIntersectionVertices": 276,
         "sourceToWorldY": 1.7344138602837906,
         "node": "moored_boat_003",
-        "deltaY": -0.17205258365924236,
+        "deltaY": -0.1720525832502251,
         "positionXZ": [
           543.1466560000001,
           1140.133536
@@ -2459,11 +2459,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.01499999999999968,
-        "maximumGroundClearance": 1.862658119003755,
+        "maximumGroundClearance": 1.8626581190088896,
         "terrainIntersectionVertices": 241,
-        "sourceToWorldY": 7.166510935676701,
+        "sourceToWorldY": 7.166510935587136,
         "node": "moored_boat_005",
-        "deltaY": -2.683611061308234,
+        "deltaY": -2.6836110615084836,
         "positionXZ": [
           577.2594880000001,
           1138.005306
@@ -2474,11 +2474,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000124,
-        "maximumGroundClearance": 2.7316838226702336,
+        "maximumGroundClearance": 2.731683784283119,
         "terrainIntersectionVertices": 216,
-        "sourceToWorldY": 2.6658968071592906,
+        "sourceToWorldY": 2.6658967660608806,
         "node": "moored_boat_006",
-        "deltaY": -4.4820537891009815,
+        "deltaY": -4.48205382400588,
         "positionXZ": [
           658.541806,
           1143.808818
@@ -2489,11 +2489,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 1.9223126315684063,
+        "maximumGroundClearance": 1.9223126315683778,
         "terrainIntersectionVertices": 265,
-        "sourceToWorldY": 14.330078509266112,
+        "sourceToWorldY": 14.330078509266093,
         "node": "moored_boat_010",
-        "deltaY": -2.543556113111393,
+        "deltaY": -2.5435561131157503,
         "positionXZ": [
           718.311022,
           1079.9686260000003
@@ -2558,11 +2558,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.014999999999999902,
-        "maximumGroundClearance": 1.6852403049005464,
+        "maximumGroundClearance": 1.6852403126078328,
         "terrainIntersectionVertices": 218,
-        "sourceToWorldY": 1.8813363852014964,
+        "sourceToWorldY": 1.8813363930154157,
         "node": "moored_boat_021",
-        "deltaY": -6.884479701405565,
+        "deltaY": -6.884479694855636,
         "positionXZ": [
           428.758642,
           1194.019602
@@ -2572,12 +2572,12 @@
         "mode": "hauled-up",
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
-        "minimumGroundClearance": 0.01499999999999968,
-        "maximumGroundClearance": 3.113217774543206,
+        "minimumGroundClearance": 0.015000000000000124,
+        "maximumGroundClearance": 3.113217783006341,
         "terrainIntersectionVertices": 257,
-        "sourceToWorldY": 4.028864542833097,
+        "sourceToWorldY": 4.028864543201376,
         "node": "moored_boat_022",
-        "deltaY": -4.344274594768719,
+        "deltaY": -4.344274586175786,
         "positionXZ": [
           417.78911199999993,
           1194.3956399999997
@@ -2587,12 +2587,12 @@
         "mode": "hauled-up",
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
-        "minimumGroundClearance": 0.014999999999999902,
-        "maximumGroundClearance": 2.1395672858897825,
+        "minimumGroundClearance": 0.01499999999999968,
+        "maximumGroundClearance": 2.1395672796318985,
         "terrainIntersectionVertices": 290,
-        "sourceToWorldY": 1.8414879427675375,
+        "sourceToWorldY": 1.8414879359896725,
         "node": "moored_boat_023",
-        "deltaY": -0.3948818753070824,
+        "deltaY": -0.39488187759738946,
         "positionXZ": [
           413.268154,
           1206.740388
@@ -2603,11 +2603,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.014999999999999236,
-        "maximumGroundClearance": 2.3681322802209572,
+        "maximumGroundClearance": 2.3681322778113714,
         "terrainIntersectionVertices": 223,
-        "sourceToWorldY": 4.506760317115707,
+        "sourceToWorldY": 4.506760312050562,
         "node": "moored_boat_027",
-        "deltaY": -7.036760231850095,
+        "deltaY": -7.0367602275475365,
         "positionXZ": [
           460.200208,
           1071.247992
@@ -2694,7 +2694,7 @@
         "terrainIntersectionVertices": 225,
         "sourceToWorldY": 14.287715202301184,
         "node": "moored_boat_037",
-        "deltaY": -0.016105390753033078,
+        "deltaY": -0.01610539075303663,
         "positionXZ": [
           718.584724,
           1076.282268
@@ -2714,7 +2714,7 @@
     "authoredPoints": {
       "[145, 178]": [
         237.635264,
-        26.650691966849692,
+        26.650585273177626,
         373.459628
       ],
       "[152, 100]": [
@@ -2724,12 +2724,12 @@
       ],
       "[230, 86]": [
         314.540463,
-        29.21494902301394,
+        29.21384440786222,
         446.749464
       ],
       "[221, 88]": [
         305.540463,
-        28.795791465947325,
+        28.793336144703982,
         444.749464
       ]
     }
@@ -2818,13 +2818,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.907848200214751,
+        "maximumGroundClearance": 0.9208493850302268,
         "terrainIntersectionVertices": 298,
-        "sourceToWorldY": 17.869553531728535,
+        "sourceToWorldY": 17.88796554616846,
         "region": "amberwood",
         "node": "Prop_RowingBoat_0",
         "assembly": null,
-        "deltaY": -1.9879641873537572,
+        "deltaY": -1.9815986506166823,
         "movedXZ": [
           0.0,
           0.0
@@ -2841,13 +2841,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.9204655920668223,
+        "maximumGroundClearance": 0.9254468673689793,
         "terrainIntersectionVertices": 303,
-        "sourceToWorldY": 17.69281620753517,
+        "sourceToWorldY": 17.697797482837327,
         "region": "amberwood",
         "node": "Prop_RowingBoat_1",
         "assembly": null,
-        "deltaY": -5.432421896694006,
+        "deltaY": -5.428772014642266,
         "movedXZ": [
           0.0,
           0.0
@@ -2864,13 +2864,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.9107009945980771,
+        "maximumGroundClearance": 0.9168068893217516,
         "terrainIntersectionVertices": 314,
-        "sourceToWorldY": 17.569725277578012,
+        "sourceToWorldY": 17.575831172301687,
         "region": "amberwood",
         "node": "Prop_RowingBoat_2",
         "assembly": null,
-        "deltaY": -5.32235042806397,
+        "deltaY": -5.31752063449823,
         "movedXZ": [
           0.0,
           0.0
@@ -2887,13 +2887,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.896951550370062,
+        "maximumGroundClearance": 0.897056404401102,
         "terrainIntersectionVertices": 309,
-        "sourceToWorldY": 17.37974967848533,
+        "sourceToWorldY": 17.37985453251637,
         "region": "amberwood",
         "node": "Prop_RowingBoat_3",
         "assembly": null,
-        "deltaY": -9.940243419402442,
+        "deltaY": -9.940138565371402,
         "movedXZ": [
           0.0,
           0.0
@@ -2910,13 +2910,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.881682054810291,
+        "maximumGroundClearance": 0.8818608405274873,
         "terrainIntersectionVertices": 305,
-        "sourceToWorldY": 17.265091932119972,
+        "sourceToWorldY": 17.26527071783717,
         "region": "amberwood",
         "node": "Prop_RowingBoat_4",
         "assembly": null,
-        "deltaY": -10.061095218203015,
+        "deltaY": -10.060916432485818,
         "movedXZ": [
           0.0,
           0.0
@@ -2933,13 +2933,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.8735085614577898,
+        "maximumGroundClearance": 0.8703480891022508,
         "terrainIntersectionVertices": 291,
-        "sourceToWorldY": 16.151967336126166,
+        "sourceToWorldY": 16.148806863770627,
         "region": "amberwood",
         "node": "Prop_KelpBoat",
         "assembly": null,
-        "deltaY": -0.5407430980186945,
+        "deltaY": -0.5436324718561742,
         "movedXZ": [
           0.0,
           0.0
@@ -2956,13 +2956,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 2.231559911533939,
+        "maximumGroundClearance": 2.2390246622413272,
         "terrainIntersectionVertices": 503,
-        "sourceToWorldY": 17.83671119216237,
+        "sourceToWorldY": 17.844175942869757,
         "region": "amberwood",
         "node": "Prop_HarbourPacket",
         "assembly": null,
-        "deltaY": -7.299398230954637,
+        "deltaY": -7.291933480247248,
         "movedXZ": [
           0.0,
           0.0
@@ -3326,7 +3326,7 @@
           0.0,
           0.0
         ],
-        "minimumGroundClearance": 0.3619901606517515,
+        "minimumGroundClearance": 0.36199016738751366,
         "maximumGroundClearance": 6.921633580692457,
         "terrainIntersectionVertices": 538,
         "sourceToWorldY": 0.0,
@@ -3352,11 +3352,11 @@
           0.0,
           0.0
         ],
-        "minimumGroundClearance": -0.5953196486423731,
+        "minimumGroundClearance": -0.5953196486503667,
         "maximumGroundClearance": 2.328997285667461,
         "terrainIntersectionVertices": 603,
         "sourceToWorldY": 0.0,
-        "bankIntrusionMetres": 0.5953196486423731,
+        "bankIntrusionMetres": 0.5953196486503667,
         "region": "manymouth_delta",
         "node": "MooredMarketBoat_4",
         "assembly": "manymouth_delta.boardwalk-town",
@@ -3455,13 +3455,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.01499999999999968,
-        "maximumGroundClearance": 8.099244596917622,
+        "maximumGroundClearance": 8.09924460446701,
         "terrainIntersectionVertices": 513,
-        "sourceToWorldY": 4.7204299197012585,
+        "sourceToWorldY": 4.7204299222449695,
         "region": "manymouth_delta",
         "node": "PacketLateen",
         "assembly": "manymouth_delta.boardwalk-town",
-        "deltaY": 4.7204299197012585,
+        "deltaY": 4.7204299222449695,
         "movedXZ": [
           0.0,
           0.0
@@ -3727,13 +3727,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 1.094311716510468,
+        "maximumGroundClearance": 2.3111741857989827,
         "terrainIntersectionVertices": 271,
-        "sourceToWorldY": 63.65629768023131,
+        "sourceToWorldY": 63.495375643325865,
         "region": "verdant_stair",
         "node": "Boat_00",
         "assembly": null,
-        "deltaY": -4.072073321622192,
+        "deltaY": -3.6245799565913117,
         "movedXZ": [
           0.0,
           0.0
@@ -3750,13 +3750,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.931013169725162,
+        "maximumGroundClearance": 2.7158791947498315,
         "terrainIntersectionVertices": 288,
-        "sourceToWorldY": 59.22734852490172,
+        "sourceToWorldY": 59.41326017459623,
         "region": "verdant_stair",
         "node": "Boat_01",
         "assembly": null,
-        "deltaY": -5.095475121344684,
+        "deltaY": -4.2929784388742505,
         "movedXZ": [
           0.0,
           0.0
@@ -3773,13 +3773,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 1.8628780022966822,
+        "maximumGroundClearance": 1.126130489836278,
         "terrainIntersectionVertices": 392,
-        "sourceToWorldY": 54.27756621965327,
+        "sourceToWorldY": 55.10516234670193,
         "region": "verdant_stair",
         "node": "Boat_02",
         "assembly": null,
-        "deltaY": -8.055107734801446,
+        "deltaY": -8.510996097250043,
         "movedXZ": [
           0.0,
           0.0
@@ -3796,13 +3796,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 3.1110753126647808,
+        "maximumGroundClearance": 1.9671058585125536,
         "terrainIntersectionVertices": 320,
-        "sourceToWorldY": 58.22976465470601,
+        "sourceToWorldY": 59.21300728669605,
         "region": "verdant_stair",
         "node": "Boat_03",
         "assembly": null,
-        "deltaY": -5.683638936298237,
+        "deltaY": -6.027755473640134,
         "movedXZ": [
           0.0,
           0.0
@@ -3819,13 +3819,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 2.7375926467327787,
+        "maximumGroundClearance": 2.358488756017522,
         "terrainIntersectionVertices": 284,
-        "sourceToWorldY": 67.90301883188971,
+        "sourceToWorldY": 67.99301840403136,
         "region": "verdant_stair",
         "node": "Boat_04",
         "assembly": null,
-        "deltaY": -1.3557591053214395,
+        "deltaY": -1.4656421447036792,
         "movedXZ": [
           0.0,
           0.0
@@ -4020,22 +4020,27 @@
       },
       {
         "region": "verdant_stair",
-        "node": "Boat_02",
-        "spreadMetres": 1.85
+        "node": "Boat_00",
+        "spreadMetres": 2.3
+      },
+      {
+        "region": "verdant_stair",
+        "node": "Boat_01",
+        "spreadMetres": 2.7
       },
       {
         "region": "verdant_stair",
         "node": "Boat_03",
-        "spreadMetres": 3.1
+        "spreadMetres": 1.95
       },
       {
         "region": "verdant_stair",
         "node": "Boat_04",
-        "spreadMetres": 2.72
+        "spreadMetres": 2.34
       }
     ],
     "assemblyDeviations": 11,
-    "maximumMoveMetres": 10.061095218203015,
+    "maximumMoveMetres": 10.060916432485818,
     "policy": "Rigid translation: afloat on the actual water surface with a complete navigable footprint, moored at the water line with the hull edge against the bank when most of the footprint is water, otherwise hauled up on the ground; a hull hauled up across a slope moves to the nearest spot within 12 m where it floats level, if one exists; companions within a hull footprint follow it; gameplay-linked hulls untouched."
   },
   "roadGradingPasses": [
@@ -4043,10 +4048,10 @@
       "pass": 1,
       "respectsStandingGround": false,
       "standingVertices": 0,
-      "corridorVertices": 72355,
+      "corridorVertices": 72066,
       "targetMaximumTriangleGrade": 0.45,
-      "fixedFootingVertices": 9704,
-      "conflictingFootingCorridorVertices": 3956,
+      "fixedFootingVertices": 9144,
+      "conflictingFootingCorridorVertices": 3901,
       "exceptions": "Original drainage beds and surveyed assembly support remain authoritative; exported collision and bridge tests verify actual traversability."
     }
   ],
@@ -4056,18 +4061,37 @@
         "id": "trail-amberwood-0",
         "region": "amberwood",
         "sites": [
+          "harvesting.txt:321:3",
+          "harvesting.txt:536:3",
+          "harvesting.txt:539:3"
+        ],
+        "from": [
+          508.5871,
+          500.63124000000005
+        ],
+        "to": [
+          536.8831974719628,
+          481.2640761569869
+        ],
+        "stations": 12,
+        "roadDistanceMetres": 34.3
+      },
+      {
+        "id": "trail-amberwood-1",
+        "region": "amberwood",
+        "sites": [
           "harvesting.txt:349:3"
         ],
         "from": [
-          618.0,
-          570.0
+          618.2641527180851,
+          568.0693873322125
         ],
         "to": [
           647.3394641647087,
           553.9991169115524
         ],
         "stations": 9,
-        "roadDistanceMetres": 33.4
+        "roadDistanceMetres": 32.3
       },
       {
         "id": "trail-mirrorhold-0",
@@ -4092,24 +4116,26 @@
         "id": "trail-verdant_stair-0",
         "region": "verdant_stair",
         "sites": [
+          "harvesting.txt:266:3",
+          "harvesting.txt:268:3",
           "harvesting.txt:270:3"
         ],
         "from": [
-          1172.0103532147536,
-          1141.9779383069
+          1178.2239518197084,
+          1135.7845220233953
         ],
         "to": [
-          1163.57,
-          1178.11
+          1161.0848399412364,
+          1167.213557248203
         ],
         "stations": 7,
-        "roadDistanceMetres": 37.1
+        "roadDistanceMetres": 35.8
       }
     ],
     "sitesRead": 667,
     "postsRead": 0,
     "steepSites": 49,
-    "servedSites": 41,
+    "servedSites": 36,
     "postsServed": 0,
     "postsOutOfReach": 0,
     "reachGrade": 0.65,
@@ -4146,12 +4172,12 @@
     "solidMarginMetres": 2.0,
     "solidMaximumAreaSquareMetres": 1600.0,
     "retryStationMetres": 4.0,
-    "closeStationRoutes": 6,
-    "hubExits": 72,
-    "endEntries": 188,
+    "closeStationRoutes": 14,
+    "hubExits": 71,
+    "endEntries": 186,
     "exitSearchMetres": 30.0,
     "endSolidRadiusMetres": 6.0,
-    "seamTerminalSolidPenalty": 0.0,
+    "seamTerminalSolidPenalty": 60.0,
     "crossSlope": {
       "start": 0.55,
       "linear": 0.0,
@@ -4166,7 +4192,39 @@
       "grade": 0.35,
       "penalty": 0.0
     },
-    "policy": "Retained solids up to 1600 square metres, widened by 2 m, are impassable for alignments and their edges except the solids within 6 m of a road end, first at 6 m stations then at 4 m; a road end inside a solid starts or ends with a close-station leg from open ground; a sealed end falls back to solids as a heavy penalty; larger boxes keep the soft clearance penalty; the cross-slope, relief, step-grade and seam-terminal terms stand at their listed weights (zero: off).",
+    "terrainTermsByTerritory": {
+      "grey_moors": [
+        25.0,
+        40.0,
+        25.0,
+        600.0
+      ],
+      "crownwater": [
+        25.0,
+        40.0,
+        25.0,
+        600.0
+      ],
+      "verdant_stair": [
+        25.0,
+        40.0,
+        25.0,
+        600.0
+      ],
+      "amethyst_barrens": [
+        25.0,
+        40.0,
+        25.0,
+        600.0
+      ],
+      "sunmane_steppe": [
+        25.0,
+        40.0,
+        25.0,
+        600.0
+      ]
+    },
+    "policy": "Retained solids up to 1600 square metres, widened by 2 m, are impassable for alignments and their edges except the solids within 6 m of a road end, first at 6 m stations then at 4 m; a road end inside a solid starts or ends with a close-station leg from open ground; a sealed end falls back to solids as a heavy penalty; larger boxes keep the soft clearance penalty; the seam-terminal term stands at its listed weight; the cross-slope, relief and step-grade terms stand at their listed module weights (zero: off) except in the territories listed under terrainTermsByTerritory.",
     "solidCrossings": [
       {
         "road": "discovery-sunmane_steppe-306",
@@ -4175,10 +4233,10 @@
         "metres": 53
       },
       {
-        "road": "door-amberwood-motherroot-mouth",
+        "road": "trail-amberwood-0",
         "region": "amberwood",
         "node": "Landmark_GreatTree_Wood",
-        "metres": 50
+        "metres": 51
       },
       {
         "road": "street-mirrorhold-east-working-road",
@@ -4205,6 +4263,18 @@
         "metres": 30
       },
       {
+        "road": "discovery-amberwood-467",
+        "region": "amberwood",
+        "node": "Landmark_GreatArch",
+        "metres": 28
+      },
+      {
+        "road": "discovery-amberwood-478",
+        "region": "amberwood",
+        "node": "Landmark_GreatTree_Wood",
+        "metres": 27
+      },
+      {
         "road": "discovery-verdant_stair-367",
         "region": "verdant_stair",
         "node": "Landmark_GreatTemple",
@@ -4217,10 +4287,10 @@
         "metres": 25
       },
       {
-        "road": "discovery-amberwood-467",
+        "road": "door-amberwood-motherroot-mouth",
         "region": "amberwood",
-        "node": "Landmark_GreatArch",
-        "metres": 24
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 25
       },
       {
         "road": "door-verdant_stair-temple-sanctum-door",
@@ -4250,6 +4320,12 @@
         "road": "discovery-whitehorn_range-539",
         "region": "whitehorn_range",
         "node": "Landmark_glacier_temple",
+        "metres": 20
+      },
+      {
+        "road": "door-amberwood-motherroot-mouth",
+        "region": "amberwood",
+        "node": "Landmark_GreatTree_Wood",
         "metres": 20
       },
       {
@@ -4367,9 +4443,51 @@
         "metres": 13
       },
       {
+        "road": "amberwood--four_gates-amberwood",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 12
+      },
+      {
+        "road": "amberwood--grey_moors-amberwood",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 12
+      },
+      {
+        "road": "amberwood--mirrorhold-amberwood",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 12
+      },
+      {
+        "road": "amberwood--whitehorn_range-amberwood",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 12
+      },
+      {
         "road": "discovery-four_gates-264",
         "region": "four_gates",
         "node": "Shopfront_four-gates-reedworks",
+        "metres": 12
+      },
+      {
+        "road": "door-amberwood-amber-hall-door",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 12
+      },
+      {
+        "road": "door-amberwood-cinder-chapel-door",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 12
+      },
+      {
+        "road": "door-amberwood-gate-undercroft-stair",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
         "metres": 12
       },
       {
@@ -4421,12 +4539,6 @@
         "metres": 11
       },
       {
-        "road": "amberwood--mirrorhold-amberwood",
-        "region": "amberwood",
-        "node": "Landmark_Watchtower_5",
-        "metres": 10
-      },
-      {
         "road": "discovery-amberwood-475",
         "region": "amberwood",
         "node": "Landmark_HollowTreeHall",
@@ -4451,30 +4563,6 @@
         "metres": 10
       },
       {
-        "road": "amberwood--four_gates-amberwood",
-        "region": "amberwood",
-        "node": "Landmark_CanopyPlatform_0",
-        "metres": 9
-      },
-      {
-        "road": "amberwood--grey_moors-amberwood",
-        "region": "amberwood",
-        "node": "Landmark_CanopyPlatform_0",
-        "metres": 9
-      },
-      {
-        "road": "amberwood--mirrorhold-amberwood",
-        "region": "amberwood",
-        "node": "Landmark_CanopyPlatform_0",
-        "metres": 9
-      },
-      {
-        "road": "amberwood--whitehorn_range-amberwood",
-        "region": "amberwood",
-        "node": "Landmark_CanopyPlatform_0",
-        "metres": 9
-      },
-      {
         "road": "discovery-crownwater-903",
         "region": "crownwater",
         "node": "Building_Shore_net-menders",
@@ -4496,30 +4584,6 @@
         "road": "discovery-verdant_stair-366",
         "region": "verdant_stair",
         "node": "Landmark_GreatTemple",
-        "metres": 9
-      },
-      {
-        "road": "door-amberwood-amber-hall-door",
-        "region": "amberwood",
-        "node": "Landmark_CanopyPlatform_0",
-        "metres": 9
-      },
-      {
-        "road": "door-amberwood-cinder-chapel-door",
-        "region": "amberwood",
-        "node": "Landmark_CanopyPlatform_0",
-        "metres": 9
-      },
-      {
-        "road": "door-amberwood-gate-undercroft-stair",
-        "region": "amberwood",
-        "node": "Landmark_CanopyPlatform_0",
-        "metres": 9
-      },
-      {
-        "road": "door-amberwood-motherroot-mouth",
-        "region": "amberwood",
-        "node": "Landmark_CanopyPlatform_0",
         "metres": 9
       },
       {
@@ -4562,12 +4626,6 @@
         "road": "amethyst_barrens--sunmane_steppe-sunmane_steppe",
         "region": "sunmane_steppe",
         "node": "Encampment_WallTower_00",
-        "metres": 8
-      },
-      {
-        "road": "discovery-amberwood-478",
-        "region": "amberwood",
-        "node": "Landmark_GreatTree_Wood",
         "metres": 8
       },
       {
@@ -4631,6 +4689,12 @@
         "metres": 8
       },
       {
+        "road": "discovery-amberwood-481",
+        "region": "amberwood",
+        "node": "Landmark_AncientArch_5",
+        "metres": 7
+      },
+      {
         "road": "discovery-amethyst_barrens-707",
         "region": "amethyst_barrens",
         "node": "Landmark_ResonantCluster_3",
@@ -4661,6 +4725,24 @@
         "metres": 7
       },
       {
+        "road": "discovery-verdant_stair-361",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 7
+      },
+      {
+        "road": "discovery-verdant_stair-361",
+        "region": "verdant_stair",
+        "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "discovery-verdant_stair-369",
+        "region": "verdant_stair",
+        "node": "Secret_stair_hanging_garden",
+        "metres": 7
+      },
+      {
         "road": "discovery-whitehorn_range-538",
         "region": "whitehorn_range",
         "node": "Secret_horn_temple_eyrie",
@@ -4676,6 +4758,12 @@
         "road": "door-verdant_stair-anchor-hollow-mouth",
         "region": "verdant_stair",
         "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "door-verdant_stair-banyan-hollow-arch",
+        "region": "verdant_stair",
+        "node": "Hut_Village_03",
         "metres": 7
       },
       {
@@ -4799,12 +4887,6 @@
         "metres": 6
       },
       {
-        "road": "door-amberwood-cinder-chapel-door",
-        "region": "amberwood",
-        "node": "Stone_RuinFragment_B_ash_chapel_03",
-        "metres": 6
-      },
-      {
         "road": "door-four_gates-interior-four-gates-lantern-row",
         "region": "four_gates",
         "node": "Shopfront_four-gates-lantern-row",
@@ -4823,6 +4905,12 @@
         "metres": 6
       },
       {
+        "road": "trail-amberwood-0",
+        "region": "amberwood",
+        "node": "Landmark_Building_Lodge_07",
+        "metres": 6
+      },
+      {
         "road": "discovery-amberwood-472",
         "region": "amberwood",
         "node": "Landmark_Watchtower_2",
@@ -4832,12 +4920,6 @@
         "road": "discovery-amberwood-473",
         "region": "amberwood",
         "node": "Secret_amber_boar_run",
-        "metres": 5
-      },
-      {
-        "road": "discovery-amberwood-474",
-        "region": "amberwood",
-        "node": "Landmark_Watchtower_5",
         "metres": 5
       },
       {
@@ -4871,9 +4953,9 @@
         "metres": 5
       },
       {
-        "road": "door-amberwood-cinder-chapel-door",
+        "road": "door-amberwood-motherroot-mouth",
         "region": "amberwood",
-        "node": "Stone_RuinFragment_B_ash_chapel_06",
+        "node": "Landmark_CanopyDwelling",
         "metres": 5
       },
       {
@@ -4892,30 +4974,6 @@
         "road": "amber-moot-path",
         "region": "amberwood",
         "node": "Landmark_Building_Lodge_00",
-        "metres": 4
-      },
-      {
-        "road": "amberwood--four_gates-amberwood",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_6",
-        "metres": 4
-      },
-      {
-        "road": "amberwood--grey_moors-amberwood",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_6",
-        "metres": 4
-      },
-      {
-        "road": "amberwood--mirrorhold-amberwood",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_6",
-        "metres": 4
-      },
-      {
-        "road": "amberwood--whitehorn_range-amberwood",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_6",
         "metres": 4
       },
       {
@@ -4979,12 +5037,6 @@
         "metres": 4
       },
       {
-        "road": "discovery-verdant_stair-361",
-        "region": "verdant_stair",
-        "node": "Building_TownHall",
-        "metres": 4
-      },
-      {
         "road": "discovery-verdant_stair-363",
         "region": "verdant_stair",
         "node": "Landmark_GreatTemple",
@@ -4997,15 +5049,9 @@
         "metres": 4
       },
       {
-        "road": "door-amberwood-cinder-chapel-door",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_6",
-        "metres": 4
-      },
-      {
         "road": "door-amberwood-gate-undercroft-stair",
         "region": "amberwood",
-        "node": "Prop_MarketStall_6",
+        "node": "Landmark_ForestGate_1",
         "metres": 4
       },
       {
@@ -5043,18 +5089,6 @@
         "region": "mirrorhold",
         "node": "Landmark_far-west",
         "metres": 4
-      },
-      {
-        "road": "amberwood--grey_moors-amberwood",
-        "region": "amberwood",
-        "node": "Landmark_ForestGate_0",
-        "metres": 3
-      },
-      {
-        "road": "amberwood--grey_moors-amberwood",
-        "region": "amberwood",
-        "node": "Landmark_SeaArch",
-        "metres": 3
       },
       {
         "road": "discovery-amberwood-472",
@@ -5279,30 +5313,6 @@
         "metres": 2
       },
       {
-        "road": "amberwood--four_gates-amberwood",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_7",
-        "metres": 2
-      },
-      {
-        "road": "amberwood--grey_moors-amberwood",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_7",
-        "metres": 2
-      },
-      {
-        "road": "amberwood--mirrorhold-amberwood",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_7",
-        "metres": 2
-      },
-      {
-        "road": "amberwood--whitehorn_range-amberwood",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_7",
-        "metres": 2
-      },
-      {
         "road": "discovery-amberwood-1078",
         "region": "amberwood",
         "node": "Prop_Ruin_027",
@@ -5333,12 +5343,6 @@
         "metres": 2
       },
       {
-        "road": "discovery-amberwood-481",
-        "region": "amberwood",
-        "node": "Secret_amber_undercut",
-        "metres": 2
-      },
-      {
         "road": "discovery-amethyst_barrens-705",
         "region": "amethyst_barrens",
         "node": "Landmark_StoneRing",
@@ -5366,6 +5370,12 @@
         "road": "discovery-crownwater-903",
         "region": "crownwater",
         "node": "Secret_crown_court_reliquary",
+        "metres": 2
+      },
+      {
+        "road": "discovery-crownwater-908",
+        "region": "crownwater",
+        "node": "Secret_crown_campanile_eyrie",
         "metres": 2
       },
       {
@@ -5507,30 +5517,6 @@
         "metres": 2
       },
       {
-        "road": "door-amberwood-amber-hall-door",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_7",
-        "metres": 2
-      },
-      {
-        "road": "door-amberwood-cinder-chapel-door",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_7",
-        "metres": 2
-      },
-      {
-        "road": "door-amberwood-gate-undercroft-stair",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_7",
-        "metres": 2
-      },
-      {
-        "road": "door-amberwood-motherroot-mouth",
-        "region": "amberwood",
-        "node": "Prop_MarketStall_7",
-        "metres": 2
-      },
-      {
         "road": "door-crownwater-case-room-door",
         "region": "crownwater",
         "node": "Landmark_Pavilion_pavilion_east",
@@ -5585,24 +5571,6 @@
         "metres": 2
       },
       {
-        "road": "amber-undercut-path",
-        "region": "amberwood",
-        "node": "Prop_Ruin_011",
-        "metres": 1
-      },
-      {
-        "road": "amberwood--mirrorhold-amberwood",
-        "region": "amberwood",
-        "node": "Prop_BurntCamp_2",
-        "metres": 1
-      },
-      {
-        "road": "amberwood--mirrorhold-amberwood",
-        "region": "amberwood",
-        "node": "Prop_Ruin_028",
-        "metres": 1
-      },
-      {
         "road": "discovery-amberwood-472",
         "region": "amberwood",
         "node": "Secret_amber_beekeepers_garden",
@@ -5615,15 +5583,15 @@
         "metres": 1
       },
       {
-        "road": "discovery-amberwood-474",
-        "region": "amberwood",
-        "node": "Prop_BurntCamp_2",
-        "metres": 1
-      },
-      {
         "road": "discovery-amberwood-478",
         "region": "amberwood",
         "node": "Secret_amber_moot_vault",
+        "metres": 1
+      },
+      {
+        "road": "discovery-amberwood-481",
+        "region": "amberwood",
+        "node": "Secret_amber_undercut",
         "metres": 1
       },
       {
@@ -5857,7 +5825,7 @@
       {
         "road": "door-amberwood-cinder-chapel-door",
         "region": "amberwood",
-        "node": "Landmark_AshChapel",
+        "node": "Stone_RuinFragment_B_ash_chapel_03",
         "metres": 1
       },
       {
@@ -5922,5 +5890,5 @@
       }
     ]
   },
-  "elapsedSeconds": 339.27
+  "elapsedSeconds": 366.74
 }

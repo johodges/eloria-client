@@ -64,7 +64,7 @@ class ResourceTrailTests(unittest.TestCase):
         world=make_world();content=FakeContent([0,0])
         # steep-far stands on the hillside 88 m from the road; steep-near on the hillside 24 m from its end (inside the budget); flat on the plain.
         sites={'test':[('steep-far',[180,-100]),('flat',[60,-100]),('steep-near',[140,-40])]}
-        with patch.object(R,'authored_sites',return_value=sites),patch.object(world,'route',side_effect=lambda a,b,region=None:np.vstack([a,b])) as route,\
+        with patch.object(R,'authored_sites',return_value=sites),patch.object(world,'route',side_effect=lambda a,b,region=None,**kw:np.vstack([a,b])) as route,\
              patch.object(world,'add_road',side_effect=fake_add_road(world)):
             report=R.prepare_resource_trails(world,content,'unused')
         self.assertEqual(len(report['trails']),1)
@@ -81,7 +81,7 @@ class ResourceTrailTests(unittest.TestCase):
         # post-far-level stands 80 m from any station on the plain.
         harvest_site=('steep-near',[140,-40],'site')
         sites={'test':[('post-hill',[140,-40],'post'),('post-near',[124,-40],'post'),('post-level',[100,-60],'post'),('post-far-level',[60,-120],'post'),harvest_site]}
-        with patch.object(R,'authored_sites',return_value=sites),patch.object(world,'route',side_effect=lambda a,b,region=None:np.vstack([a,b])),\
+        with patch.object(R,'authored_sites',return_value=sites),patch.object(world,'route',side_effect=lambda a,b,region=None,**kw:np.vstack([a,b])),\
              patch.object(world,'add_road',side_effect=fake_add_road(world)):
             report=R.prepare_resource_trails(world,content,'unused')
         self.assertEqual([t['sites'] for t in report['trails']],[['post-hill']])
@@ -99,7 +99,7 @@ class ResourceTrailTests(unittest.TestCase):
     def test_a_trail_without_an_alignment_is_recorded_not_fatal(self):
         world=make_world();content=FakeContent([0,0])
         sites={'test':[('lost',[180,-100])]}
-        def no_route(a,b,region=None):
+        def no_route(a,b,region=None,**kw):
             raise ValueError('No road alignment')
         with patch.object(R,'authored_sites',return_value=sites),patch.object(world,'route',side_effect=no_route),\
              patch.object(world,'add_road',side_effect=fake_add_road(world)):
@@ -110,7 +110,7 @@ class ResourceTrailTests(unittest.TestCase):
     def test_a_trail_that_winds_far_around_for_a_short_gap_is_skipped(self):
         world=make_world();content=FakeContent([0,0])
         sites={'test':[('far',[180,-100])]}
-        def winding(a,b,region=None):
+        def winding(a,b,region=None,**kw):
             a=np.asarray(a,float);b=np.asarray(b,float)
             return np.vstack([a,a+[0,150],b+[0,150],b])   # three times the gap and more
         with patch.object(R,'authored_sites',return_value=sites),patch.object(world,'route',side_effect=winding),\
@@ -124,7 +124,7 @@ class ResourceTrailTests(unittest.TestCase):
         world.owner[:, :]=0;world.owner[45:55, 92:95]=1;world.ids=['test','other']   # a notch of foreign ground at x 184..190, z 90..110
         sites={'test':[('in',[180,-100]),('far',[196,-100])]}   # both inside; their centroid (188,100) is in the notch
         targets=[]
-        with patch.object(R,'authored_sites',return_value=sites),patch.object(world,'route',side_effect=lambda a,b,region=None:(targets.append(np.asarray(b)),np.vstack([a,b]))[1]),\
+        with patch.object(R,'authored_sites',return_value=sites),patch.object(world,'route',side_effect=lambda a,b,region=None,**kw:(targets.append(np.asarray(b)),np.vstack([a,b]))[1]),\
              patch.object(world,'add_road',side_effect=fake_add_road(world)):
             report=R.prepare_resource_trails(world,content,'unused')
         self.assertEqual(len(report['trails']),1)
@@ -133,7 +133,7 @@ class ResourceTrailTests(unittest.TestCase):
     def test_sites_within_twenty_metres_share_one_trail(self):
         world=make_world();content=FakeContent([0,0])
         sites={'test':[('a',[180,-100]),('b',[192,-108]),('c',[180,-170])]}
-        with patch.object(R,'authored_sites',return_value=sites),patch.object(world,'route',side_effect=lambda a,b,region=None:np.vstack([a,b])),\
+        with patch.object(R,'authored_sites',return_value=sites),patch.object(world,'route',side_effect=lambda a,b,region=None,**kw:np.vstack([a,b])),\
              patch.object(world,'add_road',side_effect=fake_add_road(world)):
             report=R.prepare_resource_trails(world,content,'unused')
         self.assertEqual(sorted(len(t['sites']) for t in report['trails']),[1,2])

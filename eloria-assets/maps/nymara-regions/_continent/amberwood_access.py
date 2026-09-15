@@ -293,10 +293,12 @@ def prepare_amberwood_access(world,content):
     content.mapping[(REGION,cache['node'])]=cache['shift'];content.bounds_by_name[(REGION,cache['node'])]=(cache['low'],cache['high'])
     # Make space for the sloped market stair beside the existing stall row, and
     # take stall 3 off the line the Motherroot mouth door road takes north past
-    # the platform's east side (the road clipped the stall's west edge; the
-    # platform's own solid covers the stall's cells, so the router cannot see
-    # it there): 2.5 m east and 2 m north, clear of stall 4 and the guild awning.
-    for name,delta in (('Prop_MarketStall_6',np.array([15.,0.,4.])),('Prop_MarketStall_3',np.array([2.5,0.,-2.]))):
+    # the platform's east side: 1.5 m east, with the firewood at its corner. The
+    # road clipped the stall's west edge because the platform's own solid covers
+    # the stall's cells and the router cannot see it there; moved any further
+    # north the stall's widened box leaves the platform's, the router sees it,
+    # and the door road loops 550 m round the Great Tree (the sixteenth's run 4).
+    for name,delta in (('Prop_MarketStall_6',np.array([15.,0.,4.])),('Prop_MarketStall_3',np.array([1.5,0.,0.])),('Prop_Firewood_162',np.array([0.,0.,.6]))):
         stall=content.placement_by_name[(REGION,name)]
         stall['shift']+=delta;stall['low']+=delta;stall['high']+=delta
         content.mapping[(REGION,stall['node'])]=stall['shift'];content.bounds_by_name[(REGION,stall['node'])]=(stall['low'],stall['high'])
@@ -327,7 +329,7 @@ def prepare_amberwood_access(world,content):
     matrices,_=S.GR.hierarchy(doc);low,high=S.subtree_bounds(doc,body,lower['index'],matrices)
     lower['low'][...]=low+lower['shift'];lower['high'][...]=high+lower['shift']
     content.bounds_by_name[(REGION,lower['node'])]=(lower['low'],lower['high'])
-    world.amberwood_access={'hatch':target.tolist(),'canopyJunction':report,'marketRailOpening':opening,'marketStallDisplacement':[15,0,4],'marketStall3Displacement':[2.5,0,-2],'charcoalHatchDisplacement':[7,0,0],
+    world.amberwood_access={'hatch':target.tolist(),'canopyJunction':report,'marketRailOpening':opening,'marketStallDisplacement':[15,0,4],'marketStall3Displacement':[1.5,0,0],'charcoalHatchDisplacement':[7,0,0],
         'marketStairReserve':[reserve_low.tolist(),reserve_high.tolist()],'marketStairClearance':cleared,
         'rootRampReserve':[ramp_low.tolist(),ramp_high.tolist()],'rootRampClearance':ramp_cleared,
         'motherrootVoice':{'identity':MOTHERROOT_VOICE,'post':content.authored_actor_points[(REGION,MOTHERROOT_VOICE)].tolist()}}

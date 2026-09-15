@@ -25,7 +25,7 @@
       "max": [
         160.786735314162,
         31.881306072337377,
-        -82.02469207275726
+        -84.0
       ]
     },
     "playableBounds": {
@@ -36,7 +36,7 @@
       ],
       "max": [
         296.0,
-        289.57038202907705,
+        289.5820514595254,
         306.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         296.0,
-        289.57038202907705,
+        289.5820514595254,
         306.0
       ]
     }
@@ -485,7 +485,7 @@
       ],
       "max": [
         296.0,
-        289.57038202907705,
+        289.5820514595254,
         306.0
       ]
     },
@@ -505,9 +505,9 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 216312,
-    "nodes": 51,
-    "meshes": 18,
+    "glbBytes": 209412,
+    "nodes": 47,
+    "meshes": 16,
     "externalResources": {
       "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -524,9 +524,7 @@
       "../../../_continent/shared-assets/db2c7c74f2b18000a04770fac433094201dad4e3d233403ea217511199ff82b5.png": "db2c7c74f2b18000a04770fac433094201dad4e3d233403ea217511199ff82b5",
       "../../../_continent/shared-assets/1e46e611766f1ff771876959dfe9b23cbb2fb1858a68fe635a584f5d03759314.png": "1e46e611766f1ff771876959dfe9b23cbb2fb1858a68fe635a584f5d03759314",
       "../../../_continent/shared-assets/fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046.png": "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046",
-      "../../../_continent/shared-assets/07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f.png": "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f",
-      "../../../_continent/shared-assets/861c0b82c1bfeb753dbc6ee5a65f0e408beb984ef7481509703f05eaca6a2355.png": "861c0b82c1bfeb753dbc6ee5a65f0e408beb984ef7481509703f05eaca6a2355",
-      "../../../_continent/shared-assets/4a94b1614cda42c42a66fa7237ad9d38fec320503f1cfc0779c4c617dd841690.png": "4a94b1614cda42c42a66fa7237ad9d38fec320503f1cfc0779c4c617dd841690"
+      "../../../_continent/shared-assets/07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f.png": "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f"
     },
     "sharedResourceResidentBytes": {
       "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
@@ -544,9 +542,7 @@
       "db2c7c74f2b18000a04770fac433094201dad4e3d233403ea217511199ff82b5": 349526,
       "1e46e611766f1ff771876959dfe9b23cbb2fb1858a68fe635a584f5d03759314": 1398102,
       "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
-      "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526,
-      "861c0b82c1bfeb753dbc6ee5a65f0e408beb984ef7481509703f05eaca6a2355": 1398102,
-      "4a94b1614cda42c42a66fa7237ad9d38fec320503f1cfc0779c4c617dd841690": 349526
+      "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526
     }
   },
   "sources": [
@@ -2151,10 +2147,10 @@
     "max": [
       160.786735314162,
       31.881306072337377,
-      -82.02469207275726
+      -84.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:021cfeafd3cc2ed73fe1a94c88a2ffc14ac4aa091f25b6f872b9edeea629b5fa",
+  "terrainRevision": "diagonal-spine-v1:8b8bd13ed6a6bdb7ef0153dabfb9d438b642bdf8036e7b8da99ff30f41b7eca3",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -2171,19 +2167,17 @@
     "../../../_continent/shared-assets/db2c7c74f2b18000a04770fac433094201dad4e3d233403ea217511199ff82b5.png": "db2c7c74f2b18000a04770fac433094201dad4e3d233403ea217511199ff82b5",
     "../../../_continent/shared-assets/1e46e611766f1ff771876959dfe9b23cbb2fb1858a68fe635a584f5d03759314.png": "1e46e611766f1ff771876959dfe9b23cbb2fb1858a68fe635a584f5d03759314",
     "../../../_continent/shared-assets/fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046.png": "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046",
-    "../../../_continent/shared-assets/07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f.png": "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f",
-    "../../../_continent/shared-assets/861c0b82c1bfeb753dbc6ee5a65f0e408beb984ef7481509703f05eaca6a2355.png": "861c0b82c1bfeb753dbc6ee5a65f0e408beb984ef7481509703f05eaca6a2355",
-    "../../../_continent/shared-assets/4a94b1614cda42c42a66fa7237ad9d38fec320503f1cfc0779c4c617dd841690.png": "4a94b1614cda42c42a66fa7237ad9d38fec320503f1cfc0779c4c617dd841690"
+    "../../../_continent/shared-assets/07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f.png": "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
     "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
     "collisionSha256": "c0d11a164a66dbcf179bb2a55d49f20a3374802fc82ed5517a1465c40352872d",
-    "terrainRevision": "diagonal-spine-v1:021cfeafd3cc2ed73fe1a94c88a2ffc14ac4aa091f25b6f872b9edeea629b5fa"
+    "terrainRevision": "diagonal-spine-v1:8b8bd13ed6a6bdb7ef0153dabfb9d438b642bdf8036e7b8da99ff30f41b7eca3"
   }
 }

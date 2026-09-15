@@ -24,7 +24,7 @@
       ],
       "max": [
         276.0,
-        289.57038202907705,
+        289.5820514595254,
         160.0
       ]
     },
@@ -39,7 +39,7 @@
       ],
       "max": [
         276.0,
-        289.57038202907705,
+        289.5820514595254,
         160.0
       ]
     },
@@ -52,7 +52,7 @@
       ],
       "max": [
         276.0,
-        289.57038202907705,
+        289.5820514595254,
         160.0
       ]
     }
@@ -199,7 +199,7 @@
       "type": "training-yard",
       "position": [
         -155.70000000000005,
-        11.311158206751436,
+        11.311158208156737,
         101.70000000000005
       ]
     },
@@ -210,7 +210,7 @@
       "type": "training-yard",
       "position": [
         157.39999999999998,
-        17.879716582522217,
+        17.8797165617397,
         100.0
       ]
     }
@@ -992,18 +992,18 @@
       "id": "road-to-amberwood",
       "name": "Road to Amberwood",
       "position": [
-        13.5,
-        21.92392462483149,
-        -153.5
+        -42.5,
+        8.19300916263901,
+        -149.5
       ],
       "serverTile": [
-        323,
-        317
+        267,
+        313
       ],
       "destinationMap": "amberwood",
       "destinationTile": [
-        275,
-        23
+        219,
+        19
       ],
       "type": "walk"
     },
@@ -2050,7 +2050,7 @@
       ],
       "max": [
         276.0,
-        289.57038202907705,
+        289.5820514595254,
         160.0
       ]
     },
@@ -2072,7 +2072,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+      "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
       "globalMin": [
         224.0,
         684.0
@@ -2182,8 +2182,8 @@
       164.0
     ],
     "heightEncoding": {
-      "origin": 2.6092354686323276,
-      "step": 0.3468806597869143,
+      "origin": 2.6392909382392284,
+      "step": 0.34676233209493623,
       "range": [
         1,
         255
@@ -2201,16 +2201,16 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 395067,
-    "walkableFraction": 0.279923,
-    "sourceGlbSha256": "5ead97117303b2799f8cf21fe54c08b7e963f036f1b806d73c063e039a5cde7a",
+    "walkableCells": 398563,
+    "walkableFraction": 0.2824,
+    "sourceGlbSha256": "68fffd781f34d093c673b98a27f7713ff79b570dcb5f81496816fbe0517c3b72",
     "exportStatistics": {
       "walkMeshes": 8,
       "structuralMeshes": 313,
       "structuralTriangles": 31978,
-      "walkTriangles": 1730,
-      "steepCells": 57271,
-      "waterCells": 35192,
+      "walkTriangles": 5643,
+      "steepCells": 56699,
+      "waterCells": 32136,
       "structuralCells": 22015,
       "thresholdHaloCells": 240
     }
@@ -2226,22 +2226,22 @@
     "collisionFile": "collision.bin",
     "crossings": [
       {
-        "id": "ContinentalBridgeUnion_013",
+        "id": "ContinentalBridgeUnion_008",
         "endpoints": [
           [
-            8.3,
-            18.59005355834961,
-            -140.3
+            -153.7,
+            9.554616212844849,
+            -29.3
           ],
           [
-            16.3,
-            21.447185039520264,
-            -151.3
+            -39.7,
+            13.896082878112793,
+            -147.3
           ]
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_017",
+        "id": "ContinentalBridgeUnion_016",
         "endpoints": [
           [
             -160.7,
@@ -2258,9 +2258,9 @@
     ]
   },
   "performance": {
-    "glbBytes": 7536992,
-    "nodes": 1523,
-    "meshes": 708,
+    "glbBytes": 7944328,
+    "nodes": 1582,
+    "meshes": 728,
     "externalResources": {
       "../nymara-regions/_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../nymara-regions/_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -2345,32 +2345,32 @@
       "../nymara-regions/_continent/shared-assets/475ef8281cbbcd2725103e11e0c83e3078a3126128609801c9e59ae4314a4d19.png": "475ef8281cbbcd2725103e11e0c83e3078a3126128609801c9e59ae4314a4d19",
       "../nymara-regions/_continent/shared-assets/fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046.png": "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046",
       "../nymara-regions/_continent/shared-assets/07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f.png": "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f",
-      "../nymara-regions/_continent/shared-assets/9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6.png": "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6",
-      "../nymara-regions/_continent/shared-assets/1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853.png": "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853",
-      "../nymara-regions/_continent/shared-assets/ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247.png": "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247",
-      "../nymara-regions/_continent/shared-assets/2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832.png": "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832",
-      "../nymara-regions/_continent/shared-assets/fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3.png": "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3",
-      "../nymara-regions/_continent/shared-assets/5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a.png": "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a",
-      "../nymara-regions/_continent/shared-assets/935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab.png": "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab",
-      "../nymara-regions/_continent/shared-assets/085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427.png": "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427",
-      "../nymara-regions/_continent/shared-assets/14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a.png": "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a",
-      "../nymara-regions/_continent/shared-assets/4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168.png": "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168",
-      "../nymara-regions/_continent/shared-assets/db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f.png": "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f",
-      "../nymara-regions/_continent/shared-assets/cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864.png": "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864",
       "../nymara-regions/_continent/shared-assets/c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b.png": "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b",
       "../nymara-regions/_continent/shared-assets/3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035.png": "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035",
       "../nymara-regions/_continent/shared-assets/7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6.png": "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6",
-      "../nymara-regions/_continent/shared-assets/b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255.png": "b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255",
-      "../nymara-regions/_continent/shared-assets/065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb.png": "065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb",
-      "../nymara-regions/_continent/shared-assets/b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01.png": "b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01",
+      "../nymara-regions/_continent/shared-assets/085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427.png": "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427",
+      "../nymara-regions/_continent/shared-assets/14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a.png": "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a",
+      "../nymara-regions/_continent/shared-assets/9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6.png": "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6",
+      "../nymara-regions/_continent/shared-assets/1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853.png": "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853",
+      "../nymara-regions/_continent/shared-assets/ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247.png": "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247",
+      "../nymara-regions/_continent/shared-assets/5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a.png": "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a",
+      "../nymara-regions/_continent/shared-assets/935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab.png": "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab",
+      "../nymara-regions/_continent/shared-assets/2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832.png": "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832",
+      "../nymara-regions/_continent/shared-assets/fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3.png": "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3",
+      "../nymara-regions/_continent/shared-assets/4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168.png": "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168",
+      "../nymara-regions/_continent/shared-assets/db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f.png": "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f",
+      "../nymara-regions/_continent/shared-assets/cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864.png": "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864",
       "../nymara-regions/_continent/shared-assets/5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95.png": "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95",
       "../nymara-regions/_continent/shared-assets/2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b.png": "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b",
       "../nymara-regions/_continent/shared-assets/99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd.png": "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd",
-      "../nymara-regions/_continent/shared-assets/a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c.png": "a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c",
-      "../nymara-regions/_continent/shared-assets/c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9.png": "c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9",
+      "../nymara-regions/_continent/shared-assets/b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255.png": "b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255",
+      "../nymara-regions/_continent/shared-assets/065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb.png": "065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb",
+      "../nymara-regions/_continent/shared-assets/b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01.png": "b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01",
       "../nymara-regions/_continent/shared-assets/bb9e65d308478ab4c6c8a2b45f5e6b2ee359f9b7fa0b3e01ce68f65439e2fa4c.png": "bb9e65d308478ab4c6c8a2b45f5e6b2ee359f9b7fa0b3e01ce68f65439e2fa4c",
       "../nymara-regions/_continent/shared-assets/26516a2388195ac5c69afe1655e8c2b43deb81e34045e7c73141dd47c05de3a5.png": "26516a2388195ac5c69afe1655e8c2b43deb81e34045e7c73141dd47c05de3a5",
       "../nymara-regions/_continent/shared-assets/5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365.png": "5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365",
+      "../nymara-regions/_continent/shared-assets/a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c.png": "a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c",
+      "../nymara-regions/_continent/shared-assets/c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9.png": "c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9",
       "../nymara-regions/_continent/shared-assets/d575609332890a0fdce2def3286959f4f752d1a35d7f2b83c7a667295268ee5e.png": "d575609332890a0fdce2def3286959f4f752d1a35d7f2b83c7a667295268ee5e"
     },
     "sharedResourceResidentBytes": {
@@ -2457,32 +2457,32 @@
       "475ef8281cbbcd2725103e11e0c83e3078a3126128609801c9e59ae4314a4d19": 87382,
       "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
       "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526,
-      "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
-      "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
-      "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
-      "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
-      "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
-      "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
-      "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
-      "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
-      "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
-      "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
-      "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
-      "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
       "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b": 1398102,
       "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035": 349526,
       "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6": 1398102,
-      "b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255": 349526,
-      "065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb": 349526,
-      "b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01": 349526,
+      "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
+      "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
+      "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
+      "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
+      "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
+      "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
+      "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
+      "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
+      "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
+      "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
+      "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
+      "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
       "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95": 1398102,
       "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b": 1398102,
       "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102,
-      "a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c": 1398102,
-      "c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9": 349526,
+      "b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255": 349526,
+      "065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb": 349526,
+      "b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01": 349526,
       "bb9e65d308478ab4c6c8a2b45f5e6b2ee359f9b7fa0b3e01ce68f65439e2fa4c": 349526,
       "26516a2388195ac5c69afe1655e8c2b43deb81e34045e7c73141dd47c05de3a5": 349526,
       "5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365": 349526,
+      "a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c": 1398102,
+      "c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9": 349526,
       "d575609332890a0fdce2def3286959f4f752d1a35d7f2b83c7a667295268ee5e": 87382
     }
   },
@@ -2500,7 +2500,7 @@
     ],
     "max": [
       276.0,
-      289.57038202907705,
+      289.5820514595254,
       160.0
     ]
   },
@@ -2534,14 +2534,14 @@
       "portal": "road-to-amberwood",
       "destination": "amberwood",
       "anchor": [
-        13.0,
-        21.18082054620793,
-        -152.0
+        -43.0,
+        7.122167964021928,
+        -148.0
       ],
       "globalAnchor": [
-        543.0,
-        21.18082054620793,
-        688.0
+        487.0,
+        7.122167964021928,
+        692.0
       ],
       "globalTranslation": [
         530.0,
@@ -4329,7 +4329,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:f4d5719e01e29541b666521e21ef5e7642468b2e9360758e82e1038b7cf1762c",
+  "terrainRevision": "diagonal-spine-v1:41e9d9494ee73f52e3a1f9efc3099a7717b62009f60a64b444baacd97c8b413b",
   "externalResources": {
     "../nymara-regions/_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../nymara-regions/_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4414,37 +4414,37 @@
     "../nymara-regions/_continent/shared-assets/475ef8281cbbcd2725103e11e0c83e3078a3126128609801c9e59ae4314a4d19.png": "475ef8281cbbcd2725103e11e0c83e3078a3126128609801c9e59ae4314a4d19",
     "../nymara-regions/_continent/shared-assets/fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046.png": "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046",
     "../nymara-regions/_continent/shared-assets/07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f.png": "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f",
-    "../nymara-regions/_continent/shared-assets/9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6.png": "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6",
-    "../nymara-regions/_continent/shared-assets/1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853.png": "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853",
-    "../nymara-regions/_continent/shared-assets/ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247.png": "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247",
-    "../nymara-regions/_continent/shared-assets/2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832.png": "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832",
-    "../nymara-regions/_continent/shared-assets/fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3.png": "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3",
-    "../nymara-regions/_continent/shared-assets/5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a.png": "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a",
-    "../nymara-regions/_continent/shared-assets/935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab.png": "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab",
-    "../nymara-regions/_continent/shared-assets/085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427.png": "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427",
-    "../nymara-regions/_continent/shared-assets/14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a.png": "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a",
-    "../nymara-regions/_continent/shared-assets/4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168.png": "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168",
-    "../nymara-regions/_continent/shared-assets/db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f.png": "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f",
-    "../nymara-regions/_continent/shared-assets/cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864.png": "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864",
     "../nymara-regions/_continent/shared-assets/c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b.png": "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b",
     "../nymara-regions/_continent/shared-assets/3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035.png": "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035",
     "../nymara-regions/_continent/shared-assets/7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6.png": "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6",
-    "../nymara-regions/_continent/shared-assets/b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255.png": "b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255",
-    "../nymara-regions/_continent/shared-assets/065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb.png": "065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb",
-    "../nymara-regions/_continent/shared-assets/b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01.png": "b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01",
+    "../nymara-regions/_continent/shared-assets/085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427.png": "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427",
+    "../nymara-regions/_continent/shared-assets/14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a.png": "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a",
+    "../nymara-regions/_continent/shared-assets/9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6.png": "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6",
+    "../nymara-regions/_continent/shared-assets/1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853.png": "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853",
+    "../nymara-regions/_continent/shared-assets/ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247.png": "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247",
+    "../nymara-regions/_continent/shared-assets/5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a.png": "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a",
+    "../nymara-regions/_continent/shared-assets/935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab.png": "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab",
+    "../nymara-regions/_continent/shared-assets/2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832.png": "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832",
+    "../nymara-regions/_continent/shared-assets/fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3.png": "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3",
+    "../nymara-regions/_continent/shared-assets/4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168.png": "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168",
+    "../nymara-regions/_continent/shared-assets/db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f.png": "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f",
+    "../nymara-regions/_continent/shared-assets/cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864.png": "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864",
     "../nymara-regions/_continent/shared-assets/5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95.png": "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95",
     "../nymara-regions/_continent/shared-assets/2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b.png": "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b",
     "../nymara-regions/_continent/shared-assets/99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd.png": "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd",
-    "../nymara-regions/_continent/shared-assets/a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c.png": "a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c",
-    "../nymara-regions/_continent/shared-assets/c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9.png": "c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9",
+    "../nymara-regions/_continent/shared-assets/b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255.png": "b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255",
+    "../nymara-regions/_continent/shared-assets/065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb.png": "065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb",
+    "../nymara-regions/_continent/shared-assets/b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01.png": "b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01",
     "../nymara-regions/_continent/shared-assets/bb9e65d308478ab4c6c8a2b45f5e6b2ee359f9b7fa0b3e01ce68f65439e2fa4c.png": "bb9e65d308478ab4c6c8a2b45f5e6b2ee359f9b7fa0b3e01ce68f65439e2fa4c",
     "../nymara-regions/_continent/shared-assets/26516a2388195ac5c69afe1655e8c2b43deb81e34045e7c73141dd47c05de3a5.png": "26516a2388195ac5c69afe1655e8c2b43deb81e34045e7c73141dd47c05de3a5",
     "../nymara-regions/_continent/shared-assets/5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365.png": "5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365",
+    "../nymara-regions/_continent/shared-assets/a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c.png": "a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c",
+    "../nymara-regions/_continent/shared-assets/c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9.png": "c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9",
     "../nymara-regions/_continent/shared-assets/d575609332890a0fdce2def3286959f4f752d1a35d7f2b83c7a667295268ee5e.png": "d575609332890a0fdce2def3286959f4f752d1a35d7f2b83c7a667295268ee5e"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
     "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
   },
   "streamingChunks": {
@@ -4462,34 +4462,34 @@
           "min": [
             -306.0,
             19.03705101348137,
-            -136.4811523902522
+            -134.0
           ],
           "max": [
-            -232.91270512907494,
-            42.03010634244122,
+            -231.45708147960738,
+            41.888414407158116,
             -72.0
           ]
         },
-        "estimatedResidentBytes": 16457612,
-        "glbBytes": 128316,
-        "geometryResidentBytes": 641580,
+        "estimatedResidentBytes": 16448852,
+        "glbBytes": 126564,
+        "geometryResidentBytes": 632820,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
+          "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
+          "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
+          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
+          "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
+          "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
           "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
           "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
           "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
           "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
           "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
-          "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
-          "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
-          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
-          "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
-          "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
+          "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
+          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526,
           "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95": 1398102,
           "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b": 1398102,
-          "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102,
-          "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
-          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526
+          "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102
         }
       },
       {
@@ -4502,23 +4502,22 @@
             -72.0
           ],
           "max": [
-            -240.27532975424492,
-            21.000695080350773,
+            -240.84613731810055,
+            20.958672638254548,
             6.0
           ]
         },
-        "estimatedResidentBytes": 7133388,
-        "glbBytes": 81004,
-        "geometryResidentBytes": 405020,
+        "estimatedResidentBytes": 7651298,
+        "glbBytes": 44776,
+        "geometryResidentBytes": 223880,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
-          "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
-          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526,
+          "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95": 1398102,
+          "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b": 1398102,
+          "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102,
           "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
           "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
-          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
-          "a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c": 1398102,
-          "c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9": 349526
+          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102
         }
       },
       {
@@ -4526,22 +4525,27 @@
         "manifest": "chunks/03_07/world.json",
         "bounds": {
           "min": [
-            -252.21953784327587,
+            -248.825132127703,
             8.333427354054043,
-            -140.0
+            -145.2134837533879
           ],
           "max": [
-            -133.45212671613132,
-            46.754733977266284,
-            -69.49553209939131
+            -139.76581214509991,
+            48.71710035398265,
+            -69.09098854251374
           ]
         },
-        "estimatedResidentBytes": 25492710,
-        "glbBytes": 729472,
-        "geometryResidentBytes": 3647360,
+        "estimatedResidentBytes": 26272310,
+        "glbBytes": 885392,
+        "geometryResidentBytes": 4426960,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
+          "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
+          "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
+          "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
+          "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
+          "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
           "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
           "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
           "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
@@ -4549,19 +4553,14 @@
           "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
           "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
           "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
-          "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
-          "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
-          "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
-          "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
-          "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
           "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b": 1398102,
           "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035": 349526,
           "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6": 1398102,
+          "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
+          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526,
           "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95": 1398102,
           "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b": 1398102,
           "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102,
-          "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
-          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526,
           "b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255": 349526,
           "065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb": 349526,
           "b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01": 349526
@@ -4572,22 +4571,27 @@
         "manifest": "chunks/03_08/world.json",
         "bounds": {
           "min": [
-            -242.0,
+            -243.8404887004681,
             4.170038072630593,
-            -77.70998078656544
+            -72.0
           ],
           "max": [
-            -142.09730357609163,
-            44.64120359140596,
+            -146.0,
+            44.32528017537224,
             24.0
           ]
         },
-        "estimatedResidentBytes": 8856228,
-        "glbBytes": 198380,
-        "geometryResidentBytes": 991900,
+        "estimatedResidentBytes": 13837286,
+        "glbBytes": 215920,
+        "geometryResidentBytes": 1079600,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
+          "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
+          "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
+          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
+          "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
+          "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
           "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
           "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
           "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
@@ -4611,19 +4615,16 @@
           ],
           "max": [
             -146.0,
-            15.123944029659825,
+            14.937096362009523,
             120.0
           ]
         },
-        "estimatedResidentBytes": 5175512,
-        "glbBytes": 143812,
-        "geometryResidentBytes": 719060,
+        "estimatedResidentBytes": 960626,
+        "glbBytes": 139696,
+        "geometryResidentBytes": 698480,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
-          "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95": 1398102,
-          "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b": 1398102,
-          "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102,
           "d575609332890a0fdce2def3286959f4f752d1a35d7f2b83c7a667295268ee5e": 87382
         }
       },
@@ -4654,19 +4655,19 @@
         "manifest": "chunks/04_07/world.json",
         "bounds": {
           "min": [
-            -146.0,
-            2.9195150682271036,
+            -155.79055786132812,
+            3.3992532485724176,
             -148.0
           ],
           "max": [
             -17.737123227975644,
             81.89597987804733,
-            -71.48308826212872
+            -28.0
           ]
         },
-        "estimatedResidentBytes": 44658128,
-        "glbBytes": 647868,
-        "geometryResidentBytes": 3239340,
+        "estimatedResidentBytes": 47554612,
+        "glbBytes": 930068,
+        "geometryResidentBytes": 4650340,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -4713,15 +4714,17 @@
           "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
           "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
           "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
+          "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b": 1398102,
+          "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035": 349526,
+          "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6": 1398102,
           "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
           "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
           "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
           "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
-          "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
-          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526,
           "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95": 1398102,
           "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b": 1398102,
-          "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102
+          "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102,
+          "d575609332890a0fdce2def3286959f4f752d1a35d7f2b83c7a667295268ee5e": 87382
         }
       },
       {
@@ -4731,17 +4734,17 @@
           "min": [
             -146.0,
             4.667326120860846,
-            -74.40326691184248
+            -72.0
           ],
           "max": [
-            -43.68474368214703,
+            -49.69315152133413,
             74.31320768216509,
             33.1459550804359
           ]
         },
-        "estimatedResidentBytes": 60181600,
-        "glbBytes": 886452,
-        "geometryResidentBytes": 4432260,
+        "estimatedResidentBytes": 56729880,
+        "glbBytes": 965064,
+        "geometryResidentBytes": 4825320,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -4800,23 +4803,21 @@
           "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
           "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
           "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
+          "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
+          "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
           "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
           "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
           "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
           "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
           "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
-          "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
-          "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
-          "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
-          "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
-          "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b": 1398102,
-          "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035": 349526,
-          "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6": 1398102,
           "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
           "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526,
           "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95": 1398102,
           "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b": 1398102,
-          "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102
+          "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102,
+          "bb9e65d308478ab4c6c8a2b45f5e6b2ee359f9b7fa0b3e01ce68f65439e2fa4c": 349526,
+          "26516a2388195ac5c69afe1655e8c2b43deb81e34045e7c73141dd47c05de3a5": 349526,
+          "5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365": 349526
         }
       },
       {
@@ -4826,17 +4827,17 @@
           "min": [
             -153.45263498126985,
             1.8179965685709583,
-            20.243884958823514
+            14.63541171352881
           ],
           "max": [
-            -46.08540040987083,
-            40.76897538705541,
+            -43.94830831331643,
+            45.0730402084004,
             120.0
           ]
         },
-        "estimatedResidentBytes": 37724966,
-        "glbBytes": 589432,
-        "geometryResidentBytes": 2947160,
+        "estimatedResidentBytes": 43139944,
+        "glbBytes": 693756,
+        "geometryResidentBytes": 3468780,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -4883,14 +4884,19 @@
           "11acef171c9483ba0326c55e79e7dcabdebc20589d6659b5fce4441b15a0a469": 1398102,
           "93bbf1c04e3b6bec0e22897bd63f2d68298c2698f9551f36a434a38d9250eb57": 349526,
           "40ae2223911a179955bd8b1c17991c7dc21ce244efd7ab1f22d5d9dc38a8e92c": 1398102,
-          "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
-          "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
-          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
-          "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
-          "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
+          "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
+          "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
+          "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
+          "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
+          "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
+          "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
+          "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
           "bb9e65d308478ab4c6c8a2b45f5e6b2ee359f9b7fa0b3e01ce68f65439e2fa4c": 349526,
           "26516a2388195ac5c69afe1655e8c2b43deb81e34045e7c73141dd47c05de3a5": 349526,
-          "5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365": 349526
+          "5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365": 349526,
+          "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
+          "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
+          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102
         }
       },
       {
@@ -4908,15 +4914,12 @@
             148.0
           ]
         },
-        "estimatedResidentBytes": 1514602,
-        "glbBytes": 58252,
-        "geometryResidentBytes": 291260,
+        "estimatedResidentBytes": 446724,
+        "glbBytes": 54392,
+        "geometryResidentBytes": 271960,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
-          "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
-          "bb9e65d308478ab4c6c8a2b45f5e6b2ee359f9b7fa0b3e01ce68f65439e2fa4c": 349526,
-          "26516a2388195ac5c69afe1655e8c2b43deb81e34045e7c73141dd47c05de3a5": 349526,
-          "5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365": 349526
+          "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382
         }
       },
       {
@@ -4925,18 +4928,18 @@
         "bounds": {
           "min": [
             -50.0,
-            3.040808103078566,
-            -154.0
+            3.488680537591911,
+            -159.61596665281422
           ],
           "max": [
-            56.36487280000688,
+            46.0,
             74.31320768216509,
-            -64.02227908705879
+            -61.589198006018705
           ]
         },
-        "estimatedResidentBytes": 60300764,
-        "glbBytes": 1120000,
-        "geometryResidentBytes": 5600000,
+        "estimatedResidentBytes": 57543936,
+        "glbBytes": 1145352,
+        "geometryResidentBytes": 5726760,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -4986,32 +4989,26 @@
           "843382be4eda772daf6b622d49d8f700605171c95c22fdeddc1d4512134dab68": 349526,
           "1d081298f165977ff2d99ff644947a7c1b6053edab80b38ed96c352e92ffea44": 349526,
           "ab59855a4121a56093cf56b41b5461fd7cfa365951edab16f3204be26c52c09b": 349526,
-          "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
-          "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
-          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
-          "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
-          "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
           "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b": 1398102,
           "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035": 349526,
           "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6": 1398102,
-          "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
-          "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
           "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
           "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
+          "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
+          "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
+          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
+          "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
+          "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
           "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
           "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
           "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
-          "b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255": 349526,
-          "065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb": 349526,
-          "b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01": 349526,
+          "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
+          "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
           "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95": 1398102,
           "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b": 1398102,
           "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102,
           "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
-          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526,
-          "a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c": 1398102,
-          "c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9": 349526,
-          "d575609332890a0fdce2def3286959f4f752d1a35d7f2b83c7a667295268ee5e": 87382
+          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526
         }
       },
       {
@@ -5029,9 +5026,9 @@
             24.0
           ]
         },
-        "estimatedResidentBytes": 44630418,
-        "glbBytes": 729708,
-        "geometryResidentBytes": 3648540,
+        "estimatedResidentBytes": 46385386,
+        "glbBytes": 731176,
+        "geometryResidentBytes": 3655880,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "7da2435fee0460bec13557b28d0334bd7fc798aa75408a8f665339dd87a61a16": 1398102,
@@ -5065,23 +5062,25 @@
           "11acef171c9483ba0326c55e79e7dcabdebc20589d6659b5fce4441b15a0a469": 1398102,
           "93bbf1c04e3b6bec0e22897bd63f2d68298c2698f9551f36a434a38d9250eb57": 349526,
           "40ae2223911a179955bd8b1c17991c7dc21ce244efd7ab1f22d5d9dc38a8e92c": 1398102,
-          "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
-          "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
-          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
-          "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
-          "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
           "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b": 1398102,
           "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035": 349526,
           "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6": 1398102,
-          "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
-          "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
           "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
           "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
           "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
           "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
           "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
+          "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
+          "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
+          "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
+          "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
+          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
+          "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
+          "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
           "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
-          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526
+          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526,
+          "a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c": 1398102,
+          "c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9": 349526
         }
       },
       {
@@ -5099,9 +5098,9 @@
             120.0
           ]
         },
-        "estimatedResidentBytes": 59803842,
-        "glbBytes": 1038092,
-        "geometryResidentBytes": 5190460,
+        "estimatedResidentBytes": 56005240,
+        "glbBytes": 1047328,
+        "geometryResidentBytes": 5236640,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "0a363ea032c6e69c26c4d630346b44e64e634a6f8e7449dcd764f276f0aec3ac": 1398102,
@@ -5159,21 +5158,16 @@
           "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
           "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
           "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
+          "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
+          "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
           "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
           "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
           "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b": 1398102,
           "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035": 349526,
           "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6": 1398102,
-          "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
-          "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
-          "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
-          "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
-          "b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255": 349526,
-          "065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb": 349526,
-          "b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01": 349526,
-          "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95": 1398102,
-          "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b": 1398102,
-          "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102,
+          "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
+          "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
+          "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
           "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
           "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526
         }
@@ -5183,7 +5177,7 @@
         "manifest": "chunks/05_10/world.json",
         "bounds": {
           "min": [
-            -50.50138817486504,
+            -50.0,
             1.1951766722912058,
             120.0
           ],
@@ -5193,9 +5187,9 @@
             152.0
           ]
         },
-        "estimatedResidentBytes": 1498102,
-        "glbBytes": 54952,
-        "geometryResidentBytes": 274760,
+        "estimatedResidentBytes": 1483062,
+        "glbBytes": 51944,
+        "geometryResidentBytes": 259720,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5215,13 +5209,13 @@
           ],
           "max": [
             136.0,
-            42.709450857865626,
-            -70.97646648844398
+            57.67867600258115,
+            -64.55840993293964
           ]
         },
-        "estimatedResidentBytes": 33146480,
-        "glbBytes": 460168,
-        "geometryResidentBytes": 2300840,
+        "estimatedResidentBytes": 34683208,
+        "glbBytes": 417988,
+        "geometryResidentBytes": 2089940,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "7da2435fee0460bec13557b28d0334bd7fc798aa75408a8f665339dd87a61a16": 1398102,
@@ -5260,13 +5254,15 @@
           "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
           "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
           "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
-          "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
-          "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
-          "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b": 1398102,
-          "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035": 349526,
-          "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6": 1398102,
+          "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
+          "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
+          "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
+          "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
+          "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
           "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
-          "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526
+          "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
+          "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
+          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526
         }
       },
       {
@@ -5276,17 +5272,17 @@
           "min": [
             46.0,
             5.66999735262098,
-            -74.97585485426032
+            -74.51898001090524
           ],
           "max": [
             142.0,
             74.31320768216509,
-            24.14936243490945
+            30.1100759641771
           ]
         },
-        "estimatedResidentBytes": 57494278,
-        "glbBytes": 855800,
-        "geometryResidentBytes": 4279000,
+        "estimatedResidentBytes": 56797818,
+        "glbBytes": 716508,
+        "geometryResidentBytes": 3582540,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "f6f587a6401b62a85cb10ec93847b1536a4266766669540a1dfcfedf2e00c893": 349526,
@@ -5342,21 +5338,21 @@
           "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
           "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
           "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
-          "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b": 1398102,
-          "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035": 349526,
-          "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6": 1398102,
-          "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
-          "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
           "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
           "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
           "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
           "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
           "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
+          "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b": 1398102,
+          "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035": 349526,
+          "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6": 1398102,
+          "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
+          "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
+          "a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c": 1398102,
+          "c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9": 349526,
           "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95": 1398102,
           "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b": 1398102,
-          "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102,
-          "a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c": 1398102,
-          "c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9": 349526
+          "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102
         }
       },
       {
@@ -5364,19 +5360,19 @@
         "manifest": "chunks/06_09/world.json",
         "bounds": {
           "min": [
-            45.10000002384186,
+            44.7553044533729,
             4.98693409712547,
-            19.53111691793572
+            17.728326205511735
           ],
           "max": [
             142.0,
-            40.42491971107927,
+            43.57544624688749,
             120.0
           ]
         },
-        "estimatedResidentBytes": 39629394,
-        "glbBytes": 620792,
-        "geometryResidentBytes": 3103960,
+        "estimatedResidentBytes": 42816324,
+        "glbBytes": 629032,
+        "geometryResidentBytes": 3145160,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5430,6 +5426,9 @@
           "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
           "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
           "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
+          "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
+          "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
+          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
           "bb9e65d308478ab4c6c8a2b45f5e6b2ee359f9b7fa0b3e01ce68f65439e2fa4c": 349526,
           "26516a2388195ac5c69afe1655e8c2b43deb81e34045e7c73141dd47c05de3a5": 349526,
           "5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365": 349526
@@ -5440,7 +5439,7 @@
         "manifest": "chunks/06_10/world.json",
         "bounds": {
           "min": [
-            45.20425067102758,
+            46.0,
             7.842514610312856,
             120.0
           ],
@@ -5450,9 +5449,9 @@
             154.0
           ]
         },
-        "estimatedResidentBytes": 1547402,
-        "glbBytes": 64812,
-        "geometryResidentBytes": 324060,
+        "estimatedResidentBytes": 1532442,
+        "glbBytes": 61820,
+        "geometryResidentBytes": 309100,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5466,31 +5465,21 @@
         "manifest": "chunks/07_08/world.json",
         "bounds": {
           "min": [
-            134.96025776603506,
+            142.0,
             16.877106019712507,
             -62.0
           ],
           "max": [
             196.0,
-            91.53488182687627,
+            91.53488189084163,
             24.0
           ]
         },
-        "estimatedResidentBytes": 10212958,
-        "glbBytes": 67772,
-        "geometryResidentBytes": 338860,
+        "estimatedResidentBytes": 251182,
+        "glbBytes": 32760,
+        "geometryResidentBytes": 163800,
         "sharedResourceResidentBytes": {
-          "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
-          "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
-          "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
-          "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
-          "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b": 1398102,
-          "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035": 349526,
-          "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6": 1398102,
-          "2bb3c5ab2b90f58febff2fe9cc1fa90160440f5d3b810e669a0d5ab35196f832": 1398102,
-          "fa75ef00b2baceccfeb12e5ffe54100abc20a6a5038f8b6b669a4be58073fcf3": 349526,
-          "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
-          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526
+          "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382
         }
       },
       {
@@ -5498,31 +5487,30 @@
         "manifest": "chunks/07_09/world.json",
         "bounds": {
           "min": [
-            142.0,
+            137.5875030449082,
             16.595929132829927,
             24.0
           ],
           "max": [
-            238.0,
+            239.04068313257278,
             48.94471740722656,
             120.0
           ]
         },
-        "estimatedResidentBytes": 7248426,
-        "glbBytes": 156440,
-        "geometryResidentBytes": 782200,
+        "estimatedResidentBytes": 7872756,
+        "glbBytes": 141496,
+        "geometryResidentBytes": 707480,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
-          "b554815218ab58f3d7d4b5158ea732f4907141c79f92fffaa62083993ca56255": 349526,
-          "065f2a2b95ffc068cc94556d4c1b40516a546f4f317cf8aa8bd371a61d5493bb": 349526,
-          "b9f06a04c8563b9e12cd19ea15756c736b33aa34639f8d9ad32359dd2ba48a01": 349526,
           "5daf1e8fe98a25a6c5fe36f0cdb8549e09c4be9cb4a900ebd71cd50f3bd74e95": 1398102,
           "2e50d0cb59b7257eea46ce0eebca98a02a9bbf1a1192361358c2afa845d3bd6b": 1398102,
           "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102,
           "bb9e65d308478ab4c6c8a2b45f5e6b2ee359f9b7fa0b3e01ce68f65439e2fa4c": 349526,
           "26516a2388195ac5c69afe1655e8c2b43deb81e34045e7c73141dd47c05de3a5": 349526,
-          "5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365": 349526
+          "5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365": 349526,
+          "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046": 1398102,
+          "07a04f9e7f0ec5c683e213b7310e3570b71fa190f781fe17dc1ce2dcc345fa2f": 349526
         }
       },
       {
@@ -5540,9 +5528,9 @@
             158.0
           ]
         },
-        "estimatedResidentBytes": 1517862,
-        "glbBytes": 58904,
-        "geometryResidentBytes": 294520,
+        "estimatedResidentBytes": 1577622,
+        "glbBytes": 70856,
+        "geometryResidentBytes": 354280,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5556,7 +5544,7 @@
         "manifest": "chunks/08_09/world.json",
         "bounds": {
           "min": [
-            238.0,
+            233.3460729642236,
             26.742149350513966,
             94.0
           ],
@@ -5566,11 +5554,14 @@
             120.0
           ]
         },
-        "estimatedResidentBytes": 114622,
-        "glbBytes": 5448,
-        "geometryResidentBytes": 27240,
+        "estimatedResidentBytes": 1182520,
+        "glbBytes": 9312,
+        "geometryResidentBytes": 46560,
         "sharedResourceResidentBytes": {
-          "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382
+          "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
+          "bb9e65d308478ab4c6c8a2b45f5e6b2ee359f9b7fa0b3e01ce68f65439e2fa4c": 349526,
+          "26516a2388195ac5c69afe1655e8c2b43deb81e34045e7c73141dd47c05de3a5": 349526,
+          "5ad4349c53838eb1443c531b1eb418b817a8bfd14cc0cf8c9a087ce12eea1365": 349526
         }
       },
       {
@@ -5596,12 +5587,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:f4d5719e01e29541b666521e21ef5e7642468b2e9360758e82e1038b7cf1762c"
+    "terrainRevision": "diagonal-spine-v1:41e9d9494ee73f52e3a1f9efc3099a7717b62009f60a64b444baacd97c8b413b"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
-    "collisionSha256": "c961366c07bb60deb44bf53837c02297ef69edd889de15038d8c2dd0a0a4bdd9",
-    "terrainRevision": "diagonal-spine-v1:f4d5719e01e29541b666521e21ef5e7642468b2e9360758e82e1038b7cf1762c"
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
+    "collisionSha256": "a2088d8befad298581da50e02273ecfe32dde405ee8a975eadfb3a0f000d4aa8",
+    "terrainRevision": "diagonal-spine-v1:41e9d9494ee73f52e3a1f9efc3099a7717b62009f60a64b444baacd97c8b413b"
   }
 }

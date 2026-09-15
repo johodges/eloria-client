@@ -3068,7 +3068,7 @@
               0,
               0
             ],
-            "walkingHeight": 29.82876968383789,
+            "walkingHeight": 29.88150978088379,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -6025,7 +6025,7 @@
           "portal": "road-to-amberwood",
           "position": [
             -52.5,
-            88.66954091217288,
+            89.92351776566392,
             156.5
           ],
           "frame": {
@@ -6034,12 +6034,12 @@
             "destination": "amberwood",
             "anchor": [
               -53.0,
-              88.51044188640591,
+              89.76441873989694,
               156.0
             ],
             "globalAnchor": [
               497.0,
-              88.51044188640591,
+              89.76441873989694,
               376.0
             ],
             "globalTranslation": [
@@ -7758,7 +7758,7 @@
           "portal": "road-to-whitehorn_range",
           "position": [
             -12.5,
-            88.66954091217288,
+            89.92351776566392,
             -165.5
           ],
           "frame": {
@@ -7767,12 +7767,12 @@
             "destination": "whitehorn_range",
             "anchor": [
               -13.0,
-              88.51044188640591,
+              89.76441873989694,
               -164.0
             ],
             "globalAnchor": [
               497.0,
-              88.51044188640591,
+              89.76441873989694,
               376.0
             ],
             "globalTranslation": [
@@ -15541,7 +15541,7 @@
               0,
               0
             ],
-            "walkingHeight": 29.82876968383789,
+            "walkingHeight": 29.88150978088379,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -20441,7 +20441,7 @@
           "portal": "road-to-westhaven",
           "position": [
             -56.5,
-            17.833010171859943,
+            17.891510480103445,
             318.5
           ],
           "frame": {
@@ -20450,12 +20450,12 @@
             "destination": "westhaven",
             "anchor": [
               -57.0,
-              17.87437060781999,
+              17.91337081331566,
               318.0
             ],
             "globalAnchor": [
               163.0,
-              17.87437060781999,
+              17.91337081331566,
               738.0
             ],
             "globalTranslation": [
@@ -20493,7 +20493,7 @@
               0,
               0
             ],
-            "walkingHeight": 29.82876968383789,
+            "walkingHeight": 29.88150978088379,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -21724,7 +21724,7 @@
           "portal": "road-to-grey_moors",
           "position": [
             -6.5,
-            18.139837124549185,
+            18.133574673869987,
             -323.5
           ],
           "frame": {
@@ -21733,12 +21733,12 @@
             "destination": "grey_moors",
             "anchor": [
               -7.0,
-              17.87437060781999,
+              17.91337081331566,
               -322.0
             ],
             "globalAnchor": [
               163.0,
-              17.87437060781999,
+              17.91337081331566,
               738.0
             ],
             "globalTranslation": [
@@ -23013,7 +23013,7 @@
           "portal": "road-to-mirrorhold",
           "position": [
             129.5,
-            65.35396865702097,
+            64.3175718096528,
             72.5
           ],
           "frame": {
@@ -23021,14 +23021,14 @@
             "portal": "road-to-mirrorhold",
             "destination": "mirrorhold",
             "anchor": [
-              128.0,
-              64.5145227358496,
-              73.0
+              129.0,
+              64.23729210584732,
+              72.0
             ],
             "globalAnchor": [
-              638.0,
-              64.5145227358496,
-              613.0
+              639.0,
+              64.23729210584732,
+              612.0
             ],
             "globalTranslation": [
               510.0,
@@ -23036,8 +23036,8 @@
               540.0
             ],
             "outward": [
-              1.0,
-              0.0
+              0.0,
+              1.0
             ],
             "uvSign": 1,
             "preloadDistance": 320,
@@ -24945,23 +24945,23 @@
           "map": "mirrorhold",
           "portal": "road-to-amberwood",
           "position": [
-            -202.5,
-            64.06735315758216,
-            -37.5
+            -200.5,
+            64.39905098311053,
+            -39.5
           ],
           "frame": {
             "id": "amberwood--mirrorhold",
             "portal": "road-to-amberwood",
             "destination": "amberwood",
             "anchor": [
-              -202.0,
-              64.5145227358496,
-              -37.0
+              -201.0,
+              64.23729210584732,
+              -38.0
             ],
             "globalAnchor": [
-              638.0,
-              64.5145227358496,
-              613.0
+              639.0,
+              64.23729210584732,
+              612.0
             ],
             "globalTranslation": [
               840.0,
@@ -24969,8 +24969,8 @@
               650.0
             ],
             "outward": [
-              -1.0,
-              -0.0
+              -0.0,
+              -1.0
             ],
             "uvSign": 1,
             "preloadDistance": 320,
@@ -26884,23 +26884,23 @@
           "map": "amberwood",
           "portal": "road-to-four_gates",
           "position": [
-            33.5,
-            21.181220468366067,
-            148.5
+            -22.5,
+            6.797786420239905,
+            152.5
           ],
           "frame": {
             "id": "amberwood--four_gates",
             "portal": "road-to-four_gates",
             "destination": "four_gates",
             "anchor": [
-              33.0,
-              21.18082054620793,
-              148.0
+              -23.0,
+              7.122167964021928,
+              152.0
             ],
             "globalAnchor": [
-              543.0,
-              21.18082054620793,
-              688.0
+              487.0,
+              7.122167964021928,
+              692.0
             ],
             "globalTranslation": [
               510.0,
@@ -28787,23 +28787,23 @@
           "map": "four_gates",
           "portal": "road-to-amberwood",
           "position": [
-            13.5,
-            21.92392462483149,
-            -153.5
+            -42.5,
+            8.19300916263901,
+            -149.5
           ],
           "frame": {
             "id": "amberwood--four_gates",
             "portal": "road-to-amberwood",
             "destination": "amberwood",
             "anchor": [
-              13.0,
-              21.18082054620793,
-              -152.0
+              -43.0,
+              7.122167964021928,
+              -148.0
             ],
             "globalAnchor": [
-              543.0,
-              21.18082054620793,
-              688.0
+              487.0,
+              7.122167964021928,
+              692.0
             ],
             "globalTranslation": [
               530.0,
@@ -46938,7 +46938,7 @@
               0,
               0
             ],
-            "walkingHeight": 78.24848175048828,
+            "walkingHeight": 81.51676940917969,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -59512,7 +59512,7 @@
               0,
               0
             ],
-            "walkingHeight": 78.24848175048828,
+            "walkingHeight": 81.51676940917969,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -76020,7 +76020,7 @@
               0,
               0
             ],
-            "walkingHeight": 78.24848175048828,
+            "walkingHeight": 81.51676940917969,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -77497,7 +77497,7 @@
           "portal": "road-to-ssarathi_ruins",
           "position": [
             -30.5,
-            48.933097361441,
+            48.97769092580292,
             160.5
           ],
           "frame": {
@@ -77506,12 +77506,12 @@
             "destination": "ssarathi_ruins",
             "anchor": [
               -31.0,
-              48.93416455860762,
+              48.97875812296954,
               160.0
             ],
             "globalAnchor": [
               1069.0,
-              48.93416455860762,
+              48.97875812296954,
               1280.0
             ],
             "globalTranslation": [
@@ -77549,7 +77549,7 @@
               0,
               0
             ],
-            "walkingHeight": 78.24848175048828,
+            "walkingHeight": 81.51676940917969,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -80990,7 +80990,7 @@
           "portal": "road-to-verdant_stair",
           "position": [
             -30.5,
-            49.18538575430984,
+            49.509786274088455,
             -161.5
           ],
           "frame": {
@@ -80999,12 +80999,12 @@
             "destination": "verdant_stair",
             "anchor": [
               -31.0,
-              48.93416455860762,
+              48.97875812296954,
               -160.0
             ],
             "globalAnchor": [
               1069.0,
-              48.93416455860762,
+              48.97875812296954,
               1280.0
             ],
             "globalTranslation": [
@@ -84964,7 +84964,7 @@
               0,
               0
             ],
-            "walkingHeight": 29.82876968383789,
+            "walkingHeight": 29.88150978088379,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -101915,7 +101915,7 @@
               0,
               0
             ],
-            "walkingHeight": 78.24848175048828,
+            "walkingHeight": 81.51676940917969,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [

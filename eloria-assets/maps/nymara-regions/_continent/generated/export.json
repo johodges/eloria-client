@@ -1,21 +1,21 @@
 {
   "masterPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\_continent\\generated\\continent.glb",
-  "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+  "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
   "geometrySources": {
-    "build_continent.py": "6e0784bbe5643dacb22077470989c64f9294675b60ba7b5686dc8406b485ae47",
+    "build_continent.py": "00d3ecd3dff06d9e13c6264983fac8025b86fddceadaa733e2f5705e8de47e82",
     "scene_io.py": "9691cc8d611cf1fd6939c9de9ac20dd013c34f62c1cdc9833791d9416481f9dc",
     "terrain_export.py": "8172b53f4fc2b65780120e68b945e86991aa8ea2f70e4bfa05a49af809cbccb6",
     "bridge_export.py": "5101240f104d7cd9ce3f9bdda88c2f8e51b54ddaac84ca6fae5ccb6923e58ed8",
     "ferry_export.py": "b62c3920560a902fe1197c6e9b4a2fe8067948d4218a50db2f366e7ef7d38453",
     "crossings.py": "330edbd6b57112e6c903963396c110e233393578da34dff33d4864ca237b50d2",
-    "amberwood_access.py": "c918350e8fec2d7d10b68c372d3383e44146ab536e5adf62f5f0a03939cf85ef",
+    "amberwood_access.py": "6ec87f8995ce94bc7f0420a1d3e148dbe63823de52a00f8ec949f63785ea5065",
     "manymouth_access.py": "384d8da2abfc40895fe4dc64cbe8ffd7a2d1cbad98e573a2fa254895b3d65eb7",
     "manymouth_village_streets.py": "e693e424b4269174e38b1cca80eb51c7d2f0243a12deb6b95e46aa232cbe8ea7",
     "collision_export.py": "7a360c964db0524b61892d200916344a0c2238cb31357b2dec1573c371038609",
-    "mirror_access_geometry.py": "0e80b614cc1215c9536e9930a47ef1921889414d17d103cd03572724e71bb2fe",
+    "mirror_access_geometry.py": "9af6bf043c07e834b8238ec0b930c78c7d46bfe655560cd7833127b84357be8c",
     "grey_crossings.py": "46bf2b3f8227af2e01ba88dc68d7d80fedfc4ef9410dad3cba1edc1663256d2f"
   },
-  "compositionSha256": "8ae0c5b25f1a2a0c6ee2437c0cffd1c32f831f870057c254a63e7f5eb6511455",
+  "compositionSha256": "bd5e565d3685d120decb4af748ec5bfa2ec793a99bc5de9aba283e949d792b45",
   "greyCrossingLandmarks": [
     {
       "id": "grey-boardwalk-0",
@@ -33,20 +33,20 @@
     {
       "id": "grey-boardwalk-1",
       "replacedSpan": "Landmark_boardwalk_centre",
-      "node": "Walk_ContinentalBridgeUnion_005_grey_moors",
+      "node": "Walk_ContinentalBridgeUnion_004_grey_moors",
       "globalPosition": [
         271.0,
         27.850000381469727,
         353.0
       ],
-      "coveredSamples": 24,
+      "coveredSamples": 50,
       "oldFloorSamples": 106,
       "distanceMetres": 0.0
     },
     {
       "id": "grey-boardwalk-6",
       "replacedSpan": "Landmark_boardwalk_south",
-      "node": "Walk_ContinentalBridgeUnion_007_grey_moors",
+      "node": "Walk_ContinentalBridgeUnion_006_grey_moors",
       "globalPosition": [
         266.0,
         22.016843795776367,
@@ -60,62 +60,62 @@
   "regions": {
     "whitehorn_range": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\whitehorn_range\\world.json",
-      "glbSha256": "405890a6b604e7a0b5193f9b295d038ba0ef49d0f7893eb5f9bff66702ad8341",
+      "glbSha256": "1fb9e44076d02916c12890271b6b6c4b5d89c8d6abad021dfa25a50ea07cabe5",
       "chunks": 29
     },
     "grey_moors": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\grey_moors\\world.json",
-      "glbSha256": "41cee345408adc79b1ab348d2c85d4b17c0cfc9957036afd1eec2edc9b5649de",
+      "glbSha256": "731c942cb293f6d3a4b0205a5a6dccec733731d46bfd115388d555bf564c0f6e",
       "chunks": 32
     },
     "amberwood": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\amberwood\\world.json",
-      "glbSha256": "8025544b6ed8d8084eaede71d2db788c10bf728a8f8a0ada5511f3c9dd3ebcb3",
+      "glbSha256": "16358e913652c5b7bf09aa280bd8da9b139b31b712d0753712d814f8e17f6916",
       "chunks": 22
     },
     "amethyst_barrens": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\world.json",
-      "glbSha256": "eb88e14c79917d35dcdd8d11dc982dac95619fa43d78841d591e4dec65bff4b7",
+      "glbSha256": "cf37632c9cea0cba50215f5b12b94e1ed5ea29ce865175372d6a124f70022523",
       "chunks": 44
     },
     "mirrorhold": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world.json",
-      "glbSha256": "21604e0eba68e5d29bc3381a8fa96cfb4b054bf090ceb615acb4c7b4d92baebd",
+      "glbSha256": "c5fc868738e728205ab260ecc3ab99147551a89dc510fead10ca2d16128d1292",
       "chunks": 31
     },
     "sunmane_steppe": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\sunmane_steppe\\world.json",
-      "glbSha256": "ef3610d180f4d6cb53e405ab9b6465e33603b20e6bdbbc039e35ee08295e611f",
+      "glbSha256": "f604faae2b5130ee701522c49f6bff0df8930d21864e8091393d8101e9e05c6f",
       "chunks": 41
     },
     "four_gates": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\four-gates\\world.json",
-      "glbSha256": "5ead97117303b2799f8cf21fe54c08b7e963f036f1b806d73c063e039a5cde7a",
+      "glbSha256": "68fffd781f34d093c673b98a27f7713ff79b570dcb5f81496816fbe0517c3b72",
       "chunks": 23
     },
     "westhaven": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\westhaven\\world.json",
-      "glbSha256": "c053bdea0c037c954b20c559dd5835653371743d6c34268246193924331d5796",
+      "glbSha256": "1e3adc0afcc36b608426bd60a6236750adb41d976f016672122af8c99dc6b623",
       "chunks": 26
     },
     "manymouth_delta": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\manymouth_delta\\world.json",
-      "glbSha256": "2134ca8e85e32af7a6da6eea3f50a78fd4aef0f4a7188a4d6e3fa72e959f83d4",
+      "glbSha256": "dac1efaef675e3f3e9c2e1655ebb510242fef1bff377d1dd6415659c79c628dc",
       "chunks": 29
     },
     "crownwater": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\crownwater\\world.json",
-      "glbSha256": "22021b4368d5e266c2eff18ae6b3c5ad091d38cb05499cfb88d00308988a2d9c",
+      "glbSha256": "97b6081a6fbdf45c19c87c1b46dfb43684922c79e6186955bb64197868a96201",
       "chunks": 40
     },
     "verdant_stair": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\verdant_stair\\world.json",
-      "glbSha256": "d366ca1f094dde02604598c29c6160876ebc6e59b886088728f13a2d22916539",
+      "glbSha256": "aeca2bfb398c4436bd5d1b032b808cdfc6f9803e743359db3481ececbc9aad89",
       "chunks": 37
     },
     "ssarathi_ruins": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\world.json",
-      "glbSha256": "86b982c9a2157f0c50a2238cdc7cc9b58f55723486dd21beb86ca3aeb50bf645",
+      "glbSha256": "b0e6df9e4f947696084e9eda5d51200125a860460013fc911a27380e19a949d6",
       "chunks": 44
     }
   }

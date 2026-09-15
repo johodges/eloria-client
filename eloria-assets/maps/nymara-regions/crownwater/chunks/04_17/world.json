@@ -36,7 +36,7 @@
       ],
       "max": [
         476.0,
-        289.57038202907705,
+        289.5820514595254,
         110.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         476.0,
-        289.57038202907705,
+        289.5820514595254,
         110.0
       ]
     }
@@ -295,7 +295,7 @@
       ],
       "max": [
         476.0,
-        289.57038202907705,
+        289.5820514595254,
         110.0
       ]
     },
@@ -1726,7 +1726,7 @@
       110.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:a949daff0b1ab657b9f04305739772b3a086f2af1761fa5690d4c4d51cd0b09d",
+  "terrainRevision": "diagonal-spine-v1:2e06537d9f6743fe30b630676954b06938954f0b301ab0c677ecc35554ac1171",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -1742,13 +1742,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
     "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
-    "collisionSha256": "35cfe6d283f8a601fb39d990e0c9d02de9a9f93168649f91d3f7fccbf7e141de",
-    "terrainRevision": "diagonal-spine-v1:a949daff0b1ab657b9f04305739772b3a086f2af1761fa5690d4c4d51cd0b09d"
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
+    "collisionSha256": "021a37434dfef100b9d8e1f012097e1798bd09b60da8336fda68780fe8737edc",
+    "terrainRevision": "diagonal-spine-v1:2e06537d9f6743fe30b630676954b06938954f0b301ab0c677ecc35554ac1171"
   }
 }

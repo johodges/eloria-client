@@ -36,7 +36,7 @@
       ],
       "max": [
         232.0,
-        289.57038202907705,
+        289.5820514595254,
         346.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         232.0,
-        289.57038202907705,
+        289.5820514595254,
         346.0
       ]
     }
@@ -243,7 +243,7 @@
       ],
       "max": [
         232.0,
-        289.57038202907705,
+        289.5820514595254,
         346.0
       ]
     },
@@ -335,14 +335,14 @@
       "portal": "road-to-amberwood",
       "destination": "amberwood",
       "anchor": [
-        -202.0,
-        64.5145227358496,
-        -37.0
+        -201.0,
+        64.23729210584732,
+        -38.0
       ],
       "globalAnchor": [
-        638.0,
-        64.5145227358496,
-        613.0
+        639.0,
+        64.23729210584732,
+        612.0
       ],
       "globalTranslation": [
         840.0,
@@ -350,8 +350,8 @@
         650.0
       ],
       "outward": [
-        -1.0,
-        -0.0
+        -0.0,
+        -1.0
       ],
       "uvSign": 1,
       "preloadDistance": 320,
@@ -2984,7 +2984,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:93d40e3342cb6ca94a842ad18ed1fe27dd0435d3055dd9f25dfbf0b8c814bad9",
+  "terrainRevision": "diagonal-spine-v1:1ff5c540e005c69a2bcc9b6b0a2bbf27cde03445973ebbbe960776782166ac7f",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/34bfe9afef5484824ff7d670ae779edda8e8ea9e86183c4c0c75de066583480c.png": "34bfe9afef5484824ff7d670ae779edda8e8ea9e86183c4c0c75de066583480c",
@@ -3011,13 +3011,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
     "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
-    "collisionSha256": "917856d3fdbb5a6a7946cb2036918fd9cd73493fa6128b22eeeb50ed4993f501",
-    "terrainRevision": "diagonal-spine-v1:93d40e3342cb6ca94a842ad18ed1fe27dd0435d3055dd9f25dfbf0b8c814bad9"
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
+    "collisionSha256": "1e031f5a4b4e88a998873de5c37aea77b0637c20b145e35e724958e668133cc3",
+    "terrainRevision": "diagonal-spine-v1:1ff5c540e005c69a2bcc9b6b0a2bbf27cde03445973ebbbe960776782166ac7f"
   }
 }

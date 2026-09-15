@@ -24,7 +24,7 @@
       ],
       "max": [
         22.0,
-        17.992436661949508,
+        17.99661123221508,
         -196.0
       ]
     },
@@ -36,7 +36,7 @@
       ],
       "max": [
         202.0,
-        289.57038202907705,
+        289.5820514595254,
         240.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         202.0,
-        289.57038202907705,
+        289.5820514595254,
         240.0
       ]
     }
@@ -109,12 +109,12 @@
       "destination": "grey_moors",
       "anchor": [
         -7.0,
-        17.87437060781999,
+        17.91337081331566,
         -322.0
       ],
       "globalAnchor": [
         163.0,
-        17.87437060781999,
+        17.91337081331566,
         738.0
       ],
       "globalTranslation": [
@@ -464,7 +464,7 @@
       ],
       "max": [
         202.0,
-        289.57038202907705,
+        289.5820514595254,
         240.0
       ]
     },
@@ -484,8 +484,8 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 147496,
-    "nodes": 8,
+    "glbBytes": 149576,
+    "nodes": 20,
     "meshes": 3,
     "externalResources": {
       "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
@@ -1744,11 +1744,11 @@
     ],
     "max": [
       22.0,
-      17.992436661949508,
+      17.99661123221508,
       -196.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:e819793977940e8c77f246e1c6fc88ae2ce18313b50f3b17a27307ce58efb590",
+  "terrainRevision": "diagonal-spine-v1:24a4295092a6b2da751ecd142f09e84541bb5b6fd3264cb6bf7a519667c4f1be",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -1758,13 +1758,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
     "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
-    "collisionSha256": "4157c63711e8dbf1c503fd985182a6f5ef79c35af1799190a84d10a8c3f65ca1",
-    "terrainRevision": "diagonal-spine-v1:e819793977940e8c77f246e1c6fc88ae2ce18313b50f3b17a27307ce58efb590"
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
+    "collisionSha256": "fc0eff0d2ce5c0b773358937941f06cd76d7e52bd77973c95d2fec9dc6b9b39e",
+    "terrainRevision": "diagonal-spine-v1:24a4295092a6b2da751ecd142f09e84541bb5b6fd3264cb6bf7a519667c4f1be"
   }
 }

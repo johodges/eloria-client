@@ -18,13 +18,13 @@
     ],
     "bounds": {
       "min": [
-        -242.0,
+        -243.8404887004681,
         4.170038072630593,
-        -77.70998078656544
+        -72.0
       ],
       "max": [
-        -142.09730357609163,
-        44.64120359140596,
+        -146.0,
+        44.32528017537224,
         24.0
       ]
     },
@@ -39,7 +39,7 @@
       ],
       "max": [
         276.0,
-        289.57038202907705,
+        289.5820514595254,
         160.0
       ]
     },
@@ -52,7 +52,7 @@
       ],
       "max": [
         276.0,
-        289.57038202907705,
+        289.5820514595254,
         160.0
       ]
     }
@@ -239,7 +239,7 @@
       ],
       "max": [
         276.0,
-        289.57038202907705,
+        289.5820514595254,
         160.0
       ]
     },
@@ -278,12 +278,17 @@
     "defaultSpawn": "continent-arrival"
   },
   "performance": {
-    "glbBytes": 198380,
-    "nodes": 27,
-    "meshes": 11,
+    "glbBytes": 215920,
+    "nodes": 40,
+    "meshes": 14,
     "externalResources": {
       "../../../nymara-regions/_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../../../nymara-regions/_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
+      "../../../nymara-regions/_continent/shared-assets/9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6.png": "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6",
+      "../../../nymara-regions/_continent/shared-assets/1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853.png": "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853",
+      "../../../nymara-regions/_continent/shared-assets/ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247.png": "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247",
+      "../../../nymara-regions/_continent/shared-assets/5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a.png": "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a",
+      "../../../nymara-regions/_continent/shared-assets/935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab.png": "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab",
       "../../../nymara-regions/_continent/shared-assets/4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168.png": "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168",
       "../../../nymara-regions/_continent/shared-assets/db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f.png": "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f",
       "../../../nymara-regions/_continent/shared-assets/cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864.png": "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864",
@@ -298,6 +303,11 @@
     "sharedResourceResidentBytes": {
       "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
       "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
+      "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
+      "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853": 349526,
+      "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247": 1398102,
+      "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a": 1398102,
+      "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab": 349526,
       "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
       "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f": 349526,
       "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864": 1398102,
@@ -318,13 +328,13 @@
   "knownLimitations": [],
   "bounds": {
     "min": [
-      -242.0,
+      -243.8404887004681,
       4.170038072630593,
-      -77.70998078656544
+      -72.0
     ],
     "max": [
-      -142.09730357609163,
-      44.64120359140596,
+      -146.0,
+      44.32528017537224,
       24.0
     ]
   },
@@ -334,14 +344,14 @@
       "portal": "road-to-amberwood",
       "destination": "amberwood",
       "anchor": [
-        13.0,
-        21.18082054620793,
-        -152.0
+        -43.0,
+        7.122167964021928,
+        -148.0
       ],
       "globalAnchor": [
-        543.0,
-        21.18082054620793,
-        688.0
+        487.0,
+        7.122167964021928,
+        692.0
       ],
       "globalTranslation": [
         530.0,
@@ -2129,10 +2139,15 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:f4d5719e01e29541b666521e21ef5e7642468b2e9360758e82e1038b7cf1762c",
+  "terrainRevision": "diagonal-spine-v1:41e9d9494ee73f52e3a1f9efc3099a7717b62009f60a64b444baacd97c8b413b",
   "externalResources": {
     "../../../nymara-regions/_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../nymara-regions/_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
+    "../../../nymara-regions/_continent/shared-assets/9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6.png": "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6",
+    "../../../nymara-regions/_continent/shared-assets/1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853.png": "1e6b239197eac3a1739bc300dd9080bf78ae31955ac6c1ddb347ae65492be853",
+    "../../../nymara-regions/_continent/shared-assets/ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247.png": "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247",
+    "../../../nymara-regions/_continent/shared-assets/5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a.png": "5e85c8391c4bac32fd575dc4a1ec11df7196399c3a4f78852d3b381d59590f3a",
+    "../../../nymara-regions/_continent/shared-assets/935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab.png": "935028b6c1a69a06d085be64ae29fe90cddedcad21236f6599de780690b0c6ab",
     "../../../nymara-regions/_continent/shared-assets/4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168.png": "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168",
     "../../../nymara-regions/_continent/shared-assets/db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f.png": "db1b7e5bad1c11dfe18ed4b8fbf6fd5c54fe01934b91ab61c5abd318bc26fb4f",
     "../../../nymara-regions/_continent/shared-assets/cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864.png": "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864",
@@ -2146,13 +2161,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
     "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
-    "collisionSha256": "c961366c07bb60deb44bf53837c02297ef69edd889de15038d8c2dd0a0a4bdd9",
-    "terrainRevision": "diagonal-spine-v1:f4d5719e01e29541b666521e21ef5e7642468b2e9360758e82e1038b7cf1762c"
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
+    "collisionSha256": "a2088d8befad298581da50e02273ecfe32dde405ee8a975eadfb3a0f000d4aa8",
+    "terrainRevision": "diagonal-spine-v1:41e9d9494ee73f52e3a1f9efc3099a7717b62009f60a64b444baacd97c8b413b"
   }
 }

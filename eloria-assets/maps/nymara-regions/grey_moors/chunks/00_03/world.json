@@ -36,7 +36,7 @@
       ],
       "max": [
         192.0,
-        289.57038202907705,
+        289.5820514595254,
         322.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         192.0,
-        289.57038202907705,
+        289.5820514595254,
         322.0
       ]
     }
@@ -70,7 +70,7 @@
       0,
       0
     ],
-    "walkingHeight": 29.82876968383789,
+    "walkingHeight": 29.88150978088379,
     "invertServerY": true,
     "addressableWorldBounds": {
       "min": [
@@ -302,7 +302,7 @@
       ],
       "max": [
         192.0,
-        289.57038202907705,
+        289.5820514595254,
         322.0
       ]
     },
@@ -423,12 +423,12 @@
       "destination": "westhaven",
       "anchor": [
         -57.0,
-        17.87437060781999,
+        17.91337081331566,
         318.0
       ],
       "globalAnchor": [
         163.0,
-        17.87437060781999,
+        17.91337081331566,
         738.0
       ],
       "globalTranslation": [
@@ -2147,20 +2147,20 @@
       -36.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:9015510453c7750f9d2c58d0b12b90476bb388002e948827c8002a2c89e9aa00",
+  "terrainRevision": "diagonal-spine-v1:b86b36ce98c1c5fbdb94c2ce4fb405d6eb1c0f8f80a9534586fc269abec9bc55",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
     "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
-    "collisionSha256": "7312023b4299b5aced30015be26ada3777c58e2aa9c4569bc67ad45de0cf4247",
-    "terrainRevision": "diagonal-spine-v1:9015510453c7750f9d2c58d0b12b90476bb388002e948827c8002a2c89e9aa00"
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
+    "collisionSha256": "ab397b2e8919b4ac36ada7fa5212d43eb89f13b96eb865f10db0d25be936f0a4",
+    "terrainRevision": "diagonal-spine-v1:b86b36ce98c1c5fbdb94c2ce4fb405d6eb1c0f8f80a9534586fc269abec9bc55"
   }
 }

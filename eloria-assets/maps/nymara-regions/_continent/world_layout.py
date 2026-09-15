@@ -62,6 +62,24 @@ ROUTE_RELIEF_APRON_METRES=42.   # the outer reach of the natural bank apron the 
 # square of the excess is charged so traverses win over direct descents.
 ROUTE_STEP_GRADE=.35
 ROUTE_STEP_PENALTY=0.
+# The station terms per territory (cross-slope linear, cross-slope square,
+# relief, step grade). The territories whose contract sites the fifteenth
+# measured as tuned around the former alignments (Mirrorhold's civic
+# junction, the Ssarathi temple entry, the Amberwood--Four Gates seam
+# approach, the Amberwood estate posts, the Whitehorn and Manymouth doors)
+# keep the module weights above until those sites are re-seated; the wild
+# territories take the measured weights, so their traverses leave the steep
+# hillsides for the gentle ground. Westhaven keeps the module weights too:
+# with the measured ones its discovery branch 835 re-aligned ten metres
+# through Yard Shed 1 on flat ground (the shed's cells carry a neighbour's
+# solid id, so the alignment could not see it).
+ROUTE_TERRAIN_TERMS={region:(25.,40.,25.,600.) for region in
+    ('grey_moors','crownwater','verdant_stair','amethyst_barrens','sunmane_steppe')}
+
+
+def terrain_terms(region):
+    """(cross-slope linear, cross-slope square, relief, step) weights for a territory's alignments."""
+    return ROUTE_TERRAIN_TERMS.get(region,(ROUTE_CROSS_SLOPE_LINEAR,ROUTE_CROSS_SLOPE_SQUARE,ROUTE_RELIEF_PENALTY,ROUTE_STEP_PENALTY))
 ROAD_WADE_DEPTH_METRES=.3   # a road bed in shallow water stays this close to the surface (the fold wades .35)
 CHUNK=96.0
 
@@ -549,12 +567,14 @@ class World:
         return (int(np.clip(round((point[1]-self.z0)/CELL),0,self.height.shape[0]-1)),
                 int(np.clip(round((point[0]-self.x0)/CELL),0,self.height.shape[1]-1)))
 
-    def route(self,start,goal,region=None,step=6):
+    def route(self,start,goal,region=None,step=6,own=None):
         """A* road alignment that favours manageable grades, gentle traverses and narrow crossings.
 
         Retained solids are impassable for every station and for every edge
         between stations, except the solid that holds one of the road's own
-        ends (a door, a discovery, a hub inside a hall). When no alignment
+        ends (a door, a discovery, a hub inside a hall); a caller whose start
+        is no structure of its own (a trail from a road station) passes the
+        solids of its far end as ``own``. When no alignment
         exists at the normal station spacing the search threads closer
         stations between the solids; when none exists at all it runs once more
         with solids as a heavy penalty only, and the road is recorded as a
@@ -563,7 +583,7 @@ class World:
         routing=self.__dict__.setdefault('routing',[])
         start=np.asarray(start,float);goal=np.asarray(goal,float)
         origins=self.open_ground_candidates(start,region);targets=self.open_ground_candidates(goal,region)
-        own=self.solids_at_ends(start,goal)
+        if own is None:own=self.solids_at_ends(start,goal)
         pairs=sorted(((i+j,i,j) for i in range(len(origins)) for j in range(len(targets))))
         attempts=[(origins[i],targets[j],spacing,True) for _,i,j in pairs for spacing in (step,ROUTE_RETRY_STEP_METRES)]
         attempts.append((origins[0],targets[0],step,False))
@@ -708,6 +728,7 @@ class World:
                 sample=relief_height[sz,sx]
                 deepest=np.maximum(deepest,low-sample);tallest=np.maximum(tallest,sample-high)
             relief[(dz,dx)]=np.maximum(0.,np.maximum(deepest,tallest)-ROUTE_RELIEF_ALLOWANCE_METRES)
+        cross_linear,cross_square,relief_penalty,step_penalty=terrain_terms(region)
         costs={origin:0.};parents={};queue=[(0.,origin)];done=set()
         while queue:
             _,current=heapq.heappop(queue)
@@ -728,9 +749,9 @@ class World:
                 blocked=self.obstacles[min(nz*stride,rows-1),min(nx*stride,columns-1)]
                 excess=max(0.,float(slope[nz,nx])-ROUTE_CROSS_SLOPE_START)
                 steep=max(0.,grade-ROUTE_STEP_GRADE)
-                penalty=(1+grade*grade*32+max(0,grade-.4)*70+steep*steep*ROUTE_STEP_PENALTY
-                         +excess*ROUTE_CROSS_SLOPE_LINEAR+excess*excess*ROUTE_CROSS_SLOPE_SQUARE
-                         +float(relief[(dz,dx)][z,x])*ROUTE_RELIEF_PENALTY
+                penalty=(1+grade*grade*32+max(0,grade-.4)*70+steep*steep*step_penalty
+                         +excess*cross_linear+excess*excess*cross_square
+                         +float(relief[(dz,dx)][z,x])*relief_penalty
                          +(65 if h[nz,nx]<.3 else 0)+(150 if blocked and neighbor not in (origin,target) else 0)
                          +(SOLID_SOFT_PENALTY if solid else 0))
                 # In the steep city, the surveyed civic network provides the
@@ -797,7 +818,8 @@ class World:
                 'crossSlope':{'start':ROUTE_CROSS_SLOPE_START,'linear':ROUTE_CROSS_SLOPE_LINEAR,'square':ROUTE_CROSS_SLOPE_SQUARE},
                 'relief':{'allowanceMetres':ROUTE_RELIEF_ALLOWANCE_METRES,'penaltyPerMetre':ROUTE_RELIEF_PENALTY,'naturalApronMetres':ROUTE_RELIEF_APRON_METRES},
                 'stepGrade':{'grade':ROUTE_STEP_GRADE,'penalty':ROUTE_STEP_PENALTY},
-                'policy':'Retained solids up to 1600 square metres, widened by 2 m, are impassable for alignments and their edges except the solids within 6 m of a road end, first at 6 m stations then at 4 m; a road end inside a solid starts or ends with a close-station leg from open ground; a sealed end falls back to solids as a heavy penalty; larger boxes keep the soft clearance penalty; the cross-slope, relief, step-grade and seam-terminal terms stand at their listed weights (zero: off).'}
+                'terrainTermsByTerritory':{region:list(weights) for region,weights in ROUTE_TERRAIN_TERMS.items()},
+                'policy':'Retained solids up to 1600 square metres, widened by 2 m, are impassable for alignments and their edges except the solids within 6 m of a road end, first at 6 m stations then at 4 m; a road end inside a solid starts or ends with a close-station leg from open ground; a sealed end falls back to solids as a heavy penalty; larger boxes keep the soft clearance penalty; the seam-terminal term stands at its listed weight; the cross-slope, relief and step-grade terms stand at their listed module weights (zero: off) except in the territories listed under terrainTermsByTerritory.'}
 
     def add_road(self,points,width=3.5,name='road'):
         points=np.asarray(points,float)

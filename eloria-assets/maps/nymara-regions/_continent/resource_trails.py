@@ -211,7 +211,8 @@ def prepare_resource_trails(world, content, profile):
             start = own[nearest]
             name = f'trail-{region}-{number}'
             try:
-                path = world.route(start, centre, region=region)
+                # The start is a road station, not a structure of the trail's own.
+                path = world.route(start, centre, region=region, own=world.solids_at_ends(centre))
             except ValueError as error:
                 report['skipped'].append({'region': region, 'reason': str(error), 'sites': [candidates[i][0] for i in group]})
                 continue

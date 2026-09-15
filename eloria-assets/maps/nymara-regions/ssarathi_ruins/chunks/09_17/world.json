@@ -36,7 +36,7 @@
       ],
       "max": [
         400.0,
-        289.57038202907705,
+        289.5820514595254,
         240.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         400.0,
-        289.57038202907705,
+        289.5820514595254,
         240.0
       ]
     }
@@ -109,12 +109,12 @@
       "destination": "verdant_stair",
       "anchor": [
         -31.0,
-        48.93416455860762,
+        48.97875812296954,
         -160.0
       ],
       "globalAnchor": [
         1069.0,
-        48.93416455860762,
+        48.97875812296954,
         1280.0
       ],
       "globalTranslation": [
@@ -382,7 +382,7 @@
       ],
       "max": [
         400.0,
-        289.57038202907705,
+        289.5820514595254,
         240.0
       ]
     },
@@ -963,20 +963,20 @@
       240.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:b6243a6bd848af7d2c3043ec825f694cad0f52f4e75c80f1796d3ccb454a1b91",
+  "terrainRevision": "diagonal-spine-v1:f34a1d009a603b95b22a22b4a400ee4785aa123a231124d4671d66b92a6dbd4c",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
     "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
-    "collisionSha256": "7f9cddf67f954924981456ded97cf2225142f7c55cd0739e9fe836c1dd37a526",
-    "terrainRevision": "diagonal-spine-v1:b6243a6bd848af7d2c3043ec825f694cad0f52f4e75c80f1796d3ccb454a1b91"
+    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
+    "collisionSha256": "bd055c0520a8f16dc447eb55ee220e75c6fc71b66473239a0c0e3a92aff9b4fe",
+    "terrainRevision": "diagonal-spine-v1:f34a1d009a603b95b22a22b4a400ee4785aa123a231124d4671d66b92a6dbd4c"
   }
 }
