@@ -5,20 +5,27 @@ exported. X runs east, Z runs south, and sea level is Y = 0. Named territories
 are server and content identities. Their boundaries do not determine the
 height, water level, ground colour, or vegetation of the landscape.
 
-**QA state: provisional for the sixteenth publication (2026-09-15).** Master
+**QA state: verified for the sixteenth publication (2026-09-15).** Master
 `c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112`, publication
 `48afa1ed52fa6dc1737d2107660bf55601001b4c79c0d9750b15b1e09044eb5e`
 (`work-output/diagonal-continent/after/sixteenth-freeze.json`). On these bytes the
-strict contracts passed with 0 failures over 3,660 placements and the full audit
-passed and verified the publication. The seven native loopback suites, the
-gameplay view captures, the server, client and continent suites and the
-headless set were running when this notice was written; it becomes verified
-when they pass. Known limitations are listed in
-`STATUS-2026-09-13-takeover.md` (road cores steeper than 0.65 in settlement
-feathers and pinned city footings, 7 alignments through compact retained
-solids inside camp furniture, the Great Tree village yard and root plateau
-served by no hub-connected ground, 51 floating road runs reported and not
-decked, twelve decorative hulls across slopes, ramp heads with angular facets).
+strict contracts passed with 0 failures over 3,660 placements, the full audit
+passed and verified the publication, the 24 primary, 9 supplement and 2 atlas
+gameplay views were captured with the published registry and no overrides
+(`final-review/`, `final-repairs/`), and the seven native loopback suites
+walked 240 routes with 0 failures on a real server (`after/live-walk/
+final-live-summary.json`). Known limitations are listed in
+`STATUS-2026-09-13-takeover.md`: road cores steeper than 0.65 in settlement
+feathers and pinned city footings that the server routes around (the station
+terrain terms are on in five wild territories and held at zero in the seven
+whose sites are tuned around the former alignments), 7 alignments
+through compact retained solids inside camp furniture no pin can avoid, the
+Great Tree village yard and root plateau served by no hub-connected ground
+(the root ramp waits for a yard approach), 51 floating road runs reported and
+not decked, twelve decorative hulls resting across a slope with no water
+within 12 m, and ramp heads meeting banks with angular facets. Any later
+change to a shaping or export source returns this notice to provisional until
+the same chain is repeated.
 
 `diagonal-plan.json` describes the coast, connected mountain chain, river
 catchments, islands, territory centres, and placement controls. `landscape.py`
