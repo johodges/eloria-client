@@ -50,6 +50,20 @@ class DoorApproachTests(unittest.TestCase):
         # Another entrance to the same map, out of the pin's reach, keeps the default handling.
         self.assertIsNone(D.server_road_end(content, 'amberwood', np.array([640., 590.]), 'amberwood', 'amberwood_estate'))
 
+    def test_a_map_pair_with_several_entrances_serves_each_portal_from_the_pin_within_reach(self):
+        content = SimpleNamespace(server_road_ends={('sunmane_steppe', 'sunmane_steppe', 'sunmane_steppe_secrets'): [np.array([1216., 732.]), np.array([1196., 760.])]})
+        banner = np.array([1214.1, 743.2]); spring = np.array([1202.3, 751.6]); vault = np.array([1171.1, 701.1])
+        self.assertEqual(D.server_road_end(content, 'sunmane_steppe', banner, 'sunmane_steppe', 'sunmane_steppe_secrets').tolist(), [1216., 732.])
+        self.assertEqual(D.server_road_end(content, 'sunmane_steppe', spring, 'sunmane_steppe', 'sunmane_steppe_secrets').tolist(), [1196., 760.])
+        # The hall vault, out of both pins' reach, keeps the default handling.
+        self.assertIsNone(D.server_road_end(content, 'sunmane_steppe', vault, 'sunmane_steppe', 'sunmane_steppe_secrets'))
+        # prepare_door_approaches keeps every pin of a pair and reports them all.
+        w = world(); w.ids = ['sunmane_steppe']
+        prepared = SimpleNamespace()
+        D.prepare_door_approaches(w, prepared)
+        self.assertEqual(len(prepared.server_road_ends[('sunmane_steppe', 'sunmane_steppe', 'sunmane_steppe_secrets')]), 2)
+        self.assertEqual(w.door_approaches['serverRoadEnds']['sunmane_steppe:sunmane_steppe->sunmane_steppe_secrets'], [[1216., 732.], [1196., 760.]])
+
     def test_doors_without_a_pin_keep_their_own_point(self):
         content = SimpleNamespace(door_road_ends={})
         self.assertTrue(np.array_equal(D.door_road_end(content, 'verdant_stair', 'other-door', DOOR), DOOR))

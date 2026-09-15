@@ -34,8 +34,19 @@ ROAD_ENDS = {
 # spans, 3 m from the undercroft stair that opens east: too close to tell the
 # two apart by distance, so its branch is pinned to the dry court west of the
 # stream and reaches the door over the water.
+# A map pair may hold several pins (one per entrance): each serves the portal
+# within MAXIMUM_DOOR_DISTANCE_METRES of it. The Sunmane camp's furniture is
+# one solid at the router's 2 m cells and margins, so a branch routed straight
+# to a secret marker threads whatever stands between its nearest road station
+# and the marker: the banner-focus branch crossed the round tent for 15 m and
+# the windmill, the spring branch (routed from the banner-focus branch's end)
+# the windmill, the banner shrine and two standing stones. Pinned to the
+# pocket north of the animal pen and to the open ground north of the spring,
+# their routed parts cross nothing and the straight runs only the markers'
+# own boxes (the banner focus stands at the pen's box edge).
 SERVER_ROAD_ENDS = {
     ('amberwood', 'amberwood', 'amberwood_estate'): (600., 590.),
+    ('sunmane_steppe', 'sunmane_steppe', 'sunmane_steppe_secrets'): [(1216., 732.), (1196., 760.)],
 }
 SERVER_ROAD_END_LEG_METRES = 2.   # a pin closer than this to its portal is the road's end itself
 MINIMUM_DRY_METRES = .8
@@ -60,13 +71,14 @@ def prepare_door_approaches(world, content):
         if region in world.ids:
             ends[(region, portal)] = validated(region, portal, x, z)
     server_ends = {}
-    for (region, source, target), (x, z) in SERVER_ROAD_ENDS.items():
+    for (region, source, target), pins in SERVER_ROAD_ENDS.items():
         if region in world.ids:
-            server_ends[(region, source, target)] = validated(region, f'{source}->{target}', x, z)
+            pins = [pins] if not isinstance(pins, list) else pins
+            server_ends[(region, source, target)] = [validated(region, f'{source}->{target}', x, z) for x, z in pins]
     content.door_road_ends = ends
     content.server_road_ends = server_ends
     world.door_approaches = {'roadEnds': {f'{region}:{portal}': point.tolist() for (region, portal), point in ends.items()},
-                             'serverRoadEnds': {f'{region}:{source}->{target}': point.tolist() for (region, source, target), point in server_ends.items()},
+                             'serverRoadEnds': {f'{region}:{source}->{target}': [point.tolist() for point in points] for (region, source, target), points in server_ends.items()},
                              'policy': 'A door inside a retained pavilion gets its road on the pavilion\'s open side; the retained floor carries the last metres.'}
     return world.door_approaches
 
@@ -87,10 +99,15 @@ def server_road_end(content, region, point, source, target):
     A map can have several entrances from the same territory; the pin serves
     the portal within its reach and the others keep the default handling.
     """
-    own = getattr(content, 'server_road_ends', {}).get((region, source, target))
-    if own is None or np.linalg.norm(own - np.asarray(point, dtype=float)) > MAXIMUM_DOOR_DISTANCE_METRES:
+    pins = getattr(content, 'server_road_ends', {}).get((region, source, target))
+    if pins is None:
         return None
-    return own
+    pins = [pins] if isinstance(pins, np.ndarray) else list(pins)
+    point = np.asarray(point, dtype=float)
+    within = [pin for pin in pins if np.linalg.norm(pin - point) <= MAXIMUM_DOOR_DISTANCE_METRES]
+    if not within:
+        return None
+    return min(within, key=lambda pin: np.linalg.norm(pin - point))
 
 
 def door_road_end_near(content, region, point):

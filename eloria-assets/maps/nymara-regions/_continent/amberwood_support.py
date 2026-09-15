@@ -17,8 +17,20 @@ REGION='amberwood'
 # branch climbed it at 1.1-1.4 once the terrain terms took the seam and door
 # roads off the ridge (the fifteenth's three roads had graded that hillside
 # together); its bed is one authored earth surface here like the paths above.
-APPROACH_BRANCHES={'amber-ridge-camp-branch':'discovery-amberwood-473'}
+# The undercut secret's branch (481) climbs the same feather 2-3 m beside the
+# camp branch; as a second approach branch its bed is graded too and neither
+# fades beside the other.
+APPROACH_BRANCHES={'amber-ridge-camp-branch':'discovery-amberwood-473','amber-undercut-branch':'discovery-amberwood-481'}
 APPROACH_GRADE=.45
+# A branch approach leaves other roads' corridors as the shared solve left
+# them: its cut and fill fade out from APPROACH_OTHER_ROAD_CLEAR to
+# APPROACH_OTHER_ROAD_FADE metres of any other centreline. Measured without
+# the fade: the camp branch runs 20 m beside the cinder chapel door road on
+# the chapel plateau, its shoulders raised the plateau edge 2-4.5 m and the
+# door road's climb steepened from .65 to .84, so the whole chapel hill lost
+# its served corridor.
+APPROACH_OTHER_ROAD_CLEAR=2.5
+APPROACH_OTHER_ROAD_FADE=7.
 
 
 def branch_routes(world):
@@ -36,6 +48,19 @@ def branch_profile(levels,stations,maximum_grade=APPROACH_GRADE):
     return graded_profile(levels,stations,maximum_grade=maximum_grade)
 
 
+def other_road_distance(world,exclude,x,z,margin=20.):
+    """Metres from each vertex to the nearest centreline of any road not named in ``exclude``."""
+    x,z=np.broadcast_arrays(np.asarray(x,float),np.asarray(z,float))
+    low=np.array([x.min()-margin,z.min()-margin]);high=np.array([x.max()+margin,z.max()+margin])
+    distance=np.full(x.shape,np.inf)
+    for road in world.roads:
+        if road['id'] in exclude:continue
+        points=np.asarray(road['points'],float)[:,[0,2]]
+        if len(points)<2 or not ((points>=low)&(points<=high)).all(axis=1).any():continue
+        distance=np.minimum(distance,path_field(points,np.zeros(len(points)),x,z)[1])
+    return distance
+
+
 def authored_routes(world):
     offset=np.asarray(world.regions[REGION]['center'])-[510.,540.]
     return {
@@ -50,6 +75,20 @@ def authored_routes(world):
         # line up the hill and the chapel foot at (626, 491) lies 26 m lower than
         # the fourteenth left it; the former 28 m line climbed at .54.
         'amber-undercut-path':np.array([[626,491],[634,491],[641,487],[647,486],[650,481],[647,476]],float)+offset,
+        # The village yard's approach: from the hub-connected ground west of
+        # the canopy walkway's foot, south of Canopy Platform 2, over the low
+        # hump beside the walkway end (h 45) and down to the root ramp's foot
+        # (h 41, amberwood_access.ROOT_RAMP_FOOT). The yard is a 5 m hollow
+        # between that hump and the tree's roots; the fifteenth and the terms
+        # measurements reached it only where a routed branch's shoulder
+        # happened to fill the ground beside the walkway end.
+        'amber-yard-approach':np.array([[462,469],[474,471],[484,473]],float)+offset,
+        # The chapel plateau's north bank: 8 m from the hub-side ground to the
+        # plateau edge over 14 m. The cinder chapel door road climbs it on a
+        # diagonal that the shared solve leaves at .62-.67 (the served fold
+        # blocks .65), so the chapel, the estate door, the undercut secret and
+        # the ridge camp behind them were served by rounding or not at all.
+        'amber-chapel-bank':np.array([[602,522],[611,512],[620,504]],float)+offset,
     }
 
 
@@ -95,6 +134,9 @@ def apply_amberwood_support(world,content):
             a,b=obj['low'],obj['high']
             occupied|=(gx>=a[0]-.25)&(gx<=b[0]+.25)&(gz>=a[2]-.25)&(gz<=b[2]+.25)
         weight*=~occupied
+        if branch:
+            siblings=set(APPROACH_BRANCHES)|set(APPROACH_BRANCHES.values())
+            weight*=L.smoothstep(APPROACH_OTHER_ROAD_CLEAR,APPROACH_OTHER_ROAD_FADE,other_road_distance(world,siblings,gx,gz))
         # Routed roads crossing an approach are regraded with it: the approach
         # is one authored earth surface and the corridors it crosses become
         # part of it. Two guards were tried in the fifteenth publication and
