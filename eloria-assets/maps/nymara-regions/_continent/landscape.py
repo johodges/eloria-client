@@ -7,6 +7,7 @@ an authored geographic model, not an erosion or atmospheric simulation.
 """
 from __future__ import annotations
 
+import copy
 from functools import lru_cache
 import json
 from pathlib import Path
@@ -290,6 +291,266 @@ def _relief_height(x, z, source):
     return h + ty, weight
 
 
+def relief_outline(source):
+    """The four continent-metre corners [x, z] of a relief source's crop rectangle, in the
+    order x0z0, x1z0, x1z1, x0z1, carried by the source's own translation and squeeze.
+
+    This is the ground the source owns whole, before the ``feather`` shoulder outside it.
+    Without a "crop" the source owns its entire sampled extent, the rectangle
+    ``_relief_height`` falls back to; a crop reaching past that extent still owns the
+    ground it names, the edge sample's height continuing underneath. The plan editor draws
+    this polygon rather than repeating the retained transform's arithmetic of its own.
+    """
+    crop = source.get("crop")
+    if crop is None:
+        sx, sz, _ = _relief_samples(source["samples"])
+        crop = [sx[0], sz[0], sx[-1], sz[-1]]
+    x0, z0, x1, z1 = (float(value) for value in crop)
+    corners = retained_map_xz(source, [[x0, z0], [x1, z0], [x1, z1], [x0, z1]])
+    return [[float(x), float(z)] for x, z in corners]
+
+
+# Authored corrections over the modelled ground. "smooth" is deliberately not in v1:
+# a smoothing pass reads its neighbours, which a broadcast point sampler cannot do.
+TERRAIN_EDIT_OPS = ("raise", "lower", "flatten")
+TERRAIN_EDIT_SHAPES = ("circle", "polyline", "polygon")
+TERRAIN_EDIT_KEYS = ("id", "name", "op", "shape", "amount", "target", "feather", "strength")
+TERRAIN_EDIT_STATISTICS = ("min", "max", "mean")
+TERRAIN_EDIT_STEP = 2.0  # The composed sampling interval; targets are measured on it.
+
+
+def _is_number(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and np.isfinite(value)
+
+
+def _edit_id(edit):
+    identity = edit.get("id") if isinstance(edit, dict) else None
+    return f"terrain edit {identity!r}" if isinstance(identity, str) else "unnamed terrain edit"
+
+
+def _edit_number(edit, key, default=None, low=None, high=None):
+    """One authored scalar of a terrain edit; every complaint names the edit."""
+    value = edit.get(key, default)
+    if not _is_number(value):
+        raise ValueError(f"{_edit_id(edit)}: {key!r} must be a finite number, not {value!r}")
+    value = float(value)
+    if (low is not None and value < low) or (high is not None and value > high):
+        raise ValueError(f"{_edit_id(edit)}: {key!r} must lie in "
+                         f"[{'-inf' if low is None else low}, {'inf' if high is None else high}], not {value}")
+    return value
+
+
+def _edit_shape(edit):
+    """The edit's single shape as (kind, definition)."""
+    shape = edit.get("shape")
+    if not isinstance(shape, dict) or len(shape) != 1 or set(shape) - set(TERRAIN_EDIT_SHAPES):
+        raise ValueError(f"{_edit_id(edit)}: 'shape' must hold exactly one of "
+                         f"{list(TERRAIN_EDIT_SHAPES)}, not {sorted(shape) if isinstance(shape, dict) else shape!r}")
+    return next(iter(shape.items()))
+
+
+def _segment_distance(x, z, points, closed=False):
+    """Least distance to a chain of straight segments between the authored vertices.
+
+    Terrain edits join their points with straight lines, unlike the rivers and roads that
+    run through ``curved_points``: the editor draws exactly these segments.
+    """
+    points = np.asarray(points, dtype=np.float64)
+    pairs = zip(points, np.roll(points, -1, axis=0)) if closed else zip(points[:-1], points[1:])
+    closest = np.full(np.shape(x), np.inf)
+    for a, b in pairs:
+        dx, dz = b[0] - a[0], b[1] - a[1]
+        t = np.clip(((x - a[0]) * dx + (z - a[1]) * dz) / max(dx * dx + dz * dz, 1e-9), 0.0, 1.0)
+        closest = np.minimum(closest, (x - a[0] - t * dx) ** 2 + (z - a[1] - t * dz) ** 2)
+    return np.sqrt(closest)
+
+
+def _polygon_inside(x, z, points):
+    """Even-odd containment, the rule ``coastline_distance`` uses for the mainland."""
+    points = np.asarray(points, dtype=np.float64)
+    inside = np.zeros(np.shape(x), dtype=bool)
+    for a, b in zip(points, np.roll(points, -1, axis=0)):
+        if abs(b[1] - a[1]) > 1e-12:
+            inside ^= ((a[1] > z) != (b[1] > z)) & (x < a[0] + (z - a[1]) * (b[0] - a[0]) / (b[1] - a[1]))
+    return inside
+
+
+def _edit_distance(x, z, edit):
+    """Metres outside the edit's shape: zero on and inside it, growing outward."""
+    kind, data = _edit_shape(edit)
+    if kind == "circle":
+        centre = np.asarray(data["center"], dtype=np.float64)
+        return np.maximum(np.hypot(x - centre[0], z - centre[1]) - float(data["radius"]), 0.0)
+    if kind == "polyline":
+        return np.maximum(_segment_distance(x, z, data["points"]) - float(data["width"]) / 2.0, 0.0)
+    return np.where(_polygon_inside(x, z, data["points"]), 0.0,
+                    _segment_distance(x, z, data["points"], closed=True))
+
+
+def _edit_weight(x, z, edit):
+    """How much of the edit each point takes: one inside the shape, fading over the
+    feather outside it, times the edit's strength. A feather of zero is a hard edge."""
+    feather = _edit_number(edit, "feather", 0.0, low=0.0)
+    strength = _edit_number(edit, "strength", 1.0, low=0.0, high=1.0)
+    x, z = _coords(x, z)
+    x0, z0, x1, z1 = _edit_bounds(edit)
+    # Only the points the shape can reach pay for its geometry. One edit is metres wide
+    # and the composed grid is continental, so this window is most of the saving.
+    near = (x >= x0 - feather) & (x <= x1 + feather) & (z >= z0 - feather) & (z <= z1 + feather)
+    weight = np.zeros(x.shape)
+    if near.any():
+        outside = _edit_distance(x[near], z[near], edit)
+        weight[near] = (1.0 - smoothstep(0.0, feather, outside) if feather > 0
+                        else np.where(outside > 0.0, 0.0, 1.0))
+    return weight * strength
+
+
+def _edit_target(edit):
+    """The metres a flatten settles on; the editor resolves statistics before saving."""
+    target = edit.get("target")
+    if isinstance(target, str):
+        raise ValueError(f"{_edit_id(edit)}: the flatten 'target' {target!r} must be resolved to metres by "
+                         "resolve_terrain_edit_targets before the ground is evaluated")
+    return _edit_number(edit, "target")
+
+
+def _edit_bounds(edit):
+    """[x0, z0, x1, z1] around the shape itself, before its feather."""
+    kind, data = _edit_shape(edit)
+    if kind == "circle":
+        centre = np.asarray(data["center"], dtype=np.float64)
+        radius = float(data["radius"])
+        return [centre[0] - radius, centre[1] - radius, centre[0] + radius, centre[1] + radius]
+    points = np.asarray(data["points"], dtype=np.float64)
+    margin = float(data["width"]) / 2.0 if kind == "polyline" else 0.0
+    return [points[:, 0].min() - margin, points[:, 1].min() - margin,
+            points[:, 0].max() + margin, points[:, 1].max() + margin]
+
+
+def _edit_samples(edit, step=TERRAIN_EDIT_STEP):
+    """Composed-grid points inside the shape, for measuring the ground there."""
+    x0, z0, x1, z1 = _edit_bounds(edit)
+    x, z = np.meshgrid(np.arange(x0, x1 + step, step), np.arange(z0, z1 + step, step))
+    outside = _edit_distance(x, z, edit)
+    # A shape finer than the sampling grid still deserves a reading: take its nearest points.
+    inside = outside <= 0.0 if (outside <= 0.0).any() else outside <= outside.min()
+    return x[inside], z[inside]
+
+
+def _terrain_edit_height(x, z, h, plan):
+    """Apply the plan's authored terrain edits, in list order, to a composed ground."""
+    for edit in plan.get("terrain_edits") or []:
+        op = edit.get("op")
+        if op not in TERRAIN_EDIT_OPS:
+            raise ValueError(f"{_edit_id(edit)}: unknown op {op!r}; v1 carries "
+                             f"{list(TERRAIN_EDIT_OPS)} and deliberately no 'smooth'")
+        weight = _edit_weight(x, z, edit)
+        if op == "flatten":
+            h = h * (1 - weight) + _edit_target(edit) * weight
+        else:
+            amount = _edit_number(edit, "amount", low=0.0)
+            h = h + amount * weight if op == "raise" else h - amount * weight
+    return h
+
+
+def validate_terrain_edits(plan):
+    """Every problem with the plan's authored terrain edits; empty means safe to compose.
+
+    The plan editor calls this on each change and before saving, so problems name their
+    edit and describe the fix rather than the rule they broke.
+    """
+    edits = plan.get("terrain_edits") or []
+    if not isinstance(edits, list):
+        return ["'terrain_edits' must be a list of edits"]
+    bounds = plan.get("bounds")
+    problems, seen = [], set()
+    for index, edit in enumerate(edits):
+        if not isinstance(edit, dict):
+            problems.append(f"terrain edit {index}: each edit must be an object")
+            continue
+        identity = edit.get("id")
+        where = _edit_id(edit) if isinstance(identity, str) and identity.strip() else f"terrain edit {index}"
+        if not isinstance(identity, str) or not identity.strip():
+            problems.append(f"{where}: needs a non-empty string 'id'")
+        elif identity in seen:
+            problems.append(f"{where}: duplicate id; every edit needs its own")
+        seen.add(identity if isinstance(identity, str) else index)
+        unknown = sorted(set(edit) - set(TERRAIN_EDIT_KEYS))
+        if unknown:
+            problems.append(f"{where}: unknown key(s) {unknown}; v1 carries {list(TERRAIN_EDIT_KEYS)}")
+        op = edit.get("op")
+        if op == "smooth":
+            problems.append(f"{where}: op 'smooth' is deliberately not part of v1; "
+                            f"use one of {list(TERRAIN_EDIT_OPS)}")
+        elif op not in TERRAIN_EDIT_OPS:
+            problems.append(f"{where}: 'op' must be one of {list(TERRAIN_EDIT_OPS)}, not {op!r}")
+        elif op == "flatten":
+            target = edit.get("target")
+            if not (_is_number(target) or (isinstance(target, str) and target in TERRAIN_EDIT_STATISTICS)):
+                problems.append(f"{where}: flatten needs a 'target' in metres or one of "
+                                f"{list(TERRAIN_EDIT_STATISTICS)}, not {target!r}")
+        elif not _is_number(edit.get("amount")) or edit["amount"] < 0:
+            problems.append(f"{where}: {op} needs a positive 'amount' in metres, not {edit.get('amount')!r}")
+        feather = edit.get("feather", 0.0)
+        if not _is_number(feather) or feather < 0:
+            problems.append(f"{where}: 'feather' must be a distance in metres of at least 0, not {feather!r}")
+            feather = 0.0
+        if "strength" in edit and not (_is_number(edit["strength"]) and 0.0 <= edit["strength"] <= 1.0):
+            problems.append(f"{where}: 'strength' must lie between 0 and 1, not {edit['strength']!r}")
+        shape = edit.get("shape")
+        if not isinstance(shape, dict) or len(shape) != 1 or set(shape) - set(TERRAIN_EDIT_SHAPES):
+            problems.append(f"{where}: 'shape' must hold exactly one of {list(TERRAIN_EDIT_SHAPES)}, "
+                            f"not {sorted(shape) if isinstance(shape, dict) else shape!r}")
+            continue
+        kind, data = next(iter(shape.items()))
+        if not isinstance(data, dict):
+            problems.append(f"{where}: the {kind} must be an object")
+            continue
+        if kind == "circle":
+            points = [data.get("center")]
+            if not _is_number(data.get("radius")) or data["radius"] <= 0:
+                problems.append(f"{where}: the circle needs a 'radius' greater than 0, not {data.get('radius')!r}")
+        else:
+            least = 2 if kind == "polyline" else 3
+            points = data.get("points")
+            if not isinstance(points, list) or len(points) < least:
+                problems.append(f"{where}: the {kind} needs at least {least} points, "
+                                f"not {len(points) if isinstance(points, list) else points!r}")
+                points = points if isinstance(points, list) else []
+            if kind == "polyline" and (not _is_number(data.get("width")) or data["width"] <= 0):
+                problems.append(f"{where}: the polyline needs a 'width' greater than 0, not {data.get('width')!r}")
+        for point in points:
+            if not (isinstance(point, (list, tuple)) and len(point) == 2 and all(_is_number(v) for v in point)):
+                problems.append(f"{where}: {point!r} is not a finite [x, z] point")
+            elif bounds and not (bounds[0] - feather <= point[0] <= bounds[2] + feather
+                                 and bounds[1] - feather <= point[1] <= bounds[3] + feather):
+                problems.append(f"{where}: point {list(point)} lies outside the plan bounds "
+                                f"{list(bounds)} by more than its {feather} m feather")
+    return problems
+
+
+def resolve_terrain_edit_targets(plan):
+    """A copy of the plan whose flatten targets are all metres.
+
+    "min", "max" and "mean" become that statistic of the natural ground, which is the
+    plan with every terrain edit removed, sampled on the composed 2 m grid inside the
+    shape and rounded to 0.1 m. Numbers are kept. The editor resolves before saving, so a
+    stored plan never asks the composer to measure the ground it is about to change.
+    """
+    resolved = copy.deepcopy(plan)
+    natural = dict(resolved, terrain_edits=[])
+    for edit in resolved.get("terrain_edits") or []:
+        target = edit.get("target")
+        if edit.get("op") != "flatten" or not isinstance(target, str):
+            continue
+        if target not in TERRAIN_EDIT_STATISTICS:
+            raise ValueError(f"{_edit_id(edit)}: unknown flatten target {target!r}; use metres or "
+                             f"{list(TERRAIN_EDIT_STATISTICS)}")
+        x, z = _edit_samples(edit)
+        edit["target"] = round(float(getattr(np, target)(height_at(x, z, natural))), 1)
+    return resolved
+
+
 def height_at(x, z, plan=None):
     """Evaluate the shared ground height without reference to territory ownership."""
     plan = load_plan() if plan is None else plan
@@ -310,6 +571,10 @@ def height_at(x, z, plan=None):
         blend = 1 - smoothstep(basin.get("rim", 0.85), basin.get("feather", 1.5), r)
         floor = basin["floor"] + basin.get("bowl", 6.0) * np.clip(r, 0, 1.5) ** 2
         h = h * (1 - blend) + np.minimum(h, floor) * blend
+    # Authored corrections on the modelled ground, in the plan's own list order: an
+    # editor's raised knoll, lowered hollow or flattened shelf, each weighted by its
+    # shape and feathered outside it. Foundations still settle their pads last.
+    h = _terrain_edit_height(x, z, h, plan)
     for pad in plan.get("foundations", []):
         distance = np.hypot(x - pad["center"][0], z - pad["center"][1])
         blend = 1 - smoothstep(pad["radius"], pad["radius"] + pad.get("feather", 24), distance)
@@ -414,3 +679,31 @@ def vegetation_fields(x, z, height=None, plan=None):
     return {"tree_density": density, "wetness": weights["wetland"],
             "deciduous": weights["woodland"], "conifer": weights["rock"] * (1 - weights["snow"]),
             "dryness": weights["steppe"] + weights["badland"]}
+
+
+if __name__ == "__main__":
+    # Plan-editor support only; importing this module stays free of side effects.
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Authored terrain edits of a continent plan.")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--check-terrain-edits", nargs="?", const=str(PLAN_PATH), metavar="PLAN",
+                       help="report every problem with a plan's terrain edits (default: the committed plan)")
+    group.add_argument("--resolve-terrain-edits", nargs=2, metavar=("PLAN_IN", "PLAN_OUT"),
+                       help="write a copy of a plan whose flatten targets are all metres")
+    arguments = parser.parse_args()
+    if arguments.check_terrain_edits:
+        checked = Path(arguments.check_terrain_edits)
+        found = validate_terrain_edits(json.loads(checked.read_text(encoding="utf-8")))
+        print("\n".join(found + [f"{checked}: {len(found) or 'no'} problem{'' if len(found) == 1 else 's'}"]))
+        raise SystemExit(1 if found else 0)
+    source, destination = (Path(path) for path in arguments.resolve_terrain_edits)
+    authored = json.loads(source.read_text(encoding="utf-8"))
+    remaining = validate_terrain_edits(authored)
+    if remaining:
+        print("\n".join(remaining))
+        raise SystemExit(f"{source}: fix these problems before resolving its targets")
+    settled = resolve_terrain_edit_targets(authored)
+    with open(destination, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(settled, indent=2) + "\n")
+    print(f"{destination}: {len(settled.get('terrain_edits') or [])} terrain edits, every target in metres")

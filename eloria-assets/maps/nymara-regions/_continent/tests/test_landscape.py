@@ -127,6 +127,22 @@ class ContinentGeographyTests(unittest.TestCase):
             without, _ = landscape._relief_height(np.zeros(41), np.linspace(-300., -100., 41), dict(source, knee=None))
             np.testing.assert_allclose(without, np.linspace(178., 40., 41))
 
+    def test_relief_outline_traces_the_crop_through_the_retained_transform(self):
+        rows = (np.array([-10., 0., 10.]), np.array([-300., -200., -100.]), np.zeros((3, 3)))
+        crop = [[-8., -280.], [6., -280.], [6., -140.], [-8., -140.]]
+        with patch.object(landscape, "_relief_samples", lambda name: rows):
+            flat = {"samples": "x.npz", "translation": [477., 70., 272.], "crop": [-8, -280, 6, -140]}
+            np.testing.assert_allclose(landscape.relief_outline(flat), landscape.retained_map_xz([477., 70., 272.], crop))
+            squeezed = dict(flat, squeeze_z=.85, about_z=60.)
+            corners = landscape.relief_outline(squeezed)
+            np.testing.assert_allclose(corners, landscape.retained_map_xz(squeezed, crop))
+            # x0z0, x1z0, x1z1, x0z1: translated east-west, squeezed north-south about source row 60.
+            self.assertEqual([corner[0] for corner in corners], [469., 469. + 14., 469. + 14., 469.])
+            np.testing.assert_allclose([corner[1] for corner in corners], [43., 43., 162., 162.])
+            # Without a crop the source owns its whole sampled extent, as _relief_height reads it.
+            np.testing.assert_allclose(landscape.relief_outline({"samples": "x.npz", "translation": [0., 0., 0.]}),
+                                       [[-10., -300.], [10., -300.], [10., -100.], [-10., -100.]])
+
     def test_optional_foundation_feathers_into_shared_surface(self):
         plan = copy.deepcopy(landscape.load_plan())
         target = float(landscape.height_at(740, 1030)) + 2
@@ -163,6 +179,164 @@ class ContinentGeographyTests(unittest.TestCase):
         self.assertLessEqual(float(np.max(height[bank]-20)),.65)
         self.assertTrue((np.diff(height)>=-1e-10).all())
         self.assertAlmostEqual(height[0],20-river['depth'])
+
+
+class AuthoredTerrainEditTests(unittest.TestCase):
+    """The plan's "terrain_edits": the editor previews exactly what compose builds."""
+
+    CENTRE = [520., 690.]
+
+    def plan(self, *edits):
+        return dict(landscape.load_plan(), terrain_edits=[dict(edit) for edit in edits])
+
+    def circle(self, identity, centre=None, radius=20., **edit):
+        return dict(edit, id=identity, shape={"circle": {"center": list(centre or self.CENTRE), "radius": radius}})
+
+    def test_absent_or_empty_terrain_edits_leave_the_ground_alone(self):
+        x, z = np.arange(180., 1381., 200.), np.arange(140., 1541., 230.)[:, None]
+        ground = landscape.height_at(x, z)
+        without = copy.deepcopy(landscape.load_plan())
+        without.pop("terrain_edits", None)
+        np.testing.assert_array_equal(landscape.height_at(x, z, without), ground)
+        np.testing.assert_array_equal(landscape.height_at(x, z, self.plan()), ground)
+        # The committed plan carries no unresolved or malformed edit.
+        self.assertEqual(landscape.validate_terrain_edits(landscape.load_plan()), [])
+
+    def test_circle_raise_fills_its_shape_and_fades_over_the_feather(self):
+        x, radius, feather, amount = self.CENTRE[0], 20., 8., 10.
+        plan = self.plan(self.circle("knoll", op="raise", radius=radius, feather=feather, amount=amount))
+        for offset, share in ((0., 1.), (radius, 1.), (radius + feather / 2, .5), (radius + feather, 0.), (90., 0.)):
+            point = (x + offset, self.CENTRE[1])
+            self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(landscape.height_at(*point)),
+                                   amount * share, places=9, msg=offset)
+        # Arrays and scalars agree, as everywhere else in this module.
+        grid_x = x + np.array([0., 12., 24., 40.])
+        grid_z = self.CENTRE[1] + np.array([0., 6.])[:, None]
+        grid = landscape.height_at(grid_x, grid_z, plan)
+        self.assertEqual(grid.shape, (2, 4))
+        for row in range(2):
+            for column in range(4):
+                self.assertAlmostEqual(grid[row, column],
+                                       float(landscape.height_at(grid_x[column], grid_z[row, 0], plan)), places=11)
+
+    def test_lower_and_flatten_share_that_weight(self):
+        radius, feather = 20., 8.
+        lowered = self.plan(self.circle("hollow", op="lower", radius=radius, feather=feather, amount=6.))
+        flattened = self.plan(self.circle("shelf", op="flatten", radius=radius, feather=feather, target=42.))
+        for offset, share in ((0., 1.), (radius + feather / 2, .5), (radius + feather, 0.)):
+            point = (self.CENTRE[0] + offset, self.CENTRE[1])
+            ground = float(landscape.height_at(*point))
+            self.assertAlmostEqual(float(landscape.height_at(*point, lowered)), ground - 6. * share, places=9)
+            self.assertAlmostEqual(float(landscape.height_at(*point, flattened)),
+                                   ground * (1 - share) + 42. * share, places=9)
+
+    def test_polyline_band_and_polygon_boundary_measure_distance_outside(self):
+        line = [[440., 640.], [600., 640.], [600., 740.]]
+        plan = self.plan({"id": "berm", "op": "raise", "amount": 4., "feather": 10.,
+                          "shape": {"polyline": {"points": line, "width": 12.}}})
+        # The width is the whole band: half of it either side of the authored segments.
+        for offset, share in ((0., 1.), (6., 1.), (11., .5), (16., 0.)):
+            point = (500., 640. + offset)
+            self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(landscape.height_at(*point)),
+                                   4. * share, places=9, msg=offset)
+        square = [[380., 580.], [480., 580.], [480., 680.], [380., 680.]]
+        plan = self.plan({"id": "yard", "op": "raise", "amount": 4., "feather": 10.,
+                          "shape": {"polygon": {"points": square}}})
+        # Zero inside however far from an edge, the boundary distance outside, and a
+        # corner measured to the corner itself rather than to either edge's line.
+        for point, share in (((430., 630.), 1.), ((380., 580.), 1.), ((485., 630.), .5),
+                             ((483., 684.), .5), ((492., 630.), 0.)):
+            self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(landscape.height_at(*point)),
+                                   4. * share, places=9, msg=point)
+
+    def test_feather_zero_is_a_hard_edge_and_strength_scales_the_effect(self):
+        plan = self.plan(self.circle("pad", op="raise", radius=20., feather=0., amount=9.))
+        for offset, share in ((19.999, 1.), (20., 1.), (20.001, 0.)):
+            point = (self.CENTRE[0] + offset, self.CENTRE[1])
+            self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(landscape.height_at(*point)),
+                                   9. * share, places=9, msg=offset)
+        for strength, share in ((1., 1.), (.25, .25), (0., 0.)):
+            weak = self.plan(self.circle("pad", op="raise", radius=20., feather=8., amount=9., strength=strength))
+            self.assertAlmostEqual(float(landscape.height_at(*self.CENTRE, weak))
+                                   - float(landscape.height_at(*self.CENTRE)), 9. * share, places=9)
+            # The strength multiplies the weight, so the feather still halves it.
+            edge = (self.CENTRE[0] + 24., self.CENTRE[1])
+            self.assertAlmostEqual(float(landscape.height_at(*edge, weak)) - float(landscape.height_at(*edge)),
+                                   9. * share * .5, places=9)
+
+    def test_edits_run_in_list_order_after_the_basins_and_before_the_foundations(self):
+        raised = self.circle("lift", op="raise", feather=0., amount=25.)
+        settled = self.circle("shelf", op="flatten", feather=0., target=42.)
+        self.assertAlmostEqual(float(landscape.height_at(*self.CENTRE, self.plan(raised, settled))), 42., places=9)
+        self.assertAlmostEqual(float(landscape.height_at(*self.CENTRE, self.plan(settled, raised))), 67., places=9)
+        floor = float(landscape.height_at(*self.CENTRE)) - 30.
+        plan = self.plan(self.circle("lift", op="raise", radius=18., feather=0., amount=12.))
+        plan["basins"] = [{"center": list(self.CENTRE), "radii": [40., 40.], "floor": floor, "bowl": 0.}]
+        # A basin carves with a minimum: an edit applied before it would be cut back to the floor.
+        self.assertAlmostEqual(float(landscape.height_at(*self.CENTRE, plan)), floor + 12., places=9)
+        plan["foundations"] = [{"center": list(self.CENTRE), "radius": 10., "elevation": 5., "feather": 20.}]
+        self.assertAlmostEqual(float(landscape.height_at(*self.CENTRE, plan)), 5., places=9)
+
+    def test_height_at_refuses_an_unresolved_target_or_an_unsupported_edit(self):
+        for edit, message in (
+                (self.circle("shelf", op="flatten", target="mean"), "resolved to metres"),
+                (self.circle("shelf", op="flatten", target=None), "must be a finite number"),
+                (self.circle("blur", op="smooth", amount=1.), "unknown op"),
+                (self.circle("knoll", op="raise", amount=-1.), "'amount' must lie"),
+                (self.circle("knoll", op="raise", amount=1., feather=-3.), "'feather' must lie"),
+                (self.circle("knoll", op="raise", amount=1., strength=1.4), "'strength' must lie"),
+                ({"id": "blob", "op": "raise", "amount": 1., "shape": {"blob": {"center": [0., 0.]}}}, "'shape' must hold")):
+            with self.assertRaisesRegex(ValueError, message) as raised:
+                landscape.height_at(*self.CENTRE, self.plan(edit))
+            self.assertIn(edit["id"], str(raised.exception))
+
+    def test_validate_terrain_edits_names_every_problem(self):
+        plan = self.plan(self.circle("twin", op="raise", amount=2., feather=0.),
+                         self.circle("twin", op="lower", amount=2., feather=0.),
+                         {"id": "bare", "op": "raise", "amount": 2.},
+                         {"id": "thin", "op": "flatten", "target": "mean",
+                          "shape": {"polygon": {"points": [[400., 600.], [420., 620.]]}}},
+                         {"id": "open", "op": "raise", "amount": 2., "feather": 4.,
+                          "shape": {"polyline": {"points": [[400., 600.]], "width": 6.}}},
+                         self.circle("astray", centre=[-40., 690.], radius=5., op="raise", amount=2., feather=5.),
+                         self.circle("blur", op="smooth", amount=2., feather=0.),
+                         self.circle("dot", radius=0., op="raise", amount=2., feather=0.))
+        problems = landscape.validate_terrain_edits(plan)
+        self.assertIn("duplicate id", "\n".join(p for p in problems if "'twin'" in p))
+        self.assertEqual(len([p for p in problems if "'twin'" in p]), 1)
+        self.assertIn("'shape' must hold", "\n".join(p for p in problems if "'bare'" in p))
+        self.assertIn("at least 3 points", "\n".join(p for p in problems if "'thin'" in p))
+        self.assertIn("at least 2 points", "\n".join(p for p in problems if "'open'" in p))
+        self.assertIn("outside the plan bounds", "\n".join(p for p in problems if "'astray'" in p))
+        self.assertIn("not part of v1", "\n".join(p for p in problems if "'blur'" in p))
+        self.assertIn("'radius' greater than 0", "\n".join(p for p in problems if "'dot'" in p))
+        # A point outside the bounds by less than its feather is inside the tolerance.
+        near = self.circle("near", centre=[-4., 690.], radius=5., op="raise", amount=2., feather=5.)
+        self.assertEqual(landscape.validate_terrain_edits(self.plan(near)), [])
+
+    def test_resolve_terrain_edit_targets_measures_the_natural_ground(self):
+        radius = 24.
+        knoll = self.circle("knoll", radius=radius, op="raise", amount=30., feather=0.)
+        shelf = self.circle("shelf", radius=radius, op="flatten", target="mean", feather=10.)
+        kept = self.circle("kept", radius=5., op="flatten", target=12.5, feather=0.)
+        plan = self.plan(knoll, shelf, kept)
+        resolved = landscape.resolve_terrain_edit_targets(plan)
+        # Measured on the 2 m composed grid inside the shape, with every edit removed:
+        # the knoll's 30 m over the same circle must not reach the shelf's target.
+        natural = dict(landscape.load_plan(), terrain_edits=[])
+        x, z = np.meshgrid(np.arange(self.CENTRE[0] - radius, self.CENTRE[0] + radius + 2, 2.),
+                           np.arange(self.CENTRE[1] - radius, self.CENTRE[1] + radius + 2, 2.))
+        inside = np.hypot(x - self.CENTRE[0], z - self.CENTRE[1]) <= radius
+        ground = landscape.height_at(x[inside], z[inside], natural)
+        self.assertEqual(resolved["terrain_edits"][1]["target"], round(float(ground.mean()), 1))
+        self.assertEqual(resolved["terrain_edits"][2]["target"], 12.5)
+        self.assertEqual(resolved["terrain_edits"][0], knoll)
+        self.assertEqual(plan["terrain_edits"][1]["target"], "mean")
+        for statistic in ("min", "max"):
+            settled = landscape.resolve_terrain_edit_targets(self.plan(dict(shelf, target=statistic)))
+            self.assertEqual(settled["terrain_edits"][0]["target"], round(float(getattr(ground, statistic)()), 1))
+        # A resolved plan evaluates; only numbers reach the composer.
+        self.assertTrue(np.isfinite(float(landscape.height_at(*self.CENTRE, resolved))))
 
 
 if __name__ == "__main__":
