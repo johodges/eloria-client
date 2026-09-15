@@ -3897,9 +3897,13 @@ func _rebase_streamed_world(rebase: Transform3D) -> void:
 
 func _on_world_loaded(manifest: WorldManifest) -> void:
 	var binding_started := Time.get_ticks_usec()
+	var binding_steps: Dictionary = {}
+	var step_started := binding_started
 	exterior_stream.activate(loaded_server_map, world_loader.world_root, manifest)
 	_watch_chunk_surfaces()
+	binding_steps["activate"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_bind_shared_world()
+	binding_steps["bind_shared_world"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	if is_instance_valid(lantern_scene):
 		lantern_scene.queue_free()
 	lantern_scene = null
@@ -3917,30 +3921,56 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	if not _continuous_map_handoff:
 		WorldEnvironmentBinder.apply_camera(manifest, camera_rig)
 	_bind_light_markers(manifest)
+	binding_steps["light_markers"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_apply_day_night()
+	binding_steps["day_night"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_update_border_lighting()
+	binding_steps["border_lighting"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_bind_ambient_audio(manifest)
+	binding_steps["ambient_audio"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_populate_ambient_life(manifest)
+	binding_steps["ambient_life"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_current_map_display_name = str(
 		manifest.data.get("asset", {}).get("name", manifest.asset_id()))
 	map_label.text = "Map: " + _current_map_display_name
 	map_title.text = _current_map_display_name.to_upper()
 	current_map_button.text = "Current: " + _current_map_display_name
 	_configure_interior_cutaway(manifest)
+	binding_steps["interior_cutaway"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_configure_secret_sections(manifest)
+	binding_steps["secret_sections"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_configure_occluder_fade(manifest)
+	binding_steps["occluder_fade"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_configure_full_map(manifest)
+	binding_steps["full_map"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_install_map_picture(manifest)
+	binding_steps["map_picture"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_queue_map_picture_warmup()
+	binding_steps["map_picture_warmup"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_request_map_redraw()
-	_sync_world()
+	binding_steps["map_redraw"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
+	# A seamless crossing keeps every actor node, rebased with the world, and
+	# the server keeps their records: presenting the whole table again here
+	# cost 90-1,125 ms on the handoff frame (the sixteenth's first live proof),
+	# while the traveller walked on and the camera check read it as a jump.
+	# Only actors the server changes are presented after such a crossing;
+	# any other map load presents the table it just received.
+	_sync_world({} if _continuous_map_handoff else null)
+	binding_steps["sync_world"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_sync_ground_bags()
+	binding_steps["sync_ground_bags"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_sync_map_objects()
-	_snap_all_actors_to_surface.call_deferred()
+	binding_steps["sync_map_objects"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
+	# The carried actors stand on the same ground after the rebase; their
+	# next packet re-samples the surface they stand on.
+	if not _continuous_map_handoff:
+		_snap_all_actors_to_surface.call_deferred()
 	_snap_all_ground_bags_to_surface.call_deferred()
 	_snap_all_map_objects_to_surface.call_deferred()
 	if _continuous_map_handoff:
 		exterior_stream.last_handoff["binding_ms"] = (Time.get_ticks_usec() - binding_started) / 1000.0
+		binding_steps["snap_deferred"] = (Time.get_ticks_usec() - step_started) / 1000.0
+		exterior_stream.last_handoff["binding_steps"] = binding_steps
 
 func _bind_light_markers(manifest: WorldManifest) -> void:
 	# Braziers, hearths and shrine lamps the map declares as markers. Interiors
@@ -4092,8 +4122,19 @@ func _on_world_load_failed(errors: Array[String]) -> void:
 func _sync_world(changed: Variant = null) -> void:
 	if adapter != null and AppState.actors.has(AppState.local_actor_id):
 		var arrival_actor: Dictionary = AppState.actors[AppState.local_actor_id]
-		if world_loader.ensure_chunk_arrival(adapter.tile_center(int(arrival_actor.x), int(arrival_actor.y))):
+		# Across a seamless crossing the record keeps the map it was spawned on
+		# until the server sends it again, and its tiles belong to that map: read
+		# through the arriving map's adapter they named a chunk in its far corner,
+		# which was then loaded on the handoff frame (the sixteenth's live proof:
+		# 1-2 s a crossing, the traveller walking on meanwhile).
+		var record_map: String = str(arrival_actor.get("map", AppState.current_map))
+		if record_map == AppState.current_map and world_loader.ensure_chunk_arrival(adapter.tile_center(int(arrival_actor.x), int(arrival_actor.y))):
 			_actor_surface_samples.clear()
+			# The chunk just attached has no physics body until the next physics
+			# frame: the actors presented below ray past it onto their fallback
+			# height, so they are placed again after that frame (a seamless
+			# crossing no longer re-snaps the whole table at its binding).
+			_snap_all_actors_to_surface.call_deferred()
 			_snap_all_map_objects_to_surface.call_deferred()
 	map_label.text = "Map: " + (AppState.current_map if not AppState.current_map.is_empty() else "loading")
 	for id: Variant in actor_nodes.keys():
@@ -4264,10 +4305,20 @@ func _place_actor_on_surface(actor: ReplicatedActor3D, force := false, fallback_
 	var ray_start: Vector3 = Vector3(actor_position.x, 400.0, actor_position.z)
 	var ray_end: Vector3 = Vector3(actor_position.x, -100.0, actor_position.z)
 	# A neighbour's ground stands on the preview layer while its map is not
-	# the active one; an actor across the seam is placed on it all the same.
-	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
-		ray_start, ray_end,
-		WorldLoader.NAVIGATION_SURFACE_LAYER | ExteriorRegionStream.PREVIEW_SURFACE_LAYER)
+	# the active one; an actor across the seam is placed on it. An actor on
+	# the client's own map rays the navigation layer alone, as it always did:
+	# on the handoff frame the map just left still stands at its old place
+	# for the physics server, and with the preview layer in the mask the
+	# traveller arriving over a seam was set 48-58 m up on that map's ground
+	# (the sixteenth's live proof, five crossings). The traveller is on the
+	# client's own map by definition, whatever map its record still names.
+	var record: Dictionary = AppState.actors.get(actor.actor_id, {}) as Dictionary
+	var across_seam: bool = (actor.actor_id != AppState.local_actor_id
+		and str(record.get("map", AppState.current_map)) != AppState.current_map)
+	var mask: int = WorldLoader.NAVIGATION_SURFACE_LAYER
+	if across_seam:
+		mask |= ExteriorRegionStream.PREVIEW_SURFACE_LAYER
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(ray_start, ray_end, mask)
 	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
 	var hit_position_value: Variant = hit.get("position")
 	if hit_position_value is Vector3:
