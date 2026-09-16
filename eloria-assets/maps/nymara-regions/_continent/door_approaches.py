@@ -98,6 +98,24 @@ SEAM_ROAD_WAYPOINTS = {
     # at about (629, 418), where the ravine the river cuts is three metres deep.
     ('whitehorn_range', 'amethyst_barrens--whitehorn_range'): [
         (556., 394.), (614., 406.), (668., 448.), (694., 433.), (692., 377.), (760., 419.), (786., 340.)],
+    # The Amberwood crossing: out of the gate court east past the shrine terrace and the village, down the
+    # tail's south shoulder to the saddle, then west along the 115-130 m bench to the crossing's lip.
+    #
+    # This one is not scenery. The crossing at (531, 436) is 52 m from the gate court and 103 m above the
+    # Amberwood roads at (516, 444), and world_layout.corridor_grade reconciles the whole connected road
+    # network at 0.318 m per metre along an axis, writing the midpoint of its lower and upper envelopes. A
+    # direct seam road put those Amberwood roads 124 m of corridor from the court, so the court's upper
+    # envelope was 69.2 + 0.318 x 124 = 108.6 m against its own 172.8 m target and it composed at 126.1 m.
+    # These six legs stretch the Whitehorn side from 75 m to 179 m of road (about 240 m of corridor graph),
+    # which is what the head costs: every waypoint stands inside Whitehorn on dry ground of 131-179 m and at
+    # least 26 m clear of the Hornwater's ravine, and the legs fall at 0.06 to 1.03 on the plan's ground.
+    # They all stay north of z = 432. A first pass carried the last two legs down to (572, 450) and
+    # (548, 438), 20-30 m from Amberwood's own roads where corridor_grade cuts the ground 38 m below the
+    # natural bank, and the geometry stage then refused the bridge there: "Bridge banks cannot fit the frozen
+    # terrain within 102m: 38.495m endpoint lift at (555.0, 469.0)". On the 130-145 m bench the approach is
+    # the one design O2's direct road took, and only the last 11 m drop to the crossing's lip.
+    ('whitehorn_range', 'amberwood--whitehorn_range'): [
+        (560., 386.), (596., 398.), (602., 420.), (594., 432.), (566., 430.), (542., 428.)],
 }
 # The same for a retained territory, in its source (library) metres, carried
 # where the layout stands by the plan's retained transform (as the retained door

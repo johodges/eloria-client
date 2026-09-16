@@ -264,6 +264,10 @@ class ContinentGeographyTests(unittest.TestCase):
             weight=weight*landscape.smoothstep(-8,float(relief.get('coast_feather',60.)),
                                                landscape.coastline_distance(x,z,plain))
             reference=reference*(1-weight)+height*weight
+        # The authored corrections come after the relief in height_at, and the committed plan carries them
+        # (the Whitehorn summit, its gate court shelf and its snowline terrace all stand inside this window),
+        # so the hand-built reference has to apply them too or it is measuring a different ground.
+        reference=landscape._terrain_edit_height(x,z,reference,plain)
         np.testing.assert_array_equal(landscape.height_at(x,z,plain),reference)
         # The flagged river: its bed stands a full depth under the level even where the relief's weight is 1.
         river=max(carving,key=lambda r:len(r['points']))
