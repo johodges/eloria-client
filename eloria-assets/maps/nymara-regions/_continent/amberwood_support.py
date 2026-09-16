@@ -2,6 +2,14 @@
 
 These are visible earth roads with local cut/fill and broad shoulders. The
 canopy compound, kiln buildings and authored discovery identities stay fixed.
+
+The chapel hill's cluster (chapel, boundary stone, lookouts, ridge camp,
+arches, coppice yard, cinder field and the two secrets) stands 132 m west and
+139 m south of the plateau it was authored on, so the Whitehorn Range can take
+the ground north-east of Amberwood as its tail: continent-edits.json carries
+every loose placement and diagonal-plan.json's assembly_sites carries the ridge
+camp. The routes below moved with it on the same translation. Numbers quoted in
+these comments were measured before that move, on the old plateau.
 """
 from __future__ import annotations
 import numpy as np
@@ -10,37 +18,54 @@ from world_layout import corridor_grade,graded_profile,SOLID_MAXIMUM_AREA_SQUARE
 from four_gates_support import path_field
 
 REGION='amberwood'
-# Routed branches graded as approaches (approach name -> road id). The ridge
-# camp's discovery branch (maps.txt 473, the boar-run door) climbs the
-# plateau's north feather from whichever public road stands nearest. The
-# shared road solve holds a footing feather at its blended ground, so the
-# branch climbed it at 1.1-1.4 once the terrain terms took the seam and door
-# roads off the ridge (the fifteenth's three roads had graded that hillside
-# together); its bed is one authored earth surface here like the paths above.
-# The undercut secret's branch (481) climbs the same feather 2-3 m beside the
-# camp branch; as a second approach branch its bed is graded too and neither
-# fades beside the other.
+# Routed branches graded as approaches (approach name -> road id). The ids are
+# maps.txt line numbers and do not move with the cluster; the discoveries
+# themselves do, because content.mapped_server_point resolves a server tile
+# through the nearest retained object in the SOURCE frame and both tiles land
+# inside a secret that carries the cluster's shift (473 in Secret_amber_boar_run,
+# 481 in Secret_amber_undercut). On the old plateau the ridge camp's branch
+# (473, the boar-run door) climbed the plateau's north feather from whichever
+# public road stood nearest. The shared road solve holds a footing feather at
+# its blended ground, so the branch climbed it at 1.1-1.4 once the terrain terms
+# took the seam and door roads off the ridge (the fifteenth's three roads had
+# graded that hillside together). The undercut secret's branch (481) climbed the
+# same feather 2-3 m beside the camp branch. The relocated ground is forest
+# floor falling 15-25 m over 120 m towards the kelp landing, so branch_runs
+# should find few steep runs to regrade there until the door and seam roads
+# build their own feathers again; the beds stay one authored earth surface
+# each, like the paths below, and neither fades beside the other.
 APPROACH_BRANCHES={'amber-ridge-camp-branch':'discovery-amberwood-473','amber-undercut-branch':'discovery-amberwood-481'}
 APPROACH_GRADE=.45
 # A branch approach leaves other roads' corridors as the shared solve left
 # them: its cut and fill fade out from APPROACH_OTHER_ROAD_CLEAR to
-# APPROACH_OTHER_ROAD_FADE metres of any other centreline. Measured without
-# the fade: the camp branch runs 20 m beside the cinder chapel door road on
-# the chapel plateau, its shoulders raised the plateau edge 2-4.5 m and the
-# door road's climb steepened from .65 to .84, so the whole chapel hill lost
-# its served corridor.
+# APPROACH_OTHER_ROAD_FADE metres of any other centreline. Measured on the old
+# plateau without the fade: the camp branch ran 20 m beside the cinder chapel
+# door road, its shoulders raised the plateau edge 2-4.5 m and the door road's
+# climb steepened from .65 to .84, so the whole chapel hill lost its served
+# corridor. The two branches still share ground with the chapel's door road at
+# the new site, so the fade is kept; it has not been re-measured there.
 APPROACH_OTHER_ROAD_CLEAR=2.5
 APPROACH_OTHER_ROAD_FADE=7.
 # A branch approach is regraded along its steep runs only: each run of
 # stations steeper than the grade, padded by APPROACH_RUN_PAD_METRES and
 # widened until its ends stay on the natural ground, gets a local bounded
 # profile; the corridor weight fades to nothing APPROACH_RUN_FADE_METRES past
-# a run. Measured with the whole line regraded: the branches' shoulders
-# imposed their level on the chapel plateau's south side (2-3 m of fill at
-# x 596-624, z 494-502) and the step at its north edge cut the plateau, the
-# chapel foot and the camp approach off the hub reach.
+# a run. Measured on the old plateau with the whole line regraded: the
+# branches' shoulders imposed their level on its south side (2-3 m of fill at
+# the old x 596-624, z 494-502, the moved x 464-492, z 633-641) and the step at
+# its north edge cut the plateau, the chapel foot and the camp approach off the
+# hub reach.
 APPROACH_RUN_PAD_METRES=6.
 APPROACH_RUN_FADE_METRES=3.
+# Loose yard dressing that an approach's earth surface runs under wherever it
+# stands: ruin fragments, log piles and carts are a name family, not a lookup of
+# fixed placements, so moving one does not change what this stage does with it.
+# The prefixes are spelled without a trailing underscore, as the ruin fragments
+# already were, so object_edits.catalogue does not read the family as a per-node
+# reference and refuse to move the coppice yard with the rest of the chapel hill.
+# Across every certified library these three match exactly the 34 nodes the
+# underscored spellings matched.
+LOOSE_DRESSING=('Stone_RuinFragment','LogPile','Cart')
 
 
 def branch_routes(world):
@@ -109,16 +134,26 @@ def authored_routes(world):
     offset=np.asarray(world.regions[REGION]['center'])-[510.,540.]
     return {
         'amber-side-kilnyard':np.array([[638,613],[634,617],[630,624],[629,634]],float)+offset,
-        'amber-chapel-climb':np.array([[626,491],[634,491],[641,494],[646,503],[654,510],[663,511],[666,509]],float)+offset,
+        # The cluster's own routes carry the same (-132, +139) translation as its
+        # placements, so the chapel foot, the ruins, the camp and the arches keep
+        # their relation to the roads that serve them. The plateau they climbed is
+        # gone: on the natural ground the camp route falls from .59 to .10 and the
+        # undercut path from 1.05 to .14, both inside the corridor grade, while the
+        # chapel climb was already gentle (.05 to .07). The authored beds still
+        # matter because the shared solve's door and branch roads raise feathers
+        # across them wherever they meet.
+        'amber-chapel-climb':np.array([[494,630],[502,630],[509,633],[514,642],[522,649],[531,650],[534,648]],float)+offset,
         'amber-motherroot-yard':np.array([[510,522],[510,517],[512,513]],float)+offset,
         'amber-moot-path':np.array([[496,500],[495,505],[500,508],[503,504]],float)+offset,
-        'amber-ridge-camp':np.array([[604,435],[605,445],[599,452],[591,456],[584,456],[578,450]],float)+offset,
-        # The undercut path bends east between the two ruins (33.8 m, end-to-end
-        # grade .45): with the structures registered where they stand
-        # (content.register_obstacles) the cinder chapel door road takes its direct
-        # line up the hill and the chapel foot at (626, 491) lies 26 m lower than
-        # the fourteenth left it; the former 28 m line climbed at .54.
-        'amber-undercut-path':np.array([[626,491],[634,491],[641,487],[647,486],[650,481],[647,476]],float)+offset,
+        'amber-ridge-camp':np.array([[472,574],[473,584],[467,591],[459,595],[452,595],[446,589]],float)+offset,
+        # The undercut path bends east between the two ruins (33.8 m): with the
+        # structures registered where they stand (content.register_obstacles) the
+        # cinder chapel door road takes its direct line to the chapel foot and the
+        # two roads stay apart. On the plateau the foot at (626, 491) lay 26 m below
+        # the chapel, the bend held the path to .45 and the former 28 m line climbed
+        # at .54; the moved line rises 5 m over the same 33.8 m, so the bend now
+        # earns its keep by separating the roads rather than by the grade.
+        'amber-undercut-path':np.array([[494,630],[502,630],[509,626],[515,625],[518,620],[515,615]],float)+offset,
         # The village yard's approach: from the hub-connected ground west of
         # the canopy walkway's foot, south of Canopy Platform 2, over the low
         # hump beside the walkway end (h 45) and down to the root ramp's foot
@@ -127,12 +162,14 @@ def authored_routes(world):
         # measurements reached it only where a routed branch's shoulder
         # happened to fill the ground beside the walkway end.
         'amber-yard-approach':np.array([[462,469],[474,471],[484,473]],float)+offset,
-        # The chapel plateau's north bank: 8 m from the hub-side ground to the
-        # plateau edge over 14 m. The cinder chapel door road climbs it on a
-        # diagonal that the shared solve leaves at .62-.67 (the served fold
-        # blocks .65), so the chapel, the estate door, the undercut secret and
-        # the ridge camp behind them were served by rounding or not at all.
-        'amber-chapel-bank':np.array([[602,522],[611,512],[620,504]],float)+offset,
+        # 'amber-chapel-bank' is gone with the plateau. It carried the cinder
+        # chapel door road up the plateau's north bank, 8 m of rise over 14 m
+        # that the shared solve left at .62-.67 (the served fold blocks .65), so
+        # the chapel, the estate door, the undercut secret and the ridge camp
+        # behind them were served by rounding or not at all. The same line at the
+        # moved site rises 5 m over 25 m, inside the corridor grade and inside
+        # the served fold, so there is no bank to author; a flat authored surface
+        # there would only raise ground the door road does not need.
     }
 
 
@@ -177,7 +214,7 @@ def apply_amberwood_support(world,content):
         occupied=np.zeros_like(weight,dtype=bool)
         for obj in content.objects:
             if obj['region']!=REGION or not obj.get('collides') or obj.get('assembly'):continue
-            if obj['node'].startswith(('Stone_RuinFragment','LogPile_','Cart_')):continue
+            if obj['node'].startswith(LOOSE_DRESSING):continue
             if obj.get('kind') in ('tree','rock','foliage','undergrowth','scrub'):continue
             a,b=obj['low'],obj['high']
             if (b[0]-a[0])*(b[2]-a[2])>SOLID_MAXIMUM_AREA_SQUARE_METRES:continue

@@ -15,11 +15,13 @@ class Roads:
 
 
 def test_the_ridge_camp_branch_is_an_approach_taken_from_its_routed_road():
-    world = Roads([{'id': 'discovery-amberwood-473', 'points': [[556., 83., 472.], [576., 92., 480.], [605., 107., 457.]]}])
-    world.roads.append({'id': 'discovery-amberwood-481', 'points': [[644., 101., 496.], [603., 102., 493.]]})
+    # Stations at the relocated cluster: the boar-run door stands by the camp on
+    # the south-west forest floor, the undercut door 40 m east of it.
+    world = Roads([{'id': 'discovery-amberwood-473', 'points': [[424., 26., 611.], [444., 30., 619.], [473., 34., 596.]]}])
+    world.roads.append({'id': 'discovery-amberwood-481', 'points': [[512., 31., 635.], [471., 32., 632.]]})
     routes = A.branch_routes(world)
     assert list(routes) == ['amber-ridge-camp-branch', 'amber-undercut-branch']
-    np.testing.assert_array_equal(routes['amber-ridge-camp-branch'], [[556., 472.], [576., 480.], [605., 457.]])
+    np.testing.assert_array_equal(routes['amber-ridge-camp-branch'], [[424., 611.], [444., 619.], [473., 596.]])
     with pytest.raises(ValueError, match='was not routed'):
         A.branch_routes(Roads([]))
 
@@ -53,12 +55,24 @@ def test_the_village_yard_approach_runs_from_the_west_ground_to_the_root_ramp_fo
     assert np.all(path[:, 1] < 479.)   # south of Canopy Platform 2 (z 479..495)
 
 
-def test_the_chapel_bank_approach_climbs_from_the_hub_side_ground_to_the_plateau_edge():
+def test_the_chapel_hill_routes_moved_with_the_cluster_and_the_bank_is_gone():
     world = Roads([]); world.regions = {'amberwood': {'center': [510., 540.]}}
-    path = A.authored_routes(world)['amber-chapel-bank']
-    assert path[0][1] > 517. and path[-1][1] < 506.   # from below the bank (z > 517) up to the plateau edge
-    length = np.sum(np.linalg.norm(np.diff(path, axis=0), axis=1))
-    assert 8. / length < A.APPROACH_GRADE   # 8 m of rise within the corridor grade
+    routes = A.authored_routes(world)
+    # The plateau's north bank does not exist at the new site: 5 m of rise over
+    # 25 m is inside the corridor grade, so the route and its regrade are gone.
+    assert 'amber-chapel-bank' not in routes
+    for name in ('amber-chapel-climb', 'amber-ridge-camp', 'amber-undercut-path'):
+        path = routes[name]
+        assert path[:, 0].max() < 560. and path[:, 1].min() > 560.   # south-west of the old plateau
+    # The chapel climb and the undercut path still leave the same chapel foot,
+    # and the undercut path still bends east away from it between the two ruins.
+    np.testing.assert_array_equal(routes['amber-chapel-climb'][:2], routes['amber-undercut-path'][:2])
+    assert routes['amber-undercut-path'][-1][0] > routes['amber-undercut-path'][0][0] + 15.
+    # The camp route still ends on the ridge camp's own reference point.
+    np.testing.assert_allclose(routes['amber-ridge-camp'][-1], [446., 589.], atol=1.)
+    # The village's own approaches did not move with the hill.
+    np.testing.assert_array_equal(routes['amber-yard-approach'][0], [462., 469.])
+    np.testing.assert_array_equal(routes['amber-side-kilnyard'][0], [638., 613.])
 
 
 def test_a_branch_is_regraded_along_its_steep_runs_only():
