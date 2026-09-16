@@ -88,6 +88,22 @@ class ContinentGeographyTests(unittest.TestCase):
         rgb = landscape.terrain_color(x, np.full_like(x, 590))
         self.assertLess(float(np.max(np.linalg.norm(np.diff(rgb, axis=0), axis=1))), 0.035)
 
+    def test_a_relief_source_may_lower_the_snowline_over_its_own_ground(self):
+        rows = (np.array([-10., 0., 10.]), np.array([-300., -200., -100.]), np.full((3, 3), 50.))
+        with patch.object(landscape, "_relief_samples", lambda name: rows):
+            source = {"samples": "x.npz", "translation": [500., 0., 300.], "crop": [-10, -300, 10, -100],
+                      "feather": 40, "snowline_drop": 45.}
+            plan = dict(landscape.load_plan(), relief_sources=[source])
+            inside = float(landscape.snowline_at(500., 100., plan))
+            far = float(landscape.snowline_at(500., 700., plan))
+            between = float(landscape.snowline_at(500., 220., plan))     # 20 m outside the crop
+            plain = float(landscape.snowline_at(500., 100., dict(plan, relief_sources=[])))
+            self.assertAlmostEqual(inside, plain - 45., places=6)
+            self.assertAlmostEqual(far, 131 + float(landscape.smoothstep(250, 850, 700.)) * 82, places=6)
+            self.assertTrue(plain - 45. < between < plain)
+            # A source without the key changes nothing.
+            self.assertAlmostEqual(float(landscape.snowline_at(500., 100., dict(plan, relief_sources=[dict(source, snowline_drop=0.)]))), plain, places=6)
+
     def test_relief_source_and_retained_transform_share_one_squeeze(self):
         transform = {"translation": [477., 70., 272.], "squeeze_z": .85, "about_z": 60.}
         # x is translated; z is squeezed about source row 60 and translated: 272 + 60 + (z - 60) * .85.

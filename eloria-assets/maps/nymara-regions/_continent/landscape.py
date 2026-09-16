@@ -615,6 +615,20 @@ def water_fields(x=None, z=None, height=None, plan=None):
             "river_distance": minimum}
 
 
+def snowline_at(x, z, plan=None):
+    """The height above which snow lies: a latitude line, lowered over a relief source that declares an
+    alpine climate (``snowline_drop`` metres, carried by the source's own crop weight and feather), so an old
+    mountain map keeps its snow at its own heights without its seams turning into cliffs."""
+    plan = load_plan() if plan is None else plan
+    x, z = _coords(x, z)
+    snowline = 131 + smoothstep(250, 850, z) * 82
+    for source in plan.get("relief_sources", []):
+        drop = float(source.get("snowline_drop", 0.0))
+        if drop:
+            snowline = snowline - drop * _relief_height(x, z, source)[1]
+    return snowline
+
+
 def biome_weights(x, z, height=None, plan=None):
     """Smooth material/plant community weights; no named-region boundary masks."""
     plan = load_plan() if plan is None else plan
@@ -634,7 +648,7 @@ def biome_weights(x, z, height=None, plan=None):
     damp = (1 - smoothstep(9, 67, water["river_distance"])) * (1 - smoothstep(22, 85, h))
     delta = np.exp(-(((x - 510) / 250) ** 2 + ((z - 1140) / 235) ** 2))
     limestone = warm * smoothstep(740, 1170, x) * smoothstep(15, 95, h)
-    snowline = 131 + smoothstep(250, 850, z) * 82
+    snowline = snowline_at(x, z, plan)
     snow = smoothstep(snowline - 9, snowline + 16, h + _noise(x, z, 70, plan["seed"] + 71) * 4)
     rock = smoothstep(67, 142, h) * (1 - snow)
     sand = (1 - smoothstep(1.0, 8.5, h)) * (1 - smoothstep(35, 105, water["river_distance"])) * 0.5
