@@ -880,7 +880,7 @@
       "name": "Raven",
       "actor_type": 713,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/029_raven/2_rigged/029_raven_rigged.glb",
-      "sha256": "2cc4ca03bca578bca8b24e6032d7f52104586a319bca60c23de2cd6dfae109b0",
+      "sha256": "51f7f04f5ba5b6d01fbed49062786bd6d861c2c5d93251c318a37bc05da4516a",
       "source_revision": 7,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -893,7 +893,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 98,
+      "morph_targets": 50,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/birds/029_raven.png",
       "reference_creature": "racoon",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 54",
@@ -912,7 +912,7 @@
       "name": "Magpie",
       "actor_type": 714,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/030_magpie/2_rigged/030_magpie_rigged.glb",
-      "sha256": "fd30645b8a147753ce1f907846adf3c43cee7d1bac7a53fa53a3613a6ff58948",
+      "sha256": "0ff949657ebfadc63717b947c3e6f6aa46381bd0fb9b00bb8841cb67ad3b2ad4",
       "source_revision": 7,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -925,7 +925,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 98,
+      "morph_targets": 50,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/birds/030_magpie.png",
       "reference_creature": "racoon",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 54",
@@ -944,7 +944,7 @@
       "name": "Mallard Duck",
       "actor_type": 715,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/031_mallard_duck/2_rigged/031_mallard_duck_rigged.glb",
-      "sha256": "e49654daf4e63df6b25702d1531f31c90ca6b626314a0b9d8b757e97e31a29ab",
+      "sha256": "0bbe2badfdb1371b8e5aa5a91468aade1d3dd00e693da08dd47737ceb494dcb7",
       "source_revision": 7,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -957,7 +957,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 98,
+      "morph_targets": 50,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/birds/031_mallard_duck.png",
       "reference_creature": "beaver",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 10",
@@ -976,7 +976,7 @@
       "name": "Goose",
       "actor_type": 716,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/032_goose/2_rigged/032_goose_rigged.glb",
-      "sha256": "66b3275ebd67b348241fadbebe0c37ad392cb94cddbfc9536da1044bdcbb57f9",
+      "sha256": "0baa0dc4d0ec5b7bc645cbc953a2bb442d8a821c19c270b9a422e7652c074d77",
       "source_revision": 7,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -989,7 +989,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 98,
+      "morph_targets": 50,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/birds/032_goose.png",
       "reference_creature": "fox",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 30",
@@ -1008,7 +1008,7 @@
       "name": "Swan",
       "actor_type": 717,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/033_swan/2_rigged/033_swan_rigged.glb",
-      "sha256": "dcf3b0edc97692fdac1852e5276166d035bdb0d21e1e7797810c7a5e0d4e50c6",
+      "sha256": "ded48f223148d8229f91c421b1b42eca10de7a521721598d3c6718896223f1c2",
       "source_revision": 7,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1021,7 +1021,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 98,
+      "morph_targets": 50,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/birds/033_swan.png",
       "reference_creature": "fox",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 30",
@@ -1040,7 +1040,7 @@
       "name": "Rooster",
       "actor_type": 718,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/034_rooster/2_rigged/034_rooster_rigged.glb",
-      "sha256": "d8c34aa5f4e207d9b4b7b5ed14a908d488c2581208690c6215b14dcad82d92bf",
+      "sha256": "4477f078727c8c41b22085e3fd78697afb3944135c24c7cf82fdd78fecbffb08",
       "source_revision": 9,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1053,7 +1053,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 297,
+      "morph_targets": 153,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/birds/034_rooster.png",
       "reference_creature": "skunk",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 58",
@@ -1072,7 +1072,7 @@
       "name": "Turkey",
       "actor_type": 719,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/035_turkey/2_rigged/035_turkey_rigged.glb",
-      "sha256": "8042f785d580168c3180f1f0c7b5cfab90827e394530ab9ad195c3370a079625",
+      "sha256": "ce3346f13a00e7ccfc8a9b3fa64e2b82e69a3356f02672973c6c1295c07054e0",
       "source_revision": 8,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1085,7 +1085,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 33,
+      "morph_targets": 17,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/birds/035_turkey.png",
       "reference_creature": "fox",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 30",
@@ -1104,7 +1104,7 @@
       "name": "Pheasant",
       "actor_type": 720,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/036_pheasant/2_rigged/036_pheasant_rigged.glb",
-      "sha256": "cf37fd1e5753c5f90aee3710f77e8037bfd24965e382c58a666b1092db2e234c",
+      "sha256": "c8e0b330aae4f79751122ab732a0c4c90e4f4ea2079a13c54db1532f04356c9f",
       "source_revision": 7,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1117,7 +1117,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 98,
+      "morph_targets": 50,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/birds/036_pheasant.png",
       "reference_creature": "skunk",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 58",
@@ -1198,7 +1198,7 @@
       "name": "Pelican",
       "actor_type": 723,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/039_pelican/2_rigged/039_pelican_rigged.glb",
-      "sha256": "b007c207fc2fad6d228dad1a9635eedd0dda4c103c28b91d43d722b855071331",
+      "sha256": "9b317b5e1b9ab5dd04c9056ab691a54fe5e908d2cd5fe72993e7bd1763d26ea1",
       "source_revision": 9,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1211,7 +1211,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 297,
+      "morph_targets": 153,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/birds/039_pelican.png",
       "reference_creature": "fox",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 30",
@@ -1230,7 +1230,7 @@
       "name": "Macaw",
       "actor_type": 724,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/040_macaw/2_rigged/040_macaw_rigged.glb",
-      "sha256": "e9bb088f03c914b5de00c608ae3c01210be6fc0163cefd2abbfbdb074d3d65bd",
+      "sha256": "a139f5244038402b58a36303fc9b0f08dd3be179882b5ba5bc654c0f74208955",
       "source_revision": 8,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1243,7 +1243,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 33,
+      "morph_targets": 17,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/birds/040_macaw.png",
       "reference_creature": "racoon",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 54",
@@ -1820,7 +1820,7 @@
       "name": "Giant Wasp",
       "actor_type": 743,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/059_giant_wasp/2_rigged/059_giant_wasp_rigged.glb",
-      "sha256": "025586f8b18a867aa5f56aef5a7c5342c10e7ad74790ec87deb67f314a10f49c",
+      "sha256": "8795cee2ec803e093b6f9298150665034fb5620badcaa337a2f4a358da7a160f",
       "source_revision": 10,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1833,7 +1833,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 129,
+      "morph_targets": 65,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/invertebrates/059_giant_wasp.png",
       "reference_creature": "large_spider_1",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 41",
@@ -1883,7 +1883,7 @@
       "name": "Skeleton",
       "actor_type": 745,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/061_skeleton/2_rigged/061_skeleton_rigged.glb",
-      "sha256": "94a927dd36b122320038b8f37d9cce668c86f8f1dee42ad6a3cf85e0da41f08f",
+      "sha256": "7625809e4e256943c677080f203bdb628e7fa74023243b2e56dbaa06b906902a",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1895,7 +1895,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 82,
+      "morph_targets": 42,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/061_skeleton.png",
       "reference_creature": "skeleton",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 57",
@@ -1914,7 +1914,7 @@
       "name": "Zombie",
       "actor_type": 746,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/062_zombie/2_rigged/062_zombie_rigged.glb",
-      "sha256": "dc40f57a6a8a8a3338e115a098575117a3d8a6163d27eb6e4e0c47b7cf08a33d",
+      "sha256": "f88e621f25f54256af942c4210200763ebf48b84b8e5970d2193f893e0812d83",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1926,7 +1926,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 82,
+      "morph_targets": 42,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/062_zombie.png",
       "reference_creature": "skeleton",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 57",
@@ -1945,7 +1945,7 @@
       "name": "Ghoul",
       "actor_type": 747,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/063_ghoul/2_rigged/063_ghoul_rigged.glb",
-      "sha256": "2dd3574c2a7cf8673214a643d812adbbeaad085be9a888d4748532ee29e716ce",
+      "sha256": "aa779e6f1a73aa06d6dd22bcf2e12048e40931c5d1c1710a33aeab8d176d0ce2",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1957,7 +1957,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 82,
+      "morph_targets": 42,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/063_ghoul.png",
       "reference_creature": "armed_skeleton",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 5",
@@ -1976,7 +1976,7 @@
       "name": "Mummy",
       "actor_type": 748,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/064_mummy/2_rigged/064_mummy_rigged.glb",
-      "sha256": "ea33acd883dcc203be5090d5a76d7b48703365776e1289c71eb3e208fd452a3f",
+      "sha256": "5cffd425e3fdab941508dc529734cbd6c803fc2534c37f302d87d2c2a3af19b0",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1988,7 +1988,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 82,
+      "morph_targets": 42,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/064_mummy.png",
       "reference_creature": "troll_1",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 69",
@@ -2007,7 +2007,7 @@
       "name": "Vampire",
       "actor_type": 749,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/065_vampire/2_rigged/065_vampire_rigged.glb",
-      "sha256": "080e7ec35b411944e959f4520544167068341e9914bde6fdfa478d4546c84998",
+      "sha256": "3902403638a0ed90e8410733f4254a559d22c9b4e4e595924121a83e25fc6b42",
       "source_revision": 9,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2019,7 +2019,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 82,
+      "morph_targets": 42,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/065_vampire.png",
       "reference_creature": "armed_male_orc",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 4",
@@ -2038,7 +2038,7 @@
       "name": "Imp",
       "actor_type": 750,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/066_imp/2_rigged/066_imp_rigged.glb",
-      "sha256": "3589c3eb9e895fde51a8aa83f9f5dd2fa03320ccd412f97cd9954eb27068b13c",
+      "sha256": "7f75fe373e6d256abf84b5a2cbf853dc727567c8c2f4f2a0798dec33d098dcc4",
       "source_revision": 10,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2051,7 +2051,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 211,
+      "morph_targets": 107,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/066_imp.png",
       "reference_creature": "imp",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 39",
@@ -2070,7 +2070,7 @@
       "name": "Gargoyle",
       "actor_type": 751,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/067_gargoyle/2_rigged/067_gargoyle_rigged.glb",
-      "sha256": "f6bda30e6f1adfd718b4e060b5f8635d5d664e2713838178e02316736322bea6",
+      "sha256": "1110b8705f0c252fefb7644e9f80a0ea37d16093e349243ae3562c9672dd79bb",
       "source_revision": 10,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2083,7 +2083,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 211,
+      "morph_targets": 107,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/067_gargoyle.png",
       "reference_creature": "gargoyle_1",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 31",
@@ -2102,7 +2102,7 @@
       "name": "Gremlin",
       "actor_type": 752,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/068_gremlin/2_rigged/068_gremlin_rigged.glb",
-      "sha256": "cc3bb4bef3cea53b158435850a2efacc1d3138916389d2cecb849a73a6a8858e",
+      "sha256": "aa6a813a21037ced877bc34a44adefebb389dfe1b88bf8907c282d8bd56f3de8",
       "source_revision": 8,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2114,7 +2114,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 82,
+      "morph_targets": 42,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/068_gremlin.png",
       "reference_creature": "imp",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 39",
@@ -2133,7 +2133,7 @@
       "name": "Hobgoblin",
       "actor_type": 753,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/069_hobgoblin/2_rigged/069_hobgoblin_rigged.glb",
-      "sha256": "f17f113edf1b2e6a111f33e35ec50e3f0d9900aa1f97f5ae93aa89cf2fd19fd9",
+      "sha256": "3651eaa6b175d57ee9e18552d063201c561d047ddec664d13d0355f1394d0333",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2145,7 +2145,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 82,
+      "morph_targets": 42,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/069_hobgoblin.png",
       "reference_creature": "hobgoblin",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 37",
@@ -2164,7 +2164,7 @@
       "name": "Gnoll",
       "actor_type": 754,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/070_gnoll/2_rigged/070_gnoll_rigged.glb",
-      "sha256": "226ac366db2f43f39fb77e36ea326ae2740483e954bac79c8e5a486ab7925786",
+      "sha256": "5bf8be2e7a207d206ed74071c5d4d6f3e52d28e2bad5f760d9d82a8c0833a32c",
       "source_revision": 9,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2176,7 +2176,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 82,
+      "morph_targets": 42,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/070_gnoll.png",
       "reference_creature": "male_orc_1",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 50",
@@ -2195,7 +2195,7 @@
       "name": "Centaur",
       "actor_type": 755,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/071_centaur/2_rigged/071_centaur_rigged.glb",
-      "sha256": "8ad98adacf77dc84685071fa9135254cfe99b9e373471ec7a527609e530f2427",
+      "sha256": "e500b26a17d4416d17364e949a9521f5ccbf331d0b0cc61b4a435489733587fb",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2207,7 +2207,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 82,
+      "morph_targets": 42,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_beasts/071_centaur.png",
       "reference_creature": "armed_male_orc",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 4",
@@ -2226,7 +2226,7 @@
       "name": "Merfolk",
       "actor_type": 756,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/072_merfolk/2_rigged/072_merfolk_rigged.glb",
-      "sha256": "76873f15c0bbe7fb0a1fae609daef7423432ee81d7636fbad564371c5ee1059d",
+      "sha256": "260e8229f61686c4d862b8c142edf9dc5f863a5f5889d2fa1115fdbed0538d6d",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2238,7 +2238,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 82,
+      "morph_targets": 42,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/072_merfolk.png",
       "reference_creature": "female_orc_1",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 25",
@@ -2257,7 +2257,7 @@
       "name": "Tengu",
       "actor_type": 757,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/073_tengu/2_rigged/073_tengu_rigged.glb",
-      "sha256": "0c843ab5c79cbc9102fade7824703562f32633c03ad4f8e7108468418c75afed",
+      "sha256": "2ac6611359374c173ede83dc9231256c7c15352e731035b48570248f90233ed0",
       "source_revision": 13,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2270,7 +2270,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 259,
+      "morph_targets": 131,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/073_tengu.png",
       "reference_creature": "armed_male_orc",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 4",
@@ -2289,7 +2289,7 @@
       "name": "Arachne",
       "actor_type": 758,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/074_arachne/2_rigged/074_arachne_rigged.glb",
-      "sha256": "14bfffed793b7f73e5b5309f1441d1923ff8dac6aa6e0d34fc17842f5bd7db47",
+      "sha256": "cdaa3b7dca5d3c9adca4f807739fbfe83d541e4cfae2758cb9ab5f595e212460",
       "source_revision": 12,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2301,7 +2301,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 98,
+      "morph_targets": 50,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_beasts/074_arachne.png",
       "reference_creature": "armed_male_orc",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 4",
@@ -2320,7 +2320,7 @@
       "name": "Manticore",
       "actor_type": 759,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/075_manticore/2_rigged/075_manticore_rigged.glb",
-      "sha256": "1ebebcffb9e2f7ec4570a00ce805b7f937ade2a7cd50b5af048e07feb033712a",
+      "sha256": "919c26bc7ccac14ff566efb544022cec0c9e1b64e2a6dcd48ff584df5627adc7",
       "source_revision": 10,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2333,7 +2333,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 129,
+      "morph_targets": 65,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_beasts/075_manticore.png",
       "reference_creature": "chimeran_desert",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 16",
@@ -2352,7 +2352,7 @@
       "name": "Cockatrice",
       "actor_type": 760,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/076_cockatrice/2_rigged/076_cockatrice_rigged.glb",
-      "sha256": "de81f0e91896935cbce096cb2f5e3cb9bd5bbb0a218783f9c643af09e10749bd",
+      "sha256": "b46c7be7f1d9b3af8b93570a1709a1a6b9f0b479a8ca4e10d89f071885a375b3",
       "source_revision": 10,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2365,7 +2365,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 162,
+      "morph_targets": 82,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_beasts/076_cockatrice.png",
       "reference_creature": "cockatrice",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 20",
@@ -2384,7 +2384,7 @@
       "name": "Peryton",
       "actor_type": 761,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/077_peryton/2_rigged/077_peryton_rigged.glb",
-      "sha256": "22f783bf126e53f3f2222a7f773ae05d4c55d8db3d7471061dbc8f409679eba4",
+      "sha256": "02a77ca8a19c01161f72e2449c3fea4a428babefdd1ce957794bca30e57c5251",
       "source_revision": 10,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2397,7 +2397,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 162,
+      "morph_targets": 82,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_beasts/077_peryton.png",
       "reference_creature": "lion",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 47",
@@ -2416,7 +2416,7 @@
       "name": "Jackalope",
       "actor_type": 762,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/078_jackalope/2_rigged/078_jackalope_rigged.glb",
-      "sha256": "d183766fdd587b8bc46a25922fbd13f5e802ba08bb0c7473e61440572ab1aca9",
+      "sha256": "3b9415dd6f0b649e21294815436b528355f9d67b4886791f09ef57a371831875",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2428,7 +2428,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 49,
+      "morph_targets": 25,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_beasts/078_jackalope.png",
       "reference_creature": "brownie",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 14",
@@ -2447,7 +2447,7 @@
       "name": "Qilin",
       "actor_type": 763,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/079_qilin/2_rigged/079_qilin_rigged.glb",
-      "sha256": "b72bb9ad608a9aea1dd234666fb81a04cc9a10fed93ab155511b14567d0f0137",
+      "sha256": "d5c3e065bf108ae0da80e861a4de6a630a131dce6cf76c7f0012060e74a42646",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2459,7 +2459,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 49,
+      "morph_targets": 25,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_beasts/079_qilin.png",
       "reference_creature": "chimeran_forest",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 17",
@@ -2633,7 +2633,7 @@
       "name": "Living Armor",
       "actor_type": 769,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/085_living_armor/2_rigged/085_living_armor_rigged.glb",
-      "sha256": "0d4a32168a07234f4ccfa82cc8795164bc637e5d186ef9e77765e19124b6633d",
+      "sha256": "be0cca56b4130d4526391407f3a8a437e7800256c64d27b731b9b24473345b74",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2645,7 +2645,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 82,
+      "morph_targets": 42,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_constructs/085_living_armor.png",
       "reference_creature": "armed_male_orc",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 4",
@@ -2664,7 +2664,7 @@
       "name": "Flesh Golem",
       "actor_type": 770,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/086_flesh_golem/2_rigged/086_flesh_golem_rigged.glb",
-      "sha256": "895c987743053e50791218ce94c0502e17524fb7efa20ed547436370f27da531",
+      "sha256": "446428190e78d3534de3ec3184e046f2a70a81162974824a379a5cf7e0be68c0",
       "source_revision": 14,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2676,7 +2676,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 130,
+      "morph_targets": 66,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/086_flesh_golem.png",
       "reference_creature": "cyclops_1",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 21",
@@ -2881,7 +2881,7 @@
       "name": "Cerberus",
       "actor_type": 777,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/093_cerberus/2_rigged/093_cerberus_rigged.glb",
-      "sha256": "f52e8383fbcfd044d83ae53c43f3d02fe1888a812cc90d762b7634cdd694e73c",
+      "sha256": "c06512bd05f4c225f5d873e3c9d95814f58e5b2b9251ddbbd95a4ef2bd2fdcd5",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2893,7 +2893,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 49,
+      "morph_targets": 25,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_beasts/093_cerberus.png",
       "reference_creature": "chimeran_desert",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 16",
@@ -2912,7 +2912,7 @@
       "name": "Two Headed Giant",
       "actor_type": 778,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/094_two_headed_giant/2_rigged/094_two_headed_giant_rigged.glb",
-      "sha256": "e11a3232a7f403dc7ff4e708a7af66c504bd0ecc58b372c0eda0f181ca3f78b2",
+      "sha256": "b5f525227173dee2458e2ab23a84724c82a4c84e95dffdaac49bd8e8bbccca06",
       "source_revision": 13,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2924,7 +2924,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 130,
+      "morph_targets": 66,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/094_two_headed_giant.png",
       "reference_creature": "giant_1",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 34",
@@ -2943,7 +2943,7 @@
       "name": "Winged Serpent",
       "actor_type": 779,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/095_winged_serpent/2_rigged/095_winged_serpent_rigged.glb",
-      "sha256": "ddbbc645f9ccf3b2e237f7f8a864f267f55896ff7f4a502902ec59811bc419d1",
+      "sha256": "e6eb83cadbabb753fba02315b56be5038a1dc11e2a1042ea2d99b1f0ab9c21e0",
       "source_revision": 15,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2956,7 +2956,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 129,
+      "morph_targets": 65,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_beasts/095_winged_serpent.png",
       "reference_creature": "chimeran_desert",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 16",
@@ -2975,7 +2975,7 @@
       "name": "Four Armed Guardian",
       "actor_type": 780,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/096_four_armed_guardian/2_rigged/096_four_armed_guardian_rigged.glb",
-      "sha256": "6da4ff1f95ecb2fa63256313fbc7140f7306a90b6e3ec5dcf1eb7f282f17fc76",
+      "sha256": "4339198fb5079e271815af3103520f13e03e4ac3aeef7a5cb23a202f3fadb990",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2987,7 +2987,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 82,
+      "morph_targets": 42,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_humanoids/096_four_armed_guardian.png",
       "reference_creature": "feros",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 27",
@@ -3068,7 +3068,7 @@
       "name": "Sphinx",
       "actor_type": 783,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/099_sphinx/2_rigged/099_sphinx_rigged.glb",
-      "sha256": "81f65ca743122cd74de8c019aab6809801cf1d920610d96b37b1876971a8f1fe",
+      "sha256": "94d9ec343d5a0a387f48a5928c7b26137661d94424bfd8af14792a483870eb04",
       "source_revision": 15,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -3081,7 +3081,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 129,
+      "morph_targets": 65,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_beasts/099_sphinx.png",
       "reference_creature": "chimeran_mountain",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 18",
@@ -3100,7 +3100,7 @@
       "name": "Air Elemental",
       "actor_type": 784,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/100_air_elemental/2_rigged/100_air_elemental_rigged.glb",
-      "sha256": "d53d8f30e6b103141cd1b57aae1fc8254e1b727ed53f77ee3b69d075f4a6d270",
+      "sha256": "ed39dc649586c494d7d3d1b89377c2e3a9ed0d1e4693f1d25b7a419703158ea0",
       "source_revision": 15,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -3112,7 +3112,7 @@
         "Sword_Attack",
         "Walk"
       ],
-      "morph_targets": 97,
+      "morph_targets": 49,
       "concept": "concept_art/creatures/basic_creature_expansion_100/images/fantasy_aberrations/100_air_elemental.png",
       "reference_creature": "chimeran_desert",
       "reference_source": "creatureDesign.xlsx / Creatures Stats / row 16",
