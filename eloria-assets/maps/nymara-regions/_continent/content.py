@@ -48,8 +48,12 @@ def walk_through(name):
 
 
 def retained_source_center(transform,center):
-    """(source centre, xz scale) that send mapped_xz through a retained transform: the source point the
-    territory's centre stands on, and the north-south squeeze (1 for a rigid translation)."""
+    """(source centre, xz scale) summarising a retained transform: the source point the territory's
+    centre stands on, and the north-south squeeze (1 for a rigid translation).
+
+    Content places through landscape.retained_map_xz (Content.mapped_xz); a source centre and a
+    per-axis scale cannot express the layout's turn. This summary is kept for the published
+    contentTransform alone, the continuous fallback for server tiles with no explicit mapping."""
     translation,scale,about=L.retained_affine(transform)
     return (np.asarray(center,float)-translation[[0,2]]-about*(1.-scale))/scale,scale
 
@@ -82,6 +86,54 @@ def retained_source_placements(region, placements):
     return [p for p in placements if not p['node'].startswith(obsolete.get(region,())) and p['node'] not in retired.get(region,())]
 
 
+def placement_bounds(document,body,placements):
+    """(low, high) of every retained placement's own subtree, by node name."""
+    matrices=S.GR.hierarchy(document)[0]
+    by_name={n.get('name'):i for i,n in enumerate(document['nodes'])}
+    return {p['node']:S.subtree_bounds(document,body,by_name[p['node']],matrices)
+            for p in placements if p['node'] in by_name}
+
+
+def turn_layout(document,body,placements,yaw_degrees,pivots=None):
+    """Turn a whole retained layout by ``yaw_degrees`` in a private copy of its document.
+
+    A retained root turns about its own base centre on object_edits' own matrix, the rotation it
+    performs for an authored edit (which is then applied on top of this one, never twice): the mesh
+    turns in place while mapped_xz carries its position round. A compound member turns about ``pivots[node]``,
+    its compound's reference point, so the members' positions rotate about it as well and the compound
+    stays one rigid body under a single shift. A tree's foliage companions turn with the tree, on its
+    matrix, so a crown cannot part from its trunk. Nothing is scaled.
+    """
+    document=dict(document);document['nodes']=[dict(node) for node in document['nodes']]
+    matrices,parents=S.GR.hierarchy(document)
+    by_name={n.get('name'):i for i,n in enumerate(document['nodes'])}
+    foliage={}
+    for p in placements:
+        if p.get('kind')=='foliage' and p['node'] in by_name and 'position' in p:
+            foliage.setdefault(tuple(np.round(p['position'],4)),[]).append(p['node'])
+    turned=set()
+    for p in placements:
+        name=p['node']
+        if name not in by_name or name in turned:continue
+        roots=[name]
+        if (p.get('kind')=='tree' or name.endswith('_Wood')) and 'position' in p:
+            roots+=[c for c in foliage.get(tuple(np.round(p['position'],4)),()) if c!=name and c not in turned]
+        low,high=np.full(3,np.inf),np.full(3,-np.inf)
+        for root in roots:
+            l,h=S.subtree_bounds(document,body,by_name[root],matrices)
+            low=np.minimum(low,l);high=np.maximum(high,h)
+        pivot=(pivots or {}).get(name)
+        # object_edits' matrix is a right-handed turn about +Y, which swings the opposite way to the
+        # map's yaw (positive from north towards east, landscape._rotate_xz). Turning the root by its
+        # negative puts the mesh round exactly as retained_map_xz carries the positions.
+        k=OE.edit_matrix([float(pivot[0]),0.,float(pivot[1])] if pivot is not None else OE.base_pivot(low,high),-yaw_degrees)
+        for root in roots:
+            index=by_name[root];parent=matrices[parents[index]] if index in parents else np.eye(4)
+            OE.set_matrix(document['nodes'][index],np.linalg.inv(parent)@k@parent@S.GR.local_matrix(document['nodes'][index]))
+            turned.add(root)
+    return document
+
+
 def spawn_position(template):
     spawns=template.get('spawnPoints',template.get('spawns',[]))
     default=template.get('navigation',{}).get('defaultSpawn')
@@ -93,6 +145,10 @@ class Content:
     def __init__(self,world,library,templates,legacy):
         self.world=world;self.library=Path(library);self.templates=templates;self.legacy=legacy
         self.documents={};self.metadata={};self.prototypes={};self.objects=[];self.mapping={};self.source_centers={};self.scales={}
+        # A territory's retained transform (None where it keeps the centre/scale rule) and, under a
+        # turned layout, the constant part of what each placement carries beyond that transform's own
+        # mapping of its source point (see load(); the placement's live shift is the other part).
+        self.transforms={};self.residuals={}
         self.placement_by_name={};self.bounds_by_name={}
         self.companions={}
         self.assembly_records={}
@@ -100,6 +156,11 @@ class Content:
         self.edits=OE.ObjectEdits(OE.load_edits(),world.ids)
 
     def mapped_xz(self,region,points):
+        """Source xz to continent xz. A retained transform carries the whole layout: squeezed and turned
+        about its own point, then translated (landscape.retained_map_xz); any other territory keeps the
+        centre-and-scale rule. Points may be one pair or an array of them."""
+        transform=self.transforms.get(region)
+        if transform is not None:return L.retained_map_xz(transform,points)
         points=np.asarray(points,float)
         return (points-self.source_centers[region])*self.scales[region]+self.world.regions[region]['center']
 
@@ -145,6 +206,25 @@ class Content:
             # Authored object edits (continent-edits.json): removals before
             # grouping and bounds, rotation/scale on the source roots.
             metadata['placements']=self.edits.filter_placements(region,metadata['placements'])
+            region_transform=self.world.plan.get('retained_transforms',{}).get(region)
+            self.transforms[region]=region_transform
+            ground=np.load(folder/'foundation-samples.npz')
+            sample=RegularGridInterpolator((ground['z'],ground['x']),ground['height'],bounds_error=False,fill_value=None)
+            def source_height(x,z):
+                x,z=np.broadcast_arrays(np.asarray(x,float),np.asarray(z,float))
+                return sample(np.c_[z.ravel(),x.ravel()]).reshape(x.shape)
+            # A transform that turns carries the whole legacy layout round as one rigid body: every
+            # placement turns before its own authored edits, each compound about its reference so it
+            # stays rigid, and the compounds keep the anchors they had before the turn.
+            yaw=L.retained_yaw_degrees(region_transform) if region_transform is not None else 0.
+            unmap=(lambda x,z:L.retained_unmap_xz(region_transform,x,z)) if yaw else None
+            references=None;legacy_bounds={}
+            if yaw:
+                legacy_bounds=placement_bounds(document,body,metadata['placements'])
+                anchored=A.build_assemblies(region,metadata['placements'],legacy_bounds,source_height)
+                references={identity:assembly.reference_xz for identity,assembly in anchored.items()}
+                document=turn_layout(document,body,metadata['placements'],yaw,
+                    {node:assembly.reference_xz for assembly in anchored.values() for node in assembly.nodes})
             document=self.edits.prepare_document(region,document,body,metadata['placements'])
             self.documents[region]=(document,body)
             self.metadata[region]=metadata
@@ -163,19 +243,13 @@ class Content:
             center=spawn_position(self.templates[region])[[0,2]]
             self.source_centers[region]=center
             self.scales[region]=.78 if region!='four_gates' else .90
-            region_transform=self.world.plan.get('retained_transforms',{}).get(region)
             if region_transform:
-                # One transform for the whole layout: a rigid translation, or a
-                # translation with a north-south squeeze about a source row.
+                # One transform for the whole layout: a rigid translation, or a translation with a
+                # north-south squeeze and a turn about a source point. The published summary only.
                 self.source_centers[region],self.scales[region]=retained_source_center(region_transform,self.world.regions[region]['center'])
-            ground=np.load(folder/'foundation-samples.npz')
-            sample=RegularGridInterpolator((ground['z'],ground['x']),ground['height'],bounds_error=False,fill_value=None)
-            def source_height(x,z):
-                x,z=np.broadcast_arrays(np.asarray(x,float),np.asarray(z,float))
-                return sample(np.c_[z.ravel(),x.ravel()]).reshape(x.shape)
             source_bounds={p['node']:S.subtree_bounds(document,body,by_name[p['node']],matrices)
                            for p in metadata['placements'] if p['node'] in by_name}
-            groups=A.build_assemblies(region,metadata['placements'],source_bounds,source_height)
+            groups=A.build_assemblies(region,metadata['placements'],source_bounds,source_height,references=references)
             group_shifts={}
             for identity,assembly in groups.items():
                 site=self.world.plan.get('assembly_sites',{}).get(identity,{})
@@ -219,7 +293,7 @@ class Content:
                 ix0=max(0,int((low[0]-self.world.x0)/2));ix1=min(len(self.world.x),int((high[0]-self.world.x0)/2)+2)
                 iz0=max(0,int((low[1]-self.world.z0)/2));iz1=min(len(self.world.z),int((high[1]-self.world.z0)/2)+2)
                 sl=np.s_[iz0:iz1,ix0:ix1]
-                target,weight=assembly.sample_foundation(self.world.gx[sl],self.world.gz[sl],shift,source_height,feather=feather)
+                target,weight=assembly.sample_foundation(self.world.gx[sl],self.world.gz[sl],shift,source_height,feather=feather,unmap=unmap)
                 if region=='manymouth_delta' and assembly.datum=='water':
                     # Stilt floors sit above wet ground. Legacy survey terraces
                     # cannot become banks poking through their intact porches.
@@ -278,7 +352,12 @@ class Content:
                     dry=aquatic or (ground_height>.8 and not (wet['mask'] and wet['depth']>.35))
                     if owned and dry:break
                     new_xz=hub+(new_xz-hub)*.90
-                source_ground=float(sample([[old_xz[1],old_xz[0]]])[0])
+                source_xz=old_xz
+                if unmap is not None and assembly_id:
+                    # The turn moved this member inside its compound; the legacy ground it was surveyed
+                    # on lies under the continent point carried back through the layout's mapping.
+                    source_xz=np.asarray(unmap(*(old_xz+group_shifts[assembly_id][[0,2]])),float)
+                source_ground=float(sample([[source_xz[1],source_xz[0]]])[0])
                 # Regional surveys left some ground-standing props buried in
                 # their own terrain (Whitehorn cairns up to 30 m under it). A
                 # compact prop whose base lies under the legacy ground stands
@@ -312,6 +391,15 @@ class Content:
                 if assembly_id:obj['assembly']=assembly_id
                 retained.append(obj)
                 self.mapping[(region,name)]=shift
+                if yaw:
+                    # This and the placement's own shift are together what it carries beyond the layout's
+                    # mapping of its source point: the pull inside the territory, its grounding and any
+                    # authored move. A linked record is mapped with the layout and then carried by both,
+                    # so it keeps its place on the object, and a later stage that moves the object (the
+                    # shift, in place) moves its records with it.
+                    legacy=legacy_bounds.get(name)
+                    base=((legacy[0]+legacy[1])*.5)[[0,2]] if legacy is not None else old_xz
+                    self.residuals[(region,name)]=old_xz-np.asarray(L.retained_map_xz(region_transform,base),float)
                 self.placement_by_name[(region,name)]=obj
                 self.bounds_by_name[(region,name)]=(low+shift,high+shift)
                 # Obstacles reach the router through register_obstacles once the
@@ -329,25 +417,46 @@ class Content:
         self.edits.add_copies(self.world,self)
         if self.edits:print(f"Object edits: {len(self.edits.report['removed'])} removed, {len(self.edits.report['transformed'])} transformed, {len(self.edits.report['added'])} added",flush=True)
 
+    def carried_point(self,region,point,anchor,shift):
+        """A linked record carried by the retained object ``anchor``: the object's own displacement, or,
+        under a turned layout, the record's source point mapped with the layout, so its offset from the
+        object turns with it, plus what that object carries beyond the mapping (its residual and the
+        shift it stands at now)."""
+        residual=self.residuals.get(anchor) if anchor else None
+        if residual is None:return point+shift
+        x,z=np.asarray(L.retained_map_xz(self.transforms[region],point[[0,2]]),float)+residual+shift[[0,2]]
+        return np.array([x,point[1]+shift[1],z])
+
     def mapped_point(self,region,point,node=None,landmark=None):
         point=np.array(point,float)
-        shift=self.mapping.get((region,node)) if node else None
+        anchor=(region,node) if node else None
+        shift=self.mapping.get(anchor) if anchor else None
         if shift is None and landmark:
+            anchor=None
             entry=next((p for p in self.metadata[region]['placements'] if p.get('landmark')==landmark),None)
-            if entry:shift=self.mapping.get((region,entry['node']))
+            if entry:
+                shift=self.mapping.get((region,entry['node']))
+                if shift is not None:anchor=(region,entry['node'])
         if shift is None:
+            anchor=None;transform=self.transforms.get(region)
+            # A turn moves a compound's members away from their source frame, so a record with no link
+            # of its own is measured against the objects where they stand, in continent metres.
+            probe=(np.asarray(L.retained_map_xz(transform,point[[0,2]]),float)
+                   if transform is not None and L.retained_yaw_degrees(transform) else None)
             nearby=[]
             for obj in self.objects:
                 if obj['region']!=region or obj.get('kind') in NATURAL or 'sourcePivot' not in obj:continue
-                low=obj['low']-obj['shift'];high=obj['high']-obj['shift']
-                outside=np.maximum(np.maximum(low[[0,2]]-point[[0,2]],point[[0,2]]-high[[0,2]]),0)
+                low=obj['low']-obj['shift'];high=obj['high']-obj['shift'];pivot=obj['sourcePivot'][[0,2]];here=point[[0,2]]
+                if probe is not None:low=obj['low'];high=obj['high'];pivot=((low+high)*.5)[[0,2]];here=probe
+                outside=np.maximum(np.maximum(low[[0,2]]-here,here-high[[0,2]]),0)
                 distance=float(np.linalg.norm(outside))
-                if distance<=24:nearby.append((distance+.005*np.linalg.norm(point[[0,2]]-obj['sourcePivot'][[0,2]]),obj['shift']))
+                if distance<=24:nearby.append((distance+.005*np.linalg.norm(here-pivot),obj))
             if nearby:
                 candidate=min(nearby,key=lambda p:p[0])[1]
-                mapped=point+candidate
-                if int(self.world.owner_at(mapped[0],mapped[2]))==self.ids.index(region):shift=candidate
-        if shift is not None:return point+shift
+                mapped=self.carried_point(region,point,(candidate['region'],candidate['node']),candidate['shift'])
+                if int(self.world.owner_at(mapped[0],mapped[2]))==self.ids.index(region):
+                    shift=candidate['shift'];anchor=(candidate['region'],candidate['node'])
+        if shift is not None:return self.carried_point(region,point,anchor,shift)
         x,z=self.mapped_xz(region,point[[0,2]])
         hub=np.asarray(self.world.regions[region]['center'],float)
         for _ in range(40):

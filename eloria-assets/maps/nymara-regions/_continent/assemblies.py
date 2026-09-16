@@ -158,7 +158,7 @@ class Assembly:
         y=float(water_level if self.datum=='water' else target_height(*target))
         return np.array([target[0]-self.reference_xz[0],y-self.reference_y,target[1]-self.reference_xz[1]])
 
-    def sample_foundation(self, x, z, shift, source_height, *, feather=12.):
+    def sample_foundation(self, x, z, shift, source_height, *, feather=12., unmap=None):
         """Return target Y and influence for footprint-local original grades.
 
         Query with world XZ arrays on the new global terrain lattice. Source
@@ -166,6 +166,9 @@ class Assembly:
         not one additive raising pass per component. Open water and bridge
         spans stay outside the support mask. The original region's terrain is
         sampled only underneath buildings/yards, never copied as a rectangle.
+        ``unmap`` (a turned layout's inverse mapping) carries the sample point back to the legacy
+        frame, which the shift alone cannot do once the layout turns; without it the shift leads
+        back, as it does for every territory that is only translated.
         """
         if not math.isfinite(feather) or feather<=0:raise ValueError('Foundation feather must be positive')
         x,z=np.broadcast_arrays(np.asarray(x,float),np.asarray(z,float))
@@ -207,15 +210,21 @@ class Assembly:
             t=np.clip(1-distance/feather,0,1)
             influence=t*t*(3-2*t)
             sample_x=np.where(outside,nearest_x,sx);sample_z=np.where(outside,nearest_z,sz)
+        if unmap is not None:
+            # A turned layout: the legacy ground under this footing is the continent point carried back
+            # through the layout's own mapping, not the point the shift alone reaches.
+            sample_x,sample_z=unmap(sample_x+shift[0],sample_z+shift[2])
         target=np.asarray(source_height(sample_x,sample_z),float)+shift[1]
         return target,influence
 
 
-def build_assemblies(region, placements, bounds_by_name: Mapping, source_height: Callable):
+def build_assemblies(region, placements, bounds_by_name: Mapping, source_height: Callable, references=None):
     """Build groups from actual source-space GLB bounds; return ID -> Assembly.
 
     bounds_by_name[node] is (minimumXYZ, maximumXYZ). source_height(x,z)
     supports scalar or broadcast NumPy input. Regions are never mutated here.
+    ``references`` pins a compound's anchor to the point it stood on before its layout was turned, so
+    turning the compound about that anchor cannot move the compound itself.
     """
     groups={}
     for p in placements:
@@ -228,7 +237,7 @@ def build_assemblies(region, placements, bounds_by_name: Mapping, source_height:
         full=np.array([bounds[:,0].min(axis=0),bounds[:,1].max(axis=0)])
         fallback=tuple(((full[0]+full[1])*.5)[[0,2]])
         reference,datum=REFERENCE.get(identity,(fallback,'water' if region=='manymouth_delta' and identity.rsplit('.',1)[1] in HAMLETS else 'terrain'))
-        reference=np.asarray(reference,float)
+        reference=np.asarray((references or {}).get(identity,reference),float)
         y=REFERENCE_HEIGHTS.get(identity,0. if datum=='water' else float(source_height(*reference)))
         footprints=[]
         if identity=='four_gates.civic':
