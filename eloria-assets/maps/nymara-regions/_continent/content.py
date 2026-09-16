@@ -12,6 +12,7 @@ from scipy.interpolate import RegularGridInterpolator
 from scipy.spatial import cKDTree
 import landscape as L
 import scene_io as S
+import winding as W
 import assemblies as A
 
 NATURAL={'tree','foliage','rock','undergrowth','stone','scatter','small_dressing',
@@ -422,6 +423,9 @@ class Content:
         for region in self.ids:
             folder=self.library/region
             document,body=S.GR.load(folder/'library.glb')
+            # Triangles wound against their own normals are reversed in a private copy before anything reads
+            # the geometry (winding.py; README "Inverted winding in retained library meshes").
+            document,body,_=W.normalise_winding(document,body)
             metadata=json.loads((folder/'library.json').read_text())
             metadata['placements']=retained_source_placements(region,metadata['placements'])
             if region=='amberwood':

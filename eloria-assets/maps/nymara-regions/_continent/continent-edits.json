@@ -2366,23 +2366,6 @@
       ],
       "yawDegrees": 0,
       "scale": 1
-    },
-    {
-      "id": "amberwood-chapel-hill-Walk_Prop_SpiralStair_3",
-      "action": "transform",
-      "root": "amberwood_Walk_Prop_SpiralStair_3_WorldPlacement",
-      "pivot": [
-        568.946,
-        78.247,
-        487.057
-      ],
-      "translate": [
-        -132.0,
-        0.0,
-        139.0
-      ],
-      "yawDegrees": 0,
-      "scale": 1
     }
   ],
   "vegetationAreas": []
