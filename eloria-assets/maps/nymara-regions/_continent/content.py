@@ -161,6 +161,12 @@ RETAINED_SECTIONS=('retained_part_edits','retained_attachments','retained_footin
 PART_EDIT_KEYS=('node','part','translate','remove')
 ATTACHMENT_KEYS=('node','host','offset')
 FOOTING_KEYS=('node','radius','feather')
+#   "assembly_member_offsets": {"<assembly id>": {"<member node>": [dx, dy, dz]}}
+# moves one member of a compound in the legacy source frame before any bounds or grouping (see apply_member_offsets):
+# object edits refuse compound members, whose one shared shift keeps the compound rigid.
+MEMBER_OFFSETS='assembly_member_offsets'
+# Name words of placements that may stand in water: the pull of a single and of a pulled site ask the rest for dry ground.
+AQUATIC_WORDS=('boat','skiff','pier','jetty','quay','bridge','causeway','sunken','waterfall')
 
 
 def _finite_vector(value,length):
@@ -244,6 +250,66 @@ def apply_part_edits(region,document,body,placements,entries):
         parent=matrices[parents[index]];move=np.eye(4);move[:3,3]=vector
         OE.set_matrix(document['nodes'][index],np.linalg.inv(parent)@move@parent@S.GR.local_matrix(document['nodes'][index]))
     return document
+
+
+def check_member_offsets(plan,ids):
+    """Refuse an "assembly_member_offsets" section that is not {assembly id: {node: vector}} or names a territory the continent lacks."""
+    table=(plan or {}).get(MEMBER_OFFSETS)
+    if table is None:return {}
+    if not isinstance(table,dict):raise ValueError(f'{MEMBER_OFFSETS}: must map assembly ids to {{member node: [dx, dy, dz]}}')
+    for identity,entries in table.items():
+        region=str(identity).split('.',1)[0]
+        if '.' not in str(identity) or region not in ids:
+            raise ValueError(f'{MEMBER_OFFSETS}: {identity!r} is not an assembly id of a territory the continent has ({list(ids)})')
+        if not isinstance(entries,dict) or not entries:
+            raise ValueError(f'{MEMBER_OFFSETS}[{identity!r}]: must map member nodes to three metres [dx, dy, dz]')
+        for node,vector in entries.items():
+            if _finite_vector(vector,3) is None:
+                raise ValueError(f'{MEMBER_OFFSETS}[{identity!r}][{node!r}]: must be three finite metres [dx, dy, dz], not {vector!r}')
+    return table
+
+
+def apply_member_offsets(region,document,body,placements,plan):
+    """(document, {node: offset}): the plan's "assembly_member_offsets" for one territory's compounds applied.
+
+    Each entry moves a member's placement root by [dx, dy, dz] metres of the legacy source frame, in a private copy of
+    the document, converted to the root's parent-local frame so its world vertices move by exactly that vector; the
+    placement's source position moves with it. Content.load applies this after the part edits and before any bounds,
+    turn or grouping, so the compound's bounds, footprints, anchor and every later stage see the member where the
+    offset puts it, and the compound still moves under one shift. Linked records keep their own source points.
+    Refuses an assembly id none of this territory's placements form, a node that is not a member of that compound,
+    and a tree or _Wood placement (its foliage roots are separate placements).
+    """
+    table=(plan or {}).get(MEMBER_OFFSETS) or {}
+    mine={identity:offsets for identity,offsets in table.items() if str(identity).split('.',1)[0]==region}
+    if not mine:return document,{}
+    members={}
+    for p in placements:
+        group=A.placement_group(region,p,placements)
+        if group:members.setdefault(group,{})[p['node']]=p
+    document=dict(document);document['nodes']=[dict(node) for node in document['nodes']]
+    matrices,parents=S.GR.hierarchy(document)
+    by_name={n.get('name'):i for i,n in enumerate(document['nodes'])}
+    applied={}
+    for identity,offsets in mine.items():
+        where=f'{MEMBER_OFFSETS}[{identity!r}]'
+        if identity not in members:
+            raise ValueError(f'{where}: no compound of that id among the {region} placements (it has {sorted(members)})')
+        for node,vector in offsets.items():
+            placement=members[identity].get(node)
+            if placement is None or node not in by_name:
+                raise ValueError(f'{where}: {node!r} is not a member of {identity}')
+            if placement.get('kind')=='tree' or node.endswith('_Wood'):
+                raise ValueError(f'{where}: {node} carries separate foliage roots and cannot be offset alone')
+            vector=_finite_vector(vector,3)
+            if vector is None:raise ValueError(f'{where}[{node!r}]: must be three finite metres [dx, dy, dz]')
+            index=by_name[node]
+            parent=matrices[parents[index]] if index in parents else np.eye(4)
+            move=np.eye(4);move[:3,3]=vector
+            OE.set_matrix(document['nodes'][index],np.linalg.inv(parent)@move@parent@S.GR.local_matrix(document['nodes'][index]))
+            if 'position' in placement:placement['position']=(np.asarray(placement['position'],float)+vector).tolist()
+            applied[node]=vector.tolist()
+    return document,applied
 
 
 def retained_attachments(plan,region,placements,edits=None):
@@ -373,6 +439,10 @@ class Content:
         self.placement_by_name={};self.bounds_by_name={}
         self.companions={}
         self.assembly_records={}
+        # winding.double_sided_sheets' report per territory whose table entry changed or missed anything.
+        self.double_sided={}
+        # The plan's assembly_member_offsets as applied: (region, node) -> [dx, dy, dz].
+        self.member_offsets={}
         # Placements carried by a host (the plan's retained_attachments): (region, node) -> {'host', 'offset',
         # 'relative': its shift less its host's at load}, and the keys with every host before what it carries.
         self.attachments={};self.attachment_order=[]
@@ -418,14 +488,34 @@ class Content:
                 self.world.structure_obstacle(o['low'],o['high'],solid=not walk_through(o['node']));count+=1
         return count
 
+    def members_dry(self,assembly,source_bounds,shift):
+        """Does every member of a compound carried by ``shift`` stand on dry ground? The rule a single is pulled by: the
+        member's centre above 0.8 m and out of water deeper than 0.35 m; boats, piers, quays, bridges, causeways, sunken
+        pieces and waterfalls (AQUATIC_WORDS) may stand in water."""
+        centres=np.array([((np.asarray(source_bounds[node][0],float)+np.asarray(source_bounds[node][1],float))*.5)[[0,2]]
+                          for node in assembly.nodes if not any(word in node.lower() for word in AQUATIC_WORDS)])
+        if not len(centres):return True
+        x,z=centres[:,0]+shift[0],centres[:,1]+shift[2]
+        height=np.asarray(self.world.height_at(x,z),float)
+        wet=L.water_fields(x,z,height=height,plan=self.world.plan)
+        return bool(np.all((height>.8)&~(np.asarray(wet['mask'],bool)&(np.asarray(wet['depth'],float)>.35))))
+
     def load(self):
         check_retained_sections(self.world.plan,self.ids)
+        check_member_offsets(self.world.plan,self.ids)
         for region in self.ids:
             folder=self.library/region
             document,body=S.GR.load(folder/'library.glb')
             # Triangles wound against their own normals are reversed in a private copy before anything reads
             # the geometry (winding.py; README "Inverted winding in retained library meshes").
             document,body,_=W.normalise_winding(document,body)
+            # Authored open sheets meant to be seen from both sides (the Sunmane canvases, the Four Gates arcade
+            # walls, boats and shrine roofs: winding.DOUBLE_SIDED_SHEETS) render doubleSided in the same private copy.
+            document,sides=W.double_sided_sheets(document,W.DOUBLE_SIDED_SHEETS.get(region))
+            if sides['materials'] or sides['primitives'] or sides['unmatched']:
+                self.double_sided[region]=sides
+                print(f"{region}: double-sided sheets: {len(sides['materials'])} materials, {len(sides['primitives'])} primitives"
+                      +(f"; unmatched {sides['unmatched']}" if sides['unmatched'] else ''),flush=True)
             metadata=json.loads((folder/'library.json').read_text())
             metadata['placements']=retained_source_placements(region,metadata['placements'])
             if region=='amberwood':
@@ -440,6 +530,9 @@ class Content:
             # any bounds are taken; attachments and footings are checked against the same placements.
             document=apply_part_edits(region,document,body,metadata['placements'],
                                       retained_section(self.world.plan,'retained_part_edits',region))
+            # Compound members offset in the source frame (the plan's assembly_member_offsets), before any bounds.
+            document,offsets=apply_member_offsets(region,document,body,metadata['placements'],self.world.plan)
+            self.member_offsets.update({(region,node):vector for node,vector in offsets.items()})
             attachments=retained_attachments(self.world.plan,region,metadata['placements'],self.edits)
             footings=retained_footings(self.world.plan,region,metadata['placements'],attachments)
             turns={}
@@ -513,13 +606,17 @@ class Content:
                 member_points=np.array([[x,z] for node in assembly.nodes
                     for x in (source_bounds[node][0][0],source_bounds[node][1][0])
                     for z in (source_bounds[node][0][2],source_bounds[node][1][2])])
-                for _ in range(0 if authored_transform is not None else 32):
+                # A pulled site (assemblies.PULLED_SITES) steps finer and may need dry ground as well (assemblies.SITE_PULL).
+                step,steps,needs_dry=A.SITE_PULL.get(identity,A.PULL)
+                for _ in range(0 if authored_transform is not None else steps):
                     points=member_points+shift[[0,2]]
-                    if np.all(self.world.owner_at(points[:,0],points[:,1])==self.ids.index(region)):break
-                    target=assembly.reference_xz+shift[[0,2]];shift[[0,2]]+=(hub-target)*.08
+                    if np.all(self.world.owner_at(points[:,0],points[:,1])==self.ids.index(region)) and (not needs_dry or self.members_dry(assembly,source_bounds,shift)):break
+                    target=assembly.reference_xz+shift[[0,2]];shift[[0,2]]+=(hub-target)*step
                 if authored_transform is None and assembly.datum=='terrain':
                     anchor=assembly.reference_xz+shift[[0,2]]
                     shift[1]=float(self.world.height_at(*anchor))-assembly.reference_y
+                elif authored_transform is None and assembly.datum=='footprints':
+                    shift[1]=assembly.footprint_lift(self.world.height_at,source_height,shift,unmap=unmap)
                 group_shifts[identity]=shift
                 self.assembly_records[identity]=dict(A.report(assembly),translation=shift.tolist())
                 feather=32. if identity=='mirrorhold.city' else 24.
@@ -569,9 +666,12 @@ class Content:
                         c_low,c_high=S.subtree_bounds(document,body,companion,matrices)
                         low=np.minimum(low,c_low);high=np.maximum(high,c_high)
                 if not np.isfinite(low).all():continue
-                if kind in NATURAL and not p.get('landmark') and not assembly_id:
+                # A structure's natural companions (assemblies.companions) are retained with it and stay prototypes for
+                # the ecological scatter as well: the Sunmane EarthRocks are the steppe's only rocks.
+                natural_companion=bool(assembly_id) and name in A.companions(region,metadata['placements'])
+                if kind in NATURAL and not p.get('landmark') and (not assembly_id or natural_companion):
                     if kind in ('tree','rock','fern','undergrowth','scrub','stump','fallenlog','mushrooms','leafdrift') and .05<high[1]-low[1]<30: natural.append((p,index,low,high))
-                    continue
+                    if not assembly_id:continue
                 # Former regional paths are replaced by continent roads. Keep
                 # architectural floors, bridges, streets and named discoveries.
                 if not p.get('landmark') and (kind in ('road','path','terrain','ground') or name.startswith(('Road_','Path_','Track_','Soil_','Walk_Road_','Walk_Path_','Walk_Track_'))):continue
@@ -586,7 +686,7 @@ class Content:
                 for _ in range(0 if assembly_id or host else 24):
                     samples=np.array([new_xz+[dx,dz] for dx,dz in ((0,0),(radius+3,0),(-radius-3,0),(0,radius+3),(0,-radius-3))])
                     owned=np.all(self.world.owner_at(samples[:,0],samples[:,1])==expected)
-                    aquatic=any(word in name.lower() for word in ('boat','skiff','pier','jetty','quay','bridge','causeway','sunken','waterfall'))
+                    aquatic=any(word in name.lower() for word in AQUATIC_WORDS)
                     ground_height=float(self.world.height_at(*new_xz))
                     wet=L.water_fields(*new_xz,height=ground_height,plan=self.world.plan)
                     dry=aquatic or (ground_height>.8 and not (wet['mask'] and wet['depth']>.35))

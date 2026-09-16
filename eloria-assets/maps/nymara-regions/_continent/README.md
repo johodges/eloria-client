@@ -221,6 +221,37 @@ approaches; collision export must not conceal a disconnected entrance by
 carving an invisible corridor or moving it away from its building. The entrance
 profile hash is part of composition freshness.
 
+Compounds from the retained asset audit (`experiments/asset-audit/REPORT.md`, 2026-09-16), all in
+`assemblies.py`:
+
+- **Natural companions.** `content.load` keeps a natural placement only as a landmark or a compound member,
+  so a landmark built with rocks at its flanks lost them. A natural placement named
+  `<structure node>_<word>_<n>` for a word of `COMPANION_WORDS` (`EarthRock`: the four Sunmane cave mouths)
+  and the pairs of `COMPANION_PAIRS` (the Amethyst Northern Grotto arch with its abutment stones and the geode
+  cave it spans; not the Amberwood sea arch, which stood further from its legacy ground as a compound) form the
+  compound `<territory>.<structure node>` with their structure (or join the compound the structure already
+  belongs to). The structure and each companion carry the legacy slope they stood on as footprints, and the
+  companions stay scatter prototypes too (the EarthRocks are Sunmane's only rocks).
+- **Pulled sites.** A single outside its territory, or on wet ground, is pulled 10 % of the way to the hub per
+  step on its own, so the pieces of one legacy site converged. `PULLED_SITES` makes such sites compounds that
+  move as one body at their legacy spacing: Amberwood's east quarry (its lodges, towers and dressing; placed by
+  `assembly_sites.amberwood.east-quarry.center` because its whole pull would land it on the garden), Verdant
+  Stair's temple summit and Amethyst's upland geode cave with its crystal field. Sunmane's palisade gates join
+  the encampment and Westhaven's chandlery stock and working loads join the harbour
+  (`westhaven_support.HARBOUR_PREFIXES`). A pulled site steps 2 % of the way per step (`SITE_PULL`), and the
+  geode site also waits for every member centre to stand on dry ground; every other compound keeps its 8 %.
+  Every member of a pulled site but those in water or in the air (`site_supports_ground`) keeps its legacy
+  ground as a footprint, props included: moved onto other ground, a prop without one floats or sinks.
+- **Footprint datum.** `REFERENCE` datum `'footprints'` stands a compound at the median, over a 2 m grid on
+  every member's bounds, of the continent ground less the legacy ground (`Assembly.footprint_lift`), instead
+  of the ground at its reference point. The pulled sites use it. The canopy village does not: the lift it
+  would get (11.5 m on the O5 plan) raises the market stair's deck beyond the stair's 45 m run.
+- **Member offsets.** The plan's `assembly_member_offsets` (`{"<assembly id>": {"<member node>": [dx, dy,
+  dz]}}`, metres of the legacy source frame) moves one member's placement root before any bounds, turn or
+  grouping (`content.apply_member_offsets`), since object edits refuse compound members. Unknown ids,
+  non-members, trees and malformed vectors are refused. It seats the Mirrorhold cistern-yard and quarry-shelf
+  bollards on their survey ground.
+
 ## Rebuild
 
 Use Python with NumPy, SciPy, and Pillow, the shared toolkit's native raster
@@ -698,3 +729,17 @@ decks become deck support in the served collision (a closed slab serves its top 
 underside), a colliding solid whose inward-wound part overlapped its outward body blocks that volume
 again (collision_export's winding number had summed to zero inside it), and the atlas draws the roofs
 it used to cull.
+
+The sheets a rule keeps wound against their normals (the open sheets of a `KEEP_WINDING` lathe and level
+water facing up) would be lit from behind: `normalise_winding` negates their vertex normals in a new float
+NORMAL accessor on the same appended body (`relit_*` in the report), except at a vertex another triangle
+also uses. The Whitehorn icefalls, the compass rose, the fountain pools and the Ssarathi waterfall plunge
+rings no longer read black.
+
+Some authored open sheets are meant to be seen from both sides and were built single-sided: the Sunmane
+canvases (pavilion roofs, tents, windmill sails, market canopies), the Four Gates arcade walls, boats, the
+Ssarathi shrine and ruin roofs, the Mirrorhold rose window and falls. `winding.DOUBLE_SIDED_SHEETS` names them
+per territory, as whole materials when every use is a sheet and as (mesh pattern, material) pairs when the
+material also dresses closed solids; `content.load` applies it with `double_sided_sheets` straight after the
+winding correction, pointing the listed primitives at a doubleSided copy of the material that keeps its name.
+Bark and branch meshes and models built against terrain are left out.

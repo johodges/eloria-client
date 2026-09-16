@@ -24,7 +24,11 @@ Mirrorhold lamps, the Amberwood resin markers); the open sheets of the clockwise
 lathes named in ``KEEP_WINDING`` keep theirs (the Whitehorn icefall columns, the
 skep, the Crownwater compass-rose ring); and a level triangle of a water
 material faces up whatever its normals say (fountain and well pools, the
-Ssarathi waterfall plunge rings).
+Ssarathi waterfall plunge rings). A sheet kept against its normals by
+either rule shows the side its normals turn away from and would be lit from
+behind, so its vertex normals are negated in a new NORMAL accessor
+(``relit_triangles``). ``DOUBLE_SIDED_SHEETS`` names the authored open sheets
+meant to be seen from both sides; ``double_sided_sheets`` makes them doubleSided.
 
 The correction works on a private copy of a loaded document. Each corrected
 primitive gets a new index accessor on a new buffer view appended to a new body
@@ -71,6 +75,7 @@ CANCELLED = 1e-6
 TRIANGLES = 4
 INDEX_TYPES = {5121: '<u1', 5123: '<u2', 5125: '<u4'}
 ELEMENT_ARRAY_BUFFER = 34963
+ARRAY_BUFFER = 34962
 # Meshes whose open surfaces are wound the authored side although their normals oppose it. The toolkit's
 # mesh.lathe always winds against its normals and points them by the profile's direction ((dy, -dr) of
 # the profile step): a profile running counter-clockwise round the solid (up the outside, in across the
@@ -86,9 +91,48 @@ KEEP_WINDING = ('frozen_cascade_', 'Prop_Skep', 'PlazaRose__', 'SunkenCourt__')
 # grey_bog_water; not crownwater_marble) faces up when its winding is in question, whatever its normals
 # say: water is seen from above. The fountain and well pools are flat lathes run outward from the axis,
 # whose analytic normals point down, and the Ssarathi waterfall plunge rings are clockwise lathes; the
-# Grey Moors bog pools and the Mirrorhold ring pool face down and turn up.
+# Grey Moors bog pools and the Mirrorhold ring pool face down and turn up. The triangles this rule and KEEP_WINDING
+# keep against their normals are relit: their vertex normals turn to the side they show (normalise_winding).
 WATER_WORD = 'water'
 LEVEL = .5
+# Authored single-sided open sheets that must render from both sides. The asset audit of the O5 composition
+# (experiments/asset-audit, family B, 2026-09-16) found them with their culled side open to a viewer, authored
+# so: the winding correction reverses nothing in them, and the library shows the same gap. Per territory,
+# ``materials`` names cloth whose every use in the library is an open sheet (the Sunmane canvases of the
+# pavilions, tents, windmill sails, market canopies and water stations); the material itself turns doubleSided.
+# A material that also dresses closed solids is named through ``meshes`` instead, as (mesh name, material name)
+# pairs, the mesh name an fnmatch pattern on the library mesh name (case-sensitive; ``*`` names a family): the
+# matching primitives with that material point at one doubleSided private copy of it, which keeps the
+# material's name, so the client's name-keyed surfaces (footsteps, water) read it as before. Left out: bark and
+# branch meshes (the Great Tree, the Hanged Oak, the dead trees, the root hollows and root-bound arches), whose
+# open branch prisms need a render first, and models built to stand against terrain (the cave mouths, the cenote
+# stair, retaining walls, the Northern Grotto arch), which need their backing rather than a second side.
+DOUBLE_SIDED_SHEETS = {
+    'sunmane_steppe': {'materials': ('sun_canvas_pale', 'sun_canvas_ochre', 'sun_canvas_red')},
+    'four_gates': {'meshes': (('Plaza_Arcade_*__solid__fg_stone_ashlar', 'fg_stone_ashlar'),
+                              ('Sanctuary_Portal__solid__fg_crystal_blue', 'fg_crystal_blue'))},
+    'amberwood': {'meshes': (('Garden_Rotunda__ashlar', 'ashlar'), ('Garden_Statue__ashlar', 'ashlar'),
+                             ('Prop_CultivatedGrain_*', 'thatch_reed'), ('Garden_Fall', 'water_stream'),
+                             ('Prop_HarbourPacket__timber_grey', 'timber_grey'), ('RowingBoat', 'timber_grey'))},
+    'amethyst_barrens': {'meshes': (('PacketTender', 'timber_grey'),)},
+    'crownwater': {'meshes': (('CrownStatue_*__ashlar', 'ashlar'), ('Boat_*__timber_dark', 'timber_dark'),
+                              ('PacketBoat__timber_dark', 'timber_dark'))},
+    'grey_moors': {'meshes': (('CoveBoat', 'grey_bog_timber'), ('PeatCutting_*__grey_bog_timber', 'grey_bog_timber'))},
+    'manymouth_delta': {'meshes': (('green_temple__manymouth_glyph_stone', 'manymouth_glyph_stone'),
+                                   ('PacketLateen__timber_grey', 'timber_grey'))},
+    'mirrorhold': {'meshes': (('Mirrorhold_RoseWindow__blue_crystal', 'blue_crystal'), ('Mirrorhold_Boat', 'timber_grey'),
+                              ('Mirrorhold_Waterfall', 'water_stream'))},
+    'ssarathi_ruins': {'meshes': (('WaterGate__ssarathi_jade_ashlar', 'ssarathi_jade_ashlar'),
+                                  ('CourtShrine__ssarathi_jade_scale', 'ssarathi_jade_scale'),
+                                  ('MarketShrine__ssarathi_jade_scale', 'ssarathi_jade_scale'),
+                                  ('RoadShrine__ssarathi_jade_scale', 'ssarathi_jade_scale'),
+                                  ('RuinBuilding_*__ssarathi_jade_scale', 'ssarathi_jade_scale'),
+                                  ('MooredPunt', 'timber_grey'))},
+    'verdant_stair': {'meshes': (('Statue__ashlar', 'ashlar'), ('PavilionSmall__verdant_jade', 'verdant_jade'),
+                                 ('Boat', 'timber_grey'))},
+    'westhaven': {'meshes': (('Mole_Bastion__rubble_stone', 'rubble_stone'), ('Rowing_Boat', 'timber_grey'))},
+}
+SHEET_TABLE_KEYS = ('materials', 'meshes')
 STATUSES = ('consistent', 'corrected', 'outvoted', 'two_sided', 'authored_winding', 'water_up', 'double_sided',
             'no_normals', 'not_triangles', 'unreadable')
 LEFT_ALONE = ('outvoted', 'two_sided', 'authored_winding', 'water_up', 'double_sided', 'no_normals', 'not_triangles',
@@ -280,8 +324,20 @@ def _sheets(measured):
     return measured['sheets']
 
 
+def _relit_vertices(measured, relit):
+    """(mask of the vertices whose normals turn, how many vertices of the relit triangles keep theirs): a vertex
+    turns when every readable triangle of the primitive that uses it is relit; one shared with any other triangle
+    keeps its normal, which that triangle is lit by."""
+    faces, valid = measured['faces'], ~measured['degenerate']
+    used = np.zeros(measured['vertices'], bool)
+    other = np.zeros(measured['vertices'], bool)
+    used[faces[relit].reshape(-1)] = True
+    other[faces[valid & ~relit].reshape(-1)] = True
+    return used & ~other, int((used & other).sum())
+
+
 def _record(document, mesh, number, primitive, measured, reason, min_cos):
-    """(the report record, the triangles the default rule reverses) of one primitive."""
+    """(the report record, the triangles the default rule reverses, the triangles whose normals turn) of one primitive."""
     material_index, material = _material(document, primitive)
     attributes = primitive.get('attributes') or {}
     mode = primitive.get('mode', TRIANGLES)
@@ -292,13 +348,14 @@ def _record(document, mesh, number, primitive, measured, reason, min_cos):
               'paired_back_faces': 0, 'paired_back_face_area': 0., 'outvoted_triangles': 0, 'outvoted_area': 0.,
               'enclosing_triangles': 0, 'authored_triangles': 0, 'water_kept_triangles': 0, 'carried_triangles': 0,
               'flipped_triangles': 0, 'flipped_area': 0., 'signed_volume': None, 'corrected_signed_volume': None,
+              'relit_triangles': 0, 'relit_area': 0., 'relit_vertices': 0, 'relit_shared_vertices': 0,
               'has_normals': 'NORMAL' in attributes, 'double_sided': bool(material.get('doubleSided', False))}
     if mode != TRIANGLES:
         record['status'] = 'not_triangles'
-        return record, None
+        return record, None, None
     if measured is None:
         record.update(status='unreadable', reason=reason)
-        return record, None
+        return record, None, None
     cosine, area, volume = measured['cosine'], measured['area'], measured['volume']
     with np.errstate(invalid='ignore'):
         opposing = cosine < min_cos
@@ -312,6 +369,7 @@ def _record(document, mesh, number, primitive, measured, reason, min_cos):
         record['disagreeing_area_share'] = float(area[disagreeing].sum()) / total if total > 0 else 0.
         record['no_evidence_triangles'] = int((~measured['degenerate'] & np.isnan(cosine)).sum())
     flip = np.zeros(len(cosine), bool)
+    relit = np.zeros(len(cosine), bool)
     if not record['has_normals']:
         record['status'] = 'no_normals'
     elif record['double_sided']:
@@ -342,6 +400,9 @@ def _record(document, mesh, number, primitive, measured, reason, min_cos):
             flip = (flip & ~level) | (level & (rise < 0) & ~paired)
         authored = flip & str(record['mesh_name'] or '').startswith(KEEP_WINDING) & ~closed[of_sheet]
         flip &= ~authored
+        # A sheet that keeps its winding against its normals by rule (an authored clockwise lathe, level water
+        # facing up) shows the side its normals turn away from, so it is lit from behind: its normals turn.
+        relit = authored | water_kept
         outvoted = opposing & ~paired & ~flip & ~kept_closed & ~authored & ~water_kept
         record.update(paired_back_faces=int(paired.sum()), paired_back_face_area=float(area[paired].sum()),
                       outvoted_triangles=int(outvoted.sum()), outvoted_area=float(area[outvoted].sum()),
@@ -353,11 +414,15 @@ def _record(document, mesh, number, primitive, measured, reason, min_cos):
         record['status'] = 'consistent'
     record.update(flipped_triangles=int(flip.sum()), flipped_area=float(area[flip].sum()),
                   corrected_signed_volume=float(volume.sum() - 2. * volume[flip].sum()))
-    return record, flip
+    if relit.any():
+        turned, shared = _relit_vertices(measured, relit)
+        record.update(relit_triangles=int(relit.sum()), relit_area=float(area[relit].sum()),
+                      relit_vertices=int(turned.sum()), relit_shared_vertices=shared)
+    return record, flip, relit
 
 
 def _survey(document, body, meshes, min_cos):
-    """(record, geometry, flip mask) per primitive of ``meshes``; shared geometry is measured once."""
+    """(record, geometry, flip mask, relit mask) per primitive of ``meshes``; shared geometry is measured once."""
     measured_by_key = {}
     for mesh in meshes:
         for number, primitive in enumerate(document['meshes'][mesh].get('primitives') or []):
@@ -367,10 +432,10 @@ def _survey(document, body, meshes, min_cos):
                 if key not in measured_by_key:
                     measured_by_key[key] = (*_measure(document, body, primitive), (mesh, number))
                 measured, reason, first = measured_by_key[key]
-            record, flip = _record(document, mesh, number, primitive, measured, reason, min_cos)
+            record, flip, relit = _record(document, mesh, number, primitive, measured, reason, min_cos)
             if first is not None and first != (mesh, number):
                 record['shared_geometry'] = list(first)
-            yield record, measured, flip
+            yield record, measured, flip, relit
 
 
 def _mesh_uses(document, nodes):
@@ -431,7 +496,7 @@ def winding_report(document, body, nodes=None, *, min_cos=MIN_COS):
     meshes = range(len(document.get('meshes') or [])) if nodes is None else sorted(uses)
     matrices = GR.hierarchy(document)[0] if uses else {}
     records = []
-    for record, measured, flip in _survey(document, body, meshes, min_cos):
+    for record, measured, flip, _ in _survey(document, body, meshes, min_cos):
         instances = uses.get(record['mesh'], [])
         names = []
         for node in instances:
@@ -452,7 +517,8 @@ def winding_report(document, body, nodes=None, *, min_cos=MIN_COS):
 
 
 def normalise_winding(document, body, *, min_cos=MIN_COS):
-    """(private document copy, body, report): every backwards triangle reversed in new index accessors.
+    """(private document copy, body, report): every backwards triangle reversed in new index accessors, and the
+    sheets kept against their normals by rule relit in new normal accessors.
 
     A triangle is reversed (its last two indices swapped) when the cosine between its geometric normal
     and the sum of its vertex normals is below ``min_cos``, decided per sheet by the area-weighted mean
@@ -461,60 +527,40 @@ def normalise_winding(document, body, *, min_cos=MIN_COS):
     of a mesh named in KEEP_WINDING; level water faces up. Each corrected primitive points at a new index
     accessor, of the original component type,
     on a new buffer view appended to a new body at a 4-byte boundary; a primitive without indices gets its
-    first index accessor. Untouched primitives keep their accessors, geometry shared by several meshes gets
-    one new accessor, and the input document and body are never modified. When nothing needs reversing the
-    body comes back as it was (as bytes).
+    first index accessor. The triangles that keep their winding against their normals by rule, the open sheets
+    of a KEEP_WINDING mesh the vote would have reversed and the level water facing up (``relit_triangles``),
+    show the side their normals turn away from and would be lit from behind: their vertex normals are negated
+    in a new float VEC3 NORMAL accessor on a new buffer view of the same body, except at a vertex a triangle
+    outside that set also uses, which keeps its normal (``relit_shared_vertices``). Untouched primitives keep
+    their accessors, geometry shared by several meshes gets one new accessor of each kind, and the input
+    document and body are never modified. When nothing needs reversing or relighting the body comes back as it
+    was (as bytes).
 
     The report: ``records`` (winding_report's per-primitive records without the node and world fields),
     ``primitives``, ``corrected_primitives``, ``corrected_geometries``, ``triangles``, ``flipped_triangles``,
     ``area``, ``flipped_area``, ``paired_back_faces``, ``outvoted_triangles``, ``enclosing_triangles``,
-    ``authored_triangles``, ``carried_triangles`` (geometry counted once, mesh space), ``left_alone``
-    (primitives per status that is left alone), ``left_alone_opposing`` (those among them with triangles the
-    rule would have reversed), ``appended_bytes`` and ``seconds``.
+    ``authored_triangles``, ``carried_triangles`` (geometry counted once, mesh space), ``relit_primitives``,
+    ``relit_geometries``, ``relit_triangles``, ``relit_area``, ``relit_vertices``, ``relit_shared_vertices``,
+    ``left_alone`` (primitives per status that is left alone), ``left_alone_opposing`` (those among them with
+    triangles the rule would have reversed), ``appended_bytes`` and ``seconds``.
     """
     started = time.perf_counter()
     result = _private(document)
     source = body if isinstance(body, bytes) else bytes(body)
     chunks, length = [], len(source)
-    written, records, counted = {}, [], set()
+    written, relit_written, records, counted = {}, {}, [], set()
     kept = ('paired_back_faces', 'outvoted_triangles', 'enclosing_triangles', 'authored_triangles', 'water_kept_triangles',
             'carried_triangles')
-    totals = {'triangles': 0, 'flipped_triangles': 0, 'area': 0., 'flipped_area': 0., **dict.fromkeys(kept, 0)}
-    for record, measured, flip in _survey(document, body, range(len(document.get('meshes') or [])), min_cos):
-        records.append(record)
-        original = document['meshes'][record['mesh']]['primitives'][record['primitive']]
-        key = _geometry_key(original)
-        if measured is not None and key not in counted:
-            counted.add(key)
-            for name in ('triangles', 'area', *kept):
-                totals[name] += record[name]
-        if record['status'] != 'corrected':
-            continue
-        primitive = result['meshes'][record['mesh']]['primitives'][record['primitive']]
-        if key in written:
-            primitive['indices'] = record['indices'] = written[key]
-            continue
-        totals['flipped_triangles'] += record['flipped_triangles']
-        totals['flipped_area'] += record['flipped_area']
-        order = measured['order'].copy()
-        faces = order[:3 * len(flip)].reshape(-1, 3)
-        faces[flip] = faces[flip][:, [0, 2, 1]]
-        if 'indices' in original:
-            old = document['accessors'][original['indices']]
-            component = old['componentType']
-            target = document['bufferViews'][old['bufferView']].get('target')
-            accessor = {name: _private(value) for name, value in old.items() if name not in ('bufferView', 'byteOffset')}
-        else:
-            # The largest value of a component type is reserved (primitive restart).
-            component = 5123 if measured['vertices'] <= 65535 else 5125
-            target = ELEMENT_ARRAY_BUFFER
-            accessor = {'componentType': component, 'count': len(order), 'type': 'SCALAR'}
-            if len(order):
-                accessor.update(min=[int(order.min())], max=[int(order.max())])
-        data = order.astype(INDEX_TYPES[component]).tobytes()
+    relit_totals = ('relit_triangles', 'relit_area', 'relit_vertices', 'relit_shared_vertices')
+    totals = {'triangles': 0, 'flipped_triangles': 0, 'area': 0., 'flipped_area': 0., **dict.fromkeys(kept, 0),
+              **dict.fromkeys(relit_totals, 0)}
+
+    def append(data, target, accessor):
+        """Append ``data`` to the new body on its own buffer view and ``accessor`` over it; its accessor index."""
+        nonlocal length
         padding = (-length) % 4
         if padding:
-            chunks.append(b'\0' * padding)
+            chunks.append(bytes(padding))
             length += padding
         view = {'buffer': 0, 'byteOffset': length, 'byteLength': len(data)}
         if target is not None:
@@ -524,7 +570,55 @@ def normalise_winding(document, body, *, min_cos=MIN_COS):
         result.setdefault('bufferViews', []).append(view)
         accessor['bufferView'] = len(result['bufferViews']) - 1
         result.setdefault('accessors', []).append(accessor)
-        primitive['indices'] = record['indices'] = written[key] = len(result['accessors']) - 1
+        return len(result['accessors']) - 1
+
+    for record, measured, flip, relit in _survey(document, body, range(len(document.get('meshes') or [])), min_cos):
+        records.append(record)
+        original = document['meshes'][record['mesh']]['primitives'][record['primitive']]
+        key = _geometry_key(original)
+        if measured is not None and key not in counted:
+            counted.add(key)
+            for name in ('triangles', 'area', *kept):
+                totals[name] += record[name]
+        primitive = result['meshes'][record['mesh']]['primitives'][record['primitive']]
+        if record['status'] == 'corrected' and key in written:
+            primitive['indices'] = record['indices'] = written[key]
+        elif record['status'] == 'corrected':
+            totals['flipped_triangles'] += record['flipped_triangles']
+            totals['flipped_area'] += record['flipped_area']
+            order = measured['order'].copy()
+            faces = order[:3 * len(flip)].reshape(-1, 3)
+            faces[flip] = faces[flip][:, [0, 2, 1]]
+            if 'indices' in original:
+                old = document['accessors'][original['indices']]
+                component = old['componentType']
+                target = document['bufferViews'][old['bufferView']].get('target')
+                accessor = {name: _private(value) for name, value in old.items() if name not in ('bufferView', 'byteOffset')}
+            else:
+                # The largest value of a component type is reserved (primitive restart).
+                component = 5123 if measured['vertices'] <= 65535 else 5125
+                target = ELEMENT_ARRAY_BUFFER
+                accessor = {'componentType': component, 'count': len(order), 'type': 'SCALAR'}
+                if len(order):
+                    accessor.update(min=[int(order.min())], max=[int(order.max())])
+            primitive['indices'] = record['indices'] = written[key] = append(
+                order.astype(INDEX_TYPES[component]).tobytes(), target, accessor)
+        if not record['relit_triangles']:
+            continue
+        if key in relit_written:
+            primitive['attributes']['NORMAL'] = record['normals'] = relit_written[key]
+            continue
+        old = document['accessors'][original['attributes']['NORMAL']]
+        if old.get('componentType') != 5126 or old.get('type') != 'VEC3':
+            record['relit_refused'] = 'normals are not float VEC3'
+            continue
+        for name in relit_totals:
+            totals[name] += record[name]
+        turned, _ = _relit_vertices(measured, relit)
+        normals = np.array(GR.accessor(document, body, original['attributes']['NORMAL']), dtype='<f4')
+        normals[turned] *= -1.
+        primitive['attributes']['NORMAL'] = record['normals'] = relit_written[key] = append(
+            normals.tobytes(), ARRAY_BUFFER, {'componentType': 5126, 'count': len(normals), 'type': 'VEC3'})
     if chunks:
         source = b''.join([source, *chunks])
         if result.get('buffers'):
@@ -534,11 +628,73 @@ def normalise_winding(document, body, *, min_cos=MIN_COS):
     left_alone = {status: sum(1 for r in records if r['status'] == status) for status in LEFT_ALONE}
     report = {'min_cos': min_cos, 'primitives': len(records),
               'corrected_primitives': sum(1 for r in records if r['status'] == 'corrected'),
-              'corrected_geometries': len(written), **totals, 'left_alone': left_alone,
+              'corrected_geometries': len(written), **totals,
+              'relit_primitives': sum(1 for r in records if 'normals' in r), 'relit_geometries': len(relit_written),
+              'left_alone': left_alone,
               'left_alone_opposing': {status: sum(1 for r in records if r['status'] == status and r['opposing_triangles'])
                                       for status in LEFT_ALONE},
               'appended_bytes': len(source) - len(body), 'seconds': time.perf_counter() - started, 'records': records}
     return result, source, report
+
+
+def double_sided_sheets(document, sheets=None):
+    """(document, report): one territory's authored open sheets set to render from both sides.
+
+    ``sheets`` is the territory's DOUBLE_SIDED_SHEETS entry ({'materials': names, 'meshes': (mesh pattern,
+    material name) pairs}); with none the document comes back as it is. A listed material turns doubleSided
+    wherever a material of that name is defined. A listed pair re-points each primitive of a mesh whose name
+    matches the pattern (fnmatch, case-sensitive) and whose material has the pair's name at a doubleSided copy
+    of that material, one copy per source material appended to ``materials`` with its name kept; a primitive
+    whose material is double-sided already keeps it. The result is a new document dict with its own
+    ``materials`` list and copies of the meshes it re-points; the input document is never modified. The report:
+    ``materials`` (names turned), ``primitives`` ([mesh name, primitive number, material name] re-pointed),
+    ``copies`` ({source material index: copy index}) and ``unmatched`` (materials and pairs that name nothing in
+    this document). Refuses an entry with keys other than SHEET_TABLE_KEYS.
+    """
+    import fnmatch
+    report = {'materials': [], 'primitives': [], 'copies': {}, 'unmatched': []}
+    if not sheets:
+        return document, report
+    unknown = sorted(set(sheets) - set(SHEET_TABLE_KEYS))
+    if unknown:
+        raise ValueError(f'double-sided sheets: unknown key(s) {unknown}; an entry carries {list(SHEET_TABLE_KEYS)}')
+    result = dict(document)
+    source = document.get('materials') or []
+    materials = result['materials'] = [dict(material) for material in source]
+    for name in sheets.get('materials', ()):
+        indices = [index for index, material in enumerate(source) if material.get('name') == name]
+        if not indices:
+            report['unmatched'].append(name)
+            continue
+        for index in indices:
+            materials[index]['doubleSided'] = True
+        report['materials'].append(name)
+    meshes = result['meshes'] = list(document.get('meshes') or [])
+    copies = report['copies']
+    for pattern, material_name in sheets.get('meshes', ()):
+        matched = False
+        for number, mesh in enumerate(document.get('meshes') or []):
+            if not fnmatch.fnmatchcase(str(mesh.get('name') or ''), pattern):
+                continue
+            for part, primitive in enumerate(mesh.get('primitives') or []):
+                index = primitive.get('material')
+                if not isinstance(index, int) or not 0 <= index < len(source) or source[index].get('name') != material_name:
+                    continue
+                matched = True
+                if materials[index].get('doubleSided'):
+                    continue
+                if index not in copies:
+                    twin = _private(source[index])
+                    twin['doubleSided'] = True
+                    materials.append(twin)
+                    copies[index] = len(materials) - 1
+                if meshes[number] is mesh:
+                    meshes[number] = dict(mesh, primitives=[dict(item) for item in mesh['primitives']])
+                meshes[number]['primitives'][part]['material'] = copies[index]
+                report['primitives'].append([mesh.get('name'), part, material_name])
+        if not matched:
+            report['unmatched'].append([pattern, material_name])
+    return result, report
 
 
 # ------------------------------------------------------------------ the audit command

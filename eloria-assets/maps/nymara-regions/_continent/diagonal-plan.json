@@ -1607,6 +1607,12 @@
         -27.6383,
         813.9205
       ]
+    },
+    "amberwood.east-quarry": {
+      "center": [
+        630,
+        620
+      ]
     }
   },
   "inhabited_hubs": {
@@ -2216,5 +2222,24 @@
         "radius": 0
       }
     ]
+  },
+  "assembly_member_offsets": {
+    "mirrorhold.city": {
+      "Prop_cistern-yard_bollard_0": [
+        0.0,
+        -2.49,
+        0.0
+      ],
+      "Prop_cistern-yard_bollard_1": [
+        0.0,
+        -5.47,
+        0.0
+      ],
+      "Prop_quarry-shelf_bollard_1": [
+        0.0,
+        -10.54,
+        0.0
+      ]
+    }
   }
 }

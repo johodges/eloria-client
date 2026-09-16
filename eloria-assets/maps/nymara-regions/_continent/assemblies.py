@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
+import re
 from typing import Callable, Mapping
 
 import numpy as np
@@ -37,6 +38,60 @@ MIRROR_FORTRESS = ('Landmark_Orrery','Landmark_Citadel','Landmark_Basin_',
     'Prop_Brazier_0_','Prop_Brazier_2_','Secret_mirror_orrery_','Secret_mirror_rose_',
     'Secret_mirror_basin_','Secret_mirror_citadel_','Secret_mirror_lens_focus',
     'Secret_mirror_icebore_')
+# Natural placements a retained structure keeps as parts of itself. content.load drops natural placements that are
+# neither landmarks nor compound members, so a landmark built with rocks at its flanks lost them and stood free on
+# the continent (the Sunmane cave mouths, asset audit example 1). The rule: a natural placement named
+# <structure node>_<word>_<n>, for a word of COMPANION_WORDS, belongs to that structure (the four Sunmane cave mouths
+# and their EarthRock_0..2). COMPANION_PAIRS names the pairs the rule cannot read, per territory: structure node ->
+# (exact companion names, companion name prefixes). A structure with companions is a compound with them (its own
+# compound when it already belongs to one), named '<territory>.<structure node>'; its footprint and each companion's
+# then carry the legacy slope the structure was built against instead of a flat round footing.
+COMPANION_WORDS = ('EarthRock',)
+COMPANION_PAIRS = {
+    # The Northern Grotto arch, its four abutment stones and the geode cave whose mouth it spans. (The Amberwood sea arch
+    # and its RockCluster_2_sea_arch_* rocks read the same way, but as a compound the arch stood 26 % hidden against 7 %
+    # in the legacy frame and 3 % as a single, measured on the O5 plan: a later stage raises its footprint.)
+    'amethyst_barrens': {'Northern_Grotto_Bridge_Arch': (('Landmark_GeodeCave_0',), ('Northern_Grotto_Abutment_',))}}
+_COMPANION_PATTERN = re.compile(r'(.+)_(?:%s)_\d+' % '|'.join(map(re.escape, COMPANION_WORDS)))
+# Legacy sites content.load pulled into their territory one placement at a time (a single moves 10 % of the way to the
+# hub until it is owned and dry), so their pieces converged and interpenetrated (asset audit family D, example 4). As
+# compounds they move as one body and keep their legacy spacing. Per territory: compound id -> (exact member names,
+# member name prefixes). A plan assembly_sites center places a site whose pull would land it on other content.
+PULLED_SITES = {
+    # The east quarry, its two watch towers, the three lodges east of the timber yard and all their dressing: legacy
+    # x 186..265, z 12..108 of the Amberwood library, mapped into Mirrorhold's ground and pulled 19-62 m piece by piece.
+    'amberwood': {'amberwood.east-quarry': ((
+        'Landmark_EastQuarry', 'Landmark_Tower_far_watch', 'Landmark_Watchtower_5', 'Landmark_Building_Lodge_10',
+        'Landmark_Building_Lodge_11', 'Landmark_Building_Lodge_29', 'Prop_Barrel_005', 'Prop_Barrel_020', 'Prop_Barrel_021',
+        'Prop_Barrel_031', 'Prop_BasketAmber_106', 'Prop_BasketAmber_116', 'Prop_BasketAmber_118', 'Prop_BasketAmber_119',
+        'Prop_Brazier_233', 'Prop_Brazier_235', 'Prop_Brazier_239', 'Prop_BurntBrazier_2', 'Prop_BurntBrazier_6',
+        'Prop_BurntBrazier_7', 'Prop_BurntCamp_2', 'Prop_BurntCamp_6', 'Prop_BurntCamp_7', 'Prop_Cart_181', 'Prop_Cart_194',
+        'Prop_Crate_057', 'Prop_Crate_073', 'Prop_Crate_083', 'Prop_Crate_087', 'Prop_Crate_094', 'Prop_Firewood_172',
+        'Prop_LogPile_224', 'Prop_LogPile_228', 'Prop_RetainingWall_5', 'Prop_Ruin_038', 'Prop_Ruin_043', 'Prop_Ruin_046',
+        'Prop_Sack_130', 'Prop_Signpost_272'), ('Cart_east_quarry_', 'Crate_east_quarry_'))},
+    # The temple summit: the Great Temple and its climbing stair (compacted 36 -> 28 m apart, the stair through the
+    # temple), the sun pavilion and its arcade, the court rails, the high camp, the summit stair, the kiln yard and the
+    # quarry huts with their discoveries.
+    'verdant_stair': {'verdant_stair.temple-summit': ((
+        'Landmark_GreatTemple', 'Landmark_Stair_temple_climb', 'Arcade_SunPavilion', 'Landmark_SunPavilion',
+        'Signpost_TempleCourt', 'Secret_stair_sun_focus', 'Secret_stair_temple_vault', 'Landmark_Stair_summit_climb',
+        'Secret_stair_quarry_pit', 'Hut_kiln_yard_00', 'Prop_kiln_yard_00',
+        # The upper court the climbing stair starts from, with its arcade, signpost and waystone.
+        'Landmark_UpperCourt', 'Arcade_UpperCourt', 'Signpost_UpperCourt', 'Secret_stair_waystone'),
+        ('Rail_SunPavilion_', 'Rail_TempleCourt_', 'Wall_temple_court_', 'Hut_high_camp_', 'Prop_high_camp_', 'Hut_quarry_',
+         'Prop_quarry_'))},
+    # The upland geode cave with its crystal field: the cave and the spires were pulled 20-43 m off the wet coast onto
+    # the resonant cluster they had stood 27-54 m from.
+    'amethyst_barrens': {'amethyst_barrens.upland-geode': ((
+        'Landmark_GeodeCave_3', 'Landmark_ResonantCluster_7', 'Crystal_UplandSpire_1_0', 'Crystal_UplandSpire_1_1',
+        'Crystal_UplandSpire_1_2'), ())}}
+# How content.load pulls a compound into its territory: (step, steps, dry). Every other compound steps 8 % of the way to
+# the territory hub up to 32 times until every member corner is owned. A pulled site steps 2 % (up to 160 times), so it
+# stops at the first owned place instead of up to 16 m beyond it, and a site whose pieces were pulled off wet ground
+# also needs every member centre dry (above 0.8 m and out of water deeper than 0.35 m, the rule for a single).
+PULL = (.08, 32, False)
+SITE_PULL = {identity: (.02, 160, identity == 'amethyst_barrens.upland-geode')
+             for sites in PULLED_SITES.values() for identity in sites}
 REFERENCE = {'four_gates.civic':((0.,0.),'terrain'),
     'four_gates.sanctuary':((-115.,-162.),'terrain'),
     'four_gates.south-gate':((.5,172.),'terrain'),
@@ -44,6 +99,11 @@ REFERENCE = {'four_gates.civic':((0.,0.),'terrain'),
     'mirrorhold.fortress':((99.6788,-138.6464),'terrain'),
     'mirrorhold.plaza':((69.6788,-39.6464),'terrain'),
     'mirrorhold.lake-harbour':((93.6788,42.4641),'water'),
+    # The canopy village keeps its reference-point datum. Its western giants, platforms and walkways stand 31-35 m
+    # under the continent's northern dome (Landmark_Giant_6_Wood 93 % underground in the O5 composition), but the
+    # 'footprints' datum (Assembly.footprint_lift) lifts the whole village about 11.5 m with the Great Tree, and the
+    # market stair from platform 0 then needs more than its 45 m at 0.58 (build_amberwood_access refuses it): see
+    # C:/Temp/el-ca-out/ASSET-FIXES.md, item 5. Burying giants need terrain work under the dome, not a datum.
     'amberwood.canopy-village':((61.2229,-141.8745),'terrain'),
     'amberwood.great-arch':((132.9427,-49.1381),'terrain'),
     'amberwood.garden':((122.2803,29.841),'terrain'),
@@ -53,9 +113,47 @@ REFERENCE = {'four_gates.civic':((0.,0.),'terrain'),
     'manymouth_delta.east_hamlet':((292.06279895504485,-120.97237631493502),'terrain')}
 REFERENCE.update(W.REFERENCES)
 REFERENCE.update(D.REFERENCES)
+# The pulled sites are placed by their footprints: a site moved across its territory has no meaningful single point, so
+# it is mapped by the centre of its own bounds. The temple summit keeps the anchor it had before its upper court joined
+# (a later centre would move the whole site against its compacted neighbours).
+REFERENCE.update({identity: (None, 'footprints') for sites in PULLED_SITES.values() for identity in sites})
+REFERENCE['verdant_stair.temple-summit'] = ((143.76912019141707, -126.2123795523941), 'footprints')
+DATUMS = ('terrain', 'water', 'footprints')
 # The upper-bank hamlet retains the old tidal architectural datum. Sampling
 # its obsolete excavated seabed (-4m) would lift every stilt floor needlessly.
 REFERENCE_HEIGHTS={'manymouth_delta.east_hamlet':0.}
+
+
+_COMPANIONS_CACHE = {}
+
+
+def companions(region, allplacements=()):
+    """{node: its structure's placement} for every structure with companions and for each companion (itself included).
+
+    The COMPANION_WORDS rule and COMPANION_PAIRS over one territory's placements: a companion counts only while its
+    structure is among them (an object edit may have removed the structure), and a structure only while it keeps one.
+    Remembered for the placement list last asked about (content.load asks once per placement)."""
+    key = (region, id(allplacements), len(allplacements))
+    cached = _COMPANIONS_CACHE.get('last')
+    if cached is not None and cached[0] == key and cached[1] is allplacements:
+        return cached[2]
+    by_name = {p['node']: p for p in allplacements}
+    found = {}
+    for name in by_name:
+        match = _COMPANION_PATTERN.fullmatch(name)
+        if match and match.group(1) in by_name:
+            found.setdefault(match.group(1), set()).add(name)
+    for host, (names, prefixes) in COMPANION_PAIRS.get(region, {}).items():
+        if host in by_name:
+            members = {name for name in by_name if name != host and (name in names or name.startswith(prefixes))}
+            if members:
+                found.setdefault(host, set()).update(members)
+    result = {}
+    for host, members in found.items():
+        for name in (host, *members):
+            result[name] = by_name[host]
+    _COMPANIONS_CACHE['last'] = (key, allplacements, result)
+    return result
 
 
 def placement_group(region, placement, allplacements=()):
@@ -64,10 +162,23 @@ def placement_group(region, placement, allplacements=()):
     Explicit source assembly metadata takes precedence. Legacy recipes have
     meaningful component names, including zero-origin baked walk meshes;
     membership therefore must not be inferred from placement-position alone.
+    A structure's natural companions (COMPANION_WORDS, COMPANION_PAIRS) share
+    its compound, or form '<territory>.<structure node>' with it; companions
+    are known only from ``allplacements``, which every loader passes.
     """
     explicit=placement.get('assembly') or placement.get('assembly_id')
     if explicit:return region+'.'+str(explicit)
+    host=companions(region,allplacements).get(placement['node']) if allplacements else None
+    if host is not None:
+        return _territory_group(region,host) or region+'.'+host['node']
+    return _territory_group(region,placement)
+
+
+def _territory_group(region, placement):
+    """The compound a placement belongs to by its territory's naming rules and site tables, or None."""
     name=placement['node'];kind=placement.get('kind','prop')
+    for identity,(names,prefixes) in PULLED_SITES.get(region,{}).items():
+        if name in names or name.startswith(prefixes):return identity
     if region=='westhaven':return W.placement_group(placement)
     if region=='amberwood' and name.startswith('Landmark_Giant_'):return 'amberwood.canopy-village'
     if kind in NATURE:return None
@@ -132,9 +243,11 @@ def placement_group(region, placement, allplacements=()):
         # Exterior standing stones follow the final bank, not the temple's
         # raised floor datum; they do not carry connected walk geometry.
     elif region=='sunmane_steppe':
+        # The palisade's four gates stand in its walls: as singles, compacted to 0.78 of their 25 m, they stood inside
+        # the full-size ring, through the great hall and the pavilions (asset audit family D).
         if name.startswith('Encampment_') or name in (
             'Structure_Palisade','Landmark_sunmane_great_hall','Landmark_sunmane_well_00',
-            'Landmark_sunmane_secret_steppe-hall-vault',
+            'Landmark_sunmane_secret_steppe-hall-vault','Gate_North','Gate_South','Gate_East','Gate_West',
             *('Landmark_orun_banner_shrine_'+str(i).zfill(2) for i in range(4,8))):
             return region+'.encampment'
     elif region=='ssarathi_ruins':
@@ -144,6 +257,19 @@ def placement_group(region, placement, allplacements=()):
         # the pyramid and the culvert beneath its stairs.
         if kind not in ('road','path','ground','terrain'):return region+'.ruin-city'
     return None
+
+
+# Name words of the pulled-site members that stand in water or in the air and carry no footing.
+SITE_OPEN_WORDS = ('boat', 'skiff', 'lateen', 'causeway', 'pier', 'quay', 'water', 'sunken', 'lamp', 'banner', 'flame',
+                   'portcullis', 'levitating', 'shard', 'wisp')
+
+
+def site_supports_ground(placement):
+    """Does a member of a pulled site keep its legacy ground under it? Every member but natural ones and those standing
+    in water or in the air (SITE_OPEN_WORDS), props, signs, discoveries and crystals included: as singles each had a
+    round footing of its own, and a site moved onto other ground leaves a prop without one floating or buried."""
+    name = placement['node'].lower()
+    return placement.get('kind') not in NATURE and not any(word in name for word in SITE_OPEN_WORDS)
 
 
 def supports_ground(placement):
@@ -168,12 +294,40 @@ class Assembly:
     datum: str
     bounds: np.ndarray
     footprints: tuple[np.ndarray,...]
+    # Every member's xz bounds [[low x, low z], [high x, high z]] in the source frame, supporting the ground or not.
+    member_boxes: tuple[np.ndarray,...] = ()
 
     def shift_to(self, map_xz: Callable, target_height: Callable, *, water_level=0., target_xz=None):
         """Map the assembly anchor once; preserve metre-for-metre structure."""
         target=np.asarray(map_xz(self.reference_xz) if target_xz is None else target_xz,float)
         y=float(water_level if self.datum=='water' else target_height(*target))
         return np.array([target[0]-self.reference_xz[0],y-self.reference_y,target[1]-self.reference_xz[1]])
+
+    def footprint_lift(self, target_height: Callable, source_height: Callable, shift, *, spacing=2., unmap=None):
+        """The vertical shift that stands the compound on the ground under all its members (datum 'footprints').
+
+        Each member's source xz bounds (``member_boxes``) are sampled on a grid ``spacing`` metres apart (at least its
+        centre), carried by ``shift`` in x/z onto the continent, and the continent ground there (``target_height``) is
+        compared with the source ground at the same legacy point (``source_height``; through ``unmap``, a turned
+        layout's inverse mapping, when given). The shift is the median of those differences over every sample, so the
+        compound sits on the continent as a whole instead of at its reference point, and a member standing where the
+        continent is much higher or lower than its legacy ground no longer decides the datum on its own."""
+        if not math.isfinite(spacing) or spacing<=0:raise ValueError('Footprint datum spacing must be positive')
+        shift=np.asarray(shift,float)
+        xs,zs=[],[]
+        for low,high in self.member_boxes:
+            low,high=np.asarray(low,float),np.asarray(high,float)
+            x=np.arange(low[0],high[0]+1e-9,spacing) if high[0]-low[0]>=spacing else np.array([(low[0]+high[0])*.5])
+            z=np.arange(low[1],high[1]+1e-9,spacing) if high[1]-low[1]>=spacing else np.array([(low[1]+high[1])*.5])
+            gx,gz=np.meshgrid(x,z)
+            xs.append(gx.ravel());zs.append(gz.ravel())
+        if not xs:raise ValueError(self.id+': a footprint datum needs member bounds')
+        sx,sz=np.concatenate(xs),np.concatenate(zs)
+        wx,wz=sx+shift[0],sz+shift[2]
+        lx,lz=unmap(wx,wz) if unmap is not None else (sx,sz)
+        difference=np.asarray(target_height(wx,wz),float)-np.asarray(source_height(lx,lz),float)
+        if not np.isfinite(difference).all():raise ValueError(self.id+': footprint datum samples leave the ground')
+        return float(np.median(difference))
 
     def sample_foundation(self, x, z, shift, source_height, *, feather=12., unmap=None):
         """Return target Y and influence for footprint-local original grades.
@@ -254,6 +408,9 @@ def build_assemblies(region, placements, bounds_by_name: Mapping, source_height:
         full=np.array([bounds[:,0].min(axis=0),bounds[:,1].max(axis=0)])
         fallback=tuple(((full[0]+full[1])*.5)[[0,2]])
         reference,datum=REFERENCE.get(identity,(fallback,'water' if region=='manymouth_delta' and identity.rsplit('.',1)[1] in HAMLETS else 'terrain'))
+        if datum not in DATUMS:raise ValueError(f'{identity}: datum {datum!r} is none of {DATUMS}')
+        # A site placed by its footprints keeps the centre of its own bounds as the point it is mapped and pulled by.
+        reference=fallback if reference is None else reference
         reference=np.asarray((references or {}).get(identity,reference),float)
         y=REFERENCE_HEIGHTS.get(identity,0. if datum=='water' else float(source_height(*reference)))
         footprints=[]
@@ -263,14 +420,19 @@ def build_assemblies(region, placements, bounds_by_name: Mapping, source_height:
             for z in range(-112,112,8):
                 half=math.sqrt(max(0,112**2-(z+4)**2))
                 footprints.append(np.array([[-half,z],[half,z+8]],float))
+        # A structure's natural companions and a pulled site's members stand on their own legacy ground.
+        companion_of=companions(region,placements)
+        site=identity in SITE_PULL
         for p,b in zip(members,bounds):
             # These three Manymouth banks are fitted to their actual upper
             # floors by manymouth_support. The old survey's rectangular
             # footing masks would restore trenches around the new bank edge.
             camp_member=identity=='amberwood.ridge-camp' and p['node'].startswith(('Prop_Tent_ridge_camp_','Brazier_ridge_camp_'))
-            if (supports_ground(p) or camp_member) and identity not in D.REFERENCES:
+            companion=p['node'] in companion_of and companion_of[p['node']]['node']!=p['node']
+            if (supports_ground(p) or camp_member or companion or (site and site_supports_ground(p))) and identity not in D.REFERENCES:
                 footprints.append(b[:,[0,2]]+np.array([[-1.5,-1.5],[1.5,1.5]]))
-        result[identity]=Assembly(identity,tuple(p['node'] for p in members),reference,y,datum,full,tuple(footprints))
+        result[identity]=Assembly(identity,tuple(p['node'] for p in members),reference,y,datum,full,tuple(footprints),
+                                  tuple(b[:,[0,2]] for b in bounds))
     return result
 
 

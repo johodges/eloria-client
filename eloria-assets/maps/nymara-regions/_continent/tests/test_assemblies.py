@@ -169,6 +169,91 @@ class AssembliesTests(unittest.TestCase):
         np.testing.assert_allclose(w,[0,0,.5,1,1,1])
         self.assertEqual(y[4],50.,'The shared street keeps its actual source survey')
 
+    def test_a_landmark_and_its_named_natural_companions_form_one_compound(self):
+        cave='Landmark_sunmane_cave_east_adit'
+        p=[{'node':cave,'kind':'landmark'}]+[{'node':f'{cave}_EarthRock_{i}','kind':'rock'} for i in range(3)]
+        p+=[{'node':'Rock_0001','kind':'rock'},{'node':'Landmark_gone_EarthRock_0','kind':'rock'},
+            {'node':'Landmark_sunmane_cave_east_adit_EarthRockish_0','kind':'rock'}]
+        groups={q['node']:A.placement_group('sunmane_steppe',q,p) for q in p}
+        self.assertEqual({groups[q['node']] for q in p[:4]},{'sunmane_steppe.'+cave})
+        # An unrelated rock, a companion whose structure is not placed and a name that only resembles the rule stay natural.
+        self.assertIsNone(groups['Rock_0001']);self.assertIsNone(groups['Landmark_gone_EarthRock_0'])
+        self.assertIsNone(groups['Landmark_sunmane_cave_east_adit_EarthRockish_0'])
+        # Companions are read from the placements every loader passes; alone, a structure is what its own rules make it.
+        self.assertIsNone(A.placement_group('sunmane_steppe',p[0]))
+        b={q['node']:([10.+i,14.,-60.],[14.+i,21.,-55.]) for i,q in enumerate(p[:4])}
+        compound=A.build_assemblies('sunmane_steppe',p,b,ground)['sunmane_steppe.'+cave]
+        self.assertEqual(set(compound.nodes),set(b))
+        self.assertEqual(len(compound.footprints),4,'the mouth and each rock carry the legacy slope they stood on')
+        self.assertEqual((compound.datum,len(compound.member_boxes)),('terrain',4))
+        # A structure already in a compound brings its companions into that compound.
+        orrery=[{'node':'Landmark_Orrery','kind':'landmark'},{'node':'Landmark_Orrery_EarthRock_0','kind':'rock'}]
+        self.assertEqual({A.placement_group('mirrorhold',q,orrery) for q in orrery},{'mirrorhold.city'})
+
+    def test_the_audits_named_pairs_join_a_structure_that_the_rule_cannot_read(self):
+        # The sea arch is left out: measured as a compound it stood further from its legacy ground than as a single.
+        p=[{'node':'Landmark_SeaArch','kind':'landmark'},{'node':'RockCluster_2_sea_arch_01','kind':'rock'}]
+        self.assertEqual([A.placement_group('amberwood',q,p) for q in p],[None,None])
+        grotto=[{'node':'Northern_Grotto_Bridge_Arch','kind':'bridge'},{'node':'Northern_Grotto_Abutment_0_-1','kind':'stone'},
+                {'node':'Landmark_GeodeCave_0','kind':'landmark'},{'node':'Landmark_GeodeCave_1','kind':'landmark'}]
+        self.assertEqual([A.placement_group('amethyst_barrens',q,grotto) for q in grotto],
+                         ['amethyst_barrens.Northern_Grotto_Bridge_Arch']*3+[None])
+        # Without its structure a named companion is only a natural placement.
+        self.assertIsNone(A.placement_group('amethyst_barrens',grotto[1],grotto[1:2]))
+        b={q['node']:([float(i),10.,0.],[i+4.,14.,4.]) for i,q in enumerate(grotto[:3])}
+        compound=A.build_assemblies('amethyst_barrens',grotto[:3],b,ground)['amethyst_barrens.Northern_Grotto_Bridge_Arch']
+        self.assertEqual(len(compound.footprints),3,'the arch, the cave and the abutment stone each hold their ground')
+
+    def test_pulled_sites_and_the_palisade_gates_are_compounds_placed_by_their_footprints(self):
+        members={'amberwood':('Landmark_EastQuarry','Landmark_Tower_far_watch','Landmark_Building_Lodge_29','Prop_Signpost_272','Crate_east_quarry_07'),
+                 'verdant_stair':('Landmark_GreatTemple','Landmark_Stair_temple_climb','Rail_TempleCourt_3','Prop_quarry_02'),
+                 'amethyst_barrens':('Landmark_GeodeCave_3','Landmark_ResonantCluster_7','Crystal_UplandSpire_1_2')}
+        sites={'amberwood':'amberwood.east-quarry','verdant_stair':'verdant_stair.temple-summit','amethyst_barrens':'amethyst_barrens.upland-geode'}
+        for region,names in members.items():
+            for name in names:
+                self.assertEqual(A.placement_group(region,{'node':name,'kind':'landmark'}),sites[region],name)
+            self.assertEqual(A.REFERENCE[sites[region]][1],'footprints')
+            if region!='verdant_stair':self.assertIsNone(A.REFERENCE[sites[region]][0])
+        for name in ('Landmark_Building_Lodge_12','Landmark_CharcoalKiln_0','Secret_amber_charcoal_cache'):
+            self.assertIsNone(A.placement_group('amberwood',{'node':name,'kind':'landmark'}),name)
+        self.assertEqual({A.placement_group('sunmane_steppe',{'node':'Gate_'+side,'kind':'landmark'}) for side in ('North','South','East','West')},
+                         {'sunmane_steppe.encampment'})
+        self.assertEqual(A.placement_group('verdant_stair',{'node':'Landmark_UpperCourt','kind':'landmark'}),'verdant_stair.temple-summit')
+        self.assertEqual(A.REFERENCE['verdant_stair.temple-summit'],((143.76912019141707,-126.2123795523941),'footprints'))
+        self.assertEqual(A.SITE_PULL['amberwood.east-quarry'],(.02,160,False))
+        self.assertEqual(A.SITE_PULL['amethyst_barrens.upland-geode'],(.02,160,True))
+        self.assertNotIn('four_gates.civic',A.SITE_PULL,'every other compound keeps its 8 % pull')
+        # A site with no reference point keeps the centre of its own bounds as its anchor.
+        p=[{'node':'Landmark_EastQuarry','kind':'landmark'},{'node':'Landmark_Tower_far_watch','kind':'landmark'}]
+        b={'Landmark_EastQuarry':([222.,20.,81.],[243.,37.,102.]),'Landmark_Tower_far_watch':([251.,31.,60.],[263.,49.,72.])}
+        site=A.build_assemblies('amberwood',p,b,ground)['amberwood.east-quarry']
+        np.testing.assert_allclose(site.reference_xz,[242.5,81.])
+        self.assertEqual(site.datum,'footprints')
+        # A site's props, signs and crystals stand on their own legacy ground; lamps, boats and levitating shards do not.
+        for node,kind,expected in (('Prop_Crate_057','prop',True),('Crystal_UplandSpire_1_0','crystal',True),('Prop_LampPost_1','prop',False),
+                                   ('Landmark_LevitatingShards_0','shards',False),('Rock_1','rock',False)):
+            self.assertEqual(A.site_supports_ground({'node':node,'kind':kind}),expected,node)
+        p.append({'node':'Prop_Crate_057','kind':'prop'});b['Prop_Crate_057']=([230.,28.,70.],[231.,29.,71.])
+        self.assertEqual(len(A.build_assemblies('amberwood',p,b,ground)['amberwood.east-quarry'].footprints),3)
+
+    def test_a_footprint_datum_stands_a_compound_on_the_ground_under_all_its_members(self):
+        boxes=(np.array([[0.,0.],[10.,10.]]),np.array([[20.,0.],[30.,10.]]),np.array([[40.,0.],[50.,10.]]))
+        compound=A.Assembly('grey_moors.site',('a','b','c'),np.array([25.,5.]),0.,'footprints',np.zeros((2,3)),(),boxes)
+        source=lambda x,z:np.asarray(x,float)*0.+2.
+        # The continent stands 5 m over the legacy ground, except a 25 m dome over the middle member's place.
+        shift=np.array([100.,0.,300.])
+        def continent(x,z):
+            x=np.asarray(x,float);return np.where((x>=119.)&(x<=131.),27.,7.)
+        self.assertAlmostEqual(compound.footprint_lift(continent,source,shift),5.)
+        self.assertEqual(float(continent(*(compound.reference_xz+shift[[0,2]])))-2.,25.,'the reference point alone would lift it 25 m')
+        # Under a turned layout the legacy ground is read where the unmapping leads.
+        legacy=lambda x,z:np.where(np.asarray(z,float)>1000.,9.,2.)
+        self.assertAlmostEqual(compound.footprint_lift(continent,legacy,shift,unmap=lambda x,z:(x,np.asarray(z)+1000.)),-2.)
+        with self.assertRaisesRegex(ValueError,'needs member bounds'):
+            A.Assembly('grey_moors.site',(),np.zeros(2),0.,'footprints',np.zeros((2,3)),()).footprint_lift(continent,source,shift)
+        # The canopy village keeps its reference point: a footprint lift would raise the market stair's deck past its run.
+        self.assertEqual(A.REFERENCE['amberwood.canopy-village'],((61.2229,-141.8745),'terrain'))
+
     def test_city_apron_uses_euclidean_corner_distance_and_a_smooth_boundary(self):
         p=[{'node':'Building_CliffHouse_'+str(i),'kind':'building'} for i in range(2)]
         b={p[0]['node']:([0,0,0],[8,10,8]),p[1]['node']:([20,0,0],[28,10,8])}

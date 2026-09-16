@@ -181,7 +181,10 @@ def test_a_mesh_named_to_keep_its_winding_keeps_its_open_sheets_only():
     fixed, fixed_body, report = W.normalise_winding(document, body)
     record = report['records'][0]
     assert record['status'] == 'authored_winding' and record['authored_triangles'] == 2 and record['flipped_triangles'] == 0
-    assert report['left_alone']['authored_winding'] == 1 and fixed == document and fixed_body == body
+    assert report['left_alone']['authored_winding'] == 1
+    # The winding stays; the normals, which point away from the side the sheet shows, turn (see the relit test).
+    assert fixed['meshes'][0]['primitives'][0]['indices'] == document['meshes'][0]['primitives'][0]['indices']
+    assert record['relit_triangles'] == 2 and report['relit_primitives'] == 1 and fixed_body[:len(body)] == body
     document['meshes'][0]['name'] = 'Card'
     assert W.normalise_winding(document, body)[2]['records'][0]['flipped_triangles'] == 2
 
@@ -206,7 +209,10 @@ def test_level_water_faces_up_whatever_its_normals_say():
     fixed, fixed_body, report = W.normalise_winding(document, body)
     record = report['records'][0]
     assert record['opposing_triangles'] == 2 and record['water_kept_triangles'] == 2
-    assert record['status'] == 'water_up' and record['flipped_triangles'] == 0 and fixed_body == body
+    assert record['status'] == 'water_up' and record['flipped_triangles'] == 0 and record['relit_triangles'] == 2
+    assert fixed['meshes'][0]['primitives'][0]['indices'] == document['meshes'][0]['primitives'][0]['indices']
+    np.testing.assert_array_equal(S.GR.accessor(fixed, fixed_body, fixed['meshes'][0]['primitives'][0]['attributes']['NORMAL']),
+                                  -down_normals)
 
     # A bog pool wound face down turns up, as it would by its normals alone.
     document, body = build([(pool, -down_normals, front)])
@@ -228,6 +234,80 @@ def test_level_water_faces_up_whatever_its_normals_say():
     document['materials'][0]['name'] = 'water_pool'
     record = W.normalise_winding(document, body)[2]['records'][0]
     assert record['opposing_triangles'] == 2 and record['flipped_triangles'] == 0 and record['status'] == 'water_up'
+    assert record['relit_triangles'] == 2 and record['relit_vertices'] == 4, 'only the pool facing up is relit'
+
+
+def relit_normals(fixed, fixed_body, mesh=0):
+    return S.GR.accessor(fixed, fixed_body, fixed['meshes'][mesh]['primitives'][0]['attributes']['NORMAL'])
+
+
+def test_sheets_kept_against_their_normals_are_relit_from_the_side_they_show(tmp_path):
+    """The Whitehorn icefall: a clockwise lathe wound outward keeps its winding, and its inward normals turn out."""
+    corners, normals, front = card()
+    cube_corners, cube_normals, cube_triangles = cube()
+    # One primitive: the icefall sheet (wound to face -z, lit +z) beside a closed block wound inward, which still turns.
+    positions = np.vstack([corners, cube_corners + [0., 0., 5.]])
+    vertex_normals = np.vstack([normals, cube_normals])
+    faces = np.vstack([front[:, [0, 2, 1]], cube_triangles[:, [0, 2, 1]] + 4])
+    document, body = build([(positions, vertex_normals, faces)])
+    document['meshes'][0]['name'] = 'frozen_cascade_01__alpine_blue_ice'
+    snapshot, raw = json.loads(json.dumps(document)), bytes(body)
+    fixed, fixed_body, report = W.normalise_winding(document, body)
+    record = report['records'][0]
+    assert record['status'] == 'corrected' and record['flipped_triangles'] == 12 and record['authored_triangles'] == 2
+    assert record['relit_triangles'] == 2 and record['relit_area'] == pytest.approx(4.) and record['relit_vertices'] == 4
+    assert record['relit_shared_vertices'] == 0
+    assert report['relit_primitives'] == 1 and report['relit_geometries'] == 1 and report['relit_triangles'] == 2
+    assert document == snapshot and bytes(body) == raw, 'the input is never modified'
+    primitive = fixed['meshes'][0]['primitives'][0]
+    # The sheet's normals turn to face the side it shows; the block's normals stay and its winding turns.
+    np.testing.assert_array_equal(relit_normals(fixed, fixed_body), np.vstack([-normals, cube_normals]))
+    order = S.GR.accessor(fixed, fixed_body, primitive['indices']).reshape(-1, 3).astype(int)
+    np.testing.assert_array_equal(order[:2], front[:, [0, 2, 1]])
+    np.testing.assert_array_equal(order[2:], cube_triangles + 4)
+    # New accessors on new views of the appended body; positions keep theirs.
+    normal_accessor = fixed['accessors'][primitive['attributes']['NORMAL']]
+    view = fixed['bufferViews'][normal_accessor['bufferView']]
+    assert normal_accessor == {'componentType': 5126, 'count': 28, 'type': 'VEC3', 'bufferView': len(fixed['bufferViews']) - 1}
+    assert view['target'] == W.ARRAY_BUFFER and view['byteOffset'] % 4 == 0 and view['byteOffset'] >= len(body)
+    assert primitive['attributes']['POSITION'] == document['meshes'][0]['primitives'][0]['attributes']['POSITION']
+    assert fixed_body[:len(body)] == body and fixed['buffers'][0]['byteLength'] == len(fixed_body)
+    # Nothing is left lit from behind, and a second pass changes nothing.
+    after = W.winding_report(fixed, fixed_body)[0]
+    assert after['status'] == 'consistent' and after['disagreeing_area_share'] == 0.
+    again, again_body, again_report = W.normalise_winding(fixed, fixed_body)
+    assert again == fixed and again_body == fixed_body and again_report['relit_triangles'] == 0
+    # The relit document exports and validates.
+    S.dump_glb(tmp_path / 'relit.glb', fixed, fixed_body)
+    assert validate_gltf.validate(str(tmp_path / 'relit.glb')).counts()['numErrors'] == 0
+
+
+def test_a_relit_vertex_another_triangle_shares_keeps_its_normal():
+    """A level pool triangle facing up and lit down shares one corner with a wall lit the way it faces."""
+    positions = np.array([[0., 0., 0.], [0., 0., -2.], [2., 0., 0.],      # the pool, wound to face +y
+                          [4., 0., 0.], [4., 2., 0.]])                    # the wall, facing +z, sharing corner 2
+    vertex_normals = np.array([[0., -1., 0.], [0., -1., 0.], [0., -1., 0.], [0., 0., 1.], [0., 0., 1.]])
+    faces = np.array([[0, 2, 1], [2, 3, 4]])
+    assert facing(positions[faces])[0, 1] > 0 and facing(positions[faces])[1, 2] > 0
+    document, body = build([(positions, vertex_normals, faces)])
+    document['materials'][0]['name'] = 'water_pool'
+    fixed, fixed_body, report = W.normalise_winding(document, body)
+    record = report['records'][0]
+    assert record['status'] == 'water_up' and record['relit_triangles'] == 1
+    assert record['relit_vertices'] == 2 and record['relit_shared_vertices'] == 1
+    np.testing.assert_array_equal(relit_normals(fixed, fixed_body),
+                                  [[0., 1., 0.], [0., 1., 0.], [0., -1., 0.], [0., 0., 1.], [0., 0., 1.]])
+
+
+def test_relit_geometry_shared_by_several_meshes_gets_one_normal_accessor():
+    corners, normals, front = card()
+    document, body = build([(corners, normals, front[:, [0, 2, 1]])])
+    document['meshes'][0]['name'] = 'Prop_Skep__thatch_reed'
+    document['meshes'].append(json.loads(json.dumps(document['meshes'][0])) | {'name': 'Prop_Skep__thatch_reed_twin'})
+    fixed, fixed_body, report = W.normalise_winding(document, body)
+    first, second = (fixed['meshes'][m]['primitives'][0]['attributes']['NORMAL'] for m in (0, 1))
+    assert first == second == len(document['accessors'])
+    assert report['relit_primitives'] == 2 and report['relit_geometries'] == 1 and report['relit_triangles'] == 2
 
 
 def card():
@@ -360,3 +440,73 @@ def test_a_corrected_document_exports_through_the_scene_exporter(tmp_path):
     primitive = exported_document['meshes'][0]['primitives'][0]
     assert exported_document['accessors'][primitive['indices']]['componentType'] == 5123
     assert W.winding_report(exported_document, exported_body)[0]['status'] == 'consistent'
+
+
+def sheet_document():
+    """(document, body): open cards named like library meshes, over four materials."""
+    corners, normals, front = card()
+    names = ['Kit_tent__solid__canvas', 'Plaza_Arcade_0__solid__stone', 'Plaza_Arcade_1__solid__stone',
+             'Plaza_Monument__solid__stone', 'Plaza_Arcade_2__solid__gilt', 'Timber_Shed']
+    document, body = build([(corners, normals, front)] * len(names))
+    document['materials'] = [{'name': 'canvas', 'pbrMetallicRoughness': {'baseColorFactor': [.9, .8, .6, 1.]}},
+                             {'name': 'stone', 'pbrMetallicRoughness': {'baseColorFactor': [.5, .5, .5, 1.]}, 'doubleSided': False},
+                             {'name': 'gilt'}, {'name': 'timber'}]
+    for mesh, name, material in zip(document['meshes'], names, (0, 1, 1, 1, 2, 3)):
+        mesh['name'] = name
+        mesh['primitives'][0]['material'] = material
+    return document, body
+
+
+def test_listed_sheet_materials_and_mesh_families_render_from_both_sides_and_nothing_else_does():
+    document, body = sheet_document()
+    snapshot = json.loads(json.dumps(document))
+    table = {'materials': ('canvas', 'sailcloth'),
+             'meshes': (('Plaza_Arcade_*__solid__stone', 'stone'), ('plaza_monument__solid__stone', 'stone'))}
+    fixed, report = W.double_sided_sheets(document, table)
+    assert document == snapshot, 'the input document is never modified'
+    materials = fixed['materials']
+    # A listed material turns where it is defined; the others keep their flags.
+    assert materials[0]['doubleSided'] is True and materials[0]['name'] == 'canvas'
+    assert materials[1].get('doubleSided') is False and 'doubleSided' not in materials[2] and 'doubleSided' not in materials[3]
+    # A material shared with other meshes turns only through a doubleSided copy used by the listed family.
+    assert len(materials) == 5
+    assert materials[4] == dict(snapshot['materials'][1], doubleSided=True)
+    material_of = {mesh['name']: mesh['primitives'][0]['material'] for mesh in fixed['meshes']}
+    assert material_of == {'Kit_tent__solid__canvas': 0, 'Plaza_Arcade_0__solid__stone': 4, 'Plaza_Arcade_1__solid__stone': 4,
+                           'Plaza_Monument__solid__stone': 1, 'Plaza_Arcade_2__solid__gilt': 2, 'Timber_Shed': 3}
+    assert report['materials'] == ['canvas'] and report['copies'] == {1: 4}
+    assert report['primitives'] == [['Plaza_Arcade_0__solid__stone', 0, 'stone'], ['Plaza_Arcade_1__solid__stone', 0, 'stone']]
+    # Names are matched exactly: a missing material and a pattern in the wrong case name nothing, and say so.
+    assert report['unmatched'] == ['sailcloth', ['plaza_monument__solid__stone', 'stone']]
+    # Geometry, accessors and the body are shared untouched; an untouched mesh is the same object.
+    assert fixed['accessors'] == document['accessors'] and fixed['meshes'][3] is document['meshes'][3]
+    # No entry: the document itself.
+    assert W.double_sided_sheets(document, None) == (document, {'materials': [], 'primitives': [], 'copies': {}, 'unmatched': []})
+    with pytest.raises(ValueError, match='unknown key'):
+        W.double_sided_sheets(document, {'material': ('canvas',)})
+
+
+def test_double_sided_sheets_export_through_the_scene_exporter(tmp_path):
+    document, body = sheet_document()
+    fixed, _ = W.double_sided_sheets(document, {'meshes': (('Plaza_Arcade_*', 'stone'),)})
+    exporter = S.Exporter(tmp_path / 'world.glb')
+    exporter.add(fixed, body, [1, 3], prefix='four_gates_')
+    exporter.write()
+    assert validate_gltf.validate(str(tmp_path / 'world.glb')).counts()['numErrors'] == 0
+    exported, _ = S.GR.load(tmp_path / 'world.glb')
+    flags = {exported['meshes'][node['mesh']]['name']: exported['materials'][exported['meshes'][node['mesh']]['primitives'][0]['material']]
+             for node in exported['nodes'] if 'mesh' in node}
+    assert flags['Plaza_Arcade_0__solid__stone'] == {'name': 'stone', 'pbrMetallicRoughness': {'baseColorFactor': [.5, .5, .5, 1.]},
+                                                     'doubleSided': True}
+    assert flags['Plaza_Monument__solid__stone'].get('doubleSided') is False
+
+
+def test_the_double_sided_table_names_open_sheets_by_territory_and_leaves_bark_and_backed_models_alone():
+    for region, entry in W.DOUBLE_SIDED_SHEETS.items():
+        assert set(entry) <= set(W.SHEET_TABLE_KEYS), region
+        assert all(isinstance(name, str) for name in entry.get('materials', ())), region
+        assert all(len(pair) == 2 and all(isinstance(part, str) for part in pair) for pair in entry.get('meshes', ())), region
+        named = [*entry.get('materials', ()), *(part for pair in entry.get('meshes', ()) for part in pair)]
+        assert not any('bark' in name or 'cave_mouth' in name or 'Retaining' in name or 'CenoteStair' in name for name in named), region
+    assert W.DOUBLE_SIDED_SHEETS['sunmane_steppe']['materials'] == ('sun_canvas_pale', 'sun_canvas_ochre', 'sun_canvas_red')
+    assert ('Plaza_Arcade_*__solid__fg_stone_ashlar', 'fg_stone_ashlar') in W.DOUBLE_SIDED_SHEETS['four_gates']['meshes']
