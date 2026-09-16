@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Build the Windows client package that installs Eloria on another machine.
+"""Build the client package that installs Eloria on another Windows or Linux machine.
 
 Added 2026-09-16 for Eloria Client.
 
-    python godot-client/tools/package_windows.py              # origin/develop
-    python godot-client/tools/package_windows.py --ref HEAD --installer
+    python godot-client/tools/package_client.py                     # Windows, origin/develop
+    python godot-client/tools/package_client.py --platform linux    # Linux
+    python godot-client/tools/package_client.py --ref HEAD --installer
 
 The package is built from a commit, never from a working tree. The main
 checkout is shared with other sessions and always holds someone's unfinished
@@ -14,8 +15,9 @@ Nothing it does touches the checkout it is run from.
 
 What goes in, and why it is more than an export:
 
-  app/Eloria.exe, Eloria.pck
-      The Godot export. Scripts, scenes, UI art and data.
+  app/Eloria.exe (Windows) or app/Eloria.x86_64 (Linux), app/Eloria.pck
+      The Godot export. Scripts, scenes, UI art and data. Linux needs the
+      official 4.7.2 export templates installed beside the Windows ones.
   app/assets, app/data, app/schemas
       Loose copies. Actor models are read with GLTFDocument from
       ProjectSettings.globalize_path("res://assets/..."), which in an exported
@@ -34,7 +36,11 @@ What goes in, and why it is more than an export:
 Only files tracked at the commit are shipped. Before zipping, the package is
 checked - every registry manifest, the files each manifest names, and every
 external texture a GLB references must be present - and the exported game is
-started headless once with a throwaway APPDATA, failing on any script error.
+started headless once with a throwaway user directory, failing on any script
+error. The Linux build is started under WSL (Ubuntu-24.04) when it is present.
+
+Windows ships as a zip with .bat launchers. Linux ships as a .tar.gz with .sh
+launchers: a zip made on Windows cannot mark the game executable.
 
 --installer also compiles an Inno Setup installer (per-user, no admin, Start
 menu shortcut, uninstaller) when ISCC.exe is available. Inno Setup is not part
@@ -51,6 +57,7 @@ import shutil
 import struct
 import subprocess
 import sys
+import tarfile
 import tempfile
 import time
 import zipfile
@@ -62,7 +69,6 @@ PROJECT = REPO.parent
 DIST = PROJECT / "dist"
 GODOT_EXE = "Godot_v4.7.2-stable_win64_console.exe"
 MARKER = ".eloria-package"
-PRESET_NAME = "Windows Desktop"
 ASSET_REF = re.compile(r"res://\.\./(eloria-assets/[^\"'\s]+)")
 
 # The installer's identity. Keep it fixed: Windows matches upgrades and the
@@ -129,7 +135,44 @@ application/export_angle=0
 application/export_d3d12=0
 application/d3d12_agility_sdk_multiarch=true
 ssh_remote_deploy/enabled=false
+
+[preset.1]
+
+name="Linux"
+platform="Linux"
+runnable=false
+advanced_options=false
+dedicated_server=false
+custom_features=""
+export_filter="all_resources"
+include_filter="*.json,*.bin"
+exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,*.md,assets/actors/*"
+export_path=""
+patches=PackedStringArray()
+encryption_include_filters=""
+encryption_exclude_filters=""
+seed=0
+encrypt_pck=false
+encrypt_directory=false
+script_export_mode=2
+
+[preset.1.options]
+
+custom_template/debug=""
+custom_template/release=""
+debug/export_console_wrapper=0
+binary_format/embed_pck=false
+texture_format/s3tc_bptc=true
+texture_format/etc2_astc=false
+binary_format/architecture="x86_64"
+ssh_remote_deploy/enabled=false
 """
+
+PLATFORMS = {
+    "windows": {"preset": "Windows Desktop", "binary": "Eloria.exe", "folder": "Eloria-Windows"},
+    "linux": {"preset": "Linux", "binary": "Eloria.x86_64", "folder": "Eloria-Linux"},
+}
+WSL_DISTRO = "Ubuntu-24.04"
 
 
 class PackageError(RuntimeError):
@@ -225,13 +268,13 @@ def import_project(godot: Path, project: Path, logs: Path) -> None:
     raise PackageError("import never settled after 6 passes; see import-*.log")
 
 
-def export_project(godot: Path, project: Path, app_dir: Path, logs: Path) -> None:
-    log("exporting")
+def export_project(godot: Path, project: Path, app_dir: Path, logs: Path, platform: dict) -> None:
+    log(f"exporting ({platform['preset']})")
     app_dir.mkdir(parents=True, exist_ok=True)
     text = run_godot(godot, ["--headless", "--path", str(project), "--export-release",
-                             PRESET_NAME, str(app_dir / "Eloria.exe")],
+                             platform["preset"], str(app_dir / platform["binary"])],
                      logs / "export.log", timeout=3600)
-    for name in ("Eloria.exe", "Eloria.pck"):
+    for name in (platform["binary"], "Eloria.pck"):
         if not (app_dir / name).is_file():
             raise PackageError(f"export did not write {name}; log: {logs / 'export.log'}\n{text[-2000:]}")
 
@@ -387,14 +430,49 @@ def check_registry(build_dir: Path, stage: Path) -> None:
     log(f"checked {len(registry.get('maps', {}))} registry maps")
 
 
-def smoke_launch(app_dir: Path, logs: Path) -> None:
-    log("smoke launch (headless)")
-    exe = app_dir / "Eloria.exe"
-    with tempfile.TemporaryDirectory(prefix="eloria-smoke-") as appdata:
-        # A throwaway APPDATA keeps user:// away from the real client settings.
-        env = dict(os.environ, APPDATA=appdata, LOCALAPPDATA=appdata)
-        text = run_godot(exe, ["--headless", "--quit-after", "600"], logs / "smoke.log",
-                         timeout=300, env=env)
+def wsl_path(path: Path) -> str:
+    resolved = path.resolve()
+    return f"/mnt/{resolved.drive[0].lower()}{resolved.as_posix()[2:]}"
+
+
+def smoke_launch(app_dir: Path, logs: Path, platform: dict) -> None:
+    # The launch must leave the package exactly as it was: a user:// that
+    # falls back to a relative path writes settings and caches into app/,
+    # and they would ship in the archive.
+    before = {p for p in app_dir.parent.rglob("*")}
+    try:
+        _launch(app_dir, logs, platform)
+    finally:
+        added = sorted(p for p in app_dir.parent.rglob("*") if p not in before)
+        if added:
+            raise PackageError("the smoke launch wrote into the package:\n  "
+                               + "\n  ".join(str(p.relative_to(app_dir.parent)) for p in added[:20]))
+
+
+def _launch(app_dir: Path, logs: Path, platform: dict) -> None:
+    if platform["binary"].endswith(".exe"):
+        log("smoke launch (headless)")
+        with tempfile.TemporaryDirectory(prefix="eloria-smoke-") as appdata:
+            # A throwaway APPDATA keeps user:// away from the real client settings.
+            env = dict(os.environ, APPDATA=appdata, LOCALAPPDATA=appdata)
+            text = run_godot(app_dir / platform["binary"], ["--headless", "--quit-after", "600"],
+                             logs / "smoke.log", timeout=300, env=env)
+    else:
+        # The Linux binary runs under WSL, with a throwaway HOME for user://.
+        wsl = shutil.which("wsl.exe") or shutil.which("wsl")
+        if not wsl or subprocess.run([wsl, "-d", WSL_DISTRO, "--exec", "true"],
+                                     capture_output=True).returncode != 0:
+            log(f"smoke launch skipped: WSL distribution {WSL_DISTRO} is not available")
+            return
+        log(f"smoke launch (headless, WSL {WSL_DISTRO})")
+        command = (f'home=$(mktemp -d) && cd "{wsl_path(app_dir)}" && '
+                   f'HOME="$home" XDG_DATA_HOME="$home" XDG_CONFIG_HOME="$home" '
+                   f'./{platform["binary"]} --headless --quit-after 600; '
+                   f'status=$?; rm -rf "$home"; exit $status')
+        # --exec, not --: "--" hands the line to the distro's login shell
+        # first, which expands $home to nothing before sh ever sees it.
+        text = run_godot(Path(wsl), ["-d", WSL_DISTRO, "--exec", "sh", "-c", command],
+                         logs / "smoke.log", timeout=300)
     hits = [line for line in text.splitlines() if any(f in line for f in SMOKE_FAILURES)]
     if hits:
         raise PackageError("the exported client reported errors at startup:\n  "
@@ -408,7 +486,8 @@ def default_server(build_dir: Path) -> tuple[str, str]:
     return (host.group(1) if host else "?", str(int(float(port.group(1)))) if port else "2000")
 
 
-def write_launchers(stage: Path, server: str | None, build_dir: Path, version: str) -> list[str]:
+def write_launchers(stage: Path, server: str | None, build_dir: Path, version: str,
+                    platform: dict) -> list[str]:
     args = []
     if server:
         host, _, port = server.partition(":")
@@ -417,6 +496,24 @@ def write_launchers(stage: Path, server: str | None, build_dir: Path, version: s
     else:
         shown_host, shown_port = default_server(build_dir)
     extra = (" -- " + " ".join(args)) if args else ""
+    if not platform["binary"].endswith(".exe"):
+        (stage / "Eloria.sh").write_text(
+            '#!/bin/sh\n'
+            'cd "$(dirname "$0")/app" || exit 1\n'
+            f'exec ./{platform["binary"]}{extra} "$@"\n', encoding="ascii", newline="\n")
+        (stage / "Eloria-debug.sh").write_text(
+            '#!/bin/sh\n'
+            'cd "$(dirname "$0")/app" || exit 1\n'
+            'echo "Eloria is running; its log is saved as eloria-debug.log beside this script."\n'
+            f'./{platform["binary"]} --verbose --log-file ../eloria-debug.log{extra} "$@"\n'
+            'status=$?\n'
+            'echo "Eloria exited with status $status."\n'
+            'exit $status\n', encoding="ascii", newline="\n")
+        (stage / "README.txt").write_text(
+            README_LINUX.format(version=version, host=shown_host, port=shown_port,
+                                archive=f"{stage.name}.tar.gz", folder=stage.name, binary=platform["binary"]),
+            encoding="utf-8", newline="\n")
+        return args
     (stage / "Eloria.bat").write_text(
         f'@echo off\r\nstart "" "%~dp0app\\Eloria.exe"{extra}\r\n', encoding="ascii")
     # The installed export templates carry no console wrapper, and a GUI exe
@@ -484,7 +581,85 @@ The world is black or models are missing
 """
 
 
+README_LINUX = """Eloria - Linux Client
+=====================
+Build {version}
+
+Requirements
+------------
+64-bit x86 Linux with a desktop session (X11, or Wayland with XWayland) and
+a GPU driver supporting OpenGL 3.3 - any Mesa, NVIDIA or AMD driver from the
+last decade. Nothing else needs installing.
+
+Install
+-------
+Extract the whole folder anywhere you can write to, for example:
+
+    tar -xzf {archive} -C ~/Games
+
+then start the game:
+
+    ~/Games/{folder}/Eloria.sh
+
+Keep the folder together - the game reads the app and eloria-assets folders
+that sit beside the scripts. If your desktop does not run .sh files on
+double-click, start it from a terminal as above.
+
+If Eloria.sh says "Permission denied", the archive was extracted by a tool
+that dropped file permissions. Fix it with:
+
+    chmod +x Eloria.sh Eloria-debug.sh app/{binary}
+
+Playing
+-------
+The login screen is pre-filled with the server:
+
+    Host: {host}
+    Port: {port}
+
+Enter a username and password and press Connect, or create a character.
+
+What is in this folder
+----------------------
+  Eloria.sh          Start the game.
+  Eloria-debug.sh    Start with verbose logging to eloria-debug.log.
+  app/               The game executable and its data.
+  eloria-assets/     World maps and region artwork.
+
+Troubleshooting
+---------------
+Nothing happens when I start it
+    Run ./Eloria-debug.sh from a terminal and read eloria-debug.log.
+
+It cannot connect
+    Check that outbound TCP to the port above is not blocked by a firewall.
+
+The world is black or models are missing
+    Part of the folder is missing or was moved. Extract it again.
+"""
+
+
 # --- outputs ------------------------------------------------------------------
+
+def make_tarball(stage: Path, platform: dict) -> Path:
+    """A .tar.gz, because a zip made on Windows cannot mark files executable."""
+    archive = stage.parent / f"{stage.name}.tar.gz"
+    archive.unlink(missing_ok=True)
+    executables = {platform["binary"], "Eloria.sh", "Eloria-debug.sh"}
+    log(f"archiving {archive.name}")
+
+    def normalise(info: tarfile.TarInfo) -> tarfile.TarInfo | None:
+        if Path(info.name).name == MARKER:
+            return None
+        info.uid = info.gid = 0
+        info.uname = info.gname = ""
+        info.mode = 0o755 if info.isdir() or Path(info.name).name in executables else 0o644
+        return info
+
+    with tarfile.open(archive, "w:gz", compresslevel=1) as handle:
+        handle.add(stage, arcname=stage.name, filter=normalise)
+    return archive
+
 
 def make_zip(stage: Path) -> Path:
     archive = stage.with_suffix(".zip")
@@ -508,7 +683,7 @@ def make_installer(stage: Path, iscc: Path, version: str, launch_args: list[str]
     size = sum(p.stat().st_size for p in stage.rglob("*") if p.is_file())
     parameters = " ".join(launch_args).replace('"', '""')
     spanning = size > 1_800_000_000
-    script = f"""; Generated by godot-client/tools/package_windows.py
+    script = f"""; Generated by godot-client/tools/package_client.py
 [Setup]
 AppId={INSTALLER_APP_ID.replace('{', '{{')}
 AppName=Eloria
@@ -559,6 +734,8 @@ Filename: "{{app}}\\app\\Eloria.exe"; Parameters: "{('-- ' + parameters) if para
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    parser.add_argument("--platform", choices=sorted(PLATFORMS), default="windows",
+                        help="windows: folder + zip; linux: folder + tar.gz (default windows)")
     parser.add_argument("--ref", default="origin/develop", help="commit to package (default origin/develop)")
     parser.add_argument("--no-fetch", action="store_true", help="do not fetch origin first")
     parser.add_argument("--godot", help="Godot console exe (default: the one in the client checkout)")
@@ -568,13 +745,16 @@ def main() -> int:
     parser.add_argument("--server", help="bake HOST[:PORT] into the launchers instead of the login default")
     parser.add_argument("--force", action="store_true", help="replace an existing package for this commit")
     parser.add_argument("--no-smoke", action="store_true", help="skip the headless launch check")
-    parser.add_argument("--no-zip", action="store_true", help="leave the folder unzipped")
+    parser.add_argument("--no-zip", action="store_true", help="leave the folder unarchived")
     parser.add_argument("--installer", action="store_true", help="also build an Inno Setup installer")
     parser.add_argument("--iscc", help="path to Inno Setup's ISCC.exe")
     options = parser.parse_args()
 
     started = time.time()
+    platform = PLATFORMS[options.platform]
     try:
+        if options.installer and options.platform != "windows":
+            raise PackageError("--installer builds a Windows installer only")
         godot = find_godot(options.godot)
         iscc = find_iscc(options.iscc) if options.installer else None
         if options.installer and iscc is None:
@@ -586,7 +766,7 @@ def main() -> int:
         sha = git("rev-parse", "--verify", options.ref + "^{commit}").strip()
         stamp = datetime.date.today().strftime("%Y%m%d")
         version = f"{stamp}-{sha[:9]}"
-        stage = options.out.resolve() / f"Eloria-Windows-{version}"
+        stage = options.out.resolve() / f"{platform['folder']}-{version}"
         log(f"packaging {options.ref} = {sha[:9]} into {stage}")
         if stage.exists():
             if not options.force:
@@ -594,7 +774,7 @@ def main() -> int:
             if not (stage / MARKER).is_file():
                 raise PackageError(f"{stage} was not made by this script; refusing to delete it")
             shutil.rmtree(stage)
-        logs = options.out.resolve() / ".build" / "logs" / version
+        logs = options.out.resolve() / ".build" / "logs" / f"{options.platform}-{version}"
         logs.mkdir(parents=True, exist_ok=True)
         stage.mkdir(parents=True)
         (stage / MARKER).write_text(sha + "\n", encoding="utf-8")
@@ -603,18 +783,18 @@ def main() -> int:
         project = prepare_build_tree(build_dir, sha)
         import_project(godot, project, logs)
         app_dir = stage / "app"
-        export_project(godot, project, app_dir, logs)
+        export_project(godot, project, app_dir, logs, platform)
         stage_loose_client_files(build_dir, app_dir)
         warnings = stage_eloria_assets(build_dir, stage)
         check_registry(build_dir, stage)
         check_glb_textures(app_dir)
-        launch_args = write_launchers(stage, options.server, build_dir, version)
+        launch_args = write_launchers(stage, options.server, build_dir, version, platform)
         if not options.no_smoke:
-            smoke_launch(app_dir, logs)
+            smoke_launch(app_dir, logs, platform)
 
         outputs = [stage]
         if not options.no_zip:
-            outputs.append(make_zip(stage))
+            outputs.append(make_zip(stage) if options.platform == "windows" else make_tarball(stage, platform))
         if iscc:
             outputs.append(make_installer(stage, iscc, version, launch_args, logs))
     except PackageError as error:
