@@ -210,10 +210,11 @@ class AuthoredTerrainEditTests(unittest.TestCase):
 
     def test_absent_or_empty_terrain_edits_leave_the_ground_alone(self):
         x, z = np.arange(180., 1381., 200.), np.arange(140., 1541., 230.)[:, None]
-        ground = landscape.height_at(x, z)
+        # The committed plan may carry edits of its own; the absent key and an empty list are the same ground.
         without = copy.deepcopy(landscape.load_plan())
         without.pop("terrain_edits", None)
-        np.testing.assert_array_equal(landscape.height_at(x, z, without), ground)
+        ground = landscape.height_at(x, z, without)
+        np.testing.assert_array_equal(landscape.height_at(x, z, dict(without, terrain_edits=[])), ground)
         np.testing.assert_array_equal(landscape.height_at(x, z, self.plan()), ground)
         # The committed plan carries no unresolved or malformed edit.
         self.assertEqual(landscape.validate_terrain_edits(landscape.load_plan()), [])
