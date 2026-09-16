@@ -88,6 +88,16 @@ RETAINED_DOOR_ROAD_WAYPOINTS = {
 # authored separately under its own region: the mountain side takes the climb
 # while the other side stays a straight run to the terminal.
 SEAM_ROAD_WAYPOINTS = {
+    # The Moors pass: four legs of switchback on the west face of the Whitehorn massif, from the shoulder
+    # above the watch cave down to the crossing at its foot, 361 m of road for 107 m of fall (grades 0.11 to
+    # 0.46 between waypoints on the plan's own ground).
+    ('whitehorn_range', 'grey_moors--whitehorn_range'): [
+        (371., 302.), (412., 364.), (349., 281.), (411., 377.), (364., 327.)],
+    # The east pass: out of the gate court south-east down the tail, then two hairpins round the east flank
+    # onto the Barrens' floor, 377 m for 84 m of descent (grades 0.13 to 0.38). Leg 2 crosses the Hornwater
+    # at about (629, 418), where the ravine the river cuts is three metres deep.
+    ('whitehorn_range', 'amethyst_barrens--whitehorn_range'): [
+        (556., 394.), (614., 406.), (668., 448.), (694., 433.), (692., 377.), (760., 419.), (786., 340.)],
 }
 # The same for a retained territory, in its source (library) metres, carried
 # where the layout stands by the plan's retained transform (as the retained door

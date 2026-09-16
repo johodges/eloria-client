@@ -249,6 +249,32 @@ class ContinentGeographyTests(unittest.TestCase):
         self.assertTrue((np.diff(height)>=-1e-10).all())
         self.assertAlmostEqual(height[0],20-river['depth'])
 
+    def test_cuts_relief_carves_the_legacy_relief_and_leaves_other_rivers_alone(self):
+        """A "cuts_relief" river is drained after the relief sources; every other river is untouched."""
+        plan=landscape.load_plan()
+        source=plan['relief_sources'][0]
+        carving=[r for r in plan['rivers'] if landscape.cuts_relief(r)]
+        self.assertTrue(carving,'the plan should carry at least one carving river to measure')
+        # Unflagged rivers: dropping the flag from every river must reproduce the one-pass ground exactly.
+        plain=dict(plan,rivers=[{k:v for k,v in r.items() if k!='cuts_relief'} for r in plan['rivers']])
+        x,z=np.meshgrid(np.linspace(380,700,161),np.linspace(120,560,221))
+        reference=landscape._drainage_height(x,z,landscape._natural_height(x,z,plain),plain)
+        for relief in plain['relief_sources']:
+            height,weight=landscape._relief_height(x,z,relief)
+            weight=weight*landscape.smoothstep(-8,float(relief.get('coast_feather',60.)),
+                                               landscape.coastline_distance(x,z,plain))
+            reference=reference*(1-weight)+height*weight
+        np.testing.assert_array_equal(landscape.height_at(x,z,plain),reference)
+        # The flagged river: its bed stands a full depth under the level even where the relief's weight is 1.
+        river=max(carving,key=lambda r:len(r['points']))
+        points=np.array(river['points'],float)
+        inside=points[np.asarray(landscape._relief_height(points[:,0],points[:,1],source)[1],float)>.99]
+        self.assertTrue(len(inside),'the carving river should run inside the relief source')
+        cut=np.asarray(landscape.height_at(inside[:,0],inside[:,1],plan),float)
+        np.testing.assert_allclose(cut,inside[:,2]-river['depth'],atol=1e-9)
+        buried=np.asarray(landscape.height_at(inside[:,0],inside[:,1],plain),float)
+        self.assertGreater(float(np.max(buried-inside[:,2])),1.,'without the flag the relief buries the bed')
+
 
 class AuthoredTerrainEditTests(unittest.TestCase):
     """The plan's "terrain_edits": the editor previews exactly what compose builds."""

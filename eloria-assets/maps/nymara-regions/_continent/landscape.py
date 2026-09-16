@@ -195,11 +195,31 @@ def _natural_height(x, z, plan):
     return h
 
 
-def _drainage_height(x, z, h, plan):
+def cuts_relief(river):
+    """Whether this river carves a legacy relief source instead of standing under it.
+
+    ``height_at`` lays a relief source over the drained ground, which paints out the bed of any
+    river that runs inside the source's weight: a mountain valley cannot hold water there. A river
+    that declares ``"cuts_relief": true`` is drained a second time, after the relief sources and the
+    basins, so its bed and valley are cut into the old heightfield rather than buried by it. Every
+    other river is drained once, before the relief, exactly as it always was.
+    """
+    return bool(river.get("cuts_relief", False))
+
+
+def _drainage_height(x, z, h, plan, rivers=None, lakes=None):
+    """Grade the valleys and cut the beds of ``rivers`` (the plan's own by default) and ``lakes``.
+
+    The two selections exist for ``cuts_relief``: the first pass takes the ordinary rivers and the
+    lakes, the second (after the relief) takes the carving rivers and no lake. Both passes only ever
+    lower the ground, so a carving tributary cannot fill the river it joins.
+    """
+    rivers = plan["rivers"] if rivers is None else rivers
+    lakes = plan.get("lakes", []) if lakes is None else lakes
     # First grade valleys, then cut beds. Doing this in two passes prevents a
     # tributary shoulder from filling its receiving river at a confluence.
     fields = []
-    for river in plan["rivers"]:
+    for river in rivers:
         distance, level = _polyline_field(x, z, river["points"])
         width, valley = river["width"], river["valley_width"]
         blend = 1 - smoothstep(width, valley, distance)
@@ -221,7 +241,7 @@ def _drainage_height(x, z, h, plan):
         profile = np.where(distance <= width, bed, bank)
         blend = 1 - smoothstep(terrace_end, terrace_end + join, distance)
         h = h * (1 - blend) + np.minimum(h, profile) * blend
-    for lake in plan.get("lakes", []):
+    for lake in lakes:
         r = _ellipse_distance(x, z, lake)
         blend = 1 - smoothstep(0.8, 1.55, r)
         bed = lake["level"] - lake["depth"] * (1 - smoothstep(0, 1.3, r))
@@ -658,7 +678,9 @@ def height_at(x, z, plan=None):
     """Evaluate the shared ground height without reference to territory ownership."""
     plan = load_plan() if plan is None else plan
     x, z = _coords(x, z)
-    h = _drainage_height(x, z, _natural_height(x, z, plan), plan)
+    carving = [river for river in plan["rivers"] if cuts_relief(river)]
+    h = _drainage_height(x, z, _natural_height(x, z, plan), plan,
+                         rivers=[river for river in plan["rivers"] if not cuts_relief(river)])
     # Legacy relief sources: a territory's old map relief placed by its retained
     # transform replaces the plan landform inside a crop that leaves the old
     # map's edge walls out, feathered at the crop's edge and damped by the coast.
@@ -675,6 +697,11 @@ def height_at(x, z, plan=None):
         blend = 1 - smoothstep(basin.get("rim", 0.85), basin.get("feather", 1.5), r)
         floor = basin["floor"] + basin.get("bowl", 6.0) * np.clip(r, 0, 1.5) ** 2
         h = h * (1 - blend) + np.minimum(h, floor) * blend
+    # A river that declares "cuts_relief" is drained here instead, over the composed
+    # relief: the mountain torrent cuts its gorge through the old heightfield rather
+    # than standing on it. Authored corrections and footings still come after it.
+    if carving:
+        h = _drainage_height(x, z, h, plan, rivers=carving, lakes=())
     # Authored corrections on the modelled ground, in the plan's own list order: an
     # editor's raised knoll, lowered hollow or flattened shelf, each weighted by its
     # shape and feathered outside it. Foundations still settle their pads last.
