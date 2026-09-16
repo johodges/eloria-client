@@ -12,7 +12,7 @@
       "name": "Rabbit",
       "actor_type": 685,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/001_rabbit/2_rigged/001_rabbit_rigged.glb",
-      "sha256": "a2a794ced81d92feaaa039b6d58a9a8099116cbc989d4377c3a80229f8f81eb3",
+      "sha256": "9abdf401f82f4117932fe62bfd4a05585efe9009916b74b175a1a3400b00cf55",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -43,7 +43,7 @@
       "name": "Beaver",
       "actor_type": 686,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/002_beaver/2_rigged/002_beaver_rigged.glb",
-      "sha256": "4674b12a41fdb30254a5c0d19b5b29dd9efe6979592360cf4bdfe27aca8c3507",
+      "sha256": "7961520cbdb2c189d6d485b940bd9ba9f0d586dcff1fafee5d2698a4cc46af6e",
       "source_revision": 5,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -74,7 +74,7 @@
       "name": "Skunk",
       "actor_type": 687,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/003_skunk/2_rigged/003_skunk_rigged.glb",
-      "sha256": "2ff8241ee5bb0e3162f8a3a1b8d8a0ca848917103dfff6e5628ac42b0b14e5f3",
+      "sha256": "5579a6b4a75b5de376f314a098bed770edad03eb8272a097a31f538950d54a83",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -105,7 +105,7 @@
       "name": "Hedgehog",
       "actor_type": 688,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/004_hedgehog/2_rigged/004_hedgehog_rigged.glb",
-      "sha256": "0c50335d0474a79f0f2ed3c7af58eac13dc0f78dd12390d9adb3cb7948e6a527",
+      "sha256": "f83efdc2cd1f7553435c09a7d349737fe477726bb7824dc52a95edc19e2107c9",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -136,7 +136,7 @@
       "name": "Squirrel",
       "actor_type": 689,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/005_squirrel/2_rigged/005_squirrel_rigged.glb",
-      "sha256": "2afd9ce3777bf404778c5d6bef93931fb631198f97bf5c068df0235466e670a5",
+      "sha256": "7d0c06d699347776ad4f63bffb8b5a728dfd30abe7f14df2fd5536257d9b2d42",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -167,7 +167,7 @@
       "name": "Dormouse",
       "actor_type": 690,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/006_dormouse/2_rigged/006_dormouse_rigged.glb",
-      "sha256": "2c7023b02d2bd6c0f08dd1044e0a5fc2661a7118ffb6ef93feebb9c7034a8c7f",
+      "sha256": "9f1375740ba52627e1a6651aaf2026b3ddfd4330c9ce64481e9c89508b808a9f",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -198,7 +198,7 @@
       "name": "Shrew",
       "actor_type": 691,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/007_shrew/2_rigged/007_shrew_rigged.glb",
-      "sha256": "7cc4ccfd0bdea6dae562c2ad15e75011561e544c7501d11ea99081fd3891b529",
+      "sha256": "d657f368a2df7a89b16457f7c67ce4021f70bf991dff6ed3a3c28faa0bf66d08",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -229,7 +229,7 @@
       "name": "Stoat",
       "actor_type": 692,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/008_stoat/2_rigged/008_stoat_rigged.glb",
-      "sha256": "f8171dcc98be3be279cc9abde19b6a280b4e601e4959b0a4216508e11f3a958a",
+      "sha256": "031e349f91759be6f63c30a1a681b56e293e7a6129af0aa071c61a37f4298372",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -260,7 +260,7 @@
       "name": "Mongoose",
       "actor_type": 693,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/009_mongoose/2_rigged/009_mongoose_rigged.glb",
-      "sha256": "db12aa6eff27d599c5e2ad3e2821f69705d695b8750407a6a78db89806b3acec",
+      "sha256": "edfe689846904ca99cce5d513e8ef56d444715b76d5f298231b1f7430829d4a2",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -291,7 +291,7 @@
       "name": "Armadillo",
       "actor_type": 694,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/010_armadillo/2_rigged/010_armadillo_rigged.glb",
-      "sha256": "a5653dcaf604dbb9baa12a0cc611dc731c4290a6d4cc6f9f58cabf14e47666fc",
+      "sha256": "cce9260395d1e978f7771736b814f59b5067a0cdf4b3bb07031024b5a6d0fc85",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -322,7 +322,7 @@
       "name": "Opossum",
       "actor_type": 695,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/011_opossum/2_rigged/011_opossum_rigged.glb",
-      "sha256": "3c7445bcf61f895cdd547fb0b1da2d67261d4fd5ce6ca5de698ad77ed8eedeeb",
+      "sha256": "d87541715cfb908d4f582363e6f37b521c55d4734d6fadba2479245893f7733e",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -353,7 +353,7 @@
       "name": "Platypus",
       "actor_type": 696,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/012_platypus/2_rigged/012_platypus_rigged.glb",
-      "sha256": "7fa3fdcedc9bac6e2dad0346dbdcb0cdc94550f9f855e9a666087cd7eaa68a4a",
+      "sha256": "0b597d10385a1ac69af337e921762c0f82500e86258801b08321180ebfc9bd36",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -384,7 +384,7 @@
       "name": "Wombat",
       "actor_type": 697,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/013_wombat/2_rigged/013_wombat_rigged.glb",
-      "sha256": "6d63fef918a2dfea585dfc001b60e703a43f240ca545999a6a669a8002ae34a3",
+      "sha256": "753422998371677e2bc437b93b9666a34eb988a8bd636e94bd10b6a5dcca4948",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -415,7 +415,7 @@
       "name": "Puma",
       "actor_type": 698,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/014_puma/2_rigged/014_puma_rigged.glb",
-      "sha256": "1c7373f28f47cc20e2aa9ae41894c0d7dca138e3754abd8339da5c6a57233e00",
+      "sha256": "a03ce51c6caf735827896146322e7af638b6d96dea6e8e1e325a3bfc891b7876",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -446,7 +446,7 @@
       "name": "Leopard",
       "actor_type": 699,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/015_leopard/2_rigged/015_leopard_rigged.glb",
-      "sha256": "b93d403174ae48e7bcb49683215ee6262b21a35d80da17af1cd15d78b0f54e59",
+      "sha256": "e37033cb2b97f87c270df13c1c39bd60abd118d5c2764e4cd2ea828a325f5ec6",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -477,7 +477,7 @@
       "name": "Cheetah",
       "actor_type": 700,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/016_cheetah/2_rigged/016_cheetah_rigged.glb",
-      "sha256": "5f34e4935d9af0a190d78146841aa64f54fd0153653613eb23937e2885f3c8b2",
+      "sha256": "907807502b45fbb74beea700ad0239611e378c5fd871b38e690c8634e61a28e1",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -508,7 +508,7 @@
       "name": "Donkey",
       "actor_type": 701,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/017_donkey/2_rigged/017_donkey_rigged.glb",
-      "sha256": "c7b5762aeb4b8de7a5cd5388089a6de6b9c8276fd447a58cb4484838abf57ab7",
+      "sha256": "03fbb04f37b0a74385e2e7a6c440399f5786b53de905c9e03f6b1498196cdb55",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -539,7 +539,7 @@
       "name": "Tapir",
       "actor_type": 702,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/018_tapir/2_rigged/018_tapir_rigged.glb",
-      "sha256": "d8a6c19c07bcae94dfb3cd6e233fdf9abb5c04de10387c91fdf940435396a22b",
+      "sha256": "07b73259cd021f2d2e6e7ed66c894e67af432d9577f7e24229a343a9fa27cb4d",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -570,7 +570,7 @@
       "name": "Elephant",
       "actor_type": 703,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/019_elephant/2_rigged/019_elephant_rigged.glb",
-      "sha256": "bb5589ff237db9a3adf12a044c9731518a72ddc1b3762c5bc0a9fef120ef8dc5",
+      "sha256": "fee6784ddb48a26596d16f900bd4c419965df3c434737a586d08ce52764297e8",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -601,7 +601,7 @@
       "name": "Hippopotamus",
       "actor_type": 704,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/020_hippopotamus/2_rigged/020_hippopotamus_rigged.glb",
-      "sha256": "59834b974851639b0955e11fe059cdbc520c212086a235b4273990957daf0239",
+      "sha256": "1ee39b73995cd29a673c2cd8d133b0f5cbad830208565c3b224dfe409cc2a9f5",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -632,7 +632,7 @@
       "name": "Giraffe",
       "actor_type": 705,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/021_giraffe/2_rigged/021_giraffe_rigged.glb",
-      "sha256": "73a17ae7cf0a87b21b109dceb3f23961d169180d6be8128fb26ea9b56cb1d3e2",
+      "sha256": "f62a1c6d6d6b3141ca77f896deb919c1aaf781f4eb2ab59466ba5be1bdb44303",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -663,7 +663,7 @@
       "name": "Zebra",
       "actor_type": 706,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/022_zebra/2_rigged/022_zebra_rigged.glb",
-      "sha256": "da0c4c003445f9a95848b3c834c915b50d876f4b3af2297d8548a1963b18e5c7",
+      "sha256": "d7cd12081a8828ed284f75e5fe87f7910f0def82822c28c87591b2f60ecd03fb",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -694,7 +694,7 @@
       "name": "Kangaroo",
       "actor_type": 707,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/023_kangaroo/2_rigged/023_kangaroo_rigged.glb",
-      "sha256": "ebf1511988b5489dc9fa40fbaafa246f8c906ac8e56657aa59a782e3fb2957e8",
+      "sha256": "e386a2f12fe0cd17acdb036c4bd3221f4bbc4f00df3ab184102cc1c6efb1a00a",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -725,7 +725,7 @@
       "name": "Orangutan",
       "actor_type": 708,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/024_orangutan/2_rigged/024_orangutan_rigged.glb",
-      "sha256": "dc631f89969e77cafe2b4de333bb76db86f0bec56a39be34dc532ac8d28503a3",
+      "sha256": "c4a76af948a9da857d4813fc9bdf607e07b774ff7a0a1032ee0e597428a163d3",
       "source_revision": 5,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -756,7 +756,7 @@
       "name": "Baboon",
       "actor_type": 709,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/025_baboon/2_rigged/025_baboon_rigged.glb",
-      "sha256": "3671d689955ec386a0e7bd85de591c69aca37bebfefa4544c5cd12ebe8a415c0",
+      "sha256": "b884104c67570d66374364744aba7238c85d05f88e272ce6eb620782a81ac4b4",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -787,7 +787,7 @@
       "name": "Walrus",
       "actor_type": 710,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/026_walrus/2_rigged/026_walrus_rigged.glb",
-      "sha256": "8e7e29cf71bd058f7ecac702f3422a77f71efde9a520bf32761c35596d13505d",
+      "sha256": "ec23a1950d10104cd1b0269cd873cb4e3662b84d0730d9506639fa59f0835315",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -818,7 +818,7 @@
       "name": "Manatee",
       "actor_type": 711,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/027_manatee/2_rigged/027_manatee_rigged.glb",
-      "sha256": "823f8dd5ac50c9a08742257094ef91fab3ca8ac673ff3442133b81af254d180d",
+      "sha256": "2225257bb536537f7414b20567afff278ed38f22de70280df2d3530e6775f488",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -849,7 +849,7 @@
       "name": "Dolphin",
       "actor_type": 712,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/028_dolphin/2_rigged/028_dolphin_rigged.glb",
-      "sha256": "302fd6137c8bae3ce4f6609a204c0b2c300eb003be54b862b20a8ee246e6bb20",
+      "sha256": "1c7c697e6058f215465872557eaae14f1f826d44cb5b84789c10aa15cb108d74",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -880,7 +880,7 @@
       "name": "Raven",
       "actor_type": 713,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/029_raven/2_rigged/029_raven_rigged.glb",
-      "sha256": "fb9b28345f8c7d973365207b43786c592da328046dd93d8e138110e209ba5293",
+      "sha256": "9c87b6fb6078f7401fddaa36e0d9da90ab5891ab2fff88d4675187b76318af3e",
       "source_revision": 7,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -912,7 +912,7 @@
       "name": "Magpie",
       "actor_type": 714,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/030_magpie/2_rigged/030_magpie_rigged.glb",
-      "sha256": "cc0be0e8852342f574d3c3f0303eaad09596b9d0fde0779c3991dcc954605e2f",
+      "sha256": "7dac47332bf79b94b05b5745e3e8cb1526172b377c23f742c6c776e1ea60f98a",
       "source_revision": 7,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -944,7 +944,7 @@
       "name": "Mallard Duck",
       "actor_type": 715,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/031_mallard_duck/2_rigged/031_mallard_duck_rigged.glb",
-      "sha256": "572d4ecd3bda423260c4a11d08da68e7bc799652921b71cf141a65dcd41976a8",
+      "sha256": "b72a038fb0010056dd9388e7fb81fab1ed6b12565b13981c0a0391a188a2cfa6",
       "source_revision": 7,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -976,7 +976,7 @@
       "name": "Goose",
       "actor_type": 716,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/032_goose/2_rigged/032_goose_rigged.glb",
-      "sha256": "748842b153614ccb2729b1814b6262255e47cf8a4f3b645f676b2082c2d2c0b7",
+      "sha256": "199d5793f016403d7c1ec51f13e0e3595fcee509cf03b6835afd56ef040aaf41",
       "source_revision": 7,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1008,7 +1008,7 @@
       "name": "Swan",
       "actor_type": 717,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/033_swan/2_rigged/033_swan_rigged.glb",
-      "sha256": "8d10ad684c3ec141abb924402df5d207349618635ccba3c4c9c9a6e47b9c373e",
+      "sha256": "0c9d2caf258c9a008b5a61a4587f46d68ce4b214c10f42cdb2d9f2833b294acf",
       "source_revision": 7,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1040,7 +1040,7 @@
       "name": "Rooster",
       "actor_type": 718,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/034_rooster/2_rigged/034_rooster_rigged.glb",
-      "sha256": "a5fb8cca6740d9f321c3296d4d85a2a6e1b09f860b3eacc8e3ee3199bac16f84",
+      "sha256": "a17dfe656d74035e6cd27602ae32fc55523dd21bc5d3c36c85ae1dbbe57a9737",
       "source_revision": 9,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1072,7 +1072,7 @@
       "name": "Turkey",
       "actor_type": 719,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/035_turkey/2_rigged/035_turkey_rigged.glb",
-      "sha256": "56a395f2859f3a3c39da0007e262b4b9991579508aadbe830f5744d121f1dcdf",
+      "sha256": "6c82536ecc8c3549f8d1aedb560c3a407de9fb7847976741b497bb00cd8ba51e",
       "source_revision": 8,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1104,7 +1104,7 @@
       "name": "Pheasant",
       "actor_type": 720,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/036_pheasant/2_rigged/036_pheasant_rigged.glb",
-      "sha256": "051f6eaca5a286e3ad29e3b5aadf57c0ac10dda3f5e14e9728898951ca439914",
+      "sha256": "83babdc3aaea8174bbdb40546c7af24e9cc32b5d51b308eb357457ef7f9722af",
       "source_revision": 7,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1136,7 +1136,7 @@
       "name": "Ostrich",
       "actor_type": 721,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/037_ostrich/2_rigged/037_ostrich_rigged.glb",
-      "sha256": "05a477b70748777f2e2fdf278dbae3f3c3d2bdd990b968b49b79b35d9cb62bfe",
+      "sha256": "da1deee44da7ad84a140f506a75c4ec8e8d056d1d962e7c91c3dabc257fb60d6",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1167,7 +1167,7 @@
       "name": "Penguin",
       "actor_type": 722,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/038_penguin/2_rigged/038_penguin_rigged.glb",
-      "sha256": "9f40d56ad46f70b582d948816f2b7234c87587636937c8eb537a96c0f0c998c3",
+      "sha256": "b8d94e5ab120b5e5039bfade6c19e61ed068ea81d2798c4a11ef88e53923da19",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1198,7 +1198,7 @@
       "name": "Pelican",
       "actor_type": 723,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/039_pelican/2_rigged/039_pelican_rigged.glb",
-      "sha256": "bf818f522b6215d28ce6fdd35cb3b0168108f0f1913446fa7757e7c2dd219e84",
+      "sha256": "2f108a7a6c95b9e7960d623abdff3186a2822317b55dbcec59d1b607abf5cf4e",
       "source_revision": 9,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1230,7 +1230,7 @@
       "name": "Macaw",
       "actor_type": 724,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/040_macaw/2_rigged/040_macaw_rigged.glb",
-      "sha256": "354c7f369edb5fb981a72ab91b99851942738849bc3bdf74322edcc004011955",
+      "sha256": "4a9a518b940f8da72bb430870baf0aa62616a1bed5d8995b8080e147b825b1d5",
       "source_revision": 8,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1262,7 +1262,7 @@
       "name": "Cobra",
       "actor_type": 725,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/041_cobra/2_rigged/041_cobra_rigged.glb",
-      "sha256": "c6bf00e1fc44d2faebd3e8f5fdb6b0c98c95b1bf6b14e9df48d0ad5bc4d4db2c",
+      "sha256": "0b9f8456157ab460356cfa2ad0116d9228ec5ec198a311564624317be06b04cd",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1293,7 +1293,7 @@
       "name": "Chameleon",
       "actor_type": 726,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/042_chameleon/2_rigged/042_chameleon_rigged.glb",
-      "sha256": "ad218360a5496d22f6b20686191edd00d055e87ecfb3ad61b0f0a4ad1672fee9",
+      "sha256": "b984610fcb1db896892efb2f6c95f22306dff239dddd32256f3aa54b2ff44b95",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1324,7 +1324,7 @@
       "name": "Gecko",
       "actor_type": 727,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/043_gecko/2_rigged/043_gecko_rigged.glb",
-      "sha256": "d579777deccba822a99833dc7d11b18eeb31c51237a1273c91fc249b5d7ed73c",
+      "sha256": "77d2f0358f71fb5822f76515021222df54818caa12551657a2b0029497c3b2db",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1355,7 +1355,7 @@
       "name": "Frilled Lizard",
       "actor_type": 728,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/044_frilled_lizard/2_rigged/044_frilled_lizard_rigged.glb",
-      "sha256": "91c72d05e3208b75e45e4c464476ce94ef250f7b041ebda846f85a57469b7110",
+      "sha256": "cb0496b7744fb059e1c7dd69b65ec5095f919ee33d803d64c2eac37f6aba392e",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1386,7 +1386,7 @@
       "name": "Iguana",
       "actor_type": 729,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/045_iguana/2_rigged/045_iguana_rigged.glb",
-      "sha256": "bcbc1ec0844b1a3f16e67695fe6d42f0139ead0ec7b260980fa461c33c4157f0",
+      "sha256": "d58d16dc46e9b3c0aaa8632c12c4a8c36c3d922c4c545361fb05545d0470c361",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1417,7 +1417,7 @@
       "name": "Caecilian",
       "actor_type": 730,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/046_caecilian/2_rigged/046_caecilian_rigged.glb",
-      "sha256": "7602ccdd51ce53d69ee9456eb71972b8fe200bbbb591063b83a9ab5eedd43f57",
+      "sha256": "0d3b45d66fb3f8459c7e38efbb71ce3c2df58cbc1a74ef4c80903ae37ba50a8a",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1448,7 +1448,7 @@
       "name": "Mudskipper",
       "actor_type": 731,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/047_mudskipper/2_rigged/047_mudskipper_rigged.glb",
-      "sha256": "4f0b80ed7cadd5f7e7ddc81d95a34359b25930e37d15f983ea26377b1df4f99f",
+      "sha256": "6879e120c27c440cc78efd47c696e6065078d19f9c7c09627378b60e011bc49e",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1479,7 +1479,7 @@
       "name": "Snapping Turtle",
       "actor_type": 732,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/048_snapping_turtle/2_rigged/048_snapping_turtle_rigged.glb",
-      "sha256": "c8878cf7d4655e8d762b3fe0e5e83b602816469efa4aa41b70948151eda6b93f",
+      "sha256": "4e4446de5275c4b6dc16c843a2b74b48238bb8ac7a37d17b19e123986b87dca7",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1510,7 +1510,7 @@
       "name": "Hammerhead Shark",
       "actor_type": 733,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/049_hammerhead_shark/2_rigged/049_hammerhead_shark_rigged.glb",
-      "sha256": "993cfd025ab455825fdeee231a2e200a7dc54ed349dae03c91daf53f7f71f514",
+      "sha256": "f2fcf42bae57526ad2a017eaba67a5a6b2c3e88e7b4de5d56cfa928e427bcd57",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1541,7 +1541,7 @@
       "name": "Sturgeon",
       "actor_type": 734,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/050_sturgeon/2_rigged/050_sturgeon_rigged.glb",
-      "sha256": "0c63f6064d0a6adcb3f43f0a3edb9b071509b062f0c0938db0c2c075514753d5",
+      "sha256": "864d3527e0ca2cc1d559424ad486f910b1126d665b30d8adb1655f3c481e6ae1",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1572,7 +1572,7 @@
       "name": "Seahorse",
       "actor_type": 735,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/051_seahorse/2_rigged/051_seahorse_rigged.glb",
-      "sha256": "84507bc16d9b359de4f1b61a52e8f6322ac07b7b202c16318a6e178c74fe1a4d",
+      "sha256": "d302e635c66e8439af50c6000c3799c4dcf67984f6bf7f2eea9273f429c58a99",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1603,7 +1603,7 @@
       "name": "Octopus",
       "actor_type": 736,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/052_octopus/2_rigged/052_octopus_rigged.glb",
-      "sha256": "bcba1cf57023af3234995ceed64461b02387fc3a00bbb892119dce50e5536dba",
+      "sha256": "ea9cfd06e54cf0fa0413044acf9e2f4d09705a5033e9370cb6038f19b626b0ba",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1634,7 +1634,7 @@
       "name": "Cuttlefish",
       "actor_type": 737,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/053_cuttlefish/2_rigged/053_cuttlefish_rigged.glb",
-      "sha256": "a9c0ad57208c02886226c4773ccbabe872d4d588fb1d4dbf4a4c9600b4491992",
+      "sha256": "5dd82394d93233d0ef7343d184e157d5e85158176583992c58fd3e33cc5cad49",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1665,7 +1665,7 @@
       "name": "Nautilus",
       "actor_type": 738,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/054_nautilus/2_rigged/054_nautilus_rigged.glb",
-      "sha256": "f561a699f083d02fe80de24901a332db5bd1e2486e403533fa3362ef0b0bda60",
+      "sha256": "15c0346b145a49ae409a9437e56352d75083633fc76607e5e728408aa45e989f",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1696,7 +1696,7 @@
       "name": "Lobster",
       "actor_type": 739,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/055_lobster/2_rigged/055_lobster_rigged.glb",
-      "sha256": "949531630df12d218e59868264835f8ce8fd0e97a2e87c982a6f0849d1fad1d4",
+      "sha256": "44c8e01afc0ad5382b4afbd3547c5fbb0d5929c3bc1c4296df5362cf7b0eff58",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1727,7 +1727,7 @@
       "name": "Giant Centipede",
       "actor_type": 740,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/056_giant_centipede/2_rigged/056_giant_centipede_rigged.glb",
-      "sha256": "47a52843cd7185c487c6a6f418acffa138e021a884432bcf0dbd5f6f1dffe387",
+      "sha256": "ba7402cd310938b94875606f1a30f778c73fad8be15f873271ba0059ef8c7f78",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1758,7 +1758,7 @@
       "name": "Giant Snail",
       "actor_type": 741,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/057_giant_snail/2_rigged/057_giant_snail_rigged.glb",
-      "sha256": "9323cfc17bdfe8208ed0b552367c1abaf952eea983ccf77bbdcdd1f405f71a35",
+      "sha256": "ed8501b8ec2bcb1372c7944b3801aac9a4278b8889727f0fb65bd48d182d668e",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1789,7 +1789,7 @@
       "name": "Giant Leech",
       "actor_type": 742,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/058_giant_leech/2_rigged/058_giant_leech_rigged.glb",
-      "sha256": "cd8e24f266aa6438c28458818e6578191bd1d96654f8165db29e669d83eda65d",
+      "sha256": "e9f68f58ebfe28d29720d6ece126c15747ae08b4f294e887fcfbe5a01f8b8f39",
       "source_revision": 8,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1820,7 +1820,7 @@
       "name": "Giant Wasp",
       "actor_type": 743,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/059_giant_wasp/2_rigged/059_giant_wasp_rigged.glb",
-      "sha256": "7a5526bb48a713ecb621f3a9dc5fc8f143d9fc8d2e032b70f0ce373aead52ba1",
+      "sha256": "32f1bbe66da4f7b7f699ac690af853fadc3affe1259ed54d40caa682a46486d2",
       "source_revision": 10,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1852,7 +1852,7 @@
       "name": "Giant Ant",
       "actor_type": 744,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/060_giant_ant/2_rigged/060_giant_ant_rigged.glb",
-      "sha256": "cfc0830557b26e74b6f45c85652a310f0a944091b6a56b7c9944f45b8d33fc2f",
+      "sha256": "1dabf314be9a30e9d9b0ab446c840bee81ff427e5fe621b15835d7933be5cbea",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1883,7 +1883,7 @@
       "name": "Skeleton",
       "actor_type": 745,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/061_skeleton/2_rigged/061_skeleton_rigged.glb",
-      "sha256": "fd23a2bcb49bb3b0678bb613d6c272984b4fad32936ddbee54db960c96585253",
+      "sha256": "ef52a3a5e83250ed3fa865e8518e3e0ca87b1bb27db9fcf05b932baabf822f22",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1914,7 +1914,7 @@
       "name": "Zombie",
       "actor_type": 746,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/062_zombie/2_rigged/062_zombie_rigged.glb",
-      "sha256": "faab4f83db690add41b3943f4093022d366381ba2222b68a6d23b76587f451cc",
+      "sha256": "297102bbdcd774fd29e76a2970a569a9fb2e51b9f72a361b5e56b05142be3a68",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1945,7 +1945,7 @@
       "name": "Ghoul",
       "actor_type": 747,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/063_ghoul/2_rigged/063_ghoul_rigged.glb",
-      "sha256": "cf2153dfef05e359b6ad46dae768662ec4078c12e778fdd6213be55a2997840e",
+      "sha256": "b868775311e3cae1e6903fdc48a324e55899b7b0a162804202073f76148c2587",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -1976,7 +1976,7 @@
       "name": "Mummy",
       "actor_type": 748,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/064_mummy/2_rigged/064_mummy_rigged.glb",
-      "sha256": "f45c9055a5fb8b4ecfcca6f89ee3280ee5fc7d8c8a035c31dab0aba988d455b0",
+      "sha256": "530a7e772ec6f57ff805df340cb757e931e5cb606a875a3ea89847374faa70ab",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2007,7 +2007,7 @@
       "name": "Vampire",
       "actor_type": 749,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/065_vampire/2_rigged/065_vampire_rigged.glb",
-      "sha256": "416ecc869a7c5688e875db60c5fded62a8b68ffb564732a634698cdfefa98e7d",
+      "sha256": "8dde2bf17bcbb4d9b2a780cdc464e7bc8bdfc872bbd8dfa0c09ff142c0c59d30",
       "source_revision": 9,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2038,7 +2038,7 @@
       "name": "Imp",
       "actor_type": 750,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/066_imp/2_rigged/066_imp_rigged.glb",
-      "sha256": "8f97fb8544ae1d611d2d218baf77019175dbe988a09590372e8a5a0f44781e87",
+      "sha256": "c5167d6e0320c488abf2e513d2269c0ed2ccdf1e9ff5733016fa3195a512f203",
       "source_revision": 10,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2070,7 +2070,7 @@
       "name": "Gargoyle",
       "actor_type": 751,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/067_gargoyle/2_rigged/067_gargoyle_rigged.glb",
-      "sha256": "70ddd8fa0ecb7bad1ad30a6744235a5f19488ada12225f431db9453dd6d41f9e",
+      "sha256": "f7da6e661f0da538da969364c03fa0a105064bf8566a12e16cd154e9c838203d",
       "source_revision": 10,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2102,7 +2102,7 @@
       "name": "Gremlin",
       "actor_type": 752,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/068_gremlin/2_rigged/068_gremlin_rigged.glb",
-      "sha256": "76970d23b9a353a63a7da4f8b6bee9ffe22ff7b7acc0a27778d2127b1b1c918e",
+      "sha256": "fab708699707c8d205525d9483badf66b16d85d74dd66cebd9bd8b3b064bb703",
       "source_revision": 8,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2133,7 +2133,7 @@
       "name": "Hobgoblin",
       "actor_type": 753,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/069_hobgoblin/2_rigged/069_hobgoblin_rigged.glb",
-      "sha256": "98a492e6e3c5018cbd94760fe4b2f8f4ccc4c6d369e3a5ff3c126e8b371f3466",
+      "sha256": "18999531468a31a5477b88409f1978ae3a75dff48a926edcdbb4a862b53e53df",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2164,7 +2164,7 @@
       "name": "Gnoll",
       "actor_type": 754,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/070_gnoll/2_rigged/070_gnoll_rigged.glb",
-      "sha256": "24bf97d6940f7de18db9bed77cbf514e1c40842b3d02bb2d844ccf9018f3915e",
+      "sha256": "5e144a8d1f3f5ac8693098f2cc9b7c91143cc72d4155b52b7745c53af37fdf9e",
       "source_revision": 9,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2195,7 +2195,7 @@
       "name": "Centaur",
       "actor_type": 755,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/071_centaur/2_rigged/071_centaur_rigged.glb",
-      "sha256": "aeefadcde469c9dc3ca5eabb74a50bb135faafc66e64f21f027f206abac16130",
+      "sha256": "25c7f7408d3d8e736d40694e9bf7b6c75b0b27ef7ac3a8c735e83eafcc532ec9",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2226,7 +2226,7 @@
       "name": "Merfolk",
       "actor_type": 756,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/072_merfolk/2_rigged/072_merfolk_rigged.glb",
-      "sha256": "665975b2932794618592eead76e590f4d22418185d3b8fdf0116d6ae3aa699d9",
+      "sha256": "31bb4e3576afdedc6b03ae56408bdd1ce82bd91c85508847ffc661109cf7fee3",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2257,7 +2257,7 @@
       "name": "Tengu",
       "actor_type": 757,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/073_tengu/2_rigged/073_tengu_rigged.glb",
-      "sha256": "5548743fda33173f84468c3c88bc78d707d1624b2444feaac7e5bcf76f74c583",
+      "sha256": "c4bf7152a99596af9e9a98273491541a1eb558c148498fc50a964f81ef56bb1b",
       "source_revision": 13,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2289,7 +2289,7 @@
       "name": "Arachne",
       "actor_type": 758,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/074_arachne/2_rigged/074_arachne_rigged.glb",
-      "sha256": "9d6dcfeef89979cbe1cf7d12aeaffe1e1e46906511d55b526ddc3b0be13f414d",
+      "sha256": "0e62909aab064e719bc3ce477e1141da15e101b2ea7fa31bada70a7bcf10be9a",
       "source_revision": 12,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2320,7 +2320,7 @@
       "name": "Manticore",
       "actor_type": 759,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/075_manticore/2_rigged/075_manticore_rigged.glb",
-      "sha256": "47d976682e5081b9b3a62047cfec1733c4e48ba0f8b62101c304205a33b5d285",
+      "sha256": "183e05cae0d626dfa9c4b65ebe0d0762f92680be066641009eda3fcacda0b84c",
       "source_revision": 10,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2352,7 +2352,7 @@
       "name": "Cockatrice",
       "actor_type": 760,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/076_cockatrice/2_rigged/076_cockatrice_rigged.glb",
-      "sha256": "eec86c7cc2fdb08155a37ec5377c071ce5a6ec757880f51d0f71c2651e6b3378",
+      "sha256": "0c45d09a89141dbc93008d9a0c17b13caba36a13fd10410bab044f62e60a8329",
       "source_revision": 10,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2384,7 +2384,7 @@
       "name": "Peryton",
       "actor_type": 761,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/077_peryton/2_rigged/077_peryton_rigged.glb",
-      "sha256": "f44292308548c21ecbffcdba4aedb57955c955de1ea3bac3b1f154f83110e55c",
+      "sha256": "f1d0c122c307a2a5dcc9dd9ef0d1e8946e0491da22a29f5572a42c7278fdc232",
       "source_revision": 10,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2416,7 +2416,7 @@
       "name": "Jackalope",
       "actor_type": 762,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/078_jackalope/2_rigged/078_jackalope_rigged.glb",
-      "sha256": "ce0df7b2357bb8f9568f543b47ea02d3a972e121350925df052b6b3e4676de19",
+      "sha256": "d83b855232326e4b92c5b5b252f65631e0be8e13475715d867192accd6e05afa",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2447,7 +2447,7 @@
       "name": "Qilin",
       "actor_type": 763,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/079_qilin/2_rigged/079_qilin_rigged.glb",
-      "sha256": "d14ce3e19582ab71bf00828b1518200493d603f147dc3a935d232d23a51e3ab9",
+      "sha256": "8b80153739b4f8ecb00ddf5acf1b94b9944e826648d8e2a6536f074d9ffe4aad",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2478,7 +2478,7 @@
       "name": "Dragon Turtle",
       "actor_type": 764,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/080_dragon_turtle/2_rigged/080_dragon_turtle_rigged.glb",
-      "sha256": "943a6791d79c654471165a5e5bc15b5260ad966108db864584eb3ac0120e7052",
+      "sha256": "2220b57d18962537277b587f911c19e715cfebf9794279d9c2fee658b4f17296",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2509,7 +2509,7 @@
       "name": "Burrowing Landshark",
       "actor_type": 765,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/081_burrowing_landshark/2_rigged/081_burrowing_landshark_rigged.glb",
-      "sha256": "34923c95c9ab491a69aba7bc253f848f99caaffde13d35e5d51ed9d044e47d0b",
+      "sha256": "a81255f4a908ba83f4607da964e27cf498998e0a787e7194e5badd07ec9231a5",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2540,7 +2540,7 @@
       "name": "Iron Eater",
       "actor_type": 766,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/082_iron_eater/2_rigged/082_iron_eater_rigged.glb",
-      "sha256": "5e833034af9ac8c576c7871288faae0fd71f0e21ff1e5e7db2f5123a5b7986e1",
+      "sha256": "c818b3e64f38158289a9daf902ff40a4495414afcb89cc95fa32178cd1eec899",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2571,7 +2571,7 @@
       "name": "Stalactite Maw",
       "actor_type": 767,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/083_stalactite_maw/2_rigged/083_stalactite_maw_rigged.glb",
-      "sha256": "109e21b3372e56cde576837d4b048b85e83f08b6e88abcc91088e33683641395",
+      "sha256": "b44a2c83ec35e14b86e32947f1968e4ff66e9e9c78b5009f5a9d2ab236658815",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2602,7 +2602,7 @@
       "name": "Mimic",
       "actor_type": 768,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/084_mimic/2_rigged/084_mimic_rigged.glb",
-      "sha256": "5c8d466de9b0815729cdcf8f0c3e428bb6074d0881688a74ab6eda45aea3ec18",
+      "sha256": "719e055cbb00ac90d32fc58924df064aceedb41e39d97954468f5078cd7860c6",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2633,7 +2633,7 @@
       "name": "Living Armor",
       "actor_type": 769,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/085_living_armor/2_rigged/085_living_armor_rigged.glb",
-      "sha256": "9f870d6cd0fd49c403466a342fbf3809487bdc364b1f237fd1836f55867019af",
+      "sha256": "afdd63ede8f5a5e5d5993cb9e2b9a99e996a086aed2714960a16db32202e26bc",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2664,7 +2664,7 @@
       "name": "Flesh Golem",
       "actor_type": 770,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/086_flesh_golem/2_rigged/086_flesh_golem_rigged.glb",
-      "sha256": "a987f7414de4e9e4ebda1fdb72b77b0a3dfcd9a58f5f6c3e0c2ee5b6bdf2fa54",
+      "sha256": "f7afbd34e1f28c2bfce277cc03132dc96fd9d0ee1bd969f37b2369316aabcf16",
       "source_revision": 14,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2695,7 +2695,7 @@
       "name": "Slime",
       "actor_type": 771,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/087_slime/2_rigged/087_slime_rigged.glb",
-      "sha256": "1eab1862b14d6c008c6769a4018fafc6719748cf51ced858afcbc14694a54825",
+      "sha256": "0dd3bf855ecceaf5836e39674f20befb4e80315f217ad52565b1a24028314d89",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2726,7 +2726,7 @@
       "name": "Living Spellbook",
       "actor_type": 772,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/088_living_spellbook/2_rigged/088_living_spellbook_rigged.glb",
-      "sha256": "eee270da6360d7a1da1091175aeae09fdedc1044785ee32c5ed55e287c352063",
+      "sha256": "a9f90991e807e4f74d3a07f0513bcf2449d6efb488e4ec71eded7aec3b5b22a2",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2757,7 +2757,7 @@
       "name": "Crawling Hand",
       "actor_type": 773,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/089_crawling_hand/2_rigged/089_crawling_hand_rigged.glb",
-      "sha256": "ebf48e9f0d250a292d42089c7ba119f3291cc8d997cda1d88e9790f3df6ddc4b",
+      "sha256": "d3868b1f61dfe4e6683f9db596c5855f97d0720dab8a32ac0f529ae174b8ab89",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2788,7 +2788,7 @@
       "name": "Floating Eye",
       "actor_type": 774,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/090_floating_eye/2_rigged/090_floating_eye_rigged.glb",
-      "sha256": "141635468cd6ef3f780b194fc081cda3e0a644ee342ce69317866572f6202f4c",
+      "sha256": "a3311fc298661d60fca3d7c1b03fa17bfe9b0c5840a544b4af3cbc317694a8f2",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2819,7 +2819,7 @@
       "name": "Levitating Jellyfish",
       "actor_type": 775,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/091_levitating_jellyfish/2_rigged/091_levitating_jellyfish_rigged.glb",
-      "sha256": "8cd918b14f05659fefa933f2f9b37d607d68a3ca8567bf7b335615a49fb67c40",
+      "sha256": "3c47b6770901e8c065ba8d8cbff4e4b4179b684df6c6153bb57711ff721a82db",
       "source_revision": 3,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2850,7 +2850,7 @@
       "name": "Giant Worm",
       "actor_type": 776,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/092_giant_worm/2_rigged/092_giant_worm_rigged.glb",
-      "sha256": "077ec50e0426789740bda69f742e79f96d706c34e4eeddf7417a04cea36d9125",
+      "sha256": "4bf2f5073d73ff407d4339547e970e1ffee551e2f272fd269d0c31faaa811206",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2881,7 +2881,7 @@
       "name": "Cerberus",
       "actor_type": 777,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/093_cerberus/2_rigged/093_cerberus_rigged.glb",
-      "sha256": "a4b885fed6aa1dbefeebeb649b9e80f728c195479f98f58f3f04a8ca0934783e",
+      "sha256": "a34c5126434b0899f792545627fcb8b313ee85371f6e6dc487a3bd771460e984",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2912,7 +2912,7 @@
       "name": "Two Headed Giant",
       "actor_type": 778,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/094_two_headed_giant/2_rigged/094_two_headed_giant_rigged.glb",
-      "sha256": "821f85c86a9b9883fb214089258c3b0d57cdfb5e00af7e6e04ac96be8d51398d",
+      "sha256": "520bcafb8a6eeea7552c3ebb47e997ee3ec715632067de51e09c724e01c0591f",
       "source_revision": 13,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2943,7 +2943,7 @@
       "name": "Winged Serpent",
       "actor_type": 779,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/095_winged_serpent/2_rigged/095_winged_serpent_rigged.glb",
-      "sha256": "d04b6473679543abac182b3f0a6f0a78594dbb12766cba12e6e0099268421433",
+      "sha256": "732721f1884932d71d6dd61a3a28c3d1d88bc2cad2e4234d63c4bb992d8e41f4",
       "source_revision": 15,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -2975,7 +2975,7 @@
       "name": "Four Armed Guardian",
       "actor_type": 780,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/096_four_armed_guardian/2_rigged/096_four_armed_guardian_rigged.glb",
-      "sha256": "1a81474af000f9ca842e659404e442783064e6c1445d5d0ecfd421979dd13fa3",
+      "sha256": "544d7f5f1037ea268b437536f0b1ae85e2676e36dc3e0e07f33d0ce5f3bd6175",
       "source_revision": 11,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -3006,7 +3006,7 @@
       "name": "Animated Sword",
       "actor_type": 781,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/097_animated_sword/2_rigged/097_animated_sword_rigged.glb",
-      "sha256": "2fe619dd5378ca15903f098601020f2e98a018ca3e8e24524aaa71239bdc5bd2",
+      "sha256": "995e6d3fdf879c36935505ee4bd656932d5c5bec06aa815f302ab067deeb55ad",
       "source_revision": 8,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -3037,7 +3037,7 @@
       "name": "Giant Antlion",
       "actor_type": 782,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/098_giant_antlion/2_rigged/098_giant_antlion_rigged.glb",
-      "sha256": "2db3ca30ec7ffacd7080c663a86a918dfc50544409df058247640a0dfffa0e92",
+      "sha256": "2df5c9b043c1726101d3f67f07ab8c96950f329a837701e3ea62a44d50e3fde2",
       "source_revision": 4,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -3068,7 +3068,7 @@
       "name": "Sphinx",
       "actor_type": 783,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/099_sphinx/2_rigged/099_sphinx_rigged.glb",
-      "sha256": "07744b8dda9dbc38edf9c0bccfb3961f72b1fe9717d4e67d334bdda8d9e96dcb",
+      "sha256": "d10e389dc3443b0b5451981163cb2b09e208490bb9caa5a0ed0e288415c7a8e2",
       "source_revision": 15,
       "source_bundle_revision": 15,
       "animation_clips": [
@@ -3100,7 +3100,7 @@
       "name": "Air Elemental",
       "actor_type": 784,
       "source_glb": "generate_models/basic_creature_expansion_100_animated/100_air_elemental/2_rigged/100_air_elemental_rigged.glb",
-      "sha256": "81d1ee05d63217d66ec8340bf40ce1004a09797049fd4a4855e3441c6d4d7f4c",
+      "sha256": "1afdd07be6b2699dde174b5aad741857aab7eb7d03023b94f888116bf6aaed27",
       "source_revision": 15,
       "source_bundle_revision": 15,
       "animation_clips": [

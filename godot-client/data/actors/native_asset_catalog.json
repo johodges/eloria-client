@@ -19,7 +19,7 @@
       "path": "godot-client/assets/actors/native/races/luminous_female.glb",
       "source": "luminous_human_female_tpose.glb",
       "sourceSHA256": "f5ebfc9e753d1120190863187753ed76b8b614a959e9a8efe5608194ad387d35",
-      "sha256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
+      "sha256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
       "surfaces": [
         "body",
         "eyes",
@@ -66,7 +66,7 @@
       "path": "godot-client/assets/actors/native/races/luminous_male.glb",
       "source": "luminous_human_male_tpose.glb",
       "sourceSHA256": "5e56f9535725e0ae3d8fc9e3acb284ed75dca1010fdbfd1a9b068fe21f16ee63",
-      "sha256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
+      "sha256": "66c1602c274ab9e61ab0f6263296b827af0f15e2ac0bd36486fdbeec07c0c087",
       "surfaces": [
         "body",
         "eyes",
@@ -113,7 +113,7 @@
       "path": "godot-client/assets/actors/native/races/votary_female.glb",
       "source": "whitehorn_votary_female_tpose.glb",
       "sourceSHA256": "a0601f6b651b363f793c997c1821fd483f6a017a836b07c58cffa3ee6214d154",
-      "sha256": "bbca1fa2d71c8e1a8637121ac0ce730e350b26691006455346c1d450fecfd7e8",
+      "sha256": "6a59f021bd3a69468c834d737281d852163e618f482dbfd42246bf8ef0b8ab6e",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -147,7 +147,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_female",
-        "templateSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
+        "templateSHA256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
         "headSourceSHA256": "94a683d051c7c78cbc46dd50a2d7542fc97fb2c35149bedce371ba49bad08544",
         "lowerCutM": 0.075,
         "upperCutM": 0.11,
@@ -172,7 +172,7 @@
       "path": "godot-client/assets/actors/native/races/votary_male.glb",
       "source": "whitehorn_votary_male_tpose.glb",
       "sourceSHA256": "43cd45aca3c697956b98cfffa966a8ca612d28d341e7e9d29d3fadf696aaadb7",
-      "sha256": "9c08c46a55d6a0f1807edc55c183a827d86edde50469758e417f72d3f0b05ed7",
+      "sha256": "6657944d8a42e7ee3ce295b85e5d7bb7e5f7b677e3bcfc1c8774ae6f2044e5fe",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -206,7 +206,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_male",
-        "templateSHA256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
+        "templateSHA256": "66c1602c274ab9e61ab0f6263296b827af0f15e2ac0bd36486fdbeec07c0c087",
         "headSourceSHA256": "e23afc7a78395eae57c05f9309d39135aa3f168d1889cbc17a5e5fe644c978fe",
         "lowerCutM": 0.075,
         "upperCutM": 0.11,
@@ -231,7 +231,7 @@
       "path": "godot-client/assets/actors/native/races/glasswarden_female.glb",
       "source": "glasswarden_female_tpose.glb",
       "sourceSHA256": "bcc56ed1bacd5f5bd8988e841d2cd9075fc2de8cf4d1bb65650483e7e46b9a6d",
-      "sha256": "a7f8fc3dece1bc3a2ff1cdd2f7f4db5b80ff8980bcd405b7da0b7954bf2e0092",
+      "sha256": "1b34c79d89f9ef077ec3236fe5213d30bbebf53dbd3145cd587753bfcb17832b",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -265,7 +265,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_female",
-        "templateSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
+        "templateSHA256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
         "headSourceSHA256": "48a7e981e1b7677be78f649136759ce0d525ad543f73bc0ceda9d132b99aef3d",
         "lowerCutM": 0.075,
         "upperCutM": 0.13,
@@ -297,7 +297,7 @@
       "path": "godot-client/assets/actors/native/races/glasswarden_male.glb",
       "source": "glasswarden_male_tpose.glb",
       "sourceSHA256": "efcec232675bfb5f233ea33cadb168d716658aa6569dd0b1a6c67fb0c0c85636",
-      "sha256": "acde0bf5d110d1db68be8d2158c2f2dc7a86a692784b94c4a529d42a26e2f0a4",
+      "sha256": "b9e0ad4cf0211560d043b33836dc754a9e7ad4ebdd9c89658433a978c87b5eea",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -331,7 +331,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_male",
-        "templateSHA256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
+        "templateSHA256": "66c1602c274ab9e61ab0f6263296b827af0f15e2ac0bd36486fdbeec07c0c087",
         "headSourceSHA256": "f0541ef8603eb3fdec252e037852368dd78503105dbe1e5293e60791fe2470f1",
         "lowerCutM": 0.075,
         "upperCutM": 0.13,
@@ -363,7 +363,7 @@
       "path": "godot-client/assets/actors/native/races/orun_female.glb",
       "source": "orun_female_tpose.glb",
       "sourceSHA256": "f7152380fa5ff5bfd7330e7548631d68b114acebecc753af1e2fde87c4833cc9",
-      "sha256": "8e999cd89c48733e0b1e236bc9b89f8d4d1924e467e0dec13ca5bfe36f5df869",
+      "sha256": "84de9a4a6f261c872957c4e8cd9b949c9f3b686047e76d6818034d3a74e2f244",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -397,7 +397,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_female",
-        "templateSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
+        "templateSHA256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
         "headSourceSHA256": "4004f49c607fd1b4b6b487441b8236c007224f0e804e1369b2f2e5deb7c08a2f",
         "lowerCutM": 0.075,
         "upperCutM": 0.11,
@@ -422,7 +422,7 @@
       "path": "godot-client/assets/actors/native/races/orun_male.glb",
       "source": "orun_male_tpose.glb",
       "sourceSHA256": "0e128103b3ffe815cfb0d49550b93d8297d85dfaaab3e3528e5559a131bcc328",
-      "sha256": "80799003ab637952e3337105c9aea8f52b947fed0104866e8f6d13e780b30cc9",
+      "sha256": "9044aebf2ea13cf82a9bdb40641481115e25521ec02e8a78df760a9b01299fd8",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -456,7 +456,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_male",
-        "templateSHA256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
+        "templateSHA256": "66c1602c274ab9e61ab0f6263296b827af0f15e2ac0bd36486fdbeec07c0c087",
         "headSourceSHA256": "e2b56ffafb37d1b059335de56946549fe2363c1dd1d6e6dea328a39d7f983aa3",
         "lowerCutM": 0.075,
         "upperCutM": 0.11,
@@ -481,7 +481,7 @@
       "path": "godot-client/assets/actors/native/races/greyhaven_female.glb",
       "source": "greyhaven_female_tpose.glb",
       "sourceSHA256": "1a3b9be948faa6427c0bac616bc2b85aa1094605f11a15fd3fb1b118847187f5",
-      "sha256": "ab23f8f16e0d3de5c7a0763c0cd4f2a43f42292cb5afe93c8bb365a8ae7f8cf6",
+      "sha256": "a08af3496700a674cf8af2d2179256f575f145289f3bad57c5bdda1b8d617d11",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -515,7 +515,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_female",
-        "templateSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
+        "templateSHA256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
         "headSourceSHA256": "a4d97b259e99f057f2e1ca0da038fe51b54903ae8da63ac1e43ba39da28b1ea9",
         "lowerCutM": 0.075,
         "upperCutM": 0.11,
@@ -540,7 +540,7 @@
       "path": "godot-client/assets/actors/native/races/greyhaven_male.glb",
       "source": "greyhaven_male_tpose.glb",
       "sourceSHA256": "0091fb6ffb2e277105967a7c25bd392008ffb799c2de4e8f50f3c212830d412c",
-      "sha256": "c6196b1d5cb71711866655bd4aaecc09c753577f56e69d22d9b2f8dca3a3e3c4",
+      "sha256": "ca3b23bd7916e41833570a941dbfb02446d441a0955cf35c5c07582ac7e52a7f",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -574,7 +574,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_male",
-        "templateSHA256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
+        "templateSHA256": "66c1602c274ab9e61ab0f6263296b827af0f15e2ac0bd36486fdbeec07c0c087",
         "headSourceSHA256": "555b385f7b9b194142c8f6ab75bc31f24cb83428f25b6a384a405210f136b8d1",
         "lowerCutM": 0.075,
         "upperCutM": 0.11,
@@ -599,7 +599,7 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_female.glb",
       "source": "ssarathi_female_tpose.glb",
       "sourceSHA256": "c87560e8fe71372682314da2c4ec960e489a7fa50fccb90cb92f2a9459e4c3d6",
-      "sha256": "d6924edbd26ee217631223e45bcaabc0fb332eba5853b7f1c5dc6cea8742a12d",
+      "sha256": "663ba89e85e7b5b5038a4daeb1f51826a3e46f73ff9050f7dfcf93bf7357d228",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -633,7 +633,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_female",
-        "templateSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
+        "templateSHA256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
         "headSourceSHA256": "9725d1c3fd53ff4202a3edd8cbf55fb992fdf3385c270e2b192306dc5521dcf9",
         "lowerCutM": 0.075,
         "upperCutM": 0.13,
@@ -672,7 +672,7 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_male.glb",
       "source": "ssarathi_male_tpose.glb",
       "sourceSHA256": "0aaf3f18262bfc71b3e60044afbb9770b7d1f5551854ac62c07ccd627bceaf75",
-      "sha256": "33e6b660b70c25ef73845ac852d0bbb2d7dbf285f99afc520156c39679eb95c3",
+      "sha256": "43451e600b853d75a40c5485c0d3619e216eef30933b939e8db5976856616d9a",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -706,7 +706,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_male",
-        "templateSHA256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
+        "templateSHA256": "66c1602c274ab9e61ab0f6263296b827af0f15e2ac0bd36486fdbeec07c0c087",
         "headSourceSHA256": "6d58507c9e95ffb90687666abde479ee81f8d8e6e94a7a4640b050cb299b8091",
         "lowerCutM": 0.075,
         "upperCutM": 0.13,
@@ -745,7 +745,7 @@
       "path": "godot-client/assets/actors/native/races/stoneborn_female.glb",
       "source": "stoneborn_female_tpose.glb",
       "sourceSHA256": "4e7ba138db2251d33144b60ee710f95a8f2cacd0ae9852461af429954e6fc529",
-      "sha256": "7cf5c3085122eb398ae522ba9f47f2c1693ffa482d4ecf1dad321795188624ed",
+      "sha256": "1c69c690093b16dc35e5fad49187071691afbdb765701435d99b1b750a2c83f5",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -779,7 +779,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_female",
-        "templateSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
+        "templateSHA256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
         "headSourceSHA256": "00fc5264403055c9cb2802619c67d1c0cf5dc30d8ea725237a8369c01ce92027",
         "lowerCutM": 0.075,
         "upperCutM": 0.11,
@@ -804,7 +804,7 @@
       "path": "godot-client/assets/actors/native/races/stoneborn_male.glb",
       "source": "stoneborn_male_tpose.glb",
       "sourceSHA256": "f742ff4ade8777366b193e35ba6dd59716920c573ce2c381e3e1ac0d861a5fbb",
-      "sha256": "f4718edbebbf17fa3d544b242127f30aa6d0609652b1ffc397926713193b99e4",
+      "sha256": "b2016fbc3e43f31811858442618574e1b188dbf48daa11abb80cb7f7ba66337a",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -838,7 +838,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_male",
-        "templateSHA256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
+        "templateSHA256": "66c1602c274ab9e61ab0f6263296b827af0f15e2ac0bd36486fdbeec07c0c087",
         "headSourceSHA256": "9fcef45f55de5868df25d0445484c9e9fd1d6f8aececb6c74a8cc2ae3018058e",
         "lowerCutM": 0.075,
         "upperCutM": 0.11,
@@ -863,7 +863,7 @@
       "path": "godot-client/assets/actors/native/races/mycelari_female.glb",
       "source": "mycelari_female_tpose.glb",
       "sourceSHA256": "36a041b00f9bb18f23312a2c3c58334c01e8bc3f0509003717d0ce28139a4991",
-      "sha256": "4303b328ecb201aa582f0db71f8f6cdf5114598d42a433b48a58a5c538907d97",
+      "sha256": "5889ca15c74f291a34d728920f1a0a336291fc2d3f45f95e5e2271a864613142",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -896,7 +896,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_female",
-        "templateSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
+        "templateSHA256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
         "headSourceSHA256": "c1ffd2116b9c184264546a293a96b38d02d473227fa5ba5cd8d3024b1279f782",
         "lowerCutM": 0.075,
         "upperCutM": 0.11,
@@ -921,7 +921,7 @@
       "path": "godot-client/assets/actors/native/races/mycelari_male.glb",
       "source": "mycelari_male_tpose.glb",
       "sourceSHA256": "2aca1144b085584e298793940e17bc2b8f8afd969fcf3620d3b2604132f56157",
-      "sha256": "db4b6034e20b0fb799279f4755a7c094eda5cf6b2b47c322f236538beaf65509",
+      "sha256": "db41829eaeddad1b42817e5a07ed6b0548801342cce42461cfdd5cd2318ec671",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -954,7 +954,7 @@
           "radiusM": 0.15
         },
         "template": "luminous_male",
-        "templateSHA256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
+        "templateSHA256": "66c1602c274ab9e61ab0f6263296b827af0f15e2ac0bd36486fdbeec07c0c087",
         "headSourceSHA256": "337e2c7b7d40a0d057ac65b9a079dfacab3a7467ba85dc6813e41ee1a4618062",
         "lowerCutM": 0.075,
         "upperCutM": 0.11,
@@ -1144,7 +1144,7 @@
         ]
       },
       "path": "godot-client/assets/actors/native/hair/bob_female.glb",
-      "sha256": "cf645cc8d3be26dbbc77a4194221d7dbeb0399485940f13ca4b32fbaadecaf7d"
+      "sha256": "437e6ea6fde2bbebc6047c9ea6ef1ee5ca65507fed81834d30d46dece9fda0e2"
     },
     "ponytail_female": {
       "style": "ponytail",
@@ -1165,7 +1165,7 @@
         ]
       },
       "path": "godot-client/assets/actors/native/hair/ponytail_female.glb",
-      "sha256": "f6f470c3cfcf2001201ac7d329b60180c1cf49d1ac52150ca6cdd13ff372ad12"
+      "sha256": "e274c7ead70fcb8f0915dc27ed9150d21cb9a78496063f7f6d25dc0d1d48e472"
     },
     "braid_female": {
       "style": "braid",
@@ -1186,7 +1186,7 @@
         ]
       },
       "path": "godot-client/assets/actors/native/hair/braid_female.glb",
-      "sha256": "0887e93bc27cb7b23f4d9383d92cab4e9719853d312f2f14a579cca7c27499c2"
+      "sha256": "79a900bd1c411a88568341c99c6214208c8a53fcf78b7118beae3fe6ae218586"
     },
     "topknot_female": {
       "style": "topknot",
@@ -1207,7 +1207,7 @@
         ]
       },
       "path": "godot-client/assets/actors/native/hair/topknot_female.glb",
-      "sha256": "2460b62168241cba9d669b3d4e35ef2144cbca964e77b2ee5fe1d7b81e36b93d"
+      "sha256": "e274f8251939498d4c11e5fd6fe951fe69c97364075e2203685728b63ca4130c"
     },
     "mohawk_female": {
       "style": "mohawk",
@@ -1228,7 +1228,7 @@
         ]
       },
       "path": "godot-client/assets/actors/native/hair/mohawk_female.glb",
-      "sha256": "31de14e0b5a74b46fcf034821c7fbde7d4ae557a1f5d6e5f850156a6628e9adc"
+      "sha256": "f61804d4e063ec94784d4192525abefcc6fe5d5fb15b1b9512e48eddb8d07b4f"
     },
     "bob_male": {
       "style": "bob",
@@ -1249,7 +1249,7 @@
         ]
       },
       "path": "godot-client/assets/actors/native/hair/bob_male.glb",
-      "sha256": "633e61585d395b238568d540233f087639b29c2297a446ee4f0070ce639467eb"
+      "sha256": "c83370c3754a4ea3435905229206aea2b467507587566b37fc45e31539ccc7de"
     },
     "ponytail_male": {
       "style": "ponytail",
@@ -1270,7 +1270,7 @@
         ]
       },
       "path": "godot-client/assets/actors/native/hair/ponytail_male.glb",
-      "sha256": "53da0a3b0e803855183d5adc1b07051fd7c7f8b00b4510b9867deeeed5fd33a4"
+      "sha256": "8f7497a4acfa0dea9d47e9927fee3dc0c64ccf021140dddadef7851e4da3fd39"
     },
     "braid_male": {
       "style": "braid",
@@ -1291,7 +1291,7 @@
         ]
       },
       "path": "godot-client/assets/actors/native/hair/braid_male.glb",
-      "sha256": "0b5ff32f7c78a060d595ac597aa8f84a5a519e75ef3af3459ef7ef3d6a5bbd0d"
+      "sha256": "25d60782459ccb7e94cc1cd8f370250bff590c058e6aa9a0304e6c614f7447cf"
     },
     "topknot_male": {
       "style": "topknot",
@@ -1312,7 +1312,7 @@
         ]
       },
       "path": "godot-client/assets/actors/native/hair/topknot_male.glb",
-      "sha256": "410007eac116cd1cd9c2c2486853381f57310a713aca0a5c3382be73d9f5887a"
+      "sha256": "d42fce67c977dbe55883b05163c6e5b3ece7116172bcb47775af4aa672caf739"
     },
     "mohawk_male": {
       "style": "mohawk",
@@ -1333,7 +1333,7 @@
         ]
       },
       "path": "godot-client/assets/actors/native/hair/mohawk_male.glb",
-      "sha256": "888d093a518b6683c39431313fd267e32788e38261058f75e48cbbbad230011f"
+      "sha256": "f449f8e537189f1fa7c51118289125b7bb25bb2418d5928cae67ee2b58c658e0"
     }
   },
   "creatures": {
@@ -30857,865 +30857,865 @@
   "fittedHair": {
     "luminous_female:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_parted_female.glb",
-      "sha256": "b9b9bddf5bb37fed2e8242de5a6381032f2800afcedb987a686894678d8bd929",
+      "sha256": "5b76655635877ad55f5afbc4424d8050c00249614787b40fc658a4c72053e5b7",
       "joints": 77,
       "triangles": 5204
     },
     "luminous_female:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_long_female.glb",
-      "sha256": "b1a74faddef783196a09800ae5df3099967907eca2904736d7c645d9891ee1bf",
+      "sha256": "ca055b594666f206329676286e82764743420ce9d42334a9abce64df57d78659",
       "joints": 77,
       "triangles": 11624
     },
     "luminous_female:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_buns_female.glb",
-      "sha256": "8b6f139e2c79ac6003538ff2d156b9331c49635770bdc549bfdf701d0e3d7d02",
+      "sha256": "e22f8cdec325a84582d1419aa41045d4094eae8022c8bb4c41a89f0470d36a64",
       "joints": 77,
       "triangles": 13136
     },
     "luminous_male:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_parted_male.glb",
-      "sha256": "5f167aea4afe71804355638af2629f546fe8345f414d92c5ab0f2144a269edcb",
+      "sha256": "83757c00f31c850da4f5fa392b411387cdb79c55df21201043ccc20ef91d6206",
       "joints": 77,
       "triangles": 5204
     },
     "luminous_male:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_long_male.glb",
-      "sha256": "bdcbdd8d7935cf3d7a37737d357c48739a83075bbc2bac6759d1215adf4c70b5",
+      "sha256": "93253735223f1e39405623d923aea66cbed54fc24d262d5136b4f21107d39450",
       "joints": 77,
       "triangles": 11624
     },
     "luminous_male:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_buns_male.glb",
-      "sha256": "fbfe14085c6d9234067611a6c7188952deb1c1042957274f419a48789e2e8e3f",
+      "sha256": "a75fa06e130b4f87a2904ac7186dc179855b30b0074b8d59b43ee875f5a9ab5f",
       "joints": 77,
       "triangles": 13136
     },
     "votary_female:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_female_parted_female.glb",
-      "sha256": "8dcc27f5dc8352d0d9bcdfb7fe7fc96b74c644df388d89c02eeda22189ad4f60",
+      "sha256": "c979252c78c55f07a00ba0bfcc31898fa1fc9f2a5657638d13cec2cc0a8db73e",
       "joints": 77,
       "triangles": 5204
     },
     "votary_female:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_female_long_female.glb",
-      "sha256": "38b45ebc08e08e8767d3fbb71fff00bb983d74242d2f4c70dcb75784c15844fd",
+      "sha256": "d7c7da8e44e07f67e2ea92bdf07db603b822c00dcd1b9aa1bfdae694938c7ca5",
       "joints": 77,
       "triangles": 11624
     },
     "votary_female:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_female_buns_female.glb",
-      "sha256": "f03c9e5c48d5ea93e48439b379bbc095f62f17d2f8999b7da8f4bd4260f428d1",
+      "sha256": "3ef881c3c45c66be8960ca4ae4d2baef82b20ba0ed6ed6cc95ee9f80a5fe05ed",
       "joints": 77,
       "triangles": 13136
     },
     "votary_male:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_male_parted_male.glb",
-      "sha256": "831fe7c696f67a1060540ca7f9ebcea3c8488add2de3067880f7767f6e8ec8d2",
+      "sha256": "da6678ce75e8a7b13a43229c69eecbb14185d51358e65c0e743c309305a190b0",
       "joints": 77,
       "triangles": 5204
     },
     "votary_male:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_male_long_male.glb",
-      "sha256": "ca70f4dfc56c613387499bcb7b878a63bb29aa86fbce9950dd96edc7648070be",
+      "sha256": "76ff2f46f5da6112d91d3fbb6e9be57e8f2721b02b5334defda8ca7ca08392a3",
       "joints": 77,
       "triangles": 11624
     },
     "votary_male:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_male_buns_male.glb",
-      "sha256": "a202be57bcbe225b77703ae1c94f9f6c8609565d63c8d23d7cdfc29b718c9d55",
+      "sha256": "b463af9b1778b2918710a9faf8c75ece96f4cf5340be43d248b0b1bddb27db88",
       "joints": 77,
       "triangles": 13136
     },
     "glasswarden_female:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_parted_female.glb",
-      "sha256": "aace437c666ad92cbc669060411ad36ae978ba63909a1f6aed8fd4cec62755c1",
+      "sha256": "7c257662f98a346a03ec134f24f5b15b31d8fd9f6c2116670c6c6dd7f11664f1",
       "joints": 77,
       "triangles": 5204
     },
     "glasswarden_female:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_long_female.glb",
-      "sha256": "7464a56add1f296ed9b766374a8748741227180e0d9c3fdb6e7a7d261909cc23",
+      "sha256": "1f36f18e3da480da4a6964c70aad4169c04d2e701c375beffad7e19f6248bfd6",
       "joints": 77,
       "triangles": 11624
     },
     "glasswarden_female:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_buns_female.glb",
-      "sha256": "69e97c4a2353b8ffabf55961a85e421e709230e212b6ffe1cc0843241951a415",
+      "sha256": "b9e997e923e718befde289ea41cd9aa18f225dac4b3155f5addf11b79f2fb49b",
       "joints": 77,
       "triangles": 13136
     },
     "glasswarden_male:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_parted_male.glb",
-      "sha256": "9f5d228396d1f4df9d473b38a8276052ac02f5f92ba04156c69986d71a631e6b",
+      "sha256": "b361d1b30f54de4df68d1be5ac19532643ef595963c9597b204e5ea85f522feb",
       "joints": 77,
       "triangles": 5204
     },
     "glasswarden_male:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_long_male.glb",
-      "sha256": "d8a5e806d33802e93169d4ebd40b20413a5a237d463550774dc8a79df4149105",
+      "sha256": "645fb5871a852c147c68809553d5d605972893356fff530c80f836af3bfccad2",
       "joints": 77,
       "triangles": 11624
     },
     "glasswarden_male:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_buns_male.glb",
-      "sha256": "d2b917399da44b5a4279ef267d1bcbc26ecdfa8fd4e56d2ac34a4103e3128f43",
+      "sha256": "eb4268cf76f574570e396ff5e6b43133b69307cddebfebe05e36423183d359b8",
       "joints": 77,
       "triangles": 13136
     },
     "orun_female:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_female_parted_female.glb",
-      "sha256": "df79e958be21d41078df7d22f56f69391bede69b80a05e77ead158725755c690",
+      "sha256": "bc03d759b043d6f3b4967d5e1afeb48dc4c54872b886c94f8500905e9e436a0f",
       "joints": 77,
       "triangles": 5204
     },
     "orun_female:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_female_long_female.glb",
-      "sha256": "e95de9aee664db2d2c73c5f2ebd1b2928b6f20a07c7d6c938cf9451ace000b27",
+      "sha256": "7ddceadb86ac76663559d129e581b773501c0fc165cd6b975bb32e87ed0f5eeb",
       "joints": 77,
       "triangles": 11624
     },
     "orun_female:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_female_buns_female.glb",
-      "sha256": "21f8f27d3f5e7d6c4a0df69b31c1f4dd2697de4c4d9aa8b2cfbc6293d9ed097e",
+      "sha256": "838fc4d7791ae8eaeed44817d8efbbc7c41608d4f47047d4de26a6127d8baf00",
       "joints": 77,
       "triangles": 13136
     },
     "orun_male:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_male_parted_male.glb",
-      "sha256": "d1a5ccdf3431bbb912b84b67b46d57e24fe38b44d8bb362061ccc8581383c605",
+      "sha256": "0c052ea8fbd87efcc1ae7c13161b57467f82fe59015bb44b5959c05227f95b38",
       "joints": 77,
       "triangles": 5204
     },
     "orun_male:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_male_long_male.glb",
-      "sha256": "eeafaba71c3fe30df24870ceaab8f39b6a5ba9c3ba18849374ce580c91599778",
+      "sha256": "fb953ea1d96e7b3b1fe4423d7a8c8dbb062ab8a4f4719475ec540aa87611e036",
       "joints": 77,
       "triangles": 11624
     },
     "orun_male:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_male_buns_male.glb",
-      "sha256": "b28f69727e358971c4f9b475f7e64631a541d16b16f6ef6efcddfff862fb4166",
+      "sha256": "a580faf2df29f4cea79bc38e47cf24bd1c02b2b5cc6267882d0bf99d6fbb3f0c",
       "joints": 77,
       "triangles": 13136
     },
     "greyhaven_female:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_parted_female.glb",
-      "sha256": "28dcea695bf83fdc2463a3d1dcde062b6c6d8b45d5ab56ecc167148ea1b9fb9c",
+      "sha256": "ffb3a68f3e77ba114dd051a5ae9258547c0ac789de4c44dd805c0145eebef943",
       "joints": 77,
       "triangles": 5204
     },
     "greyhaven_female:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_long_female.glb",
-      "sha256": "f0aea5b6fd6d32062753f253113bef9267e2a9fc09c103642949b036b2b4153b",
+      "sha256": "3bfaeef678bc8848d8ab6fdf287bc5133e46b63e3d2a94360f7e3fc94d494078",
       "joints": 77,
       "triangles": 11624
     },
     "greyhaven_female:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_buns_female.glb",
-      "sha256": "409065b4ca8052b65996331c9e4baf524bbb8fba236d69e23b33eae4b35b61e7",
+      "sha256": "263603c3025845ee744faa20c6d451753f57ab4984d7e5dc85690e0b9c2d12d4",
       "joints": 77,
       "triangles": 13136
     },
     "greyhaven_male:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_parted_male.glb",
-      "sha256": "b40f86d9e93091b46d8676a201a4d97e061d5b57345bcc7e34190a83b254731a",
+      "sha256": "b5d2c57932211d916210fa9e6d70552d70503379bb9541266d24c13db753c642",
       "joints": 77,
       "triangles": 5204
     },
     "greyhaven_male:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_long_male.glb",
-      "sha256": "16ad180cef0b27eb78177ff0284264c62dc3aba4a43836948b4f67aab2eaa3d3",
+      "sha256": "4886b09ad92ad221654370c0d2f4ecb961b772f8ec52e702d3d7a05d2c6e260f",
       "joints": 77,
       "triangles": 11624
     },
     "greyhaven_male:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_buns_male.glb",
-      "sha256": "b0261ae02f86002ad6e46b8452978a77e2ebad3bc2b9237d459b78772dd3aff0",
+      "sha256": "ee7c7b6fafe8225d8b132b077a85f6906c357d3471cd6acca8a1581386bf6461",
       "joints": 77,
       "triangles": 13136
     },
     "ssarathi_female:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_parted_female.glb",
-      "sha256": "0163653e45cc9b1dbbe75cc18b73059f31f000f99006ae5623b9d7e274b90f93",
+      "sha256": "15670316cfd1e6a39fdfe0ff4690ebb2cc0b107c8fc653d787bf697ee2b975fc",
       "joints": 77,
       "triangles": 5204
     },
     "ssarathi_female:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_long_female.glb",
-      "sha256": "e48cea13d2acd6977b9ca393a7820b55621279cfb63ef39b5fbb2d5fe9bdd578",
+      "sha256": "65450b7a2ba189a15a908861da95bc468020e5c6a9aa83b933577cad25786ef1",
       "joints": 77,
       "triangles": 11624
     },
     "ssarathi_female:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_buns_female.glb",
-      "sha256": "1dca1a2d7a7aed101f4e6ebb16632d00e10ab67f0ab3b49244ea3a08581bcb26",
+      "sha256": "0f998f7fa2103ac4768d3f7fdfc1d5830c72e64d887b4845e112d990b3f38e8a",
       "joints": 77,
       "triangles": 13136
     },
     "ssarathi_male:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_parted_male.glb",
-      "sha256": "4a3ba4b46b9ce526058f39e63015198ef72e473132bc751560afb27070acf6c7",
+      "sha256": "41e5caaf65e3b3a946b593a935ade08cbc883587d88b5549025d306fb14d30ce",
       "joints": 77,
       "triangles": 5204
     },
     "ssarathi_male:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_long_male.glb",
-      "sha256": "481497e3d7b72a84e11e91689a8132befb851a7b799e2850528dbefef1e8f1ce",
+      "sha256": "a688d2ccad8c742e1091ac07c9233d8080115f29a81cc51553aa881c1cbc5a0d",
       "joints": 77,
       "triangles": 11624
     },
     "ssarathi_male:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_buns_male.glb",
-      "sha256": "a2d17acef0d7be71e4ab4b24320d7471a3543300864464ebce10cc23bd85f78f",
+      "sha256": "1b9cc9333d7c044737eae8d6b3136b931128530ba7e672cb58a97521c2c08ecf",
       "joints": 77,
       "triangles": 13136
     },
     "stoneborn_female:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_parted_female.glb",
-      "sha256": "f2eec8cfc34f284d6ef2f04f62acfb987d33cfa68fae98963075d7d0944dede1",
+      "sha256": "4de931a3493e257bd09e1143860bced1900c64772a6ab975b7c09421dd947e2e",
       "joints": 77,
       "triangles": 5204
     },
     "stoneborn_female:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_long_female.glb",
-      "sha256": "94daa44e53483738e00deb27d66d4f7b12dc10b015e9573ca8914f5bf8adb7ee",
+      "sha256": "792856a8d9fd6c701b597df953894686086622e514ee2065b6ff06d096a6b9e0",
       "joints": 77,
       "triangles": 11624
     },
     "stoneborn_female:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_buns_female.glb",
-      "sha256": "198075039b5887315828a1461b91d910ef963f1f7ef085693c178b41d5c7700f",
+      "sha256": "ecc4bb4708c72e3631ffa676fa9039a1807b4d708006101acd0d955685f46d8c",
       "joints": 77,
       "triangles": 13136
     },
     "stoneborn_male:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_parted_male.glb",
-      "sha256": "15fafd8e64322423e97e9ef7b07a23be1bc4f2471e5521b5226af4433db9878a",
+      "sha256": "cbb72605d2260002d140f9e92614c30144c9b7ee16176c9cf1a736e1a9616996",
       "joints": 77,
       "triangles": 5204
     },
     "stoneborn_male:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_long_male.glb",
-      "sha256": "ff1d626422dd915f9066deb4a50820e8aae40e1b3a6e863ab314950f27fc550e",
+      "sha256": "796b9be7abdd8445ab2d2957d92fa80667b3f1bc2602b8a0352d1495ca7c68f2",
       "joints": 77,
       "triangles": 11624
     },
     "stoneborn_male:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_buns_male.glb",
-      "sha256": "cd6d3a9aebb897dc8f42c818b93eb4b82fef65ec522bf7803e24d637335a9194",
+      "sha256": "698d7b3d91a2b974e6ed2ceceba96c3e1c8907d8558b60fd238dfd96e8630cde",
       "joints": 77,
       "triangles": 13136
     },
     "mycelari_female:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_parted_female.glb",
-      "sha256": "9d034187be1470f014025a2885af2ab0590afe1b220cd781ca79720faa77fff5",
+      "sha256": "d4c0c48f6d4edaca022615960db7ff080a24275ae002c169a9304466e003d1dd",
       "joints": 77,
       "triangles": 5204
     },
     "mycelari_female:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_long_female.glb",
-      "sha256": "214fbf6fabc0040cea35b218ae7f602d65cfa58a7306e6bd0e28daad4647e470",
+      "sha256": "5e521d3c877fe4b5cb38e2decb28d680b0fb15e2d1dbcd75188afb1c19e14979",
       "joints": 77,
       "triangles": 11624
     },
     "mycelari_female:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_buns_female.glb",
-      "sha256": "5bb5b8c7cafcbda6f4cc998c117a03947b6b2c3d974366d59d772446da4e5784",
+      "sha256": "613189624c3ef4cf144fb47b3b16128d7a17a3f0aab333dd48c2b370a9104d01",
       "joints": 77,
       "triangles": 13136
     },
     "mycelari_male:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_parted_male.glb",
-      "sha256": "a2d918712876a5b0ceb5b9394560b98e376cd042a18d69b475345d1a1459bf88",
+      "sha256": "ec3899c2cb5a8bcf67c7157e98a1bdcb6575f6c10cd305300a415da43392d86d",
       "joints": 77,
       "triangles": 5204
     },
     "mycelari_male:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_long_male.glb",
-      "sha256": "b23676a66c787a1a2e75af18db31b26c635d7ad0c0ef07dd7e5489f1f4d7d4c8",
+      "sha256": "b1030cacf80f1c690f8358afadb024920e0c23832da86519c39e94d5398f3af0",
       "joints": 77,
       "triangles": 11624
     },
     "mycelari_male:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_buns_male.glb",
-      "sha256": "960b0fe94341200c739852409a8f275fe77ac9e22c66547bb5cee261588a54bc",
+      "sha256": "9268a35c4b27a6eef4d6413b6297e3a8a106a418e7ca2618d42ba12d1c95ea2e",
       "joints": 77,
       "triangles": 13136
     },
     "luminous_female:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_buzzed_female.glb",
-      "sha256": "b81a5507f718798dc032d92de3084d601a39d1b0a1312314b2cafe63dc8d07b8",
+      "sha256": "7a407c4546cefc47aa7eb5ae2c1542a7d8f754d1fb6aff329b53f0e6e3c1a4a3",
       "joints": 77,
       "triangles": 3320
     },
     "luminous_male:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_buzzed_male.glb",
-      "sha256": "955bd69c7e9084ce96c4ff5c7445d410343f6a56b92c7bb2a654b709186cb09d",
+      "sha256": "a26b35a6625904b6f7083f820f265f81cf8398255f2b9707e5a5d819eb119ce6",
       "joints": 77,
       "triangles": 3320
     },
     "votary_female:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_female_buzzed_female.glb",
-      "sha256": "2df17c3c8e023ebb373a9d229c109620e7f114effcf4cca17de1428b15f68f22",
+      "sha256": "fb2b59596b6cbdbf844b27ffcdb20da1d61083e30413d8f95b323eb6073cdf6a",
       "joints": 77,
       "triangles": 3320
     },
     "votary_male:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_male_buzzed_male.glb",
-      "sha256": "6d7f0ddeb9a16da6ccfcaed94fbf43274fd033a23923db4e6219b95c231f681b",
+      "sha256": "170be03dc78578fed60899c7090b1f169dad54c1f64b18f729ed3d203bd48348",
       "joints": 77,
       "triangles": 3320
     },
     "glasswarden_female:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_buzzed_female.glb",
-      "sha256": "4118f235a00d72e8a963c6e8c40159065e17918c636b088c1198cbb0d79aa4ef",
+      "sha256": "ea7b7042d62a8f3efeffda36a1a4dee226cc37346c48fdd42c49721ba82af3fe",
       "joints": 77,
       "triangles": 3320
     },
     "glasswarden_male:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_buzzed_male.glb",
-      "sha256": "c0f91b75be7fd39100a0bee03b347fd22ff9a06f585c913027d5cdb8402cdb9e",
+      "sha256": "792f6218cdfa6a1f91c86c94a17284a2382106e84b1d2191cabd6065a861feb3",
       "joints": 77,
       "triangles": 3320
     },
     "orun_female:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_female_buzzed_female.glb",
-      "sha256": "dc99105d40b7af3abc8857a08988aae6ebb74fc6ecd4c52de0a0b18ed4b69742",
+      "sha256": "c3980dca409c25b75c43aaa6777db1bfce64d2aca00ed34db50b77e3fcea028c",
       "joints": 77,
       "triangles": 3320
     },
     "orun_male:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_male_buzzed_male.glb",
-      "sha256": "d567279a7328c27594302f8a1dad5135fd3e8b78ffe2d4689d3efbc062143939",
+      "sha256": "c3851274b6d4c9e3e7d2624872501076960f76a96772e0818c20a686685d954e",
       "joints": 77,
       "triangles": 3320
     },
     "greyhaven_female:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_buzzed_female.glb",
-      "sha256": "6082cb05e11906261761fdd926eb5c15f51e9e517df3260e5636c2d334a4e572",
+      "sha256": "8f3275f16d9216e0649d38bfcb1905ab216c879efbbecf869da1e1830d1fd2db",
       "joints": 77,
       "triangles": 3320
     },
     "greyhaven_male:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_buzzed_male.glb",
-      "sha256": "3e4f72e32eb787ac8f3070d3f9ee021ca395ea2a5bc4dc4e0fcb2ef921ad1ff5",
+      "sha256": "0429ba4d4c499daa42dbd5850a8c664aa9d7ed89929cec4373567e9cabf63bc2",
       "joints": 77,
       "triangles": 3320
     },
     "ssarathi_female:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_buzzed_female.glb",
-      "sha256": "9f2adf37a8c7098dec3a87eb9b49f19a3624144286b956115fffec1f4b1c94f9",
+      "sha256": "364b1720767919976db31b41a1468390585ee39eb9df6ddc63852b3544c04a96",
       "joints": 77,
       "triangles": 3320
     },
     "ssarathi_male:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_buzzed_male.glb",
-      "sha256": "a785e39dc8a0d775efdcdd35dbc7a0649066329c6f43206db15642a29f856d13",
+      "sha256": "d0c22c46783aab1937407c678537b4dee4d51594d40a17180ddc0d4984b2546e",
       "joints": 77,
       "triangles": 3320
     },
     "stoneborn_female:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_buzzed_female.glb",
-      "sha256": "ae30aaf2c9fffb2f5371b4fe0c5a56812dd5a5f3935429f50bcbdfb40dd9e066",
+      "sha256": "5f4a5c7835bd864760c573602a1854e4345603a4554f1483cdbece23611210d8",
       "joints": 77,
       "triangles": 3320
     },
     "stoneborn_male:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_buzzed_male.glb",
-      "sha256": "4b684d8b94835c3e878e8e7beba0c37084af2893d53e8c27c30b69e75085551a",
+      "sha256": "cb403fa2120de5b3f60d734d36badd6fcb638c6ad998097a4733ed8364efbb08",
       "joints": 77,
       "triangles": 3320
     },
     "mycelari_female:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_buzzed_female.glb",
-      "sha256": "06bed1bdc679dd428038b90a600ba4ef793a9ddb1a05653ae689d0cfe2bd6a64",
+      "sha256": "a114f8ac89a7f4660d9ffd20d41797bf332fb679566d8da0d8c0e732b3bcc62d",
       "joints": 77,
       "triangles": 3320
     },
     "mycelari_male:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_buzzed_male.glb",
-      "sha256": "74800610576a82d3311cee0189a7ff3a36db1ebf1c46680cb77afead66fb3a50",
+      "sha256": "96f131e92a0870448051afb86d159b5c704b7428971b33e679eb869a5aa17de5",
       "joints": 77,
       "triangles": 3320
     },
     "luminous_female:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_bob_female.glb",
-      "sha256": "76b819c77bbdce4ee65de18bbdde8ae31e0633ce3d3d77fe84ecc62ea9b22efc",
+      "sha256": "7cd412c32c0087057769a82882db95da21550b602d8bc1276195b109aa9d0632",
       "joints": 77,
       "triangles": 11624
     },
     "luminous_female:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_ponytail_female.glb",
-      "sha256": "43c9e90a47a25c40f6adf058448212fb3baf459a1926950a918ec01319fbc3ef",
+      "sha256": "a6a434cde7781a2345a65a375229074ce4a3313f8302acd10827cd33cc97f41b",
       "joints": 77,
       "triangles": 12040
     },
     "luminous_female:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_braid_female.glb",
-      "sha256": "45f9687c24b247b998be972893362b90264f5b135da9593d9d2921f621909dbe",
+      "sha256": "abdf79c97ca9a8f7d8e6c431f54bf9cdcf3c7f14462bf2056668dd67ce670bd9",
       "joints": 77,
       "triangles": 15976
     },
     "luminous_female:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_topknot_female.glb",
-      "sha256": "748d1db7dab360e169420b029385d4ad988c2a77064971f9026aede2ffb9d342",
+      "sha256": "af53b5bf8a0f372e3b59a81702452f07d7a4f85933ca65e45d005a1a36be6b3d",
       "joints": 77,
       "triangles": 12872
     },
     "luminous_female:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_mohawk_female.glb",
-      "sha256": "57b63b7773609f66da05c990f0894b28e4c3ce5e0247cefe00a6529b809dca10",
+      "sha256": "ab1018ec268fac25137343e0ef323bfb9bceb7368640fbedf81e555d61ffea36",
       "joints": 77,
       "triangles": 8312
     },
     "luminous_male:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_bob_male.glb",
-      "sha256": "674d57e8ba143940ef99c284cb86b852c371c3f647a43b985930f24fae8782a7",
+      "sha256": "7cd5741fa4bbca1618c2d8e9de05573b6d14414fafbc1f83d1d5703d1419b923",
       "joints": 77,
       "triangles": 11624
     },
     "luminous_male:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_ponytail_male.glb",
-      "sha256": "06a0b5c4c739709cb0b827a9df7078d3d939415de86a3c6d9f3b279bfc8f126b",
+      "sha256": "aa2d2f54958362a92a22342817cd9613f18976345cacdeec215002382bfba6f7",
       "joints": 77,
       "triangles": 12040
     },
     "luminous_male:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_braid_male.glb",
-      "sha256": "16f81eb9a0e0550c9c4537f2f665827eda6f5a365017f5d3f97f44332fe21f8b",
+      "sha256": "74fa6f150f0b32aab6e8abd2bdc538755ae97579d1d2e7adf6953e7ef2ede1b9",
       "joints": 77,
       "triangles": 15976
     },
     "luminous_male:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_topknot_male.glb",
-      "sha256": "d41197bd0b5653126025e159e39a7982ef5473921a9825ef8cd93fe9b993b592",
+      "sha256": "b06acb22bb54ae2c312dba4daadaed78b7cc1c1a2072811a11bcc6c75332bb8a",
       "joints": 77,
       "triangles": 12872
     },
     "luminous_male:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_mohawk_male.glb",
-      "sha256": "859ff07276f7832c485da55040a3bf683ff6e7ef1138b6d7140714a382fa3120",
+      "sha256": "1ee5c25a40db234038b564ffb177785af593ace43b2c3b9c944c340b12e4a2af",
       "joints": 77,
       "triangles": 8312
     },
     "votary_female:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_female_bob_female.glb",
-      "sha256": "ad6f5d89e4f4d196cafcae1ae6191539a1e09ad1e6c1caccfa78b8ccc24e83a2",
+      "sha256": "2306074d168d5d8c5d3078c4c4cfe908faaf5533481cd735b871228225a4dc56",
       "joints": 77,
       "triangles": 11624
     },
     "votary_female:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_female_ponytail_female.glb",
-      "sha256": "a53dbc86b7d4ba8739b2ff4d051330aaae6caf416b03375dc2f55b3b79cb2f07",
+      "sha256": "ca70acf99bb0bcef77430fad381a18b5afe98b549481c9268c4a2d4e0642117e",
       "joints": 77,
       "triangles": 12040
     },
     "votary_female:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_female_braid_female.glb",
-      "sha256": "e1da699e915306cb84b35d897b5c71c9f789eb27fa57fbd5d5ae3d0029e95fda",
+      "sha256": "f0e031b0177dae8e56dcdf6ebc2c234b75fe4f1dac2bb6a95e60c2fbbf91c004",
       "joints": 77,
       "triangles": 15976
     },
     "votary_female:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_female_topknot_female.glb",
-      "sha256": "83a1ebf41ae47886d05e22535e4308a8b2ff64d01c69681b8bd0a45c3e5dd976",
+      "sha256": "4598dd0338643554ef883470c1059fa6af2c65c171df3e179f5f761e9e65ae2d",
       "joints": 77,
       "triangles": 12872
     },
     "votary_female:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_female_mohawk_female.glb",
-      "sha256": "8dc53c6ce33ad29e4e3cfb783da50947b98fc1e901d7b8aa79246a8e2e436116",
+      "sha256": "0a4bf9c72aa0787ecea887a63d5c0955a05034ece3bb0ee8c95b2013ecad2beb",
       "joints": 77,
       "triangles": 8312
     },
     "votary_male:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_male_bob_male.glb",
-      "sha256": "fc9a145373bf53972bb2c7f810a1bfff1db0bf4366a314a1746234c9c20f5265",
+      "sha256": "1b38dc5e7a6ca04a8f9353905926376f91a729094fd9696ef61114f9251a103e",
       "joints": 77,
       "triangles": 11624
     },
     "votary_male:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_male_ponytail_male.glb",
-      "sha256": "979b97d0b574626488efcece71419aa3d3b34656e1716e0daf14b3305d8414da",
+      "sha256": "c1caa99648e56a6247d40b0b58fdbf241a39d69b5a2924a12be351e8cd555de2",
       "joints": 77,
       "triangles": 12040
     },
     "votary_male:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_male_braid_male.glb",
-      "sha256": "b50141502fcb4bc9cc071b010f89be812ace320777fc992144ea3b9ed42ff6db",
+      "sha256": "c3a139ab051ac7e1d2c1366e5b5ef3c0155cb4b0ccca910b373c3ec92135ee9a",
       "joints": 77,
       "triangles": 15976
     },
     "votary_male:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_male_topknot_male.glb",
-      "sha256": "358030ae5ce71978aacf7b7b9f7f8b0b744bad822c70ea156ae26132a3374a02",
+      "sha256": "05e66fe59145e0cc4c6f6c019cce8e7ac8fb00ba20388ee394247c54fa0e58b8",
       "joints": 77,
       "triangles": 12872
     },
     "votary_male:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/votary_male_mohawk_male.glb",
-      "sha256": "ce539ff3318c66489730942c50c2a9496df8ee13251dfa5a775c32d4d4e0c213",
+      "sha256": "256cabe9a9fb5ece7204d6995b31d3985363b8f45e4619eacdf9c2a78277f5ac",
       "joints": 77,
       "triangles": 8312
     },
     "glasswarden_female:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_bob_female.glb",
-      "sha256": "bbdc76c8a5f5b1bbd830efe213c69796423bc6cc77753610427c45557a4ce9b7",
+      "sha256": "09e4c3232121b5ec1fde5dc9a2d481ca2f5ebfcf81758a55db933f212d3ec1ea",
       "joints": 77,
       "triangles": 11624
     },
     "glasswarden_female:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_ponytail_female.glb",
-      "sha256": "6903fc849f2af9039957b4ad4fb4e6fe05991210c2ca2efd42e52c0741eb2fbe",
+      "sha256": "29e188563c40653e1955d68e870406d537ae61f2dbe87f78925089de45ccac0b",
       "joints": 77,
       "triangles": 12040
     },
     "glasswarden_female:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_braid_female.glb",
-      "sha256": "eec2252c777de5ea5eba36793b9e9591df5298e9d2a7976e50d97d0f94136129",
+      "sha256": "da1845c33661bc6151490b16d3a8e62c0e260e35c8c86101aff306a2035ef270",
       "joints": 77,
       "triangles": 15976
     },
     "glasswarden_female:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_topknot_female.glb",
-      "sha256": "fa2268cac0c86aae58462f0feb0d9180b27dcd8a07ca671a8d042ef97f9220cc",
+      "sha256": "caac9796437fb7d8963eb168bace75a8e8753276de0d24da8922152e1537f394",
       "joints": 77,
       "triangles": 12872
     },
     "glasswarden_female:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_mohawk_female.glb",
-      "sha256": "31fb4c2121092d1247e1a65a8db09b28a07d62f08ad11d4fae9528982e0e3ae3",
+      "sha256": "0fa5662f61632543524e94f2d670546dbd5d4e58d12921763f4d2f2660d9905f",
       "joints": 77,
       "triangles": 8312
     },
     "glasswarden_male:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_bob_male.glb",
-      "sha256": "0f889c64137db7b0531f03bed9c629d9c7f385a462d3eeb6c2fe8131d2450bea",
+      "sha256": "275c1581b01d8d6f172cbb78f02ad8a8f80705e00d0f150888a4697fd76f577c",
       "joints": 77,
       "triangles": 11624
     },
     "glasswarden_male:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_ponytail_male.glb",
-      "sha256": "adf1862b8fc1565a826972570b9c8f9e8b99784cc11083d4fd63647c865744d2",
+      "sha256": "e3f099464d1b7f288ffbaaaaab3c8ebdc886c10d508d8440341a502340240b26",
       "joints": 77,
       "triangles": 12040
     },
     "glasswarden_male:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_braid_male.glb",
-      "sha256": "ce5a099366552fee084584e5c5a25ce8ee167eb5aeda68d83564f8f1be7bbcb8",
+      "sha256": "8e548523aef69c3168072def62e822fa1800edc792351478a953b0d10d2a0a07",
       "joints": 77,
       "triangles": 15976
     },
     "glasswarden_male:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_topknot_male.glb",
-      "sha256": "746a8dbdc8eebe0216bff60b26eb0f1b2e4ec2818a928f69e4694aa8dda04e4c",
+      "sha256": "87c34470e419ade5503c4c0acc356b3b76305dec82e3705d5767cbcb5346fe9d",
       "joints": 77,
       "triangles": 12872
     },
     "glasswarden_male:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_mohawk_male.glb",
-      "sha256": "63cca68d752d5d9562321d3825a392303a55adf4c34473bd247a50a1f0023844",
+      "sha256": "2bb52cc3ec7ee0f963b55862410836a7c7015859fd657871d7cc8065d97930f0",
       "joints": 77,
       "triangles": 8312
     },
     "orun_female:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_female_bob_female.glb",
-      "sha256": "babcaaa628e414e1331d650ae4dcb7af8a2d8088010eabb91aba561dc1311fdf",
+      "sha256": "9063eda68c2271c7c3303e7c31bcf18eda91fc790fcb36816d03b4d297260c02",
       "joints": 77,
       "triangles": 11624
     },
     "orun_female:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_female_ponytail_female.glb",
-      "sha256": "61befa1829e19d5be75526a0de60b0545008dbfb39eee94ceaa3e294c165d593",
+      "sha256": "82f7bc998bb1f061928fe84939ceb78d4824944f9a47ec156969fc873d1a0e9f",
       "joints": 77,
       "triangles": 12040
     },
     "orun_female:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_female_braid_female.glb",
-      "sha256": "57b202748edf79088e9b8759fc100a45db961fcf9ea3b0e622ba643fbb7fefd4",
+      "sha256": "e6f537f35b58274121a400b6586ade73c00211ac9cd6f96b9bdd63f6a613ac3b",
       "joints": 77,
       "triangles": 15976
     },
     "orun_female:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_female_topknot_female.glb",
-      "sha256": "c845868385b26f66029d0fa6b776e96b826c1540f035c2722947bb7aceba363d",
+      "sha256": "b188e37555249372ce13a3d015f63e467f9f93590945e59f8f8d2c2de5981f1f",
       "joints": 77,
       "triangles": 12872
     },
     "orun_female:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_female_mohawk_female.glb",
-      "sha256": "60778f07e11e81fe2e5e2ea7755fb67ef18af2a1cdc5590a9ddf28621c04d087",
+      "sha256": "f8d1fcaf36f0bc70bf3623810169918aaee005c79052726e3452de704203eb4b",
       "joints": 77,
       "triangles": 8312
     },
     "orun_male:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_male_bob_male.glb",
-      "sha256": "f73174dffaabc40e4a7ca78118e87ae497f62e3f40d8d9f58249032d6fccdf04",
+      "sha256": "6939920bb595059bda9b33f922793045c05c63c8b523ac27881c2a233d18d7a1",
       "joints": 77,
       "triangles": 11624
     },
     "orun_male:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_male_ponytail_male.glb",
-      "sha256": "0f1d96ca7858e474646f78aa92c954053c936815f5bc532c9db452094294060d",
+      "sha256": "2620e1ae5e89fe73d0d1de07ae6a881c7e4ea0cf697f70a271704155909545cd",
       "joints": 77,
       "triangles": 12040
     },
     "orun_male:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_male_braid_male.glb",
-      "sha256": "1b32073ac8054c29a9231d99c3e0d35ef8400308e94ce0ffcd219f80536a2918",
+      "sha256": "45c597d3422f5321b1d136db6447f79f7582c20fc284c2fcc11dbd5a61390911",
       "joints": 77,
       "triangles": 15976
     },
     "orun_male:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_male_topknot_male.glb",
-      "sha256": "e357498edd39fc36e0b56ff9e62105d29f3f1e5300ac70b8839f7e958576c445",
+      "sha256": "517b0e6a13c8c1a088b057f7a452e3a744450ca088a6f757b6a3b4097c346f3e",
       "joints": 77,
       "triangles": 12872
     },
     "orun_male:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/orun_male_mohawk_male.glb",
-      "sha256": "e80d86e0304c3dab0922eb6359cb3eab1fbcb4cdf4dd171b64518bb327d7a9dd",
+      "sha256": "5134a7b557b4353a4b97ebabba94671bd3a39efc0035151a584e05087540d5ed",
       "joints": 77,
       "triangles": 8312
     },
     "greyhaven_female:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_bob_female.glb",
-      "sha256": "a0f7a6acac34bf974f9f05591d479abf94b0dc67ee81ee3a35ad9d10e9b145ed",
+      "sha256": "ec4bc121ccb17b9cfffa2a6b1338cb4a74a3fb5c9ea79150b83d16abb5a28eaf",
       "joints": 77,
       "triangles": 11624
     },
     "greyhaven_female:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_ponytail_female.glb",
-      "sha256": "743e24585c82241afe379672fbe7a0a84c893a33502a2d5a661df4cc3863ad2e",
+      "sha256": "110480e1bd0286681af4fdc876f96fce2e1aa84dd05a0290db9e4370986ee22a",
       "joints": 77,
       "triangles": 12040
     },
     "greyhaven_female:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_braid_female.glb",
-      "sha256": "8ab048089fa799c48ec19f59dd58e46b100727de0da52261311671c6a36d6951",
+      "sha256": "0dc2709b9abecf99255221b1d480def06003774acec1325db16f98620ec717ac",
       "joints": 77,
       "triangles": 15976
     },
     "greyhaven_female:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_topknot_female.glb",
-      "sha256": "b547b2046f5f92b30d19a057af9a27a7d0480f5c724b0dcd48aab6f9a7025c44",
+      "sha256": "ed43157fb55ad2f3b8d892dc882681c868d432545e5aee6f1e6202c248e55359",
       "joints": 77,
       "triangles": 12872
     },
     "greyhaven_female:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_mohawk_female.glb",
-      "sha256": "3e371585b4b4d86775e5608acb596a313d2fe40240cb1078d2ff0357f1a047c1",
+      "sha256": "535e921a13b051389a0c5e3b937bbea6fa552bd2c4e81e6fc292989313c7c342",
       "joints": 77,
       "triangles": 8312
     },
     "greyhaven_male:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_bob_male.glb",
-      "sha256": "eb44bfa6b4e1c7ab3f36d74ffc953e849c3cf27fc90d51a3cc46709173d5ec51",
+      "sha256": "b7cd3f103a8eb8c5e188b99f7e98cee83b60a8ef2eaba8556301fb936a443b90",
       "joints": 77,
       "triangles": 11624
     },
     "greyhaven_male:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_ponytail_male.glb",
-      "sha256": "43c555d4910d56a8c20a3f3e05b57c945f00e1186f0c68bdfdb0ef48ca6d7ede",
+      "sha256": "b3bc33862633330931f678526c18c1a64ea74a06359fa953c7608292a0a66190",
       "joints": 77,
       "triangles": 12040
     },
     "greyhaven_male:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_braid_male.glb",
-      "sha256": "582b5ee069b90524bcb7d325006f11df701a29cfa450a32420e494ed0ce4d771",
+      "sha256": "1ecfa7310999b8dbd278282bd3072b93e6ddc3c8dc9447688597ed87fb979d57",
       "joints": 77,
       "triangles": 15976
     },
     "greyhaven_male:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_topknot_male.glb",
-      "sha256": "a22a5e886a7184284687debe0065057895fb0259a8e506a968826548885bee01",
+      "sha256": "e76e45768204ae0e9ed56955f84145800837d72f7da1106f9fe74b65b5a6a584",
       "joints": 77,
       "triangles": 12872
     },
     "greyhaven_male:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_mohawk_male.glb",
-      "sha256": "571d432a11bb7cc5ba02df9c3db33fbc0079430a60182fa620135cd41b4fe40d",
+      "sha256": "ed8cbeb6e38572c79fcc9da2b72dbce3196a94478c314ab13e464fb0f3708e3c",
       "joints": 77,
       "triangles": 8312
     },
     "ssarathi_female:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_bob_female.glb",
-      "sha256": "6868c39ac7d2e43f8740929d8dbf06b94ad8b310f6484c33f98b6eae00ebf1c0",
+      "sha256": "06a066221bdb50e5af2a7ca2d72a384ec8c4b86cfa68e95f940c24f45a9b6782",
       "joints": 77,
       "triangles": 11624
     },
     "ssarathi_female:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_ponytail_female.glb",
-      "sha256": "eefab49b93287d3fe866f832e39d756fde3515226574ba2e2062cdfc2b7b5e17",
+      "sha256": "798410ed57af39f59d6ebf75b5ed82f5f82a1861cc9b4d3be599cdb1dfb6a282",
       "joints": 77,
       "triangles": 12040
     },
     "ssarathi_female:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_braid_female.glb",
-      "sha256": "3db95ec2376eb54187a373c7107e870d171293885f36d2023e8a70967ff026f6",
+      "sha256": "e167a2723df80e622697a57c4a2f6002a6ded7e7f20f2e1699c3f00332b30ee0",
       "joints": 77,
       "triangles": 15976
     },
     "ssarathi_female:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_topknot_female.glb",
-      "sha256": "20a7c735c2bfd00dbc1face7459882694065aa4f73d938e6c359ab65f20eb804",
+      "sha256": "26a579ec1d9dc26936fa137e4d751b05c5cffbfa8a1259b15f9df3f6b8735609",
       "joints": 77,
       "triangles": 12872
     },
     "ssarathi_female:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_mohawk_female.glb",
-      "sha256": "2650e474e6c76ca9af4399fb5f548d2b566dedc5f124582dc6a833a0765882ad",
+      "sha256": "87922ef16c06275458e4cf6701230b88fd0eee403c0d7a8e3bea3cefa0687574",
       "joints": 77,
       "triangles": 8312
     },
     "ssarathi_male:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_bob_male.glb",
-      "sha256": "d2f43f2b5f2368f847d83fca9205d098ccf2ec349a51082e884d5dc7a7c21d16",
+      "sha256": "2bb22e22210ec7788a87919fa160dcc605fd40ea92247f8fdf60fd1856ed2aba",
       "joints": 77,
       "triangles": 11624
     },
     "ssarathi_male:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_ponytail_male.glb",
-      "sha256": "a037d7756e52bc7b8d9e0c4671d8c5ded0954ba1520d3deb201e9cfd68680f45",
+      "sha256": "f0e5291f384d4df1ec2abf29c4a6da698e7939e0eda8b55aebbf6db82779634c",
       "joints": 77,
       "triangles": 12040
     },
     "ssarathi_male:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_braid_male.glb",
-      "sha256": "84e93d228495b3f398669a8893e0422de019fd2873aca27d3e9ec65430572d9b",
+      "sha256": "ff3099b7fd4e5a11c4fa18c458e189a8a344362ebc83dd3d497b332cf856c75f",
       "joints": 77,
       "triangles": 15976
     },
     "ssarathi_male:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_topknot_male.glb",
-      "sha256": "2c7202b5e954b433be838a8c45a04afe5af7581f51332d1991ec8be34f52e4e6",
+      "sha256": "adac41a8f85aade6f17c7d8313488e3463cbb9509f359a9217c6fe0130dab01e",
       "joints": 77,
       "triangles": 12872
     },
     "ssarathi_male:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_mohawk_male.glb",
-      "sha256": "f9e2af6ba11b686f428cdecc356357e50dc64a8df4f494d11bf1d1571a0ed4a6",
+      "sha256": "30bf7ee561e9f147ba3e637547cafbbbdddff6553bf55ee97313aae9da9a0352",
       "joints": 77,
       "triangles": 8312
     },
     "stoneborn_female:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_bob_female.glb",
-      "sha256": "548296d2f0344d228ce23f2f4df4017cd7c71ca78fdc617e367628335410f781",
+      "sha256": "d2378630bb5eddd4ee0232b0ef87f6c0c086b2a237a94e2430e29a8acfed228f",
       "joints": 77,
       "triangles": 11624
     },
     "stoneborn_female:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_ponytail_female.glb",
-      "sha256": "93c4f9913477debacbe31f8f4b83d52d112aaf95109d8fc8a750dd079d63187d",
+      "sha256": "d26c2115eb13d8e97e32239d2fbdff861728b1e382eab56c061286f86f60a898",
       "joints": 77,
       "triangles": 12040
     },
     "stoneborn_female:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_braid_female.glb",
-      "sha256": "11dba196ccb31b3547f9c04cc4cd9194225468719c3987df13ea68e98f636ffc",
+      "sha256": "fa31e95b620881854c80e3f2ccd64278fb11fb20c7b09772cc147ff6343cd53c",
       "joints": 77,
       "triangles": 15976
     },
     "stoneborn_female:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_topknot_female.glb",
-      "sha256": "f522d05e6f8e4e8b5c53a1c7ae3db2aae3a69af0d4dbbeb19ce84cb0aede76bc",
+      "sha256": "db74a7f57adbfd7af342f2cbf8887d306f9acb7f1b7c34f674083c85d5cc69b9",
       "joints": 77,
       "triangles": 12872
     },
     "stoneborn_female:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_mohawk_female.glb",
-      "sha256": "6f589ad7e7d9f5e5f595f38a56809903c5345ae63d7826ce6eb18f5b513fae4d",
+      "sha256": "b755da13da673c4d1fdc271b58854f69109f66e1929bec9bdc59e7fc7cda9d5f",
       "joints": 77,
       "triangles": 8312
     },
     "stoneborn_male:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_bob_male.glb",
-      "sha256": "cb91caf3c842b0a66eef5710239fcda9e81002042e9c58d176047c74d2be4609",
+      "sha256": "601b87fb8e269d308051cf4f0153c30dfbea61bb7d964cea99cd7d1b44e8c463",
       "joints": 77,
       "triangles": 11624
     },
     "stoneborn_male:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_ponytail_male.glb",
-      "sha256": "ad40e9097d022cc5b26024a79deac7a70f58c92a0041d3293a3d8ada1bc5461b",
+      "sha256": "83456c01f8d8bbe6cfcd9c14234f977c154f74ab475abd542ba824e6ded1e174",
       "joints": 77,
       "triangles": 12040
     },
     "stoneborn_male:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_braid_male.glb",
-      "sha256": "9271b1edf606b2f5db46c6632385839bcba00342bb64b4f27b7aec99fb188855",
+      "sha256": "c159d67b5db25075878ecf2712be8fd58380c9518b301d6a6dd6180a527640ce",
       "joints": 77,
       "triangles": 15976
     },
     "stoneborn_male:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_topknot_male.glb",
-      "sha256": "d95b7ac145900133391ab83f298f8ff4718f391294d10c660c4e5c1a1293f02b",
+      "sha256": "1887bf7bf54ef77077e2fe102b35879fdcaea7e2a74dc85d6c1d9bfe8ee90e8e",
       "joints": 77,
       "triangles": 12872
     },
     "stoneborn_male:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_mohawk_male.glb",
-      "sha256": "4c27b48b2cc100b8e28a1e8e3e78981178689ef4e070adfea130a62d9dc769f5",
+      "sha256": "b5a9db317f8fd91e13095c39da404f4004d3548e8f5f060f97f6981a28730d91",
       "joints": 77,
       "triangles": 8312
     },
     "mycelari_female:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_bob_female.glb",
-      "sha256": "bd591196b927ae7fea2b21e2b9375ad1c3af4f969e31e49f4ab0a8b1cf47be59",
+      "sha256": "b0f44158defea4b70ebea4953421833a52619f3866f94d3b4e9616d488f208bb",
       "joints": 77,
       "triangles": 11624
     },
     "mycelari_female:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_ponytail_female.glb",
-      "sha256": "332a0cd26ea9d0e6bbd2a6c47d9e94c5a282a28f727ee5bc7aec46a167492e48",
+      "sha256": "9102dda3c5789d65e6ff8b3e2c6c3b67e7632b3e2bea0058ea2b3284df9b0d66",
       "joints": 77,
       "triangles": 12040
     },
     "mycelari_female:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_braid_female.glb",
-      "sha256": "137c53feb1550ec2a9b4d15c6e953fa1737f592fe478893982408143a3e03ec7",
+      "sha256": "30aa39f2baaa2c06d2ade21dc41af9440d56a72b4d220424421d74bbdcaa336a",
       "joints": 77,
       "triangles": 15976
     },
     "mycelari_female:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_topknot_female.glb",
-      "sha256": "01f95638f5ce87c4932f8dea1a66699ae751cc1a3bd5066dc1cb9fc554285574",
+      "sha256": "4fbb68b7a38d0a894ad4cb2ca65e2c5a924768657ea9c99d73c6e02bffb20e23",
       "joints": 77,
       "triangles": 12872
     },
     "mycelari_female:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_mohawk_female.glb",
-      "sha256": "4325f93d9ed01c40ae2b7b9f046a57bbbbfe963b023e815a0734d0cdbc53edc9",
+      "sha256": "c287aa0ac118d7d6b8fd624c33601b874a5b21631d2451f06e64befcf5b02a8f",
       "joints": 77,
       "triangles": 8312
     },
     "mycelari_male:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_bob_male.glb",
-      "sha256": "e8b4f079f5e126c9e2c2bd723b95227c41537cde03cf2dae806483145b6f63f8",
+      "sha256": "f86cf701ace1756eb923eebedef227a73ecc539bfb760945edd2975b343b750b",
       "joints": 77,
       "triangles": 11624
     },
     "mycelari_male:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_ponytail_male.glb",
-      "sha256": "78838a4be2831d23fbf6951e0c90a33c75cc6b4a00453147cd6a903ae037fb10",
+      "sha256": "d50a89fad931d61de43cd241423d2118d385a18b7cbd23ab8400a5aec86a38aa",
       "joints": 77,
       "triangles": 12040
     },
     "mycelari_male:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_braid_male.glb",
-      "sha256": "cc50a1cfa02d44e43cfc87fa3a30fbf7ec990b801a7475f770105e04f9c4ff18",
+      "sha256": "eeb53b66a7ae0d4336dc4d788240710870754d9081d4f6c76b82561b5a03b060",
       "joints": 77,
       "triangles": 15976
     },
     "mycelari_male:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_topknot_male.glb",
-      "sha256": "6c3ed0ef27d09a9bce7f891b2dea9654eb9df697ce4ef9c21965c28df3a41014",
+      "sha256": "5744bd98f98acb8fafb65b4c7375c165c201c1c933769e9f642cc579e54112c9",
       "joints": 77,
       "triangles": 12872
     },
     "mycelari_male:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_mohawk_male.glb",
-      "sha256": "8a31b2dd192d2a595e6dd40cab0125adb045f4d98d5384329d95b17c88b533b7",
+      "sha256": "2c8b62a6ffd660037b28c89728621fefff098b560ad6928bbf06578142ec9a8f",
       "joints": 77,
       "triangles": 8312
     }
@@ -31729,7 +31729,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/rabbit.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "a2a794ced81d92feaaa039b6d58a9a8099116cbc989d4377c3a80229f8f81eb3",
+      "sha256": "9abdf401f82f4117932fe62bfd4a05585efe9009916b74b175a1a3400b00cf55",
       "source": "generate_models/basic_creature_expansion_100_animated/001_rabbit/2_rigged/001_rabbit_rigged.glb"
     },
     "beaver": {
@@ -31740,7 +31740,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/beaver.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "4674b12a41fdb30254a5c0d19b5b29dd9efe6979592360cf4bdfe27aca8c3507",
+      "sha256": "7961520cbdb2c189d6d485b940bd9ba9f0d586dcff1fafee5d2698a4cc46af6e",
       "source": "generate_models/basic_creature_expansion_100_animated/002_beaver/2_rigged/002_beaver_rigged.glb"
     },
     "skunk": {
@@ -31751,7 +31751,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/skunk.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "2ff8241ee5bb0e3162f8a3a1b8d8a0ca848917103dfff6e5628ac42b0b14e5f3",
+      "sha256": "5579a6b4a75b5de376f314a098bed770edad03eb8272a097a31f538950d54a83",
       "source": "generate_models/basic_creature_expansion_100_animated/003_skunk/2_rigged/003_skunk_rigged.glb"
     },
     "hedgehog": {
@@ -31762,7 +31762,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/hedgehog.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "0c50335d0474a79f0f2ed3c7af58eac13dc0f78dd12390d9adb3cb7948e6a527",
+      "sha256": "f83efdc2cd1f7553435c09a7d349737fe477726bb7824dc52a95edc19e2107c9",
       "source": "generate_models/basic_creature_expansion_100_animated/004_hedgehog/2_rigged/004_hedgehog_rigged.glb"
     },
     "squirrel": {
@@ -31773,7 +31773,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/squirrel.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "2afd9ce3777bf404778c5d6bef93931fb631198f97bf5c068df0235466e670a5",
+      "sha256": "7d0c06d699347776ad4f63bffb8b5a728dfd30abe7f14df2fd5536257d9b2d42",
       "source": "generate_models/basic_creature_expansion_100_animated/005_squirrel/2_rigged/005_squirrel_rigged.glb"
     },
     "dormouse": {
@@ -31784,7 +31784,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/dormouse.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "2c7023b02d2bd6c0f08dd1044e0a5fc2661a7118ffb6ef93feebb9c7034a8c7f",
+      "sha256": "9f1375740ba52627e1a6651aaf2026b3ddfd4330c9ce64481e9c89508b808a9f",
       "source": "generate_models/basic_creature_expansion_100_animated/006_dormouse/2_rigged/006_dormouse_rigged.glb"
     },
     "shrew": {
@@ -31795,7 +31795,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/shrew.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "7cc4ccfd0bdea6dae562c2ad15e75011561e544c7501d11ea99081fd3891b529",
+      "sha256": "d657f368a2df7a89b16457f7c67ce4021f70bf991dff6ed3a3c28faa0bf66d08",
       "source": "generate_models/basic_creature_expansion_100_animated/007_shrew/2_rigged/007_shrew_rigged.glb"
     },
     "stoat": {
@@ -31806,7 +31806,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/stoat.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "f8171dcc98be3be279cc9abde19b6a280b4e601e4959b0a4216508e11f3a958a",
+      "sha256": "031e349f91759be6f63c30a1a681b56e293e7a6129af0aa071c61a37f4298372",
       "source": "generate_models/basic_creature_expansion_100_animated/008_stoat/2_rigged/008_stoat_rigged.glb"
     },
     "mongoose": {
@@ -31817,7 +31817,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/mongoose.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "db12aa6eff27d599c5e2ad3e2821f69705d695b8750407a6a78db89806b3acec",
+      "sha256": "edfe689846904ca99cce5d513e8ef56d444715b76d5f298231b1f7430829d4a2",
       "source": "generate_models/basic_creature_expansion_100_animated/009_mongoose/2_rigged/009_mongoose_rigged.glb"
     },
     "armadillo": {
@@ -31828,7 +31828,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/armadillo.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "a5653dcaf604dbb9baa12a0cc611dc731c4290a6d4cc6f9f58cabf14e47666fc",
+      "sha256": "cce9260395d1e978f7771736b814f59b5067a0cdf4b3bb07031024b5a6d0fc85",
       "source": "generate_models/basic_creature_expansion_100_animated/010_armadillo/2_rigged/010_armadillo_rigged.glb"
     },
     "opossum": {
@@ -31839,7 +31839,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/opossum.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "3c7445bcf61f895cdd547fb0b1da2d67261d4fd5ce6ca5de698ad77ed8eedeeb",
+      "sha256": "d87541715cfb908d4f582363e6f37b521c55d4734d6fadba2479245893f7733e",
       "source": "generate_models/basic_creature_expansion_100_animated/011_opossum/2_rigged/011_opossum_rigged.glb"
     },
     "platypus": {
@@ -31850,7 +31850,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/platypus.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "7fa3fdcedc9bac6e2dad0346dbdcb0cdc94550f9f855e9a666087cd7eaa68a4a",
+      "sha256": "0b597d10385a1ac69af337e921762c0f82500e86258801b08321180ebfc9bd36",
       "source": "generate_models/basic_creature_expansion_100_animated/012_platypus/2_rigged/012_platypus_rigged.glb"
     },
     "wombat": {
@@ -31861,7 +31861,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/wombat.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "6d63fef918a2dfea585dfc001b60e703a43f240ca545999a6a669a8002ae34a3",
+      "sha256": "753422998371677e2bc437b93b9666a34eb988a8bd636e94bd10b6a5dcca4948",
       "source": "generate_models/basic_creature_expansion_100_animated/013_wombat/2_rigged/013_wombat_rigged.glb"
     },
     "puma": {
@@ -31872,7 +31872,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/puma.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "1c7373f28f47cc20e2aa9ae41894c0d7dca138e3754abd8339da5c6a57233e00",
+      "sha256": "a03ce51c6caf735827896146322e7af638b6d96dea6e8e1e325a3bfc891b7876",
       "source": "generate_models/basic_creature_expansion_100_animated/014_puma/2_rigged/014_puma_rigged.glb"
     },
     "leopard": {
@@ -31883,7 +31883,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/leopard.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "b93d403174ae48e7bcb49683215ee6262b21a35d80da17af1cd15d78b0f54e59",
+      "sha256": "e37033cb2b97f87c270df13c1c39bd60abd118d5c2764e4cd2ea828a325f5ec6",
       "source": "generate_models/basic_creature_expansion_100_animated/015_leopard/2_rigged/015_leopard_rigged.glb"
     },
     "cheetah": {
@@ -31894,7 +31894,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/cheetah.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "5f34e4935d9af0a190d78146841aa64f54fd0153653613eb23937e2885f3c8b2",
+      "sha256": "907807502b45fbb74beea700ad0239611e378c5fd871b38e690c8634e61a28e1",
       "source": "generate_models/basic_creature_expansion_100_animated/016_cheetah/2_rigged/016_cheetah_rigged.glb"
     },
     "donkey": {
@@ -31905,7 +31905,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/donkey.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "c7b5762aeb4b8de7a5cd5388089a6de6b9c8276fd447a58cb4484838abf57ab7",
+      "sha256": "03fbb04f37b0a74385e2e7a6c440399f5786b53de905c9e03f6b1498196cdb55",
       "source": "generate_models/basic_creature_expansion_100_animated/017_donkey/2_rigged/017_donkey_rigged.glb"
     },
     "tapir": {
@@ -31916,7 +31916,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/tapir.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "d8a6c19c07bcae94dfb3cd6e233fdf9abb5c04de10387c91fdf940435396a22b",
+      "sha256": "07b73259cd021f2d2e6e7ed66c894e67af432d9577f7e24229a343a9fa27cb4d",
       "source": "generate_models/basic_creature_expansion_100_animated/018_tapir/2_rigged/018_tapir_rigged.glb"
     },
     "elephant": {
@@ -31927,7 +31927,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/elephant.glb",
       "joints": 29,
       "animations": 7,
-      "sha256": "bb5589ff237db9a3adf12a044c9731518a72ddc1b3762c5bc0a9fef120ef8dc5",
+      "sha256": "fee6784ddb48a26596d16f900bd4c419965df3c434737a586d08ce52764297e8",
       "source": "generate_models/basic_creature_expansion_100_animated/019_elephant/2_rigged/019_elephant_rigged.glb"
     },
     "hippopotamus": {
@@ -31938,7 +31938,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/hippopotamus.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "59834b974851639b0955e11fe059cdbc520c212086a235b4273990957daf0239",
+      "sha256": "1ee39b73995cd29a673c2cd8d133b0f5cbad830208565c3b224dfe409cc2a9f5",
       "source": "generate_models/basic_creature_expansion_100_animated/020_hippopotamus/2_rigged/020_hippopotamus_rigged.glb"
     },
     "giraffe": {
@@ -31949,7 +31949,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giraffe.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "73a17ae7cf0a87b21b109dceb3f23961d169180d6be8128fb26ea9b56cb1d3e2",
+      "sha256": "f62a1c6d6d6b3141ca77f896deb919c1aaf781f4eb2ab59466ba5be1bdb44303",
       "source": "generate_models/basic_creature_expansion_100_animated/021_giraffe/2_rigged/021_giraffe_rigged.glb"
     },
     "zebra": {
@@ -31960,7 +31960,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/zebra.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "da0c4c003445f9a95848b3c834c915b50d876f4b3af2297d8548a1963b18e5c7",
+      "sha256": "d7cd12081a8828ed284f75e5fe87f7910f0def82822c28c87591b2f60ecd03fb",
       "source": "generate_models/basic_creature_expansion_100_animated/022_zebra/2_rigged/022_zebra_rigged.glb"
     },
     "kangaroo": {
@@ -31971,7 +31971,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/kangaroo.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "ebf1511988b5489dc9fa40fbaafa246f8c906ac8e56657aa59a782e3fb2957e8",
+      "sha256": "e386a2f12fe0cd17acdb036c4bd3221f4bbc4f00df3ab184102cc1c6efb1a00a",
       "source": "generate_models/basic_creature_expansion_100_animated/023_kangaroo/2_rigged/023_kangaroo_rigged.glb"
     },
     "orangutan": {
@@ -31982,7 +31982,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/orangutan.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "dc631f89969e77cafe2b4de333bb76db86f0bec56a39be34dc532ac8d28503a3",
+      "sha256": "c4a76af948a9da857d4813fc9bdf607e07b774ff7a0a1032ee0e597428a163d3",
       "source": "generate_models/basic_creature_expansion_100_animated/024_orangutan/2_rigged/024_orangutan_rigged.glb"
     },
     "baboon": {
@@ -31993,7 +31993,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/baboon.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "3671d689955ec386a0e7bd85de591c69aca37bebfefa4544c5cd12ebe8a415c0",
+      "sha256": "b884104c67570d66374364744aba7238c85d05f88e272ce6eb620782a81ac4b4",
       "source": "generate_models/basic_creature_expansion_100_animated/025_baboon/2_rigged/025_baboon_rigged.glb"
     },
     "walrus": {
@@ -32004,7 +32004,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/walrus.glb",
       "joints": 18,
       "animations": 7,
-      "sha256": "8e7e29cf71bd058f7ecac702f3422a77f71efde9a520bf32761c35596d13505d",
+      "sha256": "ec23a1950d10104cd1b0269cd873cb4e3662b84d0730d9506639fa59f0835315",
       "source": "generate_models/basic_creature_expansion_100_animated/026_walrus/2_rigged/026_walrus_rigged.glb"
     },
     "manatee": {
@@ -32015,7 +32015,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/manatee.glb",
       "joints": 18,
       "animations": 7,
-      "sha256": "823f8dd5ac50c9a08742257094ef91fab3ca8ac673ff3442133b81af254d180d",
+      "sha256": "2225257bb536537f7414b20567afff278ed38f22de70280df2d3530e6775f488",
       "source": "generate_models/basic_creature_expansion_100_animated/027_manatee/2_rigged/027_manatee_rigged.glb"
     },
     "dolphin": {
@@ -32026,7 +32026,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/dolphin.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "302fd6137c8bae3ce4f6609a204c0b2c300eb003be54b862b20a8ee246e6bb20",
+      "sha256": "1c7c697e6058f215465872557eaae14f1f826d44cb5b84789c10aa15cb108d74",
       "source": "generate_models/basic_creature_expansion_100_animated/028_dolphin/2_rigged/028_dolphin_rigged.glb"
     },
     "raven": {
@@ -32037,7 +32037,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/raven.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "fb9b28345f8c7d973365207b43786c592da328046dd93d8e138110e209ba5293",
+      "sha256": "9c87b6fb6078f7401fddaa36e0d9da90ab5891ab2fff88d4675187b76318af3e",
       "source": "generate_models/basic_creature_expansion_100_animated/029_raven/2_rigged/029_raven_rigged.glb"
     },
     "magpie": {
@@ -32048,7 +32048,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/magpie.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "cc0be0e8852342f574d3c3f0303eaad09596b9d0fde0779c3991dcc954605e2f",
+      "sha256": "7dac47332bf79b94b05b5745e3e8cb1526172b377c23f742c6c776e1ea60f98a",
       "source": "generate_models/basic_creature_expansion_100_animated/030_magpie/2_rigged/030_magpie_rigged.glb"
     },
     "mallard_duck": {
@@ -32059,7 +32059,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/mallard_duck.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "572d4ecd3bda423260c4a11d08da68e7bc799652921b71cf141a65dcd41976a8",
+      "sha256": "b72a038fb0010056dd9388e7fb81fab1ed6b12565b13981c0a0391a188a2cfa6",
       "source": "generate_models/basic_creature_expansion_100_animated/031_mallard_duck/2_rigged/031_mallard_duck_rigged.glb"
     },
     "goose": {
@@ -32070,7 +32070,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/goose.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "748842b153614ccb2729b1814b6262255e47cf8a4f3b645f676b2082c2d2c0b7",
+      "sha256": "199d5793f016403d7c1ec51f13e0e3595fcee509cf03b6835afd56ef040aaf41",
       "source": "generate_models/basic_creature_expansion_100_animated/032_goose/2_rigged/032_goose_rigged.glb"
     },
     "swan": {
@@ -32081,7 +32081,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/swan.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "8d10ad684c3ec141abb924402df5d207349618635ccba3c4c9c9a6e47b9c373e",
+      "sha256": "0c9d2caf258c9a008b5a61a4587f46d68ce4b214c10f42cdb2d9f2833b294acf",
       "source": "generate_models/basic_creature_expansion_100_animated/033_swan/2_rigged/033_swan_rigged.glb"
     },
     "rooster": {
@@ -32092,7 +32092,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/rooster.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "a5fb8cca6740d9f321c3296d4d85a2a6e1b09f860b3eacc8e3ee3199bac16f84",
+      "sha256": "a17dfe656d74035e6cd27602ae32fc55523dd21bc5d3c36c85ae1dbbe57a9737",
       "source": "generate_models/basic_creature_expansion_100_animated/034_rooster/2_rigged/034_rooster_rigged.glb"
     },
     "turkey": {
@@ -32103,7 +32103,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/turkey.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "56a395f2859f3a3c39da0007e262b4b9991579508aadbe830f5744d121f1dcdf",
+      "sha256": "6c82536ecc8c3549f8d1aedb560c3a407de9fb7847976741b497bb00cd8ba51e",
       "source": "generate_models/basic_creature_expansion_100_animated/035_turkey/2_rigged/035_turkey_rigged.glb"
     },
     "pheasant": {
@@ -32114,7 +32114,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/pheasant.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "051f6eaca5a286e3ad29e3b5aadf57c0ac10dda3f5e14e9728898951ca439914",
+      "sha256": "83babdc3aaea8174bbdb40546c7af24e9cc32b5d51b308eb357457ef7f9722af",
       "source": "generate_models/basic_creature_expansion_100_animated/036_pheasant/2_rigged/036_pheasant_rigged.glb"
     },
     "ostrich": {
@@ -32125,7 +32125,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/ostrich.glb",
       "joints": 17,
       "animations": 7,
-      "sha256": "05a477b70748777f2e2fdf278dbae3f3c3d2bdd990b968b49b79b35d9cb62bfe",
+      "sha256": "da1deee44da7ad84a140f506a75c4ec8e8d056d1d962e7c91c3dabc257fb60d6",
       "source": "generate_models/basic_creature_expansion_100_animated/037_ostrich/2_rigged/037_ostrich_rigged.glb"
     },
     "penguin": {
@@ -32136,7 +32136,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/penguin.glb",
       "joints": 17,
       "animations": 7,
-      "sha256": "9f40d56ad46f70b582d948816f2b7234c87587636937c8eb537a96c0f0c998c3",
+      "sha256": "b8d94e5ab120b5e5039bfade6c19e61ed068ea81d2798c4a11ef88e53923da19",
       "source": "generate_models/basic_creature_expansion_100_animated/038_penguin/2_rigged/038_penguin_rigged.glb"
     },
     "pelican": {
@@ -32147,7 +32147,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/pelican.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "bf818f522b6215d28ce6fdd35cb3b0168108f0f1913446fa7757e7c2dd219e84",
+      "sha256": "2f108a7a6c95b9e7960d623abdff3186a2822317b55dbcec59d1b607abf5cf4e",
       "source": "generate_models/basic_creature_expansion_100_animated/039_pelican/2_rigged/039_pelican_rigged.glb"
     },
     "macaw": {
@@ -32158,7 +32158,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/macaw.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "354c7f369edb5fb981a72ab91b99851942738849bc3bdf74322edcc004011955",
+      "sha256": "4a9a518b940f8da72bb430870baf0aa62616a1bed5d8995b8080e147b825b1d5",
       "source": "generate_models/basic_creature_expansion_100_animated/040_macaw/2_rigged/040_macaw_rigged.glb"
     },
     "cobra": {
@@ -32169,7 +32169,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/cobra.glb",
       "joints": 17,
       "animations": 7,
-      "sha256": "c6bf00e1fc44d2faebd3e8f5fdb6b0c98c95b1bf6b14e9df48d0ad5bc4d4db2c",
+      "sha256": "0b9f8456157ab460356cfa2ad0116d9228ec5ec198a311564624317be06b04cd",
       "source": "generate_models/basic_creature_expansion_100_animated/041_cobra/2_rigged/041_cobra_rigged.glb"
     },
     "chameleon": {
@@ -32180,7 +32180,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/chameleon.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "ad218360a5496d22f6b20686191edd00d055e87ecfb3ad61b0f0a4ad1672fee9",
+      "sha256": "b984610fcb1db896892efb2f6c95f22306dff239dddd32256f3aa54b2ff44b95",
       "source": "generate_models/basic_creature_expansion_100_animated/042_chameleon/2_rigged/042_chameleon_rigged.glb"
     },
     "gecko": {
@@ -32191,7 +32191,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/gecko.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "d579777deccba822a99833dc7d11b18eeb31c51237a1273c91fc249b5d7ed73c",
+      "sha256": "77d2f0358f71fb5822f76515021222df54818caa12551657a2b0029497c3b2db",
       "source": "generate_models/basic_creature_expansion_100_animated/043_gecko/2_rigged/043_gecko_rigged.glb"
     },
     "frilled_lizard": {
@@ -32202,7 +32202,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/frilled_lizard.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "91c72d05e3208b75e45e4c464476ce94ef250f7b041ebda846f85a57469b7110",
+      "sha256": "cb0496b7744fb059e1c7dd69b65ec5095f919ee33d803d64c2eac37f6aba392e",
       "source": "generate_models/basic_creature_expansion_100_animated/044_frilled_lizard/2_rigged/044_frilled_lizard_rigged.glb"
     },
     "iguana": {
@@ -32213,7 +32213,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/iguana.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "bcbc1ec0844b1a3f16e67695fe6d42f0139ead0ec7b260980fa461c33c4157f0",
+      "sha256": "d58d16dc46e9b3c0aaa8632c12c4a8c36c3d922c4c545361fb05545d0470c361",
       "source": "generate_models/basic_creature_expansion_100_animated/045_iguana/2_rigged/045_iguana_rigged.glb"
     },
     "caecilian": {
@@ -32224,7 +32224,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/caecilian.glb",
       "joints": 22,
       "animations": 7,
-      "sha256": "7602ccdd51ce53d69ee9456eb71972b8fe200bbbb591063b83a9ab5eedd43f57",
+      "sha256": "0d3b45d66fb3f8459c7e38efbb71ce3c2df58cbc1a74ef4c80903ae37ba50a8a",
       "source": "generate_models/basic_creature_expansion_100_animated/046_caecilian/2_rigged/046_caecilian_rigged.glb"
     },
     "mudskipper": {
@@ -32235,7 +32235,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/mudskipper.glb",
       "joints": 16,
       "animations": 7,
-      "sha256": "4f0b80ed7cadd5f7e7ddc81d95a34359b25930e37d15f983ea26377b1df4f99f",
+      "sha256": "6879e120c27c440cc78efd47c696e6065078d19f9c7c09627378b60e011bc49e",
       "source": "generate_models/basic_creature_expansion_100_animated/047_mudskipper/2_rigged/047_mudskipper_rigged.glb"
     },
     "snapping_turtle": {
@@ -32246,7 +32246,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/snapping_turtle.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "c8878cf7d4655e8d762b3fe0e5e83b602816469efa4aa41b70948151eda6b93f",
+      "sha256": "4e4446de5275c4b6dc16c843a2b74b48238bb8ac7a37d17b19e123986b87dca7",
       "source": "generate_models/basic_creature_expansion_100_animated/048_snapping_turtle/2_rigged/048_snapping_turtle_rigged.glb"
     },
     "hammerhead_shark": {
@@ -32257,7 +32257,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/hammerhead_shark.glb",
       "joints": 17,
       "animations": 7,
-      "sha256": "993cfd025ab455825fdeee231a2e200a7dc54ed349dae03c91daf53f7f71f514",
+      "sha256": "f2fcf42bae57526ad2a017eaba67a5a6b2c3e88e7b4de5d56cfa928e427bcd57",
       "source": "generate_models/basic_creature_expansion_100_animated/049_hammerhead_shark/2_rigged/049_hammerhead_shark_rigged.glb"
     },
     "sturgeon": {
@@ -32268,7 +32268,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/sturgeon.glb",
       "joints": 17,
       "animations": 7,
-      "sha256": "0c63f6064d0a6adcb3f43f0a3edb9b071509b062f0c0938db0c2c075514753d5",
+      "sha256": "864d3527e0ca2cc1d559424ad486f910b1126d665b30d8adb1655f3c481e6ae1",
       "source": "generate_models/basic_creature_expansion_100_animated/050_sturgeon/2_rigged/050_sturgeon_rigged.glb"
     },
     "seahorse": {
@@ -32279,7 +32279,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/seahorse.glb",
       "joints": 15,
       "animations": 7,
-      "sha256": "84507bc16d9b359de4f1b61a52e8f6322ac07b7b202c16318a6e178c74fe1a4d",
+      "sha256": "d302e635c66e8439af50c6000c3799c4dcf67984f6bf7f2eea9273f429c58a99",
       "source": "generate_models/basic_creature_expansion_100_animated/051_seahorse/2_rigged/051_seahorse_rigged.glb"
     },
     "octopus": {
@@ -32290,7 +32290,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/octopus.glb",
       "joints": 36,
       "animations": 7,
-      "sha256": "bcba1cf57023af3234995ceed64461b02387fc3a00bbb892119dce50e5536dba",
+      "sha256": "ea9cfd06e54cf0fa0413044acf9e2f4d09705a5033e9370cb6038f19b626b0ba",
       "source": "generate_models/basic_creature_expansion_100_animated/052_octopus/2_rigged/052_octopus_rigged.glb"
     },
     "cuttlefish": {
@@ -32301,7 +32301,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/cuttlefish.glb",
       "joints": 46,
       "animations": 7,
-      "sha256": "a9c0ad57208c02886226c4773ccbabe872d4d588fb1d4dbf4a4c9600b4491992",
+      "sha256": "5dd82394d93233d0ef7343d184e157d5e85158176583992c58fd3e33cc5cad49",
       "source": "generate_models/basic_creature_expansion_100_animated/053_cuttlefish/2_rigged/053_cuttlefish_rigged.glb"
     },
     "nautilus": {
@@ -32312,7 +32312,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/nautilus.glb",
       "joints": 53,
       "animations": 7,
-      "sha256": "f561a699f083d02fe80de24901a332db5bd1e2486e403533fa3362ef0b0bda60",
+      "sha256": "15c0346b145a49ae409a9437e56352d75083633fc76607e5e728408aa45e989f",
       "source": "generate_models/basic_creature_expansion_100_animated/054_nautilus/2_rigged/054_nautilus_rigged.glb"
     },
     "lobster": {
@@ -32323,7 +32323,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/lobster.glb",
       "joints": 37,
       "animations": 7,
-      "sha256": "949531630df12d218e59868264835f8ce8fd0e97a2e87c982a6f0849d1fad1d4",
+      "sha256": "44c8e01afc0ad5382b4afbd3547c5fbb0d5929c3bc1c4296df5362cf7b0eff58",
       "source": "generate_models/basic_creature_expansion_100_animated/055_lobster/2_rigged/055_lobster_rigged.glb"
     },
     "giant_centipede": {
@@ -32334,7 +32334,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_centipede.glb",
       "joints": 112,
       "animations": 7,
-      "sha256": "47a52843cd7185c487c6a6f418acffa138e021a884432bcf0dbd5f6f1dffe387",
+      "sha256": "ba7402cd310938b94875606f1a30f778c73fad8be15f873271ba0059ef8c7f78",
       "source": "generate_models/basic_creature_expansion_100_animated/056_giant_centipede/2_rigged/056_giant_centipede_rigged.glb"
     },
     "giant_snail": {
@@ -32345,7 +32345,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_snail.glb",
       "joints": 14,
       "animations": 7,
-      "sha256": "9323cfc17bdfe8208ed0b552367c1abaf952eea983ccf77bbdcdd1f405f71a35",
+      "sha256": "ed8501b8ec2bcb1372c7944b3801aac9a4278b8889727f0fb65bd48d182d668e",
       "source": "generate_models/basic_creature_expansion_100_animated/057_giant_snail/2_rigged/057_giant_snail_rigged.glb"
     },
     "giant_leech": {
@@ -32356,7 +32356,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_leech.glb",
       "joints": 22,
       "animations": 7,
-      "sha256": "cd8e24f266aa6438c28458818e6578191bd1d96654f8165db29e669d83eda65d",
+      "sha256": "e9f68f58ebfe28d29720d6ece126c15747ae08b4f294e887fcfbe5a01f8b8f39",
       "source": "generate_models/basic_creature_expansion_100_animated/058_giant_leech/2_rigged/058_giant_leech_rigged.glb"
     },
     "giant_wasp": {
@@ -32367,7 +32367,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_wasp.glb",
       "joints": 33,
       "animations": 8,
-      "sha256": "7a5526bb48a713ecb621f3a9dc5fc8f143d9fc8d2e032b70f0ce373aead52ba1",
+      "sha256": "32f1bbe66da4f7b7f699ac690af853fadc3affe1259ed54d40caa682a46486d2",
       "source": "generate_models/basic_creature_expansion_100_animated/059_giant_wasp/2_rigged/059_giant_wasp_rigged.glb"
     },
     "giant_ant": {
@@ -32378,7 +32378,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_ant.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "cfc0830557b26e74b6f45c85652a310f0a944091b6a56b7c9944f45b8d33fc2f",
+      "sha256": "1dabf314be9a30e9d9b0ab446c840bee81ff427e5fe621b15835d7933be5cbea",
       "source": "generate_models/basic_creature_expansion_100_animated/060_giant_ant/2_rigged/060_giant_ant_rigged.glb"
     },
     "skeleton": {
@@ -32389,7 +32389,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/skeleton.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "fd23a2bcb49bb3b0678bb613d6c272984b4fad32936ddbee54db960c96585253",
+      "sha256": "ef52a3a5e83250ed3fa865e8518e3e0ca87b1bb27db9fcf05b932baabf822f22",
       "source": "generate_models/basic_creature_expansion_100_animated/061_skeleton/2_rigged/061_skeleton_rigged.glb"
     },
     "zombie": {
@@ -32400,7 +32400,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/zombie.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "faab4f83db690add41b3943f4093022d366381ba2222b68a6d23b76587f451cc",
+      "sha256": "297102bbdcd774fd29e76a2970a569a9fb2e51b9f72a361b5e56b05142be3a68",
       "source": "generate_models/basic_creature_expansion_100_animated/062_zombie/2_rigged/062_zombie_rigged.glb"
     },
     "ghoul": {
@@ -32411,7 +32411,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/ghoul.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "cf2153dfef05e359b6ad46dae768662ec4078c12e778fdd6213be55a2997840e",
+      "sha256": "b868775311e3cae1e6903fdc48a324e55899b7b0a162804202073f76148c2587",
       "source": "generate_models/basic_creature_expansion_100_animated/063_ghoul/2_rigged/063_ghoul_rigged.glb"
     },
     "mummy": {
@@ -32422,7 +32422,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/mummy.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "f45c9055a5fb8b4ecfcca6f89ee3280ee5fc7d8c8a035c31dab0aba988d455b0",
+      "sha256": "530a7e772ec6f57ff805df340cb757e931e5cb606a875a3ea89847374faa70ab",
       "source": "generate_models/basic_creature_expansion_100_animated/064_mummy/2_rigged/064_mummy_rigged.glb"
     },
     "vampire": {
@@ -32433,7 +32433,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/vampire.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "416ecc869a7c5688e875db60c5fded62a8b68ffb564732a634698cdfefa98e7d",
+      "sha256": "8dde2bf17bcbb4d9b2a780cdc464e7bc8bdfc872bbd8dfa0c09ff142c0c59d30",
       "source": "generate_models/basic_creature_expansion_100_animated/065_vampire/2_rigged/065_vampire_rigged.glb"
     },
     "imp": {
@@ -32444,7 +32444,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/imp.glb",
       "joints": 29,
       "animations": 8,
-      "sha256": "8f97fb8544ae1d611d2d218baf77019175dbe988a09590372e8a5a0f44781e87",
+      "sha256": "c5167d6e0320c488abf2e513d2269c0ed2ccdf1e9ff5733016fa3195a512f203",
       "source": "generate_models/basic_creature_expansion_100_animated/066_imp/2_rigged/066_imp_rigged.glb"
     },
     "gargoyle": {
@@ -32455,7 +32455,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/gargoyle.glb",
       "joints": 29,
       "animations": 8,
-      "sha256": "70ddd8fa0ecb7bad1ad30a6744235a5f19488ada12225f431db9453dd6d41f9e",
+      "sha256": "f7da6e661f0da538da969364c03fa0a105064bf8566a12e16cd154e9c838203d",
       "source": "generate_models/basic_creature_expansion_100_animated/067_gargoyle/2_rigged/067_gargoyle_rigged.glb"
     },
     "gremlin": {
@@ -32466,7 +32466,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/gremlin.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "76970d23b9a353a63a7da4f8b6bee9ffe22ff7b7acc0a27778d2127b1b1c918e",
+      "sha256": "fab708699707c8d205525d9483badf66b16d85d74dd66cebd9bd8b3b064bb703",
       "source": "generate_models/basic_creature_expansion_100_animated/068_gremlin/2_rigged/068_gremlin_rigged.glb"
     },
     "hobgoblin": {
@@ -32477,7 +32477,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/hobgoblin.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "98a492e6e3c5018cbd94760fe4b2f8f4ccc4c6d369e3a5ff3c126e8b371f3466",
+      "sha256": "18999531468a31a5477b88409f1978ae3a75dff48a926edcdbb4a862b53e53df",
       "source": "generate_models/basic_creature_expansion_100_animated/069_hobgoblin/2_rigged/069_hobgoblin_rigged.glb"
     },
     "gnoll": {
@@ -32488,7 +32488,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/gnoll.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "24bf97d6940f7de18db9bed77cbf514e1c40842b3d02bb2d844ccf9018f3915e",
+      "sha256": "5e144a8d1f3f5ac8693098f2cc9b7c91143cc72d4155b52b7745c53af37fdf9e",
       "source": "generate_models/basic_creature_expansion_100_animated/070_gnoll/2_rigged/070_gnoll_rigged.glb"
     },
     "centaur": {
@@ -32499,7 +32499,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/centaur.glb",
       "joints": 32,
       "animations": 7,
-      "sha256": "aeefadcde469c9dc3ca5eabb74a50bb135faafc66e64f21f027f206abac16130",
+      "sha256": "25c7f7408d3d8e736d40694e9bf7b6c75b0b27ef7ac3a8c735e83eafcc532ec9",
       "source": "generate_models/basic_creature_expansion_100_animated/071_centaur/2_rigged/071_centaur_rigged.glb"
     },
     "merfolk": {
@@ -32510,7 +32510,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/merfolk.glb",
       "joints": 20,
       "animations": 7,
-      "sha256": "665975b2932794618592eead76e590f4d22418185d3b8fdf0116d6ae3aa699d9",
+      "sha256": "31bb4e3576afdedc6b03ae56408bdd1ce82bd91c85508847ffc661109cf7fee3",
       "source": "generate_models/basic_creature_expansion_100_animated/072_merfolk/2_rigged/072_merfolk_rigged.glb"
     },
     "tengu": {
@@ -32521,7 +32521,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/tengu.glb",
       "joints": 23,
       "animations": 8,
-      "sha256": "5548743fda33173f84468c3c88bc78d707d1624b2444feaac7e5bcf76f74c583",
+      "sha256": "c4bf7152a99596af9e9a98273491541a1eb558c148498fc50a964f81ef56bb1b",
       "source": "generate_models/basic_creature_expansion_100_animated/073_tengu/2_rigged/073_tengu_rigged.glb"
     },
     "arachne": {
@@ -32532,7 +32532,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/arachne.glb",
       "joints": 44,
       "animations": 7,
-      "sha256": "9d6dcfeef89979cbe1cf7d12aeaffe1e1e46906511d55b526ddc3b0be13f414d",
+      "sha256": "0e62909aab064e719bc3ce477e1141da15e101b2ea7fa31bada70a7bcf10be9a",
       "source": "generate_models/basic_creature_expansion_100_animated/074_arachne/2_rigged/074_arachne_rigged.glb"
     },
     "manticore": {
@@ -32543,7 +32543,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/manticore.glb",
       "joints": 29,
       "animations": 8,
-      "sha256": "47d976682e5081b9b3a62047cfec1733c4e48ba0f8b62101c304205a33b5d285",
+      "sha256": "183e05cae0d626dfa9c4b65ebe0d0762f92680be066641009eda3fcacda0b84c",
       "source": "generate_models/basic_creature_expansion_100_animated/075_manticore/2_rigged/075_manticore_rigged.glb"
     },
     "cockatrice": {
@@ -32554,7 +32554,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/cockatrice.glb",
       "joints": 23,
       "animations": 8,
-      "sha256": "eec86c7cc2fdb08155a37ec5377c071ce5a6ec757880f51d0f71c2651e6b3378",
+      "sha256": "0c45d09a89141dbc93008d9a0c17b13caba36a13fd10410bab044f62e60a8329",
       "source": "generate_models/basic_creature_expansion_100_animated/076_cockatrice/2_rigged/076_cockatrice_rigged.glb"
     },
     "peryton": {
@@ -32565,7 +32565,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/peryton.glb",
       "joints": 29,
       "animations": 8,
-      "sha256": "f44292308548c21ecbffcdba4aedb57955c955de1ea3bac3b1f154f83110e55c",
+      "sha256": "f1d0c122c307a2a5dcc9dd9ef0d1e8946e0491da22a29f5572a42c7278fdc232",
       "source": "generate_models/basic_creature_expansion_100_animated/077_peryton/2_rigged/077_peryton_rigged.glb"
     },
     "jackalope": {
@@ -32576,7 +32576,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/jackalope.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "ce0df7b2357bb8f9568f543b47ea02d3a972e121350925df052b6b3e4676de19",
+      "sha256": "d83b855232326e4b92c5b5b252f65631e0be8e13475715d867192accd6e05afa",
       "source": "generate_models/basic_creature_expansion_100_animated/078_jackalope/2_rigged/078_jackalope_rigged.glb"
     },
     "qilin": {
@@ -32587,7 +32587,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/qilin.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "d14ce3e19582ab71bf00828b1518200493d603f147dc3a935d232d23a51e3ab9",
+      "sha256": "8b80153739b4f8ecb00ddf5acf1b94b9944e826648d8e2a6536f074d9ffe4aad",
       "source": "generate_models/basic_creature_expansion_100_animated/079_qilin/2_rigged/079_qilin_rigged.glb"
     },
     "dragon_turtle": {
@@ -32598,7 +32598,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/dragon_turtle.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "943a6791d79c654471165a5e5bc15b5260ad966108db864584eb3ac0120e7052",
+      "sha256": "2220b57d18962537277b587f911c19e715cfebf9794279d9c2fee658b4f17296",
       "source": "generate_models/basic_creature_expansion_100_animated/080_dragon_turtle/2_rigged/080_dragon_turtle_rigged.glb"
     },
     "burrowing_landshark": {
@@ -32609,7 +32609,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/burrowing_landshark.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "34923c95c9ab491a69aba7bc253f848f99caaffde13d35e5d51ed9d044e47d0b",
+      "sha256": "a81255f4a908ba83f4607da964e27cf498998e0a787e7194e5badd07ec9231a5",
       "source": "generate_models/basic_creature_expansion_100_animated/081_burrowing_landshark/2_rigged/081_burrowing_landshark_rigged.glb"
     },
     "iron_eater": {
@@ -32620,7 +32620,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/iron_eater.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "5e833034af9ac8c576c7871288faae0fd71f0e21ff1e5e7db2f5123a5b7986e1",
+      "sha256": "c818b3e64f38158289a9daf902ff40a4495414afcb89cc95fa32178cd1eec899",
       "source": "generate_models/basic_creature_expansion_100_animated/082_iron_eater/2_rigged/082_iron_eater_rigged.glb"
     },
     "stalactite_maw": {
@@ -32631,7 +32631,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/stalactite_maw.glb",
       "joints": 21,
       "animations": 7,
-      "sha256": "109e21b3372e56cde576837d4b048b85e83f08b6e88abcc91088e33683641395",
+      "sha256": "b44a2c83ec35e14b86e32947f1968e4ff66e9e9c78b5009f5a9d2ab236658815",
       "source": "generate_models/basic_creature_expansion_100_animated/083_stalactite_maw/2_rigged/083_stalactite_maw_rigged.glb"
     },
     "mimic": {
@@ -32642,7 +32642,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/mimic.glb",
       "joints": 18,
       "animations": 7,
-      "sha256": "5c8d466de9b0815729cdcf8f0c3e428bb6074d0881688a74ab6eda45aea3ec18",
+      "sha256": "719e055cbb00ac90d32fc58924df064aceedb41e39d97954468f5078cd7860c6",
       "source": "generate_models/basic_creature_expansion_100_animated/084_mimic/2_rigged/084_mimic_rigged.glb"
     },
     "living_armor": {
@@ -32653,7 +32653,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/living_armor.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "9f870d6cd0fd49c403466a342fbf3809487bdc364b1f237fd1836f55867019af",
+      "sha256": "afdd63ede8f5a5e5d5993cb9e2b9a99e996a086aed2714960a16db32202e26bc",
       "source": "generate_models/basic_creature_expansion_100_animated/085_living_armor/2_rigged/085_living_armor_rigged.glb"
     },
     "flesh_golem": {
@@ -32664,7 +32664,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/flesh_golem.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "a987f7414de4e9e4ebda1fdb72b77b0a3dfcd9a58f5f6c3e0c2ee5b6bdf2fa54",
+      "sha256": "f7afbd34e1f28c2bfce277cc03132dc96fd9d0ee1bd969f37b2369316aabcf16",
       "source": "generate_models/basic_creature_expansion_100_animated/086_flesh_golem/2_rigged/086_flesh_golem_rigged.glb"
     },
     "slime": {
@@ -32675,7 +32675,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/slime.glb",
       "joints": 10,
       "animations": 7,
-      "sha256": "1eab1862b14d6c008c6769a4018fafc6719748cf51ced858afcbc14694a54825",
+      "sha256": "0dd3bf855ecceaf5836e39674f20befb4e80315f217ad52565b1a24028314d89",
       "source": "generate_models/basic_creature_expansion_100_animated/087_slime/2_rigged/087_slime_rigged.glb"
     },
     "living_spellbook": {
@@ -32686,7 +32686,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/living_spellbook.glb",
       "joints": 5,
       "animations": 7,
-      "sha256": "eee270da6360d7a1da1091175aeae09fdedc1044785ee32c5ed55e287c352063",
+      "sha256": "a9f90991e807e4f74d3a07f0513bcf2449d6efb488e4ec71eded7aec3b5b22a2",
       "source": "generate_models/basic_creature_expansion_100_animated/088_living_spellbook/2_rigged/088_living_spellbook_rigged.glb"
     },
     "crawling_hand": {
@@ -32697,7 +32697,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/crawling_hand.glb",
       "joints": 17,
       "animations": 7,
-      "sha256": "ebf48e9f0d250a292d42089c7ba119f3291cc8d997cda1d88e9790f3df6ddc4b",
+      "sha256": "d3868b1f61dfe4e6683f9db596c5855f97d0720dab8a32ac0f529ae174b8ab89",
       "source": "generate_models/basic_creature_expansion_100_animated/089_crawling_hand/2_rigged/089_crawling_hand_rigged.glb"
     },
     "floating_eye": {
@@ -32708,7 +32708,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/floating_eye.glb",
       "joints": 21,
       "animations": 7,
-      "sha256": "141635468cd6ef3f780b194fc081cda3e0a644ee342ce69317866572f6202f4c",
+      "sha256": "a3311fc298661d60fca3d7c1b03fa17bfe9b0c5840a544b4af3cbc317694a8f2",
       "source": "generate_models/basic_creature_expansion_100_animated/090_floating_eye/2_rigged/090_floating_eye_rigged.glb"
     },
     "levitating_jellyfish": {
@@ -32719,7 +32719,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/levitating_jellyfish.glb",
       "joints": 41,
       "animations": 7,
-      "sha256": "8cd918b14f05659fefa933f2f9b37d607d68a3ca8567bf7b335615a49fb67c40",
+      "sha256": "3c47b6770901e8c065ba8d8cbff4e4b4179b684df6c6153bb57711ff721a82db",
       "source": "generate_models/basic_creature_expansion_100_animated/091_levitating_jellyfish/2_rigged/091_levitating_jellyfish_rigged.glb"
     },
     "giant_worm": {
@@ -32730,7 +32730,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_worm.glb",
       "joints": 22,
       "animations": 7,
-      "sha256": "077ec50e0426789740bda69f742e79f96d706c34e4eeddf7417a04cea36d9125",
+      "sha256": "4bf2f5073d73ff407d4339547e970e1ffee551e2f272fd269d0c31faaa811206",
       "source": "generate_models/basic_creature_expansion_100_animated/092_giant_worm/2_rigged/092_giant_worm_rigged.glb"
     },
     "cerberus": {
@@ -32741,7 +32741,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/cerberus.glb",
       "joints": 28,
       "animations": 7,
-      "sha256": "a4b885fed6aa1dbefeebeb649b9e80f728c195479f98f58f3f04a8ca0934783e",
+      "sha256": "a34c5126434b0899f792545627fcb8b313ee85371f6e6dc487a3bd771460e984",
       "source": "generate_models/basic_creature_expansion_100_animated/093_cerberus/2_rigged/093_cerberus_rigged.glb"
     },
     "two_headed_giant": {
@@ -32752,7 +32752,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/two_headed_giant.glb",
       "joints": 20,
       "animations": 7,
-      "sha256": "821f85c86a9b9883fb214089258c3b0d57cdfb5e00af7e6e04ac96be8d51398d",
+      "sha256": "520bcafb8a6eeea7552c3ebb47e997ee3ec715632067de51e09c724e01c0591f",
       "source": "generate_models/basic_creature_expansion_100_animated/094_two_headed_giant/2_rigged/094_two_headed_giant_rigged.glb"
     },
     "winged_serpent": {
@@ -32763,7 +32763,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/winged_serpent.glb",
       "joints": 26,
       "animations": 8,
-      "sha256": "d04b6473679543abac182b3f0a6f0a78594dbb12766cba12e6e0099268421433",
+      "sha256": "732721f1884932d71d6dd61a3a28c3d1d88bc2cad2e4234d63c4bb992d8e41f4",
       "source": "generate_models/basic_creature_expansion_100_animated/095_winged_serpent/2_rigged/095_winged_serpent_rigged.glb"
     },
     "four_armed_guardian": {
@@ -32774,7 +32774,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/four_armed_guardian.glb",
       "joints": 30,
       "animations": 7,
-      "sha256": "1a81474af000f9ca842e659404e442783064e6c1445d5d0ecfd421979dd13fa3",
+      "sha256": "544d7f5f1037ea268b437536f0b1ae85e2676e36dc3e0e07f33d0ce5f3bd6175",
       "source": "generate_models/basic_creature_expansion_100_animated/096_four_armed_guardian/2_rigged/096_four_armed_guardian_rigged.glb"
     },
     "animated_sword": {
@@ -32785,7 +32785,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/animated_sword.glb",
       "joints": 3,
       "animations": 7,
-      "sha256": "2fe619dd5378ca15903f098601020f2e98a018ca3e8e24524aaa71239bdc5bd2",
+      "sha256": "995e6d3fdf879c36935505ee4bd656932d5c5bec06aa815f302ab067deeb55ad",
       "source": "generate_models/basic_creature_expansion_100_animated/097_animated_sword/2_rigged/097_animated_sword_rigged.glb"
     },
     "giant_antlion": {
@@ -32796,7 +32796,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_antlion.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "2db3ca30ec7ffacd7080c663a86a918dfc50544409df058247640a0dfffa0e92",
+      "sha256": "2df5c9b043c1726101d3f67f07ab8c96950f329a837701e3ea62a44d50e3fde2",
       "source": "generate_models/basic_creature_expansion_100_animated/098_giant_antlion/2_rigged/098_giant_antlion_rigged.glb"
     },
     "sphinx": {
@@ -32807,7 +32807,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/sphinx.glb",
       "joints": 29,
       "animations": 8,
-      "sha256": "07744b8dda9dbc38edf9c0bccfb3961f72b1fe9717d4e67d334bdda8d9e96dcb",
+      "sha256": "d10e389dc3443b0b5451981163cb2b09e208490bb9caa5a0ed0e288415c7a8e2",
       "source": "generate_models/basic_creature_expansion_100_animated/099_sphinx/2_rigged/099_sphinx_rigged.glb"
     },
     "air_elemental": {
@@ -32818,7 +32818,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/air_elemental.glb",
       "joints": 20,
       "animations": 7,
-      "sha256": "81d1ee05d63217d66ec8340bf40ce1004a09797049fd4a4855e3441c6d4d7f4c",
+      "sha256": "1afdd07be6b2699dde174b5aad741857aab7eb7d03023b94f888116bf6aaed27",
       "source": "generate_models/basic_creature_expansion_100_animated/100_air_elemental/2_rigged/100_air_elemental_rigged.glb"
     }
   }
