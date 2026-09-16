@@ -589,3 +589,65 @@ that a site wins on the far side of a neighbour still belongs to the region in
 `owner` and `owner_at` but is quietly missing from its `polygons` entry, and so
 from its `bounds` and `address`. Each extra site is one more vectorised distance
 field over the 630k ownership cells, about 15 ms, so a handful is not felt.
+
+## The ownership partition on its own
+
+`world_layout.ownership_map(plan, cell=CELL, ids=None)` returns
+`(ids, owner, x0, z0)`: the territory partition of the plan's `bounds` on cell
+centres `cell` metres apart, scored from the region `center` points,
+`ownership_bias` and `ownership_sites` and nothing else. No heights, no water
+and no sampled continent, so the plan editor draws the partition at 8 m in
+milliseconds without building a `World`. `ids` are the plan's regions in its own
+order unless a list is given, and `owner` is an int grid of indices into them,
+row 0 at `z0` and column 0 at `x0`, whose cell `[row][column]` covers
+`[x0+column*cell, x0+(column+1)*cell)` by `[z0+row*cell, z0+(row+1)*cell)` and
+is scored at its centre. The `World` constructor is one call to this at `CELL`
+on its own grid, so the preview and the world it previews cannot drift: the
+scoring, the bias and the tie rule exist in one place only.
+
+`owner_components(plan, region, cell=8.0)` labels that region's cells
+4-connected and returns one boolean mask per component, each the grid's own
+shape, largest first; count a mask with `np.count_nonzero` and read its metres
+with `component_extent(mask, x0, z0, cell)`, which gives
+`{"cells": n, "bounds": [x0, z0, x1, z1]}`. `owner_islands` is the same list
+past the largest, empty when the territory is one body of land. This is how to
+see the trap the section above names: a site that wins ground on the far side of
+a neighbour leaves a territory in two pieces, and since `outline` traces a
+single contour that island is quietly missing from `polygons`, and so from
+`bounds` and `address`, while `owner` and `owner_at` still name the region. Every
+territory of the live plan is one component at 8 m.
+
+## The published content transform
+
+`export_contracts.content_transform(content, region)` builds the
+`contentTransform` each region's publication spec carries: the mapping from that
+territory's legacy source frame into the continent, and the continuous fallback
+for any content point the export never placed explicitly.
+
+The old fields stay. `scale` about `sourceCenter`, with `targetCenter`, is one
+uniform scale and no turn, and it is all that
+`publish_diagonal_continent.transform_tile`, `estimated_served_tile` here and
+the paired server's `tests/geographic_contracts.native_area_tile` can read. A
+retained transform may now squeeze its layout per axis and turn it about its own
+point (Whitehorn), and no scalar carries either, so an exact `affine`
+`[a, b, c, d, e, f]` is published besides: continent `X = a*x + b*z + e` and
+`Z = c*x + d*z + f` for a source point `(x, z)`. It is read straight off
+`Content.mapped_xz` at `(0, 0)`, `(1, 0)` and `(0, 1)`, so it reproduces
+`landscape.retained_map_xz` for a retained territory and the centre-and-scale
+rule for every other one - to about 1e-11 m, the cost of differencing probes -
+with no second copy of either rule to drift. A dict transform publishes its own
+`yawDegrees` and `squeeze` `[sx, sz]` as well, for a reader that would rather
+compose the turn itself. Mind the frames: `affine` lands on absolute continent
+metres, while the old fields land relative to the territory's centre, the spec's
+`translation`.
+
+`scale` stays a number wherever the mapping really is a uniform scale - every
+territory on the centre-and-scale rule, and a retained transform that is a rigid
+translation - and is `null` where the layout squeezes per axis or turns, where a
+single number would be a wrong answer rather than a rounded one. That case used
+to be `float()` of a two-axis scale, which raises `TypeError` under numpy 2 for
+*any* retained transform, a rigid translation's `[1, 1]` included. The three
+readers above all take `scale` as a number and
+`publish_diagonal_continent.validate_spec` rejects a `null` outright, so
+publishing a squeezed or turned territory needs them taught the affine first:
+that is a follow-up, not something this transform can paper over.

@@ -1,4 +1,9 @@
-"""Extra ownership sites: a territory owns the ground nearest any of them, not only its centre."""
+"""Extra ownership sites: a territory owns the ground nearest any of them, not only its centre.
+
+The same partition, module level: ``ownership_map`` at any cell spacing is what the World
+constructor scores its own grid with, and ``owner_components`` shows a territory that a site
+has split into a body and an island the traced polygon cannot reach.
+"""
 from pathlib import Path
 import sys
 import unittest
@@ -16,6 +21,7 @@ PLAN={'name':'ownership probe','seed':7,'sea_level':0.,'bounds':[0,0,40,40],
     'ridges':[],'islands':[],'rivers':[],'lakes':[],
     'regions':[{'id':'west','center':[10,20]},{'id':'east','center':[30,20]}]}
 TAIL=[30.,36.]   # A second Westhaven-style site in the far corner of its neighbour.
+FAR=[38.,20.]    # A site past the neighbour's own centre: the ground it wins is cut off.
 
 
 class OwnershipSiteTests(unittest.TestCase):
@@ -79,6 +85,76 @@ class OwnershipSiteTests(unittest.TestCase):
         self.assertEqual(W.ownership_sites(PLAN,['west','east']),{})
         np.testing.assert_allclose(W.ownership_sites(dict(PLAN,ownership_sites={'east':[TAIL]}),
             ['west','east'])['east'],[TAIL])
+
+
+class OwnershipMapTests(unittest.TestCase):
+    """The partition on its own: no heights, no water, no sampled continent, any cell spacing."""
+
+    def cell(self,owner,x0,z0,cell,x,z):
+        return int(owner[int((z-z0)/cell),int((x-x0)/cell)])
+
+    def test_the_constructor_scores_its_grid_with_the_module_level_partition(self):
+        for extra in ({},{'ownership_sites':{'west':[TAIL]}},{'ownership_sites':{'west':[FAR]}},
+                      {'ownership_bias':{'east':400}}):
+            with self.subTest(**extra):
+                plan=dict(PLAN,**extra);world=W.World(plan)
+                ids,owner,x0,z0=W.ownership_map(plan)
+                self.assertEqual(ids,world.ids);self.assertEqual((x0,z0),(world.x0,world.z0))
+                np.testing.assert_array_equal(owner,world.owner)
+
+    def test_a_coarse_map_names_the_same_region_under_every_site(self):
+        plan=dict(PLAN,ownership_sites={'west':[TAIL,FAR]})
+        ids,fine,x0,z0=W.ownership_map(plan,W.CELL)
+        coarse_ids,coarse,cx0,cz0=W.ownership_map(plan,8.)
+        self.assertEqual(coarse_ids,ids);self.assertEqual((cx0,cz0),(x0,z0))
+        self.assertEqual(coarse.shape,(5,5));self.assertEqual(fine.shape,(20,20))
+        for x,z in (TAIL,FAR,[10.,20.],[30.,20.],[1.,39.]):
+            self.assertEqual(self.cell(coarse,x0,z0,8.,x,z),self.cell(fine,x0,z0,W.CELL,x,z),(x,z))
+
+    def test_a_site_across_the_neighbour_is_one_island_whose_bounds_hold_it(self):
+        plan=dict(PLAN,ownership_sites={'west':[FAR]})
+        for cell in (W.CELL,8.):
+            with self.subTest(cell=cell):
+                ids,owner,x0,z0=W.ownership_map(plan,cell)
+                parts=W.owner_components(plan,'west',cell)
+                self.assertEqual(len(parts),2)
+                self.assertEqual([part.shape for part in parts],[owner.shape]*2)
+                self.assertGreater(np.count_nonzero(parts[0]),np.count_nonzero(parts[1]))
+                # The masks are a partition of exactly the region's own cells.
+                np.testing.assert_array_equal(parts[0]|parts[1],owner==ids.index('west'))
+                self.assertFalse((parts[0]&parts[1]).any())
+                islands=W.owner_islands(plan,'west',cell)
+                self.assertEqual(len(islands),1);np.testing.assert_array_equal(islands[0],parts[1])
+                extent=W.component_extent(islands[0],x0,z0,cell)
+                self.assertEqual(extent['cells'],int(np.count_nonzero(islands[0])))
+                low_x,low_z,high_x,high_z=extent['bounds']
+                self.assertTrue(low_x<=FAR[0]<=high_x and low_z<=FAR[1]<=high_z,extent)
+                # It is the ground the traced polygon silently leaves out.
+                polygon=np.array(W.World(plan).polygons['west'])
+                self.assertFalse(bool(L._polygon_inside(np.array(FAR[0]),np.array(FAR[1]),polygon)))
+
+    def test_a_connected_plan_declares_no_islands(self):
+        for plan in (PLAN,dict(PLAN,ownership_sites={'west':[TAIL]}),dict(PLAN,ownership_bias={'east':400})):
+            for region in ('west','east'):
+                with self.subTest(region=region,sites=plan.get('ownership_sites')):
+                    self.assertEqual(len(W.owner_components(plan,region)),1)
+                    self.assertEqual(W.owner_islands(plan,region),[])
+        with self.assertRaisesRegex(ValueError,"no region 'north'"):
+            W.owner_components(PLAN,'north')
+
+    def test_the_ids_are_the_plans_order_and_a_tie_keeps_the_region_listed_first(self):
+        self.assertEqual(W.ownership_map(PLAN,8.)[0],['west','east'])
+        # At 8 m one column of cell centres stands exactly on the bisector: it goes to whoever is listed
+        # first, so the same ground changes hands with the order alone.
+        ids,owner,_,_=W.ownership_map(PLAN,8.)
+        self.assertEqual([ids[value] for value in owner[2]],['west','west','west','east','east'])
+        ids,owner,_,_=W.ownership_map(PLAN,8.,['east','west'])
+        self.assertEqual([ids[value] for value in owner[2]],['west','west','east','east','east'])
+        # Two regions on one point tie everywhere, and every cell falls to the first of them.
+        shared=dict(PLAN,regions=[{'id':'west','center':[20,20]},{'id':'east','center':[20,20]}])
+        for order in (['west','east'],['east','west']):
+            ids,owner,_,_=W.ownership_map(shared,8.,order)
+            self.assertEqual(ids,order);self.assertEqual(set(owner.ravel().tolist()),{0})
 
 
 if __name__=='__main__':

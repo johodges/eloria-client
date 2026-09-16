@@ -803,6 +803,47 @@ def update_markers(placement, manifest):
     placement.report['regions'][placement.region]['updatedAuthoredMarkers'] = updated
 
 
+def content_transform(content, region):
+    """The published mapping from one territory's source frame into continent metres.
+
+    ``scale`` about ``sourceCenter``, with ``targetCenter``, is the old rule and all that
+    publish_diagonal_continent.transform_tile, estimated_served_tile above, and the paired server's
+    geographic_contracts.native_area_tile can read: one uniform scale, no turn. A retained transform may
+    squeeze its layout per axis and turn it about its own point, which no scalar carries, so the exact
+    mapping is published as ``affine`` [a, b, c, d, e, f] besides, giving continent
+    X = a*x + b*z + e and Z = c*x + d*z + f for a source point (x, z). It is read straight off
+    ``content.mapped_xz`` at (0, 0), (1, 0) and (0, 1), so it reproduces landscape.retained_map_xz for a
+    retained territory and the centre-and-scale rule for every other one, with no second copy of either
+    to drift. Note the frames: ``affine`` lands on absolute continent metres, while the old fields land
+    relative to the territory's centre, this spec's ``translation``, which is what the server address
+    frame is built on.
+
+    ``scale`` stays a number wherever that mapping really is a uniform scale -- every territory on the
+    centre-and-scale rule, and a retained transform that is a rigid translation -- and is null where the
+    layout squeezes per axis or turns, where a scalar would be a wrong answer rather than a rounded one.
+    A dict transform also publishes its own ``yawDegrees`` and ``squeeze`` [sx, sz] for a reader that
+    would rather compose the turn itself than read it out of the affine.
+    """
+    if str(HERE) not in sys.path:
+        sys.path.insert(0, str(HERE))
+    import landscape as L
+    probe = np.asarray(content.mapped_xz(region, [[0., 0.], [1., 0.], [0., 1.]]), float).reshape(3, 2)
+    a, c = probe[1] - probe[0]
+    b, d = probe[2] - probe[0]
+    e, f = probe[0]
+    declared = np.asarray(content.scales[region], float).ravel()
+    tolerance = 1e-9 * max(1., abs(a), abs(d))
+    uniform = abs(b) <= tolerance and abs(c) <= tolerance and abs(a - d) <= tolerance
+    published = {'scale': float(declared[0]) if uniform else None,
+        'sourceCenter': np.asarray(content.source_centers[region], float).ravel().tolist(), 'targetCenter': [0, 0],
+        'affine': [float(a), float(b), float(c), float(d), float(e), float(f)]}
+    transform = getattr(content, 'transforms', {}).get(region)
+    if isinstance(transform, dict):
+        published['yawDegrees'] = float(L.retained_yaw_degrees(transform))
+        published['squeeze'] = [float(value) for value in L.retained_affine(transform)[1]]
+    return published
+
+
 def export_contracts(world, content, manifests, output, server_path):
     """Export exact placement/publication data; leave authoritative server files alone."""
     output, server = Path(output).resolve(), Path(server_path).resolve()
@@ -877,8 +918,7 @@ def export_contracts(world, content, manifests, output, server_path):
                 'translation': [float(center[0]), 0, float(center[1])], 'arrival': list(origin),
                 'terrainRevision': REVISION,
                 'previousServerOrigin': list(content.templates[region]['coordinateTransform']['serverOrigin']),
-                'contentTransform': {'scale': float(content.scales[region]),
-                    'sourceCenter': np.asarray(content.source_centers[region]).tolist(), 'targetCenter': [0, 0]},
+                'contentTransform': content_transform(content, region),
                 'contentPositions': {group: {} for group in records}, 'tilePositions': {},
                 'portalPositions': {}, 'removedInteractiveIds': [],
                 'collisionPath': str(collision_path), 'worldManifestPath': str(world_path)}

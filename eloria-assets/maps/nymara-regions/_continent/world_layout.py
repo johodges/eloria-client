@@ -3,7 +3,7 @@ from __future__ import annotations
 import heapq
 import math
 import numpy as np
-from scipy.ndimage import gaussian_filter, distance_transform_edt, binary_dilation, maximum_filter
+from scipy.ndimage import gaussian_filter, distance_transform_edt, binary_dilation, label, maximum_filter
 from scipy.spatial import cKDTree
 from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import cg
@@ -242,6 +242,66 @@ def ownership_sites(plan,ids):
     return sites
 
 
+def ownership_map(plan,cell=CELL,ids=None):
+    """(ids, owner, x0, z0): which territory owns every cell of the plan's bounds, ``cell`` metres apart.
+
+    ``ids`` are the plan's regions in its own order, or exactly the list given. ``owner`` is an int grid of
+    indices into them, row 0 at ``z0`` and column 0 at ``x0``, whose cell [row][column] covers the metres
+    [x0+column*cell, x0+(column+1)*cell) by [z0+row*cell, z0+(row+1)*cell) and is scored at their centre.
+
+    The partition is centres, ``ownership_bias`` and ``ownership_sites`` alone -- no heights, no water, no
+    sampled continent -- so a plan editor can draw it at 8 m without building a World. A region's score at a
+    cell is the least squared distance to its centre and to any extra site it declares, less its bias; the
+    lowest score owns the cell and a tie keeps the region listed first. The constructor reads this at CELL
+    on its own grid, so the preview and the world it previews cannot drift apart.
+    """
+    regions={r['id']:r for r in plan['regions']}
+    ids=list(regions) if ids is None else list(ids)
+    centers=np.array([regions[region]['center'] for region in ids],float)
+    sites=ownership_sites(plan,ids);bias=plan.get('ownership_bias',{})
+    x0,z0,x1,z1=plan['bounds']
+    x=np.arange(x0,x1+cell*.5,cell);z=np.arange(z0,z1+cell*.5,cell)
+    gx,gz=np.meshgrid(x[:-1]+cell*.5,z[:-1]+cell*.5)
+    points=np.c_[gx.ravel(),gz.ravel()]
+    scores=np.full(len(points),np.inf);owners=np.zeros(len(points),int)
+    for index,(region,center) in enumerate(zip(ids,centers)):
+        # Nearest of the region's own centre and any extra ownership site it declares.
+        score=np.sum((points-center)**2,axis=1)
+        for site in sites.get(region,()):score=np.minimum(score,np.sum((points-site)**2,axis=1))
+        score=score-bias.get(region,0)
+        selected=score<scores;owners[selected]=index;scores[selected]=score[selected]
+    return ids,owners.reshape(len(z)-1,len(x)-1),x0,z0
+
+
+def owner_components(plan,region,cell=8.):
+    """One territory's ground as 4-connected component masks over ``ownership_map``'s grid, largest first.
+
+    Each mask carries that grid's own shape, row 0 at z0, so a caller counts its cells with
+    ``np.count_nonzero`` and reads its metres with ``component_extent``. One mask is one body of land;
+    every mask past the first is a detached island, ground the region wins on the far side of a
+    neighbour. ``outline`` traces a single contour, so an island is quietly missing from
+    ``World.polygons`` and from the ``bounds`` and ``address`` read off it: this is how to see one.
+    """
+    ids,owner=ownership_map(plan,cell)[:2]
+    if region not in ids:raise ValueError(f'owner_components: no region {region!r} in this plan; it names {list(ids)}')
+    labels,count=label(owner==ids.index(region))
+    sizes=np.bincount(labels.ravel(),minlength=count+1)
+    return [labels==value for value in sorted(range(1,count+1),key=lambda value:(-int(sizes[value]),value))]
+
+
+def owner_islands(plan,region,cell=8.):
+    """A territory's detached components: ``owner_components`` past its largest, empty when it is one body."""
+    return owner_components(plan,region,cell)[1:]
+
+
+def component_extent(mask,x0,z0,cell=8.):
+    """One component mask as {'cells': int, 'bounds': [x0, z0, x1, z1]}, the metre rectangle its cells cover."""
+    rows,columns=np.nonzero(np.asarray(mask,bool))
+    if not len(rows):return {'cells':0,'bounds':[]}
+    return {'cells':int(len(rows)),'bounds':[float(x0+columns.min()*cell),float(z0+rows.min()*cell),
+        float(x0+(columns.max()+1)*cell),float(z0+(rows.max()+1)*cell)]}
+
+
 class World:
     def hub(self,region):
         """Inhabited arrival is independent of the territory's geographic seed."""
@@ -259,16 +319,9 @@ class World:
         self.height=L.height_at(self.gx,self.gz,self.plan)
         self.water=L.water_fields(self.gx,self.gz,height=self.height,plan=self.plan)
         self.original_height=self.height.copy()
-        centers=np.c_[self.gx[:-1,:-1].ravel()+CELL*.5,self.gz[:-1,:-1].ravel()+CELL*.5]
         self.ownership_sites=ownership_sites(self.plan,self.ids)
-        scores=np.full(len(centers),np.inf);owners=np.zeros(len(centers),int)
-        for index,(region,center) in enumerate(zip(self.ids,self.centers)):
-            # Nearest of the region's own centre and any extra ownership site it declares.
-            score=np.sum((centers-center)**2,axis=1)
-            for site in self.ownership_sites.get(region,()):score=np.minimum(score,np.sum((centers-site)**2,axis=1))
-            score=score-self.plan.get('ownership_bias',{}).get(region,0)
-            selected=score<scores;owners[selected]=index;scores[selected]=score[selected]
-        self.owner=owners.reshape(self.height.shape[0]-1,self.height.shape[1]-1)
+        # Scored by the module-level partition, so an editor's preview at another spacing cannot drift from it.
+        self.owner=ownership_map(self.plan,CELL,self.ids)[1]
         self.polygons={r:outline(self.owner==i,self.x0,self.z0) for i,r in enumerate(self.ids)}
         self.obstacles=np.zeros_like(self.height,dtype=bool)
         self.solids=np.zeros_like(self.height,dtype=bool)

@@ -15,6 +15,8 @@ import numpy as np
 HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE))
 import export_contracts as E
+import content as C
+import landscape as L
 
 
 class Sources:
@@ -402,7 +404,9 @@ class ExportTests(unittest.TestCase):
         world=types.SimpleNamespace(ids=['test'],regions={'test':{'center':[0,0]}},publication_connections=[],
             collision_exports={'test':collision},address=lambda r:([15,15],[30,30]))
         content=types.SimpleNamespace(templates={'test':copy.deepcopy(manifest)},scales={'test':1},source_centers={'test':[0,0]},
-            mapped_point=lambda r,p,node=None,landmark=None:np.array(p,float))
+            transforms={'test':None},world=world,mapped_point=lambda r,p,node=None,landmark=None:np.array(p,float))
+        # The published contentTransform is read off Content's own mapping; here it is the identity.
+        content.mapped_xz=lambda region,points:C.Content.mapped_xz(content,region,points)
         class Transform:
             def __init__(self,**kwargs):self.__dict__.update(kwargs)
         sources=types.SimpleNamespace(GridTransform=Transform,requantise=lambda g,t:g.astype(np.int32),reachable_from=Sources.reachable_from)
@@ -483,3 +487,82 @@ class ServedTileContinuityTests(unittest.TestCase):
         self.assertNotEqual(first, [7, 7])
         p.reserve(first)    # even if something reserves the new tile meanwhile
         self.assertEqual(p.place([6, 5], 'invasion b', 5), first)
+class ContentTransformTests(unittest.TestCase):
+    """The published source-frame mapping, carried by Content's own mapped_xz."""
+
+    PROBES = [[12., -7.], [-30., 45.], [210., 180.]]
+    TURNED = {'translation': [760., 0., 640.], 'about_x': 40., 'about_z': -60.,
+              'yaw_degrees': -34., 'squeeze_x': .92, 'squeeze_z': .74}
+
+    def content(self, transform, source_center=(40., -60.), scale=.78, center=(900., 500.)):
+        """A stand-in seated exactly as Content.load seats a territory, with Content's own mapped_xz."""
+        fake = types.SimpleNamespace(transforms={'test': transform}, source_centers={}, scales={},
+            world=types.SimpleNamespace(regions={'test': {'center': list(center)}}))
+        fake.mapped_xz = lambda region, points: C.Content.mapped_xz(fake, region, points)
+        if transform is None:
+            fake.source_centers['test'], fake.scales['test'] = np.asarray(source_center, float), scale
+        else:
+            fake.source_centers['test'], fake.scales['test'] = C.retained_source_center(transform, center)
+        return fake
+
+    def mapped(self, published, points):
+        """The published affine read as the contract states it: continent metres from source metres."""
+        a, b, c, d, e, f = published['affine']
+        points = np.asarray(points, float)
+        return np.c_[a * points[:, 0] + b * points[:, 1] + e, c * points[:, 0] + d * points[:, 1] + f]
+
+    def test_a_territory_on_the_centre_and_scale_rule_keeps_its_published_fields(self):
+        content = self.content(None)
+        published = E.content_transform(content, 'test')
+        self.assertEqual(published['scale'], .78)
+        self.assertEqual(published['sourceCenter'], [40., -60.])
+        self.assertEqual(published['targetCenter'], [0, 0])
+        self.assertNotIn('yawDegrees', published)
+        self.assertNotIn('squeeze', published)
+        np.testing.assert_allclose(published['affine'], [.78, 0., 0., .78, 900. - 40. * .78, 500. + 60. * .78], atol=1e-9)
+        np.testing.assert_allclose(self.mapped(published, self.PROBES), content.mapped_xz('test', self.PROBES), atol=1e-7)
+
+    def test_a_rigid_translation_keeps_the_old_fields_and_publishes_an_identity_affine(self):
+        transform = [760., 0., 640.]
+        published = E.content_transform(self.content(transform), 'test')
+        self.assertEqual(published['scale'], 1.)
+        np.testing.assert_allclose(published['sourceCenter'], [140., -140.])
+        np.testing.assert_allclose(published['affine'], [1., 0., 0., 1., 760., 640.], atol=1e-9)
+        self.assertNotIn('yawDegrees', published)
+        self.assertNotIn('squeeze', published)
+        np.testing.assert_allclose(self.mapped(published, self.PROBES), L.retained_map_xz(transform, self.PROBES), atol=1e-7)
+
+    def test_a_turned_and_squeezed_territory_publishes_the_exact_affine_and_no_scalar(self):
+        content = self.content(self.TURNED)
+        # The old line asked float() of a two-axis scale, which is the TypeError this replaces.
+        with self.assertRaises(TypeError):
+            float(content.scales['test'])
+        published = E.content_transform(content, 'test')
+        self.assertIsNone(published['scale'])
+        self.assertEqual(published['yawDegrees'], -34.)
+        self.assertEqual(published['squeeze'], [.92, .74])
+        self.assertEqual(len(published['sourceCenter']), 2)
+        self.assertTrue(all(np.isfinite(published['affine'])))
+        np.testing.assert_allclose(self.mapped(published, self.PROBES), L.retained_map_xz(self.TURNED, self.PROBES), atol=1e-7)
+        self.assertEqual(json.loads(json.dumps(published)), published)
+
+    def test_a_squeeze_without_a_turn_is_still_no_single_scale(self):
+        transform = {'translation': [760., 0., 640.], 'about_z': -60., 'squeeze_z': .74}
+        published = E.content_transform(self.content(transform), 'test')
+        self.assertIsNone(published['scale'])
+        self.assertEqual(published['squeeze'], [1., .74])
+        self.assertEqual(published['yawDegrees'], 0.)
+        a, b, c, d = published['affine'][:4]
+        np.testing.assert_allclose([a, b, c, d], [1., 0., 0., .74], atol=1e-9)
+        np.testing.assert_allclose(self.mapped(published, self.PROBES), L.retained_map_xz(transform, self.PROBES), atol=1e-7)
+
+    def test_a_uniform_squeeze_keeps_the_number_the_old_rule_reads(self):
+        transform = {'translation': [760., 0., 640.], 'about_x': 40., 'about_z': -60., 'squeeze_x': .8, 'squeeze_z': .8}
+        published = E.content_transform(self.content(transform), 'test')
+        self.assertEqual(published['scale'], .8)
+        # The old fields and the affine name the same ground: the affine is absolute continent
+        # metres, the old rule is relative to the territory's centre.
+        source = np.asarray(published['sourceCenter'], float)
+        old = (np.asarray(self.PROBES, float) - source) * published['scale'] + [900., 500.]
+        np.testing.assert_allclose(old, self.mapped(published, self.PROBES), atol=1e-7)
+        np.testing.assert_allclose(old, L.retained_map_xz(transform, self.PROBES), atol=1e-7)
