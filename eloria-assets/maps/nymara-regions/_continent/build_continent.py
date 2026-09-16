@@ -127,7 +127,7 @@ def prepare(library,output):
     prepare_grey_crossings(world,content)
     from four_gates_sage import prepare_four_gates_sage,refresh_four_gates_sage_heights
     prepare_four_gates_sage(world,content)
-    from door_approaches import prepare_door_approaches,door_road_end,door_road_end_near,server_road_end,door_road_waypoints,SERVER_ROAD_END_LEG_METRES
+    from door_approaches import prepare_door_approaches,door_road_end,door_road_end_near,server_road_end,door_road_waypoints,seam_road_waypoints,route_in_legs,SERVER_ROAD_END_LEG_METRES
     prepare_door_approaches(world,content)
     from crown_support import apply_crown_support
     from westhaven_support import apply_westhaven_support
@@ -160,10 +160,15 @@ def prepare(library,output):
                 # crossing the wall its terminal stands beside (measured at Four Gates
                 # with the terrain terms on: 31 m through City_Wall_44 and _45, and the
                 # seam's crossing and return records unreachable).
-                path=world.route(hub,terminal,region=region,own=world.solids_at_ends(hub))
+                # An authored pass is routed hub -> waypoint -> ... -> terminal in legs
+                # (as a designed climb to a door is), so a mountain crossing takes the
+                # switchback its valley suggests instead of the router's shortest line;
+                # the hub's own solids stay on the first leg, where the hub stands.
+                legs=[hub]+seam_road_waypoints(content,region,link['id'])+[terminal]
+                path=route_in_legs(world,legs,region,own=world.solids_at_ends(hub))
                 path=np.vstack([path,anchor-outward*4,anchor,anchor+outward*4])
                 world.add_road(path,width=4,name=link['id']+'-'+region)
-                print(f'Road {region} to {link["id"]}: {len(path)} stations',flush=True)
+                print(f'Road {region} to {link["id"]}: {len(path)} stations'+(f' by {len(legs)-2} authored waypoints' if len(legs)>2 else ''),flush=True)
         else:
             ends=[]
             for side,region in enumerate(link['regions']):
@@ -191,7 +196,7 @@ def prepare(library,output):
             # A door inside a retained pavilion gets its road on the pavilion's open side;
             # a designed climb is routed through its authored waypoints in legs.
             legs=[hub]+door_road_waypoints(content,region,entry.get('id'))+[door_road_end(content,region,entry.get('id'),point)]
-            path=np.vstack([world.route(a,b,region=region)[:-1 if index<len(legs)-2 else None] for index,(a,b) in enumerate(zip(legs,legs[1:]))])
+            path=route_in_legs(world,legs,region)
             world.add_road(path,width=1.65,name='door-'+region+'-'+str(entry.get('id','entry')))
     # The server also declares hidden rooms and instance returns that are not
     # client portal markers. Give these discoveries narrow branches from the

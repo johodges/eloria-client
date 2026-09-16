@@ -118,5 +118,121 @@ class DoorApproachTests(unittest.TestCase):
         self.assertEqual(content.door_road_ends, {})
 
 
+MOORS_PASS = ('whitehorn_range', 'grey_moors--whitehorn_range')
+EAST_PASS = ('whitehorn_range', 'amethyst_barrens--whitehorn_range')
+
+
+def seam_patches(authored=None, retained=None):
+    """The three waypoint tables with only the seam entries under test in them."""
+    return (patch.dict(D.RETAINED_DOOR_ROAD_WAYPOINTS, {}, clear=True),
+            patch.dict(D.SEAM_ROAD_WAYPOINTS, authored or {}, clear=True),
+            patch.dict(D.RETAINED_SEAM_ROAD_WAYPOINTS, retained or {}, clear=True))
+
+
+class SeamRoadWaypointTests(unittest.TestCase):
+    def test_an_authored_pass_lists_its_waypoints_in_order_and_other_seams_have_none(self):
+        w = world(); w.ids = ['whitehorn_range', 'grey_moors']
+        prepared = SimpleNamespace()
+        doors, authored, retained = seam_patches({MOORS_PASS: [(500., 300.), (520., 200.)]})
+        with doors, authored, retained:
+            D.prepare_door_approaches(w, prepared)
+        self.assertEqual([p.tolist() for p in D.seam_road_waypoints(prepared, *MOORS_PASS)], [[500., 300.], [520., 200.]])
+        # The other side of the same crossing, another crossing and an unprepared
+        # content object are all straight runs from the hub to the terminal.
+        self.assertEqual(D.seam_road_waypoints(prepared, 'grey_moors', 'grey_moors--whitehorn_range'), [])
+        self.assertEqual(D.seam_road_waypoints(prepared, *EAST_PASS), [])
+        self.assertEqual(D.seam_road_waypoints(SimpleNamespace(), *MOORS_PASS), [])
+        self.assertEqual(w.door_approaches['seamWaypoints'], {'whitehorn_range:grey_moors--whitehorn_range': [[500., 300.], [520., 200.]]})
+        self.assertEqual(w.door_approaches['waypoints'], {})            # door roads keep their own key
+
+    def test_a_pass_authored_for_another_territory_is_left_alone(self):
+        w = world(); w.ids = ['grey_moors']
+        prepared = SimpleNamespace()
+        doors, authored, retained = seam_patches({MOORS_PASS: [(500., 300.)]})
+        with doors, authored, retained:
+            D.prepare_door_approaches(w, prepared)
+        self.assertEqual(prepared.seam_road_waypoints, {})
+        self.assertEqual(w.door_approaches['seamWaypoints'], {})
+
+    def test_source_frame_seam_waypoints_follow_the_retained_transform(self):
+        w = world(); w.ids = ['whitehorn_range']
+        w.plan = {'retained_transforms': {'whitehorn_range': {'translation': [477., 70., 272.], 'squeeze_z': .85, 'about_z': 60.}}}
+        prepared = SimpleNamespace()
+        doors, authored, retained = seam_patches(retained={EAST_PASS: [(70., 40.)]})
+        with doors, authored, retained:
+            D.prepare_door_approaches(w, prepared)
+        # x is translated; z is squeezed about source row 60 then translated: 272 + 60 + (z - 60) * .85.
+        np.testing.assert_allclose([p.tolist() for p in D.seam_road_waypoints(prepared, *EAST_PASS)], [[547., 315.]])
+        self.assertEqual(list(w.door_approaches['seamWaypoints']), ['whitehorn_range:amethyst_barrens--whitehorn_range'])
+        np.testing.assert_allclose(w.door_approaches['seamWaypoints']['whitehorn_range:amethyst_barrens--whitehorn_range'], [[547., 315.]])
+        # Without a transform the source frame has no place in the continent.
+        w.plan = {}
+        doors, authored, retained = seam_patches(retained={EAST_PASS: [(70., 40.)]})
+        with doors, authored, retained:
+            with self.assertRaisesRegex(ValueError, 'amethyst_barrens--whitehorn_range: source-frame waypoints need'):
+                D.prepare_door_approaches(w, SimpleNamespace())
+
+    def test_waypoints_outside_the_territory_in_water_or_not_dry_are_refused(self):
+        def prepare(**terrain):
+            w = world(**terrain); w.ids = ['whitehorn_range']
+            doors, authored, retained = seam_patches({MOORS_PASS: [(500., 300.), (520., 200.)]})
+            with doors, authored, retained:
+                D.prepare_door_approaches(w, SimpleNamespace())
+        prepare()                                                       # dry ground inside the range is accepted
+        with self.assertRaisesRegex(ValueError, 'grey_moors--whitehorn_range waypoint 0.*outside its territory'):
+            prepare(owner=1)
+        with self.assertRaisesRegex(ValueError, 'waypoint 0.*not dry ground'):
+            prepare(height=.2)
+        with self.assertRaisesRegex(ValueError, 'waypoint 0.*stands in water'):
+            prepare(wet=True)
+
+
+class FakeWorld:
+    """A world whose router runs straight: ``stations`` points from a to b inclusive."""
+
+    def __init__(self, stations=2):
+        self.stations = stations
+        self.calls = []
+
+    def route(self, a, b, region=None, own=None):
+        a = np.asarray(a, float); b = np.asarray(b, float)
+        self.calls.append((a.tolist(), b.tolist(), region, own))
+        return np.array([a + (b - a) * t for t in np.linspace(0., 1., self.stations)])
+
+
+class RouteInLegsTests(unittest.TestCase):
+    HUB = np.array([0., 0.])
+    TERMINAL = np.array([3., 3.])
+
+    def test_waypoints_become_legs_with_no_duplicated_joint(self):
+        w = FakeWorld()
+        legs = [self.HUB, np.array([1., 1.]), np.array([2., 2.]), self.TERMINAL]
+        path = D.route_in_legs(w, legs, 'whitehorn_range', own={7})
+        self.assertEqual(path.tolist(), [[0., 0.], [1., 1.], [2., 2.], [3., 3.]])
+        self.assertEqual([(a, b) for a, b, _, _ in w.calls],
+                         [([0., 0.], [1., 1.]), ([1., 1.], [2., 2.]), ([2., 2.], [3., 3.])])
+        # The road's own solids ride the first leg only; every leg stays in its region.
+        self.assertEqual([own for _, _, _, own in w.calls], [{7}, None, None])
+        self.assertEqual({region for _, _, region, _ in w.calls}, {'whitehorn_range'})
+
+    def test_a_leg_keeps_its_own_stations_and_drops_only_the_joint(self):
+        path = D.route_in_legs(FakeWorld(stations=3), [self.HUB, np.array([1., 1.]), self.TERMINAL], 'whitehorn_range')
+        self.assertEqual(path.tolist(), [[0., 0.], [.5, .5], [1., 1.], [2., 2.], [3., 3.]])
+
+    def test_without_waypoints_the_road_is_the_single_route_it_always_was(self):
+        expected = FakeWorld(stations=4).route(self.HUB, self.TERMINAL, region='whitehorn_range', own={7})
+        w = FakeWorld(stations=4)
+        path = D.route_in_legs(w, [self.HUB, self.TERMINAL], 'whitehorn_range', own={7})
+        self.assertEqual(path.tolist(), expected.tolist())
+        self.assertEqual(w.calls, [([0., 0.], [3., 3.], 'whitehorn_range', {7})])
+
+    def test_the_legs_match_the_expression_the_door_roads_used(self):
+        legs = [self.HUB, np.array([1., 1.]), self.TERMINAL]
+        old = FakeWorld(stations=3)
+        expected = np.vstack([old.route(a, b, region='amberwood')[:-1 if index < len(legs) - 2 else None]
+                              for index, (a, b) in enumerate(zip(legs, legs[1:]))])
+        self.assertEqual(D.route_in_legs(FakeWorld(stations=3), legs, 'amberwood').tolist(), expected.tolist())
+
+
 if __name__ == '__main__':
     unittest.main()

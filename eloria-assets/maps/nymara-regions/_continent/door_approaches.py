@@ -12,6 +12,13 @@ edge) is reached from the north across plain ground.
 A pin here ends the door road on the open side of such a pavilion; the retained
 walking floor carries the last metres to the door and no deck is built. The
 pinned end must be dry ground inside the door's own territory.
+
+The module also holds the authored waypoints a road passes on its way: a door
+road's (hub -> waypoint -> ... -> door end) and a seam road's (hub -> waypoint
+-> ... -> crossing terminal). Both are routed in legs by ``route_in_legs``, so
+a mountain pass climbs the switchback its valley suggests instead of taking the
+router's shortest line. Waypoints obey the same rules as a pinned end: dry
+ground, out of the water, inside the territory whose hub the road leaves.
 """
 from __future__ import annotations
 import numpy as np
@@ -72,12 +79,31 @@ RETAINED_DOOR_ROAD_WAYPOINTS = {
     ('whitehorn_range', 'west-watch-cave-mouth'): [(-93., -38.), (-81., -96.)],                       # west pass station, the west valley
     ('whitehorn_range', 'whitehorn-barrow-door'): [(-93., -38.), (-81., -96.), (-85., -150.)],        # ... and past the watch cave
 }
+# (region, connection id) -> authored waypoints in continent metres for a seam
+# road: the road from that territory's hub to its side of a border crossing is
+# routed hub -> waypoint -> ... -> crossing terminal in legs, so a pass climbs
+# its authored switchback instead of the router's shortest line. A connection id
+# is the crossing's own id, the two region ids sorted and joined by '--' (as in
+# 'grey_moors--whitehorn_range'), and each of the two sides of a crossing is
+# authored separately under its own region: the mountain side takes the climb
+# while the other side stays a straight run to the terminal.
+SEAM_ROAD_WAYPOINTS = {
+}
+# The same for a retained territory, in its source (library) metres, carried
+# where the layout stands by the plan's retained transform (as the retained door
+# road waypoints above). The plan phase authors the two Whitehorn passes here,
+# in this frame, since the range keeps its legacy relief under such a transform:
+#   ('whitehorn_range', 'grey_moors--whitehorn_range')        the Moors pass,
+#       authored as a switchback climb; and
+#   ('whitehorn_range', 'amethyst_barrens--whitehorn_range')  the east pass.
+RETAINED_SEAM_ROAD_WAYPOINTS = {
+}
 MINIMUM_DRY_METRES = .8
 MAXIMUM_DOOR_DISTANCE_METRES = 12.
 
 
 def prepare_door_approaches(world, content):
-    """Validate and expose the pinned road ends before door roads are routed."""
+    """Validate and expose the pinned road ends and the authored door and seam waypoints before the roads are routed."""
     def validated(region, label, x, z):
         if int(world.owner_at(x, z)) != world.ids.index(region):
             raise ValueError(f'{region}:{label}: authored door road end lies outside its territory')
@@ -98,24 +124,35 @@ def prepare_door_approaches(world, content):
         if region in world.ids:
             pins = [pins] if not isinstance(pins, list) else pins
             server_ends[(region, source, target)] = [validated(region, f'{source}->{target}', x, z) for x, z in pins]
-    waypoints = {}
-    for (region, portal), points in DOOR_ROAD_WAYPOINTS.items():
-        if region in world.ids:
-            waypoints[(region, portal)] = [validated(region, f'{portal} waypoint {index}', x, z) for index, (x, z) in enumerate(points)]
-    for (region, portal), points in RETAINED_DOOR_ROAD_WAYPOINTS.items():
-        if region not in world.ids:
-            continue
-        transform = getattr(world, 'plan', {}).get('retained_transforms', {}).get(region)
-        if transform is None:
-            raise ValueError(f"{region}:{portal}: source-frame waypoints need the territory's retained transform")
-        mapped = L.retained_map_xz(transform, points)
-        waypoints[(region, portal)] = [validated(region, f'{portal} waypoint {index}', x, z) for index, (x, z) in enumerate(mapped)]
+    def waypoints_of(authored, retained):
+        """Authored road waypoints in order, from the continent frame and from a retained source frame.
+
+        The key's second field (a portal id for a door road, a connection id
+        for a seam road) names the road in every refusal.
+        """
+        prepared = {}
+        for (region, road), points in authored.items():
+            if region in world.ids:
+                prepared[(region, road)] = [validated(region, f'{road} waypoint {index}', x, z) for index, (x, z) in enumerate(points)]
+        for (region, road), points in retained.items():
+            if region not in world.ids:
+                continue
+            transform = getattr(world, 'plan', {}).get('retained_transforms', {}).get(region)
+            if transform is None:
+                raise ValueError(f"{region}:{road}: source-frame waypoints need the territory's retained transform")
+            mapped = L.retained_map_xz(transform, points)
+            prepared[(region, road)] = [validated(region, f'{road} waypoint {index}', x, z) for index, (x, z) in enumerate(mapped)]
+        return prepared
+    waypoints = waypoints_of(DOOR_ROAD_WAYPOINTS, RETAINED_DOOR_ROAD_WAYPOINTS)
+    seam_waypoints = waypoints_of(SEAM_ROAD_WAYPOINTS, RETAINED_SEAM_ROAD_WAYPOINTS)
     content.door_road_ends = ends
     content.server_road_ends = server_ends
     content.door_road_waypoints = waypoints
+    content.seam_road_waypoints = seam_waypoints
     world.door_approaches = {'roadEnds': {f'{region}:{portal}': point.tolist() for (region, portal), point in ends.items()},
                              'serverRoadEnds': {f'{region}:{source}->{target}': [point.tolist() for point in points] for (region, source, target), points in server_ends.items()},
                              'waypoints': {f'{region}:{portal}': [point.tolist() for point in points] for (region, portal), points in waypoints.items()},
+                             'seamWaypoints': {f'{region}:{connection}': [point.tolist() for point in points] for (region, connection), points in seam_waypoints.items()},
                              'policy': 'A door inside a retained pavilion gets its road on the pavilion\'s open side; the retained floor carries the last metres.'}
     return world.door_approaches
 
@@ -123,6 +160,35 @@ def prepare_door_approaches(world, content):
 def door_road_waypoints(content, region, portal):
     """The authored waypoints a door road passes on its way from the hub, in order (none for most doors)."""
     return list(getattr(content, 'door_road_waypoints', {}).get((region, portal), []))
+
+
+def seam_road_waypoints(content, region, connection_id):
+    """The authored waypoints a seam road passes between the hub and the crossing terminal, in order.
+
+    Empty for every seam but an authored pass, where the road is then routed in
+    legs through them: the pass climbs its switchback instead of the router's
+    shortest line to the border.
+    """
+    return list(getattr(content, 'seam_road_waypoints', {}).get((region, connection_id), []))
+
+
+def route_in_legs(world, legs, region, own=None):
+    """One road alignment routed through its authored waypoints: hub -> waypoint -> ... -> end.
+
+    Every leg but the last drops its final station, which is the next leg's
+    first, so the joints are not stations twice over. ``own`` (the retained
+    solids the road may cross because they hold its start, from
+    ``world.solids_at_ends``) applies to the first leg only, as it did when the
+    road was one call; the later legs let the router take the solids of their
+    own two ends. With two stations and no waypoints this is exactly
+    ``world.route(legs[0], legs[1], region=region, own=own)``.
+    """
+    legs = list(legs)
+    parts = []
+    for index, (a, b) in enumerate(zip(legs, legs[1:])):
+        leg = world.route(a, b, region=region, own=own if index == 0 else None)
+        parts.append(leg[:-1] if index < len(legs) - 2 else leg)
+    return np.vstack(parts)
 
 
 def door_road_end(content, region, portal, door_point):
