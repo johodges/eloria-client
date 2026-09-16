@@ -73,9 +73,10 @@ INSTALLER_APP_ID = "{6B1E9F4C-3A52-4D8E-9C71-5E0B2F8A4D17}"
 MAP_EXCLUDED_DIRS = {"references", "captures", "godot-captures", "source",
                      "sources", "qa", "reports", "review", "renders"}
 MAP_EXCLUDED_SUFFIXES = {".py", ".md", ".gd", ".c", ".txt", ".gitignore"}
-# Reduced-detail map packages (world-lod2.glb, 335 MB across eleven maps).
-# Manifests list them under lodGroups, but no client code loads them.
-MAP_LOD_PACKAGE = re.compile(r"^world-lod\d+\.glb$")
+# Reduced-detail map packages (world-lod2.glb, 335 MB across eleven maps) and
+# their manifests and statistics. Manifests list them under lodGroups and the
+# registry names Sunmane's under "lod2", but no client code loads either.
+MAP_LOD_PACKAGE = re.compile(r"^(world-lod\d+|build-statistics-lod\d+)\b")
 # Manifest keys that describe provenance, or files the client never opens.
 MANIFEST_SKIPPED_KEYS = {"sources", "provenance", "knownLimitations", "lodGroups"}
 FILE_LIKE = re.compile(r"^[^:*?\"<>|\s]+\.(glb|gltf|bin|json|webp|png|jpg|jpeg|gz|escg|ogg|wav)$", re.I)
@@ -302,6 +303,8 @@ def stage_eloria_assets(build_dir: Path, stage: Path) -> list[str]:
         text = (build_dir / relative).read_text(encoding="utf-8", errors="replace")
         for match in ASSET_REF.finditer(text):
             target = match.group(1).rstrip("/")
+            if MAP_LOD_PACKAGE.match(PurePosixPath(target).name):
+                continue
             if target in all_tracked:
                 wanted.add(target)
             elif not any(p.startswith(target + "/") for p in all_tracked):
@@ -330,6 +333,8 @@ def stage_eloria_assets(build_dir: Path, stage: Path) -> list[str]:
             elif FILE_LIKE.match(value) and not value.startswith(("res://", "user://", "/")):
                 target = os.path.normpath(str(base / value)).replace("\\", "/")
             else:
+                continue
+            if MAP_LOD_PACKAGE.match(PurePosixPath(target).name):
                 continue
             if target in all_tracked:
                 if target not in wanted:
