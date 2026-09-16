@@ -19,6 +19,7 @@ def world(owner=0, height=7.5, wet=False):
                            owner_at=lambda px, pz: owner, height_at=lambda px, pz: height)
 
 
+@patch.dict(D.RETAINED_ROAD_ENDS, {}, clear=True)      # object-anchored ends need composed content: RetainedRoadEndTests
 class DoorApproachTests(unittest.TestCase):
     def test_the_shrine_road_ends_on_dry_ground_north_of_the_pavilion(self):
         w = world(); content = SimpleNamespace()
@@ -129,6 +130,7 @@ def seam_patches(authored=None, retained=None):
             patch.dict(D.RETAINED_SEAM_ROAD_WAYPOINTS, retained or {}, clear=True))
 
 
+@patch.dict(D.RETAINED_ROAD_ENDS, {}, clear=True)
 class SeamRoadWaypointTests(unittest.TestCase):
     def test_an_authored_pass_lists_its_waypoints_in_order_and_other_seams_have_none(self):
         w = world(); w.ids = ['whitehorn_range', 'grey_moors']
@@ -185,6 +187,89 @@ class SeamRoadWaypointTests(unittest.TestCase):
             prepare(height=.2)
         with self.assertRaisesRegex(ValueError, 'waypoint 0.*stands in water'):
             prepare(wet=True)
+
+
+TEMPLE_DOOR = ('whitehorn_range', 'whitehorn-glacier-temple-door')
+TURNED = {'translation': [534.5, 155., 320.], 'squeeze_x': .8, 'squeeze_z': .85, 'about_x': -14.5, 'about_z': 60.,
+          'yaw_degrees': -34., 'datum': 'ground'}
+
+
+def temple_content(region='whitehorn_range', node='Landmark_glacier_temple'):
+    """Composed content holding one retained object whose bounds centre in x/z is (455, 120), and some scatter."""
+    return SimpleNamespace(objects=[
+        {'region': region, 'node': 'Grove_00001', 'low': np.array([0., 0., 0.]), 'high': np.array([2., 9., 2.])},
+        {'region': region, 'node': node, 'low': np.array([440., 180., 100.]), 'high': np.array([470., 230., 140.])}])
+
+
+def anchored(entries):
+    """The retained road-end table holding only ``entries``, and no source-frame waypoints that need a transform."""
+    return (patch.dict(D.RETAINED_ROAD_ENDS, entries, clear=True),
+            patch.dict(D.RETAINED_DOOR_ROAD_WAYPOINTS, {}, clear=True),
+            patch.dict(D.RETAINED_SEAM_ROAD_WAYPOINTS, {}, clear=True))
+
+
+class RetainedRoadEndTests(unittest.TestCase):
+    def test_the_temple_road_ends_at_the_foot_of_its_stair(self):
+        self.assertEqual(D.RETAINED_ROAD_ENDS[TEMPLE_DOOR], ('Landmark_glacier_temple', (0.25, 15.5)))
+
+    def test_an_anchored_end_stands_on_its_object_turned_with_the_layout_and_never_squeezed(self):
+        w = world(); w.ids = ['whitehorn_range']; w.plan = {'retained_transforms': {'whitehorn_range': TURNED}}
+        content = temple_content()
+        ends, doors, seams = anchored({TEMPLE_DOOR: ('Landmark_glacier_temple', (0.25, 15.5))})
+        with ends, doors, seams:
+            report = D.prepare_door_approaches(w, content)
+        # Legacy +x (right) and +z (front) turned by -34 degrees: x east, z south, a positive yaw north towards east.
+        c, s = np.cos(np.radians(-34.)), np.sin(np.radians(-34.))
+        expected = np.array([455. + .25 * c - 15.5 * s, 120. + .25 * s + 15.5 * c])
+        end = content.door_road_ends[TEMPLE_DOOR]
+        np.testing.assert_allclose(end, expected, atol=1e-9)
+        self.assertAlmostEqual(float(np.linalg.norm(end - [455., 120.])), float(np.hypot(.25, 15.5)), places=9)
+        np.testing.assert_allclose(report['roadEnds']['whitehorn_range:whitehorn-glacier-temple-door'], expected, atol=1e-9)
+        entry = report['retainedRoadEnds']['whitehorn_range:whitehorn-glacier-temple-door']
+        self.assertEqual((entry['node'], entry['offset'], entry['pivot']), ('Landmark_glacier_temple', [.25, 15.5], [455., 120.]))
+        # Served exactly as a ROAD_ENDS pin: the door road ends there while the door is within reach.
+        door = expected + [0., -11.4]
+        self.assertTrue(np.array_equal(D.door_road_end(content, *TEMPLE_DOOR, door), end))
+        self.assertTrue(np.array_equal(D.door_road_end_near(content, 'whitehorn_range', door), end))
+        with self.assertRaisesRegex(ValueError, 'further than'):
+            D.door_road_end(content, *TEMPLE_DOOR, expected + [0., -20.])
+
+    def test_without_a_turn_the_offset_runs_along_the_continent_axes(self):
+        for transform in ([477., 70., 272.], {'translation': [477., 70., 272.], 'squeeze_z': .85, 'about_z': 60.}, None):
+            w = world(); w.ids = ['whitehorn_range']
+            w.plan = {'retained_transforms': {'whitehorn_range': transform}} if transform is not None else {}
+            content = temple_content()
+            ends, doors, seams = anchored({TEMPLE_DOOR: ('Landmark_glacier_temple', (3., -4.))})
+            with ends, doors, seams:
+                D.prepare_door_approaches(w, content)
+            self.assertEqual(content.door_road_ends[TEMPLE_DOOR].tolist(), [458., 116.])
+
+    def test_a_missing_anchor_or_a_second_pin_is_refused(self):
+        w = world(); w.ids = ['whitehorn_range']; w.plan = {}
+        for content in (SimpleNamespace(), SimpleNamespace(objects=[]), temple_content(region='grey_moors'),
+                        temple_content(node='Landmark_glacier_temple_ruin')):
+            ends, doors, seams = anchored({TEMPLE_DOOR: ('Landmark_glacier_temple', (0., 10.))})
+            with ends, doors, seams, self.assertRaisesRegex(ValueError, 'anchored on Landmark_glacier_temple, which is not a retained object'):
+                D.prepare_door_approaches(w, content)
+        ends, doors, seams = anchored({TEMPLE_DOOR: ('Landmark_glacier_temple', (0., 10.))})
+        with ends, doors, seams, patch.dict(D.ROAD_ENDS, {TEMPLE_DOOR: (455., 130.)}):
+            with self.assertRaisesRegex(ValueError, 'pinned twice'):
+                D.prepare_door_approaches(w, temple_content())
+
+    def test_an_anchored_end_outside_the_territory_under_water_or_not_dry_is_refused(self):
+        for terrain, message in (({'owner': 1}, 'outside its territory'), ({'height': .2}, 'not dry ground'),
+                                 ({'wet': True}, 'stands in water')):
+            w = world(**terrain); w.ids = ['whitehorn_range']; w.plan = {}
+            ends, doors, seams = anchored({TEMPLE_DOOR: ('Landmark_glacier_temple', (0., 10.))})
+            with ends, doors, seams, self.assertRaisesRegex(ValueError, 'whitehorn-glacier-temple-door: .*' + message):
+                D.prepare_door_approaches(w, temple_content())
+
+    def test_a_territory_the_continent_lacks_needs_no_anchor(self):
+        w = world()                                                     # verdant_stair and mirrorhold only
+        ends, doors, seams = anchored({TEMPLE_DOOR: ('Landmark_glacier_temple', (0., 10.))})
+        with ends, doors, seams:
+            report = D.prepare_door_approaches(w, SimpleNamespace())
+        self.assertEqual(report['retainedRoadEnds'], {})
 
 
 class FakeWorld:

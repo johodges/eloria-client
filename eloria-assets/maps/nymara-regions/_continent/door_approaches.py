@@ -34,6 +34,24 @@ ROAD_ENDS = {
     # pin stands seven metres clear of the arch so the road goes round it.
     ('amberwood', 'gate-undercroft-stair'): (616.5, 589.5),
 }
+# (region, portal id) -> (retained node, (dx, dz)): a door road end anchored on a
+# retained object, for a door whose way in is that object's own stair or court.
+# The pin is the object's composed pivot (the centre of its composed bounds in
+# x/z) plus the territory layout's turn of (dx, dz), metres along the legacy
+# source axes and never squeezed, so it keeps its place on the object however
+# the retained transform turns, squeezes or grounds the layout. It needs the
+# composed content (prepare_door_approaches runs after Content.load), refuses an
+# object that is not retained, and is then validated and served exactly as a
+# ROAD_ENDS pin: dry ground in the door's territory, within
+# MAXIMUM_DOOR_DISTANCE_METRES of the door.
+RETAINED_ROAD_ENDS = {
+    # The Whitehorn glacier temple's door stands on its platform 4.1 m in front of
+    # the facade, and the platform's stair descends to the front between right
+    # -5.0 and 5.4. Routed to the door itself (design O4) the road climbed onto
+    # the platform over its left flank and ran along it; pinned to the stair foot,
+    # 11.4 m from the door, it ends there and the platform carries the last metres.
+    ('whitehorn_range', 'whitehorn-glacier-temple-door'): ('Landmark_glacier_temple', (0.25, 15.5)),
+}
 # (region, portal source map, portal target map) -> global XZ metres of dry
 # ground where the discovery branch to a server-only portal is routed to; the
 # branch then runs straight from there to the portal itself, a deck where the
@@ -167,6 +185,21 @@ def prepare_door_approaches(world, content):
     for (region, portal), (x, z) in ROAD_ENDS.items():
         if region in world.ids:
             ends[(region, portal)] = validated(region, portal, x, z)
+    retained_ends = {}
+    for (region, portal), (node, (dx, dz)) in RETAINED_ROAD_ENDS.items():
+        if region not in world.ids:
+            continue
+        anchor = next((obj for obj in getattr(content, 'objects', ()) if obj.get('region') == region and obj.get('node') == node), None)
+        if anchor is None:
+            raise ValueError(f'{region}:{portal}: the door road end is anchored on {node}, which is not a retained object in {region}')
+        if (region, portal) in ends:
+            raise ValueError(f'{region}:{portal}: the door road end is pinned twice, in ROAD_ENDS and in RETAINED_ROAD_ENDS')
+        pivot = (np.asarray(anchor['low'], dtype=float) + np.asarray(anchor['high'], dtype=float)) * .5
+        transform = getattr(world, 'plan', {}).get('retained_transforms', {}).get(region)
+        rx, rz = L._rotate_xz(float(dx), float(dz), L.retained_yaw_degrees(transform) if transform is not None else 0.)
+        ends[(region, portal)] = validated(region, portal, pivot[0] + rx, pivot[2] + rz)
+        retained_ends[(region, portal)] = {'node': node, 'offset': [float(dx), float(dz)],
+                                           'pivot': pivot[[0, 2]].tolist(), 'end': ends[(region, portal)].tolist()}
     server_ends = {}
     for (region, source, target), pins in SERVER_ROAD_ENDS.items():
         if region in world.ids:
@@ -198,6 +231,7 @@ def prepare_door_approaches(world, content):
     content.door_road_waypoints = waypoints
     content.seam_road_waypoints = seam_waypoints
     world.door_approaches = {'roadEnds': {f'{region}:{portal}': point.tolist() for (region, portal), point in ends.items()},
+                             'retainedRoadEnds': {f'{region}:{portal}': entry for (region, portal), entry in retained_ends.items()},
                              'serverRoadEnds': {f'{region}:{source}->{target}': [point.tolist() for point in points] for (region, source, target), points in server_ends.items()},
                              'waypoints': {f'{region}:{portal}': [point.tolist() for point in points] for (region, portal), points in waypoints.items()},
                              'seamWaypoints': {f'{region}:{connection}': [point.tolist() for point in points] for (region, connection), points in seam_waypoints.items()},
