@@ -98,24 +98,44 @@ SEAM_ROAD_WAYPOINTS = {
     # at about (629, 418), where the ravine the river cuts is three metres deep.
     ('whitehorn_range', 'amethyst_barrens--whitehorn_range'): [
         (556., 394.), (614., 406.), (668., 448.), (694., 433.), (692., 377.), (760., 419.), (786., 340.)],
-    # The Amberwood crossing: out of the gate court east past the shrine terrace and the village, down the
-    # tail's south shoulder to the saddle, then west along the 115-130 m bench to the crossing's lip.
+    # The Amberwood crossing: out of the gate court north-east over the 173 m shelf, NORTH of the village
+    # strip, down the Hornwater's west scarp beside the east pass's own descent, across the river, down the
+    # tail's EAST bank, back over the river at the saddle and west along the tail's southern bench to the
+    # crossing's lip.
     #
     # This one is not scenery. The crossing at (531, 436) is 52 m from the gate court and 103 m above the
     # Amberwood roads at (516, 444), and world_layout.corridor_grade reconciles the whole connected road
     # network at 0.318 m per metre along an axis, writing the midpoint of its lower and upper envelopes. A
     # direct seam road put those Amberwood roads 124 m of corridor from the court, so the court's upper
-    # envelope was 69.2 + 0.318 x 124 = 108.6 m against its own 172.8 m target and it composed at 126.1 m.
-    # These six legs stretch the Whitehorn side from 75 m to 179 m of road (about 240 m of corridor graph),
-    # which is what the head costs: every waypoint stands inside Whitehorn on dry ground of 131-179 m and at
-    # least 26 m clear of the Hornwater's ravine, and the legs fall at 0.06 to 1.03 on the plan's ground.
-    # They all stay north of z = 432. A first pass carried the last two legs down to (572, 450) and
-    # (548, 438), 20-30 m from Amberwood's own roads where corridor_grade cuts the ground 38 m below the
-    # natural bank, and the geometry stage then refused the bridge there: "Bridge banks cannot fit the frozen
-    # terrain within 102m: 38.495m endpoint lift at (555.0, 469.0)". On the 130-145 m bench the approach is
-    # the one design O2's direct road took, and only the last 11 m drop to the crossing's lip.
+    # envelope was 69.2 + 0.318 x 124 = 108.6 m against its own 172.8 m target and it composed at 126.1 m
+    # (design O2). Authored length is what buys the head back.
+    #
+    # Design O3 bought it with six legs east of the court -- and ran them straight through the village on the
+    # south-east slope, which settle_roads then cut to the road's own descending profile: the high overlook
+    # 179.8 -> 134.9 m, the ram pit 143.2 -> 99.4, the snowline stones 173.4 -> 139.5, Structure_watch_01
+    # 175.7 -> 142.7. Four of its six waypoints stood inside a village footprint. These eight legs buy the
+    # same length (336 m of authored line, against O3's 179) on ground that holds nothing: the nearest
+    # village footprint is 26.6 m from the line and the nearest graded road cell 17-27 m from each of the
+    # four placements, which is outside road_shoulder_field's 24 m band. Replaying corridor_grade over this
+    # route before the bake leaves the gate court at the same 154.1 m O3 gave it.
+    #
+    # Every waypoint is inside Whitehorn on dry ground of 108-175 m; the legs fall at 0.01 to 0.71 on the
+    # plan's ground and the steepest 10 m window on the line, 1.56, is the Hornwater's own west scarp at
+    # (583, 343), which the east pass descends beside it. The two river crossings are shallow: the northern
+    # one is the east pass's own, and the southern one is the saddle at (630, 456) where the ravine is about
+    # three metres deep. The crossing station itself did not move -- the ownership raster offers 27 safe
+    # stations and every one of them lies on the z 422-436 line at x 397-533 (design O3 section 4).
+    #
+    # (558, 450) is the last leg's pin and it is not decoration. Without it the router's own A* took the
+    # 51 m run from (574, 464) to the crossing terminal in a northward arc through (570, 437), 16 m from
+    # Secret_horn_ram_pit's 4.5 m footprint and inside road_shoulder_field's 24 m band, and the first O4
+    # bake composed the ram pit at 121.2 m against design O2's 143.2 while the other three village
+    # placements came back within 2 m. Pinned, the approach stays south of the saddle and the whole line
+    # keeps 33.2 m from that footprint. Measure a candidate against the ROUTED road, not the authored
+    # polyline: the straight line here is 27.3 m clear where the route was 16.
     ('whitehorn_range', 'amberwood--whitehorn_range'): [
-        (560., 386.), (596., 398.), (602., 420.), (594., 432.), (566., 430.), (542., 428.)],
+        (556., 350.), (596., 340.), (628., 384.), (648., 420.), (640., 452.), (604., 464.), (574., 464.),
+        (558., 450.)],
 }
 # The same for a retained territory, in its source (library) metres, carried
 # where the layout stands by the plan's retained transform (as the retained door
