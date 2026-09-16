@@ -5,6 +5,7 @@ import numpy as np
 import scene_io as S
 from ferry_export import G,M
 from mirror_support import upper_floor_field
+import landscape as L
 
 REGION='mirrorhold'
 
@@ -162,6 +163,7 @@ def build_mirror_access(world,content,path):
     for name,start,stop in [('Quay',[968.5,814.5],[940.5,796.5]),
                             ('Sanctuary',[874.5,900.5],[866.5,874.5])]:
         node='Walk_Mirror_BankRamp_'+name
+        L.require_designed_deck(getattr(world,'plan',None) or {},node,'mirror_access_geometry')
         mesh,report=ramp_mesh(world,content,start,stop,'mirror_bank_stone')
         builder.add_mesh(node,mesh,with_tangents=False);root=builder.add_node(G.Node(node,mesh=node))
         parts.append({'region':REGION,'node':node,'roots':[root],'bounds':mesh.bounds(),'segment':[],'collides':False})

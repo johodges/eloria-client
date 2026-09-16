@@ -267,89 +267,23 @@ class BridgeUnionTests(unittest.TestCase):
                 self.assertAlmostEqual(low[1],float(w.height_at(x,z))-.06,places=6)
                 self.assertAlmostEqual(high[1],float(B.surface_at(w,x,z))-.12,places=6)
 
-    def test_unfittable_banks_fail_without_mutating_the_world(self):
+    def test_an_unfittable_bank_is_reported_not_grown_and_the_world_is_unchanged(self):
+        # A cliff beside the channel: since the roads pass (R1) a deck is its span plus landings of at most
+        # deck_landing_metres; it is never grown up a bank to fit it, and the misfit is reported.
         w=world();w.height_at=lambda x,z:np.where(np.asarray(x)>24,80.,-2.)+np.asarray(z)*0
-        w.roads=[{'id':'out','width':3.,'points':[[4,-2,20],[44,-2,20]]}]   # a profile on the bed: the cliff itself must fail, not float
+        w.roads=[{'id':'out','width':3.,'points':[[4,-2,20],[44,-2,20]]}]
         before=w.height_at(np.arange(48.),20).copy()
-        with self.assertRaisesRegex(ValueError,'cannot fit|actual dry bank'):
-            B.common_surface(w,water_fields=water,maximum_extension=0)
+        field=B.common_surface(w,water_fields=water)
+        self.assertGreater(field['maximumBankError'],.12)
+        self.assertLessEqual(int(field['mask'][:,31:].any(axis=0).sum()),6)   # at most the six-metre landing beyond the water
         np.testing.assert_array_equal(before,w.height_at(np.arange(48.),20))
 
-
-    def test_a_dry_natural_channel_under_a_raised_road_profile_is_spanned(self):
-        # The current ground keeps a dry gully (no water anywhere); the natural
-        # ground shows the channel; the road profile stays 2.7 m above the bed.
-        def dry_gully():
-            w=world();w.x=np.arange(0,49,2.);w.z=np.arange(0,41,2.)
-            gully=lambda x:(np.asarray(x)>=18)&(np.asarray(x)<=30)
-            w.height_at=lambda x,z:np.where(gully(x),-.5,2.)+np.asarray(z)*0
-            gx,gz=np.meshgrid(w.x,w.z);w.original_height=np.where(gully(gx),-1.5,2.)+gz*0
-            w.roads=[{'id':'out','width':3.,'points':[[4,2.2,20],[44,2.2,20]]}]
-            return w
-        def natural(x,z,*,height,plan):
-            river=np.asarray(height)<-1.
-            return {'mask':river,'depth':np.where(river,.3,0.),'surface':np.where(river,-1.2,0.),'river_mask':river}
-        w=dry_gully()
-        with tempfile.TemporaryDirectory() as temporary:
-            parts=B.build_bridges(w,Path(temporary)/'bridges.glb',water_fields=natural)
-        field=w.bridge_field
-        self.assertEqual(field['wetCells'],0);self.assertGreater(field['spanCells'],0)
-        self.assertEqual(len(B.common_surface(w,water_fields=natural)['components']),1)
-        self.assertTrue([p for p in parts if p['node'].startswith('BridgeUnionPier_')])
-        for x in (18,20,24,28,30):
-            self.assertGreater(float(B.surface_at(w,x,20)),1.9,x)   # the deck spans the gully instead of following its bed
-        # Without the natural ground, or with a profile that wades the dry bed, no deck is built.
-        w=dry_gully();del w.original_height
-        self.assertFalse(B.common_surface(w,water_fields=natural)['mask'].any())
-        w=dry_gully();w.roads=[{'id':'out','width':3.,'points':[[4,2.2,20],[18,-.4,20],[30,-.4,20],[44,2.2,20]]}]
-        self.assertFalse(B.common_surface(w,water_fields=natural)['mask'].any())
-
-
-    def test_a_gap_sized_floating_run_at_a_shallow_creek_is_spanned_and_a_long_one_is_reported(self):
-        # A wadeable creek (no deep water) between two low banks, the road profile 1.7-2.5 m above
-        # creek and banks alike: the deck carries the profile's run from ground to ground.
-        def creek(x, low=18, high=30):
-            x=np.asarray(x);return np.where((x>=22)&(x<=26),-.3,np.where((x>=low)&(x<=high),.5,2.))
-        def shallow(x,z,*,height,plan):
-            h=np.asarray(height);wet=h<-.015
-            return {'mask':wet,'depth':np.where(wet,-h,0.),'surface':np.zeros(np.shape(h))}
-        w=world();w.height_at=lambda x,z:creek(x)+np.asarray(z)*0
-        w.roads=[{'id':'out','width':3.,'points':[[4,2.2,20],[44,2.2,20]]}]
-        with tempfile.TemporaryDirectory() as temporary:
-            B.build_bridges(w,Path(temporary)/'bridges.glb',water_fields=shallow)
-        field=w.bridge_field
-        self.assertEqual(field['wetCells'],0);self.assertGreater(field['spanCells'],0);self.assertEqual(field['floatingRunsSkipped'],[])
-        for x in (18,20,24,28,30):
-            self.assertGreater(float(B.surface_at(w,x,20)),1.9,x)
-        # A floating run longer than SPAN_MAXIMUM_METRES is no gap: reported, not decked.
-        w=world();w.height_at=lambda x,z:creek(x,low=6,high=42)+np.asarray(z)*0
-        w.roads=[{'id':'out','width':3.,'points':[[4,2.2,20],[44,2.2,20]]}]
-        field=B.common_surface(w,water_fields=shallow)
-        self.assertFalse(field['mask'].any());self.assertEqual(len(field['floatingRunsSkipped']),1)
-        self.assertGreater(field['floatingRunsSkipped'][0]['extentMetres'],B.SPAN_MAXIMUM_METRES)
-        self.assertEqual(field['floatingRunsSkipped'][0]['reasons'],['longer than a gap'])
-        # A terrace edge: the ground steps down under a level profile and the road meets the low ground
-        # again at the far end, so the run has a landing as low as its floor: no dip, reported, not decked.
-        w=world();w.height_at=lambda x,z:np.where(np.asarray(x)>=24,-.2,2.)+np.asarray(z)*0
-        w.roads=[{'id':'out','width':3.,'points':[[4,2.2,20],[24,2.2,20],[36,-.2,20],[44,-.2,20]]}]
-        field=B.common_surface(w,water_fields=shallow)
-        self.assertFalse(field['mask'].any());self.assertEqual([r['reasons'] for r in field['floatingRunsSkipped']],[['no dip below its landings']])
-        # A shore road: the ground falls to shallow water beside the road, so its downhill shoulder floats
-        # while the road itself stands on the ground; reported, not decked.
-        w=world();w.height_at=lambda x,z:np.where((np.asarray(z)>=21)&(np.asarray(x)>=18)&(np.asarray(x)<=30),-.2,2.)+np.asarray(x)*0
-        w.roads=[{'id':'out','width':3.,'points':[[4,2.2,20],[44,2.2,20]]}]
-        field=B.common_surface(w,water_fields=shallow)
-        self.assertFalse(field['mask'].any());self.assertEqual([r['reasons'] for r in field['floatingRunsSkipped']],[['road on the ground, only a shoulder floats']])
-        # A creek with a deep pool is the wet rule's crossing: its floating run is reported, the pool decked.
-        w=world();w.height_at=lambda x,z:np.where((np.asarray(x)>=23)&(np.asarray(x)<=25),-1.,creek(x))+np.asarray(z)*0
-        w.roads=[{'id':'out','width':3.,'points':[[4,2.2,20],[44,2.2,20]]}]
-        field=B.common_surface(w,water_fields=shallow)
-        self.assertGreater(field['wetCells'],0);self.assertEqual(field['spanCells'],0)
-        self.assertEqual([r['reasons'] for r in field['floatingRunsSkipped']],[['holds deep water']])
-        # A floating profile that touches no water (a dry dip) builds nothing.
+    def test_a_dry_gully_or_a_floating_road_profile_builds_no_deck(self):
+        # The floating-run span rule is retired: roads are graded into the ground, and only water carries a deck.
         w=world();w.height_at=lambda x,z:np.where((np.asarray(x)>=18)&(np.asarray(x)<=30),.5,2.)+np.asarray(z)*0
         w.roads=[{'id':'out','width':3.,'points':[[4,2.2,20],[44,2.2,20]]}]
-        self.assertFalse(B.common_surface(w,water_fields=shallow)['mask'].any())
+        dry=lambda x,z,*,height,plan:{'mask':np.zeros(np.shape(height),bool),'depth':np.zeros(np.shape(height)),'surface':np.zeros(np.shape(height))}
+        self.assertFalse(B.common_surface(w,water_fields=dry)['mask'].any())
 
 
     def test_precision_remnants_are_the_faces_too_small_or_too_thin_to_carry_a_grade(self):

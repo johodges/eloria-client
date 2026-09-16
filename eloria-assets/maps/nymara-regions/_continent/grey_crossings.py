@@ -19,12 +19,16 @@ import numpy as np
 import scene_io as S
 from content import RETIRED_GREY_SPANS
 from mirror_support import upper_floor_field
+import landscape as L
 
 REGION='grey_moors'
 CACHE='Secret_moor_boardwalk_cache'
+BOARDWALK_PREFIX='Landmark_boardwalk_'
 CROSSING_PREFIX='Walk_ContinentalBridgeUnion_'
 SAMPLE_METRES=1.
-MAXIMUM_ASSOCIATION_METRES=40.
+# R1: two Moorwater bridge sites remain (the hub crossing and the southern pool); the retired centre span stands
+# 56.7 m from the hub crossing's floor, the nearest emitted floor.
+MAXIMUM_ASSOCIATION_METRES=64.
 # Expected global XZ of the four records on the last composition that still
 # retained the spans (ninth), replayed read-only in
 # diagnostic-moor-southern-rims/combined-retirement-ninth.json; they equal the
@@ -52,7 +56,10 @@ def prepare_grey_crossings(world,content):
             raise ValueError(f'{REGION}:{list(tile)}: authored semantic point lies outside its territory')
         point=np.array([x,float(world.height_at(x,z)),z])
         content.authored_server_points[(REGION,tile)]=point;points[str(list(tile))]=point.tolist()
-    world.grey_crossings={'retiredSpans':list(RETIRED_GREY_SPANS),'authoredPoints':points}
+    # The retained boardwalks that stay are designed decks: elevated walks the plan names (owner, 2026-09-16).
+    boardwalks=sorted(node for (region,node) in content.mapping if region==REGION and node.startswith(BOARDWALK_PREFIX))
+    for node in boardwalks:L.require_designed_deck(getattr(world,'plan',None) or {},node,'grey_crossings')
+    world.grey_crossings={'retiredSpans':list(RETIRED_GREY_SPANS),'authoredPoints':points,'designedBoardwalks':boardwalks}
     return world.grey_crossings
 
 

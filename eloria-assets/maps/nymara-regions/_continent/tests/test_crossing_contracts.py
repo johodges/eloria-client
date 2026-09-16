@@ -53,6 +53,14 @@ class CrossingPointTests(unittest.TestCase):
             self.assertLess(abs(point[2] - (ORIGIN[1] - tile[1] - .5)), .5)
 
 
+class SiteTests(unittest.TestCase):
+    def test_a_floor_number_names_its_crossing_site_and_decks_away_from_sites_name_none(self):
+        self.assertEqual(X.site_of('001'), 0)
+        self.assertEqual(X.site_of('042'), 41)
+        self.assertIsNone(X.site_of('500'))
+        self.assertIsNone(X.site_of('517'))
+
+
 class DeclareCrossingsTests(unittest.TestCase):
     def test_a_continuous_floor_is_declared_between_its_extreme_served_tiles(self):
         # Package x 2..9 (tiles 12..19 wide? no: tile x = package x + 10 -> 12..18), z -3..-1 (tiles 11..12).
@@ -61,6 +69,7 @@ class DeclareCrossingsTests(unittest.TestCase):
         crossings, declared, not_walkable = X.declare_crossings(document, body, 'west', grid, 2, ORIGIN, CELLS, heights)
         self.assertEqual(not_walkable, [])
         self.assertEqual([c['id'] for c in crossings], ['ContinentalBridgeUnion_004'])
+        self.assertEqual(crossings[0]['site'], 3)                 # bridge_export numbers a site's deck by its id + 1
         record = declared[0]
         self.assertEqual(record['deckTiles'], 16)                 # 8 tiles long, 2 tiles wide
         self.assertEqual(record['parts'], [16])

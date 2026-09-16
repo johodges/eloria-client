@@ -81,12 +81,13 @@ Use these source responsibilities when changing the world:
 | `grey_crossings.py` | Retirement of the three duplicate Grey Moors boardwalk spans, the four pinned server positions they anchored, and their landmark identities on the actual continental crossing floors. |
 | `four_gates_sage.py` | The six Four Gates tutorial Sage records pinned 48 tiles from the arrival beside the plaza approach, keeping their surveyed layout. |
 | `object_edits.py`, `continent-edits.json` | Authored object edits from the continent plan editor: retained placements removed before grouping, rotated/scaled on their source roots and moved on their shift before footings and routing; copies cloned into their own territory's document with their own footing and collision identity; vegetation areas that clear or thin ecological scatter without renumbering anything outside them. `python object_edits.py --library <library>` checks the file before composing. |
-| `door_approaches.py` | Authored road ends for doors inside retained pavilions (the Shrine of the Nine Lost on the South Quay), shared by the server-declared discovery branch to the same door, so the road meets the pavilion's open side and no deck is built onto its threshold. |
+| `door_approaches.py` | Authored road ends for doors inside retained pavilions (the Shrine of the Nine Lost on the South Quay), shared by the server-declared discovery branch to the same door, so the road meets the pavilion's open side and no deck is built onto its threshold. Every authored road end, server road end and seam or door waypoint is checked dry and outside the river setback before routing (`validate_river_setbacks`). |
+| `river_crossings.py` | River crossing sites: every plan river cut in cross sections, the locally shortest square reaches with dry landings offered as candidates and claimed by the roads that cross them, at least 100 m apart along a river; river setbacks, dry road ends and branch starts (see "Roads and rivers"). |
 | `winding.py` | Library triangles wound against their own vertex normals, reversed per sheet in a private copy of each library document as `content.load` reads it, before any bounds, grouping, turn or edit (see "Inverted winding in retained library meshes"). |
-| `crossing_contracts.py` | Contracts-stage declaration of each continental bridge floor's two standing points from the served collision fold, with every floor's walkable parts reported. |
+| `crossing_contracts.py` | Contracts-stage declaration of each continental bridge floor's two standing points from the served collision fold, with every floor's walkable parts reported; each declaration names the crossing site its floor serves. |
 | `ferry_export.py`, `ferry_support.py` | Actual quay/boat fit and preservation of its complete shoreline footprint through road grading. |
-| `world_layout.py` | Ownership polygons, server address envelopes, road alignment (retained solids impassable, hubs and terminals joined to open ground, gentle traverses preferred, the station terrain terms per territory), common road grading, foundation reconciliation and drainage protection. |
-| `bridge_export.py` | One union of visible continental bridge decks, fitted to the common road surface and actual banks. |
+| `world_layout.py` | Ownership polygons, server address envelopes, road alignment (retained solids impassable, river water and its setback impassable except on a crossing site's bridge edge, hubs and terminals joined to dry open ground, gentle traverses preferred, the station terrain terms per territory, legs rerouted round earthworks beyond the limits), common road grading with cut and fill limited outside footings, foundation reconciliation and drainage protection. |
+| `bridge_export.py` | One union of visible continental bridge decks: each claimed crossing site's span with landings of at most 6 m (named by its site), decks over deep sea water away from any site, piers only where they stand in water; fitted to the common road surface and actual banks, an unfittable bank reported rather than grown. |
 | `terrain_export.py` | Shared terrain faces and physically clipped shorelines, partitioned from the complete world surface. |
 | `build_continent.py`, `scene_io.py` | Global composition (seam roads route with the hub's own solids only, so a terminal beside a city wall threads the gate), master scene, named packages, independent loading cells and shared image dependencies. |
 | `crossings.py`, `export_contracts.py` | Reciprocal crossing lanes and authoritative standing positions derived from actual exported walking surfaces. |
@@ -221,6 +222,70 @@ approaches; collision export must not conceal a disconnected entrance by
 carving an invisible corridor or moving it away from its building. The entrance
 profile hash is part of composition freshness.
 
+## Roads and rivers
+
+The road rules since the R1 pass (2026-09-16): a road crosses a river only on a bridge at a locally shortest,
+square reach; several bridges may cross one river when they stand at least 100 m apart along it; a road that
+travels in a river's direction keeps to its bank outside a setback; roads do not float; earthworks outside
+footings are limited and written into the ground. The plan key `crossing_policy` holds the numbers
+(`landscape.CROSSING_POLICY_DEFAULTS`, validated against `CROSSING_POLICY_LIMITS`).
+
+**Crossing sites** (`river_crossings.py`). Every plan river is cut every 2 m along its curved centreline. A
+section costs its wet width plus an approach term (the bank rise a .35 grade cannot absorb over a 12 m landing).
+Sections are excluded over lakes and the sea, within 20 m of another channel (confluences), across the rigid
+core of a settlement footing or a retained solid, within 12 m of a territory seam, more than 15 degrees off
+square to the flow, with a landing that is not dry ground above the sea, or where a deck would stand more
+than 0.3 m over its banks. A section within a quarter metre of the cheapest valid section within 40 m along its
+river is a candidate (thinned to one every 20 m). A candidate whose approach exceeds 6 m is a last resort,
+offered only to a leg that finds no other crossing. The plan key `authored_crossings` names a section (a river
+id and metres along it) that is a candidate although the model excludes it, when its only reasons are a deck
+that cannot sit at water level between high banks or a retained solid beside a landing
+(`landscape.AUTHORED_CROSSING_WAIVERS`): the Mirrorwater ravine below Mirror Lake, which the Verdant Stair seam
+road crosses as design O5 did.
+
+**Routing.** River water is impassable to the router. Every claimed site in the leg's territory, and every
+candidate there standing at least 100 m along its river from each claimed site, adds one bridge edge between its
+two routed landings (9 m beyond the wet edges), costing 60 m of alignment on top of its length; a site a public
+road (seam, ferry or door road) already crosses costs a quarter of that. A routed road claims the sites it
+crosses. A road of half width w keeps max(6 m, w + 4 m) from river water and pays a soft penalty over a 16 m
+bank shelf beyond that. Seam terminals, door pins, server road ends, discovery branch starts and ends and trail
+starts stand on dry land outside the setback; a branch starts on its destination's bank and never on a bridge.
+A seam road that cannot be routed through its chosen station tries up to ten alternatives spread along the
+seam. `composition.json` reports `riverCrossings` (sites, claims, last-resort claims, unrouted legs),
+`movedSeamCrossings` and `dryRoadEnds`.
+
+**Earthworks.** Outside footings (the rigid core of an assembly footing, and Mirrorhold's released civic
+ground) a road's profile cuts at most 4 m and fills at most 3 m, and the solved corridor written into the
+ground obeys the same limits (`graded_profile`, `limit_corridor_earthworks`). A leg whose ground no .45 grade
+can carry within the limits is rerouted up to three times with a penalty on the offending stations; what
+remains is reported under `earthworks.legsStillExceeding` and needs authored switchback waypoints
+(`SEAM_ROAD_WAYPOINTS`, `DOOR_ROAD_WAYPOINTS`).
+
+**Bridge decks** (`bridge_export.py`). A deck is a claimed site's span with landings of at most 6 m, lifted at
+most 0.3 m over dry ground; lifted landing cells are trimmed rather than raised, and piers stand only in
+water. The retired plan keys `bridge_approach_aprons` and `bridge_approach_connections` are refused. The
+union floor `Walk_ContinentalBridgeUnion_<n>` names its site (`n` is the site id plus one; decks over deep sea
+water away from any site number from 500), one node per territory even when a site's deck falls into disconnected
+pieces, and `crossing_contracts.py` records that site with each declared crossing.
+
+**Geometry consumers of the roads.** A Manymouth village street with no retained public contact starts
+from the nearest public road within 36 m, else within 64 m (`manymouth_village_streets.public_road_station`);
+the Grey Moors boardwalk identities retired onto the continental crossing floors associate with the nearest
+emitted Grey Moors floor within 64 m (`grey_crossings.MAXIMUM_ASSOCIATION_METRES`).
+
+**Designed decks.** Every other elevated walk is a named designed deck in the plan key `designed_decks`
+(an exact name or a trailing-`*` prefix, the module that builds it, a note): the Amberwood market stair, root
+ramp and root hatch, the Manymouth boardwalks and village streets, the Mirrorhold bank ramps, the ferry quays
+and the Grey Moors boardwalks. A building module refuses a deck the plan does not name under that module.
+
+**Audit.** `audit_continent.py` checks the rules on `generated/roads.json` (stations, widths and crossing
+sites), the emitted terrain and `river-bridges.glb`: no road station over river water outside a site's span,
+no wet run crossing under 70 degrees, each site within 4 m of the locally shortest buildable crossing and at
+least the spacing from its river's other sites (sections within the policy's seam distance of a territory seam are no
+comparison), no pier over 8 m outside designed decks, and no road station more than 1.5 m over its ground outside
+site spans and designed decks. Sea spans and their landings are
+reported, not judged by the river rules.
+
 ## Rebuild
 
 Use Python with NumPy, SciPy, and Pillow, the shared toolkit's native raster
@@ -252,7 +317,8 @@ shaping modules (`landscape`, `world_layout`, `content`, `assemblies`,
 `mirror_support`, `manymouth_support`, `mirror_streets`, `four_gates_support`,
 `amberwood_support`, `amberwood_access`, `mirror_lake_support`,
 `ssarathi_bank_support`, `manymouth_boats`, `terrain_export`, `scene_io`,
-`grey_crossings`, `four_gates_sage`, `door_approaches`, `hull_settle`, `resource_trails`, `object_edits`),
+`grey_crossings`, `four_gates_sage`, `door_approaches`, `hull_settle`, `resource_trails`, `object_edits`,
+`winding`, `river_crossings`),
 the object edits file `continent-edits.json` (absent means no edits),
 the composition algorithm, the authoritative
 entrance profile and each retained library certificate. A changed source must

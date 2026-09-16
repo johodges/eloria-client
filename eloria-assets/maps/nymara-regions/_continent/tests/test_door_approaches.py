@@ -25,10 +25,10 @@ class DoorApproachTests(unittest.TestCase):
         w = world(); content = SimpleNamespace()
         report = D.prepare_door_approaches(w, content)
         end = content.door_road_ends[('verdant_stair', 'nine-lost-door')]
-        self.assertEqual(end.tolist(), [1206.5, 1175.5])
+        self.assertEqual(end.tolist(), [1201.0, 1173.0])     # R1: outside the river setback, west-north-west of the threshold
         self.assertLess(end[1], DOOR[1])                    # north of the door (smaller z)
         self.assertLess(np.linalg.norm(end - DOOR), D.MAXIMUM_DOOR_DISTANCE_METRES)
-        self.assertEqual(report['roadEnds'], {'verdant_stair:nine-lost-door': [1206.5, 1175.5]})
+        self.assertEqual(report['roadEnds'], {'verdant_stair:nine-lost-door': [1201.0, 1173.0]})
         self.assertIs(w.door_approaches, report)
         self.assertTrue(np.array_equal(D.door_road_end(content, 'verdant_stair', 'nine-lost-door', DOOR), end))
 
@@ -57,6 +57,9 @@ class DoorApproachTests(unittest.TestCase):
         banner = np.array([1214.1, 743.2]); spring = np.array([1202.3, 751.6]); vault = np.array([1171.1, 701.1]); mill = np.array([1226., 744.])
         self.assertEqual(D.server_road_end(content, 'sunmane_steppe', banner, 'sunmane_steppe', 'sunmane_steppe_secrets').tolist(), [1216., 732.])
         self.assertEqual(D.server_road_end(content, 'sunmane_steppe', spring, 'sunmane_steppe', 'sunmane_steppe_secrets').tolist(), [1196., 760.])
+        # R1 moved the spring pin out of the river setback; it still serves the spring from within reach.
+        moved = SimpleNamespace(server_road_ends={key: [np.asarray(p, float) for p in pins] for key, pins in D.SERVER_ROAD_ENDS.items() if key[0] == 'sunmane_steppe'})
+        self.assertEqual(D.server_road_end(moved, 'sunmane_steppe', spring, 'sunmane_steppe', 'sunmane_steppe_secrets').tolist(), [1201.5, 761.5])
         self.assertEqual(D.server_road_end(content, 'sunmane_steppe', mill, 'sunmane_steppe', 'sunmane_steppe_secrets').tolist(), [1232., 734.])
         # The hall vault, out of both pins' reach, keeps the default handling.
         self.assertIsNone(D.server_road_end(content, 'sunmane_steppe', vault, 'sunmane_steppe', 'sunmane_steppe_secrets'))
@@ -65,7 +68,7 @@ class DoorApproachTests(unittest.TestCase):
         prepared = SimpleNamespace()
         D.prepare_door_approaches(w, prepared)
         self.assertEqual(len(prepared.server_road_ends[('sunmane_steppe', 'sunmane_steppe', 'sunmane_steppe_secrets')]), 3)
-        self.assertEqual(w.door_approaches['serverRoadEnds']['sunmane_steppe:sunmane_steppe->sunmane_steppe_secrets'], [[1216., 732.], [1196., 760.], [1232., 734.]])
+        self.assertEqual(w.door_approaches['serverRoadEnds']['sunmane_steppe:sunmane_steppe->sunmane_steppe_secrets'], [[1216., 732.], [1201.5, 761.5], [1232., 734.]])
 
     def test_a_designed_climb_lists_its_waypoints_in_order_and_other_doors_none(self):
         w = world(); w.ids = ['whitehorn_range']
@@ -124,8 +127,8 @@ EAST_PASS = ('whitehorn_range', 'amethyst_barrens--whitehorn_range')
 
 
 def seam_patches(authored=None, retained=None):
-    """The three waypoint tables with only the seam entries under test in them."""
-    return (patch.dict(D.RETAINED_DOOR_ROAD_WAYPOINTS, {}, clear=True),
+    """The four waypoint tables with only the seam entries under test in them."""
+    return (patch.multiple(D, RETAINED_DOOR_ROAD_WAYPOINTS={}, DOOR_ROAD_WAYPOINTS={}),
             patch.dict(D.SEAM_ROAD_WAYPOINTS, authored or {}, clear=True),
             patch.dict(D.RETAINED_SEAM_ROAD_WAYPOINTS, retained or {}, clear=True))
 

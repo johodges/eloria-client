@@ -4,6 +4,14 @@ Independent outgoing/incoming road ribbons must never become separate decks
 over the same channel. This exporter solves one common 1m height field, clips
 its faces to a smooth road capsule union, and partitions it once by territory.
 The sampled continent terrain is read-only. Failed bank fits are explicit.
+
+Since the roads pass (R1) a deck is only a bridge: a claimed crossing site's
+span plus landings of at most the plan's crossing_policy.deck_landing_metres,
+or the same over deep water a road crosses away from any site (a sea channel).
+Piers stand only under the span, over water. Floors are named per site
+(Walk_ContinentalBridgeUnion_<site id + 1>_<territory>; decks away from a
+site number from 500). Elevated walks that are not bridges belong to the
+designed decks the plan names (landscape.designed_deck_entry).
 """
 from __future__ import annotations
 
@@ -26,12 +34,12 @@ from amberwood import gltf as G, mesh as M
 
 CELL=1.
 GRADE=.65
+RETIRED_PLAN_KEYS=('bridge_approach_aprons','bridge_approach_connections')
+TRIM_PASSES=6     # landing cells lifted over their bank beyond the deck lift limit are dropped and the deck solved again
 SOLVE_GRADE=.64  # Margin for narrow clipped faces in float32 continent coordinates.
 NEGLIGIBLE_FLOOR_AREA=1e-6  # square metres; a clipped outline below this is a sliver, not a floor
 PRECISION_REMNANT_AREA=1e-4      # square metres: an encoded face failing the grade under this area is a remnant
 PRECISION_REMNANT_ALTITUDE=.01   # metres: or thinner than this across its longest edge
-SPAN_CLEARANCE_METRES=1.    # a road profile this far above the ground, in a run that touches water, is a span
-SPAN_MAXIMUM_METRES=24.     # a floating run longer than this is a hillside road the grading did not build, not a gap
 CROSS=np.array([[0,1,0],[1,1,1],[0,1,0]],bool)
 CAP_ARC_STEPS=12
 POLYGON_EPS=1e-9
@@ -317,8 +325,51 @@ def frontier_vertices(cells,road):
     return result
 
 
-def common_surface(world, *, water_fields=None, maximum_extension=96):
+def deck_policy(world):
+    """(landing metres, lift metres) of the plan's crossing policy (landscape defaults without a plan)."""
+    plan=getattr(world,'plan',None) or {}
+    for key in RETIRED_PLAN_KEYS:
+        if key in plan:
+            raise ValueError(f'{key}: retired by the roads pass (R1): a bridge deck is its site span plus landings of at most '
+                             'crossing_policy.deck_landing_metres; remove the key from diagonal-plan.json')
+    policy=L.crossing_policy(plan)
+    return float(policy['deck_landing_metres']),float(policy['deck_lift_metres'])
+
+
+def site_span_cells(world,site,road,landing):
+    """Road footprint cells on a crossing site's span: along its axis from landing metres before the first wet edge
+    to landing metres beyond the last, and across it within the widest road plus a cell."""
+    left,right=np.asarray(site['wetEdges'][0],float),np.asarray(site['wetEdges'][1],float)
+    axis=right-left;length=float(np.linalg.norm(axis))
+    if length<1e-9:return np.zeros_like(road)
+    axis/=length;across=np.array([-axis[1],axis[0]])
+    half=max((float(r['width']) for r in world.roads),default=4.)+CELL
+    start=left-axis*landing;span=length+2*landing
+    corners=np.array([start+across*half,start-across*half,start+axis*span+across*half,start+axis*span-across*half])
+    lo=np.floor((corners.min(axis=0)-[world.x0,world.z0])/CELL).astype(int);hi=np.ceil((corners.max(axis=0)-[world.x0,world.z0])/CELL).astype(int)
+    ix0,iz0=max(0,lo[0]),max(0,lo[1]);ix1,iz1=min(road.shape[1],hi[0]+1),min(road.shape[0],hi[1]+1)
+    cells=np.zeros_like(road)
+    if ix0>=ix1 or iz0>=iz1:return cells
+    x,z=np.meshgrid(world.x0+(np.arange(ix0,ix1)+.5)*CELL,world.z0+(np.arange(iz0,iz1)+.5)*CELL)
+    along=(x-start[0])*axis[0]+(z-start[1])*axis[1];side=(x-start[0])*across[0]+(z-start[1])*across[1]
+    cells[iz0:iz1,ix0:ix1]=(along>=0)&(along<=span)&(np.abs(side)<=half)
+    return cells&road
+
+
+def common_surface(world, *, water_fields=None, maximum_extension=None):
+    """One deck field over every bridge the roads need, clipped later to the road capsule union.
+
+    A bridge deck is a crossing site's span (river_crossings: the wet width at a claimed site) plus landings of at
+    most ``crossing_policy.deck_landing_metres`` on each bank, over the road cells there; deep water a road crosses
+    anywhere else (a sea channel between islands) gets the same deck: its wet cells plus that landing. Nothing else
+    is decked: the approach aprons, the connection aprons, the bank growth and the floating-run spans of earlier
+    publications are retired (``maximum_extension`` is accepted and ignored). A deck stands on the water clearance,
+    the harmonic bank-to-bank grade over water and the bounded-grade majorant; over dry ground it rests 2.5 cm above
+    the bed, and wherever the grade majorant lifts it further, or a landing cannot meet its bank within the grade,
+    the report says so instead of growing the deck.
+    """
     water_fields=water_fields or L.water_fields
+    landing,lift_limit=deck_policy(world)
     outline=RoadOutline(world)
     road=road_footprint(world);rows,cols=np.nonzero(road)
     x=world.x0+(cols+.5)*CELL;z=world.z0+(rows+.5)*CELL
@@ -328,121 +379,28 @@ def common_surface(world, *, water_fields=None, maximum_extension=96):
     # merely because nearby water reaches an invisible grid-cell centre.
     inside=outline.contains(x,z)
     wet=np.zeros_like(road);wet[rows,cols]=water['mask']&(water['depth']>.35)&inside
-    # A road profile held above the ground it crosses is a span whether or
-    # not deep water runs there: a shallow creek kept by a footing feather,
-    # a drained natural channel, and the banks the profile floats over on
-    # its way back to the ground. The floating run must touch water (any
-    # depth today, or the original ground's channels), so that a profile
-    # left above a pinned settlement footing far from water builds no deck;
-    # it must be gap-sized, since a profile floating for tens of metres up
-    # a river bank is a hillside road the grading did not build; it must
-    # hold no deep water, which the wet rule decks with its own approaches;
-    # the road's own centreline must float in it, since a shore or
-    # cliff-edge road floats only at the shoulder that falls away beside
-    # it; and the ground under the road inside the run must dip below the
-    # ground under the road where it meets the run at either end, the
-    # shape of a creek or gully rather than of a bank the road descends or
-    # a terrace edge. Runs failing these are reported, not decked.
-    span=np.zeros_like(road);span_all=span;spanned_runs=[];skipped_runs=[]
-    if getattr(world,'roads',None):
-        watery=np.zeros_like(road);watery[rows,cols]=water['mask']
-        original=getattr(world,'original_height',None)
-        if original is not None:
-            terrain_cell=float(world.x[1]-world.x[0])
-            natural=water_fields(x,z,height=triangle_sample(original,x,z,world.x0,world.z0,terrain_cell),plan=world.plan)
-            watery[rows,cols]|=np.asarray(natural.get('river_mask',np.zeros(len(x),bool)),bool)
-        if watery.any():
-            # Each road stamps its own profile across its footprint width, so
-            # the whole width spans, shoulders included, as the per-vertex
-            # water test does for a wet crossing; a neighbouring road higher
-            # up a hillside lends its profile to no cell of this one.
-            profile=np.full(road.shape,-np.inf);centre_lift=np.full(road.shape,-np.inf);centre_ground=np.full(road.shape,np.inf);bed=np.full(road.shape,np.inf);bed[rows,cols]=ground
-            for r in world.roads:
-                pts=np.asarray(r['points'],float);half=float(r['width'])+CELL/math.sqrt(2)
-                offsets=np.arange(-half,half+1e-9,CELL*.5)
-                for a,b in zip(pts,pts[1:]):
-                    d=b[[0,2]]-a[[0,2]];length=float(np.linalg.norm(d))
-                    if length<1e-9:continue
-                    n=np.array([-d[1],d[0]])/length;count=max(1,int(math.ceil(length*2)))
-                    samples=a[None,:]+(b-a)[None,:]*(np.arange(count+1)/count)[:,None]
-                    px=samples[:,0][:,None]+n[0]*offsets[None,:];pz=samples[:,2][:,None]+n[1]*offsets[None,:]
-                    iz=((pz-world.z0)/CELL).astype(int);ix=((px-world.x0)/CELL).astype(int)
-                    keep=(iz>=0)&(iz<road.shape[0])&(ix>=0)&(ix<road.shape[1])
-                    np.maximum.at(profile,(iz[keep],ix[keep]),np.broadcast_to(samples[:,1][:,None],iz.shape)[keep])
-                    # The road's own lift, at its samples against the ground under them: on a
-                    # steep cross-slope the centre of the cell a sample falls in lies lower.
-                    under=np.asarray(world.height_at(samples[:,0],samples[:,2]),float);lift=samples[:,1]-under
-                    cz=((samples[:,2]-world.z0)/CELL).astype(int);cx=((samples[:,0]-world.x0)/CELL).astype(int)
-                    keep=(cz>=0)&(cz<road.shape[0])&(cx>=0)&(cx<road.shape[1])
-                    np.maximum.at(centre_lift,(cz[keep],cx[keep]),lift[keep]);np.minimum.at(centre_ground,(cz[keep],cx[keep]),under[keep])
-            floating=road&(profile-bed>SPAN_CLEARANCE_METRES);centre_floating=road&(centre_lift>SPAN_CLEARANCE_METRES)
-            labels,_=label(floating,structure=np.ones((3,3)))
-            touching=np.unique(labels[floating&watery]);touching=touching[touching>0]
-            objects=find_objects(labels)
-            for run in touching:
-                sl=objects[run-1]
-                extent=math.hypot((sl[0].stop-sl[0].start)*CELL,(sl[1].stop-sl[1].start)*CELL)
-                padded=(slice(max(0,sl[0].start-1),sl[0].stop+1),slice(max(0,sl[1].start-1),sl[1].stop+1))
-                inside_run=labels[padded]==run
-                deep=bool((inside_run&wet[padded]).any())
-                centred=inside_run&centre_floating[padded]
-                landing=binary_dilation(centred,structure=np.ones((3,3)))&~centred&np.isfinite(centre_ground[padded])&~centre_floating[padded]
-                lowest=float(np.min(centre_ground[padded][centred])) if centred.any() else np.inf
-                landing_floor=float(np.min(centre_ground[padded][landing])) if landing.any() else -np.inf
-                record={'cells':int(inside_run.sum()),'extentMetres':round(extent,1),'maximumLiftMetres':round(float(np.max((profile-bed)[padded][inside_run])),2),
-                        'dipMetres':round(landing_floor-lowest,2) if np.isfinite(landing_floor) and np.isfinite(lowest) else None,'deepWater':deep,'centrelineFloats':bool(centred.any()),
-                        'bounds':[round(world.x0+sl[1].start*CELL,1),round(world.z0+sl[0].start*CELL,1),round(world.x0+sl[1].stop*CELL,1),round(world.z0+sl[0].stop*CELL,1)]}
-                reasons=[]
-                if extent>SPAN_MAXIMUM_METRES:reasons.append('longer than a gap')
-                if deep:reasons.append('holds deep water')
-                if not centred.any():reasons.append('road on the ground, only a shoulder floats')
-                elif not (landing_floor-lowest>SPAN_CLEARANCE_METRES):reasons.append('no dip below its landings')
-                if reasons:
-                    record['reasons']=reasons;skipped_runs.append(record)
-                else:
-                    spanned_runs.append(record);span_all|=labels==run
-            span=np.zeros_like(road);span[rows,cols]=span_all[rows,cols]&inside
-    cells=wet|span
-    for _ in range(6):cells=binary_dilation(cells,structure=CROSS)&road
-    approach_coverage={}
-    # Some authored river valleys preserve a broad natural bank apron through
-    # road grading. Their visible timber crossing must include that approach,
-    # rather than stopping at a dry but steep slope partway up the bank.
-    for region,metres in sorted(world.plan.get('bridge_approach_aprons',{}).items()):
-        metres=float(metres)
-        if region not in world.ids or not np.isfinite(metres) or not 6<=metres<=96:
-            raise ValueError('Bridge approach apron requires a known region and 6..96 metres')
-        owned=np.zeros_like(road);owned[rows,cols]=world.owner_at(x,z)==world.ids.index(region)
-        before=int(cells.sum())
-        for _ in range(int(math.ceil(metres/CELL))-6):
-            cells|=binary_dilation(cells,structure=CROSS)&road&owned
-        approach_coverage[region]={'requestedMetres':metres,'additionalCells':int(cells.sum())-before}
-    connection_coverage={}
-    for identity,metres in sorted(world.plan.get('bridge_approach_connections',{}).items()):
-        metres=float(metres)
-        connection=next((c for c in world.connections if c['id']==identity and c['type']=='walk'),None)
-        selected=[r for r in world.roads if r['id'].startswith(identity+'-')]
-        if connection is None or not selected or not np.isfinite(metres) or not 6<=metres<=96:
-            raise ValueError('Bridge connection apron requires a known walking connection with roads and 6..96 metres')
-        subset=SimpleNamespace(x0=world.x0,x1=world.x1,z0=world.z0,z1=world.z1,roads=selected)
-        eligible=road_footprint(subset)
-        anchor=np.asarray(connection['anchor']);radius=metres*2+12
-        nearby=np.zeros_like(road);nearby[rows,cols]=np.hypot(x-anchor[0],z-anchor[1])<=radius
-        eligible&=nearby
-        before=int(cells.sum())
-        # A wet seed can be separated from its destination territory by a dry
-        # bank on the other side of the ownership line. Follow both actual
-        # connection roads through that bank, within one local crossing area.
-        for _ in range(int(math.ceil(metres/CELL))-6):
-            cells|=binary_dilation(cells,structure=CROSS)&eligible
-        connection_coverage[identity]={'requestedMetres':metres,'anchorRadiusMetres':radius,
-            'additionalCells':int(cells.sum())-before}
+    river=np.zeros_like(road)
+    if 'river_mask' in water:river[rows,cols]=np.asarray(water['river_mask'],bool)&inside
+    sites=[site for site in getattr(world,'crossing_sites',[]) if getattr(world,'crossing_site_roads',{}).get(site['id'],True)]
+    site_cells={};spanned=np.zeros_like(road)
+    for site in sites:
+        cells=site_span_cells(world,site,road,landing)
+        if cells.any():site_cells[site['id']]=cells;spanned|=cells
+    # Deep water a road crosses away from every site: its own wet cells plus the landing.
+    loose=wet&~spanned
+    cells=loose.copy()
+    for _ in range(int(math.ceil(landing/CELL))):cells=binary_dilation(cells,structure=CROSS)&road
+    cells|=spanned
+    stray_river=river&wet&~spanned
     final=np.full((road.shape[0]+1,road.shape[1]+1),np.nan)
-    maximum_bank_error=0.;components=[];worst_bank=None
-    for extension in range(0,maximum_extension+1,6):
+    # A deck lifts at most deck_lift_metres over dry ground: a landing cell the solved deck would carry higher over
+    # its bank is left to the graded road, and the deck is solved again without it (a steep bank ends the landing).
+    trimmed=0
+    for attempt in range(TRIM_PASSES+1):
+        final.fill(np.nan)
         labels,count=label(cells,structure=np.ones((3,3)))
         frontier=frontier_vertices(cells,road)
-        grow=np.zeros_like(cells);components=[];final.fill(np.nan);maximum_bank_error=0.;worst_bank=None
+        components=[];maximum_bank_error=0.;worst_bank=None;lift_reports=[];next_loose=500;trim=np.zeros_like(cells)
         for component,sl in enumerate(find_objects(labels),1):
             if sl is None:continue
             iz0,iz1=sl[0].start,sl[0].stop;ix0,ix1=sl[1].start,sl[1].stop
@@ -452,26 +410,46 @@ def common_surface(world, *, water_fields=None, maximum_extension=96):
             wf=water_fields(gx,gz,height=bed,plan=world.plan)
             water_vertices=wf['mask']&(wf['depth']>.35)
             lower=np.where(water_vertices,np.maximum(bed+.025,wf['surface']+.85),bed+.025)
-            spanned=water_vertices|vertices_for_cells(mask&span_all[sl])
-            deck=bounded_floor(bank_profile(lower,active,spanned),active)
+            deck=bounded_floor(bank_profile(lower,active,water_vertices),active)
+            dry=active&~wf['mask']
+            lifted=dry&(deck-bed>lift_limit+1e-9)
+            if lifted.any() and attempt<TRIM_PASSES:
+                corners=dry[:-1,:-1]&dry[1:,:-1]&dry[:-1,1:]&dry[1:,1:]
+                touching=lifted[:-1,:-1]|lifted[1:,:-1]|lifted[:-1,1:]|lifted[1:,1:]
+                cut=mask&corners&touching
+                if cut.any() and (mask&~cut&~corners).any():
+                    view=trim[sl];view|=cut
             bank=frontier[iz0:iz1+1,ix0:ix1+1]&active
             error=float(np.max(deck[bank]-bed[bank],initial=0))
             if bank.any() and error>=maximum_bank_error:
                 worst=int(np.argmax(np.where(bank,deck-bed,-np.inf)))
                 worst_bank=(float(gx.ravel()[worst]),float(gz.ravel()[worst]))
             maximum_bank_error=max(maximum_bank_error,error)
-            if error>.12:grow[sl]|=mask
+            members=sorted(site_id for site_id,site_mask in site_cells.items() if (site_mask[sl]&mask).any())
+            identity=members[0]+1 if members else next_loose
+            if not members:next_loose+=1
+            report={'component':identity,'sites':members,'cells':int(mask.sum()),'bankErrorMetres':round(error,3),
+                    'dryLiftOverLimitVertices':int(lifted.sum()),'maximumDryLiftMetres':round(float(np.max((deck-bed)[dry],initial=0)),3)}
+            if lifted.any():
+                where=int(np.argmax(np.where(lifted,deck-bed,-np.inf)))
+                report['worstDryLift']=[round(float(gx.ravel()[where]),1),round(float(gz.ravel()[where]),1)]
+            lift_reports.append(report)
             view=final[iz0:iz1+1,ix0:ix1+1];view[active]=deck[active]
-            components.append({'id':component,'slice':sl,'cells':mask,'height':deck,'bankError':error})
-        if not grow.any():break
-        if extension==maximum_extension:
-            raise ValueError(f'Bridge banks cannot fit the frozen terrain within {maximum_extension+6}m: {maximum_bank_error:.3f}m endpoint lift at {worst_bank}; regrade the approach before export')
-        for _ in range(6):grow=binary_dilation(grow,structure=CROSS)&road
-        cells|=grow
+            components.append({'id':identity,'sites':members,'slice':sl,'cells':mask,'height':deck,'bankError':error,
+                               'water':water_vertices})
+        if not trim.any():break
+        cells=cells&~trim;trimmed+=int(trim.sum())
     for component in components:component['outline']=outline
+    stray=[]
+    if stray_river.any():
+        zs,xs=np.nonzero(stray_river)
+        stray=[[round(float(world.x0+(c+.5)*CELL),1),round(float(world.z0+(r+.5)*CELL),1)] for r,c in list(zip(zs,xs))[::25]]
     return {'x0':world.x0,'z0':world.z0,'cell':CELL,'mask':cells,'height':final,'components':components,'outline':outline,
-            'wetCells':int(wet.sum()),'spanCells':int(span.sum()),'floatingRunsSpanned':spanned_runs,'floatingRunsSkipped':skipped_runs,'maximumBankError':maximum_bank_error,'approachCoverage':approach_coverage,
-            'connectionApproachCoverage':connection_coverage}
+            'wetCells':int(wet.sum()),'siteCells':int(spanned.sum()),'looseWetCells':int(loose.sum()),
+            'riverWaterOutsideSites':{'cells':int(stray_river.sum()),'at':stray},
+            'maximumBankError':maximum_bank_error,'worstBank':worst_bank,'deckLandingMetres':landing,'deckLiftMetres':lift_limit,
+            'trimmedLandingCells':trimmed,'decks':lift_reports}
+
 
 
 def surface_at(world,x,z,field=None):
@@ -605,6 +583,15 @@ def timber_texture():
     return output.getvalue()
 
 
+def merge_meshes(meshes):
+    """One mesh of several of one material (a site's disconnected deck pieces, their fascias)."""
+    if len(meshes)==1:return meshes[0]
+    offsets=np.cumsum([0]+[len(m.positions) for m in meshes[:-1]])
+    return M.Mesh(positions=np.concatenate([m.positions for m in meshes]),normals=np.concatenate([m.normals for m in meshes]),
+                  uvs=np.concatenate([m.uvs for m in meshes]),indices=np.concatenate([m.indices+o for m,o in zip(meshes,offsets)]),
+                  material=meshes[0].material)
+
+
 def subset_mesh(mesh,triangles):
     indices=mesh.indices.reshape(-1,3)[triangles]
     used,remap=np.unique(indices,return_inverse=True)
@@ -684,6 +671,7 @@ def support_spacing(world,faces,planned,placed):
 
 def build_bridges(world,path, *, water_fields=None):
     """Return bridge parts matching build_continent.bridge_scene's contract."""
+    water_fields=water_fields or L.water_fields
     field=common_surface(world,water_fields=water_fields)
     builder=G.GltfBuilder('Eloria unified continental bridge deck')
     builder.add_material(G.Material('bridge_stone',base_color=(.44,.43,.37,1),roughness=.92))
@@ -696,6 +684,13 @@ def build_bridges(world,path, *, water_fields=None):
         builder.add_mesh(name,mesh,with_tangents=False)
         root=builder.add_node(G.Node(name,mesh=name))
         result.append({'region':region,'roots':[root],'bounds':mesh.bounds(),'node':name,'segment':[]})
+    # A site whose deck fell into disconnected components names every piece by the site: its floors and fascias are
+    # gathered and emitted as one node per territory after the loop, so no two nodes share a name.
+    numbers=[component['id'] for component in field['components']]
+    shared={number for number in numbers if numbers.count(number)>1};gathered={}
+    def floor(region,name,mesh,number):
+        if number in shared:gathered.setdefault(name,(region,[]))[1].append(mesh)
+        else:add(region,name,mesh)
     for component in field['components']:
         mesh,owners=deck_mesh(world,component)
         faces=mesh.positions[mesh.indices.reshape(-1,3)]
@@ -709,12 +704,12 @@ def build_bridges(world,path, *, water_fields=None):
         triangles.append(faces)
         for index,region in enumerate(world.ids):
             selected=np.flatnonzero(owners==index)
-            if len(selected):add(region,f"Walk_ContinentalBridgeUnion_{component['id']:03d}_{region}",subset_mesh(mesh,selected))
+            if len(selected):floor(region,f"Walk_ContinentalBridgeUnion_{component['id']:03d}_{region}",subset_mesh(mesh,selected),component['id'])
         fascia,fascia_owners=edge_fascia(mesh,owners,field['outline'])
         if fascia is not None:
             for index,region in enumerate(world.ids):
                 selected=np.flatnonzero(fascia_owners==index)
-                if len(selected):add(region,f"BridgeUnionTimberEdge_{component['id']:03d}_{region}",subset_mesh(fascia,selected))
+                if len(selected):floor(region,f"BridgeUnionTimberEdge_{component['id']:03d}_{region}",subset_mesh(fascia,selected),component['id'])
         row,col=np.nonzero(component['cells']);sl=component['slice'];planned=[];placed=[];fitted=[]
         for r,c in zip(row,col):
             iz,ix=sl[0].start+int(r),sl[1].start+int(c)
@@ -722,11 +717,17 @@ def build_bridges(world,path, *, water_fields=None):
             x,z=world.x0+(ix+.5)*CELL,world.z0+(iz+.5)*CELL
             if not field['outline'].contains(x,z):continue
             if float(surface_at(world,x,z,field))-.12-float(world.height_at(x,z))<.4:continue
+            # Piers stand only under the span, over the water; a landing rests on its bank.
+            bed=np.array([float(world.height_at(x,z))])
+            if not bool(np.asarray(water_fields(np.array([x]),np.array([z]),height=bed,plan=world.plan)['mask']).reshape(-1)[0]):continue
             planned.append([x,z]);support,fit=fit_pier(world,encoded,x,z);fitted.append(fit)
             if support is None:continue
             placed.append(fit['position']);region=world.ids[int(world.owner_at(*fit['position']))]
             add(region,f"BridgeUnionPier_{component['id']:03d}_{ix}_{iz}",support)
         support_reports.append(dict(component=component['id'],**support_spacing(world,encoded,planned,placed),piers=fitted))
+    for name,(region,meshes) in gathered.items():add(region,name,merge_meshes(meshes))
+    names=[part['node'] for part in result]
+    if len(names)!=len(set(names)):raise ValueError('Bridge parts share a node name: '+', '.join(sorted({n for n in names if names.count(n)>1})))
     world.bridge_triangles=np.concatenate(triangles) if triangles else np.empty((0,3,3))
     world.bridge_field={key:value for key,value in field.items() if key!='components'}
     for connection in world.connections:
@@ -745,12 +746,12 @@ def build_bridges(world,path, *, water_fields=None):
             add(region,'Walk__StreamThreshold_'+connection['id']+'_'+region,mesh)
     Path(path).parent.mkdir(parents=True,exist_ok=True);builder.write_glb(str(path))
     world.bridge_report={'components':len(field['components']),'visibleCells':int(field['mask'].sum()),
-        'visibleTriangles':len(world.bridge_triangles),'wetCells':field['wetCells'],'spanCells':field['spanCells'],'floatingRunsSpanned':field['floatingRunsSpanned'],'floatingRunsSkipped':field['floatingRunsSkipped'],
-        'approachCoverage':field['approachCoverage'],
-        'connectionApproachCoverage':field['connectionApproachCoverage'],
-        'maximumBankErrorMetres':field['maximumBankError'],'maximumGrade':GRADE,
+        'visibleTriangles':len(world.bridge_triangles),'wetCells':field['wetCells'],'siteCells':field['siteCells'],'looseWetCells':field['looseWetCells'],
+        'riverWaterOutsideSites':field['riverWaterOutsideSites'],'decks':field['decks'],
+        'deckLandingMetres':field['deckLandingMetres'],'deckLiftMetres':field['deckLiftMetres'],'trimmedLandingCells':field['trimmedLandingCells'],
+        'maximumBankErrorMetres':field['maximumBankError'],'worstBank':field['worstBank'],'maximumGrade':GRADE,
         'outlineMaximumInsetFraction':1-math.cos(math.pi/(2*CAP_ARC_STEPS)),
         'precisionCleanupAreaSquareMetres':sum(c.get('precisionCleanupArea',0) for c in field['components']),
         'supports':support_reports,
-        'policy':'Disjoint road capsule union clipped onto one common floor; unchanged terrain; exact ownership by cell; timber fascia below the floor.'}
+        'policy':'Decks only at claimed crossing sites (span plus landings) and over deep water crossed away from a site; disjoint road capsule union clipped onto one common floor; unchanged terrain; exact ownership by cell; piers only over water; timber fascia below the floor.'}
     return result

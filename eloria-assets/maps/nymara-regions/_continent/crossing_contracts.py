@@ -14,7 +14,11 @@ it rasterises each ``Walk_ContinentalBridgeUnion_*_<region>`` floor with the
 collision exporter's own rasteriser, keeps the tiles the floor fully covers,
 joins them through at most one plain walkable ground tile (a floor interrupted
 by a metre of bank is still one crossing), takes the largest climb-connected
-part and declares its two extreme tiles along the floor's long axis. Floors
+part and declares its two extreme tiles along the floor's long axis. Since the
+roads pass (R1) every floor is one bridge site's deck (bridge_export names it
+by the site: its number is the site's id plus one; decks over deep water away
+from any site number from 500), so a declaration is a site's crossing and
+names the site it serves. Floors
 whose largest part holds fewer than three deck tiles, or no more than half of
 the floor's deck tiles, are reported instead of declared: a structure standing on
 the deck, or a pinch, is something to fix or to state, not to hide behind a
@@ -31,6 +35,7 @@ from scipy.ndimage import binary_dilation
 from collision_export import CELL, GR, MAX_GRADE
 
 FLOOR_PREFIX = 'Walk_ContinentalBridgeUnion_'
+LOOSE_DECK_BASE = 500   # bridge_export numbers decks away from every crossing site from here
 UPWARD = 1 / math.sqrt(1 + MAX_GRADE ** 2) - 1e-9
 MINIMUM_DECK_TILES = 3
 # Declared points sit .2 m inside their tile's centre so the server's rounding
@@ -50,6 +55,12 @@ def floor_ids(document, region):
         if match:
             found.add(match.group(1))
     return sorted(found)
+
+
+def site_of(identity):
+    """The crossing site a union floor number carries (bridge_export: site id + 1), or None for a deck away from a site."""
+    number = int(identity)
+    return number - 1 if 0 < number < LOOSE_DECK_BASE else None
 
 
 def floor_triangles(document, body, region, identity):
@@ -110,7 +121,7 @@ def declare_crossings(document, body, region, grid, climb, origin, cells, height
         triangles = floor_triangles(document, body, region, identity)
         covered, _ = GR.rasterise(triangles, width, rows, x0, z1, CELL, upward=UPWARD)
         deck = covered.reshape(rows // 2, 2, width // 2, 2).all(axis=(1, 3)) & walkable
-        record = {'id': f'ContinentalBridgeUnion_{identity}', 'deckTiles': int(deck.sum()), 'parts': []}
+        record = {'id': f'ContinentalBridgeUnion_{identity}', 'site': site_of(identity), 'deckTiles': int(deck.sum()), 'parts': []}
         parts = []
         if deck.any():
             field = deck | (binary_dilation(deck) & walkable)
@@ -133,5 +144,5 @@ def declare_crossings(document, body, region, grid, climb, origin, cells, height
         for x, y in ends:
             floor = float(np.mean(np.asarray(heights, dtype=float)[y * 2:y * 2 + 2, x * 2:x * 2 + 2]))
             endpoints.append(crossing_point((x, y), floor, origin))
-        crossings.append({'id': record['id'], 'endpoints': endpoints})
+        crossings.append({'id': record['id'], 'site': record['site'], 'endpoints': endpoints})
     return crossings, declared, not_walkable

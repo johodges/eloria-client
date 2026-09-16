@@ -1513,7 +1513,8 @@
     "The Western River bends around the inhabited Four Gates terrace; civic buildings are not used as dams across its channel.",
     "Crownwater lies farther south so its connected causeway city fits its named island territory without extending into mainland server ownership.",
     "Whitehorn Range design O4: design O3 unchanged in the plan - the retained layout turned -34 degrees about the gate court and squeezed 0.80 x 0.85, the leaf mask and its 110 m feather, the Moor foothills at 148-184 m, the legacy survey cropped at z >= -262, the authored summit raise 45 m high north-west of the temple, the gate court flatten at 173 m and the snowline stone terrace - with the Amberwood seam road re-routed in door_approaches so its switchback no longer runs through the village strip: it now leaves the court north-east over the shelf, north of every village placement, crosses the Hornwater beside the east pass, descends the tail east bank and returns west along the southern bench to the crossing at (531, 436), 336 m of authored line whose nearest village footprint is 26.6 m away.",
-    "Whitehorn Range design O5: design O4 with the glacier temple seated in its mountain. The three temple steeples ride on the temple (retained_attachments, offset [0, 0.90, -3.93]) instead of being squeezed and grounded on the slope on their own; the icicle row is moved 6 m back under the cornice (retained_part_edits); the temple is a compound whose footing holds its legacy site against the roads, inside two flattens in the temple frame that put a 240 m cliff behind the facade and a 211 m terrace before the platform; and the door road ends at the stair foot (door_approaches.RETAINED_ROAD_ENDS). From the landmark audit: a pad for the bridge watch and one for the temple rest, the lower camp made a compound with its camp props, and the temple road stops moved off the huts; the snowline terrace re-cut as a rectangle over the overlook and the stones that stops short of the east camp, which gets its own pad, with the east pass's first waypoint moved west off the terrace; seat stamps with 12 m feathers for the Amberwood ash chapel and watchtower 0; and the legacy banks and channel bed under Ssarathi's great causeway bridge."
+    "Whitehorn Range design O5: design O4 with the glacier temple seated in its mountain. The three temple steeples ride on the temple (retained_attachments, offset [0, 0.90, -3.93]) instead of being squeezed and grounded on the slope on their own; the icicle row is moved 6 m back under the cornice (retained_part_edits); the temple is a compound whose footing holds its legacy site against the roads, inside two flattens in the temple frame that put a 240 m cliff behind the facade and a 211 m terrace before the platform; and the door road ends at the stair foot (door_approaches.RETAINED_ROAD_ENDS). From the landmark audit: a pad for the bridge watch and one for the temple rest, the lower camp made a compound with its camp props, and the temple road stops moved off the huts; the snowline terrace re-cut as a rectangle over the overlook and the stones that stops short of the east camp, which gets its own pad, with the east pass's first waypoint moved west off the terrace; seat stamps with 12 m feathers for the Amberwood ash chapel and watchtower 0; and the legacy banks and channel bed under Ssarathi's great causeway bridge.",
+    "Roads pass R1 (owner, 2026-09-16): a road crosses a plan river only on a bridge at a claimed crossing site, the locally shortest crossing square to the flow, sites at least 100 m apart along one river (crossing_policy; river_crossings.py); river water and a setback of max(6 m, half width + 4 m) are impassable elsewhere; road earthworks outside footings cut at most 4 m and fill at most 3 m and are written into the ground; a bridge deck is its span plus landings of at most 6 m (the approach and connection aprons are retired); only the designed decks named here and retained Walk_ decks stand elevated."
   ],
   "assembly_sites": {
     "ssarathi_ruins.temple-focus": {
@@ -1629,12 +1630,12 @@
       1280
     ],
     "grey_moors--whitehorn_range": [
-      362.0,
-      327.0
+      378.0,
+      379.0
     ],
     "amberwood--whitehorn_range": [
-      531.0,
-      436.0
+      397.0,
+      422.0
     ],
     "amethyst_barrens--whitehorn_range": [
       790.0,
@@ -1674,16 +1675,6 @@
   "ownership_bias": {
     "mirrorhold": 20000,
     "crownwater": 70000
-  },
-  "bridge_approach_aprons": {
-    "amberwood": 96.0,
-    "ssarathi_ruins": 12.0,
-    "grey_moors": 96.0,
-    "whitehorn_range": 96.0
-  },
-  "bridge_approach_connections": {
-    "amberwood--whitehorn_range": 42.0,
-    "amberwood--grey_moors": 96.0
   },
   "relief_sources": [
     {
@@ -2216,5 +2207,86 @@
         "radius": 0
       }
     ]
-  }
+  },
+  "crossing_policy": {
+    "minimum_spacing_metres": 100.0,
+    "local_window_metres": 40.0,
+    "perpendicular_tolerance_degrees": 15.0,
+    "sample_metres": 2.0,
+    "landing_metres": 12.0,
+    "approach_grade": 0.35,
+    "deck_clearance_metres": 0.85,
+    "maximum_approach_metres": 6.0,
+    "setback_minimum_metres": 6.0,
+    "setback_margin_metres": 4.0,
+    "bank_shelf_metres": 16.0,
+    "bank_shelf_penalty": 4.0,
+    "confluence_metres": 20.0,
+    "seam_metres": 12.0,
+    "footing_weight": 0.999,
+    "bridge_cost_metres": 60.0,
+    "shared_bridge_factor": 0.25,
+    "deck_landing_metres": 6.0,
+    "deck_lift_metres": 0.3,
+    "maximum_pier_metres": 8.0
+  },
+  "designed_decks": [
+    {
+      "name": "Walk_Amber_MarketCanopyStair",
+      "module": "amberwood_access",
+      "note": "the Amberwood stair from the market floor up to Canopy Platform 0"
+    },
+    {
+      "name": "Walk_Amber_RootRamp",
+      "module": "amberwood_access",
+      "note": "the Amberwood ramp from the village yard onto the Motherroot plateau"
+    },
+    {
+      "name": "Walk_Motherroot_RootHatch",
+      "module": "amberwood_access",
+      "note": "the root hatch's timber threshold, a ground-level step at the Motherroot mouth"
+    },
+    {
+      "name": "Walk_Manymouth_FishingBoardwalk",
+      "module": "manymouth_access",
+      "note": "the Manymouth north fishing boardwalk over the tidal bank"
+    },
+    {
+      "name": "Walk_Manymouth_MarketEntrance",
+      "module": "manymouth_access",
+      "note": "the Manymouth floating market's entrance boardwalk"
+    },
+    {
+      "name": "Walk_Manymouth_PaddyStreet",
+      "module": "manymouth_access",
+      "note": "the Manymouth paddy hamlet street on piles"
+    },
+    {
+      "name": "Walk_Manymouth_Village_*",
+      "module": "manymouth_village_streets",
+      "note": "the Manymouth village streets joining retained porches and landings"
+    },
+    {
+      "name": "Walk_Mirror_BankRamp_*",
+      "module": "mirror_access_geometry",
+      "note": "Mirrorhold's quay and sanctuary bank ramps"
+    },
+    {
+      "name": "Walk_FerryQuay_*",
+      "module": "ferry_export",
+      "note": "the ferry quays and their landing decks"
+    },
+    {
+      "name": "Landmark_boardwalk_*",
+      "module": "grey_crossings",
+      "note": "the retained Grey Moors boardwalks (the three duplicate spans stay retired)"
+    }
+  ],
+  "authored_crossings": [
+    {
+      "river": "mirror_outlet",
+      "arcMetres": 16.0,
+      "note": "the Mirrorwater ravine below Mirror Lake, crossed by the Verdant Stair seam road as in design O5; excluded by the model only for a retained solid 4 m from its west landing"
+    }
+  ]
 }

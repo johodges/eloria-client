@@ -349,7 +349,7 @@ def composition_algorithm_sha(path):
 def audit_shaping(client, continent, composition, inputs):
     plan_sha=inputs.digest(continent/'diagonal-plan.json')
     require(composition['planSha256']==plan_sha,'Composition uses a different landscape plan')
-    shaping={name:[] for name in ('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py')}
+    shaping={name:[] for name in ('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py')}
     for relative,expected in composition['sources'].items():
         path=Path(relative.replace('\\','/'))
         if path.name in shaping:shaping[path.name].append((path,expected))
@@ -408,6 +408,284 @@ def exported_frames(client, exports, plan, master_sha, plan_sha, inputs):
                         'serverOrigin':frame['serverOrigin'],'serverCells':frame['serverCells']}
         manifests[region]=manifest;packages[region]=path.parent
     return frames,manifests,packages
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# The owner's road rules (the roads pass, R1, 2026-09-16), checked on the emitted terrain against the composed roads the
+# geometry export records in roads.json: no road over river water outside a bridge site's span; a site's crossing no
+# more than 4 m longer than the shortest crossing within 40 m along its river and at least 70 degrees to the flow;
+# sites on one river at least the policy's spacing apart; no bridge pier taller than 8 m; no road station and no
+# bridge floor more than 1.5 m above the ground outside site spans and designed decks.
+ROAD_RULE_STATION_METRES = 2.
+ROAD_RULE_FLOAT_METRES = 1.5
+ROAD_RULE_PIER_METRES = 8.
+ROAD_RULE_SHORTEST_EXCESS_METRES = 4.
+ROAD_RULE_SQUARE_DEGREES = 70.
+ROAD_RULE_WINDOW_METRES = 40.
+ROAD_RULE_SPAN_HALF_METRES = 6.
+
+
+def resample_stations(points, step=ROAD_RULE_STATION_METRES):
+    """Stations every ``step`` metres along an xyz polyline (y linear between its points)."""
+    p = np.asarray(points, float)
+    if len(p) < 2:
+        return p.reshape(-1, 3)
+    seg = np.linalg.norm(np.diff(p[:, [0, 2]], axis=0), axis=1)
+    p = p[np.r_[True, seg > 1e-9]]
+    if len(p) < 2:
+        return p
+    cum = np.r_[0, np.cumsum(np.linalg.norm(np.diff(p[:, [0, 2]], axis=0), axis=1))]
+    s = np.r_[np.arange(0, cum[-1], step), cum[-1]]
+    return np.c_[np.interp(s, cum, p[:, 0]), np.interp(s, cum, p[:, 1]), np.interp(s, cum, p[:, 2])]
+
+
+def site_span_boxes(sites, landing):
+    """Each site's span plus its landings as (origin, axis, length, half width)."""
+    boxes = []
+    for site in sites:
+        left, right = np.asarray(site['wetEdges'][0], float), np.asarray(site['wetEdges'][1], float)
+        axis = right - left
+        length = float(np.linalg.norm(axis))
+        axis = axis / max(length, 1e-9)
+        boxes.append((left - axis * landing, axis, length + 2 * landing, ROAD_RULE_SPAN_HALF_METRES))
+    return boxes
+
+
+def inside_boxes(xz, boxes):
+    xz = np.asarray(xz, float).reshape(-1, 2)
+    inside = np.zeros(len(xz), bool)
+    for origin, axis, length, half in boxes:
+        rel = xz - origin
+        along = rel @ axis
+        across = rel @ np.array([-axis[1], axis[0]])
+        inside |= (along >= -1e-9) & (along <= length + 1e-9) & (np.abs(across) <= half)
+    return inside
+
+
+def river_curve(river):
+    import landscape as L
+    points = L.curved_points(river['points'])[:, :2]
+    seg = np.linalg.norm(np.diff(points, axis=0), axis=1)
+    points = points[np.r_[True, seg > 1e-9]]
+    seg = np.diff(points, axis=0)
+    length = np.linalg.norm(seg, axis=1)
+    return np.r_[0, np.cumsum(length)], points, seg / length[:, None]
+
+
+def wet_width(river_water_at, centre, normal, reach, edges=False):
+    """The wet run through (or nearest) the centre, square to the centreline, sampled every half metre (and its two
+    edge offsets when ``edges``)."""
+    offsets = np.arange(-reach, reach + 1e-9, .5)
+    wet = np.asarray(river_water_at(centre[0] + normal[0] * offsets, centre[1] + normal[1] * offsets), bool)
+    middle = len(offsets) // 2
+    near = np.flatnonzero(wet)
+    if not len(near):
+        return (0., (0., 0.)) if edges else 0.
+    seed = int(near[np.argmin(np.abs(near - middle))])
+    lo = hi = seed
+    while lo > 0 and wet[lo - 1]:
+        lo -= 1
+    while hi < len(wet) - 1 and wet[hi + 1]:
+        hi += 1
+    width = (hi - lo + 1) * .5
+    return (width, (float(offsets[lo]), float(offsets[hi]))) if edges else width
+
+
+def road_rule_findings(roads, sites, rivers, policy, ground_at, river_water_at, piers=(), designed_boxes=(), union_vertices=None,
+                       sea_near_at=None, sea_at=None, seam_near_at=None):
+    """Every breach of the road rules, with the measured totals; pure over its inputs (the audit's and tests' fixtures).
+
+    ``sea_near_at(x, z)`` marks points over the sea or within a deck landing of it: a road there is on a sea span or its
+    landing, which the river rules do not cover (reported in the totals, not refused). Piers carry their ``bed``
+    height; one standing in the sea is reported, not held to the pier limit. ``seam_near_at(x, z)`` marks points within
+    the crossing policy's seam distance of a territory seam, where no bridge is built: the local-shortest comparison
+    skips sections there."""
+    landing = float(policy.get('deck_landing_metres', 6.))
+    sea_near = sea_near_at if sea_near_at is not None else (lambda x, z: np.zeros(np.shape(np.asarray(x, float)), bool))
+    sea_at = sea_at if sea_at is not None else (lambda x, z: np.zeros(np.shape(np.asarray(x, float)), bool))
+    spacing = float(policy.get('minimum_spacing_metres', 100.))
+    spans = site_span_boxes(sites, landing)
+    designed = [(np.asarray(low, float), np.asarray(high, float)) for low, high in designed_boxes]
+    def in_designed(xz):
+        result = np.zeros(len(xz), bool)
+        for low, high in designed:
+            result |= np.all((xz >= low) & (xz <= high), axis=1)
+        return result
+    rivers = {river['id']: river for river in rivers}
+    curves = {key: river_curve(river) for key, river in rivers.items()}
+    violations = []
+    totals = {'roads': len(roads), 'stations': 0, 'overRiverWaterOutsideSitesMetres': 0., 'floatingOutsideDecksMetres': 0.,
+              'sites': len(sites), 'crossingRuns': 0, 'piers': len(piers), 'tallestPierMetres': max((p['height'] for p in piers), default=0.)}
+    for road in roads:
+        stations = resample_stations(road['points'])
+        if not len(stations):
+            continue
+        totals['stations'] += len(stations)
+        xz = stations[:, [0, 2]]
+        on_span = inside_boxes(xz, spans)
+        wet = np.asarray(river_water_at(xz[:, 0], xz[:, 1]), bool)
+        stray = wet & ~on_span
+        if stray.any():
+            metres = float(stray.sum() * ROAD_RULE_STATION_METRES)
+            totals['overRiverWaterOutsideSitesMetres'] += metres
+            violations.append(f"{road['id']}: {metres:g} m over river water outside every bridge site, first at {xz[stray][0].round(1).tolist()}")
+        lift = stations[:, 1] - np.asarray(ground_at(xz[:, 0], xz[:, 1]), float)
+        at_sea = np.asarray(sea_near(xz[:, 0], xz[:, 1]), bool)
+        totals['seaSpanStationsMetres'] = totals.get('seaSpanStationsMetres', 0.) + float((at_sea & (lift > ROAD_RULE_FLOAT_METRES)).sum() * ROAD_RULE_STATION_METRES)
+        floating = (lift > ROAD_RULE_FLOAT_METRES) & ~on_span & ~in_designed(xz) & ~at_sea
+        if floating.any():
+            metres = float(floating.sum() * ROAD_RULE_STATION_METRES)
+            totals['floatingOutsideDecksMetres'] += metres
+            violations.append(f"{road['id']}: {metres:g} m of stations more than {ROAD_RULE_FLOAT_METRES:g} m above the ground outside site spans and designed decks, up to {float(lift[floating].max()):.1f} m at {xz[floating][int(np.argmax(lift[floating]))].round(1).tolist()}")
+        # Every wet run is one crossing: square to the flow of its river.
+        edges = np.flatnonzero(np.diff(np.r_[0, wet.astype(int), 0]))
+        for a, b in zip(edges[::2], edges[1::2]):
+            if b - a < 2:
+                continue
+            totals['crossingRuns'] += 1
+            chord = xz[b - 1] - xz[a]
+            if np.linalg.norm(chord) < 1e-6:
+                continue
+            middle = (xz[a] + xz[b - 1]) * .5
+            best = None
+            for key, (arc, points, unit) in curves.items():
+                rel = middle - points[:-1]
+                t = np.clip(np.sum(rel * (points[1:] - points[:-1]), axis=1) / np.maximum(np.sum((points[1:] - points[:-1]) ** 2, axis=1), 1e-9), 0, 1)
+                d = np.linalg.norm(middle - (points[:-1] + t[:, None] * (points[1:] - points[:-1])), axis=1)
+                k = int(np.argmin(d))
+                if best is None or d[k] < best[0]:
+                    best = (float(d[k]), unit[k], key)
+            if best is None:
+                continue
+            angle = float(np.degrees(np.arccos(np.clip(abs(np.dot(chord / np.linalg.norm(chord), best[1])), 0, 1))))
+            if angle < ROAD_RULE_SQUARE_DEGREES:
+                violations.append(f"{road['id']}: crosses {best[2]} at {angle:.0f} degrees to the flow at {middle.round(1).tolist()}")
+    by_river = defaultdict(list)
+    for site in sites:
+        by_river[site['river']].append(site)
+        if site['river'] not in curves:
+            violations.append(f"site {site.get('id')}: river {site['river']!r} is not a plan river")
+            continue
+        arc, points, unit = curves[site['river']]
+        river = rivers[site['river']]
+        left, right = np.asarray(site['wetEdges'][0], float), np.asarray(site['wetEdges'][1], float)
+        span = right - left
+        s0 = float(site['arcMetres'])
+        near = (arc[:-1] >= s0 - 6) & (arc[:-1] <= s0 + 6)
+        flow = unit[near].sum(axis=0) if near.any() else unit[int(np.argmin(np.abs(arc[:-1] - s0)))]
+        flow = flow / max(float(np.linalg.norm(flow)), 1e-9)
+        square = float(np.degrees(np.arccos(np.clip(abs(np.dot(span / max(float(np.linalg.norm(span)), 1e-9), flow)), 0, 1))))
+        if square < ROAD_RULE_SQUARE_DEGREES:
+            violations.append(f"site {site.get('id')} on {site['river']}: span stands {square:.0f} degrees to the flow")
+        reach = float(river['width']) + 30.
+        widths = []
+        for s in np.arange(max(0., s0 - ROAD_RULE_WINDOW_METRES), min(arc[-1], s0 + ROAD_RULE_WINDOW_METRES) + 1e-9, 2.):
+            k = int(np.clip(np.searchsorted(arc, s, side='right') - 1, 0, len(unit) - 1))
+            centre = points[k] + unit[k] * (s - arc[k])
+            normal = np.array([-unit[k][1], unit[k][0]])
+            width, edges = wet_width(river_water_at, centre, normal, reach, edges=True)
+            if width <= 0:
+                continue
+            # Only a crossing a bridge could land: dry ground above the sea a landing beyond each wet edge, and no
+            # sea in the run (a river mouth widens into the sea, which is no narrow reach).
+            if sea_near is not None:
+                ends = np.array([centre + normal * (edges[0] - landing), centre + normal * (edges[1] + landing)])
+                run = centre + normal * np.linspace(edges[0], edges[1], 9)[:, None]
+                if np.asarray(river_water_at(ends[:, 0], ends[:, 1]), bool).any() or np.asarray(sea_at(ends[:, 0], ends[:, 1]), bool).any()                         or np.asarray(sea_at(run[:, 0], run[:, 1]), bool).any():
+                    continue
+                if seam_near_at is not None and (np.asarray(seam_near_at(ends[:, 0], ends[:, 1]), bool).any()
+                                                 or np.asarray(seam_near_at(run[:, 0], run[:, 1]), bool).any()):
+                    continue
+            widths.append(width)
+        here = float(np.linalg.norm(span)) + .5
+        if widths and here > min(widths) + ROAD_RULE_SHORTEST_EXCESS_METRES:
+            violations.append(f"site {site.get('id')} on {site['river']}: crossing {here:.1f} m against {min(widths):.1f} m within {ROAD_RULE_WINDOW_METRES:g} m")
+    for river, group in by_river.items():
+        arcs = sorted(float(site['arcMetres']) for site in group)
+        for a, b in zip(arcs, arcs[1:]):
+            if b - a < spacing - 1e-6:
+                violations.append(f"{river}: bridge sites {b - a:.0f} m apart along the river (at least {spacing:g})")
+    for pier in piers:
+        if 'x' in pier and bool(np.asarray(sea_near(np.array([pier['x']]), np.array([pier['z']])), bool).reshape(-1)[0]) and not inside_boxes(np.array([[pier['x'], pier['z']]]), spans)[0]:
+            totals['seaPiers'] = totals.get('seaPiers', 0) + 1
+            totals['tallestSeaPierMetres'] = max(totals.get('tallestSeaPierMetres', 0.), float(pier['height']))
+            continue
+        if pier['height'] > ROAD_RULE_PIER_METRES:
+            violations.append(f"{pier['name']}: pier {pier['height']:.1f} m tall (at most {ROAD_RULE_PIER_METRES:g})")
+    if union_vertices is not None and len(union_vertices):
+        vertices = np.asarray(union_vertices, float)
+        xz = vertices[:, [0, 2]]
+        lift = vertices[:, 1] - np.asarray(ground_at(xz[:, 0], xz[:, 1]), float)
+        dry = ~np.asarray(river_water_at(xz[:, 0], xz[:, 1]), bool)
+        at_sea = np.asarray(sea_near(xz[:, 0], xz[:, 1]), bool)
+        totals['seaSpanFloorVerticesOver1.5m'] = int((at_sea & dry & (lift > ROAD_RULE_FLOAT_METRES)).sum())
+        floating = dry & (lift > ROAD_RULE_FLOAT_METRES) & ~inside_boxes(xz, spans) & ~at_sea
+        totals['floatingBridgeVertices'] = int(floating.sum())
+        if floating.any():
+            violations.append(f"{int(floating.sum())} bridge floor vertices stand more than {ROAD_RULE_FLOAT_METRES:g} m over dry ground outside site spans, up to {float(lift[floating].max()):.1f} m at {xz[floating][int(np.argmax(lift[floating]))].round(1).tolist()}")
+    totals['violations'] = len(violations)
+    return {'totals': totals, 'violations': violations}
+
+
+def audit_road_rules(generated, plan, surface, inputs):
+    """The road rules on the emitted terrain, the composed roads (roads.json) and the emitted bridge structures."""
+    import landscape as L
+    record = inputs.json(generated / 'roads.json')
+    heights = surface.attributes[:, 1].reshape(surface.nz, surface.nx)
+    x0, z0 = surface.bounds[:2]
+    def ground_at(x, z):
+        return triangle_sample(heights, x, z, x0, z0, surface.cell)
+    # One water survey of the emitted terrain on its own lattice: river water (with its lakes) and the sea.
+    gx, gz = np.meshgrid(x0 + np.arange(surface.nx) * surface.cell, z0 + np.arange(surface.nz) * surface.cell)
+    fields = L.water_fields(gx, gz, height=heights, plan=plan)
+    river_depth = np.where(np.asarray(fields['river_mask'], bool), np.asarray(fields['depth'], float), 0.)
+    def lattice(grid, x, z):
+        x, z = np.broadcast_arrays(np.asarray(x, float), np.asarray(z, float))
+        iz = np.clip(np.rint((z - z0) / surface.cell).astype(int), 0, grid.shape[0] - 1)
+        ix = np.clip(np.rint((x - x0) / surface.cell).astype(int), 0, grid.shape[1] - 1)
+        return grid[iz, ix]
+    def river_water_at(x, z):
+        return triangle_sample(river_depth, x, z, x0, z0, surface.cell) > .02
+    doc, body = GR.load(generated / 'bridges.glb')
+    inputs.digest(generated / 'bridges.glb')
+    piers, union, boxes = [], [], []
+    designed = plan.get('designed_decks') or []
+    def is_designed(name):
+        return any(entry['name'] == name or (entry['name'].endswith('*') and name.startswith(entry['name'][:-1])) for entry in designed)
+    for index, node in enumerate(doc['nodes']):
+        name = node.get('name', '')
+        if 'mesh' not in node:
+            continue
+        if name.startswith('BridgeUnionPier_'):
+            tri = GR.triangles(doc, body, [index]).reshape(-1, 3)
+            piers.append({'name': name, 'height': float(tri[:, 1].max() - tri[:, 1].min()),
+                          'x': float((tri[:, 0].min() + tri[:, 0].max()) * .5), 'z': float((tri[:, 2].min() + tri[:, 2].max()) * .5)})
+        elif name.startswith('Walk_ContinentalBridgeUnion_'):
+            union.append(GR.triangles(doc, body, [index]).reshape(-1, 3))
+        elif name.startswith('Walk_') and is_designed(name):
+            tri = GR.triangles(doc, body, [index]).reshape(-1, 3)
+            boxes.append((tri[:, [0, 2]].min(axis=0) - 1., tri[:, [0, 2]].max(axis=0) + 1.))
+    policy = L.crossing_policy(plan)
+    # Sea spans (a channel between islands) and their landings are not river crossings: reported, not refused.
+    from scipy.ndimage import distance_transform_edt
+    sea = np.asarray(fields['sea_mask'], bool)
+    sea_distance = distance_transform_edt(~sea) * surface.cell if sea.any() else np.full(heights.shape, np.inf)
+    def sea_near_at(x, z):
+        return lattice(sea_distance, x, z) <= float(policy['deck_landing_metres']) + surface.cell
+    def sea_at(x, z):
+        return lattice(sea_distance, x, z) <= 0.
+    # Territory seams on the ownership raster (cells whose owner differs from a neighbour's), as river_crossings measures them.
+    owner = surface.owner
+    boundary = np.zeros(owner.shape, bool)
+    boundary[:-1, :] |= owner[:-1, :] != owner[1:, :]; boundary[1:, :] |= owner[:-1, :] != owner[1:, :]
+    boundary[:, :-1] |= owner[:, :-1] != owner[:, 1:]; boundary[:, 1:] |= owner[:, :-1] != owner[:, 1:]
+    seam_distance = np.pad(distance_transform_edt(~boundary) * surface.cell, ((0, 1), (0, 1)), mode='edge') if boundary.any() else np.full(heights.shape, np.inf)
+    def seam_near_at(x, z):
+        return lattice(seam_distance, x, z) <= float(policy['seam_metres'])
+    findings = road_rule_findings(record['roads'], record.get('crossingSites', []), plan.get('rivers', []), policy, ground_at, river_water_at,
+                                  piers, boxes, np.concatenate(union) if union else None, sea_near_at, sea_at, seam_near_at)
+    require(not findings['violations'], 'Road rules: ' + '; '.join(findings['violations'][:12]) + (f' (and {len(findings["violations"]) - 12} more)' if len(findings['violations']) > 12 else ''))
+    return findings['totals']
 
 
 def run(client, generated, report_path, server=None, require_collision=False, geometry_only=False):
@@ -489,6 +767,10 @@ def run(client, generated, report_path, server=None, require_collision=False, ge
             print(f'{region}: actual terrain, {len(chunks)} chunks, dependencies and bounds verified',flush=True)
         surface.complete(named_counts,'Named territories')
         surface.complete(chunk_counts,'Streaming chunks')
+        # The owner's road rules (R1): every composition since records its crossing sites and its roads.
+        if 'riverCrossings' in composition:
+            require((generated/'roads.json').is_file(),'Geometry export did not record the composed roads (roads.json)')
+            report['roadRules']=audit_road_rules(generated,plan,surface,inputs)
         if not geometry_only:
             publication = inputs.json(generated/'publication.json')
             report['frames'] = audit_frames(publication,manifests,surface.translations)

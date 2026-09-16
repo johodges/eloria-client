@@ -34,7 +34,7 @@ from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
 from build_progress import Progress
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py')
 
 
 EMPTY_SHA256=hashlib.sha256(b'').hexdigest()
@@ -127,7 +127,7 @@ def prepare(library,output):
     prepare_grey_crossings(world,content)
     from four_gates_sage import prepare_four_gates_sage,refresh_four_gates_sage_heights
     prepare_four_gates_sage(world,content)
-    from door_approaches import prepare_door_approaches,door_road_end,door_road_end_near,server_road_end,door_road_waypoints,seam_road_waypoints,route_in_legs,SERVER_ROAD_END_LEG_METRES
+    from door_approaches import prepare_door_approaches,door_road_end,door_road_end_near,server_road_end,door_road_waypoints,seam_road_waypoints,route_in_legs,validate_river_setbacks,SERVER_ROAD_END_LEG_METRES
     prepare_door_approaches(world,content)
     from crown_support import apply_crown_support
     from westhaven_support import apply_westhaven_support
@@ -143,32 +143,54 @@ def prepare(library,output):
     # Every prepare stage that moves retained content has run: the router
     # sees each structure where it finally stands.
     world.registered_obstacles=content.register_obstacles()
+    # River water, its setback and the candidate bridge sites, where the ground and the solids now stand: from here
+    # on a road crosses a plan river only on a site it claims (river_crossings.py).
+    from river_crossings import prepare_river_crossings,dry_end,branch_start,water_distance_at,snapshot_claims,restore_claims,crossing_report
+    prepare_river_crossings(world)
+    validate_river_setbacks(world,content)
     world.plan_connections()
     add_mirror_streets(world,content)
     from ferry_export import fit_landing
     from ferry_support import remember_ferry_fit,restore_selected_shores,validate_final_ferries
+    world.unrouted=[]
     for link in world.connections:
         if link['type']=='walk':
-            anchor=np.array(link['anchor']);normal=np.array(link['normal'])
-            for side,region in enumerate(link['regions']):
-                outward=normal if side==0 else -normal
-                hub=world.hub(region)
-                terminal=anchor-outward*9
-                # A seam terminal stands on open ground by construction (the crossing
-                # choice charges terminals inside solids), so the road's own solids are
-                # the hub's only: its last stretch threads a city wall's gate instead of
-                # crossing the wall its terminal stands beside (measured at Four Gates
-                # with the terrain terms on: 31 m through City_Wall_44 and _45, and the
-                # seam's crossing and return records unreachable).
-                # An authored pass is routed hub -> waypoint -> ... -> terminal in legs
-                # (as a designed climb to a door is), so a mountain crossing takes the
-                # switchback its valley suggests instead of the router's shortest line;
-                # the hub's own solids stay on the first leg, where the hub stands.
-                legs=[hub]+seam_road_waypoints(content,region,link['id'])+[terminal]
-                path=route_in_legs(world,legs,region,own=world.solids_at_ends(hub))
-                path=np.vstack([path,anchor-outward*4,anchor,anchor+outward*4])
-                world.add_road(path,width=4,name=link['id']+'-'+region)
-                print(f'Road {region} to {link["id"]}: {len(path)} stations'+(f' by {len(legs)-2} authored waypoints' if len(legs)>2 else ''),flush=True)
+            # The crossing's best seam station first, then its alternatives (a seam road whose hub cannot reach a
+            # station without an unavailable river crossing moves the crossing along the seam instead).
+            choices=[{'anchor':link['anchor'],'normal':link['normal']}]+list(link.get('alternatives',[]))
+            failures=[]
+            for choice in choices:
+                anchor=np.array(choice['anchor'],float);normal=np.array(choice['normal'],float)
+                claims=snapshot_claims(world);paths=[]
+                try:
+                    for side,region in enumerate(link['regions']):
+                        outward=normal if side==0 else -normal
+                        hub=world.hub(region)
+                        terminal=anchor-outward*9
+                        # A seam terminal stands on open ground by construction (the crossing
+                        # choice charges terminals inside solids), so the road's own solids are
+                        # the hub's only: its last stretch threads a city wall's gate instead of
+                        # crossing the wall its terminal stands beside (measured at Four Gates
+                        # with the terrain terms on: 31 m through City_Wall_44 and _45, and the
+                        # seam's crossing and return records unreachable).
+                        # An authored pass is routed hub -> waypoint -> ... -> terminal in legs
+                        # (as a designed climb to a door is), so a mountain crossing takes the
+                        # switchback its valley suggests instead of the router's shortest line;
+                        # the hub's own solids stay on the first leg, where the hub stands.
+                        legs=[hub]+seam_road_waypoints(content,region,link['id'])+[terminal]
+                        path=route_in_legs(world,legs,region,own=world.solids_at_ends(hub),width=4,public=True,name=link['id']+'-'+region)
+                        paths.append((region,np.vstack([path,anchor-outward*4,anchor,anchor+outward*4]),len(legs)))
+                except ValueError as error:
+                    restore_claims(world,claims);failures.append(str(error));continue
+                if choice is not choices[0]:
+                    world.__dict__.setdefault('moved_seam_crossings',[]).append({'id':link['id'],'from':list(link['anchor']),'to':anchor.tolist(),'failures':failures})
+                    link['anchor']=anchor.tolist();link['normal']=normal.tolist()
+                for region,path,count in paths:
+                    world.add_road(path,width=4,name=link['id']+'-'+region)
+                    print(f'Road {region} to {link["id"]}: {len(path)} stations'+(f' by {count-2} authored waypoints' if count>2 else ''),flush=True)
+                break
+            else:
+                raise ValueError(f"{link['id']}: no seam station of the crossing can be reached from both hubs: {failures}")
         else:
             ends=[]
             for side,region in enumerate(link['regions']):
@@ -178,7 +200,7 @@ def prepare(library,output):
                 restore_selected_shores(world)
                 remember_ferry_fit(world,fit_landing(world,landing,region))
                 hub=world.hub(region)
-                world.add_road(world.route(hub,landing,region=region),width=2.5,name=link['id']+'-'+region)
+                world.add_road(world.route(hub,landing,region=region,width=2.5,public=True,name=link['id']+'-'+region),width=2.5,name=link['id']+'-'+region)
                 ends.append(landing.tolist())
             link['landings']=ends
     # Inhabited approaches grow from the public roads to existing doorways.
@@ -194,10 +216,19 @@ def prepare(library,output):
             if any(np.linalg.norm(point-p)<7 for p in seen):continue
             seen.append(point)
             # A door inside a retained pavilion gets its road on the pavilion's open side;
-            # a designed climb is routed through its authored waypoints in legs.
-            legs=[hub]+door_road_waypoints(content,region,entry.get('id'))+[door_road_end(content,region,entry.get('id'),point)]
-            path=route_in_legs(world,legs,region)
-            world.add_road(path,width=1.65,name='door-'+region+'-'+str(entry.get('id','entry')))
+            # a designed climb is routed through its authored waypoints in legs. A door
+            # standing in a river's water or setback is served from the nearest dry ground
+            # outside it (a pinned end is validated there already).
+            name='door-'+region+'-'+str(entry.get('id','entry'))
+            end=door_road_end(content,region,entry.get('id'),point)
+            end,moved=dry_end(world,end,1.65,region)
+            legs=[hub]+door_road_waypoints(content,region,entry.get('id'))+[end]
+            claims=snapshot_claims(world)
+            try:path=route_in_legs(world,legs,region,width=1.65,public=True,name=name)
+            except ValueError as error:
+                restore_claims(world,claims);world.unrouted.append({'road':name,'region':region,'reason':str(error)});continue
+            if moved:world.__dict__.setdefault('dry_road_ends',[]).append({'road':name,'from':point.tolist(),'to':end.tolist()})
+            world.add_road(path,width=1.65,name=name)
     # The server also declares hidden rooms and instance returns that are not
     # client portal markers. Give these discoveries narrow branches from the
     # nearest public route, using the same authored point transform as export.
@@ -220,21 +251,26 @@ def prepare(library,output):
             seen.append(point)
             # A server portal with its own pin is routed to that dry ground from
             # the network on that side of the portal and runs straight on to the
-            # portal (a deck over water); one beside a pinned door shares the
-            # door's road end.
+            # portal where that run crosses no river; one beside a pinned door
+            # shares the door's road end. An end in a river's water or setback is
+            # served from the nearest dry ground outside it.
             pin=server_road_end(content,region,point,source,target)
             end=pin if pin is not None else door_road_end_near(content,region,point)
-            candidates=np.vstack([np.asarray(road['points'])[:,[0,2]] for road in world.roads])
-            candidates=candidates[world.owner_at(candidates[:,0],candidates[:,1])==world.ids.index(region)]
-            if pin is not None:
-                side=(candidates-point)@(end-point)>0
-                if side.any():candidates=candidates[side]
-            distances=np.linalg.norm(candidates-end,axis=1)
-            nearest=int(np.argmin(distances))
-            if distances[nearest]<4 and pin is None:continue
-            path=world.route(candidates[nearest],end,region=region)
-            if pin is not None and np.linalg.norm(pin-point)>SERVER_ROAD_END_LEG_METRES:path=np.vstack([path,point])
-            world.add_road(path,width=1.65,name=f'discovery-{region}-{number}')
+            end,moved=dry_end(world,end,1.65,region)
+            # A branch starts on dry land outside the setback, never on a bridge, and on its destination's bank.
+            stations=np.vstack([np.asarray(road['points'])[:,[0,2]] for road in world.roads])
+            start,gap=branch_start(world,region,stations,end,1.65,toward=point if pin is not None else None)
+            if start is None or (gap<4 and pin is None):continue
+            name=f'discovery-{region}-{number}'
+            claims=snapshot_claims(world)
+            try:path=world.route(start,end,region=region,width=1.65,name=name)
+            except ValueError as error:
+                restore_claims(world,claims);world.unrouted.append({'road':name,'region':region,'reason':str(error)});continue
+            if pin is not None and np.linalg.norm(pin-point)>SERVER_ROAD_END_LEG_METRES:
+                run=np.linspace(0.,1.,max(2,int(np.ceil(np.linalg.norm(point-end)))+1))[:,None]*(point-end)+end
+                if not (water_distance_at(world,run[:,0],run[:,1])<=0.).any():path=np.vstack([path,point])
+            if moved:world.__dict__.setdefault('dry_road_ends',[]).append({'road':name,'from':point.tolist(),'to':end.tolist()})
+            world.add_road(path,width=1.65,name=name)
     # Authored resource sites on steep ground that no corridor serves get a trail.
     from resource_trails import prepare_resource_trails
     trails=prepare_resource_trails(world,content,HERE/'legacy-server-profile/config/eloria')
@@ -243,6 +279,8 @@ def prepare(library,output):
     # Every alignment exists now: record the retained solids any road still crosses.
     world.road_solid_crossings=world.solid_crossings(content.solid_boxes())
     print(f'Roads through retained solids: {len(world.road_solid_crossings)} (solid fallbacks {len(world.routing_report()["solidFallbacks"])})',flush=True)
+    print(f'River crossings: {len(world.crossing_sites)} sites claimed of {len(world.crossing_candidates)} candidates; {len(world.unrouted)} optional roads unrouted',flush=True)
+    for key in ('_water_passage_cache','_bank_labels'):world.__dict__.pop(key,None)
     world.settle_roads()
     PROGRESS.step('supports and ground',2,4)
     from mirror_support import apply_mirror_support
@@ -255,6 +293,8 @@ def prepare(library,output):
     apply_ssarathi_banks(world,content)
     finish_mirror_lake_support(world,content)
     world.water=L.water_fields(world.gx,world.gz,height=world.height,plan=world.plan)
+    # The support stages have finished the ground: every road station stands on it again (bridges excepted).
+    world.refresh_road_heights()
     final_ferries=validate_final_ferries(world)
     print(f'Final ferry shore readback: {len(final_ferries["finalFits"])} complete quay/mooring fits',flush=True)
     content.reground()
@@ -282,6 +322,7 @@ def prepare(library,output):
         'mirrorLakeSupport':world.mirror_lake_support,'ssarathiBankSupport':world.ssarathi_bank_support,
         'manymouthBoats':world.manymouth_boats,'greyCrossings':world.grey_crossings,'fourGatesSage':world.four_gates_sage,
         'doorApproaches':world.door_approaches,'hullSettle':world.hull_settle,'roadGradingPasses':world.road_grading_passes,'resourceTrails':world.resource_trails,
+        'riverCrossings':crossing_report(world),'movedSeamCrossings':getattr(world,'moved_seam_crossings',[]),'dryRoadEnds':getattr(world,'dry_road_ends',[]),
         'routing':{**world.routing_report(),'solidCrossings':world.road_solid_crossings},
         'elapsedSeconds':round(time.monotonic()-started,2)})
     PROGRESS.step('composition written',4,4)
@@ -440,6 +481,11 @@ def export_geometry(world,content,output):
             bridge_parts.append(dict(part,roots=structures.doc['scenes'][0]['nodes'][start:].copy()))
     structures.write()
     json_write(output/'crossing-structures.json',{'bridges':world.bridge_report,'ferries':world.ferry_report,'amberwoodAccess':world.amberwood_access,'manymouthAccess':world.manymouth_access,'mirrorBankAccess':world.mirror_bank_access,'mirrorBankOpening':world.mirror_bank_opening})
+    # The composed roads and their crossing sites, for the road-rule audit (audit_continent.audit_road_rules).
+    from river_crossings import crossing_report
+    json_write(output/'roads.json',{'schema':1,'roads':[{'id':road['id'],'width':float(road['width']),'points':road['points']} for road in world.roads],
+        'crossingSites':crossing_report(world)['sites'] if hasattr(world,'crossing_sites') else [],
+        'designedDecks':world.plan.get('designed_decks',[])})
     partitions=partition_surface(world,terrain_path)
     terrain_doc,terrain_body=S.GR.load(terrain_path);bridge_doc,bridge_body=S.GR.load(bridge_path)
     master_path=output/'continent.glb';master=S.Exporter(master_path)

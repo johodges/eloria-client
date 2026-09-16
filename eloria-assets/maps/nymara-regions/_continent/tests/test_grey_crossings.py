@@ -129,7 +129,7 @@ class LandmarkRemapTests(unittest.TestCase):
             self.assertEqual(south['node'],'Walk_ContinentalBridgeUnion_004_grey_moors')
             np.testing.assert_allclose(south['position'],[110.-220.,6.5,260.-420.])
             self.assertEqual(south['association']['coveredSamples'],105)
-            # No floor covers the centre span; the nearest actual floor vertex within 40 m carries it.
+            # No floor covers the centre span; the nearest actual floor vertex within 64 m carries it.
             self.assertEqual(centre['node'],'Walk_ContinentalBridgeUnion_002_grey_moors')
             np.testing.assert_allclose(centre['position'],[115.-220.,3.5,225.-420.])
             self.assertAlmostEqual(centre['association']['distanceMetres'],np.hypot(35.,13.))
@@ -151,7 +151,7 @@ class LandmarkRemapTests(unittest.TestCase):
     def test_a_span_without_any_nearby_floor_fails_instead_of_inventing_a_position(self):
         with tempfile.TemporaryDirectory() as d:
             world,content,manifest,doc,body,bridges=self.fixture(Path(d),centre_center=(80.,0.,12.))
-            with self.assertRaisesRegex(ValueError,'within 40 m of the retired span'):
+            with self.assertRaisesRegex(ValueError,'within 64 m of the retired span'):
                 X.remap_grey_crossing_landmarks(world,content,REGION,manifest,doc,body,bridges)
         with tempfile.TemporaryDirectory() as d:
             world,content,manifest,doc,body,bridges=self.fixture(Path(d),floors=[('BridgeUnionPier_002_1_1',(.8,2.,.8),(110.,1.,200.))])

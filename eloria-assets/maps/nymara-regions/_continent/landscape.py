@@ -674,6 +674,155 @@ def resolve_terrain_edit_targets(plan):
     return resolved
 
 
+# The owner's road rules (2026-09-16): a road crosses a river only on a bridge at the locally shortest crossing,
+# square to the flow and at a narrow reach; bridges on one river stand at least 100 m apart along it; a road
+# travelling in a river's direction keeps to the bank outside a setback. river_crossings.py finds the sites and
+# world_layout.py routes through them. The plan's "crossing_policy" may override any of these defaults.
+CROSSING_POLICY_DEFAULTS = {
+    "minimum_spacing_metres": 100.0,          # two bridge sites on one river, along its curved centreline
+    "local_window_metres": 40.0,              # a site is the cheapest crossing within this reach either way along the river
+    "perpendicular_tolerance_degrees": 15.0,  # the span stands within this of square to the flow
+    "sample_metres": 2.0,                     # cross sections along each river's centreline
+    "landing_metres": 12.0,                   # the approach length over which the approach grade absorbs a bank rise
+    "approach_grade": 0.35,
+    "deck_clearance_metres": 0.85,            # a deck over the water surface
+    "maximum_approach_metres": 6.0,           # a site needing more unabsorbed bank rise is only a leg's last resort
+    "setback_minimum_metres": 6.0,            # a road keeps max(this, its half width + the margin) from river water
+    "setback_margin_metres": 4.0,
+    "bank_shelf_metres": 16.0,                # beyond the setback, up to this far from the water, a road pays the shelf penalty
+    "bank_shelf_penalty": 4.0,                # per metre of alignment, on top of flat ground's 1
+    "confluence_metres": 20.0,                # no site this close to another river's channel edge
+    "seam_metres": 12.0,                      # no site whose span or landings come this close to a territory seam
+    "footing_weight": 0.999,                  # no site across the rigid core of a settlement footing (an assembly)
+    "bridge_cost_metres": 60.0,               # a new bridge costs this much alignment on top of its own length
+    "shared_bridge_factor": 0.25,             # a bridge a public road already crosses costs this share of it
+    "deck_landing_metres": 6.0,               # a deck is its span plus at most this much landing on each bank
+    "deck_lift_metres": 0.3,                  # a deck stands at most this far over dry ground
+    "maximum_pier_metres": 8.0,               # the tallest pier the audit accepts outside a designed deck
+}
+CROSSING_POLICY_LIMITS = {
+    "minimum_spacing_metres": (0.0, 1000.0), "local_window_metres": (2.0, 500.0),
+    "perpendicular_tolerance_degrees": (0.0, 45.0), "sample_metres": (0.5, 10.0), "landing_metres": (1.0, 60.0),
+    "approach_grade": (0.05, 1.0), "deck_clearance_metres": (0.0, 5.0), "maximum_approach_metres": (0.0, 100.0),
+    "setback_minimum_metres": (0.0, 40.0), "setback_margin_metres": (0.0, 40.0), "bank_shelf_metres": (0.0, 100.0),
+    "bank_shelf_penalty": (0.0, 100.0), "confluence_metres": (0.0, 200.0), "seam_metres": (0.0, 100.0),
+    "footing_weight": (0.0, 1.0), "bridge_cost_metres": (0.0, 1000.0), "shared_bridge_factor": (0.0, 1.0),
+    "deck_landing_metres": (0.0, 24.0), "deck_lift_metres": (0.0, 5.0), "maximum_pier_metres": (0.0, 100.0),
+}
+
+
+def validate_crossing_policy(plan):
+    """Every problem with the plan's "crossing_policy"; empty means the policy (with its defaults) is usable."""
+    policy = plan.get("crossing_policy")
+    if policy is None:
+        return []
+    if not isinstance(policy, dict):
+        return ["'crossing_policy' must be an object of named numbers"]
+    problems = []
+    for key, value in policy.items():
+        if key not in CROSSING_POLICY_DEFAULTS:
+            problems.append(f"crossing_policy: unknown key {key!r}; known keys are {sorted(CROSSING_POLICY_DEFAULTS)}")
+            continue
+        low, high = CROSSING_POLICY_LIMITS[key]
+        if not _is_number(value) or not low <= float(value) <= high:
+            problems.append(f"crossing_policy: {key!r} must be a number in [{low}, {high}], not {value!r}")
+    return problems
+
+
+def crossing_policy(plan):
+    """The plan's crossing policy merged over CROSSING_POLICY_DEFAULTS, all floats; refuses a policy with problems."""
+    problems = validate_crossing_policy(plan)
+    if problems:
+        raise ValueError("; ".join(problems))
+    merged = dict(CROSSING_POLICY_DEFAULTS)
+    merged.update({key: float(value) for key, value in (plan.get("crossing_policy") or {}).items()})
+    return merged
+
+
+AUTHORED_CROSSING_WAIVERS = ("deck lifts over its banks", "retained solid")
+
+
+def validate_authored_crossings(plan):
+    """Every problem with the plan's "authored_crossings": designed crossings of a plan river at sections the crossing
+    model excludes only for reasons in AUTHORED_CROSSING_WAIVERS (a deck that cannot sit at water level between high
+    banks, or a retained solid beside a routed landing). Each entry is {"river": a plan river id, "arcMetres": metres
+    along its curved centreline, "note": why the crossing is designed}. Empty means usable."""
+    entries = plan.get("authored_crossings")
+    if entries is None:
+        return []
+    if not isinstance(entries, list):
+        return ["'authored_crossings' must be a list of {river, arcMetres, note}"]
+    rivers = {river.get("id") for river in plan.get("rivers", [])}
+    problems = []
+    for index, entry in enumerate(entries):
+        label = f"authored_crossings[{index}]"
+        if not isinstance(entry, dict) or set(entry) != {"river", "arcMetres", "note"}:
+            problems.append(f"{label}: must be an object with exactly river, arcMetres and note")
+            continue
+        if entry["river"] not in rivers:
+            problems.append(f"{label}: {entry['river']!r} is not a plan river")
+        if not _is_number(entry["arcMetres"]) or float(entry["arcMetres"]) < 0:
+            problems.append(f"{label}: arcMetres must be metres along the river, not {entry['arcMetres']!r}")
+        if not isinstance(entry["note"], str) or not entry["note"].strip():
+            problems.append(f"{label}: the note must say why the crossing is designed")
+    return problems
+
+
+def validate_designed_decks(plan):
+    """Every problem with the plan's "designed_decks": the support-module and retained decks allowed to stand
+    elevated. Each entry is {"name": exact node name, or a family ending in "*", "module": who builds or registers
+    it, "note": why it stands}; names are unique."""
+    decks = plan.get("designed_decks")
+    if decks is None:
+        return []
+    if not isinstance(decks, list):
+        return ["'designed_decks' must be a list of {name, module, note} entries"]
+    problems, seen = [], set()
+    for index, entry in enumerate(decks):
+        if not isinstance(entry, dict):
+            problems.append(f"designed deck {index}: each entry must be an object")
+            continue
+        name = entry.get("name")
+        if not isinstance(name, str) or not name.strip() or "*" in name[:-1]:
+            problems.append(f"designed deck {index}: 'name' must be a node name, or a family ending in one '*', not {name!r}")
+        elif name in seen:
+            problems.append(f"designed deck {name!r}: listed twice")
+        else:
+            seen.add(name)
+        for key in ("module", "note"):
+            if not isinstance(entry.get(key), str) or not entry[key].strip():
+                problems.append(f"designed deck {name!r}: needs a non-empty string {key!r}")
+        unknown = sorted(set(entry) - {"name", "module", "note"})
+        if unknown:
+            problems.append(f"designed deck {name!r}: unknown key(s) {unknown}")
+    return problems
+
+
+def designed_deck_entry(plan, name):
+    """The designed_decks entry naming this node (exactly, or by a family "prefix*"), or None."""
+    problems = validate_designed_decks(plan)
+    if problems:
+        raise ValueError("; ".join(problems))
+    for entry in plan.get("designed_decks") or []:
+        pattern = entry["name"]
+        if pattern == name or (pattern.endswith("*") and name.startswith(pattern[:-1])):
+            return entry
+    return None
+
+
+def require_designed_deck(plan, name, module):
+    """Refuse an elevated deck the plan does not name in designed_decks (or names under another module). A plan
+    without a designed_decks list predates the rule and refuses nothing (None)."""
+    if "designed_decks" not in (plan or {}):
+        return None
+    entry = designed_deck_entry(plan, name)
+    if entry is None:
+        raise ValueError(f"{name}: {module} builds an elevated deck that diagonal-plan.json's designed_decks does not name")
+    if entry["module"] != module:
+        raise ValueError(f"{name}: designed_decks names it under {entry['module']!r}, not {module!r}")
+    return entry
+
+
 def height_at(x, z, plan=None):
     """Evaluate the shared ground height without reference to territory ownership."""
     plan = load_plan() if plan is None else plan

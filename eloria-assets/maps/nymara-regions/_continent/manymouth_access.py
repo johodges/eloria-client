@@ -9,6 +9,7 @@ from types import SimpleNamespace
 import numpy as np
 import scene_io as S
 import manymouth_support as D
+import landscape as L
 from bridge_export import G,M,RoadOutline,_clip_halfplane,triangulate_floor,_area_xz
 
 REGION='manymouth_delta'
@@ -178,6 +179,9 @@ def build_manymouth_access(world,content,path):
         builder.add_material(G.Material('fishing_'+name,base_color=tuple(np.asarray(color)**2.2)+(1.,),roughness=.95,double_sided=False))
     parts=[]
     def add(name,mesh):
+        # Every walk this module builds is a designed deck the plan names (the village streets register their own).
+        if name.startswith('Walk_') and not name.startswith('Walk_Manymouth_Village_'):
+            L.require_designed_deck(getattr(world,'plan',None) or {},name,'manymouth_access')
         builder.add_mesh(name,mesh,with_tangents=False);root=builder.add_node(G.Node(name,mesh=name))
         parts.append({'region':REGION,'node':name,'roots':[root],'bounds':mesh.bounds(),'segment':[],'collides':False})
     positions=faces.reshape(-1,3)
@@ -214,13 +218,13 @@ def build_manymouth_access(world,content,path):
                     paddy_posts.append(M.box((.17,top-bed+.05,.17),center=(p[0],(bed-.05+top)*.5,p[1]),material='fishing_posts'))
                     post_contacts.append([float(p[0]),bed-.05,float(p[1])])
     if paddy_posts:add('Manymouth_PaddyStreet_Piles',M.merge(paddy_posts,material='fishing_posts'))
-    from manymouth_village_streets import build_village_streets,floor_samples
+    from manymouth_village_streets import build_village_streets,floor_samples,deck_name
     village_reports=[]
     for village_faces,village_paths,village_report in build_village_streets(world,content):
         identity=village_report['id'];v=village_faces.reshape(-1,3)
         normal=np.cross(village_faces[:,1].astype(float)-village_faces[:,0],village_faces[:,2].astype(float)-village_faces[:,0])
         normal/=np.linalg.norm(normal,axis=1,keepdims=True)
-        add('Walk_Manymouth_Village_'+identity,M.Mesh(positions=v,normals=np.repeat(normal,3,axis=0),
+        add(deck_name(world,identity),M.Mesh(positions=v,normals=np.repeat(normal,3,axis=0),
             uvs=v[:,[0,2]]*.4,indices=np.arange(len(v)),material='fishing_timber'))
         add('Manymouth_Village_Fascia_'+identity,boardwalk_fascia(village_faces,'fishing_timber'))
         positions=[]

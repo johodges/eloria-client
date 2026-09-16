@@ -8,6 +8,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import mirror_streets as M
+import world_layout as W
 from world_layout import World
 
 
@@ -77,6 +78,10 @@ def test_real_road_settlement_grades_open_hill_and_preserves_house_floor():
     assert np.max(abs(np.diff(legacy.height[centre, open_street])) / 2.) > .65
     assert np.max(abs(np.diff(world.height[centre, open_street])) / 2.) <= .60
     assert world.height[centre, world.x == 0][0] < 12.
+    # The city survey's released street ground is designed grading inside the city footing: the road earthworks
+    # limits (cut 4 m, fill 3 m) apply outside it, not here.
+    assert world.earthworks_free()[centre, world.x == 0][0]
+    assert not legacy.earthworks_free()[centre, world.x == 0][0] or legacy.road_grading['earthworks']['limitedVertices'] == 0
     assert world.road_grading['conflictingFootingCorridorVertices'] == 0
     # No cut/fill reaches a distant area beyond the road shoulder.
     np.testing.assert_array_equal(world.height[0], before[0])

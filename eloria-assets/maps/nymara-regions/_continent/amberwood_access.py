@@ -9,6 +9,7 @@ import copy
 from pathlib import Path
 import numpy as np
 import scene_io as S
+import landscape as L
 from bridge_export import G,M
 from ferry_export import ribbon
 from mirror_access_geometry import ramp_mesh,foundation_faces
@@ -343,6 +344,8 @@ def build_amberwood_access(world,content,path):
         builder.add_material(G.Material('amber_access_'+name,base_color=tuple(np.asarray(color)**2.2)+(1.,),roughness=.9,double_sided=True))
     parts=[];hatch_parent=None;hatch_bounds=[]
     def add(name,mesh,solid=False):
+        # Every walk this module builds is a designed deck the plan names (landscape.designed_deck_entry).
+        if name.startswith('Walk_'):L.require_designed_deck(getattr(world,'plan',None) or {},name,'amberwood_access')
         parent=hatch_parent if HATCH in name else None
         builder.add_mesh(name,mesh,with_tangents=False);root=builder.add_node(G.Node(name,mesh=name),parent=parent)
         if parent is not None:

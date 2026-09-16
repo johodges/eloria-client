@@ -257,6 +257,9 @@ def build_ferries(world, path, *, water_fields=None):
                                         double_sided=name in ('hull', 'trim', 'canvas')))
     parts, reports, walk_triangles = [], [], []
     def add(region, name, mesh):
+        # A quay deck is a designed deck the plan names (landscape.designed_deck_entry).
+        if name.startswith('Walk_'):
+            L.require_designed_deck(getattr(world, 'plan', None) or {}, name, 'ferry_export')
         builder.add_mesh(name, mesh, with_tangents=False)
         root = builder.add_node(G.Node(name, mesh=name))
         parts.append(dict(region=region, roots=[root], bounds=mesh.bounds(), node=name, segment=[]))

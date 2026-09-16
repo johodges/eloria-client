@@ -13,6 +13,7 @@ import scene_io as S
 import manymouth_support as D
 import collision_export as C
 import bridge_export as B
+import landscape as L
 
 REGION='manymouth_delta'
 WIDTH=1.25
@@ -110,16 +111,35 @@ def station(content,name,matrices):
     return {'name':name,'xz':xz,'y':y,'faces':faces}
 
 
+PUBLIC_ROAD_REACH_METRES=36.
+# R1: roads cross the delta's channels only on bridge sites 100 m apart, so a landing the old roads passed within the
+# usual reach (the floating market, 29 m from the Crownwater ferry road in O5) can stand farther from every road now.
+PUBLIC_ROAD_FALLBACK_REACH_METRES=64.
+
+
+PUBLIC_ROAD_BANK_CHOICES=4          # banks per target a group without public contacts may try, best first
+PUBLIC_ROAD_BANK_SPACING_METRES=4.  # ...each this far from the better ones
+
+
 def public_road_station(world,content,target):
-    samples=[]
-    for road in world.roads:
-        # A resource trail is not a public approach for a village street.
-        if str(road.get('id','')).startswith('trail-'):continue
-        p=np.asarray(road['points'])[:,[0,2]]
-        for a,b in zip(p,p[1:]):
-            d=b-a;t=np.clip(np.dot(target['xz']-a,d)/max(np.dot(d,d),1e-9),0,1)
-            q=a+t*d
-            if 3<np.linalg.norm(q-target['xz'])<36:samples.append(q)
+    return public_road_stations(world,content,target,count=1)[0]
+
+
+def public_road_stations(world,content,target,count=PUBLIC_ROAD_BANK_CHOICES):
+    """A target's public road banks, best first (distance plus three times the height difference), each at least
+    PUBLIC_ROAD_BANK_SPACING_METRES from the better ones: dry, manageable ground of the territory beside a public
+    road within the usual reach, else within the fallback reach."""
+    for reach in (PUBLIC_ROAD_REACH_METRES,PUBLIC_ROAD_FALLBACK_REACH_METRES):
+        samples=[]
+        for road in world.roads:
+            # A resource trail is not a public approach for a village street.
+            if str(road.get('id','')).startswith('trail-'):continue
+            p=np.asarray(road['points'])[:,[0,2]]
+            for a,b in zip(p,p[1:]):
+                d=b-a;t=np.clip(np.dot(target['xz']-a,d)/max(np.dot(d,d),1e-9),0,1)
+                q=a+t*d
+                if 3<np.linalg.norm(q-target['xz'])<reach:samples.append(q)
+        if samples:break
     if not samples:raise ValueError(target['name']+': no local public road approach')
     p=np.unique(np.floor(samples)+.5,axis=0);h=world.height_at(p[:,0],p[:,1])
     if not hasattr(content,'_village_walk_floors'):
@@ -135,8 +155,13 @@ def public_road_station(world,content,target):
     use=((world.owner_at(q[:,:,0],q[:,:,1])==world.ids.index(REGION))&(~wet)&(C.terrain_grade(world,q[:,:,0],q[:,:,1])<.5)).all(axis=1)
     indices=np.flatnonzero(use)
     if not len(indices):raise ValueError(target['name']+': public approach has no dry manageable bank')
-    best=min(indices,key=lambda i:np.linalg.norm(p[i]-target['xz'])+abs(h[i]-target['y'])*3)
-    return {'name':'public-road-'+target['name'],'xz':p[best],'y':float(h[best]),'faces':np.empty((0,3,3)),'ground':True}
+    ranked=sorted(indices,key=lambda i:np.linalg.norm(p[i]-target['xz'])+abs(h[i]-target['y'])*3)
+    chosen=[]
+    for i in ranked:
+        if all(np.linalg.norm(p[i]-p[j])>=PUBLIC_ROAD_BANK_SPACING_METRES for j in chosen):chosen.append(i)
+        if len(chosen)==count:break
+    return [{'name':'public-road-'+target['name'],'xz':p[i],'y':float(h[i]),'faces':np.empty((0,3,3)),'ground':True,'reach':reach}
+            for i in chosen]
 
 
 def route(world,content,start,end):
@@ -196,7 +221,8 @@ def connect_group(world,content,roots,targets):
         pairs=sorted((float(np.linalg.norm(a['xz']-b['xz'])),i,j) for i,a in enumerate(remaining) for j,b in enumerate(connected))
         found=None
         for distance,i,j in pairs:
-            if distance>40:continue
+            # A street is short: 40 m, or the reach its public road bank was found within (the fallback reach).
+            if distance>max(40.,float(connected[j].get('reach',0.))):continue
             path=route(world,content,remaining[i],connected[j])
             if path is not None:found=(i,j,path);break
         if found is None:raise ValueError('No short exterior street reaches '+', '.join(n['name'] for n in remaining))
@@ -287,21 +313,39 @@ def street_faces(world,content,paths,nodes,matrices):
         'newTriangles':len(faces),'precisionCleanupTriangles':int((~keep).sum())}
 
 
+DECK_PREFIX='Walk_Manymouth_Village_'
+
+
+def deck_name(world,identity):
+    """The village street deck's node name, registered against the plan's designed_decks (an elevated walk)."""
+    name=DECK_PREFIX+identity
+    L.require_designed_deck(getattr(world,'plan',None) or {},name,'manymouth_village_streets')
+    return name
+
+
 def build_village_streets(world,content):
     matrices,_=S.GR.hierarchy(content.documents[REGION][0]);results=[]
     for identity,(public,names) in SOURCE_PLANS.items():
         roots=[station(content,name,matrices) for name in public]
         targets=[station(content,name,matrices) for name in names]
+        options=[roots]
         if not roots:
             choices=[]
             for target in targets:
-                try:node=public_road_station(world,content,target)
+                try:nodes=public_road_stations(world,content,target)
                 except ValueError:continue
-                choices.append((float(np.linalg.norm(node['xz']-target['xz']))+abs(node['y']-target['y'])*3,node))
+                choices.extend((float(np.linalg.norm(node['xz']-target['xz']))+abs(node['y']-target['y'])*3,node) for node in nodes)
             if not choices:raise ValueError(identity+': no nearby public road bank')
-            roots=[min(choices,key=lambda item:item[0])[1]]
-        paths,links=connect_group(world,content,roots,targets)
-        faces,report=street_faces(world,content,paths,roots+targets,matrices)
+            # Best bank first (a stable sort keeps the targets' order between equal banks); the next is tried only
+            # when a street from the better one cannot reach every floor within the grade bounds.
+            options=[[node] for _,node in sorted(choices,key=lambda item:item[0])]
+        for index,roots in enumerate(options):
+            try:
+                paths,links=connect_group(world,content,roots,targets)
+                faces,report=street_faces(world,content,paths,roots+targets,matrices)
+                break
+            except ValueError:
+                if index==len(options)-1:raise
         report.update(id=identity,halfWidth=WIDTH,connections=links,paths=[p.tolist() for p in paths],
             publicContacts=[{'node':n['name'],'position':[float(n['xz'][0]),n['y'],float(n['xz'][1])]} for n in roots],
             targetFloors=[{'node':n['name'],'position':[float(n['xz'][0]),n['y'],float(n['xz'][1])]} for n in targets])

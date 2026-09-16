@@ -26,13 +26,18 @@ import landscape as L
 
 # (region, portal id) -> global XZ metres where the door road ends.
 ROAD_ENDS = {
-    ('verdant_stair', 'nine-lost-door'): (1206.5, 1175.5),   # north threshold of the South Quay pavilion
+    # North of the South Quay pavilion. Until the roads pass (R1) the end stood on the
+    # pavilion's north threshold (1206.5, 1175.5), 2 m from the river: a road end stands
+    # outside its river setback now (6 m for a door road), so it moved 6 m west-north-west
+    # onto dry ground 8.9 m from the water, 10.3 m from the door.
+    ('verdant_stair', 'nine-lost-door'): (1201.0, 1173.0),
     # The gate undercroft stair opens east out of the Great Arch's base masonry
     # onto a pocket of level ground; a road routed to the door itself ends inside
     # the masonry, and every earlier publication reached the served tile only
     # over a bridge deck the raised road profile built 14 m above the arch. The
-    # pin stands seven metres clear of the arch so the road goes round it.
-    ('amberwood', 'gate-undercroft-stair'): (616.5, 589.5),
+    # pin stands seven metres clear of the arch so the road goes round it; R1 moved
+    # it 3 m east of (616.5, 589.5), out of the stream's setback (8.5 m from the water).
+    ('amberwood', 'gate-undercroft-stair'): (619.0, 591.0),
 }
 # (region, portal id) -> (retained node, (dx, dz)): a door road end anchored on a
 # retained object, for a door whose way in is that object's own stair or court.
@@ -82,15 +87,38 @@ RETAINED_ROAD_ENDS = {
 # margin north-east of the windmill it comes through the same pocket; its
 # marker stands inside the windmill's box and 4 m inside round tent 06's
 # footprint, which no pin avoids.
+# R1 (the roads pass) keeps every pin outside its river setback: the estate pin moved
+# from (600, 590), 2 m from the stream, to the west court's dry edge (6.3 m from the
+# water, 11.9 m from the portal), and the spring pin from (1196, 760), 4.5 m from the
+# Limestone River, 5.7 m east (8.9 m from the water, 9.9 m from its marker). The
+# branch no longer runs on from a pin over water to a portal standing in it.
 SERVER_ROAD_ENDS = {
-    ('amberwood', 'amberwood', 'amberwood_estate'): (600., 590.),
-    ('sunmane_steppe', 'sunmane_steppe', 'sunmane_steppe_secrets'): [(1216., 732.), (1196., 760.), (1232., 734.)],
+    ('amberwood', 'amberwood', 'amberwood_estate'): (596.5, 588.),
+    ('sunmane_steppe', 'sunmane_steppe', 'sunmane_steppe_secrets'): [(1216., 732.), (1201.5, 761.5), (1232., 734.)],
 }
 SERVER_ROAD_END_LEG_METRES = 2.   # a pin closer than this to its portal is the road's end itself
 # (region, portal id) -> authored waypoints in continent metres: the door road is
 # routed hub -> waypoint -> ... -> door end in legs, so a designed climb passes
 # its overlook, refuge or shrine instead of taking the router's shortest line.
 DOOR_ROAD_WAYPOINTS = {
+    # R1 (2026-09-16): the Grey Moors hub's climbs out of the Moorwater valley. The hub (220, 420) stands on the
+    # valley's west wall at 32 m; the barrows and crypts stand 55-90 m above it on slopes of .6-1.3, which the 4 m
+    # cut and 3 m fill limits cannot grade to .45 on the router's own line (the O5 lines ran straight up them: routing
+    # excess of 56, 56 and 110 m). The west trunk climbs the west wall north, crosses to the upper slope at z 294-306
+    # and turns in one hairpin at (300, 342) to the warm stone and the great barrow; the east crypt stair continues
+    # from there along the upper slope (412 m), so it needs no bridge. The fifth chamber shares the seam road's east
+    # trunk (SEAM_ROAD_WAYPOINTS below). Found as bounded-grade paths (grade .40-.43, legs 12-36 m, every edge within
+    # the limits of the ground) on the R1 candidate composition and routed there leg by leg: no leg exceeds the limits
+    # but by the 8 m a leg's pinned end takes at a steep joint.
+    ('grey_moors', 'warm-stone-door'): [
+        (210., 360.), (216., 336.), (222., 306.), (246., 294.), (264., 306.), (288., 324.), (300., 342.), (294., 324.), (278., 308.)],
+    ('grey_moors', 'great-barrow-mouth'): [
+        (210., 360.), (216., 336.), (222., 306.), (246., 294.), (264., 306.), (288., 324.), (300., 342.), (294., 324.), (278., 308.)],
+    ('grey_moors', 'east-crypt-stair'): [
+        (210., 360.), (216., 336.), (222., 306.), (246., 294.), (264., 306.), (288., 324.), (300., 342.), (294., 324.), (278., 308.),
+        (294., 312.), (306., 330.), (336., 342.)],
+    ('grey_moors', 'fifth-chamber-mouth'): [
+        (276., 426.), (282., 408.), (312., 426.), (324., 408.), (342., 414.), (348., 390.)],
 }
 # The same for a retained territory, in its source (library) metres: the plan's
 # retained transform (translation and squeeze) carries them where the layout stands.
@@ -130,11 +158,28 @@ RETAINED_DOOR_ROAD_WAYPOINTS = {
 # authored separately under its own region: the mountain side takes the climb
 # while the other side stays a straight run to the terminal.
 SEAM_ROAD_WAYPOINTS = {
-    # The Moors pass: four legs of switchback on the west face of the Whitehorn massif, from the shoulder
-    # above the watch cave down to the crossing at its foot, 361 m of road for 107 m of fall (grades 0.11 to
-    # 0.46 between waypoints on the plan's own ground).
+    # The Moors pass. Design O2 authored four legs of switchback down the west face to a crossing at (362, 327):
+    # (371, 302), (412, 364), (349, 281), (411, 377), (364, 327). R1 moved the crossing to the gentle west foot at
+    # (378, 379) (make_whitehorn_plan_r1.py) and this road now leaves the gate court down the south face on the
+    # switchback it shares with the Amberwood crossing's road, then runs west along the foot to its terminal
+    # (387, 379): legs of 20-57 m at grades .31-.42 on the R1 candidate composition's ground, every one within
+    # the 4 m cut and 3 m fill limits of the ground (a bridge-grade search, R1.md): (496, 400), (512, 420),
+    # (536, 424), (484, 416), (444, 396), (392, 372), (408, 384).
+    #
+    # Re-authored on the R1 candidate composition's own ground (that first R1 line was found on ground the O5 roads
+    # had cut 20-65 m into the face, and routed with 128 m of legs beyond the limits): out of the court west, seven
+    # hairpins down the south-west face to (438, 396), then the bench loop the ground allows onto the terminal's
+    # shelf -- down to (392, 372), east along the shelf to (408, 384) and back to the terminal. 395 m; routed leg by
+    # leg there, no leg beyond the limits but the 8 m at three steep joints. The Amberwood crossing's road shares it
+    # as far as (408, 384). The hairpin at (510, 426) keeps the line 15 m clear of shrine 00's footprint.
     ('whitehorn_range', 'grey_moors--whitehorn_range'): [
-        (371., 302.), (412., 364.), (349., 281.), (411., 377.), (364., 327.)],
+        (504., 384.), (474., 372.), (492., 402.), (510., 426.), (480., 408.), (486., 420.), (468., 408.), (438., 396.),
+        (408., 378.), (392., 372.), (408., 384.)],
+    # The Grey Moors side: out of the hub over the Moorwater bridge, then five traverses up the east wall to the
+    # bench at 64 m and north to the terminal (369, 379); 255 m, no leg beyond the limits (O5-line excess 48 m). The
+    # fifth chamber door road shares the trunk.
+    ('grey_moors', 'grey_moors--whitehorn_range'): [
+        (276., 426.), (282., 408.), (312., 426.), (324., 408.), (342., 414.), (348., 384.)],
     # The east pass: out of the gate court south-east down the tail, then two hairpins round the east flank
     # onto the Barrens' floor, 377 m for 84 m of descent (grades 0.13 to 0.38). Leg 2 crosses the Hornwater
     # at about (629, 418), where the ravine the river cuts is three metres deep.
@@ -143,12 +188,20 @@ SEAM_ROAD_WAYPOINTS = {
     # north), and at (556, 394) its 4 m-wide corridor and 24 m shoulders reached the
     # snowline terrace's west edge 23-27 m away and cut it 8-15 m (the overlook's
     # and the stones' floating west edges).
+    # R1: the second waypoint moved from (614, 406), 8.2 m from the Hornwater, to (610, 405), clear of the seam
+    # road's 8 m river setback; leg 2 now crosses the river on the bridge site beside it (horn_tributary@288).
     ('whitehorn_range', 'amethyst_barrens--whitehorn_range'): [
-        (544., 390.), (614., 406.), (668., 448.), (694., 433.), (692., 377.), (760., 419.), (786., 340.)],
-    # The Amberwood crossing: out of the gate court north-east over the 173 m shelf, NORTH of the village
-    # strip, down the Hornwater's west scarp beside the east pass's own descent, across the river, down the
-    # tail's EAST bank, back over the river at the saddle and west along the tail's southern bench to the
-    # crossing's lip.
+        (544., 390.), (610., 405.), (668., 448.), (694., 433.), (692., 377.), (760., 419.), (786., 340.)],
+    # The Amberwood crossing. Design O5 authored eight legs here (quoted below): out of the gate court
+    # north-east over the 173 m shelf, NORTH of the village strip, down the Hornwater's west scarp beside the
+    # east pass's own descent, across the river, down the tail's EAST bank, back over the river at the saddle
+    # and west along the tail's southern bench to the crossing's lip: (556, 350), (596, 340), (628, 384),
+    # (648, 420), (640, 452), (604, 464), (574, 464), (558, 450). R1 retired them: three stood 2-4 m from the
+    # Hornwater, inside the seam road's 8 m river setback, and the line crossed the river twice 65 m apart,
+    # where one bridge site per 100 m of river allows only one. The court no longer needs the bought length
+    # either: corridor_grade still reconciles the network, but settle_roads now holds every road within 4 m of
+    # cut and 3 m of fill of the ground it finds (world_layout.limit_corridor_earthworks), so the network cannot
+    # sink the court. What the router makes of the escarpment unaided is measured in R1.md.
     #
     # This one is not scenery. The crossing at (531, 436) is 52 m from the gate court and 103 m above the
     # Amberwood roads at (516, 444), and world_layout.corridor_grade reconciles the whole connected road
@@ -180,9 +233,16 @@ SEAM_ROAD_WAYPOINTS = {
     # placements came back within 2 m. Pinned, the approach stays south of the saddle and the whole line
     # keeps 33.2 m from that footprint. Measure a candidate against the ROUTED road, not the authored
     # polyline: the straight line here is 27.3 m clear where the route was 16.
+    #
+    # R1 then moved the crossing itself to the massif's west foot at (397, 422), where its terminal line is gentle
+    # (grade .24 against 3.5 at (531, 436)). The road shares the Moors pass's descent (above) to the shelf at
+    # (408, 384), then drops off the shelf's east end in two more traverses to the foot and the terminal (397, 413);
+    # 459 m, routed on the R1 candidate composition's ground with no leg beyond the limits but 8 m at joints. (The
+    # first R1 line, (496, 400) (512, 420) (536, 424) (484, 416) (444, 396) (396, 372) (440, 408) (412, 400), was found
+    # on ground the O5 roads had cut and routed with 160 m of legs beyond the limits.)
     ('whitehorn_range', 'amberwood--whitehorn_range'): [
-        (556., 350.), (596., 340.), (628., 384.), (648., 420.), (640., 452.), (604., 464.), (574., 464.),
-        (558., 450.)],
+        (504., 384.), (474., 372.), (492., 402.), (510., 426.), (480., 408.), (486., 420.), (468., 408.), (438., 396.),
+        (408., 378.), (392., 372.), (408., 384.), (414., 390.), (426., 399.), (438., 408.), (426., 405.), (414., 402.)],
 }
 # The same for a retained territory, in its source (library) metres, carried
 # where the layout stands by the plan's retained transform (as the retained door
@@ -283,7 +343,7 @@ def seam_road_waypoints(content, region, connection_id):
     return list(getattr(content, 'seam_road_waypoints', {}).get((region, connection_id), []))
 
 
-def route_in_legs(world, legs, region, own=None):
+def route_in_legs(world, legs, region, own=None, width=None, public=False, name=None):
     """One road alignment routed through its authored waypoints: hub -> waypoint -> ... -> end.
 
     Every leg but the last drops its final station, which is the next leg's
@@ -292,14 +352,62 @@ def route_in_legs(world, legs, region, own=None):
     ``world.solids_at_ends``) applies to the first leg only, as it did when the
     road was one call; the later legs let the router take the solids of their
     own two ends. With two stations and no waypoints this is exactly
-    ``world.route(legs[0], legs[1], region=region, own=own)``.
+    ``world.route(legs[0], legs[1], region=region, own=own)``. ``width``,
+    ``public`` and ``name`` reach every leg's route (its river setback, whether
+    its crossings become shared bridges, and the road its claims are recorded
+    under) when given.
     """
     legs = list(legs)
+    extra = {key: value for key, value in (('width', width), ('public', public), ('name', name)) if value}
     parts = []
     for index, (a, b) in enumerate(zip(legs, legs[1:])):
-        leg = world.route(a, b, region=region, own=own if index == 0 else None)
+        leg = world.route(a, b, region=region, own=own if index == 0 else None, **extra)
         parts.append(leg[:-1] if index < len(legs) - 2 else leg)
     return np.vstack(parts)
+
+
+def validate_river_setbacks(world, content, door_width=1.65, seam_width=4.):
+    """After river_crossings.prepare_river_crossings: every pinned road end and authored waypoint stands outside its
+    road's river setback, and every authored leg whose straight line crosses a plan river has a candidate crossing
+    of that river in its territory (the router then carries the leg over it on a bridge). Returns the legs that
+    cross a river, with the nearest candidate to each crossing point."""
+    import river_crossings as RC
+    if getattr(world, 'river_water_distance', None) is None:
+        return []
+    policy = RC.policy_of(world)
+    def check(region, label, point, width):
+        setback = RC.setback_metres(policy, width)
+        distance = float(RC.water_distance_at(world, point[0], point[1]))
+        if distance <= setback:
+            raise ValueError(f'{region}:{label}: stands {distance:.1f} m from river water, inside the {setback:g} m river setback')
+    for (region, portal), point in getattr(content, 'door_road_ends', {}).items():
+        check(region, f'{portal} road end', point, door_width)
+    for (region, source, target), pins in getattr(content, 'server_road_ends', {}).items():
+        for point in pins:
+            check(region, f'{source}->{target} road end', point, door_width)
+    legs = []
+    for waypoints, width in ((getattr(content, 'door_road_waypoints', {}), door_width), (getattr(content, 'seam_road_waypoints', {}), seam_width)):
+        for (region, road), points in waypoints.items():
+            for index, point in enumerate(points):
+                check(region, f'{road} waypoint {index}', point, width)
+            route = [world.hub(region)] + list(points)
+            for index, (a, b) in enumerate(zip(route, route[1:])):
+                a, b = np.asarray(a, float), np.asarray(b, float)
+                count = max(2, int(np.ceil(np.linalg.norm(b - a))) + 1)
+                line = a + (b - a) * np.linspace(0., 1., count)[:, None]
+                wet = RC.water_distance_at(world, line[:, 0], line[:, 1]) <= 0.
+                if not wet.any():
+                    continue
+                crossing = line[int(np.flatnonzero(wet)[len(np.flatnonzero(wet)) // 2])]
+                nearby = [c for c in world.crossing_candidates if c['region'] == region]
+                if not nearby:
+                    raise ValueError(f'{region}:{road}: leg {index} crosses a river where its territory offers no crossing site')
+                best = min(nearby, key=lambda c: float(np.linalg.norm(np.asarray(c['centre']) - crossing)))
+                legs.append({'road': f'{region}:{road}', 'leg': index, 'crossesAt': crossing.round(1).tolist(), 'nearestCandidate': best['key'],
+                             'candidateMetres': round(float(np.linalg.norm(np.asarray(best['centre']) - crossing)), 1)})
+    if hasattr(world, 'door_approaches'):
+        world.door_approaches['riverLegs'] = legs
+    return legs
 
 
 def door_road_end(content, region, portal, door_point):

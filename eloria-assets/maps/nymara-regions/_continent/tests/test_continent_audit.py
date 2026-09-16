@@ -120,7 +120,7 @@ class ProvisionalExportTests(unittest.TestCase):
         plan={'bounds':[0,0,4,4],'regions':[{'id':'west','center':[1,2]},{'id':'east','center':[3,2]}]}
         write(continent/'diagonal-plan.json',plan);plan_sha=digest(continent/'diagonal-plan.json')
         sources={}
-        for name in ('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py'):
+        for name in ('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py'):
             path=continent/name;path.write_text(f'# fixture {name}\n')
             sources[path.relative_to(client).as_posix()]=digest(path)
         builder=continent/'build_continent.py'
@@ -186,7 +186,7 @@ class ProvisionalExportTests(unittest.TestCase):
             self.assertTrue(any('Streaming chunks: 1 missing' in error for error in result['errors']),result['errors'])
 
     def test_shaping_and_composition_algorithm_freshness_are_required_in_provisional_mode(self):
-        for name in ('assemblies.py','crown_support.py','westhaven_support.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','build_continent.py','legacy-server-profile/config/eloria/maps.txt','continent-edits.json'):
+        for name in ('assemblies.py','crown_support.py','westhaven_support.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','build_continent.py','legacy-server-profile/config/eloria/maps.txt','continent-edits.json'):
             with self.subTest(name=name),tempfile.TemporaryDirectory() as tmp:
                 root=Path(tmp);client,generated,base=self.fixture(root)
                 path=base/'_continent'/name
@@ -216,6 +216,65 @@ class ProvisionalExportTests(unittest.TestCase):
             self.assertFalse(result['passed'])
             self.assertTrue(any('Geometry export source changed: bridge_export.py' in error for error in result['errors']))
 
+
+
+def rule_fixture():
+    """A straight river along x = 120 (half width 10, narrowing to 5 over z 96..112), dry banks at 4 m."""
+    rivers = [{'id': 'main', 'name': 'Main', 'width': 10., 'points': [[120., 0., 0.], [120., 180., 0.], [120., 360., 0.]]}]
+    half = lambda z: np.where((np.asarray(z) >= 96) & (np.asarray(z) <= 112), 5., 10.)
+    water = lambda x, z: np.abs(np.asarray(x, float) - 120.) <= half(z)
+    ground = lambda x, z: np.where(water(x, z), -1.5, 4.)
+    site = {'id': 0, 'river': 'main', 'arcMetres': 104., 'wetEdges': [[115., 104.], [125., 104.]]}
+    policy = {'deck_landing_metres': 6., 'minimum_spacing_metres': 100.}
+    return rivers, water, ground, site, policy
+
+
+class RoadRuleTests(unittest.TestCase):
+    def test_a_square_crossing_at_a_site_on_the_ground_passes(self):
+        rivers, water, ground, site, policy = rule_fixture()
+        road = {'id': 'seam', 'points': [[60., 4., 104.], [114., 4., 104.], [126., .85, 104.], [180., 4., 104.]]}
+        found = A.road_rule_findings([road], [site], rivers, policy, ground, water, piers=[{'name': 'BridgeUnionPier_001_120_104', 'height': 2.4}])
+        self.assertEqual(found['violations'], [])
+        self.assertEqual(found['totals']['crossingRuns'], 1)
+
+    def test_a_road_down_the_channel_or_across_it_obliquely_fails(self):
+        rivers, water, ground, site, policy = rule_fixture()
+        along = {'id': 'discovery-a1', 'points': [[125., 4., 200.], [122., 4., 320.]]}
+        oblique = {'id': 'door-c1', 'points': [[90., 4., 80.], [150., 4., 128.]]}
+        found = A.road_rule_findings([along, oblique], [dict(site, wetEdges=[[112., 90.], [128., 118.]])], rivers, policy, ground, water)
+        self.assertTrue(any(v.startswith('discovery-a1:') and 'over river water outside every bridge site' in v for v in found['violations']), found['violations'])
+        self.assertTrue(any(v.startswith('door-c1:') and 'degrees to the flow' in v for v in found['violations']), found['violations'])
+
+    def test_close_sites_tall_piers_floating_stations_and_long_crossings_fail(self):
+        rivers, water, ground, site, policy = rule_fixture()
+        near = dict(site, id=1, arcMetres=130., wetEdges=[[110., 130.], [130., 130.]])
+        floating = {'id': 'hub-road', 'points': [[20., 4., 20.], [60., 7., 20.]]}
+        found = A.road_rule_findings([floating], [site, near], rivers, policy, ground, water,
+                                     piers=[{'name': 'BridgeUnionPier_002_120_160', 'height': 9.5}])
+        text = ' | '.join(found['violations'])
+        self.assertIn('bridge sites 26 m apart', text)
+        self.assertIn('pier 9.5 m tall', text)
+        self.assertIn('hub-road: ', text)
+        self.assertIn('crossing 20.5 m against 10.5 m', text)
+        # A designed deck carries its own elevated floor.
+        found = A.road_rule_findings([floating], [site], rivers, policy, ground, water, designed_boxes=[((10., 10.), (70., 30.))])
+        self.assertEqual(found['violations'], [])
+
+    def test_the_local_shortest_ignores_sections_at_a_territory_seam(self):
+        rivers, water, ground, site, policy = rule_fixture()
+        wide = dict(site, arcMetres=130., wetEdges=[[110., 130.], [130., 130.]])     # 20 m, 26 m from the 10 m reach
+        self.assertTrue(any('crossing 20.5 m against 10.5 m' in v for v in A.road_rule_findings([], [wide], rivers, policy, ground, water)['violations']))
+        # The narrow reach stands on a territory seam (z 96..112): no bridge is built there, so it is no comparison.
+        seam = lambda x, z: (np.asarray(z, float) >= 90) & (np.asarray(z, float) <= 118)
+        self.assertEqual(A.road_rule_findings([], [wide], rivers, policy, ground, water, seam_near_at=seam)['violations'], [])
+
+    def test_bridge_floors_may_stand_over_the_span_but_not_over_dry_ground_beyond_it(self):
+        rivers, water, ground, site, policy = rule_fixture()
+        over_span = np.array([[118., 1., 104.], [131., 3.5, 104.]])
+        beyond = np.array([[150., 7., 104.]])
+        self.assertEqual(A.road_rule_findings([], [site], rivers, policy, ground, water, union_vertices=over_span)['violations'], [])
+        found = A.road_rule_findings([], [site], rivers, policy, ground, water, union_vertices=np.r_[over_span, beyond])
+        self.assertTrue(any('bridge floor vertices' in v for v in found['violations']))
 
 if __name__ == '__main__':
     unittest.main()

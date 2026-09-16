@@ -196,7 +196,6 @@ def prepare_resource_trails(world, content, profile):
         if not len(own):
             report['skipped'].append({'region': region, 'reason': 'no road station in the territory', 'sites': [c[0] for c in candidates]})
             continue
-        own_tree = cKDTree(own)
         groups = cluster([p for _, p in candidates], CLUSTER_METRES)
         groups.sort(key=lambda g: -len(g))
         for number, group in enumerate(groups):
@@ -207,12 +206,14 @@ def prepare_resource_trails(world, content, profile):
             if int(world.owner_at(float(centre[0]), float(centre[1]))) != index:
                 # A cluster straddling a boundary bulge: aim at its site nearest the centroid, which is inside.
                 centre = min((candidates[i][1] for i in group), key=lambda p: float(np.linalg.norm(p - centre)))
-            distance, nearest = own_tree.query(centre)
-            start = own[nearest]
+            # A trail starts on dry land outside its river setback, never on a bridge, and on its sites' bank when
+            # a station there exists (river_crossings.branch_start, the discovery branches' rule).
+            import river_crossings as RC
+            start, distance = RC.branch_start(world, region, own, centre, TRAIL_WIDTH_METRES)
             name = f'trail-{region}-{number}'
             try:
                 # The start is a road station, not a structure of the trail's own.
-                path = world.route(start, centre, region=region, own=world.solids_at_ends(centre))
+                path = world.route(start, centre, region=region, own=world.solids_at_ends(centre), width=TRAIL_WIDTH_METRES, name=name)
             except ValueError as error:
                 report['skipped'].append({'region': region, 'reason': str(error), 'sites': [candidates[i][0] for i in group]})
                 continue
