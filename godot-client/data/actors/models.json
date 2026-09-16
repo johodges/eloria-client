@@ -98,7 +98,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
+        "sourceSHA256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
         "references": {
           "body": [
             [
@@ -228,7 +228,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
+        "sourceSHA256": "66c1602c274ab9e61ab0f6263296b827af0f15e2ac0bd36486fdbeec07c0c087",
         "references": {
           "body": [
             [
@@ -317,7 +317,7 @@
       "hairAllowsProtrusions": true,
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "bbca1fa2d71c8e1a8637121ac0ce730e350b26691006455346c1d450fecfd7e8",
+        "sourceSHA256": "6a59f021bd3a69468c834d737281d852163e618f482dbfd42246bf8ef0b8ab6e",
         "references": {
           "body": [
             [
@@ -421,7 +421,7 @@
       "hairAllowsProtrusions": true,
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "9c08c46a55d6a0f1807edc55c183a827d86edde50469758e417f72d3f0b05ed7",
+        "sourceSHA256": "6657944d8a42e7ee3ce295b85e5d7bb7e5f7b677e3bcfc1c8774ae6f2044e5fe",
         "references": {
           "body": [
             [
@@ -524,7 +524,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "a7f8fc3dece1bc3a2ff1cdd2f7f4db5b80ff8980bcd405b7da0b7954bf2e0092",
+        "sourceSHA256": "1b34c79d89f9ef077ec3236fe5213d30bbebf53dbd3145cd587753bfcb17832b",
         "references": {
           "body": [
             [
@@ -628,7 +628,7 @@
       "hairAllowsProtrusions": true,
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "acde0bf5d110d1db68be8d2158c2f2dc7a86a692784b94c4a529d42a26e2f0a4",
+        "sourceSHA256": "b9e0ad4cf0211560d043b33836dc754a9e7ad4ebdd9c89658433a978c87b5eea",
         "references": {
           "body": [
             [
@@ -731,7 +731,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "8e999cd89c48733e0b1e236bc9b89f8d4d1924e467e0dec13ca5bfe36f5df869",
+        "sourceSHA256": "84de9a4a6f261c872957c4e8cd9b949c9f3b686047e76d6818034d3a74e2f244",
         "references": {
           "body": [
             [
@@ -834,7 +834,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "80799003ab637952e3337105c9aea8f52b947fed0104866e8f6d13e780b30cc9",
+        "sourceSHA256": "9044aebf2ea13cf82a9bdb40641481115e25521ec02e8a78df760a9b01299fd8",
         "references": {
           "body": [
             [
@@ -937,7 +937,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "ab23f8f16e0d3de5c7a0763c0cd4f2a43f42292cb5afe93c8bb365a8ae7f8cf6",
+        "sourceSHA256": "a08af3496700a674cf8af2d2179256f575f145289f3bad57c5bdda1b8d617d11",
         "references": {
           "body": [
             [
@@ -1040,7 +1040,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "c6196b1d5cb71711866655bd4aaecc09c753577f56e69d22d9b2f8dca3a3e3c4",
+        "sourceSHA256": "ca3b23bd7916e41833570a941dbfb02446d441a0955cf35c5c07582ac7e52a7f",
         "references": {
           "body": [
             [
@@ -1370,7 +1370,7 @@
       "hairAllowsProtrusions": true,
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "7cf5c3085122eb398ae522ba9f47f2c1693ffa482d4ecf1dad321795188624ed",
+        "sourceSHA256": "1c69c690093b16dc35e5fad49187071691afbdb765701435d99b1b750a2c83f5",
         "references": {
           "body": [
             [
@@ -1474,7 +1474,7 @@
       "hairAllowsProtrusions": true,
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "f4718edbebbf17fa3d544b242127f30aa6d0609652b1ffc397926713193b99e4",
+        "sourceSHA256": "b2016fbc3e43f31811858442618574e1b188dbf48daa11abb80cb7f7ba66337a",
         "references": {
           "body": [
             [
@@ -1577,7 +1577,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "4303b328ecb201aa582f0db71f8f6cdf5114598d42a433b48a58a5c538907d97",
+        "sourceSHA256": "5889ca15c74f291a34d728920f1a0a336291fc2d3f45f95e5e2271a864613142",
         "references": {
           "body": [
             [
@@ -1673,7 +1673,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "db4b6034e20b0fb799279f4755a7c094eda5cf6b2b47c322f236538beaf65509",
+        "sourceSHA256": "db41829eaeddad1b42817e5a07ed6b0548801342cce42461cfdd5cd2318ec671",
         "references": {
           "body": [
             [
