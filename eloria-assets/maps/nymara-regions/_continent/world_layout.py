@@ -221,6 +221,27 @@ def triangle_sample(grid,x,z,x0=0,z0=0,cell=CELL):
     return np.where(u+v<=1,a+(b-a)*u+(c-a)*v,d+(c-d)*(1-u)+(b-d)*(1-v))
 
 
+def ownership_sites(plan,ids):
+    """Extra ownership sites per region as {region:(n,2) array of [x, z] in continent metres}.
+
+    A territory owns the ground nearest any of its extra sites as well as the ground nearest
+    its own centre, so a region can carry a tail past what one Voronoi centre alone gives it.
+    A region with no extra site is absent here and scores exactly as it did before.
+    """
+    bounds=plan.get('bounds');sites={}
+    for region,points in (plan.get('ownership_sites') or {}).items():
+        if region not in ids:raise ValueError(f'ownership_sites: no region {region!r} in this plan; it names {list(ids)}')
+        points=np.asarray(points,float)
+        if points.size==0:continue
+        if points.ndim!=2 or points.shape[1]!=2 or not np.isfinite(points).all():
+            raise ValueError(f'ownership_sites[{region!r}]: every site must be one finite [x, z] in continent metres')
+        if bounds is not None:
+            away=(points[:,0]<bounds[0])|(points[:,0]>bounds[2])|(points[:,1]<bounds[1])|(points[:,1]>bounds[3])
+            if away.any():raise ValueError(f'ownership_sites[{region!r}]: site {points[away][0].tolist()} lies outside the plan bounds {list(bounds)}')
+        sites[region]=points
+    return sites
+
+
 class World:
     def hub(self,region):
         """Inhabited arrival is independent of the territory's geographic seed."""
@@ -239,9 +260,13 @@ class World:
         self.water=L.water_fields(self.gx,self.gz,height=self.height,plan=self.plan)
         self.original_height=self.height.copy()
         centers=np.c_[self.gx[:-1,:-1].ravel()+CELL*.5,self.gz[:-1,:-1].ravel()+CELL*.5]
+        self.ownership_sites=ownership_sites(self.plan,self.ids)
         scores=np.full(len(centers),np.inf);owners=np.zeros(len(centers),int)
         for index,(region,center) in enumerate(zip(self.ids,self.centers)):
-            score=np.sum((centers-center)**2,axis=1)-self.plan.get('ownership_bias',{}).get(region,0)
+            # Nearest of the region's own centre and any extra ownership site it declares.
+            score=np.sum((centers-center)**2,axis=1)
+            for site in self.ownership_sites.get(region,()):score=np.minimum(score,np.sum((centers-site)**2,axis=1))
+            score=score-self.plan.get('ownership_bias',{}).get(region,0)
             selected=score<scores;owners[selected]=index;scores[selected]=score[selected]
         self.owner=owners.reshape(self.height.shape[0]-1,self.height.shape[1]-1)
         self.polygons={r:outline(self.owner==i,self.x0,self.z0) for i,r in enumerate(self.ids)}

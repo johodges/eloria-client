@@ -10,6 +10,7 @@ from __future__ import annotations
 import copy
 from functools import lru_cache
 import json
+import math
 from pathlib import Path
 
 import numpy as np
@@ -235,21 +236,48 @@ def retained_affine(transform):
     full length keeps its crown inside it. Optional 'datum': 'ground' stands each compound on the composed relief."""
     if isinstance(transform, dict):
         translation = np.asarray(transform["translation"], float)
-        scale = np.array([1.0, float(transform.get("squeeze_z", 1.0))])
-        about = np.array([0.0, float(transform.get("about_z", 0.0))])
+        scale = np.array([float(transform.get("squeeze_x", 1.0)), float(transform.get("squeeze_z", 1.0))])
+        about = np.array([float(transform.get("about_x", 0.0)), float(transform.get("about_z", 0.0))])
     else:
         translation = np.asarray(transform, float); scale = np.ones(2); about = np.zeros(2)
     if translation.shape != (3,) or not np.isfinite(translation).all():
         raise ValueError("retained transform: the translation must contain three finite metres")
-    if not 0.0 < scale[1] <= 1.0:
-        raise ValueError("retained transform: squeeze_z must lie in (0, 1]")
+    if not (0.0 < scale[0] <= 1.0 and 0.0 < scale[1] <= 1.0):
+        raise ValueError("retained transform: squeeze_x and squeeze_z must lie in (0, 1]")
     return translation, scale, about
 
 
+def retained_yaw_degrees(transform):
+    """The layout's turn about its 'about' point, degrees, positive from north towards east on the map
+    (a dict's 'yaw_degrees'; a list transform never turns)."""
+    yaw = float(transform.get("yaw_degrees", 0.0)) if isinstance(transform, dict) else 0.0
+    if not np.isfinite(yaw):
+        raise ValueError("retained transform: yaw_degrees must be finite")
+    return yaw
+
+
+def _rotate_xz(dx, dz, degrees):
+    """Turn offsets about the origin: the map's x east, z south, so a positive angle turns north towards east."""
+    c, s = math.cos(math.radians(degrees)), math.sin(math.radians(degrees))
+    return dx * c - dz * s, dx * s + dz * c
+
+
 def retained_map_xz(transform, points):
-    """Source-frame xz points carried to continent metres by a retained transform."""
+    """Source-frame xz points carried to continent metres by a retained transform: squeezed about its
+    'about' point, turned by 'yaw_degrees' about the same point, then translated."""
     translation, scale, about = retained_affine(transform)
-    return translation[[0, 2]] + about + (np.asarray(points, float) - about) * scale
+    points = np.asarray(points, float)
+    d = (points - about) * scale
+    rx, rz = _rotate_xz(d[..., 0], d[..., 1], retained_yaw_degrees(transform))
+    return np.stack([rx, rz], axis=-1) + about + translation[[0, 2]]
+
+
+def retained_unmap_xz(transform, x, z):
+    """Continent metres back to the source frame: the inverse of retained_map_xz, on arrays."""
+    translation, scale, about = retained_affine(transform)
+    qx, qz = x - translation[0] - about[0], z - translation[2] - about[1]
+    rx, rz = _rotate_xz(qx, qz, -retained_yaw_degrees(transform))
+    return about[0] + rx / scale[0], about[1] + rz / scale[1]
 
 
 @lru_cache(maxsize=4)
@@ -260,17 +288,23 @@ def _relief_samples(name):
 
 def _relief_height(x, z, source):
     """(height, weight) of a sampled relief source at global x, z: bilinear inside its crop, whole there, and
-    beyond the crop's edge the edge's own height continues as a shoulder fading out over ``feather`` metres."""
+    beyond the crop's edge the edge's own height continues as a shoulder fading out over ``feather`` metres.
+
+    An optional authored ``mask`` narrows that rectangle to a leaf shape: the weight returned is the crop's
+    times the mask's, so the old heightfield fades along the authored outline instead of its own crop edge.
+    """
     sx, sz, sh = _relief_samples(source["samples"])
     tx, ty, tz = source["translation"]
-    # The same north-south squeeze the territory's retained transform carries,
+    # The same squeeze and turn the territory's retained transform carries,
     # so the relief stands under the layout it was surveyed with.
-    squeeze = float(source.get("squeeze_z", 1.0)); about = float(source.get("about_z", 0.0))
-    lx, lz = x - tx, about + (z - tz - about) / squeeze
+    lx, lz = retained_unmap_xz(source, x, z)
     x0, z0, x1, z1 = source.get("crop", [sx[0], sz[0], sx[-1], sz[-1]])
     # Distance outside the crop rectangle (Euclidean, so the shoulder rounds the corners).
     outside = np.hypot(np.maximum(np.maximum(x0 - lx, lx - x1), 0.0), np.maximum(np.maximum(z0 - lz, lz - z1), 0.0))
     weight = 1.0 - smoothstep(0.0, float(source.get("feather", 40.0)), outside)
+    mask = _relief_mask_weight(x, z, source)
+    if mask is not None:
+        weight = weight * mask
     cx = np.clip(lx, max(x0, sx[0]), min(x1, sx[-1])); cz = np.clip(lz, max(z0, sz[0]), min(z1, sz[-1]))
     ix = np.clip(np.searchsorted(sx, cx) - 1, 0, len(sx) - 2); iz = np.clip(np.searchsorted(sz, cz) - 1, 0, len(sz) - 2)
     fx = (cx - sx[ix]) / (sx[ix + 1] - sx[ix]); fz = (cz - sz[iz]) / (sz[iz + 1] - sz[iz])
@@ -300,6 +334,8 @@ def relief_outline(source):
     ``_relief_height`` falls back to; a crop reaching past that extent still owns the
     ground it names, the edge sample's height continuing underneath. The plan editor draws
     this polygon rather than repeating the retained transform's arithmetic of its own.
+    A source that also declares a ``mask`` owns only the part of this rectangle inside that
+    leaf; ``relief_mask_outline`` returns it.
     """
     crop = source.get("crop")
     if crop is None:
@@ -308,6 +344,73 @@ def relief_outline(source):
     x0, z0, x1, z1 = (float(value) for value in crop)
     corners = retained_map_xz(source, [[x0, z0], [x1, z0], [x1, z1], [x0, z1]])
     return [[float(x), float(z)] for x, z in corners]
+
+
+def _relief_id(source):
+    """A relief source named for a complaint: its authored name, else the samples it reads."""
+    for key in ("name", "samples"):
+        value = source.get(key) if isinstance(source, dict) else None
+        if isinstance(value, str) and value.strip():
+            return f"relief source {value!r}"
+    return "unnamed relief source"
+
+
+def _relief_mask(source):
+    """A relief source's authored mask as (polygon, feather), or None when it declares none.
+
+    The polygon's points are ``[x, z]`` in continent metres, not in the source's own surveyed
+    frame: the leaf is drawn over the composed map, where its shape is judged, so moving the
+    source's translation moves the heightfield under a mask that stays where it was drawn.
+    """
+    mask = source.get("mask")
+    if mask is None:
+        return None
+    if not isinstance(mask, dict):
+        raise ValueError(f"{_relief_id(source)}: 'mask' must be an object with a 'polygon' and a 'feather', "
+                         f"not {mask!r}")
+    points = mask.get("polygon")
+    if not isinstance(points, (list, tuple)) or len(points) < 3:
+        raise ValueError(f"{_relief_id(source)}: the mask 'polygon' needs at least 3 [x, z] points in continent "
+                         f"metres, not {len(points) if isinstance(points, (list, tuple)) else points!r}")
+    for point in points:
+        if not (isinstance(point, (list, tuple)) and len(point) == 2 and all(_is_number(value) for value in point)):
+            raise ValueError(f"{_relief_id(source)}: {point!r} is not a finite [x, z] mask point")
+    feather = mask.get("feather", 0.0)
+    if not _is_number(feather) or feather < 0.0:
+        raise ValueError(f"{_relief_id(source)}: the mask 'feather' must be a distance in metres of at least 0, "
+                         f"not {feather!r}")
+    return np.asarray(points, dtype=np.float64), float(feather)
+
+
+def _relief_mask_weight(x, z, source):
+    """How much of a masked relief source each point takes: one inside the authored polygon, fading to
+    nothing over its ``feather`` metres outside it. Straight edges between the authored vertices and
+    even-odd containment, the rule a polygon terrain edit follows (``_polygon_inside`` below). ``None``
+    when the source carries no mask, which leaves its crop weight exactly as it was."""
+    mask = _relief_mask(source)
+    if mask is None:
+        return None
+    points, feather = mask
+    x, z = _coords(x, z)
+    # Only the points the leaf plus its feather can reach pay for its geometry. The composed
+    # grid is continental and one mask covers a corner of it, so this window is the saving.
+    (x0, z0), (x1, z1) = points.min(axis=0) - feather, points.max(axis=0) + feather
+    near = (x >= x0) & (x <= x1) & (z >= z0) & (z <= z1)
+    weight = np.zeros(x.shape)
+    if near.any():
+        outside = np.where(_polygon_inside(x[near], z[near], points), 0.0,
+                           _segment_distance(x[near], z[near], points, closed=True))
+        weight[near] = (1.0 - smoothstep(0.0, feather, outside) if feather > 0
+                        else np.where(outside > 0.0, 0.0, 1.0))
+    return weight
+
+
+def relief_mask_outline(source):
+    """A relief source's authored mask polygon as ``[[x, z], ...]`` in continent metres, or None when
+    the source declares no mask and its crop rectangle alone decides the ground it owns. The plan
+    editor draws this leaf over the rectangle ``relief_outline`` gives it."""
+    mask = _relief_mask(source)
+    return None if mask is None else [[float(x), float(z)] for x, z in mask[0]]
 
 
 # Authored corrections over the modelled ground. "smooth" is deliberately not in v1:
@@ -559,6 +662,7 @@ def height_at(x, z, plan=None):
     # Legacy relief sources: a territory's old map relief placed by its retained
     # transform replaces the plan landform inside a crop that leaves the old
     # map's edge walls out, feathered at the crop's edge and damped by the coast.
+    # An authored mask polygon narrows that crop to a leaf, feathered on its own.
     for source in plan.get("relief_sources", []):
         relief, weight = _relief_height(x, z, source)
         weight = weight * smoothstep(-8, float(source.get("coast_feather", 60.0)), coastline_distance(x, z, plan))
@@ -617,8 +721,9 @@ def water_fields(x=None, z=None, height=None, plan=None):
 
 def snowline_at(x, z, plan=None):
     """The height above which snow lies: a latitude line, lowered over a relief source that declares an
-    alpine climate (``snowline_drop`` metres, carried by the source's own crop weight and feather), so an old
-    mountain map keeps its snow at its own heights without its seams turning into cliffs."""
+    alpine climate (``snowline_drop`` metres, carried by the source's own weight, so by its crop, its feather
+    and its mask alike), so an old mountain map keeps its snow at its own heights without its seams turning
+    into cliffs."""
     plan = load_plan() if plan is None else plan
     x, z = _coords(x, z)
     snowline = 131 + smoothstep(250, 850, z) * 82

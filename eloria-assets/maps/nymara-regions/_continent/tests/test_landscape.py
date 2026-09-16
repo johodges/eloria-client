@@ -159,6 +159,59 @@ class ContinentGeographyTests(unittest.TestCase):
             np.testing.assert_allclose(landscape.relief_outline({"samples": "x.npz", "translation": [0., 0., 0.]}),
                                        [[-10., -300.], [10., -300.], [10., -100.], [-10., -100.]])
 
+    def test_a_relief_source_fades_along_an_authored_mask_polygon(self):
+        rows = (np.array([-10., 0., 10.]), np.array([-300., -200., -100.]),
+                np.array([[10., 20., 30.], [40., 50., 60.], [70., 80., 90.]]))
+        with patch.object(landscape, "_relief_samples", lambda name: rows):
+            # The crop is continent x 490..510, z 0..200; the mask keeps its northern half.
+            plain = {"samples": "x.npz", "name": "probe", "translation": [500., 0., 300.],
+                     "crop": [-10, -300, 10, -100], "feather": 40}
+            leaf = [[490., 0.], [510., 0.], [510., 100.], [490., 100.]]
+            masked = dict(plain, mask={"polygon": leaf, "feather": 20})
+            x = np.array([500., 500., 500., 500., 505.])
+            z = np.array([50., 110., 160., 220., 100.])
+            # A source without a mask is untouched: the crop's own feather still fades it
+            # over the 20 m past its z edge, and the sampled heights are unchanged.
+            height, weight = landscape._relief_height(x, z, plain)
+            np.testing.assert_allclose(height, [35., 53., 68., 80., 55.])
+            np.testing.assert_allclose(weight, [1., 1., 1., .5, 1.])
+            masked_height, masked_weight = landscape._relief_height(x, z, masked)
+            np.testing.assert_allclose(masked_height, height)
+            # Inside the leaf whole, half way through its feather a half, beyond it nothing.
+            np.testing.assert_allclose(masked_weight, [1., .5, 0., 0., 1.])
+            self.assertTrue(0. < float(masked_weight[1]) < 1.)
+            # The same on a scalar and on a broadcast grid, the shapes the composer samples.
+            self.assertEqual(float(landscape._relief_height(500., 50., masked)[1]), 1.)
+            self.assertEqual(float(landscape._relief_height(500., 160., masked)[1]), 0.)
+            gx, gz = np.meshgrid(np.array([495., 505.]), np.array([50., 160.]))
+            np.testing.assert_allclose(landscape._relief_height(gx, gz, masked)[1], [[1., 1.], [0., 0.]])
+            # The accessor hands the plan editor the leaf; a source without one has none.
+            self.assertEqual(landscape.relief_mask_outline(masked), leaf)
+            self.assertIsNone(landscape.relief_mask_outline(plain))
+            for mask, complaint in (({"polygon": [[490., 0.], [510., 0.]], "feather": 20}, "at least 3"),
+                                    ({"polygon": leaf, "feather": -1}, "at least 0"),
+                                    ({"polygon": [[490., 0.], [510., 0.], [510., None]]}, "finite")):
+                with self.assertRaisesRegex(ValueError, "probe.*" + complaint):
+                    landscape._relief_height(x, z, dict(plain, mask=mask))
+                with self.assertRaisesRegex(ValueError, "probe.*" + complaint):
+                    landscape.relief_mask_outline(dict(plain, mask=mask))
+
+    def test_a_masked_relief_source_lowers_the_snowline_only_under_its_leaf(self):
+        rows = (np.array([-10., 0., 10.]), np.array([-300., -200., -100.]), np.full((3, 3), 50.))
+        with patch.object(landscape, "_relief_samples", lambda name: rows):
+            source = {"samples": "x.npz", "name": "probe", "translation": [500., 0., 300.],
+                      "crop": [-10, -300, 10, -100], "feather": 40, "snowline_drop": 45.,
+                      "mask": {"polygon": [[490., 0.], [510., 0.], [510., 100.], [490., 100.]], "feather": 20}}
+            plan = dict(landscape.load_plan(), relief_sources=[source])
+            plain = float(landscape.snowline_at(500., 50., dict(plan, relief_sources=[])))
+            # snowline_at carries the source's whole weight, so the mask reaches the snow too.
+            self.assertAlmostEqual(float(landscape.snowline_at(500., 50., plan)), plain - 45., places=6)
+            self.assertAlmostEqual(float(landscape.snowline_at(500., 110., plan)), plain - 22.5, places=6)
+            # Still inside the crop, but past the leaf and its feather: no alpine drop at all.
+            self.assertAlmostEqual(float(landscape.snowline_at(500., 160., plan)), plain, places=6)
+            unmasked = dict(plan, relief_sources=[{k: v for k, v in source.items() if k != "mask"}])
+            self.assertAlmostEqual(float(landscape.snowline_at(500., 160., unmasked)), plain - 45., places=6)
+
     def test_optional_foundation_feathers_into_shared_surface(self):
         plan = copy.deepcopy(landscape.load_plan())
         target = float(landscape.height_at(740, 1030)) + 2

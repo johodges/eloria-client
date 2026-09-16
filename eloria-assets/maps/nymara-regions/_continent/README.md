@@ -484,3 +484,108 @@ keys that cannot be mapped to a file, such as one written by another branch;
 all three read as stale rather than raising. Retained content libraries are not
 covered, because their cache path is a `--library` argument the composition does
 not record: the `compose` and `geometry` stages remain the authority there.
+
+## Seam road waypoints
+
+A seam road runs from a territory's hub to its side of a border crossing.
+`door_approaches.py` lets such a road follow authored waypoints, exactly as a
+door road does: `SEAM_ROAD_WAYPOINTS` keys `(region, connection id)` to
+continent-metre points, and `RETAINED_SEAM_ROAD_WAYPOINTS` keys the same to
+source (library) metres, which the plan's retained transform carries where the
+retained layout stands. A connection id is the crossing's own id, the two region
+ids sorted and joined by `--`, and each of the two sides of a crossing is
+authored under its own region: the mountain side takes the climb while the other
+side stays a straight run to the terminal.
+
+`prepare_door_approaches` validates a waypoint exactly as it validates a pinned
+road end - inside the territory whose hub the road leaves, on dry ground
+(`MINIMUM_DRY_METRES`) and out of the water - naming the offender
+`<region>:<connection id> waypoint <index>`; a source-frame entry for a
+territory with no retained transform is refused rather than placed anywhere.
+The prepared points become `content.seam_road_waypoints`, read with
+`seam_road_waypoints(content, region, connection_id)` (empty for every seam
+without an authored pass), and are reported under `doorApproaches.seamWaypoints`
+as `{"<region>:<connection id>": [[x, z], ...]}`, beside the door roads' own
+`doorApproaches.waypoints`.
+
+Composition routes both kinds of road with `route_in_legs`: hub -> waypoint ->
+... -> end, where every leg but the last drops its final station so a joint is
+not a station twice over, and the road's own retained solids (the hub's, for a
+seam road) ride the first leg only. With no waypoints this is the single
+`world.route(hub, end)` call it has always been, so unauthored seams and doors
+keep their alignments unchanged and only an authored pass moves.
+
+The plan phase authors two passes, both in the source frame because Whitehorn
+Range keeps its legacy relief under a retained transform:
+`('whitehorn_range', 'grey_moors--whitehorn_range')` for the Moors pass,
+authored as a switchback climb, and
+`('whitehorn_range', 'amethyst_barrens--whitehorn_range')` for the east pass.
+Both tables ship empty until then.
+
+## Masked relief sources
+
+A relief source may carry an optional `mask`: an authored polygon that narrows
+its rectangular crop to a leaf shape, so a legacy heightfield fades along an
+outline someone drew instead of along the edges of its crop.
+
+```json
+{"samples": "legacy-relief/whitehorn_range.npz", "translation": [477, 90, 272],
+ "crop": [-105, -291, 280, 95], "feather": 56,
+ "mask": {"polygon": [[380, 40], [600, 12], [648, 180], [470, 300]], "feather": 60}}
+```
+
+`polygon` is at least three `[x, z]` points in **continent** metres, not in the
+source's own surveyed frame: the leaf is drawn over the composed map, where its
+shape is judged, so changing the source's translation, squeeze or yaw moves the
+heightfield under a mask that stays where it was drawn. Its edges are the
+straight segments between the authored vertices and containment is even-odd,
+exactly the rule a polygon terrain edit follows. `feather` is the metres over
+which the source fades outside the leaf (`1 - smoothstep(0, feather, distance
+outside)`, so 0 is a hard edge, and 0 is the default).
+
+The source's weight becomes `crop_weight * mask_weight`. The crop rectangle and
+its own `feather` therefore keep working unchanged and the mask only ever takes
+weight away; a source without a `mask` is evaluated exactly as before, to the
+last decimal. `snowline_at` already carries the source's whole weight, so a
+`snowline_drop` follows the leaf as well: past the mask and its feather the
+plain latitude snowline stands, even well inside the crop.
+`relief_mask_outline(source)` returns the polygon as `[[x, z], ...]`, or `None`
+for a source without one, beside the crop rectangle `relief_outline(source)`
+gives the plan editor. `height_at` refuses a mask of fewer than three points, a
+point that is not a finite `[x, z]`, and a negative feather, naming the source.
+
+Only the points inside the polygon's bounding box grown by its feather pay for
+its geometry, the window the terrain edits use, so a leaf over one territory
+costs the 631k-point composed grid about 40 ms - inside the noise of the 30 s
+that grid's `height_at` already takes.
+
+## Extra ownership sites
+
+Territory ownership is a Voronoi partition of the plan's region `center` points,
+biased by `ownership_bias`. An optional `ownership_sites` section gives a region
+further sites, so a territory can carry a tail into ground a single centre
+cannot reach:
+
+```json
+"ownership_sites": {"westhaven": [[300, 1320], [418, 1402]]}
+```
+
+Each region's score at a cell becomes the **least** squared distance over its
+centre and its own extra sites, minus its `ownership_bias`; the lowest score
+owns the cell and a tie keeps the region listed first, as before. A region owns
+the ground nearest any site it declares, as well as the ground nearest its
+centre. Everything downstream is unchanged: `World.owner`, `owner_at`,
+`polygons`, `bounds` and `address` read the same grid as they always did, and
+`plan_connections` still scores and orients its crossings on the region centres,
+not on the sites.
+
+`world_layout.ownership_sites(plan, ids)` is the authority the `World`
+constructor uses, and the constructor keeps its result as
+`world.ownership_sites`. It raises `ValueError` for a region the plan does not
+name and for a site outside the plan `bounds`; a region with no extra site is
+absent from the mapping and is scored exactly as it was. A tail must stay joined
+to the rest of its territory: `outline` traces one contour per region, so ground
+that a site wins on the far side of a neighbour still belongs to the region in
+`owner` and `owner_at` but is quietly missing from its `polygons` entry, and so
+from its `bounds` and `address`. Each extra site is one more vectorised distance
+field over the 630k ownership cells, about 15 ms, so a handful is not felt.
