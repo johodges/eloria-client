@@ -210,7 +210,7 @@ def anchored(entries):
 
 class RetainedRoadEndTests(unittest.TestCase):
     def test_the_temple_road_ends_at_the_foot_of_its_stair(self):
-        self.assertEqual(D.RETAINED_ROAD_ENDS[TEMPLE_DOOR], ('Landmark_glacier_temple', (0.25, 15.5)))
+        self.assertEqual(D.RETAINED_ROAD_ENDS[TEMPLE_DOOR], ('Landmark_glacier_temple', (0.25, 13.5)))
 
     def test_an_anchored_end_stands_on_its_object_turned_with_the_layout_and_never_squeezed(self):
         w = world(); w.ids = ['whitehorn_range']; w.plan = {'retained_transforms': {'whitehorn_range': TURNED}}

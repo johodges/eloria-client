@@ -91,6 +91,44 @@ class AssembliesTests(unittest.TestCase):
         for name in ('Landmark_CanopyPlatform_4','Landmark_CanopyWalkway_3'):
             self.assertFalse(A.supports_ground({'node':name,'kind':'landmark'}))
 
+    def test_canopy_spiral_stairs_move_with_their_platforms_and_dig_no_ground_of_their_own(self):
+        # Library positions of platform 3 and its stair: the stair's top stands 1.65 m under the platform.
+        platform={'node':'Landmark_CanopyPlatform_3','kind':'landmark','position':[93.8471,65.8284,-171.0711]}
+        stairs=[{'node':'Walk_Prop_SpiralStair_'+str(i),'kind':'prop','walk_surface':True} for i in range(6)]
+        stairs[3]['position']=[94.7949,54.8284,-170.8318]
+        for stair in stairs:
+            self.assertEqual(A.placement_group('amberwood',stair),'amberwood.canopy-village')
+            # Like its platform, a stair carries no footing of its own: under the two western platforms, which the
+            # continent's relief buries, a stair footing dug a pit through the relief.
+            self.assertFalse(A.supports_ground(stair))
+        self.assertIsNone(A.placement_group('whitehorn_range',stairs[3]),'only Amberwood carries canopy stairs')
+        b={'Landmark_CanopyPlatform_3':([88.,64.,-176.],[100.,67.,-166.]),'Walk_Prop_SpiralStair_3':([92.8,54.8,-172.8],[96.8,64.2,-168.8])}
+        village=A.build_assemblies('amberwood',[platform,stairs[3]],b,ground)['amberwood.canopy-village']
+        self.assertEqual(set(village.nodes),{'Landmark_CanopyPlatform_3','Walk_Prop_SpiralStair_3'})
+        self.assertEqual(len(village.footprints),0,'neither the stair nor the platform supports the ground')
+        # One shift carries both, so the stair keeps its place under the platform wherever the village stands.
+        shift=village.shift_to(lambda q:np.asarray(q)+[500.,700.],lambda x,z:40.)
+        np.testing.assert_allclose((np.array(stairs[3]['position'])+shift)-(np.array(platform['position'])+shift),
+                                   np.array(stairs[3]['position'])-np.array(platform['position']))
+
+    def test_the_glacier_temple_and_the_lower_camp_are_whitehorn_compounds_on_their_own_ground(self):
+        temple={'node':'Landmark_glacier_temple','kind':'landmark','collides':True}
+        camp=[{'node':name,'kind':'landmark' if name=='Landmark_LowerCamp' else 'prop'} for name in A.WHITEHORN_LOWER_CAMP]
+        steeple={'node':'Landmark_TemplePinnacle1','kind':'landmark'}
+        self.assertEqual(A.placement_group('whitehorn_range',temple),'whitehorn_range.glacier-temple')
+        self.assertEqual({A.placement_group('whitehorn_range',p) for p in camp},{'whitehorn_range.lower-camp'})
+        # The steeples ride on the temple as attachments, which a compound member cannot be; other huts stay singles.
+        for single in (steeple,{'node':'Landmark_BridgeWatch','kind':'landmark'},{'node':'Landmark_TempleRest','kind':'landmark'}):
+            self.assertIsNone(A.placement_group('whitehorn_range',single))
+        self.assertIsNone(A.placement_group('grey_moors',temple),'the rule is Whitehorn\'s own')
+        b={'Landmark_glacier_temple':([86.,40.,-246.2],[113.,89.,-220.8])}
+        b.update({p['node']:([64.5+i,25.8,39.4],[66.5+i,27.,41.4]) for i,p in enumerate(camp)})
+        groups=A.build_assemblies('whitehorn_range',[temple,*camp],b,ground)
+        # The temple's footing covers its whole body; the camp's covers the hut, and its props follow it without one.
+        self.assertEqual(len(groups['whitehorn_range.glacier-temple'].footprints),1)
+        self.assertEqual(len(groups['whitehorn_range.lower-camp'].footprints),1)
+        self.assertEqual(groups['whitehorn_range.glacier-temple'].datum,'terrain')
+
     def test_city_streets_share_the_building_support_without_exporting_a_rectangle(self):
         p=[{'node':'Building_CliffHouse_'+str(i),'kind':'building'} for i in range(3)]
         b={p[0]['node']:([0,0,0],[8,10,8]),p[1]['node']:([100,0,0],[108,10,8]),

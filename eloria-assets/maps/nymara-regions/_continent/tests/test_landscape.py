@@ -288,6 +288,11 @@ class AuthoredTerrainEditTests(unittest.TestCase):
     def plan(self, *edits):
         return dict(landscape.load_plan(), terrain_edits=[dict(edit) for edit in edits])
 
+    def ground(self, x, z):
+        """The committed plan's ground with no terrain edit at all: the committed plan carries edits of its own
+        (the Amberwood seat stamps stand inside this test's window), which the edits under test replace."""
+        return landscape.height_at(x, z, self.plan())
+
     def circle(self, identity, centre=None, radius=20., **edit):
         return dict(edit, id=identity, shape={"circle": {"center": list(centre or self.CENTRE), "radius": radius}})
 
@@ -307,7 +312,7 @@ class AuthoredTerrainEditTests(unittest.TestCase):
         plan = self.plan(self.circle("knoll", op="raise", radius=radius, feather=feather, amount=amount))
         for offset, share in ((0., 1.), (radius, 1.), (radius + feather / 2, .5), (radius + feather, 0.), (90., 0.)):
             point = (x + offset, self.CENTRE[1])
-            self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(landscape.height_at(*point)),
+            self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(self.ground(*point)),
                                    amount * share, places=9, msg=offset)
         # Arrays and scalars agree, as everywhere else in this module.
         grid_x = x + np.array([0., 12., 24., 40.])
@@ -325,7 +330,7 @@ class AuthoredTerrainEditTests(unittest.TestCase):
         flattened = self.plan(self.circle("shelf", op="flatten", radius=radius, feather=feather, target=42.))
         for offset, share in ((0., 1.), (radius + feather / 2, .5), (radius + feather, 0.)):
             point = (self.CENTRE[0] + offset, self.CENTRE[1])
-            ground = float(landscape.height_at(*point))
+            ground = float(self.ground(*point))
             self.assertAlmostEqual(float(landscape.height_at(*point, lowered)), ground - 6. * share, places=9)
             self.assertAlmostEqual(float(landscape.height_at(*point, flattened)),
                                    ground * (1 - share) + 42. * share, places=9)
@@ -337,7 +342,7 @@ class AuthoredTerrainEditTests(unittest.TestCase):
         # The width is the whole band: half of it either side of the authored segments.
         for offset, share in ((0., 1.), (6., 1.), (11., .5), (16., 0.)):
             point = (500., 640. + offset)
-            self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(landscape.height_at(*point)),
+            self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(self.ground(*point)),
                                    4. * share, places=9, msg=offset)
         square = [[380., 580.], [480., 580.], [480., 680.], [380., 680.]]
         plan = self.plan({"id": "yard", "op": "raise", "amount": 4., "feather": 10.,
@@ -346,22 +351,22 @@ class AuthoredTerrainEditTests(unittest.TestCase):
         # corner measured to the corner itself rather than to either edge's line.
         for point, share in (((430., 630.), 1.), ((380., 580.), 1.), ((485., 630.), .5),
                              ((483., 684.), .5), ((492., 630.), 0.)):
-            self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(landscape.height_at(*point)),
+            self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(self.ground(*point)),
                                    4. * share, places=9, msg=point)
 
     def test_feather_zero_is_a_hard_edge_and_strength_scales_the_effect(self):
         plan = self.plan(self.circle("pad", op="raise", radius=20., feather=0., amount=9.))
         for offset, share in ((19.999, 1.), (20., 1.), (20.001, 0.)):
             point = (self.CENTRE[0] + offset, self.CENTRE[1])
-            self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(landscape.height_at(*point)),
+            self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(self.ground(*point)),
                                    9. * share, places=9, msg=offset)
         for strength, share in ((1., 1.), (.25, .25), (0., 0.)):
             weak = self.plan(self.circle("pad", op="raise", radius=20., feather=8., amount=9., strength=strength))
             self.assertAlmostEqual(float(landscape.height_at(*self.CENTRE, weak))
-                                   - float(landscape.height_at(*self.CENTRE)), 9. * share, places=9)
+                                   - float(self.ground(*self.CENTRE)), 9. * share, places=9)
             # The strength multiplies the weight, so the feather still halves it.
             edge = (self.CENTRE[0] + 24., self.CENTRE[1])
-            self.assertAlmostEqual(float(landscape.height_at(*edge, weak)) - float(landscape.height_at(*edge)),
+            self.assertAlmostEqual(float(landscape.height_at(*edge, weak)) - float(self.ground(*edge)),
                                    9. * share * .5, places=9)
 
     def test_edits_run_in_list_order_after_the_basins_and_before_the_foundations(self):
@@ -369,7 +374,7 @@ class AuthoredTerrainEditTests(unittest.TestCase):
         settled = self.circle("shelf", op="flatten", feather=0., target=42.)
         self.assertAlmostEqual(float(landscape.height_at(*self.CENTRE, self.plan(raised, settled))), 42., places=9)
         self.assertAlmostEqual(float(landscape.height_at(*self.CENTRE, self.plan(settled, raised))), 67., places=9)
-        floor = float(landscape.height_at(*self.CENTRE)) - 30.
+        floor = float(self.ground(*self.CENTRE)) - 30.
         plan = self.plan(self.circle("lift", op="raise", radius=18., feather=0., amount=12.))
         plan["basins"] = [{"center": list(self.CENTRE), "radii": [40., 40.], "floor": floor, "bowl": 0.}]
         # A basin carves with a minimum: an edit applied before it would be cut back to the floor.

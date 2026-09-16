@@ -45,12 +45,19 @@ ROAD_ENDS = {
 # ROAD_ENDS pin: dry ground in the door's territory, within
 # MAXIMUM_DOOR_DISTANCE_METRES of the door.
 RETAINED_ROAD_ENDS = {
-    # The Whitehorn glacier temple's door stands on its platform 4.1 m in front of
+    # The Whitehorn glacier temple's door stands on its platform 4.4 m in front of
     # the facade, and the platform's stair descends to the front between right
-    # -5.0 and 5.4. Routed to the door itself (design O4) the road climbed onto
-    # the platform over its left flank and ran along it; pinned to the stair foot,
-    # 11.4 m from the door, it ends there and the platform carries the last metres.
-    ('whitehorn_range', 'whitehorn-glacier-temple-door'): ('Landmark_glacier_temple', (0.25, 15.5)),
+    # -5.0 and 5.4, meeting the legacy forecourt at front 13.15 (the legacy foot
+    # (99.55, 68.04, -220.98)). Routed to the door itself (design O4) the road
+    # climbed onto the platform over its left flank and ran along it; pinned just
+    # past the stair foot it ends there and the platform carries the last metres.
+    # At front 15.5 (a first authoring) the end stood on the slope below the
+    # forecourt 3.5 m under the stair's last tread, and 12.2 m from the server
+    # portal on the platform (458.1, 124.2), just past door_road_end_near's reach:
+    # that portal and the eyrie secret beyond it then took discovery branches that
+    # the temple's solid sent 862 m and 1068 m round the mountain (offline
+    # composition). At 13.5 the portal is 10.1 m away and shares this end.
+    ('whitehorn_range', 'whitehorn-glacier-temple-door'): ('Landmark_glacier_temple', (0.25, 13.5)),
 }
 # (region, portal source map, portal target map) -> global XZ metres of dry
 # ground where the discovery branch to a server-only portal is routed to; the
@@ -90,7 +97,24 @@ DOOR_ROAD_WAYPOINTS = {
 RETAINED_DOOR_ROAD_WAYPOINTS = {
     # Whitehorn Range (the legacy relief under its retained transform): the climbs
     # the old map's valley suggests, from the gate court at the south seams.
-    ('whitehorn_range', 'whitehorn-glacier-temple-door'): [(70., 40.), (88., -58.), (76., -192.)],     # lower camp, bridge watch, temple rest
+    # The temple road's stops. Authored at (70, 40), (88, -58) and (76, -192) they
+    # lay inside the lower camp's footprint and 2.3-2.6 m off the bridge watch and
+    # the temple rest; no hut is a solid for the router, so the road ran through
+    # them and settle_roads cut their ground to its own profile (O4: 163, 168 and
+    # 192 m against bases of 175.3, 174.25 and 202.7). Now:
+    #   lower camp   (43.6, 27.3): on the Amberwood seam road's corridor 24 m west
+    #                of the hut, which that road already grades, so the door road
+    #                adds no corridor beside the camp;
+    #   bridge watch (87.5, -55.7): on the watch's pad 7.9 m in front of it;
+    #   temple rest  (87.5, -187.5): 8.3 m east of the hut, on the road's line
+    #                from the corridor it shares below to the temple's stair foot,
+    #                so the road passes the hut instead of crossing it.
+    # The road ends at the stair foot (RETAINED_ROAD_ENDS); what holds its height
+    # there is the glacier temple's compound footing (assemblies.placement_group),
+    # not these stops: corridor_grade caps the stair foot near 196 m through the
+    # road network (two offline compositions, one with a 77 m loop authored west
+    # of the temple rest, which the router ran as out-and-back spurs).
+    ('whitehorn_range', 'whitehorn-glacier-temple-door'): [(43.6, 27.3), (87.5, -55.7), (87.5, -187.5)],
     ('whitehorn_range', 'whitehorn-mine-adit'): [(176., 18.), (237., -26.), (200., -120.)],           # high overlook, east camp, mine yard
     ('whitehorn_range', 'snowline-cell-door'): [(237., -26.), (251., -102.)],                          # east camp, the east valley
     ('whitehorn_range', 'whitehorn-ice-cave-mouth'): [(-93., -38.)],                                  # the old west pass station
@@ -114,8 +138,13 @@ SEAM_ROAD_WAYPOINTS = {
     # The east pass: out of the gate court south-east down the tail, then two hairpins round the east flank
     # onto the Barrens' floor, 377 m for 84 m of descent (grades 0.13 to 0.38). Leg 2 crosses the Hornwater
     # at about (629, 418), where the ravine the river cuts is three metres deep.
+    # Design O5: the first waypoint moved from (556, 394) to (544, 390). The leg to it
+    # is a spur that returns north-west (the router rounds the village hill to the
+    # north), and at (556, 394) its 4 m-wide corridor and 24 m shoulders reached the
+    # snowline terrace's west edge 23-27 m away and cut it 8-15 m (the overlook's
+    # and the stones' floating west edges).
     ('whitehorn_range', 'amethyst_barrens--whitehorn_range'): [
-        (556., 394.), (614., 406.), (668., 448.), (694., 433.), (692., 377.), (760., 419.), (786., 340.)],
+        (544., 390.), (614., 406.), (668., 448.), (694., 433.), (692., 377.), (760., 419.), (786., 340.)],
     # The Amberwood crossing: out of the gate court north-east over the 173 m shelf, NORTH of the village
     # strip, down the Hornwater's west scarp beside the east pass's own descent, across the river, down the
     # tail's EAST bank, back over the river at the saddle and west along the tail's southern bench to the

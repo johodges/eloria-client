@@ -29,6 +29,8 @@ TOWN_LINKS = {'Survey_stilt_town__town_hall','Survey_stilt_town__town_quay',
               'Survey_stilt_town__market_hall','Survey_market_hall__floating_market'}
 TOWN_NODES = {'Landmark_MootHall','Landmark_MarketHall','Landing_stilt_town',
               'Landing_floating_market','PacketLateen','Secret_delta_moot_vault'}
+WHITEHORN_LOWER_CAMP = ('Landmark_LowerCamp','Prop_camp_crate_00_0','Prop_camp_crate_00_1','Prop_camp_crate_00_2',
+                        'Prop_camp_brazier_00','Prop_RefugeFuel2','Prop_RefugeFire2')
 MIRROR_FORTRESS = ('Landmark_Orrery','Landmark_Citadel','Landmark_Basin_',
     'Landmark_Gate','Landmark_Gallery','Landmark_RoseWindow','Landmark_lens_tower_',
     'Landmark_north-post','Landmark_upper-shrine','Building_VaultEntry_lens-',
@@ -102,9 +104,21 @@ def placement_group(region, placement, allplacements=()):
     elif region=='amberwood':
         if name=='Landmark_Watchtower_1' or name.startswith(('Prop_Tent_ridge_camp_','Brazier_ridge_camp_')):
             return region+'.ridge-camp'
-        if name.startswith(('Landmark_Canopy','Landmark_GreatTree_')):return region+'.canopy-village'
+        # The spiral stairs climb to the canopy platforms: as singles each was pulled and grounded on its
+        # own and stood 33-58 m from its platform (the legacy stair tops sit 1.65 m under them).
+        if name.startswith(('Landmark_Canopy','Landmark_GreatTree_','Walk_Prop_SpiralStair_')):return region+'.canopy-village'
         if name.startswith(('Landmark_GreatArch','Landmark_ArchColumn_')):return region+'.great-arch'
         if name.startswith('Landmark_Garden'):return region+'.garden'
+    elif region=='whitehorn_range':
+        # Retained singles are regrounded on whatever ground the roads leave them, and settle_roads fixes no
+        # single's ground. The temple road ends at the glacier temple's stair foot, where corridor_grade caps
+        # the road near 196 m (its upper envelope rises 0.318 m per metre from the network's low cells), so the
+        # temple, as a single, sank 14-15 m with its terrace in two offline compositions; the lower camp's spur is
+        # rounded 20-26 m off by the Amberwood seam road at 155-157 m, whose shoulders cut the pad under the camp.
+        # As compounds their footings hold the legacy ground under them (both legacy sites are level) against the
+        # roads, road cells inside them are fitted to that ground, and nothing regrounds them.
+        if name=='Landmark_glacier_temple':return region+'.glacier-temple'
+        if name in WHITEHORN_LOWER_CAMP:return region+'.lower-camp'
     elif region=='manymouth_delta':
         if name=='Landing_shore_south_hamlet':return region+'.south_hamlet'
         if name in ('Lore_stelae_court','Landing_lore_court','Landing_shore_lore_court'):
@@ -136,7 +150,10 @@ def supports_ground(placement):
     """A bridge deck or water surface is not an island-shaped foundation."""
     name=placement['node'].lower()
     if placement.get('kind') in NATURE:return False
-    if name.startswith(('landmark_canopyplatform','landmark_canopywalkway')):return False
+    # A spiral stair stands under its canopy platform, which supports no ground either: the two western
+    # platforms stand 17-25 m under the continent's relief, and a stair footprint carrying the legacy ground
+    # there dug a 29 m pit that moved the Amberwood-Grey Moors crossing 28.6 m (an offline composition).
+    if name.startswith(('landmark_canopyplatform','landmark_canopywalkway','walk_prop_spiralstair')):return False
     if any(word in name for word in ('boat','skiff','lateen','causeway','pier','quay','survey_',
         'water','sunken','lamp','bollard','banner','crystal','flame','portcullis')):return False
     return not name.startswith(('prop_','secret_','sign_','goods_','plaza_bench','plaza_fountain','plaza_arcade'))
