@@ -31729,7 +31729,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/rabbit.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "9abdf401f82f4117932fe62bfd4a05585efe9009916b74b175a1a3400b00cf55",
+      "sha256": "08c77aa8dfd5d41e12e6aaf558f92b6b21ecf521add6cbedda3177364deb467a",
       "source": "generate_models/basic_creature_expansion_100_animated/001_rabbit/2_rigged/001_rabbit_rigged.glb"
     },
     "beaver": {
@@ -31740,7 +31740,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/beaver.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "7961520cbdb2c189d6d485b940bd9ba9f0d586dcff1fafee5d2698a4cc46af6e",
+      "sha256": "3e2a5a80c7752bd6a91c447c9bd73e95b70aac6fd5b9da1113caafb75650d757",
       "source": "generate_models/basic_creature_expansion_100_animated/002_beaver/2_rigged/002_beaver_rigged.glb"
     },
     "skunk": {
@@ -31751,7 +31751,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/skunk.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "5579a6b4a75b5de376f314a098bed770edad03eb8272a097a31f538950d54a83",
+      "sha256": "d0c02affb5f0d6197216a22ea201b6532f6d5e43d9775f605bf345bb5cfe3fb7",
       "source": "generate_models/basic_creature_expansion_100_animated/003_skunk/2_rigged/003_skunk_rigged.glb"
     },
     "hedgehog": {
@@ -31762,7 +31762,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/hedgehog.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "f83efdc2cd1f7553435c09a7d349737fe477726bb7824dc52a95edc19e2107c9",
+      "sha256": "a5e0fd72dda41b3b6454dc983bfa655a24b6de91af61b6e6db6184d1047d8ff8",
       "source": "generate_models/basic_creature_expansion_100_animated/004_hedgehog/2_rigged/004_hedgehog_rigged.glb"
     },
     "squirrel": {
@@ -31773,7 +31773,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/squirrel.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "7d0c06d699347776ad4f63bffb8b5a728dfd30abe7f14df2fd5536257d9b2d42",
+      "sha256": "20fd8b27e55ec35533b7a8fb7f943255332dd3c04c68fe1eb0b5cda4d74f504e",
       "source": "generate_models/basic_creature_expansion_100_animated/005_squirrel/2_rigged/005_squirrel_rigged.glb"
     },
     "dormouse": {
@@ -31784,7 +31784,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/dormouse.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "9f1375740ba52627e1a6651aaf2026b3ddfd4330c9ce64481e9c89508b808a9f",
+      "sha256": "8ab00afab0422e7414c2b676f97245bf5a9a2d5d68f2f117c640e232929d7b86",
       "source": "generate_models/basic_creature_expansion_100_animated/006_dormouse/2_rigged/006_dormouse_rigged.glb"
     },
     "shrew": {
@@ -31795,7 +31795,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/shrew.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "d657f368a2df7a89b16457f7c67ce4021f70bf991dff6ed3a3c28faa0bf66d08",
+      "sha256": "9133d773793bfacaca4b5ef89ecab493373c014acfd1201b9b1a8672d5be67b1",
       "source": "generate_models/basic_creature_expansion_100_animated/007_shrew/2_rigged/007_shrew_rigged.glb"
     },
     "stoat": {
@@ -31806,7 +31806,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/stoat.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "031e349f91759be6f63c30a1a681b56e293e7a6129af0aa071c61a37f4298372",
+      "sha256": "b08df198302d11910ecc0e0ec9424b2d7590d75f6c11833459f8ea123b1326cb",
       "source": "generate_models/basic_creature_expansion_100_animated/008_stoat/2_rigged/008_stoat_rigged.glb"
     },
     "mongoose": {
@@ -31817,7 +31817,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/mongoose.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "edfe689846904ca99cce5d513e8ef56d444715b76d5f298231b1f7430829d4a2",
+      "sha256": "521bbb6f2eb5f2674990bbb805f50b3b713d5a108b4e3c4702b08f943c1ac876",
       "source": "generate_models/basic_creature_expansion_100_animated/009_mongoose/2_rigged/009_mongoose_rigged.glb"
     },
     "armadillo": {
@@ -31828,7 +31828,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/armadillo.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "cce9260395d1e978f7771736b814f59b5067a0cdf4b3bb07031024b5a6d0fc85",
+      "sha256": "0614972f746ec9ed5ee3aedb0a4f22d1dcb2265c3668088067244167a56f1065",
       "source": "generate_models/basic_creature_expansion_100_animated/010_armadillo/2_rigged/010_armadillo_rigged.glb"
     },
     "opossum": {
@@ -31839,7 +31839,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/opossum.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "d87541715cfb908d4f582363e6f37b521c55d4734d6fadba2479245893f7733e",
+      "sha256": "55153b8bbd616be33d9db70b7f1bc5c319c5f61cbd84d84f2eab8f11c670dc37",
       "source": "generate_models/basic_creature_expansion_100_animated/011_opossum/2_rigged/011_opossum_rigged.glb"
     },
     "platypus": {
@@ -31850,7 +31850,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/platypus.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "0b597d10385a1ac69af337e921762c0f82500e86258801b08321180ebfc9bd36",
+      "sha256": "3c78ff2b95dcb4adbd83dfacbb50092a7322ec0fad44e5d75bcd34dbef4460f9",
       "source": "generate_models/basic_creature_expansion_100_animated/012_platypus/2_rigged/012_platypus_rigged.glb"
     },
     "wombat": {
@@ -31861,7 +31861,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/wombat.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "753422998371677e2bc437b93b9666a34eb988a8bd636e94bd10b6a5dcca4948",
+      "sha256": "2905003a9c506edfc49c498ca2f219afdf4bd1a00829bbc8ddea19932d3b1be9",
       "source": "generate_models/basic_creature_expansion_100_animated/013_wombat/2_rigged/013_wombat_rigged.glb"
     },
     "puma": {
@@ -31872,7 +31872,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/puma.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "a03ce51c6caf735827896146322e7af638b6d96dea6e8e1e325a3bfc891b7876",
+      "sha256": "8a4f1ede1d3bea2eca3bd3b5c2c0da02d22c1c2c375342e2ab39f19f0f359610",
       "source": "generate_models/basic_creature_expansion_100_animated/014_puma/2_rigged/014_puma_rigged.glb"
     },
     "leopard": {
@@ -31883,7 +31883,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/leopard.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "e37033cb2b97f87c270df13c1c39bd60abd118d5c2764e4cd2ea828a325f5ec6",
+      "sha256": "012a55c07d836f5c46afaa1388e032d6878acb01cc4e4c6009406a7ec7bfda5f",
       "source": "generate_models/basic_creature_expansion_100_animated/015_leopard/2_rigged/015_leopard_rigged.glb"
     },
     "cheetah": {
@@ -31894,7 +31894,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/cheetah.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "907807502b45fbb74beea700ad0239611e378c5fd871b38e690c8634e61a28e1",
+      "sha256": "16864e631f18faded93c8b66db773e08426c3fb52437fc29ba09fca6901e6609",
       "source": "generate_models/basic_creature_expansion_100_animated/016_cheetah/2_rigged/016_cheetah_rigged.glb"
     },
     "donkey": {
@@ -31905,7 +31905,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/donkey.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "03fbb04f37b0a74385e2e7a6c440399f5786b53de905c9e03f6b1498196cdb55",
+      "sha256": "c9050afcd30dc6be71de6eb711b54c7c3801838593002d7bd2f4b382eb82ab1e",
       "source": "generate_models/basic_creature_expansion_100_animated/017_donkey/2_rigged/017_donkey_rigged.glb"
     },
     "tapir": {
@@ -31916,7 +31916,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/tapir.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "07b73259cd021f2d2e6e7ed66c894e67af432d9577f7e24229a343a9fa27cb4d",
+      "sha256": "88a77f96f04bce678a635d3bdab67375b297e99cc1c405f5b6e3f9d024b5ac13",
       "source": "generate_models/basic_creature_expansion_100_animated/018_tapir/2_rigged/018_tapir_rigged.glb"
     },
     "elephant": {
@@ -31927,7 +31927,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/elephant.glb",
       "joints": 29,
       "animations": 7,
-      "sha256": "fee6784ddb48a26596d16f900bd4c419965df3c434737a586d08ce52764297e8",
+      "sha256": "879f3eb1d6ebecd4eeca9c4fcda9c25a15f40dab777fd1574deeb0aa8ccbbe30",
       "source": "generate_models/basic_creature_expansion_100_animated/019_elephant/2_rigged/019_elephant_rigged.glb"
     },
     "hippopotamus": {
@@ -31938,7 +31938,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/hippopotamus.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "1ee39b73995cd29a673c2cd8d133b0f5cbad830208565c3b224dfe409cc2a9f5",
+      "sha256": "06cff6a8be7091ebc2eccbd6758408a6046560b05ff0030efa748dde2915feb5",
       "source": "generate_models/basic_creature_expansion_100_animated/020_hippopotamus/2_rigged/020_hippopotamus_rigged.glb"
     },
     "giraffe": {
@@ -31949,7 +31949,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giraffe.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "f62a1c6d6d6b3141ca77f896deb919c1aaf781f4eb2ab59466ba5be1bdb44303",
+      "sha256": "45875823a99e8f62c2c121e1e69be81cef95a5f0a6069470bfb4e9074bf2a587",
       "source": "generate_models/basic_creature_expansion_100_animated/021_giraffe/2_rigged/021_giraffe_rigged.glb"
     },
     "zebra": {
@@ -31960,7 +31960,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/zebra.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "d7cd12081a8828ed284f75e5fe87f7910f0def82822c28c87591b2f60ecd03fb",
+      "sha256": "a473fa42e8df4fc973d041b0ed461e71d24489b7cb37888efbcf5feab1557c32",
       "source": "generate_models/basic_creature_expansion_100_animated/022_zebra/2_rigged/022_zebra_rigged.glb"
     },
     "kangaroo": {
@@ -31971,7 +31971,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/kangaroo.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "e386a2f12fe0cd17acdb036c4bd3221f4bbc4f00df3ab184102cc1c6efb1a00a",
+      "sha256": "56a21b1c773946794fe8f5be6cea45d37d8a1d488e1011b05b52e0c88cf6c648",
       "source": "generate_models/basic_creature_expansion_100_animated/023_kangaroo/2_rigged/023_kangaroo_rigged.glb"
     },
     "orangutan": {
@@ -31982,7 +31982,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/orangutan.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "c4a76af948a9da857d4813fc9bdf607e07b774ff7a0a1032ee0e597428a163d3",
+      "sha256": "6edc40547ea4d7ba24c871c8352d0566d5217aa5365d84973f3a8e6fc68950b9",
       "source": "generate_models/basic_creature_expansion_100_animated/024_orangutan/2_rigged/024_orangutan_rigged.glb"
     },
     "baboon": {
@@ -31993,7 +31993,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/baboon.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "b884104c67570d66374364744aba7238c85d05f88e272ce6eb620782a81ac4b4",
+      "sha256": "93e0b6567fb7c4dee7e97c7c462960e494d6ffa37ec53ef7af35f2bc2c3c81f7",
       "source": "generate_models/basic_creature_expansion_100_animated/025_baboon/2_rigged/025_baboon_rigged.glb"
     },
     "walrus": {
@@ -32004,7 +32004,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/walrus.glb",
       "joints": 18,
       "animations": 7,
-      "sha256": "ec23a1950d10104cd1b0269cd873cb4e3662b84d0730d9506639fa59f0835315",
+      "sha256": "9d0b41df82c3c3698fc51db832afc85597d2feaafbcceab98707221f2da00e5c",
       "source": "generate_models/basic_creature_expansion_100_animated/026_walrus/2_rigged/026_walrus_rigged.glb"
     },
     "manatee": {
@@ -32015,7 +32015,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/manatee.glb",
       "joints": 18,
       "animations": 7,
-      "sha256": "2225257bb536537f7414b20567afff278ed38f22de70280df2d3530e6775f488",
+      "sha256": "52ff82c70d0fc191e6a7d1ffcec75b2baaa41e07ce672217822046be44e09c54",
       "source": "generate_models/basic_creature_expansion_100_animated/027_manatee/2_rigged/027_manatee_rigged.glb"
     },
     "dolphin": {
@@ -32026,7 +32026,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/dolphin.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "1c7c697e6058f215465872557eaae14f1f826d44cb5b84789c10aa15cb108d74",
+      "sha256": "594336902af90829e9f72d1d783e480878c5ce219145c091398e40a32e3ef595",
       "source": "generate_models/basic_creature_expansion_100_animated/028_dolphin/2_rigged/028_dolphin_rigged.glb"
     },
     "raven": {
@@ -32037,7 +32037,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/raven.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "9c87b6fb6078f7401fddaa36e0d9da90ab5891ab2fff88d4675187b76318af3e",
+      "sha256": "2cc4ca03bca578bca8b24e6032d7f52104586a319bca60c23de2cd6dfae109b0",
       "source": "generate_models/basic_creature_expansion_100_animated/029_raven/2_rigged/029_raven_rigged.glb"
     },
     "magpie": {
@@ -32048,7 +32048,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/magpie.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "7dac47332bf79b94b05b5745e3e8cb1526172b377c23f742c6c776e1ea60f98a",
+      "sha256": "fd30645b8a147753ce1f907846adf3c43cee7d1bac7a53fa53a3613a6ff58948",
       "source": "generate_models/basic_creature_expansion_100_animated/030_magpie/2_rigged/030_magpie_rigged.glb"
     },
     "mallard_duck": {
@@ -32059,7 +32059,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/mallard_duck.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "b72a038fb0010056dd9388e7fb81fab1ed6b12565b13981c0a0391a188a2cfa6",
+      "sha256": "e49654daf4e63df6b25702d1531f31c90ca6b626314a0b9d8b757e97e31a29ab",
       "source": "generate_models/basic_creature_expansion_100_animated/031_mallard_duck/2_rigged/031_mallard_duck_rigged.glb"
     },
     "goose": {
@@ -32070,7 +32070,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/goose.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "199d5793f016403d7c1ec51f13e0e3595fcee509cf03b6835afd56ef040aaf41",
+      "sha256": "66b3275ebd67b348241fadbebe0c37ad392cb94cddbfc9536da1044bdcbb57f9",
       "source": "generate_models/basic_creature_expansion_100_animated/032_goose/2_rigged/032_goose_rigged.glb"
     },
     "swan": {
@@ -32081,7 +32081,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/swan.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "0c9d2caf258c9a008b5a61a4587f46d68ce4b214c10f42cdb2d9f2833b294acf",
+      "sha256": "dcf3b0edc97692fdac1852e5276166d035bdb0d21e1e7797810c7a5e0d4e50c6",
       "source": "generate_models/basic_creature_expansion_100_animated/033_swan/2_rigged/033_swan_rigged.glb"
     },
     "rooster": {
@@ -32092,7 +32092,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/rooster.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "a17dfe656d74035e6cd27602ae32fc55523dd21bc5d3c36c85ae1dbbe57a9737",
+      "sha256": "d8c34aa5f4e207d9b4b7b5ed14a908d488c2581208690c6215b14dcad82d92bf",
       "source": "generate_models/basic_creature_expansion_100_animated/034_rooster/2_rigged/034_rooster_rigged.glb"
     },
     "turkey": {
@@ -32103,7 +32103,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/turkey.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "6c82536ecc8c3549f8d1aedb560c3a407de9fb7847976741b497bb00cd8ba51e",
+      "sha256": "8042f785d580168c3180f1f0c7b5cfab90827e394530ab9ad195c3370a079625",
       "source": "generate_models/basic_creature_expansion_100_animated/035_turkey/2_rigged/035_turkey_rigged.glb"
     },
     "pheasant": {
@@ -32114,7 +32114,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/pheasant.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "83babdc3aaea8174bbdb40546c7af24e9cc32b5d51b308eb357457ef7f9722af",
+      "sha256": "cf37fd1e5753c5f90aee3710f77e8037bfd24965e382c58a666b1092db2e234c",
       "source": "generate_models/basic_creature_expansion_100_animated/036_pheasant/2_rigged/036_pheasant_rigged.glb"
     },
     "ostrich": {
@@ -32125,7 +32125,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/ostrich.glb",
       "joints": 17,
       "animations": 7,
-      "sha256": "da1deee44da7ad84a140f506a75c4ec8e8d056d1d962e7c91c3dabc257fb60d6",
+      "sha256": "b850bd8eb5c79c46c8cfbe6f127ea154275908e0285bc44775950d3bf82defcd",
       "source": "generate_models/basic_creature_expansion_100_animated/037_ostrich/2_rigged/037_ostrich_rigged.glb"
     },
     "penguin": {
@@ -32136,7 +32136,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/penguin.glb",
       "joints": 17,
       "animations": 7,
-      "sha256": "b8d94e5ab120b5e5039bfade6c19e61ed068ea81d2798c4a11ef88e53923da19",
+      "sha256": "0d3e204e160aed582326b46fd5a1b737e9d35d00fc7e5c859c23855989c53165",
       "source": "generate_models/basic_creature_expansion_100_animated/038_penguin/2_rigged/038_penguin_rigged.glb"
     },
     "pelican": {
@@ -32147,7 +32147,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/pelican.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "2f108a7a6c95b9e7960d623abdff3186a2822317b55dbcec59d1b607abf5cf4e",
+      "sha256": "b007c207fc2fad6d228dad1a9635eedd0dda4c103c28b91d43d722b855071331",
       "source": "generate_models/basic_creature_expansion_100_animated/039_pelican/2_rigged/039_pelican_rigged.glb"
     },
     "macaw": {
@@ -32158,7 +32158,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/macaw.glb",
       "joints": 17,
       "animations": 8,
-      "sha256": "4a9a518b940f8da72bb430870baf0aa62616a1bed5d8995b8080e147b825b1d5",
+      "sha256": "e9bb088f03c914b5de00c608ae3c01210be6fc0163cefd2abbfbdb074d3d65bd",
       "source": "generate_models/basic_creature_expansion_100_animated/040_macaw/2_rigged/040_macaw_rigged.glb"
     },
     "cobra": {
@@ -32169,7 +32169,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/cobra.glb",
       "joints": 17,
       "animations": 7,
-      "sha256": "0b9f8456157ab460356cfa2ad0116d9228ec5ec198a311564624317be06b04cd",
+      "sha256": "56dee072df5ff0b32fa9dcebc120dfb0ef24fec51fc3e59fb92cb298ad5fc449",
       "source": "generate_models/basic_creature_expansion_100_animated/041_cobra/2_rigged/041_cobra_rigged.glb"
     },
     "chameleon": {
@@ -32180,7 +32180,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/chameleon.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "b984610fcb1db896892efb2f6c95f22306dff239dddd32256f3aa54b2ff44b95",
+      "sha256": "81a6f61cea83c5bfea82dc0ae6c3295268ef9946373787312ffe7e66ef701042",
       "source": "generate_models/basic_creature_expansion_100_animated/042_chameleon/2_rigged/042_chameleon_rigged.glb"
     },
     "gecko": {
@@ -32191,7 +32191,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/gecko.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "77d2f0358f71fb5822f76515021222df54818caa12551657a2b0029497c3b2db",
+      "sha256": "91033ab6b1442341370d2df04878d68f03f9c726a867ec8fbfbf607046c3a5f4",
       "source": "generate_models/basic_creature_expansion_100_animated/043_gecko/2_rigged/043_gecko_rigged.glb"
     },
     "frilled_lizard": {
@@ -32202,7 +32202,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/frilled_lizard.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "cb0496b7744fb059e1c7dd69b65ec5095f919ee33d803d64c2eac37f6aba392e",
+      "sha256": "47ef7574afcf7500e35e8dbe58c641fe7dcf0fef7821e0bf95bedb8ad07bc66f",
       "source": "generate_models/basic_creature_expansion_100_animated/044_frilled_lizard/2_rigged/044_frilled_lizard_rigged.glb"
     },
     "iguana": {
@@ -32213,7 +32213,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/iguana.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "d58d16dc46e9b3c0aaa8632c12c4a8c36c3d922c4c545361fb05545d0470c361",
+      "sha256": "cf051a83cd2581eaecd2967e5ab5152b33d96b1b4f80f0ab51e592e7f068aeb3",
       "source": "generate_models/basic_creature_expansion_100_animated/045_iguana/2_rigged/045_iguana_rigged.glb"
     },
     "caecilian": {
@@ -32224,7 +32224,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/caecilian.glb",
       "joints": 22,
       "animations": 7,
-      "sha256": "0d3b45d66fb3f8459c7e38efbb71ce3c2df58cbc1a74ef4c80903ae37ba50a8a",
+      "sha256": "343f15ee49fb006bc44661878fba22e045931123b15a5d026325e7f2d017366b",
       "source": "generate_models/basic_creature_expansion_100_animated/046_caecilian/2_rigged/046_caecilian_rigged.glb"
     },
     "mudskipper": {
@@ -32235,7 +32235,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/mudskipper.glb",
       "joints": 16,
       "animations": 7,
-      "sha256": "6879e120c27c440cc78efd47c696e6065078d19f9c7c09627378b60e011bc49e",
+      "sha256": "65ca9d9950a4a3359f596ef407e5b98d4e1aff84a71214a7dcfec70c1696b803",
       "source": "generate_models/basic_creature_expansion_100_animated/047_mudskipper/2_rigged/047_mudskipper_rigged.glb"
     },
     "snapping_turtle": {
@@ -32246,7 +32246,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/snapping_turtle.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "4e4446de5275c4b6dc16c843a2b74b48238bb8ac7a37d17b19e123986b87dca7",
+      "sha256": "5900e01ecf062f2c56a96388c600ec33a868e6b8ea7e83a7456bd9f8d401f203",
       "source": "generate_models/basic_creature_expansion_100_animated/048_snapping_turtle/2_rigged/048_snapping_turtle_rigged.glb"
     },
     "hammerhead_shark": {
@@ -32257,7 +32257,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/hammerhead_shark.glb",
       "joints": 17,
       "animations": 7,
-      "sha256": "f2fcf42bae57526ad2a017eaba67a5a6b2c3e88e7b4de5d56cfa928e427bcd57",
+      "sha256": "1e377487b5a6bbd7926bf22d13cc95411848f5e65f1a82c888a70cf04aaa41be",
       "source": "generate_models/basic_creature_expansion_100_animated/049_hammerhead_shark/2_rigged/049_hammerhead_shark_rigged.glb"
     },
     "sturgeon": {
@@ -32268,7 +32268,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/sturgeon.glb",
       "joints": 17,
       "animations": 7,
-      "sha256": "864d3527e0ca2cc1d559424ad486f910b1126d665b30d8adb1655f3c481e6ae1",
+      "sha256": "bb34a2ce4ca152a5cd3895c101eca5180f22da802c34a430ebf4d0792788fa47",
       "source": "generate_models/basic_creature_expansion_100_animated/050_sturgeon/2_rigged/050_sturgeon_rigged.glb"
     },
     "seahorse": {
@@ -32279,7 +32279,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/seahorse.glb",
       "joints": 15,
       "animations": 7,
-      "sha256": "d302e635c66e8439af50c6000c3799c4dcf67984f6bf7f2eea9273f429c58a99",
+      "sha256": "3204950cd96cf4ebd9bc74b97750cc1cf88e5ceb20534a607d01298da91e3bb4",
       "source": "generate_models/basic_creature_expansion_100_animated/051_seahorse/2_rigged/051_seahorse_rigged.glb"
     },
     "octopus": {
@@ -32290,7 +32290,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/octopus.glb",
       "joints": 36,
       "animations": 7,
-      "sha256": "ea9cfd06e54cf0fa0413044acf9e2f4d09705a5033e9370cb6038f19b626b0ba",
+      "sha256": "fb5be70e1f2c2fb62fb18bfe83aa4c5c4856a1e4c169b66fc7d132aa3b031fa1",
       "source": "generate_models/basic_creature_expansion_100_animated/052_octopus/2_rigged/052_octopus_rigged.glb"
     },
     "cuttlefish": {
@@ -32301,7 +32301,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/cuttlefish.glb",
       "joints": 46,
       "animations": 7,
-      "sha256": "5dd82394d93233d0ef7343d184e157d5e85158176583992c58fd3e33cc5cad49",
+      "sha256": "88d022ebdd9363b40001c5c24b82ca94f69bb2761ceecb04a433e6d40be93480",
       "source": "generate_models/basic_creature_expansion_100_animated/053_cuttlefish/2_rigged/053_cuttlefish_rigged.glb"
     },
     "nautilus": {
@@ -32312,7 +32312,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/nautilus.glb",
       "joints": 53,
       "animations": 7,
-      "sha256": "15c0346b145a49ae409a9437e56352d75083633fc76607e5e728408aa45e989f",
+      "sha256": "d09465affbb80108b46381fd78201fd7ac007d5d1b24cc4e891a9429160ff50d",
       "source": "generate_models/basic_creature_expansion_100_animated/054_nautilus/2_rigged/054_nautilus_rigged.glb"
     },
     "lobster": {
@@ -32323,7 +32323,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/lobster.glb",
       "joints": 37,
       "animations": 7,
-      "sha256": "44c8e01afc0ad5382b4afbd3547c5fbb0d5929c3bc1c4296df5362cf7b0eff58",
+      "sha256": "1685ca1a4fda2493cf79dc5946ed1bcd30997bec5f0e0ef1a0b830c9e6d7ff89",
       "source": "generate_models/basic_creature_expansion_100_animated/055_lobster/2_rigged/055_lobster_rigged.glb"
     },
     "giant_centipede": {
@@ -32334,7 +32334,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_centipede.glb",
       "joints": 112,
       "animations": 7,
-      "sha256": "ba7402cd310938b94875606f1a30f778c73fad8be15f873271ba0059ef8c7f78",
+      "sha256": "c7311a398f94902cec6c7921bbf26374405dbfcac9c8af5c4f33372e0bf21bc0",
       "source": "generate_models/basic_creature_expansion_100_animated/056_giant_centipede/2_rigged/056_giant_centipede_rigged.glb"
     },
     "giant_snail": {
@@ -32345,7 +32345,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_snail.glb",
       "joints": 14,
       "animations": 7,
-      "sha256": "ed8501b8ec2bcb1372c7944b3801aac9a4278b8889727f0fb65bd48d182d668e",
+      "sha256": "da9718c830eb4993fc93e58538b8107e82de30b78842a545a2ccc15d51cd82ee",
       "source": "generate_models/basic_creature_expansion_100_animated/057_giant_snail/2_rigged/057_giant_snail_rigged.glb"
     },
     "giant_leech": {
@@ -32356,7 +32356,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_leech.glb",
       "joints": 22,
       "animations": 7,
-      "sha256": "e9f68f58ebfe28d29720d6ece126c15747ae08b4f294e887fcfbe5a01f8b8f39",
+      "sha256": "c6d713e9b71c618c5d7726a204f0fec1d3708165b1eb9a1dc72783445cc63855",
       "source": "generate_models/basic_creature_expansion_100_animated/058_giant_leech/2_rigged/058_giant_leech_rigged.glb"
     },
     "giant_wasp": {
@@ -32367,7 +32367,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_wasp.glb",
       "joints": 33,
       "animations": 8,
-      "sha256": "32f1bbe66da4f7b7f699ac690af853fadc3affe1259ed54d40caa682a46486d2",
+      "sha256": "025586f8b18a867aa5f56aef5a7c5342c10e7ad74790ec87deb67f314a10f49c",
       "source": "generate_models/basic_creature_expansion_100_animated/059_giant_wasp/2_rigged/059_giant_wasp_rigged.glb"
     },
     "giant_ant": {
@@ -32378,7 +32378,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_ant.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "1dabf314be9a30e9d9b0ab446c840bee81ff427e5fe621b15835d7933be5cbea",
+      "sha256": "6cfea03093bb4de797b62ade10c02a21290e0b4f771699fbbf61cf58ea27b615",
       "source": "generate_models/basic_creature_expansion_100_animated/060_giant_ant/2_rigged/060_giant_ant_rigged.glb"
     },
     "skeleton": {
@@ -32389,7 +32389,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/skeleton.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "ef52a3a5e83250ed3fa865e8518e3e0ca87b1bb27db9fcf05b932baabf822f22",
+      "sha256": "94a927dd36b122320038b8f37d9cce668c86f8f1dee42ad6a3cf85e0da41f08f",
       "source": "generate_models/basic_creature_expansion_100_animated/061_skeleton/2_rigged/061_skeleton_rigged.glb"
     },
     "zombie": {
@@ -32400,7 +32400,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/zombie.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "297102bbdcd774fd29e76a2970a569a9fb2e51b9f72a361b5e56b05142be3a68",
+      "sha256": "dc40f57a6a8a8a3338e115a098575117a3d8a6163d27eb6e4e0c47b7cf08a33d",
       "source": "generate_models/basic_creature_expansion_100_animated/062_zombie/2_rigged/062_zombie_rigged.glb"
     },
     "ghoul": {
@@ -32411,7 +32411,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/ghoul.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "b868775311e3cae1e6903fdc48a324e55899b7b0a162804202073f76148c2587",
+      "sha256": "2dd3574c2a7cf8673214a643d812adbbeaad085be9a888d4748532ee29e716ce",
       "source": "generate_models/basic_creature_expansion_100_animated/063_ghoul/2_rigged/063_ghoul_rigged.glb"
     },
     "mummy": {
@@ -32422,7 +32422,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/mummy.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "530a7e772ec6f57ff805df340cb757e931e5cb606a875a3ea89847374faa70ab",
+      "sha256": "ea33acd883dcc203be5090d5a76d7b48703365776e1289c71eb3e208fd452a3f",
       "source": "generate_models/basic_creature_expansion_100_animated/064_mummy/2_rigged/064_mummy_rigged.glb"
     },
     "vampire": {
@@ -32433,7 +32433,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/vampire.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "8dde2bf17bcbb4d9b2a780cdc464e7bc8bdfc872bbd8dfa0c09ff142c0c59d30",
+      "sha256": "080e7ec35b411944e959f4520544167068341e9914bde6fdfa478d4546c84998",
       "source": "generate_models/basic_creature_expansion_100_animated/065_vampire/2_rigged/065_vampire_rigged.glb"
     },
     "imp": {
@@ -32444,7 +32444,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/imp.glb",
       "joints": 29,
       "animations": 8,
-      "sha256": "c5167d6e0320c488abf2e513d2269c0ed2ccdf1e9ff5733016fa3195a512f203",
+      "sha256": "3589c3eb9e895fde51a8aa83f9f5dd2fa03320ccd412f97cd9954eb27068b13c",
       "source": "generate_models/basic_creature_expansion_100_animated/066_imp/2_rigged/066_imp_rigged.glb"
     },
     "gargoyle": {
@@ -32455,7 +32455,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/gargoyle.glb",
       "joints": 29,
       "animations": 8,
-      "sha256": "f7da6e661f0da538da969364c03fa0a105064bf8566a12e16cd154e9c838203d",
+      "sha256": "f6bda30e6f1adfd718b4e060b5f8635d5d664e2713838178e02316736322bea6",
       "source": "generate_models/basic_creature_expansion_100_animated/067_gargoyle/2_rigged/067_gargoyle_rigged.glb"
     },
     "gremlin": {
@@ -32466,7 +32466,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/gremlin.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "fab708699707c8d205525d9483badf66b16d85d74dd66cebd9bd8b3b064bb703",
+      "sha256": "cc3bb4bef3cea53b158435850a2efacc1d3138916389d2cecb849a73a6a8858e",
       "source": "generate_models/basic_creature_expansion_100_animated/068_gremlin/2_rigged/068_gremlin_rigged.glb"
     },
     "hobgoblin": {
@@ -32477,7 +32477,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/hobgoblin.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "18999531468a31a5477b88409f1978ae3a75dff48a926edcdbb4a862b53e53df",
+      "sha256": "f17f113edf1b2e6a111f33e35ec50e3f0d9900aa1f97f5ae93aa89cf2fd19fd9",
       "source": "generate_models/basic_creature_expansion_100_animated/069_hobgoblin/2_rigged/069_hobgoblin_rigged.glb"
     },
     "gnoll": {
@@ -32488,7 +32488,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/gnoll.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "5e144a8d1f3f5ac8693098f2cc9b7c91143cc72d4155b52b7745c53af37fdf9e",
+      "sha256": "226ac366db2f43f39fb77e36ea326ae2740483e954bac79c8e5a486ab7925786",
       "source": "generate_models/basic_creature_expansion_100_animated/070_gnoll/2_rigged/070_gnoll_rigged.glb"
     },
     "centaur": {
@@ -32499,7 +32499,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/centaur.glb",
       "joints": 32,
       "animations": 7,
-      "sha256": "25c7f7408d3d8e736d40694e9bf7b6c75b0b27ef7ac3a8c735e83eafcc532ec9",
+      "sha256": "8ad98adacf77dc84685071fa9135254cfe99b9e373471ec7a527609e530f2427",
       "source": "generate_models/basic_creature_expansion_100_animated/071_centaur/2_rigged/071_centaur_rigged.glb"
     },
     "merfolk": {
@@ -32510,7 +32510,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/merfolk.glb",
       "joints": 20,
       "animations": 7,
-      "sha256": "31bb4e3576afdedc6b03ae56408bdd1ce82bd91c85508847ffc661109cf7fee3",
+      "sha256": "76873f15c0bbe7fb0a1fae609daef7423432ee81d7636fbad564371c5ee1059d",
       "source": "generate_models/basic_creature_expansion_100_animated/072_merfolk/2_rigged/072_merfolk_rigged.glb"
     },
     "tengu": {
@@ -32521,7 +32521,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/tengu.glb",
       "joints": 23,
       "animations": 8,
-      "sha256": "c4bf7152a99596af9e9a98273491541a1eb558c148498fc50a964f81ef56bb1b",
+      "sha256": "0c843ab5c79cbc9102fade7824703562f32633c03ad4f8e7108468418c75afed",
       "source": "generate_models/basic_creature_expansion_100_animated/073_tengu/2_rigged/073_tengu_rigged.glb"
     },
     "arachne": {
@@ -32532,7 +32532,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/arachne.glb",
       "joints": 44,
       "animations": 7,
-      "sha256": "0e62909aab064e719bc3ce477e1141da15e101b2ea7fa31bada70a7bcf10be9a",
+      "sha256": "14bfffed793b7f73e5b5309f1441d1923ff8dac6aa6e0d34fc17842f5bd7db47",
       "source": "generate_models/basic_creature_expansion_100_animated/074_arachne/2_rigged/074_arachne_rigged.glb"
     },
     "manticore": {
@@ -32543,7 +32543,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/manticore.glb",
       "joints": 29,
       "animations": 8,
-      "sha256": "183e05cae0d626dfa9c4b65ebe0d0762f92680be066641009eda3fcacda0b84c",
+      "sha256": "1ebebcffb9e2f7ec4570a00ce805b7f937ade2a7cd50b5af048e07feb033712a",
       "source": "generate_models/basic_creature_expansion_100_animated/075_manticore/2_rigged/075_manticore_rigged.glb"
     },
     "cockatrice": {
@@ -32554,7 +32554,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/cockatrice.glb",
       "joints": 23,
       "animations": 8,
-      "sha256": "0c45d09a89141dbc93008d9a0c17b13caba36a13fd10410bab044f62e60a8329",
+      "sha256": "de81f0e91896935cbce096cb2f5e3cb9bd5bbb0a218783f9c643af09e10749bd",
       "source": "generate_models/basic_creature_expansion_100_animated/076_cockatrice/2_rigged/076_cockatrice_rigged.glb"
     },
     "peryton": {
@@ -32565,7 +32565,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/peryton.glb",
       "joints": 29,
       "animations": 8,
-      "sha256": "f1d0c122c307a2a5dcc9dd9ef0d1e8946e0491da22a29f5572a42c7278fdc232",
+      "sha256": "22f783bf126e53f3f2222a7f773ae05d4c55d8db3d7471061dbc8f409679eba4",
       "source": "generate_models/basic_creature_expansion_100_animated/077_peryton/2_rigged/077_peryton_rigged.glb"
     },
     "jackalope": {
@@ -32576,7 +32576,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/jackalope.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "d83b855232326e4b92c5b5b252f65631e0be8e13475715d867192accd6e05afa",
+      "sha256": "d183766fdd587b8bc46a25922fbd13f5e802ba08bb0c7473e61440572ab1aca9",
       "source": "generate_models/basic_creature_expansion_100_animated/078_jackalope/2_rigged/078_jackalope_rigged.glb"
     },
     "qilin": {
@@ -32587,7 +32587,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/qilin.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "8b80153739b4f8ecb00ddf5acf1b94b9944e826648d8e2a6536f074d9ffe4aad",
+      "sha256": "b72bb9ad608a9aea1dd234666fb81a04cc9a10fed93ab155511b14567d0f0137",
       "source": "generate_models/basic_creature_expansion_100_animated/079_qilin/2_rigged/079_qilin_rigged.glb"
     },
     "dragon_turtle": {
@@ -32598,7 +32598,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/dragon_turtle.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "2220b57d18962537277b587f911c19e715cfebf9794279d9c2fee658b4f17296",
+      "sha256": "2e46dd54b687a5556a75e714ec511e0216335b052f8a4c50a95d292e381109bd",
       "source": "generate_models/basic_creature_expansion_100_animated/080_dragon_turtle/2_rigged/080_dragon_turtle_rigged.glb"
     },
     "burrowing_landshark": {
@@ -32609,7 +32609,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/burrowing_landshark.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "a81255f4a908ba83f4607da964e27cf498998e0a787e7194e5badd07ec9231a5",
+      "sha256": "bfc2f1b9c0a0b84bdbc6fa1817a196b82234d656a4b921026ec799941b6b9730",
       "source": "generate_models/basic_creature_expansion_100_animated/081_burrowing_landshark/2_rigged/081_burrowing_landshark_rigged.glb"
     },
     "iron_eater": {
@@ -32620,7 +32620,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/iron_eater.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "c818b3e64f38158289a9daf902ff40a4495414afcb89cc95fa32178cd1eec899",
+      "sha256": "11a7444b752fd17c152f3d609a1f4a23d721ae9cccd71aa2da45f696044a4dde",
       "source": "generate_models/basic_creature_expansion_100_animated/082_iron_eater/2_rigged/082_iron_eater_rigged.glb"
     },
     "stalactite_maw": {
@@ -32631,7 +32631,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/stalactite_maw.glb",
       "joints": 21,
       "animations": 7,
-      "sha256": "b44a2c83ec35e14b86e32947f1968e4ff66e9e9c78b5009f5a9d2ab236658815",
+      "sha256": "3214c4f25833cd3f32464965be3b2b33a284162c4ddda9ce2a7231da9cff69e4",
       "source": "generate_models/basic_creature_expansion_100_animated/083_stalactite_maw/2_rigged/083_stalactite_maw_rigged.glb"
     },
     "mimic": {
@@ -32642,7 +32642,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/mimic.glb",
       "joints": 18,
       "animations": 7,
-      "sha256": "719e055cbb00ac90d32fc58924df064aceedb41e39d97954468f5078cd7860c6",
+      "sha256": "32adca02bf08398a850e446ce49f6fd8c60252a740c41be62e2f15cf1531a97c",
       "source": "generate_models/basic_creature_expansion_100_animated/084_mimic/2_rigged/084_mimic_rigged.glb"
     },
     "living_armor": {
@@ -32653,7 +32653,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/living_armor.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "afdd63ede8f5a5e5d5993cb9e2b9a99e996a086aed2714960a16db32202e26bc",
+      "sha256": "0d4a32168a07234f4ccfa82cc8795164bc637e5d186ef9e77765e19124b6633d",
       "source": "generate_models/basic_creature_expansion_100_animated/085_living_armor/2_rigged/085_living_armor_rigged.glb"
     },
     "flesh_golem": {
@@ -32664,7 +32664,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/flesh_golem.glb",
       "joints": 19,
       "animations": 7,
-      "sha256": "f7afbd34e1f28c2bfce277cc03132dc96fd9d0ee1bd969f37b2369316aabcf16",
+      "sha256": "895c987743053e50791218ce94c0502e17524fb7efa20ed547436370f27da531",
       "source": "generate_models/basic_creature_expansion_100_animated/086_flesh_golem/2_rigged/086_flesh_golem_rigged.glb"
     },
     "slime": {
@@ -32675,7 +32675,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/slime.glb",
       "joints": 10,
       "animations": 7,
-      "sha256": "0dd3bf855ecceaf5836e39674f20befb4e80315f217ad52565b1a24028314d89",
+      "sha256": "15f30dca286d5167376dc768d33109fc5a09c9946e5f4dcabc96fa2af979b64a",
       "source": "generate_models/basic_creature_expansion_100_animated/087_slime/2_rigged/087_slime_rigged.glb"
     },
     "living_spellbook": {
@@ -32686,7 +32686,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/living_spellbook.glb",
       "joints": 5,
       "animations": 7,
-      "sha256": "a9f90991e807e4f74d3a07f0513bcf2449d6efb488e4ec71eded7aec3b5b22a2",
+      "sha256": "0ac27a79533006dff6b50ae2e3bdc75e23290524e1f9dc7f589a36291df42618",
       "source": "generate_models/basic_creature_expansion_100_animated/088_living_spellbook/2_rigged/088_living_spellbook_rigged.glb"
     },
     "crawling_hand": {
@@ -32697,7 +32697,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/crawling_hand.glb",
       "joints": 17,
       "animations": 7,
-      "sha256": "d3868b1f61dfe4e6683f9db596c5855f97d0720dab8a32ac0f529ae174b8ab89",
+      "sha256": "2cb97d33d3639554bd6e82827a2fe1f5e2fbde1ffa2b5d281086ccf64cbc6a1c",
       "source": "generate_models/basic_creature_expansion_100_animated/089_crawling_hand/2_rigged/089_crawling_hand_rigged.glb"
     },
     "floating_eye": {
@@ -32708,7 +32708,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/floating_eye.glb",
       "joints": 21,
       "animations": 7,
-      "sha256": "a3311fc298661d60fca3d7c1b03fa17bfe9b0c5840a544b4af3cbc317694a8f2",
+      "sha256": "29db5d7efb46c3cc957f410b346353d7da4de5ee3a348ef012b90f79202e6ab3",
       "source": "generate_models/basic_creature_expansion_100_animated/090_floating_eye/2_rigged/090_floating_eye_rigged.glb"
     },
     "levitating_jellyfish": {
@@ -32719,7 +32719,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/levitating_jellyfish.glb",
       "joints": 41,
       "animations": 7,
-      "sha256": "3c47b6770901e8c065ba8d8cbff4e4b4179b684df6c6153bb57711ff721a82db",
+      "sha256": "19669b347e6dba20403fcb6a71c1667f0ddeac0c59064c7036bea81b57528e5a",
       "source": "generate_models/basic_creature_expansion_100_animated/091_levitating_jellyfish/2_rigged/091_levitating_jellyfish_rigged.glb"
     },
     "giant_worm": {
@@ -32730,7 +32730,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_worm.glb",
       "joints": 22,
       "animations": 7,
-      "sha256": "4bf2f5073d73ff407d4339547e970e1ffee551e2f272fd269d0c31faaa811206",
+      "sha256": "8a928caf80674a5a614d967d2cf6874b09f96ca93d7b93c8c47001566bd18022",
       "source": "generate_models/basic_creature_expansion_100_animated/092_giant_worm/2_rigged/092_giant_worm_rigged.glb"
     },
     "cerberus": {
@@ -32741,7 +32741,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/cerberus.glb",
       "joints": 28,
       "animations": 7,
-      "sha256": "a34c5126434b0899f792545627fcb8b313ee85371f6e6dc487a3bd771460e984",
+      "sha256": "f52e8383fbcfd044d83ae53c43f3d02fe1888a812cc90d762b7634cdd694e73c",
       "source": "generate_models/basic_creature_expansion_100_animated/093_cerberus/2_rigged/093_cerberus_rigged.glb"
     },
     "two_headed_giant": {
@@ -32752,7 +32752,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/two_headed_giant.glb",
       "joints": 20,
       "animations": 7,
-      "sha256": "520bcafb8a6eeea7552c3ebb47e997ee3ec715632067de51e09c724e01c0591f",
+      "sha256": "e11a3232a7f403dc7ff4e708a7af66c504bd0ecc58b372c0eda0f181ca3f78b2",
       "source": "generate_models/basic_creature_expansion_100_animated/094_two_headed_giant/2_rigged/094_two_headed_giant_rigged.glb"
     },
     "winged_serpent": {
@@ -32763,7 +32763,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/winged_serpent.glb",
       "joints": 26,
       "animations": 8,
-      "sha256": "732721f1884932d71d6dd61a3a28c3d1d88bc2cad2e4234d63c4bb992d8e41f4",
+      "sha256": "ddbbc645f9ccf3b2e237f7f8a864f267f55896ff7f4a502902ec59811bc419d1",
       "source": "generate_models/basic_creature_expansion_100_animated/095_winged_serpent/2_rigged/095_winged_serpent_rigged.glb"
     },
     "four_armed_guardian": {
@@ -32774,7 +32774,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/four_armed_guardian.glb",
       "joints": 30,
       "animations": 7,
-      "sha256": "544d7f5f1037ea268b437536f0b1ae85e2676e36dc3e0e07f33d0ce5f3bd6175",
+      "sha256": "6da4ff1f95ecb2fa63256313fbc7140f7306a90b6e3ec5dcf1eb7f282f17fc76",
       "source": "generate_models/basic_creature_expansion_100_animated/096_four_armed_guardian/2_rigged/096_four_armed_guardian_rigged.glb"
     },
     "animated_sword": {
@@ -32785,7 +32785,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/animated_sword.glb",
       "joints": 3,
       "animations": 7,
-      "sha256": "995e6d3fdf879c36935505ee4bd656932d5c5bec06aa815f302ab067deeb55ad",
+      "sha256": "56b9af575eac41a82210c6c274c1d76f51c0092f77e4e1a47953c9979c931cf1",
       "source": "generate_models/basic_creature_expansion_100_animated/097_animated_sword/2_rigged/097_animated_sword_rigged.glb"
     },
     "giant_antlion": {
@@ -32796,7 +32796,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_antlion.glb",
       "joints": 25,
       "animations": 7,
-      "sha256": "2df5c9b043c1726101d3f67f07ab8c96950f329a837701e3ea62a44d50e3fde2",
+      "sha256": "661a4adf62e960bacd58e1b1086e8932d1985204f11b80348ed4febdaaca1080",
       "source": "generate_models/basic_creature_expansion_100_animated/098_giant_antlion/2_rigged/098_giant_antlion_rigged.glb"
     },
     "sphinx": {
@@ -32807,7 +32807,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/sphinx.glb",
       "joints": 29,
       "animations": 8,
-      "sha256": "d10e389dc3443b0b5451981163cb2b09e208490bb9caa5a0ed0e288415c7a8e2",
+      "sha256": "81f65ca743122cd74de8c019aab6809801cf1d920610d96b37b1876971a8f1fe",
       "source": "generate_models/basic_creature_expansion_100_animated/099_sphinx/2_rigged/099_sphinx_rigged.glb"
     },
     "air_elemental": {
@@ -32818,7 +32818,7 @@
       "path": "godot-client/assets/actors/native/creatures/basic_expansion/air_elemental.glb",
       "joints": 20,
       "animations": 7,
-      "sha256": "1afdd07be6b2699dde174b5aad741857aab7eb7d03023b94f888116bf6aaed27",
+      "sha256": "d53d8f30e6b103141cd1b57aae1fc8254e1b727ed53f77ee3b69d075f4a6d270",
       "source": "generate_models/basic_creature_expansion_100_animated/100_air_elemental/2_rigged/100_air_elemental_rigged.glb"
     }
   }

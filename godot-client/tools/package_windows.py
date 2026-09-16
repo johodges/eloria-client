@@ -27,8 +27,9 @@ What goes in, and why it is more than an export:
   eloria-assets/maps, eloria-assets/concepts
       "res://../eloria-assets/..." resolves beside app/. Every map package (a
       folder holding world.json) ships without its references, captures,
-      sources and reports; any file a shipped manifest or the map registry
-      names is pulled in even if the filter dropped it.
+      sources, reports and unused world-lod2.glb; any other file a shipped
+      manifest or the map registry names is pulled in even if the filter
+      dropped it.
 
 Only files tracked at the commit are shipped. Before zipping, the package is
 checked - every registry manifest, the files each manifest names, and every
@@ -72,8 +73,11 @@ INSTALLER_APP_ID = "{6B1E9F4C-3A52-4D8E-9C71-5E0B2F8A4D17}"
 MAP_EXCLUDED_DIRS = {"references", "captures", "godot-captures", "source",
                      "sources", "qa", "reports", "review", "renders"}
 MAP_EXCLUDED_SUFFIXES = {".py", ".md", ".gd", ".c", ".txt", ".gitignore"}
-# Manifest keys that describe provenance rather than files the client opens.
-MANIFEST_SKIPPED_KEYS = {"sources", "provenance", "knownLimitations"}
+# Reduced-detail map packages (world-lod2.glb, 335 MB across eleven maps).
+# Manifests list them under lodGroups, but no client code loads them.
+MAP_LOD_PACKAGE = re.compile(r"^world-lod\d+\.glb$")
+# Manifest keys that describe provenance, or files the client never opens.
+MANIFEST_SKIPPED_KEYS = {"sources", "provenance", "knownLimitations", "lodGroups"}
 FILE_LIKE = re.compile(r"^[^:*?\"<>|\s]+\.(glb|gltf|bin|json|webp|png|jpg|jpeg|gz|escg|ogg|wav)$", re.I)
 SMOKE_FAILURES = ("SCRIPT ERROR", "Parse Error", "Failed to load script",
                   "No loader found", "Cannot open file", "Failed loading resource")
@@ -254,6 +258,8 @@ def is_shipped_map_file(relative: PurePosixPath) -> bool:
         return False
     name = relative.name
     if relative.suffix.lower() in MAP_EXCLUDED_SUFFIXES or name == ".gitignore":
+        return False
+    if MAP_LOD_PACKAGE.match(name):
         return False
     return not (name.endswith(".validator.json") or name.endswith("report.json"))
 
