@@ -21,8 +21,12 @@ HARBOUR_PREFIXES = ('Quay_Wall_', 'Prop_Quay_', 'Jetty_', 'Ship_',
     'Mole_Run_', 'Prop_Mole_', 'Landmark_Mole_', 'Landmark_Warehouse_',
     'Landmark_Pier_', 'Landmark_Yard_Shed_', 'Prop_Timber_Stack_',
     'Prop_Fish_Stall_', 'House_lower_', 'Yard_lower_',
-    'Prop_Lamp_quayside_', 'Prop_Lamp_market_climb_', 'Prop_Boat_')
-HARBOUR_NODES = frozenset(('Landmark_Quay_Arch', 'Landmark_Fish_Market',
+    'Prop_Lamp_quayside_', 'Prop_Lamp_market_climb_', 'Prop_Boat_',
+    # The quay's working dressing: the chandlery stock beside Quay_Wall_06 and the loads at the warehouses and the
+    # yard shed. As singles they were mapped and grounded apart from the harbour they dress, 46-76 m from their
+    # buildings (asset audit, family D scattered props).
+    'Prop_Chandlery_', 'Working_Load_')
+HARBOUR_NODES = frozenset(('Landmark_Quay_Arch', 'Landmark_Fish_Market', 'Prop_Cistern_lower_square',
     'Landmark_Gantry', 'Landmark_Harbour_Crane', 'Landmark_Harbour_Gate',
     'Landmark_Custom_House', 'Landmark_Shipyard_Hull', 'Landmark_Ropewalk',
     'Landmark_Guild_Hall', 'Lore_league_post_house', 'Landmark_Gullstone_Watch',

@@ -1608,6 +1608,12 @@
         -27.6383,
         813.9205
       ]
+    },
+    "amberwood.east-quarry": {
+      "center": [
+        630,
+        620
+      ]
     }
   },
   "inhabited_hubs": {
@@ -2288,5 +2294,24 @@
       "arcMetres": 16.0,
       "note": "the Mirrorwater ravine below Mirror Lake, crossed by the Verdant Stair seam road as in design O5; excluded by the model only for a retained solid 4 m from its west landing"
     }
-  ]
+  ],
+  "assembly_member_offsets": {
+    "mirrorhold.city": {
+      "Prop_cistern-yard_bollard_0": [
+        0.0,
+        -2.49,
+        0.0
+      ],
+      "Prop_cistern-yard_bollard_1": [
+        0.0,
+        -5.47,
+        0.0
+      ],
+      "Prop_quarry-shelf_bollard_1": [
+        0.0,
+        -10.54,
+        0.0
+      ]
+    }
+  }
 }
