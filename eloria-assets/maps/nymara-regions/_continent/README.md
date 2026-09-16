@@ -651,3 +651,49 @@ readers above all take `scale` as a number and
 `publish_diagonal_continent.validate_spec` rejects a `null` outright, so
 publishing a squeezed or turned territory needs them taught the affine first:
 that is a follow-up, not something this transform can paper over.
+
+## Inverted winding in retained library meshes
+
+Many certified library meshes wind their triangles against their own vertex normals. The toolkit's
+`mesh.lathe` does, and so do the sides of `mesh.cylinder` (`routecraft.annular_walk` and
+`templecraft.sun_disc` say so where they compensate), so barrels, log piles, posts, towers, domes,
+pavilion floors and pine crowns stand inside out: the client and the atlas rasteriser
+(`_toolkit/native/raster.c`) cull their outsides, and every classifier that reads a face's facing
+from `cross(b - a, c - a)` sees their walking faces pointing down. `winding.py` corrects them in
+memory; the certified `library.glb` files are never rewritten.
+
+`normalise_winding(document, body, *, min_cos=-0.2)` returns a private copy of a loaded document,
+its body and a report. The vertex normals are the evidence: a triangle whose geometric normal opposes
+the sum of its three vertex normals (cosine below `min_cos`) is listed backwards. The decision is
+taken per sheet, the triangles joined across welded edges they traverse in opposite directions, and a
+sheet turns whole when its area-weighted mean cosine is below `min_cos`. A lone triangle is the plain
+rule; a crease whose smoothed normals point the wrong way inside a consistently wound surface is
+outvoted (the Amethyst geode mouths, boulders). The normals are not always the right side, because a
+lathe points its normals by its profile's direction: a profile running clockwise round its solid has
+inward normals over an outward winding. So the back copy of a two-sided card that kept its front's
+normals keeps its winding (the Grey Moors scrub), as does a closed sheet that already encloses a
+positive signed volume, and an open sheet of a clockwise lathe named in `KEEP_WINDING` (the Whitehorn
+icefall columns, the skep, the Crownwater compass-rose ring); and a level triangle whose winding is in
+question faces up when its material has `water` as a whole word of its name, whatever its normals say
+(fountain and well pools are flat lathes run outward from the axis, the Ssarathi waterfall plunge rings
+clockwise ones). Primitives without normals, non-triangle modes, double-sided materials and unreadable
+accessors are reported and left alone. A reversed triangle has two indices swapped in a new index
+accessor of the same component type, on a new buffer view appended to a new body at a 4-byte boundary;
+untouched primitives keep their accessors, geometry shared by several meshes is corrected once, and the
+result exports through `scene_io.Exporter` as the original does. `winding_report(document, body,
+nodes=None)` measures without correcting, with placed (world) areas over the given node instances.
+
+`content.load` corrects each library document straight after reading it, before the Amberwood camp
+source, part edits, the layout turn, object edits, bounds and grouping, so retained structures,
+natural prototypes, ecological scatter and object-edit copies all read corrected geometry. That costs
+0.3 to 1 s a library, about 7 s for all twelve.
+
+    python winding.py --library <task root>/library [--region R] [--output report.json]
+
+audits the libraries without changing them: per territory the primitives corrected, the triangles
+flipped, their placed area, what was left alone and why, and the meshes with the most flipped area,
+written to `<task root>/experiments/winding-audit/report.json`. Downstream, backwards library `Walk_`
+decks become deck support in the served collision (a closed slab serves its top instead of its
+underside), a colliding solid whose inward-wound part overlapped its outward body blocks that volume
+again (collision_export's winding number had summed to zero inside it), and the atlas draws the roofs
+it used to cull.
