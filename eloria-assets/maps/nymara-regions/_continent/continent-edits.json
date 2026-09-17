@@ -371,9 +371,9 @@
         435.166
       ],
       "translate": [
-        -132.0,
+        -135.0,
         0.0,
-        139.0
+        129.0
       ],
       "yawDegrees": 0,
       "scale": 1
@@ -388,7 +388,7 @@
         430.307
       ],
       "translate": [
-        -132.0,
+        -130.5,
         0.0,
         139.0
       ],
@@ -422,9 +422,9 @@
         537.107
       ],
       "translate": [
-        -132.0,
+        -134.0,
         0.0,
-        139.0
+        138.0
       ],
       "yawDegrees": 0,
       "scale": 1
@@ -2366,7 +2366,469 @@
       ],
       "yawDegrees": 0,
       "scale": 1
+    },
+    {
+      "root": "whitehorn_range_Prop_cairn_0054_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        614.2,
+        192.7,
+        260.7
+      ],
+      "translate": [
+        -43.5,
+        0,
+        125.4
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "whitehorn_range_Prop_cairn_0055_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        623.9,
+        194.9,
+        258.1
+      ],
+      "translate": [
+        -43.5,
+        0,
+        125.4
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "whitehorn_range_Prop_cairn_0060_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        630.3,
+        195.9,
+        205.5
+      ],
+      "translate": [
+        -51.2,
+        0,
+        199.3
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "whitehorn_range_Prop_cairn_0061_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        641.2,
+        196.7,
+        205.7
+      ],
+      "translate": [
+        -45.7,
+        0,
+        204.8
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "whitehorn_range_Prop_cairn_0062_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        634.0,
+        194.9,
+        190.0
+      ],
+      "translate": [
+        -45.7,
+        0,
+        204.8
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "whitehorn_range_Prop_cairn_0113_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        646.1,
+        196.8,
+        202.2
+      ],
+      "translate": [
+        -45.7,
+        0,
+        204.8
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "whitehorn_range_Prop_cairn_0114_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        651.1,
+        195.4,
+        193.7
+      ],
+      "translate": [
+        -39.7,
+        0,
+        207.3
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "whitehorn_range_Prop_cairn_0063_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        633.9,
+        195.0,
+        176.6
+      ],
+      "translate": [
+        -45.7,
+        0,
+        204.8
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "whitehorn_range_Prop_RouteSign3_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        629.1,
+        193.9,
+        183.3
+      ],
+      "translate": [
+        -45.7,
+        0,
+        204.8
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "verdant_stair_Lore_moved_anchor_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        1174.2,
+        18.9,
+        1085.3
+      ],
+      "translate": [
+        0,
+        0,
+        5.0
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "verdant_stair_Walkway_RopeCrossingLow_0_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        1179.9,
+        19.6,
+        1086.7
+      ],
+      "translate": [
+        4.5,
+        0,
+        2.0
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "verdant_stair_Walkway_RootCrossing_1_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        1170.5,
+        18.5,
+        1089.4
+      ],
+      "translate": [
+        -1.0,
+        0,
+        0
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "verdant_stair_Wall_hanging_gardens_18_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        1184.5,
+        19.9,
+        1095.6
+      ],
+      "translate": [
+        -1.0,
+        0,
+        -1.0
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "verdant_stair_Landmark_EastLookout_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        1175.8,
+        25.8,
+        1108.3
+      ],
+      "translate": [
+        2.0,
+        0,
+        2.5
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "verdant_stair_Rail_HangingGardens_2_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        1186.5,
+        21.9,
+        1095.6
+      ],
+      "translate": [
+        -1.0,
+        0,
+        -1.0
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "verdant_stair_Landmark_Crossing_RavineBridge_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        1038.8,
+        105.7,
+        1010.0
+      ],
+      "translate": [
+        0,
+        -11.6,
+        0
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "verdant_stair_Walkway_RavineBridge_0_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        1021.3,
+        108.6,
+        1005.5
+      ],
+      "translate": [
+        0,
+        -12.2,
+        0
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "verdant_stair_Landmark_Crossing_RopeCrossingHigh_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        1205.7,
+        43.6,
+        1122.3
+      ],
+      "translate": [
+        0,
+        -16.5,
+        0
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "westhaven_House_ridge_0_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        110.0,
+        2.1,
+        936.8
+      ],
+      "translate": [
+        56.42,
+        0,
+        -28.9
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "westhaven_Yard_ridge_0_bench_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        107.4,
+        2.1,
+        941.1
+      ],
+      "translate": [
+        55.81,
+        0,
+        -27.9
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "westhaven_Yard_ridge_0_sacks_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        106.0,
+        1.8,
+        927.5
+      ],
+      "translate": [
+        63.4,
+        0,
+        -14.71
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "westhaven_Yard_ridge_0_fence_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        110.0,
+        2.0,
+        933.4
+      ],
+      "translate": [
+        56.42,
+        0,
+        -29.7
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "westhaven_Yard_ridge_1_bench_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        113.1,
+        2.0,
+        927.9
+      ],
+      "translate": [
+        -6.1,
+        0,
+        -14.7
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "sunmane_steppe_Structure_Bridge_00_WorldPlacement",
+      "action": "transform",
+      "pivot": [
+        1155.5,
+        23.1,
+        703.6
+      ],
+      "translate": [
+        -0.5,
+        0,
+        -1.0
+      ],
+      "yawDegrees": 0,
+      "scale": 1
+    },
+    {
+      "root": "mirrorhold_Landmark_Retaining_0_WorldPlacement",
+      "action": "remove"
+    },
+    {
+      "root": "mirrorhold_Landmark_RoadWall_0_WorldPlacement",
+      "action": "remove"
+    },
+    {
+      "root": "mirrorhold_Prop_cistern-yard_bollard_2_WorldPlacement",
+      "action": "remove"
+    },
+    {
+      "root": "mirrorhold_Prop_quarry-shelf_bollard_0_WorldPlacement",
+      "action": "remove"
+    },
+    {
+      "root": "amberwood_Prop_Ruin_038_WorldPlacement",
+      "action": "remove"
+    },
+    {
+      "root": "amberwood_Prop_Brazier_239_WorldPlacement",
+      "action": "remove"
     }
   ],
-  "vegetationAreas": []
+  "vegetationAreas": [
+    {
+      "id": "verdant-boat-03-clearing",
+      "name": "Clearing round the hauled-up Boat_03",
+      "mode": "clear",
+      "kinds": [
+        "tree"
+      ],
+      "polygon": [
+        [
+          1012.0,
+          1150.5
+        ],
+        [
+          1026.0,
+          1150.5
+        ],
+        [
+          1026.0,
+          1161.0
+        ],
+        [
+          1012.0,
+          1161.0
+        ]
+      ]
+    },
+    {
+      "id": "four-gates-sanctuary-clearing",
+      "name": "Clearing round the Northern Sanctuary on its own ground",
+      "mode": "clear",
+      "kinds": [
+        "tree",
+        "undergrowth"
+      ],
+      "polygon": [
+        [
+          248.0,
+          722.0
+        ],
+        [
+          336.0,
+          722.0
+        ],
+        [
+          336.0,
+          782.0
+        ],
+        [
+          248.0,
+          782.0
+        ]
+      ]
+    }
+  ]
 }

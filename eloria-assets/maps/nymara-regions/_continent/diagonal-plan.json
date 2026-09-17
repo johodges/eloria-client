@@ -1611,8 +1611,22 @@
     },
     "amberwood.east-quarry": {
       "center": [
-        630,
-        620
+        630.093,
+        618.4
+      ]
+    },
+    "four_gates.south-gate": {
+      "translation": [
+        529.95,
+        -7.5,
+        806.5
+      ]
+    },
+    "four_gates.sanctuary": {
+      "translation": [
+        406.963,
+        -7.0,
+        919.753
       ]
     }
   },
@@ -2134,6 +2148,606 @@
           ]
         }
       }
+    },
+    {
+      "id": "four-gates-mirrorhold-seam-shoulder",
+      "name": "Four Gates-Mirrorhold seam junction shoulder",
+      "op": "raise",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              646,
+              744
+            ],
+            [
+              668,
+              744
+            ],
+            [
+              668,
+              766
+            ],
+            [
+              646,
+              766
+            ]
+          ]
+        }
+      },
+      "amount": 12,
+      "feather": 10,
+      "strength": 1
+    },
+    {
+      "id": "mirrorhold-gate-descent-hollow",
+      "name": "Mirrorhold north-west gate descent hollow",
+      "op": "lower",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              718,
+              602
+            ],
+            [
+              762,
+              602
+            ],
+            [
+              762,
+              640
+            ],
+            [
+              718,
+              640
+            ]
+          ]
+        }
+      },
+      "amount": 8,
+      "feather": 12,
+      "strength": 1
+    },
+    {
+      "id": "verdant-ravine-bridge-east-abutment",
+      "name": "Ravine bridge east abutment",
+      "op": "flatten",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1051,
+              1008.5
+            ],
+            [
+              1062,
+              1008.5
+            ],
+            [
+              1062,
+              1020.5
+            ],
+            [
+              1051,
+              1020.5
+            ]
+          ]
+        }
+      },
+      "target": 94.6,
+      "feather": 8,
+      "strength": 1
+    },
+    {
+      "id": "verdant-high-rope-crossing-gap",
+      "name": "Gap under the high rope crossing",
+      "op": "lower",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1201.5,
+              1119
+            ],
+            [
+              1209.5,
+              1119
+            ],
+            [
+              1209.5,
+              1133
+            ],
+            [
+              1201.5,
+              1133
+            ]
+          ]
+        }
+      },
+      "amount": 4.5,
+      "feather": 3,
+      "strength": 1
+    },
+    {
+      "id": "amethyst-resonant-cluster-1-seat",
+      "name": "Landmark_ResonantCluster_1 seat",
+      "op": "flatten",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              995.6,
+              219.5
+            ],
+            [
+              1016.2,
+              219.5
+            ],
+            [
+              1016.2,
+              238.1
+            ],
+            [
+              995.6,
+              238.1
+            ]
+          ]
+        }
+      },
+      "target": 14.8,
+      "feather": 6,
+      "strength": 1
+    },
+    {
+      "id": "amethyst-storm-ruin-0-seat",
+      "name": "Landmark_StormRuin_0 seat",
+      "op": "flatten",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1048.2,
+              263.3
+            ],
+            [
+              1064.6,
+              263.3
+            ],
+            [
+              1064.6,
+              275.2
+            ],
+            [
+              1048.2,
+              275.2
+            ]
+          ]
+        }
+      },
+      "target": 4.0,
+      "feather": 6,
+      "strength": 1
+    },
+    {
+      "id": "whitehorn-frozen-cascade-01-backing",
+      "name": "Landmark_frozen_cascade_01 backing (legacy -z side)",
+      "op": "raise",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              499.4,
+              133.6
+            ],
+            [
+              496.1,
+              128.6
+            ],
+            [
+              479.3,
+              140.0
+            ],
+            [
+              482.6,
+              144.9
+            ]
+          ]
+        }
+      },
+      "amount": 8.6,
+      "feather": 4,
+      "strength": 1
+    },
+    {
+      "id": "whitehorn-frozen-cascade-01-seat",
+      "name": "Landmark_frozen_cascade_01 seat",
+      "op": "flatten",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              488.3,
+              144.2
+            ],
+            [
+              500.5,
+              144.2
+            ],
+            [
+              500.5,
+              149.7
+            ],
+            [
+              488.3,
+              149.7
+            ]
+          ]
+        }
+      },
+      "target": 212.9,
+      "feather": 3,
+      "strength": 1
+    },
+    {
+      "id": "verdant-water-shrine-seat",
+      "name": "Landmark_WaterShrine seat",
+      "op": "flatten",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1155.7,
+              1030.1
+            ],
+            [
+              1177.7,
+              1030.1
+            ],
+            [
+              1177.7,
+              1052.2
+            ],
+            [
+              1155.7,
+              1052.2
+            ]
+          ]
+        }
+      },
+      "target": 24.2,
+      "feather": 6,
+      "strength": 1
+    },
+    {
+      "id": "verdant-orchid-terrace-arcade-seat",
+      "name": "Arcade_OrchidTerrace seat",
+      "op": "flatten",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1148.4,
+              1019.5
+            ],
+            [
+              1163.3,
+              1019.5
+            ],
+            [
+              1163.3,
+              1034.4
+            ],
+            [
+              1148.4,
+              1034.4
+            ]
+          ]
+        }
+      },
+      "target": 22.0,
+      "feather": 6,
+      "strength": 1
+    },
+    {
+      "id": "verdant-summit-watch-seat",
+      "name": "Landmark_SummitWatch and its arcade seat",
+      "op": "flatten",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1213.2,
+              955.2
+            ],
+            [
+              1235.2,
+              955.2
+            ],
+            [
+              1235.2,
+              977.2
+            ],
+            [
+              1213.2,
+              977.2
+            ]
+          ]
+        }
+      },
+      "target": 27.9,
+      "feather": 6,
+      "strength": 1
+    },
+    {
+      "id": "verdant-ridge-shrine-arcade-seat",
+      "name": "Arcade_RidgeShrine seat",
+      "op": "flatten",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1255.6,
+              1015.3
+            ],
+            [
+              1266.5,
+              1015.3
+            ],
+            [
+              1266.5,
+              1030.2
+            ],
+            [
+              1255.6,
+              1030.2
+            ]
+          ]
+        }
+      },
+      "target": 28.8,
+      "feather": 3,
+      "strength": 1
+    },
+    {
+      "id": "verdant-middle-market-arcade-seat",
+      "name": "Arcade_MiddleMarket seat",
+      "op": "flatten",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1132.6,
+              1073.2
+            ],
+            [
+              1154.7,
+              1073.2
+            ],
+            [
+              1154.7,
+              1095.3
+            ],
+            [
+              1132.6,
+              1095.3
+            ]
+          ]
+        }
+      },
+      "target": 53.1,
+      "feather": 6,
+      "strength": 1
+    },
+    {
+      "id": "ssarathi-fall-gorge-1",
+      "name": "Waterfall_east gorge, step 1",
+      "op": "lower",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1234,
+              1334
+            ],
+            [
+              1270,
+              1334
+            ],
+            [
+              1270,
+              1373
+            ],
+            [
+              1234,
+              1373
+            ]
+          ]
+        }
+      },
+      "amount": 4.5,
+      "feather": 14,
+      "strength": 1
+    },
+    {
+      "id": "ssarathi-fall-gorge-2",
+      "name": "Waterfall_east gorge, step 2",
+      "op": "lower",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1234,
+              1334
+            ],
+            [
+              1270,
+              1334
+            ],
+            [
+              1270,
+              1384
+            ],
+            [
+              1234,
+              1384
+            ]
+          ]
+        }
+      },
+      "amount": 4.5,
+      "feather": 14,
+      "strength": 1
+    },
+    {
+      "id": "ssarathi-fall-gorge-3",
+      "name": "Waterfall_east gorge, step 3",
+      "op": "lower",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1234,
+              1334
+            ],
+            [
+              1270,
+              1334
+            ],
+            [
+              1270,
+              1395
+            ],
+            [
+              1234,
+              1395
+            ]
+          ]
+        }
+      },
+      "amount": 4.5,
+      "feather": 14,
+      "strength": 1
+    },
+    {
+      "id": "ssarathi-fall-gorge-4",
+      "name": "Waterfall_east gorge, step 4",
+      "op": "lower",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1234,
+              1334
+            ],
+            [
+              1270,
+              1334
+            ],
+            [
+              1270,
+              1406
+            ],
+            [
+              1234,
+              1406
+            ]
+          ]
+        }
+      },
+      "amount": 4.5,
+      "feather": 14,
+      "strength": 1
+    },
+    {
+      "id": "ssarathi-fall-gorge-5",
+      "name": "Waterfall_east gorge, step 5",
+      "op": "lower",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1234,
+              1334
+            ],
+            [
+              1270,
+              1334
+            ],
+            [
+              1270,
+              1417
+            ],
+            [
+              1234,
+              1417
+            ]
+          ]
+        }
+      },
+      "amount": 4.5,
+      "feather": 14,
+      "strength": 1
+    },
+    {
+      "id": "ssarathi-fall-gorge-6",
+      "name": "Waterfall_east gorge, step 6",
+      "op": "lower",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1234,
+              1334
+            ],
+            [
+              1270,
+              1334
+            ],
+            [
+              1270,
+              1428
+            ],
+            [
+              1234,
+              1428
+            ]
+          ]
+        }
+      },
+      "amount": 4.5,
+      "feather": 14,
+      "strength": 1
+    },
+    {
+      "id": "ssarathi-fall-pool",
+      "name": "Waterfall_east pool floor",
+      "op": "flatten",
+      "shape": {
+        "polygon": {
+          "points": [
+            [
+              1234,
+              1332
+            ],
+            [
+              1270,
+              1332
+            ],
+            [
+              1270,
+              1366
+            ],
+            [
+              1234,
+              1366
+            ]
+          ]
+        }
+      },
+      "target": 0.0,
+      "feather": 10,
+      "strength": 1
     }
   ],
   "retained_attachments": {
@@ -2201,6 +2815,55 @@
       {
         "node": "Landmark_EastCamp",
         "radius": 0
+      },
+      {
+        "node": "Landmark_frozen_cascade_01",
+        "radius": 0
+      },
+      {
+        "node": "Prop_cairn_0054",
+        "radius": 1.0,
+        "feather": 2.5
+      },
+      {
+        "node": "Prop_cairn_0055",
+        "radius": 1.0,
+        "feather": 2.5
+      },
+      {
+        "node": "Prop_cairn_0060",
+        "radius": 1.0,
+        "feather": 2.5
+      },
+      {
+        "node": "Prop_cairn_0061",
+        "radius": 1.0,
+        "feather": 2.5
+      },
+      {
+        "node": "Prop_cairn_0062",
+        "radius": 1.0,
+        "feather": 2.5
+      },
+      {
+        "node": "Prop_cairn_0063",
+        "radius": 1.0,
+        "feather": 2.5
+      },
+      {
+        "node": "Prop_cairn_0113",
+        "radius": 1.0,
+        "feather": 2.5
+      },
+      {
+        "node": "Prop_cairn_0114",
+        "radius": 1.0,
+        "feather": 2.5
+      },
+      {
+        "node": "Prop_RouteSign3",
+        "radius": 1.0,
+        "feather": 2.5
       }
     ],
     "amberwood": [
@@ -2210,6 +2873,50 @@
       },
       {
         "node": "Landmark_Watchtower_0",
+        "radius": 0
+      }
+    ],
+    "verdant_stair": [
+      {
+        "node": "Landmark_Crossing_RavineBridge",
+        "radius": 0
+      },
+      {
+        "node": "Landmark_Crossing_RopeCrossingHigh",
+        "radius": 0
+      },
+      {
+        "node": "Landmark_WaterShrine",
+        "radius": 0
+      },
+      {
+        "node": "Arcade_OrchidTerrace",
+        "radius": 0
+      },
+      {
+        "node": "Landmark_SummitWatch",
+        "radius": 0
+      },
+      {
+        "node": "Arcade_SummitWatch",
+        "radius": 0
+      },
+      {
+        "node": "Arcade_RidgeShrine",
+        "radius": 0
+      },
+      {
+        "node": "Arcade_MiddleMarket",
+        "radius": 0
+      }
+    ],
+    "amethyst_barrens": [
+      {
+        "node": "Landmark_ResonantCluster_1",
+        "radius": 0
+      },
+      {
+        "node": "Landmark_StormRuin_0",
         "radius": 0
       }
     ]
@@ -2311,6 +3018,13 @@
         0.0,
         -10.54,
         0.0
+      ]
+    },
+    "sunmane_steppe.encampment": {
+      "Gate_North": [
+        0.0,
+        0.0,
+        -1.0
       ]
     }
   }
