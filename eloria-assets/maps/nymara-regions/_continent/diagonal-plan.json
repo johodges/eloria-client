@@ -4837,6 +4837,20 @@
       "record": "maps.txt:775:door:grey_moors->amberwood_secrets",
       "reason": "The undercut mouth door 775, its return maps.txt:778 and interactive 512 share authored tile [342, 332]: the mouth stands in a 4-tile pocket at 147 m on a 45-degree face below Tower 4 that the seventeenth landform left unreachable (the sixteenth seated it in place). Round-four trail designs failed: the barrow lowland's 8 m step to the Barrow 4 terrace has 7-9 m of room between Barrow 1, the barrow well and the lowland's only connection strip, and the 15 m face above has no bench to turn on. Relocation found no bank nearer than 38 m. Pinned at the foot of the slope straight below the mouth (33.6 m, 28 m lower), where its discovery trail already starts, 7 m east of the barrow well door. Its roads stay on the entrance (\"roads\": \"entrance\"): routed to this pin the discovery trail vanished and the Grey Moors roads settled differently, cutting 49 barrow-country records off (bake 9).",
       "roads": "entrance"
+    },
+    {
+      "region": "amberwood",
+      "tile": [
+        403,
+        406
+      ],
+      "point": [
+        459.5,
+        612.5
+      ],
+      "record": "spawn_groups/invasion/invasion_nymara.def",
+      "roads": "entrance",
+      "reason": "One of five invasion spawn points of a single wave cluster, authored within 5 tiles of each other ([401, 401], [403, 403], [405, 401], [403, 406], [406, 404]) and served together on one tile by the sixteenth publication. On the seventeenth composition this point follows a different retained anchor than the other four and lands 169 m north-east of them (expected (581.5, 492.9), beyond its 80 m budget of the cluster), so the placement split the shared tile, which the publication rebase keyed by served tile cannot express. Pinned with its cluster on the tile the other four share."
     }
   ],
   "access_decks": [
