@@ -5,27 +5,32 @@ exported. X runs east, Z runs south, and sea level is Y = 0. Named territories
 are server and content identities. Their boundaries do not determine the
 height, water level, ground colour, or vegetation of the landscape.
 
-**QA state: verified for the sixteenth publication (2026-09-15).** Master
+**QA state: the served world is the verified sixteenth publication (2026-09-15); the
+sources are ahead of it and unpublished.** Master
 `c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112`, publication
 `48afa1ed52fa6dc1737d2107660bf55601001b4c79c0d9750b15b1e09044eb5e`
-(`work-output/diagonal-continent/after/sixteenth-freeze.json`). On these bytes the
+(`work-output/diagonal-continent/after/sixteenth-freeze.json`). On those bytes the
 strict contracts passed with 0 failures over 3,660 placements, the full audit
 passed and verified the publication, the 24 primary, 9 supplement and 2 atlas
-gameplay views were captured with the published registry and no overrides
-(`final-review/`, `final-repairs/`), and the seven native loopback suites
-walked 240 routes with 0 failures on a real server (`after/live-walk/
-final-live-summary.json`). Known limitations are listed in
-`STATUS-2026-09-13-takeover.md`: road cores steeper than 0.65 in settlement
-feathers and pinned city footings that the server routes around (the station
-terrain terms are on in five wild territories and held at zero in the seven
-whose sites are tuned around the former alignments), 7 alignments
-through compact retained solids inside camp furniture no pin can avoid, the
-Great Tree village yard and root plateau served by no hub-connected ground
-(the root ramp waits for a yard approach), 51 floating road runs reported and
-not decked, twelve decorative hulls resting across a slope with no water
-within 12 m, and ramp heads meeting banks with angular facets. Any later
-change to a shaping or export source returns this notice to provisional until
-the same chain is repeated.
+gameplay views were captured with the published registry and no overrides, and
+the seven native loopback suites walked 240 routes with 0 failures on a real
+server. Known limitations of that publication are listed in
+`STATUS-2026-09-13-takeover.md`.
+
+The sources merged since the sixteenth carry the Whitehorn Range redesign (a
+turned and squeezed retained layout on a masked legacy relief, the Hornwater
+gorge, the mountain village, the glacier temple compound), the roads pass R1
+(bridges at the locally shortest crossings, bank setbacks, earthworks within 4 m
+of cut and 3 m of fill, no floating roads outside named decks), the asset passes
+A1/A2, the winding correction, the plan editor's pipeline pieces (terrain edits,
+now with ramps; object edits; progress and freshness) and content transforms
+published as an exact affine. They are not yet publishable: the first contracts
+run on them (2026-09-17) refused 532 placements, cut off from their arrivals by
+roads steeper than the walkable grade and by the redesigned relief. The
+seventeenth publication (terrain reach links, bridge landing and walkway fixes,
+walkable roads) continues on `feature/diagonal-continent`
+(`work-output/diagonal-continent/experiments/contracts-17/REPORT.md`); until it
+passes, a compose of these sources is a design preview, not a publication.
 
 `diagonal-plan.json` describes the coast, connected mountain chain, river
 catchments, islands, territory centres, and placement controls. `landscape.py`
