@@ -34,7 +34,7 @@ from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
 from build_progress import Progress
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py')
 
 
 EMPTY_SHA256=hashlib.sha256(b'').hexdigest()
@@ -127,6 +127,9 @@ def prepare(library,output):
     prepare_grey_crossings(world,content)
     from four_gates_sage import prepare_four_gates_sage,refresh_four_gates_sage_heights
     prepare_four_gates_sage(world,content)
+    # Records the plan relocates to reachable ground (a door on a cliff face) are pinned before any road seeks them.
+    from authored_points import prepare_authored_points,refresh_authored_point_heights
+    prepare_authored_points(world,content)
     from door_approaches import prepare_door_approaches,door_road_end,door_road_end_near,server_road_end,door_road_waypoints,seam_road_waypoints,route_in_legs,validate_river_setbacks,SERVER_ROAD_END_LEG_METRES
     prepare_door_approaches(world,content)
     from crown_support import apply_crown_support
@@ -292,6 +295,11 @@ def prepare(library,output):
     from ssarathi_bank_support import apply_ssarathi_banks
     apply_ssarathi_banks(world,content)
     finish_mirror_lake_support(world,content)
+    # Reach links are written on the finished ground: the roads are settled and the supports done, so nothing
+    # grades them again; road heights and placements follow them below.
+    from reach_links import apply_reach_links
+    reach=apply_reach_links(world,content)
+    if reach['links']:print(f"Reach links: {reach['links']} written on the finished ground ({reach['changedCells']} cells changed, up to {reach['maximumChangeMetres']} m)",flush=True)
     world.water=L.water_fields(world.gx,world.gz,height=world.height,plan=world.plan)
     # The support stages have finished the ground: every road station stands on it again (bridges excepted).
     world.refresh_road_heights()
@@ -305,6 +313,7 @@ def prepare(library,output):
     refresh_amberwood_access_heights(world,content)
     refresh_grey_crossing_heights(world,content)
     refresh_four_gates_sage_heights(world,content)
+    refresh_authored_point_heights(world,content)
     content.ecological_scatter()
     if any(digest(HERE/name)!=sha for name,sha in shaping.items()):
         raise ValueError('Landscape shaping source changed during composition; run prepare again')
@@ -321,7 +330,7 @@ def prepare(library,output):
         'objects':len(content.objects),'roads':len(world.roads),'assemblies':content.assembly_records,
         'mirrorLakeSupport':world.mirror_lake_support,'ssarathiBankSupport':world.ssarathi_bank_support,
         'manymouthBoats':world.manymouth_boats,'greyCrossings':world.grey_crossings,'fourGatesSage':world.four_gates_sage,
-        'doorApproaches':world.door_approaches,'hullSettle':world.hull_settle,'roadGradingPasses':world.road_grading_passes,'resourceTrails':world.resource_trails,
+        'doorApproaches':world.door_approaches,'reachLinks':getattr(world,'reach_links',{'links':0,'perLink':[]}),'authoredPoints':getattr(world,'authored_points',{'points':[]}),'hullSettle':world.hull_settle,'roadGradingPasses':world.road_grading_passes,'resourceTrails':world.resource_trails,
         'riverCrossings':crossing_report(world),'movedSeamCrossings':getattr(world,'moved_seam_crossings',[]),'dryRoadEnds':getattr(world,'dry_road_ends',[]),
         'routing':{**world.routing_report(),'solidCrossings':world.road_solid_crossings},
         'elapsedSeconds':round(time.monotonic()-started,2)})

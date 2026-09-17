@@ -88,6 +88,8 @@ Use these source responsibilities when changing the world:
 | `object_edits.py`, `continent-edits.json` | Authored object edits from the continent plan editor: retained placements removed before grouping, rotated/scaled on their source roots and moved on their shift before footings and routing; copies cloned into their own territory's document with their own footing and collision identity; vegetation areas that clear or thin ecological scatter without renumbering anything outside them. `python object_edits.py --library <library>` checks the file before composing. |
 | `door_approaches.py` | Authored road ends for doors inside retained pavilions (the Shrine of the Nine Lost on the South Quay), shared by the server-declared discovery branch to the same door, so the road meets the pavilion's open side and no deck is built onto its threshold. Every authored road end, server road end and seam or door waypoint is checked dry and outside the river setback before routing (`validate_river_setbacks`). |
 | `river_crossings.py` | River crossing sites: every plan river cut in cross sections, the locally shortest square reaches with dry landings offered as candidates and claimed by the roads that cross them, at least 100 m apart along a river; river setbacks, dry road ends and branch starts (see "Roads and rivers"). |
+| `reach_links.py` | The plan's `reach_links`: authored ground (the terrain edit shapes and ops) written onto the finished composition after the roads and the support stages, so served ground the arrival cannot reach is joined to it and nothing grades the link again; never on a river centreline or a rigid compound (see "Reach links"). |
+| `authored_points.py` | The plan's `authored_points`: a server record (a secret door, its return, its interactive) pinned by its authored tile to open ground beside an entrance no served ground reaches, as `four_gates_sage.py` pins the Sage; the placer still resolves standing ground within the record's budget, and door roads route to the pin. |
 | `winding.py` | Library triangles wound against their own vertex normals, reversed per sheet in a private copy of each library document as `content.load` reads it, before any bounds, grouping, turn or edit (see "Inverted winding in retained library meshes"). |
 | `crossing_contracts.py` | Contracts-stage declaration of each continental bridge floor's two standing points from the served collision fold, with every floor's walkable parts reported; each declaration names the crossing site its floor serves. |
 | `ferry_export.py`, `ferry_support.py` | Actual quay/boat fit and preservation of its complete shoreline footprint through road grading. |
@@ -354,7 +356,7 @@ shaping modules (`landscape`, `world_layout`, `content`, `assemblies`,
 `amberwood_support`, `amberwood_access`, `mirror_lake_support`,
 `ssarathi_bank_support`, `manymouth_boats`, `terrain_export`, `scene_io`,
 `grey_crossings`, `four_gates_sage`, `door_approaches`, `hull_settle`, `resource_trails`, `object_edits`,
-`winding`, `river_crossings`),
+`winding`, `river_crossings`, `reach_links`, `authored_points`),
 the object edits file `continent-edits.json` (absent means no edits),
 the composition algorithm, the authoritative
 entrance profile and each retained library certificate. A changed source must
@@ -541,6 +543,31 @@ relief source's crop rectangle, in the order `x0z0`, `x1z0`, `x1z1`, `x0z1`,
 carried by that source's own translation and squeeze (the whole sampled extent
 when it declares no `crop`). The plan editor draws that polygon instead of
 repeating the retained transform's arithmetic.
+
+## Reach links
+
+The contracts refuse a placement the served walk grid cannot reach from its territory's arrival, and served ground is
+walkable only at a grade of .65 or less. Where a band of steeper ground cuts an area off, `diagonal-plan.json` may
+carry `reach_links`: entries in exactly the terrain edit format above (`ramp`, `flatten`, `raise`, `lower`, with
+`feather` and `strength`, checked by `reach_links.validate_reach_links`). Unlike a terrain edit, which shapes the
+modelled ground before the foundations and the roads (so a road that re-routes onto its gentle ground, or a footing
+feather, grades it again), a reach link is written by `reach_links.apply_reach_links` once the roads are settled and
+the support stages have finished the ground; the road heights are refreshed onto it and the placements regrounded on
+it afterwards, and nothing else moves it. A link whose weight reaches a river's centreline, or the footprint of a
+member of a rigid compound (which reground does not move), is refused. The composition records every link's changed
+cells (`composition.json` `reachLinks`). Links are designed against the served walk grid of the previous composition;
+because they do not change the routing, that prediction holds.
+
+## Authored points
+
+Some records stand where no served ground can reach them however the ground is linked: a secret door on a cliff face or
+a tower wall, a return inside a building's box. `diagonal-plan.json` may pin such a record in `authored_points`:
+`{"region", "tile": [x, y], "point": [x, z], "record", "reason"}`, where `tile` is the record's tile in the authored
+server profile (the contracts report's `oldTile`) and `point` is open ground beside the entrance in continent metres.
+`authored_points.prepare_authored_points` pins them before any road is routed (inside the territory and on dry ground,
+or the composition stops), exactly as the Four Gates Sage records are pinned; the placer still resolves each pin to
+standing ground within the record's own displacement budget, and `refresh_authored_point_heights` reads the heights
+from the finished ground after the reach links. The composition records them (`composition.json` `authoredPoints`).
 
 ## Build progress and composition freshness
 

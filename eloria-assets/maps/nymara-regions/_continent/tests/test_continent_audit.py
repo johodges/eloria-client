@@ -120,7 +120,7 @@ class ProvisionalExportTests(unittest.TestCase):
         plan={'bounds':[0,0,4,4],'regions':[{'id':'west','center':[1,2]},{'id':'east','center':[3,2]}]}
         write(continent/'diagonal-plan.json',plan);plan_sha=digest(continent/'diagonal-plan.json')
         sources={}
-        for name in ('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py'):
+        for name in ('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py'):
             path=continent/name;path.write_text(f'# fixture {name}\n')
             sources[path.relative_to(client).as_posix()]=digest(path)
         builder=continent/'build_continent.py'
@@ -186,7 +186,7 @@ class ProvisionalExportTests(unittest.TestCase):
             self.assertTrue(any('Streaming chunks: 1 missing' in error for error in result['errors']),result['errors'])
 
     def test_shaping_and_composition_algorithm_freshness_are_required_in_provisional_mode(self):
-        for name in ('assemblies.py','crown_support.py','westhaven_support.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','build_continent.py','legacy-server-profile/config/eloria/maps.txt','continent-edits.json'):
+        for name in ('assemblies.py','crown_support.py','westhaven_support.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','build_continent.py','legacy-server-profile/config/eloria/maps.txt','continent-edits.json'):
             with self.subTest(name=name),tempfile.TemporaryDirectory() as tmp:
                 root=Path(tmp);client,generated,base=self.fixture(root)
                 path=base/'_continent'/name
