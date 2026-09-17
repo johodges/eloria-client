@@ -559,8 +559,13 @@ member of a rigid compound (which reground does not move), is refused; a member 
 walkway or platform) holds none, and a tree member holds only the three metres round its trunk. Outside the links'
 bands the linked ground is then smoothed (`smooth_link_change`): no two neighbouring 2 m cells differ by more than
 `WALL_METRES` (4 m), or by the ground's own step plus a metre where it was already steeper, so a deep cut or fill on a
-steep face ends as a broader terrace instead of a wall; the bands, the river centrelines and the ground under compound
-members keep their heights. The composition records every link's changed cells and the smoothing
+steep face ends as a broader terrace instead of a wall. The smoothing moves only ground too steep to walk: the bands,
+every corner of a triangle gentle enough to carry walking (`WALKABLE_GRADE`), the river centrelines and the ground under
+compound members keep their heights, so it never takes reach away. Where that fixed ground leaves no room for 4 m (a
+switchback's crowded legs), the allowed wall grows by half again pass by pass and the fall is shared out as evenly as it
+can be; a step between two fixed cells stays, and the report counts the walls left (`wallsLeft`,
+`tallestWallLeftMetres`). Walls between crowded legs are a design matter: space the legs further apart. The
+composition records every link's changed cells and the smoothing
 (`composition.json` `reachLinks`). Links are designed against the served walk grid of the previous composition;
 because they do not change the routing, that prediction holds.
 

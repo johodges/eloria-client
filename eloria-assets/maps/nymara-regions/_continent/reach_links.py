@@ -11,6 +11,7 @@ drainage made them) and never moves the ground under a rigid compound's member b
 does not move compound members; a tree member's ground is the three metres round its trunk, not its canopy's box).
 Outside the links' bands the linked ground is smoothed (smooth_link_change): no two neighbouring 2 m cells differ by
 more than WALL_METRES, or than the ground before did, so a deep cut or fill on a steep face ends as a broader terrace.
+The smoothing moves only ground too steep to walk: every corner of a walkable triangle keeps its linked height.
 """
 from __future__ import annotations
 
@@ -95,6 +96,27 @@ def compound_contacts(world, content, change):
 
 WALL_METRES = 4.   # outside a link's band no two neighbouring 2 m cells differ by more than this, or than the natural ground did
 CATCH_UP_METRES = 1.   # plus this: where the natural ground is steeper, a cut or fill still closes on it by a metre a cell
+# A triangle of the linked ground this gentle may carry served walking (collision_export.MAX_GRADE is .65, and a
+# margin): the smoothing never moves its corners, so it cannot take walkable ground or a connection away.
+WALKABLE_GRADE = .7
+WALL_GROWTH = 1.5   # where the fixed ground leaves no room for WALL_METRES, each further pass allows half again
+WALL_PASSES = 9     # 4 m up to about 100 m; a cell no pass can place keeps the linked ground
+
+
+def _walk_corners(height, cell, grade=WALKABLE_GRADE):
+    """Grid nodes that are corners of a triangle no steeper than ``grade``, on the composed grid's own triangulation
+    (collision_export.terrain_grade: each cell splits into its (a, b, c) and (b, c, d) triangles)."""
+    height = np.asarray(height, dtype=float)
+    a, b = height[:-1, :-1], height[:-1, 1:]
+    c, d = height[1:, :-1], height[1:, 1:]
+    lower = np.hypot(b - a, c - a) / cell <= grade
+    upper = np.hypot(d - c, d - b) / cell <= grade
+    corners = np.zeros(height.shape, bool)
+    corners[:-1, :-1] |= lower
+    corners[:-1, 1:] |= lower | upper
+    corners[1:, :-1] |= lower | upper
+    corners[1:, 1:] |= upper
+    return corners
 
 
 def _river_cells(plan, x0, z0, cell, shape):
@@ -149,13 +171,17 @@ def _envelope(values, wall_x, wall_z, upper):
 def smooth_link_change(gx, gz, before, after, links, plan, content=None, wall=WALL_METRES):
     """(ground, report): the linked ground with no new walls. Outside the links' bands, neighbouring 2 m cells may
     differ by at most ``wall`` metres, or by what the ground before the links did plus CATCH_UP_METRES where it was
-    steeper. A band keeps its surface exactly; river centreline cells and the ground under rigid compound members
-    keep the ground before the links; a deeper cut or fill is carried outward, so it ends as a broader terrace
-    instead of a wall. Where bands leave no room for that (a hairpin's crowded legs), the linked ground stays as the
-    links made it and the report counts the cells."""
+    steeper. A band keeps its surface exactly, and so does every corner of a walkable triangle (_walk_corners): the
+    smoothing reshapes only ground too steep to walk, so it never takes a walkable cell or a connection away. River
+    centreline cells and the ground under rigid compound members keep the ground before the links; a deeper cut or
+    fill is carried outward through the steep ground, so it ends as a broader terrace instead of a wall. Where the
+    fixed ground leaves no room for ``wall`` (a hairpin's crowded legs), the wall grows by half again pass by pass
+    (WALL_GROWTH, WALL_PASSES), so the fall is shared out as evenly as the fixed ground allows; a step between two
+    fixed cells stays as the links made it. The report counts the widened and relaxed cells and the walls left."""
     from scipy.ndimage import binary_dilation, find_objects, label
     before = np.asarray(before, dtype=float); after = np.asarray(after, dtype=float)
-    report = {'wallMetres': wall, 'widenedCells': 0, 'crowdedCells': 0}
+    report = {'wallMetres': wall, 'widenedCells': 0, 'relaxedCells': 0, 'unplacedCells': 0, 'wallsLeft': 0,
+              'tallestWallLeftMetres': 0.}
     touched = np.abs(after - before) > 1e-6
     if not touched.any():
         return after.copy(), report
@@ -166,6 +192,7 @@ def smooth_link_change(gx, gz, before, after, links, plan, content=None, wall=WA
     margin = int(np.ceil(float(np.abs(after - before).max()) / CATCH_UP_METRES)) + 3
     groups, _ = label(binary_dilation(touched | core, iterations=margin))
     anchors = None
+    walk = _walk_corners(after, cell)
     result = after.copy()
     for window in find_objects(groups):
         if window is None:
@@ -173,20 +200,35 @@ def smooth_link_change(gx, gz, before, after, links, plan, content=None, wall=WA
         if anchors is None:
             anchors = _river_cells(plan, x0, z0, cell, gx.shape) | _compound_cells(gx, gz, content)
         h0, h1, k = before[window], after[window], core[window]
-        fixed = k | (anchors[window] & ~k)
-        target = np.where(k, h1, h0)
-        wall_x = np.maximum(wall, np.abs(np.diff(h0, axis=1)) + CATCH_UP_METRES)
-        wall_z = np.maximum(wall, np.abs(np.diff(h0, axis=0)) + CATCH_UP_METRES)
-        # The linked ground made wall-bounded on its own (the mean of its smallest majorant and largest minorant),
-        # then held to the bands' surfaces and the anchors' ground: min and max of wall-bounded fields stay bounded.
-        regular = .5 * (_envelope(h1, wall_x, wall_z, False) + _envelope(h1, wall_x, wall_z, True))
-        upper = _envelope(np.where(fixed, target, np.inf), wall_x, wall_z, True)
-        lower = _envelope(np.where(fixed, target, -np.inf), wall_x, wall_z, False)
-        feasible = lower <= upper + 1e-9
-        smoothed = np.where(feasible, np.clip(regular, lower, upper), h1)
-        smoothed[k] = h1[k]
+        anchored = anchors[window] & ~k & ~walk[window]
+        placed = k | walk[window] | anchored
+        smoothed = np.where(anchored, h0, h1)
+        natural_x = np.abs(np.diff(h0, axis=1)) + CATCH_UP_METRES
+        natural_z = np.abs(np.diff(h0, axis=0)) + CATCH_UP_METRES
+        for step in range(WALL_PASSES):
+            limit = wall * WALL_GROWTH ** step
+            wall_x, wall_z = np.maximum(limit, natural_x), np.maximum(limit, natural_z)
+            # The linked ground made wall-bounded on its own (the mean of its smallest majorant and largest minorant),
+            # held between the cones of the placed cells: min and max of wall-bounded fields stay wall-bounded, so
+            # every cell a pass places keeps its wall to its neighbours placed by that pass or before it.
+            regular = .5 * (_envelope(h1, wall_x, wall_z, False) + _envelope(h1, wall_x, wall_z, True))
+            upper = _envelope(np.where(placed, smoothed, np.inf), wall_x, wall_z, True)
+            lower = _envelope(np.where(placed, smoothed, -np.inf), wall_x, wall_z, False)
+            room = ~placed & (lower <= upper + 1e-9)
+            smoothed = np.where(room, np.clip(regular, lower, upper), smoothed)
+            if step:
+                report['relaxedCells'] += int(np.count_nonzero(room & (np.abs(smoothed - h1) > .01)))
+            placed |= room
+            if placed.all():
+                break
+        report['unplacedCells'] += int(np.count_nonzero(~placed))
         report['widenedCells'] += int(np.count_nonzero(np.abs(smoothed - h1) > .01))
-        report['crowdedCells'] += int(np.count_nonzero(~feasible & (np.abs(h1 - h0) > .01)))
+        for axis, natural in ((1, natural_x), (0, natural_z)):
+            steps = np.abs(np.diff(smoothed, axis=axis))
+            free = ~(k[:, 1:] & k[:, :-1]) if axis == 1 else ~(k[1:, :] & k[:-1, :])   # a band's own steps are its surface
+            left = free & (steps > np.maximum(wall, natural) + .01)
+            report['wallsLeft'] += int(np.count_nonzero(left))
+            report['tallestWallLeftMetres'] = round(max(report['tallestWallLeftMetres'], float(steps[left].max(initial=0.))), 3)
         result[window] = smoothed
     return result, report
 

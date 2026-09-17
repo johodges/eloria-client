@@ -75,6 +75,42 @@ class ApplyTests(unittest.TestCase):
         np.testing.assert_array_equal(steep.height[band], hard[band])
         self.assertGreater(report['smoothing']['widenedCells'], 0)
 
+    def test_smoothing_never_moves_ground_that_can_carry_walking(self):
+        w = world({})
+        w.height = np.where(w.gx < 60., 10., 10. + (w.gx - 60.) * 1.5)   # a walkable meadow west, a steep face east
+        cut = {'id': 'pit', 'op': 'flatten', 'shape': {'circle': {'center': [60., 40.], 'radius': 6.}}, 'target': 2.,
+               'feather': 1., 'strength': 1}
+        w.plan = {'reach_links': [cut]}
+        linked = L._terrain_edit_height(w.gx, w.gz, w.height.copy(), {'terrain_edits': [cut]})
+        walk = R._walk_corners(linked, 2.)
+        report = R.apply_reach_links(w)
+        np.testing.assert_array_equal(w.height[walk], linked[walk])
+        self.assertTrue(R._walk_corners(w.height, 2.)[walk].all())
+        smoothing = report['smoothing']
+        self.assertGreater(smoothing['widenedCells'], 0)        # the steep face east of the pit is terraced
+        self.assertGreater(smoothing['wallsLeft'], 0)           # the pit's wall beside the meadow stays
+        self.assertGreater(smoothing['tallestWallLeftMetres'], R.WALL_METRES)
+
+    def test_crowded_legs_share_the_fall_between_them(self):
+        w = world({})
+        w.height = 10. + w.gz * 2.5                     # a steep face, 5 m between rows
+        low = {'id': 'leg-1', 'op': 'ramp', 'shape': {'polyline': {'points': [[10., 30.], [110., 30.]], 'width': 4.}},
+               'heights': [85., 85.], 'feather': 1., 'strength': 1}
+        high = dict(low, id='leg-2', shape={'polyline': {'points': [[10., 40.], [110., 40.]], 'width': 4.}}, heights=[105., 105.])
+        w.plan = {'reach_links': [low, high]}
+        linked = L._terrain_edit_height(w.gx, w.gz, w.height.copy(), {'terrain_edits': [low, high]})
+        walk = R._walk_corners(linked, 2.)
+        report = R.apply_reach_links(w)
+        # 20 m between the band edges (rows 16 and 19) cannot fit the natural 5 m + 1 m a row: the passes share it out.
+        raw_steps = np.abs(np.diff(linked[16:20, 5:56], axis=0))
+        steps = np.abs(np.diff(w.height[16:20, 5:56], axis=0))
+        self.assertGreater(float(raw_steps.max()), 9.)
+        self.assertLessEqual(float(steps.max()), R.WALL_METRES * R.WALL_GROWTH ** 2 + 1e-9)
+        np.testing.assert_allclose(steps.sum(axis=0), 20.)
+        np.testing.assert_array_equal(w.height[walk], linked[walk])
+        self.assertGreater(report['smoothing']['relaxedCells'], 0)
+        self.assertEqual(report['smoothing']['unplacedCells'], 0)
+
     def test_smoothing_leaves_river_centrelines_and_compound_ground_unchanged(self):
         plan = {'reach_links': [RAMP], 'rivers': [{'id': 'brook', 'points': [[20., 62.], [80., 62.]]}]}
         w = world(plan)
