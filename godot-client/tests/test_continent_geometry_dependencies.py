@@ -13,6 +13,21 @@ import rebuild_continent_geography as R
 
 
 class ContinentGeometryDependencyTests(unittest.TestCase):
+    def test_shared_continent_rebuild_guard_precedes_all_legacy_stages(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            regions = root / 'regions'
+            regions.mkdir()
+            (regions / 'continent-geography.json').write_text(json.dumps({'geometryMode': 'continent-chunks-v1'}))
+            artifacts = root / 'artifacts'
+            arguments = ['rebuild_continent_geography.py', '--server', str(root/'server'),
+                         '--data', str(root/'maps'), '--artifacts', str(artifacts)]
+            with patch.object(R, 'REGIONS', regions), patch.object(sys, 'argv', arguments), patch.object(R, 'geometry') as build:
+                with self.assertRaisesRegex(SystemExit, 'build_pipeline.py'):
+                    R.main()
+                build.assert_not_called()
+            self.assertFalse(artifacts.exists())
+
     def test_new_dependency_absent_from_old_certificate_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

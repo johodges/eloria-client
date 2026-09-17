@@ -59,6 +59,9 @@ var connection_state := "disconnected"
 var authenticated := false
 var local_actor_id := -1
 var current_map := ""
+## The land neighbours of the current map by the handle their actors' packets
+## carry in the stock "z" field (ELORIA_ADJACENT_MAPS); 0 is the current map.
+var adjacent_maps: Dictionary = {}
 var lantern_tutorial: Dictionary = {}
 var actors: Dictionary = {}
 ## The ids of actors written since the presentation last read them. Every
@@ -499,7 +502,11 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			marketplace = _empty_marketplace_state()
 			merchant = _empty_merchant_state()
 			combat_state = _empty_combat_state()
-			actors.clear()
+			# Actors are the server's to keep or clear: a teleport sends
+			# KILL_ALL_ACTORS ahead of the change, a seamless land crossing keeps
+			# every actor the client shows and re-files them on its side. The
+			# handles of the old map's neighbours are stale, and named afresh.
+			adjacent_maps.clear()
 			selected_actor_id = -1
 			npc_dialogue = {"open": false, "name": "", "text": "",
 				"options": [], "quest": false, "quest_id": 0}
@@ -514,7 +521,15 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			state_changed.emit(&"merchant")
 			state_changed.emit(&"combat_state")
 			state_changed.emit(&"map")
+		"adjacent_maps":
+			adjacent_maps = (event.maps as Dictionary).duplicate()
+			state_changed.emit(&"adjacent_maps")
 		"actor_spawn":
+			# Which map the actor stands on: its packet's handle names a neighbour,
+			# 0 the map the client stands on. Resolved here, once, so neither a
+			# change of map nor a new handle table can re-tag it.
+			var map_handle: int = int(event.get("map_handle", 0))
+			event["map"] = str(adjacent_maps.get(map_handle, current_map)) if map_handle > 0 else current_map
 			actors[event.actor_id] = event
 			mark_actor_changed(int(event.actor_id))
 			state_changed.emit(&"actors")

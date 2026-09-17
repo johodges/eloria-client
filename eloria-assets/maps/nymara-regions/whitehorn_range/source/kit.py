@@ -435,7 +435,9 @@ def glacier_temple(seed: int = 0, width: float = 20.0,
                          uv_scale=1.4, material=MARBLE))
     inlay = M.cylinder(4.4, 4.4, 0.05, segments=32, uv_scale=2.2,
                        material=BRASS)
-    inlay.transform(M.translation(0.0, podium_h + 0.20, 1.2))
+    # Inset the metal into the marble: its top sits 3 cm above the walking
+    # plane. The former 8 cm air gap made the entire forecourt a low obstacle.
+    inlay.transform(M.translation(0.0, podium_h + 0.10, 1.2))
     group.add(inlay)
 
     # -- the facade --------------------------------------------------------

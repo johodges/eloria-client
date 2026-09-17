@@ -53,7 +53,9 @@ extends RefCounted
 ##     static batching, mip chains and the batch links as node paths.
 ## 2 - batches use imported-root coordinates, including detached preloads.
 ## 5 - continent-owned scenery uses shared-cell grouping and hidden thresholds.
-const CACHE_FORMAT_VERSION := 6
+## 6 - shared-continent chunks, external textures and opaque vertex colours.
+## 7 - shared elevated/sloping drainage uses the common continent water shader.
+const CACHE_FORMAT_VERSION := 7
 
 ## Wrapped into the digest so the hash of a package cannot be confused with the
 ## hash of anything else, and so the digest itself can be revised without

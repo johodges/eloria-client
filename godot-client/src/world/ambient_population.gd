@@ -26,8 +26,18 @@ var _spawned: Array[Node3D] = []
 var _animated: Array[Array] = []
 var _gate: AnimationGate = AnimationGate.new()
 var _gate_countdown := 0.0
+var _streamed: ContinentChunkStream
+var _streamed_samples: Array[Dictionary] = []
+var _sample_nodes: Dictionary = {}
+var _sample_chunks: Dictionary = {}
+var _pending_cells: Dictionary = {}
+var _streamed_catalog: Dictionary = {}
+var _streamed_space: PhysicsDirectSpaceState3D
 
-func populate(manifest: WorldManifest, space: PhysicsDirectSpaceState3D) -> int:
+func populate(manifest: WorldManifest, space: PhysicsDirectSpaceState3D,
+		chunk_stream: ContinentChunkStream = null) -> int:
+	if chunk_stream != null:
+		return _populate_streamed(manifest, space, chunk_stream)
 	clear()
 	var declared: Variant = manifest.data.get("ambientPopulation")
 	if declared is not Dictionary:
@@ -72,12 +82,131 @@ func populate(manifest: WorldManifest, space: PhysicsDirectSpaceState3D) -> int:
 	return spawned
 
 func clear() -> void:
-	for node: Node3D in _spawned:
+	if is_instance_valid(_streamed):
+		_streamed.cell_ready.disconnect(_on_cell_ready)
+		_streamed.cell_retiring.disconnect(_on_cell_retiring)
+	_streamed = null
+	_streamed_samples.clear()
+	_sample_nodes.clear()
+	_sample_chunks.clear()
+	_pending_cells.clear()
+	_streamed_catalog.clear()
+	_streamed_space = null
+	set_physics_process(false)
+	for node: Variant in _spawned:
 		if is_instance_valid(node):
 			node.queue_free()
 	_spawned.clear()
 	_gate.reset()
 	_animated.clear()
+
+func _populate_streamed(manifest: WorldManifest, space: PhysicsDirectSpaceState3D,
+		chunk_stream: ContinentChunkStream) -> int:
+	if _streamed == chunk_stream:
+		return _spawned.size() # Adoption keeps the same animals and animation phases.
+	clear()
+	_streamed = chunk_stream
+	_streamed_space = space
+	_streamed_catalog = _load_catalog()
+	_streamed.cell_ready.connect(_on_cell_ready)
+	_streamed.cell_retiring.connect(_on_cell_retiring)
+	var groups: Array = manifest.data.get("ambientPopulation", {}).get("groups", [])
+	for group: Dictionary in groups:
+		var centre := _vector(group.get("center", [0,0,0]))
+		var radius := float(group.get("radius", 6.0))
+		var rng := RandomNumberGenerator.new()
+		rng.seed = int(group.get("seed", 1))
+		for index: int in int(group.get("count", 1)):
+			var angle := rng.randf() * TAU
+			var reach := radius * sqrt(rng.randf())
+			var sample := {"id":_streamed_samples.size(), "model":str(group.get("model", "")),
+				"position":Vector3(centre.x + cos(angle) * reach, centre.y, centre.z + sin(angle) * reach),
+				"scale":float(group.get("scale", 1.0)) * rng.randf_range(0.94, 1.06),
+				"rotation":rng.randf() * TAU, "animation":str(group.get("animation", "Idle_A")),
+				"offset":rng.randf() * 4.0}
+			_streamed_samples.append(sample)
+	for identity: String in _streamed.cells:
+		_on_cell_ready(identity, _streamed.cells[identity].root)
+	return 0
+
+func _on_cell_ready(identity: String, _imported: Node3D) -> void:
+	if _streamed_samples.is_empty():
+		return
+	# Collision registration completes at the physics boundary after attachment.
+	_pending_cells[identity] = Engine.get_physics_frames() + 1
+	set_physics_process(true)
+
+func _on_cell_retiring(identity: String, _imported: Node3D) -> void:
+	_pending_cells.erase(identity)
+	var removed: Array = []
+	for sample_id: int in _sample_chunks.keys():
+		if str(_sample_chunks[sample_id]) == identity:
+			var node: Variant = _sample_nodes.get(sample_id)
+			removed.append(node)
+			_spawned.erase(node)
+			_sample_nodes.erase(sample_id)
+			_sample_chunks.erase(sample_id)
+	# The chunk owns these nodes and frees them in its bounded retirement pass.
+	# Do not independently queue_free descendants while that traversal owns them.
+	_animated = _animated.filter(func(pair: Array) -> bool: return pair[0] not in removed)
+	_gate.reset()
+	var used_models: Dictionary = {}
+	for sample_id: int in _sample_nodes:
+		used_models[str(_streamed_samples[sample_id].model)] = true
+	for model: String in _scenes.keys():
+		if not used_models.has(model):
+			_scenes.erase(model)
+
+func _physics_process(_delta: float) -> void:
+	if not is_instance_valid(_streamed) or _streamed_space == null:
+		set_physics_process(false)
+		return
+	var ready := false
+	for identity: String in _pending_cells.keys():
+		if Engine.get_physics_frames() >= int(_pending_cells[identity]):
+			_pending_cells.erase(identity)
+			ready = true
+	if ready:
+		_spawn_ready_samples()
+	if _pending_cells.is_empty():
+		set_physics_process(false)
+
+func _spawn_ready_samples() -> void:
+	for sample: Dictionary in _streamed_samples:
+		var identity := int(sample.id)
+		if _sample_nodes.has(identity):
+			continue
+		var position: Vector3 = _streamed.global_transform * (sample.position as Vector3)
+		var query := PhysicsRayQueryParameters3D.create(position + Vector3.UP * 200.0,
+			position - Vector3.UP * 200.0, NAVIGATION_LAYER | ExteriorRegionStream.PREVIEW_SURFACE_LAYER)
+		var hit := _streamed_space.intersect_ray(query)
+		var collider: Node = hit.get("collider") as Node
+		if collider == null or not _streamed.is_ancestor_of(collider):
+			continue # Cold terrain is pending, never a valid fallback animal height.
+		var cell := collider
+		while cell != _streamed and not cell.has_meta("continent_chunk_id"):
+			cell = cell.get_parent()
+		if cell == _streamed:
+			continue
+		var cell_id := str(cell.get_meta("continent_chunk_id"))
+		if not _streamed.cells.has(cell_id):
+			continue
+		var scene := _scene_for(str(sample.model), _streamed_catalog)
+		if scene == null:
+			continue
+		var instance := scene.instantiate() as Node3D
+		if instance == null:
+			continue
+		cell.add_child(instance)
+		instance.scale = Vector3.ONE * float(sample.scale)
+		instance.rotation.y = float(sample.rotation)
+		instance.global_position = hit.position
+		var player := _play(instance, str(sample.animation), float(sample.offset))
+		if player != null:
+			_animated.append([instance, player])
+		_spawned.append(instance)
+		_sample_nodes[identity] = instance
+		_sample_chunks[identity] = cell_id
 
 ## Scenery animals are the same skeleton and skinning work as an actor, and a
 ## steppe declares a hundred of them, most of them behind the camera at any

@@ -1,10 +1,13 @@
 {
   "schema": 2,
-  "note": "North-up metre coordinates from continent-geography.json; the atlas and actual exterior frames share the same translations and ownership polygons.",
   "continent": "Nymara",
+  "originMetres": [
+    -40,
+    -40
+  ],
   "canvasMetres": [
-    1880,
-    1720
+    1580,
+    1760
   ],
   "metresPerPixel": 2,
   "sea": [
@@ -13,58 +16,59 @@
     157
   ],
   "regions": {
-    "four_gates": [
-      1050.0,
-      1016.0
-    ],
-    "crownwater": [
-      650.0,
-      964.0
-    ],
     "whitehorn_range": [
-      1050.0,
-      220.0
-    ],
-    "mirrorhold": [
-      1050.0,
-      620.0
-    ],
-    "amethyst_barrens": [
-      1445.0,
-      620.0
-    ],
-    "sunmane_steppe": [
-      1450.0,
-      1016.0
-    ],
-    "verdant_stair": [
-      1595.0,
-      1398.0
-    ],
-    "ssarathi_ruins": [
-      1220.0,
-      1424.0
-    ],
-    "manymouth_delta": [
-      720.0,
-      1412.0
-    ],
-    "westhaven": [
-      210.0,
-      1400.0
+      550,
+      220
     ],
     "grey_moors": [
-      250.0,
-      1010.0
+      220,
+      420
     ],
     "amberwood": [
-      655.0,
-      574.0
+      510,
+      540
+    ],
+    "amethyst_barrens": [
+      950,
+      400
+    ],
+    "mirrorhold": [
+      840,
+      650
+    ],
+    "sunmane_steppe": [
+      1200,
+      720
+    ],
+    "four_gates": [
+      530,
+      840
+    ],
+    "westhaven": [
+      170,
+      1060
+    ],
+    "manymouth_delta": [
+      520,
+      1140
+    ],
+    "crownwater": [
+      290,
+      1570
+    ],
+    "verdant_stair": [
+      1100,
+      1120
+    ],
+    "ssarathi_ruins": [
+      1100,
+      1440
     ]
   },
   "routeBends": {},
-  "originMetres": [
-    -40,
-    -40
-  ]
+  "note": "One common-world master render; geographic centres label the named nonrectangular territories.",
+  "geometryAtlas": {
+    "image": "res://../eloria-assets/maps/nymara-regions/_continent/cartography/continent-atlas.png",
+    "report": "res://../eloria-assets/maps/nymara-regions/_continent/cartography/continent-atlas.json"
+  }
 }

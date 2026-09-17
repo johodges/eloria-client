@@ -74,6 +74,49 @@ def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def geometry_contract(manifest: dict) -> dict:
+    """Stable render inputs; derived minimap provenance must not hash itself."""
+    minimap = manifest.get('minimap', {})
+    return {'frame': {key:minimap.get(key) for key in
+            ('worldMin', 'worldMax', 'imageSize', 'pixelsPerMetre')},
+            'mapFrame': list(framing(manifest)),
+            'continentGeography': manifest.get('continentGeography', {}),
+            'glb': manifest.get('asset', {}).get('glb'),
+            'externalResources': manifest.get('externalResources', {})}
+
+
+def contract_digest(manifest: dict) -> str:
+    return hashlib.sha256(json.dumps(geometry_contract(manifest), sort_keys=True,
+                                    separators=(',', ':')).encode()).hexdigest()
+
+
+def geometry_atlas(layout: dict) -> tuple[Path, dict] | None:
+    """A direct master render supersedes patchwork imagery, with stale checks."""
+    spec = layout.get('geometryAtlas')
+    if not spec:
+        return None
+    image = resource_to_path(spec['image'])
+    report = load_json(resource_to_path(spec['report']))
+    if report.get('schemaVersion') != 1:
+        raise ValueError('Unsupported master geometry atlas report')
+    if report.get('layout') != {key:layout[key] for key in
+                              ('originMetres', 'canvasMetres', 'metresPerPixel')}:
+        raise ValueError('Master geometry atlas framing is stale; run _continent/atlas_export.py')
+    if digest(image) != report['imageSha256']:
+        raise ValueError('Master geometry atlas image changed after rendering')
+    for resource, expected in report['inputs'].items():
+        if digest(resource_to_path(resource)) != expected:
+            raise ValueError(f'Master geometry atlas input is stale: {resource}')
+    for resource, expected in report.get('optionalReviewInputs', {}).items():
+        path = resource_to_path(resource)
+        if path.exists() and digest(path) != expected:
+            raise ValueError(f'Present review master geometry is stale: {resource}')
+    for resource, expected in report['territoryContracts'].items():
+        if contract_digest(load_json(resource_to_path(resource))) != expected:
+            raise ValueError(f'Master geometry atlas territory framing is stale: {resource}')
+    return image, report
+
+
 def framing(manifest: dict) -> tuple[float, float, float, float]:
     """The X/Z rectangle the live Tab map frames, as (min_x, min_z, max_x, max_z).
 
@@ -263,6 +306,12 @@ def compose(layout: dict, registry: dict) -> tuple[dict, list[dict]]:
     }
     if geography:
         cartography['continent']['geographySha256'] = digest(GEOGRAPHY)
+    master = geometry_atlas(layout)
+    if master:
+        cartography['continent']['masterGeometry'] = {
+            'imageSha256': master[1]['imageSha256'],
+            'masterSha256': master[1]['masterSha256'],
+            'reportSha256': digest(resource_to_path(layout['geometryAtlas']['report']))}
     return cartography, tiles
 
 
@@ -270,6 +319,12 @@ def draw(layout: dict, cartography: dict, tiles: list[dict]) -> Image.Image:
     metres_per_pixel = float(layout["metresPerPixel"])
     width, height = cartography["continent"]["imageSize"]
     canvas = Image.new("RGB", (width, height), tuple(int(v) for v in layout["sea"]))
+    master = geometry_atlas(layout)
+    if master:
+        with Image.open(master[0]) as image:
+            if image.size != (width, height):
+                raise ValueError('Master geometry atlas raster and layout dimensions differ')
+            canvas = image.convert('RGB')
     lake = layout.get("lake") if not GEOGRAPHY.exists() else None
     if lake:
         cx, cy = (float(v) / metres_per_pixel for v in lake["centre"])
@@ -277,7 +332,7 @@ def draw(layout: dict, cartography: dict, tiles: list[dict]) -> Image.Image:
         ImageDraw.Draw(canvas).ellipse(
             [cx - radius, cy - radius, cx + radius, cy + radius],
             fill=tuple(int(v) for v in lake["colour"]))
-    for tile in tiles:
+    for tile in tiles if not master else []:
         x, y, w, h = tile["crop"]
         rect = tile["rect"]
         with Image.open(tile["image"]) as image:

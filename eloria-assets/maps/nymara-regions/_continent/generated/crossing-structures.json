@@ -1,0 +1,5169 @@
+{
+  "bridges": {
+    "components": 40,
+    "visibleCells": 8380,
+    "visibleTriangles": 25335,
+    "wetCells": 4496,
+    "siteCells": 3940,
+    "looseWetCells": 3140,
+    "riverWaterOutsideSites": {
+      "cells": 0,
+      "at": []
+    },
+    "decks": [
+      {
+        "component": 15,
+        "sites": [
+          14
+        ],
+        "cells": 64,
+        "bankErrorMetres": 0.772,
+        "dryLiftOverLimitVertices": 2,
+        "maximumDryLiftMetres": 0.772,
+        "worstDryLift": [
+          485.0,
+          198.0
+        ]
+      },
+      {
+        "component": 500,
+        "sites": [],
+        "cells": 154,
+        "bankErrorMetres": 1.023,
+        "dryLiftOverLimitVertices": 3,
+        "maximumDryLiftMetres": 1.023,
+        "worstDryLift": [
+          1055.0,
+          209.0
+        ]
+      },
+      {
+        "component": 14,
+        "sites": [
+          13
+        ],
+        "cells": 87,
+        "bankErrorMetres": 0.025,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.025
+      },
+      {
+        "component": 3,
+        "sites": [
+          2
+        ],
+        "cells": 201,
+        "bankErrorMetres": 0.025,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.075
+      },
+      {
+        "component": 1,
+        "sites": [
+          0
+        ],
+        "cells": 204,
+        "bankErrorMetres": 0.025,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.025
+      },
+      {
+        "component": 4,
+        "sites": [
+          3
+        ],
+        "cells": 184,
+        "bankErrorMetres": 0.469,
+        "dryLiftOverLimitVertices": 9,
+        "maximumDryLiftMetres": 0.469,
+        "worstDryLift": [
+          278.0,
+          545.0
+        ]
+      },
+      {
+        "component": 2,
+        "sites": [
+          1
+        ],
+        "cells": 242,
+        "bankErrorMetres": 0.352,
+        "dryLiftOverLimitVertices": 2,
+        "maximumDryLiftMetres": 0.352,
+        "worstDryLift": [
+          388.0,
+          543.0
+        ]
+      },
+      {
+        "component": 5,
+        "sites": [
+          4
+        ],
+        "cells": 189,
+        "bankErrorMetres": 0.359,
+        "dryLiftOverLimitVertices": 4,
+        "maximumDryLiftMetres": 0.359,
+        "worstDryLift": [
+          566.0,
+          643.0
+        ]
+      },
+      {
+        "component": 6,
+        "sites": [
+          5
+        ],
+        "cells": 316,
+        "bankErrorMetres": 0.025,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.025
+      },
+      {
+        "component": 7,
+        "sites": [
+          6
+        ],
+        "cells": 311,
+        "bankErrorMetres": 0.025,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.025
+      },
+      {
+        "component": 8,
+        "sites": [
+          7
+        ],
+        "cells": 236,
+        "bankErrorMetres": 0.025,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.123
+      },
+      {
+        "component": 9,
+        "sites": [
+          8
+        ],
+        "cells": 101,
+        "bankErrorMetres": 9.057,
+        "dryLiftOverLimitVertices": 17,
+        "maximumDryLiftMetres": 9.057,
+        "worstDryLift": [
+          834.0,
+          836.0
+        ]
+      },
+      {
+        "component": 501,
+        "sites": [],
+        "cells": 490,
+        "bankErrorMetres": 1.906,
+        "dryLiftOverLimitVertices": 20,
+        "maximumDryLiftMetres": 1.906,
+        "worstDryLift": [
+          390.0,
+          993.0
+        ]
+      },
+      {
+        "component": 12,
+        "sites": [
+          11
+        ],
+        "cells": 292,
+        "bankErrorMetres": 0.025,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.025
+      },
+      {
+        "component": 11,
+        "sites": [
+          10
+        ],
+        "cells": 316,
+        "bankErrorMetres": 0.025,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.025
+      },
+      {
+        "component": 502,
+        "sites": [],
+        "cells": 50,
+        "bankErrorMetres": 0.356,
+        "dryLiftOverLimitVertices": 3,
+        "maximumDryLiftMetres": 0.37,
+        "worstDryLift": [
+          531.0,
+          1072.0
+        ]
+      },
+      {
+        "component": 503,
+        "sites": [],
+        "cells": 499,
+        "bankErrorMetres": 2.32,
+        "dryLiftOverLimitVertices": 11,
+        "maximumDryLiftMetres": 2.32,
+        "worstDryLift": [
+          33.0,
+          1204.0
+        ]
+      },
+      {
+        "component": 504,
+        "sites": [],
+        "cells": 593,
+        "bankErrorMetres": 2.173,
+        "dryLiftOverLimitVertices": 13,
+        "maximumDryLiftMetres": 2.173,
+        "worstDryLift": [
+          239.0,
+          1239.0
+        ]
+      },
+      {
+        "component": 505,
+        "sites": [],
+        "cells": 24,
+        "bankErrorMetres": 3.131,
+        "dryLiftOverLimitVertices": 10,
+        "maximumDryLiftMetres": 3.131,
+        "worstDryLift": [
+          55.0,
+          1134.0
+        ]
+      },
+      {
+        "component": 506,
+        "sites": [],
+        "cells": 613,
+        "bankErrorMetres": 2.776,
+        "dryLiftOverLimitVertices": 10,
+        "maximumDryLiftMetres": 2.776,
+        "worstDryLift": [
+          155.0,
+          1195.0
+        ]
+      },
+      {
+        "component": 16,
+        "sites": [
+          15
+        ],
+        "cells": 114,
+        "bankErrorMetres": 0.355,
+        "dryLiftOverLimitVertices": 1,
+        "maximumDryLiftMetres": 0.355,
+        "worstDryLift": [
+          1238.0,
+          1139.0
+        ]
+      },
+      {
+        "component": 10,
+        "sites": [
+          9
+        ],
+        "cells": 194,
+        "bankErrorMetres": 0.033,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.033
+      },
+      {
+        "component": 17,
+        "sites": [
+          16
+        ],
+        "cells": 118,
+        "bankErrorMetres": 0.025,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.025
+      },
+      {
+        "component": 13,
+        "sites": [
+          12
+        ],
+        "cells": 217,
+        "bankErrorMetres": 0.025,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.025
+      },
+      {
+        "component": 507,
+        "sites": [],
+        "cells": 446,
+        "bankErrorMetres": 2.047,
+        "dryLiftOverLimitVertices": 13,
+        "maximumDryLiftMetres": 2.047,
+        "worstDryLift": [
+          370.0,
+          1419.0
+        ]
+      },
+      {
+        "component": 19,
+        "sites": [
+          18
+        ],
+        "cells": 116,
+        "bankErrorMetres": 0.341,
+        "dryLiftOverLimitVertices": 2,
+        "maximumDryLiftMetres": 0.406,
+        "worstDryLift": [
+          1163.0,
+          1427.0
+        ]
+      },
+      {
+        "component": 508,
+        "sites": [],
+        "cells": 207,
+        "bankErrorMetres": 0.7,
+        "dryLiftOverLimitVertices": 5,
+        "maximumDryLiftMetres": 0.7,
+        "worstDryLift": [
+          458.0,
+          1448.0
+        ]
+      },
+      {
+        "component": 509,
+        "sites": [],
+        "cells": 82,
+        "bankErrorMetres": 1.9,
+        "dryLiftOverLimitVertices": 14,
+        "maximumDryLiftMetres": 1.222,
+        "worstDryLift": [
+          1168.0,
+          1483.0
+        ]
+      },
+      {
+        "component": 510,
+        "sites": [],
+        "cells": 107,
+        "bankErrorMetres": 1.263,
+        "dryLiftOverLimitVertices": 11,
+        "maximumDryLiftMetres": 1.469,
+        "worstDryLift": [
+          268.0,
+          1525.0
+        ]
+      },
+      {
+        "component": 511,
+        "sites": [],
+        "cells": 35,
+        "bankErrorMetres": 1.859,
+        "dryLiftOverLimitVertices": 9,
+        "maximumDryLiftMetres": 1.859,
+        "worstDryLift": [
+          484.0,
+          1521.0
+        ]
+      },
+      {
+        "component": 512,
+        "sites": [],
+        "cells": 12,
+        "bankErrorMetres": 0.025,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.025
+      },
+      {
+        "component": 513,
+        "sites": [],
+        "cells": 1,
+        "bankErrorMetres": 0.212,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.212
+      },
+      {
+        "component": 514,
+        "sites": [],
+        "cells": 23,
+        "bankErrorMetres": 1.334,
+        "dryLiftOverLimitVertices": 9,
+        "maximumDryLiftMetres": 1.413,
+        "worstDryLift": [
+          327.0,
+          1537.0
+        ]
+      },
+      {
+        "component": 515,
+        "sites": [],
+        "cells": 24,
+        "bankErrorMetres": 3.382,
+        "dryLiftOverLimitVertices": 12,
+        "maximumDryLiftMetres": 3.382,
+        "worstDryLift": [
+          333.0,
+          1542.0
+        ]
+      },
+      {
+        "component": 516,
+        "sites": [],
+        "cells": 58,
+        "bankErrorMetres": 1.027,
+        "dryLiftOverLimitVertices": 9,
+        "maximumDryLiftMetres": 1.027,
+        "worstDryLift": [
+          1069.0,
+          1538.0
+        ]
+      },
+      {
+        "component": 517,
+        "sites": [],
+        "cells": 9,
+        "bankErrorMetres": 1.265,
+        "dryLiftOverLimitVertices": 5,
+        "maximumDryLiftMetres": 1.265,
+        "worstDryLift": [
+          335.0,
+          1556.0
+        ]
+      },
+      {
+        "component": 518,
+        "sites": [],
+        "cells": 202,
+        "bankErrorMetres": 0.435,
+        "dryLiftOverLimitVertices": 5,
+        "maximumDryLiftMetres": 0.435,
+        "worstDryLift": [
+          462.0,
+          1584.0
+        ]
+      },
+      {
+        "component": 18,
+        "sites": [
+          17
+        ],
+        "cells": 116,
+        "bankErrorMetres": 0.025,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.025
+      },
+      {
+        "component": 519,
+        "sites": [],
+        "cells": 258,
+        "bankErrorMetres": 0.674,
+        "dryLiftOverLimitVertices": 7,
+        "maximumDryLiftMetres": 0.907,
+        "worstDryLift": [
+          311.0,
+          1595.0
+        ]
+      },
+      {
+        "component": 520,
+        "sites": [],
+        "cells": 875,
+        "bankErrorMetres": 0.472,
+        "dryLiftOverLimitVertices": 25,
+        "maximumDryLiftMetres": 0.472,
+        "worstDryLift": [
+          1192.0,
+          1635.0
+        ]
+      }
+    ],
+    "deckLandingMetres": 6.0,
+    "deckLiftMetres": 0.3,
+    "trimmedLandingCells": 1055,
+    "cutOffLandingCells": 373,
+    "cutOffLandingBanks": [
+      [
+        470.2,
+        197.0
+      ],
+      [
+        410.4,
+        546.5
+      ],
+      [
+        829.4,
+        837.9
+      ],
+      [
+        417.2,
+        995.1
+      ],
+      [
+        43.5,
+        1121.5
+      ],
+      [
+        55.9,
+        1130.9
+      ],
+      [
+        116.5,
+        1140.6
+      ],
+      [
+        580.2,
+        1145.8
+      ],
+      [
+        339.1,
+        1412.3
+      ],
+      [
+        474.0,
+        1416.2
+      ],
+      [
+        266.1,
+        1513.9
+      ],
+      [
+        484.0,
+        1516.2
+      ],
+      [
+        981.5,
+        1519.0
+      ],
+      [
+        324.5,
+        1533.9
+      ],
+      [
+        332.2,
+        1540.2
+      ],
+      [
+        1063.5,
+        1549.5
+      ],
+      [
+        334.2,
+        1557.5
+      ],
+      [
+        1192.0,
+        1634.0
+      ]
+    ],
+    "maximumBankErrorMetres": 9.056699730653634,
+    "worstBank": [
+      834.0,
+      836.0
+    ],
+    "maximumGrade": 0.65,
+    "outlineMaximumInsetFraction": 0.008555138626189618,
+    "precisionCleanupAreaSquareMetres": 7.300388585177332e-06,
+    "supports": [
+      {
+        "component": 15,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 7.801308215446903,
+        "maximumUnsupportedSpanEstimateMetres": 7.801308215446903,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              476.5,
+              196.5
+            ],
+            "position": [
+              476.5,
+              196.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 192.4363427395001,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 500,
+        "supportsBefore": 2,
+        "supportsAfter": 2,
+        "oldMaximumUnsupportedSpanEstimateMetres": 12.229675819221848,
+        "maximumUnsupportedSpanEstimateMetres": 12.229675819221848,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              1068.5,
+              212.5
+            ],
+            "position": [
+              1068.5,
+              212.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 1.5089490182544978,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              1076.5,
+              220.5
+            ],
+            "position": [
+              1076.5,
+              220.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 2.70977863092412,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 14,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 6.319581831020294,
+        "maximumUnsupportedSpanEstimateMetres": 6.319581831020294,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              532.5,
+              276.5
+            ],
+            "position": [
+              532.5,
+              276.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 160.4499969482422,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 3,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 8.897644170224993,
+        "maximumUnsupportedSpanEstimateMetres": 8.897644170224993,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              628.5,
+              404.5
+            ],
+            "position": [
+              628.5,
+              404.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 160.4499969482422,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 1,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 9.059593622344325,
+        "maximumUnsupportedSpanEstimateMetres": 9.059593622344325,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              252.5,
+              412.5
+            ],
+            "position": [
+              252.5,
+              412.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 24.89796329929959,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 4,
+        "supportsBefore": 2,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 8.692269873603605,
+        "maximumUnsupportedSpanEstimateMetres": 8.692269873603605,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              276.5,
+              540.5
+            ],
+            "position": [
+              276.5,
+              540.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 20.936623921617866,
+            "status": "grounded bank stub"
+          },
+          {
+            "planned": [
+              284.5,
+              540.5
+            ],
+            "position": [
+              284.1,
+              540.1
+            ],
+            "shiftMetres": 0.565685424949238,
+            "minimumDeck": 21.269599592546,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 2,
+        "supportsBefore": 2,
+        "supportsAfter": 2,
+        "oldMaximumUnsupportedSpanEstimateMetres": 14.806657117606246,
+        "maximumUnsupportedSpanEstimateMetres": 14.806657117606246,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              396.5,
+              540.5
+            ],
+            "position": [
+              396.5,
+              540.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 25.376668241631705,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              404.5,
+              548.5
+            ],
+            "position": [
+              404.5,
+              548.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 24.925584671727847,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 5,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 7.9875556735457325,
+        "maximumUnsupportedSpanEstimateMetres": 7.9875556735457325,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 6,
+        "supportsBefore": 2,
+        "supportsAfter": 2,
+        "oldMaximumUnsupportedSpanEstimateMetres": 15.367516498454368,
+        "maximumUnsupportedSpanEstimateMetres": 15.367516498454368,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              420.5,
+              668.5
+            ],
+            "position": [
+              420.5,
+              668.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 16.647018051880877,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              412.5,
+              676.5
+            ],
+            "position": [
+              412.5,
+              676.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 16.626837921969127,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 7,
+        "supportsBefore": 2,
+        "supportsAfter": 2,
+        "oldMaximumUnsupportedSpanEstimateMetres": 15.91223071159642,
+        "maximumUnsupportedSpanEstimateMetres": 15.91223071159642,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              356.5,
+              788.5
+            ],
+            "position": [
+              356.5,
+              788.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 10.226349103322718,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              364.5,
+              796.5
+            ],
+            "position": [
+              364.5,
+              796.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 10.157148587604752,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 8,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 11.191843834637455,
+        "maximumUnsupportedSpanEstimateMetres": 11.191843834637455,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              1196.5,
+              796.5
+            ],
+            "position": [
+              1196.5,
+              796.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 22.22238227003254,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 9,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 9.669269266221734,
+        "maximumUnsupportedSpanEstimateMetres": 9.669269266221734,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              836.5,
+              844.5
+            ],
+            "position": [
+              836.5,
+              844.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 76.80238650273532,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 501,
+        "supportsBefore": 5,
+        "supportsAfter": 5,
+        "oldMaximumUnsupportedSpanEstimateMetres": 15.263904968605784,
+        "maximumUnsupportedSpanEstimateMetres": 15.263904968605784,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              412.5,
+              988.5
+            ],
+            "position": [
+              412.5,
+              988.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              420.5,
+              988.5
+            ],
+            "position": [
+              420.5,
+              988.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              428.5,
+              988.5
+            ],
+            "position": [
+              428.5,
+              988.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              396.5,
+              996.5
+            ],
+            "position": [
+              396.5,
+              996.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              436.5,
+              996.5
+            ],
+            "position": [
+              436.5,
+              996.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 12,
+        "supportsBefore": 2,
+        "supportsAfter": 2,
+        "oldMaximumUnsupportedSpanEstimateMetres": 14.82182527972562,
+        "maximumUnsupportedSpanEstimateMetres": 14.82182527972562,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              468.5,
+              1036.5
+            ],
+            "position": [
+              468.5,
+              1036.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 3.4438424476472576,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              468.5,
+              1044.5
+            ],
+            "position": [
+              468.5,
+              1044.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 3.41647938661481,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 11,
+        "supportsBefore": 2,
+        "supportsAfter": 2,
+        "oldMaximumUnsupportedSpanEstimateMetres": 14.339429187939132,
+        "maximumUnsupportedSpanEstimateMetres": 14.339429187939132,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              516.5,
+              1060.5
+            ],
+            "position": [
+              516.5,
+              1060.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 3.1748533793725073,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              524.5,
+              1060.5
+            ],
+            "position": [
+              524.5,
+              1060.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 3.2017026530811563,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 502,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 9.503996021177603,
+        "maximumUnsupportedSpanEstimateMetres": 8.429422229344016,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              532.5,
+              1076.5
+            ],
+            "position": [
+              532.1,
+              1076.1
+            ],
+            "shiftMetres": 0.565685424949238,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 503,
+        "supportsBefore": 7,
+        "supportsAfter": 7,
+        "oldMaximumUnsupportedSpanEstimateMetres": 23.97141745322042,
+        "maximumUnsupportedSpanEstimateMetres": 23.97141745322042,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              36.5,
+              1132.5
+            ],
+            "position": [
+              36.9,
+              1132.7
+            ],
+            "shiftMetres": 0.447213595499958,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              28.5,
+              1148.5
+            ],
+            "position": [
+              28.5,
+              1148.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              20.5,
+              1156.5
+            ],
+            "position": [
+              20.5,
+              1156.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              12.5,
+              1172.5
+            ],
+            "position": [
+              12.5,
+              1172.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              12.5,
+              1180.5
+            ],
+            "position": [
+              12.5,
+              1180.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              12.5,
+              1188.5
+            ],
+            "position": [
+              12.5,
+              1188.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              28.5,
+              1204.5
+            ],
+            "position": [
+              28.5,
+              1204.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8840299713192508,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 504,
+        "supportsBefore": 9,
+        "supportsAfter": 9,
+        "oldMaximumUnsupportedSpanEstimateMetres": 31.559974448283015,
+        "maximumUnsupportedSpanEstimateMetres": 31.557633866351306,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              204.5,
+              1148.5
+            ],
+            "position": [
+              204.5,
+              1148.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 1.5777926905975619,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              212.5,
+              1156.5
+            ],
+            "position": [
+              212.3,
+              1156.7
+            ],
+            "shiftMetres": 0.282842712474619,
+            "minimumDeck": 1.515014879161754,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              220.5,
+              1172.5
+            ],
+            "position": [
+              220.5,
+              1172.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 1.4159405283971864,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              220.5,
+              1180.5
+            ],
+            "position": [
+              220.7,
+              1180.5
+            ],
+            "shiftMetres": 0.2,
+            "minimumDeck": 1.3741678576661798,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              220.5,
+              1188.5
+            ],
+            "position": [
+              220.9,
+              1188.9
+            ],
+            "shiftMetres": 0.565685424949238,
+            "minimumDeck": 1.3237616446022002,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              220.5,
+              1196.5
+            ],
+            "position": [
+              220.9,
+              1196.5
+            ],
+            "shiftMetres": 0.4,
+            "minimumDeck": 1.2778176024057757,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              220.5,
+              1204.5
+            ],
+            "position": [
+              220.9,
+              1204.5
+            ],
+            "shiftMetres": 0.4,
+            "minimumDeck": 1.2294610876799212,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              220.5,
+              1212.5
+            ],
+            "position": [
+              220.9,
+              1212.9
+            ],
+            "shiftMetres": 0.565685424949238,
+            "minimumDeck": 1.1786875396301184,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              220.5,
+              1220.5
+            ],
+            "position": [
+              220.9,
+              1220.5
+            ],
+            "shiftMetres": 0.4,
+            "minimumDeck": 1.13283622995732,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 505,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 8.398908710654359,
+        "maximumUnsupportedSpanEstimateMetres": 8.398908710654359,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 506,
+        "supportsBefore": 5,
+        "supportsAfter": 5,
+        "oldMaximumUnsupportedSpanEstimateMetres": 35.01513103918611,
+        "maximumUnsupportedSpanEstimateMetres": 35.01513103918611,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              116.5,
+              1140.5
+            ],
+            "position": [
+              116.5,
+              1140.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 1.169629641272877,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              132.5,
+              1148.5
+            ],
+            "position": [
+              132.5,
+              1148.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 1.1430319270002656,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              140.5,
+              1148.5
+            ],
+            "position": [
+              140.5,
+              1148.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 1.128977356282121,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              148.5,
+              1156.5
+            ],
+            "position": [
+              148.5,
+              1156.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 1.1072933682007715,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              156.5,
+              1164.5
+            ],
+            "position": [
+              156.5,
+              1164.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 1.0854060098426999,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 16,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 11.165836908935898,
+        "maximumUnsupportedSpanEstimateMetres": 11.165836908935898,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 10,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 13.235856375580108,
+        "maximumUnsupportedSpanEstimateMetres": 13.235856375580108,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              572.5,
+              1156.5
+            ],
+            "position": [
+              572.5,
+              1156.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 1.5138499795430107,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 17,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 11.176079797147771,
+        "maximumUnsupportedSpanEstimateMetres": 11.176079797147771,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 13,
+        "supportsBefore": 2,
+        "supportsAfter": 2,
+        "oldMaximumUnsupportedSpanEstimateMetres": 11.958257380852332,
+        "maximumUnsupportedSpanEstimateMetres": 11.889458630847452,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              452.5,
+              1268.5
+            ],
+            "position": [
+              452.5,
+              1268.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              460.5,
+              1268.5
+            ],
+            "position": [
+              460.3,
+              1268.7
+            ],
+            "shiftMetres": 0.282842712474619,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 507,
+        "supportsBefore": 8,
+        "supportsAfter": 8,
+        "oldMaximumUnsupportedSpanEstimateMetres": 19.075896675825206,
+        "maximumUnsupportedSpanEstimateMetres": 19.075896675825206,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              316.5,
+              1404.5
+            ],
+            "position": [
+              316.5,
+              1404.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              324.5,
+              1404.5
+            ],
+            "position": [
+              324.5,
+              1404.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              332.5,
+              1404.5
+            ],
+            "position": [
+              332.5,
+              1404.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              340.5,
+              1404.5
+            ],
+            "position": [
+              340.5,
+              1404.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              396.5,
+              1404.5
+            ],
+            "position": [
+              396.5,
+              1404.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              356.5,
+              1412.5
+            ],
+            "position": [
+              356.5,
+              1412.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              380.5,
+              1412.5
+            ],
+            "position": [
+              380.5,
+              1412.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              364.5,
+              1420.5
+            ],
+            "position": [
+              364.5,
+              1420.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 19,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 11.072157036475435,
+        "maximumUnsupportedSpanEstimateMetres": 11.072157036475435,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 508,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 23.052585808497355,
+        "maximumUnsupportedSpanEstimateMetres": 22.85932936506748,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              460.5,
+              1436.5
+            ],
+            "position": [
+              460.7,
+              1436.7
+            ],
+            "shiftMetres": 0.282842712474619,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 509,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 5.089185869819803,
+        "maximumUnsupportedSpanEstimateMetres": 5.089185869819803,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 510,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 21.85762857745545,
+        "maximumUnsupportedSpanEstimateMetres": 21.85762857745545,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 511,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 5.561022056170934,
+        "maximumUnsupportedSpanEstimateMetres": 5.561022056170934,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              484.5,
+              1516.5
+            ],
+            "position": [
+              484.5,
+              1516.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.9301476289037964,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 512,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 4.022347108475988,
+        "maximumUnsupportedSpanEstimateMetres": 4.022347108475988,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 513,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 0.0,
+        "maximumUnsupportedSpanEstimateMetres": 0.0,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 514,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 7.0474189635049855,
+        "maximumUnsupportedSpanEstimateMetres": 7.0474189635049855,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 515,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 5.378795811333579,
+        "maximumUnsupportedSpanEstimateMetres": 5.378795811333579,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 516,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 3.333593755721599,
+        "maximumUnsupportedSpanEstimateMetres": 3.333593755721599,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 517,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 3.696673570256007,
+        "maximumUnsupportedSpanEstimateMetres": 3.696673570256007,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 518,
+        "supportsBefore": 2,
+        "supportsAfter": 2,
+        "oldMaximumUnsupportedSpanEstimateMetres": 16.340995199008212,
+        "maximumUnsupportedSpanEstimateMetres": 16.340995199008212,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              484.5,
+              1564.5
+            ],
+            "position": [
+              484.5,
+              1564.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              476.5,
+              1572.5
+            ],
+            "position": [
+              476.5,
+              1572.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 18,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 11.880315349520133,
+        "maximumUnsupportedSpanEstimateMetres": 11.880315349520133,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": []
+      },
+      {
+        "component": 519,
+        "supportsBefore": 3,
+        "supportsAfter": 3,
+        "oldMaximumUnsupportedSpanEstimateMetres": 18.930257948838026,
+        "maximumUnsupportedSpanEstimateMetres": 18.930257948838026,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              316.5,
+              1596.5
+            ],
+            "position": [
+              316.5,
+              1596.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              324.5,
+              1612.5
+            ],
+            "position": [
+              324.5,
+              1612.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              332.5,
+              1628.5
+            ],
+            "position": [
+              332.5,
+              1628.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          }
+        ]
+      },
+      {
+        "component": 520,
+        "supportsBefore": 7,
+        "supportsAfter": 7,
+        "oldMaximumUnsupportedSpanEstimateMetres": 24.31222456552953,
+        "maximumUnsupportedSpanEstimateMetres": 24.31222456552953,
+        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
+        "piers": [
+          {
+            "planned": [
+              1164.5,
+              1604.5
+            ],
+            "position": [
+              1164.5,
+              1604.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.44269545592032955,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              1180.5,
+              1620.5
+            ],
+            "position": [
+              1180.5,
+              1620.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              1236.5,
+              1628.5
+            ],
+            "position": [
+              1236.5,
+              1628.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              1228.5,
+              1652.5
+            ],
+            "position": [
+              1228.5,
+              1652.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              1204.5,
+              1660.5
+            ],
+            "position": [
+              1204.5,
+              1660.5
+            ],
+            "shiftMetres": 0.0,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              1212.5,
+              1660.5
+            ],
+            "position": [
+              1212.5,
+              1660.9
+            ],
+            "shiftMetres": 0.4,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          },
+          {
+            "planned": [
+              1220.5,
+              1660.5
+            ],
+            "position": [
+              1220.5,
+              1660.9
+            ],
+            "shiftMetres": 0.4,
+            "minimumDeck": 0.8500000238418579,
+            "status": "supported"
+          }
+        ]
+      }
+    ],
+    "policy": "Decks only at claimed crossing sites (span plus landings) and over deep water crossed away from a site; disjoint road capsule union clipped onto one common floor; unchanged terrain; exact ownership by cell; piers only over water; timber fascia below the floor."
+  },
+  "ferries": {
+    "landings": [
+      {
+        "region": "manymouth_delta",
+        "landing": [
+          394.0,
+          1206.0
+        ],
+        "forward": [
+          -0.9569403357322088,
+          0.2902846772544624
+        ],
+        "side": [
+          -0.2902846772544624,
+          -0.9569403357322088
+        ],
+        "reach": 22.0,
+        "boatCenter": [
+          375.28580819351333,
+          1215.961376663395
+        ],
+        "waterLevel": 0.0,
+        "minimumBoatDepth": 0.6753030111675575,
+        "contactError": 0.02499999999999991,
+        "maximumGrade": 0.44500000000000006,
+        "mooringSide": -1.0,
+        "connections": [
+          "crownwater--manymouth_delta"
+        ],
+        "node": "Walk_FerryQuay_manymouth_delta_00"
+      },
+      {
+        "region": "crownwater",
+        "landing": [
+          334.0,
+          1558.0
+        ],
+        "forward": [
+          0.9951847266721969,
+          0.0980171403295606
+        ],
+        "side": [
+          -0.0980171403295606,
+          0.9951847266721969
+        ],
+        "reach": 10.0,
+        "boatCenter": [
+          342.35575531936416,
+          1562.942808214256
+        ],
+        "waterLevel": 0.0,
+        "minimumBoatDepth": 2.285358316927569,
+        "contactError": 0.0603983819103191,
+        "maximumGrade": 0.44500000000000006,
+        "mooringSide": 1.0,
+        "connections": [
+          "crownwater--manymouth_delta"
+        ],
+        "node": "Walk_FerryQuay_crownwater_01"
+      },
+      {
+        "region": "ssarathi_ruins",
+        "landing": [
+          1058.0,
+          1576.0
+        ],
+        "forward": [
+          -0.6343932841636454,
+          0.7730104533627371
+        ],
+        "side": [
+          -0.7730104533627371,
+          -0.6343932841636454
+        ],
+        "reach": 22.0,
+        "boatCenter": [
+          1047.9739625481834,
+          1594.6796298950158
+        ],
+        "waterLevel": 0.0,
+        "minimumBoatDepth": 0.6541324680078349,
+        "contactError": 0.02499999999999991,
+        "maximumGrade": 0.4450000000000003,
+        "mooringSide": -1.0,
+        "connections": [
+          "crownwater--ssarathi_ruins"
+        ],
+        "node": "Walk_FerryQuay_ssarathi_ruins_02"
+      },
+      {
+        "region": "crownwater",
+        "landing": [
+          284.0,
+          1600.0
+        ],
+        "forward": [
+          -0.6343932841636454,
+          0.7730104533627371
+        ],
+        "side": [
+          -0.7730104533627371,
+          -0.6343932841636454
+        ],
+        "reach": 10.0,
+        "boatCenter": [
+          281.58668195814715,
+          1609.4035044546629
+        ],
+        "waterLevel": 0.0,
+        "minimumBoatDepth": 0.8163000332621833,
+        "contactError": 0.02499999999999991,
+        "maximumGrade": 0.4450000000000003,
+        "mooringSide": -1.0,
+        "connections": [
+          "crownwater--ssarathi_ruins"
+        ],
+        "node": "Walk_FerryQuay_crownwater_03"
+      },
+      {
+        "region": "westhaven",
+        "landing": [
+          148.0,
+          1192.0
+        ],
+        "forward": [
+          1.0,
+          0.0
+        ],
+        "side": [
+          -0.0,
+          1.0
+        ],
+        "reach": 6.0,
+        "boatCenter": [
+          152.8,
+          1187.9
+        ],
+        "waterLevel": 0.0,
+        "minimumBoatDepth": 8.180649600103962,
+        "contactError": 0.08244953645735009,
+        "maximumGrade": 0.4450000000000003,
+        "mooringSide": -1.0,
+        "connections": [
+          "crownwater--westhaven"
+        ],
+        "node": "Walk_FerryQuay_westhaven_04"
+      },
+      {
+        "region": "crownwater",
+        "landing": [
+          304.0,
+          1592.0
+        ],
+        "forward": [
+          0.6343932841636455,
+          0.7730104533627369
+        ],
+        "side": [
+          -0.7730104533627369,
+          0.6343932841636455
+        ],
+        "reach": 12.0,
+        "boatCenter": [
+          307.68210461018015,
+          1602.9495253613884
+        ],
+        "waterLevel": 0.0,
+        "minimumBoatDepth": 1.3221667166446056,
+        "contactError": 0.025301982838677795,
+        "maximumGrade": 0.4450000000000003,
+        "mooringSide": 1.0,
+        "connections": [
+          "crownwater--westhaven"
+        ],
+        "node": "Walk_FerryQuay_crownwater_05"
+      }
+    ],
+    "uniqueQuays": 6,
+    "ferryEnds": 6,
+    "maximumGrade": 0.45,
+    "policy": "Actual frozen bank and wet boat footprint; no terrain or travel-contract movement."
+  },
+  "amberwoodAccess": {
+    "hatch": [
+      512.0,
+      48.52628852230227,
+      513.0
+    ],
+    "canopyJunction": {
+      "sourceCenter": [
+        68.95013586137054,
+        -174.7640761569869
+      ],
+      "heightSeparationMetres": 6.5533829714805805,
+      "taperMetres": 27.0
+    },
+    "marketRailOpening": {
+      "removedRailTriangles": 444,
+      "removedRailComponents": 7
+    },
+    "marketStallDisplacement": [
+      15,
+      0,
+      4
+    ],
+    "marketStall3Displacement": [
+      1.5,
+      0,
+      0
+    ],
+    "charcoalHatchDisplacement": [
+      7,
+      0,
+      0
+    ],
+    "marketStairReserve": [
+      [
+        488.8785974908076,
+        538.9
+      ],
+      [
+        512.6,
+        585.1116769846404
+      ]
+    ],
+    "marketStairClearance": [
+      {
+        "node": "Prop_Barrel_041",
+        "displacement": [
+          2.29,
+          0.0,
+          1.03
+        ]
+      },
+      {
+        "node": "Prop_BasketAmber_121",
+        "displacement": [
+          -2.96,
+          0.0,
+          -1.34
+        ]
+      },
+      {
+        "node": "Prop_FenceSplit_252",
+        "displacement": [
+          0.87,
+          0.0,
+          0.39
+        ]
+      },
+      {
+        "node": "Prop_FenceSplit_257",
+        "displacement": [
+          5.23,
+          0.0,
+          2.36
+        ]
+      },
+      {
+        "node": "Prop_FenceSplit_265",
+        "displacement": [
+          4.19,
+          0.0,
+          1.89
+        ]
+      }
+    ],
+    "rootRampReserve": [
+      [
+        479.59999999999997,
+        467.59999999999997
+      ],
+      [
+        509.40000000000003,
+        476.40000000000003
+      ]
+    ],
+    "rootRampClearance": [],
+    "motherrootVoice": {
+      "identity": "Motherroot Voice Sillow",
+      "post": [
+        508.5,
+        47.296465390036204,
+        515.5
+      ]
+    },
+    "marketRamp": {
+      "start": [
+        493.9481178253666,
+        38.24371849318143,
+        577.0434533866883
+      ],
+      "landing": [
+        510.0,
+        57.79134535771821,
+        541.5
+      ],
+      "levelLandingMetres": 4.0,
+      "lengthMetres": 39.0,
+      "grade": 0.5585036247010506
+    },
+    "rootRamp": {
+      "start": [
+        484.0,
+        472.0
+      ],
+      "stop": [
+        505.0,
+        472.0
+      ],
+      "maximumGrade": 0.460249332752386,
+      "maximumSupportHeight": 3.7429566831239285,
+      "contactLift": [
+        0.02499999999999858,
+        0.02499999999999858
+      ],
+      "foot": [
+        484.0,
+        41.474286547331765,
+        472.0
+      ],
+      "head": [
+        505.0,
+        50.17594243614884,
+        472.0
+      ],
+      "halfWidthMetres": 1.8,
+      "lengthMetres": 21.0,
+      "riseMetres": 8.701655888817072
+    }
+  },
+  "manymouthAccess": {
+    "floorLevel": 1.75,
+    "halfWidth": 1.3,
+    "newTriangles": 98,
+    "paths": [
+      [
+        [
+          557.2114627765512,
+          1299.6653930518482
+        ],
+        [
+          592.7018764423227,
+          1293.7985946509693
+        ]
+      ],
+      [
+        [
+          584.7706020282602,
+          1299.9223586890553
+        ],
+        [
+          583.996197283679,
+          1295.2377005753883
+        ]
+      ],
+      [
+        [
+          579.236677925477,
+          1294.06193083261
+        ],
+        [
+          579.5524708117857,
+          1295.9722777376826
+        ]
+      ],
+      [
+        [
+          561.4159763263559,
+          1306.170443711028
+        ],
+        [
+          560.2574142769803,
+          1299.1618772698075
+        ]
+      ]
+    ],
+    "marketEntrance": {
+      "path": [
+        [
+          507.5,
+          1152.5
+        ],
+        [
+          504.5,
+          1157.5
+        ]
+      ],
+      "floorLevel": 2.2,
+      "newTriangles": 31
+    },
+    "paddyHamlet": {
+      "porches": [
+        [
+          433.9940515532725,
+          1041.8075920120207
+        ],
+        [
+          426.737265206837,
+          1040.5841880813566
+        ],
+        [
+          429.87023410942487,
+          1052.2721458450285
+        ],
+        [
+          422.4217439666026,
+          1051.7149024978605
+        ],
+        [
+          426.16603336479596,
+          1063.4361701980558
+        ],
+        [
+          418.9158655181163,
+          1062.443067170712
+        ],
+        [
+          422.67590961601667,
+          1073.3374916091886
+        ],
+        [
+          413.5768838896983,
+          1074.9907814041105
+        ]
+      ],
+      "landing": [
+        433.4500356688731,
+        1033.330632783505
+      ],
+      "spine": [
+        [
+          433.4500356688731,
+          1033.330632783505
+        ],
+        [
+          430.36565838005475,
+          1041.1958900466886
+        ],
+        [
+          426.14598903801374,
+          1051.9935241714445
+        ],
+        [
+          422.5409494414561,
+          1062.939618684384
+        ],
+        [
+          418.1263967528575,
+          1074.1641365066496
+        ]
+      ],
+      "floorLevel": 4.15,
+      "halfWidth": 1.3,
+      "newTriangles": 620,
+      "paths": [
+        [
+          [
+            433.4500356688731,
+            1033.330632783505
+          ],
+          [
+            430.36565838005475,
+            1041.1958900466886
+          ]
+        ],
+        [
+          [
+            430.36565838005475,
+            1041.1958900466886
+          ],
+          [
+            426.14598903801374,
+            1051.9935241714445
+          ]
+        ],
+        [
+          [
+            426.14598903801374,
+            1051.9935241714445
+          ],
+          [
+            422.5409494414561,
+            1062.939618684384
+          ]
+        ],
+        [
+          [
+            422.5409494414561,
+            1062.939618684384
+          ],
+          [
+            418.1263967528575,
+            1074.1641365066496
+          ]
+        ],
+        [
+          [
+            433.9940515532725,
+            1041.8075920120207
+          ],
+          [
+            430.36565838005475,
+            1041.1958900466886
+          ]
+        ],
+        [
+          [
+            426.737265206837,
+            1040.5841880813566
+          ],
+          [
+            430.36565838005475,
+            1041.1958900466886
+          ]
+        ],
+        [
+          [
+            429.87023410942487,
+            1052.2721458450285
+          ],
+          [
+            426.14598903801374,
+            1051.9935241714445
+          ]
+        ],
+        [
+          [
+            422.4217439666026,
+            1051.7149024978605
+          ],
+          [
+            426.14598903801374,
+            1051.9935241714445
+          ]
+        ],
+        [
+          [
+            426.16603336479596,
+            1063.4361701980558
+          ],
+          [
+            422.5409494414561,
+            1062.939618684384
+          ]
+        ],
+        [
+          [
+            418.9158655181163,
+            1062.443067170712
+          ],
+          [
+            422.5409494414561,
+            1062.939618684384
+          ]
+        ],
+        [
+          [
+            422.67590961601667,
+            1073.3374916091886
+          ],
+          [
+            418.1263967528575,
+            1074.1641365066496
+          ]
+        ],
+        [
+          [
+            413.5768838896983,
+            1074.9907814041105
+          ],
+          [
+            418.1263967528575,
+            1074.1641365066496
+          ]
+        ]
+      ],
+      "postGroundContacts": [
+        [
+          434.17419236817005,
+          2.5120164748926865,
+          1034.6887554123068
+        ],
+        [
+          431.9957115700227,
+          2.6012287223823787,
+          1033.8344595548292
+        ],
+        [
+          432.71385756906324,
+          2.330082710502691,
+          1038.4126542125587
+        ],
+        [
+          430.5353767709159,
+          2.3978479184163723,
+          1037.558358355081
+        ],
+        [
+          431.09141191886096,
+          2.209146929892027,
+          1042.5531600275363
+        ],
+        [
+          428.9119278571753,
+          2.231604225348204,
+          1041.7014269561705
+        ],
+        [
+          429.63545795071434,
+          1.728043348620278,
+          1046.2787738081956
+        ],
+        [
+          427.45597388902866,
+          2.0598017467066403,
+          1045.42704073683
+        ],
+        [
+          428.1795039825678,
+          0.6982339013380596,
+          1050.0043875888548
+        ],
+        [
+          426.0000199208821,
+          1.2769692181742673,
+          1049.152654517489
+        ],
+        [
+          426.94445481606215,
+          -0.10784408528209034,
+          1053.3093328206353
+        ],
+        [
+          424.7218908216987,
+          0.32296204132699396,
+          1052.5773428678633
+        ],
+        [
+          425.69318993952896,
+          -0.25679186061270676,
+          1057.108587511855
+        ],
+        [
+          423.4706259451655,
+          -0.36793328326606933,
+          1056.376597559083
+        ],
+        [
+          424.4419250629957,
+          0.5031833037358042,
+          1060.9078422030746
+        ],
+        [
+          422.2193610686323,
+          -0.028698901276645872,
+          1060.1758522503026
+        ],
+        [
+          423.2637603932809,
+          1.4156888109713808,
+          1064.2984580155494
+        ],
+        [
+          421.0861269520917,
+          0.8059315001384063,
+          1063.442004516628
+        ],
+        [
+          421.7997373182018,
+          2.0141542343483616,
+          1068.0209083423686
+        ],
+        [
+          419.6221038770126,
+          1.688318904002706,
+          1067.1644548434472
+        ],
+        [
+          420.3357142431226,
+          2.0509790685355553,
+          1071.7433586691877
+        ],
+        [
+          418.1580808019334,
+          1.999299161079932,
+          1070.8869051702663
+        ],
+        [
+          432.81346375434975,
+          2.158521086670476,
+          1042.7950698340678
+        ],
+        [
+          433.20246927264975,
+          2.258641044315293,
+          1040.4876308409994
+        ],
+        [
+          427.91785300575975,
+          2.324569114800708,
+          1039.5967102593095
+        ],
+        [
+          427.52884748745976,
+          2.2292348749723003,
+          1041.904149252378
+        ],
+        [
+          428.7857337106357,
+          -0.23914597784285352,
+          1053.3642808572986
+        ],
+        [
+          428.9603080966769,
+          0.2689028376336962,
+          1051.0308019558001
+        ],
+        [
+          423.50624436539175,
+          1.1384886532994525,
+          1050.6227674855904
+        ],
+        [
+          423.3316699793506,
+          0.3806113335425682,
+          1052.9562463870889
+        ],
+        [
+          425.0165047380277,
+          1.6868156413078312,
+          1064.4596368248885
+        ],
+        [
+          425.33406460445417,
+          1.0484454326005315,
+          1062.1412848819696
+        ],
+        [
+          420.0653941448845,
+          0.03682153820637073,
+          1061.4196005438794
+        ],
+        [
+          419.7478342784581,
+          0.6935626961820417,
+          1063.7379524867983
+        ],
+        [
+          421.9011830671275,
+          2.2176803379461822,
+          1074.6674159583326
+        ],
+        [
+          421.4828553067964,
+          2.0999772264176864,
+          1072.3651123543445
+        ],
+        [
+          414.3516104385875,
+          1.963923082207405,
+          1073.6608570549665
+        ],
+        [
+          414.76993819891857,
+          2.043806759275403,
+          1075.9631606589546
+        ]
+      ],
+      "policy": "Eight actual porches join the retained round landing through one narrow street between the houses."
+    },
+    "villageStreets": [
+      {
+        "maximumGrade": 0.0031628514271004734,
+        "maximumContactLift": 0.015,
+        "newTriangles": 907,
+        "precisionCleanupTriangles": 23,
+        "id": "town",
+        "halfWidth": 1.25,
+        "connections": [
+          [
+            "town_porch_00",
+            "town_porch_01"
+          ],
+          [
+            "town_porch_02",
+            "Landing_stilt_town"
+          ],
+          [
+            "town_porch_04",
+            "town_porch_02"
+          ],
+          [
+            "town_porch_03",
+            "town_porch_04"
+          ],
+          [
+            "town_porch_05",
+            "town_porch_03"
+          ],
+          [
+            "town_porch_06",
+            "town_porch_05"
+          ],
+          [
+            "town_porch_07",
+            "town_porch_05"
+          ],
+          [
+            "town_porch_08",
+            "town_porch_07"
+          ]
+        ],
+        "paths": [
+          [
+            [
+              512.0938547912598,
+              1156.7751967468262
+            ],
+            [
+              507.0520218673706,
+              1151.6343686141968
+            ]
+          ],
+          [
+            [
+              529.3194903198242,
+              1128.3684107818603
+            ],
+            [
+              521.3200014892578,
+              1142.9700018920898
+            ]
+          ],
+          [
+            [
+              532.5334032836914,
+              1117.3267142333984
+            ],
+            [
+              529.3194903198242,
+              1128.3684107818603
+            ]
+          ],
+          [
+            [
+              525.6203020874024,
+              1115.3144843139648
+            ],
+            [
+              532.5334032836914,
+              1117.3267142333984
+            ]
+          ],
+          [
+            [
+              531.7908247772217,
+              1101.3034979858398
+            ],
+            [
+              525.6203020874024,
+              1115.3144843139648
+            ]
+          ],
+          [
+            [
+              539.2711771789551,
+              1102.8428694763184
+            ],
+            [
+              531.7908247772217,
+              1101.3034979858398
+            ]
+          ],
+          [
+            [
+              537.4381369415283,
+              1091.944454864502
+            ],
+            [
+              531.7908247772217,
+              1101.3034979858398
+            ]
+          ],
+          [
+            [
+              545.6534060302735,
+              1092.2658774414062
+            ],
+            [
+              537.4381369415283,
+              1091.944454864502
+            ]
+          ]
+        ],
+        "publicContacts": [
+          {
+            "node": "Landing_stilt_town",
+            "position": [
+              521.3200014892578,
+              2.200000047683716,
+              1142.9700018920898
+            ]
+          },
+          {
+            "node": "town_porch_01",
+            "position": [
+              507.0520218673706,
+              2.200000047683716,
+              1151.6343686141968
+            ]
+          }
+        ],
+        "targetFloors": [
+          {
+            "node": "town_porch_00",
+            "position": [
+              512.0938547912598,
+              2.200000047683716,
+              1156.7751967468262
+            ]
+          },
+          {
+            "node": "town_porch_02",
+            "position": [
+              529.3194903198242,
+              2.1818935871124268,
+              1128.3684107818603
+            ]
+          },
+          {
+            "node": "town_porch_03",
+            "position": [
+              525.6203020874024,
+              2.1587581634521484,
+              1115.3144843139648
+            ]
+          },
+          {
+            "node": "town_porch_04",
+            "position": [
+              532.5334032836914,
+              2.1587581634521484,
+              1117.3267142333984
+            ]
+          },
+          {
+            "node": "town_porch_05",
+            "position": [
+              531.7908247772217,
+              2.1293418407440186,
+              1101.3034979858398
+            ]
+          },
+          {
+            "node": "town_porch_06",
+            "position": [
+              539.2711771789551,
+              2.1241331100463867,
+              1102.8428694763184
+            ]
+          },
+          {
+            "node": "town_porch_07",
+            "position": [
+              537.4381369415283,
+              2.1069846153259277,
+              1091.944454864502
+            ]
+          },
+          {
+            "node": "town_porch_08",
+            "position": [
+              545.6534060302735,
+              2.0988667011260986,
+              1092.2658774414062
+            ]
+          }
+        ],
+        "fittedPiles": [
+          {
+            "positionXZ": [
+              525.3613,
+              1113.2231
+            ],
+            "bottom": -2.861391753871061,
+            "top": 2.091567055069628,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              525.7297,
+              1132.6731
+            ],
+            "bottom": 0.9500001529471842,
+            "top": 2.12576068445389,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              526.9735,
+              1109.5624
+            ],
+            "bottom": -3.1299038013498635,
+            "top": 2.0828146409799406,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              527.338,
+              1114.0937
+            ],
+            "bottom": -2.718476704044225,
+            "top": 2.0917635067102367,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              527.6241,
+              1133.7109
+            ],
+            "bottom": 0.9718616215288016,
+            "top": 2.1259165554555413,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              528.5857,
+              1105.9017
+            ],
+            "bottom": -3.2553716394810195,
+            "top": 2.074281867891963,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              528.8414,
+              1126.1463
+            ],
+            "bottom": -0.6364329461838863,
+            "top": 2.1140124412432795,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              528.9502,
+              1110.433
+            ],
+            "bottom": -3.0172207238807083,
+            "top": 2.083021272146967,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              529.546,
+              1130.2028
+            ],
+            "bottom": 0.3612138510373247,
+            "top": 2.118609005138439,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              529.9593,
+              1122.3057
+            ],
+            "bottom": 0.02611734634057354,
+            "top": 2.104583663964271,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              530.1979,
+              1102.241
+            ],
+            "bottom": -3.4828099959211345,
+            "top": 2.0658056192317074,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              530.5624,
+              1106.7723
+            ],
+            "bottom": -3.1124751226402756,
+            "top": 2.07398357457281,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              530.9154,
+              1126.75
+            ],
+            "bottom": -0.5871117746970805,
+            "top": 2.1135508308219486,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              531.0772,
+              1118.4651
+            ],
+            "bottom": -0.7091495833137426,
+            "top": 2.094730018922519,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              531.6054,
+              1099.5204
+            ],
+            "bottom": -3.325901895603345,
+            "top": 2.062539160139901,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              532.0333,
+              1122.9094
+            ],
+            "bottom": 0.1562833196016299,
+            "top": 2.104556440253428,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              533.1512,
+              1119.0688
+            ],
+            "bottom": -0.4472253868168585,
+            "top": 2.0959524055562944,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              533.4548,
+              1100.6364
+            ],
+            "bottom": -3.646278594794728,
+            "top": 2.062671855341638,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              533.6664,
+              1102.7921
+            ],
+            "bottom": -3.5663089643311547,
+            "top": 2.063715401056835,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              533.6719,
+              1096.0956
+            ],
+            "bottom": -4.846312149525453,
+            "top": 2.0534159056160863,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              534.1018,
+              1100.6764
+            ],
+            "bottom": -3.6966051237953192,
+            "top": 2.06161297038459,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              535.5213,
+              1097.2115
+            ],
+            "bottom": -4.97465207950499,
+            "top": 2.053451379543983,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              535.7385,
+              1092.6708
+            ],
+            "bottom": -6.725222177628596,
+            "top": 2.043326448607965,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              537.5843,
+              1103.5984
+            ],
+            "bottom": -3.7688633268750666,
+            "top": 2.0595844190817867,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              537.5879,
+              1093.7867
+            ],
+            "bottom": -6.605264484379091,
+            "top": 2.0434480251030154,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              540.1154,
+              1093.13
+            ],
+            "bottom": -6.955886308773206,
+            "top": 2.0399370692923466,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              540.1998,
+              1090.9717
+            ],
+            "bottom": -7.202587690795347,
+            "top": 2.0396152306521507,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              544.1123,
+              1093.2864
+            ],
+            "bottom": -6.98864743000809,
+            "top": 2.0346242800636185,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              544.1968,
+              1091.1281
+            ],
+            "bottom": -7.024612244418258,
+            "top": 2.0342896152672134,
+            "floorGap": 0.08000000000000007
+          }
+        ]
+      },
+      {
+        "maximumGrade": 0.17080196484374421,
+        "maximumContactLift": 0.015,
+        "newTriangles": 486,
+        "precisionCleanupTriangles": 4,
+        "id": "floating_market",
+        "halfWidth": 1.25,
+        "connections": [
+          [
+            "Landing_floating_market",
+            "public-road-Landing_floating_market"
+          ]
+        ],
+        "paths": [
+          [
+            [
+              449.31657398376467,
+              1181.9699999251366
+            ],
+            [
+              401.5,
+              1192.5
+            ]
+          ]
+        ],
+        "publicContacts": [
+          {
+            "node": "public-road-Landing_floating_market",
+            "position": [
+              401.5,
+              2.651220711672194,
+              1192.5
+            ]
+          }
+        ],
+        "targetFloors": [
+          {
+            "node": "Landing_floating_market",
+            "position": [
+              449.31657398376467,
+              2.200000047683716,
+              1181.9699999251366
+            ]
+          }
+        ],
+        "fittedPiles": [
+          {
+            "positionXZ": [
+              409.0199,
+              1191.9499
+            ],
+            "bottom": 2.1343601020407075,
+            "top": 2.538012738656998,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              412.9263,
+              1191.0896
+            ],
+            "bottom": 2.086662271622549,
+            "top": 2.495357120531205,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              416.8327,
+              1190.2294
+            ],
+            "bottom": 2.0539215115121627,
+            "top": 2.4514661077211706,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              420.7391,
+              1189.3691
+            ],
+            "bottom": 1.7471078489332992,
+            "top": 2.4092327520708308,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              424.6455,
+              1188.5088
+            ],
+            "bottom": 1.609896538089949,
+            "top": 2.365774147848927,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              428.0874,
+              1185.5391
+            ],
+            "bottom": 1.9550819518384805,
+            "top": 2.323313056339122,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              428.5519,
+              1187.6486
+            ],
+            "bottom": 1.7666214237795863,
+            "top": 2.323463335878104,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              431.9938,
+              1184.6789
+            ],
+            "bottom": -1.569076382690014,
+            "top": 2.279799741310874,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              432.4583,
+              1186.7883
+            ],
+            "bottom": 0.23581106518918227,
+            "top": 2.2802044821204124,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              435.9002,
+              1183.8186
+            ],
+            "bottom": -1.3113610070064279,
+            "top": 2.2374943145976123,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              436.3647,
+              1185.9281
+            ],
+            "bottom": -2.3586699781938782,
+            "top": 2.2365529539303446,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              439.8066,
+              1182.9584
+            ],
+            "bottom": -2.0400732025034087,
+            "top": 2.193358012362453,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              440.2711,
+              1185.0678
+            ],
+            "bottom": -2.867358743281759,
+            "top": 2.193534565663338,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              443.713,
+              1182.0981
+            ],
+            "bottom": -0.944974044889969,
+            "top": 2.1492550670151744,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              444.1775,
+              1184.2076
+            ],
+            "bottom": -1.6702354645204267,
+            "top": 2.1502717616809446,
+            "floorGap": 0.08000000000000007
+          }
+        ]
+      },
+      {
+        "maximumGrade": 0.6200000349077484,
+        "maximumContactLift": 0.015,
+        "newTriangles": 851,
+        "precisionCleanupTriangles": 30,
+        "id": "sea_landing",
+        "halfWidth": 1.25,
+        "connections": [
+          [
+            "sea_landing_porch_04",
+            "public-road-sea_landing_porch_04"
+          ],
+          [
+            "sea_landing_porch_02",
+            "sea_landing_porch_04"
+          ],
+          [
+            "sea_landing_porch_03",
+            "sea_landing_porch_02"
+          ],
+          [
+            "sea_landing_porch_01",
+            "sea_landing_porch_03"
+          ],
+          [
+            "sea_landing_porch_00",
+            "sea_landing_porch_01"
+          ],
+          [
+            "Landing_sea_landing",
+            "sea_landing_porch_01"
+          ]
+        ],
+        "paths": [
+          [
+            [
+              429.37121690239144,
+              1023.8052705806615
+            ],
+            [
+              429.0,
+              1026.0
+            ],
+            [
+              432.0,
+              1028.0
+            ],
+            [
+              442.5,
+              1027.5
+            ]
+          ],
+          [
+            [
+              423.80781663383675,
+              1015.1045106929662
+            ],
+            [
+              429.37121690239144,
+              1023.8052705806615
+            ]
+          ],
+          [
+            [
+              416.7045756670399,
+              1017.6399416011693
+            ],
+            [
+              423.80781663383675,
+              1015.1045106929662
+            ]
+          ],
+          [
+            [
+              410.3340312334461,
+              1009.1762575191381
+            ],
+            [
+              417.0,
+              1017.0
+            ],
+            [
+              416.7045756670399,
+              1017.6399416011693
+            ]
+          ],
+          [
+            [
+              417.43723405327034,
+              1006.6407732051732
+            ],
+            [
+              410.3340312334461,
+              1009.1762575191381
+            ]
+          ],
+          [
+            [
+              408.56153596367074,
+              1000.9081148189427
+            ],
+            [
+              410.3340312334461,
+              1009.1762575191381
+            ]
+          ]
+        ],
+        "publicContacts": [
+          {
+            "node": "public-road-sea_landing_porch_04",
+            "position": [
+              442.5,
+              2.833845316044968,
+              1027.5
+            ]
+          }
+        ],
+        "targetFloors": [
+          {
+            "node": "Landing_sea_landing",
+            "position": [
+              408.56153596367074,
+              1.75,
+              1000.9081148189427
+            ]
+          },
+          {
+            "node": "sea_landing_porch_00",
+            "position": [
+              417.43723405327034,
+              1.75,
+              1006.6407732051732
+            ]
+          },
+          {
+            "node": "sea_landing_porch_01",
+            "position": [
+              410.3340312334461,
+              1.75,
+              1009.1762575191381
+            ]
+          },
+          {
+            "node": "sea_landing_porch_02",
+            "position": [
+              423.80781663383675,
+              1.75,
+              1015.1045106929662
+            ]
+          },
+          {
+            "node": "sea_landing_porch_03",
+            "position": [
+              416.7045756670399,
+              1.75,
+              1017.6399416011693
+            ]
+          },
+          {
+            "node": "sea_landing_porch_04",
+            "position": [
+              429.37121690239144,
+              1.75,
+              1023.8052705806615
+            ]
+          }
+        ],
+        "fittedPiles": [
+          {
+            "positionXZ": [
+              408.6584,
+              1006.5123
+            ],
+            "bottom": -2.910388743183103,
+            "top": 1.6850001049041747,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              410.4848,
+              1011.0185
+            ],
+            "bottom": -11.448507208895732,
+            "top": 1.6850024649309194,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              410.7704,
+              1006.0595
+            ],
+            "bottom": -1.9624611354668595,
+            "top": 1.685000189353604,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              411.8943,
+              1007.4726
+            ],
+            "bottom": -4.960579430855146,
+            "top": 1.6850004050535037,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              412.1289,
+              1009.6176
+            ],
+            "bottom": -9.474293035547198,
+            "top": 1.6850013643716917,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              412.6204,
+              1009.5069
+            ],
+            "bottom": -9.381995201054918,
+            "top": 1.6850022323728007,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              413.0789,
+              1014.0632
+            ],
+            "bottom": -13.65505556567284,
+            "top": 1.6850137681708937,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              414.7231,
+              1012.6623
+            ],
+            "bottom": -12.904499432581279,
+            "top": 1.685016395731334,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              415.6615,
+              1006.1279
+            ],
+            "bottom": -5.898720349906483,
+            "top": 1.6850002533424662,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              418.4803,
+              1018.1528
+            ],
+            "bottom": -13.20154082482647,
+            "top": 1.6851905080908711,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              421.5214,
+              1014.7739
+            ],
+            "bottom": -13.123663443371699,
+            "top": 1.6851555980906305,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              422.2475,
+              1016.8082
+            ],
+            "bottom": -12.97297150016675,
+            "top": 1.6865724818800074,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              425.5258,
+              1015.7865
+            ],
+            "bottom": -12.709571083782993,
+            "top": 1.6892073521347502,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              425.8608,
+              1020.32
+            ],
+            "bottom": -12.291979227605397,
+            "top": 1.7120928603112042,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              427.6806,
+              1019.1564
+            ],
+            "bottom": -12.266731197400258,
+            "top": 1.7087477248164005,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              429.649,
+              1027.7307
+            ],
+            "bottom": 0.3706619032542167,
+            "top": 2.63968960381014,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              430.1859,
+              1025.4644
+            ],
+            "bottom": -11.45191680782752,
+            "top": 2.126892641496303,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              430.8472,
+              1025.9334
+            ],
+            "bottom": -11.318078537368683,
+            "top": 2.4438277830276736,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              433.4469,
+              1026.8499
+            ],
+            "bottom": -5.539782113831154,
+            "top": 3.385497617507897,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              433.5497,
+              1029.0074
+            ],
+            "bottom": 2.8465650989121096,
+            "top": 4.05861902122495,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              437.4424,
+              1026.6596
+            ],
+            "bottom": -6.351324571709186,
+            "top": 3.3285228964996727,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              437.5451,
+              1028.8172
+            ],
+            "bottom": 2.8084698059794273,
+            "top": 3.4009331139646966,
+            "floorGap": 0.08000000000000007
+          }
+        ]
+      },
+      {
+        "maximumGrade": 0.09825118933803123,
+        "maximumContactLift": 0.015,
+        "newTriangles": 669,
+        "precisionCleanupTriangles": 57,
+        "id": "east_hamlet",
+        "halfWidth": 1.25,
+        "connections": [
+          [
+            "east_hamlet_porch_02",
+            "east_hamlet_porch_00"
+          ],
+          [
+            "east_hamlet_porch_04",
+            "east_hamlet_porch_02"
+          ],
+          [
+            "east_hamlet_porch_03",
+            "east_hamlet_porch_04"
+          ],
+          [
+            "east_hamlet_porch_08",
+            "east_hamlet_porch_06"
+          ]
+        ],
+        "paths": [
+          [
+            [
+              700.2743467074292,
+              1080.1315991308384
+            ],
+            [
+              710.0,
+              1075.0
+            ],
+            [
+              710.5116361361402,
+              1072.0520359899692
+            ]
+          ],
+          [
+            [
+              690.3453611117261,
+              1085.6244084264927
+            ],
+            [
+              700.0,
+              1082.0
+            ],
+            [
+              700.2743467074292,
+              1080.1315991308384
+            ]
+          ],
+          [
+            [
+              690.4850095492261,
+              1093.7754589941196
+            ],
+            [
+              690.3453611117261,
+              1085.6244084264927
+            ]
+          ],
+          [
+            [
+              733.4330991488355,
+              1101.7959706213169
+            ],
+            [
+              729.0,
+              1093.0
+            ],
+            [
+              728.666375516023,
+              1089.4405133154087
+            ]
+          ]
+        ],
+        "publicContacts": [
+          {
+            "node": "Landing_east_hamlet",
+            "position": [
+              722.8963865023511,
+              14.36421523190121,
+              1063.3174816991977
+            ]
+          },
+          {
+            "node": "Landing_lore_court",
+            "position": [
+              703.5434812289136,
+              14.36421523190121,
+              1105.1837918188266
+            ]
+          },
+          {
+            "node": "Landing_shore_lore_court",
+            "position": [
+              694.7622464877027,
+              15.13056216335873,
+              1112.136691751688
+            ]
+          },
+          {
+            "node": "east_hamlet_porch_00",
+            "position": [
+              710.5116361361402,
+              14.669805861478848,
+              1072.0520359899692
+            ]
+          },
+          {
+            "node": "east_hamlet_porch_01",
+            "position": [
+              705.4096158724683,
+              14.36421523190121,
+              1092.7851025488071
+            ]
+          },
+          {
+            "node": "east_hamlet_porch_05",
+            "position": [
+              726.5551694613355,
+              14.424858666425747,
+              1075.752845468729
+            ]
+          },
+          {
+            "node": "east_hamlet_porch_06",
+            "position": [
+              728.666375516023,
+              15.003937102323574,
+              1089.4405133154087
+            ]
+          },
+          {
+            "node": "east_hamlet_porch_07",
+            "position": [
+              715.0011686068433,
+              14.36421523190121,
+              1089.3254734899692
+            ]
+          }
+        ],
+        "targetFloors": [
+          {
+            "node": "east_hamlet_porch_02",
+            "position": [
+              700.2743467074292,
+              15.553756810194058,
+              1080.1315991308384
+            ]
+          },
+          {
+            "node": "east_hamlet_porch_03",
+            "position": [
+              690.4850095492261,
+              16.137097693449064,
+              1093.7754589941196
+            ]
+          },
+          {
+            "node": "east_hamlet_porch_04",
+            "position": [
+              690.3453611117261,
+              15.990075922971767,
+              1085.6244084264927
+            ]
+          },
+          {
+            "node": "east_hamlet_porch_08",
+            "position": [
+              733.4330991488355,
+              15.303258753782314,
+              1101.7959706213169
+            ]
+          }
+        ],
+        "fittedPiles": [
+          {
+            "positionXZ": [
+              689.311,
+              1088.2948
+            ],
+            "bottom": 11.96937623987709,
+            "top": 15.957136521318306,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              689.3795,
+              1092.2942
+            ],
+            "bottom": 12.258732533744869,
+            "top": 16.040159300475437,
+            "floorGap": 0.0799999999999983
+          },
+          {
+            "positionXZ": [
+              691.3701,
+              1084.0861
+            ],
+            "bottom": 11.859738010657045,
+            "top": 15.882725530685779,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              691.4706,
+              1088.2578
+            ],
+            "bottom": 12.214662085134313,
+            "top": 15.95103900133139,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              691.5392,
+              1092.2572
+            ],
+            "bottom": 12.500559960567339,
+            "top": 16.045835988381167,
+            "floorGap": 0.0799999999999983
+          },
+          {
+            "positionXZ": [
+              695.1149,
+              1082.6803
+            ],
+            "bottom": 12.22888539900314,
+            "top": 15.716819040997803,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              695.8741,
+              1084.7025
+            ],
+            "bottom": 12.439536405969763,
+            "top": 15.719747781033046,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              698.8597,
+              1081.2745
+            ],
+            "bottom": 12.598078270978863,
+            "top": 15.530124530124663,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              699.6189,
+              1083.2967
+            ],
+            "bottom": 12.793999251198857,
+            "top": 15.542742852343087,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              701.097,
+              1078.4764
+            ],
+            "bottom": 12.712758145894178,
+            "top": 15.437036363458947,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              702.105,
+              1080.3868
+            ],
+            "bottom": 12.910129025719195,
+            "top": 15.412330296378368,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              704.6348,
+              1076.6098
+            ],
+            "bottom": 13.045619975574668,
+            "top": 15.121594504588922,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              705.6427,
+              1078.5202
+            ],
+            "bottom": 13.191290133219455,
+            "top": 15.123551314572403,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              708.1725,
+              1074.7431
+            ],
+            "bottom": 13.335788881328492,
+            "top": 14.798369865753967,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              709.1805,
+              1076.6535
+            ],
+            "bottom": 13.423085954504165,
+            "top": 14.834028941018229,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              709.1924,
+              1073.3374
+            ],
+            "bottom": 13.39214436323326,
+            "top": 14.663233078847707,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              727.7847,
+              1091.6073
+            ],
+            "bottom": 13.56421523190121,
+            "top": 14.955488556483305,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              729.9353,
+              1091.4058
+            ],
+            "bottom": 13.56421523190121,
+            "top": 14.973059597424067,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              729.9933,
+              1097.3706
+            ],
+            "bottom": 13.564151314844363,
+            "top": 15.113283088214832,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              731.9222,
+              1096.3984
+            ],
+            "bottom": 13.564215155364664,
+            "top": 15.113040213666428,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              733.7224,
+              1099.9704
+            ],
+            "bottom": 13.56421523190121,
+            "top": 15.213542925626902,
+            "floorGap": 0.08000000000000007
+          }
+        ]
+      },
+      {
+        "maximumGrade": 0.23895517428775828,
+        "maximumContactLift": 0.015,
+        "newTriangles": 1142,
+        "precisionCleanupTriangles": 28,
+        "id": "south_hamlet",
+        "halfWidth": 1.25,
+        "connections": [
+          [
+            "south_hamlet_porch_01",
+            "Landing_south_hamlet"
+          ],
+          [
+            "south_hamlet_porch_00",
+            "south_hamlet_porch_01"
+          ],
+          [
+            "south_hamlet_porch_03",
+            "south_hamlet_porch_01"
+          ],
+          [
+            "south_hamlet_porch_02",
+            "south_hamlet_porch_03"
+          ],
+          [
+            "south_hamlet_porch_05",
+            "south_hamlet_porch_03"
+          ],
+          [
+            "south_hamlet_porch_04",
+            "south_hamlet_porch_05"
+          ],
+          [
+            "south_hamlet_porch_06",
+            "south_hamlet_porch_05"
+          ],
+          [
+            "south_hamlet_porch_07",
+            "south_hamlet_porch_06"
+          ]
+        ],
+        "paths": [
+          [
+            [
+              616.1359935561818,
+              1226.8725547656773
+            ],
+            [
+              614.7415843764943,
+              1235.3572807178257
+            ]
+          ],
+          [
+            [
+              608.8962474624318,
+              1227.6727256641148
+            ],
+            [
+              616.1359935561818,
+              1226.8725547656773
+            ]
+          ],
+          [
+            [
+              612.7290111343068,
+              1214.1646079883335
+            ],
+            [
+              615.0,
+              1226.0
+            ],
+            [
+              616.1359935561818,
+              1226.8725547656773
+            ]
+          ],
+          [
+            [
+              605.4892650405568,
+              1214.9647769794224
+            ],
+            [
+              612.7290111343068,
+              1214.1646079883335
+            ]
+          ],
+          [
+            [
+              609.160956935088,
+              1201.5512218341587
+            ],
+            [
+              611.0,
+              1213.0
+            ],
+            [
+              612.7290111343068,
+              1214.1646079883335
+            ]
+          ],
+          [
+            [
+              601.8691020766896,
+              1202.2653903827427
+            ],
+            [
+              609.160956935088,
+              1201.5512218341587
+            ]
+          ],
+          [
+            [
+              610.0643382827443,
+              1184.8367204532383
+            ],
+            [
+              606.0,
+              1186.0
+            ],
+            [
+              607.0,
+              1199.0
+            ],
+            [
+              609.160956935088,
+              1201.5512218341587
+            ]
+          ],
+          [
+            [
+              620.0118251601857,
+              1179.7594814166782
+            ],
+            [
+              610.0,
+              1184.0
+            ],
+            [
+              610.0643382827443,
+              1184.8367204532383
+            ]
+          ]
+        ],
+        "publicContacts": [
+          {
+            "node": "Landing_south_hamlet",
+            "position": [
+              614.7415843764943,
+              1.75,
+              1235.3572807178257
+            ]
+          },
+          {
+            "node": "south_hamlet_porch_08",
+            "position": [
+              605.2303310195607,
+              1.75,
+              1240.1740531787632
+            ]
+          }
+        ],
+        "targetFloors": [
+          {
+            "node": "south_hamlet_porch_00",
+            "position": [
+              608.8962474624318,
+              1.8169658184051514,
+              1227.6727256641148
+            ]
+          },
+          {
+            "node": "south_hamlet_porch_01",
+            "position": [
+              616.1359935561818,
+              1.8005210161209106,
+              1226.8725547656773
+            ]
+          },
+          {
+            "node": "south_hamlet_porch_02",
+            "position": [
+              605.4892650405568,
+              2.013319730758667,
+              1214.9647769794224
+            ]
+          },
+          {
+            "node": "south_hamlet_porch_03",
+            "position": [
+              612.7290111343068,
+              1.9968748092651367,
+              1214.1646079883335
+            ]
+          },
+          {
+            "node": "south_hamlet_porch_04",
+            "position": [
+              601.8691020766896,
+              2.220395565032959,
+              1202.2653903827427
+            ]
+          },
+          {
+            "node": "south_hamlet_porch_05",
+            "position": [
+              609.160956935088,
+              2.1988892555236816,
+              1201.5512218341587
+            ]
+          },
+          {
+            "node": "south_hamlet_porch_06",
+            "position": [
+              610.0643382827443,
+              3.143167018890381,
+              1184.8367204532383
+            ]
+          },
+          {
+            "node": "south_hamlet_porch_07",
+            "position": [
+              620.0118251601857,
+              4.968723773956299,
+              1179.7594814166782
+            ]
+          }
+        ],
+        "fittedPiles": [
+          {
+            "positionXZ": [
+              605.0382,
+              1187.5784
+            ],
+            "bottom": -0.9038704064122707,
+            "top": 2.8349896505491206,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              605.345,
+              1191.5666
+            ],
+            "bottom": -1.2859229223160427,
+            "top": 2.6501886027270105,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              605.6518,
+              1195.5548
+            ],
+            "bottom": -1.514596791066437,
+            "top": 2.41831231297337,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              607.1919,
+              1187.4127
+            ],
+            "bottom": -0.1800959369079137,
+            "top": 2.876386969592549,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              607.4482,
+              1202.8041
+            ],
+            "bottom": -1.5644632695779166,
+            "top": 2.134466686281475,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              607.4986,
+              1191.401
+            ],
+            "bottom": -0.6661427933708504,
+            "top": 2.6442274563926897,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              607.8054,
+              1195.3892
+            ],
+            "bottom": -1.1135953411712316,
+            "top": 2.4176052489943047,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              608.7936,
+              1199.4465
+            ],
+            "bottom": -1.2798404716723983,
+            "top": 2.1989343662784813,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              608.9194,
+              1186.2878
+            ],
+            "bottom": 0.5357671543258754,
+            "top": 3.0155418060832737,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              608.9669,
+              1207.1529
+            ],
+            "bottom": -1.5735923896532638,
+            "top": 2.0491358581304535,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              609.6013,
+              1211.1023
+            ],
+            "bottom": -1.573997148707183,
+            "top": 1.9806709363163475,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              610.4652,
+              1202.8609
+            ],
+            "bottom": -1.229467740612047,
+            "top": 2.115928962534126,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              610.8429,
+              1182.4701
+            ],
+            "bottom": 0.8735205642809221,
+            "top": 3.2326603869031945,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              611.0746,
+              1215.434
+            ],
+            "bottom": -1.542960164841621,
+            "top": 1.9267515466280813,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              611.0996,
+              1206.8103
+            ],
+            "bottom": -1.434766768230799,
+            "top": 2.0496905626859707,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              611.6853,
+              1184.4591
+            ],
+            "bottom": 0.9238398827174052,
+            "top": 3.2009504050869437,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              611.734,
+              1210.7597
+            ],
+            "bottom": -1.6810575440696265,
+            "top": 1.9761950178527066,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              611.951,
+              1215.8413
+            ],
+            "bottom": -1.7606732625833048,
+            "top": 1.9193238449911818,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              612.7048,
+              1219.7696
+            ],
+            "bottom": -1.559334914517104,
+            "top": 1.849491899171484,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              613.4586,
+              1223.6979
+            ],
+            "bottom": -1.290653709230945,
+            "top": 1.7809476447310642,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              614.0723,
+              1215.4342
+            ],
+            "bottom": -1.737070115524919,
+            "top": 1.9208630890155685,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              614.4816,
+              1228.142
+            ],
+            "bottom": -0.9201143591663731,
+            "top": 1.733037227672178,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              614.5262,
+              1180.9101
+            ],
+            "bottom": 0.05250250931441154,
+            "top": 3.9546994843578256,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              614.8261,
+              1219.3626
+            ],
+            "bottom": -1.766199249386168,
+            "top": 1.8496811094498415,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              615.3686,
+              1182.899
+            ],
+            "bottom": 0.021608698406429303,
+            "top": 3.956868414078647,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              615.5799,
+              1223.2909
+            ],
+            "bottom": -1.828962667075731,
+            "top": 1.7787956767030035,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              616.9584,
+              1228.5278
+            ],
+            "bottom": -1.6275058691114395,
+            "top": 1.722485311653838,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              618.2094,
+              1179.35
+            ],
+            "bottom": -0.3593272317132011,
+            "top": 4.732236607670141,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              619.0518,
+              1181.339
+            ],
+            "bottom": -0.3408628230821031,
+            "top": 4.715786587974761,
+            "floorGap": 0.08000000000000007
+          }
+        ]
+      },
+      {
+        "maximumGrade": 0.0,
+        "maximumContactLift": 0.015,
+        "newTriangles": 355,
+        "precisionCleanupTriangles": 14,
+        "id": "boat_yard",
+        "halfWidth": 1.25,
+        "connections": [
+          [
+            "boat_yard_porch_02",
+            "boat_yard_porch_03"
+          ],
+          [
+            "boat_yard_porch_05",
+            "boat_yard_porch_02"
+          ],
+          [
+            "boat_yard_porch_04",
+            "boat_yard_porch_05"
+          ]
+        ],
+        "paths": [
+          [
+            [
+              466.8012238931424,
+              1253.1145528548793
+            ],
+            [
+              472.9713908624417,
+              1247.53312051235
+            ]
+          ],
+          [
+            [
+              459.50707449433867,
+              1243.451453565939
+            ],
+            [
+              466.8012238931424,
+              1253.1145528548793
+            ]
+          ],
+          [
+            [
+              454.56538786408964,
+              1249.527125715597
+            ],
+            [
+              459.50707449433867,
+              1243.451453565939
+            ]
+          ]
+        ],
+        "publicContacts": [
+          {
+            "node": "Landing_boat_yard",
+            "position": [
+              491.97590233800474,
+              1.75,
+              1257.40989243923
+            ]
+          },
+          {
+            "node": "boat_yard_porch_00",
+            "position": [
+              476.9948464822537,
+              1.75,
+              1256.386184095724
+            ]
+          },
+          {
+            "node": "boat_yard_porch_01",
+            "position": [
+              483.16498341081206,
+              1.75,
+              1250.8047422164516
+            ]
+          },
+          {
+            "node": "boat_yard_porch_03",
+            "position": [
+              472.9713908624417,
+              1.75,
+              1247.53312051235
+            ]
+          }
+        ],
+        "targetFloors": [
+          {
+            "node": "boat_yard_porch_02",
+            "position": [
+              466.8012238931424,
+              1.75,
+              1253.1145528548793
+            ]
+          },
+          {
+            "node": "boat_yard_porch_04",
+            "position": [
+              454.56538786408964,
+              1.75,
+              1249.527125715597
+            ]
+          },
+          {
+            "node": "boat_yard_porch_05",
+            "position": [
+              459.50707449433867,
+              1.75,
+              1243.451453565939
+            ]
+          }
+        ],
+        "fittedPiles": [
+          {
+            "positionXZ": [
+              456.3497,
+              1249.0449
+            ],
+            "bottom": -2.3280379420569184,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              457.198,
+              1244.5788
+            ],
+            "bottom": -2.3807769549243076,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              458.8737,
+              1245.9418
+            ],
+            "bottom": -2.5890223751989256,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              461.2728,
+              1243.998
+            ],
+            "bottom": -2.44079674770638,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              461.9587,
+              1248.4919
+            ],
+            "bottom": -2.176660853206598,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              463.6827,
+              1247.1906
+            ],
+            "bottom": -1.689351440753363,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              464.3686,
+              1251.6845
+            ],
+            "bottom": -1.2527861231401825,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              466.0926,
+              1250.3831
+            ],
+            "bottom": -0.7291302608805224,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              467.1891,
+              1251.3074
+            ],
+            "bottom": -0.4128754976726617,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              468.6381,
+              1252.9092
+            ],
+            "bottom": -0.1259300710502289,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              470.1555,
+              1248.624
+            ],
+            "bottom": -0.05166156934055083,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              471.6045,
+              1250.2259
+            ],
+            "bottom": -0.027797531400801066,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          }
+        ]
+      },
+      {
+        "maximumGrade": 0.0,
+        "maximumContactLift": 0.015,
+        "newTriangles": 75,
+        "precisionCleanupTriangles": 8,
+        "id": "far_bar",
+        "halfWidth": 1.25,
+        "connections": [
+          [
+            "far_bar_porch_02",
+            "far_bar_porch_03"
+          ]
+        ],
+        "paths": [
+          [
+            [
+              651.266276265216,
+              1221.4262299198608
+            ],
+            [
+              651.4237317095519,
+              1214.0016331333618
+            ]
+          ]
+        ],
+        "publicContacts": [
+          {
+            "node": "Landing_far_bar",
+            "position": [
+              692.5708951006652,
+              1.75,
+              1208.9646534580688
+            ]
+          },
+          {
+            "node": "far_bar_porch_00",
+            "position": [
+              681.2356823931457,
+              1.75,
+              1207.5541462559204
+            ]
+          },
+          {
+            "node": "far_bar_porch_01",
+            "position": [
+              662.7398938189269,
+              1.75,
+              1218.784737076233
+            ]
+          },
+          {
+            "node": "far_bar_porch_03",
+            "position": [
+              651.4237317095519,
+              1.75,
+              1214.0016331333618
+            ]
+          }
+        ],
+        "targetFloors": [
+          {
+            "node": "far_bar_porch_02",
+            "position": [
+              651.266276265216,
+              1.75,
+              1221.4262299198608
+            ]
+          }
+        ],
+        "fittedPiles": [
+          {
+            "positionXZ": [
+              650.3031,
+              1215.9046
+            ],
+            "bottom": -0.4454460850238608,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              652.3778,
+              1219.9495
+            ],
+            "bottom": -0.615783336105517,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              652.4626,
+              1215.9504
+            ],
+            "bottom": -0.2059475721182173,
+            "top": 1.6849999856948852,
+            "floorGap": 0.08000000000000007
+          }
+        ]
+      },
+      {
+        "maximumGrade": 0.006992789516831433,
+        "maximumContactLift": 0.015,
+        "newTriangles": 357,
+        "precisionCleanupTriangles": 12,
+        "id": "deep_grove",
+        "halfWidth": 1.25,
+        "connections": [
+          [
+            "deep_grove_porch_01",
+            "deep_grove_porch_02"
+          ],
+          [
+            "deep_grove_porch_04",
+            "deep_grove_porch_01"
+          ],
+          [
+            "deep_grove_porch_03",
+            "deep_grove_porch_04"
+          ]
+        ],
+        "paths": [
+          [
+            [
+              629.9110675976067,
+              1152.743142381502
+            ],
+            [
+              636.454356782177,
+              1147.2856037767656
+            ]
+          ],
+          [
+            [
+              624.2060199901848,
+              1143.590684190584
+            ],
+            [
+              629.9110675976067,
+              1152.743142381502
+            ]
+          ],
+          [
+            [
+              618.0306354687004,
+              1149.3370411546953
+            ],
+            [
+              624.2060199901848,
+              1143.590684190584
+            ]
+          ]
+        ],
+        "publicContacts": [
+          {
+            "node": "Landing_deep_grove",
+            "position": [
+              652.4901462719231,
+              2.434807062149048,
+              1156.226067796541
+            ]
+          },
+          {
+            "node": "deep_grove_porch_00",
+            "position": [
+              641.0167499706536,
+              2.397995948791504,
+              1156.3181011827714
+            ]
+          },
+          {
+            "node": "deep_grove_porch_02",
+            "position": [
+              636.454356782177,
+              2.3575706481933594,
+              1147.2856037767656
+            ]
+          }
+        ],
+        "targetFloors": [
+          {
+            "node": "deep_grove_porch_01",
+            "position": [
+              629.9110675976067,
+              2.331667423248291,
+              1152.743142381502
+            ]
+          },
+          {
+            "node": "deep_grove_porch_03",
+            "position": [
+              618.0306354687004,
+              2.271653890609741,
+              1149.3370411546953
+            ]
+          },
+          {
+            "node": "deep_grove_porch_04",
+            "position": [
+              624.2060199901848,
+              2.292029619216919,
+              1143.590684190584
+            ]
+          }
+        ],
+        "fittedPiles": [
+          {
+            "positionXZ": [
+              618.393,
+              1147.5246
+            ],
+            "bottom": 0.95,
+            "top": 2.208229681303329,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              619.8645,
+              1149.1059
+            ],
+            "bottom": 0.95,
+            "top": 2.2094130401808263,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              621.3214,
+              1144.7997
+            ],
+            "bottom": 0.8067594031154488,
+            "top": 2.2218269735336302,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              622.7928,
+              1146.381
+            ],
+            "bottom": 0.08856043084425062,
+            "top": 2.22450662189549,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              624.083,
+              1145.4349
+            ],
+            "bottom": -0.34286823850642,
+            "top": 2.2274832865949814,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              625.916,
+              1144.2923
+            ],
+            "bottom": -0.9254297303608112,
+            "top": 2.229319165601322,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              626.1989,
+              1148.8295
+            ],
+            "bottom": -1.6623831423255866,
+            "top": 2.245363284344694,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              628.0319,
+              1147.6869
+            ],
+            "bottom": -2.0848947576002956,
+            "top": 2.2474157640595243,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              628.3148,
+              1152.224
+            ],
+            "bottom": -2.0996282072630463,
+            "top": 2.26416310101068,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              630.3712,
+              1150.953
+            ],
+            "bottom": -1.9745565896164583,
+            "top": 2.2671773377549393,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              631.7547,
+              1152.6117
+            ],
+            "bottom": -1.5359426063292643,
+            "top": 2.2685404757657444,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              633.443,
+              1148.3909
+            ],
+            "bottom": -1.140285162355046,
+            "top": 2.2828011626728504,
+            "floorGap": 0.08000000000000007
+          },
+          {
+            "positionXZ": [
+              634.8265,
+              1150.0497
+            ],
+            "bottom": -0.16910885613438448,
+            "top": 2.2833260069097068,
+            "floorGap": 0.08000000000000007
+          }
+        ]
+      }
+    ],
+    "policy": "Visible timber links, existing floors subtracted, unchanged tidal bank and rigid houses."
+  },
+  "mirrorBankAccess": [
+    {
+      "node": "Walk_Mirror_BankRamp_Quay",
+      "start": [
+        968.5,
+        814.5
+      ],
+      "stop": [
+        940.5,
+        796.5
+      ],
+      "maximumGrade": 0.6363886709661303,
+      "maximumSupportHeight": 3.2239045611395483,
+      "contactLift": [
+        0.025000000000005684,
+        0.025000000000005684
+      ]
+    },
+    {
+      "node": "Walk_Mirror_BankRamp_Sanctuary",
+      "start": [
+        874.5,
+        900.5
+      ],
+      "stop": [
+        866.5,
+        874.5
+      ],
+      "maximumGrade": 0.533996866163788,
+      "maximumSupportHeight": 3.211160768884156,
+      "contactLift": [
+        0.025000000000005684,
+        0.025000000000005684
+      ]
+    }
+  ],
+  "mirrorBankOpening": {
+    "node": "Landmark_LakeLink_Sanctuary",
+    "clippedTriangles": 15,
+    "openingWidth": 4.6,
+    "floorUnchanged": true
+  },
+  "accessDecks": [
+    {
+      "name": "Walk_Westhaven_LampCausewayLink",
+      "region": "westhaven",
+      "lengthMetres": 18.68,
+      "maximumGrade": 0.04,
+      "heights": [
+        4.33,
+        3.58
+      ]
+    },
+    {
+      "name": "Walk_Westhaven_FerryLandingStair",
+      "region": "westhaven",
+      "lengthMetres": 31.13,
+      "maximumGrade": 0.459,
+      "heights": [
+        1.07,
+        1.07,
+        10.11,
+        10.22,
+        10.32,
+        10.43,
+        10.53,
+        10.64,
+        10.74,
+        10.85,
+        11.56
+      ]
+    }
+  ]
+}

@@ -46,6 +46,15 @@ def test_vertex_alpha_reveals_lower_geometry_instead_of_writing_depth():
     assert np.asarray(coverage)[16,16]==255
 
 
+def test_opaque_vertex_rgb_matches_equivalent_material_tint():
+    tint=np.array([.34,.41,.20,1.],np.float32)
+    def tinted(base,vertex):
+        s=C.R.Scene();s.add_material(C.R.RenderMaterial('ground',tuple(base),roughness=.95))
+        s.add_mesh(quad(0.,'ground'))
+        return np.asarray(render(s,np.tile(vertex,(4,1)).astype(np.float32))[0])
+    assert np.array_equal(tinted(tint,np.ones(4)),tinted(np.ones(4),tint))
+
+
 def test_coverage_is_geometry_derived_and_transparent_alpha_does_not_fill_it():
     s=C.R.Scene();s.add_material(C.R.RenderMaterial('ground',(.4,.4,.4,1.)))
     s.add_mesh(quad(0.,'ground',2.,8.))

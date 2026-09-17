@@ -6,6 +6,25 @@ extends SceneTree
 const TIMEOUT := 90.0
 const SCREEN := Vector2i(1440, 900)
 const GROUND_TOLERANCE := 0.6
+# A neighbour chunk still importing when a click route starts attaches moments
+# later, as a player sees it; the clicked surface is waited for, never assumed.
+const NEIGHBOUR_SURFACE_TIMEOUT := 20.0
+# A walk the server ended short of its target (a wandering creature stood on
+# the tile or on the last step) is requested again once the actor has stood
+# still this long, as a player clicks again; every repeat is recorded and the
+# exact target is still required within the same budget.
+const REISSUE_AFTER_IDLE := 3.0
+# A frame gap this long is recorded as a stall (with its tick time), and a
+# liveness line is printed every 30 s, so a client that stops rendering while
+# a route waits can be located in the log rather than inferred afterwards.
+const STALL_GAP_MS := 2000
+const LIVENESS_EVERY_MS := 30000
+## A route's start teleport is asked up to this many times, each waited this
+## long, when a wandering body on the start tile makes the arrival land beside it.
+const START_ATTEMPTS := 3
+const START_WAIT_SECONDS := 40.0
+## Seconds to wait for a body standing where a neighbour click would land.
+const OCCUPIED_TARGET_TIMEOUT := 20.0
 
 var _failures := 0
 var _artifacts := ""
@@ -24,6 +43,7 @@ func _run() -> void:
 		_artifacts = ProjectSettings.globalize_path("res://test-artifacts/transition")
 	DirAccess.make_dir_recursive_absolute(_artifacts)
 	root.size = SCREEN
+	_watchdog()
 	_main = (load("res://src/app/main.tscn") as PackedScene).instantiate() as Control
 	root.add_child(_main)
 	await process_frame
@@ -74,11 +94,21 @@ func _run() -> void:
 			if not items_ready: continue
 		var map_id: String = str(route.get("map", "amberwood"))
 		var start: Array = route.start
-		_network.call("send_chat", "#invasion_assistant teleport %s %d %d" % [map_id, int(start[0]), int(start[1])])
 		# Admin arrivals may move to a nearby unoccupied tile. Only fixtures
 		# that explicitly allow it relax their start; route targets remain exact.
-		var arrived: bool = await _wait(func() -> bool:
-			return _near(map_id, start, int(route.get("startTolerance", 0))), 120)
+		# A wandering body on the start tile makes the arrival land beside it:
+		# the same teleport is asked again once that body has moved on, and
+		# every repeat is recorded.
+		var arrived := false
+		var start_attempts := 0
+		while not arrived and start_attempts < START_ATTEMPTS:
+			start_attempts += 1
+			_network.call("send_chat", "#invasion_assistant teleport %s %d %d" % [map_id, int(start[0]), int(start[1])])
+			arrived = await _wait(func() -> bool:
+				return _near(map_id, start, int(route.get("startTolerance", 0))), START_WAIT_SECONDS)
+		if start_attempts > 1:
+			if not _report.has("start_retries"): _report["start_retries"] = []
+			(_report["start_retries"] as Array).append({"route": str(route.id), "attempts": start_attempts, "arrived": arrived})
 		_expect(arrived, str(route.id) + " start")
 		if not arrived: continue
 		await _settle(20)
@@ -89,9 +119,21 @@ func _run() -> void:
 		for step: Dictionary in route.steps:
 			var target: Array = step.tile
 			var npc_result: Dictionary = {}
+			var arrival_result: Dictionary = {}
+			var arrival_observation: Dictionary = {}
+			var arrival_observer := Callable()
+			var arrival_error := _arrival_fixture_error(step, str(route.get("travelMode", "")) == "ferry")
+			if not arrival_error.is_empty():
+				_expect(false, str(route.id) + " / " + arrival_error)
+				break
+			if step.has("expectedArrival"):
+				arrival_observer = func(command: int, payload: PackedByteArray) -> void:
+					_observe_arrival(arrival_observation, EloriaProtocol.decode_server(command, payload),
+						int(_state.get("local_actor_id")), str(step.destination))
+				_network.connect("packet_received", arrival_observer)
 			var walk_timeout: float = float(step.get("walkTimeout", route.get("walkTimeout", 45)))
 			var began: int = Time.get_ticks_msec()
-			_issue_walk(step)
+			await _issue_walk(step)
 			var destination: String = str(step.get("destination", map_id))
 			var reached: bool
 			if step.has("destination"):
@@ -100,11 +142,17 @@ func _run() -> void:
 					ready_to_enter = await _wait(func() -> bool: return _near(map_id, target, 2), walk_timeout)
 					if ready_to_enter:
 						_network.call("use_map_object", int(step.object))
-				reached = await _on_map(destination) if ready_to_enter else false
+				reached = await _walk_until(route, step, func() -> bool: return _arrived_on(destination), TIMEOUT) if ready_to_enter else false
 				if bool(step.get("clickNeighbor", false)) and reached:
 					reached = await _wait(func() -> bool: return _at(destination, target), walk_timeout)
 			else:
-				reached = await _wait(func() -> bool: return _at(map_id, target), walk_timeout)
+				reached = await _walk_until(route, step, func() -> bool: return _at(map_id, target), walk_timeout)
+			if arrival_observer.is_valid():
+				_network.disconnect("packet_received", arrival_observer)
+				arrival_result = await _check_arrival(step, arrival_observation) if reached else {
+					"ok": false, "error": "destination did not arrive", "packet": arrival_observation}
+				reached = reached and bool(arrival_result.get("ok", false))
+				_expect(reached, "%s / exact published ferry arrival before further movement" % route.id)
 			if reached and step.has("useObject"):
 				var chat_cursor: int = (_state.get("chat_lines") as Array).size()
 				if bool(step.get("expectStorage", false)):
@@ -133,6 +181,7 @@ func _run() -> void:
 				"map": str(_state.get("current_map")), "ok": reached,
 				"used_object": int(step.get("useObject", -1)),
 				"used_npc": str(step.get("useNpc", "")), "npc_dialogue": npc_result,
+				"arrival": arrival_result,
 				"storage_open": bool((_state.get("storage") as Dictionary).get("open", false)),
 				"seconds": (Time.get_ticks_msec() - began) / 1000.0,
 				"actor": (_state.get("actors") as Dictionary).get(int(_state.get("local_actor_id")), {}).duplicate(true)})
@@ -166,6 +215,110 @@ func _run() -> void:
 	_main.queue_free()
 	await process_frame
 	quit(_failures)
+
+static func _arrival_fixture_error(step: Dictionary, ferry_route := false) -> String:
+	if not step.has("expectedArrival"):
+		return "ferry transition requires expectedArrival" if step.has("destination") and (ferry_route or str(step.get("transitionMode", "")) == "ferry") else ""
+	var expected: Variant = step.expectedArrival
+	if not expected is Dictionary or not step.has("destination"):
+		return "expectedArrival requires a destination transition and dictionary"
+	if str(expected.get("map", "")) != str(step.destination) or str(step.destination).is_empty():
+		return "expectedArrival map must match the transition destination"
+	for key: String in ["tile", "global"]:
+		var pair: Variant = expected.get(key)
+		if not pair is Array or pair.size() != 2:
+			return "expectedArrival requires a two-coordinate " + key
+		for value: Variant in pair:
+			if not (value is float or value is int) or not is_finite(float(value)):
+				return "expectedArrival coordinates must be finite numbers"
+			if key == "tile" and (float(value) != floorf(float(value)) or float(value) < 0):
+				return "expectedArrival tile must contain nonnegative integers"
+	if str(expected.get("units", "")) != "metres" or str(expected.get("point", "")) != "tile-center":
+		return "expectedArrival global coordinates require metres at tile-center"
+	if bool(step.get("clickNeighbor", false)):
+		return "expectedArrival must be checked before a neighbor walk continues"
+	return ""
+
+static func _observe_arrival(observation: Dictionary, event: Dictionary, local_id: int, destination: String) -> void:
+	if str(event.get("type", "")) == "change_map":
+		observation["current_map"] = str(event.get("map_name", ""))
+		if not observation.has("maps"): observation["maps"] = []
+		(observation.maps as Array).append(observation.current_map)
+	elif str(event.get("type", "")) == "actor_spawn" and int(event.get("actor_id", -1)) == local_id:
+		if str(observation.get("current_map", "")) == destination and not observation.has("first_actor"):
+			# Freeze the first authoritative landing. A later spawn/correction or
+			# walking to the expected tile must never repair a failed arrival proof.
+			observation["first_actor"] = event.duplicate(true)
+
+static func _arrival_identity(expected: Dictionary, observation: Dictionary, current_map: String,
+		actor: Dictionary, manifest: WorldManifest) -> Dictionary:
+	var result := {"ok": false, "expected": expected.duplicate(true), "packet": observation.duplicate(true),
+		"map": current_map, "actor": actor.duplicate(true)}
+	var first: Dictionary = observation.get("first_actor", {})
+	var tile: Array = expected.tile
+	for candidate: Dictionary in [first, actor]:
+		if candidate.is_empty() or int(candidate.get("x", -1)) != int(tile[0]) or int(candidate.get("y", -1)) != int(tile[1]):
+			result["error"] = "first arrival packet or current authoritative tile differs from published landing"
+			return result
+	if current_map != str(expected.map) or str(observation.get("current_map", "")) != current_map or manifest == null:
+		result["error"] = "arrival map identity differs from published destination"
+		return result
+	if manifest.asset_id() != str(expected.map):
+		result["error"] = "loaded territory package differs from published destination"
+		return result
+	var placement: Dictionary = manifest.data.get("continentGeography", {})
+	var translation: Array = placement.get("translation", [])
+	if translation.size() != 3:
+		result["error"] = "destination manifest has no published continent placement"
+		return result
+	var local := manifest.coordinate_adapter().tile_center(int(tile[0]), int(tile[1]))
+	var global_point := Vector2(local.x + float(translation[0]), local.z + float(translation[2]))
+	result["local"] = [local.x, local.y, local.z]
+	result["global"] = [global_point.x, global_point.y]
+	if global_point.distance_to(Vector2(float(expected.global[0]), float(expected.global[1]))) > .001:
+		result["error"] = "destination manifest transform disagrees with published global landing"
+		return result
+	result["ok"] = true
+	return result
+
+func _check_arrival(step: Dictionary, observation: Dictionary) -> Dictionary:
+	var actor: Dictionary = (_state.get("actors") as Dictionary).get(int(_state.get("local_actor_id")), {})
+	var result := _arrival_identity(step.expectedArrival, observation, str(_state.get("current_map")), actor, _loader.manifest)
+	if not bool(result.ok): return result
+	if not _loader.world_root is ContinentChunkStream:
+		result["ok"] = false
+		result["error"] = "published continent ferry destination did not use chunk streaming"
+		return result
+	var chunks := _loader.world_root as ContinentChunkStream
+	var position: Array = result.local
+	var local := Vector3(float(position[0]), float(position[1]), float(position[2]))
+	var covering: Array[String] = []
+	for identity: String in chunks.cells:
+		if ContinentChunkStream.bounds_distance(local, chunks.cells[identity].entry.bounds) <= .01:
+			covering.append(identity)
+	var cold := not _loader.loaded_by_adoption
+	result["chunks"] = {"cold_load": cold, "has_focus": chunks.has_focus,
+		"initial_focus": [chunks.initial_focus.x, chunks.initial_focus.y, chunks.initial_focus.z] if chunks.initial_focus.is_finite() else null,
+		"focus": [chunks.focus.x, chunks.focus.y, chunks.focus.z],
+		"covering": covering, "loaded": chunks.cells.keys(), "events": chunks.events.duplicate(true)}
+	if not chunks.has_focus or covering.is_empty() or (cold and chunks.initial_focus.distance_to(local) > .001):
+		result["ok"] = false
+		result["error"] = "destination chunks were not primed at the authoritative ferry landing"
+		return result
+	# Observe the production physics result; do not prime chunks or move the
+	# actor from the harness. A correct DTO alone cannot prove walkable ground.
+	await physics_frame
+	await physics_frame
+	var space: PhysicsDirectSpaceState3D = _main.get("gameplay_world").direct_space_state
+	var query := PhysicsRayQueryParameters3D.create(Vector3(local.x, 400, local.z),
+		Vector3(local.x, -200, local.z), WorldLoader.NAVIGATION_SURFACE_LAYER)
+	var hit := space.intersect_ray(query)
+	var collider: Node = hit.get("collider") as Node
+	result["active_surface"] = not hit.is_empty() and collider != null and chunks.is_ancestor_of(collider)
+	if not bool(result.active_surface):
+		result["ok"] = false
+		result["error"] = "ferry arrival has no active destination chunk walking surface"
+	return result
 
 static func _npc_fixture_error(step: Dictionary) -> String:
 	for key: String in ["useNpc", "expectDialogue", "expectDialogueText"]:
@@ -324,18 +477,52 @@ func _issue_walk(step: Dictionary) -> void:
 	var point: Vector3 = resident.root.transform * far_adapter.server_to_godot(float(target[0]) + .1, float(target[1]) + .1)
 	var space: PhysicsDirectSpaceState3D = _main.get("gameplay_world").direct_space_state
 	var query := PhysicsRayQueryParameters3D.create(Vector3(point.x, 400, point.z), Vector3(point.x, -200, point.z), ExteriorRegionStream.PREVIEW_SURFACE_LAYER)
+	var waited_from := Time.get_ticks_msec()
 	var hit := space.intersect_ray(query)
+	while hit.is_empty() and Time.get_ticks_msec() - waited_from < roundi(NEIGHBOUR_SURFACE_TIMEOUT * 1000.0):
+		await process_frame
+		hit = space.intersect_ray(query)
+	if not _report.has("surface_waits"): _report["surface_waits"] = []
+	(_report["surface_waits"] as Array).append({"destination": str(step.destination), "tile": target,
+		"waited_ms": Time.get_ticks_msec() - waited_from, "found": not hit.is_empty()})
 	_expect(not hit.is_empty(), "clicked neighbor has an actual rendered walking surface")
 	if hit.is_empty(): return
 	point = hit.position
 	var camera: Camera3D = _main.get("gameplay_camera")
 	var screen := camera.unproject_position(point)
 	_expect(Rect2(Vector2.ZERO, Vector2(camera.get_viewport().size)).has_point(screen), "neighbor destination is visible in the gameplay camera")
+	# A wandering body between the camera and the target takes the click (the
+	# client's own picker would attack it). Wait for it to move on, as a player
+	# would, and record the wait; the click itself stays the ordinary one.
+	var occupied_from := Time.get_ticks_msec()
+	var picked: int = int(_main.call("_pick_actor", screen))
+	while picked >= 0 and Time.get_ticks_msec() - occupied_from < roundi(OCCUPIED_TARGET_TIMEOUT * 1000.0):
+		await process_frame
+		picked = int(_main.call("_pick_actor", screen))
+	if picked >= 0 or Time.get_ticks_msec() - occupied_from > 0:
+		if not _report.has("occupied_waits"): _report["occupied_waits"] = []
+		(_report["occupied_waits"] as Array).append({"destination": str(step.destination), "tile": target,
+			"waited_ms": Time.get_ticks_msec() - occupied_from, "still_occupied_by": picked})
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.pressed = true
 	click.position = screen
 	_main.call("_handle_world_click", click, screen)
+
+func _watchdog() -> void:
+	var last: int = Time.get_ticks_msec()
+	var spoke: int = last
+	while true:
+		await process_frame
+		var now: int = Time.get_ticks_msec()
+		if now - last >= STALL_GAP_MS:
+			if not _report.has("stalls"): _report["stalls"] = []
+			(_report["stalls"] as Array).append({"at_ms": last, "gap_ms": now - last})
+			print("harness_stall ", JSON.stringify({"at_ms": last, "gap_ms": now - last}))
+		if now - spoke >= LIVENESS_EVERY_MS:
+			print("harness_alive ", JSON.stringify({"at_ms": now, "routes_completed": int(_report.get("routes_completed", 0))}))
+			spoke = now
+		last = now
 
 func _write_report() -> void:
 	_report["failures"] = _failures
@@ -350,12 +537,40 @@ func _near(map_id: String, tile: Array, tolerance: int) -> bool:
 func _at(map_id: String, tile: Array) -> bool:
 	return _near(map_id, tile, 0)
 
+func _arrived_on(name: String) -> bool:
+	return (str(_state.get("current_map")) == name
+		and _loader.world_root != null
+		and (_main.get("actor_nodes") as Dictionary).has(int(_state.get("local_actor_id"))))
+
 func _on_map(name: String) -> bool:
-	return await _wait(func() -> bool:
-		return (str(_state.get("current_map")) == name
-			and _loader.world_root != null
-			and (_main.get("actor_nodes") as Dictionary).has(
-				int(_state.get("local_actor_id")))), TIMEOUT)
+	return await _wait(func() -> bool: return _arrived_on(name), TIMEOUT)
+
+## Waits for `arrived`, requesting the step's walk again whenever the local
+## actor has not changed tile for REISSUE_AFTER_IDLE seconds. Steps that use
+## an object to change map keep their single request.
+func _walk_until(route: Dictionary, step: Dictionary, arrived: Callable, seconds: float) -> bool:
+	var deadline: int = Time.get_ticks_msec() + roundi(seconds * 1000.0)
+	var last_tile := Vector2i(-1, -1)
+	var idle_since: int = Time.get_ticks_msec()
+	var reissued := 0
+	while Time.get_ticks_msec() < deadline:
+		if bool(arrived.call()):
+			break
+		var actor: Dictionary = (_state.get("actors") as Dictionary).get(int(_state.get("local_actor_id")), {})
+		var tile := Vector2i(int(actor.get("x", -1)), int(actor.get("y", -1)))
+		if tile != last_tile:
+			last_tile = tile
+			idle_since = Time.get_ticks_msec()
+		elif not step.has("object") and Time.get_ticks_msec() - idle_since >= roundi(REISSUE_AFTER_IDLE * 1000.0):
+			await _issue_walk(step)
+			reissued += 1
+			idle_since = Time.get_ticks_msec()
+		await process_frame
+	if reissued > 0:
+		if not _report.has("reissued_walks"): _report["reissued_walks"] = []
+		(_report["reissued_walks"] as Array).append({"route": str(route.id), "target": step.tile,
+			"reissued": reissued, "arrived": bool(arrived.call())})
+	return bool(arrived.call())
 
 func _chat_contains_after(cursor: int, expected: String) -> bool:
 	var lines: Array = _state.get("chat_lines")

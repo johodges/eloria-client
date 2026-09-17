@@ -70,3 +70,7 @@ func footprint_center(server_x: int, server_y: int, footprint: Vector2i) -> Vect
 	var offset_x: float = float(width / 2 - (width - 1) / 2 + 1) * 0.5
 	var offset_y: float = float(depth / 2 - (depth - 1) / 2 + 1) * 0.5
 	return server_to_godot(float(server_x) + offset_x, float(server_y) + offset_y)
+
+## The height an actor falls back to when no ground is found under it.
+func fallback_height() -> float:
+	return walking_height

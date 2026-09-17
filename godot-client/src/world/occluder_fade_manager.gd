@@ -29,6 +29,12 @@ func sync_worlds(manifest: WorldManifest, imported_world: Variant, residents: Di
 
 func _include(wanted: Dictionary, imported_world: Variant, manifest: WorldManifest) -> void:
 	if is_instance_valid(imported_world) and imported_world is Node3D and imported_world.is_inside_tree() and not imported_world.is_queued_for_deletion():
+		if imported_world is ContinentChunkStream:
+			# Each arriving/retiring cell owns its own stable fade index. Indexing
+			# the territory container once would miss all subsequently loaded trees.
+			for cell: Dictionary in imported_world.cells.values():
+				_include(wanted, cell.root, cell.manifest)
+			return
 		wanted[imported_world.get_instance_id()] = {"root": imported_world, "manifest": manifest}
 
 func _remove(identity: int) -> void:

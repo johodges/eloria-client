@@ -1,5 +1,6 @@
 """Actual ownership, actor coordinates, protected structures and road geometry."""
 from pathlib import Path
+import json
 import sys
 from types import SimpleNamespace
 import numpy as np
@@ -12,6 +13,19 @@ from amberwood import mesh as M
 from amberwood.terrain import Terrain
 from regionbuild import RegionBuild, Placement
 from verify_runtime import VerticalRayIndex
+
+
+@pytest.fixture(autouse=True)
+def legacy_coordinate_recipe(monkeypatch):
+    """Exercise the retained algorithms against their immutable authored world.
+
+    Current exported geography is independently audited by audit_continent and
+    test_stream_cell_packages. These regressions deliberately cover the older
+    border synthesis, its 17 crossings and its protected native destinations.
+    """
+    path = Path(__file__).resolve().parents[2] / 'eloria-assets/maps/nymara-regions/_continent/legacy-geography.json'
+    data = json.loads(path.read_text(encoding='utf-8'))
+    monkeypatch.setattr(G, 'plan', lambda: data)
 
 
 def area(mesh):

@@ -3,6 +3,9 @@ extends RefCounted
 
 const RESOLUTION := 1024
 const MARGIN := 1.04
+## Metres of the neighbours shown around a continent exterior on the Tab map,
+## where their pictures stand and a click walks across the seam.
+const NEIGHBOUR_BUFFER_METRES := 96.0
 
 static func bounds_for(manifest: WorldManifest, section_id: String = "") -> AABB:
 	var asset: Dictionary = manifest.data.get("asset", {})
@@ -35,9 +38,11 @@ static func bounds_for(manifest: WorldManifest, section_id: String = "") -> AABB
 				float(high[1]) - float(low[1])))
 	return bounds
 
-static func configure(camera: Camera3D, viewport: SubViewport, bounds: AABB) -> void:
+static func configure(camera: Camera3D, viewport: SubViewport, bounds: AABB, buffer := 0.0) -> void:
 	if bounds.size.x <= 0.0 or bounds.size.z <= 0.0:
 		return
+	if buffer > 0.0:
+		bounds = AABB(bounds.position - Vector3(buffer, 0.0, buffer), bounds.size + Vector3(2.0 * buffer, 0.0, 2.0 * buffer))
 	# A rectangular interior should fill a rectangular image, without stretching
 	# its terrain or wasting half of a square texture on inaccessible space.
 	var aspect := bounds.size.x / bounds.size.z

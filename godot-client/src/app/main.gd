@@ -586,6 +586,17 @@ var _local_placement_logged := false
 ## Set when `_sync_world` ran out of spawn budget with actors still to
 ## build; the next frame picks them up.
 var _spawn_backlog := false
+## The region's picture under the map cameras, or null on a map without one.
+var _map_picture: MeshInstance3D
+## Regions whose tab-map textures are still to be decoded ahead of a crossing.
+var _map_picture_warmup: Array[String] = []
+var _map_picture_warmup_armed := false
+## The resident neighbours' pictures, keyed by normalized map id: a quad under
+## each resident's root, so it stands in that map's rigid frame.
+var _neighbour_pictures: Dictionary = {}
+## Neighbour map id -> {transform, adapter}: the framed adapters actors on
+## resident neighbours are placed through, rebuilt when the root moves.
+var _neighbour_adapters: Dictionary = {}
 ## Decides which actors animate this frame, and how often; see AnimationGate.
 var animation_gate: AnimationGate = AnimationGate.new()
 var _animation_gate_refresh_msec := 0
@@ -858,6 +869,9 @@ const ANIMATION_GATE_REFRESH_MSEC := 100
 ## open enough to read the names of everyone on a pavilion a hundred and sixty
 ## metres away, stacked over the water in front of the player.
 const ACTOR_DRAW_DISTANCE_METRES := 80.0
+## The visual layer the region's own map picture is drawn on, and the only
+## layer the map cameras render while a picture is installed.
+const MAP_PICTURE_LAYER := 8
 ## How far from the player another actor's name, title and health bar still
 ## show. The block is drawn at a fixed screen size so it stays readable at any
 ## zoom, which also means a name sixty metres off is as large as one at arm's
@@ -1238,7 +1252,8 @@ func _process(delta: float) -> void:
 		_update_carried_item()
 		_update_map_viewports()
 		_update_local_actor_follow()
-		exterior_stream.update_position(camera_rig.focus)
+		if AppState.actors.has(AppState.local_actor_id):
+			exterior_stream.update_position(camera_rig.focus)
 		if Time.get_ticks_msec() >= _stream_lighting_at:
 			_stream_lighting_at = Time.get_ticks_msec() + 100
 			_update_border_lighting()
@@ -2622,6 +2637,10 @@ func _close_client() -> void:
 
 func _exit_tree() -> void:
 	occluder_fade.reset()
+	# Released here, before the rendering server goes: otherwise the picture's
+	# and the cached tab-map textures are reported leaked at exit.
+	_remove_map_picture()
+	_tab_map_textures.clear()
 
 func _on_login_succeeded() -> void:
 	spell_loadout.load_profile("%s:%d/%s" % [host_edit.text.strip_edges().to_lower(), int(port_edit.value), user_edit.text.strip_edges().to_lower()])
@@ -3470,6 +3489,12 @@ func _handle_map_gui_input(event: InputEvent, map_control: TextureRect,
 	print_debug("map_input source=", source, " local_click=", mouse_button.position,
 		" viewport=", viewport_position, " server_tile=", target_value,
 		" command=", "RUN_TO" if mouse_button.shift_pressed else "MOVE_TO")
+	if target_value is Vector2i and not _tile_inside_current_map(target_value as Vector2i):
+		# Past the seam: the neighbour whose served tiles hold the point is
+		# walked to in legs, the way a world click on its resident ground is.
+		_map_click_beyond(camera, viewport_position, mouse_button.shift_pressed, source)
+		map_control.accept_event()
+		return
 	if target_value is Vector2i:
 		exterior_stream.pending_walk.clear()
 		_clear_keyboard_movement_tracking()
@@ -3481,6 +3506,15 @@ func _handle_map_gui_input(event: InputEvent, map_control: TextureRect,
 	map_control.accept_event()
 
 func _map_target_tile(camera: Camera3D, viewport_position: Vector2) -> Variant:
+	var point: Variant = _map_click_point(camera, viewport_position)
+	if not point is Vector3:
+		return null
+	return adapter.godot_to_server(point as Vector3)
+
+## The ground under a map click: the navigation surface where the ray meets
+## one, else the walking-height plane (the map cameras look straight down, so
+## the plane gives the same x and z past the current map's ground).
+func _map_click_point(camera: Camera3D, viewport_position: Vector2) -> Variant:
 	if not is_instance_valid(camera):
 		return null
 	var ray_origin: Vector3 = camera.project_ray_origin(viewport_position)
@@ -3493,7 +3527,40 @@ func _map_target_tile(camera: Camera3D, viewport_position: Vector2) -> Variant:
 		if distance_to_ground < 0.0:
 			return null
 		point = ray_origin + ray_direction * distance_to_ground
-	return adapter.godot_to_server(point as Vector3)
+	return point
+
+## Whether a tile lies inside the current map's served cells.
+func _tile_inside_current_map(tile: Vector2i) -> bool:
+	var manifest: WorldManifest = world_loader.manifest if world_loader != null else null
+	var coordinates: Dictionary = manifest.data.get("coordinateTransform", {}) as Dictionary if manifest != null else {}
+	return ExteriorRegionStream.tile_inside(coordinates, tile)
+
+## A map click past the seam: the neighbour that holds the point gets the walk
+## order in legs (the first to the surveyed crossing, the rest at the map
+## change); a point no neighbour holds is not a place to walk to.
+func _map_click_beyond(camera: Camera3D, viewport_position: Vector2, run: bool, source: String) -> void:
+	var point_value: Variant = _map_click_point(camera, viewport_position)
+	if not point_value is Vector3 or _movement_locked(false):
+		return
+	var point: Vector3 = point_value as Vector3
+	var beyond: Dictionary = exterior_stream.map_at_local(point)
+	if beyond.is_empty():
+		print_debug("map_input source=", source, " beyond the seam, no neighbour holds ", point)
+		return
+	var leg_value: Variant = exterior_stream.arm_walk_to(str(beyond.map), beyond.tile as Vector2i, run, point)
+	if not leg_value is Vector3:
+		print_debug("map_input source=", source, " no seamless road to ", beyond.map)
+		return
+	var leg: Vector3 = leg_value as Vector3
+	_clear_keyboard_movement_tracking()
+	_clear_local_turn_prediction()
+	var move_error: Error = Network.move_to(adapter.godot_to_server(leg), run)
+	if move_error != OK:
+		exterior_stream.pending_walk.clear()
+		push_warning("%s MOVE_TO failed: %s" % [source, error_string(move_error)])
+		return
+	print_debug("map_input source=", source, " walk to ", beyond.map, " tile=", beyond.tile, " via seam leg=", leg)
+	_show_walk_highlight(adapter.godot_to_server(point), point.y)
 
 static func _control_to_viewport_position(local_position: Vector2,
 		control_size: Vector2, target_size: Vector2i) -> Vector2:
@@ -3640,6 +3707,8 @@ func _on_state_changed(path: StringName) -> void:
 	if not AppState.authenticated:
 		return
 	match path:
+		&"adjacent_maps":
+			_queue_map_picture_warmup()
 		&"lantern_tutorial":
 			if AppState.lantern_tutorial.get("active", false) and AppState.lantern_tutorial.get("ring_training", false):
 				if spell_loadout.mode != "wheel": spell_loadout.set_mode("wheel")
@@ -3819,8 +3888,14 @@ func _load_server_map() -> void:
 	# in the far corner
 	# of the map instead of the middle of it.
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
+	_neighbour_adapters.clear()
+	# A seamless crossing keeps every actor node: the server keeps their
+	# records too, re-filing the ones on the map arrived at as its own and
+	# the ones on the map left as its neighbours, and _rebase_streamed_world
+	# has carried the nodes into the new frame. Any other change of map
+	# empties the table, as the server's KILL_ALL_ACTORS empties AppState's.
 	for actor_id: Variant in actor_nodes.keys():
-		if int(actor_id) == _retained_traveller:
+		if _continuous_map_handoff or int(actor_id) == _retained_traveller:
 			continue
 		var raw_actor_node: Variant = actor_nodes[actor_id]
 		if is_instance_valid(raw_actor_node):
@@ -3851,23 +3926,35 @@ func _load_server_map() -> void:
 	else:
 		occluder_fade.reset()
 		exterior_stream.clear(true) # A preload miss must not cancel the expected road continuation.
-		world_loader.load_world(manifest_path)
+		# CHANGE_MAP precedes the destination actor packet. Delay chunk disk
+		# reads until that packet supplies the actual login/teleport arrival.
+		world_loader.load_world(manifest_path, Vector3.INF, true)
 
 func _rebase_streamed_world(rebase: Transform3D) -> void:
 	camera_rig.rebase_world(rebase)
 	# The destination may use rotated coordinates. Transform the sun with the
 	# terrain and camera so crossing the seam keeps the same physical direction.
 	world_sun.global_basis = rebase.basis * world_sun.global_basis
+	# Every actor node rides the rebase: the world moved under all of them, and
+	# the ones on the map just left are placed through its resident frame next.
+	for actor_id: Variant in actor_nodes.keys():
+		var carried: Variant = actor_nodes[actor_id]
+		if is_instance_valid(carried):
+			(carried as ReplicatedActor3D).rebase_world(rebase)
 	var traveller: Variant = actor_nodes.get(_retained_traveller)
 	if is_instance_valid(traveller):
-		(traveller as ReplicatedActor3D).rebase_world(rebase)
 		exterior_stream.last_handoff["traveller_at_rebase"] = traveller.global_position
 		exterior_stream.last_handoff["target_at_rebase"] = traveller.server_target
 
 func _on_world_loaded(manifest: WorldManifest) -> void:
 	var binding_started := Time.get_ticks_usec()
+	var binding_steps: Dictionary = {}
+	var step_started := binding_started
 	exterior_stream.activate(loaded_server_map, world_loader.world_root, manifest)
+	_watch_chunk_surfaces()
+	binding_steps["activate"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_bind_shared_world()
+	binding_steps["bind_shared_world"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	if is_instance_valid(lantern_scene):
 		lantern_scene.queue_free()
 	lantern_scene = null
@@ -3885,28 +3972,56 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	if not _continuous_map_handoff:
 		WorldEnvironmentBinder.apply_camera(manifest, camera_rig)
 	_bind_light_markers(manifest)
+	binding_steps["light_markers"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_apply_day_night()
+	binding_steps["day_night"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_update_border_lighting()
+	binding_steps["border_lighting"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_bind_ambient_audio(manifest)
+	binding_steps["ambient_audio"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_populate_ambient_life(manifest)
+	binding_steps["ambient_life"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_current_map_display_name = str(
 		manifest.data.get("asset", {}).get("name", manifest.asset_id()))
 	map_label.text = "Map: " + _current_map_display_name
 	map_title.text = _current_map_display_name.to_upper()
 	current_map_button.text = "Current: " + _current_map_display_name
 	_configure_interior_cutaway(manifest)
+	binding_steps["interior_cutaway"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_configure_secret_sections(manifest)
+	binding_steps["secret_sections"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_configure_occluder_fade(manifest)
+	binding_steps["occluder_fade"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_configure_full_map(manifest)
+	binding_steps["full_map"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
+	_install_map_picture(manifest)
+	binding_steps["map_picture"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
+	_queue_map_picture_warmup()
+	binding_steps["map_picture_warmup"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_request_map_redraw()
-	_sync_world()
+	binding_steps["map_redraw"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
+	# A seamless crossing keeps every actor node, rebased with the world, and
+	# the server keeps their records: presenting the whole table again here
+	# cost 90-1,125 ms on the handoff frame (the sixteenth's first live proof),
+	# while the traveller walked on and the camera check read it as a jump.
+	# Only actors the server changes are presented after such a crossing;
+	# any other map load presents the table it just received.
+	_sync_world({} if _continuous_map_handoff else null)
+	binding_steps["sync_world"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_sync_ground_bags()
+	binding_steps["sync_ground_bags"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
 	_sync_map_objects()
-	_snap_all_actors_to_surface.call_deferred()
+	binding_steps["sync_map_objects"] = (Time.get_ticks_usec() - step_started) / 1000.0; step_started = Time.get_ticks_usec()
+	# The carried actors stand on the same ground after the rebase; their
+	# next packet re-samples the surface they stand on.
+	if not _continuous_map_handoff:
+		_snap_all_actors_to_surface.call_deferred()
 	_snap_all_ground_bags_to_surface.call_deferred()
 	_snap_all_map_objects_to_surface.call_deferred()
 	if _continuous_map_handoff:
 		exterior_stream.last_handoff["binding_ms"] = (Time.get_ticks_usec() - binding_started) / 1000.0
+		binding_steps["snap_deferred"] = (Time.get_ticks_usec() - step_started) / 1000.0
+		exterior_stream.last_handoff["binding_steps"] = binding_steps
 
 func _bind_light_markers(manifest: WorldManifest) -> void:
 	# Braziers, hearths and shrine lamps the map declares as markers. Interiors
@@ -4010,15 +4125,25 @@ func _bind_ambient_audio(manifest: WorldManifest) -> void:
 
 func _populate_ambient_life(manifest: WorldManifest) -> void:
 	# Scenery livestock declared by the map. Networked actors are untouched.
-	if ambient_population == null:
+	var chunk_stream := world_loader.world_root as ContinentChunkStream
+	if chunk_stream != null:
+		if is_instance_valid(ambient_population) and ambient_population.get_parent() == world_root:
+			ambient_population.clear()
+			ambient_population.queue_free()
+		ambient_population = chunk_stream.get_node_or_null("AmbientPopulation") as AmbientPopulation
+		if ambient_population == null:
+			ambient_population = AmbientPopulation.new()
+			ambient_population.name = "AmbientPopulation"
+			chunk_stream.add_child(ambient_population)
+	elif not is_instance_valid(ambient_population) or ambient_population.get_parent() != world_root:
 		ambient_population = AmbientPopulation.new()
 		ambient_population.name = "AmbientPopulation"
 		world_root.add_child(ambient_population)
 	await get_tree().physics_frame
-	if gameplay_world == null:
+	if gameplay_world == null or world_loader.manifest != manifest:
 		return
 	var spawned: int = ambient_population.populate(manifest,
-		gameplay_world.direct_space_state)
+		gameplay_world.direct_space_state, chunk_stream)
 	if spawned > 0:
 		print_debug("ambient_population map=", AppState.current_map, " spawned=", spawned)
 
@@ -4046,6 +4171,22 @@ func _on_world_load_failed(errors: Array[String]) -> void:
 ## An actor with no node yet is built either way, at most ACTOR_SPAWN_BUDGET
 ## of them per pass; the rest are picked up on the following frames.
 func _sync_world(changed: Variant = null) -> void:
+	if adapter != null and AppState.actors.has(AppState.local_actor_id):
+		var arrival_actor: Dictionary = AppState.actors[AppState.local_actor_id]
+		# Across a seamless crossing the record keeps the map it was spawned on
+		# until the server sends it again, and its tiles belong to that map: read
+		# through the arriving map's adapter they named a chunk in its far corner,
+		# which was then loaded on the handoff frame (the sixteenth's live proof:
+		# 1-2 s a crossing, the traveller walking on meanwhile).
+		var record_map: String = str(arrival_actor.get("map", AppState.current_map))
+		if record_map == AppState.current_map and world_loader.ensure_chunk_arrival(adapter.tile_center(int(arrival_actor.x), int(arrival_actor.y))):
+			_actor_surface_samples.clear()
+			# The chunk just attached has no physics body until the next physics
+			# frame: the actors presented below ray past it onto their fallback
+			# height, so they are placed again after that frame (a seamless
+			# crossing no longer re-snaps the whole table at its binding).
+			_snap_all_actors_to_surface.call_deferred()
+			_snap_all_map_objects_to_surface.call_deferred()
 	map_label.text = "Map: " + (AppState.current_map if not AppState.current_map.is_empty() else "loading")
 	for id: Variant in actor_nodes.keys():
 		if AppState.actors.has(id):
@@ -4120,34 +4261,42 @@ func _sync_world(changed: Variant = null) -> void:
 func _present_actor(id: Variant) -> void:
 	var dto: Dictionary = _presentation_dto(AppState.actors[id])
 	var existing_actor: ReplicatedActor3D = actor_nodes[id] as ReplicatedActor3D
-	existing_actor.apply_server_state(dto, adapter)
+	var actor_adapter: CoordinateAdapter = _adapter_for_actor(dto)
+	if actor_adapter == null:
+		return
+	existing_actor.apply_server_state(dto, actor_adapter)
 	# Before apply_vitals, which is what overwrites the old value.
 	_report_health_change(int(id), int(dto.get("health", 0)),
 		int(dto.get("max_health", 0)), existing_actor)
 	existing_actor.apply_vitals(int(dto.get("health", 0)),
 		int(dto.get("max_health", 0)))
 	existing_actor.set_nameplate_visible(_nameplate_visible_for(int(id)))
-	_place_actor_on_surface(existing_actor)
+	_place_actor_on_surface(existing_actor, false, actor_adapter.fallback_height())
 
 ## Builds the node for an actor that has none yet.
 func _spawn_actor(id: Variant) -> void:
 	var dto: Dictionary = _presentation_dto(AppState.actors[id])
+	var actor_adapter: CoordinateAdapter = _adapter_for_actor(dto)
+	if actor_adapter == null:
+		# Its map is a neighbour that is not resident yet: built on a later pass.
+		_spawn_backlog = true
+		return
 	var node := ReplicatedActor3D.new()
 	node.name = "Actor_%d" % id
 	world_root.add_child(node)
 	actor_nodes[id] = node
 	var model_id := _model_for_actor(dto)
 	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
-	var errors := node.configure(dto, adapter, model_config,
+	var errors := node.configure(dto, actor_adapter, model_config,
 		_animation_for_model(model_config), equipment_config)
 	if not errors.is_empty():
 		push_warning("Actor %d: %s" % [id, "; ".join(errors)])
-	node.apply_server_state(dto, adapter, true)
+	node.apply_server_state(dto, actor_adapter, true)
 	_fit_lantern_map_marker(node, "MapDot")
 	node.set_combat_effects_enabled(_effects_enabled)
 	node.set_nameplate_visible(_nameplate_visible_for(int(id)))
 	node.set_title(str(AppState.actor_titles.get(int(id), "")))
-	_place_actor_on_surface(node, true)
+	_place_actor_on_surface(node, true, actor_adapter.fallback_height())
 	if int(id) == AppState.local_actor_id:
 		_sync_harvest_sparkle()
 
@@ -4196,7 +4345,7 @@ func _update_local_actor_follow() -> void:
 ## queries a second on a populated map. The sample is now cached per actor and
 ## repeated only when its tile moves, or when the caller forces it after a map
 ## load.
-func _place_actor_on_surface(actor: ReplicatedActor3D, force := false) -> void:
+func _place_actor_on_surface(actor: ReplicatedActor3D, force := false, fallback_height := NAN) -> void:
 	if not is_instance_valid(actor) or gameplay_world == null:
 		return
 	var actor_position: Vector3 = actor.server_target
@@ -4206,8 +4355,21 @@ func _place_actor_on_surface(actor: ReplicatedActor3D, force := false) -> void:
 	_actor_surface_samples[actor.actor_id] = sample
 	var ray_start: Vector3 = Vector3(actor_position.x, 400.0, actor_position.z)
 	var ray_end: Vector3 = Vector3(actor_position.x, -100.0, actor_position.z)
-	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
-		ray_start, ray_end, WorldLoader.NAVIGATION_SURFACE_LAYER)
+	# A neighbour's ground stands on the preview layer while its map is not
+	# the active one; an actor across the seam is placed on it. An actor on
+	# the client's own map rays the navigation layer alone, as it always did:
+	# on the handoff frame the map just left still stands at its old place
+	# for the physics server, and with the preview layer in the mask the
+	# traveller arriving over a seam was set 48-58 m up on that map's ground
+	# (the sixteenth's live proof, five crossings). The traveller is on the
+	# client's own map by definition, whatever map its record still names.
+	var record: Dictionary = AppState.actors.get(actor.actor_id, {}) as Dictionary
+	var across_seam: bool = (actor.actor_id != AppState.local_actor_id
+		and str(record.get("map", AppState.current_map)) != AppState.current_map)
+	var mask: int = WorldLoader.NAVIGATION_SURFACE_LAYER
+	if across_seam:
+		mask |= ExteriorRegionStream.PREVIEW_SURFACE_LAYER
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(ray_start, ray_end, mask)
 	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
 	var hit_position_value: Variant = hit.get("position")
 	if hit_position_value is Vector3:
@@ -4223,10 +4385,191 @@ func _place_actor_on_surface(actor: ReplicatedActor3D, force := false) -> void:
 				" navigation_hit=", hit_position, " render=", actor.render_diagnostics(),
 				" camera=", camera_rig.camera_diagnostics())
 	else:
-		actor.set_surface_height(adapter.walking_height + 0.02)
+		var fallback: float = adapter.walking_height if is_nan(fallback_height) else fallback_height
+		actor.set_surface_height(fallback + 0.02)
 		if actor.actor_id == AppState.local_actor_id:
 			push_warning("local_actor_placement navigation_miss map=%s actor_id=%d target=%s fallback_y=%.3f" % [
-				AppState.current_map, actor.actor_id, actor_position, adapter.walking_height + 0.02])
+				AppState.current_map, actor.actor_id, actor_position, fallback + 0.02])
+
+## The adapter that places an actor: the active map's for an actor on it, and
+## for an actor on a neighbouring map, that map's own adapter carried through
+## the rigid frame its resident root stands in. Null while the neighbour is
+## not resident: the actor waits for its ground rather than standing on ours.
+func _adapter_for_actor(dto: Dictionary) -> CoordinateAdapter:
+	var actor_map: String = str(dto.get("map", ""))
+	if actor_map.is_empty() or actor_map == AppState.current_map:
+		return adapter
+	var normalized: String = MapRegistry.normalize_server_map_id(actor_map)
+	if normalized == MapRegistry.normalize_server_map_id(AppState.current_map):
+		return adapter
+	var resident: Variant = exterior_stream.residents.get(normalized)
+	if not resident is Dictionary:
+		return null
+	var root: Node3D = (resident as Dictionary).get("root") as Node3D
+	var manifest: WorldManifest = (resident as Dictionary).get("manifest") as WorldManifest
+	if not is_instance_valid(root) or manifest == null:
+		return null
+	var cached: Variant = _neighbour_adapters.get(normalized)
+	if cached is Dictionary and (cached as Dictionary).get("transform") == root.transform:
+		return (cached as Dictionary).get("adapter") as CoordinateAdapter
+	var framed := FramedCoordinateAdapter.wrap(manifest.coordinate_adapter(), root.transform)
+	_neighbour_adapters[normalized] = {"transform": root.transform, "adapter": framed}
+	return framed
+
+## The Tab map and the minimap draw the region's own picture, not the resident
+## chunks. A chunk-streamed territory holds only the chunks around the player,
+## so a live render of the world framed to the whole region showed the
+## resident chunks in a field of nothing. Every region ships its picture
+## (minimap.webp, one pixel a metre, north up, framed by cartography.json as
+## the full-map camera frames the region); it is laid on the ground on a
+## visual layer only the map cameras render, and while it stands they render
+## nothing else. The dots and marks are drawn over it as before. A map
+## without a picture (an interior) keeps the live render.
+func _install_map_picture(manifest: WorldManifest) -> void:
+	_remove_map_picture()
+	var region_index: int = _region_index_for_map(AppState.current_map)
+	var minimap: Dictionary = manifest.data.get("minimap", {}) as Dictionary
+	var texture: Texture2D = null
+	var tab_map: Dictionary = {}
+	if region_index >= 0 and not minimap.is_empty():
+		var region: Dictionary = cartography_regions[region_index] as Dictionary
+		texture = _tab_map_texture(region)
+		tab_map = region.get("tabMap", {}) as Dictionary
+	var extent: Rect2 = MapPicture.extent(minimap, tab_map) if texture != null else Rect2()
+	if texture == null or extent.size.x <= 0.0 or extent.size.y <= 0.0:
+		_set_map_cameras_picture(false)
+		return
+	_map_picture = MapPicture.build(texture, extent, MapPicture.height_below(manifest.data), MAP_PICTURE_LAYER)
+	world_root.add_child(_map_picture)
+	_set_map_cameras_picture(true)
+	_install_neighbour_pictures()
+
+func _remove_map_picture() -> void:
+	if is_instance_valid(_map_picture):
+		_map_picture.queue_free()
+	_map_picture = null
+
+## The region boundaries in the current map's frame: every region's cartography
+## polygon (continent picture pixels, north up) turned into metres of this map,
+## with its name at its label point and the current region flagged. Both map
+## overlays draw them as dashed lines; the Tab map names the neighbours.
+func _map_boundaries() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var region_index: int = _region_index_for_map(AppState.current_map)
+	if region_index < 0 or not cartography is Dictionary:
+		return result
+	var continent: Dictionary = (cartography as Dictionary).get("continent", {}) as Dictionary
+	var origin: Array = continent.get("originMetres", []) as Array
+	var metres_per_pixel: float = float(continent.get("metresPerPixel", 0.0))
+	var translation: Array = (cartography_regions[region_index] as Dictionary).get("globalTranslation", []) as Array
+	if origin.size() != 2 or metres_per_pixel <= 0.0 or translation.size() != 3:
+		return result
+	var height: float = adapter.walking_height if adapter != null else 0.0
+	for index: int in range(cartography_regions.size()):
+		var region: Dictionary = cartography_regions[index] as Dictionary
+		var polygon: Array = region.get("continentPolygon", []) as Array
+		if polygon.size() < 3:
+			continue
+		var points := PackedVector3Array()
+		for pixel: Variant in polygon:
+			var pair: Array = pixel as Array
+			points.append(Vector3(float(origin[0]) + float(pair[0]) * metres_per_pixel - float(translation[0]), height,
+				float(origin[1]) + float(pair[1]) * metres_per_pixel - float(translation[2])))
+		var label_pixel: Array = region.get("continentLabel", []) as Array
+		var label := Vector3.INF
+		if label_pixel.size() == 2:
+			label = Vector3(float(origin[0]) + float(label_pixel[0]) * metres_per_pixel - float(translation[0]), height,
+				float(origin[1]) + float(label_pixel[1]) * metres_per_pixel - float(translation[2]))
+		result.append({"name": str(region.get("name", "")), "points": points, "label": label, "current": index == region_index})
+	return result
+
+func _update_map_boundaries() -> void:
+	var boundaries: Array[Dictionary] = _map_boundaries()
+	map_marker_overlay.set_boundaries(boundaries)
+	if minimap_marker_overlay != null:
+		minimap_marker_overlay.set_boundaries(boundaries)
+
+## The neighbours' pictures beside the current one: the minimap's window
+## reaches past the seam, and the grey background there read as a hole in the
+## world. Every resident neighbour of the exterior stream gets a quad of its
+## own picture under its root (the rigid frame it stands in), at its own
+## picture height on the map layer; the current map's picture is built first
+## and stands in its own frame as before. Called after the current picture
+## is laid and whenever the stream's resident table changes.
+func _install_neighbour_pictures() -> void:
+	if exterior_stream != null and not exterior_stream.residents_changed.is_connected(_install_neighbour_pictures):
+		exterior_stream.residents_changed.connect(_install_neighbour_pictures)
+	var residents: Dictionary = exterior_stream.residents if exterior_stream != null else {}
+	for stale_id: String in _neighbour_pictures.keys():
+		var stale: Variant = _neighbour_pictures[stale_id]
+		var resident_root: Node3D = (residents.get(stale_id, {}) as Dictionary).get("root") as Node3D
+		if not residents.has(stale_id) or not is_instance_valid(stale) or (stale as Node).get_parent() != resident_root:
+			if is_instance_valid(stale):
+				(stale as Node).queue_free()
+			_neighbour_pictures.erase(stale_id)
+	for map_id: String in residents.keys():
+		if _neighbour_pictures.has(map_id):
+			continue
+		var resident: Dictionary = residents[map_id] as Dictionary
+		var root: Node3D = resident.get("root") as Node3D
+		var manifest: WorldManifest = resident.get("manifest") as WorldManifest
+		if not is_instance_valid(root) or manifest == null:
+			continue
+		var region_index: int = _region_index_for_map(map_id)
+		var minimap: Dictionary = manifest.data.get("minimap", {}) as Dictionary
+		if region_index < 0 or minimap.is_empty():
+			continue
+		var region: Dictionary = cartography_regions[region_index] as Dictionary
+		var texture: Texture2D = _tab_map_texture(region)
+		if texture == null:
+			continue
+		var extent: Rect2 = MapPicture.extent(minimap, region.get("tabMap", {}) as Dictionary)
+		if extent.size.x <= 0.0 or extent.size.y <= 0.0:
+			continue
+		var picture := MapPicture.build(texture, extent, MapPicture.height_below(manifest.data), MAP_PICTURE_LAYER)
+		root.add_child(picture)
+		_neighbour_pictures[map_id] = picture
+
+## The neighbours' pictures ahead of the crossing: a seamless handoff must not
+## pay for a webp decode and an upload while the traveller drifts to its
+## server target, so the textures of the maps the server lists as adjacent
+## are decoded on the frames after a map load, one a frame, into the same
+## cache the Tab map reads. The crossing then builds a quad over a cached
+## texture. Called after each world load and whenever the adjacency changes.
+func _queue_map_picture_warmup() -> void:
+	for name_value: Variant in AppState.adjacent_maps.values():
+		var name := str(name_value)
+		var region_index: int = _region_index_for_map(name)
+		if region_index < 0:
+			continue
+		var key: String = str((cartography_regions[region_index] as Dictionary).get("serverMap", ""))
+		if _tab_map_textures.has(key) or _map_picture_warmup.has(name):
+			continue
+		_map_picture_warmup.append(name)
+	if _map_picture_warmup.is_empty() or _map_picture_warmup_armed:
+		return
+	_map_picture_warmup_armed = true
+	get_tree().create_timer(0.1).timeout.connect(_warm_one_map_picture, CONNECT_ONE_SHOT)
+
+## Decodes one queued region's texture; re-arms for the next on a later frame.
+func _warm_one_map_picture() -> void:
+	_map_picture_warmup_armed = false
+	if _map_picture_warmup.is_empty():
+		return
+	var name: String = _map_picture_warmup.pop_front()
+	var region_index: int = _region_index_for_map(name)
+	if region_index >= 0:
+		_tab_map_texture(cartography_regions[region_index] as Dictionary)
+	if not _map_picture_warmup.is_empty():
+		_map_picture_warmup_armed = true
+		get_tree().create_timer(0.1).timeout.connect(_warm_one_map_picture, CONNECT_ONE_SHOT)
+
+## What the map cameras render: the picture alone while one stands, else the
+## live world on layer 1 as they always did.
+func _set_map_cameras_picture(picture: bool) -> void:
+	var mask: int = MAP_PICTURE_LAYER if picture else 1
+	map_camera.cull_mask = mask
+	full_map_camera.cull_mask = mask
 
 func _footstep_surface_at(tile: Vector2i) -> String:
 	if gameplay_world == null or adapter == null:
@@ -4970,9 +5313,12 @@ func _configure_interior_cutaway(manifest: WorldManifest) -> void:
 
 
 func _configure_full_map(manifest: WorldManifest) -> void:
+	# A continent exterior shows a buffer of its neighbours around it.
+	var buffer: float = MapViewScript.NEIGHBOUR_BUFFER_METRES if manifest.data.has("continentGeography") else 0.0
 	MapViewScript.configure(full_map_camera, full_map_viewport,
-		MapViewScript.bounds_for(manifest, secret_sections.current_section()))
+		MapViewScript.bounds_for(manifest, secret_sections.current_section()), buffer)
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
+	_update_map_boundaries()
 	player_map_marker.scale = Vector3(.18,1,.18) if manifest.asset_id() in ["lantern_reach", "bellwatch", "stillglass", "reedway", "cinderbank", "echo_court", "wayfarer_bastion", "lantern_exchange", "waystone_yard"] else Vector3.ONE
 
 ## The map window's cartography: the continent picture and the regions on it.
@@ -10543,6 +10889,19 @@ func _snap_all_map_objects_to_surface() -> void:
 		_place_map_marker_on_surface(raw_marker as MapMarker3D)
 	for raw_marker: Variant in player_mark_nodes.values():
 		_place_map_marker_on_surface(raw_marker as MapMarker3D)
+
+## Map objects and markers are placed on the rendered navigation surface when
+## the server lists them. On a streamed territory the chunk beneath a distant
+## object attaches later, so each chunk arrival places them again; otherwise a
+## harvestable far from the arrival stayed ungrounded until the next map change.
+func _watch_chunk_surfaces() -> void:
+	var chunk_stream := world_loader.world_root as ContinentChunkStream
+	if chunk_stream == null or chunk_stream.cell_ready.is_connected(_on_chunk_surface_ready):
+		return
+	chunk_stream.cell_ready.connect(_on_chunk_surface_ready)
+
+func _on_chunk_surface_ready(_identity: String, _imported: Node3D) -> void:
+	_snap_all_map_objects_to_surface.call_deferred()
 
 ## The "now harvesting" indicator. The stock client drove this by matching an
 ## exact English phrase out of the chat stream; this reads the authoritative

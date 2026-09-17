@@ -19,6 +19,7 @@ import math
 import os
 from pathlib import Path
 import re
+import struct
 import sys
 import textwrap
 
@@ -33,6 +34,53 @@ def read(path):
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+# The live harness gameplay camera: rendered_landscape_walk.gd applies pitch -60,
+# the route yaw and distance and aims 1.2 m above the actor; run_live_continent
+# launches the client at this resolution with the main scene's 50 degree FOV.
+HARNESS_VIEWPORT=(1440,900)
+HARNESS_FOV_DEGREES=50.0
+HARNESS_PITCH_DEGREES=-60.0
+HARNESS_AIM_HEIGHT=1.2
+CLICK_CAMERA_DISTANCE=32
+# A clicked neighbour tile must project this far inside the frame: the offline
+# surface model (the client's own collision export, 0.29 m steps) differs from
+# the rendered surface by up to half a metre, about 15 px at this zoom.
+CLICK_VISIBLE_MARGIN_PX=60
+
+
+def harness_screen_position(focus,yaw_degrees,distance,point):
+    """Where the live harness camera projects `point` (Godot metres) with the actor at `focus`.
+
+    Mirrors IsometricCameraController._update_camera and Camera3D.unproject_position
+    (vertical field of view, KEEP_HEIGHT). None when the point is behind the camera.
+    """
+    yaw=math.radians(yaw_degrees);pitch=math.radians(HARNESS_PITCH_DEGREES)
+    camera=(focus[0]+math.sin(yaw)*math.cos(pitch)*distance,focus[1]-math.sin(pitch)*distance,
+            focus[2]+math.cos(yaw)*math.cos(pitch)*distance)
+    forward=(focus[0]-camera[0],focus[1]+HARNESS_AIM_HEIGHT-camera[1],focus[2]-camera[2])
+    length=math.sqrt(sum(v*v for v in forward))
+    z_axis=tuple(-v/length for v in forward)
+    sideways=math.hypot(z_axis[2],z_axis[0])
+    x_axis=(z_axis[2]/sideways,0.0,-z_axis[0]/sideways)
+    y_axis=(z_axis[1]*x_axis[2]-z_axis[2]*x_axis[1],z_axis[2]*x_axis[0]-z_axis[0]*x_axis[2],
+            z_axis[0]*x_axis[1]-z_axis[1]*x_axis[0])
+    local=tuple(point[i]-camera[i] for i in range(3))
+    along=lambda axis:sum(local[i]*axis[i] for i in range(3))
+    depth=-along(z_axis)
+    if depth<=1e-6:return None
+    half=math.tan(math.radians(HARNESS_FOV_DEGREES)/2)
+    width,height=HARNESS_VIEWPORT
+    x=along(x_axis)/depth/(half*width/height);y=along(y_axis)/depth/half
+    return ((x+1)/2*width,(1-y)/2*height)
+
+
+def visible_margin(screen):
+    """Pixels between a projected point and the nearest viewport edge; negative outside."""
+    if screen is None:return -math.inf
+    width,height=HARNESS_VIEWPORT
+    return min(screen[0],width-screen[0],screen[1],height-screen[1])
 
 
 def finite_span_union(lines):
@@ -54,6 +102,38 @@ def finite_span_union(lines):
             else:merged.append([low,high])
         result.extend([axis,fixed,low,high] for low,high in merged)
     return result
+
+
+def owned_adjacencies(geography, bounds):
+    """Derive every physical shared edge from polygons, not route metadata."""
+    import numpy as np
+    sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'maps/nymara-regions/_continent'))
+    from audit_continent import ownership_raster
+    polygons={name:spec['ownershipPolygon'] for name,spec in geography['regions'].items()}
+    names=list(polygons);cell=float(geography['ownershipRasterMetres'])
+    if not math.isfinite(cell) or cell<=0:raise AuditError('Invalid ownership lattice spacing')
+    try:owner=ownership_raster(polygons,bounds,cell)
+    except ValueError as error:raise AuditError(str(error)) from error
+    result=defaultdict(list);x0,z0,_,_=bounds
+    for axis in (0,1):
+        a,b=(owner[:,:-1],owner[:,1:]) if axis==0 else (owner[:-1,:],owner[1:,:])
+        for row,column in zip(*np.nonzero(a!=b)):
+            pair=tuple(sorted((names[a[row,column]],names[b[row,column]])))
+            x=x0+(int(column)+(axis==0))*cell;z=z0+(int(row)+(axis==1))*cell
+            result[pair].append([[x,z],[x+(axis==1)*cell,z+(axis==0)*cell]])
+    return result
+
+
+def travel_route(connections, source, destination):
+    """Shortest declared itinerary; ferry legs remain explicit interactions."""
+    queue=[(source,[])];visited={source}
+    for current,route in queue:
+        if current==destination:return route
+        for link in connections:
+            for a,b in (link['ends'],link['ends'][::-1]):
+                if a['region']!=current or b['region'] in visited:continue
+                visited.add(b['region']);queue.append((b['region'],route+[(link,a,b)]))
+    raise AuditError(f'{source} -> {destination}: no declared continent travel route')
 
 
 def runtime(server):
@@ -320,7 +400,7 @@ class WalkAudit:
 
 
 class Generator:
-    def __init__(self, client, server, data, *, max_leg=64):
+    def __init__(self, client, server, data, *, max_leg=64, publication=None):
         self.client, self.server, self.data = Path(client).resolve(), Path(server).resolve(), Path(data).resolve()
         self.profile = self.server/'config/eloria'
         self.inputs = {}
@@ -330,18 +410,34 @@ class Generator:
             raise AuditError('Final twelve-region geographic publication is not ready')
         geography_path=self.client/'eloria-assets/maps/nymara-regions/continent-geography.json'
         self.geography=self.json_input(geography_path)
-        if self.manifest['continentGeography'].get('geographySha256')!=sha(geography_path):
+        self.chunk_mode=self.geography.get('geometryMode')=='continent-chunks-v1'
+        if self.chunk_mode:
+            publication_path=Path(publication) if publication else geography_path.parent/'_continent/generated/publication.json'
+            self.publication=self.json_input(publication_path)
+            self.landscape_plan=self.json_input(geography_path.parent/self.geography['planSource'])
+            ledger=self.manifest['continentGeography'];publication_hash=sha(publication_path)
+            if (ledger.get('geometryMode')!='continent-chunks-v1' or ledger.get('geographySha256')!=publication_hash or
+                self.manifest.get('diagonalContinent',{}).get('publicationSha256')!=publication_hash or
+                ledger.get('masterSha256')!=self.publication['masterSha256'] or
+                self.geography['verification']['masterSha256']!=self.publication['masterSha256']):
+                raise AuditError('Server publication, continent master and authored geography provenance differ')
+            for region,spec in self.specs.items():
+                for key in ('serverOrigin','serverCells','translation'):
+                    if spec[key]!=self.geography['regions'][region][key] or spec[key]!=self.publication['regions'][region][key]:
+                        raise AuditError(f'{region}: canonical/publication/server {key} differs')
+        elif self.manifest['continentGeography'].get('geographySha256')!=sha(geography_path):
             raise AuditError('Server publication does not match the current authored geography')
         graph = self.json_input(self.profile/'exterior_connections.json')
         if graph!=self.json_input(self.client/'godot-client/data/maps/exterior_connections.json'):
             raise AuditError('Client and server neighbor graphs differ')
-        self.links = graph['connections']
-        self.visual_links = graph.get('visualConnections', [])
-        if len(self.links) != 17 or not all(x.get('seamless') for x in self.links):
+        self.links = [link for link in graph['connections'] if not link.get('visualOnly')]
+        self.visual_links = [link for link in graph['connections'] if link.get('visualOnly')]+graph.get('visualConnections', [])
+        if (not self.chunk_mode and len(self.links) != 17) or not all(x.get('seamless') for x in self.links):
             raise AuditError('All seventeen reciprocal geographic links must be published first')
-        if not all(e.get('frame',{}).get('geometryMode') == 'continent-owned-v1' for x in self.links for e in x['ends']):
+        mode='continent-chunks-v1' if self.chunk_mode else 'continent-owned-v1'
+        if not all(e.get('frame',{}).get('geometryMode') == mode for x in self.links for e in x['ends']):
             raise AuditError('Live proof requires the final continent-owned geometry frames')
-        if len(self.visual_links) != 7 or not all(x.get('visualOnly') and not x.get('seamless') for x in self.visual_links):
+        if not self.chunk_mode and (len(self.visual_links) != 7 or not all(x.get('visualOnly') and not x.get('seamless') for x in self.visual_links)):
             raise AuditError('The seven final visual-only shoreline pairs must be published first')
         self.registry = self.json_input(self.client/'godot-client/data/maps/registry.json')['maps']
         stream_path=self.client/'godot-client/src/world/exterior_region_stream.gd'
@@ -404,6 +500,7 @@ class Generator:
         self.audit = WalkAudit(world,portals,move_seconds=settings.player_move_interval_ms/1000,max_leg=max_leg)
         self.portals,self.world = portals,world
         self.errors,self.lanes,self.coverage = [],[],{}
+        if self.chunk_mode:self.graph_integrity()  # Fail before expensive route planning on an invalid topology.
 
     def track(self,path):
         value=sha(path)
@@ -469,12 +566,41 @@ class Generator:
 
     def graph_integrity(self):
         expected=defaultdict(list)
-        for segment in self.geography['boundaryHeightField']['segments']:
-            expected[tuple(sorted(segment['regions']))].append([segment['start'],segment['end']])
+        chunk_mode=getattr(self,'chunk_mode',False)
+        if chunk_mode:
+            expected=owned_adjacencies(self.geography,self.landscape_plan['bounds'])
+            declared=self.publication['connections'];walk={};seen=set()
+            for link in declared:
+                pair=tuple(sorted(end['region'] for end in link['ends']))
+                if (link['id'] in seen or len(pair)!=2 or pair[0]==pair[1] or
+                    not set(pair)<=set(self.specs) or link['type'] not in ('walk','ferry')):
+                    raise AuditError('Invalid or duplicate declared continent travel connection')
+                seen.add(link['id'])
+                if link['type']=='walk':
+                    if pair not in expected:raise AuditError(f"{link['id']}: road joins territories without a physical boundary")
+                    walk[link['id']]=pair
+                    for end in link['ends']:
+                        if len(end.get('lanes',[]))!=7 or end['frame'].get('halfWidthTiles')!=3:
+                            raise AuditError(f"{link['id']}: published seven-lane road contract is incomplete")
+            canonical={link['id']:tuple(sorted(e['region'] for e in link['ends'])) for link in self.geography['connections']}
+            actual_walk={link['id']:tuple(sorted(e['map'] for e in link['ends'])) for link in self.links}
+            if walk!=canonical or walk!=actual_walk or len(actual_walk)!=len(self.links):
+                raise AuditError('Runtime roads differ from canonical published crossings')
+            if len(set(walk.values()))!=len(walk):raise AuditError('Multiple road records duplicate a physical adjacency')
+            visual_pairs=[tuple(sorted(e['map'] for e in link['ends'])) for link in self.visual_links]
+            if set(visual_pairs)!=set(expected)-set(walk.values()) or len(set(visual_pairs))!=len(visual_pairs):
+                raise AuditError('Visual links do not cover the exact remaining owned boundaries')
+            if not all(link.get('visualOnly') for link in self.visual_links):raise AuditError('Non-road physical connection lacks visualOnly')
+            first=next(iter(self.specs))
+            for region in self.specs:travel_route(declared,first,region)
+        else:
+            for segment in self.geography['boundaryHeightField']['segments']:
+                expected[tuple(sorted(segment['regions']))].append([segment['start'],segment['end']])
         records=self.links+self.visual_links
         actual=[tuple(sorted(e['map'] for e in link['ends'])) for link in records]
-        if len(actual)!=24 or len(set(actual))!=24 or set(actual)!=set(expected):
-            raise AuditError('The17 road and7 visual links do not cover the exact24 physical adjacency pairs')
+        if len(actual)!=len(set(actual)) or set(actual)!=set(expected) or (not chunk_mode and len(actual)!=24):
+            raise AuditError('Published links do not cover the exact physical adjacency pairs')
+        if len({link['id'] for link in records})!=len(records):raise AuditError('Duplicate runtime physical connection identity')
         result=[]
         for link,pair in zip(records,actual):
             union=finite_span_union(expected[pair]);anchors=[]
@@ -483,15 +609,22 @@ class Generator:
                 if end.get('coordinateTransform',{}).get('serverOrigin')!=spec['serverOrigin']:
                     raise AuditError(f"{link['id']}: stale end origin")
                 frame=end.get('frame',{})
-                if frame.get('geometryMode')!='continent-owned-v1':raise AuditError(f"{link['id']}: non-owned frame")
+                mode='continent-chunks-v1' if chunk_mode else 'continent-owned-v1'
+                if frame.get('geometryMode')!=mode:raise AuditError(f"{link['id']}: wrong geometry frame mode")
                 lines=[[[p[0]+translation[0],p[1]+translation[2]] for p in line] for line in end.get('preloadEdges',[])]
                 if not lines or finite_span_union(lines)!=union:
                     raise AuditError(f"{link['id']}: finite preload edges differ from owned physical boundary on {end['map']}")
                 anchors.append([frame['anchor'][i]+translation[i] for i in range(3)])
             if math.dist(*anchors)>.001:raise AuditError(f"{link['id']}: global frame anchors disagree")
+            if chunk_mode and not link.get('visualOnly'):
+                xz=(anchors[0][0],anchors[0][2])
+                if not any(abs(xz[1-axis]-fixed)<.001 and low-.001<=xz[axis]<=high+.001 for axis,fixed,low,high in union):
+                    raise AuditError(f"{link['id']}: road frame anchor is outside its physical boundary")
             result.append({'id':link['id'],'regions':list(pair),'visualOnly':bool(link.get('visualOnly')),
                            'globalFiniteSpanUnion':union})
-        return {'passed':True,'roadPairs':len(self.links),'visualPairs':len(self.visual_links),'physicalPairs':len(result),'pairs':result}
+        return {'passed':True,'roadPairs':len(self.links),'visualPairs':len(self.visual_links),'physicalPairs':len(result),'pairs':result,
+                'boundarySource':'independent ownership polygon scan conversion' if chunk_mode else 'legacy boundaryHeightField',
+                'ferryPairs':sum(c['type']=='ferry' for c in self.publication['connections']) if chunk_mode else 0}
 
     @staticmethod
     def approach_frame(frame,package,link_id):
@@ -659,12 +792,85 @@ class Generator:
 
     @staticmethod
     def offset(point,direction,distance):
-        return tuple(point[i]+direction[i]*distance for i in (0,1))
+        # Published seam normals are unit vectors, most of them diagonal on the
+        # continent; a lane is the nearest server tile at each metre inward.
+        return tuple(int(math.floor(point[i]+direction[i]*distance+.5)) for i in (0,1))
+
+    def surface_height(self,region,tile):
+        """Rendered walking height (metres) of a server tile from the client's own collision export.
+
+        The territory's EWCG grid folds to the server tile the same way the
+        published server collision does (four half-metre cells, highest floor,
+        none blocked), so a tile the server can stand on always has a height.
+        """
+        if not hasattr(self,'_surfaces'):self._surfaces={}
+        if region not in self._surfaces:
+            path=self.members[region]['path']
+            encoding=self.json_input(path)['collision']['heightEncoding']
+            binary=path.parent/'collision.bin';self.track(binary);raw=binary.read_bytes()
+            magic,_version,width,height=struct.unpack('<4sIII',raw[:16])
+            if magic!=b'EWCG' or len(raw)<16+width*height:raise AuditError(f'{region}: unreadable client collision export')
+            self._surfaces[region]=(raw,width,height,encoding)
+        raw,width,height,encoding=self._surfaces[region]
+        x,y=tile
+        if not (0<=x and 2*x+1<width and 0<=y and 2*y+1<height):return None
+        cells=[raw[16+(2*y+dy)*width+2*x+dx] for dy in (0,1) for dx in (0,1)]
+        if not all(cells):return None
+        return max(cells)*encoding['step']+encoding['origin']
+
+    def godot_xz(self,region,x,y):
+        """Continent-frame metres of server coordinates in `region`; fractional tiles allowed."""
+        spec=self.specs[region];ox,oy=spec['serverOrigin'];tx,_,tz=spec['translation']
+        return (x-ox+tx,oy-y+tz)
+
+    def harness_screen(self,region,start,neighbour,target,yaw,distance):
+        """Project a neighbour tile as the live harness clicks it: the actor at `start`, the ray at the tile's +0.1 corner."""
+        stand=self.surface_height(region,start);floor=self.surface_height(neighbour,target)
+        if stand is None or floor is None:return None
+        fx,fz=self.godot_xz(region,start[0]+.5,start[1]+.5)
+        px,pz=self.godot_xz(neighbour,target[0]+.1,target[1]+.1)
+        return harness_screen_position((fx,stand,fz),yaw,distance,(px,floor,pz))
+
+    def route_path(self,region,start,label):
+        """The real server route from `start` toward the territory arrival.
+
+        Graded continent roads curve within metres of a seam and their normals
+        are diagonal, so a straight-line offset can leave the road; the actual
+        route to the territory arrival is the only faithful inward reference.
+        """
+        start=tuple(start);hub=tuple(self.specs[region]['arrival'])
+        if not self.audit.standing(region,start):raise AuditError(f'{region}: unsupported or occupied standing tile {start} ({label})')
+        # Other automatic triggers are obstacles for a reference route, as in planning.
+        blocked=set(self.audit.occupied(region))|(set(self.audit.automatic[region])-{start})
+        path=self.world.find_path(region,start,hub,blocked)
+        if not path:raise AuditError(f'{region}: no route from {start} to the arrival ({label})')
+        return [tuple(tile) for tile in path]
+
+    def route_tile(self,region,start,steps,label):
+        """The tile reached after `steps` real server steps from `start` toward the hub."""
+        path=self.route_path(region,start,label)
+        tile=path[min(steps,len(path))-1]
+        if tile in self.audit.automatic[region]:raise AuditError(f'{region}: route reference {tile} is an automatic trigger ({label})')
+        return tile
 
     def sorted_lanes(self,a,b):
         found=[p for p in self.portals if p.source==a['map'] and p.destination==b['map'] and p.object_id is None]
         if len(found)!=7:
             raise AuditError(f"{a['map']} -> {b['map']}: expected seven lanes, got {len(found)}")
+        if getattr(self,'chunk_mode',False):
+            records=[link for link in self.publication['connections'] if link['type']=='walk' and
+                     {e['region'] for e in link['ends']}=={a['map'],b['map']}]
+            if len(records)!=1:raise AuditError('Missing unique published road lane set')
+            first=next(e for e in records[0]['ends'] if e['region']==a['map'])
+            second=next(e for e in records[0]['ends'] if e['region']==b['map'])
+            def global_tile(name,tile):
+                spec=self.specs[name];ox,oy=spec['serverOrigin'];x,_,z=spec['translation']
+                return (round(tile[0]+.5-ox+x,6),round(oy-tile[1]-.5+z,6))
+            targets={global_tile(b['map'],e['arrival']):tuple(e['arrival']) for e in second['lanes']}
+            expected={(tuple(e['tile']),targets.get(global_tile(a['map'],e['tile']))) for e in first['lanes']}
+            actual={((p.x,p.y),(p.destination_x,p.destination_y)) for p in found}
+            if None in (arrival for _,arrival in expected) or expected!=actual:
+                raise AuditError(f"{a['map']} -> {b['map']}: served lanes differ from globally identical published cells")
         x,z=a['frame']['outward']
         return sorted(found,key=lambda p:p.x*(-z)+p.y*(-x))
 
@@ -706,6 +912,17 @@ class Generator:
             for a,b in (link['ends'],link['ends'][::-1]):
                 def check():
                     current, destination = a['map'], b['map']
+                    if getattr(self,'chunk_mode',False):
+                        try:self.first_road_leg(current,destination)
+                        except AuditError:
+                            itinerary=travel_route(self.publication['connections'],current,destination)
+                            if not any(c['type']=='ferry' for c,_,_ in itinerary):raise
+                            routes.append({'pair':link['id'],'from':current,'to':destination,
+                                'maps':[current]+[end['region'] for _,_,end in itinerary],
+                                'travelMode':'ferry-required','oneClickWalkAvailable':False,
+                                'ferryConnections':[c['id'] for c,_,_ in itinerary if c['type']=='ferry'],
+                                'intermediateRequests':[]})
+                            return
                     arrival = None;maps=[current];requests=[]
                     for _ in range(len(self.specs)):
                         here,there=self.first_road_leg(current,destination)
@@ -734,18 +951,21 @@ class Generator:
         a,b=link['ends']
         p=self.sorted_lanes(a,b)[index]
         target=(p.x,p.y)
-        start=self.offset(target,self.inward(a['frame']),8)
-        expected_return=self.offset(target,self.inward(a['frame']),2)
-        q=next((q for q in self.sorted_lanes(b,a) if (q.destination_x,q.destination_y)==expected_return),None)
-        if q is None:
-            raise AuditError(f"{link['id']}: lane {index-3} has no reciprocal arrival at {expected_return}")
+        start=self.route_tile(a['map'],target,8,link['id']+' lane start')
+        # The reciprocal lane arrives one cell inside this trigger; both sides sort
+        # their lanes along the common tangent, so match by actual arrival tile.
+        candidates=[(max(abs(q.destination_x-target[0]),abs(q.destination_y-target[1])),q) for q in self.sorted_lanes(b,a)]
+        gap,q=min(candidates,key=lambda row:row[0])
+        if gap>3:
+            raise AuditError(f"{link['id']}: lane {index-3} has no reciprocal arrival beside its trigger {target}")
+        expected_return=(q.destination_x,q.destination_y)
         identity=link['id']+'-lane-'+str(index-3)
         steps=self.audit.movement(a['map'],start,target,identity+' outward',allowed=[target])
         steps[-1].update(destination=b['map'])
         arrival=(p.destination_x,p.destination_y)
         end=(q.x,q.y)
         # Walk off the return lane before reversing; do not use an admin jump.
-        back_approach=self.offset(end,self.inward(b['frame']),6)
+        back_approach=self.route_tile(b['map'],end,6,link['id']+' return approach')
         steps+=self.audit.movement(b['map'],arrival,back_approach,identity+' reverse approach')
         back=self.audit.movement(b['map'],back_approach,end,identity+' return',allowed=[end])
         back[-1].update(destination=a['map'])
@@ -755,18 +975,29 @@ class Generator:
 
     def click_route(self,link,a,b,depth):
         p=self.sorted_lanes(a,b)[3]
-        start=self.offset((p.x,p.y),self.inward(a['frame']),8)
+        start=self.route_tile(a['map'],(p.x,p.y),8,link['id']+' click start')
         destination=(p.destination_x,p.destination_y)
-        target=self.offset(destination,self.inward(b['frame']),depth)
+        path=self.route_path(b['map'],destination,link['id']+' click target')
+        yaw=self.yaw(a['frame'])
+        # The harness asserts the clicked tile projects inside its fixed camera.
+        # Graded roads bend and climb within metres of a seam, so the deep
+        # target is the farthest of the first `depth` real steps that stays a
+        # clear margin inside the frame; a shallow target must itself be visible.
+        chosen=None
+        for steps in range(min(depth,len(path)),0,-1):
+            tile=path[steps-1]
+            if tile in self.audit.automatic[b['map']]:raise AuditError(f"{b['map']}: route reference {tile} is an automatic trigger ({link['id']} click target)")
+            margin=visible_margin(self.harness_screen(a['map'],start,b['map'],tile,yaw,CLICK_CAMERA_DISTANCE))
+            if margin>=CLICK_VISIBLE_MARGIN_PX:chosen=(steps,tile,margin);break
+        if chosen is None or (depth>2 and chosen[0]<=2):
+            raise AuditError(f"{b['map']}: no route tile {3 if depth>2 else 1}-{depth} steps beyond {destination} is visible from the gameplay camera at {start}")
+        steps,target,margin=chosen
         self.audit.exact_path(a['map'],start,(p.x,p.y),allowed=[(p.x,p.y)])
         self.audit.exact_path(b['map'],destination,target)
         identity=link['id']+'-'+a['map']+'-click-'+str(depth)
-        # This actual uphill target is 3.48m above the Manymouth start.
-        # At32m it projects 4.75px above the viewport; normal40m zoom keeps
-        # the same12m target visible with a70px margin at1440x900/FOV50.
-        distance=40 if identity=='manymouth_delta--grey_moors-manymouth_delta-click-12' else 32
         return {'id':identity,'map':a['map'],'start':list(start),'startTolerance':0,
-                'yaw':self.yaw(a['frame']),'distance':distance,'walkTimeout':60,
+                'yaw':yaw,'distance':CLICK_CAMERA_DISTANCE,'walkTimeout':60,
+                'requestedSteps':depth,'targetSteps':steps,'screenMarginPx':round(margin,1),
                 'steps':[{'tile':list(target),'destination':b['map'],'clickNeighbor':True,
                           'label':'exact visible resident target','capture':identity}]}
 
@@ -781,7 +1012,10 @@ class Generator:
                             lane=approaches.lane_tiles(a['frame'],a['coordinateTransform'],index-3,outward=1)
                             if lane[-1]!=(p.x,p.y):raise AuditError(f"{a['map']}: authored lane misses its actual trigger")
                         else:
-                            lane=[self.offset((p.x,p.y),self.inward(a['frame']),depth) for depth in range(40,-1,-1)]
+                            depth=int(a['frame']['collarDepth']) if getattr(self,'chunk_mode',False) else 40
+                            if depth<2:raise AuditError(f"{a['map']}: receiving strip is too short")
+                            lane=[self.offset((p.x,p.y),self.inward(a['frame']),offset) for offset in range(depth,-1,-1)]
+                            lane=[tile for i,tile in enumerate(lane) if i==0 or tile!=lane[i-1]]
                         start=lane[0]
                         path=self.audit.exact_path(a['map'],start,(p.x,p.y),allowed=[(p.x,p.y)])
                         # Prove the surveyed lane itself, not just a winding detour.
@@ -799,7 +1033,7 @@ class Generator:
                         self.lanes.append({'from':a['map'],'to':b['map'],'lane':index-3,
                                            'trigger':[p.x,p.y],'arrival':list(arrival),'approachSteps':len(path),
                                            'surveyedLaneTiles':len(lane),'authoredCurve':curved,
-                                           'collarMetres':approaches.collar_length(a['frame']) if curved else 40})
+                                           'collarMetres':approaches.collar_length(a['frame']) if curved else depth})
                 self.attempt(link['id']+' '+a['map']+' seven lanes',check_lanes)
                 for depth in (2,12):
                     route=self.attempt(link['id']+' neighbor click',lambda:self.click_route(link,a,b,depth))
@@ -808,6 +1042,55 @@ class Generator:
                 route=self.attempt(link['id']+' handoff',lambda:self.border_route(link,index))
                 if route:(centre if index==3 else shoulders).append(route)
         return centre,shoulders,clicks
+
+    def ferry_routes(self):
+        """Prove actual dock access, remote departure and return with live fixtures."""
+        routes=[]
+        if not getattr(self,'chunk_mode',False):return routes
+        for link in self.publication['connections']:
+            if link['type']!='ferry':continue
+            for a,b in (link['ends'],link['ends'][::-1]):
+                def check():
+                    identity=link['id']+'-'+a['region']+'-roundtrip'
+                    start=tuple(self.specs[a['region']]['arrival']);steps=[]
+                    for source,destination,current in ((a,b,start),(b,a,tuple(b['arrival']))):
+                        triggers=[p for p in self.portals if p.source==source['region'] and p.destination==destination['region']
+                                  and (p.x,p.y)==tuple(source['tile']) and p.object_id is None]
+                        if len(triggers)!=1 or (triggers[0].destination_x,triggers[0].destination_y)!=tuple(destination['arrival']):
+                            raise AuditError(f'{identity}: missing exact published ferry departure/arrival')
+                        leg=self.audit.movement(source['region'],current,tuple(source['tile']),identity,
+                                                allowed=[tuple(source['tile'])])
+                        if not leg:raise AuditError(f'{identity}: ferry approach contains no movement')
+                        leg[-1]['destination']=destination['region']
+                        leg[-1]['expectedArrival']=self.ferry_arrival(destination)
+                        steps+=leg
+                        arrival=tuple(destination['arrival'])
+                        if arrival in self.audit.automatic[destination['region']] or self.audit.arrival_departure(destination['region'],arrival) is None:
+                            raise AuditError(f'{identity}: ferry arrival cannot safely depart')
+                    steps.append({'tile':a['arrival'],'label':'exact return from ferry','capture':identity+'-returned'})
+                    routes.append({'id':identity,'map':a['region'],'start':list(start),'startTolerance':0,
+                                   'distance':32,'travelMode':'ferry','steps':steps})
+                self.attempt(link['id']+' '+a['region']+' ferry access',check)
+        return routes
+
+    def ferry_arrival(self,destination):
+        """Freeze the published server tile and its shared continent centre.
+
+        The live harness checks this on the first real destination spawn,
+        before any next MOVE_TO can conceal a displaced ferry arrival.
+        """
+        region=destination['region'];tile=destination['arrival'];spec=self.specs[region]
+        if len(tile)!=2 or any(not isinstance(v,(int,float)) or not math.isfinite(v) or int(v)!=v for v in tile):
+            raise AuditError(f'{region}: ferry arrival is not an exact authoritative tile')
+        origin=spec.get('serverOrigin');translation=spec.get('translation')
+        if (not isinstance(origin,(list,tuple)) or len(origin)!=2 or
+            not isinstance(translation,(list,tuple)) or len(translation)!=3 or
+            any(not isinstance(v,(int,float)) or not math.isfinite(v) for v in [*origin,*translation])):
+            raise AuditError(f'{region}: ferry arrival has no finite published continent transform')
+        x=tile[0]+.5-origin[0]+translation[0]
+        z=origin[1]-tile[1]-.5+translation[2]
+        return {'map':region,'tile':[int(v) for v in tile],'global':[round(x,6),round(z,6)],
+                'units':'metres','point':'tile-center'}
 
     def services(self,region):
         start=tuple(self.specs[region]['arrival'])
@@ -957,10 +1240,11 @@ class Generator:
 
     def generate(self):
         integrity=self.attempt('actual65-family package bytes and metadata',self.publication_integrity)
-        graph=self.attempt('all24 physical neighbor pairs',self.graph_integrity)
+        graph=self.attempt('all physical neighbor pairs',self.graph_integrity)
         family_access=self.attempt('all65 family portal standing/access',self.family_portal_access)
         centre,shoulders,clicks=self.borders()
         visual_routes=self.visual_road_requests()
+        ferries=self.ferry_routes()
         inventory=self.attempt('all-content access inventory',self.content_inventory)
         core,doors=[],[]
         for region in self.specs:
@@ -979,14 +1263,17 @@ class Generator:
         outputs={'streaming-centre.json':centre,'streaming-shoulders.json':shoulders,
                  'streaming-all-three-lanes.json':centre+shoulders,'neighbor-clicks.json':clicks,
                  'region-core.json':core,'all-interior-roundtrips.json':doors}
-        if len(self.lanes)!=238:self.errors.append({'route':'all lanes','error':f'Only {len(self.lanes)}/238 lanes audited'})
+        expected_lanes=sum(len(end['lanes']) for link in self.publication['connections'] if link['type']=='walk'
+                           for end in link['ends']) if getattr(self,'chunk_mode',False) else 238
+        if getattr(self,'chunk_mode',False):outputs['ferry-roundtrips.json']=ferries
+        if len(self.lanes)!=expected_lanes:self.errors.append({'route':'all lanes','error':f'Only {len(self.lanes)}/{expected_lanes} lanes audited'})
         changed=[p for p,h in self.inputs.items() if sha(Path(p))!=h]
         if changed:self.errors.append({'route':'provenance','error':'Inputs changed during generation','files':changed})
         report={'ready':not self.errors,'errors':self.errors,'coverage':self.coverage,
-                'readyDefinition':'Actual package bytes, all24 physical neighbor pairs, all65 family portal entries/exits, representative live fixtures and required road requests passed their offline checks; inspect allContentAccess separately for exhaustive content claims.',
+                'readyDefinition':'Actual package bytes, every ownership-derived physical neighbor pair, all served family portal entries/exits, published ferry roundtrips, representative live fixtures and required road requests passed their offline checks; inspect allContentAccess separately for exhaustive content claims.',
                 'counts':{name:len(routes) for name,routes in outputs.items()},'laneCount':len(self.lanes),
                 'lanes':self.lanes,'movementLegs':self.audit.legs,'inputSha256':self.inputs,
-                'visualOnlyRoadRoutes':visual_routes,'singleMoveRequests':self.audit.requests,
+                'visualOnlyRoadRoutes':visual_routes,'singleMoveRequests':self.audit.requests,'expectedLaneCount':expected_lanes,
                 'allContentAccess':inventory,
                 'publicationIntegrity':integrity,'graphIntegrity':graph,'familyPortalAccess':family_access,
                 'maximumIntermediateRequestSteps':max((r['requestedSteps'] for r in self.audit.requests),default=0),
@@ -995,6 +1282,7 @@ class Generator:
                                'Every emitted waypoint uses the real unmodified World.find_path; planning-only entrance exclusions are never passed to its final proof.',
                                'Neighbor visibility, rendered walking surfaces, camera continuity and exact resumed targets are asserted by the live harness.',
                                'Visual-only shore routing audits fixed intermediate arrival-to-portal MOVE_TO requests without waypoints; camera-dependent first/final legs are separate live checks.',
+                               'Island adjacency without a continuous road is explicitly ferry-required; each declared ferry dock and return is audited separately and is not claimed as a one-click walk.',
                                'An uncapped diagnostic copy measures overlong paths only; individual 512-step truncations remain visible.',
                                'Each intermediate path also simulates actual runtime 448-command same-target renewals, with one user click, no fixture waypoint, exact endpoint/door checks and the runtime renewal budget.']}
         return outputs,report
@@ -1007,11 +1295,12 @@ def main():
     parser.add_argument('--data',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--max-leg',type=int,default=64)
+    parser.add_argument('--publication',type=Path,help='New-continent publication contract; defaults to _continent/generated/publication.json')
     args=parser.parse_args()
     if not 1<=args.max_leg<=128:parser.error('--max-leg must be in 1..128')
     args.output.mkdir(parents=True,exist_ok=True)
     try:
-        outputs,report=Generator(args.client,args.server,args.data,max_leg=args.max_leg).generate()
+        outputs,report=Generator(args.client,args.server,args.data,max_leg=args.max_leg,publication=args.publication).generate()
     except (AuditError,ValueError) as error:
         outputs,report={}, {'ready':False,'errors':[{'error':str(error)}]}
     (args.output/'fixture-audit.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')

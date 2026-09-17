@@ -41,6 +41,10 @@ var _retiring: Array[Dictionary] = []
 const RETIRE_NODES_PER_FRAME := 64
 const RETIRE_BUDGET_USEC := 2000
 
+## The resident table changed: a neighbour arrived, left, or the maps swapped
+## at a crossing. Main lays the neighbours' map pictures by it.
+signal residents_changed
+
 func configure(maps: Dictionary) -> void:
 	registry = maps
 	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(CONNECTIONS))
@@ -60,6 +64,12 @@ func activate(map_id: String, imported: Node3D, manifest: WorldManifest) -> void
 
 func update_position(position: Vector3) -> void:
 	_last_position = position
+	if active_root is ContinentChunkStream:
+		(active_root as ContinentChunkStream).update_focus(position)
+	for resident: Dictionary in residents.values():
+		var imported: Node3D = resident.root
+		if imported is ContinentChunkStream:
+			(imported as ContinentChunkStream).update_focus(imported.transform.affine_inverse() * position)
 	if Time.get_ticks_msec() < _next_update or active_map.is_empty():
 		return
 	_next_update = Time.get_ticks_msec() + 250
@@ -79,7 +89,10 @@ func update_position(position: Vector3) -> void:
 	_thread = Thread.new()
 	var path := ProjectSettings.globalize_path(str(entry.get("manifest", "")))
 	var visuals := GlbSceneCache.missing(PackedStringArray(candidate.there.get("visualScenes", [])))
-	var error := _thread.start(WorldLoader.prepare_detached.bind(path, MapSceneCache.is_enabled(), visuals))
+	var arrival := Vector3.INF
+	if candidate.here.has("frame") and candidate.there.has("frame"):
+		arrival = frame_transform(candidate.here.frame, candidate.there.frame).affine_inverse() * position
+	var error := _thread.start(WorldLoader.prepare_detached.bind(path, MapSceneCache.is_enabled(), visuals, arrival))
 	if error != OK:
 		_thread = null
 		_retry_after[map_id] = Time.get_ticks_msec() + 30000
@@ -109,6 +122,7 @@ func _preload_candidate(candidates: Array[Dictionary], wanted: Dictionary) -> Di
 
 func _process(_delta: float) -> void:
 	_drain_retired()
+	ContinentChunkStream.reap_orphans()
 	if _thread == null or _thread.is_alive():
 		return
 	var builder := _thread.wait_to_finish() as WorldLoader
@@ -138,6 +152,7 @@ func _process(_delta: float) -> void:
 	MapSceneCache.note_local_digest((resident.manifest as WorldManifest).asset_id(), str(resident.digest))
 	_record("ready", map_id, {"load_ms": float(resident.phases.get(&"total", 0)) / 1000.0})
 	_refresh_views()
+	residents_changed.emit()
 
 func _nearby(map_id: String) -> bool:
 	return _wanted_neighbours(_candidates(_last_position)).has(map_id)
@@ -188,6 +203,16 @@ func _candidates(position: Vector3) -> Array[Dictionary]:
 
 ## Transfer already-instantiated nodes. A surveyed join rebases the old world
 ## and camera into the destination's coordinate frame; nothing moves on screen.
+## Server steps are one metre and the rendered traveller interpolates up to a
+## few steps behind the authoritative crossing packet, so a crossing is judged
+## continuous within this slack of the seam even when the frame's collar is
+## only the continent's two-metre threshold-floor extent. Teleports and other
+## remote map changes stay far outside it.
+const CONTINUOUS_CROSSING_SLACK_METRES := 8.0
+
+static func continuous_crossing(seamless: bool, crossing_distance: float, collar: float) -> bool:
+	return seamless and crossing_distance < maxf(collar, CONTINUOUS_CROSSING_SLACK_METRES)
+
 func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> Dictionary:
 	last_handoff = {}
 	if not residents.has(destination):
@@ -197,11 +222,8 @@ func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> 
 		if str(candidate.map) == destination:
 			join = candidate
 			break
-	# Render interpolation can trail an authoritative crossing during a slow
-	# frame. The surveyed approach, not a tiny radius around the trigger, is
-	# the continuous-travel zone.
 	var collar := float(join.get("here", {}).get("frame", {}).get("collarDepth", 42))
-	var continuous := bool(join.get("seamless", false)) and float(join.get("crossing_distance", INF)) < collar
+	var continuous := continuous_crossing(bool(join.get("seamless", false)), float(join.get("crossing_distance", INF)), collar)
 	var resident: Dictionary = residents[destination]
 	residents.erase(destination)
 	var rebase := Transform3D.IDENTITY
@@ -212,6 +234,7 @@ func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> 
 		_set_collision(old, false)
 		old.transform = rebase
 		residents[active_map] = previous
+		residents_changed.emit()
 	else:
 		for stale: String in residents.keys():
 			_evict(stale)
@@ -237,7 +260,7 @@ func _refresh_views() -> void:
 		var imported := residents[map_id].root as Node3D
 		if bool(candidate.seamless) or bool(candidate.visual_only):
 			var identity := str(candidate.there.frame.id)
-			var full_owned := str(candidate.there.frame.get("geometryMode", "")) == "continent-owned-v1"
+			var full_owned := str(candidate.there.frame.get("geometryMode", "")) in ["continent-owned-v1", "continent-chunks-v1"]
 			imported.transform = frame_transform(candidate.here.frame, candidate.there.frame)
 			imported.visible = true
 			_set_view(imported, identity, full_owned)
@@ -270,6 +293,8 @@ static func _vector(raw: Array) -> Vector3:
 	return Vector3(float(raw[0]), float(raw[1]), float(raw[2]))
 
 static func _set_collision(imported: Node3D, enabled: bool, preview_enabled := false, border := "", full_owned := false) -> void:
+	if imported is ContinentChunkStream:
+		(imported as ContinentChunkStream).set_physics_mode(enabled, preview_enabled)
 	var mode := str(enabled) + ":" + str(preview_enabled) + ":" + border + ":" + str(full_owned)
 	if imported.get_meta("stream_physics", "") == mode:
 		return
@@ -314,6 +339,7 @@ func _evict(map_id: String) -> void:
 	residents.erase(map_id)
 	_retire(resident, map_id)
 	_record("evicted", map_id, {"retiring": _retiring.size()})
+	residents_changed.emit()
 
 func _can_dispatch_preload() -> bool:
 	return (_thread == null and _retiring.is_empty()
@@ -321,6 +347,8 @@ func _can_dispatch_preload() -> bool:
 
 func _retire(resident: Dictionary, map_id: String) -> void:
 	var imported := resident.root as Node3D
+	if imported is ContinentChunkStream:
+		(imported as ContinentChunkStream).pause_streaming()
 	imported.visible = false
 	_set_collision(imported, false)
 	imported.process_mode = Node.PROCESS_MODE_DISABLED
@@ -338,6 +366,9 @@ func _drain_retired(max_nodes := RETIRE_NODES_PER_FRAME,
 	var freed := 0
 	while not _retiring.is_empty() and freed < max_nodes and Time.get_ticks_usec() - began < budget_usec:
 		var retired: Dictionary = _retiring[0]
+		var imported: Variant = retired.resident.root
+		if is_instance_valid(imported) and imported is ContinentChunkStream and not (imported as ContinentChunkStream).can_retire():
+			break
 		var stack: Array = retired.stack
 		var visual_keys: Array = retired.visual_keys
 		if stack.is_empty():
@@ -459,7 +490,7 @@ func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction:
 		# Owned footprints can wrap behind the road plane at a shared corner.
 		# Their real geometry, foreground occlusion and served bounds decide the
 		# target; a local collar still needs the legacy outward-side restriction.
-		var full_owned := str(candidate.there.frame.get("geometryMode", "")) == "continent-owned-v1"
+		var full_owned := str(candidate.there.frame.get("geometryMode", "")) in ["continent-owned-v1", "continent-chunks-v1"]
 		if not full_owned and (point - anchor).dot(outward) <= 0:
 			continue
 		var target_manifest := residents[map_id].manifest as WorldManifest
@@ -471,18 +502,86 @@ func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction:
 		var height := int(dimensions[1]) if dimensions is Array else width
 		if tile.x < 0 or tile.y < 0 or (width > 0 and (tile.x >= width or tile.y >= height)):
 			return null
-		var leg := _first_walk_leg(active_map, map_id)
-		if leg.is_empty():
-			return null
-		pending_walk = {"map": map_id, "tile": tile, "run": run, "world_point": point,
-			"routed": true, "issued_from": active_map, "next_map": str(leg.there.map)}
-		var here_adapter := CoordinateAdapter.new(leg.here.get("coordinateTransform",
-			active_manifest.data.get("coordinateTransform", {})))
-		_arm_walk_leg(active_map, here_adapter.godot_to_server(_vector(leg.here.position)), _local_walk_actor(active_map))
 		# Route through the centre of the surveyed road. The server decides
 		# whether the approach and the continuation are walkable.
-		return _vector(leg.here.position)
+		return arm_walk_to(map_id, tile, run, point)
 	return null
+
+## A walk order to a tile of a neighbour: the first leg to the surveyed seam
+## crossing, the rest carried by take_continuation at the map change. Returns
+## the leg's target point in the active map, or null when the tile lies
+## outside that map's served cells or no seamless road leads there.
+func arm_walk_to(map_id: String, tile: Vector2i, run: bool, world_point: Vector3) -> Variant:
+	pending_walk.clear()
+	if not tile_inside(neighbour_coordinates(map_id), tile):
+		return null
+	var leg := _first_walk_leg(active_map, map_id)
+	if leg.is_empty():
+		return null
+	pending_walk = {"map": map_id, "tile": tile, "run": run, "world_point": world_point,
+		"routed": true, "issued_from": active_map, "next_map": str(leg.there.map)}
+	var fallback: Dictionary = active_manifest.data.get("coordinateTransform", {}) if active_manifest != null else {}
+	var here_adapter := CoordinateAdapter.new(leg.here.get("coordinateTransform", fallback))
+	_arm_walk_leg(active_map, here_adapter.godot_to_server(_vector(leg.here.position)), _local_walk_actor(active_map))
+	return _vector(leg.here.position)
+
+## The direct seamless links out of the active map, as {map, here, there}.
+func _direct_links() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for link: Dictionary in links:
+		if not bool(link.get("seamless", false)):
+			continue
+		var ends: Array = link.ends
+		for index: int in 2:
+			if str(ends[index].map) == active_map:
+				result.append({"map": str(ends[1 - index].map), "here": ends[index], "there": ends[1 - index]})
+	return result
+
+## A neighbour's rigid frame in the active map: its resident root's while it
+## stands, else the surveyed join of the direct seamless link. Null with neither.
+func neighbour_transform(map_id: String) -> Variant:
+	var resident: Variant = residents.get(map_id)
+	if resident is Dictionary and is_instance_valid((resident as Dictionary).get("root") as Node3D):
+		return ((resident as Dictionary).get("root") as Node3D).transform
+	for candidate: Dictionary in _direct_links():
+		if str(candidate.map) == map_id:
+			return frame_transform(candidate.here.frame, candidate.there.frame)
+	return null
+
+## A neighbour's coordinate transform: the resident manifest's, else the link end's.
+func neighbour_coordinates(map_id: String) -> Dictionary:
+	var resident: Variant = residents.get(map_id)
+	if resident is Dictionary and (resident as Dictionary).get("manifest") is WorldManifest:
+		return ((resident as Dictionary).get("manifest") as WorldManifest).data.get("coordinateTransform", {}) as Dictionary
+	for candidate: Dictionary in _direct_links():
+		if str(candidate.map) == map_id:
+			return candidate.there.get("coordinateTransform", {}) as Dictionary
+	return {}
+
+## Whether a server tile lies inside a map's served cells (unknown cells accept every non-negative tile).
+static func tile_inside(coordinates: Dictionary, tile: Vector2i) -> bool:
+	if tile.x < 0 or tile.y < 0:
+		return false
+	var dimensions: Variant = coordinates.get("serverCells", 0)
+	var width := int(dimensions[0]) if dimensions is Array else int(dimensions)
+	var height := int(dimensions[1]) if dimensions is Array else width
+	return width <= 0 or (tile.x < width and tile.y < height)
+
+## The direct neighbour whose served tiles hold a point of the active map's
+## frame, with that tile: what a map click past the seam means. Empty when
+## no neighbour holds the point.
+func map_at_local(point: Vector3) -> Dictionary:
+	for candidate: Dictionary in _direct_links():
+		var map_id := str(candidate.map)
+		var frame_value: Variant = neighbour_transform(map_id)
+		var coordinates := neighbour_coordinates(map_id)
+		if not frame_value is Transform3D or coordinates.is_empty():
+			continue
+		var local_point: Vector3 = (frame_value as Transform3D).affine_inverse() * point
+		var tile: Vector2i = CoordinateAdapter.new(coordinates).godot_to_server(local_point)
+		if tile_inside(coordinates, tile):
+			return {"map": map_id, "tile": tile}
+	return {}
 
 func _local_walk_actor(map_id: String) -> Dictionary:
 	var tree := Engine.get_main_loop() as SceneTree
@@ -587,7 +686,8 @@ func _first_walk_leg(source: String, destination: String) -> Dictionary:
 	return {}
 
 func is_idle() -> bool:
-	return _thread == null and _retiring.is_empty()
+	ContinentChunkStream.reap_orphans()
+	return _thread == null and _retiring.is_empty() and ContinentChunkStream.orphans_pending() == 0
 
 func _record(kind: String, map_id: String, detail := {}) -> void:
 	var entry := {"event": kind, "map": map_id, "at_ms": Time.get_ticks_msec()}

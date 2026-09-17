@@ -54,3 +54,6 @@ godot-client/assets/actors/native/races/*_metallic_roughness.jpg
 godot-client/assets/actors/native/races/*_normal.jpg
 godot-client/assets/actors/native/races/*_[0-9].png
 godot-client/assets/actors/native/equipment/*_[0-9].png
+
+# pytest caches (any directory)
+.pytest_cache/

@@ -128,7 +128,7 @@ func _run() -> void:
 	_expect(region_preview.visible and not continent_view.visible and not map_image.visible,
 		"clicking a region shows its tab map")
 	_expect(region_preview.texture != null
-		and region_preview.texture.get_size() == Vector2(383.0, 383.0),
+		and region_preview.texture.get_size() == Vector2(456.0, 592.0),
 		"Mirrorhold's preview is its whole minimap, one pixel a metre")
 	_expect(map_title.text == "MIRRORHOLD", "the title is the region's name")
 	_expect(continent_button.texture_normal == continent_texture,
@@ -137,16 +137,17 @@ func _run() -> void:
 		"a preview idles the world render")
 
 	# The cursor names server tiles over the preview, through the map's own
-	# transform: the middle of Mirrorhold's compact 383 m framing is tile (191, 191).
+	# transform: the middle of Mirrorhold's 456 x 592 m framing (world 4, 50 from
+	# a server origin of 228, 350) is tile (232, 300).
 	await process_frame
 	var preview_centre: Vector2 = region_preview.size * 0.5
 	var tile_value: Variant = main.call("_preview_tile_at", preview_centre)
-	_expect(tile_value is Vector2i and (tile_value as Vector2i) == Vector2i(191, 191),
-		"the middle of Mirrorhold's map is server tile (191, 191), got " + str(tile_value))
+	_expect(tile_value is Vector2i and (tile_value as Vector2i) == Vector2i(232, 300),
+		"the middle of Mirrorhold's map is server tile (232, 300), got " + str(tile_value))
 	var preview_motion := InputEventMouseMotion.new()
 	preview_motion.position = preview_centre
 	main.call("_on_region_preview_gui_input", preview_motion)
-	_expect(map_coordinates.text == "Coordinates: 191, 191",
+	_expect(map_coordinates.text == "Coordinates: 232, 300",
 		"the sidebar reports the tile under the cursor")
 	var off_picture := InputEventMouseMotion.new()
 	off_picture.position = Vector2(-10.0, -10.0)
@@ -161,9 +162,9 @@ func _run() -> void:
 	# addressable tiles, Four Gates to its map bounds rather than its backdrop.
 	main.call("_preview_region", _index_of(regions, "sunmane_steppe"))
 	var sunmane_texture: Texture2D = region_preview.texture
-	_expect(sunmane_texture is AtlasTexture
-		and (sunmane_texture as AtlasTexture).region == Rect2(0.0, 1.0, 383.0, 383.0),
-		"Sunmane's preview is the live map's framing, not the landform past its last tile")
+	_expect(sunmane_texture != null and not sunmane_texture is AtlasTexture
+		and sunmane_texture.get_size() == Vector2(490.0, 780.0),
+		"Sunmane's preview is the live map's framing, its whole 490 x 780 m minimap")
 	var four_gates_index: int = _index_of(regions, "four_gates")
 	main.call("_preview_region", four_gates_index)
 	_expect(map_image.visible and not region_preview.visible,
@@ -172,8 +173,8 @@ func _run() -> void:
 	main.call("_preview_region", four_gates_index)
 	var four_gates_texture: Texture2D = region_preview.texture
 	_expect(four_gates_texture != null and not four_gates_texture is AtlasTexture
-		and four_gates_texture.get_size() == Vector2(396.0, 396.0),
-		"Four Gates' preview frames the compact civic island")
+		and four_gates_texture.get_size() == Vector2(582.0, 316.0),
+		"Four Gates' preview frames its map bounds, 582 x 316 m")
 	_expect(main.call("_tab_map_texture", regions[four_gates_index]) == four_gates_texture,
 		"a tab map is decoded once and kept")
 	_expect(map_title.text == "FOUR GATES", "the preview is titled with the map's name")

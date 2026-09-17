@@ -47,6 +47,9 @@ var _marks: Array[Dictionary] = []
 var _enabled_types: Dictionary = {}
 var _marker_scale := 1.0
 var _round := false
+## The region boundaries in metres of the current map (see map_marker_overlay).
+var _boundaries: Array[Dictionary] = []
+const BOUNDARY_COLOUR := Color(1.0, 1.0, 1.0, 0.7)
 
 func configure(camera: Camera3D, viewport_size: Vector2i) -> void:
 	_camera = camera
@@ -56,6 +59,31 @@ func configure(camera: Camera3D, viewport_size: Vector2i) -> void:
 ## The marks on the minimap right now, as `main.gd` collected them: each one a
 ## world position, the marker type it can be switched off by, and the colour
 ## the node that owns it draws itself in.
+func set_boundaries(boundaries: Array[Dictionary]) -> void:
+	_boundaries = boundaries
+	queue_redraw()
+
+## Whether a texture point lies within the round mask, when the map is round.
+func _within_mask(point: Vector2) -> bool:
+	if not _round:
+		return true
+	var centre: Vector2 = size * 0.5
+	return point.distance_to(centre) <= minf(size.x, size.y) * 0.5 - 1.0
+
+## The seams between regions as dashed lines, kept inside the round mask.
+func _draw_boundaries() -> void:
+	for boundary: Dictionary in _boundaries:
+		var points: PackedVector3Array = boundary.get("points", PackedVector3Array()) as PackedVector3Array
+		var previous: Variant = null
+		for index: int in range(points.size() + 1):
+			var world: Vector3 = points[index % points.size()]
+			var point: Variant = null if _camera.is_position_behind(world) else _texture_position(_camera.unproject_position(world))
+			if point is Vector2 and not _within_mask(point as Vector2):
+				point = null
+			if previous is Vector2 and point is Vector2:
+				draw_dashed_line(previous as Vector2, point as Vector2, BOUNDARY_COLOUR, 1.2, 5.0)
+			previous = point
+
 func set_marks(marks: Array[Dictionary]) -> void:
 	_marks = marks
 	queue_redraw()
@@ -114,7 +142,10 @@ func draw_order(marks: Array[Dictionary]) -> Array[Dictionary]:
 	return others + own
 
 func _draw() -> void:
-	if not is_instance_valid(_camera) or _marks.is_empty():
+	if not is_instance_valid(_camera):
+		return
+	_draw_boundaries()
+	if _marks.is_empty():
 		return
 	for mark: Dictionary in draw_order(_marks):
 		var type: StringName = mark.get("type", &"") as StringName

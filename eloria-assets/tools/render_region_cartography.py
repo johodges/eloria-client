@@ -158,13 +158,42 @@ def frame(manifest):
     return low, high, size
 
 
-def _texture(doc, binary, index):
+def external_resource(path, uri, expected, asset_root=None):
+    """Resolve deliberate shared PNG dependencies inside the authored asset tree."""
+    if not isinstance(uri, str) or not uri or ':' in uri or '\\' in uri or uri.startswith('/'):
+        raise ValueError(f'Unsupported external texture URI: {uri!r}')
+    root = Path(asset_root or ROOT/'eloria-assets').resolve()
+    target = (Path(path).parent/uri).resolve()
+    if not target.is_relative_to(root):
+        raise ValueError(f'External texture escapes asset root: {uri}')
+    if not isinstance(expected, str) or len(expected) != 64 or sha(target) != expected:
+        raise ValueError(f'External texture hash mismatch: {uri}')
+    return target
+
+
+def source_inputs(path, manifest, asset_root=None):
+    glb = Path(path).parent/manifest['asset']['glb']
+    result = {'manifest':sha(path), 'glb':sha(glb)}
+    resources = manifest.get('externalResources', {})
+    if resources:
+        result['externalResources'] = {uri:sha(external_resource(glb, uri, expected, asset_root))
+            for uri, expected in sorted(resources.items())}
+    return result
+
+
+def _texture(doc, binary, index, path=None, external_resources=None, asset_root=None):
     spec = doc['images'][doc['textures'][index]['source']]
-    if 'bufferView' not in spec:
-        raise ValueError('Packaged GLB must embed textures')
-    view = doc['bufferViews'][spec['bufferView']]
-    at = view.get('byteOffset', 0)
-    with Image.open(io.BytesIO(binary[at:at+view['byteLength']])) as image:
+    if 'bufferView' in spec:
+        view = doc['bufferViews'][spec['bufferView']]
+        at = view.get('byteOffset', 0)
+        source = io.BytesIO(binary[at:at+view['byteLength']])
+    else:
+        uri = spec.get('uri')
+        expected = (external_resources or {}).get(uri)
+        if path is None or expected is None:
+            raise ValueError(f'External texture must have a declared SHA256: {uri}')
+        source = external_resource(path, uri, expected, asset_root)
+    with Image.open(source) as image:
         return np.asarray(image.convert('RGBA')).copy()
 
 
@@ -188,7 +217,7 @@ def clamp_flags(material):
     return flags
 
 
-def scene_from_glb(path):
+def scene_from_glb(path, external_resources=None, asset_root=None):
     doc, binary = read_glb(path)
     scene = R.Scene()
     material_water = set()
@@ -209,7 +238,7 @@ def scene_from_glb(path):
             albedo = f"albedo-{texture['index']}"
             wrap = texture_wrap(doc, texture['index'])
             if albedo not in scene._textures:
-                rgba = _texture(doc, binary, texture['index'])
+                rgba = _texture(doc, binary, texture['index'], path, external_resources, asset_root)
                 # Native shader expects linear albedo; alpha is linear already.
                 rgba[..., :3] = np.rint((rgba[..., :3] / 255.) ** 2.2 * 255).astype(np.uint8)
                 scene.add_texture(albedo, rgba)
@@ -445,11 +474,11 @@ def render_region(identity, path, output, supersample=2):
     manifest = json.loads(path.read_text(encoding='utf-8'))
     low, high, size = frame(manifest)
     glb = path.parent/manifest['asset']['glb']
-    inputs = {'manifest':sha(path),'glb':sha(glb)}
-    scene, colors, stats = scene_from_glb(glb)
+    inputs = source_inputs(path, manifest)
+    scene, colors, stats = scene_from_glb(glb, manifest.get('externalResources'))
     rgb, rgba, coverage, counts = raster(scene, colors, low, high, size, supersample,
                                         native_cache=output/'_atlas_native')
-    if inputs != {'manifest':sha(path),'glb':sha(glb)}:
+    if inputs != source_inputs(path, manifest):
         raise RuntimeError(f'{identity}: package changed during render; retry after geometry freeze')
     folder = output/identity
     folder.mkdir(parents=True, exist_ok=True)
@@ -481,7 +510,7 @@ def apply_outputs(report, output):
     path=Path(report['sourceManifest'])
     manifest=json.loads(path.read_text(encoding='utf-8'))
     glb=path.parent/manifest['asset']['glb']
-    if report['inputs'] != {'manifest':sha(path),'glb':sha(glb)}:
+    if report['inputs'] != source_inputs(path, manifest):
         raise RuntimeError(f"{report['region']}: refusing publication after source inputs changed")
     original_frame={k:manifest['minimap'].get(k) for k in
                     ('worldMin','worldMax','imageSize','pixelsPerMetre','transform','origin','centre')}
@@ -500,6 +529,8 @@ def apply_outputs(report, output):
         'styleVersion':STYLE_VERSION,'glbSha256':report['inputs']['glb'],
         'toolSha256':report['toolSha256'],'rendererSourceSha256':report['rendererSourceSha256'],
         'supersample':report['supersample'],'waterRGB':report['waterRGB']}
+    if report['inputs'].get('externalResources'):
+        minimap['cartographyRender']['externalResources'] = report['inputs']['externalResources']
     if report.get('coverage', {}).get('softGroundDither'):
         minimap['cartographyRender']['softGroundDither'] = atlas_soft_ground.publication_provenance(
             report['coverage']['softGroundDither'])

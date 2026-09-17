@@ -51,6 +51,7 @@ func _init() -> void:
 		"achievements_catalog_v1":
 			EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_CATALOG,
 		"actor_titles_v1": EloriaProtocol.ServerMessage.ELORIA_ACTOR_TITLES,
+		"adjacent_actors_v1": EloriaProtocol.ServerMessage.ELORIA_ADJACENT_MAPS,
 		"actor_footprints_v1":
 			EloriaProtocol.ServerMessage.ELORIA_ACTOR_FOOTPRINTS,
 		"attribute_state_v1":
@@ -72,6 +73,7 @@ func _init() -> void:
 		"storage_window_v1": EloriaProtocol.ServerMessage.ELORIA_STORAGE_STATE}
 	var capability_probes: Dictionary = {
 		EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE: '{"version":1,"active":false}'.to_utf8_buffer().hex_encode(),
+		EloriaProtocol.ServerMessage.ELORIA_ADJACENT_MAPS: "010100" + "whitehorn_range".to_utf8_buffer().hex_encode() + "00",
 		EloriaProtocol.ServerMessage.ELORIA_MAGIC_STATE: '{"kind":"recall","id":9,"entries":[]}'.to_utf8_buffer().hex_encode(),
 		EloriaProtocol.ServerMessage.SEND_SPECIAL_EFFECT: "025b004d0005",
 		EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE:

@@ -1,507 +1,195 @@
 {
-  "schema": 2,
-  "note": "The continent of Nymara: a great lake ringed by eleven regions with Four Gates at its centre. Every exterior-to-exterior transition is declared once, here, as a pair of portal ids; each region's package carries the matching portal (position and server tile) under its own id, and tools/continent_portals.py joins the two into the server's portal table. Interior doors are the region packages' own.",
-  "layout": {
-    "ring_clockwise_from_north": [
-      "mirrorhold",
-      "amethyst_barrens",
-      "sunmane_steppe",
-      "verdant_stair",
-      "ssarathi_ruins",
-      "manymouth_delta",
-      "westhaven",
-      "grey_moors",
-      "amberwood"
-    ],
-    "beyond_the_ring": {
-      "whitehorn_range": "the mountain wall north of Mirrorhold, Amberwood and the Barrens"
-    },
-    "on_the_lake": {
-      "four_gates": "the island at the centre, four causeways",
-      "crownwater": "the western archipelago; every quay is a ferry"
-    },
-    "frontier": {
-      "sunmane_steppe": "the east gate opens on the unmapped east; nine watch-cairns, no road"
-    }
-  },
-  "regions": [
-    {
-      "id": "mirrorhold",
-      "title": "Mirrorhold",
-      "map": "mirrorhold",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.mirrorhold",
-      "spawn_hook": "spawns.nymara.mirrorhold",
-      "hazard_hook": "hazards.nymara.mirrorhold",
-      "harvest_hook": "harvest.nymara.mirrorhold"
-    },
-    {
-      "id": "crownwater",
-      "title": "Crownwater",
-      "map": "crownwater",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.crownwater",
-      "spawn_hook": "spawns.nymara.crownwater",
-      "hazard_hook": "hazards.nymara.crownwater",
-      "harvest_hook": "harvest.nymara.crownwater"
-    },
-    {
-      "id": "four_gates",
-      "title": "Four Gates",
-      "map": "four_gates",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.four_gates",
-      "spawn_hook": "spawns.nymara.four_gates",
-      "hazard_hook": "hazards.nymara.four_gates",
-      "harvest_hook": "harvest.nymara.four_gates"
-    },
-    {
-      "id": "whitehorn_range",
-      "title": "Whitehorn Range",
-      "map": "whitehorn_range",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.whitehorn_range",
-      "spawn_hook": "spawns.nymara.whitehorn_range",
-      "hazard_hook": "hazards.nymara.whitehorn_range",
-      "harvest_hook": "harvest.nymara.whitehorn_range"
-    },
-    {
-      "id": "amethyst_barrens",
-      "title": "Amethyst Barrens",
-      "map": "amethyst_barrens",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.amethyst_barrens",
-      "spawn_hook": "spawns.nymara.amethyst_barrens",
-      "hazard_hook": "hazards.nymara.amethyst_barrens",
-      "harvest_hook": "harvest.nymara.amethyst_barrens"
-    },
-    {
-      "id": "sunmane_steppe",
-      "title": "Sunmane Steppe",
-      "map": "sunmane_steppe",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.sunmane_steppe",
-      "spawn_hook": "spawns.nymara.sunmane_steppe",
-      "hazard_hook": "hazards.nymara.sunmane_steppe",
-      "harvest_hook": "harvest.nymara.sunmane_steppe"
-    },
-    {
-      "id": "amberwood",
-      "title": "Amberwood",
-      "map": "amberwood",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.amberwood",
-      "spawn_hook": "spawns.nymara.amberwood",
-      "hazard_hook": "hazards.nymara.amberwood",
-      "harvest_hook": "harvest.nymara.amberwood"
-    },
-    {
-      "id": "grey_moors",
-      "title": "Grey Moors",
-      "map": "grey_moors",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.grey_moors",
-      "spawn_hook": "spawns.nymara.grey_moors",
-      "hazard_hook": "hazards.nymara.grey_moors",
-      "harvest_hook": "harvest.nymara.grey_moors"
-    },
-    {
-      "id": "westhaven",
-      "title": "Westhaven",
-      "map": "westhaven",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.westhaven",
-      "spawn_hook": "spawns.nymara.westhaven",
-      "hazard_hook": "hazards.nymara.westhaven",
-      "harvest_hook": "harvest.nymara.westhaven"
-    },
-    {
-      "id": "verdant_stair",
-      "title": "Verdant Stair",
-      "map": "verdant_stair",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.verdant_stair",
-      "spawn_hook": "spawns.nymara.verdant_stair",
-      "hazard_hook": "hazards.nymara.verdant_stair",
-      "harvest_hook": "harvest.nymara.verdant_stair"
-    },
-    {
-      "id": "ssarathi_ruins",
-      "title": "Ssarathi Ruins",
-      "map": "ssarathi_ruins",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.ssarathi_ruins",
-      "spawn_hook": "spawns.nymara.ssarathi_ruins",
-      "hazard_hook": "hazards.nymara.ssarathi_ruins",
-      "harvest_hook": "harvest.nymara.ssarathi_ruins"
-    },
-    {
-      "id": "manymouth_delta",
-      "title": "Manymouth Delta",
-      "map": "manymouth_delta",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.manymouth_delta",
-      "spawn_hook": "spawns.nymara.manymouth_delta",
-      "hazard_hook": "hazards.nymara.manymouth_delta",
-      "harvest_hook": "harvest.nymara.manymouth_delta"
-    },
-    {
-      "id": "drowned_crown",
-      "title": "Drowned Crown",
-      "map": "drowned_crown",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.drowned_crown",
-      "spawn_hook": "spawns.nymara.drowned_crown",
-      "hazard_hook": "hazards.nymara.drowned_crown",
-      "harvest_hook": "harvest.nymara.drowned_crown"
-    },
-    {
-      "id": "whitehorn_glacier_temple",
-      "title": "Whitehorn Glacier Temple",
-      "map": "whitehorn_glacier_temple",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.whitehorn_glacier_temple",
-      "spawn_hook": "spawns.nymara.whitehorn_glacier_temple",
-      "hazard_hook": "hazards.nymara.whitehorn_glacier_temple",
-      "harvest_hook": "harvest.nymara.whitehorn_glacier_temple"
-    },
-    {
-      "id": "resonant_vault",
-      "title": "Resonant Vault",
-      "map": "resonant_vault",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.resonant_vault",
-      "spawn_hook": "spawns.nymara.resonant_vault",
-      "hazard_hook": "hazards.nymara.resonant_vault",
-      "harvest_hook": "harvest.nymara.resonant_vault"
-    },
-    {
-      "id": "amberwood_estate",
-      "title": "Amberwood Estate",
-      "map": "amberwood_estate",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.amberwood_estate",
-      "spawn_hook": "spawns.nymara.amberwood_estate",
-      "hazard_hook": "hazards.nymara.amberwood_estate",
-      "harvest_hook": "harvest.nymara.amberwood_estate"
-    },
-    {
-      "id": "grey_moor_barrows",
-      "title": "Grey Moor Barrows",
-      "map": "grey_moor_barrows",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.grey_moor_barrows",
-      "spawn_hook": "spawns.nymara.grey_moor_barrows",
-      "hazard_hook": "hazards.nymara.grey_moor_barrows",
-      "harvest_hook": "harvest.nymara.grey_moor_barrows"
-    },
-    {
-      "id": "ssarathi_royal_archive",
-      "title": "Ssarathi Royal Archive",
-      "map": "ssarathi_royal_archive",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.ssarathi_royal_archive",
-      "spawn_hook": "spawns.nymara.ssarathi_royal_archive",
-      "hazard_hook": "hazards.nymara.ssarathi_royal_archive",
-      "harvest_hook": "harvest.nymara.ssarathi_royal_archive"
-    },
-    {
-      "id": "manymouth_flooded_labyrinth",
-      "title": "Manymouth Flooded Labyrinth",
-      "map": "manymouth_flooded_labyrinth",
-      "arrival": [
-        58,
-        58
-      ],
-      "npc_hook": "npcs.nymara.manymouth_flooded_labyrinth",
-      "spawn_hook": "spawns.nymara.manymouth_flooded_labyrinth",
-      "hazard_hook": "hazards.nymara.manymouth_flooded_labyrinth",
-      "harvest_hook": "harvest.nymara.manymouth_flooded_labyrinth"
-    }
-  ],
+  "schema": 1,
+  "revision": "diagonal-spine-v1",
   "connections": [
     {
+      "id": "grey_moors--whitehorn_range",
       "from": "whitehorn_range",
-      "from_portal": "south-gate",
+      "from_portal": "road-to-grey_moors",
+      "to": "grey_moors",
+      "to_portal": "road-to-whitehorn_range",
+      "type": "walk",
+      "note": "Shared-continent authored connection"
+    },
+    {
+      "id": "amberwood--whitehorn_range",
+      "from": "whitehorn_range",
+      "from_portal": "road-to-amberwood",
+      "to": "amberwood",
+      "to_portal": "road-to-whitehorn_range",
+      "type": "walk",
+      "note": "Shared-continent authored connection"
+    },
+    {
+      "id": "amethyst_barrens--whitehorn_range",
+      "from": "whitehorn_range",
+      "from_portal": "road-to-amethyst_barrens",
+      "to": "amethyst_barrens",
+      "to_portal": "road-to-whitehorn_range",
+      "type": "walk",
+      "note": "Shared-continent authored connection"
+    },
+    {
+      "id": "amberwood--grey_moors",
+      "from": "grey_moors",
+      "from_portal": "road-to-amberwood",
+      "to": "amberwood",
+      "to_portal": "road-to-grey_moors",
+      "type": "walk",
+      "note": "Shared-continent authored connection"
+    },
+    {
+      "id": "grey_moors--westhaven",
+      "from": "grey_moors",
+      "from_portal": "road-to-westhaven",
+      "to": "westhaven",
+      "to_portal": "road-to-grey_moors",
+      "type": "walk",
+      "note": "Shared-continent authored connection"
+    },
+    {
+      "id": "amberwood--mirrorhold",
+      "from": "amberwood",
+      "from_portal": "road-to-mirrorhold",
       "to": "mirrorhold",
-      "to_portal": "north-pass",
+      "to_portal": "road-to-amberwood",
       "type": "walk",
-      "note": "the pilgrim road down from the Whitehorn Gate to the citadel's north pass"
+      "note": "Shared-continent authored connection"
     },
     {
-      "from": "whitehorn_range",
-      "from_portal": "west-pass",
-      "to": "amberwood",
-      "to_portal": "north-pass",
-      "type": "walk",
-      "note": "the ice-cave pass west into the autumn woods"
-    },
-    {
-      "from": "whitehorn_range",
-      "from_portal": "east-pass",
-      "to": "amethyst_barrens",
-      "to_portal": "north-pass",
-      "type": "walk",
-      "note": "the mine road east over the saddle into the barrens"
-    },
-    {
-      "from": "mirrorhold",
-      "from_portal": "south-road",
+      "id": "amberwood--four_gates",
+      "from": "amberwood",
+      "from_portal": "road-to-four_gates",
       "to": "four_gates",
-      "to_portal": "north",
+      "to_portal": "road-to-amberwood",
       "type": "walk",
-      "note": "the shore road to the sanctuary stair on the north causeway"
+      "note": "Shared-continent authored connection"
     },
     {
+      "id": "amethyst_barrens--mirrorhold",
       "from": "mirrorhold",
-      "from_portal": "east-road",
+      "from_portal": "road-to-amethyst_barrens",
       "to": "amethyst_barrens",
-      "to_portal": "west-road",
+      "to_portal": "road-to-mirrorhold",
       "type": "walk",
-      "note": "the Glasswarden road along the lake's north shore"
+      "note": "Shared-continent authored connection"
     },
     {
+      "id": "mirrorhold--sunmane_steppe",
       "from": "mirrorhold",
-      "from_portal": "west-gorge",
-      "to": "amberwood",
-      "to_portal": "east-road",
-      "type": "walk",
-      "note": "the gorge road west into the burnt country"
-    },
-    {
-      "from": "mirrorhold",
-      "from_portal": "lake-quay",
-      "to": "crownwater",
-      "to_portal": "north-quay",
-      "type": "ferry",
-      "note": "the Crownwater packet from the citadel's harbour"
-    },
-    {
-      "from": "amethyst_barrens",
-      "from_portal": "south-road",
+      "from_portal": "road-to-sunmane_steppe",
       "to": "sunmane_steppe",
-      "to_portal": "north-track",
+      "to_portal": "road-to-mirrorhold",
       "type": "walk",
-      "note": "the Sunmane track down through the desert and the badlands"
+      "note": "Shared-continent authored connection"
     },
     {
-      "from": "amethyst_barrens",
-      "from_portal": "east-shore",
-      "to": "crownwater",
-      "to_portal": "north-quay-east",
-      "type": "ferry",
-      "note": "the Crownwater packet from the barrens' east landing"
-    },
-    {
-      "from": "sunmane_steppe",
-      "from_portal": "west-landing",
+      "id": "four_gates--mirrorhold",
+      "from": "mirrorhold",
+      "from_portal": "road-to-four_gates",
       "to": "four_gates",
-      "to_portal": "east",
-      "type": "causeway",
-      "note": "the east causeway of Four Gates lands on the steppe shore"
+      "to_portal": "road-to-mirrorhold",
+      "type": "walk",
+      "note": "Shared-continent authored connection"
     },
     {
-      "from": "sunmane_steppe",
-      "from_portal": "south-track",
+      "id": "mirrorhold--verdant_stair",
+      "from": "mirrorhold",
+      "from_portal": "road-to-verdant_stair",
       "to": "verdant_stair",
-      "to_portal": "east-pass-gate",
+      "to_portal": "road-to-mirrorhold",
       "type": "walk",
-      "note": "the shore road south over the ridge into the jungle"
+      "note": "Shared-continent authored connection"
     },
     {
-      "from": "verdant_stair",
-      "from_portal": "west-quay-gate",
-      "to": "ssarathi_ruins",
-      "to_portal": "east-causeway",
+      "id": "amethyst_barrens--sunmane_steppe",
+      "from": "amethyst_barrens",
+      "from_portal": "road-to-sunmane_steppe",
+      "to": "sunmane_steppe",
+      "to_portal": "road-to-amethyst_barrens",
       "type": "walk",
-      "note": "the quay road west along the coast to the temple causeway"
+      "note": "Shared-continent authored connection"
     },
     {
-      "from": "ssarathi_ruins",
-      "from_portal": "north-stair",
-      "to": "four_gates",
-      "to_portal": "south",
+      "id": "sunmane_steppe--verdant_stair",
+      "from": "sunmane_steppe",
+      "from_portal": "road-to-verdant_stair",
+      "to": "verdant_stair",
+      "to_portal": "road-to-sunmane_steppe",
       "type": "walk",
-      "note": "the south causeway of Four Gates lands at the temple stair"
+      "note": "Shared-continent authored connection"
     },
     {
-      "from": "ssarathi_ruins",
-      "from_portal": "west-causeway",
-      "to": "manymouth_delta",
-      "to_portal": "east-landing",
-      "type": "walk",
-      "note": "the west causeway runs out onto the delta's east bar"
-    },
-    {
-      "from": "ssarathi_ruins",
-      "from_portal": "south-gate",
-      "to": "crownwater",
-      "to_portal": "south-quay-east",
-      "type": "ferry",
-      "note": "the temple boat to the Crown court"
-    },
-    {
-      "from": "manymouth_delta",
-      "from_portal": "north-landing",
-      "to": "crownwater",
-      "to_portal": "south-quay",
-      "type": "ferry",
-      "note": "the packet up the main channel to the lake"
-    },
-    {
-      "from": "manymouth_delta",
-      "from_portal": "west-landing",
-      "to": "grey_moors",
-      "to_portal": "south-gate",
-      "type": "walk",
-      "note": "the drain track up onto the moor"
-    },
-    {
-      "from": "manymouth_delta",
-      "from_portal": "south-landing",
-      "to": "westhaven",
-      "to_portal": "east-road",
-      "type": "walk",
-      "note": "the coast road west to the haven"
-    },
-    {
-      "from": "westhaven",
-      "from_portal": "north-road",
-      "to": "grey_moors",
-      "to_portal": "west-waygate",
-      "type": "walk",
-      "note": "the upland road onto the moor"
-    },
-    {
-      "from": "westhaven",
-      "from_portal": "crownwater-berth",
-      "to": "crownwater",
-      "to_portal": "west-quay",
-      "type": "ferry",
-      "note": "the Crownwater packet from the west quay"
-    },
-    {
-      "from": "westhaven",
-      "from_portal": "amber-berth",
-      "to": "amberwood",
-      "to_portal": "harbour-quay",
-      "type": "ferry",
-      "note": "the Greyhaven packet up the coast to the Amberwood harbour"
-    },
-    {
-      "from": "grey_moors",
-      "from_portal": "east-waygate",
-      "to": "crownwater",
-      "to_portal": "west-quay-south",
-      "type": "ferry",
-      "note": "the moor jetty's boat to the lake islands"
-    },
-    {
-      "from": "grey_moors",
-      "from_portal": "north-gate",
-      "to": "amberwood",
-      "to_portal": "south-road",
-      "type": "walk",
-      "note": "the north track off the moor into the woods"
-    },
-    {
+      "id": "four_gates--westhaven",
       "from": "four_gates",
-      "from_portal": "west",
-      "to": "crownwater",
-      "to_portal": "east-quay",
-      "type": "causeway",
-      "note": "the west causeway of Four Gates lands on the Crownwater islets"
-    }
-  ],
-  "ferries": [
-    {
-      "from": "crownwater",
-      "to": "mirrorhold",
-      "service": "crownwater_ferry"
-    },
-    {
-      "from": "crownwater",
-      "to": "amethyst_barrens",
-      "service": "crownwater_ferry"
-    },
-    {
-      "from": "crownwater",
+      "from_portal": "road-to-westhaven",
       "to": "westhaven",
-      "service": "crownwater_ferry"
+      "to_portal": "road-to-four_gates",
+      "type": "walk",
+      "note": "Shared-continent authored connection"
     },
     {
-      "from": "crownwater",
-      "to": "grey_moors",
-      "service": "crownwater_ferry"
-    },
-    {
-      "from": "crownwater",
+      "id": "four_gates--manymouth_delta",
+      "from": "four_gates",
+      "from_portal": "road-to-manymouth_delta",
       "to": "manymouth_delta",
-      "service": "crownwater_ferry"
+      "to_portal": "road-to-four_gates",
+      "type": "walk",
+      "note": "Shared-continent authored connection"
     },
     {
-      "from": "crownwater",
-      "to": "ssarathi_ruins",
-      "service": "crownwater_ferry"
-    },
-    {
+      "id": "manymouth_delta--westhaven",
       "from": "westhaven",
-      "to": "amberwood",
-      "service": "greyhaven_packet"
+      "from_portal": "road-to-manymouth_delta",
+      "to": "manymouth_delta",
+      "to_portal": "road-to-westhaven",
+      "type": "walk",
+      "note": "Shared-continent authored connection"
+    },
+    {
+      "id": "manymouth_delta--verdant_stair",
+      "from": "manymouth_delta",
+      "from_portal": "road-to-verdant_stair",
+      "to": "verdant_stair",
+      "to_portal": "road-to-manymouth_delta",
+      "type": "walk",
+      "note": "Shared-continent authored connection"
+    },
+    {
+      "id": "ssarathi_ruins--verdant_stair",
+      "from": "verdant_stair",
+      "from_portal": "road-to-ssarathi_ruins",
+      "to": "ssarathi_ruins",
+      "to_portal": "road-to-verdant_stair",
+      "type": "walk",
+      "note": "Shared-continent authored connection"
+    },
+    {
+      "id": "crownwater--westhaven",
+      "from": "westhaven",
+      "from_portal": "ferry-to-crownwater",
+      "to": "crownwater",
+      "to_portal": "ferry-to-westhaven",
+      "type": "ferry",
+      "note": "Shared-continent authored connection"
+    },
+    {
+      "id": "crownwater--manymouth_delta",
+      "from": "manymouth_delta",
+      "from_portal": "ferry-to-crownwater",
+      "to": "crownwater",
+      "to_portal": "ferry-to-manymouth_delta",
+      "type": "ferry",
+      "note": "Shared-continent authored connection"
+    },
+    {
+      "id": "crownwater--ssarathi_ruins",
+      "from": "ssarathi_ruins",
+      "from_portal": "ferry-to-crownwater",
+      "to": "crownwater",
+      "to_portal": "ferry-to-ssarathi_ruins",
+      "type": "ferry",
+      "note": "Shared-continent authored connection"
     }
   ]
 }
