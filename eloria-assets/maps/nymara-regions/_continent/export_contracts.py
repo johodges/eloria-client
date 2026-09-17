@@ -235,9 +235,16 @@ def estimated_served_tile(old_key, prior):
     origin = prior['serverOrigin']
     previous_origin = prior['baselineServerOrigin']
     transform = prior['baselineContentTransform']
-    source, target, scale = transform['sourceCenter'], transform['targetCenter'], transform['scale']
-    x = (old[0] + .5 - previous_origin[0] - source[0]) * scale + target[0]
-    z = (previous_origin[1] - old[1] - .5 - source[1]) * scale + target[1]
+    x = old[0] + .5 - previous_origin[0]
+    z = previous_origin[1] - old[1] - .5
+    if transform['scale'] is None:
+        # A turned or per-axis squeezed layout: its exact affine lands on absolute continent metres.
+        a, b, c, d, e, f = transform['affine']
+        translation = prior['translation']
+        x, z = a * x + b * z + e - translation[0], c * x + d * z + f - translation[2]
+    else:
+        source, target, scale = transform['sourceCenter'], transform['targetCenter'], transform['scale']
+        x, z = (x - source[0]) * scale + target[0], (z - source[1]) * scale + target[1]
     return [int(math.floor(x + origin[0])), int(math.floor(origin[1] - z))]
 
 

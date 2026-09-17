@@ -505,7 +505,12 @@ continent metres. `feather` is the metres over which the effect fades outside
 the shape (`weight = 1 - smoothstep(0, feather, distance outside)`, so a feather
 of 0 is a hard edge) and the optional `strength` in 0..1 multiplies that weight.
 `raise` adds `amount * weight` metres, `lower` subtracts them, and `flatten`
-blends the ground toward `target` metres. A `smooth` op is deliberately not part
+blends the ground toward `target` metres. `ramp` takes a `polyline` and a
+`heights` list with one height in metres per point, and blends the ground toward
+its own sloped surface: the heights interpolated along the nearest straight
+segment, level beyond the first and last point, so a gentle walkable way can be
+cut or filled through a band of ground too steep to walk (the seventeenth
+publication's reach links). A `smooth` op is deliberately not part
 of v1: a pass that reads its neighbours cannot be evaluated at one broadcast
 point, and the validator rejects it by name.
 

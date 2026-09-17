@@ -58,17 +58,29 @@ def point_key(point):
     return f'{x}:{y}'
 
 
+def content_local(transform, x, z, translation):
+    """A source point (x, z) in continent metres relative to the territory's centre.
+
+    ``scale`` about ``sourceCenter``, plus ``targetCenter``, is the rule for a layout that only scales. A layout
+    that turns or squeezes per axis publishes ``scale`` null with its exact ``affine`` [a, b, c, d, e, f]:
+    continent X = a*x + b*z + e and Z = c*x + d*z + f in absolute metres, so the centre, the spec's
+    ``translation``, comes off it."""
+    scale = transform['scale']
+    if scale is None:
+        a, b, c, d, e, f = transform['affine']
+        return a * x + b * z + e - translation[0], c * x + d * z + f - translation[2]
+    source, target = transform['sourceCenter'], transform['targetCenter']
+    return (x - source[0]) * scale + target[0], (z - source[1]) * scale + target[1]
+
+
 def transform_tile(point, spec):
     explicit = spec.get('tilePositions', {}).get(point_key(point))
     if explicit is not None:
         return list(shared.integer_pair(explicit, 'exact standing point'))
     old = spec['previousServerOrigin']
     origin = spec['serverOrigin']
-    transform = spec['contentTransform']
-    source, target, scale = transform['sourceCenter'], transform['targetCenter'], transform['scale']
     # Server coordinates name cell centres; server Y runs opposite local Z.
-    x = (point[0] + .5 - old[0] - source[0]) * scale + target[0]
-    z = (old[1] - point[1] - .5 - source[1]) * scale + target[1]
+    x, z = content_local(spec['contentTransform'], point[0] + .5 - old[0], old[1] - point[1] - .5, spec.get('translation'))
     return [math.floor(x + origin[0]), math.floor(origin[1] - z)]
 
 
@@ -87,7 +99,14 @@ def validate_spec(region, spec, previous):
     if previous and spec['previousServerOrigin'] != previous.get('serverOrigin'):
         raise ValueError(f'{region}: export was authored against a different server address frame')
     transform = spec.get('contentTransform', {})
-    if not isinstance(transform.get('scale'), (int, float)) or transform['scale'] <= 0:
+    if transform.get('scale') is None and 'scale' in transform:
+        affine = transform.get('affine')
+        if (not isinstance(affine, list) or len(affine) != 6
+                or not all(isinstance(n, (int, float)) and not isinstance(n, bool) and math.isfinite(n) for n in affine)):
+            raise ValueError(f'{region}: a contentTransform with no uniform scale requires its exact affine')
+        if affine[0] * affine[3] - affine[1] * affine[2] <= 0:
+            raise ValueError(f'{region}: contentTransform affine must keep orientation and area')
+    elif not isinstance(transform.get('scale'), (int, float)) or transform['scale'] <= 0:
         raise ValueError(f'{region}: contentTransform requires a positive uniform scale')
     for key in ('sourceCenter', 'targetCenter'):
         if len(transform.get(key, [])) != 2 or not all(isinstance(n, (int, float)) and math.isfinite(n) for n in transform[key]):

@@ -52,6 +52,32 @@ class PublicationTests(unittest.TestCase):
         spec['tilePositions']['7:8'] = [4, 5]
         self.assertEqual(P.transform_tile([7, 8], spec), [4, 5])
 
+    def test_a_turned_layout_maps_through_its_exact_affine(self):
+        spec = specs()['westhaven']
+        # Continent X = .6x - .8z + 25 and Z = .8x + .6z + 3 in absolute metres (a turn, no squeeze); the
+        # territory's centre is its translation (20, 0). Cell 7:8 is source (1.5, -2.5): continent (27.9, 2.7),
+        # local (7.9, 2.7).
+        spec['contentTransform'] = {'scale': None, 'sourceCenter': [0, 0], 'targetCenter': [0, 0],
+                                    'affine': [.6, -.8, .8, .6, 25., 3.]}
+        self.assertEqual(P.transform_tile([7, 8], spec), [19, 9])
+        spec['tilePositions']['7:8'] = [4, 5]
+        self.assertEqual(P.transform_tile([7, 8], spec), [4, 5])
+
+    def test_a_transform_without_a_uniform_scale_requires_a_valid_affine(self):
+        spec = specs()['westhaven']
+        spec['contentTransform'] = {'scale': None, 'sourceCenter': [0, 0], 'targetCenter': [0, 0],
+                                    'affine': [.6, -.8, .8, .6, 25., 3.]}
+        P.validate_spec('westhaven', copy.deepcopy(spec), None)
+        for affine in (None, [.6, -.8, .8, .6, 25.], [.6, -.8, .8, .6, 25., float('nan')],
+                       [.6, .8, .8, -.6, 25., 3.], [0, 0, 0, 0, 1., 1.]):
+            broken = copy.deepcopy(spec)
+            broken['contentTransform']['affine'] = affine
+            with self.assertRaisesRegex(ValueError, 'affine'):
+                P.validate_spec('westhaven', broken, None)
+        del spec['contentTransform']['scale']
+        with self.assertRaisesRegex(ValueError, 'positive uniform scale'):
+            P.validate_spec('westhaven', spec, None)
+
     def test_lane_order_does_not_change_global_position(self):
         links = connections()
         links[0]['ends'][1]['lanes'].reverse()

@@ -354,6 +354,42 @@ class AuthoredTerrainEditTests(unittest.TestCase):
             self.assertAlmostEqual(float(landscape.height_at(*point, plan)) - float(self.ground(*point)),
                                    4. * share, places=9, msg=point)
 
+    def test_ramp_follows_its_heights_along_the_polyline_and_fades_over_the_feather(self):
+        line = [[440., 640.], [500., 640.], [500., 700.]]
+        plan = self.plan({"id": "ramp", "op": "ramp", "heights": [10., 40., 16.], "feather": 10.,
+                          "shape": {"polyline": {"points": line, "width": 8.}}})
+        # On the line: the vertex heights and the straight interpolation between them, whatever the ground was.
+        for point, height in (((440., 640.), 10.), ((470., 640.), 25.), ((500., 640.), 40.), ((500., 670.), 28.),
+                              ((500., 700.), 16.)):
+            self.assertAlmostEqual(float(landscape.height_at(*point, plan)), height, places=9, msg=point)
+        # Across the band the surface keeps the height of the nearest point on the line, and the feather blends it
+        # into the ground as any edit's weight does; beyond the first vertex the surface stays level.
+        for point, height, share in (((470., 644.), 25., 1.), ((470., 649.), 25., .5), ((470., 654.), 25., 0.),
+                                     ((430., 640.), 10., 1. - float(landscape.smoothstep(0., 10., 6.)))):
+            ground = float(self.ground(*point))
+            self.assertAlmostEqual(float(landscape.height_at(*point, plan)), ground * (1 - share) + height * share,
+                                   places=9, msg=point)
+        # Arrays and scalars agree.
+        xs, zs = np.array([440., 470., 500., 503.]), np.array([640., 660.])[:, None]
+        grid = landscape.height_at(xs, zs, plan)
+        for row in range(2):
+            for column in range(4):
+                self.assertAlmostEqual(grid[row, column], float(landscape.height_at(xs[column], zs[row, 0], plan)),
+                                       places=11)
+
+    def test_validate_terrain_edits_checks_a_ramps_heights(self):
+        line = {"polyline": {"points": [[440., 640.], [500., 640.]], "width": 8.}}
+        ramp = {"id": "ramp", "op": "ramp", "heights": [10., 20.], "feather": 4., "shape": line}
+        self.assertEqual(landscape.validate_terrain_edits(self.plan(ramp)), [])
+        problems = landscape.validate_terrain_edits(self.plan(
+            dict(ramp, id="short", heights=[10.]), dict(ramp, id="words", heights=[10., "high"]),
+            dict(ramp, id="bare", heights=None), self.circle("round", op="ramp", heights=[10.], feather=0.),
+            self.circle("stray", op="raise", amount=2., heights=[1.], feather=0.)))
+        for identity in ("short", "words", "bare"):
+            self.assertIn("one finite height", "\n".join(p for p in problems if f"'{identity}'" in p))
+        self.assertIn("runs along a polyline", "\n".join(p for p in problems if "'round'" in p))
+        self.assertIn("belongs to a ramp", "\n".join(p for p in problems if "'stray'" in p))
+
     def test_feather_zero_is_a_hard_edge_and_strength_scales_the_effect(self):
         plan = self.plan(self.circle("pad", op="raise", radius=20., feather=0., amount=9.))
         for offset, share in ((19.999, 1.), (20., 1.), (20.001, 0.)):
@@ -390,6 +426,9 @@ class AuthoredTerrainEditTests(unittest.TestCase):
                 (self.circle("knoll", op="raise", amount=-1.), "'amount' must lie"),
                 (self.circle("knoll", op="raise", amount=1., feather=-3.), "'feather' must lie"),
                 (self.circle("knoll", op="raise", amount=1., strength=1.4), "'strength' must lie"),
+                ({"id": "slope", "op": "ramp", "shape": {"polyline": {"points": [[440., 640.], [500., 640.]], "width": 8.}}},
+                 "one finite height"),
+                (self.circle("disc", op="ramp", heights=[1.]), "runs along a polyline"),
                 ({"id": "blob", "op": "raise", "amount": 1., "shape": {"blob": {"center": [0., 0.]}}}, "'shape' must hold")):
             with self.assertRaisesRegex(ValueError, message) as raised:
                 landscape.height_at(*self.CENTRE, self.plan(edit))

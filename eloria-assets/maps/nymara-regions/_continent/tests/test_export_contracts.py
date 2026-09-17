@@ -556,6 +556,19 @@ class ContentTransformTests(unittest.TestCase):
         np.testing.assert_allclose([a, b, c, d], [1., 0., 0., .74], atol=1e-9)
         np.testing.assert_allclose(self.mapped(published, self.PROBES), L.retained_map_xz(transform, self.PROBES), atol=1e-7)
 
+    def test_the_rebase_estimate_of_a_turned_territory_reads_its_published_affine(self):
+        # A record the baseline gained after a publication that turned its territory is served where that
+        # publication's exact mapping put its original cell: continent metres less the territory's centre.
+        published = E.content_transform(self.content(self.TURNED), 'test')
+        self.assertIsNone(published['scale'])
+        prior = {'serverOrigin': [400, 300], 'baselineServerOrigin': [120, 120], 'translation': [900., 0., 500.],
+                 'baselineContentTransform': published}
+        for old in ([130, 110], [250, 40], [90, 300]):
+            source = [old[0] + .5 - 120, 120 - old[1] - .5]
+            x, z = np.asarray(L.retained_map_xz(self.TURNED, [source]), float).reshape(2)
+            expected = [int(np.floor(x - 900. + 400)), int(np.floor(300 - (z - 500.)))]
+            self.assertEqual(E.estimated_served_tile(f'{old[0]}:{old[1]}', prior), expected)
+
     def test_a_uniform_squeeze_keeps_the_number_the_old_rule_reads(self):
         transform = {'translation': [760., 0., 640.], 'about_x': 40., 'about_z': -60., 'squeeze_x': .8, 'squeeze_z': .8}
         published = E.content_transform(self.content(transform), 'test')

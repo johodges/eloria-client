@@ -435,9 +435,9 @@ def relief_mask_outline(source):
 
 # Authored corrections over the modelled ground. "smooth" is deliberately not in v1:
 # a smoothing pass reads its neighbours, which a broadcast point sampler cannot do.
-TERRAIN_EDIT_OPS = ("raise", "lower", "flatten")
+TERRAIN_EDIT_OPS = ("raise", "lower", "flatten", "ramp")
 TERRAIN_EDIT_SHAPES = ("circle", "polyline", "polygon")
-TERRAIN_EDIT_KEYS = ("id", "name", "op", "shape", "amount", "target", "feather", "strength")
+TERRAIN_EDIT_KEYS = ("id", "name", "op", "shape", "amount", "target", "heights", "feather", "strength")
 TERRAIN_EDIT_STATISTICS = ("min", "max", "mean")
 TERRAIN_EDIT_STEP = 2.0  # The composed sampling interval; targets are measured on it.
 
@@ -560,6 +560,37 @@ def _edit_samples(edit, step=TERRAIN_EDIT_STEP):
     return x[inside], z[inside]
 
 
+def _ramp_heights(edit):
+    """A ramp's per-vertex surface heights, one finite number per polyline point."""
+    kind, data = _edit_shape(edit)
+    if kind != "polyline":
+        raise ValueError(f"{_edit_id(edit)}: a ramp runs along a polyline, not a {kind}")
+    heights = edit.get("heights")
+    if (not isinstance(heights, list) or len(heights) != len(data["points"])
+            or not all(_is_number(value) for value in heights)):
+        raise ValueError(f"{_edit_id(edit)}: a ramp needs one finite height in metres per polyline point in "
+                         f"'heights', not {heights!r}")
+    return np.asarray(heights, dtype=np.float64)
+
+
+def _ramp_surface(x, z, edit):
+    """The ramp's own surface under each point: its 'heights' interpolated along the nearest straight segment of
+    the polyline, the segment ``_segment_distance`` measures the band from, so the surface is level beyond the
+    first and last vertex and continuous at every inner vertex."""
+    heights = _ramp_heights(edit)
+    points = np.asarray(_edit_shape(edit)[1]["points"], dtype=np.float64)
+    closest = np.full(np.shape(x), np.inf)
+    surface = np.zeros(np.shape(x))
+    for a, b, low, high in zip(points[:-1], points[1:], heights[:-1], heights[1:]):
+        dx, dz = b[0] - a[0], b[1] - a[1]
+        t = np.clip(((x - a[0]) * dx + (z - a[1]) * dz) / max(dx * dx + dz * dz, 1e-9), 0.0, 1.0)
+        distance = (x - a[0] - t * dx) ** 2 + (z - a[1] - t * dz) ** 2
+        nearer = distance < closest
+        closest = np.where(nearer, distance, closest)
+        surface = np.where(nearer, low + (high - low) * t, surface)
+    return surface
+
+
 def _terrain_edit_height(x, z, h, plan):
     """Apply the plan's authored terrain edits, in list order, to a composed ground."""
     for edit in plan.get("terrain_edits") or []:
@@ -570,6 +601,15 @@ def _terrain_edit_height(x, z, h, plan):
         weight = _edit_weight(x, z, edit)
         if op == "flatten":
             h = h * (1 - weight) + _edit_target(edit) * weight
+        elif op == "ramp":
+            # Only the points the ramp reaches pay for the per-segment surface.
+            px, pz = _coords(x, z)
+            touched = np.broadcast_to(weight > 0, px.shape)
+            _ramp_heights(edit)
+            if touched.any():
+                surface = np.zeros(px.shape)
+                surface[touched] = _ramp_surface(px[touched], pz[touched], edit)
+                h = h * (1 - weight) + surface * weight
         else:
             amount = _edit_number(edit, "amount", low=0.0)
             h = h + amount * weight if op == "raise" else h - amount * weight
@@ -612,8 +652,12 @@ def validate_terrain_edits(plan):
             if not (_is_number(target) or (isinstance(target, str) and target in TERRAIN_EDIT_STATISTICS)):
                 problems.append(f"{where}: flatten needs a 'target' in metres or one of "
                                 f"{list(TERRAIN_EDIT_STATISTICS)}, not {target!r}")
+        elif op == "ramp":
+            pass  # its 'heights' are checked against the polyline's points below
         elif not _is_number(edit.get("amount")) or edit["amount"] < 0:
             problems.append(f"{where}: {op} needs a positive 'amount' in metres, not {edit.get('amount')!r}")
+        if "heights" in edit and op != "ramp":
+            problems.append(f"{where}: 'heights' belongs to a ramp; a {op} does not read it")
         feather = edit.get("feather", 0.0)
         if not _is_number(feather) or feather < 0:
             problems.append(f"{where}: 'feather' must be a distance in metres of at least 0, not {feather!r}")
@@ -642,6 +686,15 @@ def validate_terrain_edits(plan):
                 points = points if isinstance(points, list) else []
             if kind == "polyline" and (not _is_number(data.get("width")) or data["width"] <= 0):
                 problems.append(f"{where}: the polyline needs a 'width' greater than 0, not {data.get('width')!r}")
+        if op == "ramp":
+            heights = edit.get("heights")
+            if kind != "polyline":
+                problems.append(f"{where}: a ramp runs along a polyline whose 'heights' give its surface at each "
+                                f"point, not a {kind}")
+            elif (not isinstance(heights, list) or len(heights) != len(points)
+                    or not all(_is_number(value) for value in heights)):
+                problems.append(f"{where}: a ramp needs one finite height in metres per polyline point in "
+                                f"'heights' ({len(points)} here), not {heights!r}")
         for point in points:
             if not (isinstance(point, (list, tuple)) and len(point) == 2 and all(_is_number(v) for v in point)):
                 problems.append(f"{where}: {point!r} is not a finite [x, z] point")
