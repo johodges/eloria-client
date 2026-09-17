@@ -464,7 +464,7 @@ def prune_retired_exports(manifests):
 def export_geometry(world,content,output):
     PROGRESS.start('geometry',len(world.ids))
     composition_sha=digest(output/'composition.json')
-    export_sources={name:digest(HERE/name) for name in ('build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py')}
+    export_sources={name:digest(HERE/name) for name in ('build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py')}
     prepare_contracts(world)
     terrain_path=output/'shared-terrain.glb';bridge_path=output/'bridges.glb'
     from ferry_export import build_ferries
@@ -479,17 +479,20 @@ def export_geometry(world,content,output):
     fishing_parts=build_manymouth_access(world,content,fishing_path)
     mirror_path=output/'mirror-bank-access.glb'
     mirror_parts=build_mirror_access(world,content,mirror_path)
+    from access_decks import build_access_decks
+    decks_path=output/'access-decks.glb'
+    deck_parts=build_access_decks(world,content,decks_path)
     river_parts=bridge_scene(world,river_path)
     ferry_parts=build_ferries(world,ferry_path)
     structures=S.Exporter(bridge_path);bridge_parts=[];structure_sources=[]
-    for path,parts in ((river_path,river_parts),(ferry_path,ferry_parts),(access_path,access_parts),(fishing_path,fishing_parts),(mirror_path,mirror_parts)):
+    for path,parts in ((river_path,river_parts),(ferry_path,ferry_parts),(access_path,access_parts),(fishing_path,fishing_parts),(mirror_path,mirror_parts),(decks_path,deck_parts)):
         doc,body=S.GR.load(path);structure_sources.append((doc,body))
         for part in parts:
             start=len(structures.doc['scenes'][0]['nodes'])
             structures.add(doc,body,part['roots'])
             bridge_parts.append(dict(part,roots=structures.doc['scenes'][0]['nodes'][start:].copy()))
     structures.write()
-    json_write(output/'crossing-structures.json',{'bridges':world.bridge_report,'ferries':world.ferry_report,'amberwoodAccess':world.amberwood_access,'manymouthAccess':world.manymouth_access,'mirrorBankAccess':world.mirror_bank_access,'mirrorBankOpening':world.mirror_bank_opening})
+    json_write(output/'crossing-structures.json',{'bridges':world.bridge_report,'ferries':world.ferry_report,'amberwoodAccess':world.amberwood_access,'manymouthAccess':world.manymouth_access,'mirrorBankAccess':world.mirror_bank_access,'mirrorBankOpening':world.mirror_bank_opening,'accessDecks':getattr(world,'access_decks',[])})
     # The composed roads and their crossing sites, for the road-rule audit (audit_continent.audit_road_rules).
     from river_crossings import crossing_report
     json_write(output/'roads.json',{'schema':1,'roads':[{'id':road['id'],'width':float(road['width']),'points':road['points']} for road in world.roads],
@@ -575,7 +578,7 @@ def verify_geometry_export(output):
     ledger=json.loads((output/'export.json').read_text(encoding='utf-8'))
     if ledger.get('compositionSha256')!=digest(output/'composition.json'):
         raise ValueError('Geometry does not match the composed landform; run the geometry stage before contracts')
-    required={'build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py'}
+    required={'build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py'}
     if set(ledger.get('geometrySources',{}))!=required:raise ValueError('Geometry export is missing its source certificate')
     for name,expected in ledger['geometrySources'].items():
         if digest(HERE/name)!=expected:raise ValueError(f'{name}: geometry export source changed; export again')

@@ -706,7 +706,7 @@ def run(client, generated, report_path, server=None, require_collision=False, ge
         exports = inputs.json(generated/'export.json')
         require(exports.get('compositionSha256')==inputs.digest(generated/'composition.json'),'Geometry differs from the current composition')
         report['shapingFreshness']=audit_shaping(client,continent,composition,inputs)
-        required_export_sources={'build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py'}
+        required_export_sources={'build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py'}
         require(set(exports.get('geometrySources',{}))==required_export_sources,'Geometry export must certify every export source')
         for name,expected in exports['geometrySources'].items():
             require(inputs.digest(continent/name)==expected,f'Geometry export source changed: {name}')

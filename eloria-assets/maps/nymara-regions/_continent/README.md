@@ -76,6 +76,7 @@ Use these source responsibilities when changing the world:
 | `crown_support.py`, `westhaven_support.py`, `manymouth_support.py`, `mirror_support.py` | Local island, harbour, landing and bank support fitted to retained structures. |
 | `mirror_streets.py`, `four_gates_support.py` | Civic circulation, actual building footings and the graded east-gate approach; an exterior branch that starts on a civic street is trimmed where it first leaves the street network (a later touch keeps the descent and the bridge between). |
 | `mirror_access_geometry.py` | Low stone bank ramps and the physical opening onto the sanctuary walkway. |
+| `access_decks.py` | The plan's `access_decks`: short named walking decks (a polyline with a height per point and a width, every segment at .45 or less) where two walk surfaces stop short of each other over water or a hole, built in the geometry stage and refused unless `designed_decks` names them under this module (the Lamp Rock causeway link). |
 | `mirror_lake_support.py`, `ssarathi_bank_support.py` | Containing lake shores and natural river banks fitted around retained walking floors. |
 | `manymouth_boats.py` | Actual hull contact with water or ground for independent decorative dugouts. |
 | `hull_settle.py` | Every other decorative watercraft, standalone or inside a rigid assembly, settled by rigid Y only onto the actual water surface or hauled up on the ground, with rigs and cargo standing within a hull following it. |
@@ -365,8 +366,8 @@ be recomposed rather than accepted by editing a certificate.
 Geometry export independently records `geometrySources` in `export.json` for
 `build_continent.py`, `scene_io.py`, `terrain_export.py`, `bridge_export.py`,
 `ferry_export.py`, `crossings.py`, `amberwood_access.py`, `manymouth_access.py`,
-`manymouth_village_streets.py`, `collision_export.py`, `mirror_access_geometry.py`
-and `grey_crossings.py`, and checks that none changed during the
+`manymouth_village_streets.py`, `collision_export.py`, `mirror_access_geometry.py`,
+`grey_crossings.py` and `access_decks.py`, and checks that none changed during the
 build. The audit requires these current export hashes as well as the
 composition certificates. Bridge export changes can reuse the composed world;
 Ferry code also participates in landing selection and requires composition.

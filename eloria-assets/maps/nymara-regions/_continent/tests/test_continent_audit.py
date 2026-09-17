@@ -135,7 +135,7 @@ class ProvisionalExportTests(unittest.TestCase):
         exports={'masterPath':str(generated/'continent.glb'),'masterSha256':master_sha,'regions':{},
                  'compositionSha256':digest(generated/'composition.json')}
         exports['geometrySources']={}
-        for name in ('build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py'):
+        for name in ('build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py'):
             path=continent/name
             if not path.exists():path.write_text(f'# fixture {name}\n')
             exports['geometrySources'][name]=digest(path)
