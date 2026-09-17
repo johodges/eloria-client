@@ -19,13 +19,13 @@
     "bounds": {
       "min": [
         -48.50931682586679,
-        38.38298523994238,
+        21.340314009953367,
         -160.0
       ],
       "max": [
-        61.340155922261374,
-        101.82263867312679,
-        -61.8371385094822
+        58.54039749912454,
+        97.48515878939752,
+        -60.94102818448869
       ]
     },
     "playableBounds": {
@@ -36,7 +36,7 @@
       ],
       "max": [
         400.0,
-        289.5820514595254,
+        344.15944658837685,
         160.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         400.0,
-        289.5820514595254,
+        344.15944658837685,
         160.0
       ]
     }
@@ -70,7 +70,7 @@
       0,
       0
     ],
-    "walkingHeight": 81.51676940917969,
+    "walkingHeight": 77.51676940917969,
     "invertServerY": true,
     "addressableWorldBounds": {
       "min": [
@@ -125,14 +125,14 @@
       "portal": "road-to-mirrorhold",
       "destination": "mirrorhold",
       "anchor": [
-        -96.0,
-        78.6044663045092,
-        -233.0
+        -97.0,
+        78.94927867136467,
+        -232.0
       ],
       "globalAnchor": [
-        1004.0,
-        78.6044663045092,
-        887.0
+        1003.0,
+        78.94927867136467,
+        888.0
       ],
       "globalTranslation": [
         1100.0,
@@ -140,8 +140,8 @@
         1120.0
       ],
       "outward": [
-        -1.0,
-        -0.0
+        -0.0,
+        -1.0
       ],
       "uvSign": 1,
       "preloadDistance": 320,
@@ -194,12 +194,12 @@
       "destination": "manymouth_delta",
       "anchor": [
         -290.0,
-        18.666194354078876,
+        18.666218556302688,
         17.0
       ],
       "globalAnchor": [
         810.0,
-        18.666194354078876,
+        18.666218556302688,
         1137.0
       ],
       "globalTranslation": [
@@ -453,7 +453,7 @@
       ],
       "max": [
         400.0,
-        289.5820514595254,
+        344.15944658837685,
         160.0
       ]
     },
@@ -473,9 +473,9 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 883944,
-    "nodes": 133,
-    "meshes": 55,
+    "glbBytes": 738296,
+    "nodes": 129,
+    "meshes": 48,
     "externalResources": {
       "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../../../_continent/shared-assets/99e4f61d9f284a71c2321e4e3408ec2b5731e520abaa06cabd5ba87a1988431f.png": "99e4f61d9f284a71c2321e4e3408ec2b5731e520abaa06cabd5ba87a1988431f",
@@ -516,8 +516,6 @@
       "../../../_continent/shared-assets/c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b.png": "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b",
       "../../../_continent/shared-assets/3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035.png": "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035",
       "../../../_continent/shared-assets/7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6.png": "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6",
-      "../../../_continent/shared-assets/40561572b0f36f5b112ab45d5ef29354763431c70ac93609c1856c81e7cb9b8b.png": "40561572b0f36f5b112ab45d5ef29354763431c70ac93609c1856c81e7cb9b8b",
-      "../../../_continent/shared-assets/0a27bfed76ccf5d78822b76fb8c8e9d432d430e65d25c232f741e9d736709b1b.png": "0a27bfed76ccf5d78822b76fb8c8e9d432d430e65d25c232f741e9d736709b1b",
       "../../../_continent/shared-assets/651d79cd161a5ff0fb66f99c0fcf0a15534708f4a0456659fc741c353c604377.png": "651d79cd161a5ff0fb66f99c0fcf0a15534708f4a0456659fc741c353c604377",
       "../../../_continent/shared-assets/4d7cea7520725efcd78053f330d7a142b2a0c67bf602e9af767cdf199c718324.png": "4d7cea7520725efcd78053f330d7a142b2a0c67bf602e9af767cdf199c718324",
       "../../../_continent/shared-assets/91e8f8f558088e42aeed020a4e35e76edbd1eefb878dea089b055078d0e64395.png": "91e8f8f558088e42aeed020a4e35e76edbd1eefb878dea089b055078d0e64395",
@@ -566,8 +564,6 @@
       "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b": 1398102,
       "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035": 349526,
       "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6": 1398102,
-      "40561572b0f36f5b112ab45d5ef29354763431c70ac93609c1856c81e7cb9b8b": 1398102,
-      "0a27bfed76ccf5d78822b76fb8c8e9d432d430e65d25c232f741e9d736709b1b": 349526,
       "651d79cd161a5ff0fb66f99c0fcf0a15534708f4a0456659fc741c353c604377": 1398102,
       "4d7cea7520725efcd78053f330d7a142b2a0c67bf602e9af767cdf199c718324": 349526,
       "91e8f8f558088e42aeed020a4e35e76edbd1eefb878dea089b055078d0e64395": 1398102,
@@ -1605,16 +1601,16 @@
   "bounds": {
     "min": [
       -48.50931682586679,
-      38.38298523994238,
+      21.340314009953367,
       -160.0
     ],
     "max": [
-      61.340155922261374,
-      101.82263867312679,
-      -61.8371385094822
+      58.54039749912454,
+      97.48515878939752,
+      -60.94102818448869
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:b1478579173271fe8776461014d8140f7bbacb0fa3205624cd4159dd712a0643",
+  "terrainRevision": "diagonal-spine-v1:d731537ae826e0c7d042db5b08a33a65b38a922d8445cee8231e8e372ac7736f",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/99e4f61d9f284a71c2321e4e3408ec2b5731e520abaa06cabd5ba87a1988431f.png": "99e4f61d9f284a71c2321e4e3408ec2b5731e520abaa06cabd5ba87a1988431f",
@@ -1655,8 +1651,6 @@
     "../../../_continent/shared-assets/c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b.png": "c41762de3532fb217d0fc81637f25bbdd6fb5fc137aff614ddf0bc6102a8f58b",
     "../../../_continent/shared-assets/3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035.png": "3fdf41124c0f35ad79faea5072db9a4cf30b18e479e2319591a90893e9b4f035",
     "../../../_continent/shared-assets/7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6.png": "7226fc354c61b972d44e7b4c6dc39af8ae91f6ef7586aa217a72ec965b1c62a6",
-    "../../../_continent/shared-assets/40561572b0f36f5b112ab45d5ef29354763431c70ac93609c1856c81e7cb9b8b.png": "40561572b0f36f5b112ab45d5ef29354763431c70ac93609c1856c81e7cb9b8b",
-    "../../../_continent/shared-assets/0a27bfed76ccf5d78822b76fb8c8e9d432d430e65d25c232f741e9d736709b1b.png": "0a27bfed76ccf5d78822b76fb8c8e9d432d430e65d25c232f741e9d736709b1b",
     "../../../_continent/shared-assets/651d79cd161a5ff0fb66f99c0fcf0a15534708f4a0456659fc741c353c604377.png": "651d79cd161a5ff0fb66f99c0fcf0a15534708f4a0456659fc741c353c604377",
     "../../../_continent/shared-assets/4d7cea7520725efcd78053f330d7a142b2a0c67bf602e9af767cdf199c718324.png": "4d7cea7520725efcd78053f330d7a142b2a0c67bf602e9af767cdf199c718324",
     "../../../_continent/shared-assets/91e8f8f558088e42aeed020a4e35e76edbd1eefb878dea089b055078d0e64395.png": "91e8f8f558088e42aeed020a4e35e76edbd1eefb878dea089b055078d0e64395",
@@ -1667,13 +1661,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
-    "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
+    "masterSha256": "461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073",
+    "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112",
-    "collisionSha256": "be242aa25701589ddb5b8426733c93bcd6fdabf46d5ff06a90c91cf7cf27d091",
-    "terrainRevision": "diagonal-spine-v1:b1478579173271fe8776461014d8140f7bbacb0fa3205624cd4159dd712a0643"
+    "masterSha256": "461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073",
+    "collisionSha256": "f705cb9dbdebe1b2fb21fc38e7471d26ec43c4e1950eb92846458427788b4a19",
+    "terrainRevision": "diagonal-spine-v1:d731537ae826e0c7d042db5b08a33a65b38a922d8445cee8231e8e372ac7736f"
   }
 }

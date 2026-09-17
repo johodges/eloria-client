@@ -18,7 +18,7 @@
           0,
           0
         ],
-        "walkingHeight": 22.343976974487305,
+        "walkingHeight": 21.69345474243164,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
@@ -47,27 +47,27 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          228,
+          208,
           350
         ],
         "serverCells": [
-          600,
-          600
+          540,
+          540
         ],
         "origin": [
           0,
           0,
           0
         ],
-        "walkingHeight": 98.7447280883789,
+        "walkingHeight": 95.35431671142578,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
-            -228,
-            -250
+            -208,
+            -190
           ],
           "max": [
-            372,
+            332,
             350
           ]
         }
@@ -132,7 +132,7 @@
         "metresPerTile": 1.0,
         "serverOrigin": [
           362,
-          186
+          360
         ],
         "serverCells": [
           708,
@@ -143,16 +143,16 @@
           0,
           0
         ],
-        "walkingHeight": 136.06863403320312,
+        "walkingHeight": 168.99960327148438,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
             -362,
-            -522
+            -348
           ],
           "max": [
             346,
-            186
+            360
           ]
         }
       },
@@ -173,27 +173,27 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          246,
+          182,
           166
         ],
         "serverCells": [
-          804,
-          804
+          738,
+          738
         ],
         "origin": [
           0,
           0,
           0
         ],
-        "walkingHeight": 31.012304306030273,
+        "walkingHeight": 33.29356384277344,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
-            -246,
-            -638
+            -182,
+            -572
           ],
           "max": [
-            558,
+            556,
             166
           ]
         }
@@ -270,27 +270,27 @@
         "metresPerTile": 1.0,
         "serverOrigin": [
           242,
-          170
+          182
         ],
         "serverCells": [
-          444,
-          444
+          426,
+          426
         ],
         "origin": [
           0,
           0,
           0
         ],
-        "walkingHeight": 57.5399169921875,
+        "walkingHeight": 57.791343688964844,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
             -242,
-            -274
+            -244
           ],
           "max": [
-            202,
-            170
+            184,
+            182
           ]
         }
       },
@@ -322,7 +322,7 @@
           0,
           0
         ],
-        "walkingHeight": 29.88150978088379,
+        "walkingHeight": 27.01974105834961,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
@@ -364,7 +364,7 @@
           0,
           0
         ],
-        "walkingHeight": 13.261550903320312,
+        "walkingHeight": 14.555402755737305,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
@@ -406,7 +406,7 @@
           0,
           0
         ],
-        "walkingHeight": 81.51676940917969,
+        "walkingHeight": 77.51676940917969,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
@@ -448,7 +448,7 @@
           0,
           0
         ],
-        "walkingHeight": 2.2521300315856934,
+        "walkingHeight": 2.2352070808410645,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [

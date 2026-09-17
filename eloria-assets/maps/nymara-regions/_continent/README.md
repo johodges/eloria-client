@@ -5,32 +5,28 @@ exported. X runs east, Z runs south, and sea level is Y = 0. Named territories
 are server and content identities. Their boundaries do not determine the
 height, water level, ground colour, or vegetation of the landscape.
 
-**QA state: the served world is the verified sixteenth publication (2026-09-15); the
-sources are ahead of it and unpublished.** Master
-`c27c05670ff9c8084cb54b244d02e17b0e1a44ee1751ab03b88318e9ee179112`, publication
-`48afa1ed52fa6dc1737d2107660bf55601001b4c79c0d9750b15b1e09044eb5e`
-(`work-output/diagonal-continent/after/sixteenth-freeze.json`). On those bytes the
+**QA state: verified for the seventeenth publication (2026-09-17).** Master
+`461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073`, publication
+`fee27071603edc7bcea56eb9ef103dd28c2c8d352df33aa8c2452f9267005e60`
+(`work-output/diagonal-continent/after/seventeenth-freeze.json`). On these bytes the
 strict contracts passed with 0 failures over 3,660 placements, the full audit
-passed and verified the publication, the 24 primary, 9 supplement and 2 atlas
-gameplay views were captured with the published registry and no overrides, and
-the seven native loopback suites walked 240 routes with 0 failures on a real
-server. Known limitations of that publication are listed in
-`STATUS-2026-09-13-takeover.md`.
-
-The sources merged since the sixteenth carry the Whitehorn Range redesign (a
-turned and squeezed retained layout on a masked legacy relief, the Hornwater
-gorge, the mountain village, the glacier temple compound), the roads pass R1
-(bridges at the locally shortest crossings, bank setbacks, earthworks within 4 m
-of cut and 3 m of fill, no floating roads outside named decks), the asset passes
-A1/A2, the winding correction, the plan editor's pipeline pieces (terrain edits,
-now with ramps; object edits; progress and freshness) and content transforms
-published as an exact affine. They are not yet publishable: the first contracts
-run on them (2026-09-17) refused 532 placements, cut off from their arrivals by
-roads steeper than the walkable grade and by the redesigned relief. The
-seventeenth publication (terrain reach links, bridge landing and walkway fixes,
-walkable roads) continues on `feature/diagonal-continent`
-(`work-output/diagonal-continent/experiments/contracts-17/REPORT.md`); until it
-passes, a compose of these sources is a design preview, not a publication.
+passed and verified the publication, the 26 primary, 9 supplement and 2 atlas
+gameplay views were captured with the published registry and no overrides
+(`final-review/`), and the seven native loopback suites walked 240 routes with 0
+failures on a real server (`after/live-walk/final-live-summary.json`). It is the
+first publication of the Whitehorn Range redesign, the roads pass R1, the asset
+passes A1/A2, the plan editor's object and terrain edits and the exact affine
+content transforms. Where its roads climb steeper than the walkable grade, 48 reach
+links (walkable ramps and pads written on the finished ground), 19 authored points
+(records pinned to reachable ground) and two access decks (the Lamp Rock causeway
+link and the Crownwater ferry landing stair) serve the placements. Known limitations
+are listed in `STATUS-2026-09-13-takeover.md`: roads are not yet walkable (the
+walkable-roads round); the reach links leave 732 wall steps over the 4 m smoothing
+limit, the tallest 20.7 m, where the Moors pass switchback's legs are stacked on
+the Whitehorn face and its road ribbons cross them; the Grey Moors undercut mouth
+is served 33.6 m out and 28 m below its entrance, at the foot of its slope, while
+its trail still climbs to the mouth. Any later change to a shaping or export source
+returns this notice to provisional until the same chain is repeated.
 
 `diagonal-plan.json` describes the coast, connected mountain chain, river
 catchments, islands, territory centres, and placement controls. `landscape.py`
