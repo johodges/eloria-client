@@ -9,6 +9,8 @@ stages have finished the ground: nothing after it moves the ground but the road 
 placements regrounded on it. It never reaches a river's centreline (the carved beds and the bridge banks stay as the
 drainage made them) and never moves the ground under a rigid compound's member by more than a quarter metre (reground
 does not move compound members; a tree member's ground is the three metres round its trunk, not its canopy's box).
+Outside the links' bands the linked ground is smoothed (smooth_link_change): no two neighbouring 2 m cells differ by
+more than WALL_METRES, or than the ground before did, so a deep cut or fill on a steep face ends as a broader terrace.
 """
 from __future__ import annotations
 
@@ -55,6 +57,9 @@ def river_contacts(plan, link):
 
 COMPOUND_TOLERANCE_METRES = .25   # the ground under a rigid compound member may move this little, as a seat settles
 TRUNK_RADIUS_METRES = 3.          # a tree member's ground: this far round its pivot, not its canopy's box
+# Compound members that stand on no ground of their own: the canopy walkways and platforms hang between trees
+# (assemblies.supports_ground names them too). Their boxes span tens of metres of ground they never touch.
+ELEVATED_MEMBER_PREFIXES = ('landmark_canopyplatform', 'landmark_canopywalkway')
 
 
 def trunk_pivot(obj):
@@ -71,7 +76,7 @@ def compound_contacts(world, content, change):
         return []
     found = []
     for obj in getattr(content, 'objects', []):
-        if not obj.get('assembly'):
+        if not obj.get('assembly') or str(obj.get('node', '')).lower().startswith(ELEVATED_MEMBER_PREFIXES):
             continue
         low, high = np.asarray(obj['low'], dtype=float), np.asarray(obj['high'], dtype=float)
         if obj.get('kind') == 'tree':
@@ -86,6 +91,104 @@ def compound_contacts(world, content, change):
         if moved > COMPOUND_TOLERANCE_METRES:
             found.append((obj.get('region'), obj.get('node'), round(moved, 3)))
     return found
+
+
+WALL_METRES = 4.   # outside a link's band no two neighbouring 2 m cells differ by more than this, or than the natural ground did
+CATCH_UP_METRES = 1.   # plus this: where the natural ground is steeper, a cut or fill still closes on it by a metre a cell
+
+
+def _river_cells(plan, x0, z0, cell, shape):
+    """Composed-grid cells every river centreline passes through (the channel keeps the drainage's ground)."""
+    mask = np.zeros(shape, bool)
+    for river in plan.get('rivers') or []:
+        if len(river.get('points') or []) < 2:
+            continue
+        curve = np.asarray(L.curved_points(river['points']), dtype=float)[:, :2]
+        for a, b in zip(curve[:-1], curve[1:]):
+            count = max(1, int(np.ceil(np.linalg.norm(b - a) / (cell * .5))))
+            points = a + (b - a) * (np.arange(count + 1)[:, None] / count)
+            iz = np.rint((points[:, 1] - z0) / cell).astype(int); ix = np.rint((points[:, 0] - x0) / cell).astype(int)
+            keep = (iz >= 0) & (ix >= 0) & (iz < shape[0]) & (ix < shape[1])
+            mask[iz[keep], ix[keep]] = True
+    return mask
+
+
+def _compound_cells(gx, gz, content):
+    """Composed-grid cells under rigid compound members (a tree member: round its trunk), one metre wider."""
+    mask = np.zeros(gx.shape, bool)
+    for obj in getattr(content, 'objects', []) if content is not None else []:
+        if not obj.get('assembly') or str(obj.get('node', '')).lower().startswith(ELEVATED_MEMBER_PREFIXES):
+            continue
+        low, high = np.asarray(obj['low'], dtype=float), np.asarray(obj['high'], dtype=float)
+        if obj.get('kind') == 'tree':
+            pivot = trunk_pivot(obj)
+            low = np.array([pivot[0] - TRUNK_RADIUS_METRES, 0., pivot[2] - TRUNK_RADIUS_METRES])
+            high = np.array([pivot[0] + TRUNK_RADIUS_METRES, 0., pivot[2] + TRUNK_RADIUS_METRES])
+        mask |= (gx >= low[0] - 1.) & (gx <= high[0] + 1.) & (gz >= low[2] - 1.) & (gz <= high[2] + 1.)
+    return mask
+
+
+def _envelope(values, wall_x, wall_z, upper):
+    """Step-bounded envelope on the composed grid: the largest field under ``values`` (upper=True) or the smallest
+    over it whose neighbouring cells differ by at most ``wall_x`` (between columns) and ``wall_z`` (between rows)."""
+    value = np.asarray(values, dtype=float).copy()
+    for _ in range(sum(value.shape)):
+        new = value.copy()
+        if upper:
+            new[:, 1:] = np.minimum(new[:, 1:], value[:, :-1] + wall_x); new[:, :-1] = np.minimum(new[:, :-1], value[:, 1:] + wall_x)
+            new[1:, :] = np.minimum(new[1:, :], value[:-1, :] + wall_z); new[:-1, :] = np.minimum(new[:-1, :], value[1:, :] + wall_z)
+        else:
+            new[:, 1:] = np.maximum(new[:, 1:], value[:, :-1] - wall_x); new[:, :-1] = np.maximum(new[:, :-1], value[:, 1:] - wall_x)
+            new[1:, :] = np.maximum(new[1:, :], value[:-1, :] - wall_z); new[:-1, :] = np.maximum(new[:-1, :], value[1:, :] - wall_z)
+        if np.array_equal(new, value):
+            break
+        value = new
+    return value
+
+
+def smooth_link_change(gx, gz, before, after, links, plan, content=None, wall=WALL_METRES):
+    """(ground, report): the linked ground with no new walls. Outside the links' bands, neighbouring 2 m cells may
+    differ by at most ``wall`` metres, or by what the ground before the links did plus CATCH_UP_METRES where it was
+    steeper. A band keeps its surface exactly; river centreline cells and the ground under rigid compound members
+    keep the ground before the links; a deeper cut or fill is carried outward, so it ends as a broader terrace
+    instead of a wall. Where bands leave no room for that (a hairpin's crowded legs), the linked ground stays as the
+    links made it and the report counts the cells."""
+    from scipy.ndimage import binary_dilation, find_objects, label
+    before = np.asarray(before, dtype=float); after = np.asarray(after, dtype=float)
+    report = {'wallMetres': wall, 'widenedCells': 0, 'crowdedCells': 0}
+    touched = np.abs(after - before) > 1e-6
+    if not touched.any():
+        return after.copy(), report
+    cell = float(gx[0, 1] - gx[0, 0]); x0, z0 = float(gx[0, 0]), float(gz[0, 0])
+    core = np.zeros(gx.shape, bool)
+    for link in links:
+        core |= np.asarray(L._edit_weight(gx, gz, link), dtype=float) >= .999 * float(link.get('strength', 1.))
+    margin = int(np.ceil(float(np.abs(after - before).max()) / CATCH_UP_METRES)) + 3
+    groups, _ = label(binary_dilation(touched | core, iterations=margin))
+    anchors = None
+    result = after.copy()
+    for window in find_objects(groups):
+        if window is None:
+            continue
+        if anchors is None:
+            anchors = _river_cells(plan, x0, z0, cell, gx.shape) | _compound_cells(gx, gz, content)
+        h0, h1, k = before[window], after[window], core[window]
+        fixed = k | (anchors[window] & ~k)
+        target = np.where(k, h1, h0)
+        wall_x = np.maximum(wall, np.abs(np.diff(h0, axis=1)) + CATCH_UP_METRES)
+        wall_z = np.maximum(wall, np.abs(np.diff(h0, axis=0)) + CATCH_UP_METRES)
+        # The linked ground made wall-bounded on its own (the mean of its smallest majorant and largest minorant),
+        # then held to the bands' surfaces and the anchors' ground: min and max of wall-bounded fields stay bounded.
+        regular = .5 * (_envelope(h1, wall_x, wall_z, False) + _envelope(h1, wall_x, wall_z, True))
+        upper = _envelope(np.where(fixed, target, np.inf), wall_x, wall_z, True)
+        lower = _envelope(np.where(fixed, target, -np.inf), wall_x, wall_z, False)
+        feasible = lower <= upper + 1e-9
+        smoothed = np.where(feasible, np.clip(regular, lower, upper), h1)
+        smoothed[k] = h1[k]
+        report['widenedCells'] += int(np.count_nonzero(np.abs(smoothed - h1) > .01))
+        report['crowdedCells'] += int(np.count_nonzero(~feasible & (np.abs(h1 - h0) > .01)))
+        result[window] = smoothed
+    return result, report
 
 
 def apply_reach_links(world, content=None):
@@ -103,6 +206,8 @@ def apply_reach_links(world, content=None):
         if rivers:
             raise ValueError(f"Reach link {link['id']!r} reaches river centrelines {rivers}; keep its shape and feather off the channel")
     before = np.asarray(world.height, dtype=float).copy()
+    # Kept for the reach proxy, which designs further links from this ground and replays the links and smoothing.
+    world.ground_before_reach_links = before.astype(np.float32)
     height = before
     for link in authored:
         after = L._terrain_edit_height(world.gx, world.gz, height, {'terrain_edits': [link]})
@@ -114,6 +219,12 @@ def apply_reach_links(world, content=None):
         report['perLink'].append({'id': link['id'], 'op': link.get('op'), 'changedCells': int((changed > .01).sum()),
                                   'maximumChangeMetres': round(float(changed.max(initial=0.)), 3)})
         height = after
+    height, smoothing = smooth_link_change(world.gx, world.gz, before, height, authored, world.plan, content)
+    report['smoothing'] = smoothing
+    compounds = compound_contacts(world, content, np.abs(height - before))
+    if compounds:
+        raise ValueError(f"Reach links together move the ground under rigid compound members {compounds[:6]} by more than "
+                         f"{COMPOUND_TOLERANCE_METRES} m once smoothed")
     world.height = height
     total = np.abs(height - before)
     report.update(changedCells=int((total > .01).sum()), maximumChangeMetres=round(float(total.max(initial=0.)), 3))

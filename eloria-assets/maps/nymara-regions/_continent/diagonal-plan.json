@@ -4437,6 +4437,182 @@
       "amount": 0.3,
       "feather": 2,
       "strength": 1
+    },
+    {
+      "id": "reach3-grey_moors-1",
+      "name": "Great Barrow arch west shoulder: the court past the arch into its south yard (doors 753/754, 759/760)",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              278.0,
+              296.0
+            ],
+            [
+              278.0,
+              298.0
+            ],
+            [
+              278.0,
+              300.0
+            ]
+          ],
+          "width": 2.0
+        }
+      },
+      "heights": [
+        86.55,
+        86.1,
+        85.9
+      ],
+      "feather": 0.8,
+      "strength": 1
+    },
+    {
+      "id": "reach3-grey_moors-2",
+      "name": "Bog: reached north-west corner along the slope onto the boardwalk island tip",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              309.5,
+              322.0
+            ],
+            [
+              317.5,
+              326.2
+            ]
+          ],
+          "width": 4.0
+        }
+      },
+      "heights": [
+        104.05,
+        105.9
+      ],
+      "feather": 1.5,
+      "strength": 1
+    },
+    {
+      "id": "reach3-grey_moors-3",
+      "name": "Boardwalk island south-east corner onto the south-face terrace below Crypt 2",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              329.5,
+              342.5
+            ],
+            [
+              333.0,
+              344.4
+            ]
+          ],
+          "width": 4.0
+        }
+      },
+      "heights": [
+        104.1,
+        104.62
+      ],
+      "feather": 1.2,
+      "strength": 1
+    },
+    {
+      "id": "reach3-grey_moors-4",
+      "name": "South-face terrace below Crypt 2 on the z 344/346 node rows, clear of the crypt box",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              333.0,
+              344.4
+            ],
+            [
+              339.0,
+              345.0
+            ],
+            [
+              349.0,
+              345.0
+            ]
+          ],
+          "width": 3.2
+        }
+      },
+      "heights": [
+        104.62,
+        106.91,
+        110.71
+      ],
+      "feather": 0.8,
+      "strength": 1
+    },
+    {
+      "id": "reach3-grey_moors-5",
+      "name": "South face east of Crypt 2 up and round into the barrow cluster",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              349.0,
+              345.0
+            ],
+            [
+              360.5,
+              339.6
+            ],
+            [
+              359.5,
+              335.5
+            ]
+          ],
+          "width": 4.0
+        }
+      },
+      "heights": [
+        110.71,
+        115.54,
+        117.14
+      ],
+      "feather": 1.2,
+      "strength": 1
+    },
+    {
+      "id": "reach3-amberwood-1",
+      "name": "Amberwood warm-spring cliff foot: a toe shelf below secret door 482 from the basin west lobe to the Watchtower_3 strip, north of the Great Tree box and clear of the Giant_3 trunk and the tower box",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              518.5,
+              460.5
+            ],
+            [
+              527.5,
+              459.8
+            ],
+            [
+              535.0,
+              460.6
+            ]
+          ],
+          "width": 4.0
+        }
+      },
+      "heights": [
+        49.3,
+        49.3,
+        52.0
+      ],
+      "feather": 1.5,
+      "strength": 1
     }
   ],
   "authored_points": [
@@ -4634,6 +4810,19 @@
       ],
       "record": "npcs.txt:318:Widow Carrow",
       "reason": "the gauntlet keeper stands beside the pinned gauntlet arrival on the reached court below the entrance strip"
+    },
+    {
+      "region": "amberwood",
+      "tile": [
+        187,
+        385
+      ],
+      "point": [
+        526.0,
+        459.0
+      ],
+      "record": "maps.txt:482:door:amberwood->amberwood_secrets",
+      "reason": "Door 482, its return maps.txt:491 and interactive 512 share authored tile [187, 385] (one pin serves all three): the warm-spring door stands at (525.9, 444.6) on a 15-tile ledge about 49 m up the cliff north of the canopy village, unreachable by any grade; pinned 14.4 m south, straight below it, on the reach link reach3-amberwood-1 shelf at the cliff foot."
     }
   ],
   "access_decks": [

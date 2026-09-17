@@ -555,8 +555,13 @@ modelled ground before the foundations and the roads (so a road that re-routes o
 feather, grades it again), a reach link is written by `reach_links.apply_reach_links` once the roads are settled and
 the support stages have finished the ground; the road heights are refreshed onto it and the placements regrounded on
 it afterwards, and nothing else moves it. A link whose weight reaches a river's centreline, or the footprint of a
-member of a rigid compound (which reground does not move), is refused. The composition records every link's changed
-cells (`composition.json` `reachLinks`). Links are designed against the served walk grid of the previous composition;
+member of a rigid compound (which reground does not move), is refused; a member that hangs above the ground (a canopy
+walkway or platform) holds none, and a tree member holds only the three metres round its trunk. Outside the links'
+bands the linked ground is then smoothed (`smooth_link_change`): no two neighbouring 2 m cells differ by more than
+`WALL_METRES` (4 m), or by the ground's own step plus a metre where it was already steeper, so a deep cut or fill on a
+steep face ends as a broader terrace instead of a wall; the bands, the river centrelines and the ground under compound
+members keep their heights. The composition records every link's changed cells and the smoothing
+(`composition.json` `reachLinks`). Links are designed against the served walk grid of the previous composition;
 because they do not change the routing, that prediction holds.
 
 ## Authored points

@@ -34,17 +34,55 @@ class ValidationTests(unittest.TestCase):
 
 
 class ApplyTests(unittest.TestCase):
-    def test_links_blend_the_finished_ground_as_terrain_edits_do(self):
+    def _walls(self, before, after, band):
+        """The largest step between neighbouring cells outside the bands, beyond what the ground before allowed."""
+        worst = 0.
+        for axis in (0, 1):
+            step = np.abs(np.diff(after, axis=axis)); natural = np.abs(np.diff(before, axis=axis))
+            allowed = np.maximum(R.WALL_METRES, natural + R.CATCH_UP_METRES)
+            free = (~band[1:, :] & ~band[:-1, :]) if axis == 0 else (~band[:, 1:] & ~band[:, :-1])
+            worst = max(worst, float((step - allowed)[free].max(initial=0.)))
+        return worst
+
+    def test_links_blend_the_finished_ground_as_terrain_edits_do_then_smooth_outside_the_band(self):
         w = world({'reach_links': [RAMP]})
-        expected = L._terrain_edit_height(w.gx, w.gz, w.height.copy(), {'terrain_edits': [RAMP]})
+        before = w.height.copy()
+        blended = L._terrain_edit_height(w.gx, w.gz, before.copy(), {'terrain_edits': [RAMP]})
+        band = np.asarray(L._edit_weight(w.gx, w.gz, RAMP)) >= .999
         report = R.apply_reach_links(w)
-        np.testing.assert_array_equal(w.height, expected)
-        # On the line the ground is the ramp's own surface, off the feather it is untouched.
+        # The band keeps the ramp's own surface exactly; on the line it is the ramp's height.
+        np.testing.assert_array_equal(w.height[band], blended[band])
         self.assertAlmostEqual(float(w.height[20, 25]), 26. + 24. * (50. - 20.) / 60., places=9)
+        self.assertLessEqual(self._walls(before, w.height, band), 1e-9)
         self.assertEqual(float(w.height[0, 0]), 10.)
         self.assertEqual(report['links'], 1)
         self.assertGreater(report['changedCells'], 0)
+        self.assertIn('smoothing', report)
         self.assertEqual(w.reach_links, report)
+
+    def test_a_deep_cut_ends_as_a_terrace_not_a_wall(self):
+        steep = world({})
+        steep.height = 10. + steep.gz * 1.2        # a steep face rising south, 2.4 m between rows
+        cut = {'id': 'bench', 'op': 'flatten', 'shape': {'circle': {'center': [60., 40.], 'radius': 4.}}, 'target': 36.,
+               'feather': 1., 'strength': 1}
+        steep.plan = {'reach_links': [cut]}
+        before = steep.height.copy()
+        hard = L._terrain_edit_height(steep.gx, steep.gz, before.copy(), {'terrain_edits': [cut]})
+        band = np.asarray(L._edit_weight(steep.gx, steep.gz, cut)) >= .999
+        self.assertGreater(self._walls(before, hard, band), 5.)
+        report = R.apply_reach_links(steep)
+        self.assertLessEqual(self._walls(before, steep.height, band), 1e-9)
+        np.testing.assert_array_equal(steep.height[band], hard[band])
+        self.assertGreater(report['smoothing']['widenedCells'], 0)
+
+    def test_smoothing_leaves_river_centrelines_and_compound_ground_unchanged(self):
+        plan = {'reach_links': [RAMP], 'rivers': [{'id': 'brook', 'points': [[20., 62.], [80., 62.]]}]}
+        w = world(plan)
+        w.height = 10. + w.gz * 1.5
+        before = w.height.copy()
+        R.apply_reach_links(w)
+        river_row = int(round(62. / 2.))
+        np.testing.assert_allclose(w.height[river_row, 10:41], before[river_row, 10:41], atol=1e-9)
 
     def test_no_links_leave_the_ground_alone(self):
         w = world({})
@@ -81,6 +119,14 @@ class ApplyTests(unittest.TestCase):
         standing = dict(tree, shift=[50., 0., 40.])
         with self.assertRaisesRegex(ValueError, 'rigid compound members'):
             R.apply_reach_links(world({'reach_links': [RAMP]}), types.SimpleNamespace(objects=[standing]))
+
+    def test_an_elevated_walkway_member_does_not_hold_the_ground_under_its_box(self):
+        walkway = {'region': 'test', 'node': 'Landmark_CanopyWalkway_9', 'kind': 'landmark', 'assembly': 'test.village',
+                   'low': [0., 40., 0.], 'high': [120., 46., 80.]}
+        R.apply_reach_links(world({'reach_links': [RAMP]}), types.SimpleNamespace(objects=[walkway]))
+        stair = dict(walkway, node='Walk_Prop_SpiralStair_2')
+        with self.assertRaisesRegex(ValueError, 'rigid compound members'):
+            R.apply_reach_links(world({'reach_links': [RAMP]}), types.SimpleNamespace(objects=[stair]))
 
     def test_invalid_links_are_refused_before_the_ground_changes(self):
         w = world({'reach_links': [dict(RAMP, op='smooth')]})
