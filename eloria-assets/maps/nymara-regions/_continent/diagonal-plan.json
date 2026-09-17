@@ -4823,6 +4823,19 @@
       ],
       "record": "maps.txt:482:door:amberwood->amberwood_secrets",
       "reason": "Door 482, its return maps.txt:491 and interactive 512 share authored tile [187, 385] (one pin serves all three): the warm-spring door stands at (525.9, 444.6) on a 15-tile ledge about 49 m up the cliff north of the canopy village, unreachable by any grade; pinned 14.4 m south, straight below it, on the reach link reach3-amberwood-1 shelf at the cliff foot."
+    },
+    {
+      "region": "grey_moors",
+      "tile": [
+        342,
+        332
+      ],
+      "point": [
+        350.5,
+        333.5
+      ],
+      "record": "maps.txt:775:door:grey_moors->amberwood_secrets",
+      "reason": "The undercut mouth door 775, its return maps.txt:778 and interactive 512 share authored tile [342, 332]: the mouth stands in a 4-tile pocket at 147 m on a 45-degree face below Tower 4 that the seventeenth landform left unreachable (the sixteenth seated it in place). Round-four trail designs failed: the barrow lowland's 8 m step to the Barrow 4 terrace has 7-9 m of room between Barrow 1, the barrow well and the lowland's only connection strip, and the 15 m face above has no bench to turn on. Relocation found no bank nearer than 38 m. Pinned at the foot of the slope straight below the mouth (33.6 m, 28 m lower), where its discovery trail already starts, 7 m east of the barrow well door."
     }
   ],
   "access_decks": [
