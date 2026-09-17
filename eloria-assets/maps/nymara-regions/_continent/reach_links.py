@@ -8,7 +8,7 @@ feather and strength), listed under the plan's "reach_links", and applied once t
 stages have finished the ground: nothing after it moves the ground but the road heights refreshed onto it and the
 placements regrounded on it. It never reaches a river's centreline (the carved beds and the bridge banks stay as the
 drainage made them) and never moves the ground under a rigid compound's member by more than a quarter metre (reground
-does not move compound members).
+does not move compound members; a tree member's ground is the three metres round its trunk, not its canopy's box).
 """
 from __future__ import annotations
 
@@ -54,6 +54,14 @@ def river_contacts(plan, link):
 
 
 COMPOUND_TOLERANCE_METRES = .25   # the ground under a rigid compound member may move this little, as a seat settles
+TRUNK_RADIUS_METRES = 3.          # a tree member's ground: this far round its pivot, not its canopy's box
+
+
+def trunk_pivot(obj):
+    """Where a tree member meets the ground: its source pivot carried by its shift, else its box centre."""
+    if obj.get('sourcePivot') is not None and obj.get('shift') is not None:
+        return np.asarray(obj['sourcePivot'], dtype=float) + np.asarray(obj['shift'], dtype=float)
+    return (np.asarray(obj['low'], dtype=float) + np.asarray(obj['high'], dtype=float)) * .5
 
 
 def compound_contacts(world, content, change):
@@ -66,6 +74,11 @@ def compound_contacts(world, content, change):
         if not obj.get('assembly'):
             continue
         low, high = np.asarray(obj['low'], dtype=float), np.asarray(obj['high'], dtype=float)
+        if obj.get('kind') == 'tree':
+            # A tree stands on its trunk: its box is the canopy's, metres wider than the ground it touches.
+            pivot = trunk_pivot(obj)
+            low = np.array([pivot[0] - TRUNK_RADIUS_METRES, 0., pivot[2] - TRUNK_RADIUS_METRES])
+            high = np.array([pivot[0] + TRUNK_RADIUS_METRES, 0., pivot[2] + TRUNK_RADIUS_METRES])
         under = (world.gx >= low[0] - 1.) & (world.gx <= high[0] + 1.) & (world.gz >= low[2] - 1.) & (world.gz <= high[2] + 1.)
         if not under.any():
             continue

@@ -3013,6 +3013,16 @@
       "name": "Landmark_boardwalk_*",
       "module": "grey_crossings",
       "note": "the retained Grey Moors boardwalks (the three duplicate spans stay retired)"
+    },
+    {
+      "name": "Walk_Westhaven_LampCausewayLink",
+      "module": "access_decks",
+      "note": "Lamp Rock causeway end joined to the yard bridge over the 12-13 m of harbour the roads pass left open"
+    },
+    {
+      "name": "Walk_Westhaven_FerryLandingStair",
+      "module": "access_decks",
+      "note": "Crownwater ferry landing: from the ferry road harbour deck south of the landing shelf, standing off the Sea Arch island east face, turning onto its rim"
     }
   ],
   "authored_crossings": [
@@ -3589,6 +3599,1128 @@
       ],
       "feather": 4,
       "strength": 1
+    },
+    {
+      "id": "reach2-whitehorn_range-1",
+      "name": "Whitehorn: Moors pass pad down to the west lowland strip (Amberwood crossing lanes)",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              384.0,
+              384.5
+            ],
+            [
+              394.0,
+              388.0
+            ],
+            [
+              404.0,
+              390.5
+            ],
+            [
+              412.4,
+              393.0
+            ],
+            [
+              418.8,
+              399.8
+            ],
+            [
+              426.0,
+              405.0
+            ],
+            [
+              430.0,
+              409.0
+            ],
+            [
+              420.0,
+              410.5
+            ],
+            [
+              408.0,
+              410.0
+            ]
+          ],
+          "width": 7.0
+        }
+      },
+      "heights": [
+        75.0,
+        70.76,
+        66.64,
+        63.13,
+        59.4,
+        55.85,
+        53.58,
+        50.0,
+        50.0
+      ],
+      "feather": 2.0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-whitehorn_range-2",
+      "name": "Whitehorn switchback leg 1: Moors pass pad along the south-face bench",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              384.0,
+              375.0
+            ],
+            [
+              395.0,
+              372.5
+            ],
+            [
+              405.0,
+              375.5
+            ],
+            [
+              414.0,
+              380.0
+            ],
+            [
+              424.0,
+              386.0
+            ],
+            [
+              437.0,
+              394.7
+            ],
+            [
+              447.6,
+              400.2
+            ],
+            [
+              459.0,
+              403.8
+            ],
+            [
+              463.71,
+              404.65
+            ],
+            [
+              470.6,
+              405.9
+            ]
+          ],
+          "width": 7.0
+        }
+      },
+      "heights": [
+        75.0,
+        79.51,
+        83.69,
+        87.71,
+        92.38,
+        98.64,
+        103.41,
+        108.19,
+        110.11,
+        110.11
+      ],
+      "feather": 2.0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-whitehorn_range-3",
+      "name": "Whitehorn switchback leg 2: bench hairpin back up the face",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              470.6,
+              405.9
+            ],
+            [
+              466.28,
+              400.39
+            ],
+            [
+              460.0,
+              392.4
+            ],
+            [
+              450.9,
+              388.2
+            ],
+            [
+              441.3,
+              385.4
+            ],
+            [
+              432.6,
+              380.3
+            ],
+            [
+              428.01,
+              374.85
+            ],
+            [
+              423.5,
+              369.5
+            ]
+          ],
+          "width": 7.0
+        }
+      },
+      "heights": [
+        110.11,
+        110.11,
+        114.18,
+        118.18,
+        122.18,
+        126.22,
+        129.07,
+        129.07
+      ],
+      "feather": 2.0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-whitehorn_range-4",
+      "name": "Whitehorn switchback leg 3: mid-face up to the gate plateau tongue",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              423.5,
+              369.5
+            ],
+            [
+              430.29,
+              371.2
+            ],
+            [
+              435.5,
+              372.5
+            ],
+            [
+              445.7,
+              371.6
+            ],
+            [
+              459.7,
+              373.2
+            ],
+            [
+              474.6,
+              375.0
+            ],
+            [
+              483.0,
+              379.5
+            ],
+            [
+              489.5,
+              387.0
+            ],
+            [
+              497.0,
+              395.5
+            ],
+            [
+              506.0,
+              399.0
+            ]
+          ],
+          "width": 7.0
+        }
+      },
+      "heights": [
+        129.07,
+        129.07,
+        131.22,
+        135.31,
+        140.95,
+        146.95,
+        150.77,
+        154.74,
+        159.27,
+        163.13
+      ],
+      "feather": 2.0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-whitehorn_range-5",
+      "name": "Whitehorn glacier temple terrace: south foot step down to the temple rest band (grid rows z>=142 only, outside the temple compound box)",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              444.0,
+              144.0
+            ],
+            [
+              454.0,
+              144.0
+            ]
+          ],
+          "width": 6.0
+        }
+      },
+      "heights": [
+        210.3,
+        206.3
+      ],
+      "feather": 1.0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-whitehorn_range-6",
+      "name": "Whitehorn BridgeWatch pad: south-east shoulder down to the Hornwater east-bank terrace (Rope-Bridge Keeper Adhe)",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              539.0,
+              250.0
+            ],
+            [
+              543.0,
+              264.0
+            ],
+            [
+              553.0,
+              278.0
+            ]
+          ],
+          "width": 6.0
+        }
+      },
+      "heights": [
+        174.0,
+        168.18,
+        161.29
+      ],
+      "feather": 1.5,
+      "strength": 1
+    },
+    {
+      "id": "reach2-grey_moors-1",
+      "name": "Bog pool south lobe (C9) down to the south lowland",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              344.0,
+              416.0
+            ],
+            [
+              369.0,
+              438.0
+            ]
+          ],
+          "width": 5.0
+        }
+      },
+      "heights": [
+        62.6,
+        50.28
+      ],
+      "feather": 3.5,
+      "strength": 1
+    },
+    {
+      "id": "reach2-grey_moors-2",
+      "name": "Moors pass crossing pad west shelf to the bog island north-east lobe",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              376.0,
+              380.5
+            ],
+            [
+              366.0,
+              380.5
+            ],
+            [
+              356.0,
+              380.5
+            ],
+            [
+              345.0,
+              380.0
+            ]
+          ],
+          "width": 4.0
+        }
+      },
+      "heights": [
+        75.0,
+        75.6,
+        76.2,
+        76.4
+      ],
+      "feather": 4.0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-grey_moors-3",
+      "name": "Tower 3 west terrace along the tower foot to its south ledge",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              313.0,
+              361.0
+            ],
+            [
+              333.0,
+              362.5
+            ],
+            [
+              341.0,
+              367.0
+            ],
+            [
+              346.0,
+              367.2
+            ]
+          ],
+          "width": 4.0
+        }
+      },
+      "heights": [
+        83.4,
+        84.4,
+        84.6,
+        86.3
+      ],
+      "feather": 3.0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-grey_moors-4",
+      "name": "Bog island north-west lobe up to the Tower 3 west terrace",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              332.0,
+              381.0
+            ],
+            [
+              313.5,
+              361.0
+            ]
+          ],
+          "width": 6.0
+        }
+      },
+      "heights": [
+        73.5,
+        83.4
+      ],
+      "feather": 3.0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-grey_moors-5",
+      "name": "Great Barrow court east edge up the hillside to the bog boardwalk island",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              295.0,
+              289.0
+            ],
+            [
+              306.0,
+              320.0
+            ]
+          ],
+          "width": 5.0
+        }
+      },
+      "heights": [
+        93.1,
+        103.6
+      ],
+      "feather": 2.5,
+      "strength": 1
+    },
+    {
+      "id": "reach2-grey_moors-6",
+      "name": "Great Barrow court east edge up to the court vault shelf",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              288.0,
+              289.0
+            ],
+            [
+              293.5,
+              288.5
+            ],
+            [
+              295.0,
+              275.0
+            ]
+          ],
+          "width": 5.0
+        }
+      },
+      "heights": [
+        90.9,
+        92.9,
+        98.1
+      ],
+      "feather": 3.0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-amberwood-1",
+      "name": "Amber tributary bridge east landing, contour strip 1 (water line): the crest the landing trim split the deck on",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              567.74,
+              656.49
+            ],
+            [
+              569.64,
+              654.17
+            ],
+            [
+              571.54,
+              651.85
+            ],
+            [
+              573.44,
+              649.52
+            ],
+            [
+              575.34,
+              647.2
+            ]
+          ],
+          "width": 2.0
+        }
+      },
+      "heights": [
+        25.69,
+        26.07,
+        26.44,
+        26.79,
+        27.15
+      ],
+      "feather": 0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-amberwood-2",
+      "name": "Amber tributary bridge east landing, contour strip 2",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              569.29,
+              657.76
+            ],
+            [
+              571.19,
+              655.43
+            ],
+            [
+              573.09,
+              653.11
+            ],
+            [
+              574.99,
+              650.79
+            ],
+            [
+              576.89,
+              648.47
+            ]
+          ],
+          "width": 2.0
+        }
+      },
+      "heights": [
+        26.29,
+        26.67,
+        27.04,
+        27.39,
+        27.75
+      ],
+      "feather": 0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-amberwood-3",
+      "name": "Amber tributary bridge east landing, contour strip 3",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              570.84,
+              659.02
+            ],
+            [
+              572.74,
+              656.7
+            ],
+            [
+              574.64,
+              654.38
+            ],
+            [
+              576.53,
+              652.05
+            ],
+            [
+              578.43,
+              649.73
+            ]
+          ],
+          "width": 2.0
+        }
+      },
+      "heights": [
+        26.89,
+        27.27,
+        27.64,
+        27.99,
+        28.35
+      ],
+      "feather": 0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-amberwood-4",
+      "name": "Amber tributary bridge east landing, contour strip 4 (terrace)",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              572.39,
+              660.29
+            ],
+            [
+              574.29,
+              657.97
+            ],
+            [
+              576.18,
+              655.64
+            ],
+            [
+              578.08,
+              653.32
+            ],
+            [
+              579.98,
+              651.0
+            ]
+          ],
+          "width": 2.0
+        }
+      },
+      "heights": [
+        27.3,
+        27.87,
+        28.24,
+        28.59,
+        28.95
+      ],
+      "feather": 0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-amberwood-5",
+      "name": "Amberwood bridge terrace to the south hamlet slope, north and east of Lodge_27",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              578.0,
+              659.0
+            ],
+            [
+              590.0,
+              663.0
+            ],
+            [
+              590.8,
+              677.0
+            ]
+          ],
+          "width": 6.0
+        }
+      },
+      "heights": [
+        28.9,
+        33.9,
+        33.8
+      ],
+      "feather": 1.0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-amberwood-6",
+      "name": "Amberwood south hamlet slope up the quarry ridge to the hamlet plateau",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              638.5,
+              697.5
+            ],
+            [
+              641.5,
+              684.0
+            ],
+            [
+              642.5,
+              668.0
+            ]
+          ],
+          "width": 4.5
+        }
+      },
+      "heights": [
+        41.4,
+        46.8,
+        47.3
+      ],
+      "feather": 2.0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-amberwood-7",
+      "name": "Amberwood arch reliquary shelf (door 471) up to the hamlet plateau, east of the Great Arch",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              609.5,
+              602.5
+            ],
+            [
+              609.8,
+              611.0
+            ]
+          ],
+          "width": 4.0
+        }
+      },
+      "heights": [
+        40.3,
+        43.3
+      ],
+      "feather": 1.5,
+      "strength": 1
+    },
+    {
+      "id": "reach2-amberwood-8",
+      "name": "Amberwood Amber Hall lane along the east flank to the Watchtower_3 harvest strip, outside the canopy-village compound boxes",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              561.0,
+              503.0
+            ],
+            [
+              563.7,
+              520.0
+            ],
+            [
+              564.7,
+              530.0
+            ],
+            [
+              564.5,
+              549.0
+            ]
+          ],
+          "width": 4.0
+        }
+      },
+      "heights": [
+        53.4,
+        47.0,
+        46.4,
+        53.6
+      ],
+      "feather": 2.0,
+      "strength": 1
+    },
+    {
+      "id": "reach2-mirrorhold-1",
+      "name": "Mirrorhold NE outer slope switchback from the north-west arm",
+      "op": "ramp",
+      "shape": {
+        "polyline": {
+          "points": [
+            [
+              824,
+              530
+            ],
+            [
+              827,
+              500
+            ],
+            [
+              868,
+              524
+            ],
+            [
+              861,
+              488.5
+            ],
+            [
+              888,
+              497.5
+            ],
+            [
+              900,
+              517
+            ]
+          ],
+          "width": 10
+        }
+      },
+      "heights": [
+        118.0,
+        107.6,
+        89.0,
+        77.9,
+        66.9,
+        64.5
+      ],
+      "feather": 8,
+      "strength": 1
+    },
+    {
+      "id": "reach2-verdant_stair-1",
+      "name": "Cenote hollow floor to the Town Hall frontage (crest eased 0.3 m)",
+      "op": "lower",
+      "shape": {
+        "circle": {
+          "center": [
+            1116,
+            1098
+          ],
+          "radius": 1.5
+        }
+      },
+      "amount": 0.3,
+      "feather": 2,
+      "strength": 1
+    }
+  ],
+  "authored_points": [
+    {
+      "region": "whitehorn_range",
+      "tile": [
+        240,
+        307
+      ],
+      "point": [
+        491.0,
+        161.0
+      ],
+      "record": "maps.txt:531:door:whitehorn_range->whitehorn_range_secrets",
+      "reason": "The cascade-spring secret door (and its return maps.txt:548:return:whitehorn_range_secrets->whitehorn_range, same authored tile) stands on the 1.3-grade slope under Landmark_frozen_cascade_01, beside the colliding Secret_horn_cascade_spring prop; its only walkable ground within 5 m is a 23-tile shelf of the cascade seat. A cutting that brings reach within 5 m would lower the ground under the spring prop by up to 3 m, so both records are pinned 7 m south at the foot of the slope on the reached cascade basin."
+    },
+    {
+      "region": "grey_moors",
+      "tile": [
+        366,
+        241
+      ],
+      "point": [
+        344.5,
+        364.5
+      ],
+      "record": "maps.txt:751:door:grey_moors->grey_moor_barrows",
+      "reason": "Tower 3 door on the tower's west wall (about 94 m); pinned 4 m south to the tower's south ledge (85.8 m), the reachable ground at its foot."
+    },
+    {
+      "region": "grey_moors",
+      "tile": [
+        364,
+        241
+      ],
+      "point": [
+        342.5,
+        364.5
+      ],
+      "record": "maps.txt:752:return:grey_moor_barrows->grey_moors",
+      "reason": "Return of the Tower 3 door, inside the tower's box; pinned 4 m south to the tower's south ledge (85 m) beside the door's pin."
+    },
+    {
+      "region": "grey_moors",
+      "tile": [
+        376,
+        239
+      ],
+      "point": [
+        352.5,
+        364.5
+      ],
+      "record": "maps.txt:774:door:grey_moors->grey_moors_secrets (with maps.txt:794 return and interactives.txt:303 511 on the same tile)",
+      "reason": "Tower eyrie door and return stand inside Tower 3's box; pinned 4.5 m south to the tower's south ledge (88.4 m), the reachable ground at its foot."
+    },
+    {
+      "region": "grey_moors",
+      "tile": [
+        315,
+        217
+      ],
+      "point": [
+        359.5,
+        364.5
+      ],
+      "record": "maps.txt:777:door:grey_moors->grey_moors_secrets (with maps.txt:790 return and interactives.txt:306 514 on the same tile)",
+      "reason": "The wisp focus door stands on a 13-tile ledge at 101-103 m on Tower 3's east flank that no link reaches; pinned 12 m south to the tower's south ledge (89.5 m), the nearest reachable ground at the foot of that flank, clear of Shrine 2 and Tower 3."
+    },
+    {
+      "region": "amberwood",
+      "tile": [
+        252,
+        52
+      ],
+      "point": [
+        571.0,
+        686.5
+      ],
+      "record": "maps.txt:477:door:amberwood->amberwood_secrets",
+      "reason": "Door 477 (with its return maps.txt:492 and interactive 506, same authored tile) stands at (577.9, 693.0) on a 1.2-grade bank below Watchtower_2; the only reached ground within its 5 m budget lies inside Watchtower_2's box, so it is pinned 9 m down its own door road to the open bridge terrace at the foot of the bank."
+    },
+    {
+      "region": "verdant_stair",
+      "tile": [
+        292,
+        241
+      ],
+      "point": [
+        1237.5,
+        1022.5
+      ],
+      "record": "maps.txt:353:door:verdant_stair->verdant_stair_insides",
+      "reason": "Ridge shrine insides door stands on the summit shelf (43 m) that no served ground reaches: its only access, Landmark_Stair_summit_climb, has no walk deck over ground steeper than .65 and, like the huts and props on the shelf, is a temple-summit compound member no link may regrade. Pinned to the temple terrace at the foot of the shelf's west flank (34 m), 13.2 m west-south-west, outside the Great Temple and summit stair boxes."
+    },
+    {
+      "region": "verdant_stair",
+      "tile": [
+        290,
+        241
+      ],
+      "point": [
+        1235.5,
+        1022.5
+      ],
+      "record": "maps.txt:354:return:verdant_stair_insides->verdant_stair",
+      "reason": "Return of the ridge shrine insides door (maps.txt:353) on the same unreachable summit shelf; pinned 2 m west of the door's pin on the temple terrace at the foot of the west flank (34 m), 13.2 m from its entrance, keeping the original pair's 2 m spacing."
+    },
+    {
+      "region": "verdant_stair",
+      "tile": [
+        281,
+        267
+      ],
+      "point": [
+        1225.5,
+        990.5
+      ],
+      "record": "maps.txt:363:door:verdant_stair->verdant_stair_secrets",
+      "reason": "Quarry pit secret door, its return (maps.txt:376) and bound interactive share this tile on the summit shelf's north-west rim (45 m), a 15-tile island among temple-summit compound members. Pinned to the reached ground at the foot of the rim north of the Great Temple's terrace (32.6 m), 11.6 m west-south-west, 1 m outside the temple's box."
+    },
+    {
+      "region": "verdant_stair",
+      "tile": [
+        309,
+        281
+      ],
+      "point": [
+        1257.5,
+        976.5
+      ],
+      "record": "maps.txt:359:door:verdant_stair->verdant_stair_secrets",
+      "reason": "Culvert secret door, its return (maps.txt:383) and bound interactive share this tile, 0.2 m from Ruin_boundary_shrine_03 on the summit's north flank (27.5 m, grade above 1). Pinned to the reached river terrace at the foot of that flank (15 m), 8.9 m north-north-east, beside the Marchstone Hermit, where a culvert would outlet."
+    },
+    {
+      "region": "verdant_stair",
+      "tile": [
+        214,
+        106
+      ],
+      "point": [
+        1185.5,
+        1114.5
+      ],
+      "record": "maps.txt:362:door:verdant_stair->verdant_stair_secrets",
+      "reason": "East lookout secret door, its return (maps.txt:379) and bound interactive share this tile at the lookout butts on the steep slope south of Landmark_EastLookout (33.6 m), no walkable tile within 5 m. Pinned to the reached ground at the foot of that slope (20 m), 9.2 m north-east, outside the lookout's and the Upper Court arcade's boxes."
+    },
+    {
+      "region": "verdant_stair",
+      "tile": [
+        328,
+        234
+      ],
+      "point": [
+        1270.5,
+        1033.5
+      ],
+      "record": "maps.txt:364:door:verdant_stair->verdant_stair_secrets",
+      "reason": "Ridge reliquary secret door, its return (maps.txt:380) and bound interactive share this tile on the 20 m river face below the ridge shrine (31 m), a 1-tile ledge. Pinned to the reached riverside path at the foot of the face (13.7 m), 12.6 m south."
+    },
+    {
+      "region": "amethyst_barrens",
+      "tile": [
+        260,
+        329
+      ],
+      "point": [
+        1033.5,
+        243.5
+      ],
+      "record": "maps.txt:703:door:amethyst_barrens->amethyst_barrens_secrets",
+      "reason": "Massif reliquary secret door, its return (maps.txt:722) and bound interactive share this tile on a 6-tile ledge 7 m above the Field Station yard, 0-2 m from the massif crystal spires. Pinned to the yard below the ledge (17.2 m), in the passage east of Landmark_FieldStation_4 (0.8 m outside its box), 8.4 m south-south-east."
+    },
+    {
+      "region": "grey_moors",
+      "tile": [
+        244,
+        278
+      ],
+      "point": [
+        302.0,
+        300.0
+      ],
+      "record": "maps.txt:1177/1178/1188/1189/1199/1200 gauntlet returns; instances/grey_moors_gauntlet_low.def, _mid.def",
+      "reason": "the gauntlet entrance stands on a 1-4 m strip at 121-125 m on the barrow court east face; its arrival is pinned to the reached court below"
+    },
+    {
+      "region": "grey_moors",
+      "tile": [
+        243,
+        276
+      ],
+      "point": [
+        304.0,
+        302.5
+      ],
+      "record": "npcs.txt:318:Widow Carrow",
+      "reason": "the gauntlet keeper stands beside the pinned gauntlet arrival on the reached court below the entrance strip"
+    }
+  ],
+  "access_decks": [
+    {
+      "name": "Walk_Westhaven_LampCausewayLink",
+      "region": "westhaven",
+      "points": [
+        [
+          306.3,
+          1156.0
+        ],
+        [
+          311.3,
+          1138.0
+        ]
+      ],
+      "heights": [
+        4.33,
+        3.58
+      ],
+      "width": 3.0,
+      "note": "Lamp Rock causeway end joined to the yard bridge over the 12-13 m of harbour the roads pass left open"
+    },
+    {
+      "name": "Walk_Westhaven_FerryLandingStair",
+      "region": "westhaven",
+      "points": [
+        [
+          163.2,
+          1183.6
+        ],
+        [
+          163.4,
+          1186.0
+        ],
+        [
+          164.6,
+          1207.0
+        ],
+        [
+          164.56,
+          1207.69
+        ],
+        [
+          164.36,
+          1208.36
+        ],
+        [
+          164.01,
+          1208.96
+        ],
+        [
+          163.53,
+          1209.47
+        ],
+        [
+          162.95,
+          1209.85
+        ],
+        [
+          162.3,
+          1210.09
+        ],
+        [
+          161.6,
+          1210.17
+        ],
+        [
+          158.8,
+          1210.4
+        ]
+      ],
+      "heights": [
+        1.07,
+        1.07,
+        10.11,
+        10.22,
+        10.32,
+        10.43,
+        10.53,
+        10.64,
+        10.74,
+        10.85,
+        11.56
+      ],
+      "width": 2.5,
+      "note": "Crownwater ferry landing: from the ferry road harbour deck south of the landing shelf, standing off the Sea Arch island east face, turning onto its rim"
     }
   ]
 }

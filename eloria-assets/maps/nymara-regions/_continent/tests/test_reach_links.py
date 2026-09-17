@@ -73,6 +73,15 @@ class ApplyTests(unittest.TestCase):
         w.plan = {'reach_links': [gentle]}
         R.apply_reach_links(w, content)
 
+    def test_a_tree_member_is_judged_at_its_trunk_not_its_canopy(self):
+        # A giant tree whose canopy box spans the link but whose trunk stands 20 m clear of it.
+        tree = {'region': 'test', 'node': 'Giant', 'kind': 'tree', 'assembly': 'test.village',
+                'low': [30., 0., 20.], 'high': [70., 30., 60.], 'sourcePivot': [0., 0., 0.], 'shift': [50., 0., 62.]}
+        R.apply_reach_links(world({'reach_links': [RAMP]}), types.SimpleNamespace(objects=[tree]))
+        standing = dict(tree, shift=[50., 0., 40.])
+        with self.assertRaisesRegex(ValueError, 'rigid compound members'):
+            R.apply_reach_links(world({'reach_links': [RAMP]}), types.SimpleNamespace(objects=[standing]))
+
     def test_invalid_links_are_refused_before_the_ground_changes(self):
         w = world({'reach_links': [dict(RAMP, op='smooth')]})
         before = w.height.copy()
