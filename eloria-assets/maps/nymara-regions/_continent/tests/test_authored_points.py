@@ -29,6 +29,24 @@ class AuthoredPointTests(unittest.TestCase):
         self.assertEqual(float(content.authored_server_points[('west', (120, 88))][1]), 7.5)
         self.assertEqual(w.authored_points['points'][0]['point'], [40., 7.5, 60.])
 
+    def test_a_point_may_keep_its_roads_on_the_entrance(self):
+        import content as CT
+        content = types.SimpleNamespace()
+        keep = dict(ENTRY, roads='entrance')
+        other = dict(ENTRY, tile=[121, 88], point=[42., 60.])
+        w = world({'regions': [{'id': 'west'}, {'id': 'east'}], 'authored_points': [keep, other]})
+        report = A.prepare_authored_points(w, content)
+        self.assertEqual([row['roads'] for row in report['points']], ['entrance', 'pin'])
+        self.assertEqual(content.entrance_road_tiles, {('west', (120, 88))})
+        # The contracts and every other reader get the pin; a road builder gets the entrance for "entrance" only.
+        content.templates = {'west': {'coordinateTransform': {'serverOrigin': [0, 200]}}}
+        content.mapped_point = lambda region, point, node, landmark: np.array([point[0] + 1000., 0., point[2]])
+        np.testing.assert_array_equal(CT.Content.mapped_server_point(content, 'west', [120, 88]), [40., 5., 60.])
+        np.testing.assert_array_equal(CT.Content.mapped_server_point(content, 'west', [120, 88], roads=True), [1120.5, 0., 111.5])
+        np.testing.assert_array_equal(CT.Content.mapped_server_point(content, 'west', [121, 88], roads=True), [42., 5., 60.])
+        problems = A.validate_authored_points({'authored_points': [dict(ENTRY, roads='door')]})
+        self.assertTrue(any('roads must be one of' in p for p in problems), problems)
+
     def test_no_points_change_nothing(self):
         content = types.SimpleNamespace()
         self.assertEqual(A.prepare_authored_points(world({}), content), {'points': []})

@@ -245,7 +245,7 @@ def prepare(library,output):
         if source in world.ids and target in world.ids:continue
         for region,tile in ((source,fields[start:start+2]),(target,fields[start+3:start+5])):
             if region not in world.ids:continue
-            point=content.mapped_server_point(region,list(map(int,tile)))[[0,2]]
+            point=content.mapped_server_point(region,list(map(int,tile)),roads=True)[[0,2]]
             if int(world.owner_at(*point))==world.ids.index(region):destinations[region].append((number,point,source,target))
     for region,entries in destinations.items():
         seen=[]

@@ -579,6 +579,11 @@ server profile (the contracts report's `oldTile`) and `point` is open ground bes
 or the composition stops), exactly as the Four Gates Sage records are pinned; the placer still resolves each pin to
 standing ground within the record's own displacement budget, and `refresh_authored_point_heights` reads the heights
 from the finished ground after the reach links. The composition records them (`composition.json` `authoredPoints`).
+The door and discovery roads are routed to a pin by default. A pin with `"roads": "entrance"` keeps them on the
+record's own entrance: a road re-routed to a pin re-settles its territory's road earthworks, which moves the ground
+under reach links designed on the old ground (routed to its pin, the Grey Moors undercut mouth lost its discovery
+trail; the territory's roads settled up to 6 m differently as far as 150 m away and 49 barrow-country records were
+cut off).
 
 ## Build progress and composition freshness
 

@@ -14,7 +14,7 @@ import world_layout as W
 class FakeContent:
     def __init__(self,center):
         self.center=np.asarray(center,float)
-    def mapped_server_point(self,region,tile):
+    def mapped_server_point(self,region,tile,roads=False):
         # A tile is a metre east and a metre south of the territory centre per unit.
         return np.array([self.center[0]+tile[0],0.,self.center[1]-tile[1]])
 

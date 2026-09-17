@@ -8,8 +8,12 @@ Gates Sage records are pinned (four_gates_sage.py): the contract placer still re
 ground within the record's own displacement budget, and the door roads are routed to it.
 
 Each entry: {"region", "tile": [x, y] (the record's authored server tile), "point": [x, z] (continent metres),
-"record" (the contract record it serves, for the report), "reason"}. A point must stand inside its territory on dry
-ground; its height is read from the finished ground after the reach links.
+"record" (the contract record it serves, for the report), "reason"}, and optionally "roads": "pin" (the default: the
+door and discovery roads serve the point) or "entrance" (the roads keep serving the record's own entrance; only the
+served standing point moves). A road re-routed to a pin re-settles its territory's road earthworks, which can move
+the ground far from the pin under links designed for the old ground; "entrance" leaves the roads, and so the ground,
+exactly as they were. A point must stand inside its territory on dry ground; its height is read from the finished
+ground after the reach links.
 """
 from __future__ import annotations
 
@@ -17,6 +21,7 @@ import numpy as np
 
 PLAN_KEY = 'authored_points'
 MINIMUM_DRY_METRES = .8
+ROAD_CHOICES = ('pin', 'entrance')
 
 
 def entries(plan):
@@ -51,6 +56,8 @@ def validate_authored_points(plan):
         seen.add(key)
         if not isinstance(entry.get('reason'), str) or not entry['reason'].strip():
             problems.append(f'{where}: say why the record moves ("reason")')
+        if entry.get('roads', 'pin') not in ROAD_CHOICES:
+            problems.append(f'{where}: roads must be one of {list(ROAD_CHOICES)}, not {entry.get("roads")!r}')
     return problems
 
 
@@ -61,6 +68,8 @@ def prepare_authored_points(world, content):
         raise ValueError('Authored points: ' + '; '.join(problems))
     if not hasattr(content, 'authored_server_points'):
         content.authored_server_points = {}
+    if not hasattr(content, 'entrance_road_tiles'):
+        content.entrance_road_tiles = set()
     report = {'points': []}
     for entry in entries(world.plan):
         region, tile = entry['region'], tuple(entry['tile'])
@@ -74,7 +83,10 @@ def prepare_authored_points(world, content):
             raise ValueError(f'{region}:{list(tile)}: authored point ({x}, {z}) is not dry ground ({height:.2f} m)')
         point = np.array([x, height, z])
         content.authored_server_points[(region, tile)] = point
-        report['points'].append({'region': region, 'tile': list(tile), 'point': point.tolist(),
+        roads = entry.get('roads', 'pin')
+        if roads == 'entrance':
+            content.entrance_road_tiles.add((region, tile))
+        report['points'].append({'region': region, 'tile': list(tile), 'point': point.tolist(), 'roads': roads,
                                  'record': entry.get('record'), 'reason': entry['reason']})
     world.authored_points = report
     return report

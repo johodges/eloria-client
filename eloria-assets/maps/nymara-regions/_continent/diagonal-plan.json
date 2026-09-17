@@ -4835,7 +4835,8 @@
         333.5
       ],
       "record": "maps.txt:775:door:grey_moors->amberwood_secrets",
-      "reason": "The undercut mouth door 775, its return maps.txt:778 and interactive 512 share authored tile [342, 332]: the mouth stands in a 4-tile pocket at 147 m on a 45-degree face below Tower 4 that the seventeenth landform left unreachable (the sixteenth seated it in place). Round-four trail designs failed: the barrow lowland's 8 m step to the Barrow 4 terrace has 7-9 m of room between Barrow 1, the barrow well and the lowland's only connection strip, and the 15 m face above has no bench to turn on. Relocation found no bank nearer than 38 m. Pinned at the foot of the slope straight below the mouth (33.6 m, 28 m lower), where its discovery trail already starts, 7 m east of the barrow well door."
+      "reason": "The undercut mouth door 775, its return maps.txt:778 and interactive 512 share authored tile [342, 332]: the mouth stands in a 4-tile pocket at 147 m on a 45-degree face below Tower 4 that the seventeenth landform left unreachable (the sixteenth seated it in place). Round-four trail designs failed: the barrow lowland's 8 m step to the Barrow 4 terrace has 7-9 m of room between Barrow 1, the barrow well and the lowland's only connection strip, and the 15 m face above has no bench to turn on. Relocation found no bank nearer than 38 m. Pinned at the foot of the slope straight below the mouth (33.6 m, 28 m lower), where its discovery trail already starts, 7 m east of the barrow well door. Its roads stay on the entrance (\"roads\": \"entrance\"): routed to this pin the discovery trail vanished and the Grey Moors roads settled differently, cutting 49 barrow-country records off (bake 9).",
+      "roads": "entrance"
     }
   ],
   "access_decks": [

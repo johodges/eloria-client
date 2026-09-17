@@ -830,10 +830,14 @@ class Content:
             x,z=hub+(np.array([x,z])-hub)*.90
         return np.array([x,float(self.world.height_at(x,z)),z])
 
-    def mapped_server_point(self,region,tile):
-        """Use the authoritative tile and its linked architectural transform."""
+    def mapped_server_point(self,region,tile,roads=False):
+        """Use the authoritative tile and its linked architectural transform.
+
+        A pinned tile answers with its pin, except to a road builder (``roads``) when the plan's authored point keeps
+        its roads on the entrance (authored_points "roads": "entrance")."""
         authored=getattr(self,'authored_server_points',{}).get((region,tuple(tile)))
-        if authored is not None:return np.asarray(authored,float).copy()
+        if authored is not None and not (roads and (region,tuple(tile)) in getattr(self,'entrance_road_tiles',())):
+            return np.asarray(authored,float).copy()
         entries=[]
         def visit(value):
             if isinstance(value,list):

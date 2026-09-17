@@ -166,7 +166,7 @@ def prepare_resource_trails(world, content, profile):
         candidates = []
         for entry in sites.get(region, []):
             label, tile, kind = entry[0], entry[1], site_kind(entry)
-            point = np.asarray(content.mapped_server_point(region, tile), float)[[0, 2]]
+            point = np.asarray(content.mapped_server_point(region, tile, roads=True), float)[[0, 2]]
             if int(world.owner_at(float(point[0]), float(point[1]))) != index:
                 continue
             distance = float(all_tree.query(point)[0]) if all_tree is not None else np.inf
