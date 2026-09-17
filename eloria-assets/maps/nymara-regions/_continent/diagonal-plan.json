@@ -4851,6 +4851,20 @@
       "record": "spawn_groups/invasion/invasion_nymara.def",
       "roads": "entrance",
       "reason": "One of five invasion spawn points of a single wave cluster, authored within 5 tiles of each other ([401, 401], [403, 403], [405, 401], [403, 406], [406, 404]) and served together on one tile by the sixteenth publication. On the seventeenth composition this point follows a different retained anchor than the other four and lands 169 m north-east of them (expected (581.5, 492.9), beyond its 80 m budget of the cluster), so the placement split the shared tile, which the publication rebase keyed by served tile cannot express. Pinned with its cluster on the tile the other four share."
+    },
+    {
+      "region": "whitehorn_range",
+      "tile": [
+        372,
+        296
+      ],
+      "point": [
+        536.5,
+        387.5
+      ],
+      "record": "maps.txt:516:return:whitehorn_glacier_temple->whitehorn_range",
+      "roads": "entrance",
+      "reason": "Return of glacier temple door maps.txt:515, authored 2 tiles west of its door. The owner's object edit moved Landmark_shrine_02 (with the shrine school) 286 m south; the door is linked to the shrine and followed it to (538.5, 386.5), but the return is not linked and stayed at the old site, 31.8 m from the mine portal, so leaving the temple put the player 288 tiles from the door they entered (the live fixture audit refused the round trip). Pinned beside the moved door at the offset the other temple returns keep (2 tiles west, 1 north); roads stay on the entrance so the road network is unchanged."
     }
   ],
   "access_decks": [
