@@ -356,6 +356,20 @@ def site_span_cells(world,site,road,landing):
     return cells&road
 
 
+def landing_cut(mask,cut,dry_cells):
+    """The cells one landing trim removes from a deck: its lifted cells and every cell they part from the water.
+
+    A landing ends at its first lifted cell. Cells beyond it that no longer share a cell edge, through the rest of
+    the deck, with a cell over the water (one with a vertex that is not dry) would stand as a floor of their own,
+    joined to the span through a cell corner at most, which nobody walks: they go with the cut, so a trim never
+    leaves a deck in pieces. ``mask``, ``cut`` and ``dry_cells`` are the component's cell grids.
+    """
+    kept=mask&~cut
+    parts,_=label(kept,structure=CROSS)
+    wet=np.unique(parts[kept&~dry_cells])
+    return mask&~np.isin(parts,wet[wet>0])
+
+
 def common_surface(world, *, water_fields=None, maximum_extension=None):
     """One deck field over every bridge the roads need, clipped later to the road capsule union.
 
@@ -394,8 +408,9 @@ def common_surface(world, *, water_fields=None, maximum_extension=None):
     stray_river=river&wet&~spanned
     final=np.full((road.shape[0]+1,road.shape[1]+1),np.nan)
     # A deck lifts at most deck_lift_metres over dry ground: a landing cell the solved deck would carry higher over
-    # its bank is left to the graded road, and the deck is solved again without it (a steep bank ends the landing).
-    trimmed=0
+    # its bank is left to the graded road, and the deck is solved again without it (a steep bank ends the landing,
+    # and the landing cells beyond it go too: landing_cut).
+    trimmed=0;cut_off=0;cut_banks=[]
     for attempt in range(TRIM_PASSES+1):
         final.fill(np.nan)
         labels,count=label(cells,structure=np.ones((3,3)))
@@ -418,7 +433,13 @@ def common_surface(world, *, water_fields=None, maximum_extension=None):
                 touching=lifted[:-1,:-1]|lifted[1:,:-1]|lifted[:-1,1:]|lifted[1:,1:]
                 cut=mask&corners&touching
                 if cut.any() and (mask&~cut&~corners).any():
-                    view=trim[sl];view|=cut
+                    removed=landing_cut(mask,cut,corners)
+                    view=trim[sl];view|=removed
+                    beyond=removed&~cut
+                    if beyond.any():
+                        cut_off+=int(beyond.sum())
+                        rr,cc=np.nonzero(cut&binary_dilation(beyond,structure=CROSS))
+                        if len(rr):cut_banks.append([round(float(world.x0+(ix0+cc.mean()+.5)*CELL),1),round(float(world.z0+(iz0+rr.mean()+.5)*CELL),1)])
             bank=frontier[iz0:iz1+1,ix0:ix1+1]&active
             error=float(np.max(deck[bank]-bed[bank],initial=0))
             if bank.any() and error>=maximum_bank_error:
@@ -448,7 +469,7 @@ def common_surface(world, *, water_fields=None, maximum_extension=None):
             'wetCells':int(wet.sum()),'siteCells':int(spanned.sum()),'looseWetCells':int(loose.sum()),
             'riverWaterOutsideSites':{'cells':int(stray_river.sum()),'at':stray},
             'maximumBankError':maximum_bank_error,'worstBank':worst_bank,'deckLandingMetres':landing,'deckLiftMetres':lift_limit,
-            'trimmedLandingCells':trimmed,'decks':lift_reports}
+            'trimmedLandingCells':trimmed,'cutOffLandingCells':cut_off,'cutOffLandingBanks':cut_banks,'decks':lift_reports}
 
 
 
@@ -749,6 +770,7 @@ def build_bridges(world,path, *, water_fields=None):
         'visibleTriangles':len(world.bridge_triangles),'wetCells':field['wetCells'],'siteCells':field['siteCells'],'looseWetCells':field['looseWetCells'],
         'riverWaterOutsideSites':field['riverWaterOutsideSites'],'decks':field['decks'],
         'deckLandingMetres':field['deckLandingMetres'],'deckLiftMetres':field['deckLiftMetres'],'trimmedLandingCells':field['trimmedLandingCells'],
+        'cutOffLandingCells':field['cutOffLandingCells'],'cutOffLandingBanks':field['cutOffLandingBanks'],
         'maximumBankErrorMetres':field['maximumBankError'],'worstBank':field['worstBank'],'maximumGrade':GRADE,
         'outlineMaximumInsetFraction':1-math.cos(math.pi/(2*CAP_ARC_STEPS)),
         'precisionCleanupAreaSquareMetres':sum(c.get('precisionCleanupArea',0) for c in field['components']),

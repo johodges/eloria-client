@@ -6,6 +6,7 @@ import tempfile
 import unittest
 
 import numpy as np
+from scipy.ndimage import label
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import bridge_export as B
@@ -87,6 +88,33 @@ class SiteDeckTests(unittest.TestCase):
         self.assertGreaterEqual(columns.min(), 12); self.assertLessEqual(columns.max() + 1, 36)
         self.assertGreaterEqual(field['decks'][0]['component'], 500)
         self.assertGreater(field['riverWaterOutsideSites']['cells'], 0)
+
+    def test_a_landing_trim_never_leaves_a_deck_in_pieces(self):
+        # The east bank's first dry metre lies at the water line and the bank then rises 2 m in a metre: the deck,
+        # held over the water, lifts about 1.5 m over that metre, so the trim cuts the landing's first dry column
+        # across the whole road. The landing cells beyond the cut would be a floor of their own (the Amberwater
+        # crossing at the Amberwood hub was split [104, 36] this way): they go with the cut, and the report says
+        # where a bank ended a landing.
+        w = crossing()
+        w.height_at = lambda x, z: np.select([(np.asarray(x) >= 18) & (np.asarray(x) <= 30), (np.asarray(x) > 30) & (np.asarray(x) < 32)],
+                                             [-2., 0.], 2.) + np.asarray(z) * 0
+        field = B.common_surface(w, water_fields=water)
+        self.assertEqual([d['sites'] for d in field['decks']], [[4]])
+        _, pieces = label(field['mask'], structure=B.CROSS)
+        self.assertEqual(pieces, 1)
+        self.assertFalse(field['mask'][:, 31:].any())                  # nothing of the east landing beyond its cut
+        self.assertTrue(field['mask'][:, 12:18].any())                 # the west landing, which fits, stays
+        self.assertGreater(field['cutOffLandingCells'], 0)
+        self.assertTrue(any(abs(x - 31.5) <= 1 and abs(z - 20) <= 2 for x, z in field['cutOffLandingBanks']))
+
+    def test_a_landing_cut_keeps_every_piece_still_joined_to_the_water(self):
+        mask = np.ones((3, 6), bool)
+        dry = np.zeros((3, 6), bool); dry[:, 2:] = True               # columns 0-1 stand over the water
+        cut = np.zeros((3, 6), bool); cut[:, 3] = True                # a full-width cut in the landing
+        removed = B.landing_cut(mask, cut, dry)
+        self.assertTrue(removed[:, 3:].all()); self.assertFalse(removed[:, :3].any())
+        cut[:, 3] = False; cut[0, 3] = True                           # a partial cut parts nothing
+        self.assertEqual(B.landing_cut(mask, cut, dry).tolist(), cut.tolist())
 
     def test_the_retired_apron_keys_are_refused(self):
         for key in ('bridge_approach_aprons', 'bridge_approach_connections'):
