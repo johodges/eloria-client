@@ -193,8 +193,13 @@ func _state_and_main() -> void:
 		"the current region's picture is installed")
 	if picture is MeshInstance3D:
 		var aabb: AABB = (picture as MeshInstance3D).mesh.get_aabb()
-		_expect(_spans(aabb, Rect2(-224.0, -246.0, 456.0, 592.0), -24.0),
-			"the picture spans the region's minimap frame (%s)" % aabb)
+		# The published cartography crops the picture: frame it as the neighbour's is framed below, inside the minimap.
+		var region: Dictionary = (main.get("cartography_regions") as Array)[main.call("_region_index_for_map", "mirrorhold")] as Dictionary
+		var extent: Rect2 = MapPicture.extent(manifest.data.get("minimap", {}) as Dictionary, region.get("tabMap", {}) as Dictionary)
+		_expect(extent.size.x > 0.0 and Rect2(-224.0, -246.0, 456.0, 592.0).encloses(extent),
+			"the region's cartography frames its picture inside its minimap (%s)" % extent)
+		_expect(_spans(aabb, extent, -24.0),
+			"the picture spans the region's framed minimap (%s)" % aabb)
 		_expect((picture as MeshInstance3D).layers == main.get("MAP_PICTURE_LAYER"), "the picture is on the map layer")
 	_expect(map_camera.cull_mask == main.get("MAP_PICTURE_LAYER") and full_map_camera.cull_mask == main.get("MAP_PICTURE_LAYER"),
 		"the map cameras render the picture layer alone")
