@@ -2201,8 +2201,8 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 377673,
-    "walkableFraction": 0.267598,
+    "walkableCells": 382528,
+    "walkableFraction": 0.271038,
     "sourceGlbSha256": "d17cd9d9923fd03f84ba73635123cdb285de1a394a03667895bda5df393a7063",
     "exportStatistics": {
       "walkMeshes": 8,
@@ -2212,7 +2212,8 @@
       "steepCells": 68472,
       "waterCells": 35035,
       "structuralCells": 21862,
-      "thresholdHaloCells": 240
+      "thresholdHaloCells": 240,
+      "seamCollarCells": 4855
     }
   },
   "navigation": {
@@ -4323,7 +4324,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:5f8e37c74bd37938843a8ef1a63139a72d280c016969ddd2d53e86f1ce521ecd",
+  "terrainRevision": "diagonal-spine-v1:e92ac2d615a9042d18c9e07210e6fe62522992b438d5027a7d073903463561f8",
   "externalResources": {
     "../nymara-regions/_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../nymara-regions/_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -5581,12 +5582,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:5f8e37c74bd37938843a8ef1a63139a72d280c016969ddd2d53e86f1ce521ecd"
+    "terrainRevision": "diagonal-spine-v1:e92ac2d615a9042d18c9e07210e6fe62522992b438d5027a7d073903463561f8"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
     "masterSha256": "461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073",
-    "collisionSha256": "9ac0b7e9b9a18d843fecf0d17818e0b78dcba016e1f436f6a81bd25bc1e72ac7",
-    "terrainRevision": "diagonal-spine-v1:5f8e37c74bd37938843a8ef1a63139a72d280c016969ddd2d53e86f1ce521ecd"
+    "collisionSha256": "52a39018601eb0ec5a41602c1ffc7231c867f05d05dd91d8a1cebd83e5fa8084",
+    "terrainRevision": "diagonal-spine-v1:e92ac2d615a9042d18c9e07210e6fe62522992b438d5027a7d073903463561f8"
   }
 }

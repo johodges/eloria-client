@@ -16906,14 +16906,14 @@
         64
       ],
       "tile": [
-        374,
+        373,
         281
       ],
       "expectedTile": [
         373.66,
         280.755
       ],
-      "displacementMetres": 0.419,
+      "displacementMetres": 0.704,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -77792,14 +77792,14 @@
         358
       ],
       "tile": [
-        59,
-        463
+        60,
+        461
       ],
       "expectedTile": [
         58.64,
         462.87
       ],
-      "displacementMetres": 0.382,
+      "displacementMetres": 2.312,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -80474,10 +80474,10 @@
     "whitehorn_range": {
       "stageFactor": 24,
       "stageMetres": 4.800000000000001,
-      "walkableServerTiles": 103713,
-      "largestComponentTiles": 96495,
+      "walkableServerTiles": 104157,
+      "largestComponentTiles": 96890,
       "reachableByStage": {
-        "24": 96495
+        "24": 96890
       },
       "crossings": {
         "declared": [
@@ -80540,7 +80540,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 96495,
+      "hubReachableTiles": 96890,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80549,22 +80549,22 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 96486,
+      "hubReachableAfterStorageTiles": 96881,
       "updatedAuthoredMarkers": 75,
-      "terrainRevision": "diagonal-spine-v1:3833ba7da3e6f9d1b65371a0cb33b88b117235d91049d84b6e2f2943c0c4818d",
+      "terrainRevision": "diagonal-spine-v1:7c4a45f8ebe5857e0add4755f2e0b5885a8f590669ad8442dceaf37076451b57",
       "servedTileContinuity": {
-        "keptServedTile": 280,
+        "keptServedTile": 281,
         "movedTogether": 0,
-        "movedFromServedTile": 1
+        "movedFromServedTile": 0
       }
     },
     "grey_moors": {
       "stageFactor": 13,
       "stageMetres": 2.6,
-      "walkableServerTiles": 115356,
-      "largestComponentTiles": 114087,
+      "walkableServerTiles": 115899,
+      "largestComponentTiles": 114635,
       "reachableByStage": {
-        "13": 114087
+        "13": 114635
       },
       "crossings": {
         "declared": [
@@ -80609,7 +80609,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 114087,
+      "hubReachableTiles": 114635,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80618,9 +80618,9 @@
         ],
         "displacementMetres": 6.519
       },
-      "hubReachableAfterStorageTiles": 114078,
+      "hubReachableAfterStorageTiles": 114626,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:c091ba09d36bdd523b46929efb7028e3d9bd0a81c43e4e1157b8eff4df3c30a3",
+      "terrainRevision": "diagonal-spine-v1:406f90ddf3bf916accc1f06379d4abb6ba5efd07628cd072a7015ea33ad0aa9a",
       "servedTileContinuity": {
         "keptServedTile": 291,
         "movedTogether": 0,
@@ -80630,10 +80630,10 @@
     "amberwood": {
       "stageFactor": 9,
       "stageMetres": 1.8,
-      "walkableServerTiles": 54673,
-      "largestComponentTiles": 51088,
+      "walkableServerTiles": 55453,
+      "largestComponentTiles": 51775,
       "reachableByStage": {
-        "9": 51088
+        "9": 51775
       },
       "crossings": {
         "declared": [
@@ -80696,7 +80696,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 51088,
+      "hubReachableTiles": 51775,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80705,9 +80705,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 51079,
+      "hubReachableAfterStorageTiles": 51766,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:296375fb366faf1af4a15fa435fda2eb32af40bf7e45d59a39802071aa9fa85f",
+      "terrainRevision": "diagonal-spine-v1:41f124232e1c4fcbb84ea847963bfde43d780e6ba079ef04375371cb09631c47",
       "servedTileContinuity": {
         "keptServedTile": 307,
         "movedTogether": 0,
@@ -80717,10 +80717,10 @@
     "amethyst_barrens": {
       "stageFactor": 8,
       "stageMetres": 1.6,
-      "walkableServerTiles": 129190,
-      "largestComponentTiles": 127892,
+      "walkableServerTiles": 130317,
+      "largestComponentTiles": 129019,
       "reachableByStage": {
-        "8": 127892
+        "8": 129019
       },
       "crossings": {
         "declared": [
@@ -80747,7 +80747,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 127892,
+      "hubReachableTiles": 129019,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80756,9 +80756,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 127883,
+      "hubReachableAfterStorageTiles": 129010,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:d1fbb7661a36bde1e34cb910e8743024b007bb9f119d6ece9abd168274d4b7cf",
+      "terrainRevision": "diagonal-spine-v1:f2705fa869350e5ab2c5fee28de8c4d6702df14709fbc65a9a08478fe4087eac",
       "servedTileContinuity": {
         "keptServedTile": 269,
         "movedTogether": 0,
@@ -80768,10 +80768,10 @@
     "mirrorhold": {
       "stageFactor": 15,
       "stageMetres": 3.0,
-      "walkableServerTiles": 81440,
-      "largestComponentTiles": 65874,
+      "walkableServerTiles": 82515,
+      "largestComponentTiles": 66553,
       "reachableByStage": {
-        "15": 65874
+        "15": 66553
       },
       "crossings": {
         "declared": [
@@ -80798,7 +80798,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 65874,
+      "hubReachableTiles": 66553,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80807,9 +80807,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 65865,
+      "hubReachableAfterStorageTiles": 66544,
       "updatedAuthoredMarkers": 3,
-      "terrainRevision": "diagonal-spine-v1:7f4b1c719b7879307060f03b889756b849dfdcbc83569886519f892172296803",
+      "terrainRevision": "diagonal-spine-v1:75780fbd22f13ee369743e6ff5daed94434cf7841495954553efd007f7d3d042",
       "servedTileContinuity": {
         "keptServedTile": 222,
         "movedTogether": 0,
@@ -80819,10 +80819,10 @@
     "sunmane_steppe": {
       "stageFactor": 11,
       "stageMetres": 2.2,
-      "walkableServerTiles": 169247,
-      "largestComponentTiles": 168345,
+      "walkableServerTiles": 170436,
+      "largestComponentTiles": 169465,
       "reachableByStage": {
-        "11": 168345
+        "11": 169465
       },
       "crossings": {
         "declared": [
@@ -80849,7 +80849,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 168345,
+      "hubReachableTiles": 169465,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80858,9 +80858,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 168326,
+      "hubReachableAfterStorageTiles": 169446,
       "updatedAuthoredMarkers": 40,
-      "terrainRevision": "diagonal-spine-v1:e981bd6276f30dab1ce92d9977a1dbb2017cb60e37b3041fdd30dc9ede242f77",
+      "terrainRevision": "diagonal-spine-v1:d9aafa7be812d2d460ca8bbf57ae3edeb4e2a3227be45907ad0c9e7cec757123",
       "servedTileContinuity": {
         "keptServedTile": 257,
         "movedTogether": 0,
@@ -80868,13 +80868,12 @@
       }
     },
     "four_gates": {
-      "stageFactor": 3,
-      "stageMetres": 0.6000000000000001,
-      "walkableServerTiles": 93042,
-      "largestComponentTiles": 82629,
+      "stageFactor": 4,
+      "stageMetres": 0.8,
+      "walkableServerTiles": 94245,
+      "largestComponentTiles": 83369,
       "reachableByStage": {
-        "3": 82629,
-        "4": 82629
+        "4": 83369
       },
       "crossings": {
         "declared": [
@@ -80911,7 +80910,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 82629,
+      "hubReachableTiles": 83369,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80920,9 +80919,9 @@
         ],
         "displacementMetres": 1.581
       },
-      "hubReachableAfterStorageTiles": 82620,
+      "hubReachableAfterStorageTiles": 83360,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:5f8e37c74bd37938843a8ef1a63139a72d280c016969ddd2d53e86f1ce521ecd",
+      "terrainRevision": "diagonal-spine-v1:e92ac2d615a9042d18c9e07210e6fe62522992b438d5027a7d073903463561f8",
       "servedTileContinuity": {
         "keptServedTile": 225,
         "movedTogether": 0,
@@ -80932,10 +80931,10 @@
     "westhaven": {
       "stageFactor": 4,
       "stageMetres": 0.8,
-      "walkableServerTiles": 94408,
-      "largestComponentTiles": 91224,
+      "walkableServerTiles": 95088,
+      "largestComponentTiles": 91886,
       "reachableByStage": {
-        "4": 91224
+        "4": 91886
       },
       "crossings": {
         "declared": [
@@ -81013,7 +81012,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 91224,
+      "hubReachableTiles": 91886,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81022,9 +81021,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 91215,
+      "hubReachableAfterStorageTiles": 91877,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:67424b7ae410eab591d17b639e460509ca5e776abb8638965c188d3a199efd40",
+      "terrainRevision": "diagonal-spine-v1:98f1ea674fb7c220e8565535b20549e0c512cfd3069ba6905a9bf03458390dac",
       "servedTileContinuity": {
         "keptServedTile": 238,
         "movedTogether": 0,
@@ -81034,11 +81033,11 @@
     "manymouth_delta": {
       "stageFactor": 3,
       "stageMetres": 0.6000000000000001,
-      "walkableServerTiles": 107355,
-      "largestComponentTiles": 105512,
+      "walkableServerTiles": 108085,
+      "largestComponentTiles": 106127,
       "reachableByStage": {
-        "3": 105512,
-        "4": 105540
+        "3": 106127,
+        "4": 106155
       },
       "crossings": {
         "declared": [
@@ -81157,7 +81156,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 105512,
+      "hubReachableTiles": 106127,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81166,9 +81165,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 105503,
+      "hubReachableAfterStorageTiles": 106118,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:a2fb84dffe46c3b6fe90cd177cdcd43e784550ea7f47b47f37353fd70fba004a",
+      "terrainRevision": "diagonal-spine-v1:94dea1f2d5669f40758ecd969298d99600f6f4fa33c39377e4de9071f97dfc95",
       "servedTileContinuity": {
         "keptServedTile": 262,
         "movedTogether": 0,
@@ -81391,10 +81390,10 @@
     "verdant_stair": {
       "stageFactor": 8,
       "stageMetres": 1.6,
-      "walkableServerTiles": 175661,
-      "largestComponentTiles": 172533,
+      "walkableServerTiles": 177211,
+      "largestComponentTiles": 174082,
       "reachableByStage": {
-        "8": 172533
+        "8": 174082
       },
       "crossings": {
         "declared": [
@@ -81439,7 +81438,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 172533,
+      "hubReachableTiles": 174082,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81448,9 +81447,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 172524,
+      "hubReachableAfterStorageTiles": 174073,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:d731537ae826e0c7d042db5b08a33a65b38a922d8445cee8231e8e372ac7736f",
+      "terrainRevision": "diagonal-spine-v1:435fb2ac69266c2231c0ff8a1aedbc324c6c2ee0a766e07e40a2c8de38c0d92c",
       "servedTileContinuity": {
         "keptServedTile": 237,
         "movedTogether": 0,
@@ -81460,10 +81459,10 @@
     "ssarathi_ruins": {
       "stageFactor": 5,
       "stageMetres": 1.0,
-      "walkableServerTiles": 148908,
-      "largestComponentTiles": 135664,
+      "walkableServerTiles": 149420,
+      "largestComponentTiles": 136160,
       "reachableByStage": {
-        "5": 135664
+        "5": 136160
       },
       "crossings": {
         "declared": [
@@ -81582,7 +81581,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 135664,
+      "hubReachableTiles": 136160,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81591,9 +81590,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 135655,
+      "hubReachableAfterStorageTiles": 136151,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:90b50d8cc2473ddf51a390e77e382b8412dcc6d5fe30cca48f81b18bf1ced71f",
+      "terrainRevision": "diagonal-spine-v1:8b5b1868ae1e8be1807b78592d4eae5b26ed2559dc486bcf69cdee9fcc5b43b5",
       "servedTileContinuity": {
         "keptServedTile": 224,
         "movedTogether": 0,
@@ -81602,9 +81601,9 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "21b23141424366a6f03e738da9b049d987fcc7ba2a7c97d686dbb2db1d8dc022",
+    "client_content_manifest.json": "6543482bc7d6fc0f46ad7e7c2b2d16fe560b715e337a14d60107d33cc2ce6ff0",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
-    "harvesting.txt": "c42e65143c58027d75b63e997ab28c6b44e9325cde53a1ec626214c6a2104456",
+    "harvesting.txt": "5ec55d54f53c8d9475490efdd46cccc2a3ec6525e82810997a0a9f83f35fa5b3",
     "instances/amberwood_gauntlet_low.def": "e2a5c0ca17b0c0af42f65728241c6f6d08ae6faea086505572af2fd2e417ae36",
     "instances/amberwood_gauntlet_mid.def": "db1a535c3f73a3677a28d2b2cf5ed71b9c3b8c0ea8308a88b95c6feee28d2672",
     "instances/amethyst_gauntlet_high.def": "644d0d0978354c06d3dec430c9d52a50db2aed224060b403509677a8a8a8d298",
@@ -81622,22 +81621,335 @@
     "instances/whitehorn_gauntlet_high.def": "8feae1eebe2cd08299e5938bb0fc9a527596877d26112b8da33f8d67aa260df5",
     "instances/whitehorn_gauntlet_low.def": "14e6e6894db6cede5ca63ac84acd0e4abb6aa35ccbd1b62f9cf2496779a2b3f4",
     "interactives.txt": "c2a4d16d46d347c568b527876e12b1e60f3b21f6c56fe85141e58699853a3680",
-    "maps.txt": "186fccad6ebbe5256a3395858f1eaedf6f79f1d19c2bee0c89e9c2482aa29c69",
+    "maps.txt": "5b3fcf140f02d64474ebb11c6d24f5f17131d013ec2ebe5d72973a14b47df1ac",
     "npcs.txt": "0f6b52c017cf2b3f3c1231445edbfbfd7cedc2c13a7915840c00c9ae00def77e",
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "ca18cd66ea468bbf2f78c01fa908a21a4cc21649b4cd5ad49a5306ec8582ef27",
+    "spawn_groups/invasion/invasion_nymara.def": "22e33d2d823727f7ebd26df1c0b4e9223cb2f68471d4dd7cd4a318485475c57d",
     "spawns.txt": "5b5e177221d5a365e9136362a56a30b3b0cf8e1b8aee29375828105405367734",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "b88ab564961389e6f8bed2046ad5835d0e245e47b747aaef7ccc3a3a5f599685"
   },
   "sourceCodeSha256": {
     "eloria/daily_quests.py": "cc0d148f52690f13a1a598c6cd30abf152efd0176354055077f7341f43b32956",
-    "eloria/world.py": "cbfaaeb2a9df29154881c728eb486313005a9554c5f7443f7208a9814b480d6e",
+    "eloria/world.py": "50939de697a63f1677896ade2e0337301b71b292eaa378d567e68a9c6164c2f2",
     "eloria/walkthrough.py": "06024c6d0dce473a9b00dfcda30cf1e4d2416b0a7f308f191c0ca9812ae6b7a4",
     "eloria/pk.py": "e89cb845c21aa3fe41c2b49a8a5597b91c5729774e9f19636fd2d6d03ea731df"
   },
-  "baselineSha256": "d88cad3ed2c902b28faedac900fffe857c6a1240a4e8135bfdd50e38b52849a0",
+  "baselineSha256": "a60fb8f2e5d7c2357fa4b978f3c03b4a07c4815923cf180e5a7b285a72c1fb2e",
+  "seams": [
+    {
+      "id": "grey_moors--whitehorn_range",
+      "ends": [
+        {
+          "region": "whitehorn_range",
+          "gateLanes": 4,
+          "gateLanesMoved": 3,
+          "lanes": 16
+        },
+        {
+          "region": "grey_moors",
+          "gateLanes": 0,
+          "gateLanesMoved": 7,
+          "lanes": 16
+        }
+      ]
+    },
+    {
+      "id": "amberwood--whitehorn_range",
+      "ends": [
+        {
+          "region": "whitehorn_range",
+          "gateLanes": 7,
+          "gateLanesMoved": 0,
+          "lanes": 18
+        },
+        {
+          "region": "amberwood",
+          "gateLanes": 0,
+          "gateLanesMoved": 7,
+          "lanes": 17
+        }
+      ]
+    },
+    {
+      "id": "amethyst_barrens--whitehorn_range",
+      "ends": [
+        {
+          "region": "whitehorn_range",
+          "gateLanes": 1,
+          "gateLanesMoved": 6,
+          "lanes": 366
+        },
+        {
+          "region": "amethyst_barrens",
+          "gateLanes": 4,
+          "gateLanesMoved": 3,
+          "lanes": 368
+        }
+      ]
+    },
+    {
+      "id": "amberwood--grey_moors",
+      "ends": [
+        {
+          "region": "grey_moors",
+          "gateLanes": 1,
+          "gateLanesMoved": 6,
+          "lanes": 381
+        },
+        {
+          "region": "amberwood",
+          "gateLanes": 5,
+          "gateLanesMoved": 2,
+          "lanes": 381
+        }
+      ]
+    },
+    {
+      "id": "grey_moors--westhaven",
+      "ends": [
+        {
+          "region": "grey_moors",
+          "gateLanes": 7,
+          "gateLanesMoved": 0,
+          "lanes": 142
+        },
+        {
+          "region": "westhaven",
+          "gateLanes": 0,
+          "gateLanesMoved": 7,
+          "lanes": 142
+        }
+      ]
+    },
+    {
+      "id": "amberwood--mirrorhold",
+      "ends": [
+        {
+          "region": "amberwood",
+          "gateLanes": 3,
+          "gateLanesMoved": 4,
+          "lanes": 51
+        },
+        {
+          "region": "mirrorhold",
+          "gateLanes": 1,
+          "gateLanesMoved": 6,
+          "lanes": 49
+        }
+      ]
+    },
+    {
+      "id": "amberwood--four_gates",
+      "ends": [
+        {
+          "region": "amberwood",
+          "gateLanes": 7,
+          "gateLanesMoved": 0,
+          "lanes": 147
+        },
+        {
+          "region": "four_gates",
+          "gateLanes": 0,
+          "gateLanesMoved": 7,
+          "lanes": 146
+        }
+      ]
+    },
+    {
+      "id": "amethyst_barrens--mirrorhold",
+      "ends": [
+        {
+          "region": "mirrorhold",
+          "gateLanes": 1,
+          "gateLanesMoved": 6,
+          "lanes": 223
+        },
+        {
+          "region": "amethyst_barrens",
+          "gateLanes": 4,
+          "gateLanesMoved": 3,
+          "lanes": 224
+        }
+      ]
+    },
+    {
+      "id": "mirrorhold--sunmane_steppe",
+      "ends": [
+        {
+          "region": "mirrorhold",
+          "gateLanes": 0,
+          "gateLanesMoved": 7,
+          "lanes": 156
+        },
+        {
+          "region": "sunmane_steppe",
+          "gateLanes": 7,
+          "gateLanesMoved": 0,
+          "lanes": 156
+        }
+      ]
+    },
+    {
+      "id": "four_gates--mirrorhold",
+      "ends": [
+        {
+          "region": "mirrorhold",
+          "gateLanes": 5,
+          "gateLanesMoved": 2,
+          "lanes": 43
+        },
+        {
+          "region": "four_gates",
+          "gateLanes": 1,
+          "gateLanesMoved": 6,
+          "lanes": 43
+        }
+      ]
+    },
+    {
+      "id": "mirrorhold--verdant_stair",
+      "ends": [
+        {
+          "region": "mirrorhold",
+          "gateLanes": 3,
+          "gateLanesMoved": 4,
+          "lanes": 190
+        },
+        {
+          "region": "verdant_stair",
+          "gateLanes": 1,
+          "gateLanesMoved": 6,
+          "lanes": 192
+        }
+      ]
+    },
+    {
+      "id": "amethyst_barrens--sunmane_steppe",
+      "ends": [
+        {
+          "region": "amethyst_barrens",
+          "gateLanes": 5,
+          "gateLanesMoved": 2,
+          "lanes": 514
+        },
+        {
+          "region": "sunmane_steppe",
+          "gateLanes": 1,
+          "gateLanesMoved": 6,
+          "lanes": 515
+        }
+      ]
+    },
+    {
+      "id": "sunmane_steppe--verdant_stair",
+      "ends": [
+        {
+          "region": "sunmane_steppe",
+          "gateLanes": 4,
+          "gateLanesMoved": 3,
+          "lanes": 462
+        },
+        {
+          "region": "verdant_stair",
+          "gateLanes": 0,
+          "gateLanesMoved": 7,
+          "lanes": 461
+        }
+      ]
+    },
+    {
+      "id": "four_gates--westhaven",
+      "ends": [
+        {
+          "region": "four_gates",
+          "gateLanes": 3,
+          "gateLanesMoved": 4,
+          "lanes": 391
+        },
+        {
+          "region": "westhaven",
+          "gateLanes": 1,
+          "gateLanesMoved": 6,
+          "lanes": 391
+        }
+      ]
+    },
+    {
+      "id": "four_gates--manymouth_delta",
+      "ends": [
+        {
+          "region": "four_gates",
+          "gateLanes": 7,
+          "gateLanesMoved": 0,
+          "lanes": 43
+        },
+        {
+          "region": "manymouth_delta",
+          "gateLanes": 0,
+          "gateLanesMoved": 7,
+          "lanes": 44
+        }
+      ]
+    },
+    {
+      "id": "manymouth_delta--westhaven",
+      "ends": [
+        {
+          "region": "westhaven",
+          "gateLanes": 1,
+          "gateLanesMoved": 6,
+          "lanes": 131
+        },
+        {
+          "region": "manymouth_delta",
+          "gateLanes": 7,
+          "gateLanesMoved": 0,
+          "lanes": 131
+        }
+      ]
+    },
+    {
+      "id": "manymouth_delta--verdant_stair",
+      "ends": [
+        {
+          "region": "manymouth_delta",
+          "gateLanes": 0,
+          "gateLanesMoved": 7,
+          "lanes": 291
+        },
+        {
+          "region": "verdant_stair",
+          "gateLanes": 7,
+          "gateLanesMoved": 0,
+          "lanes": 290
+        }
+      ]
+    },
+    {
+      "id": "ssarathi_ruins--verdant_stair",
+      "ends": [
+        {
+          "region": "verdant_stair",
+          "gateLanes": 7,
+          "gateLanesMoved": 0,
+          "lanes": 503
+        },
+        {
+          "region": "ssarathi_ruins",
+          "gateLanes": 0,
+          "gateLanesMoved": 7,
+          "lanes": 502
+        }
+      ]
+    }
+  ],
+  "crossingArrivals": {
+    "rows": 8142,
+    "unreachable": 0,
+    "examples": []
+  },
   "ready": true
 }

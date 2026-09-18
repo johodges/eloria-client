@@ -854,8 +854,8 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 685711,
-    "walkableFraction": 0.273294,
+    "walkableCells": 690487,
+    "walkableFraction": 0.275198,
     "sourceGlbSha256": "6ff9b7de76776dee30f201a7d241f83dfe4b78b4e1635c053c8075c5291446fb",
     "exportStatistics": {
       "walkMeshes": 7,
@@ -865,7 +865,8 @@
       "steepCells": 37901,
       "waterCells": 263107,
       "structuralCells": 14113,
-      "thresholdHaloCells": 152
+      "thresholdHaloCells": 152,
+      "seamCollarCells": 4776
     }
   },
   "navigation": {
