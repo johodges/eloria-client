@@ -289,8 +289,11 @@ def audit_frames(publication, manifests, translations):
         require(np.allclose(frames[0]['outward'], -np.asarray(frames[1]['outward']), atol=1e-9), f'{link["id"]}: reciprocal directions differ')
         for source, target in ((a,b),(b,a)):
             region = source['region']
-            stored = [f for f in manifests[region]['streamingBorders'] if f['id'] == link['id']]
-            require(len(stored) == 1 and stored[0]['anchor'] == source['frame']['anchor'] and stored[0]['outward'] == source['frame']['outward'], f'{link["id"]}: territory frame differs from publication')
+            # A border no road crosses has no threshold in its territories' packages;
+            # its frame is the publication's alone.
+            if link.get('road', True):
+                stored = [f for f in manifests[region]['streamingBorders'] if f['id'] == link['id']]
+                require(len(stored) == 1 and stored[0]['anchor'] == source['frame']['anchor'] and stored[0]['outward'] == source['frame']['outward'], f'{link["id"]}: territory frame differs from publication')
             # A crossing hands the walker over at the very cell they stand on, so every
             # departure must name a cell of the other map. This was checked against the far
             # side's own lane list, which held for a gate of seven lanes either side of one

@@ -1,4 +1,5 @@
 """A seam is crossed wherever both maps can be stood on, not only at its gate."""
+import copy
 from pathlib import Path
 import sys
 import unittest
@@ -26,12 +27,11 @@ def step(heights, y, x, dy, dx):
 
 
 def served(west=None, east=None, world=None):
-    """Each map's own ground on two level grids, all of it reached, or the grids given."""
+    """Each map's own ground on two level grids, or the grids given."""
     world = world or FlatWorld()
     grids = {'west': west, 'east': east}
     return {region: C.own_ground(world, region,
-                                 np.ones((48, 48), np.uint8) if grids[region] is None else grids[region].astype(np.uint8),
-                                 (0, 0), lambda heights, start: heights != 0)
+                                 np.ones((48, 48), np.uint8) if grids[region] is None else grids[region].astype(np.uint8))
             for region in ('west', 'east')}
 
 
@@ -70,6 +70,19 @@ class SeamLaneTests(unittest.TestCase):
         east[int(far[1]), int(far[0])] = False
         self.assertEqual({tuple(lane['tile']) for lane in self.lanes(served(east=east))},
                          whole - {closed})
+
+    def test_a_pocket_its_own_hub_cannot_reach_is_still_a_way_across(self):
+        # The east strip beside the border is cut off from the rest of the east map
+        # by a river two tiles in (the Manymouth strip under the Four Gates south
+        # wall): still walkable on both sides of the border, so still crossable.
+        east = np.ones((48, 48), bool)
+        border_x = int(C.tiles_at(self.world, 'east', 20.5, 10.)[0])
+        east[:, border_x + 2] = False
+        strip = {tuple(lane['tile']) for lane in self.lanes(served(east=east))}
+        self.assertEqual(strip, {tuple(lane['tile']) for lane in self.lanes(served())},
+                         'a river behind the strip closes no crossing onto it')
+        back = self.lanes(served(east=east), side=1)
+        self.assertTrue(back, 'and a walker in the strip can always step back')
 
     def test_the_two_sides_of_a_seam_name_the_same_ground(self):
         west = {tuple(C.global_tile(self.world, 'west', lane['tile']).round(3))
@@ -152,6 +165,141 @@ class SeamLaneTests(unittest.TestCase):
         connections = world.publication_connections
         self.assertEqual(C.widen_seams(world, connections, served(world=world), step, gated=GATED), [])
         self.assertEqual([len(end['lanes']) for end in connections[0]['ends']], [7, 7])
+
+
+class RoadlessWorld(FlatWorld):
+    """The two territories of FlatWorld with no road between them."""
+    connections = []
+
+
+# Each map's hub, well inside its own ground: FlatWorld's border is at west tile
+# 34 / east tile 13 (the neighbour's first tile across it), its own last tiles 33 and 14.
+HUBS = {'west': [20, 24], 'east': [28, 24]}
+
+
+class RoadlessBorderTests(unittest.TestCase):
+    def settle(self, grids=None):
+        world = RoadlessWorld()
+        C.prepare_contracts(world)
+        publication = {'connections': [], 'visualConnections': copy.deepcopy(world.visual_connections)}
+        settled = C.settle_crossings(world, publication, grids or served(world=world), step, HUBS)
+        return world, publication, settled['opened']
+
+    def test_a_border_no_road_crosses_is_opened_wherever_its_ground_meets(self):
+        world, publication, opened = self.settle()
+        self.assertEqual(world.publication_connections, [], 'no road, deck or marker is built for it')
+        self.assertEqual(opened, ['border--west--east'])
+        self.assertEqual(publication['visualConnections'], [], 'its view-only twin is withdrawn')
+        link, = publication['connections']
+        self.assertIs(link['road'], False)
+        for end, other in zip(link['ends'], link['ends'][::-1]):
+            tiles = [lane['tile'] for lane in end['lanes']]
+            self.assertGreater(len(tiles), 7, 'the whole border is crossable, not a gate of it')
+            self.assertFalse(any('gate' in lane for lane in end['lanes']), 'and no lane of it is a gate')
+            self.assertIn(end['tile'], tiles, 'each end is seated on one of its own lanes')
+            self.assertEqual(end['frame']['portal'], 'border-to-' + other['region'])
+            self.assertTrue(end['preloadEdges'], 'it ships the border it is crossed along')
+
+    def test_a_border_whose_ground_never_meets_stays_a_view(self):
+        world, publication, opened = self.settle(served(east=np.zeros((48, 48), bool), world=RoadlessWorld()))
+        self.assertEqual(opened, [])
+        self.assertEqual(publication['connections'], [])
+        self.assertEqual([v['id'] for v in publication['visualConnections']], ['view--west--east'])
+
+    def test_a_pair_a_road_or_a_boat_joins_is_not_opened_again(self):
+        self.assertEqual(C.open_borders(FlatWorld()), [], 'a road already crosses it')
+        world = RoadlessWorld()
+        world.connections = [{'id': 'east--west', 'type': 'ferry', 'regions': ['west', 'east']}]
+        self.assertEqual(C.open_borders(world), [], 'the server tells a boat from a walk by the maps it joins')
+
+    def test_the_anchor_stands_on_the_border(self):
+        link, = C.open_borders(RoadlessWorld())
+        self.assertEqual(link['anchor'], [20., 10.])
+        self.assertEqual(link['normal'], [1., 0.])
+
+    def test_the_collar_opens_a_roadless_border_as_it_opens_a_road_s(self):
+        world = RoadlessWorld()
+        C.prepare_contracts(world)
+        gx, gz = np.meshgrid(np.arange(14.25, 26., .5), np.arange(4.25, 16., .5))
+        collar = CE.seam_collar(world, 'west', gx, gz)
+        self.assertTrue(collar.any())
+        self.assertGreaterEqual(gx[collar].min(), 20.)
+        self.assertLessEqual(gx[collar].max(), 21.)
+
+
+class ReachableLaneTests(unittest.TestCase):
+    """A lane is kept where a walker from some hub can get onto it and step off where it lands."""
+    def prune(self, west=None, east=None):
+        world = FlatWorld()
+        C.prepare_contracts(world)
+        connections = world.publication_connections
+        # A served grid is its own territory and the one-tile collar beyond it.
+        west = np.ones((48, 48), bool) if west is None else west
+        east = np.ones((48, 48), bool) if east is None else east
+        west[:, 35:] = False
+        east[:, :13] = False
+        grids = served(west=west, east=east, world=world)
+        C.widen_seams(world, connections, grids, step, gated=())
+        before = [{tuple(lane['tile']) for lane in end['lanes']} for end in connections[0]['ends']]
+        withdrawn = C.prune_lanes(world, connections, grids, HUBS, 2)
+        after = [{tuple(lane['tile']) for lane in end['lanes']} for end in connections[0]['ends']]
+        return before, after, withdrawn, connections[0]
+
+    def test_open_ground_keeps_every_lane(self):
+        before, after, withdrawn, _ = self.prune()
+        self.assertEqual(withdrawn, 0)
+        self.assertEqual(before, after)
+
+    def test_ground_no_hub_can_reach_from_either_side_is_no_crossing(self):
+        # A wall behind the border on both maps: the strip between is an island.
+        west, east = np.ones((48, 48), bool), np.ones((48, 48), bool)
+        west[:, 30] = False
+        east[:, 17] = False
+        before, after, withdrawn, _ = self.prune(west, east)
+        self.assertTrue(all(before))
+        self.assertEqual(after, [set(), set()])
+        self.assertEqual(withdrawn, sum(len(tiles) for tiles in before))
+
+    def test_a_pocket_reached_over_the_border_keeps_its_lanes(self):
+        # The Manymouth strip under the Four Gates wall: cut off from its own hub,
+        # walked into from the neighbour's, and so crossable both ways.
+        west = np.ones((48, 48), bool)
+        west[:, 30] = False
+        before, after, withdrawn, _ = self.prune(west=west)
+        self.assertEqual(withdrawn, 0)
+        self.assertEqual(before, after)
+
+    def test_a_landing_with_nowhere_to_go_but_back_is_no_crossing(self):
+        # One tile of west ground walled in against the border at (33, 24).
+        west = np.ones((48, 48), bool)
+        west[19:30, 30:33] = False
+        west[19:30, 33] = False
+        west[24, 33] = True
+        before, after, withdrawn, link = self.prune(west=west)
+        self.assertGreater(withdrawn, 0)
+        # West's own crossing out of the cell is unreachable from its hub, and
+        # east's crossing into it lands with every first step another crossing.
+        self.assertNotIn((34, 24), after[0])
+        world = FlatWorld()
+        into = {tuple(int(v) for v in C.tiles_at(world, 'west', *C.global_tile(world, 'east', tile)))
+                for tile in after[1]}
+        self.assertNotIn((33, 24), into)
+        self.assertTrue(after[0] and after[1], 'the rest of the border is still crossed')
+        for end in link['ends']:
+            self.assertIn(tuple(end['tile']), {tuple(lane['tile']) for lane in end['lanes']},
+                          'each end is reseated on a lane that survives')
+
+    def test_a_road_nobody_can_use_is_refused(self):
+        world = FlatWorld()
+        C.prepare_contracts(world)
+        west, east = np.ones((48, 48), bool), np.ones((48, 48), bool)
+        west[:, 30] = False
+        east[:, 17] = False
+        grids = served(west=west, east=east, world=world)
+        publication = {'connections': world.publication_connections, 'visualConnections': []}
+        C.widen_seams(world, publication['connections'], grids, step, gated=())
+        with self.assertRaisesRegex(ValueError, 'no walker can reach or leave any lane of east--west'):
+            C.settle_crossings(world, publication, grids, step, HUBS)
 
 
 class SeamCollarTests(unittest.TestCase):

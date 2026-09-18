@@ -396,6 +396,9 @@ class RegionPlacement:
         self.storage = set()
         self.bodies = set()
         self.fixed = set()
+        # An open border's lanes: kept clear of content, but - unlike the fixed
+        # tiles - never asked to be reachable from the hub.
+        self.held = set()
         self.actor_tiles = set()
         self.old_entries = {}
         self.entry_by_identity = {}
@@ -510,7 +513,9 @@ class RegionPlacement:
         width, depth = shape
         excluded = np.zeros(self.grid.shape, dtype=bool)
         arrival = tuple(self.spec['arrival'])
-        placed = {tuple(t) for t in self.spec['tilePositions'].values()} | set(self.fixed)
+        placed = {tuple(t) for t in self.spec['tilePositions'].values()} | set(self.fixed) | set(self.held)
+        # Held lanes run the length of every border: thousands of tiles, asked after every trial body.
+        px, py = (np.array(v, dtype=int) for v in zip(*placed)) if placed else (np.zeros(0, int), np.zeros(0, int))
         for _ in range(256):
             tile = self.nearest(expected, radius, shape, mask=self.reachable & ~excluded)
             if tile is None:
@@ -521,8 +526,8 @@ class RegionPlacement:
             self.grid[window] = 0
             reachable = self.sources.reachable_from(self.grid, arrival, 2)
             lost = int(self.reachable.sum()) - int(reachable.sum())
-            severed = lost > width * depth + 2 or any(
-                self.reachable[y, x] and not reachable[y, x] for x, y in placed if (x, y) != tuple(tile))
+            cut = self.reachable[py, px] & ~reachable[py, px] & ((px != tile[0]) | (py != tile[1]))
+            severed = lost > width * depth + 2 or bool(cut.any())
             if severed:
                 self.grid[window] = saved
                 excluded[window] = True
@@ -606,6 +611,12 @@ class RegionPlacement:
         if int(self.reachable.sum()) < 64:
             self.failure('safe arrival', old_arrival, expected, 12, 'Hub component has fewer than 64 tiles')
 
+    def hold(self, tile):
+        """Keep content off a tile without asking that the hub reach it: an open border's lane."""
+        tile = list(map(int, tile))
+        self.held.add(tuple(tile))
+        self.reserve(tile, margin=1)
+
     def check_fixed(self, tile, label):
         tile = list(map(int, tile))
         if not self.valid(tile, allow_reserved=True):
@@ -662,6 +673,12 @@ def place_doors(text, placements, connections):
         for end in connection['ends']:
             p = placements[end['region']]
             for index, lane in enumerate(end.get('lanes', [end])):
+                # The gate's lanes are where its road meets the border and must be
+                # reachable from the hub; the rest of an open border is held clear
+                # of content wherever it runs, pockets its hub cannot reach included.
+                if connection.get('type') == 'walk' and 'lanes' in end and 'gate' not in lane:
+                    p.hold(lane['tile']); p.hold(lane['arrival'])
+                    continue
                 p.check_fixed(lane['tile'], f'{connection["id"]}:departure:{index}')
                 p.check_fixed(lane['arrival'], f'{connection["id"]}:arrival:{index}')
     for number, fields in rows(text):
@@ -931,23 +948,29 @@ def export_contracts(world, content, manifests, output, server_path):
                 'collisionPath': str(collision_path), 'worldManifestPath': str(world_path)}
             p = RegionPlacement(world, content, region, spec, result, grid, sources, report, previous=previous)
             p.connect_hub(old_maps[region]['arrival'], largest)
-            # What a seam may be crossed on is what the hub can walk to without
-            # crossing a border first, not merely what the grid says is standable:
-            # a pocket of gentle ground behind a cliff or across a river is not a
-            # way out of a territory, nor is a strip of the neighbour reached only
-            # over its own border lanes.
+            # A seam is crossed wherever both maps' grids can stand, from this
+            # map's own ground beside it (crossings.crossing_lanes); which of those
+            # lanes a walker can actually get to is settled once every map's grid
+            # is folded (crossings.settle_crossings).
             from crossings import own_ground
             if any(c.get('type') == 'walk' and region in c.get('regions', ())
-                   for c in getattr(world, 'connections', ())):
-                served[region] = own_ground(world, region, grid, p.spec['arrival'],
-                                            lambda heights, start: sources.reachable_from(heights, start, 2))
+                   for c in list(getattr(world, 'connections', ())) + list(getattr(world, 'open_border_links', ()))):
+                served[region] = own_ground(world, region, grid)
             placements[region], outputs[region], publication['regions'][region] = p, (world_path, manifest), spec
             print(f'{region}: exact server grid, stage {factor}, hub reaches {int(p.reachable.sum())} tiles in {time.monotonic()-started:.1f}s', flush=True)
         # Every seam's lanes come from the served grids of both its maps, so
         # this waits until the last of them has been folded.
-        from crossings import widen_seams
-        report['seams'] = widen_seams(world, publication['connections'], served,
-                                      lambda heights, y, x, dy, dx: sources.walk_step_ok(heights, y, x, dy, dx, 2))
+        from crossings import settle_crossings, widen_seams
+        step = lambda heights, y, x, dy, dx: sources.walk_step_ok(heights, y, x, dy, dx, 2)
+        report['seams'] = widen_seams(world, publication['connections'], served, step)
+        # Borders no road crosses, opened wherever their ground meets; then only
+        # the lanes a walker from some hub can get onto and step off are kept.
+        settled = settle_crossings(world, publication, served, step,
+                                   {region: p.spec['arrival'] for region, p in placements.items()})
+        report['seams'] += settled['roadless']
+        report['openBorders'], report['withdrawnLanes'] = settled['opened'], settled['withdrawnLanes']
+        print('open roadless borders: %s; %d lanes no walker can use withdrawn' % (
+            ', '.join(settled['opened']) or 'none', settled['withdrawnLanes']), flush=True)
         for seam in report['seams']:
             print('%s: %s' % (seam['id'], ', '.join(
                 '%s %d lanes (gate %d on its own lanes, %d moved)' % (
@@ -956,19 +979,23 @@ def export_contracts(world, content, manifests, output, server_path):
         _, rows = publisher.connection_rows(publication['connections'], publication['regions'])
         # The publish tool used to prove a departure against the far side's own
         # lane list; now that it reads the arrival straight out of the shared
-        # grid, this is the stronger question that check was standing in for -
-        # can an actor be put down where the crossing sends them and walk on
-        # from there.
+        # grid, this is the question that check was standing in for - can an
+        # actor be put down where the crossing sends them.
         widened = {(end['region'], other['region']) for seam in report['seams']
                    for end, other in (seam['ends'], seam['ends'][::-1])}
         stranded = [row for row in rows if row[0] in served and row[3] in served
-                    and not served[row[3]]['reach'][row[5], row[4]]]
+                    and not served[row[3]]['grid'][row[5], row[4]]]
         report['crossingArrivals'] = {'rows': len(rows), 'unreachable': len(stranded),
                                       'examples': [list(row) for row in stranded[:8]]}
         refused = [row for row in stranded if (row[0], row[3]) in widened]
         if refused:
             raise ValueError('crossing arrivals stand on ground the destination refuses: '
                              + ', '.join('%s %s -> %s %s' % (r[0], r[1:3], r[3], r[4:6]) for r in refused[:8]))
+        # Where a crossing puts a walker down is kept clear of content on the far
+        # map as well: an actor stood there would leave the arrival nowhere to go.
+        for row in rows:
+            if (row[0], row[3]) in widened and row[3] in placements:
+                placements[row[3]].hold([row[4], row[5]])
         place_doors(texts['maps.txt'], placements, publication['connections'])
         chunk_metadata = []
         for region, p in placements.items():
@@ -1022,6 +1049,7 @@ def export_contracts(world, content, manifests, output, server_path):
             chunk_metadata.extend(revision_metadata(path, manifest, p.spec, publication['masterSha256']))
             chosen = set(tuple(v) for v in p.spec['tilePositions'].values())
             chosen.update(p.fixed)
+            chosen.update(p.held)
             p.spec['tileHeights'] = {key(tile): p.local_position(tile)[1] for tile in sorted(chosen)
                                     if p.in_grid(tile)}
         rebase_publication(publication, previous)

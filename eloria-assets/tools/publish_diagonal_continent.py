@@ -411,9 +411,14 @@ def connection_manifests(publication, worlds, specs):
     graph, streaming = [], []
     for connection in publication['connections']:
         a, b = connection['ends']
-        graph.append({'id': connection['id'], 'from': a['region'], 'from_portal': a['portal'],
-                      'to': b['region'], 'to_portal': b['portal'], 'type': connection.get('type', 'land'),
-                      'note': connection.get('note', 'Shared-continent authored connection')})
+        # The graph is the roads and boats between territories, each between two
+        # named portals, and the atlas draws each as a route. A border no road
+        # crosses is walked over wherever its ground allows and has neither.
+        road = connection.get('road', True)
+        if road:
+            graph.append({'id': connection['id'], 'from': a['region'], 'from_portal': a['portal'],
+                          'to': b['region'], 'to_portal': b['portal'], 'type': connection.get('type', 'land'),
+                          'note': connection.get('note', 'Shared-continent authored connection')})
         if connection.get('type', 'land') in ('ferry', 'ship', 'boat', 'teleport'):
             continue
         ends = []
@@ -430,7 +435,7 @@ def connection_manifests(publication, worlds, specs):
                          'frame': copy.deepcopy(frame), 'coordinateTransform': copy.deepcopy(world['coordinateTransform']),
                          'preloadEdges':copy.deepcopy(end.get('preloadEdges',[])),
                          'crossingRuns': crossing_runs([lane['tile'] for lane in end.get('lanes', [end])])})
-        streaming.append({'id': connection['id'], 'seamless': True, 'ends': ends})
+        streaming.append({'id': connection['id'], 'seamless': True, 'ends': ends, **({} if road else {'road': False})})
     identities={c['id'] for c in streaming}
     for visual in publication.get('visualConnections',[]):
         if visual.get('id') in identities or len(visual.get('ends',[]))!=2 or not visual.get('visualOnly'):

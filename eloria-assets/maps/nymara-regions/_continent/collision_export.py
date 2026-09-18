@@ -96,8 +96,11 @@ def seam_collar(world, region, gx, gz):
     from scipy.ndimage import binary_dilation
     from crossings import widened
     collar = np.zeros(gx.shape, dtype=bool)
-    opened = [c for c in world.connections if widened(c.get('id'))
-              and c.get('type') not in ('ferry', 'boat', 'ship') and region in c.get('regions', [])]
+    # Roadless borders too (crossings.open_borders): a walker crosses them
+    # wherever the ground allows, as they cross a road's.
+    opened = [c for c in list(world.connections) + list(getattr(world, 'open_border_links', ()))
+              if widened(c.get('id')) and c.get('type') not in ('ferry', 'boat', 'ship')
+              and region in c.get('regions', [])]
     if not opened:
         return collar
     owner = world.owner_at(gx, gz)
