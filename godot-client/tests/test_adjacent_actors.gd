@@ -260,6 +260,28 @@ func _state_and_main() -> void:
 		var beyond_far: Dictionary = stream.call("map_at_local", Vector3(middle.x + offset.x, 0.0, middle.y + offset.z))
 		_expect(str(beyond_far.get("map", "")) == "four_gates",
 			"a map click on a region that is not next door names that region (%s)" % beyond_far)
+		# Whose ground a map click is on is read from the territory outlines the
+		# maps draw, not from which square of served cells holds it: those squares
+		# reach far into the neighbours' ground, and a click on the neighbour's side
+		# of a border went to the server as a walk on this map that stopped there.
+		var previous_map: String = str(app_state.get("current_map"))
+		app_state.set("current_map", "mirrorhold")
+		var continent: Dictionary = (main.get("cartography") as Dictionary).get("continent", {}) as Dictionary
+		var origin: Array = continent.get("originMetres", []) as Array
+		var metres_per_pixel: float = float(continent.get("metresPerPixel", 0.0))
+		var here_index: int = main.call("_region_index_for_map", "mirrorhold")
+		var here_region: Dictionary = (main.get("cartography_regions") as Array)[here_index] as Dictionary
+		var here_offset: Array = here_region.get("globalTranslation", []) as Array
+		for probe: Array in [[far_region, "four_gates"], [here_region, "mirrorhold"]]:
+			var label: Array = (probe[0] as Dictionary).get("continentLabel", []) as Array
+			var point := Vector3(float(origin[0]) + float(label[0]) * metres_per_pixel - float(here_offset[0]), 0.0,
+				float(origin[1]) + float(label[1]) * metres_per_pixel - float(here_offset[2]))
+			_expect(str(main.call("_map_owning_point", point)) == str(probe[1]),
+				"a map click on %s's own ground is a walk to %s" % [probe[1], probe[1]])
+		var owned: Dictionary = stream.call("map_at_local", Vector3(middle.x + offset.x, 0.0, middle.y + offset.z), "four_gates")
+		_expect(str(owned.get("map", "")) == "four_gates" and owned.get("tile") is Vector2i,
+			"the owning map's own tile answers for the click (%s)" % owned)
+		app_state.set("current_map", previous_map)
 	# A map click past the seam: the direct neighbour whose served tiles hold
 	# the point is found through the surveyed join, and the walk is armed in legs.
 	stream.set("active_map", "mirrorhold")
@@ -287,6 +309,16 @@ func _state_and_main() -> void:
 		"the pending walk carries the neighbour, its tile and the next map (%s)" % pending)
 	_expect(stream.call("arm_walk_to", "whitehorn_range", Vector2i(900, 900), false, Vector3.ZERO) == null,
 		"a tile outside the neighbour's cells is refused")
+	# A view-only link draws a neighbour across a border nobody can cross; a walk
+	# routed over it went to the middle of that border and stopped there.
+	var road_links: Array = stream.get("links")
+	var view_there := {"map": "four_gates", "position": [0.0, 2.0, -100.0], "coordinateTransform": coordinates,
+		"frame": {"anchor": [0.0, 2.0, -100.0], "outward": [1.0, 0.0], "globalTranslation": [0, 0, 0]}}
+	stream.set("links", [{"id": "view--mirrorhold--four_gates", "seamless": true, "visualOnly": true,
+		"ends": [here.duplicate(true), view_there]}])
+	_expect(stream.call("arm_walk_to", "four_gates", Vector2i(10, 10), false, Vector3.ZERO) == null,
+		"no walk is routed over a view-only link")
+	stream.set("links", road_links)
 	# The region boundaries: every cartography polygon in this map's metres, the
 	# current one flagged; the first point of a polygon converts through the continent frame.
 	var boundaries: Array = main.call("_map_boundaries")

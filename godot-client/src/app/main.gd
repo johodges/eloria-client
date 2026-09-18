@@ -368,6 +368,8 @@ var map_registry: Dictionary = {}
 var world_object_models: Dictionary = {}
 var cartography: Dictionary = {}
 var cartography_regions: Array = []
+## Region outlines in continent picture pixels, for which territory a map click is on.
+var _region_polygons: Array[PackedVector2Array] = []
 ## The continent picture and the regions' tab maps are decoded the first
 ## time the map window opens, not at startup: the continent alone is a
 ## 1600-pixel image nobody sees before pressing Tab.
@@ -1019,6 +1021,7 @@ func _ready() -> void:
 		_on_invasion_assistant_command_requested)
 	cartography = _json("res://data/maps/cartography.json")
 	cartography_regions = cartography.get("regions", []) as Array
+	_region_polygons.clear()
 	equipment_config = _json("res://data/actors/equipment.json")
 	item_atlas.configure(_json("res://data/items/atlases.json"))
 	spell_catalog.configure(_json("res://data/spells/catalog.json"))
@@ -3537,10 +3540,19 @@ func _handle_map_gui_input(event: InputEvent, map_control: TextureRect,
 	print_debug("map_input source=", source, " local_click=", mouse_button.position,
 		" viewport=", viewport_position, " server_tile=", target_value,
 		" command=", "RUN_TO" if mouse_button.shift_pressed else "MOVE_TO")
-	if target_value is Vector2i and not _tile_inside_current_map(target_value as Vector2i):
-		# Past the seam: the neighbour whose served tiles hold the point is
-		# walked to in legs, the way a world click on its resident ground is.
-		_map_click_beyond(camera, viewport_position, mouse_button.shift_pressed, source)
+	# Whose ground the click is on decides the walk, not whether it falls inside
+	# this map's square of served cells: that square reaches far into every
+	# neighbour's ground, so a click on the neighbour's side went to the server
+	# as a walk on this map and stopped at the border.
+	var click_point: Variant = _map_click_point(camera, viewport_position)
+	var owner: String = _map_owning_point(click_point as Vector3) if click_point is Vector3 else ""
+	var here_map: String = MapRegistry.normalize_server_map_id(AppState.current_map)
+	var elsewhere: bool = (owner != here_map) if not owner.is_empty() else (
+		target_value is Vector2i and not _tile_inside_current_map(target_value as Vector2i))
+	if target_value is Vector2i and elsewhere:
+		# Past the seam: the neighbour that owns the ground is walked to in legs,
+		# the way a world click on its resident ground is.
+		_map_click_beyond(camera, viewport_position, mouse_button.shift_pressed, source, owner)
 		map_control.accept_event()
 		return
 	if target_value is Vector2i:
@@ -3577,6 +3589,39 @@ func _map_click_point(camera: Camera3D, viewport_position: Vector2) -> Variant:
 		point = ray_origin + ray_direction * distance_to_ground
 	return point
 
+## The map whose own ground a point of the current map's frame stands on, by
+## the territory outlines both maps draw as dashed lines; empty where no
+## territory holds the point.
+func _map_owning_point(point: Vector3) -> String:
+	var region_index: int = _region_index_for_map(AppState.current_map)
+	if region_index < 0 or not cartography is Dictionary:
+		return ""
+	var continent: Dictionary = (cartography as Dictionary).get("continent", {}) as Dictionary
+	var origin: Array = continent.get("originMetres", []) as Array
+	var metres_per_pixel: float = float(continent.get("metresPerPixel", 0.0))
+	var translation: Array = (cartography_regions[region_index] as Dictionary).get("globalTranslation", []) as Array
+	if origin.size() != 2 or metres_per_pixel <= 0.0 or translation.size() != 3:
+		return ""
+	var pixel := Vector2((point.x + float(translation[0]) - float(origin[0])) / metres_per_pixel,
+		(point.z + float(translation[2]) - float(origin[1])) / metres_per_pixel)
+	for index: int in range(cartography_regions.size()):
+		var polygon: PackedVector2Array = _region_polygon(index)
+		if polygon.size() >= 3 and Geometry2D.is_point_in_polygon(pixel, polygon):
+			return MapRegistry.normalize_server_map_id(str(
+				(cartography_regions[index] as Dictionary).get("serverMap", "")))
+	return ""
+
+## A region's outline in continent picture pixels, built once per cartography.
+func _region_polygon(index: int) -> PackedVector2Array:
+	if _region_polygons.size() != cartography_regions.size():
+		_region_polygons.clear()
+		for region_value: Variant in cartography_regions:
+			var polygon := PackedVector2Array()
+			for pair: Variant in ((region_value as Dictionary).get("continentPolygon", []) as Array):
+				polygon.append(Vector2(float((pair as Array)[0]), float((pair as Array)[1])))
+			_region_polygons.append(polygon)
+	return _region_polygons[index]
+
 ## Whether a tile lies inside the current map's served cells.
 func _tile_inside_current_map(tile: Vector2i) -> bool:
 	var manifest: WorldManifest = world_loader.manifest if world_loader != null else null
@@ -3586,12 +3631,13 @@ func _tile_inside_current_map(tile: Vector2i) -> bool:
 ## A map click past the seam: the neighbour that holds the point gets the walk
 ## order in legs (the first to the surveyed crossing, the rest at the map
 ## change); a point no neighbour holds is not a place to walk to.
-func _map_click_beyond(camera: Camera3D, viewport_position: Vector2, run: bool, source: String) -> void:
+func _map_click_beyond(camera: Camera3D, viewport_position: Vector2, run: bool, source: String,
+		owner := "") -> void:
 	var point_value: Variant = _map_click_point(camera, viewport_position)
 	if not point_value is Vector3 or _movement_locked(false):
 		return
 	var point: Vector3 = point_value as Vector3
-	var beyond: Dictionary = exterior_stream.map_at_local(point)
+	var beyond: Dictionary = exterior_stream.map_at_local(point, owner)
 	if beyond.is_empty():
 		print_debug("map_input source=", source, " beyond the seam, no region holds ", point)
 		AppState.append_local_message("There is no map there to walk to.", 3)
