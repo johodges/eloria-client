@@ -734,7 +734,17 @@ class World:
                 vertical=abs(s[0,0]-s[1,0])<1e-8;constant=s[0,0] if vertical else s[0,1];variable=mid[i,1] if vertical else mid[i,0]
                 available=by_axis[(vertical,constant)]
                 if all(variable+k*CELL in available for k in range(-3,4)): straight.append(i)
-            candidates=np.array(straight if straight else range(len(mid)))
+            identity='--'.join(sorted((ra,rb)))
+            authored=self.plan.get('connection_sites',{}).get(identity)
+            # The model prefers a station on a straight run, where the seven lanes of
+            # its gate lie across the border as surveyed. An authored station is a
+            # decision already taken and may stand on a step of the seam: every border
+            # is now crossed along its length, and a gate lane a step puts on its own
+            # side of the border is dropped when the seam's lanes are drawn
+            # (crossings.departs_outward), so what it needs is the safe footprint and
+            # the dry terminals asked of any station.
+            pool=range(len(mid)) if authored is not None or not straight else straight
+            candidates=np.array(pool)
             # The full receiving footprint must belong to the two actual
             # neighbours. A triple junction cannot supply seven safe lanes.
             safe=[]
@@ -744,8 +754,6 @@ class World:
                 if np.isin(self.owner_at(xx,zz),(ia,ib)).all():safe.append(candidate)
             if not safe:raise ValueError(f'{ra}/{rb}: no crossing clear of the third territory or world edge')
             candidates=np.asarray(safe)
-            identity='--'.join(sorted((ra,rb)))
-            authored=self.plan.get('connection_sites',{}).get(identity)
             def oriented(candidate):
                 vertical=abs(segments[candidate,0,0]-segments[candidate,1,0])<1e-8
                 normal=np.array([1.,0.]) if vertical else np.array([0.,1.])

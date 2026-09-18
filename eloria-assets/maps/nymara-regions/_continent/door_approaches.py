@@ -243,10 +243,9 @@ SEAM_ROAD_WAYPOINTS = {
     ('whitehorn_range', 'amberwood--whitehorn_range'): [
         (504., 384.), (474., 372.), (492., 402.), (510., 426.), (480., 408.), (486., 420.), (468., 408.), (438., 396.),
         (408., 378.), (392., 372.), (408., 384.), (414., 390.), (426., 399.), (438., 408.), (426., 405.), (414., 402.)],
-    # Four Gates has four gates and two roads, and its seam roads cannot be what gives the north and south gates
-    # theirs. Each seam road runs between its two territories' hubs by way of a station the model chooses on the
-    # seam, and both stations stand where the ground lets both hubs reach them: moved in front of the gates they
-    # are refused by the ground (measured 2026-09-18).
+    # Four Gates has four gates and had two roads. A seam road runs between its two territories' hubs by way of a
+    # station on the seam that both hubs can reach, so a gate gets a road only where such a station can stand in
+    # front of it (measured 2026-09-18).
     #
     # South: pinned to the seam at (519, 990) with the Mirrorwater bridged at arc 358, the Manymouth road left the
     # one bridge that joins the two halves of the delta (western_river@760, (517, 1058)) and half of Manymouth Delta
@@ -255,11 +254,18 @@ SEAM_ROAD_WAYPOINTS = {
     # out through the south gates by waypoints, the Four Gates road found no way west outside the wall and came
     # back through the gates, out by the west trunk and round over the Western River: 742 m where 170 would do.
     #
-    # North: the Amberwater lies along the seam in front of the gate (see the plan_connections note).
+    # So the south gate waits for its road to be one that only has to reach the border, now that a border can be
+    # crossed wherever the ground allows: it no longer has to be the one road that carries the map change.
     #
-    # So the gates wait for the seams to open along their length. Once a border can be crossed wherever the ground
-    # allows, a gate's road only has to reach the border and a bridge only has to carry it over the river; it no
-    # longer has to be the one road that carries the map change.
+    # North: the Amberwater lies along the seam in front of the gate from (513, 690) to (543, 694), where every
+    # road terminal would stand in the water, and comes off it eastward. An authored station may now stand on a
+    # step of the seam, and (553, 698) - 27 m from the gate, every terminal 12.7 m or more from the water - was
+    # accepted, routed and bridged over the Amberwater at arc 154 (550, 668). It still cannot be crossed: east of
+    # the water the border runs along the far rim of a gully. From the bridge's south landing at 21 m the ground
+    # falls to 11.8 m at z 694 and climbs back to 18.8 m at the station within four metres, so the road dropped
+    # into the gully and out of it at grades to 1.75, the strip between the gully and the border was ground neither
+    # hub could reach, and the gate's lanes landed on it. Every station in front of the gate stands on that rim.
+    # A crossing there needs a deck across the gully (access_decks.py), not a road through it: an owner's decision.
 }
 # The same for a retained territory, in its source (library) metres, carried
 # where the layout stands by the plan's retained transform (as the retained door
