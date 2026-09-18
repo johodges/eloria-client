@@ -345,7 +345,7 @@ class ExportTests(unittest.TestCase):
         import collision_export
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);glb=root/'world.glb';glb.write_bytes(b'synthetic geometry')
-            for name in ('collision_export.py','world_layout.py','terrain_export.py','landscape.py'):(root/name).write_text('source')
+            for name in ('collision_export.py','world_layout.py','terrain_export.py','landscape.py','crossings.py'):(root/name).write_text('source')
             world=types.SimpleNamespace(ids=['test'],regions={'test':{'center':[0,0]}},connections=[],
                 address=lambda r:([2,2],[4,4]),height=np.ones((3,3)),owner=np.zeros((2,2),np.uint8),
                 water={'mask':np.zeros((3,3),bool),'surface':np.zeros((3,3))},x0=0,z0=0,x1=4,z1=4)

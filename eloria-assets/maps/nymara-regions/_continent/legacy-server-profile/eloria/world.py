@@ -46,7 +46,7 @@ from .legendary_items import (MODIFIER_KEY, instance_effect_descriptions,
                               instance_effects, roll_legendary_modifiers)
 from .map_digests import load_map_digests
 from .map_layout import FOUR_GATES_ARRIVAL
-from .maps import load_maps
+from .maps import Portal, load_maps
 from .profile import PROFILE
 from .pk import PKZone, capped_level, pk_zone_at, shared_pk_zone
 from .stats import (award_combat_xp, award_experience, combat_experience,
@@ -1273,6 +1273,72 @@ class ActiveInstance:
 from .magic_runtime import MagicRuntime
 
 
+# A land crossing used to be one gate seven lanes wide, so the whole portal
+# table was a couple of hundred rows and every asker simply scanned it. A seam
+# a player may cross wherever the ground allows is the width of the border
+# instead, and `check_portal` asks about a tile on every step of every walking
+# session - a scan there is the map's whole boundary per step per walker.
+#
+# These take the world rather than being methods on it: a good deal of the
+# suite exercises one World method against a stand-in object that has only the
+# fields that method reads, and the table is one of those fields.
+def portal_index(world) -> tuple[dict, dict]:
+    """The portal table by tile and by map, rebuilt whenever the table changes.
+
+    The index is cached on the world and thrown away when the table it was
+    built from is no longer the table bound there: the sky map adds and removes
+    its own portal at runtime and the road content builders extend theirs, and
+    each does so by binding a new tuple, which is what this notices.
+    """
+    portals = getattr(world, 'portals', ())
+    cached = getattr(world, '_portal_index_cache', None)
+    if cached is not None and cached[0] is portals:
+        return cached[1], cached[2]
+    at: dict[tuple[str, int, int], list] = {}
+    leaving: dict[str, list] = {}
+    for portal in portals:
+        at.setdefault((portal.source, portal.x, portal.y), []).append(portal)
+        leaving.setdefault(portal.source, []).append(portal)
+    try:
+        world._portal_index_cache = (portals, at, leaving)
+    except AttributeError:
+        pass  # a stand-in that refuses new attributes still gets its answer
+    return at, leaving
+
+
+def portal_at(world, map_id: str, x: int, y: int):
+    """The portal standing on one tile: the first in table order, as a scan found."""
+    found = portal_index(world)[0].get((map_id, x, y))
+    return found[0] if found else None
+
+
+def portals_leaving(world, map_id: str) -> list:
+    """Every portal that leaves one map, in table order."""
+    return portal_index(world)[1].get(map_id, [])
+
+
+def walkway_portals(world, map_id: str) -> frozenset:
+    """The tiles of one map that change maps under anyone who steps on them.
+
+    An object portal fires only when its object is used, so it is no hazard
+    to a walk past it; every other portal fires on the step.
+    """
+    portals = getattr(world, 'portals', ())
+    cached = getattr(world, '_walkway_portal_cache', None)
+    if cached is None or cached[0] is not portals:
+        cached = (portals, {})
+        try:
+            world._walkway_portal_cache = cached
+        except AttributeError:
+            pass
+    tiles = cached[1].get(map_id)
+    if tiles is None:
+        tiles = frozenset((portal.x, portal.y) for portal in portals_leaving(world, map_id)
+                          if portal.object_id is None)
+        cached[1][map_id] = tiles
+    return tiles
+
+
 class World(MagicRuntime):
     # A profile that ships no conversation and no quest lines has none, and so
     # does a World built without running __init__ - which several tests do to
@@ -1608,9 +1674,8 @@ class World(MagicRuntime):
     async def start_territory_raid(self, aggressor: str, defender: str):
         raid = self.territory_raids.start(aggressor, defender)
         route = next((
-            portal for portal in self.portals
-            if portal.source == raid.defender.map_id
-            and portal.destination == raid.aggressor.map_id), None)
+            portal for portal in portals_leaving(self, raid.defender.map_id)
+            if portal.destination == raid.aggressor.map_id), None)
         raid.attacker_entry = ((route.x, route.y) if route
                                else raid.aggressor.attacker_spawn)
         for team, group_name in ((raid.aggressor.key, raid.aggressor.attacker_group),
@@ -5122,9 +5187,23 @@ class World(MagicRuntime):
                 occupied.update(footprint_of(npc).tiles(npc.x, npc.y))
         return occupied
 
+    def walk_blocked(self, map_id: str, target: tuple[int, int], ignore=()) -> set:
+        """What a walk to `target` may not step on: bodies, and every other way off the map.
+
+        A walk goes where it was sent. The server fires a portal under any tile
+        a walker steps onto, so a path over another one changed maps short of
+        its target. That was rare while a land crossing was a gate of seven
+        lanes; a border open along its length is a row of crossings beside the
+        walker's own ground, and a path shaving a corner of it would cross. The
+        target itself is never refused - a click on a crossing or a door is a
+        walk through it.
+        """
+        blocked = self.blocking_tiles(map_id, ignore=ignore)
+        return blocked | (walkway_portals(self, map_id) - {tuple(target)})
+
     async def move(self, c: Character, target_x: int, target_y: int):
         # The EL client applies one tile per actor command; keep server authoritative.
-        occupied = self.blocking_tiles(c.map_id, ignore=(c,))
+        occupied = self.walk_blocked(c.map_id, (target_x, target_y), ignore=(c,))
         path = self.find_path(c.map_id, (c.x, c.y), (target_x, target_y), occupied,
                               footprint_of(c))
         session = next((item for item in self.sessions if item.character is c), None)
@@ -5245,8 +5324,7 @@ class World(MagicRuntime):
         c = session.character
         if not c:
             return False
-        portal = next((entry for entry in self.portals
-                       if entry.source == c.map_id and (entry.x, entry.y) == (c.x, c.y)), None)
+        portal = portal_at(self, c.map_id, c.x, c.y)
         if not portal:
             return False
         if portal.object_id is not None and session.portal_intent != (c.map_id, c.x, c.y):
@@ -5295,6 +5373,25 @@ class World(MagicRuntime):
         entries.extend(self.map_exit_entries(map_id))
         return entries
 
+    def border_gate(self, map_id: str, destination: str,
+                    tiles: list[tuple[int, int]]) -> tuple[int, int]:
+        """The crossing of an open border that its road arrives at.
+
+        The survey anchors every land crossing at its gate, the station its
+        seam road runs to; the crossing tile nearest that anchor is where a
+        marker for the way to the neighbour belongs. Without the survey, the
+        tile nearest the middle of the border's crossings.
+        """
+        frames = getattr(self, "land_frames", {}).get((map_id, destination))
+        near = (getattr(self, "land_connections", {}).get((map_id, destination)) or ({},))[0] or {}
+        anchor = near.get("globalAnchor")
+        if frames and isinstance(anchor, list) and len(anchor) == 3:
+            ax, ay = frames[0].to_tile(float(anchor[0]), float(anchor[2]))
+        else:
+            ax = sum(x for x, _ in tiles) / len(tiles)
+            ay = sum(y for _, y in tiles) / len(tiles)
+        return min(tiles, key=lambda tile: ((tile[0] - ax) ** 2 + (tile[1] - ay) ** 2, tile))
+
     def map_exit_entries(self, map_id: str) -> list[tuple[int, int, int, int, str, str]]:
         """The ways off this map that nothing else marks, one per doorway.
 
@@ -5306,20 +5403,35 @@ class World(MagicRuntime):
         leads. A doorway with a waygate object beside it is left to the
         waygate, which is already a marked, clickable thing.
         """
-        portals = [portal for portal in getattr(self, "portals", ())
-                   if portal.source == map_id and portal.object_id is None
-                   and portal.destination != map_id]
+        portals = [portal for portal in portals_leaving(self, map_id)
+                   if portal.object_id is None and portal.destination != map_id]
         if not portals:
             return []
         waygates = [(entry.x, entry.y)
                     for (entry_map, _), entry in getattr(self, "interactives", {}).items()
                     if entry_map == map_id and getattr(entry, "role", "") == "portal"]
-        clusters: list[tuple[str, list[tuple[int, int]]]] = []
+        # A seamless land crossing is the map's own border, open wherever the
+        # ground allows: one way to each neighbour, marked at the crossing its
+        # road arrives at, rather than a mark for every stretch of open ground
+        # along the border - which gave one map twelve and one neighbour seven.
+        land = getattr(self, "land_connections", {})
+        borders: dict[str, list[tuple[int, int]]] = {}
+        for portal in portals:
+            if (map_id, portal.destination) in land:
+                borders.setdefault(portal.destination, []).append((portal.x, portal.y))
+        portals = [portal for portal in portals if portal.destination not in borders]
+        clusters: list[tuple[str, list[tuple[int, int]]]] = [
+            (destination, [self.border_gate(map_id, destination, tiles)])
+            for destination, tiles in sorted(borders.items())]
         for portal in sorted(portals, key=lambda entry: (entry.destination, entry.x, entry.y)):
             for destination, tiles in clusters:
+                # Newest tile first: a run of seam tiles is added in order, so
+                # the one that answers is the one just added rather than the far
+                # end of a boundary-long cluster. `any` is a yes or no, so the
+                # order it asks in cannot change which cluster a tile joins.
                 if destination == portal.destination and any(
                         max(abs(portal.x - x), abs(portal.y - y)) <= EXIT_CLUSTER_TILES
-                        for x, y in tiles):
+                        for x, y in reversed(tiles)):
                     tiles.append((portal.x, portal.y))
                     break
             else:
@@ -5417,10 +5529,10 @@ class World(MagicRuntime):
                 await session.send(p.raw_text(interactive.text))
                 await self.walkthrough_event(session, interactive.role)
                 return
-        exact = [portal for portal in self.portals
-                 if portal.source == c.map_id and portal.object_id == object_id]
-        choices = exact or [portal for portal in self.portals if portal.source == c.map_id
-                            and portal.object_id is None
+        leaving = portals_leaving(self, c.map_id)
+        exact = [portal for portal in leaving if portal.object_id == object_id]
+        choices = exact or [portal for portal in leaving
+                            if portal.object_id is None
                             and max(abs(c.x-portal.x), abs(c.y-portal.y))
                             <= self.settings.portal_activation_distance]
         if not choices:
@@ -10270,9 +10382,19 @@ class World(MagicRuntime):
         return entries
 
     def teleporter_tiles(self, map_id: str) -> list[tuple[int, int]]:
-        """Every tile on a map that takes you somewhere else."""
-        return sorted({(portal.x, portal.y) for portal in self.portals
-                       if portal.source == map_id})
+        """Every tile on a map that takes you somewhere else.
+
+        Not the tiles of a seamless land crossing: those are the map's own
+        border, walked over wherever the ground allows, and no more a way
+        somewhere else than the ground beside them. Listing them would also
+        bury the doors - a border open along its length is hundreds of tiles,
+        and the packet carries 255.
+        """
+        land = getattr(self, 'land_connections', {})
+        return sorted({(portal.x, portal.y)
+                       for portal in portals_leaving(self, map_id)
+                       if portal.object_id is not None
+                       or (map_id, portal.destination) not in land})
 
     async def send_teleporters(self, session: Session) -> None:
         c = session.character
@@ -10584,9 +10706,7 @@ class World(MagicRuntime):
             if not lines:
                 lines.append("Nothing here but the road, I am afraid.")
         elif response_id == 711:
-            for portal in self.portals:
-                if portal.source != c.map_id:
-                    continue
+            for portal in portals_leaving(self, c.map_id):
                 destination = self.maps.get(portal.destination)
                 name = destination.name if destination else portal.destination
                 lines.append(f"{name} lies through the gate "
@@ -10643,8 +10763,8 @@ class World(MagicRuntime):
             nodes = [spawn for spawn in self.spawn_definitions
                      if spawn.map_id == wt.HOME_MAP and spawn.creature == wt.STARTER_CREATURE]
         elif panel.event == "travel":
-            nodes = [portal for portal in self.portals
-                     if portal.source == wt.HOME_MAP and portal.object_id is None
+            nodes = [portal for portal in portals_leaving(self, wt.HOME_MAP)
+                     if portal.object_id is None
                      and portal.destination in {"mirrorhold", "crownwater",
                                                 "sunmane_steppe", "ssarathi_ruins"}]
         else:

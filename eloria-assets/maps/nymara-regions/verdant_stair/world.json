@@ -231,8 +231,8 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 711333,
-    "walkableFraction": 0.36086,
+    "walkableCells": 717551,
+    "walkableFraction": 0.364014,
     "sourceGlbSha256": "c05c2c558f0d8a70b44334def35ff91a7d6d2d89d34ec0d63e46af5617fc8909",
     "exportStatistics": {
       "walkMeshes": 86,
@@ -242,7 +242,8 @@
       "steepCells": 103803,
       "waterCells": 106444,
       "structuralCells": 5588,
-      "thresholdHaloCells": 280
+      "thresholdHaloCells": 280,
+      "seamCollarCells": 6218
     }
   },
   "navigation": {
@@ -3872,7 +3873,7 @@
       160.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:d731537ae826e0c7d042db5b08a33a65b38a922d8445cee8231e8e372ac7736f",
+  "terrainRevision": "diagonal-spine-v1:435fb2ac69266c2231c0ff8a1aedbc324c6c2ee0a766e07e40a2c8de38c0d92c",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -5558,12 +5559,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:d731537ae826e0c7d042db5b08a33a65b38a922d8445cee8231e8e372ac7736f"
+    "terrainRevision": "diagonal-spine-v1:435fb2ac69266c2231c0ff8a1aedbc324c6c2ee0a766e07e40a2c8de38c0d92c"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
     "masterSha256": "461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073",
-    "collisionSha256": "f705cb9dbdebe1b2fb21fc38e7471d26ec43c4e1950eb92846458427788b4a19",
-    "terrainRevision": "diagonal-spine-v1:d731537ae826e0c7d042db5b08a33a65b38a922d8445cee8231e8e372ac7736f"
+    "collisionSha256": "560392549ad6b5f07acbd61cb5cd6f103f5b25f21decd4d512b6eeaa8aaefadd",
+    "terrainRevision": "diagonal-spine-v1:435fb2ac69266c2231c0ff8a1aedbc324c6c2ee0a766e07e40a2c8de38c0d92c"
   }
 }

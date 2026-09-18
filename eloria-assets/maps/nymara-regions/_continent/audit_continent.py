@@ -256,6 +256,12 @@ class Surface:
         require(not missing and not duplicate, f'{label}: {missing} missing and {duplicate} duplicated visible terrain triangles')
 
 
+# A road contract needs a way across. An open border publishes the lanes its
+# ground offers - the gate's among them, carried by the border lanes nearest
+# its surveyed ones - which a narrow pass can make fewer than a gate's seven.
+GATE_LANES = 1
+
+
 def audit_frames(publication, manifests, translations):
     checks = 0
     triggers = set()
@@ -264,6 +270,15 @@ def audit_frames(publication, manifests, translations):
         origin = manifests[region]['coordinateTransform']['serverOrigin']
         return np.array([tile[0] + .5 - origin[0] + translations[region][0],
                          origin[1] - tile[1] - .5 + translations[region][2]])
+    def tile_at(region, point):
+        """The tile of one map under a global cell centre: position() inverted."""
+        transform = manifests[region]['coordinateTransform']
+        origin, cells = transform['serverOrigin'], transform.get('serverCells')
+        tile = [int(round(point[0] - translations[region][0] + origin[0] - .5)),
+                int(round(origin[1] + translations[region][2] - point[1] - .5))]
+        if cells and not (0 <= tile[0] < cells[0] and 0 <= tile[1] < cells[1]):
+            return None
+        return tile if np.allclose(position(region, tile), point, atol=1e-6, rtol=0) else None
     for link in publication['connections']:
         if link['type'] != 'walk':
             continue
@@ -276,15 +291,30 @@ def audit_frames(publication, manifests, translations):
             region = source['region']
             stored = [f for f in manifests[region]['streamingBorders'] if f['id'] == link['id']]
             require(len(stored) == 1 and stored[0]['anchor'] == source['frame']['anchor'] and stored[0]['outward'] == source['frame']['outward'], f'{link["id"]}: territory frame differs from publication')
-            target_positions = {tuple(position(target['region'], lane['arrival'])):lane['arrival'] for lane in target['lanes']}
-            require(len(source['lanes']) == 7 and len(target_positions) == 7, f'{link["id"]}: seven crossing lanes are not distinct')
+            # A crossing hands the walker over at the very cell they stand on, so every
+            # departure must name a cell of the other map. This was checked against the far
+            # side's own lane list, which held for a gate of seven lanes either side of one
+            # anchor but cannot hold for a border crossed along its length: each step in the
+            # boundary leaves one more tile outside it than inside, so the two lists are the
+            # same ground in different numbers. The reading is exact instead - one metre grid,
+            # whole-tile origins, whole-metre translations - and the ground it lands on is
+            # judged by the served grids in export_contracts.
+            require(len(source['lanes']) >= GATE_LANES, f'{link["id"]}: no way across')
+            require(len({tuple(lane['tile']) for lane in source['lanes']}) == len(source['lanes']),
+                    f'{link["id"]}: a crossing lane is declared twice')
             for lane in source['lanes']:
-                point = tuple(position(region, lane['tile']))
-                require(point in target_positions, f'{link["id"]}: crossing changes global actor coordinates')
+                point = position(region, lane['tile'])
+                landing = tile_at(target['region'], point)
+                require(landing is not None, f'{link["id"]}: crossing changes global actor coordinates')
+                # One step for a lane on the border's first tile, two for a gate's, which
+                # its survey lays a metre either side of the seam's line.
+                require(1 <= max(abs(lane['tile'][0] - lane['arrival'][0]),
+                                 abs(lane['tile'][1] - lane['arrival'][1])) <= 2,
+                        f'{link["id"]}: a lane and the ground a walker arrives on are not beside each other')
                 trigger = (region, *lane['tile'])
                 require(trigger not in triggers, f'{link["id"]}: duplicate departure trigger')
                 triggers.add(trigger)
-                arrivals.append((target['region'], *target_positions[point]))
+                arrivals.append((target['region'], *landing))
                 checks += 1
     require(not set(arrivals) & triggers, 'A crossing arrival immediately triggers another crossing')
     return {'checkedLaneDirections':checks}
@@ -598,10 +628,15 @@ def road_rule_findings(roads, sites, rivers, policy, ground_at, river_water_at, 
                     continue
             widths.append(width)
         here = float(np.linalg.norm(span)) + .5
+        if site.get('authored'):
+            # The plan named this crossing and said why; the local-shortest and spacing rules judge the crossings the
+            # model sites for itself.
+            totals['authoredSites'] = totals.get('authoredSites', 0) + 1
+            continue
         if widths and here > min(widths) + ROAD_RULE_SHORTEST_EXCESS_METRES:
             violations.append(f"site {site.get('id')} on {site['river']}: crossing {here:.1f} m against {min(widths):.1f} m within {ROAD_RULE_WINDOW_METRES:g} m")
     for river, group in by_river.items():
-        arcs = sorted(float(site['arcMetres']) for site in group)
+        arcs = sorted(float(site['arcMetres']) for site in group if not site.get('authored'))
         for a, b in zip(arcs, arcs[1:]):
             if b - a < spacing - 1e-6:
                 violations.append(f"{river}: bridge sites {b - a:.0f} m apart along the river (at least {spacing:g})")

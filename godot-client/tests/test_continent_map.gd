@@ -127,9 +127,12 @@ func _run() -> void:
 	overlay.call("_gui_input", click)
 	_expect(region_preview.visible and not continent_view.visible and not map_image.visible,
 		"clicking a region shows its tab map")
+	var mirrorhold_crop: Vector2 = _tab_map_size(regions[mirrorhold_index] as Dictionary)
 	_expect(region_preview.texture != null
-		and region_preview.texture.get_size() == Vector2(456.0, 592.0),
-		"Mirrorhold's preview is its whole minimap, one pixel a metre")
+		and region_preview.texture.get_size() == mirrorhold_crop,
+		"Mirrorhold's preview is the pixels its cartography frames, one a metre, got "
+			+ str(region_preview.texture.get_size() if region_preview.texture != null else Vector2.ZERO)
+			+ " for " + str(mirrorhold_crop))
 	_expect(map_title.text == "MIRRORHOLD", "the title is the region's name")
 	_expect(continent_button.texture_normal == continent_texture,
 		"over a preview the small map shows the continent again")
@@ -137,18 +140,26 @@ func _run() -> void:
 		"a preview idles the world render")
 
 	# The cursor names server tiles over the preview, through the map's own
-	# transform: the middle of Mirrorhold's 456 x 592 m framing (world 4, 50 from
-	# a server origin of 228, 350) is tile (232, 300).
+	# transform: the middle of the framing the cartography publishes for the
+	# region, in that region's own metres, is the tile its adapter names. The
+	# numbers are read from the publication rather than pinned here, so a
+	# republished picture moves the expectation with it.
 	await process_frame
+	var mirrorhold_entry: Dictionary = MapRegistry.resolve(main.get("map_registry") as Dictionary,
+		str((regions[mirrorhold_index] as Dictionary).get("serverMap", "")))
+	var mirrorhold_adapter := CoordinateAdapter.new(mirrorhold_entry.get("coordinateTransform", {}) as Dictionary)
+	var mirrorhold_middle: Vector2 = _tab_map_middle(regions[mirrorhold_index] as Dictionary)
+	var expected_tile: Vector2i = mirrorhold_adapter.godot_to_server(
+		Vector3(mirrorhold_middle.x, 0.0, mirrorhold_middle.y))
 	var preview_centre: Vector2 = region_preview.size * 0.5
 	var tile_value: Variant = main.call("_preview_tile_at", preview_centre)
-	_expect(tile_value is Vector2i and (tile_value as Vector2i) == Vector2i(232, 300),
-		"the middle of Mirrorhold's map is server tile (232, 300), got " + str(tile_value))
+	_expect(tile_value is Vector2i and (tile_value as Vector2i) == expected_tile,
+		"the middle of Mirrorhold's map is server tile " + str(expected_tile) + ", got " + str(tile_value))
 	var preview_motion := InputEventMouseMotion.new()
 	preview_motion.position = preview_centre
 	main.call("_on_region_preview_gui_input", preview_motion)
-	_expect(map_coordinates.text == "Coordinates: 232, 300",
-		"the sidebar reports the tile under the cursor")
+	_expect(map_coordinates.text == "Coordinates: %d, %d" % [expected_tile.x, expected_tile.y],
+		"the sidebar reports the tile under the cursor, got " + map_coordinates.text)
 	var off_picture := InputEventMouseMotion.new()
 	off_picture.position = Vector2(-10.0, -10.0)
 	main.call("_on_region_preview_gui_input", off_picture)
@@ -161,10 +172,11 @@ func _run() -> void:
 	# A preview is framed as the live Tab map frames the map: Sunmane to its
 	# addressable tiles, Four Gates to its map bounds rather than its backdrop.
 	main.call("_preview_region", _index_of(regions, "sunmane_steppe"))
+	var sunmane_index: int = _index_of(regions, "sunmane_steppe")
 	var sunmane_texture: Texture2D = region_preview.texture
-	_expect(sunmane_texture != null and not sunmane_texture is AtlasTexture
-		and sunmane_texture.get_size() == Vector2(490.0, 780.0),
-		"Sunmane's preview is the live map's framing, its whole 490 x 780 m minimap")
+	var sunmane_crop: Vector2 = _tab_map_size(regions[sunmane_index] as Dictionary)
+	_expect(sunmane_texture != null and sunmane_texture.get_size() == sunmane_crop,
+		"Sunmane's preview is the live map's framing, its whole " + str(sunmane_crop) + " minimap")
 	var four_gates_index: int = _index_of(regions, "four_gates")
 	main.call("_preview_region", four_gates_index)
 	_expect(map_image.visible and not region_preview.visible,
@@ -172,9 +184,10 @@ func _run() -> void:
 	app_state.set("current_map", "mirrorhold")
 	main.call("_preview_region", four_gates_index)
 	var four_gates_texture: Texture2D = region_preview.texture
-	_expect(four_gates_texture != null and not four_gates_texture is AtlasTexture
-		and four_gates_texture.get_size() == Vector2(582.0, 316.0),
-		"Four Gates' preview frames its map bounds, 582 x 316 m")
+	var four_gates_crop: Vector2 = _tab_map_size(regions[four_gates_index] as Dictionary)
+	_expect(four_gates_texture != null and four_gates_texture.get_size() == four_gates_crop,
+		"Four Gates' preview frames its map bounds, " + str(four_gates_crop) + ", got "
+			+ str(four_gates_texture.get_size() if four_gates_texture != null else Vector2.ZERO))
 	_expect(main.call("_tab_map_texture", regions[four_gates_index]) == four_gates_texture,
 		"a tab map is decoded once and kept")
 	_expect(map_title.text == "FOUR GATES", "the preview is titled with the map's name")
@@ -200,6 +213,28 @@ func _run() -> void:
 	_expect(full_map.visible and map_image.visible and not continent_view.visible,
 		"reopening the map window shows the current map")
 	_finish()
+
+## The pixels a region's published cartography frames, one a metre: the crop
+## the tab map declares, or the whole picture where it declares none.
+func _tab_map_size(region: Dictionary) -> Vector2:
+	var tab_map: Dictionary = region.get("tabMap", {}) as Dictionary
+	var crop: Array = tab_map.get("region", []) as Array
+	if crop.size() == 4:
+		return Vector2(float(crop[2]), float(crop[3]))
+	var low: Array = tab_map.get("worldMin", []) as Array
+	var high: Array = tab_map.get("worldMax", []) as Array
+	if low.size() < 2 or high.size() < 2:
+		return Vector2.ZERO
+	return Vector2(float(high[0]) - float(low[0]), float(high[1]) - float(low[1]))
+
+## The middle of that framing in the region's own metres.
+func _tab_map_middle(region: Dictionary) -> Vector2:
+	var tab_map: Dictionary = region.get("tabMap", {}) as Dictionary
+	var low: Array = tab_map.get("worldMin", []) as Array
+	var high: Array = tab_map.get("worldMax", []) as Array
+	if low.size() < 2 or high.size() < 2:
+		return Vector2.ZERO
+	return Vector2(float(low[0]) + float(high[0]), float(low[1]) + float(high[1])) * 0.5
 
 func _index_of(regions: Array, server_map: String) -> int:
 	for index: int in range(regions.size()):

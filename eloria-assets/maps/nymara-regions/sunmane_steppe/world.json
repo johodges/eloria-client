@@ -298,8 +298,8 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 685711,
-    "walkableFraction": 0.273294,
+    "walkableCells": 690487,
+    "walkableFraction": 0.275198,
     "sourceGlbSha256": "6ff9b7de76776dee30f201a7d241f83dfe4b78b4e1635c053c8075c5291446fb",
     "exportStatistics": {
       "walkMeshes": 7,
@@ -309,7 +309,8 @@
       "steepCells": 37901,
       "waterCells": 263107,
       "structuralCells": 14113,
-      "thresholdHaloCells": 152
+      "thresholdHaloCells": 152,
+      "seamCollarCells": 4776
     }
   },
   "navigation": {
@@ -7942,7 +7943,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:e981bd6276f30dab1ce92d9977a1dbb2017cb60e37b3041fdd30dc9ede242f77",
+  "terrainRevision": "diagonal-spine-v1:d9aafa7be812d2d460ca8bbf57ae3edeb4e2a3227be45907ad0c9e7cec757123",
   "sources": [
     "_continent/diagonal-plan.json",
     "_continent/build_continent.py",
@@ -9252,12 +9253,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:e981bd6276f30dab1ce92d9977a1dbb2017cb60e37b3041fdd30dc9ede242f77"
+    "terrainRevision": "diagonal-spine-v1:d9aafa7be812d2d460ca8bbf57ae3edeb4e2a3227be45907ad0c9e7cec757123"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
     "masterSha256": "461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073",
-    "collisionSha256": "fefce5341f3c75f8fd792dc8c0387a4f17591235b80d61657f66d818faaa8ba0",
-    "terrainRevision": "diagonal-spine-v1:e981bd6276f30dab1ce92d9977a1dbb2017cb60e37b3041fdd30dc9ede242f77"
+    "collisionSha256": "0b2d35c0548426e8c2697c5514259a4cf5af04dee45df1160b92c8c72245bde8",
+    "terrainRevision": "diagonal-spine-v1:d9aafa7be812d2d460ca8bbf57ae3edeb4e2a3227be45907ad0c9e7cec757123"
   }
 }

@@ -155,6 +155,27 @@ class AuthoredCrossingTests(unittest.TestCase):
         site = RC.crossing_report(world)['sites'][0]
         self.assertTrue(site['authored']); self.assertEqual(site['waived'], ['retained solid'])
 
+    def test_an_authored_section_waives_a_seam_it_stands_near_but_never_a_span_in_two_territories(self):
+        # Standing near a seam is a preference an authored crossing may overrule: the Four Gates south gate is to
+        # have its bridge although the boundary runs near the river there.
+        world = river_world(owner=lambda w: (w.gz[:-1, :-1] >= 250).astype(int))
+        rows = RC.river_sections(world, world.plan['rivers'][0], RC.policy_of(world))
+        near = min((r for r in rows if 'cost' in r and 240 <= r['centre'][1] < 249
+                    and r['reasons'] == ['territory seam']), key=lambda r: r['cost'])
+        world.plan['authored_crossings'] = [{'river': 'main', 'arcMetres': near['arc'], 'note': 'the gate bridge'}]
+        RC.prepare_river_crossings(world)
+        self.assertEqual([c['waived'] for c in world.crossing_candidates if c['authored']], [['territory seam']])
+        # A span whose own line lies in two territories is refused instead: each territory exports its own geometry,
+        # so that deck would be built in halves.
+        split = river_world(owner=lambda w: (w.gx[:-1, :-1] >= 120).astype(int))
+        rows = RC.river_sections(split, split.plan['rivers'][0], RC.policy_of(split))
+        measured = [r for r in rows if 'cost' in r]
+        self.assertTrue(all('two territories' in r['reasons'] for r in measured))
+        split.plan['authored_crossings'] = [{'river': 'main', 'arcMetres': measured[len(measured) // 2]['arc'],
+                                             'note': 'across the boundary'}]
+        with self.assertRaisesRegex(ValueError, 'two territories cannot be waived'):
+            RC.prepare_river_crossings(split)
+
     def test_an_authored_section_cannot_waive_a_lake_and_the_key_is_validated(self):
         import landscape as L
         lake = {'name': 'Pool', 'center': [120., 300.], 'radii': [20., 20.], 'level': 0., 'depth': 1.5}
@@ -191,6 +212,22 @@ class SpacingTests(unittest.TestCase):
         self.assertEqual(len(world.crossing_sites), 2)
         RC.restore_claims(world, snapshot)
         self.assertEqual([s['key'] for s in world.crossing_sites], [first['key']])
+
+    def test_an_authored_crossing_is_claimed_inside_the_spacing(self):
+        # The spacing rules the crossings the model sites for itself. One the plan names is a decision already taken.
+        world = river_world(width=lambda z: np.full(np.shape(z), 8.))
+        RC.prepare_river_crossings(world)
+        spacing = RC.policy_of(world)['minimum_spacing_metres']
+        first = min(world.crossing_candidates, key=lambda c: c['arcMetres'])
+        near = next(c for c in world.crossing_candidates if 0 < abs(c['arcMetres'] - first['arcMetres']) < spacing)
+        world.plan['authored_crossings'] = [{'river': 'main', 'arcMetres': near['arcMetres'], 'note': 'the gate bridge'}]
+        RC.prepare_river_crossings(world)
+        RC.claim(world, [first['key']], 'door-a', public=True)
+        authored = next(c for c in world.crossing_candidates if c['authored'])
+        self.assertLess(abs(authored['arcMetres'] - first['arcMetres']), spacing)
+        RC.claim(world, [authored['key']], 'gate-road', public=True)
+        self.assertEqual(len(world.crossing_sites), 2)
+        self.assertIn(authored['key'], [c['key'] for c in RC.available_crossings(world, None)])
 
     def test_the_policy_is_validated_by_name_and_range(self):
         import landscape as L

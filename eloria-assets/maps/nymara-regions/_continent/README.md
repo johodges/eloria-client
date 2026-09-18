@@ -5,28 +5,31 @@ exported. X runs east, Z runs south, and sea level is Y = 0. Named territories
 are server and content identities. Their boundaries do not determine the
 height, water level, ground colour, or vegetation of the landscape.
 
-**QA state: verified for the seventeenth publication (2026-09-17).** Master
-`461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073`, publication
-`fee27071603edc7bcea56eb9ef103dd28c2c8d352df33aa8c2452f9267005e60`
-(`work-output/diagonal-continent/after/seventeenth-freeze.json`). On these bytes the
-strict contracts passed with 0 failures over 3,660 placements, the full audit
-passed and verified the publication, the 26 primary, 9 supplement and 2 atlas
-gameplay views were captured with the published registry and no overrides
-(`final-review/`), and the seven native loopback suites walked 240 routes with 0
-failures on a real server (`after/live-walk/final-live-summary.json`). It is the
-first publication of the Whitehorn Range redesign, the roads pass R1, the asset
-passes A1/A2, the plan editor's object and terrain edits and the exact affine
-content transforms. Where its roads climb steeper than the walkable grade, 48 reach
-links (walkable ramps and pads written on the finished ground), 19 authored points
-(records pinned to reachable ground) and two access decks (the Lamp Rock causeway
-link and the Crownwater ferry landing stair) serve the placements. Known limitations
-are listed in `STATUS-2026-09-13-takeover.md`: roads are not yet walkable (the
-walkable-roads round); the reach links leave 732 wall steps over the 4 m smoothing
-limit, the tallest 20.7 m, where the Moors pass switchback's legs are stacked on
-the Whitehorn face and its road ribbons cross them; the Grey Moors undercut mouth
-is served 33.6 m out and 28 m below its entrance, at the foot of its slope, while
-its trail still climbs to the mouth. Any later change to a shaping or export source
-returns this notice to provisional until the same chain is repeated.
+**QA state: published as the eighteenth publication (2026-09-18) and verified
+for what it changed.** Master `461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073` (the
+seventeenth's: no geometry changed), publication
+`d714feb374f3e9de1d6942c0fbc966fa24d87fe23a066934ce2a23043d60744f`
+(`work-output/diagonal-continent/after/eighteenth-freeze.json`). It is the first
+publication with every land seam open along its length: 8,136 crossing lanes
+where the seventeenth had 252, each the neighbour's first tile across the border,
+stepped onto from ground its hub reaches without crossing. On these bytes the strict
+contracts passed with 0 failures over 3,660 placements, every published crossing
+lands on ground its destination's hub reaches, the audit passed and verified the
+publication, and the live fixture audit proved every lane offline by the server's own
+walking rules with 0 errors. On a real server with the real client the gates' centre
+and shoulder handoffs, the neighbour clicks, the ferry round trips and the region cores
+passed. The interior round trips, the encounters and the final review captures were not
+repeated for this publication: its geometry is the seventeenth's, and the interiors'
+door approaches under the new walking rule (a walk keeps off every way out of a map but
+its target) were proved offline only. Known limitations are listed in
+`STATUS-2026-09-13-takeover.md`: roads are not yet walkable (the walkable-roads round);
+the reach links leave wall steps over the 4 m smoothing limit where the Moors pass
+switchback's legs are stacked on the Whitehorn face; the Grey Moors undercut mouth is
+served at the foot of its slope; and the Four Gates north and south gates still have no
+roads of their own - the ground in front of them offers no seam station both hubs can
+reach (the north gate faces a gully that needs an access deck), recorded in
+`door_approaches.py`. Any later change to a shaping or export source returns this
+notice to provisional until the same chain is repeated.
 
 `diagonal-plan.json` describes the coast, connected mountain chain, river
 catchments, islands, territory centres, and placement controls. `landscape.py`
@@ -145,12 +148,23 @@ box without granting movement there. Compact retained settlements and their
 surroundings occupy only part of these envelopes; open hills, rivers and sea
 provide the geographic transitions between them.
 
-`crossings.py` surveys seven exact metre-cell lanes at each road crossing.
-Reciprocal arrivals share the same global cell centre. Reverse departure
-triggers sit on the opposite side, preventing immediate return loops.
-Short invisible threshold floors support the final step across an ownership
-boundary; they do not duplicate visible terrain. Other shared boundaries
-are declared as visual adjacencies without adding travel portals.
+`crossings.py` surveys the seven metre-cell lanes of each road crossing's
+gate and every other tile of the border a walker can cross on. A lane is the
+neighbour's first tile across the border, stepped onto from this territory's
+own ground; it exists wherever both served grids let an actor stand there and
+both hubs can reach it (a seam named in `GATED_SEAMS` keeps only its gate).
+The crossing hands the walker over at that same cell, read in the other map's
+tile frame - every territory's tiles are one metre grid in the shared frame -
+so an arrival shares its departure's global cell centre, and no departure is
+owned by the map it departs from, which keeps every arrival clear of the
+crossing back. The collision export opens that first strip of the
+neighbour's ground along the whole border (`collision_export.seam_collar`)
+without letting it stretch the territory's height scale. Short invisible
+threshold floors still carry the gate's own lanes across the ownership
+boundary; they do not duplicate visible terrain. The published survey ships
+each end's crossings as runs, so a client aims a walk at the crossing on its
+way. Shared boundaries without a road are declared as visual adjacencies
+without adding travel portals.
 
 Island connections without a continuous road remain explicit ferries. Their
 fixtures require the exact authoritative receiving tile and its global metre
@@ -237,15 +251,19 @@ footings are limited and written into the ground. The plan key `crossing_policy`
 **Crossing sites** (`river_crossings.py`). Every plan river is cut every 2 m along its curved centreline. A
 section costs its wet width plus an approach term (the bank rise a .35 grade cannot absorb over a 12 m landing).
 Sections are excluded over lakes and the sea, within 20 m of another channel (confluences), across the rigid
-core of a settlement footing or a retained solid, within 12 m of a territory seam, more than 15 degrees off
-square to the flow, with a landing that is not dry ground above the sea, or where a deck would stand more
-than 0.3 m over its banks. A section within a quarter metre of the cheapest valid section within 40 m along its
-river is a candidate (thinned to one every 20 m). A candidate whose approach exceeds 6 m is a last resort,
-offered only to a leg that finds no other crossing. The plan key `authored_crossings` names a section (a river
-id and metres along it) that is a candidate although the model excludes it, when its only reasons are a deck
-that cannot sit at water level between high banks or a retained solid beside a landing
-(`landscape.AUTHORED_CROSSING_WAIVERS`): the Mirrorwater ravine below Mirror Lake, which the Verdant Stair seam
-road crosses as design O5 did.
+core of a settlement footing or a retained solid, within 12 m of a territory seam, whose own line lies in two
+territories or none, more than 15 degrees off square to the flow, with a landing that is not dry ground above
+the sea, or where a deck would stand more than 0.3 m over its banks. A section within a quarter metre of the
+cheapest valid section within 40 m along its river is a candidate (thinned to one every 20 m). A candidate whose
+approach exceeds 6 m is a last resort, offered only to a leg that finds no other crossing. The plan key
+`authored_crossings` names a section (a river id and metres along it) that is a candidate although the model
+excludes it, when its only reasons are a deck that cannot sit at water level between high banks, a retained
+solid beside a landing, or standing nearer a territory seam than the policy prefers
+(`landscape.AUTHORED_CROSSING_WAIVERS`). A span in two territories is never waived: each territory exports its
+own geometry, so such a deck would be built in halves. An authored crossing also keeps its place whatever the
+minimum spacing says, and the audit judges the local-shortest and spacing rules only on the sites the model
+chose for itself: the plan names three, the Mirrorwater ravine below Mirror Lake that the Verdant Stair seam road
+crosses as design O5 did, and the Amberwater and Mirrorwater in front of the Four Gates north and south gates.
 
 **Routing.** River water is impassable to the router. Every claimed site in the leg's territory, and every
 candidate there standing at least 100 m along its river from each claimed site, adds one bridge edge between its

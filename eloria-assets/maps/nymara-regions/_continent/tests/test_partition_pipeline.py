@@ -46,6 +46,28 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'not a safe shared boundary station'):
             World.plan_connections(world)
 
+    def test_an_authored_station_may_stand_on_a_step_of_the_seam(self):
+        # The seam runs up x=20 to z=10, steps two metres east and runs on up x=22:
+        # (22, 13) stands on a vertical run of two segments below it, not seven.
+        ids=[r['id'] for r in L.load_plan()['regions']]
+        a,b=ids.index('verdant_stair'),ids.index('ssarathi_ruins')
+        centers=np.zeros((len(ids),2));centers[a]=[10,20];centers[b]=[30,20]
+        seam=[[[20,z],[20,z+2]] for z in range(0,10,2)]+[[[20,10],[22,10]]]+[[[22,z],[22,z+2]] for z in range(10,40,2)]
+        boundary=lambda z:np.where(np.asarray(z)<10,20,22)
+        world=SimpleNamespace(ids=ids,centers=centers,connections=[],
+            plan={'rivers':[],'lakes':[],'sea_level':0,'connection_sites':{'ssarathi_ruins--verdant_stair':[22,13]}},
+            adjacent_edges=lambda:{tuple(sorted((a,b))):seam},
+            height_at=lambda x,z:np.zeros_like(x)+2,seam_terminal_penalty=lambda point,normal:0.,
+            owner_at=lambda x,z:np.where(np.asarray(x)<boundary(z),a,b))
+        World.plan_connections(world)
+        self.assertEqual(world.connections[0]['anchor'],[22.,13.])
+        # What the model chooses for itself still stands on a straight run.
+        world.connections=[];del world.plan['connection_sites']['ssarathi_ruins--verdant_stair']
+        World.plan_connections(world)
+        anchor=world.connections[0]['anchor']
+        self.assertEqual(anchor[0],22.)
+        self.assertGreaterEqual(anchor[1],17.,"seven segments of x=22 stand either side of the model's own station")
+
     def test_contradictory_footings_do_not_cut_a_cliff_through_the_street(self):
         target=np.full((9,60),25.);active=np.ones_like(target,bool)
         fixed=np.zeros_like(active);floor=np.zeros_like(target)

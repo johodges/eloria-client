@@ -193,9 +193,20 @@ func _candidates(position: Vector3) -> Array[Dictionary]:
 			var here: Dictionary = ends[index]
 			var there: Dictionary = ends[1 - index]
 			var at := _vector(here.position)
-			result.append({"map": str(there.map), "distance": _seam_distance(position, here, bool(link.get("seamless", false))),
-				"crossing_distance": Vector2(position.x - at.x, position.z - at.z).length(),
-				"here": here, "there": there, "seamless": bool(link.get("seamless", false)),
+			var seamless := bool(link.get("seamless", false))
+			var seam := _seam_distance(position, here, seamless)
+			var anchor_distance := Vector2(position.x - at.x, position.z - at.z).length()
+			# Where the survey ships the shared border itself, the border is what
+			# a handoff is judged against: every tile along it is a way across,
+			# so leaving by its far end is as continuous as leaving by the middle.
+			# A link that ships only an anchor and a view flank keeps the anchor:
+			# its flank says how far the neighbour is drawn, not how far it can be
+			# walked into, and a point out on the flank is not a crossing at all.
+			var edged := not (here.get("preloadEdges", []) as Array).is_empty()
+			result.append({"map": str(there.map), "distance": seam,
+				"crossing_distance": anchor_distance,
+				"handoff_distance": seam if edged else anchor_distance,
+				"here": here, "there": there, "seamless": seamless,
 				"visual_only": bool(link.get("visualOnly", false))})
 	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return str(a.map) < str(b.map) if float(a.distance) == float(b.distance) else float(a.distance) < float(b.distance))
@@ -210,8 +221,8 @@ func _candidates(position: Vector3) -> Array[Dictionary]:
 ## remote map changes stay far outside it.
 const CONTINUOUS_CROSSING_SLACK_METRES := 8.0
 
-static func continuous_crossing(seamless: bool, crossing_distance: float, collar: float) -> bool:
-	return seamless and crossing_distance < maxf(collar, CONTINUOUS_CROSSING_SLACK_METRES)
+static func continuous_crossing(seamless: bool, seam_distance: float, collar: float) -> bool:
+	return seamless and seam_distance < maxf(collar, CONTINUOUS_CROSSING_SLACK_METRES)
 
 func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> Dictionary:
 	last_handoff = {}
@@ -223,7 +234,12 @@ func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> 
 			join = candidate
 			break
 	var collar := float(join.get("here", {}).get("frame", {}).get("collarDepth", 42))
-	var continuous := continuous_crossing(bool(join.get("seamless", false)), float(join.get("crossing_distance", INF)), collar)
+	# Measured to the seam itself and not to the crossing's anchor. The two were
+	# the same thing while a seam was one gate seven lanes wide, and the slack is
+	# written as a slack "of the seam"; but a border walkable along its length is
+	# crossed wherever the ground allows.
+	var continuous := continuous_crossing(bool(join.get("seamless", false)),
+		float(join.get("handoff_distance", INF)), collar)
 	var resident: Dictionary = residents[destination]
 	residents.erase(destination)
 	var rebase := Transform3D.IDENTITY
@@ -244,7 +260,9 @@ func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> 
 	imported.visible = true
 	_generation += 1
 	last_handoff = {"from": active_map, "to": destination, "continuous": continuous,
-		"rebase": rebase, "root_id": imported.get_instance_id(), "source_distance": join.get("crossing_distance", INF)}
+		"rebase": rebase, "root_id": imported.get_instance_id(),
+		"source_distance": join.get("handoff_distance", INF),
+		"anchor_distance": join.get("crossing_distance", INF)}
 	_record("handoff", destination, {"continuous": continuous})
 	return {"resident": resident, "continuous": continuous, "rebase": rebase}
 
@@ -513,7 +531,7 @@ func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction:
 ## outside that map's served cells or no seamless road leads there.
 func arm_walk_to(map_id: String, tile: Vector2i, run: bool, world_point: Vector3) -> Variant:
 	pending_walk.clear()
-	if not tile_inside(neighbour_coordinates(map_id), tile):
+	if not tile_inside(region_coordinates(map_id), tile):
 		return null
 	var leg := _first_walk_leg(active_map, map_id)
 	if leg.is_empty():
@@ -522,8 +540,44 @@ func arm_walk_to(map_id: String, tile: Vector2i, run: bool, world_point: Vector3
 		"routed": true, "issued_from": active_map, "next_map": str(leg.there.map)}
 	var fallback: Dictionary = active_manifest.data.get("coordinateTransform", {}) if active_manifest != null else {}
 	var here_adapter := CoordinateAdapter.new(leg.here.get("coordinateTransform", fallback))
-	_arm_walk_leg(active_map, here_adapter.godot_to_server(_vector(leg.here.position)), _local_walk_actor(active_map))
-	return _vector(leg.here.position)
+	var crossing := best_crossing(leg.here, here_adapter, _last_position, world_point)
+	_arm_walk_leg(active_map, crossing, _local_walk_actor(active_map))
+	if crossing == here_adapter.godot_to_server(_vector(leg.here.position)):
+		return _vector(leg.here.position)
+	return here_adapter.tile_center(crossing.x, crossing.y)
+
+## Where a border can be crossed, in its near map's own tiles: the runs the
+## survey ships with each end, expanded. Empty for a survey written before the
+## borders opened, which leaves a walk to the gate the survey anchors.
+static func crossing_tiles(end: Dictionary) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	var packed: Variant = end.get("crossingRuns")
+	if packed is not Dictionary:
+		return result
+	var along_x := str((packed as Dictionary).get("axis", "x")) == "x"
+	for run: Variant in (packed as Dictionary).get("runs", []) as Array:
+		if run is not Array or (run as Array).size() != 3:
+			continue
+		var line := int(run[0])
+		for step: int in range(int(run[1]), int(run[2]) + 1):
+			result.append(Vector2i(step, line) if along_x else Vector2i(line, step))
+	return result
+
+## The crossing of a border that makes the shortest walk from `from` to `to`,
+## both in the active map's frame. A border open along its length is crossed on
+## whichever of its tiles is on the way, not at the gate the survey anchors; a
+## click a step across the border used to send the walker round by the gate,
+## which could be the far end of the border. Without shipped crossings, the gate.
+static func best_crossing(end: Dictionary, adapter: CoordinateAdapter, from: Vector3, to: Vector3) -> Vector2i:
+	var best := adapter.godot_to_server(_vector(end.position))
+	var best_cost := INF
+	for tile: Vector2i in crossing_tiles(end):
+		var at := adapter.tile_center(tile.x, tile.y)
+		var cost := Vector2(at.x - from.x, at.z - from.z).length() + Vector2(to.x - at.x, to.z - at.z).length()
+		if cost < best_cost:
+			best_cost = cost
+			best = tile
+	return best
 
 ## The direct seamless links out of the active map, as {map, here, there}.
 func _direct_links() -> Array[Dictionary]:
@@ -548,6 +602,48 @@ func neighbour_transform(map_id: String) -> Variant:
 			return frame_transform(candidate.here.frame, candidate.there.frame)
 	return null
 
+## Any exterior region's placement in the active map's frame, loaded or not:
+## the surveyed join of a direct seamless link where there is one (a resident
+## root's own transform first), else the continent translations the registry
+## publishes, where a region's metres are its global metres less its own
+## translation. Null for a map the registry does not place on the continent.
+func region_transform(map_id: String) -> Variant:
+	var direct: Variant = neighbour_transform(map_id)
+	if direct is Transform3D:
+		return direct
+	var here: Variant = _continent_translation(active_map)
+	var there: Variant = _continent_translation(map_id)
+	if here is Vector3 and there is Vector3:
+		return Transform3D(Basis(), (there as Vector3) - (here as Vector3))
+	return null
+
+## Any exterior region's coordinate transform: a resident manifest's or a link
+## end's, else the one the registry publishes for every map.
+func region_coordinates(map_id: String) -> Dictionary:
+	var known := neighbour_coordinates(map_id)
+	if not known.is_empty():
+		return known
+	return MapRegistry.resolve(registry, map_id).get("coordinateTransform", {}) as Dictionary
+
+## Where a region stands on the continent, from the registry's geography.
+func _continent_translation(map_id: String) -> Variant:
+	var geography: Dictionary = MapRegistry.resolve(registry, map_id).get("continentGeography", {}) as Dictionary
+	var translation: Array = geography.get("translation", []) as Array
+	if translation.size() != 3:
+		return null
+	return Vector3(float(translation[0]), float(translation[1]), float(translation[2]))
+
+## Every exterior region the registry places on the continent, the active map last.
+func continent_maps() -> Array[String]:
+	var result: Array[String] = []
+	for key: Variant in registry.keys():
+		var map_id: String = MapRegistry.normalize_server_map_id(str(key))
+		if map_id == active_map or result.has(map_id):
+			continue
+		if _continent_translation(map_id) is Vector3:
+			result.append(map_id)
+	return result
+
 ## A neighbour's coordinate transform: the resident manifest's, else the link end's.
 func neighbour_coordinates(map_id: String) -> Dictionary:
 	var resident: Variant = residents.get(map_id)
@@ -567,14 +663,22 @@ static func tile_inside(coordinates: Dictionary, tile: Vector2i) -> bool:
 	var height := int(dimensions[1]) if dimensions is Array else width
 	return width <= 0 or (tile.x < width and tile.y < height)
 
-## The direct neighbour whose served tiles hold a point of the active map's
-## frame, with that tile: what a map click past the seam means. Empty when
-## no neighbour holds the point.
+## The region whose served tiles hold a point of the active map's frame, with
+## that tile: what a map click past the seam means. The direct neighbours are
+## asked first, on their surveyed joins; then every other region the registry
+## places on the continent, so a click on a far map answers as well as one on
+## the map next door. Empty when no region holds the point.
 func map_at_local(point: Vector3) -> Dictionary:
+	var order: Array[String] = []
 	for candidate: Dictionary in _direct_links():
-		var map_id := str(candidate.map)
-		var frame_value: Variant = neighbour_transform(map_id)
-		var coordinates := neighbour_coordinates(map_id)
+		if not order.has(str(candidate.map)):
+			order.append(str(candidate.map))
+	for map_id: String in continent_maps():
+		if not order.has(map_id):
+			order.append(map_id)
+	for map_id: String in order:
+		var frame_value: Variant = region_transform(map_id)
+		var coordinates := region_coordinates(map_id)
 		if not frame_value is Transform3D or coordinates.is_empty():
 			continue
 		var local_point: Vector3 = (frame_value as Transform3D).affine_inverse() * point

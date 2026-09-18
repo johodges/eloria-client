@@ -271,7 +271,8 @@
       "steepCells": 208528,
       "waterCells": 817842,
       "structuralCells": 9758,
-      "thresholdHaloCells": 0
+      "thresholdHaloCells": 0,
+      "seamCollarCells": 0
     }
   },
   "navigation": {

@@ -88,15 +88,32 @@ class PublicationTests(unittest.TestCase):
             self.assertEqual(P.world_point(source, [x, y], specs()), P.world_point(dest, [ax, ay], specs()))
 
     def test_bad_lane_match_and_bounce_fail(self):
+        # A crossing hands the walker over at the cell they stand on, so a
+        # departure must name a cell of the other map. (The arrival used to be
+        # found in the far side's lane list; it is read in the destination's
+        # own frame now, so a border open along its length need not have lane
+        # for lane the same tiles on both sides.)
         links = connections()
         links[0]['ends'][1]['lanes'][0]['arrival'][0] += 1
-        with self.assertRaisesRegex(ValueError, 'no arrival at the same global'):
+        self.assertEqual(len(P.connection_rows(links, specs())[1]), 14)
+        links[0]['ends'][0]['lanes'][0]['tile'][0] = 3
+        with self.assertRaisesRegex(ValueError, 'stands on no cell of westhaven'):
             P.connection_rows(links, specs())
         links = connections()
         links[0]['ends'][0]['lanes'][0]['tile'] = links[0]['ends'][0]['lanes'][0]['arrival']
         links[0]['ends'][1]['lanes'][0]['arrival'] = links[0]['ends'][1]['lanes'][0]['tile']
         with self.assertRaisesRegex(ValueError, 'immediately triggers'):
             P.connection_rows(links, specs())
+
+    def test_a_border_s_crossings_ship_as_the_fewest_runs(self):
+        self.assertEqual(P.crossing_runs([[5, 1], [5, 2], [5, 3], [6, 4], [6, 5], [9, 9]]),
+                         {'axis': 'y', 'runs': [[5, 1, 3], [6, 4, 5], [9, 9, 9]]})
+        self.assertEqual(P.crossing_runs([[1, 7], [2, 7], [3, 7], [4, 8]]),
+                         {'axis': 'x', 'runs': [[7, 1, 3], [8, 4, 4]]})
+        graph, stream = P.connection_manifests({'revision': 'diagonal-spine-v1', 'connections': connections()},
+                                               {name: {'coordinateTransform': {}} for name in specs()}, specs())
+        runs = stream['connections'][0]['ends'][0]['crossingRuns']
+        self.assertEqual(runs, {'axis': 'y', 'runs': [[22, 9, 15]]}, 'seven lanes in a column are one run')
 
     def test_three_ferries_publish_six_distinct_docks_without_becoming_walk_links(self):
         regions = {name: copy.deepcopy(specs()['four_gates']) for name in (

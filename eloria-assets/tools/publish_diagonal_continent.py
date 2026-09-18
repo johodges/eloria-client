@@ -90,6 +90,21 @@ def world_point(region, tile, specs):
             round(spec['serverOrigin'][1] - tile[1] - .5 + spec['translation'][2], 6))
 
 
+def destination_tile(region, point, specs):
+    """The tile of `region` under a global cell centre, or None where it has none.
+
+    Every territory's tile grid is the same metre grid in the shared frame, so
+    a crossing that hands a walker over at the cell they stand on only has to
+    read that cell in the other map's own numbering.
+    """
+    spec = specs[region]
+    x = int(round(point[0] - spec['translation'][0] + spec['serverOrigin'][0] - .5))
+    y = int(round(spec['serverOrigin'][1] + spec['translation'][2] - point[1] - .5))
+    if not (0 <= x < spec['serverCells'][0] and 0 <= y < spec['serverCells'][1]):
+        return None
+    return [x, y] if world_point(region, (x, y), specs) == point else None
+
+
 def validate_spec(region, spec, previous):
     for name in ('serverOrigin', 'previousServerOrigin', 'serverCells', 'arrival'):
         spec[name] = list(shared.integer_pair(spec.get(name), f'{region}.{name}'))
@@ -283,13 +298,19 @@ def connection_rows(connections, specs):
         lines.append(f'# {identity} ({connection.get("type", "land")})\n')
         for source, destination in ((a, b), (b, a)):
             lanes = source.get('lanes', [{'tile': source['tile'], 'arrival': source['arrival']}])
-            arrivals = destination.get('lanes', [{'tile': destination['tile'], 'arrival': destination['arrival']}])
-            targets = {world_point(destination['region'], lane['arrival'], specs): lane['arrival'] for lane in arrivals}
             for lane in lanes:
                 tile = list(shared.integer_pair(lane['tile'], identity + ' departure'))
-                arrival = targets.get(world_point(source['region'], tile, specs)) if seamless else destination['arrival']
+                # A seamless crossing hands the walker over at the very cell
+                # they are standing on, so the arrival is that cell read in the
+                # destination's own tile frame. While a seam was a gate seven
+                # lanes wide this was found by matching the far side's own lane
+                # list, which needs the two sides to have lane for lane the same
+                # tiles; a border crossed along its length has one more tile on
+                # the outside of every step in it than on the inside.
+                arrival = (destination_tile(destination['region'], world_point(source['region'], tile, specs), specs)
+                           if seamless else destination['arrival'])
                 if arrival is None:
-                    raise ValueError(f'{identity}: source lane {tile} has no arrival at the same global cell centre')
+                    raise ValueError(f'{identity}: departure {tile} of {source["region"]} stands on no cell of {destination["region"]}')
                 arrival = list(shared.integer_pair(arrival, identity + ' arrival'))
                 trigger = (source['region'], *tile)
                 if trigger in sources:
@@ -297,9 +318,12 @@ def connection_rows(connections, specs):
                 sources.add(trigger)
                 entries.append((source['region'], *tile, destination['region'], *arrival))
                 lines.append('portal | ' + ' | '.join(map(str, entries[-1])) + '\n')
-    for source, x, y, target, tx, ty in entries:
-        if (target, tx, ty) in sources:
-            raise ValueError(f'{source}->{target}: arrival immediately triggers another exterior crossing')
+    triggered = [(source, x, y, target, tx, ty) for source, x, y, target, tx, ty in entries if (target, tx, ty) in sources]
+    if triggered:
+        source, x, y, target, tx, ty = triggered[0]
+        raise ValueError(f'{source}->{target}: arrival immediately triggers another exterior crossing: '
+                         + ', '.join(f'{s} {[a, b]} -> {t} {[c, d]}' for s, a, b, t, c, d in triggered[:8])
+                         + f' ({len(triggered)} in all)')
     return ''.join(lines), entries
 
 
@@ -363,6 +387,26 @@ def validate_standing_points(specs, blobs, texts, connections):
     return len(checked)
 
 
+def crossing_runs(tiles):
+    """A border's crossing tiles as the fewest straight runs along one axis.
+
+    A client walking to a neighbour aims at the crossing that makes the
+    shortest walk, so it has to know where the crossings are; a border open
+    along its length is hundreds of them, and the survey is written indented.
+    Along ``x`` a run is ``[y, x0, x1]``, along ``y`` it is ``[x, y0, y1]``.
+    """
+    def along(axis):
+        other, runs = 1 - axis, []
+        for tile in sorted(tiles, key=lambda tile: (tile[other], tile[axis])):
+            if runs and runs[-1][0] == tile[other] and runs[-1][2] + 1 == tile[axis]:
+                runs[-1][2] = tile[axis]
+            else:
+                runs.append([tile[other], tile[axis], tile[axis]])
+        return runs
+    x, y = along(0), along(1)
+    return {'axis': 'x', 'runs': x} if len(x) <= len(y) else {'axis': 'y', 'runs': y}
+
+
 def connection_manifests(publication, worlds, specs):
     graph, streaming = [], []
     for connection in publication['connections']:
@@ -384,7 +428,8 @@ def connection_manifests(publication, worlds, specs):
             position = end.get('position', [tile[0] + .5 - origin[0], frame['anchor'][1], origin[1] - tile[1] - .5])
             ends.append({'map': region, 'portal': end['portal'], 'position': position,
                          'frame': copy.deepcopy(frame), 'coordinateTransform': copy.deepcopy(world['coordinateTransform']),
-                         'preloadEdges':copy.deepcopy(end.get('preloadEdges',[]))})
+                         'preloadEdges':copy.deepcopy(end.get('preloadEdges',[])),
+                         'crossingRuns': crossing_runs([lane['tile'] for lane in end.get('lanes', [end])])})
         streaming.append({'id': connection['id'], 'seamless': True, 'ends': ends})
     identities={c['id'] for c in streaming}
     for visual in publication.get('visualConnections',[]):

@@ -102,10 +102,22 @@ class EmittedPartitionTests(unittest.TestCase):
            'lanes':[{'tile':[8,y],'arrival':[7,y]} for y in range(7)]}
         b={'region':'east','frame':{'id':'road','anchor':[-2,0,2],'outward':[-1,0]},
            'lanes':[{'tile':[3,y],'arrival':[4,y]} for y in range(7)]}
-        manifests={end['region']:{'coordinateTransform':{'serverOrigin':[6,6]},'streamingBorders':[end['frame']]} for end in (a,b)}
+        manifests={end['region']:{'coordinateTransform':{'serverOrigin':[6,6],'serverCells':[16,16]},
+            'streamingBorders':[end['frame']]} for end in (a,b)}
         publication={'connections':[{'id':'road','type':'walk','ends':[a,b]}]}
         self.assertEqual(A.audit_frames(publication,manifests,translations)['checkedLaneDirections'],14)
-        b['lanes'][0]['arrival'][0]+=1
+        # The ground a walker arriving the other way lands on is the tile behind the
+        # crossing, beside it. The two sides used to be checked lane against lane, which a
+        # border crossed along its length cannot satisfy: a step in the boundary leaves one
+        # more tile outside it than inside.
+        b['lanes'][0]['arrival'][0]+=2
+        with self.assertRaisesRegex(A.AuditError,'not beside each other'):
+            A.audit_frames(publication,manifests,translations)
+        b['lanes'][0]['arrival'][0]-=2
+        # A crossing hands the walker over at the cell they stand on, so a departure that
+        # names no cell of the other map is no crossing.
+        b['lanes'][0]['tile'][0]-=12
+        b['lanes'][0]['arrival'][0]-=12
         with self.assertRaisesRegex(A.AuditError,'global actor coordinates'):
             A.audit_frames(publication,manifests,translations)
 
