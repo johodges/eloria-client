@@ -237,7 +237,9 @@ def prepare_contracts(world):
                 for offset in range(-3,4):
                     departure=tile_for(world,region,anchor+normal+offset*tangent)
                     arrival=tile_for(world,region,anchor-normal+offset*tangent)
-                    lanes.append({'tile':departure,'arrival':arrival})
+                    # 'gate' is the lane's offset along the surveyed seam: what tells the gate's
+                    # own lanes from the rest of an open border, and which of them is which.
+                    lanes.append({'tile':departure,'arrival':arrival,'gate':offset})
                 frame=frame_for(world,link,region,side)
                 p=global_tile(world,region,lanes[3]['tile']);height=float(world.height_at(*p))
                 edges=(np.asarray(link['edgeSegments'])-center).tolist()
