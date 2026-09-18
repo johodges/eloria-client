@@ -4436,6 +4436,21 @@ func _place_actor_on_surface(actor: ReplicatedActor3D, force := false, fallback_
 				" navigation_hit=", hit_position, " render=", actor.render_diagnostics(),
 				" camera=", camera_rig.camera_diagnostics())
 	else:
+		# Off the edge of this map's own ground. Where a border is open, the tile a
+		# walker steps onto to cross it is the neighbour's first tile, which this
+		# map's geometry does not cover; the neighbour's does, resident on the
+		# preview layer and standing where it belongs until the handoff. Its ground
+		# is sampled there before the map's flat walking height, which set a
+		# traveller 9 to 94 m off the ground it stood on for the frame before a
+		# crossing (the eighteenth's live proof: every camera jump it found). The
+		# gates never met this: their threshold deck spans the border on both maps.
+		if not across_seam:
+			var beside: Dictionary = gameplay_world.direct_space_state.intersect_ray(
+				PhysicsRayQueryParameters3D.create(ray_start, ray_end, ExteriorRegionStream.PREVIEW_SURFACE_LAYER))
+			var beside_position: Variant = beside.get("position")
+			if beside_position is Vector3:
+				actor.set_surface_height((beside_position as Vector3).y + 0.02)
+				return
 		var fallback: float = adapter.walking_height if is_nan(fallback_height) else fallback_height
 		actor.set_surface_height(fallback + 0.02)
 		if actor.actor_id == AppState.local_actor_id:
