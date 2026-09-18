@@ -5337,6 +5337,25 @@ class World(MagicRuntime):
         entries.extend(self.map_exit_entries(map_id))
         return entries
 
+    def border_gate(self, map_id: str, destination: str,
+                    tiles: list[tuple[int, int]]) -> tuple[int, int]:
+        """The crossing of an open border that its road arrives at.
+
+        The survey anchors every land crossing at its gate, the station its
+        seam road runs to; the crossing tile nearest that anchor is where a
+        marker for the way to the neighbour belongs. Without the survey, the
+        tile nearest the middle of the border's crossings.
+        """
+        frames = getattr(self, "land_frames", {}).get((map_id, destination))
+        near = (getattr(self, "land_connections", {}).get((map_id, destination)) or ({},))[0] or {}
+        anchor = near.get("globalAnchor")
+        if frames and isinstance(anchor, list) and len(anchor) == 3:
+            ax, ay = frames[0].to_tile(float(anchor[0]), float(anchor[2]))
+        else:
+            ax = sum(x for x, _ in tiles) / len(tiles)
+            ay = sum(y for _, y in tiles) / len(tiles)
+        return min(tiles, key=lambda tile: ((tile[0] - ax) ** 2 + (tile[1] - ay) ** 2, tile))
+
     def map_exit_entries(self, map_id: str) -> list[tuple[int, int, int, int, str, str]]:
         """The ways off this map that nothing else marks, one per doorway.
 
@@ -5355,7 +5374,19 @@ class World(MagicRuntime):
         waygates = [(entry.x, entry.y)
                     for (entry_map, _), entry in getattr(self, "interactives", {}).items()
                     if entry_map == map_id and getattr(entry, "role", "") == "portal"]
-        clusters: list[tuple[str, list[tuple[int, int]]]] = []
+        # A seamless land crossing is the map's own border, open wherever the
+        # ground allows: one way to each neighbour, marked at the crossing its
+        # road arrives at, rather than a mark for every stretch of open ground
+        # along the border - which gave one map twelve and one neighbour seven.
+        land = getattr(self, "land_connections", {})
+        borders: dict[str, list[tuple[int, int]]] = {}
+        for portal in portals:
+            if (map_id, portal.destination) in land:
+                borders.setdefault(portal.destination, []).append((portal.x, portal.y))
+        portals = [portal for portal in portals if portal.destination not in borders]
+        clusters: list[tuple[str, list[tuple[int, int]]]] = [
+            (destination, [self.border_gate(map_id, destination, tiles)])
+            for destination, tiles in sorted(borders.items())]
         for portal in sorted(portals, key=lambda entry: (entry.destination, entry.x, entry.y)):
             for destination, tiles in clusters:
                 # Newest tile first: a run of seam tiles is added in order, so
