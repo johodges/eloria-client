@@ -115,6 +115,19 @@ class PublicationTests(unittest.TestCase):
         runs = stream['connections'][0]['ends'][0]['crossingRuns']
         self.assertEqual(runs, {'axis': 'y', 'runs': [[22, 9, 15]]}, 'seven lanes in a column are one run')
 
+    def test_a_roadless_border_is_walked_over_but_is_no_road(self):
+        links = connections()
+        links[0].update(id='border--four_gates--westhaven', type='walk', road=False)
+        emitted, rows = P.connection_rows(links, specs())
+        self.assertEqual(len(rows), 14, 'every lane of it is a crossing either way')
+        graph, stream = P.connection_manifests({'revision': 'diagonal-spine-v1', 'connections': links},
+                                               {name: {'coordinateTransform': {}} for name in specs()}, specs())
+        self.assertEqual(graph['connections'], [], 'the graph is roads and boats, which the atlas draws as routes')
+        link, = stream['connections']
+        self.assertTrue(link['seamless'])
+        self.assertIs(link['road'], False)
+        self.assertNotIn('visualOnly', link)
+
     def test_three_ferries_publish_six_distinct_docks_without_becoming_walk_links(self):
         regions = {name: copy.deepcopy(specs()['four_gates']) for name in (
             'crownwater', 'westhaven', 'manymouth_delta', 'ssarathi_ruins')}

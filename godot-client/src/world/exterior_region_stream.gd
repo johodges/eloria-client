@@ -668,7 +668,14 @@ static func tile_inside(coordinates: Dictionary, tile: Vector2i) -> bool:
 ## asked first, on their surveyed joins; then every other region the registry
 ## places on the continent, so a click on a far map answers as well as one on
 ## the map next door. Empty when no region holds the point.
-func map_at_local(point: Vector3) -> Dictionary:
+func map_at_local(point: Vector3, owner := "") -> Dictionary:
+	# The territory that owns the ground, when the caller knows it: served cells
+	# are squares that overlap their neighbours', so the first square holding the
+	# point is not always the map whose ground it is.
+	if not owner.is_empty():
+		var tile_value: Variant = tile_on(owner, point)
+		if tile_value is Vector2i:
+			return {"map": owner, "tile": tile_value}
 	var order: Array[String] = []
 	for candidate: Dictionary in _direct_links():
 		if not order.has(str(candidate.map)):
@@ -686,6 +693,16 @@ func map_at_local(point: Vector3) -> Dictionary:
 		if tile_inside(coordinates, tile):
 			return {"map": map_id, "tile": tile}
 	return {}
+
+## A map's tile under a point of the active map's frame, or null outside its cells.
+func tile_on(map_id: String, point: Vector3) -> Variant:
+	var frame_value: Variant = region_transform(map_id)
+	var coordinates := region_coordinates(map_id)
+	if not frame_value is Transform3D or coordinates.is_empty():
+		return null
+	var tile: Vector2i = CoordinateAdapter.new(coordinates).godot_to_server(
+		(frame_value as Transform3D).affine_inverse() * point)
+	return tile if tile_inside(coordinates, tile) else null
 
 func _local_walk_actor(map_id: String) -> Dictionary:
 	var tree := Engine.get_main_loop() as SceneTree
@@ -775,7 +792,9 @@ func _first_walk_leg(source: String, destination: String) -> Dictionary:
 	while not queue.is_empty():
 		var at: Dictionary = queue.pop_front()
 		for link: Dictionary in links:
-			if not bool(link.get("seamless", false)):
+			# A view-only link draws a neighbour across a border nobody can cross:
+			# a walk routed over it went to the middle of that border and stopped.
+			if not bool(link.get("seamless", false)) or bool(link.get("visualOnly", false)):
 				continue
 			for i: int in 2:
 				var here: Dictionary = link.ends[i]

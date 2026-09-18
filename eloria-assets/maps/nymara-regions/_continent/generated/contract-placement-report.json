@@ -16907,13 +16907,13 @@
       ],
       "tile": [
         373,
-        281
+        282
       ],
       "expectedTile": [
         373.66,
         280.755
       ],
-      "displacementMetres": 0.704,
+      "displacementMetres": 1.409,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -20493,13 +20493,13 @@
       ],
       "tile": [
         219,
-        30
+        42
       ],
       "expectedTile": [
         218.816,
         42.312
       ],
-      "displacementMetres": 12.313,
+      "displacementMetres": 0.362,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -34110,14 +34110,14 @@
         173
       ],
       "tile": [
-        340,
-        179
+        339,
+        178
       ],
       "expectedTile": [
         335.0,
         185.0
       ],
-      "displacementMetres": 7.81,
+      "displacementMetres": 8.062,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -34132,14 +34132,14 @@
         169
       ],
       "tile": [
-        339,
-        178
+        338,
+        177
       ],
       "expectedTile": [
         338.0,
         181.0
       ],
-      "displacementMetres": 3.162,
+      "displacementMetres": 4.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -34154,14 +34154,14 @@
         177
       ],
       "tile": [
-        341,
-        179
+        339,
+        177
       ],
       "expectedTile": [
         334.0,
         189.0
       ],
-      "displacementMetres": 12.207,
+      "displacementMetres": 13.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -34638,14 +34638,14 @@
         167
       ],
       "tile": [
-        342,
-        179
+        339,
+        176
       ],
       "expectedTile": [
         342.0,
         179.0
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 4.243,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -34858,14 +34858,14 @@
         159
       ],
       "tile": [
-        340,
+        339,
         171
       ],
       "expectedTile": [
         340.0,
         171.0
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 1.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -34968,14 +34968,14 @@
         173
       ],
       "tile": [
-        343,
-        180
+        338,
+        176
       ],
       "expectedTile": [
         343.0,
         185.0
       ],
-      "displacementMetres": 5.0,
+      "displacementMetres": 10.296,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -34990,14 +34990,14 @@
         165
       ],
       "tile": [
-        338,
-        177
+        337,
+        176
       ],
       "expectedTile": [
         338.0,
         177.0
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 1.414,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -35782,14 +35782,14 @@
         176
       ],
       "tile": [
-        343,
-        179
+        339,
+        175
       ],
       "expectedTile": [
         342.0,
         188.0
       ],
-      "displacementMetres": 9.055,
+      "displacementMetres": 13.342,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -70070,14 +70070,14 @@
         179
       ],
       "tile": [
-        343,
-        178
+        342,
+        205
       ],
       "expectedTile": [
         344.0,
         191.0
       ],
-      "displacementMetres": 13.038,
+      "displacementMetres": 14.142,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -70114,14 +70114,14 @@
         175
       ],
       "tile": [
-        343,
-        178
+        342,
+        205
       ],
       "expectedTile": [
         344.0,
         187.0
       ],
-      "displacementMetres": 9.055,
+      "displacementMetres": 18.111,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -70136,14 +70136,14 @@
         179
       ],
       "tile": [
-        343,
-        178
+        342,
+        205
       ],
       "expectedTile": [
         340.0,
         191.0
       ],
-      "displacementMetres": 13.342,
+      "displacementMetres": 14.142,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -70158,14 +70158,14 @@
         175
       ],
       "tile": [
-        340,
-        178
+        338,
+        175
       ],
       "expectedTile": [
         340.0,
         187.0
       ],
-      "displacementMetres": 9.0,
+      "displacementMetres": 12.166,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -70180,14 +70180,14 @@
         173
       ],
       "tile": [
-        343,
-        178
+        342,
+        205
       ],
       "expectedTile": [
         342.0,
         185.0
       ],
-      "displacementMetres": 7.071,
+      "displacementMetres": 20.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -70224,14 +70224,14 @@
         177
       ],
       "tile": [
-        340,
-        178
+        338,
+        175
       ],
       "expectedTile": [
         338.0,
         189.0
       ],
-      "displacementMetres": 11.18,
+      "displacementMetres": 14.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -70268,14 +70268,14 @@
         173
       ],
       "tile": [
-        340,
-        178
+        338,
+        175
       ],
       "expectedTile": [
         338.0,
         185.0
       ],
-      "displacementMetres": 7.28,
+      "displacementMetres": 10.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -70290,14 +70290,14 @@
         171
       ],
       "tile": [
-        340,
-        178
+        338,
+        175
       ],
       "expectedTile": [
         340.0,
         183.0
       ],
-      "displacementMetres": 5.0,
+      "displacementMetres": 8.246,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -70312,14 +70312,14 @@
         175
       ],
       "tile": [
-        340,
-        178
+        338,
+        175
       ],
       "expectedTile": [
         336.0,
         187.0
       ],
-      "displacementMetres": 9.849,
+      "displacementMetres": 12.166,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -80474,10 +80474,10 @@
     "whitehorn_range": {
       "stageFactor": 24,
       "stageMetres": 4.800000000000001,
-      "walkableServerTiles": 104157,
-      "largestComponentTiles": 96890,
+      "walkableServerTiles": 104258,
+      "largestComponentTiles": 96987,
       "reachableByStage": {
-        "24": 96890
+        "24": 96987
       },
       "crossings": {
         "declared": [
@@ -80540,7 +80540,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 96890,
+      "hubReachableTiles": 96987,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80549,9 +80549,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 96881,
+      "hubReachableAfterStorageTiles": 96978,
       "updatedAuthoredMarkers": 75,
-      "terrainRevision": "diagonal-spine-v1:7c4a45f8ebe5857e0add4755f2e0b5885a8f590669ad8442dceaf37076451b57",
+      "terrainRevision": "diagonal-spine-v1:d2018f7b1537edcd1723547d062443c985436823b84ed4aab4b4117238fcde0b",
       "servedTileContinuity": {
         "keptServedTile": 281,
         "movedTogether": 0,
@@ -80561,10 +80561,10 @@
     "grey_moors": {
       "stageFactor": 13,
       "stageMetres": 2.6,
-      "walkableServerTiles": 115899,
-      "largestComponentTiles": 114635,
+      "walkableServerTiles": 115984,
+      "largestComponentTiles": 114720,
       "reachableByStage": {
-        "13": 114635
+        "13": 114720
       },
       "crossings": {
         "declared": [
@@ -80609,7 +80609,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 114635,
+      "hubReachableTiles": 114720,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80618,13 +80618,13 @@
         ],
         "displacementMetres": 6.519
       },
-      "hubReachableAfterStorageTiles": 114626,
+      "hubReachableAfterStorageTiles": 114711,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:406f90ddf3bf916accc1f06379d4abb6ba5efd07628cd072a7015ea33ad0aa9a",
+      "terrainRevision": "diagonal-spine-v1:caed80cd26520c6721b8af8357cefae239a1e2cbd206432da762a4a03c3acdba",
       "servedTileContinuity": {
-        "keptServedTile": 291,
+        "keptServedTile": 290,
         "movedTogether": 0,
-        "movedFromServedTile": 0
+        "movedFromServedTile": 1
       }
     },
     "amberwood": {
@@ -80707,7 +80707,7 @@
       },
       "hubReachableAfterStorageTiles": 51766,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:41f124232e1c4fcbb84ea847963bfde43d780e6ba079ef04375371cb09631c47",
+      "terrainRevision": "diagonal-spine-v1:48099e0f4f39aaadd288204b57051deb091f5635605965afeafcea406c376f2e",
       "servedTileContinuity": {
         "keptServedTile": 307,
         "movedTogether": 0,
@@ -80768,7 +80768,7 @@
     "mirrorhold": {
       "stageFactor": 15,
       "stageMetres": 3.0,
-      "walkableServerTiles": 82515,
+      "walkableServerTiles": 82614,
       "largestComponentTiles": 66553,
       "reachableByStage": {
         "15": 66553
@@ -80809,7 +80809,7 @@
       },
       "hubReachableAfterStorageTiles": 66544,
       "updatedAuthoredMarkers": 3,
-      "terrainRevision": "diagonal-spine-v1:75780fbd22f13ee369743e6ff5daed94434cf7841495954553efd007f7d3d042",
+      "terrainRevision": "diagonal-spine-v1:2749d43c704b4721db5ece95128c0849130e746bb1ea5594a0e907147d95b9ef",
       "servedTileContinuity": {
         "keptServedTile": 222,
         "movedTogether": 0,
@@ -80870,10 +80870,10 @@
     "four_gates": {
       "stageFactor": 4,
       "stageMetres": 0.8,
-      "walkableServerTiles": 94245,
-      "largestComponentTiles": 83369,
+      "walkableServerTiles": 94335,
+      "largestComponentTiles": 83454,
       "reachableByStage": {
-        "4": 83369
+        "4": 83454
       },
       "crossings": {
         "declared": [
@@ -80910,7 +80910,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 83369,
+      "hubReachableTiles": 83454,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80919,9 +80919,9 @@
         ],
         "displacementMetres": 1.581
       },
-      "hubReachableAfterStorageTiles": 83360,
+      "hubReachableAfterStorageTiles": 83445,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:e92ac2d615a9042d18c9e07210e6fe62522992b438d5027a7d073903463561f8",
+      "terrainRevision": "diagonal-spine-v1:3e6c96013e1c05d929d4fb6b65fa5a6529b9b1fe781d22a3c0a82bce1629ae6c",
       "servedTileContinuity": {
         "keptServedTile": 225,
         "movedTogether": 0,
@@ -81023,21 +81023,21 @@
       },
       "hubReachableAfterStorageTiles": 91877,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:98f1ea674fb7c220e8565535b20549e0c512cfd3069ba6905a9bf03458390dac",
+      "terrainRevision": "diagonal-spine-v1:2b7c5eb8e2bc581a9eed54f1820b552b60bcb210651071d67b0db131975e4785",
       "servedTileContinuity": {
-        "keptServedTile": 238,
-        "movedTogether": 0,
-        "movedFromServedTile": 0
+        "keptServedTile": 226,
+        "movedTogether": 4,
+        "movedFromServedTile": 8
       }
     },
     "manymouth_delta": {
       "stageFactor": 3,
       "stageMetres": 0.6000000000000001,
-      "walkableServerTiles": 108085,
-      "largestComponentTiles": 106127,
+      "walkableServerTiles": 108151,
+      "largestComponentTiles": 106193,
       "reachableByStage": {
-        "3": 106127,
-        "4": 106155
+        "3": 106193,
+        "4": 106221
       },
       "crossings": {
         "declared": [
@@ -81156,7 +81156,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 106127,
+      "hubReachableTiles": 106193,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81165,9 +81165,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 106118,
+      "hubReachableAfterStorageTiles": 106184,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:94dea1f2d5669f40758ecd969298d99600f6f4fa33c39377e4de9071f97dfc95",
+      "terrainRevision": "diagonal-spine-v1:11c1901c392b22af048e41f9ba30e058a5a6f2010976385a6a9ee5f955d4d4f0",
       "servedTileContinuity": {
         "keptServedTile": 262,
         "movedTogether": 0,
@@ -81390,10 +81390,10 @@
     "verdant_stair": {
       "stageFactor": 8,
       "stageMetres": 1.6,
-      "walkableServerTiles": 177211,
-      "largestComponentTiles": 174082,
+      "walkableServerTiles": 177216,
+      "largestComponentTiles": 174087,
       "reachableByStage": {
-        "8": 174082
+        "8": 174087
       },
       "crossings": {
         "declared": [
@@ -81438,7 +81438,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 174082,
+      "hubReachableTiles": 174087,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81447,9 +81447,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 174073,
+      "hubReachableAfterStorageTiles": 174078,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:435fb2ac69266c2231c0ff8a1aedbc324c6c2ee0a766e07e40a2c8de38c0d92c",
+      "terrainRevision": "diagonal-spine-v1:0315995ea8dccfae9484329d49dbc6fe8ff3ec0c911aeb395a82725dda069bf8",
       "servedTileContinuity": {
         "keptServedTile": 237,
         "movedTogether": 0,
@@ -81459,10 +81459,10 @@
     "ssarathi_ruins": {
       "stageFactor": 5,
       "stageMetres": 1.0,
-      "walkableServerTiles": 149420,
-      "largestComponentTiles": 136160,
+      "walkableServerTiles": 149486,
+      "largestComponentTiles": 136226,
       "reachableByStage": {
-        "5": 136160
+        "5": 136226
       },
       "crossings": {
         "declared": [
@@ -81581,7 +81581,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 136160,
+      "hubReachableTiles": 136226,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81590,9 +81590,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 136151,
+      "hubReachableAfterStorageTiles": 136217,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:8b5b1868ae1e8be1807b78592d4eae5b26ed2559dc486bcf69cdee9fcc5b43b5",
+      "terrainRevision": "diagonal-spine-v1:31b085b9c400553192166fe8722a32a0700c3ec8587d710812504f628299cae4",
       "servedTileContinuity": {
         "keptServedTile": 224,
         "movedTogether": 0,
@@ -81601,9 +81601,9 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "6543482bc7d6fc0f46ad7e7c2b2d16fe560b715e337a14d60107d33cc2ce6ff0",
+    "client_content_manifest.json": "4d529edc179f48a9b07c2ba58920e6aa1e9b17c08566de2c98cc091756c55792",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
-    "harvesting.txt": "5ec55d54f53c8d9475490efdd46cccc2a3ec6525e82810997a0a9f83f35fa5b3",
+    "harvesting.txt": "eaa50f2053c2ce018f37d48cc6d0f372466a01b7965d827f5424b68be78edc4e",
     "instances/amberwood_gauntlet_low.def": "e2a5c0ca17b0c0af42f65728241c6f6d08ae6faea086505572af2fd2e417ae36",
     "instances/amberwood_gauntlet_mid.def": "db1a535c3f73a3677a28d2b2cf5ed71b9c3b8c0ea8308a88b95c6feee28d2672",
     "instances/amethyst_gauntlet_high.def": "644d0d0978354c06d3dec430c9d52a50db2aed224060b403509677a8a8a8d298",
@@ -81621,19 +81621,19 @@
     "instances/whitehorn_gauntlet_high.def": "8feae1eebe2cd08299e5938bb0fc9a527596877d26112b8da33f8d67aa260df5",
     "instances/whitehorn_gauntlet_low.def": "14e6e6894db6cede5ca63ac84acd0e4abb6aa35ccbd1b62f9cf2496779a2b3f4",
     "interactives.txt": "c2a4d16d46d347c568b527876e12b1e60f3b21f6c56fe85141e58699853a3680",
-    "maps.txt": "5b3fcf140f02d64474ebb11c6d24f5f17131d013ec2ebe5d72973a14b47df1ac",
+    "maps.txt": "b0c4595a632c3862f0018e1d015bcd17ee5e00b7ee10595611fa66257beebd62",
     "npcs.txt": "0f6b52c017cf2b3f3c1231445edbfbfd7cedc2c13a7915840c00c9ae00def77e",
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "22e33d2d823727f7ebd26df1c0b4e9223cb2f68471d4dd7cd4a318485475c57d",
-    "spawns.txt": "5b5e177221d5a365e9136362a56a30b3b0cf8e1b8aee29375828105405367734",
+    "spawn_groups/invasion/invasion_nymara.def": "13b163eb8c9e0d95aee388040c65ba06ee0a6c280c72bc5e842cdda8f0279fe3",
+    "spawns.txt": "1cad5f2e74e73f47b0d8b365c1e9cb14584d6cb9e9b92853271a62a7c053282b",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "b88ab564961389e6f8bed2046ad5835d0e245e47b747aaef7ccc3a3a5f599685"
   },
   "sourceCodeSha256": {
     "eloria/daily_quests.py": "cc0d148f52690f13a1a598c6cd30abf152efd0176354055077f7341f43b32956",
-    "eloria/world.py": "50939de697a63f1677896ade2e0337301b71b292eaa378d567e68a9c6164c2f2",
+    "eloria/world.py": "bc284c12f5bd32aa271f84032d69ca6f46b52199d568b6adf80f46b68241199b",
     "eloria/walkthrough.py": "06024c6d0dce473a9b00dfcda30cf1e4d2416b0a7f308f191c0ca9812ae6b7a4",
     "eloria/pk.py": "e89cb845c21aa3fe41c2b49a8a5597b91c5729774e9f19636fd2d6d03ea731df"
   },
@@ -81646,13 +81646,13 @@
           "region": "whitehorn_range",
           "gateLanes": 4,
           "gateLanesMoved": 3,
-          "lanes": 16
+          "lanes": 29
         },
         {
           "region": "grey_moors",
           "gateLanes": 0,
           "gateLanesMoved": 7,
-          "lanes": 16
+          "lanes": 31
         }
       ]
     },
@@ -81663,13 +81663,13 @@
           "region": "whitehorn_range",
           "gateLanes": 7,
           "gateLanesMoved": 0,
-          "lanes": 18
+          "lanes": 57
         },
         {
           "region": "amberwood",
           "gateLanes": 0,
           "gateLanesMoved": 7,
-          "lanes": 17
+          "lanes": 55
         }
       ]
     },
@@ -81680,13 +81680,13 @@
           "region": "whitehorn_range",
           "gateLanes": 1,
           "gateLanesMoved": 6,
-          "lanes": 366
+          "lanes": 370
         },
         {
           "region": "amethyst_barrens",
           "gateLanes": 4,
           "gateLanesMoved": 3,
-          "lanes": 368
+          "lanes": 371
         }
       ]
     },
@@ -81697,13 +81697,13 @@
           "region": "grey_moors",
           "gateLanes": 1,
           "gateLanesMoved": 6,
-          "lanes": 381
+          "lanes": 388
         },
         {
           "region": "amberwood",
           "gateLanes": 5,
           "gateLanesMoved": 2,
-          "lanes": 381
+          "lanes": 385
         }
       ]
     },
@@ -81731,13 +81731,13 @@
           "region": "amberwood",
           "gateLanes": 3,
           "gateLanesMoved": 4,
-          "lanes": 51
+          "lanes": 74
         },
         {
           "region": "mirrorhold",
           "gateLanes": 1,
           "gateLanesMoved": 6,
-          "lanes": 49
+          "lanes": 63
         }
       ]
     },
@@ -81748,13 +81748,13 @@
           "region": "amberwood",
           "gateLanes": 7,
           "gateLanesMoved": 0,
-          "lanes": 147
+          "lanes": 236
         },
         {
           "region": "four_gates",
           "gateLanes": 0,
           "gateLanesMoved": 7,
-          "lanes": 146
+          "lanes": 236
         }
       ]
     },
@@ -81765,13 +81765,13 @@
           "region": "mirrorhold",
           "gateLanes": 1,
           "gateLanesMoved": 6,
-          "lanes": 223
+          "lanes": 268
         },
         {
           "region": "amethyst_barrens",
           "gateLanes": 4,
           "gateLanesMoved": 3,
-          "lanes": 224
+          "lanes": 262
         }
       ]
     },
@@ -81782,13 +81782,13 @@
           "region": "mirrorhold",
           "gateLanes": 0,
           "gateLanesMoved": 7,
-          "lanes": 156
+          "lanes": 202
         },
         {
           "region": "sunmane_steppe",
           "gateLanes": 7,
           "gateLanesMoved": 0,
-          "lanes": 156
+          "lanes": 201
         }
       ]
     },
@@ -81799,13 +81799,13 @@
           "region": "mirrorhold",
           "gateLanes": 5,
           "gateLanesMoved": 2,
-          "lanes": 43
+          "lanes": 236
         },
         {
           "region": "four_gates",
           "gateLanes": 1,
           "gateLanesMoved": 6,
-          "lanes": 43
+          "lanes": 234
         }
       ]
     },
@@ -81816,13 +81816,13 @@
           "region": "mirrorhold",
           "gateLanes": 3,
           "gateLanesMoved": 4,
-          "lanes": 190
+          "lanes": 303
         },
         {
           "region": "verdant_stair",
           "gateLanes": 1,
           "gateLanesMoved": 6,
-          "lanes": 192
+          "lanes": 303
         }
       ]
     },
@@ -81850,13 +81850,13 @@
           "region": "sunmane_steppe",
           "gateLanes": 4,
           "gateLanesMoved": 3,
-          "lanes": 462
+          "lanes": 469
         },
         {
           "region": "verdant_stair",
           "gateLanes": 0,
           "gateLanesMoved": 7,
-          "lanes": 461
+          "lanes": 467
         }
       ]
     },
@@ -81884,13 +81884,13 @@
           "region": "four_gates",
           "gateLanes": 7,
           "gateLanesMoved": 0,
-          "lanes": 43
+          "lanes": 280
         },
         {
           "region": "manymouth_delta",
           "gateLanes": 0,
           "gateLanesMoved": 7,
-          "lanes": 44
+          "lanes": 281
         }
       ]
     },
@@ -81901,13 +81901,13 @@
           "region": "westhaven",
           "gateLanes": 1,
           "gateLanesMoved": 6,
-          "lanes": 131
+          "lanes": 164
         },
         {
           "region": "manymouth_delta",
           "gateLanes": 7,
           "gateLanesMoved": 0,
-          "lanes": 131
+          "lanes": 164
         }
       ]
     },
@@ -81935,19 +81935,94 @@
           "region": "verdant_stair",
           "gateLanes": 7,
           "gateLanesMoved": 0,
-          "lanes": 503
+          "lanes": 519
         },
         {
           "region": "ssarathi_ruins",
           "gateLanes": 0,
           "gateLanesMoved": 7,
-          "lanes": 502
+          "lanes": 518
+        }
+      ]
+    },
+    {
+      "id": "border--whitehorn_range--mirrorhold",
+      "ends": [
+        {
+          "region": "whitehorn_range",
+          "gateLanes": 0,
+          "gateLanesMoved": 0,
+          "lanes": 96
+        },
+        {
+          "region": "mirrorhold",
+          "gateLanes": 0,
+          "gateLanesMoved": 0,
+          "lanes": 96
+        }
+      ]
+    },
+    {
+      "id": "border--grey_moors--four_gates",
+      "ends": [
+        {
+          "region": "grey_moors",
+          "gateLanes": 0,
+          "gateLanesMoved": 0,
+          "lanes": 85
+        },
+        {
+          "region": "four_gates",
+          "gateLanes": 0,
+          "gateLanesMoved": 0,
+          "lanes": 85
+        }
+      ]
+    },
+    {
+      "id": "border--four_gates--verdant_stair",
+      "ends": [
+        {
+          "region": "four_gates",
+          "gateLanes": 0,
+          "gateLanesMoved": 0,
+          "lanes": 5
+        },
+        {
+          "region": "verdant_stair",
+          "gateLanes": 0,
+          "gateLanesMoved": 0,
+          "lanes": 5
+        }
+      ]
+    },
+    {
+      "id": "border--manymouth_delta--ssarathi_ruins",
+      "ends": [
+        {
+          "region": "manymouth_delta",
+          "gateLanes": 0,
+          "gateLanesMoved": 0,
+          "lanes": 66
+        },
+        {
+          "region": "ssarathi_ruins",
+          "gateLanes": 0,
+          "gateLanesMoved": 0,
+          "lanes": 65
         }
       ]
     }
   ],
+  "openBorders": [
+    "border--whitehorn_range--mirrorhold",
+    "border--grey_moors--four_gates",
+    "border--four_gates--verdant_stair",
+    "border--manymouth_delta--ssarathi_ruins"
+  ],
+  "withdrawnLanes": 182,
   "crossingArrivals": {
-    "rows": 8142,
+    "rows": 10169,
     "unreachable": 0,
     "examples": []
   },

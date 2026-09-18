@@ -451,6 +451,8 @@ class Generator:
         if len(self.members)!=65:raise AuditError(f'Expected all65 served family identities, found {len(self.members)}')
         self.track(Path(approaches.__file__))
         for link in self.links:
+            # A border no road crosses has no authored approach to merge.
+            if not link.get('road',True):continue
             for end in link['ends']:
                 package=self.json_input(self.members[end['map']]['path'])
                 end['frame']=self.approach_frame(end['frame'],package,link['id'])
@@ -573,7 +575,7 @@ class Generator:
         chunk_mode=getattr(self,'chunk_mode',False)
         if chunk_mode:
             expected=owned_adjacencies(self.geography,self.landscape_plan['bounds'])
-            declared=self.publication['connections'];walk={};seen=set()
+            declared=self.publication['connections'];walk={};roadless={};seen=set()
             for link in declared:
                 pair=tuple(sorted(end['region'] for end in link['ends']))
                 if (link['id'] in seen or len(pair)!=2 or pair[0]==pair[1] or
@@ -582,7 +584,9 @@ class Generator:
                 seen.add(link['id'])
                 if link['type']=='walk':
                     if pair not in expected:raise AuditError(f"{link['id']}: road joins territories without a physical boundary")
-                    walk[link['id']]=pair
+                    # A border no road crosses is opened wherever its ground meets; the
+                    # geography's connections are its roads.
+                    (walk if link.get('road',True) else roadless)[link['id']]=pair
                     for end in link['ends']:
                         # An open border publishes the lanes its ground offers, which a narrow
                         # pass can make fewer than a gate's seven; what a road contract needs is a
@@ -590,12 +594,15 @@ class Generator:
                         if not end.get('lanes') or end['frame'].get('halfWidthTiles')!=3:
                             raise AuditError(f"{link['id']}: published road contract has no way across")
             canonical={link['id']:tuple(sorted(e['region'] for e in link['ends'])) for link in self.geography['connections']}
-            actual_walk={link['id']:tuple(sorted(e['map'] for e in link['ends'])) for link in self.links}
-            if walk!=canonical or walk!=actual_walk or len(actual_walk)!=len(self.links):
+            actual_walk={link['id']:tuple(sorted(e['map'] for e in link['ends'])) for link in self.links if link.get('road',True)}
+            actual_roadless={link['id']:tuple(sorted(e['map'] for e in link['ends'])) for link in self.links if not link.get('road',True)}
+            if walk!=canonical or walk!=actual_walk or len(actual_walk)+len(actual_roadless)!=len(self.links):
                 raise AuditError('Runtime roads differ from canonical published crossings')
-            if len(set(walk.values()))!=len(walk):raise AuditError('Multiple road records duplicate a physical adjacency')
+            if roadless!=actual_roadless:raise AuditError('Runtime roadless borders differ from the published ones')
+            crossed=list(walk.values())+list(roadless.values())
+            if len(set(crossed))!=len(crossed):raise AuditError('Multiple road records duplicate a physical adjacency')
             visual_pairs=[tuple(sorted(e['map'] for e in link['ends'])) for link in self.visual_links]
-            if set(visual_pairs)!=set(expected)-set(walk.values()) or len(set(visual_pairs))!=len(visual_pairs):
+            if set(visual_pairs)!=set(expected)-set(crossed) or len(set(visual_pairs))!=len(visual_pairs):
                 raise AuditError('Visual links do not cover the exact remaining owned boundaries')
             if not all(link.get('visualOnly') for link in self.visual_links):raise AuditError('Non-road physical connection lacks visualOnly')
             first=next(iter(self.specs))
@@ -860,12 +867,16 @@ class Generator:
         if tile in self.audit.automatic[region]:raise AuditError(f'{region}: route reference {tile} is an automatic trigger ({label})')
         return tile
 
-    def published_end(self,a,b):
-        """The publication's end of the walk link a->b, which carries its lanes."""
+    def published_link(self,a,b):
+        """The publication's walk link between a and b."""
         records=[link for link in self.publication['connections'] if link['type']=='walk' and
                  {e['region'] for e in link['ends']}=={a['map'],b['map']}]
         if len(records)!=1:raise AuditError('Missing unique published road lane set')
-        return next(e for e in records[0]['ends'] if e['region']==a['map'])
+        return records[0]
+
+    def published_end(self,a,b):
+        """The publication's end of the walk link a->b, which carries its lanes."""
+        return next(e for e in self.published_link(a,b)['ends'] if e['region']==a['map'])
 
     def sorted_lanes(self,a,b):
         """Every lane a->b along the common tangent: a gate's seven, or an open border's whole length."""
@@ -904,7 +915,7 @@ class Generator:
         if not getattr(self,'chunk_mode',False):
             return {index-3:p for index,p in enumerate(lanes)}
         offsets={tuple(e['tile']):e['gate'] for e in self.published_end(a,b)['lanes'] if 'gate' in e}
-        if not offsets and len(lanes)==7:
+        if not offsets and len(lanes)==7 and self.published_link(a,b).get('road',True):
             # A publication from before the borders opened: its seven lanes are the gate.
             return {index-3:p for index,p in enumerate(lanes)}
         return {offsets[(p.x,p.y)]:p for p in lanes if (p.x,p.y) in offsets}
@@ -1104,9 +1115,13 @@ class Generator:
                                            'surveyedLaneTiles':len(lane),'authoredCurve':curved,
                                            'collarMetres':approaches.collar_length(a['frame']) if curved else depth})
                 self.attempt(link['id']+' '+a['map']+' lanes',check_lanes)
+                # A border no road crosses has no gate to click across from or hand
+                # off at: its lanes, each proved above, are all it offers.
+                if not link.get('road',True):continue
                 for depth in (2,12):
                     route=self.attempt(link['id']+' neighbor click',lambda:self.click_route(link,a,b,depth))
                     if route:clicks.append(route)
+            if not link.get('road',True):continue
             for index in (0,3,6):
                 route=self.attempt(link['id']+' handoff',lambda:self.border_route(link,index))
                 if route:(centre if index==3 else shoulders).append(route)

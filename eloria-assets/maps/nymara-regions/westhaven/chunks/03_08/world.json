@@ -1740,7 +1740,7 @@
       -196.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:98f1ea674fb7c220e8565535b20549e0c512cfd3069ba6905a9bf03458390dac",
+  "terrainRevision": "diagonal-spine-v1:2b7c5eb8e2bc581a9eed54f1820b552b60bcb210651071d67b0db131975e4785",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035"
   },
@@ -1753,6 +1753,6 @@
     "revision": "diagonal-spine-v1",
     "masterSha256": "461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073",
     "collisionSha256": "ff8f9a6f7e156480f5e1d15548bbf13455dcb42325fa2e156d70df2e6af525b4",
-    "terrainRevision": "diagonal-spine-v1:98f1ea674fb7c220e8565535b20549e0c512cfd3069ba6905a9bf03458390dac"
+    "terrainRevision": "diagonal-spine-v1:2b7c5eb8e2bc581a9eed54f1820b552b60bcb210651071d67b0db131975e4785"
   }
 }

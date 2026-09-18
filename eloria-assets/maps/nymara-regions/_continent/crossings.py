@@ -1,5 +1,7 @@
 """Survey reciprocal territory gates in the single global coordinate system."""
 from __future__ import annotations
+from collections import deque
+import copy
 import numpy as np
 
 # A land crossing has been a gate: seven lanes about a surveyed anchor, with an
@@ -80,34 +82,36 @@ def seam_tiles(world, link, side):
             'inward': mine & binary_dilation(theirs, step)}
 
 
-def own_ground(world, region, grid, arrival, reach):
-    """A map's served grid, the tiles its territory owns, and what its hub reaches on them.
-
-    ``reach(heights, start)`` is the server's own flood at the contract's climb
-    limit (collision_sources.reachable_from). Every tile a neighbour owns is
-    closed first: stepping onto one is a crossing, so ground this map reaches
-    only through a neighbour's tiles is not reached at all - it is behind a
-    border lane that fires first. Flooding through them, as the contract's own
-    reachability does, took a strip of the neighbour for a corridor and found
-    lanes no walker can step onto.
-    """
+def own_ground(world, region, grid):
+    """A map's served grid and the tiles its territory owns."""
     origin, _ = world.address(region)
     center = world.regions[region]['center']
     ys, xs = np.indices(grid.shape)
     mine = np.asarray(world.owner_at(xs + .5 - origin[0] + center[0], origin[1] - ys - .5 + center[1])) \
         == world.ids.index(region)
-    return {'grid': grid, 'own': mine, 'reach': np.asarray(reach(np.where(mine, grid, 0), tuple(arrival)), dtype=bool)}
+    return {'grid': grid, 'own': mine}
 
 
 def crossing_lanes(world, link, side, served, step):
-    """Every lane this border offers, by the server's own walking rules.
+    """Every lane this border offers: walkable ground on both sides and a legal step between.
 
     ``served`` holds each map's ``own_ground``; ``step(heights, y, x, dy, dx)`` is
     the server's step test (collision_sources.walk_step_ok at the contract's
-    climb limit). A lane is the neighbour's first tile across the border that a
-    walker can step onto from ground their hub reaches without crossing, and
-    whose cell the neighbour's hub reaches the same way; it is paired with the
-    tile it is stepped onto from, where a walker arriving the other way lands.
+    climb limit). A lane is the neighbour's first tile across the border that
+    this map's grid lets an actor stand on and step onto from a tile of its own
+    territory beside it, and whose cell the neighbour's grid lets an actor stand
+    on; it is paired with the tile it is stepped onto from, where a walker
+    arriving the other way lands.
+
+    Nothing here asks whether either map's hub can reach the spot. It did, and
+    that closed every stretch of border where one side is a pocket its own hub
+    cannot walk to - the Manymouth strip between the Four Gates south wall and
+    the Mirrorwater, cut off from the delta by the river, left 120 of the 141
+    walkable segments of that border without a crossing, and a walker outside
+    the south gate was sent back through the town to the nearest one. The rule
+    is the owner's: ground walkable on both sides of a border is a way across.
+    Nobody can be stranded by it, since every lane's reverse stands at the same
+    place: a walker who crosses into a pocket can always step back.
     """
     rings = seam_tiles(world, link, side)
     region, other = link['regions'][side], link['regions'][1 - side]
@@ -121,13 +125,13 @@ def crossing_lanes(world, link, side, served, step):
     far_rows, far_columns = far['grid'].shape
     lanes = []
     for x, y, fx, fy in zip(tx.tolist(), ty.tolist(), ox.tolist(), oy.tolist()):
-        if not (0 <= fx < far_columns and 0 <= fy < far_rows) or not far['reach'][fy, fx]:
+        if not (0 <= fx < far_columns and 0 <= fy < far_rows) or not far['grid'][fy, fx]:
             continue
-        # From each tile of this map's own reached ground beside it, straight
-        # steps first so a straight seam pairs straight across.
+        # From each tile of this map's own ground beside it, straight steps
+        # first so a straight seam pairs straight across.
         partners = [(x + dx, y + dy) for dx in (0, -1, 1) for dy in (0, -1, 1) if dx or dy
                     if 0 <= x + dx < columns and 0 <= y + dy < rows
-                    and near['own'][y + dy, x + dx] and near['reach'][y + dy, x + dx]
+                    and near['own'][y + dy, x + dx] and near['grid'][y + dy, x + dx]
                     and step(near['grid'], y + dy, x + dx, -dy, -dx)]
         if not partners:
             continue
@@ -192,7 +196,8 @@ def widen_seams(world, connections, served, step, gated=None):
     report = []
     # A world with no surveyed links has no seam to widen: several contract tests
     # exercise the export against a stand-in that carries only what it reads.
-    links = {link['id']: link for link in getattr(world, 'connections', ())}
+    links = {link['id']: link for link in list(getattr(world, 'connections', ()))
+             + list(getattr(world, 'open_border_links', ()))}
     for connection in connections:
         if connection.get('type') != 'walk' or connection['id'] in (GATED_SEAMS if gated is None else gated):
             continue
@@ -203,7 +208,7 @@ def widen_seams(world, connections, served, step, gated=None):
             gate = [lane for lane in end['lanes'] if 'gate' in lane]
             if not border:
                 widths.append({'region': end['region'], 'gateLanes': len(gate), 'gateLanesMoved': 0,
-                               'lanes': len(end['lanes']), 'keptSurveyedGate': True})
+                               'lanes': len(end['lanes']), 'keptSurveyedGate': bool(gate)})
                 continue
             direct = [lane for lane in gate if tuple(lane['tile']) in border]
             for lane in direct:
@@ -224,6 +229,225 @@ def widen_seams(world, connections, served, step, gated=None):
                            'lanes': len(border)})
         report.append({'id': connection['id'], 'ends': widths})
     return report
+
+
+def open_borders(world):
+    """The borders no road or boat crosses, as links a walker may cross wherever the ground allows.
+
+    Twelve territories meet along twenty-four borders and eighteen of them were
+    planned as roads. The other borders were drawn but never crossable: Grey
+    Moors met Four Gates along forty metres of open moor that a walker could
+    see across and not step over, and a click on the far side walked to the
+    middle of that border and stopped. The owner's rule is that ground walkable
+    on both sides of a border is a way across, road or no road, so each of these
+    is surveyed like a road's seam - its lanes are its ground's, from both
+    served grids (``crossing_lanes``) - with no gate, no road and no threshold.
+
+    A pair a boat joins is left alone: Crownwater's shore is reached by ferry,
+    and the server tells a boat from a walk by the pair of maps a portal joins,
+    so a walkable border beside a ferry would turn the ferry into a walk.
+
+    Each link's anchor is the point of its border nearest the border's middle,
+    and its normal points from the first territory's centre to the second's, as
+    a view-only link's does.
+    """
+    if not hasattr(world, 'adjacent_edges'):
+        return []
+    joined = {tuple(sorted(c['regions'])) for c in getattr(world, 'connections', ())}
+    links = []
+    for (ia, ib), segments in sorted(world.adjacent_edges().items()):
+        ra, rb = world.ids[ia], world.ids[ib]
+        if tuple(sorted((ra, rb))) in joined:
+            continue
+        segments = np.asarray(segments, dtype=float)
+        middle = segments.mean(axis=(0, 1))
+        start, end = segments[:, 0], segments[:, 1]
+        along = np.clip(((middle - start) * (end - start)).sum(axis=1)
+                        / np.maximum(((end - start) ** 2).sum(axis=1), 1e-12), 0., 1.)
+        points = start + along[:, None] * (end - start)
+        anchor = points[np.argmin(((points - middle) ** 2).sum(axis=1))]
+        delta = np.asarray(world.centers[ib], dtype=float) - np.asarray(world.centers[ia], dtype=float)
+        links.append({'id': 'border--' + ra + '--' + rb, 'type': 'walk', 'road': False,
+                      'regions': [ra, rb], 'anchor': anchor.tolist(),
+                      'normal': (delta / np.linalg.norm(delta)).tolist(), 'edgeSegments': segments.tolist()})
+    return links
+
+
+def open_border_contracts(world):
+    """A walk contract for each roadless border, its lanes still to be surveyed.
+
+    Each end starts at the border's first tile out from the anchor; the
+    survey (``widen_seams``) gives it the border's lanes and seats it on the
+    one nearest there.
+    """
+    contracts = []
+    for link in world.open_border_links:
+        ends = []
+        for side, region in enumerate(link['regions']):
+            other = link['regions'][1 - side]
+            center = np.asarray(world.regions[region]['center'])
+            anchor = np.asarray(link['anchor'])
+            normal = np.asarray(link['normal']) * (1 if side == 0 else -1)
+            frame = frame_for(world, link, region, side)
+            frame['portal'] = 'border-to-' + other
+            tile = tile_for(world, region, anchor + normal)
+            p = global_tile(world, region, tile)
+            ends.append({'region': region, 'portal': frame['portal'], 'tile': tile,
+                         'arrival': tile_for(world, region, anchor - normal), 'lanes': [],
+                         'position': [float(p[0] - center[0]), float(world.height_at(*p)), float(p[1] - center[1])],
+                         'frame': frame, 'preloadEdges': (np.asarray(link['edgeSegments']) - center).tolist()})
+        contracts.append({'id': link['id'], 'type': 'walk', 'road': False, 'ends': ends})
+    return contracts
+
+
+# The server's eight steps as (dy, dx), in collision_sources.STEPS order.
+STEPS = ((0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1))
+
+
+def step_bits(heights, limit):
+    """Every step the server allows off each tile, as bit k of ``bits[y][x]`` for STEPS[k].
+
+    collision_sources.walk_step_ok for the whole grid at once: both tiles
+    open, a climb within the limit, and a diagonal only where both of its
+    straight steps are allowed from the same tile. Nested lists, because the
+    flood reads them one tile at a time.
+    """
+    h = np.asarray(heights, dtype=np.int16)
+    rows, columns = h.shape
+
+    def allowed(dy, dx):
+        there = np.zeros_like(h)
+        there[max(0, -dy):rows - max(0, dy), max(0, -dx):columns - max(0, dx)] = \
+            h[max(0, dy):rows - max(0, -dy), max(0, dx):columns - max(0, -dx)]
+        return (h != 0) & (there != 0) & (np.abs(there - h) <= limit)
+
+    bits = np.zeros(h.shape, dtype=np.uint8)
+    for k, (dy, dx) in enumerate(STEPS):
+        mask = allowed(dy, dx)
+        if dy and dx:
+            mask &= allowed(dy, 0) & allowed(0, dx)
+        bits |= mask.astype(np.uint8) << k
+    return bits.tolist()
+
+
+def flood(bits, seen, seeds, terminals):
+    """Grow ``seen`` from ``seeds`` by the server's steps; a terminal is stepped onto, never off."""
+    rows, columns = seen.shape
+    queue = deque()
+    for x, y in seeds:
+        if 0 <= x < columns and 0 <= y < rows and not seen[y, x]:
+            seen[y, x] = True
+            queue.append((x, y))
+    while queue:
+        x, y = queue.popleft()
+        if (x, y) in terminals:
+            continue
+        row = bits[y][x]
+        for k, (dy, dx) in enumerate(STEPS):
+            if row >> k & 1 and not seen[y + dy, x + dx]:
+                seen[y + dy, x + dx] = True
+                queue.append((x + dx, y + dy))
+
+
+def prune_lanes(world, connections, served, hubs, limit):
+    """Withdraw every lane a walker cannot get onto, or cannot step off the far end of.
+
+    A lane is walkable ground on both sides of its border (``crossing_lanes``),
+    which holds as well for a scrap of moor fenced by cliff on both maps, that
+    no walker from either can reach, and for a single tile of the neighbour's
+    ground with nowhere to go from it but back over the border. Both were
+    published once the lanes stopped asking for a hub, and the live proof
+    refused 206 of them: a crossing on ground nobody can walk to, and an
+    arrival whose every first step is another crossing.
+
+    Reach is the proof's own: from each map's hub by the server's steps, onto
+    a lane and never off it (a lane fires where it is stood on), and over each
+    lane that lands where a walker can take a first step that is not another
+    lane - into the far map, from that landing. Withdrawing a lane changes what
+    is reachable, so the survey is repeated until nothing more is withdrawn.
+    Returns how many lanes were withdrawn.
+    """
+    walks = [c for c in connections if c.get('type') == 'walk']
+    bits = {region: step_bits(entry['grid'], limit) for region, entry in served.items()}
+    withdrawn = 0
+    while True:
+        lanes, terminals = [], {region: set() for region in served}
+        for connection in walks:
+            for end, other in (connection['ends'], connection['ends'][::-1]):
+                region, far = end['region'], other['region']
+                if region not in served or far not in served:
+                    continue
+                for lane in end['lanes']:
+                    tile = (int(lane['tile'][0]), int(lane['tile'][1]))
+                    point = global_tile(world, region, tile)
+                    cell = tuple(int(v) for v in tiles_at(world, far, point[0], point[1]))
+                    lanes.append((region, tile, far, cell, lane))
+                    terminals[region].add(tile)
+
+        def lands(region, cell):
+            x, y = cell
+            rows, columns = served[region]['grid'].shape
+            if not (0 <= x < columns and 0 <= y < rows) or not served[region]['grid'][y, x]:
+                return False
+            row = bits[region][y][x]
+            return any(row >> k & 1 and (x + dx, y + dy) not in terminals[region]
+                       for k, (dy, dx) in enumerate(STEPS))
+
+        landing = {(far, cell): lands(far, cell) for _, _, far, cell, _ in lanes}
+        seen = {region: np.zeros(entry['grid'].shape, dtype=bool) for region, entry in served.items()}
+        seeds = {region: [tuple(int(v) for v in hubs[region])] for region in served if region in hubs}
+        while seeds:
+            for region, points in seeds.items():
+                flood(bits[region], seen[region], points, terminals[region])
+            seeds = {}
+            for region, (x, y), far, cell, _ in lanes:
+                if seen[region][y, x] and landing[far, cell] and not seen[far][cell[1], cell[0]]:
+                    seeds.setdefault(far, []).append(cell)
+        gone = {id(lane) for region, (x, y), far, cell, lane in lanes
+                if not (seen[region][y, x] and landing[far, cell])}
+        if not gone:
+            return withdrawn
+        withdrawn += len(gone)
+        for connection in walks:
+            for end in connection['ends']:
+                end['lanes'] = [lane for lane in end['lanes'] if id(lane) not in gone]
+                reseat(world, end)
+
+
+def settle_crossings(world, publication, served, step, hubs, limit=2):
+    """Open the roadless borders, then keep every lane a walker can use.
+
+    Each roadless border (``open_borders``) is surveyed like a road's seam and
+    joins the published links; a border whose two maps offer no lane either
+    way - water, cliff or wall the length of it - keeps its view-only link,
+    which draws the neighbour without offering a way across. Then every land
+    crossing, road or roadless, keeps only the lanes a walker can get onto and
+    step off (``prune_lanes``). A roadless border left without a lane either
+    way is withdrawn and becomes a view again, and the survey is repeated
+    without it, since it may have been the only way into ground beyond it.
+    An opened border's view-only twin is withdrawn: one link per pair of
+    territories. Returns the survey of the roadless borders, the identities of
+    those opened and how many lanes were withdrawn.
+    """
+    candidates = copy.deepcopy(getattr(world, 'open_connections', []))
+    report = widen_seams(world, candidates, served, step, gated=())
+    opened = [c for c in candidates if all(end['lanes'] for end in c['ends'])]
+    roads = [c for c in publication['connections'] if c.get('type') == 'walk']
+    withdrawn = 0
+    while True:
+        withdrawn += prune_lanes(world, roads + opened, served, hubs, limit)
+        kept = [c for c in opened if all(end['lanes'] for end in c['ends'])]
+        if len(kept) == len(opened):
+            break
+        opened = kept
+    stranded = [c['id'] for c in roads if not all(end['lanes'] for end in c['ends'])]
+    if stranded:
+        raise ValueError('no walker can reach or leave any lane of ' + ', '.join(stranded))
+    pairs = {frozenset(end['region'] for end in c['ends']) for c in opened}
+    publication['connections'].extend(opened)
+    publication['visualConnections'] = [v for v in publication.get('visualConnections', [])
+                                        if frozenset(end['map'] for end in v['ends']) not in pairs]
+    return {'roadless': report, 'opened': [c['id'] for c in opened], 'withdrawnLanes': withdrawn}
 
 
 def frame_for(world, link, region, side):
@@ -307,6 +531,11 @@ def prepare_contracts(world):
                 'preloadEdges':(np.asarray(segments)-center).tolist()})
         visuals.append({'id':link['id'],'seamless':True,'visualOnly':True,'ends':ends})
     world.visual_connections=visuals
+    # Roadless borders are surveyed beside the roads but published only once
+    # export_contracts has found their lanes (settle_open_borders); the geometry
+    # stage builds no road, deck or marker for them.
+    world.open_border_links=open_borders(world)
+    world.open_connections=open_border_contracts(world)
     return connections
 
 
