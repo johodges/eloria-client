@@ -222,6 +222,44 @@ func _state_and_main() -> void:
 	(stream.get("residents") as Dictionary).erase("whitehorn_range")
 	stream.emit_signal("residents_changed")
 	_expect(not (main.get("_neighbour_pictures") as Dictionary).has("whitehorn_range"), "a neighbour that leaves takes its picture with it")
+
+	# Every region the registry places on the continent stands on the map layer,
+	# loaded or not: the Tab map frames the neighbours, and the grey hole where an
+	# unloaded region stood is what the pictures are for. An unloaded region is
+	# laid in the world root on the continent translations, its picture framed by
+	# the cartography alone, a little under the current region's own.
+	stream.set("active_map", "mirrorhold")
+	main.call("_install_map_picture", manifest)
+	var registry: Dictionary = main.get("map_registry") as Dictionary
+	var far_pictures: Dictionary = main.get("_neighbour_pictures") as Dictionary
+	var far_picture: Variant = far_pictures.get("four_gates")
+	_expect(far_picture is MeshInstance3D and is_instance_valid(far_picture),
+		"a region that is not loaded still has its picture")
+	if far_picture is MeshInstance3D:
+		_expect((far_picture as Node).get_parent() == main.get("world_root"),
+			"an unloaded region's picture stands in the world root")
+		var here_translation: Array = (MapRegistry.resolve(registry, "mirrorhold").get(
+			"continentGeography", {}) as Dictionary).get("translation", []) as Array
+		var there_translation: Array = (MapRegistry.resolve(registry, "four_gates").get(
+			"continentGeography", {}) as Dictionary).get("translation", []) as Array
+		var offset := Vector3(float(there_translation[0]) - float(here_translation[0]),
+			float(there_translation[1]) - float(here_translation[1]),
+			float(there_translation[2]) - float(here_translation[2]))
+		_expect((far_picture as MeshInstance3D).transform.origin.is_equal_approx(offset),
+			"it stands where the continent translations put it (%s for %s)" % [
+				(far_picture as MeshInstance3D).transform.origin, offset])
+		var far_index: int = main.call("_region_index_for_map", "four_gates")
+		var far_region: Dictionary = (main.get("cartography_regions") as Array)[far_index] as Dictionary
+		var far_extent: Rect2 = MapPicture.tab_map_extent(far_region.get("tabMap", {}) as Dictionary)
+		var sunk: float = float(main.get("_map_picture_height")) - float(main.get("MAP_PICTURE_SINK_METRES")) * float(far_index + 1)
+		_expect(far_extent.size.x > 0.0 and _spans((far_picture as MeshInstance3D).mesh.get_aabb(), far_extent, sunk),
+			"its picture spans the framing its cartography publishes (%s)" % (far_picture as MeshInstance3D).mesh.get_aabb())
+		# A click out there names that region and its tile, though no link joins
+		# the two maps directly: the walk is then routed leg by leg as ever.
+		var middle: Vector2 = far_extent.get_center()
+		var beyond_far: Dictionary = stream.call("map_at_local", Vector3(middle.x + offset.x, 0.0, middle.y + offset.z))
+		_expect(str(beyond_far.get("map", "")) == "four_gates",
+			"a map click on a region that is not next door names that region (%s)" % beyond_far)
 	# A map click past the seam: the direct neighbour whose served tiles hold
 	# the point is found through the surveyed join, and the walk is armed in legs.
 	stream.set("active_map", "mirrorhold")

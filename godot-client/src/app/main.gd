@@ -449,6 +449,11 @@ var _current_map_display_name := "Unknown map"
 var _minimap_scale := 1.0
 var _minimap_orientation := MINIMAP_DEFAULT_ORIENTATION
 var _minimap_zoom := MINIMAP_ZOOM_DEFAULT
+## How far the Tab map is pulled back, and the framing it is pulled back from.
+## Only a map that frames its neighbours (a continent exterior) pulls back.
+var _full_map_zoom := 1.0
+var _full_map_base_size := 0.0
+var _full_map_zoomable := false
 var _minimap_marker_scale := 1.0
 var _minimap_border := MINIMAP_DEFAULT_BORDER
 ## "square" or "round". A round minimap is the map masked to the circle its
@@ -588,11 +593,15 @@ var _local_placement_logged := false
 var _spawn_backlog := false
 ## The region's picture under the map cameras, or null on a map without one.
 var _map_picture: MeshInstance3D
+## The ground the current region's picture lies on: what the other regions'
+## pictures sink below, since only a loaded region publishes its own.
+var _map_picture_height := 0.0
 ## Regions whose tab-map textures are still to be decoded ahead of a crossing.
 var _map_picture_warmup: Array[String] = []
 var _map_picture_warmup_armed := false
-## The resident neighbours' pictures, keyed by normalized map id: a quad under
-## each resident's root, so it stands in that map's rigid frame.
+## The other regions' pictures, keyed by normalized map id: a quad under each
+## resident's root, so it stands in that map's rigid frame, and one in
+## world_root for every region that is not loaded.
 var _neighbour_pictures: Dictionary = {}
 ## Neighbour map id -> {transform, adapter}: the framed adapters actors on
 ## resident neighbours are placed through, rebuilt when the root moves.
@@ -838,6 +847,12 @@ const EL_GUI_INVERT_COLOUR := Color(0.32, 0.23, 0.15)
 const EL_GUI_BRIGHT_COLOUR := Color(0.95, 0.76, 0.52)
 ## How many metres of ground the minimap camera covers, and the bounds the
 ## scroll wheel moves it between.
+## How much of the continent the Tab map frames: 1 is the region and the
+## collar of its neighbours it has always framed, and the wheel pulls back
+## from there to the whole continent, whose pictures stand whether or not
+## their packages are loaded.
+const FULL_MAP_ZOOM_STEP := 1.25
+const FULL_MAP_ZOOM_MAX := 6.0
 const MINIMAP_ZOOM_DEFAULT := 180.0
 const MINIMAP_ZOOM_MIN := 60.0
 const MINIMAP_ZOOM_MAX := 480.0
@@ -872,6 +887,9 @@ const ACTOR_DRAW_DISTANCE_METRES := 80.0
 ## The visual layer the region's own map picture is drawn on, and the only
 ## layer the map cameras render while a picture is installed.
 const MAP_PICTURE_LAYER := 8
+## How far each further region's picture lies below the current one, so two
+## pictures whose rectangles overlap never fight over the same ground.
+const MAP_PICTURE_SINK_METRES := 0.05
 ## How far from the player another actor's name, title and health bar still
 ## show. The block is drawn at a fixed screen size so it stays readable at any
 ## zoom, which also means a name sixty metres off is as large as one at arm's
@@ -3395,7 +3413,35 @@ func _apply_minimap_zoom() -> void:
 	if minimap_frame.visible:
 		map_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 
+## The scroll wheel over the Tab map frames more or less of the continent
+## around the region. Every region's picture stands whether or not it is
+## loaded, so zooming out shows the neighbours, and a click out there walks
+## the legs to it the way a click just past the seam always has.
+func _zoom_full_map(closer: bool) -> void:
+	if not _full_map_zoomable:
+		return
+	var previous: float = _full_map_zoom
+	var step: float = 1.0 / FULL_MAP_ZOOM_STEP if closer else FULL_MAP_ZOOM_STEP
+	_full_map_zoom = clampf(_full_map_zoom * step, 1.0, FULL_MAP_ZOOM_MAX)
+	if is_equal_approx(previous, _full_map_zoom):
+		return
+	_apply_full_map_zoom()
+
+func _apply_full_map_zoom() -> void:
+	if _full_map_base_size <= 0.0:
+		return
+	full_map_camera.size = _full_map_base_size * _full_map_zoom
+	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
+	_request_map_redraw()
+
 func _on_full_map_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var wheel: InputEventMouseButton = event as InputEventMouseButton
+		if wheel.pressed and (wheel.button_index == MOUSE_BUTTON_WHEEL_UP
+				or wheel.button_index == MOUSE_BUTTON_WHEEL_DOWN):
+			_zoom_full_map(wheel.button_index == MOUSE_BUTTON_WHEEL_UP)
+			map_image.accept_event()
+			return
 	if event is InputEventMouseMotion:
 		var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
 		map_image.tooltip_text = map_marker_overlay.label_at(mouse_motion.position)
@@ -3545,11 +3591,13 @@ func _map_click_beyond(camera: Camera3D, viewport_position: Vector2, run: bool, 
 	var point: Vector3 = point_value as Vector3
 	var beyond: Dictionary = exterior_stream.map_at_local(point)
 	if beyond.is_empty():
-		print_debug("map_input source=", source, " beyond the seam, no neighbour holds ", point)
+		print_debug("map_input source=", source, " beyond the seam, no region holds ", point)
+		AppState.append_local_message("There is no map there to walk to.", 3)
 		return
 	var leg_value: Variant = exterior_stream.arm_walk_to(str(beyond.map), beyond.tile as Vector2i, run, point)
 	if not leg_value is Vector3:
 		print_debug("map_input source=", source, " no seamless road to ", beyond.map)
+		AppState.append_local_message("No road leads from here to %s." % _region_name_for_map(str(beyond.map)), 3)
 		return
 	var leg: Vector3 = leg_value as Vector3
 	_clear_keyboard_movement_tracking()
@@ -4439,7 +4487,8 @@ func _install_map_picture(manifest: WorldManifest) -> void:
 	if texture == null or extent.size.x <= 0.0 or extent.size.y <= 0.0:
 		_set_map_cameras_picture(false)
 		return
-	_map_picture = MapPicture.build(texture, extent, MapPicture.height_below(manifest.data), MAP_PICTURE_LAYER)
+	_map_picture_height = MapPicture.height_below(manifest.data)
+	_map_picture = MapPicture.build(texture, extent, _map_picture_height, MAP_PICTURE_LAYER)
 	world_root.add_child(_map_picture)
 	_set_map_cameras_picture(true)
 	_install_neighbour_pictures()
@@ -4489,46 +4538,79 @@ func _update_map_boundaries() -> void:
 	if minimap_marker_overlay != null:
 		minimap_marker_overlay.set_boundaries(boundaries)
 
-## The neighbours' pictures beside the current one: the minimap's window
-## reaches past the seam, and the grey background there read as a hole in the
-## world. Every resident neighbour of the exterior stream gets a quad of its
-## own picture under its root (the rigid frame it stands in), at its own
-## picture height on the map layer; the current map's picture is built first
-## and stands in its own frame as before. Called after the current picture
-## is laid and whenever the stream's resident table changes.
+## The other regions' pictures beside the current one: the minimap's window
+## reaches past the seam and the Tab map frames a collar of the neighbours, and
+## the grey background there read as a hole in the world. Every exterior region
+## the registry places on the continent gets a quad of its own picture on the
+## map layer, whether or not its package is loaded: a resident neighbour's
+## stands under its root (the rigid frame it stands in, so it travels with it)
+## at its own picture height, and every other region stands in world_root on
+## the frame the stream surveys for it. The current map's picture is built
+## first and stands in its own frame as before. Called after the current
+## picture is laid and whenever the stream's resident table changes.
 func _install_neighbour_pictures() -> void:
 	if exterior_stream != null and not exterior_stream.residents_changed.is_connected(_install_neighbour_pictures):
 		exterior_stream.residents_changed.connect(_install_neighbour_pictures)
 	var residents: Dictionary = exterior_stream.residents if exterior_stream != null else {}
+	var wanted: Array[String] = exterior_stream.continent_maps() if exterior_stream != null else ([] as Array[String])
+	for map_id: String in residents.keys():
+		if not wanted.has(map_id):
+			wanted.append(map_id)
+	# A picture whose frame changed - a region loaded, or the map swapped under
+	# it at a crossing - is dropped here and built again below in its new one.
 	for stale_id: String in _neighbour_pictures.keys():
 		var stale: Variant = _neighbour_pictures[stale_id]
 		var resident_root: Node3D = (residents.get(stale_id, {}) as Dictionary).get("root") as Node3D
-		if not residents.has(stale_id) or not is_instance_valid(stale) or (stale as Node).get_parent() != resident_root:
+		var frame: Node = resident_root if is_instance_valid(resident_root) else world_root
+		if (not wanted.has(stale_id) or not is_instance_valid(stale)
+				or (stale as Node).get_parent() != frame):
 			if is_instance_valid(stale):
 				(stale as Node).queue_free()
 			_neighbour_pictures.erase(stale_id)
-	for map_id: String in residents.keys():
+	for map_id: String in wanted:
 		if _neighbour_pictures.has(map_id):
 			continue
-		var resident: Dictionary = residents[map_id] as Dictionary
-		var root: Node3D = resident.get("root") as Node3D
-		var manifest: WorldManifest = resident.get("manifest") as WorldManifest
-		if not is_instance_valid(root) or manifest == null:
-			continue
-		var region_index: int = _region_index_for_map(map_id)
-		var minimap: Dictionary = manifest.data.get("minimap", {}) as Dictionary
-		if region_index < 0 or minimap.is_empty():
-			continue
-		var region: Dictionary = cartography_regions[region_index] as Dictionary
-		var texture: Texture2D = _tab_map_texture(region)
-		if texture == null:
-			continue
-		var extent: Rect2 = MapPicture.extent(minimap, region.get("tabMap", {}) as Dictionary)
-		if extent.size.x <= 0.0 or extent.size.y <= 0.0:
-			continue
-		var picture := MapPicture.build(texture, extent, MapPicture.height_below(manifest.data), MAP_PICTURE_LAYER)
+		var picture: Variant = _build_region_picture(map_id, residents.get(map_id, {}) as Dictionary)
+		if picture is MeshInstance3D:
+			_neighbour_pictures[map_id] = picture
+
+## One region's picture: its own minimap pixels, framed as the Tab map frames
+## that region. A resident region is laid under its root at its manifest's
+## picture height; any other is laid in world_root on the join the stream
+## surveys for it (or the continent translations the registry publishes), with
+## its extent read from the published cartography, which carries the same crop
+## the manifest would give. Those pictures sink a little for each further
+## region so that two never fight over the same ground; the cameras look
+## straight down, so the depth itself is never seen.
+func _build_region_picture(map_id: String, resident: Dictionary) -> Variant:
+	var region_index: int = _region_index_for_map(map_id)
+	if region_index < 0 or exterior_stream == null:
+		return null
+	var region: Dictionary = cartography_regions[region_index] as Dictionary
+	var texture: Texture2D = _tab_map_texture(region)
+	if texture == null:
+		return null
+	var tab_map: Dictionary = region.get("tabMap", {}) as Dictionary
+	var root: Node3D = resident.get("root") as Node3D
+	var manifest: WorldManifest = resident.get("manifest") as WorldManifest
+	var loaded: bool = is_instance_valid(root) and manifest != null
+	var extent: Rect2 = (MapPicture.extent(manifest.data.get("minimap", {}) as Dictionary, tab_map)
+		if loaded else MapPicture.tab_map_extent(tab_map))
+	if extent.size.x <= 0.0 or extent.size.y <= 0.0:
+		return null
+	var height: float = (MapPicture.height_below(manifest.data) if loaded
+		else _map_picture_height - MAP_PICTURE_SINK_METRES * float(region_index + 1))
+	var picture := MapPicture.build(texture, extent, height, MAP_PICTURE_LAYER)
+	if loaded:
 		root.add_child(picture)
-		_neighbour_pictures[map_id] = picture
+		return picture
+	var frame_value: Variant = exterior_stream.region_transform(map_id)
+	if not frame_value is Transform3D:
+		picture.queue_free()
+		return null
+	world_root.add_child(picture)
+	picture.transform = frame_value as Transform3D
+	return picture
 
 ## The neighbours' pictures ahead of the crossing: a seamless handoff must not
 ## pay for a webp decode and an upload while the traveller drifts to its
@@ -4537,8 +4619,16 @@ func _install_neighbour_pictures() -> void:
 ## cache the Tab map reads. The crossing then builds a quad over a cached
 ## texture. Called after each world load and whenever the adjacency changes.
 func _queue_map_picture_warmup() -> void:
+	var names: Array[String] = []
 	for name_value: Variant in AppState.adjacent_maps.values():
-		var name := str(name_value)
+		names.append(str(name_value))
+	# The Tab map draws every region of the continent, loaded or not, so the
+	# rest follow the adjacent ones into the cache a frame at a time.
+	if exterior_stream != null:
+		for map_id: String in exterior_stream.continent_maps():
+			if not names.has(map_id):
+				names.append(map_id)
+	for name: String in names:
 		var region_index: int = _region_index_for_map(name)
 		if region_index < 0:
 			continue
@@ -5317,6 +5407,14 @@ func _configure_full_map(manifest: WorldManifest) -> void:
 	var buffer: float = MapViewScript.NEIGHBOUR_BUFFER_METRES if manifest.data.has("continentGeography") else 0.0
 	MapViewScript.configure(full_map_camera, full_map_viewport,
 		MapViewScript.bounds_for(manifest, secret_sections.current_section()), buffer)
+	# A map that frames its neighbours can be pulled back over the continent;
+	# one that does not (an interior, a secret) keeps its own framing.
+	_full_map_base_size = full_map_camera.size
+	_full_map_zoomable = buffer > 0.0
+	if not _full_map_zoomable:
+		_full_map_zoom = 1.0
+	elif _full_map_zoom > 1.0:
+		full_map_camera.size = _full_map_base_size * _full_map_zoom
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
 	_update_map_boundaries()
 	player_map_marker.scale = Vector3(.18,1,.18) if manifest.asset_id() in ["lantern_reach", "bellwatch", "stillglass", "reedway", "cinderbank", "echo_court", "wayfarer_bastion", "lantern_exchange", "waystone_yard"] else Vector3.ONE
@@ -5379,6 +5477,13 @@ func _tab_map_texture(region: Dictionary) -> Texture2D:
 			texture = atlas
 	_tab_map_textures[key] = texture
 	return texture
+
+## A region's name as the cartography writes it, for a line the player reads.
+func _region_name_for_map(server_map: String) -> String:
+	var region_index: int = _region_index_for_map(server_map)
+	if region_index < 0:
+		return server_map
+	return str((cartography_regions[region_index] as Dictionary).get("name", server_map))
 
 func _region_index_for_map(server_map: String) -> int:
 	var wanted: String = MapRegistry.normalize_server_map_id(server_map)

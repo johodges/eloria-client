@@ -28,6 +28,17 @@ static func extent(minimap: Dictionary, tab_map: Dictionary) -> Rect2:
 			Vector2(float(crop[2]), float(crop[3])) / pixels_per_metre)
 	return Rect2(origin, full)
 
+## The rect a region's picture covers in its own metres, from the cartography
+## alone: what extent() derives from a manifest, for a region whose package is
+## not loaded. The published tab map carries the crop already applied.
+static func tab_map_extent(tab_map: Dictionary) -> Rect2:
+	var low: Array = tab_map.get("worldMin", []) as Array
+	var high: Array = tab_map.get("worldMax", []) as Array
+	if low.size() < 2 or high.size() < 2:
+		return Rect2()
+	var origin := Vector2(float(low[0]), float(low[1]))
+	return Rect2(origin, Vector2(float(high[0]), float(high[1])) - origin)
+
 ## A metre under the lowest ground the picture frames, so no terrain the map
 ## cameras might still render could sit beneath it; the cameras look straight
 ## down, so the height itself is never seen.
