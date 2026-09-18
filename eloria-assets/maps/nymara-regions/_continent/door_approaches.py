@@ -243,26 +243,23 @@ SEAM_ROAD_WAYPOINTS = {
     ('whitehorn_range', 'amberwood--whitehorn_range'): [
         (504., 384.), (474., 372.), (492., 402.), (510., 426.), (480., 408.), (486., 420.), (468., 408.), (438., 396.),
         (408., 378.), (392., 372.), (408., 384.), (414., 390.), (426., 399.), (438., 408.), (426., 405.), (414., 402.)],
-    # Four Gates has four gates and, until now, two roads: every seam road left by the east gate or the west trunk,
-    # because the Amberwater runs along the northern boundary and the Mirrorwater along the southern one, and the
-    # stations the solver scored best stood away west where neither river is in the way. The south gate's crossing
-    # is now pinned in front of it (plan connection_sites) and the river beyond it is bridged (plan
-    # authored_crossings): out of the plaza through the inner gate at (530, 951) and the outer gate at (530, 978)
-    # to the station (519, 990), with the Manymouth side crossing the Mirrorwater at arc 358 (540, 1009), 58 m
-    # from the gate and wholly inside Manymouth Delta. Its stop stands due south of that bridge on the far bank's
-    # dry ground, 13 m from the water at (540, 1026); (536, 1022) was inside the 8 m setback a 4 m seam road keeps,
-    # on the inside of the river's bend.
+    # Four Gates has four gates and two roads, and its seam roads cannot be what gives the north and south gates
+    # theirs. Each seam road runs between its two territories' hubs by way of a station the model chooses on the
+    # seam, and both stations stand where the ground lets both hubs reach them: moved in front of the gates they
+    # are refused by the ground (measured 2026-09-18).
     #
-    # The north gate has no station yet, and not for want of dry ground: the Amberwood seam runs as a staircase
-    # past the gate, and the Amberwater lies on it from (513, 690) to (543, 694) - every terminal there stands in
-    # the water itself. It comes off the seam eastward, and (549, 696), (551, 696), (553, 698) and (555, 698) are
-    # 8.6 to 14.1 m dry, 24 to 28 m from the gate. What refuses them is the chooser's seven-collinear-segment rule
-    # (plan_connections), which no part of that staircase satisfies: the nearest station it will accept is the one
-    # the model already picked, (405, 698), 124 m west. The rule is what the stepped-seam work removes, so the
-    # north gate's road, its pin and its Amberwater bridge at arc 154 come back with it rather than by waiving a
-    # crossing rule here.
-    ('four_gates', 'four_gates--manymouth_delta'): [(530., 900.), (530., 954.), (528., 982.)],
-    ('manymouth_delta', 'four_gates--manymouth_delta'): [(540., 1026.)],
+    # South: pinned to the seam at (519, 990) with the Mirrorwater bridged at arc 358, the Manymouth road left the
+    # one bridge that joins the two halves of the delta (western_river@760, (517, 1058)) and half of Manymouth Delta
+    # - 56 thousand tiles - lost its way to the hub. Pinned there with the crossing left to the model, no road
+    # alignment reaches the station from the Manymouth hub at all. Kept at the model's station (449, 988) and led
+    # out through the south gates by waypoints, the Four Gates road found no way west outside the wall and came
+    # back through the gates, out by the west trunk and round over the Western River: 742 m where 170 would do.
+    #
+    # North: the Amberwater lies along the seam in front of the gate (see the plan_connections note).
+    #
+    # So the gates wait for the seams to open along their length. Once a border can be crossed wherever the ground
+    # allows, a gate's road only has to reach the border and a bridge only has to carry it over the river; it no
+    # longer has to be the one road that carries the map change.
 }
 # The same for a retained territory, in its source (library) metres, carried
 # where the layout stands by the plan's retained transform (as the retained door

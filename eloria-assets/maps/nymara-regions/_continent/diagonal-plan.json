@@ -1661,10 +1661,6 @@
       790.0,
       339.0
     ],
-    "four_gates--manymouth_delta": [
-      519.0,
-      990.0
-    ],
     "amberwood--mirrorhold": [
       673,
       620
@@ -3034,11 +3030,6 @@
       "river": "mirror_outlet",
       "arcMetres": 16.0,
       "note": "the Mirrorwater ravine below Mirror Lake, crossed by the Verdant Stair seam road as in design O5; excluded by the model only for a retained solid 4 m from its west landing"
-    },
-    {
-      "river": "mirror_outlet",
-      "arcMetres": 358.0,
-      "note": "the Mirrorwater in front of the Four Gates south gate, on the Manymouth Delta seam road out of that gate: the whole span stands in Manymouth Delta, 6 m inside the seam distance the model prefers to keep"
     }
   ],
   "assembly_member_offsets": {
