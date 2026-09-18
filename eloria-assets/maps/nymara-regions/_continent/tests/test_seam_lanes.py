@@ -11,8 +11,8 @@ import crossings as C
 import collision_export as CE
 from test_partition_pipeline import FlatWorld
 
-WIDE = ('east--west',)
-SHIPPED = C.WIDE_SEAMS
+GATED = ('east--west',)
+SHIPPED = C.GATED_SEAMS
 
 
 def served(west=None, east=None):
@@ -69,7 +69,7 @@ class SeamLaneTests(unittest.TestCase):
         C.prepare_contracts(world)
         connections = world.publication_connections
         gate = [[tuple(lane['tile']) for lane in end['lanes']] for end in connections[0]['ends']]
-        report = C.widen_seams(world, connections, served(), wide=WIDE)
+        report = C.widen_seams(world, connections, served(), gated=())
         self.assertEqual([end['gateLanes'] for end in report[0]['ends']], [7, 7])
         for side, end in enumerate(connections[0]['ends']):
             tiles = [tuple(lane['tile']) for lane in end['lanes']]
@@ -78,33 +78,54 @@ class SeamLaneTests(unittest.TestCase):
             self.assertTrue(set(gate[side]) <= set(tiles), 'the gate survives the widening')
             self.assertEqual(tiles, sorted(tiles, key=lambda t: (t[1], t[0])))
 
-    def test_a_seam_not_yet_widened_keeps_its_gate_alone(self):
+    def test_no_cell_is_a_departure_of_both_maps_where_the_border_steps_by_the_gate(self):
+        world = self.world
+        # The border steps two metres east for one metre of its length beside the
+        # anchor, so one of the seven offsets of the west gate lands on west ground.
+        def owner_at(x, z):
+            x, z = np.broadcast_arrays(np.asarray(x, float), np.asarray(z, float))
+            step = (x < 22) & (z >= 10) & (z < 11)
+            return ((x >= 20) & ~step).astype(int)
+        world.owner_at = owner_at
+        C.prepare_contracts(world)
+        connections = world.publication_connections
+        report = C.widen_seams(world, connections, served(), gated=())
+        self.assertEqual([end['gateLanesInside'] for end in report[0]['ends']], [1, 0])
+        west, east = connections[0]['ends']
+        for end in (west, east):
+            for lane in end['lanes']:
+                self.assertTrue(C.departs_outward(world, end['region'], lane), end['region'])
+        cells = [{tuple(C.global_tile(world, end['region'], lane['tile']).round(3)) for lane in end['lanes']}
+                 for end in (west, east)]
+        self.assertFalse(cells[0] & cells[1], 'an arrival would trigger the crossing back at once')
+
+    def test_a_gated_seam_keeps_its_gate_alone(self):
         world = self.world
         C.prepare_contracts(world)
         connections = world.publication_connections
-        self.assertEqual(C.widen_seams(world, connections, served(), wide=()), [])
+        self.assertEqual(C.widen_seams(world, connections, served(), gated=GATED), [])
         self.assertEqual([len(end['lanes']) for end in connections[0]['ends']], [7, 7])
 
 
 class SeamCollarTests(unittest.TestCase):
-    def collar(self, wide):
+    def collar(self, gated):
         world = FlatWorld()
-        C.WIDE_SEAMS = wide
+        C.GATED_SEAMS = gated
         try:
             gx, gz = np.meshgrid(np.arange(14.25, 26., .5), np.arange(4.25, 16., .5))
             return CE.seam_collar(world, 'west', gx, gz), gx, gz
         finally:
-            C.WIDE_SEAMS = SHIPPED
+            C.GATED_SEAMS = SHIPPED
 
-    def test_the_collar_is_one_tile_of_the_neighbour_and_only_for_a_widened_seam(self):
-        collar, gx, _ = self.collar(WIDE)
+    def test_the_collar_is_one_tile_of_the_neighbour_and_only_for_an_open_seam(self):
+        collar, gx, _ = self.collar(())
         self.assertTrue(collar.any(), 'a widened seam opens the first tile across its border')
         opened = gx[collar]
         self.assertGreaterEqual(opened.min(), 20., 'the collar is the neighbour\'s ground, never our own')
         self.assertLessEqual(opened.max(), 21., 'and only the first tile of it')
 
-    def test_a_seam_not_yet_widened_has_no_collar(self):
-        collar, _, _ = self.collar(())
+    def test_a_gated_seam_has_no_collar(self):
+        collar, _, _ = self.collar(GATED)
         self.assertFalse(collar.any())
 
 

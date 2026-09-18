@@ -107,13 +107,13 @@ class EmittedPartitionTests(unittest.TestCase):
         publication={'connections':[{'id':'road','type':'walk','ends':[a,b]}]}
         self.assertEqual(A.audit_frames(publication,manifests,translations)['checkedLaneDirections'],14)
         # The ground a walker arriving the other way lands on is the tile behind the
-        # crossing, one step from it. The two sides used to be checked lane against lane,
-        # which a border crossed along its length cannot satisfy: a step in the boundary
-        # leaves one more tile outside it than inside.
-        b['lanes'][0]['arrival'][0]+=1
-        with self.assertRaisesRegex(A.AuditError,'one step apart'):
+        # crossing, beside it. The two sides used to be checked lane against lane, which a
+        # border crossed along its length cannot satisfy: a step in the boundary leaves one
+        # more tile outside it than inside.
+        b['lanes'][0]['arrival'][0]+=2
+        with self.assertRaisesRegex(A.AuditError,'not beside each other'):
             A.audit_frames(publication,manifests,translations)
-        b['lanes'][0]['arrival'][0]-=1
+        b['lanes'][0]['arrival'][0]-=2
         # A crossing hands the walker over at the cell they stand on, so a departure that
         # names no cell of the other map is no crossing.
         b['lanes'][0]['tile'][0]-=12

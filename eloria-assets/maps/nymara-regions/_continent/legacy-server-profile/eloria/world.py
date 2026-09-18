@@ -10315,9 +10315,19 @@ class World(MagicRuntime):
         return entries
 
     def teleporter_tiles(self, map_id: str) -> list[tuple[int, int]]:
-        """Every tile on a map that takes you somewhere else."""
+        """Every tile on a map that takes you somewhere else.
+
+        Not the tiles of a seamless land crossing: those are the map's own
+        border, walked over wherever the ground allows, and no more a way
+        somewhere else than the ground beside them. Listing them would also
+        bury the doors - a border open along its length is hundreds of tiles,
+        and the packet carries 255.
+        """
+        land = getattr(self, 'land_connections', {})
         return sorted({(portal.x, portal.y)
-                       for portal in portals_leaving(self, map_id)})
+                       for portal in portals_leaving(self, map_id)
+                       if portal.object_id is not None
+                       or (map_id, portal.destination) not in land})
 
     async def send_teleporters(self, session: Session) -> None:
         c = session.character

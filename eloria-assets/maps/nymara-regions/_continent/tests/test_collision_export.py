@@ -13,6 +13,7 @@ SOURCE = Path(__file__).resolve().parents[1]
 if str(SOURCE) not in sys.path:
     sys.path.insert(0, str(SOURCE))
 import collision_export as C
+import crossings as XC
 from scene_io import dump_glb
 from world_layout import triangle_sample
 
@@ -98,6 +99,12 @@ class CollisionExportTests(unittest.TestCase):
     def setUp(self):
         self.folder = tempfile.TemporaryDirectory()
 
+    def gate(self, *identities):
+        """Keep these seams to their gates, so the threshold halo is seen on its own."""
+        saved = XC.GATED_SEAMS
+        XC.GATED_SEAMS = identities
+        self.addCleanup(setattr, XC, 'GATED_SEAMS', saved)
+
     def tearDown(self):
         self.folder.cleanup()
 
@@ -147,6 +154,7 @@ class CollisionExportTests(unittest.TestCase):
         self.assertTrue(sample(result, world, 'west', -4.25, .25))
 
     def test_halo_requires_an_actual_threshold_and_stays_two_metres_deep(self):
+        self.gate('road')
         world = TwoTerritories()
         world.connections = [{'id': 'road', 'regions': ['west', 'east'], 'type': 'walk',
                               'anchor': [0, 0], 'normal': [1, 0]}]
@@ -162,6 +170,26 @@ class CollisionExportTests(unittest.TestCase):
         self.assertAlmostEqual(float(sample(west, world, 'west', .25, .25, 'heights')),
                                float(sample(east, world, 'east', .25, .25, 'heights')))
 
+    def test_an_open_seam_opens_the_first_tile_across_its_whole_border_without_a_deck(self):
+        world = TwoTerritories()
+        world.connections = [{'id': 'road', 'regions': ['west', 'east'], 'type': 'walk',
+                              'anchor': [0, 0], 'normal': [1, 0]}]
+        result = self.export(world)
+        # The neighbour's first tile across the border can be stood on, by the gate
+        # and four metres along the border from it alike, since that is where the
+        # crossing hands a walker over...
+        for z in (.25, 4.25, -4.75):
+            with self.subTest(z=z):
+                self.assertTrue(sample(result, world, 'west', .25, z))
+                self.assertTrue(sample(result, world, 'west', .75, z))
+                # ...and nothing beyond it: a step cannot reach past the crossing.
+                self.assertFalse(sample(result, world, 'west', 1.25, z))
+        self.assertGreater(result['collision']['exportStatistics']['seamCollarCells'], 0)
+        # The collar is the neighbour's ground, so it does not stretch this map's scale.
+        self.gate('road')
+        closed = self.export(world)
+        self.assertEqual(result['collision']['heightEncoding'], closed['collision']['heightEncoding'])
+
     def test_each_half_cell_can_close_its_full_actor_tile(self):
         world = TwoTerritories()
         baseline = self.export(world)['walkable']
@@ -175,6 +203,7 @@ class CollisionExportTests(unittest.TestCase):
                 self.assertEqual(int((blocked == 0).sum()), int((baseline.reshape(12, 2, 12, 2).all(axis=(1, 3)) == 0).sum()) + 1)
 
     def test_stepped_ownership_inside_threshold_covers_all_four_arrival_subcells(self):
+        self.gate('stepped-road')
         world = TwoTerritories()
         world.owner_at = lambda x,z: (np.broadcast_arrays(x,z)[0] >=
             np.where(np.broadcast_arrays(x,z)[1] > 2, -5,

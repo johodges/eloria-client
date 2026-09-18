@@ -305,9 +305,11 @@ def audit_frames(publication, manifests, translations):
                 point = position(region, lane['tile'])
                 landing = tile_at(target['region'], point)
                 require(landing is not None, f'{link["id"]}: crossing changes global actor coordinates')
-                require(max(abs(lane['tile'][0] - lane['arrival'][0]),
-                            abs(lane['tile'][1] - lane['arrival'][1])) == 1,
-                        f'{link["id"]}: a lane and the ground a walker arrives on are not one step apart')
+                # One step for a lane on the border's first tile, two for a gate's, which
+                # its survey lays a metre either side of the seam's line.
+                require(1 <= max(abs(lane['tile'][0] - lane['arrival'][0]),
+                                 abs(lane['tile'][1] - lane['arrival'][1])) <= 2,
+                        f'{link["id"]}: a lane and the ground a walker arrives on are not beside each other')
                 trigger = (region, *lane['tile'])
                 require(trigger not in triggers, f'{link["id"]}: duplicate departure trigger')
                 triggers.add(trigger)

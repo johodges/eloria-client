@@ -6,13 +6,18 @@ import numpy as np
 # authored threshold deck under them, and the rest of the border impassable
 # however gentle the ground either side of it. A seam is crossed instead
 # wherever the ground allows, which is every tile of the border a walker can
-# stand on on both maps.
+# stand on on both maps: its lanes come from the two served collision grids and
+# its collar from the whole border (collision_export.seam_collar).
 #
-# The widening arrives one seam at a time. A seam named here takes its lanes
-# from the two served collision grids and its collar from the whole border
-# (collision_export.seam_collar); every other seam keeps the seven lanes of its
-# gate, exactly as before, until it is named too.
-WIDE_SEAMS = ('manymouth_delta--verdant_stair',)
+# Manymouth Delta to Verdant Stair was opened first, on its own, and went from
+# seven lanes a side to 298 and 290 with no contract failing. A seam named here
+# keeps only the seven lanes of its gate.
+GATED_SEAMS = ()
+
+
+def widened(identity):
+    """Whether a land seam is crossed along its length or only at its gate."""
+    return identity not in GATED_SEAMS
 
 
 def tile_for(world, region, global_xz):
@@ -116,29 +121,48 @@ def crossing_lanes(world, link, side, served):
     return lanes
 
 
-def widen_seams(world, connections, served, wide=WIDE_SEAMS):
-    """Give each named seam every lane its two served grids allow.
+def departs_outward(world, region, lane):
+    """Whether a lane is stood on beyond its own territory, as a crossing must be.
 
-    The gate's own seven lanes are kept whatever the grids say: they stand on
-    an authored threshold deck, so a widened seam can only gain ways across and
-    can never lose the one it already had.
+    A gate's lanes are laid by geometry - seven offsets along the surveyed
+    seam from its anchor - and where the ownership raster steps near the anchor
+    one of them can land on its own map's side of the border. While that seam
+    was nowhere else crossable it did no harm. Once the other map's lanes run
+    the whole border, that tile is also the other map's first tile across, so
+    each map would send a walker to the other from the one cell: the arrival
+    would trigger the crossing back at once.
+    """
+    point = global_tile(world, region, lane['tile'])
+    return int(np.asarray(world.owner_at(point[0], point[1]))) != world.ids.index(region)
+
+
+def widen_seams(world, connections, served, gated=None):
+    """Give each open seam every lane its two served grids allow.
+
+    The gate's own lanes are kept whatever the grids say - they stand on an
+    authored threshold deck, so a widened seam can only gain ways across - but
+    not one that departs from its own map's ground (``departs_outward``): no
+    departure is ever owned by the map it departs from, which is what keeps
+    every arrival clear of the crossing back.
     """
     report = []
     # A world with no surveyed links has no seam to widen: several contract tests
     # exercise the export against a stand-in that carries only what it reads.
     links = {link['id']: link for link in getattr(world, 'connections', ())}
     for connection in connections:
-        if connection.get('type') != 'walk' or connection['id'] not in wide:
+        if connection.get('type') != 'walk' or connection['id'] in (GATED_SEAMS if gated is None else gated):
             continue
         link = links[connection['id']]
         widths = []
         for side, end in enumerate(connection['ends']):
-            lanes = {tuple(lane['tile']): lane for lane in end['lanes']}
-            gate = len(lanes)
+            kept = [lane for lane in end['lanes'] if departs_outward(world, end['region'], lane)]
+            lanes = {tuple(lane['tile']): lane for lane in kept}
             for lane in crossing_lanes(world, link, side, served):
                 lanes.setdefault(tuple(lane['tile']), lane)
+            inside = len(end['lanes']) - len(kept)
             end['lanes'] = [lanes[key] for key in sorted(lanes, key=lambda t: (t[1], t[0]))]
-            widths.append({'region': end['region'], 'gateLanes': gate, 'lanes': len(lanes)})
+            widths.append({'region': end['region'], 'gateLanes': len(kept), 'gateLanesInside': inside,
+                           'lanes': len(lanes)})
         report.append({'id': connection['id'], 'ends': widths})
     return report
 

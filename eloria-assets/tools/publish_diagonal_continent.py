@@ -318,9 +318,12 @@ def connection_rows(connections, specs):
                 sources.add(trigger)
                 entries.append((source['region'], *tile, destination['region'], *arrival))
                 lines.append('portal | ' + ' | '.join(map(str, entries[-1])) + '\n')
-    for source, x, y, target, tx, ty in entries:
-        if (target, tx, ty) in sources:
-            raise ValueError(f'{source}->{target}: arrival immediately triggers another exterior crossing')
+    triggered = [(source, x, y, target, tx, ty) for source, x, y, target, tx, ty in entries if (target, tx, ty) in sources]
+    if triggered:
+        source, x, y, target, tx, ty = triggered[0]
+        raise ValueError(f'{source}->{target}: arrival immediately triggers another exterior crossing: '
+                         + ', '.join(f'{s} {[a, b]} -> {t} {[c, d]}' for s, a, b, t, c, d in triggered[:8])
+                         + f' ({len(triggered)} in all)')
     return ''.join(lines), entries
 
 

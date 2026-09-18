@@ -78,7 +78,7 @@ def gate_halo(world, region, gx, gz):
 
 
 def seam_collar(world, region, gx, gz):
-    """The first tile of a widened neighbour's ground beyond a shared border.
+    """The first tile of a neighbour's ground beyond an open shared border.
 
     A crossing is stood on the far side of the boundary: a lane's departure
     tile is the neighbour's first tile across it, and an actor has to be able
@@ -94,17 +94,17 @@ def seam_collar(world, region, gx, gz):
     map's own slope, water and structures refuse.
     """
     from scipy.ndimage import binary_dilation
-    from crossings import WIDE_SEAMS
+    from crossings import widened
     collar = np.zeros(gx.shape, dtype=bool)
-    widened = [c for c in world.connections if c.get('id') in WIDE_SEAMS
-               and c.get('type') not in ('ferry', 'boat', 'ship') and region in c.get('regions', [])]
-    if not widened:
+    opened = [c for c in world.connections if widened(c.get('id'))
+              and c.get('type') not in ('ferry', 'boat', 'ship') and region in c.get('regions', [])]
+    if not opened:
         return collar
     owner = world.owner_at(gx, gz)
     # Two half-cells to the tile, so a tile eight-adjacent to this territory is
     # every one of whose cells stands within two cells of a cell of its own.
     beside = binary_dilation(owner == world.ids.index(region), np.ones((5, 5), dtype=bool))
-    for connection in widened:
+    for connection in opened:
         regions = connection['regions']
         other = regions[1] if regions[0] == region else regions[0]
         collar |= beside & (owner == world.ids.index(other))
