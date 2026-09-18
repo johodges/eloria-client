@@ -243,6 +243,23 @@ SEAM_ROAD_WAYPOINTS = {
     ('whitehorn_range', 'amberwood--whitehorn_range'): [
         (504., 384.), (474., 372.), (492., 402.), (510., 426.), (480., 408.), (486., 420.), (468., 408.), (438., 396.),
         (408., 378.), (392., 372.), (408., 384.), (414., 390.), (426., 399.), (438., 408.), (426., 405.), (414., 402.)],
+    # Four Gates has four gates and, until now, two roads: every seam road left by the east gate or the west trunk,
+    # because the Amberwater runs along the northern boundary and the Mirrorwater along the southern one, and the
+    # stations the solver scored best stood away west where neither river is in the way. The north and south gates
+    # opened onto nothing. Their crossings are now pinned in front of them (plan connection_sites) and the rivers
+    # beyond them are bridged (plan authored_crossings), so each of the four gates carries the road of the territory
+    # it faces: Amberwood north, Mirrorhold east, Manymouth Delta south, Westhaven and the rest west.
+    #
+    # North: out of the plaza up the north road, through the gate at (530, 711) and north-east to the station
+    # (548, 695); the Amberwood side comes down to the Amberwater and crosses it at arc 154 (550, 668), 44 m from
+    # the gate, where the model excludes nothing and both banks stand in Amberwood.
+    ('four_gates', 'amberwood--four_gates'): [(530., 760.), (530., 714.), (540., 702.)],
+    ('amberwood', 'amberwood--four_gates'): [(546., 658.)],
+    # South: out of the plaza through the inner gate at (530, 951) and the outer gate at (530, 978) to the station
+    # (519, 990); the Manymouth side crosses the Mirrorwater at arc 358 (540, 1009), 58 m from the gate, with the
+    # whole span in Manymouth Delta.
+    ('four_gates', 'four_gates--manymouth_delta'): [(530., 900.), (530., 954.), (528., 982.)],
+    ('manymouth_delta', 'four_gates--manymouth_delta'): [(536., 1022.)],
 }
 # The same for a retained territory, in its source (library) metres, carried
 # where the layout stands by the plan's retained transform (as the retained door

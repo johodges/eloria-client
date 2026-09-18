@@ -237,15 +237,19 @@ footings are limited and written into the ground. The plan key `crossing_policy`
 **Crossing sites** (`river_crossings.py`). Every plan river is cut every 2 m along its curved centreline. A
 section costs its wet width plus an approach term (the bank rise a .35 grade cannot absorb over a 12 m landing).
 Sections are excluded over lakes and the sea, within 20 m of another channel (confluences), across the rigid
-core of a settlement footing or a retained solid, within 12 m of a territory seam, more than 15 degrees off
-square to the flow, with a landing that is not dry ground above the sea, or where a deck would stand more
-than 0.3 m over its banks. A section within a quarter metre of the cheapest valid section within 40 m along its
-river is a candidate (thinned to one every 20 m). A candidate whose approach exceeds 6 m is a last resort,
-offered only to a leg that finds no other crossing. The plan key `authored_crossings` names a section (a river
-id and metres along it) that is a candidate although the model excludes it, when its only reasons are a deck
-that cannot sit at water level between high banks or a retained solid beside a landing
-(`landscape.AUTHORED_CROSSING_WAIVERS`): the Mirrorwater ravine below Mirror Lake, which the Verdant Stair seam
-road crosses as design O5 did.
+core of a settlement footing or a retained solid, within 12 m of a territory seam, whose own line lies in two
+territories or none, more than 15 degrees off square to the flow, with a landing that is not dry ground above
+the sea, or where a deck would stand more than 0.3 m over its banks. A section within a quarter metre of the
+cheapest valid section within 40 m along its river is a candidate (thinned to one every 20 m). A candidate whose
+approach exceeds 6 m is a last resort, offered only to a leg that finds no other crossing. The plan key
+`authored_crossings` names a section (a river id and metres along it) that is a candidate although the model
+excludes it, when its only reasons are a deck that cannot sit at water level between high banks, a retained
+solid beside a landing, or standing nearer a territory seam than the policy prefers
+(`landscape.AUTHORED_CROSSING_WAIVERS`). A span in two territories is never waived: each territory exports its
+own geometry, so such a deck would be built in halves. An authored crossing also keeps its place whatever the
+minimum spacing says, and the audit judges the local-shortest and spacing rules only on the sites the model
+chose for itself: the plan names three, the Mirrorwater ravine below Mirror Lake that the Verdant Stair seam road
+crosses as design O5 did, and the Amberwater and Mirrorwater in front of the Four Gates north and south gates.
 
 **Routing.** River water is impassable to the router. Every claimed site in the leg's territory, and every
 candidate there standing at least 100 m along its river from each claimed site, adds one bridge edge between its

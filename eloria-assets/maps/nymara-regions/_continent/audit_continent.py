@@ -598,10 +598,15 @@ def road_rule_findings(roads, sites, rivers, policy, ground_at, river_water_at, 
                     continue
             widths.append(width)
         here = float(np.linalg.norm(span)) + .5
+        if site.get('authored'):
+            # The plan named this crossing and said why; the local-shortest and spacing rules judge the crossings the
+            # model sites for itself.
+            totals['authoredSites'] = totals.get('authoredSites', 0) + 1
+            continue
         if widths and here > min(widths) + ROAD_RULE_SHORTEST_EXCESS_METRES:
             violations.append(f"site {site.get('id')} on {site['river']}: crossing {here:.1f} m against {min(widths):.1f} m within {ROAD_RULE_WINDOW_METRES:g} m")
     for river, group in by_river.items():
-        arcs = sorted(float(site['arcMetres']) for site in group)
+        arcs = sorted(float(site['arcMetres']) for site in group if not site.get('authored'))
         for a, b in zip(arcs, arcs[1:]):
             if b - a < spacing - 1e-6:
                 violations.append(f"{river}: bridge sites {b - a:.0f} m apart along the river (at least {spacing:g})")

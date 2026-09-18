@@ -279,7 +279,12 @@ def river_sections(world, river, policy):
     solid = solids[iz, ix].any(axis=1) if solids is not None else np.zeros(len(valid), bool)
     footing = _sample(settlement_weight(world), line_x, line_z, world).max(axis=1) >= float(policy['footing_weight'])
     owners = np.asarray(world.owner_at(line_x, line_z))
-    seams = (seam_distance(world)[iz, ix].min(axis=1) < float(policy['seam_metres'])) | ~np.all(owners == owners[:, :1], axis=1) | (owners[:, 0] < 0)
+    # Two reasons, not one. Standing near a seam is a preference - a bridge belongs to the territory that exports it,
+    # and one built at the boundary serves two hubs badly - so an authored crossing may waive it. A span whose own
+    # line lies in two territories (or in none) is not a preference: each territory exports only its own geometry, so
+    # such a deck would be built in halves. That one no authored crossing may waive.
+    seams = seam_distance(world)[iz, ix].min(axis=1) < float(policy['seam_metres'])
+    split = ~np.all(owners == owners[:, :1], axis=1) | (owners[:, 0] < 0)
     confluence = np.zeros(len(valid), bool)
     for other in world.plan.get('rivers', []):
         if other.get('id') == river.get('id'):
@@ -299,7 +304,7 @@ def river_sections(world, river, policy):
     lift_limit = float(policy['deck_lift_metres']) + .025
     for k, row in enumerate(valid):
         misfit = False
-        if not row['reasons'] and not (lakes[k] or sea[k] or solid[k] or footing[k] or seams[k] or confluence[k] or wet_landing[k] or low_landing[k]):
+        if not row['reasons'] and not (lakes[k] or sea[k] or solid[k] or footing[k] or seams[k] or split[k] or confluence[k] or wet_landing[k] or low_landing[k]):
             dry_lift, end_lift = deck_fit(world, wet_left[k], wet_right[k], policy)
             misfit = dry_lift > lift_limit or end_lift > .12
             row['deckLift'] = round(dry_lift, 3)
@@ -308,7 +313,7 @@ def river_sections(world, river, policy):
                    approach=float(approach[k]), cost=float(row['wetWidth'] + approach[k]), deviationDegrees=float(off_square[k]),
                    region=int(owners[k, 0]))
         for flag, reason in ((lakes[k], 'lake'), (sea[k], 'sea'), (solid[k], 'retained solid'), (footing[k], 'footing'),
-                             (seams[k], 'territory seam'), (confluence[k], 'confluence'), (wet_landing[k], 'wet landing'),
+                             (seams[k], 'territory seam'), (split[k], 'two territories'), (confluence[k], 'confluence'), (wet_landing[k], 'wet landing'),
                              (low_landing[k], 'landing at sea level'), (misfit, 'deck lifts over its banks'),
                              (off_square[k] > float(policy['perpendicular_tolerance_degrees']), 'oblique to the flow')):
             if flag:
@@ -382,9 +387,15 @@ def crossing_candidates(world, policy=None):
 
 
 def spaced(candidate, sites, policy):
-    """Whether a crossing keeps the minimum spacing along its river from every site (itself excepted)."""
+    """Whether a crossing keeps the minimum spacing along its river from every site (itself excepted).
+
+    The spacing is a rule for the crossings the model sites itself: rivers should be bridged where a road needs them
+    and not every hundred metres. A crossing the plan authors is a decision already taken - the Four Gates north gate
+    is to have its bridge whatever stands upstream - so it keeps its place, and so does a site beside it."""
     spacing = float(policy['minimum_spacing_metres'])
-    return all(site['key'] == candidate['key'] or site['river'] != candidate['river']
+    if candidate.get('authored'):
+        return True
+    return all(site['key'] == candidate['key'] or site['river'] != candidate['river'] or site.get('authored')
                or abs(site['arcMetres'] - candidate['arcMetres']) >= spacing - 1e-9 for site in sites)
 
 

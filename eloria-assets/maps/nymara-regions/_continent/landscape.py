@@ -792,7 +792,11 @@ def crossing_policy(plan):
     return merged
 
 
-AUTHORED_CROSSING_WAIVERS = ("deck lifts over its banks", "retained solid")
+# What an authored crossing may overrule: a deck that cannot sit at water level between high banks, a retained
+# solid beside a routed landing, and standing nearer a territory seam than the policy prefers. It may never
+# overrule "two territories" - a span in two territories would be exported in halves - nor water, a lake, the
+# sea, a settlement footing or a wet landing.
+AUTHORED_CROSSING_WAIVERS = ("deck lifts over its banks", "retained solid", "territory seam")
 
 
 def validate_authored_crossings(plan):
