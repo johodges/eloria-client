@@ -46,7 +46,7 @@ from .legendary_items import (MODIFIER_KEY, instance_effect_descriptions,
                               instance_effects, roll_legendary_modifiers)
 from .map_digests import load_map_digests
 from .map_layout import FOUR_GATES_ARRIVAL
-from .maps import load_maps
+from .maps import Portal, load_maps
 from .profile import PROFILE
 from .pk import PKZone, capped_level, pk_zone_at, shared_pk_zone
 from .stats import (award_combat_xp, award_experience, combat_experience,
@@ -1273,6 +1273,50 @@ class ActiveInstance:
 from .magic_runtime import MagicRuntime
 
 
+# A land crossing used to be one gate seven lanes wide, so the whole portal
+# table was a couple of hundred rows and every asker simply scanned it. A seam
+# a player may cross wherever the ground allows is the width of the border
+# instead, and `check_portal` asks about a tile on every step of every walking
+# session - a scan there is the map's whole boundary per step per walker.
+#
+# These take the world rather than being methods on it: a good deal of the
+# suite exercises one World method against a stand-in object that has only the
+# fields that method reads, and the table is one of those fields.
+def portal_index(world) -> tuple[dict, dict]:
+    """The portal table by tile and by map, rebuilt whenever the table changes.
+
+    The index is cached on the world and thrown away when the table it was
+    built from is no longer the table bound there: the sky map adds and removes
+    its own portal at runtime and the road content builders extend theirs, and
+    each does so by binding a new tuple, which is what this notices.
+    """
+    portals = getattr(world, 'portals', ())
+    cached = getattr(world, '_portal_index_cache', None)
+    if cached is not None and cached[0] is portals:
+        return cached[1], cached[2]
+    at: dict[tuple[str, int, int], list] = {}
+    leaving: dict[str, list] = {}
+    for portal in portals:
+        at.setdefault((portal.source, portal.x, portal.y), []).append(portal)
+        leaving.setdefault(portal.source, []).append(portal)
+    try:
+        world._portal_index_cache = (portals, at, leaving)
+    except AttributeError:
+        pass  # a stand-in that refuses new attributes still gets its answer
+    return at, leaving
+
+
+def portal_at(world, map_id: str, x: int, y: int):
+    """The portal standing on one tile: the first in table order, as a scan found."""
+    found = portal_index(world)[0].get((map_id, x, y))
+    return found[0] if found else None
+
+
+def portals_leaving(world, map_id: str) -> list:
+    """Every portal that leaves one map, in table order."""
+    return portal_index(world)[1].get(map_id, [])
+
+
 class World(MagicRuntime):
     # A profile that ships no conversation and no quest lines has none, and so
     # does a World built without running __init__ - which several tests do to
@@ -1608,9 +1652,8 @@ class World(MagicRuntime):
     async def start_territory_raid(self, aggressor: str, defender: str):
         raid = self.territory_raids.start(aggressor, defender)
         route = next((
-            portal for portal in self.portals
-            if portal.source == raid.defender.map_id
-            and portal.destination == raid.aggressor.map_id), None)
+            portal for portal in portals_leaving(self, raid.defender.map_id)
+            if portal.destination == raid.aggressor.map_id), None)
         raid.attacker_entry = ((route.x, route.y) if route
                                else raid.aggressor.attacker_spawn)
         for team, group_name in ((raid.aggressor.key, raid.aggressor.attacker_group),
@@ -5245,8 +5288,7 @@ class World(MagicRuntime):
         c = session.character
         if not c:
             return False
-        portal = next((entry for entry in self.portals
-                       if entry.source == c.map_id and (entry.x, entry.y) == (c.x, c.y)), None)
+        portal = portal_at(self, c.map_id, c.x, c.y)
         if not portal:
             return False
         if portal.object_id is not None and session.portal_intent != (c.map_id, c.x, c.y):
@@ -5306,9 +5348,8 @@ class World(MagicRuntime):
         leads. A doorway with a waygate object beside it is left to the
         waygate, which is already a marked, clickable thing.
         """
-        portals = [portal for portal in getattr(self, "portals", ())
-                   if portal.source == map_id and portal.object_id is None
-                   and portal.destination != map_id]
+        portals = [portal for portal in portals_leaving(self, map_id)
+                   if portal.object_id is None and portal.destination != map_id]
         if not portals:
             return []
         waygates = [(entry.x, entry.y)
@@ -5317,9 +5358,13 @@ class World(MagicRuntime):
         clusters: list[tuple[str, list[tuple[int, int]]]] = []
         for portal in sorted(portals, key=lambda entry: (entry.destination, entry.x, entry.y)):
             for destination, tiles in clusters:
+                # Newest tile first: a run of seam tiles is added in order, so
+                # the one that answers is the one just added rather than the far
+                # end of a boundary-long cluster. `any` is a yes or no, so the
+                # order it asks in cannot change which cluster a tile joins.
                 if destination == portal.destination and any(
                         max(abs(portal.x - x), abs(portal.y - y)) <= EXIT_CLUSTER_TILES
-                        for x, y in tiles):
+                        for x, y in reversed(tiles)):
                     tiles.append((portal.x, portal.y))
                     break
             else:
@@ -5417,10 +5462,10 @@ class World(MagicRuntime):
                 await session.send(p.raw_text(interactive.text))
                 await self.walkthrough_event(session, interactive.role)
                 return
-        exact = [portal for portal in self.portals
-                 if portal.source == c.map_id and portal.object_id == object_id]
-        choices = exact or [portal for portal in self.portals if portal.source == c.map_id
-                            and portal.object_id is None
+        leaving = portals_leaving(self, c.map_id)
+        exact = [portal for portal in leaving if portal.object_id == object_id]
+        choices = exact or [portal for portal in leaving
+                            if portal.object_id is None
                             and max(abs(c.x-portal.x), abs(c.y-portal.y))
                             <= self.settings.portal_activation_distance]
         if not choices:
@@ -10271,8 +10316,8 @@ class World(MagicRuntime):
 
     def teleporter_tiles(self, map_id: str) -> list[tuple[int, int]]:
         """Every tile on a map that takes you somewhere else."""
-        return sorted({(portal.x, portal.y) for portal in self.portals
-                       if portal.source == map_id})
+        return sorted({(portal.x, portal.y)
+                       for portal in portals_leaving(self, map_id)})
 
     async def send_teleporters(self, session: Session) -> None:
         c = session.character
@@ -10584,9 +10629,7 @@ class World(MagicRuntime):
             if not lines:
                 lines.append("Nothing here but the road, I am afraid.")
         elif response_id == 711:
-            for portal in self.portals:
-                if portal.source != c.map_id:
-                    continue
+            for portal in portals_leaving(self, c.map_id):
                 destination = self.maps.get(portal.destination)
                 name = destination.name if destination else portal.destination
                 lines.append(f"{name} lies through the gate "
@@ -10643,8 +10686,8 @@ class World(MagicRuntime):
             nodes = [spawn for spawn in self.spawn_definitions
                      if spawn.map_id == wt.HOME_MAP and spawn.creature == wt.STARTER_CREATURE]
         elif panel.event == "travel":
-            nodes = [portal for portal in self.portals
-                     if portal.source == wt.HOME_MAP and portal.object_id is None
+            nodes = [portal for portal in portals_leaving(self, wt.HOME_MAP)
+                     if portal.object_id is None
                      and portal.destination in {"mirrorhold", "crownwater",
                                                 "sunmane_steppe", "ssarathi_ruins"}]
         else:

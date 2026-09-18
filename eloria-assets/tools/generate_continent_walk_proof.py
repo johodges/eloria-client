@@ -580,8 +580,11 @@ class Generator:
                     if pair not in expected:raise AuditError(f"{link['id']}: road joins territories without a physical boundary")
                     walk[link['id']]=pair
                     for end in link['ends']:
-                        if len(end.get('lanes',[]))!=7 or end['frame'].get('halfWidthTiles')!=3:
-                            raise AuditError(f"{link['id']}: published seven-lane road contract is incomplete")
+                        # The gate's own seven lanes are the floor: a widened seam keeps them
+                        # and adds the rest of its border, and halfWidthTiles still describes
+                        # the authored threshold under the gate rather than the border's width.
+                        if len(end.get('lanes',[]))<7 or end['frame'].get('halfWidthTiles')!=3:
+                            raise AuditError(f"{link['id']}: published road contract is narrower than its gate")
             canonical={link['id']:tuple(sorted(e['region'] for e in link['ends'])) for link in self.geography['connections']}
             actual_walk={link['id']:tuple(sorted(e['map'] for e in link['ends'])) for link in self.links}
             if walk!=canonical or walk!=actual_walk or len(actual_walk)!=len(self.links):

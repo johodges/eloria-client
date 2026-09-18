@@ -256,6 +256,11 @@ class Surface:
         require(not missing and not duplicate, f'{label}: {missing} missing and {duplicate} duplicated visible terrain triangles')
 
 
+# The lanes of a gate: seven, either side of the surveyed anchor. A widened seam
+# keeps them and adds the rest of its border, so this is a floor and not a count.
+GATE_LANES = 7
+
+
 def audit_frames(publication, manifests, translations):
     checks = 0
     triggers = set()
@@ -264,6 +269,15 @@ def audit_frames(publication, manifests, translations):
         origin = manifests[region]['coordinateTransform']['serverOrigin']
         return np.array([tile[0] + .5 - origin[0] + translations[region][0],
                          origin[1] - tile[1] - .5 + translations[region][2]])
+    def tile_at(region, point):
+        """The tile of one map under a global cell centre: position() inverted."""
+        transform = manifests[region]['coordinateTransform']
+        origin, cells = transform['serverOrigin'], transform.get('serverCells')
+        tile = [int(round(point[0] - translations[region][0] + origin[0] - .5)),
+                int(round(origin[1] + translations[region][2] - point[1] - .5))]
+        if cells and not (0 <= tile[0] < cells[0] and 0 <= tile[1] < cells[1]):
+            return None
+        return tile if np.allclose(position(region, tile), point, atol=1e-6, rtol=0) else None
     for link in publication['connections']:
         if link['type'] != 'walk':
             continue
@@ -276,15 +290,28 @@ def audit_frames(publication, manifests, translations):
             region = source['region']
             stored = [f for f in manifests[region]['streamingBorders'] if f['id'] == link['id']]
             require(len(stored) == 1 and stored[0]['anchor'] == source['frame']['anchor'] and stored[0]['outward'] == source['frame']['outward'], f'{link["id"]}: territory frame differs from publication')
-            target_positions = {tuple(position(target['region'], lane['arrival'])):lane['arrival'] for lane in target['lanes']}
-            require(len(source['lanes']) == 7 and len(target_positions) == 7, f'{link["id"]}: seven crossing lanes are not distinct')
+            # A crossing hands the walker over at the very cell they stand on, so every
+            # departure must name a cell of the other map. This was checked against the far
+            # side's own lane list, which held for a gate of seven lanes either side of one
+            # anchor but cannot hold for a border crossed along its length: each step in the
+            # boundary leaves one more tile outside it than inside, so the two lists are the
+            # same ground in different numbers. The reading is exact instead - one metre grid,
+            # whole-tile origins, whole-metre translations - and the ground it lands on is
+            # judged by the served grids in export_contracts.
+            require(len(source['lanes']) >= GATE_LANES, f'{link["id"]}: fewer crossing lanes than the gate surveyed')
+            require(len({tuple(lane['tile']) for lane in source['lanes']}) == len(source['lanes']),
+                    f'{link["id"]}: a crossing lane is declared twice')
             for lane in source['lanes']:
-                point = tuple(position(region, lane['tile']))
-                require(point in target_positions, f'{link["id"]}: crossing changes global actor coordinates')
+                point = position(region, lane['tile'])
+                landing = tile_at(target['region'], point)
+                require(landing is not None, f'{link["id"]}: crossing changes global actor coordinates')
+                require(max(abs(lane['tile'][0] - lane['arrival'][0]),
+                            abs(lane['tile'][1] - lane['arrival'][1])) == 1,
+                        f'{link["id"]}: a lane and the ground a walker arrives on are not one step apart')
                 trigger = (region, *lane['tile'])
                 require(trigger not in triggers, f'{link["id"]}: duplicate departure trigger')
                 triggers.add(trigger)
-                arrivals.append((target['region'], *target_positions[point]))
+                arrivals.append((target['region'], *landing))
                 checks += 1
     require(not set(arrivals) & triggers, 'A crossing arrival immediately triggers another crossing')
     return {'checkedLaneDirections':checks}

@@ -77,6 +77,40 @@ def gate_halo(world, region, gx, gz):
     return halo
 
 
+def seam_collar(world, region, gx, gz):
+    """The first tile of a widened neighbour's ground beyond a shared border.
+
+    A crossing is stood on the far side of the boundary: a lane's departure
+    tile is the neighbour's first tile across it, and an actor has to be able
+    to stand there on this map before the portal under it can fire. The
+    authored gate thresholds open that strip for the seven lanes of a gate
+    (`gate_halo`, which needs the threshold deck beneath it); a seam crossed
+    wherever the ground allows needs it along the whole border instead.
+
+    One tile deep and eight-connected, because a walker's step is: nothing
+    beyond a border can be reached without standing on the strip. It is the
+    same ground either way - one shared height field, one water plan - so what
+    is opened here is what the neighbour already walks on, minus whatever this
+    map's own slope, water and structures refuse.
+    """
+    from scipy.ndimage import binary_dilation
+    from crossings import WIDE_SEAMS
+    collar = np.zeros(gx.shape, dtype=bool)
+    widened = [c for c in world.connections if c.get('id') in WIDE_SEAMS
+               and c.get('type') not in ('ferry', 'boat', 'ship') and region in c.get('regions', [])]
+    if not widened:
+        return collar
+    owner = world.owner_at(gx, gz)
+    # Two half-cells to the tile, so a tile eight-adjacent to this territory is
+    # every one of whose cells stands within two cells of a cell of its own.
+    beside = binary_dilation(owner == world.ids.index(region), np.ones((5, 5), dtype=bool))
+    for connection in widened:
+        regions = connection['regions']
+        other = regions[1] if regions[0] == region else regions[0]
+        collar |= beside & (owner == world.ids.index(other))
+    return collar
+
+
 def _mesh_groups(document, body, manifest):
     """Classify mesh descendants, preserving declared structural root identity."""
     nodes = document['nodes']
@@ -226,14 +260,28 @@ def structural_mask(groups, surface, x0, z1):
     return blocked
 
 
-def encode_heights(heights, walkable):
-    if not walkable.any():
+def encode_heights(heights, walkable, basis=None):
+    """Encode walkable ground into the 255 steps a served grid has.
+
+    ``basis`` is the ground whose range decides the scale, and is this
+    territory's own. The seam collar is the neighbour's ground a step beyond
+    the border, and how high the land stands over there is no business of this
+    map's height scale: a low territory beside a high one would otherwise have
+    its steps coarsened, or its own highest ground pushed past the 255th step,
+    by a strip of somebody else's hillside. A collar cell the scale cannot
+    express is simply not walkable here - the crossing there does not open -
+    and a territory with no widened border keeps exactly the scale it had.
+    """
+    reference = walkable if basis is None or not basis.any() else basis
+    if not reference.any():
         return np.zeros(heights.shape, dtype=np.uint8), {'origin': -.2, 'step': .2, 'range': [1, 255]}
-    low, high = float(heights[walkable].min()), float(heights[walkable].max())
+    low, high = float(heights[reference].min()), float(heights[reference].max())
     step = max(.2, (high - low) / 253)
     origin = low - step
-    values = np.clip(np.rint((heights - origin) / step), 1, 255)
-    return np.where(walkable, values, 0).astype(np.uint8), {'origin': origin, 'step': step, 'range': [1, 255]}
+    values = np.rint((heights - origin) / step)
+    inside = (values >= 1) & (values <= 255)
+    return (np.where(walkable & inside, np.clip(values, 1, 255), 0).astype(np.uint8),
+            {'origin': origin, 'step': step, 'range': [1, 255]})
 
 
 def export_collision(world, region, manifest, glb_path, output_path):
@@ -266,10 +314,16 @@ The caller installs collision metadata into its final world manifest itself.
     np.copyto(surface, deck, where=deck_support)
     slope_allowed = (grade <= MAX_GRADE + 1e-9) | deck_support
     halo = gate_halo(world, region, gx, gz) & deck_support
+    collar = seam_collar(world, region, gx, gz)
+    collar &= (gx >= world.x0) & (gz >= world.z0) & (gx < world.x1) & (gz < world.z1)
     submerged = wet & (surface < water - WADE)
     structure = structural_mask(structures, surface, x0, z1)
-    walkable = (own | halo) & slope_allowed & ~submerged & ~structure & np.isfinite(surface)
-    grid, encoding = encode_heights(surface, walkable)
+    standable = slope_allowed & ~submerged & ~structure & np.isfinite(surface)
+    # This territory's own ground, which is what its height scale is built from.
+    settled = (own | halo) & standable
+    walkable = settled | (collar & standable)
+    grid, encoding = encode_heights(surface, walkable, basis=settled)
+    walkable &= grid != 0
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(struct.pack('<4sHHII', b'EWCG', 2, 0, width, rows) + grid.tobytes())
@@ -284,5 +338,6 @@ The caller installs collision metadata into its final world manifest itself.
         sourceGlbSha256=hashlib.sha256(Path(glb_path).read_bytes()).hexdigest(),
         exportStatistics={**statistics, 'walkTriangles': len(walk_triangles),
             'steepCells': int((own & ~slope_allowed).sum()), 'waterCells': int((own & submerged).sum()),
-            'structuralCells': int((own & structure).sum()), 'thresholdHaloCells': int(halo.sum())})
+            'structuralCells': int((own & structure).sum()), 'thresholdHaloCells': int(halo.sum()),
+            'seamCollarCells': int((collar & ~own & ~halo & walkable).sum())})
     return {'collision': collision, 'heights': surface.astype(np.float32), 'walkable': walkable, 'grid': grid}

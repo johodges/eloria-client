@@ -354,7 +354,7 @@ def cached_collision(world, region, manifest, glb_path, collision_path, output, 
         'collisionRoots': sorted(manifest.get('collision', {}).get('nodeNames', [])),
         'surfacePrefixes': manifest.get('navigation', {}).get('surfaceNodePrefixes', ['Terrain_', 'Walk_']),
         'connections': [c for c in world.connections if region in c.get('regions', [])],
-        'sources': {name: sha(HERE / name) for name in ('collision_export.py', 'world_layout.py', 'terrain_export.py', 'landscape.py')},
+        'sources': {name: sha(HERE / name) for name in ('collision_export.py', 'world_layout.py', 'terrain_export.py', 'landscape.py', 'crossings.py')},
         'readerSha256': sha(Path(exporter.GR.__file__))}
     signature_text = json.dumps(signature, sort_keys=True, default=lambda a: np.asarray(a).tolist())
     signature_hash = hashlib.sha256(signature_text.encode()).hexdigest()
@@ -888,7 +888,7 @@ def export_contracts(world, content, manifests, output, server_path):
     previous_publication = current_manifest.get('diagonalContinent', {}).get('publicationSha256')
     if previous_publication:
         publication['sourcePublicationSha256'] = previous_publication
-    placements, outputs = {}, {}
+    placements, outputs, served = {}, {}, {}
     if str(HERE) not in sys.path:
         sys.path.insert(0, str(HERE))
     from collision_export import export_collision
@@ -931,9 +931,37 @@ def export_contracts(world, content, manifests, output, server_path):
                 'collisionPath': str(collision_path), 'worldManifestPath': str(world_path)}
             p = RegionPlacement(world, content, region, spec, result, grid, sources, report, previous=previous)
             p.connect_hub(old_maps[region]['arrival'], largest)
+            # What a seam may be crossed on is what the hub can walk to, not merely
+            # what the grid says is standable: a pocket of gentle ground behind a
+            # cliff or across a river is not a way out of a territory, and every
+            # crossing tile has to be reachable or its own contract refuses it.
+            served[region] = np.asarray(p.reachable, dtype=bool)
             placements[region], outputs[region], publication['regions'][region] = p, (world_path, manifest), spec
             print(f'{region}: exact server grid, stage {factor}, hub reaches {int(p.reachable.sum())} tiles in {time.monotonic()-started:.1f}s', flush=True)
-        publisher.connection_rows(publication['connections'], publication['regions'])
+        # Every seam's lanes come from the served grids of both its maps, so
+        # this waits until the last of them has been folded.
+        from crossings import widen_seams
+        report['seams'] = widen_seams(world, publication['connections'], served)
+        for seam in report['seams']:
+            print('%s: %s' % (seam['id'], ', '.join(
+                '%s %d lanes (gate %d)' % (end['region'], end['lanes'], end['gateLanes'])
+                for end in seam['ends'])), flush=True)
+        _, rows = publisher.connection_rows(publication['connections'], publication['regions'])
+        # The publish tool used to prove a departure against the far side's own
+        # lane list; now that it reads the arrival straight out of the shared
+        # grid, this is the stronger question that check was standing in for -
+        # can an actor be put down where the crossing sends them and walk on
+        # from there.
+        widened = {(end['region'], other['region']) for seam in report['seams']
+                   for end, other in (seam['ends'], seam['ends'][::-1])}
+        stranded = [row for row in rows if row[0] in served and row[3] in served
+                    and not served[row[3]][row[5], row[4]]]
+        report['crossingArrivals'] = {'rows': len(rows), 'unreachable': len(stranded),
+                                      'examples': [list(row) for row in stranded[:8]]}
+        refused = [row for row in stranded if (row[0], row[3]) in widened]
+        if refused:
+            raise ValueError('crossing arrivals stand on ground the destination refuses: '
+                             + ', '.join('%s %s -> %s %s' % (r[0], r[1:3], r[3], r[4:6]) for r in refused[:8]))
         place_doors(texts['maps.txt'], placements, publication['connections'])
         chunk_metadata = []
         for region, p in placements.items():

@@ -2,6 +2,18 @@
 from __future__ import annotations
 import numpy as np
 
+# A land crossing has been a gate: seven lanes about a surveyed anchor, with an
+# authored threshold deck under them, and the rest of the border impassable
+# however gentle the ground either side of it. A seam is crossed instead
+# wherever the ground allows, which is every tile of the border a walker can
+# stand on on both maps.
+#
+# The widening arrives one seam at a time. A seam named here takes its lanes
+# from the two served collision grids and its collar from the whole border
+# (collision_export.seam_collar); every other seam keeps the seven lanes of its
+# gate, exactly as before, until it is named too.
+WIDE_SEAMS = ('manymouth_delta--verdant_stair',)
+
 
 def tile_for(world, region, global_xz):
     origin, _ = world.address(region)
@@ -14,6 +26,121 @@ def global_tile(world, region, tile):
     center = world.regions[region]['center']
     return np.array([tile[0] + .5 - origin[0] + center[0],
                      origin[1] - tile[1] - .5 + center[1]])
+
+
+def tiles_at(world, region, gx, gz):
+    """The tiles under global points, in one region's own tile frame.
+
+    Every territory's tile grid is the same metre grid in the shared frame -
+    the server origins are whole tiles and the translations whole metres - so
+    this is exact, and the tile of one map that answers to a global point names
+    the same ground as the tile of another map that answers to it.
+    """
+    origin, _ = world.address(region)
+    center = world.regions[region]['center']
+    return (np.rint(np.asarray(gx, dtype=float) - center[0] + origin[0] - .5).astype(int),
+            np.rint(origin[1] + center[1] - np.asarray(gz, dtype=float) - .5).astype(int))
+
+
+def seam_tiles(world, link, side):
+    """The tiles either side of one border, in the near region's own tile frame.
+
+    ``outward`` is the neighbour's first tile beyond the border and ``inward``
+    the near territory's last tile inside it. A crossing is stood on the
+    outward ring: a walker steps off their own ground onto the first tile of
+    the neighbour's, and the portal under it hands them to the neighbour's map
+    at that same cell - which is why a crossing moves nobody and needs no fade.
+    Both rings are eight-connected because a walker's step is, so there is no
+    tile beyond a border that can be reached without standing on a crossing.
+    """
+    from scipy.ndimage import binary_dilation
+    region, other = link['regions'][side], link['regions'][1 - side]
+    origin, cells = world.address(region)
+    segments = np.asarray(link['edgeSegments'], dtype=float).reshape(-1, 2)
+    low, high = segments.min(axis=0) - 4., segments.max(axis=0) + 4.
+    x0, y1 = tiles_at(world, region, low[0], low[1])
+    x1, y0 = tiles_at(world, region, high[0], high[1])
+    xs = np.arange(max(0, int(x0)), min(int(cells[0]), int(x1) + 1))
+    ys = np.arange(max(0, int(y0)), min(int(cells[1]), int(y1) + 1))
+    if xs.size == 0 or ys.size == 0:
+        return None
+    tx, ty = np.meshgrid(xs, ys)
+    gx = tx + .5 - origin[0] + world.regions[region]['center'][0]
+    gz = origin[1] - ty - .5 + world.regions[region]['center'][1]
+    owner = world.owner_at(gx, gz)
+    mine, theirs = owner == world.ids.index(region), owner == world.ids.index(other)
+    step = np.ones((3, 3), dtype=bool)
+    return {'tx': tx, 'ty': ty, 'gx': gx, 'gz': gz,
+            'outward': theirs & binary_dilation(mine, step),
+            'inward': mine & binary_dilation(theirs, step)}
+
+
+def crossing_lanes(world, link, side, served):
+    """Every lane this border offers: a tile a walker can stand on on both maps.
+
+    ``served`` is each region's served tile grid as a boolean - the fold the
+    server itself walks on, not the half-cell raster under it - so a lane
+    exists exactly where both maps agree an actor may stand. Each lane pairs
+    the tile it is stood on with the tile behind it that a walker arriving the
+    other way lands on.
+    """
+    rings = seam_tiles(world, link, side)
+    region, other = link['regions'][side], link['regions'][1 - side]
+    near, far = served.get(region), served.get(other)
+    if rings is None or near is None or far is None:
+        return []
+
+    def standing(mask):
+        tx, ty = rings['tx'][mask], rings['ty'][mask]
+        ox, oy = tiles_at(world, other, rings['gx'][mask], rings['gz'][mask])
+        inside = ((tx >= 0) & (ty >= 0) & (tx < near.shape[1]) & (ty < near.shape[0])
+                  & (ox >= 0) & (oy >= 0) & (ox < far.shape[1]) & (oy < far.shape[0]))
+        tx, ty, ox, oy = tx[inside], ty[inside], ox[inside], oy[inside]
+        both = near[ty, tx] & far[oy, ox]
+        return tx[both], ty[both]
+
+    departures = np.stack(standing(rings['outward']), axis=1)
+    behind = {(int(x), int(y)) for x, y in np.stack(standing(rings['inward']), axis=1)}
+    lanes = []
+    for x, y in departures.tolist():
+        # The tile a walker coming the other way lands on: the nearest ground
+        # of this territory behind the crossing, sideways steps last so a
+        # straight seam pairs straight across. A crossing with none behind it
+        # is ground nobody can have walked from and is no lane at all.
+        partners = [(x + dx, y + dy) for dx in (0, -1, 1) for dy in (0, -1, 1)
+                    if (x + dx, y + dy) in behind]
+        if not partners:
+            continue
+        partner = min(partners, key=lambda t: (abs(t[0] - x) + abs(t[1] - y), t[1], t[0]))
+        lanes.append({'tile': [x, y], 'arrival': [partner[0], partner[1]]})
+    return lanes
+
+
+def widen_seams(world, connections, served, wide=WIDE_SEAMS):
+    """Give each named seam every lane its two served grids allow.
+
+    The gate's own seven lanes are kept whatever the grids say: they stand on
+    an authored threshold deck, so a widened seam can only gain ways across and
+    can never lose the one it already had.
+    """
+    report = []
+    # A world with no surveyed links has no seam to widen: several contract tests
+    # exercise the export against a stand-in that carries only what it reads.
+    links = {link['id']: link for link in getattr(world, 'connections', ())}
+    for connection in connections:
+        if connection.get('type') != 'walk' or connection['id'] not in wide:
+            continue
+        link = links[connection['id']]
+        widths = []
+        for side, end in enumerate(connection['ends']):
+            lanes = {tuple(lane['tile']): lane for lane in end['lanes']}
+            gate = len(lanes)
+            for lane in crossing_lanes(world, link, side, served):
+                lanes.setdefault(tuple(lane['tile']), lane)
+            end['lanes'] = [lanes[key] for key in sorted(lanes, key=lambda t: (t[1], t[0]))]
+            widths.append({'region': end['region'], 'gateLanes': gate, 'lanes': len(lanes)})
+        report.append({'id': connection['id'], 'ends': widths})
+    return report
 
 
 def frame_for(world, link, region, side):

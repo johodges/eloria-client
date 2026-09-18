@@ -90,6 +90,21 @@ def world_point(region, tile, specs):
             round(spec['serverOrigin'][1] - tile[1] - .5 + spec['translation'][2], 6))
 
 
+def destination_tile(region, point, specs):
+    """The tile of `region` under a global cell centre, or None where it has none.
+
+    Every territory's tile grid is the same metre grid in the shared frame, so
+    a crossing that hands a walker over at the cell they stand on only has to
+    read that cell in the other map's own numbering.
+    """
+    spec = specs[region]
+    x = int(round(point[0] - spec['translation'][0] + spec['serverOrigin'][0] - .5))
+    y = int(round(spec['serverOrigin'][1] + spec['translation'][2] - point[1] - .5))
+    if not (0 <= x < spec['serverCells'][0] and 0 <= y < spec['serverCells'][1]):
+        return None
+    return [x, y] if world_point(region, (x, y), specs) == point else None
+
+
 def validate_spec(region, spec, previous):
     for name in ('serverOrigin', 'previousServerOrigin', 'serverCells', 'arrival'):
         spec[name] = list(shared.integer_pair(spec.get(name), f'{region}.{name}'))
@@ -283,13 +298,19 @@ def connection_rows(connections, specs):
         lines.append(f'# {identity} ({connection.get("type", "land")})\n')
         for source, destination in ((a, b), (b, a)):
             lanes = source.get('lanes', [{'tile': source['tile'], 'arrival': source['arrival']}])
-            arrivals = destination.get('lanes', [{'tile': destination['tile'], 'arrival': destination['arrival']}])
-            targets = {world_point(destination['region'], lane['arrival'], specs): lane['arrival'] for lane in arrivals}
             for lane in lanes:
                 tile = list(shared.integer_pair(lane['tile'], identity + ' departure'))
-                arrival = targets.get(world_point(source['region'], tile, specs)) if seamless else destination['arrival']
+                # A seamless crossing hands the walker over at the very cell
+                # they are standing on, so the arrival is that cell read in the
+                # destination's own tile frame. While a seam was a gate seven
+                # lanes wide this was found by matching the far side's own lane
+                # list, which needs the two sides to have lane for lane the same
+                # tiles; a border crossed along its length has one more tile on
+                # the outside of every step in it than on the inside.
+                arrival = (destination_tile(destination['region'], world_point(source['region'], tile, specs), specs)
+                           if seamless else destination['arrival'])
                 if arrival is None:
-                    raise ValueError(f'{identity}: source lane {tile} has no arrival at the same global cell centre')
+                    raise ValueError(f'{identity}: departure {tile} of {source["region"]} stands on no cell of {destination["region"]}')
                 arrival = list(shared.integer_pair(arrival, identity + ' arrival'))
                 trigger = (source['region'], *tile)
                 if trigger in sources:
