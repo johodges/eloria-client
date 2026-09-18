@@ -156,8 +156,8 @@ class AuthoredCrossingTests(unittest.TestCase):
         self.assertTrue(site['authored']); self.assertEqual(site['waived'], ['retained solid'])
 
     def test_an_authored_section_waives_a_seam_it_stands_near_but_never_a_span_in_two_territories(self):
-        # Standing near a seam is a preference an authored crossing may overrule: the Four Gates north gate is to
-        # have its bridge although the boundary runs along the river there.
+        # Standing near a seam is a preference an authored crossing may overrule: the Four Gates south gate is to
+        # have its bridge although the boundary runs near the river there.
         world = river_world(owner=lambda w: (w.gz[:-1, :-1] >= 250).astype(int))
         rows = RC.river_sections(world, world.plan['rivers'][0], RC.policy_of(world))
         near = min((r for r in rows if 'cost' in r and 240 <= r['centre'][1] < 249

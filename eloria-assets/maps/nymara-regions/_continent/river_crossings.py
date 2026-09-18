@@ -390,8 +390,8 @@ def spaced(candidate, sites, policy):
     """Whether a crossing keeps the minimum spacing along its river from every site (itself excepted).
 
     The spacing is a rule for the crossings the model sites itself: rivers should be bridged where a road needs them
-    and not every hundred metres. A crossing the plan authors is a decision already taken - the Four Gates north gate
-    is to have its bridge whatever stands upstream - so it keeps its place, and so does a site beside it."""
+    and not every hundred metres. A crossing the plan authors is a decision already taken - a gate is to have its
+    bridge whatever stands upstream - so it keeps its place, and so does a site beside it."""
     spacing = float(policy['minimum_spacing_metres'])
     if candidate.get('authored'):
         return True
