@@ -5,23 +5,23 @@ exported. X runs east, Z runs south, and sea level is Y = 0. Named territories
 are server and content identities. Their boundaries do not determine the
 height, water level, ground colour, or vegetation of the landscape.
 
-**QA state: published as the eighteenth publication (2026-09-18) and verified
+**QA state: published as the nineteenth publication (2026-09-18) and verified
 for what it changed.** Master `461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073` (the
 seventeenth's: no geometry changed), publication
-`d714feb374f3e9de1d6942c0fbc966fa24d87fe23a066934ce2a23043d60744f`
-(`work-output/diagonal-continent/after/eighteenth-freeze.json`). It is the first
-publication with every land seam open along its length: 8,136 crossing lanes
-where the seventeenth had 252, each the neighbour's first tile across the border,
-stepped onto from ground its hub reaches without crossing. On these bytes the strict
-contracts passed with 0 failures over 3,660 placements, every published crossing
-lands on ground its destination's hub reaches, the audit passed and verified the
-publication, and the live fixture audit proved every lane offline by the server's own
-walking rules with 0 errors. On a real server with the real client the gates' centre
-and shoulder handoffs, the neighbour clicks, the ferry round trips and the region cores
-passed. The interior round trips, the encounters and the final review captures were not
-repeated for this publication: its geometry is the seventeenth's, and the interiors'
-door approaches under the new walking rule (a walk keeps off every way out of a map but
-its target) were proved offline only. Known limitations are listed in
+`7bf0c8514b28cfbbf4c2f043fe36b2dfeb8c87f4ad6bc5dfd9aba81e70e17f3c`. It opens the four
+borders no road crosses - Grey Moors and Four Gates, Whitehorn and Mirrorhold,
+Manymouth and Ssarathi, Four Gates and Verdant Stair - wherever their ground meets
+(`crossings.open_borders`; Crownwater's three shore borders stay ferry crossings), and
+takes the hub out of the lane rule: a lane is ground walkable on both sides of its border
+with a legal step between, kept where a walker from some map's hub can get onto it and
+step off where it lands (`crossings.settle_crossings`, which withdrew 182 lanes on
+unreachable scraps and one-tile dead ends). 10,163 lanes where the eighteenth had 8,136,
+and every stretch of border walkable on both sides now carries a crossing. On these bytes
+the strict contracts passed with 0 failures, the audit passed and verified the
+publication, and the live fixture audit proved all 10,163 lanes offline by the server's
+own walking rules with 0 errors; the continent, crossing-related server and client
+tests passed. The live suites on a real server and client were not run for this
+publication, at the owner's request. Known limitations are listed in
 `STATUS-2026-09-13-takeover.md`: roads are not yet walkable (the walkable-roads round);
 the reach links leave wall steps over the 4 m smoothing limit where the Moors pass
 switchback's legs are stacked on the Whitehorn face; the Grey Moors undercut mouth is
