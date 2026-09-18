@@ -540,8 +540,44 @@ func arm_walk_to(map_id: String, tile: Vector2i, run: bool, world_point: Vector3
 		"routed": true, "issued_from": active_map, "next_map": str(leg.there.map)}
 	var fallback: Dictionary = active_manifest.data.get("coordinateTransform", {}) if active_manifest != null else {}
 	var here_adapter := CoordinateAdapter.new(leg.here.get("coordinateTransform", fallback))
-	_arm_walk_leg(active_map, here_adapter.godot_to_server(_vector(leg.here.position)), _local_walk_actor(active_map))
-	return _vector(leg.here.position)
+	var crossing := best_crossing(leg.here, here_adapter, _last_position, world_point)
+	_arm_walk_leg(active_map, crossing, _local_walk_actor(active_map))
+	if crossing == here_adapter.godot_to_server(_vector(leg.here.position)):
+		return _vector(leg.here.position)
+	return here_adapter.tile_center(crossing.x, crossing.y)
+
+## Where a border can be crossed, in its near map's own tiles: the runs the
+## survey ships with each end, expanded. Empty for a survey written before the
+## borders opened, which leaves a walk to the gate the survey anchors.
+static func crossing_tiles(end: Dictionary) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	var packed: Variant = end.get("crossingRuns")
+	if packed is not Dictionary:
+		return result
+	var along_x := str((packed as Dictionary).get("axis", "x")) == "x"
+	for run: Variant in (packed as Dictionary).get("runs", []) as Array:
+		if run is not Array or (run as Array).size() != 3:
+			continue
+		var line := int(run[0])
+		for step: int in range(int(run[1]), int(run[2]) + 1):
+			result.append(Vector2i(step, line) if along_x else Vector2i(line, step))
+	return result
+
+## The crossing of a border that makes the shortest walk from `from` to `to`,
+## both in the active map's frame. A border open along its length is crossed on
+## whichever of its tiles is on the way, not at the gate the survey anchors; a
+## click a step across the border used to send the walker round by the gate,
+## which could be the far end of the border. Without shipped crossings, the gate.
+static func best_crossing(end: Dictionary, adapter: CoordinateAdapter, from: Vector3, to: Vector3) -> Vector2i:
+	var best := adapter.godot_to_server(_vector(end.position))
+	var best_cost := INF
+	for tile: Vector2i in crossing_tiles(end):
+		var at := adapter.tile_center(tile.x, tile.y)
+		var cost := Vector2(at.x - from.x, at.z - from.z).length() + Vector2(to.x - at.x, to.z - at.z).length()
+		if cost < best_cost:
+			best_cost = cost
+			best = tile
+	return best
 
 ## The direct seamless links out of the active map, as {map, here, there}.
 func _direct_links() -> Array[Dictionary]:

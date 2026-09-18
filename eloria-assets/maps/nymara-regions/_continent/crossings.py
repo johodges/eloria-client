@@ -136,6 +136,26 @@ def departs_outward(world, region, lane):
     return int(np.asarray(world.owner_at(point[0], point[1]))) != world.ids.index(region)
 
 
+def reseat(world, end):
+    """Keep an end's own crossing - its tile, arrival and position - on one of its lanes.
+
+    The end's tile is the gate's middle lane, and its position is where a
+    client walking to the neighbour aims its first leg. A gate lane that
+    departed from its own side of the border is dropped, and when that is the
+    middle one the end would send a walker to a tile that no longer crosses
+    anything; the lane nearest it takes its place.
+    """
+    if not end['lanes'] or any(lane['tile'] == end['tile'] for lane in end['lanes']):
+        return
+    lane = min(end['lanes'], key=lambda lane: ((lane['tile'][0] - end['tile'][0]) ** 2
+                                               + (lane['tile'][1] - end['tile'][1]) ** 2, lane['tile']))
+    region = end['region']
+    center = np.asarray(world.regions[region]['center'], dtype=float)
+    point = global_tile(world, region, lane['tile'])
+    end['tile'], end['arrival'] = list(lane['tile']), list(lane['arrival'])
+    end['position'] = [float(point[0] - center[0]), float(world.height_at(*point)), float(point[1] - center[1])]
+
+
 def widen_seams(world, connections, served, gated=None):
     """Give each open seam every lane its two served grids allow.
 
@@ -161,6 +181,7 @@ def widen_seams(world, connections, served, gated=None):
                 lanes.setdefault(tuple(lane['tile']), lane)
             inside = len(end['lanes']) - len(kept)
             end['lanes'] = [lanes[key] for key in sorted(lanes, key=lambda t: (t[1], t[0]))]
+            reseat(world, end)
             widths.append({'region': end['region'], 'gateLanes': len(kept), 'gateLanesInside': inside,
                            'lanes': len(lanes)})
         report.append({'id': connection['id'], 'ends': widths})

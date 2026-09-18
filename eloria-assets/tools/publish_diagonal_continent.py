@@ -387,6 +387,26 @@ def validate_standing_points(specs, blobs, texts, connections):
     return len(checked)
 
 
+def crossing_runs(tiles):
+    """A border's crossing tiles as the fewest straight runs along one axis.
+
+    A client walking to a neighbour aims at the crossing that makes the
+    shortest walk, so it has to know where the crossings are; a border open
+    along its length is hundreds of them, and the survey is written indented.
+    Along ``x`` a run is ``[y, x0, x1]``, along ``y`` it is ``[x, y0, y1]``.
+    """
+    def along(axis):
+        other, runs = 1 - axis, []
+        for tile in sorted(tiles, key=lambda tile: (tile[other], tile[axis])):
+            if runs and runs[-1][0] == tile[other] and runs[-1][2] + 1 == tile[axis]:
+                runs[-1][2] = tile[axis]
+            else:
+                runs.append([tile[other], tile[axis], tile[axis]])
+        return runs
+    x, y = along(0), along(1)
+    return {'axis': 'x', 'runs': x} if len(x) <= len(y) else {'axis': 'y', 'runs': y}
+
+
 def connection_manifests(publication, worlds, specs):
     graph, streaming = [], []
     for connection in publication['connections']:
@@ -408,7 +428,8 @@ def connection_manifests(publication, worlds, specs):
             position = end.get('position', [tile[0] + .5 - origin[0], frame['anchor'][1], origin[1] - tile[1] - .5])
             ends.append({'map': region, 'portal': end['portal'], 'position': position,
                          'frame': copy.deepcopy(frame), 'coordinateTransform': copy.deepcopy(world['coordinateTransform']),
-                         'preloadEdges':copy.deepcopy(end.get('preloadEdges',[]))})
+                         'preloadEdges':copy.deepcopy(end.get('preloadEdges',[])),
+                         'crossingRuns': crossing_runs([lane['tile'] for lane in end.get('lanes', [end])])})
         streaming.append({'id': connection['id'], 'seamless': True, 'ends': ends})
     identities={c['id'] for c in streaming}
     for visual in publication.get('visualConnections',[]):

@@ -98,6 +98,25 @@ class SeamLaneTests(unittest.TestCase):
         cells = [{tuple(C.global_tile(world, end['region'], lane['tile']).round(3)) for lane in end['lanes']}
                  for end in (west, east)]
         self.assertFalse(cells[0] & cells[1], 'an arrival would trigger the crossing back at once')
+        # Each end's own crossing - where a walker to the neighbour is sent - is one of its lanes.
+        for end in (west, east):
+            self.assertIn(end['tile'], [lane['tile'] for lane in end['lanes']])
+
+    def test_an_end_whose_middle_lane_is_dropped_is_reseated_on_the_nearest_lane(self):
+        world = self.world
+        def owner_at(x, z):
+            x, z = np.broadcast_arrays(np.asarray(x, float), np.asarray(z, float))
+            return ((x >= 20) & ~((x < 22) & (z >= 9) & (z < 12))).astype(int)
+        world.owner_at = owner_at
+        C.prepare_contracts(world)
+        west = world.publication_connections[0]['ends'][0]
+        middle = list(west['tile'])
+        C.widen_seams(world, world.publication_connections, served(), gated=())
+        self.assertNotEqual(west['tile'], middle, 'the middle lane stood on west ground and was dropped')
+        self.assertIn(west['tile'], [lane['tile'] for lane in west['lanes']])
+        point = C.global_tile(world, 'west', west['tile'])
+        self.assertEqual(west['position'][0], float(point[0] - 10))
+        self.assertEqual(west['position'][2], float(point[1] - 10))
 
     def test_a_gated_seam_keeps_its_gate_alone(self):
         world = self.world
