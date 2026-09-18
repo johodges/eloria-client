@@ -247,7 +247,7 @@ class WalkAudit:
         start, target = tuple(start), tuple(target)
         if not self.standing(region, start) or not self.standing(region, target):
             raise AuditError(f'{region}: unsupported or occupied direct request {start} -> {target}')
-        actual = self.world.find_path(region, start, target, self.occupied(region))
+        actual = self.world.find_path(region, start, target, self.world.walk_blocked(region, target))
         full = actual
         diagnostic = False
         if len(actual) == 512 and actual[-1] != target:
@@ -290,7 +290,7 @@ class WalkAudit:
             if current==target:
                 return {'passes':True,'requestsIssued':len(segments),'renewals':max(0,len(segments)-1),
                         'executedSteps':total,'segments':segments,'userClicks':1,'fixtureWaypoints':0}
-            actual=self.world.find_path(region,current,target,self.occupied(region))
+            actual=self.world.find_path(region,current,target,self.world.walk_blocked(region,target))
             executed=actual[:renew_at]
             unintended.update(set(executed)&(self.automatic[region]-set(allowed)))
             segment={'from':list(current),'requestedTarget':list(target),'serverReturnedSteps':len(actual),
@@ -332,7 +332,8 @@ class WalkAudit:
         start, target = tuple(start), tuple(target)
         if not self.standing(region, start) or not self.standing(region, target):
             raise AuditError(f'{region}: unsupported or occupied standing tile {start} -> {target}')
-        blocked = self.occupied(region)
+        # What the server's own walk refuses: bodies and every way off the map but the target.
+        blocked = self.world.walk_blocked(region, target)
         if planning:
             blocked = blocked | (self.automatic[region]-set(allowed)-{start})
         path = self.world.find_path(region, start, target, blocked)
@@ -466,6 +467,9 @@ class Generator:
         self.spawns = R['spawns'].load_spawns(self.profile/'spawns.txt')
         world = R['world'].World.__new__(R['world'].World)
         world.maps, world.settings = maps, settings
+        # The server's walk keeps off every way out of a map but the one it was
+        # sent to (World.walk_blocked reads the portal table), so the model does too.
+        world.portals = portals
         world.collision_maps = R['collision'].load_collision_maps(str(self.data), maps, settings.max_walk_height_change)
         for region in self.members:
             if region not in world.collision_maps:
@@ -580,11 +584,11 @@ class Generator:
                     if pair not in expected:raise AuditError(f"{link['id']}: road joins territories without a physical boundary")
                     walk[link['id']]=pair
                     for end in link['ends']:
-                        # The gate's own seven lanes are the floor: a widened seam keeps them
-                        # and adds the rest of its border, and halfWidthTiles still describes
-                        # the authored threshold under the gate rather than the border's width.
-                        if len(end.get('lanes',[]))<7 or end['frame'].get('halfWidthTiles')!=3:
-                            raise AuditError(f"{link['id']}: published road contract is narrower than its gate")
+                        # An open border publishes the lanes its ground offers, which a narrow
+                        # pass can make fewer than a gate's seven; what a road contract needs is a
+                        # way across, and halfWidthTiles still describes the authored threshold.
+                        if not end.get('lanes') or end['frame'].get('halfWidthTiles')!=3:
+                            raise AuditError(f"{link['id']}: published road contract has no way across")
             canonical={link['id']:tuple(sorted(e['region'] for e in link['ends'])) for link in self.geography['connections']}
             actual_walk={link['id']:tuple(sorted(e['map'] for e in link['ends'])) for link in self.links}
             if walk!=canonical or walk!=actual_walk or len(actual_walk)!=len(self.links):
@@ -1060,11 +1064,16 @@ class Generator:
             for a,b in (link['ends'],link['ends'][::-1]):
                 def check_lanes():
                     if getattr(self,'chunk_mode',False):
-                        gate={(q.x,q.y) for q in self.gate_lanes(a,b).values()}
+                        # Every lane of an open border, the gate's among them, is the neighbour's
+                        # first tile across it stepped onto from the ground behind, so each is
+                        # proved as one; the gate's own walks are the handoffs and clicks below.
                         published={tuple(e['tile']):e for e in self.published_end(a,b)['lanes']}
+                        offsets={(q.x,q.y):k for k,q in self.gate_lanes(a,b).items()}
                         for q in self.sorted_lanes(a,b):
-                            if (q.x,q.y) not in gate:
-                                self.lanes.append(self.border_lane(a,b,q,published[(q.x,q.y)]))
+                            item=self.border_lane(a,b,q,published[(q.x,q.y)])
+                            if (q.x,q.y) in offsets:item['lane']=offsets[(q.x,q.y)]
+                            self.lanes.append(item)
+                        return
                     for offset,p in sorted(self.gate_lanes(a,b).items()):
                         index=offset+3
                         curved='approachCenterline' in a['frame']

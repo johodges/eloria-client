@@ -256,9 +256,10 @@ class Surface:
         require(not missing and not duplicate, f'{label}: {missing} missing and {duplicate} duplicated visible terrain triangles')
 
 
-# The lanes of a gate: seven, either side of the surveyed anchor. A widened seam
-# keeps them and adds the rest of its border, so this is a floor and not a count.
-GATE_LANES = 7
+# A road contract needs a way across. An open border publishes the lanes its
+# ground offers - the gate's among them, carried by the border lanes nearest
+# its surveyed ones - which a narrow pass can make fewer than a gate's seven.
+GATE_LANES = 1
 
 
 def audit_frames(publication, manifests, translations):
@@ -298,7 +299,7 @@ def audit_frames(publication, manifests, translations):
             # same ground in different numbers. The reading is exact instead - one metre grid,
             # whole-tile origins, whole-metre translations - and the ground it lands on is
             # judged by the served grids in export_contracts.
-            require(len(source['lanes']) >= GATE_LANES, f'{link["id"]}: fewer crossing lanes than the gate surveyed')
+            require(len(source['lanes']) >= GATE_LANES, f'{link["id"]}: no way across')
             require(len({tuple(lane['tile']) for lane in source['lanes']}) == len(source['lanes']),
                     f'{link["id"]}: a crossing lane is declared twice')
             for lane in source['lanes']:

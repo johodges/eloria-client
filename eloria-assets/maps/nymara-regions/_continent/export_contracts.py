@@ -931,20 +931,27 @@ def export_contracts(world, content, manifests, output, server_path):
                 'collisionPath': str(collision_path), 'worldManifestPath': str(world_path)}
             p = RegionPlacement(world, content, region, spec, result, grid, sources, report, previous=previous)
             p.connect_hub(old_maps[region]['arrival'], largest)
-            # What a seam may be crossed on is what the hub can walk to, not merely
-            # what the grid says is standable: a pocket of gentle ground behind a
-            # cliff or across a river is not a way out of a territory, and every
-            # crossing tile has to be reachable or its own contract refuses it.
-            served[region] = np.asarray(p.reachable, dtype=bool)
+            # What a seam may be crossed on is what the hub can walk to without
+            # crossing a border first, not merely what the grid says is standable:
+            # a pocket of gentle ground behind a cliff or across a river is not a
+            # way out of a territory, nor is a strip of the neighbour reached only
+            # over its own border lanes.
+            from crossings import own_ground
+            if any(c.get('type') == 'walk' and region in c.get('regions', ())
+                   for c in getattr(world, 'connections', ())):
+                served[region] = own_ground(world, region, grid, p.spec['arrival'],
+                                            lambda heights, start: sources.reachable_from(heights, start, 2))
             placements[region], outputs[region], publication['regions'][region] = p, (world_path, manifest), spec
             print(f'{region}: exact server grid, stage {factor}, hub reaches {int(p.reachable.sum())} tiles in {time.monotonic()-started:.1f}s', flush=True)
         # Every seam's lanes come from the served grids of both its maps, so
         # this waits until the last of them has been folded.
         from crossings import widen_seams
-        report['seams'] = widen_seams(world, publication['connections'], served)
+        report['seams'] = widen_seams(world, publication['connections'], served,
+                                      lambda heights, y, x, dy, dx: sources.walk_step_ok(heights, y, x, dy, dx, 2))
         for seam in report['seams']:
             print('%s: %s' % (seam['id'], ', '.join(
-                '%s %d lanes (gate %d)' % (end['region'], end['lanes'], end['gateLanes'])
+                '%s %d lanes (gate %d on its own lanes, %d moved)' % (
+                    end['region'], end['lanes'], end['gateLanes'], end.get('gateLanesMoved', 0))
                 for end in seam['ends'])), flush=True)
         _, rows = publisher.connection_rows(publication['connections'], publication['regions'])
         # The publish tool used to prove a departure against the far side's own
@@ -955,7 +962,7 @@ def export_contracts(world, content, manifests, output, server_path):
         widened = {(end['region'], other['region']) for seam in report['seams']
                    for end, other in (seam['ends'], seam['ends'][::-1])}
         stranded = [row for row in rows if row[0] in served and row[3] in served
-                    and not served[row[3]][row[5], row[4]]]
+                    and not served[row[3]]['reach'][row[5], row[4]]]
         report['crossingArrivals'] = {'rows': len(rows), 'unreachable': len(stranded),
                                       'examples': [list(row) for row in stranded[:8]]}
         refused = [row for row in stranded if (row[0], row[3]) in widened]

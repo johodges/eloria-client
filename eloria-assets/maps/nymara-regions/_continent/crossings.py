@@ -80,40 +80,55 @@ def seam_tiles(world, link, side):
             'inward': mine & binary_dilation(theirs, step)}
 
 
-def crossing_lanes(world, link, side, served):
-    """Every lane this border offers: a tile a walker can stand on on both maps.
+def own_ground(world, region, grid, arrival, reach):
+    """A map's served grid, the tiles its territory owns, and what its hub reaches on them.
 
-    ``served`` is each region's served tile grid as a boolean - the fold the
-    server itself walks on, not the half-cell raster under it - so a lane
-    exists exactly where both maps agree an actor may stand. Each lane pairs
-    the tile it is stood on with the tile behind it that a walker arriving the
-    other way lands on.
+    ``reach(heights, start)`` is the server's own flood at the contract's climb
+    limit (collision_sources.reachable_from). Every tile a neighbour owns is
+    closed first: stepping onto one is a crossing, so ground this map reaches
+    only through a neighbour's tiles is not reached at all - it is behind a
+    border lane that fires first. Flooding through them, as the contract's own
+    reachability does, took a strip of the neighbour for a corridor and found
+    lanes no walker can step onto.
+    """
+    origin, _ = world.address(region)
+    center = world.regions[region]['center']
+    ys, xs = np.indices(grid.shape)
+    mine = np.asarray(world.owner_at(xs + .5 - origin[0] + center[0], origin[1] - ys - .5 + center[1])) \
+        == world.ids.index(region)
+    return {'grid': grid, 'own': mine, 'reach': np.asarray(reach(np.where(mine, grid, 0), tuple(arrival)), dtype=bool)}
+
+
+def crossing_lanes(world, link, side, served, step):
+    """Every lane this border offers, by the server's own walking rules.
+
+    ``served`` holds each map's ``own_ground``; ``step(heights, y, x, dy, dx)`` is
+    the server's step test (collision_sources.walk_step_ok at the contract's
+    climb limit). A lane is the neighbour's first tile across the border that a
+    walker can step onto from ground their hub reaches without crossing, and
+    whose cell the neighbour's hub reaches the same way; it is paired with the
+    tile it is stepped onto from, where a walker arriving the other way lands.
     """
     rings = seam_tiles(world, link, side)
     region, other = link['regions'][side], link['regions'][1 - side]
     near, far = served.get(region), served.get(other)
     if rings is None or near is None or far is None:
         return []
-
-    def standing(mask):
-        tx, ty = rings['tx'][mask], rings['ty'][mask]
-        ox, oy = tiles_at(world, other, rings['gx'][mask], rings['gz'][mask])
-        inside = ((tx >= 0) & (ty >= 0) & (tx < near.shape[1]) & (ty < near.shape[0])
-                  & (ox >= 0) & (oy >= 0) & (ox < far.shape[1]) & (oy < far.shape[0]))
-        tx, ty, ox, oy = tx[inside], ty[inside], ox[inside], oy[inside]
-        both = near[ty, tx] & far[oy, ox]
-        return tx[both], ty[both]
-
-    departures = np.stack(standing(rings['outward']), axis=1)
-    behind = {(int(x), int(y)) for x, y in np.stack(standing(rings['inward']), axis=1)}
+    mask = rings['outward']
+    tx, ty = rings['tx'][mask], rings['ty'][mask]
+    ox, oy = tiles_at(world, other, rings['gx'][mask], rings['gz'][mask])
+    rows, columns = near['grid'].shape
+    far_rows, far_columns = far['grid'].shape
     lanes = []
-    for x, y in departures.tolist():
-        # The tile a walker coming the other way lands on: the nearest ground
-        # of this territory behind the crossing, sideways steps last so a
-        # straight seam pairs straight across. A crossing with none behind it
-        # is ground nobody can have walked from and is no lane at all.
-        partners = [(x + dx, y + dy) for dx in (0, -1, 1) for dy in (0, -1, 1)
-                    if (x + dx, y + dy) in behind]
+    for x, y, fx, fy in zip(tx.tolist(), ty.tolist(), ox.tolist(), oy.tolist()):
+        if not (0 <= fx < far_columns and 0 <= fy < far_rows) or not far['reach'][fy, fx]:
+            continue
+        # From each tile of this map's own reached ground beside it, straight
+        # steps first so a straight seam pairs straight across.
+        partners = [(x + dx, y + dy) for dx in (0, -1, 1) for dy in (0, -1, 1) if dx or dy
+                    if 0 <= x + dx < columns and 0 <= y + dy < rows
+                    and near['own'][y + dy, x + dx] and near['reach'][y + dy, x + dx]
+                    and step(near['grid'], y + dy, x + dx, -dy, -dx)]
         if not partners:
             continue
         partner = min(partners, key=lambda t: (abs(t[0] - x) + abs(t[1] - y), t[1], t[0]))
@@ -140,15 +155,16 @@ def reseat(world, end):
     """Keep an end's own crossing - its tile, arrival and position - on one of its lanes.
 
     The end's tile is the gate's middle lane, and its position is where a
-    client walking to the neighbour aims its first leg. A gate lane that
-    departed from its own side of the border is dropped, and when that is the
-    middle one the end would send a walker to a tile that no longer crosses
-    anything; the lane nearest it takes its place.
+    client walking to the neighbour aims its first leg. When the border opens,
+    the gate's lanes become the border lanes nearest them, so the end moves to
+    the lane that now carries the gate's middle offset, or failing that the
+    lane nearest where it stood.
     """
-    if not end['lanes'] or any(lane['tile'] == end['tile'] for lane in end['lanes']):
+    if not end['lanes'] or any(lane['tile'] == end['tile'] and lane.get('gate') == 0 for lane in end['lanes']):
         return
-    lane = min(end['lanes'], key=lambda lane: ((lane['tile'][0] - end['tile'][0]) ** 2
-                                               + (lane['tile'][1] - end['tile'][1]) ** 2, lane['tile']))
+    middle = [lane for lane in end['lanes'] if lane.get('gate') == 0]
+    lane = middle[0] if middle else min(end['lanes'], key=lambda lane: (
+        (lane['tile'][0] - end['tile'][0]) ** 2 + (lane['tile'][1] - end['tile'][1]) ** 2, lane['tile']))
     region = end['region']
     center = np.asarray(world.regions[region]['center'], dtype=float)
     point = global_tile(world, region, lane['tile'])
@@ -156,14 +172,22 @@ def reseat(world, end):
     end['position'] = [float(point[0] - center[0]), float(world.height_at(*point)), float(point[1] - center[1])]
 
 
-def widen_seams(world, connections, served, gated=None):
-    """Give each open seam every lane its two served grids allow.
+def widen_seams(world, connections, served, step, gated=None):
+    """Give each open seam every lane its two maps' ground allows, and nothing else.
 
-    The gate's own lanes are kept whatever the grids say - they stand on an
-    authored threshold deck, so a widened seam can only gain ways across - but
-    not one that departs from its own map's ground (``departs_outward``): no
-    departure is ever owned by the map it departs from, which is what keeps
-    every arrival clear of the crossing back.
+    Every published lane is a border lane (``crossing_lanes``): the neighbour's
+    first tile across the border, stepped onto from ground this map's hub
+    reaches without crossing. The gate's surveyed lanes are not kept for their
+    own sake. The survey lays one side's on the second tile beyond the border,
+    which a walker can only reach over the first - a border lane that fires
+    before it - and where the ownership raster steps beside an anchor it lays
+    others on the map's own side of the border (``departs_outward``) or where no
+    step reaches them. The live proof walks every lane by the server's own
+    rules and refused all of those. So each gate lane that is a border lane
+    keeps its offset along the seam ('gate'), and each that is not hands its
+    offset to the free border lane nearest it: the gate's walks still start at
+    the gate. A seam whose border offers no lane at all keeps its gate as
+    surveyed, where it has always worked.
     """
     report = []
     # A world with no surveyed links has no seam to widen: several contract tests
@@ -175,15 +199,29 @@ def widen_seams(world, connections, served, gated=None):
         link = links[connection['id']]
         widths = []
         for side, end in enumerate(connection['ends']):
-            kept = [lane for lane in end['lanes'] if departs_outward(world, end['region'], lane)]
-            lanes = {tuple(lane['tile']): lane for lane in kept}
-            for lane in crossing_lanes(world, link, side, served):
-                lanes.setdefault(tuple(lane['tile']), lane)
-            inside = len(end['lanes']) - len(kept)
-            end['lanes'] = [lanes[key] for key in sorted(lanes, key=lambda t: (t[1], t[0]))]
+            border = {tuple(lane['tile']): lane for lane in crossing_lanes(world, link, side, served, step)}
+            gate = [lane for lane in end['lanes'] if 'gate' in lane]
+            if not border:
+                widths.append({'region': end['region'], 'gateLanes': len(gate), 'gateLanesMoved': 0,
+                               'lanes': len(end['lanes']), 'keptSurveyedGate': True})
+                continue
+            direct = [lane for lane in gate if tuple(lane['tile']) in border]
+            for lane in direct:
+                border[tuple(lane['tile'])]['gate'] = lane['gate']
+            moved = 0
+            for lane in gate:
+                if tuple(lane['tile']) in border:
+                    continue
+                free = [key for key, candidate in border.items() if 'gate' not in candidate]
+                if free:
+                    key = tuple(lane['tile'])
+                    nearest = min(free, key=lambda t: ((t[0] - key[0]) ** 2 + (t[1] - key[1]) ** 2, t))
+                    border[nearest]['gate'] = lane['gate']
+                    moved += 1
+            end['lanes'] = [border[key] for key in sorted(border, key=lambda t: (t[1], t[0]))]
             reseat(world, end)
-            widths.append({'region': end['region'], 'gateLanes': len(kept), 'gateLanesInside': inside,
-                           'lanes': len(lanes)})
+            widths.append({'region': end['region'], 'gateLanes': len(direct), 'gateLanesMoved': moved,
+                           'lanes': len(border)})
         report.append({'id': connection['id'], 'ends': widths})
     return report
 

@@ -15,10 +15,24 @@ GATED = ('east--west',)
 SHIPPED = C.GATED_SEAMS
 
 
-def served(west=None, east=None):
-    """Two all-walkable served grids, or the ones given."""
-    return {'west': np.ones((48, 48), bool) if west is None else west,
-            'east': np.ones((48, 48), bool) if east is None else east}
+def step(heights, y, x, dy, dx):
+    """The server's step rule on level ground: both tiles open, no corner cut."""
+    rows, columns = heights.shape
+    def ok(ny, nx):
+        return 0 <= ny < rows and 0 <= nx < columns and bool(heights[y, x]) and bool(heights[ny, nx])
+    if not ok(y + dy, x + dx):
+        return False
+    return not (dy and dx) or (ok(y + dy, x) and ok(y, x + dx))
+
+
+def served(west=None, east=None, world=None):
+    """Each map's own ground on two level grids, all of it reached, or the grids given."""
+    world = world or FlatWorld()
+    grids = {'west': west, 'east': east}
+    return {region: C.own_ground(world, region,
+                                 np.ones((48, 48), np.uint8) if grids[region] is None else grids[region].astype(np.uint8),
+                                 (0, 0), lambda heights, start: heights != 0)
+            for region in ('west', 'east')}
 
 
 class SeamLaneTests(unittest.TestCase):
@@ -27,7 +41,7 @@ class SeamLaneTests(unittest.TestCase):
         self.link = self.world.connections[0]
 
     def lanes(self, grids, side=0):
-        return C.crossing_lanes(self.world, self.link, side, grids)
+        return C.crossing_lanes(self.world, self.link, side, grids, step)
 
     def test_every_tile_of_the_border_both_maps_can_stand_on_is_a_lane(self):
         lanes = self.lanes(served())
@@ -69,14 +83,26 @@ class SeamLaneTests(unittest.TestCase):
         C.prepare_contracts(world)
         connections = world.publication_connections
         gate = [[tuple(lane['tile']) for lane in end['lanes']] for end in connections[0]['ends']]
-        report = C.widen_seams(world, connections, served(), gated=())
-        self.assertEqual([end['gateLanes'] for end in report[0]['ends']], [7, 7])
+        report = C.widen_seams(world, connections, served(world=world), step, gated=())
+        self.assertEqual([end['gateLanes'] + end['gateLanesMoved'] for end in report[0]['ends']], [7, 7])
+        # The survey lays the west gate's lanes on the second tile beyond the border
+        # and the east gate's on the first: a walker can only reach the west ones over
+        # the border's own first-tile lanes, which fire first and take their offsets;
+        # the east ones are border lanes already.
+        self.assertEqual([end['gateLanesMoved'] for end in report[0]['ends']], [7, 0])
         for side, end in enumerate(connections[0]['ends']):
             tiles = [tuple(lane['tile']) for lane in end['lanes']]
             self.assertGreater(len(tiles), 7, 'the seam gained the rest of its border')
             self.assertEqual(len(set(tiles)), len(tiles), 'no lane is declared twice')
-            self.assertTrue(set(gate[side]) <= set(tiles), 'the gate survives the widening')
+            offsets = sorted(lane['gate'] for lane in end['lanes'] if 'gate' in lane)
+            self.assertEqual(offsets, list(range(-3, 4)), 'every lane of the gate survives, by its offset')
+            for lane in end['lanes']:
+                self.assertEqual(max(abs(lane['tile'][0] - lane['arrival'][0]),
+                                     abs(lane['tile'][1] - lane['arrival'][1])), 1,
+                                 'every lane is stepped onto from the tile beside it')
             self.assertEqual(tiles, sorted(tiles, key=lambda t: (t[1], t[0])))
+        self.assertTrue(set(gate[1]) <= {tuple(lane['tile']) for lane in connections[0]['ends'][1]['lanes']},
+                        'a gate on the first tile keeps its own lanes')
 
     def test_no_cell_is_a_departure_of_both_maps_where_the_border_steps_by_the_gate(self):
         world = self.world
@@ -89,9 +115,11 @@ class SeamLaneTests(unittest.TestCase):
         world.owner_at = owner_at
         C.prepare_contracts(world)
         connections = world.publication_connections
-        report = C.widen_seams(world, connections, served(), gated=())
-        self.assertEqual([end['gateLanesInside'] for end in report[0]['ends']], [1, 0])
+        C.widen_seams(world, connections, served(world=world), step, gated=())
         west, east = connections[0]['ends']
+        for end in (west, east):
+            self.assertEqual(sorted(lane['gate'] for lane in end['lanes'] if 'gate' in lane), list(range(-3, 4)),
+                             'every offset of the gate is carried by a lane of the border')
         for end in (west, east):
             for lane in end['lanes']:
                 self.assertTrue(C.departs_outward(world, end['region'], lane), end['region'])
@@ -111,7 +139,7 @@ class SeamLaneTests(unittest.TestCase):
         C.prepare_contracts(world)
         west = world.publication_connections[0]['ends'][0]
         middle = list(west['tile'])
-        C.widen_seams(world, world.publication_connections, served(), gated=())
+        C.widen_seams(world, world.publication_connections, served(world=world), step, gated=())
         self.assertNotEqual(west['tile'], middle, 'the middle lane stood on west ground and was dropped')
         self.assertIn(west['tile'], [lane['tile'] for lane in west['lanes']])
         point = C.global_tile(world, 'west', west['tile'])
@@ -122,7 +150,7 @@ class SeamLaneTests(unittest.TestCase):
         world = self.world
         C.prepare_contracts(world)
         connections = world.publication_connections
-        self.assertEqual(C.widen_seams(world, connections, served(), gated=GATED), [])
+        self.assertEqual(C.widen_seams(world, connections, served(world=world), step, gated=GATED), [])
         self.assertEqual([len(end['lanes']) for end in connections[0]['ends']], [7, 7])
 
 

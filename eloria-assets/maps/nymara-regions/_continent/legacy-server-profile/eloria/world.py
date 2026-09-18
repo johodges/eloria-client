@@ -1317,6 +1317,28 @@ def portals_leaving(world, map_id: str) -> list:
     return portal_index(world)[1].get(map_id, [])
 
 
+def walkway_portals(world, map_id: str) -> frozenset:
+    """The tiles of one map that change maps under anyone who steps on them.
+
+    An object portal fires only when its object is used, so it is no hazard
+    to a walk past it; every other portal fires on the step.
+    """
+    portals = getattr(world, 'portals', ())
+    cached = getattr(world, '_walkway_portal_cache', None)
+    if cached is None or cached[0] is not portals:
+        cached = (portals, {})
+        try:
+            world._walkway_portal_cache = cached
+        except AttributeError:
+            pass
+    tiles = cached[1].get(map_id)
+    if tiles is None:
+        tiles = frozenset((portal.x, portal.y) for portal in portals_leaving(world, map_id)
+                          if portal.object_id is None)
+        cached[1][map_id] = tiles
+    return tiles
+
+
 class World(MagicRuntime):
     # A profile that ships no conversation and no quest lines has none, and so
     # does a World built without running __init__ - which several tests do to
@@ -5165,9 +5187,23 @@ class World(MagicRuntime):
                 occupied.update(footprint_of(npc).tiles(npc.x, npc.y))
         return occupied
 
+    def walk_blocked(self, map_id: str, target: tuple[int, int], ignore=()) -> set:
+        """What a walk to `target` may not step on: bodies, and every other way off the map.
+
+        A walk goes where it was sent. The server fires a portal under any tile
+        a walker steps onto, so a path over another one changed maps short of
+        its target. That was rare while a land crossing was a gate of seven
+        lanes; a border open along its length is a row of crossings beside the
+        walker's own ground, and a path shaving a corner of it would cross. The
+        target itself is never refused - a click on a crossing or a door is a
+        walk through it.
+        """
+        blocked = self.blocking_tiles(map_id, ignore=ignore)
+        return blocked | (walkway_portals(self, map_id) - {tuple(target)})
+
     async def move(self, c: Character, target_x: int, target_y: int):
         # The EL client applies one tile per actor command; keep server authoritative.
-        occupied = self.blocking_tiles(c.map_id, ignore=(c,))
+        occupied = self.walk_blocked(c.map_id, (target_x, target_y), ignore=(c,))
         path = self.find_path(c.map_id, (c.x, c.y), (target_x, target_y), occupied,
                               footprint_of(c))
         session = next((item for item in self.sessions if item.character is c), None)
