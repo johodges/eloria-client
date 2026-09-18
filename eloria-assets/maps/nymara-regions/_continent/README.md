@@ -145,12 +145,23 @@ box without granting movement there. Compact retained settlements and their
 surroundings occupy only part of these envelopes; open hills, rivers and sea
 provide the geographic transitions between them.
 
-`crossings.py` surveys seven exact metre-cell lanes at each road crossing.
-Reciprocal arrivals share the same global cell centre. Reverse departure
-triggers sit on the opposite side, preventing immediate return loops.
-Short invisible threshold floors support the final step across an ownership
-boundary; they do not duplicate visible terrain. Other shared boundaries
-are declared as visual adjacencies without adding travel portals.
+`crossings.py` surveys the seven metre-cell lanes of each road crossing's
+gate and every other tile of the border a walker can cross on. A lane is the
+neighbour's first tile across the border, stepped onto from this territory's
+own ground; it exists wherever both served grids let an actor stand there and
+both hubs can reach it (a seam named in `GATED_SEAMS` keeps only its gate).
+The crossing hands the walker over at that same cell, read in the other map's
+tile frame - every territory's tiles are one metre grid in the shared frame -
+so an arrival shares its departure's global cell centre, and no departure is
+owned by the map it departs from, which keeps every arrival clear of the
+crossing back. The collision export opens that first strip of the
+neighbour's ground along the whole border (`collision_export.seam_collar`)
+without letting it stretch the territory's height scale. Short invisible
+threshold floors still carry the gate's own lanes across the ownership
+boundary; they do not duplicate visible terrain. The published survey ships
+each end's crossings as runs, so a client aims a walk at the crossing on its
+way. Shared boundaries without a road are declared as visual adjacencies
+without adding travel portals.
 
 Island connections without a continuous road remain explicit ferries. Their
 fixtures require the exact authoritative receiving tile and its global metre
