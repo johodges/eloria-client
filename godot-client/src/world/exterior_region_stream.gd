@@ -193,9 +193,20 @@ func _candidates(position: Vector3) -> Array[Dictionary]:
 			var here: Dictionary = ends[index]
 			var there: Dictionary = ends[1 - index]
 			var at := _vector(here.position)
-			result.append({"map": str(there.map), "distance": _seam_distance(position, here, bool(link.get("seamless", false))),
-				"crossing_distance": Vector2(position.x - at.x, position.z - at.z).length(),
-				"here": here, "there": there, "seamless": bool(link.get("seamless", false)),
+			var seamless := bool(link.get("seamless", false))
+			var seam := _seam_distance(position, here, seamless)
+			var anchor_distance := Vector2(position.x - at.x, position.z - at.z).length()
+			# Where the survey ships the shared border itself, the border is what
+			# a handoff is judged against: every tile along it is a way across,
+			# so leaving by its far end is as continuous as leaving by the middle.
+			# A link that ships only an anchor and a view flank keeps the anchor:
+			# its flank says how far the neighbour is drawn, not how far it can be
+			# walked into, and a point out on the flank is not a crossing at all.
+			var edged := not (here.get("preloadEdges", []) as Array).is_empty()
+			result.append({"map": str(there.map), "distance": seam,
+				"crossing_distance": anchor_distance,
+				"handoff_distance": seam if edged else anchor_distance,
+				"here": here, "there": there, "seamless": seamless,
 				"visual_only": bool(link.get("visualOnly", false))})
 	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return str(a.map) < str(b.map) if float(a.distance) == float(b.distance) else float(a.distance) < float(b.distance))
@@ -210,8 +221,8 @@ func _candidates(position: Vector3) -> Array[Dictionary]:
 ## remote map changes stay far outside it.
 const CONTINUOUS_CROSSING_SLACK_METRES := 8.0
 
-static func continuous_crossing(seamless: bool, crossing_distance: float, collar: float) -> bool:
-	return seamless and crossing_distance < maxf(collar, CONTINUOUS_CROSSING_SLACK_METRES)
+static func continuous_crossing(seamless: bool, seam_distance: float, collar: float) -> bool:
+	return seamless and seam_distance < maxf(collar, CONTINUOUS_CROSSING_SLACK_METRES)
 
 func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> Dictionary:
 	last_handoff = {}
@@ -223,7 +234,12 @@ func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> 
 			join = candidate
 			break
 	var collar := float(join.get("here", {}).get("frame", {}).get("collarDepth", 42))
-	var continuous := continuous_crossing(bool(join.get("seamless", false)), float(join.get("crossing_distance", INF)), collar)
+	# Measured to the seam itself and not to the crossing's anchor. The two were
+	# the same thing while a seam was one gate seven lanes wide, and the slack is
+	# written as a slack "of the seam"; but a border walkable along its length is
+	# crossed wherever the ground allows.
+	var continuous := continuous_crossing(bool(join.get("seamless", false)),
+		float(join.get("handoff_distance", INF)), collar)
 	var resident: Dictionary = residents[destination]
 	residents.erase(destination)
 	var rebase := Transform3D.IDENTITY
@@ -244,7 +260,9 @@ func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> 
 	imported.visible = true
 	_generation += 1
 	last_handoff = {"from": active_map, "to": destination, "continuous": continuous,
-		"rebase": rebase, "root_id": imported.get_instance_id(), "source_distance": join.get("crossing_distance", INF)}
+		"rebase": rebase, "root_id": imported.get_instance_id(),
+		"source_distance": join.get("handoff_distance", INF),
+		"anchor_distance": join.get("crossing_distance", INF)}
 	_record("handoff", destination, {"continuous": continuous})
 	return {"resident": resident, "continuous": continuous, "rebase": rebase}
 
