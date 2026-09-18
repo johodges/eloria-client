@@ -34,7 +34,7 @@ const NIGHT_AMBIENT_ENERGY := 0.95
 ## A fraction of noon is not enough on its own: a map authored for an overcast
 ## noon of 0.34 would keep a night of 0.32 and stay unplayable while a bright
 ## one was fine. Night is floored at a level every map can be walked in.
-const NIGHT_AMBIENT_FLOOR := 0.68
+const NIGHT_AMBIENT_FLOOR := 0.74
 ## Night ambient is not scraped off the night sky. A package that declares no
 ## `skyContribution` takes all of its ambient from the sky, so at midnight the
 ## only light the ground had was NIGHT_SKY_TOP itself and the maps whose
@@ -49,9 +49,9 @@ const DAWN_SUN_COLOUR := Color(1.0, 0.72, 0.46)
 ## The night sky and fog are lifted with the rest: they are most of what the
 ## far half of an outdoor scene is made of, so leaving them near black would
 ## undo the ambient the ground just gained.
-const NIGHT_SKY_TOP := Color(0.11, 0.14, 0.25)
-const NIGHT_SKY_HORIZON := Color(0.23, 0.27, 0.39)
-const NIGHT_FOG := Color(0.24, 0.28, 0.38)
+const NIGHT_SKY_TOP := Color(0.14, 0.18, 0.30)
+const NIGHT_SKY_HORIZON := Color(0.27, 0.32, 0.45)
+const NIGHT_FOG := Color(0.27, 0.31, 0.42)
 ## The sun's arc, in degrees of elevation at noon and below the horizon at
 ## midnight.
 const NOON_ELEVATION := -62.0
@@ -64,6 +64,23 @@ const MIDNIGHT_ELEVATION := 12.0
 ## as broken. Shadows fade in once the sun has climbed clear of that band
 ## rather than the instant it crosses the horizon.
 const SHADOW_ELEVATION_CUTOFF := -15.0
+## The moon. Night was one flat ambient wash: MIDNIGHT_ELEVATION is below the
+## horizon, so the sun's remaining key shines up into the sky and lights
+## nothing on the ground, and no outdoor package declares a lamp. Everything
+## therefore took the same light from every side and the world read as
+## silhouettes - dark not for want of brightness but for want of a direction.
+## The moon rides the sun's own arc half a day away, so it stands highest at
+## midnight and sets as the sun rises, and it is the only light with a
+## direction while the sun is down.
+const MOON_ENERGY := 0.28
+const MOON_COLOUR := Color(0.52, 0.60, 0.86)
+## Moonlight is gone by the time the sun is properly up: it fades out over the
+## first third of the daylight curve, so dawn, noon and dusk are as they were.
+const MOON_DAYLIGHT_FADE := 0.35
+## The moon throws no shadow of its own. A second shadow-casting directional
+## light costs a whole shadow pass - measured at a fifth of the frame rate on
+## the Four Gates capture - and what night was missing was the shading, not a
+## second set of cast shadows.
 
 ## The server's own daylight curve, for a continuous minute.
 static func daylight(minute: float) -> float:
@@ -97,9 +114,10 @@ static func drives(manifest: WorldManifest) -> bool:
 ## manifest values are read back as the noon reference, so this can run
 ## repeatedly without drifting.
 static func apply(manifest: WorldManifest, world_environment: WorldEnvironment,
-		sun: DirectionalLight3D, minute: float) -> bool:
+		sun: DirectionalLight3D, minute: float, moon: DirectionalLight3D = null) -> bool:
 	if not drives(manifest) or world_environment == null or sun == null:
 		return false
+	_apply_moon(moon, daylight(minute), sun)
 	var environment: Environment = world_environment.environment
 	if environment == null:
 		return false
@@ -167,6 +185,21 @@ static func apply(manifest: WorldManifest, world_environment: WorldEnvironment,
 		environment.fog_light_color = _colour(declared_fog.get("color"),
 			Color("d8c9a4")).lerp(NIGHT_FOG, 1.0 - light)
 	return true
+
+## The moon on the sun's arc, half a day away: highest at midnight, below the
+## horizon and dark by the time the sun is up. It takes the sun's own azimuth
+## turned about, so its shading falls the other way from the day's.
+static func _apply_moon(moon: DirectionalLight3D, light: float, sun: DirectionalLight3D) -> void:
+	if moon == null:
+		return
+	var night: float = clampf(1.0 - light / MOON_DAYLIGHT_FADE, 0.0, 1.0)
+	moon.light_energy = MOON_ENERGY * night
+	moon.light_color = MOON_COLOUR
+	moon.rotation_degrees.x = lerpf(NOON_ELEVATION, MIDNIGHT_ELEVATION, light)
+	moon.rotation_degrees.y = sun.rotation_degrees.y + 180.0
+	moon.rotation_degrees.z = sun.rotation_degrees.z
+	moon.visible = night > 0.0
+	moon.shadow_enabled = false
 
 static func _either(source: Dictionary, first: String, second: String) -> Variant:
 	return source.get(first, source.get(second))

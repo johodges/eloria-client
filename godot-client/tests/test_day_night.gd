@@ -82,6 +82,32 @@ func _run() -> void:
 	_expect(sun.rotation_degrees.x > noon_elevation,
 		"the sun is somewhere else at midnight than at noon")
 
+	# The moon is the night's only directed light. It rides the sun's arc half a
+	# day away, so at midnight it stands where the sun stands at noon - above
+	# the horizon, throwing light down on the ground the sun is under - and it
+	# is dark and hidden by the time the sun is properly up, so day is as it was.
+	var moon := DirectionalLight3D.new()
+	root.add_child(moon)
+	DayNightBinder.apply(outdoor, world_environment, sun, 0.0, moon)
+	_expect(moon.light_energy > 0.0 and moon.visible,
+		"the moon lights the ground at midnight: %f" % moon.light_energy)
+	_expect(moon.rotation_degrees.x < 0.0,
+		"the moon stands above the horizon at midnight: %f" % moon.rotation_degrees.x)
+	_expect(is_equal_approx(moon.rotation_degrees.x, noon_elevation),
+		"it stands where the sun stands at noon: %f for %f" % [moon.rotation_degrees.x, noon_elevation])
+	_expect(not moon.shadow_enabled,
+		"the moon throws no shadow of its own, which would cost a second shadow pass")
+	DayNightBinder.apply(outdoor, world_environment, sun, 180.0, moon)
+	_expect(is_zero_approx(moon.light_energy) and not moon.visible,
+		"the moon is dark and hidden at noon: %f" % moon.light_energy)
+	_expect(is_equal_approx(sun.light_energy, noon_energy),
+		"and noon is still the package's own light")
+	DayNightBinder.apply(outdoor, world_environment, sun, 90.0, moon)
+	_expect(is_zero_approx(moon.light_energy),
+		"and it is out by sunrise, so dawn and dusk are unchanged: %f" % moon.light_energy)
+	moon.queue_free()
+	DayNightBinder.apply(outdoor, world_environment, sun, 0.0)
+
 	# Regression: a sun still below the horizon must not cast a shadow, even
 	# once `light` has climbed past a small fraction. Minute 40 sits at
 	# light ~0.117 - past the old flat 0.08 cutoff, but the interpolated

@@ -81,6 +81,8 @@ var _stream_lighting_at := 0
 @onready var fallback_ground: MeshInstance3D = $GameView/ViewportContainer/Viewport/WorldRoot/Ground
 @onready var world_environment: WorldEnvironment = $GameView/ViewportContainer/Viewport/WorldRoot/Environment
 @onready var world_sun: DirectionalLight3D = $GameView/ViewportContainer/Viewport/WorldRoot/Sun
+## The night's only directed light: dark and hidden while the sun is up.
+@onready var world_moon: DirectionalLight3D = $GameView/ViewportContainer/Viewport/WorldRoot/Moon
 
 var ambient_population: AmbientPopulation
 var map_light_root: Node3D
@@ -3983,6 +3985,7 @@ func _rebase_streamed_world(rebase: Transform3D) -> void:
 	# The destination may use rotated coordinates. Transform the sun with the
 	# terrain and camera so crossing the seam keeps the same physical direction.
 	world_sun.global_basis = rebase.basis * world_sun.global_basis
+	world_moon.global_basis = rebase.basis * world_moon.global_basis
 	# Every actor node rides the rebase: the world moved under all of them, and
 	# the ones on the map just left are placed through its resident frame next.
 	for actor_id: Variant in actor_nodes.keys():
@@ -4110,7 +4113,7 @@ func _apply_day_night() -> void:
 		return
 	var lighting := exterior_stream.lighting_manifest(camera_rig.focus)
 	_day_night_active = DayNightBinder.apply(lighting,
-		world_environment, world_sun, AppState.continuous_game_minute())
+		world_environment, world_sun, AppState.continuous_game_minute(), world_moon)
 	_sync_map_environment()
 
 func _update_border_lighting() -> void:
@@ -4126,7 +4129,7 @@ func _update_border_lighting() -> void:
 	if environment != null:
 		environment.fog_density = float(declared.get("fog", {}).get("density", environment.fog_density))
 		environment.adjustment_saturation = float(declared.get("saturation", 1))
-	DayNightBinder.apply(lighting, world_environment, world_sun, AppState.continuous_game_minute())
+	DayNightBinder.apply(lighting, world_environment, world_sun, AppState.continuous_game_minute(), world_moon)
 
 ## The maps are navigation aids, not scenery. Rendered through the world's own
 ## environment they went as dark as the world did, and a minimap nobody can
