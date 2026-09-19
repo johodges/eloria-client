@@ -25,6 +25,7 @@ const START_ATTEMPTS := 3
 const START_WAIT_SECONDS := 40.0
 ## Seconds to wait for a body standing where a neighbour click would land.
 const OCCUPIED_TARGET_TIMEOUT := 20.0
+const FIXTURE_MINIMAP_ZOOM := 180.0
 
 var _failures := 0
 var _artifacts := ""
@@ -468,6 +469,14 @@ static func _configure_route_camera(rig: IsometricCameraController, route: Dicti
 
 func _issue_walk(step: Dictionary) -> void:
 	var target: Array = step.tile
+	var map_click_error := map_click_fixture_error(step)
+	if not map_click_error.is_empty():
+		_expect(false, map_click_error)
+		return
+	var map_click := str(step.get("mapClick", ""))
+	if not map_click.is_empty():
+		await _issue_map_walk(step, map_click)
+		return
 	if not bool(step.get("clickNeighbor", false)):
 		_network.call("move_to", Vector2i(int(target[0]), int(target[1])), false)
 		return
@@ -508,6 +517,146 @@ func _issue_walk(step: Dictionary) -> void:
 	click.pressed = true
 	click.position = screen
 	_main.call("_handle_world_click", click, screen)
+
+## A map fixture goes through the visible TextureRect and its connected
+## gui_input handler, exactly as a player click does. Map cameras can see a
+## resident neighbour without its preview surface or the gameplay camera being
+## able to see the destination, so this path deliberately has neither wait.
+func _issue_map_walk(step: Dictionary, source: String) -> void:
+	var target_values: Array = step.tile
+	var target := Vector2i(int(target_values[0]), int(target_values[1]))
+	var destination := str(step.destination)
+	var stream: ExteriorRegionStream = _main.get("exterior_stream")
+	var resident_value: Variant = stream.residents.get(destination)
+	if not resident_value is Dictionary:
+		_expect(false, "%s map click destination %s is not resident" % [source, destination])
+		return
+	var resident: Dictionary = resident_value as Dictionary
+	var resident_root: Node3D = resident.get("root") as Node3D
+	var resident_manifest: WorldManifest = resident.get("manifest") as WorldManifest
+	if not is_instance_valid(resident_root) or resident_manifest == null:
+		_expect(false, "%s map click destination %s has no resident root/manifest" % [source, destination])
+		return
+	var point: Vector3 = resident_root.transform * resident_manifest.coordinate_adapter().tile_center(
+		target.x, target.y)
+	var map_control: TextureRect
+	var map_render_viewport: SubViewport
+	var camera: Camera3D
+	var opened_for_click := false
+	var saved_map_state: Dictionary = {}
+	if source == "full_map":
+		var full_map_panel: Control = _main.get("full_map") as Control
+		opened_for_click = not full_map_panel.visible
+		if opened_for_click:
+			_main.call("_on_map_button_pressed")
+		map_control = _main.get("map_image") as TextureRect
+		map_render_viewport = _main.get("full_map_viewport") as SubViewport
+		camera = _main.get("full_map_camera") as Camera3D
+	else:
+		var minimap_panel: Control = _main.get("minimap_frame") as Control
+		opened_for_click = not minimap_panel.visible
+		if opened_for_click:
+			_main.call("_on_minimap_button_pressed")
+		# User HUD preferences persist across runs. The fixture uses the ordinary
+		# north-up/default-width minimap deterministically, then restores both
+		# values before closing it so the test neither depends on nor changes them.
+		saved_map_state = {
+			"zoom": float(_main.get("_minimap_zoom")),
+			"orientation": str(_main.get("_minimap_orientation"))}
+		_main.set("_minimap_zoom", FIXTURE_MINIMAP_ZOOM)
+		_main.set("_minimap_orientation", "north_up")
+		_main.call("_apply_minimap_zoom")
+		map_control = _main.get("minimap") as TextureRect
+		map_render_viewport = _main.get("map_viewport") as SubViewport
+		camera = _main.get("map_camera") as Camera3D
+	# Let containers lay out a newly opened map and let actor-follow settle the
+	# minimap camera before projecting into its SubViewport.
+	await process_frame
+	await process_frame
+	if (not is_instance_valid(map_control) or not map_control.is_visible_in_tree()
+			or not is_instance_valid(map_render_viewport) or not is_instance_valid(camera)):
+		_expect(false, "%s map click controls are invalid or hidden" % source)
+		_restore_map_click_ui(source, opened_for_click, saved_map_state)
+		return
+	var viewport_position := camera.unproject_position(point)
+	if camera.is_position_behind(point) or not Rect2(Vector2.ZERO,
+			Vector2(map_render_viewport.size)).has_point(viewport_position):
+		_expect(false, "%s map click target %s projects outside %s" % [
+			source, point, map_render_viewport.size])
+		_restore_map_click_ui(source, opened_for_click, saved_map_state)
+		return
+	var local_value: Variant = viewport_to_texture_position(
+		viewport_position, map_control, map_render_viewport.size)
+	if not local_value is Vector2:
+		_expect(false, "%s map click target cannot be placed in the displayed texture" % source)
+		_restore_map_click_ui(source, opened_for_click, saved_map_state)
+		return
+	var local_position: Vector2 = local_value as Vector2
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	click.position = local_position
+	map_control.gui_input.emit(click)
+	var pending: Dictionary = stream.pending_walk.duplicate(true)
+	var intended_tile: Variant = pending.get("tile")
+	_expect(str(pending.get("map", "")) == destination,
+		"%s map click retained intended destination %s" % [source, destination])
+	_expect(intended_tile is Vector2i and intended_tile == target,
+		"%s map click retained exact intended tile %s" % [source, target])
+	if not _report.has("map_clicks"):
+		_report["map_clicks"] = []
+	(_report["map_clicks"] as Array).append({
+		"source": source, "destination": destination, "tile": target_values.duplicate(),
+		"projected": [viewport_position.x, viewport_position.y],
+		"texture_local": [local_position.x, local_position.y],
+		"pending_destination": str(pending.get("map", "")),
+		"pending_tile": ([intended_tile.x, intended_tile.y] if intended_tile is Vector2i else null)})
+	_restore_map_click_ui(source, opened_for_click, saved_map_state)
+
+func _restore_map_click_ui(source: String, opened_for_click: bool,
+		saved_map_state: Dictionary = {}) -> void:
+	if source == "minimap" and not saved_map_state.is_empty():
+		_main.set("_minimap_zoom", float(saved_map_state.zoom))
+		_main.set("_minimap_orientation", str(saved_map_state.orientation))
+		_main.call("_apply_minimap_zoom")
+	if not opened_for_click:
+		return
+	if source == "full_map":
+		_main.call("_on_map_button_pressed")
+	else:
+		_main.call("_on_minimap_button_pressed")
+
+## The inverse of Main._texture_to_viewport_position. It mirrors the map
+## handler's keep-aspect letterbox calculation so the emitted event lands on
+## the same rendered pixel for any control and SubViewport aspect ratio.
+static func viewport_to_texture_position(viewport_position: Vector2,
+		texture_rect: TextureRect, target_size: Vector2i) -> Variant:
+	var control_size := texture_rect.size
+	var target := Vector2(target_size)
+	if (control_size.x <= 0.0 or control_size.y <= 0.0
+			or target.x <= 0.0 or target.y <= 0.0
+			or not Rect2(Vector2.ZERO, target).has_point(viewport_position)):
+		return null
+	if texture_rect.stretch_mode == TextureRect.STRETCH_KEEP_ASPECT_CENTERED:
+		var scale := minf(control_size.x / target.x, control_size.y / target.y)
+		var displayed_size := target * scale
+		var displayed_origin := (control_size - displayed_size) * 0.5
+		return displayed_origin + viewport_position * displayed_size / target
+	return viewport_position * control_size / target
+
+## Unknown mapClick values are fixture errors. They must never silently fall
+## through to the terrain or direct-network movement paths.
+static func map_click_fixture_error(step: Dictionary) -> String:
+	if not step.has("mapClick"):
+		return ""
+	var source := str(step.get("mapClick", ""))
+	if source not in ["full_map", "minimap"]:
+		return "mapClick must be full_map or minimap, got %s" % source
+	if not bool(step.get("clickNeighbor", false)):
+		return "%s mapClick requires clickNeighbor=true" % source
+	if str(step.get("destination", "")).is_empty():
+		return "%s mapClick requires a destination" % source
+	return ""
 
 func _watchdog() -> void:
 	var last: int = Time.get_ticks_msec()

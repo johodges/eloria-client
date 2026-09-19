@@ -15,8 +15,8 @@ Manymouth and Ssarathi, Four Gates and Verdant Stair - wherever their ground mee
 takes the hub out of the lane rule: a lane is ground walkable on both sides of its border
 with a legal step between, kept where a walker from some map's hub can get onto it and
 step off where it lands (`crossings.settle_crossings`, which withdrew 182 lanes on
-unreachable scraps and one-tile dead ends). 10,163 lanes where the eighteenth had 8,136,
-and every stretch of border walkable on both sides now carries a crossing. On these bytes
+unreachable scraps and one-tile dead ends). The publication has 10,163 lane directions
+where the eighteenth had 8,136. On these bytes
 the strict contracts passed with 0 failures, the audit passed and verified the
 publication, and the live fixture audit proved all 10,163 lanes offline by the server's
 own walking rules with 0 errors; the continent, crossing-related server and client
@@ -30,6 +30,30 @@ roads of their own - the ground in front of them offers no seam station both hub
 reach (the north gate faces a gully that needs an access deck), recorded in
 `door_approaches.py`. Any later change to a shaping or export source returns this
 notice to provisional until the same chain is repeated.
+
+**QA follow-up (2026-09-19; the nineteenth publication is unchanged).** The offline
+proof now emits one roadless crossing walk in each direction for all four roadless pairs,
+plus one neighbour-terrain, one Tab-map and one minimap click for the same audited target:
+8 walks and 24 clicks in total. Its audit is ready with 10,163/10,163 lanes and 0 errors.
+The focused Python generator suite passed 33 tests with no skips; the focused roadless-map
+headless suite passed 19 checks with 0 failures; and the border-crossing and exterior-walk
+continuation headless suites passed. The world-input suite still has two unrelated failures
+for imported material texture filtering and mip chains. No live suite, full server suite or
+build chain was run, and this follow-up changed no geometry, publication or server data.
+Evidence is retained in `../../../../../after/roadless-fixtures-tests-20260919-190518.log`,
+`../../../../../after/roadless-prepare-20260919-191643.log`,
+`../../../../../after/headless-roadless-map-clicks-agent-20260919-r2.log`, and
+`../../../../../after/roadless-fixture-validation-20260919.json`.
+
+The coarse `border_audit.py` midpoint diagnostic was rerun on the unchanged server inputs
+and did not reproduce the earlier blanket `both == crossed` claim: several non-Crownwater
+rows differ, including Whitehorn-Mirrorhold at 48/47. Its `both` count checks only nonzero
+floor bytes at two segment-midpoint samples, while `crossed` checks exact served portal-tile
+membership; it does not apply actual step-height, collar, reachability, landing or lane-
+pruning rules. This is recorded as an unresolved diagnostic discrepancy, not evidence that
+each unmatched sample is a legal missing lane. See
+`../../../../../STATUS-2026-09-19-roadless-fixtures.md`
+and `../../../../../after/roadless-border-audit-20260919-191929.log`.
 
 `diagonal-plan.json` describes the coast, connected mountain chain, river
 catchments, islands, territory centres, and placement controls. `landscape.py`
