@@ -1167,7 +1167,7 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 			"enabled": _attribution_enabled,
 			"acceptanceTimingComparable": not _attribution_enabled,
 			"attachment": _attribution_attachment.duplicate(true),
-			"processDeltaSource": "benchmark Main _process(delta)",
+			"processDeltaSource": "benchmark Main process callback delta argument",
 			"skeletonFrameSource": "Engine.get_process_frames",
 			"combatTimingBoundary": ("delegated skeleton_updated callback only; "
 				+ "known handler invocation estimates are mirrored by source, not "
