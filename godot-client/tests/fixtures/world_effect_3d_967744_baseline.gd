@@ -1,4 +1,7 @@
-class_name WorldEffect3D
+# FROZEN REFERENCE: keep geometry emission byte-for-byte with production.
+# Reviewed source: 9677447685464fcb19a5cb4e7e739f0f67670ae0; source SHA-256
+# 8586cceda29f07ce352bf4f33513f50d36e33c28e808847941699743558d9e2a.
+# class_name is omitted so the fixture can coexist with production.
 extends Node3D
 ## One short-lived effect the server said happened in the world.
 ##
@@ -47,48 +50,8 @@ var _launched := false
 var _burst: GPUParticles3D
 var _material: StandardMaterial3D
 var _details := ImmediateMesh.new()
-var _native_details: ArrayMesh
-var _details_node: MeshInstance3D
 var _detail_material := CombatEffectMesh.material()
 var _impact := Vector3.ZERO
-var _native_geometry: RefCounted
-static var _native_build_attempts := 0
-static var _native_build_successes := 0
-static var _native_build_fallbacks := 0
-
-
-func _init() -> void:
-	_initialize_native_presentation()
-	if _native_geometry != null:
-		_native_details = ArrayMesh.new()
-
-
-func _initialize_native_presentation() -> void:
-	var mode := OS.get_environment("ELORIA_NATIVE_PRESENTATION").strip_edges().to_lower()
-	if mode not in ["world", "all"]:
-		return
-	if not ClassDB.class_exists(&"NativeWorldEffectGeometry"):
-		var extension_path := "res://bin/native_crowd.gdextension"
-		if not FileAccess.file_exists(extension_path):
-			return
-		GDExtensionManager.load_extension(extension_path)
-	if not ClassDB.class_exists(&"NativeWorldEffectGeometry"):
-		return
-	_native_geometry = ClassDB.instantiate(&"NativeWorldEffectGeometry") as RefCounted
-	if _native_geometry != null and not _native_geometry.has_method(&"build"):
-		_native_geometry = null
-
-
-func native_presentation_active() -> bool:
-	return _native_geometry != null
-
-
-static func native_presentation_stats() -> Dictionary:
-	return {
-		"buildAttempts": _native_build_attempts,
-		"buildSuccesses": _native_build_successes,
-		"buildFallbacks": _native_build_fallbacks,
-	}
 
 func configure(effect: int, origin: Vector3, target: Variant = null, power := 1) -> void:
 	effect_id = effect
@@ -117,11 +80,11 @@ func configure(effect: int, origin: Vector3, target: Variant = null, power := 1)
 	_ring.position = _impact + Vector3.UP * 0.055
 	_ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(_ring)
-	_details_node = MeshInstance3D.new()
-	_details_node.name = "EffectRunes"
-	_details_node.mesh = _native_details if _native_geometry != null else _details
-	_details_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	add_child(_details_node)
+	var details_node := MeshInstance3D.new()
+	details_node.name = "EffectRunes"
+	details_node.mesh = _details
+	details_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(details_node)
 	_add_burst(palette)
 	if target is Vector3 and _impact.length_squared() > 0.0025:
 		flight = SpellFlight.new()
@@ -282,54 +245,6 @@ func _process(delta: float) -> void:
 		queue_free()
 
 func _draw_details(progress: float) -> void:
-	if _native_geometry == null:
-		_draw_details_gdscript(progress)
-		return
-	_native_build_attempts += 1
-	var color := _palette()
-	var size := SpellPresentation.power_scale(power_level)
-	var radius := SpellPresentation.power_radius(power_level)
-	color.a = sin(progress * PI) * 0.7
-	var contact: Vector3 = flight.destination if flight != null else Vector3.ZERO
-	var built: Variant = _native_geometry.call("build", effect_id, power_level,
-		elapsed, progress, _impact, color, size, radius, area_radius,
-		flight != null, contact)
-	if _native_output_valid(built):
-		_commit_native_details(built as Array)
-		_native_build_successes += 1
-		return
-	_native_build_fallbacks += 1
-	_native_geometry = null
-	_native_details.clear_surfaces()
-	_details_node.mesh = _details
-	_draw_details_gdscript(progress)
-
-
-func _native_output_valid(built: Variant) -> bool:
-	if typeof(built) != TYPE_ARRAY:
-		return false
-	var packed := built as Array
-	if packed.size() != 2 \
-			or typeof(packed[0]) != TYPE_PACKED_VECTOR3_ARRAY \
-			or typeof(packed[1]) != TYPE_PACKED_COLOR_ARRAY:
-		return false
-	var vertices := packed[0] as PackedVector3Array
-	var colors := packed[1] as PackedColorArray
-	return not vertices.is_empty() and vertices.size() % 3 == 0 \
-		and colors.size() == vertices.size()
-
-
-func _commit_native_details(packed: Array) -> void:
-	var arrays := []
-	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_VERTEX] = packed[0]
-	arrays[Mesh.ARRAY_COLOR] = packed[1]
-	_native_details.clear_surfaces()
-	_native_details.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	_native_details.surface_set_material(0, _detail_material)
-
-
-func _draw_details_gdscript(progress: float) -> void:
 	_details.clear_surfaces()
 	_details.surface_begin(Mesh.PRIMITIVE_TRIANGLES, _detail_material)
 	var color := _palette()
