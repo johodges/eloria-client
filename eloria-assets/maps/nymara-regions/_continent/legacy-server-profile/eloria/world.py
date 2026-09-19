@@ -68,7 +68,7 @@ from .interactives import load_interactives
 from .stats import max_level_for, next_level_experience, post_cap_points
 from . import walkthrough as wt
 from . import lantern, bell
-from .territory_raids import TerritoryRaidService, load_territories
+from .territory_raids import Territory, TerritoryRaidService, load_territories
 from .recipes import load_recipes, roll_mix_outcome
 from .spawns import load_spawns
 from . import gauntlets
@@ -749,6 +749,9 @@ PATH_TICK_FRACTION = 0.4
 VISIBILITY_REFRESH_TICKS = 4
 # The client capability that asks for the actors of adjoining maps across land seams.
 ADJACENT_ACTORS_CAPABILITY = "adjacent_actors_v1"
+# The served Nymara equivalent of the old Eternal Lands armed goblin. Territory
+# rows may name authored spawn groups; a blank side uses this ordinary force.
+TERRITORY_RAID_FALLBACK_CREATURE = "reed_mask_hunter"
 # Actor ids travel as an unsigned 16-bit field in every actor packet.
 MAX_ACTOR_ID = 0xFFFF
 # A recycled id must not collide with a REMOVE_ACTOR still on its way to a
@@ -1234,6 +1237,30 @@ def check_boss_content(bosses: dict[str, Boss],
                 "in this profile")
 
 
+def check_territory_raid_content(territories: Mapping[str, Territory],
+                                 creatures: Mapping[str, CreatureDefinition],
+                                 spawn_groups: Mapping[str, SpawnGroup],
+                                 force_size: int) -> None:
+    """Reject raid dependencies at startup, not on the first six-hour tick."""
+    unknown_groups = sorted({
+        group.casefold()
+        for territory in territories.values()
+        for group in (territory.attacker_group, territory.defender_group)
+        if group and group.casefold() not in spawn_groups
+    })
+    if unknown_groups:
+        raise ValueError(
+            "Unknown territory raid spawn group(s): "
+            + ", ".join(unknown_groups))
+    uses_fallback = force_size > 0 and any(
+        not territory.attacker_group or not territory.defender_group
+        for territory in territories.values())
+    if uses_fallback and TERRITORY_RAID_FALLBACK_CREATURE not in creatures:
+        raise ValueError(
+            "Territory raids require fallback creature "
+            f"{TERRITORY_RAID_FALLBACK_CREATURE!r}")
+
+
 class NoFreeCreatureTile(ValueError):
     """Placement is temporarily blocked by collision or other actors."""
 
@@ -1494,9 +1521,14 @@ class World(MagicRuntime):
         self.active_instances: dict[str, ActiveInstance] = {}
         self._last_spawn_slot: tuple[int, int] | None = None
         self.settings = settings or ServerSettings()
+        territories = (load_territories(territories_path)
+                       if Path(territories_path).is_file() else {})
+        check_territory_raid_content(
+            territories, self.creatures,
+            {**self.spawn_groups, **self.invasion_spawn_groups},
+            self.settings.territory_raid_force_size)
         self.territory_raids = TerritoryRaidService(
-            load_territories(territories_path) if Path(territories_path).is_file() else {},
-            self.settings.territory_raid_duration_seconds)
+            territories, self.settings.territory_raid_duration_seconds)
         load_raid_state = getattr(self.db, "load_global_state", None)
         if callable(load_raid_state):
             self.territory_raids.restore(load_raid_state("territory_raids", ""))
@@ -1699,7 +1731,7 @@ class World(MagicRuntime):
                         raid.defender.map_id, center[0] + offset[0],
                         center[1] + offset[1])
                     actor = self.spawn_animal(
-                        "armed_goblin", x, y, invasion=True,
+                        TERRITORY_RAID_FALLBACK_CREATURE, x, y, invasion=True,
                         map_id=raid.defender.map_id)
                     actor_ids.add(actor.actor_id)
             self.territory_raids.actor_teams.update(
