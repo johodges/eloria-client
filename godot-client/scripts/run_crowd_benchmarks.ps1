@@ -99,9 +99,20 @@ $sourceRelativePaths = @(
     "godot-client/native/native_crowd/src/native_crowd_reducer.h",
     "godot-client/native/native_crowd/src/register_types.cpp",
     "godot-client/native/native_crowd/src/register_types.h",
+    "godot-client/native/native_crowd/CMakeLists.txt",
+    "godot-client/native/native_crowd/build_profile.json",
     "godot-client/bin/native_crowd.gdextension",
     "godot-client/bin/windows/native_crowd.windows.template_release.x86_64.dll"
 )
+$optionalSourceRelativePaths = @(
+    "godot-client/native/native_crowd/src/native_spell_flight_geometry.cpp",
+    "godot-client/native/native_crowd/src/native_spell_flight_geometry.h"
+)
+foreach ($relativePath in $optionalSourceRelativePaths) {
+    if (Test-Path -LiteralPath (Join-Path $repositoryRoot $relativePath)) {
+        $sourceRelativePaths += $relativePath
+    }
+}
 $sourceStatus = @(& git -c $gitSafe -C $repositoryRoot status --porcelain -- `
     $sourceRelativePaths)
 $dirty = $worktreeDirty -or $indexDirty -or $sourceStatus.Count -gt 0
@@ -271,7 +282,8 @@ function Assert-BenchmarkReport([string]$JsonPath, [string]$ExpectedProfile,
                     $cell.activity -ne "third_active" -or $cell.visibility -ne "half300" -or
                     $cell.network -ne "normal_burst" -or
                     [int]$before.capeEquipmentActors -ne 150 -or
-                    [int]$before.modifierNodes -ne 150 -or
+                    [int]$before.modifierNodes -lt 150 -or
+                    [int]$before.wornFlags -ne 150 -or
                     [int]$before.activeModifiers -le 0 -or
                     [int]$before.settledModifiers -lt [int]$before.activeModifiers -or
                     [int]$before.capeMeshInstances -lt 150 -or

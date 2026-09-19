@@ -717,8 +717,9 @@ func _cape_feature_attestation(nodes: Dictionary, spec: Dictionary,
 	_expect(int(before["capeEquipmentActors"]) == int(
 			diagnostics.get("equippedHumanoids", -1)),
 		"%s keeps a cape equipped on every mixed-fixture humanoid" % spec["id"])
-	_expect(int(before["modifierNodes"]) == int(before["capeEquipmentActors"]),
-		"%s has one cape modifier per cape-equipped actor" % spec["id"])
+	_expect(int(before["modifierNodes"]) >= int(before["capeEquipmentActors"])
+		and int(before["wornFlags"]) == int(before["capeEquipmentActors"]),
+		"%s retains a worn cape modifier for every cape-equipped actor" % spec["id"])
 	_expect(int(before["capeMeshInstances"]) >= int(before["capeEquipmentActors"]),
 		"%s retains cape mesh geometry before disabling solvers" % spec["id"])
 	_expect(int(before["activeModifiers"]) > 0
