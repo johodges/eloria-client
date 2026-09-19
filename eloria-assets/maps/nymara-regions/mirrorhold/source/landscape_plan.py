@@ -64,7 +64,66 @@ ROADS={
  'sanctuary-causeway-approach':([(158.5,7,12),(167,4.5,23),
                                 (175.5,4,39),(175.5,3.96,50.5)],7),
 }
+WATERWORK_STREAMS={
+ 'upper_cascade':((1.5,70,-99.65),(7.9,51,-69.65),(14.3,40,-45.65),
+                  (27.7,19,-9.65)),
+ 'canal_west':((27.7,19,-9.65),(14.3,12,5.83),(7.9,6,22.7),
+               (27.7,.12,36.8)),
+ 'canal_east':((206.45,42,-39.65),(199,27,-22),(177.68,9,8.65),
+               (153.68,.12,28.37)),
+}
+OBSOLETE_WATERWORK_NODES=frozenset(
+    [f'Landmark_Channel_{i}' for i in range(5)]+
+    [f'Landmark_Fall_{i}' for i in range(3)])
 TOWN_ROWS=[(-48,30),(-31,23.5),(-14,17)]
+YARD_LINKS={
+ 'west-bench': [(-79,41,-97),(-68,40,-96),(-56,40,-96)],
+ 'lower-terrace':[(-4,13,36),(-15,14,27),(-27.28,17,14.29)],
+ 'mid-bench':[(-10,35,-54),(-3,33,-38),(15,32,-16)],
+ 'east-bench':[(175.5,22,-2),(179,19,1)],
+ 'east-stair-home':[(175.5,31,-21),(179,31,-18)],
+ 'lake-north':[(31,8,24),(27,8,17)],
+ 'lake-east':[(209,14,52),(227,14,32),(218,19,4),(195,31,-13)],
+ 'west-shore':[(-12,14,54),(-28,14,37),(-27.28,17,14.29)],
+ 'south-shore':[(18,12,82),(27,12,76),(39,11,73),(55,8,76),(57.68,6,88.48)],
+}
+# Houses keep untouched road/terrain grades.  Their datum moves only where the
+# emitted window bottom meets the original ground; lower-terrace_1 also moves
+# 3 m west to clear the canal.  A same-footprint plinth supports each exposed
+# base.
+HOUSE_DATUM_REPAIRS=(
+ {'node':'Building_CliffHouse_3','base':31.52},
+ {'node':'Building_CliffHouse_4','base':33.87},
+ {'node':'Building_CliffHouse_9','base':26.02},
+ {'node':'Building_CliffHouse_14','base':19.02},
+ {'node':'Building_lower-terrace_0','base':13.77},
+ {'node':'Building_lake-north_0','base':8.57},
+)
+HOUSE_POSITION_REPAIRS=(
+ {'node':'Building_lower-terrace_1','x':.5,'z':28.,'base':12.82},
+)
+HOUSE_MASONRY_FOUNDATIONS=(
+ {'house':'Building_CliffHouse_3','node':'Building_HouseFoundation_CliffHouse_3',
+  'x':-35.,'z':-48.,'base':31.52,'width':9.3,'depth':8.7,'height':1.75,'variant':3},
+ {'house':'Building_CliffHouse_9','node':'Building_HouseFoundation_CliffHouse_9',
+  'x':-22.,'z':-31.,'base':26.02,'width':7.5,'depth':8.7,'height':2.75,'variant':1},
+ {'house':'Building_CliffHouse_14','node':'Building_HouseFoundation_CliffHouse_14',
+  'x':-22.,'z':-14.,'base':19.02,'width':8.4,'depth':7.5,'height':2.25,'variant':2},
+ {'house':'Building_lower-terrace_0','node':'Building_HouseFoundation_lower-terrace_0',
+  'x':-11.5,'z':28.,'base':13.77,'width':9.3,'depth':8.7,'height':.9,'variant':3},
+ {'house':'Building_lower-terrace_1','node':'Building_HouseFoundation_lower-terrace_1',
+  'x':.5,'z':28.,'base':12.82,'width':6.6,'depth':7.5,'height':1.9,'variant':0},
+ {'house':'Building_lake-north_0','node':'Building_HouseFoundation_lake-north_0',
+  'x':23.5,'z':16.,'base':8.57,'width':6.6,'depth':7.5,'height':.85,'variant':0},
+ {'house':'Building_east-bench_0','node':'Building_HouseFoundation_east-bench_0',
+  'x':175.5,'z':-6.,'base':21.82,'width':9.3,'depth':8.7,'height':5.05,'variant':3},
+ {'house':'Building_lake-north_1','node':'Building_HouseFoundation_lake-north_1',
+  'x':38.5,'z':16.,'base':7.82,'width':7.5,'depth':8.7,'height':1.8,'variant':1},
+ {'house':'Building_west-bench_1','node':'Building_HouseFoundation_west-bench_1',
+  'x':-71.5,'z':-105.,'base':40.82,'width':7.5,'depth':8.7,'height':.7,'variant':1},
+ {'house':'Building_west-shore_1','node':'Building_HouseFoundation_west-shore_1',
+  'x':-4.5,'z':46.,'base':13.82,'width':6.6,'depth':7.5,'height':.4,'variant':0},
+)
 SECRET_POSTS={
  'mirror-reed-cut':(31,8,30),'mirror-lens-garden':(143,58,-38),
  'mirror-orrery-vault':(115,124,-230),'mirror-stair-pit':(191,39.33,-33),
@@ -127,20 +186,34 @@ def _patch(t,x,z,w,d,y,surface=TER.PAVING,shoulder=6):
     t.surface[inside]=surface;t.tree_block|=signed<4
 
 
+def _house_foundation_mesh(spec):
+    """A masonry skirt contained by the house's existing wall footprint."""
+    h=spec['height'];w=spec['width'];d=spec['depth']
+    wall=M.box((w,h-.24,d),center=(0,-(h-.24)/2,0),material='pale_ashlar')
+    foot=M.box((w,.24,d),center=(0,-h+.12,0),material='pale_ashlar')
+    return M.merge([wall,foot],material='pale_ashlar')
+
+
 def _seat(build,p,x,z,y=None,yaw=None):
     p.position=(x,float(build.terrain.height_at(x,z)) if y is None else y,z)
     if yaw is not None:p.rotation_y=yaw
     p.scale=1.0
 
 
+def _retire_obsolete_waterworks(build):
+    """Drop the old display pieces only after their replacement is complete."""
+    canal=build.water_meshes.get('Water_Canal')
+    stream_ids={row['id'] for row in build.authored_streams}
+    if canal is None or not canal.triangle_count or stream_ids!=set(WATERWORK_STREAMS):
+        raise AssertionError('active three-catchment waterworks must exist before retirement')
+    build.placements[:]=[p for p in build.placements
+                         if p.node not in OBSOLETE_WATERWORK_NODES]
+
+
 def _waterworks(build,seed):
     """Meltwater always falls to the lake; carts cross on surveyed masonry."""
     t=build.terrain
-    streams={
-      'upper_cascade':[(1.5,70,-99.65),(7.9,51,-69.65),(14.3,40,-45.65),(27.7,19,-9.65)],
-      'canal_west':[(27.7,19,-9.65),(14.3,12,5.83),(7.9,6,22.7),(27.7,.12,36.8)],
-      'canal_east':[(206.45,42,-39.65),(199,27,-22),(177.68,9,8.65),(153.68,.12,28.37)],
-    }
+    streams=WATERWORK_STREAMS
     for points in streams.values():
         a=np.asarray(points,float)
         RC.grade_road(t,a[:,[0,2]],a[:,1]-.48,width=2.8,shoulder=3.8,
@@ -196,6 +269,7 @@ def _waterworks(build,seed):
                     build.add_mesh(key,group)
                     build.place(Placement('Landmark_'+key,key,(0,0,0),collides=False,kind='landmark'))
                     build.water_crossings.append({'id':key,'endpoints':RC.crossing_endpoints([start,end])})
+    _retire_obsolete_waterworks(build)
     build.notes.append(f'Meltwater: three descending catchments; {len(seen)} surveyed cart bridges.')
 
 
@@ -319,23 +393,27 @@ def compact(build,seed,materials,lod=None):
         _seat(build,east_home,175.5,-27,30.82,0)
     # Connect every inhabited yard to an existing road, staying outside the
     # private house row. Survey station heights keep ramps intelligible.
-    yard_links={
-      'west-bench': [(-79,41,-97),(-68,40,-96),(-56,40,-96)],
-      'lower-terrace':[(-4,13,36),(-15,14,27),(-27.28,17,14.29)],
-      'mid-bench':[(-10,35,-54),(-3,33,-38),(15,32,-16)],
-      'east-bench':[(175.5,22,-2),(179,19,1)],
-      'east-stair-home':[(175.5,31,-21),(179,31,-18)],
-      'lake-north':[(31,8,24),(27,8,17)],
-      'lake-east':[(209,14,52),(227,14,32),(218,19,4),(195,31,-13)],
-      'west-shore':[(-12,14,54),(-28,14,37),(-27.28,17,14.29)],
-      'south-shore':[(18,12,82),(27,12,76),(39,11,73),(55,8,76),(57.68,6,88.48)],
-    }
-    for name,stations in yard_links.items():
+    for name,stations in YARD_LINKS.items():
         _road(t,stations,4,TER.PATH,7)
         build.authored_roads.append({'id':name+'-yard-link','width':4,'waypoints':stations})
     # Reapply shared streets where a yard's soft bank could cover their bed.
     for key in ('arrival-lane','quay-descent','amber-gorge-road','east-working-road'):
         stations,width=ROADS[key];_road(t,stations,width,TER.PATH,14 if key in ('arrival-lane','quay-descent') else 8)
+
+    # Keep authored terrain and every road grade unchanged.  Adjust only the
+    # affected building datum, then support exposed bases inside their walls.
+    for spec in HOUSE_DATUM_REPAIRS:
+        house=next(p for p in build.placements if p.node==spec['node'])
+        x,_,z=house.position;_seat(build,house,x,z,spec['base'])
+    for spec in HOUSE_POSITION_REPAIRS:
+        house=next(p for p in build.placements if p.node==spec['node'])
+        _seat(build,house,spec['x'],spec['z'],spec['base'])
+    for spec in HOUSE_MASONRY_FOUNDATIONS:
+        mesh='Mirrorhold_'+spec['node']
+        build.add_mesh(mesh,_house_foundation_mesh(spec))
+        build.place(Placement(spec['node'],mesh,
+                              (spec['x'],spec['base'],spec['z']),0,1,
+                              collides=True,kind='building'))
 
     _waterworks(build,seed)
     # The first stream bridge approaches on a diagonal, then the civic road
@@ -560,7 +638,6 @@ def manifest(build,manifest):
                                     'max':[t.xs[-1],float(t.height.max()),t.zs[-1]]}
     manifest['environment']['presentation']={
        'chimneySmoke':{'enabled':True,'nodes':['Building_CliffHouse_2','Building_CliffHouse_7']},
-       'waterSpray':{'enabled':True,'nodes':['Landmark_Fall_0','Landmark_Fall_1']},
        'ambientAudio':[{'id':'settlement','zone':'stair-town'},
                        {'id':'wind-barren','zone':'northern-cols'}]}
     manifest['environment']['zones']=[{'id':'stair-town','centre':[-48,24,-26],'radius':40},

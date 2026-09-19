@@ -461,10 +461,20 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
 
 # The Sanctuary Road approaches across the lake. The side arms are fishing
 # piers; the north and south arms join real shore aprons.
+# The compact plan preserves 214 m of its Z axis and compresses the remaining
+# 362 m into 170 m.  Pre-expand the two north/south inner stations so their
+# emitted decks still meet the full-size Ring at the intended 20.8 m radius;
+# otherwise their parapets reach the inner basin and divide the promenade.
+RING_LINK_JOIN_RADIUS = 20.8
+COMPACT_Z_OUTER_SCALE = 170.0 / 362.0
+RING_LINK_SOURCE_Z_OFFSET = RING_LINK_JOIN_RADIUS / COMPACT_Z_OUTER_SCALE
+RING_Z = ANCHORS["ring"][1]
 LAKE_LINKS = {
-    "Sanctuary": [(156, 3.70, 80.8), (156, 4.6, 118),
+    "Sanctuary": [(156, 3.70, RING_Z + RING_LINK_SOURCE_Z_OFFSET),
+                  (156, 4.6, 118),
                    (145, 5.2, 138), (120, 6.06, 158)],
-    "City": [(156, 3.70, 39.2), (156, 3.70, 4), (156, 3.70, -16)],
+    "City": [(156, 3.70, RING_Z - RING_LINK_SOURCE_Z_OFFSET),
+             (156, 3.70, 4), (156, 3.70, -16)],
     "WestPier": [(135.2, 3.70, 60), (94.5, 3.70, 60)],
     "EastPier": [(176.8, 3.70, 60), (217.5, 3.70, 60)],
 }

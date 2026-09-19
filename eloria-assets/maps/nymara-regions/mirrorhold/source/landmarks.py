@@ -302,8 +302,42 @@ def cliff_house(seed: int = 0, width: float = 5.0, depth: float = 5.6,
             for sub in panel.parts:
                 out.add(sub.translate(side * width * 0.22,
                                       0.9 + level * storey, depth * 0.5 + 0.02))
-    balcony = ARCH.railing(width * 0.8, 0.95, material=TIMBER)
-    out.add(balcony.translate(0.0, total - storey, depth * 0.58))
+    # The upper storey is jettied over the street.  Its balustrade needs a
+    # real landing beneath it, but this remains architectural scenery rather
+    # than a new upper-storey walk route.
+    deck_y = total - storey
+    jetty_front = depth * 0.575
+    house_front = depth * 0.5
+    deck_outer = jetty_front + 1.05
+    deck_inner = house_front - 0.12
+    deck_width = width + 0.85
+    deck_depth = deck_outer - deck_inner
+    out.add(M.box((deck_width, 0.18, deck_depth),
+                  center=(0.0, deck_y - 0.09,
+                          (deck_inner + deck_outer) * 0.5),
+                  material=TIMBER))
+
+    # Two braces transfer the projecting edge back into the masonry.  They
+    # sit outside both window bays and finish against the deck underside.
+    low_y, low_z = deck_y - 0.95, house_front + 0.02
+    high_y, high_z = deck_y - 0.18, deck_outer - 0.18
+    bracket_length = math.hypot(high_y - low_y, high_z - low_z)
+    bracket_angle = math.atan2(high_z - low_z, high_y - low_y)
+    for side in (-1.0, 1.0):
+        bracket = M.box((0.18, bracket_length, 0.18), material=TIMBER)
+        bracket.rotate_x(bracket_angle).translate(
+            side * width * 0.37, (low_y + high_y) * 0.5,
+            (low_z + high_z) * 0.5)
+        out.add(bracket)
+
+    outer_rail = ARCH.railing(deck_width - 0.16, 0.95, material=TIMBER)
+    out.add(outer_rail.translate(0.0, deck_y, deck_outer))
+    return_length = deck_outer - jetty_front
+    return_z = (jetty_front + deck_outer) * 0.5
+    for side in (-1.0, 1.0):
+        side_rail = ARCH.railing(return_length, 0.95, material=TIMBER)
+        out.add(side_rail.rotate_y(math.pi * 0.5).translate(
+            side * (deck_width * 0.5 - 0.08), deck_y, return_z))
     return out
 
 
