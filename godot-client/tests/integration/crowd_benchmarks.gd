@@ -19,6 +19,26 @@ const MAX_READINESS_MSEC := 60000
 const MIN_SAMPLE_FRAMES := 60
 const MAX_LIVE_WORLD_EFFECTS := 4096
 const DRIVER_VERSION := "deferred-coalesced-role-faithful-v2"
+const ATTRIBUTION_RAW_KEYS := [
+	"processDeltaMilliseconds", "mainProcessInclusiveMilliseconds",
+	"mainProcessCallsPerFrame", "combatPoseFromSkeletonMilliseconds",
+	"skeletonUpdatesPerFrame",
+	"uniqueSkeletonsUpdatedPerFrame", "maximumSkeletonUpdatesPerActor",
+	"mirroredEffectSetterMissilePerFrame",
+	"mirroredEffectSetterGroundMissilePerFrame",
+	"mirroredEffectSetterSpecialPerFrame",
+	"mirroredEffectSetterAnimationPerFrame", "mirroredSpellPalettePerFrame",
+	"mirroredSpellPowerPerFrame",
+]
+const ATTRIBUTION_COUNT_KEYS := [
+	"mainProcessCallsPerFrame", "skeletonUpdatesPerFrame",
+	"uniqueSkeletonsUpdatedPerFrame", "maximumSkeletonUpdatesPerActor",
+	"mirroredEffectSetterMissilePerFrame",
+	"mirroredEffectSetterGroundMissilePerFrame",
+	"mirroredEffectSetterSpecialPerFrame",
+	"mirroredEffectSetterAnimationPerFrame", "mirroredSpellPalettePerFrame",
+	"mirroredSpellPowerPerFrame",
+]
 
 var _failures := 0
 var _headless := false
@@ -30,6 +50,8 @@ var _creatures: Array = []
 var _report: Dictionary = {}
 var _cell_index := 0
 var _capture_enabled := false
+var _attribution_enabled := false
+var _attribution_attachment: Dictionary = {}
 var _driver_usec := 0
 var _driver_command_usec := 0
 var _driver_packets := 0
@@ -54,6 +76,8 @@ func _run() -> void:
 		"artifact directory is writable")
 	_capture_enabled = not _headless and OS.get_environment(
 		"ELORIA_CROWD_CAPTURE").strip_edges() == "1"
+	_attribution_enabled = OS.get_environment(
+		"ELORIA_CROWD_ATTRIBUTION").strip_edges() == "1"
 	_creatures = _creature_actor_types()
 	_report = {
 		"schemaVersion": 1,
@@ -88,6 +112,13 @@ func _run() -> void:
 				"ELORIA_CROWD_CADENCE_MSEC", DEFAULT_CADENCE_MSEC, 25),
 			"windowWallTimeAuthoritative": false,
 			"headlessRenderMetricsAvailable": false,
+			"attribution": {
+				"enabled": _attribution_enabled,
+				"acceptanceTimingComparable": not _attribution_enabled,
+				"purpose": ("diagnostic callback attribution; timer, signal and "
+					+ "observer overhead is included") if _attribution_enabled else
+					"disabled; ordinary acceptance timing",
+			},
 		},
 		"driver": {
 			"version": DRIVER_VERSION,
@@ -228,6 +259,7 @@ func _set_up_main() -> void:
 	if not _expect(benchmark_scene != null, "benchmark Main scene loads"):
 		return
 	_main = benchmark_scene.instantiate() as Control
+	_main.set("benchmark_attribution_enabled", _attribution_enabled)
 	root.add_child(_main)
 	await process_frame
 	_app_state = root.get_node_or_null("/root/AppState")
@@ -317,6 +349,14 @@ func _run_cell(spec: Dictionary) -> void:
 	spawn["milliseconds"] = _round(float(Time.get_ticks_usec() - spawn_started) / 1000.0)
 	var nodes := _main.get("actor_nodes") as Dictionary
 	_apply_feature_switches(nodes, str(spec["features"]))
+	_attribution_attachment = {}
+	if _attribution_enabled:
+		_attribution_attachment = _main.call(
+			"benchmark_attach_attribution", nodes) as Dictionary
+		if not _expect(bool(_attribution_attachment.get("ok", false)),
+				"%s installs attribution without changing combat signal order: %s" % [
+					spec["id"], str(_attribution_attachment.get("error", ""))]):
+			return
 	await _place_population(nodes, records, str(spec["visibility"]))
 	var selected_actor_id := FIRST_ACTOR_ID + mini(1, count - 1)
 	_app_state.set("selected_actor_id", selected_actor_id)
@@ -935,6 +975,9 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 		"stateUpdatesPerFrame": [], "flushesPerFrame": [],
 		"combatPresentationEventsPerFrame": [],
 	}
+	if _attribution_enabled:
+		for key: String in ATTRIBUTION_RAW_KEYS:
+			raw[key] = []
 	var calls: Dictionary = {}
 	var resources_before := _resource_readiness_snapshot()
 	var started := Time.get_ticks_msec()
@@ -964,6 +1007,7 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 		var measured: Dictionary = _main.call("benchmark_take_frame") as Dictionary
 		var usec: Dictionary = measured.get("microseconds", {}) as Dictionary
 		var frame_calls: Dictionary = measured.get("calls", {}) as Dictionary
+		var frame_values: Dictionary = measured.get("values", {}) as Dictionary
 		(raw["presentMilliseconds"] as Array).append(
 			float(usec.get("present_excluding_ground", 0)) / 1000.0)
 		(raw["groundMilliseconds"] as Array).append(float(usec.get("ground", 0)) / 1000.0)
@@ -983,6 +1027,34 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 			frame_calls.get("sync_world_inclusive", 0)))
 		(raw["combatPresentationEventsPerFrame"] as Array).append(
 			_driver_combat_events)
+		if _attribution_enabled:
+			var attribution := measured.get("attribution", {}) as Dictionary
+			(raw["processDeltaMilliseconds"] as Array).append(
+				float(frame_values.get("process_delta_milliseconds", 0.0)))
+			(raw["mainProcessInclusiveMilliseconds"] as Array).append(
+				float(usec.get("main_process_inclusive", 0)) / 1000.0)
+			(raw["mainProcessCallsPerFrame"] as Array).append(int(
+				frame_calls.get("main_process_inclusive", 0)))
+			(raw["combatPoseFromSkeletonMilliseconds"] as Array).append(
+				float(usec.get("combat_pose_from_skeleton", 0)) / 1000.0)
+			(raw["skeletonUpdatesPerFrame"] as Array).append(int(
+				frame_calls.get("skeleton_updated", 0)))
+			(raw["uniqueSkeletonsUpdatedPerFrame"] as Array).append(int(
+				frame_calls.get("unique_skeletons_updated", 0)))
+			(raw["maximumSkeletonUpdatesPerActor"] as Array).append(int(
+				attribution.get("maximumSkeletonUpdatesPerActor", 0)))
+			(raw["mirroredEffectSetterMissilePerFrame"] as Array).append(int(
+				frame_calls.get("mirrored_effect_setter_missile", 0)))
+			(raw["mirroredEffectSetterGroundMissilePerFrame"] as Array).append(int(
+				frame_calls.get("mirrored_effect_setter_ground_missile", 0)))
+			(raw["mirroredEffectSetterSpecialPerFrame"] as Array).append(int(
+				frame_calls.get("mirrored_effect_setter_special", 0)))
+			(raw["mirroredEffectSetterAnimationPerFrame"] as Array).append(int(
+				frame_calls.get("mirrored_effect_setter_animation", 0)))
+			(raw["mirroredSpellPalettePerFrame"] as Array).append(int(
+				frame_calls.get("mirrored_spell_palette", 0)))
+			(raw["mirroredSpellPowerPerFrame"] as Array).append(int(
+				frame_calls.get("mirrored_spell_power", 0)))
 		(raw["sceneNodes"] as Array).append(int(
 			Performance.get_monitor(Performance.OBJECT_NODE_COUNT)))
 		(raw["resourceObjects"] as Array).append(int(
@@ -1001,6 +1073,20 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 	var summary: Dictionary = {}
 	for key: String in raw:
 		summary[key] = _distribution(raw[key] as Array)
+	if _attribution_enabled:
+		for key: String in ATTRIBUTION_RAW_KEYS:
+			_expect(_finite_numeric_series(raw[key] as Array),
+				"%s attribution report retains finite numeric %s samples" % [
+					spec["id"], key])
+		for key: String in ATTRIBUTION_COUNT_KEYS:
+			_expect(_nonnegative_integral_series(raw[key] as Array),
+				"%s attribution report retains nonnegative integral %s samples" % [
+					spec["id"], key])
+		_expect(_consistent_skeleton_counts(raw),
+			"%s skeleton totals, unique actors and observed maxima are consistent" %
+				spec["id"])
+		_expect(_all_int_value(raw["mainProcessCallsPerFrame"] as Array, 1),
+			"%s attributes exactly one Main _process call to each timed frame" % spec["id"])
 	var sampled_frames := (raw["wallMilliseconds"] as Array).size()
 	var sufficient_samples := sampled_frames >= MIN_SAMPLE_FRAMES
 	_expect(sufficient_samples, "%s records at least %d timed frames before the %d ms hard bound" % [
@@ -1070,6 +1156,16 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 		"rendererSampling": ("viewport measured times are sampled after process_frame; "
 			+ "the asynchronous API may describe a previously submitted frame"),
 		"summary": summary, "packetBearingSummary": packet_bearing,
+		"attribution": {
+			"enabled": _attribution_enabled,
+			"acceptanceTimingComparable": not _attribution_enabled,
+			"attachment": _attribution_attachment.duplicate(true),
+			"processDeltaSource": "benchmark Main _process(delta)",
+			"skeletonFrameSource": "Engine.get_process_frames",
+			"combatTimingBoundary": ("delegated skeleton_updated callback only; "
+				+ "known handler invocation estimates are mirrored by source, not "
+				+ "directly intercepted or timed as total update_pose calls"),
+		},
 		"rates": {
 			"packetsPerSecond": _round(_sum_numeric(raw["packetsPerFrame"] as Array) / elapsed_seconds),
 			"actorCommandsPerSecond": _round(_sum_numeric(raw["commandsPerFrame"] as Array) / elapsed_seconds),
@@ -1772,6 +1868,53 @@ static func _csv_ints_static(raw: String, fallback: Array) -> Array:
 
 func _round(value: float) -> float:
 	return snappedf(value, 0.001)
+
+
+func _finite_numeric_series(values: Array) -> bool:
+	if values.is_empty():
+		return false
+	for value: Variant in values:
+		if not (value is int or value is float) or not is_finite(float(value)):
+			return false
+	return true
+
+
+func _all_int_value(values: Array, expected: int) -> bool:
+	if values.is_empty():
+		return false
+	for value: Variant in values:
+		if int(value) != expected:
+			return false
+	return true
+
+
+func _nonnegative_integral_series(values: Array) -> bool:
+	if values.is_empty():
+		return false
+	for value: Variant in values:
+		if not (value is int or value is float) or float(value) < 0.0 \
+				or float(value) != floor(float(value)):
+			return false
+	return true
+
+
+func _consistent_skeleton_counts(raw: Dictionary) -> bool:
+	var totals := raw["skeletonUpdatesPerFrame"] as Array
+	var uniques := raw["uniqueSkeletonsUpdatedPerFrame"] as Array
+	var maxima := raw["maximumSkeletonUpdatesPerActor"] as Array
+	if totals.size() != uniques.size() or totals.size() != maxima.size():
+		return false
+	for index: int in range(totals.size()):
+		var total := int(totals[index])
+		var unique := int(uniques[index])
+		var maximum := int(maxima[index])
+		if unique > total or maximum > total:
+			return false
+		if total == 0 and (unique != 0 or maximum != 0):
+			return false
+		if total > 0 and (unique == 0 or maximum == 0):
+			return false
+	return true
 
 
 func _expect(value: bool, label: String) -> bool:

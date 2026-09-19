@@ -134,6 +134,29 @@ def _required_bool(mapping: dict[str, Any], key: str, context: str) -> bool:
     return value
 
 
+def _validate_acceptance_attribution(measurement: dict[str, Any], context: str) -> None:
+    """Keep observer-instrumented diagnostics out of acceptance aggregates."""
+    attribution = measurement.get("attribution")
+    if attribution is None:
+        # Historical reports predate the explicit attribution attestation.
+        return
+    if not isinstance(attribution, dict):
+        raise SummaryError(f"{context}.attribution must be an object")
+    enabled = _required_bool(attribution, "enabled", f"{context}.attribution")
+    comparable = _required_bool(
+        attribution, "acceptanceTimingComparable", f"{context}.attribution"
+    )
+    if comparable == enabled:
+        raise SummaryError(
+            f"{context}: attribution and acceptance-comparable flags disagree"
+        )
+    if enabled:
+        raise SummaryError(
+            f"{context}: attribution diagnostics include observer/timer overhead "
+            "and cannot enter acceptance timing summaries"
+        )
+
+
 def _expected_active_count(count: int, activity: str, context: str) -> int:
     if activity == "idle":
         return 0
@@ -742,6 +765,8 @@ def _validate_run(
     dirty = data.get("dirty")
     if not isinstance(dirty, bool):
         raise SummaryError(f"{context}: dirty must be a boolean")
+    measurement = _required_dict(data, "measurement", context)
+    _validate_acceptance_attribution(measurement, f"{context}.measurement")
     driver = _validate_driver(data, context, allow_legacy_driver)
 
     planned = data.get("plannedCells")

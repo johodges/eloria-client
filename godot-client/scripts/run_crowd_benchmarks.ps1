@@ -24,6 +24,7 @@ param(
     [int]$WarmupMilliseconds = 1000,
     [int]$CadenceMilliseconds = 100,
     [switch]$Capture,
+    [switch]$Attribution,
     [string]$Label = "",
     [string]$InterferenceLabel = "shared host; unrelated Godot jobs may be present"
 )
@@ -137,6 +138,7 @@ $env:ELORIA_CROWD_SAMPLE_MSEC = [string]$SampleMilliseconds
 $env:ELORIA_CROWD_WARMUP_MSEC = [string]$WarmupMilliseconds
 $env:ELORIA_CROWD_CADENCE_MSEC = [string]$CadenceMilliseconds
 $env:ELORIA_CROWD_CAPTURE = if ($Capture) { "1" } else { "0" }
+$env:ELORIA_CROWD_ATTRIBUTION = if ($Attribution) { "1" } else { "0" }
 $env:ELORIA_CROWD_LABEL = $Label
 $env:ELORIA_CROWD_INTERFERENCE = $InterferenceLabel
 $env:ELORIA_CROWD_ARTIFACT_DIR = $runRoot
@@ -205,7 +207,8 @@ function Quote-ProcessArgument([string]$Value) {
     return '"' + ($Value -replace '"', '\"') + '"'
 }
 
-function Assert-BenchmarkReport([string]$JsonPath, [string]$ExpectedProfile) {
+function Assert-BenchmarkReport([string]$JsonPath, [string]$ExpectedProfile,
+        [bool]$ExpectedAttribution) {
     if (-not (Test-Path -LiteralPath $JsonPath)) {
         throw "Benchmark exited without writing $JsonPath."
     }
@@ -229,6 +232,77 @@ function Assert-BenchmarkReport([string]$JsonPath, [string]$ExpectedProfile) {
             $cells[0].count -ne 300 -or $cells[0].plannedActive -ne 100 -or
             $cells[0].fixture.before.frustumAndDrawVisible -ne 150)) {
         throw "Primary acceptance invariants are absent: $JsonPath"
+    }
+    $actualAttribution = [bool]$result.measurement.attribution.enabled
+    if ($actualAttribution -ne $ExpectedAttribution -or
+            [bool]$result.measurement.attribution.acceptanceTimingComparable -eq $ExpectedAttribution) {
+        throw "Benchmark attribution metadata does not match the requested diagnostic mode: $JsonPath"
+    }
+    if ($ExpectedAttribution) {
+        $requiredRaw = @(
+            "processDeltaMilliseconds", "mainProcessInclusiveMilliseconds",
+            "mainProcessCallsPerFrame",
+            "combatPoseFromSkeletonMilliseconds", "skeletonUpdatesPerFrame",
+            "uniqueSkeletonsUpdatedPerFrame", "maximumSkeletonUpdatesPerActor",
+            "mirroredEffectSetterMissilePerFrame",
+            "mirroredEffectSetterGroundMissilePerFrame",
+            "mirroredEffectSetterSpecialPerFrame",
+            "mirroredEffectSetterAnimationPerFrame", "mirroredSpellPalettePerFrame",
+            "mirroredSpellPowerPerFrame"
+        )
+        $countMetrics = @(
+            "mainProcessCallsPerFrame", "skeletonUpdatesPerFrame",
+            "uniqueSkeletonsUpdatedPerFrame", "maximumSkeletonUpdatesPerActor",
+            "mirroredEffectSetterMissilePerFrame",
+            "mirroredEffectSetterGroundMissilePerFrame",
+            "mirroredEffectSetterSpecialPerFrame",
+            "mirroredEffectSetterAnimationPerFrame", "mirroredSpellPalettePerFrame",
+            "mirroredSpellPowerPerFrame"
+        )
+        foreach ($cell in $cells) {
+            if (-not [bool]$cell.sample.attribution.enabled -or
+                    [bool]$cell.sample.attribution.acceptanceTimingComparable -or
+                    -not [bool]$cell.sample.attribution.attachment.ok) {
+                throw "Cell attribution attestation is absent or acceptance-comparable: $JsonPath"
+            }
+            $expectedSamples = @($cell.sample.raw.wallMilliseconds).Count
+            foreach ($metric in $requiredRaw) {
+                $values = @($cell.sample.raw.$metric)
+                if ($values.Count -ne $expectedSamples -or $values.Count -eq 0) {
+                    throw "Attribution metric $metric has incomplete raw coverage: $JsonPath"
+                }
+                foreach ($value in $values) {
+                    if ($null -eq $value -or -not ($value -is [ValueType])) {
+                        throw "Attribution metric $metric contains a non-number: $JsonPath"
+                    }
+                    $number = [double]$value
+                    if ([double]::IsNaN($number) -or [double]::IsInfinity($number)) {
+                        throw "Attribution metric $metric contains a non-finite number: $JsonPath"
+                    }
+                    if ($metric -in $countMetrics -and
+                            ($number -lt 0 -or $number -ne [math]::Truncate($number))) {
+                        throw "Attribution count $metric is not a nonnegative integer: $JsonPath"
+                    }
+                }
+                if ($null -eq $cell.sample.summary.$metric) {
+                    throw "Attribution metric $metric has no reported distribution: $JsonPath"
+                }
+            }
+            for ($index = 0; $index -lt $expectedSamples; $index++) {
+                $total = [int]$cell.sample.raw.skeletonUpdatesPerFrame[$index]
+                $unique = [int]$cell.sample.raw.uniqueSkeletonsUpdatedPerFrame[$index]
+                $maximum = [int]$cell.sample.raw.maximumSkeletonUpdatesPerActor[$index]
+                if ($unique -gt $total -or $maximum -gt $total -or
+                        ($total -eq 0 -and ($unique -ne 0 -or $maximum -ne 0)) -or
+                        ($total -gt 0 -and ($unique -eq 0 -or $maximum -eq 0))) {
+                    throw "Skeleton attribution counts are internally inconsistent: $JsonPath"
+                }
+            }
+            if (@($cell.sample.raw.mainProcessCallsPerFrame | Where-Object {
+                    [int]$_ -ne 1 }).Count -gt 0) {
+                throw "Attribution did not capture exactly one Main process call per frame: $JsonPath"
+            }
+        }
     }
 }
 
@@ -332,6 +406,7 @@ foreach ($trial in 1..$Repeats) {
 						scriptErrorsDetected = $false; schemaValid = $false; reportValid = $false
 						reportValidationError = "monitoring failed before report validation"
 						renderer = $renderingMethod; mode = $run; backend = $backend; trial = $trial
+						attributionEnabled = $Attribution.IsPresent
 					} | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $processPath
 					throw
 				}
@@ -345,7 +420,7 @@ foreach ($trial in 1..$Repeats) {
 				$schemaValid = $false
 				$reportValidationError = ""
 				try {
-					Assert-BenchmarkReport $jsonPath $Profile
+					Assert-BenchmarkReport $jsonPath $Profile $Attribution.IsPresent
 					$schemaValid = $true
 				}
 				catch {
@@ -383,6 +458,7 @@ foreach ($trial in 1..$Repeats) {
                     mode = $run
                     backend = $backend
                     trial = $trial
+					attributionEnabled = $Attribution.IsPresent
                 } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $processPath
 				if ($postReportStop) {
 					throw "$runId wrote a report but required forced post-report termination. See $logPath"

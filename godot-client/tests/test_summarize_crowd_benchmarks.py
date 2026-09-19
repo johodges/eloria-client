@@ -132,6 +132,40 @@ class RawDistributionValidationTests(unittest.TestCase):
             _validate_raw(raw, summary, packet_summary)
 
 
+class AttributionAdmissionTests(unittest.TestCase):
+    def test_accepts_legacy_or_explicit_uninstrumented_measurement(self) -> None:
+        SUMMARY._validate_acceptance_attribution({}, "measurement")
+        SUMMARY._validate_acceptance_attribution({
+            "attribution": {
+                "enabled": False,
+                "acceptanceTimingComparable": True,
+            },
+        }, "measurement")
+
+    def test_rejects_instrumented_diagnostic_from_acceptance_summary(self) -> None:
+        with self.assertRaisesRegex(
+                SUMMARY.SummaryError, "cannot enter acceptance timing summaries"):
+            SUMMARY._validate_acceptance_attribution({
+                "attribution": {
+                    "enabled": True,
+                    "acceptanceTimingComparable": False,
+                },
+            }, "measurement")
+
+    def test_rejects_missing_nonboolean_or_inconsistent_flags(self) -> None:
+        malformed = (
+            {"enabled": False},
+            {"enabled": "false", "acceptanceTimingComparable": True},
+            {"enabled": False, "acceptanceTimingComparable": False},
+            {"enabled": True, "acceptanceTimingComparable": True},
+        )
+        for attribution in malformed:
+            with self.subTest(attribution=attribution):
+                with self.assertRaises(SUMMARY.SummaryError):
+                    SUMMARY._validate_acceptance_attribution(
+                        {"attribution": attribution}, "measurement")
+
+
 class CompanionValidationTests(unittest.TestCase):
     def _validate(self, companion: dict, *, report_dirty: bool = False) -> None:
         with tempfile.TemporaryDirectory() as directory:
