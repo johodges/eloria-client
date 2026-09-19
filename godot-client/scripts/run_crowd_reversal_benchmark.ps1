@@ -148,7 +148,12 @@ function Assert-WorkspaceVariant([string]$Variant,
         $_.Substring(3).Trim('"') -replace '\\', '/'
     } | Sort-Object -Unique)
     $expectedChanged = if ($Variant -eq 'A') { @($relativePaths | Sort-Object) } else { @() }
-    if (@(Compare-Object $expectedChanged $changedPaths).Count) {
+    $statusMismatch = $expectedChanged.Count -ne $changedPaths.Count
+    if (-not $statusMismatch -and $expectedChanged.Count -gt 0) {
+        $statusMismatch = @(Compare-Object -ReferenceObject $expectedChanged `
+            -DifferenceObject $changedPaths).Count -ne 0
+    }
+    if ($statusMismatch) {
         throw "Unexpected tracked paths for $Variant. Expected [$($expectedChanged -join ', ')], " +
             "found [$($changedPaths -join ', ')]."
     }
