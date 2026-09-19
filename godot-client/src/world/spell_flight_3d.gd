@@ -17,17 +17,51 @@ var _path_spread := 0.0
 var _path_arc := 0.0
 var _tail_fraction := 0.58
 var _mesh := ImmediateMesh.new()
+var _native_mesh: ArrayMesh
+var _mesh_node: MeshInstance3D
 var _ribbon_material: ShaderMaterial
 var _glow_material: ShaderMaterial
+var _native_geometry: RefCounted
 static var _power_materials: Dictionary = {}
+static var _native_build_attempts := 0
+static var _native_build_successes := 0
+static var _native_build_fallbacks := 0
 
 func _init() -> void:
+	_initialize_native_presentation()
+	if _native_geometry != null:
+		_native_mesh = ArrayMesh.new()
 	_set_power_materials(1)
-	var node := MeshInstance3D.new()
-	node.name = "SpellEnergy"
-	node.mesh = _mesh
-	node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	add_child(node)
+	_mesh_node = MeshInstance3D.new()
+	_mesh_node.name = "SpellEnergy"
+	_mesh_node.mesh = _native_mesh if _native_geometry != null else _mesh
+	_mesh_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(_mesh_node)
+
+func _initialize_native_presentation() -> void:
+	var mode := OS.get_environment("ELORIA_NATIVE_PRESENTATION").strip_edges().to_lower()
+	if mode not in ["1", "flight", "both"]:
+		return
+	if not ClassDB.class_exists(&"NativeSpellFlightGeometry"):
+		var extension_path := "res://bin/native_crowd.gdextension"
+		if not FileAccess.file_exists(extension_path):
+			return
+		GDExtensionManager.load_extension(extension_path)
+	if not ClassDB.class_exists(&"NativeSpellFlightGeometry"):
+		return
+	_native_geometry = ClassDB.instantiate(&"NativeSpellFlightGeometry") as RefCounted
+	if _native_geometry != null and not _native_geometry.has_method(&"build"):
+		_native_geometry = null
+
+func native_presentation_active() -> bool:
+	return _native_geometry != null
+
+static func native_presentation_stats() -> Dictionary:
+	return {
+		"buildAttempts": _native_build_attempts,
+		"buildSuccesses": _native_build_successes,
+		"buildFallbacks": _native_build_fallbacks,
+	}
 
 func _set_power_materials(power: int) -> void:
 	if not _power_materials.has(power):
@@ -89,12 +123,34 @@ func point_at(progress: float, strand := 0) -> Vector3:
 
 func draw_at(time: float) -> void:
 	_mesh.clear_surfaces()
+	if _native_mesh != null:
+		_native_mesh.clear_surfaces()
 	if time >= duration + AFTERGLOW:
 		return
 	var camera := get_viewport().get_camera_3d()
 	var view := camera.global_basis.z.normalized() if camera != null else Vector3(0.3, 0.5, 1).normalized()
 	var right := camera.global_basis.x.normalized() if camera != null else Vector3.RIGHT
 	var up := view.cross(right).normalized()
+	if _native_geometry != null:
+		_native_build_attempts += 1
+		var magnitude := SpellPresentation.power_scale(power_level)
+		var count := SpellPresentation.power_count(18, power_level)
+		var built: Variant = _native_geometry.call("build", effect_id, tint, start,
+			destination, _side, _up, _path_spread, _path_arc, _tail_fraction,
+			duration, time, view, right, up, magnitude, count)
+		if _native_output_valid(built, time):
+			var native_arrays: Array = built
+			if time >= 0.0:
+				_commit_native_surface(native_arrays[0], native_arrays[1],
+					native_arrays[2], _ribbon_material)
+			_commit_native_surface(native_arrays[3], native_arrays[4],
+				native_arrays[5], _glow_material)
+			_native_build_successes += 1
+			return
+		_native_build_fallbacks += 1
+		_native_geometry = null
+		_mesh_node.mesh = _mesh
+		_native_mesh = null
 	var p := clampf(time / duration, 0.0, 1.0)
 	var fade := 1.0 - smoothstep(duration, duration + AFTERGLOW, time)
 	var magnitude := SpellPresentation.power_scale(power_level)
@@ -138,6 +194,46 @@ func draw_at(time: float) -> void:
 			color.a = (1.0 - age) * fade * 0.7
 			_glow(point, (0.025 + float(i % 3) * 0.009) * magnitude, color, right, up)
 	_mesh.surface_end()
+
+func _native_output_valid(built: Variant, time: float) -> bool:
+	if typeof(built) != TYPE_ARRAY:
+		return false
+	var arrays: Array = built
+	if arrays.size() != 6:
+		return false
+	if (typeof(arrays[0]) != TYPE_PACKED_VECTOR3_ARRAY
+			or typeof(arrays[1]) != TYPE_PACKED_COLOR_ARRAY
+			or typeof(arrays[2]) != TYPE_PACKED_VECTOR2_ARRAY
+			or typeof(arrays[3]) != TYPE_PACKED_VECTOR3_ARRAY
+			or typeof(arrays[4]) != TYPE_PACKED_COLOR_ARRAY
+			or typeof(arrays[5]) != TYPE_PACKED_VECTOR2_ARRAY):
+		return false
+	var ribbon_vertices: PackedVector3Array = arrays[0]
+	var ribbon_colors: PackedColorArray = arrays[1]
+	var ribbon_uvs: PackedVector2Array = arrays[2]
+	var glow_vertices: PackedVector3Array = arrays[3]
+	var glow_colors: PackedColorArray = arrays[4]
+	var glow_uvs: PackedVector2Array = arrays[5]
+	var expected_ribbon := (3 if effect_id in [10, 86] else 2) * SEGMENTS * 6 \
+		if time >= 0.0 else 0
+	return (ribbon_vertices.size() == expected_ribbon
+		and ribbon_colors.size() == expected_ribbon
+		and ribbon_uvs.size() == expected_ribbon
+		and glow_vertices.size() >= 18
+		and glow_vertices.size() % 6 == 0
+		and glow_colors.size() == glow_vertices.size()
+		and glow_uvs.size() == glow_vertices.size())
+
+func _commit_native_surface(vertices: PackedVector3Array,
+		colors: PackedColorArray, uvs: PackedVector2Array,
+		material: Material) -> void:
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_COLOR] = colors
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
+	_native_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	_native_mesh.surface_set_material(_native_mesh.get_surface_count() - 1, material)
 
 func _segment(a: Vector3, b: Vector3, width: float, color: Color, view: Vector3) -> void:
 	var side := (b - a).cross(view).normalized() * width * 0.5
