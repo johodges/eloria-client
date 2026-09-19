@@ -218,7 +218,10 @@ def _validate_native_presentation(
     if not isinstance(value, dict):
         raise SummaryError(f"{context}.nativePresentation must be an object")
     mode = _required_text(value, "requestedMode", f"{context}.nativePresentation")
-    environments = {"off": "0", "cape": "cape", "flight": "flight", "both": "both"}
+    environments = {
+        "off": "0", "cape": "cape", "flight": "flight", "both": "both",
+        "world": "world", "all": "all",
+    }
     if mode not in environments:
         raise SummaryError(f"{context}.nativePresentation.requestedMode is unsupported")
     environment = _required_text(
@@ -231,7 +234,7 @@ def _validate_native_presentation(
     ):
         raise SummaryError(f"{context}.nativePresentation.reducerIndependent must be true")
 
-    aggregate_keys = (
+    base_aggregate_keys = (
         "capeModifierInstancesMaximum", "capeStatsSupportedInstancesMaximum",
         "capeActiveInstancesMaximum", "capeNativeBackendInstancesMaximum",
         "capeGdscriptBackendInstancesMaximum", "capeNativeCalls",
@@ -240,15 +243,41 @@ def _validate_native_presentation(
         "flightBuildSuccesses", "flightBuildFallbacks",
     )
     actual = _required_dict(value, "actual", f"{context}.nativePresentation")
+    world_aggregate_keys = (
+        "worldInstancesMaximum", "worldActiveInstancesMaximum",
+        "worldBuildAttempts", "worldBuildSuccesses", "worldBuildFallbacks",
+    )
+    world_actual_fields = ("worldStatsSupported", *world_aggregate_keys)
+    world_field_presence = [key in actual for key in world_actual_fields]
+    if any(world_field_presence) and not all(world_field_presence):
+        raise SummaryError(
+            f"{context}.nativePresentation.actual has a partial world attestation"
+        )
+    world_attested = all(world_field_presence)
+    if mode in {"world", "all"} and not world_attested:
+        raise SummaryError(
+            f"{context}.nativePresentation requested {mode} without world attestation"
+        )
+    if world_attested and not isinstance(actual["worldStatsSupported"], bool):
+        raise SummaryError(
+            f"{context}.nativePresentation.actual.worldStatsSupported must be boolean"
+        )
+    aggregate_keys = base_aggregate_keys + (
+        world_aggregate_keys if world_attested else ()
+    )
     checked = {
         key: _nonnegative_counter(actual, key, f"{context}.nativePresentation.actual")
         for key in aggregate_keys
     }
-    for key in ("capeMatchedRequest", "flightMatchedRequest", "matchedRequest"):
+    match_keys = ["capeMatchedRequest", "flightMatchedRequest", "matchedRequest"]
+    if world_attested:
+        match_keys.append("worldMatchedRequest")
+    for key in match_keys:
         if not _required_bool(actual, key, f"{context}.nativePresentation.actual"):
             raise SummaryError(f"{context}.nativePresentation.actual.{key} must be true")
 
     observed = {key: 0 for key in aggregate_keys}
+    observed_world_stats_supported = False
     cape_snapshot_keys = (
         "modifierInstances", "statsSupportedInstances", "activeInstances",
         "nativeBackendInstances", "gdscriptBackendInstances", "nativeCalls",
@@ -258,10 +287,14 @@ def _validate_native_presentation(
         "instances", "activeInstances", "buildAttempts", "buildSuccesses",
         "buildFallbacks",
     )
-    delta_keys = (
+    base_delta_keys = (
         "capeNativeCalls", "capeFallbackCalls", "flightBuildAttempts",
         "flightBuildSuccesses", "flightBuildFallbacks",
     )
+    world_delta_keys = (
+        "worldBuildAttempts", "worldBuildSuccesses", "worldBuildFallbacks",
+    )
+    delta_keys = base_delta_keys + (world_delta_keys if world_attested else ())
     for index, cell in enumerate(cells):
         cell_context = f"{context}.cells[{index}].nativePresentation"
         if not isinstance(cell, dict):
@@ -274,7 +307,9 @@ def _validate_native_presentation(
             key: _nonnegative_counter(delta, key, f"{cell_context}.delta")
             for key in delta_keys
         }
-        snapshots: dict[str, tuple[dict[str, int], dict[str, int]]] = {}
+        snapshots: dict[
+            str, tuple[dict[str, int], dict[str, int], dict[str, int]]
+        ] = {}
         for phase in ("beforeSample", "afterSample"):
             snapshot = _required_dict(attestation, phase, cell_context)
             cape = _required_dict(snapshot, "cape", f"{cell_context}.{phase}")
@@ -291,7 +326,30 @@ def _validate_native_presentation(
                 raise SummaryError(
                     f"{cell_context}.{phase}.flight.statsSupported must be boolean"
                 )
-            snapshots[phase] = (cape_values, flight_values)
+            world_values: dict[str, int] = {}
+            if world_attested:
+                world = _required_dict(snapshot, "world", f"{cell_context}.{phase}")
+                if not isinstance(world.get("statsSupported"), bool):
+                    raise SummaryError(
+                        f"{cell_context}.{phase}.world.statsSupported must be boolean"
+                    )
+                observed_world_stats_supported = (
+                    observed_world_stats_supported or world["statsSupported"]
+                )
+                world_values = {
+                    key: _nonnegative_counter(
+                        world, key, f"{cell_context}.{phase}.world"
+                    )
+                    for key in (
+                        "instances", "activeInstances", "buildAttempts",
+                        "buildSuccesses", "buildFallbacks",
+                    )
+                }
+            elif "world" in snapshot:
+                raise SummaryError(
+                    f"{cell_context}.{phase}.world is present without top-level attestation"
+                )
+            snapshots[phase] = (cape_values, flight_values, world_values)
             observed["capeModifierInstancesMaximum"] = max(
                 observed["capeModifierInstancesMaximum"], cape_values["modifierInstances"]
             )
@@ -316,8 +374,16 @@ def _validate_native_presentation(
             observed["flightActiveInstancesMaximum"] = max(
                 observed["flightActiveInstancesMaximum"], flight_values["activeInstances"]
             )
-        cape_before, flight_before = snapshots["beforeSample"]
-        cape_after, flight_after = snapshots["afterSample"]
+            if world_attested:
+                observed["worldInstancesMaximum"] = max(
+                    observed["worldInstancesMaximum"], world_values["instances"]
+                )
+                observed["worldActiveInstancesMaximum"] = max(
+                    observed["worldActiveInstancesMaximum"],
+                    world_values["activeInstances"],
+                )
+        cape_before, flight_before, world_before = snapshots["beforeSample"]
+        cape_after, flight_after, world_after = snapshots["afterSample"]
         expected_delta = {
             "capeNativeCalls": cape_after["nativeCalls"] - cape_before["nativeCalls"],
             "capeFallbackCalls": cape_after["fallbackCalls"] - cape_before["fallbackCalls"],
@@ -331,6 +397,18 @@ def _validate_native_presentation(
                 flight_after["buildFallbacks"] - flight_before["buildFallbacks"]
             ),
         }
+        if world_attested:
+            expected_delta.update({
+                "worldBuildAttempts": (
+                    world_after["buildAttempts"] - world_before["buildAttempts"]
+                ),
+                "worldBuildSuccesses": (
+                    world_after["buildSuccesses"] - world_before["buildSuccesses"]
+                ),
+                "worldBuildFallbacks": (
+                    world_after["buildFallbacks"] - world_before["buildFallbacks"]
+                ),
+            })
         if any(value < 0 for value in expected_delta.values()):
             raise SummaryError(f"{cell_context} native counters decreased during sampling")
         if reported_delta != expected_delta:
@@ -343,9 +421,15 @@ def _validate_native_presentation(
         raise SummaryError(
             f"{context}.nativePresentation.actual does not match per-cell attestations"
         )
+    if world_attested and actual["worldStatsSupported"] != observed_world_stats_supported:
+        raise SummaryError(
+            f"{context}.nativePresentation.actual.worldStatsSupported does not "
+            "match per-cell snapshots"
+        )
 
-    wants_cape = mode in {"cape", "both"}
-    wants_flight = mode in {"flight", "both"}
+    wants_cape = mode in {"cape", "both", "all"}
+    wants_flight = mode in {"flight", "both", "all"}
+    wants_world = mode in {"world", "all"}
     cape_active = (
         checked["capeActiveInstancesMaximum"] > 0
         and checked["capeNativeBackendInstancesMaximum"] > 0
@@ -376,12 +460,38 @@ def _validate_native_presentation(
         raise SummaryError(
             f"{context}.nativePresentation actual activity does not match requested mode"
         )
+    world_matches = True
+    if world_attested:
+        world_active = (
+            actual["worldStatsSupported"]
+            and checked["worldActiveInstancesMaximum"] > 0
+            and checked["worldBuildAttempts"] > 0
+            and checked["worldBuildSuccesses"] == checked["worldBuildAttempts"]
+            and checked["worldBuildFallbacks"] == 0
+        )
+        world_inactive = (
+            checked["worldActiveInstancesMaximum"] == 0
+            and checked["worldBuildAttempts"] == 0
+            and checked["worldBuildSuccesses"] == 0
+            and checked["worldBuildFallbacks"] == 0
+        )
+        world_matches = world_active if wants_world else world_inactive
+    if not world_matches:
+        raise SummaryError(
+            f"{context}.nativePresentation world activity does not match requested mode"
+        )
+    checked_actual = dict(checked)
+    if world_attested:
+        checked_actual["worldStatsSupported"] = actual["worldStatsSupported"]
     return {
         "attestation": "attested",
+        "worldAttested": world_attested,
         "requestedMode": mode,
         "environmentValue": environment,
-        "requestedComponents": {"cape": wants_cape, "flight": wants_flight},
-        "actual": checked,
+        "requestedComponents": {
+            "cape": wants_cape, "flight": wants_flight, "world": wants_world,
+        },
+        "actual": checked_actual,
     }
 
 
@@ -1527,9 +1637,12 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
         headless_values = {run["headless"] for run in group_runs}
         presentation_states = {
             (
-                "legacy-unattested"
+                ("legacy-unattested", False)
                 if run["nativePresentation"] is None
-                else run["nativePresentation"]["requestedMode"]
+                else (
+                    run["nativePresentation"]["requestedMode"],
+                    run["nativePresentation"]["worldAttested"],
+                )
             )
             for run in group_runs
         }
@@ -1585,6 +1698,7 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
         if first_presentation is None:
             group_presentation = {
                 "attestation": "legacy-unattested",
+                "worldAttested": False,
                 "requestedMode": None,
                 "environmentValue": None,
                 "requestedComponents": None,
@@ -1593,6 +1707,7 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
         else:
             group_presentation = {
                 "attestation": first_presentation["attestation"],
+                "worldAttested": first_presentation["worldAttested"],
                 "requestedMode": first_presentation["requestedMode"],
                 "environmentValue": first_presentation["environmentValue"],
                 "requestedComponents": first_presentation["requestedComponents"],
@@ -1725,6 +1840,7 @@ def _markdown(report: dict[str, Any]) -> str:
     for group in report["groups"]:
         presentation = group.get("nativePresentation") or {
             "attestation": "legacy-unattested",
+            "worldAttested": False,
             "requestedMode": None,
             "environmentValue": None,
             "activityPerRun": [],
@@ -1771,7 +1887,15 @@ def _markdown(report: dict[str, Any]) -> str:
                 f"{actual['capeFallbackCalls']}; flight active max "
                 f"{actual['flightActiveInstancesMaximum']}, flight builds "
                 f"{actual['flightBuildSuccesses']}/{actual['flightBuildAttempts']}, "
-                f"flight fallback {actual['flightBuildFallbacks']}."
+                f"flight fallback {actual['flightBuildFallbacks']}"
+                + (
+                    "; world active max "
+                    f"{actual['worldActiveInstancesMaximum']}, world builds "
+                    f"{actual['worldBuildSuccesses']}/{actual['worldBuildAttempts']}, "
+                    f"world fallback {actual['worldBuildFallbacks']}"
+                    if presentation["worldAttested"] else ""
+                )
+                + "."
             )
         for caveat in group["caveats"]:
             lines.append(f"- {caveat}")

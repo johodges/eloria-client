@@ -9,7 +9,7 @@ param(
     [string[]]$Renderer = @("gl_compatibility"),
     [ValidateSet("Both", "GDScript", "Native")]
     [string]$NativeBackend = "Both",
-    [ValidateSet("Off", "Cape", "Flight", "Both")]
+    [ValidateSet("Off", "Cape", "Flight", "Both", "World", "All")]
     [string]$NativePresentation = "Off",
     [ValidateRange(1, 20)]
     [int]$Repeats = 3,
@@ -77,6 +77,8 @@ $nativePresentationEnvironment = switch ($NativePresentation) {
     "Cape" { "cape" }
     "Flight" { "flight" }
     "Both" { "both" }
+    "World" { "world" }
+    "All" { "all" }
 }
 # Set this unconditionally so a parent shell cannot contaminate comparisons.
 $env:ELORIA_NATIVE_PRESENTATION = $nativePresentationEnvironment
@@ -99,6 +101,7 @@ $sourceRelativePaths = @(
     "godot-client/src/state/app_state.gd",
     "godot-client/src/app/main.gd",
     "godot-client/src/actors/replicated_actor_3d.gd",
+    "godot-client/src/actors/ranger_bow_3d.gd",
     "godot-client/src/actors/cape_cloth.gd",
     "godot-client/src/actors/combat_presentation_3d.gd",
     "godot-client/src/world/world_effect_3d.gd",
@@ -118,7 +121,9 @@ $optionalSourceRelativePaths = @(
     "godot-client/native/native_crowd/src/native_cape_constraint_kernel.cpp",
     "godot-client/native/native_crowd/src/native_cape_constraint_kernel.h",
     "godot-client/native/native_crowd/src/native_spell_flight_geometry.cpp",
-    "godot-client/native/native_crowd/src/native_spell_flight_geometry.h"
+    "godot-client/native/native_crowd/src/native_spell_flight_geometry.h",
+    "godot-client/native/native_crowd/src/native_world_effect_geometry.cpp",
+    "godot-client/native/native_crowd/src/native_world_effect_geometry.h"
 )
 foreach ($relativePath in $optionalSourceRelativePaths) {
     if (Test-Path -LiteralPath (Join-Path $repositoryRoot $relativePath)) {
@@ -262,6 +267,8 @@ function Assert-BenchmarkReport([string]$JsonPath, [string]$ExpectedProfile,
         "Cape" { "cape" }
         "Flight" { "flight" }
         "Both" { "both" }
+        "World" { "world" }
+        "All" { "all" }
     }
     $presentation = $result.nativePresentation
     $actualPresentation = $presentation.actual
@@ -270,11 +277,13 @@ function Assert-BenchmarkReport([string]$JsonPath, [string]$ExpectedProfile,
             -not [bool]$presentation.reducerIndependent -or
             -not [bool]$actualPresentation.matchedRequest -or
             -not [bool]$actualPresentation.capeMatchedRequest -or
-            -not [bool]$actualPresentation.flightMatchedRequest) {
+            -not [bool]$actualPresentation.flightMatchedRequest -or
+            -not [bool]$actualPresentation.worldMatchedRequest) {
         throw "Native presentation request/activity attestation is invalid: $JsonPath"
     }
-    $wantsCape = $ExpectedNativePresentation -in @("Cape", "Both")
-    $wantsFlight = $ExpectedNativePresentation -in @("Flight", "Both")
+    $wantsCape = $ExpectedNativePresentation -in @("Cape", "Both", "All")
+    $wantsFlight = $ExpectedNativePresentation -in @("Flight", "Both", "All")
+    $wantsWorld = $ExpectedNativePresentation -in @("World", "All")
     if ($wantsCape) {
         if ([int]$actualPresentation.capeActiveInstancesMaximum -le 0 -or
                 [int]$actualPresentation.capeNativeBackendInstancesMaximum -le 0 -or
@@ -303,6 +312,22 @@ function Assert-BenchmarkReport([string]$JsonPath, [string]$ExpectedProfile,
             [int]$actualPresentation.flightBuildSuccesses -ne 0 -or
             [int]$actualPresentation.flightBuildFallbacks -ne 0) {
         throw "Unrequested native flight component was active: $JsonPath"
+    }
+    if ($wantsWorld) {
+        if (-not [bool]$actualPresentation.worldStatsSupported -or
+                [int]$actualPresentation.worldActiveInstancesMaximum -le 0 -or
+                [int]$actualPresentation.worldBuildAttempts -le 0 -or
+                [int]$actualPresentation.worldBuildSuccesses -ne
+                    [int]$actualPresentation.worldBuildAttempts -or
+                [int]$actualPresentation.worldBuildFallbacks -ne 0) {
+            throw "Requested native world component was inactive or fell back: $JsonPath"
+        }
+    }
+    elseif ([int]$actualPresentation.worldActiveInstancesMaximum -ne 0 -or
+            [int]$actualPresentation.worldBuildAttempts -ne 0 -or
+            [int]$actualPresentation.worldBuildSuccesses -ne 0 -or
+            [int]$actualPresentation.worldBuildFallbacks -ne 0) {
+        throw "Unrequested native world component was active: $JsonPath"
     }
     $solverCells = @($cells | Where-Object { $_.features -eq "cape_solver_off" })
     $hasSolverDiagnostic = $solverCells.Count -gt 0

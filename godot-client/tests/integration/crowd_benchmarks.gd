@@ -8,6 +8,7 @@ extends SceneTree
 const BENCHMARK_MAIN_PATH := "res://tests/integration/crowd_benchmark_main.tscn"
 const MODELS := "res://data/actors/models.json"
 const SPELL_FLIGHT := preload("res://src/world/spell_flight_3d.gd")
+const WORLD_EFFECT := preload("res://src/world/world_effect_3d.gd")
 const FIRST_ACTOR_ID := 14000
 const CAPE_PART := 2
 const CAPE_SOLVER_OFF_FEATURE := "cape_solver_off"
@@ -152,7 +153,8 @@ func _run() -> void:
 		"unixTime": int(Time.get_unix_time_from_system()),
 	}
 	if not _expect(_native_presentation_mode != "invalid",
-			"ELORIA_NATIVE_PRESENTATION is one of 0/off, cape, flight, both/1"):
+			("ELORIA_NATIVE_PRESENTATION is one of 0/off, cape, flight, "
+			+ "both/1, world, all")):
 		_finish()
 		return
 	var user_data := OS.get_user_data_dir().replace("\\", "/")
@@ -674,6 +676,10 @@ func _requested_native_presentation_mode() -> String:
 			return "flight"
 		"1", "both":
 			return "both"
+		"world":
+			return "world"
+		"all":
+			return "all"
 	return "invalid"
 
 
@@ -731,10 +737,36 @@ func _native_flight_snapshot() -> Dictionary:
 	return result
 
 
+func _native_world_snapshot() -> Dictionary:
+	var world_script := WORLD_EFFECT as Script
+	var result := {
+		"statsSupported": world_script.has_method(&"native_presentation_stats"),
+		"instances": 0,
+		"activeInstances": 0,
+		"buildAttempts": 0,
+		"buildSuccesses": 0,
+		"buildFallbacks": 0,
+	}
+	if bool(result["statsSupported"]):
+		var stats := world_script.call(&"native_presentation_stats") as Dictionary
+		result["buildAttempts"] = int(stats.get("buildAttempts", 0))
+		result["buildSuccesses"] = int(stats.get("buildSuccesses", 0))
+		result["buildFallbacks"] = int(stats.get("buildFallbacks", 0))
+	for node: Node in root.find_children("*", "", true, false):
+		if node.get_script() != WORLD_EFFECT:
+			continue
+		result["instances"] += 1
+		if node.has_method(&"native_presentation_active"):
+			result["activeInstances"] += int(bool(
+				node.call(&"native_presentation_active")))
+	return result
+
+
 func _native_presentation_snapshot(nodes: Dictionary) -> Dictionary:
 	return {
 		"cape": _native_cape_snapshot(nodes),
 		"flight": _native_flight_snapshot(),
+		"world": _native_world_snapshot(),
 	}
 
 
@@ -750,6 +782,8 @@ func _native_presentation_cell_attestation(before: Dictionary,
 	var cape_after := after["cape"] as Dictionary
 	var flight_before := before["flight"] as Dictionary
 	var flight_after := after["flight"] as Dictionary
+	var world_before := before["world"] as Dictionary
+	var world_after := after["world"] as Dictionary
 	return {
 		"requestedMode": _native_presentation_mode,
 		"beforeSample": before,
@@ -765,6 +799,12 @@ func _native_presentation_cell_attestation(before: Dictionary,
 				flight_before, flight_after, "buildSuccesses"),
 			"flightBuildFallbacks": _counter_delta(
 				flight_before, flight_after, "buildFallbacks"),
+			"worldBuildAttempts": _counter_delta(
+				world_before, world_after, "buildAttempts"),
+			"worldBuildSuccesses": _counter_delta(
+				world_before, world_after, "buildSuccesses"),
+			"worldBuildFallbacks": _counter_delta(
+				world_before, world_after, "buildFallbacks"),
 		},
 	}
 
@@ -783,6 +823,12 @@ func _finalize_native_presentation_report() -> void:
 		"flightBuildAttempts": 0,
 		"flightBuildSuccesses": 0,
 		"flightBuildFallbacks": 0,
+		"worldStatsSupported": false,
+		"worldInstancesMaximum": 0,
+		"worldActiveInstancesMaximum": 0,
+		"worldBuildAttempts": 0,
+		"worldBuildSuccesses": 0,
+		"worldBuildFallbacks": 0,
 	}
 	for raw_cell: Variant in _report["cells"] as Array:
 		var cell := raw_cell as Dictionary
@@ -793,6 +839,7 @@ func _finalize_native_presentation_report() -> void:
 		for snapshot: Dictionary in [before, after]:
 			var cape := snapshot.get("cape", {}) as Dictionary
 			var flight := snapshot.get("flight", {}) as Dictionary
+			var world := snapshot.get("world", {}) as Dictionary
 			actual["capeModifierInstancesMaximum"] = maxi(
 				int(actual["capeModifierInstancesMaximum"]),
 				int(cape.get("modifierInstances", 0)))
@@ -814,13 +861,25 @@ func _finalize_native_presentation_report() -> void:
 			actual["flightActiveInstancesMaximum"] = maxi(
 				int(actual["flightActiveInstancesMaximum"]),
 				int(flight.get("activeInstances", 0)))
+			actual["worldStatsSupported"] = bool(actual["worldStatsSupported"]) \
+				or bool(world.get("statsSupported", false))
+			actual["worldInstancesMaximum"] = maxi(
+				int(actual["worldInstancesMaximum"]),
+				int(world.get("instances", 0)))
+			actual["worldActiveInstancesMaximum"] = maxi(
+				int(actual["worldActiveInstancesMaximum"]),
+				int(world.get("activeInstances", 0)))
 		actual["capeNativeCalls"] += int(delta.get("capeNativeCalls", 0))
 		actual["capeFallbackCalls"] += int(delta.get("capeFallbackCalls", 0))
 		actual["flightBuildAttempts"] += int(delta.get("flightBuildAttempts", 0))
 		actual["flightBuildSuccesses"] += int(delta.get("flightBuildSuccesses", 0))
 		actual["flightBuildFallbacks"] += int(delta.get("flightBuildFallbacks", 0))
-	var wants_cape := _native_presentation_mode in ["cape", "both"]
-	var wants_flight := _native_presentation_mode in ["flight", "both"]
+		actual["worldBuildAttempts"] += int(delta.get("worldBuildAttempts", 0))
+		actual["worldBuildSuccesses"] += int(delta.get("worldBuildSuccesses", 0))
+		actual["worldBuildFallbacks"] += int(delta.get("worldBuildFallbacks", 0))
+	var wants_cape := _native_presentation_mode in ["cape", "both", "all"]
+	var wants_flight := _native_presentation_mode in ["flight", "both", "all"]
+	var wants_world := _native_presentation_mode in ["world", "all"]
 	var cape_matches := (int(actual["capeActiveInstancesMaximum"]) > 0
 		and int(actual["capeNativeBackendInstancesMaximum"]) > 0
 		and int(actual["capeNativeCalls"]) > 0
@@ -837,15 +896,28 @@ func _finalize_native_presentation_report() -> void:
 			and int(actual["flightBuildAttempts"]) == 0
 			and int(actual["flightBuildSuccesses"]) == 0
 			and int(actual["flightBuildFallbacks"]) == 0)
+	var world_matches := (bool(actual["worldStatsSupported"])
+		and int(actual["worldActiveInstancesMaximum"]) > 0
+		and int(actual["worldBuildAttempts"]) > 0
+		and int(actual["worldBuildSuccesses"]) == int(actual["worldBuildAttempts"])
+		and int(actual["worldBuildFallbacks"]) == 0) if wants_world else (
+			int(actual["worldActiveInstancesMaximum"]) == 0
+			and int(actual["worldBuildAttempts"]) == 0
+			and int(actual["worldBuildSuccesses"]) == 0
+			and int(actual["worldBuildFallbacks"]) == 0)
 	actual["capeMatchedRequest"] = cape_matches
 	actual["flightMatchedRequest"] = flight_matches
-	actual["matchedRequest"] = cape_matches and flight_matches
+	actual["worldMatchedRequest"] = world_matches
+	actual["matchedRequest"] = cape_matches and flight_matches and world_matches
 	(_report["nativePresentation"] as Dictionary)["actual"] = actual
 	_expect(cape_matches,
 		"native cape presentation activity and calls match requested mode %s" %
 			_native_presentation_mode)
 	_expect(flight_matches,
 		"native flight presentation activity and calls match requested mode %s" %
+			_native_presentation_mode)
+	_expect(world_matches,
+		"native world presentation activity and calls match requested mode %s" %
 			_native_presentation_mode)
 
 

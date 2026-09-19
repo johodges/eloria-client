@@ -237,9 +237,14 @@ class AcceptanceEligibilityTests(unittest.TestCase):
 
 class NativePresentationAdmissionTests(unittest.TestCase):
     @staticmethod
-    def _fixture(mode: str) -> tuple[dict, list[dict]]:
-        wants_cape = mode in {"cape", "both"}
-        wants_flight = mode in {"flight", "both"}
+    def _fixture(
+        mode: str, *, world_attested: bool | None = None
+    ) -> tuple[dict, list[dict]]:
+        if world_attested is None:
+            world_attested = mode in {"world", "all"}
+        wants_cape = mode in {"cape", "both", "all"}
+        wants_flight = mode in {"flight", "both", "all"}
+        wants_world = mode in {"world", "all"}
         cape_before = {
             "modifierInstances": 180,
             "statsSupportedInstances": 180,
@@ -262,6 +267,17 @@ class NativePresentationAdmissionTests(unittest.TestCase):
         flight_after = dict(flight_before)
         flight_after["buildAttempts"] = 10 if wants_flight else 0
         flight_after["buildSuccesses"] = 10 if wants_flight else 0
+        world_before = {
+            "statsSupported": True,
+            "instances": 4 if wants_world else 0,
+            "activeInstances": 4 if wants_world else 0,
+            "buildAttempts": 7 if wants_world else 0,
+            "buildSuccesses": 7 if wants_world else 0,
+            "buildFallbacks": 0,
+        }
+        world_after = dict(world_before)
+        world_after["buildAttempts"] = 14 if wants_world else 0
+        world_after["buildSuccesses"] = 14 if wants_world else 0
         actual = {
             "capeModifierInstancesMaximum": 180,
             "capeStatsSupportedInstancesMaximum": 180,
@@ -279,10 +295,21 @@ class NativePresentationAdmissionTests(unittest.TestCase):
             "flightMatchedRequest": True,
             "matchedRequest": True,
         }
+        if world_attested:
+            actual.update({
+                "worldStatsSupported": True,
+                "worldInstancesMaximum": 4 if wants_world else 0,
+                "worldActiveInstancesMaximum": 4 if wants_world else 0,
+                "worldBuildAttempts": 7 if wants_world else 0,
+                "worldBuildSuccesses": 7 if wants_world else 0,
+                "worldBuildFallbacks": 0,
+                "worldMatchedRequest": True,
+            })
         presentation = {
             "requestedMode": mode,
             "environmentValue": {
                 "off": "0", "cape": "cape", "flight": "flight", "both": "both",
+                "world": "world", "all": "all",
             }[mode],
             "reducerIndependent": True,
             "actual": actual,
@@ -301,16 +328,75 @@ class NativePresentationAdmissionTests(unittest.TestCase):
                 },
             },
         }]
+        if world_attested:
+            cells[0]["nativePresentation"]["beforeSample"]["world"] = world_before
+            cells[0]["nativePresentation"]["afterSample"]["world"] = world_after
+            cells[0]["nativePresentation"]["delta"].update({
+                "worldBuildAttempts": 7 if wants_world else 0,
+                "worldBuildSuccesses": 7 if wants_world else 0,
+                "worldBuildFallbacks": 0,
+            })
         return presentation, cells
 
     def test_accepts_legacy_and_each_attested_mode(self) -> None:
         self.assertIsNone(SUMMARY._validate_native_presentation(None, [], "run"))
-        for mode in ("off", "cape", "flight", "both"):
+        for mode in ("off", "cape", "flight", "both", "world", "all"):
             with self.subTest(mode=mode):
                 presentation, cells = self._fixture(mode)
                 checked = SUMMARY._validate_native_presentation(
                     presentation, cells, "run")
                 self.assertEqual(mode, checked["requestedMode"])
+        presentation, cells = self._fixture("both", world_attested=True)
+        checked = SUMMARY._validate_native_presentation(presentation, cells, "run")
+        self.assertTrue(checked["worldAttested"])
+
+    def test_rejects_world_request_without_world_attestation(self) -> None:
+        presentation, cells = self._fixture("world", world_attested=False)
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "without world attestation"):
+            SUMMARY._validate_native_presentation(presentation, cells, "run")
+
+    def test_rejects_world_fallback_or_unrequested_activity(self) -> None:
+        presentation, cells = self._fixture("all")
+        cells[0]["nativePresentation"]["delta"]["worldBuildFallbacks"] = 1
+        cells[0]["nativePresentation"]["afterSample"]["world"]["buildFallbacks"] = 1
+        presentation["actual"]["worldBuildFallbacks"] = 1
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "world activity"):
+            SUMMARY._validate_native_presentation(presentation, cells, "run")
+
+    def test_rejects_world_activity_when_both_does_not_request_world(self) -> None:
+        presentation, cells = self._fixture("both", world_attested=True)
+        before = cells[0]["nativePresentation"]["beforeSample"]["world"]
+        after = cells[0]["nativePresentation"]["afterSample"]["world"]
+        before.update({
+            "instances": 4,
+            "activeInstances": 4,
+            "buildAttempts": 7,
+            "buildSuccesses": 7,
+        })
+        after.update({
+            "instances": 4,
+            "activeInstances": 4,
+            "buildAttempts": 14,
+            "buildSuccesses": 14,
+        })
+        cells[0]["nativePresentation"]["delta"].update({
+            "worldBuildAttempts": 7,
+            "worldBuildSuccesses": 7,
+        })
+        presentation["actual"].update({
+            "worldInstancesMaximum": 4,
+            "worldActiveInstancesMaximum": 4,
+            "worldBuildAttempts": 7,
+            "worldBuildSuccesses": 7,
+        })
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "world activity"):
+            SUMMARY._validate_native_presentation(presentation, cells, "run")
+
+    def test_rejects_partial_world_attestation(self) -> None:
+        presentation, cells = self._fixture("both", world_attested=False)
+        presentation["actual"]["worldBuildAttempts"] = 0
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "partial world attestation"):
+            SUMMARY._validate_native_presentation(presentation, cells, "run")
 
     def test_rejects_requested_but_inactive_component(self) -> None:
         presentation, cells = self._fixture("cape")
@@ -463,11 +549,12 @@ class LodFixtureValidationTests(unittest.TestCase):
 
 class NativePresentationAggregationTests(unittest.TestCase):
     @staticmethod
-    def _run(mode: str | None, trial: int) -> dict:
+    def _run(mode: str | None, trial: int, *, world_attested: bool = False) -> dict:
         presentation = None
         if mode is not None:
             presentation = {
                 "attestation": "attested",
+                "worldAttested": world_attested,
                 "requestedMode": mode,
                 "environmentValue": {
                     "off": "0", "cape": "cape", "flight": "flight", "both": "both",
@@ -475,6 +562,7 @@ class NativePresentationAggregationTests(unittest.TestCase):
                 "requestedComponents": {
                     "cape": mode in {"cape", "both"},
                     "flight": mode in {"flight", "both"},
+                    "world": False,
                 },
                 "actual": {
                     "capeActiveInstancesMaximum": 150 if mode in {"cape", "both"} else 0,
@@ -486,6 +574,15 @@ class NativePresentationAggregationTests(unittest.TestCase):
                     "flightBuildFallbacks": 0,
                 },
             }
+            if world_attested:
+                presentation["actual"].update({
+                    "worldStatsSupported": True,
+                    "worldInstancesMaximum": 0,
+                    "worldActiveInstancesMaximum": 0,
+                    "worldBuildAttempts": 0,
+                    "worldBuildSuccesses": 0,
+                    "worldBuildFallbacks": 0,
+                })
         return {
             "path": f"C:/fixtures/run-{trial}.json",
             "sha256": f"sha-{trial}",
@@ -528,6 +625,14 @@ class NativePresentationAggregationTests(unittest.TestCase):
     def test_rejects_legacy_and_attested_runs_in_one_group(self) -> None:
         runs = [self._run(None, 1), self._run("off", 2)]
         with self.assertRaisesRegex(SUMMARY.SummaryError, "legacy/attested"):
+            SUMMARY._aggregate(runs, 60, [])
+
+    def test_rejects_world_attested_and_historical_mode_in_one_group(self) -> None:
+        runs = [
+            self._run("both", 1),
+            self._run("both", 2, world_attested=True),
+        ]
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "mixes native presentation"):
             SUMMARY._aggregate(runs, 60, [])
 
     def test_emits_group_and_per_run_mode_activity(self) -> None:

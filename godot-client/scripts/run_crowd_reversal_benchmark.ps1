@@ -7,10 +7,16 @@ param(
     [ValidateSet('gl_compatibility', 'forward_plus')]
     [string]$Renderer = 'gl_compatibility',
     [string]$Sequence = 'A,B,B,A,A,B',
-    [ValidateSet('Off', 'Cape', 'Flight', 'Both')]
+    [ValidateSet('Off', 'Cape', 'Flight', 'Both', 'World', 'All')]
     [string]$BaselineNativePresentation = 'Off',
-    [ValidateSet('Off', 'Cape', 'Flight', 'Both')]
+    [ValidateSet('Off', 'Cape', 'Flight', 'Both', 'World', 'All')]
     [string]$CandidateNativePresentation = 'Off',
+    [string[]]$RelativePaths = @(
+        'godot-client/src/actors/cape_cloth.gd',
+        'godot-client/src/world/combat_effect_mesh.gd',
+        'godot-client/src/world/spell_flight_3d.gd',
+        'godot-client/src/world/world_effect_3d.gd'
+    ),
     [string]$Label = 'optimization-final-reversal-v1',
     [ValidateRange(1000, 30000)][int]$SampleMilliseconds = 5000,
     [switch]$Capture,
@@ -45,12 +51,22 @@ $originalRoot = Join-Path $sessionRoot 'original-blobs'
 New-Item -ItemType Directory -Force -Path $sessionRoot, $backupRoot, $originalRoot |
     Out-Null
 
-$relativePaths = @(
+$approvedRelativePaths = @(
     'godot-client/src/actors/cape_cloth.gd',
+    'godot-client/src/actors/combat_presentation_3d.gd',
+    'godot-client/src/actors/ranger_bow_3d.gd',
+    'godot-client/src/actors/replicated_actor_3d.gd',
     'godot-client/src/world/combat_effect_mesh.gd',
     'godot-client/src/world/spell_flight_3d.gd',
     'godot-client/src/world/world_effect_3d.gd'
 )
+$relativePaths = @($RelativePaths | ForEach-Object { $_.Replace('\', '/').Trim() })
+if ($relativePaths.Count -eq 0 -or @($relativePaths | Where-Object {
+        [string]::IsNullOrWhiteSpace($_) -or $_ -notin $approvedRelativePaths
+    }).Count -or @($relativePaths | Sort-Object -Unique).Count -ne $relativePaths.Count) {
+    throw ('RelativePaths must be unique entries from the approved runtime allowlist: ' +
+        ($approvedRelativePaths -join ', '))
+}
 $variants = @($Sequence.Split(',') | ForEach-Object { $_.Trim().ToUpperInvariant() })
 if ($variants.Count -lt 3 -or @($variants | Where-Object { $_ -notin @('A', 'B') }).Count -or
     'A' -notin $variants -or 'B' -notin $variants) {
@@ -182,6 +198,21 @@ $baselineHead = (Invoke-Git @('rev-parse', "$BaselineRevision^{commit}")).Trim()
 if (@(Invoke-Git @('status', '--porcelain', '--untracked-files=no')).Count) {
     throw 'Tracked worktree must be clean before the reversal session.'
 }
+$unlistedRevisionChanges = [Collections.Generic.List[string]]::new()
+foreach ($approvedPath in $approvedRelativePaths) {
+    $candidateBlobHash = Get-Sha256Bytes (
+        Get-GitBlobBytes $OptimizedRevision $approvedPath)
+    $baselineBlobHash = Get-Sha256Bytes (
+        Get-GitBlobBytes $baselineHead $approvedPath)
+    if ($candidateBlobHash -ne $baselineBlobHash -and
+            $approvedPath -notin $relativePaths) {
+        $unlistedRevisionChanges.Add($approvedPath)
+    }
+}
+if ($unlistedRevisionChanges.Count -gt 0) {
+    throw ("RelativePaths omits runtime files changed between the two revisions: " +
+        ($unlistedRevisionChanges -join ', '))
+}
 
 $candidateBytes = [ordered]@{}
 $candidateHashes = [ordered]@{}
@@ -235,6 +266,9 @@ $manifest = [ordered]@{
     optimizedRevision = $OptimizedRevision
     baselineRevisionInput = $BaselineRevision
     baselineRevision = $baselineHead
+    relativePaths = $relativePaths
+    approvedRelativePaths = $approvedRelativePaths
+    unlistedRevisionChanges = @($unlistedRevisionChanges)
     mode = $Mode
     renderer = $Renderer
     sequence = $variants
