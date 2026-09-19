@@ -124,6 +124,7 @@ $sourceRelativePaths = @(
 )
 $optionalSourceRelativePaths = @(
     "godot-client/src/actors/equipment_registry_snapshot_cache.gd",
+    "godot-client/src/actors/rebound_skin_pool.gd",
     "godot-client/native/native_crowd/src/native_cape_constraint_kernel.cpp",
     "godot-client/native/native_crowd/src/native_cape_constraint_kernel.h",
     "godot-client/native/native_crowd/src/native_spell_flight_geometry.cpp",

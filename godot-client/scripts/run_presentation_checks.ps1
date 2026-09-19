@@ -56,6 +56,7 @@ $sourcePaths = @('src/actors/cape_cloth.gd', 'src/actors/replicated_actor_3d.gd'
     'bin/windows/native_crowd.windows.template_release.x86_64.dll')
 $optionalSourcePaths = @(
     'src/actors/equipment_registry_snapshot_cache.gd',
+    'src/actors/rebound_skin_pool.gd',
     'native/native_crowd/src/native_spell_flight_geometry.cpp',
     'native/native_crowd/src/native_spell_flight_geometry.h',
     'native/native_crowd/src/native_cape_constraint_kernel.cpp',
