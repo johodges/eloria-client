@@ -69,6 +69,18 @@ def _run(report_path: Path, *, dirty: bool = False) -> dict:
         "commit": "0123456789abcdef",
         "sourceHash": "source-hash",
         "dirty": dirty,
+        "nativePresentation": {
+            "attestation": "attested",
+            "requestedMode": "off",
+            "environmentValue": "0",
+            "requestedComponents": {"cape": False, "flight": False},
+            "actual": {},
+        },
+        "executionLimits": {
+            "pid": 123,
+            "requestedAffinityMask": 15,
+            "requestedWorkerThreads": 2,
+        },
     }
 
 
@@ -106,6 +118,8 @@ def _companion(*, dirty: bool = False) -> dict:
         "sourceFiles": {"godot-client/source.gd": "digest"},
         "dirty": dirty,
         "monitoring": "synthetic exact-process monitor",
+        "nativePresentationRequested": "Off",
+        "nativePresentationEnvironment": "0",
     }
 
 
@@ -336,10 +350,14 @@ class NativePresentationAdmissionTests(unittest.TestCase):
 
 
 class CompanionValidationTests(unittest.TestCase):
-    def _validate(self, companion: dict, *, report_dirty: bool = False) -> None:
+    def _validate(
+        self, companion: dict, *, report_dirty: bool = False,
+        report_affinity: int = 15,
+    ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             report_path = Path(directory) / "run.json"
             run = _run(report_path, dirty=report_dirty)
+            run["executionLimits"]["requestedAffinityMask"] = report_affinity
             companion_path = report_path.with_name("run.process.json")
             companion_path.write_text(json.dumps(companion), encoding="utf-8")
             SUMMARY._validate_companion(run, allow_missing_for_fixtures=False)
@@ -371,6 +389,31 @@ class CompanionValidationTests(unittest.TestCase):
     def test_rejects_dirty_state_mismatch(self) -> None:
         with self.assertRaisesRegex(SUMMARY.SummaryError, "dirty does not match its report"):
             self._validate(_companion(dirty=True), report_dirty=False)
+
+    def test_rejects_wrong_process_presentation_mode_or_environment(self) -> None:
+        for key, value in (
+            ("nativePresentationRequested", "Cape"),
+            ("nativePresentationEnvironment", "cape"),
+        ):
+            with self.subTest(key=key):
+                companion = _companion()
+                companion[key] = value
+                with self.assertRaisesRegex(
+                    SUMMARY.SummaryError, rf"\.{key} does not match"
+                ):
+                    self._validate(companion)
+
+    def test_rejects_process_execution_limit_mismatch(self) -> None:
+        companion = _companion()
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "requestedAffinityMask"):
+            self._validate(companion, report_affinity=7)
+
+    def test_rejects_process_identity_mismatch_with_report(self) -> None:
+        companion = _companion()
+        companion["rootPid"] = 124
+        companion["observedProcesses"]["124"] = companion["observedProcesses"].pop("123")
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "process.pid"):
+            self._validate(companion)
 
 
 class LodFixtureValidationTests(unittest.TestCase):
@@ -416,6 +459,90 @@ class LodFixtureValidationTests(unittest.TestCase):
                 fixture["before"][group][key] = value
                 with self.assertRaisesRegex(SUMMARY.SummaryError, rf"before\.{group}"):
                     SUMMARY._validate_lod_fixture(fixture, 300, "cell.fixture")
+
+
+class NativePresentationAggregationTests(unittest.TestCase):
+    @staticmethod
+    def _run(mode: str | None, trial: int) -> dict:
+        presentation = None
+        if mode is not None:
+            presentation = {
+                "attestation": "attested",
+                "requestedMode": mode,
+                "environmentValue": {
+                    "off": "0", "cape": "cape", "flight": "flight", "both": "both",
+                }[mode],
+                "requestedComponents": {
+                    "cape": mode in {"cape", "both"},
+                    "flight": mode in {"flight", "both"},
+                },
+                "actual": {
+                    "capeActiveInstancesMaximum": 150 if mode in {"cape", "both"} else 0,
+                    "capeNativeCalls": 100 if mode in {"cape", "both"} else 0,
+                    "capeFallbackCalls": 0,
+                    "flightActiveInstancesMaximum": 52 if mode in {"flight", "both"} else 0,
+                    "flightBuildAttempts": 40 if mode in {"flight", "both"} else 0,
+                    "flightBuildSuccesses": 40 if mode in {"flight", "both"} else 0,
+                    "flightBuildFallbacks": 0,
+                },
+            }
+        return {
+            "path": f"C:/fixtures/run-{trial}.json",
+            "sha256": f"sha-{trial}",
+            "runId": f"run-{trial}",
+            "label": "same-label",
+            "backend": "gdscript",
+            "nativeBackendActive": False,
+            "renderer": "gl_compatibility",
+            "display": "headless",
+            "headless": True,
+            "nativePresentation": presentation,
+            "executionLimits": None,
+            "commit": "0123456789abcdef",
+            "sourceHash": "same-source-hash",
+            "dirty": False,
+            "trial": trial,
+            "sharedMachine": True,
+            "interferenceLabel": "synthetic shared host",
+            "driver": {
+                "status": "validated",
+                "version": SUMMARY.DRIVER_VERSION,
+                "productionFaithful": True,
+                "caveat": None,
+            },
+            "cells": [],
+            "companionProcess": {
+                "status": "missingFixtureOptOut",
+                "path": f"C:/fixtures/run-{trial}.process.json",
+                "sha256": None,
+                "fixtureOptOut": True,
+                "executableIdentityAvailable": False,
+            },
+        }
+
+    def test_rejects_same_provenance_label_with_different_modes(self) -> None:
+        runs = [self._run("off", 1), self._run("both", 2)]
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "mixes native presentation"):
+            SUMMARY._aggregate(runs, 60, [])
+
+    def test_rejects_legacy_and_attested_runs_in_one_group(self) -> None:
+        runs = [self._run(None, 1), self._run("off", 2)]
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "legacy/attested"):
+            SUMMARY._aggregate(runs, 60, [])
+
+    def test_emits_group_and_per_run_mode_activity(self) -> None:
+        report = SUMMARY._aggregate(
+            [self._run("both", 1), self._run("both", 2)], 60, []
+        )
+        group = report["groups"][0]
+        self.assertEqual("both", group["nativePresentation"]["requestedMode"])
+        self.assertEqual(2, len(group["nativePresentation"]["activityPerRun"]))
+        self.assertEqual(
+            "both", group["runs"][0]["nativePresentation"]["requestedMode"]
+        )
+        markdown = SUMMARY._markdown(report)
+        self.assertIn("Native presentation: `both`", markdown)
+        self.assertIn("cape active max 150", markdown)
 
 
 class MarkdownRegressionTests(unittest.TestCase):

@@ -376,7 +376,83 @@ def _validate_native_presentation(
         raise SummaryError(
             f"{context}.nativePresentation actual activity does not match requested mode"
         )
-    return {"requestedMode": mode, "actual": checked}
+    return {
+        "attestation": "attested",
+        "requestedMode": mode,
+        "environmentValue": environment,
+        "requestedComponents": {"cape": wants_cape, "flight": wants_flight},
+        "actual": checked,
+    }
+
+
+def _validate_report_process(
+    value: Any, native_presentation: dict[str, Any] | None, context: str
+) -> dict[str, Any] | None:
+    """Validate report-side launch limits and the serialized runner request."""
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise SummaryError(f"{context}.process must be an object")
+
+    checked: dict[str, Any] = {}
+    if "pid" in value:
+        pid = _required_int(value, "pid", f"{context}.process")
+        if pid <= 0:
+            raise SummaryError(f"{context}.process.pid must be positive")
+        checked["pid"] = pid
+    if "requestedAffinityMask" in value:
+        affinity = _required_int(value, "requestedAffinityMask", f"{context}.process")
+        if affinity <= 0:
+            raise SummaryError(
+                f"{context}.process.requestedAffinityMask must be positive"
+            )
+        checked["requestedAffinityMask"] = affinity
+    if "requestedWorkerThreads" in value:
+        workers = _required_int(value, "requestedWorkerThreads", f"{context}.process")
+        if workers <= 0:
+            raise SummaryError(
+                f"{context}.process.requestedWorkerThreads must be positive"
+            )
+        checked["requestedWorkerThreads"] = workers
+
+    runner_metadata = value.get("runnerMetadata")
+    if runner_metadata is not None:
+        if not isinstance(runner_metadata, str) or not runner_metadata:
+            raise SummaryError(f"{context}.process.runnerMetadata must be JSON text")
+        try:
+            runner = json.loads(runner_metadata)
+        except json.JSONDecodeError as error:
+            raise SummaryError(
+                f"{context}.process.runnerMetadata is not valid JSON: {error}"
+            ) from error
+        if not isinstance(runner, dict):
+            raise SummaryError(f"{context}.process.runnerMetadata must decode to an object")
+        for key in ("affinityMask", "requestedWorkerThreads"):
+            report_key = (
+                "requestedAffinityMask" if key == "affinityMask" else key
+            )
+            if key in runner and report_key in checked:
+                if runner[key] != checked[report_key]:
+                    raise SummaryError(
+                        f"{context}.process.runnerMetadata.{key} does not match "
+                        f"process.{report_key}"
+                    )
+        if native_presentation is not None:
+            expected_mode = native_presentation["requestedMode"]
+            expected_environment = native_presentation["environmentValue"]
+            requested_mode = runner.get("requestedNativePresentation")
+            if not isinstance(requested_mode, str) or requested_mode.lower() != expected_mode:
+                raise SummaryError(
+                    f"{context}.process.runnerMetadata.requestedNativePresentation "
+                    "does not match report native presentation mode"
+                )
+            if runner.get("nativePresentationEnvironment") != expected_environment:
+                raise SummaryError(
+                    f"{context}.process.runnerMetadata.nativePresentationEnvironment "
+                    "does not match report native presentation environment"
+                )
+        checked["runnerMetadata"] = runner
+    return checked
 
 
 def _expected_active_count(count: int, activity: str, context: str) -> int:
@@ -1024,6 +1100,9 @@ def _validate_run(
     native_presentation = _validate_native_presentation(
         data.get("nativePresentation"), cells, context
     )
+    execution_limits = _validate_report_process(
+        data.get("process"), native_presentation, context
+    )
 
     return {
         "path": str(path.resolve()),
@@ -1036,6 +1115,7 @@ def _validate_run(
         "display": display,
         "headless": headless,
         "nativePresentation": native_presentation,
+        "executionLimits": execution_limits,
         "commit": commit,
         "sourceHash": source_hash,
         "dirty": dirty,
@@ -1146,6 +1226,26 @@ def _validate_companion(run: dict[str, Any], allow_missing_for_fixtures: bool) -
                 f"{context}.{key} does not match its report; "
                 f"companion={data.get(key)!r}, report={expected!r}"
             )
+    presentation = run.get("nativePresentation")
+    companion_has_presentation = any(
+        key in data
+        for key in ("nativePresentationRequested", "nativePresentationEnvironment")
+    )
+    if presentation is None:
+        if companion_has_presentation:
+            raise SummaryError(
+                f"{context}: companion declares native presentation for a legacy-unattested report"
+            )
+    else:
+        requested = data.get("nativePresentationRequested")
+        if not isinstance(requested, str) or requested.lower() != presentation["requestedMode"]:
+            raise SummaryError(
+                f"{context}.nativePresentationRequested does not match its report"
+            )
+        if data.get("nativePresentationEnvironment") != presentation["environmentValue"]:
+            raise SummaryError(
+                f"{context}.nativePresentationEnvironment does not match its report"
+            )
     exit_code = _required_int(data, "exitCode", context)
     if exit_code != 0:
         raise SummaryError(f"{context}.exitCode is {exit_code}; expected 0")
@@ -1191,6 +1291,19 @@ def _validate_companion(run: dict[str, Any], allow_missing_for_fixtures: bool) -
     affinity_mask = _required_int(data, "affinityMask", context)
     if affinity_mask != 0xF:
         raise SummaryError(f"{context}.affinityMask is {affinity_mask}; expected 15")
+    execution_limits = run.get("executionLimits")
+    if execution_limits is not None:
+        requested_affinity = execution_limits.get("requestedAffinityMask")
+        if requested_affinity is not None and requested_affinity != affinity_mask:
+            raise SummaryError(
+                f"{context}.affinityMask does not match report process.requestedAffinityMask"
+            )
+        if "requestedWorkerThreads" in data:
+            requested_workers = _required_int(data, "requestedWorkerThreads", context)
+            if requested_workers != execution_limits.get("requestedWorkerThreads"):
+                raise SummaryError(
+                    f"{context}.requestedWorkerThreads does not match its report"
+                )
     if not _required_bool(data, "allObservedProcessesVerified", context):
         raise SummaryError(f"{context}.allObservedProcessesVerified is false")
     observed = _required_dict(data, "observedProcesses", context)
@@ -1199,6 +1312,10 @@ def _validate_companion(run: dict[str, Any], allow_missing_for_fixtures: bool) -
     root_pid = _required_int(data, "rootPid", context)
     if str(root_pid) not in observed:
         raise SummaryError(f"{context}.rootPid is absent from observedProcesses")
+    if execution_limits is not None:
+        report_pid = execution_limits.get("pid")
+        if report_pid is not None and report_pid != root_pid:
+            raise SummaryError(f"{context}.rootPid does not match report process.pid")
     identity_available = True
     for pid, raw_process in observed.items():
         if not isinstance(raw_process, dict):
@@ -1276,6 +1393,9 @@ def _validate_companion(run: dict[str, Any], allow_missing_for_fixtures: bool) -
         "sourceHash": data["sourceHash"],
         "sourceFiles": source_files,
         "monitoring": data.get("monitoring"),
+        "nativePresentationRequested": data.get("nativePresentationRequested"),
+        "nativePresentationEnvironment": data.get("nativePresentationEnvironment"),
+        "executionLimits": execution_limits,
     }
 
 
@@ -1405,6 +1525,14 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
         }
         active_values = {run["nativeBackendActive"] for run in group_runs}
         headless_values = {run["headless"] for run in group_runs}
+        presentation_states = {
+            (
+                "legacy-unattested"
+                if run["nativePresentation"] is None
+                else run["nativePresentation"]["requestedMode"]
+            )
+            for run in group_runs
+        }
         if len(commits) != 1 or len(source_hashes) != 1:
             raise SummaryError(
                 f"group {key} mixes commit/sourceHash provenance; summarize those runs separately"
@@ -1415,6 +1543,11 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
             raise SummaryError(f"group {key} mixes benchmark driver generations")
         if len(active_values) != 1 or len(headless_values) != 1:
             raise SummaryError(f"group {key} mixes backend-active or headless state")
+        if len(presentation_states) != 1:
+            raise SummaryError(
+                f"group {key} mixes native presentation modes or legacy/attested runs; "
+                "summarize each presentation mode separately"
+            )
         expected_cells = {cell["id"] for cell in group_runs[0]["cells"]}
         for run in group_runs[1:]:
             actual_cells = {cell["id"] for cell in run["cells"]}
@@ -1448,6 +1581,30 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
                 "Headless renderer, GPU, draw-call, and primitive metrics are unavailable and remain null."
             )
         driver = group_runs[0]["driver"]
+        first_presentation = group_runs[0]["nativePresentation"]
+        if first_presentation is None:
+            group_presentation = {
+                "attestation": "legacy-unattested",
+                "requestedMode": None,
+                "environmentValue": None,
+                "requestedComponents": None,
+                "activityPerRun": [],
+            }
+        else:
+            group_presentation = {
+                "attestation": first_presentation["attestation"],
+                "requestedMode": first_presentation["requestedMode"],
+                "environmentValue": first_presentation["environmentValue"],
+                "requestedComponents": first_presentation["requestedComponents"],
+                "activityPerRun": [
+                    {
+                        "runId": run["runId"],
+                        "trial": run["trial"],
+                        "actual": run["nativePresentation"]["actual"],
+                    }
+                    for run in group_runs
+                ],
+            }
         if not driver["productionFaithful"]:
             caveats.append(driver["caveat"])
         group_results.append(
@@ -1461,6 +1618,7 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
                 "commit": next(iter(commits)),
                 "sourceHash": next(iter(source_hashes)),
                 "driver": driver,
+                "nativePresentation": group_presentation,
                 "dirtyValues": sorted({str(run["dirty"]) for run in group_runs}),
                 "sharedMachine": shared,
                 "interferenceLabels": interference,
@@ -1474,6 +1632,8 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
                         "path": run["path"],
                         "sha256": run["sha256"],
                         "driver": run["driver"],
+                        "nativePresentation": run["nativePresentation"],
+                        "executionLimits": run["executionLimits"],
                         "companionProcess": run["companionProcess"],
                     }
                     for run in group_runs
@@ -1563,6 +1723,12 @@ def _markdown(report: dict[str, Any]) -> str:
         "",
     ]
     for group in report["groups"]:
+        presentation = group.get("nativePresentation") or {
+            "attestation": "legacy-unattested",
+            "requestedMode": None,
+            "environmentValue": None,
+            "activityPerRun": [],
+        }
         driver_description = (
             f"`{group['driver']['version']}` (validated deferred-coalescing path)"
             if group["driver"]["productionFaithful"]
@@ -1583,10 +1749,30 @@ def _markdown(report: dict[str, Any]) -> str:
                 f"Commit: `{group['commit']}`  ",
                 f"Source hash: `{group['sourceHash']}`  ",
                 f"Runs: {group['runCount']}  ",
-                f"Driver: {driver_description}",
+                f"Driver: {driver_description}  ",
+                (
+                    "Native presentation: legacy/unattested"
+                    if presentation["attestation"] == "legacy-unattested"
+                    else (
+                        f"Native presentation: `{presentation['requestedMode']}` "
+                        f"(`ELORIA_NATIVE_PRESENTATION={presentation['environmentValue']}`)"
+                    )
+                ),
                 "",
             ]
         )
+        for item in presentation["activityPerRun"]:
+            actual = item["actual"]
+            lines.append(
+                "- Native presentation activity "
+                f"`{item['runId']}`: cape active max "
+                f"{actual['capeActiveInstancesMaximum']}, cape native calls "
+                f"{actual['capeNativeCalls']}, cape fallback "
+                f"{actual['capeFallbackCalls']}; flight active max "
+                f"{actual['flightActiveInstancesMaximum']}, flight builds "
+                f"{actual['flightBuildSuccesses']}/{actual['flightBuildAttempts']}, "
+                f"flight fallback {actual['flightBuildFallbacks']}."
+            )
         for caveat in group["caveats"]:
             lines.append(f"- {caveat}")
         if group["interferenceLabels"]:
