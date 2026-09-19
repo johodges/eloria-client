@@ -69,6 +69,9 @@ Four Gates by default. `-SampleMilliseconds`, `-WarmupMilliseconds` and
 `-CadenceMilliseconds` control real elapsed-time phases. Activity updates are
 scheduled from the monotonic clock; a faster headless frame loop therefore
 does not turn a nominal 100 ms server cadence into one packet per frame.
+The asynchronous case dispatches one of ten groups every 10 ms at the default
+cadence, so each actor still receives an update every 100 ms. Combat and effect
+events remain on a 400 ms cadence in that case.
 
 `-NativeBackend Both` runs the same configuration first through the GDScript
 actor-command reducer and then through the optional native reducer. A requested
@@ -90,7 +93,11 @@ outside the timed interval. With `-Capture`, the primary 300-actor windowed run
 writes settled and active PNGs for visual review.
 
 The launcher records the commit, dirty state, requested and actual renderer,
-backend activation, trial and process identity. It applies affinity mask `0xF`
+backend activation, trial and process identity. Its composite source hash and
+per-file hashes cover the benchmark, actor/state path, native reducer sources,
+extension manifest and generated native DLL. It records `cleanExit` separately
+from `abortedAfterReport`; the latter means the artifact was written but the
+runner had to stop Godot after the five-second shutdown grace period. It applies affinity mask `0xF`
 to the Godot process and any discovered console-wrapper descendants, then
 writes the observed masks to the companion process JSON. The two-thread
 environment setting is recorded as a request because Godot exposes no runtime
@@ -111,6 +118,12 @@ therefore include separate packet-bearing wall, presentation, grounding,
 reducer and sync distributions, plus packet, actor-command, flush and combat
 presentation event rates. Use those event distributions and frame maxima for
 spikes. The generic headless percentiles remain a CPU-loop proxy.
+
+`packetDispatchInclusiveMilliseconds` measures the complete `AppState` packet
+dispatch, including synchronously emitted presentation handlers and effect
+construction. `commandOnlyReduceMilliseconds` measures only the nested
+`ADD_ACTOR_COMMAND` dispatch. The component timers overlap with these inclusive
+packet timings, so they are attribution views rather than additive costs.
 
 Do not add headless scene CPU to windowed renderer time to construct a frame
 total. They come from separate executions. A windowed run also does not prove a
@@ -141,6 +154,13 @@ remaining headless wall time includes animation, skeleton/skin work, physics,
 camera and other scene processing. The benchmark-only clock reads themselves
 remain in the measured frame, so component values are attribution aids rather
 than a claim of zero instrumentation overhead.
+
+The `no_animation` feature is a diagnostic bound, not an acceptance mode. It
+keeps normal animation-gate classification, meshes, equipment, draw flags and
+overhead nodes, then deactivates actor `AnimationPlayer` nodes after setup and
+after gate or presentation updates. Its small benchmark-only freeze pass is
+included in the animation-gate timer, which makes the inferred saving
+conservative rather than an exact production animation cost.
 
 The stress packet microbenchmark is explicitly a synthetic shape: 500
 `ADD_ACTOR_COMMAND` frames with eight actor commands apiece, or 4,000 commands

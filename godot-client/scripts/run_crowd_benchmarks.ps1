@@ -76,7 +76,13 @@ $sourceRelativePaths = @(
     "godot-client/tests/integration/crowd_benchmark_main.tscn",
     "godot-client/src/state/app_state.gd",
     "godot-client/src/app/main.gd",
-    "godot-client/src/actors/replicated_actor_3d.gd"
+    "godot-client/src/actors/replicated_actor_3d.gd",
+    "godot-client/native/native_crowd/src/native_crowd_reducer.cpp",
+    "godot-client/native/native_crowd/src/native_crowd_reducer.h",
+    "godot-client/native/native_crowd/src/register_types.cpp",
+    "godot-client/native/native_crowd/src/register_types.h",
+    "godot-client/bin/native_crowd.gdextension",
+    "godot-client/bin/windows/native_crowd.windows.template_release.x86_64.dll"
 )
 $sourceStatus = @(& git -c $gitSafe -C $repositoryRoot status --porcelain -- `
     $sourceRelativePaths)
@@ -298,6 +304,8 @@ foreach ($trial in 1..$Repeats) {
 					sourceFiles = $sourceHashes
 					monitoring = "Godot wrapper/child discovered during first second; known masks checked every second"
 					postReportStop = $postReportStop
+					abortedAfterReport = $postReportStop
+					cleanExit = (-not $postReportStop -and $process.ExitCode -eq 0)
                     renderer = $renderingMethod
                     mode = $run
                     backend = $backend
