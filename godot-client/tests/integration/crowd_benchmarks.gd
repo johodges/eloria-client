@@ -724,7 +724,7 @@ func _cape_feature_attestation(nodes: Dictionary, spec: Dictionary,
 		"%s retains cape mesh geometry before disabling solvers" % spec["id"])
 	_expect(int(before["activeModifiers"]) > 0
 		and int(before["settledModifiers"]) >= int(before["activeModifiers"]),
-		"%s warms every active cape solver before freezing its pose" % spec["id"])
+		"%s warms every active cape solver before disabling simulation" % spec["id"])
 	for value: Variant in nodes.values():
 		if not is_instance_valid(value):
 			continue
