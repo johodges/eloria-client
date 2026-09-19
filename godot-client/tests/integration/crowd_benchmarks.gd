@@ -346,6 +346,7 @@ func _run_cell(spec: Dictionary) -> void:
 	await _prime_activity(spec, active_ids)
 	await _warm_for(spec, active_ids)
 	var sample := await _sample_cell(spec, active_ids)
+	sample["workloadValidation"] = _validate_executed_workload(spec, workload, sample)
 	if str(spec["features"]) == "no_effects":
 		var effect_summary := (sample["summary"] as Dictionary).get(
 			"transientWorldEffects", {}) as Dictionary
@@ -397,6 +398,38 @@ func _run_cell(spec: Dictionary) -> void:
 		census["frustumAndDrawVisible"], " visible, ", active_ids.size(), " active")
 
 
+func _validate_executed_workload(spec: Dictionary, workload: Dictionary,
+		sample: Dictionary) -> Dictionary:
+	var raw := sample.get("raw", {}) as Dictionary
+	var commands := int(_sum_numeric(raw.get("commandsPerFrame", []) as Array))
+	var observed := sample.get("activityObserved", {}) as Dictionary
+	var physics_processing := int(observed.get("physicsProcessing", 0))
+	var actions := observed.get("actions", {}) as Dictionary
+	var non_idle_actions := 0
+	for action: Variant in actions:
+		if str(action) != "idle":
+			non_idle_actions += int(actions[action])
+	var planned_active := int(workload.get("active", 0))
+	var planned_moving := int(workload.get("moving", 0))
+	if planned_active > 0:
+		_expect(commands > 0, "%s executed actor commands during the sample" % spec["id"])
+		_expect(non_idle_actions >= planned_active,
+			"%s shows all %d workload actors in non-idle actions (got %d)" % [
+				spec["id"], planned_active, non_idle_actions])
+	if planned_moving > 0:
+		_expect(physics_processing >= planned_moving,
+			"%s shows all %d moving actors processing physics (got %d)" % [
+				spec["id"], planned_moving, physics_processing])
+	var passed := commands > 0 and non_idle_actions >= planned_active \
+		and physics_processing >= planned_moving if planned_active > 0 else commands == 0
+	return {
+		"commands": commands,
+		"nonIdleActions": non_idle_actions,
+		"physicsProcessing": physics_processing,
+		"plannedActive": planned_active,
+		"plannedMoving": planned_moving,
+		"passed": passed,
+	}
 func _validate_visibility_span(spec: Dictionary, active_ids: Array[int],
 		expected: int) -> Dictionary:
 	var minimum := 1 << 30
@@ -498,6 +531,7 @@ func _place_population(nodes: Dictionary, records: Dictionary,
 	var ids: Array = nodes.keys()
 	ids.sort()
 	var ground_y := local.global_position.y
+	var occupied_tiles: Dictionary = {}
 	for index: int in range(ids.size()):
 		var actor := nodes[ids[index]] as ReplicatedActor3D
 		var point := local.global_position
@@ -509,11 +543,12 @@ func _place_population(nodes: Dictionary, records: Dictionary,
 		else:
 			point = _outside_frustum_point(camera, local.global_position,
 				index - wanted, count - wanted, ground_y)
+		if count > 300:
+			point = _unique_fixture_point(camera, local.global_position, actor, point,
+				index < wanted, occupied_tiles)
+		else:
+			occupied_tiles[_adapter.godot_to_server(point)] = true
 		_set_actor_position(actor, records, point)
-	var occupied_tiles: Dictionary = {}
-	for record_value: Variant in records.values():
-		var record := record_value as Dictionary
-		occupied_tiles[Vector2i(int(record["x"]), int(record["y"]))] = true
 	_expect(occupied_tiles.size() == count,
 		"%s placement assigns one canonical server tile per actor (got %d of %d)" % [
 			visibility, occupied_tiles.size(), count])
@@ -523,6 +558,48 @@ func _place_population(nodes: Dictionary, records: Dictionary,
 	_main.call("_update_animation_gate", 0.0)
 	_app_state.set("actors", records)
 	await _settle_frames(2)
+
+
+func _unique_fixture_point(camera: Camera3D, local_position: Vector3,
+		actor: ReplicatedActor3D, intended: Vector3, expected_visible: bool,
+		occupied: Dictionary) -> Vector3:
+	var base_tile := _adapter.godot_to_server(intended)
+	if not occupied.has(base_tile):
+		occupied[base_tile] = true
+		return intended
+	# Screen-ray samples become denser in world space near the lower edge of an
+	# isometric camera. Resolve any duplicate deterministically to the closest
+	# free protocol tile that preserves the intended frustum/draw classification.
+	# This keeps every actor on a real server coordinate without stacking or
+	# silently moving an off-screen actor into the measured visible population.
+	for radius: int in range(1, 65):
+		for offset_y: int in range(-radius, radius + 1):
+			for offset_x: int in range(-radius, radius + 1):
+				if maxi(absi(offset_x), absi(offset_y)) != radius:
+					continue
+				var tile := base_tile + Vector2i(offset_x, offset_y)
+				if occupied.has(tile):
+					continue
+				var candidate := _adapter.tile_center(tile.x, tile.y)
+				candidate.y = intended.y
+				if _point_camera_visible(camera, local_position, candidate,
+						actor.view_radius()) != expected_visible:
+					continue
+				occupied[tile] = true
+				return candidate
+	_expect(false, "fixture could not reserve a unique tile with the requested visibility")
+	return intended
+
+
+func _point_camera_visible(camera: Camera3D, local_position: Vector3,
+		point: Vector3, radius: float) -> bool:
+	if local_position.distance_to(point) > 80.0:
+		return false
+	var anchor := point + Vector3.UP
+	for plane: Plane in camera.get_frustum():
+		if plane.distance_to(anchor) > radius:
+			return false
+	return true
 
 
 func _visible_ground_point(camera: Camera3D, index: int, total: int,
@@ -696,7 +773,7 @@ func _warm_for(spec: Dictionary, active_ids: Array[int]) -> void:
 
 func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 	var duration := int((_report["measurement"] as Dictionary)["sampleMilliseconds"])
-	var hard_limit := maxi(duration * 4, 15000)
+	var hard_limit := maxi(duration * 4, 120000)
 	var cadence := _driver_cadence(spec)
 	var raw: Dictionary = {
 		"wallMilliseconds": [], "presentMilliseconds": [], "groundMilliseconds": [],
@@ -768,8 +845,10 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 	var summary: Dictionary = {}
 	for key: String in raw:
 		summary[key] = _distribution(raw[key] as Array)
-	_expect((raw["wallMilliseconds"] as Array).size() >= MIN_SAMPLE_FRAMES,
-		"%s records at least %d timed frames" % [spec["id"], MIN_SAMPLE_FRAMES])
+	var sampled_frames := (raw["wallMilliseconds"] as Array).size()
+	var sufficient_samples := sampled_frames >= MIN_SAMPLE_FRAMES
+	_expect(sufficient_samples, "%s records at least %d timed frames before the %d ms hard bound" % [
+		spec["id"], MIN_SAMPLE_FRAMES, hard_limit])
 	var packet_bearing: Dictionary = {}
 	for key: String in ["wallMilliseconds", "presentMilliseconds",
 			"groundMilliseconds", "packetDispatchInclusiveMilliseconds",
@@ -785,8 +864,15 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 	return {
 		"elapsedMilliseconds": Time.get_ticks_msec() - started,
 		"requestedMilliseconds": duration, "hardLimitMilliseconds": hard_limit,
+		"sampleSufficiency": {
+			"sufficient": sufficient_samples,
+			"minimumFrames": MIN_SAMPLE_FRAMES,
+			"actualFrames": sampled_frames,
+			"reason": null if sufficient_samples else (
+				"hard time bound reached before minimum frame count"),
+		},
 		"driverCadenceMilliseconds": cadence,
-		"frames": (raw["wallMilliseconds"] as Array).size(),
+		"frames": sampled_frames,
 		"cadenceTicks": tick,
 		"wallMetric": "scene-tree CPU proxy" if _headless else "diagnostic compositor-paced wall",
 		"percentileCaveat": ("uncapped headless all-frame percentiles dilute "
@@ -822,9 +908,17 @@ func _drive_tick(spec: Dictionary, active_ids: Array[int], tick: int) -> void:
 	var move_count := active_ids.size()
 	if activity == "third_active":
 		move_count = active_ids.size() / 2
-	var moving: Array[int] = active_ids.slice(0, move_count) if activity != "all_combat" else []
-	var fighting: Array[int] = active_ids.slice(move_count) if activity == "third_active" else (
-		active_ids if activity == "all_combat" else [])
+	var moving: Array[int] = []
+	var fighting: Array[int] = []
+	if activity != "all_combat":
+		for index: int in range(move_count):
+			moving.append(active_ids[index])
+	if activity == "third_active":
+		for index: int in range(move_count, active_ids.size()):
+			fighting.append(active_ids[index])
+	elif activity == "all_combat":
+		for id: int in active_ids:
+			fighting.append(id)
 	if not moving.is_empty():
 		if network == "asynchronous":
 			# Each group gets its own alternating sequence. Using tick parity here

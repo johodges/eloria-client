@@ -54,6 +54,23 @@ godot-client/assets/actors/native/races/*_metallic_roughness.jpg
 godot-client/assets/actors/native/races/*_normal.jpg
 godot-client/assets/actors/native/races/*_[0-9].png
 godot-client/assets/actors/native/equipment/*_[0-9].png
+godot-client/assets/actors/native/equipment/*_[0-9].jpg
+
+# Additional textures extracted by Godot 4.7 from the embedded actor GLBs.
+# Keep these generated sidecars beside the imports without staging them.
+godot-client/assets/actors/native/**/*_base_color.jpg
+godot-client/assets/actors/native/**/*_basecolor.jpg
+godot-client/assets/actors/native/**/*_normal.jpg
+godot-client/assets/actors/native/**/*_metallic_roughness.jpg
+godot-client/assets/actors/native/**/*_Image_0.jpg
+godot-client/assets/actors/native/creatures/*_base_color_[0-9].jpg
+godot-client/assets/actors/native/creatures/*_metallic_roughness_[0-9].jpg
+godot-client/assets/actors/native/creatures/*_normal_[0-9].jpg
+godot-client/assets/actors/native/races/*_[0-9].jpg
+godot-client/assets/actors/native/races/*_texture_0.jpg
+godot-client/assets/actors/native/races/luminous_*_basecolor.png
+godot-client/assets/actors/native/hair/**/*_Native Hair * Base Color.jpg
+godot-client/assets/actors/native/hair/**/*_Native Hair * Normal.jpg
 
 # pytest caches (any directory)
 .pytest_cache/

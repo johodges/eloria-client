@@ -36,7 +36,7 @@ The other profiles are diagnostic:
 
 | Profile | Coverage |
 | --- | --- |
-| `matrix` | 100/200/300/500 mixed actors at idle, one-third active, all moving and all fighting; half-frustum visibility. |
+| `matrix` | 100/200/300/500 mixed actors at idle, one-third active, all moving and all fighting; half-frustum visibility. All-combat is a heavy scripted-spell stress case rather than ordinary gameplay density. |
 | `features` | 300 humanoids with full equipment, bare bodies, no cape, effects disabled, overhead disabled, grounding disabled, and a diagnostic with actor AnimationPlayers frozen after normal gate classification. |
 | `stress` | 500 mixed actors with normal and asynchronous command delivery, folded turn/attack packets, health/buff packets, unchanged wear packets, and alternating wear/unwear lifecycle packets. It also runs two 500-packet decode/reduce bursts. |
 | `all` | Every predefined cell above. |
@@ -92,14 +92,23 @@ mean, p50, p95, p99 and maximum. Screenshot capture and resource census occur
 outside the timed interval. With `-Capture`, the primary 300-actor windowed run
 writes settled and active PNGs for visual review.
 
+Sampling continues until both the requested wall duration and 60 frames have
+elapsed, subject to the greater of a 120-second or four-times-duration hard
+bound for every population. A cell that
+reaches that bound before 60 frames records `sampleSufficiency` as false and
+fails report validation; it is excluded from performance evidence.
+
 The launcher records the commit, dirty state, requested and actual renderer,
 backend activation, trial and process identity. Its composite source hash and
 per-file hashes cover the benchmark, actor/state path, native reducer sources,
 extension manifest and generated native DLL. It records `cleanExit` separately
 from `abortedAfterReport`; the latter means the artifact was written but the
 runner had to stop Godot after the five-second shutdown grace period. It applies affinity mask `0xF`
-to the Godot process and any discovered console-wrapper descendants, then
-writes the observed masks to the companion process JSON. The two-thread
+to the captured Godot process object. When given the Windows console binary,
+it resolves and launches the sibling non-console executable directly; it does
+not scan or modify other Godot processes by name. The companion process JSON
+records the exact executable path, start time, observed mask, script-error
+scan, and report-validation result. The two-thread
 environment setting is recorded as a request because Godot exposes no runtime
 worker-pool count; the four-CPU affinity is the enforced bound.
 

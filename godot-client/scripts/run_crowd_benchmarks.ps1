@@ -46,6 +46,15 @@ if ([string]::IsNullOrWhiteSpace($GodotPath)) {
     $GodotPath = $godot.Source
 }
 $GodotPath = (Resolve-Path -LiteralPath $GodotPath).Path
+$launchPath = $GodotPath
+if ([IO.Path]::GetFileNameWithoutExtension($GodotPath) -like '*_console') {
+    $directPath = Join-Path (Split-Path -Parent $GodotPath) `
+        (([IO.Path]::GetFileNameWithoutExtension($GodotPath) -replace '_console$', '') + '.exe')
+    if (-not (Test-Path -LiteralPath $directPath)) {
+        throw "The console Godot executable has no sibling direct executable at $directPath."
+    }
+    $launchPath = (Resolve-Path -LiteralPath $directPath).Path
+}
 
 # Keep mutable state in this worktree. The process mask is the enforceable CPU
 # bound. Thread environment variables are requests recorded in the report;
@@ -74,6 +83,7 @@ $sourceRelativePaths = @(
     "godot-client/tests/integration/crowd_benchmarks.gd",
     "godot-client/tests/integration/crowd_benchmark_main.gd",
     "godot-client/tests/integration/crowd_benchmark_main.tscn",
+    "godot-client/scripts/run_crowd_benchmarks.ps1",
     "godot-client/src/state/app_state.gd",
     "godot-client/src/app/main.gd",
     "godot-client/src/actors/replicated_actor_3d.gd",
@@ -141,34 +151,33 @@ $backends = switch ($NativeBackend) {
 $safeLabel = ($Label -replace '[^A-Za-z0-9_.-]+', '-').Trim('-')
 if ([string]::IsNullOrWhiteSpace($safeLabel)) { $safeLabel = "unlabelled" }
 
-function Set-And-VerifyAffinity([int]$ProcessId, [hashtable]$Observed) {
+function Set-And-VerifyAffinity([System.Diagnostics.Process]$Process,
+        [hashtable]$Observed, [string]$ExpectedPath,
+        [datetime]$ExpectedStartTime) {
     try {
-        $process = Get-Process -Id $ProcessId -ErrorAction Stop
-        $process.ProcessorAffinity = 15
-        $process.Refresh()
-        $actual = $process.ProcessorAffinity.ToInt64()
-        $Observed[[string]$ProcessId] = @{
-            name = $process.ProcessName
+        if ($Process.HasExited) { return }
+        $Process.ProcessorAffinity = 15
+        $Process.Refresh()
+        $actual = $Process.ProcessorAffinity.ToInt64()
+        $actualPath = $Process.MainModule.FileName
+        $actualStartTime = $Process.StartTime.ToUniversalTime()
+        $Observed[[string]$Process.Id] = @{
+            name = $Process.ProcessName
+            path = $actualPath
+            startTimeUtc = $actualStartTime.ToString('o')
             affinityMask = $actual
         }
+        if (-not $actualPath.Equals($ExpectedPath,
+                [StringComparison]::OrdinalIgnoreCase) -or
+                $actualStartTime -ne $ExpectedStartTime) {
+            throw "Captured process identity changed for PID $($Process.Id)."
+        }
         if ($actual -ne 15) {
-            throw "Process $ProcessId has affinity $actual instead of 15."
+            throw "Process $($Process.Id) has affinity $actual instead of 15."
         }
     }
-    catch [Microsoft.PowerShell.Commands.ProcessCommandException] {
-        # A short-lived wrapper can exit between discovery and inspection.
-    }
-}
-
-function Discover-GodotProcesses([string[]]$Names,
-        [System.Collections.Generic.HashSet[int]]$Existing,
-        [hashtable]$Observed) {
-    foreach ($name in $Names) {
-        foreach ($candidate in @(Get-Process -Name $name -ErrorAction SilentlyContinue)) {
-            if (-not $Existing.Contains($candidate.Id)) {
-                Set-And-VerifyAffinity $candidate.Id $Observed
-            }
-        }
+    catch [System.InvalidOperationException] {
+        # The captured process can exit between HasExited and inspection.
     }
 }
 
@@ -245,52 +254,55 @@ foreach ($trial in 1..$Repeats) {
 
                 Write-Host "Running $runId serially (affinity=0xF; worker request=2)..."
                 $observed = @{}
-				$rootProcessName = [IO.Path]::GetFileNameWithoutExtension($GodotPath)
-				$childProcessName = $rootProcessName -replace '_console$', ''
-				$godotProcessNames = @($rootProcessName, $childProcessName) | Select-Object -Unique
-				$existingGodotIds = [System.Collections.Generic.HashSet[int]]::new()
-				foreach ($name in $godotProcessNames) {
-					foreach ($existing in @(Get-Process -Name $name -ErrorAction SilentlyContinue)) {
-						[void]$existingGodotIds.Add($existing.Id)
-					}
-				}
-                $process = Start-Process -FilePath $GodotPath -ArgumentList $quotedArguments `
+                $process = Start-Process -FilePath $launchPath -ArgumentList $quotedArguments `
 					-PassThru -WindowStyle Hidden -RedirectStandardOutput $stdoutPath `
 					-RedirectStandardError $stderrPath
-                Set-And-VerifyAffinity $process.Id $observed
-				foreach ($probe in 1..5) {
-					Discover-GodotProcesses $godotProcessNames $existingGodotIds $observed
-					Start-Sleep -Milliseconds 200
-				}
+				$expectedProcessPath = $launchPath
+				$expectedProcessStart = $process.StartTime.ToUniversalTime()
+                Set-And-VerifyAffinity $process $observed $expectedProcessPath `
+					$expectedProcessStart
 				$deadline = (Get-Date).AddMinutes($TimeoutMinutes)
 				$artifactSeenAt = $null
 				$postReportStop = $false
 				do {
-					$live = 0
-					foreach ($knownId in @($observed.Keys)) {
-						Set-And-VerifyAffinity ([int]$knownId) $observed
-						if (Get-Process -Id ([int]$knownId) -ErrorAction SilentlyContinue) {
-							$live += 1
-						}
+					$process.Refresh()
+					$live = if ($process.HasExited) { 0 } else { 1 }
+					if ($live -gt 0) {
+						Set-And-VerifyAffinity $process $observed $expectedProcessPath `
+							$expectedProcessStart
 					}
 					if ((Get-Date) -ge $deadline) {
-						foreach ($knownId in @($observed.Keys)) {
-							Stop-Process -Id ([int]$knownId) -Force -ErrorAction SilentlyContinue
-						}
+						if (-not $process.HasExited) { $process.Kill($true) }
 						throw "$runId exceeded the $TimeoutMinutes minute timeout."
 					}
 					if (Test-Path -LiteralPath $jsonPath) {
 						if ($null -eq $artifactSeenAt) { $artifactSeenAt = Get-Date }
 						elseif (((Get-Date) - $artifactSeenAt).TotalSeconds -ge 5 -and $live -gt 0) {
-							foreach ($knownId in @($observed.Keys)) {
-								Stop-Process -Id ([int]$knownId) -Force -ErrorAction SilentlyContinue
-							}
+							$process.Kill($true)
 							$postReportStop = $true
 						}
 					}
 					if ($live -gt 0) { Start-Sleep -Seconds 1 }
-				} while ($live -gt 0)
+                } while ($live -gt 0)
                 $process.WaitForExit()
+				$scriptErrorsDetected = $false
+				foreach ($diagnosticPath in @($logPath, $stdoutPath, $stderrPath)) {
+					if ((Test-Path -LiteralPath $diagnosticPath) -and
+							(Select-String -Path $diagnosticPath -Pattern 'SCRIPT ERROR|Parse Error' -Quiet)) {
+						$scriptErrorsDetected = $true
+					}
+				}
+				$schemaValid = $false
+				$reportValidationError = ""
+				try {
+					Assert-BenchmarkReport $jsonPath $Profile
+					$schemaValid = $true
+				}
+				catch {
+					$reportValidationError = $_.Exception.Message
+				}
+				$cleanExit = -not $postReportStop -and $process.ExitCode -eq 0
+				$reportValid = $schemaValid -and -not $scriptErrorsDetected -and $cleanExit
                 @{
                     runId = $runId
                     rootPid = $process.Id
@@ -302,25 +314,33 @@ foreach ($trial in 1..$Repeats) {
                     dirty = $dirty
 					sourceHash = $sourceHash
 					sourceFiles = $sourceHashes
-					monitoring = "Godot wrapper/child discovered during first second; known masks checked every second"
+					requestedGodotPath = $GodotPath
+					launchExecutablePath = $launchPath
+					monitoring = "captured direct Godot Process object only; exact path/start time and mask checked every second"
 					postReportStop = $postReportStop
 					abortedAfterReport = $postReportStop
-					cleanExit = (-not $postReportStop -and $process.ExitCode -eq 0)
+					cleanExit = $cleanExit
+					scriptErrorsDetected = $scriptErrorsDetected
+					schemaValid = $schemaValid
+					reportValid = $reportValid
+					reportValidationError = $reportValidationError
                     renderer = $renderingMethod
                     mode = $run
                     backend = $backend
                     trial = $trial
                 } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $processPath
-                if ($process.ExitCode -ne 0 -and -not $postReportStop) {
+				if ($postReportStop) {
+					throw "$runId wrote a report but required forced post-report termination. See $logPath"
+				}
+                if ($process.ExitCode -ne 0) {
                     throw "$runId failed with exit code $($process.ExitCode). See $logPath"
                 }
-				foreach ($diagnosticPath in @($logPath, $stdoutPath, $stderrPath)) {
-					if ((Test-Path -LiteralPath $diagnosticPath) -and
-							(Select-String -Path $diagnosticPath -Pattern 'SCRIPT ERROR|Parse Error' -Quiet)) {
-						throw "$runId logged a script or parse error. See $diagnosticPath"
-					}
-                }
-				Assert-BenchmarkReport $jsonPath $Profile
+				if ($scriptErrorsDetected) {
+					throw "$runId logged a script or parse error. See $logPath"
+				}
+				if (-not $reportValid) {
+					throw $reportValidationError
+				}
             }
         }
     }
