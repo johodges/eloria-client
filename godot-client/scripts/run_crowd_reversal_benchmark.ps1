@@ -52,6 +52,7 @@ New-Item -ItemType Directory -Force -Path $sessionRoot, $backupRoot, $originalRo
     Out-Null
 
 $approvedRelativePaths = @(
+    'godot-client/src/app/main.gd',
     'godot-client/src/actors/cape_cloth.gd',
     'godot-client/src/actors/combat_presentation_3d.gd',
     'godot-client/src/actors/ranger_bow_3d.gd',

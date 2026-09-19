@@ -1968,10 +1968,28 @@ func _actor_diagnostics(nodes: Dictionary, spec: Dictionary) -> Dictionary:
 	var equipped_humanoids := 0
 	var fully_equipped_humanoids := 0
 	var applied_equipment_visuals := 0
+	# Census outside the sampled frame interval: verify catalog ownership in
+	# both historical runtimes and the shared-snapshot implementation.
+	var registries: Array[Dictionary] = []
+	var registry_bindings := 0
+	var read_only_registries := 0
+	var shared_with_main := 0
+	var main_registry := _main.get("equipment_config") as Dictionary
 	for value: Variant in nodes.values():
 		if not is_instance_valid(value):
 			continue
 		var actor := value as ReplicatedActor3D
+		var registry := actor.get("_equipment_config") as Dictionary
+		registry_bindings += 1
+		read_only_registries += int(registry.is_read_only())
+		shared_with_main += int(is_same(registry, main_registry))
+		var known_registry := false
+		for existing: Dictionary in registries:
+			if is_same(existing, registry):
+				known_registry = true
+				break
+		if not known_registry:
+			registries.append(registry)
 		var diag := actor.equipment_diagnostics()
 		var visuals := diag.get("visuals", {}) as Dictionary
 		if not visuals.is_empty():
@@ -2000,6 +2018,13 @@ func _actor_diagnostics(nodes: Dictionary, spec: Dictionary) -> Dictionary:
 		"equippedHumanoids": equipped_humanoids,
 		"fullyEquippedHumanoids": fully_equipped_humanoids,
 		"appliedEquipmentVisuals": applied_equipment_visuals,
+		"equipmentRegistry": {
+			"actorBindings": registry_bindings,
+			"uniqueSnapshots": registries.size(),
+			"readOnlyActorBindings": read_only_registries,
+			"sharedWithMain": shared_with_main,
+			"mainReadOnly": main_registry.is_read_only(),
+		},
 		"meshInstances": mesh_instances,
 		"distinctMeshes": distinct_meshes.size(),
 		"cachedScenes": GlbSceneCache.cached_scene_count(),

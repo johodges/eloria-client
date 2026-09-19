@@ -75,6 +75,10 @@ $sourceRelativePaths = @(
     'godot-client/bin/windows/native_crowd.windows.template_release.x86_64.dll'
 )
 $sourceHashes = [ordered]@{}
+$snapshotCachePath = 'godot-client/src/actors/equipment_registry_snapshot_cache.gd'
+if (Test-Path -LiteralPath (Join-Path $repositoryRoot $snapshotCachePath) -PathType Leaf) {
+    $sourceRelativePaths += $snapshotCachePath
+}
 foreach ($relativePath in $sourceRelativePaths) {
     $absolutePath = Join-Path $repositoryRoot $relativePath
     if (-not (Test-Path -LiteralPath $absolutePath -PathType Leaf)) {

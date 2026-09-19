@@ -118,6 +118,7 @@ $sourceRelativePaths = @(
     "godot-client/bin/windows/native_crowd.windows.template_release.x86_64.dll"
 )
 $optionalSourceRelativePaths = @(
+    "godot-client/src/actors/equipment_registry_snapshot_cache.gd",
     "godot-client/native/native_crowd/src/native_cape_constraint_kernel.cpp",
     "godot-client/native/native_crowd/src/native_cape_constraint_kernel.h",
     "godot-client/native/native_crowd/src/native_spell_flight_geometry.cpp",
