@@ -76,8 +76,12 @@ func benchmark_attach_attribution(nodes: Dictionary) -> Dictionary:
 			if not callback.is_valid():
 				return {"ok": false,
 					"error": "actor %d has an invalid skeleton callback" % id}
-			originals.append({"callable": callback,
-				"flags": int(connection.get("flags", 0))})
+			var flags := int(connection.get("flags", 0))
+			if (flags & CONNECT_REFERENCE_COUNTED) != 0:
+				return {"ok": false,
+					"error": ("actor %d has a reference-counted skeleton callback; "
+						+ "connection multiplicity cannot be reconstructed") % id}
+			originals.append({"callable": callback, "flags": flags})
 		plan["originals"] = originals
 		if combat != null:
 			var direct := Callable(combat, "update_pose")
@@ -96,6 +100,7 @@ func benchmark_attach_attribution(nodes: Dictionary) -> Dictionary:
 
 	var combat_delegates := 0
 	var passive_observers := 0
+	var verified_replacements := 0
 	var applied: Array[Dictionary] = []
 	for plan: Dictionary in plans:
 		var skeleton := plan["skeleton"] as Skeleton3D
@@ -119,6 +124,7 @@ func benchmark_attach_attribution(nodes: Dictionary) -> Dictionary:
 			applied.append({"kind": "replacement", "skeleton": skeleton,
 				"originals": originals, "replacement": replacement})
 			combat_delegates += 1
+			verified_replacements += 1
 		else:
 			var observer := Callable(self,
 				"_benchmark_skeleton_updated").bind(id)
@@ -136,6 +142,9 @@ func benchmark_attach_attribution(nodes: Dictionary) -> Dictionary:
 		"ok": true, "actors": plans.size(),
 		"combatSignalDelegates": combat_delegates,
 		"passiveSkeletonObservers": passive_observers,
+		"verifiedOrderedReplacements": verified_replacements,
+		"allCombatReplacementOrdersVerified":
+			verified_replacements == combat_delegates,
 		"combatSignalOrderPolicy":
 			"snapshot and rebuild every callback in original order",
 	}
@@ -169,7 +178,34 @@ func _benchmark_replace_connections(skeleton: Skeleton3D,
 				"error": "connect returned %d; restore returned %d" % [
 					connected, restore_error]}
 		installed.append(descriptor)
-	return {"ok": true}
+	if not _benchmark_connections_match(skeleton, replacement):
+		var restore_error := _benchmark_reset_connections(skeleton, expected)
+		return {"ok": false,
+			"error": "replacement order/flags verification failed; restore returned %d" %
+				restore_error}
+	return {"ok": true, "verified": true}
+
+
+func _benchmark_connections_match(skeleton: Skeleton3D,
+		descriptors: Array[Dictionary]) -> bool:
+	var live_connections := skeleton.skeleton_updated.get_connections()
+	if live_connections.size() != descriptors.size():
+		return false
+	for index: int in range(descriptors.size()):
+		var live := live_connections[index] as Dictionary
+		if live.get("callable") != descriptors[index].get("callable") \
+				or int(live.get("flags", 0)) != int(descriptors[index].get("flags", 0)):
+			return false
+	return true
+
+
+func _benchmark_reset_connections(skeleton: Skeleton3D,
+		descriptors: Array[Dictionary]) -> int:
+	for connection: Dictionary in skeleton.skeleton_updated.get_connections():
+		var callback: Callable = connection.get("callable", Callable()) as Callable
+		if callback.is_valid():
+			skeleton.skeleton_updated.disconnect(callback)
+	return _benchmark_connect_descriptors(skeleton, descriptors)
 
 
 func _benchmark_connect_descriptors(skeleton: Skeleton3D,

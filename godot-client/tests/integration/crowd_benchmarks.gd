@@ -357,6 +357,13 @@ func _run_cell(spec: Dictionary) -> void:
 				"%s installs attribution without changing combat signal order: %s" % [
 					spec["id"], str(_attribution_attachment.get("error", ""))]):
 			return
+		if not _expect(bool(_attribution_attachment.get(
+				"allCombatReplacementOrdersVerified", false))
+				and int(_attribution_attachment.get(
+					"verifiedOrderedReplacements", -1)) == int(
+						_attribution_attachment.get("combatSignalDelegates", -2)),
+				"%s verifies every timed combat callback order and flag set" % spec["id"]):
+			return
 	await _place_population(nodes, records, str(spec["visibility"]))
 	var selected_actor_id := FIRST_ACTOR_ID + mini(1, count - 1)
 	_app_state.set("selected_actor_id", selected_actor_id)
