@@ -210,7 +210,7 @@ func _initialize_native_constraint_kernel() -> void:
 		return
 	_native_constraint_kernel_initialized = true
 	var requested := OS.get_environment("ELORIA_NATIVE_PRESENTATION").strip_edges().to_lower()
-	if requested not in ["cape", "both", "1"]:
+	if requested not in ["cape", "both", "all", "1"]:
 		return
 	_native_constraint_status = "requested"
 	if not ClassDB.class_exists(&"NativeCapeConstraintKernel"):

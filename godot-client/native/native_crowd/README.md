@@ -151,18 +151,20 @@ isolated `$results` directory. `ELORIA_CROWD_EXPECT_USER_ROOT` and
 
 ## Optional presentation kernels
 
-The same extension also contains two independently selectable presentation
+The same extension also contains three selectable presentation
 experiments. They do not require the native actor reducer. Leave
 `ELORIA_NATIVE_CROWD=0` when measuring their contribution.
 
 `ELORIA_NATIVE_PRESENTATION` selects the presentation path at instance creation:
 
-| Value | Cape constraints | Spell-flight geometry |
-| --- | --- | --- |
-| unset, `0`, or `off` | GDScript | GDScript |
-| `cape` | Native | GDScript |
-| `flight` | GDScript | Native |
-| `both` or `1` | Native | Native |
+| Value | Cape constraints | Spell-flight geometry | World-impact detail geometry |
+| --- | --- | --- | --- |
+| unset, `0`, or `off` | GDScript | GDScript | GDScript |
+| `cape` | Native | GDScript | GDScript |
+| `flight` | GDScript | Native | GDScript |
+| `both` or `1` | Native | Native | GDScript |
+| `world` | GDScript | GDScript | Native |
+| `all` | Native | Native | Native |
 
 The source checkout remains usable without a built extension. A requested
 kernel that is unavailable falls back to the existing GDScript implementation.
@@ -181,10 +183,24 @@ unchanged for the GDScript fallback. It does not own actors or read scene nodes.
 glow geometry from its current scalar/vector parameters. It returns packed
 positions, colours and UVs. Godot retains endpoint tracking, release and arrival
 timing, lifetime, materials, nodes, and ArrayMesh submission. Invalid output
-selects that flight's complete original ImmediateMesh path. World-effect rings,
-runes, particles, and actor combat cues are outside this native boundary.
+selects that flight's complete original ImmediateMesh path.
 
-Both kernels use the existing RefCounted binding profile and the same serial,
+`NativeWorldEffectGeometry.build()` constructs a complete impact detail surface
+in one call: radial marks, blessing/ward/harm shapes, the flight-contact spark,
+area waves and spell-specific shapes. It returns packed positions and colours.
+Godot retains anchors, the clock, effect lifetime, ring animation, particles,
+materials and mesh submission. The optional wrapper validates the packed output
+shape and permanently selects the original ImmediateMesh path if a build fails.
+The native operation validates bounded, finite inputs and returns no partial
+geometry on rejection. It neither creates scene nodes nor changes event timing.
+
+The `both`/`1` values retain their original cape-plus-flight meaning. `all`
+explicitly adds world-impact geometry, and benchmark reports attest its active
+instances, successful builds and fallback counts separately. Actor combat cues
+remain in GDScript. See the [impact geometry study](../../docs/crowd-impact-geometry-optimization.md)
+for the focused comparison and scene measurements.
+
+All kernels use the existing RefCounted binding profile and the same serial,
 affinity-limited build commands above. The renderer default and actor reducer
 opt-in remain unchanged. This is geometry/constraint computation within Godot,
 not a separate crowd renderer.

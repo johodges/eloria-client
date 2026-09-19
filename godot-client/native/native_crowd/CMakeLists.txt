@@ -32,6 +32,8 @@ add_library(native_crowd SHARED
     src/native_spell_flight_geometry.h
     src/native_cape_constraint_kernel.cpp
     src/native_cape_constraint_kernel.h
+    src/native_world_effect_geometry.cpp
+    src/native_world_effect_geometry.h
     src/register_types.cpp
     src/register_types.h
 )

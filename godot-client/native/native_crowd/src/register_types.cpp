@@ -3,6 +3,7 @@
 #include "native_crowd_reducer.h"
 #include "native_spell_flight_geometry.h"
 #include "native_cape_constraint_kernel.h"
+#include "native_world_effect_geometry.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
@@ -19,6 +20,7 @@ void initialize_native_crowd_module(
     ClassDB::register_class<NativeCrowdStore>();
     ClassDB::register_class<NativeSpellFlightGeometry>();
     ClassDB::register_class<NativeCapeConstraintKernel>();
+    ClassDB::register_class<NativeWorldEffectGeometry>();
 }
 
 void uninitialize_native_crowd_module(

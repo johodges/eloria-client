@@ -59,13 +59,13 @@ func _run() -> void:
 	baseline.free()
 	flight.free()
 
-	for enabled_mode: String in ["both", "1"]:
+	for enabled_mode: String in ["both", "1", "all"]:
 		OS.set_environment("ELORIA_NATIVE_PRESENTATION", enabled_mode)
 		var enabled = Production.new()
 		_expect(enabled.native_presentation_active(),
 			enabled_mode + " mode activates native flight")
 		enabled.free()
-	for disabled_mode: String in ["", "0", "cape"]:
+	for disabled_mode: String in ["", "0", "cape", "world"]:
 		OS.set_environment("ELORIA_NATIVE_PRESENTATION", disabled_mode)
 		var disabled = Production.new()
 		_expect(not disabled.native_presentation_active(),

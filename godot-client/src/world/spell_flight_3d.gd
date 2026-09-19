@@ -40,7 +40,7 @@ func _init() -> void:
 
 func _initialize_native_presentation() -> void:
 	var mode := OS.get_environment("ELORIA_NATIVE_PRESENTATION").strip_edges().to_lower()
-	if mode not in ["1", "flight", "both"]:
+	if mode not in ["1", "flight", "both", "all"]:
 		return
 	if not ClassDB.class_exists(&"NativeSpellFlightGeometry"):
 		var extension_path := "res://bin/native_crowd.gdextension"

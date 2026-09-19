@@ -231,6 +231,20 @@ strictly serial. Each backend, renderer, display mode and trial gets a unique
 UTC-stamped JSON, log, process-metadata file and screenshot name, so an A/B run
 cannot overwrite its peer. The default is three trials per configuration.
 
+`-NativePresentation` independently selects `Off` (default), `Cape`, `Flight`,
+`Both` (cape and flight), `World` (impact detail geometry), or `All`. Keep
+`-NativeBackend GDScript` when measuring presentation changes alone. Reports
+verify active native instances, successful calls and zero fallbacks for every
+requested component. Historical reports without world-detail attestation remain
+readable but are grouped separately from reports with the newer counters.
+See the [native extension options](../native/native_crowd/README.md#optional-presentation-kernels).
+
+For source-reversal comparisons, `run_crowd_reversal_benchmark.ps1` accepts
+`-RelativePaths` from a fixed runtime-file allowlist. Include every changed
+runtime path, including `ranger_bow_3d.gd` when comparing bow caching. The runner
+rejects an omitted changed path, requires a clean frozen revision and the
+exclusive CPU slot, records both variants, and restores exact checkout bytes.
+
 ## Reading the report
 
 Every cell records its exact requested configuration, spawn passes and time,

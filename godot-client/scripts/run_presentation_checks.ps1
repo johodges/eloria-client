@@ -46,7 +46,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Cannot determine source status.' }
 $executableHash = (Get-FileHash -LiteralPath $launchPath -Algorithm SHA256).Hash.ToLowerInvariant()
 $sourceHashes = [ordered]@{}
 $sourcePaths = @('src/actors/cape_cloth.gd', 'src/actors/replicated_actor_3d.gd',
-    'src/actors/combat_presentation_3d.gd', 'src/world/world_effect_3d.gd',
+    'src/actors/combat_presentation_3d.gd', 'src/actors/ranger_bow_3d.gd',
+    'src/world/world_effect_3d.gd',
     'src/world/spell_flight_3d.gd', 'src/world/combat_effect_mesh.gd',
     'src/world/spell_energy.gdshader', 'src/world/animation_gate.gd',
     'src/app/main.gd', 'project.godot', 'scripts/run_presentation_checks.ps1',
@@ -57,7 +58,9 @@ $optionalSourcePaths = @(
     'native/native_crowd/src/native_spell_flight_geometry.cpp',
     'native/native_crowd/src/native_spell_flight_geometry.h',
     'native/native_crowd/src/native_cape_constraint_kernel.cpp',
-    'native/native_crowd/src/native_cape_constraint_kernel.h'
+    'native/native_crowd/src/native_cape_constraint_kernel.h',
+    'native/native_crowd/src/native_world_effect_geometry.cpp',
+    'native/native_crowd/src/native_world_effect_geometry.h'
 )
 foreach ($relative in $optionalSourcePaths) {
     if (Test-Path -LiteralPath (Join-Path $clientRoot $relative)) {
