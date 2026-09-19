@@ -41,6 +41,7 @@ extends SceneTree
 ##   ELORIA_BENCH_MAP      the map the actor scene stands on ("" for none)
 ##   ELORIA_BENCH_LABEL    a name for the run, written into the report
 ##   ELORIA_BENCH_OUTPUT   the file name inside the artifact directory
+##   ELORIA_PACKET_BENCH_REPEATS packet timing repeats (default 8)
 
 ## The eleven exteriors and the city, in the order a tour would take them. The
 ## ids are registry keys; the manifests are resolved through MapRegistry, which
@@ -79,6 +80,18 @@ func _init() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
+	var expected_user_root := OS.get_environment(
+		"ELORIA_CROWD_EXPECT_USER_ROOT").replace("\\", "/")
+	while expected_user_root.ends_with("/"):
+		expected_user_root = expected_user_root.left(-1)
+	var actual_user_dir := OS.get_user_data_dir().replace("\\", "/")
+	if not expected_user_root.is_empty() \
+			and actual_user_dir != expected_user_root \
+			and not actual_user_dir.begins_with(expected_user_root + "/"):
+		push_error("client benchmark user data escaped its isolated root: "
+			+ actual_user_dir)
+		quit(1)
+		return
 	_headless = DisplayServer.get_name() == "headless"
 	# Headless frames are padded to the idle sleep, which is the whole frame
 	# time at this scale. Removing it is what makes headless wall time mean
@@ -110,6 +123,7 @@ func _run() -> void:
 		"godot": "%d.%d.%d" % [Engine.get_version_info()["major"],
 			Engine.get_version_info()["minor"], Engine.get_version_info()["patch"]],
 		"viewport": [root.size.x, root.size.y],
+		"userDataDir": actual_user_dir,
 		"sections": sections,
 		"unixTime": int(Time.get_unix_time_from_system()),
 	}
@@ -598,6 +612,12 @@ func _measure_packets() -> Dictionary:
 	var app_state: Node = root.get_node_or_null("/root/AppState")
 	if not _expect(app_state != null, "AppState is available to the reducer benchmark"):
 		return {}
+	var native_crowd_active := bool(app_state.call(
+		"native_crowd_reducer_active")) \
+		if app_state.has_method("native_crowd_reducer_active") else false
+	if OS.get_environment("ELORIA_NATIVE_CROWD") == "1":
+		_expect(native_crowd_active,
+			"the requested native AppState reducer is active")
 
 	var burst := PackedByteArray()
 	var counts: Dictionary = {"actor_commands": 0, "partial_stats": 0, "chat": 0}
@@ -650,7 +670,9 @@ func _measure_packets() -> Dictionary:
 
 	var decode_usec: int = 0
 	var full_usec: int = 0
-	var repeats: int = 8
+	var repeats: int = max(1, int(OS.get_environment(
+		"ELORIA_PACKET_BENCH_REPEATS"))) if not OS.get_environment(
+		"ELORIA_PACKET_BENCH_REPEATS").is_empty() else 8
 	var decoded: int = 0
 	for repeat: int in range(repeats):
 		var offset: int = 0
@@ -711,6 +733,7 @@ func _measure_packets() -> Dictionary:
 	_expect(decoded == PACKET_BURST,
 		"the burst drains to %d packets (got %d)" % [PACKET_BURST, decoded])
 	var results: Dictionary = {
+		"nativeCrowdReducerActive": native_crowd_active,
 		"packets": PACKET_BURST,
 		"bytes": burst.size(),
 		"mix": counts,
