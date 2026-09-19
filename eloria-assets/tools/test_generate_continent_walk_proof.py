@@ -179,6 +179,105 @@ class FerryArrivalFixtureTests(unittest.TestCase):
             generator.ferry_arrival({'region':'island','arrival':[12.5,34]})
 
 
+@unittest.skipUnless(os.environ.get('ELORIA_PROOF_SERVER'), 'Set ELORIA_PROOF_SERVER to run paired roadless fixtures')
+class RoadlessFixtureTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.R=P.runtime(Path(os.environ['ELORIA_PROOF_SERVER']))
+
+    def world(self,width=100,height=100):
+        w=self.R['world'].World.__new__(self.R['world'].World)
+        w.settings=SimpleNamespace(max_walk_height_change=2,portal_activation_distance=8)
+        w.maps={}
+        w.collision_maps={name:self.R['collision'].with_step_mask(
+            self.R['collision'].CollisionMap(width,height,bytes([10])*(width*height)),2) for name in ('a','b')}
+        w.sessions,w.animals,w.animals_by_map=[],{},{}
+        w.npcs={};w._footprint_collision={}
+        return w
+
+    def portal(self,source,x,y,destination,dx,dy):
+        return self.R['maps'].Portal(source,x,y,destination,dx,dy)
+
+    def roadless_generator(self,surface=lambda region,tile:0.0):
+        world=self.world();raw=bytearray(world.collision_maps['a'].heights)
+        for y in range(100):raw[y*100+50]=0
+        collision=self.R['collision'].with_step_mask(self.R['collision'].CollisionMap(100,100,bytes(raw)),2)
+        world.collision_maps={'a':collision,'b':collision}
+        ys=(20,50,80)
+        portals=[]
+        for y in ys:
+            portals.extend([self.portal('a',82,y,'b',10,y),self.portal('b',8,y,'a',80,y)])
+        ends=[{'map':'a','frame':{'outward':[1,0]},'coordinateTransform':{'serverOrigin':[0,0]}},
+              {'map':'b','frame':{'outward':[-1,0]},'coordinateTransform':{'serverOrigin':[0,0]}}]
+        publication_ends=[
+            {'region':'a','lanes':[{'tile':[82,y],'arrival':[81,y]} for y in ys]},
+            {'region':'b','lanes':[{'tile':[8,y],'arrival':[9,y]} for y in ys]}]
+        g=P.Generator.__new__(P.Generator);g.chunk_mode=True
+        g.world,g.portals=world,portals;g.audit=P.WalkAudit(world,portals)
+        g.links=[{'id':'a--b-roadless','road':False,'ends':ends}]
+        g.publication={'connections':[{'id':'a--b-roadless','type':'walk','road':False,'ends':publication_ends}]}
+        g.specs={'a':{'arrival':[2,5],'serverOrigin':[0,0],'translation':[0,0,0]},
+                 'b':{'arrival':[90,5],'serverOrigin':[0,0],'translation':[72,0,0]}}
+        g.surface_height=surface;g.errors,g.lanes=[],[]
+        return g
+
+    def test_roadless_fixtures_cover_both_directions_from_hub_disconnected_pockets(self):
+        g=self.roadless_generator()
+        with self.assertRaisesRegex(P.AuditError,'no route'):
+            g.route_path('a',(82,50),'hub-disconnected policy check')
+        centre,shoulders,clicks=g.borders()
+        self.assertEqual(g.errors,[]);self.assertEqual(len(g.lanes),6)
+        self.assertEqual((len(centre),len(shoulders),len(clicks)),(2,0,6))
+        for source,destination in (('a','b'),('b','a')):
+            walk=next(route for route in centre if route['map']==source)
+            source_clicks=[route for route in clicks if route['map']==source]
+            self.assertEqual(len(source_clicks),3)
+            click=next(route for route in source_clicks if 'mapClick' not in route['steps'][0])
+            crossings=[step for step in walk['steps'] if 'destination' in step]
+            self.assertEqual(len(crossings),1);self.assertEqual(crossings[0]['destination'],destination)
+            portal=next(p for p in g.portals if p.source==source and (p.x,p.y)==tuple(crossings[0]['tile']))
+            target=tuple(click['steps'][0]['tile']);arrival=(portal.destination_x,portal.destination_y)
+            self.assertEqual(click['start'],walk['start'])
+            self.assertEqual(click['steps'][0]['destination'],destination)
+            self.assertTrue(click['steps'][0]['clickNeighbor'])
+            self.assertNotIn(target,g.audit.automatic[destination])
+            self.assertTrue(3<=click['targetSteps']<=12)
+            self.assertEqual(g.audit.exact_path(destination,arrival,target)[-1],target)
+            self.assertEqual(walk['steps'][-1]['tile'],list(target))
+            self.assertEqual(walk['id'],f'a--b-roadless-{source}-roadless-crossing')
+            self.assertEqual(click['id'],f'a--b-roadless-{source}-roadless-click')
+            self.assertEqual({route['steps'][0].get('mapClick') for route in source_clicks},{None,'full_map','minimap'})
+            self.assertEqual({tuple(route['steps'][0]['tile']) for route in source_clicks},{target})
+            self.assertEqual({route['steps'][0]['destination'] for route in source_clicks},{destination})
+            self.assertTrue(all(route['steps'][0]['clickNeighbor'] for route in source_clicks))
+            self.assertEqual(len({route['id'] for route in source_clicks}),3)
+            self.assertEqual(len({route['steps'][0]['capture'] for route in source_clicks}),3)
+            self.assertEqual(len({route['steps'][0]['label'] for route in source_clicks}),3)
+
+    def test_roadless_selection_deterministically_tries_an_alternative_unframeable_lane(self):
+        surface=lambda region,tile:None if 40<=tile[1]<=60 else 0.0
+        routes=[]
+        for _ in range(2):
+            g=self.roadless_generator(surface);centre,shoulders,clicks=g.borders()
+            self.assertEqual(g.errors,[]);self.assertEqual((len(centre),len(shoulders),len(clicks)),(2,0,6))
+            chosen=[]
+            for route in centre:
+                crossing=next(step for step in route['steps'] if 'destination' in step)
+                self.assertNotEqual(crossing['tile'][1],50)
+                chosen.append((route['id'],route['start'],crossing['tile'],route['steps'][-1]['tile']))
+            routes.append(chosen)
+        self.assertEqual(routes[0],routes[1])
+
+    def test_roadless_selection_records_actionable_error_when_all_candidates_fail(self):
+        g=self.roadless_generator(lambda region,tile:None)
+        centre,shoulders,clicks=g.borders()
+        self.assertEqual((centre,shoulders,clicks),([],[],[]));self.assertEqual(len(g.lanes),6)
+        errors=[item['error'] for item in g.errors if 'roadless representative' in item['route']]
+        self.assertEqual(len(errors),2)
+        self.assertTrue(all('no usable roadless representative' in error and 'camera margin' in error
+                            for error in errors))
+
+
 @unittest.skipUnless(os.environ.get('ELORIA_PROOF_SERVER'), 'Set ELORIA_PROOF_SERVER to run paired path regressions')
 class PathProofTests(unittest.TestCase):
     @classmethod
@@ -197,6 +296,11 @@ class PathProofTests(unittest.TestCase):
 
     def portal(self,source,x,y,destination,dx,dy):
         return self.R['maps'].Portal(source,x,y,destination,dx,dy)
+
+    def configure_border_fixture(self,g):
+        g.specs={'a':{'arrival':[2,50],'serverOrigin':[0,0],'translation':[0,0,0]},
+                 'b':{'arrival':[90,50],'serverOrigin':[0,0],'translation':[72,0,0]}}
+        g.surface_height=lambda region,tile:0.0
 
     def test_new_ferry_fixtures_require_actual_dock_access_and_safe_return(self):
         g=P.Generator.__new__(P.Generator);g.chunk_mode=True;g.world=self.world(24,12)
@@ -547,6 +651,7 @@ class PathProofTests(unittest.TestCase):
                             self.portal('b',8,50+offset,'a',80,50+offset)])
         g=P.Generator.__new__(P.Generator)
         g.world,g.portals=world,portals;g.audit=P.WalkAudit(world,portals)
+        self.configure_border_fixture(g)
         g.links=[{'id':'a--b','ends':[{'map':'a','frame':merged,'coordinateTransform':{'serverOrigin':[0,0]}},
                                     {'map':'b','frame':{'outward':[-1,0]}}]}]
         g.errors,g.lanes=[],[];g.borders()
@@ -589,6 +694,7 @@ class PathProofTests(unittest.TestCase):
         g=P.Generator.__new__(P.Generator)
         g.world,g.portals=world,portals
         g.audit=P.WalkAudit(world,portals)
+        self.configure_border_fixture(g)
         g.links=[{'id':'a--b','ends':[{'map':'a','frame':{'outward':[1,0]}},
                                      {'map':'b','frame':{'outward':[-1,0]}}]}]
         g.errors,g.lanes=[],[]
@@ -596,6 +702,7 @@ class PathProofTests(unittest.TestCase):
         self.assertEqual(g.errors,[])
         self.assertEqual(len(g.lanes),14)
         self.assertEqual((len(centre),len(shoulders),len(clicks)),(1,2,4))
+        self.assertTrue(all('roadless' not in route['id'] for route in centre+shoulders+clicks))
         self.assertEqual([s['destination'] for s in centre[0]['steps'] if 'destination' in s],['b','a'])
         far=[r['steps'][0]['tile'] for r in clicks if r['map']=='a']
         self.assertEqual(far,[[12,50],[22,50]])
@@ -609,6 +716,7 @@ class PathProofTests(unittest.TestCase):
         world.collision_maps['a']=self.R['collision'].CollisionMap(100,100,bytes(raw))
         g=P.Generator.__new__(P.Generator)
         g.world,g.portals=world,portals;g.audit=P.WalkAudit(world,portals)
+        self.configure_border_fixture(g)
         g.links=[{'id':'a--b','ends':[{'map':'a','frame':{'outward':[1,0]}},
                                      {'map':'b','frame':{'outward':[-1,0]}}]}]
         g.errors,g.lanes=[],[]

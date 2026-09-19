@@ -48,6 +48,7 @@ CLICK_CAMERA_DISTANCE=32
 # surface model (the client's own collision export, 0.29 m steps) differs from
 # the rendered surface by up to half a metre, about 15 px at this zoom.
 CLICK_VISIBLE_MARGIN_PX=60
+ROADLESS_LOCAL_CANDIDATES=32
 
 
 def harness_screen_position(focus,yaw_degrees,distance,point):
@@ -1069,6 +1070,83 @@ class Generator:
                 'steps':[{'tile':list(target),'destination':b['map'],'clickNeighbor':True,
                           'label':'exact visible resident target','capture':identity}]}
 
+    def local_route_candidates(self,region,origin,direction,minimum,maximum,preferred,label,*,reverse=False):
+        """Short real paths into a border pocket, independent of the territory hub."""
+        origin=tuple(origin);ideal=(origin[0]+direction[0]*preferred,origin[1]+direction[1]*preferred)
+        points=[(origin[0]+dx,origin[1]+dy) for dx in range(-maximum,maximum+1)
+                for dy in range(-maximum,maximum+1) if dx or dy]
+        points.sort(key=lambda p:((p[0]-ideal[0])**2+(p[1]-ideal[1])**2,
+                                  -((p[0]-origin[0])*direction[0]+(p[1]-origin[1])*direction[1]),p))
+        result=[]
+        for point in points:
+            if point in self.audit.automatic[region] or not self.audit.standing(region,point):continue
+            try:
+                path=(self.audit.exact_path(region,point,origin,allowed=[origin]) if reverse else
+                      self.audit.exact_path(region,origin,point))
+            except AuditError:
+                continue
+            if minimum<=len(path)<=maximum:
+                result.append((point,len(path)))
+                if len(result)>=ROADLESS_LOCAL_CANDIDATES:break
+        return result
+
+    def roadless_routes(self,link,a,b):
+        """One local physical crossing and neighbour click for a roadless direction."""
+        lanes=self.sorted_lanes(a,b)
+        order=sorted(range(len(lanes)),key=lambda index:(abs(index-(len(lanes)-1)/2),index))
+        published={tuple(e['tile']):e for e in self.published_end(a,b)['lanes']}
+        failures=[];selected=None
+        for index in order:
+            p=lanes[index];trigger=(p.x,p.y);arrival=(p.destination_x,p.destination_y)
+            lane=published.get(trigger)
+            if lane is None:
+                failures.append(f'{trigger}: absent from published lane set');continue
+            try:self.border_lane(a,b,p,lane)
+            except AuditError as error:
+                failures.append(f'{trigger}: {error}');continue
+            starts=self.local_route_candidates(a['map'],trigger,self.inward(a['frame']),3,12,8,
+                                                link['id']+' roadless approach',reverse=True)
+            if not starts:
+                failures.append(f'{trigger}: no safe 3-12-step local source approach');continue
+            targets=self.local_route_candidates(b['map'],arrival,self.inward(b['frame']),3,12,8,
+                                                 link['id']+' roadless target')
+            if not targets:
+                failures.append(f'{trigger}: no safe 3-12-step nonportal destination target');continue
+            yaw=self.yaw(a['frame'])
+            for start,source_steps in starts:
+                for target,target_steps in targets:
+                    margin=visible_margin(self.harness_screen(a['map'],start,b['map'],target,yaw,
+                                                              CLICK_CAMERA_DISTANCE))
+                    if margin>=CLICK_VISIBLE_MARGIN_PX:
+                        selected=(p,start,source_steps,arrival,target,target_steps,yaw,margin);break
+                if selected:break
+            if selected:break
+            failures.append(f'{trigger}: no local approach/target pair has {CLICK_VISIBLE_MARGIN_PX}px camera margin')
+        if selected is None:
+            detail='; '.join(failures[:8])
+            if len(failures)>8:detail+=f'; plus {len(failures)-8} more lanes'
+            raise AuditError(f"{link['id']} {a['map']} -> {b['map']}: no usable roadless representative ({detail})")
+        p,start,source_steps,arrival,target,target_steps,yaw,margin=selected
+        identity=link['id']+'-'+a['map']+'-roadless-crossing'
+        steps=self.audit.movement(a['map'],start,(p.x,p.y),identity+' outward',allowed=[(p.x,p.y)])
+        steps[-1].update(destination=b['map'])
+        steps+=self.audit.movement(b['map'],arrival,target,identity+' safe departure')
+        walk={'id':identity,'map':a['map'],'start':list(start),'startTolerance':0,
+              'yaw':yaw,'distance':CLICK_CAMERA_DISTANCE,'steps':steps}
+        clicks=[]
+        for mode,suffix,label in ((None,'','exact visible roadless resident target'),
+                                  ('full_map','-full-map','exact roadless resident target via full map'),
+                                  ('minimap','-minimap','exact roadless resident target via minimap')):
+            click_identity=link['id']+'-'+a['map']+'-roadless-click'+suffix
+            step={'tile':list(target),'destination':b['map'],'clickNeighbor':True,
+                  'label':label,'capture':click_identity}
+            if mode is not None:step['mapClick']=mode
+            clicks.append({'id':click_identity,'map':a['map'],'start':list(start),'startTolerance':0,
+                           'yaw':yaw,'distance':CLICK_CAMERA_DISTANCE,'walkTimeout':60,
+                           'requestedSteps':12,'targetSteps':target_steps,'screenMarginPx':round(margin,1),
+                           'steps':[step]})
+        return walk,clicks
+
     def borders(self):
         centre,shoulders,clicks=[],[],[]
         for link in self.links:
@@ -1115,9 +1193,12 @@ class Generator:
                                            'surveyedLaneTiles':len(lane),'authoredCurve':curved,
                                            'collarMetres':approaches.collar_length(a['frame']) if curved else depth})
                 self.attempt(link['id']+' '+a['map']+' lanes',check_lanes)
-                # A border no road crosses has no gate to click across from or hand
-                # off at: its lanes, each proved above, are all it offers.
-                if not link.get('road',True):continue
+                if not link.get('road',True):
+                    routes=self.attempt(link['id']+' '+a['map']+' roadless representative',
+                                        lambda:self.roadless_routes(link,a,b))
+                    if routes:
+                        walk,roadless_clicks=routes;centre.append(walk);clicks.extend(roadless_clicks)
+                    continue
                 for depth in (2,12):
                     route=self.attempt(link['id']+' neighbor click',lambda:self.click_route(link,a,b,depth))
                     if route:clicks.append(route)
