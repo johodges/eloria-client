@@ -307,6 +307,9 @@ class NativePresentationAdmissionTests(unittest.TestCase):
     def test_rejects_unrequested_activity_or_fallback(self) -> None:
         presentation, cells = self._fixture("off")
         cells[0]["nativePresentation"]["delta"]["flightBuildFallbacks"] = 1
+        cells[0]["nativePresentation"]["afterSample"]["flight"][
+            "buildFallbacks"
+        ] = 1
         presentation["actual"]["flightBuildFallbacks"] = 1
         with self.assertRaisesRegex(SUMMARY.SummaryError, "actual activity"):
             SUMMARY._validate_native_presentation(presentation, cells, "run")
@@ -315,6 +318,20 @@ class NativePresentationAdmissionTests(unittest.TestCase):
         presentation, cells = self._fixture("both")
         presentation["environmentValue"] = "1"
         with self.assertRaisesRegex(SUMMARY.SummaryError, "environment/mode mismatch"):
+            SUMMARY._validate_native_presentation(presentation, cells, "run")
+
+    def test_rejects_reported_delta_that_does_not_match_snapshots(self) -> None:
+        presentation, cells = self._fixture("cape")
+        cells[0]["nativePresentation"]["delta"]["capeNativeCalls"] = 9
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "afterSample minus beforeSample"):
+            SUMMARY._validate_native_presentation(presentation, cells, "run")
+
+    def test_rejects_counter_that_decreases_during_sampling(self) -> None:
+        presentation, cells = self._fixture("flight")
+        cells[0]["nativePresentation"]["afterSample"]["flight"][
+            "buildSuccesses"
+        ] = 4
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "counters decreased"):
             SUMMARY._validate_native_presentation(presentation, cells, "run")
 
 

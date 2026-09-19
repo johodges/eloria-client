@@ -270,8 +270,11 @@ def _validate_native_presentation(
         if _required_text(attestation, "requestedMode", cell_context) != mode:
             raise SummaryError(f"{cell_context}.requestedMode changed within run")
         delta = _required_dict(attestation, "delta", cell_context)
-        for key in delta_keys:
-            observed[key] += _nonnegative_counter(delta, key, f"{cell_context}.delta")
+        reported_delta = {
+            key: _nonnegative_counter(delta, key, f"{cell_context}.delta")
+            for key in delta_keys
+        }
+        snapshots: dict[str, tuple[dict[str, int], dict[str, int]]] = {}
         for phase in ("beforeSample", "afterSample"):
             snapshot = _required_dict(attestation, phase, cell_context)
             cape = _required_dict(snapshot, "cape", f"{cell_context}.{phase}")
@@ -288,6 +291,7 @@ def _validate_native_presentation(
                 raise SummaryError(
                     f"{cell_context}.{phase}.flight.statsSupported must be boolean"
                 )
+            snapshots[phase] = (cape_values, flight_values)
             observed["capeModifierInstancesMaximum"] = max(
                 observed["capeModifierInstancesMaximum"], cape_values["modifierInstances"]
             )
@@ -312,6 +316,29 @@ def _validate_native_presentation(
             observed["flightActiveInstancesMaximum"] = max(
                 observed["flightActiveInstancesMaximum"], flight_values["activeInstances"]
             )
+        cape_before, flight_before = snapshots["beforeSample"]
+        cape_after, flight_after = snapshots["afterSample"]
+        expected_delta = {
+            "capeNativeCalls": cape_after["nativeCalls"] - cape_before["nativeCalls"],
+            "capeFallbackCalls": cape_after["fallbackCalls"] - cape_before["fallbackCalls"],
+            "flightBuildAttempts": (
+                flight_after["buildAttempts"] - flight_before["buildAttempts"]
+            ),
+            "flightBuildSuccesses": (
+                flight_after["buildSuccesses"] - flight_before["buildSuccesses"]
+            ),
+            "flightBuildFallbacks": (
+                flight_after["buildFallbacks"] - flight_before["buildFallbacks"]
+            ),
+        }
+        if any(value < 0 for value in expected_delta.values()):
+            raise SummaryError(f"{cell_context} native counters decreased during sampling")
+        if reported_delta != expected_delta:
+            raise SummaryError(
+                f"{cell_context}.delta does not equal afterSample minus beforeSample"
+            )
+        for key in delta_keys:
+            observed[key] += reported_delta[key]
     if checked != observed:
         raise SummaryError(
             f"{context}.nativePresentation.actual does not match per-cell attestations"

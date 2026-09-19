@@ -151,7 +151,7 @@ function Assert-WorkspaceVariant([string]$Variant,
         if ($_.Length -lt 4) { throw "Cannot parse git status line: $_" }
         $_.Substring(3).Trim('"') -replace '\\', '/'
     } | Sort-Object -Unique)
-    $expectedChanged = if ($Variant -eq 'A') { @($relativePaths | Sort-Object) } else { @() }
+    $expectedChanged = if ($Variant -eq 'A') { @($baselineChangedPaths) } else { @() }
     $statusMismatch = $expectedChanged.Count -ne $changedPaths.Count
     if (-not $statusMismatch -and $expectedChanged.Count -gt 0) {
         $statusMismatch = @(Compare-Object -ReferenceObject $expectedChanged `
@@ -205,6 +205,9 @@ foreach ($relativePath in $relativePaths) {
     [IO.File]::WriteAllBytes((Join-Path $originalRoot "$safeName.original"),
         $originalBytes[$relativePath])
 }
+$baselineChangedPaths = @($relativePaths | Where-Object {
+    $candidateGitBlobHashes[$_] -ne $originalHashes[$_]
+} | Sort-Object)
 
 $runnerHash = (Get-FileHash -LiteralPath $runner -Algorithm SHA256).Hash.ToLowerInvariant()
 $godotRequestedHash = (Get-FileHash -LiteralPath $godotRequested `
@@ -233,6 +236,7 @@ $manifest = [ordered]@{
     candidateHashes = $candidateHashes
     candidateGitBlobHashes = $candidateGitBlobHashes
     originalHashes = $originalHashes
+    baselineChangedPaths = $baselineChangedPaths
     runs = [Collections.Generic.List[object]]::new()
     lockAcquired = $false
     restored = $false

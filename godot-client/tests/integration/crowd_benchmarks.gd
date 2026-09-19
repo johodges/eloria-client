@@ -735,7 +735,9 @@ func _native_presentation_snapshot(nodes: Dictionary) -> Dictionary:
 
 
 func _counter_delta(before: Dictionary, after: Dictionary, key: String) -> int:
-	return maxi(0, int(after.get(key, 0)) - int(before.get(key, 0)))
+	var delta := int(after.get(key, 0)) - int(before.get(key, 0))
+	_expect(delta >= 0, "native presentation counter %s never decreases" % key)
+	return delta
 
 
 func _native_presentation_cell_attestation(before: Dictionary,
