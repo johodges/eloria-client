@@ -56,6 +56,15 @@ or define the `custom` profile. Useful values are:
   `protocol_health_buffs`, `protocol_unchanged_gear`,
   `protocol_changed_gear_lifecycle`.
 
+`-Attribution` is an optional diagnostic mode, off by default. It adds Main
+process timing and delta, ordered combat-callback timing, per-actor skeleton
+update counts and mirrored immediate-handler estimates. These measurements
+include observer/timer overhead and are rejected by the ordinary acceptance
+summarizer. They are not a complete engine animation/skinning profile. See the
+[presentation follow-up](crowd-presentation-optimization.md) for diagnostic
+results, strict presentation-test commands and the guarded old/new comparison
+helper. Do not enable attribution when reproducing acceptance timing.
+
 For example, this runs only the 100 and 500 actor all-move cells from the
 standard scaling matrix:
 

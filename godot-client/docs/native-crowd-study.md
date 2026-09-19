@@ -1,5 +1,11 @@
 # Native crowd investigation
 
+This is the historical study through `9773c70d6c45cd03370d6bd0fed0c2b2b3866d27`.
+The subsequent [presentation optimization follow-up](crowd-presentation-optimization.md)
+records cape/effect changes, alternating before/after measurements, additional
+rendered checks and the remaining gap to 60 FPS. Numbers below retain their
+original measurement revisions.
+
 The branch delivers a working, optional native command reducer and a validated
 crowd benchmark suite. Focused command work improved by 26–32%, but there is
 no established whole-frame gain and the **300-actor 60 FPS target was not met**.
