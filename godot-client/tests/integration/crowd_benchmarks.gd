@@ -704,8 +704,12 @@ func _native_cape_snapshot(nodes: Dictionary) -> Dictionary:
 
 
 func _native_flight_snapshot() -> Dictionary:
+	# Treat the preload as its Script resource for reflection. Calling Object
+	# methods directly on a preloaded GDScript class is a parse error, and the
+	# baseline reversal script intentionally predates these optional getters.
+	var flight_script := SPELL_FLIGHT as Script
 	var result := {
-		"statsSupported": SPELL_FLIGHT.has_method(&"native_presentation_stats"),
+		"statsSupported": flight_script.has_method(&"native_presentation_stats"),
 		"instances": 0,
 		"activeInstances": 0,
 		"buildAttempts": 0,
@@ -713,7 +717,7 @@ func _native_flight_snapshot() -> Dictionary:
 		"buildFallbacks": 0,
 	}
 	if bool(result["statsSupported"]):
-		var stats := SPELL_FLIGHT.call(&"native_presentation_stats") as Dictionary
+		var stats := flight_script.call(&"native_presentation_stats") as Dictionary
 		result["buildAttempts"] = int(stats.get("buildAttempts", 0))
 		result["buildSuccesses"] = int(stats.get("buildSuccesses", 0))
 		result["buildFallbacks"] = int(stats.get("buildFallbacks", 0))
