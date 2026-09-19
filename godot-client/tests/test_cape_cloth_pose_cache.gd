@@ -27,13 +27,13 @@ func _run() -> void:
 	_model_config = models["luminous_male"]
 	_animation_config = _main.call("_animation_for_model", _model_config)
 
-	var optimized_actor := _spawn({str(2): CAPE_VISUAL, str(5): 184})
-	var baseline_actor := _spawn({str(2): CAPE_VISUAL, str(5): 184})
+	var optimized_actor := super._spawn({str(2): CAPE_VISUAL, str(5): 184})
+	var baseline_actor := super._spawn({str(2): CAPE_VISUAL, str(5): 184})
 	for actor: ReplicatedActor3D in [optimized_actor, baseline_actor]:
 		actor.set_process(false)
 		actor.set_physics_process(false)
-	var optimized_skeleton := _skeleton_of(optimized_actor)
-	var baseline_skeleton := _skeleton_of(baseline_actor)
+	var optimized_skeleton := super._skeleton_of(optimized_actor)
+	var baseline_skeleton := super._skeleton_of(baseline_actor)
 	var optimized_cloth: SkeletonModifier3D = optimized_skeleton.get_node("CapeCloth")
 	var baseline_cloth := _replace_with_baseline(baseline_actor, baseline_skeleton)
 	optimized_cloth.active = false

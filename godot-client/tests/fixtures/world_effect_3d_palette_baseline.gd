@@ -1,4 +1,7 @@
-class_name WorldEffect3D
+# FROZEN REFERENCE: do not replace this per-call palette table.
+# Reviewed source: effect cleanup commit 64b6c171; normalized body SHA-256
+# 28dbe874de014e1ad6653d9b2b9d37636d812e6f57e12f1dfb523ddfc33488b7.
+# class_name is omitted so the fixture can coexist with production.
 extends Node3D
 ## One short-lived effect the server said happened in the world.
 ##
@@ -25,13 +28,6 @@ const SpellFlight = preload("res://src/world/spell_flight_3d.gd")
 const HARM_EFFECTS: Array[int] = [0, 2, 5, 10, 17, 73, 83, 84, 85, 86, 87, 88, 89, 90, 91]
 const BLESSING_EFFECTS: Array[int] = [1, 4, 9, 12, 14, 79, 19]
 const WARD_EFFECTS: Array[int] = [3, 6, 72, 74, 75, 76, 77, 78, 80, 81, 82, 18, 92]
-const EFFECT_PALETTES := {75: Color("a18bff"), 76: Color("ff9a42"),
-	77: Color("8ce5ff"), 78: Color("d5fa65"), 79: Color("fff0b5"),
-	80: Color("ccbaff"), 81: Color("e8c878"), 82: Color("b6dcff"),
-	83: Color("a67dff"), 84: Color("76dbff"), 85: Color("d5f54b"),
-	86: Color("ec467d"), 87: Color("b777ad"), 88: Color("9b69d4"),
-	89: Color("ed7544"), 90: Color("68b4ce"), 91: Color("a6b951"),
-	92: Color("f1dfba"), 18: Color("6bcddb"), 19: Color("ffd370")}
 
 var effect_id: int = -1
 var power_level := 1
@@ -205,7 +201,14 @@ func _add_burst(palette: Color) -> void:
 	_burst.emitting = false
 
 func _palette() -> Color:
-	if EFFECT_PALETTES.has(effect_id): return EFFECT_PALETTES[effect_id]
+	var colors := {75: Color("a18bff"), 76: Color("ff9a42"), 77: Color("8ce5ff"),
+		78: Color("d5fa65"), 79: Color("fff0b5"), 80: Color("ccbaff"),
+		81: Color("e8c878"), 82: Color("b6dcff"), 83: Color("a67dff"),
+		84: Color("76dbff"), 85: Color("d5f54b"), 86: Color("ec467d"),
+		87: Color("b777ad"), 88: Color("9b69d4"), 89: Color("ed7544"),
+		90: Color("68b4ce"), 91: Color("a6b951"), 92: Color("f1dfba"),
+		18: Color("6bcddb"), 19: Color("ffd370")}
+	if colors.has(effect_id): return colors[effect_id]
 	if effect_id in [0, 73]:
 		return Color(0.64, 0.88, 0.20)
 	if effect_id in [10, 86]:
