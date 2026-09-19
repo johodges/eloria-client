@@ -7,6 +7,10 @@ param(
     [ValidateSet('gl_compatibility', 'forward_plus')]
     [string]$Renderer = 'gl_compatibility',
     [string]$Sequence = 'A,B,B,A,A,B',
+    [ValidateSet('Off', 'Cape', 'Flight', 'Both')]
+    [string]$BaselineNativePresentation = 'Off',
+    [ValidateSet('Off', 'Cape', 'Flight', 'Both')]
+    [string]$CandidateNativePresentation = 'Off',
     [string]$Label = 'optimization-final-reversal-v1',
     [ValidateRange(1000, 30000)][int]$SampleMilliseconds = 5000,
     [switch]$Capture,
@@ -216,6 +220,8 @@ $manifest = [ordered]@{
     mode = $Mode
     renderer = $Renderer
     sequence = $variants
+    baselineNativePresentation = $BaselineNativePresentation
+    candidateNativePresentation = $CandidateNativePresentation
     label = $safeLabel
     sampleMilliseconds = $SampleMilliseconds
     interferenceLabel = 'shared host; unrelated Godot jobs authorized; activity not continuously monitored'
@@ -248,6 +254,11 @@ try {
         $variant = $variants[$index]
         $variantName = if ($variant -eq 'A') { 'baseline' } else { 'optimized' }
         $variantRevision = if ($variant -eq 'A') { $baselineHead } else { $OptimizedRevision }
+        $variantNativePresentation = if ($variant -eq 'A') {
+            $BaselineNativePresentation
+        } else {
+            $CandidateNativePresentation
+        }
         $bytes = if ($variant -eq 'A') { $originalBytes } else { $candidateBytes }
         $hashes = if ($variant -eq 'A') { $originalHashes } else { $candidateHashes }
         $previousHashes = if ($currentVariant -eq 'A') { $originalHashes } else { $candidateHashes }
@@ -275,6 +286,7 @@ try {
             TimeoutMinutes = 30; SampleMilliseconds = $SampleMilliseconds
             WarmupMilliseconds = 1000; CadenceMilliseconds = 100; Label = $runLabel
             InterferenceLabel = $manifest.interferenceLabel
+            NativePresentation = $variantNativePresentation
         }
         if ($Capture) { $arguments.Capture = $true }
         & $runner @arguments
@@ -303,8 +315,11 @@ try {
             @($observedProcesses | Where-Object { $_.affinityMask -ne 15 }).Count -or
             $reportJson.label -ne $runLabel -or $reportJson.commit -ne $OptimizedRevision -or
             $reportJson.dirty -ne $expectedDirty -or
+            $reportJson.nativePresentation.requestedMode -ne
+                $variantNativePresentation.ToLowerInvariant() -or
             $processJson.commit -ne $OptimizedRevision -or
             $processJson.dirty -ne $expectedDirty -or
+            $processJson.nativePresentationRequested -ne $variantNativePresentation -or
             $processJson.sourceHash -ne $reportJson.sourceHash) {
             throw "Run $($index + 1) failed report/process validation."
         }
@@ -317,6 +332,7 @@ try {
         $manifest.runs.Add([ordered]@{
             order = $index + 1; variant = $variant; variantName = $variantName
             variantRevision = $variantRevision; label = $runLabel
+            nativePresentation = $variantNativePresentation
             effectiveDigest = $effectiveDigest; startedAtUtc = $runStarted
             completedAtUtc = (Get-Date).ToUniversalTime().ToString('o')
             effectiveHashes = $effectiveHashes; sourceHash = $reportJson.sourceHash

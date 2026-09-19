@@ -201,6 +201,157 @@ def _validate_acceptance_eligibility(
         )
 
 
+def _nonnegative_counter(mapping: dict[str, Any], key: str, context: str) -> int:
+    value = _required_int(mapping, key, context)
+    if value < 0:
+        raise SummaryError(f"{context}.{key} must be nonnegative")
+    return value
+
+
+def _validate_native_presentation(
+    value: Any, cells: list[Any], context: str
+) -> dict[str, Any] | None:
+    """Attest requested native presentation components and measured execution."""
+    if value is None:
+        # Historical reports predate the independent presentation selector.
+        return None
+    if not isinstance(value, dict):
+        raise SummaryError(f"{context}.nativePresentation must be an object")
+    mode = _required_text(value, "requestedMode", f"{context}.nativePresentation")
+    environments = {"off": "0", "cape": "cape", "flight": "flight", "both": "both"}
+    if mode not in environments:
+        raise SummaryError(f"{context}.nativePresentation.requestedMode is unsupported")
+    environment = _required_text(
+        value, "environmentValue", f"{context}.nativePresentation"
+    )
+    if environment != environments[mode]:
+        raise SummaryError(f"{context}.nativePresentation environment/mode mismatch")
+    if not _required_bool(
+        value, "reducerIndependent", f"{context}.nativePresentation"
+    ):
+        raise SummaryError(f"{context}.nativePresentation.reducerIndependent must be true")
+
+    aggregate_keys = (
+        "capeModifierInstancesMaximum", "capeStatsSupportedInstancesMaximum",
+        "capeActiveInstancesMaximum", "capeNativeBackendInstancesMaximum",
+        "capeGdscriptBackendInstancesMaximum", "capeNativeCalls",
+        "capeFallbackCalls", "flightInstancesMaximum",
+        "flightActiveInstancesMaximum", "flightBuildAttempts",
+        "flightBuildSuccesses", "flightBuildFallbacks",
+    )
+    actual = _required_dict(value, "actual", f"{context}.nativePresentation")
+    checked = {
+        key: _nonnegative_counter(actual, key, f"{context}.nativePresentation.actual")
+        for key in aggregate_keys
+    }
+    for key in ("capeMatchedRequest", "flightMatchedRequest", "matchedRequest"):
+        if not _required_bool(actual, key, f"{context}.nativePresentation.actual"):
+            raise SummaryError(f"{context}.nativePresentation.actual.{key} must be true")
+
+    observed = {key: 0 for key in aggregate_keys}
+    cape_snapshot_keys = (
+        "modifierInstances", "statsSupportedInstances", "activeInstances",
+        "nativeBackendInstances", "gdscriptBackendInstances", "nativeCalls",
+        "fallbackCalls",
+    )
+    flight_snapshot_keys = (
+        "instances", "activeInstances", "buildAttempts", "buildSuccesses",
+        "buildFallbacks",
+    )
+    delta_keys = (
+        "capeNativeCalls", "capeFallbackCalls", "flightBuildAttempts",
+        "flightBuildSuccesses", "flightBuildFallbacks",
+    )
+    for index, cell in enumerate(cells):
+        cell_context = f"{context}.cells[{index}].nativePresentation"
+        if not isinstance(cell, dict):
+            raise SummaryError(f"{cell_context} parent must be an object")
+        attestation = _required_dict(cell, "nativePresentation", cell_context)
+        if _required_text(attestation, "requestedMode", cell_context) != mode:
+            raise SummaryError(f"{cell_context}.requestedMode changed within run")
+        delta = _required_dict(attestation, "delta", cell_context)
+        for key in delta_keys:
+            observed[key] += _nonnegative_counter(delta, key, f"{cell_context}.delta")
+        for phase in ("beforeSample", "afterSample"):
+            snapshot = _required_dict(attestation, phase, cell_context)
+            cape = _required_dict(snapshot, "cape", f"{cell_context}.{phase}")
+            flight = _required_dict(snapshot, "flight", f"{cell_context}.{phase}")
+            cape_values = {
+                key: _nonnegative_counter(cape, key, f"{cell_context}.{phase}.cape")
+                for key in cape_snapshot_keys
+            }
+            flight_values = {
+                key: _nonnegative_counter(flight, key, f"{cell_context}.{phase}.flight")
+                for key in flight_snapshot_keys
+            }
+            if not isinstance(flight.get("statsSupported"), bool):
+                raise SummaryError(
+                    f"{cell_context}.{phase}.flight.statsSupported must be boolean"
+                )
+            observed["capeModifierInstancesMaximum"] = max(
+                observed["capeModifierInstancesMaximum"], cape_values["modifierInstances"]
+            )
+            observed["capeStatsSupportedInstancesMaximum"] = max(
+                observed["capeStatsSupportedInstancesMaximum"],
+                cape_values["statsSupportedInstances"],
+            )
+            observed["capeActiveInstancesMaximum"] = max(
+                observed["capeActiveInstancesMaximum"], cape_values["activeInstances"]
+            )
+            observed["capeNativeBackendInstancesMaximum"] = max(
+                observed["capeNativeBackendInstancesMaximum"],
+                cape_values["nativeBackendInstances"],
+            )
+            observed["capeGdscriptBackendInstancesMaximum"] = max(
+                observed["capeGdscriptBackendInstancesMaximum"],
+                cape_values["gdscriptBackendInstances"],
+            )
+            observed["flightInstancesMaximum"] = max(
+                observed["flightInstancesMaximum"], flight_values["instances"]
+            )
+            observed["flightActiveInstancesMaximum"] = max(
+                observed["flightActiveInstancesMaximum"], flight_values["activeInstances"]
+            )
+    if checked != observed:
+        raise SummaryError(
+            f"{context}.nativePresentation.actual does not match per-cell attestations"
+        )
+
+    wants_cape = mode in {"cape", "both"}
+    wants_flight = mode in {"flight", "both"}
+    cape_active = (
+        checked["capeActiveInstancesMaximum"] > 0
+        and checked["capeNativeBackendInstancesMaximum"] > 0
+        and checked["capeNativeCalls"] > 0
+        and checked["capeFallbackCalls"] == 0
+    )
+    flight_active = (
+        checked["flightActiveInstancesMaximum"] > 0
+        and checked["flightBuildAttempts"] > 0
+        and checked["flightBuildSuccesses"] == checked["flightBuildAttempts"]
+        and checked["flightBuildFallbacks"] == 0
+    )
+    cape_inactive = (
+        checked["capeActiveInstancesMaximum"] == 0
+        and checked["capeNativeBackendInstancesMaximum"] == 0
+        and checked["capeNativeCalls"] == 0
+        and checked["capeFallbackCalls"] == 0
+    )
+    flight_inactive = (
+        checked["flightActiveInstancesMaximum"] == 0
+        and checked["flightBuildAttempts"] == 0
+        and checked["flightBuildSuccesses"] == 0
+        and checked["flightBuildFallbacks"] == 0
+    )
+    cape_matches = cape_active if wants_cape else cape_inactive
+    flight_matches = flight_active if wants_flight else flight_inactive
+    if not cape_matches or not flight_matches:
+        raise SummaryError(
+            f"{context}.nativePresentation actual activity does not match requested mode"
+        )
+    return {"requestedMode": mode, "actual": checked}
+
+
 def _expected_active_count(count: int, activity: str, context: str) -> int:
     if activity == "idle":
         return 0
@@ -843,6 +994,9 @@ def _validate_run(
                     f"{context}: completed cell {cell['id']!r} changed planned {key}; "
                     f"planned={spec.get(key)!r}, actual={cell[key]!r}"
                 )
+    native_presentation = _validate_native_presentation(
+        data.get("nativePresentation"), cells, context
+    )
 
     return {
         "path": str(path.resolve()),
@@ -854,6 +1008,7 @@ def _validate_run(
         "renderer": renderer,
         "display": display,
         "headless": headless,
+        "nativePresentation": native_presentation,
         "commit": commit,
         "sourceHash": source_hash,
         "dirty": dirty,

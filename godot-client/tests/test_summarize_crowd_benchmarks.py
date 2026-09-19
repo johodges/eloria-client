@@ -221,6 +221,103 @@ class AcceptanceEligibilityTests(unittest.TestCase):
                         "measurement")
 
 
+class NativePresentationAdmissionTests(unittest.TestCase):
+    @staticmethod
+    def _fixture(mode: str) -> tuple[dict, list[dict]]:
+        wants_cape = mode in {"cape", "both"}
+        wants_flight = mode in {"flight", "both"}
+        cape_before = {
+            "modifierInstances": 180,
+            "statsSupportedInstances": 180,
+            "activeInstances": 180 if wants_cape else 0,
+            "nativeBackendInstances": 180 if wants_cape else 0,
+            "gdscriptBackendInstances": 0 if wants_cape else 180,
+            "nativeCalls": 10 if wants_cape else 0,
+            "fallbackCalls": 0,
+        }
+        cape_after = dict(cape_before)
+        cape_after["nativeCalls"] = 20 if wants_cape else 0
+        flight_before = {
+            "statsSupported": True,
+            "instances": 3 if wants_flight else 0,
+            "activeInstances": 3 if wants_flight else 0,
+            "buildAttempts": 5 if wants_flight else 0,
+            "buildSuccesses": 5 if wants_flight else 0,
+            "buildFallbacks": 0,
+        }
+        flight_after = dict(flight_before)
+        flight_after["buildAttempts"] = 10 if wants_flight else 0
+        flight_after["buildSuccesses"] = 10 if wants_flight else 0
+        actual = {
+            "capeModifierInstancesMaximum": 180,
+            "capeStatsSupportedInstancesMaximum": 180,
+            "capeActiveInstancesMaximum": 180 if wants_cape else 0,
+            "capeNativeBackendInstancesMaximum": 180 if wants_cape else 0,
+            "capeGdscriptBackendInstancesMaximum": 0 if wants_cape else 180,
+            "capeNativeCalls": 10 if wants_cape else 0,
+            "capeFallbackCalls": 0,
+            "flightInstancesMaximum": 3 if wants_flight else 0,
+            "flightActiveInstancesMaximum": 3 if wants_flight else 0,
+            "flightBuildAttempts": 5 if wants_flight else 0,
+            "flightBuildSuccesses": 5 if wants_flight else 0,
+            "flightBuildFallbacks": 0,
+            "capeMatchedRequest": True,
+            "flightMatchedRequest": True,
+            "matchedRequest": True,
+        }
+        presentation = {
+            "requestedMode": mode,
+            "environmentValue": {
+                "off": "0", "cape": "cape", "flight": "flight", "both": "both",
+            }[mode],
+            "reducerIndependent": True,
+            "actual": actual,
+        }
+        cells = [{
+            "nativePresentation": {
+                "requestedMode": mode,
+                "beforeSample": {"cape": cape_before, "flight": flight_before},
+                "afterSample": {"cape": cape_after, "flight": flight_after},
+                "delta": {
+                    "capeNativeCalls": 10 if wants_cape else 0,
+                    "capeFallbackCalls": 0,
+                    "flightBuildAttempts": 5 if wants_flight else 0,
+                    "flightBuildSuccesses": 5 if wants_flight else 0,
+                    "flightBuildFallbacks": 0,
+                },
+            },
+        }]
+        return presentation, cells
+
+    def test_accepts_legacy_and_each_attested_mode(self) -> None:
+        self.assertIsNone(SUMMARY._validate_native_presentation(None, [], "run"))
+        for mode in ("off", "cape", "flight", "both"):
+            with self.subTest(mode=mode):
+                presentation, cells = self._fixture(mode)
+                checked = SUMMARY._validate_native_presentation(
+                    presentation, cells, "run")
+                self.assertEqual(mode, checked["requestedMode"])
+
+    def test_rejects_requested_but_inactive_component(self) -> None:
+        presentation, cells = self._fixture("cape")
+        presentation["actual"]["capeActiveInstancesMaximum"] = 0
+        with self.assertRaises(SUMMARY.SummaryError):
+            SUMMARY._validate_native_presentation(presentation, cells, "run")
+
+    def test_rejects_unrequested_activity_or_fallback(self) -> None:
+        presentation, cells = self._fixture("off")
+        cells[0]["nativePresentation"]["delta"]["flightBuildFallbacks"] = 1
+        presentation["actual"]["flightBuildFallbacks"] = 1
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "actual activity"):
+            SUMMARY._validate_native_presentation(presentation, cells, "run")
+
+    def test_rejects_environment_mode_mismatch(self) -> None:
+        presentation, cells = self._fixture("both")
+        presentation["environmentValue"] = "1"
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "environment/mode mismatch"):
+            SUMMARY._validate_native_presentation(presentation, cells, "run")
+
+
 class CompanionValidationTests(unittest.TestCase):
     def _validate(self, companion: dict, *, report_dirty: bool = False) -> None:
         with tempfile.TemporaryDirectory() as directory:

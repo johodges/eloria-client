@@ -9,6 +9,8 @@ param(
     [string[]]$Renderer = @("gl_compatibility"),
     [ValidateSet("Both", "GDScript", "Native")]
     [string]$NativeBackend = "Both",
+    [ValidateSet("Off", "Cape", "Flight", "Both")]
+    [string]$NativePresentation = "Off",
     [ValidateRange(1, 20)]
     [int]$Repeats = 3,
     [ValidateRange(1, 180)]
@@ -70,6 +72,14 @@ $env:GODOT_THREADS_OVERRIDE = "2"
 $env:OMP_NUM_THREADS = "2"
 $env:OPENBLAS_NUM_THREADS = "2"
 $env:MKL_NUM_THREADS = "2"
+$nativePresentationEnvironment = switch ($NativePresentation) {
+    "Off" { "0" }
+    "Cape" { "cape" }
+    "Flight" { "flight" }
+    "Both" { "both" }
+}
+# Set this unconditionally so a parent shell cannot contaminate comparisons.
+$env:ELORIA_NATIVE_PRESENTATION = $nativePresentationEnvironment
 New-Item -ItemType Directory -Force -Path $env:APPDATA, $env:LOCALAPPDATA,
     $env:USERPROFILE, $env:TEMP | Out-Null
 
@@ -105,6 +115,8 @@ $sourceRelativePaths = @(
     "godot-client/bin/windows/native_crowd.windows.template_release.x86_64.dll"
 )
 $optionalSourceRelativePaths = @(
+    "godot-client/native/native_crowd/src/native_cape_constraint_kernel.cpp",
+    "godot-client/native/native_crowd/src/native_cape_constraint_kernel.h",
     "godot-client/native/native_crowd/src/native_spell_flight_geometry.cpp",
     "godot-client/native/native_crowd/src/native_spell_flight_geometry.h"
 )
@@ -219,7 +231,7 @@ function Quote-ProcessArgument([string]$Value) {
 }
 
 function Assert-BenchmarkReport([string]$JsonPath, [string]$ExpectedProfile,
-        [bool]$ExpectedAttribution) {
+        [bool]$ExpectedAttribution, [string]$ExpectedNativePresentation) {
     if (-not (Test-Path -LiteralPath $JsonPath)) {
         throw "Benchmark exited without writing $JsonPath."
     }
@@ -243,6 +255,54 @@ function Assert-BenchmarkReport([string]$JsonPath, [string]$ExpectedProfile,
             $cells[0].count -ne 300 -or $cells[0].plannedActive -ne 100 -or
             $cells[0].fixture.before.frustumAndDrawVisible -ne 150)) {
         throw "Primary acceptance invariants are absent: $JsonPath"
+    }
+    $expectedPresentationMode = $ExpectedNativePresentation.ToLowerInvariant()
+    $expectedPresentationEnvironment = switch ($ExpectedNativePresentation) {
+        "Off" { "0" }
+        "Cape" { "cape" }
+        "Flight" { "flight" }
+        "Both" { "both" }
+    }
+    $presentation = $result.nativePresentation
+    $actualPresentation = $presentation.actual
+    if ($null -eq $presentation -or $presentation.requestedMode -ne $expectedPresentationMode -or
+            $presentation.environmentValue -ne $expectedPresentationEnvironment -or
+            -not [bool]$presentation.reducerIndependent -or
+            -not [bool]$actualPresentation.matchedRequest -or
+            -not [bool]$actualPresentation.capeMatchedRequest -or
+            -not [bool]$actualPresentation.flightMatchedRequest) {
+        throw "Native presentation request/activity attestation is invalid: $JsonPath"
+    }
+    $wantsCape = $ExpectedNativePresentation -in @("Cape", "Both")
+    $wantsFlight = $ExpectedNativePresentation -in @("Flight", "Both")
+    if ($wantsCape) {
+        if ([int]$actualPresentation.capeActiveInstancesMaximum -le 0 -or
+                [int]$actualPresentation.capeNativeBackendInstancesMaximum -le 0 -or
+                [int]$actualPresentation.capeNativeCalls -le 0 -or
+                [int]$actualPresentation.capeFallbackCalls -ne 0) {
+            throw "Requested native cape component was inactive or fell back: $JsonPath"
+        }
+    }
+    elseif ([int]$actualPresentation.capeActiveInstancesMaximum -ne 0 -or
+            [int]$actualPresentation.capeNativeBackendInstancesMaximum -ne 0 -or
+            [int]$actualPresentation.capeNativeCalls -ne 0 -or
+            [int]$actualPresentation.capeFallbackCalls -ne 0) {
+        throw "Unrequested native cape component was active: $JsonPath"
+    }
+    if ($wantsFlight) {
+        if ([int]$actualPresentation.flightActiveInstancesMaximum -le 0 -or
+                [int]$actualPresentation.flightBuildAttempts -le 0 -or
+                [int]$actualPresentation.flightBuildSuccesses -ne
+                    [int]$actualPresentation.flightBuildAttempts -or
+                [int]$actualPresentation.flightBuildFallbacks -ne 0) {
+            throw "Requested native flight component was inactive or fell back: $JsonPath"
+        }
+    }
+    elseif ([int]$actualPresentation.flightActiveInstancesMaximum -ne 0 -or
+            [int]$actualPresentation.flightBuildAttempts -ne 0 -or
+            [int]$actualPresentation.flightBuildSuccesses -ne 0 -or
+            [int]$actualPresentation.flightBuildFallbacks -ne 0) {
+        throw "Unrequested native flight component was active: $JsonPath"
     }
     $solverCells = @($cells | Where-Object { $_.features -eq "cape_solver_off" })
     $hasSolverDiagnostic = $solverCells.Count -gt 0
@@ -388,6 +448,7 @@ foreach ($trial in 1..$Repeats) {
             foreach ($backend in $trialBackends) {
                 $env:ELORIA_NATIVE_CROWD = if ($backend -eq "native") { "1" } else { "0" }
                 $env:ELORIA_CROWD_NATIVE_BACKEND = $backend
+                $env:ELORIA_NATIVE_PRESENTATION = $nativePresentationEnvironment
                 $timestamp = (Get-Date).ToUniversalTime().ToString("yyyyMMddTHHmmssfffZ")
                 $runId = "$safeLabel-$Profile-$backend-$renderingMethod-$run-trial$trial-$timestamp"
                 $env:ELORIA_CROWD_TRIAL = [string]$trial
@@ -398,6 +459,8 @@ foreach ($trial in 1..$Repeats) {
                     affinityMask = 15
                     logicalProcessors = @(0, 1, 2, 3)
                     requestedWorkerThreads = 2
+                    requestedNativePresentation = $NativePresentation
+                    nativePresentationEnvironment = $nativePresentationEnvironment
                 } | ConvertTo-Json -Compress)
                 $logPath = Join-Path $runRoot "$runId.log"
                 $stdoutPath = Join-Path $runRoot "$runId.stdout.log"
@@ -478,6 +541,8 @@ foreach ($trial in 1..$Repeats) {
 						reportValidationError = "monitoring failed before report validation"
 						renderer = $renderingMethod; mode = $run; backend = $backend; trial = $trial
 						attributionEnabled = $Attribution.IsPresent
+						nativePresentationRequested = $NativePresentation
+						nativePresentationEnvironment = $nativePresentationEnvironment
 					} | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $processPath
 					throw
 				}
@@ -491,7 +556,8 @@ foreach ($trial in 1..$Repeats) {
 				$schemaValid = $false
 				$reportValidationError = ""
 				try {
-					Assert-BenchmarkReport $jsonPath $Profile $Attribution.IsPresent
+					Assert-BenchmarkReport $jsonPath $Profile $Attribution.IsPresent `
+						$NativePresentation
 					$schemaValid = $true
 				}
 				catch {
@@ -530,6 +596,8 @@ foreach ($trial in 1..$Repeats) {
                     backend = $backend
                     trial = $trial
 					attributionEnabled = $Attribution.IsPresent
+					nativePresentationRequested = $NativePresentation
+					nativePresentationEnvironment = $nativePresentationEnvironment
                 } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $processPath
 				if ($postReportStop) {
 					throw "$runId wrote a report but required forced post-report termination. See $logPath"

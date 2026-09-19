@@ -7,6 +7,7 @@ extends SceneTree
 
 const BENCHMARK_MAIN_PATH := "res://tests/integration/crowd_benchmark_main.tscn"
 const MODELS := "res://data/actors/models.json"
+const SPELL_FLIGHT := preload("res://src/world/spell_flight_3d.gd")
 const FIRST_ACTOR_ID := 14000
 const CAPE_PART := 2
 const CAPE_SOLVER_OFF_FEATURE := "cape_solver_off"
@@ -62,6 +63,7 @@ var _driver_state_updates := 0
 var _driver_combat_events := 0
 var _cape_solver_probe_enabled := false
 var _cape_solver_probe_nodes: Array[SkeletonModifier3D] = []
+var _native_presentation_mode := "off"
 
 
 func _init() -> void:
@@ -82,6 +84,7 @@ func _run() -> void:
 		"ELORIA_CROWD_CAPTURE").strip_edges() == "1"
 	_attribution_enabled = OS.get_environment(
 		"ELORIA_CROWD_ATTRIBUTION").strip_edges() == "1"
+	_native_presentation_mode = _requested_native_presentation_mode()
 	_creatures = _creature_actor_types()
 	_report = {
 		"schemaVersion": 1,
@@ -99,6 +102,13 @@ func _run() -> void:
 		"dirty": OS.get_environment("ELORIA_CROWD_DIRTY") == "1",
 		"trial": _environment_int("ELORIA_CROWD_TRIAL", 1, 1),
 		"nativeBackend": _environment_or("ELORIA_CROWD_NATIVE_BACKEND", "current"),
+		"nativePresentation": {
+			"requestedMode": _native_presentation_mode,
+			"environmentValue": OS.get_environment(
+				"ELORIA_NATIVE_PRESENTATION").strip_edges().to_lower(),
+			"reducerIndependent": true,
+			"actual": {},
+		},
 		"godot": Engine.get_version_info(),
 		"viewport": [root.size.x, root.size.y],
 		"sharedMachine": true,
@@ -141,6 +151,10 @@ func _run() -> void:
 		"failures": [],
 		"unixTime": int(Time.get_unix_time_from_system()),
 	}
+	if not _expect(_native_presentation_mode != "invalid",
+			"ELORIA_NATIVE_PRESENTATION is one of 0/off, cape, flight, both/1"):
+		_finish()
+		return
 	var user_data := OS.get_user_data_dir().replace("\\", "/")
 	var expected_user_root := OS.get_environment("ELORIA_CROWD_USER_ROOT").replace("\\", "/")
 	_report["userDataDirectory"] = user_data
@@ -180,6 +194,7 @@ func _run() -> void:
 	_report["plannedCells"] = cells.duplicate(true)
 	for raw_cell: Variant in cells:
 		await _run_cell(raw_cell as Dictionary)
+	_finalize_native_presentation_report()
 	if str(_report["profile"]) in ["stress", "all"]:
 		_report["packetBursts"] = _measure_packet_bursts()
 	await _tear_down_main()
@@ -452,7 +467,11 @@ func _run_cell(spec: Dictionary) -> void:
 	await _prime_activity(spec, active_ids)
 	await _warm_for(spec, active_ids)
 	var feature_attestation := _cape_feature_attestation(nodes, spec, diagnostics)
+	var native_presentation_before := _native_presentation_snapshot(nodes)
 	var sample := await _sample_cell(spec, active_ids)
+	var native_presentation_after := _native_presentation_snapshot(nodes)
+	var native_presentation := _native_presentation_cell_attestation(
+		native_presentation_before, native_presentation_after)
 	_finalize_cape_feature_attestation(nodes, spec, feature_attestation, sample)
 	sample["workloadValidation"] = _validate_executed_workload(spec, workload, sample)
 	if str(spec["features"]) == "no_effects":
@@ -492,6 +511,7 @@ func _run_cell(spec: Dictionary) -> void:
 	result["resourceReadiness"] = readiness
 	result["diagnostics"] = diagnostics
 	result["featureAttestation"] = feature_attestation
+	result["nativePresentation"] = native_presentation
 	result["networkIntegrity"] = network_integrity
 	result["selectedActorId"] = selected_actor_id
 	result["plannedActive"] = active_ids.size()
@@ -641,6 +661,186 @@ func _cape_modifiers(nodes: Dictionary) -> Array[SkeletonModifier3D]:
 		if is_instance_valid(cloth):
 			modifiers.append(cloth)
 	return modifiers
+
+
+func _requested_native_presentation_mode() -> String:
+	var raw := OS.get_environment("ELORIA_NATIVE_PRESENTATION").strip_edges().to_lower()
+	match raw:
+		"", "0", "off":
+			return "off"
+		"cape":
+			return "cape"
+		"flight":
+			return "flight"
+		"1", "both":
+			return "both"
+	return "invalid"
+
+
+func _native_cape_snapshot(nodes: Dictionary) -> Dictionary:
+	var result := {
+		"modifierInstances": 0,
+		"statsSupportedInstances": 0,
+		"activeInstances": 0,
+		"nativeBackendInstances": 0,
+		"gdscriptBackendInstances": 0,
+		"nativeCalls": 0,
+		"fallbackCalls": 0,
+	}
+	for cloth: SkeletonModifier3D in _cape_modifiers(nodes):
+		result["modifierInstances"] += 1
+		if not cloth.has_method(&"native_presentation_stats"):
+			result["gdscriptBackendInstances"] += 1
+			continue
+		result["statsSupportedInstances"] += 1
+		var stats := cloth.call(&"native_presentation_stats") as Dictionary
+		var backend := str(stats.get("backend", ""))
+		result["activeInstances"] += int(bool(stats.get("active", false)))
+		result["nativeBackendInstances"] += int(backend == "native")
+		result["gdscriptBackendInstances"] += int(backend == "gdscript")
+		result["nativeCalls"] += int(stats.get("nativeCalls", 0))
+		result["fallbackCalls"] += int(stats.get("fallbackCalls", 0))
+	return result
+
+
+func _native_flight_snapshot() -> Dictionary:
+	var result := {
+		"statsSupported": SPELL_FLIGHT.has_method(&"native_presentation_stats"),
+		"instances": 0,
+		"activeInstances": 0,
+		"buildAttempts": 0,
+		"buildSuccesses": 0,
+		"buildFallbacks": 0,
+	}
+	if bool(result["statsSupported"]):
+		var stats := SPELL_FLIGHT.call(&"native_presentation_stats") as Dictionary
+		result["buildAttempts"] = int(stats.get("buildAttempts", 0))
+		result["buildSuccesses"] = int(stats.get("buildSuccesses", 0))
+		result["buildFallbacks"] = int(stats.get("buildFallbacks", 0))
+	for node: Node in root.find_children("*", "", true, false):
+		if node.get_script() != SPELL_FLIGHT:
+			continue
+		result["instances"] += 1
+		if node.has_method(&"native_presentation_active"):
+			result["activeInstances"] += int(bool(
+				node.call(&"native_presentation_active")))
+	return result
+
+
+func _native_presentation_snapshot(nodes: Dictionary) -> Dictionary:
+	return {
+		"cape": _native_cape_snapshot(nodes),
+		"flight": _native_flight_snapshot(),
+	}
+
+
+func _counter_delta(before: Dictionary, after: Dictionary, key: String) -> int:
+	return maxi(0, int(after.get(key, 0)) - int(before.get(key, 0)))
+
+
+func _native_presentation_cell_attestation(before: Dictionary,
+		after: Dictionary) -> Dictionary:
+	var cape_before := before["cape"] as Dictionary
+	var cape_after := after["cape"] as Dictionary
+	var flight_before := before["flight"] as Dictionary
+	var flight_after := after["flight"] as Dictionary
+	return {
+		"requestedMode": _native_presentation_mode,
+		"beforeSample": before,
+		"afterSample": after,
+		"delta": {
+			"capeNativeCalls": _counter_delta(
+				cape_before, cape_after, "nativeCalls"),
+			"capeFallbackCalls": _counter_delta(
+				cape_before, cape_after, "fallbackCalls"),
+			"flightBuildAttempts": _counter_delta(
+				flight_before, flight_after, "buildAttempts"),
+			"flightBuildSuccesses": _counter_delta(
+				flight_before, flight_after, "buildSuccesses"),
+			"flightBuildFallbacks": _counter_delta(
+				flight_before, flight_after, "buildFallbacks"),
+		},
+	}
+
+
+func _finalize_native_presentation_report() -> void:
+	var actual := {
+		"capeModifierInstancesMaximum": 0,
+		"capeStatsSupportedInstancesMaximum": 0,
+		"capeActiveInstancesMaximum": 0,
+		"capeNativeBackendInstancesMaximum": 0,
+		"capeGdscriptBackendInstancesMaximum": 0,
+		"capeNativeCalls": 0,
+		"capeFallbackCalls": 0,
+		"flightInstancesMaximum": 0,
+		"flightActiveInstancesMaximum": 0,
+		"flightBuildAttempts": 0,
+		"flightBuildSuccesses": 0,
+		"flightBuildFallbacks": 0,
+	}
+	for raw_cell: Variant in _report["cells"] as Array:
+		var cell := raw_cell as Dictionary
+		var attestation := cell.get("nativePresentation", {}) as Dictionary
+		var before := attestation.get("beforeSample", {}) as Dictionary
+		var after := attestation.get("afterSample", {}) as Dictionary
+		var delta := attestation.get("delta", {}) as Dictionary
+		for snapshot: Dictionary in [before, after]:
+			var cape := snapshot.get("cape", {}) as Dictionary
+			var flight := snapshot.get("flight", {}) as Dictionary
+			actual["capeModifierInstancesMaximum"] = maxi(
+				int(actual["capeModifierInstancesMaximum"]),
+				int(cape.get("modifierInstances", 0)))
+			actual["capeStatsSupportedInstancesMaximum"] = maxi(
+				int(actual["capeStatsSupportedInstancesMaximum"]),
+				int(cape.get("statsSupportedInstances", 0)))
+			actual["capeActiveInstancesMaximum"] = maxi(
+				int(actual["capeActiveInstancesMaximum"]),
+				int(cape.get("activeInstances", 0)))
+			actual["capeNativeBackendInstancesMaximum"] = maxi(
+				int(actual["capeNativeBackendInstancesMaximum"]),
+				int(cape.get("nativeBackendInstances", 0)))
+			actual["capeGdscriptBackendInstancesMaximum"] = maxi(
+				int(actual["capeGdscriptBackendInstancesMaximum"]),
+				int(cape.get("gdscriptBackendInstances", 0)))
+			actual["flightInstancesMaximum"] = maxi(
+				int(actual["flightInstancesMaximum"]),
+				int(flight.get("instances", 0)))
+			actual["flightActiveInstancesMaximum"] = maxi(
+				int(actual["flightActiveInstancesMaximum"]),
+				int(flight.get("activeInstances", 0)))
+		actual["capeNativeCalls"] += int(delta.get("capeNativeCalls", 0))
+		actual["capeFallbackCalls"] += int(delta.get("capeFallbackCalls", 0))
+		actual["flightBuildAttempts"] += int(delta.get("flightBuildAttempts", 0))
+		actual["flightBuildSuccesses"] += int(delta.get("flightBuildSuccesses", 0))
+		actual["flightBuildFallbacks"] += int(delta.get("flightBuildFallbacks", 0))
+	var wants_cape := _native_presentation_mode in ["cape", "both"]
+	var wants_flight := _native_presentation_mode in ["flight", "both"]
+	var cape_matches := (int(actual["capeActiveInstancesMaximum"]) > 0
+		and int(actual["capeNativeBackendInstancesMaximum"]) > 0
+		and int(actual["capeNativeCalls"]) > 0
+		and int(actual["capeFallbackCalls"]) == 0) if wants_cape else (
+			int(actual["capeActiveInstancesMaximum"]) == 0
+			and int(actual["capeNativeBackendInstancesMaximum"]) == 0
+			and int(actual["capeNativeCalls"]) == 0
+			and int(actual["capeFallbackCalls"]) == 0)
+	var flight_matches := (int(actual["flightActiveInstancesMaximum"]) > 0
+		and int(actual["flightBuildAttempts"]) > 0
+		and int(actual["flightBuildSuccesses"]) == int(actual["flightBuildAttempts"])
+		and int(actual["flightBuildFallbacks"]) == 0) if wants_flight else (
+			int(actual["flightActiveInstancesMaximum"]) == 0
+			and int(actual["flightBuildAttempts"]) == 0
+			and int(actual["flightBuildSuccesses"]) == 0
+			and int(actual["flightBuildFallbacks"]) == 0)
+	actual["capeMatchedRequest"] = cape_matches
+	actual["flightMatchedRequest"] = flight_matches
+	actual["matchedRequest"] = cape_matches and flight_matches
+	(_report["nativePresentation"] as Dictionary)["actual"] = actual
+	_expect(cape_matches,
+		"native cape presentation activity and calls match requested mode %s" %
+			_native_presentation_mode)
+	_expect(flight_matches,
+		"native flight presentation activity and calls match requested mode %s" %
+			_native_presentation_mode)
 
 
 func _active_cape_solver_count() -> int:
