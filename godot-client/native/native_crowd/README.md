@@ -121,7 +121,30 @@ with deferred export. The last mode is deliberately labelled non-equivalent.
 Reset, reduction, and materialization components run as a separate timing pass,
 so their clock reads do not inflate the total-mode measurements.
 
-```sh
-ELORIA_NATIVE_CROWD=1 godot --headless --path godot-client \
+Use the same isolated environment initialized above. On Windows, while the
+PowerShell variables from the parity run are still active:
+
+```powershell
+$env:ELORIA_CROWD_EXPECT_USER_ROOT = $isolated
+$env:ELORIA_NATIVE_CROWD = "1"
+$env:ELORIA_ARTIFACT_DIR = $results
+& $godot --headless --path "$PWD/godot-client" `
+  --log-file "$results/native-crowd-reducer.log" `
   --script res://tests/integration/native_crowd_reducer_benchmark.gd
+if ($LASTEXITCODE -ne 0) { throw "native reducer benchmark failed" }
 ```
+
+On Linux, while the exported isolation variables above are still active:
+
+```sh
+export ELORIA_CROWD_EXPECT_USER_ROOT="$isolated"
+export ELORIA_NATIVE_CROWD=1
+export ELORIA_ARTIFACT_DIR="$results"
+taskset -c 0-3 godot --headless --path godot-client \
+  --log-file "$results/native-crowd-reducer.log" \
+  --script res://tests/integration/native_crowd_reducer_benchmark.gd || exit 1
+```
+
+Both invocations write `native-crowd-reducer.json` and its log beneath the
+isolated `$results` directory. `ELORIA_CROWD_EXPECT_USER_ROOT` and
+`ELORIA_NATIVE_CROWD=1` remain required from the parity-run setup.
