@@ -57,3 +57,11 @@ godot-client/assets/actors/native/equipment/*_[0-9].png
 
 # pytest caches (any directory)
 .pytest_cache/
+
+# Native crowd prototype outputs and its fetched, pinned godot-cpp checkout.
+# Source and build metadata live in godot-client/native/native_crowd; generated
+# binaries are copied into the project only for an explicit benchmark run.
+godot-client/native/native_crowd/build/
+godot-client/native/native_crowd/.deps/
+godot-client/bin/native_crowd*
+godot-client/bin/**/native_crowd*
