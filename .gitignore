@@ -2,6 +2,8 @@ __pycache__/
 *.py[cod]
 godot-client/.godot/
 godot-client/test-artifacts/
+# Short Windows junction to the ignored engine-profile build, avoiding MAX_PATH.
+/ep/
 godot-client/**/*.import
 godot-client/**/*.uid
 godot-client/assets/actors/native/races/* *.png

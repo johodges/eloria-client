@@ -256,6 +256,21 @@ mean, p50, p95, p99 and maximum. Screenshot capture and resource census occur
 outside the timed interval. With `-Capture`, the primary 300-actor windowed run
 writes settled and active PNGs for visual review.
 
+The untimed `diagnostics.equipmentSkins` census distinguishes Skin resource
+identity from exact ordered bind content. Per-actor totals show how many
+different Skin resources and binds a skeleton may need to update, and how many
+remain if identical contents are shared. The census does not expose Godot's
+internal `SkinReference` count, register new bindings, or change resources.
+
+`-EngineProfileMarkers` emits paired sample boundaries for an external engine
+profiler while preserving the production animation schedule. The report records
+the process ID, engine clock, process-frame counter, and diagnostic-only status;
+the ordinary acceptance summarizer rejects these reports. Marker printing is
+outside the sampled loop. See the [engine profiling setup](../scripts/engine-profile/README.md)
+for the exact custom engine patch, capture tools, and trace analysis. Custom
+engine timings must be compared with the same build, and nested inclusive zones
+must not be added together.
+
 Sampling continues until both the requested wall duration and 60 frames have
 elapsed, subject to the greater of a 120-second or four-times-duration hard
 bound for every population. A cell that

@@ -3,10 +3,14 @@ extends SceneTree
 ## not instantiate actor assets; the integration benchmark validates those.
 
 const CrowdBenchmark = preload("res://tests/integration/crowd_benchmarks.gd")
+const SkinCensusContract = preload("res://tests/fixtures/crowd_skin_census_contract.gd")
 var _failures := 0
 
 
 func _init() -> void:
+	var skin_checks := SkinCensusContract.contract()
+	_expect(bool(skin_checks.get("passed", false)),
+		"equipment skin census separates identity and exact content: %s" % skin_checks)
 	var primary: Array = CrowdBenchmark.profile_cells("primary")
 	_expect(primary.size() == 1, "primary is one repeatable acceptance cell")
 	var acceptance := primary[0] as Dictionary

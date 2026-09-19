@@ -9,6 +9,7 @@ const BENCHMARK_MAIN_PATH := "res://tests/integration/crowd_benchmark_main.tscn"
 const MODELS := "res://data/actors/models.json"
 const SPELL_FLIGHT := preload("res://src/world/spell_flight_3d.gd")
 const WORLD_EFFECT := preload("res://src/world/world_effect_3d.gd")
+const SKIN_CENSUS := preload("res://tests/fixtures/crowd_skin_census.gd")
 const FIRST_ACTOR_ID := 14000
 const CAPE_PART := 2
 const CAPE_SOLVER_OFF_FEATURE := "cape_solver_off"
@@ -55,6 +56,7 @@ var _report: Dictionary = {}
 var _cell_index := 0
 var _capture_enabled := false
 var _attribution_enabled := false
+var _engine_profile_markers_enabled := false
 var _attribution_attachment: Dictionary = {}
 var _driver_usec := 0
 var _driver_command_usec := 0
@@ -85,6 +87,8 @@ func _run() -> void:
 		"ELORIA_CROWD_CAPTURE").strip_edges() == "1"
 	_attribution_enabled = OS.get_environment(
 		"ELORIA_CROWD_ATTRIBUTION").strip_edges() == "1"
+	_engine_profile_markers_enabled = OS.get_environment(
+		"ELORIA_CROWD_ENGINE_PROFILE_MARKERS").strip_edges() == "1"
 	_native_presentation_mode = _requested_native_presentation_mode()
 	_creatures = _creature_actor_types()
 	_report = {
@@ -132,13 +136,15 @@ func _run() -> void:
 				"acceptanceTimingComparable": not _attribution_enabled,
 				"purpose": ("diagnostic callback attribution; timer, signal and "
 					+ "observer overhead is included") if _attribution_enabled else
-					"disabled; ordinary acceptance timing",
+					"disabled; no callback attribution",
 			},
 			"acceptance": {
-				"eligible": true,
-				"diagnosticOnly": false,
-				"reason": "production presentation features",
+				"eligible": not _engine_profile_markers_enabled,
+				"diagnosticOnly": _engine_profile_markers_enabled,
+				"reason": "external engine profiling session" if
+					_engine_profile_markers_enabled else "production presentation features",
 			},
+			"engineProfileMarkersEnabled": _engine_profile_markers_enabled,
 		},
 		"driver": {
 			"version": DRIVER_VERSION,
@@ -1445,6 +1451,7 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 		raw["capeSolverActivePerFrame"] = []
 	var calls: Dictionary = {}
 	var resources_before := _resource_readiness_snapshot()
+	var profile_start := _engine_profile_marker("sample_start", str(spec["id"]))
 	var started := Time.get_ticks_msec()
 	var next_tick := started
 	var tick := 0
@@ -1538,6 +1545,7 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 		_append_render_sample(raw)
 		if abort_reason != null:
 			break
+	var profile_end := _engine_profile_marker("sample_end", str(spec["id"]))
 	var summary: Dictionary = {}
 	for key: String in raw:
 		summary[key] = _distribution(raw[key] as Array)
@@ -1586,6 +1594,12 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 	var elapsed_seconds := maxf(0.001,
 		float(Time.get_ticks_msec() - started) / 1000.0)
 	return {
+		"engineProfileWindow": {
+			"enabled": _engine_profile_markers_enabled,
+			"start": profile_start, "end": profile_end,
+			"scope": "steady sample only; excludes warmup, census, captures and teardown",
+			"externalProfilerTimingsAreDiagnostic": true,
+		},
 		"elapsedMilliseconds": Time.get_ticks_msec() - started,
 		"requestedMilliseconds": duration, "hardLimitMilliseconds": hard_limit,
 		"sampleSufficiency": {
@@ -1658,6 +1672,24 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 		"resourceVariationIncludesDeclaredCombatEffects": true,
 		"activityObserved": _activity_census(_main.get("actor_nodes") as Dictionary),
 	}
+
+
+## Optional correlation points for an external native profiler. Emitting these
+## outside the sample loop leaves production animation scheduling untouched.
+## Unix time permits alignment with an external recorder; monotonic engine time
+## also detects a system-clock adjustment. Profiled wall times are diagnostic.
+func _engine_profile_marker(event: String, cell: String) -> Dictionary:
+	if not _engine_profile_markers_enabled:
+		return {}
+	var marker := {
+		"schemaVersion": 1, "event": event, "cell": cell,
+		"processId": OS.get_process_id(),
+		"unixMicroseconds": roundi(Time.get_unix_time_from_system() * 1000000.0),
+		"engineMicroseconds": Time.get_ticks_usec(),
+		"processFrame": Engine.get_process_frames(),
+	}
+	print("ELORIA_CROWD_ENGINE_PROFILE ", JSON.stringify(marker))
+	return marker
 
 
 func _drive_tick(spec: Dictionary, active_ids: Array[int], tick: int) -> void:
@@ -2013,6 +2045,7 @@ func _actor_diagnostics(nodes: Dictionary, spec: Dictionary) -> Dictionary:
 		"nativeEquipmentNodes": native_equipment,
 		"fallbackEquipmentNodes": fallback_equipment,
 		"skinnedEquipmentNodes": skinned_equipment,
+		"equipmentSkins": SKIN_CENSUS.census(nodes),
 		"combatPresentations": combat_presentations,
 		"animationPlayers": animation_players,
 		"equippedHumanoids": equipped_humanoids,
