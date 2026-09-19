@@ -73,6 +73,21 @@ The asynchronous case dispatches one of ten groups every 10 ms at the default
 cadence, so each actor still receives an update every 100 ms. Combat and effect
 events remain on a 400 ms cadence in that case.
 
+Driver version `deferred-coalesced-role-faithful-v2` leaves dirty actor IDs in
+`AppState` for `Main` to consume through its normal deferred signal path. It
+does not call `take_changed_actors` or `_sync_world` from the timed driver.
+Catch-up ticks in one engine frame therefore coalesce into one presentation
+pass, matching live network delivery. Every sample records actual benchmark-subclass
+`sync_world_inclusive` calls in `raw.flushesPerFrame` and fails if a measured
+frame has more than one. Dirty command traffic must also produce at least one
+observed deferred flush.
+
+Fighting actors repeat a four-role cycle: caster effect, ranged animation, and
+two melee roles. Only the melee roles receive command 46 and folded turn
+commands; caster and ranged roles receive their protocol presentation event
+without a contradictory melee command. Priming sends command 18, waits one
+process frame for deferred presentation, then sends the role-specific visuals.
+
 `-NativeBackend Both` runs the same configuration first through the GDScript
 actor-command reducer and then through the optional native reducer. A requested
 native run fails if the extension did not load. `-Renderer` accepts
@@ -97,6 +112,11 @@ elapsed, subject to the greater of a 120-second or four-times-duration hard
 bound for every population. A cell that
 reaches that bound before 60 frames records `sampleSufficiency` as false and
 fails report validation; it is excluded from performance evidence.
+
+A sample also aborts and fails if live `WorldEffect3D` nodes exceed 4,096. The
+report retains the partial frames, packet/event rates, effect counts, and an
+`overloadAbort` reason. The guard stops runaway stress growth; it does not drop
+effects or turn an overload into accepted frame-rate evidence.
 
 The launcher records the commit, dirty state, requested and actual renderer,
 backend activation, trial and process identity. Its composite source hash and

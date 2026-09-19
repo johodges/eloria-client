@@ -60,11 +60,18 @@ HEADLESS_UNAVAILABLE_METRICS = (
 
 ACTIVITY_COLUMNS = (
     ("idle", "Idle"),
+    ("third_active", "Third active"),
     ("all_move", "Move"),
     ("all_combat", "Combat"),
 )
 
 SCALING_COUNTS = (100, 200, 300, 500)
+
+DRIVER_VERSION = "deferred-coalesced-role-faithful-v2"
+DRIVER_ROLE_CYCLE = ["caster_effect", "ranged_animation", "melee_primary", "melee_primary"]
+DRIVER_PRESENTATION_COALESCING = "AppState dirty signals consumed by Main deferred sync"
+DRIVER_ACTUAL_FLUSH_METRIC = "benchmark Main sync_world_inclusive calls per measured frame"
+DRIVER_FLUSH_SOURCE = "frame_calls.sync_world_inclusive"
 
 
 class SummaryError(ValueError):
@@ -137,6 +144,51 @@ def _expected_active_count(count: int, activity: str, context: str) -> int:
     raise SummaryError(f"{context}.activity has unsupported value {activity!r}")
 
 
+def _validate_driver(data: dict[str, Any], context: str, allow_legacy: bool) -> dict[str, Any]:
+    raw = data.get("driver")
+    if raw is None:
+        if not allow_legacy:
+            raise SummaryError(
+                f"{context}.driver is missing; this historical forced-presentation report is "
+                "superseded. Use --allow-legacy-forced-presentation only for explicit historical review"
+            )
+        return {
+            "status": "legacyForcedPresentationOptIn",
+            "version": None,
+            "productionFaithful": False,
+            "caveat": (
+                "Historical driver manually consumed dirty actors and forced presentation; "
+                "it does not attest Main's deferred coalescing path."
+            ),
+        }
+    if not isinstance(raw, dict):
+        raise SummaryError(f"{context}.driver must be an object")
+    if raw.get("version") != DRIVER_VERSION:
+        raise SummaryError(
+            f"{context}.driver.version is {raw.get('version')!r}; expected {DRIVER_VERSION!r}"
+        )
+    if raw.get("presentationCoalescing") != DRIVER_PRESENTATION_COALESCING:
+        raise SummaryError(f"{context}.driver.presentationCoalescing is not the deferred Main path")
+    if _required_bool(raw, "manualPresentationFlushes", f"{context}.driver"):
+        raise SummaryError(f"{context}.driver.manualPresentationFlushes must be false")
+    if raw.get("actualFlushMetric") != DRIVER_ACTUAL_FLUSH_METRIC:
+        raise SummaryError(f"{context}.driver.actualFlushMetric is unsupported")
+    if raw.get("roleCycle") != DRIVER_ROLE_CYCLE:
+        raise SummaryError(f"{context}.driver.roleCycle does not match the role-faithful cycle")
+    if _required_int(raw, "combatCadenceMultiplier", f"{context}.driver") != 4:
+        raise SummaryError(f"{context}.driver.combatCadenceMultiplier must be 4")
+    return {
+        "status": "validated",
+        "version": DRIVER_VERSION,
+        "productionFaithful": True,
+        "presentationCoalescing": raw["presentationCoalescing"],
+        "manualPresentationFlushes": raw["manualPresentationFlushes"],
+        "actualFlushMetric": raw["actualFlushMetric"],
+        "roleCycle": raw["roleCycle"],
+        "combatCadenceMultiplier": raw["combatCadenceMultiplier"],
+    }
+
+
 def _validate_stat(value: Any, context: str, maximum_samples: int) -> dict[str, Any] | None:
     if value is None:
         return None
@@ -171,7 +223,140 @@ def _validate_summary(
     return result
 
 
-def _validate_cell(cell: Any, run_context: str, min_frames: int, headless: bool) -> dict[str, Any]:
+def _integer_series(value: Any, context: str, frames: int) -> list[int]:
+    if not isinstance(value, list) or len(value) != frames:
+        raise SummaryError(f"{context} length must equal frames")
+    result: list[int] = []
+    for index, item in enumerate(value):
+        number = _finite_number(item, f"{context}[{index}]")
+        if number < 0 or not number.is_integer():
+            raise SummaryError(f"{context}[{index}] must be a non-negative integer")
+        result.append(int(number))
+    return result
+
+
+def _validate_driver_attestation(
+    sample: dict[str, Any],
+    summary: dict[str, dict[str, Any] | None],
+    raw: dict[str, Any],
+    frames: int,
+    network: str,
+    fighting: int,
+    context: str,
+) -> dict[str, Any]:
+    cadence = _required_int(sample, "driverCadenceMilliseconds", context)
+    combat_cadence = _required_int(sample, "combatCadenceMilliseconds", context)
+    if cadence < 1:
+        raise SummaryError(f"{context}.driverCadenceMilliseconds must be positive")
+    expected_combat_cadence = cadence * (40 if network == "asynchronous" else 4)
+    if combat_cadence != expected_combat_cadence:
+        raise SummaryError(
+            f"{context}.combatCadenceMilliseconds is {combat_cadence}; "
+            f"expected {expected_combat_cadence}"
+        )
+
+    flushes = _integer_series(raw.get("flushesPerFrame"), f"{context}.raw.flushesPerFrame", frames)
+    commands = _integer_series(raw.get("commandsPerFrame"), f"{context}.raw.commandsPerFrame", frames)
+    actual_flushes = sum(flushes)
+    maximum_flushes = max(flushes, default=0)
+    if maximum_flushes > 1:
+        raise SummaryError(
+            f"{context}.raw.flushesPerFrame has maximum {maximum_flushes}; expected at most 1"
+        )
+    flush_summary = summary.get("flushesPerFrame")
+    if flush_summary is None or flush_summary["samples"] != frames:
+        raise SummaryError(f"{context}.summary.flushesPerFrame must cover every frame")
+    if flush_summary["max"] != float(maximum_flushes):
+        raise SummaryError(f"{context}.summary.flushesPerFrame.max does not match raw samples")
+
+    calls = _required_dict(sample, "calls", context)
+    call_count = calls.get("sync_world_inclusive", 0)
+    if isinstance(call_count, bool) or not isinstance(call_count, int) or call_count < 0:
+        raise SummaryError(f"{context}.calls.sync_world_inclusive must be a non-negative integer")
+    if call_count != actual_flushes:
+        raise SummaryError(
+            f"{context}.calls.sync_world_inclusive is {call_count}; "
+            f"raw flush total is {actual_flushes}"
+        )
+
+    attestation = _required_dict(sample, "driverAttestation", context)
+    if attestation.get("version") != DRIVER_VERSION:
+        raise SummaryError(f"{context}.driverAttestation.version is unsupported")
+    if _required_bool(attestation, "manualPresentationFlushes", f"{context}.driverAttestation"):
+        raise SummaryError(f"{context}.driverAttestation.manualPresentationFlushes must be false")
+    if attestation.get("flushMetricSource") != DRIVER_FLUSH_SOURCE:
+        raise SummaryError(f"{context}.driverAttestation.flushMetricSource is unsupported")
+    if _required_int(attestation, "actualFlushes", f"{context}.driverAttestation") != actual_flushes:
+        raise SummaryError(f"{context}.driverAttestation.actualFlushes does not match raw samples")
+    if _required_int(
+        attestation, "maximumFlushesPerFrame", f"{context}.driverAttestation"
+    ) != maximum_flushes:
+        raise SummaryError(
+            f"{context}.driverAttestation.maximumFlushesPerFrame does not match raw samples"
+        )
+    if not _required_bool(attestation, "atMostOneFlushPerFrame", f"{context}.driverAttestation"):
+        raise SummaryError(f"{context}.driverAttestation.atMostOneFlushPerFrame must be true")
+    dirty_commands = sum(commands) > 0
+    if _required_bool(
+        attestation, "dirtyCommandsObserved", f"{context}.driverAttestation"
+    ) != dirty_commands:
+        raise SummaryError(f"{context}.driverAttestation.dirtyCommandsObserved is inconsistent")
+    produced_flush = not dirty_commands or actual_flushes > 0
+    if _required_bool(
+        attestation, "dirtyCommandsProducedFlush", f"{context}.driverAttestation"
+    ) != produced_flush or not produced_flush:
+        raise SummaryError(f"{context}.driverAttestation.dirtyCommandsProducedFlush is false")
+    if attestation.get("roleCycle") != DRIVER_ROLE_CYCLE:
+        raise SummaryError(f"{context}.driverAttestation.roleCycle is unsupported")
+    role_counts = _required_dict(attestation, "roleCounts", f"{context}.driverAttestation")
+    caster = (fighting + 3) // 4
+    ranged = (fighting + 2) // 4
+    expected_roles = {
+        "fighting": fighting,
+        "casterEffect": caster,
+        "rangedAnimation": ranged,
+        "meleePrimary": fighting - caster - ranged,
+    }
+    if role_counts != expected_roles:
+        raise SummaryError(
+            f"{context}.driverAttestation.roleCounts is {role_counts}; expected {expected_roles}"
+        )
+    if not _required_bool(
+        attestation, "meleeRolesReceiveCommand46", f"{context}.driverAttestation"
+    ):
+        raise SummaryError(f"{context}.driverAttestation.meleeRolesReceiveCommand46 must be true")
+    if not _required_bool(
+        attestation,
+        "casterAndRangedRolesReceiveVisualEventsOnly",
+        f"{context}.driverAttestation",
+    ):
+        raise SummaryError(
+            f"{context}.driverAttestation.casterAndRangedRolesReceiveVisualEventsOnly must be true"
+        )
+
+    overload = _required_dict(sample, "overloadAbort", context)
+    if _required_bool(overload, "aborted", f"{context}.overloadAbort"):
+        raise SummaryError(f"{context}.overloadAbort.aborted is true")
+    if overload.get("reason") is not None:
+        raise SummaryError(f"{context}.overloadAbort.reason must be null when not aborted")
+    if _required_int(overload, "liveWorldEffectLimit", f"{context}.overloadAbort") != 4096:
+        raise SummaryError(f"{context}.overloadAbort.liveWorldEffectLimit must be 4096")
+    return {
+        "status": "validated",
+        "driverCadenceMilliseconds": cadence,
+        "combatCadenceMilliseconds": combat_cadence,
+        "attestation": attestation,
+        "overloadAbort": overload,
+    }
+
+
+def _validate_cell(
+    cell: Any,
+    run_context: str,
+    min_frames: int,
+    headless: bool,
+    driver: dict[str, Any],
+) -> dict[str, Any]:
     if not isinstance(cell, dict):
         raise SummaryError(f"{run_context}.cells entries must be objects")
     cell_id = _required_text(cell, "id", run_context)
@@ -275,6 +460,23 @@ def _validate_cell(cell: Any, run_context: str, min_frames: int, headless: bool)
                     f"{context}.sample.summary.{metric} must be null for a headless run"
                 )
 
+    if driver["productionFaithful"]:
+        driver_attestation = _validate_driver_attestation(
+            sample,
+            summary,
+            raw,
+            frames,
+            cell["network"],
+            workload_fighting,
+            f"{context}.sample",
+        )
+    else:
+        driver_attestation = {
+            "status": "legacyForcedPresentationOptIn",
+            "productionFaithful": False,
+            "caveat": driver["caveat"],
+        }
+
     rates = sample.get("rates", {})
     if not isinstance(rates, dict):
         raise SummaryError(f"{context}.sample.rates must be an object")
@@ -299,6 +501,7 @@ def _validate_cell(cell: Any, run_context: str, min_frames: int, headless: bool)
         "memory": memory,
         "spawn": spawn,
         "despawnMilliseconds": despawn_milliseconds,
+        "driverValidation": driver_attestation,
         "summary": summary,
         "packetBearingSummary": packet_summary,
         "rates": checked_rates,
@@ -311,7 +514,9 @@ def _planned_id(spec: Any, context: str) -> str:
     return _required_text(spec, "id", context)
 
 
-def _validate_run(path: Path, data: Any, min_frames: int) -> dict[str, Any]:
+def _validate_run(
+    path: Path, data: Any, min_frames: int, allow_legacy_driver: bool
+) -> dict[str, Any]:
     context = str(path)
     if not isinstance(data, dict):
         raise SummaryError(f"{context}: report root must be an object")
@@ -353,6 +558,7 @@ def _validate_run(path: Path, data: Any, min_frames: int) -> dict[str, Any]:
     shared_machine = data.get("sharedMachine")
     if not isinstance(shared_machine, bool):
         raise SummaryError(f"{context}: sharedMachine must be a boolean")
+    driver = _validate_driver(data, context, allow_legacy_driver)
 
     planned = data.get("plannedCells")
     cells = data.get("cells")
@@ -363,7 +569,9 @@ def _validate_run(path: Path, data: Any, min_frames: int) -> dict[str, Any]:
     planned_ids = [_planned_id(spec, f"{context}.plannedCells") for spec in planned]
     if len(planned_ids) != len(set(planned_ids)):
         raise SummaryError(f"{context}: plannedCells contains duplicate ids")
-    checked_cells = [_validate_cell(cell, context, min_frames, headless) for cell in cells]
+    checked_cells = [
+        _validate_cell(cell, context, min_frames, headless, driver) for cell in cells
+    ]
     actual_ids = [cell["id"] for cell in checked_cells]
     if len(actual_ids) != len(set(actual_ids)):
         raise SummaryError(f"{context}: cells contains duplicate ids")
@@ -397,6 +605,7 @@ def _validate_run(path: Path, data: Any, min_frames: int) -> dict[str, Any]:
         "trial": trial,
         "sharedMachine": shared_machine,
         "interferenceLabel": data.get("interferenceLabel"),
+        "driver": driver,
         "cells": checked_cells,
     }
 
@@ -437,7 +646,9 @@ def _expand_inputs(inputs: list[str], directories: list[str], label: str | None)
     return sorted(unique.values(), key=lambda value: str(value).lower()), sorted(set(ignored))
 
 
-def _read_runs(paths: list[Path], label: str | None, min_frames: int) -> list[dict[str, Any]]:
+def _read_runs(
+    paths: list[Path], label: str | None, min_frames: int, allow_legacy_driver: bool
+) -> list[dict[str, Any]]:
     runs: list[dict[str, Any]] = []
     for path in paths:
         try:
@@ -448,7 +659,7 @@ def _read_runs(paths: list[Path], label: str | None, min_frames: int) -> list[di
             raise SummaryError(f"{path}: report root must be an object")
         if label is not None and data.get("label") != label:
             continue
-        runs.append(_validate_run(path, data, min_frames))
+        runs.append(_validate_run(path, data, min_frames, allow_legacy_driver))
     if not runs:
         suffix = f" for label {label!r}" if label else ""
         raise SummaryError(f"no benchmark runs selected{suffix}")
@@ -699,6 +910,7 @@ def _aggregate_cell(cell_runs: list[tuple[dict[str, Any], dict[str, Any]]]) -> d
                     "memory": cell["memory"],
                     "spawn": cell["spawn"],
                     "despawnMilliseconds": cell["despawnMilliseconds"],
+                    "driverValidation": cell["driverValidation"],
                 }
                 for run, cell in cell_runs
             ],
@@ -727,6 +939,10 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
         commits = {run["commit"] for run in group_runs}
         source_hashes = {run["sourceHash"] for run in group_runs}
         labels = {run["label"] for run in group_runs}
+        driver_states = {
+            (run["driver"]["status"], run["driver"]["version"])
+            for run in group_runs
+        }
         active_values = {run["nativeBackendActive"] for run in group_runs}
         headless_values = {run["headless"] for run in group_runs}
         if len(commits) != 1 or len(source_hashes) != 1:
@@ -735,6 +951,8 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
             )
         if len(labels) != 1:
             raise SummaryError(f"group {key} mixes benchmark labels; select one with --label")
+        if len(driver_states) != 1:
+            raise SummaryError(f"group {key} mixes benchmark driver generations")
         if len(active_values) != 1 or len(headless_values) != 1:
             raise SummaryError(f"group {key} mixes backend-active or headless state")
         expected_cells = {cell["id"] for cell in group_runs[0]["cells"]}
@@ -769,6 +987,9 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
             caveats.append(
                 "Headless renderer, GPU, draw-call, and primitive metrics are unavailable and remain null."
             )
+        driver = group_runs[0]["driver"]
+        if not driver["productionFaithful"]:
+            caveats.append(driver["caveat"])
         group_results.append(
             {
                 "backend": key[0],
@@ -779,6 +1000,7 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
                 "headless": next(iter(headless_values)),
                 "commit": next(iter(commits)),
                 "sourceHash": next(iter(source_hashes)),
+                "driver": driver,
                 "dirtyValues": sorted({str(run["dirty"]) for run in group_runs}),
                 "sharedMachine": shared,
                 "interferenceLabels": interference,
@@ -791,6 +1013,7 @@ def _aggregate(runs: list[dict[str, Any]], min_frames: int, ignored: list[Path])
                         "label": run["label"],
                         "path": run["path"],
                         "sha256": run["sha256"],
+                        "driver": run["driver"],
                         "companionProcess": run["companionProcess"],
                     }
                     for run in group_runs
@@ -853,7 +1076,13 @@ def _run_values(metric: dict[str, Any], key: str) -> str:
 
 
 def _find_scaling_cell(cells: list[dict[str, Any]], count: int, activity: str) -> dict[str, Any] | None:
-    matches = [cell for cell in cells if cell["count"] == count and cell["activity"] == activity]
+    matches = [
+        cell
+        for cell in cells
+        if cell["id"] != "acceptance-mixed300"
+        and cell["count"] == count
+        and cell["activity"] == activity
+    ]
     if not matches:
         return None
     preferred = [cell for cell in matches if cell["id"] == f"matrix-{count}-{activity}"]
@@ -874,13 +1103,27 @@ def _markdown(report: dict[str, Any]) -> str:
         "",
     ]
     for group in report["groups"]:
+        driver_description = (
+            f"`{group['driver']['version']}` (validated deferred-coalescing path)"
+            if group["driver"]["productionFaithful"]
+            else "legacy forced-presentation opt-in (not production-faithful)"
+        )
         lines.extend(
             [
                 f"## {group['backend']} · {group['renderer']} · {group['display']}",
                 "",
+                (
+                    "Headless `wallMilliseconds` is a **scene CPU proxy**; renderer, GPU, "
+                    "draw-call, and primitive metrics are unavailable."
+                    if group["headless"]
+                    else "Windowed `wallMilliseconds` is **diagnostic and non-authoritative**; "
+                    "display pacing and compositor scheduling can affect it."
+                ),
+                "",
                 f"Commit: `{group['commit']}`  ",
                 f"Source hash: `{group['sourceHash']}`  ",
-                f"Runs: {group['runCount']}",
+                f"Runs: {group['runCount']}  ",
+                f"Driver: {driver_description}",
                 "",
             ]
         )
@@ -891,48 +1134,69 @@ def _markdown(report: dict[str, Any]) -> str:
         if group["caveats"] or group["interferenceLabels"]:
             lines.append("")
 
-        lines.extend(
-            [
-                "### Scaling: wall milliseconds, median of run means",
-                "",
-                "| Actors | Idle | Move | Combat |",
-                "| ---: | ---: | ---: | ---: |",
-            ]
-        )
-        for count in SCALING_COUNTS:
-            row = [str(count)]
-            for activity, _ in ACTIVITY_COLUMNS:
-                cell = _find_scaling_cell(group["cells"], count, activity)
-                value = None if cell is None else cell["metrics"]["wallMilliseconds"]["medianOfRunMeans"]
-                row.append(_format_number(value))
-            lines.append("| " + " | ".join(row) + " |")
-        lines.append("")
+        scaling_columns = [
+            (activity, label)
+            for activity, label in ACTIVITY_COLUMNS
+            if any(
+                _find_scaling_cell(group["cells"], count, activity) is not None
+                for count in SCALING_COUNTS
+            )
+        ]
+        if scaling_columns:
+            scaling_title = (
+                "### Scaling: scene CPU proxy wall milliseconds, median of run means"
+                if group["headless"]
+                else "### Scaling: diagnostic wall milliseconds, median of run means (non-authoritative)"
+            )
+            lines.extend(
+                [
+                    scaling_title,
+                    "",
+                    "| Actors | " + " | ".join(label for _, label in scaling_columns) + " |",
+                    "| ---: | " + " | ".join("---:" for _ in scaling_columns) + " |",
+                ]
+            )
+            for count in SCALING_COUNTS:
+                row = [str(count)]
+                for activity, _ in scaling_columns:
+                    cell = _find_scaling_cell(group["cells"], count, activity)
+                    value = (
+                        None
+                        if cell is None
+                        else cell["metrics"]["wallMilliseconds"]["medianOfRunMeans"]
+                    )
+                    row.append(_format_number(value))
+                lines.append("| " + " | ".join(row) + " |")
+            lines.append("")
 
         primary = next((cell for cell in group["cells"] if cell["id"] == "acceptance-mixed300"), None)
-        lines.extend(
-            [
-                "### Primary cell components",
-                "",
-                "All-frame component values are milliseconds.",
-                "",
-                "| Component | Median of run means | Per-run means | Per-run p95 | Per-run p99 | Per-run max |",
-                "| --- | ---: | --- | --- | --- | --- |",
-            ]
-        )
-        for metric in (
-            "wallMilliseconds",
-            "presentMilliseconds",
-            "groundMilliseconds",
-            "overheadMilliseconds",
-            "animationGateMilliseconds",
-            "syncWorldMilliseconds",
-            "packetDispatchInclusiveMilliseconds",
-            "commandOnlyReduceMilliseconds",
-        ):
-            aggregate = None if primary is None else primary["metrics"].get(metric)
-            if aggregate is None:
-                cells = [metric, "—", "—", "—", "—", "—"]
-            else:
+        if primary is not None:
+            primary_title = (
+                "### Primary scene CPU proxy components"
+                if group["headless"]
+                else "### Primary diagnostic wall components (non-authoritative)"
+            )
+            lines.extend(
+                [
+                    primary_title,
+                    "",
+                    "All-frame component values are milliseconds.",
+                    "",
+                    "| Component | Median of run means | Per-run means | Per-run p95 | Per-run p99 | Per-run max |",
+                    "| --- | ---: | --- | --- | --- | --- |",
+                ]
+            )
+            for metric in (
+                "wallMilliseconds",
+                "presentMilliseconds",
+                "groundMilliseconds",
+                "overheadMilliseconds",
+                "animationGateMilliseconds",
+                "syncWorldMilliseconds",
+                "packetDispatchInclusiveMilliseconds",
+                "commandOnlyReduceMilliseconds",
+            ):
+                aggregate = primary["metrics"].get(metric)
                 cells = [
                     metric,
                     _format_number(aggregate["medianOfRunMeans"]),
@@ -941,22 +1205,51 @@ def _markdown(report: dict[str, Any]) -> str:
                     _run_values(aggregate, "p99"),
                     _run_values(aggregate, "max"),
                 ]
-            lines.append("| " + " | ".join(cells) + " |")
-        lines.append("")
+                lines.append("| " + " | ".join(cells) + " |")
+            lines.append("")
 
-        lines.extend(
-            [
-                "Packet-bearing frames are summarized separately; their sample counts can be lower than the cell frame count.",
-                "",
-                "| Packet-bearing component | Median of run means | Per-run means | Per-run p95 | Per-run p99 | Per-run max |",
-                "| --- | ---: | --- | --- | --- | --- |",
-            ]
-        )
-        for metric in PACKET_METRICS:
-            aggregate = None if primary is None else primary["packetBearingMetrics"].get(metric)
-            if aggregate is None:
-                cells = [metric, "—", "—", "—", "—", "—"]
-            else:
+            if not group["headless"]:
+                renderer_metrics = (
+                    ("worldRenderCpuMilliseconds", "ms"),
+                    ("worldRenderGpuMilliseconds", "ms"),
+                    ("drawCalls", "calls/frame"),
+                )
+                if any(
+                    primary["metrics"][metric]["medianOfRunMeans"] is not None
+                    for metric, _ in renderer_metrics
+                ):
+                    lines.extend(
+                        [
+                            "### Primary windowed world-render metrics",
+                            "",
+                            "| Metric | Unit | Median of run means | Per-run means | Per-run p95 | Per-run p99 | Per-run max |",
+                            "| --- | --- | ---: | --- | --- | --- | --- |",
+                        ]
+                    )
+                    for metric, unit in renderer_metrics:
+                        aggregate = primary["metrics"][metric]
+                        cells = [
+                            metric,
+                            unit,
+                            _format_number(aggregate["medianOfRunMeans"]),
+                            _run_values(aggregate, "mean"),
+                            _run_values(aggregate, "p95"),
+                            _run_values(aggregate, "p99"),
+                            _run_values(aggregate, "max"),
+                        ]
+                        lines.append("| " + " | ".join(cells) + " |")
+                    lines.append("")
+
+            lines.extend(
+                [
+                    "Packet-bearing frames are summarized separately; their sample counts can be lower than the cell frame count.",
+                    "",
+                    "| Packet-bearing component | Median of run means | Per-run means | Per-run p95 | Per-run p99 | Per-run max |",
+                    "| --- | ---: | --- | --- | --- | --- |",
+                ]
+            )
+            for metric in PACKET_METRICS:
+                aggregate = primary["packetBearingMetrics"].get(metric)
                 cells = [
                     metric,
                     _format_number(aggregate["medianOfRunMeans"]),
@@ -965,8 +1258,8 @@ def _markdown(report: dict[str, Any]) -> str:
                     _run_values(aggregate, "p99"),
                     _run_values(aggregate, "max"),
                 ]
-            lines.append("| " + " | ".join(cells) + " |")
-        lines.append("")
+                lines.append("| " + " | ".join(cells) + " |")
+            lines.append("")
 
     lines.extend(["## Inputs", ""])
     for item in report["inputs"]["files"]:
@@ -1023,6 +1316,14 @@ def _parser() -> argparse.ArgumentParser:
             "Existing companions are always validated and benchmark reports should not use this opt-out."
         ),
     )
+    parser.add_argument(
+        "--allow-legacy-forced-presentation",
+        action="store_true",
+        help=(
+            "Include superseded historical reports whose driver manually forced presentation. "
+            "The JSON and Markdown outputs mark them as not production-faithful."
+        ),
+    )
     return parser
 
 
@@ -1034,7 +1335,9 @@ def main(argv: list[str] | None = None) -> int:
         if not args.inputs and not args.artifact_directory:
             raise SummaryError("provide at least one JSON path, glob, or artifact directory")
         paths, ignored = _expand_inputs(args.inputs, args.artifact_directory, args.label)
-        runs = _read_runs(paths, args.label, args.min_frames)
+        runs = _read_runs(
+            paths, args.label, args.min_frames, args.allow_legacy_forced_presentation
+        )
         for run in runs:
             _validate_companion(run, args.allow_missing_process_companion_for_fixtures)
         report = _aggregate(runs, args.min_frames, ignored)

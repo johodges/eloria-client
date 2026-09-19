@@ -17,6 +17,8 @@ const DEFAULT_CADENCE_MSEC := 100
 const MAX_SPAWN_MSEC := 300000
 const MAX_READINESS_MSEC := 60000
 const MIN_SAMPLE_FRAMES := 60
+const MAX_LIVE_WORLD_EFFECTS := 4096
+const DRIVER_VERSION := "deferred-coalesced-role-faithful-v2"
 
 var _failures := 0
 var _headless := false
@@ -33,7 +35,6 @@ var _driver_command_usec := 0
 var _driver_packets := 0
 var _driver_commands := 0
 var _driver_state_updates := 0
-var _driver_flushes := 0
 var _driver_combat_events := 0
 
 
@@ -87,6 +88,14 @@ func _run() -> void:
 				"ELORIA_CROWD_CADENCE_MSEC", DEFAULT_CADENCE_MSEC, 25),
 			"windowWallTimeAuthoritative": false,
 			"headlessRenderMetricsAvailable": false,
+		},
+		"driver": {
+			"version": DRIVER_VERSION,
+			"presentationCoalescing": "timed AppState dirty signals consumed by Main deferred sync",
+			"manualPresentationFlushes": false,
+			"actualFlushMetric": "benchmark Main sync_world_inclusive calls per measured frame",
+			"roleCycle": ["caster_effect", "ranged_animation", "melee_primary", "melee_primary"],
+			"combatCadenceMultiplier": 4,
 		},
 		"cells": [],
 		"failures": [],
@@ -543,11 +552,8 @@ func _place_population(nodes: Dictionary, records: Dictionary,
 		else:
 			point = _outside_frustum_point(camera, local.global_position,
 				index - wanted, count - wanted, ground_y)
-		if count > 300:
-			point = _unique_fixture_point(camera, local.global_position, actor, point,
-				index < wanted, occupied_tiles)
-		else:
-			occupied_tiles[_adapter.godot_to_server(point)] = true
+		point = _unique_fixture_point(camera, local.global_position, actor, point,
+			index < wanted, occupied_tiles)
 		_set_actor_position(actor, records, point)
 	_expect(occupied_tiles.size() == count,
 		"%s placement assigns one canonical server tile per actor (got %d of %d)" % [
@@ -751,8 +757,10 @@ func _prime_activity(spec: Dictionary, active_ids: Array[int]) -> void:
 		var workload := _workload_plan(active_ids, str(spec["activity"]))
 		var fighting: Array[int] = active_ids.slice(int(workload["moving"]))
 		_send_actor_commands(fighting, 18)
-		_flush_changed()
-		_drive_combat_visuals(fighting, 0, str(spec["features"]) != "no_effects")
+		# Let Main consume AppState's dirty signal through its normal deferred,
+		# once-per-frame presentation before role-specific visual events arrive.
+		await process_frame
+		_drive_combat_visuals(fighting, 0)
 	await process_frame
 
 
@@ -792,6 +800,7 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 	var started := Time.get_ticks_msec()
 	var next_tick := started
 	var tick := 0
+	var abort_reason: Variant = null
 	while Time.get_ticks_msec() - started < duration \
 			or (raw["wallMilliseconds"] as Array).size() < MIN_SAMPLE_FRAMES:
 		if Time.get_ticks_msec() - started >= hard_limit:
@@ -802,7 +811,6 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 		_driver_packets = 0
 		_driver_commands = 0
 		_driver_state_updates = 0
-		_driver_flushes = 0
 		_driver_combat_events = 0
 		var frame_started := Time.get_ticks_usec()
 		var now := Time.get_ticks_msec()
@@ -831,17 +839,25 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 		(raw["packetsPerFrame"] as Array).append(_driver_packets)
 		(raw["commandsPerFrame"] as Array).append(_driver_commands)
 		(raw["stateUpdatesPerFrame"] as Array).append(_driver_state_updates)
-		(raw["flushesPerFrame"] as Array).append(_driver_flushes)
+		(raw["flushesPerFrame"] as Array).append(int(
+			frame_calls.get("sync_world_inclusive", 0)))
 		(raw["combatPresentationEventsPerFrame"] as Array).append(
 			_driver_combat_events)
 		(raw["sceneNodes"] as Array).append(int(
 			Performance.get_monitor(Performance.OBJECT_NODE_COUNT)))
 		(raw["resourceObjects"] as Array).append(int(
 			Performance.get_monitor(Performance.OBJECT_RESOURCE_COUNT)))
-		(raw["transientWorldEffects"] as Array).append(_live_world_effect_count())
+		var live_effects := _live_world_effect_count()
+		(raw["transientWorldEffects"] as Array).append(live_effects)
+		if live_effects > MAX_LIVE_WORLD_EFFECTS:
+			abort_reason = "live WorldEffect3D count %d exceeded safety limit %d" % [
+				live_effects, MAX_LIVE_WORLD_EFFECTS]
+			_expect(false, "%s aborted: %s" % [spec["id"], abort_reason])
 		for key: Variant in frame_calls:
 			calls[key] = int(calls.get(key, 0)) + int(frame_calls[key])
 		_append_render_sample(raw)
+		if abort_reason != null:
+			break
 	var summary: Dictionary = {}
 	for key: String in raw:
 		summary[key] = _distribution(raw[key] as Array)
@@ -849,6 +865,16 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 	var sufficient_samples := sampled_frames >= MIN_SAMPLE_FRAMES
 	_expect(sufficient_samples, "%s records at least %d timed frames before the %d ms hard bound" % [
 		spec["id"], MIN_SAMPLE_FRAMES, hard_limit])
+	var actual_flushes := int(_sum_numeric(raw["flushesPerFrame"] as Array))
+	var max_flushes := int(_max_numeric(raw["flushesPerFrame"] as Array))
+	var sampled_commands := int(_sum_numeric(raw["commandsPerFrame"] as Array))
+	var role_counts := _combat_role_counts(spec, active_ids)
+	_expect(max_flushes <= 1,
+		"%s lets Main coalesce presentation to at most one sync per frame (got %d)" % [
+			spec["id"], max_flushes])
+	if sampled_commands > 0:
+		_expect(actual_flushes > 0,
+			"%s observes a deferred Main sync for dirty actor commands" % spec["id"])
 	var packet_bearing: Dictionary = {}
 	for key: String in ["wallMilliseconds", "presentMilliseconds",
 			"groundMilliseconds", "packetDispatchInclusiveMilliseconds",
@@ -868,10 +894,32 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 			"sufficient": sufficient_samples,
 			"minimumFrames": MIN_SAMPLE_FRAMES,
 			"actualFrames": sampled_frames,
-			"reason": null if sufficient_samples else (
+			"reason": abort_reason if abort_reason != null else (
+				null if sufficient_samples else
 				"hard time bound reached before minimum frame count"),
 		},
+		"overloadAbort": {
+			"aborted": abort_reason != null,
+			"reason": abort_reason,
+			"liveWorldEffectLimit": MAX_LIVE_WORLD_EFFECTS,
+		},
 		"driverCadenceMilliseconds": cadence,
+		"combatCadenceMilliseconds": cadence * (
+			40 if str(spec["network"]) == "asynchronous" else 4),
+		"driverAttestation": {
+			"version": DRIVER_VERSION,
+			"manualPresentationFlushes": false,
+			"flushMetricSource": "frame_calls.sync_world_inclusive",
+			"actualFlushes": actual_flushes,
+			"maximumFlushesPerFrame": max_flushes,
+			"atMostOneFlushPerFrame": max_flushes <= 1,
+			"dirtyCommandsObserved": sampled_commands > 0,
+			"dirtyCommandsProducedFlush": sampled_commands == 0 or actual_flushes > 0,
+			"roleCycle": ["caster_effect", "ranged_animation", "melee_primary", "melee_primary"],
+			"roleCounts": role_counts,
+			"meleeRolesReceiveCommand46": true,
+			"casterAndRangedRolesReceiveVisualEventsOnly": true,
+		},
 		"frames": sampled_frames,
 		"cadenceTicks": tick,
 		"wallMetric": "scene-tree CPU proxy" if _headless else "diagnostic compositor-paced wall",
@@ -919,6 +967,10 @@ func _drive_tick(spec: Dictionary, active_ids: Array[int], tick: int) -> void:
 	elif activity == "all_combat":
 		for id: int in active_ids:
 			fighting.append(id)
+	var melee: Array[int] = []
+	for index: int in range(fighting.size()):
+		if index % 4 in [2, 3]:
+			melee.append(fighting[index])
 	if not moving.is_empty():
 		if network == "asynchronous":
 			# Each group gets its own alternating sequence. Using tick parity here
@@ -932,25 +984,40 @@ func _drive_tick(spec: Dictionary, active_ids: Array[int], tick: int) -> void:
 		else:
 			var command := 22 if tick % 2 == 0 else 26
 			_send_actor_commands(moving, command)
-	if not fighting.is_empty() and tick % combat_interval == 0:
+	if not melee.is_empty() and tick % combat_interval == 0:
 		if network == "folded_turn_attack":
-			_send_actor_commands(fighting, 38 + (tick / 4) % 8)
-		_send_actor_commands(fighting, 46)
+			_send_actor_commands(melee, 38 + (tick / 4) % 8)
+		_send_actor_commands(melee, 46)
 	if network in ["protocol_health_buffs", "protocol_unchanged_gear",
 			"protocol_changed_gear_lifecycle"] and tick % mutation_interval == 0:
 		_send_network_variant_packets(active_ids, network, tick)
-	_flush_changed()
-	# Presentation events follow the state flush, as they do after packet
-	# reduction. Applying them before the fresh attack command would overwrite
-	# the spell or bow action and benchmark a state that is never drawn.
+	# AppState's actor change signal schedules Main's normal deferred sync. The
+	# harness never consumes the dirty set directly, so catch-up ticks coalesce
+	# into the same once-per-frame presentation path as live network traffic.
+	# Caster/ranged visuals target roles that do not receive melee command 46,
+	# avoiding contradictory action packets for the same actor.
 	if not fighting.is_empty() and tick % combat_interval == 0:
-		_drive_combat_visuals(fighting, tick,
-			str(spec["features"]) != "no_effects")
+		_drive_combat_visuals(fighting, tick)
 
 
 func _driver_cadence(spec: Dictionary) -> int:
 	var cadence := int((_report["measurement"] as Dictionary)["cadenceMilliseconds"])
 	return maxi(1, cadence / 10) if str(spec["network"]) == "asynchronous" else cadence
+
+
+func _combat_role_counts(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
+	var plan := _workload_plan(active_ids, str(spec["activity"]))
+	var fighting := int(plan["fighting"])
+	var caster := 0
+	var ranged := 0
+	var melee := 0
+	for index: int in range(fighting):
+		match index % 4:
+			0: caster += 1
+			1: ranged += 1
+			_: melee += 1
+	return {"fighting": fighting, "casterEffect": caster,
+		"rangedAnimation": ranged, "meleePrimary": melee}
 
 
 func _send_actor_commands(ids: Array, command: int) -> void:
@@ -967,13 +1034,11 @@ func _send_actor_commands(ids: Array, command: int) -> void:
 	_driver_commands += ids.size()
 
 
-func _drive_combat_visuals(ids: Array, tick: int, effects: bool) -> void:
+func _drive_combat_visuals(ids: Array, tick: int) -> void:
 	for index: int in range(ids.size()):
 		var actor_value: Variant = (_main.get("actor_nodes") as Dictionary).get(ids[index])
 		if not is_instance_valid(actor_value):
 			continue
-		var actor := actor_value as ReplicatedActor3D
-		actor.set_combat_effects_enabled(effects)
 		match index % 4:
 			0:
 				# The real handler creates WorldEffect3D and drives the source actor's
@@ -1046,14 +1111,6 @@ func _send_packet(command: int, payload: PackedByteArray, updates: int) -> void:
 func _append_u16(payload: PackedByteArray, value: int) -> void:
 	payload.append(value & 0xff)
 	payload.append((value >> 8) & 0xff)
-
-
-func _flush_changed() -> void:
-	var changed := _app_state.call("take_changed_actors") as Dictionary
-	if changed.is_empty():
-		return
-	_main.call("_sync_world", changed)
-	_driver_flushes += 1
 
 
 func _append_render_sample(raw: Dictionary) -> void:
@@ -1479,6 +1536,14 @@ func _sum_numeric(values: Array) -> float:
 		if value != null:
 			total += float(value)
 	return total
+
+
+func _max_numeric(values: Array) -> float:
+	var maximum := 0.0
+	for value: Variant in values:
+		if value != null:
+			maximum = maxf(maximum, float(value))
+	return maximum
 
 
 func _percentile(values: Array[float], fraction: float) -> float:
