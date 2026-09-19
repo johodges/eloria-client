@@ -1,3 +1,6 @@
+## Frozen capsule-cache baseline from commit 5829cce3b.
+## Body SHA-256 from the script declaration:
+## 76da42459b01cdf535ee37d39dca2f34a26f6d6aebcd5c53408e080fd17e9e30
 extends SkeletonModifier3D
 ## Verlet cloth for the cape chains on the player rig.
 ##
@@ -77,13 +80,6 @@ var _collision_spans := PackedFloat64Array()
 var _collision_radii := PackedFloat64Array()
 var _collision_reaches: Array[PackedFloat32Array] = []
 var _empty_reach := PackedFloat32Array()
-## Optional arithmetic-only extension. GDScript remains the complete fallback;
-## the native object never reads the skeleton or writes a bone.
-var _native_constraint_kernel: RefCounted
-var _native_constraint_kernel_initialized := false
-var _native_constraint_status := "disabled"
-var _native_constraint_calls := 0
-var _native_constraint_fallbacks := 0
 ## How far the worn torso reaches from each capsule's axis, sampled along it,
 ## or empty for a bare chest. Measured once per armour by the wearer, which is
 ## the only place the equipment is known.
@@ -201,46 +197,7 @@ func _cache(skeleton: Skeleton3D) -> bool:
 			if score > best:
 				best = score
 				_forward_local = local
-	_initialize_native_constraint_kernel()
 	return true
-
-
-func _initialize_native_constraint_kernel() -> void:
-	if _native_constraint_kernel_initialized:
-		return
-	_native_constraint_kernel_initialized = true
-	var requested := OS.get_environment("ELORIA_NATIVE_PRESENTATION").strip_edges().to_lower()
-	if requested not in ["cape", "both", "1"]:
-		return
-	_native_constraint_status = "requested"
-	if not ClassDB.class_exists(&"NativeCapeConstraintKernel"):
-		var extension_path := "res://bin/native_crowd.gdextension"
-		if not FileAccess.file_exists(extension_path):
-			_native_constraint_status = "extension_missing"
-			return
-		GDExtensionManager.load_extension(extension_path)
-	if not ClassDB.class_exists(&"NativeCapeConstraintKernel"):
-		_native_constraint_status = "class_unavailable"
-		return
-	_native_constraint_kernel = ClassDB.instantiate(&"NativeCapeConstraintKernel")
-	if _native_constraint_kernel == null:
-		_native_constraint_status = "instantiate_failed"
-		return
-	_native_constraint_status = "active"
-
-
-func native_constraint_kernel_active() -> bool:
-	return _native_constraint_kernel != null
-
-
-func native_presentation_stats() -> Dictionary:
-	return {
-		"active": _native_constraint_kernel != null,
-		"backend": "native" if _native_constraint_kernel != null else "gdscript",
-		"status": _native_constraint_status,
-		"nativeCalls": _native_constraint_calls,
-		"fallbackCalls": _native_constraint_fallbacks,
-	}
 
 
 func _cache_collision_pair(pair: PackedInt32Array, kind: CapsuleKind) -> void:
@@ -418,11 +375,6 @@ func _process_modification_with_delta(delta: float) -> void:
 	var plane_at := anchor_world.dot(forward) + BACK_OFFSET \
 		if forward != Vector3.ZERO else 0.0
 	var down := (to_world.basis * anchor_pose.basis * _hang_local).normalized()
-	if _native_constraint_kernel != null and _try_native_constraint_step(
-			skeleton, to_world, to_local, anchor_pose, down, fall, damping, forward,
-			plane_at, anchor_world.y):
-		_settled = true
-		return
 
 	for chain in range(_bones.size()):
 		var rest := _rest_joints_from_pose(to_world, chain, anchor_pose, down)
@@ -486,52 +438,6 @@ func _process_modification_with_delta(delta: float) -> void:
 			skeleton.set_bone_pose_rotation(bone, local_pose.basis.get_rotation_quaternion())
 			parent = posed
 	_settled = true
-
-
-func _try_native_constraint_step(skeleton: Skeleton3D, to_world: Transform3D,
-		to_local: Transform3D, anchor_pose: Transform3D, down: Vector3, fall: Vector3,
-		damping: float, forward: Vector3, plane_at: float,
-		anchor_y: float) -> bool:
-	var rests: Array[PackedVector3Array] = []
-	for chain: int in range(_bones.size()):
-		rests.append(_rest_joints_from_pose(to_world, chain, anchor_pose, down))
-	var solved := bool(_native_constraint_kernel.call("step",
-		_points, _previous, rests, _lengths,
-		_collision_world, _collision_pairs, _collision_axes,
-		_collision_spans, _collision_radii, _collision_reaches,
-		fall, damping, forward, plane_at, anchor_y, to_world, _settled))
-	if not solved:
-		_native_constraint_fallbacks += 1
-		return false
-	_native_constraint_calls += 1
-	for chain: int in range(_bones.size()):
-		_write_native_chain_bones(skeleton, chain, rests[chain], anchor_pose,
-			to_world, to_local)
-	return true
-
-
-func _write_native_chain_bones(skeleton: Skeleton3D, chain: int,
-		rest: PackedVector3Array, anchor_pose: Transform3D,
-		to_world: Transform3D, to_local: Transform3D) -> void:
-	var points := _points[chain]
-	var parent := anchor_pose
-	var authored := to_world * parent
-	var rest_direction := (rest[1] - rest[0]).normalized()
-	for link in range(LINKS):
-		var bone := _bones[chain][link]
-		var bone_rest: Transform3D = _bone_rests[chain][link]
-		authored = authored * bone_rest
-		var wanted := (points[link + 1] - points[link]).normalized()
-		var turn := Basis.IDENTITY
-		if wanted.length_squared() > 0.5:
-			turn = Basis(Quaternion(rest_direction, wanted))
-		var posed := to_local * Transform3D(turn * authored.basis,
-			points[link] + turn * (authored.origin - rest[link]))
-		var local_pose := parent.affine_inverse() * posed
-		skeleton.set_bone_pose_position(bone, local_pose.origin)
-		skeleton.set_bone_pose_rotation(bone,
-			local_pose.basis.get_rotation_quaternion())
-		parent = posed
 
 
 func reset() -> void:

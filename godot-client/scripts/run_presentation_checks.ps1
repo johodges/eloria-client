@@ -55,7 +55,9 @@ $sourcePaths = @('src/actors/cape_cloth.gd', 'src/actors/replicated_actor_3d.gd'
     'bin/windows/native_crowd.windows.template_release.x86_64.dll')
 $optionalSourcePaths = @(
     'native/native_crowd/src/native_spell_flight_geometry.cpp',
-    'native/native_crowd/src/native_spell_flight_geometry.h'
+    'native/native_crowd/src/native_spell_flight_geometry.h',
+    'native/native_crowd/src/native_cape_constraint_kernel.cpp',
+    'native/native_crowd/src/native_cape_constraint_kernel.h'
 )
 foreach ($relative in $optionalSourcePaths) {
     if (Test-Path -LiteralPath (Join-Path $clientRoot $relative)) {
@@ -166,6 +168,7 @@ foreach ($script in $Scripts) {
         scriptSha256 = (Get-FileHash -LiteralPath $scriptPath -Algorithm SHA256).Hash.ToLowerInvariant()
         commit = $commit; sourceStatus = $sourceStatus; sourceFiles = $sourceHashes
         renderer = $Renderer; headless = $Headless.IsPresent
+        nativePresentationEnvironment = [string]$env:ELORIA_NATIVE_PRESENTATION
         executable = $launchPath; executableSha256 = $executableHash; pid = $process.Id
         startTimeUtc = $(if ($null -ne $expectedStart) { $expectedStart.ToString('o') } else { $null })
         affinityMask = 15; requestedWorkers = 2; identityVerified = $verified
