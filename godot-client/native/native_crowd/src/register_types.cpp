@@ -1,6 +1,8 @@
 #include "register_types.h"
 
 #include "native_crowd_reducer.h"
+#include "native_spell_flight_geometry.h"
+#include "native_cape_constraint_kernel.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
@@ -15,6 +17,8 @@ void initialize_native_crowd_module(
     }
     ClassDB::register_class<NativeCrowdReducer>();
     ClassDB::register_class<NativeCrowdStore>();
+    ClassDB::register_class<NativeSpellFlightGeometry>();
+    ClassDB::register_class<NativeCapeConstraintKernel>();
 }
 
 void uninitialize_native_crowd_module(
@@ -38,4 +42,3 @@ GDExtensionBool GDE_EXPORT native_crowd_library_init(
     return init_object.init();
 }
 }
-

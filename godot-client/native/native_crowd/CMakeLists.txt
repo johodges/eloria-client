@@ -28,6 +28,10 @@ FetchContent_MakeAvailable(godot_cpp)
 add_library(native_crowd SHARED
     src/native_crowd_reducer.cpp
     src/native_crowd_reducer.h
+    src/native_spell_flight_geometry.cpp
+    src/native_spell_flight_geometry.h
+    src/native_cape_constraint_kernel.cpp
+    src/native_cape_constraint_kernel.h
     src/register_types.cpp
     src/register_types.h
 )

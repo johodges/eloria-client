@@ -148,3 +148,43 @@ taskset -c 0-3 godot --headless --path godot-client \
 Both invocations write `native-crowd-reducer.json` and its log beneath the
 isolated `$results` directory. `ELORIA_CROWD_EXPECT_USER_ROOT` and
 `ELORIA_NATIVE_CROWD=1` remain required from the parity-run setup.
+
+## Optional presentation kernels
+
+The same extension also contains two independently selectable presentation
+experiments. They do not require the native actor reducer. Leave
+`ELORIA_NATIVE_CROWD=0` when measuring their contribution.
+
+`ELORIA_NATIVE_PRESENTATION` selects the presentation path at instance creation:
+
+| Value | Cape constraints | Spell-flight geometry |
+| --- | --- | --- |
+| unset, `0`, or `off` | GDScript | GDScript |
+| `cape` | Native | GDScript |
+| `flight` | GDScript | Native |
+| `both` or `1` | Native | Native |
+
+The source checkout remains usable without a built extension. A requested
+kernel that is unavailable falls back to the existing GDScript implementation.
+Benchmark acceptance additionally verifies actual native calls, so a missing
+library cannot be reported as a native performance result.
+
+`NativeCapeConstraintKernel.step()` handles all three cape chains in one call:
+initialization and teleport recovery, Verlet integration, and the existing two
+ordered relaxation passes. Godot still owns the modifier, animated body reads,
+rest construction, clock, state arrays, and bone pose writes. The kernel validates
+inputs, computes into local packed copies, and publishes the six point/history
+arrays only after completing the step. A rejected call leaves the caller's state
+unchanged for the GDScript fallback. It does not own actors or read scene nodes.
+
+`NativeSpellFlightGeometry.build()` computes one complete flight's ribbon and
+glow geometry from its current scalar/vector parameters. It returns packed
+positions, colours and UVs. Godot retains endpoint tracking, release and arrival
+timing, lifetime, materials, nodes, and ArrayMesh submission. Invalid output
+selects that flight's complete original ImmediateMesh path. World-effect rings,
+runes, particles, and actor combat cues are outside this native boundary.
+
+Both kernels use the existing RefCounted binding profile and the same serial,
+affinity-limited build commands above. The renderer default and actor reducer
+opt-in remain unchanged. This is geometry/constraint computation within Godot,
+not a separate crowd renderer.
