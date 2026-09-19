@@ -1,6 +1,8 @@
 class_name ReplicatedActor3D
 extends CharacterBody3D
 
+const REBOUND_SKIN_POOL := preload("res://src/actors/rebound_skin_pool.gd")
+
 @export var walk_presentation_speed := 6.0
 @export var run_presentation_speed := 9.0
 @export var turn_speed_radians := 12.0
@@ -2078,6 +2080,10 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 				piece.get("binds", [] as Array[Transform3D]) as Array[Transform3D],
 				fit_basis, _girth_ratios(author_rig, fit_profile), ground)
 			if rebound != null:
+				# Skeleton3D registers Skin resources by identity. Garment and
+				# backing meshes with identical finalized binds can share that
+				# binding while keeping their meshes and materials independent.
+				rebound = REBOUND_SKIN_POOL.intern_finalized(rebound)
 				_rebound_skins[surface_key] = rebound
 		if rebound == null:
 			continue
