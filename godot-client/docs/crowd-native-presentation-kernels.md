@@ -7,6 +7,10 @@ workload's median headless scene CPU proxy from **29.601 to 24.328 ms
 Rendered observations also favor the candidate, with overlapping tails and
 shared-host interference. **The 60 FPS / 16.67 ms target remains unmet.**
 
+The subsequent [combat and impact geometry study](crowd-impact-geometry-optimization.md)
+adds bow-shape reuse and an optional native world-impact builder, with its own
+controlled comparisons and current remaining-bottleneck assessment.
+
 This study continues `perf/native-crowd-300-benchmark` from
 `269c0eeb83dba09a704230e684c72e5f5ea3eca8`. The earlier
 [presentation cleanup](crowd-presentation-optimization.md) and
