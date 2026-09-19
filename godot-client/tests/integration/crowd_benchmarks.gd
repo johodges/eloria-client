@@ -8,6 +8,8 @@ extends SceneTree
 const BENCHMARK_MAIN_PATH := "res://tests/integration/crowd_benchmark_main.tscn"
 const MODELS := "res://data/actors/models.json"
 const FIRST_ACTOR_ID := 14000
+const CAPE_PART := 2
+const CAPE_SOLVER_OFF_FEATURE := "cape_solver_off"
 const COUNTS := [100, 200, 300, 500]
 const FULL_KIT_A := {0: 114, 1: 106, 2: 0, 3: 117, 4: 171, 5: 184, 6: 192}
 const FULL_KIT_B := {0: 164, 1: 111, 2: 1, 3: 109, 4: 172, 5: 185, 6: 193}
@@ -58,6 +60,8 @@ var _driver_packets := 0
 var _driver_commands := 0
 var _driver_state_updates := 0
 var _driver_combat_events := 0
+var _cape_solver_probe_enabled := false
+var _cape_solver_probe_nodes: Array[SkeletonModifier3D] = []
 
 
 func _init() -> void:
@@ -119,6 +123,11 @@ func _run() -> void:
 					+ "observer overhead is included") if _attribution_enabled else
 					"disabled; ordinary acceptance timing",
 			},
+			"acceptance": {
+				"eligible": true,
+				"diagnosticOnly": false,
+				"reason": "production presentation features",
+			},
 		},
 		"driver": {
 			"version": DRIVER_VERSION,
@@ -156,6 +165,18 @@ func _run() -> void:
 	var cells := profile_cells(str(_report["profile"]))
 	cells = _filter_cells(cells)
 	_expect(not cells.is_empty(), "profile and filters select at least one cell")
+	_cape_solver_probe_enabled = false
+	for raw_cell: Variant in cells:
+		if str((raw_cell as Dictionary).get("features", "")) == CAPE_SOLVER_OFF_FEATURE:
+			_cape_solver_probe_enabled = true
+			break
+	if _cape_solver_probe_enabled:
+		(_report["measurement"] as Dictionary)["acceptance"] = {
+			"eligible": false,
+			"diagnosticOnly": true,
+			"reason": ("cape_solver_off retains cape equipment and meshes while "
+				+ "bypassing simulation, with a per-frame modifier activity census"),
+		}
 	_report["plannedCells"] = cells.duplicate(true)
 	for raw_cell: Variant in cells:
 		await _run_cell(raw_cell as Dictionary)
@@ -335,6 +356,14 @@ func _run_cell(spec: Dictionary) -> void:
 	if not _expect(expected_visible >= 0,
 			"%s uses a supported visibility preset (got %s)" % [spec["id"], visibility]):
 		return
+	if str(spec["features"]) == CAPE_SOLVER_OFF_FEATURE:
+		if not _expect(count == 300 and str(spec["population"]) == "mixed" \
+				and str(spec["activity"]) == "third_active" \
+				and visibility == "half300" \
+				and str(spec["network"]) == "normal_burst",
+				"%s reserves cape_solver_off for the primary mixed 300/150/100 fixture" %
+					spec["id"]):
+			return
 	var before := _memory_sample()
 	var records := _make_records(count, str(spec["population"]), str(spec["features"]))
 	_app_state.set("local_actor_id", FIRST_ACTOR_ID)
@@ -348,6 +377,9 @@ func _run_cell(spec: Dictionary) -> void:
 	var spawn := await _spawn_all(count)
 	spawn["milliseconds"] = _round(float(Time.get_ticks_usec() - spawn_started) / 1000.0)
 	var nodes := _main.get("actor_nodes") as Dictionary
+	_cape_solver_probe_nodes.clear()
+	if _cape_solver_probe_enabled:
+		_cape_solver_probe_nodes = _cape_modifiers(nodes)
 	_apply_feature_switches(nodes, str(spec["features"]))
 	_attribution_attachment = {}
 	if _attribution_enabled:
@@ -419,7 +451,9 @@ func _run_cell(spec: Dictionary) -> void:
 	var protocol_errors_before := (_app_state.get("recent_protocol_errors") as Array).size()
 	await _prime_activity(spec, active_ids)
 	await _warm_for(spec, active_ids)
+	var feature_attestation := _cape_feature_attestation(nodes, spec, diagnostics)
 	var sample := await _sample_cell(spec, active_ids)
+	_finalize_cape_feature_attestation(nodes, spec, feature_attestation, sample)
 	sample["workloadValidation"] = _validate_executed_workload(spec, workload, sample)
 	if str(spec["features"]) == "no_effects":
 		var effect_summary := (sample["summary"] as Dictionary).get(
@@ -457,6 +491,7 @@ func _run_cell(spec: Dictionary) -> void:
 		"visibilityValidation": visibility_span}
 	result["resourceReadiness"] = readiness
 	result["diagnostics"] = diagnostics
+	result["featureAttestation"] = feature_attestation
 	result["networkIntegrity"] = network_integrity
 	result["selectedActorId"] = selected_actor_id
 	result["plannedActive"] = active_ids.size()
@@ -469,6 +504,7 @@ func _run_cell(spec: Dictionary) -> void:
 		"retainedAfterDespawnIncludingHarnessTelemetry": _memory_delta(before, after),
 	}
 	(_report["cells"] as Array).append(result)
+	_cape_solver_probe_nodes.clear()
 	print("crowd cell ", spec["id"], ": ", count, " actors, ",
 		census["frustumAndDrawVisible"], " visible, ", active_ids.size(), " active")
 
@@ -594,6 +630,147 @@ func _apply_feature_switches(nodes: Dictionary, features: String) -> void:
 		if features == "no_overhead":
 			actor.set_nameplate_visible(false)
 			actor.set_health_visible(false)
+
+
+func _cape_modifiers(nodes: Dictionary) -> Array[SkeletonModifier3D]:
+	var modifiers: Array[SkeletonModifier3D] = []
+	for value: Variant in nodes.values():
+		if not is_instance_valid(value):
+			continue
+		var cloth := (value as ReplicatedActor3D).get("_cape_cloth") as SkeletonModifier3D
+		if is_instance_valid(cloth):
+			modifiers.append(cloth)
+	return modifiers
+
+
+func _active_cape_solver_count() -> int:
+	var active := 0
+	for cloth: SkeletonModifier3D in _cape_solver_probe_nodes:
+		active += int(is_instance_valid(cloth) and cloth.active)
+	return active
+
+
+func _cape_solver_census(nodes: Dictionary) -> Dictionary:
+	var result := {
+		"capeEquipmentActors": 0,
+		"capeEquipmentNodes": 0,
+		"capeMeshInstances": 0,
+		"capeVisibleMeshInstances": 0,
+		"appliedEquipmentVisuals": 0,
+		"modifierNodes": 0,
+		"activeModifiers": 0,
+		"settledModifiers": 0,
+		"wornFlags": 0,
+	}
+	for value: Variant in nodes.values():
+		if not is_instance_valid(value):
+			continue
+		var actor := value as ReplicatedActor3D
+		var equipment := actor.equipment_diagnostics()
+		var visuals := equipment.get("visuals", {}) as Dictionary
+		result["appliedEquipmentVisuals"] += visuals.size()
+		var has_cape := visuals.has(CAPE_PART) or visuals.has(str(CAPE_PART))
+		result["capeEquipmentActors"] += int(has_cape)
+		var equipment_nodes := actor.get("_equipment_nodes") as Dictionary
+		var cape_nodes: Array = equipment_nodes.get(CAPE_PART,
+			equipment_nodes.get(str(CAPE_PART), [])) as Array
+		result["capeEquipmentNodes"] += cape_nodes.size()
+		for cape_value: Variant in cape_nodes:
+			var cape_node := cape_value as Node
+			if not is_instance_valid(cape_node):
+				continue
+			var meshes: Array[MeshInstance3D] = []
+			if cape_node is MeshInstance3D:
+				meshes.append(cape_node as MeshInstance3D)
+			for child: Node in cape_node.find_children("*", "MeshInstance3D", true, false):
+				meshes.append(child as MeshInstance3D)
+			for mesh: MeshInstance3D in meshes:
+				result["capeMeshInstances"] += 1
+				result["capeVisibleMeshInstances"] += int(mesh.is_visible_in_tree())
+		var cloth := actor.get("_cape_cloth") as SkeletonModifier3D
+		if is_instance_valid(cloth):
+			result["modifierNodes"] += 1
+			result["activeModifiers"] += int(cloth.active)
+			result["settledModifiers"] += int(bool(cloth.get("_settled")))
+		result["wornFlags"] += int(bool(actor.get("_cape_cloth_worn")))
+	return result
+
+
+func _cape_feature_attestation(nodes: Dictionary, spec: Dictionary,
+		diagnostics: Dictionary) -> Dictionary:
+	var before := _cape_solver_census(nodes)
+	var solver_off := str(spec["features"]) == CAPE_SOLVER_OFF_FEATURE
+	var result := {
+		"diagnosticOnly": _cape_solver_probe_enabled,
+		"acceptanceTimingComparable": not _cape_solver_probe_enabled,
+		"featureUnderTest": solver_off,
+		"reason": ("cape equipment and meshes retained while simulation is bypassed; "
+			+ "the resulting diagnostic pose may differ from production"
+			if solver_off else (
+				"full-feature control sampled with per-frame cape activity census"
+				if _cape_solver_probe_enabled else "production cape solver behavior")),
+		"perFrameActivityCensusEnabled": _cape_solver_probe_enabled,
+		"beforeSample": before,
+	}
+	if not solver_off:
+		return result
+	_expect(int(before["capeEquipmentActors"]) == int(
+			diagnostics.get("equippedHumanoids", -1)),
+		"%s keeps a cape equipped on every mixed-fixture humanoid" % spec["id"])
+	_expect(int(before["modifierNodes"]) == int(before["capeEquipmentActors"]),
+		"%s has one cape modifier per cape-equipped actor" % spec["id"])
+	_expect(int(before["capeMeshInstances"]) >= int(before["capeEquipmentActors"]),
+		"%s retains cape mesh geometry before disabling solvers" % spec["id"])
+	_expect(int(before["activeModifiers"]) > 0
+		and int(before["settledModifiers"]) >= int(before["activeModifiers"]),
+		"%s warms every active cape solver before freezing its pose" % spec["id"])
+	for value: Variant in nodes.values():
+		if not is_instance_valid(value):
+			continue
+		var actor := value as ReplicatedActor3D
+		var cloth := actor.get("_cape_cloth") as SkeletonModifier3D
+		if not is_instance_valid(cloth):
+			continue
+		cloth.active = false
+		# AnimationGate derives future activity from this private production flag.
+		# Clearing it only inside the disposable benchmark actor prevents normal
+		# tier updates from silently re-enabling the modifier during the sample;
+		# equipment nodes remain, but the resulting pose is not claimed equivalent.
+		actor.set("_cape_cloth_worn", false)
+	var disabled := _cape_solver_census(nodes)
+	result["afterDisable"] = disabled
+	_expect(int(disabled["activeModifiers"]) == 0
+		and int(disabled["wornFlags"]) == 0,
+		"%s disables every cape modifier and its gate reactivation flag" % spec["id"])
+	_expect(int(disabled["capeEquipmentActors"]) == int(before["capeEquipmentActors"])
+		and int(disabled["capeEquipmentNodes"]) == int(before["capeEquipmentNodes"])
+		and int(disabled["capeMeshInstances"]) == int(before["capeMeshInstances"])
+		and int(disabled["appliedEquipmentVisuals"]) == int(
+			before["appliedEquipmentVisuals"]),
+		"%s disables simulation without removing cape meshes or equipment" % spec["id"])
+	return result
+
+
+func _finalize_cape_feature_attestation(nodes: Dictionary, spec: Dictionary,
+		attestation: Dictionary, sample: Dictionary) -> void:
+	var after := _cape_solver_census(nodes)
+	attestation["afterSample"] = after
+	if str(spec["features"]) != CAPE_SOLVER_OFF_FEATURE:
+		return
+	var before := attestation.get("beforeSample", {}) as Dictionary
+	var active_summary := (sample.get("summary", {}) as Dictionary).get(
+		"capeSolverActivePerFrame", {}) as Dictionary
+	_expect(int(active_summary.get("samples", 0)) == int(sample.get("frames", -1))
+		and int(active_summary.get("max", -1)) == 0,
+		"%s attests zero active cape solvers in every sampled frame" % spec["id"])
+	_expect(int(after["activeModifiers"]) == 0 and int(after["wornFlags"]) == 0,
+		"%s keeps all cape solvers disabled after the timed sample" % spec["id"])
+	_expect(int(after["capeEquipmentActors"]) == int(before["capeEquipmentActors"])
+		and int(after["capeEquipmentNodes"]) == int(before["capeEquipmentNodes"])
+		and int(after["capeMeshInstances"]) == int(before["capeMeshInstances"])
+		and int(after["appliedEquipmentVisuals"]) == int(
+			before["appliedEquipmentVisuals"]),
+		"%s retains exact cape mesh and equipment counts through the sample" % spec["id"])
 
 
 func _place_population(nodes: Dictionary, records: Dictionary,
@@ -985,6 +1162,8 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 	if _attribution_enabled:
 		for key: String in ATTRIBUTION_RAW_KEYS:
 			raw[key] = []
+	if _cape_solver_probe_enabled:
+		raw["capeSolverActivePerFrame"] = []
 	var calls: Dictionary = {}
 	var resources_before := _resource_readiness_snapshot()
 	var started := Time.get_ticks_msec()
@@ -1009,6 +1188,9 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 			tick += 1
 			next_tick += cadence
 		await process_frame
+		if _cape_solver_probe_enabled:
+			(raw["capeSolverActivePerFrame"] as Array).append(
+				_active_cape_solver_count())
 		(raw["wallMilliseconds"] as Array).append(
 			float(Time.get_ticks_usec() - frame_started) / 1000.0)
 		var measured: Dictionary = _main.call("benchmark_take_frame") as Dictionary
@@ -1094,6 +1276,10 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 				spec["id"])
 		_expect(_all_int_value(raw["mainProcessCallsPerFrame"] as Array, 1),
 			"%s attributes exactly one Main _process call to each timed frame" % spec["id"])
+	if _cape_solver_probe_enabled:
+		_expect(_nonnegative_integral_series(
+			raw["capeSolverActivePerFrame"] as Array),
+			"%s retains a nonnegative integral cape activity census" % spec["id"])
 	var sampled_frames := (raw["wallMilliseconds"] as Array).size()
 	var sufficient_samples := sampled_frames >= MIN_SAMPLE_FRAMES
 	_expect(sufficient_samples, "%s records at least %d timed frames before the %d ms hard bound" % [
@@ -1172,6 +1358,12 @@ func _sample_cell(spec: Dictionary, active_ids: Array[int]) -> Dictionary:
 			"combatTimingBoundary": ("delegated skeleton_updated callback only; "
 				+ "known handler invocation estimates are mirrored by source, not "
 				+ "directly intercepted or timed as total update_pose calls"),
+		},
+		"capeSolverProbe": {
+			"enabled": _cape_solver_probe_enabled,
+			"acceptanceTimingComparable": not _cape_solver_probe_enabled,
+			"source": ("pre-collected SkeletonModifier3D references counted after "
+				+ "each process_frame"),
 		},
 		"rates": {
 			"packetsPerSecond": _round(_sum_numeric(raw["packetsPerFrame"] as Array) / elapsed_seconds),

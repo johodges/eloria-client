@@ -166,6 +166,61 @@ class AttributionAdmissionTests(unittest.TestCase):
                         {"attribution": attribution}, "measurement")
 
 
+class AcceptanceEligibilityTests(unittest.TestCase):
+    def test_accepts_legacy_or_explicit_production_measurement(self) -> None:
+        production = [{"features": "full"}]
+        SUMMARY._validate_acceptance_eligibility({}, production, "measurement")
+        SUMMARY._validate_acceptance_eligibility({
+            "acceptance": {
+                "eligible": True,
+                "diagnosticOnly": False,
+                "reason": "production presentation features",
+            },
+        }, production, "measurement")
+
+    def test_rejects_solver_off_even_when_attribution_is_disabled(self) -> None:
+        measurement = {
+            "attribution": {
+                "enabled": False,
+                "acceptanceTimingComparable": True,
+            },
+            "acceptance": {
+                "eligible": False,
+                "diagnosticOnly": True,
+                "reason": "cape simulation bypass diagnostic",
+            },
+        }
+        SUMMARY._validate_acceptance_attribution(measurement, "measurement")
+        with self.assertRaisesRegex(
+                SUMMARY.SummaryError, "diagnostic intervention"):
+            SUMMARY._validate_acceptance_eligibility(
+                measurement, [{"features": "cape_solver_off"}], "measurement")
+
+    def test_solver_off_cannot_lie_about_acceptance_eligibility(self) -> None:
+        with self.assertRaisesRegex(SUMMARY.SummaryError, "not marked diagnostic-only"):
+            SUMMARY._validate_acceptance_eligibility({
+                "acceptance": {
+                    "eligible": True,
+                    "diagnosticOnly": False,
+                    "reason": "incorrect",
+                },
+            }, [{"features": "cape_solver_off"}], "measurement")
+
+    def test_rejects_missing_or_inconsistent_acceptance_flags(self) -> None:
+        malformed = (
+            {"eligible": True, "reason": "missing flag"},
+            {"eligible": "true", "diagnosticOnly": False, "reason": "wrong type"},
+            {"eligible": True, "diagnosticOnly": True, "reason": "inconsistent"},
+            {"eligible": False, "diagnosticOnly": False, "reason": "inconsistent"},
+        )
+        for acceptance in malformed:
+            with self.subTest(acceptance=acceptance):
+                with self.assertRaises(SUMMARY.SummaryError):
+                    SUMMARY._validate_acceptance_eligibility(
+                        {"acceptance": acceptance}, [{"features": "full"}],
+                        "measurement")
+
+
 class CompanionValidationTests(unittest.TestCase):
     def _validate(self, companion: dict, *, report_dirty: bool = False) -> None:
         with tempfile.TemporaryDirectory() as directory:

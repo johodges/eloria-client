@@ -233,6 +233,65 @@ function Assert-BenchmarkReport([string]$JsonPath, [string]$ExpectedProfile,
             $cells[0].fixture.before.frustumAndDrawVisible -ne 150)) {
         throw "Primary acceptance invariants are absent: $JsonPath"
     }
+    $solverCells = @($cells | Where-Object { $_.features -eq "cape_solver_off" })
+    $hasSolverDiagnostic = $solverCells.Count -gt 0
+    $acceptance = $result.measurement.acceptance
+    if ($null -eq $acceptance -or [string]::IsNullOrWhiteSpace([string]$acceptance.reason) -or
+            [bool]$acceptance.eligible -eq [bool]$acceptance.diagnosticOnly) {
+        throw "Benchmark acceptance eligibility metadata is absent or inconsistent: $JsonPath"
+    }
+    if ($hasSolverDiagnostic -and ([bool]$acceptance.eligible -or
+            -not [bool]$acceptance.diagnosticOnly)) {
+        throw "cape_solver_off is not marked diagnostic-only: $JsonPath"
+    }
+    if (-not $hasSolverDiagnostic -and (-not [bool]$acceptance.eligible -or
+            [bool]$acceptance.diagnosticOnly)) {
+        throw "Production benchmark is unexpectedly marked diagnostic-only: $JsonPath"
+    }
+    if ($hasSolverDiagnostic) {
+        foreach ($cell in $cells) {
+            if (-not [bool]$cell.featureAttestation.diagnosticOnly -or
+                    [bool]$cell.featureAttestation.acceptanceTimingComparable -or
+                    -not [bool]$cell.featureAttestation.perFrameActivityCensusEnabled -or
+                    -not [bool]$cell.sample.capeSolverProbe.enabled -or
+                    [bool]$cell.sample.capeSolverProbe.acceptanceTimingComparable) {
+                throw "Cape diagnostic cell lacks non-acceptance probe attestation: $JsonPath"
+            }
+            $activity = @($cell.sample.raw.capeSolverActivePerFrame)
+            if ($activity.Count -ne [int]$cell.sample.frames -or $activity.Count -eq 0) {
+                throw "Cape activity census has incomplete frame coverage: $JsonPath"
+            }
+        }
+        foreach ($cell in $solverCells) {
+            $before = $cell.featureAttestation.beforeSample
+            $disabled = $cell.featureAttestation.afterDisable
+            $after = $cell.featureAttestation.afterSample
+            if (-not [bool]$cell.featureAttestation.featureUnderTest -or
+                    $cell.count -ne 300 -or $cell.population -ne "mixed" -or
+                    $cell.activity -ne "third_active" -or $cell.visibility -ne "half300" -or
+                    $cell.network -ne "normal_burst" -or
+                    [int]$before.capeEquipmentActors -ne 150 -or
+                    [int]$before.modifierNodes -ne 150 -or
+                    [int]$before.activeModifiers -le 0 -or
+                    [int]$before.settledModifiers -lt [int]$before.activeModifiers -or
+                    [int]$before.capeMeshInstances -lt 150 -or
+                    [int]$disabled.activeModifiers -ne 0 -or [int]$disabled.wornFlags -ne 0 -or
+                    [int]$after.activeModifiers -ne 0 -or [int]$after.wornFlags -ne 0) {
+                throw "cape_solver_off fixture or modifier-state attestation is invalid: $JsonPath"
+            }
+            foreach ($field in @("capeEquipmentActors", "capeEquipmentNodes",
+                    "capeMeshInstances", "appliedEquipmentVisuals")) {
+                if ([int]$before.$field -ne [int]$disabled.$field -or
+                        [int]$before.$field -ne [int]$after.$field) {
+                    throw "cape_solver_off changed retained cape/equipment census $field`: $JsonPath"
+                }
+            }
+            if (@($cell.sample.raw.capeSolverActivePerFrame | Where-Object {
+                    [int]$_ -ne 0 }).Count -gt 0) {
+                throw "cape_solver_off was reactivated during sampled frames: $JsonPath"
+            }
+        }
+    }
     $actualAttribution = [bool]$result.measurement.attribution.enabled
     if ($actualAttribution -ne $ExpectedAttribution -or
             [bool]$result.measurement.attribution.acceptanceTimingComparable -eq $ExpectedAttribution) {

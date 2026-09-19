@@ -157,6 +157,50 @@ def _validate_acceptance_attribution(measurement: dict[str, Any], context: str) 
         )
 
 
+def _validate_acceptance_eligibility(
+    measurement: dict[str, Any], planned: list[Any], context: str
+) -> None:
+    """Reject benchmark-only feature probes from acceptance aggregates."""
+    diagnostic_features = {
+        str(spec.get("features", ""))
+        for spec in planned
+        if isinstance(spec, dict)
+        and str(spec.get("features", "")) == "cape_solver_off"
+    }
+    acceptance = measurement.get("acceptance")
+    if acceptance is None:
+        if diagnostic_features:
+            raise SummaryError(
+                f"{context}: cape_solver_off requires explicit diagnostic-only metadata"
+            )
+        # Historical reports predate the acceptance eligibility attestation.
+        return
+    if not isinstance(acceptance, dict):
+        raise SummaryError(f"{context}.acceptance must be an object")
+    eligible = _required_bool(acceptance, "eligible", f"{context}.acceptance")
+    diagnostic_only = _required_bool(
+        acceptance, "diagnosticOnly", f"{context}.acceptance"
+    )
+    _required_text(acceptance, "reason", f"{context}.acceptance")
+    if eligible == diagnostic_only:
+        raise SummaryError(
+            f"{context}: acceptance eligibility and diagnostic-only flags disagree"
+        )
+    if diagnostic_features:
+        if eligible or not diagnostic_only:
+            raise SummaryError(
+                f"{context}: cape_solver_off is not marked diagnostic-only"
+            )
+        raise SummaryError(
+            f"{context}: cape_solver_off is a diagnostic intervention and cannot "
+            "enter acceptance timing summaries"
+        )
+    if not eligible:
+        raise SummaryError(
+            f"{context}: diagnostic-only measurements cannot enter acceptance timing summaries"
+        )
+
+
 def _expected_active_count(count: int, activity: str, context: str) -> int:
     if activity == "idle":
         return 0
@@ -765,16 +809,18 @@ def _validate_run(
     dirty = data.get("dirty")
     if not isinstance(dirty, bool):
         raise SummaryError(f"{context}: dirty must be a boolean")
-    measurement = _required_dict(data, "measurement", context)
-    _validate_acceptance_attribution(measurement, f"{context}.measurement")
-    driver = _validate_driver(data, context, allow_legacy_driver)
-
     planned = data.get("plannedCells")
     cells = data.get("cells")
     if not isinstance(planned, list) or not planned:
         raise SummaryError(f"{context}: plannedCells must be a non-empty array")
     if not isinstance(cells, list) or not cells:
         raise SummaryError(f"{context}: cells must be a non-empty array")
+    measurement = _required_dict(data, "measurement", context)
+    _validate_acceptance_attribution(measurement, f"{context}.measurement")
+    _validate_acceptance_eligibility(
+        measurement, planned, f"{context}.measurement"
+    )
+    driver = _validate_driver(data, context, allow_legacy_driver)
     planned_ids = [_planned_id(spec, f"{context}.plannedCells") for spec in planned]
     if len(planned_ids) != len(set(planned_ids)):
         raise SummaryError(f"{context}: plannedCells contains duplicate ids")
