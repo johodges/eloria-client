@@ -64,7 +64,7 @@ func _run() -> void:
 
 
 func _check_baseline_provenance() -> void:
-	var source := FileAccess.get_file_as_string(BASELINE)
+	var source := FileAccess.get_file_as_string(_baseline_path())
 	var body_at := source.find("extends SkeletonModifier3D")
 	_check(body_at >= 0, "frozen baseline contains the original script body")
 	if body_at < 0:
@@ -74,8 +74,20 @@ func _check_baseline_provenance() -> void:
 	context.start(HashingContext.HASH_SHA256)
 	context.update(normalized.to_utf8_buffer())
 	var digest := context.finish().hex_encode()
-	_check(digest == BASELINE_BODY_SHA256,
+	_check(digest == _baseline_body_sha256(),
 		"frozen baseline source matches reviewed SHA-256")
+
+
+func _baseline_path() -> String:
+	return BASELINE
+
+
+func _baseline_body_sha256() -> String:
+	return BASELINE_BODY_SHA256
+
+
+func _comparison_label() -> String:
+	return "frozen original solver vs cached pose solver"
 
 
 func _replace_with_baseline(actor: ReplicatedActor3D,
@@ -86,7 +98,7 @@ func _replace_with_baseline(actor: ReplicatedActor3D,
 	original.active = false
 	skeleton.remove_child(original)
 	original.free()
-	var replacement: SkeletonModifier3D = (load(BASELINE) as Script).new()
+	var replacement: SkeletonModifier3D = (load(_baseline_path()) as Script).new()
 	replacement.name = "CapeCloth"
 	skeleton.add_child(replacement)
 	replacement.call("set_torso_reach", torso, lumbar)
@@ -267,7 +279,7 @@ func _run_missing_optional_sequence() -> void:
 	root.add_child(baseline_skeleton)
 	var optimized: SkeletonModifier3D = (load(
 		"res://src/actors/cape_cloth.gd") as Script).new()
-	var baseline: SkeletonModifier3D = (load(BASELINE) as Script).new()
+	var baseline: SkeletonModifier3D = (load(_baseline_path()) as Script).new()
 	optimized_skeleton.add_child(optimized)
 	baseline_skeleton.add_child(baseline)
 	optimized.active = false
@@ -333,7 +345,7 @@ func _measure_pair(optimized: SkeletonModifier3D,
 	print("  ordered paired trials: ", JSON.stringify(ordered_trials))
 	var evidence := {
 		"schemaVersion": 1,
-		"comparison": "frozen baseline vs cached pose solver",
+		"comparison": _comparison_label(),
 		"iterationsPerMeasurement": ITERATIONS,
 		"warmupCallsPerSolver": 20,
 		"orderedTrials": ordered_trials,

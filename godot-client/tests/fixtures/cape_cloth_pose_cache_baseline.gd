@@ -1,3 +1,6 @@
+## Frozen immediate pre-optimization baseline from commit 269c0eeb8.
+## Body SHA-256 from the script declaration:
+## 78b9e684ab3dd72a9e2bd32d8a1685cfedee1698071411ce33eca110cfef3743
 extends SkeletonModifier3D
 ## Verlet cloth for the cape chains on the player rig.
 ##
@@ -68,14 +71,6 @@ var _collision_bones := PackedInt32Array()
 var _collision_pairs: Array[Vector2i] = []
 var _collision_kinds := PackedInt32Array()
 var _collision_world := PackedVector3Array()
-## A capsule's endpoints, axis and squared span are invariant while the twelve
-## cloth points are constrained in one modifier pass. The solver visits four
-## capsules for each point in each relaxation pass, so retaining these four
-## descriptors avoids recomputing the same axis/span and kind policy 96 times.
-var _collision_axes := PackedVector3Array()
-var _collision_spans := PackedFloat64Array()
-var _collision_radii := PackedFloat64Array()
-var _collision_reaches: Array[PackedFloat32Array] = []
 var _empty_reach := PackedFloat32Array()
 ## How far the worn torso reaches from each capsule's axis, sampled along it,
 ## or empty for a bare chest. Measured once per armour by the wearer, which is
@@ -161,9 +156,6 @@ func _cache(skeleton: Skeleton3D) -> bool:
 	for pair: PackedInt32Array in _legs:
 		_cache_collision_pair(pair, CapsuleKind.LEG)
 	_collision_world.resize(_collision_bones.size())
-	_collision_axes.resize(_collision_pairs.size())
-	_collision_spans.resize(_collision_pairs.size())
-	_refresh_collision_descriptors()
 	# The torso's forward axis, for holding the cape behind the back, taken
 	# from the SPINE bone's own orientation rather than the shoulder line: an
 	# attack swings one arm across the body, and a forward derived from the
@@ -211,8 +203,6 @@ func _cache_collision_pair(pair: PackedInt32Array, kind: CapsuleKind) -> void:
 			slots.y = slot
 	_collision_pairs.append(slots)
 	_collision_kinds.append(kind)
-	_collision_radii.append(TORSO_RADIUS if kind != CapsuleKind.LEG else LEG_RADIUS)
-	_collision_reaches.append(_empty_reach)
 
 
 ## The torso's forward direction in world space, or ZERO if it is undefined.
@@ -261,18 +251,6 @@ func set_torso_reach(trunk: PackedFloat32Array,
 		lumbar: PackedFloat32Array) -> void:
 	_torso_reach = trunk
 	_lumbar_reach = lumbar
-	_refresh_collision_descriptors()
-
-
-func _refresh_collision_descriptors() -> void:
-	for capsule: int in range(_collision_kinds.size()):
-		var kind: int = _collision_kinds[capsule]
-		if kind == CapsuleKind.TORSO:
-			_collision_reaches[capsule] = _torso_reach
-		elif kind == CapsuleKind.LUMBAR:
-			_collision_reaches[capsule] = _lumbar_reach
-		else:
-			_collision_reaches[capsule] = _empty_reach
 
 
 func _push_out_of_legs(skeleton: Skeleton3D, to_world: Transform3D,
@@ -286,21 +264,23 @@ func _snapshot_collision_world(skeleton: Skeleton3D,
 	for slot: int in range(_collision_bones.size()):
 		_collision_world[slot] = to_world * skeleton.get_bone_global_pose(
 			_collision_bones[slot]).origin
-	for capsule: int in range(_collision_pairs.size()):
-		var pair: Vector2i = _collision_pairs[capsule]
-		var axis := _collision_world[pair.y] - _collision_world[pair.x]
-		_collision_axes[capsule] = axis
-		_collision_spans[capsule] = axis.length_squared()
 
 
 func _push_out_of_collision_snapshot(to_world: Transform3D,
 		point: Vector3) -> Vector3:
 	for capsule: int in range(_collision_pairs.size()):
 		var pair: Vector2i = _collision_pairs[capsule]
-		point = _push_out_of_capsule_axis(to_world, point,
-			_collision_world[pair.x], _collision_axes[capsule],
-			_collision_spans[capsule], _collision_radii[capsule],
-			_collision_reaches[capsule])
+		var kind: int = _collision_kinds[capsule]
+		var radius := LEG_RADIUS
+		var reach := _empty_reach
+		if kind == CapsuleKind.TORSO:
+			radius = TORSO_RADIUS
+			reach = _torso_reach
+		elif kind == CapsuleKind.LUMBAR:
+			radius = TORSO_RADIUS
+			reach = _lumbar_reach
+		point = _push_out_of_capsule_points(to_world, point,
+			_collision_world[pair.x], _collision_world[pair.y], radius, reach)
 	return point
 
 
@@ -317,12 +297,6 @@ func _push_out_of_capsule_points(to_world: Transform3D, point: Vector3,
 		reach: PackedFloat32Array) -> Vector3:
 	var axis := b - a
 	var span := axis.length_squared()
-	return _push_out_of_capsule_axis(to_world, point, a, axis, span, radius, reach)
-
-
-func _push_out_of_capsule_axis(to_world: Transform3D, point: Vector3,
-		a: Vector3, axis: Vector3, span: float, radius: float,
-		reach: PackedFloat32Array) -> Vector3:
 	var travel := 0.0 if span < 1e-9 else clampf((point - a).dot(axis) / span, 0.0, 1.0)
 	# The reach is sampled along the axis, so how far down the capsule the
 	# point sits is exactly the index into it - which holds through a lean or
