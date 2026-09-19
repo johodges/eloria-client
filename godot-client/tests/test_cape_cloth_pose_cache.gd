@@ -301,26 +301,59 @@ func _measure_pair(optimized: SkeletonModifier3D,
 	const ITERATIONS := 1500
 	var optimized_trials := PackedFloat64Array()
 	var baseline_trials := PackedFloat64Array()
+	var ordered_trials: Array[Dictionary] = []
 	for trial: int in range(7):
 		optimized.call("reset")
 		baseline.call("reset")
 		for _warm: int in range(20):
 			optimized.call("_process_modification_with_delta", STEP)
 			baseline.call("_process_modification_with_delta", STEP)
+		var optimized_usec := 0.0
+		var baseline_usec := 0.0
+		var order := "baseline_first" if trial % 2 == 0 else "optimized_first"
 		if trial % 2 == 0:
-			baseline_trials.append(_time_solver(baseline, ITERATIONS))
-			optimized_trials.append(_time_solver(optimized, ITERATIONS))
+			baseline_usec = _time_solver(baseline, ITERATIONS)
+			optimized_usec = _time_solver(optimized, ITERATIONS)
 		else:
-			optimized_trials.append(_time_solver(optimized, ITERATIONS))
-			baseline_trials.append(_time_solver(baseline, ITERATIONS))
-	optimized_trials.sort()
-	baseline_trials.sort()
-	var optimized_median := optimized_trials[optimized_trials.size() / 2]
-	var baseline_median := baseline_trials[baseline_trials.size() / 2]
+			optimized_usec = _time_solver(optimized, ITERATIONS)
+			baseline_usec = _time_solver(baseline, ITERATIONS)
+		optimized_trials.append(optimized_usec)
+		baseline_trials.append(baseline_usec)
+		ordered_trials.append({"trial": trial, "order": order,
+			"baselineMicrosecondsPerCall": baseline_usec,
+			"optimizedMicrosecondsPerCall": optimized_usec})
+	var optimized_sorted := optimized_trials.duplicate()
+	var baseline_sorted := baseline_trials.duplicate()
+	optimized_sorted.sort()
+	baseline_sorted.sort()
+	var optimized_median := optimized_sorted[optimized_sorted.size() / 2]
+	var baseline_median := baseline_sorted[baseline_sorted.size() / 2]
 	print("  cape solver focused cost: baseline %.2f us, optimized %.2f us, ratio %.3f" % [
 		baseline_median, optimized_median, optimized_median / baseline_median])
-	print("  baseline trials us: ", baseline_trials)
-	print("  optimized trials us: ", optimized_trials)
+	print("  ordered paired trials: ", JSON.stringify(ordered_trials))
+	var evidence := {
+		"schemaVersion": 1,
+		"comparison": "frozen baseline vs cached pose solver",
+		"iterationsPerMeasurement": ITERATIONS,
+		"warmupCallsPerSolver": 20,
+		"orderedTrials": ordered_trials,
+		"median": {
+			"baselineMicrosecondsPerCall": baseline_median,
+			"optimizedMicrosecondsPerCall": optimized_median,
+			"optimizedToBaselineRatio": optimized_median / baseline_median,
+		},
+	}
+	var artifacts := OS.get_environment("ELORIA_ARTIFACT_DIR")
+	_check(not artifacts.is_empty(),
+		"focused performance run declares ELORIA_ARTIFACT_DIR")
+	if not artifacts.is_empty():
+		DirAccess.make_dir_recursive_absolute(artifacts)
+		var output := FileAccess.open(artifacts.path_join("cape-solver-paired.json"),
+			FileAccess.WRITE)
+		_check(output != null, "focused performance artifact opens")
+		if output != null:
+			output.store_string(JSON.stringify(evidence, "  "))
+			output.close()
 
 
 func _time_solver(cloth: SkeletonModifier3D, iterations: int) -> float:
