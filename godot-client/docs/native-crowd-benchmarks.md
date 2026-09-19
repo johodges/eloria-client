@@ -1,5 +1,10 @@
 # Native crowd benchmark
 
+For marker-bounded engine attribution with the normal animation schedule, see
+[the engine profile workflow](crowd-engine-profile.md). The current
+[Skin-sharing comparison](crowd-skin-sharing.md) records repeated full-workload
+runs separately from instrumented diagnostic captures.
+
 `tests/integration/crowd_benchmarks.gd` measures the existing actor pipeline at
 100, 200, 300 and 500 actors. It keeps the local player inside that count,
 builds actors through `Main._sync_world`, and drives movement and attacks through

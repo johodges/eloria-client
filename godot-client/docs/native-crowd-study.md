@@ -1,5 +1,10 @@
 # Native crowd investigation
 
+The latest continuation records [engine animation and skeleton profiles](crowd-engine-profile.md),
+[exact equipment Skin sharing](crowd-skin-sharing.md), and a bounded
+[Forward+ visual-readiness check](crowd-forward-plus-readiness.md). Each report
+keeps its own source revisions and measurement limits.
+
 This is the historical study through `9773c70d6c45cd03370d6bd0fed0c2b2b3866d27`.
 The subsequent [presentation optimization follow-up](crowd-presentation-optimization.md)
 records cape/effect changes, alternating before/after measurements, additional
