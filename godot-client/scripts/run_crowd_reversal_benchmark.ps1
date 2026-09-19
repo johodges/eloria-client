@@ -208,6 +208,21 @@ foreach ($relativePath in $relativePaths) {
 $baselineChangedPaths = @($relativePaths | Where-Object {
     $candidateGitBlobHashes[$_] -ne $originalHashes[$_]
 } | Sort-Object)
+$baselineBytes = [ordered]@{}
+$baselineEffectiveHashes = [ordered]@{}
+foreach ($relativePath in $relativePaths) {
+    if ($relativePath -in $baselineChangedPaths) {
+        $baselineBytes[$relativePath] = $originalBytes[$relativePath]
+        $baselineEffectiveHashes[$relativePath] = $originalHashes[$relativePath]
+    }
+    else {
+        # Preserve checkout line endings for blob-identical paths. Rewriting a
+        # raw `git show` blob can make an otherwise identical Windows worktree
+        # appear dirty even though the Git objects are the same.
+        $baselineBytes[$relativePath] = $candidateBytes[$relativePath]
+        $baselineEffectiveHashes[$relativePath] = $candidateHashes[$relativePath]
+    }
+}
 
 $runnerHash = (Get-FileHash -LiteralPath $runner -Algorithm SHA256).Hash.ToLowerInvariant()
 $godotRequestedHash = (Get-FileHash -LiteralPath $godotRequested `
@@ -237,6 +252,7 @@ $manifest = [ordered]@{
     candidateGitBlobHashes = $candidateGitBlobHashes
     originalHashes = $originalHashes
     baselineChangedPaths = $baselineChangedPaths
+    baselineEffectiveHashes = $baselineEffectiveHashes
     runs = [Collections.Generic.List[object]]::new()
     lockAcquired = $false
     restored = $false
@@ -263,9 +279,13 @@ try {
         } else {
             $CandidateNativePresentation
         }
-        $bytes = if ($variant -eq 'A') { $originalBytes } else { $candidateBytes }
-        $hashes = if ($variant -eq 'A') { $originalHashes } else { $candidateHashes }
-        $previousHashes = if ($currentVariant -eq 'A') { $originalHashes } else { $candidateHashes }
+        $bytes = if ($variant -eq 'A') { $baselineBytes } else { $candidateBytes }
+        $hashes = if ($variant -eq 'A') { $baselineEffectiveHashes } else { $candidateHashes }
+        $previousHashes = if ($currentVariant -eq 'A') {
+            $baselineEffectiveHashes
+        } else {
+            $candidateHashes
+        }
         Assert-WorkspaceVariant $currentVariant $previousHashes | Out-Null
         if ($variant -ne $currentVariant) {
             foreach ($relativePath in $relativePaths) {
@@ -363,7 +383,8 @@ finally {
                 $absolutePath = Join-Path $repositoryRoot $relativePath
                 $currentHash = (Get-FileHash -LiteralPath $absolutePath `
                     -Algorithm SHA256).Hash.ToLowerInvariant()
-                $knownHashes = @($candidateHashes[$relativePath], $originalHashes[$relativePath])
+                $knownHashes = @(
+                    $candidateHashes[$relativePath], $baselineEffectiveHashes[$relativePath])
                 if ($restoreHead -ne $OptimizedRevision) {
                     throw "HEAD changed to $restoreHead; refusing to overwrite $relativePath."
                 }
