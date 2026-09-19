@@ -51,11 +51,39 @@ var _bones: Array[PackedInt32Array] = []
 var _points: Array[PackedVector3Array] = []
 var _previous: Array[PackedVector3Array] = []
 var _lengths: Array[PackedFloat32Array] = []
+## Rest transforms never change after this modifier caches its skeleton. Keeping
+## them beside the chain indices avoids asking Skeleton3D for the same twelve
+## authored transforms every frame.
+var _bone_rests: Array[Array] = []
 var _legs: Array[PackedInt32Array] = []
 var _settled := false
 var _last_anchor := Vector3.ZERO
 var _torso := PackedInt32Array()
 var _lumbar := PackedInt32Array()
+## Collision capsules keep their original order (torso, lumbar, left leg,
+## right leg), but share one per-pass snapshot of their unique endpoint bones.
+## This snapshot is filled before any cape bone is written.
+enum CapsuleKind { TORSO, LUMBAR, LEG }
+var _collision_bones := PackedInt32Array()
+var _collision_pairs: Array[Vector2i] = []
+var _collision_kinds := PackedInt32Array()
+var _collision_world := PackedVector3Array()
+## A capsule's endpoints, axis and squared span are invariant while the twelve
+## cloth points are constrained in one modifier pass. The solver visits four
+## capsules for each point in each relaxation pass, so retaining these four
+## descriptors avoids recomputing the same axis/span and kind policy 96 times.
+var _collision_axes := PackedVector3Array()
+var _collision_spans := PackedFloat64Array()
+var _collision_radii := PackedFloat64Array()
+var _collision_reaches: Array[PackedFloat32Array] = []
+var _empty_reach := PackedFloat32Array()
+## Optional arithmetic-only extension. GDScript remains the complete fallback;
+## the native object never reads the skeleton or writes a bone.
+var _native_constraint_kernel: RefCounted
+var _native_constraint_kernel_initialized := false
+var _native_constraint_status := "disabled"
+var _native_constraint_calls := 0
+var _native_constraint_fallbacks := 0
 ## How far the worn torso reaches from each capsule's axis, sampled along it,
 ## or empty for a bare chest. Measured once per armour by the wearer, which is
 ## the only place the equipment is known.
@@ -94,17 +122,20 @@ func _cache(skeleton: Skeleton3D) -> bool:
 		return false
 	for chain in CHAINS:
 		var bones := PackedInt32Array()
+		var rests: Array[Transform3D] = []
 		for link in range(LINKS):
 			var bone := skeleton.find_bone("cape_%s_%02d" % [chain, link + 1])
 			if bone < 0:
 				return false
 			bones.append(bone)
+			rests.append(skeleton.get_bone_rest(bone))
 		var lengths := PackedFloat32Array()
 		for link in range(1, LINKS):
-			lengths.append(skeleton.get_bone_rest(bones[link]).origin.length())
+			lengths.append(rests[link].origin.length())
 		# The last bone has no child, so its tip repeats its own drop.
 		lengths.append(lengths[lengths.size() - 1])
 		_bones.append(bones)
+		_bone_rests.append(rests)
 		_lengths.append(lengths)
 		_points.append(PackedVector3Array())
 		_previous.append(PackedVector3Array())
@@ -130,6 +161,16 @@ func _cache(skeleton: Skeleton3D) -> bool:
 	lumbar.append(skeleton.find_bone("spine_01"))
 	if lumbar[0] >= 0 and lumbar[1] >= 0:
 		_lumbar = lumbar
+	if not _torso.is_empty():
+		_cache_collision_pair(_torso, CapsuleKind.TORSO)
+	if not _lumbar.is_empty():
+		_cache_collision_pair(_lumbar, CapsuleKind.LUMBAR)
+	for pair: PackedInt32Array in _legs:
+		_cache_collision_pair(pair, CapsuleKind.LEG)
+	_collision_world.resize(_collision_bones.size())
+	_collision_axes.resize(_collision_pairs.size())
+	_collision_spans.resize(_collision_pairs.size())
+	_refresh_collision_descriptors()
 	# The torso's forward axis, for holding the cape behind the back, taken
 	# from the SPINE bone's own orientation rather than the shoulder line: an
 	# attack swings one arm across the body, and a forward derived from the
@@ -160,7 +201,64 @@ func _cache(skeleton: Skeleton3D) -> bool:
 			if score > best:
 				best = score
 				_forward_local = local
+	_initialize_native_constraint_kernel()
 	return true
+
+
+func _initialize_native_constraint_kernel() -> void:
+	if _native_constraint_kernel_initialized:
+		return
+	_native_constraint_kernel_initialized = true
+	var requested := OS.get_environment("ELORIA_NATIVE_PRESENTATION").strip_edges().to_lower()
+	if requested not in ["cape", "both", "all", "1"]:
+		return
+	_native_constraint_status = "requested"
+	if not ClassDB.class_exists(&"NativeCapeConstraintKernel"):
+		var extension_path := "res://bin/native_crowd.gdextension"
+		if not FileAccess.file_exists(extension_path):
+			_native_constraint_status = "extension_missing"
+			return
+		GDExtensionManager.load_extension(extension_path)
+	if not ClassDB.class_exists(&"NativeCapeConstraintKernel"):
+		_native_constraint_status = "class_unavailable"
+		return
+	_native_constraint_kernel = ClassDB.instantiate(&"NativeCapeConstraintKernel")
+	if _native_constraint_kernel == null:
+		_native_constraint_status = "instantiate_failed"
+		return
+	_native_constraint_status = "active"
+
+
+func native_constraint_kernel_active() -> bool:
+	return _native_constraint_kernel != null
+
+
+func native_presentation_stats() -> Dictionary:
+	return {
+		"active": _native_constraint_kernel != null,
+		"backend": "native" if _native_constraint_kernel != null else "gdscript",
+		"status": _native_constraint_status,
+		"nativeCalls": _native_constraint_calls,
+		"fallbackCalls": _native_constraint_fallbacks,
+	}
+
+
+func _cache_collision_pair(pair: PackedInt32Array, kind: CapsuleKind) -> void:
+	var slots := Vector2i()
+	for endpoint: int in range(2):
+		var bone: int = pair[endpoint]
+		var slot: int = _collision_bones.find(bone)
+		if slot < 0:
+			slot = _collision_bones.size()
+			_collision_bones.append(bone)
+		if endpoint == 0:
+			slots.x = slot
+		else:
+			slots.y = slot
+	_collision_pairs.append(slots)
+	_collision_kinds.append(kind)
+	_collision_radii.append(TORSO_RADIUS if kind != CapsuleKind.LEG else LEG_RADIUS)
+	_collision_reaches.append(_empty_reach)
 
 
 ## The torso's forward direction in world space, or ZERO if it is undefined.
@@ -170,7 +268,15 @@ func _cache(skeleton: Skeleton3D) -> bool:
 func _torso_forward(skeleton: Skeleton3D, to_world: Transform3D) -> Vector3:
 	if _forward_local == Vector3.ZERO:
 		return Vector3.ZERO
-	var basis: Basis = to_world.basis * skeleton.get_bone_global_pose(_anchor).basis
+	return _torso_forward_from_pose(to_world,
+		skeleton.get_bone_global_pose(_anchor))
+
+
+func _torso_forward_from_pose(to_world: Transform3D,
+		anchor_pose: Transform3D) -> Vector3:
+	if _forward_local == Vector3.ZERO:
+		return Vector3.ZERO
+	var basis: Basis = to_world.basis * anchor_pose.basis
 	var forward := (basis * _forward_local)
 	if forward.length_squared() < 1e-9:
 		return Vector3.ZERO
@@ -180,10 +286,15 @@ func _torso_forward(skeleton: Skeleton3D, to_world: Transform3D) -> Vector3:
 func _rest_joints(skeleton: Skeleton3D, to_world: Transform3D,
 		chain: int) -> PackedVector3Array:
 	"""Material-line joints, independent of the helper bones' bind tilt."""
-	var joints := PackedVector3Array()
 	var frame := skeleton.get_bone_global_pose(_anchor)
 	var down := (to_world.basis * frame.basis * _hang_local).normalized()
-	var root_frame := frame * skeleton.get_bone_rest(_bones[chain][0])
+	return _rest_joints_from_pose(to_world, chain, frame, down)
+
+
+func _rest_joints_from_pose(to_world: Transform3D, chain: int,
+		frame: Transform3D, down: Vector3) -> PackedVector3Array:
+	var joints := PackedVector3Array()
+	var root_frame := frame * (_bone_rests[chain][0] as Transform3D)
 	joints.append(to_world * root_frame.origin)
 	for link in range(LINKS):
 		joints.append(joints[link] + down * _lengths[chain][link])
@@ -196,19 +307,46 @@ func set_torso_reach(trunk: PackedFloat32Array,
 		lumbar: PackedFloat32Array) -> void:
 	_torso_reach = trunk
 	_lumbar_reach = lumbar
+	_refresh_collision_descriptors()
+
+
+func _refresh_collision_descriptors() -> void:
+	for capsule: int in range(_collision_kinds.size()):
+		var kind: int = _collision_kinds[capsule]
+		if kind == CapsuleKind.TORSO:
+			_collision_reaches[capsule] = _torso_reach
+		elif kind == CapsuleKind.LUMBAR:
+			_collision_reaches[capsule] = _lumbar_reach
+		else:
+			_collision_reaches[capsule] = _empty_reach
 
 
 func _push_out_of_legs(skeleton: Skeleton3D, to_world: Transform3D,
 		point: Vector3) -> Vector3:
-	if not _torso.is_empty():
-		point = _push_out_of_capsule(skeleton, to_world, point, _torso,
-			TORSO_RADIUS, _torso_reach)
-	if not _lumbar.is_empty():
-		point = _push_out_of_capsule(skeleton, to_world, point, _lumbar,
-			TORSO_RADIUS, _lumbar_reach)
-	for pair in _legs:
-		point = _push_out_of_capsule(skeleton, to_world, point, pair,
-			LEG_RADIUS, PackedFloat32Array())
+	_snapshot_collision_world(skeleton, to_world)
+	return _push_out_of_collision_snapshot(to_world, point)
+
+
+func _snapshot_collision_world(skeleton: Skeleton3D,
+		to_world: Transform3D) -> void:
+	for slot: int in range(_collision_bones.size()):
+		_collision_world[slot] = to_world * skeleton.get_bone_global_pose(
+			_collision_bones[slot]).origin
+	for capsule: int in range(_collision_pairs.size()):
+		var pair: Vector2i = _collision_pairs[capsule]
+		var axis := _collision_world[pair.y] - _collision_world[pair.x]
+		_collision_axes[capsule] = axis
+		_collision_spans[capsule] = axis.length_squared()
+
+
+func _push_out_of_collision_snapshot(to_world: Transform3D,
+		point: Vector3) -> Vector3:
+	for capsule: int in range(_collision_pairs.size()):
+		var pair: Vector2i = _collision_pairs[capsule]
+		point = _push_out_of_capsule_axis(to_world, point,
+			_collision_world[pair.x], _collision_axes[capsule],
+			_collision_spans[capsule], _collision_radii[capsule],
+			_collision_reaches[capsule])
 	return point
 
 
@@ -217,8 +355,20 @@ func _push_out_of_capsule(skeleton: Skeleton3D, to_world: Transform3D,
 		reach: PackedFloat32Array) -> Vector3:
 	var a := to_world * skeleton.get_bone_global_pose(pair[0]).origin
 	var b := to_world * skeleton.get_bone_global_pose(pair[1]).origin
+	return _push_out_of_capsule_points(to_world, point, a, b, radius, reach)
+
+
+func _push_out_of_capsule_points(to_world: Transform3D, point: Vector3,
+		a: Vector3, b: Vector3, radius: float,
+		reach: PackedFloat32Array) -> Vector3:
 	var axis := b - a
 	var span := axis.length_squared()
+	return _push_out_of_capsule_axis(to_world, point, a, axis, span, radius, reach)
+
+
+func _push_out_of_capsule_axis(to_world: Transform3D, point: Vector3,
+		a: Vector3, axis: Vector3, span: float, radius: float,
+		reach: PackedFloat32Array) -> Vector3:
 	var travel := 0.0 if span < 1e-9 else clampf((point - a).dot(axis) / span, 0.0, 1.0)
 	# The reach is sampled along the axis, so how far down the capsule the
 	# point sits is exactly the index into it - which holds through a lean or
@@ -250,7 +400,11 @@ func _process_modification_with_delta(delta: float) -> void:
 	var to_world := skeleton.global_transform
 	var to_local := to_world.affine_inverse()
 	var step := minf(maxf(delta, 0.0), MAX_STEP)
-	var anchor_world := to_world * skeleton.get_bone_global_pose(_anchor).origin
+	# Snapshot all animated inputs before any cape output is written. Cape bones
+	# are descendants; their writes cannot leak into a later chain's body reads.
+	var anchor_pose := skeleton.get_bone_global_pose(_anchor)
+	var anchor_world := to_world * anchor_pose.origin
+	_snapshot_collision_world(skeleton, to_world)
 	var anchor_speed := 0.0 if step <= 0.0 else (
 		anchor_world.distance_to(_last_anchor) / step)
 	_last_anchor = anchor_world
@@ -260,12 +414,18 @@ func _process_modification_with_delta(delta: float) -> void:
 	# The back-of-the-torso plane, held for every chain this frame: a cape
 	# swings and cannot pass to the chest, which is what an attack's lean and
 	# twist made it do.
-	var forward := _torso_forward(skeleton, to_world)
-	var plane_at := (to_world * skeleton.get_bone_global_pose(_anchor).origin).dot(
-		forward) + BACK_OFFSET if forward != Vector3.ZERO else 0.0
+	var forward := _torso_forward_from_pose(to_world, anchor_pose)
+	var plane_at := anchor_world.dot(forward) + BACK_OFFSET \
+		if forward != Vector3.ZERO else 0.0
+	var down := (to_world.basis * anchor_pose.basis * _hang_local).normalized()
+	if _native_constraint_kernel != null and _try_native_constraint_step(
+			skeleton, to_world, to_local, anchor_pose, down, fall, damping, forward,
+			plane_at, anchor_world.y):
+		_settled = true
+		return
 
 	for chain in range(_bones.size()):
-		var rest := _rest_joints(skeleton, to_world, chain)
+		var rest := _rest_joints_from_pose(to_world, chain, anchor_pose, down)
 		var points := _points[chain]
 		if points.size() != rest.size() or not _settled:
 			points = rest.duplicate()
@@ -289,7 +449,7 @@ func _process_modification_with_delta(delta: float) -> void:
 					points[index] = points[index - 1] + offset * (
 						_lengths[chain][index - 1] / length)
 			for index in range(1, points.size()):
-				points[index] = _push_out_of_legs(skeleton, to_world, points[index])
+				points[index] = _push_out_of_collision_snapshot(to_world, points[index])
 				if forward != Vector3.ZERO:
 					var ahead := points[index].dot(forward) - plane_at
 					if ahead > 0.0:
@@ -308,12 +468,12 @@ func _process_modification_with_delta(delta: float) -> void:
 		# is offset from that segment, increasingly so down a tilted bind
 		# chain. Rotating bones alone turns that offset into an outward hem
 		# slope, even when every simulated segment has settled vertically.
-		var parent := skeleton.get_bone_global_pose(_anchor)
+		var parent := anchor_pose
 		var authored := to_world * parent
 		var rest_direction := (rest[1] - rest[0]).normalized()
 		for link in range(LINKS):
 			var bone := _bones[chain][link]
-			var bone_rest := skeleton.get_bone_rest(bone)
+			var bone_rest: Transform3D = _bone_rests[chain][link]
 			authored = authored * bone_rest
 			var wanted := (points[link + 1] - points[link]).normalized()
 			var turn := Basis.IDENTITY
@@ -326,6 +486,52 @@ func _process_modification_with_delta(delta: float) -> void:
 			skeleton.set_bone_pose_rotation(bone, local_pose.basis.get_rotation_quaternion())
 			parent = posed
 	_settled = true
+
+
+func _try_native_constraint_step(skeleton: Skeleton3D, to_world: Transform3D,
+		to_local: Transform3D, anchor_pose: Transform3D, down: Vector3, fall: Vector3,
+		damping: float, forward: Vector3, plane_at: float,
+		anchor_y: float) -> bool:
+	var rests: Array[PackedVector3Array] = []
+	for chain: int in range(_bones.size()):
+		rests.append(_rest_joints_from_pose(to_world, chain, anchor_pose, down))
+	var solved := bool(_native_constraint_kernel.call("step",
+		_points, _previous, rests, _lengths,
+		_collision_world, _collision_pairs, _collision_axes,
+		_collision_spans, _collision_radii, _collision_reaches,
+		fall, damping, forward, plane_at, anchor_y, to_world, _settled))
+	if not solved:
+		_native_constraint_fallbacks += 1
+		return false
+	_native_constraint_calls += 1
+	for chain: int in range(_bones.size()):
+		_write_native_chain_bones(skeleton, chain, rests[chain], anchor_pose,
+			to_world, to_local)
+	return true
+
+
+func _write_native_chain_bones(skeleton: Skeleton3D, chain: int,
+		rest: PackedVector3Array, anchor_pose: Transform3D,
+		to_world: Transform3D, to_local: Transform3D) -> void:
+	var points := _points[chain]
+	var parent := anchor_pose
+	var authored := to_world * parent
+	var rest_direction := (rest[1] - rest[0]).normalized()
+	for link in range(LINKS):
+		var bone := _bones[chain][link]
+		var bone_rest: Transform3D = _bone_rests[chain][link]
+		authored = authored * bone_rest
+		var wanted := (points[link + 1] - points[link]).normalized()
+		var turn := Basis.IDENTITY
+		if wanted.length_squared() > 0.5:
+			turn = Basis(Quaternion(rest_direction, wanted))
+		var posed := to_local * Transform3D(turn * authored.basis,
+			points[link] + turn * (authored.origin - rest[link]))
+		var local_pose := parent.affine_inverse() * posed
+		skeleton.set_bone_pose_position(bone, local_pose.origin)
+		skeleton.set_bone_pose_rotation(bone,
+			local_pose.basis.get_rotation_quaternion())
+		parent = posed
 
 
 func reset() -> void:

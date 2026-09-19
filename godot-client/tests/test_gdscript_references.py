@@ -18,6 +18,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 CLIENT = ROOT / "godot-client"
 SOURCE_DIRS = ("src", "tests")
+NATIVE_SOURCE_DIR = CLIENT / "native" / "native_crowd" / "src"
 
 DEFINITION = re.compile(r"^[ \t]*(?:static\s+)?func\s+(\w+)", re.M)
 # An unqualified call: not preceded by a dot, so not a method on another object.
@@ -40,6 +41,11 @@ SELF_STRING_CALL = re.compile(
 # enough to catch a deletion, which is what this file exists for.
 FOREIGN_STRING_CALL = re.compile(
     r"\w\.call(?:_deferred)?\(\s*\"(\w+)\"|Callable\(\s*\w+\s*,\s*\"(\w+)\"")
+# GDExtension methods are reached through Object.call() too. Read the names
+# Godot actually exports rather than maintaining a second permissive allowlist.
+NATIVE_BOUND_METHOD = re.compile(
+    r"\bClassDB\s*::\s*bind_method\s*\(\s*D_METHOD\s*\(\s*\"([A-Za-z_]\w*)\"")
+SCRIPT_EXTENDS = re.compile(r'''^extends\s+["']([^"']+)["']''', re.M)
 
 # Engine callbacks are defined and never called, so nothing else pins them.
 # Losing _physics_process silently removes all actor interpolation.
@@ -68,11 +74,67 @@ def gdscript_files():
         yield from sorted((CLIENT / directory).rglob("*.gd"))
 
 
+def native_bound_methods_from_text(text: str) -> set[str]:
+    return set(NATIVE_BOUND_METHOD.findall(text))
+
+
+def native_bound_methods() -> set[str]:
+    methods: set[str] = set()
+    for path in sorted(NATIVE_SOURCE_DIR.rglob("*.cpp")):
+        methods |= native_bound_methods_from_text(path.read_text(encoding="utf-8"))
+    return methods
+
+
+def inherited_script_members(path: Path, sources: dict[Path, str],
+                             client_root: Path = CLIENT) -> set[str]:
+    """Resolve explicit script inheritance without allowing unrelated methods."""
+    members: set[str] = set()
+    seen: set[Path] = set()
+    while path in sources and path not in seen:
+        seen.add(path)
+        text = sources[path]
+        members |= set(DEFINITION.findall(text)) | set(DECLARATION.findall(text))
+        parent = SCRIPT_EXTENDS.search(text)
+        if parent is None:
+            break
+        target = parent.group(1)
+        path = ((client_root / target.removeprefix("res://"))
+                if target.startswith("res://") else path.parent / target).resolve()
+    return members
+
+
 class GdScriptReferenceTest(unittest.TestCase):
+    def test_explicit_script_inheritance(self) -> None:
+        root = CLIENT.resolve()
+        base, middle, child, unrelated = (
+            root / name for name in ("base.gd", "middle.gd", "child.gd", "other.gd"))
+        sources = {
+            base: "extends Node\nvar _callback: Callable\nfunc _base():\n\tpass\n",
+            middle: 'extends "res://base.gd"\nfunc _middle():\n\tpass\n',
+            child: 'extends "middle.gd"\nfunc _child():\n\t_base()\n',
+            unrelated: "func _unrelated():\n\tpass\n",
+        }
+        self.assertEqual({"_callback", "_base", "_middle", "_child"},
+                         inherited_script_members(child, sources, root))
+        self.assertNotIn("_missing", inherited_script_members(child, sources, root))
+        sources[base] = 'extends "child.gd"\nfunc _base():\n\tpass\n'
+        self.assertEqual({"_base", "_middle", "_child"},
+                         inherited_script_members(child, sources, root))
+
+    def test_native_bound_method_extraction(self) -> None:
+        source = r'''
+            const char *not_a_binding = "pretend";
+            ClassDB::bind_method(
+                D_METHOD("actual_method", "argument"), &Example::actual_method);
+        '''
+        self.assertEqual({"actual_method"},
+                         native_bound_methods_from_text(source))
+
     def test_private_calls_resolve_in_their_own_file(self) -> None:
-        for path in gdscript_files():
-            text = path.read_text(encoding="utf-8")
-            defined = set(DEFINITION.findall(text))
+        sources = {path.resolve(): path.read_text(encoding="utf-8")
+                   for path in gdscript_files()}
+        for path, text in sources.items():
+            defined = inherited_script_members(path, sources)
             called = (set(PRIVATE_CALL.findall(text))
                       | set(CALLABLE_REFERENCE.findall(text))
                       | set(SIGNAL_CONNECT.findall(text))
@@ -104,7 +166,7 @@ class GdScriptReferenceTest(unittest.TestCase):
 
     def test_string_named_calls_resolve_somewhere(self) -> None:
         """The rendered tests drive main.gd and the actors by name."""
-        defined: set[str] = set()
+        defined: set[str] = native_bound_methods()
         for path in gdscript_files():
             defined |= set(DEFINITION.findall(path.read_text(encoding="utf-8")))
         for path in gdscript_files():

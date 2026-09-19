@@ -222,6 +222,11 @@ var _skin_choice := 0
 var _equipment_config: Dictionary = {}
 var _equipment_visuals: Dictionary = {}
 var _equipment_nodes: Dictionary = {}
+## Whether the main-hand model uses the separate two-hand bow presentation.
+## Resolving a fitted equipment variant can clone a nested model dictionary, so
+## retain this one boolean until the weapon, registry or wearer rig changes.
+var _hand_prop_ranged_cache_valid := false
+var _hand_prop_weapon_has_ranged_animation := false
 ## Whether this actor has been dressed once. Until it has, every wardrobe
 ## request is applied in full, however little it appears to change.
 var _equipment_applied: bool = false
@@ -417,7 +422,9 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	_face_group_materials.clear()
 	_skin_materials.clear()
 	_attachment_bones = (model_config.get("attachments", {}) as Dictionary).duplicate(true)
-	_equipment_config = (equipment_config as Dictionary).duplicate(true)
+	_equipment_config = preload(
+		"res://src/actors/equipment_registry_snapshot_cache.gd").acquire(equipment_config)
+	_invalidate_hand_prop_ranged_cache()
 	var source_path := _external_path(str(model_config.get("scene", "")))
 	var errors := _load_native_scene(source_path)
 	if not errors.is_empty():
@@ -1636,6 +1643,7 @@ func equipment_diagnostics() -> Dictionary:
 func _clear_equipment_part(part: int) -> void:
 	if part == 0:
 		_trail_weapon_mesh = null
+		_invalidate_hand_prop_ranged_cache()
 	var nodes_value: Variant = _equipment_nodes.get(part, [])
 	if nodes_value is Array:
 		for node_value: Variant in nodes_value:
@@ -1671,6 +1679,10 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	if visual_id == 0 and bool(part_config.get("bareWhenEmpty", false)):
 		return
 	var model_config: Dictionary = _equipment_model_config(part, visual_id)
+	if part == 0:
+		_hand_prop_weapon_has_ranged_animation = model_config.has(
+			"rangedAnimationScene")
+		_hand_prop_ranged_cache_valid = true
 	if str(model_config.get("attach", "")) == "ranged_bow" and combat_presentation != null:
 		# The presentation follows both hands; ordinary equipment follows one socket.
 		return
@@ -2541,8 +2553,21 @@ func set_hand_props_visible(enabled: bool) -> void:
 		for prop: Node in _equipment_nodes.get(part, []):
 			if is_instance_valid(prop) and prop is Node3D:
 				# Native bow variants are replaced by the string-driven bow in the left hand.
-				var weapon := _equipment_model_config(0, int(_equipment_visuals.get(0, 0)))
-				(prop as Node3D).visible = enabled and not (part == 0 and weapon.has("rangedAnimationScene"))
+				(prop as Node3D).visible = enabled and not (
+					part == 0 and _hand_prop_uses_ranged_animation())
+
+func _invalidate_hand_prop_ranged_cache() -> void:
+	_hand_prop_ranged_cache_valid = false
+	_hand_prop_weapon_has_ranged_animation = false
+
+func _hand_prop_uses_ranged_animation() -> bool:
+	if not _hand_prop_ranged_cache_valid:
+		var weapon := _equipment_model_config(0,
+			int(_equipment_visuals.get(0, 0)))
+		_hand_prop_weapon_has_ranged_animation = weapon.has(
+			"rangedAnimationScene")
+		_hand_prop_ranged_cache_valid = true
+	return _hand_prop_weapon_has_ranged_animation
 
 func ranged_release_origin() -> Vector3:
 	if combat_presentation != null and combat_presentation.bow != null and combat_presentation.bow.visible:

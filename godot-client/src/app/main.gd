@@ -1022,7 +1022,9 @@ func _ready() -> void:
 	cartography = _json("res://data/maps/cartography.json")
 	cartography_regions = cartography.get("regions", []) as Array
 	_region_polygons.clear()
-	equipment_config = _json("res://data/actors/equipment.json")
+	equipment_config = preload(
+		"res://src/actors/equipment_registry_snapshot_cache.gd").prepare(
+		_json("res://data/actors/equipment.json"))
 	item_atlas.configure(_json("res://data/items/atlases.json"))
 	spell_catalog.configure(_json("res://data/spells/catalog.json"))
 	spells_window.call("configure", spell_catalog, _cast_spell_by_id)

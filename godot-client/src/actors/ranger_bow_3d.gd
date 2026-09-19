@@ -11,6 +11,11 @@ var _tip_y := 0.68
 var _tip_z := 0.18
 var _path := ""
 var _aim_back := Vector3.ZERO
+var _upper_limbs: Array[Node3D] = []
+var _lower_limbs: Array[Node3D] = []
+var _local_geometry_valid := false
+var _last_draw_point := Vector3.ZERO
+var _last_flex := 0.0
 
 func _init() -> void:
 	name = "RangerBow"
@@ -45,6 +50,16 @@ func set_asset(path: String) -> void:
 	var rest_string := bow.find_child("RestString", true, false) as Node3D
 	if rest_string != null:
 		rest_string.hide()
+	_upper_limbs.clear()
+	_lower_limbs.clear()
+	for limb: Node in bow.get_children():
+		if not limb is Node3D:
+			continue
+		if String(limb.name).begins_with("Upper"):
+			_upper_limbs.append(limb as Node3D)
+		elif String(limb.name).begins_with("Lower"):
+			_lower_limbs.append(limb as Node3D)
+	_local_geometry_valid = false
 
 func pose(grip: Vector3, draw_hand: Vector3, up: Vector3, forward: Vector3,
 		is_drawing: bool, release_time: float, size: float, arrow_size := 1.0) -> void:
@@ -67,20 +82,23 @@ func pose(grip: Vector3, draw_hand: Vector3, up: Vector3, forward: Vector3,
 	if release_time >= 0.0:
 		draw_point.z += sin(release_time * 95.0) * exp(-release_time * 24.0) * 0.055
 	var flex := clampf((draw_point.z-_tip_z)*0.18, -0.025, 0.11)
-	for limb: Node3D in bow.get_children():
-		if String(limb.name).begins_with("Upper"):
+	if not _local_geometry_valid or draw_point != _last_draw_point or flex != _last_flex:
+		for limb: Node3D in _upper_limbs:
 			limb.rotation.x = flex
-		elif String(limb.name).begins_with("Lower"):
+		for limb: Node3D in _lower_limbs:
 			limb.rotation.x = -flex
-	var upper_tip := Basis(Vector3.RIGHT, flex) * Vector3(0, _tip_y, _tip_z)
-	var lower_tip := Basis(Vector3.RIGHT, -flex) * Vector3(0, -_tip_y, _tip_z)
-	_string.clear_surfaces()
-	_string.surface_begin(Mesh.PRIMITIVE_TRIANGLES, _string_material)
-	CombatEffectMesh.line(_string, upper_tip, draw_point,
-		0.0035, Color(0.82, 0.77, 0.58), Vector3.RIGHT)
-	CombatEffectMesh.line(_string, draw_point, lower_tip,
-		0.0035, Color(0.82, 0.77, 0.58), Vector3.RIGHT)
-	_string.surface_end()
+		var upper_tip := Basis(Vector3.RIGHT, flex) * Vector3(0, _tip_y, _tip_z)
+		var lower_tip := Basis(Vector3.RIGHT, -flex) * Vector3(0, -_tip_y, _tip_z)
+		_string.clear_surfaces()
+		_string.surface_begin(Mesh.PRIMITIVE_TRIANGLES, _string_material)
+		CombatEffectMesh.line(_string, upper_tip, draw_point,
+			0.0035, Color(0.82, 0.77, 0.58), Vector3.RIGHT)
+		CombatEffectMesh.line(_string, draw_point, lower_tip,
+			0.0035, Color(0.82, 0.77, 0.58), Vector3.RIGHT)
+		_string.surface_end()
+		_last_draw_point = draw_point
+		_last_flex = flex
+		_local_geometry_valid = true
 	if arrow != null:
 		# Shared animation positions preserve draw length across race proportions.
 		# Fit the bow to stature, and the arrow to the animated skeleton's units.

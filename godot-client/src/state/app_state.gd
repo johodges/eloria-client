@@ -64,6 +64,10 @@ var current_map := ""
 var adjacent_maps: Dictionary = {}
 var lantern_tutorial: Dictionary = {}
 var actors: Dictionary = {}
+## Optional coarse actor-command reducer. The descriptor is generated only by
+## the native benchmark build, and this instance exists only for an explicit
+## opt-in, so an ordinary source checkout keeps the GDScript path unchanged.
+var _native_crowd_reducer: Object
 ## The ids of actors written since the presentation last read them. Every
 ## site that writes `actors` records the id here and `take_changed_actors`
 ## hands the set over, so a frame with one moving creature costs one actor's
@@ -324,9 +328,44 @@ var last_clock_sync_msec := 0
 var invasion_assistant: Dictionary = {"open": false}
 
 func _ready() -> void:
+	_initialize_native_crowd_reducer()
 	Network.connection_state_changed.connect(_on_connection_state_changed)
 	Network.packet_received.connect(_on_packet)
 	MapSceneCache.set_mismatch_sink(_on_map_digest_mismatch)
+
+func _initialize_native_crowd_reducer() -> void:
+	if OS.get_environment("ELORIA_NATIVE_CROWD") != "1":
+		return
+	if not ClassDB.class_exists(&"NativeCrowdReducer"):
+		var extension_path := "res://bin/native_crowd.gdextension"
+		if not FileAccess.file_exists(extension_path):
+			push_error("ELORIA_NATIVE_CROWD requested but its extension is not built")
+			return
+		GDExtensionManager.load_extension(extension_path)
+	if not ClassDB.class_exists(&"NativeCrowdReducer"):
+		push_error("ELORIA_NATIVE_CROWD requested but its extension did not load")
+		return
+	_native_crowd_reducer = ClassDB.instantiate(&"NativeCrowdReducer")
+	if _native_crowd_reducer == null:
+		push_error("ELORIA_NATIVE_CROWD could not instantiate its reducer")
+
+func native_crowd_reducer_active() -> bool:
+	return _native_crowd_reducer != null
+
+func _try_native_actor_commands(command: int,
+		payload: PackedByteArray) -> bool:
+	if _native_crowd_reducer == null or command != EloriaProtocol.ServerMessage.ADD_ACTOR_COMMAND:
+		return false
+	var result: Dictionary = _native_crowd_reducer.call(
+		"reduce_packet", actors, payload, local_actor_id) as Dictionary
+	if str(result.get("status", "fallback")) != "ok":
+		return false
+	var native_changed_ids: PackedInt32Array = result.get(
+		"changed_ids", PackedInt32Array()) as PackedInt32Array
+	for actor_id: int in native_changed_ids:
+		mark_actor_changed(actor_id)
+	state_changed.emit(&"actors")
+	return true
 
 ## The server said it was built against a different package than the one this
 ## machine loaded. Said out loud in the console because it is not something the
@@ -456,6 +495,8 @@ func _queue_map_marker_removal(marker_id: int) -> void:
 			state_changed.emit(&"map_markers"), CONNECT_ONE_SHOT)
 
 func _on_packet(command: int, payload: PackedByteArray) -> void:
+	if _try_native_actor_commands(command, payload):
+		return
 	var event := EloriaProtocol.decode_server(command, payload)
 	match event.type:
 		"invasion_assistant":
