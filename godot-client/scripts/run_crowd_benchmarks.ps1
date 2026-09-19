@@ -231,6 +231,81 @@ function Set-And-VerifyAffinity([System.Diagnostics.Process]$Process,
     }
 }
 
+function Get-ProcessMemorySample([System.Diagnostics.Process]$Process) {
+    $timestamp = (Get-Date).ToUniversalTime().ToString('o')
+    try {
+        if ($Process.HasExited) { throw 'captured process exited before memory sampling' }
+        $Process.Refresh()
+        return [ordered]@{
+            timestampUtc = $timestamp
+            available = $true
+            error = $null
+            workingSetBytes = [long]$Process.WorkingSet64
+            privateMemoryBytes = [long]$Process.PrivateMemorySize64
+            pagedMemoryBytes = [long]$Process.PagedMemorySize64
+            peakWorkingSetBytes = [long]$Process.PeakWorkingSet64
+            peakPagedMemoryBytes = [long]$Process.PeakPagedMemorySize64
+        }
+    }
+    catch {
+        return [ordered]@{
+            timestampUtc = $timestamp
+            available = $false
+            error = $_.Exception.Message
+            workingSetBytes = $null
+            privateMemoryBytes = $null
+            pagedMemoryBytes = $null
+            peakWorkingSetBytes = $null
+            peakPagedMemoryBytes = $null
+        }
+    }
+}
+
+function Get-ByteDistribution([object[]]$Values) {
+    $usable = @($Values | Where-Object { $null -ne $_ } |
+        ForEach-Object { [long]$_ } | Sort-Object)
+    if ($usable.Count -eq 0) { return $null }
+    $middle = [int][Math]::Floor($usable.Count / 2.0)
+    $median = if ($usable.Count % 2 -eq 1) {
+        [long]$usable[$middle]
+    }
+    else {
+        [long][Math]::Round(
+            ([decimal]$usable[$middle - 1] + [decimal]$usable[$middle]) / 2,
+            [MidpointRounding]::AwayFromZero)
+    }
+    return [ordered]@{
+        medianBytes = $median
+        maximumBytes = [long]$usable[-1]
+    }
+}
+
+function Get-ProcessMemorySummary([Collections.Generic.List[object]]$Samples) {
+    $available = @($Samples | Where-Object { $_.available })
+    return [ordered]@{
+        scope = ('periodic operating-system counters across the full captured process ' +
+            'lifetime, including startup and lifecycle; not exact steady benchmark frames')
+        sampleInterval = 'approximately one second while the captured process is alive'
+        sampleCount = $Samples.Count
+        availableSampleCount = $available.Count
+        unavailableSampleCount = $Samples.Count - $available.Count
+        workingSetBytes = Get-ByteDistribution @($available | ForEach-Object {
+            $_.workingSetBytes })
+        privateMemoryBytes = Get-ByteDistribution @($available | ForEach-Object {
+            $_.privateMemoryBytes })
+        pagedMemoryBytes = Get-ByteDistribution @($available | ForEach-Object {
+            $_.pagedMemoryBytes })
+        peakWorkingSetBytes = Get-ByteDistribution @($available | ForEach-Object {
+            $_.peakWorkingSetBytes })
+        peakPagedMemoryBytes = Get-ByteDistribution @($available | ForEach-Object {
+            $_.peakPagedMemoryBytes })
+        privatePeakBytes = $null
+        privatePeakCaveat = ('Windows Process exposes sampled PrivateMemorySize64 here, ' +
+            'not a private-memory peak counter; no peak is inferred')
+        samples = @($Samples)
+    }
+}
+
 function Quote-ProcessArgument([string]$Value) {
     if ($Value -notmatch '[\s"]') { return $Value }
     return '"' + ($Value -replace '"', '\"') + '"'
@@ -507,6 +582,7 @@ foreach ($trial in 1..$Repeats) {
 
                 Write-Host "Running $runId serially (affinity=0xF; worker request=2)..."
                 $observed = @{}
+                $memorySamples = [Collections.Generic.List[object]]::new()
                 $process = Start-Process -FilePath $launchPath -ArgumentList $quotedArguments `
 					-PassThru -WindowStyle Hidden -RedirectStandardOutput $stdoutPath `
 					-RedirectStandardError $stderrPath
@@ -517,15 +593,16 @@ foreach ($trial in 1..$Repeats) {
 				$postReportStop = $false
 				$identityVerified = $false
 				try {
-					Set-And-VerifyAffinity $process $observed $expectedProcessPath `
-						$expectedProcessStart
-					$identityVerified = $observed.ContainsKey([string]$process.Id)
-					do {
+                    Set-And-VerifyAffinity $process $observed $expectedProcessPath `
+                        $expectedProcessStart
+                    $identityVerified = $observed.ContainsKey([string]$process.Id)
+                    do {
 						$process.Refresh()
 						$live = if ($process.HasExited) { 0 } else { 1 }
-						if ($live -gt 0) {
-							Set-And-VerifyAffinity $process $observed $expectedProcessPath `
-								$expectedProcessStart
+                        if ($live -gt 0) {
+                            Set-And-VerifyAffinity $process $observed $expectedProcessPath `
+                                $expectedProcessStart
+                            $memorySamples.Add((Get-ProcessMemorySample $process))
 						}
 						if ((Get-Date) -ge $deadline) {
 							if (-not $process.HasExited) { $process.Kill($true) }
@@ -567,9 +644,10 @@ foreach ($trial in 1..$Repeats) {
 						reportValidationError = "monitoring failed before report validation"
 						renderer = $renderingMethod; mode = $run; backend = $backend; trial = $trial
 						attributionEnabled = $Attribution.IsPresent
-						nativePresentationRequested = $NativePresentation
-						nativePresentationEnvironment = $nativePresentationEnvironment
-					} | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $processPath
+                        nativePresentationRequested = $NativePresentation
+                        nativePresentationEnvironment = $nativePresentationEnvironment
+                        processMemory = Get-ProcessMemorySummary $memorySamples
+                    } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $processPath
 					throw
 				}
 				$scriptErrorsDetected = $false
@@ -622,8 +700,9 @@ foreach ($trial in 1..$Repeats) {
                     backend = $backend
                     trial = $trial
 					attributionEnabled = $Attribution.IsPresent
-					nativePresentationRequested = $NativePresentation
-					nativePresentationEnvironment = $nativePresentationEnvironment
+                    nativePresentationRequested = $NativePresentation
+                    nativePresentationEnvironment = $nativePresentationEnvironment
+                    processMemory = Get-ProcessMemorySummary $memorySamples
                 } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $processPath
 				if ($postReportStop) {
 					throw "$runId wrote a report but required forced post-report termination. See $logPath"
