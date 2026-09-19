@@ -189,7 +189,7 @@ def _validate_lod_fixture(fixture: dict[str, Any], count: int, context: str) -> 
         "distance": 32.0,
         "pitchDegrees": -25.0,
         "yawDegrees": 0.0,
-        "fieldOfViewDegrees": 75.0,
+        "fieldOfViewDegrees": 50.0,
     }
     for key, expected in expected_camera.items():
         actual = _finite_number(camera.get(key), f"{context}.camera.{key}")

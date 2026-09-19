@@ -192,7 +192,7 @@ class LodFixtureValidationTests(unittest.TestCase):
                 "distance": 32.0,
                 "pitchDegrees": -25.0,
                 "yawDegrees": 0.0,
-                "fieldOfViewDegrees": 75.0,
+                "fieldOfViewDegrees": 50.0,
             },
             "visibilityValidation": {"min": 200, "max": 200},
             "grounding": {"surfaceHits": 300, "surfaceMatches": 300, "surfaceMisses": 0},

@@ -181,7 +181,7 @@ The zoom preset lays out a fresh population after changing camera distance, so
 it is not a same-layout before/after culling comparison.
 
 The `lod_bands` fixture fixes the camera at distance 32, pitch -25 degrees, yaw
-0 degrees and a 75-degree field of view. Its initial census must contain exactly
+0 degrees and a 50-degree field of view. Its initial census must contain exactly
 100 actors at 0-45 m, 100 at 45-80 m and 100 beyond 80 m, corresponding to 100
 full-rate, 100 half-rate and 100 paused animation tiers. Exactly 200 must remain
 inside both the camera frustum and 80 m draw range throughout the validation
