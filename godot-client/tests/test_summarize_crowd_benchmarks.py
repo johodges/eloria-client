@@ -192,6 +192,20 @@ class AcceptanceEligibilityTests(unittest.TestCase):
             },
         }, production, "measurement")
 
+    def test_external_engine_profile_cannot_enter_acceptance(self) -> None:
+        # Even erroneous eligibility metadata must not admit paused/instrumented
+        # profiler samples into the ordinary frame-time comparison.
+        for acceptance in ({}, {"eligible": True, "diagnosticOnly": False,
+                                "reason": "incorrect production label"}):
+            with self.subTest(acceptance=acceptance):
+                with self.assertRaisesRegex(SUMMARY.SummaryError, "external engine profiling"):
+                    SUMMARY._validate_acceptance_eligibility({
+                        "engineProfileMarkersEnabled": True,
+                        "acceptance": acceptance,
+                    }, [{"features": "full"}], "measurement")
+        SUMMARY._validate_acceptance_eligibility(
+            {"engineProfileMarkersEnabled": False}, [{"features": "full"}], "measurement")
+
     def test_rejects_solver_off_even_when_attribution_is_disabled(self) -> None:
         measurement = {
             "attribution": {

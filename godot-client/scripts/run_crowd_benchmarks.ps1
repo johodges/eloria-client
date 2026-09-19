@@ -15,6 +15,8 @@ param(
     [int]$Repeats = 3,
     [ValidateRange(1, 180)]
     [int]$TimeoutMinutes = 30,
+    [ValidateRange(1, 300)]
+    [int]$PostReportGraceSeconds = 5,
     [string]$Counts = "",
     [string]$Populations = "",
     [string]$Activities = "",
@@ -27,6 +29,7 @@ param(
     [int]$CadenceMilliseconds = 100,
     [switch]$Capture,
     [switch]$Attribution,
+    [switch]$EngineProfileMarkers,
     [string]$Label = "",
     [string]$InterferenceLabel = "shared host; unrelated Godot jobs may be present"
 )
@@ -96,6 +99,7 @@ $sourceRelativePaths = @(
     "godot-client/tests/integration/crowd_benchmarks.gd",
     "godot-client/tests/integration/crowd_benchmark_main.gd",
     "godot-client/tests/integration/crowd_benchmark_main.tscn",
+    "godot-client/tests/fixtures/crowd_skin_census.gd",
     "godot-client/scripts/run_crowd_benchmarks.ps1",
     "godot-client/project.godot",
     "godot-client/src/state/app_state.gd",
@@ -107,6 +111,7 @@ $sourceRelativePaths = @(
     "godot-client/src/world/world_effect_3d.gd",
     "godot-client/src/world/spell_flight_3d.gd",
     "godot-client/src/world/combat_effect_mesh.gd",
+    "godot-client/src/world/spell_energy.gdshader",
     "godot-client/src/world/animation_gate.gd",
     "godot-client/native/native_crowd/src/native_crowd_reducer.cpp",
     "godot-client/native/native_crowd/src/native_crowd_reducer.h",
@@ -119,6 +124,7 @@ $sourceRelativePaths = @(
 )
 $optionalSourceRelativePaths = @(
     "godot-client/src/actors/equipment_registry_snapshot_cache.gd",
+    "godot-client/src/actors/rebound_skin_pool.gd",
     "godot-client/native/native_crowd/src/native_cape_constraint_kernel.cpp",
     "godot-client/native/native_crowd/src/native_cape_constraint_kernel.h",
     "godot-client/native/native_crowd/src/native_spell_flight_geometry.cpp",
@@ -168,6 +174,7 @@ $env:ELORIA_CROWD_WARMUP_MSEC = [string]$WarmupMilliseconds
 $env:ELORIA_CROWD_CADENCE_MSEC = [string]$CadenceMilliseconds
 $env:ELORIA_CROWD_CAPTURE = if ($Capture) { "1" } else { "0" }
 $env:ELORIA_CROWD_ATTRIBUTION = if ($Attribution) { "1" } else { "0" }
+$env:ELORIA_CROWD_ENGINE_PROFILE_MARKERS = if ($EngineProfileMarkers) { "1" } else { "0" }
 $env:ELORIA_CROWD_LABEL = $Label
 $env:ELORIA_CROWD_INTERFERENCE = $InterferenceLabel
 $env:ELORIA_CROWD_ARTIFACT_DIR = $runRoot
@@ -312,7 +319,8 @@ function Quote-ProcessArgument([string]$Value) {
 }
 
 function Assert-BenchmarkReport([string]$JsonPath, [string]$ExpectedProfile,
-        [bool]$ExpectedAttribution, [string]$ExpectedNativePresentation) {
+        [bool]$ExpectedAttribution, [string]$ExpectedNativePresentation,
+        [bool]$ExpectedEngineProfileMarkers, [int]$ExpectedProcessId) {
     if (-not (Test-Path -LiteralPath $JsonPath)) {
         throw "Benchmark exited without writing $JsonPath."
     }
@@ -407,18 +415,44 @@ function Assert-BenchmarkReport([string]$JsonPath, [string]$ExpectedProfile,
     }
     $solverCells = @($cells | Where-Object { $_.features -eq "cape_solver_off" })
     $hasSolverDiagnostic = $solverCells.Count -gt 0
+    if ($result.measurement.engineProfileMarkersEnabled -isnot [bool] -or
+            $result.measurement.engineProfileMarkersEnabled -ne $ExpectedEngineProfileMarkers) {
+        throw "Engine profile marker mode does not match the requested mode: $JsonPath"
+    }
+    $hasDiagnosticIntervention = $hasSolverDiagnostic -or $ExpectedEngineProfileMarkers
     $acceptance = $result.measurement.acceptance
     if ($null -eq $acceptance -or [string]::IsNullOrWhiteSpace([string]$acceptance.reason) -or
             [bool]$acceptance.eligible -eq [bool]$acceptance.diagnosticOnly) {
         throw "Benchmark acceptance eligibility metadata is absent or inconsistent: $JsonPath"
     }
-    if ($hasSolverDiagnostic -and ([bool]$acceptance.eligible -or
+    if ($hasDiagnosticIntervention -and ([bool]$acceptance.eligible -or
             -not [bool]$acceptance.diagnosticOnly)) {
-        throw "cape_solver_off is not marked diagnostic-only: $JsonPath"
+        throw "Instrumented benchmark is not marked diagnostic-only: $JsonPath"
     }
-    if (-not $hasSolverDiagnostic -and (-not [bool]$acceptance.eligible -or
+    if (-not $hasDiagnosticIntervention -and (-not [bool]$acceptance.eligible -or
             [bool]$acceptance.diagnosticOnly)) {
         throw "Production benchmark is unexpectedly marked diagnostic-only: $JsonPath"
+    }
+    foreach ($cell in $cells) {
+        $window = $cell.sample.engineProfileWindow
+        if ($null -eq $window -or $window.enabled -isnot [bool] -or
+                $window.enabled -ne $ExpectedEngineProfileMarkers) {
+            throw "Cell engine profile mode is missing or inconsistent: $JsonPath"
+        }
+        if ($ExpectedEngineProfileMarkers) {
+            $begin = $window.start
+            $end = $window.end
+            if ($begin.event -ne 'sample_start' -or $end.event -ne 'sample_end' -or
+                    $begin.cell -ne $cell.id -or $end.cell -ne $cell.id -or
+                    [long]$begin.processId -ne $ExpectedProcessId -or
+                    $begin.processId -ne $end.processId -or
+                    [long]$end.engineMicroseconds -le [long]$begin.engineMicroseconds -or
+                    ([long]$end.processFrame - [long]$begin.processFrame) -ne [long]$cell.sample.frames -or
+                    [Math]::Abs(([double]$end.unixMicroseconds - [double]$begin.unixMicroseconds) -
+                        ([double]$end.engineMicroseconds - [double]$begin.engineMicroseconds)) -gt 100000) {
+                throw "Engine profile window has invalid boundaries or a system clock discontinuity: $JsonPath"
+            }
+        }
     }
     if ($hasSolverDiagnostic) {
         foreach ($cell in $cells) {
@@ -610,7 +644,7 @@ foreach ($trial in 1..$Repeats) {
 						}
 						if (Test-Path -LiteralPath $jsonPath) {
 							if ($null -eq $artifactSeenAt) { $artifactSeenAt = Get-Date }
-							elseif (((Get-Date) - $artifactSeenAt).TotalSeconds -ge 5 -and $live -gt 0) {
+							elseif (((Get-Date) - $artifactSeenAt).TotalSeconds -ge $PostReportGraceSeconds -and $live -gt 0) {
 								$process.Kill($true)
 								$postReportStop = $true
 							}
@@ -640,10 +674,12 @@ foreach ($trial in 1..$Repeats) {
 						monitoring = "captured direct Godot Process object only; monitoring failed"
 						monitoringError = $monitoringError; forcedTermination = $forcedTermination
 						postReportStop = $false; abortedAfterReport = $false; cleanExit = $false
+						postReportGraceSeconds = $PostReportGraceSeconds
 						scriptErrorsDetected = $false; schemaValid = $false; reportValid = $false
 						reportValidationError = "monitoring failed before report validation"
 						renderer = $renderingMethod; mode = $run; backend = $backend; trial = $trial
 						attributionEnabled = $Attribution.IsPresent
+                        engineProfileMarkersEnabled = $EngineProfileMarkers.IsPresent
                         nativePresentationRequested = $NativePresentation
                         nativePresentationEnvironment = $nativePresentationEnvironment
                         processMemory = Get-ProcessMemorySummary $memorySamples
@@ -661,7 +697,7 @@ foreach ($trial in 1..$Repeats) {
 				$reportValidationError = ""
 				try {
 					Assert-BenchmarkReport $jsonPath $Profile $Attribution.IsPresent `
-						$NativePresentation
+						$NativePresentation $EngineProfileMarkers.IsPresent $process.Id
 					$schemaValid = $true
 				}
 				catch {
@@ -690,6 +726,7 @@ foreach ($trial in 1..$Repeats) {
 					forcedTermination = $postReportStop
 					postReportStop = $postReportStop
 					abortedAfterReport = $postReportStop
+					postReportGraceSeconds = $PostReportGraceSeconds
 					cleanExit = $cleanExit
 					scriptErrorsDetected = $scriptErrorsDetected
 					schemaValid = $schemaValid
@@ -700,6 +737,7 @@ foreach ($trial in 1..$Repeats) {
                     backend = $backend
                     trial = $trial
 					attributionEnabled = $Attribution.IsPresent
+                    engineProfileMarkersEnabled = $EngineProfileMarkers.IsPresent
                     nativePresentationRequested = $NativePresentation
                     nativePresentationEnvironment = $nativePresentationEnvironment
                     processMemory = Get-ProcessMemorySummary $memorySamples

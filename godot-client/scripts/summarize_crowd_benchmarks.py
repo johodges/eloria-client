@@ -161,6 +161,13 @@ def _validate_acceptance_eligibility(
     measurement: dict[str, Any], planned: list[Any], context: str
 ) -> None:
     """Reject benchmark-only feature probes from acceptance aggregates."""
+    if "engineProfileMarkersEnabled" in measurement and _required_bool(
+        measurement, "engineProfileMarkersEnabled", context
+    ):
+        raise SummaryError(
+            f"{context}: external engine profiling is diagnostic and cannot "
+            "enter acceptance timing summaries"
+        )
     diagnostic_features = {
         str(spec.get("features", ""))
         for spec in planned
