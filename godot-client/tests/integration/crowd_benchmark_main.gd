@@ -50,8 +50,9 @@ func _process(delta: float) -> void:
 
 
 ## Installs diagnostic observers only after a benchmark fixture is complete.
-## The production combat callback may be replaced only when it is the final
-## connection, so disconnect/reconnect leaves its relative order unchanged.
+## Every existing connection is snapshotted before mutation. The production
+## combat callback is replaced in place by rebuilding the complete ordered
+## connection list, so the other callbacks retain their relative positions.
 func benchmark_attach_attribution(nodes: Dictionary) -> Dictionary:
 	_benchmark_skeleton_frames.clear()
 	var plans: Array[Dictionary] = []
@@ -67,28 +68,30 @@ func benchmark_attach_attribution(nodes: Dictionary) -> Dictionary:
 		var id := int(raw_id)
 		var combat := actor.combat_presentation
 		var plan := {"id": id, "skeleton": skeleton, "combat": combat,
-			"direct": Callable(), "flags": 0}
+			"direct_index": -1, "originals": []}
+		var connections := skeleton.skeleton_updated.get_connections()
+		var originals: Array[Dictionary] = []
+		for connection: Dictionary in connections:
+			var callback: Callable = connection.get("callable", Callable()) as Callable
+			if not callback.is_valid():
+				return {"ok": false,
+					"error": "actor %d has an invalid skeleton callback" % id}
+			originals.append({"callable": callback,
+				"flags": int(connection.get("flags", 0))})
+		plan["originals"] = originals
 		if combat != null:
 			var direct := Callable(combat, "update_pose")
-			var connections := skeleton.skeleton_updated.get_connections()
 			var direct_index := -1
-			var direct_flags := 0
-			for index: int in range(connections.size()):
-				var connection := connections[index] as Dictionary
-				if connection.get("callable") == direct:
+			for index: int in range(originals.size()):
+				if originals[index].get("callable") == direct:
+					if direct_index >= 0:
+						return {"ok": false,
+							"error": "actor %d combat callback is connected more than once" % id}
 					direct_index = index
-					direct_flags = int(connection.get("flags", 0))
-					break
 			if direct_index < 0:
 				return {"ok": false,
 					"error": "actor %d combat callback is not connected" % id}
-			if direct_index != connections.size() - 1:
-				return {"ok": false,
-					"error": ("actor %d combat callback is connection %d of %d; "
-						+ "refusing to change signal order") % [
-						id, direct_index, connections.size()]}
-			plan["direct"] = direct
-			plan["flags"] = direct_flags
+			plan["direct_index"] = direct_index
 		plans.append(plan)
 
 	var combat_delegates := 0
@@ -99,52 +102,103 @@ func benchmark_attach_attribution(nodes: Dictionary) -> Dictionary:
 		var id := int(plan["id"])
 		var combat := plan["combat"] as CombatPresentation3D
 		if combat != null:
-			var direct := plan["direct"] as Callable
-			skeleton.skeleton_updated.disconnect(direct)
 			var delegated := Callable(self,
 				"_benchmark_combat_skeleton_updated").bind(id, combat)
-			var connected := skeleton.skeleton_updated.connect(
-				delegated, int(plan["flags"]))
-			if connected != OK:
-				skeleton.skeleton_updated.connect(direct, int(plan["flags"]))
-				_benchmark_rollback_attribution(applied)
+			var originals := plan["originals"] as Array[Dictionary]
+			var replacement: Array[Dictionary] = originals.duplicate(true)
+			replacement[int(plan["direct_index"])]["callable"] = delegated
+			var replace_result := _benchmark_replace_connections(
+				skeleton, originals, replacement)
+			if not bool(replace_result.get("ok", false)):
+				var rollback_errors := _benchmark_rollback_attribution(applied)
 				return {"ok": false,
-					"error": "actor %d timed combat delegate failed: %d" % [
-						id, connected]}
-			applied.append({"skeleton": skeleton, "installed": delegated,
-				"direct": direct, "flags": int(plan["flags"])})
+					"error": ("actor %d timed combat delegate failed: %s%s" % [
+						id, str(replace_result.get("error", "unknown error")),
+						("; rollback: " + "; ".join(rollback_errors))
+						if not rollback_errors.is_empty() else ""])}
+			applied.append({"kind": "replacement", "skeleton": skeleton,
+				"originals": originals, "replacement": replacement})
 			combat_delegates += 1
 		else:
 			var observer := Callable(self,
 				"_benchmark_skeleton_updated").bind(id)
 			var connected := skeleton.skeleton_updated.connect(observer)
 			if connected != OK:
-				_benchmark_rollback_attribution(applied)
+				var rollback_errors := _benchmark_rollback_attribution(applied)
 				return {"ok": false,
-					"error": "actor %d skeleton observer failed: %d" % [id, connected]}
-			applied.append({"skeleton": skeleton, "installed": observer,
-				"direct": Callable(), "flags": 0})
+					"error": ("actor %d skeleton observer failed: %d%s" % [
+						id, connected, ("; rollback: " + "; ".join(rollback_errors))
+						if not rollback_errors.is_empty() else ""])}
+			applied.append({"kind": "observer", "skeleton": skeleton,
+				"installed": observer})
 			passive_observers += 1
 	_benchmark_attribution_attachment = {
 		"ok": true, "actors": plans.size(),
 		"combatSignalDelegates": combat_delegates,
 		"passiveSkeletonObservers": passive_observers,
 		"combatSignalOrderPolicy":
-			"replace only a final direct callback with a final timed delegate",
+			"snapshot and rebuild every callback in original order",
 	}
 	return _benchmark_attribution_attachment.duplicate(true)
 
 
-func _benchmark_rollback_attribution(applied: Array[Dictionary]) -> void:
+func _benchmark_replace_connections(skeleton: Skeleton3D,
+		expected: Array[Dictionary], replacement: Array[Dictionary]) -> Dictionary:
+	var current := skeleton.skeleton_updated.get_connections()
+	if current.size() != expected.size():
+		return {"ok": false, "error": "connection count changed after preflight"}
+	for index: int in range(expected.size()):
+		var live := current[index] as Dictionary
+		if live.get("callable") != expected[index].get("callable") \
+				or int(live.get("flags", 0)) != int(expected[index].get("flags", 0)):
+			return {"ok": false,
+				"error": "connection %d changed after preflight" % index}
+	for descriptor: Dictionary in expected:
+		skeleton.skeleton_updated.disconnect(descriptor["callable"] as Callable)
+	var installed: Array[Dictionary] = []
+	for descriptor: Dictionary in replacement:
+		var connected := skeleton.skeleton_updated.connect(
+			descriptor["callable"] as Callable, int(descriptor["flags"]))
+		if connected != OK:
+			for added: Dictionary in installed:
+				var callback := added["callable"] as Callable
+				if skeleton.skeleton_updated.is_connected(callback):
+					skeleton.skeleton_updated.disconnect(callback)
+			var restore_error := _benchmark_connect_descriptors(skeleton, expected)
+			return {"ok": false,
+				"error": "connect returned %d; restore returned %d" % [
+					connected, restore_error]}
+		installed.append(descriptor)
+	return {"ok": true}
+
+
+func _benchmark_connect_descriptors(skeleton: Skeleton3D,
+		descriptors: Array[Dictionary]) -> int:
+	for descriptor: Dictionary in descriptors:
+		var connected := skeleton.skeleton_updated.connect(
+			descriptor["callable"] as Callable, int(descriptor["flags"]))
+		if connected != OK:
+			return connected
+	return OK
+
+
+func _benchmark_rollback_attribution(applied: Array[Dictionary]) -> Array[String]:
+	var errors: Array[String] = []
 	for index: int in range(applied.size() - 1, -1, -1):
 		var record := applied[index]
 		var skeleton := record["skeleton"] as Skeleton3D
-		var installed := record["installed"] as Callable
-		if skeleton.skeleton_updated.is_connected(installed):
-			skeleton.skeleton_updated.disconnect(installed)
-		var direct := record["direct"] as Callable
-		if direct.is_valid():
-			skeleton.skeleton_updated.connect(direct, int(record["flags"]))
+		if str(record["kind"]) == "replacement":
+			var restored := _benchmark_replace_connections(skeleton,
+				record["replacement"] as Array[Dictionary],
+				record["originals"] as Array[Dictionary])
+			if not bool(restored.get("ok", false)):
+				errors.append("actor connection restore failed: %s" %
+					str(restored.get("error", "unknown error")))
+		else:
+			var installed := record["installed"] as Callable
+			if skeleton.skeleton_updated.is_connected(installed):
+				skeleton.skeleton_updated.disconnect(installed)
+	return errors
 
 
 func _benchmark_note_skeleton(actor_id: int) -> void:
@@ -181,7 +235,7 @@ func _benchmark_count_event(label: StringName) -> void:
 
 func _on_missile_fired(shot: Dictionary) -> void:
 	if benchmark_attribution_enabled:
-		var source := actor_nodes.get(int(shot.get("source_actor_id", -1)))
+		var source: Variant = actor_nodes.get(int(shot.get("source_actor_id", -1)))
 		if is_instance_valid(source):
 			_benchmark_count_event(&"mirrored_effect_setter_missile")
 	super._on_missile_fired(shot)
@@ -189,7 +243,7 @@ func _on_missile_fired(shot: Dictionary) -> void:
 
 func _on_ground_missile_fired(shot: Dictionary) -> void:
 	if benchmark_attribution_enabled:
-		var source := actor_nodes.get(int(shot.get("source_actor_id", -1)))
+		var source: Variant = actor_nodes.get(int(shot.get("source_actor_id", -1)))
 		if is_instance_valid(source):
 			_benchmark_count_event(&"mirrored_effect_setter_ground_missile")
 	super._on_ground_missile_fired(shot)
