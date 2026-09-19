@@ -298,6 +298,11 @@ func _prewarm_population() -> void:
 func _run_cell(spec: Dictionary) -> void:
 	_cell_index += 1
 	var count := int(spec["count"])
+	var visibility := str(spec["visibility"])
+	var expected_visible := expected_visible_count(visibility, count)
+	if not _expect(expected_visible >= 0,
+			"%s uses a supported visibility preset (got %s)" % [spec["id"], visibility]):
+		return
 	var before := _memory_sample()
 	var records := _make_records(count, str(spec["population"]), str(spec["features"]))
 	_app_state.set("local_actor_id", FIRST_ACTOR_ID)
@@ -317,8 +322,6 @@ func _run_cell(spec: Dictionary) -> void:
 	_app_state.set("selected_actor_id", selected_actor_id)
 	_main.call("_sync_selection")
 	_main.call("_sync_overhead_health")
-	var expected_visible := count / 2 if str(spec["visibility"]) in [
-		"half300", "frustum_half", "range_bands"] else count
 	var census := _census(nodes)
 	var grounding := _grounding_census(nodes)
 	_expect(int(census["total"]) == count,
@@ -329,6 +332,21 @@ func _run_cell(spec: Dictionary) -> void:
 	_expect(int(census["heightSynchronized"]) == count,
 		"%s has %d finite grounded actor heights (got %d)" % [spec["id"],
 			count, census["heightSynchronized"]])
+	if visibility == "lod_bands":
+		var bands := census["distanceBands"] as Dictionary
+		var tiers := census["animationTiers"] as Dictionary
+		_expect(count == 300,
+			"%s reserves lod_bands for the declared 300-actor fixture" % spec["id"])
+		_expect(int(bands["near0To45"]) == 100
+			and int(bands["mid45To80"]) == 100
+			and int(bands["beyond80"]) == 100,
+			"%s has exact 100/100/100 near, middle and beyond distance bands" % spec["id"])
+		_expect(int(tiers["full"]) == 100 and int(tiers["half"]) == 100
+			and int(tiers["paused"]) == 100,
+			"%s has exact 100/100/100 full, half-rate and paused animation tiers" % spec["id"])
+		_expect(int(census["withinDrawDistance"]) == 200
+			and int(census["frustumIntersecting"]) == 200,
+			"%s keeps exactly 200 actors in draw range and camera frustum" % spec["id"])
 	if str(spec["features"]) == "no_overhead":
 		_expect(int(census["visibleNameplates"]) == 0
 			and int(census["visibleHealthBars"]) == 0,
@@ -388,6 +406,7 @@ func _run_cell(spec: Dictionary) -> void:
 	result["spawn"] = spawn
 	result["fixture"] = {"before": census, "after": census_after,
 		"grounding": grounding,
+		"camera": _fixture_camera_config(),
 		"visibilityValidation": visibility_span}
 	result["resourceReadiness"] = readiness
 	result["diagnostics"] = diagnostics
@@ -405,6 +424,17 @@ func _run_cell(spec: Dictionary) -> void:
 	(_report["cells"] as Array).append(result)
 	print("crowd cell ", spec["id"], ": ", count, " actors, ",
 		census["frustumAndDrawVisible"], " visible, ", active_ids.size(), " active")
+
+
+func _fixture_camera_config() -> Dictionary:
+	var rig := _main.get("camera_rig") as Node3D
+	var camera := _main.get("gameplay_camera") as Camera3D
+	return {
+		"distance": _round(float(rig.get("distance"))),
+		"pitchDegrees": _round(float(rig.get("pitch_degrees"))),
+		"yawDegrees": _round(float(rig.get("yaw_degrees"))),
+		"fieldOfViewDegrees": _round(camera.fov),
+	}
 
 
 func _validate_executed_workload(spec: Dictionary, workload: Dictionary,
@@ -530,21 +560,34 @@ func _place_population(nodes: Dictionary, records: Dictionary,
 	var rig := _main.get("camera_rig") as Node3D
 	if visibility == "zoom":
 		rig.set("distance", 70.0)
+		rig.set("pitch_degrees", -60.0)
+		rig.call("_update_camera")
+	elif visibility == "lod_bands":
+		# A shallower, supported gameplay pitch keeps near ground actors inside
+		# the FULL tier while showing enough ground for a populated HALF tier.
+		rig.set("distance", 32.0)
+		rig.set("pitch_degrees", -25.0)
 		rig.call("_update_camera")
 	else:
 		rig.set("distance", 26.0)
+		rig.set("pitch_degrees", -60.0)
 		rig.call("_update_camera")
 	await _settle_frames(2)
 	var count := nodes.size()
-	var wanted := count if visibility in ["concentrated", "zoom"] else count / 2
+	var wanted := expected_visible_count(visibility, count)
 	var ids: Array = nodes.keys()
 	ids.sort()
 	var ground_y := local.global_position.y
+	var lod_points: Array[Vector3] = []
+	if visibility == "lod_bands":
+		lod_points = _lod_fixture_points(camera, local.global_position, count, ground_y)
 	var occupied_tiles: Dictionary = {}
 	for index: int in range(ids.size()):
 		var actor := nodes[ids[index]] as ReplicatedActor3D
 		var point := local.global_position
-		if index < wanted:
+		if visibility == "lod_bands":
+			point = lod_points[index] if index < lod_points.size() else point
+		elif index < wanted:
 			point = _visible_ground_point(camera, index, wanted, ground_y)
 		elif visibility == "range_bands" and index >= wanted + (count - wanted) / 2:
 			point = _beyond_draw_point(camera, local.global_position,
@@ -564,6 +607,103 @@ func _place_population(nodes: Dictionary, records: Dictionary,
 	_main.call("_update_animation_gate", 0.0)
 	_app_state.set("actors", records)
 	await _settle_frames(2)
+
+
+static func expected_visible_count(visibility: String, count: int) -> int:
+	if visibility == "lod_bands":
+		return count * 2 / 3
+	if visibility in ["half300", "frustum_half", "range_bands"]:
+		return count / 2
+	if visibility in ["concentrated", "zoom"]:
+		return count
+	return -1
+
+
+func _lod_fixture_points(camera: Camera3D, local_position: Vector3,
+		count: int, ground_y: float) -> Array[Vector3]:
+	# Derive visible points from real viewport rays rather than assuming a camera
+	# orientation. Canonical tiles are filtered with generous distance margins,
+	# making the 100/100/100 census stable after terrain grounding.
+	var group := count / 3
+	var near: Array[Vector3] = [local_position]
+	var middle: Array[Vector3] = []
+	var far: Array[Vector3] = []
+	var occupied: Dictionary = {_adapter.godot_to_server(local_position): true}
+	var viewport_size := camera.get_viewport().get_visible_rect().size
+	for row: int in range(96):
+		for column: int in range(128):
+			var normalized := Vector2(
+				lerpf(0.08, 0.92, (float(column) + 0.5) / 128.0),
+				lerpf(0.08, 0.92, (float(row) + 0.5) / 96.0))
+			var screen := Vector2(viewport_size.x * normalized.x,
+				viewport_size.y * normalized.y)
+			var origin := camera.project_ray_origin(screen)
+			var direction := camera.project_ray_normal(screen)
+			if absf(direction.y) < 0.00001:
+				continue
+			var ray_distance := (ground_y - origin.y) / direction.y
+			if ray_distance <= 1.0:
+				continue
+			var projected := origin + direction * ray_distance
+			var tile := _adapter.godot_to_server(projected)
+			if occupied.has(tile):
+				continue
+			var candidate := _adapter.tile_center(tile.x, tile.y)
+			candidate.y = ground_y
+			if not _point_camera_visible(camera, local_position, candidate, 0.25):
+				continue
+			var local_distance := local_position.distance_to(candidate)
+			var camera_distance := camera.global_position.distance_to(candidate + Vector3.UP)
+			if near.size() < group and local_distance >= 12.0 \
+					and local_distance <= 40.0 and camera_distance <= 40.0:
+				occupied[tile] = true
+				near.append(candidate)
+			elif middle.size() < group and local_distance >= 52.0 \
+					and local_distance <= 72.0 and camera_distance >= 50.0:
+				occupied[tile] = true
+				middle.append(candidate)
+			if near.size() == group and middle.size() == group:
+				break
+		if near.size() == group and middle.size() == group:
+			break
+	_expect(near.size() == group and middle.size() == group,
+		"lod_bands finds %d near/full and %d middle/half viewport tiles" % [
+			near.size(), middle.size()])
+	var toward := local_position - camera.global_position
+	toward.y = 0.0
+	toward = toward.normalized()
+	var right := Vector3.UP.cross(toward).normalized()
+	var far_index := 0
+	while far.size() < group and far_index < 2000:
+		var column := far_index % 20
+		var row := far_index / 20
+		var projected := Vector3(local_position.x, ground_y, local_position.z) \
+			- toward * (92.0 + float(row) * 2.5) \
+			+ right * (float(column) - 9.5) * 1.4
+		var tile := _adapter.godot_to_server(projected)
+		var candidate := _adapter.tile_center(tile.x, tile.y)
+		candidate.y = ground_y
+		if not occupied.has(tile) and local_position.distance_to(candidate) > 85.0 \
+				and not _point_frustum_visible(camera, candidate, 0.25):
+			occupied[tile] = true
+			far.append(candidate)
+		far_index += 1
+	_expect(far.size() == group,
+		"lod_bands finds %d beyond-range paused tiles" % far.size())
+	var points: Array[Vector3] = []
+	points.append_array(near)
+	points.append_array(middle)
+	points.append_array(far)
+	return points
+
+
+func _point_frustum_visible(camera: Camera3D, point: Vector3,
+		radius: float) -> bool:
+	var anchor := point + Vector3.UP
+	for plane: Plane in camera.get_frustum():
+		if plane.distance_to(anchor) > radius:
+			return false
+	return true
 
 
 func _unique_fixture_point(camera: Camera3D, local_position: Vector3,

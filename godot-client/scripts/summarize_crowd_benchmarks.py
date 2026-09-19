@@ -69,9 +69,11 @@ SCALING_COUNTS = (100, 200, 300, 500)
 
 DRIVER_VERSION = "deferred-coalesced-role-faithful-v2"
 DRIVER_ROLE_CYCLE = ["caster_effect", "ranged_animation", "melee_primary", "melee_primary"]
-DRIVER_PRESENTATION_COALESCING = "AppState dirty signals consumed by Main deferred sync"
+DRIVER_PRESENTATION_COALESCING = "timed AppState dirty signals consumed by Main deferred sync"
 DRIVER_ACTUAL_FLUSH_METRIC = "benchmark Main sync_world_inclusive calls per measured frame"
 DRIVER_FLUSH_SOURCE = "frame_calls.sync_world_inclusive"
+STAT_FIELDS = ("mean", "p50", "p95", "p99", "max")
+SERIALIZED_STAT_TOLERANCE = 5e-7
 
 
 class SummaryError(ValueError):
@@ -144,6 +146,71 @@ def _expected_active_count(count: int, activity: str, context: str) -> int:
     raise SummaryError(f"{context}.activity has unsupported value {activity!r}")
 
 
+def _expected_visible_count(count: int, visibility: str, context: str) -> int:
+    if visibility == "lod_bands":
+        if count != 300:
+            raise SummaryError(f"{context}.visibility lod_bands requires exactly 300 actors")
+        return 200
+    if visibility in {"half300", "frustum_half", "range_bands"}:
+        return count // 2
+    if visibility in {"concentrated", "zoom"}:
+        return count
+    raise SummaryError(f"{context}.visibility has unsupported value {visibility!r}")
+
+
+def _validate_lod_fixture(fixture: dict[str, Any], count: int, context: str) -> None:
+    if count != 300:
+        raise SummaryError(f"{context} requires exactly 300 actors")
+    before = _required_dict(fixture, "before", context)
+    expected_maps = {
+        "distanceBands": {"near0To45": 100, "mid45To80": 100, "beyond80": 100},
+        "animationTiers": {"full": 100, "half": 100, "paused": 100},
+    }
+    for key, expected in expected_maps.items():
+        raw = _required_dict(before, key, f"{context}.before")
+        if set(raw) != set(expected):
+            raise SummaryError(
+                f"{context}.before.{key} keys are {sorted(raw)}; expected {sorted(expected)}"
+            )
+        actual = {
+            name: _required_int(raw, name, f"{context}.before.{key}") for name in expected
+        }
+        if actual != expected:
+            raise SummaryError(
+                f"{context}.before.{key} is {actual}; expected {expected}"
+            )
+    for key in ("frustumAndDrawVisible", "frustumIntersecting", "withinDrawDistance"):
+        actual = _required_int(before, key, f"{context}.before")
+        if actual != 200:
+            raise SummaryError(f"{context}.before.{key} is {actual}; expected 200")
+
+    camera = _required_dict(fixture, "camera", context)
+    expected_camera = {
+        "distance": 32.0,
+        "pitchDegrees": -25.0,
+        "yawDegrees": 0.0,
+        "fieldOfViewDegrees": 75.0,
+    }
+    for key, expected in expected_camera.items():
+        actual = _finite_number(camera.get(key), f"{context}.camera.{key}")
+        if not math.isclose(actual, expected, rel_tol=1e-12, abs_tol=SERIALIZED_STAT_TOLERANCE):
+            raise SummaryError(f"{context}.camera.{key} is {actual}; expected {expected}")
+
+    visibility = _required_dict(fixture, "visibilityValidation", context)
+    for key in ("min", "max"):
+        actual = _required_int(visibility, key, f"{context}.visibilityValidation")
+        if actual != 200:
+            raise SummaryError(
+                f"{context}.visibilityValidation.{key} is {actual}; expected 200"
+            )
+    grounding = _required_dict(fixture, "grounding", context)
+    expected_grounding = {"surfaceHits": 300, "surfaceMatches": 300, "surfaceMisses": 0}
+    for key, expected in expected_grounding.items():
+        actual = _required_int(grounding, key, f"{context}.grounding")
+        if actual != expected:
+            raise SummaryError(f"{context}.grounding.{key} is {actual}; expected {expected}")
+
+
 def _validate_driver(data: dict[str, Any], context: str, allow_legacy: bool) -> dict[str, Any]:
     raw = data.get("driver")
     if raw is None:
@@ -202,9 +269,9 @@ def _validate_stat(value: Any, context: str, maximum_samples: int) -> dict[str, 
             f"{context}.samples ({samples}) exceeds the cell frame count ({maximum_samples})"
         )
     checked: dict[str, Any] = {"samples": samples}
-    for key in ("mean", "p95", "p99", "max"):
+    for key in STAT_FIELDS:
         checked[key] = _finite_number(value.get(key), f"{context}.{key}")
-    if checked["p95"] > checked["max"] or checked["p99"] > checked["max"]:
+    if not (checked["p50"] <= checked["p95"] <= checked["p99"] <= checked["max"]):
         raise SummaryError(f"{context} percentile exceeds max")
     return checked
 
@@ -233,6 +300,115 @@ def _integer_series(value: Any, context: str, frames: int) -> list[int]:
             raise SummaryError(f"{context}[{index}] must be a non-negative integer")
         result.append(int(number))
     return result
+
+
+def _harness_round(value: float) -> float:
+    # Mirrors snappedf(value, 0.001) for the benchmark's non-negative samples.
+    return math.floor(value / 0.001 + 0.5) * 0.001
+
+
+def _raw_series(value: Any, context: str, frames: int) -> list[float | None]:
+    if not isinstance(value, list) or len(value) != frames:
+        raise SummaryError(f"{context} length must equal frames")
+    checked: list[float | None] = []
+    for index, item in enumerate(value):
+        checked.append(None if item is None else _finite_number(item, f"{context}[{index}]"))
+    return checked
+
+
+def _harness_distribution(values: Iterable[float | None]) -> dict[str, float | int] | None:
+    usable = sorted(value for value in values if value is not None)
+    if not usable:
+        return None
+    total = 0.0
+    for value in usable:
+        total += value
+
+    def percentile(fraction: float) -> float:
+        index = min(max(math.ceil(fraction * len(usable)) - 1, 0), len(usable) - 1)
+        return _harness_round(usable[index])
+
+    return {
+        "samples": len(usable),
+        "mean": _harness_round(total / len(usable)),
+        "p50": percentile(0.50),
+        "p95": percentile(0.95),
+        "p99": percentile(0.99),
+        "max": _harness_round(usable[-1]),
+    }
+
+
+def _require_distribution_match(
+    actual: dict[str, Any] | None,
+    expected: dict[str, float | int] | None,
+    context: str,
+) -> None:
+    if expected is None:
+        if actual is not None:
+            raise SummaryError(f"{context} must be null because every raw sample is null")
+        return
+    if actual is None:
+        raise SummaryError(f"{context} is null despite available raw samples")
+    if actual["samples"] != expected["samples"]:
+        raise SummaryError(
+            f"{context}.samples is {actual['samples']}; raw samples produce {expected['samples']}"
+        )
+    for key in STAT_FIELDS:
+        if not math.isclose(
+            actual[key], float(expected[key]), rel_tol=1e-12, abs_tol=SERIALIZED_STAT_TOLERANCE
+        ):
+            raise SummaryError(
+                f"{context}.{key} is {actual[key]}; raw samples produce {expected[key]}"
+            )
+
+
+def _validate_raw_distributions(
+    raw_value: Any,
+    summary_value: Any,
+    summary: dict[str, dict[str, Any] | None],
+    packet_summary_value: Any,
+    packet_summary: dict[str, dict[str, Any] | None],
+    frames: int,
+    context: str,
+) -> dict[str, list[float | None]]:
+    if not isinstance(raw_value, dict):
+        raise SummaryError(f"{context}.raw must be an object")
+    if not isinstance(summary_value, dict):
+        raise SummaryError(f"{context}.summary must be an object")
+    if set(summary_value) != set(raw_value):
+        raise SummaryError(f"{context}.summary keys must exactly match raw metric keys")
+
+    raw: dict[str, list[float | None]] = {}
+    for metric, values in raw_value.items():
+        if not isinstance(metric, str) or not metric:
+            raise SummaryError(f"{context}.raw metric names must be non-empty strings")
+        raw[metric] = _raw_series(values, f"{context}.raw.{metric}", frames)
+        _require_distribution_match(
+            summary.get(metric),
+            _harness_distribution(raw[metric]),
+            f"{context}.summary.{metric}",
+        )
+
+    if not isinstance(packet_summary_value, dict):
+        raise SummaryError(f"{context}.packetBearingSummary must be an object")
+    if set(packet_summary_value) != set(PACKET_METRICS):
+        raise SummaryError(
+            f"{context}.packetBearingSummary keys must exactly match packet-bearing metrics"
+        )
+    packets = raw.get("packetsPerFrame")
+    if packets is None or any(value is None for value in packets):
+        raise SummaryError(f"{context}.raw.packetsPerFrame must contain a value for every frame")
+    for metric in PACKET_METRICS:
+        values = raw.get(metric)
+        if values is None:
+            raise SummaryError(f"{context}.raw.{metric} is required for packet-bearing validation")
+        selected = [values[index] for index, count in enumerate(packets) if int(count) > 0]
+        _require_distribution_match(
+            packet_summary.get(metric),
+            _harness_distribution(selected),
+            f"{context}.packetBearingSummary.{metric}",
+        )
+    return raw
 
 
 def _validate_driver_attestation(
@@ -366,9 +542,7 @@ def _validate_cell(
         raise SummaryError(f"{context}.count must be a positive integer")
     for key in ("activity", "population", "visibility", "features", "network"):
         _required_text(cell, key, context)
-    expected_visible = count // 2 if cell["visibility"] in {
-        "half300", "frustum_half", "range_bands"
-    } else count
+    expected_visible = _expected_visible_count(count, cell["visibility"], context)
     expected_active = _expected_active_count(count, cell["activity"], context)
     fixture = _required_dict(cell, "fixture", context)
     for phase in ("before", "after"):
@@ -386,6 +560,8 @@ def _validate_cell(
                 f"{context}.fixture.{phase}.frustumAndDrawVisible is {actual_visible}; "
                 f"expected {expected_visible}"
             )
+    if cell["visibility"] == "lod_bands":
+        _validate_lod_fixture(fixture, count, f"{context}.fixture")
     planned_active = _required_int(cell, "plannedActive", context)
     if planned_active != expected_active:
         raise SummaryError(
@@ -429,8 +605,9 @@ def _validate_cell(
             f"{context}.sample.frames is {frames}; minimum required is {min_frames}"
         )
 
+    summary_value = sample.get("summary")
     summary = _validate_summary(
-        sample.get("summary"), f"{context}.sample.summary", frames, SUMMARY_METRICS
+        summary_value, f"{context}.sample.summary", frames, SUMMARY_METRICS
     )
     wall = summary.get("wallMilliseconds")
     if wall is None:
@@ -440,18 +617,22 @@ def _validate_cell(
             f"{context}.sample.summary.wallMilliseconds.samples must equal frames"
         )
 
+    packet_summary_value = sample.get("packetBearingSummary", {})
     packet_summary = _validate_summary(
-        sample.get("packetBearingSummary", {}),
+        packet_summary_value,
         f"{context}.sample.packetBearingSummary",
         frames,
         PACKET_METRICS,
     )
-    raw = sample.get("raw")
-    if not isinstance(raw, dict):
-        raise SummaryError(f"{context}.sample.raw must be an object")
-    raw_wall = raw.get("wallMilliseconds")
-    if not isinstance(raw_wall, list) or len(raw_wall) != frames:
-        raise SummaryError(f"{context}.sample.raw.wallMilliseconds length must equal frames")
+    raw = _validate_raw_distributions(
+        sample.get("raw"),
+        summary_value,
+        summary,
+        packet_summary_value,
+        packet_summary,
+        frames,
+        f"{context}.sample",
+    )
 
     if headless:
         for metric in HEADLESS_UNAVAILABLE_METRICS:
@@ -558,6 +739,9 @@ def _validate_run(
     shared_machine = data.get("sharedMachine")
     if not isinstance(shared_machine, bool):
         raise SummaryError(f"{context}: sharedMachine must be a boolean")
+    dirty = data.get("dirty")
+    if not isinstance(dirty, bool):
+        raise SummaryError(f"{context}: dirty must be a boolean")
     driver = _validate_driver(data, context, allow_legacy_driver)
 
     planned = data.get("plannedCells")
@@ -601,7 +785,7 @@ def _validate_run(
         "headless": headless,
         "commit": commit,
         "sourceHash": source_hash,
-        "dirty": data.get("dirty"),
+        "dirty": dirty,
         "trial": trial,
         "sharedMachine": shared_machine,
         "interferenceLabel": data.get("interferenceLabel"),
@@ -718,22 +902,38 @@ def _validate_companion(run: dict[str, Any], allow_missing_for_fixtures: bool) -
         raise SummaryError(f"{context}.abortedAfterReport is true")
     if _required_bool(data, "postReportStop", context):
         raise SummaryError(f"{context}.postReportStop is true (forced post-report termination)")
-    for key in ("forcedTermination", "forceTerminated"):
-        if key in data and _required_bool(data, key, context):
-            raise SummaryError(f"{context}.{key} is true")
-    if "reportValid" in data and not _required_bool(data, "reportValid", context):
-        raise SummaryError(f"{context}.reportValid is false")
-    if "schemaValid" in data and not _required_bool(data, "schemaValid", context):
-        raise SummaryError(f"{context}.schemaValid is false")
-    if "scriptErrorsDetected" in data and _required_bool(data, "scriptErrorsDetected", context):
-        raise SummaryError(f"{context}.scriptErrorsDetected is true")
+    current_fields = (
+        "reportValid",
+        "schemaValid",
+        "scriptErrorsDetected",
+        "forcedTermination",
+        "monitoringError",
+    )
     current_attestation = any(
-        key in data for key in ("reportValid", "schemaValid", "scriptErrorsDetected")
+        key in data for key in current_fields
     )
     if current_attestation:
-        for key in ("reportValid", "scriptErrorsDetected"):
+        for key in current_fields:
             if key not in data:
                 raise SummaryError(f"{context}.{key} is required for current process metadata")
+    forced_termination = data.get("forcedTermination")
+    if current_attestation:
+        if _required_bool(data, "forcedTermination", context):
+            raise SummaryError(f"{context}.forcedTermination is true")
+        monitoring_error = data["monitoringError"]
+        if not isinstance(monitoring_error, str):
+            raise SummaryError(f"{context}.monitoringError must be a string")
+        if monitoring_error:
+            raise SummaryError(f"{context}.monitoringError is non-empty: {monitoring_error}")
+        if not _required_bool(data, "reportValid", context):
+            raise SummaryError(f"{context}.reportValid is false")
+        if not _required_bool(data, "schemaValid", context):
+            raise SummaryError(f"{context}.schemaValid is false")
+        if _required_bool(data, "scriptErrorsDetected", context):
+            raise SummaryError(f"{context}.scriptErrorsDetected is true")
+    elif "forceTerminated" in data and _required_bool(data, "forceTerminated", context):
+        raise SummaryError(f"{context}.forceTerminated is true")
+    monitoring_error = data.get("monitoringError")
 
     affinity_mask = _required_int(data, "affinityMask", context)
     if affinity_mask != 0xF:
@@ -789,6 +989,11 @@ def _validate_companion(run: dict[str, Any], allow_missing_for_fixtures: bool) -
     dirty = data.get("dirty")
     if not isinstance(dirty, bool):
         raise SummaryError(f"{context}.dirty must be a boolean")
+    if dirty != run["dirty"]:
+        raise SummaryError(
+            f"{context}.dirty does not match its report; "
+            f"companion={dirty!r}, report={run['dirty']!r}"
+        )
 
     run["companionProcess"] = {
         "status": "validated",
@@ -802,6 +1007,8 @@ def _validate_companion(run: dict[str, Any], allow_missing_for_fixtures: bool) -
         "cleanExit": data["cleanExit"],
         "abortedAfterReport": data["abortedAfterReport"],
         "postReportStop": data["postReportStop"],
+        "forcedTermination": forced_termination,
+        "monitoringError": monitoring_error,
         "reportValid": data.get("reportValid"),
         "schemaValid": data.get("schemaValid"),
         "scriptErrorsDetected": data.get("scriptErrorsDetected"),
@@ -1090,7 +1297,7 @@ def _find_scaling_cell(cells: list[dict[str, Any]], count: int, activity: str) -
         return preferred[0]
     if len(matches) == 1:
         return matches[0]
-    raise SummaryError(f"multiple cells match scaling row count={count}, activity={activity}")
+    return None
 
 
 def _markdown(report: dict[str, Any]) -> str:
@@ -1166,6 +1373,40 @@ def _markdown(report: dict[str, Any]) -> str:
                         else cell["metrics"]["wallMilliseconds"]["medianOfRunMeans"]
                     )
                     row.append(_format_number(value))
+                lines.append("| " + " | ".join(row) + " |")
+            lines.append("")
+
+        nonprimary_cells = [
+            cell for cell in group["cells"] if cell["id"] != "acceptance-mixed300"
+        ]
+        if nonprimary_cells:
+            cell_title = (
+                "### Cells: scene CPU proxy wall and renderer metrics"
+                if group["headless"]
+                else "### Cells: diagnostic wall and world-render metrics (wall non-authoritative)"
+            )
+            lines.extend(
+                [
+                    cell_title,
+                    "",
+                    "| Cell | Wall mean, median of run means (ms) | Per-run wall p95 (ms) | Per-run wall p99 (ms) | World render CPU mean (ms) | World render GPU mean (ms) | Draw calls mean |",
+                    "| --- | ---: | --- | --- | ---: | ---: | ---: |",
+                ]
+            )
+            for cell in nonprimary_cells:
+                wall = cell["metrics"]["wallMilliseconds"]
+                world_cpu = cell["metrics"]["worldRenderCpuMilliseconds"]
+                world_gpu = cell["metrics"]["worldRenderGpuMilliseconds"]
+                draw_calls = cell["metrics"]["drawCalls"]
+                row = [
+                    f"`{cell['id']}`",
+                    _format_number(wall["medianOfRunMeans"]),
+                    _run_values(wall, "p95"),
+                    _run_values(wall, "p99"),
+                    _format_number(world_cpu["medianOfRunMeans"]),
+                    _format_number(world_gpu["medianOfRunMeans"]),
+                    _format_number(draw_calls["medianOfRunMeans"]),
+                ]
                 lines.append("| " + " | ".join(row) + " |")
             lines.append("")
 

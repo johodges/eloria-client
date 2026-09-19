@@ -48,7 +48,8 @@ or define the `custom` profile. Useful values are:
 
 - populations: `creature`, `humanoid`, `mixed`;
 - activities: `idle`, `move25`, `third_active`, `all_move`, `all_combat`;
-- visibility: `concentrated`, `frustum_half`, `half300`, `range_bands`, `zoom`;
+- visibility: `concentrated`, `frustum_half`, `half300`, `range_bands`, `zoom`,
+  `lod_bands` (300 actors only);
 - features: `full`, `bare`, `no_cape`, `no_effects`, `no_overhead`, `no_ground`,
   `no_animation`;
 - network: `normal_burst`, `asynchronous`, `folded_turn_attack`,
@@ -61,8 +62,133 @@ standard scaling matrix:
 ```powershell
 godot-client/scripts/run_crowd_benchmarks.ps1 `
   -GodotPath C:/path/to/Godot.exe -Profile matrix -Mode Headless `
-  -Counts 100,500 -Activities all_move
+  -Counts "100,500" -Activities all_move
 ```
+
+The predefined `matrix` profile contains `all_combat` unless it is filtered.
+That workload intentionally creates sustained spell effects and can fail the
+sample-sufficiency or live-effect safety bounds. A default, unfiltered matrix
+therefore can fail the whole profile by design. The accepted 12-cell scaling
+matrix excludes that stress workload and can be replayed in the three measured
+display/renderer configurations with:
+
+```powershell
+$runner = "godot-client/scripts/run_crowd_benchmarks.ps1"
+$godot = "C:/path/to/Godot.exe"
+$matrix = @{
+  GodotPath = $godot
+  Profile = "matrix"
+  NativeBackend = "GDScript"
+  Repeats = 1
+  Counts = "100,200,300,500"
+  Activities = "idle,third_active,all_move"
+  Label = "final-matrix-coalesced"
+}
+& $runner @matrix -Mode Headless -Renderer gl_compatibility
+& $runner @matrix -Mode Windowed -Renderer gl_compatibility
+& $runner @matrix -Mode Windowed -Renderer forward_plus
+```
+
+Run the bounded all-combat cells separately so one rejected population cannot
+prevent another population or display mode from producing an artifact. These
+commands match the final stress fixture, including `frustum_half` at 300 actors:
+
+```powershell
+foreach ($count in 100, 200, 300, 500) {
+  foreach ($mode in "Headless", "Windowed") {
+    try {
+      & $runner -GodotPath $godot -Profile custom -Mode $mode `
+        -NativeBackend GDScript -Renderer forward_plus -Repeats 1 `
+        -Counts ([string]$count) -Populations mixed -Activities all_combat `
+        -Visibilities frustum_half -Features full -Networks normal_burst `
+        -Label "final-combat-coalesced-$count"
+    }
+    catch {
+      if ($count -ne 500) { throw }
+      Write-Warning "Retained the rejected bounded 500-actor stress artifact: $_"
+    }
+  }
+}
+```
+
+In the recorded 500-actor run, Godot exited with code 2 because the cell crossed
+the 4,096-live-effect guard and consequently did not reach 60 frames. The
+launcher correctly rejects that report. Its partial JSON is bounded overload
+evidence, not accepted timing evidence; a replay is not required to fail at the
+same point on another machine.
+
+The focused feature repeats use opposite explicit cell orders, rather than
+depending on dictionary or filesystem ordering:
+
+```powershell
+& $runner -GodotPath $godot -Profile custom -Mode Headless `
+  -NativeBackend GDScript -Renderer gl_compatibility -Repeats 1 `
+  -Counts 300 -Populations humanoid -Activities third_active `
+  -Visibilities half300 `
+  -Features "no_animation,no_effects,full,no_cape" -Networks normal_burst `
+  -Label final-features-repeat-coalesced-a
+
+& $runner -GodotPath $godot -Profile custom -Mode Headless `
+  -NativeBackend GDScript -Renderer gl_compatibility -Repeats 1 `
+  -Counts 300 -Populations humanoid -Activities third_active `
+  -Visibilities half300 `
+  -Features "no_cape,full,no_animation,no_effects" -Networks normal_burst `
+  -Label final-features-repeat-coalesced-b
+```
+
+The remaining custom diagnostics use the same GDScript/full/normal-burst
+boundary and request one headless and one Forward+ windowed run. `-Mode Both`
+with one `forward_plus` renderer produces exactly those two artifacts:
+
+```powershell
+# One quarter of each population moves.
+& $runner -GodotPath $godot -Profile custom -Mode Both `
+  -NativeBackend GDScript -Renderer forward_plus -Repeats 1 `
+  -Counts "100,200,300,500" -Populations mixed -Activities move25 `
+  -Visibilities frustum_half -Features full -Networks normal_burst `
+  -Label final-diagnostics-coalesced-move25
+
+# 299 model-backed creatures plus the required local humanoid.
+& $runner -GodotPath $godot -Profile custom -Mode Both `
+  -NativeBackend GDScript -Renderer forward_plus -Repeats 1 `
+  -Counts 300 -Populations creature -Activities third_active `
+  -Visibilities half300 -Features full -Networks normal_burst `
+  -Label final-diagnostics-coalesced-creature300
+
+# Three distinct 300-actor visibility layouts.
+& $runner -GodotPath $godot -Profile custom -Mode Both `
+  -NativeBackend GDScript -Renderer forward_plus -Repeats 1 `
+  -Counts 300 -Populations mixed -Activities third_active `
+  -Visibilities "concentrated,range_bands,zoom" `
+  -Features full -Networks normal_burst `
+  -Label final-diagnostics-coalesced-visibility300
+
+# Exact near/full, middle/half-rate and beyond-range/paused LOD bands.
+& $runner -GodotPath $godot -Profile custom -Mode Both `
+  -NativeBackend GDScript -Renderer forward_plus -Repeats 1 `
+  -Counts 300 -Populations mixed -Activities third_active `
+  -Visibilities lod_bands -Features full -Networks normal_burst `
+  -Label final-diagnostics-coalesced-lod-bands
+```
+
+The creature preset uses the default 1 x 1 actor footprint and reserves unique
+anchor tiles; it does not test multi-tile occupancy or collision. The fixture
+selects a known actor but does not assert marker geometry, visibility, or marker
+movement. Network stress validation is limited to decode/dispatch checks and
+unchanged-gear identity, not authoritative gameplay outcomes for health, buffs
+or changed equipment.
+The zoom preset lays out a fresh population after changing camera distance, so
+it is not a same-layout before/after culling comparison.
+
+The `lod_bands` fixture fixes the camera at distance 32, pitch -25 degrees, yaw
+0 degrees and a 75-degree field of view. Its initial census must contain exactly
+100 actors at 0-45 m, 100 at 45-80 m and 100 beyond 80 m, corresponding to 100
+full-rate, 100 half-rate and 100 paused animation tiers. Exactly 200 must remain
+inside both the camera frustum and 80 m draw range throughout the validation
+span. The exact tier assertion applies to the initial settled fixture. Timed
+combat or movement can temporarily promote an actor for a one-shot animation;
+the observed 101/99/100 post-workload split is valid and is not forced back to
+the initial split by the summarizer.
 
 `-Map none` removes map geometry for an actor-only diagnostic. Acceptance uses
 Four Gates by default. `-SampleMilliseconds`, `-WarmupMilliseconds` and
@@ -131,6 +257,19 @@ records the exact executable path, start time, observed mask, script-error
 scan, and report-validation result. The two-thread
 environment setting is recorded as a request because Godot exposes no runtime
 worker-pool count; the four-CPU affinity is the enforced bound.
+
+The primary, feature, matrix, combat and stress evidence reports retain the fixed
+runtime composite source hash
+`dcd930f19ce1ec9857c3b5a546b082aaf00a0ed4fa99ffea373d9d10d0311480`.
+They also correctly record a dirty worktree because the tracked analytical
+summary script changed while measurements were collected. Analysis and
+documentation files such as that script and this guide are outside the runner's
+runtime source manifest; the per-file manifest and fixed composite hash show
+that the measured runtime inputs did not change. The reports should still be
+described as dirty-worktree runs, not as a clean checkout.
+The later `lod_bands` fixture changes the benchmark runtime source, so its
+headless and windowed reports have a newer composite hash; those two reports
+must match each other and carry their own per-file manifest.
 
 Headless and windowed runs answer different questions:
 

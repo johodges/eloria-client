@@ -56,6 +56,12 @@ func _init() -> void:
 		and stress_names.has("protocol_unchanged_gear")
 		and stress_names.has("protocol_changed_gear_lifecycle"),
 		"stress includes commands, health/buffs and equipment lifecycle packets")
+	_expect(CrowdBenchmark.expected_visible_count("lod_bands", 300) == 200,
+		"the supplemental LOD fixture declares 200 camera-visible actors")
+	_expect(CrowdBenchmark.expected_visible_count("range_bands", 300) == 150,
+		"the existing range fixture retains its 150-visible contract")
+	_expect(CrowdBenchmark.expected_visible_count("misspelled", 300) == -1,
+		"an unknown visibility token is rejected instead of acting concentrated")
 	print("crowd benchmark contract: ",
 		"PASS" if _failures == 0 else "FAIL (%d)" % _failures)
 	quit(_failures)
