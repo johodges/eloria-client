@@ -41,6 +41,7 @@ import transitions as MARCH                 # noqa: E402
 import secretdoors as SD                    # noqa: E402
 import secrets_design as SEC                # noqa: E402
 import loresites as LORE                    # noqa: E402
+import cave_model as CAVE                   # noqa: E402
 
 SEED = 20260828
 # Class islands smaller than this are given to whatever surrounds them. Six
@@ -247,11 +248,12 @@ def _split_group(key: str, item) -> tuple[dict[str, M.Mesh], dict[str, M.Mesh]]:
 
 def export_glb(build: RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuilder, dict]:
     builder = GLTF.GltfBuilder(
-        generator="Eloria Whitehorn Range builder (original procedural assets)")
+        generator="Eloria Whitehorn Range builder (procedural region plus pinned Meshy cave)")
     MAT.register_gltf_materials(builder, sets, only=MATERIALS | getattr(build,'vista_materials',set()))
     MAT.register_ground_materials(
         builder, sets,
         {piece.material for piece in build.terrain_meshes.values()})
+    CAVE.register_material(builder)
 
     # Tangents are intentionally omitted: Godot's glTF importer generates them
     # for normal-mapped materials, and shipping them costs sixteen bytes a
@@ -635,6 +637,23 @@ def _environment() -> dict:
     }
 
 
+def publication_metadata() -> dict:
+    """Metadata retained when this regional build enters the continent library."""
+    cave = CAVE.provenance()
+    return {
+        "sources": {"caveModel": cave},
+        "provenance": {
+            "generator": "Eloria Whitehorn Range builder",
+            "seed": SEED,
+            "toolkit": "maps/nymara-regions/_toolkit",
+            "deterministic": True,
+            "assets": "Region geometry and textures are procedural except the "
+                      "owner-approved pinned Meshy Whitehorn cave model.",
+            "thirdPartyModels": {"whitehornIceCaveMouthV001": cave},
+        },
+    }
+
+
 def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
                    minimap: dict, path: Path) -> dict:
     t = build.terrain
@@ -656,6 +675,7 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
     build.resolve_names()
     collision_nodes = sorted({p.node for p in build.placements if p.collides})
 
+    publication = publication_metadata()
     manifest = {
         "schemaVersion": SCHEMA_VERSION,
         "assetVersion": ASSET_VERSION,
@@ -740,15 +760,9 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
                        "whitehorn_range_region_concept.png",
             "detailBoard": "references/00-concept-detail-board.png",
             "build": "source/build_whitehorn.py",
+            **publication["sources"],
         },
-        "provenance": {
-            "generator": "Eloria Whitehorn Range builder",
-            "seed": SEED,
-            "toolkit": "maps/nymara-regions/_toolkit",
-            "deterministic": True,
-            "assets": "All geometry and textures generated procedurally; no "
-                      "third-party models or images.",
-        },
+        "provenance": publication["provenance"],
         "productionStatus": "production-geometry-materials-population",
         "knownLimitations": build.notes,
     }
@@ -804,6 +818,7 @@ def main() -> int:
 
     texture_bytes = sum(sum(len(v) for v in ts.images().values())
                         for name, ts in sets.items() if name in MATERIALS)
+    texture_bytes += CAVE.embedded_texture_bytes()
     stats["embeddedTextureBytes"] = texture_bytes
     stats["placements"] = len(build.placements)
     stats["collision"] = collision_stats

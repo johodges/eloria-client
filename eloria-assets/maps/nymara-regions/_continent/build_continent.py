@@ -364,6 +364,19 @@ def local_point(point,center):
     p=np.array(point,float).copy();p[[0,2]]-=center;return p.tolist()
 
 
+def apply_publication_metadata(manifest,library_metadata):
+    """Overlay the regional library's narrow provenance payload."""
+    payload=library_metadata.get('publicationMetadata',{})
+    if not payload:return
+    if not isinstance(payload,dict) or set(payload)-{'sources','provenance'}:
+        raise ValueError('Invalid regional publication metadata')
+    sources=payload.get('sources',{});provenance=payload.get('provenance',{})
+    if not isinstance(sources,dict) or not isinstance(provenance,dict):
+        raise ValueError('Invalid regional publication sources/provenance')
+    manifest.setdefault('sourceAssets',{}).update(copy.deepcopy(sources))
+    manifest.setdefault('provenance',{}).update(copy.deepcopy(provenance))
+
+
 def manifest_for(world,content,region):
     m=copy.deepcopy(content.templates[region]);center=np.array(world.regions[region]['center']);origin,cells=world.address(region)
     hub=world.hub(region);arrival=local_point([hub[0],float(world.height_at(*hub)),hub[1]],center)
@@ -418,6 +431,7 @@ def manifest_for(world,content,region):
                             'ownershipPolygon':world.polygons[region],'geometryMode':'continent-chunks-v1'}
     m['terrainRevision']='diagonal-spine-v1'
     m['sources']=['_continent/diagonal-plan.json','_continent/build_continent.py','_continent/build_library.py']
+    apply_publication_metadata(m,content.metadata[region])
     m['knownLimitations']=[]
     apply_manifest(world,region,m)
     # One physically consistent light, sea and haze across the whole landmass.

@@ -26,8 +26,9 @@ import numpy as np
 from amberwood import mesh as M
 from amberwood import noise as N
 from amberwood import stonework as SW
+import cave_model as CAVE
 
-# Materials, all drawn from the pinned set in build_whitehorn.MATERIALS.
+# Procedural materials below are drawn from the pinned set in build_whitehorn.MATERIALS.
 STONE = "pale_ashlar"
 ROCK = "cliff_rock"
 RUBBLE = "rubble_stone"
@@ -218,35 +219,18 @@ def _icicle_fringe(span: float, count: int, seed: int, drop: float = 1.5,
 
 def ice_cave_mouth(seed: int = 0, span: float = 7.5,
                    height: float = 5.2, approach_drop: float = 0.0) -> SW.MeshGroup:
-    """A cavern opening in blue ice, fringed with icicles. Panel 6.
+    """The approved Meshy ice-rock shell around the retained cave approach.
 
-    Faces -Z. The first version was a single icosphere with a throat pushed
-    into it, which rendered as a plain pale ball: the opening was swallowed by
-    the mass and nothing read as a cave at all. This builds the mouth as a
-    dark arched void framed by ice, which is what makes an opening legible
-    from outside without an interior behind it.
+    Faces -Z. ``span`` and ``height`` remain for call compatibility and for
+    positioning the retained stairs, floor and lanterns; the reviewed shell
+    uses its own pinned uniform scale in :mod:`cave_model`.
     """
-    rng = _rng(seed)
     group = SW.MeshGroup()
     half = span * 0.5
 
-    # The ice mass, as two flanking shoulders and a lintel rather than one
-    # ball, so there is an actual hole between them.
-    for side in (-1.0, 1.0):
-        shoulder = M.icosphere(span * 0.46, subdivisions=2, material=ICE)
-        shoulder.transform(M.scaling(0.85, 1.25, 1.05))
-        shoulder.transform(M.translation(side * (half + span * 0.20),
-                                         height * 0.42, 1.4))
-        group.add(shoulder)
-    brow = M.icosphere(span * 0.55, subdivisions=2, material=ICE)
-    brow.transform(M.scaling(1.35, 0.55, 1.0))
-    brow.transform(M.translation(0.0, height * 0.95, 1.5))
-    group.add(brow)
-
-    # the void: a dark recess the shoulders frame, set back from the lip
-    group.add(M.box((span * 0.78, height * 0.86, 5.0),
-                    center=(0.0, height * 0.43, 3.1),
-                    uv_scale=1.0, material=IRON))
+    # The model supplies the full visible shell and its own recessed interior.
+    # It deliberately does not replace the proven gameplay floor or approach.
+    group.add(CAVE.source_mesh(scale=CAVE.scale_for_span(span)))
     # a floor of trodden ice running out of it
     floor = M.box((span * 0.80, 0.25, 6.0), center=(0.0, 0.12, 1.4),
                   uv_scale=1.4, material=ICE)
@@ -258,23 +242,6 @@ def ice_cave_mouth(seed: int = 0, span: float = 7.5,
                         0.60, 9, uv_scale=1.4, material=ICE)
     approach.transform(M.translation(0.0, -approach_drop, -7.0))
     group.add_walk(approach)
-
-    # broken ice around the lip, and the icicle fringe over the opening
-    shards = []
-    for i in range(16):
-        angle = math.pi * (i / 15.0)
-        radius = half * (1.02 + 0.16 * rng.random())
-        shard = M.icosphere(0.30 + 0.34 * rng.random(), subdivisions=1,
-                            material=ICE)
-        shard.transform(M.scaling(0.7, 1.6, 0.7))
-        shard.transform(M.translation(math.cos(angle) * radius,
-                                      height * 0.30
-                                      + math.sin(angle) * height * 0.62,
-                                      0.35))
-        shards.append(shard)
-    group.add(M.merge(shards, material=ICE))
-    group.add(_icicle_fringe(span * 0.80, 18, seed + 5, drop=2.0,
-                             y=height * 0.86, material=ICE))
 
     # lanterns at the mouth, as panel 6 has them
     for side in (-1.0, 1.0):

@@ -45,9 +45,28 @@ def clean(value):
     return value
 
 
+def regional_publication_metadata(module):
+    """Return an optional regional manifest overlay as JSON-compatible data."""
+    provider = getattr(module, 'publication_metadata', None)
+    if provider is None:return {}
+    payload = clean(provider())
+    if not isinstance(payload, dict) or set(payload)-{'sources','provenance'}:
+        raise ValueError('publication_metadata must return only sources/provenance objects')
+    if any(not isinstance(payload.get(key,{}),dict) for key in ('sources','provenance')):
+        raise ValueError('publication_metadata sources/provenance must be objects')
+    return payload
+
+
 def inputs(region):
     sources = set(TOOLKIT.rglob('*.py')) | set((package(region)/'source').rglob('*.py'))
     sources.update((package(region)/'source').rglob('*.json'))
+    # Binary source assets are authored build inputs too. Keep this deliberately
+    # narrow: generated region textures and caches elsewhere in the package do
+    # not invalidate retained composition, while every regular file under the
+    # source asset tree does.
+    asset_root = package(region)/'source'/'assets'
+    if asset_root.is_dir():
+        sources.update(path for path in asset_root.rglob('*') if path.is_file())
     for name in ('_northern', '_finishing', '_outer', '_color'):
         sources.update((REGIONS/name).rglob('*.py'))
     sources.update([Path(__file__).resolve(), HERE/'legacy-geography.json', HERE/'legacy-contracts.json'])
@@ -153,6 +172,8 @@ def build(region, output, force=False):
         'landmarks','interactives','npc_markers','harvestables','portals','spawns','notes','empty_nodes','authored_roads','crossings')}
     metadata['placements'] = [clean(asdict(p)) for p in built.placements]
     metadata['region'] = region
+    publication = regional_publication_metadata(module)
+    if publication:metadata['publicationMetadata'] = publication
     (root/'library.json').write_text(json.dumps(metadata,indent=2)+'\n',encoding='utf-8')
     np.savez_compressed(root/'foundation-samples.npz', x=built.terrain.gx[0], z=built.terrain.gz[:,0], height=built.terrain.height)
     if certificate != inputs(region): raise RuntimeError('Source recipes changed during content composition')
