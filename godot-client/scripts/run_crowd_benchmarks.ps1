@@ -159,7 +159,17 @@ function Set-And-VerifyAffinity([System.Diagnostics.Process]$Process,
         $Process.ProcessorAffinity = 15
         $Process.Refresh()
         $actual = $Process.ProcessorAffinity.ToInt64()
-        $actualPath = $Process.MainModule.FileName
+        $actualPath = ""
+        for ($identityProbe = 0; $identityProbe -lt 20; $identityProbe++) {
+            $Process.Refresh()
+            $actualPath = $Process.Path
+            if (-not [string]::IsNullOrWhiteSpace($actualPath)) { break }
+            if ($Process.HasExited) { break }
+            Start-Sleep -Milliseconds 50
+        }
+        if ([string]::IsNullOrWhiteSpace($actualPath)) {
+            throw "Captured process path was unavailable for PID $($Process.Id)."
+        }
         $actualStartTime = $Process.StartTime.ToUniversalTime()
         $Observed[[string]$Process.Id] = @{
             name = $Process.ProcessName
@@ -176,8 +186,10 @@ function Set-And-VerifyAffinity([System.Diagnostics.Process]$Process,
             throw "Process $($Process.Id) has affinity $actual instead of 15."
         }
     }
-    catch [System.InvalidOperationException] {
-        # The captured process can exit between HasExited and inspection.
+    catch {
+        # A normal exit can race any property read. Suppress only that race;
+        # an inspection error while the captured process is alive must fail.
+        if (-not $Process.HasExited) { throw }
     }
 }
 
@@ -259,32 +271,63 @@ foreach ($trial in 1..$Repeats) {
 					-RedirectStandardError $stderrPath
 				$expectedProcessPath = $launchPath
 				$expectedProcessStart = $process.StartTime.ToUniversalTime()
-                Set-And-VerifyAffinity $process $observed $expectedProcessPath `
-					$expectedProcessStart
 				$deadline = (Get-Date).AddMinutes($TimeoutMinutes)
 				$artifactSeenAt = $null
 				$postReportStop = $false
-				do {
-					$process.Refresh()
-					$live = if ($process.HasExited) { 0 } else { 1 }
-					if ($live -gt 0) {
-						Set-And-VerifyAffinity $process $observed $expectedProcessPath `
-							$expectedProcessStart
-					}
-					if ((Get-Date) -ge $deadline) {
-						if (-not $process.HasExited) { $process.Kill($true) }
-						throw "$runId exceeded the $TimeoutMinutes minute timeout."
-					}
-					if (Test-Path -LiteralPath $jsonPath) {
-						if ($null -eq $artifactSeenAt) { $artifactSeenAt = Get-Date }
-						elseif (((Get-Date) - $artifactSeenAt).TotalSeconds -ge 5 -and $live -gt 0) {
-							$process.Kill($true)
-							$postReportStop = $true
+				$identityVerified = $false
+				try {
+					Set-And-VerifyAffinity $process $observed $expectedProcessPath `
+						$expectedProcessStart
+					$identityVerified = $observed.ContainsKey([string]$process.Id)
+					do {
+						$process.Refresh()
+						$live = if ($process.HasExited) { 0 } else { 1 }
+						if ($live -gt 0) {
+							Set-And-VerifyAffinity $process $observed $expectedProcessPath `
+								$expectedProcessStart
 						}
+						if ((Get-Date) -ge $deadline) {
+							if (-not $process.HasExited) { $process.Kill($true) }
+							throw "$runId exceeded the $TimeoutMinutes minute timeout."
+						}
+						if (Test-Path -LiteralPath $jsonPath) {
+							if ($null -eq $artifactSeenAt) { $artifactSeenAt = Get-Date }
+							elseif (((Get-Date) - $artifactSeenAt).TotalSeconds -ge 5 -and $live -gt 0) {
+								$process.Kill($true)
+								$postReportStop = $true
+							}
+						}
+						if ($live -gt 0) { Start-Sleep -Seconds 1 }
+					} while ($live -gt 0)
+					$process.WaitForExit()
+				}
+				catch {
+					$monitoringError = $_.Exception.Message
+					$forcedTermination = $false
+					try {
+						if (-not $process.HasExited) {
+							$process.Kill($true)
+							$forcedTermination = $true
+						}
+						$process.WaitForExit()
 					}
-					if ($live -gt 0) { Start-Sleep -Seconds 1 }
-                } while ($live -gt 0)
-                $process.WaitForExit()
+					catch {}
+					$failedExitCode = if ($process.HasExited) { $process.ExitCode } else { -1 }
+					@{
+						runId = $runId; rootPid = $process.Id; exitCode = $failedExitCode
+						affinityMask = 15; allObservedProcessesVerified = $false
+						observedProcesses = $observed; commit = $commit; dirty = $dirty
+						sourceHash = $sourceHash; sourceFiles = $sourceHashes
+						requestedGodotPath = $GodotPath; launchExecutablePath = $launchPath
+						monitoring = "captured direct Godot Process object only; monitoring failed"
+						monitoringError = $monitoringError; forcedTermination = $forcedTermination
+						postReportStop = $false; abortedAfterReport = $false; cleanExit = $false
+						scriptErrorsDetected = $false; schemaValid = $false; reportValid = $false
+						reportValidationError = "monitoring failed before report validation"
+						renderer = $renderingMethod; mode = $run; backend = $backend; trial = $trial
+					} | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $processPath
+					throw
+				}
 				$scriptErrorsDetected = $false
 				foreach ($diagnosticPath in @($logPath, $stdoutPath, $stderrPath)) {
 					if ((Test-Path -LiteralPath $diagnosticPath) -and
@@ -302,13 +345,16 @@ foreach ($trial in 1..$Repeats) {
 					$reportValidationError = $_.Exception.Message
 				}
 				$cleanExit = -not $postReportStop -and $process.ExitCode -eq 0
-				$reportValid = $schemaValid -and -not $scriptErrorsDetected -and $cleanExit
+				$reportValid = $identityVerified -and $schemaValid -and -not $scriptErrorsDetected -and $cleanExit
+				if (-not $identityVerified) {
+					$reportValidationError = "Process exited before executable identity and affinity were verified."
+				}
                 @{
                     runId = $runId
                     rootPid = $process.Id
                     exitCode = $process.ExitCode
                     affinityMask = 15
-                    allObservedProcessesVerified = $true
+                    allObservedProcessesVerified = $identityVerified
                     observedProcesses = $observed
                     commit = $commit
                     dirty = $dirty
@@ -317,6 +363,8 @@ foreach ($trial in 1..$Repeats) {
 					requestedGodotPath = $GodotPath
 					launchExecutablePath = $launchPath
 					monitoring = "captured direct Godot Process object only; exact path/start time and mask checked every second"
+					monitoringError = ""
+					forcedTermination = $postReportStop
 					postReportStop = $postReportStop
 					abortedAfterReport = $postReportStop
 					cleanExit = $cleanExit

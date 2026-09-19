@@ -99,6 +99,40 @@ function Quote-Argument([string]$Value) {
     return '"' + ($Value -replace '"', '\"') + '"'
 }
 
+function Get-CapturedProcessIdentity([Diagnostics.Process]$Process,
+        [string]$ExpectedPath) {
+    $lastFailure = "process identity was not available"
+    for ($probe = 0; $probe -lt 20; $probe++) {
+        if ($Process.HasExited) {
+            throw "Captured process $($Process.Id) exited before identity verification."
+        }
+        try {
+            $Process.Refresh()
+            $actualPath = $Process.Path
+            $actualStart = $Process.StartTime.ToUniversalTime()
+            $actualMask = $Process.ProcessorAffinity.ToInt64()
+            if ([string]::IsNullOrWhiteSpace($actualPath)) {
+                $lastFailure = "captured process path was empty"
+            } elseif (-not $actualPath.Equals(
+                    $ExpectedPath, [StringComparison]::OrdinalIgnoreCase)) {
+                throw "Captured process path changed: $actualPath"
+            } elseif ($actualMask -ne 15) {
+                throw "Captured process inherited affinity $actualMask instead of 15."
+            } else {
+                return [ordered]@{
+                    path = $actualPath
+                    startTimeUtc = $actualStart.ToString("o")
+                    affinityMask = $actualMask
+                }
+            }
+        } catch [InvalidOperationException] {
+            $lastFailure = $_.Exception.Message
+        }
+        Start-Sleep -Milliseconds 50
+    }
+    throw "Could not verify captured process $($Process.Id): $lastFailure"
+}
+
 foreach ($backend in @("gdscript", "native")) {
     $env:ELORIA_NATIVE_CROWD = if ($backend -eq "native") { "1" } else { "0" }
     $env:ELORIA_BENCH_OUTPUT = "crowd-lifecycle-$backend.json"
@@ -131,12 +165,24 @@ foreach ($backend in @("gdscript", "native")) {
     $process = Start-Process -FilePath $GodotPath -ArgumentList $quotedArguments `
         -PassThru -WindowStyle Hidden -RedirectStandardOutput $stdoutPath `
         -RedirectStandardError $stderrPath
-    $startTimeUtc = $process.StartTime.ToUniversalTime().ToString("o")
-    $directExecutablePath = $process.MainModule.FileName
-    $observedMasks = @()
-    $initialMask = $null
+    try {
+        $identity = Get-CapturedProcessIdentity $process $GodotPath
+    } catch {
+        if (-not $process.HasExited) {
+            $process.Kill()
+            $process.WaitForExit()
+        }
+        throw
+    }
+    $startTimeUtc = $identity.startTimeUtc
+    $directExecutablePath = $identity.path
+    $initialMask = $identity.affinityMask
+    $observedMasks = @([ordered]@{
+        timeUtc = (Get-Date).ToUniversalTime().ToString("o")
+        affinityMask = $initialMask
+    })
     $timedOut = $false
-    $affinityVerified = $false
+    $affinityVerified = $true
     $runErrors = @()
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
     while (-not $process.HasExited) {
