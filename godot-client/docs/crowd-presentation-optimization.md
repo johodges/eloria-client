@@ -1,5 +1,9 @@
 # Crowd presentation optimization follow-up
 
+The later [native presentation follow-up](crowd-native-presentation-kernels.md)
+records the capsule cache and optional native cape/flight kernels, including
+a fresh controlled 300-actor comparison. The results below are historical.
+
 The combined presentation cleanup reduced the primary workload's median
 headless CPU proxy from **41.691 to 29.272 ms** in an alternating comparison,
 with the optimized version faster in all three pairs. Rendered Forward+
