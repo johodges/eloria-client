@@ -15,6 +15,8 @@ param(
     [int]$Repeats = 3,
     [ValidateRange(1, 180)]
     [int]$TimeoutMinutes = 30,
+    [ValidateRange(1, 300)]
+    [int]$PostReportGraceSeconds = 5,
     [string]$Counts = "",
     [string]$Populations = "",
     [string]$Activities = "",
@@ -641,7 +643,7 @@ foreach ($trial in 1..$Repeats) {
 						}
 						if (Test-Path -LiteralPath $jsonPath) {
 							if ($null -eq $artifactSeenAt) { $artifactSeenAt = Get-Date }
-							elseif (((Get-Date) - $artifactSeenAt).TotalSeconds -ge 5 -and $live -gt 0) {
+							elseif (((Get-Date) - $artifactSeenAt).TotalSeconds -ge $PostReportGraceSeconds -and $live -gt 0) {
 								$process.Kill($true)
 								$postReportStop = $true
 							}
@@ -671,6 +673,7 @@ foreach ($trial in 1..$Repeats) {
 						monitoring = "captured direct Godot Process object only; monitoring failed"
 						monitoringError = $monitoringError; forcedTermination = $forcedTermination
 						postReportStop = $false; abortedAfterReport = $false; cleanExit = $false
+						postReportGraceSeconds = $PostReportGraceSeconds
 						scriptErrorsDetected = $false; schemaValid = $false; reportValid = $false
 						reportValidationError = "monitoring failed before report validation"
 						renderer = $renderingMethod; mode = $run; backend = $backend; trial = $trial
@@ -722,6 +725,7 @@ foreach ($trial in 1..$Repeats) {
 					forcedTermination = $postReportStop
 					postReportStop = $postReportStop
 					abortedAfterReport = $postReportStop
+					postReportGraceSeconds = $PostReportGraceSeconds
 					cleanExit = $cleanExit
 					scriptErrorsDetected = $scriptErrorsDetected
 					schemaValid = $schemaValid
