@@ -34,7 +34,7 @@
     "eloria/daily_quests.py": "2b4735642d1db3a09f069b14fdf477897eb1e16492fb0a8fb5787c97a866e218",
     "eloria/pk.py": "57adf011f24b2f806ce337620504065b95cd88fb756ebe23e437e35e9075aa91",
     "eloria/walkthrough.py": "069d3adbe13012f52ad3b9072fc2867995e5ca0596753a9ff5ecffdc98f933f7",
-    "eloria/world.py": "38843602618daf8bd0f52d5f4d6e3a95159570a582188285dadebf49478592e9"
+    "eloria/world.py": "355a5b6cadaf4ed6e220c6113093fd79fcaf08233eb174aefc907910f73e10ca"
   },
   "reconciliations": [
     {
@@ -55,6 +55,14 @@
         "eloria/world.py"
       ],
       "reason": "feature/adjacent-map-actors (server 11c3546, merged 09faf95) changed eloria/world.py on the branch after the fifteenth publication: actors across land seams. The baseline copy carries the feature's diff applied to the legacy-frame text (no coordinates touched); the served copy is that text rewritten by the current publication."
+    },
+    {
+      "date": "2026-09-19",
+      "developCommit": "bde0f87aafa4cb95cba2c03b4631d5f7a318a0a6",
+      "files": [
+        "eloria/world.py"
+      ],
+      "reason": "develop changed coordinate-free territory raid startup validation and the fallback creature after the current publication. The baseline copy carries exactly the d1de849..bde0f87 functional delta applied to the legacy-frame text (no authored coordinates touched); the served copy remains that text rewritten by the current publication."
     }
   ]
 }
