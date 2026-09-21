@@ -80809,7 +80809,7 @@
       },
       "hubReachableAfterStorageTiles": 67297,
       "updatedAuthoredMarkers": 3,
-      "terrainRevision": "diagonal-spine-v1:48dcb52046cba082113bc3aabe8a369e745c134d382f33e8986f45b05570fa96",
+      "terrainRevision": "diagonal-spine-v1:1c548957b97f4da68e12beef8bc80b73014200e4d8d2228fa70c8ef6cbcdfc58",
       "servedTileContinuity": {
         "keptServedTile": 222,
         "movedTogether": 0,
@@ -81601,7 +81601,7 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "38226c37f9a0096cc3663dd3d2252e6bb21067fc747d0955c913578a1da468a5",
+    "client_content_manifest.json": "e1ab6767566756374d41d8ec5336a6ae661cbff6f04127ab1e4c1afb0d5ab255",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
     "harvesting.txt": "c9e893ecae824e973201c12db13d859f81888d3aa7a792c6bc39765e2ed4679b",
     "instances/amberwood_gauntlet_low.def": "e2a5c0ca17b0c0af42f65728241c6f6d08ae6faea086505572af2fd2e417ae36",
@@ -81621,12 +81621,12 @@
     "instances/whitehorn_gauntlet_high.def": "8feae1eebe2cd08299e5938bb0fc9a527596877d26112b8da33f8d67aa260df5",
     "instances/whitehorn_gauntlet_low.def": "14e6e6894db6cede5ca63ac84acd0e4abb6aa35ccbd1b62f9cf2496779a2b3f4",
     "interactives.txt": "c2a4d16d46d347c568b527876e12b1e60f3b21f6c56fe85141e58699853a3680",
-    "maps.txt": "ba3e93836e91362a1bffd366ee961671c52b3dc631ec2e2c111f76c2636654d1",
+    "maps.txt": "82dad9bb2f24283e3c028bc5b9185dd8970407d27ccb53b3e81574a5b6623e2a",
     "npcs.txt": "0f6b52c017cf2b3f3c1231445edbfbfd7cedc2c13a7915840c00c9ae00def77e",
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "469273ec162ab7a41a17b1ed7b13708651d8e6850d59acd38f0c28e3e7249c50",
+    "spawn_groups/invasion/invasion_nymara.def": "cf9cab2da21a220c6b79e65ecc9faed46fd53308013b03dbc330e5c6cb8e0a05",
     "spawns.txt": "64a538207a3d923c1581246208a18dbd7c6daecae92d6da4a0ba4ae93e4cb1ab",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "b88ab564961389e6f8bed2046ad5835d0e245e47b747aaef7ccc3a3a5f599685"

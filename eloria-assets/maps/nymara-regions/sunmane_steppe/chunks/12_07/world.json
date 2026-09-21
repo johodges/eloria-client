@@ -3170,12 +3170,12 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "28ea9f34bf6e745773d6c42639b958d68ef58dc8b9c44925361c3183772e632c",
+    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "28ea9f34bf6e745773d6c42639b958d68ef58dc8b9c44925361c3183772e632c",
+    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
     "collisionSha256": "0b2d35c0548426e8c2697c5514259a4cf5af04dee45df1160b92c8c72245bde8",
     "terrainRevision": "diagonal-spine-v1:d9aafa7be812d2d460ca8bbf57ae3edeb4e2a3227be45907ad0c9e7cec757123"
   }

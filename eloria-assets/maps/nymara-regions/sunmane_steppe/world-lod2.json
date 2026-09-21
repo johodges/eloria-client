@@ -6353,7 +6353,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "28ea9f34bf6e745773d6c42639b958d68ef58dc8b9c44925361c3183772e632c",
+      "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
       "globalMin": [
         1010.0,
         228.0
