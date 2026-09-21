@@ -1,17 +1,16 @@
 """Every surface a region draws under a player is walkable in its walk grid.
 
-A region's `collision.bin` is not built from its geometry: the build derives it
-from the terrain height field and re-opens its decks by guessing each one's
-footprint from placement bounds. Ten regions carry ten copies of that code and
-the copies drifted, so Mirrorhold's marble causeway was blocked over its whole
-length bar a disc in the middle and Crownwater's quays lost their ends.
-`_toolkit/open_walk_surfaces.py` corrects the finished package from its own
-`Walk_*` nodes; this holds every package to that afterwards.
+The common continent collision exporter builds each authoritative walk grid
+from the current shared terrain and the package's `Walk_*` geometry. Its
+manifest records both that authored-surface contract and the source GLB digest;
+the provenance check below verifies that the export records match the published
+geometry.
 
 A surface drawn under one of the map's `Water_*` bodies is scenery rather than
 floor, and a surface inside a landmark box `stamp_solid_landmarks.py` has closed
 belongs to a building that is shut, so both are exempt.
 """
+import hashlib
 import sys
 import unittest
 from pathlib import Path
@@ -56,18 +55,21 @@ class WalkSurfaces(unittest.TestCase):
                           f"blocked in its grid ({where}); run _toolkit/open_walk_surfaces.py")
         self.assertGreaterEqual(checked, 10, "the regions that declare walk surfaces")
 
-    def test_the_correction_is_recorded_and_settled(self):
-        """A package that needed opening says so, and opening it again is a no-op."""
-        recorded = 0
+    def test_the_authored_surface_export_matches_current_geometry(self):
         for region in REGIONS:
-            collision = GLB.read_grid(REGIONS_DIR / region)[1]["collision"]
-            entry = collision.get("openedWalkSurfaces")
-            if entry is None:
-                continue
-            recorded += 1
-            self.assertEqual(entry["prefix"], OPEN.WALK, region)
-            self.assertGreater(entry["cellsCovered"], 0, region)
-        self.assertGreaterEqual(recorded, 10)
+            with self.subTest(region=region):
+                package = REGIONS_DIR / region
+                collision = GLB.read_grid(package)[1]["collision"]
+                self.assertIn("authoredSurfaceExport", collision, region)
+                self.assertIs(collision["authoredSurfaceExport"], True, region)
+                self.assertIn("sourceGlbSha256", collision, region)
+                source_sha = hashlib.sha256((package / "world.glb").read_bytes()).hexdigest()
+                self.assertEqual(collision["sourceGlbSha256"], source_sha, region)
+                self.assertIn("exportStatistics", collision, region)
+                statistics = collision["exportStatistics"]
+                self.assertIsInstance(statistics, dict, region)
+                self.assertIn("walkTriangles", statistics, region)
+                self.assertGreater(statistics["walkTriangles"], 0, region)
 
 
 if __name__ == "__main__":
