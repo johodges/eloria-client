@@ -1,5 +1,5 @@
 {
-  "glbBytes": 146212212,
+  "glbBytes": 146212200,
   "nodes": 20804,
   "meshes": 4704,
   "externalResources": {},
@@ -347,7 +347,7 @@
     "370790616ae0f5ae9f7dca4e36c502ccdbc3094daee999986e7733d0b08a6999": 349526,
     "5d99c9774bacfb4be57c9b2c015b4c28614feda9e74b0ce2c102024f91a0ef8a": 1398102
   },
-  "sha256": "461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073",
+  "sha256": "28ea9f34bf6e745773d6c42639b958d68ef58dc8b9c44925361c3183772e632c",
   "regions": [
     "whitehorn_range",
     "grey_moors",

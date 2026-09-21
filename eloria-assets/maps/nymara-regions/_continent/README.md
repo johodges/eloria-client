@@ -55,6 +55,17 @@ each unmatched sample is a legal missing lane. See
 `../../../../../STATUS-2026-09-19-roadless-fixtures.md`
 and `../../../../../after/roadless-border-audit-20260919-191929.log`.
 
+**MC007 + MC008 QA candidate (2026-09-21; approved for publication).** The
+corrected clean normal build preserves all 313 composed road polylines and all
+10 non-Mirrorhold region GLBs byte-for-byte against `c7c8c1ce`. Mirrorhold's
+encoded terrain changes only at the 10 reviewed City-turnout vertices (maximum
+cut `1.6841355 m`, no fill); its other encoded changes are the reviewed City
+and Sanctuary Drowned Crown arm geometry. Normal publication, targeted access,
+collision, offline movement, and visual checks passed. The orchestrator approved
+the reviewed source and generated allowlists for publication under the user's
+authorization; owner deployment and live confirmation remain pending. See
+`QA-MC007-MC008-2026-09-21.md`.
+
 `diagonal-plan.json` describes the coast, connected mountain chain, river
 catchments, islands, territory centres, and placement controls. `landscape.py`
 evaluates the common height and climate fields. No territory border enters

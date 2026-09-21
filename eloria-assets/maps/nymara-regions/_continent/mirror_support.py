@@ -1,4 +1,4 @@
-"""Local bank clearance beneath Mirrorhold's retained upper walking decks.
+"""Local bank clearance beneath Mirrorhold decks and beside the City landing.
 
 Apply after final road/ferry grading, before regrounding/scatter. Geometry and
 the city's common translation are immutable. The old source survey includes
@@ -15,6 +15,17 @@ LINKS=('Landmark_LakeLink_City','Landmark_LakeLink_Sanctuary')
 GROUND_CLEARANCE=.06
 GRID_APRON=math.sqrt(2)*2.
 FEATHER=6.
+CITY_TURNOUT_NAME='mirrorhold-city-quay-turnout'
+CITY_TURNOUT_POLYGON=np.array(((891.,795.),(890.,792.),(891.,789.),(896.,789.),
+                               (897.2,792.),(896.,795.),(895.25,796.5),(891.75,796.5)))
+CITY_TURNOUT_FEATHER=3.
+CITY_TURNOUT_MAX_CUT=4.
+CITY_TURNOUT_ROAD_HALF_WIDTH=3.5
+CITY_TURNOUT_ROAD_A=np.array((883.,795.77))
+CITY_TURNOUT_ROAD_B=np.array((905.,793.))
+CITY_TURNOUT_ROAD_HEIGHTS=(83.52,84.5)
+CITY_TURNOUT_DECK_FLOOR=83.7
+CITY_TURNOUT_LANDING_BLEND=1.5
 
 
 def walking_triangles(content,obj):
@@ -83,8 +94,83 @@ def exposed_triangles(triangles):
     return triangles[np.any(samples[:,:,1]>=upper-1e-6,axis=1)]
 
 
+def _polygon_field(x,z,polygon=CITY_TURNOUT_POLYGON):
+    """Inside mask and unsigned edge distance for one small convex apron."""
+    x,z=np.broadcast_arrays(np.asarray(x,float),np.asarray(z,float))
+    inside=np.zeros(x.shape,bool);distance=np.full(x.shape,np.inf)
+    for index,start in enumerate(polygon):
+        end=polygon[(index+1)%len(polygon)]
+        crosses=(start[1]>z)!=(end[1]>z)
+        at_x=(end[0]-start[0])*(z-start[1])/(end[1]-start[1]+1e-30)+start[0]
+        inside^=crosses&(x<at_x)
+        delta=end-start;length2=float(delta@delta)
+        t=np.clip(((x-start[0])*delta[0]+(z-start[1])*delta[1])/length2,0,1)
+        distance=np.minimum(distance,np.hypot(x-start[0]-t*delta[0],z-start[1]-t*delta[1]))
+    return inside,distance
+
+
+def _city_road_profile(x,z):
+    x,z=np.broadcast_arrays(np.asarray(x,float),np.asarray(z,float))
+    delta=CITY_TURNOUT_ROAD_B-CITY_TURNOUT_ROAD_A
+    t=np.clip(((x-CITY_TURNOUT_ROAD_A[0])*delta[0]+(z-CITY_TURNOUT_ROAD_A[1])*delta[1])/
+              float(delta@delta),0.,1.)
+    near=CITY_TURNOUT_ROAD_A+t[...,None]*delta
+    distance=np.hypot(x-near[...,0],z-near[...,1])
+    height=CITY_TURNOUT_ROAD_HEIGHTS[0]+t*(CITY_TURNOUT_ROAD_HEIGHTS[1]-CITY_TURNOUT_ROAD_HEIGHTS[0])
+    return distance,height,near[...,1]
+
+
+def apply_city_quay_turnout(world):
+    """Cut the pictured City landing mound into a bounded quay turnout."""
+    polygon=CITY_TURNOUT_POLYGON
+    low=polygon.min(axis=0)-CITY_TURNOUT_FEATHER-2
+    high=polygon.max(axis=0)+CITY_TURNOUT_FEATHER+2
+    if (high[0]<world.x[0] or low[0]>world.x[-1] or
+            high[1]<world.z[0] or low[1]>world.z[-1]):
+        return {'name':CITY_TURNOUT_NAME,'changedVertices':0,'maximumCut':0.,'maximumFill':0.,
+                'changedWetVertices':0,'changedRoadCoreVertices':0}
+    ix0,ix1=np.searchsorted(world.x,[low[0],high[0]],side='left')
+    iz0,iz1=np.searchsorted(world.z,[low[1],high[1]],side='left')
+    ix1=np.searchsorted(world.x,high[0],side='right');iz1=np.searchsorted(world.z,high[1],side='right')
+    sl=np.s_[iz0:iz1,ix0:ix1];x,z=world.gx[sl],world.gz[sl]
+    old=world.height[sl].copy();inside,edge=_polygon_field(x,z)
+    weight=np.where(inside,1.,1-L.smoothstep(0.,CITY_TURNOUT_FEATHER,edge))
+    dry=~world.water['mask'][sl]
+    owned=world.owner_at(x,z)==world.ids.index('mirrorhold')
+    distance,road_height,road_z=_city_road_profile(x,z)
+    # Authored road vertices remain exact. Adjacent terrain triangles may
+    # interpolate differently, which collision/access validation measures.
+    weight*=dry&owned&(distance>CITY_TURNOUT_ROAD_HALF_WIDTH+1e-9)
+    south=np.maximum(z-road_z,0.)
+    landing=L.smoothstep(0.,CITY_TURNOUT_LANDING_BLEND,south)
+    target=road_height*(1-landing)+CITY_TURNOUT_DECK_FLOOR*landing
+    delta=np.minimum(target-old,0.)*weight
+    requested_cut=np.maximum(-delta,0.)
+    if float(requested_cut.max(initial=0))>CITY_TURNOUT_MAX_CUT+1e-9:
+        raise ValueError(CITY_TURNOUT_NAME+': requested cut exceeds 4 m')
+    updated=old+delta;changed=np.abs(delta)>1e-8
+    cut=requested_cut;fill=np.maximum(delta,0.)
+    changed_wet=changed&~dry;changed_road=changed&(distance<=CITY_TURNOUT_ROAD_HALF_WIDTH+1e-9)
+    if fill.any():raise ValueError(CITY_TURNOUT_NAME+': cut-only repair attempted fill')
+    if changed_wet.any():raise ValueError(CITY_TURNOUT_NAME+': wet terrain changed')
+    if changed_road.any():raise ValueError(CITY_TURNOUT_NAME+': authored road vertex changed')
+    world.height[sl]=updated
+    world.assembly_target[sl]=np.where(changed,np.minimum(world.assembly_target[sl],updated),
+                                       world.assembly_target[sl])
+    return {'name':CITY_TURNOUT_NAME,'corePolygonGlobalXZ':polygon.tolist(),
+            'featherMetres':CITY_TURNOUT_FEATHER,'changedVertices':int(changed.sum()),
+            'maximumCut':float(cut.max(initial=0)),'maximumFill':float(fill.max(initial=0)),
+            'changedWetVertices':int(changed_wet.sum()),
+            'changedRoadCoreVertices':int(changed_road.sum()),
+            'changedBounds':(None if not changed.any() else
+                [[float(x[changed].min()),float(z[changed].min())],
+                 [float(x[changed].max()),float(z[changed].max())]]),
+            'assemblyTargetsLowered':int(np.count_nonzero(
+                changed&(world.assembly_target[sl]<=updated+1e-9)))}
+
+
 def apply_mirror_support(world,content):
-    """Trim only local dry ground that covers a verified exposed link floor."""
+    """Clear exposed link floors, then cut the adjacent bounded City turnout."""
     if 'mirrorhold' not in world.ids:return {}
     objects={o['node']:o for o in content.objects if o['region']=='mirrorhold'}
     reports=[]
@@ -127,8 +213,9 @@ def apply_mirror_support(world,content):
         if entry['after']['maximumBurial']>.015:
             raise ValueError(name+': actual upper walking floor remains buried after local bank repair')
         reports.append(entry)
+    turnout=apply_city_quay_turnout(world)
     report={'policy':'Actual exposed upper link floors; bounded local dry bank cuts, unchanged city geometry and lake',
             'groundClearanceMetres':GROUND_CLEARANCE,'fullGridApronMetres':GRID_APRON,'featherMetres':FEATHER,
-            'links':reports}
+            'links':reports,'cityQuayTurnout':turnout}
     world.mirror_support=report
     return report

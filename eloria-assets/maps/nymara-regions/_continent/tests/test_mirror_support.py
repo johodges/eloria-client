@@ -76,5 +76,42 @@ class MirrorSupportTests(unittest.TestCase):
                 M.apply_mirror_support(w,content)
         np.testing.assert_array_equal(w.height,before)
 
+    def test_city_turnout_is_bounded_cut_only_and_persists_through_assembly(self):
+        x=np.arange(884.,908.,2.);z=np.arange(784.,808.,2.);gx,gz=np.meshgrid(x,z)
+        height=np.full(gx.shape,86.);wet=np.zeros(gx.shape,bool);wet[3,5]=True
+        w=SimpleNamespace(ids=['mirrorhold'],x0=x[0],z0=z[0],x=x,z=z,gx=gx,gz=gz,
+                          height=height.copy(),assembly_target=np.full(gx.shape,90.),
+                          water={'mask':wet})
+        w.owner_at=lambda x,z:np.zeros(np.broadcast(x,z).shape,dtype=int)
+        before=w.height.copy();targets=w.assembly_target.copy()
+        road_distance,_,_=M._city_road_profile(gx,gz)
+        report=M.apply_city_quay_turnout(w)
+        changed=np.abs(w.height-before)>1e-8
+        self.assertEqual(report['name'],M.CITY_TURNOUT_NAME)
+        self.assertGreater(report['changedVertices'],0)
+        self.assertLessEqual(report['maximumCut'],M.CITY_TURNOUT_MAX_CUT)
+        self.assertEqual(report['maximumFill'],0)
+        self.assertEqual(report['changedWetVertices'],0)
+        self.assertEqual(report['changedRoadCoreVertices'],0)
+        np.testing.assert_array_equal(w.height[wet],before[wet])
+        np.testing.assert_array_equal(w.height[road_distance<=M.CITY_TURNOUT_ROAD_HALF_WIDTH],
+                                      before[road_distance<=M.CITY_TURNOUT_ROAD_HALF_WIDTH])
+        np.testing.assert_array_equal(w.assembly_target[~changed],targets[~changed])
+        np.testing.assert_allclose(w.assembly_target[changed],w.height[changed])
+        self.assertTrue((w.height<=before+1e-10).all())
+
+    def test_city_turnout_rejects_excessive_mound_before_mutation(self):
+        x=np.arange(884.,908.,2.);z=np.arange(784.,808.,2.);gx,gz=np.meshgrid(x,z)
+        height=np.full(gx.shape,100.);wet=np.zeros(gx.shape,bool)
+        w=SimpleNamespace(ids=['mirrorhold'],x0=x[0],z0=z[0],x=x,z=z,gx=gx,gz=gz,
+                          height=height.copy(),assembly_target=np.full(gx.shape,101.),
+                          water={'mask':wet})
+        w.owner_at=lambda x,z:np.zeros(np.broadcast(x,z).shape,dtype=int)
+        before=w.height.copy();targets=w.assembly_target.copy()
+        with self.assertRaisesRegex(ValueError,'requested cut exceeds 4 m'):
+            M.apply_city_quay_turnout(w)
+        np.testing.assert_array_equal(w.height,before)
+        np.testing.assert_array_equal(w.assembly_target,targets)
+
 
 if __name__=='__main__':unittest.main()

@@ -80622,9 +80622,9 @@
       "updatedAuthoredMarkers": 8,
       "terrainRevision": "diagonal-spine-v1:caed80cd26520c6721b8af8357cefae239a1e2cbd206432da762a4a03c3acdba",
       "servedTileContinuity": {
-        "keptServedTile": 290,
+        "keptServedTile": 291,
         "movedTogether": 0,
-        "movedFromServedTile": 1
+        "movedFromServedTile": 0
       }
     },
     "amberwood": {
@@ -80768,10 +80768,10 @@
     "mirrorhold": {
       "stageFactor": 15,
       "stageMetres": 3.0,
-      "walkableServerTiles": 82614,
-      "largestComponentTiles": 66553,
+      "walkableServerTiles": 82703,
+      "largestComponentTiles": 67306,
       "reachableByStage": {
-        "15": 66553
+        "15": 67306
       },
       "crossings": {
         "declared": [
@@ -80798,7 +80798,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 66553,
+      "hubReachableTiles": 67306,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80807,9 +80807,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 66544,
+      "hubReachableAfterStorageTiles": 67297,
       "updatedAuthoredMarkers": 3,
-      "terrainRevision": "diagonal-spine-v1:2749d43c704b4721db5ece95128c0849130e746bb1ea5594a0e907147d95b9ef",
+      "terrainRevision": "diagonal-spine-v1:48dcb52046cba082113bc3aabe8a369e745c134d382f33e8986f45b05570fa96",
       "servedTileContinuity": {
         "keptServedTile": 222,
         "movedTogether": 0,
@@ -81025,9 +81025,9 @@
       "updatedAuthoredMarkers": 8,
       "terrainRevision": "diagonal-spine-v1:2b7c5eb8e2bc581a9eed54f1820b552b60bcb210651071d67b0db131975e4785",
       "servedTileContinuity": {
-        "keptServedTile": 226,
-        "movedTogether": 4,
-        "movedFromServedTile": 8
+        "keptServedTile": 238,
+        "movedTogether": 0,
+        "movedFromServedTile": 0
       }
     },
     "manymouth_delta": {
@@ -81601,9 +81601,9 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "4d529edc179f48a9b07c2ba58920e6aa1e9b17c08566de2c98cc091756c55792",
+    "client_content_manifest.json": "38226c37f9a0096cc3663dd3d2252e6bb21067fc747d0955c913578a1da468a5",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
-    "harvesting.txt": "eaa50f2053c2ce018f37d48cc6d0f372466a01b7965d827f5424b68be78edc4e",
+    "harvesting.txt": "c9e893ecae824e973201c12db13d859f81888d3aa7a792c6bc39765e2ed4679b",
     "instances/amberwood_gauntlet_low.def": "e2a5c0ca17b0c0af42f65728241c6f6d08ae6faea086505572af2fd2e417ae36",
     "instances/amberwood_gauntlet_mid.def": "db1a535c3f73a3677a28d2b2cf5ed71b9c3b8c0ea8308a88b95c6feee28d2672",
     "instances/amethyst_gauntlet_high.def": "644d0d0978354c06d3dec430c9d52a50db2aed224060b403509677a8a8a8d298",
@@ -81621,23 +81621,23 @@
     "instances/whitehorn_gauntlet_high.def": "8feae1eebe2cd08299e5938bb0fc9a527596877d26112b8da33f8d67aa260df5",
     "instances/whitehorn_gauntlet_low.def": "14e6e6894db6cede5ca63ac84acd0e4abb6aa35ccbd1b62f9cf2496779a2b3f4",
     "interactives.txt": "c2a4d16d46d347c568b527876e12b1e60f3b21f6c56fe85141e58699853a3680",
-    "maps.txt": "b0c4595a632c3862f0018e1d015bcd17ee5e00b7ee10595611fa66257beebd62",
+    "maps.txt": "ba3e93836e91362a1bffd366ee961671c52b3dc631ec2e2c111f76c2636654d1",
     "npcs.txt": "0f6b52c017cf2b3f3c1231445edbfbfd7cedc2c13a7915840c00c9ae00def77e",
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "13b163eb8c9e0d95aee388040c65ba06ee0a6c280c72bc5e842cdda8f0279fe3",
-    "spawns.txt": "1cad5f2e74e73f47b0d8b365c1e9cb14584d6cb9e9b92853271a62a7c053282b",
+    "spawn_groups/invasion/invasion_nymara.def": "469273ec162ab7a41a17b1ed7b13708651d8e6850d59acd38f0c28e3e7249c50",
+    "spawns.txt": "64a538207a3d923c1581246208a18dbd7c6daecae92d6da4a0ba4ae93e4cb1ab",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "b88ab564961389e6f8bed2046ad5835d0e245e47b747aaef7ccc3a3a5f599685"
   },
   "sourceCodeSha256": {
-    "eloria/daily_quests.py": "cc0d148f52690f13a1a598c6cd30abf152efd0176354055077f7341f43b32956",
-    "eloria/world.py": "bc284c12f5bd32aa271f84032d69ca6f46b52199d568b6adf80f46b68241199b",
-    "eloria/walkthrough.py": "06024c6d0dce473a9b00dfcda30cf1e4d2416b0a7f308f191c0ca9812ae6b7a4",
+    "eloria/daily_quests.py": "62b94bc25bf4ebdf0d19ea782388e8b9bc59219ef6692da897a6cfafab9e2e03",
+    "eloria/world.py": "214b4186f67585cd5ccf1df417c0ac3025031a261d2e702d82485f71ed5411e5",
+    "eloria/walkthrough.py": "b310f3ca4efabe1838fc6a8de4eb5c471f02a7ce7cd38611ccb5c66410fa8cdb",
     "eloria/pk.py": "e89cb845c21aa3fe41c2b49a8a5597b91c5729774e9f19636fd2d6d03ea731df"
   },
-  "baselineSha256": "a60fb8f2e5d7c2357fa4b978f3c03b4a07c4815923cf180e5a7b285a72c1fb2e",
+  "baselineSha256": "387fd9cb52429ee21f3ca5d557966c249f978ef063de98bc7216ccb463f3120b",
   "seams": [
     {
       "id": "grey_moors--whitehorn_range",
