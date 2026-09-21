@@ -55,6 +55,52 @@ func _run() -> void:
 	_expect(stream.pending_walk.is_empty(), "only exact authoritative arrival releases the intent")
 	_expect(stream.take_continuation("c",_actor(600,700)).is_empty(), "completed click never sends another request")
 
+	# Intermediate continuation chooses an open point along the next border in
+	# the intermediate map's frame. Neither the stale active map nor click-frame
+	# positions describe an actor who has already crossed into that map.
+	var routed := ExteriorRegionStream.new()
+	routed.active_map = "amberwood"
+	routed._last_position = Vector3(9000,0,9000)
+	routed.registry = {
+		"mirrorhold": {
+			"coordinateTransform": {"serverOrigin":[100,80]},
+			"continentGeography": {"translation":[100,0,200]}},
+		"whitehorn_range": {
+			"coordinateTransform": {"serverOrigin":[0,0]},
+			"continentGeography": {"translation":[140,0,240]}}}
+	routed.links = [
+		{"seamless":true,"ends":[
+			{"map":"amberwood","position":[0.5,0,-0.5],"coordinateTransform":{"serverOrigin":[0,0]}},
+			{"map":"mirrorhold","position":[0.5,0,-0.5],"coordinateTransform":{"serverOrigin":[100,80]}}]},
+		{"seamless":true,"ends":[
+			{"map":"mirrorhold","position":[20.5,0,-0.5],"coordinateTransform":{"serverOrigin":[100,80]},
+				"crossingRuns":{"axis":"y","runs":[[120,80,90]]}},
+			{"map":"whitehorn_range","position":[0.5,0,-0.5],"coordinateTransform":{"serverOrigin":[0,0]}}]}]
+	routed.pending_walk = {"map":"whitehorn_range","tile":Vector2i(5,46),"run":true,
+		"routed":true,"next_map":"mirrorhold","world_point":Vector3(-8000,0,-8000)}
+	routed._arm_walk_leg("amberwood",Vector2i(0,0),_actor())
+	var routed_middle := routed.take_continuation("mirrorhold",
+		{"x":100,"y":86,"command_sequence":1,"alive":true})
+	_expect(routed_middle.get("tile") == Vector2i(120,86) and bool(routed_middle.get("run",false)),
+		"intermediate continuation uses fresh actor and final-map frames to choose the open crossing")
+	_expect(routed.take_continuation("mirrorhold",{"x":100,"y":86,"command_sequence":1,"alive":true}).is_empty(),
+		"frame-aware intermediate crossing is issued only once")
+	var routed_final := routed.take_continuation("whitehorn_range",
+		{"x":0,"y":0,"command_sequence":2,"alive":true})
+	_expect(routed_final.get("tile") == Vector2i(5,46) and bool(routed_final.get("run",false)),
+		"frame-aware crossing preserves the exact final tile and run intent")
+	routed.take_continuation("whitehorn_range",{"x":5,"y":46,"command_sequence":3,"alive":true})
+	_expect(routed.pending_walk.is_empty(), "authoritative final arrival clears the frame-aware continuation")
+	routed.registry.erase("whitehorn_range")
+	routed.pending_walk = {"map":"whitehorn_range","tile":Vector2i(5,46),"run":true,
+		"routed":true,"next_map":"mirrorhold"}
+	routed._arm_walk_leg("amberwood",Vector2i(0,0),_actor())
+	var fallback_middle := routed.take_continuation("mirrorhold",
+		{"x":100,"y":86,"command_sequence":4,"alive":true})
+	_expect(fallback_middle.get("tile") == Vector2i(120,80),
+		"missing destination geography keeps the surveyed gate fallback even when crossings are shipped")
+	routed.free()
+
 	_begin(stream)
 	_expect(stream.take_continuation("a",_actor(100,100)).is_empty(), "short ordinary movement does not renew")
 	_expect(stream.take_continuation("a",_actor(100,3000)).is_empty(), "stationary commands cannot cause retries")

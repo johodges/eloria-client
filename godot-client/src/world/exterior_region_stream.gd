@@ -750,6 +750,16 @@ func take_continuation(map_id: String, actor := {}) -> Dictionary:
 				return {}
 			var adapter := CoordinateAdapter.new(leg.here.coordinateTransform)
 			target = adapter.godot_to_server(_vector(leg.here.position))
+			var destination_coordinates := region_coordinates(destination)
+			var here_translation: Variant = _continent_translation(map_id)
+			var destination_translation: Variant = _continent_translation(destination)
+			if actor.has("x") and actor.has("y") and not destination_coordinates.is_empty() \
+					and here_translation is Vector3 and destination_translation is Vector3:
+				var from := adapter.tile_center(int(actor.x), int(actor.y))
+				var destination_adapter := CoordinateAdapter.new(destination_coordinates)
+				var to := destination_adapter.tile_center(pending_walk.tile.x, pending_walk.tile.y)
+				to += (destination_translation as Vector3) - (here_translation as Vector3)
+				target = best_crossing(leg.here, adapter, from, to)
 			pending_walk.next_map = str(leg.there.map)
 		_arm_walk_leg(map_id, target, actor)
 		if map_id == destination and not actor.is_empty() and pending_walk.last_tile == target:
