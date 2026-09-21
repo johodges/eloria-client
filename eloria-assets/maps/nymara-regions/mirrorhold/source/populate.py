@@ -22,6 +22,7 @@ from amberwood.populate import scatter_points
 
 import landmarks as L
 import region as REG
+import ring_links as RING_LINKS
 from region import ANCHORS, LEVEL, SCALE, LOCAL
 
 from regionbuild import Placement, RegionBuild
@@ -394,9 +395,10 @@ def populate_lake(build: RegionBuild, seed: int = 20260828) -> None:
         points = np.asarray(stations, dtype=float)
         centre = (points.min(axis=0) + points.max(axis=0)) * 0.5
         centre[1] = 0
-        build.add_mesh(asset, RC.graded_causeway(
-            points - centre, width=6.5, foot=-12.0, stone=ASHLAR_MAT,
-            paving=MARBLE_MAT, parapet=0.8))
+        build.add_mesh(asset, RING_LINKS.graded_ring_link(
+            name, points, centre, ring_z=ANCHORS["ring"][1], width=6.5,
+            foot=-12.0, stone=ASHLAR_MAT, paving=MARBLE_MAT,
+            parapet=0.8))
         build.place(Placement("Landmark_LakeLink_" + name, asset, tuple(centre),
                               0, 1, collides=True, kind="landmark"))
 
