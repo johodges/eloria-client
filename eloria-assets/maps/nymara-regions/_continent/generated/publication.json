@@ -1,12 +1,12 @@
 {
   "schema": 1,
   "revision": "diagonal-spine-v1",
-  "masterPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\_continent\\generated\\continent.glb",
-  "masterSha256": "461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073",
+  "masterPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\_continent\\generated\\continent.glb",
+  "masterSha256": "28ea9f34bf6e745773d6c42639b958d68ef58dc8b9c44925361c3183772e632c",
   "sourceProfileSha256": {
-    "client_content_manifest.json": "4d529edc179f48a9b07c2ba58920e6aa1e9b17c08566de2c98cc091756c55792",
+    "client_content_manifest.json": "38226c37f9a0096cc3663dd3d2252e6bb21067fc747d0955c913578a1da468a5",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
-    "harvesting.txt": "eaa50f2053c2ce018f37d48cc6d0f372466a01b7965d827f5424b68be78edc4e",
+    "harvesting.txt": "c9e893ecae824e973201c12db13d859f81888d3aa7a792c6bc39765e2ed4679b",
     "instances/amberwood_gauntlet_low.def": "e2a5c0ca17b0c0af42f65728241c6f6d08ae6faea086505572af2fd2e417ae36",
     "instances/amberwood_gauntlet_mid.def": "db1a535c3f73a3677a28d2b2cf5ed71b9c3b8c0ea8308a88b95c6feee28d2672",
     "instances/amethyst_gauntlet_high.def": "644d0d0978354c06d3dec430c9d52a50db2aed224060b403509677a8a8a8d298",
@@ -24,13 +24,13 @@
     "instances/whitehorn_gauntlet_high.def": "8feae1eebe2cd08299e5938bb0fc9a527596877d26112b8da33f8d67aa260df5",
     "instances/whitehorn_gauntlet_low.def": "14e6e6894db6cede5ca63ac84acd0e4abb6aa35ccbd1b62f9cf2496779a2b3f4",
     "interactives.txt": "c2a4d16d46d347c568b527876e12b1e60f3b21f6c56fe85141e58699853a3680",
-    "maps.txt": "b0c4595a632c3862f0018e1d015bcd17ee5e00b7ee10595611fa66257beebd62",
+    "maps.txt": "ba3e93836e91362a1bffd366ee961671c52b3dc631ec2e2c111f76c2636654d1",
     "npcs.txt": "0f6b52c017cf2b3f3c1231445edbfbfd7cedc2c13a7915840c00c9ae00def77e",
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "13b163eb8c9e0d95aee388040c65ba06ee0a6c280c72bc5e842cdda8f0279fe3",
-    "spawns.txt": "1cad5f2e74e73f47b0d8b365c1e9cb14584d6cb9e9b92853271a62a7c053282b",
+    "spawn_groups/invasion/invasion_nymara.def": "469273ec162ab7a41a17b1ed7b13708651d8e6850d59acd38f0c28e3e7249c50",
+    "spawns.txt": "64a538207a3d923c1581246208a18dbd7c6daecae92d6da4a0ba4ae93e4cb1ab",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "b88ab564961389e6f8bed2046ad5835d0e245e47b747aaef7ccc3a3a5f599685"
   },
@@ -2120,8 +2120,8 @@
         }
       },
       "removedInteractiveIds": [],
-      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\whitehorn_range\\collision.bin",
-      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\whitehorn_range\\world.json",
+      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\whitehorn_range\\collision.bin",
+      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\whitehorn_range\\world.json",
       "tileHeights": {
         "95:423": 0.30823850631713867,
         "95:424": -0.05453767627477646,
@@ -5764,7 +5764,7 @@
           359,
           281
         ],
-        "373:281": [
+        "373:282": [
           373,
           282
         ],
@@ -6960,8 +6960,8 @@
         }
       },
       "removedInteractiveIds": [],
-      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\grey_moors\\collision.bin",
-      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\grey_moors\\world.json",
+      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\grey_moors\\collision.bin",
+      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\grey_moors\\world.json",
       "tileHeights": {
         "96:13": -0.10936632752418518,
         "96:14": -0.05669986456632614,
@@ -12172,8 +12172,8 @@
         }
       },
       "removedInteractiveIds": [],
-      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\amberwood\\collision.bin",
-      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\amberwood\\world.json",
+      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\amberwood\\collision.bin",
+      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\amberwood\\world.json",
       "tileHeights": {
         "3:15": 23.55683708190918,
         "3:16": 23.903409957885742,
@@ -17372,8 +17372,8 @@
         }
       },
       "removedInteractiveIds": [],
-      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\collision.bin",
-      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\world.json",
+      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\collision.bin",
+      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\world.json",
       "tileHeights": {
         "3:295": 78.50111389160156,
         "3:296": 78.18246459960938,
@@ -21132,7 +21132,7 @@
         141,
         197
       ],
-      "terrainRevision": "diagonal-spine-v1:2749d43c704b4721db5ece95128c0849130e746bb1ea5594a0e907147d95b9ef",
+      "terrainRevision": "diagonal-spine-v1:48dcb52046cba082113bc3aabe8a369e745c134d382f33e8986f45b05570fa96",
       "previousServerOrigin": [
         208,
         350
@@ -22723,8 +22723,8 @@
         }
       },
       "removedInteractiveIds": [],
-      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\collision.bin",
-      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world.json",
+      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\collision.bin",
+      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world.json",
       "tileHeights": {
         "3:282": 38.03929901123047,
         "3:283": 38.22811508178711,
@@ -28320,8 +28320,8 @@
         }
       },
       "removedInteractiveIds": [],
-      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\sunmane_steppe\\collision.bin",
-      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\sunmane_steppe\\world.json",
+      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\sunmane_steppe\\collision.bin",
+      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\sunmane_steppe\\world.json",
       "tileHeights": {
         "3:125": 78.74154663085938,
         "3:126": 78.70809936523438,
@@ -33778,8 +33778,8 @@
         }
       },
       "removedInteractiveIds": [],
-      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\four-gates\\collision.bin",
-      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\four-gates\\world.json",
+      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\four-gates\\collision.bin",
+      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\four-gates\\world.json",
       "tileHeights": {
         "3:257": 22.50383186340332,
         "3:258": 22.5800838470459,
@@ -38124,15 +38124,15 @@
           57,
           125
         ],
-        "340:179": [
+        "339:178": [
           339,
           178
         ],
-        "339:178": [
+        "338:177": [
           338,
           177
         ],
-        "341:179": [
+        "339:177": [
           339,
           177
         ],
@@ -38220,7 +38220,7 @@
           271,
           162
         ],
-        "339:177": [
+        "339:176": [
           339,
           176
         ],
@@ -38276,11 +38276,11 @@
           321,
           252
         ],
-        "338:177": [
+        "338:176": [
           338,
           176
         ],
-        "338:176": [
+        "337:176": [
           337,
           176
         ],
@@ -38424,7 +38424,7 @@
           331,
           385
         ],
-        "339:176": [
+        "339:175": [
           339,
           175
         ],
@@ -38628,7 +38628,7 @@
           336,
           203
         ],
-        "337:176": [
+        "338:175": [
           338,
           175
         ],
@@ -39308,8 +39308,8 @@
         }
       },
       "removedInteractiveIds": [],
-      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\westhaven\\collision.bin",
-      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\westhaven\\world.json",
+      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\westhaven\\collision.bin",
+      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\westhaven\\world.json",
       "tileHeights": {
         "55:111": 17.60628890991211,
         "55:171": 5.119724750518799,
@@ -44057,8 +44057,8 @@
         }
       },
       "removedInteractiveIds": [],
-      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\manymouth_delta\\collision.bin",
-      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\manymouth_delta\\world.json",
+      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\manymouth_delta\\collision.bin",
+      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\manymouth_delta\\world.json",
       "tileHeights": {
         "23:310": 2.717573642730713,
         "23:311": 2.7203824520111084,
@@ -49105,8 +49105,8 @@
         }
       },
       "removedInteractiveIds": [],
-      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\crownwater\\collision.bin",
-      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\crownwater\\world.json",
+      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\crownwater\\collision.bin",
+      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\crownwater\\world.json",
       "tileHeights": {
         "198:279": 1.8492817878723145,
         "199:278": 2.4622626304626465,
@@ -52278,8 +52278,8 @@
         }
       },
       "removedInteractiveIds": [],
-      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\verdant_stair\\collision.bin",
-      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\verdant_stair\\world.json",
+      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\verdant_stair\\collision.bin",
+      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\verdant_stair\\world.json",
       "tileHeights": {
         "3:241": 24.490842819213867,
         "3:242": 24.590957641601562,
@@ -58448,8 +58448,8 @@
         }
       },
       "removedInteractiveIds": [],
-      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\collision.bin",
-      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\world.json",
+      "collisionPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\collision.bin",
+      "worldManifestPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\diagonal-continent\\client\\.release-mc008-20260921\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\world.json",
       "tileHeights": {
         "69:361": -0.18409065902233124,
         "69:362": -0.06906921416521072,
@@ -264147,12 +264147,12 @@
   "preloadDistance": 320,
   "retainDistance": 420,
   "maxResidentAdjacentMaps": 3,
-  "baselineSha256": "a60fb8f2e5d7c2357fa4b978f3c03b4a07c4815923cf180e5a7b285a72c1fb2e",
+  "baselineSha256": "387fd9cb52429ee21f3ca5d557966c249f978ef063de98bc7216ccb463f3120b",
   "sourceCodeSha256": {
-    "eloria/daily_quests.py": "cc0d148f52690f13a1a598c6cd30abf152efd0176354055077f7341f43b32956",
-    "eloria/world.py": "bc284c12f5bd32aa271f84032d69ca6f46b52199d568b6adf80f46b68241199b",
-    "eloria/walkthrough.py": "06024c6d0dce473a9b00dfcda30cf1e4d2416b0a7f308f191c0ca9812ae6b7a4",
+    "eloria/daily_quests.py": "62b94bc25bf4ebdf0d19ea782388e8b9bc59219ef6692da897a6cfafab9e2e03",
+    "eloria/world.py": "214b4186f67585cd5ccf1df417c0ac3025031a261d2e702d82485f71ed5411e5",
+    "eloria/walkthrough.py": "b310f3ca4efabe1838fc6a8de4eb5c471f02a7ce7cd38611ccb5c66410fa8cdb",
     "eloria/pk.py": "e89cb845c21aa3fe41c2b49a8a5597b91c5729774e9f19636fd2d6d03ea731df"
   },
-  "sourcePublicationSha256": "2cfdc9d2968de8b2d464602ee8b598ef99c666482f8ecc67d7d8d8e6309ee3fc"
+  "sourcePublicationSha256": "bcec79280b0cfe5cb995fd54b56ce22c8694e09566a5dabd38a31758fc5b29ca"
 }
