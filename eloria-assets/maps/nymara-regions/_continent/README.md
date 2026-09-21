@@ -66,6 +66,16 @@ the reviewed source and generated allowlists for publication under the user's
 authorization; owner deployment and live confirmation remain pending. See
 `QA-MC007-MC008-2026-09-21.md`.
 
+**MC005 QA candidate (2026-09-21; validated isolated build).** The
+Mirrorhold cliff-house source keeps every existing house and railing triangle
+and adds one closed timber sill beneath each of the 27 decorative railings.
+The sill is decorative and is not a walk surface. The normal isolated build
+preserves all 313 composed roads, terrain and grounding arrays, placements,
+the Mirrorhold transform, and collision data. See
+`QA-MC005-2026-09-21.md` for the exact candidate identity, emitted proof,
+known baseline limitations, and review evidence. Owner deployment and live
+confirmation remain pending.
+
 `diagonal-plan.json` describes the coast, connected mountain chain, river
 catchments, islands, territory centres, and placement controls. `landscape.py`
 evaluates the common height and climate fields. No territory border enters

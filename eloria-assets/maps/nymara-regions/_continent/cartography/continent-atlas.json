@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-  "masterSha256": "28ea9f34bf6e745773d6c42639b958d68ef58dc8b9c44925361c3183772e632c",
+  "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
   "inputs": {
-    "res://../eloria-assets/maps/nymara-regions/continent-geography.json": "732f8fb914185b45cfaa9cb3454b99cc1afde62fc69e8c8e204b32a693a93703",
+    "res://../eloria-assets/maps/nymara-regions/continent-geography.json": "c68cdc242129369340cbf69d769270356a95bf8e99bca8f368d1c9806431e92b",
     "res://../eloria-assets/maps/nymara-regions/_continent/atlas_export.py": "a19b270692eb12e5bba7e8a63dc10888134d48b807af22afbc7a1ed6305f6799",
     "res://../eloria-assets/tools/render_region_cartography.py": "39cea0c899c16ca1aa802165bf7670d65cde7e4e7aee8b4be1131b3cb5d5101e",
     "res://../eloria-assets/tools/build_continent_map.py": "671b2aa920739e7e259ac5f4a382c1a681ad97fc4bc4159e6e78ebf98533fc38",
@@ -168,7 +168,7 @@
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/fdc104c8f52acf092f24da6bf467acca15f7dde32a85f3084ee5bdaa9f327b3c.png": "fdc104c8f52acf092f24da6bf467acca15f7dde32a85f3084ee5bdaa9f327b3c",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247.png": "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046.png": "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046",
-    "res://../eloria-assets/maps/nymara-regions/mirrorhold/world.glb": "380e4fcd754d4f9ac15e317a1c6bacef267d526bb58fdf8272c66577bca7e44b",
+    "res://../eloria-assets/maps/nymara-regions/mirrorhold/world.glb": "9918136be99c813ae4a34d7767754541ca6eebff0eb62b071c7b2d2b6ac3084f",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/018671435a95b7c86b0d29b83763ea7fa04f36d1850ba3cbaf9c625ab6730aab.png": "018671435a95b7c86b0d29b83763ea7fa04f36d1850ba3cbaf9c625ab6730aab",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/06b2238495c21e9f2f051941c8bafb10fdcb9900dfa855367b918c6de44d770d.png": "06b2238495c21e9f2f051941c8bafb10fdcb9900dfa855367b918c6de44d770d",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/0e64c22065fd8019dfb3c741966a4cb3b507cd0122f027e53e5e2dc055ffcde0.png": "0e64c22065fd8019dfb3c741966a4cb3b507cd0122f027e53e5e2dc055ffcde0",
@@ -442,7 +442,7 @@
   "supersample": 2,
   "projection": "orthographic, -Z north, +X east; one shared world pixel lattice",
   "optionalReviewInputs": {
-    "res://../eloria-assets/maps/nymara-regions/_continent/generated/continent.glb": "28ea9f34bf6e745773d6c42639b958d68ef58dc8b9c44925361c3183772e632c"
+    "res://../eloria-assets/maps/nymara-regions/_continent/generated/continent.glb": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e"
   },
   "reviewMaster": "Verified while rendering; when absent, freshness checks verify tracked named GLBs, shared textures and authored generation inputs."
 }

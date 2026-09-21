@@ -2990,12 +2990,12 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "28ea9f34bf6e745773d6c42639b958d68ef58dc8b9c44925361c3183772e632c",
+    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "28ea9f34bf6e745773d6c42639b958d68ef58dc8b9c44925361c3183772e632c",
+    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
     "collisionSha256": "14e636b6f778b54152dde7b9bfdb4006c42bec05565911b2f9075a8d5d5eba34",
     "terrainRevision": "diagonal-spine-v1:d2018f7b1537edcd1723547d062443c985436823b84ed4aab4b4117238fcde0b"
   }
