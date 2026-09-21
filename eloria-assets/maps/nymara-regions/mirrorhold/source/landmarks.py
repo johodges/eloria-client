@@ -302,8 +302,24 @@ def cliff_house(seed: int = 0, width: float = 5.0, depth: float = 5.6,
             for sub in panel.parts:
                 out.add(sub.translate(side * width * 0.22,
                                       0.9 + level * storey, depth * 0.5 + 0.02))
+    # Preserve the original decorative railing byte-for-byte, then give it a
+    # thin, non-walkable timber sill that is seated into both rail and jetty.
     balcony = ARCH.railing(width * 0.8, 0.95, material=TIMBER)
-    out.add(balcony.translate(0.0, total - storey, depth * 0.58))
+    balcony.translate(0.0, total - storey, depth * 0.58)
+    out.add(balcony)
+    rail_low, rail_high = balcony.bounds()
+    _, roof_high = roof.bounds()
+    jetty_front = depth * 0.575
+    sill_inner = jetty_front - 0.12
+    sill_outer = min(rail_high[2] + 0.02, roof_high[2] - 0.01)
+    sill_top = rail_low[1] + 0.02
+    sill_thickness = 0.05
+    out.add(M.box((rail_high[0] - rail_low[0], sill_thickness,
+                   sill_outer - sill_inner),
+                  center=((rail_low[0] + rail_high[0]) * 0.5,
+                          sill_top - sill_thickness * 0.5,
+                          (sill_inner + sill_outer) * 0.5),
+                  material=TIMBER))
     return out
 
 
