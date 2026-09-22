@@ -20,7 +20,7 @@ Or double-click `open-map-authoring-pilot.bat` in `godot-client`.
 
 Godot may import project assets on the first launch. Select the `MapAuthoringPilot` root to edit terrain, water level, preview, and export settings in the Inspector. Select the road, river, or an individual bridge to edit its width and other object settings. The root's **Edit road points**, **Edit river points**, and **Edit terrain heights** buttons select the matching saved control and switch the 3D viewport to it. The controls are:
 
-- `AuthoredControls/Ground`: owns the base ground surface for the whole map. Local painted ground regions are a later milestone.
+- `AuthoredControls/Ground`: owns the base ground surface for the whole map. Its `Regions` folder contains disabled Soil and Sand starter areas for local ground changes.
 - `AuthoredControls/Road`: a `Path3D` whose curve controls the worn path. Set **Default Width** for the whole road, or expand **Point Widths** and enter a full width for individual curve points. A point value of `0` inherits the surrounding taper.
 - `AuthoredControls/River`: a `Path3D` whose curve controls the river channel, terrain cut, visible water, and blocked export cells. Its **Default Width** and optional **Point Widths** work the same way as the road.
 - `AuthoredControls/TerrainHeights`: a group of `Marker3D` height handles. Move a handle up or down for a smooth radial height offset, and edit its **Influence Radius** in the Inspector. Move it in X/Z, duplicate it, or delete it to change where local shaping applies.
@@ -48,6 +48,12 @@ Set **Rotation Degrees** on that local surface to rotate only its texture. The o
 Choose **Custom** to assign a material directly. Enable **Show Advanced Materials** on that surface to expose its source material without changing the selected preset. Advanced fields control tint, normal strength, roughness, ORM response, triplanar **UV1 > Scale**, and supported shader parameters. Direct edits remain local to the selected object and survive refresh and save/reopen. Switching away from a texture and back during the editing session recovers that surface's current material, so Inspector undo can restore Custom materials and advanced tweaks.
 
 The terrain and road start at `GROUND_UV_SCALE = 0.24`, and bridge decks start at `TIMBER_UV_SCALE = 0.5`, near the top of `map_authoring_pilot.gd`. Change those constants for code-wide texture density. Triplanar surfaces use their source material's **UV1 Scale**. The old root visual style remains hidden storage used only when opening an older scene that has no local surface.
+
+## Add local ground areas
+
+Expand `AuthoredControls/Ground/Regions` and select `SoilArea` or `SandArea`. Enable the area, then use Godot's normal move, rotate, and scale tools to place it in X/Z. Set **Shape**, full **Size**, **Blend Width**, **Opacity**, and **Priority** in the Inspector; higher Priority areas overlay lower ones. Expand the area's **Surface** to choose its local texture and texture rotation. Duplicate an area with Ctrl+D to make another independently textured patch, or delete the whole area node to remove it. Height is cosmetic; each patch follows the existing terrain surface and does not change walking or export collision.
+
+Soil and Sand are colour and texture-density variants of the existing licensed ground texture maps; this pilot does not add a separate desert source asset. Up to 127 enabled regions can have distinct draw layers. If more are enabled, the lowest-priority regions, with scene order as the tie-breaker, are kept and the rest are skipped with a warning.
 
 Lighting is saved in the scene rather than generated. Select `Sun` to edit direction, colour, energy, and shadows; select `Environment` and expand its resource to edit the cool ambient/background values. The warm pool is `AuthoredScenery/CabinLantern/WarmLight`, where the Inspector exposes colour, energy, range, and shadows. Select the lantern or another prop's parent node to move the complete authored instance.
 
@@ -104,6 +110,12 @@ The object-material test covers independently textured and rotated bridges, the 
 
 ```powershell
 & 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_object_materials.gd
+```
+
+The ground-region test covers the disabled Soil and Sand starters, transformed soft-edged patches, priority order, Terrain-only refresh, duplicate and save/reopen isolation, and unchanged collision/export data:
+
+```powershell
+& 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_ground_regions.gd
 ```
 
 The focused visual-control test additionally edits road and river point counts, bends the river and verifies the visible water and exported collision move with it, changes terrain-handle height/radius/XZ and checks generated terrain plus encoded height cells, exercises degenerate paths, and saves/reopens the authored controls:

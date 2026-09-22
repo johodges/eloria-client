@@ -168,8 +168,8 @@ static func create_road_material(preset: String) -> ShaderMaterial:
 
 
 static func create_oriented_material(source: Material,
-		rotation_degrees: float) -> Material:
-	if source == null or is_zero_approx(rotation_degrees):
+		rotation_degrees: float, force_shader: bool = false) -> Material:
+	if source == null or is_zero_approx(rotation_degrees) and not force_shader:
 		return source
 	if source is ShaderMaterial:
 		var shader_material := source as ShaderMaterial

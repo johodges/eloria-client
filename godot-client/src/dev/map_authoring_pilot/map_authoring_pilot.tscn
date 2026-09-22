@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3]
+[gd_scene load_steps=42 format=3]
 
 [ext_resource type="Script" path="res://src/dev/map_authoring_pilot/map_authoring_pilot.gd" id="1_pilot"]
 [ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/last_lantern_style.tres" id="2_style"]
@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/stone-orm.png" id="18_stone_orm"]
 [ext_resource type="Shader" path="res://src/dev/map_authoring_pilot/style/worn_path.gdshader" id="19_path_shader"]
 [ext_resource type="Shader" path="res://src/dev/map_authoring_pilot/style/water.gdshader" id="20_water_shader"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_pilot/ground_region.gd" id="21_region"]
 
 [sub_resource type="ORMMaterial3D" id="Material_terrain"]
 albedo_color = Color(0.78, 0.86, 0.72, 1)
@@ -94,6 +95,46 @@ script = ExtResource("7_surface")
 texture_preset = "Grass"
 source_material = SubResource("Material_terrain")
 
+[sub_resource type="ORMMaterial3D" id="Material_soil_region"]
+albedo_color = Color(0.43, 0.3, 0.18, 1)
+albedo_texture = ExtResource("10_ground_color")
+roughness = 1.0
+normal_enabled = true
+normal_scale = 0.72
+normal_texture = ExtResource("11_ground_normal")
+orm_texture = ExtResource("12_ground_orm")
+uv1_scale = Vector3(0.24, 0.24, 0.24)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 4
+cull_mode = 2
+
+[sub_resource type="Resource" id="Surface_soil_region"]
+resource_local_to_scene = true
+script = ExtResource("7_surface")
+texture_preset = "Soil"
+source_material = SubResource("Material_soil_region")
+
+[sub_resource type="ORMMaterial3D" id="Material_sand_region"]
+albedo_color = Color(0.86, 0.72, 0.47, 1)
+albedo_texture = ExtResource("10_ground_color")
+roughness = 0.96
+normal_enabled = true
+normal_scale = 0.48
+normal_texture = ExtResource("11_ground_normal")
+orm_texture = ExtResource("12_ground_orm")
+uv1_scale = Vector3(0.2, 0.2, 0.2)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 4
+cull_mode = 2
+
+[sub_resource type="Resource" id="Surface_sand_region"]
+resource_local_to_scene = true
+script = ExtResource("7_surface")
+texture_preset = "Sand"
+source_material = SubResource("Material_sand_region")
+
 [sub_resource type="Resource" id="Surface_road"]
 resource_local_to_scene = true
 script = ExtResource("7_surface")
@@ -163,6 +204,24 @@ visual_style = ExtResource("2_style")
 [node name="Ground" type="Node3D" parent="AuthoredControls"]
 script = ExtResource("9_ground")
 base_surface = SubResource("Surface_ground")
+
+[node name="Regions" type="Node3D" parent="AuthoredControls/Ground"]
+
+[node name="SoilArea" type="Marker3D" parent="AuthoredControls/Ground/Regions"]
+position = Vector3(-12, 0, 12)
+gizmo_extents = 0.7
+script = ExtResource("21_region")
+size = Vector2(14, 10)
+surface = SubResource("Surface_soil_region")
+
+[node name="SandArea" type="Marker3D" parent="AuthoredControls/Ground/Regions"]
+position = Vector3(12, 0, 10)
+rotation = Vector3(0, 0.349066, 0)
+gizmo_extents = 0.7
+script = ExtResource("21_region")
+shape = 1
+size = Vector2(12, 8)
+surface = SubResource("Surface_sand_region")
 
 [node name="Road" type="Path3D" parent="AuthoredControls"]
 curve = SubResource("Curve3D_road")

@@ -58,6 +58,20 @@ func _run() -> void:
 			push_error("map authoring pilot editor preview: terrain height handle API is invalid")
 			quit(1)
 			return
+	var ground_regions := pilot.get_node_or_null(
+		"AuthoredControls/Ground/Regions") as Node3D
+	if ground_regions == null or ground_regions.get_child_count() != 2:
+		push_error("map authoring pilot editor preview: saved ground-region starters are incomplete")
+		quit(1)
+		return
+	for region in ground_regions.get_children():
+		var footprint := region.get_node_or_null(
+			"__GroundRegionFootprint") as MeshInstance3D
+		if footprint == null or footprint.owner != null or footprint.cast_shadow != \
+				GeometryInstance3D.SHADOW_CASTING_SETTING_OFF:
+			push_error("map authoring pilot editor preview: ground-region editor footprint is invalid")
+			quit(1)
+			return
 	var editor_interface: Object = Engine.get_singleton("EditorInterface")
 	var selection: Object = editor_interface.call("get_selection")
 	for action in [

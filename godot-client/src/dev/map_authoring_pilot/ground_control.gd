@@ -28,4 +28,10 @@ func sync_surface_binding() -> void:
 
 func surface_signature() -> Array:
 	sync_surface_binding()
-	return base_surface.signature() if base_surface != null else []
+	var result: Array = [base_surface.signature() if base_surface != null else []]
+	var regions := get_node_or_null("Regions")
+	if regions != null:
+		for child in regions.get_children():
+			if child.has_method("region_signature"):
+				result.append(child.call("region_signature"))
+	return result

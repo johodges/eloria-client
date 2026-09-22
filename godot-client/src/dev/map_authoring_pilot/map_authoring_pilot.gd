@@ -2,6 +2,9 @@
 class_name MapAuthoringPilot
 extends Node3D
 
+const _GROUND_REGION_MATERIAL := preload(
+	"res://src/dev/map_authoring_pilot/style/ground_region_material.gd")
+
 ## A deliberately small, code-first map authoring example. Authored controls live
 ## under AuthoredControls and are saved in the scene. Everything below
 ## GeneratedPreview is disposable and is rebuilt from those controls.
@@ -72,6 +75,9 @@ var _status: Label
 var _river_samples := PackedVector2Array()
 var _river_half_widths := PackedFloat32Array()
 var _bridge_cache: Array[Dictionary] = []
+var _ground_regions: Array[Dictionary] = []
+var _ground_region_material_cache: Dictionary = {}
+var _warned_ground_region_limit := false
 var _terrain_height_influences: Array[Dictionary] = []
 var _terrain_height_memo: Dictionary = {}
 
@@ -507,9 +513,88 @@ func _refresh_authoring_caches() -> void:
 	_terrain_height_memo.clear()
 	_refresh_river_samples()
 	_refresh_bridge_cache()
+	_refresh_ground_region_cache()
 	_refresh_terrain_height_influences()
 	if Engine.is_editor_hint():
 		update_configuration_warnings()
+
+
+func _refresh_ground_region_cache() -> void:
+	_ground_regions.clear()
+	if ground_control == null:
+		return
+	var regions := ground_control.get_node_or_null("Regions")
+	if regions == null:
+		return
+	var scene_order := 0
+	for candidate in regions.get_children():
+		if not candidate.has_method("region_signature"):
+			scene_order += 1
+			continue
+		if candidate.has_method("sync_surface_binding"):
+			candidate.call("sync_surface_binding")
+		if not bool(candidate.get("enabled")):
+			scene_order += 1
+			continue
+		var surface := candidate.get("surface") as MapAuthoringSurface
+		var world_to_local: Variant = candidate.call("projected_world_to_local")
+		if surface == null or world_to_local == null:
+			scene_order += 1
+			continue
+		_ground_regions.append({
+			"instance_id": candidate.get_instance_id(),
+			"name": String(candidate.name),
+			"priority": int(candidate.get("priority")),
+			"scene_order": scene_order,
+			"surface": surface,
+			"world_to_local": world_to_local,
+			"half_size": Vector2(candidate.get("size")) * 0.5,
+			"shape": int(candidate.get("shape")),
+			"blend_width": float(candidate.get("blend_width")),
+			"opacity": float(candidate.get("opacity")),
+			"bounds": candidate.call("world_bounds"),
+		})
+		scene_order += 1
+	_ground_regions.sort_custom(_ground_region_less)
+	if _ground_regions.size() > 127 and not _warned_ground_region_limit:
+		push_warning("Map authoring pilot: only the first 127 enabled ground regions are drawn; later regions are skipped.")
+		_warned_ground_region_limit = true
+	if _ground_regions.size() > 127:
+		_ground_regions.resize(127)
+	var active_ids: Dictionary = {}
+	for index in _ground_regions.size():
+		var region := _ground_regions[index]
+		var instance_id: int = region.instance_id
+		active_ids[instance_id] = true
+		var render_priority := -128 + index
+		var material_signature := [region.surface.signature(), region.world_to_local,
+			region.half_size, region.shape, region.blend_width, region.opacity,
+			render_priority]
+		var cached: Dictionary = _ground_region_material_cache.get(instance_id, {})
+		var material := cached.get("material") as ShaderMaterial
+		if cached.get("signature", []) != material_signature:
+			material = null
+		if material == null:
+			material = _GROUND_REGION_MATERIAL.create(region.surface,
+				region.world_to_local, region.half_size, region.shape,
+				region.blend_width, region.opacity, render_priority)
+			if material != null:
+				_ground_region_material_cache[instance_id] = {
+					"signature": material_signature,
+					"material": material,
+				}
+		region["render_priority"] = render_priority
+		region["material"] = material
+		_ground_regions[index] = region
+	for cached_id in _ground_region_material_cache.keys():
+		if not active_ids.has(cached_id):
+			_ground_region_material_cache.erase(cached_id)
+
+
+func _ground_region_less(left: Dictionary, right: Dictionary) -> bool:
+	if left.priority != right.priority:
+		return int(left.priority) < int(right.priority)
+	return int(left.scene_order) < int(right.scene_order)
 
 
 func _refresh_river_samples() -> void:
@@ -855,6 +940,60 @@ func _build_terrain(parent: Node3D) -> void:
 	collision.shape = shape
 	body.add_child(collision)
 	parent.add_child(body)
+	_build_ground_region_overlays(parent)
+
+
+func _build_ground_region_overlays(parent: Node3D) -> void:
+	for region in _ground_regions:
+		var material: ShaderMaterial = region.material
+		if material == null:
+			continue
+		var bounds: Rect2 = region.bounds
+		if not bounds.position.is_finite() or not bounds.size.is_finite() or \
+				bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
+			continue
+		var first_column := clampi(floori(bounds.position.x + MAP_METRES * 0.5),
+			0, int(MAP_METRES) - 1)
+		var last_column := clampi(ceili(bounds.end.x + MAP_METRES * 0.5) - 1,
+			0, int(MAP_METRES) - 1)
+		var first_row := clampi(floori(bounds.position.y + MAP_METRES * 0.5),
+			0, int(MAP_METRES) - 1)
+		var last_row := clampi(ceili(bounds.end.y + MAP_METRES * 0.5) - 1,
+			0, int(MAP_METRES) - 1)
+		if first_column > last_column or first_row > last_row:
+			continue
+		var overlay := SurfaceTool.new()
+		overlay.begin(Mesh.PRIMITIVE_TRIANGLES)
+		var has_vertices := false
+		for row in range(first_row, last_row + 1):
+			for column in range(first_column, last_column + 1):
+				var x0 := -MAP_METRES * 0.5 + float(column)
+				var z0 := -MAP_METRES * 0.5 + float(row)
+				var cell_bounds := Rect2(Vector2(x0, z0), Vector2.ONE)
+				if not bounds.intersects(cell_bounds, true):
+					continue
+				var x1 := x0 + 1.0
+				var z1 := z0 + 1.0
+				var a := Vector3(x0, _decoded_height(_encode_height(
+					_terrain_height(x0, z0))) + 0.008, z0)
+				var b := Vector3(x1, _decoded_height(_encode_height(
+					_terrain_height(x1, z0))) + 0.008, z0)
+				var c := Vector3(x1, _decoded_height(_encode_height(
+					_terrain_height(x1, z1))) + 0.008, z1)
+				var d := Vector3(x0, _decoded_height(_encode_height(
+					_terrain_height(x0, z1))) + 0.008, z1)
+				for vertex in [a, c, b, a, d, c]:
+					overlay.set_uv(Vector2(vertex.x, vertex.z) * GROUND_UV_SCALE)
+					overlay.add_vertex(vertex)
+					has_vertices = true
+		if not has_vertices:
+			continue
+		overlay.generate_normals()
+		overlay.generate_tangents()
+		var mesh := overlay.commit()
+		var node := _add_mesh(parent, "GroundRegion_%s" % region.name,
+			mesh, material)
+		node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 func _build_water(parent: Node3D) -> void:
