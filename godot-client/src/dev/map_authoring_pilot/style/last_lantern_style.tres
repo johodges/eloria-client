@@ -82,6 +82,11 @@ shader_parameter/river_half_width = 3.0
 
 [resource]
 script = ExtResource("1_style")
+terrain_texture = "Grass"
+road_texture = "Worn earth"
+woodwork_texture = "Timber"
+stonework_texture = "Stone"
+roof_texture = "Slate"
 terrain_material = SubResource("StandardMaterial3D_terrain")
 worn_path_material = SubResource("ShaderMaterial3D_path")
 timber_material = SubResource("StandardMaterial3D_timber")

@@ -5,7 +5,7 @@ uniform sampler2D ground_albedo : source_color, filter_linear_mipmap_anisotropic
 uniform sampler2D ground_normal : hint_normal, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D ground_orm : filter_linear_mipmap_anisotropic, repeat_enable;
 uniform vec4 worn_tint : source_color = vec4(0.62, 0.50, 0.34, 1.0);
-uniform float texture_scale : hint_range(0.1, 4.0, 0.05) = 1.0;
+uniform float texture_scale : hint_range(0.1, 16.0, 0.05) = 1.0;
 uniform float roughness_multiplier : hint_range(0.0, 2.0, 0.05) = 1.0;
 uniform float normal_strength : hint_range(0.0, 2.0, 0.05) = 0.72;
 uniform float edge_feather : hint_range(0.01, 0.5, 0.01) = 0.16;

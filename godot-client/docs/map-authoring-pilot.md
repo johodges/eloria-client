@@ -34,16 +34,15 @@ Moving a terrain handle in Y creates a local offset rather than changing the map
 
 ## Edit the Last Lantern look
 
-The root's **Visual Style** field points to `src/dev/map_authoring_pilot/style/last_lantern_style.tres`. To make a variant, open that resource from the Inspector and use **Save As** to create a personal `.tres`, then assign the copy to **Visual Style**. Keep one style assigned on the pilot root: it feeds both generated map meshes and saved `AuthoredScenery` props. Editing the checked-in shared resource changes every scene that uses it.
+The root's **Visual Style** field points to `src/dev/map_authoring_pilot/style/last_lantern_style.tres`. Expand it in the Inspector and choose a texture from the native **Terrain Texture**, **Road Texture**, **Woodwork Texture**, **Stonework Texture**, and **Roof Texture** dropdowns. **Woodwork Texture** covers the cabin walls, trim, bridge deck, and matching timber props. The viewport updates after the short editor debounce; press Ctrl+S to save the choices with the scene.
 
-Expand these fields on the personal style in the Inspector:
+Each dropdown offers **Custom**, **Grass**, **Worn earth**, **Timber**, **Stone**, **Thatch**, **Textile**, **Canvas**, **Metal**, **Leather**, **Hide**, **Bone**, **Crystal**, **Cavern**, and **Slate**. These choices reuse the Sunmane PBR texture families already licensed for Eloria. The road always keeps its feathered-edge shader while changing the selected base-colour, normal, and ORM textures.
 
-- **Terrain Material** controls the textured grass tint, normal strength, roughness, and ORM response.
-- **Worn Path Material** is a `ShaderMaterial`; edit `worn_tint`, `texture_scale`, `roughness_multiplier`, `normal_strength`, and `edge_feather` under **Shader Parameters**.
-- **Timber**, **Stone**, and **Slate Material** control the bridge, cabin, roof, and matching authored props. Their triplanar density is under **UV1 > Scale**.
-- **Water Material** exposes `deep_color`, `shallow_color`, `foam_color`, and `river_half_width` under **Shader Parameters**.
+Before experimenting, use **Save As** on the style resource to create a personal `.tres`, then assign the copy to **Visual Style**. Keep one style assigned on the pilot root: it feeds both generated map meshes and saved `AuthoredScenery` props. Editing the checked-in shared resource changes every scene that uses it.
 
-The terrain and road start at `GROUND_UV_SCALE = 0.24`, and the bridge deck starts at `TIMBER_UV_SCALE = 0.5`, near the top of `map_authoring_pilot.gd`. Change those constants for code-wide texture density. Triplanar timber, stone, and slate use the style resource's **UV1 Scale**, so they remain editable without changing the generator. Parameter edits update every mesh sharing that material immediately. Replacing a nested material reference is detected by the editor debounce and refreshes the generated meshes and authored scenery.
+Use **Custom** in a slot when you want to assign a material directly. Enable **Show Advanced Materials** to expose all six material resources without changing their selected presets. The advanced fields control texture tint, normal strength, roughness, ORM response, triplanar **UV1 > Scale**, and the road and water shader parameters. Advanced edits remain intact across refresh and save/reopen. Switching away from a texture and back during the editing session recovers its current material, so Inspector undo also restores Custom materials and advanced tweaks.
+
+The terrain and road start at `GROUND_UV_SCALE = 0.24`, and the bridge deck starts at `TIMBER_UV_SCALE = 0.5`, near the top of `map_authoring_pilot.gd`. Change those constants for code-wide texture density. Triplanar wall, woodwork, stonework, and roof materials use the style resource's **UV1 Scale**. Parameter edits update every mesh sharing that material immediately.
 
 Lighting is saved in the scene rather than generated. Select `Sun` to edit direction, colour, energy, and shadows; select `Environment` and expand its resource to edit the cool ambient/background values. The warm pool is `AuthoredScenery/CabinLantern/WarmLight`, where the Inspector exposes colour, energy, range, and shadows. Select the lantern or another prop's parent node to move the complete authored instance.
 
@@ -88,10 +87,16 @@ For the default Inspector export on Windows, the manifest is normally under `$en
 
 The smoke test checks that curve, scenery, visual-style, and material edits survive regeneration and save/reopen, generated preview nodes remain nonpersistent, the checked export fixture remains byte/JSON equivalent, the conservative server grid has the expected shape, and every step from spawn across the bridge to the entrance is legal on that same grid.
 
+The texture-preset test checks every named choice, isolated material instances, road-edge shader preservation, generated mesh and scenery assignments, the compact Inspector property list, and Custom or advanced edits across refresh and save/reopen:
+
+```powershell
+& 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_pilot_texture_presets.gd
+```
+
 The focused visual-control test additionally edits road and river point counts, bends the river and verifies the visible water and exported collision move with it, changes terrain-handle height/radius/XZ and checks generated terrain plus encoded height cells, exercises degenerate paths, and saves/reopens the authored controls:
 
 ```powershell
 & 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_pilot_visual_controls.gd
 ```
 
-The style textures reuse the Sunmane Steppe ground, timber, and stone source set. Preserve the original Eloria CC-BY-4.0 attribution recorded in `src/dev/map_authoring_pilot/style/ATTRIBUTION.md` when copying or redistributing them. This pilot deliberately reuses only that modest material set and does not import the Last Lantern tutorial scene, quest, or asset-building pipeline.
+The style textures reuse the Sunmane Steppe PBR source families already licensed for Eloria. Preserve the original CC-BY-4.0 attribution recorded in `src/dev/map_authoring_pilot/style/ATTRIBUTION.md` when copying or redistributing them. This pilot does not import the Last Lantern tutorial scene, quest, or asset-building pipeline.
