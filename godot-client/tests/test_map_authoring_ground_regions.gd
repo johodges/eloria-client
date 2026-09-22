@@ -27,6 +27,45 @@ func _run() -> void:
 		soil.surface.texture_preset == MapAuthoringTexturePresets.SOIL and
 		sand.surface.texture_preset == MapAuthoringTexturePresets.SAND,
 		"starter regions own independent Soil and Sand surfaces")
+	var proxy_properties := {}
+	for property: Dictionary in soil.get_property_list():
+		if property.name in [&"texture", &"texture_rotation"]:
+			proxy_properties[property.name] = property
+	soil.set("texture", MapAuthoringTexturePresets.SAND)
+	soil.set("texture_rotation", 27.0)
+	_expect(proxy_properties.size() == 2 and
+		(int(proxy_properties[&"texture"].usage) & PROPERTY_USAGE_STORAGE) == 0 and
+		(int(proxy_properties[&"texture_rotation"].usage) & PROPERTY_USAGE_STORAGE) == 0 and
+		soil.surface.texture_preset == MapAuthoringTexturePresets.SAND and
+		is_equal_approx(soil.surface.rotation_degrees, 27.0),
+		"top-level Texture controls edit the local Surface without duplicate storage")
+	var undo := UndoRedo.new()
+	undo.create_action("Change ground-region texture")
+	undo.add_do_property(soil, "texture", MapAuthoringTexturePresets.STONE)
+	undo.add_undo_property(soil, "texture", MapAuthoringTexturePresets.SAND)
+	undo.commit_action()
+	var proxy_do_worked: bool = \
+		soil.surface.texture_preset == MapAuthoringTexturePresets.STONE
+	undo.undo()
+	_expect(proxy_do_worked and
+		soil.surface.texture_preset == MapAuthoringTexturePresets.SAND,
+		"Texture proxy participates in property undo without a second saved value")
+	var other_region_source: Material = sand.surface.source_material
+	soil.enabled = true
+	soil.surface.source_material = ShaderMaterial.new()
+	var source_warnings: PackedStringArray = \
+		soil.call("_get_configuration_warnings")
+	_expect(not source_warnings.is_empty() and
+		String(source_warnings[0]).contains("Choose a named Texture"),
+		"an enabled unsupported Surface gives an actionable editor warning")
+	soil.set("texture", MapAuthoringTexturePresets.SAND)
+	_expect(soil.surface.source_material is BaseMaterial3D and
+		soil.surface.source_material != other_region_source and
+		sand.surface.source_material == other_region_source,
+		"reselecting a named Texture repairs only that region's invalid source")
+	soil.enabled = false
+	soil.set("texture", MapAuthoringTexturePresets.SOIL)
+	soil.set("texture_rotation", 0.0)
 	_expect(_region_meshes(pilot).is_empty(),
 		"disabled starter regions do not create preview overlays")
 
@@ -93,13 +132,18 @@ func _run() -> void:
 	_expect(duplicate.surface != soil.surface and
 		duplicate.surface.source_material != soil.surface.source_material,
 		"duplicating a region immediately owns an independent local surface")
-	duplicate.surface.texture_preset = MapAuthoringTexturePresets.SAND
+	duplicate.set("texture", MapAuthoringTexturePresets.SAND)
+	duplicate.set("texture_rotation", 37.0)
 	_expect(soil.surface.texture_preset == MapAuthoringTexturePresets.SOIL,
 		"editing the duplicate surface leaves its source region unchanged")
 
 	var packed := PackedScene.new()
 	_expect(packed.pack(pilot) == OK and ResourceSaver.save(packed, RELOAD_PATH) == OK,
 		"ground regions and their local surfaces can be saved")
+	var saved_text := FileAccess.get_file_as_string(RELOAD_PATH)
+	_expect(not saved_text.contains("\ntexture =") and
+		not saved_text.contains("\ntexture_rotation ="),
+		"top-level Texture proxies are not serialized beside the Surface")
 	var reopened_scene := ResourceLoader.load(RELOAD_PATH, "PackedScene",
 		ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
 	var reopened := reopened_scene.instantiate()
@@ -111,6 +155,7 @@ func _run() -> void:
 	_expect(reopened_soil.enabled and reopened_copy.enabled and
 		reopened_soil.surface.texture_preset == MapAuthoringTexturePresets.SOIL and
 		reopened_copy.surface.texture_preset == MapAuthoringTexturePresets.SAND and
+		is_equal_approx(reopened_copy.surface.rotation_degrees, 37.0) and
 		reopened_soil.surface != reopened_copy.surface and
 		reopened_soil.surface.source_material != reopened_copy.surface.source_material,
 		"enabled regions and duplicate-local materials survive save and reopen")

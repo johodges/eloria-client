@@ -110,21 +110,32 @@ static func create(surface: MapAuthoringSurface,
 
 
 static func _region_shader(base: Shader) -> Shader:
-	var base_code := base.code
+	# Shader source can be presented with platform-specific line endings. Normalize
+	# before hook validation and cache lookup so equivalent owned code shares one
+	# stable variant across editor and runtime.
+	var base_code := base.code.replace("\r\n", "\n").replace("\r", "\n")
 	if _shader_variants.has(base_code):
 		return _shader_variants[base_code]
-	if base_code.count(_UNIFORM_ANCHOR) != 1 or \
-			base_code.count(_VERTEX_ANCHOR) != 1 or \
-			base_code.count(_FRAGMENT_ANCHOR) != 1:
+	var code := _region_code(base_code)
+	if code.is_empty():
 		return null
-	var code := base_code.replace(
-		_UNIFORM_ANCHOR, _UNIFORM_ANCHOR + _REGION_UNIFORMS)
-	code = code.replace(_VERTEX_ANCHOR, _REGION_VERTEX)
-	code = code.replace(_FRAGMENT_ANCHOR, _REGION_FRAGMENT)
 	var shader := Shader.new()
 	shader.code = code
 	_shader_variants[base_code] = shader
 	return shader
+
+
+static func _region_code(source_code: String) -> String:
+	var base_code := source_code.replace("\r\n", "\n").replace("\r", "\n")
+	if base_code.count(_UNIFORM_ANCHOR) != 1 or \
+			base_code.count(_VERTEX_ANCHOR) != 1 or \
+			base_code.count(_FRAGMENT_ANCHOR) != 1:
+		return ""
+	var code := base_code.replace(
+		_UNIFORM_ANCHOR, _UNIFORM_ANCHOR + _REGION_UNIFORMS)
+	code = code.replace(_VERTEX_ANCHOR, _REGION_VERTEX)
+	code = code.replace(_FRAGMENT_ANCHOR, _REGION_FRAGMENT)
+	return code
 
 
 static func _warn_unsupported(surface: MapAuthoringSurface, reason: String) -> void:

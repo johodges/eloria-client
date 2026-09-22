@@ -7,6 +7,8 @@ enum Shape {
 	RECTANGLE,
 }
 
+## Draw this local ground patch. The Scene-tree eye can temporarily hide an
+## enabled patch without changing this saved setting.
 @export var enabled := false:
 	set(value):
 		enabled = value
@@ -22,11 +24,42 @@ enum Shape {
 @export_range(0.0, 8.0, 0.05) var blend_width := 1.25
 @export_range(0.0, 1.0, 0.01) var opacity := 1.0
 @export_range(-1000, 1000, 1) var priority := 0
+@export_group("Appearance")
+## Choose a ready ground texture without expanding the Surface resource.
+@export var texture: String:
+	get:
+		return (surface.texture_preset if surface != null
+			else MapAuthoringTexturePresets.CUSTOM)
+	set(value):
+		_ensure_surface()
+		surface.texture_preset = value
+		if value != MapAuthoringTexturePresets.CUSTOM and \
+				MapAuthoringTexturePresets.PRESET_NAMES.has(value) and \
+				not surface.source_material is BaseMaterial3D:
+			surface.source_material = \
+				MapAuthoringTexturePresets.create_material(value)
+## Rotate this region's texture in degrees without rotating its footprint.
+@export_range(-180.0, 180.0, 1.0, "degrees") var texture_rotation: float:
+	get:
+		return surface.rotation_degrees if surface != null else 0.0
+	set(value):
+		_ensure_surface()
+		surface.rotation_degrees = value
+## Advanced local material controls. Use the top-level Texture controls for
+## common choices; expand Surface for Custom source material editing.
 @export var surface: MapAuthoringSurface
 
 var _bound_surface: MapAuthoringSurface
 var _outline_signature: Array = []
 var _warning_signature: Array = []
+
+
+func _validate_property(property: Dictionary) -> void:
+	if property.name == &"texture":
+		property.hint = PROPERTY_HINT_ENUM
+		property.hint_string = ",".join(MapAuthoringTexturePresets.PRESET_NAMES)
+	if property.name in [&"texture", &"texture_rotation"]:
+		property.usage = int(property.usage) & ~PROPERTY_USAGE_STORAGE
 
 
 func _ready() -> void:
@@ -43,7 +76,8 @@ func _process(_delta: float) -> void:
 		var current := [enabled, shape, size]
 		if current != _outline_signature:
 			_refresh_editor_outline()
-		var warnings_current := [enabled, global_transform, surface != null]
+		var warnings_current := [enabled, global_transform, surface != null,
+			surface != null and surface.source_material is BaseMaterial3D]
 		if warnings_current != _warning_signature:
 			_warning_signature = warnings_current
 			update_configuration_warnings()
@@ -56,11 +90,19 @@ func sync_surface_binding() -> void:
 		surface = surface.duplicate(true) as MapAuthoringSurface
 		surface.resource_local_to_scene = true
 	_bound_surface = surface
+	notify_property_list_changed()
+
+
+func _ensure_surface() -> void:
+	if surface == null:
+		surface = MapAuthoringSurface.from_preset(
+			MapAuthoringTexturePresets.CUSTOM)
+	sync_surface_binding()
 
 
 func region_signature() -> Array:
 	sync_surface_binding()
-	return [name, global_transform, enabled, shape, size, blend_width,
+	return [name, global_transform, enabled, is_visible_in_tree(), shape, size, blend_width,
 		opacity, priority, surface.signature() if surface != null else []]
 
 
@@ -105,6 +147,8 @@ func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
 	if enabled and surface == null:
 		warnings.append("Enabled ground regions need a Surface; this region is skipped.")
+	elif enabled and not surface.source_material is BaseMaterial3D:
+		warnings.append("This ground region cannot draw its current Surface. Choose a named Texture such as Grass, Soil, or Sand, or use a supported standard 3D material source.")
 	if enabled and projected_world_to_local() == null:
 		warnings.append("Ground region X/Z scale is singular; this region is skipped.")
 	return warnings

@@ -72,6 +72,27 @@ func _run() -> void:
 			push_error("map authoring pilot editor preview: ground-region editor footprint is invalid")
 			quit(1)
 			return
+	var soil_region := ground_regions.get_node("SoilArea")
+	soil_region.set("texture", MapAuthoringTexturePresets.SAND)
+	soil_region.set("texture_rotation", 19.0)
+	soil_region.enabled = true
+	await create_timer(0.35).timeout
+	await process_frame
+	if soil_region.surface.texture_preset != MapAuthoringTexturePresets.SAND or \
+			not is_equal_approx(soil_region.surface.rotation_degrees, 19.0) or \
+			pilot.get_node_or_null(
+				"GeneratedPreview/Terrain/GroundRegion_SoilArea") == null:
+		push_error("map authoring pilot editor preview: enabled region did not auto-refresh")
+		quit(1)
+		return
+	soil_region.visible = false
+	await create_timer(0.35).timeout
+	await process_frame
+	if pilot.get_node_or_null(
+			"GeneratedPreview/Terrain/GroundRegion_SoilArea") != null:
+		push_error("map authoring pilot editor preview: hidden region overlay stayed visible")
+		quit(1)
+		return
 	var editor_interface: Object = Engine.get_singleton("EditorInterface")
 	var selection: Object = editor_interface.call("get_selection")
 	for action in [

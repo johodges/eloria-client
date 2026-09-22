@@ -41,6 +41,20 @@ func _test_forced_zero_shader_and_preserved_pbr() -> void:
 		region.shader.code.find("discard") >= 0 and
 		region.shader.code.find("ALPHA = clamp") >= 0,
 		"only the region variant contains the soft transparent footprint")
+	var owned_crlf := MapAuthoringTexturePresets._ORIENTED_PBR_SHADER.code.replace(
+		"\n", "\r\n")
+	var crlf_region_code: String = RegionMaterial._region_code(owned_crlf)
+	var crlf_shader := Shader.new()
+	crlf_shader.code = owned_crlf
+	var crlf_variant: Shader = RegionMaterial._region_shader(crlf_shader)
+	var lf_shader := Shader.new()
+	lf_shader.code = MapAuthoringTexturePresets._ORIENTED_PBR_SHADER.code
+	var lf_variant: Shader = RegionMaterial._region_shader(lf_shader)
+	_expect(not crlf_region_code.is_empty() and crlf_variant != null and
+		crlf_variant == lf_variant and
+		crlf_region_code.find("region_world_xz") >= 0 and
+		crlf_region_code.find("ALPHA = clamp") >= 0,
+		"CRLF owned source uses the production hooks and normalized LF shader cache")
 
 
 func _test_independent_parameters_and_shared_shader() -> void:

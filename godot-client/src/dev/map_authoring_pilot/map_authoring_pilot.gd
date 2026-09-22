@@ -533,7 +533,7 @@ func _refresh_ground_region_cache() -> void:
 			continue
 		if candidate.has_method("sync_surface_binding"):
 			candidate.call("sync_surface_binding")
-		if not bool(candidate.get("enabled")):
+		if not bool(candidate.get("enabled")) or not candidate.is_visible_in_tree():
 			scene_order += 1
 			continue
 		var surface := candidate.get("surface") as MapAuthoringSurface
