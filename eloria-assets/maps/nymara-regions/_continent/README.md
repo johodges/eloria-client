@@ -416,20 +416,23 @@ shaping modules (`landscape`, `world_layout`, `content`, `assemblies`,
 `amberwood_support`, `amberwood_access`, `mirror_lake_support`,
 `ssarathi_bank_support`, `manymouth_boats`, `terrain_export`, `scene_io`,
 `grey_crossings`, `four_gates_sage`, `door_approaches`, `hull_settle`, `resource_trails`, `object_edits`,
-`winding`, `river_crossings`, `reach_links`, `authored_points`),
+`winding`, `river_crossings`, `reach_links`, `authored_points`, `bridge_export`,
+`bridge_prepare`, `bridge_profiles`, and `../_northern/requirements.txt`),
 the object edits file `continent-edits.json` (absent means no edits),
 the composition algorithm, the authoritative
-entrance profile and each retained library certificate. A changed source must
+entrance profile, the actual Shapely/GEOS runtime versions, and each retained library certificate. A changed source must
 be recomposed rather than accepted by editing a certificate.
 
 Geometry export independently records `geometrySources` in `export.json` for
 `build_continent.py`, `scene_io.py`, `terrain_export.py`, `bridge_export.py`,
+`bridge_profiles.py`, `../_northern/requirements.txt`,
 `ferry_export.py`, `crossings.py`, `amberwood_access.py`, `manymouth_access.py`,
 `manymouth_village_streets.py`, `collision_export.py`, `mirror_access_geometry.py`,
 `grey_crossings.py` and `access_decks.py`, and checks that none changed during the
-build. The audit requires these current export hashes as well as the
-composition certificates. Bridge export changes can reuse the composed world;
-Ferry code also participates in landing selection and requires composition.
+build. It also records the actual Shapely and GEOS runtime versions without
+requiring one platform-specific GEOS patch release. The audit requires these current export hashes as well as the
+composition certificates. Bridge export participates in claimed-deck terrain
+grading and requires composition. Ferry code also participates in landing selection and requires composition.
 Terrain export and scene decoding participate in actual boat flotation and
 ground contact, so changes to either also require fresh composition.
 Village streets use the collision module's actual triangle slope and water

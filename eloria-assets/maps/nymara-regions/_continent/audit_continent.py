@@ -27,6 +27,9 @@ sys.path.insert(0, str(HERE.parent / '_toolkit'))
 import glb_reader as GR
 from world_layout import triangle_sample
 
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','bridge_export.py','bridge_prepare.py','bridge_profiles.py','../_northern/requirements.txt')
+EXPORT_SOURCES={'build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','bridge_profiles.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py'}
+
 
 class AuditError(ValueError):
     pass
@@ -35,6 +38,11 @@ class AuditError(ValueError):
 def require(condition, message):
     if not condition:
         raise AuditError(message)
+
+
+def geometry_dependencies():
+    import shapely
+    return {'shapely':shapely.__version__,'geos':shapely.geos_version_string}
 
 
 class Inputs:
@@ -382,13 +390,12 @@ def composition_algorithm_sha(path):
 def audit_shaping(client, continent, composition, inputs):
     plan_sha=inputs.digest(continent/'diagonal-plan.json')
     require(composition['planSha256']==plan_sha,'Composition uses a different landscape plan')
-    shaping={name:[] for name in ('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py')}
-    for relative,expected in composition['sources'].items():
-        path=Path(relative.replace('\\','/'))
-        if path.name in shaping:shaping[path.name].append((path,expected))
-    for name,records in shaping.items():
-        require(len(records)==1,f'Composition must identify exactly one shaping source: {name}')
-        relative,expected=records[0];path=(client/relative).resolve()
+    shaping={str((continent/name).resolve().relative_to(client.resolve())).replace('\\','/'):name for name in SHAPING_SOURCES}
+    sources={relative.replace('\\','/'):expected for relative,expected in composition['sources'].items()}
+    missing=set(shaping)-sources.keys()
+    require(not missing,'Composition is missing shaping source certificates: '+', '.join(sorted(missing)))
+    for relative,name in shaping.items():
+        expected=sources[relative];path=(client/relative).resolve()
         require(path==(continent/name).resolve(),f'Composition shaping source resolves outside its authored location: {relative}')
         require(inputs.digest(path)==expected,f'Authored landscape changed after composition: {relative}')
     builder=continent/'build_continent.py';inputs.digest(builder)
@@ -399,7 +406,9 @@ def audit_shaping(client, continent, composition, inputs):
     edits_path=continent/'continent-edits.json'
     edits_sha=inputs.digest(edits_path) if edits_path.exists() else hashlib.sha256(b'').hexdigest()
     require(composition.get('objectEditsSha256',hashlib.sha256(b'').hexdigest())==edits_sha,'Object edits (continent-edits.json) changed after composition')
-    return {'planSha256':plan_sha,'objectEditsSha256':edits_sha,'compositionAlgorithmSha256':algorithm_sha,'entranceProfileSha256':entrance_sha,'shapingModules':list(shaping)}
+    dependencies=geometry_dependencies()
+    require(composition.get('geometryDependencies')==dependencies,'Composition geometry dependencies changed after composition')
+    return {'planSha256':plan_sha,'objectEditsSha256':edits_sha,'compositionAlgorithmSha256':algorithm_sha,'entranceProfileSha256':entrance_sha,'geometryDependencies':dependencies,'shapingModules':list(SHAPING_SOURCES)}
 
 
 def exported_frames(client, exports, plan, master_sha, plan_sha, inputs):
@@ -744,8 +753,8 @@ def run(client, generated, report_path, server=None, require_collision=False, ge
         exports = inputs.json(generated/'export.json')
         require(exports.get('compositionSha256')==inputs.digest(generated/'composition.json'),'Geometry differs from the current composition')
         report['shapingFreshness']=audit_shaping(client,continent,composition,inputs)
-        required_export_sources={'build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py'}
-        require(set(exports.get('geometrySources',{}))==required_export_sources,'Geometry export must certify every export source')
+        require(set(exports.get('geometrySources',{}))==EXPORT_SOURCES,'Geometry export must certify every export source')
+        require(exports.get('geometryDependencies')==geometry_dependencies(),'Geometry export dependencies changed after export')
         for name,expected in exports['geometrySources'].items():
             require(inputs.digest(continent/name)==expected,f'Geometry export source changed: {name}')
         report['geometrySourceFreshness']=exports['geometrySources']

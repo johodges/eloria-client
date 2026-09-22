@@ -34,7 +34,8 @@ from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
 from build_progress import Progress
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','bridge_export.py','bridge_prepare.py','bridge_profiles.py','../_northern/requirements.txt')
+EXPORT_SOURCES=('build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','bridge_profiles.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py')
 
 
 EMPTY_SHA256=hashlib.sha256(b'').hexdigest()
@@ -60,6 +61,14 @@ def json_write(path,data):
     Path(path).write_text(json.dumps(data,indent=2,default=clean,ensure_ascii=False)+'\n',encoding='utf-8',newline='\n')
 
 def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+def source_key(path):return Path(path).resolve().relative_to(CLIENT.resolve()).as_posix()
+
+def shaping_source_keys():return frozenset(source_key(HERE/name) for name in SHAPING_SOURCES)
+
+def geometry_dependencies():
+    import shapely
+    return {'shapely':shapely.__version__,'geos':shapely.geos_version_string}
 
 
 def composition_algorithm_sha():
@@ -112,8 +121,10 @@ def prepare(library,output):
     edits_sha=object_edits_digest()
     profile_sha=digest(HERE/'legacy-server-profile/config/eloria/maps.txt')
     algorithm_sha=composition_algorithm_sha()
-    sources={str(p.relative_to(CLIENT)):digest(p) for p in HERE.glob('*.py')}
-    shaping={name:sources[str((HERE/name).relative_to(CLIENT))] for name in SHAPING_SOURCES}
+    dependencies=geometry_dependencies()
+    certificate_paths=tuple(HERE.glob('*.py'))+(HERE/'../_northern/requirements.txt',)
+    sources={source_key(p):digest(p) for p in certificate_paths}
+    shaping={name:digest(HERE/name) for name in SHAPING_SOURCES}
     templates=json.loads((HERE/'legacy-contracts.json').read_text())
     legacy=json.loads((HERE/'legacy-geography.json').read_text())
     started=time.monotonic();world=World()
@@ -301,6 +312,8 @@ def prepare(library,output):
     reach=apply_reach_links(world,content)
     if reach['links']:print(f"Reach links: {reach['links']} written on the finished ground ({reach['changedCells']} cells changed, up to {reach['maximumChangeMetres']} m)",flush=True)
     world.water=L.water_fields(world.gx,world.gz,height=world.height,plan=world.plan)
+    from bridge_prepare import prepare_bridges
+    world.bridge_preparation=prepare_bridges(world,content)
     # The support stages have finished the ground: every road station stands on it again (bridges excepted).
     world.refresh_road_heights()
     final_ferries=validate_final_ferries(world)
@@ -317,6 +330,7 @@ def prepare(library,output):
     content.ecological_scatter()
     if any(digest(HERE/name)!=sha for name,sha in shaping.items()):
         raise ValueError('Landscape shaping source changed during composition; run prepare again')
+    if geometry_dependencies()!=dependencies:raise ValueError('Geometry dependencies changed during composition; run prepare again')
     if digest(HERE/'diagonal-plan.json')!=plan_sha:raise ValueError('Landscape plan changed during composition')
     if object_edits_digest()!=edits_sha:raise ValueError('Object edits changed during composition')
     if digest(profile)!=profile_sha:raise ValueError('Authored entrances changed during composition')
@@ -324,7 +338,7 @@ def prepare(library,output):
     # Cache is local generated state with exact source certificates. Never load
     # an arbitrary downloaded pickle as an authored continent.
     with (output/'composed.pkl').open('wb') as handle:pickle.dump((world,content),handle,protocol=5)
-    json_write(output/'composition.json',{'schema':1,'planSha256':plan_sha,'objectEditsSha256':edits_sha,'objectEdits':{'document':content.edits.doc,'report':content.edits.report},'entranceProfileSha256':profile_sha,'compositionAlgorithmSha256':algorithm_sha,
+    json_write(output/'composition.json',{'schema':1,'planSha256':plan_sha,'objectEditsSha256':edits_sha,'objectEdits':{'document':content.edits.doc,'report':content.edits.report},'entranceProfileSha256':profile_sha,'compositionAlgorithmSha256':algorithm_sha,'geometryDependencies':dependencies,
         'library':{r:digest(Path(library)/r/'source-certificate.json') for r in world.ids},
         'sources':sources,
         'objects':len(content.objects),'roads':len(world.roads),'assemblies':content.assembly_records,
@@ -345,12 +359,16 @@ def load_composed(output,library):
     if certificate.get('entranceProfileSha256')!=digest(HERE/'legacy-server-profile/config/eloria/maps.txt'):raise ValueError('Authored entrance profile changed; recompose before export')
     algorithm_sha=composition_algorithm_sha()
     if certificate.get('compositionAlgorithmSha256')!=algorithm_sha:raise ValueError('Composition algorithm changed; recompose before export')
+    if certificate.get('geometryDependencies')!=geometry_dependencies():raise ValueError('Geometry dependencies changed; recompose before export')
     for region,sha in certificate['library'].items():
         if sha!=digest(Path(library)/region/'source-certificate.json'):raise ValueError(f'{region}: source content changed; recompose')
-    for relative,sha in certificate['sources'].items():
+    sources={relative.replace('\\','/'):sha for relative,sha in certificate['sources'].items()}
+    missing=shaping_source_keys()-sources.keys()
+    if missing:raise ValueError('Composition is missing shaping source certificates: '+', '.join(sorted(missing)))
+    for relative in sorted(shaping_source_keys()):
         # Export-only fixes may reuse the completed landform. Its shaping
         # modules and source content are the exact terrain authority.
-        if Path(relative).name in SHAPING_SOURCES and digest(CLIENT/relative)!=sha:
+        if digest(CLIENT/relative)!=sources[relative]:
             raise ValueError(f'{relative}: landscape composition changed; recompose')
     with (output/'composed.pkl').open('rb') as handle:return pickle.load(handle)
 
@@ -464,7 +482,8 @@ def prune_retired_exports(manifests):
 def export_geometry(world,content,output):
     PROGRESS.start('geometry',len(world.ids))
     composition_sha=digest(output/'composition.json')
-    export_sources={name:digest(HERE/name) for name in ('build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py')}
+    dependencies=geometry_dependencies()
+    export_sources={name:digest(HERE/name) for name in EXPORT_SOURCES}
     prepare_contracts(world)
     terrain_path=output/'shared-terrain.glb';bridge_path=output/'bridges.glb'
     from ferry_export import build_ferries
@@ -566,9 +585,10 @@ def export_geometry(world,content,output):
     prune_retired_exports(manifests)
     if any(digest(HERE/name)!=sha for name,sha in export_sources.items()):
         raise ValueError('Geometry export source changed during the build; export again before publication')
+    if geometry_dependencies()!=dependencies:raise ValueError('Geometry dependencies changed during export; export again before publication')
     if digest(output/'composition.json')!=composition_sha:raise ValueError('Composition changed during geometry export')
     json_write(output/'export.json',{'masterPath':str(master_path),'masterSha256':master_sha,
-        'geometrySources':export_sources,'compositionSha256':composition_sha,'greyCrossingLandmarks':grey_landmarks,
+        'geometrySources':export_sources,'geometryDependencies':dependencies,'compositionSha256':composition_sha,'greyCrossingLandmarks':grey_landmarks,
         'regions':{r:{'world':str(package(r)/'world.json'),'glbSha256':digest(package(r)/'world.glb'),'chunks':len(m['streamingChunks']['chunks'])} for r,m in manifests.items()}})
     return manifests
 
@@ -578,8 +598,9 @@ def verify_geometry_export(output):
     ledger=json.loads((output/'export.json').read_text(encoding='utf-8'))
     if ledger.get('compositionSha256')!=digest(output/'composition.json'):
         raise ValueError('Geometry does not match the composed landform; run the geometry stage before contracts')
-    required={'build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py'}
+    required=set(EXPORT_SOURCES)
     if set(ledger.get('geometrySources',{}))!=required:raise ValueError('Geometry export is missing its source certificate')
+    if ledger.get('geometryDependencies')!=geometry_dependencies():raise ValueError('Geometry export dependencies changed; export again')
     for name,expected in ledger['geometrySources'].items():
         if digest(HERE/name)!=expected:raise ValueError(f'{name}: geometry export source changed; export again')
     if digest(output/'continent.glb')!=ledger['masterSha256']:raise ValueError('Exported master bytes changed')
@@ -674,10 +695,13 @@ def composition_freshness(output=None):
         if recorded is None and current is None:continue
         compare(name,recorded,current)
     compare('compositionAlgorithm',composition.get('compositionAlgorithmSha256'),composition_algorithm_sha())
-    for relative,recorded in sorted(composition.get('sources',{}).items()):
-        relative=relative.replace('\\','/')
-        if Path(relative).name not in SHAPING_SOURCES:continue
-        source=CLIENT/relative;compare(relative,recorded,digest(source) if source.exists() else None)
+    compare('geometryDependencies',composition.get('geometryDependencies'),geometry_dependencies())
+    sources={relative.replace('\\','/'):sha for relative,sha in composition.get('sources',{}).items()}
+    for relative in sorted(shaping_source_keys()):
+        source=CLIENT/relative;current=digest(source) if source.exists() else None
+        if relative not in sources:
+            state['recorded'][relative]=None;state['current'][relative]=current;state['missing'].append(relative)
+        else:compare(relative,sources[relative],current)
     for key,value in sorted(composition.items()):
         if key.endswith('Sha256') and key not in COMPOSITION_INPUTS and key!='compositionAlgorithmSha256':
             state['unknown'].append(key);state['recorded'][key]=value;state['current'][key]=None

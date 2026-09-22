@@ -111,14 +111,16 @@ class CompositionFreshnessTests(unittest.TestCase):
         plan=continent/'diagonal-plan.json';plan.write_text('{"regions": []}\n',encoding='utf-8')
         sources={}
         for name in B.SHAPING_SOURCES:
-            source=continent/name;source.write_text(f'# fixture {name}\n',encoding='utf-8')
-            sources[str(source.relative_to(client))]=digest(source)
+            source=continent/name;source.parent.mkdir(parents=True,exist_ok=True)
+            source.write_text(f'# fixture {name}\n',encoding='utf-8')
+            sources[source.resolve().relative_to(client.resolve()).as_posix()]=digest(source)
         builder=continent/'build_continent.py';builder.write_text('# fixture builder\n',encoding='utf-8')
         sources[str(builder.relative_to(client))]=digest(builder)
         profile=continent/'legacy-server-profile/config/eloria/maps.txt'
         profile.parent.mkdir(parents=True);profile.write_text('# fixture entrances\n',encoding='utf-8')
         self.write(generated/'composition.json',{'schema':1,'planSha256':digest(plan),
             'entranceProfileSha256':digest(profile),'compositionAlgorithmSha256':B.composition_algorithm_sha(),
+            'geometryDependencies':B.geometry_dependencies(),
             'library':{},'sources':sources,'objects':3,'roads':7})
         return client,continent,generated
 
@@ -142,7 +144,9 @@ class CompositionFreshnessTests(unittest.TestCase):
 
     def test_an_edited_plan_or_shaping_source_reads_as_stale(self):
         for name,expected in (('diagonal-plan.json','plan'),
-                              ('content.py','eloria-assets/maps/nymara-regions/_continent/content.py'),
+                               ('content.py','eloria-assets/maps/nymara-regions/_continent/content.py'),
+                               ('bridge_prepare.py','eloria-assets/maps/nymara-regions/_continent/bridge_prepare.py'),
+                               ('../_northern/requirements.txt','eloria-assets/maps/nymara-regions/_northern/requirements.txt'),
                               ('legacy-server-profile/config/eloria/maps.txt','entranceProfile')):
             with self.subTest(name=name),tempfile.TemporaryDirectory() as tmp:
                 client,continent,generated=self.fixture(Path(tmp))
@@ -152,6 +156,54 @@ class CompositionFreshnessTests(unittest.TestCase):
                 self.assertEqual(state['changed'],[expected],state['changed'])
                 self.assertEqual(state['missing'],[])
                 self.assertNotEqual(state['recorded'][expected],state['current'][expected])
+
+    def test_a_missing_required_shaping_certificate_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            client,continent,generated=self.fixture(Path(tmp))
+            composition=json.loads((generated/'composition.json').read_text(encoding='utf-8'))
+            requirement='eloria-assets/maps/nymara-regions/_northern/requirements.txt'
+            composition['sources'].pop(requirement)
+            self.write(generated/'composition.json',composition)
+            state=self.freshness(client,continent,generated)
+            self.assertFalse(state['fresh']);self.assertIn(requirement,state['missing'])
+            with patch.object(B,'HERE',continent),patch.object(B,'CLIENT',client):
+                with self.assertRaisesRegex(ValueError,'missing shaping source certificates.*requirements.txt'):
+                    B.load_composed(generated,Path(tmp)/'library')
+
+    def test_a_requirements_only_change_invalidates_composition_and_export(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            client,continent,generated=self.fixture(Path(tmp))
+            requirement=continent/'../_northern/requirements.txt'
+            export_sources={name:(digest(continent/name) if (continent/name).exists() else '0'*64)
+                            for name in B.EXPORT_SOURCES}
+            self.write(generated/'export.json',{'compositionSha256':digest(generated/'composition.json'),
+                'geometrySources':export_sources,'geometryDependencies':B.geometry_dependencies()})
+            requirement.write_text('# changed requirement\n',encoding='utf-8')
+            state=self.freshness(client,continent,generated)
+            self.assertFalse(state['fresh'])
+            self.assertEqual(state['changed'],['eloria-assets/maps/nymara-regions/_northern/requirements.txt'])
+            with patch.object(B,'HERE',continent),patch.object(B,'CLIENT',client):
+                with self.assertRaisesRegex(ValueError,'requirements.txt: landscape composition changed'):
+                    B.load_composed(generated,Path(tmp)/'library')
+                with self.assertRaisesRegex(ValueError,'requirements.txt: geometry export source changed'):
+                    B.verify_geometry_export(generated)
+
+    def test_a_runtime_dependency_mismatch_invalidates_composition_and_export(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            client,continent,generated=self.fixture(Path(tmp))
+            changed={'shapely':'2.1.2','geos':'3.10.0-test'}
+            with patch.object(B,'geometry_dependencies',return_value=changed):
+                state=self.freshness(client,continent,generated)
+                self.assertFalse(state['fresh']);self.assertEqual(state['changed'],['geometryDependencies'])
+                with patch.object(B,'HERE',continent),patch.object(B,'CLIENT',client):
+                    with self.assertRaisesRegex(ValueError,'Geometry dependencies changed'):
+                        B.load_composed(generated,Path(tmp)/'library')
+            self.write(generated/'export.json',{'compositionSha256':digest(generated/'composition.json'),
+                'geometrySources':{name:'0'*64 for name in B.EXPORT_SOURCES},
+                'geometryDependencies':changed})
+            with patch.object(B,'HERE',continent):
+                with self.assertRaisesRegex(ValueError,'Geometry export dependencies changed'):
+                    B.verify_geometry_export(generated)
 
     def test_a_deleted_input_is_missing_rather_than_changed(self):
         with tempfile.TemporaryDirectory() as tmp:

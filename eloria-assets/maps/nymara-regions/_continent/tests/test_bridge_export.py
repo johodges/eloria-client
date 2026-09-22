@@ -28,6 +28,23 @@ def water(x,z,*,height,plan):
 
 
 class BridgeUnionTests(unittest.TestCase):
+    def test_site13_uses_bounded_asymmetric_landings_for_keeper_route(self):
+        w=world();road=w.roads[0]
+        site={'id':13,'key':'horn_tributary@124','wetEdges':[[18.,20.],[30.,20.]]}
+        geometry=B._claimed_geometry_v7(w,site,6.,[road])
+        self.assertEqual((geometry['leftLandingMetres'],geometry['rightLandingMetres']),(4.,6.))
+        self.assertAlmostEqual(geometry['policyStart'],-4.)
+        self.assertAlmostEqual(geometry['policyEnd'],18.)
+        ordinary=B._claimed_geometry_v7(w,{**site,'id':12},6.,[road])
+        self.assertEqual((ordinary['leftLandingMetres'],ordinary['rightLandingMetres']),(6.,6.))
+        saved=B.SITE_BANK_LANDINGS[(13,'horn_tributary@124')]
+        try:
+            B.SITE_BANK_LANDINGS[(13,'horn_tributary@124')]=(0.,6.)
+            with self.assertRaisesRegex(B.BP.ProfileError,'positive policy cap'):
+                B._claimed_geometry_v7(w,site,6.,[road])
+        finally:
+            B.SITE_BANK_LANDINGS[(13,'horn_tributary@124')]=saved
+
     def test_a_sliver_outline_is_no_floor_and_a_square_still_triangulates(self):
         # Four vertices a tenth of a millimetre apart: below the collapse threshold's reach, no ear has area.
         sliver=np.array([[1171.39,5.,1421.61],[1171.3901,5.,1421.61],[1171.3901,5.,1421.6101],[1171.39,5.,1421.6101]])
@@ -240,6 +257,20 @@ class BridgeUnionTests(unittest.TestCase):
         a=B.common_surface(first,water_fields=water);b=B.common_surface(second,water_fields=water)
         np.testing.assert_array_equal(a['mask'],b['mask'])
         np.testing.assert_allclose(a['height'],b['height'],equal_nan=True)
+
+    def test_loose_inventory_is_the_common_surface_wet_authority_with_stable_roads(self):
+        w=world();inventory=B.loose_crossing_inventory(w,water_fields=water)
+        field=B.common_surface(w,water_fields=water)
+        self.assertEqual(inventory['looseWetCellIndices'],field['looseWetCellIndices'])
+        self.assertEqual(len(inventory['components']),1)
+        component=inventory['components'][0]
+        self.assertEqual(component['looseWetCells'],inventory['looseWetCellIndices'])
+        self.assertEqual(component['roadIds'],('back','out'))
+        self.assertEqual(component['fullWidthWaterRoadIds'],('back','out'))
+        self.assertEqual({item['roadId'] for item in component['fullWidthWaterCells']},{'back','out'})
+        self.assertEqual(set().union(*(set(item['looseWetCells'])
+                                     for item in component['fullWidthWaterCells'])),
+                         set(inventory['looseWetCellIndices']))
 
     def test_crossing_roads_share_one_junction_with_bounded_actual_triangle_slopes(self):
         w=world();w.roads.append({'id':'north-south','width':3.,'points':[[24,0,4],[24,0,36]]})

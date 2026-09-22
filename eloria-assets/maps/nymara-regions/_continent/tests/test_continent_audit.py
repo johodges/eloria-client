@@ -6,6 +6,7 @@ import json
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
@@ -132,24 +133,25 @@ class ProvisionalExportTests(unittest.TestCase):
         plan={'bounds':[0,0,4,4],'regions':[{'id':'west','center':[1,2]},{'id':'east','center':[3,2]}]}
         write(continent/'diagonal-plan.json',plan);plan_sha=digest(continent/'diagonal-plan.json')
         sources={}
-        for name in ('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py'):
-            path=continent/name;path.write_text(f'# fixture {name}\n')
-            sources[path.relative_to(client).as_posix()]=digest(path)
+        for name in A.SHAPING_SOURCES:
+            path=continent/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_text(f'# fixture {name}\n')
+            sources[path.resolve().relative_to(client.resolve()).as_posix()]=digest(path)
         builder=continent/'build_continent.py'
         builder.write_text('def prepare(library, output):\n    return library, output\n\ndef ferry_landing(world, region, toward):\n    return toward\n')
         profile=continent/'legacy-server-profile/config/eloria/maps.txt'
         profile.parent.mkdir(parents=True);profile.write_text('# fixture entrances\n')
         write(generated/'composition.json',{'planSha256':plan_sha,'sources':sources,
-              'compositionAlgorithmSha256':A.composition_algorithm_sha(builder),'entranceProfileSha256':digest(profile)})
+              'compositionAlgorithmSha256':A.composition_algorithm_sha(builder),'entranceProfileSha256':digest(profile),
+              'geometryDependencies':A.geometry_dependencies()})
         scene(generated/'shared-terrain.glb');scene(generated/'continent.glb')
         master_sha=digest(generated/'continent.glb')
         write(generated/'master-scene.json',{'sha256':master_sha,'regions':['west','east']})
         exports={'masterPath':str(generated/'continent.glb'),'masterSha256':master_sha,'regions':{},
-                 'compositionSha256':digest(generated/'composition.json')}
+                 'compositionSha256':digest(generated/'composition.json'),'geometryDependencies':A.geometry_dependencies()}
         exports['geometrySources']={}
-        for name in ('build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py'):
+        for name in A.EXPORT_SOURCES:
             path=continent/name
-            if not path.exists():path.write_text(f'# fixture {name}\n')
+            if not path.exists():path.parent.mkdir(parents=True,exist_ok=True);path.write_text(f'# fixture {name}\n')
             exports['geometrySources'][name]=digest(path)
         for region,x in (('west',1),('east',3)):
             package=base/region;chunk=package/'chunks/00_00';chunk.mkdir(parents=True)
@@ -198,7 +200,7 @@ class ProvisionalExportTests(unittest.TestCase):
             self.assertTrue(any('Streaming chunks: 1 missing' in error for error in result['errors']),result['errors'])
 
     def test_shaping_and_composition_algorithm_freshness_are_required_in_provisional_mode(self):
-        for name in ('assemblies.py','crown_support.py','westhaven_support.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','build_continent.py','legacy-server-profile/config/eloria/maps.txt','continent-edits.json'):
+        for name in ('assemblies.py','crown_support.py','westhaven_support.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','bridge_prepare.py','bridge_profiles.py','../_northern/requirements.txt','build_continent.py','legacy-server-profile/config/eloria/maps.txt','continent-edits.json'):
             with self.subTest(name=name),tempfile.TemporaryDirectory() as tmp:
                 root=Path(tmp);client,generated,base=self.fixture(root)
                 path=base/'_continent'/name
@@ -207,6 +209,24 @@ class ProvisionalExportTests(unittest.TestCase):
                 result=A.run(client,generated,root/'report.json',geometry_only=True)
                 self.assertFalse(result['passed'])
                 self.assertTrue(any('changed after composition' in error for error in result['errors']),result['errors'])
+
+    def test_missing_shaping_certificate_and_runtime_mismatch_are_rejected(self):
+        requirement='eloria-assets/maps/nymara-regions/_northern/requirements.txt'
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);client,generated,_=self.fixture(root)
+            path=generated/'composition.json';composition=json.loads(path.read_text())
+            composition['sources'].pop(requirement);path.write_text(json.dumps(composition))
+            export=generated/'export.json';ledger=json.loads(export.read_text())
+            ledger['compositionSha256']=hashlib.sha256(path.read_bytes()).hexdigest();export.write_text(json.dumps(ledger))
+            result=A.run(client,generated,root/'report.json',geometry_only=True)
+            self.assertFalse(result['passed'])
+            self.assertTrue(any('missing shaping source certificates' in error for error in result['errors']),result['errors'])
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);client,generated,_=self.fixture(root)
+            with patch.object(A,'geometry_dependencies',return_value={'shapely':'2.1.2','geos':'3.10.0-test'}):
+                result=A.run(client,generated,root/'report.json',geometry_only=True)
+            self.assertFalse(result['passed'])
+            self.assertTrue(any('dependencies changed' in error for error in result['errors']),result['errors'])
 
     def test_provisional_address_and_master_provenance_cannot_be_invented(self):
         for field in ('address','master'):
@@ -220,13 +240,13 @@ class ProvisionalExportTests(unittest.TestCase):
                 self.assertFalse(result['passed'])
                 self.assertTrue(any(('address bounds' if field=='address' else 'different master') in error for error in result['errors']))
 
-    def test_stale_bridge_export_source_cannot_pass_through_unchanged_terrain(self):
+    def test_stale_bridge_export_source_cannot_pass_through_unchanged_composition(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);client,generated,base=self.fixture(root)
             (base/'_continent/bridge_export.py').write_text('# Changed deck profile\n')
             result=A.run(client,generated,root/'report.json',geometry_only=True)
             self.assertFalse(result['passed'])
-            self.assertTrue(any('Geometry export source changed: bridge_export.py' in error for error in result['errors']))
+            self.assertTrue(any('Authored landscape changed after composition' in error for error in result['errors']))
 
 
 
