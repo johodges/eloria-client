@@ -28,6 +28,15 @@ Godot may import project assets on the first launch. Select the `MapAuthoringPil
 - `Building`: move or rotate the open-front cabin and its attached entrance, or edit its separate wall and roof surfaces.
 - `Building/Entrance` and `Spawn`: adjust the attached doorway endpoint and route start.
 - `AuthoredScenery`: move the saved shore rocks, grass clumps, wind pine, sign, or cabin lantern with the normal transform tools. These cosmetic nodes stay outside `GeneratedPreview`, so regeneration does not erase their placements.
+- `AuthoredAssets`: contains props placed from the **Map Assets** dock. These are ordinary saved scene nodes and also stay outside `GeneratedPreview`.
+
+## Place library assets
+
+Open **Map Assets** from the editor docks, search by name, and optionally narrow the category. Select an item to see its preview, press **Place on terrain**, then click the terrain in the 3D view. Escape or right-click cancels. **Add at view center** places at the terrain point under the middle of the 3D view. Use **Refresh Library** after changing the project asset catalog.
+
+Placed items are selected immediately. Move, rotate, scale, duplicate, delete, undo, and redo them with Godot's normal scene tools, then save the pilot scene. The dock grounds the visible bounds on the actual preview terrain and uses the catalog height for the initial size of world-library models. Items live under `AuthoredAssets`, so refreshing generated terrain, roads, bridges, or buildings does not erase them.
+
+World-library GLBs keep their linked scene identity and original materials, including multi-material models. The starter rocks, pine, grass, sign, and lantern are editable local copies; select one of their mesh parts to use its existing local **Surface** texture controls. Library props are visual in this pilot and do not change walking collision or exported map data.
 
 To edit either path, select its `Path3D` node and work in the 3D viewport. In **Select Points** mode, Ctrl+left-click the curve or empty space to add or split a point, and right-click an existing point to delete it. The dedicated **Add Point** mode also splits when you click the curve and appends when you click empty space; **Delete Point** mode removes a clicked point. Ctrl+Z uses Godot's native undo. **Top View** is recommended because road and river authoring is in X/Z; point Y is intentionally ignored. The river's visible water and blocked-cell mask resolve to the pilot's half-metre export samples. These controls follow the Godot 4.5 stable `Path3D` editor behavior verified in [`path_3d_editor_plugin.cpp`](https://github.com/godotengine/godot/blob/4.5-stable/editor/scene/3d/path_3d_editor_plugin.cpp).
 
@@ -116,6 +125,12 @@ The ground-region test covers the disabled Soil and Sand starters, transformed s
 
 ```powershell
 & 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_ground_regions.gd
+```
+
+The editor placement test covers exact triangle-ground clicks, linked GLB and local starter placement, grounding and catalog size, native undo/redo, refresh and save/reopen survival, unchanged collision data, and the dock's search, selection, refresh, and cancel flow:
+
+```powershell
+& 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --editor --headless --path . --script res://tests/test_map_asset_placement_editor.gd
 ```
 
 The focused visual-control test additionally edits road and river point counts, bends the river and verifies the visible water and exported collision move with it, changes terrain-handle height/radius/XZ and checks generated terrain plus encoded height cells, exercises degenerate paths, and saves/reopens the authored controls:

@@ -287,6 +287,8 @@ gizmo_extents = 1.5
 
 [editable path="AuthoredScenery"]
 
+[node name="AuthoredAssets" type="Node3D" parent="."]
+
 [node name="GeneratedPreview" type="Node3D" parent="."]
 
 [node name="Sun" type="DirectionalLight3D" parent="."]

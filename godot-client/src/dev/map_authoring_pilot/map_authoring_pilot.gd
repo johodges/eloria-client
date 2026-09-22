@@ -208,6 +208,39 @@ func server_grid() -> PackedByteArray:
 	return _server_grid.duplicate()
 
 
+## Intersects a world-space ray with the actual quantized preview triangles used
+## by the editor. This keeps asset placement exact at river cuts and steep banks.
+func authoring_ground_intersection(ray_origin: Vector3, ray_direction: Vector3,
+		max_distance: float = 2048.0) -> Variant:
+	if not ray_origin.is_finite() or not ray_direction.is_finite() or \
+			ray_direction.length_squared() < 0.000001 or not is_finite(max_distance) or \
+			max_distance <= 0.0:
+		return null
+	var terrain_mesh := get_node_or_null(
+		"GeneratedPreview/Terrain/TerrainMesh") as MeshInstance3D
+	if terrain_mesh == null or terrain_mesh.mesh == null or \
+			absf(global_transform.basis.determinant()) < 0.000001:
+		return null
+	var inverse := global_transform.affine_inverse()
+	var start := inverse * ray_origin
+	var finish := inverse * (ray_origin + ray_direction.normalized() * max_distance)
+	var mesh_to_pilot := inverse * terrain_mesh.global_transform
+	var faces := terrain_mesh.mesh.get_faces()
+	var nearest: Variant = null
+	var nearest_distance := INF
+	for index in range(0, faces.size() - 2, 3):
+		var hit: Variant = Geometry3D.segment_intersects_triangle(start, finish,
+			mesh_to_pilot * faces[index], mesh_to_pilot * faces[index + 1],
+			mesh_to_pilot * faces[index + 2])
+		if hit == null:
+			continue
+		var distance: float = start.distance_squared_to(hit as Vector3)
+		if distance < nearest_distance:
+			nearest_distance = distance
+			nearest = hit
+	return global_transform * (nearest as Vector3) if nearest != null else null
+
+
 func authored_snapshot() -> Dictionary:
 	return {
 		"road": _curve_signature(),
