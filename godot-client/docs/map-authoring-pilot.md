@@ -38,6 +38,8 @@ Placed items are selected immediately. Move, rotate, scale, duplicate, delete, u
 
 World-library GLBs keep their linked scene identity and original materials, including multi-material models. The starter rocks, pine, grass, sign, and lantern are editable local copies; select one of their mesh parts to use its existing local **Surface** texture controls. Library props are visual in this pilot and do not change walking collision or exported map data.
 
+The **Continent props**, **Continent structures**, and **Continent landmarks** categories contain individual objects extracted from the current continent packages: secret entrances, gates, a bridge, buildings, caves, trees, a skiff, and other reusable forms. They keep their current continent scale and native materials. Large landmarks can be resized with the normal scale gizmo. A boat is grounded like every other visual asset; after placing one, move it up in Y to the water level you want. Whole regions, cities, terrain, and fitted access assemblies are never library entries.
+
 To edit either path, select its `Path3D` node and work in the 3D viewport. In **Select Points** mode, Ctrl+left-click the curve or empty space to add or split a point, and right-click an existing point to delete it. The dedicated **Add Point** mode also splits when you click the curve and appends when you click empty space; **Delete Point** mode removes a clicked point. Ctrl+Z uses Godot's native undo. **Top View** is recommended because road and river authoring is in X/Z; point Y is intentionally ignored. The river's visible water and blocked-cell mask resolve to the pilot's half-metre export samples. These controls follow the Godot 4.5 stable `Path3D` editor behavior verified in [`path_3d_editor_plugin.cpp`](https://github.com/godotengine/godot/blob/4.5-stable/editor/scene/3d/path_3d_editor_plugin.cpp).
 
 Entries in **Point Widths** use the same indices as the curve's points. Adding or deleting curve points with the normal `Path3D` tools adjusts the width entries automatically; a newly inserted `0` keeps the surrounding taper. Undo and redo restore the matching saved widths.
@@ -131,6 +133,18 @@ The editor placement test covers exact triangle-ground clicks, linked GLB and lo
 
 ```powershell
 & 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --editor --headless --path . --script res://tests/test_map_asset_placement_editor.gd
+```
+
+The continent extraction test loads every curated GLB, verifies centred and grounded bounds, and saves and reopens a linked multi-material building:
+
+```powershell
+& 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_asset_extraction.gd
+```
+
+When the authored continent packages change, rebuild the curated individual-object library from its exact-root source manifest:
+
+```powershell
+python ../eloria-assets/tools/export_map_asset_library.py
 ```
 
 The focused visual-control test additionally edits road and river point counts, bends the river and verifies the visible water and exported collision move with it, changes terrain-handle height/radius/XZ and checks generated terrain plus encoded height cells, exercises degenerate paths, and saves/reopens the authored controls:

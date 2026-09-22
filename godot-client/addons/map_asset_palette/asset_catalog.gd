@@ -1,6 +1,12 @@
 extends RefCounted
 
 const OBJECTS_PATH := "res://data/world/objects.json"
+const EXTRAS_PATH := "res://data/world/map_asset_extras.json"
+const EXTRA_CATEGORIES := {
+	"Continent props": true,
+	"Continent structures": true,
+	"Continent landmarks": true,
+}
 const STARTER_SCENE_PATH := \
 	"res://src/dev/map_authoring_pilot/scenery/last_lantern_scenery.tscn"
 const STARTER_ENTRIES := [
@@ -72,6 +78,7 @@ static func _build_entries() -> Array[Dictionary]:
 	else:
 		push_warning("Map asset catalog skipped missing starter scene: %s" %
 			STARTER_SCENE_PATH)
+	_append_extras(result)
 	return result
 
 
@@ -106,6 +113,53 @@ static func _append_native_group(result: Array[Dictionary], catalog: Dictionary,
 			String(role_names.get(model_id, "")), group_name]
 		result.append(_entry(model_id, label, category, scene_path, "",
 			float(model.get("height", 0.0)), " ".join(search_fields)))
+
+
+static func _append_extras(result: Array[Dictionary]) -> void:
+	if not FileAccess.file_exists(EXTRAS_PATH):
+		return
+	var manifest := _read_dictionary(EXTRAS_PATH)
+	var declared: Variant = manifest.get("entries", null)
+	if int(manifest.get("version", 0)) != 1 or not declared is Array:
+		push_warning("Map asset extras must use version 1 with an entries array: %s" %
+			EXTRAS_PATH)
+		return
+	var known_ids := {}
+	for existing: Dictionary in result:
+		known_ids[String(existing.id)] = true
+	for value: Variant in declared as Array:
+		if not value is Dictionary:
+			push_warning("Map asset extras skipped a non-object entry")
+			continue
+		var extra := value as Dictionary
+		var id := String(extra.get("id", "")).strip_edges()
+		var label := String(extra.get("label", "")).strip_edges()
+		var category := String(extra.get("category", "")).strip_edges()
+		var scene_path := String(extra.get("scene_path", "")).strip_edges()
+		var height := float(extra.get("height", 0.0))
+		var tags_value: Variant = extra.get("tags", [])
+		if not id.begins_with("continent:") or label.is_empty() or \
+				not EXTRA_CATEGORIES.has(category) or known_ids.has(id) or \
+				not scene_path.begins_with("res://assets/world/continent/") or \
+				not _valid_resource_path(scene_path) or not is_finite(height) or \
+				height < 0.0 or not tags_value is Array:
+			push_warning("Map asset extras skipped invalid or duplicate entry '%s'" % id)
+			continue
+		var tags: Array[String] = []
+		var tags_valid := true
+		for tag_value: Variant in tags_value as Array:
+			if not tag_value is String:
+				tags_valid = false
+				break
+			var tag := String(tag_value).strip_edges()
+			if not tag.is_empty():
+				tags.append(tag)
+		if not tags_valid:
+			push_warning("Map asset extras skipped invalid tags for '%s'" % id)
+			continue
+		known_ids[id] = true
+		result.append(_entry(id, label, category, scene_path, "", height,
+			" ".join(tags)))
 
 
 static func _entry(id: String, label: String, category: String,
