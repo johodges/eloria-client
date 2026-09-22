@@ -19,7 +19,7 @@
     "bounds": {
       "min": [
         46.0,
-        4.133934027263659,
+        4.133934027281699,
         -75.89870966461717
       ],
       "max": [
@@ -425,7 +425,7 @@
   "bounds": {
     "min": [
       46.0,
-      4.133934027263659,
+      4.133934027281699,
       -75.89870966461717
     ],
     "max": [
@@ -2243,7 +2243,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:3e6c96013e1c05d929d4fb6b65fa5a6529b9b1fe781d22a3c0a82bce1629ae6c",
+  "terrainRevision": "diagonal-spine-v1:f0f34079d170be9bc31ec4597de2b25bb4ea3441af9589ac827fa92c813cd061",
   "externalResources": {
     "../../../nymara-regions/_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../nymara-regions/_continent/shared-assets/f6f587a6401b62a85cb10ec93847b1536a4266766669540a1dfcfedf2e00c893.png": "f6f587a6401b62a85cb10ec93847b1536a4266766669540a1dfcfedf2e00c893",
@@ -2309,13 +2309,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
+    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
-    "collisionSha256": "148dfaefbcd3622b85c3e6afaa68dd24ecba704d8958e05a53b994d93cd3b7b0",
-    "terrainRevision": "diagonal-spine-v1:3e6c96013e1c05d929d4fb6b65fa5a6529b9b1fe781d22a3c0a82bce1629ae6c"
+    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+    "collisionSha256": "a8f790f4825cea353938d934020dbf78e9b2e9b31f9c6728eaa4b50c3fda10f3",
+    "terrainRevision": "diagonal-spine-v1:f0f34079d170be9bc31ec4597de2b25bb4ea3441af9589ac827fa92c813cd061"
   }
 }

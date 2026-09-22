@@ -26850,14 +26850,14 @@
         128
       ],
       "tile": [
-        97,
+        79,
         236
       ],
       "expectedTile": [
         79.0,
         236.0
       ],
-      "displacementMetres": 18.0,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -27114,14 +27114,14 @@
         58
       ],
       "tile": [
-        189,
+        167,
         166
       ],
       "expectedTile": [
         169.0,
         166.0
       ],
-      "displacementMetres": 20.0,
+      "displacementMetres": 2.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -47146,14 +47146,14 @@
         146
       ],
       "tile": [
-        91,
+        71,
         254
       ],
       "expectedTile": [
         71.0,
         254.0
       ],
-      "displacementMetres": 20.0,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -47190,14 +47190,14 @@
         144
       ],
       "tile": [
-        91,
+        71,
         252
       ],
       "expectedTile": [
         71.0,
         252.0
       ],
-      "displacementMetres": 20.0,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -47278,14 +47278,14 @@
         145
       ],
       "tile": [
-        90,
+        70,
         253
       ],
       "expectedTile": [
         70.0,
         253.0
       ],
-      "displacementMetres": 20.0,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -55594,14 +55594,14 @@
         247
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         323.325,
         368.506
       ],
-      "displacementMetres": 23.928,
+      "displacementMetres": 23.997,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -55616,14 +55616,14 @@
         251
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         315.886,
         370.023
       ],
-      "displacementMetres": 18.282,
+      "displacementMetres": 17.716,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -55638,14 +55638,14 @@
         251
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         313.233,
         368.234
       ],
-      "displacementMetres": 18.828,
+      "displacementMetres": 17.786,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -55660,14 +55660,14 @@
         251
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         318.539,
         371.813
       ],
-      "displacementMetres": 18.287,
+      "displacementMetres": 18.216,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -55682,14 +55682,14 @@
         247
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         318.019,
         364.928
       ],
-      "displacementMetres": 23.78,
+      "displacementMetres": 23.092,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -55704,14 +55704,14 @@
         247
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         328.631,
         372.085
       ],
-      "displacementMetres": 25.72,
+      "displacementMetres": 26.465,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -55726,14 +55726,14 @@
         255
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         313.985,
         372.842
       ],
-      "displacementMetres": 14.897,
+      "displacementMetres": 14.326,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -55748,14 +55748,14 @@
         251
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         310.58,
         366.445
       ],
-      "displacementMetres": 19.88,
+      "displacementMetres": 18.421,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -55770,14 +55770,14 @@
         251
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         321.192,
         373.602
       ],
-      "displacementMetres": 18.845,
+      "displacementMetres": 19.243,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -55792,14 +55792,14 @@
         255
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         311.332,
         371.053
       ],
-      "displacementMetres": 15.562,
+      "displacementMetres": 14.413,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -55814,14 +55814,14 @@
         255
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         316.638,
         374.632
       ],
-      "displacementMetres": 14.904,
+      "displacementMetres": 14.94,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -55836,14 +55836,14 @@
         255
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         308.679,
         369.263
       ],
-      "displacementMetres": 16.821,
+      "displacementMetres": 15.189,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -56122,14 +56122,14 @@
         272
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         305.452,
         382.326
       ],
-      "displacementMetres": 3.986,
+      "displacementMetres": 1.734,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -56144,14 +56144,14 @@
         272
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         308.105,
         384.116
       ],
-      "displacementMetres": 2.184,
+      "displacementMetres": 3.107,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -56210,14 +56210,14 @@
         268
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         310.214,
         382.51
       ],
-      "displacementMetres": 4.745,
+      "displacementMetres": 5.423,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -56254,14 +56254,14 @@
         276
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         306.204,
         386.935
       ],
-      "displacementMetres": 1.228,
+      "displacementMetres": 3.172,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -56276,14 +56276,14 @@
         264
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         309.463,
         377.902
       ],
-      "displacementMetres": 8.464,
+      "displacementMetres": 7.557,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -56320,14 +56320,14 @@
         272
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         310.758,
         385.905
       ],
-      "displacementMetres": 3.759,
+      "displacementMetres": 6.065,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -56364,14 +56364,14 @@
         264
       ],
       "tile": [
-        307,
-        386
+        305,
+        384
       ],
       "expectedTile": [
         306.81,
         376.112
       ],
-      "displacementMetres": 9.89,
+      "displacementMetres": 8.093,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -80474,28 +80474,28 @@
     "whitehorn_range": {
       "stageFactor": 24,
       "stageMetres": 4.800000000000001,
-      "walkableServerTiles": 104258,
-      "largestComponentTiles": 96987,
+      "walkableServerTiles": 104246,
+      "largestComponentTiles": 96999,
       "reachableByStage": {
-        "24": 96987
+        "24": 96999
       },
       "crossings": {
         "declared": [
           {
             "id": "ContinentalBridgeUnion_003",
             "site": 2,
-            "deckTiles": 159,
+            "deckTiles": 155,
             "parts": [
-              159
+              155
             ],
             "endTiles": [
               [
                 428,
-                172
+                174
               ],
               [
                 449,
-                176
+                174
               ]
             ]
           },
@@ -80508,30 +80508,30 @@
             ],
             "endTiles": [
               [
-                341,
-                291
+                339,
+                294
               ],
               [
-                347,
-                307
+                349,
+                309
               ]
             ]
           },
           {
             "id": "ContinentalBridgeUnion_015",
             "site": 14,
-            "deckTiles": 37,
+            "deckTiles": 55,
             "parts": [
-              37
+              55
             ],
             "endTiles": [
               [
-                286,
-                382
+                281,
+                381
               ],
               [
-                300,
-                385
+                301,
+                383
               ]
             ]
           }
@@ -80540,7 +80540,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 96987,
+      "hubReachableTiles": 96999,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80549,58 +80549,58 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 96978,
+      "hubReachableAfterStorageTiles": 96990,
       "updatedAuthoredMarkers": 75,
-      "terrainRevision": "diagonal-spine-v1:d2018f7b1537edcd1723547d062443c985436823b84ed4aab4b4117238fcde0b",
+      "terrainRevision": "diagonal-spine-v1:019313dcc2e282ba51da5f21a7610f0cd36576890491e08a490f5f3ceaaa31ba",
       "servedTileContinuity": {
-        "keptServedTile": 281,
-        "movedTogether": 0,
-        "movedFromServedTile": 0
+        "keptServedTile": 262,
+        "movedTogether": 18,
+        "movedFromServedTile": 1
       }
     },
     "grey_moors": {
       "stageFactor": 13,
       "stageMetres": 2.6,
-      "walkableServerTiles": 115984,
-      "largestComponentTiles": 114720,
+      "walkableServerTiles": 115989,
+      "largestComponentTiles": 114725,
       "reachableByStage": {
-        "13": 114720
+        "13": 114725
       },
       "crossings": {
         "declared": [
           {
             "id": "ContinentalBridgeUnion_001",
             "site": 0,
-            "deckTiles": 163,
+            "deckTiles": 157,
             "parts": [
-              163
+              157
             ],
             "endTiles": [
               [
                 263,
-                330
+                333
               ],
               [
                 242,
-                336
+                333
               ]
             ]
           },
           {
             "id": "ContinentalBridgeUnion_004",
             "site": 3,
-            "deckTiles": 147,
+            "deckTiles": 156,
             "parts": [
-              147
+              156
             ],
             "endTiles": [
               [
-                276,
-                198
+                275,
+                200
               ],
               [
-                292,
-                213
+                291,
+                214
               ]
             ]
           }
@@ -80609,7 +80609,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 114720,
+      "hubReachableTiles": 114725,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80618,9 +80618,9 @@
         ],
         "displacementMetres": 6.519
       },
-      "hubReachableAfterStorageTiles": 114711,
+      "hubReachableAfterStorageTiles": 114716,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:caed80cd26520c6721b8af8357cefae239a1e2cbd206432da762a4a03c3acdba",
+      "terrainRevision": "diagonal-spine-v1:b85c12573906836ea2779f8b2f3aa9c57baac0fa60d2b1486b8d6a78a88cb632",
       "servedTileContinuity": {
         "keptServedTile": 291,
         "movedTogether": 0,
@@ -80630,64 +80630,64 @@
     "amberwood": {
       "stageFactor": 9,
       "stageMetres": 1.8,
-      "walkableServerTiles": 55453,
-      "largestComponentTiles": 51775,
+      "walkableServerTiles": 55449,
+      "largestComponentTiles": 51772,
       "reachableByStage": {
-        "9": 51775
+        "9": 51772
       },
       "crossings": {
         "declared": [
           {
             "id": "ContinentalBridgeUnion_002",
             "site": 1,
-            "deckTiles": 191,
+            "deckTiles": 243,
             "parts": [
-              191
+              243
             ],
             "endTiles": [
               [
-                140,
-                173
+                146,
+                172
               ],
               [
-                114,
-                180
+                115,
+                184
               ]
             ]
           },
           {
             "id": "ContinentalBridgeUnion_005",
             "site": 4,
-            "deckTiles": 146,
+            "deckTiles": 145,
             "parts": [
-              146
+              145
             ],
             "endTiles": [
               [
-                309,
-                69
+                306,
+                66
               ],
               [
-                290,
-                78
+                292,
+                80
               ]
             ]
           },
           {
             "id": "ContinentalBridgeUnion_006",
             "site": 5,
-            "deckTiles": 247,
+            "deckTiles": 239,
             "parts": [
-              247
+              239
             ],
             "endTiles": [
               [
-                133,
-                42
+                137,
+                38
               ],
               [
-                158,
-                64
+                162,
+                59
               ]
             ]
           }
@@ -80696,7 +80696,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 51775,
+      "hubReachableTiles": 51772,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80705,9 +80705,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 51766,
+      "hubReachableAfterStorageTiles": 51763,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:48099e0f4f39aaadd288204b57051deb091f5635605965afeafcea406c376f2e",
+      "terrainRevision": "diagonal-spine-v1:5f24496b4b8cc6f6d3fff5c4e718bd51c1b1390f0c0a685f5179dc7f5506eb0d",
       "servedTileContinuity": {
         "keptServedTile": 307,
         "movedTogether": 0,
@@ -80758,7 +80758,7 @@
       },
       "hubReachableAfterStorageTiles": 129010,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:f2705fa869350e5ab2c5fee28de8c4d6702df14709fbc65a9a08478fe4087eac",
+      "terrainRevision": "diagonal-spine-v1:93e795f2aff0cbae6e6c544638f03cb4a4e17bceb50749908c56886459b2a4cd",
       "servedTileContinuity": {
         "keptServedTile": 269,
         "movedTogether": 0,
@@ -80768,28 +80768,28 @@
     "mirrorhold": {
       "stageFactor": 15,
       "stageMetres": 3.0,
-      "walkableServerTiles": 82703,
-      "largestComponentTiles": 67306,
+      "walkableServerTiles": 82607,
+      "largestComponentTiles": 66811,
       "reachableByStage": {
-        "15": 67306
+        "15": 66811
       },
       "crossings": {
         "declared": [
           {
             "id": "ContinentalBridgeUnion_009",
             "site": 8,
-            "deckTiles": 75,
+            "deckTiles": 141,
             "parts": [
-              75
+              141
             ],
             "endTiles": [
               [
-                205,
-                147
+                209,
+                151
               ],
               [
-                201,
-                163
+                194,
+                164
               ]
             ]
           }
@@ -80798,7 +80798,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 67306,
+      "hubReachableTiles": 66811,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80807,13 +80807,13 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 67297,
+      "hubReachableAfterStorageTiles": 66802,
       "updatedAuthoredMarkers": 3,
-      "terrainRevision": "diagonal-spine-v1:1c548957b97f4da68e12beef8bc80b73014200e4d8d2228fa70c8ef6cbcdfc58",
+      "terrainRevision": "diagonal-spine-v1:1f5fb869ebc72735f2533b302942ee22597c8a5c88ead1fe7b5aa6f164331fef",
       "servedTileContinuity": {
-        "keptServedTile": 222,
+        "keptServedTile": 217,
         "movedTogether": 0,
-        "movedFromServedTile": 0
+        "movedFromServedTile": 5
       }
     },
     "sunmane_steppe": {
@@ -80829,18 +80829,18 @@
           {
             "id": "ContinentalBridgeUnion_008",
             "site": 7,
-            "deckTiles": 185,
+            "deckTiles": 177,
             "parts": [
-              185
+              177
             ],
             "endTiles": [
               [
-                184,
-                208
+                183,
+                211
               ],
               [
                 205,
-                222
+                221
               ]
             ]
           }
@@ -80860,7 +80860,7 @@
       },
       "hubReachableAfterStorageTiles": 169446,
       "updatedAuthoredMarkers": 40,
-      "terrainRevision": "diagonal-spine-v1:d9aafa7be812d2d460ca8bbf57ae3edeb4e2a3227be45907ad0c9e7cec757123",
+      "terrainRevision": "diagonal-spine-v1:db5cab4e943b716bcc250cb379ad1729cd690cab7e87f6d277b91c75596cc0ba",
       "servedTileContinuity": {
         "keptServedTile": 257,
         "movedTogether": 0,
@@ -80880,18 +80880,18 @@
           {
             "id": "ContinentalBridgeUnion_007",
             "site": 6,
-            "deckTiles": 240,
+            "deckTiles": 234,
             "parts": [
-              240
+              234
             ],
             "endTiles": [
               [
-                154,
-                202
+                155,
+                204
               ],
               [
-                128,
-                222
+                127,
+                220
               ]
             ]
           }
@@ -80921,7 +80921,7 @@
       },
       "hubReachableAfterStorageTiles": 83445,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:3e6c96013e1c05d929d4fb6b65fa5a6529b9b1fe781d22a3c0a82bce1629ae6c",
+      "terrainRevision": "diagonal-spine-v1:f0f34079d170be9bc31ec4597de2b25bb4ea3441af9589ac827fa92c813cd061",
       "servedTileContinuity": {
         "keptServedTile": 225,
         "movedTogether": 0,
@@ -81023,7 +81023,7 @@
       },
       "hubReachableAfterStorageTiles": 91877,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:2b7c5eb8e2bc581a9eed54f1820b552b60bcb210651071d67b0db131975e4785",
+      "terrainRevision": "diagonal-spine-v1:fc59afa56b452a2995d4c327984d013d3c62ac4d7323e92242305b5b4347c98f",
       "servedTileContinuity": {
         "keptServedTile": 238,
         "movedTogether": 0,
@@ -81033,65 +81033,65 @@
     "manymouth_delta": {
       "stageFactor": 3,
       "stageMetres": 0.6000000000000001,
-      "walkableServerTiles": 108151,
-      "largestComponentTiles": 106193,
+      "walkableServerTiles": 108156,
+      "largestComponentTiles": 106198,
       "reachableByStage": {
-        "3": 106193,
-        "4": 106221
+        "3": 106198,
+        "4": 106226
       },
       "crossings": {
         "declared": [
           {
             "id": "ContinentalBridgeUnion_010",
             "site": 9,
-            "deckTiles": 150,
+            "deckTiles": 190,
             "parts": [
-              150
+              190
             ],
             "endTiles": [
               [
-                253,
-                288
+                256,
+                286
               ],
               [
-                266,
-                304
+                269,
+                309
               ]
             ]
           },
           {
             "id": "ContinentalBridgeUnion_011",
             "site": 10,
-            "deckTiles": 250,
+            "deckTiles": 246,
             "parts": [
-              227,
+              223,
               23
             ],
             "endTiles": [
               [
                 221,
-                389
+                391
               ],
               [
                 188,
-                394
+                393
               ]
             ]
           },
           {
             "id": "ContinentalBridgeUnion_012",
             "site": 11,
-            "deckTiles": 226,
+            "deckTiles": 222,
             "parts": [
-              226
+              222
             ],
             "endTiles": [
               [
-                161,
-                397
+                158,
+                396
               ],
               [
-                148,
+                149,
                 425
               ]
             ]
@@ -81099,17 +81099,17 @@
           {
             "id": "ContinentalBridgeUnion_013",
             "site": 12,
-            "deckTiles": 149,
+            "deckTiles": 144,
             "parts": [
-              149
+              144
             ],
             "endTiles": [
               [
                 161,
-                176
+                177
               ],
               [
-                128,
+                129,
                 181
               ]
             ]
@@ -81156,7 +81156,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 106193,
+      "hubReachableTiles": 106198,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81165,9 +81165,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 106184,
+      "hubReachableAfterStorageTiles": 106189,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:11c1901c392b22af048e41f9ba30e058a5a6f2010976385a6a9ee5f955d4d4f0",
+      "terrainRevision": "diagonal-spine-v1:60a35b28fe94fae7b57d0fc9cfcac1d6639e8b958c38c9c0f8a99051a10363ff",
       "servedTileContinuity": {
         "keptServedTile": 262,
         "movedTogether": 0,
@@ -81380,7 +81380,7 @@
       },
       "hubReachableAfterStorageTiles": 39909,
       "updatedAuthoredMarkers": 9,
-      "terrainRevision": "diagonal-spine-v1:4596f190f1a65b8b0d3149a47b0e5a9e89274347b829282da61bb6f351625527",
+      "terrainRevision": "diagonal-spine-v1:f084d325a6497d7ad8e0d4789b70a0c5f90507c56333da483451159087440e18",
       "servedTileContinuity": {
         "keptServedTile": 255,
         "movedTogether": 0,
@@ -81390,10 +81390,10 @@
     "verdant_stair": {
       "stageFactor": 8,
       "stageMetres": 1.6,
-      "walkableServerTiles": 177216,
-      "largestComponentTiles": 174087,
+      "walkableServerTiles": 177217,
+      "largestComponentTiles": 174088,
       "reachableByStage": {
-        "8": 174087
+        "8": 174088
       },
       "crossings": {
         "declared": [
@@ -81418,18 +81418,18 @@
           {
             "id": "ContinentalBridgeUnion_017",
             "site": 16,
-            "deckTiles": 65,
+            "deckTiles": 61,
             "parts": [
-              65
+              61
             ],
             "endTiles": [
               [
-                387,
-                43
+                388,
+                45
               ],
               [
-                369,
-                60
+                367,
+                56
               ]
             ]
           }
@@ -81438,7 +81438,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 174087,
+      "hubReachableTiles": 174088,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81447,9 +81447,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 174078,
+      "hubReachableAfterStorageTiles": 174079,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:0315995ea8dccfae9484329d49dbc6fe8ff3ec0c911aeb395a82725dda069bf8",
+      "terrainRevision": "diagonal-spine-v1:39cc1e5acd6dbbfbeca7dd3e97a1df45ab1210b71a117718543a864193324321",
       "servedTileContinuity": {
         "keptServedTile": 237,
         "movedTogether": 0,
@@ -81469,32 +81469,32 @@
           {
             "id": "ContinentalBridgeUnion_018",
             "site": 17,
-            "deckTiles": 66,
+            "deckTiles": 63,
             "parts": [
-              66
+              63
             ],
             "endTiles": [
               [
-                519,
-                83
+                518,
+                88
               ],
               [
                 541,
-                94
+                93
               ]
             ]
           },
           {
             "id": "ContinentalBridgeUnion_019",
             "site": 18,
-            "deckTiles": 65,
+            "deckTiles": 63,
             "parts": [
-              65
+              63
             ],
             "endTiles": [
               [
-                430,
-                257
+                431,
+                255
               ],
               [
                 453,
@@ -81592,7 +81592,7 @@
       },
       "hubReachableAfterStorageTiles": 136217,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:31b085b9c400553192166fe8722a32a0700c3ec8587d710812504f628299cae4",
+      "terrainRevision": "diagonal-spine-v1:1dbebe6500d3cf33cd347328646ee289d0db9037a568bbcb2eb1d25572aca72d",
       "servedTileContinuity": {
         "keptServedTile": 224,
         "movedTogether": 0,
@@ -81601,7 +81601,7 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "e1ab6767566756374d41d8ec5336a6ae661cbff6f04127ab1e4c1afb0d5ab255",
+    "client_content_manifest.json": "4e7c11416ce0bca3bf8c5d419897041bafbf74bf1ed49101af8320592333a641",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
     "harvesting.txt": "c9e893ecae824e973201c12db13d859f81888d3aa7a792c6bc39765e2ed4679b",
     "instances/amberwood_gauntlet_low.def": "e2a5c0ca17b0c0af42f65728241c6f6d08ae6faea086505572af2fd2e417ae36",

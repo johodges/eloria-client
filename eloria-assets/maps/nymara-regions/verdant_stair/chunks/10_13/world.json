@@ -24,7 +24,7 @@
       ],
       "max": [
         -37.70540481076296,
-        69.28298538785833,
+        69.28298538774038,
         171.43688323710467
       ]
     },
@@ -456,7 +456,7 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 869348,
+    "glbBytes": 869352,
     "nodes": 86,
     "meshes": 37,
     "externalResources": {
@@ -1535,11 +1535,11 @@
     ],
     "max": [
       -37.70540481076296,
-      69.28298538785833,
+      69.28298538774038,
       171.43688323710467
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:0315995ea8dccfae9484329d49dbc6fe8ff3ec0c911aeb395a82725dda069bf8",
+  "terrainRevision": "diagonal-spine-v1:39cc1e5acd6dbbfbeca7dd3e97a1df45ab1210b71a117718543a864193324321",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6.png": "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6",
@@ -1563,13 +1563,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
+    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
-    "collisionSha256": "b34fc9df3c51788eccd9d5ebcb46b2bb5459a7ff047251cacf7cdebb90d8d446",
-    "terrainRevision": "diagonal-spine-v1:0315995ea8dccfae9484329d49dbc6fe8ff3ec0c911aeb395a82725dda069bf8"
+    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+    "collisionSha256": "ffed8be74a6709638ac64ee7e162abc5360039f0b643a18d1f1daf76a10044d6",
+    "terrainRevision": "diagonal-spine-v1:39cc1e5acd6dbbfbeca7dd3e97a1df45ab1210b71a117718543a864193324321"
   }
 }

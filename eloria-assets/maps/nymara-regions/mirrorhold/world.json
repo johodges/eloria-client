@@ -259,8 +259,8 @@
       350.0
     ],
     "heightEncoding": {
-      "origin": 27.133712227653714,
-      "step": 0.6991586133895927,
+      "origin": 27.13371245361906,
+      "step": 0.6991586124999654,
       "range": [
         1,
         255
@@ -278,17 +278,17 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 341829,
-    "walkableFraction": 0.293063,
-    "sourceGlbSha256": "9918136be99c813ae4a34d7767754541ca6eebff0eb62b071c7b2d2b6ac3084f",
+    "walkableCells": 341553,
+    "walkableFraction": 0.292827,
+    "sourceGlbSha256": "c02b59ef16b8d2d599d5618f374ddaa15c4ddf4c0596564e75e5b3e7ab226851",
     "exportStatistics": {
       "walkMeshes": 31,
       "structuralMeshes": 348,
-      "structuralTriangles": 118572,
-      "walkTriangles": 3229,
-      "steepCells": 221652,
+      "structuralTriangles": 98460,
+      "walkTriangles": 3026,
+      "steepCells": 221688,
       "waterCells": 11508,
-      "structuralCells": 29478,
+      "structuralCells": 29720,
       "thresholdHaloCells": 379,
       "seamCollarCells": 4758
     }
@@ -308,14 +308,14 @@
         "site": 8,
         "endpoints": [
           [
-            -2.7,
-            78.63516616821289,
-            202.7
+            1.3,
+            78.29042053222656,
+            198.7
           ],
           [
-            -6.7,
-            78.3103256225586,
-            186.7
+            -13.7,
+            79.74880981445312,
+            185.7
           ]
         ]
       }
@@ -730,7 +730,7 @@
       "type": "transition",
       "position": [
         -31.743799999999965,
-        125.99775820315597,
+        125.99775820530368,
         -140.54700000000003
       ],
       "note": "Where Mirrorhold gives way to the Amethyst Barrens: luminous road furniture, a march stone, a waystation, and 13 pieces of the country beyond."
@@ -742,7 +742,7 @@
       "type": "waystation",
       "position": [
         -35.04740000000004,
-        132.38700833421314,
+        132.38700833424141,
         -133.0331
       ]
     },
@@ -753,7 +753,7 @@
       "type": "transition",
       "position": [
         -132.49052999999992,
-        92.82492126482595,
+        92.8241602581291,
         145.27044
       ],
       "note": "Where Mirrorhold gives way to the Amberwood: luminous road furniture, a march stone, a waystation, and 12 pieces of the country beyond."
@@ -1476,7 +1476,7 @@
       "kind": "creature-group",
       "position": [
         -38.51089999999999,
-        148.9082289287704,
+        148.90822892878626,
         39.35360000000003
       ],
       "serverTile": [
@@ -1509,7 +1509,7 @@
       "label": "Lens Quartz",
       "position": [
         176.03937000000008,
-        32.759053635275215,
+        32.75905363531574,
         -107.59968000000003
       ],
       "serverTile": [
@@ -1539,7 +1539,7 @@
       "label": "Lens Quartz",
       "position": [
         -37.18949999999995,
-        152.8154030735528,
+        152.81540307335143,
         7.19360000000006
       ],
       "serverTile": [
@@ -1554,7 +1554,7 @@
       "label": "Lens Quartz",
       "position": [
         -75.0163,
-        123.54119543542467,
+        123.54119830559135,
         46.22360000000003
       ],
       "serverTile": [
@@ -1569,7 +1569,7 @@
       "label": "Lens Quartz",
       "position": [
         163.05282,
-        108.2834491971322,
+        108.2834491933259,
         156.94830000000002
       ],
       "serverTile": [
@@ -1584,7 +1584,7 @@
       "label": "Lens Quartz",
       "position": [
         176.6867400000001,
-        99.82916924482194,
+        99.82916924463223,
         141.83424000000002
       ],
       "serverTile": [
@@ -1644,7 +1644,7 @@
       "label": "Glacier Rime",
       "position": [
         167.52231000000006,
-        34.36018579191444,
+        34.360185791915015,
         -101.50506000000007
       ],
       "serverTile": [
@@ -1659,7 +1659,7 @@
       "label": "Glacier Rime",
       "position": [
         170.23580000000004,
-        34.45648974216909,
+        34.45648974216969,
         -96.88699999999994
       ],
       "serverTile": [
@@ -1689,7 +1689,7 @@
       "label": "Glacier Rime",
       "position": [
         153.24329999999998,
-        41.26777574852364,
+        41.26777574834172,
         -83.03639999999996
       ],
       "serverTile": [
@@ -1749,7 +1749,7 @@
       "label": "Glacier Rime",
       "position": [
         164.83799999999997,
-        39.39861347156509,
+        39.39861347253842,
         -76.06639999999993
       ],
       "serverTile": [
@@ -1779,7 +1779,7 @@
       "label": "Alpine Herb",
       "position": [
         -108.68690000000004,
-        62.012177682257224,
+        62.01217846181295,
         205.0199
       ],
       "serverTile": [
@@ -1854,7 +1854,7 @@
       "label": "Alpine Herb",
       "position": [
         -138.64350000000002,
-        92.25360753845065,
+        92.25369481370495,
         4.013599999999997
       ],
       "serverTile": [
@@ -1884,7 +1884,7 @@
       "label": "Alpine Herb",
       "position": [
         -98.52009999999996,
-        58.35655877750015,
+        58.35655976278371,
         209.5376
       ],
       "serverTile": [
@@ -1899,7 +1899,7 @@
       "label": "Alpine Herb",
       "position": [
         -122.80814999999996,
-        93.71423096636953,
+        93.71423013598475,
         175.03784999999993
       ],
       "serverTile": [
@@ -1929,7 +1929,7 @@
       "label": "Alpine Herb",
       "position": [
         161.26883999999995,
-        94.05522375702253,
+        94.05522375775791,
         184.53483000000006
       ],
       "serverTile": [
@@ -2375,7 +2375,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
+      "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
       "globalMin": [
         636.0,
         468.0
@@ -2394,9 +2394,9 @@
     }
   },
   "performance": {
-    "glbBytes": 4582960,
-    "nodes": 809,
-    "meshes": 227,
+    "glbBytes": 4569720,
+    "nodes": 806,
+    "meshes": 226,
     "externalResources": {
       "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -5185,7 +5185,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:1c548957b97f4da68e12beef8bc80b73014200e4d8d2228fa70c8ef6cbcdfc58",
+  "terrainRevision": "diagonal-spine-v1:1f5fb869ebc72735f2533b302942ee22597c8a5c88ead1fe7b5aa6f164331fef",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -5279,7 +5279,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
+    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "streamingChunks": {
@@ -5318,7 +5318,7 @@
         "bounds": {
           "min": [
             -204.0,
-            32.9116368808167,
+            32.91163688087871,
             22.0
           ],
           "max": [
@@ -5394,13 +5394,13 @@
           ],
           "max": [
             -71.43552898167798,
-            230.7526297905073,
+            230.7526311265274,
             23.579025200472756
           ]
         },
-        "estimatedResidentBytes": 18674460,
-        "glbBytes": 222160,
-        "geometryResidentBytes": 1110800,
+        "estimatedResidentBytes": 18674480,
+        "glbBytes": 222164,
+        "geometryResidentBytes": 1110820,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
@@ -5433,13 +5433,13 @@
           ],
           "max": [
             -69.4706130027771,
-            153.76602453083555,
+            153.76602754810895,
             118.0
           ]
         },
-        "estimatedResidentBytes": 26717660,
-        "glbBytes": 362792,
-        "geometryResidentBytes": 1813960,
+        "estimatedResidentBytes": 26662260,
+        "glbBytes": 351712,
+        "geometryResidentBytes": 1758560,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0": 1398102,
@@ -5479,7 +5479,7 @@
         "bounds": {
           "min": [
             -168.0,
-            27.667462012391333,
+            27.667460949726387,
             118.0
           ],
           "max": [
@@ -5488,9 +5488,9 @@
             214.0
           ]
         },
-        "estimatedResidentBytes": 31493916,
-        "glbBytes": 618992,
-        "geometryResidentBytes": 3094960,
+        "estimatedResidentBytes": 31438516,
+        "glbBytes": 607912,
+        "geometryResidentBytes": 3039560,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0": 1398102,
@@ -5539,7 +5539,7 @@
           ],
           "max": [
             -72.0,
-            70.63787287120971,
+            70.63791944813177,
             282.0
           ]
         },
@@ -5557,7 +5557,7 @@
         "bounds": {
           "min": [
             -2.0,
-            70.21067740211372,
+            70.21067740313714,
             -182.0
           ],
           "max": [
@@ -5656,9 +5656,9 @@
             118.0
           ]
         },
-        "estimatedResidentBytes": 40063294,
-        "glbBytes": 375524,
-        "geometryResidentBytes": 1877620,
+        "estimatedResidentBytes": 40049874,
+        "glbBytes": 372840,
+        "geometryResidentBytes": 1864200,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0": 1398102,
@@ -5724,9 +5724,9 @@
             214.0
           ]
         },
-        "estimatedResidentBytes": 32376328,
-        "glbBytes": 410996,
-        "geometryResidentBytes": 2054980,
+        "estimatedResidentBytes": 32310168,
+        "glbBytes": 397764,
+        "geometryResidentBytes": 1988820,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5783,9 +5783,9 @@
             310.0
           ]
         },
-        "estimatedResidentBytes": 5044094,
-        "glbBytes": 344720,
-        "geometryResidentBytes": 1723600,
+        "estimatedResidentBytes": 5044114,
+        "glbBytes": 344724,
+        "geometryResidentBytes": 1723620,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5805,7 +5805,7 @@
           ],
           "max": [
             24.0,
-            57.12172733767556,
+            57.12172733767137,
             346.0
           ]
         },
@@ -5844,7 +5844,7 @@
         "bounds": {
           "min": [
             24.0,
-            40.273610560395106,
+            40.27361056040201,
             -170.0
           ],
           "max": [
@@ -5878,7 +5878,7 @@
         "bounds": {
           "min": [
             24.0,
-            85.48813295231622,
+            85.48813295460366,
             -74.0
           ],
           "max": [
@@ -5936,7 +5936,7 @@
         "bounds": {
           "min": [
             23.37220276718142,
-            117.55694561239746,
+            117.55694561119277,
             22.0
           ],
           "max": [
@@ -6065,7 +6065,7 @@
         "bounds": {
           "min": [
             24.0,
-            57.12172733767556,
+            57.12172733767137,
             214.0
           ],
           "max": [
@@ -6099,7 +6099,7 @@
           ],
           "max": [
             32.0,
-            60.82466775862349,
+            60.82466776040096,
             314.0
           ]
         },
@@ -6121,7 +6121,7 @@
           ],
           "max": [
             216.0,
-            85.48813295231622,
+            85.48813295460366,
             -74.0
           ]
         },
@@ -6181,7 +6181,7 @@
         "bounds": {
           "min": [
             119.43786431325475,
-            40.6649153078501,
+            40.66491530963196,
             22.0
           ],
           "max": [
@@ -6190,9 +6190,9 @@
             134.85026595458987
           ]
         },
-        "estimatedResidentBytes": 24987206,
-        "glbBytes": 226416,
-        "geometryResidentBytes": 1132080,
+        "estimatedResidentBytes": 24986666,
+        "glbBytes": 226308,
+        "geometryResidentBytes": 1131540,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0": 1398102,
@@ -6235,7 +6235,7 @@
         "bounds": {
           "min": [
             120.0,
-            78.31727490863022,
+            78.31727490880606,
             118.0
           ],
           "max": [
@@ -6244,9 +6244,9 @@
             214.0
           ]
         },
-        "estimatedResidentBytes": 26015968,
-        "glbBytes": 362264,
-        "geometryResidentBytes": 1811320,
+        "estimatedResidentBytes": 25988948,
+        "glbBytes": 356860,
+        "geometryResidentBytes": 1784300,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0": 1398102,
@@ -6284,7 +6284,7 @@
         "bounds": {
           "min": [
             120.0,
-            78.20929154638162,
+            78.20929154617221,
             214.0
           ],
           "max": [
@@ -6333,7 +6333,7 @@
           ],
           "max": [
             228.0,
-            36.98556753470905,
+            36.9855675350224,
             -12.0
           ]
         },
@@ -6345,12 +6345,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:1c548957b97f4da68e12beef8bc80b73014200e4d8d2228fa70c8ef6cbcdfc58"
+    "terrainRevision": "diagonal-spine-v1:1f5fb869ebc72735f2533b302942ee22597c8a5c88ead1fe7b5aa6f164331fef"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
-    "collisionSha256": "cfcbd8df7a274345b776732d91e61cb057c254f803617a361ccc7e46f857fea4",
-    "terrainRevision": "diagonal-spine-v1:1c548957b97f4da68e12beef8bc80b73014200e4d8d2228fa70c8ef6cbcdfc58"
+    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+    "collisionSha256": "000f3e5579bab2051d1af546b06f7647aa89e98d2ac1c6bc5d1e515d6da6b044",
+    "terrainRevision": "diagonal-spine-v1:1f5fb869ebc72735f2533b302942ee22597c8a5c88ead1fe7b5aa6f164331fef"
   }
 }

@@ -195,15 +195,15 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 470543,
-    "walkableFraction": 0.20913,
-    "sourceGlbSha256": "f768e0455ab5354753361bed9004f85c8ccecba456d6646286dae197963acb83",
+    "walkableCells": 470558,
+    "walkableFraction": 0.209137,
+    "sourceGlbSha256": "95b036a2be1aa224b3fc1863eee74a1262302fac4c1e18777ef96205bad1c8b2",
     "exportStatistics": {
       "walkMeshes": 15,
       "structuralMeshes": 151,
       "structuralTriangles": 77614,
-      "walkTriangles": 2376,
-      "steepCells": 112904,
+      "walkTriangles": 1730,
+      "steepCells": 112889,
       "waterCells": 336801,
       "structuralCells": 4358,
       "thresholdHaloCells": 200,
@@ -226,13 +226,13 @@
         "endpoints": [
           [
             39.3,
-            24.791847229003906,
-            -4.3
+            24.95982837677002,
+            -7.3
           ],
           [
             18.3,
-            24.963239192962646,
-            -10.3
+            24.956889152526855,
+            -7.3
           ]
         ]
       },
@@ -241,14 +241,14 @@
         "site": 3,
         "endpoints": [
           [
-            52.3,
-            23.897404670715332,
-            127.7
+            51.3,
+            23.893156051635742,
+            125.7
           ],
           [
-            68.3,
-            23.912498474121094,
-            112.7
+            67.3,
+            23.808490753173828,
+            111.7
           ]
         ]
       }
@@ -295,7 +295,7 @@
       "type": "monument",
       "position": [
         119.3570354668708,
-        121.47941212746085,
+        121.47941212652768,
         -91.02054950387662
       ]
     },
@@ -306,7 +306,7 @@
       "type": "monument",
       "position": [
         -37.22914520032765,
-        42.812216624566744,
+        42.81221662424959,
         -115.27591493930663
       ]
     },
@@ -317,7 +317,7 @@
       "type": "monument",
       "position": [
         88.16627476342262,
-        86.41786279754878,
+        86.41786279862617,
         -73.02213068422662
       ]
     },
@@ -339,7 +339,7 @@
       "type": "entrance",
       "position": [
         79.91951532282638,
-        109.31180021744902,
+        109.31180021652416,
         -160.44519212722685
       ]
     },
@@ -350,7 +350,7 @@
       "type": "entrance",
       "position": [
         -55.7269117127133,
-        34.827423124660875,
+        34.827423123887,
         -130.10747102208842
       ]
     },
@@ -405,7 +405,7 @@
       "type": "monument",
       "position": [
         144.93321247414673,
-        110.2699381244088,
+        110.26993813046292,
         -78.93558295722033
       ]
     },
@@ -438,7 +438,7 @@
       "type": "monument",
       "position": [
         -30.476113999999995,
-        48.32377194197017,
+        48.32377194210557,
         14.349008000000026
       ]
     },
@@ -493,7 +493,7 @@
       "type": "shrine",
       "position": [
         -57.10263234573739,
-        49.42149122612485,
+        49.42149122608168,
         32.640681185052756
       ]
     },
@@ -548,7 +548,7 @@
       "type": "ruin",
       "position": [
         128.09358715255064,
-        96.19771549878743,
+        96.19771549718179,
         -62.8334609462097
       ]
     },
@@ -559,7 +559,7 @@
       "type": "ruin",
       "position": [
         112.43394464576966,
-        151.60227040183273,
+        151.6022704018334,
         -143.45902056384614
       ]
     },
@@ -581,7 +581,7 @@
       "type": "ruin",
       "position": [
         -47.5972695573883,
-        48.66173522177143,
+        48.66173522239173,
         27.05741999999998
       ]
     },
@@ -592,7 +592,7 @@
       "type": "ruin",
       "position": [
         70.59720559163543,
-        33.53452171146448,
+        33.53452171118886,
         41.007837147881105
       ]
     },
@@ -614,7 +614,7 @@
       "type": "ruin",
       "position": [
         143.90072147706826,
-        64.01886510296913,
+        64.01886510196137,
         -12.60621390420988
       ]
     },
@@ -636,7 +636,7 @@
       "type": "ruin",
       "position": [
         105.8678269378658,
-        69.67242237511289,
+        69.67242238117802,
         -27.44312281983963
       ]
     },
@@ -647,7 +647,7 @@
       "type": "worksite",
       "position": [
         -50.30742600000002,
-        49.761886109515665,
+        49.76188611006543,
         -14.340300002098104
       ]
     },
@@ -658,7 +658,7 @@
       "type": "worksite",
       "position": [
         88.97987604490942,
-        58.66010653701593,
+        58.660106534464155,
         -18.711231383391635
       ]
     },
@@ -669,7 +669,7 @@
       "type": "worksite",
       "position": [
         13.070127755393798,
-        48.87721663406415,
+        48.87721663603261,
         -105.29520807673435
       ]
     },
@@ -680,7 +680,7 @@
       "type": "worksite",
       "position": [
         141.30598823412345,
-        67.77922596300876,
+        67.77922596339445,
         -27.437737944910452
       ]
     },
@@ -735,7 +735,7 @@
       "type": "landmark-tree",
       "position": [
         74.75912190943563,
-        37.48849951656598,
+        37.488499515559695,
         21.47273748799637
       ]
     },
@@ -768,7 +768,7 @@
       "type": "landmark-tree",
       "position": [
         110.4750769215533,
-        127.77359127060454,
+        127.7735912715593,
         -109.3208342125555
       ]
     },
@@ -779,7 +779,7 @@
       "type": "landmark-tree",
       "position": [
         105.78076032708145,
-        70.44650989503685,
+        70.44650990187029,
         -28.940734210203402
       ]
     },
@@ -790,7 +790,7 @@
       "type": "landmark-tree",
       "position": [
         120.31690699862264,
-        38.213375541116626,
+        38.21337554049466,
         45.98673443254671
       ]
     },
@@ -800,15 +800,15 @@
       "type": "bridge",
       "name": "Grey Moor Crossing",
       "position": [
-        26.0,
-        25.05173683166504,
-        -12.5262451171875
+        26.099655151367188,
+        25.556175231933594,
+        -12.519073486328125
       ],
       "replacedSpan": "Landmark_boardwalk_gate",
       "association": {
         "coveredSamples": 0,
         "oldFloorSamples": 125,
-        "distanceMetres": 23.342024986774124
+        "distanceMetres": 23.341142330999585
       }
     },
     {
@@ -817,15 +817,15 @@
       "type": "bridge",
       "name": "Grey Moor Crossing",
       "position": [
-        40.0,
-        25.070133209228516,
-        -11.511993408203125
+        39.136932373046875,
+        25.022619247436523,
+        -11.574554443359375
       ],
       "replacedSpan": "Landmark_boardwalk_centre",
       "association": {
         "coveredSamples": 0,
         "oldFloorSamples": 106,
-        "distanceMetres": 56.7022722579212
+        "distanceMetres": 56.80973917166927
       }
     },
     {
@@ -846,7 +846,7 @@
       "name": "Grey Moor Crossing",
       "position": [
         -41.32356999999999,
-        49.534481323662995,
+        49.53448132323726,
         -42.768970999999965
       ]
     },
@@ -857,7 +857,7 @@
       "name": "Grey Moor Crossing",
       "position": [
         14.962125000000015,
-        52.71919119756871,
+        52.7191911982666,
         -112.82999900000004
       ]
     },
@@ -868,7 +868,7 @@
       "name": "Grey Moor Crossing",
       "position": [
         117.336882,
-        73.78610783491207,
+        73.78610783501101,
         -32.996038999999996
       ]
     },
@@ -878,15 +878,15 @@
       "type": "bridge",
       "name": "Grey Moor Crossing",
       "position": [
-        40.0,
-        24.82415008544922,
-        -4.0
+        39.493804931640625,
+        24.933813095092773,
+        -3.65020751953125
       ],
       "replacedSpan": "Landmark_boardwalk_south",
       "association": {
         "coveredSamples": 0,
         "oldFloorSamples": 204,
-        "distanceMetres": 38.34221284896669
+        "distanceMetres": 38.251424114958894
       }
     },
     {
@@ -896,7 +896,7 @@
       "name": "Grey Moor Crossing",
       "position": [
         -41.701414,
-        47.014604653699216,
+        47.01460465383462,
         34.03810800000002
       ]
     },
@@ -940,7 +940,7 @@
       "name": "Moor Ferry Jetty",
       "position": [
         -42.191993999999994,
-        50.51359420063671,
+        50.51359420060938,
         42.18224399999997
       ]
     },
@@ -962,7 +962,7 @@
       "type": "shelter",
       "position": [
         -12.47999999999999,
-        41.04071594899034,
+        41.04071595080131,
         -4.579999999999984
       ]
     },
@@ -974,7 +974,7 @@
       "thread": "F",
       "position": [
         106.02719821491621,
-        128.5384537209542,
+        128.5384537213003,
         -115.92146238822943
       ],
       "note": "Eleven barrows were breached. This is the one the debt-reader walks you to, its return-field stakes still standing blank."
@@ -1021,7 +1021,7 @@
       "type": "waystation",
       "position": [
         -39.678314,
-        46.383771941970174,
+        46.383771942105575,
         33.441508
       ]
     },
@@ -1274,7 +1274,7 @@
       "destinationSpawn": "moor-wisp-focus",
       "position": [
         137.44801408012256,
-        101.55473556704817,
+        101.55473556532087,
         -66.55665955529253
       ],
       "authority": "server",
@@ -1337,7 +1337,7 @@
       "destinationSpawn": "moor-tower-eyrie",
       "position": [
         130.24323964346047,
-        93.07296004178217,
+        93.0729600414821,
         -60.466478617899384
       ],
       "authority": "server",
@@ -1425,7 +1425,7 @@
       "name": "Peat Cutter",
       "position": [
         88.97987604490942,
-        57.76010653701593,
+        57.76010653446416,
         -18.711231383391635
       ],
       "serverTile": [
@@ -1470,7 +1470,7 @@
       "name": "Coast Watcher",
       "position": [
         -57.10263234573739,
-        48.67149122612485,
+        48.67149122608168,
         32.640681185052756
       ],
       "serverTile": [
@@ -1485,7 +1485,7 @@
       "name": "Widow of the Last Croft",
       "position": [
         -47.5972695573883,
-        47.49173522177143,
+        47.491735222391725,
         27.05741999999998
       ],
       "serverTile": [
@@ -1515,7 +1515,7 @@
       "name": "Stone Carter",
       "position": [
         144.93321247414673,
-        109.16993812440879,
+        109.16993813046291,
         -78.93558295722033
       ],
       "serverTile": [
@@ -1530,7 +1530,7 @@
       "name": "Moor Ranger",
       "position": [
         105.8678269378658,
-        68.50242237511289,
+        68.50242238117802,
         -27.44312281983963
       ],
       "serverTile": [
@@ -1598,7 +1598,7 @@
       "kind": "creature-zone",
       "position": [
         121.4291836352088,
-        131.0494859927619,
+        131.04948599144834,
         -108.87650174774518
       ],
       "radius": 40.0,
@@ -1612,7 +1612,7 @@
       "resource": "cut-peat",
       "position": [
         -37.5653539647827,
-        49.28749510963598,
+        49.287495109796424,
         -57.686909702713024
       ],
       "serverTile": [
@@ -1668,7 +1668,7 @@
       "resource": "cut-peat",
       "position": [
         64.1241530720215,
-        30.29065756956382,
+        30.29065756956596,
         38.1524931384277
       ],
       "serverTile": [
@@ -1696,7 +1696,7 @@
       "resource": "cut-peat",
       "position": [
         -49.12575396478269,
-        49.257495109635975,
+        49.25749510979642,
         -44.560809702713016
       ],
       "serverTile": [
@@ -1724,7 +1724,7 @@
       "resource": "cut-peat",
       "position": [
         42.66255257264709,
-        50.61043762979577,
+        50.61043763019467,
         -112.53158630953976
       ],
       "serverTile": [
@@ -1738,7 +1738,7 @@
       "resource": "cut-peat",
       "position": [
         110.34855000000005,
-        161.92775932881457,
+        161.92775932813225,
         -184.506114
       ],
       "serverTile": [
@@ -1752,7 +1752,7 @@
       "resource": "cut-peat",
       "position": [
         147.49377318000006,
-        88.1214589921594,
+        88.12145899325512,
         -50.85566693999999
       ],
       "serverTile": [
@@ -1780,7 +1780,7 @@
       "resource": "cut-peat",
       "position": [
         68.1241530720215,
-        30.76065756956382,
+        30.76065756956596,
         5.127293138427717
       ],
       "serverTile": [
@@ -1836,7 +1836,7 @@
       "resource": "cut-peat",
       "position": [
         145.370882,
-        73.28170664626253,
+        73.28170664636147,
         -46.71873900000003
       ],
       "serverTile": [
@@ -1850,7 +1850,7 @@
       "resource": "cut-peat",
       "position": [
         -27.253253964782687,
-        48.85749510963598,
+        48.857495109796425,
         -33.821309702712995
       ],
       "serverTile": [
@@ -1864,7 +1864,7 @@
       "resource": "cut-peat",
       "position": [
         44.90063513233764,
-        61.40252761962726,
+        61.402527620537896,
         -110.47171805876349
       ],
       "serverTile": [
@@ -1892,7 +1892,7 @@
       "resource": "cut-peat",
       "position": [
         33.41425257264709,
-        51.32043762979577,
+        51.32043763019467,
         -105.37188630953972
       ],
       "serverTile": [
@@ -1906,7 +1906,7 @@
       "resource": "cut-peat",
       "position": [
         81.48004800000001,
-        78.07943375789242,
+        78.07943375788501,
         -206.84422200000003
       ],
       "serverTile": [
@@ -1920,7 +1920,7 @@
       "resource": "cut-peat",
       "position": [
         104.14880685615964,
-        143.4383345478332,
+        143.4383345598723,
         -119.89334330077747
       ],
       "serverTile": [
@@ -1934,7 +1934,7 @@
       "resource": "cut-peat",
       "position": [
         95.14425261309208,
-        68.1094609676416,
+        68.10946096983744,
         -29.978539084514864
       ],
       "serverTile": [
@@ -1948,7 +1948,7 @@
       "resource": "cut-peat",
       "position": [
         105.45089489999998,
-        149.09280367961844,
+        149.09280368041433,
         -167.54381982000004
       ],
       "serverTile": [
@@ -1976,7 +1976,7 @@
       "resource": "cut-peat",
       "position": [
         -33.25325396478269,
-        49.937495109635975,
+        49.93749510979642,
         -64.84650970271298
       ],
       "serverTile": [
@@ -2074,7 +2074,7 @@
       "resource": "cut-peat",
       "position": [
         137.83788823412345,
-        66.82922596300875,
+        66.82922596339445,
         -24.45453794491044
       ],
       "serverTile": [
@@ -2088,7 +2088,7 @@
       "resource": "cut-peat",
       "position": [
         110.75288715255067,
-        90.48771549878742,
+        90.48771549718178,
         -64.02676094620972
       ],
       "serverTile": [
@@ -2102,7 +2102,7 @@
       "resource": "cut-peat",
       "position": [
         120.78814173912048,
-        75.29898713925462,
+        75.29898713941145,
         -53.55715673535161
       ],
       "serverTile": [
@@ -2214,7 +2214,7 @@
       "resource": "cut-peat",
       "position": [
         54.1241530720215,
-        30.820657569563817,
+        30.82065756956596,
         45.31209313842771
       ],
       "serverTile": [
@@ -2256,7 +2256,7 @@
       "resource": "cut-peat",
       "position": [
         -17.253253964782715,
-        49.85749510963598,
+        49.857495109796425,
         -27.855009702713005
       ],
       "serverTile": [
@@ -2284,7 +2284,7 @@
       "resource": "cut-peat",
       "position": [
         -51.437853964782704,
-        50.007495109635975,
+        50.00749510979642,
         -56.493609702713
       ],
       "serverTile": [
@@ -2312,7 +2312,7 @@
       "resource": "cut-peat",
       "position": [
         -60.68625396478271,
-        50.437495109635975,
+        50.43749510979642,
         -60.07340970271298
       ],
       "serverTile": [
@@ -2354,7 +2354,7 @@
       "resource": "cut-peat",
       "position": [
         104.03655600000002,
-        144.57307317498444,
+        144.57307317544712,
         -191.021376
       ],
       "serverTile": [
@@ -2820,7 +2820,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
+      "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
       "globalMin": [
         0.0,
         0.0
@@ -2839,9 +2839,9 @@
     }
   },
   "performance": {
-    "glbBytes": 11200048,
-    "nodes": 1075,
-    "meshes": 595,
+    "glbBytes": 11193516,
+    "nodes": 1081,
+    "meshes": 597,
     "externalResources": {
       "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4652,7 +4652,7 @@
       322.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:caed80cd26520c6721b8af8357cefae239a1e2cbd206432da762a4a03c3acdba",
+  "terrainRevision": "diagonal-spine-v1:b85c12573906836ea2779f8b2f3aa9c57baac0fa60d2b1486b8d6a78a88cb632",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4741,7 +4741,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
+    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "streamingChunks": {
@@ -4993,7 +4993,7 @@
           ],
           "max": [
             -28.0,
-            42.435629888339776,
+            42.435629888625144,
             -132.0
           ]
         },
@@ -5041,9 +5041,9 @@
             -27.975383904678324
           ]
         },
-        "estimatedResidentBytes": 31609310,
-        "glbBytes": 974120,
-        "geometryResidentBytes": 4870600,
+        "estimatedResidentBytes": 31609290,
+        "glbBytes": 974116,
+        "geometryResidentBytes": 4870580,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "ab5881fb0f1107266d0692b9c22bb22d3fd692dffa94c058823a27a2dd937b35": 1398102,
@@ -5091,13 +5091,13 @@
           ],
           "max": [
             -17.73984161155701,
-            54.21252474565992,
+            54.21252474620969,
             60.0
           ]
         },
-        "estimatedResidentBytes": 34647580,
-        "glbBytes": 952628,
-        "geometryResidentBytes": 4763140,
+        "estimatedResidentBytes": 34647560,
+        "glbBytes": 952624,
+        "geometryResidentBytes": 4763120,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d901334c8d05c924ad4229c9b8089148b9056f6d22c2334f69740f3f15c5e775": 1398102,
@@ -5148,7 +5148,7 @@
           ],
           "max": [
             -28.0,
-            48.15467839989839,
+            48.15467839993505,
             156.0
           ]
         },
@@ -5170,7 +5170,7 @@
           ],
           "max": [
             -27.798403918034012,
-            43.26585921143895,
+            43.26585921137438,
             252.0
           ]
         },
@@ -5199,7 +5199,7 @@
           ],
           "max": [
             -28.0,
-            30.339812015686793,
+            30.339812015694594,
             320.0
           ]
         },
@@ -5383,9 +5383,9 @@
             60.0
           ]
         },
-        "estimatedResidentBytes": 35847674,
-        "glbBytes": 528548,
-        "geometryResidentBytes": 2642740,
+        "estimatedResidentBytes": 35830734,
+        "glbBytes": 525160,
+        "geometryResidentBytes": 2625800,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5440,14 +5440,14 @@
             60.0
           ],
           "max": [
-            71.0,
+            70.98858642578125,
             44.651298195280106,
             156.0
           ]
         },
-        "estimatedResidentBytes": 1071106,
-        "glbBytes": 161792,
-        "geometryResidentBytes": 808960,
+        "estimatedResidentBytes": 1055146,
+        "glbBytes": 158600,
+        "geometryResidentBytes": 793000,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5460,7 +5460,7 @@
         "bounds": {
           "min": [
             -28.0,
-            20.699167695045574,
+            20.699167695046377,
             156.0
           ],
           "max": [
@@ -5567,7 +5567,7 @@
           ],
           "max": [
             130.0,
-            179.68748563481526,
+            179.68748563533774,
             -132.0
           ]
         },
@@ -5611,7 +5611,7 @@
         "bounds": {
           "min": [
             68.0,
-            44.660942350924415,
+            44.66094235244644,
             -132.0
           ],
           "max": [
@@ -5620,9 +5620,9 @@
             -36.0
           ]
         },
-        "estimatedResidentBytes": 50731888,
-        "glbBytes": 1303380,
-        "geometryResidentBytes": 6516900,
+        "estimatedResidentBytes": 50731908,
+        "glbBytes": 1303384,
+        "geometryResidentBytes": 6516920,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "ab5881fb0f1107266d0692b9c22bb22d3fd692dffa94c058823a27a2dd937b35": 1398102,
@@ -5682,7 +5682,7 @@
         "bounds": {
           "min": [
             65.81881682678716,
-            29.441480809952957,
+            29.441480809894877,
             -50.949974609497076
           ],
           "max": [
@@ -5691,9 +5691,9 @@
             67.81349496473695
           ]
         },
-        "estimatedResidentBytes": 52234154,
-        "glbBytes": 1533928,
-        "geometryResidentBytes": 7669640,
+        "estimatedResidentBytes": 52234134,
+        "glbBytes": 1533924,
+        "geometryResidentBytes": 7669620,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "ab5881fb0f1107266d0692b9c22bb22d3fd692dffa94c058823a27a2dd937b35": 1398102,
@@ -5759,7 +5759,7 @@
           ],
           "max": [
             144.0,
-            55.35308131942741,
+            55.35308132439964,
             156.0
           ]
         },
@@ -5835,7 +5835,7 @@
           ],
           "max": [
             170.0,
-            56.6111077507535,
+            56.61110775270398,
             12.0
           ]
         },
@@ -5847,12 +5847,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:caed80cd26520c6721b8af8357cefae239a1e2cbd206432da762a4a03c3acdba"
+    "terrainRevision": "diagonal-spine-v1:b85c12573906836ea2779f8b2f3aa9c57baac0fa60d2b1486b8d6a78a88cb632"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
-    "collisionSha256": "af1d37f8eadcc38becc137019c892f4a0c3f6be5d446010eacd93108851029d0",
-    "terrainRevision": "diagonal-spine-v1:caed80cd26520c6721b8af8357cefae239a1e2cbd206432da762a4a03c3acdba"
+    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+    "collisionSha256": "3a8d097f367283c0c1e41f74da5d049a2be74e3fb13f1953b3f94427a2235182",
+    "terrainRevision": "diagonal-spine-v1:b85c12573906836ea2779f8b2f3aa9c57baac0fa60d2b1486b8d6a78a88cb632"
   }
 }

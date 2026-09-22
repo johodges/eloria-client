@@ -1820,7 +1820,7 @@
       146.0496128894672
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:48099e0f4f39aaadd288204b57051deb091f5635605965afeafcea406c376f2e",
+  "terrainRevision": "diagonal-spine-v1:5f24496b4b8cc6f6d3fff5c4e718bd51c1b1390f0c0a685f5179dc7f5506eb0d",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -1850,13 +1850,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
+    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
-    "collisionSha256": "1a24a404fe91e24ebceaf5a2fa995d20834b82257fd145f1d65b75207382fe47",
-    "terrainRevision": "diagonal-spine-v1:48099e0f4f39aaadd288204b57051deb091f5635605965afeafcea406c376f2e"
+    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+    "collisionSha256": "a6c8f6bcc90181fb513783b0596b20b5e5fe7be0a0e3f1e6a4994c7361bf2471",
+    "terrainRevision": "diagonal-spine-v1:5f24496b4b8cc6f6d3fff5c4e718bd51c1b1390f0c0a685f5179dc7f5506eb0d"
   }
 }

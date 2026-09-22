@@ -19,12 +19,12 @@
     "bounds": {
       "min": [
         -86.0,
-        20.797532435545598,
+        20.79753243510555,
         -112.0
       ],
       "max": [
         16.380000190734904,
-        53.75274342797597,
+        53.75274342675672,
         -12.484097446464204
       ]
     },
@@ -3016,16 +3016,16 @@
   "bounds": {
     "min": [
       -86.0,
-      20.797532435545598,
+      20.79753243510555,
       -112.0
     ],
     "max": [
       16.380000190734904,
-      53.75274342797597,
+      53.75274342675672,
       -12.484097446464204
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:f2705fa869350e5ab2c5fee28de8c4d6702df14709fbc65a9a08478fe4087eac",
+  "terrainRevision": "diagonal-spine-v1:93e795f2aff0cbae6e6c544638f03cb4a4e17bceb50749908c56886459b2a4cd",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/6c72a20af3c3a103a45d58f1b58a483dd550705958963cc508ae7c187df5eaf3.png": "6c72a20af3c3a103a45d58f1b58a483dd550705958963cc508ae7c187df5eaf3",
@@ -3055,13 +3055,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
+    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "be444d5d47bdbc0bc3521107b151e89176164db39b5a431b4e9f6208aecd765e",
+    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
     "collisionSha256": "fdc21bdc1a4821ad1b2b6d8fc05e840c1b2eaa423bd8142a68c6ed226ff6dfa4",
-    "terrainRevision": "diagonal-spine-v1:f2705fa869350e5ab2c5fee28de8c4d6702df14709fbc65a9a08478fe4087eac"
+    "terrainRevision": "diagonal-spine-v1:93e795f2aff0cbae6e6c544638f03cb4a4e17bceb50749908c56886459b2a4cd"
   }
 }
