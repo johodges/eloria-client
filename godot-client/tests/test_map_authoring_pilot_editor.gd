@@ -38,8 +38,10 @@ func _run() -> void:
 		push_error("map authoring pilot editor preview: saved scenery/light separation is invalid")
 		quit(1)
 		return
-	if styled_rock == null or styled_rock.material_override != pilot.visual_style.stone_material:
-		push_error("map authoring pilot editor preview: authored scenery did not receive the saved style")
+	var rock_surface := styled_rock.get("surface") as MapAuthoringSurface \
+		if styled_rock != null else null
+	if rock_surface == null or styled_rock.material_override != rock_surface.get_material():
+		push_error("map authoring pilot editor preview: authored scenery did not receive its local surface")
 		quit(1)
 		return
 	var road := pilot.get_node_or_null("AuthoredControls/Road") as Path3D

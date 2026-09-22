@@ -8,6 +8,8 @@ extends RefCounted
 const CUSTOM := "Custom"
 const GRASS := "Grass"
 const WORN_EARTH := "Worn earth"
+const SOIL := "Soil"
+const SAND := "Sand"
 const TIMBER := "Timber"
 const STONE := "Stone"
 const THATCH := "Thatch"
@@ -22,7 +24,7 @@ const CAVERN := "Cavern"
 const SLATE := "Slate"
 
 const PRESET_NAMES := [
-	CUSTOM, GRASS, WORN_EARTH, TIMBER, STONE, THATCH, TEXTILE, CANVAS,
+	CUSTOM, GRASS, WORN_EARTH, SOIL, SAND, TIMBER, STONE, THATCH, TEXTILE, CANVAS,
 	METAL, LEATHER, HIDE, BONE, CRYSTAL, CAVERN, SLATE,
 ]
 
@@ -44,6 +46,16 @@ const _PRESETS := {
 	WORN_EARTH: {
 		"family": "ground", "tint": Color(0.60, 0.48, 0.31, 1.0),
 		"roughness": 1.0, "normal_strength": 0.72, "density": 0.24,
+	},
+	SOIL: {
+		"family": "ground", "tint": Color(0.43, 0.30, 0.18, 1.0),
+		"roughness": 1.0, "normal_strength": 0.72, "density": 0.24,
+	},
+	# The licensed ground pattern reads cleanly as sand with a warmer, lighter
+	# tint; keeping the same maps avoids introducing an unlicensed asset.
+	SAND: {
+		"family": "ground", "tint": Color(0.86, 0.72, 0.47, 1.0),
+		"roughness": 0.96, "normal_strength": 0.48, "density": 0.20,
 	},
 	TIMBER: {
 		"family": "timber", "tint": Color(0.65, 0.64, 0.59, 1.0),

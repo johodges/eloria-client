@@ -134,6 +134,10 @@ func _test_road_shader_survives_swaps(style: MapAuthoringVisualStyle) -> void:
 
 func _test_generated_consumers(pilot: Node,
 		style: MapAuthoringVisualStyle) -> void:
+	var ground := pilot.get_node("AuthoredControls/Ground")
+	var road := pilot.get_node("AuthoredControls/Road")
+	var building := pilot.get_node("AuthoredControls/Building")
+	var rock := pilot.get_node("AuthoredScenery/ShoreRockWest")
 	style.terrain_texture = MapAuthoringTexturePresets.CAVERN
 	style.road_texture = MapAuthoringTexturePresets.LEATHER
 	style.woodwork_texture = MapAuthoringTexturePresets.CANVAS
@@ -142,15 +146,15 @@ func _test_generated_consumers(pilot: Node,
 	pilot.refresh_all()
 	await process_frame
 	_expect(_mesh_material(pilot, "GeneratedPreview/Terrain/TerrainMesh") ==
-		style.terrain_material, "terrain preset reaches the generated terrain mesh")
+		ground.base_surface.get_material(), "terrain keeps its explicit local surface")
 	_expect(_mesh_material(pilot, "GeneratedPreview/Road/RoadSurface") ==
-		style.worn_path_material, "road preset reaches the generated road mesh")
+		road.surface.get_material(), "road keeps its explicit local surface")
 	_expect(_mesh_material(pilot, "GeneratedPreview/Building/BackWall") ==
-		style.timber_material, "woodwork preset reaches generated cabin walls")
+		building.wall_surface.get_material(), "cabin walls keep their explicit local surface")
 	_expect(_mesh_material(pilot, "GeneratedPreview/Building/Roof") ==
-		style.slate_material, "roof preset reaches the generated cabin roof")
+		building.roof_surface.get_material(), "cabin roof keeps its explicit local surface")
 	_expect(_mesh_material(pilot, "AuthoredScenery/ShoreRockWest") ==
-		style.stone_material, "stonework preset reaches saved stone scenery")
+		rock.surface.get_material(), "saved stone scenery keeps its explicit local surface")
 
 
 func _test_custom_save_and_reopen(pilot: Node,
@@ -162,8 +166,8 @@ func _test_custom_save_and_reopen(pilot: Node,
 	style.terrain_material = custom
 	pilot.refresh_all()
 	await process_frame
-	_expect(_mesh_material(pilot, "GeneratedPreview/Terrain/TerrainMesh") == custom,
-		"a Custom material survives refresh and reaches generated terrain")
+	_expect(_mesh_material(pilot, "GeneratedPreview/Terrain/TerrainMesh") != custom,
+		"a legacy Custom material does not replace explicit local terrain")
 	_expect(ResourceSaver.save(style, CUSTOM_STYLE_PATH) == OK,
 		"a style with a Custom slot can be saved")
 	var reopened := ResourceLoader.load(CUSTOM_STYLE_PATH, "Resource",

@@ -24,8 +24,8 @@ const TIMBER_UV_SCALE := 0.5
 @export_range(-1.0, 3.0, 0.05) var terrain_base_height := 1.4
 @export_range(-1.0, 3.0, 0.05) var water_level := 0.35
 
-@export_category("Visual style")
-@export var visual_style: MapAuthoringVisualStyle
+## Hidden compatibility template for older saved scenes without local surfaces.
+@export_storage var visual_style: MapAuthoringVisualStyle
 
 @export_storage var road_width := 2.5
 ## Legacy storage used only when an older scene has root BridgeStart/BridgeEnd
@@ -47,6 +47,7 @@ const TIMBER_UV_SCALE := 0.5
 @onready var authored: Node3D = get_node_or_null("AuthoredControls")
 @onready var road: Path3D = get_node_or_null("AuthoredControls/Road")
 @onready var river: Path3D = get_node_or_null("AuthoredControls/River")
+@onready var ground_control: Node3D = get_node_or_null("AuthoredControls/Ground")
 @onready var terrain_heights: Node3D = get_node_or_null("AuthoredControls/TerrainHeights")
 @onready var bridges_control: Node3D = get_node_or_null("AuthoredControls/Bridges")
 ## Compatibility aliases for probes which address the first authored bridge.
@@ -205,11 +206,12 @@ func authored_snapshot() -> Dictionary:
 	return {
 		"road": _curve_signature(),
 		"river": _path_signature(river),
+		"ground": _ground_signature(),
 		"terrain_heights": _terrain_heights_signature(),
 		"bridges": _bridges_signature(),
 		"bridge_start": bridge_start.transform if bridge_start else Transform3D.IDENTITY,
 		"bridge_end": bridge_end.transform if bridge_end else Transform3D.IDENTITY,
-		"building": building_control.transform if building_control else Transform3D.IDENTITY,
+		"building": _building_signature(),
 		"entrance": entrance.transform if entrance else Transform3D.IDENTITY,
 	}
 
@@ -234,6 +236,8 @@ func _regenerate(scope: String) -> void:
 		if current.params != _last_signatures.params or \
 				current.river != _last_signatures.river or \
 				current.terrain_heights != _last_signatures.terrain_heights:
+			scope = "All"
+		elif current.ground != _last_signatures.ground and scope != "Terrain":
 			scope = "All"
 		elif current.bridge != _last_signatures.bridge and scope != "Bridge":
 			scope = "All"
@@ -266,11 +270,20 @@ func _cache_nodes() -> void:
 		road.call("sync_curve_binding")
 	if river != null and river.has_method("sync_curve_binding"):
 		river.call("sync_curve_binding")
+	if road != null and road.has_method("sync_surface_binding"):
+		road.call("sync_surface_binding")
+	if river != null and river.has_method("sync_surface_binding"):
+		river.call("sync_surface_binding")
+	ground_control = get_node_or_null("AuthoredControls/Ground")
+	if ground_control != null and ground_control.has_method("sync_surface_binding"):
+		ground_control.call("sync_surface_binding")
 	terrain_heights = get_node_or_null("AuthoredControls/TerrainHeights")
 	bridges_control = get_node_or_null("AuthoredControls/Bridges")
 	bridge_start = _first_bridge_marker("Start")
 	bridge_end = _first_bridge_marker("End")
 	building_control = get_node_or_null("AuthoredControls/Building")
+	if building_control != null and building_control.has_method("sync_surface_bindings"):
+		building_control.call("sync_surface_bindings")
 	entrance = get_node_or_null("AuthoredControls/Building/Entrance")
 	spawn_marker = get_node_or_null("AuthoredControls/Spawn")
 	generated = get_node_or_null("GeneratedPreview")
@@ -303,6 +316,8 @@ func _detect_authored_changes() -> void:
 	if current.river != _last_signatures.river or \
 			current.terrain_heights != _last_signatures.terrain_heights:
 		changed.append("All")
+	if current.ground != _last_signatures.ground:
+		changed.append("Terrain")
 	if current.bridge != _last_signatures.bridge:
 		changed.append("Bridge")
 	if current.building != _last_signatures.building or current.markers != _last_signatures.markers:
@@ -318,16 +333,34 @@ func _detect_authored_changes() -> void:
 func _signatures() -> Dictionary:
 	return {
 		"params": [terrain_relief, terrain_base_height, water_level, road_width,
-			show_walkability,
-			_visual_style_signature()].hash(),
+			show_walkability, _visual_style_signature()].hash(),
+		"ground": _ground_signature(),
 		"road": _curve_signature(),
 		"river": _path_signature(river),
 		"terrain_heights": _terrain_heights_signature(),
 		"bridge": _bridges_signature().hash(),
-		"building": str(building_control.transform).hash() if building_control else 0,
+		"building": _building_signature().hash(),
 		"markers": [entrance.transform if entrance else Transform3D.IDENTITY,
 			spawn_marker.transform if spawn_marker else Transform3D.IDENTITY].hash(),
 	}
+
+
+func _ground_signature() -> Array:
+	if ground_control == null:
+		return []
+	var result: Array = [ground_control.global_transform]
+	if ground_control.has_method("surface_signature"):
+		result.append(ground_control.call("surface_signature"))
+	return result
+
+
+func _building_signature() -> Array:
+	if building_control == null:
+		return []
+	var result: Array = [building_control.global_transform]
+	if building_control.has_method("surface_signature"):
+		result.append(building_control.call("surface_signature"))
+	return result
 
 
 func _first_bridge_marker(marker_name: String) -> Marker3D:
@@ -684,11 +717,17 @@ func _append_bridge_cache(control: Node3D, start: Marker3D, end: Marker3D) -> vo
 	var arch := bridge_arch
 	var clearance := bridge_water_clearance
 	var deck_rotation := 0.0
+	var deck_surface: MapAuthoringSurface
+	var support_surface: MapAuthoringSurface
 	if control != null:
+		if control.has_method("sync_surface_bindings"):
+			control.call("sync_surface_bindings")
 		width = clampf(float(control.get("width")), 1.5, 6.0)
 		arch = clampf(float(control.get("arch")), 0.0, 2.0)
 		clearance = maxf(float(control.get("water_clearance")), 0.85)
 		deck_rotation = float(control.get("deck_texture_rotation_degrees"))
+		deck_surface = control.get("deck_surface") as MapAuthoringSurface
+		support_surface = control.get("support_surface") as MapAuthoringSurface
 	_bridge_cache.append({
 		"name": String(control.name) if control != null else "Bridge",
 		"control": control,
@@ -704,6 +743,8 @@ func _append_bridge_cache(control: Node3D, start: Marker3D, end: Marker3D) -> vo
 		"arch": arch,
 		"clearance": clearance,
 		"deck_rotation": deck_rotation,
+		"deck_surface": deck_surface,
+		"support_surface": support_surface,
 	})
 
 
@@ -801,8 +842,11 @@ func _build_terrain(parent: Node3D) -> void:
 	surface.generate_normals()
 	surface.generate_tangents()
 	var mesh := surface.commit()
-	_add_mesh(parent, "TerrainMesh", mesh, _style_material("terrain",
-		Color("#648052"), 0.92))
+	var ground_surface: MapAuthoringSurface
+	if ground_control != null and "base_surface" in ground_control:
+		ground_surface = ground_control.get("base_surface") as MapAuthoringSurface
+	_add_mesh(parent, "TerrainMesh", mesh, _surface_material(ground_surface,
+		"terrain", Color("#648052"), 0.92))
 	var body := StaticBody3D.new()
 	body.name = "TerrainCollision"
 	var collision := CollisionShape3D.new()
@@ -848,8 +892,10 @@ func _build_water(parent: Node3D) -> void:
 	surface.generate_tangents()
 	var mesh := surface.commit()
 	if mesh != null:
-		_add_mesh(parent, "River", mesh, _style_material("water",
-			Color(0.12, 0.48, 0.68, 0.78), 0.2))
+		var river_surface: MapAuthoringSurface = (river.get("surface") as MapAuthoringSurface
+			if "surface" in river else null)
+		_add_mesh(parent, "River", mesh, _surface_material(river_surface,
+			"water", Color(0.12, 0.48, 0.68, 0.78), 0.2))
 
 
 func _build_road(parent: Node3D) -> void:
@@ -910,8 +956,10 @@ func _build_road(parent: Node3D) -> void:
 				surface.add_vertex(vertex)
 	surface.generate_normals()
 	surface.generate_tangents()
-	_add_mesh(parent, "RoadSurface", surface.commit(), _style_material(
-		"road", Color("#8d7958"), 0.95))
+	var road_surface: MapAuthoringSurface = (road.get("surface") as MapAuthoringSurface
+		if "surface" in road else null)
+	_add_mesh(parent, "RoadSurface", surface.commit(), _surface_material(
+		road_surface, "road", Color("#8d7958"), 0.95))
 
 
 func _road_height(x: float, z: float) -> float:
@@ -997,16 +1045,17 @@ func _build_bridge_span(parent: Node3D, bridge: Dictionary) -> void:
 			surface.add_vertex(vertex)
 	surface.generate_normals()
 	surface.generate_tangents()
-	_add_mesh(span_root, "BridgeDeck", surface.commit(), _style_material(
-		"woodwork", Color("#b08a58"), 0.86, float(bridge.deck_rotation)))
+	_add_mesh(span_root, "BridgeDeck", surface.commit(), _surface_material(
+		bridge.deck_surface, "woodwork", Color("#b08a58"), 0.86,
+		float(bridge.deck_rotation)))
 	var support_index := 0
 	for point: Vector2 in [bridge.a, bridge.b]:
 		var pier := BoxMesh.new()
 		var top := _bridge_height_for(bridge, point.x, point.y)
 		pier.size = Vector3(0.45, maxf(0.2, top - water_level), width + 0.6)
 		var support_name := "BridgeSupport" if support_index == 0 else "BridgeSupportEnd"
-		var node := _add_mesh(span_root, support_name, pier, _style_material(
-			"stonework", Color("#625243"), 1.0))
+		var node := _add_mesh(span_root, support_name, pier, _surface_material(
+			bridge.support_surface, "stonework", Color("#625243"), 1.0))
 		node.position = Vector3(point.x, water_level + pier.size.y * 0.5, point.y)
 		node.rotation.y = -direction.angle()
 		support_index += 1
@@ -1017,7 +1066,12 @@ func _build_building(parent: Node3D) -> void:
 		return
 	var centre := building_control.global_position
 	var floor := _decoded_height(_encode_height(_terrain_height(centre.x, centre.z)))
-	var wall_material := _style_material("woodwork", Color("#9d876d"), 0.9)
+	var wall_surface: MapAuthoringSurface = (building_control.get("wall_surface") \
+		as MapAuthoringSurface if "wall_surface" in building_control else null)
+	var roof_surface: MapAuthoringSurface = (building_control.get("roof_surface") \
+		as MapAuthoringSurface if "roof_surface" in building_control else null)
+	var wall_material := _surface_material(wall_surface,
+		"woodwork", Color("#9d876d"), 0.9)
 	# Four wall groups form a readable open-front cabin. The gap in the front
 	# wall is the same gap `_inside_building` leaves open in the walk grid.
 	_add_building_box(parent, "BackWall", Vector3(0.5, 4.0, 5.0),
@@ -1032,11 +1086,11 @@ func _build_building(parent: Node3D) -> void:
 		Vector3(-3.25, 2.0, 1.75), floor, wall_material)
 	var roof := PrismMesh.new()
 	roof.size = Vector3(7.8, 2.0, 5.8)
-	var roof_node := _add_mesh(parent, "Roof", roof, _style_material(
-		"roof", Color("#5c3f35"), 1.0))
+	var roof_node := _add_mesh(parent, "Roof", roof, _surface_material(
+		roof_surface, "roof", Color("#5c3f35"), 1.0))
 	roof_node.transform = building_control.global_transform
 	roof_node.position += Vector3(0.0, floor + 4.8, 0.0)
-	var door_mat := _style_material("woodwork", Color("#3b251c"), 1.0)
+	var door_mat := wall_material
 	for offset in [-1.0, 1.0]:
 		var post := BoxMesh.new()
 		post.size = Vector3(0.35, 2.6, 0.4)
@@ -1127,6 +1181,18 @@ func _style_material(slot: String, fallback_color: Color,
 		if saved is Material:
 			return saved
 	return _material(fallback_color, fallback_roughness)
+
+
+func _surface_material(surface: MapAuthoringSurface, legacy_slot: String,
+		fallback_color: Color, fallback_roughness: float,
+		extra_rotation_degrees := 0.0) -> Material:
+	if surface != null:
+		var local := surface.get_material(extra_rotation_degrees)
+		if local != null:
+			return local
+		return _material(fallback_color, fallback_roughness)
+	return _style_material(legacy_slot, fallback_color, fallback_roughness,
+		extra_rotation_degrees)
 
 
 func _visual_style_signature() -> Array:

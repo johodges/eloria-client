@@ -23,6 +23,9 @@ const MAX_WIDTH := 16.0
 		_normalize_width_count()
 		_update_current_history()
 
+@export_group("Local surface")
+@export var surface: MapAuthoringSurface
+
 var _tracked_curve: Curve3D
 var _point_snapshot: Array[Vector3] = []
 var _topology_history: Array[Dictionary] = []
@@ -32,16 +35,20 @@ var _stations_dirty := true
 var _stations := PackedFloat32Array()
 var _resolved_widths_dirty := true
 var _resolved_widths := PackedFloat32Array()
+var _bound_surface: MapAuthoringSurface
 
 
 func _ready() -> void:
 	set_process(true)
 	sync_curve_binding()
+	sync_surface_binding()
 
 
 func _process(_delta: float) -> void:
 	if curve != _tracked_curve:
 		sync_curve_binding()
+	if surface != _bound_surface:
+		sync_surface_binding()
 
 
 func sync_curve_binding() -> void:
@@ -95,7 +102,18 @@ func width_at_offset(baked_distance: float) -> float:
 
 func width_signature() -> Array:
 	sync_curve_binding()
-	return [default_width, point_widths.duplicate()]
+	sync_surface_binding()
+	return [default_width, point_widths.duplicate(),
+		surface.signature() if surface != null else []]
+
+
+func sync_surface_binding() -> void:
+	if surface == _bound_surface:
+		return
+	if surface != null:
+		surface = surface.duplicate(true) as MapAuthoringSurface
+		surface.resource_local_to_scene = true
+	_bound_surface = surface
 
 
 func width_sample_offsets() -> PackedFloat32Array:

@@ -20,11 +20,12 @@ Or double-click `open-map-authoring-pilot.bat` in `godot-client`.
 
 Godot may import project assets on the first launch. Select the `MapAuthoringPilot` root to edit terrain, water level, preview, and export settings in the Inspector. Select the road, river, or an individual bridge to edit its width and other object settings. The root's **Edit road points**, **Edit river points**, and **Edit terrain heights** buttons select the matching saved control and switch the 3D viewport to it. The controls are:
 
+- `AuthoredControls/Ground`: owns the base ground surface for the whole map. Local painted ground regions are a later milestone.
 - `AuthoredControls/Road`: a `Path3D` whose curve controls the worn path. Set **Default Width** for the whole road, or expand **Point Widths** and enter a full width for individual curve points. A point value of `0` inherits the surrounding taper.
 - `AuthoredControls/River`: a `Path3D` whose curve controls the river channel, terrain cut, visible water, and blocked export cells. Its **Default Width** and optional **Point Widths** work the same way as the road.
 - `AuthoredControls/TerrainHeights`: a group of `Marker3D` height handles. Move a handle up or down for a smooth radial height offset, and edit its **Influence Radius** in the Inspector. Move it in X/Z, duplicate it, or delete it to change where local shaping applies.
 - `AuthoredControls/Bridges`: contains the saved bridges. Select `Bridge` to change its width, arch, water clearance, or deck texture rotation. Move its `Start` and `End` markers to place the bank landings. Duplicate the whole bridge with Ctrl+D for another crossing, then move the copy and its endpoints; delete the whole bridge node to remove that crossing.
-- `Building`: move or rotate the open-front cabin and its attached entrance.
+- `Building`: move or rotate the open-front cabin and its attached entrance, or edit its separate wall and roof surfaces.
 - `Building/Entrance` and `Spawn`: adjust the attached doorway endpoint and route start.
 - `AuthoredScenery`: move the saved shore rocks, grass clumps, wind pine, sign, or cabin lantern with the normal transform tools. These cosmetic nodes stay outside `GeneratedPreview`, so regeneration does not erase their placements.
 
@@ -34,21 +35,19 @@ Entries in **Point Widths** use the same indices as the curve's points. Adding o
 
 Moving a terrain handle in Y creates a local offset rather than changing the map-wide baseline. **Terrain Base Height** and **Terrain Relief** on `MapAuthoringPilot` remain the global controls. Duplicate or delete handles in the Scene tree, use the normal move tool for Y and X/Z, and press Ctrl+S to save the authored nodes.
 
-## Edit the Last Lantern look
+## Edit one object's surface
 
-The root's **Visual Style** field points to `src/dev/map_authoring_pilot/style/last_lantern_style.tres`. Expand it in the Inspector and choose a texture from the native **Terrain Texture**, **Road Texture**, **Woodwork Texture**, **Stonework Texture**, and **Roof Texture** dropdowns. **Woodwork Texture** covers the cabin walls, trim, bridge deck, and matching timber props. The viewport updates after the short editor debounce; press Ctrl+S to save the choices with the scene.
+Texture choices live on the object they affect. Select `Ground`, `Road`, `River`, an individual bridge, or `Building`, then expand its **Surface** field in the Inspector. A bridge has separate **Deck Surface** and **Support Surface** fields. The building has separate **Wall Surface** and **Roof Surface** fields. Changing one object leaves every other object unchanged.
 
-Each dropdown offers **Custom**, **Grass**, **Worn earth**, **Timber**, **Stone**, **Thatch**, **Textile**, **Canvas**, **Metal**, **Leather**, **Hide**, **Bone**, **Crystal**, **Cavern**, and **Slate**. These choices reuse the Sunmane PBR texture families already licensed for Eloria. The road always keeps its feathered-edge shader while changing the selected base-colour, normal, and ORM textures.
+For saved scenery, expand `AuthoredScenery` and select the mesh part itself. For example, choose `ShoreRockWest`, `WindPine/Trunk`, `WindPine/LowerNeedles`, `CabinLantern/Glass`, or `WeatheredSign/Board`. Every mesh part has its own **Surface**, including grass, foliage, and glowing glass. Duplicate a bridge or scenery mesh with Ctrl+D to get an independent surface, then choose a different texture or rotation on the copy.
 
-Before experimenting, use **Save As** on the style resource to create a personal `.tres`, then assign the copy to **Visual Style**. Keep one style assigned on the pilot root: it feeds both generated map meshes and saved `AuthoredScenery` props. Editing the checked-in shared resource changes every scene that uses it.
+Each surface offers **Custom**, **Grass**, **Worn earth**, **Soil**, **Sand**, **Timber**, **Stone**, **Thatch**, **Textile**, **Canvas**, **Metal**, **Leather**, **Hide**, **Bone**, **Crystal**, **Cavern**, and **Slate**. These choices reuse the Sunmane PBR texture families already licensed for Eloria. A Road surface always keeps its feathered-edge shader while changing the selected texture.
 
-Use **Custom** in a slot when you want to assign a material directly. Enable **Show Advanced Materials** to expose all six material resources without changing their selected presets. The advanced fields control texture tint, normal strength, roughness, ORM response, triplanar **UV1 > Scale**, and the road and water shader parameters. Advanced edits remain intact across refresh and save/reopen. Switching away from a texture and back during the editing session recovers its current material, so Inspector undo also restores Custom materials and advanced tweaks.
+Set **Rotation Degrees** on that local surface to rotate only its texture. The older bridge **Deck Texture Rotation Degrees** field remains additive for saved-scene compatibility; prefer the Deck Surface rotation for new edits. Rotation works with the included presets and supported standard or pilot shader materials. If a Custom shader uses unsupported texture features, the pilot keeps its original material and prints a warning.
 
-The style also exposes texture rotation for terrain, roads, woodwork, stonework, and roofs. These rotations affect every matching generated surface and saved scenery prop. A bridge's **Deck Texture Rotation Degrees** adds a local adjustment for that deck without changing the shared woodwork material.
+Choose **Custom** to assign a material directly. Enable **Show Advanced Materials** on that surface to expose its source material without changing the selected preset. Advanced fields control tint, normal strength, roughness, ORM response, triplanar **UV1 > Scale**, and supported shader parameters. Direct edits remain local to the selected object and survive refresh and save/reopen. Switching away from a texture and back during the editing session recovers that surface's current material, so Inspector undo can restore Custom materials and advanced tweaks.
 
-Rotation works with the included texture presets and supported standard or pilot shader materials. If a custom shader uses unsupported texture features, the pilot keeps the original material and prints a warning instead of changing that material.
-
-The terrain and road start at `GROUND_UV_SCALE = 0.24`, and the bridge deck starts at `TIMBER_UV_SCALE = 0.5`, near the top of `map_authoring_pilot.gd`. Change those constants for code-wide texture density. Triplanar wall, woodwork, stonework, and roof materials use the style resource's **UV1 Scale**. Parameter edits update every mesh sharing that material immediately.
+The terrain and road start at `GROUND_UV_SCALE = 0.24`, and bridge decks start at `TIMBER_UV_SCALE = 0.5`, near the top of `map_authoring_pilot.gd`. Change those constants for code-wide texture density. Triplanar surfaces use their source material's **UV1 Scale**. The old root visual style remains hidden storage used only when opening an older scene that has no local surface.
 
 Lighting is saved in the scene rather than generated. Select `Sun` to edit direction, colour, energy, and shadows; select `Environment` and expand its resource to edit the cool ambient/background values. The warm pool is `AuthoredScenery/CabinLantern/WarmLight`, where the Inspector exposes colour, energy, range, and shadows. Select the lantern or another prop's parent node to move the complete authored instance.
 
@@ -95,10 +94,16 @@ For the default Inspector export on Windows, the manifest is normally under `$en
 
 The smoke test checks that curve, scenery, visual-style, and material edits survive regeneration and save/reopen, generated preview nodes remain nonpersistent, the checked export fixture remains byte/JSON equivalent, the conservative server grid has the expected shape, and every step from spawn across the bridge to the entrance is legal on that same grid.
 
-The texture-preset test checks every named choice, isolated material instances, road-edge shader preservation, generated mesh and scenery assignments, the compact Inspector property list, and Custom or advanced edits across refresh and save/reopen:
+The texture-preset test checks every named choice, material isolation, road-edge shader preservation, the compact Inspector property list, and Custom or advanced resource edits across save/reopen:
 
 ```powershell
 & 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_pilot_texture_presets.gd
+```
+
+The object-material test covers independently textured and rotated bridges, the local Road shader, separate building walls and roof, independently edited rocks, unchanged foliage and glow defaults, Ctrl+D isolation, and save/reopen without persisting runtime-derived materials:
+
+```powershell
+& 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_object_materials.gd
 ```
 
 The focused visual-control test additionally edits road and river point counts, bends the river and verifies the visible water and exported collision move with it, changes terrain-handle height/radius/XZ and checks generated terrain plus encoded height cells, exercises degenerate paths, and saves/reopens the authored controls:
