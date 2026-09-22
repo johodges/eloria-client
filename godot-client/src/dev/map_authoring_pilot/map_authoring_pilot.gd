@@ -13,11 +13,16 @@ const SERVER_CELLS := 48
 const HEIGHT_STEP := 0.2
 const WALKER_SPEED := 5.0
 const WATER_HALF_WIDTH := 3.0
+const GROUND_UV_SCALE := 0.24
+const TIMBER_UV_SCALE := 0.5
 
 @export_category("Terrain")
 @export_range(0.0, 2.0, 0.05) var terrain_relief := 0.8
 @export_range(-1.0, 3.0, 0.05) var terrain_base_height := 1.4
 @export_range(-1.0, 3.0, 0.05) var water_level := 0.35
+
+@export_category("Visual style")
+@export var visual_style: MapAuthoringVisualStyle
 
 @export_category("Road and bridge")
 @export_range(1.0, 6.0, 0.1) var road_width := 2.5
@@ -39,6 +44,7 @@ const WATER_HALF_WIDTH := 3.0
 @onready var building_control: Node3D = get_node_or_null("AuthoredControls/Building")
 @onready var entrance: Marker3D = get_node_or_null("AuthoredControls/Building/Entrance")
 @onready var spawn_marker: Marker3D = get_node_or_null("AuthoredControls/Spawn")
+@onready var authored_scenery: Node3D = get_node_or_null("AuthoredScenery")
 @onready var generated: Node3D = get_node_or_null("GeneratedPreview")
 
 var _half_grid := PackedByteArray()
@@ -159,6 +165,7 @@ func _regenerate(scope: String) -> void:
 	if not is_inside_tree():
 		return
 	_cache_nodes()
+	_sync_authored_style()
 	if generated == null or road == null or road.curve == null:
 		return
 	_build_walk_grids()
@@ -178,6 +185,7 @@ func _regenerate(scope: String) -> void:
 
 func _cache_nodes() -> void:
 	authored = get_node_or_null("AuthoredControls")
+	authored_scenery = get_node_or_null("AuthoredScenery")
 	road = get_node_or_null("AuthoredControls/Road")
 	bridge_start = get_node_or_null("AuthoredControls/BridgeStart")
 	bridge_end = get_node_or_null("AuthoredControls/BridgeEnd")
@@ -226,7 +234,8 @@ func _detect_authored_changes() -> void:
 func _signatures() -> Dictionary:
 	return {
 		"params": [terrain_relief, terrain_base_height, water_level, road_width,
-			bridge_width, bridge_arch, bridge_water_clearance, show_walkability].hash(),
+			bridge_width, bridge_arch, bridge_water_clearance, show_walkability,
+			_visual_style_signature()].hash(),
 		"road": _curve_signature(),
 		"bridge": [bridge_start.transform if bridge_start else Transform3D.IDENTITY,
 			bridge_end.transform if bridge_end else Transform3D.IDENTITY].hash(),
@@ -364,11 +373,15 @@ func _build_terrain(parent: Node3D) -> void:
 			var c := Vector3(x1, _decoded_height(_encode_height(_terrain_height(x1, z1))), z1)
 			var d := Vector3(x0, _decoded_height(_encode_height(_terrain_height(x0, z1))), z1)
 			for vertex in [a, c, b, a, d, c]:
-				surface.set_uv(Vector2((vertex.x + 24.0) / 48.0, (vertex.z + 24.0) / 48.0))
+				# Authored texture density is measured in world metres and does not
+				# stretch when the terrain extent changes.
+				surface.set_uv(Vector2(vertex.x, vertex.z) * GROUND_UV_SCALE)
 				surface.add_vertex(vertex)
 	surface.generate_normals()
+	surface.generate_tangents()
 	var mesh := surface.commit()
-	_add_mesh(parent, "TerrainMesh", mesh, _material(Color("#648052"), 0.92))
+	_add_mesh(parent, "TerrainMesh", mesh, _style_material("terrain_material",
+		Color("#648052"), 0.92))
 	var body := StaticBody3D.new()
 	body.name = "TerrainCollision"
 	var collision := CollisionShape3D.new()
@@ -382,7 +395,8 @@ func _build_terrain(parent: Node3D) -> void:
 func _build_water(parent: Node3D) -> void:
 	var mesh := BoxMesh.new()
 	mesh.size = Vector3(WATER_HALF_WIDTH * 2.0, 0.08, MAP_METRES)
-	var node := _add_mesh(parent, "River", mesh, _material(Color(0.12, 0.48, 0.68, 0.78), 0.2))
+	var node := _add_mesh(parent, "River", mesh, _style_material("water_material",
+		Color(0.12, 0.48, 0.68, 0.78), 0.2))
 	node.position.y = water_level - 0.04
 
 
@@ -391,8 +405,13 @@ func _build_road(parent: Node3D) -> void:
 	if points.size() < 2:
 		return
 	var cross_sections: Array[Array] = []
+	var distances: Array[float] = []
 	var lateral_steps := 6
+	var distance := 0.0
 	for index in points.size():
+		if index > 0:
+			distance += points[index - 1].distance_to(points[index])
+		distances.append(distance)
 		var previous: Vector3 = points[maxi(0, index - 1)]
 		var following: Vector3 = points[mini(points.size() - 1, index + 1)]
 		var direction := Vector2(following.x - previous.x, following.z - previous.z).normalized()
@@ -413,10 +432,27 @@ func _build_road(parent: Node3D) -> void:
 				cross_sections[index][lateral_index + 1],
 				cross_sections[index + 1][lateral_index + 1],
 				cross_sections[index + 1][lateral_index]]
-			for vertex in [vertices[0], vertices[2], vertices[1], vertices[0], vertices[3], vertices[2]]:
+			var u0 := float(lateral_index) / float(lateral_steps)
+			var u1 := float(lateral_index + 1) / float(lateral_steps)
+			var texture_u0 := u0 * road_width * GROUND_UV_SCALE
+			var texture_u1 := u1 * road_width * GROUND_UV_SCALE
+			var emitted := [
+				[vertices[0], Vector2(texture_u0, distances[index] * GROUND_UV_SCALE), Vector2(u0, 0.0)],
+				[vertices[2], Vector2(texture_u1, distances[index + 1] * GROUND_UV_SCALE), Vector2(u1, 0.0)],
+				[vertices[1], Vector2(texture_u1, distances[index] * GROUND_UV_SCALE), Vector2(u1, 0.0)],
+				[vertices[0], Vector2(texture_u0, distances[index] * GROUND_UV_SCALE), Vector2(u0, 0.0)],
+				[vertices[3], Vector2(texture_u0, distances[index + 1] * GROUND_UV_SCALE), Vector2(u0, 0.0)],
+				[vertices[2], Vector2(texture_u1, distances[index + 1] * GROUND_UV_SCALE), Vector2(u1, 0.0)],
+			]
+			for item in emitted:
+				surface.set_uv(item[1])
+				surface.set_uv2(item[2])
+				var vertex: Vector3 = item[0]
 				surface.add_vertex(vertex)
 	surface.generate_normals()
-	_add_mesh(parent, "RoadSurface", surface.commit(), _material(Color("#8d7958"), 0.95))
+	surface.generate_tangents()
+	_add_mesh(parent, "RoadSurface", surface.commit(), _style_material(
+		"worn_path_material", Color("#8d7958"), 0.95))
 
 
 func _road_height(x: float, z: float) -> float:
@@ -469,15 +505,28 @@ func _build_bridge(parent: Node3D) -> void:
 			Vector3(p0.x - normal.x, y0, p0.y - normal.y),
 			Vector3(p1.x - normal.x, y1, p1.y - normal.y),
 			Vector3(p1.x + normal.x, y1, p1.y + normal.y)]
-		for vertex in [vertices[0], vertices[2], vertices[1], vertices[0], vertices[3], vertices[2]]:
+		var emitted := [
+			[vertices[0], Vector2(0.0, t0 * basis.length * TIMBER_UV_SCALE)],
+			[vertices[2], Vector2(bridge_width * TIMBER_UV_SCALE, t1 * basis.length * TIMBER_UV_SCALE)],
+			[vertices[1], Vector2(bridge_width * TIMBER_UV_SCALE, t0 * basis.length * TIMBER_UV_SCALE)],
+			[vertices[0], Vector2(0.0, t0 * basis.length * TIMBER_UV_SCALE)],
+			[vertices[3], Vector2(0.0, t1 * basis.length * TIMBER_UV_SCALE)],
+			[vertices[2], Vector2(bridge_width * TIMBER_UV_SCALE, t1 * basis.length * TIMBER_UV_SCALE)],
+		]
+		for item in emitted:
+			surface.set_uv(item[1])
+			var vertex: Vector3 = item[0]
 			surface.add_vertex(vertex)
 	surface.generate_normals()
-	_add_mesh(parent, "BridgeDeck", surface.commit(), _material(Color("#b08a58"), 0.86))
+	surface.generate_tangents()
+	_add_mesh(parent, "BridgeDeck", surface.commit(), _style_material(
+		"timber_material", Color("#b08a58"), 0.86))
 	for point: Vector2 in [basis.a, basis.b]:
 		var pier := BoxMesh.new()
 		var top := _bridge_height(point.x, point.y)
 		pier.size = Vector3(0.45, maxf(0.2, top - water_level), bridge_width + 0.6)
-		var node := _add_mesh(parent, "BridgeSupport", pier, _material(Color("#625243"), 1.0))
+		var node := _add_mesh(parent, "BridgeSupport", pier, _style_material(
+			"stone_material", Color("#625243"), 1.0))
 		node.position = Vector3(point.x, water_level + pier.size.y * 0.5, point.y)
 		node.rotation.y = -direction.angle()
 
@@ -487,7 +536,7 @@ func _build_building(parent: Node3D) -> void:
 		return
 	var centre := building_control.global_position
 	var floor := _decoded_height(_encode_height(_terrain_height(centre.x, centre.z)))
-	var wall_material := _material(Color("#9d876d"), 0.9)
+	var wall_material := _style_material("timber_material", Color("#9d876d"), 0.9)
 	# Four wall groups form a readable open-front cabin. The gap in the front
 	# wall is the same gap `_inside_building` leaves open in the walk grid.
 	_add_building_box(parent, "BackWall", Vector3(0.5, 4.0, 5.0),
@@ -502,10 +551,11 @@ func _build_building(parent: Node3D) -> void:
 		Vector3(-3.25, 2.0, 1.75), floor, wall_material)
 	var roof := PrismMesh.new()
 	roof.size = Vector3(7.8, 2.0, 5.8)
-	var roof_node := _add_mesh(parent, "Roof", roof, _material(Color("#5c3f35"), 1.0))
+	var roof_node := _add_mesh(parent, "Roof", roof, _style_material(
+		"slate_material", Color("#5c3f35"), 1.0))
 	roof_node.transform = building_control.global_transform
 	roof_node.position += Vector3(0.0, floor + 4.8, 0.0)
-	var door_mat := _material(Color("#3b251c"), 1.0)
+	var door_mat := _style_material("timber_material", Color("#3b251c"), 1.0)
 	for offset in [-1.0, 1.0]:
 		var post := BoxMesh.new()
 		post.size = Vector3(0.35, 2.6, 0.4)
@@ -577,6 +627,33 @@ func _material(color: Color, roughness: float, overlay := false) -> StandardMate
 		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		material.no_depth_test = true
 	return material
+
+
+func _style_material(property_name: StringName, fallback_color: Color,
+		fallback_roughness: float) -> Material:
+	if visual_style != null:
+		var saved: Variant = visual_style.get(property_name)
+		if saved is Material:
+			return saved
+	return _material(fallback_color, fallback_roughness)
+
+
+func _visual_style_signature() -> Array[int]:
+	if visual_style == null:
+		return []
+	var signature: Array[int] = [visual_style.get_instance_id()]
+	for property_name in [&"terrain_material", &"worn_path_material", &"timber_material",
+			&"stone_material", &"slate_material", &"water_material"]:
+		var material: Variant = visual_style.get(property_name)
+		signature.append(material.get_instance_id() if material is Material else 0)
+	return signature
+
+
+func _sync_authored_style() -> void:
+	if authored_scenery == null:
+		authored_scenery = get_node_or_null("AuthoredScenery")
+	if authored_scenery != null and authored_scenery.has_method("apply_visual_style"):
+		authored_scenery.call("apply_visual_style", visual_style)
 
 
 func _setup_runtime() -> void:

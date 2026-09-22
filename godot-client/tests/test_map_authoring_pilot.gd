@@ -27,6 +27,42 @@ func _run() -> void:
 		"refresh creates a disposable terrain preview")
 	_expect(pilot.get_node("GeneratedPreview/Terrain").owner == null,
 		"generated preview is not scene-owned")
+	_expect(pilot.visual_style != null and not pilot.visual_style.resource_path.is_empty(),
+		"the reusable Last Lantern visual style is a saved resource assignment")
+	var scenery: Node3D = pilot.get_node("AuthoredScenery") as Node3D
+	var rock: MeshInstance3D = scenery.get_node("ShoreRockWest") as MeshInstance3D
+	var scenery_before := rock.transform
+	pilot.refresh_all()
+	await process_frame
+	_expect(rock.transform == scenery_before,
+		"saved authored scenery remains outside disposable regeneration")
+	_expect(rock.material_override == pilot.visual_style.stone_material,
+		"authored stone dressing consumes the shared style material")
+	var personalized_style_path := "res://src/dev/map_authoring_pilot/example_export/personalized-style-smoke.tres"
+	var personalized_style := pilot.visual_style.duplicate(true) as MapAuthoringVisualStyle
+	_expect(ResourceSaver.save(personalized_style, personalized_style_path) == OK,
+		"a personal copy of the reusable style can be saved")
+	pilot.visual_style = ResourceLoader.load(personalized_style_path, "Resource",
+		ResourceLoader.CACHE_MODE_IGNORE) as MapAuthoringVisualStyle
+	var root_style: MapAuthoringVisualStyle = pilot.visual_style
+	pilot.refresh_all()
+	await process_frame
+	var personalized_stone := root_style.stone_material.duplicate() as BaseMaterial3D
+	var personalized_stone_tint := Color(0.39, 0.47, 0.48, 1.0)
+	personalized_stone.albedo_color = personalized_stone_tint
+	root_style.stone_material = personalized_stone
+	root_style.emit_changed()
+	_expect(ResourceSaver.save(root_style, personalized_style_path) == OK,
+		"nested personal material edits can be saved")
+	pilot.call("_detect_authored_changes")
+	await process_frame
+	_expect(pilot.visual_style == root_style,
+		"nested material replacement does not replace the root style object")
+	_expect(pilot.get_node("GeneratedPreview/Bridge/BridgeSupport").material_override ==
+		personalized_stone,
+		"regeneration applies a replaced nested material reference")
+	_expect(rock.material_override == personalized_stone,
+		"saved scenery applies the same personalized material reference")
 	var fixture_root := "res://src/dev/map_authoring_pilot/example_export"
 	var fresh_root := "res://src/dev/map_authoring_pilot/.smoke-export"
 	pilot.export_directory = fresh_root
@@ -67,6 +103,8 @@ func _run() -> void:
 	await process_frame
 	_expect(road.curve.get_point_position(1) == edited_point,
 		"an authored curve edit survives regeneration exactly")
+	rock.position += Vector3(0.25, 0.0, 0.0)
+	var moved_rock := rock.transform
 	var packed := PackedScene.new()
 	_expect(packed.pack(pilot) == OK, "the edited authoring scene can be packed")
 	var reload_path := "res://src/dev/map_authoring_pilot/example_export/reload-smoke.tscn"
@@ -82,8 +120,18 @@ func _run() -> void:
 		"the authored building transform survives save and reopen")
 	_expect((reopened.get_node("AuthoredControls/Road") as Path3D).curve.get_point_position(1) == edited_point,
 		"the authored road curve survives save and reopen")
+	_expect((reopened.get_node("AuthoredScenery/ShoreRockWest") as MeshInstance3D).transform == moved_rock,
+		"a hand-placed scenery transform survives save and reopen")
+	var reopened_style := reopened.visual_style as MapAuthoringVisualStyle
+	_expect(reopened_style != null and reopened_style.resource_path == personalized_style_path and
+		reopened_style.stone_material is BaseMaterial3D,
+		"the personalized style assignment survives save and reopen")
+	_expect((reopened_style.stone_material as BaseMaterial3D).albedo_color ==
+		personalized_stone_tint,
+		"a personalized material parameter survives save and reopen")
 	reopened.free()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(reload_path))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(personalized_style_path))
 
 	var grid: PackedByteArray = pilot.server_grid()
 	_expect(grid.size() == 48 * 48, "the preview uses the 48 x 48 conservative server grid")

@@ -29,5 +29,16 @@ func _run() -> void:
 		push_error("map authoring pilot editor preview: overlay should start hidden")
 		quit(1)
 		return
+	var scenery := pilot.get_node_or_null("AuthoredScenery")
+	var warm_light := pilot.get_node_or_null("AuthoredScenery/CabinLantern/WarmLight")
+	var styled_rock := pilot.get_node_or_null("AuthoredScenery/ShoreRockWest") as MeshInstance3D
+	if scenery == null or preview.is_ancestor_of(scenery) or warm_light == null:
+		push_error("map authoring pilot editor preview: saved scenery/light separation is invalid")
+		quit(1)
+		return
+	if styled_rock == null or styled_rock.material_override != pilot.visual_style.stone_material:
+		push_error("map authoring pilot editor preview: authored scenery did not receive the saved style")
+		quit(1)
+		return
 	print("map authoring pilot editor preview: PASS")
 	quit(0)

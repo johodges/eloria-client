@@ -20,6 +20,22 @@ Godot may import project assets on the first launch. Select the `MapAuthoringPil
 - `BridgeStart` and `BridgeEnd`: move the bridge anchors.
 - `Building`: move or rotate the open-front cabin and its attached entrance.
 - `Building/Entrance` and `Spawn`: adjust the attached doorway endpoint and route start.
+- `AuthoredScenery`: move the saved shore rocks, grass clumps, wind pine, sign, or cabin lantern with the normal transform tools. These cosmetic nodes stay outside `GeneratedPreview`, so regeneration does not erase their placements.
+
+## Edit the Last Lantern look
+
+The root's **Visual Style** field points to `src/dev/map_authoring_pilot/style/last_lantern_style.tres`. To make a variant, open that resource from the Inspector and use **Save As** to create a personal `.tres`, then assign the copy to **Visual Style**. Keep one style assigned on the pilot root: it feeds both generated map meshes and saved `AuthoredScenery` props. Editing the checked-in shared resource changes every scene that uses it.
+
+Expand these fields on the personal style in the Inspector:
+
+- **Terrain Material** controls the textured grass tint, normal strength, roughness, and ORM response.
+- **Worn Path Material** is a `ShaderMaterial`; edit `worn_tint`, `texture_scale`, `roughness_multiplier`, `normal_strength`, and `edge_feather` under **Shader Parameters**.
+- **Timber**, **Stone**, and **Slate Material** control the bridge, cabin, roof, and matching authored props. Their triplanar density is under **UV1 > Scale**.
+- **Water Material** exposes `deep_color`, `shallow_color`, `foam_color`, and `river_half_width` under **Shader Parameters**.
+
+The terrain and road start at `GROUND_UV_SCALE = 0.24`, and the bridge deck starts at `TIMBER_UV_SCALE = 0.5`, near the top of `map_authoring_pilot.gd`. Change those constants for code-wide texture density. Triplanar timber, stone, and slate use the style resource's **UV1 Scale**, so they remain editable without changing the generator. Parameter edits update every mesh sharing that material immediately. Replacing a nested material reference is detected by the editor debounce and refreshes the generated meshes and authored scenery.
+
+Lighting is saved in the scene rather than generated. Select `Sun` to edit direction, colour, energy, and shadows; select `Environment` and expand its resource to edit the cool ambient/background values. The warm pool is `AuthoredScenery/CabinLantern/WarmLight`, where the Inspector exposes colour, energy, range, and shadows. Select the lantern or another prop's parent node to move the complete authored instance.
 
 The bridge markers' Y values are explicit offsets above their sampled banks. Road curve Y is intentionally plan-only in this pilot; the road preview follows the same chosen floor height that is exported, so raising a visual curve cannot create an unexported second floor.
 
@@ -40,6 +56,8 @@ Press **Export EWCG + JSON** on the scene root. The default output is `user://ma
 
 The sample contains rolling terrain, a water channel, an editable road, a gently arched bridge, and a movable building entrance. The local walker proves only this offline sample's grid and height-step rules. It is not proof of multiplayer movement, production continent composition, streamed-region handoff, or the full server map conversion.
 
+The saved rocks, grass, tree, sign, and lantern are decorative in this pilot. They intentionally add no collision and are kept clear of the validated route. If a production prop should block movement, author that change in the collision/export contract and validate it separately rather than assuming the visible mesh is solid.
+
 To check an export through the real server movement classes without starting a server, run:
 
 ```powershell
@@ -54,4 +72,6 @@ For the default Inspector export on Windows, the manifest is normally under `$en
 & 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_pilot.gd
 ```
 
-The smoke test checks that curve and transform edits survive regeneration, generated preview nodes remain nonpersistent, the conservative server grid has the expected shape, and every step from spawn across the bridge to the entrance is legal on that same grid.
+The smoke test checks that curve, scenery, visual-style, and material edits survive regeneration and save/reopen, generated preview nodes remain nonpersistent, the checked export fixture remains byte/JSON equivalent, the conservative server grid has the expected shape, and every step from spawn across the bridge to the entrance is legal on that same grid.
+
+The style textures reuse the Sunmane Steppe ground, timber, and stone source set. Preserve the original Eloria CC-BY-4.0 attribution recorded in `src/dev/map_authoring_pilot/style/ATTRIBUTION.md` when copying or redistributing them. This pilot deliberately reuses only that modest material set and does not import the Last Lantern tutorial scene, quest, or asset-building pipeline.

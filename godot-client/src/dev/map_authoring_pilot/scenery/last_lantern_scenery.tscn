@@ -1,0 +1,166 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://src/dev/map_authoring_pilot/scenery/last_lantern_scenery.gd" id="1_script"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_post"]
+size = Vector3(0.18, 2.8, 0.18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_arm"]
+size = Vector3(0.8, 0.12, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lantern"]
+size = Vector3(0.34, 0.44, 0.34)
+
+[sub_resource type="StandardMaterial3D" id="Material_amber"]
+transparency = 1
+albedo_color = Color(1, 0.43, 0.08, 0.78)
+emission_enabled = true
+emission = Color(1, 0.24, 0.03, 1)
+emission_energy_multiplier = 3.2
+roughness = 0.24
+
+[sub_resource type="SphereMesh" id="SphereMesh_rock"]
+radius = 0.75
+height = 1.5
+radial_segments = 12
+rings = 6
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_trunk"]
+top_radius = 0.18
+bottom_radius = 0.28
+height = 3.7
+radial_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="Material_needles"]
+albedo_color = Color(0.055, 0.16, 0.105, 1)
+roughness = 0.96
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_needles_large"]
+top_radius = 0.08
+bottom_radius = 1.35
+height = 2.4
+radial_segments = 10
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_needles_small"]
+top_radius = 0.05
+bottom_radius = 1.0
+height = 1.9
+radial_segments = 10
+
+[sub_resource type="StandardMaterial3D" id="Material_grass"]
+albedo_color = Color(0.16, 0.26, 0.11, 1)
+roughness = 1.0
+cull_mode = 2
+
+[sub_resource type="BoxMesh" id="QuadMesh_grass"]
+material = SubResource("Material_grass")
+size = Vector3(0.09, 1.0, 0.09)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sign"]
+size = Vector3(1.05, 0.5, 0.11)
+
+[node name="LastLanternScenery" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="CabinLantern" type="Node3D" parent="."]
+position = Vector3(18.4, 2.2, 10.5)
+rotation_degrees = Vector3(0, -12, 0)
+
+[node name="Post" type="MeshInstance3D" parent="CabinLantern"]
+position = Vector3(0, 1.4, 0)
+mesh = SubResource("BoxMesh_post")
+metadata/style_slot = "timber"
+
+[node name="Arm" type="MeshInstance3D" parent="CabinLantern"]
+position = Vector3(-0.31, 2.68, 0)
+mesh = SubResource("BoxMesh_arm")
+metadata/style_slot = "timber"
+
+[node name="Glass" type="MeshInstance3D" parent="CabinLantern"]
+position = Vector3(-0.66, 2.35, 0)
+mesh = SubResource("BoxMesh_lantern")
+material_override = SubResource("Material_amber")
+
+[node name="WarmLight" type="OmniLight3D" parent="CabinLantern"]
+position = Vector3(-0.66, 2.35, 0)
+light_color = Color(1, 0.52, 0.2, 1)
+light_energy = 4.2
+omni_range = 7.5
+shadow_enabled = true
+
+[node name="ShoreRockWest" type="MeshInstance3D" parent="."]
+position = Vector3(-6.7, 2.15, 10.2)
+rotation_degrees = Vector3(4, 26, -5)
+scale = Vector3(1.45, 0.72, 1.05)
+mesh = SubResource("SphereMesh_rock")
+metadata/style_slot = "stone"
+
+[node name="ShoreRockEast" type="MeshInstance3D" parent="."]
+position = Vector3(6.4, 2.1, -11.3)
+rotation_degrees = Vector3(-3, -17, 6)
+scale = Vector3(1.05, 0.58, 0.82)
+mesh = SubResource("SphereMesh_rock")
+metadata/style_slot = "stone"
+
+[node name="WindPine" type="Node3D" parent="."]
+position = Vector3(-15.2, 1.6, 13.0)
+rotation_degrees = Vector3(0, 0, -7)
+
+[node name="Trunk" type="MeshInstance3D" parent="WindPine"]
+position = Vector3(0, 1.85, 0)
+mesh = SubResource("CylinderMesh_trunk")
+metadata/style_slot = "timber"
+
+[node name="LowerNeedles" type="MeshInstance3D" parent="WindPine"]
+position = Vector3(0.3, 3.15, 0)
+rotation_degrees = Vector3(0, 0, -12)
+mesh = SubResource("CylinderMesh_needles_large")
+material_override = SubResource("Material_needles")
+
+[node name="UpperNeedles" type="MeshInstance3D" parent="WindPine"]
+position = Vector3(0.55, 4.45, 0)
+rotation_degrees = Vector3(0, 0, -16)
+mesh = SubResource("CylinderMesh_needles_small")
+material_override = SubResource("Material_needles")
+
+[node name="GrassClumpNorth" type="Node3D" parent="."]
+position = Vector3(-9.2, 2.0, 15.4)
+
+[node name="BladeA" type="MeshInstance3D" parent="GrassClumpNorth"]
+position = Vector3(0, 0.45, 0)
+rotation_degrees = Vector3(0, 0, -12)
+mesh = SubResource("QuadMesh_grass")
+
+[node name="BladeB" type="MeshInstance3D" parent="GrassClumpNorth"]
+position = Vector3(0.2, 0.38, 0.04)
+rotation_degrees = Vector3(18, 42, 16)
+mesh = SubResource("QuadMesh_grass")
+
+[node name="GrassClumpSouth" type="Node3D" parent="."]
+position = Vector3(10.5, 1.6, -15.2)
+scale = Vector3(1.25, 0.9, 1.25)
+
+[node name="BladeA" type="MeshInstance3D" parent="GrassClumpSouth"]
+position = Vector3(0, 0.45, 0)
+rotation_degrees = Vector3(-8, 0, 14)
+mesh = SubResource("QuadMesh_grass")
+
+[node name="BladeB" type="MeshInstance3D" parent="GrassClumpSouth"]
+position = Vector3(-0.2, 0.4, 0.08)
+rotation_degrees = Vector3(12, 52, -16)
+mesh = SubResource("QuadMesh_grass")
+
+[node name="WeatheredSign" type="Node3D" parent="."]
+position = Vector3(13.7, 2.0, 12.2)
+rotation_degrees = Vector3(0, -28, 0)
+
+[node name="Post" type="MeshInstance3D" parent="WeatheredSign"]
+position = Vector3(0, 0.9, 0)
+scale = Vector3(0.8, 0.7, 0.8)
+mesh = SubResource("BoxMesh_post")
+metadata/style_slot = "timber"
+
+[node name="Board" type="MeshInstance3D" parent="WeatheredSign"]
+position = Vector3(0, 1.7, 0)
+mesh = SubResource("BoxMesh_sign")
+metadata/style_slot = "timber"
