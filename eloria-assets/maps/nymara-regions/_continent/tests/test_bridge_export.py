@@ -1,15 +1,37 @@
 """Read actual exported deck faces: overlap cannot pass as two good ribbons."""
 from pathlib import Path
+from dataclasses import dataclass,replace
 import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import bridge_export as B
+import build_continent as BC
+import coastal_bridge_export as C
 import scene_io as S
+
+
+@dataclass(frozen=True)
+class ExportSupport:
+    name:str
+    footprint_xz:np.ndarray
+    top_height_metres:float
+    triangles:np.ndarray
+    @property
+    def encoded_triangles(self):return self.triangles.astype(np.float32).astype(float)
+
+
+@dataclass(frozen=True)
+class ExportClaim:
+    claim_id:str
+    encoded_floor_triangles:np.ndarray
+    supports:tuple
+    stairs:tuple=()
 
 
 def world():
@@ -271,6 +293,131 @@ class BridgeUnionTests(unittest.TestCase):
         self.assertEqual(set().union(*(set(item['looseWetCells'])
                                      for item in component['fullWidthWaterCells'])),
                          set(inventory['looseWetCellIndices']))
+
+    def test_prepared_coast_suppresses_legacy_floor_before_surface_construction(self):
+        w=world();inventory=B.loose_crossing_inventory(w,water_fields=water)
+        floor=np.array([[[18.,2.,17.],[18.,2.,23.],[30.,2.,17.]],
+                        [[30.,2.,17.],[18.,2.,23.],[30.,2.,23.]]],np.float32).astype(float)
+        w.claimed_coastal_records=(SimpleNamespace(
+            claim_id='ordinary-out',encoded_floor_triangles=floor,
+            loose_wet_cells=inventory['looseWetCellIndices'],road_ids=('out',),
+            wet_extent_metres=(14.,26.),join_stations_metres=(14.,26.),
+            surfaces=(SimpleNamespace(name='floor'),),stairs=(),supports=(),
+            evidence={'fullWidthJoins':{'acceptanceAuthority':True,'clear':True,
+                'maximumGapMetres':.1,'worstBankXZ':[18.,20.]}}),)
+        w.claimed_coastal_inventory=C.build_selected_inventory(inventory,w.claimed_coastal_records)
+        field=B.common_surface(w,water_fields=water)
+        self.assertEqual([component['coastalRecordId'] for component in field['components']],
+                         ['ordinary-out'])
+        self.assertNotIn('height',field['components'][0])
+        self.assertEqual(field['looseWetCellIndices'],inventory['looseWetCellIndices'])
+        self.assertEqual(field['trimmedLandingCells'],0)
+
+    def test_selected_coast_retains_unselected_legacy_wet_authority(self):
+        w=world();w.height_at=lambda x,z:np.where(
+            ((np.asarray(x)>=10)&(np.asarray(x)<=14))|((np.asarray(x)>=30)&(np.asarray(x)<=34)),
+            -2.,2.)+np.asarray(z)*0
+        def separated(x,z,*,height,plan):
+            mask=((np.asarray(x)>=10)&(np.asarray(x)<=14))|((np.asarray(x)>=30)&(np.asarray(x)<=34))
+            return {'mask':mask,'depth':np.where(mask,2.,0.),'surface':np.asarray(height)*0}
+        inventory=B.loose_crossing_inventory(w,water_fields=separated)
+        baseline=B.common_surface(w,water_fields=separated)
+        baseline_y=float(B.surface_at(w,32.,20.,field=baseline))
+        self.assertEqual(len(inventory['components']),2)
+        selected=min(inventory['components'],key=lambda value:value['bounds'][2])
+        floor=np.array([[[8.,2.,17.],[8.,2.,23.],[16.,2.,17.]],
+                        [[16.,2.,17.],[8.,2.,23.],[16.,2.,23.]]],np.float32).astype(float)
+        w.claimed_coastal_records=(SimpleNamespace(
+            claim_id='selected-west',encoded_floor_triangles=floor,
+            loose_wet_cells=selected['looseWetCells'],road_ids=('out',),
+            wet_extent_metres=(10.,14.),join_stations_metres=(8.,16.),
+            surfaces=(SimpleNamespace(name='floor'),),stairs=(),supports=(),
+            evidence={'fullWidthJoins':{'acceptanceAuthority':True,'clear':True,
+                'maximumGapMetres':.1,'worstBankXZ':[8.,20.]}}),)
+        w.claimed_coastal_inventory=C.build_selected_inventory(inventory,w.claimed_coastal_records)
+        field=B.common_surface(w,water_fields=separated)
+        prepared=[value for value in field['components'] if value.get('coastalRecordId')]
+        fallback=[value for value in field['components'] if not value.get('sites') and
+                  not value.get('coastalRecordId')]
+        self.assertEqual([value['coastalRecordId'] for value in prepared],['selected-west'])
+        self.assertTrue(fallback)
+        self.assertTrue(np.asarray(field['mask']).flat[list(field['legacyLooseWetCellIndices'])].all())
+        self.assertEqual(float(B.surface_at(w,32.,20.,field=field)),baseline_y)
+        self.assertEqual(field['preparedLooseWetCells']+field['legacyLooseWetCells'],
+                         field['looseWetCells'])
+
+    def test_prepared_query_includes_real_encoded_vertex_and_edge_but_not_exterior(self):
+        face=np.array([[[529.72802734375,2.1699771881103516,1073.4534912109375],
+                        [529.3009033203125,2.1699771881103516,1073.509765625],
+                        [528.9029541015625,2.1699771881103516,1073.6746826171875]]],float)
+        positions=face.reshape(-1,3)
+        mesh=B.M.Mesh(positions=positions,normals=np.tile([0.,1.,0.],(3,1)),
+                      uvs=positions[:,[0,2]],indices=np.arange(3),material='bridge_stone')
+        component={'_preparedMeshCache':(mesh,np.array([0]))}
+        vertex=face[0,1,[0,2]];edge=face[0,:2][:,[0,2]].mean(axis=0)
+        centre=face[0,:][:,[0,2]].mean(axis=0)
+        outward=vertex-centre;outward/=np.linalg.norm(outward)
+        exterior=vertex+outward*1e-7
+        covered,height=B._prepared_surface_at(world(),component,
+            np.array([vertex[0],edge[0],exterior[0]]),
+            np.array([vertex[1],edge[1],exterior[1]]))
+        np.testing.assert_array_equal(covered,[True,True,False])
+        np.testing.assert_allclose(height[:2],face[0,0,1],atol=0.,rtol=0.)
+        self.assertEqual(height[2],-np.inf)
+
+    def export_roof_fixture(self,*,top=2.,footprint=None):
+        floor=np.array([[[0,top,0],[0,top,1],[1,top,0]],
+                        [[1,top,0],[0,top,1],[1,top,1]]],np.float32).astype(float)
+        base=floor.copy();base[:,:,1]=0.
+        sides=[]
+        for a,b in (((0,0),(0,1)),((0,1),(1,1)),((1,1),(1,0)),((1,0),(0,0))):
+            sides.extend(([[a[0],0,a[1]],[a[0],top,a[1]],[b[0],0,b[1]]],
+                          [[a[0],top,a[1]],[b[0],top,b[1]],[b[0],0,b[1]]]))
+        triangles=np.concatenate([floor,base,np.asarray(sides,float)])
+        if footprint is None:footprint=np.array([[0,0],[0,1],[1,1],[1,0]],float)
+        support=ExportSupport('covered',np.asarray(footprint,float),top,triangles)
+        claim=ExportClaim('portable',floor,(support,))
+        return SimpleNamespace(claimed_coastal_records=(claim,)),floor,triangles
+
+    def test_export_copy_omits_only_a_fully_covered_support_roof(self):
+        world,floor,triangles=self.export_roof_fixture();exported,report=BC.bridge_export_world(world)
+        self.assertIsNot(exported,world);self.assertEqual(report[0]['roofTrianglesOmitted'],2)
+        np.testing.assert_array_equal(world.claimed_coastal_records[0].supports[0].triangles,triangles)
+        actual=exported.claimed_coastal_records[0].supports[0].encoded_triangles
+        self.assertEqual(len(actual),10);self.assertFalse(np.any(np.all(actual[:,:,1]==2.,axis=1)))
+        np.testing.assert_array_equal(exported.claimed_coastal_records[0].encoded_floor_triangles,floor)
+
+    def test_export_support_roof_fails_closed_on_height_mismatch_or_exterior(self):
+        world,floor,_=self.export_roof_fixture(top=3.)
+        claim=replace(world.claimed_coastal_records[0],encoded_floor_triangles=floor.copy())
+        claim.encoded_floor_triangles[:,:,1]=2.
+        world.claimed_coastal_records=(claim,)
+        with self.assertRaisesRegex(ValueError,'no identical-height prepared floor'):
+            BC.bridge_export_world(world)
+        world,_,_=self.export_roof_fixture(footprint=[[0,0],[0,1],[1.1,1],[1.1,0]])
+        with self.assertRaisesRegex(ValueError,'not completely covered'):
+            BC.bridge_export_world(world)
+
+    def test_bridge_scene_returns_derived_export_state_without_replacing_logical_claim(self):
+        world,_,triangles=self.export_roof_fixture()
+        logical_claim=world.claimed_coastal_records[0]
+        derived_report={'components':1,'supports':[{'name':'covered'}]}
+        derived_triangles=np.array([[[0.,2.,0.],[0.,2.,1.],[1.,2.,0.]]])
+        derived_field={'components':[{'coastalRecordId':'portable'}]}
+        def build(export_world,path):
+            self.assertIsNot(export_world,world)
+            self.assertEqual(len(export_world.claimed_coastal_records[0].supports[0].encoded_triangles),10)
+            export_world.bridge_report=derived_report
+            export_world.bridge_triangles=derived_triangles
+            export_world.bridge_field=derived_field
+            return [{'node':'prepared'}]
+        with patch.object(B,'build_bridges',side_effect=build):
+            self.assertEqual(BC.bridge_scene(world,Path('unused.glb')),[{'node':'prepared'}])
+        self.assertIs(world.claimed_coastal_records[0],logical_claim)
+        np.testing.assert_array_equal(logical_claim.supports[0].encoded_triangles,triangles)
+        self.assertIs(world.bridge_report,derived_report)
+        self.assertIs(world.bridge_triangles,derived_triangles)
+        self.assertIs(world.bridge_field,derived_field)
 
     def test_crossing_roads_share_one_junction_with_bounded_actual_triangle_slopes(self):
         w=world();w.roads.append({'id':'north-south','width':3.,'points':[[24,0,4],[24,0,36]]})

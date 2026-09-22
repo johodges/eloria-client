@@ -7,6 +7,7 @@ The complete GLB is a reproducible review artifact, never a client dependency.
 from __future__ import annotations
 import argparse
 import copy
+from dataclasses import replace
 import hashlib
 import inspect
 import json
@@ -34,8 +35,8 @@ from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
 from build_progress import Progress
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','bridge_export.py','bridge_prepare.py','bridge_profiles.py','../_northern/requirements.txt')
-EXPORT_SOURCES=('build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','bridge_profiles.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
+EXPORT_SOURCES=('build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_prepare.py','coastal_bridge_export.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py')
 
 
 EMPTY_SHA256=hashlib.sha256(b'').hexdigest()
@@ -373,9 +374,53 @@ def load_composed(output,library):
     with (output/'composed.pkl').open('rb') as handle:return pickle.load(handle)
 
 
+def bridge_export_world(world):
+    """Copy prepared coastal records for export, omitting covered support roofs."""
+    from shapely import Polygon,union_all
+    records=tuple(getattr(world,'claimed_coastal_records',()))
+    if not records:return world,()
+    reports=[];export_records=[]
+    for claim in records:
+        floor=np.asarray(claim.encoded_floor_triangles,np.float32).astype(float)
+        def support_without_roof(support):
+            faces=np.asarray(support.encoded_triangles,np.float32).astype(float)
+            top=float(np.float32(support.top_height_metres))
+            normal=np.cross(faces[:,1]-faces[:,0],faces[:,2]-faces[:,0])
+            roof=(np.abs(normal[:,1])>0.)&np.all(faces[:,:,1]==top,axis=1)
+            if not np.any(roof):return support
+            floor_at_top=floor[np.all(floor[:,:,1]==top,axis=1)]
+            if not len(floor_at_top):
+                raise ValueError(f'{claim.claim_id}: support roof has no identical-height prepared floor')
+            floor_union=union_all([Polygon(face[:,[0,2]]) for face in floor_at_top])
+            footprint=Polygon(np.asarray(support.footprint_xz,float))
+            outside=footprint.difference(floor_union)
+            if not footprint.is_valid or footprint.area<=0. or not outside.is_empty:
+                raise ValueError(f'{claim.claim_id}: support roof footprint is not completely covered by prepared floor')
+            retained=faces[~roof]
+            reports.append({'claimId':claim.claim_id,'support':support.name,
+                            'roofTrianglesOmitted':int(roof.sum()),
+                            'retainedTriangles':len(retained),'supportFootprintArea':float(footprint.area),
+                            'outsidePreparedFloorArea':float(outside.area)})
+            return replace(support,triangles=retained)
+        supports=tuple(support_without_roof(support) for support in claim.supports)
+        stairs=tuple(replace(stair,supports=tuple(support_without_roof(support)
+                                                  for support in stair.supports))
+                     for stair in claim.stairs)
+        export_records.append(replace(claim,supports=supports,stairs=stairs))
+    result=copy.copy(world);result.claimed_coastal_records=tuple(export_records)
+    result.coastal_support_roof_export=tuple(reports)
+    return result,tuple(reports)
+
+
 def bridge_scene(world,path):
     from bridge_export import build_bridges
-    return build_bridges(world,path)
+    export_world,_=bridge_export_world(world)
+    result=build_bridges(export_world,path)
+    # build_bridges assigns these derived export/query products. The export-local
+    # coastal-record copy must not hide them from the normal geometry pipeline.
+    for name in ('bridge_report','bridge_triangles','bridge_field'):
+        setattr(world,name,getattr(export_world,name))
+    return result
 
 
 def local_point(point,center):

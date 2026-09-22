@@ -32,6 +32,7 @@ HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(HERE.parent/'_toolkit'))
 import landscape as L
 import bridge_profiles as BP
+import coastal_bridge_export as C
 import assemblies as A
 import collision_export as CE
 from content import walk_through as content_walk_through
@@ -2761,8 +2762,18 @@ def common_surface(world, *, water_fields=None, maximum_extension=None):
     sites=authority['sites'];site_cells=authority['siteCells'];spanned=authority['spanned']
     # Deep water a road crosses away from every site: its own wet cells plus the landing.
     loose=authority['loose']
-    cells=loose.copy()
-    for _ in range(int(math.ceil(landing/CELL))):cells=binary_dilation(cells,structure=CROSS)&road
+    prepared_coast=hasattr(world,'claimed_coastal_records')
+    selected_mask=np.zeros_like(loose);prepared_cells=();fallback_cells=tuple(map(int,np.flatnonzero(loose)))
+    if prepared_coast:
+        selected_mask,prepared_cells,fallback_cells=C.prepared_footprint_mask(
+            world,tuple(map(int,np.flatnonzero(loose))),loose.shape,world.x0,world.z0,CELL)
+        fallback=loose.copy();fallback.flat[list(prepared_cells)]=False
+        if np.any(fallback&selected_mask):
+            raise ValueError('prepared coastal floor intersects an unselected loose wet cell')
+        cells=fallback
+    else:cells=loose.copy()
+    for _ in range(int(math.ceil(landing/CELL))):
+        cells=binary_dilation(cells,structure=CROSS)&road&~selected_mask
     cells|=spanned
     stray_river=river&wet&~spanned
     final=np.full((road.shape[0]+1,road.shape[1]+1),np.nan)
@@ -2854,10 +2865,14 @@ def common_surface(world, *, water_fields=None, maximum_extension=None):
     field={'x0':world.x0,'z0':world.z0,'cell':CELL,'mask':cells,'height':final,'components':components,'outline':outline,
             'wetCells':int(wet.sum()),'siteCells':int(spanned.sum()),'looseWetCells':int(loose.sum()),
             'looseWetCellIndices':tuple(map(int,np.flatnonzero(loose))),
+            'preparedLooseWetCellIndices':tuple(prepared_cells),
+            'legacyLooseWetCellIndices':tuple(fallback_cells),
             'riverWaterOutsideSites':{'cells':int(stray_river.sum()),'at':stray},
             'maximumBankError':maximum_bank_error,'worstBank':worst_bank,'deckLandingMetres':landing,'deckLiftMetres':lift_limit,
             'deckClearanceMetres':clearance,
             'trimmedLandingCells':trimmed,'cutOffLandingCells':cut_off,'cutOffLandingBanks':cut_banks,'decks':lift_reports}
+    if hasattr(world,'claimed_coastal_records'):
+        field=C.replace_legacy_loose_components(world,field)
     return field
 
 
@@ -2868,14 +2883,15 @@ def _prepared_surface_at(world,component,x,z):
     cached=component.get('_preparedQueryCache')
     if cached is None:
         faces=np.asarray(mesh.positions[mesh.indices.reshape(-1,3)],float)
+        polygons=SH.polygons(faces[:,:,[0,2]])
         bins={}
         for index,face in enumerate(faces):
             xz=face[:,[0,2]];low=np.floor(xz.min(axis=0)/8.).astype(int);high=np.floor(xz.max(axis=0)/8.).astype(int)
             for ix in range(low[0],high[0]+1):
                 for iz in range(low[1],high[1]+1):bins.setdefault((ix,iz),[]).append(index)
-        cached=(faces,{key:tuple(value) for key,value in bins.items()})
+        cached=(faces,polygons,{key:tuple(value) for key,value in bins.items()})
         component['_preparedQueryCache']=cached
-    faces,bins=cached
+    faces,polygons,bins=cached
     x,z=np.broadcast_arrays(np.asarray(x,float),np.asarray(z,float));shape=x.shape
     points=np.c_[x.ravel(),z.ravel()];covered=np.zeros(len(points),bool);height=np.full(len(points),-np.inf)
     for point_index,point in enumerate(points):
@@ -2883,10 +2899,10 @@ def _prepared_surface_at(world,component,x,z):
         for face_index in bins.get(key,()):
             face=faces[face_index];xz=face[:,[0,2]]
             if np.any(point<xz.min(axis=0)) or np.any(point>xz.max(axis=0)):continue
-            matrix=(xz[1:]-xz[0]).T
-            try:uv=np.linalg.solve(matrix,point-xz[0])
-            except np.linalg.LinAlgError:continue
-            if uv[0]<0. or uv[1]<0. or uv.sum()>1.:continue
+            # GEOS' robust predicate includes the exact encoded triangle boundary.
+            # Divided barycentric comparisons can reject a shared vertex when an
+            # otherwise exact solution rounds to 1+1 ULP or -1 ULP.
+            if not SH.intersects_xy(polygons[face_index],point[0],point[1]):continue
             height[point_index]=_triangle_height(face,point);covered[point_index]=True;break
     return covered.reshape(shape),height.reshape(shape)
 
@@ -3398,10 +3414,13 @@ def build_bridges(world,path, *, water_fields=None):
     builder.add_material(G.Material('bridge_edge_timber',base_color=(.085,.061,.04,1),roughness=.95,double_sided=True))
     builder.add_material(G.Material('threshold_invisible',base_color=(0,0,0,0),alpha_mode='BLEND'))
     result=[];triangles=[];support_reports=[]
-    def add(region,name,mesh):
+    def add(region,name,mesh, *, collides=False,record_id=None):
         builder.add_mesh(name,mesh,with_tangents=False)
         root=builder.add_node(G.Node(name,mesh=name))
-        result.append({'region':region,'roots':[root],'bounds':mesh.bounds(),'node':name,'segment':[]})
+        part={'region':region,'roots':[root],'bounds':mesh.bounds(),'node':name,'segment':[]}
+        if collides:part['collides']=True
+        if record_id is not None:part['recordId']=record_id
+        result.append(part)
     # A site whose deck fell into disconnected components names every piece by the site: its floors and fascias are
     # gathered and emitted as one node per territory after the loop, so no two nodes share a name.
     numbers=[component['id'] for component in field['components']]
@@ -3410,7 +3429,7 @@ def build_bridges(world,path, *, water_fields=None):
         if number in shared:gathered.setdefault(name,(region,[]))[1].append(mesh)
         else:add(region,name,mesh)
     for component in field['components']:
-        token=f"{component['id']:03d}"
+        token=C.component_token(component)
         mesh,owners=deck_mesh(world,component)
         faces=mesh.positions[mesh.indices.reshape(-1,3)]
         encoded=faces.astype(np.float32).astype(float)
@@ -3430,22 +3449,33 @@ def build_bridges(world,path, *, water_fields=None):
                 selected=np.flatnonzero(fascia_owners==index)
                 if len(selected):floor(region,f"BridgeUnionTimberEdge_{token}_{region}",subset_mesh(fascia,selected),component['id'])
         row,col=np.nonzero(component['cells']);sl=component['slice'];planned=[];placed=[];fitted=[]
-        for r,c in zip(row,col):
-            iz,ix=sl[0].start+int(r),sl[1].start+int(c)
-            if ix%8!=4 or iz%8!=4:continue
-            x,z=world.x0+(ix+.5)*CELL,world.z0+(iz+.5)*CELL
-            if not (component.get('outline') or field['outline']).contains(x,z):continue
-            if float(surface_at(world,x,z,field))-.12-float(world.height_at(x,z))<.4:continue
-            # Piers stand only under the span, over the water; a landing rests on its bank.
-            bed=np.array([float(world.height_at(x,z))])
-            if not bool(np.asarray(water_fields(np.array([x]),np.array([z]),height=bed,plan=world.plan)['mask']).reshape(-1)[0]):continue
-            planned.append([x,z]);support,fit=fit_pier(world,encoded,x,z);fitted.append(fit)
-            if support is None:continue
-            placed.append(fit['position']);region=world.ids[int(world.owner_at(*fit['position']))]
-            add(region,f"BridgeUnionPier_{token}_{ix}_{iz}",support)
-        support_reports.append(dict(component=component['id'],
-            **support_spacing(world,encoded,planned,placed),piers=fitted))
+        if not component.get('coastalRecordId'):
+            for r,c in zip(row,col):
+                iz,ix=sl[0].start+int(r),sl[1].start+int(c)
+                if ix%8!=4 or iz%8!=4:continue
+                x,z=world.x0+(ix+.5)*CELL,world.z0+(iz+.5)*CELL
+                if not (component.get('outline') or field['outline']).contains(x,z):continue
+                if float(surface_at(world,x,z,field))-.12-float(world.height_at(x,z))<.4:continue
+                # Piers stand only under the span, over the water; a landing rests on its bank.
+                bed=np.array([float(world.height_at(x,z))])
+                if not bool(np.asarray(water_fields(np.array([x]),np.array([z]),height=bed,plan=world.plan)['mask']).reshape(-1)[0]):continue
+                planned.append([x,z]);support,fit=fit_pier(world,encoded,x,z);fitted.append(fit)
+                if support is None:continue
+                placed.append(fit['position']);region=world.ids[int(world.owner_at(*fit['position']))]
+                add(region,f"BridgeUnionPier_{token}_{ix}_{iz}",support)
+        if component.get('coastalRecordId'):
+            claim=component['claim'];support_names={support.name for support in claim.supports}
+            support_names.update(support.name for stair in claim.stairs for support in stair.supports)
+            support_reports.append({'component':component['id'],'authority':'prepared-coastal-claim',
+                'genericPiersSkipped':True,'preparedSupports':len(support_names),
+                'supportContact':dict(claim.evidence.get('supportContact',{}))})
+        else:
+            support_reports.append(dict(component=component['id'],
+                **support_spacing(world,encoded,planned,placed),piers=fitted))
     for name,(region,meshes) in gathered.items():add(region,name,merge_meshes(meshes))
+    for part in C.coastal_auxiliary_parts(world):
+        add(part['region'],part['name'],part['mesh'],collides=bool(part['collides']),
+            record_id=part.get('recordId'))
     names=[part['node'] for part in result]
     if len(names)!=len(set(names)):raise ValueError('Bridge parts share a node name: '+', '.join(sorted({n for n in names if names.count(n)>1})))
     world.bridge_triangles=np.concatenate(triangles) if triangles else np.empty((0,3,3))

@@ -140,6 +140,8 @@ Use these source responsibilities when changing the world:
 | `ferry_export.py`, `ferry_support.py` | Actual quay/boat fit and preservation of its complete shoreline footprint through road grading. |
 | `world_layout.py` | Ownership polygons, server address envelopes, road alignment (retained solids impassable, river water and its setback impassable except on a crossing site's bridge edge, hubs and terminals joined to dry open ground, gentle traverses preferred, the station terrain terms per territory, legs rerouted round earthworks beyond the limits), common road grading with cut and fill limited outside footings, foundation reconciliation and drainage protection. |
 | `bridge_export.py` | One union of visible continental bridge decks: each claimed crossing site's span with landings of at most 6 m (named by its site), decks over deep sea water away from any site, piers only where they stand in water; fitted to the common road surface and actual banks, an unfittable bank reported rather than grown. |
+| `bridge_prepare.py` | Final shaping coordinator that applies only the bounded coastal road edits required by the explicit release selection, fits claimed river terrain, inventories the resulting loose coastal water, and prepares those selected coastal claims before road-height refresh and content regrounding. |
+| `coastal_prepare.py`, `sea_crossings.py`, `coastal_bank_fit.py`, `coastal_bridge_export.py` | Stable-road and exact live-cell coastal claims. This incremental release prepares only component 502 (`discovery-manymouth_delta-1003`); component 501 and every other loose crossing remain gated to the legacy floor path. Selected claims export and query their same encoded floor and support triangles, and stale, duplicate, overlapping or out-of-authority selected partitions fail before export. |
 | `terrain_export.py` | Shared terrain faces and physically clipped shorelines, partitioned from the complete world surface. |
 | `build_continent.py`, `scene_io.py` | Global composition (seam roads route with the hub's own solids only, so a terminal beside a city wall threads the gate), master scene, named packages, independent loading cells and shared image dependencies. |
 | `crossings.py`, `export_contracts.py` | Reciprocal crossing lanes and authoritative standing positions derived from actual exported walking surfaces. |
@@ -416,16 +418,18 @@ shaping modules (`landscape`, `world_layout`, `content`, `assemblies`,
 `amberwood_support`, `amberwood_access`, `mirror_lake_support`,
 `ssarathi_bank_support`, `manymouth_boats`, `terrain_export`, `scene_io`,
 `grey_crossings`, `four_gates_sage`, `door_approaches`, `hull_settle`, `resource_trails`, `object_edits`,
-`winding`, `river_crossings`, `reach_links`, `authored_points`, `bridge_export`,
-`bridge_prepare`, `bridge_profiles`, and `../_northern/requirements.txt`),
+`winding`, `river_crossings`, `reach_links`, `authored_points`, `bridge_export`, `bridge_prepare`,
+`coastal_prepare`, `coastal_bridge_export`, `bridge_profiles`, `sea_crossings`, `coastal_bank_fit`,
+and `../_northern/requirements.txt`),
 the object edits file `continent-edits.json` (absent means no edits),
 the composition algorithm, the authoritative
 entrance profile, the actual Shapely/GEOS runtime versions, and each retained library certificate. A changed source must
 be recomposed rather than accepted by editing a certificate.
 
 Geometry export independently records `geometrySources` in `export.json` for
-`build_continent.py`, `scene_io.py`, `terrain_export.py`, `bridge_export.py`,
-`bridge_profiles.py`, `../_northern/requirements.txt`,
+`build_continent.py`, `scene_io.py`, `terrain_export.py`, `bridge_export.py`, `bridge_profiles.py`,
+`sea_crossings.py`, `coastal_prepare.py`, `coastal_bridge_export.py`, `coastal_bank_fit.py`,
+`../_northern/requirements.txt`,
 `ferry_export.py`, `crossings.py`, `amberwood_access.py`, `manymouth_access.py`,
 `manymouth_village_streets.py`, `collision_export.py`, `mirror_access_geometry.py`,
 `grey_crossings.py` and `access_decks.py`, and checks that none changed during the
