@@ -16,7 +16,10 @@ void fragment() {
 	float a = sin(dot(p, vec2(0.59, 0.26)) + TIME * 0.8);
 	float b = sin(dot(p, vec2(-0.24, 0.72)) - TIME * 0.55);
 	float ripples = sin(dot(p, vec2(2.7, 1.5)) + a * 1.1 + TIME) * 0.5 + 0.5;
-	float bank = smoothstep(river_half_width * 0.48, river_half_width, abs(world_position.x));
+	// Generated water vertices carry their distance from the authored river
+	// curve in UV2.x, so bends and transformed paths shade correctly while the
+	// saved material keeps control of the width-aware bank treatment.
+	float bank = smoothstep(river_half_width * 0.48, river_half_width, UV2.x);
 	ALBEDO = mix(deep_color.rgb, shallow_color.rgb, bank);
 	ALBEDO += vec3(0.009, 0.018, 0.02) * ripples;
 	float foam = smoothstep(0.72, 0.98, bank) * (0.3 + 0.7 * pow(ripples, 5.0));

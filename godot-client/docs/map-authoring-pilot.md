@@ -4,6 +4,10 @@ This is a small, isolated Godot 4.7.2 example for editing a map with immediate v
 
 ![Map authoring pilot play preview](images/map-authoring-pilot.png)
 
+The edited-control example below bends `River` east and raises `WestHeight`; both changes exist only in the capture's in-memory scene.
+
+![Bent river and raised terrain handle preview](images/map-authoring-controls.png)
+
 ## Open it
 
 From `godot-client`, run:
@@ -14,13 +18,19 @@ From `godot-client`, run:
 
 Or double-click `open-map-authoring-pilot.bat` in `godot-client`.
 
-Godot may import project assets on the first launch. Select the `MapAuthoringPilot` root to edit terrain, water, road, bridge, preview, and export parameters in the Inspector. Use the normal 3D tools to edit these saved controls:
+Godot may import project assets on the first launch. Select the `MapAuthoringPilot` root to edit terrain, water, road, bridge, preview, and export parameters in the Inspector. The root's **Edit road points**, **Edit river points**, and **Edit terrain heights** buttons select the matching saved control and switch the 3D viewport to it. The controls are:
 
-- `AuthoredControls/Road`: edit the `Curve3D` points in the viewport.
+- `AuthoredControls/Road`: a native `Path3D` whose `Curve3D` controls the worn path.
+- `AuthoredControls/River`: a native `Path3D` whose `Curve3D` controls the river channel, terrain cut, visible water, and blocked export cells.
+- `AuthoredControls/TerrainHeights`: a group of `Marker3D` height handles. Move a handle up or down for a smooth radial height offset, and edit its **Influence Radius** in the Inspector. Move it in X/Z, duplicate it, or delete it to change where local shaping applies.
 - `BridgeStart` and `BridgeEnd`: move the bridge anchors.
 - `Building`: move or rotate the open-front cabin and its attached entrance.
 - `Building/Entrance` and `Spawn`: adjust the attached doorway endpoint and route start.
 - `AuthoredScenery`: move the saved shore rocks, grass clumps, wind pine, sign, or cabin lantern with the normal transform tools. These cosmetic nodes stay outside `GeneratedPreview`, so regeneration does not erase their placements.
+
+To edit either path, select its `Path3D` node and work in the 3D viewport. In **Select Points** mode, Ctrl+left-click the curve or empty space to add or split a point, and right-click an existing point to delete it. The dedicated **Add Point** mode also splits when you click the curve and appends when you click empty space; **Delete Point** mode removes a clicked point. Ctrl+Z uses Godot's native undo. **Top View** is recommended because road and river authoring is in X/Z; point Y is intentionally ignored. The river's visible water and blocked-cell mask resolve to the pilot's half-metre export samples. These controls follow the Godot 4.5 stable `Path3D` editor behavior verified in [`path_3d_editor_plugin.cpp`](https://github.com/godotengine/godot/blob/4.5-stable/editor/scene/3d/path_3d_editor_plugin.cpp).
+
+Moving a terrain handle in Y creates a local offset rather than changing the map-wide baseline. **Terrain Base Height** and **Terrain Relief** on `MapAuthoringPilot` remain the global controls. Duplicate or delete handles in the Scene tree, use the normal move tool for Y and X/Z, and press Ctrl+S to save the authored nodes.
 
 ## Edit the Last Lantern look
 
@@ -37,11 +47,15 @@ The terrain and road start at `GROUND_UV_SCALE = 0.24`, and the bridge deck star
 
 Lighting is saved in the scene rather than generated. Select `Sun` to edit direction, colour, energy, and shadows; select `Environment` and expand its resource to edit the cool ambient/background values. The warm pool is `AuthoredScenery/CabinLantern/WarmLight`, where the Inspector exposes colour, energy, range, and shadows. Select the lantern or another prop's parent node to move the complete authored instance.
 
-The bridge markers' Y values are explicit offsets above their sampled banks. Road curve Y is intentionally plan-only in this pilot; the road preview follows the same chosen floor height that is exported, so raising a visual curve cannot create an unexported second floor.
+The bridge markers' Y values are explicit offsets above their sampled banks. Road and river curve Y values are intentionally plan-only in this pilot; the road preview follows the exported floor, and river water stays at the root's **Water Level**. Raising a curve point therefore cannot create an unexported second floor or locally raise the water.
 
-Changes refresh after a short debounce. For an explicit rebuild, set `Refresh Scope` on the root and press **Refresh selected feature**. Preview geometry is generated below `GeneratedPreview`; it is deliberately not scene-owned and is never a source of saved edits. Undo and redo the normal Path3D, Marker3D, transform, and Inspector edits, then save the scene as usual. Reopening it regenerates the preview from those saved authored controls.
+Moving the river does not move the bridge. Reposition `BridgeStart` and `BridgeEnd` manually when the crossing changes. Arbitrary river or terrain-height edits can also invalidate the walking route, so use **Start walk** or the walkability overlay after reshaping the crossing. With fewer than two river points, the pilot safely shows no river water or channel cut and exports no river-blocked cells. With fewer than two road points, it shows no road surface. Restore or add points to resume either preview.
 
-For code-first work, edit `src/dev/map_authoring_pilot/map_authoring_pilot.gd`: `_terrain_height` defines the sampled terrain, `_build_road` and `_build_bridge` define their preview meshes, and `_encoded_floor` chooses the one exported floor. Save the script and use **Refresh selected feature**; if Godot has not reloaded a tool-script change, close and reopen the scene. Keep the `MapAuthoringPilot` and `AuthoredControls` transforms at identity and move the named controls below them, so the saved control coordinates continue to match the export frame.
+Changes refresh after a short debounce. For an explicit rebuild, set `Refresh Scope` on the root and press **Refresh selected feature**. Preview geometry is generated below `GeneratedPreview`; it is deliberately not scene-owned and is never a source of saved edits. Edit `AuthoredControls/Road`, `AuthoredControls/River`, and `AuthoredControls/TerrainHeights`, not their generated meshes. Undo and redo the normal Path3D, Marker3D, transform, and Inspector edits, then save the scene as usual. Reopening it regenerates the preview from those saved authored controls.
+
+`AuthoredScenery` remains independent of terrain shaping. After moving the river or terrain handles, manually reposition or reground cosmetic rocks, grass, trees, signs, and the lantern if their saved placements no longer fit the surface.
+
+For code-first work, edit `src/dev/map_authoring_pilot/map_authoring_pilot.gd`: `_terrain_height` combines global terrain and `TerrainHeights`, `_build_road`, `_build_water`, and `_build_bridge` define preview meshes, and `_encoded_floor` chooses the one exported floor. Each handle uses `src/dev/map_authoring_pilot/terrain_height_handle.gd`, whose public authoring property is `influence_radius`. Save the script and use **Refresh selected feature**; if Godot has not reloaded a tool-script change, close and reopen the scene. Keep the `MapAuthoringPilot` and `AuthoredControls` transforms at identity and move the named controls below them, so the saved control coordinates continue to match the export frame.
 
 ## Play and export
 
@@ -54,7 +68,7 @@ Press **Export EWCG + JSON** on the scene root. The default output is `user://ma
 - `collision.bin`: EWCG-v2, 96 × 96 row-major bytes at 0.5 m per cell.
 - `world.json`: the coordinate, height encoding, server fold, and validation probes.
 
-The sample contains rolling terrain, a water channel, an editable road, a gently arched bridge, and a movable building entrance. The local walker proves only this offline sample's grid and height-step rules. It is not proof of multiplayer movement, production continent composition, streamed-region handoff, or the full server map conversion.
+The sample contains rolling terrain, a curve-authored water channel, local terrain-height handles, an editable road, a gently arched bridge, and a movable building entrance. The local walker proves only this offline sample's grid and height-step rules. It is not proof of multiplayer movement, production continent composition, streamed-region handoff, or the full server map conversion.
 
 The saved rocks, grass, tree, sign, and lantern are decorative in this pilot. They intentionally add no collision and are kept clear of the validated route. If a production prop should block movement, author that change in the collision/export contract and validate it separately rather than assuming the visible mesh is solid.
 
@@ -73,5 +87,11 @@ For the default Inspector export on Windows, the manifest is normally under `$en
 ```
 
 The smoke test checks that curve, scenery, visual-style, and material edits survive regeneration and save/reopen, generated preview nodes remain nonpersistent, the checked export fixture remains byte/JSON equivalent, the conservative server grid has the expected shape, and every step from spawn across the bridge to the entrance is legal on that same grid.
+
+The focused visual-control test additionally edits road and river point counts, bends the river and verifies the visible water and exported collision move with it, changes terrain-handle height/radius/XZ and checks generated terrain plus encoded height cells, exercises degenerate paths, and saves/reopens the authored controls:
+
+```powershell
+& 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_pilot_visual_controls.gd
+```
 
 The style textures reuse the Sunmane Steppe ground, timber, and stone source set. Preserve the original Eloria CC-BY-4.0 attribution recorded in `src/dev/map_authoring_pilot/style/ATTRIBUTION.md` when copying or redistributing them. This pilot deliberately reuses only that modest material set and does not import the Last Lantern tutorial scene, quest, or asset-building pipeline.

@@ -21,7 +21,9 @@ func _run() -> void:
 	var bridge := pilot.get_node_or_null("GeneratedPreview/Bridge")
 	var building := pilot.get_node_or_null("GeneratedPreview/Building")
 	var overlay := pilot.get_node_or_null("GeneratedPreview/Walkability")
-	if preview == null or terrain == null or bridge == null or building == null or overlay == null:
+	var water := pilot.get_node_or_null("GeneratedPreview/Water/River")
+	if preview == null or terrain == null or water == null or bridge == null or \
+			building == null or overlay == null:
 		push_error("map authoring pilot editor preview: generated subtree is incomplete")
 		quit(1)
 		return
@@ -40,5 +42,31 @@ func _run() -> void:
 		push_error("map authoring pilot editor preview: authored scenery did not receive the saved style")
 		quit(1)
 		return
+	var road := pilot.get_node_or_null("AuthoredControls/Road") as Path3D
+	var river := pilot.get_node_or_null("AuthoredControls/River") as Path3D
+	var terrain_heights := pilot.get_node_or_null("AuthoredControls/TerrainHeights") as Node3D
+	if road == null or river == null or terrain_heights == null or \
+			terrain_heights.get_child_count() < 2 or terrain_heights.get_child_count() > 3:
+		push_error("map authoring pilot editor preview: visual authored controls are incomplete")
+		quit(1)
+		return
+	for child in terrain_heights.get_children():
+		if not child is Marker3D or not child.has_method("authored_height_offset") or \
+				child.get("influence_radius") == null:
+			push_error("map authoring pilot editor preview: terrain height handle API is invalid")
+			quit(1)
+			return
+	var editor_interface: Object = Engine.get_singleton("EditorInterface")
+	var selection: Object = editor_interface.call("get_selection")
+	for action in [
+		[&"edit_road_points", road],
+		[&"edit_river_points", river],
+		[&"edit_terrain_heights", terrain_heights.get_child(0)],
+	]:
+		pilot.call(action[0])
+		if not selection.call("get_selected_nodes").has(action[1]):
+			push_error("map authoring pilot editor preview: root visual-control action selected the wrong node")
+			quit(1)
+			return
 	print("map authoring pilot editor preview: PASS")
 	quit(0)

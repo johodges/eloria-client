@@ -13,6 +13,9 @@ const SERVER_CELLS := 48
 const HEIGHT_STEP := 0.2
 const WALKER_SPEED := 5.0
 const WATER_HALF_WIDTH := 3.0
+const RIVER_SAMPLE_SPACING := 0.5
+const RIVER_SAMPLE_LIMIT := 256
+const RIVER_SIMPLIFY_TOLERANCE := 0.08
 const GROUND_UV_SCALE := 0.24
 const TIMBER_UV_SCALE := 0.5
 
@@ -36,9 +39,14 @@ const TIMBER_UV_SCALE := 0.5
 @export_dir var export_directory := "user://map_authoring_pilot/export"
 @export_tool_button("Refresh selected feature", "Callable") var refresh_selected_action := refresh_selected
 @export_tool_button("Export EWCG + JSON", "Callable") var export_action := export_contract
+@export_tool_button("Edit road points", "Curve3D") var edit_road_action := edit_road_points
+@export_tool_button("Edit river points", "Curve3D") var edit_river_action := edit_river_points
+@export_tool_button("Edit terrain heights", "Marker3D") var edit_terrain_action := edit_terrain_heights
 
 @onready var authored: Node3D = get_node_or_null("AuthoredControls")
 @onready var road: Path3D = get_node_or_null("AuthoredControls/Road")
+@onready var river: Path3D = get_node_or_null("AuthoredControls/River")
+@onready var terrain_heights: Node3D = get_node_or_null("AuthoredControls/TerrainHeights")
 @onready var bridge_start: Marker3D = get_node_or_null("AuthoredControls/BridgeStart")
 @onready var bridge_end: Marker3D = get_node_or_null("AuthoredControls/BridgeEnd")
 @onready var building_control: Node3D = get_node_or_null("AuthoredControls/Building")
@@ -57,6 +65,9 @@ var _walk_route: Array[Vector2i] = []
 var _walk_route_index := 0
 var _walking := false
 var _status: Label
+var _river_samples := PackedVector2Array()
+var _terrain_height_influences: Array[Dictionary] = []
+var _terrain_height_memo: Dictionary = {}
 
 
 func _ready() -> void:
@@ -88,7 +99,48 @@ func refresh_all() -> void:
 	_regenerate("All")
 
 
+func edit_road_points() -> void:
+	_cache_nodes()
+	_select_authored_control(road)
+
+
+func edit_river_points() -> void:
+	_cache_nodes()
+	_select_authored_control(river)
+
+
+func edit_terrain_heights() -> void:
+	_cache_nodes()
+	var target: Node = terrain_heights
+	if terrain_heights != null:
+		for child in terrain_heights.get_children():
+			if child is Marker3D:
+				target = child
+				break
+	_select_authored_control(target)
+
+
+func _select_authored_control(target: Node) -> void:
+	# EditorInterface is looked up dynamically so exported/runtime builds never
+	# bind an editor-only class or API.
+	if not Engine.is_editor_hint() or target == null \
+			or not Engine.has_singleton("EditorInterface"):
+		return
+	var editor_interface: Object = Engine.get_singleton("EditorInterface")
+	if editor_interface == null:
+		return
+	var selection: Object = editor_interface.call("get_selection")
+	if selection != null:
+		selection.call("clear")
+		selection.call("add_node", target)
+	if editor_interface.has_method("edit_node"):
+		editor_interface.call("edit_node", target)
+	if editor_interface.has_method("set_main_screen_editor"):
+		editor_interface.call("set_main_screen_editor", "3D")
+
+
 func export_contract() -> void:
+	_cache_nodes()
 	_build_walk_grids()
 	var absolute := ProjectSettings.globalize_path(export_directory)
 	var error := DirAccess.make_dir_recursive_absolute(absolute)
@@ -139,6 +191,7 @@ func export_contract() -> void:
 
 
 func server_grid() -> PackedByteArray:
+	_cache_nodes()
 	_build_walk_grids()
 	return _server_grid.duplicate()
 
@@ -146,6 +199,8 @@ func server_grid() -> PackedByteArray:
 func authored_snapshot() -> Dictionary:
 	return {
 		"road": _curve_signature(),
+		"river": _path_signature(river),
+		"terrain_heights": _terrain_heights_signature(),
 		"bridge_start": bridge_start.transform if bridge_start else Transform3D.IDENTITY,
 		"bridge_end": bridge_end.transform if bridge_end else Transform3D.IDENTITY,
 		"building": building_control.transform if building_control else Transform3D.IDENTITY,
@@ -166,8 +221,14 @@ func _regenerate(scope: String) -> void:
 		return
 	_cache_nodes()
 	_sync_authored_style()
-	if generated == null or road == null or road.curve == null:
+	if generated == null:
 		return
+	if scope != "All" and not _last_signatures.is_empty():
+		var current := _signatures()
+		if current.params != _last_signatures.params or \
+				current.river != _last_signatures.river or \
+				current.terrain_heights != _last_signatures.terrain_heights:
+			scope = "All"
 	_build_walk_grids()
 	if scope in ["All", "Terrain"]:
 		_replace_feature("Terrain", _build_terrain)
@@ -187,6 +248,8 @@ func _cache_nodes() -> void:
 	authored = get_node_or_null("AuthoredControls")
 	authored_scenery = get_node_or_null("AuthoredScenery")
 	road = get_node_or_null("AuthoredControls/Road")
+	river = get_node_or_null("AuthoredControls/River")
+	terrain_heights = get_node_or_null("AuthoredControls/TerrainHeights")
 	bridge_start = get_node_or_null("AuthoredControls/BridgeStart")
 	bridge_end = get_node_or_null("AuthoredControls/BridgeEnd")
 	building_control = get_node_or_null("AuthoredControls/Building")
@@ -208,7 +271,7 @@ func _replace_feature(feature_name: String, builder: Callable) -> void:
 
 func _detect_authored_changes() -> void:
 	_cache_nodes()
-	if road == null or generated == null:
+	if generated == null:
 		return
 	var current := _signatures()
 	if _last_signatures.is_empty():
@@ -219,6 +282,9 @@ func _detect_authored_changes() -> void:
 		changed.append("All")
 	if current.road != _last_signatures.road:
 		changed.append("Road")
+	if current.river != _last_signatures.river or \
+			current.terrain_heights != _last_signatures.terrain_heights:
+		changed.append("All")
 	if current.bridge != _last_signatures.bridge:
 		changed.append("Bridge")
 	if current.building != _last_signatures.building or current.markers != _last_signatures.markers:
@@ -237,6 +303,8 @@ func _signatures() -> Dictionary:
 			bridge_width, bridge_arch, bridge_water_clearance, show_walkability,
 			_visual_style_signature()].hash(),
 		"road": _curve_signature(),
+		"river": _path_signature(river),
+		"terrain_heights": _terrain_heights_signature(),
 		"bridge": [bridge_start.transform if bridge_start else Transform3D.IDENTITY,
 			bridge_end.transform if bridge_end else Transform3D.IDENTITY].hash(),
 		"building": str(building_control.transform).hash() if building_control else 0,
@@ -246,18 +314,39 @@ func _signatures() -> Dictionary:
 
 
 func _curve_signature() -> Array:
+	return _path_signature(road)
+
+
+func _path_signature(path: Path3D) -> Array:
 	var result: Array = []
-	if road == null or road.curve == null:
+	if path == null or path.curve == null:
 		return result
-	result.append(road.transform)
-	for index in road.curve.point_count:
-		result.append(road.curve.get_point_position(index))
-		result.append(road.curve.get_point_in(index))
-		result.append(road.curve.get_point_out(index))
+	result.append(path.global_transform)
+	result.append(path.curve.closed)
+	result.append(path.curve.bake_interval)
+	for index in path.curve.point_count:
+		result.append(path.curve.get_point_position(index))
+		result.append(path.curve.get_point_in(index))
+		result.append(path.curve.get_point_out(index))
+	return result
+
+
+func _terrain_heights_signature() -> Array:
+	var result: Array = []
+	if terrain_heights == null:
+		return result
+	result.append(terrain_heights.global_transform)
+	for child in terrain_heights.get_children():
+		if child is Marker3D and child.has_method("authored_height_offset"):
+			result.append(child.name)
+			result.append(child.transform)
+			result.append(child.get("influence_radius"))
+			result.append(child.get("neutral_y"))
 	return result
 
 
 func _build_walk_grids() -> void:
+	_refresh_authoring_caches()
 	_half_grid.resize(HALF_CELLS * HALF_CELLS)
 	for cell_y in HALF_CELLS:
 		for cell_x in HALF_CELLS:
@@ -282,7 +371,7 @@ func _build_walk_grids() -> void:
 func _encoded_floor(x: float, z: float) -> int:
 	if _inside_bridge(x, z):
 		return _encode_height(_bridge_height(x, z))
-	if absf(x) <= WATER_HALF_WIDTH:
+	if _river_distance(Vector2(x, z)) <= WATER_HALF_WIDTH:
 		return 0
 	if _inside_building(x, z):
 		return 0
@@ -298,13 +387,152 @@ func _decoded_height(value: int) -> float:
 
 
 func _terrain_height(x: float, z: float) -> float:
+	var memo_key := Vector2(x, z)
+	if _terrain_height_memo.has(memo_key):
+		return _terrain_height_memo[memo_key]
 	var broad := 0.55 * sin(x * 0.12) * cos(z * 0.10)
 	var detail := 0.25 * sin((x + z) * 0.24)
-	var river_bank := 0.45 * smoothstep(0.0, 7.0, absf(x))
+	var river_distance := _river_distance(Vector2(x, z))
+	var river_bank := 0.0
+	var river_cut := 0.0
+	if is_finite(river_distance):
+		river_bank = 0.45 * smoothstep(0.0, 7.0, river_distance)
+		river_cut = 1.45 * (1.0 - smoothstep(2.6, 5.5, river_distance))
 	# The bounded cut makes the water visible and leaves the bridge anchors on
 	# dry banks. It is visual terrain and the source of the exported heights.
-	var river_cut := 1.45 * (1.0 - smoothstep(2.6, 5.5, absf(x)))
-	return maxf(0.2, terrain_base_height + terrain_relief * (broad + detail) + river_bank - river_cut)
+	var height := terrain_base_height + terrain_relief * (broad + detail) + river_bank - river_cut
+	for influence in _terrain_height_influences:
+		var distance: float = Vector2(x, z).distance_to(influence.position)
+		if distance < influence.radius:
+			height += influence.offset * (1.0 - smoothstep(0.0, influence.radius, distance))
+	height = maxf(0.2, height)
+	_terrain_height_memo[memo_key] = height
+	return height
+
+
+func _refresh_authoring_caches() -> void:
+	_terrain_height_memo.clear()
+	_refresh_river_samples()
+	_refresh_terrain_height_influences()
+	if Engine.is_editor_hint():
+		update_configuration_warnings()
+
+
+func _refresh_river_samples() -> void:
+	_river_samples.clear()
+	if river == null or river.curve == null or river.curve.point_count < 2:
+		return
+	var length := river.curve.get_baked_length()
+	if length <= 0.001:
+		return
+	var count := clampi(ceili(length / RIVER_SAMPLE_SPACING) + 1, 2,
+		RIVER_SAMPLE_LIMIT)
+	var dense := PackedVector2Array()
+	for index in count:
+		var local := river.curve.sample_baked(length * float(index) / float(count - 1), true)
+		var world := river.global_transform * local
+		dense.append(Vector2(world.x, world.z))
+	_river_samples = _simplify_polyline(dense, RIVER_SIMPLIFY_TOLERANCE)
+	if _river_samples.size() < 2 or _polyline_length(_river_samples) <= 0.001:
+		_river_samples.clear()
+
+
+func _refresh_terrain_height_influences() -> void:
+	_terrain_height_influences.clear()
+	if terrain_heights == null:
+		return
+	for child in terrain_heights.get_children():
+		if not child is Marker3D or not child.has_method("authored_height_offset"):
+			continue
+		var radius := maxf(float(child.get("influence_radius")), 0.01)
+		var neutral_y := float(child.get("neutral_y"))
+		var neutral_world := terrain_heights.global_transform * Vector3(
+			child.position.x, neutral_y, child.position.z)
+		var offset: float = child.global_position.y - neutral_world.y
+		if absf(offset) <= 0.00001:
+			continue
+		_terrain_height_influences.append({
+			"position": Vector2(child.global_position.x, child.global_position.z),
+			"offset": offset,
+			"radius": radius,
+		})
+
+
+func _simplify_polyline(points: PackedVector2Array, tolerance: float) -> PackedVector2Array:
+	if points.size() <= 2:
+		return points
+	var keep := PackedByteArray()
+	keep.resize(points.size())
+	keep[0] = 1
+	keep[points.size() - 1] = 1
+	var ranges: Array[Vector2i] = [Vector2i(0, points.size() - 1)]
+	while not ranges.is_empty():
+		var interval: Vector2i = ranges.pop_back()
+		var maximum := tolerance
+		var farthest := -1
+		for index in interval.y:
+			if index <= interval.x:
+				continue
+			if index >= interval.y:
+				break
+			var distance := _point_segment_distance(points[index], points[interval.x], points[interval.y])
+			if distance > maximum:
+				maximum = distance
+				farthest = index
+		if farthest >= 0:
+			keep[farthest] = 1
+			ranges.append(Vector2i(interval.x, farthest))
+			ranges.append(Vector2i(farthest, interval.y))
+	var result := PackedVector2Array()
+	for index in points.size():
+		if keep[index]:
+			result.append(points[index])
+	return result
+
+
+func _polyline_length(points: PackedVector2Array) -> float:
+	var result := 0.0
+	for index in points.size() - 1:
+		result += points[index].distance_to(points[index + 1])
+	return result
+
+
+func _polyline_point_at_fraction(points: PackedVector2Array, fraction: float) -> Vector2:
+	if points.is_empty():
+		return Vector2.ZERO
+	if points.size() == 1:
+		return points[0]
+	var total := _polyline_length(points)
+	if total <= 0.001:
+		return points[0]
+	var target := total * clampf(fraction, 0.0, 1.0)
+	var travelled := 0.0
+	for index in points.size() - 1:
+		var segment := points[index].distance_to(points[index + 1])
+		if travelled + segment >= target:
+			return points[index].lerp(points[index + 1],
+				(target - travelled) / maxf(segment, 0.000001))
+		travelled += segment
+	return points[points.size() - 1]
+
+
+func _river_distance(point: Vector2) -> float:
+	if _river_samples.size() < 2:
+		return INF
+	var result := INF
+	for index in _river_samples.size() - 1:
+		result = minf(result, _point_segment_distance(point,
+			_river_samples[index], _river_samples[index + 1]))
+	return result
+
+
+func _point_segment_distance(point: Vector2, a: Vector2, b: Vector2) -> float:
+	var delta := b - a
+	var length_squared := delta.length_squared()
+	if length_squared <= 0.000001:
+		return point.distance_to(a)
+	var t := clampf((point - a).dot(delta) / length_squared, 0.0, 1.0)
+	return point.distance_to(a + delta * t)
 
 
 func _bridge_basis() -> Dictionary:
@@ -393,11 +621,39 @@ func _build_terrain(parent: Node3D) -> void:
 
 
 func _build_water(parent: Node3D) -> void:
-	var mesh := BoxMesh.new()
-	mesh.size = Vector3(WATER_HALF_WIDTH * 2.0, 0.08, MAP_METRES)
-	var node := _add_mesh(parent, "River", mesh, _style_material("water_material",
-		Color(0.12, 0.48, 0.68, 0.78), 0.2))
-	node.position.y = water_level - 0.04
+	if _river_samples.size() < 2:
+		return
+	# Use the same half-metre cell centres as collision export. This keeps bends
+	# and end caps visually aligned with the authoritative distance corridor.
+	var surface := SurfaceTool.new()
+	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var emitted_water := false
+	for cell_y in HALF_CELLS:
+		for cell_x in HALF_CELLS:
+			var centre3 := _half_cell_world(cell_x, cell_y)
+			var centre := Vector2(centre3.x, centre3.z)
+			if _river_distance(centre) > WATER_HALF_WIDTH:
+				continue
+			var x0 := centre.x - HALF_CELL * 0.5
+			var x1 := centre.x + HALF_CELL * 0.5
+			var z0 := centre.y - HALF_CELL * 0.5
+			var z1 := centre.y + HALF_CELL * 0.5
+			var corners := [Vector2(x0, z0), Vector2(x1, z0),
+				Vector2(x1, z1), Vector2(x0, z1)]
+			for corner_index in [0, 2, 1, 0, 3, 2]:
+				var corner: Vector2 = corners[corner_index]
+				surface.set_uv(corner * GROUND_UV_SCALE)
+				surface.set_uv2(Vector2(_river_distance(corner), 0.0))
+				surface.add_vertex(Vector3(corner.x, water_level, corner.y))
+				emitted_water = true
+	if not emitted_water:
+		return
+	surface.generate_normals()
+	surface.generate_tangents()
+	var mesh := surface.commit()
+	if mesh != null:
+		_add_mesh(parent, "River", mesh, _style_material("water_material",
+			Color(0.12, 0.48, 0.68, 0.78), 0.2))
 
 
 func _build_road(parent: Node3D) -> void:
@@ -479,7 +735,11 @@ func _rendered_terrain_height(x: float, z: float) -> float:
 
 func _road_samples() -> Array[Vector3]:
 	var points: Array[Vector3] = []
+	if road == null or road.curve == null or road.curve.point_count < 2:
+		return points
 	var length := road.curve.get_baked_length()
+	if length <= 0.001:
+		return points
 	var count := maxi(2, ceili(length / 0.35) + 1)
 	for index in count:
 		var local := road.curve.sample_baked(length * float(index) / float(count - 1), true)
@@ -821,17 +1081,55 @@ func _validation_probes() -> Dictionary:
 	var bridge_mid: Vector2 = basis.a.lerp(basis.b, 0.5)
 	var bridge_side := bridge_mid + Vector2(0.0, bridge_width * 0.5 + 1.0)
 	var solid_wall := building_control.global_transform * Vector3(3.25, 0.0, 0.0)
+	var road_probe := spawn_marker.global_position if spawn_marker else Vector3.ZERO
+	if road != null and road.curve != null and road.curve.point_count >= 2 \
+			and road.curve.get_baked_length() > 0.001:
+		road_probe = road.global_transform * road.curve.sample_baked(
+			road.curve.get_baked_length() * 0.25, true)
+	var water_probe2 := _polyline_point_at_fraction(_river_samples, 5.0 / 6.0)
 	return {
 		"spawn": _tile_array(_world_to_server(spawn_marker.global_position)),
-		"roadWaypoint": _tile_array(_world_to_server(road.global_transform * road.curve.sample_baked(road.curve.get_baked_length() * 0.25))),
+		"roadWaypoint": _tile_array(_world_to_server(road_probe)),
 		"bridgeEntry": _tile_array(_world_to_server(Vector3(basis.a.x, 0.0, basis.a.y))),
 		"bridgeDeck": _tile_array(_world_to_server(Vector3(bridge_mid.x, 0.0, bridge_mid.y))),
 		"bridgeExit": _tile_array(_world_to_server(Vector3(basis.b.x, 0.0, basis.b.y))),
 		"entrance": _tile_array(_world_to_server(entrance.global_position)),
-		"waterProbe": _tile_array(_world_to_server(Vector3(0.0, 0.0, 16.0))),
+		"waterProbe": _tile_array(_world_to_server(Vector3(water_probe2.x, 0.0, water_probe2.y))),
 		"solidProbe": _tile_array(_world_to_server(solid_wall)),
 		"besideBridgeProbe": _tile_array(_world_to_server(Vector3(bridge_side.x, 0.0, bridge_side.y))),
 	}
+
+
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings := PackedStringArray()
+	var river_node: Path3D = get_node_or_null("AuthoredControls/River")
+	if river_node == null or river_node.curve == null or river_node.curve.point_count < 2 \
+			or river_node.curve.get_baked_length() <= 0.001 or not _path_has_xz_extent(river_node):
+		warnings.append("River needs at least two distinct points; water, river cut, and river blocking are disabled.")
+	var road_node: Path3D = get_node_or_null("AuthoredControls/Road")
+	if road_node == null or road_node.curve == null or road_node.curve.point_count < 2 \
+			or road_node.curve.get_baked_length() <= 0.001:
+		warnings.append("Road needs at least two distinct points; its preview is disabled.")
+	return warnings
+
+
+func _path_has_xz_extent(path: Path3D) -> bool:
+	if path == null or path.curve == null or path.curve.point_count < 2:
+		return false
+	var origin := Vector2.ZERO
+	var has_origin := false
+	for index in path.curve.point_count:
+		var point := path.curve.get_point_position(index)
+		for local: Vector3 in [point, point + path.curve.get_point_in(index),
+				point + path.curve.get_point_out(index)]:
+			var world: Vector3 = path.global_transform * local
+			var projected := Vector2(world.x, world.z)
+			if not has_origin:
+				origin = projected
+				has_origin = true
+			elif projected.distance_squared_to(origin) > 0.000001:
+				return true
+	return false
 
 
 func _tile_array(tile: Vector2i) -> Array[int]:
