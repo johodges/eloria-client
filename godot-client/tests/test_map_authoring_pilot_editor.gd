@@ -1,0 +1,33 @@
+extends SceneTree
+
+const PILOT := preload("res://src/dev/map_authoring_pilot/map_authoring_pilot.tscn")
+
+
+func _init() -> void:
+	call_deferred("_run")
+
+
+func _run() -> void:
+	if not Engine.is_editor_hint():
+		push_error("map authoring pilot editor preview: Engine.is_editor_hint() is false")
+		quit(1)
+		return
+	var pilot: Node = PILOT.instantiate()
+	root.add_child(pilot)
+	await process_frame
+	await process_frame
+	var preview := pilot.get_node_or_null("GeneratedPreview")
+	var terrain := pilot.get_node_or_null("GeneratedPreview/Terrain")
+	var bridge := pilot.get_node_or_null("GeneratedPreview/Bridge")
+	var building := pilot.get_node_or_null("GeneratedPreview/Building")
+	var overlay := pilot.get_node_or_null("GeneratedPreview/Walkability")
+	if preview == null or terrain == null or bridge == null or building == null or overlay == null:
+		push_error("map authoring pilot editor preview: generated subtree is incomplete")
+		quit(1)
+		return
+	if overlay.visible:
+		push_error("map authoring pilot editor preview: overlay should start hidden")
+		quit(1)
+		return
+	print("map authoring pilot editor preview: PASS")
+	quit(0)
