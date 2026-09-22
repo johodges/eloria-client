@@ -58,7 +58,7 @@ func _run() -> void:
 	await process_frame
 	_expect(pilot.visual_style == root_style,
 		"nested material replacement does not replace the root style object")
-	_expect(pilot.get_node("GeneratedPreview/Bridge/BridgeSupport").material_override ==
+	_expect(pilot.get_node("GeneratedPreview/Bridge/Bridge/BridgeSupport").material_override ==
 		personalized_stone,
 		"regeneration applies a replaced nested material reference")
 	_expect(rock.material_override == personalized_stone,

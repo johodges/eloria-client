@@ -1,11 +1,14 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://src/dev/map_authoring_pilot/map_authoring_pilot.gd" id="1_pilot"]
 [ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/last_lantern_style.tres" id="2_style"]
 [ext_resource type="PackedScene" path="res://src/dev/map_authoring_pilot/scenery/last_lantern_scenery.tscn" id="3_scenery"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_pilot/terrain_height_handle.gd" id="4_height"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_pilot/bridge_control.gd" id="5_bridge"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_pilot/width_path.gd" id="6_width"]
 
 [sub_resource type="Curve3D" id="Curve3D_road"]
+resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, -20, 0, -8, 0, 0, 0, 0, 0, 0, -7, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 7),
 "tilts": PackedFloat32Array(0, 0, 0, 0)
@@ -13,6 +16,7 @@ _data = {
 point_count = 4
 
 [sub_resource type="Curve3D" id="Curve3D_river"]
+resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -24, 0, 0, 0, 0, 0, 0, 0, 0, -8, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 24),
 "tilts": PackedFloat32Array(0, 0, 0, 0)
@@ -35,9 +39,12 @@ visual_style = ExtResource("2_style")
 
 [node name="Road" type="Path3D" parent="AuthoredControls"]
 curve = SubResource("Curve3D_road")
+script = ExtResource("6_width")
 
 [node name="River" type="Path3D" parent="AuthoredControls"]
 curve = SubResource("Curve3D_river")
+script = ExtResource("6_width")
+default_width = 6.0
 
 [node name="TerrainHeights" type="Node3D" parent="AuthoredControls"]
 
@@ -59,11 +66,16 @@ gizmo_extents = 1.5
 script = ExtResource("4_height")
 neutral_y = 2.0
 
-[node name="BridgeStart" type="Marker3D" parent="AuthoredControls"]
+[node name="Bridges" type="Node3D" parent="AuthoredControls"]
+
+[node name="Bridge" type="Node3D" parent="AuthoredControls/Bridges"]
+script = ExtResource("5_bridge")
+
+[node name="Start" type="Marker3D" parent="AuthoredControls/Bridges/Bridge"]
 position = Vector3(-4, 0, 0)
 gizmo_extents = 1.5
 
-[node name="BridgeEnd" type="Marker3D" parent="AuthoredControls"]
+[node name="End" type="Marker3D" parent="AuthoredControls/Bridges/Bridge"]
 position = Vector3(4, 0, 0)
 gizmo_extents = 1.5
 

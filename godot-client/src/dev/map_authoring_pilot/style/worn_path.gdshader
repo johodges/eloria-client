@@ -9,13 +9,32 @@ uniform float texture_scale : hint_range(0.1, 16.0, 0.05) = 1.0;
 uniform float roughness_multiplier : hint_range(0.0, 2.0, 0.05) = 1.0;
 uniform float normal_strength : hint_range(0.0, 2.0, 0.05) = 0.72;
 uniform float edge_feather : hint_range(0.01, 0.5, 0.01) = 0.16;
+uniform float texture_rotation_radians = 0.0;
+
+vec2 rotate_texture_vector(vec2 value, float angle) {
+	float sine = sin(angle);
+	float cosine = cos(angle);
+	return vec2(cosine * value.x - sine * value.y,
+		sine * value.x + cosine * value.y);
+}
 
 void fragment() {
-	vec2 texture_uv = UV * texture_scale;
+	vec2 texture_uv = rotate_texture_vector(UV * texture_scale,
+		texture_rotation_radians);
 	vec4 base = texture(ground_albedo, texture_uv);
 	vec3 packed_orm = texture(ground_orm, texture_uv).rgb;
 	ALBEDO = base.rgb * worn_tint.rgb;
-	NORMAL_MAP = texture(ground_normal, texture_uv).rgb;
+	vec3 sampled_normal = texture(ground_normal, texture_uv).rgb;
+	// Rotating the lookup rotates the texture axes. Bring the decoded tangent
+	// normal back through the inverse rotation so bumps turn with the pattern.
+	// Keep the zero-angle path as the original exact sampled value.
+	if (abs(texture_rotation_radians) > 0.000001) {
+		vec2 tangent_normal = sampled_normal.xy * 2.0 - 1.0;
+		tangent_normal = rotate_texture_vector(tangent_normal,
+			-texture_rotation_radians);
+		sampled_normal.xy = tangent_normal * 0.5 + 0.5;
+	}
+	NORMAL_MAP = sampled_normal;
 	NORMAL_MAP_DEPTH = normal_strength;
 	AO = packed_orm.r;
 	ROUGHNESS = clamp(packed_orm.g * roughness_multiplier, 0.0, 1.0);

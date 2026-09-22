@@ -29,6 +29,9 @@ const PRESET_NAMES := [
 const ROAD_MESH_UV_DENSITY := 0.24
 const _TEXTURE_ROOT := "res://src/dev/map_authoring_pilot/style/textures/"
 const _WORN_PATH_SHADER := preload("res://src/dev/map_authoring_pilot/style/worn_path.gdshader")
+const _ORIENTED_PBR_SHADER := preload(
+	"res://src/dev/map_authoring_pilot/style/oriented_pbr.gdshader")
+static var _oriented_shader_variants := {}
 
 # Values with a direct Last Lantern or Sunmane authoring equivalent keep its
 # tint and scale. The other families use restrained neutral tints and scales
@@ -150,6 +153,109 @@ static func create_road_material(preset: String) -> ShaderMaterial:
 		material.set_shader_parameter("normal_strength", spec["normal_strength"])
 	material.set_shader_parameter("edge_feather", 0.16)
 	return material
+
+
+static func create_oriented_material(source: Material,
+		rotation_degrees: float) -> Material:
+	if source == null or is_zero_approx(rotation_degrees):
+		return source
+	if source is ShaderMaterial:
+		var shader_material := source as ShaderMaterial
+		if shader_material.shader != _WORN_PATH_SHADER:
+			return null
+		var oriented_road := shader_material.duplicate(true) as ShaderMaterial
+		oriented_road.set_shader_parameter(
+			"texture_rotation_radians", deg_to_rad(rotation_degrees))
+		return oriented_road
+	if not source is BaseMaterial3D:
+		return null
+	var base := source as BaseMaterial3D
+	if not _has_only_supported_base_features(base):
+		return null
+	var oriented := ShaderMaterial.new()
+	oriented.resource_name = base.resource_name
+	oriented.render_priority = base.render_priority
+	oriented.next_pass = base.next_pass
+	oriented.shader = _oriented_shader_variant(base)
+	oriented.set_shader_parameter("albedo_map", base.albedo_texture)
+	oriented.set_shader_parameter("normal_map", base.normal_texture)
+	oriented.set_shader_parameter("use_albedo_map", base.albedo_texture != null)
+	oriented.set_shader_parameter("use_normal_map",
+		base.normal_enabled and base.normal_texture != null)
+	oriented.set_shader_parameter("albedo_tint", base.albedo_color)
+	oriented.set_shader_parameter("roughness_value", base.roughness)
+	oriented.set_shader_parameter("metallic_value", base.metallic)
+	oriented.set_shader_parameter("normal_strength", base.normal_scale)
+	oriented.set_shader_parameter("uv_scale", base.uv1_scale)
+	oriented.set_shader_parameter("uv_offset", base.uv1_offset)
+	oriented.set_shader_parameter("use_triplanar", base.uv1_triplanar)
+	oriented.set_shader_parameter("use_world_triplanar", base.uv1_world_triplanar)
+	oriented.set_shader_parameter("triplanar_sharpness", base.uv1_triplanar_sharpness)
+	oriented.set_shader_parameter(
+		"texture_rotation_radians", deg_to_rad(rotation_degrees))
+	if base is ORMMaterial3D:
+		var orm := base as ORMMaterial3D
+		oriented.set_shader_parameter("orm_map", orm.orm_texture)
+		oriented.set_shader_parameter("use_orm_map", orm.orm_texture != null)
+	return oriented
+
+
+static func _oriented_shader_variant(base: BaseMaterial3D) -> Shader:
+	var variant_key := [base.cull_mode, base.texture_filter, base.texture_repeat]
+	if _oriented_shader_variants.has(variant_key):
+		return _oriented_shader_variants[variant_key]
+	var cull_mode := "cull_disabled"
+	match base.cull_mode:
+		BaseMaterial3D.CULL_BACK:
+			cull_mode = "cull_back"
+		BaseMaterial3D.CULL_FRONT:
+			cull_mode = "cull_front"
+	var texture_filter := "filter_linear_mipmap_anisotropic"
+	match base.texture_filter:
+		BaseMaterial3D.TEXTURE_FILTER_NEAREST:
+			texture_filter = "filter_nearest"
+		BaseMaterial3D.TEXTURE_FILTER_LINEAR:
+			texture_filter = "filter_linear"
+		BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS:
+			texture_filter = "filter_nearest_mipmap"
+		BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS:
+			texture_filter = "filter_linear_mipmap"
+		BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS_ANISOTROPIC:
+			texture_filter = "filter_nearest_mipmap_anisotropic"
+	var repeat_mode := "repeat_enable" if base.texture_repeat else "repeat_disable"
+	var shader := Shader.new()
+	shader.code = _ORIENTED_PBR_SHADER.code.replace(
+		"cull_disabled", cull_mode).replace(
+		"filter_linear_mipmap_anisotropic", texture_filter).replace(
+		"repeat_enable", repeat_mode)
+	_oriented_shader_variants[variant_key] = shader
+	return shader
+
+
+static func _has_only_supported_base_features(base: BaseMaterial3D) -> bool:
+	var baseline: BaseMaterial3D = (ORMMaterial3D.new()
+		if base is ORMMaterial3D else StandardMaterial3D.new())
+	var supported := {
+		&"resource_local_to_scene": true, &"resource_name": true,
+		&"next_pass": true, &"render_priority": true,
+		&"albedo_color": true, &"albedo_texture": true,
+		&"metallic": true, &"roughness": true,
+		&"normal_enabled": true, &"normal_scale": true,
+		&"normal_texture": true, &"orm_texture": true,
+		&"uv1_scale": true, &"uv1_offset": true,
+		&"uv1_triplanar": true, &"uv1_world_triplanar": true,
+		&"uv1_triplanar_sharpness": true,
+		&"texture_filter": true, &"texture_repeat": true,
+		&"cull_mode": true,
+	}
+	for property: Dictionary in base.get_property_list():
+		var property_name := StringName(property.name)
+		if supported.has(property_name) or \
+				(int(property.usage) & PROPERTY_USAGE_STORAGE) == 0:
+			continue
+		if base.get(property_name) != baseline.get(property_name):
+			return false
+	return true
 
 
 static func _texture(family: String, map_name: String) -> Texture2D:

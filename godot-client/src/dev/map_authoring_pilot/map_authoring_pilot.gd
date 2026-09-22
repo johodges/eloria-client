@@ -27,11 +27,12 @@ const TIMBER_UV_SCALE := 0.5
 @export_category("Visual style")
 @export var visual_style: MapAuthoringVisualStyle
 
-@export_category("Road and bridge")
-@export_range(1.0, 6.0, 0.1) var road_width := 2.5
-@export_range(1.5, 6.0, 0.1) var bridge_width := 3.0
-@export_range(0.0, 2.0, 0.05) var bridge_arch := 0.6
-@export_range(0.85, 2.0, 0.05) var bridge_water_clearance := 0.9
+@export_storage var road_width := 2.5
+## Legacy storage used only when an older scene has root BridgeStart/BridgeEnd
+## markers and no AuthoredControls/Bridges container.
+@export_storage var bridge_width := 3.0
+@export_storage var bridge_arch := 0.6
+@export_storage var bridge_water_clearance := 0.9
 
 @export_category("Preview")
 @export var show_walkability := false
@@ -47,8 +48,10 @@ const TIMBER_UV_SCALE := 0.5
 @onready var road: Path3D = get_node_or_null("AuthoredControls/Road")
 @onready var river: Path3D = get_node_or_null("AuthoredControls/River")
 @onready var terrain_heights: Node3D = get_node_or_null("AuthoredControls/TerrainHeights")
-@onready var bridge_start: Marker3D = get_node_or_null("AuthoredControls/BridgeStart")
-@onready var bridge_end: Marker3D = get_node_or_null("AuthoredControls/BridgeEnd")
+@onready var bridges_control: Node3D = get_node_or_null("AuthoredControls/Bridges")
+## Compatibility aliases for probes which address the first authored bridge.
+@onready var bridge_start: Marker3D = _first_bridge_marker("Start")
+@onready var bridge_end: Marker3D = _first_bridge_marker("End")
 @onready var building_control: Node3D = get_node_or_null("AuthoredControls/Building")
 @onready var entrance: Marker3D = get_node_or_null("AuthoredControls/Building/Entrance")
 @onready var spawn_marker: Marker3D = get_node_or_null("AuthoredControls/Spawn")
@@ -66,6 +69,8 @@ var _walk_route_index := 0
 var _walking := false
 var _status: Label
 var _river_samples := PackedVector2Array()
+var _river_half_widths := PackedFloat32Array()
+var _bridge_cache: Array[Dictionary] = []
 var _terrain_height_influences: Array[Dictionary] = []
 var _terrain_height_memo: Dictionary = {}
 
@@ -201,6 +206,7 @@ func authored_snapshot() -> Dictionary:
 		"road": _curve_signature(),
 		"river": _path_signature(river),
 		"terrain_heights": _terrain_heights_signature(),
+		"bridges": _bridges_signature(),
 		"bridge_start": bridge_start.transform if bridge_start else Transform3D.IDENTITY,
 		"bridge_end": bridge_end.transform if bridge_end else Transform3D.IDENTITY,
 		"building": building_control.transform if building_control else Transform3D.IDENTITY,
@@ -229,6 +235,13 @@ func _regenerate(scope: String) -> void:
 				current.river != _last_signatures.river or \
 				current.terrain_heights != _last_signatures.terrain_heights:
 			scope = "All"
+		elif current.bridge != _last_signatures.bridge and scope != "Bridge":
+			scope = "All"
+		elif current.road != _last_signatures.road and scope not in ["Road", "Bridge"]:
+			scope = "All"
+		elif (current.building != _last_signatures.building or \
+				current.markers != _last_signatures.markers) and scope != "Building":
+			scope = "All"
 	_build_walk_grids()
 	if scope in ["All", "Terrain"]:
 		_replace_feature("Terrain", _build_terrain)
@@ -249,9 +262,14 @@ func _cache_nodes() -> void:
 	authored_scenery = get_node_or_null("AuthoredScenery")
 	road = get_node_or_null("AuthoredControls/Road")
 	river = get_node_or_null("AuthoredControls/River")
+	if road != null and road.has_method("sync_curve_binding"):
+		road.call("sync_curve_binding")
+	if river != null and river.has_method("sync_curve_binding"):
+		river.call("sync_curve_binding")
 	terrain_heights = get_node_or_null("AuthoredControls/TerrainHeights")
-	bridge_start = get_node_or_null("AuthoredControls/BridgeStart")
-	bridge_end = get_node_or_null("AuthoredControls/BridgeEnd")
+	bridges_control = get_node_or_null("AuthoredControls/Bridges")
+	bridge_start = _first_bridge_marker("Start")
+	bridge_end = _first_bridge_marker("End")
 	building_control = get_node_or_null("AuthoredControls/Building")
 	entrance = get_node_or_null("AuthoredControls/Building/Entrance")
 	spawn_marker = get_node_or_null("AuthoredControls/Spawn")
@@ -300,17 +318,56 @@ func _detect_authored_changes() -> void:
 func _signatures() -> Dictionary:
 	return {
 		"params": [terrain_relief, terrain_base_height, water_level, road_width,
-			bridge_width, bridge_arch, bridge_water_clearance, show_walkability,
+			show_walkability,
 			_visual_style_signature()].hash(),
 		"road": _curve_signature(),
 		"river": _path_signature(river),
 		"terrain_heights": _terrain_heights_signature(),
-		"bridge": [bridge_start.transform if bridge_start else Transform3D.IDENTITY,
-			bridge_end.transform if bridge_end else Transform3D.IDENTITY].hash(),
+		"bridge": _bridges_signature().hash(),
 		"building": str(building_control.transform).hash() if building_control else 0,
 		"markers": [entrance.transform if entrance else Transform3D.IDENTITY,
 			spawn_marker.transform if spawn_marker else Transform3D.IDENTITY].hash(),
 	}
+
+
+func _first_bridge_marker(marker_name: String) -> Marker3D:
+	var container := get_node_or_null("AuthoredControls/Bridges") as Node3D
+	if container != null:
+		for candidate in container.get_children():
+			if not _is_bridge_control(candidate):
+				continue
+			var start := candidate.get_node_or_null("Start") as Marker3D
+			var end := candidate.get_node_or_null("End") as Marker3D
+			if start != null and end != null:
+				return start if marker_name == "Start" else end
+		return null
+	return get_node_or_null("AuthoredControls/Bridge%s" % marker_name) as Marker3D
+
+
+func _is_bridge_control(candidate: Node) -> bool:
+	return candidate is Node3D and candidate.has_method("authored_signature")
+
+
+func _bridges_signature() -> Array:
+	var result: Array = []
+	var container := get_node_or_null("AuthoredControls/Bridges") as Node3D
+	if container != null:
+		result.append(container.global_transform)
+		for candidate in container.get_children():
+			result.append(candidate.name)
+			if _is_bridge_control(candidate):
+				result.append(candidate.call("authored_signature"))
+			elif candidate is Node3D:
+				result.append(candidate.global_transform)
+				for marker_name in ["Start", "End"]:
+					var marker := candidate.get_node_or_null(marker_name) as Marker3D
+					result.append(marker.transform if marker else Transform3D.IDENTITY)
+		return result
+	var legacy_start := get_node_or_null("AuthoredControls/BridgeStart") as Marker3D
+	var legacy_end := get_node_or_null("AuthoredControls/BridgeEnd") as Marker3D
+	return [legacy_start.transform if legacy_start else Transform3D.IDENTITY,
+		legacy_end.transform if legacy_end else Transform3D.IDENTITY,
+		bridge_width, bridge_arch, bridge_water_clearance]
 
 
 func _curve_signature() -> Array:
@@ -328,6 +385,8 @@ func _path_signature(path: Path3D) -> Array:
 		result.append(path.curve.get_point_position(index))
 		result.append(path.curve.get_point_in(index))
 		result.append(path.curve.get_point_out(index))
+	if path.has_method("width_signature"):
+		result.append(path.call("width_signature"))
 	return result
 
 
@@ -369,8 +428,9 @@ func _build_walk_grids() -> void:
 
 
 func _encoded_floor(x: float, z: float) -> int:
-	if _inside_bridge(x, z):
-		return _encode_height(_bridge_height(x, z))
+	var bridge := _bridge_at(x, z)
+	if not bridge.is_empty():
+		return _encode_height(float(bridge.height))
 	if _river_distance(Vector2(x, z)) <= WATER_HALF_WIDTH:
 		return 0
 	if _inside_building(x, z):
@@ -413,6 +473,7 @@ func _terrain_height(x: float, z: float) -> float:
 func _refresh_authoring_caches() -> void:
 	_terrain_height_memo.clear()
 	_refresh_river_samples()
+	_refresh_bridge_cache()
 	_refresh_terrain_height_influences()
 	if Engine.is_editor_hint():
 		update_configuration_warnings()
@@ -420,6 +481,7 @@ func _refresh_authoring_caches() -> void:
 
 func _refresh_river_samples() -> void:
 	_river_samples.clear()
+	_river_half_widths.clear()
 	if river == null or river.curve == null or river.curve.point_count < 2:
 		return
 	var length := river.curve.get_baked_length()
@@ -427,14 +489,41 @@ func _refresh_river_samples() -> void:
 		return
 	var count := clampi(ceili(length / RIVER_SAMPLE_SPACING) + 1, 2,
 		RIVER_SAMPLE_LIMIT)
-	var dense := PackedVector2Array()
+	var offsets: Array[float] = []
 	for index in count:
-		var local := river.curve.sample_baked(length * float(index) / float(count - 1), true)
+		offsets.append(length * float(index) / float(count - 1))
+	var width_stations := PackedFloat32Array()
+	if river.has_method("width_sample_offsets"):
+		width_stations = river.call("width_sample_offsets")
+	for station in width_stations:
+		if station > 0.000001 and station < length - 0.000001:
+			offsets.append(station)
+	offsets.sort()
+	var dense := PackedVector2Array()
+	var dense_widths := PackedFloat32Array()
+	var dense_offsets := PackedFloat32Array()
+	var anchors := PackedByteArray()
+	for offset in offsets:
+		if not dense_offsets.is_empty() and absf(offset - dense_offsets[-1]) <= 0.000001:
+			continue
+		var local := river.curve.sample_baked(offset, true)
 		var world := river.global_transform * local
 		dense.append(Vector2(world.x, world.z))
-	_river_samples = _simplify_polyline(dense, RIVER_SIMPLIFY_TOLERANCE)
+		dense_offsets.append(offset)
+		dense_widths.append(_path_width_at(river, offset, WATER_HALF_WIDTH * 2.0) * 0.5)
+		var is_anchor := false
+		for station in width_stations:
+			if absf(offset - station) <= 0.000001:
+				is_anchor = true
+				break
+		anchors.append(1 if is_anchor else 0)
+	var simplified := _simplify_tapered_polyline(dense, dense_widths,
+		dense_offsets, anchors, RIVER_SIMPLIFY_TOLERANCE)
+	_river_samples = simplified.points
+	_river_half_widths = simplified.widths
 	if _river_samples.size() < 2 or _polyline_length(_river_samples) <= 0.001:
 		_river_samples.clear()
+		_river_half_widths.clear()
 
 
 func _refresh_terrain_height_influences() -> void:
@@ -458,9 +547,11 @@ func _refresh_terrain_height_influences() -> void:
 		})
 
 
-func _simplify_polyline(points: PackedVector2Array, tolerance: float) -> PackedVector2Array:
+func _simplify_tapered_polyline(points: PackedVector2Array, widths: PackedFloat32Array,
+		offsets: PackedFloat32Array, anchors: PackedByteArray,
+		tolerance: float) -> Dictionary:
 	if points.size() <= 2:
-		return points
+		return {"points": points, "widths": widths}
 	var keep := PackedByteArray()
 	keep.resize(points.size())
 	keep[0] = 1
@@ -475,19 +566,30 @@ func _simplify_polyline(points: PackedVector2Array, tolerance: float) -> PackedV
 				continue
 			if index >= interval.y:
 				break
+			if anchors[index]:
+				farthest = index
+				break
 			var distance := _point_segment_distance(points[index], points[interval.x], points[interval.y])
-			if distance > maximum:
-				maximum = distance
+			var span := maxf(offsets[interval.y] - offsets[interval.x], 0.000001)
+			var fraction := clampf((offsets[index] - offsets[interval.x]) / span, 0.0, 1.0)
+			var width_error := absf(widths[index] - lerpf(widths[interval.x],
+				widths[interval.y], fraction))
+			var score := maxf(distance / maxf(tolerance, 0.000001),
+				width_error / 0.01)
+			if score > maximum / maxf(tolerance, 0.000001):
+				maximum = score * tolerance
 				farthest = index
 		if farthest >= 0:
 			keep[farthest] = 1
 			ranges.append(Vector2i(interval.x, farthest))
 			ranges.append(Vector2i(farthest, interval.y))
 	var result := PackedVector2Array()
+	var result_widths := PackedFloat32Array()
 	for index in points.size():
 		if keep[index]:
 			result.append(points[index])
-	return result
+			result_widths.append(widths[index])
+	return {"points": result, "widths": result_widths}
 
 
 func _polyline_length(points: PackedVector2Array) -> float:
@@ -517,12 +619,30 @@ func _polyline_point_at_fraction(points: PackedVector2Array, fraction: float) ->
 
 
 func _river_distance(point: Vector2) -> float:
-	if _river_samples.size() < 2:
-		return INF
-	var result := INF
+	var sample := _river_sample(point)
+	return float(sample.profile_distance) if not sample.is_empty() else INF
+
+
+func _river_sample(point: Vector2) -> Dictionary:
+	if _river_samples.size() < 2 or _river_half_widths.size() != _river_samples.size():
+		return {}
+	var result: Dictionary = {}
+	var nearest_edge := INF
 	for index in _river_samples.size() - 1:
-		result = minf(result, _point_segment_distance(point,
-			_river_samples[index], _river_samples[index + 1]))
+		var a := _river_samples[index]
+		var b := _river_samples[index + 1]
+		var delta := b - a
+		var length_squared := delta.length_squared()
+		var t := clampf((point - a).dot(delta) /
+			maxf(length_squared, 0.000001), 0.0, 1.0)
+		var distance := point.distance_to(a + delta * t)
+		var half_width := lerpf(_river_half_widths[index],
+			_river_half_widths[index + 1], t)
+		var edge_distance := distance - half_width
+		if edge_distance < nearest_edge:
+			nearest_edge = edge_distance
+			result = {"distance": distance, "half_width": half_width,
+				"profile_distance": distance + WATER_HALF_WIDTH - half_width}
 	return result
 
 
@@ -535,42 +655,115 @@ func _point_segment_distance(point: Vector2, a: Vector2, b: Vector2) -> float:
 	return point.distance_to(a + delta * t)
 
 
+func _refresh_bridge_cache() -> void:
+	_bridge_cache.clear()
+	if bridges_control != null:
+		for candidate in bridges_control.get_children():
+			if _is_bridge_control(candidate):
+				_append_bridge_cache(candidate as Node3D,
+					candidate.get_node_or_null("Start") as Marker3D,
+					candidate.get_node_or_null("End") as Marker3D)
+		return
+	# Older saved scenes used two markers and global settings. The fallback is
+	# deliberately disabled whenever a Bridges container exists, even if empty.
+	var legacy_start := get_node_or_null("AuthoredControls/BridgeStart") as Marker3D
+	var legacy_end := get_node_or_null("AuthoredControls/BridgeEnd") as Marker3D
+	if legacy_start != null and legacy_end != null:
+		_append_bridge_cache(null, legacy_start, legacy_end)
+
+
+func _append_bridge_cache(control: Node3D, start: Marker3D, end: Marker3D) -> void:
+	if start == null or end == null:
+		return
+	var a := Vector2(start.global_position.x, start.global_position.z)
+	var b := Vector2(end.global_position.x, end.global_position.z)
+	var length := a.distance_to(b)
+	if length <= 0.001:
+		return
+	var width := bridge_width
+	var arch := bridge_arch
+	var clearance := bridge_water_clearance
+	var deck_rotation := 0.0
+	if control != null:
+		width = clampf(float(control.get("width")), 1.5, 6.0)
+		arch = clampf(float(control.get("arch")), 0.0, 2.0)
+		clearance = maxf(float(control.get("water_clearance")), 0.85)
+		deck_rotation = float(control.get("deck_texture_rotation_degrees"))
+	_bridge_cache.append({
+		"name": String(control.name) if control != null else "Bridge",
+		"control": control,
+		"start": start,
+		"end": end,
+		"start_y": start.global_position.y,
+		"end_y": end.global_position.y,
+		"a": a,
+		"b": b,
+		"delta": b - a,
+		"length": length,
+		"width": width,
+		"arch": arch,
+		"clearance": clearance,
+		"deck_rotation": deck_rotation,
+	})
+
+
 func _bridge_basis() -> Dictionary:
-	if bridge_start == null or bridge_end == null:
-		return {"a": Vector2(-4.0, 0.0), "b": Vector2(4.0, 0.0), "delta": Vector2(8.0, 0.0), "length": 8.0}
-	var a := Vector2(bridge_start.global_position.x, bridge_start.global_position.z)
-	var b := Vector2(bridge_end.global_position.x, bridge_end.global_position.z)
-	return {"a": a, "b": b, "delta": b - a, "length": maxf(a.distance_to(b), 0.01)}
+	if not _bridge_cache.is_empty():
+		return _bridge_cache[0]
+	return {"a": Vector2(-4.0, 0.0), "b": Vector2(4.0, 0.0),
+		"delta": Vector2(8.0, 0.0), "length": 8.0, "width": bridge_width}
 
 
-func _bridge_projection(x: float, z: float) -> Dictionary:
-	var basis := _bridge_basis()
+func _bridge_projection_for(bridge: Dictionary, x: float, z: float) -> Dictionary:
 	var point := Vector2(x, z)
-	var t: float = clampf((point - basis.a).dot(basis.delta) /
-		maxf(basis.delta.length_squared(), 0.0001), 0.0, 1.0)
-	var nearest: Vector2 = basis.a + basis.delta * t
+	var delta: Vector2 = bridge.delta
+	var a: Vector2 = bridge.a
+	var t: float = clampf((point - a).dot(delta) /
+		maxf(delta.length_squared(), 0.0001), 0.0, 1.0)
+	var nearest: Vector2 = a + delta * t
 	return {"t": t, "distance": point.distance_to(nearest)}
 
 
 func _inside_bridge(x: float, z: float) -> bool:
-	var projected := _bridge_projection(x, z)
-	return projected.distance <= bridge_width * 0.5 and projected.t > 0.0 and projected.t < 1.0
+	return not _bridge_at(x, z).is_empty()
 
 
 func _bridge_height(x: float, z: float) -> float:
-	var projected := _bridge_projection(x, z)
+	var found := _bridge_at(x, z)
+	return float(found.height) if not found.is_empty() else _terrain_height(x, z)
+
+
+func _bridge_height_for(bridge: Dictionary, x: float, z: float) -> float:
+	var projected := _bridge_projection_for(bridge, x, z)
 	var t: float = projected.t
-	var basis := _bridge_basis()
 	# Marker Y is an authored height offset above its bank, not discarded data.
-	var a_height := _terrain_height(basis.a.x, basis.a.y) + (bridge_start.global_position.y if bridge_start else 0.0)
-	var b_height := _terrain_height(basis.b.x, basis.b.y) + (bridge_end.global_position.y if bridge_end else 0.0)
+	var a: Vector2 = bridge.a
+	var b: Vector2 = bridge.b
+	var a_height := _terrain_height(a.x, a.y) + float(bridge.start_y)
+	var b_height := _terrain_height(b.x, b.y) + float(bridge.end_y)
 	var plateau := 1.0
 	if t < 0.3:
 		plateau = smoothstep(0.0, 0.3, t)
 	elif t > 0.7:
 		plateau = smoothstep(1.0, 0.7, t)
 	var base := lerpf(a_height, b_height, t)
-	return maxf(base + bridge_arch * plateau, water_level + bridge_water_clearance)
+	return maxf(base + float(bridge.arch) * plateau,
+		water_level + float(bridge.clearance))
+
+
+func _bridge_at(x: float, z: float) -> Dictionary:
+	var result: Dictionary = {}
+	var highest := -INF
+	for bridge in _bridge_cache:
+		var projected := _bridge_projection_for(bridge, x, z)
+		if projected.distance > float(bridge.width) * 0.5 \
+				or projected.t <= 0.0 or projected.t >= 1.0:
+			continue
+		var height := _bridge_height_for(bridge, x, z)
+		if height > highest:
+			highest = height
+			result = {"bridge": bridge, "projection": projected, "height": height}
+	return result
 
 
 func _inside_building(x: float, z: float) -> bool:
@@ -608,7 +801,7 @@ func _build_terrain(parent: Node3D) -> void:
 	surface.generate_normals()
 	surface.generate_tangents()
 	var mesh := surface.commit()
-	_add_mesh(parent, "TerrainMesh", mesh, _style_material("terrain_material",
+	_add_mesh(parent, "TerrainMesh", mesh, _style_material("terrain",
 		Color("#648052"), 0.92))
 	var body := StaticBody3D.new()
 	body.name = "TerrainCollision"
@@ -632,7 +825,8 @@ func _build_water(parent: Node3D) -> void:
 		for cell_x in HALF_CELLS:
 			var centre3 := _half_cell_world(cell_x, cell_y)
 			var centre := Vector2(centre3.x, centre3.z)
-			if _river_distance(centre) > WATER_HALF_WIDTH:
+			var centre_sample := _river_sample(centre)
+			if centre_sample.is_empty() or centre_sample.distance > centre_sample.half_width:
 				continue
 			var x0 := centre.x - HALF_CELL * 0.5
 			var x1 := centre.x + HALF_CELL * 0.5
@@ -642,8 +836,10 @@ func _build_water(parent: Node3D) -> void:
 				Vector2(x1, z1), Vector2(x0, z1)]
 			for corner_index in [0, 2, 1, 0, 3, 2]:
 				var corner: Vector2 = corners[corner_index]
+				var corner_sample := _river_sample(corner)
 				surface.set_uv(corner * GROUND_UV_SCALE)
-				surface.set_uv2(Vector2(_river_distance(corner), 0.0))
+				surface.set_uv2(Vector2(float(corner_sample.distance),
+					float(corner_sample.half_width)))
 				surface.add_vertex(Vector3(corner.x, water_level, corner.y))
 				emitted_water = true
 	if not emitted_water:
@@ -652,7 +848,7 @@ func _build_water(parent: Node3D) -> void:
 	surface.generate_tangents()
 	var mesh := surface.commit()
 	if mesh != null:
-		_add_mesh(parent, "River", mesh, _style_material("water_material",
+		_add_mesh(parent, "River", mesh, _style_material("water",
 			Color(0.12, 0.48, 0.68, 0.78), 0.2))
 
 
@@ -662,12 +858,17 @@ func _build_road(parent: Node3D) -> void:
 		return
 	var cross_sections: Array[Array] = []
 	var distances: Array[float] = []
+	var widths: Array[float] = []
 	var lateral_steps := 6
 	var distance := 0.0
+	var baked_length := road.curve.get_baked_length()
 	for index in points.size():
 		if index > 0:
 			distance += points[index - 1].distance_to(points[index])
 		distances.append(distance)
+		var baked_offset := baked_length * float(index) / float(points.size() - 1)
+		var section_width := _path_width_at(road, baked_offset, road_width)
+		widths.append(section_width)
 		var previous: Vector3 = points[maxi(0, index - 1)]
 		var following: Vector3 = points[mini(points.size() - 1, index + 1)]
 		var direction := Vector2(following.x - previous.x, following.z - previous.z).normalized()
@@ -675,7 +876,7 @@ func _build_road(parent: Node3D) -> void:
 		var point: Vector3 = points[index]
 		var section: Array[Vector3] = []
 		for lateral_index in lateral_steps + 1:
-			var lateral := road_width * (0.5 - float(lateral_index) / float(lateral_steps))
+			var lateral := section_width * (0.5 - float(lateral_index) / float(lateral_steps))
 			var x := point.x + normal.x * lateral
 			var z := point.z + normal.y * lateral
 			section.append(Vector3(x, _road_height(x, z), z))
@@ -690,15 +891,17 @@ func _build_road(parent: Node3D) -> void:
 				cross_sections[index + 1][lateral_index]]
 			var u0 := float(lateral_index) / float(lateral_steps)
 			var u1 := float(lateral_index + 1) / float(lateral_steps)
-			var texture_u0 := u0 * road_width * GROUND_UV_SCALE
-			var texture_u1 := u1 * road_width * GROUND_UV_SCALE
+			var texture_u0a := u0 * widths[index] * GROUND_UV_SCALE
+			var texture_u1a := u1 * widths[index] * GROUND_UV_SCALE
+			var texture_u0b := u0 * widths[index + 1] * GROUND_UV_SCALE
+			var texture_u1b := u1 * widths[index + 1] * GROUND_UV_SCALE
 			var emitted := [
-				[vertices[0], Vector2(texture_u0, distances[index] * GROUND_UV_SCALE), Vector2(u0, 0.0)],
-				[vertices[2], Vector2(texture_u1, distances[index + 1] * GROUND_UV_SCALE), Vector2(u1, 0.0)],
-				[vertices[1], Vector2(texture_u1, distances[index] * GROUND_UV_SCALE), Vector2(u1, 0.0)],
-				[vertices[0], Vector2(texture_u0, distances[index] * GROUND_UV_SCALE), Vector2(u0, 0.0)],
-				[vertices[3], Vector2(texture_u0, distances[index + 1] * GROUND_UV_SCALE), Vector2(u0, 0.0)],
-				[vertices[2], Vector2(texture_u1, distances[index + 1] * GROUND_UV_SCALE), Vector2(u1, 0.0)],
+				[vertices[0], Vector2(texture_u0a, distances[index] * GROUND_UV_SCALE), Vector2(u0, widths[index])],
+				[vertices[2], Vector2(texture_u1b, distances[index + 1] * GROUND_UV_SCALE), Vector2(u1, widths[index + 1])],
+				[vertices[1], Vector2(texture_u1a, distances[index] * GROUND_UV_SCALE), Vector2(u1, widths[index])],
+				[vertices[0], Vector2(texture_u0a, distances[index] * GROUND_UV_SCALE), Vector2(u0, widths[index])],
+				[vertices[3], Vector2(texture_u0b, distances[index + 1] * GROUND_UV_SCALE), Vector2(u0, widths[index + 1])],
+				[vertices[2], Vector2(texture_u1b, distances[index + 1] * GROUND_UV_SCALE), Vector2(u1, widths[index + 1])],
 			]
 			for item in emitted:
 				surface.set_uv(item[1])
@@ -708,12 +911,13 @@ func _build_road(parent: Node3D) -> void:
 	surface.generate_normals()
 	surface.generate_tangents()
 	_add_mesh(parent, "RoadSurface", surface.commit(), _style_material(
-		"worn_path_material", Color("#8d7958"), 0.95))
+		"road", Color("#8d7958"), 0.95))
 
 
 func _road_height(x: float, z: float) -> float:
-	if _inside_bridge(x, z):
-		return _bridge_height(x, z) + 0.035
+	var bridge := _bridge_at(x, z)
+	if not bridge.is_empty():
+		return float(bridge.height) + 0.035
 	return _rendered_terrain_height(x, z) + 0.055
 
 
@@ -747,31 +951,45 @@ func _road_samples() -> Array[Vector3]:
 	return points
 
 
+func _path_width_at(path: Path3D, baked_offset: float, fallback: float) -> float:
+	if path != null and path.has_method("width_at_offset"):
+		return maxf(float(path.call("width_at_offset", baked_offset)), 0.05)
+	return fallback
+
+
 func _build_bridge(parent: Node3D) -> void:
-	var basis := _bridge_basis()
-	var direction: Vector2 = basis.delta.normalized()
-	var normal := Vector2(-direction.y, direction.x) * bridge_width * 0.5
+	for bridge in _bridge_cache:
+		_build_bridge_span(parent, bridge)
+
+
+func _build_bridge_span(parent: Node3D, bridge: Dictionary) -> void:
+	var span_root := Node3D.new()
+	span_root.name = String(bridge.name)
+	parent.add_child(span_root)
+	var direction: Vector2 = bridge.delta.normalized()
+	var width: float = bridge.width
+	var normal := Vector2(-direction.y, direction.x) * width * 0.5
 	var segments := 20
 	var surface := SurfaceTool.new()
 	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
 	for index in segments:
 		var t0 := float(index) / float(segments)
 		var t1 := float(index + 1) / float(segments)
-		var p0: Vector2 = basis.a.lerp(basis.b, t0)
-		var p1: Vector2 = basis.a.lerp(basis.b, t1)
-		var y0 := _bridge_height(p0.x, p0.y) + 0.06
-		var y1 := _bridge_height(p1.x, p1.y) + 0.06
+		var p0: Vector2 = bridge.a.lerp(bridge.b, t0)
+		var p1: Vector2 = bridge.a.lerp(bridge.b, t1)
+		var y0 := _bridge_height_for(bridge, p0.x, p0.y) + 0.06
+		var y1 := _bridge_height_for(bridge, p1.x, p1.y) + 0.06
 		var vertices := [Vector3(p0.x + normal.x, y0, p0.y + normal.y),
 			Vector3(p0.x - normal.x, y0, p0.y - normal.y),
 			Vector3(p1.x - normal.x, y1, p1.y - normal.y),
 			Vector3(p1.x + normal.x, y1, p1.y + normal.y)]
 		var emitted := [
-			[vertices[0], Vector2(0.0, t0 * basis.length * TIMBER_UV_SCALE)],
-			[vertices[2], Vector2(bridge_width * TIMBER_UV_SCALE, t1 * basis.length * TIMBER_UV_SCALE)],
-			[vertices[1], Vector2(bridge_width * TIMBER_UV_SCALE, t0 * basis.length * TIMBER_UV_SCALE)],
-			[vertices[0], Vector2(0.0, t0 * basis.length * TIMBER_UV_SCALE)],
-			[vertices[3], Vector2(0.0, t1 * basis.length * TIMBER_UV_SCALE)],
-			[vertices[2], Vector2(bridge_width * TIMBER_UV_SCALE, t1 * basis.length * TIMBER_UV_SCALE)],
+			[vertices[0], Vector2(0.0, t0 * bridge.length * TIMBER_UV_SCALE)],
+			[vertices[2], Vector2(width * TIMBER_UV_SCALE, t1 * bridge.length * TIMBER_UV_SCALE)],
+			[vertices[1], Vector2(width * TIMBER_UV_SCALE, t0 * bridge.length * TIMBER_UV_SCALE)],
+			[vertices[0], Vector2(0.0, t0 * bridge.length * TIMBER_UV_SCALE)],
+			[vertices[3], Vector2(0.0, t1 * bridge.length * TIMBER_UV_SCALE)],
+			[vertices[2], Vector2(width * TIMBER_UV_SCALE, t1 * bridge.length * TIMBER_UV_SCALE)],
 		]
 		for item in emitted:
 			surface.set_uv(item[1])
@@ -779,16 +997,19 @@ func _build_bridge(parent: Node3D) -> void:
 			surface.add_vertex(vertex)
 	surface.generate_normals()
 	surface.generate_tangents()
-	_add_mesh(parent, "BridgeDeck", surface.commit(), _style_material(
-		"timber_material", Color("#b08a58"), 0.86))
-	for point: Vector2 in [basis.a, basis.b]:
+	_add_mesh(span_root, "BridgeDeck", surface.commit(), _style_material(
+		"woodwork", Color("#b08a58"), 0.86, float(bridge.deck_rotation)))
+	var support_index := 0
+	for point: Vector2 in [bridge.a, bridge.b]:
 		var pier := BoxMesh.new()
-		var top := _bridge_height(point.x, point.y)
-		pier.size = Vector3(0.45, maxf(0.2, top - water_level), bridge_width + 0.6)
-		var node := _add_mesh(parent, "BridgeSupport", pier, _style_material(
-			"stone_material", Color("#625243"), 1.0))
+		var top := _bridge_height_for(bridge, point.x, point.y)
+		pier.size = Vector3(0.45, maxf(0.2, top - water_level), width + 0.6)
+		var support_name := "BridgeSupport" if support_index == 0 else "BridgeSupportEnd"
+		var node := _add_mesh(span_root, support_name, pier, _style_material(
+			"stonework", Color("#625243"), 1.0))
 		node.position = Vector3(point.x, water_level + pier.size.y * 0.5, point.y)
 		node.rotation.y = -direction.angle()
+		support_index += 1
 
 
 func _build_building(parent: Node3D) -> void:
@@ -796,7 +1017,7 @@ func _build_building(parent: Node3D) -> void:
 		return
 	var centre := building_control.global_position
 	var floor := _decoded_height(_encode_height(_terrain_height(centre.x, centre.z)))
-	var wall_material := _style_material("timber_material", Color("#9d876d"), 0.9)
+	var wall_material := _style_material("woodwork", Color("#9d876d"), 0.9)
 	# Four wall groups form a readable open-front cabin. The gap in the front
 	# wall is the same gap `_inside_building` leaves open in the walk grid.
 	_add_building_box(parent, "BackWall", Vector3(0.5, 4.0, 5.0),
@@ -812,10 +1033,10 @@ func _build_building(parent: Node3D) -> void:
 	var roof := PrismMesh.new()
 	roof.size = Vector3(7.8, 2.0, 5.8)
 	var roof_node := _add_mesh(parent, "Roof", roof, _style_material(
-		"slate_material", Color("#5c3f35"), 1.0))
+		"roof", Color("#5c3f35"), 1.0))
 	roof_node.transform = building_control.global_transform
 	roof_node.position += Vector3(0.0, floor + 4.8, 0.0)
-	var door_mat := _style_material("timber_material", Color("#3b251c"), 1.0)
+	var door_mat := _style_material("woodwork", Color("#3b251c"), 1.0)
 	for offset in [-1.0, 1.0]:
 		var post := BoxMesh.new()
 		post.size = Vector3(0.35, 2.6, 0.4)
@@ -889,18 +1110,30 @@ func _material(color: Color, roughness: float, overlay := false) -> StandardMate
 	return material
 
 
-func _style_material(property_name: StringName, fallback_color: Color,
-		fallback_roughness: float) -> Material:
-	if visual_style != null:
-		var saved: Variant = visual_style.get(property_name)
+func _style_material(slot: String, fallback_color: Color,
+		fallback_roughness: float, extra_rotation_degrees := 0.0) -> Material:
+	if visual_style != null and visual_style.has_method("get_material"):
+		var styled: Variant = visual_style.call("get_material", slot,
+			extra_rotation_degrees)
+		if styled is Material:
+			return styled
+	elif visual_style != null:
+		var legacy_properties := {
+			"terrain": &"terrain_material", "road": &"worn_path_material",
+			"woodwork": &"timber_material", "stonework": &"stone_material",
+			"roof": &"slate_material", "water": &"water_material",
+		}
+		var saved: Variant = visual_style.get(legacy_properties.get(slot, &""))
 		if saved is Material:
 			return saved
 	return _material(fallback_color, fallback_roughness)
 
 
-func _visual_style_signature() -> Array[int]:
+func _visual_style_signature() -> Array:
 	if visual_style == null:
 		return []
+	if visual_style.has_method("rotation_signature"):
+		return [visual_style.get_instance_id(), visual_style.call("rotation_signature")]
 	var signature: Array[int] = [visual_style.get_instance_id()]
 	for property_name in [&"terrain_material", &"worn_path_material", &"timber_material",
 			&"stone_material", &"slate_material", &"water_material"]:
@@ -1079,7 +1312,9 @@ func _world_to_server(point: Vector3) -> Vector2i:
 func _validation_probes() -> Dictionary:
 	var basis := _bridge_basis()
 	var bridge_mid: Vector2 = basis.a.lerp(basis.b, 0.5)
-	var bridge_side := bridge_mid + Vector2(0.0, bridge_width * 0.5 + 1.0)
+	var bridge_direction: Vector2 = basis.delta.normalized()
+	var bridge_normal := Vector2(-bridge_direction.y, bridge_direction.x)
+	var bridge_side := bridge_mid + bridge_normal * (float(basis.width) * 0.5 + 1.0)
 	var solid_wall := building_control.global_transform * Vector3(3.25, 0.0, 0.0)
 	var road_probe := spawn_marker.global_position if spawn_marker else Vector3.ZERO
 	if road != null and road.curve != null and road.curve.point_count >= 2 \
@@ -1110,6 +1345,21 @@ func _get_configuration_warnings() -> PackedStringArray:
 	if road_node == null or road_node.curve == null or road_node.curve.point_count < 2 \
 			or road_node.curve.get_baked_length() <= 0.001:
 		warnings.append("Road needs at least two distinct points; its preview is disabled.")
+	var bridge_container := get_node_or_null("AuthoredControls/Bridges") as Node3D
+	if bridge_container != null:
+		for candidate in bridge_container.get_children():
+			if not candidate is Node3D:
+				continue
+			if not _is_bridge_control(candidate):
+				warnings.append("Bridge entry %s needs the bridge control script; it is skipped." % candidate.name)
+				continue
+			var start := candidate.get_node_or_null("Start") as Marker3D
+			var end := candidate.get_node_or_null("End") as Marker3D
+			if start == null or end == null:
+				warnings.append("Bridge %s needs Start and End markers; it is skipped." % candidate.name)
+			elif Vector2(start.global_position.x, start.global_position.z).distance_to(
+					Vector2(end.global_position.x, end.global_position.z)) <= 0.001:
+				warnings.append("Bridge %s needs distinct Start and End positions; it is skipped." % candidate.name)
 	return warnings
 
 

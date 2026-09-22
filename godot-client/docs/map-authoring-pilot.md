@@ -18,17 +18,19 @@ From `godot-client`, run:
 
 Or double-click `open-map-authoring-pilot.bat` in `godot-client`.
 
-Godot may import project assets on the first launch. Select the `MapAuthoringPilot` root to edit terrain, water, road, bridge, preview, and export parameters in the Inspector. The root's **Edit road points**, **Edit river points**, and **Edit terrain heights** buttons select the matching saved control and switch the 3D viewport to it. The controls are:
+Godot may import project assets on the first launch. Select the `MapAuthoringPilot` root to edit terrain, water level, preview, and export settings in the Inspector. Select the road, river, or an individual bridge to edit its width and other object settings. The root's **Edit road points**, **Edit river points**, and **Edit terrain heights** buttons select the matching saved control and switch the 3D viewport to it. The controls are:
 
-- `AuthoredControls/Road`: a native `Path3D` whose `Curve3D` controls the worn path.
-- `AuthoredControls/River`: a native `Path3D` whose `Curve3D` controls the river channel, terrain cut, visible water, and blocked export cells.
+- `AuthoredControls/Road`: a `Path3D` whose curve controls the worn path. Set **Default Width** for the whole road, or expand **Point Widths** and enter a full width for individual curve points. A point value of `0` inherits the surrounding taper.
+- `AuthoredControls/River`: a `Path3D` whose curve controls the river channel, terrain cut, visible water, and blocked export cells. Its **Default Width** and optional **Point Widths** work the same way as the road.
 - `AuthoredControls/TerrainHeights`: a group of `Marker3D` height handles. Move a handle up or down for a smooth radial height offset, and edit its **Influence Radius** in the Inspector. Move it in X/Z, duplicate it, or delete it to change where local shaping applies.
-- `BridgeStart` and `BridgeEnd`: move the bridge anchors.
+- `AuthoredControls/Bridges`: contains the saved bridges. Select `Bridge` to change its width, arch, water clearance, or deck texture rotation. Move its `Start` and `End` markers to place the bank landings. Duplicate the whole bridge with Ctrl+D for another crossing, then move the copy and its endpoints; delete the whole bridge node to remove that crossing.
 - `Building`: move or rotate the open-front cabin and its attached entrance.
 - `Building/Entrance` and `Spawn`: adjust the attached doorway endpoint and route start.
 - `AuthoredScenery`: move the saved shore rocks, grass clumps, wind pine, sign, or cabin lantern with the normal transform tools. These cosmetic nodes stay outside `GeneratedPreview`, so regeneration does not erase their placements.
 
 To edit either path, select its `Path3D` node and work in the 3D viewport. In **Select Points** mode, Ctrl+left-click the curve or empty space to add or split a point, and right-click an existing point to delete it. The dedicated **Add Point** mode also splits when you click the curve and appends when you click empty space; **Delete Point** mode removes a clicked point. Ctrl+Z uses Godot's native undo. **Top View** is recommended because road and river authoring is in X/Z; point Y is intentionally ignored. The river's visible water and blocked-cell mask resolve to the pilot's half-metre export samples. These controls follow the Godot 4.5 stable `Path3D` editor behavior verified in [`path_3d_editor_plugin.cpp`](https://github.com/godotengine/godot/blob/4.5-stable/editor/scene/3d/path_3d_editor_plugin.cpp).
+
+Entries in **Point Widths** use the same indices as the curve's points. Adding or deleting curve points with the normal `Path3D` tools adjusts the width entries automatically; a newly inserted `0` keeps the surrounding taper. Undo and redo restore the matching saved widths.
 
 Moving a terrain handle in Y creates a local offset rather than changing the map-wide baseline. **Terrain Base Height** and **Terrain Relief** on `MapAuthoringPilot` remain the global controls. Duplicate or delete handles in the Scene tree, use the normal move tool for Y and X/Z, and press Ctrl+S to save the authored nodes.
 
@@ -42,13 +44,19 @@ Before experimenting, use **Save As** on the style resource to create a personal
 
 Use **Custom** in a slot when you want to assign a material directly. Enable **Show Advanced Materials** to expose all six material resources without changing their selected presets. The advanced fields control texture tint, normal strength, roughness, ORM response, triplanar **UV1 > Scale**, and the road and water shader parameters. Advanced edits remain intact across refresh and save/reopen. Switching away from a texture and back during the editing session recovers its current material, so Inspector undo also restores Custom materials and advanced tweaks.
 
+The style also exposes texture rotation for terrain, roads, woodwork, stonework, and roofs. These rotations affect every matching generated surface and saved scenery prop. A bridge's **Deck Texture Rotation Degrees** adds a local adjustment for that deck without changing the shared woodwork material.
+
+Rotation works with the included texture presets and supported standard or pilot shader materials. If a custom shader uses unsupported texture features, the pilot keeps the original material and prints a warning instead of changing that material.
+
 The terrain and road start at `GROUND_UV_SCALE = 0.24`, and the bridge deck starts at `TIMBER_UV_SCALE = 0.5`, near the top of `map_authoring_pilot.gd`. Change those constants for code-wide texture density. Triplanar wall, woodwork, stonework, and roof materials use the style resource's **UV1 Scale**. Parameter edits update every mesh sharing that material immediately.
 
 Lighting is saved in the scene rather than generated. Select `Sun` to edit direction, colour, energy, and shadows; select `Environment` and expand its resource to edit the cool ambient/background values. The warm pool is `AuthoredScenery/CabinLantern/WarmLight`, where the Inspector exposes colour, energy, range, and shadows. Select the lantern or another prop's parent node to move the complete authored instance.
 
-The bridge markers' Y values are explicit offsets above their sampled banks. Road and river curve Y values are intentionally plan-only in this pilot; the road preview follows the exported floor, and river water stays at the root's **Water Level**. Raising a curve point therefore cannot create an unexported second floor or locally raise the water.
+Each bridge endpoint's Y value is an explicit offset above its sampled bank. Road and river curve Y values are intentionally plan-only in this pilot; the road preview follows the exported floor, and river water stays at the root's **Water Level**. Raising a curve point therefore cannot create an unexported second floor or locally raise the water.
 
-Moving the river does not move the bridge. Reposition `BridgeStart` and `BridgeEnd` manually when the crossing changes. Arbitrary river or terrain-height edits can also invalidate the walking route, so use **Start walk** or the walkability overlay after reshaping the crossing. With fewer than two river points, the pilot safely shows no river water or channel cut and exports no river-blocked cells. With fewer than two road points, it shows no road surface. Restore or add points to resume either preview.
+Moving the river does not move a bridge. Reposition that bridge and its `Start` and `End` markers when the crossing changes. Arbitrary river or terrain-height edits can also invalidate the walking route, so use **Start walk** or the walkability overlay after reshaping the crossing. With fewer than two river points, the pilot safely shows no river water or channel cut and exports no river-blocked cells. With fewer than two road points, it shows no road surface. Restore or add points to resume either preview.
+
+The export has one floor height per map sample. If bridges overlap, both bridge meshes remain visible, while the walking floor, road overlay, and export consistently use the highest deck there. Stacked, independently walkable bridge levels are not supported by this sample.
 
 Changes refresh after a short debounce. For an explicit rebuild, set `Refresh Scope` on the root and press **Refresh selected feature**. Preview geometry is generated below `GeneratedPreview`; it is deliberately not scene-owned and is never a source of saved edits. Edit `AuthoredControls/Road`, `AuthoredControls/River`, and `AuthoredControls/TerrainHeights`, not their generated meshes. Undo and redo the normal Path3D, Marker3D, transform, and Inspector edits, then save the scene as usual. Reopening it regenerates the preview from those saved authored controls.
 
@@ -97,6 +105,13 @@ The focused visual-control test additionally edits road and river point counts, 
 
 ```powershell
 & 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_pilot_visual_controls.gd
+```
+
+The focused bridge and path-width tests cover multiple independently sized bridges, duplication and deletion, invalid endpoints, save/reopen behavior, width topology undo, tapered road geometry, and tapered river collision:
+
+```powershell
+& 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_pilot_bridges_widths.gd
+& 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_path_widths.gd
 ```
 
 The style textures reuse the Sunmane Steppe PBR source families already licensed for Eloria. Preserve the original CC-BY-4.0 attribution recorded in `src/dev/map_authoring_pilot/style/ATTRIBUTION.md` when copying or redistributing them. This pilot does not import the Last Lantern tutorial scene, quest, or asset-building pipeline.

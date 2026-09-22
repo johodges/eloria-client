@@ -24,12 +24,10 @@ func _apply_style(node: Node) -> void:
 		if _visual_style == null:
 			mesh_instance.material_override = null
 		else:
-			match String(node.get_meta("style_slot")):
-				"timber":
-					mesh_instance.material_override = _visual_style.timber_material
-				"stone":
-					mesh_instance.material_override = _visual_style.stone_material
-				"slate":
-					mesh_instance.material_override = _visual_style.slate_material
+			var slots := {"timber": "woodwork", "stone": "stonework",
+				"slate": "roof"}
+			var slot: String = slots.get(String(node.get_meta("style_slot")), "")
+			if not slot.is_empty():
+				mesh_instance.material_override = _visual_style.get_material(slot)
 	for child in node.get_children():
 		_apply_style(child)

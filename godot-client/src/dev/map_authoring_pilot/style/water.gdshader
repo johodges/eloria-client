@@ -18,8 +18,11 @@ void fragment() {
 	float ripples = sin(dot(p, vec2(2.7, 1.5)) + a * 1.1 + TIME) * 0.5 + 0.5;
 	// Generated water vertices carry their distance from the authored river
 	// curve in UV2.x, so bends and transformed paths shade correctly while the
-	// saved material keeps control of the width-aware bank treatment.
-	float bank = smoothstep(river_half_width * 0.48, river_half_width, UV2.x);
+	// saved material keeps control of the width-aware bank treatment. New
+	// meshes carry their local authored half-width in UV2.y; zero retains the
+	// uniform fallback for old meshes and hand-authored previews.
+	float local_half_width = UV2.y > 0.0 ? UV2.y : river_half_width;
+	float bank = smoothstep(local_half_width * 0.48, local_half_width, UV2.x);
 	ALBEDO = mix(deep_color.rgb, shallow_color.rgb, bank);
 	ALBEDO += vec3(0.009, 0.018, 0.02) * ripples;
 	float foam = smoothstep(0.72, 0.98, bank) * (0.3 + 0.7 * pow(ripples, 5.0));
