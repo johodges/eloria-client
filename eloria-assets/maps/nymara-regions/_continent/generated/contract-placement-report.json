@@ -80553,9 +80553,9 @@
       "updatedAuthoredMarkers": 75,
       "terrainRevision": "diagonal-spine-v1:019313dcc2e282ba51da5f21a7610f0cd36576890491e08a490f5f3ceaaa31ba",
       "servedTileContinuity": {
-        "keptServedTile": 262,
-        "movedTogether": 18,
-        "movedFromServedTile": 1
+        "keptServedTile": 281,
+        "movedTogether": 0,
+        "movedFromServedTile": 0
       }
     },
     "grey_moors": {
@@ -80811,9 +80811,9 @@
       "updatedAuthoredMarkers": 3,
       "terrainRevision": "diagonal-spine-v1:1f5fb869ebc72735f2533b302942ee22597c8a5c88ead1fe7b5aa6f164331fef",
       "servedTileContinuity": {
-        "keptServedTile": 217,
+        "keptServedTile": 222,
         "movedTogether": 0,
-        "movedFromServedTile": 5
+        "movedFromServedTile": 0
       }
     },
     "sunmane_steppe": {
@@ -80939,7 +80939,7 @@
       "crossings": {
         "declared": [
           {
-            "id": "ContinentalBridgeUnion_503",
+            "id": "ContinentalBridgeUnion_502",
             "site": null,
             "deckTiles": 286,
             "parts": [
@@ -80957,7 +80957,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_505",
+            "id": "ContinentalBridgeUnion_504",
             "site": null,
             "deckTiles": 11,
             "parts": [
@@ -80976,7 +80976,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_506",
+            "id": "ContinentalBridgeUnion_505",
             "site": null,
             "deckTiles": 421,
             "parts": [
@@ -80998,7 +80998,7 @@
         ],
         "notWalkable": [
           {
-            "id": "ContinentalBridgeUnion_504",
+            "id": "ContinentalBridgeUnion_503",
             "site": null,
             "deckTiles": 324,
             "parts": [
@@ -81023,7 +81023,7 @@
       },
       "hubReachableAfterStorageTiles": 91877,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:fc59afa56b452a2995d4c327984d013d3c62ac4d7323e92242305b5b4347c98f",
+      "terrainRevision": "diagonal-spine-v1:d12eea5ba978ebccf748c3ff44472d9ca07a9b6a2ad2369122fc41ec020ebfc2",
       "servedTileContinuity": {
         "keptServedTile": 238,
         "movedTogether": 0,
@@ -81033,11 +81033,11 @@
     "manymouth_delta": {
       "stageFactor": 3,
       "stageMetres": 0.6000000000000001,
-      "walkableServerTiles": 108156,
-      "largestComponentTiles": 106198,
+      "walkableServerTiles": 108157,
+      "largestComponentTiles": 106199,
       "reachableByStage": {
-        "3": 106198,
-        "4": 106226
+        "3": 106199,
+        "4": 106227
       },
       "crossings": {
         "declared": [
@@ -81132,31 +81132,13 @@
                 451
               ]
             ]
-          },
-          {
-            "id": "ContinentalBridgeUnion_502",
-            "site": null,
-            "deckTiles": 27,
-            "parts": [
-              27
-            ],
-            "endTiles": [
-              [
-                216,
-                374
-              ],
-              [
-                225,
-                379
-              ]
-            ]
           }
         ],
         "notWalkable": [],
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 106198,
+      "hubReachableTiles": 106199,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81165,9 +81147,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 106189,
+      "hubReachableAfterStorageTiles": 106190,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:60a35b28fe94fae7b57d0fc9cfcac1d6639e8b958c38c9c0f8a99051a10363ff",
+      "terrainRevision": "diagonal-spine-v1:427ecbe571c3f45bd2c84eb2a67f89ff782de7a6ca2cd8c4d82b296cb5c22eeb",
       "servedTileContinuity": {
         "keptServedTile": 262,
         "movedTogether": 0,
@@ -81187,7 +81169,7 @@
       "crossings": {
         "declared": [
           {
-            "id": "ContinentalBridgeUnion_507",
+            "id": "ContinentalBridgeUnion_506",
             "site": null,
             "deckTiles": 248,
             "parts": [
@@ -81209,7 +81191,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_510",
+            "id": "ContinentalBridgeUnion_509",
             "site": null,
             "deckTiles": 63,
             "parts": [
@@ -81229,7 +81211,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_511",
+            "id": "ContinentalBridgeUnion_510",
             "site": null,
             "deckTiles": 20,
             "parts": [
@@ -81251,7 +81233,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_514",
+            "id": "ContinentalBridgeUnion_513",
             "site": null,
             "deckTiles": 13,
             "parts": [
@@ -81270,7 +81252,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_515",
+            "id": "ContinentalBridgeUnion_514",
             "site": null,
             "deckTiles": 12,
             "parts": [
@@ -81288,7 +81270,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_517",
+            "id": "ContinentalBridgeUnion_516",
             "site": null,
             "deckTiles": 3,
             "parts": [
@@ -81306,7 +81288,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_518",
+            "id": "ContinentalBridgeUnion_517",
             "site": null,
             "deckTiles": 110,
             "parts": [
@@ -81325,7 +81307,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_519",
+            "id": "ContinentalBridgeUnion_518",
             "site": null,
             "deckTiles": 141,
             "parts": [
@@ -81347,7 +81329,7 @@
         ],
         "notWalkable": [
           {
-            "id": "ContinentalBridgeUnion_508",
+            "id": "ContinentalBridgeUnion_507",
             "site": null,
             "deckTiles": 115,
             "parts": [
@@ -81359,7 +81341,7 @@
             "reason": "largest walkable part holds 50 of 115 deck tiles"
           },
           {
-            "id": "ContinentalBridgeUnion_513",
+            "id": "ContinentalBridgeUnion_512",
             "site": null,
             "deckTiles": 0,
             "parts": [],
@@ -81380,7 +81362,7 @@
       },
       "hubReachableAfterStorageTiles": 39909,
       "updatedAuthoredMarkers": 9,
-      "terrainRevision": "diagonal-spine-v1:f084d325a6497d7ad8e0d4789b70a0c5f90507c56333da483451159087440e18",
+      "terrainRevision": "diagonal-spine-v1:7483efe3735d63fb0189ed324c5309f91cb433e435131c96cd9d2115938dab58",
       "servedTileContinuity": {
         "keptServedTile": 255,
         "movedTogether": 0,
@@ -81503,7 +81485,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_509",
+            "id": "ContinentalBridgeUnion_508",
             "site": null,
             "deckTiles": 41,
             "parts": [
@@ -81521,7 +81503,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_512",
+            "id": "ContinentalBridgeUnion_511",
             "site": null,
             "deckTiles": 4,
             "parts": [
@@ -81539,7 +81521,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_516",
+            "id": "ContinentalBridgeUnion_515",
             "site": null,
             "deckTiles": 28,
             "parts": [
@@ -81559,7 +81541,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_520",
+            "id": "ContinentalBridgeUnion_519",
             "site": null,
             "deckTiles": 481,
             "parts": [
@@ -81592,7 +81574,7 @@
       },
       "hubReachableAfterStorageTiles": 136217,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:1dbebe6500d3cf33cd347328646ee289d0db9037a568bbcb2eb1d25572aca72d",
+      "terrainRevision": "diagonal-spine-v1:61c66f790f1472ab66e30d4584a5e9f5932e9ce7ace21297257965f0404e4fa5",
       "servedTileContinuity": {
         "keptServedTile": 224,
         "movedTogether": 0,
@@ -81601,9 +81583,9 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "4e7c11416ce0bca3bf8c5d419897041bafbf74bf1ed49101af8320592333a641",
+    "client_content_manifest.json": "29068a4b1c9bdfa585c94edaeb3246d6ca19a61592f0c4bf7df118e2f7c8d2e7",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
-    "harvesting.txt": "c9e893ecae824e973201c12db13d859f81888d3aa7a792c6bc39765e2ed4679b",
+    "harvesting.txt": "2af403a2dcc5d4fc8469d648a331bffc335194abc3180d3bf27bcca6671531de",
     "instances/amberwood_gauntlet_low.def": "e2a5c0ca17b0c0af42f65728241c6f6d08ae6faea086505572af2fd2e417ae36",
     "instances/amberwood_gauntlet_mid.def": "db1a535c3f73a3677a28d2b2cf5ed71b9c3b8c0ea8308a88b95c6feee28d2672",
     "instances/amethyst_gauntlet_high.def": "644d0d0978354c06d3dec430c9d52a50db2aed224060b403509677a8a8a8d298",
@@ -81626,7 +81608,7 @@
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "cf9cab2da21a220c6b79e65ecc9faed46fd53308013b03dbc330e5c6cb8e0a05",
+    "spawn_groups/invasion/invasion_nymara.def": "e8b26752e82a8bdbb1e349db13317b4fe4569a8924a16504ac77b54a3374a2aa",
     "spawns.txt": "64a538207a3d923c1581246208a18dbd7c6daecae92d6da4a0ba4ae93e4cb1ab",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "b88ab564961389e6f8bed2046ad5835d0e245e47b747aaef7ccc3a3a5f599685"

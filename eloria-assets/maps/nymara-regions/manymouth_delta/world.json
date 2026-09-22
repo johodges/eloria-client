@@ -332,7 +332,8 @@
       "Secret_delta_bund_run",
       "Secret_delta_waystone",
       "Secret_delta_banyan_eyrie",
-      "Secret_delta_rootrun_mouth"
+      "Secret_delta_rootrun_mouth",
+      "BridgeCoastal_coastal-502_Support_Walk_Coastal502_TerminalSupport_manymouth_delta"
     ],
     "width": 1020,
     "height": 1020,
@@ -360,17 +361,17 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 442245,
-    "walkableFraction": 0.425072,
-    "sourceGlbSha256": "e2493f9a98705da162b7086e8bd0796035ea6717ac69be3678bd814b2533a158",
+    "walkableCells": 442249,
+    "walkableFraction": 0.425076,
+    "sourceGlbSha256": "f72cc386045a8b93497b9b487621691da5701052267e503566b3a0f1fcaaefb4",
     "exportStatistics": {
       "walkMeshes": 206,
-      "structuralMeshes": 433,
-      "structuralTriangles": 117316,
-      "walkTriangles": 18646,
-      "steepCells": 24879,
+      "structuralMeshes": 434,
+      "structuralTriangles": 117504,
+      "walkTriangles": 18583,
+      "steepCells": 24875,
       "waterCells": 207756,
-      "structuralCells": 7708,
+      "structuralCells": 7721,
       "thresholdHaloCells": 200,
       "seamCollarCells": 3219
     }
@@ -462,22 +463,6 @@
             -77.7,
             1.399206280708313,
             -141.3
-          ]
-        ]
-      },
-      {
-        "id": "ContinentalBridgeUnion_502",
-        "site": null,
-        "endpoints": [
-          [
-            8.3,
-            0.8500000238418579,
-            -64.3
-          ],
-          [
-            17.3,
-            1.438535988330841,
-            -69.3
           ]
         ]
       }
@@ -2923,7 +2908,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+      "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
       "globalMin": [
         316.0,
         984.0
@@ -2942,9 +2927,9 @@
     }
   },
   "performance": {
-    "glbBytes": 7901116,
-    "nodes": 1833,
-    "meshes": 507,
+    "glbBytes": 7919064,
+    "nodes": 1830,
+    "meshes": 506,
     "externalResources": {
       "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4703,7 +4688,7 @@
       306.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:60a35b28fe94fae7b57d0fc9cfcac1d6639e8b958c38c9c0f8a99051a10363ff",
+  "terrainRevision": "diagonal-spine-v1:427ecbe571c3f45bd2c84eb2a67f89ff782de7a6ca2cd8c4d82b296cb5c22eeb",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4782,7 +4767,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+    "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "streamingChunks": {
@@ -5108,9 +5093,9 @@
             16.4254150390625
           ]
         },
-        "estimatedResidentBytes": 30999142,
-        "glbBytes": 1184136,
-        "geometryResidentBytes": 5920680,
+        "estimatedResidentBytes": 31088962,
+        "glbBytes": 1202100,
+        "geometryResidentBytes": 6010500,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5864,12 +5849,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:60a35b28fe94fae7b57d0fc9cfcac1d6639e8b958c38c9c0f8a99051a10363ff"
+    "terrainRevision": "diagonal-spine-v1:427ecbe571c3f45bd2c84eb2a67f89ff782de7a6ca2cd8c4d82b296cb5c22eeb"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
-    "collisionSha256": "660946a30dba95667e995308ba5cceb95e20739a794355369a0d183bdb6e579e",
-    "terrainRevision": "diagonal-spine-v1:60a35b28fe94fae7b57d0fc9cfcac1d6639e8b958c38c9c0f8a99051a10363ff"
+    "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
+    "collisionSha256": "9f6e0c44d4b4141e1850adbc6007553dcaa155527e738922336352c77c472e44",
+    "terrainRevision": "diagonal-spine-v1:427ecbe571c3f45bd2c84eb2a67f89ff782de7a6ca2cd8c4d82b296cb5c22eeb"
   }
 }

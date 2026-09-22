@@ -2,9 +2,9 @@
   "schema": 1,
   "revision": "diagonal-spine-v1",
   "masterPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\mc006-river-client\\eloria-assets\\maps\\nymara-regions\\_continent\\generated\\continent.glb",
-  "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
+  "masterSha256": "050e625e8f5efdcfa431271b31f7fe542627b214a9531fab2173542e31ed36b5",
   "sourceProfileSha256": {
-    "client_content_manifest.json": "29068a4b1c9bdfa585c94edaeb3246d6ca19a61592f0c4bf7df118e2f7c8d2e7",
+    "client_content_manifest.json": "63ff4a3d428deaa610f094cbe9275609dfefa4fe7f89f22bbb0696be1e786a78",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
     "harvesting.txt": "2af403a2dcc5d4fc8469d648a331bffc335194abc3180d3bf27bcca6671531de",
     "instances/amberwood_gauntlet_low.def": "e2a5c0ca17b0c0af42f65728241c6f6d08ae6faea086505572af2fd2e417ae36",
@@ -41982,7 +41982,7 @@
         207,
         309
       ],
-      "terrainRevision": "diagonal-spine-v1:427ecbe571c3f45bd2c84eb2a67f89ff782de7a6ca2cd8c4d82b296cb5c22eeb",
+      "terrainRevision": "diagonal-spine-v1:dd465b2ef45ece3b6d31cd49c15a6f31a9fe5e3d3e78892c672de5e04f698684",
       "previousServerOrigin": [
         208,
         310
@@ -264154,5 +264154,5 @@
     "eloria/walkthrough.py": "b310f3ca4efabe1838fc6a8de4eb5c471f02a7ce7cd38611ccb5c66410fa8cdb",
     "eloria/pk.py": "e89cb845c21aa3fe41c2b49a8a5597b91c5729774e9f19636fd2d6d03ea731df"
   },
-  "sourcePublicationSha256": "5109e48882b6f783360e0c9097a566ef07239bc9762d57e457b58bc417770423"
+  "sourcePublicationSha256": "4575cc25a8b168f543fedf2d3a6b3db4b83157e54503bd47a89a0a9589b61f30"
 }

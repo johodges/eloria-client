@@ -262,7 +262,7 @@
     },
     "walkableCells": 235650,
     "walkableFraction": 0.098339,
-    "sourceGlbSha256": "ec7676091a22ccd82210b0c4b791794f6fca5c9439150e604ff4d2abbc9c7246",
+    "sourceGlbSha256": "0b72aedcdcb3afdbaa546a2ea5fd9e2162ab0af29f601b53e67c8cfb32b5ad85",
     "exportStatistics": {
       "walkMeshes": 95,
       "structuralMeshes": 278,
@@ -286,7 +286,7 @@
     "collisionFile": "collision.bin",
     "crossings": [
       {
-        "id": "ContinentalBridgeUnion_507",
+        "id": "ContinentalBridgeUnion_506",
         "site": null,
         "endpoints": [
           [
@@ -302,7 +302,7 @@
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_510",
+        "id": "ContinentalBridgeUnion_509",
         "site": null,
         "endpoints": [
           [
@@ -318,7 +318,7 @@
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_511",
+        "id": "ContinentalBridgeUnion_510",
         "site": null,
         "endpoints": [
           [
@@ -334,7 +334,7 @@
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_514",
+        "id": "ContinentalBridgeUnion_513",
         "site": null,
         "endpoints": [
           [
@@ -350,7 +350,7 @@
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_515",
+        "id": "ContinentalBridgeUnion_514",
         "site": null,
         "endpoints": [
           [
@@ -366,7 +366,7 @@
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_517",
+        "id": "ContinentalBridgeUnion_516",
         "site": null,
         "endpoints": [
           [
@@ -382,7 +382,7 @@
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_518",
+        "id": "ContinentalBridgeUnion_517",
         "site": null,
         "endpoints": [
           [
@@ -398,7 +398,7 @@
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_519",
+        "id": "ContinentalBridgeUnion_518",
         "site": null,
         "endpoints": [
           [
@@ -2029,7 +2029,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+      "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
       "globalMin": [
         0.0,
         1226.0
@@ -3581,7 +3581,7 @@
       110.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:f084d325a6497d7ad8e0d4789b70a0c5f90507c56333da483451159087440e18",
+  "terrainRevision": "diagonal-spine-v1:7483efe3735d63fb0189ed324c5309f91cb433e435131c96cd9d2115938dab58",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -3658,7 +3658,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+    "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "streamingChunks": {
@@ -5142,12 +5142,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:f084d325a6497d7ad8e0d4789b70a0c5f90507c56333da483451159087440e18"
+    "terrainRevision": "diagonal-spine-v1:7483efe3735d63fb0189ed324c5309f91cb433e435131c96cd9d2115938dab58"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+    "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
     "collisionSha256": "efa80052e1d17a368df9445bac9439b3a41c46a9f05978a2c2325354a4334d44",
-    "terrainRevision": "diagonal-spine-v1:f084d325a6497d7ad8e0d4789b70a0c5f90507c56333da483451159087440e18"
+    "terrainRevision": "diagonal-spine-v1:7483efe3735d63fb0189ed324c5309f91cb433e435131c96cd9d2115938dab58"
   }
 }

@@ -209,7 +209,7 @@
     },
     "walkableCells": 387074,
     "walkableFraction": 0.279885,
-    "sourceGlbSha256": "223377a230991afa47dc55d7a7aa39ab1a761679539426329cdc82581c5ffc0e",
+    "sourceGlbSha256": "f87d03e75962ccaa76e8bfdab02a0f4817ea8a07d7470aa0dec53114a0d4793f",
     "exportStatistics": {
       "walkMeshes": 41,
       "structuralMeshes": 237,
@@ -233,7 +233,7 @@
     "collisionFile": "collision.bin",
     "crossings": [
       {
-        "id": "ContinentalBridgeUnion_503",
+        "id": "ContinentalBridgeUnion_502",
         "site": null,
         "endpoints": [
           [
@@ -249,7 +249,7 @@
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_505",
+        "id": "ContinentalBridgeUnion_504",
         "site": null,
         "endpoints": [
           [
@@ -265,7 +265,7 @@
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_506",
+        "id": "ContinentalBridgeUnion_505",
         "site": null,
         "endpoints": [
           [
@@ -2903,7 +2903,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+      "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
       "globalMin": [
         0.0,
         724.0
@@ -4338,7 +4338,7 @@
       240.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:fc59afa56b452a2995d4c327984d013d3c62ac4d7323e92242305b5b4347c98f",
+  "terrainRevision": "diagonal-spine-v1:d12eea5ba978ebccf748c3ff44472d9ca07a9b6a2ad2369122fc41ec020ebfc2",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4424,7 +4424,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+    "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "streamingChunks": {
@@ -5553,12 +5553,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:fc59afa56b452a2995d4c327984d013d3c62ac4d7323e92242305b5b4347c98f"
+    "terrainRevision": "diagonal-spine-v1:d12eea5ba978ebccf748c3ff44472d9ca07a9b6a2ad2369122fc41ec020ebfc2"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+    "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
     "collisionSha256": "ff8f9a6f7e156480f5e1d15548bbf13455dcb42325fa2e156d70df2e6af525b4",
-    "terrainRevision": "diagonal-spine-v1:fc59afa56b452a2995d4c327984d013d3c62ac4d7323e92242305b5b4347c98f"
+    "terrainRevision": "diagonal-spine-v1:d12eea5ba978ebccf748c3ff44472d9ca07a9b6a2ad2369122fc41ec020ebfc2"
   }
 }

@@ -1,12 +1,16 @@
 {
   "masterPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\mc006-river-client\\eloria-assets\\maps\\nymara-regions\\_continent\\generated\\continent.glb",
-  "masterSha256": "fd3ba78fb77759e9df29449070693ea13b096ec9b4f68cba0fbc6d655fdce5ee",
+  "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
   "geometrySources": {
-    "build_continent.py": "9e37abc3d0678c83133673862dac3d8b63c1393b7c86f534e584067830b13d94",
+    "build_continent.py": "ee18925e9093a3cfc24563907e338bf654a42acec00bcdea1424e7aaed23f55b",
     "scene_io.py": "9691cc8d611cf1fd6939c9de9ac20dd013c34f62c1cdc9833791d9416481f9dc",
     "terrain_export.py": "8172b53f4fc2b65780120e68b945e86991aa8ea2f70e4bfa05a49af809cbccb6",
-    "bridge_export.py": "14d34c6954493fc99950395f4a0f12d1110d62040470042ee08736994ffbb317",
+    "bridge_export.py": "99eb1f31e4e2a8703d9f1a6d6aec9690bf0b5ecefdd8da59d6d65b8cab39a563",
     "bridge_profiles.py": "6a3e212582e3493da4d0ad09c537e8e813ff05c567d324dbbda7bfeeb3fd0847",
+    "sea_crossings.py": "c2d2f911935154d3d0fb644d7e26641633d37de09e2e35fcf6cb4f9e7367f21d",
+    "coastal_prepare.py": "4e7b774748397f7774b4356b3c543fab496cf6fb923f97a2d8fdecae0d80fb4c",
+    "coastal_bridge_export.py": "8b62de6f17c02aecc05fc5093dd0ded1b2913e1c09c41dd3f1a890a9ce15cb30",
+    "coastal_bank_fit.py": "3006bfd29e8ade22c111ca6752787b4b4ef77dcada4818a596947e5f8d31e5d2",
     "../_northern/requirements.txt": "35dd02e1045a2d03670812fb5096130a323d6b7bde7119a867ffb3b0db67a620",
     "ferry_export.py": "def0b4549f319ee7094fefeb799b8bc75845a2183f4ee973a1f6f52c9f225965",
     "crossings.py": "b6ee99e226b9a26009702715f77f806c8da2f7ea28d0b53242ca11f39a8d0d18",
@@ -22,7 +26,7 @@
     "shapely": "2.1.2",
     "geos": "3.13.1"
   },
-  "compositionSha256": "a1747cb0828d77737e501dbd6b48f1ef64238578414414d27a4f73236ec8c522",
+  "compositionSha256": "43c8f8356e1336d25ba102f535dd258fc579a52d27aa72674935e65017b7ee95",
   "greyCrossingLandmarks": [
     {
       "id": "grey-boardwalk-0",
@@ -102,17 +106,17 @@
     },
     "westhaven": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\mc006-river-client\\eloria-assets\\maps\\nymara-regions\\westhaven\\world.json",
-      "glbSha256": "223377a230991afa47dc55d7a7aa39ab1a761679539426329cdc82581c5ffc0e",
+      "glbSha256": "f87d03e75962ccaa76e8bfdab02a0f4817ea8a07d7470aa0dec53114a0d4793f",
       "chunks": 26
     },
     "manymouth_delta": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\mc006-river-client\\eloria-assets\\maps\\nymara-regions\\manymouth_delta\\world.json",
-      "glbSha256": "e2493f9a98705da162b7086e8bd0796035ea6717ac69be3678bd814b2533a158",
+      "glbSha256": "f72cc386045a8b93497b9b487621691da5701052267e503566b3a0f1fcaaefb4",
       "chunks": 29
     },
     "crownwater": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\mc006-river-client\\eloria-assets\\maps\\nymara-regions\\crownwater\\world.json",
-      "glbSha256": "ec7676091a22ccd82210b0c4b791794f6fca5c9439150e604ff4d2abbc9c7246",
+      "glbSha256": "0b72aedcdcb3afdbaa546a2ea5fd9e2162ab0af29f601b53e67c8cfb32b5ad85",
       "chunks": 40
     },
     "verdant_stair": {
@@ -122,7 +126,7 @@
     },
     "ssarathi_ruins": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\mc006-river-client\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\world.json",
-      "glbSha256": "a9d8333e5ddfe6d8c76f7b1bc8379013fb950bbaf07eb667b0fd6d8412a51d72",
+      "glbSha256": "d5e1c7678fe43ccdbee957a5426df668de5137eda113fc3517c7e2fead658997",
       "chunks": 44
     }
   }

@@ -2,9 +2,9 @@
   "schema": 1,
   "revision": "diagonal-spine-v1",
   "masterPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\mc006-river-client\\eloria-assets\\maps\\nymara-regions\\_continent\\generated\\continent.glb",
-  "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
+  "masterSha256": "3830d73007afc6d41e22c42f1e43efce72454b29dedb2b0994ab79c7c086eb97",
   "sourceProfileSha256": {
-    "client_content_manifest.json": "29068a4b1c9bdfa585c94edaeb3246d6ca19a61592f0c4bf7df118e2f7c8d2e7",
+    "client_content_manifest.json": "5f01a30d2c22c4e7d92c2e60bc3a1e81dbb6ba738ace61e09562c8414dc2484c",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
     "harvesting.txt": "2af403a2dcc5d4fc8469d648a331bffc335194abc3180d3bf27bcca6671531de",
     "instances/amberwood_gauntlet_low.def": "e2a5c0ca17b0c0af42f65728241c6f6d08ae6faea086505572af2fd2e417ae36",
@@ -29,7 +29,7 @@
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "e8b26752e82a8bdbb1e349db13317b4fe4569a8924a16504ac77b54a3374a2aa",
+    "spawn_groups/invasion/invasion_nymara.def": "549dfee0ca032c2a8e733a6530b0019f3938c20b3bca06b92364d2277684ad12",
     "spawns.txt": "64a538207a3d923c1581246208a18dbd7c6daecae92d6da4a0ba4ae93e4cb1ab",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "b88ab564961389e6f8bed2046ad5835d0e245e47b747aaef7ccc3a3a5f599685"
@@ -41982,7 +41982,7 @@
         207,
         309
       ],
-      "terrainRevision": "diagonal-spine-v1:427ecbe571c3f45bd2c84eb2a67f89ff782de7a6ca2cd8c4d82b296cb5c22eeb",
+      "terrainRevision": "diagonal-spine-v1:31c212fac9ee496cf8d941cdf457b0787401920c76ce0239379e7d448220834b",
       "previousServerOrigin": [
         208,
         310
@@ -264154,5 +264154,5 @@
     "eloria/walkthrough.py": "b310f3ca4efabe1838fc6a8de4eb5c471f02a7ce7cd38611ccb5c66410fa8cdb",
     "eloria/pk.py": "e89cb845c21aa3fe41c2b49a8a5597b91c5729774e9f19636fd2d6d03ea731df"
   },
-  "sourcePublicationSha256": "5109e48882b6f783360e0c9097a566ef07239bc9762d57e457b58bc417770423"
+  "sourcePublicationSha256": "e3f5717f29f6a0f5f06d5b5664026bd0068b40aa7fb8809da03ae86c541108d0"
 }
