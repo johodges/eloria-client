@@ -1,0 +1,89 @@
+{
+  "schema": "eloria-map-authoring-territories-v1",
+  "entries": [
+    {
+      "id": "amberwood",
+      "label": "Amberwood",
+      "manifestPath": "res://../eloria-assets/maps/nymara-regions/amberwood/world.json",
+      "scenePath": null,
+      "authoringSpecPath": null
+    },
+    {
+      "id": "amethyst_barrens",
+      "label": "Amethyst Barrens",
+      "manifestPath": "res://../eloria-assets/maps/nymara-regions/amethyst_barrens/world.json",
+      "scenePath": null,
+      "authoringSpecPath": null
+    },
+    {
+      "id": "crownwater",
+      "label": "Crownwater",
+      "manifestPath": "res://../eloria-assets/maps/nymara-regions/crownwater/world.json",
+      "scenePath": null,
+      "authoringSpecPath": null
+    },
+    {
+      "id": "four_gates",
+      "label": "Four Gates",
+      "manifestPath": "res://../eloria-assets/maps/four-gates/world.json",
+      "scenePath": null,
+      "authoringSpecPath": null
+    },
+    {
+      "id": "grey_moors",
+      "label": "Grey Moors",
+      "manifestPath": "res://../eloria-assets/maps/nymara-regions/grey_moors/world.json",
+      "scenePath": null,
+      "authoringSpecPath": null
+    },
+    {
+      "id": "manymouth_delta",
+      "label": "Manymouth Delta",
+      "manifestPath": "res://../eloria-assets/maps/nymara-regions/manymouth_delta/world.json",
+      "scenePath": null,
+      "authoringSpecPath": null
+    },
+    {
+      "id": "mirrorhold",
+      "label": "Mirrorhold",
+      "manifestPath": "res://../eloria-assets/maps/nymara-regions/mirrorhold/world.json",
+      "scenePath": null,
+      "authoringSpecPath": null
+    },
+    {
+      "id": "ssarathi_ruins",
+      "label": "Ssarathi Ruins",
+      "manifestPath": "res://../eloria-assets/maps/nymara-regions/ssarathi_ruins/world.json",
+      "scenePath": null,
+      "authoringSpecPath": null
+    },
+    {
+      "id": "sunmane_steppe",
+      "label": "Sunmane Steppe",
+      "manifestPath": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/world.json",
+      "scenePath": "res://world_authoring/regions/sunmane_steppe/sunmane_steppe.tscn",
+      "authoringSpecPath": "res://world_authoring/regions/sunmane_steppe/region-authoring-spec.json"
+    },
+    {
+      "id": "verdant_stair",
+      "label": "Verdant Stair",
+      "manifestPath": "res://../eloria-assets/maps/nymara-regions/verdant_stair/world.json",
+      "scenePath": null,
+      "authoringSpecPath": null
+    },
+    {
+      "id": "westhaven",
+      "label": "Westhaven",
+      "manifestPath": "res://../eloria-assets/maps/nymara-regions/westhaven/world.json",
+      "scenePath": null,
+      "authoringSpecPath": null
+    },
+    {
+      "id": "whitehorn_range",
+      "label": "Whitehorn Range",
+      "manifestPath": "res://../eloria-assets/maps/nymara-regions/whitehorn_range/world.json",
+      "scenePath": null,
+      "authoringSpecPath": null
+    }
+  ]
+}

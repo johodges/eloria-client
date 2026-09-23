@@ -20,7 +20,7 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/map_asset_palette/plugin.cfg")
+enabled=PackedStringArray("res://addons/map_asset_palette/plugin.cfg", "res://addons/map_authoring_workspace/plugin.cfg")
 
 [rendering]
 renderer/rendering_method="gl_compatibility"
