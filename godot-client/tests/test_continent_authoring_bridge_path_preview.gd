@@ -55,6 +55,7 @@ func _run() -> void:
 
 	_check_path_clearance(road, terrain, false)
 	_check_path_clearance(river, terrain, true)
+	_check_shape_terrain_control(region, terrain)
 	var old_revision: int = terrain.preview_revision
 	var old_path_signature: Array = road.call("_current_preview_signature")
 	region.get_node("Terrain/Patches/Lift").position.y += 1.0
@@ -247,6 +248,47 @@ func _check_curved_snapshot() -> void:
 	_check(middle_anchor,
 		"snapshot retains exact curve stations and their per-point widths")
 	path.free()
+
+
+func _check_shape_terrain_control(region: Node3D, terrain: Node3D) -> void:
+	var roads := region.get_node("Roads")
+	var baseline: PackedFloat32Array = terrain.effective_heights()
+	var passive := _path("PassiveRoad", "road", Vector3(-5.0, 20.0, 5.0),
+		Vector3(5.0, 20.0, 5.0), 2.0)
+	roads.add_child(passive)
+	var inspector_property := {}
+	for property: Dictionary in passive.get_property_list():
+		if property.name == &"shape_terrain":
+			inspector_property = property
+	passive.set("shape_terrain", false)
+	terrain.refresh_preview()
+	var disabled_heights: PackedFloat32Array = terrain.effective_heights()
+	passive.position.x += 2.0
+	terrain.refresh_preview()
+	var moved_heights: PackedFloat32Array = terrain.effective_heights()
+	roads.remove_child(passive)
+	terrain.refresh_preview()
+	var deleted_heights: PackedFloat32Array = terrain.effective_heights()
+	_check(not inspector_property.is_empty() and
+		(int(inspector_property.usage) & PROPERTY_USAGE_STORAGE) == 0 and
+		passive.properties == {"terrainConform": false},
+		"Shape terrain edits the existing path property without duplicate storage")
+	_check(disabled_heights == baseline and moved_heights == baseline and
+		deleted_heights == baseline,
+		"a follow-existing road can move or be deleted without changing authored ground")
+	passive.free()
+
+	var shaping := _path("ShapingRoad", "road", Vector3(-5.0, 20.0, 5.0),
+		Vector3(5.0, 20.0, 5.0), 2.0)
+	roads.add_child(shaping)
+	var defaults_to_shaping: bool = bool(shaping.get("shape_terrain")) and \
+		not shaping.properties.has("terrainConform")
+	terrain.refresh_preview()
+	_check(defaults_to_shaping and terrain.effective_heights() != baseline,
+		"new roads default to explicit curve-height terrain shaping")
+	roads.remove_child(shaping)
+	shaping.free()
+	terrain.refresh_preview()
 
 
 func _write_heights() -> void:

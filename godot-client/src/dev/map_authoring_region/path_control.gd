@@ -12,9 +12,34 @@ extends "res://src/dev/map_authoring_pilot/width_path.gd"
 @export var preview_enabled := true
 
 const LATERAL_STEPS := 6
+const SHAPE_TERRAIN_PROPERTY := &"shape_terrain"
 
 var _preview_signature: Array = []
 var _preview_elapsed := 0.0
+
+
+func _get_property_list() -> Array[Dictionary]:
+	return [{
+		"name": SHAPE_TERRAIN_PROPERTY,
+		"type": TYPE_BOOL,
+		"hint_string": "Shape terrain from this path's curve height; when off, the path follows existing terrain.",
+		"usage": PROPERTY_USAGE_EDITOR,
+	}]
+
+
+func _get(property: StringName) -> Variant:
+	if property == SHAPE_TERRAIN_PROPERTY:
+		return bool(properties.get("terrainConform", true))
+	return null
+
+
+func _set(property: StringName, value: Variant) -> bool:
+	if property != SHAPE_TERRAIN_PROPERTY:
+		return false
+	var updated := properties.duplicate(true)
+	updated["terrainConform"] = bool(value)
+	properties = updated
+	return true
 
 
 func _ready() -> void:

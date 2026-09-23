@@ -45,9 +45,19 @@ labels and do not silently replace IDs.
 The default output is
 `eloria-assets/maps/nymara-regions/sunmane_steppe/authoring/continent-authoring.json`.
 Sidecar paths are relative to that JSON, stay inside its directory, and carry
-SHA-256 digests. `terrain.baseHeights` is the natural 2 m landform before road
-or river effects. Terrain patches and paths remain separate authoring features,
-so moving or deleting a feature cannot leave its old terrain effect behind.
+SHA-256 digests. In Sunmane, `terrain.baseHeights` is the natural 2 m landform
+before road or river effects. Terrain patches and shaping paths remain separate
+authoring features, so moving or deleting one of those features cannot leave
+its old terrain effect behind.
+
+An imported territory may instead keep its certified, already graded terrain
+as the explicit saved base. Its imported roads have **Shape terrain** off and
+follow that existing ground. Moving, widening, or deleting one of those roads
+does not automatically heal or move the terrain beneath it. Turn **Shape
+terrain** on to make that road's curve heights grade the ground, or add saved
+terrain patches for deliberate height edits. New roads default to **Shape
+terrain** on. This Inspector control writes the existing
+`properties.terrainConform` value; it is not a second saved terrain mode.
 
 ```json
 {
