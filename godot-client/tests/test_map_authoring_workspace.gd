@@ -176,13 +176,45 @@ func _test_relative_clipping() -> void:
 	var published_terrain := MeshInstance3D.new()
 	published_terrain.name = "Terrain_Test_00_00"
 	published_terrain.mesh = crossing_source
+	published_terrain.position.y = 7.0
 	published.add_child(published_terrain)
+	var published_water := MeshInstance3D.new()
+	published_water.name = "Water_Test_00_00"
+	published_water.mesh = crossing_source
+	published_water.position.y = 8.0
+	published.add_child(published_water)
 	_expect(preview._add_published_owned_surfaces(published, {
 		"ownership_polygon": polygon}),
 		"published fallback terrain is clipped against ownership")
 	_expect(not published_terrain.visible and \
 			preview.get_node_or_null("Owned_Terrain_Test_00_00") != null,
 		"published rectangular terrain is replaced by an ownerless clipped display")
+	var published_heights := preview._published_height_map(published)
+	_expect(is_equal_approx(float(published_heights.get(
+		Preview._height_key(Vector2(-2, 0)), NAN)), 8.0),
+		"published boundary sampling uses transformed terrain mesh height")
+	var published_sampler := preview._published_height_sampler(published)
+	_expect(is_equal_approx(Preview._sample_published_height(
+		Vector2(-0.5, 0), published_sampler), 8.0),
+		"published boundary interpolates water height inside a triangle without an exact vertex")
+	_expect(is_nan(Preview._sample_published_height(Vector2(2, 2), published_sampler)),
+		"published boundary reports a point outside every rendered triangle as uncovered")
+	var boundary_coverage := preview._add_boundary(published, {"id": "published_test",
+		"label": "Published test",
+		"translation": Vector3.ZERO,
+		"ownership_polygon": PackedVector2Array([
+			Vector2(-2, 0), Vector2(1, 0), Vector2(-2, 1), Vector2(2, 2)])})
+	var published_boundary := preview.get_node("OwnershipBoundary_published_test") \
+		as MeshInstance3D
+	var boundary_vertices: PackedVector3Array = \
+		published_boundary.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+	_expect(is_equal_approx(boundary_vertices[0].y, 8.15),
+		"published ownership boundary is draped just above its rendered terrain edge")
+	_expect(int(boundary_coverage.matched) >= 3 and int(boundary_coverage.missing) > 0,
+		"published boundary reports real mesh samples and unavailable contour points")
+	for vertex in boundary_vertices:
+		_expect(is_equal_approx(vertex.y, 8.15),
+			"unavailable boundary spans are omitted instead of falling back to flat Y")
 	preview.clear()
 	_expect(published_terrain.visible,
 		"hiding published references restores their source terrain visibility")

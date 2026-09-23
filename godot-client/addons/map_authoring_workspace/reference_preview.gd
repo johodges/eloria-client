@@ -6,6 +6,8 @@ signal status_changed(message: String)
 
 const HOST_NAME := "__TerritoryReferenceHost"
 const ACTIVE_CLIP_NAME := "ActiveOwnedTerrain"
+const BOUNDARY_SAMPLE_METRES := 2.0
+const PUBLISHED_HEIGHT_BIN_METRES := 8.0
 
 var active_root: Node3D
 var active_entry: Dictionary = {}
@@ -98,12 +100,13 @@ func refresh_if_changed() -> bool:
 
 func _add_reference(entry: Dictionary, generation: int) -> String:
 	var source_path := String(entry.get("source_path", ""))
-	if source_path.is_empty() or not ResourceLoader.exists(source_path):
+	var is_authored := String(entry.source_kind) == "saved_authored"
+	if source_path.is_empty() or (not ResourceLoader.exists(source_path) if is_authored \
+			else not FileAccess.file_exists(source_path)):
 		return "%s source is unavailable." % String(entry.label)
 	var packed := _cache.get(String(entry.get("cache_key", source_path))) as PackedScene
 	if packed == null:
-		packed = ResourceLoader.load(source_path, "PackedScene",
-			ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+		packed = _load_source(source_path, is_authored)
 		if packed == null:
 			return "%s could not load %s." % [String(entry.label), source_path]
 		_store_cache(String(entry.get("cache_key", source_path)), packed)
@@ -136,12 +139,35 @@ func _add_reference(entry: Dictionary, generation: int) -> String:
 			remove_child(instance)
 			instance.queue_free()
 			return "%s published terrain could not be ownership-clipped." % String(entry.label)
-	_add_boundary(instance, entry)
+	var boundary_coverage := _add_boundary(instance, entry)
 	if String(entry.source_kind) == "saved_authored":
 		_strip_reference_scripts(instance)
 	instance.process_mode = Node.PROCESS_MODE_DISABLED
-	_references[String(entry.id)] = {"entry": entry.duplicate(true), "node": instance}
+	_references[String(entry.id)] = {
+		"entry": entry.duplicate(true),
+		"node": instance,
+		"boundary_coverage": boundary_coverage,
+	}
 	return ""
+
+
+func _load_source(source_path: String, is_authored: bool) -> PackedScene:
+	if is_authored:
+		return ResourceLoader.load(source_path, "PackedScene",
+			ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+	var state := GLTFState.new()
+	var document := GLTFDocument.new()
+	if document.append_from_file(ProjectSettings.globalize_path(source_path), state) != OK:
+		return null
+	var generated := document.generate_scene(state)
+	if generated == null:
+		return null
+	var packed := PackedScene.new()
+	if packed.pack(generated) != OK:
+		generated.free()
+		return null
+	generated.free()
+	return packed
 
 
 func clear_source_cache() -> void:
@@ -204,6 +230,14 @@ func _add_owned_terrain(region: Node3D, entry: Dictionary, display_name: String,
 
 func _add_published_owned_surfaces(region: Node3D, entry: Dictionary) -> bool:
 	var clipped_count := 0
+	var terrain_material := StandardMaterial3D.new()
+	terrain_material.albedo_color = Color(0.46, 0.39, 0.56, 0.92)
+	terrain_material.roughness = 0.9
+	terrain_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	var water_material := StandardMaterial3D.new()
+	water_material.albedo_color = Color(0.18, 0.52, 0.68, 0.78)
+	water_material.roughness = 0.35
+	water_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	for child in region.find_children("*", "MeshInstance3D", true, false):
 		var source := child as MeshInstance3D
 		var source_name := String(source.name)
@@ -219,8 +253,10 @@ func _add_published_owned_surfaces(region: Node3D, entry: Dictionary) -> bool:
 		display.name = "Owned_%s" % source_name
 		display.mesh = mesh
 		display.transform = global_transform.affine_inverse() * source.global_transform
+		display.material_override = water_material if source_name.begins_with("Water_") \
+			else terrain_material
 		display.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		display.transparency = maxf(source.transparency, 0.28)
+		display.transparency = 0.08
 		add_child(display, false, Node.INTERNAL_MODE_FRONT)
 		clipped_count += 1
 	return clipped_count > 0
@@ -266,26 +302,55 @@ func _strip_reference_scripts(root: Node) -> void:
 		root.set_script(null)
 
 
-func _add_boundary(region: Node3D, entry: Dictionary) -> void:
+func _add_boundary(region: Node3D, entry: Dictionary) -> Dictionary:
 	var polygon: PackedVector2Array = entry.ownership_polygon
 	var entry_translation: Vector3 = entry.translation
 	var active_translation_value: Vector3 = active_entry.translation
 	var vertices := PackedVector3Array()
 	var terrain := region.get_node_or_null("Terrain")
+	var published_sampler := _published_height_sampler(region) if terrain == null else {}
+	var sample_count := 0
+	var matched_count := 0
+	var missing_count := 0
 	for index in polygon.size():
 		var first: Vector2 = polygon[index]
 		var second: Vector2 = polygon[(index + 1) % polygon.size()]
-		for point_value in [first, second]:
-			var point: Vector2 = point_value
+		var steps := maxi(1, ceili(first.distance_to(second) / BOUNDARY_SAMPLE_METRES))
+		var previous := Vector3.ZERO
+		var previous_valid := false
+		for step in steps + 1:
+			var point := first.lerp(second, float(step) / float(steps))
 			var local: Vector2 = point - Vector2(entry_translation.x,
 				entry_translation.z)
-			var height := 0.15
+			var sampled_height := NAN
 			if terrain != null and terrain.has_method("height_at_local"):
-				var sampled: float = terrain.call("height_at_local", local.x, local.y)
-				if not is_nan(sampled):
-					height = sampled + 0.15
-			vertices.append(Vector3(point.x - active_translation_value.x, height,
-				point.y - active_translation_value.z))
+				sampled_height = terrain.call("height_at_local", local.x, local.y)
+			elif not published_sampler.is_empty():
+				sampled_height = _sample_published_height(point, published_sampler)
+			sample_count += 1
+			if is_nan(sampled_height):
+				missing_count += 1
+				previous_valid = false
+				continue
+			matched_count += 1
+			var current := Vector3(point.x - active_translation_value.x,
+				sampled_height + 0.15, point.y - active_translation_value.z)
+			if previous_valid:
+				vertices.append(previous)
+				vertices.append(current)
+			previous = current
+			previous_valid = true
+	var coverage := {
+		"samples": sample_count,
+		"matched": matched_count,
+		"missing": missing_count,
+		"segments": vertices.size() / 2,
+	}
+	if missing_count > 0:
+		push_warning("%s ownership boundary sampled %d/%d terrain points; unavailable spans were omitted." % [
+			String(entry.label), matched_count, sample_count])
+	if vertices.is_empty():
+		return coverage
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX] = vertices
@@ -301,7 +366,116 @@ func _add_boundary(region: Node3D, entry: Dictionary) -> void:
 	boundary.name = "OwnershipBoundary_%s" % String(entry.id)
 	boundary.mesh = mesh
 	boundary.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	boundary.set_meta(&"map_authoring_boundary_coverage", coverage)
 	add_child(boundary, false, Node.INTERNAL_MODE_FRONT)
+	return coverage
+
+
+func _published_height_map(region: Node3D) -> Dictionary:
+	var result := {}
+	for child in region.find_children("*", "MeshInstance3D", true, false):
+		var source := child as MeshInstance3D
+		if not String(source.name).begins_with("Terrain_") and \
+				not String(source.name).begins_with("Water_"):
+			continue
+		if source.mesh == null:
+			continue
+		var source_to_active := active_root.global_transform.affine_inverse() * \
+			source.global_transform
+		for surface_index in source.mesh.get_surface_count():
+			var arrays: Array = source.mesh.surface_get_arrays(surface_index)
+			var source_vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+			for vertex in source_vertices:
+				var active_point := source_to_active * vertex
+				var global_point := Vector2(active_point.x + active_entry.translation.x,
+					active_point.z + active_entry.translation.z)
+				var key := _height_key(global_point)
+				result[key] = maxf(float(result.get(key, -INF)), active_point.y)
+	return result
+
+
+func _published_height_sampler(region: Node3D) -> Dictionary:
+	var sampler := {
+		"vertices": _published_height_map(region),
+		"triangles": [],
+		"bins": {},
+	}
+	var triangles: Array = sampler.triangles
+	var bins: Dictionary = sampler.bins
+	for child in region.find_children("*", "MeshInstance3D", true, false):
+		var source := child as MeshInstance3D
+		var source_name := String(source.name)
+		if (not source_name.begins_with("Terrain_") and \
+				not source_name.begins_with("Water_")) or source.mesh == null:
+			continue
+		var source_to_active := active_root.global_transform.affine_inverse() * \
+			source.global_transform
+		for surface_index in source.mesh.get_surface_count():
+			var arrays: Array = source.mesh.surface_get_arrays(surface_index)
+			var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+			var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX] \
+				if arrays[Mesh.ARRAY_INDEX] is PackedInt32Array else PackedInt32Array()
+			if indices.is_empty():
+				indices.resize(vertices.size())
+				for vertex_index in vertices.size():
+					indices[vertex_index] = vertex_index
+			for offset in range(0, indices.size() - 2, 3):
+				var triangle := PackedVector3Array()
+				for corner in 3:
+					var active_point := source_to_active * vertices[indices[offset + corner]]
+					triangle.append(Vector3(
+						active_point.x + active_entry.translation.x,
+						active_point.y,
+						active_point.z + active_entry.translation.z))
+				var projected := PackedVector2Array([
+					Vector2(triangle[0].x, triangle[0].z),
+					Vector2(triangle[1].x, triangle[1].z),
+					Vector2(triangle[2].x, triangle[2].z)])
+				if _barycentric(projected[0], projected) == null:
+					continue
+				var triangle_index := triangles.size()
+				triangles.append(triangle)
+				var minimum := projected[0].min(projected[1]).min(projected[2])
+				var maximum := projected[0].max(projected[1]).max(projected[2])
+				for bin_y in range(floori(minimum.y / PUBLISHED_HEIGHT_BIN_METRES),
+						floori(maximum.y / PUBLISHED_HEIGHT_BIN_METRES) + 1):
+					for bin_x in range(floori(minimum.x / PUBLISHED_HEIGHT_BIN_METRES),
+							floori(maximum.x / PUBLISHED_HEIGHT_BIN_METRES) + 1):
+						var key := Vector2i(bin_x, bin_y)
+						var bucket: PackedInt32Array = bins.get(key, PackedInt32Array())
+						bucket.append(triangle_index)
+						bins[key] = bucket
+	return sampler
+
+
+static func _sample_published_height(point: Vector2, sampler: Dictionary) -> float:
+	var exact: Dictionary = sampler.get("vertices", {})
+	var result := float(exact.get(_height_key(point), NAN))
+	var bin_key := Vector2i(floori(point.x / PUBLISHED_HEIGHT_BIN_METRES),
+		floori(point.y / PUBLISHED_HEIGHT_BIN_METRES))
+	var bins: Dictionary = sampler.get("bins", {})
+	var triangles: Array = sampler.get("triangles", [])
+	var candidates: PackedInt32Array = bins.get(bin_key, PackedInt32Array())
+	for triangle_index in candidates:
+		var triangle: PackedVector3Array = triangles[triangle_index]
+		var projected := PackedVector2Array([
+			Vector2(triangle[0].x, triangle[0].z),
+			Vector2(triangle[1].x, triangle[1].z),
+			Vector2(triangle[2].x, triangle[2].z)])
+		var weight_value = _barycentric(point, projected)
+		if weight_value == null:
+			continue
+		var weights: Vector3 = weight_value
+		if weights.x < -0.00001 or weights.y < -0.00001 or weights.z < -0.00001:
+			continue
+		var sampled: float = triangle[0].y * weights.x + triangle[1].y * weights.y + \
+			triangle[2].y * weights.z
+		result = sampled if is_nan(result) else maxf(result, sampled)
+	return result
+
+
+static func _height_key(point: Vector2) -> Vector2i:
+	return Vector2i(roundi(point.x * 1000.0), roundi(point.y * 1000.0))
 
 
 static func clipped_mesh(source: MeshInstance3D, active: Node3D,
