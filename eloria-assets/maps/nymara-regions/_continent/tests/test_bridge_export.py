@@ -50,22 +50,37 @@ def water(x,z,*,height,plan):
 
 
 class BridgeUnionTests(unittest.TestCase):
-    def test_site13_uses_bounded_asymmetric_landings_for_keeper_route(self):
+    def test_authored_bridge_authority_suppresses_only_wholly_owned_loose_components(self):
+        owners=np.array([1,1,1])
+        self.assertTrue(B._suppresses_generated_authored_component(
+            {'id':501,'sites':[]},owners,1))
+        self.assertFalse(B._suppresses_generated_authored_component(
+            {'id':15,'sites':[14]},owners,1),'a stable claimed crossing survives overlap')
+        self.assertFalse(B._suppresses_generated_authored_component(
+            {'id':502,'sites':[]},np.array([0,1,1]),1),'mixed neighbour coverage stays whole')
+        self.assertFalse(B._suppresses_generated_authored_component(
+            {'id':501,'sites':[]},owners,None),'procedural builds retain their component')
+
+    def test_keeper_crossing_uses_bounded_asymmetric_landings_after_site_reordering(self):
         w=world();road=w.roads[0]
-        site={'id':13,'key':'horn_tributary@124','wetEdges':[[18.,20.],[30.,20.]]}
-        geometry=B._claimed_geometry_v7(w,site,6.,[road])
-        self.assertEqual((geometry['leftLandingMetres'],geometry['rightLandingMetres']),(4.,6.))
-        self.assertAlmostEqual(geometry['policyStart'],-4.)
-        self.assertAlmostEqual(geometry['policyEnd'],18.)
-        ordinary=B._claimed_geometry_v7(w,{**site,'id':12},6.,[road])
+        for site_id in (13,12):
+            with self.subTest(site_id=site_id):
+                site={'id':site_id,'key':'horn_tributary@124','wetEdges':[[18.,20.],[30.,20.]]}
+                geometry=B._claimed_geometry_v7(w,site,6.,[road])
+                self.assertEqual((geometry['leftLandingMetres'],geometry['rightLandingMetres']),(4.,6.))
+                self.assertAlmostEqual(geometry['policyStart'],-4.)
+                self.assertAlmostEqual(geometry['policyEnd'],18.)
+        ordinary=B._claimed_geometry_v7(
+            w,{'id':13,'key':'another_crossing@124','wetEdges':[[18.,20.],[30.,20.]]},6.,[road])
         self.assertEqual((ordinary['leftLandingMetres'],ordinary['rightLandingMetres']),(6.,6.))
-        saved=B.SITE_BANK_LANDINGS[(13,'horn_tributary@124')]
+        saved=B.SITE_BANK_LANDINGS['horn_tributary@124']
         try:
-            B.SITE_BANK_LANDINGS[(13,'horn_tributary@124')]=(0.,6.)
+            B.SITE_BANK_LANDINGS['horn_tributary@124']=(0.,6.)
             with self.assertRaisesRegex(B.BP.ProfileError,'positive policy cap'):
-                B._claimed_geometry_v7(w,site,6.,[road])
+                B._claimed_geometry_v7(
+                    w,{'id':12,'key':'horn_tributary@124','wetEdges':[[18.,20.],[30.,20.]]},6.,[road])
         finally:
-            B.SITE_BANK_LANDINGS[(13,'horn_tributary@124')]=saved
+            B.SITE_BANK_LANDINGS['horn_tributary@124']=saved
 
     def test_a_sliver_outline_is_no_floor_and_a_square_still_triangulates(self):
         # Four vertices a tenth of a millimetre apart: below the collapse threshold's reach, no ear has area.

@@ -27,7 +27,8 @@ MAPS=REGIONS.parent
 CLIENT=MAPS.parents[1]
 sys.path.insert(0,str(HERE))
 import landscape as L
-from world_layout import World,CELL,CHUNK
+import authoring as AUTHORING
+from world_layout import World,CELL,CHUNK,ROAD_EARTHWORKS_GRADE
 from content import Content,spawn_position
 import scene_io as S
 from terrain_export import partition_surface
@@ -35,8 +36,8 @@ from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
 from build_progress import Progress
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
-EXPORT_SOURCES=('build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_prepare.py','coastal_bridge_export.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','authoring.py','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
+EXPORT_SOURCES=('build_continent.py','scene_io.py','terrain_export.py','compact_glb_images.py','bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_prepare.py','coastal_bridge_export.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py')
 
 
 EMPTY_SHA256=hashlib.sha256(b'').hexdigest()
@@ -116,8 +117,235 @@ def ferry_landing(world,region,toward):
     raise ValueError(f'{region}: none of {len(attempted)} ranked shoreline sites fits an actual quay and mooring; last failures: {errors[-3:]}')
 
 
+SEAM_APPROACH_DEPTHS=(4.,8.,12.)
+SEAM_APPROACH_OFFSETS=(24.,-24.,32.,-32.,40.,-40.,48.,-48.,64.,-64.)
+SEAM_APPROACH_CHECK_METRES=72.
+SERVED_MAX_GRADE=.65
+
+
+def _owned_approach(world,region,start,end):
+    count=max(2,int(np.ceil(np.linalg.norm(end-start)/2.))+1)
+    points=start+(end-start)*np.linspace(0.,1.,count)[:,None]
+    return bool(np.all(world.owner_at(points[:,0],points[:,1])==world.ids.index(region)))
+
+
+def _seam_approach_feasible(world,path,anchor,routing):
+    """A saved seam keeps its exact station only when the neighbour can grade into it."""
+    points,profile=world.road_profile(path)
+    segment=np.linalg.norm(np.diff(points,axis=0),axis=1)
+    remaining=np.r_[np.cumsum(segment[::-1])[::-1],0.]
+    nearby=(remaining[:-1]<=SEAM_APPROACH_CHECK_METRES)|(remaining[1:]<=SEAM_APPROACH_CHECK_METRES)
+    grade=np.abs(np.diff(profile))/np.maximum(segment,1e-9)
+    if np.any(nearby&(grade>ROAD_EARTHWORKS_GRADE+1e-8)):return False
+    for record in routing:
+        for point in record.get('earthworks',{}).get('excessAt',()):
+            if np.linalg.norm(np.asarray(point,float)-anchor)<=SEAM_APPROACH_CHECK_METRES:return False
+    return True
+
+
+def _reconcile_terminal_reroute(world,name,old_path,prefix,claims,routing_start,joined):
+    """Atomically replace one road's claims and routing record after a terminal reroute."""
+    if not isinstance(claims,tuple) or len(claims)!=5:return
+    from river_crossings import on_span
+    site_count,before_use,before_roads,before_routing,before_last=claims
+    old_site_ids={site_id for site_id,roads in before_roads.items() if name in roads}
+    prefix=np.asarray(prefix,float).reshape(-1,2)
+    prefix_site_ids=set()
+    for site in world.crossing_sites[:site_count]:
+        if site['id'] in old_site_ids and len(prefix) and bool(on_span(
+                world,prefix,pad=0.,sites=[site]).any()):
+            prefix_site_ids.add(site['id'])
+    new_site_ids={site_id for site_id,value in world.crossing_site_use.items()
+                  if value>before_use.get(site_id,0)}
+    desired=prefix_site_ids|new_site_ids
+
+    roads={site_id:set(values) for site_id,values in before_roads.items()}
+    use=dict(before_use)
+    for site_id in old_site_ids:
+        roads.setdefault(site_id,set()).discard(name)
+        if before_use.get(site_id,0)>0:use[site_id]=before_use[site_id]-1
+    for site_id in desired:
+        roads.setdefault(site_id,set()).add(name)
+        use[site_id]=use.get(site_id,0)+1
+    key_by_id={int(site['id']):site['key'] for site in world.crossing_sites}
+    retained=[];remap={}
+    for site in world.crossing_sites:
+        old_id=int(site['id'])
+        if not roads.get(old_id):continue
+        remap[old_id]=len(retained);retained.append(dict(site,id=len(retained)))
+    world.crossing_sites=retained
+    world.crossing_site_roads={remap[site_id]:values for site_id,values in roads.items()
+                               if site_id in remap and values}
+    world.crossing_site_use={remap[site_id]:value for site_id,value in use.items()
+                             if site_id in remap and value>0}
+    last=[]
+    for record in world.river_crossings['lastResortClaims']:
+        site_id=int(record['site'])
+        if site_id not in remap or (record.get('road')==name and site_id not in desired):continue
+        last.append({**record,'site':remap[site_id]})
+    world.river_crossings['lastResortClaims']=last
+    world.crossing_version=getattr(world,'crossing_version',0)+1
+
+    old_records=[record for record in world.routing[:before_routing] if record.get('name')==name]
+    new_records=list(world.routing[routing_start:])
+    records=old_records+new_records
+    if records:
+        record=copy.deepcopy(records[0]);joined=np.asarray(joined,float)
+        ordered=[]
+        for item in records:
+            for site_id in item.get('sites',()):
+                site_id=int(site_id)
+                if site_id in desired and site_id not in ordered:ordered.append(site_id)
+        ordered.extend(site_id for site_id in sorted(desired) if site_id not in ordered)
+        record['crossings']=[key_by_id[site_id] for site_id in ordered]
+        record['sites']=[remap[site_id] for site_id in ordered]
+        sampled,profile=world.road_profile(joined)
+        distance=np.linalg.norm(np.diff(sampled,axis=0),axis=1)
+        grade=np.abs(np.diff(profile))/np.maximum(distance,1e-9)
+        record.update(start=joined[0].tolist(),goal=joined[-1].tolist(),stations=int(len(joined)),
+                      maximumSlope=round(float(np.max(grade,initial=0.)),3))
+        old_xz=np.asarray(old_path,float).reshape(-1,2)
+        prefix_stop=max(0,len(prefix)-1);excess=[];metres=0.;passes=0
+        for index,item in enumerate(records):
+            earth=item.get('earthworks',{});points=list(earth.get('excessAt',()))
+            if index<len(old_records) and len(old_xz):
+                points=[point for point in points if int(np.argmin(
+                    np.linalg.norm(old_xz-np.asarray(point,float),axis=1)))<=prefix_stop]
+            excess.extend(points);passes+=int(earth.get('passes',0))
+            total=len(earth.get('excessAt',()))
+            if total:metres+=float(earth.get('excessMetres',0.))*len(points)/total
+        record['earthworks']={'passes':passes,'excessMetres':metres,'excessAt':excess}
+        record['solidFallback']=any(bool(item.get('solidFallback')) for item in records)
+        record['lastResortSearch']=any(bool(item.get('lastResortSearch')) for item in records)
+        other_records=[]
+        for item in world.routing[:before_routing]:
+            if item.get('name')==name:continue
+            item=copy.deepcopy(item)
+            if 'sites' in item:
+                pairs=list(zip(item.get('sites',()),item.get('crossings',())))
+                pairs=[(remap[int(site_id)],key) for site_id,key in pairs if int(site_id) in remap]
+                item['sites']=[site_id for site_id,_ in pairs]
+                item['crossings']=[key for _,key in pairs]
+            other_records.append(item)
+        world.routing=other_records+[record]
+
+
+def route_saved_seam_neighbour(world,link,region,anchor,outward,route_in_legs,
+                               snapshot_claims,restore_claims, *, start,prefix=()):
+    """Replace a settled terminal prefix, adding a bounded switchback only when required."""
+    hub=np.asarray(start,float);name=link['id']+'-'+region
+    candidates=[(9.,())]
+    tangent=np.array([-outward[1],outward[0]])
+    for depth in SEAM_APPROACH_DEPTHS:
+        terminal=anchor-outward*depth
+        for offset in SEAM_APPROACH_OFFSETS:
+            waypoint=terminal+tangent*offset
+            if _owned_approach(world,region,waypoint,terminal):candidates.append((depth,(waypoint,)))
+    failures=[]
+    for depth,extra in candidates:
+        terminal=anchor-outward*depth;claims=snapshot_claims(world);routing_start=len(world.routing)
+        try:
+            path=route_in_legs(world,[hub]+list(extra)+[terminal],region,
+                own=world.solids_at_ends(hub),width=4,public=True,name=name)
+            connector=np.vstack([terminal,anchor-outward*4,anchor,anchor+outward*4])
+            joined=np.vstack([np.asarray(prefix,float).reshape(-1,2),path,connector[1:]])
+            if _seam_approach_feasible(world,joined,anchor,world.routing[routing_start:]):
+                old=next((np.asarray(road['points'],float)[:,[0,2]] for road in getattr(world,'roads',())
+                          if road['id']==name),np.empty((0,2)))
+                prefix_path=np.vstack([np.asarray(prefix,float).reshape(-1,2),hub])
+                _reconcile_terminal_reroute(
+                    world,name,old,prefix_path,claims,routing_start,joined)
+                return joined,{'depth':depth,'waypoint':None if not extra else np.asarray(extra[0]).tolist(),
+                               'attempts':len(failures)+1}
+            failures.append(f'depth {depth:g}, waypoint {None if not extra else np.asarray(extra[0]).tolist()}: '
+                            'terminal earthworks cannot meet the road grade within cut/fill bounds')
+        except ValueError as error:failures.append(str(error))
+        restore_claims(world,claims);del world.routing[routing_start:]
+    raise ValueError(f'{name}: no neighbour-owned approach can meet the saved seam: {failures[-4:]}')
+
+
+def saved_seam_approach_grade(world,road,region,anchor):
+    """Maximum final-terrain grade travelled along the neighbour road.
+
+    A road following a contour may have a steep bank across its outer edge;
+    that transverse slope is not the grade a walker follows into the seam.
+    Exported collision and hub-to-lane contracts remain the definitive check
+    that at least one lane across the road width is walkable.
+    """
+    points=np.asarray(road['points'],float);xz=points[:,[0,2]]
+    segment=np.linalg.norm(np.diff(xz,axis=0),axis=1)
+    remaining=np.r_[np.cumsum(segment[::-1])[::-1],0.]
+    near=(remaining[:-1]<=SEAM_APPROACH_CHECK_METRES)|(remaining[1:]<=SEAM_APPROACH_CHECK_METRES)
+    owner=world.ids.index(region)
+    owned=(world.owner_at(xz[:-1,0],xz[:-1,1])==owner)|(world.owner_at(xz[1:,0],xz[1:,1])==owner)
+    heights=np.asarray(world.height_at(xz[:,0],xz[:,1]),float)
+    grade=np.abs(np.diff(heights))/np.maximum(segment,1e-9)
+    return float(np.max(grade[near&owned],initial=0.))
+
+
+def route_initial_seam_neighbour(world,link,region,anchor,outward,waypoints,route_in_legs,*,saved):
+    """Preserve the established first-pass route; defer saved-terminal repair until settled."""
+    hub=world.hub(region);terminal=anchor-outward*9
+    legs=[hub]+list(waypoints)+[terminal]
+    path=route_in_legs(world,legs,region,own=world.solids_at_ends(hub),width=4,
+        public=True,name=link['id']+'-'+region)
+    approach={'depth':9.,'waypoint':None,'attempts':0} if saved else None
+    return np.vstack([path,anchor-outward*4,anchor,anchor+outward*4]),approach,len(legs)
+
+
+def validate_saved_seam_approaches(world):
+    """Reject a genuinely unwalkable saved boundary only after final terrain is installed."""
+    result=[]
+    for record in getattr(world,'saved_seam_approaches',()):
+        link=next(value for value in world.connections if value['id']==record['id'])
+        name=link['id']+'-'+record['region'];road=next(value for value in world.roads if value['id']==name)
+        grade=saved_seam_approach_grade(world,road,record['region'],np.asarray(link['anchor'],float))
+        result.append({'id':record['id'],'region':record['region'],'maximumGrade':grade})
+        if grade>SERVED_MAX_GRADE+1e-8:
+            raise ValueError(f'{name}: final saved seam neighbour approach is too steep ({grade:.3f})')
+    return result
+
+
+def repair_saved_seam_approaches(world,content,route_in_legs,snapshot_claims,restore_claims):
+    """Reroute only a neighbour's terminal run when bounded road earthworks left it unwalkable."""
+    repairs=[];replacements={}
+    for record in getattr(world,'saved_seam_approaches',()):
+        link=next(value for value in world.connections if value['id']==record['id'])
+        region=record['region'];name=link['id']+'-'+region;road=next(value for value in world.roads if value['id']==name)
+        anchor=np.asarray(link['anchor'],float);grade=saved_seam_approach_grade(world,road,region,anchor)
+        if grade<=SERVED_MAX_GRADE+1e-8:continue
+        points=np.asarray(road['points'],float)[:,[0,2]];distance=np.linalg.norm(np.diff(points,axis=0),axis=1)
+        remaining=np.r_[np.cumsum(distance[::-1])[::-1],0.]
+        candidates=np.flatnonzero(remaining>=SEAM_APPROACH_CHECK_METRES+8.)
+        if not len(candidates):raise ValueError(f'{name}: infeasible saved seam approach has no neighbour-side prefix')
+        split=int(candidates[-1]);outward=np.asarray(link['normal'],float)
+        if link['regions'].index(region):outward=-outward
+        path,approach=route_saved_seam_neighbour(world,link,region,anchor,outward,route_in_legs,
+            snapshot_claims,restore_claims,start=points[split],prefix=points[:split])
+        replacements[name]=path;repairs.append({'id':link['id'],'region':region,'beforeMaximumGrade':round(grade,6),**approach})
+    if not repairs:return []
+    world.roads=[road for road in world.roads if road['id'] not in replacements]
+    world.road_distance=np.full_like(world.height,np.inf);world.road_nearest=np.full_like(world.height,np.inf);world.road_target=world.height.copy()
+    for road in world.roads:AUTHORING._register_road_fields(world,road)
+    for name,path in replacements.items():world.add_road(path,width=4,name=name)
+    # The replacement was selected against the already-settled terrain and
+    # must be walkable without another earthwork pass.  Settling the rebuilt
+    # global road fields here grades every unrelated legacy route a second
+    # time; that can change distant crossings even though only this saved seam
+    # terminal moved.  Rebuild the query fields for the new alignment, retain
+    # the finished ground, and let the final authority check below prove it.
+    for repair in repairs:
+        name=repair['id']+'-'+repair['region'];road=next(value for value in world.roads if value['id']==name)
+        grade=saved_seam_approach_grade(world,road,repair['region'],np.asarray(next(
+            link['anchor'] for link in world.connections if link['id']==repair['id']),float))
+        repair['afterMaximumGrade']=round(grade,6)
+        if grade>SERVED_MAX_GRADE+1e-8:raise ValueError(f'{name}: neighbour approach remains too steep after bounded reroute ({grade:.3f})')
+    return repairs
+
+
 def prepare(library,output):
     PROGRESS.start('compose',4);PROGRESS.step('loading libraries and content',0,4)
+    snapshot=AUTHORING.load_snapshot()
     plan_sha=digest(HERE/'diagonal-plan.json')
     edits_sha=object_edits_digest()
     profile_sha=digest(HERE/'legacy-server-profile/config/eloria/maps.txt')
@@ -125,12 +353,21 @@ def prepare(library,output):
     dependencies=geometry_dependencies()
     certificate_paths=tuple(HERE.glob('*.py'))+(HERE/'../_northern/requirements.txt',)
     sources={source_key(p):digest(p) for p in certificate_paths}
+    sources.update(snapshot.bound_sources())
     shaping={name:digest(HERE/name) for name in SHAPING_SOURCES}
     templates=json.loads((HERE/'legacy-contracts.json').read_text())
+    templates[AUTHORING.SUNMANE]=AUTHORING.apply_gameplay(templates[AUTHORING.SUNMANE],snapshot)
     legacy=json.loads((HERE/'legacy-geography.json').read_text())
-    started=time.monotonic();world=World()
+    plan=AUTHORING.apply_plan(L.load_plan(),snapshot)
+    started=time.monotonic();world=World(plan)
+    world.authoring_snapshot=snapshot
+    AUTHORING.verify_ownership(world,snapshot)
+    initial_authoring_terrain=AUTHORING.apply_terrain(world,snapshot)
+    world.original_height=world.height.copy()
+    world.water=L.water_fields(world.gx,world.gz,height=world.height,plan=world.plan)
     print(f'Global landform sampled in {time.monotonic()-started:.1f}s',flush=True)
     content=Content(world,library,templates,legacy);content.load()
+    authoring_runtime=AUTHORING.apply_runtime_bindings(content,snapshot)
     PROGRESS.step('roads and routing',1,4)
     from amberwood_access import prepare_amberwood_access,refresh_amberwood_access_heights
     from amberwood_support import prepare_amberwood_routes,apply_amberwood_support
@@ -162,8 +399,14 @@ def prepare(library,output):
     # on a road crosses a plan river only on a site it claims (river_crossings.py).
     from river_crossings import prepare_river_crossings,dry_end,branch_start,water_distance_at,snapshot_claims,restore_claims,crossing_report
     prepare_river_crossings(world)
+    # Install the complete saved Sunmane network before any neighbouring route
+    # is solved.  It can guide branches and seam approaches, but no retired
+    # Sunmane route may claim a bridge site or alter another territory first.
+    authoring_routes=AUTHORING.replace_routes(world,snapshot)
     validate_river_setbacks(world,content)
     world.plan_connections()
+    AUTHORING.verify_seam_anchors(world,snapshot)
+    saved_seam_ids={entry['id'] for entry in snapshot.document['seams']['anchors']}
     add_mirror_streets(world,content)
     from ferry_export import fit_landing
     from ferry_support import remember_ferry_fit,restore_selected_shores,validate_final_ferries
@@ -173,6 +416,8 @@ def prepare(library,output):
             # The crossing's best seam station first, then its alternatives (a seam road whose hub cannot reach a
             # station without an unavailable river crossing moves the crossing along the seam instead).
             choices=[{'anchor':link['anchor'],'normal':link['normal']}]+list(link.get('alternatives',[]))
+            saved_connection=link['id'] in saved_seam_ids
+            if saved_connection:choices=choices[:1]
             failures=[]
             for choice in choices:
                 anchor=np.array(choice['anchor'],float);normal=np.array(choice['normal'],float)
@@ -180,8 +425,15 @@ def prepare(library,output):
                 try:
                     for side,region in enumerate(link['regions']):
                         outward=normal if side==0 else -normal
-                        hub=world.hub(region)
-                        terminal=anchor-outward*9
+                        if region==AUTHORING.SUNMANE:
+                            identity=link['id']+'-'+region
+                            saved=next((road for road in world.roads if road['id']==identity),None)
+                            if saved is None:raise AUTHORING.AuthoringError(f'{identity}: authored seam route is absent')
+                            endpoint=np.asarray(saved['points'][-1],float)[[0,2]]
+                            if np.linalg.norm(endpoint-anchor)>6.01:
+                                raise AUTHORING.AuthoringError(
+                                    f'{identity}: authored endpoint is not at its saved seam anchor')
+                            continue
                         # A seam terminal stands on open ground by construction (the crossing
                         # choice charges terminals inside solids), so the road's own solids are
                         # the hub's only: its last stretch threads a city wall's gate instead of
@@ -192,17 +444,28 @@ def prepare(library,output):
                         # (as a designed climb to a door is), so a mountain crossing takes the
                         # switchback its valley suggests instead of the router's shortest line;
                         # the hub's own solids stay on the first leg, where the hub stands.
-                        legs=[hub]+seam_road_waypoints(content,region,link['id'])+[terminal]
-                        path=route_in_legs(world,legs,region,own=world.solids_at_ends(hub),width=4,public=True,name=link['id']+'-'+region)
-                        paths.append((region,np.vstack([path,anchor-outward*4,anchor,anchor+outward*4]),len(legs)))
+                        # Preserve the established hub route on its first pass.
+                        # Saved seams are marked for the post-settle feasibility
+                        # check below; only a finished terminal leg that still
+                        # exceeds the served grade is replaced by the bounded
+                        # neighbour-owned switchback search.
+                        path,approach,leg_count=route_initial_seam_neighbour(
+                            world,link,region,anchor,outward,seam_road_waypoints(content,region,link['id']),
+                            route_in_legs,saved=saved_connection)
+                        paths.append((region,path,approach,leg_count))
                 except ValueError as error:
                     restore_claims(world,claims);failures.append(str(error));continue
                 if choice is not choices[0]:
                     world.__dict__.setdefault('moved_seam_crossings',[]).append({'id':link['id'],'from':list(link['anchor']),'to':anchor.tolist(),'failures':failures})
                     link['anchor']=anchor.tolist();link['normal']=normal.tolist()
-                for region,path,count in paths:
+                for region,path,approach,leg_count in paths:
                     world.add_road(path,width=4,name=link['id']+'-'+region)
-                    print(f'Road {region} to {link["id"]}: {len(path)} stations'+(f' by {count-2} authored waypoints' if count>2 else ''),flush=True)
+                    if approach is not None:
+                        world.__dict__.setdefault('saved_seam_approaches',[]).append(
+                            {'id':link['id'],'region':region,**approach})
+                    print(f'Road {region} to {link["id"]}: {len(path)} stations'
+                          +(f' by saved approach {approach["waypoint"]}' if approach is not None and approach['waypoint'] is not None
+                            else f' by {leg_count-2} authored waypoints' if approach is None and leg_count>2 else ''),flush=True)
                 break
             else:
                 raise ValueError(f"{link['id']}: no seam station of the crossing can be reached from both hubs: {failures}")
@@ -221,6 +484,7 @@ def prepare(library,output):
     # Inhabited approaches grow from the public roads to existing doorways.
     # Close destinations share a trail; resources remain in the wilderness.
     for region in world.ids:
+        if region==AUTHORING.SUNMANE:continue
         hub=world.hub(region)
         seen=[]
         for entry in content.templates[region].get('portals',[]):
@@ -257,6 +521,7 @@ def prepare(library,output):
         if source in world.ids and target in world.ids:continue
         for region,tile in ((source,fields[start:start+2]),(target,fields[start+3:start+5])):
             if region not in world.ids:continue
+            if region==AUTHORING.SUNMANE:continue
             point=content.mapped_server_point(region,list(map(int,tile)),roads=True)[[0,2]]
             if int(world.owner_at(*point))==world.ids.index(region):destinations[region].append((number,point,source,target))
     for region,entries in destinations.items():
@@ -288,7 +553,8 @@ def prepare(library,output):
             world.add_road(path,width=1.65,name=name)
     # Authored resource sites on steep ground that no corridor serves get a trail.
     from resource_trails import prepare_resource_trails
-    trails=prepare_resource_trails(world,content,HERE/'legacy-server-profile/config/eloria')
+    trails=prepare_resource_trails(world,content,HERE/'legacy-server-profile/config/eloria',
+                                   exclude_regions={AUTHORING.SUNMANE})
     print(f"Resource trails: {len(trails['trails'])} for {trails['steepSites']} steep sites ({trails['servedSites']} already beside a road)",flush=True)
     prepare_amberwood_routes(world,content)
     # Every alignment exists now: record the retained solids any road still crosses.
@@ -297,6 +563,11 @@ def prepare(library,output):
     print(f'River crossings: {len(world.crossing_sites)} sites claimed of {len(world.crossing_candidates)} candidates; {len(world.unrouted)} optional roads unrouted',flush=True)
     for key in ('_water_passage_cache','_bank_labels'):world.__dict__.pop(key,None)
     world.settle_roads()
+    world.saved_seam_approach_repairs=repair_saved_seam_approaches(
+        world,content,route_in_legs,snapshot_claims,restore_claims)
+    if world.saved_seam_approach_repairs:
+        print('Saved seam neighbour approaches repaired: '+json.dumps(
+            world.saved_seam_approach_repairs,sort_keys=True,separators=(',',':')),flush=True)
     PROGRESS.step('supports and ground',2,4)
     from mirror_support import apply_mirror_support
     from four_gates_support import apply_four_gates_support
@@ -312,9 +583,23 @@ def prepare(library,output):
     from reach_links import apply_reach_links
     reach=apply_reach_links(world,content)
     if reach['links']:print(f"Reach links: {reach['links']} written on the finished ground ({reach['changedCells']} cells changed, up to {reach['maximumChangeMetres']} m)",flush=True)
+    # The exact editor preview is final terrain authority for Sunmane and its
+    # one-cell seam ring.  Routing/support calculations may inspect it, but no
+    # legacy grading or reach-link pass may survive over those vertices.
+    final_authoring_terrain=AUTHORING.apply_terrain(world,snapshot)
     world.water=L.water_fields(world.gx,world.gz,height=world.height,plan=world.plan)
+    validate_saved_seam_approaches(world)
     from bridge_prepare import prepare_bridges
-    world.bridge_preparation=prepare_bridges(world,content)
+    bridge_events=[]
+    def bridge_progress(phase,**details):
+        event={'phase':phase,**details};bridge_events.append(event)
+        print('claimed_bridge_progress '+json.dumps(event,sort_keys=True,separators=(',',':')),flush=True)
+    world.claimed_bridge_progress=bridge_progress
+    try:
+        world.bridge_preparation=prepare_bridges(world,content)
+    finally:
+        world.__dict__.pop('claimed_bridge_progress',None)
+        world.claimed_bridge_progress_events=bridge_events
     # The support stages have finished the ground: every road station stands on it again (bridges excepted).
     world.refresh_road_heights()
     final_ferries=validate_final_ferries(world)
@@ -335,18 +620,30 @@ def prepare(library,output):
     if digest(HERE/'diagonal-plan.json')!=plan_sha:raise ValueError('Landscape plan changed during composition')
     if object_edits_digest()!=edits_sha:raise ValueError('Object edits changed during composition')
     if digest(profile)!=profile_sha:raise ValueError('Authored entrances changed during composition')
+    current_snapshot=AUTHORING.load_snapshot()
+    if current_snapshot.digest!=snapshot.digest or current_snapshot.bound_sources()!=snapshot.bound_sources():
+        raise ValueError('Sunmane authoring scene or snapshot changed during composition; run prepare again')
     PROGRESS.step('writing the composition',3,4)
     # Cache is local generated state with exact source certificates. Never load
     # an arbitrary downloaded pickle as an authored continent.
     with (output/'composed.pkl').open('wb') as handle:pickle.dump((world,content),handle,protocol=5)
-    json_write(output/'composition.json',{'schema':1,'planSha256':plan_sha,'objectEditsSha256':edits_sha,'objectEdits':{'document':content.edits.doc,'report':content.edits.report},'entranceProfileSha256':profile_sha,'compositionAlgorithmSha256':algorithm_sha,'geometryDependencies':dependencies,
+    json_write(output/'composition.json',{'schema':2,'planSha256':plan_sha,'objectEditsSha256':edits_sha,'objectEdits':{'document':content.edits.doc,'report':content.edits.report},'entranceProfileSha256':profile_sha,'compositionAlgorithmSha256':algorithm_sha,'geometryDependencies':dependencies,
+        'continentAuthoring':{'schema':snapshot.document['schema'],'regionId':snapshot.document['regionId'],
+            'snapshotSha256':snapshot.digest,'sources':snapshot.bound_sources(),
+            'terrainInitial':initial_authoring_terrain,'terrainFinal':final_authoring_terrain,
+            'routes':authoring_routes,'runtimeBindings':authoring_runtime,
+            'replacements':snapshot.document['replacements']},
         'library':{r:digest(Path(library)/r/'source-certificate.json') for r in world.ids},
         'sources':sources,
         'objects':len(content.objects),'roads':len(world.roads),'assemblies':content.assembly_records,
         'mirrorLakeSupport':world.mirror_lake_support,'ssarathiBankSupport':world.ssarathi_bank_support,
         'manymouthBoats':world.manymouth_boats,'greyCrossings':world.grey_crossings,'fourGatesSage':world.four_gates_sage,
         'doorApproaches':world.door_approaches,'reachLinks':getattr(world,'reach_links',{'links':0,'perLink':[]}),'authoredPoints':getattr(world,'authored_points',{'points':[]}),'hullSettle':world.hull_settle,'roadGradingPasses':world.road_grading_passes,'resourceTrails':world.resource_trails,
-        'riverCrossings':crossing_report(world),'movedSeamCrossings':getattr(world,'moved_seam_crossings',[]),'dryRoadEnds':getattr(world,'dry_road_ends',[]),
+        'riverCrossings':crossing_report(world),'movedSeamCrossings':getattr(world,'moved_seam_crossings',[]),
+        'savedSeamApproaches':getattr(world,'saved_seam_approaches',[]),
+        'savedSeamApproachRepairs':getattr(world,'saved_seam_approach_repairs',[]),
+        'dryRoadEnds':getattr(world,'dry_road_ends',[]),
+        'bridgePreparation':world.bridge_preparation,'claimedBridgeProgress':bridge_events,
         'routing':{**world.routing_report(),'solidCrossings':world.road_solid_crossings},
         'elapsedSeconds':round(time.monotonic()-started,2)})
     PROGRESS.step('composition written',4,4)
@@ -361,6 +658,12 @@ def load_composed(output,library):
     algorithm_sha=composition_algorithm_sha()
     if certificate.get('compositionAlgorithmSha256')!=algorithm_sha:raise ValueError('Composition algorithm changed; recompose before export')
     if certificate.get('geometryDependencies')!=geometry_dependencies():raise ValueError('Geometry dependencies changed; recompose before export')
+    snapshot=AUTHORING.load_snapshot()
+    authored=certificate.get('continentAuthoring')
+    if not isinstance(authored,dict) or authored.get('snapshotSha256')!=snapshot.digest:
+        raise ValueError('Sunmane authoring snapshot changed; recompose before export')
+    if authored.get('sources')!=snapshot.bound_sources():
+        raise ValueError('Sunmane authoring scene or sidecars changed; recompose before export')
     for region,sha in certificate['library'].items():
         if sha!=digest(Path(library)/region/'source-certificate.json'):raise ValueError(f'{region}: source content changed; recompose')
     sources={relative.replace('\\','/'):sha for relative,sha in certificate['sources'].items()}
@@ -468,9 +771,20 @@ def manifest_for(world,content,region):
     m['coordinateTransform']={'metresPerTile':1.,'serverOrigin':origin,'serverCells':cells,'origin':[0,0,0],
         'walkingHeight':arrival[1],'invertServerY':True,
         'addressableWorldBounds':{'min':[-origin[0],origin[1]-cells[1]],'max':[cells[0]-origin[0],origin[1]]}}
+    authored=(getattr(world,'authoring_snapshot',None) is not None and region==AUTHORING.SUNMANE)
+    if authored:
+        spawns=m.get('spawnPoints',[])
+        if not spawns:raise AUTHORING.AuthoringError('authored Sunmane manifest lost every spawn point')
+        defaults=[spawn for spawn in spawns if spawn.get('default')]
+        if len(defaults)>1:raise AUTHORING.AuthoringError('authored Sunmane manifest has multiple default spawns')
+        selected=defaults[0] if defaults else spawns[0]
+        default_spawn=str(selected['id']);walking_height=float(selected['position'][1])
+    else:
+        default_spawn='continent-arrival';walking_height=arrival[1]
+        m['spawnPoints']=[{'id':default_spawn,'default':True,'position':arrival,'facing':[0,0,-1]}]
+    m['coordinateTransform']['walkingHeight']=walking_height
     m['navigation']={'surfaceNodePrefixes':['Terrain_','Walk_'],'terrainConforming':True,'authority':'server',
-                     'defaultSpawn':'continent-arrival','collisionFile':'collision.bin'}
-    m['spawnPoints']=[{'id':'continent-arrival','default':True,'position':arrival,'facing':[0,0,-1]}]
+                     'defaultSpawn':default_spawn,'collisionFile':'collision.bin'}
     solid=[o['node'] for o in content.objects if o['region']==region and o.get('collides')]
     m['collision']={'file':'collision.bin','binary':'collision.bin','format':'EWCG','formatVersion':2,'version':2,
                     'cellMetres':.5,'cellSize':.5,'authoredSurfaceExport':True,'gridAlignment':'tile-centres-v1','nodeNames':solid}
@@ -559,10 +873,15 @@ def export_geometry(world,content,output):
     json_write(output/'crossing-structures.json',{'bridges':world.bridge_report,'ferries':world.ferry_report,'amberwoodAccess':world.amberwood_access,'manymouthAccess':world.manymouth_access,'mirrorBankAccess':world.mirror_bank_access,'mirrorBankOpening':world.mirror_bank_opening,'accessDecks':getattr(world,'access_decks',[])})
     # The composed roads and their crossing sites, for the road-rule audit (audit_continent.audit_road_rules).
     from river_crossings import crossing_report
-    json_write(output/'roads.json',{'schema':1,'roads':[{'id':road['id'],'width':float(road['width']),'points':road['points']} for road in world.roads],
+    json_write(output/'roads.json',{'schema':2,'roads':[{'id':road['id'],'width':float(road['width']),
+        **({'widths':[float(value) for value in road['widths']]} if 'widths' in road else {}),
+        'points':road['points']} for road in world.roads],
         'crossingSites':crossing_report(world)['sites'] if hasattr(world,'crossing_sites') else [],
         'designedDecks':world.plan.get('designed_decks',[])})
     partitions=partition_surface(world,terrain_path)
+    from compact_glb_images import compact_embedded_images
+    terrain_image_compaction=compact_embedded_images(terrain_path)
+    print('Shared terrain image compaction: '+json.dumps(terrain_image_compaction,sort_keys=True),flush=True)
     terrain_doc,terrain_body=S.GR.load(terrain_path);bridge_doc,bridge_body=S.GR.load(bridge_path)
     master_path=output/'continent.glb';master=S.Exporter(master_path)
     by_region={r:[o for o in content.objects if o['region']==r] for r in world.ids}
@@ -571,7 +890,8 @@ def export_geometry(world,content,output):
         roots=[n for c in partitions[region].values() for n in c['roots']]
         add_to_exporter(master,world,content,region,terrain_doc,terrain_body,roots,by_region[region],bridge_doc,bridge_body,by_bridge[region],True)
     master_stats=master.write();master_sha=digest(master_path)
-    json_write(output/'master-scene.json',dict(master_stats,sha256=master_sha,regions=world.ids))
+    json_write(output/'master-scene.json',dict(master_stats,sha256=master_sha,regions=world.ids,
+                                               authoredOverlays=getattr(world,'authored_overlay_report',{})))
     del master
     manifests={};grey_landmarks=[]
     for region in world.ids:
@@ -634,6 +954,7 @@ def export_geometry(world,content,output):
     if digest(output/'composition.json')!=composition_sha:raise ValueError('Composition changed during geometry export')
     json_write(output/'export.json',{'masterPath':str(master_path),'masterSha256':master_sha,
         'geometrySources':export_sources,'geometryDependencies':dependencies,'compositionSha256':composition_sha,'greyCrossingLandmarks':grey_landmarks,
+        'sharedTerrainImageCompaction':terrain_image_compaction,
         'regions':{r:{'world':str(package(r)/'world.json'),'glbSha256':digest(package(r)/'world.glb'),'chunks':len(m['streamingChunks']['chunks'])} for r,m in manifests.items()}})
     return manifests
 
@@ -741,6 +1062,14 @@ def composition_freshness(output=None):
         compare(name,recorded,current)
     compare('compositionAlgorithm',composition.get('compositionAlgorithmSha256'),composition_algorithm_sha())
     compare('geometryDependencies',composition.get('geometryDependencies'),geometry_dependencies())
+    try:
+        snapshot=AUTHORING.load_snapshot()
+    except (OSError,ValueError) as error:
+        state['missing'].append('continentAuthoring');state['current']['continentAuthoring']=str(error)
+    else:
+        authored=composition.get('continentAuthoring',{})
+        compare('continentAuthoring.snapshot',authored.get('snapshotSha256'),snapshot.digest)
+        compare('continentAuthoring.sources',authored.get('sources'),snapshot.bound_sources())
     sources={relative.replace('\\','/'):sha for relative,sha in composition.get('sources',{}).items()}
     for relative in sorted(shaping_source_keys()):
         source=CLIENT/relative;current=digest(source) if source.exists() else None

@@ -164,6 +164,12 @@ class ObjectEdits:
     def __bool__(self):
         return bool(self.removed or self.transforms or self.copies or self.areas)
 
+    def exclude_authored_region(self, region):
+        """Drop legacy corrections after a scene assumes full object authority."""
+        self.removed.pop(region, None)
+        self.transforms = {key:value for key,value in self.transforms.items() if key[0] != region}
+        self.pending_removals = {(r, node) for r, nodes in self.removed.items() for node in nodes}
+
     # -- during Content.load, per region ------------------------------------
     def filter_placements(self, region, placements):
         names = self.removed.get(region, {})
@@ -256,6 +262,13 @@ class ObjectEdits:
             return documents[region]
 
         for region, node, edit in self.copies:
+            target = np.asarray(edit['pivot'], float) + np.asarray(edit['translate'], float)
+            owner = world.ids[int(world.owner_at(target[0], target[2]))]
+            if owner in getattr(content, 'authored_regions', ()):
+                # Full scene object authority includes deletion.  A legacy add
+                # whose target lies in that territory stays suppressed even
+                # when its source library belongs to a neighbour.
+                continue
             src_doc, src_body = content.documents[region]
             by_name = {n.get('name'): i for i, n in enumerate(src_doc['nodes'])}
             placement = next((p for p in content.metadata[region]['placements'] if p['node'] == node),
@@ -267,8 +280,6 @@ class ObjectEdits:
                 raise ValueError(f"{edit['id']}: {why}")
             index = by_name[node]
             roots = [index, *companion_roots(content, region, placement, index, by_name)]
-            target = np.asarray(edit['pivot'], float) + np.asarray(edit['translate'], float)
-            owner = world.ids[int(world.owner_at(target[0], target[2]))]
             matrices = S.GR.hierarchy(src_doc)[0]
             doc, body = private(owner)
             if owner == region:

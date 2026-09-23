@@ -27,14 +27,17 @@ func _run() -> void:
 
 func _test_named_ground_presets() -> void:
 	_expect(MapAuthoringTexturePresets.SOIL in MapAuthoringTexturePresets.PRESET_NAMES and
-		MapAuthoringTexturePresets.SAND in MapAuthoringTexturePresets.PRESET_NAMES,
-		"Soil and Sand are named texture choices")
+		MapAuthoringTexturePresets.SAND in MapAuthoringTexturePresets.PRESET_NAMES and
+		MapAuthoringTexturePresets.DESERT in MapAuthoringTexturePresets.PRESET_NAMES,
+		"Soil, Sand, and Desert are named texture choices")
 	var grass := MapAuthoringTexturePresets.create_material(
 		MapAuthoringTexturePresets.GRASS) as ORMMaterial3D
 	var soil := MapAuthoringTexturePresets.create_material(
 		MapAuthoringTexturePresets.SOIL) as ORMMaterial3D
 	var sand := MapAuthoringTexturePresets.create_material(
 		MapAuthoringTexturePresets.SAND) as ORMMaterial3D
+	var desert := MapAuthoringTexturePresets.create_material(
+		MapAuthoringTexturePresets.DESERT) as ORMMaterial3D
 	_expect(soil != null and sand != null and soil != sand,
 		"Soil and Sand each create a fresh material")
 	_expect(soil.albedo_texture == grass.albedo_texture and
@@ -43,6 +46,10 @@ func _test_named_ground_presets() -> void:
 	_expect(soil.albedo_color != sand.albedo_color and
 		soil.albedo_color.get_luminance() < sand.albedo_color.get_luminance(),
 		"Soil is deliberately brown and Sand is deliberately lighter")
+	_expect(desert != null and desert.albedo_texture != grass.albedo_texture and
+		desert.normal_texture == grass.normal_texture and
+		desert.orm_texture == grass.orm_texture,
+		"Desert uses its authored albedo with the neutral ground detail maps")
 
 
 func _test_factory_ownership_and_zero_passthrough() -> void:

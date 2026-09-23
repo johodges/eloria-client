@@ -1,0 +1,1316 @@
+"""Validated inputs exported by the Godot continent-authoring scenes.
+
+The snapshot is an interchange format, not a regional package.  It is read
+before shared-world composition and its referenced files are accepted only
+when their recorded hashes still match.  Keeping validation here prevents a
+partially exported scene from silently falling back to the retired regional
+recipe.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+import hashlib
+import json
+import math
+from pathlib import Path
+from typing import Any, Iterable
+
+import numpy as np
+
+
+HERE = Path(__file__).resolve().parent
+REGIONS = HERE.parent
+MAPS = REGIONS.parent
+CLIENT = MAPS.parents[1]
+SCHEMA = "eloria-continent-authoring-v1"
+SUNMANE = "sunmane_steppe"
+SUNMANE_TRANSLATION = (1200.0, 0.0, 720.0)
+SUNMANE_SERVER_ORIGIN = (194, 292)
+SUNMANE_SERVER_CELLS = (792, 792)
+SUNMANE_TERRAIN_ORIGIN = (-194.0, -500.0)
+SUNMANE_TERRAIN_VERTICES = (397, 397)
+SUNMANE_REQUIRED_ROUTE_IDS = tuple(sorted((
+    "mirrorhold--sunmane_steppe-sunmane_steppe",
+    "amethyst_barrens--sunmane_steppe-sunmane_steppe",
+    "sunmane_steppe--verdant_stair-sunmane_steppe",
+    "door-sunmane_steppe-cave-wind_caves",
+    "door-sunmane_steppe-cave-crystal_hollow",
+    *(f"discovery-sunmane_steppe-{number}" for number in range(301, 314)),
+    "discovery-sunmane_steppe-713",
+)))
+SUNMANE_REQUIRED_LINK_ROUTE_IDS = tuple(sorted((
+    "mirrorhold--sunmane_steppe-sunmane_steppe",
+    "amethyst_barrens--sunmane_steppe-sunmane_steppe",
+    "sunmane_steppe--verdant_stair-sunmane_steppe",
+    "door-sunmane_steppe-cave-wind_caves",
+    "door-sunmane_steppe-cave-crystal_hollow",
+)))
+SUNMANE_PLAN_FEATURE_IDS = ("southern_river",)
+SUNMANE_SNAPSHOT = REGIONS / SUNMANE / "authoring" / "continent-authoring.json"
+AUTHORING_FRAMEWORK_GLOBS = (
+    "godot-client/src/dev/map_authoring_region/*.gd",
+    "godot-client/src/dev/map_authoring_pilot/style/*.gd",
+    "godot-client/src/dev/map_authoring_pilot/style/*.gdshader",
+    "godot-client/src/dev/map_authoring_pilot/style/textures/*.png",
+    "godot-client/src/dev/map_authoring_pilot/style/textures/*.provenance.json",
+    "godot-client/addons/map_asset_palette/*.gd",
+)
+
+
+class AuthoringError(ValueError):
+    """The scene export cannot safely become shared continent source."""
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _object(value: Any, where: str) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise AuthoringError(f"{where} must be an object")
+    return value
+
+
+def _array(value: Any, where: str) -> list[Any]:
+    if not isinstance(value, list):
+        raise AuthoringError(f"{where} must be an array")
+    return value
+
+
+def _string(value: Any, where: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise AuthoringError(f"{where} must be a non-empty string")
+    return value
+
+
+def _number(value: Any, where: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+        raise AuthoringError(f"{where} must be a finite number")
+    return float(value)
+
+
+def _vector(value: Any, size: int, where: str) -> tuple[float, ...]:
+    values = _array(value, where)
+    if len(values) != size:
+        raise AuthoringError(f"{where} must contain {size} numbers")
+    return tuple(_number(part, f"{where}[{index}]") for index, part in enumerate(values))
+
+
+def _integer_vector(value: Any, size: int, where: str) -> tuple[int, ...]:
+    values = _array(value, where)
+    if len(values) != size or any(isinstance(part, bool) or not isinstance(part, int) for part in values):
+        raise AuthoringError(f"{where} must contain {size} integers")
+    return tuple(values)
+
+
+def _ordered_unique(records: Iterable[dict[str, Any]], where: str) -> None:
+    ids = [_string(record.get("id"), f"{where}[{index}].id") for index, record in enumerate(records)]
+    if len(ids) != len(set(ids)):
+        raise AuthoringError(f"{where} contains duplicate stable ids")
+    if ids != sorted(ids):
+        raise AuthoringError(f"{where} must be sorted by stable id")
+
+
+def _contained(base: Path, relative: Any, where: str) -> Path:
+    name = Path(_string(relative, where))
+    if name.is_absolute():
+        raise AuthoringError(f"{where} must be relative")
+    result = (base / name).resolve()
+    try:
+        result.relative_to(base.resolve())
+    except ValueError as error:
+        raise AuthoringError(f"{where} escapes {base}") from error
+    return result
+
+
+def _source_path(relative: Any, where: str) -> Path:
+    name = Path(_string(relative, where))
+    if name.is_absolute():
+        raise AuthoringError(f"{where} must be relative to the client checkout")
+    result = (CLIENT / name).resolve()
+    try:
+        result.relative_to(CLIENT.resolve())
+    except ValueError as error:
+        raise AuthoringError(f"{where} escapes the client checkout") from error
+    return result
+
+
+def _verify_hash(path: Path, expected: Any, where: str) -> None:
+    digest = _string(expected, where).lower()
+    if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
+        raise AuthoringError(f"{where} must be a lowercase SHA-256 digest")
+    if not path.is_file():
+        raise AuthoringError(f"{path}: required authored source is missing")
+    actual = sha256(path)
+    if actual != digest:
+        raise AuthoringError(f"{path}: authored source changed after snapshot export")
+
+
+def _validate_sources(document: dict[str, Any], snapshot: Path, production: bool) -> dict[str, str]:
+    sources = _object(document.get("sources"), "sources")
+    scene = _object(sources.get("scene"), "sources.scene")
+    scene_path = _source_path(scene.get("path"), "sources.scene.path")
+    _verify_hash(scene_path, scene.get("sha256"), "sources.scene.sha256")
+    result = {scene_path.relative_to(CLIENT).as_posix(): sha256(scene_path)}
+    dependencies = [_object(value, f"sources.dependencies[{index}]")
+                    for index, value in enumerate(
+                        _array(sources.get("dependencies"), "sources.dependencies"))]
+    dependency_paths = []
+    for index, entry in enumerate(dependencies):
+        relative = _string(entry.get("path"), f"sources.dependencies[{index}].path")
+        path = _source_path(relative, f"sources.dependencies[{index}].path")
+        _verify_hash(path, entry.get("sha256"), f"sources.dependencies[{index}].sha256")
+        dependency_paths.append(relative.replace("\\", "/"))
+        result[path.relative_to(CLIENT).as_posix()] = sha256(path)
+    if dependency_paths != sorted(dependency_paths) or len(dependency_paths) != len(set(dependency_paths)):
+        raise AuthoringError("sources.dependencies must be unique and sorted by path")
+    if not production and "runtimeBindingSeed" not in sources:
+        return result
+    runtime_seed = _object(sources.get("runtimeBindingSeed"), "sources.runtimeBindingSeed")
+    seed_relative = _string(runtime_seed.get("path"), "sources.runtimeBindingSeed.path").replace("\\", "/")
+    seed_path = _source_path(seed_relative, "sources.runtimeBindingSeed.path")
+    _verify_hash(seed_path, runtime_seed.get("sha256"), "sources.runtimeBindingSeed.sha256")
+    if seed_relative not in dependency_paths:
+        raise AuthoringError("sources.runtimeBindingSeed must also be a hash-bound dependency")
+    dependency_digest = next(entry["sha256"] for entry in dependencies
+                             if entry["path"].replace("\\", "/") == seed_relative)
+    if dependency_digest != runtime_seed["sha256"]:
+        raise AuthoringError("sources.runtimeBindingSeed disagrees with its dependency digest")
+    return result
+
+
+def _height_sidecar(terrain: dict[str, Any], snapshot: Path, field: str,
+                    width: int, height: int) -> Path:
+    record = _object(terrain.get(field), f"terrain.{field}")
+    if record.get("encoding") != "float32-le":
+        raise AuthoringError(f"terrain.{field}.encoding must be float32-le")
+    path = _contained(snapshot.parent, record.get("path"), f"terrain.{field}.path")
+    _verify_hash(path, record.get("sha256"), f"terrain.{field}.sha256")
+    expected = width * height * np.dtype("<f4").itemsize
+    if path.stat().st_size != expected:
+        raise AuthoringError(f"terrain {field} has {path.stat().st_size} bytes; expected {expected}")
+    values = np.fromfile(path, dtype="<f4")
+    if not np.isfinite(values).all():
+        raise AuthoringError(f"terrain {field} contains a non-finite height")
+    return path
+
+
+def _validate_terrain(document: dict[str, Any], snapshot: Path, production: bool,
+                      source_sha256: dict[str, str]) -> tuple[Path, Path, int, int]:
+    terrain = _object(document.get("terrain"), "terrain")
+    origin = _vector(terrain.get("origin"), 2, "terrain.origin")
+    if production and origin != SUNMANE_TERRAIN_ORIGIN:
+        raise AuthoringError(f"terrain.origin must be {list(SUNMANE_TERRAIN_ORIGIN)}")
+    if _number(terrain.get("cellMetres"), "terrain.cellMetres") != 2.0:
+        raise AuthoringError("terrain.cellMetres must match the shared two-metre grid")
+    if _number(terrain.get("previewUvMetresInverse"),
+               "terrain.previewUvMetresInverse") <= 0.0:
+        raise AuthoringError("terrain.previewUvMetresInverse must be positive")
+    width = terrain.get("width")
+    height = terrain.get("height")
+    if (isinstance(width, bool) or not isinstance(width, int) or width < 2 or
+            isinstance(height, bool) or not isinstance(height, int) or height < 2):
+        raise AuthoringError("terrain width and height must be integers of at least two")
+    if production and (width, height) != SUNMANE_TERRAIN_VERTICES:
+        raise AuthoringError(
+            f"terrain width and height must cover the full {SUNMANE_TERRAIN_VERTICES[0]}x"
+            f"{SUNMANE_TERRAIN_VERTICES[1]} shared envelope")
+    _validate_surface(terrain.get("baseSurface"), source_sha256, "terrain.baseSurface")
+    base_path = _height_sidecar(terrain, snapshot, "baseHeights", width, height)
+    resolved_path = _height_sidecar(terrain, snapshot, "resolvedHeights", width, height)
+    includes = _array(terrain["resolvedHeights"].get("includes"),
+                      "terrain.resolvedHeights.includes")
+    if includes != ["patches", "road-earthworks", "river-cuts"]:
+        raise AuthoringError(
+            "terrain.resolvedHeights.includes must be patches, road-earthworks, river-cuts in evaluation order")
+    patches = [_object(value, f"terrain.patches[{index}]")
+               for index, value in enumerate(_array(terrain.get("patches", []), "terrain.patches"))]
+    _ordered_unique(patches, "terrain.patches")
+    for index, patch in enumerate(patches):
+        where = f"terrain.patches[{index}]"
+        if patch.get("shape") not in ("ellipse", "rectangle"):
+            raise AuthoringError(f"{where}.shape must be ellipse or rectangle")
+        if patch.get("operation") not in ("add", "set"):
+            raise AuthoringError(f"{where}.operation must be add or set")
+        _vector(patch.get("matrix"), 16, f"{where}.matrix")
+        size = _vector(patch.get("size"), 2, f"{where}.size")
+        if min(size) <= 0.0:
+            raise AuthoringError(f"{where}.size must be positive")
+        if _number(patch.get("feather"), f"{where}.feather") < 0.0:
+            raise AuthoringError(f"{where}.feather must be non-negative")
+        _number(patch.get("height"), f"{where}.height")
+        if not isinstance(patch.get("enabled"), bool):
+            raise AuthoringError(f"{where}.enabled must be boolean")
+    return base_path, resolved_path, width, height
+
+
+def _validate_ground_regions(document: dict[str, Any], source_sha256: dict[str, str]) -> None:
+    regions = [_object(value, f"groundRegions[{index}]")
+               for index, value in enumerate(
+                   _array(document.get("groundRegions"), "groundRegions"))]
+    _ordered_unique(regions, "groundRegions")
+    for index, region in enumerate(regions):
+        where = f"groundRegions[{index}]"
+        if not isinstance(region.get("enabled"), bool):
+            raise AuthoringError(f"{where}.enabled must be boolean")
+        if region.get("shape") not in ("ellipse", "rectangle"):
+            raise AuthoringError(f"{where}.shape must be ellipse or rectangle")
+        _vector(region.get("matrix"), 16, f"{where}.matrix")
+        size = _vector(region.get("size"), 2, f"{where}.size")
+        if min(size) <= 0.0:
+            raise AuthoringError(f"{where}.size must be positive")
+        for field in ("blendWidth", "opacity", "priority"):
+            _number(region.get(field), f"{where}.{field}")
+        _validate_surface(region.get("surface"), source_sha256, f"{where}.surface")
+
+
+def _validate_pbr(pbr: Any, source_sha256: dict[str, str], where: str) -> None:
+    pbr = _object(pbr, where)
+    _vector(pbr.get("albedoColor"), 4, f"{where}.albedoColor")
+    _vector(pbr.get("uvScale"), 3, f"{where}.uvScale")
+    _vector(pbr.get("uvOffset"), 3, f"{where}.uvOffset")
+    for field in ("normalScale", "roughness", "metallic"):
+        _number(pbr.get(field), f"{where}.{field}")
+    for field in ("triplanar", "worldTriplanar"):
+        if not isinstance(pbr.get(field), bool):
+            raise AuthoringError(f"{where}.{field} must be boolean")
+    if pbr["triplanar"] or pbr["worldTriplanar"]:
+        raise AuthoringError(
+            f"{where}: triplanar surfaces cannot be represented losslessly in production GLB; "
+            "use an explicit UV-based source material")
+    for field in ("albedoTexture", "normalTexture", "ormTexture"):
+        relative = pbr.get(field)
+        if relative is None:continue
+        path = _source_path(relative, f"{where}.{field}")
+        key = path.relative_to(CLIENT).as_posix()
+        if key not in source_sha256:
+            raise AuthoringError(f"{where}.{field} is not a hash-bound scene dependency")
+
+
+def _validate_surface(surface: Any, source_sha256: dict[str, str], where: str) -> None:
+    record = _object(surface, where)
+    preset = _string(record.get("preset"), f"{where}.preset")
+    _number(record.get("rotationDegrees"), f"{where}.rotationDegrees")
+    mode=record.get("materialMode")
+    if mode not in ("surface", "road", "water"):
+        raise AuthoringError(f"{where}.materialMode is unsupported")
+    if preset != "Custom":
+        if preset not in _PRESET_MATERIALS and preset != "Water":
+            raise AuthoringError(f"{where}.preset {preset!r} is unsupported")
+        if "pbr" in record:
+            raise AuthoringError(f"{where}.pbr is valid only for Custom surfaces")
+        pbr_override=record.get("pbrOverrides")
+        if pbr_override is not None:
+            if mode!="surface":raise AuthoringError(f"{where}.pbrOverrides requires surface materialMode")
+            _validate_pbr(pbr_override,source_sha256,f"{where}.pbrOverrides")
+        road=record.get("roadOverrides")
+        if road is not None:
+            if preset!="Worn earth" or mode!="road":
+                raise AuthoringError(f"{where}.roadOverrides requires the Worn earth road preset")
+            road=_object(road,f"{where}.roadOverrides")
+            required={"wornTint","roughnessMultiplier","normalStrength","edgeFeather","textureScale"}
+            if set(road)!=required:
+                raise AuthoringError(f"{where}.roadOverrides must contain {sorted(required)}")
+            tint=_vector(road["wornTint"],4,f"{where}.roadOverrides.wornTint")
+            if min(tint)<0 or max(tint)>1:raise AuthoringError(f"{where}.roadOverrides.wornTint must be within zero and one")
+            for field in ("roughnessMultiplier","normalStrength","edgeFeather","textureScale"):
+                value=_number(road[field],f"{where}.roadOverrides.{field}")
+                if value<0:raise AuthoringError(f"{where}.roadOverrides.{field} must be non-negative")
+            if road["edgeFeather"]>1:raise AuthoringError(f"{where}.roadOverrides.edgeFeather must not exceed one")
+            if road["textureScale"]<=0:raise AuthoringError(f"{where}.roadOverrides.textureScale must be positive")
+        return
+    if "roadOverrides" in record or "pbrOverrides" in record:
+        raise AuthoringError(f"{where}: Custom surfaces use pbr, not preset overrides")
+    _validate_pbr(record.get("pbr"),source_sha256,f"{where}.pbr")
+
+
+def _validate_paths(document: dict[str, Any], source_sha256: dict[str, str]) -> None:
+    paths = [_object(value, f"paths[{index}]")
+             for index, value in enumerate(_array(document.get("paths"), "paths"))]
+    _ordered_unique(paths, "paths")
+    replacements = []
+    for index, path in enumerate(paths):
+        where = f"paths[{index}]"
+        if path.get("kind") not in ("road", "river"):
+            raise AuthoringError(f"{where}.kind must be road or river")
+        if path.get("routingRole") not in ("required", "decorative"):
+            raise AuthoringError(f"{where}.routingRole must be required or decorative")
+        replacement = path.get("replacesRouteId")
+        if replacement is not None:
+            replacements.append(_string(replacement, f"{where}.replacesRouteId"))
+        plan_feature = path.get("replacesPlanFeatureId")
+        if plan_feature is not None:
+            _string(plan_feature, f"{where}.replacesPlanFeatureId")
+        if path["kind"] == "river" and replacement is not None:
+            raise AuthoringError(f"{where}: a river cannot replace a composer road route")
+        if path["kind"] == "road" and plan_feature is not None:
+            raise AuthoringError(f"{where}: a road cannot replace a planned water feature")
+        _object(path.get("properties"), f"{where}.properties")
+        _validate_surface(path.get("surface"), source_sha256, f"{where}.surface")
+        points = [_object(value, f"{where}.points[{point}]")
+                  for point, value in enumerate(_array(path.get("points"), f"{where}.points"))]
+        if len(points) < 2:
+            raise AuthoringError(f"{where}.points needs at least two controls")
+        for point, value in enumerate(points):
+            _vector(value.get("position"), 3, f"{where}.points[{point}].position")
+            if _number(value.get("width"), f"{where}.points[{point}].width") <= 0.0:
+                raise AuthoringError(f"{where}.points[{point}].width must be positive")
+    if len(replacements) != len(set(replacements)):
+        raise AuthoringError("paths may replace a composer route only once")
+
+
+def _validate_replacements(document: dict[str, Any], production: bool) -> None:
+    replacements = _object(document.get("replacements"), "replacements")
+    route_ids = [_string(value, f"replacements.routeIds[{index}]")
+                 for index, value in enumerate(
+                     _array(replacements.get("routeIds"), "replacements.routeIds"))]
+    feature_ids = [_string(value, f"replacements.planFeatureIds[{index}]")
+                   for index, value in enumerate(
+                       _array(replacements.get("planFeatureIds"), "replacements.planFeatureIds"))]
+    for name, values in (("routeIds", route_ids), ("planFeatureIds", feature_ids)):
+        if values != sorted(values) or len(values) != len(set(values)):
+            raise AuthoringError(f"replacements.{name} must be unique and sorted")
+    paths = document["paths"]
+    declared_routes = {path["replacesRouteId"] for path in paths
+                       if path.get("replacesRouteId") is not None}
+    declared_features = {path["replacesPlanFeatureId"] for path in paths
+                         if path.get("replacesPlanFeatureId") is not None}
+    if declared_routes - set(route_ids):
+        raise AuthoringError("a path replaces a route the persistent registry does not own")
+    if declared_features - set(feature_ids):
+        raise AuthoringError("a path replaces a plan feature the persistent registry does not own")
+    if production:
+        required = set(SUNMANE_REQUIRED_ROUTE_IDS)
+        if set(route_ids) != required:
+            missing = sorted(required - set(route_ids))
+            extra = sorted(set(route_ids) - required)
+            raise AuthoringError(
+                f"Sunmane route replacement registry differs from its required routes; missing={missing}, extra={extra}")
+        absent = sorted(set(SUNMANE_REQUIRED_LINK_ROUTE_IDS) - declared_routes)
+        if absent:
+            raise AuthoringError(f"required authored Sunmane routes are absent: {absent}")
+        if tuple(feature_ids) != SUNMANE_PLAN_FEATURE_IDS:
+            raise AuthoringError(
+                f"Sunmane plan feature registry must be {list(SUNMANE_PLAN_FEATURE_IDS)}")
+
+
+def _validate_bridges(document: dict[str, Any], source_sha256: dict[str, str]) -> None:
+    bridges = [_object(value, f"bridges[{index}]")
+               for index, value in enumerate(_array(document.get("bridges"), "bridges"))]
+    _ordered_unique(bridges, "bridges")
+    for index, bridge in enumerate(bridges):
+        where = f"bridges[{index}]"
+        _vector(bridge.get("start"), 3, f"{where}.start")
+        _vector(bridge.get("end"), 3, f"{where}.end")
+        if bridge.get("collisionRole") != "walk_surface":
+            raise AuthoringError(f"{where}.collisionRole must be walk_surface")
+        for field in ("width", "arch", "waterClearance"):
+            if _number(bridge.get(field), f"{where}.{field}") < 0.0:
+                raise AuthoringError(f"{where}.{field} must be non-negative")
+        _validate_surface(bridge.get("deckSurface"), source_sha256, f"{where}.deckSurface")
+        _validate_surface(bridge.get("supportSurface"), source_sha256, f"{where}.supportSurface")
+
+
+def _resolve_baked_path(entry: dict[str, Any], snapshot: Path) -> Path:
+    relative = _string(_object(entry.get("bakedSource"), "object.bakedSource").get("path"),
+                       "object.bakedSource.path")
+    if relative.replace("\\", "/").startswith("godot-client/"):
+        return _source_path(relative, "object.bakedSource.path")
+    return _contained(snapshot.parent, relative, "object.bakedSource.path")
+
+
+def _validate_objects(document: dict[str, Any], source_sha256: dict[str, str],
+                      snapshot: Path, production: bool) -> None:
+    objects = [_object(value, f"objects[{index}]")
+               for index, value in enumerate(_array(document.get("objects"), "objects"))]
+    _ordered_unique(objects, "objects")
+    for index, entry in enumerate(objects):
+        where = f"objects[{index}]"
+        _string(entry.get("nodeName"), f"{where}.nodeName")
+        _string(entry.get("assetId"), f"{where}.assetId")
+        _vector(entry.get("matrix"), 16, f"{where}.matrix")
+        if entry.get("collisionRole") not in ("none", "solid", "walk_surface"):
+            raise AuthoringError(f"{where}.collisionRole is unsupported")
+        scene_path = _string(entry.get("scenePath"), f"{where}.scenePath")
+        if not scene_path.startswith("res://"):
+            raise AuthoringError(f"{where}.scenePath must be a res:// source asset")
+        source = _source_path("godot-client/" + scene_path.removeprefix("res://"), f"{where}.scenePath")
+        relative = source.relative_to(CLIENT).as_posix()
+        if relative not in source_sha256:
+            raise AuthoringError(f"{where}.scenePath is not a hash-bound scene dependency")
+        source_node = entry.get("sourceNode")
+        if source_node is not None and not isinstance(source_node, str):
+            raise AuthoringError(f"{where}.sourceNode must be a string")
+        baked = _object(entry.get("bakedSource"), f"{where}.bakedSource")
+        baked_path = _resolve_baked_path(entry, snapshot)
+        _verify_hash(baked_path, baked.get("sha256"), f"{where}.bakedSource.sha256")
+        baked_relative = baked_path.relative_to(CLIENT).as_posix()
+        if baked.get("path", "").replace("\\", "/").startswith("godot-client/") and baked_relative not in source_sha256:
+            raise AuthoringError(f"{where}.bakedSource.path is not a hash-bound scene dependency")
+        if baked_path.suffix.lower() != ".glb":
+            raise AuthoringError(f"{where}.bakedSource.path must be a static GLB")
+        _string(baked.get("sourceNode"), f"{where}.bakedSource.sourceNode")
+        overrides = [_object(value, f"{where}.materialOverrides[{override}]")
+                     for override, value in enumerate(_array(
+                         entry.get("materialOverrides", []), f"{where}.materialOverrides"))]
+        for override, material in enumerate(overrides):
+            material_where = f"{where}.materialOverrides[{override}]"
+            if not isinstance(material.get("meshNodePath"), str):
+                raise AuthoringError(f"{material_where}.meshNodePath must be a string")
+            surface_index = material.get("surfaceIndex")
+            if isinstance(surface_index, bool) or not isinstance(surface_index, int) or surface_index < 0:
+                raise AuthoringError(f"{material_where}.surfaceIndex must be a non-negative integer")
+            _validate_surface(material.get("surface"), source_sha256, f"{material_where}.surface")
+
+
+def _validate_gameplay(document: dict[str, Any], production: bool) -> None:
+    gameplay = _object(document.get("gameplay"), "gameplay")
+    assets = {entry["id"]: entry["nodeName"] for entry in document["objects"]}
+    required = ("spawnPoints", "portals", "interactives", "landmarks", "harvestables",
+                "npcMarkers", "ambientPopulation")
+    if production or "runtimePoints" in gameplay:
+        required += ("runtimePoints",)
+    marker_ids: dict[str, set[str]] = {}
+    for section in required:
+        records = [_object(value, f"gameplay.{section}[{index}]")
+                   for index, value in enumerate(_array(gameplay.get(section), f"gameplay.{section}"))]
+        _ordered_unique(records, f"gameplay.{section}")
+        marker_ids[section] = {record["id"] for record in records}
+        for index, record in enumerate(records):
+            where = f"gameplay.{section}[{index}]"
+            if "matrix" in record:
+                _vector(record["matrix"], 16, f"{where}.matrix")
+            elif "position" in record:
+                _vector(record["position"], 3, f"{where}.position")
+            else:
+                raise AuthoringError(f"{where} needs a position or matrix")
+            asset_id = record.get("assetId")
+            if asset_id is not None:
+                asset_id = _string(asset_id, f"{where}.assetId")
+                if asset_id not in assets:
+                    raise AuthoringError(f"{where}.assetId does not identify an authored asset")
+                node = record.get("node")
+                if node is not None and node != assets[asset_id]:
+                    raise AuthoringError(f"{where}.node disagrees with its authored assetId")
+    if not gameplay["spawnPoints"]:
+        raise AuthoringError("gameplay.spawnPoints must retain an authored spawn")
+    if not gameplay["portals"]:
+        raise AuthoringError("gameplay.portals must retain authored links")
+    if not production and "runtimeBindings" not in gameplay:
+        return
+    bindings = [_object(value, f"gameplay.runtimeBindings[{index}]")
+                for index, value in enumerate(_array(
+                    gameplay.get("runtimeBindings"), "gameplay.runtimeBindings"))]
+    _ordered_unique(bindings, "gameplay.runtimeBindings")
+    roles = {"door", "return", "interactive", "npc", "harvest", "spawn", "territory"}
+    zero_runtime_offsets = 0
+    nonzero_existing_offsets = 0
+    for index, binding in enumerate(bindings):
+        where = f"gameplay.runtimeBindings[{index}]"
+        source = _object(binding.get("source"), f"{where}.source")
+        source_path = _string(source.get("path"), f"{where}.source.path").replace("\\", "/")
+        if source_path.startswith("/") or ".." in Path(source_path).parts:
+            raise AuthoringError(f"{where}.source.path must be a contained relative profile path")
+        line = source.get("line")
+        if isinstance(line, bool) or not isinstance(line, int) or line <= 0:
+            raise AuthoringError(f"{where}.source.line must be a positive integer")
+        _integer_vector(source.get("oldTile"), 2, f"{where}.source.oldTile")
+        if "recordId" in source:
+            _string(source["recordId"], f"{where}.source.recordId")
+        marker = _object(binding.get("marker"), f"{where}.marker")
+        section = _string(marker.get("section"), f"{where}.marker.section")
+        identity = _string(marker.get("id"), f"{where}.marker.id")
+        if section not in marker_ids or identity not in marker_ids[section]:
+            raise AuthoringError(f"{where}.marker does not resolve exactly in gameplay.{section}")
+        if binding.get("role") not in roles:
+            raise AuthoringError(f"{where}.role is unsupported")
+        if binding.get("roads") not in ("marker", "entrance"):
+            raise AuthoringError(f"{where}.roads must be marker or entrance")
+        target_offset = _vector(binding.get("targetOffset"), 3, f"{where}.targetOffset")
+        if target_offset[1] != 0.0:
+            raise AuthoringError(f"{where}.targetOffset vertical component must be zero")
+        if section == "runtimePoints":
+            if target_offset != (0.0, 0.0, 0.0):
+                raise AuthoringError(f"{where}.targetOffset must be zero for a dedicated runtime point")
+            zero_runtime_offsets += 1
+        elif target_offset[0] != 0.0 or target_offset[2] != 0.0:
+            nonzero_existing_offsets += 1
+        provenance = _object(binding.get("provenance"), f"{where}.provenance")
+        for field in ("sourceReportSha256", "sourceProfileSha256"):
+            if field == "sourceProfileSha256" and field not in provenance:
+                continue
+            digest = _string(provenance.get(field), f"{where}.provenance.{field}")
+            if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
+                raise AuthoringError(f"{where}.provenance.{field} must be a lowercase SHA-256 digest")
+    if production:
+        if len(bindings) != 191:
+            raise AuthoringError("gameplay.runtimeBindings must cover all 191 Sunmane runtime records")
+        if len(gameplay["runtimePoints"]) != 110:
+            raise AuthoringError("gameplay.runtimePoints must retain all 110 unrepresented runtime controls")
+        if zero_runtime_offsets != 110 or nonzero_existing_offsets != 81:
+            raise AuthoringError("runtime binding offsets must retain 110 zero dedicated points and 81 existing-marker endpoints")
+    seed_source = document["sources"]["runtimeBindingSeed"]
+    seed_path = _source_path(seed_source["path"], "sources.runtimeBindingSeed.path")
+    seed = _object(json.loads(seed_path.read_text(encoding="utf-8")), "runtime binding seed")
+    if seed.get("schema") != "eloria-runtime-binding-seed-v1" or seed.get("regionId") != SUNMANE:
+        raise AuthoringError("runtime binding seed schema or region is unsupported")
+    provenance = _object(seed.get("provenance"), "runtime binding seed.provenance")
+    profile_hashes = {
+        entry["path"].replace("\\", "/").split("legacy-server-profile/", 1)[-1]: entry["sha256"]
+        for entry in _array(provenance.get("profileFiles"), "runtime binding seed.provenance.profileFiles")}
+    expected = []
+    for index, value in enumerate(_array(seed.get("bindings"), "runtime binding seed.bindings")):
+        record = dict(_object(value, f"runtime binding seed.bindings[{index}]"))
+        record.pop("initialPosition", None)
+        source = _object(record.get("source"), f"runtime binding seed.bindings[{index}].source")
+        record["provenance"] = {"sourceReportSha256": provenance["sourceReportSha256"]}
+        profile_digest = profile_hashes.get(source.get("path", "").replace("\\", "/"))
+        if profile_digest is not None:
+            record["provenance"]["sourceProfileSha256"] = profile_digest
+        expected.append(record)
+    if bindings != expected:
+        raise AuthoringError("gameplay.runtimeBindings do not exactly match the hash-bound seed")
+
+
+def _validate_seams(document: dict[str, Any]) -> None:
+    seams = _object(document.get("seams"), "seams")
+    digest = _string(seams.get("ownershipPolygonSha256"), "seams.ownershipPolygonSha256")
+    if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
+        raise AuthoringError("seams.ownershipPolygonSha256 must be a lowercase SHA-256 digest")
+    anchors = [_object(value, f"seams.anchors[{index}]")
+               for index, value in enumerate(_array(seams.get("anchors"), "seams.anchors"))]
+    _ordered_unique(anchors, "seams.anchors")
+    for index, anchor in enumerate(anchors):
+        _vector(anchor.get("anchor"), 3, f"seams.anchors[{index}].anchor")
+
+
+@dataclass(frozen=True)
+class Snapshot:
+    path: Path
+    document: dict[str, Any]
+    source_sha256: dict[str, str]
+    base_heights_path: Path
+    resolved_heights_path: Path
+    terrain_width: int
+    terrain_height: int
+
+    @property
+    def digest(self) -> str:
+        return sha256(self.path)
+
+    @property
+    def translation(self) -> np.ndarray:
+        return np.asarray(self.document["continentTranslation"], dtype=np.float64)
+
+    def continent_point(self, local: Iterable[float]) -> np.ndarray:
+        point = np.asarray(tuple(local), dtype=np.float64)
+        if point.shape != (3,) or not np.isfinite(point).all():
+            raise AuthoringError("local point must contain three finite numbers")
+        return point + self.translation
+
+    def base_heights(self) -> np.ndarray:
+        return np.fromfile(self.base_heights_path, dtype="<f4").reshape(
+            self.terrain_height, self.terrain_width).astype(np.float64)
+
+    def effective_heights(self) -> np.ndarray:
+        """Read the exact final height grid shown by the editor preview."""
+        return np.fromfile(self.resolved_heights_path, dtype="<f4").reshape(
+            self.terrain_height, self.terrain_width).astype(np.float64)
+
+    def replacement_paths(self) -> dict[str, dict[str, Any]]:
+        """Exact composer route identities owned by this authored scene."""
+        return {path["replacesRouteId"]: path for path in self.document["paths"]
+                if path.get("replacesRouteId") is not None}
+
+    def bound_sources(self) -> dict[str, str]:
+        """Every raw source or sidecar whose bytes certify this snapshot."""
+        result = dict(self.source_sha256)
+        for field in ("baseHeights", "resolvedHeights"):
+            path = _contained(self.path.parent, self.document["terrain"][field]["path"],
+                              f"terrain.{field}.path")
+            result[path.relative_to(CLIENT).as_posix()] = sha256(path)
+        result[self.path.relative_to(CLIENT).as_posix()] = self.digest
+        for entry in self.document["objects"]:
+            path = _resolve_baked_path(entry, self.path)
+            result[path.relative_to(CLIENT).as_posix()] = sha256(path)
+        for pattern in AUTHORING_FRAMEWORK_GLOBS:
+            matches = sorted(CLIENT.glob(pattern))
+            if not matches:
+                raise AuthoringError(f"authoring framework source glob has no files: {pattern}")
+            for path in matches:
+                result[path.relative_to(CLIENT).as_posix()] = sha256(path)
+        return dict(sorted(result.items()))
+
+
+def apply_plan(plan: dict[str, Any], snapshot: Snapshot) -> dict[str, Any]:
+    """Suppress owned procedural water and install authored water paths.
+
+    The persistent registry is applied independently of surviving path nodes,
+    so deleting the authored river deletes it rather than reviving the old
+    planned channel.
+    """
+    import copy
+    result = copy.deepcopy(plan)
+    sites = _object(result.setdefault("connection_sites", {}), "plan.connection_sites")
+    for anchor in snapshot.document["seams"]["anchors"]:
+        identity = anchor["id"]
+        point = snapshot.continent_point(anchor["anchor"])[[0, 2]].tolist()
+        registered = sites.get(identity)
+        if registered is not None and not np.allclose(
+                np.asarray(registered, dtype=np.float64), point, atol=1e-6, rtol=0.0):
+            raise AuthoringError(
+                f"{identity}: saved seam anchor conflicts with registered connection site "
+                f"{registered}; update the shared connection contract explicitly")
+        sites[identity] = point
+    owned = set(snapshot.document["replacements"]["planFeatureIds"])
+    prior = {entry.get("id"): entry for entry in result.get("rivers", [])
+             if entry.get("id") in owned}
+    result["rivers"] = [entry for entry in result.get("rivers", [])
+                        if entry.get("id") not in owned]
+    for path in snapshot.document["paths"]:
+        if path["kind"] != "river":
+            continue
+        replacement = path.get("replacesPlanFeatureId")
+        properties = path.get("properties", {})
+        widths = np.asarray([float(point["width"]) * 0.5 for point in path["points"]])
+        required = ("channelDepth", "valleyWidth", "bankHeight")
+        missing = [field for field in required if field not in properties]
+        if missing:
+            raise AuthoringError(f"{path['id']}: river properties missing {missing}")
+        identity = replacement or path["id"]
+        record = {
+            "id": identity,
+            "name": str(properties.get("name", identity)),
+            "authoredSampled": True,
+            "width": float(widths.max()),
+            "widths": widths.tolist(),
+            "depth": _number(properties["channelDepth"], f"{path['id']}.properties.channelDepth"),
+            "valley_width": _number(properties["valleyWidth"], f"{path['id']}.properties.valleyWidth"),
+            "bank_height": _number(properties["bankHeight"], f"{path['id']}.properties.bankHeight"),
+            "points": [[float(global_point[0]), float(global_point[2]), float(global_point[1]),
+                        float(width)]
+                       for global_point, width in zip(
+                           (snapshot.continent_point(point["position"]) for point in path["points"]), widths)],
+        }
+        # Topology fields are explicit authored properties.  The existing
+        # feature is consulted only to validate migration completeness, never
+        # copied as a mutable fallback.
+        topology = [field for field in ("mouth", "joins", "joins_from", "delta")
+                    if field in properties]
+        if not topology:
+            old = prior.get(replacement)
+            expected = [field for field in ("mouth", "joins", "joins_from")
+                        if old is not None and field in old]
+            if expected:
+                raise AuthoringError(
+                    f"{path['id']}: river properties must freeze one of {expected} from the retired plan feature")
+        for field in topology:
+            record[field] = copy.deepcopy(properties[field])
+        for field in ("bankShelfWidth", "bankShelfHeight", "cutsRelief"):
+            if field in properties:
+                target = {"bankShelfWidth": "bank_shelf_width",
+                          "bankShelfHeight": "bank_shelf_height",
+                          "cutsRelief": "cuts_relief"}[field]
+                record[target] = copy.deepcopy(properties[field])
+        result["rivers"].append(record)
+    return result
+
+
+def _register_road_fields(world: Any, road: dict[str, Any]) -> None:
+    """Register an exact saved centreline without recomputing its Y profile."""
+    points = np.asarray(road["points"], dtype=np.float64)
+    widths = np.asarray(road.get("widths", [float(road["width"])] * len(points)), dtype=np.float64)
+    if len(widths) != len(points):
+        raise AuthoringError(f"{road['id']}: road widths must match road points")
+    for segment, (a, b) in enumerate(zip(points, points[1:])):
+        horizontal_a, horizontal_b = a[[0, 2]], b[[0, 2]]
+        segment_width=max(float(widths[segment]),float(widths[segment+1]))
+        shoulder = max(16.0, segment_width * 4.0)
+        low = np.minimum(horizontal_a, horizontal_b) - segment_width - shoulder
+        high = np.maximum(horizontal_a, horizontal_b) + segment_width + shoulder
+        ix0 = max(0, int((low[0] - world.x0) / 2.0))
+        ix1 = min(len(world.x), int((high[0] - world.x0) / 2.0) + 2)
+        iz0 = max(0, int((low[1] - world.z0) / 2.0))
+        iz1 = min(len(world.z), int((high[1] - world.z0) / 2.0) + 2)
+        sl = np.s_[iz0:iz1, ix0:ix1]
+        delta = horizontal_b - horizontal_a
+        amount = np.clip(((world.gx[sl] - horizontal_a[0]) * delta[0] +
+                          (world.gz[sl] - horizontal_a[1]) * delta[1]) /
+                         max(float(delta @ delta), 1e-9), 0.0, 1.0)
+        distance = np.hypot(world.gx[sl] - horizontal_a[0] - amount * delta[0],
+                            world.gz[sl] - horizontal_a[1] - amount * delta[1])
+        width = widths[segment] * (1.0 - amount) + widths[segment + 1] * amount
+        world.road_distance[sl] = np.minimum(world.road_distance[sl], distance / width)
+        target = a[1] * (1.0 - amount) + b[1] * amount
+        closer = distance < world.road_nearest[sl]
+        world.road_target[sl] = np.where(closer, target, world.road_target[sl])
+        world.road_nearest[sl] = np.minimum(world.road_nearest[sl], distance)
+
+
+def replace_routes(world: Any, snapshot: Snapshot) -> dict[str, Any]:
+    """Replace every scene-owned composer route, then rebuild road rasters."""
+    owned = set(snapshot.document["replacements"]["routeIds"])
+    procedural_count = sum(road["id"] in owned for road in world.roads)
+    authored = []
+    road_paths={path.get("replacesRouteId") or path["id"]:path
+                for path in snapshot.document["paths"] if path["kind"]=="road"}
+    for identity in sorted(road_paths):
+        path = road_paths[identity]
+        widths = np.asarray([float(point["width"]) * 0.5 for point in path["points"]])
+        points = [snapshot.continent_point(point["position"]).tolist() for point in path["points"]]
+        authored.append({"id": identity, "points": points, "width": float(widths.max()),
+                         "widths": widths.tolist(),
+                         "authoringId": path["id"]})
+    by_id = {road["id"]: road for road in authored}
+    rebuilt=[];seen=set()
+    for road in world.roads:
+        identity=road["id"]
+        if identity in owned:
+            if identity in by_id and identity not in seen:
+                rebuilt.append(by_id[identity]);seen.add(identity)
+        else:rebuilt.append(road)
+    rebuilt.extend(by_id[identity] for identity in sorted(by_id) if identity not in seen)
+    world.roads = rebuilt
+    world.road_distance = np.full_like(world.height, np.inf)
+    world.road_nearest = np.full_like(world.height, np.inf)
+    world.road_target = world.height.copy()
+    for road in world.roads:
+        _register_road_fields(world, road)
+    # These claims belonged to the retired procedural Sunmane alignments.  An
+    # authored bridge is exported directly from its saved endpoints, so the
+    # claimed-site fitter must neither grade its terrain nor regenerate it.
+    suppressed=[]
+    retained=[]
+    for site in getattr(world, "crossing_sites", ()):
+        if site.get("region") == SUNMANE:
+            suppressed.append(int(site["id"]))
+        else:
+            retained.append(site)
+    if suppressed:
+        world.crossing_sites=retained
+        world.crossing_site_use={key:value for key,value in world.crossing_site_use.items()
+                                 if key not in suppressed}
+        world.crossing_site_roads={key:value for key,value in world.crossing_site_roads.items()
+                                   if key not in suppressed}
+        world.crossing_version=getattr(world,"crossing_version",0)+1
+    return {"ownedRouteIds": sorted(owned), "authoredRoutes": len(authored),
+            "removedProceduralRoutes": int(procedural_count),
+            "suppressedProceduralBridgeSiteIds":suppressed}
+
+
+def marker_position(record: dict[str, Any]) -> list[float]:
+    """Return the local translation stored by a gameplay marker."""
+    if "matrix" in record:
+        matrix = _vector(record["matrix"], 16, "gameplay marker matrix")
+        return [matrix[12], matrix[13], matrix[14]]
+    return list(_vector(record.get("position"), 3, "gameplay marker position"))
+
+
+def server_tile(position: Iterable[float]) -> list[int]:
+    """Derive the published tile from a territory-local marker position."""
+    x, _, z = _vector(list(position), 3, "gameplay marker position")
+    return [math.floor(x + SUNMANE_SERVER_ORIGIN[0]),
+            math.floor(SUNMANE_SERVER_ORIGIN[1] - z)]
+
+
+def authored_gameplay(snapshot: Snapshot) -> dict[str, Any]:
+    """Build complete manifest sections; absence means deletion, never fallback."""
+    result: dict[str, Any] = {}
+    for name, records in snapshot.document["gameplay"].items():
+        if name == "runtimeBindings":
+            continue
+        authored = []
+        for source in records:
+            import copy
+            entry = {key: copy.deepcopy(value) for key, value in source.items()
+                     if key not in ("id", "position", "matrix", "extras")}
+            extras = _object(source.get("extras", {}), f"gameplay.{name}.{source['id']}.extras")
+            forbidden = {"id", "position", "serverTile", "matrix", "center"} & extras.keys()
+            if forbidden:
+                raise AuthoringError(
+                    f"gameplay.{name}.{source['id']}.extras cannot replace {sorted(forbidden)}")
+            overlap = set(entry) & set(extras)
+            if overlap:
+                raise AuthoringError(
+                    f"gameplay.{name}.{source['id']}.extras duplicates top-level fields {sorted(overlap)}")
+            entry.update(copy.deepcopy(extras))
+            position = marker_position(source)
+            entry.update(id=source["id"], position=position, serverTile=server_tile(position))
+            if name in ("harvestables", "ambientPopulation"):
+                entry["center"] = list(position)
+            authored.append(entry)
+        result[name] = authored
+    return result
+
+
+def apply_runtime_bindings(content: Any, snapshot: Snapshot) -> dict[str, Any]:
+    """Install exact profile-record identities backed by saved gameplay markers.
+
+    These bindings deliberately do not populate the old tile-only override.
+    Multiple profile records can share an old tile while remaining separately
+    authored, and every contract lookup must therefore name its binding id.
+    """
+    gameplay = snapshot.document["gameplay"]
+    sections = {name: {record["id"]: record for record in records}
+                for name, records in gameplay.items()
+                if name != "runtimeBindings"}
+    points: dict[tuple[str, str], np.ndarray] = {}
+    records: dict[str, dict[str, Any]] = {}
+    source_index: dict[tuple[str, int, tuple[int, int]], str] = {}
+    source_lines: dict[tuple[str, int], list[str]] = {}
+    source_tiles: dict[tuple[str, tuple[int, int]], list[str]] = {}
+    entrance_tiles = set(getattr(content, "entrance_road_tiles", ()))
+    for binding in gameplay["runtimeBindings"]:
+        identity = binding["id"]
+        marker = binding["marker"]
+        local = np.asarray(marker_position(sections[marker["section"]][marker["id"]]),
+                           dtype=np.float64)
+        offset = np.asarray(binding["targetOffset"], dtype=np.float64)
+        # Endpoint offsets are horizontal semantic differences (for example a
+        # cave doorway and its return square). Marker Y remains the saved scene
+        # authority while every linked endpoint translates with marker edits.
+        local[[0, 2]] += offset[[0, 2]]
+        point = snapshot.continent_point(local)
+        points[(SUNMANE, identity)] = point
+        records[identity] = binding
+        source = binding["source"]
+        source_key = (source["path"].replace("\\", "/"), int(source["line"]),
+                      tuple(map(int, source["oldTile"])))
+        if source_key in source_index:
+            raise AuthoringError(f"duplicate runtime source identity {source_key}")
+        source_index[source_key] = identity
+        line_key = (source_key[0], source_key[1])
+        source_lines.setdefault(line_key, []).append(identity)
+        source_tiles.setdefault((source_key[0], source_key[2]), []).append(identity)
+        if binding["roads"] == "entrance":
+            entrance_tiles.add((SUNMANE, tuple(map(int, source["oldTile"]))))
+    content.authored_runtime_points = points
+    content.runtime_bindings = records
+    content.runtime_binding_sources = source_index
+    content.runtime_binding_source_lines = {
+        key: tuple(sorted(values)) for key, values in source_lines.items()}
+    content.runtime_binding_source_tiles = {
+        key: tuple(sorted(values)) for key, values in source_tiles.items()}
+    content.entrance_road_tiles = entrance_tiles
+    return {"bindings": len(records), "runtimePoints": len(gameplay["runtimePoints"])}
+
+
+def apply_gameplay(template: dict[str, Any], snapshot: Snapshot) -> dict[str, Any]:
+    """Replace all scene-owned Sunmane gameplay sections by stable ID."""
+    import copy
+    result = copy.deepcopy(template)
+    authored = authored_gameplay(snapshot)
+    for section in ("spawnPoints", "portals", "interactives", "landmarks",
+                    "harvestables", "npcMarkers"):
+        result[section] = authored[section]
+    # ``spawns`` is the legacy alias still read by a few consumers.
+    result["spawns"] = copy.deepcopy(authored["spawnPoints"])
+    note = result.get("ambientPopulation", {}).get("note")
+    result["ambientPopulation"] = {"groups": authored["ambientPopulation"]}
+    if note is not None:
+        result["ambientPopulation"]["note"] = note
+    return result
+
+
+def apply_terrain(world: Any, snapshot: Snapshot) -> dict[str, Any]:
+    """Install the scene preview's final vertices on the shared grid.
+
+    The 792 m authored envelope deliberately overlaps neighbouring ownership.
+    It is clipped only by the continent bounds; later partitioning therefore
+    reads the same shared vertices on both sides of every territory seam.
+    """
+    origin = np.asarray(snapshot.document["terrain"]["origin"], dtype=np.float64)
+    global_origin = origin + snapshot.translation[[0, 2]]
+    heights = snapshot.effective_heights()
+    x = global_origin[0] + np.arange(snapshot.terrain_width) * 2.0
+    z = global_origin[1] + np.arange(snapshot.terrain_height) * 2.0
+    ix = np.rint((x - world.x0) / 2.0).astype(int)
+    iz = np.rint((z - world.z0) / 2.0).astype(int)
+    aligned_x = world.x0 + ix * 2.0
+    aligned_z = world.z0 + iz * 2.0
+    if not np.allclose(aligned_x, x, rtol=0.0, atol=1e-9) or not np.allclose(aligned_z, z, rtol=0.0, atol=1e-9):
+        raise AuthoringError("authored terrain is not aligned to the shared two-metre grid")
+    keep_x = (ix >= 0) & (ix < world.height.shape[1])
+    keep_z = (iz >= 0) & (iz < world.height.shape[0])
+    if not keep_x.any() or not keep_z.any():
+        raise AuthoringError("authored terrain does not intersect the shared continent")
+    source = heights[np.ix_(keep_z, keep_x)]
+    target = np.ix_(iz[keep_z], ix[keep_x])
+    authority = np.ones(source.shape, dtype=bool)
+    if hasattr(world, "owner") and hasattr(world, "ids") and SUNMANE in world.ids:
+        from scipy.ndimage import binary_dilation
+        owned_cells = world.owner == world.ids.index(SUNMANE)
+        if owned_cells.shape == world.height.shape:
+            # Small test worlds may provide vertex ownership directly.
+            owned = owned_cells
+        elif owned_cells.shape == (world.height.shape[0]-1, world.height.shape[1]-1):
+            # Production ownership names terrain cells. A shared vertex belongs
+            # to Sunmane when any of its four incident cells does.
+            owned = np.zeros(world.height.shape, dtype=bool)
+            owned[:-1, :-1] |= owned_cells
+            owned[1:, :-1] |= owned_cells
+            owned[:-1, 1:] |= owned_cells
+            owned[1:, 1:] |= owned_cells
+        else:
+            raise AuthoringError(
+                f"shared ownership shape {owned_cells.shape} does not match terrain {world.height.shape}")
+        authority = binary_dilation(owned, structure=np.ones((3, 3), dtype=bool))[target]
+    current = world.height[target]
+    world.height[target] = np.where(authority, source, current)
+    # Road grading may fit neighbouring approaches to these vertices, but it
+    # must not temporarily grade them and rely on a later restore.  That can
+    # make a terminal look feasible during settlement and leave a cliff when
+    # the exact editor preview is reinstated.  Keep the full-grid mask/value
+    # pair on the world so every road pass treats the same saved vertices as
+    # fixed ground.
+    world.authored_terrain_authority = np.zeros_like(world.height, dtype=bool)
+    # Snapshot samples are f32 by contract; retaining them as f32 avoids a
+    # second continent-sized f64 height allocation while preserving every
+    # authoritative bit.
+    world.authored_terrain_height = np.zeros_like(world.height, dtype=np.float32)
+    world.authored_terrain_authority[target] = authority
+    world.authored_terrain_height[target] = source
+    return {"sourceVertices": int(heights.size),
+            "appliedVertices": int(authority.sum()),
+            "globalBounds": [[float(x[0]), float(z[0])], [float(x[-1]), float(z[-1])]]}
+
+
+def source_asset_path(scene_path: str) -> Path:
+    if not scene_path.startswith("res://"):
+        raise AuthoringError("authored object scenePath must start with res://")
+    return _source_path("godot-client/" + scene_path.removeprefix("res://"), "object.scenePath")
+
+
+def baked_asset_path(entry: dict[str, Any], snapshot: Snapshot) -> Path:
+    return _resolve_baked_path(entry, snapshot.path)
+
+
+_PRESET_MATERIALS = {
+    "Grass": ("ground", (0.78, 0.86, 0.72, 1.0), 1.0, 0.0, 0.75, 0.24),
+    "Worn earth": ("ground", (0.60, 0.48, 0.31, 1.0), 1.0, 0.0, 0.72, 0.24),
+    "Soil": ("ground", (0.43, 0.30, 0.18, 1.0), 1.0, 0.0, 0.72, 0.24),
+    "Sand": ("ground", (0.86, 0.72, 0.47, 1.0), 0.96, 0.0, 0.48, 0.20),
+    "Desert": ("desert", (0.90, 0.82, 0.68, 1.0), 1.0, 0.0, 0.50, 0.20),
+    "Timber": ("timber", (0.65, 0.64, 0.59, 1.0), 0.86, 0.0, 0.8, 0.5),
+    "Stone": ("stone", (0.48, 0.56, 0.56, 1.0), 1.0, 0.0, 0.72, 0.8),
+    "Thatch": ("thatch", (1.0, 0.94, 0.76, 1.0), 0.92, 0.0, 0.7, 0.56),
+    "Textile": ("textile", (0.58, 0.45, 0.25, 1.0), 0.86, 0.0, 0.65, 2.0),
+    "Canvas": ("canvas", (0.78, 0.77, 0.65, 1.0), 0.88, 0.0, 0.65, 1.2),
+    "Metal": ("metal", (1.0, 1.0, 1.0, 1.0), 0.44, 1.0, 0.75, 2.0),
+    "Leather": ("leather", (0.28, 0.25, 0.19, 1.0), 0.70, 0.0, 0.7, 1.0),
+    "Hide": ("hide", (0.92, 0.88, 0.78, 1.0), 0.86, 0.0, 0.6, 1.1),
+    "Bone": ("bone", (0.90, 0.86, 0.72, 1.0), 0.52, 0.0, 0.65, 1.67),
+    "Crystal": ("crystal", (0.72, 0.56, 0.86, 1.0), 0.18, 0.0, 0.8, 0.9),
+    "Cavern": ("cavern", (0.66, 0.62, 0.56, 1.0), 0.93, 0.0, 0.72, 0.23),
+    "Slate": (None, (0.095, 0.17, 0.20, 1.0), 0.55, 0.0, 1.0, 0.8),
+}
+
+
+def gltf_base_color(color: Iterable[float]) -> tuple[float, float, float, float]:
+    """Convert a Godot/editor sRGB colour to glTF's linear baseColorFactor."""
+    value = tuple(float(component) for component in color)
+    if len(value) != 4:
+        raise AuthoringError("an authored base colour must contain RGBA")
+    def linear(component: float) -> float:
+        return component / 12.92 if component <= 0.04045 else ((component + 0.055) / 1.055) ** 2.4
+    return linear(value[0]), linear(value[1]), linear(value[2]), value[3]
+
+
+def _embedded_texture(document: dict[str, Any], body: bytearray, path: Path,
+                      memo: dict[Path, int]) -> int:
+    if path in memo:
+        return memo[path]
+    suffix = path.suffix.lower()
+    if suffix not in (".png", ".jpg", ".jpeg"):
+        raise AuthoringError(f"{path}: authored PBR textures must be PNG or JPEG for GLB export")
+    while len(body) % 4:
+        body.append(0)
+    data = path.read_bytes()
+    view = len(document.setdefault("bufferViews", []))
+    document["bufferViews"].append({"buffer": 0, "byteOffset": len(body), "byteLength": len(data)})
+    body.extend(data)
+    image = len(document.setdefault("images", []))
+    document["images"].append({"name": path.stem, "bufferView": view,
+                                "mimeType": "image/png" if suffix == ".png" else "image/jpeg"})
+    samplers = document.setdefault("samplers", [])
+    if not samplers:
+        samplers.append({"magFilter": 9729, "minFilter": 9987, "wrapS": 10497, "wrapT": 10497})
+    texture = len(document.setdefault("textures", []))
+    document["textures"].append({"source": image, "sampler": 0})
+    memo[path] = texture
+    return texture
+
+
+def _material_record(document: dict[str, Any], body: bytearray, surface: dict[str, Any],
+                     textures: dict[Path, int]) -> int:
+    preset = surface["preset"]
+    rotation = math.radians(float(surface.get("rotationDegrees", 0.0)))
+    pbr_source=surface.get("pbr") if preset=="Custom" else surface.get("pbrOverrides")
+    if pbr_source is not None:
+        pbr = _object(pbr_source, "authored surface PBR")
+        color = tuple(_vector(pbr.get("albedoColor"), 4, "custom surface.pbr.albedoColor"))
+        roughness = _number(pbr.get("roughness"), "custom surface.pbr.roughness")
+        metallic = _number(pbr.get("metallic"), "custom surface.pbr.metallic")
+        normal_scale = _number(pbr.get("normalScale"), "custom surface.pbr.normalScale")
+        uv = _vector(pbr.get("uvScale"), 3, "custom surface.pbr.uvScale")
+        offset = _vector(pbr.get("uvOffset"), 3, "custom surface.pbr.uvOffset")
+        maps = {"albedo": pbr.get("albedoTexture"), "normal": pbr.get("normalTexture"),
+                "orm": pbr.get("ormTexture")}
+    else:
+        if preset not in _PRESET_MATERIALS:
+            raise AuthoringError(f"unsupported authored surface preset {preset!r}")
+        family, color, roughness, metallic, normal_scale, density = _PRESET_MATERIALS[preset]
+        uv = (density, density, density)
+        offset = (0.0, 0.0, 0.0)
+        texture_root = CLIENT / "godot-client/src/dev/map_authoring_pilot/style/textures"
+        detail_family="ground" if preset=="Desert" else family
+        maps = ({"albedo": texture_root / f"{family}-basecolor.png",
+                 "normal": texture_root / f"{detail_family}-normal.png",
+                 "orm": texture_root / f"{detail_family}-orm.png"} if family else {})
+    # Godot's oriented shader evaluates R * (UV * scale + offset). KHR applies
+    # offset + R * (UV * scale), so rotate the stored offset as well.
+    rotated_offset = (math.cos(rotation)*offset[0]-math.sin(rotation)*offset[1],
+                      math.sin(rotation)*offset[0]+math.cos(rotation)*offset[1])
+    transform = {"offset": [float(rotated_offset[0]), float(rotated_offset[1])], "rotation": rotation,
+                 "scale": [float(uv[0]), float(uv[1])]}
+    def texture_info(value: Any) -> dict[str, Any] | None:
+        if value is None:
+            return None
+        path = Path(value) if isinstance(value, Path) else _source_path(value, "custom surface texture")
+        info = {"index": _embedded_texture(document, body, path, textures)}
+        if rotation or not np.allclose(uv[:2], (1.0, 1.0)) or not np.allclose(offset[:2], (0.0, 0.0)):
+            info["extensions"] = {"KHR_texture_transform": transform}
+            extensions = document.setdefault("extensionsUsed", [])
+            if "KHR_texture_transform" not in extensions:
+                extensions.append("KHR_texture_transform")
+        return info
+    albedo, normal, orm = (texture_info(maps.get(name)) for name in ("albedo", "normal", "orm"))
+    record = {"name": f"Authored_{preset}_{len(document.setdefault('materials', [])):04d}",
+              "pbrMetallicRoughness": {"baseColorFactor": list(gltf_base_color(color)),
+                                       "roughnessFactor": float(roughness),
+                                       "metallicFactor": float(metallic)},
+              "doubleSided": True}
+    if color[3]<1.:record["alphaMode"]="BLEND"
+    if albedo is not None:record["pbrMetallicRoughness"]["baseColorTexture"] = albedo
+    if orm is not None:
+        record["pbrMetallicRoughness"]["metallicRoughnessTexture"] = orm
+        record["occlusionTexture"] = dict(orm)
+    if normal is not None:
+        record["normalTexture"] = dict(normal, scale=float(normal_scale))
+    document["materials"].append(record)
+    return len(document["materials"]) - 1
+
+
+def _apply_material_overrides(document: dict[str, Any], body: bytes, root: int,
+                              overrides: list[dict[str, Any]]) -> tuple[dict[str, Any], bytes]:
+    if not overrides:
+        return document, body
+    import copy
+    document = copy.deepcopy(document); binary = bytearray(body);texture_memo={}
+    def resolve(path: str) -> int:
+        parts = [part for part in path.replace("\\", "/").split("/") if part and part != "."]
+        current = root
+        if parts and parts[0] == document["nodes"][root].get("name"):
+            parts.pop(0)
+        for part in parts:
+            matches = [child for child in document["nodes"][current].get("children", [])
+                       if document["nodes"][child].get("name") == part]
+            if len(matches) != 1:
+                raise AuthoringError(f"material override path {path!r} does not identify one mesh node")
+            current = matches[0]
+        return current
+    cloned_meshes={}
+    for override in overrides:
+        node = resolve(override["meshNodePath"])
+        if "mesh" not in document["nodes"][node]:
+            raise AuthoringError(f"material override target {override['meshNodePath']!r} has no mesh")
+        if node not in cloned_meshes:
+            old_mesh=document["nodes"][node]["mesh"]
+            mesh=copy.deepcopy(document["meshes"][old_mesh])
+            document.setdefault("meshes",[]).append(mesh)
+            cloned_meshes[node]=len(document["meshes"])-1
+            document["nodes"][node]["mesh"]=cloned_meshes[node]
+        primitive = int(override["surfaceIndex"])
+        parts = document["meshes"][document["nodes"][node]["mesh"]]["primitives"]
+        if primitive >= len(parts):
+            raise AuthoringError(
+                f"material override target {override['meshNodePath']!r} has no surface {primitive}")
+        parts[primitive]["material"] = _material_record(document, binary, override["surface"], texture_memo)
+    if document.get("buffers"):
+        document["buffers"] = [dict(document["buffers"][0], byteLength=len(binary))]
+    return document, bytes(binary)
+
+
+def _embed_external_images(document: dict[str, Any], body: bytes, source_path: Path,
+                           snapshot: Snapshot) -> tuple[dict[str, Any], bytes]:
+    """Embed certified relative GLB images before lossless transplantation."""
+    external=[image for image in document.get("images",[]) if "uri" in image]
+    if not external:return document,body
+    import copy
+    document=copy.deepcopy(document);binary=bytearray(body)
+    for image in document.get("images",[]):
+        uri=image.get("uri")
+        if uri is None:continue
+        if ":" in uri or uri.startswith(("/","\\")):
+            raise AuthoringError(f"{source_path}: external image URI must be a relative file path")
+        path=(source_path.parent/uri).resolve()
+        try:path.relative_to(CLIENT.resolve())
+        except ValueError as error:
+            raise AuthoringError(f"{source_path}: external image escapes the client checkout") from error
+        key=path.relative_to(CLIENT).as_posix()
+        if snapshot.source_sha256.get(key)!=sha256(path):
+            raise AuthoringError(f"{source_path}: external image {key} is not hash-bound by the snapshot")
+        while len(binary)%4:binary.append(0)
+        data=path.read_bytes();view=len(document.setdefault("bufferViews",[]))
+        document["bufferViews"].append({"buffer":0,"byteOffset":len(binary),"byteLength":len(data)})
+        binary.extend(data);image.pop("uri",None);image["bufferView"]=view
+        image.setdefault("mimeType","image/png" if path.suffix.lower()==".png" else "image/jpeg")
+    if document.get("buffers"):
+        document["buffers"]=[dict(document["buffers"][0],byteLength=len(binary))]
+    return document,bytes(binary)
+
+
+def build_retained_library(snapshot: Snapshot, root: Path) -> dict[str, str]:
+    """Build Content's retained-source bridge from declared GLB subtrees.
+
+    This replaces Sunmane's retired Python regional recipe.  It never reads a
+    composed ``world.glb``: only the hash-bound source assets named by scene
+    controls are transplanted under their saved matrices.
+    """
+    import scene_io as S
+
+    root = Path(root)
+    root.mkdir(parents=True, exist_ok=True)
+    exporter = S.Exporter(root / "library.glb")
+    loaded: dict[Path, tuple[dict[str, Any], bytes]] = {}
+    retained_documents: list[tuple[dict[str, Any], bytes]] = []
+    placements = []
+    for entry in snapshot.document["objects"]:
+        source_path = baked_asset_path(entry, snapshot)
+        if source_path not in loaded:
+            loaded[source_path] = _embed_external_images(*S.GR.load(source_path),source_path,snapshot)
+        document, body = loaded[source_path]
+        source_node = entry["bakedSource"]["sourceNode"]
+        if source_node == ".":
+            matches = list(document["scenes"][document.get("scene", 0)].get("nodes", []))
+        else:
+            matches = [index for index, node in enumerate(document.get("nodes", []))
+                       if node.get("name") == source_node]
+        if len(matches) != 1:
+            raise AuthoringError(
+                f"{entry['id']}: baked sourceNode {source_node!r} resolves to {len(matches)} roots in {source_path}")
+        root_index = matches[0]
+        object_document, object_body = _apply_material_overrides(
+            document, body, root_index, entry.get("materialOverrides", []))
+        if object_document is not document:
+            # Exporter memoizes by object identity.  Keep private override
+            # documents alive until write so CPython cannot reuse their ids.
+            retained_documents.append((object_document, object_body))
+        exporter.add(object_document, object_body, [root_index], matrices={root_index: entry["matrix"]},
+                     root_names={root_index: entry["nodeName"]})
+        metadata = dict(entry.get("metadata", {}))
+        forbidden = {"node", "position", "collides", "walk_surface"} & metadata.keys()
+        if forbidden:
+            raise AuthoringError(f"{entry['id']}: object metadata cannot replace {sorted(forbidden)}")
+        matrix = entry["matrix"]
+        metadata.update(node=entry["nodeName"], position=[matrix[12], matrix[13], matrix[14]],
+                        kind=metadata.get("kind", "prop"),
+                        collides=entry["collisionRole"] == "solid",
+                        walk_surface=entry["collisionRole"] == "walk_surface",
+                        authoringId=entry["id"])
+        placements.append(metadata)
+    exporter.write()
+    metadata = {
+        "region": SUNMANE,
+        "continentAuthoring": {"schema": SCHEMA, "snapshotSha256": snapshot.digest,
+                               "coordinateSpace": "territory-local"},
+        "placements": placements,
+    }
+    library_json = root / "library.json"
+    library_json.write_text(json.dumps(metadata, indent=2, ensure_ascii=False) + "\n",
+                            encoding="utf-8", newline="\n")
+    terrain = snapshot.document["terrain"]
+    x = float(terrain["origin"][0]) + np.arange(snapshot.terrain_width) * float(terrain["cellMetres"])
+    z = float(terrain["origin"][1]) + np.arange(snapshot.terrain_height) * float(terrain["cellMetres"])
+    foundation = root / "foundation-samples.npz"
+    np.savez_compressed(foundation, x=x, z=z, height=snapshot.effective_heights())
+    return {name: sha256(root / name) for name in
+            ("library.glb", "library.json", "foundation-samples.npz")}
+
+
+def ownership_polygon_sha256(world: Any) -> str:
+    points = world.polygons[SUNMANE]
+    encoded = json.dumps(points, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def verify_ownership(world: Any, snapshot: Snapshot) -> None:
+    expected = snapshot.document["seams"]["ownershipPolygonSha256"]
+    actual = ownership_polygon_sha256(world)
+    if actual != expected:
+        raise AuthoringError(
+            "Sunmane ownership polygon changed after scene export; rebake before composition")
+
+
+def verify_seam_anchors(world: Any, snapshot: Snapshot) -> None:
+    """Keep the shared connection frame fixed to the saved scene seam controls."""
+    authored={entry["id"]:entry for entry in snapshot.document["seams"]["anchors"]}
+    actual={link["id"]:link for link in world.connections if SUNMANE in link.get("regions",())}
+    if set(actual)!=set(authored):
+        raise AuthoringError(
+            f"Sunmane seam links differ from the saved scene: expected {sorted(authored)}, got {sorted(actual)}")
+    for identity,entry in authored.items():
+        expected=snapshot.continent_point(entry["anchor"])
+        value=np.asarray(actual[identity]["anchor"],float)
+        if value.shape == (2,):
+            actual_xz=value
+        elif value.shape == (3,):
+            actual_xz=value[[0,2]]
+        else:
+            raise AuthoringError(f"{identity}: shared seam anchor must contain XZ or XYZ")
+        if not np.allclose(actual_xz,expected[[0,2]],rtol=0,atol=1e-6):
+            raise AuthoringError(f"{identity}: continent seam anchor moved after scene export")
+
+
+def load_snapshot(path: Path | str = SUNMANE_SNAPSHOT, *, production: bool = True) -> Snapshot:
+    path = Path(path).resolve()
+    if not path.is_file():
+        raise AuthoringError(f"{path}: required Sunmane authoring snapshot is missing")
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise AuthoringError(f"{path}: invalid UTF-8 JSON: {error}") from error
+    document = _object(document, "snapshot")
+    if document.get("schema") != SCHEMA:
+        raise AuthoringError(f"snapshot.schema must be {SCHEMA!r}")
+    if document.get("regionId") != SUNMANE:
+        raise AuthoringError(f"snapshot.regionId must be {SUNMANE!r}")
+    if document.get("coordinateSpace") != "territory-local":
+        raise AuthoringError("snapshot.coordinateSpace must be territory-local")
+    if document.get("axes") != {"x": "east", "y": "up", "z": "south"}:
+        raise AuthoringError("snapshot.axes must declare x east, y up and z south")
+    if _vector(document.get("continentTranslation"), 3, "continentTranslation") != SUNMANE_TRANSLATION:
+        raise AuthoringError(f"continentTranslation must be {list(SUNMANE_TRANSLATION)}")
+    server = _object(document.get("server"), "server")
+    if _number(server.get("metresPerTile"), "server.metresPerTile") != 1.0:
+        raise AuthoringError("server.metresPerTile must be one")
+    if _integer_vector(server.get("origin"), 2, "server.origin") != SUNMANE_SERVER_ORIGIN:
+        raise AuthoringError(f"server.origin must be {list(SUNMANE_SERVER_ORIGIN)}")
+    if _integer_vector(server.get("cells"), 2, "server.cells") != SUNMANE_SERVER_CELLS:
+        raise AuthoringError(f"server.cells must be {list(SUNMANE_SERVER_CELLS)}")
+    if _vector(server.get("collisionOriginMetres"), 2, "server.collisionOriginMetres") != (-194.0, 292.0):
+        raise AuthoringError("server.collisionOriginMetres must be [-194, 292]")
+    authority = _object(document.get("authority"), "authority")
+    required_authority = ("terrain", "water", "paths", "objects", "gameplay")
+    if any(authority.get(section) is not True for section in required_authority):
+        raise AuthoringError("Sunmane authority must explicitly cover terrain, water, paths, objects and gameplay")
+    _validate_replacements(document, production)
+    source_sha256 = _validate_sources(document, path, production)
+    base, resolved, width, height = _validate_terrain(document, path, production, source_sha256)
+    _validate_ground_regions(document, source_sha256)
+    _validate_paths(document, source_sha256)
+    _validate_bridges(document, source_sha256)
+    _validate_objects(document, source_sha256, path, production)
+    _validate_gameplay(document, production)
+    _validate_seams(document)
+    return Snapshot(path, document, source_sha256, base, resolved, width, height)

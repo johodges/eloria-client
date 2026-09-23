@@ -86,6 +86,11 @@ static func commit_with_undo(undo_redo: EditorUndoRedoManager, scene_root: Node,
 		undo_redo.add_do_reference(container)
 	undo_redo.add_do_method(container, &"add_child", node, true)
 	undo_redo.add_do_method(node, &"set_owner", scene_root)
+	if node.has_meta(&"map_authoring_asset_wrapper"):
+		for child in node.get_children():
+			# Save the PackedScene root as an instance. Its descendants retain the
+			# external scene's ownership, preserving native materials and hierarchy.
+			undo_redo.add_do_method(child, &"set_owner", scene_root)
 	if starter:
 		for descendant in _descendants(node):
 			undo_redo.add_do_method(descendant, &"set_owner", scene_root)

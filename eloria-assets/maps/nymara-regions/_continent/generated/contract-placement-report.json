@@ -902,7 +902,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:297:door:sunmane_steppe->sunmane_wind_caves@330:282"
     },
     {
       "region": "sunmane_steppe",
@@ -912,19 +913,20 @@
         283
       ],
       "tile": [
-        334,
+        335,
         432
       ],
       "expectedTile": [
         333.591,
         432.482
       ],
-      "displacementMetres": 0.632,
+      "displacementMetres": 1.489,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:298:return:sunmane_wind_caves->sunmane_steppe@327:283"
     },
     {
       "region": "sunmane_steppe",
@@ -935,18 +937,19 @@
       ],
       "tile": [
         274,
-        446
+        445
       ],
       "expectedTile": [
         273.606,
         445.293
       ],
-      "displacementMetres": 0.81,
+      "displacementMetres": 0.491,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:299:door:sunmane_steppe->sunmane_wind_caves@247:303"
     },
     {
       "region": "sunmane_steppe",
@@ -957,18 +960,19 @@
       ],
       "tile": [
         274,
-        443
+        442
       ],
       "expectedTile": [
         273.606,
         442.293
       ],
-      "displacementMetres": 0.81,
+      "displacementMetres": 0.491,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:300:return:sunmane_wind_caves->sunmane_steppe@247:300"
     },
     {
       "region": "sunmane_steppe",
@@ -990,7 +994,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:301:door:sunmane_steppe->sunmane_steppe_secrets@163:73"
     },
     {
       "region": "sunmane_steppe",
@@ -1012,7 +1017,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:302:door:sunmane_steppe->sunmane_steppe_secrets@108:217"
     },
     {
       "region": "sunmane_steppe",
@@ -1034,7 +1040,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:303:door:sunmane_steppe->sunmane_steppe_secrets@48:99"
     },
     {
       "region": "sunmane_steppe",
@@ -1056,7 +1063,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:304:door:sunmane_steppe->sunmane_steppe_secrets@130:284"
     },
     {
       "region": "sunmane_steppe",
@@ -1078,7 +1086,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:305:door:sunmane_steppe->sunmane_steppe_secrets@285:313"
     },
     {
       "region": "sunmane_steppe",
@@ -1100,7 +1109,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:306:door:sunmane_steppe->sunmane_steppe_secrets@111:127"
     },
     {
       "region": "sunmane_steppe",
@@ -1110,19 +1120,20 @@
         74
       ],
       "tile": [
-        221,
-        268
+        223,
+        264
       ],
       "expectedTile": [
         219.83,
         267.571
       ],
-      "displacementMetres": 1.246,
+      "displacementMetres": 4.775,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:307:door:sunmane_steppe->sunmane_steppe_secrets@179:74"
     },
     {
       "region": "sunmane_steppe",
@@ -1144,7 +1155,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:308:door:sunmane_steppe->sunmane_steppe_secrets@62:256"
     },
     {
       "region": "sunmane_steppe",
@@ -1166,7 +1178,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:309:door:sunmane_steppe->sunmane_steppe_secrets@69:268"
     },
     {
       "region": "sunmane_steppe",
@@ -1176,19 +1189,20 @@
         63
       ],
       "tile": [
-        196,
+        195,
         260
       ],
       "expectedTile": [
         195.784,
         259.913
       ],
-      "displacementMetres": 0.233,
+      "displacementMetres": 0.789,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:310:door:sunmane_steppe->sunmane_steppe_secrets@149:63"
     },
     {
       "region": "sunmane_steppe",
@@ -1198,19 +1212,20 @@
         198
       ],
       "tile": [
-        128,
+        130,
         366
       ],
       "expectedTile": [
         127.515,
         365.532
       ],
-      "displacementMetres": 0.674,
+      "displacementMetres": 2.529,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:311:door:sunmane_steppe->sunmane_steppe_secrets@61:198"
     },
     {
       "region": "sunmane_steppe",
@@ -1227,12 +1242,13 @@
         266.915,
         330.575
       ],
-      "displacementMetres": 0.434,
+      "displacementMetres": 0.433,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:312:door:sunmane_steppe->sunmane_steppe_secrets@238:153"
     },
     {
       "region": "sunmane_steppe",
@@ -1254,7 +1270,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:313:door:sunmane_steppe->sunmane_steppe_secrets@76:66"
     },
     {
       "region": "sunmane_steppe",
@@ -1276,7 +1293,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:315:return:sunmane_steppe_secrets->sunmane_steppe@69:268"
     },
     {
       "region": "sunmane_steppe",
@@ -1298,7 +1316,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:316:return:sunmane_steppe_secrets->sunmane_steppe@76:66"
     },
     {
       "region": "sunmane_steppe",
@@ -1308,19 +1327,20 @@
         74
       ],
       "tile": [
-        221,
-        268
+        223,
+        264
       ],
       "expectedTile": [
         219.83,
         267.571
       ],
-      "displacementMetres": 1.246,
+      "displacementMetres": 4.775,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:317:return:sunmane_steppe_secrets->sunmane_steppe@179:74"
     },
     {
       "region": "sunmane_steppe",
@@ -1342,7 +1362,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:318:return:sunmane_steppe_secrets->sunmane_steppe@111:127"
     },
     {
       "region": "sunmane_steppe",
@@ -1364,7 +1385,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:319:return:sunmane_steppe_secrets->sunmane_steppe@285:313"
     },
     {
       "region": "sunmane_steppe",
@@ -1386,7 +1408,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:320:return:sunmane_steppe_secrets->sunmane_steppe@48:99"
     },
     {
       "region": "sunmane_steppe",
@@ -1396,19 +1419,20 @@
         63
       ],
       "tile": [
-        196,
+        195,
         260
       ],
       "expectedTile": [
         195.784,
         259.913
       ],
-      "displacementMetres": 0.233,
+      "displacementMetres": 0.789,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:321:return:sunmane_steppe_secrets->sunmane_steppe@149:63"
     },
     {
       "region": "sunmane_steppe",
@@ -1430,7 +1454,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:322:return:sunmane_steppe_secrets->sunmane_steppe@62:256"
     },
     {
       "region": "sunmane_steppe",
@@ -1452,7 +1477,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:323:return:sunmane_steppe_secrets->sunmane_steppe@108:217"
     },
     {
       "region": "sunmane_steppe",
@@ -1462,19 +1488,20 @@
         198
       ],
       "tile": [
-        128,
+        130,
         366
       ],
       "expectedTile": [
         127.515,
         365.532
       ],
-      "displacementMetres": 0.674,
+      "displacementMetres": 2.529,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:324:return:sunmane_steppe_secrets->sunmane_steppe@61:198"
     },
     {
       "region": "sunmane_steppe",
@@ -1496,7 +1523,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:325:return:sunmane_steppe_secrets->sunmane_steppe@163:73"
     },
     {
       "region": "sunmane_steppe",
@@ -1513,12 +1541,13 @@
         266.915,
         330.575
       ],
-      "displacementMetres": 0.434,
+      "displacementMetres": 0.433,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:326:return:sunmane_steppe_secrets->sunmane_steppe@238:153"
     },
     {
       "region": "sunmane_steppe",
@@ -1540,7 +1569,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:328:return:sunmane_steppe_secrets->sunmane_steppe@130:284"
     },
     {
       "region": "verdant_stair",
@@ -6424,7 +6454,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:713:door:sunmane_steppe->amethyst_barrens_secrets@122:335"
     },
     {
       "region": "amethyst_barrens",
@@ -6688,7 +6719,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:726:return:amethyst_barrens_secrets->sunmane_steppe@122:335"
     },
     {
       "region": "amethyst_barrens",
@@ -11242,7 +11274,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:1243:return:sunmane_gauntlet->sunmane_steppe@183:142"
     },
     {
       "region": "sunmane_steppe",
@@ -11252,19 +11285,20 @@
         142
       ],
       "tile": [
-        226,
+        227,
         319
       ],
       "expectedTile": [
         226.275,
         319.179
       ],
-      "displacementMetres": 0.328,
+      "displacementMetres": 0.747,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:1244:return:sunmane_gauntlet->sunmane_steppe@183:142"
     },
     {
       "region": "sunmane_steppe",
@@ -11275,18 +11309,19 @@
       ],
       "tile": [
         226,
-        319
+        318
       ],
       "expectedTile": [
         226.275,
         319.179
       ],
-      "displacementMetres": 0.328,
+      "displacementMetres": 1.211,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:1254:return:sunmane_gauntlet_2->sunmane_steppe@183:142"
     },
     {
       "region": "sunmane_steppe",
@@ -11296,19 +11331,20 @@
         142
       ],
       "tile": [
-        226,
+        225,
         319
       ],
       "expectedTile": [
         226.275,
         319.179
       ],
-      "displacementMetres": 0.328,
+      "displacementMetres": 1.288,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:1255:return:sunmane_gauntlet_2->sunmane_steppe@183:142"
     },
     {
       "region": "sunmane_steppe",
@@ -11318,19 +11354,20 @@
         142
       ],
       "tile": [
-        226,
-        319
+        227,
+        318
       ],
       "expectedTile": [
         226.275,
         319.179
       ],
-      "displacementMetres": 0.328,
+      "displacementMetres": 1.384,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:1265:return:sunmane_gauntlet_3->sunmane_steppe@183:142"
     },
     {
       "region": "sunmane_steppe",
@@ -11340,19 +11377,20 @@
         142
       ],
       "tile": [
-        226,
-        319
+        225,
+        320
       ],
       "expectedTile": [
         226.275,
         319.179
       ],
-      "displacementMetres": 0.328,
+      "displacementMetres": 1.516,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:1266:return:sunmane_gauntlet_3->sunmane_steppe@183:142"
     },
     {
       "region": "amethyst_barrens",
@@ -28072,7 +28110,8 @@
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:90:14@120:117"
     },
     {
       "region": "sunmane_steppe",
@@ -28082,19 +28121,20 @@
         106
       ],
       "tile": [
-        182,
-        291
+        181,
+        289
       ],
       "expectedTile": [
         181.62,
         289.38
       ],
-      "displacementMetres": 1.664,
+      "displacementMetres": 0.727,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:89:13@128:106"
     },
     {
       "region": "sunmane_steppe",
@@ -28116,7 +28156,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:91:15@130:114"
     },
     {
       "region": "sunmane_steppe",
@@ -28138,7 +28179,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:92:16@131:109"
     },
     {
       "region": "sunmane_steppe",
@@ -28160,7 +28202,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:441:500@163:73"
     },
     {
       "region": "sunmane_steppe",
@@ -28182,7 +28225,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:442:501@108:217"
     },
     {
       "region": "sunmane_steppe",
@@ -28204,7 +28248,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:443:502@48:99"
     },
     {
       "region": "sunmane_steppe",
@@ -28226,7 +28271,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:444:503@130:284"
     },
     {
       "region": "sunmane_steppe",
@@ -28248,7 +28294,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:445:504@285:313"
     },
     {
       "region": "sunmane_steppe",
@@ -28270,7 +28317,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:446:505@111:127"
     },
     {
       "region": "sunmane_steppe",
@@ -28280,19 +28328,20 @@
         74
       ],
       "tile": [
-        221,
-        268
+        223,
+        264
       ],
       "expectedTile": [
         219.83,
         267.571
       ],
-      "displacementMetres": 1.246,
+      "displacementMetres": 4.775,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:447:506@179:74"
     },
     {
       "region": "sunmane_steppe",
@@ -28314,7 +28363,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:448:507@62:256"
     },
     {
       "region": "sunmane_steppe",
@@ -28336,7 +28386,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:449:508@122:335"
     },
     {
       "region": "sunmane_steppe",
@@ -28358,7 +28409,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:450:509@69:268"
     },
     {
       "region": "sunmane_steppe",
@@ -28368,19 +28420,20 @@
         63
       ],
       "tile": [
-        196,
+        195,
         260
       ],
       "expectedTile": [
         195.784,
         259.913
       ],
-      "displacementMetres": 0.233,
+      "displacementMetres": 0.789,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:451:510@149:63"
     },
     {
       "region": "sunmane_steppe",
@@ -28390,19 +28443,20 @@
         198
       ],
       "tile": [
-        128,
+        130,
         366
       ],
       "expectedTile": [
         127.515,
         365.532
       ],
-      "displacementMetres": 0.674,
+      "displacementMetres": 2.529,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:452:511@61:198"
     },
     {
       "region": "sunmane_steppe",
@@ -28419,12 +28473,13 @@
         266.915,
         330.575
       ],
-      "displacementMetres": 0.434,
+      "displacementMetres": 0.433,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:453:512@238:153"
     },
     {
       "region": "sunmane_steppe",
@@ -28446,7 +28501,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:454:513@76:66"
     },
     {
       "region": "sunmane_steppe",
@@ -28468,7 +28524,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:95:Elder Sura@119:124"
     },
     {
       "region": "sunmane_steppe",
@@ -28490,7 +28547,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:96:Kesh@129:120"
     },
     {
       "region": "sunmane_steppe",
@@ -28512,7 +28570,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:97:Orun khan@128:126"
     },
     {
       "region": "sunmane_steppe",
@@ -28534,7 +28593,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:98:Seasonal market broker@118:120"
     },
     {
       "region": "sunmane_steppe",
@@ -28556,7 +28616,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:99:Camp horse master@86:201"
     },
     {
       "region": "sunmane_steppe",
@@ -28566,19 +28627,20 @@
         120
       ],
       "tile": [
-        146,
+        139,
         306
       ],
       "expectedTile": [
         145.52,
         306.099
       ],
-      "displacementMetres": 0.49,
+      "displacementMetres": 6.521,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:100:West caravan master@82:120"
     },
     {
       "region": "sunmane_steppe",
@@ -28589,18 +28651,19 @@
       ],
       "tile": [
         211,
-        307
+        308
       ],
       "expectedTile": [
         210.72,
         306.879
       ],
-      "displacementMetres": 0.305,
+      "displacementMetres": 1.155,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:101:East caravan master@167:121"
     },
     {
       "region": "sunmane_steppe",
@@ -28622,7 +28685,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:102:Banner shrine keeper@91:203"
     },
     {
       "region": "sunmane_steppe",
@@ -28632,19 +28696,20 @@
         82
       ],
       "tile": [
-        221,
+        223,
         276
       ],
       "expectedTile": [
         220.83,
         275.571
       ],
-      "displacementMetres": 0.462,
+      "displacementMetres": 2.212,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:103:Steppe miller@180:82"
     },
     {
       "region": "sunmane_steppe",
@@ -28666,7 +28731,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:104:Crossroads well keeper@120:114"
     },
     {
       "region": "sunmane_steppe",
@@ -28688,7 +28754,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:105:Barrow warden@129:163"
     },
     {
       "region": "sunmane_steppe",
@@ -28710,7 +28777,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:106:Cove landing factor@34:81"
     },
     {
       "region": "sunmane_steppe",
@@ -28727,12 +28795,13 @@
         186.5,
         423.482
       ],
-      "displacementMetres": 0.695,
+      "displacementMetres": 0.694,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:107:Dune well keeper@134:273"
     },
     {
       "region": "sunmane_steppe",
@@ -28754,7 +28823,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:108:Salt-pan factor@287:296"
     },
     {
       "region": "sunmane_steppe",
@@ -28776,7 +28846,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:109:Wind caves watch@244:302"
     },
     {
       "region": "sunmane_steppe",
@@ -28786,19 +28857,20 @@
         278
       ],
       "tile": [
-        337,
-        428
+        338,
+        427
       ],
       "expectedTile": [
         337.591,
         427.482
       ],
-      "displacementMetres": 0.786,
+      "displacementMetres": 0.632,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:110:Amethyst prospector@331:278"
     },
     {
       "region": "sunmane_steppe",
@@ -28808,19 +28880,20 @@
         280
       ],
       "tile": [
-        350,
+        349,
         429
       ],
       "expectedTile": [
         348.591,
         429.482
       ],
-      "displacementMetres": 1.489,
+      "displacementMetres": 0.632,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:111:Whitehorn range warden@342:280"
     },
     {
       "region": "sunmane_steppe",
@@ -28842,7 +28915,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:112:Khanet Berel Suran@130:129"
     },
     {
       "region": "sunmane_steppe",
@@ -28864,7 +28938,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:113:Herd-Mother Tamu Ashai@87:198"
     },
     {
       "region": "sunmane_steppe",
@@ -28886,7 +28961,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:114:Salt Rider Onen Dur@284:295"
     },
     {
       "region": "sunmane_steppe",
@@ -28908,7 +28984,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:115:Banner Boy Suvi@94:203"
     },
     {
       "region": "sunmane_steppe",
@@ -28930,7 +29007,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:116:Wind-Cave Listener Esku@242:299"
     },
     {
       "region": "sunmane_steppe",
@@ -28952,7 +29030,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:117:Well-Digger Harun Tel@122:111"
     },
     {
       "region": "sunmane_steppe",
@@ -28974,7 +29053,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:118:Caravan Doctor Nesrin@112:120"
     },
     {
       "region": "sunmane_steppe",
@@ -28996,7 +29076,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:119:Guest-Right Judge Oru Bakhan@119:128"
     },
     {
       "region": "sunmane_steppe",
@@ -29006,19 +29087,20 @@
         79
       ],
       "tile": [
-        217,
-        274
+        224,
+        276
       ],
       "expectedTile": [
         218.83,
         272.571
       ],
-      "displacementMetres": 2.322,
+      "displacementMetres": 6.204,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:120:Grain Tallyman Sef Corrin@178:79"
     },
     {
       "region": "sunmane_steppe",
@@ -29028,19 +29110,20 @@
         121
       ],
       "tile": [
-        208,
-        305
+        211,
+        304
       ],
       "expectedTile": [
         208.62,
         304.38
       ],
-      "displacementMetres": 0.877,
+      "displacementMetres": 2.41,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:320:Rider Anse@155:121"
     },
     {
       "region": "sunmane_steppe",
@@ -29057,12 +29140,13 @@
         238.283,
         267.203
       ],
-      "displacementMetres": 0.349,
+      "displacementMetres": 0.348,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:350:0@202:71"
     },
     {
       "region": "sunmane_steppe",
@@ -29079,12 +29163,13 @@
         230.283,
         268.203
       ],
-      "displacementMetres": 0.349,
+      "displacementMetres": 0.348,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:351:1@194:72"
     },
     {
       "region": "sunmane_steppe",
@@ -29106,7 +29191,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:352:2@171:222"
     },
     {
       "region": "sunmane_steppe",
@@ -29116,19 +29202,20 @@
         139
       ],
       "tile": [
-        139,
+        133,
         320
       ],
       "expectedTile": [
         141.209,
         320.868
       ],
-      "displacementMetres": 2.373,
+      "displacementMetres": 8.255,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:353:3@76:139"
     },
     {
       "region": "sunmane_steppe",
@@ -29150,7 +29237,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:354:4@166:221"
     },
     {
       "region": "sunmane_steppe",
@@ -29172,7 +29260,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:355:5@91:68"
     },
     {
       "region": "sunmane_steppe",
@@ -29194,7 +29283,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:356:6@47:80"
     },
     {
       "region": "sunmane_steppe",
@@ -29216,7 +29306,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:357:7@43:82"
     },
     {
       "region": "sunmane_steppe",
@@ -29238,7 +29329,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:358:8@46:51"
     },
     {
       "region": "sunmane_steppe",
@@ -29260,7 +29352,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:359:9@68:212"
     },
     {
       "region": "sunmane_steppe",
@@ -29277,12 +29370,13 @@
         145.856,
         349.964
       ],
-      "displacementMetres": 0.149,
+      "displacementMetres": 0.148,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:360:10@66:193"
     },
     {
       "region": "sunmane_steppe",
@@ -29304,7 +29398,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:361:11@270:206"
     },
     {
       "region": "sunmane_steppe",
@@ -29326,7 +29421,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:362:12@320:236"
     },
     {
       "region": "sunmane_steppe",
@@ -29337,18 +29433,19 @@
       ],
       "tile": [
         333,
-        396
+        397
       ],
       "expectedTile": [
         333.012,
         396.652
       ],
-      "displacementMetres": 0.652,
+      "displacementMetres": 0.348,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:363:2013@321:242"
     },
     {
       "region": "sunmane_steppe",
@@ -29370,7 +29467,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:364:2014@284:318"
     },
     {
       "region": "sunmane_steppe",
@@ -29392,7 +29490,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:365:2015@112:306"
     },
     {
       "region": "sunmane_steppe",
@@ -29409,12 +29508,13 @@
         162.808,
         431.847
       ],
-      "displacementMetres": 0.245,
+      "displacementMetres": 0.246,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:366:2016@108:282"
     },
     {
       "region": "sunmane_steppe",
@@ -29431,12 +29531,13 @@
         146.419,
         259.292
       ],
-      "displacementMetres": 0.915,
+      "displacementMetres": 0.916,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:367:17@85:64"
     },
     {
       "region": "sunmane_steppe",
@@ -29446,19 +29547,20 @@
         203
       ],
       "tile": [
-        348,
-        371
+        345,
+        372
       ],
       "expectedTile": [
         344.873,
         372.034
       ],
-      "displacementMetres": 3.294,
+      "displacementMetres": 0.131,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:368:18@344:203"
     },
     {
       "region": "sunmane_steppe",
@@ -29468,19 +29570,20 @@
         331
       ],
       "tile": [
-        145,
+        146,
         468
       ],
       "expectedTile": [
         145.898,
         467.738
       ],
-      "displacementMetres": 0.936,
+      "displacementMetres": 0.281,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:369:19@85:331"
     },
     {
       "region": "sunmane_steppe",
@@ -29490,19 +29593,20 @@
         81
       ],
       "tile": [
-        214,
-        275
+        211,
+        276
       ],
       "expectedTile": [
         214.612,
         275.049
       ],
-      "displacementMetres": 0.614,
+      "displacementMetres": 3.735,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:501:2020@172:81"
     },
     {
       "region": "sunmane_steppe",
@@ -29524,7 +29628,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:502:2021@174:215"
     },
     {
       "region": "sunmane_steppe",
@@ -29534,19 +29639,20 @@
         135
       ],
       "tile": [
-        141,
-        314
+        137,
+        310
       ],
       "expectedTile": [
         143.693,
         316.148
       ],
-      "displacementMetres": 3.444,
+      "displacementMetres": 9.088,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:503:2022@80:135"
     },
     {
       "region": "sunmane_steppe",
@@ -29568,7 +29674,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:504:23@197:76"
     },
     {
       "region": "sunmane_steppe",
@@ -29578,19 +29685,20 @@
         129
       ],
       "tile": [
-        143,
-        311
+        139,
+        307
       ],
       "expectedTile": [
         142.209,
         310.868
       ],
-      "displacementMetres": 0.802,
+      "displacementMetres": 5.026,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:505:24@77:129"
     },
     {
       "region": "sunmane_steppe",
@@ -29600,19 +29708,20 @@
         134
       ],
       "tile": [
-        140,
-        314
+        136,
+        310
       ],
       "expectedTile": [
         140.693,
         315.148
       ],
-      "displacementMetres": 1.341,
+      "displacementMetres": 6.966,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:506:25@77:134"
     },
     {
       "region": "sunmane_steppe",
@@ -29634,7 +29743,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:507:26@205:76"
     },
     {
       "region": "sunmane_steppe",
@@ -29656,7 +29766,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:508:27@170:226"
     },
     {
       "region": "sunmane_steppe",
@@ -29678,7 +29789,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:509:28@174:218"
     },
     {
       "region": "sunmane_steppe",
@@ -29695,12 +29807,13 @@
         225.83,
         267.571
       ],
-      "displacementMetres": 0.462,
+      "displacementMetres": 0.461,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:510:29@185:74"
     },
     {
       "region": "sunmane_steppe",
@@ -29710,19 +29823,20 @@
         71
       ],
       "tile": [
-        223,
-        268
+        225,
+        266
       ],
       "expectedTile": [
         222.378,
         266.954
       ],
-      "displacementMetres": 1.217,
+      "displacementMetres": 2.79,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:511:30@180:71"
     },
     {
       "region": "sunmane_steppe",
@@ -29744,7 +29858,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:512:31@171:217"
     },
     {
       "region": "sunmane_steppe",
@@ -29766,7 +29881,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:513:32@50:86"
     },
     {
       "region": "sunmane_steppe",
@@ -29788,7 +29904,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:514:33@236:176"
     },
     {
       "region": "sunmane_steppe",
@@ -29810,7 +29927,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:515:34@236:182"
     },
     {
       "region": "sunmane_steppe",
@@ -29832,7 +29950,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:516:35@275:210"
     },
     {
       "region": "sunmane_steppe",
@@ -29854,7 +29973,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:517:36@270:210"
     },
     {
       "region": "sunmane_steppe",
@@ -29876,7 +29996,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:518:37@274:203"
     },
     {
       "region": "sunmane_steppe",
@@ -29898,7 +30019,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:519:38@315:84"
     },
     {
       "region": "sunmane_steppe",
@@ -29920,7 +30042,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:520:39@319:86"
     },
     {
       "region": "sunmane_steppe",
@@ -29942,7 +30065,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:521:40@258:137"
     },
     {
       "region": "sunmane_steppe",
@@ -29964,7 +30088,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:522:41@264:128"
     },
     {
       "region": "sunmane_steppe",
@@ -29974,19 +30099,20 @@
         297
       ],
       "tile": [
-        319,
+        321,
         441
       ],
       "expectedTile": [
         321.411,
         441.412
       ],
-      "displacementMetres": 2.446,
+      "displacementMetres": 0.582,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:523:42@312:297"
     },
     {
       "region": "sunmane_steppe",
@@ -30003,12 +30129,13 @@
         317.411,
         440.412
       ],
-      "displacementMetres": 0.583,
+      "displacementMetres": 0.582,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:524:43@308:296"
     },
     {
       "region": "sunmane_steppe",
@@ -30018,19 +30145,20 @@
         197
       ],
       "tile": [
-        346,
-        367
+        342,
+        369
       ],
       "expectedTile": [
         342.0,
         369.16
       ],
-      "displacementMetres": 4.546,
+      "displacementMetres": 0.16,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:525:44@337:197"
     },
     {
       "region": "sunmane_steppe",
@@ -30040,19 +30168,20 @@
         204
       ],
       "tile": [
-        335,
-        374
+        338,
+        373
       ],
       "expectedTile": [
         337.873,
         373.034
       ],
-      "displacementMetres": 3.031,
+      "displacementMetres": 0.131,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:526:45@337:204"
     },
     {
       "region": "sunmane_steppe",
@@ -30062,19 +30191,20 @@
         198
       ],
       "tile": [
-        346,
-        366
+        343,
+        367
       ],
       "expectedTile": [
         342.873,
         367.034
       ],
-      "displacementMetres": 3.294,
+      "displacementMetres": 0.131,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:527:46@342:198"
     },
     {
       "region": "sunmane_steppe",
@@ -30084,19 +30214,20 @@
         195
       ],
       "tile": [
-        346,
+        344,
         364
       ],
       "expectedTile": [
         343.873,
         364.034
       ],
-      "displacementMetres": 2.127,
+      "displacementMetres": 0.131,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:528:47@343:195"
     },
     {
       "region": "sunmane_steppe",
@@ -30106,19 +30237,20 @@
         205
       ],
       "tile": [
-        334,
-        373
+        341,
+        371
       ],
       "expectedTile": [
         340.53,
         370.67
       ],
-      "displacementMetres": 6.933,
+      "displacementMetres": 0.574,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:529:48@333:205"
     },
     {
       "region": "sunmane_steppe",
@@ -30128,19 +30260,20 @@
         191
       ],
       "tile": [
-        346,
+        341,
         363
       ],
       "expectedTile": [
         341.0,
         363.16
       ],
-      "displacementMetres": 5.003,
+      "displacementMetres": 0.16,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:530:49@336:191"
     },
     {
       "region": "sunmane_steppe",
@@ -30150,19 +30283,20 @@
         201
       ],
       "tile": [
-        335,
-        375
+        338,
+        374
       ],
       "expectedTile": [
         338.0,
         373.16
       ],
-      "displacementMetres": 3.519,
+      "displacementMetres": 0.84,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:531:50@333:201"
     },
     {
       "region": "sunmane_steppe",
@@ -30184,7 +30318,8 @@
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:225:0@271:99"
     },
     {
       "region": "sunmane_steppe",
@@ -30206,7 +30341,8 @@
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:226:1@216:216"
     },
     {
       "region": "sunmane_steppe",
@@ -30228,7 +30364,8 @@
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:227:2@60:236"
     },
     {
       "region": "sunmane_steppe",
@@ -30250,7 +30387,8 @@
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:228:3@58:226"
     },
     {
       "region": "sunmane_steppe",
@@ -30260,19 +30398,20 @@
         206
       ],
       "tile": [
-        315,
-        372
+        316,
+        370
       ],
       "expectedTile": [
         316.167,
         370.327
       ],
-      "displacementMetres": 2.04,
+      "displacementMetres": 0.367,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:229:4@296:206"
     },
     {
       "region": "sunmane_steppe",
@@ -30294,7 +30433,8 @@
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:230:5@347:127"
     },
     {
       "region": "sunmane_steppe",
@@ -30316,7 +30456,8 @@
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:231:6@342:113"
     },
     {
       "region": "sunmane_steppe",
@@ -30338,7 +30479,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:232:7@66:284"
     },
     {
       "region": "sunmane_steppe",
@@ -30360,7 +30502,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:233:8@56:289"
     },
     {
       "region": "sunmane_steppe",
@@ -30382,7 +30525,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:234:9@228:229"
     },
     {
       "region": "sunmane_steppe",
@@ -30404,7 +30548,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:235:10@222:196"
     },
     {
       "region": "sunmane_steppe",
@@ -30426,7 +30571,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:236:11@202:218"
     },
     {
       "region": "sunmane_steppe",
@@ -30448,7 +30594,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:237:12@212:206"
     },
     {
       "region": "sunmane_steppe",
@@ -30470,7 +30617,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:238:13@279:92"
     },
     {
       "region": "sunmane_steppe",
@@ -30492,7 +30640,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:239:14@256:112"
     },
     {
       "region": "sunmane_steppe",
@@ -30509,12 +30658,13 @@
         282.566,
         393.209
       ],
-      "displacementMetres": 0.481,
+      "displacementMetres": 0.482,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:240:15@261:239"
     },
     {
       "region": "sunmane_steppe",
@@ -30531,12 +30681,13 @@
         313.055,
         388.386
       ],
-      "displacementMetres": 0.389,
+      "displacementMetres": 0.39,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:241:16@300:232"
     },
     {
       "region": "sunmane_steppe",
@@ -30558,7 +30709,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:242:17@292:215"
     },
     {
       "region": "sunmane_steppe",
@@ -30580,7 +30732,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:243:18@246:249"
     },
     {
       "region": "sunmane_steppe",
@@ -30602,7 +30755,8 @@
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:244:19@347:105"
     },
     {
       "region": "sunmane_steppe",
@@ -30624,7 +30778,8 @@
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:245:20@323:138"
     },
     {
       "region": "sunmane_steppe",
@@ -30646,7 +30801,8 @@
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:246:21@340:138"
     },
     {
       "region": "sunmane_steppe",
@@ -30663,12 +30819,13 @@
         229.283,
         259.203
       ],
-      "displacementMetres": 0.349,
+      "displacementMetres": 0.348,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:247:22@193:63"
     },
     {
       "region": "sunmane_steppe",
@@ -30690,7 +30847,8 @@
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:248:23@220:208"
     },
     {
       "region": "sunmane_steppe",
@@ -30712,7 +30870,8 @@
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:249:24@209:222"
     },
     {
       "region": "sunmane_steppe",
@@ -30734,7 +30893,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:250:25@239:361"
     },
     {
       "region": "sunmane_steppe",
@@ -30756,7 +30916,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:251:26@374:256"
     },
     {
       "region": "sunmane_steppe",
@@ -30778,7 +30939,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:252:27@85:245"
     },
     {
       "region": "sunmane_steppe",
@@ -30800,7 +30962,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:253:28@247:96"
     },
     {
       "region": "sunmane_steppe",
@@ -30822,7 +30985,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:254:29@273:117"
     },
     {
       "region": "sunmane_steppe",
@@ -30832,19 +30996,20 @@
         344
       ],
       "tile": [
-        145,
+        146,
         481
       ],
       "expectedTile": [
         145.898,
         480.738
       ],
-      "displacementMetres": 0.936,
+      "displacementMetres": 0.281,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:255:30@85:344"
     },
     {
       "region": "sunmane_steppe",
@@ -30854,19 +31019,20 @@
         318
       ],
       "tile": [
-        327,
+        328,
         458
       ],
       "expectedTile": [
         327.901,
         457.968
       ],
-      "displacementMetres": 0.901,
+      "displacementMetres": 0.104,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:256:31@313:318"
     },
     {
       "region": "sunmane_steppe",
@@ -30888,7 +31054,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:257:32@248:233"
     },
     {
       "region": "sunmane_steppe",
@@ -30910,7 +31077,8 @@
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:258:33@76:280"
     },
     {
       "region": "sunmane_steppe",
@@ -30932,7 +31100,8 @@
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:259:34@237:228"
     },
     {
       "region": "sunmane_steppe",
@@ -30954,7 +31123,8 @@
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:260:35@77:289"
     },
     {
       "region": "sunmane_steppe",
@@ -30976,7 +31146,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:261:36@70:230"
     },
     {
       "region": "sunmane_steppe",
@@ -30998,7 +31169,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:262:37@188:51"
     },
     {
       "region": "sunmane_steppe",
@@ -31020,7 +31192,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:263:38@256:104"
     },
     {
       "region": "sunmane_steppe",
@@ -31037,12 +31210,13 @@
         345.31,
         419.531
       ],
-      "displacementMetres": 0.563,
+      "displacementMetres": 0.562,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:264:39@338:266"
     },
     {
       "region": "sunmane_steppe",
@@ -31064,7 +31238,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:265:40@231:354"
     },
     {
       "region": "sunmane_steppe",
@@ -31086,7 +31261,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:266:41@266:357"
     },
     {
       "region": "sunmane_steppe",
@@ -31097,18 +31273,19 @@
       ],
       "tile": [
         278,
-        482
+        481
       ],
       "expectedTile": [
         277.606,
         481.293
       ],
-      "displacementMetres": 0.81,
+      "displacementMetres": 0.491,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:267:42@251:339"
     },
     {
       "region": "sunmane_steppe",
@@ -31130,7 +31307,8 @@
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:268:43@363:243"
     },
     {
       "region": "sunmane_steppe",
@@ -31147,12 +31325,13 @@
         344.31,
         412.531
       ],
-      "displacementMetres": 0.563,
+      "displacementMetres": 0.562,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:269:44@337:259"
     },
     {
       "region": "sunmane_steppe",
@@ -31162,19 +31341,20 @@
         336
       ],
       "tile": [
-        129,
+        130,
         473
       ],
       "expectedTile": [
         129.898,
         472.738
       ],
-      "displacementMetres": 0.936,
+      "displacementMetres": 0.281,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:270:45@69:336"
     },
     {
       "region": "sunmane_steppe",
@@ -31184,19 +31364,20 @@
         278
       ],
       "tile": [
-        362,
+        365,
         429
       ],
       "expectedTile": [
         365.258,
         429.145
       ],
-      "displacementMetres": 3.261,
+      "displacementMetres": 0.296,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:271:46@362:278"
     },
     {
       "region": "sunmane_steppe",
@@ -31218,7 +31399,8 @@
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:272:47@234:345"
     },
     {
       "region": "sunmane_steppe",
@@ -31240,7 +31422,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:273:48@236:207"
     },
     {
       "region": "sunmane_steppe",
@@ -31250,19 +31433,20 @@
         232
       ],
       "tile": [
-        234,
+        233,
         388
       ],
       "expectedTile": [
         232.89,
         388.214
       ],
-      "displacementMetres": 1.131,
+      "displacementMetres": 0.241,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:274:49@201:232"
     },
     {
       "region": "sunmane_steppe",
@@ -31284,7 +31468,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:275:50@220:227"
     },
     {
       "region": "sunmane_steppe",
@@ -31306,7 +31491,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:276:51@322:325"
     },
     {
       "region": "sunmane_steppe",
@@ -31328,7 +31514,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:277:52@257:369"
     },
     {
       "region": "sunmane_steppe",
@@ -31339,18 +31526,19 @@
       ],
       "tile": [
         156,
-        494
+        493
       ],
       "expectedTile": [
         155.898,
         492.738
       ],
-      "displacementMetres": 1.266,
+      "displacementMetres": 0.281,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:278:53@95:356"
     },
     {
       "region": "four_gates",
@@ -42030,14 +42218,14 @@
         281
       ],
       "tile": [
-        453,
-        302
+        457,
+        306
       ],
       "expectedTile": [
         454.709,
         299.189
       ],
-      "displacementMetres": 3.29,
+      "displacementMetres": 7.186,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
@@ -46212,7 +46400,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "territories.txt@49:102"
     },
     {
       "region": "sunmane_steppe",
@@ -46234,7 +46423,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "territories.txt@156:98"
     },
     {
       "region": "sunmane_steppe",
@@ -46256,7 +46446,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "territories.txt@145:109"
     },
     {
       "region": "amberwood",
@@ -60658,10 +60849,10 @@
         336
       ],
       "expectedTile": [
-        167.04,
-        336.26
+        181.0,
+        330.0
       ],
-      "displacementMetres": 0.263,
+      "displacementMetres": 15.232,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60680,10 +60871,10 @@
         337
       ],
       "expectedTile": [
-        166.04,
-        337.26
+        180.0,
+        331.0
       ],
-      "displacementMetres": 0.263,
+      "displacementMetres": 15.232,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60702,10 +60893,10 @@
         337
       ],
       "expectedTile": [
-        168.04,
-        337.26
+        182.0,
+        331.0
       ],
-      "displacementMetres": 0.263,
+      "displacementMetres": 15.232,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60724,10 +60915,10 @@
         334
       ],
       "expectedTile": [
-        167.04,
-        334.26
+        181.0,
+        328.0
       ],
-      "displacementMetres": 0.263,
+      "displacementMetres": 15.232,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60746,10 +60937,10 @@
         336
       ],
       "expectedTile": [
-        165.04,
-        336.26
+        179.0,
+        330.0
       ],
-      "displacementMetres": 0.263,
+      "displacementMetres": 15.232,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60768,10 +60959,10 @@
         336
       ],
       "expectedTile": [
-        169.04,
-        336.26
+        183.0,
+        330.0
       ],
-      "displacementMetres": 0.263,
+      "displacementMetres": 15.232,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60790,10 +60981,10 @@
         338
       ],
       "expectedTile": [
-        167.04,
-        338.26
+        181.0,
+        332.0
       ],
-      "displacementMetres": 0.263,
+      "displacementMetres": 15.232,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60812,10 +61003,10 @@
         334
       ],
       "expectedTile": [
-        165.04,
-        334.26
+        179.0,
+        328.0
       ],
-      "displacementMetres": 0.263,
+      "displacementMetres": 15.232,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60834,10 +61025,10 @@
         334
       ],
       "expectedTile": [
-        169.04,
-        334.26
+        183.0,
+        328.0
       ],
-      "displacementMetres": 0.263,
+      "displacementMetres": 15.232,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60856,10 +61047,10 @@
         338
       ],
       "expectedTile": [
-        165.04,
-        338.26
+        179.0,
+        332.0
       ],
-      "displacementMetres": 0.263,
+      "displacementMetres": 15.232,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60878,10 +61069,10 @@
         338
       ],
       "expectedTile": [
-        169.04,
-        338.26
+        183.0,
+        332.0
       ],
-      "displacementMetres": 0.263,
+      "displacementMetres": 15.232,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60900,10 +61091,10 @@
         333
       ],
       "expectedTile": [
-        166.04,
-        333.26
+        180.0,
+        327.0
       ],
-      "displacementMetres": 0.263,
+      "displacementMetres": 15.232,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60922,10 +61113,10 @@
         454
       ],
       "expectedTile": [
-        380.007,
-        454.306
+        450.0,
+        477.0
       ],
-      "displacementMetres": 3.023,
+      "displacementMetres": 76.538,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60944,10 +61135,10 @@
         454
       ],
       "expectedTile": [
-        384.007,
-        454.306
+        454.0,
+        477.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60966,10 +61157,10 @@
         459
       ],
       "expectedTile": [
-        380.007,
-        458.306
+        450.0,
+        481.0
       ],
-      "displacementMetres": 0.694,
+      "displacementMetres": 73.376,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60988,10 +61179,10 @@
         450
       ],
       "expectedTile": [
-        376.007,
-        450.306
+        446.0,
+        473.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61010,10 +61201,10 @@
         450
       ],
       "expectedTile": [
-        384.007,
-        450.306
+        454.0,
+        473.0
       ],
-      "displacementMetres": 2.016,
+      "displacementMetres": 71.784,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61032,10 +61223,10 @@
         458
       ],
       "expectedTile": [
-        376.007,
-        458.306
+        446.0,
+        481.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61054,10 +61245,10 @@
         453
       ],
       "expectedTile": [
-        382.791,
-        451.561
+        454.0,
+        481.0
       ],
-      "displacementMetres": 1.88,
+      "displacementMetres": 75.392,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61076,10 +61267,10 @@
         446
       ],
       "expectedTile": [
-        380.007,
-        446.306
+        450.0,
+        469.0
       ],
-      "displacementMetres": 3.023,
+      "displacementMetres": 76.538,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61098,10 +61289,10 @@
         454
       ],
       "expectedTile": [
-        372.007,
-        454.306
+        442.0,
+        477.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61120,10 +61311,10 @@
         454
       ],
       "expectedTile": [
-        388.007,
-        454.306
+        458.0,
+        477.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61142,10 +61333,10 @@
         456
       ],
       "expectedTile": [
-        378.791,
-        455.561
+        450.0,
+        485.0
       ],
-      "displacementMetres": 1.844,
+      "displacementMetres": 78.549,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61164,10 +61355,10 @@
         446
       ],
       "expectedTile": [
-        376.007,
-        446.306
+        446.0,
+        469.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61186,10 +61377,10 @@
         498
       ],
       "expectedTile": [
-        148.221,
-        498.239
+        150.0,
+        565.0
       ],
-      "displacementMetres": 0.326,
+      "displacementMetres": 67.03,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61208,10 +61399,10 @@
         497
       ],
       "expectedTile": [
-        148.221,
-        496.835
+        150.0,
+        563.0
       ],
-      "displacementMetres": 0.276,
+      "displacementMetres": 66.03,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61230,10 +61421,10 @@
         498
       ],
       "expectedTile": [
-        146.817,
-        498.239
+        148.0,
+        565.0
       ],
-      "displacementMetres": 0.301,
+      "displacementMetres": 67.007,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61252,10 +61443,10 @@
         498
       ],
       "expectedTile": [
-        149.625,
-        498.239
+        152.0,
+        565.0
       ],
-      "displacementMetres": 0.445,
+      "displacementMetres": 67.03,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61274,10 +61465,10 @@
         497
       ],
       "expectedTile": [
-        146.817,
-        496.835
+        148.0,
+        563.0
       ],
-      "displacementMetres": 0.246,
+      "displacementMetres": 66.008,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61296,10 +61487,10 @@
         497
       ],
       "expectedTile": [
-        149.625,
-        496.835
+        152.0,
+        563.0
       ],
-      "displacementMetres": 0.41,
+      "displacementMetres": 66.03,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61318,10 +61509,10 @@
         496
       ],
       "expectedTile": [
-        147.519,
-        496.133
+        149.0,
+        562.0
       ],
-      "displacementMetres": 0.499,
+      "displacementMetres": 66.008,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61340,10 +61531,10 @@
         496
       ],
       "expectedTile": [
-        148.923,
-        496.133
+        151.0,
+        562.0
       ],
-      "displacementMetres": 0.154,
+      "displacementMetres": 66.03,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61362,10 +61553,10 @@
         498
       ],
       "expectedTile": [
-        146.115,
-        497.537
+        147.0,
+        564.0
       ],
-      "displacementMetres": 0.477,
+      "displacementMetres": 66.008,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61384,10 +61575,10 @@
         498
       ],
       "expectedTile": [
-        150.327,
-        497.537
+        153.0,
+        564.0
       ],
-      "displacementMetres": 0.567,
+      "displacementMetres": 66.068,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61406,10 +61597,10 @@
         495
       ],
       "expectedTile": [
-        148.221,
-        495.431
+        150.0,
+        561.0
       ],
-      "displacementMetres": 0.484,
+      "displacementMetres": 66.03,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61428,10 +61619,10 @@
         498
       ],
       "expectedTile": [
-        145.413,
-        498.239
+        146.0,
+        565.0
       ],
-      "displacementMetres": 0.477,
+      "displacementMetres": 67.007,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61446,14 +61637,14 @@
         94
       ],
       "tile": [
-        184,
-        283
+        197,
+        259
       ],
       "expectedTile": [
-        183.62,
-        277.38
+        200.0,
+        261.0
       ],
-      "displacementMetres": 5.633,
+      "displacementMetres": 3.606,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61468,14 +61659,14 @@
         95
       ],
       "tile": [
-        183,
-        278
+        197,
+        259
       ],
       "expectedTile": [
-        182.62,
-        278.38
+        199.0,
+        262.0
       ],
-      "displacementMetres": 0.537,
+      "displacementMetres": 3.606,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61490,14 +61681,14 @@
         95
       ],
       "tile": [
-        185,
-        283
+        203,
+        258
       ],
       "expectedTile": [
-        184.62,
-        278.38
+        201.0,
+        262.0
       ],
-      "displacementMetres": 4.636,
+      "displacementMetres": 4.472,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61512,14 +61703,14 @@
         92
       ],
       "tile": [
-        184,
-        281
+        197,
+        259
       ],
       "expectedTile": [
-        183.62,
-        275.38
+        200.0,
+        259.0
       ],
-      "displacementMetres": 5.633,
+      "displacementMetres": 3.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61534,14 +61725,14 @@
         94
       ],
       "tile": [
-        182,
-        277
+        197,
+        259
       ],
       "expectedTile": [
-        181.62,
-        277.38
+        198.0,
+        261.0
       ],
-      "displacementMetres": 0.537,
+      "displacementMetres": 2.236,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61556,14 +61747,14 @@
         94
       ],
       "tile": [
-        186,
-        283
+        203,
+        258
       ],
       "expectedTile": [
-        185.62,
-        277.38
+        202.0,
+        261.0
       ],
-      "displacementMetres": 5.633,
+      "displacementMetres": 3.162,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61578,14 +61769,14 @@
         96
       ],
       "tile": [
-        184,
-        283
+        197,
+        259
       ],
       "expectedTile": [
-        183.62,
-        279.38
+        200.0,
+        263.0
       ],
-      "displacementMetres": 3.64,
+      "displacementMetres": 5.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61600,14 +61791,14 @@
         92
       ],
       "tile": [
-        182,
-        275
+        197,
+        259
       ],
       "expectedTile": [
-        181.62,
-        275.38
+        198.0,
+        259.0
       ],
-      "displacementMetres": 0.537,
+      "displacementMetres": 1.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61622,14 +61813,14 @@
         92
       ],
       "tile": [
-        186,
-        281
+        203,
+        258
       ],
       "expectedTile": [
-        185.62,
-        275.38
+        202.0,
+        259.0
       ],
-      "displacementMetres": 5.633,
+      "displacementMetres": 1.414,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61648,10 +61839,10 @@
         285
       ],
       "expectedTile": [
-        181.62,
-        279.38
+        198.0,
+        263.0
       ],
-      "displacementMetres": 5.849,
+      "displacementMetres": 28.425,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61666,14 +61857,14 @@
         96
       ],
       "tile": [
-        187,
-        284
+        205,
+        259
       ],
       "expectedTile": [
-        185.62,
-        279.38
+        202.0,
+        263.0
       ],
-      "displacementMetres": 4.822,
+      "displacementMetres": 5.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61688,14 +61879,14 @@
         91
       ],
       "tile": [
-        183,
-        280
+        197,
+        258
       ],
       "expectedTile": [
-        182.62,
-        274.38
+        199.0,
+        258.0
       ],
-      "displacementMetres": 5.633,
+      "displacementMetres": 2.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61714,10 +61905,10 @@
         421
       ],
       "expectedTile": [
-        382.007,
-        421.306
+        452.0,
+        444.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61736,10 +61927,10 @@
         423
       ],
       "expectedTile": [
-        380.007,
-        423.306
+        450.0,
+        446.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61758,10 +61949,10 @@
         423
       ],
       "expectedTile": [
-        384.007,
-        423.306
+        454.0,
+        446.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61780,10 +61971,10 @@
         417
       ],
       "expectedTile": [
-        382.007,
-        417.306
+        452.0,
+        440.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61802,10 +61993,10 @@
         421
       ],
       "expectedTile": [
-        378.007,
-        421.306
+        448.0,
+        444.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61824,10 +62015,10 @@
         421
       ],
       "expectedTile": [
-        386.007,
-        421.306
+        456.0,
+        444.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61846,10 +62037,10 @@
         425
       ],
       "expectedTile": [
-        382.007,
-        425.306
+        452.0,
+        448.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61868,10 +62059,10 @@
         424
       ],
       "expectedTile": [
-        381.258,
-        424.145
+        448.0,
+        440.0
       ],
-      "displacementMetres": 0.296,
+      "displacementMetres": 68.884,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61890,10 +62081,10 @@
         424
       ],
       "expectedTile": [
-        381.87,
-        423.71
+        456.0,
+        440.0
       ],
-      "displacementMetres": 0.318,
+      "displacementMetres": 75.71,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61912,10 +62103,10 @@
         425
       ],
       "expectedTile": [
-        378.007,
-        425.306
+        448.0,
+        448.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61934,10 +62125,10 @@
         425
       ],
       "expectedTile": [
-        386.007,
-        425.306
+        456.0,
+        448.0
       ],
-      "displacementMetres": 0.306,
+      "displacementMetres": 73.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61956,10 +62147,10 @@
         422
       ],
       "expectedTile": [
-        383.258,
-        422.145
+        450.0,
+        438.0
       ],
-      "displacementMetres": 0.296,
+      "displacementMetres": 68.884,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -61978,10 +62169,10 @@
         245
       ],
       "expectedTile": [
-        298.41,
-        245.09
+        349.0,
+        211.0
       ],
-      "displacementMetres": 0.42,
+      "displacementMetres": 61.294,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62000,10 +62191,10 @@
         245
       ],
       "expectedTile": [
-        301.53,
-        245.09
+        353.0,
+        211.0
       ],
-      "displacementMetres": 0.479,
+      "displacementMetres": 61.294,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62022,10 +62213,10 @@
         248
       ],
       "expectedTile": [
-        298.41,
-        248.21
+        349.0,
+        215.0
       ],
-      "displacementMetres": 0.461,
+      "displacementMetres": 60.745,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62044,10 +62235,10 @@
         242
       ],
       "expectedTile": [
-        295.29,
-        241.97
+        345.0,
+        207.0
       ],
-      "displacementMetres": 0.292,
+      "displacementMetres": 61.033,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62066,10 +62257,10 @@
         248
       ],
       "expectedTile": [
-        295.29,
-        248.21
+        345.0,
+        215.0
       ],
-      "displacementMetres": 0.358,
+      "displacementMetres": 59.908,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62088,10 +62279,10 @@
         248
       ],
       "expectedTile": [
-        301.53,
-        248.21
+        353.0,
+        215.0
       ],
-      "displacementMetres": 0.515,
+      "displacementMetres": 60.745,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62110,10 +62301,10 @@
         243
       ],
       "expectedTile": [
-        303.87,
-        242.75
+        356.0,
+        208.0
       ],
-      "displacementMetres": 0.282,
+      "displacementMetres": 62.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62132,10 +62323,10 @@
         333
       ],
       "expectedTile": [
-        306.22,
-        333.388
+        355.0,
+        324.0
       ],
-      "displacementMetres": 0.446,
+      "displacementMetres": 49.82,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62154,10 +62345,10 @@
         335
       ],
       "expectedTile": [
-        304.22,
-        335.388
+        353.0,
+        326.0
       ],
-      "displacementMetres": 0.446,
+      "displacementMetres": 49.82,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62176,10 +62367,10 @@
         335
       ],
       "expectedTile": [
-        308.22,
-        335.388
+        357.0,
+        326.0
       ],
-      "displacementMetres": 0.446,
+      "displacementMetres": 49.82,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62198,10 +62389,10 @@
         329
       ],
       "expectedTile": [
-        306.22,
-        329.388
+        355.0,
+        320.0
       ],
-      "displacementMetres": 0.446,
+      "displacementMetres": 49.82,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62220,10 +62411,10 @@
         333
       ],
       "expectedTile": [
-        302.22,
-        333.388
+        351.0,
+        324.0
       ],
-      "displacementMetres": 0.446,
+      "displacementMetres": 49.82,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62242,10 +62433,10 @@
         333
       ],
       "expectedTile": [
-        310.22,
-        333.388
+        359.0,
+        324.0
       ],
-      "displacementMetres": 0.446,
+      "displacementMetres": 49.82,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62264,10 +62455,10 @@
         337
       ],
       "expectedTile": [
-        306.22,
-        337.388
+        355.0,
+        328.0
       ],
-      "displacementMetres": 0.446,
+      "displacementMetres": 49.82,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62286,10 +62477,10 @@
         329
       ],
       "expectedTile": [
-        302.22,
-        329.388
+        351.0,
+        320.0
       ],
-      "displacementMetres": 0.446,
+      "displacementMetres": 49.82,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62308,10 +62499,10 @@
         329
       ],
       "expectedTile": [
-        310.22,
-        329.388
+        359.0,
+        320.0
       ],
-      "displacementMetres": 0.446,
+      "displacementMetres": 49.82,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62330,10 +62521,10 @@
         337
       ],
       "expectedTile": [
-        302.22,
-        337.388
+        351.0,
+        328.0
       ],
-      "displacementMetres": 0.446,
+      "displacementMetres": 49.82,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62352,10 +62543,10 @@
         337
       ],
       "expectedTile": [
-        310.22,
-        337.388
+        359.0,
+        328.0
       ],
-      "displacementMetres": 0.446,
+      "displacementMetres": 49.82,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62374,10 +62565,10 @@
         327
       ],
       "expectedTile": [
-        304.22,
-        327.388
+        353.0,
+        318.0
       ],
-      "displacementMetres": 0.446,
+      "displacementMetres": 49.82,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62396,10 +62587,10 @@
         463
       ],
       "expectedTile": [
-        294.153,
-        463.117
+        345.0,
+        492.0
       ],
-      "displacementMetres": 0.193,
+      "displacementMetres": 58.669,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62418,10 +62609,10 @@
         463
       ],
       "expectedTile": [
-        297.153,
-        463.117
+        348.0,
+        492.0
       ],
-      "displacementMetres": 0.855,
+      "displacementMetres": 57.801,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62440,10 +62631,10 @@
         466
       ],
       "expectedTile": [
-        295.153,
-        466.117
+        346.0,
+        495.0
       ],
-      "displacementMetres": 0.193,
+      "displacementMetres": 58.669,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62462,10 +62653,10 @@
         461
       ],
       "expectedTile": [
-        294.96,
-        461.48
+        345.0,
+        488.0
       ],
-      "displacementMetres": 0.482,
+      "displacementMetres": 56.824,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62484,10 +62675,10 @@
         465
       ],
       "expectedTile": [
-        290.96,
-        465.48
+        341.0,
+        492.0
       ],
-      "displacementMetres": 0.482,
+      "displacementMetres": 56.824,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62506,10 +62697,10 @@
         462
       ],
       "expectedTile": [
-        297.96,
-        462.48
+        348.0,
+        489.0
       ],
-      "displacementMetres": 0.482,
+      "displacementMetres": 56.824,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62528,10 +62719,10 @@
         468
       ],
       "expectedTile": [
-        293.153,
-        468.117
+        344.0,
+        497.0
       ],
-      "displacementMetres": 0.193,
+      "displacementMetres": 58.669,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62550,10 +62741,10 @@
         461
       ],
       "expectedTile": [
-        290.96,
-        461.48
+        341.0,
+        488.0
       ],
-      "displacementMetres": 0.482,
+      "displacementMetres": 56.824,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62572,10 +62763,10 @@
         467
       ],
       "expectedTile": [
-        290.153,
-        467.117
+        341.0,
+        496.0
       ],
-      "displacementMetres": 0.193,
+      "displacementMetres": 58.669,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62594,10 +62785,10 @@
         464
       ],
       "expectedTile": [
-        299.758,
-        464.266
+        351.0,
+        492.0
       ],
-      "displacementMetres": 0.359,
+      "displacementMetres": 58.181,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62616,10 +62807,10 @@
         463
       ],
       "expectedTile": [
-        288.96,
-        463.48
+        339.0,
+        490.0
       ],
-      "displacementMetres": 0.482,
+      "displacementMetres": 56.824,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62638,10 +62829,10 @@
         467
       ],
       "expectedTile": [
-        288.96,
-        467.48
+        339.0,
+        494.0
       ],
-      "displacementMetres": 0.482,
+      "displacementMetres": 56.824,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62660,10 +62851,10 @@
         315
       ],
       "expectedTile": [
-        371.73,
-        314.51
+        443.0,
+        300.0
       ],
-      "displacementMetres": 0.559,
+      "displacementMetres": 72.567,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62682,10 +62873,10 @@
         315
       ],
       "expectedTile": [
-        370.95,
-        315.29
+        442.0,
+        301.0
       ],
-      "displacementMetres": 0.294,
+      "displacementMetres": 72.367,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62704,10 +62895,10 @@
         315
       ],
       "expectedTile": [
-        372.51,
-        315.29
+        444.0,
+        301.0
       ],
-      "displacementMetres": 0.569,
+      "displacementMetres": 72.367,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62726,10 +62917,10 @@
         313
       ],
       "expectedTile": [
-        371.73,
-        312.95
+        443.0,
+        298.0
       ],
-      "displacementMetres": 0.275,
+      "displacementMetres": 72.567,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62748,10 +62939,10 @@
         315
       ],
       "expectedTile": [
-        370.17,
-        314.51
+        441.0,
+        300.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 72.567,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62770,10 +62961,10 @@
         315
       ],
       "expectedTile": [
-        373.29,
-        314.51
+        445.0,
+        300.0
       ],
-      "displacementMetres": 0.569,
+      "displacementMetres": 73.546,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62792,10 +62983,10 @@
         316
       ],
       "expectedTile": [
-        371.73,
-        316.07
+        443.0,
+        302.0
       ],
-      "displacementMetres": 0.279,
+      "displacementMetres": 72.367,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62814,10 +63005,10 @@
         313
       ],
       "expectedTile": [
-        370.17,
-        312.95
+        441.0,
+        298.0
       ],
-      "displacementMetres": 0.177,
+      "displacementMetres": 72.567,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62836,10 +63027,10 @@
         313
       ],
       "expectedTile": [
-        373.29,
-        312.95
+        445.0,
+        298.0
       ],
-      "displacementMetres": 0.294,
+      "displacementMetres": 73.546,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62858,10 +63049,10 @@
         316
       ],
       "expectedTile": [
-        370.17,
-        316.07
+        441.0,
+        302.0
       ],
-      "displacementMetres": 0.184,
+      "displacementMetres": 72.367,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62880,10 +63071,10 @@
         316
       ],
       "expectedTile": [
-        373.29,
-        316.07
+        445.0,
+        302.0
       ],
-      "displacementMetres": 0.298,
+      "displacementMetres": 73.348,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62902,10 +63093,10 @@
         312
       ],
       "expectedTile": [
-        370.95,
-        312.17
+        442.0,
+        297.0
       ],
-      "displacementMetres": 0.177,
+      "displacementMetres": 72.567,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62920,14 +63111,14 @@
         1
       ],
       "tile": [
-        174,
-        212
+        189,
+        168
       ],
       "expectedTile": [
-        173.61,
-        211.55
+        189.0,
+        168.0
       ],
-      "displacementMetres": 0.595,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62946,10 +63137,10 @@
         211
       ],
       "expectedTile": [
-        171.27,
-        210.77
+        186.0,
+        167.0
       ],
-      "displacementMetres": 0.355,
+      "displacementMetres": 46.487,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62968,10 +63159,10 @@
         211
       ],
       "expectedTile": [
-        175.95,
-        210.77
+        192.0,
+        167.0
       ],
-      "displacementMetres": 0.235,
+      "displacementMetres": 46.819,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -62990,10 +63181,10 @@
         212
       ],
       "expectedTile": [
-        169.71,
-        212.33
+        184.0,
+        169.0
       ],
-      "displacementMetres": 0.439,
+      "displacementMetres": 45.222,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63012,10 +63203,10 @@
         212
       ],
       "expectedTile": [
-        177.51,
-        212.33
+        194.0,
+        169.0
       ],
-      "displacementMetres": 0.591,
+      "displacementMetres": 45.88,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63034,10 +63225,10 @@
         211
       ],
       "expectedTile": [
-        168.15,
-        210.77
+        182.0,
+        167.0
       ],
-      "displacementMetres": 0.275,
+      "displacementMetres": 46.174,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63056,10 +63247,10 @@
         211
       ],
       "expectedTile": [
-        179.07,
-        210.77
+        196.0,
+        167.0
       ],
-      "displacementMetres": 0.24,
+      "displacementMetres": 47.17,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63078,10 +63269,10 @@
         268
       ],
       "expectedTile": [
-        359.25,
-        267.71
+        427.0,
+        240.0
       ],
-      "displacementMetres": 0.383,
+      "displacementMetres": 73.539,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63100,10 +63291,10 @@
         269
       ],
       "expectedTile": [
-        357.69,
-        269.27
+        425.0,
+        242.0
       ],
-      "displacementMetres": 0.411,
+      "displacementMetres": 72.236,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63122,10 +63313,10 @@
         269
       ],
       "expectedTile": [
-        360.81,
-        269.27
+        429.0,
+        242.0
       ],
-      "displacementMetres": 0.33,
+      "displacementMetres": 73.164,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63144,10 +63335,10 @@
         265
       ],
       "expectedTile": [
-        359.25,
-        264.59
+        427.0,
+        236.0
       ],
-      "displacementMetres": 0.48,
+      "displacementMetres": 73.926,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63166,10 +63357,10 @@
         426
       ],
       "expectedTile": [
-        237.459,
-        425.759
+        270.0,
+        441.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 36.249,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63188,10 +63379,10 @@
         428
       ],
       "expectedTile": [
-        235.459,
-        427.759
+        268.0,
+        443.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 36.249,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63210,10 +63401,10 @@
         428
       ],
       "expectedTile": [
-        239.459,
-        427.759
+        272.0,
+        443.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 36.249,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63232,10 +63423,10 @@
         422
       ],
       "expectedTile": [
-        237.459,
-        421.759
+        270.0,
+        437.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 36.249,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63254,10 +63445,10 @@
         426
       ],
       "expectedTile": [
-        233.459,
-        425.759
+        266.0,
+        441.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 36.249,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63276,10 +63467,10 @@
         426
       ],
       "expectedTile": [
-        241.459,
-        425.759
+        274.0,
+        441.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 36.249,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63298,10 +63489,10 @@
         430
       ],
       "expectedTile": [
-        237.459,
-        429.759
+        270.0,
+        445.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 36.249,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63320,10 +63511,10 @@
         422
       ],
       "expectedTile": [
-        233.459,
-        421.759
+        266.0,
+        437.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 36.249,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63342,10 +63533,10 @@
         422
       ],
       "expectedTile": [
-        241.459,
-        421.759
+        274.0,
+        437.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 36.249,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63364,10 +63555,10 @@
         430
       ],
       "expectedTile": [
-        233.459,
-        429.759
+        266.0,
+        445.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 36.249,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63386,10 +63577,10 @@
         430
       ],
       "expectedTile": [
-        241.459,
-        429.759
+        274.0,
+        445.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 36.249,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63408,10 +63599,10 @@
         420
       ],
       "expectedTile": [
-        235.459,
-        419.759
+        268.0,
+        435.0
       ],
-      "displacementMetres": 0.519,
+      "displacementMetres": 36.249,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -73524,14 +73715,14 @@
         320
       ],
       "tile": [
-        379,
-        330
+        380,
+        331
       ],
       "expectedTile": [
         380.57,
         329.25
       ],
-      "displacementMetres": 1.74,
+      "displacementMetres": 1.84,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -80301,18 +80492,19 @@
       ],
       "tile": [
         274,
-        443
+        442
       ],
       "expectedTile": [
         273.606,
         442.293
       ],
-      "displacementMetres": 0.81,
+      "displacementMetres": 0.491,
       "maximumDisplacementMetres": 5.0,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:300:return:sunmane_wind_caves->sunmane_steppe@247:300"
     },
     {
       "region": "sunmane_steppe",
@@ -80322,19 +80514,20 @@
         283
       ],
       "tile": [
-        334,
+        335,
         432
       ],
       "expectedTile": [
         333.591,
         432.482
       ],
-      "displacementMetres": 0.632,
+      "displacementMetres": 1.489,
       "maximumDisplacementMetres": 5.0,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:298:return:sunmane_wind_caves->sunmane_steppe@327:283"
     },
     {
       "region": "four_gates",
@@ -80500,8 +80693,8 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_014",
-            "site": 13,
+            "id": "ContinentalBridgeUnion_013",
+            "site": 12,
             "deckTiles": 49,
             "parts": [
               49
@@ -80518,8 +80711,8 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_015",
-            "site": 14,
+            "id": "ContinentalBridgeUnion_014",
+            "site": 13,
             "deckTiles": 55,
             "parts": [
               55
@@ -80551,7 +80744,7 @@
       },
       "hubReachableAfterStorageTiles": 96990,
       "updatedAuthoredMarkers": 75,
-      "terrainRevision": "diagonal-spine-v1:019313dcc2e282ba51da5f21a7610f0cd36576890491e08a490f5f3ceaaa31ba",
+      "terrainRevision": "diagonal-spine-v1:0be7ec782a7442b249348b902fa27c284ac3a97d56e7f73c3160ed788614b7a5",
       "servedTileContinuity": {
         "keptServedTile": 281,
         "movedTogether": 0,
@@ -80620,7 +80813,7 @@
       },
       "hubReachableAfterStorageTiles": 114716,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:b85c12573906836ea2779f8b2f3aa9c57baac0fa60d2b1486b8d6a78a88cb632",
+      "terrainRevision": "diagonal-spine-v1:1dd3cdb3a14a33c019e440e42030003e2eddf659775768b66399493d126fa46d",
       "servedTileContinuity": {
         "keptServedTile": 291,
         "movedTogether": 0,
@@ -80707,7 +80900,7 @@
       },
       "hubReachableAfterStorageTiles": 51763,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:5f24496b4b8cc6f6d3fff5c4e718bd51c1b1390f0c0a685f5179dc7f5506eb0d",
+      "terrainRevision": "diagonal-spine-v1:24d56d633d6d3efee6d7fdc054fee146edcbbf8cf85c03a163e6a04613328b4c",
       "servedTileContinuity": {
         "keptServedTile": 307,
         "movedTogether": 0,
@@ -80717,10 +80910,10 @@
     "amethyst_barrens": {
       "stageFactor": 8,
       "stageMetres": 1.6,
-      "walkableServerTiles": 130317,
-      "largestComponentTiles": 129019,
+      "walkableServerTiles": 130310,
+      "largestComponentTiles": 129012,
       "reachableByStage": {
-        "8": 129019
+        "8": 129012
       },
       "crossings": {
         "declared": [
@@ -80747,7 +80940,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 129019,
+      "hubReachableTiles": 129012,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80756,9 +80949,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 129010,
+      "hubReachableAfterStorageTiles": 129003,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:93e795f2aff0cbae6e6c544638f03cb4a4e17bceb50749908c56886459b2a4cd",
+      "terrainRevision": "diagonal-spine-v1:24b6fe5a56752d43e188cdad61e4658c4cc9019cd9b609c2cb217cc915c1aff5",
       "servedTileContinuity": {
         "keptServedTile": 269,
         "movedTogether": 0,
@@ -80768,16 +80961,16 @@
     "mirrorhold": {
       "stageFactor": 15,
       "stageMetres": 3.0,
-      "walkableServerTiles": 82607,
-      "largestComponentTiles": 66811,
+      "walkableServerTiles": 83038,
+      "largestComponentTiles": 67235,
       "reachableByStage": {
-        "15": 66811
+        "15": 67235
       },
       "crossings": {
         "declared": [
           {
-            "id": "ContinentalBridgeUnion_009",
-            "site": 8,
+            "id": "ContinentalBridgeUnion_008",
+            "site": 7,
             "deckTiles": 141,
             "parts": [
               141
@@ -80798,7 +80991,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 66811,
+      "hubReachableTiles": 67235,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80807,9 +81000,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 66802,
+      "hubReachableAfterStorageTiles": 67226,
       "updatedAuthoredMarkers": 3,
-      "terrainRevision": "diagonal-spine-v1:1f5fb869ebc72735f2533b302942ee22597c8a5c88ead1fe7b5aa6f164331fef",
+      "terrainRevision": "diagonal-spine-v1:e83921314702de75e4c6f9d2690d948587d2088208defc28bc3cfb51e70f522d",
       "servedTileContinuity": {
         "keptServedTile": 222,
         "movedTogether": 0,
@@ -80817,52 +81010,33 @@
       }
     },
     "sunmane_steppe": {
-      "stageFactor": 11,
-      "stageMetres": 2.2,
-      "walkableServerTiles": 170436,
-      "largestComponentTiles": 169465,
+      "stageFactor": 7,
+      "stageMetres": 1.4000000000000001,
+      "walkableServerTiles": 173472,
+      "largestComponentTiles": 172031,
       "reachableByStage": {
-        "11": 169465
+        "7": 172031
       },
       "crossings": {
-        "declared": [
-          {
-            "id": "ContinentalBridgeUnion_008",
-            "site": 7,
-            "deckTiles": 177,
-            "parts": [
-              177
-            ],
-            "endTiles": [
-              [
-                183,
-                211
-              ],
-              [
-                205,
-                221
-              ]
-            ]
-          }
-        ],
+        "declared": [],
         "notWalkable": [],
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 169465,
+      "hubReachableTiles": 172031,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
-          193,
-          292
+          194,
+          288
         ],
-        "displacementMetres": 0.707
+        "displacementMetres": 3.536
       },
-      "hubReachableAfterStorageTiles": 169446,
-      "updatedAuthoredMarkers": 40,
-      "terrainRevision": "diagonal-spine-v1:db5cab4e943b716bcc250cb379ad1729cd690cab7e87f6d277b91c75596cc0ba",
+      "hubReachableAfterStorageTiles": 172016,
+      "updatedAuthoredMarkers": 0,
+      "terrainRevision": "diagonal-spine-v1:7fb800977bc5898943f6e3fee5130cc01dd0f18746e83a90cd39c3aafe784125",
       "servedTileContinuity": {
-        "keptServedTile": 257,
+        "keptServedTile": 126,
         "movedTogether": 0,
         "movedFromServedTile": 0
       }
@@ -80898,7 +81072,7 @@
         ],
         "notWalkable": [
           {
-            "id": "ContinentalBridgeUnion_501",
+            "id": "ContinentalBridgeUnion_502",
             "site": null,
             "deckTiles": 1,
             "parts": [
@@ -80921,7 +81095,7 @@
       },
       "hubReachableAfterStorageTiles": 83445,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:f0f34079d170be9bc31ec4597de2b25bb4ea3441af9589ac827fa92c813cd061",
+      "terrainRevision": "diagonal-spine-v1:57ac3879a4f3fbf66cd3f9ccf0f6fbb4dfbd8a3c8e6cca96a6e1ff97a4039c46",
       "servedTileContinuity": {
         "keptServedTile": 225,
         "movedTogether": 0,
@@ -80939,7 +81113,7 @@
       "crossings": {
         "declared": [
           {
-            "id": "ContinentalBridgeUnion_502",
+            "id": "ContinentalBridgeUnion_503",
             "site": null,
             "deckTiles": 286,
             "parts": [
@@ -80957,7 +81131,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_504",
+            "id": "ContinentalBridgeUnion_505",
             "site": null,
             "deckTiles": 11,
             "parts": [
@@ -80976,7 +81150,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_505",
+            "id": "ContinentalBridgeUnion_506",
             "site": null,
             "deckTiles": 421,
             "parts": [
@@ -80998,7 +81172,7 @@
         ],
         "notWalkable": [
           {
-            "id": "ContinentalBridgeUnion_503",
+            "id": "ContinentalBridgeUnion_504",
             "site": null,
             "deckTiles": 324,
             "parts": [
@@ -81023,7 +81197,7 @@
       },
       "hubReachableAfterStorageTiles": 91877,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:d12eea5ba978ebccf748c3ff44472d9ca07a9b6a2ad2369122fc41ec020ebfc2",
+      "terrainRevision": "diagonal-spine-v1:d69df223bf4f43e524097599945d88e22122a84ef7b8f636fe3cf48a26bf2730",
       "servedTileContinuity": {
         "keptServedTile": 238,
         "movedTogether": 0,
@@ -81042,8 +81216,8 @@
       "crossings": {
         "declared": [
           {
-            "id": "ContinentalBridgeUnion_010",
-            "site": 9,
+            "id": "ContinentalBridgeUnion_009",
+            "site": 8,
             "deckTiles": 190,
             "parts": [
               190
@@ -81060,8 +81234,8 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_011",
-            "site": 10,
+            "id": "ContinentalBridgeUnion_010",
+            "site": 9,
             "deckTiles": 246,
             "parts": [
               223,
@@ -81079,8 +81253,8 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_012",
-            "site": 11,
+            "id": "ContinentalBridgeUnion_011",
+            "site": 10,
             "deckTiles": 222,
             "parts": [
               222
@@ -81097,8 +81271,8 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_013",
-            "site": 12,
+            "id": "ContinentalBridgeUnion_012",
+            "site": 11,
             "deckTiles": 144,
             "parts": [
               144
@@ -81115,7 +81289,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_501",
+            "id": "ContinentalBridgeUnion_502",
             "site": null,
             "deckTiles": 386,
             "parts": [
@@ -81149,7 +81323,7 @@
       },
       "hubReachableAfterStorageTiles": 106190,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:427ecbe571c3f45bd2c84eb2a67f89ff782de7a6ca2cd8c4d82b296cb5c22eeb",
+      "terrainRevision": "diagonal-spine-v1:22657aac82858cd42c72a74cf43a3b0fd385f41a2650237b6d36608ab9af1fac",
       "servedTileContinuity": {
         "keptServedTile": 262,
         "movedTogether": 0,
@@ -81169,7 +81343,7 @@
       "crossings": {
         "declared": [
           {
-            "id": "ContinentalBridgeUnion_506",
+            "id": "ContinentalBridgeUnion_507",
             "site": null,
             "deckTiles": 248,
             "parts": [
@@ -81191,7 +81365,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_509",
+            "id": "ContinentalBridgeUnion_510",
             "site": null,
             "deckTiles": 63,
             "parts": [
@@ -81211,7 +81385,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_510",
+            "id": "ContinentalBridgeUnion_511",
             "site": null,
             "deckTiles": 20,
             "parts": [
@@ -81233,7 +81407,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_513",
+            "id": "ContinentalBridgeUnion_514",
             "site": null,
             "deckTiles": 13,
             "parts": [
@@ -81252,7 +81426,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_514",
+            "id": "ContinentalBridgeUnion_515",
             "site": null,
             "deckTiles": 12,
             "parts": [
@@ -81270,7 +81444,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_516",
+            "id": "ContinentalBridgeUnion_517",
             "site": null,
             "deckTiles": 3,
             "parts": [
@@ -81288,7 +81462,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_517",
+            "id": "ContinentalBridgeUnion_518",
             "site": null,
             "deckTiles": 110,
             "parts": [
@@ -81307,7 +81481,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_518",
+            "id": "ContinentalBridgeUnion_519",
             "site": null,
             "deckTiles": 141,
             "parts": [
@@ -81329,7 +81503,7 @@
         ],
         "notWalkable": [
           {
-            "id": "ContinentalBridgeUnion_507",
+            "id": "ContinentalBridgeUnion_508",
             "site": null,
             "deckTiles": 115,
             "parts": [
@@ -81341,7 +81515,7 @@
             "reason": "largest walkable part holds 50 of 115 deck tiles"
           },
           {
-            "id": "ContinentalBridgeUnion_512",
+            "id": "ContinentalBridgeUnion_513",
             "site": null,
             "deckTiles": 0,
             "parts": [],
@@ -81362,7 +81536,7 @@
       },
       "hubReachableAfterStorageTiles": 39909,
       "updatedAuthoredMarkers": 9,
-      "terrainRevision": "diagonal-spine-v1:7483efe3735d63fb0189ed324c5309f91cb433e435131c96cd9d2115938dab58",
+      "terrainRevision": "diagonal-spine-v1:49069626f0d100608f269404f729b5833a5e96de9d917fd11104f7789db224d9",
       "servedTileContinuity": {
         "keptServedTile": 255,
         "movedTogether": 0,
@@ -81372,16 +81546,16 @@
     "verdant_stair": {
       "stageFactor": 8,
       "stageMetres": 1.6,
-      "walkableServerTiles": 177217,
-      "largestComponentTiles": 174088,
+      "walkableServerTiles": 176642,
+      "largestComponentTiles": 173554,
       "reachableByStage": {
-        "8": 174088
+        "8": 173554
       },
       "crossings": {
         "declared": [
           {
-            "id": "ContinentalBridgeUnion_016",
-            "site": 15,
+            "id": "ContinentalBridgeUnion_015",
+            "site": 14,
             "deckTiles": 62,
             "parts": [
               62
@@ -81398,11 +81572,11 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_017",
-            "site": 16,
-            "deckTiles": 61,
+            "id": "ContinentalBridgeUnion_016",
+            "site": 15,
+            "deckTiles": 62,
             "parts": [
-              61
+              62
             ],
             "endTiles": [
               [
@@ -81420,7 +81594,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 174088,
+      "hubReachableTiles": 173554,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81429,9 +81603,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 174079,
+      "hubReachableAfterStorageTiles": 173545,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:39cc1e5acd6dbbfbeca7dd3e97a1df45ab1210b71a117718543a864193324321",
+      "terrainRevision": "diagonal-spine-v1:bd682d735d362a8424c89ab9734b2a76dd6dd5a926d9cfbaece73c5b86381a42",
       "servedTileContinuity": {
         "keptServedTile": 237,
         "movedTogether": 0,
@@ -81441,19 +81615,19 @@
     "ssarathi_ruins": {
       "stageFactor": 5,
       "stageMetres": 1.0,
-      "walkableServerTiles": 149486,
-      "largestComponentTiles": 136226,
+      "walkableServerTiles": 149485,
+      "largestComponentTiles": 136227,
       "reachableByStage": {
-        "5": 136226
+        "5": 136227
       },
       "crossings": {
         "declared": [
           {
-            "id": "ContinentalBridgeUnion_018",
-            "site": 17,
-            "deckTiles": 63,
+            "id": "ContinentalBridgeUnion_017",
+            "site": 16,
+            "deckTiles": 62,
             "parts": [
-              63
+              62
             ],
             "endTiles": [
               [
@@ -81467,8 +81641,8 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_019",
-            "site": 18,
+            "id": "ContinentalBridgeUnion_018",
+            "site": 17,
             "deckTiles": 63,
             "parts": [
               63
@@ -81485,7 +81659,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_508",
+            "id": "ContinentalBridgeUnion_509",
             "site": null,
             "deckTiles": 41,
             "parts": [
@@ -81503,7 +81677,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_511",
+            "id": "ContinentalBridgeUnion_512",
             "site": null,
             "deckTiles": 4,
             "parts": [
@@ -81521,7 +81695,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_515",
+            "id": "ContinentalBridgeUnion_516",
             "site": null,
             "deckTiles": 28,
             "parts": [
@@ -81541,7 +81715,7 @@
             ]
           },
           {
-            "id": "ContinentalBridgeUnion_519",
+            "id": "ContinentalBridgeUnion_520",
             "site": null,
             "deckTiles": 481,
             "parts": [
@@ -81563,7 +81737,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 136226,
+      "hubReachableTiles": 136227,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81572,9 +81746,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 136217,
+      "hubReachableAfterStorageTiles": 136218,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:61c66f790f1472ab66e30d4584a5e9f5932e9ce7ace21297257965f0404e4fa5",
+      "terrainRevision": "diagonal-spine-v1:0eb39a43715b3c97c8836f4d4fde15365bf71b2e121ca52877a15668a6e5b7b2",
       "servedTileContinuity": {
         "keptServedTile": 224,
         "movedTogether": 0,
@@ -81583,9 +81757,9 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "29068a4b1c9bdfa585c94edaeb3246d6ca19a61592f0c4bf7df118e2f7c8d2e7",
+    "client_content_manifest.json": "e6508b11625ef69c42572e857bd2a534b3d66c9197b8eca8f8355d924c6fb361",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
-    "harvesting.txt": "2af403a2dcc5d4fc8469d648a331bffc335194abc3180d3bf27bcca6671531de",
+    "harvesting.txt": "8c3b50d47cef3715e51dd533a8e7df75839e8d7c3a696f25e6bb539aed064718",
     "instances/amberwood_gauntlet_low.def": "e2a5c0ca17b0c0af42f65728241c6f6d08ae6faea086505572af2fd2e417ae36",
     "instances/amberwood_gauntlet_mid.def": "db1a535c3f73a3677a28d2b2cf5ed71b9c3b8c0ea8308a88b95c6feee28d2672",
     "instances/amethyst_gauntlet_high.def": "644d0d0978354c06d3dec430c9d52a50db2aed224060b403509677a8a8a8d298",
@@ -81598,18 +81772,18 @@
     "instances/manymouth_gauntlet_low.def": "93bfd2a762767f4e7e185fdc1ddefaa4f224ecc08fd810ce66f415d7a725da79",
     "instances/ssarathi_gauntlet_high.def": "d60a0ec009cf58fac8abd4dd934752379cd9d804a39164e1680a92d2e6f77477",
     "instances/ssarathi_gauntlet_mid.def": "27f8a5aed2283e0804e85f97cdc47fd27560a72a58413b6a99f3f26d541a8c47",
-    "instances/sunmane_gauntlet_low.def": "0cd5b7adc7c7e2a5ea110a55cf14e5bdee310ec21e6572bdc7846b41fb52a570",
-    "instances/sunmane_gauntlet_mid.def": "5fd405233a9cce890de4184fdb313a516a18e0e06f6c5da43fb94d560dcd9798",
+    "instances/sunmane_gauntlet_low.def": "95e4fac9aade327b73ebc88512dcb5b1fa5a1292de5712eaac6f1b1611c2dc4c",
+    "instances/sunmane_gauntlet_mid.def": "1f6fa05cace1eeca796959b93b8c04ee8546b821484273071acbaa17aeb9e899",
     "instances/whitehorn_gauntlet_high.def": "8feae1eebe2cd08299e5938bb0fc9a527596877d26112b8da33f8d67aa260df5",
     "instances/whitehorn_gauntlet_low.def": "14e6e6894db6cede5ca63ac84acd0e4abb6aa35ccbd1b62f9cf2496779a2b3f4",
-    "interactives.txt": "c2a4d16d46d347c568b527876e12b1e60f3b21f6c56fe85141e58699853a3680",
-    "maps.txt": "82dad9bb2f24283e3c028bc5b9185dd8970407d27ccb53b3e81574a5b6623e2a",
-    "npcs.txt": "0f6b52c017cf2b3f3c1231445edbfbfd7cedc2c13a7915840c00c9ae00def77e",
+    "interactives.txt": "0fdb5950b8b39bcb0970ee24667de334883a818fae735b73d115b003db7aaf92",
+    "maps.txt": "1890ea0b1fca27d5df943f6ae448dc1fd01b9993134fb05e436fdd3de5a3cce6",
+    "npcs.txt": "b114e29a16e11fba4a8bf622a84e122fb8f46331d1267e4ed26b6d9154658ca7",
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "e8b26752e82a8bdbb1e349db13317b4fe4569a8924a16504ac77b54a3374a2aa",
-    "spawns.txt": "64a538207a3d923c1581246208a18dbd7c6daecae92d6da4a0ba4ae93e4cb1ab",
+    "spawn_groups/invasion/invasion_nymara.def": "6660aef93c84a487f0057e26f5861ce856b88779920ac25eedeb0b43b6c36702",
+    "spawns.txt": "b99fdf5b6b29fef800b3317bfead1f7a5a1898d8c89464cbd0cedc044cd05f98",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "b88ab564961389e6f8bed2046ad5835d0e245e47b747aaef7ccc3a3a5f599685"
   },
@@ -81764,13 +81938,13 @@
           "region": "mirrorhold",
           "gateLanes": 0,
           "gateLanesMoved": 7,
-          "lanes": 202
+          "lanes": 377
         },
         {
           "region": "sunmane_steppe",
           "gateLanes": 7,
           "gateLanesMoved": 0,
-          "lanes": 201
+          "lanes": 376
         }
       ]
     },
@@ -81798,13 +81972,13 @@
           "region": "mirrorhold",
           "gateLanes": 3,
           "gateLanesMoved": 4,
-          "lanes": 303
+          "lanes": 299
         },
         {
           "region": "verdant_stair",
           "gateLanes": 1,
           "gateLanesMoved": 6,
-          "lanes": 303
+          "lanes": 299
         }
       ]
     },
@@ -81821,7 +81995,7 @@
           "region": "sunmane_steppe",
           "gateLanes": 1,
           "gateLanesMoved": 6,
-          "lanes": 515
+          "lanes": 513
         }
       ]
     },
@@ -81832,13 +82006,13 @@
           "region": "sunmane_steppe",
           "gateLanes": 4,
           "gateLanesMoved": 3,
-          "lanes": 469
+          "lanes": 489
         },
         {
           "region": "verdant_stair",
           "gateLanes": 0,
           "gateLanesMoved": 7,
-          "lanes": 467
+          "lanes": 491
         }
       ]
     },
@@ -82002,9 +82176,9 @@
     "border--four_gates--verdant_stair",
     "border--manymouth_delta--ssarathi_ruins"
   ],
-  "withdrawnLanes": 182,
+  "withdrawnLanes": 148,
   "crossingArrivals": {
-    "rows": 10169,
+    "rows": 10587,
     "unreachable": 0,
     "examples": []
   },

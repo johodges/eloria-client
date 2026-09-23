@@ -91,9 +91,9 @@ def curved_points(points, closed=False):
     return _curved_points(tuple(tuple(p) for p in points), closed)
 
 
-def _polyline_field(x, z, points):
+def _polyline_field(x, z, points, already_sampled=False):
     """Distance to line and linearly interpolated point attributes at nearest point."""
-    points = curved_points(points)
+    points = np.asarray(points, dtype=np.float64) if already_sampled else curved_points(points)
     closest = np.full(x.shape, np.inf)
     nearest = np.zeros(x.shape, dtype=int)
     attrs = [np.zeros(x.shape, dtype=np.float64) for _ in range(points.shape[1] - 2)]
@@ -106,6 +106,11 @@ def _polyline_field(x, z, points):
         nearest = np.where(use, segment, nearest)
         for i in range(len(attrs)):
             attrs[i] = np.where(use, a[i + 2] + t * (b[i + 2] - a[i + 2]), attrs[i])
+    if already_sampled:
+        # Editor snapshots already contain the exact rendered samples. Their
+        # Y and width values are linear on each saved span; legacy neighbour
+        # smoothing would move those authored attributes off their preview.
+        return (np.sqrt(closest), *attrs)
     # Extend the surveyed attributes smoothly across a bend. Choosing only
     # the nearest straight segment otherwise introduces small diagonal steps
     # in bank elevation even when the river's centreline is continuous. The
@@ -132,6 +137,21 @@ def _polyline_field(x, z, points):
             sums[i] += weight * (a[..., i+2]+attribute_t*(b[..., i+2]-a[..., i+2]))
     attrs = [value / weights for value in sums]
     return (np.sqrt(closest), *attrs)
+
+
+def river_field(x, z, river):
+    """Distance, hydraulic level and interpolated half-width for a river."""
+    fields = _polyline_field(x, z, river["points"], river.get("authoredSampled", False))
+    if len(fields) >= 3:
+        return fields[0], fields[1], fields[2]
+    return fields[0], fields[1], np.broadcast_to(float(river["width"]), np.asarray(fields[0]).shape)
+
+
+def river_points(river):
+    """Exact centreline samples used by fields, water, crossings and audits."""
+    if river.get("authoredSampled", False):
+        return np.asarray(river["points"], dtype=np.float64)
+    return curved_points(river["points"])
 
 
 def coastline_distance(x, z, plan=None):
@@ -220,22 +240,21 @@ def _drainage_height(x, z, h, plan, rivers=None, lakes=None):
     # tributary shoulder from filling its receiving river at a confluence.
     fields = []
     for river in rivers:
-        distance, level = _polyline_field(x, z, river["points"])
-        width, valley = river["width"], river["valley_width"]
+        distance, level, width = river_field(x, z, river)
+        valley = river["valley_width"]
         blend = 1 - smoothstep(width, valley, distance)
         valley_target = level + river["bank_height"] + 0.035 * distance
         h = np.minimum(h, h * (1 - blend) + valley_target * blend)
-        fields.append((river, distance, level))
-    for river, distance, level in fields:
-        width = river["width"]
+        fields.append((river, distance, level, width))
+    for river, distance, level, width in fields:
         # A low bank shelf gives a river somewhere to flood before its valley
         # rises. The former narrow bed blend climbed straight into the four-
         # metre valley shoulder, making the two banks read as parallel walls.
         # Centreline levels/depth and the authored drainage remain unchanged.
-        shelf = river.get("bank_shelf_width", max(10.0, width * 1.5))
+        shelf = river.get("bank_shelf_width", np.maximum(10.0, width * 1.5))
         shelf_height = min(river["bank_height"], river.get("bank_shelf_height", 0.65))
         terrace_end = width + shelf
-        join = max(18.0, width * 1.5)
+        join = np.maximum(18.0, width * 1.5)
         bed = level - river["depth"] * (1 - smoothstep(0, width, distance))
         bank = level + shelf_height * smoothstep(width, terrace_end, distance)
         profile = np.where(distance <= width, bed, bank)
@@ -937,8 +956,8 @@ def water_fields(x=None, z=None, height=None, plan=None):
     river_mask = np.zeros(x.shape, dtype=bool)
     minimum = np.full(x.shape, np.inf)
     for river in plan["rivers"]:
-        distance, profile = _polyline_field(x, z, river["points"])
-        in_channel = distance <= river["width"]
+        distance, profile, width = river_field(x, z, river)
+        in_channel = distance <= width
         level = np.maximum(level, np.where(in_channel, profile, plan["sea_level"]))
         river_mask |= in_channel
         minimum = np.minimum(minimum, distance)

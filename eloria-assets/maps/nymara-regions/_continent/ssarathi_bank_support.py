@@ -21,13 +21,13 @@ ROAD_BENCH_METRES=8.   # a graded road core keeps its corridor through the resto
 
 def bank_field(x,z,current,natural,river,plan,walking):
     """Raise imported cuts toward the original bank, with real-floor limits."""
-    distance,hydraulic=L._polyline_field(x,z,river['points'])
+    distance,hydraulic,width=L.river_field(x,z,river)
     wet=L.water_fields(x,z,height=natural,plan=plan)['mask']
-    weight=(1.-L.smoothstep(river['width']+20.,river['width']+40.,distance))*(~wet)
+    weight=(1.-L.smoothstep(width+20.,width+40.,distance))*(~wet)
     # The occupied river terrace is a low flood bank. Restoring the former
     # hill height farther inland would bury the ceremonial column shafts.
     # Continue the river's bank slope through the old survey cut instead.
-    bank=np.minimum(natural,hydraulic+.8+.04*np.maximum(0.,distance-river['width']))
+    bank=np.minimum(natural,hydraulic+.8+.04*np.maximum(0.,distance-width))
     result=current+np.maximum(0.,bank-current)*weight
     # A full terrain-cell diagonal around the exact floor prevents an adjacent
     # raised vertex from cutting through the middle of a small entrance face.

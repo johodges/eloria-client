@@ -138,7 +138,7 @@ def standing_weight(world):
 
 def river_curve(river):
     """(arc, centre xz, unit tangent per segment, level) of a plan river's curved centreline."""
-    points = L.curved_points(river['points'])
+    points = L.river_points(river)
     length = np.linalg.norm(np.diff(points[:, :2], axis=0), axis=1)
     points = points[np.r_[True, length > 1e-9]]
     xz = points[:, :2]
@@ -220,17 +220,17 @@ def river_sections(world, river, policy):
         return rows
     centre, tangent = _at_arc(arc, xz, unit, s)
     normal = np.c_[-tangent[:, 1], tangent[:, 0]]
-    width = float(river['width'])
-    reach = width + SCAN_REACH_METRES
+    width = np.asarray(L.river_field(centre[:,0],centre[:,1],river)[2],float)
+    reach = float(width.max()) + SCAN_REACH_METRES
     offsets = np.arange(-reach, reach + 1e-9, .5)
     depth = np.where(world.water['mask'], world.water['depth'], 0.)
     wet = _sample(depth, centre[:, 0][:, None] + normal[:, 0][:, None] * offsets[None, :],
                   centre[:, 1][:, None] + normal[:, 1][:, None] * offsets[None, :], world) > WET_DEPTH_METRES
     middle = len(offsets) // 2
-    near_half = int(width * 2)
     for i in range(len(s)):
         row = {'arc': float(s[i]), 'centre': centre[i], 'normal': normal[i], 'tangent': tangent[i], 'reasons': []}
         run = wet[i]
+        near_half = int(width[i] * 2)
         first = max(0, middle - near_half)
         near = np.flatnonzero(run[first:middle + near_half + 1])
         if not len(near):

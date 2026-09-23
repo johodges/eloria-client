@@ -219,6 +219,22 @@ class PreparedProfileTests(unittest.TestCase):
         self.assertLessEqual(geometry['numericJoinExpansionMetres'],
                              geometry['numericJoinExpansionGuardMetres'])
 
+    def test_joint_fit_never_mutates_authored_terrain_vertices(self):
+        baseline=prepared_crossing();first=B.fit_claimed_sites(baseline,site_ids=[4])
+        changed=first['sites'][0]['changedTerrain']
+        self.assertTrue(changed)
+        # Pin the least-displaced fitted vertex, leaving the remaining dry
+        # approach available to the solver.
+        node=tuple(min(changed,key=lambda row:abs(row['deltaMetres']))['node'])
+        world=prepared_crossing();before=world.height.copy()
+        world.authored_terrain_authority=np.zeros_like(world.height,bool)
+        world.authored_terrain_authority[node]=True
+        with self.assertRaises(B.BP.ProfileError):
+            B.fit_claimed_sites(world,site_ids=[4])
+        # A bridge that needs an authored vertex fails atomically rather than
+        # changing the editor's final terrain authority.
+        np.testing.assert_array_equal(world.height,before)
+
     def test_oblique_joint_fit_keeps_flat_width_and_encoded_join_identity(self):
         world=prepared_crossing(oblique=True);report=B.fit_claimed_sites(world,site_ids=[7])
         site=world.crossing_sites[0];left,right=np.asarray(site['wetEdges'])
@@ -374,9 +390,12 @@ class PreparedProfileTests(unittest.TestCase):
         self.assertEqual(B._site8_known_solid_margin_nodes(world,content),expected)
         world.claimed_bridge_solid_margin_source_nodes=expected
         support,_=B._retained_footprints(content);before=world.solids.copy()
+        crossing={'id':7,'key':B.MIRROR_OUTLET_SOLID_RELEASE_KEY}
         released=B._site_solid_margin_release_nodes(
-            world,{'id':8},support,set(),world.height)
+            world,crossing,support,set(),world.height)
         self.assertEqual(released,expected);np.testing.assert_array_equal(world.solids,before)
+        self.assertEqual(B._site_solid_margin_release_nodes(
+            world,{'id':8,'key':'another_river@16'},support,set(),world.height),set())
         polygon=np.array([[827.1,0.,831.1],[827.4,0.,831.1],[827.1,0.,831.4]])
         world.claimed_bridge_colliding_boxes=()
         self.assertTrue(B._solid_overlap(world,polygon))
@@ -405,10 +424,10 @@ class PreparedProfileTests(unittest.TestCase):
         actual_overlap={'kind':'box','low':np.array([827.,831.]),
                         'high':np.array([829.,833.]),'source':'test'}
         blocked=B._site_solid_margin_release_nodes(
-            world,{'id':8},support+[actual_overlap],set(),world.height)
+            world,crossing,support+[actual_overlap],set(),world.height)
         self.assertNotIn((416,414),blocked)
         self.assertNotIn((416,414),B._site_solid_margin_release_nodes(
-            world,{'id':8},support,{(416,414)},world.height))
+            world,crossing,support,{(416,414)},world.height))
         unknown={'region':'mirrorhold','node':'Unknown_Solid','collides':True,
                  'low':[827.,0.,831.],'high':[829.,1.,833.]}
         content.objects.append(unknown)

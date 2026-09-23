@@ -1,20 +1,41 @@
 {
   "bridges": {
     "components": 40,
-    "visibleCells": 8862,
-    "visibleTriangles": 18629,
-    "wetCells": 4494,
-    "siteCells": 4085,
-    "looseWetCells": 3140,
+    "visibleCells": 8748,
+    "visibleTriangles": 18576,
+    "wetCells": 4520,
+    "siteCells": 3836,
+    "looseWetCells": 3243,
     "riverWaterOutsideSites": {
-      "cells": 0,
-      "at": []
+      "cells": 103,
+      "at": [
+        [
+          1203.5,
+          788.5
+        ],
+        [
+          1194.5,
+          792.5
+        ],
+        [
+          1205.5,
+          793.5
+        ],
+        [
+          1203.5,
+          795.5
+        ],
+        [
+          1195.5,
+          799.5
+        ]
+      ]
     },
     "decks": [
       {
-        "component": 15,
+        "component": 14,
         "sites": [
-          14
+          13
         ],
         "cells": 104,
         "bankErrorMetres": 2.322,
@@ -50,9 +71,9 @@
         ]
       },
       {
-        "component": 14,
+        "component": 13,
         "sites": [
-          13
+          12
         ],
         "cells": 101,
         "bankErrorMetres": 0.415,
@@ -258,35 +279,21 @@
         ]
       },
       {
-        "component": 8,
-        "sites": [
-          7
-        ],
-        "cells": 248,
-        "bankErrorMetres": 0.415,
-        "shape": "smooth longitudinal arch; flat cross-section",
-        "axis": [
-          -0.9108873229518984,
-          0.4126551646175338
-        ],
-        "bankHeights": [
-          22.14923717954813,
-          22.199778191060606
-        ],
-        "crownHeight": 22.904552857175908,
-        "crownRiseMetres": 0.704774666115302,
-        "maximumInteriorDryGapMetres": 1.129,
-        "interiorDryGapAboveOuterJoinLimitVertices": 74,
-        "deckLiftPolicyAppliesAtOuterJoins": true,
+        "component": 501,
+        "sites": [],
+        "cells": 135,
+        "bankErrorMetres": 2.216,
+        "dryLiftOverLimitVertices": 26,
+        "maximumDryLiftMetres": 2.216,
         "worstDryLift": [
-          1207.0,
-          793.0
+          1206.0,
+          791.0
         ]
       },
       {
-        "component": 9,
+        "component": 8,
         "sites": [
-          8
+          7
         ],
         "cells": 203,
         "bankErrorMetres": 1.849,
@@ -296,13 +303,13 @@
           -0.7344040757377464
         ],
         "bankHeights": [
-          78.06098138672438,
-          79.49882825078618
+          78.0609813867419,
+          79.49882825009965
         ],
-        "crownHeight": 82.27439060125448,
-        "crownRiseMetres": 2.775562350468306,
+        "crownHeight": 82.27439060306077,
+        "crownRiseMetres": 2.775562352961117,
         "maximumInteriorDryGapMetres": 12.752,
-        "interiorDryGapAboveOuterJoinLimitVertices": 93,
+        "interiorDryGapAboveOuterJoinLimitVertices": 91,
         "deckLiftPolicyAppliesAtOuterJoins": true,
         "worstDryLift": [
           833.0,
@@ -310,7 +317,7 @@
         ]
       },
       {
-        "component": 501,
+        "component": 502,
         "sites": [],
         "cells": 490,
         "bankErrorMetres": 1.906,
@@ -322,9 +329,9 @@
         ]
       },
       {
-        "component": 12,
+        "component": 11,
         "sites": [
-          11
+          10
         ],
         "cells": 305,
         "bankErrorMetres": 0.02,
@@ -348,9 +355,9 @@
         ]
       },
       {
-        "component": 11,
+        "component": 10,
         "sites": [
-          10
+          9
         ],
         "cells": 328,
         "bankErrorMetres": 0.3,
@@ -374,7 +381,7 @@
         ]
       },
       {
-        "component": 502,
+        "component": 503,
         "sites": [],
         "cells": 499,
         "bankErrorMetres": 2.32,
@@ -386,7 +393,7 @@
         ]
       },
       {
-        "component": 503,
+        "component": 504,
         "sites": [],
         "cells": 593,
         "bankErrorMetres": 2.173,
@@ -398,7 +405,7 @@
         ]
       },
       {
-        "component": 504,
+        "component": 505,
         "sites": [],
         "cells": 24,
         "bankErrorMetres": 3.131,
@@ -410,7 +417,7 @@
         ]
       },
       {
-        "component": 505,
+        "component": 506,
         "sites": [],
         "cells": 613,
         "bankErrorMetres": 2.776,
@@ -422,24 +429,24 @@
         ]
       },
       {
-        "component": 16,
+        "component": 15,
         "sites": [
-          15
+          14
         ],
         "cells": 119,
-        "bankErrorMetres": 0.797,
+        "bankErrorMetres": 0.793,
         "shape": "smooth longitudinal arch; flat cross-section",
         "axis": [
-          -0.7513612110211388,
-          -0.6598911505489733
+          -0.7513595659607425,
+          -0.6598930236328344
         ],
         "bankHeights": [
-          10.733982668369565,
-          11.575233960285335
+          10.737012823523994,
+          11.571925204668693
         ],
-        "crownHeight": 11.787733960285335,
+        "crownHeight": 11.784425204668693,
         "crownRiseMetres": 0.21250000000000036,
-        "maximumInteriorDryGapMetres": 2.937,
+        "maximumInteriorDryGapMetres": 2.934,
         "interiorDryGapAboveOuterJoinLimitVertices": 32,
         "deckLiftPolicyAppliesAtOuterJoins": true,
         "worstDryLift": [
@@ -448,9 +455,9 @@
         ]
       },
       {
-        "component": 10,
+        "component": 9,
         "sites": [
-          9
+          8
         ],
         "cells": 264,
         "bankErrorMetres": 0.555,
@@ -474,25 +481,25 @@
         ]
       },
       {
-        "component": 17,
+        "component": 16,
         "sites": [
-          16
+          15
         ],
-        "cells": 121,
-        "bankErrorMetres": 0.444,
+        "cells": 120,
+        "bankErrorMetres": 0.51,
         "shape": "smooth longitudinal arch; flat cross-section",
         "axis": [
-          -0.8377135606730758,
-          -0.5461098701401003
+          -0.8377265856901029,
+          -0.5460898896958291
         ],
         "bankHeights": [
-          6.625900459219024,
-          6.610579959218489
+          6.626071773843998,
+          6.610620193874038
         ],
-        "crownHeight": 7.198283804117506,
-        "crownRiseMetres": 0.5723833448984816,
+        "crownHeight": 7.198269696105452,
+        "crownRiseMetres": 0.5721979222614539,
         "maximumInteriorDryGapMetres": 0.892,
-        "interiorDryGapAboveOuterJoinLimitVertices": 26,
+        "interiorDryGapAboveOuterJoinLimitVertices": 25,
         "deckLiftPolicyAppliesAtOuterJoins": true,
         "worstDryLift": [
           1174.0,
@@ -500,9 +507,9 @@
         ]
       },
       {
-        "component": 13,
+        "component": 12,
         "sites": [
-          12
+          11
         ],
         "cells": 218,
         "bankErrorMetres": 0.57,
@@ -526,7 +533,7 @@
         ]
       },
       {
-        "component": 506,
+        "component": 507,
         "sites": [],
         "cells": 446,
         "bankErrorMetres": 2.047,
@@ -538,22 +545,22 @@
         ]
       },
       {
-        "component": 19,
+        "component": 18,
         "sites": [
-          18
+          17
         ],
         "cells": 124,
         "bankErrorMetres": 0.0,
         "shape": "smooth longitudinal arch; flat cross-section",
         "axis": [
-          -0.912919072613196,
-          0.40814062142729934
+          -0.9128993082361713,
+          0.40818482703540065
         ],
         "bankHeights": [
-          4.436519614279513,
-          5.7625297264489665
+          4.438860817928611,
+          5.761805913816909
         ],
-        "crownHeight": 5.975029726448967,
+        "crownHeight": 5.9743059138169095,
         "crownRiseMetres": 0.21250000000000036,
         "maximumInteriorDryGapMetres": 2.919,
         "interiorDryGapAboveOuterJoinLimitVertices": 42,
@@ -564,7 +571,7 @@
         ]
       },
       {
-        "component": 507,
+        "component": 508,
         "sites": [],
         "cells": 207,
         "bankErrorMetres": 0.7,
@@ -576,7 +583,7 @@
         ]
       },
       {
-        "component": 508,
+        "component": 509,
         "sites": [],
         "cells": 82,
         "bankErrorMetres": 1.9,
@@ -588,7 +595,7 @@
         ]
       },
       {
-        "component": 509,
+        "component": 510,
         "sites": [],
         "cells": 107,
         "bankErrorMetres": 1.263,
@@ -600,7 +607,7 @@
         ]
       },
       {
-        "component": 510,
+        "component": 511,
         "sites": [],
         "cells": 35,
         "bankErrorMetres": 1.859,
@@ -612,7 +619,7 @@
         ]
       },
       {
-        "component": 511,
+        "component": 512,
         "sites": [],
         "cells": 12,
         "bankErrorMetres": 0.025,
@@ -620,7 +627,7 @@
         "maximumDryLiftMetres": 0.025
       },
       {
-        "component": 512,
+        "component": 513,
         "sites": [],
         "cells": 1,
         "bankErrorMetres": 0.212,
@@ -628,7 +635,7 @@
         "maximumDryLiftMetres": 0.212
       },
       {
-        "component": 513,
+        "component": 514,
         "sites": [],
         "cells": 23,
         "bankErrorMetres": 1.334,
@@ -640,7 +647,7 @@
         ]
       },
       {
-        "component": 514,
+        "component": 515,
         "sites": [],
         "cells": 24,
         "bankErrorMetres": 3.382,
@@ -652,7 +659,7 @@
         ]
       },
       {
-        "component": 515,
+        "component": 516,
         "sites": [],
         "cells": 58,
         "bankErrorMetres": 1.027,
@@ -664,7 +671,7 @@
         ]
       },
       {
-        "component": 516,
+        "component": 517,
         "sites": [],
         "cells": 9,
         "bankErrorMetres": 1.265,
@@ -676,7 +683,7 @@
         ]
       },
       {
-        "component": 517,
+        "component": 518,
         "sites": [],
         "cells": 202,
         "bankErrorMetres": 0.435,
@@ -688,24 +695,24 @@
         ]
       },
       {
-        "component": 18,
+        "component": 17,
         "sites": [
-          17
+          16
         ],
         "cells": 122,
-        "bankErrorMetres": 0.125,
+        "bankErrorMetres": 0.252,
         "shape": "smooth longitudinal arch; flat cross-section",
         "axis": [
-          -0.9567123227994418,
-          0.29103527518789973
+          -0.9567096811851444,
+          0.2910439587530026
         ],
         "bankHeights": [
-          0.5953766361803347,
-          0.8758963302497098
+          0.5953725568304706,
+          0.8819236002307355
         ],
-        "crownHeight": 1.0883963302497097,
-        "crownRiseMetres": 0.2124999999999999,
-        "maximumInteriorDryGapMetres": 0.984,
+        "crownHeight": 1.0944236002307355,
+        "crownRiseMetres": 0.21250000000000002,
+        "maximumInteriorDryGapMetres": 0.976,
         "interiorDryGapAboveOuterJoinLimitVertices": 29,
         "deckLiftPolicyAppliesAtOuterJoins": true,
         "worstDryLift": [
@@ -714,7 +721,7 @@
         ]
       },
       {
-        "component": 518,
+        "component": 519,
         "sites": [],
         "cells": 258,
         "bankErrorMetres": 0.674,
@@ -726,7 +733,7 @@
         ]
       },
       {
-        "component": 519,
+        "component": 520,
         "sites": [],
         "cells": 875,
         "bankErrorMetres": 0.472,
@@ -12586,9 +12593,13 @@
     ],
     "deckLandingMetres": 6.0,
     "deckLiftMetres": 0.3,
-    "trimmedLandingCells": 730,
-    "cutOffLandingCells": 250,
+    "trimmedLandingCells": 817,
+    "cutOffLandingCells": 275,
     "cutOffLandingBanks": [
+      [
+        1198.1,
+        794.2
+      ],
       [
         417.2,
         995.1
@@ -12653,10 +12664,10 @@
     ],
     "maximumGrade": 0.65,
     "outlineMaximumInsetFraction": 0.008555138626189618,
-    "precisionCleanupAreaSquareMetres": 7.300388585177332e-06,
+    "precisionCleanupAreaSquareMetres": 0.00014651130417147516,
     "supports": [
       {
-        "component": 15,
+        "component": 14,
         "supportsBefore": 1,
         "supportsAfter": 1,
         "oldMaximumUnsupportedSpanEstimateMetres": 12.13948470330448,
@@ -12715,7 +12726,7 @@
         ]
       },
       {
-        "component": 14,
+        "component": 13,
         "supportsBefore": 1,
         "supportsAfter": 1,
         "oldMaximumUnsupportedSpanEstimateMetres": 9.94814146580106,
@@ -12951,51 +12962,29 @@
       },
       {
         "component": 8,
-        "supportsBefore": 2,
-        "supportsAfter": 2,
-        "oldMaximumUnsupportedSpanEstimateMetres": 15.556400538122666,
-        "maximumUnsupportedSpanEstimateMetres": 15.556400538122666,
+        "supportsBefore": 1,
+        "supportsAfter": 1,
+        "oldMaximumUnsupportedSpanEstimateMetres": 14.483264996300555,
+        "maximumUnsupportedSpanEstimateMetres": 14.483264996300555,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
           {
             "planned": [
-              1204.5,
-              788.5
+              836.5,
+              844.5
             ],
             "position": [
-              1204.5,
-              788.5
+              836.5,
+              844.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 22.74333006394352,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              1196.5,
-              796.5
-            ],
-            "position": [
-              1196.5,
-              796.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 22.85960788997983,
+            "minimumDeck": 81.51145996843701,
             "status": "supported"
           }
         ]
       },
       {
-        "component": 9,
-        "supportsBefore": 0,
-        "supportsAfter": 0,
-        "oldMaximumUnsupportedSpanEstimateMetres": 19.67236337858448,
-        "maximumUnsupportedSpanEstimateMetres": 19.67236337858448,
-        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
-        "piers": []
-      },
-      {
-        "component": 501,
+        "component": 502,
         "supportsBefore": 5,
         "supportsAfter": 5,
         "oldMaximumUnsupportedSpanEstimateMetres": 15.263904968605784,
@@ -13070,7 +13059,7 @@
         ]
       },
       {
-        "component": 12,
+        "component": 11,
         "supportsBefore": 2,
         "supportsAfter": 2,
         "oldMaximumUnsupportedSpanEstimateMetres": 16.44893536032557,
@@ -13106,7 +13095,7 @@
         ]
       },
       {
-        "component": 11,
+        "component": 10,
         "supportsBefore": 3,
         "supportsAfter": 3,
         "oldMaximumUnsupportedSpanEstimateMetres": 14.755401184622942,
@@ -13155,7 +13144,7 @@
         ]
       },
       {
-        "component": 502,
+        "component": 503,
         "supportsBefore": 7,
         "supportsAfter": 7,
         "oldMaximumUnsupportedSpanEstimateMetres": 23.97141745322042,
@@ -13256,7 +13245,7 @@
         ]
       },
       {
-        "component": 503,
+        "component": 504,
         "supportsBefore": 9,
         "supportsAfter": 9,
         "oldMaximumUnsupportedSpanEstimateMetres": 31.559974448283015,
@@ -13383,7 +13372,7 @@
         ]
       },
       {
-        "component": 504,
+        "component": 505,
         "supportsBefore": 0,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 8.398908710654359,
@@ -13392,7 +13381,7 @@
         "piers": []
       },
       {
-        "component": 505,
+        "component": 506,
         "supportsBefore": 5,
         "supportsAfter": 5,
         "oldMaximumUnsupportedSpanEstimateMetres": 35.01513103918611,
@@ -13467,16 +13456,16 @@
         ]
       },
       {
-        "component": 16,
+        "component": 15,
         "supportsBefore": 0,
         "supportsAfter": 0,
-        "oldMaximumUnsupportedSpanEstimateMetres": 21.266465215397783,
-        "maximumUnsupportedSpanEstimateMetres": 21.266465215397783,
+        "oldMaximumUnsupportedSpanEstimateMetres": 21.115020267066164,
+        "maximumUnsupportedSpanEstimateMetres": 21.115020267066164,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": []
       },
       {
-        "component": 10,
+        "component": 9,
         "supportsBefore": 1,
         "supportsAfter": 1,
         "oldMaximumUnsupportedSpanEstimateMetres": 17.24756741000418,
@@ -13499,16 +13488,16 @@
         ]
       },
       {
-        "component": 17,
+        "component": 16,
         "supportsBefore": 0,
         "supportsAfter": 0,
-        "oldMaximumUnsupportedSpanEstimateMetres": 20.286024128482858,
-        "maximumUnsupportedSpanEstimateMetres": 20.286024128482858,
+        "oldMaximumUnsupportedSpanEstimateMetres": 20.000282085601526,
+        "maximumUnsupportedSpanEstimateMetres": 20.000282085601526,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": []
       },
       {
-        "component": 13,
+        "component": 12,
         "supportsBefore": 3,
         "supportsAfter": 3,
         "oldMaximumUnsupportedSpanEstimateMetres": 13.999968431987467,
@@ -13557,7 +13546,7 @@
         ]
       },
       {
-        "component": 506,
+        "component": 507,
         "supportsBefore": 8,
         "supportsAfter": 8,
         "oldMaximumUnsupportedSpanEstimateMetres": 19.075896675825206,
@@ -13671,16 +13660,16 @@
         ]
       },
       {
-        "component": 19,
+        "component": 18,
         "supportsBefore": 0,
         "supportsAfter": 0,
-        "oldMaximumUnsupportedSpanEstimateMetres": 23.851477939824925,
-        "maximumUnsupportedSpanEstimateMetres": 23.851477939824925,
+        "oldMaximumUnsupportedSpanEstimateMetres": 23.851381176727624,
+        "maximumUnsupportedSpanEstimateMetres": 23.851381176727624,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": []
       },
       {
-        "component": 507,
+        "component": 508,
         "supportsBefore": 1,
         "supportsAfter": 1,
         "oldMaximumUnsupportedSpanEstimateMetres": 23.052585808497355,
@@ -13703,7 +13692,7 @@
         ]
       },
       {
-        "component": 508,
+        "component": 509,
         "supportsBefore": 0,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 5.089185869819803,
@@ -13712,7 +13701,7 @@
         "piers": []
       },
       {
-        "component": 509,
+        "component": 510,
         "supportsBefore": 0,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 21.85762857745545,
@@ -13721,7 +13710,7 @@
         "piers": []
       },
       {
-        "component": 510,
+        "component": 511,
         "supportsBefore": 1,
         "supportsAfter": 1,
         "oldMaximumUnsupportedSpanEstimateMetres": 5.561022056170934,
@@ -13744,7 +13733,7 @@
         ]
       },
       {
-        "component": 511,
+        "component": 512,
         "supportsBefore": 0,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 4.022347108475988,
@@ -13753,7 +13742,7 @@
         "piers": []
       },
       {
-        "component": 512,
+        "component": 513,
         "supportsBefore": 0,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 0.0,
@@ -13762,7 +13751,7 @@
         "piers": []
       },
       {
-        "component": 513,
+        "component": 514,
         "supportsBefore": 0,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 7.0474189635049855,
@@ -13771,7 +13760,7 @@
         "piers": []
       },
       {
-        "component": 514,
+        "component": 515,
         "supportsBefore": 0,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 5.378795811333579,
@@ -13780,7 +13769,7 @@
         "piers": []
       },
       {
-        "component": 515,
+        "component": 516,
         "supportsBefore": 0,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 3.333593755721599,
@@ -13789,7 +13778,7 @@
         "piers": []
       },
       {
-        "component": 516,
+        "component": 517,
         "supportsBefore": 0,
         "supportsAfter": 0,
         "oldMaximumUnsupportedSpanEstimateMetres": 3.696673570256007,
@@ -13798,7 +13787,7 @@
         "piers": []
       },
       {
-        "component": 517,
+        "component": 518,
         "supportsBefore": 2,
         "supportsAfter": 2,
         "oldMaximumUnsupportedSpanEstimateMetres": 16.340995199008212,
@@ -13834,16 +13823,16 @@
         ]
       },
       {
-        "component": 18,
+        "component": 17,
         "supportsBefore": 0,
         "supportsAfter": 0,
-        "oldMaximumUnsupportedSpanEstimateMetres": 20.1207019186243,
-        "maximumUnsupportedSpanEstimateMetres": 20.1207019186243,
+        "oldMaximumUnsupportedSpanEstimateMetres": 19.999823708055292,
+        "maximumUnsupportedSpanEstimateMetres": 19.999823708055292,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": []
       },
       {
-        "component": 518,
+        "component": 519,
         "supportsBefore": 3,
         "supportsAfter": 3,
         "oldMaximumUnsupportedSpanEstimateMetres": 18.930257948838026,
@@ -13892,7 +13881,7 @@
         ]
       },
       {
-        "component": 519,
+        "component": 520,
         "supportsBefore": 7,
         "supportsAfter": 7,
         "oldMaximumUnsupportedSpanEstimateMetres": 24.31222456552953,
@@ -14010,6 +13999,68 @@
           ]
         }
       }
+    ],
+    "authored": [
+      {
+        "id": "continental-bridge-008",
+        "length": 24.166091947189145,
+        "segments": 25,
+        "width": 4.0,
+        "arch": 0.35,
+        "waterClearance": 1.1,
+        "uniformClearanceLift": 0.3504499362166662,
+        "supports": [
+          {
+            "station": 0.2,
+            "position": [
+              1193.700000190735,
+              798.6999969482422
+            ],
+            "bottom": 20.310602931983464,
+            "top": 22.580249878233268
+          },
+          {
+            "station": 0.4,
+            "position": [
+              1198.1000001907348,
+              796.6999969482422
+            ],
+            "bottom": 19.67443708498504,
+            "top": 22.685050018614128
+          },
+          {
+            "station": 0.6,
+            "position": [
+              1202.500000190735,
+              794.6999969482422
+            ],
+            "bottom": 19.63219208737428,
+            "top": 22.677850158994985
+          },
+          {
+            "station": 0.8,
+            "position": [
+              1206.9000001907348,
+              792.6999969482422
+            ],
+            "bottom": 20.063757564057937,
+            "top": 22.55865029937585
+          }
+        ]
+      },
+      {
+        "id": "steppe-hall-access",
+        "length": 3.365827091592712,
+        "segments": 4,
+        "width": 2.5,
+        "arch": 0.15,
+        "waterClearance": 0.85,
+        "uniformClearanceLift": 0.0,
+        "supports": []
+      }
+    ],
+    "suppressedGeneratedComponents": [
+      501
     ],
     "policy": "Decks only at claimed crossing sites (span plus landings) and over deep water crossed away from a site; disjoint road capsule union clipped onto one common floor; unchanged terrain; exact ownership by cell; piers only over water; timber fascia below the floor."
   },
@@ -14302,7 +14353,7 @@
     "marketRamp": {
       "start": [
         493.9481178253666,
-        38.24371849525018,
+        38.243718502893714,
         577.0434533866883
       ],
       "landing": [
@@ -14312,7 +14363,7 @@
       ],
       "levelLandingMetres": 4.0,
       "lengthMetres": 39.0,
-      "grade": 0.5585036246419437
+      "grade": 0.5585036244235569
     },
     "rootRamp": {
       "start": [
@@ -15307,7 +15358,7 @@
               409.0199,
               1191.9499
             ],
-            "bottom": 2.1343601023127623,
+            "bottom": 2.13436008887716,
             "top": 2.538012738656998,
             "floorGap": 0.08000000000000007
           },
@@ -15316,7 +15367,7 @@
               412.9263,
               1191.0896
             ],
-            "bottom": 2.0866622719293657,
+            "bottom": 2.0866622904193,
             "top": 2.495357120531205,
             "floorGap": 0.08000000000000007
           },
@@ -15325,7 +15376,7 @@
               416.8327,
               1190.2294
             ],
-            "bottom": 2.0539215116669176,
+            "bottom": 2.053921517445951,
             "top": 2.4514661077211706,
             "floorGap": 0.08000000000000007
           },
@@ -15334,7 +15385,7 @@
               420.7391,
               1189.3691
             ],
-            "bottom": 1.7471078490031844,
+            "bottom": 1.7471078394518376,
             "top": 2.4092327520708308,
             "floorGap": 0.08000000000000007
           },
@@ -15343,7 +15394,7 @@
               424.6455,
               1188.5088
             ],
-            "bottom": 1.6098965381049337,
+            "bottom": 1.609896536629851,
             "top": 2.365774147848927,
             "floorGap": 0.08000000000000007
           },
@@ -15352,7 +15403,7 @@
               428.0874,
               1185.5391
             ],
-            "bottom": 1.955081951838977,
+            "bottom": 1.9550819516550482,
             "top": 2.323313056339122,
             "floorGap": 0.08000000000000007
           },
@@ -15361,7 +15412,7 @@
               428.5519,
               1187.6486
             ],
-            "bottom": 1.7666214237802729,
+            "bottom": 1.7666214237903684,
             "top": 2.323463335878104,
             "floorGap": 0.08000000000000007
           },
@@ -16046,7 +16097,7 @@
               695.8741,
               1084.7025
             ],
-            "bottom": 12.439536405969763,
+            "bottom": 12.439536405969765,
             "top": 15.719747781033046,
             "floorGap": 0.08000000000000007
           },
@@ -16091,7 +16142,7 @@
               704.6348,
               1076.6098
             ],
-            "bottom": 13.045619975574668,
+            "bottom": 13.045619975574807,
             "top": 15.121594504588922,
             "floorGap": 0.08000000000000007
           },
@@ -16100,7 +16151,7 @@
               705.6427,
               1078.5202
             ],
-            "bottom": 13.19129013321946,
+            "bottom": 13.191290133224795,
             "top": 15.123551314572403,
             "floorGap": 0.08000000000000007
           },
@@ -16118,7 +16169,7 @@
               709.1805,
               1076.6535
             ],
-            "bottom": 13.423085954504167,
+            "bottom": 13.423085954509,
             "top": 14.834028941018229,
             "floorGap": 0.08000000000000007
           },
@@ -16154,7 +16205,7 @@
               729.9933,
               1097.3706
             ],
-            "bottom": 13.564151314844363,
+            "bottom": 13.56415131484439,
             "top": 15.113283088214832,
             "floorGap": 0.08000000000000007
           },
@@ -16163,7 +16214,7 @@
               731.9222,
               1096.3984
             ],
-            "bottom": 13.564215155364664,
+            "bottom": 13.564215155364668,
             "top": 15.113040213666428,
             "floorGap": 0.08000000000000007
           },
@@ -16609,7 +16660,7 @@
               614.5262,
               1180.9101
             ],
-            "bottom": 0.05250250931320692,
+            "bottom": 0.052502509380075446,
             "top": 3.9546994843578256,
             "floorGap": 0.08000000000000007
           },

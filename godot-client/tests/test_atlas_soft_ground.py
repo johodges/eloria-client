@@ -83,6 +83,16 @@ def test_ordinary_mask_keeps_texture_alpha_and_fixed_cutoff():
     assert (rgb[:,:,1]>rgb[:,:,0]*2).all()
 
 
+def test_plain_atlas_uses_platform_cache_without_loading_shared_binary(monkeypatch,tmp_path):
+    monkeypatch.setattr(C.R,'_library',lambda:pytest.fail('atlas loaded shared libraster.so'))
+    s,colors=scene(alpha=.75);s.materials[1].atlas_soft_ground=False
+    result=C.raster(s,colors,np.array([0.,0.]),np.array([10.,10.]),(32,32),1,
+                    native_cache=tmp_path/'native')
+    proof=result[3]['nativeRenderer']
+    assert proof['baseRasterSha256']==A.sha(C.TOOLKIT/'native/raster.c')
+    assert proof['librarySha256'] and 'cacheReceipt' not in proof
+
+
 def test_ordinary_mask_stays_fixed_cutoff_alongside_dithered_ground():
     s,colors=scene(order=('ground','soft','roof'))
     s.materials[2].alpha_mode='MASK'

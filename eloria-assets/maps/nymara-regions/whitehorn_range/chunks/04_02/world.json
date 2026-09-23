@@ -19,13 +19,13 @@
     "bounds": {
       "min": [
         -166.0,
-        155.1419551073822,
+        155.1419551067617,
         -28.0
       ],
       "max": [
         -60.127288818359375,
         238.53790177504442,
-        69.23255363943866
+        68.0
       ]
     },
     "playableBounds": {
@@ -257,7 +257,7 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 221984,
+    "glbBytes": 221680,
     "nodes": 37,
     "meshes": 13,
     "externalResources": {
@@ -2895,16 +2895,16 @@
   "bounds": {
     "min": [
       -166.0,
-      155.1419551073822,
+      155.1419551067617,
       -28.0
     ],
     "max": [
       -60.127288818359375,
       238.53790177504442,
-      69.23255363943866
+      68.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:019313dcc2e282ba51da5f21a7610f0cd36576890491e08a490f5f3ceaaa31ba",
+  "terrainRevision": "diagonal-spine-v1:0be7ec782a7442b249348b902fa27c284ac3a97d56e7f73c3160ed788614b7a5",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -2918,13 +2918,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
+    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
+    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
     "collisionSha256": "b09f105f18a4d612a61902cd48da2d7f3cf862dc40629d1cba7c5f856c0dea97",
-    "terrainRevision": "diagonal-spine-v1:019313dcc2e282ba51da5f21a7610f0cd36576890491e08a490f5f3ceaaa31ba"
+    "terrainRevision": "diagonal-spine-v1:0be7ec782a7442b249348b902fa27c284ac3a97d56e7f73c3160ed788614b7a5"
   }
 }

@@ -91,7 +91,7 @@
       "returnMap": "sunmane_steppe",
       "returnTile": [
         274,
-        443
+        442
       ],
       "bounds": {
         "min": [
@@ -201,7 +201,7 @@
       ],
       "returnMap": "sunmane_steppe",
       "returnTile": [
-        334,
+        335,
         432
       ],
       "bounds": {
@@ -1237,7 +1237,7 @@
       "destinationMap": "sunmane_steppe",
       "destinationTile": [
         274,
-        443
+        442
       ],
       "section": "sunmane_wind_caves",
       "label": "Back out to the Sunmane Steppe (Sunmane Wind Caves)"
@@ -1256,7 +1256,7 @@
       ],
       "destinationMap": "sunmane_steppe",
       "destinationTile": [
-        334,
+        335,
         432
       ],
       "section": "sunmane_crystal_hollow",

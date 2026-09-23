@@ -5,6 +5,7 @@
 # byte-exact across Windows and Unix checkouts, including mixed line endings.
 eloria-assets/maps/** -text
 godot-client/data/maps/** -text
+godot-client/world_authoring/**/*.f32le binary
 
 # Byte-exact fitter snapshots used to verify build provenance.
 eloria-assets/qa/canonical-equipment-provenance/* -text

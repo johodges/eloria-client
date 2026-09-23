@@ -140,8 +140,9 @@ def within_reach(point, height, stations, heights, tree, budget):
     return False
 
 
-def prepare_resource_trails(world, content, profile):
+def prepare_resource_trails(world, content, profile, *, exclude_regions=()):
     """Route a trail to every cluster of authored sites on steep ground, or posts, with no road station within walkable reach."""
+    exclude_regions=set(exclude_regions)
     sites = authored_sites(profile, world.ids)
     slope = station_slope(world)
     share = steep_ground_share(slope)
@@ -162,6 +163,7 @@ def prepare_resource_trails(world, content, profile):
                         'station of its territory to its cluster; an NPC post with a station within 30 m but none within its 12 m budget nor within .65 of its height across the gap gets one whatever its ground, and a post with no station within 30 m follows the site rule; '
                         'clusters join sites within 20 m.'}
     for region in world.ids:
+        if region in exclude_regions:continue
         index = world.ids.index(region)
         candidates = []
         for entry in sites.get(region, []):

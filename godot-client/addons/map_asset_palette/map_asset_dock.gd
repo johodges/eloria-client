@@ -38,7 +38,7 @@ func set_scene_available(available: bool) -> void:
 	_update_buttons()
 	if not available:
 		set_placement_armed(false)
-		_status.text = "Open the map authoring pilot to place assets."
+		_status.text = "Open a map authoring scene to place assets."
 	elif _selected_entry.is_empty():
 		_status.text = "Choose an asset from the library."
 

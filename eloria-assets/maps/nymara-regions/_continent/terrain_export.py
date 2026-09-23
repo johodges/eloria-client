@@ -12,8 +12,141 @@ from scipy.ndimage import distance_transform_edt,binary_dilation
 import landscape as L
 from world_layout import CELL, CHUNK
 from scene_io import TOOLKIT
+import authoring as AUTHORING
 if str(TOOLKIT) not in sys.path:sys.path.insert(0,str(TOOLKIT))
 from amberwood import mesh as M, gltf as G
+
+
+def authored_surface_material(builder,surface,name, *, blend=False):
+    """Register the standard-PBR production mapping for an editor Surface."""
+    preset=surface['preset']
+    if preset=='Water':return 'water_sea',np.ones(2)
+    pbr=surface.get('pbr') if preset=='Custom' else surface.get('pbrOverrides')
+    if pbr is not None:
+        color=tuple(pbr['albedoColor']);roughness=float(pbr['roughness'])
+        metallic=float(pbr['metallic']);normal_scale=float(pbr['normalScale'])
+        density=np.asarray(pbr['uvScale'],float)[:2];paths={key:pbr.get(key) for key in ('albedoTexture','normalTexture','ormTexture')}
+    else:
+        family,color,roughness,metallic,normal_scale,density=AUTHORING._PRESET_MATERIALS[preset]
+        density=np.full(2,float(density))
+        root=AUTHORING.CLIENT/'godot-client/src/dev/map_authoring_pilot/style/textures'
+        detail_family='ground' if preset=='Desert' else family
+        paths=({"albedoTexture":root/f'{family}-basecolor.png',"normalTexture":root/f'{detail_family}-normal.png',
+                "ormTexture":root/f'{detail_family}-orm.png'} if family else {})
+    road=surface.get('roadOverrides')
+    if road is not None:
+        color=tuple(road['wornTint']);roughness*=float(road['roughnessMultiplier'])
+        normal_scale=float(road['normalStrength']);density=np.full(2,float(road['textureScale']))
+    images={}
+    for field,path in paths.items():
+        if path is None:continue
+        path=Path(path) if isinstance(path,Path) else AUTHORING._source_path(path,f'{name}.{field}')
+        image_name=f'{name}_{field}'
+        builder.add_image(image_name,path.read_bytes());images[field]=image_name
+    material=f'authored_{name}'
+    builder.add_material(G.Material(material,base_color=AUTHORING.gltf_base_color(color),roughness=roughness,metallic=metallic,
+        base_color_texture=images.get('albedoTexture'),normal_texture=images.get('normalTexture'),
+        orm_texture=images.get('ormTexture'),normal_scale=normal_scale,double_sided=True,
+        alpha_mode=G.ALPHA_BLEND if blend or color[3]<1. else G.ALPHA_OPAQUE))
+    return material,density
+
+
+def _rotated_uv(points,surface,density):
+    uv=np.asarray(points,float)*np.asarray(density,float)
+    pbr=surface.get('pbr',surface.get('pbrOverrides',{}));uv+=np.asarray(pbr.get('uvOffset',[0.,0.,0.]),float)[:2]
+    angle=math.radians(float(surface.get('rotationDegrees',0.)))
+    c,s=math.cos(angle),math.sin(angle)
+    # Godot preview applies rotation after texture scale and offset.
+    return uv@np.array([[c,s],[-s,c]])
+
+
+def authored_overlays(world,builder):
+    snapshot=getattr(world,'authoring_snapshot',None)
+    if snapshot is None:return []
+    overlays=[];translation=snapshot.translation
+    def add(name,faces,surface,uv_source,colors=None,walk=False,blend=False):
+        faces=np.asarray(faces,float).reshape(-1,3,3)
+        if not len(faces):return
+        material,density=authored_surface_material(builder,surface,name,blend=blend)
+        vertices=faces.reshape(-1,3);indices=np.arange(len(vertices),dtype=np.int32)
+        uv=_rotated_uv(np.asarray(uv_source,float).reshape(-1,2),surface,density)
+        face_normal=np.cross(faces[:,1]-faces[:,0],faces[:,2]-faces[:,0])
+        face_normal/=np.maximum(np.linalg.norm(face_normal,axis=1,keepdims=True),1e-12)
+        mesh=M.Mesh(positions=vertices,normals=np.repeat(face_normal,3,axis=0),uvs=uv,
+                    colors=None if colors is None else np.asarray(colors,float).reshape(-1,4),
+                    indices=indices,material=material)
+        centres=faces.mean(axis=1);owner=world.owner_at(centres[:,0],centres[:,2]).astype(int)
+        cx=np.floor((centres[:,0]-world.x0)/CHUNK).astype(int);cz=np.floor((centres[:,2]-world.z0)/CHUNK).astype(int)
+        overlays.append({'name':('Walk_' if walk else 'AuthoredGround_')+name,'mesh':mesh,
+                         'keys':owner*10000+cz*100+cx})
+    # Base surface follows the exact owned terrain cells. A slight visual lift
+    # avoids depth fighting; collision continues to use the shared field.
+    owner=world.ids.index(AUTHORING.SUNMANE);row,col=np.nonzero(world.owner[:-1,:-1]==owner)
+    nx=len(world.x);a=row*nx+col;tri=np.stack((a,a+nx,a+1,a+1,a+nx,a+nx+1),axis=1).reshape(-1,3)
+    positions=np.stack([world.gx,world.height+.006,world.gz],axis=-1).reshape(-1,3)
+    preview_uv=float(snapshot.document['terrain']['previewUvMetresInverse'])
+    local_uv=(positions[tri][...,[0,2]]-translation[[0,2]])*preview_uv
+    add('SunmaneBase',positions[tri],snapshot.document['terrain']['baseSurface'],local_uv)
+    ordered_regions=sorted(snapshot.document['groundRegions'],key=lambda value:(value['priority'],value['id']))
+    for layer,region in enumerate(ordered_regions):
+        if not region['enabled']:continue
+        matrix=np.asarray(region['matrix'],float).reshape(4,4,order='F');inverse=np.linalg.inv(matrix)
+        local=np.c_[world.gx.ravel()-translation[0],np.zeros(world.gx.size),world.gz.ravel()-translation[2],np.ones(world.gx.size)]@inverse.T
+        half=np.asarray(region['size'],float)*.5;point=local[:,[0,2]]
+        if region['shape']=='rectangle':inside=np.minimum(half[0]-abs(point[:,0]),half[1]-abs(point[:,1]))
+        else:
+            radius=np.linalg.norm(point/half,axis=1);gradient=np.linalg.norm(point/(half*half),axis=1)
+            inside=np.where(radius<1e-5,min(half),(1-radius)*radius/np.maximum(gradient,1e-5))
+        blend=float(region['blendWidth']);weight=np.where(inside>0,1. if blend<=0 else L.smoothstep(0,blend,inside),0)*float(region['opacity'])
+        cell_weight=weight[tri].max(axis=1);selected=cell_weight>0
+        colors=np.ones((selected.sum(),3,4));colors[...,3]=weight[tri[selected]]
+        add(region['id'],positions[tri[selected]]+(0.002+layer*0.0005)*np.array([0,1,0]),region['surface'],
+            (positions[tri[selected]][...,[0,2]]-translation[[0,2]])*preview_uv,
+            colors,blend=True)
+    for path in snapshot.document['paths']:
+        if path['kind']!='road':continue
+        controls=path['points'];vertices=[];uv=[];colors=[];indices=[];along=0.;lateral_steps=6
+        road_override=path['surface'].get('roadOverrides');feather=float(road_override['edgeFeather']) if road_override else 0.
+        control_points=[snapshot.continent_point(value['position']) for value in controls]
+        control_widths=[float(value['width']) for value in controls]
+        points=[];widths=[]
+        for index,(start,end) in enumerate(zip(control_points,control_points[1:])):
+            count=max(1,int(math.ceil(np.linalg.norm(end[[0,2]]-start[[0,2]]))))
+            amount=np.linspace(0.,1.,count+1)[:-1]
+            points.extend(start*(1-value)+end*value for value in amount)
+            widths.extend(control_widths[index]*(1-value)+control_widths[index+1]*value for value in amount)
+        points.append(control_points[-1]);widths.append(control_widths[-1])
+        for index,(point,width) in enumerate(zip(points,widths)):
+            previous=point if index==0 else points[index-1];following=point if index==len(points)-1 else points[index+1]
+            tangent=(following-previous)[[0,2]];tangent/=max(np.linalg.norm(tangent),1e-12);side=np.array([-tangent[1],tangent[0]])
+            if index:along+=float(np.linalg.norm(point-points[index-1]))
+            for lateral_index in range(lateral_steps+1):
+                u=lateral_index/lateral_steps;lateral=width*(.5-u)
+                vertex=point.copy();vertex[[0,2]]+=side*lateral
+                vertex[1]=float(world.height_at(vertex[0],vertex[2]))+.055
+                vertices.append(vertex);uv.append([u*width,along])
+                distance_from_edge=1.-abs(u*2.-1.)
+                alpha=1. if feather<=0 else float(L.smoothstep(0.,feather,distance_from_edge))
+                colors.append([1.,1.,1.,alpha])
+            if index<len(points)-1:
+                base=index*(lateral_steps+1);following=base+lateral_steps+1
+                for lateral_index in range(lateral_steps):
+                    a=base+lateral_index;b=a+1;c=following+lateral_index;d=c+1
+                    indices.extend((a,d,b,a,c,d))
+        vertices=np.asarray(vertices,float);faces=vertices[np.asarray(indices).reshape(-1,3)]
+        face_indices=np.asarray(indices).reshape(-1,3)
+        add(path['id'],faces,path['surface'],np.asarray(uv)[face_indices],
+            np.asarray(colors)[face_indices],walk=True,blend=road_override is not None)
+    return overlays
+
+
+def _mesh_faces(mesh,selected):
+    """Copy selected faces from a source mesh into one compact chunk mesh."""
+    faces=np.asarray(mesh.indices).reshape(-1,3)[selected]
+    unique,inverse=np.unique(faces,return_inverse=True)
+    return M.Mesh(positions=mesh.positions[unique],normals=mesh.normals[unique],uvs=mesh.uvs[unique],
+                  colors=None if mesh.colors is None else mesh.colors[unique],indices=inverse.ravel(),
+                  material=mesh.material)
 
 
 def png(array):
@@ -56,8 +189,8 @@ def water_vertex_fields(world):
     x,z=world.gx[border],world.gz[border];height=world.height[border]
     value=sea-height-.015
     for river in world.plan.get('rivers',[]):
-        distance,hydraulic=L._polyline_field(x,z,river['points'])
-        value=np.maximum(value,np.minimum(river['width']-distance,hydraulic-height-.015))
+        distance,hydraulic,width=L.river_field(x,z,river)
+        value=np.maximum(value,np.minimum(width-distance,hydraulic-height-.015))
     for lake in world.plan.get('lakes',[]):
         domain=(1-L._ellipse_distance(x,z,lake))*min(lake['radii'])
         value=np.maximum(value,np.minimum(domain,float(lake['level'])-height-.015))
@@ -121,9 +254,9 @@ def clipped_water_surface(world,positions,cells):
         is_sea=np.abs(endpoints[:,1]-sea)<1e-9
         extra[is_sea,1]=sea
         for river in world.plan.get('rivers',[]):
-            distance,profile=L._polyline_field(endpoints[:,0],endpoints[:,2],river['points'])
-            use=(~is_sea)&(distance<=river['width']+1e-8)&np.isclose(profile,endpoints[:,1],atol=1e-7,rtol=0)
-            if use.any():extra[use,1]=L._polyline_field(extra[use,0],extra[use,2],river['points'])[1]
+            distance,profile,width=L.river_field(endpoints[:,0],endpoints[:,2],river)
+            use=(~is_sea)&(distance<=width+1e-8)&np.isclose(profile,endpoints[:,1],atol=1e-7,rtol=0)
+            if use.any():extra[use,1]=L.river_field(extra[use,0],extra[use,2],river)[1]
         for lake in world.plan.get('lakes',[]):
             use=(~is_sea)&(L._ellipse_distance(endpoints[:,0],endpoints[:,2],lake)<=1.+1e-8)&np.isclose(endpoints[:,1],lake['level'],atol=1e-7,rtol=0)
             extra[use,1]=float(lake['level'])
@@ -224,24 +357,61 @@ def partition_surface(world,path):
     water=clipped_water_surface(world,positions,cells)
     world.water_export_report=water['report']
     water_keys=key.ravel()[water['sourceCells']]
+    overlays=authored_overlays(world,builder)
+    authored_water=[];water_slot=np.full(len(water['triangles']),-1,int)
+    snapshot=getattr(world,'authoring_snapshot',None)
+    if snapshot is not None and len(water['triangles']):
+        centres=water['positions'][water['triangles']].mean(axis=1)
+        by_id={river['id']:river for river in world.plan.get('rivers',())}
+        for path_record in snapshot.document['paths']:
+            if path_record['kind']!='river':continue
+            identity=path_record.get('replacesPlanFeatureId') or path_record['id'];river=by_id.get(identity)
+            if river is None:continue
+            distance,_,width=L.river_field(centres[:,0],centres[:,2],river)
+            selected=(distance<=width+1e-8)&(water_slot<0)
+            material,density=authored_surface_material(
+                builder,path_record['surface'],path_record['id']+'_water')
+            water_slot[selected]=len(authored_water)
+            authored_water.append({'id':path_record['id'],'surface':path_record['surface'],'material':material,
+                                   'density':density,'triangles':int(selected.sum())})
+    world.authored_overlay_report={
+        'nodes':[{'name':item['name'],'triangles':int(item['mesh'].triangle_count)} for item in overlays],
+        'triangles':sum(int(item['mesh'].triangle_count) for item in overlays),
+        'waterMaterials':[{key:value for key,value in item.items() if key not in ('surface','density')}
+                          for item in authored_water]}
     output={r:{} for r in world.ids}
     for value in np.unique(key):
         owner=int(value//10000);cz=int(value%10000//100);cx=int(value%100)
         region=world.ids[owner];chunk=f'{cx:02d}_{cz:02d}'
         selected=np.flatnonzero(key.ravel()==value)
         roots=[];bounds=[]
-        for kind,indices,vertices,material,color in (
-            ('Terrain',cells[selected].ravel(),positions,'continental_ground',colors),
-            ('Water',water['triangles'][water_keys==value].ravel(),water['positions'],'water_sea',None)):
+        surfaces=[('Terrain',cells[selected].ravel(),positions,'continental_ground',colors,None,None),
+                  ('Water',water['triangles'][(water_keys==value)&(water_slot<0)].ravel(),
+                   water['positions'],'water_sea',None,None,None)]
+        for slot,item in enumerate(authored_water):
+            surfaces.append((f"Water_{item['id']}",
+                water['triangles'][(water_keys==value)&(water_slot==slot)].ravel(),
+                water['positions'],item['material'],None,item['surface'],item['density']))
+        for kind,indices,vertices,material,color,surface,density in surfaces:
             if not len(indices):continue
             unique,inverse=np.unique(indices,return_inverse=True)
             name=f'{kind}_{region}_{chunk}'
             n=normals.reshape(-1,3)[unique] if kind=='Terrain' else np.tile([0.,1.,0.],(len(unique),1))
-            texture_uv=uvs[unique] if kind=='Terrain' else vertices[unique][:,[0,2]]*.17
+            if kind=='Terrain':texture_uv=uvs[unique]
+            elif surface is None:texture_uv=vertices[unique][:,[0,2]]*.17
+            else:texture_uv=_rotated_uv(vertices[unique][:,[0,2]]-snapshot.translation[[0,2]],surface,density)
             piece=M.Mesh(positions=vertices[unique],normals=n,uvs=texture_uv,colors=color[unique] if color is not None else None,indices=inverse,material=material)
-            builder.add_mesh(name,piece,with_tangents=False)
+            builder.add_mesh(name,piece,with_tangents=surface is not None)
             index=builder.add_node(G.Node(name,mesh=name))
             roots.append(index);bounds.append(piece.bounds())
+        for overlay in overlays:
+            overlay_selected=np.flatnonzero(overlay['keys']==value)
+            if not len(overlay_selected):continue
+            piece=_mesh_faces(overlay['mesh'],overlay_selected)
+            name=f"{overlay['name']}_{region}_{chunk}"
+            builder.add_mesh(name,piece,with_tangents=True)
+            roots.append(builder.add_node(G.Node(name,mesh=name)))
+            bounds.append(piece.bounds())
         if roots:
             output[region][chunk]={'roots':roots,'bounds':[np.min([b[0] for b in bounds],axis=0),np.max([b[1] for b in bounds],axis=0)],
                                    'cell':[cx,cz],'terrainCells':len(selected)}

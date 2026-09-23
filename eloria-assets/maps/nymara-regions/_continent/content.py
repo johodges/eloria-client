@@ -14,6 +14,7 @@ import landscape as L
 import scene_io as S
 import winding as W
 import assemblies as A
+import authoring as CA
 
 NATURAL={'tree','foliage','rock','undergrowth','stone','scatter','small_dressing',
          'stump','fallenlog','leafdrift','mushrooms','fern','vine','scrub'}
@@ -448,11 +449,62 @@ class Content:
         self.attachments={};self.attachment_order=[]
         self.ids=world.ids
         self.edits=OE.ObjectEdits(OE.load_edits(),world.ids)
+        snapshot=getattr(world,'authoring_snapshot',None)
+        self.authoring_snapshots={snapshot.document['regionId']:snapshot} if snapshot is not None else {}
+        self.authored_regions=set(self.authoring_snapshots)
+        for region in self.authored_regions:self.edits.exclude_authored_region(region)
+
+    def load_authored_region(self,region,document,body,metadata):
+        """Load exact scene objects without legacy mapping, grounding or pads."""
+        snapshot=self.authoring_snapshots[region]
+        self.documents[region]=(document,body);self.metadata[region]=metadata
+        self.transforms[region]=None;self.source_centers[region]=np.zeros(2);self.scales[region]=1.
+        matrices,_=S.GR.hierarchy(document)
+        # The retained authoring library deliberately reuses prototype
+        # subtrees.  A prototype node can therefore have the same name as an
+        # authored placement, but only the named roots in the default scene
+        # carry that placement's saved matrix.  Looking through every node
+        # can select a later nested prototype, inheriting the wrong parent's
+        # transform for bounds and then losing that parent during partition.
+        scene=document['scenes'][document.get('scene',0)]
+        by_name={}
+        for index in scene.get('nodes',[]):
+            name=document['nodes'][index].get('name')
+            if not name:
+                raise ValueError(f'{region}: authored retained library has an unnamed scene root')
+            if name in by_name:
+                raise ValueError(f'{region}: authored retained library has duplicate scene root {name!r}')
+            by_name[name]=index
+        retained=[];natural=[]
+        translation=snapshot.translation
+        for placement in metadata['placements']:
+            name=placement['node'];index=by_name.get(name)
+            if index is None:
+                raise ValueError(f'{region}: authored placement {name!r} is absent from its certified library')
+            low,high=S.subtree_bounds(document,body,index,matrices)
+            shift=translation.copy()
+            names={document['nodes'][child].get('name','') for child in S.descendants(document,[index])}
+            kind=placement.get('kind','prop')
+            obj={'region':region,'index':index,'indices':[index],'shift':shift,
+                 'low':low+shift,'high':high+shift,'kind':kind,'node':name,'names':names,
+                 'collides':placement.get('collides',False),'walk':placement.get('walk_surface',False),
+                 'source':placement,'sourcePivot':(low+high)*.5,
+                 'targetGround':float(self.world.height_at(*(low[[0,2]]+high[[0,2]])*.5+translation[[0,2]]))}
+            retained.append(obj)
+            self.mapping[(region,name)]=shift
+            self.placement_by_name[(region,name)]=obj
+            self.bounds_by_name[(region,name)]=(low+shift,high+shift)
+            if kind in NATURAL:natural.append((placement,index,low,high))
+        self.objects.extend(retained);self.prototypes[region]=natural
+        print(f'{region}: retained {len(retained)} scene-authored objects, {len(natural)} reusable natural prototypes',flush=True)
 
     def mapped_xz(self,region,points):
         """Source xz to continent xz. A retained transform carries the whole layout: squeezed and turned
         about its own point, then translated (landscape.retained_map_xz); any other territory keeps the
         centre-and-scale rule. Points may be one pair or an array of them."""
+        authored=getattr(self,'authoring_snapshots',{})
+        if region in authored:
+            return np.asarray(points,float)+authored[region].translation[[0,2]]
         transform=self.transforms.get(region)
         if transform is not None:return L.retained_map_xz(transform,points)
         points=np.asarray(points,float)
@@ -517,6 +569,12 @@ class Content:
                 print(f"{region}: double-sided sheets: {len(sides['materials'])} materials, {len(sides['primitives'])} primitives"
                       +(f"; unmatched {sides['unmatched']}" if sides['unmatched'] else ''),flush=True)
             metadata=json.loads((folder/'library.json').read_text())
+            if region in self.authoring_snapshots:
+                marker=metadata.get('continentAuthoring',{})
+                if marker.get('snapshotSha256')!=self.authoring_snapshots[region].digest:
+                    raise ValueError(f'{region}: retained library was not built from the current authoring snapshot')
+                self.load_authored_region(region,document,body,metadata)
+                continue
             metadata['placements']=retained_source_placements(region,metadata['placements'])
             if region=='amberwood':
                 from amberwood_access import prepare_camp_source
@@ -793,6 +851,8 @@ class Content:
 
     def mapped_point(self,region,point,node=None,landmark=None):
         point=np.array(point,float)
+        if region in self.authoring_snapshots:
+            return self.authoring_snapshots[region].continent_point(point)
         anchor=(region,node) if node else None
         shift=self.mapping.get(anchor) if anchor else None
         if shift is None and landmark:
@@ -861,6 +921,7 @@ class Content:
         only, so a stage that has moved either of the two on its own since load is refused."""
         corrections={}
         for obj in self.objects:
+            if obj['region'] in self.authored_regions:continue
             if obj.get('assembly') or obj.get('attachment'):continue
             pivot=(obj['low']+obj['high'])*.5
             difference=float(self.world.height_at(pivot[0],pivot[2]))-obj['targetGround']
@@ -956,6 +1017,7 @@ class Content:
             shift=np.array([x[i]-center[0],h[i]-low[1]+.025,z[i]-center[2]])
             doc,_=self.documents[source]
             count+=1
+            if region in self.authored_regions:continue
             if self.edits.skips_scatter('tree',x[i],z[i]):continue
             if in_structure('tree',x[i],z[i]):continue
             self.objects.append({'region':region,'libraryRegion':source,'index':index,'shift':shift,
@@ -978,6 +1040,7 @@ class Content:
             for j,(p,index,low,high) in enumerate(selected):
                 xx=x[i]+(rng.uniform(-4,4) if j else 0);zz=z[i]+(rng.uniform(-4,4) if j else 0)
                 if int(self.world.owner_at(xx,zz))!=self.ids.index(region):continue
+                if region in self.authored_regions:continue
                 if self.edits.skips_scatter('rock',xx,zz):continue
                 if in_structure('rock',xx,zz):continue
                 y=float(self.world.height_at(xx,zz));center=(low+high)*.5
@@ -996,6 +1059,7 @@ class Content:
             p,index,low,high=pool[int(rng.integers(len(pool)))];center=(low+high)*.5
             shift=np.array([x[i]-center[0],h[i]-low[1]-.025,z[i]-center[2]])
             undergrowth+=1
+            if region in self.authored_regions:continue
             if self.edits.skips_scatter('undergrowth',x[i],z[i]):continue
             if in_structure('undergrowth',x[i],z[i]):continue
             self.objects.append({'region':region,'libraryRegion':source,'index':index,'shift':shift,

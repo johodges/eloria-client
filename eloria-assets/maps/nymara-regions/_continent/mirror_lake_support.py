@@ -27,7 +27,8 @@ def shore_fields(x,z,height,lake,outlet):
     distance=(L._ellipse_distance(x,z,lake)-1)*min(lake['radii'])
     weight=1-L.smoothstep(INNER_OUTER_CORE,FEATHER,abs(distance))
     target=float(lake['level'])+SHORE_HEIGHT+SHORE_GRADE*np.clip(distance,-8,8)
-    river_distance,_=L._polyline_field(x,z,outlet['points'])
+    river_distance=L._polyline_field(
+        x,z,outlet['points'],outlet.get('authoredSampled',False))[0]
     # Keep the actual western outfall and its two natural banks. The taper
     # opens into the basin, avoiding a radial dam across the outgoing stream.
     start=np.asarray(outlet['points'][0][:2],float)

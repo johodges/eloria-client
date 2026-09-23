@@ -12,6 +12,7 @@ enum MaterialMode {
 
 var _material_choices := {}
 var _backend := MapAuthoringVisualStyle.new()
+var _region_uv_projection := false
 
 # Keep this order: loading must establish the factory mode and preset before it
 # restores a hand-edited source material from the resource file.
@@ -26,7 +27,7 @@ var _backend := MapAuthoringVisualStyle.new()
 		_sync_backend()
 		_finish_editor_change()
 
-@export_enum("Custom", "Grass", "Worn earth", "Soil", "Sand", "Timber",
+@export_enum("Custom", "Grass", "Worn earth", "Soil", "Sand", "Desert", "Timber",
 	"Stone", "Thatch", "Textile", "Canvas", "Metal", "Leather", "Hide",
 	"Bone", "Crystal", "Cavern", "Slate") var texture_preset := \
 	MapAuthoringTexturePresets.CUSTOM:
@@ -93,6 +94,24 @@ func get_material(extra_rotation_degrees: float = 0.0) -> Material:
 	return _backend.get_material(_backend_slot(), extra_rotation_degrees)
 
 
+## Region terrain and authored meshes provide stable metre-based UVs. Keep
+## ordinary named preset choices on that explicit projection so preview and
+## production export cannot silently depend on editor-only triplanar mapping.
+## Custom materials retain their authored settings and are validated at bake.
+func enable_region_uv_projection() -> void:
+	_region_uv_projection = true
+	if texture_preset == MapAuthoringTexturePresets.CUSTOM or \
+			not source_material is BaseMaterial3D:
+		return
+	var base := source_material as BaseMaterial3D
+	if not base.uv1_triplanar and not base.uv1_world_triplanar:
+		return
+	base.uv1_triplanar = false
+	base.uv1_world_triplanar = false
+	_sync_backend_source()
+	emit_changed()
+
+
 func signature() -> Array:
 	return [get_instance_id(), material_mode, texture_preset, rotation_degrees] + \
 		_backend.rotation_signature()
@@ -144,12 +163,23 @@ func _remember_current_choice() -> void:
 func _material_for_choice(preset: String, current: Material) -> Material:
 	var key := _choice_key(preset)
 	if _material_choices.has(key):
-		return _material_choices[key]
+		return _region_uv_material(_material_choices[key], preset)
 	if preset == MapAuthoringTexturePresets.CUSTOM:
 		return current
 	if material_mode == MaterialMode.ROAD_SHADER:
 		return MapAuthoringTexturePresets.create_road_material(preset)
-	return MapAuthoringTexturePresets.create_material(preset)
+	return _region_uv_material(MapAuthoringTexturePresets.create_material(preset),
+		preset)
+
+
+func _region_uv_material(material: Material, preset: String) -> Material:
+	if not _region_uv_projection or preset == MapAuthoringTexturePresets.CUSTOM or \
+			not material is BaseMaterial3D:
+		return material
+	var base := material as BaseMaterial3D
+	base.uv1_triplanar = false
+	base.uv1_world_triplanar = false
+	return material
 
 
 func _finish_editor_change() -> void:

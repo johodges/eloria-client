@@ -8,8 +8,8 @@ including node transforms and instances. Invisible streaming thresholds and
 legacy copied receiving scenery are omitted. Native regional albedo/UVs remain;
 water uses one opaque atlas ink so oceans do not change color at map edges.
 
-Requires numpy, Pillow and the existing compiled _toolkit/native/libraster.so.
-See that directory's Makefile to rebuild the renderer after source changes.
+Requires numpy, Pillow and a C compiler. The frozen native raster source is
+compiled into the content-addressed atlas cache for the current platform.
 
     python eloria-assets/tools/render_region_cartography.py \
         --regions four_gates crownwater amberwood sunmane_steppe \
@@ -405,12 +405,10 @@ def raster(scene, colors, low, high, size, supersample=2, *, minify=True, native
     materials = scene._pack_materials()
     soft = [i for i,m in enumerate(scene.materials) if getattr(m,'atlas_soft_ground',False)]
     clamped = {i:clamp_flags(m) for i,m in enumerate(scene.materials) if clamp_flags(m)}
-    library = R._lib
-    adapter_proof = None
+    library, adapter_proof = atlas_soft_ground.load(TOOLKIT/'native/raster.c',
+        ROOT/'godot-client/src/world/soft_ground.gdshader',
+        native_cache or ROOT.parent/'work-output/atlas-native-cache')
     if soft or clamped:
-        library, adapter_proof = atlas_soft_ground.load(TOOLKIT/'native/raster.c',
-            ROOT/'godot-client/src/world/soft_ground.gdshader',
-            native_cache or ROOT.parent/'work-output/atlas-native-cache')
         for i in soft:
             materials[i].alpha_mode = 3
         for i,flags in clamped.items():
@@ -435,7 +433,9 @@ def raster(scene, colors, low, high, size, supersample=2, *, minify=True, native
     if fn is None:
         raise RuntimeError('Rebuild native/libraster.so: optional vertex-color renderer is missing')
     ptr = ctypes.POINTER(ctypes.c_float)
-    fn.argtypes = list(R._lib.render_scene.argtypes) + [ptr]
+    fn.argtypes = [ctypes.POINTER(R._Geometry), ctypes.POINTER(R._Material), ctypes.c_int32,
+        ctypes.POINTER(R._TextureArray), ptr, ptr, ctypes.POINTER(R._Lighting), ptr, ptr,
+        ctypes.c_int32, ptr, ptr, ctypes.c_int32, ctypes.c_int32, ptr]
     fn(ctypes.byref(geometry),materials,len(scene.materials),ctypes.byref(textures),
        matrix.ctypes.data_as(ptr),eye.ctypes.data_as(ptr),ctypes.byref(light),
        identity.ctypes.data_as(ptr),None,0,color.ctypes.data_as(ptr),
@@ -452,7 +452,8 @@ def raster(scene, colors, low, high, size, supersample=2, *, minify=True, native
         rgba = rgba.resize(size, Image.Resampling.LANCZOS)
         alpha = rgba.getchannel('A')
     counts = {'coveredSamples':int(coverage.sum()),
-        'sampleCount':int(coverage.size), 'coverageFraction':round(float(coverage.mean()),6)}
+        'sampleCount':int(coverage.size), 'coverageFraction':round(float(coverage.mean()),6),
+        'nativeRenderer':atlas_soft_ground.publication_provenance(adapter_proof)}
     if soft:
         counts['softGroundDither'] = adapter_proof
     if clamped:

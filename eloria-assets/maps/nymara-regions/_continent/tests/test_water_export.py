@@ -2,12 +2,14 @@
 from pathlib import Path
 import sys,tempfile,unittest
 from types import SimpleNamespace
+from unittest.mock import patch
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import terrain_export as T
 import landscape as L
 import scene_io as S
 import collision_export as C
+from amberwood import mesh as M
 
 
 def world(x,z,height,plan=None):
@@ -156,6 +158,29 @@ class WaterExportTests(unittest.TestCase):
             np.testing.assert_array_equal(*seams)
             self.assertTrue(any(abs(row[2]-3.285)<1e-5 for row in seams[0]))
             self.assertEqual(set(parts['west']),{'00_00'});self.assertEqual(set(parts['east']),{'01_00'})
+
+    def test_authored_river_record_cannot_shadow_the_output_path(self):
+        river={'id':'authored-river','width':3.,'points':[[2.,0.,2.],[2.,8.,2.]]}
+        plan={'seed':2042,'sea_level':0.,'lakes':[],'rivers':[river]}
+        w=world(np.arange(0,9,2.),np.arange(0,9,2.),lambda x,z:np.full_like(x,-1.),plan)
+        record={'id':'authored-river','kind':'river','replacesPlanFeatureId':'authored-river',
+                'surface':{'preset':'Water','rotationDegrees':0.,'materialMode':'surface'}}
+        w.authoring_snapshot=SimpleNamespace(document={'paths':[record]},translation=np.zeros(3))
+        with tempfile.TemporaryDirectory() as temporary, patch.object(T,'authored_overlays',return_value=[]):
+            output=Path(temporary)/'surface.glb'
+            T.partition_surface(w,output)
+            self.assertTrue(output.is_file())
+            self.assertEqual(w.authored_overlay_report['waterMaterials'][0]['id'],'authored-river')
+
+    def test_chunked_authored_road_emits_scalar_triangle_indices(self):
+        mesh=M.Mesh(positions=np.array([[0.,0.,0.],[1.,0.,0.],[0.,0.,1.],[1.,0.,1.]]),
+            normals=np.tile([0.,1.,0.],(4,1)),uvs=np.zeros((4,2)),
+            indices=np.array([0,1,2,1,3,2]),material='road')
+        piece=T._mesh_faces(mesh,np.array([0,1]))
+        self.assertEqual(piece.indices.ndim,1)
+        self.assertEqual(piece.triangle_count,2)
+        np.testing.assert_array_equal(piece.positions[piece.indices].reshape(-1,3,3),
+                                      mesh.positions[mesh.indices].reshape(-1,3,3))
 
     def test_each_clipped_face_stays_inside_its_actual_source_cell(self):
         w=world(np.arange(0,11,2.),np.arange(0,11,2.),lambda x,z:x*.6+z*.4-4.1)

@@ -12,6 +12,7 @@ from crossings import prepare_contracts,global_tile
 import scene_io as S
 from amberwood import mesh as M,gltf as G
 from build_continent import bridge_scene
+from content import Content
 from world_layout import World,graded_profile,corridor_grade,fit_road_to_footings
 import landscape as L
 
@@ -31,6 +32,40 @@ class FlatWorld:
 
 
 class PipelineTests(unittest.TestCase):
+    def test_authored_placement_selects_the_default_scene_root_not_a_later_named_prototype(self):
+        with tempfile.TemporaryDirectory() as folder:
+            folder=Path(folder);source=folder/'source.glb';target=folder/'selected.glb'
+            builder=G.GltfBuilder('test');builder.add_material(G.Material('plain'))
+            builder.add_mesh('mesh',M.box((2,2,2),material='plain'),with_tangents=False)
+            builder.add_node(G.Node('Placed',mesh='mesh',translation=(10,0,20)))
+            builder.add_node(G.Node('Placed',mesh='mesh',translation=(100,0,200)))
+            builder.write_glb(str(source));document,body=S.GR.load(source)
+            first,duplicate=document['scenes'][0]['nodes']
+            wrapper=len(document['nodes'])
+            document['nodes'].append({'name':'Other','children':[duplicate]})
+            document['scenes'][0]['nodes']=[first,wrapper]
+            content=Content.__new__(Content)
+            content.authoring_snapshots={'sunmane_steppe':SimpleNamespace(translation=np.array([1200.,0.,720.]))}
+            content.documents={};content.metadata={};content.transforms={};content.source_centers={};content.scales={}
+            content.objects=[];content.mapping={};content.placement_by_name={};content.bounds_by_name={};content.prototypes={}
+            content.world=SimpleNamespace(height_at=lambda x,z:2.)
+            metadata={'placements':[{'node':'Placed','kind':'prop','collides':True,'walk_surface':False}]}
+            content.load_authored_region('sunmane_steppe',document,body,metadata)
+            placed=content.objects[0]
+            self.assertEqual(placed['index'],first)
+            np.testing.assert_allclose((placed['low']+placed['high'])/2,[1210,0,740])
+            export=S.Exporter(target);export.add(document,body,[placed['index']]);export.write()
+            selected,binary=S.GR.load(target)
+            low,high=S.subtree_bounds(selected,binary,selected['scenes'][0]['nodes'][0])
+            np.testing.assert_allclose((low+high)/2,[10,0,20])
+
+            bad=dict(metadata);bad['placements']=[dict(metadata['placements'][0],node='Missing')]
+            with self.assertRaisesRegex(ValueError,"authored placement 'Missing' is absent"):
+                content.load_authored_region('sunmane_steppe',document,body,bad)
+            document['scenes'][0]['nodes'].append(duplicate)
+            with self.assertRaisesRegex(ValueError,"duplicate scene root 'Placed'"):
+                content.load_authored_region('sunmane_steppe',document,body,metadata)
+
     def test_authored_pass_must_use_a_safe_existing_boundary_station(self):
         ids=[r['id'] for r in L.load_plan()['regions']]
         a,b=ids.index('verdant_stair'),ids.index('ssarathi_ruins')

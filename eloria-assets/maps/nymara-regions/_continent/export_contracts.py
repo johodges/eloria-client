@@ -59,7 +59,9 @@ def terrain_revision(spec, collision, server_grid):
         'collisionSha256': sha(spec['collisionPath']),
         'heightEncoding': geometry['heightEncoding'],
         'serverGridSha256': hashlib.sha256(np.ascontiguousarray(server_grid, dtype=np.uint8).tobytes()).hexdigest(),
-        **{field: spec[field] for field in ('serverOrigin', 'serverCells', 'translation', 'arrival', 'contentPositions')}}
+        **{field: spec[field] for field in ('serverOrigin', 'serverCells', 'translation', 'arrival',
+                                           'contentPositions')},
+        'runtimeBindingPositions': spec.get('runtimeBindingPositions', {})}
     encoded = json.dumps(identity, sort_keys=True, separators=(',', ':'), allow_nan=False).encode('utf-8')
     return REVISION + ':' + hashlib.sha256(encoded).hexdigest()
 
@@ -181,7 +183,43 @@ def verify_current_profile(server, baseline, certificate, previous, shared, publ
         spec['previousServerOrigin'] = spec['baselineServerOrigin']
         spec['contentTransform'] = spec['baselineContentTransform']
         spec['removedInteractiveIds'] = spec['baselineRemovedInteractiveIds']
+        # A generic definition can name the same original exterior tile as
+        # several record-bound portals.  Publication resolves those portals in
+        # their saved order, so the last explicit portal is also the tile that
+        # the generic mapper served.  Reconstruct that result from the prior
+        # publication's qualified binding provenance rather than treating the
+        # collapsed baseline tile as an unrelated server edit.
+        sources = spec.get('runtimeBindingSourceTiles', {})
+        for portal in spec.get('portalPositions', {}).values():
+            identity = portal.get('runtimeBindingId')
+            if identity is None:
+                continue
+            source = sources.get(identity)
+            if source is None:
+                raise ValueError(f'{region}:{identity}: previous publication lost its runtime binding source tile')
+            spec['tilePositions'][key(source)] = list(portal['tile'])
     mappings = {r: {'delta': [0, 0], '_native_mapper': lambda old, spec=spec: publisher.transform_tile(old, spec)} for r, spec in specs.items()}
+    # Maps and territory rows are record-bound after the ordinary tile rewrite.
+    # Rebuild those explicit aliases directly from the immutable profile, just
+    # as the publisher did, so a repeated contract run verifies the served
+    # rows rather than mistaking their distinct positions for manual edits.
+    bound_profiles = {binding['source']['path'].removeprefix('config/eloria/')
+                      for spec in specs.values()
+                      for binding in spec.get('runtimeBindings', {}).values()
+                      if binding['source']['path'] in ('config/eloria/maps.txt',
+                                                      'config/eloria/territories.txt')}
+    bound_originals, bound_rewritten = {}, {}
+    for name in sorted(bound_profiles):
+        relative = 'config/eloria/' + name
+        if relative not in certificate['files']:
+            raise ValueError(f'{relative}: previous runtime binding source is absent from the immutable profile')
+        original = (baseline / relative).read_text(encoding='utf-8')
+        bound_originals[name] = original
+        bound_rewritten[name], _ = shared.rewrite_profile(original, shared.RULES[name], mappings)
+    if bound_profiles:
+        publisher.rewrite_runtime_binding_sources(
+            bound_originals, bound_rewritten, specs,
+            previous_placements=None, certified_texts=bound_originals)
     regenerated = []
     for relative, expected in certificate['files'].items():
         path = server / relative
@@ -194,7 +232,10 @@ def verify_current_profile(server, baseline, certificate, previous, shared, publ
         if name in publisher.CONTENT:
             text, _ = publisher.rewrite_content(old_text, name, specs, False)
         elif name in shared.RULES:
-            text, _ = shared.rewrite_profile(old_text, shared.RULES[name], mappings)
+            if name in bound_rewritten:
+                text = bound_rewritten[name]
+            else:
+                text, _ = shared.rewrite_profile(old_text, shared.RULES[name], mappings)
             if name == 'maps.txt':
                 text, _ = publisher.replace_crossings(text, previous['connections'], specs)
         elif name.endswith('.def') or name == 'questlines.txt':
@@ -404,6 +445,47 @@ class RegionPlacement:
         self.entry_by_identity = {}
         self._index_metadata(content.templates[region])
 
+    def runtime_binding(self, identity):
+        return getattr(self.content, 'runtime_bindings', {}).get(identity)
+
+    def runtime_identity(self, source_path, old, line=None):
+        """Resolve one saved binding by certified source identity, never by tile alone."""
+        old = tuple(map(int, old))
+        prior_positions = (self.previous or {}).get('regions', {}).get(
+            self.region, {}).get('runtimeBindingPositions', {})
+        if line is not None:
+            matches = getattr(self.content, 'runtime_binding_source_lines', {}).get(
+                (source_path, int(line)), ())
+            if len(matches) == 1:
+                return matches[0]
+            prior = [identity for identity in matches
+                     if tuple(prior_positions.get(identity, ())) == old]
+            if len(prior) > 1:
+                raise PlacementError(
+                    f'{self.region}:{source_path}:{line}:{key(old)} has ambiguous authored runtime bindings')
+            if prior:
+                return prior[0]
+            seeded = [identity for identity in matches
+                      if tuple(self.content.runtime_bindings[identity]['source']['oldTile']) == old]
+            if len(seeded) > 1:
+                raise PlacementError(
+                    f'{self.region}:{source_path}:{line}:{key(old)} has ambiguous authored runtime bindings')
+            return seeded[0] if seeded else None
+        prior = [identity for identity, tile in prior_positions.items()
+                 if tuple(tile) == old and self.runtime_binding(identity) is not None and
+                 self.runtime_binding(identity).get('source', {}).get('path') == source_path]
+        if len(prior) > 1:
+            raise PlacementError(
+                f'{self.region}:{source_path}:{key(old)} has ambiguous authored runtime bindings')
+        if prior:
+            return prior[0]
+        matches = getattr(self.content, 'runtime_binding_source_tiles', {}).get(
+            (source_path, old), ())
+        if len(matches) > 1:
+            raise PlacementError(
+                f'{self.region}:{source_path}:{key(old)} has ambiguous authored runtime bindings')
+        return matches[0] if matches else None
+
     def _index_metadata(self, value):
         if isinstance(value, list):
             for entry in value:
@@ -428,8 +510,13 @@ class RegionPlacement:
             entry = next((e for e in entries if e.get('doorNode') or e.get('node')), entries[0] if entries else {})
         # Server coordinates are authoritative. A linked architectural root
         # determines displacement, but stale marker coordinates cannot move it.
-        authored = (getattr(self.content, 'authored_actor_points', {}).get((self.region, identity))
+        authored = (getattr(self.content, 'authored_runtime_points', {}).get((self.region, identity))
                     if identity else None)
+        if identity and self.runtime_binding(identity) is not None and authored is None:
+            raise PlacementError(f'{self.region}:{identity}: saved runtime marker is missing')
+        if authored is None:
+            authored = (getattr(self.content, 'authored_actor_points', {}).get((self.region, identity))
+                        if identity else None)
         if authored is None:
             authored = getattr(self.content, 'authored_server_points', {}).get((self.region, tuple(old)))
         if authored is not None:
@@ -542,11 +629,18 @@ class RegionPlacement:
     def place(self, old, label, radius, shape=(1, 1), reserve=False, identity=None, body=False):
         old = list(map(int, old))
         expected = self.expected(old, identity)
-        existing = self.spec['tilePositions'].get(key(old))
-        served = None if body else self.previous_tile(old)
+        binding = self.runtime_binding(identity)
+        marker_key = None if binding is None else (
+            binding['marker']['section'], binding['marker']['id'],
+            tuple(map(float, binding['targetOffset'])))
+        existing = (self.spec['runtimeMarkerPositions'].get(marker_key)
+                    if marker_key is not None else self.spec['tilePositions'].get(key(old)))
+        served = None if body or binding is not None else self.previous_tile(old)
         if existing is not None:
-            # A door, its bound interactive, and a quest return must name one
-            # exact point. Never emit conflicting remaps for a shared source tile.
+            # Records that share both a marker and its semantic endpoint offset
+            # must keep one served tile. Distinct offsets intentionally remain
+            # distinct (for example a cave door and its return square), while a
+            # marker edit translates every endpoint by the same delta.
             tile = list(existing) if self.valid(existing, shape, allow_reserved=True) else None
         elif body:
             tile = self.place_body(expected, radius, shape, label)
@@ -577,12 +671,21 @@ class RegionPlacement:
         if displacement > radius + 1e-8:
             self.failure(label, old, expected, radius, 'Shared source tile was already resolved outside this record\'s movement budget')
             return None
-        self.spec['tilePositions'][key(old)] = tile
+        if binding is not None:
+            self.spec['runtimeBindingPositions'][identity] = list(tile)
+            self.spec['runtimeBindingSourceTiles'][identity] = list(old)
+            self.spec['runtimeMarkerPositions'][marker_key] = list(tile)
+            # Keep one deterministic compatibility mapping for generic source
+            # references. Exact bound profile rows use runtimeBindingPositions.
+            self.spec['tilePositions'].setdefault(key(old), list(tile))
+        else:
+            self.spec['tilePositions'][key(old)] = tile
         if reserve:
             self.reserve(tile, shape)
         self.records.append({'region': self.region, 'record': label, 'oldTile': old, 'tile': tile,
             'expectedTile': np.round(expected, 3).tolist(), 'displacementMetres': round(displacement, 3),
-            'maximumDisplacementMetres': radius, 'footprint': list(shape)})
+            'maximumDisplacementMetres': radius, 'footprint': list(shape),
+            **({'runtimeBindingId': identity} if binding is not None else {})})
         return tile
 
     def connect_hub(self, old_arrival, preferred=None):
@@ -694,11 +797,14 @@ def place_doors(text, placements, connections):
             if region not in ids:
                 continue
             p = placements[region]
-            tile = p.place(old, f'maps.txt:{number}:{direction}:{source}->{target}', 5)
+            label = f'maps.txt:{number}:{direction}:{source}->{target}'
+            binding_id = p.runtime_identity('config/eloria/maps.txt', old, number)
+            tile = p.place(old, label, 5, identity=binding_id)
             if tile is not None:
                 portal_id = next((str(e['id']) for e in p.old_entries.get(key(old), []) if 'id' in e and
                     any(k in e for k in ('destinationMap', 'targetMap'))), f'profile-{number}-{direction}')
-                p.spec['portalPositions'][portal_id] = {'oldTile': old, 'tile': tile}
+                p.spec['portalPositions'][portal_id] = {'oldTile': old, 'tile': tile,
+                                                        'runtimeBindingId': binding_id}
                 p.fixed.add(tuple(tile))
                 p.reserve(tile)
     return old_departures
@@ -706,7 +812,7 @@ def place_doors(text, placements, connections):
 
 def collect_gameplay_points(server, profile_text, placements, records, shared, publisher):
     """Exercise publication's own readers, so no supported source coordinate is omitted."""
-    current = {'label': '', 'radius': 12., 'area': False}
+    current = {'label': '', 'radius': 12., 'area': False, 'source': ''}
     def remap(region, old):
         p = placements[region]
         if key(old) in p.spec['tilePositions']:
@@ -717,7 +823,8 @@ def collect_gameplay_points(server, profile_text, placements, records, shared, p
             point = publisher.transform_tile(old, p.spec)
             p.spec['tilePositions'][key(old)] = point
             return point
-        tile = p.place(old, current['label'], current['radius'])
+        identity = p.runtime_identity(current['source'], old)
+        tile = p.place(old, current['label'], current['radius'], identity=identity)
         return tile if tile is not None else list(map(int, np.rint(p.expected(old))))
     mappings = {r: {'delta': [0, 0], '_native_mapper': lambda old, r=r: remap(r, old)} for r in placements}
     # Bind daily objectives to the retained authoritative resource or recipient.
@@ -749,18 +856,19 @@ def collect_gameplay_points(server, profile_text, placements, records, shared, p
                           'No retained daily resource within the old completion radius, or recipient missing')
     for filename in ('territories.txt', 'special_areas.txt'):
         if filename in profile_text:
-            current.update(label=filename, radius=35., area=filename == 'special_areas.txt')
+            current.update(label=filename, radius=35., area=filename == 'special_areas.txt',
+                           source='config/eloria/' + filename)
             shared.rewrite_profile(profile_text[filename], shared.RULES[filename], mappings)
     for relative, text in profile_text.items():
         if relative.endswith('.def') or relative == 'questlines.txt':
             radius = 5. if relative.startswith('instances/') else 80. if relative.startswith('spawn_groups/') else 35.
-            current.update(label=relative, radius=radius, area=False)
+            current.update(label=relative, radius=radius, area=False, source=relative)
             shared.rewrite_definition(text, mappings)
     for relative, kind_ in (('eloria/world.py', 'world'), ('eloria/walkthrough.py', 'walkthrough'),
                              ('eloria/pk.py', 'pk'), ('eloria/daily_quests.py', 'daily')):
         path = server / relative
         if path.exists():
-            current.update(label=relative, radius=12., area=kind_ == 'pk')
+            current.update(label=relative, radius=12., area=kind_ == 'pk', source=relative)
             publisher.rewrite_gameplay_source(path.read_text(encoding='utf-8'), kind_, mappings)
     manifest = json.loads(profile_text['client_content_manifest.json'])
     specs = {r: p.spec for r, p in placements.items()}
@@ -819,11 +927,20 @@ def update_markers(placement, manifest):
                 if return_tile is not None:
                     entry['arrivalPosition'] = placement.local_position(return_tile)
             updated += 1
-    arrival = placement.spec['arrival']
-    manifest['spawnPoints'] = [{'id': 'continent-arrival', 'default': True,
-                               'position': placement.local_position(arrival), 'serverTile': arrival}]
-    manifest.setdefault('navigation', {})['defaultSpawn'] = 'continent-arrival'
-    manifest['coordinateTransform']['walkingHeight'] = placement.local_position(arrival)[1]
+    if placement.region=='sunmane_steppe':
+        spawns=manifest.get('spawnPoints',[])
+        if not spawns:raise PlacementError('sunmane_steppe: authored publication lost every spawn point')
+        defaults=[spawn for spawn in spawns if spawn.get('default')]
+        if len(defaults)>1:raise PlacementError('sunmane_steppe: authored publication has multiple default spawns')
+        selected=defaults[0] if defaults else spawns[0]
+        manifest.setdefault('navigation', {})['defaultSpawn']=str(selected['id'])
+        manifest['coordinateTransform']['walkingHeight']=float(selected['position'][1])
+    else:
+        arrival = placement.spec['arrival']
+        manifest['spawnPoints'] = [{'id': 'continent-arrival', 'default': True,
+                                   'position': placement.local_position(arrival), 'serverTile': arrival}]
+        manifest.setdefault('navigation', {})['defaultSpawn'] = 'continent-arrival'
+        manifest['coordinateTransform']['walkingHeight'] = placement.local_position(arrival)[1]
     placement.report['regions'][placement.region]['updatedAuthoredMarkers'] = updated
 
 
@@ -944,6 +1061,9 @@ def export_contracts(world, content, manifests, output, server_path):
                 'previousServerOrigin': list(content.templates[region]['coordinateTransform']['serverOrigin']),
                 'contentTransform': content_transform(content, region),
                 'contentPositions': {group: {} for group in records}, 'tilePositions': {},
+                'runtimeBindings': copy.deepcopy(getattr(content, 'runtime_bindings', {})) if region == 'sunmane_steppe' else {},
+                'runtimeBindingPositions': {}, 'runtimeBindingSourceTiles': {},
+                'runtimeMarkerPositions': {},
                 'portalPositions': {}, 'removedInteractiveIds': [],
                 'collisionPath': str(collision_path), 'worldManifestPath': str(world_path)}
             p = RegionPlacement(world, content, region, spec, result, grid, sources, report, previous=previous)
@@ -1004,10 +1124,18 @@ def export_contracts(world, content, manifests, output, server_path):
                 fields = row['fields']
                 if fields[4:6] == ['portal', 'maps.txt']:
                     p.spec['removedInteractiveIds'].append(row['id'])
+                    source_file, source_line, _ = row['label'].split(':', 2)
+                    binding_id = p.runtime_identity('config/eloria/' + source_file,
+                                                    row['old'], int(source_line))
+                    if binding_id is not None:
+                        p.place(row['old'], row['label'], 5., identity=binding_id)
                     continue
                 if fields[4] != 'storage':
                     continue
-                tile = p.place(row['old'], row['label'], 12., shape=(3, 3), reserve=True)
+                source_file, source_line, _ = row['label'].split(':', 2)
+                binding_id = p.runtime_identity('config/eloria/' + source_file, row['old'], int(source_line))
+                tile = p.place(row['old'], row['label'], 12., shape=(3, 3), reserve=True,
+                               identity=binding_id)
                 if tile is not None:
                     p.spec['contentPositions']['interactives'][row['id']] = tile
                     storage.append(tile)
@@ -1025,15 +1153,21 @@ def export_contracts(world, content, manifests, output, server_path):
                         creature = creatures[species]
                         shape = (creature.footprint_width, creature.footprint_depth)
                     radius = {'interactives': 12, 'npcs': 12, 'harvest': 35, 'spawns': 80}[group]
+                    source_file, source_line, _ = row['label'].split(':', 2)
+                    binding_id = p.runtime_identity('config/eloria/' + source_file,
+                                                    row['old'], int(source_line))
+                    identity = binding_id if p.runtime_binding(binding_id) is not None else (
+                        row['id'] if group == 'npcs' else None)
                     tile = p.place(row['old'], row['label'], radius, shape, reserve=True,
-                                   identity=row['id'] if group == 'npcs' else None, body=group == 'npcs')
+                                   identity=identity, body=group == 'npcs')
                     if tile is not None:
                         p.spec['contentPositions'][group][row['id']] = tile
         collect_gameplay_points(baseline, texts, placements, records, shared, publisher)
         for target in interior_returns:
             p = placements[target['region']]
             # Return metadata may name the same point as a bound doorway.
-            p.place(target['oldTile'], 'interior return:' + target['source'], 5.)
+            identity = p.runtime_identity('config/eloria/maps.txt', target['oldTile'])
+            p.place(target['oldTile'], 'interior return:' + target['source'], 5., identity=identity)
         if report['failures']:
             raise PlacementError(f'{len(report["failures"])} continent contracts need authored geometry or placement corrections; see contract-placement-report.json')
         # The frozen inputs must still be the source of every remap we emit.
@@ -1043,6 +1177,7 @@ def export_contracts(world, content, manifests, output, server_path):
         for region, p in placements.items():
             path, manifest = outputs[region]
             update_markers(p, manifest)
+            p.spec.pop('runtimeMarkerPositions', None)
             p.spec['terrainRevision'] = terrain_revision(p.spec, p.collision, p.grid)
             report['regions'][region]['terrainRevision'] = p.spec['terrainRevision']
             report['regions'][region]['servedTileContinuity'] = dict(p.continuity)

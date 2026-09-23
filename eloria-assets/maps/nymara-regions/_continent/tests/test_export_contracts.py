@@ -17,6 +17,7 @@ sys.path.insert(0, str(HERE))
 import export_contracts as E
 import content as C
 import landscape as L
+import authoring as A
 
 
 class Sources:
@@ -33,6 +34,240 @@ class Sources:
                 if 0 <= nx < grid.shape[1] and 0 <= ny < grid.shape[0] and not result[ny,nx] and grid[ny,nx] and abs(int(grid[y,x])-int(grid[ny,nx])) <= limit:
                     result[ny,nx] = True; pending.append((nx,ny))
         return result
+
+
+def test_runtime_binding_placement_uses_exact_identity_and_shared_marker_aliases():
+    grid = np.ones((30, 30), dtype=np.uint8)
+    world = types.SimpleNamespace(regions={'sunmane_steppe': {'center': [100, 200]}})
+    bindings = {
+        'door': {'marker': {'section': 'interactives', 'id': 'shared'},
+                 'targetOffset': [0., 0., 0.]},
+        'door-alias': {'marker': {'section': 'interactives', 'id': 'shared'},
+                       'targetOffset': [0., 0., 0.]},
+        'return': {'marker': {'section': 'interactives', 'id': 'shared'},
+                   'targetOffset': [3., 0., 1.]},
+        'first': {'marker': {'section': 'runtimePoints', 'id': 'first'},
+                  'targetOffset': [0., 0., 0.]},
+        'second': {'marker': {'section': 'runtimePoints', 'id': 'second'},
+                   'targetOffset': [0., 0., 0.]},
+    }
+    authored = {
+        ('sunmane_steppe', 'door'): np.array([100., 10., 200.]),
+        ('sunmane_steppe', 'door-alias'): np.array([100., 10., 200.]),
+        ('sunmane_steppe', 'return'): np.array([103., 10., 201.]),
+        ('sunmane_steppe', 'first'): np.array([96., 10., 200.]),
+        ('sunmane_steppe', 'second'): np.array([104., 10., 200.]),
+    }
+    content = types.SimpleNamespace(
+        templates={'sunmane_steppe': {'coordinateTransform': {'serverOrigin': [15, 15]}}},
+        runtime_bindings=bindings, authored_runtime_points=authored,
+        mapped_point=lambda *args: (_ for _ in ()).throw(AssertionError('tile fallback used')))
+    spec = {'serverOrigin': [15, 15], 'previousServerOrigin': [15, 15],
+            'tilePositions': {}, 'runtimeBindingPositions': {}, 'runtimeBindingSourceTiles': {},
+            'runtimeMarkerPositions': {},
+            'portalPositions': {}, 'arrival': [15, 15]}
+    report = {'placements': [], 'failures': [], 'regions': {'sunmane_steppe': {}}}
+    collision = {'heights': np.full((60, 60), 10, dtype=np.float32)}
+    p = E.RegionPlacement(world, content, 'sunmane_steppe', spec, collision, grid, Sources, report)
+    p.connect_hub([15, 15])
+
+    door = p.place([1, 1], 'door', 5, identity='door')
+    assert p.place([1, 1], 'door-alias', 5, identity='door-alias') == door
+    returned = p.place([2, 2], 'return', 5, identity='return')
+    assert returned != door
+    first = p.place([9, 9], 'first', 5, identity='first')
+    second = p.place([9, 9], 'second', 5, identity='second')
+    assert first != second
+    assert spec['runtimeBindingPositions'] == {
+        'door': door, 'door-alias': door, 'return': returned,
+        'first': first, 'second': second}
+    assert spec['runtimeBindingSourceTiles'] == {
+        'door': [1, 1], 'door-alias': [1, 1], 'return': [2, 2],
+        'first': [9, 9], 'second': [9, 9]}
+
+
+def test_saved_runtime_edits_reach_normal_placement_with_distinct_endpoint_offsets():
+    artifacts = A.CLIENT / 'godot-client/test-artifacts/sunmane-edit-regression'
+    cave_ids = [
+        'maps.txt:297:door:sunmane_steppe->sunmane_wind_caves@330:282',
+        'maps.txt:298:return:sunmane_wind_caves->sunmane_steppe@327:283',
+    ]
+    runtime_id = 'maps.txt:1255:return:sunmane_gauntlet_2->sunmane_steppe@183:142'
+
+    def placed(snapshot):
+        content = types.SimpleNamespace(
+            templates={A.SUNMANE: {'coordinateTransform': {'serverOrigin': [194, 292]}}})
+        A.apply_runtime_bindings(content, snapshot)
+        world = types.SimpleNamespace(regions={A.SUNMANE: {'center': [1200, 720]}})
+        grid = np.ones((792, 792), dtype=np.uint8)
+        spec = {'serverOrigin': [194, 292], 'previousServerOrigin': [194, 292],
+                'tilePositions': {}, 'runtimeBindingPositions': {},
+                'runtimeBindingSourceTiles': {}, 'runtimeMarkerPositions': {},
+                'portalPositions': {}, 'arrival': [194, 292]}
+        report = {'placements': [], 'failures': [], 'regions': {A.SUNMANE: {}}}
+        collision = {'heights': np.zeros((1584, 1584), dtype=np.float32)}
+        placement = E.RegionPlacement(
+            world, content, A.SUNMANE, spec, collision, grid, Sources, report)
+        for identity in cave_ids + [runtime_id]:
+            source = content.runtime_bindings[identity]['source']
+            assert placement.place(source['oldTile'], identity, 5, identity=identity) is not None
+        assert report['failures'] == []
+        return {identity: np.asarray(spec['runtimeBindingPositions'][identity], dtype=int)
+                for identity in cave_ids + [runtime_id]}
+
+    before = placed(A.load_snapshot(artifacts / 'before/continent-authoring.json'))
+    after = placed(A.load_snapshot(artifacts / 'after/continent-authoring.json'))
+    assert not np.array_equal(before[cave_ids[0]], before[cave_ids[1]])
+    assert np.array_equal(after[cave_ids[0]] - before[cave_ids[0]], [4, 3])
+    assert np.array_equal(after[cave_ids[1]] - before[cave_ids[1]], [4, 3])
+    assert np.array_equal(after[runtime_id] - before[runtime_id], [-5, -4])
+
+
+def test_repeat_publication_resolves_prior_bound_tile_and_records_new_source_tile():
+    identity = 'maps.txt:9:return:test_cave->sunmane_steppe@183:142'
+    other_identity = 'maps.txt:9:door:sunmane_steppe->test_cave@184:143'
+    binding = {
+        'id': identity,
+        'source': {'path': 'config/eloria/maps.txt', 'line': 9, 'oldTile': [183, 142]},
+        'marker': {'section': 'runtimePoints', 'id': 'point'},
+        'targetOffset': [0., 0., 0.],
+    }
+    other_binding = {
+        'id': other_identity,
+        # This seed tile intentionally collides with the first binding's prior
+        # served tile. Prior publication identity must win on the next pass.
+        'source': {'path': 'config/eloria/maps.txt', 'line': 9, 'oldTile': [201, 301]},
+        'marker': {'section': 'runtimePoints', 'id': 'other'},
+        'targetOffset': [0., 0., 0.],
+    }
+    content = types.SimpleNamespace(
+        templates={'sunmane_steppe': {'coordinateTransform': {'serverOrigin': [194, 292]}}},
+        runtime_bindings={identity: binding, other_identity: other_binding},
+        runtime_binding_source_lines={('config/eloria/maps.txt', 9): [identity, other_identity]},
+        runtime_binding_source_tiles={('config/eloria/maps.txt', (183, 142)): [identity],
+                                      ('config/eloria/maps.txt', (201, 301)): [other_identity]},
+        authored_runtime_points={('sunmane_steppe', identity): np.array([1207., 2., 713.])})
+    world = types.SimpleNamespace(regions={'sunmane_steppe': {'center': [1200, 720]}})
+    spec = {'serverOrigin': [194, 292], 'previousServerOrigin': [194, 292],
+            'tilePositions': {}, 'runtimeBindingPositions': {},
+            'runtimeBindingSourceTiles': {}, 'runtimeMarkerPositions': {},
+            'portalPositions': {}, 'arrival': [194, 292]}
+    previous = {'regions': {'sunmane_steppe': {
+        'runtimeBindingPositions': {identity: [201, 301], other_identity: [205, 305]},
+        'runtimeBindingSourceTiles': {identity: [183, 142], other_identity: [201, 301]},
+    }}}
+    report = {'placements': [], 'failures': [], 'regions': {'sunmane_steppe': {}}}
+    p = E.RegionPlacement(
+        world, content, 'sunmane_steppe', spec,
+        {'heights': np.zeros((1584, 1584), dtype=np.float32)},
+        np.ones((792, 792), dtype=np.uint8), Sources, report, previous=previous)
+
+    # The live profile now contains the prior publication's output tile. The
+    # exact prior binding identity carries it forward without a tile heuristic.
+    assert p.runtime_identity('config/eloria/maps.txt', [201, 301], line=9) == identity
+    assert p.runtime_identity('config/eloria/maps.txt', [201, 301]) == identity
+    assert p.place([201, 301], identity, 5, identity=identity) is not None
+    assert spec['runtimeBindingSourceTiles'][identity] == [201, 301]
+    second_source = spec['runtimeBindingPositions'][identity]
+    p.previous = {'regions': {'sunmane_steppe': {
+        'runtimeBindingPositions': copy.deepcopy(spec['runtimeBindingPositions'])}}}
+    assert p.runtime_identity('config/eloria/maps.txt', second_source, line=9) == identity
+    assert p.runtime_identity('config/eloria/maps.txt', second_source) == identity
+
+
+def test_runtime_binding_source_rewrite_distinguishes_shared_old_portal_tile():
+    original = {
+        'maps.txt': ('portal|sunmane_gauntlet|800|1|2|sunmane_steppe|183|142\n'
+                     'portal|sunmane_gauntlet|799|1|2|sunmane_steppe|183|142\n'),
+        'territories.txt': 'sunmane_steppe | Steppe | id | skill | 49 | 102 | 156 | 98 | 145 | 109 |\n',
+    }
+    rewritten = copy.deepcopy(original)
+    bindings = {
+        'return-a': {'source': {'path': 'config/eloria/maps.txt', 'line': 1, 'oldTile': [183, 142]},
+                     'role': 'return'},
+        'return-b': {'source': {'path': 'config/eloria/maps.txt', 'line': 2, 'oldTile': [183, 142]},
+                     'role': 'return'},
+        'territory': {'source': {'path': 'config/eloria/territories.txt', 'line': 1,
+                                 'oldTile': [145, 109]}, 'role': 'territory'},
+    }
+    spec = {'runtimeBindings': bindings,
+            'runtimeBindingPositions': {'return-a': [201, 301], 'return-b': [205, 305],
+                                        'territory': [210, 310]},
+            'runtimeBindingSourceTiles': {'return-a': [183, 142], 'return-b': [183, 142],
+                                          'territory': [145, 109]}}
+    shared = types.SimpleNamespace(
+        integer_pair=lambda value, where: tuple(map(int, value)),
+        field_number=lambda old, value: str(value))
+    with mock.patch.object(E, 'server_modules'):
+        pass
+    # The publisher owns this source-line rewrite helper; load it with a tiny
+    # shared stub so this unit never touches a live server checkout.
+    publisher_path = HERE.parents[2] / 'tools/publish_diagonal_continent.py'
+    module_spec = importlib.util.spec_from_file_location('publisher_runtime_binding_test', publisher_path)
+    publisher = importlib.util.module_from_spec(module_spec)
+    old_shared = sys.modules.get('publish_continent_geography')
+    sys.modules['publish_continent_geography'] = shared
+    try:
+        module_spec.loader.exec_module(publisher)
+        publisher.shared = shared
+        publisher.rewrite_runtime_binding_sources(original, rewritten, {'sunmane_steppe': spec})
+        certified = {
+            'maps.txt': ('portal | sunmane_gauntlet | 800 | 31 | 315 | sunmane_steppe | 183 | 142\n'
+                         'portal | sunmane_gauntlet | 799 | 26 | 11 | sunmane_steppe | 183 | 142\n'),
+            'territories.txt': ('sunmane_steppe | Steppe | id | skill | 49 | 102 | 156 | 98 | '
+                                '145 | 109 |\n'),
+        }
+        current = {
+            'maps.txt': ('portal | whitehorn_range | 644 | 156 | amethyst_barrens | 64 | 142\n'
+                         'portal | sunmane_gauntlet | 800 | 31 | 315 | sunmane_steppe | 226 | 319\n'
+                         'portal | sunmane_gauntlet | 799 | 26 | 11 | sunmane_steppe | 227 | 319\n'),
+            'territories.txt': ('sunmane_steppe | Steppe | id | skill | 119 | 292 | 210 | 281 | '
+                                '199 | 292 |\n'),
+        }
+        current_rewritten = copy.deepcopy(current)
+        republished = {
+            'runtimeBindings': {
+                'gauntlet-return': {
+                    'source': {'path': 'config/eloria/maps.txt', 'line': 1,
+                               'recordId': '800', 'oldTile': [183, 142]},
+                    'role': 'return'},
+                'gauntlet-vault-return': {
+                    'source': {'path': 'config/eloria/maps.txt', 'line': 2,
+                               'recordId': '799', 'oldTile': [183, 142]},
+                    'role': 'return'},
+                'territory': {
+                    'source': {'path': 'config/eloria/territories.txt', 'line': 1,
+                               'oldTile': [145, 109]},
+                    'role': 'territory'},
+            },
+            'runtimeBindingPositions': {'gauntlet-return': [227, 320],
+                                        'gauntlet-vault-return': [225, 321],
+                                        'territory': [201, 293]},
+            'runtimeBindingSourceTiles': {'gauntlet-return': [183, 142],
+                                          'gauntlet-vault-return': [183, 142],
+                                          'territory': [145, 109]},
+        }
+        previous = {'sunmane_steppe': {'baselineTilePositions': {
+            '183:142': [226, 319], '145:109': [199, 292]},
+            'runtimeBindingPositions': {'gauntlet-return': [226, 319],
+                                        'gauntlet-vault-return': [227, 319]}}}
+        publisher.rewrite_runtime_binding_sources(
+            current, current_rewritten, {'sunmane_steppe': republished},
+            previous_placements=previous, certified_texts=certified)
+    finally:
+        if old_shared is None:
+            sys.modules.pop('publish_continent_geography', None)
+        else:
+            sys.modules['publish_continent_geography'] = old_shared
+    assert rewritten['maps.txt'].splitlines() == [
+        'portal|sunmane_gauntlet|800|1|2|sunmane_steppe|201|301',
+        'portal|sunmane_gauntlet|799|1|2|sunmane_steppe|205|305']
+    assert '|210|310|' in rewritten['territories.txt']
+    assert current_rewritten['maps.txt'].splitlines() == [
+        'portal | whitehorn_range | 644 | 156 | amethyst_barrens | 64 | 142',
+        'portal | sunmane_gauntlet | 800 | 31 | 315 | sunmane_steppe |227|320',
+        'portal | sunmane_gauntlet | 799 | 26 | 11 | sunmane_steppe |225|321']
+    assert '|201|293|' in current_rewritten['territories.txt']
 
 
 def placement(grid=None, preferred=None, hub=None):
@@ -52,6 +287,95 @@ def placement(grid=None, preferred=None, hub=None):
 
 
 class ServedProfileTests(unittest.TestCase):
+    def test_repeat_profile_reconstructs_the_explicit_runtime_portal_alias_used_by_definitions(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); server = root/'server'; baseline = root/'baseline'
+            relative = 'config/eloria/instances/sunmane_gauntlet_low.def'
+            for base, tile in ((baseline, [183, 142]), (server, [225, 320])):
+                path = base/relative; path.parent.mkdir(parents=True)
+                path.write_text(f'exit_map: sunmane_steppe\nexit_x: {tile[0]}\nexit_y: {tile[1]}\n')
+            identity = 'maps.txt:1266:return:sunmane_gauntlet_3->sunmane_steppe@183:142'
+            previous = {'connections': [], 'regions': {'sunmane_steppe': {
+                'baselineTilePositions': {'183:142': [226, 319]},
+                'baselineServerOrigin': [124, 125], 'serverOrigin': [194, 292],
+                'baselineContentTransform': {'scale': 1., 'sourceCenter': [0, 0], 'targetCenter': [0, 0]},
+                'baselineRemovedInteractiveIds': [],
+                'runtimeBindingSourceTiles': {identity: [183, 142]},
+                'portalPositions': {
+                    'first-return': {'oldTile': [226, 319], 'tile': [226, 319], 'runtimeBindingId': 'first'},
+                    'gauntlet-return': {'oldTile': [226, 319], 'tile': [225, 320], 'runtimeBindingId': identity},
+                },
+            }}}
+            # The earlier alias also needs complete provenance; its value is
+            # deliberately overwritten by the later, certified gauntlet alias.
+            previous['regions']['sunmane_steppe']['runtimeBindingSourceTiles']['first'] = [183, 142]
+            def transform(point, spec):
+                return spec['tilePositions'].get(f'{point[0]}:{point[1]}', point)
+            def rewrite_definition(text, mappings):
+                tile = mappings['sunmane_steppe']['_native_mapper']([183, 142])
+                lines = text.splitlines()
+                lines[1] = f'exit_x: {tile[0]}'; lines[2] = f'exit_y: {tile[1]}'
+                return '\n'.join(lines) + '\n', 1
+            shared = types.SimpleNamespace(RULES={}, rewrite_definition=rewrite_definition)
+            publisher = types.SimpleNamespace(CONTENT={}, transform_tile=transform)
+            E.verify_current_profile(server, baseline, {'files': {relative: 'immutable'}},
+                                     previous, shared, publisher)
+            (server/relative).write_text('exit_map: sunmane_steppe\nexit_x: 225\nexit_y: 319\n')
+            with self.assertRaisesRegex(ValueError, 'beyond the previous coordinated publication'):
+                E.verify_current_profile(server, baseline, {'files': {relative: 'immutable'}},
+                                         previous, shared, publisher)
+
+    def test_repeat_profile_reconstructs_distinct_record_bound_portal_rows(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); server = root/'server'; baseline = root/'baseline'
+            relative = 'config/eloria/maps.txt'
+            original = ('portal | sunmane_gauntlet | 800 | 31 | 315 | sunmane_steppe | 183 | 142\n'
+                        'portal | sunmane_gauntlet | 799 | 26 | 11 | sunmane_steppe | 183 | 142\n')
+            served = ('portal | sunmane_gauntlet | 800 | 31 | 315 | sunmane_steppe | 226 | 319\n'
+                      'portal | sunmane_gauntlet | 799 | 26 | 11 | sunmane_steppe | 225 | 320\n')
+            for base, text in ((baseline, original), (server, served)):
+                path = base/relative; path.parent.mkdir(parents=True); path.write_text(text)
+            bindings = {
+                'return-800': {'source': {'path': relative, 'line': 1}},
+                'return-799': {'source': {'path': relative, 'line': 2}},
+            }
+            previous = {'connections': [], 'regions': {'sunmane_steppe': {
+                'baselineTilePositions': {'183:142': [226, 319]},
+                'baselineServerOrigin': [124, 125], 'serverOrigin': [194, 292],
+                'baselineContentTransform': {'scale': 1., 'sourceCenter': [0, 0], 'targetCenter': [0, 0]},
+                'baselineRemovedInteractiveIds': [], 'runtimeBindings': bindings,
+                'runtimeBindingSourceTiles': {'return-800': [183, 142], 'return-799': [183, 142]},
+                'runtimeBindingPositions': {'return-800': [226, 319], 'return-799': [225, 320]},
+                'portalPositions': {
+                    'return-800': {'oldTile': [226, 319], 'tile': [226, 319], 'runtimeBindingId': 'return-800'},
+                    'return-799': {'oldTile': [226, 319], 'tile': [225, 320], 'runtimeBindingId': 'return-799'},
+                },
+            }}}
+            def transform(point, spec):
+                return spec['tilePositions'].get(f'{point[0]}:{point[1]}', point)
+            def rewrite_profile(text, rules, mappings):
+                tile = mappings['sunmane_steppe']['_native_mapper']([183, 142])
+                return text.replace('183 | 142', f'{tile[0]} | {tile[1]}'), 2
+            def rewrite_bound(originals, rewritten, specs, **unused):
+                lines = rewritten['maps.txt'].splitlines()
+                for identity, binding in bindings.items():
+                    tile = specs['sunmane_steppe']['runtimeBindingPositions'][identity]
+                    fields = lines[binding['source']['line'] - 1].split('|')
+                    fields[-2:] = [f' {tile[0]} ', f' {tile[1]}']
+                    lines[binding['source']['line'] - 1] = '|'.join(fields)
+                rewritten['maps.txt'] = '\n'.join(lines) + '\n'
+            shared = types.SimpleNamespace(RULES={'maps.txt': object()}, rewrite_profile=rewrite_profile)
+            publisher = types.SimpleNamespace(
+                CONTENT={}, transform_tile=transform,
+                rewrite_runtime_binding_sources=rewrite_bound,
+                replace_crossings=lambda text, connections, specs: (text, []))
+            E.verify_current_profile(server, baseline, {'files': {relative: 'immutable'}},
+                                     previous, shared, publisher)
+            (server/relative).write_text(served.replace('225 | 320', '225 | 319'))
+            with self.assertRaisesRegex(ValueError, 'beyond the previous coordinated publication'):
+                E.verify_current_profile(server, baseline, {'files': {relative: 'immutable'}},
+                                         previous, shared, publisher)
+
     def test_build_regenerated_invasion_file_is_accepted_only_when_its_own_check_passes(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder); server = root/'server'; baseline = root/'baseline'

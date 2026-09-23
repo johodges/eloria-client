@@ -61,7 +61,7 @@ func _forward_3d_gui_input(camera: Camera3D, event: InputEvent) -> int:
 
 func _arm_placement(entry: Dictionary) -> void:
 	if _pilot_root() == null:
-		_dock.show_message("Open the map authoring pilot before placing assets.")
+		_dock.show_message("Open a map authoring scene before placing assets.")
 		return
 	_pending_entry = entry.duplicate(true)
 	_dock.set_placement_armed(true, String(entry.label))
@@ -106,6 +106,11 @@ func _place_entry(entry: Dictionary, ground_position: Vector3) -> Node3D:
 	if node == null:
 		_dock.show_message(String(created.get("error", "The selected asset could not be loaded.")))
 		return null
+	if pilot.has_method("prepare_palette_asset"):
+		node = pilot.call("prepare_palette_asset", entry, node) as Node3D
+		if node == null:
+			_dock.show_message("The authoring region could not prepare this asset.")
+			return null
 	var transform := Placement.ground_transform(node, entry, ground_position)
 	var placed := Placement.commit_with_undo(get_undo_redo(), pilot, entry, node,
 		bool(created.get("starter", false)), transform)

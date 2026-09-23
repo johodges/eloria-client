@@ -44,7 +44,7 @@ CELL=1.
 GRADE=.65
 RETIRED_PLAN_KEYS=('bridge_approach_aprons','bridge_approach_connections')
 TRIM_PASSES=6     # landing cells lifted over their bank beyond the deck lift limit are dropped and the deck solved again
-SITE_BANK_LANDINGS={(13,'horn_tributary@124'):(4.,6.)}  # keep the Whitehorn keeper's existing bank route
+SITE_BANK_LANDINGS={'horn_tributary@124':(4.,6.)}  # keep the Whitehorn keeper's existing bank route
 SOLVE_GRADE=.64  # Margin for narrow clipped faces in float32 continent coordinates.
 TERRAIN_CELL=2.
 ROAD_CUT_METRES=4.
@@ -64,6 +64,7 @@ SITE8_SOLID_MARGIN_RELEASE={
     (416,415):(552,('Prop_PierCrate_0','Prop_PierSkiff_0')),
     (417,414):(552,('Prop_PierSkiff_0',)),
 }
+MIRROR_OUTLET_SOLID_RELEASE_KEY='mirror_outlet@16'
 SITE8_SOLID_SOURCE_BOUNDS={
     'Prop_PierCrate_0':((833.6202436103217,829.8254436103217),(834.7373563896783,830.9425563896783)),
     'Prop_PierSkiff_0':((831.8788000476837,833.5318),(836.4787999523163,835.0318)),
@@ -846,8 +847,7 @@ def _claimed_geometry_v7(world,site,landing,roads):
     while the source is one guard wider than the analytic road half-width.
     """
     left,_,axis,across,length=_site_frame(site)
-    bank_landings=SITE_BANK_LANDINGS.get(
-        (int(site['id']),str(site.get('key',''))),(landing,landing))
+    bank_landings=SITE_BANK_LANDINGS.get(str(site.get('key','')),(landing,landing))
     left_landing,right_landing=map(float,bank_landings)
     if (not np.isfinite([left_landing,right_landing]).all()
             or not 0.<left_landing<=landing or not 0.<right_landing<=landing):
@@ -1690,7 +1690,10 @@ def _site8_solid_clearance_sources(world,content):
 
 def _site_solid_margin_release_nodes(world,site,support_boxes,water_nodes,reference):
     """Revalidate complete incident terrain before releasing known margin pins."""
-    if int(site['id'])!=8:return set()
+    # Crossing ids are assigned from the current candidate inventory and can
+    # shift when an unrelated upstream candidate is added or removed.  The
+    # reviewed exception belongs to this authored reach, not to an ordinal.
+    if site.get('key')!=MIRROR_OUTLET_SOLID_RELEASE_KEY:return set()
     candidates=set(getattr(world,'claimed_bridge_solid_margin_source_nodes',()))
     released=set()
     for node in candidates:
@@ -2044,11 +2047,15 @@ def _joint_site_fit(world,site,road,landing,lift_limit,clearance,reference):
                for footprint in support_boxes):protected_nodes.update(nodes)
     solid_margin_release=_site_solid_margin_release_nodes(
         world,site,support_boxes,water_nodes,reference)
+    authored=np.asarray(getattr(world,'authored_terrain_authority',np.zeros_like(reference,bool)),bool)
+    if authored.shape!=reference.shape:
+        raise BP.ProfileError('authored terrain authority does not match the claimed-bridge terrain grid')
     mutable=[]
     for iz,ix in sorted(mutable_nodes):
         x=world.x0+ix*TERRAIN_CELL;z=world.z0+iz*TERRAIN_CELL
         wf=L.water_fields(np.array([x]),np.array([z]),height=np.array([reference[iz,ix]]),plan=world.plan)
-        if ((iz,ix) not in water_nodes and (iz,ix) not in protected_nodes
+        if (not authored[iz,ix]
+                and (iz,ix) not in water_nodes and (iz,ix) not in protected_nodes
                 and not bool(np.asarray(wf['mask'])[0])
                 and (not bool(world.solids[iz,ix]) or (iz,ix) in solid_margin_release)):
             mutable.append((iz,ix))
@@ -2117,7 +2124,7 @@ def _joint_site_fit(world,site,road,landing,lift_limit,clearance,reference):
         _append_mutable_dry_constraint(rows,limits,trow,baseline,np.asarray(water['surface'])[0],guard)
     mark_rows('approach-remains-dry',group_start)
     # Actual float32 join edges must cover the independent analytic capsules.
-    joins=[];join_report={};join_rows=[];join_margin=0.;join_identity={}
+    joins=[];join_report={};join_rows=[];join_row_details=[];join_margin=0.;join_identity={}
     for side,station in zip(('left','right'),join_stations):
         vertices,actual,error=_emitted_join(faces,left,axis,across,station)
         expected=_contract_join_intervals(world,site,station,geometry)
@@ -2149,6 +2156,8 @@ def _joint_site_fit(world,site,road,landing,lift_limit,clearance,reference):
             baseline,trow=_terrain_row(world,x,z,node_vars,size)
             prow=np.zeros(size);prow[:profile_count]=coefficients
             join_rows.append((prow-trow,baseline))
+            join_row_details.append({'side':side,'point':[float(x),float(z)],
+                                     'baseline':float(baseline)})
         joins.extend(points)
         join_report[side]={'analyticIntervals':expected,'unclippedServingIntervals':raw,
                            'excludedServingIntervals':excluded,
@@ -2336,6 +2345,7 @@ def _joint_site_fit(world,site,road,landing,lift_limit,clearance,reference):
             'b_eq':np.empty(0,float),'objective':objective.copy(),'bounds':tuple(bounds),
             'rowGroups':band_groups,'equalityGroups':{},
             'variables':variable_provenance,'site':int(site['id'])}
+        if diagnostic:model['joinContacts']=join_row_details
         if diagnostic:
             lp_models=getattr(world,'claimed_bridge_lp_models',{});lp_models[site['id']]=model
             world.claimed_bridge_lp_models=lp_models
@@ -2544,14 +2554,29 @@ def fit_claimed_sites(world,site_ids=None,content=None):
     source_solids=np.asarray(world.solids,bool).copy()
     try:
         for site in sites:
-            if not _serving_roads(world,site,strict=True):
-                raise BP.ProfileError(f'claimed bridge {site["id"]} has no serving road')
-            profile,deltas,report=_joint_site_fit(world,site,road,landing,lift,clearance,reference)
+            roads=sorted(getattr(world,'crossing_site_roads',{}).get(site['id'],()))
+            _bridge_progress(world,'fit-site-start',site=int(site['id']),routes=roads)
+            try:
+                if not _serving_roads(world,site,strict=True):
+                    raise BP.ProfileError(f'claimed bridge {site["id"]} has no serving road')
+                profile,deltas,report=_joint_site_fit(world,site,road,landing,lift,clearance,reference)
+            except Exception as error:
+                context=f'claimed bridge site {site["id"]} routes {roads}'
+                if hasattr(error,'add_note'):error.add_note(context)
+                _bridge_progress(world,'fit-site-failed',site=int(site['id']),routes=roads,
+                                 error=f'{type(error).__name__}: {error}')
+                raise
+            _bridge_progress(world,'fit-site-solved',site=int(site['id']),routes=roads)
             overlap=set(changes)&set(deltas)
             if overlap:raise ValueError(f'claimed bridge {site["id"]} shares graded terrain vertices with another site')
             changes.update(deltas);profiles[site['id']]=profile;reports.append(report)
         changed=reference.copy()
         for node,value in changes.items():changed[node]=reference[node]+value
+        authored=np.asarray(getattr(world,'authored_terrain_authority',np.zeros_like(reference,bool)),bool)
+        if authored.shape!=reference.shape:
+            raise BP.ProfileError('authored terrain authority does not match the claimed-bridge terrain grid')
+        if not np.array_equal(changed[authored],reference[authored]):
+            raise BP.ProfileError('claimed bridge fitting changed authored terrain authority')
         delta=changed-reference
         if np.any(delta<-ROAD_CUT_METRES) or np.any(delta>ROAD_FILL_METRES):
             raise ValueError('claimed bridge terrain escaped cut/fill bounds')
@@ -2594,7 +2619,8 @@ def fit_claimed_sites(world,site_ids=None,content=None):
     world.claimed_bridge_fit={'sites':reports,'selectedSiteIds':[site['id'] for site in sites],
                               'mutableTerrainVertices':len(changes),
                                'changedTerrainVertices':int(np.count_nonzero(delta)),
-                               'protectedTerrainVertices':len(world.claimed_bridge_protected_nodes),
+                              'protectedTerrainVertices':len(world.claimed_bridge_protected_nodes),
+                              'authoredTerrainVertices':int(np.count_nonzero(authored)),
                               'outsideDeclaredStencilChangedVertices':0,
                               'waterAuthority':water_comparison,
                               'maximumCutMetres':float(np.max(-delta,initial=0.)),
@@ -3403,6 +3429,103 @@ def support_spacing(world,faces,planned,placed):
         'spanMetric':'Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate'}
 
 
+def _authored_bridge_geometry(world,builder):
+    """Build saved bridge controls with the same simple preview equation.
+
+    Endpoints are exact bank landings.  ``arch`` is parabolic crown rise and a
+    single vertical lift preserves that shape when water clearance requires it.
+    The top strip is the walk collision authority; fascia and piers are visual.
+    """
+    snapshot=getattr(world,'authoring_snapshot',None)
+    if snapshot is None:return [],[],[]
+    from terrain_export import authored_surface_material,_rotated_uv
+    records=[];parts=[];walk_triangles=[]
+    for bridge in snapshot.document.get('bridges',()):
+        start=snapshot.continent_point(bridge['start']);end=snapshot.continent_point(bridge['end'])
+        delta=end[[0,2]]-start[[0,2]];length=float(np.linalg.norm(delta))
+        if length<=1e-6:raise ValueError(f"authored bridge {bridge['id']} has coincident endpoints")
+        segments=max(1,int(math.ceil(length)));t=np.linspace(0.,1.,segments+1)
+        centres=start[None,:]*(1-t[:,None])+end[None,:]*t[:,None]
+        centres[:,1]+=4*float(bridge['arch'])*t*(1-t)
+        water=[]
+        for river in world.plan.get('rivers',()):
+            distance,profile,width=L.river_field(centres[:,0],centres[:,2],river)
+            eligible=distance<=width+1e-8
+            water.append(np.where(eligible,profile,-np.inf))
+        visible=np.max(water,axis=0) if water else np.full(len(t),-np.inf)
+        lift=float(np.max(np.where(np.isfinite(visible),
+            visible+float(bridge['waterClearance'])-centres[:,1],0.),initial=0.))
+        lift=max(0.,lift);centres[:,1]+=lift
+        axis=delta/length;side=np.array([-axis[1],axis[0]])
+        half=float(bridge['width'])*.5
+        left=centres.copy();right=centres.copy()
+        left[:,[0,2]]+=side*half;right[:,[0,2]]-=side*half
+        vertices=np.empty((2*len(centres),3));vertices[0::2]=left;vertices[1::2]=right
+        faces=[]
+        for index in range(segments):
+            a=2*index;faces.extend(([a,a+2,a+1],[a+1,a+2,a+3]))
+        faces=np.asarray(faces,np.int32)
+        along=t*length
+        raw_uv=np.empty((2*len(centres),2));raw_uv[0::2]=np.c_[np.zeros(len(t)),along]
+        raw_uv[1::2]=np.c_[np.full(len(t),float(bridge['width'])),along]
+        deck_surface=dict(bridge['deckSurface'])
+        deck_surface['rotationDegrees']=float(deck_surface.get('rotationDegrees',0.))+float(
+            bridge.get('deckTextureRotationDegrees',0.))
+        name=bridge['id'];deck_material,density=authored_surface_material(builder,deck_surface,name+'_deck')
+        mesh=M.Mesh(positions=vertices,normals=np.tile([0.,1.,0.],(len(vertices),1)),
+                    uvs=_rotated_uv(raw_uv/.24,deck_surface,density),indices=faces.ravel(),
+                    material=deck_material)
+        mesh.recompute_normals(180)
+        top=mesh.positions[mesh.indices.reshape(-1,3)];walk_triangles.append(top)
+        region=world.ids[int(world.owner_at(*centres[len(centres)//2,[0,2]]))]
+        node=f'Walk_AuthoredBridge_{name}_{region}'
+        parts.append((region,node,mesh,True,name))
+        # A shallow fascia makes the span readable from the water without
+        # changing its collision surface.
+        fascia_vertices=[];fascia_faces=[];fascia_uv=[];depth=.22
+        for edge in (left,right):
+            for index in range(segments):
+                base=len(fascia_vertices);a=edge[index];b=edge[index+1]
+                fascia_vertices.extend((a,b,b-[0,depth,0],a-[0,depth,0]))
+                distance0=along[index];distance1=along[index+1]
+                fascia_uv.extend(([distance0/.24,0],[distance1/.24,0],
+                                   [distance1/.24,depth/.24],[distance0/.24,depth/.24]))
+                fascia_faces.extend((base,base+1,base+2,base,base+2,base+3))
+        fascia=M.Mesh(positions=np.asarray(fascia_vertices),normals=np.zeros((len(fascia_vertices),3)),
+                      uvs=_rotated_uv(fascia_uv,deck_surface,density),indices=np.asarray(fascia_faces),
+                      material=deck_material);fascia.recompute_normals(180)
+        parts.append((region,f'AuthoredBridgeEdge_{name}_{region}',fascia,False,name))
+        support_material,_=authored_surface_material(builder,bridge['supportSurface'],name+'_support')
+        support_count=max(0,int(math.ceil(length/5.))-1);supports=[]
+        for number in range(1,support_count+1):
+            station=number/(support_count+1);centre=start*(1-station)+end*station
+            centre[1]+=4*float(bridge['arch'])*station*(1-station)+lift-.22
+            bottom=float(world.height_at(centre[0],centre[2]));height=float(centre[1]-bottom)
+            if height<=.3:continue
+            support=M.box((.55,height,.55),center=(centre[0],bottom+height*.5,centre[2]),
+                          uv_scale=1.,material=support_material)
+            support_node=f'AuthoredBridgeSupport_{name}_{number:02d}_{region}'
+            parts.append((region,support_node,support,False,name));supports.append({
+                'station':station,'position':[float(centre[0]),float(centre[2])],
+                'bottom':bottom,'top':float(centre[1])})
+        records.append({'id':name,'length':length,'segments':segments,'width':float(bridge['width']),
+                        'arch':float(bridge['arch']),'waterClearance':float(bridge['waterClearance']),
+                        'uniformClearanceLift':lift,'supports':supports})
+    return parts,walk_triangles,records
+
+
+def _suppresses_generated_authored_component(component,owners,authored_owner):
+    """Whether bridge authority replaces this complete procedural component.
+
+    Claimed crossings belong to their stable crossing site even when a landing
+    overlaps Sunmane.  Loose components are suppressed only when every emitted
+    floor face belongs to the authored territory; mixed-owner coverage remains
+    intact as one component instead of losing a territory-shaped slice.
+    """
+    return (authored_owner is not None and not component.get('sites')
+            and len(owners)>0 and bool(np.all(owners==authored_owner)))
+
+
 def build_bridges(world,path, *, water_fields=None):
     """Return bridge parts matching build_continent.bridge_scene's contract."""
     water_fields=water_fields or L.water_fields
@@ -3413,7 +3536,10 @@ def build_bridges(world,path, *, water_fields=None):
     builder.add_material(G.Material('bridge_timber',base_color_texture='continental_bridge_planks',roughness=.93))
     builder.add_material(G.Material('bridge_edge_timber',base_color=(.085,.061,.04,1),roughness=.95,double_sided=True))
     builder.add_material(G.Material('threshold_invisible',base_color=(0,0,0,0),alpha_mode='BLEND'))
-    result=[];triangles=[];support_reports=[]
+    result=[];triangles=[];support_reports=[];suppressed_components=[]
+    authored_owner=(world.ids.index('sunmane_steppe')
+                    if getattr(world,'authoring_snapshot',None) is not None and 'sunmane_steppe' in world.ids
+                    else None)
     def add(region,name,mesh, *, collides=False,record_id=None):
         builder.add_mesh(name,mesh,with_tangents=False)
         root=builder.add_node(G.Node(name,mesh=name))
@@ -3431,6 +3557,9 @@ def build_bridges(world,path, *, water_fields=None):
     for component in field['components']:
         token=C.component_token(component)
         mesh,owners=deck_mesh(world,component)
+        if _suppresses_generated_authored_component(component,owners,authored_owner):
+            suppressed_components.append(component['id'])
+            continue
         faces=mesh.positions[mesh.indices.reshape(-1,3)]
         encoded=faces.astype(np.float32).astype(float)
         normal=np.cross(encoded[:,1]-encoded[:,0],encoded[:,2]-encoded[:,0])
@@ -3472,6 +3601,10 @@ def build_bridges(world,path, *, water_fields=None):
         else:
             support_reports.append(dict(component=component['id'],
                 **support_spacing(world,encoded,planned,placed),piers=fitted))
+    authored_parts,authored_triangles,authored_records=_authored_bridge_geometry(world,builder)
+    for region,name,mesh,collides,record_id in authored_parts:
+        add(region,name,mesh,collides=collides,record_id=record_id)
+    triangles.extend(authored_triangles)
     for name,(region,meshes) in gathered.items():add(region,name,merge_meshes(meshes))
     for part in C.coastal_auxiliary_parts(world):
         add(part['region'],part['name'],part['mesh'],collides=bool(part['collides']),
@@ -3506,5 +3639,7 @@ def build_bridges(world,path, *, water_fields=None):
         'outlineMaximumInsetFraction':1-math.cos(math.pi/(2*CAP_ARC_STEPS)),
         'precisionCleanupAreaSquareMetres':sum(c.get('precisionCleanupArea',0) for c in field['components']),
         'supports':support_reports,
+        'authored':authored_records,
+        'suppressedGeneratedComponents':suppressed_components,
         'policy':'Decks only at claimed crossing sites (span plus landings) and over deep water crossed away from a site; disjoint road capsule union clipped onto one common floor; unchanged terrain; exact ownership by cell; piers only over water; timber fascia below the floor.'}
     return result

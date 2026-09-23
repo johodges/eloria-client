@@ -44,7 +44,7 @@ def river_contacts(plan, link):
         if len(river.get('points') or []) < 2:
             continue
         # The channel's own centreline: the plan's Catmull-Rom curve, sampled at a metre or finer.
-        curve = np.asarray(L.curved_points(river['points']), dtype=float)[:, :2]
+        curve = np.asarray(L.river_points(river), dtype=float)[:, :2]
         points = [curve[:1]]
         for a, b in zip(curve[:-1], curve[1:]):
             count = max(1, int(np.ceil(np.linalg.norm(b - a))))
@@ -125,7 +125,7 @@ def _river_cells(plan, x0, z0, cell, shape):
     for river in plan.get('rivers') or []:
         if len(river.get('points') or []) < 2:
             continue
-        curve = np.asarray(L.curved_points(river['points']), dtype=float)[:, :2]
+        curve = np.asarray(L.river_points(river), dtype=float)[:, :2]
         for a, b in zip(curve[:-1], curve[1:]):
             count = max(1, int(np.ceil(np.linalg.norm(b - a) / (cell * .5))))
             points = a + (b - a) * (np.arange(count + 1)[:, None] / count)

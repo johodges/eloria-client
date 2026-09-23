@@ -107,10 +107,28 @@ def seam_collar(world, region, gx, gz):
     # Two half-cells to the tile, so a tile eight-adjacent to this territory is
     # every one of whose cells stands within two cells of a cell of its own.
     beside = binary_dilation(owner == world.ids.index(region), np.ones((5, 5), dtype=bool))
+    saved = {record['id'] for record in getattr(world, 'saved_seam_approaches', ())}
     for connection in opened:
         regions = connection['regions']
         other = regions[1] if regions[0] == region else regions[0]
         collar |= beside & (owner == world.ids.index(other))
+        if connection.get('id') in saved:
+            # A saved seam's seven canonical triggers are built from
+            # anchor +/- one metre, and therefore occupy the second server
+            # tile when the ownership raster happens to step at the anchor.
+            # Keep that exact two-metre apron on both maps.  This is still
+            # neighbour ground and still has to pass slope, water and solid
+            # collision below; it does not grade or annex any terrain.
+            anchor = np.asarray(connection['anchor'], dtype=float)
+            normal = np.asarray(connection['normal'], dtype=float)
+            normal /= max(np.linalg.norm(normal), 1e-12)
+            outward = normal if regions[0] == region else -normal
+            dx, dz = gx - anchor[0], gz - anchor[1]
+            along = dx * outward[0] + dz * outward[1]
+            across = -dx * outward[1] + dz * outward[0]
+            collar |= ((along >= -1e-8) & (along <= GATE_DEPTH + 1e-8)
+                       & (np.abs(across) <= GATE_HALF_WIDTH + 1e-8)
+                       & (owner == world.ids.index(other)))
     return collar
 
 

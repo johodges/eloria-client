@@ -1,7 +1,7 @@
 {
-  "glbBytes": 146115832,
-  "nodes": 20813,
-  "meshes": 4707,
+  "glbBytes": 178992616,
+  "nodes": 21541,
+  "meshes": 4837,
   "externalResources": {},
   "sharedResourceResidentBytes": {
     "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
@@ -144,6 +144,9 @@
     "71c16d61028d81e7fe8676f7410f7cfffc9ce0c41baec41d38ff7ad9d1ae43ac": 349526,
     "861c0b82c1bfeb753dbc6ee5a65f0e408beb984ef7481509703f05eaca6a2355": 1398102,
     "4a94b1614cda42c42a66fa7237ad9d38fec320503f1cfc0779c4c617dd841690": 349526,
+    "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805": 5592406,
+    "ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5": 1398102,
+    "6ebd390dd8d1694b88f8fc0654471317b6c31c4839fca038c879db059fcd4cb7": 1398102,
     "6fff540a6fe89e81d4ad635f8feefc5f634417d37d6269f32053c446375a6343": 1398102,
     "c35fd097da43f1be248f33482091876f21814feca22d5eaecd72010c2eaa3024": 349526,
     "4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748": 1398102,
@@ -171,16 +174,13 @@
     "c1b367dfe54bb880b2f88496a39ad50e954249da16e3229c453ea63edbd7858a": 1398102,
     "3f49329fad50dfc62c1ce7ea0a50266319d36db54561e984decd95df9af8bbf1": 349526,
     "b358a17c9f2b2ea6e5e37cfea1f241b19e50c185469e99b763ab2647b8d6f7fc": 1398102,
+    "dc5b6721703e6b9add7d746445501d29787d64079373dd2ad5624ad9f66715e5": 1398102,
+    "21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0": 349526,
     "991ef9e383e481c885e8a54cc4ee00444a2bbd28693cd36acdda308a7b05aa2d": 87382,
-    "69da8391f26e20f20efb513718249107a2c82def0d583b63c50fe1e91c3dabb6": 1398102,
-    "99823fecf7a7b2f85cafafd909dadd21b78797e545f6f2ec8daa5c5f11bebf4e": 349526,
-    "53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441": 349526,
+    "5d3d975e645bf4fd460f1022d0522c29b3dbc7b4e281bf0deb9559062fc9570a": 8386752,
     "f176f3c33b51e9febc9e1c928fc101059e5d2acaa6910f96fadf49b28aba0aa3": 1398102,
     "c2e63b92affec50d60b4eb6a5272962f804215f12bcbb621ffcf22c9167c7350": 349526,
     "d8c2578d76c1c26df32c7d7827db41910434f86c66d0c111cb8a596efff00b78": 349526,
-    "ccada634290b55490b333393c4213a30b597ed8474a08060332921e371b38760": 1398102,
-    "0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630": 349526,
-    "1bd5132efaa99527f1873c902c7416430c7a97b31fd90c1dd3c42ea6677226ac": 349526,
     "b68b1ec50e6d9411cdf2dcce9932ef43c0c15653a5a3110c158e530cc37e0d95": 349526,
     "57aec8ca31900d3961728fef29acaa7106f55b04e600862644df8efe26169268": 87382,
     "4766a163b68a7a60f2e913a693e85a3bfe1ddcfe803cdd88754a0fee42ef51a0": 87382,
@@ -190,18 +190,21 @@
     "62bff95c8e13a206e351ef4d9b51a55a8894bb08d1e41c77b00e8297e277eab0": 349526,
     "e8d3a6ffa08f64505436f7ecb218b0ea42f0c10db98bfaf1466751e937e88551": 87382,
     "b6e3514b0710c10922611a854074b9c3643ee2469965aff2ca17afc5930b9906": 87382,
+    "ccada634290b55490b333393c4213a30b597ed8474a08060332921e371b38760": 1398102,
+    "0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630": 349526,
+    "1bd5132efaa99527f1873c902c7416430c7a97b31fd90c1dd3c42ea6677226ac": 349526,
     "1536228a69528acd56c649c5555e5a3dbbd25e8324cd891322046f5afecf7e6d": 349526,
     "dc007b56b0106096b20579a6da6fdfb4d67e9fd5fac656fc47a87d66113be95f": 87382,
     "4f84c72d31eb2d3e1246047a0ad955ea041b62ac42c959c307d9b113195fe755": 87382,
-    "9bc7a88b27821940168ab9d381b558f24d0b74ccd5ba573651968da59d5a3bee": 1398102,
-    "7feeb1e75a59491990af669476a7f12531f4eec9cee2319d49358e6b46ac8701": 349526,
-    "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3": 349526,
-    "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805": 5592406,
-    "ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5": 1398102,
-    "6ebd390dd8d1694b88f8fc0654471317b6c31c4839fca038c879db059fcd4cb7": 1398102,
     "1936d69255537879eb1012c5b23b6f37ed1034a9ac878ac2f4f5d26bd8c6e262": 349526,
     "066d316378c867696b10d31b57301567a068eaefa512f10ad54ed8b0b4b70d71": 87382,
     "fb2267513cc71685566f1091d73efa7bc102867341d2ed82e3c4630a406b55e0": 87382,
+    "69da8391f26e20f20efb513718249107a2c82def0d583b63c50fe1e91c3dabb6": 1398102,
+    "99823fecf7a7b2f85cafafd909dadd21b78797e545f6f2ec8daa5c5f11bebf4e": 349526,
+    "53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441": 349526,
+    "9bc7a88b27821940168ab9d381b558f24d0b74ccd5ba573651968da59d5a3bee": 1398102,
+    "7feeb1e75a59491990af669476a7f12531f4eec9cee2319d49358e6b46ac8701": 349526,
+    "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3": 349526,
     "7da2435fee0460bec13557b28d0334bd7fc798aa75408a8f665339dd87a61a16": 1398102,
     "8dad03f4a7434e6d67e71de8f163fc38bf76b8a1b1c0bd2c1e3f0151d57260fd": 1398102,
     "af1d93b8bc7fd7ebf00398a0e76805141217f97d96d4ffc4a756f5bf49ea4080": 1398102,
@@ -290,8 +293,6 @@
     "70fc5d26c53ab75ccb13cc730db31e3295527dbd4ca3bc7504c180b4a4722f0b": 1398102,
     "374375a66523f050aba6dd6de74293ccd268211420390232c4f674fc130a2669": 349526,
     "4e3adbd13a3f22fe6d723cc8f8b4477cc8e250b37f75e829013339e951deaa6f": 1398102,
-    "dc5b6721703e6b9add7d746445501d29787d64079373dd2ad5624ad9f66715e5": 1398102,
-    "21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0": 349526,
     "d6eaed8cf04e59d32779c2f49f64fd1b8ab69f0cb2e1226cbe2f78a8d6e057a4": 1398102,
     "222923069c53612b70a30a0645d409a9d0459377f63c85ef6beef7c210313482": 349526,
     "8866a23ceb1476153132c00a6618040e3c9371397a7ceb5be993bdd46746b6ef": 1398102,
@@ -347,7 +348,7 @@
     "370790616ae0f5ae9f7dca4e36c502ccdbc3094daee999986e7733d0b08a6999": 349526,
     "5d99c9774bacfb4be57c9b2c015b4c28614feda9e74b0ce2c102024f91a0ef8a": 1398102
   },
-  "sha256": "1d115b8550bc210127955d09effe3622e78abda1e134dd7a597e0b173019b0ae",
+  "sha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
   "regions": [
     "whitehorn_range",
     "grey_moors",
@@ -361,5 +362,105 @@
     "crownwater",
     "verdant_stair",
     "ssarathi_ruins"
-  ]
+  ],
+  "authoredOverlays": {
+    "nodes": [
+      {
+        "name": "AuthoredGround_SunmaneBase",
+        "triangles": 124162
+      },
+      {
+        "name": "Walk_amethyst_barrens--sunmane_steppe-sunmane_steppe",
+        "triangles": 11100
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-301",
+        "triangles": 420
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-302",
+        "triangles": 7260
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-303",
+        "triangles": 816
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-304",
+        "triangles": 1272
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-305",
+        "triangles": 552
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-306",
+        "triangles": 10008
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-307",
+        "triangles": 444
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-308",
+        "triangles": 900
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-309",
+        "triangles": 396
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-310",
+        "triangles": 696
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-311",
+        "triangles": 504
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-312",
+        "triangles": 2640
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-313",
+        "triangles": 768
+      },
+      {
+        "name": "Walk_discovery-sunmane_steppe-713",
+        "triangles": 2136
+      },
+      {
+        "name": "Walk_door-sunmane_steppe-cave-crystal_hollow",
+        "triangles": 6816
+      },
+      {
+        "name": "Walk_door-sunmane_steppe-cave-wind_caves",
+        "triangles": 6324
+      },
+      {
+        "name": "Walk_east-gate-main-ramp",
+        "triangles": 36
+      },
+      {
+        "name": "Walk_east-gate-town-ramp",
+        "triangles": 180
+      },
+      {
+        "name": "Walk_mirrorhold--sunmane_steppe-sunmane_steppe",
+        "triangles": 9576
+      },
+      {
+        "name": "Walk_sunmane_steppe--verdant_stair-sunmane_steppe",
+        "triangles": 7920
+      }
+    ],
+    "triangles": 194926,
+    "waterMaterials": [
+      {
+        "id": "southern_river",
+        "material": "authored_southern_river_water",
+        "triangles": 10495
+      }
+    ]
+  }
 }

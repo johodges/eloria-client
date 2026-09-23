@@ -62,7 +62,7 @@ var _warned_unsupported_sources := {}
 
 @export_group("")
 
-@export_enum("Custom", "Grass", "Worn earth", "Timber", "Stone", "Thatch",
+@export_enum("Custom", "Grass", "Worn earth", "Desert", "Timber", "Stone", "Thatch",
 	"Textile", "Canvas", "Metal", "Leather", "Hide", "Bone", "Crystal",
 	"Cavern", "Slate") var terrain_texture := MapAuthoringTexturePresets.CUSTOM:
 	set(value):
@@ -74,7 +74,7 @@ var _warned_unsupported_sources := {}
 			_terrain_choices, value, terrain_material)
 		_finish_choice_change()
 
-@export_enum("Custom", "Grass", "Worn earth", "Timber", "Stone", "Thatch",
+@export_enum("Custom", "Grass", "Worn earth", "Desert", "Timber", "Stone", "Thatch",
 	"Textile", "Canvas", "Metal", "Leather", "Hide", "Bone", "Crystal",
 	"Cavern", "Slate") var road_texture := MapAuthoringTexturePresets.CUSTOM:
 	set(value):
@@ -85,7 +85,7 @@ var _warned_unsupported_sources := {}
 		worn_path_material = _road_choice(_road_choices, value, worn_path_material)
 		_finish_choice_change()
 
-@export_enum("Custom", "Grass", "Worn earth", "Timber", "Stone", "Thatch",
+@export_enum("Custom", "Grass", "Worn earth", "Desert", "Timber", "Stone", "Thatch",
 	"Textile", "Canvas", "Metal", "Leather", "Hide", "Bone", "Crystal",
 	"Cavern", "Slate") var woodwork_texture := MapAuthoringTexturePresets.CUSTOM:
 	set(value):
@@ -97,7 +97,7 @@ var _warned_unsupported_sources := {}
 			_woodwork_choices, value, timber_material)
 		_finish_choice_change()
 
-@export_enum("Custom", "Grass", "Worn earth", "Timber", "Stone", "Thatch",
+@export_enum("Custom", "Grass", "Worn earth", "Desert", "Timber", "Stone", "Thatch",
 	"Textile", "Canvas", "Metal", "Leather", "Hide", "Bone", "Crystal",
 	"Cavern", "Slate") var stonework_texture := MapAuthoringTexturePresets.CUSTOM:
 	set(value):
@@ -109,7 +109,7 @@ var _warned_unsupported_sources := {}
 			_stonework_choices, value, stone_material)
 		_finish_choice_change()
 
-@export_enum("Custom", "Grass", "Worn earth", "Timber", "Stone", "Thatch",
+@export_enum("Custom", "Grass", "Worn earth", "Desert", "Timber", "Stone", "Thatch",
 	"Textile", "Canvas", "Metal", "Leather", "Hide", "Bone", "Crystal",
 	"Cavern", "Slate") var roof_texture := MapAuthoringTexturePresets.CUSTOM:
 	set(value):

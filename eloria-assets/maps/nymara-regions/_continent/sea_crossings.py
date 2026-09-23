@@ -1641,7 +1641,7 @@ def exact_domain_evidence(evidence: Mapping, world, landscape) -> dict:
     result = dict(evidence); result["pieces"] = [dict(piece) for piece in evidence["pieces"]]
     river_segments = []
     for river in world.plan.get("rivers", ()):
-        points = np.asarray(landscape.curved_points(river["points"]), float)[:, :2]
+        points = np.asarray(landscape.river_points(river), float)[:, :2]
         width = float(river["width"])
         river_segments.extend((a, b, width, np.minimum(a, b) - width, np.maximum(a, b) + width)
                               for a, b in zip(points, points[1:]))

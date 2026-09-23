@@ -136,6 +136,155 @@ def validate_spec(region, spec, previous):
         if not isinstance(value, dict) or 'oldTile' not in value or 'tile' not in value:
             raise ValueError(f'{region}.{portal}: portalPositions requires oldTile and tile')
         spec['tilePositions'][point_key(value['oldTile'])] = list(shared.integer_pair(value['tile'], portal))
+    bindings = spec.get('runtimeBindings', {})
+    positions = spec.get('runtimeBindingPositions', {})
+    source_tiles = spec.get('runtimeBindingSourceTiles', {})
+    if set(bindings) != set(positions) or set(bindings) != set(source_tiles):
+        missing = sorted(set(bindings) - set(positions))
+        extra = sorted(set(positions) - set(bindings))
+        missing_sources = sorted(set(bindings) - set(source_tiles))
+        raise ValueError(f'{region}: runtime binding positions disagree with bindings; '
+                         f'missing={missing[:4]}, extra={extra[:4]}, missingSources={missing_sources[:4]}')
+    for identity, tile in positions.items():
+        positions[identity] = list(shared.integer_pair(tile, f'{region}.runtimeBindingPositions.{identity}'))
+        source_tiles[identity] = list(shared.integer_pair(
+            source_tiles[identity], f'{region}.runtimeBindingSourceTiles.{identity}'))
+
+
+def _runtime_binding_profile_texts(client, specs):
+    """Load the immutable profile rows named by authored binding provenance."""
+    expected = {}
+    for spec in specs.values():
+        for binding in spec.get('runtimeBindings', {}).values():
+            path = binding['source']['path']
+            if path not in ('config/eloria/maps.txt', 'config/eloria/territories.txt'):
+                continue
+            filename = path.removeprefix('config/eloria/')
+            sha = binding.get('provenance', {}).get('sourceProfileSha256')
+            if not sha:
+                raise ValueError(f'{binding["id"]}: runtime binding lacks sourceProfileSha256')
+            if filename in expected and expected[filename] != sha:
+                raise ValueError(f'{filename}: runtime bindings name conflicting certified profiles')
+            expected[filename] = sha
+    result = {}
+    root = client / 'eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria'
+    for filename, sha in expected.items():
+        path = root / filename
+        payload = path.read_bytes()
+        if shared.digest(payload) != sha:
+            raise ValueError(f'{filename}: certified runtime binding profile digest changed')
+        result[filename] = payload.decode('utf-8')
+    return result
+
+
+def _runtime_binding_live_line(filename, identity, binding, old, current_text,
+                               certified_text, previous_tile):
+    """Resolve one immutable binding onto the current, possibly republished row."""
+    source = binding['source']
+    line_number = int(source['line'])
+    certified = certified_text.splitlines()
+    if line_number <= 0 or line_number > len(certified):
+        raise ValueError(f'{identity}: certified source line is unavailable')
+    fields = certified[line_number - 1].split('|')
+    live = current_text.splitlines()
+    expected = previous_tile if previous_tile is not None else old
+
+    if filename == 'maps.txt':
+        if not fields or fields[0].strip() != 'portal' or len(fields) not in (7, 8):
+            raise ValueError(f'{identity}: certified maps source is no longer a portal row')
+        start = 2 if len(fields) == 7 else 3
+        role = binding['role']
+        index = start if role == 'door' else start + 3 if role == 'return' else None
+        if index is None or [int(fields[index]), int(fields[index + 1])] != old:
+            raise ValueError(f'{identity}: portal role or old tile changed in its certified profile')
+        stable = (0, 1, 4) if len(fields) == 7 else (0, 1, 2, 5)
+        signature = tuple(fields[i].strip() for i in stable)
+        record_id = source.get('recordId')
+        if record_id:
+            certified_id = fields[2].strip() if len(fields) == 8 else f'{fields[2].strip()}:{fields[3].strip()}'
+            if certified_id != str(record_id):
+                raise ValueError(f'{identity}: certified portal recordId changed')
+        candidates = []
+        for number, line in enumerate(live, 1):
+            candidate = line.split('|')
+            if len(candidate) != len(fields):
+                continue
+            if tuple(candidate[i].strip() for i in stable) != signature:
+                continue
+            if [int(candidate[index]), int(candidate[index + 1])] == expected:
+                candidates.append((number, index))
+    else:
+        occurrences = [index for index in range(len(fields) - 1)
+                       if fields[index].strip() == str(old[0])
+                       and fields[index + 1].strip() == str(old[1])]
+        if len(occurrences) != 1:
+            raise ValueError(f'{identity}: territory old tile is absent or ambiguous in its certified profile')
+        index = occurrences[0]
+        signature = tuple(value.strip() for value in fields[:4])
+        candidates = []
+        for number, line in enumerate(live, 1):
+            candidate = line.split('|')
+            if len(candidate) != len(fields) or tuple(value.strip() for value in candidate[:4]) != signature:
+                continue
+            if [int(candidate[index]), int(candidate[index + 1])] == expected:
+                candidates.append((number, index))
+    if len(candidates) != 1:
+        raise ValueError(f'{identity}: current source row is absent or ambiguous for certified tile {expected}')
+    return candidates[0]
+
+
+def rewrite_runtime_binding_sources(original_texts, rewritten_texts, specs,
+                                    previous_placements=None, certified_texts=None):
+    """Apply exact saved coordinates to source rows whose old tiles are not unique.
+
+    The normal native mapper is intentionally tile based. Runtime authoring is
+    record based, so maps and multi-point territory rows are patched by their
+    certified source line after the ordinary transform has run.
+    """
+    for region, spec in specs.items():
+        for identity, binding in spec.get('runtimeBindings', {}).items():
+            source = binding['source']
+            path = source['path']
+            if path not in ('config/eloria/maps.txt', 'config/eloria/territories.txt'):
+                continue
+            filename = path.removeprefix('config/eloria/')
+            if filename not in original_texts or filename not in rewritten_texts:
+                raise ValueError(f'{region}:{identity}: bound source {path} was not loaded')
+            original_text = original_texts[filename]
+            original = original_text.splitlines(keepends=True)
+            rewritten = rewritten_texts[filename].splitlines(keepends=True)
+            if len(original) != len(rewritten):
+                raise ValueError(f'{region}:{identity}: current source row count changed during rewrite')
+            old = list(shared.integer_pair(
+                spec['runtimeBindingSourceTiles'][identity], f'{identity}.runtimeBindingSourceTile'))
+            prior = None
+            if previous_placements:
+                previous = previous_placements.get(region, {})
+                # Record-bound aliases may share one immutable source tile but
+                # have distinct served positions.  Their qualified binding
+                # history is the exact live-row identity; the collapsed tile
+                # map remains only a compatibility fallback for publications
+                # that predate runtime binding positions.
+                prior = previous.get('runtimeBindingPositions', {}).get(identity)
+                if prior is None:
+                    prior = previous.get('baselineTilePositions', {}).get(point_key(old))
+                if prior is not None:
+                    prior = list(shared.integer_pair(prior, f'{identity}.previousRuntimeBindingTile'))
+            certified = original_text if certified_texts is None else certified_texts.get(filename)
+            if certified is None:
+                raise ValueError(f'{region}:{identity}: certified source profile was not loaded')
+            line_number, index = _runtime_binding_live_line(
+                filename, f'{region}:{identity}', binding, old, original_text, certified, prior)
+            original_line = original[line_number - 1]
+            output_line = rewritten[line_number - 1]
+            ending = '\r\n' if output_line.endswith('\r\n') else '\n' if output_line.endswith('\n') else ''
+            fields = original_line.rstrip('\r\n').split('|')
+            output = output_line.rstrip('\r\n').split('|')
+            tile = spec['runtimeBindingPositions'][identity]
+            output[index] = shared.field_number(output[index], tile[0])
+            output[index + 1] = shared.field_number(output[index + 1], tile[1])
+            rewritten[line_number - 1] = '|'.join(output) + ending
+            rewritten_texts[filename] = ''.join(rewritten)
 
 
 def rewrite_content(text, filename, specs, repeated):
@@ -213,6 +362,9 @@ def placement_contracts(specs):
         'baselineContentTransform': copy.deepcopy(spec.get('baselineContentTransform', spec['contentTransform'])),
         'contentPositions': copy.deepcopy(spec.get('contentPositions', {})),
         'portalPositions': copy.deepcopy(spec.get('portalPositions', {})),
+        'runtimeBindings': copy.deepcopy(spec.get('runtimeBindings', {})),
+        'runtimeBindingPositions': copy.deepcopy(spec.get('runtimeBindingPositions', {})),
+        'runtimeBindingSourceTiles': copy.deepcopy(spec.get('runtimeBindingSourceTiles', {})),
     } for region, spec in specs.items()}
 
 
@@ -517,10 +669,12 @@ def plan(client, server, publication_path):
         worlds[region], blobs[region], world_paths[region] = world, collision, world_path
 
     texts, records = {}, {}
+    original_texts = {}
     # Establish exact shared-point mappings before rewriting portals or quests.
     for filename in CONTENT:
         path = profile / filename
-        texts[filename], records[filename] = rewrite_content(read(path).decode('utf-8'), filename, specs, repeated)
+        original_texts[filename] = read(path).decode('utf-8')
+        texts[filename], records[filename] = rewrite_content(original_texts[filename], filename, specs, repeated)
     mappings = {region: {'delta': [0, 0], '_native_mapper':
                         (lambda point: list(point)) if repeated else (lambda point, spec=spec: transform_tile(point, spec))}
                 for region, spec in specs.items()}
@@ -528,7 +682,13 @@ def plan(client, server, publication_path):
         if filename in texts:
             continue
         path = profile / filename
-        texts[filename], _ = shared.rewrite_profile(read(path).decode('utf-8'), rules, mappings)
+        original_texts[filename] = read(path).decode('utf-8')
+        texts[filename], _ = shared.rewrite_profile(original_texts[filename], rules, mappings)
+    if not repeated:
+        rewrite_runtime_binding_sources(
+            original_texts, texts, specs,
+            previous_placements=current.get('placements', {}),
+            certified_texts=_runtime_binding_profile_texts(client, specs))
     texts['maps.txt'], portal_entries = replace_crossings(texts['maps.txt'], publication['connections'], specs)
     checked = validate_standing_points(specs, blobs, texts, portal_entries)
     for filename, text in texts.items():

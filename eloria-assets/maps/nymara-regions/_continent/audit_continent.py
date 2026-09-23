@@ -28,7 +28,7 @@ import glb_reader as GR
 from world_layout import triangle_sample
 
 SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
-EXPORT_SOURCES={'build_continent.py','scene_io.py','terrain_export.py','bridge_export.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py'}
+EXPORT_SOURCES={'build_continent.py','scene_io.py','terrain_export.py','compact_glb_images.py','bridge_export.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py'}
 
 
 class AuditError(ValueError):
@@ -504,9 +504,34 @@ def inside_boxes(xz, boxes):
     return inside
 
 
+def authored_deck_height(xz, triangles):
+    """Highest emitted authored walk-deck surface under each XZ point.
+
+    This uses the actual transformed triangles instead of their bounding box,
+    so an uncovered corner beside a diagonal bridge remains outside the span.
+    """
+    xz = np.asarray(xz, float).reshape(-1, 2)
+    result = np.full(len(xz), -np.inf)
+    for triangle in np.asarray(triangles, float).reshape(-1, 3, 3):
+        projected = triangle[:, [0, 2]]
+        a, b, c = projected
+        ab, ac = b - a, c - a
+        denominator = ab[0] * ac[1] - ab[1] * ac[0]
+        if abs(denominator) <= 1e-12:
+            continue
+        relative = xz - a
+        u = (relative[:, 0] * ac[1] - relative[:, 1] * ac[0]) / denominator
+        v = (ab[0] * relative[:, 1] - ab[1] * relative[:, 0]) / denominator
+        w = 1. - u - v
+        inside = (u >= -1e-9) & (v >= -1e-9) & (w >= -1e-9)
+        height = w * triangle[0, 1] + u * triangle[1, 1] + v * triangle[2, 1]
+        result[inside] = np.maximum(result[inside], height[inside])
+    return result
+
+
 def river_curve(river):
     import landscape as L
-    points = L.curved_points(river['points'])[:, :2]
+    points = L.river_points(river)[:, :2]
     seg = np.linalg.norm(np.diff(points, axis=0), axis=1)
     points = points[np.r_[True, seg > 1e-9]]
     seg = np.diff(points, axis=0)
@@ -534,6 +559,7 @@ def wet_width(river_water_at, centre, normal, reach, edges=False):
 
 
 def road_rule_findings(roads, sites, rivers, policy, ground_at, river_water_at, piers=(), designed_boxes=(), union_vertices=None,
+                       authored_deck_triangles=(),
                        sea_near_at=None, sea_at=None, seam_near_at=None):
     """Every breach of the road rules, with the measured totals; pure over its inputs (the audit's and tests' fixtures).
 
@@ -564,7 +590,12 @@ def road_rule_findings(roads, sites, rivers, policy, ground_at, river_water_at, 
             continue
         totals['stations'] += len(stations)
         xz = stations[:, [0, 2]]
-        on_span = inside_boxes(xz, spans)
+        deck_height = authored_deck_height(xz, authored_deck_triangles)
+        # A saved walk deck supports the road only where its emitted triangle
+        # covers the station and reaches at least the road surface.  A road
+        # floating above a deck is still a road-rule failure.
+        on_authored_deck = np.isfinite(deck_height) & (stations[:, 1] <= deck_height + 1e-9)
+        on_span = inside_boxes(xz, spans) | on_authored_deck
         wet = np.asarray(river_water_at(xz[:, 0], xz[:, 1]), bool)
         stray = wet & ~on_span
         if stray.any():
@@ -695,7 +726,7 @@ def audit_road_rules(generated, plan, surface, inputs):
         return triangle_sample(river_depth, x, z, x0, z0, surface.cell) > .02
     doc, body = GR.load(generated / 'bridges.glb')
     inputs.digest(generated / 'bridges.glb')
-    piers, union, boxes = [], [], []
+    piers, union, boxes, authored_decks = [], [], [], []
     designed = plan.get('designed_decks') or []
     def is_designed(name):
         return any(entry['name'] == name or (entry['name'].endswith('*') and name.startswith(entry['name'][:-1])) for entry in designed)
@@ -709,6 +740,8 @@ def audit_road_rules(generated, plan, surface, inputs):
                           'x': float((tri[:, 0].min() + tri[:, 0].max()) * .5), 'z': float((tri[:, 2].min() + tri[:, 2].max()) * .5)})
         elif name.startswith('Walk_ContinentalBridgeUnion_'):
             union.append(GR.triangles(doc, body, [index]).reshape(-1, 3))
+        elif name.startswith('Walk_AuthoredBridge_'):
+            authored_decks.append(GR.triangles(doc, body, [index]).reshape(-1, 3, 3))
         elif name.startswith('Walk_') and is_designed(name):
             tri = GR.triangles(doc, body, [index]).reshape(-1, 3)
             boxes.append((tri[:, [0, 2]].min(axis=0) - 1., tri[:, [0, 2]].max(axis=0) + 1.))
@@ -730,7 +763,8 @@ def audit_road_rules(generated, plan, surface, inputs):
     def seam_near_at(x, z):
         return lattice(seam_distance, x, z) <= float(policy['seam_metres'])
     findings = road_rule_findings(record['roads'], record.get('crossingSites', []), plan.get('rivers', []), policy, ground_at, river_water_at,
-                                  piers, boxes, np.concatenate(union) if union else None, sea_near_at, sea_at, seam_near_at)
+                                  piers, boxes, np.concatenate(union) if union else None,
+                                  np.concatenate(authored_decks) if authored_decks else (), sea_near_at, sea_at, seam_near_at)
     require(not findings['violations'], 'Road rules: ' + '; '.join(findings['violations'][:12]) + (f' (and {len(findings["violations"]) - 12} more)' if len(findings['violations']) > 12 else ''))
     return findings['totals']
 

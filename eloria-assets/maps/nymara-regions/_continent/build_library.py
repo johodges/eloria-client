@@ -17,6 +17,7 @@ from pathlib import Path
 import sys
 import time
 import numpy as np
+import authoring as AUTHORING
 
 HERE = Path(__file__).resolve().parent
 REGIONS = HERE.parent
@@ -46,6 +47,14 @@ def clean(value):
 
 
 def inputs(region):
+    if region == 'sunmane_steppe':
+        snapshot = AUTHORING.load_snapshot()
+        sources = set(TOOLKIT.rglob('*.py'))
+        sources.update((Path(__file__).resolve(), HERE/'authoring.py', HERE/'scene_io.py',
+                        HERE/'legacy-geography.json', HERE/'legacy-contracts.json'))
+        sources.update(CLIENT/relative for relative in snapshot.bound_sources())
+        return {p.relative_to(CLIENT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in sorted(sources)}
     sources = set(TOOLKIT.rglob('*.py')) | set((package(region)/'source').rglob('*.py'))
     sources.update((package(region)/'source').rglob('*.json'))
     for name in ('_northern', '_finishing', '_outer', '_color'):
@@ -122,6 +131,18 @@ def build(region, output, force=False):
         if previous.get('inputs') == certificate and all((root/p).exists() and hashlib.sha256((root/p).read_bytes()).hexdigest() == digest for p,digest in previous.get('outputs',{}).items()):
             print(f'{region}: retained content is current', flush=True)
             return
+    if region == 'sunmane_steppe':
+        started = time.monotonic()
+        snapshot = AUTHORING.load_snapshot()
+        print(f'{region}: exporting Godot-authored retained-content GLB', flush=True)
+        products = AUTHORING.build_retained_library(snapshot, root)
+        if certificate != inputs(region):
+            raise RuntimeError('Godot authoring sources changed during retained-content export')
+        proof.write_text(json.dumps({'schema':2, 'region':region, 'authority':'godot-continent-authoring',
+            'snapshotSha256':snapshot.digest, 'inputs':certificate, 'outputs':products,
+            'elapsedSeconds':round(time.monotonic()-started,2)}, indent=2)+'\n', encoding='utf-8')
+        print(f'{region}: Godot-authored reusable content complete in {time.monotonic()-started:.1f}s', flush=True)
+        return
     sys.path.insert(0, str(TOOLKIT))
     import continent_geography
     legacy = json.loads((HERE/'legacy-geography.json').read_text(encoding='utf-8'))

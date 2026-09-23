@@ -64,17 +64,34 @@ class _Lighting(ctypes.Structure):
     ]
 
 
-_lib = ctypes.CDLL(_LIB_PATH)
-_lib.render_scene.argtypes = [
-    ctypes.POINTER(_Geometry), ctypes.POINTER(_Material), ctypes.c_int32,
-    ctypes.POINTER(_TextureArray), ctypes.POINTER(ctypes.c_float),
-    ctypes.POINTER(ctypes.c_float), ctypes.POINTER(_Lighting),
-    ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), ctypes.c_int32,
-    ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float),
-    ctypes.c_int32, ctypes.c_int32]
-_lib.render_shadow.argtypes = [
-    ctypes.POINTER(_Geometry), ctypes.POINTER(ctypes.c_float),
-    ctypes.POINTER(ctypes.c_float), ctypes.c_int32]
+_lib = None
+
+
+def _library():
+    """Load the offline preview rasterizer only when a preview is requested.
+
+    Continent retained-library generation imports the regional source modules
+    for their authored geometry but never renders their optional minimaps. A
+    clean checkout therefore does not need a platform C toolchain merely to
+    compose production geometry.
+    """
+    global _lib
+    if _lib is None:
+        try:_lib = ctypes.CDLL(_LIB_PATH)
+        except OSError as error:
+            raise RuntimeError(
+                f"offline preview rasterizer is unavailable at {_LIB_PATH}; run make -C native before rendering previews") from error
+        _lib.render_scene.argtypes = [
+            ctypes.POINTER(_Geometry), ctypes.POINTER(_Material), ctypes.c_int32,
+            ctypes.POINTER(_TextureArray), ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float), ctypes.POINTER(_Lighting),
+            ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), ctypes.c_int32,
+            ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float),
+            ctypes.c_int32, ctypes.c_int32]
+        _lib.render_shadow.argtypes = [
+            ctypes.POINTER(_Geometry), ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float), ctypes.c_int32]
+    return _lib
 
 
 # --------------------------------------------------------------------------
@@ -304,7 +321,7 @@ class Scene:
         color = np.zeros(width * height * 3, dtype=np.float32)
         depth = np.zeros(width * height, dtype=np.float32)
         identity = np.ascontiguousarray(np.eye(4), dtype=np.float32)
-        _lib.render_scene(
+        _library().render_scene(
             ctypes.byref(geometry), materials, len(self.materials),
             ctypes.byref(texture_array),
             view_projection.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
@@ -352,7 +369,7 @@ class Scene:
                 light_view_projection(lighting.sun_direction, center, shadow_radius),
                 dtype=np.float32)
             shadow_buffer = np.zeros(shadow_size * shadow_size, dtype=np.float32)
-            _lib.render_shadow(ctypes.byref(geometry),
+            _library().render_shadow(ctypes.byref(geometry),
                                light_matrix.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
                                shadow_buffer.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
                                shadow_size)
@@ -370,7 +387,7 @@ class Scene:
         color = _sky_background(width, height, eye, target, fov, lighting)
         depth = np.zeros(width * height, dtype=np.float32)
         color_flat = np.ascontiguousarray(color.reshape(-1), dtype=np.float32)
-        _lib.render_scene(
+        _library().render_scene(
             ctypes.byref(geometry), materials, len(self.materials),
             ctypes.byref(texture_array),
             view_projection.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),

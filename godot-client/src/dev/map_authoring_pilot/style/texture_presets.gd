@@ -10,6 +10,7 @@ const GRASS := "Grass"
 const WORN_EARTH := "Worn earth"
 const SOIL := "Soil"
 const SAND := "Sand"
+const DESERT := "Desert"
 const TIMBER := "Timber"
 const STONE := "Stone"
 const THATCH := "Thatch"
@@ -24,7 +25,7 @@ const CAVERN := "Cavern"
 const SLATE := "Slate"
 
 const PRESET_NAMES := [
-	CUSTOM, GRASS, WORN_EARTH, SOIL, SAND, TIMBER, STONE, THATCH, TEXTILE, CANVAS,
+	CUSTOM, GRASS, WORN_EARTH, SOIL, SAND, DESERT, TIMBER, STONE, THATCH, TEXTILE, CANVAS,
 	METAL, LEATHER, HIDE, BONE, CRYSTAL, CAVERN, SLATE,
 ]
 
@@ -56,6 +57,13 @@ const _PRESETS := {
 	SAND: {
 		"family": "ground", "tint": Color(0.86, 0.72, 0.47, 1.0),
 		"roughness": 0.96, "normal_strength": 0.48, "density": 0.20,
+	},
+	# Sunmane's authored desert has its own painterly albedo, while the existing
+	# ground micro-normal and ORM keep its PBR response subtle and consistent.
+	DESERT: {
+		"family": "desert", "detail_family": "ground",
+		"tint": Color(0.90, 0.82, 0.68, 1.0),
+		"roughness": 1.0, "normal_strength": 0.50, "density": 0.20,
 	},
 	TIMBER: {
 		"family": "timber", "tint": Color(0.65, 0.64, 0.59, 1.0),
@@ -119,6 +127,7 @@ static func create_material(preset: String) -> Material:
 		return null
 	var spec: Dictionary = _PRESETS[preset]
 	var family: String = spec["family"]
+	var detail_family: String = spec.get("detail_family", family)
 	var material := ORMMaterial3D.new()
 	material.albedo_color = spec["tint"]
 	material.albedo_texture = _texture(family, "basecolor")
@@ -126,8 +135,8 @@ static func create_material(preset: String) -> Material:
 	material.metallic = spec.get("metallic", 0.0)
 	material.normal_enabled = true
 	material.normal_scale = spec["normal_strength"]
-	material.normal_texture = _texture(family, "normal")
-	material.orm_texture = _texture(family, "orm")
+	material.normal_texture = _texture(detail_family, "normal")
+	material.orm_texture = _texture(detail_family, "orm")
 	material.uv1_scale = Vector3.ONE * float(spec["density"])
 	material.uv1_triplanar = true
 	material.uv1_world_triplanar = true
@@ -155,9 +164,10 @@ static func create_road_material(preset: String) -> ShaderMaterial:
 	else:
 		var spec: Dictionary = _PRESETS[preset]
 		var family: String = spec["family"]
+		var detail_family: String = spec.get("detail_family", family)
 		material.set_shader_parameter("ground_albedo", _texture(family, "basecolor"))
-		material.set_shader_parameter("ground_normal", _texture(family, "normal"))
-		material.set_shader_parameter("ground_orm", _texture(family, "orm"))
+		material.set_shader_parameter("ground_normal", _texture(detail_family, "normal"))
+		material.set_shader_parameter("ground_orm", _texture(detail_family, "orm"))
 		material.set_shader_parameter("worn_tint", spec["tint"])
 		material.set_shader_parameter(
 			"texture_scale", float(spec["density"]) / ROAD_MESH_UV_DENSITY)

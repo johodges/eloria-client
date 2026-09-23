@@ -10,6 +10,7 @@ import ctypes
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 
@@ -17,6 +18,47 @@ from build_progress import Progress
 
 HERE=Path(__file__).resolve().parent
 CLIENT=HERE.parents[3]
+SUNMANE_SCENE='res://world_authoring/regions/sunmane_steppe/sunmane_steppe.tscn'
+SUNMANE_SNAPSHOT=CLIENT/'eloria-assets/maps/nymara-regions/sunmane_steppe/authoring/continent-authoring.json'
+
+
+def find_godot(explicit=None):
+    """Resolve the authoring runtime without accepting a stale manual bake."""
+    candidates=[]
+    if explicit is not None:candidates.append(Path(explicit))
+    if os.environ.get('ELORIA_GODOT'):candidates.append(Path(os.environ['ELORIA_GODOT']))
+    candidates.extend((CLIENT/'godot-client/Godot_v4.7.2-stable_win64_console.exe',
+                       CLIENT/'godot-client/Godot_v4.7.2-stable_win64_console'))
+    for candidate in candidates:
+        if candidate.is_file():return str(candidate.resolve())
+    for name in ('godot','godot4'):
+        found=shutil.which(name)
+        if found:return found
+    searched=', '.join(map(str,candidates))+', godot/godot4 on PATH'
+    raise RuntimeError('Godot is required to bake the saved Sunmane authoring scene; searched '+searched)
+
+
+def bake_sunmane(godot=None):
+    executable=find_godot(godot)
+    project=CLIENT/'godot-client'
+    try:
+        imported=subprocess.run([executable,'--headless','--editor','--path',str(project),'--quit'],
+                                cwd=CLIENT,check=False,timeout=180)
+    except subprocess.TimeoutExpired as error:
+        raise RuntimeError('Godot asset import did not finish within 180 seconds') from error
+    if imported.returncode:
+        raise RuntimeError(
+            f'Godot asset import failed with exit code {imported.returncode}; fix the reported import errors before baking')
+    command=[executable,'--headless','--path',str(CLIENT/'godot-client'),
+             '--script','res://src/dev/map_authoring_region/region_bake_cli.gd','--',
+             '--scene',SUNMANE_SCENE,'--output',str(SUNMANE_SNAPSHOT)]
+    try:completed=subprocess.run(command,cwd=CLIENT,check=False,timeout=180)
+    except subprocess.TimeoutExpired as error:
+        raise RuntimeError('Sunmane authoring bake did not finish within 180 seconds') from error
+    if completed.returncode:
+        raise RuntimeError(f'Sunmane authoring bake failed with exit code {completed.returncode}')
+    if not SUNMANE_SNAPSHOT.is_file():
+        raise RuntimeError('Sunmane authoring bake reported success without writing its snapshot')
 
 
 def limit_cores(count):
@@ -46,6 +88,7 @@ def main():
     parser.add_argument('--library',type=Path,help='Verified retained-content cache (default artifacts/library)')
     parser.add_argument('--stage',choices=('all','libraries','compose','geometry','contracts','publish','atlas','verify'),default='all')
     parser.add_argument('--cores',type=int,choices=range(1,9),default=8)
+    parser.add_argument('--godot',type=Path,help='Godot console executable used to bake the saved Sunmane scene')
     args=parser.parse_args();limit_cores(args.cores)
     server=args.server.resolve();artifacts=args.artifacts.resolve();artifacts.mkdir(parents=True,exist_ok=True)
     library=(args.library or artifacts/'library').resolve();output=HERE/'generated';output.mkdir(exist_ok=True)
@@ -53,6 +96,9 @@ def main():
     def run(script,*arguments,cwd=CLIENT):
         subprocess.run([sys.executable,'-u',str(script),*map(str,arguments)],cwd=cwd,check=True)
     stages=('libraries','compose','geometry','contracts','publish','atlas','verify') if args.stage=='all' else (args.stage,)
+    if any(stage in ('libraries','compose','geometry','contracts') for stage in stages):
+        print('Baking saved Sunmane authoring scene',flush=True)
+        bake_sunmane(args.godot)
     for stage in stages:
         print(f'Continent stage: {stage}',flush=True)
         progress.start(stage)

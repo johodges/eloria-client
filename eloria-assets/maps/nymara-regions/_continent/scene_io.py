@@ -83,8 +83,15 @@ class Exporter:
         self.doc['bufferViews'].append(out)
         return len(self.doc['bufferViews'])-1
 
-    def add(self, source, body, roots, *, transforms=None, prefix='', node_prefix=''):
-        """Add selected root subtrees; transforms are XYZ offsets per source root."""
+    def add(self, source, body, roots, *, transforms=None, matrices=None, root_names=None,
+            prefix='', node_prefix=''):
+        """Add selected root subtrees under placement wrappers.
+
+        Normal continent partitioning supplies XYZ ``transforms``.  Godot
+        authoring snapshots instead supply unambiguous glTF column-major
+        ``matrices`` and stable ``root_names``.  A root may use only one
+        transform representation.
+        """
         identity=id(source)
         def transfer(kind,index):
             key=(identity,kind,index)
@@ -150,13 +157,26 @@ class Exporter:
             if 'mesh' in node: node['mesh']=transfer('meshes',node['mesh'])
             if 'children' in node: node['children']=[mapping[c] for c in node['children'] if c in chosen]
             self.doc['nodes'].append(node)
+        wrappers=[]
         for root in roots:
             child=mapping[root]
-            shift=(transforms or {}).get(root,[0,0,0])
-            wrapper={'name':prefix+node_prefix+source['nodes'][root].get('name',str(root))+'_WorldPlacement',
-                     'translation':list(map(float,shift)),'children':[child]}
-            self.doc['scenes'][0]['nodes'].append(len(self.doc['nodes']))
+            if root in (transforms or {}) and root in (matrices or {}):
+                raise ValueError('A placement root cannot have both translation and matrix transforms')
+            name=(root_names or {}).get(root,
+                prefix+node_prefix+source['nodes'][root].get('name',str(root))+'_WorldPlacement')
+            wrapper={'name':name,'children':[child]}
+            if root in (matrices or {}):
+                matrix=list(map(float,matrices[root]))
+                if len(matrix)!=16 or not np.isfinite(matrix).all():
+                    raise ValueError('Placement matrix must contain sixteen finite glTF column-major numbers')
+                wrapper['matrix']=matrix
+            else:
+                shift=(transforms or {}).get(root,[0,0,0])
+                wrapper['translation']=list(map(float,shift))
+            wrapper_index=len(self.doc['nodes'])
+            self.doc['scenes'][0]['nodes'].append(wrapper_index)
             self.doc['nodes'].append(wrapper)
+            wrappers.append(wrapper_index)
         for animation in source.get('animations',[]):
             channels=[copy.deepcopy(c) for c in animation.get('channels',[]) if c['target'].get('node') in mapping]
             if not channels: continue
@@ -169,6 +189,7 @@ class Exporter:
             self.doc.setdefault('animations',[]).append(out)
         for field in ('extensionsUsed','extensionsRequired'):
             if source.get(field): self.doc[field]=sorted(set(self.doc.get(field,[]))|set(source[field]))
+        return wrappers
 
     def write(self):
         dump_glb(self.path,self.doc,self.body)

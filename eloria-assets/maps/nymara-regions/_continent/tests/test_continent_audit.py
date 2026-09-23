@@ -277,6 +277,24 @@ class RoadRuleTests(unittest.TestCase):
         self.assertTrue(any(v.startswith('discovery-a1:') and 'over river water outside every bridge site' in v for v in found['violations']), found['violations'])
         self.assertTrue(any(v.startswith('door-c1:') and 'degrees to the flow' in v for v in found['violations']), found['violations'])
 
+    def test_an_emitted_authored_deck_supports_only_its_triangle_footprint_and_height(self):
+        rivers, water, ground, site, policy = rule_fixture()
+        # A diagonal deck: its AABB includes (127, 96), but neither triangle
+        # does.  The deck top is y=3 throughout its actual footprint.
+        deck = np.array([[[112., 3., 104.], [120., 3., 96.], [128., 3., 104.]],
+                         [[112., 3., 104.], [128., 3., 104.], [120., 3., 112.]]])
+        supported = {'id': 'saved-crossing', 'points': [[112., 2.5, 104.], [128., 2.5, 104.]]}
+        found = A.road_rule_findings([supported], [], rivers, policy, ground, water,
+                                     authored_deck_triangles=deck)
+        self.assertEqual(found['violations'], [])
+        beyond = {'id': 'beside-deck', 'points': [[127., 6., 96.], [127., 6., 112.]]}
+        high = {'id': 'above-deck', 'points': [[112., 4., 104.], [128., 4., 104.]]}
+        found = A.road_rule_findings([beyond, high], [], rivers, policy, ground, water,
+                                     authored_deck_triangles=deck)
+        text = ' | '.join(found['violations'])
+        self.assertIn('beside-deck:', text)
+        self.assertIn('above-deck:', text)
+
     def test_close_sites_tall_piers_floating_stations_and_long_crossings_fail(self):
         rivers, water, ground, site, policy = rule_fixture()
         near = dict(site, id=1, arcMetres=130., wetEdges=[[110., 130.], [130., 130.]])

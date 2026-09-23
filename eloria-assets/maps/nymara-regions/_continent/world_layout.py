@@ -612,6 +612,15 @@ class World:
         footing_weight=getattr(self,'road_footing_weight',self.assembly_weight)
         fixed=active&(footing_weight>=.999)&(np.hypot(dx,dz)<.5)&~self.water['mask']
         fixed_height=self.assembly_target.copy();quay_fixed=np.zeros_like(active)
+        authored=np.asarray(getattr(self,'authored_terrain_authority',np.zeros_like(active)),bool)
+        if authored.shape!=active.shape:
+            raise ValueError('authored terrain authority does not match the shared road grid')
+        if authored.any():
+            authored_height=np.asarray(self.authored_terrain_height)
+            if authored_height.shape!=active.shape:
+                raise ValueError('authored terrain height does not match the shared road grid')
+            fixed_height[active&authored]=authored_height[active&authored]
+            fixed|=active&authored
         # After the support stages, ground that retained content stands on, or
         # that a footing feather blends toward it, is never moved by a road:
         # the road is fitted to it. Pinned footings hold their surveyed plane,
@@ -657,11 +666,12 @@ class World:
         protected=self.height*(1-support)+self.assembly_target*support
         self.height=np.where(wet,self.height,protected)
         # What the road pass writes outside footings is bounded by the same limits (shoulders included).
-        bounded=outside_footings&~wet&~quay_fixed&~ferry_fixed
+        bounded=outside_footings&~wet&~quay_fixed&~ferry_fixed&~authored
         change=self.height-before
         earthworks['clampedVertices']=int(np.count_nonzero(bounded&((change<-ROAD_CUT_METRES-1e-9)|(change>ROAD_FILL_METRES+1e-9))))
         self.height=np.where(bounded,before+np.clip(change,-ROAD_CUT_METRES,ROAD_FILL_METRES),self.height)
         self.height[quay_fixed]=fixed_height[quay_fixed]
+        if authored.any():self.height[authored]=authored_height[authored]
         self._respect_standing=bool(respect_standing)
         self.restore_drainage_corridor('roads')
         restore_graded_shores(self,active)
@@ -1292,7 +1302,8 @@ class World:
                 'unrouted':list(getattr(self,'unrouted',[])),
                 'policy':'River water and its setback (max(6 m, half width + 4 m)) are impassable for every alignment and edge; a plan river is crossed only on a bridge edge between the routed landings of a crossing site (river_crossings.py), which the road then claims; retained solids up to 1600 square metres, widened by 2 m, are impassable for alignments and their edges except the solids within 6 m of a road end, first at 6 m stations then at 4 m; a road end inside a solid starts or ends with a close-station leg from open ground; a sealed end falls back to solids as a heavy penalty; larger boxes keep the soft clearance penalty; the seam-terminal term stands at its listed weight; the cross-slope, relief and step-grade terms stand at their listed module weights (zero: off) except in the territories listed under terrainTermsByTerritory.'}
 
-    def add_road(self,points,width=3.5,name='road'):
+    def road_profile(self,points):
+        """Return the exact dense XZ stations and bounded earthwork profile used by ``add_road``."""
         points=np.asarray(points,float)
         dense=[]
         for a,b in zip(points,points[1:]):
@@ -1310,6 +1321,10 @@ class World:
         # A road follows its ground within the earthworks limits; a footing holds its own stations.
         free=triangle_sample(self.earthworks_free().astype(float),points[:,0],points[:,1],self.x0,self.z0)>=.5 if hasattr(self,'assembly_weight') else None
         profile=graded_profile(heights,distances,floor,maximum_grade=ROAD_EARTHWORKS_GRADE,cut=ROAD_CUT_METRES,fill=ROAD_FILL_METRES,free=free)
+        return points,profile
+
+    def add_road(self,points,width=3.5,name='road'):
+        points,profile=self.road_profile(points)
         self.roads.append({'id':name,'points':np.c_[points[:,0],profile,points[:,1]].tolist(),'width':width})
         for i,(a,b) in enumerate(zip(points,points[1:])):
             shoulder=max(16,width*4)

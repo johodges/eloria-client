@@ -190,6 +190,34 @@ class CollisionExportTests(unittest.TestCase):
         closed = self.export(world)
         self.assertEqual(result['collision']['heightEncoding'], closed['collision']['heightEncoding'])
 
+    def test_a_saved_seam_keeps_all_seven_exact_triggers_on_a_stepped_boundary(self):
+        world = TwoTerritories()
+        world.connections = [{'id': 'saved-road', 'regions': ['west', 'east'], 'type': 'walk',
+                              'anchor': [0, 0], 'normal': [1, 0]}]
+        world.saved_seam_approaches = [{'id': 'saved-road', 'region': 'west'}]
+        # Put the ownership edge on the surveyed anchor.  The canonical
+        # departure tile is centred 1.5 m beyond it and all four of that
+        # actor tile's half-cells must be served on each map.
+        west = self.export(world, region='west')
+        east = self.export(world, region='east')
+        for z in (-3.75, -2.75, -1.75, -.75, .25, 1.25, 2.25, 3.25, 3.75):
+            with self.subTest(region='west', z=z):
+                self.assertTrue(sample(west, world, 'west', 1.75, z))
+            with self.subTest(region='east', z=z):
+                self.assertTrue(sample(east, world, 'east', -1.75, z))
+        self.assertFalse(sample(west, world, 'west', 2.25, .25))
+        self.assertFalse(sample(east, world, 'east', -2.25, .25))
+
+    def test_an_automatic_seam_does_not_receive_the_saved_trigger_apron(self):
+        world = TwoTerritories()
+        world.connections = [{'id': 'automatic-road', 'regions': ['west', 'east'], 'type': 'walk',
+                              'anchor': [0, 0], 'normal': [1, 0]}]
+        world.saved_seam_approaches = [{'id': 'different-saved-road', 'region': 'west'}]
+        result = self.export(world, region='west')
+        self.assertTrue(sample(result, world, 'west', .75, .25))
+        self.assertFalse(sample(result, world, 'west', 1.25, .25))
+        self.assertFalse(sample(result, world, 'west', 1.75, .25))
+
     def test_each_half_cell_can_close_its_full_actor_tile(self):
         world = TwoTerritories()
         baseline = self.export(world)['walkable']
