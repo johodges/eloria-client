@@ -209,7 +209,7 @@
     },
     "walkableCells": 387074,
     "walkableFraction": 0.279885,
-    "sourceGlbSha256": "141c450927c8f5b692b12234d00768e27cfc38c3c38bb58a3976885306a129b2",
+    "sourceGlbSha256": "c1f39212bfa45b98fec5b79e7b60a791cd0024a42d611b39a18f16e0a46ef1bc",
     "exportStatistics": {
       "walkMeshes": 41,
       "structuralMeshes": 237,
@@ -530,7 +530,7 @@
       "node": "Landmark_City_Gate",
       "position": [
         -23.399450197219835,
-        10.109063794329542,
+        10.109063623145172,
         -45.477498970031775
       ],
       "serverTile": [
@@ -545,7 +545,7 @@
       "node": "Landmark_Great_Arcade",
       "position": [
         -31.97999999999999,
-        8.387985766684071,
+        8.387985773700192,
         -74.6629843139649
       ],
       "serverTile": [
@@ -605,7 +605,7 @@
       "node": "Landmark_High_Spire",
       "position": [
         58.5,
-        14.523830059067565,
+        14.523829865830756,
         -89.70000000000005
       ],
       "serverTile": [
@@ -695,7 +695,7 @@
       "node": "Landmark_Upland_Farm",
       "position": [
         91.169879959708,
-        14.29284301851115,
+        14.292843014547497,
         -98.4931539397935
       ],
       "serverTile": [
@@ -710,7 +710,7 @@
       "node": "Landmark_Hill_Estate",
       "position": [
         160.00973098268867,
-        10.664232500808215,
+        10.664232499749213,
         -39.56464082059574
       ],
       "serverTile": [
@@ -725,7 +725,7 @@
       "node": "Landmark_East_Watch",
       "position": [
         156.77999999999997,
-        12.846790456628554,
+        12.846790290825382,
         -81.90000000000009
       ],
       "serverTile": [
@@ -830,7 +830,7 @@
       "node": "Farm_End_1",
       "position": [
         117.25,
-        13.966337410498674,
+        13.96633743041026,
         -103.74000000000001
       ],
       "serverTile": [
@@ -845,7 +845,7 @@
       "node": "Farm_Water_Store",
       "position": [
         100.62,
-        14.183696812798516,
+        14.183696807943052,
         -97.5
       ],
       "serverTile": [
@@ -908,7 +908,7 @@
       "type": "waystation",
       "position": [
         163.50973098268867,
-        10.384232500808213,
+        10.384232499749212,
         -43.56464082059574
       ]
     },
@@ -1086,7 +1086,7 @@
       "type": "water",
       "position": [
         -15.069450197219822,
-        4.749063794329542,
+        4.749063623145172,
         -30.247498970031756
       ],
       "serverTile": [
@@ -1276,7 +1276,7 @@
       "destinationSpawn": "haven-cathedral-reliquary",
       "position": [
         36.66,
-        13.938919215829644,
+        13.938919214003043,
         -81.2840000000001
       ],
       "authority": "server",
@@ -1298,7 +1298,7 @@
       "destinationSpawn": "haven-gate-well",
       "position": [
         -31.19999999999999,
-        9.596117680917503,
+        9.596117691762345,
         -41.503999999999905
       ],
       "authority": "server",
@@ -1576,7 +1576,7 @@
       "type": "npc",
       "position": [
         -20.80945019721983,
-        9.009063794329542,
+        9.009063623145172,
         -42.42749897003182
       ],
       "serverTile": [
@@ -1606,7 +1606,7 @@
       "type": "npc",
       "position": [
         -30.919999999999987,
-        8.557985766684073,
+        8.557985773700194,
         -80.57298431396487
       ],
       "serverTile": [
@@ -1696,7 +1696,7 @@
       "type": "npc",
       "position": [
         84.169879959708,
-        14.29284301851115,
+        14.292843014547497,
         -98.72315393979352
       ],
       "serverTile": [
@@ -2903,7 +2903,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+      "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
       "globalMin": [
         0.0,
         724.0
@@ -2922,7 +2922,7 @@
     }
   },
   "performance": {
-    "glbBytes": 10465176,
+    "glbBytes": 10465172,
     "nodes": 2055,
     "meshes": 394,
     "externalResources": {
@@ -4338,7 +4338,7 @@
       240.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:d69df223bf4f43e524097599945d88e22122a84ef7b8f636fe3cf48a26bf2730",
+  "terrainRevision": "diagonal-spine-v1:3342e753633e05711a9a57f01cd62ca41359f84507be303ea878bbfdb6357a01",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4424,7 +4424,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "streamingChunks": {
@@ -4716,7 +4716,7 @@
           ],
           "max": [
             22.0,
-            21.990271959934507,
+            21.990271958936187,
             -292.0
           ]
         },
@@ -4739,7 +4739,7 @@
           ],
           "max": [
             22.0,
-            17.99311967421717,
+            17.993119719292352,
             -196.0
           ]
         },
@@ -4769,9 +4769,9 @@
             -98.03500001907355
           ]
         },
-        "estimatedResidentBytes": 32451632,
-        "glbBytes": 862964,
-        "geometryResidentBytes": 4314820,
+        "estimatedResidentBytes": 32451612,
+        "glbBytes": 862960,
+        "geometryResidentBytes": 4314800,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -4824,9 +4824,9 @@
             -4.0
           ]
         },
-        "estimatedResidentBytes": 48618194,
-        "glbBytes": 1037928,
-        "geometryResidentBytes": 5189640,
+        "estimatedResidentBytes": 48618214,
+        "glbBytes": 1037932,
+        "geometryResidentBytes": 5189660,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "34bfe9afef5484824ff7d670ae779edda8e8ea9e86183c4c0c75de066583480c": 1398102,
@@ -5019,7 +5019,7 @@
           ],
           "max": [
             22.0,
-            6.666460070266502,
+            6.666460063634385,
             218.0
           ]
         },
@@ -5037,7 +5037,7 @@
         "bounds": {
           "min": [
             22.0,
-            17.99311967421717,
+            17.993119719292352,
             -320.0
           ],
           "max": [
@@ -5064,7 +5064,7 @@
           ],
           "max": [
             118.0,
-            22.381005768322648,
+            22.38100575659293,
             -196.0
           ]
         },
@@ -5089,7 +5089,7 @@
         "bounds": {
           "min": [
             22.0,
-            11.26318539924621,
+            11.263185302749756,
             -196.0
           ],
           "max": [
@@ -5145,12 +5145,12 @@
         "bounds": {
           "min": [
             22.0,
-            -0.04741861050727181,
+            -0.047418612098688584,
             -106.75765893255516
           ],
           "max": [
             120.7665885361148,
-            47.42383158494647,
+            47.42383139170966,
             -4.0
           ]
         },
@@ -5222,9 +5222,9 @@
             103.29999923706055
           ]
         },
-        "estimatedResidentBytes": 49765980,
-        "glbBytes": 1459724,
-        "geometryResidentBytes": 7298620,
+        "estimatedResidentBytes": 49765960,
+        "glbBytes": 1459720,
+        "geometryResidentBytes": 7298600,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5367,7 +5367,7 @@
         "bounds": {
           "min": [
             118.0,
-            15.02307321929571,
+            15.02307321635359,
             -210.0
           ],
           "max": [
@@ -5434,13 +5434,13 @@
           ],
           "max": [
             202.0,
-            31.026790761804335,
+            31.026790596001163,
             -4.0
           ]
         },
-        "estimatedResidentBytes": 22851776,
-        "glbBytes": 847908,
-        "geometryResidentBytes": 4239540,
+        "estimatedResidentBytes": 22851756,
+        "glbBytes": 847904,
+        "geometryResidentBytes": 4239520,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "3c6d723b621fbc18f296c19362b666ff1803a213ab092a438d7dde7399dec288": 1398102,
@@ -5473,7 +5473,7 @@
           ],
           "max": [
             184.0,
-            23.430785928623127,
+            23.430785928016597,
             96.40146579567909
           ]
         },
@@ -5528,12 +5528,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:d69df223bf4f43e524097599945d88e22122a84ef7b8f636fe3cf48a26bf2730"
+    "terrainRevision": "diagonal-spine-v1:3342e753633e05711a9a57f01cd62ca41359f84507be303ea878bbfdb6357a01"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "collisionSha256": "ff8f9a6f7e156480f5e1d15548bbf13455dcb42325fa2e156d70df2e6af525b4",
-    "terrainRevision": "diagonal-spine-v1:d69df223bf4f43e524097599945d88e22122a84ef7b8f636fe3cf48a26bf2730"
+    "terrainRevision": "diagonal-spine-v1:3342e753633e05711a9a57f01cd62ca41359f84507be303ea878bbfdb6357a01"
   }
 }

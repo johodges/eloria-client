@@ -61,9 +61,17 @@ def _rotated_uv(points,surface,density):
 
 
 def authored_overlays(world,builder):
+    snapshots=dict(getattr(world,'authoring_snapshots',{}))
     snapshot=getattr(world,'authoring_snapshot',None)
-    if snapshot is None:return []
-    overlays=[];translation=snapshot.translation
+    if snapshot is not None:snapshots.setdefault(snapshot.document.get('regionId',AUTHORING.SUNMANE),snapshot)
+    if not snapshots:return []
+    overlays=[]
+    def node_name(region_id,name, *, base=False):
+        # Preserve the already-published Sunmane node identities while making
+        # every additional territory's otherwise-local ids globally unique.
+        if region_id==AUTHORING.SUNMANE:
+            return 'SunmaneBase' if base else name
+        return region_id+'Base' if base else region_id+'_'+name
     def add(name,faces,surface,uv_source,colors=None,walk=False,blend=False):
         faces=np.asarray(faces,float).reshape(-1,3,3)
         if not len(faces):return
@@ -79,64 +87,67 @@ def authored_overlays(world,builder):
         cx=np.floor((centres[:,0]-world.x0)/CHUNK).astype(int);cz=np.floor((centres[:,2]-world.z0)/CHUNK).astype(int)
         overlays.append({'name':('Walk_' if walk else 'AuthoredGround_')+name,'mesh':mesh,
                          'keys':owner*10000+cz*100+cx})
-    # Base surface follows the exact owned terrain cells. A slight visual lift
-    # avoids depth fighting; collision continues to use the shared field.
-    owner=world.ids.index(AUTHORING.SUNMANE);row,col=np.nonzero(world.owner[:-1,:-1]==owner)
-    nx=len(world.x);a=row*nx+col;tri=np.stack((a,a+nx,a+1,a+1,a+nx,a+nx+1),axis=1).reshape(-1,3)
     positions=np.stack([world.gx,world.height+.006,world.gz],axis=-1).reshape(-1,3)
-    preview_uv=float(snapshot.document['terrain']['previewUvMetresInverse'])
-    local_uv=(positions[tri][...,[0,2]]-translation[[0,2]])*preview_uv
-    add('SunmaneBase',positions[tri],snapshot.document['terrain']['baseSurface'],local_uv)
-    ordered_regions=sorted(snapshot.document['groundRegions'],key=lambda value:(value['priority'],value['id']))
-    for layer,region in enumerate(ordered_regions):
-        if not region['enabled']:continue
-        matrix=np.asarray(region['matrix'],float).reshape(4,4,order='F');inverse=np.linalg.inv(matrix)
-        local=np.c_[world.gx.ravel()-translation[0],np.zeros(world.gx.size),world.gz.ravel()-translation[2],np.ones(world.gx.size)]@inverse.T
-        half=np.asarray(region['size'],float)*.5;point=local[:,[0,2]]
-        if region['shape']=='rectangle':inside=np.minimum(half[0]-abs(point[:,0]),half[1]-abs(point[:,1]))
-        else:
-            radius=np.linalg.norm(point/half,axis=1);gradient=np.linalg.norm(point/(half*half),axis=1)
-            inside=np.where(radius<1e-5,min(half),(1-radius)*radius/np.maximum(gradient,1e-5))
-        blend=float(region['blendWidth']);weight=np.where(inside>0,1. if blend<=0 else L.smoothstep(0,blend,inside),0)*float(region['opacity'])
-        cell_weight=weight[tri].max(axis=1);selected=cell_weight>0
-        colors=np.ones((selected.sum(),3,4));colors[...,3]=weight[tri[selected]]
-        add(region['id'],positions[tri[selected]]+(0.002+layer*0.0005)*np.array([0,1,0]),region['surface'],
-            (positions[tri[selected]][...,[0,2]]-translation[[0,2]])*preview_uv,
-            colors,blend=True)
-    for path in snapshot.document['paths']:
-        if path['kind']!='road':continue
-        controls=path['points'];vertices=[];uv=[];colors=[];indices=[];along=0.;lateral_steps=6
-        road_override=path['surface'].get('roadOverrides');feather=float(road_override['edgeFeather']) if road_override else 0.
-        control_points=[snapshot.continent_point(value['position']) for value in controls]
-        control_widths=[float(value['width']) for value in controls]
-        points=[];widths=[]
-        for index,(start,end) in enumerate(zip(control_points,control_points[1:])):
-            count=max(1,int(math.ceil(np.linalg.norm(end[[0,2]]-start[[0,2]]))))
-            amount=np.linspace(0.,1.,count+1)[:-1]
-            points.extend(start*(1-value)+end*value for value in amount)
-            widths.extend(control_widths[index]*(1-value)+control_widths[index+1]*value for value in amount)
-        points.append(control_points[-1]);widths.append(control_widths[-1])
-        for index,(point,width) in enumerate(zip(points,widths)):
-            previous=point if index==0 else points[index-1];following=point if index==len(points)-1 else points[index+1]
-            tangent=(following-previous)[[0,2]];tangent/=max(np.linalg.norm(tangent),1e-12);side=np.array([-tangent[1],tangent[0]])
-            if index:along+=float(np.linalg.norm(point-points[index-1]))
-            for lateral_index in range(lateral_steps+1):
-                u=lateral_index/lateral_steps;lateral=width*(.5-u)
-                vertex=point.copy();vertex[[0,2]]+=side*lateral
-                vertex[1]=float(world.height_at(vertex[0],vertex[2]))+.055
-                vertices.append(vertex);uv.append([u*width,along])
-                distance_from_edge=1.-abs(u*2.-1.)
-                alpha=1. if feather<=0 else float(L.smoothstep(0.,feather,distance_from_edge))
-                colors.append([1.,1.,1.,alpha])
-            if index<len(points)-1:
-                base=index*(lateral_steps+1);following=base+lateral_steps+1
-                for lateral_index in range(lateral_steps):
-                    a=base+lateral_index;b=a+1;c=following+lateral_index;d=c+1
-                    indices.extend((a,d,b,a,c,d))
-        vertices=np.asarray(vertices,float);faces=vertices[np.asarray(indices).reshape(-1,3)]
-        face_indices=np.asarray(indices).reshape(-1,3)
-        add(path['id'],faces,path['surface'],np.asarray(uv)[face_indices],
-            np.asarray(colors)[face_indices],walk=True,blend=road_override is not None)
+    for region_id,snapshot in snapshots.items():
+        translation=snapshot.translation
+        # Base surface follows this territory's exact owned terrain cells. A
+        # slight visual lift avoids depth fighting; collision uses the shared field.
+        owner=world.ids.index(region_id);row,col=np.nonzero(world.owner[:-1,:-1]==owner)
+        nx=len(world.x);a=row*nx+col
+        tri=np.stack((a,a+nx,a+1,a+1,a+nx,a+nx+1),axis=1).reshape(-1,3)
+        preview_uv=float(snapshot.document['terrain']['previewUvMetresInverse'])
+        local_uv=(positions[tri][...,[0,2]]-translation[[0,2]])*preview_uv
+        add(node_name(region_id,'',base=True),positions[tri],snapshot.document['terrain']['baseSurface'],local_uv)
+        ordered_regions=sorted(snapshot.document['groundRegions'],key=lambda value:(value['priority'],value['id']))
+        for layer,ground_region in enumerate(ordered_regions):
+            if not ground_region['enabled']:continue
+            matrix=np.asarray(ground_region['matrix'],float).reshape(4,4,order='F');inverse=np.linalg.inv(matrix)
+            local=np.c_[world.gx.ravel()-translation[0],np.zeros(world.gx.size),world.gz.ravel()-translation[2],np.ones(world.gx.size)]@inverse.T
+            half=np.asarray(ground_region['size'],float)*.5;point=local[:,[0,2]]
+            if ground_region['shape']=='rectangle':inside=np.minimum(half[0]-abs(point[:,0]),half[1]-abs(point[:,1]))
+            else:
+                radius=np.linalg.norm(point/half,axis=1);gradient=np.linalg.norm(point/(half*half),axis=1)
+                inside=np.where(radius<1e-5,min(half),(1-radius)*radius/np.maximum(gradient,1e-5))
+            blend=float(ground_region['blendWidth']);weight=np.where(inside>0,1. if blend<=0 else L.smoothstep(0,blend,inside),0)*float(ground_region['opacity'])
+            cell_weight=weight[tri].max(axis=1);selected=cell_weight>0
+            colors=np.ones((selected.sum(),3,4));colors[...,3]=weight[tri[selected]]
+            add(node_name(region_id,ground_region['id']),positions[tri[selected]]+(0.002+layer*0.0005)*np.array([0,1,0]),ground_region['surface'],
+                (positions[tri[selected]][...,[0,2]]-translation[[0,2]])*preview_uv,
+                colors,blend=True)
+        for path in snapshot.document['paths']:
+            if path['kind']!='road':continue
+            controls=path['points'];vertices=[];uv=[];colors=[];indices=[];along=0.;lateral_steps=6
+            road_override=path['surface'].get('roadOverrides');feather=float(road_override['edgeFeather']) if road_override else 0.
+            control_points=[snapshot.continent_point(value['position']) for value in controls]
+            control_widths=[float(value['width']) for value in controls]
+            points=[];widths=[]
+            for index,(start,end) in enumerate(zip(control_points,control_points[1:])):
+                count=max(1,int(math.ceil(np.linalg.norm(end[[0,2]]-start[[0,2]]))))
+                amount=np.linspace(0.,1.,count+1)[:-1]
+                points.extend(start*(1-value)+end*value for value in amount)
+                widths.extend(control_widths[index]*(1-value)+control_widths[index+1]*value for value in amount)
+            points.append(control_points[-1]);widths.append(control_widths[-1])
+            for index,(point,width) in enumerate(zip(points,widths)):
+                previous=point if index==0 else points[index-1];following=point if index==len(points)-1 else points[index+1]
+                tangent=(following-previous)[[0,2]];tangent/=max(np.linalg.norm(tangent),1e-12);side=np.array([-tangent[1],tangent[0]])
+                if index:along+=float(np.linalg.norm(point-points[index-1]))
+                for lateral_index in range(lateral_steps+1):
+                    u=lateral_index/lateral_steps;lateral=width*(.5-u)
+                    vertex=point.copy();vertex[[0,2]]+=side*lateral
+                    vertex[1]=float(world.height_at(vertex[0],vertex[2]))+.055
+                    vertices.append(vertex);uv.append([u*width,along])
+                    distance_from_edge=1.-abs(u*2.-1.)
+                    alpha=1. if feather<=0 else float(L.smoothstep(0.,feather,distance_from_edge))
+                    colors.append([1.,1.,1.,alpha])
+                if index<len(points)-1:
+                    base=index*(lateral_steps+1);following=base+lateral_steps+1
+                    for lateral_index in range(lateral_steps):
+                        a=base+lateral_index;b=a+1;c=following+lateral_index;d=c+1
+                        indices.extend((a,d,b,a,c,d))
+            vertices=np.asarray(vertices,float);faces=vertices[np.asarray(indices).reshape(-1,3)]
+            face_indices=np.asarray(indices).reshape(-1,3)
+            add(node_name(region_id,path['id']),faces,path['surface'],np.asarray(uv)[face_indices],
+                np.asarray(colors)[face_indices],walk=True,blend=road_override is not None)
     return overlays
 
 
@@ -359,25 +370,35 @@ def partition_surface(world,path):
     water_keys=key.ravel()[water['sourceCells']]
     overlays=authored_overlays(world,builder)
     authored_water=[];water_slot=np.full(len(water['triangles']),-1,int)
+    snapshots=dict(getattr(world,'authoring_snapshots',{}))
     snapshot=getattr(world,'authoring_snapshot',None)
-    if snapshot is not None and len(water['triangles']):
+    if snapshot is not None:snapshots.setdefault(snapshot.document.get('regionId',AUTHORING.SUNMANE),snapshot)
+    if snapshots and len(water['triangles']):
         centres=water['positions'][water['triangles']].mean(axis=1)
         by_id={river['id']:river for river in world.plan.get('rivers',())}
-        for path_record in snapshot.document['paths']:
-            if path_record['kind']!='river':continue
-            identity=path_record.get('replacesPlanFeatureId') or path_record['id'];river=by_id.get(identity)
-            if river is None:continue
-            distance,_,width=L.river_field(centres[:,0],centres[:,2],river)
-            selected=(distance<=width+1e-8)&(water_slot<0)
-            material,density=authored_surface_material(
-                builder,path_record['surface'],path_record['id']+'_water')
-            water_slot[selected]=len(authored_water)
-            authored_water.append({'id':path_record['id'],'surface':path_record['surface'],'material':material,
-                                   'density':density,'triangles':int(selected.sum())})
+        for region_id,snapshot in snapshots.items():
+            for path_record in snapshot.document['paths']:
+                if path_record['kind']!='river':continue
+                identity=path_record.get('replacesPlanFeatureId') or path_record['id'];river=by_id.get(identity)
+                if river is None:continue
+                distance,_,width=L.river_field(centres[:,0],centres[:,2],river)
+                selected=(distance<=width+1e-8)&(water_slot<0)
+                material_name=(path_record['id'] if region_id==AUTHORING.SUNMANE else
+                               region_id+'_'+path_record['id'])+'_water'
+                material,density=authored_surface_material(
+                    builder,path_record['surface'],material_name)
+                water_slot[selected]=len(authored_water)
+                node_id=(path_record['id'] if region_id==AUTHORING.SUNMANE else
+                         region_id+'_'+path_record['id'])
+                authored_water.append({'id':path_record['id'],'nodeId':node_id,'region':region_id,
+                    'surface':path_record['surface'],'material':material,
+                    'density':density,'translation':snapshot.translation,
+                    'triangles':int(selected.sum())})
     world.authored_overlay_report={
         'nodes':[{'name':item['name'],'triangles':int(item['mesh'].triangle_count)} for item in overlays],
         'triangles':sum(int(item['mesh'].triangle_count) for item in overlays),
-        'waterMaterials':[{key:value for key,value in item.items() if key not in ('surface','density')}
+        'waterMaterials':[{key:value for key,value in item.items()
+                           if key not in ('surface','density','translation','nodeId')}
                           for item in authored_water]}
     output={r:{} for r in world.ids}
     for value in np.unique(key):
@@ -385,21 +406,21 @@ def partition_surface(world,path):
         region=world.ids[owner];chunk=f'{cx:02d}_{cz:02d}'
         selected=np.flatnonzero(key.ravel()==value)
         roots=[];bounds=[]
-        surfaces=[('Terrain',cells[selected].ravel(),positions,'continental_ground',colors,None,None),
+        surfaces=[('Terrain',cells[selected].ravel(),positions,'continental_ground',colors,None,None,None),
                   ('Water',water['triangles'][(water_keys==value)&(water_slot<0)].ravel(),
-                   water['positions'],'water_sea',None,None,None)]
+                   water['positions'],'water_sea',None,None,None,None)]
         for slot,item in enumerate(authored_water):
-            surfaces.append((f"Water_{item['id']}",
+            surfaces.append((f"Water_{item['nodeId']}",
                 water['triangles'][(water_keys==value)&(water_slot==slot)].ravel(),
-                water['positions'],item['material'],None,item['surface'],item['density']))
-        for kind,indices,vertices,material,color,surface,density in surfaces:
+                water['positions'],item['material'],None,item['surface'],item['density'],item['translation']))
+        for kind,indices,vertices,material,color,surface,density,uv_translation in surfaces:
             if not len(indices):continue
             unique,inverse=np.unique(indices,return_inverse=True)
             name=f'{kind}_{region}_{chunk}'
             n=normals.reshape(-1,3)[unique] if kind=='Terrain' else np.tile([0.,1.,0.],(len(unique),1))
             if kind=='Terrain':texture_uv=uvs[unique]
             elif surface is None:texture_uv=vertices[unique][:,[0,2]]*.17
-            else:texture_uv=_rotated_uv(vertices[unique][:,[0,2]]-snapshot.translation[[0,2]],surface,density)
+            else:texture_uv=_rotated_uv(vertices[unique][:,[0,2]]-uv_translation[[0,2]],surface,density)
             piece=M.Mesh(positions=vertices[unique],normals=n,uvs=texture_uv,colors=color[unique] if color is not None else None,indices=inverse,material=material)
             builder.add_mesh(name,piece,with_tangents=surface is not None)
             index=builder.add_node(G.Node(name,mesh=name))

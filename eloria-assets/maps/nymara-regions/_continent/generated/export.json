@@ -1,12 +1,12 @@
 {
   "masterPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\nymara-regions\\_continent\\generated\\continent.glb",
-  "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+  "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
   "geometrySources": {
-    "build_continent.py": "d28fa6923f923567304de00827f1d8becc575d5723856d874c6cfff9b6ad806a",
+    "build_continent.py": "91e358fd8cde7b52f5999b7c8dd106dfed23315820ee0de0521ec1ff9fce7689",
     "scene_io.py": "cd45695b93412a174731d5e6932fbc52d5530afda56a38c428d46f20e0633f64",
-    "terrain_export.py": "2c9fb0eef917421d691527772f1fe63d868de59ac77222b12be403d27a9621eb",
-    "compact_glb_images.py": "de54a781ca1bb1244f4bf6914eb0dd103e33ca6a0e519f3f988f16ce101e0298",
-    "bridge_export.py": "23ac44a2ad5d3c11dc89a83c260500999fa8fca8feedb388316ac8199d5d981f",
+    "terrain_export.py": "83b69887d826711795c769625aa10708d20561272858f5a7b3b11a39040b31fa",
+    "compact_glb_images.py": "b6ce2c158c82d9129d30fa43c51a0c38a9853d0ee4e1c1a1dbc475c149fadd07",
+    "bridge_export.py": "6570f93aa133a1d757298b5656873c97556465f13dc5146be46398e33b8cb07e",
     "bridge_profiles.py": "6a3e212582e3493da4d0ad09c537e8e813ff05c567d324dbbda7bfeeb3fd0847",
     "sea_crossings.py": "1518cd9b6fcafb3586d4f0328416dbf7cf960a0cc983c3498052b8499b9eda15",
     "coastal_prepare.py": "4e7b774748397f7774b4356b3c543fab496cf6fb923f97a2d8fdecae0d80fb4c",
@@ -27,7 +27,7 @@
     "shapely": "2.1.2",
     "geos": "3.13.1"
   },
-  "compositionSha256": "62c71c62468491b1d90c0c1ad3ff867a21b4cc0b895d181c7f2dd00945a3a8f0",
+  "compositionSha256": "36ec1e4ed285ccd28b751014ec8c13a30ad86434120a15a354c543b4251cd86a",
   "greyCrossingLandmarks": [
     {
       "id": "grey-boardwalk-0",
@@ -70,77 +70,80 @@
     }
   ],
   "sharedTerrainImageCompaction": {
-    "schema": 1,
-    "images": 68,
-    "uniqueImagePayloads": 6,
-    "aliasedImageBufferViews": 62,
-    "beforeBinaryBytes": 113500500,
-    "afterBinaryBytes": 76289544,
-    "savedPayloadBytes": 37210853,
-    "beforeBytes": 114443472,
-    "afterBytes": 77231144,
-    "beforeSha256": "afbca60a0b3b2a58c5eaabf7144affc290e023c88c3ad6fc12f0cc2294544333",
-    "afterSha256": "6eb221c4967318fee50ddfb032d2f8ec970641d1deb8272324a42922af58be8c"
+    "schema": 2,
+    "images": 137,
+    "uniqueImagePayloads": 9,
+    "aliasedImageBufferViews": 128,
+    "bufferViews": 4265,
+    "uniqueBufferViewPayloads": 3767,
+    "aliasedBufferViews": 498,
+    "beforeBinaryBytes": 185267180,
+    "afterBinaryBytes": 99832404,
+    "savedPayloadBytes": 85434557,
+    "beforeBytes": 186393888,
+    "afterBytes": 100955012,
+    "beforeSha256": "9392d617d77f4083ba5b637414786785d6fbbe2b959fda059cb93a63c482e4a8",
+    "afterSha256": "ac7b0f2d2aba11dbe1118550e7f1afe9e34592525e106fa10623477fb5a8a7b0"
   },
   "regions": {
     "whitehorn_range": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\nymara-regions\\whitehorn_range\\world.json",
-      "glbSha256": "0140a4e7b227cdc3498cf40dd0d12dc6fa65c5a371340ed9da0883102d3f1cb8",
+      "glbSha256": "7eddf612ac9d7711b6db51d98f4e321704d1b24ea2fbb8137ecf7514721e9e8e",
       "chunks": 36
     },
     "grey_moors": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\nymara-regions\\grey_moors\\world.json",
-      "glbSha256": "62c10551289cfeed752e37d85c80eda6ca882806cf9e13cecb259c3d3721842d",
+      "glbSha256": "9fb63bc8e7d95e55681525622b2bca0d4dd95ecfcbb4c5a4b1937caa3d0edbea",
       "chunks": 31
     },
     "amberwood": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\nymara-regions\\amberwood\\world.json",
-      "glbSha256": "6c19a801f45ed512b96e0488d453fe7ac419c990b4cdff580aea163968181382",
+      "glbSha256": "d49311cd0469d46cae8af2141f4aa0639a1411fc6b78674fc8acb9d374d45111",
       "chunks": 19
     },
     "amethyst_barrens": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\world.json",
-      "glbSha256": "b2e48b4eab7903cab1ba97612884312580dd9c881f1ab123a0b798fabaa18159",
+      "glbSha256": "527149d8ed3c2398fca1689e2347fd332c21df51aa6ada52e95ea0224949199a",
       "chunks": 41
     },
     "mirrorhold": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world.json",
-      "glbSha256": "bd128990f5fc78fa98c0aee42644cd194cf0d35f60af6bfd9542b9cb12f7675b",
+      "glbSha256": "bb6d3d5f6fafb5f3f40d0a36df22f38e932ee90b0ed3cde5ac528dc54012ca32",
       "chunks": 29
     },
     "sunmane_steppe": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\nymara-regions\\sunmane_steppe\\world.json",
-      "glbSha256": "6b1c7a153132a7dcbc3b96e17e1bccc563dd8fc4150b8a247bc62555f78e42dd",
+      "glbSha256": "747cff35208eaf2374aa0669797fe013bc250b7b1c8591e668d2b06a4b424075",
       "chunks": 41
     },
     "four_gates": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\four-gates\\world.json",
-      "glbSha256": "25cd54da96126cfab21f1555d2e9f0a10f1adfc90ed2912157f8c19a2074e909",
+      "glbSha256": "c00406df14224d82ee2bc6cd6b4d90e26965c87b10a4fc18f253677489ca41f9",
       "chunks": 23
     },
     "westhaven": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\nymara-regions\\westhaven\\world.json",
-      "glbSha256": "141c450927c8f5b692b12234d00768e27cfc38c3c38bb58a3976885306a129b2",
+      "glbSha256": "c1f39212bfa45b98fec5b79e7b60a791cd0024a42d611b39a18f16e0a46ef1bc",
       "chunks": 26
     },
     "manymouth_delta": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\nymara-regions\\manymouth_delta\\world.json",
-      "glbSha256": "fa7bcef554bc4a09209c7a0b805fec5387fbe4baa1bc9cdf5dbf276b46294670",
+      "glbSha256": "393bb84898dcd4a2e1bc6a6a4167a0805053591200a61748bfe1cacbe2c70e43",
       "chunks": 29
     },
     "crownwater": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\nymara-regions\\crownwater\\world.json",
-      "glbSha256": "b41092171abc24cb03bc8e99cf3ed4a827524b22b8ca8e320d2fa8bea2d89b7d",
+      "glbSha256": "b5e2a8a3d17ba6381510cffa2361c16d5632dac7880fc255bc1b79d752a5cd4b",
       "chunks": 40
     },
     "verdant_stair": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\nymara-regions\\verdant_stair\\world.json",
-      "glbSha256": "92d8c1c2a4dec5f8950b7db68fc1133d2736a95c2d49bfe79141dcd138dc560b",
+      "glbSha256": "1d171ffb127c78ab8bb5071ac228e8fae6a18ce7468d7c9b6a02091174065621",
       "chunks": 37
     },
     "ssarathi_ruins": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\godot-map-editor-client\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\world.json",
-      "glbSha256": "bde88b393099572c38c221966277d675aabd7e23ce3d22175734868f1d58dbdc",
+      "glbSha256": "135e50890947766f3a5eab9c9cdf27d6fc5889c00fe81a6c8bbdb39ced3436b8",
       "chunks": 44
     }
   }

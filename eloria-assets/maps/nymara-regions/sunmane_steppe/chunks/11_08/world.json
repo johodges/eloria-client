@@ -3176,7 +3176,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:7fb800977bc5898943f6e3fee5130cc01dd0f18746e83a90cd39c3aafe784125",
+  "terrainRevision": "diagonal-spine-v1:bb8a8c3a8f1a2d9e09be449b65ccfe65b81f741a65d04fdf3ac7f5f8df889a0b",
   "sources": [
     "_continent/diagonal-plan.json",
     "_continent/build_continent.py",
@@ -3212,13 +3212,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "collisionSha256": "8508b0af1dbf44b4158aab7d1f91002886c3f88c773fdbe160a848629ab3e018",
-    "terrainRevision": "diagonal-spine-v1:7fb800977bc5898943f6e3fee5130cc01dd0f18746e83a90cd39c3aafe784125"
+    "terrainRevision": "diagonal-spine-v1:bb8a8c3a8f1a2d9e09be449b65ccfe65b81f741a65d04fdf3ac7f5f8df889a0b"
   }
 }

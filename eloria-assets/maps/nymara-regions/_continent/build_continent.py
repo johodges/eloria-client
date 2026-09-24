@@ -36,7 +36,7 @@ from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
 from build_progress import Progress
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','authoring.py','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','authoring.py','authoring_catalog.py','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
 EXPORT_SOURCES=('build_continent.py','scene_io.py','terrain_export.py','compact_glb_images.py','bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_prepare.py','coastal_bridge_export.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py')
 
 
@@ -345,7 +345,9 @@ def repair_saved_seam_approaches(world,content,route_in_legs,snapshot_claims,res
 
 def prepare(library,output):
     PROGRESS.start('compose',4);PROGRESS.step('loading libraries and content',0,4)
-    snapshot=AUTHORING.load_snapshot()
+    snapshots=AUTHORING.load_snapshots();snapshots_by_region={
+        snapshot.document['regionId']:snapshot for snapshot in snapshots}
+    authored_regions=set(snapshots_by_region)
     plan_sha=digest(HERE/'diagonal-plan.json')
     edits_sha=object_edits_digest()
     profile_sha=digest(HERE/'legacy-server-profile/config/eloria/maps.txt')
@@ -353,21 +355,27 @@ def prepare(library,output):
     dependencies=geometry_dependencies()
     certificate_paths=tuple(HERE.glob('*.py'))+(HERE/'../_northern/requirements.txt',)
     sources={source_key(p):digest(p) for p in certificate_paths}
-    sources.update(snapshot.bound_sources())
+    for snapshot in snapshots:sources.update(snapshot.bound_sources())
     shaping={name:digest(HERE/name) for name in SHAPING_SOURCES}
     templates=json.loads((HERE/'legacy-contracts.json').read_text())
-    templates[AUTHORING.SUNMANE]=AUTHORING.apply_gameplay(templates[AUTHORING.SUNMANE],snapshot)
+    for region,snapshot in snapshots_by_region.items():
+        templates[region]=AUTHORING.apply_gameplay(templates[region],snapshot)
     legacy=json.loads((HERE/'legacy-geography.json').read_text())
-    plan=AUTHORING.apply_plan(L.load_plan(),snapshot)
+    plan=L.load_plan()
+    for snapshot in snapshots:plan=AUTHORING.apply_plan(plan,snapshot)
     started=time.monotonic();world=World(plan)
-    world.authoring_snapshot=snapshot
-    AUTHORING.verify_ownership(world,snapshot)
-    initial_authoring_terrain=AUTHORING.apply_terrain(world,snapshot)
+    world.authoring_snapshots=snapshots_by_region
+    world.authoring_snapshot=snapshots_by_region.get(AUTHORING.SUNMANE)
+    initial_authoring_terrain={}
+    for region,snapshot in snapshots_by_region.items():
+        AUTHORING.verify_ownership(world,snapshot)
+        initial_authoring_terrain[region]=AUTHORING.apply_terrain(world,snapshot)
     world.original_height=world.height.copy()
     world.water=L.water_fields(world.gx,world.gz,height=world.height,plan=world.plan)
     print(f'Global landform sampled in {time.monotonic()-started:.1f}s',flush=True)
     content=Content(world,library,templates,legacy);content.load()
-    authoring_runtime=AUTHORING.apply_runtime_bindings(content,snapshot)
+    authoring_runtime={region:AUTHORING.apply_runtime_bindings(content,snapshot)
+                       for region,snapshot in snapshots_by_region.items()}
     PROGRESS.step('roads and routing',1,4)
     from amberwood_access import prepare_amberwood_access,refresh_amberwood_access_heights
     from amberwood_support import prepare_amberwood_routes,apply_amberwood_support
@@ -399,14 +407,16 @@ def prepare(library,output):
     # on a road crosses a plan river only on a site it claims (river_crossings.py).
     from river_crossings import prepare_river_crossings,dry_end,branch_start,water_distance_at,snapshot_claims,restore_claims,crossing_report
     prepare_river_crossings(world)
-    # Install the complete saved Sunmane network before any neighbouring route
+    # Install every complete saved network before any neighbouring route
     # is solved.  It can guide branches and seam approaches, but no retired
     # Sunmane route may claim a bridge site or alter another territory first.
-    authoring_routes=AUTHORING.replace_routes(world,snapshot)
+    authoring_routes={region:AUTHORING.replace_routes(world,snapshot)
+                      for region,snapshot in snapshots_by_region.items()}
     validate_river_setbacks(world,content)
     world.plan_connections()
-    AUTHORING.verify_seam_anchors(world,snapshot)
-    saved_seam_ids={entry['id'] for entry in snapshot.document['seams']['anchors']}
+    for snapshot in snapshots:AUTHORING.verify_seam_anchors(world,snapshot)
+    saved_seam_ids={entry['id'] for snapshot in snapshots
+                    for entry in snapshot.document['seams']['anchors']}
     add_mirror_streets(world,content)
     from ferry_export import fit_landing
     from ferry_support import remember_ferry_fit,restore_selected_shores,validate_final_ferries
@@ -425,7 +435,7 @@ def prepare(library,output):
                 try:
                     for side,region in enumerate(link['regions']):
                         outward=normal if side==0 else -normal
-                        if region==AUTHORING.SUNMANE:
+                        if region in authored_regions:
                             identity=link['id']+'-'+region
                             saved=next((road for road in world.roads if road['id']==identity),None)
                             if saved is None:raise AUTHORING.AuthoringError(f'{identity}: authored seam route is absent')
@@ -484,7 +494,7 @@ def prepare(library,output):
     # Inhabited approaches grow from the public roads to existing doorways.
     # Close destinations share a trail; resources remain in the wilderness.
     for region in world.ids:
-        if region==AUTHORING.SUNMANE:continue
+        if region in authored_regions:continue
         hub=world.hub(region)
         seen=[]
         for entry in content.templates[region].get('portals',[]):
@@ -521,7 +531,7 @@ def prepare(library,output):
         if source in world.ids and target in world.ids:continue
         for region,tile in ((source,fields[start:start+2]),(target,fields[start+3:start+5])):
             if region not in world.ids:continue
-            if region==AUTHORING.SUNMANE:continue
+            if region in authored_regions:continue
             point=content.mapped_server_point(region,list(map(int,tile)),roads=True)[[0,2]]
             if int(world.owner_at(*point))==world.ids.index(region):destinations[region].append((number,point,source,target))
     for region,entries in destinations.items():
@@ -554,7 +564,7 @@ def prepare(library,output):
     # Authored resource sites on steep ground that no corridor serves get a trail.
     from resource_trails import prepare_resource_trails
     trails=prepare_resource_trails(world,content,HERE/'legacy-server-profile/config/eloria',
-                                   exclude_regions={AUTHORING.SUNMANE})
+                                   exclude_regions=authored_regions)
     print(f"Resource trails: {len(trails['trails'])} for {trails['steepSites']} steep sites ({trails['servedSites']} already beside a road)",flush=True)
     prepare_amberwood_routes(world,content)
     # Every alignment exists now: record the retained solids any road still crosses.
@@ -583,10 +593,10 @@ def prepare(library,output):
     from reach_links import apply_reach_links
     reach=apply_reach_links(world,content)
     if reach['links']:print(f"Reach links: {reach['links']} written on the finished ground ({reach['changedCells']} cells changed, up to {reach['maximumChangeMetres']} m)",flush=True)
-    # The exact editor preview is final terrain authority for Sunmane and its
-    # one-cell seam ring.  Routing/support calculations may inspect it, but no
-    # legacy grading or reach-link pass may survive over those vertices.
-    final_authoring_terrain=AUTHORING.apply_terrain(world,snapshot)
+    # Each exact editor preview is final terrain authority for its territory
+    # and one-cell seam ring. No legacy grading may survive those vertices.
+    final_authoring_terrain={region:AUTHORING.apply_terrain(world,snapshot)
+                             for region,snapshot in snapshots_by_region.items()}
     world.water=L.water_fields(world.gx,world.gz,height=world.height,plan=world.plan)
     validate_saved_seam_approaches(world)
     from bridge_prepare import prepare_bridges
@@ -620,19 +630,26 @@ def prepare(library,output):
     if digest(HERE/'diagonal-plan.json')!=plan_sha:raise ValueError('Landscape plan changed during composition')
     if object_edits_digest()!=edits_sha:raise ValueError('Object edits changed during composition')
     if digest(profile)!=profile_sha:raise ValueError('Authored entrances changed during composition')
-    current_snapshot=AUTHORING.load_snapshot()
-    if current_snapshot.digest!=snapshot.digest or current_snapshot.bound_sources()!=snapshot.bound_sources():
-        raise ValueError('Sunmane authoring scene or snapshot changed during composition; run prepare again')
+    current_snapshots={value.document['regionId']:value for value in AUTHORING.load_snapshots()}
+    if set(current_snapshots)!=set(snapshots_by_region) or any(
+            current_snapshots[region].digest!=snapshot.digest or
+            current_snapshots[region].bound_sources()!=snapshot.bound_sources()
+            for region,snapshot in snapshots_by_region.items()):
+        raise ValueError('An authored scene or snapshot changed during composition; run prepare again')
     PROGRESS.step('writing the composition',3,4)
     # Cache is local generated state with exact source certificates. Never load
     # an arbitrary downloaded pickle as an authored continent.
     with (output/'composed.pkl').open('wb') as handle:pickle.dump((world,content),handle,protocol=5)
     json_write(output/'composition.json',{'schema':2,'planSha256':plan_sha,'objectEditsSha256':edits_sha,'objectEdits':{'document':content.edits.doc,'report':content.edits.report},'entranceProfileSha256':profile_sha,'compositionAlgorithmSha256':algorithm_sha,'geometryDependencies':dependencies,
-        'continentAuthoring':{'schema':snapshot.document['schema'],'regionId':snapshot.document['regionId'],
-            'snapshotSha256':snapshot.digest,'sources':snapshot.bound_sources(),
-            'terrainInitial':initial_authoring_terrain,'terrainFinal':final_authoring_terrain,
-            'routes':authoring_routes,'runtimeBindings':authoring_runtime,
-            'replacements':snapshot.document['replacements']},
+        'continentAuthoring':{'schema':3,'regions':{
+            region:{'snapshotSchema':snapshot.document['schema'],
+                'snapshotSha256':snapshot.digest,'sources':snapshot.bound_sources(),
+                'terrainInitial':initial_authoring_terrain[region],
+                'terrainFinal':final_authoring_terrain[region],
+                'routes':authoring_routes[region],
+                'runtimeBindings':authoring_runtime[region],
+                'replacements':snapshot.document['replacements']}
+            for region,snapshot in snapshots_by_region.items()}},
         'library':{r:digest(Path(library)/r/'source-certificate.json') for r in world.ids},
         'sources':sources,
         'objects':len(content.objects),'roads':len(world.roads),'assemblies':content.assembly_records,
@@ -658,12 +675,15 @@ def load_composed(output,library):
     algorithm_sha=composition_algorithm_sha()
     if certificate.get('compositionAlgorithmSha256')!=algorithm_sha:raise ValueError('Composition algorithm changed; recompose before export')
     if certificate.get('geometryDependencies')!=geometry_dependencies():raise ValueError('Geometry dependencies changed; recompose before export')
-    snapshot=AUTHORING.load_snapshot()
-    authored=certificate.get('continentAuthoring')
-    if not isinstance(authored,dict) or authored.get('snapshotSha256')!=snapshot.digest:
-        raise ValueError('Sunmane authoring snapshot changed; recompose before export')
-    if authored.get('sources')!=snapshot.bound_sources():
-        raise ValueError('Sunmane authoring scene or sidecars changed; recompose before export')
+    snapshots={snapshot.document['regionId']:snapshot for snapshot in AUTHORING.load_snapshots()}
+    authored=certificate.get('continentAuthoring',{}).get('regions')
+    if not isinstance(authored,dict) or set(authored)!=set(snapshots):
+        raise ValueError('Authored territory set changed; recompose before export')
+    for region,snapshot in snapshots.items():
+        if authored[region].get('snapshotSha256')!=snapshot.digest:
+            raise ValueError(f'{region}: authoring snapshot changed; recompose before export')
+        if authored[region].get('sources')!=snapshot.bound_sources():
+            raise ValueError(f'{region}: authoring scene or sidecars changed; recompose before export')
     for region,sha in certificate['library'].items():
         if sha!=digest(Path(library)/region/'source-certificate.json'):raise ValueError(f'{region}: source content changed; recompose')
     sources={relative.replace('\\','/'):sha for relative,sha in certificate['sources'].items()}
@@ -771,12 +791,12 @@ def manifest_for(world,content,region):
     m['coordinateTransform']={'metresPerTile':1.,'serverOrigin':origin,'serverCells':cells,'origin':[0,0,0],
         'walkingHeight':arrival[1],'invertServerY':True,
         'addressableWorldBounds':{'min':[-origin[0],origin[1]-cells[1]],'max':[cells[0]-origin[0],origin[1]]}}
-    authored=(getattr(world,'authoring_snapshot',None) is not None and region==AUTHORING.SUNMANE)
+    authored=region in getattr(world,'authoring_snapshots',{})
     if authored:
         spawns=m.get('spawnPoints',[])
-        if not spawns:raise AUTHORING.AuthoringError('authored Sunmane manifest lost every spawn point')
+        if not spawns:raise AUTHORING.AuthoringError(f'authored {region} manifest lost every spawn point')
         defaults=[spawn for spawn in spawns if spawn.get('default')]
-        if len(defaults)>1:raise AUTHORING.AuthoringError('authored Sunmane manifest has multiple default spawns')
+        if len(defaults)>1:raise AUTHORING.AuthoringError(f'authored {region} manifest has multiple default spawns')
         selected=defaults[0] if defaults else spawns[0]
         default_spawn=str(selected['id']);walking_height=float(selected['position'][1])
     else:
@@ -1063,13 +1083,16 @@ def composition_freshness(output=None):
     compare('compositionAlgorithm',composition.get('compositionAlgorithmSha256'),composition_algorithm_sha())
     compare('geometryDependencies',composition.get('geometryDependencies'),geometry_dependencies())
     try:
-        snapshot=AUTHORING.load_snapshot()
+        snapshots={snapshot.document['regionId']:snapshot for snapshot in AUTHORING.load_snapshots()}
     except (OSError,ValueError) as error:
         state['missing'].append('continentAuthoring');state['current']['continentAuthoring']=str(error)
     else:
-        authored=composition.get('continentAuthoring',{})
-        compare('continentAuthoring.snapshot',authored.get('snapshotSha256'),snapshot.digest)
-        compare('continentAuthoring.sources',authored.get('sources'),snapshot.bound_sources())
+        authored=composition.get('continentAuthoring',{}).get('regions',{})
+        compare('continentAuthoring.regions',sorted(authored),sorted(snapshots))
+        for region,snapshot in snapshots.items():
+            record=authored.get(region,{})
+            compare(f'continentAuthoring.{region}.snapshot',record.get('snapshotSha256'),snapshot.digest)
+            compare(f'continentAuthoring.{region}.sources',record.get('sources'),snapshot.bound_sources())
     sources={relative.replace('\\','/'):sha for relative,sha in composition.get('sources',{}).items()}
     for relative in sorted(shaping_source_keys()):
         source=CLIENT/relative;current=digest(source) if source.exists() else None

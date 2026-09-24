@@ -11,6 +11,7 @@ from unittest import mock
 import struct
 
 import numpy as np
+import pytest
 
 HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE))
@@ -84,6 +85,256 @@ def test_runtime_binding_placement_uses_exact_identity_and_shared_marker_aliases
     assert spec['runtimeBindingSourceTiles'] == {
         'door': [1, 1], 'door-alias': [1, 1], 'return': [2, 2],
         'first': [9, 9], 'second': [9, 9]}
+
+
+def test_cross_region_profile_record_uses_qualified_target_marker_and_publishes_at_source():
+    """A Whitehorn door may be authored by a saved Amethyst portal marker."""
+    identity = 'maps.txt:531:door:amethyst_barrens->resonant_vault@315:227'
+    binding = {
+        'id': identity,
+        'marker': {'section': 'portals', 'id': 'resonant_vault'},
+        'targetOffset': [2., 0., -3.],
+        'source': {'path': 'config/eloria/maps.txt', 'line': 531,
+                   'oldTile': [315, 227]},
+    }
+    grid = np.ones((40, 40), dtype=np.uint8)
+    world = types.SimpleNamespace(regions={
+        'whitehorn_range': {'center': [0., 0.]},
+        'amethyst_barrens': {'center': [100., 200.]},
+    })
+    authored_point = np.array([4., 12., 7.])
+    content = types.SimpleNamespace(
+        templates={'whitehorn_range': {'coordinateTransform': {'serverOrigin': [20, 20]}}},
+        runtime_bindings={identity: binding},
+        runtime_bindings_by_region={'amethyst_barrens': {identity: binding}},
+        authored_runtime_points={('amethyst_barrens', identity): authored_point},
+        mapped_point=lambda *args: (_ for _ in ()).throw(AssertionError('tile fallback used')))
+    spec = {'serverOrigin': [20, 20], 'previousServerOrigin': [20, 20],
+            'tilePositions': {}, 'runtimeBindings': {},
+            'runtimeBindingPositions': {}, 'runtimeBindingSourceTiles': {},
+            'runtimeMarkerPositions': {}, 'portalPositions': {}, 'arrival': [20, 20]}
+    report = {'placements': [], 'failures': [], 'regions': {'whitehorn_range': {}}}
+    collision = {'heights': np.full((80, 80), 12, dtype=np.float32)}
+    placement = E.RegionPlacement(
+        world, content, 'whitehorn_range', spec, collision, grid, Sources, report)
+    placement.connect_hub([20, 20])
+
+    tile = placement.place([315, 227], 'whitehorn to resonant vault', 20, identity=identity)
+
+    assert tile == [23, 12]
+    assert spec['runtimeBindings'] == {identity: binding}
+    assert spec['runtimeBindingPositions'][identity] == tile
+    assert spec['runtimeBindingSourceTiles'][identity] == [315, 227]
+    # Region qualification is fail-closed if producer data ever names two owners.
+    content.runtime_bindings_by_region['whitehorn_range'] = {identity: binding}
+    with pytest.raises(E.PlacementError, match='ambiguous region owners'):
+        placement.expected([315, 227], identity)
+
+
+def test_territory_profile_consumes_authored_binding_for_already_seated_arrival(tmp_path):
+    """The actual territories.txt path must bind connect_hub's existing tile."""
+    identity = 'territories.txt@149:95'
+    binding = {
+        'id': identity,
+        'source': {'path': 'config/eloria/territories.txt', 'line': 36,
+                   'oldTile': [149, 95]},
+        'marker': {'section': 'spawnPoints', 'id': 'continent-arrival'},
+        'role': 'territory',
+        'targetOffset': [0., 0., 0.],
+    }
+    grid = np.ones((30, 30), dtype=np.uint8)
+    world = types.SimpleNamespace(
+        regions={'amethyst_barrens': {'center': [100., 200.]}},
+        hub=lambda region: np.array([100.5, 199.5]))
+    content = types.SimpleNamespace(
+        templates={'amethyst_barrens': {
+            'coordinateTransform': {'serverOrigin': [15, 15]}}},
+        runtime_bindings={identity: binding},
+        runtime_binding_source_tiles={
+            ('config/eloria/territories.txt', (149, 95)): [identity]},
+        authored_runtime_points={
+            ('amethyst_barrens', identity): np.array([100.5, 10., 199.5])},
+        mapped_point=lambda *args: (_ for _ in ()).throw(
+            AssertionError('territory binding used a generic tile fallback')))
+    spec = {'serverOrigin': [15, 15], 'previousServerOrigin': [15, 15],
+            'tilePositions': {}, 'runtimeBindings': {},
+            'runtimeBindingPositions': {}, 'runtimeBindingSourceTiles': {},
+            'runtimeMarkerPositions': {}, 'portalPositions': {}, 'arrival': [15, 15]}
+    report = {'placements': [], 'failures': [], 'regions': {'amethyst_barrens': {}}}
+    placement = E.RegionPlacement(
+        world, content, 'amethyst_barrens', spec,
+        {'heights': np.full((60, 60), 10, dtype=np.float32)},
+        grid, Sources, report)
+    placement.connect_hub([149, 95], grid.astype(bool))
+    seated = list(spec['arrival'])
+
+    def rewrite_profile(text, rule, mappings):
+        mapped = mappings['amethyst_barrens']['_native_mapper']([149, 95])
+        assert mapped == seated
+        return text, 1
+
+    shared = types.SimpleNamespace(
+        RULES={'territories.txt': object()}, rewrite_profile=rewrite_profile,
+        rewrite_definition=lambda text, mappings: (text, 0))
+    publisher = types.SimpleNamespace(
+        CONTENT={}, transform_tile=lambda old, spec: old,
+        remap_metadata=lambda *args: None,
+        rewrite_gameplay_source=lambda text, kind, mappings: text)
+    E.collect_gameplay_points(
+        tmp_path, {
+            'territories.txt': ('amethyst_barrens | Amethyst Barrens | amethyst_barrens | '
+                                'magic | 40 | 95 | 231 | 95 | 149 | 95 |\n'),
+            'client_content_manifest.json': '{"maps": []}',
+        }, {'amethyst_barrens': placement},
+        {group: {'amethyst_barrens': []}
+         for group in ('npcs', 'harvest', 'spawns', 'interactives')},
+        shared, publisher)
+
+    assert spec['arrival'] == seated
+    assert spec['runtimeBindings'] == {identity: binding}
+    assert spec['runtimeBindingPositions'][identity] == seated
+    assert spec['runtimeBindingSourceTiles'][identity] == [149, 95]
+    assert report['failures'] == []
+
+
+def test_preexisting_source_tile_does_not_collapse_distinct_marker_offsets():
+    bindings = {
+        'first': {
+            'marker': {'section': 'interactives', 'id': 'shared'},
+            'targetOffset': [0., 0., 0.]},
+        'second': {
+            'marker': {'section': 'interactives', 'id': 'shared'},
+            'targetOffset': [2., 0., 0.]},
+    }
+    world = types.SimpleNamespace(regions={'amethyst_barrens': {'center': [100., 200.]}})
+    content = types.SimpleNamespace(
+        templates={'amethyst_barrens': {
+            'coordinateTransform': {'serverOrigin': [15, 15]}}},
+        runtime_bindings=bindings,
+        authored_runtime_points={
+            ('amethyst_barrens', 'first'): np.array([100.5, 10., 199.5]),
+            ('amethyst_barrens', 'second'): np.array([102.5, 10., 199.5]),
+        })
+    spec = {'serverOrigin': [15, 15], 'previousServerOrigin': [15, 15],
+            'tilePositions': {}, 'runtimeBindings': {},
+            'runtimeBindingPositions': {}, 'runtimeBindingSourceTiles': {},
+            'runtimeMarkerPositions': {}, 'portalPositions': {}, 'arrival': [15, 15]}
+    report = {'placements': [], 'failures': [], 'regions': {'amethyst_barrens': {}}}
+    placement = E.RegionPlacement(
+        world, content, 'amethyst_barrens', spec,
+        {'heights': np.full((60, 60), 10, dtype=np.float32)},
+        np.ones((30, 30), dtype=np.uint8), Sources, report)
+
+    first = placement.place([149, 95], 'first', 5, identity='first')
+    second = placement.place([149, 95], 'second', 5, identity='second')
+    assert first != second
+    assert spec['runtimeBindingPositions'] == {'first': first, 'second': second}
+    assert report['failures'] == []
+
+
+def test_two_authored_regions_publish_only_their_qualified_bindings_and_spawns():
+    sun_aliases = {
+        'sun-door': {'marker': {'section': 'interactives', 'id': 'shared'},
+                     'targetOffset': [0., 0., 0.]},
+        'sun-return': {'marker': {'section': 'interactives', 'id': 'shared'},
+                       'targetOffset': [3., 0., 1.]},
+    }
+    amethyst_bindings = {
+        'amethyst-secret': {'marker': {'section': 'runtimePoints', 'id': 'secret'},
+                            'targetOffset': [0., 0., 0.]},
+    }
+    content = types.SimpleNamespace(
+        authored_regions={'sunmane_steppe', 'amethyst_barrens'},
+        runtime_bindings={**sun_aliases, **amethyst_bindings},
+        runtime_bindings_by_region={
+            'sunmane_steppe': sun_aliases,
+            'amethyst_barrens': amethyst_bindings,
+        },
+        templates={
+            'sunmane_steppe': {'coordinateTransform': {'serverOrigin': [194, 292]}},
+            'amethyst_barrens': {'coordinateTransform': {'serverOrigin': [182, 166]}},
+        })
+
+    published_sun = E.region_runtime_bindings(content, 'sunmane_steppe')
+    published_amethyst = E.region_runtime_bindings(content, 'amethyst_barrens')
+    assert set(published_sun) == {'sun-door', 'sun-return'}
+    assert published_sun['sun-door']['marker'] == published_sun['sun-return']['marker']
+    assert published_sun['sun-door']['targetOffset'] != published_sun['sun-return']['targetOffset']
+    assert set(published_amethyst) == {'amethyst-secret'}
+    published_sun['sun-door']['targetOffset'][0] = 99.
+    assert sun_aliases['sun-door']['targetOffset'] == [0., 0., 0.]
+
+    report = {'regions': {'sunmane_steppe': {}, 'amethyst_barrens': {}}}
+    cases = (
+        ('sunmane_steppe', [
+            {'id': 'sun-secondary', 'position': [1., 7., 2.]},
+            {'id': 'sun-primary', 'default': True, 'position': [3., 9., 4.]},
+        ], 'sun-primary', 9.),
+        ('amethyst_barrens', [
+            {'id': 'amethyst-first', 'position': [5., 11., 6.]},
+            {'id': 'amethyst-second', 'position': [7., 13., 8.]},
+        ], 'amethyst-first', 11.),
+    )
+    for region, spawns, expected_default, expected_height in cases:
+        placement = types.SimpleNamespace(
+            region=region, content=content,
+            spec={'previousServerOrigin': content.templates[region]['coordinateTransform']['serverOrigin'],
+                  'tilePositions': {}}, report=report)
+        manifest = {'spawnPoints': copy.deepcopy(spawns), 'coordinateTransform': {}}
+        E.update_markers(placement, manifest)
+        assert manifest['navigation']['defaultSpawn'] == expected_default
+        assert manifest['coordinateTransform']['walkingHeight'] == expected_height
+
+
+def test_authored_spawn_contract_rejects_missing_or_multiple_defaults():
+    region = 'amethyst_barrens'
+    content = types.SimpleNamespace(
+        authored_regions={region},
+        templates={region: {'coordinateTransform': {'serverOrigin': [182, 166]}}})
+    placement = types.SimpleNamespace(
+        region=region, content=content,
+        spec={'previousServerOrigin': [182, 166], 'tilePositions': {}},
+        report={'regions': {region: {}}})
+    with pytest.raises(E.PlacementError, match='lost every spawn point'):
+        E.update_markers(placement, {'coordinateTransform': {}})
+    with pytest.raises(E.PlacementError, match='multiple default spawns'):
+        E.update_markers(placement, {
+            'coordinateTransform': {},
+            'spawnPoints': [
+                {'id': 'one', 'default': True, 'position': [0., 1., 0.]},
+                {'id': 'two', 'default': True, 'position': [1., 2., 1.]},
+            ],
+        })
+
+
+def test_legacy_flat_runtime_bindings_are_sunmane_only_and_never_override_a_qualified_map():
+    aliases = {
+        'door': {'marker': {'section': 'interactives', 'id': 'shared'}},
+        'return': {'marker': {'section': 'interactives', 'id': 'shared'}},
+    }
+    legacy = types.SimpleNamespace(runtime_bindings=aliases)
+    assert E.region_runtime_bindings(legacy, 'sunmane_steppe') == aliases
+    assert E.region_runtime_bindings(legacy, 'amethyst_barrens') == {}
+
+    qualified = types.SimpleNamespace(
+        runtime_bindings=aliases,
+        runtime_bindings_by_region={'amethyst_barrens': {'amethyst': {'marker': {}}}})
+    assert E.region_runtime_bindings(qualified, 'sunmane_steppe') == {}
+    assert set(E.region_runtime_bindings(qualified, 'amethyst_barrens')) == {'amethyst'}
+
+    legacy_content = types.SimpleNamespace(
+        templates={'sunmane_steppe': {'coordinateTransform': {'serverOrigin': [194, 292]}}})
+    legacy_placement = types.SimpleNamespace(
+        region='sunmane_steppe', content=legacy_content,
+        spec={'previousServerOrigin': [194, 292], 'tilePositions': {}},
+        report={'regions': {'sunmane_steppe': {}}})
+    legacy_manifest = {
+        'coordinateTransform': {},
+        'spawnPoints': [{'id': 'legacy', 'position': [0., 4., 0.]}],
+    }
+    E.update_markers(legacy_placement, legacy_manifest)
+    assert legacy_manifest['navigation']['defaultSpawn'] == 'legacy'
+    assert legacy_manifest['coordinateTransform']['walkingHeight'] == 4.
 
 
 def test_saved_runtime_edits_reach_normal_placement_with_distinct_endpoint_offsets():

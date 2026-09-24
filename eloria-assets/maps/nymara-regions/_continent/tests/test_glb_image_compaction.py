@@ -3,6 +3,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 import numpy as np
 
@@ -73,6 +74,50 @@ class ImageCompactionTests(unittest.TestCase):
             second = compact_embedded_images(path)
             self.assertEqual(second["aliasedImageBufferViews"], 1)
             self.assertEqual(second["beforeBytes"], second["afterBytes"])
+
+    def test_all_exact_views_share_aligned_storage_and_preserve_logical_bytes(self):
+        repeated = b"seven77"
+        collision = b"other77"
+        odd = b"odd"
+        document = {
+            "buffers": [{"byteLength": 35}],
+            "bufferViews": [
+                {"buffer": 0, "byteOffset": 0, "byteLength": 7, "target": 34963},
+                {"buffer": 0, "byteOffset": 8, "byteLength": 3},
+                {"buffer": 0, "byteOffset": 12, "byteLength": 7, "target": 34962},
+                {"buffer": 0, "byteOffset": 20, "byteLength": 7, "target": 34963},
+                {"buffer": 0, "byteOffset": 28, "byteLength": 7, "target": 34963},
+            ],
+            "accessors": [{"bufferView": index} for index in range(5)],
+            "images": [],
+        }
+        binary = (repeated + b"\0" + odd + b"\0" + repeated + b"\0"
+                  + repeated + b"\0" + collision)
+        before = copy.deepcopy(document)
+        before_views = [view_bytes(document, binary, index) for index in range(5)]
+
+        # Force every payload into one digest bucket. Exact equality, rather
+        # than the digest alone, must decide which ranges may be shared.
+        digest = mock.Mock()
+        digest.digest.return_value = b"collision"
+        with mock.patch("compact_glb_images.hashlib.sha256", return_value=digest):
+            after, compacted, report = compact_document(document, binary)
+
+        self.assertEqual(before_views,
+                         [view_bytes(after, compacted, index) for index in range(5)])
+        self.assertEqual(report["aliasedBufferViews"], 2)
+        self.assertEqual(report["uniqueBufferViewPayloads"], 3)
+        self.assertEqual(after["bufferViews"][0]["byteOffset"],
+                         after["bufferViews"][2]["byteOffset"])
+        self.assertEqual(after["bufferViews"][0]["byteOffset"],
+                         after["bufferViews"][3]["byteOffset"])
+        self.assertNotEqual(after["bufferViews"][0]["byteOffset"],
+                            after["bufferViews"][4]["byteOffset"])
+        for old, new in zip(before["bufferViews"], after["bufferViews"]):
+            self.assertEqual({k: v for k, v in old.items() if k != "byteOffset"},
+                             {k: v for k, v in new.items() if k != "byteOffset"})
+            self.assertEqual(new["byteOffset"] % 4, 0)
+        self.assertEqual(len(compacted) % 4, 0)
 
     def test_unsupported_or_ambiguous_buffer_structures_fail_closed(self):
         document = {"buffers": [{"byteLength": 8, "uri": "external.bin"}],

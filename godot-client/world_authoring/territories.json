@@ -12,8 +12,8 @@
       "id": "amethyst_barrens",
       "label": "Amethyst Barrens",
       "manifestPath": "res://../eloria-assets/maps/nymara-regions/amethyst_barrens/world.json",
-      "scenePath": null,
-      "authoringSpecPath": null
+      "scenePath": "res://world_authoring/regions/amethyst_barrens/amethyst_barrens.tscn",
+      "authoringSpecPath": "res://world_authoring/regions/amethyst_barrens/region-authoring-spec.json"
     },
     {
       "id": "crownwater",

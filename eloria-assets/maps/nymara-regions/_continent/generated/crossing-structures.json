@@ -2,7 +2,7 @@
   "bridges": {
     "components": 40,
     "visibleCells": 8748,
-    "visibleTriangles": 18576,
+    "visibleTriangles": 18027,
     "wetCells": 4520,
     "siteCells": 3836,
     "looseWetCells": 3243,
@@ -12664,7 +12664,7 @@
     ],
     "maximumGrade": 0.65,
     "outlineMaximumInsetFraction": 0.008555138626189618,
-    "precisionCleanupAreaSquareMetres": 0.00014651130417147516,
+    "precisionCleanupAreaSquareMetres": 0.00015559164014643492,
     "supports": [
       {
         "component": 14,
@@ -12685,42 +12685,6 @@
             ],
             "shiftMetres": 0.0,
             "minimumDeck": 194.9871252086673,
-            "status": "supported"
-          }
-        ]
-      },
-      {
-        "component": 500,
-        "supportsBefore": 2,
-        "supportsAfter": 2,
-        "oldMaximumUnsupportedSpanEstimateMetres": 12.229675819221848,
-        "maximumUnsupportedSpanEstimateMetres": 12.229675819221848,
-        "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
-        "piers": [
-          {
-            "planned": [
-              1068.5,
-              212.5
-            ],
-            "position": [
-              1068.5,
-              212.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 1.5089490182544978,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              1076.5,
-              220.5
-            ],
-            "position": [
-              1076.5,
-              220.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 2.70977863092412,
             "status": "supported"
           }
         ]
@@ -14060,6 +14024,7 @@
       }
     ],
     "suppressedGeneratedComponents": [
+      500,
       501
     ],
     "policy": "Decks only at claimed crossing sites (span plus landings) and over deep water crossed away from a site; disjoint road capsule union clipped onto one common floor; unchanged terrain; exact ownership by cell; piers only over water; timber fascia below the floor."
@@ -14353,7 +14318,7 @@
     "marketRamp": {
       "start": [
         493.9481178253666,
-        38.243718502893714,
+        38.243718502929866,
         577.0434533866883
       ],
       "landing": [
@@ -14363,7 +14328,7 @@
       ],
       "levelLandingMetres": 4.0,
       "lengthMetres": 39.0,
-      "grade": 0.5585036244235569
+      "grade": 0.558503624422524
     },
     "rootRamp": {
       "start": [
@@ -15358,7 +15323,7 @@
               409.0199,
               1191.9499
             ],
-            "bottom": 2.13436008887716,
+            "bottom": 2.134360100647076,
             "top": 2.538012738656998,
             "floorGap": 0.08000000000000007
           },
@@ -15367,7 +15332,7 @@
               412.9263,
               1191.0896
             ],
-            "bottom": 2.0866622904193,
+            "bottom": 2.0866622725963975,
             "top": 2.495357120531205,
             "floorGap": 0.08000000000000007
           },
@@ -15376,7 +15341,7 @@
               416.8327,
               1190.2294
             ],
-            "bottom": 2.053921517445951,
+            "bottom": 2.05392151040048,
             "top": 2.4514661077211706,
             "floorGap": 0.08000000000000007
           },
@@ -15385,7 +15350,7 @@
               420.7391,
               1189.3691
             ],
-            "bottom": 1.7471078394518376,
+            "bottom": 1.747107847944517,
             "top": 2.4092327520708308,
             "floorGap": 0.08000000000000007
           },
@@ -15394,7 +15359,7 @@
               424.6455,
               1188.5088
             ],
-            "bottom": 1.609896536629851,
+            "bottom": 1.6098965381684767,
             "top": 2.365774147848927,
             "floorGap": 0.08000000000000007
           },
@@ -15403,7 +15368,7 @@
               428.0874,
               1185.5391
             ],
-            "bottom": 1.9550819516550482,
+            "bottom": 1.9550819518577696,
             "top": 2.323313056339122,
             "floorGap": 0.08000000000000007
           },
@@ -15412,7 +15377,7 @@
               428.5519,
               1187.6486
             ],
-            "bottom": 1.7666214237903684,
+            "bottom": 1.7666214237908064,
             "top": 2.323463335878104,
             "floorGap": 0.08000000000000007
           },
@@ -16097,7 +16062,7 @@
               695.8741,
               1084.7025
             ],
-            "bottom": 12.439536405969765,
+            "bottom": 12.439536405969761,
             "top": 15.719747781033046,
             "floorGap": 0.08000000000000007
           },
@@ -16142,7 +16107,7 @@
               704.6348,
               1076.6098
             ],
-            "bottom": 13.045619975574807,
+            "bottom": 13.045619975574674,
             "top": 15.121594504588922,
             "floorGap": 0.08000000000000007
           },
@@ -16151,7 +16116,7 @@
               705.6427,
               1078.5202
             ],
-            "bottom": 13.191290133224795,
+            "bottom": 13.191290133219615,
             "top": 15.123551314572403,
             "floorGap": 0.08000000000000007
           },
@@ -16169,7 +16134,7 @@
               709.1805,
               1076.6535
             ],
-            "bottom": 13.423085954509,
+            "bottom": 13.423085954504188,
             "top": 14.834028941018229,
             "floorGap": 0.08000000000000007
           },
@@ -16205,7 +16170,7 @@
               729.9933,
               1097.3706
             ],
-            "bottom": 13.56415131484439,
+            "bottom": 13.564151314844379,
             "top": 15.113283088214832,
             "floorGap": 0.08000000000000007
           },
@@ -16214,7 +16179,7 @@
               731.9222,
               1096.3984
             ],
-            "bottom": 13.564215155364668,
+            "bottom": 13.564215155364664,
             "top": 15.113040213666428,
             "floorGap": 0.08000000000000007
           },
@@ -16660,7 +16625,7 @@
               614.5262,
               1180.9101
             ],
-            "bottom": 0.052502509380075446,
+            "bottom": 0.05250250930427797,
             "top": 3.9546994843578256,
             "floorGap": 0.08000000000000007
           },

@@ -15,6 +15,7 @@ import subprocess
 import sys
 
 from build_progress import Progress
+import authoring_catalog
 
 HERE=Path(__file__).resolve().parent
 CLIENT=HERE.parents[3]
@@ -35,7 +36,39 @@ def find_godot(explicit=None):
         found=shutil.which(name)
         if found:return found
     searched=', '.join(map(str,candidates))+', godot/godot4 on PATH'
-    raise RuntimeError('Godot is required to bake the saved Sunmane authoring scene; searched '+searched)
+    raise RuntimeError('Godot is required to bake saved continent-authoring scenes; searched '+searched)
+
+
+def bake_authored_regions(godot=None, catalog_path=None):
+    """Bake every catalogued authored territory from its saved scene."""
+    executable=find_godot(godot)
+    project=CLIENT/'godot-client'
+    try:
+        imported=subprocess.run([executable,'--headless','--editor','--path',str(project),'--quit'],
+                                cwd=CLIENT,check=False,timeout=180)
+    except subprocess.TimeoutExpired as error:
+        raise RuntimeError('Godot asset import did not finish within 180 seconds') from error
+    if imported.returncode:
+        raise RuntimeError(
+            f'Godot asset import failed with exit code {imported.returncode}; fix the reported import errors before baking')
+    contracts=authoring_catalog.authored_contracts(
+        Path(catalog_path).resolve() if catalog_path is not None else authoring_catalog.CATALOG_PATH)
+    if not contracts:
+        raise RuntimeError('The territory catalog contains no complete authored scene/spec pairs')
+    for contract in contracts:
+        try:relative=contract.scene_path.resolve().relative_to(project.resolve()).as_posix()
+        except ValueError as error:
+            raise RuntimeError(f'{contract.id}: authored scene is outside the Godot project') from error
+        command=[executable,'--headless','--path',str(project),
+                 '--script','res://src/dev/map_authoring_region/region_bake_cli.gd','--',
+                 '--scene','res://'+relative,'--output',str(contract.snapshot_path)]
+        try:completed=subprocess.run(command,cwd=CLIENT,check=False,timeout=180)
+        except subprocess.TimeoutExpired as error:
+            raise RuntimeError(f'{contract.id}: authoring bake did not finish within 180 seconds') from error
+        if completed.returncode:
+            raise RuntimeError(f'{contract.id}: authoring bake failed with exit code {completed.returncode}')
+        if not contract.snapshot_path.is_file():
+            raise RuntimeError(f'{contract.id}: authoring bake reported success without writing its snapshot')
 
 
 def bake_sunmane(godot=None):
@@ -97,8 +130,8 @@ def main():
         subprocess.run([sys.executable,'-u',str(script),*map(str,arguments)],cwd=cwd,check=True)
     stages=('libraries','compose','geometry','contracts','publish','atlas','verify') if args.stage=='all' else (args.stage,)
     if any(stage in ('libraries','compose','geometry','contracts') for stage in stages):
-        print('Baking saved Sunmane authoring scene',flush=True)
-        bake_sunmane(args.godot)
+        print('Baking saved catalogued authoring scenes',flush=True)
+        bake_authored_regions(args.godot)
     for stage in stages:
         print(f'Continent stage: {stage}',flush=True)
         progress.start(stage)

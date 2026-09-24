@@ -107,6 +107,51 @@ def test_valid_snapshot_loads_hash_bound_heights_and_translates_points(tmp_path,
     }
 
 
+def test_authored_crossing_endpoints_follow_saved_asset_transform_and_restore():
+    crossing = {"authoredCrossing": {
+        "id": "bridge-massif",
+        "walkNode": "Walk_Landmark_SurveyedBridge_0__alpine_gravel",
+        "localEndpoints": [[-2.0, 1.0, 0.0], [2.0, 3.0, 0.0]],
+    }}
+    original = {
+        "id": "asset-bridge", "nodeName": "Landmark_SurveyedBridge_0",
+        "matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 10, 20, 30, 1],
+        "metadata": crossing,
+    }
+    # 90 degrees around +Y, uniform scale two, then translation.  The same
+    # column-major matrix is handed to scene_io for the complete visual/walk
+    # subtree, so this verifies the endpoint half of that shared authority.
+    moved = dict(original, matrix=[
+        0, 0, -2, 0,
+        0, 2, 0, 0,
+        2, 0, 0, 0,
+        15, 25, 35, 1,
+    ])
+
+    before = A.transformed_authored_crossings([original])
+    after = A.transformed_authored_crossings([moved])
+    restored = A.transformed_authored_crossings([original])
+
+    assert before[0]["endpoints"] == [[8.0, 21.0, 30.0], [12.0, 23.0, 30.0]]
+    assert after[0]["endpoints"] == [[15.0, 27.0, 39.0], [15.0, 31.0, 31.0]]
+    assert after[0]["walkNode"] == \
+        "Walk_Landmark_SurveyedBridge_0__alpine_gravel"
+    assert restored == before
+
+
+def test_authored_crossing_ids_are_unique():
+    entry = {
+        "id": "asset-bridge", "nodeName": "Landmark_SurveyedBridge_0",
+        "matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+        "metadata": {"authoredCrossing": {
+            "id": "bridge-massif", "walkNode": "Walk_Bridge",
+            "localEndpoints": [[-1, 0, 0], [1, 0, 0]],
+        }},
+    }
+    with pytest.raises(A.AuthoringError, match="duplicate authored crossing"):
+        A.transformed_authored_crossings([entry, dict(entry, id="asset-bridge-copy")])
+
+
 def test_production_runtime_bindings_resolve_qualified_markers_and_saved_moves():
     from types import SimpleNamespace
 
@@ -165,6 +210,36 @@ def test_saved_seam_anchors_must_match_shared_connection_frame(tmp_path, monkeyp
     world.connections.clear()
     with pytest.raises(A.AuthoringError, match="seam links differ"):
         A.verify_seam_anchors(world, snapshot)
+
+
+def test_ownership_and_seam_validation_use_the_snapshot_region(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
+    path, document = fixture(tmp_path, monkeypatch)
+    document["regionId"] = "amethyst_barrens"
+    document["continentTranslation"] = [950.0, 0.0, 400.0]
+    document["seams"] = {
+        "ownershipPolygonSha256": "placeholder",
+        "anchors": [{"id": "amethyst--sunmane", "anchor": [3.0, 7.0, -4.0]}],
+    }
+    world = SimpleNamespace(
+        polygons={"sunmane_steppe": [[0, 0]], "amethyst_barrens": [[1, 2], [3, 4]]},
+        connections=[{
+            "id": "amethyst--sunmane",
+            "regions": ["amethyst_barrens", "sunmane_steppe"],
+            "anchor": [953.0, 396.0],
+        }],
+    )
+    document["seams"]["ownershipPolygonSha256"] = A.ownership_polygon_sha256(
+        world, "amethyst_barrens")
+    path.write_text(json.dumps(document), encoding="utf-8")
+    snapshot = A.load_snapshot(path, production=False)
+
+    A.verify_ownership(world, snapshot)
+    A.verify_seam_anchors(world, snapshot)
+    world.polygons["amethyst_barrens"].append([5, 6])
+    with pytest.raises(A.AuthoringError, match="amethyst_barrens: ownership polygon changed"):
+        A.verify_ownership(world, snapshot)
 
 
 def test_production_plan_pins_every_authored_sunmane_seam():
@@ -399,6 +474,67 @@ def test_production_cell_ownership_expands_to_shared_vertices_before_ring(tmp_pa
     rows, columns = np.nonzero(changed)
     assert (rows.min(), rows.max(), columns.min(), columns.max()) == (398, 400, 748, 750)
     assert changed.sum() == 9
+
+
+def _terrain_snapshot(tmp_path, region, values):
+    values = np.asarray(values, dtype="<f4")
+    folder = tmp_path / region
+    folder.mkdir()
+    base = folder / "base.f32le"
+    resolved = folder / "resolved.f32le"
+    base.write_bytes(values.tobytes())
+    resolved.write_bytes(values.tobytes())
+    document = {
+        "regionId": region,
+        "continentTranslation": [0.0, 0.0, 0.0],
+        "terrain": {"origin": [0.0, 0.0], "cellMetres": 2.0},
+    }
+    return A.Snapshot(folder / "snapshot.json", document, {}, base, resolved,
+                      values.shape[1], values.shape[0])
+
+
+def test_multiple_authored_terrain_regions_merge_masks_without_overwriting_neighbours(tmp_path):
+    from types import SimpleNamespace
+
+    owner = np.zeros((4, 6), dtype=np.int16)
+    owner[:, 3:] = 1
+    world = SimpleNamespace(x0=0.0, z0=0.0, height=np.zeros((5, 7), float),
+                            owner=owner, ids=["west", "east"])
+    west = _terrain_snapshot(tmp_path, "west", np.full((5, 7), 10.0))
+    east_values = np.full((5, 7), 10.0)
+    # These samples are inside the east snapshot rectangle but outside its
+    # owned-vertex plus one-ring mask. They must not replace west authority.
+    east_values[:, :2] = 99.0
+    east = _terrain_snapshot(tmp_path, "east", east_values)
+
+    A.apply_terrain(world, west)
+    west_mask = world.authored_terrain_region_masks["west"].copy()
+    A.apply_terrain(world, east)
+
+    assert set(world.authored_terrain_region_masks) == {"east", "west"}
+    assert np.all(world.authored_terrain_height[west_mask] == 10.0)
+    np.testing.assert_array_equal(
+        world.authored_terrain_authority,
+        world.authored_terrain_region_masks["west"] |
+        world.authored_terrain_region_masks["east"],
+    )
+
+
+def test_multiple_authored_terrain_regions_reject_conflicting_shared_ring(tmp_path):
+    from types import SimpleNamespace
+
+    owner = np.zeros((4, 6), dtype=np.int16)
+    owner[:, 3:] = 1
+    world = SimpleNamespace(x0=0.0, z0=0.0, height=np.zeros((5, 7), float),
+                            owner=owner, ids=["west", "east"])
+    west = _terrain_snapshot(tmp_path, "west", np.full((5, 7), 10.0))
+    east_values = np.full((5, 7), 10.0)
+    east_values[2, 3] = 10.01
+    east = _terrain_snapshot(tmp_path, "east", east_values)
+
+    A.apply_terrain(world, west)
+    with pytest.raises(A.AuthoringError, match=r"east: authored terrain conflicts with \['west'\]"):
+        A.apply_terrain(world, east)
 
 
 def test_road_settlement_fits_to_authored_overlap_without_mutating_it():

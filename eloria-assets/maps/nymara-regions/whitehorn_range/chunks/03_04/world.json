@@ -19,7 +19,7 @@
     "bounds": {
       "min": [
         -172.0,
-        59.807978174429586,
+        59.80797789846526,
         164.0
       ],
       "max": [
@@ -356,12 +356,12 @@
       "destination": "amethyst_barrens",
       "anchor": [
         240.0,
-        89.91,
+        89.91000366210938,
         119.0
       ],
       "globalAnchor": [
         790.0,
-        89.91,
+        89.91000366210938,
         339.0
       ],
       "globalTranslation": [
@@ -2879,7 +2879,7 @@
   "bounds": {
     "min": [
       -172.0,
-      59.807978174429586,
+      59.80797789846526,
       164.0
     ],
     "max": [
@@ -2888,19 +2888,19 @@
       180.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:0be7ec782a7442b249348b902fa27c284ac3a97d56e7f73c3160ed788614b7a5",
+  "terrainRevision": "diagonal-spine-v1:fd4992a7daea20980fbb361754cc2e93bcf4cd69674209960236a30a326bc45d",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
-    "collisionSha256": "b09f105f18a4d612a61902cd48da2d7f3cf862dc40629d1cba7c5f856c0dea97",
-    "terrainRevision": "diagonal-spine-v1:0be7ec782a7442b249348b902fa27c284ac3a97d56e7f73c3160ed788614b7a5"
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
+    "collisionSha256": "a905d8fdcec46bd00f4dae1fbaab6d1a4eae4e328c04a6fac75713ce32fdc94d",
+    "terrainRevision": "diagonal-spine-v1:fd4992a7daea20980fbb361754cc2e93bcf4cd69674209960236a30a326bc45d"
   }
 }

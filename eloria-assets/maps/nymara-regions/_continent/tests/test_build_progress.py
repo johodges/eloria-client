@@ -282,6 +282,11 @@ class CompositionFreshnessTests(unittest.TestCase):
             source=continent/name;source.parent.mkdir(parents=True,exist_ok=True)
             source.write_text(f'# fixture {name}\n',encoding='utf-8')
             sources[source.resolve().relative_to(client.resolve()).as_posix()]=digest(source)
+        for name in B.EXPORT_SOURCES:
+            source=continent/name
+            if not source.exists():
+                source.parent.mkdir(parents=True,exist_ok=True)
+                source.write_text(f'# fixture {name}\n',encoding='utf-8')
         builder=continent/'build_continent.py';builder.write_text('# fixture builder\n',encoding='utf-8')
         sources[str(builder.relative_to(client))]=digest(builder)
         profile=continent/'legacy-server-profile/config/eloria/maps.txt'
@@ -289,13 +294,15 @@ class CompositionFreshnessTests(unittest.TestCase):
         self.write(generated/'composition.json',{'schema':1,'planSha256':digest(plan),
             'entranceProfileSha256':digest(profile),'compositionAlgorithmSha256':B.composition_algorithm_sha(),
             'geometryDependencies':B.geometry_dependencies(),
+            'continentAuthoring':{'schema':3,'regions':{}},
             'library':{},'sources':sources,'objects':3,'roads':7})
         return client,continent,generated
 
     def write(self,path,data):path.write_text(json.dumps(data,indent=2)+'\n',encoding='utf-8')
 
     def freshness(self,client,continent,generated):
-        with patch.object(B,'HERE',continent),patch.object(B,'CLIENT',client):
+        with patch.object(B,'HERE',continent),patch.object(B,'CLIENT',client),\
+             patch.object(B.AUTHORING,'load_snapshots',return_value=()):
             return B.composition_freshness(generated)
 
     def test_an_untouched_composition_is_fresh(self):
@@ -334,7 +341,8 @@ class CompositionFreshnessTests(unittest.TestCase):
             self.write(generated/'composition.json',composition)
             state=self.freshness(client,continent,generated)
             self.assertFalse(state['fresh']);self.assertIn(requirement,state['missing'])
-            with patch.object(B,'HERE',continent),patch.object(B,'CLIENT',client):
+            with patch.object(B,'HERE',continent),patch.object(B,'CLIENT',client),\
+                 patch.object(B.AUTHORING,'load_snapshots',return_value=()):
                 with self.assertRaisesRegex(ValueError,'missing shaping source certificates.*requirements.txt'):
                     B.load_composed(generated,Path(tmp)/'library')
 
@@ -350,7 +358,8 @@ class CompositionFreshnessTests(unittest.TestCase):
             state=self.freshness(client,continent,generated)
             self.assertFalse(state['fresh'])
             self.assertEqual(state['changed'],['eloria-assets/maps/nymara-regions/_northern/requirements.txt'])
-            with patch.object(B,'HERE',continent),patch.object(B,'CLIENT',client):
+            with patch.object(B,'HERE',continent),patch.object(B,'CLIENT',client),\
+                 patch.object(B.AUTHORING,'load_snapshots',return_value=()):
                 with self.assertRaisesRegex(ValueError,'requirements.txt: landscape composition changed'):
                     B.load_composed(generated,Path(tmp)/'library')
                 with self.assertRaisesRegex(ValueError,'requirements.txt: geometry export source changed'):
@@ -363,7 +372,8 @@ class CompositionFreshnessTests(unittest.TestCase):
             with patch.object(B,'geometry_dependencies',return_value=changed):
                 state=self.freshness(client,continent,generated)
                 self.assertFalse(state['fresh']);self.assertEqual(state['changed'],['geometryDependencies'])
-                with patch.object(B,'HERE',continent),patch.object(B,'CLIENT',client):
+                with patch.object(B,'HERE',continent),patch.object(B,'CLIENT',client),\
+                     patch.object(B.AUTHORING,'load_snapshots',return_value=()):
                     with self.assertRaisesRegex(ValueError,'Geometry dependencies changed'):
                         B.load_composed(generated,Path(tmp)/'library')
             self.write(generated/'export.json',{'compositionSha256':digest(generated/'composition.json'),

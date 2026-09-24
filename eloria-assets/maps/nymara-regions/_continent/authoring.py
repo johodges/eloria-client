@@ -17,6 +17,8 @@ from typing import Any, Iterable
 
 import numpy as np
 
+from authoring_catalog import CATALOG_PATH, RegionContract, authored_contracts
+
 
 HERE = Path(__file__).resolve().parent
 REGIONS = HERE.parent
@@ -196,13 +198,18 @@ def _height_sidecar(terrain: dict[str, Any], snapshot: Path, field: str,
 
 
 def _validate_terrain(document: dict[str, Any], snapshot: Path, production: bool,
-                      source_sha256: dict[str, str]) -> tuple[Path, Path, int, int]:
+                      source_sha256: dict[str, str],
+                      contract: RegionContract | None = None) -> tuple[Path, Path, int, int]:
     terrain = _object(document.get("terrain"), "terrain")
     origin = _vector(terrain.get("origin"), 2, "terrain.origin")
-    if production and origin != SUNMANE_TERRAIN_ORIGIN:
-        raise AuthoringError(f"terrain.origin must be {list(SUNMANE_TERRAIN_ORIGIN)}")
-    if _number(terrain.get("cellMetres"), "terrain.cellMetres") != 2.0:
-        raise AuthoringError("terrain.cellMetres must match the shared two-metre grid")
+    if production and contract is not None and origin != contract.terrain_origin:
+        raise AuthoringError(
+            f"{contract.id}: terrain.origin must be {list(contract.terrain_origin)}")
+    cell_metres = _number(terrain.get("cellMetres"), "terrain.cellMetres")
+    expected_cell_metres = contract.terrain_cell_metres if contract is not None else 2.0
+    if cell_metres != expected_cell_metres:
+        raise AuthoringError(
+            f"terrain.cellMetres must match the region contract value {expected_cell_metres}")
     if _number(terrain.get("previewUvMetresInverse"),
                "terrain.previewUvMetresInverse") <= 0.0:
         raise AuthoringError("terrain.previewUvMetresInverse must be positive")
@@ -211,10 +218,10 @@ def _validate_terrain(document: dict[str, Any], snapshot: Path, production: bool
     if (isinstance(width, bool) or not isinstance(width, int) or width < 2 or
             isinstance(height, bool) or not isinstance(height, int) or height < 2):
         raise AuthoringError("terrain width and height must be integers of at least two")
-    if production and (width, height) != SUNMANE_TERRAIN_VERTICES:
+    if production and contract is not None and (width, height) != contract.terrain_vertices:
         raise AuthoringError(
-            f"terrain width and height must cover the full {SUNMANE_TERRAIN_VERTICES[0]}x"
-            f"{SUNMANE_TERRAIN_VERTICES[1]} shared envelope")
+            f"{contract.id}: terrain width and height must cover the full "
+            f"{contract.terrain_vertices[0]}x{contract.terrain_vertices[1]} shared envelope")
     _validate_surface(terrain.get("baseSurface"), source_sha256, "terrain.baseSurface")
     base_path = _height_sidecar(terrain, snapshot, "baseHeights", width, height)
     resolved_path = _height_sidecar(terrain, snapshot, "resolvedHeights", width, height)
@@ -359,7 +366,8 @@ def _validate_paths(document: dict[str, Any], source_sha256: dict[str, str]) -> 
         raise AuthoringError("paths may replace a composer route only once")
 
 
-def _validate_replacements(document: dict[str, Any], production: bool) -> None:
+def _validate_replacements(document: dict[str, Any], production: bool,
+                           contract: RegionContract | None = None) -> None:
     replacements = _object(document.get("replacements"), "replacements")
     route_ids = [_string(value, f"replacements.routeIds[{index}]")
                  for index, value in enumerate(
@@ -379,19 +387,23 @@ def _validate_replacements(document: dict[str, Any], production: bool) -> None:
         raise AuthoringError("a path replaces a route the persistent registry does not own")
     if declared_features - set(feature_ids):
         raise AuthoringError("a path replaces a plan feature the persistent registry does not own")
-    if production:
-        required = set(SUNMANE_REQUIRED_ROUTE_IDS)
+    if production and contract is not None:
+        required = set(contract.owned_route_ids)
         if set(route_ids) != required:
             missing = sorted(required - set(route_ids))
             extra = sorted(set(route_ids) - required)
             raise AuthoringError(
-                f"Sunmane route replacement registry differs from its required routes; missing={missing}, extra={extra}")
-        absent = sorted(set(SUNMANE_REQUIRED_LINK_ROUTE_IDS) - declared_routes)
+                f"{contract.id}: route replacement registry differs from its owned routes; "
+                f"missing={missing}, extra={extra}")
+        absent = sorted(set(contract.required_route_ids) - declared_routes)
         if absent:
-            raise AuthoringError(f"required authored Sunmane routes are absent: {absent}")
-        if tuple(feature_ids) != SUNMANE_PLAN_FEATURE_IDS:
+            prefix = "required authored Sunmane routes" if contract.id == SUNMANE \
+                else f"{contract.id}: required authored routes"
+            raise AuthoringError(f"{prefix} are absent: {absent}")
+        if tuple(feature_ids) != contract.owned_plan_feature_ids:
             raise AuthoringError(
-                f"Sunmane plan feature registry must be {list(SUNMANE_PLAN_FEATURE_IDS)}")
+                f"{contract.id}: plan feature registry must be "
+                f"{list(contract.owned_plan_feature_ids)}")
 
 
 def _validate_bridges(document: dict[str, Any], source_sha256: dict[str, str]) -> None:
@@ -450,6 +462,21 @@ def _validate_objects(document: dict[str, Any], source_sha256: dict[str, str],
         if baked_path.suffix.lower() != ".glb":
             raise AuthoringError(f"{where}.bakedSource.path must be a static GLB")
         _string(baked.get("sourceNode"), f"{where}.bakedSource.sourceNode")
+        metadata = _object(entry.get("metadata", {}), f"{where}.metadata")
+        crossing = metadata.get("authoredCrossing")
+        if crossing is not None:
+            crossing = _object(crossing, f"{where}.metadata.authoredCrossing")
+            _string(crossing.get("id"), f"{where}.metadata.authoredCrossing.id")
+            _string(crossing.get("walkNode"),
+                    f"{where}.metadata.authoredCrossing.walkNode")
+            endpoints = _array(crossing.get("localEndpoints"),
+                               f"{where}.metadata.authoredCrossing.localEndpoints")
+            if len(endpoints) != 2:
+                raise AuthoringError(
+                    f"{where}.metadata.authoredCrossing.localEndpoints needs two points")
+            for endpoint, point in enumerate(endpoints):
+                _vector(point, 3,
+                        f"{where}.metadata.authoredCrossing.localEndpoints[{endpoint}]")
         overrides = [_object(value, f"{where}.materialOverrides[{override}]")
                      for override, value in enumerate(_array(
                          entry.get("materialOverrides", []), f"{where}.materialOverrides"))]
@@ -463,7 +490,8 @@ def _validate_objects(document: dict[str, Any], source_sha256: dict[str, str],
             _validate_surface(material.get("surface"), source_sha256, f"{material_where}.surface")
 
 
-def _validate_gameplay(document: dict[str, Any], production: bool) -> None:
+def _validate_gameplay(document: dict[str, Any], production: bool,
+                       contract: RegionContract | None = None) -> None:
     gameplay = _object(document.get("gameplay"), "gameplay")
     assets = {entry["id"]: entry["nodeName"] for entry in document["objects"]}
     required = ("spawnPoints", "portals", "interactives", "landmarks", "harvestables",
@@ -503,8 +531,8 @@ def _validate_gameplay(document: dict[str, Any], production: bool) -> None:
                     gameplay.get("runtimeBindings"), "gameplay.runtimeBindings"))]
     _ordered_unique(bindings, "gameplay.runtimeBindings")
     roles = {"door", "return", "interactive", "npc", "harvest", "spawn", "territory"}
-    zero_runtime_offsets = 0
-    nonzero_existing_offsets = 0
+    referenced_runtime_points: set[str] = set()
+    existing_marker_bindings = 0
     for index, binding in enumerate(bindings):
         where = f"gameplay.runtimeBindings[{index}]"
         source = _object(binding.get("source"), f"{where}.source")
@@ -532,9 +560,9 @@ def _validate_gameplay(document: dict[str, Any], production: bool) -> None:
         if section == "runtimePoints":
             if target_offset != (0.0, 0.0, 0.0):
                 raise AuthoringError(f"{where}.targetOffset must be zero for a dedicated runtime point")
-            zero_runtime_offsets += 1
-        elif target_offset[0] != 0.0 or target_offset[2] != 0.0:
-            nonzero_existing_offsets += 1
+            referenced_runtime_points.add(identity)
+        else:
+            existing_marker_bindings += 1
         provenance = _object(binding.get("provenance"), f"{where}.provenance")
         for field in ("sourceReportSha256", "sourceProfileSha256"):
             if field == "sourceProfileSha256" and field not in provenance:
@@ -542,17 +570,27 @@ def _validate_gameplay(document: dict[str, Any], production: bool) -> None:
             digest = _string(provenance.get(field), f"{where}.provenance.{field}")
             if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
                 raise AuthoringError(f"{where}.provenance.{field} must be a lowercase SHA-256 digest")
-    if production:
-        if len(bindings) != 191:
-            raise AuthoringError("gameplay.runtimeBindings must cover all 191 Sunmane runtime records")
-        if len(gameplay["runtimePoints"]) != 110:
-            raise AuthoringError("gameplay.runtimePoints must retain all 110 unrepresented runtime controls")
-        if zero_runtime_offsets != 110 or nonzero_existing_offsets != 81:
-            raise AuthoringError("runtime binding offsets must retain 110 zero dedicated points and 81 existing-marker endpoints")
+    if production and contract is not None:
+        if len(bindings) != contract.runtime_binding_count:
+            raise AuthoringError(
+                f"{contract.id}: gameplay.runtimeBindings must cover all "
+                f"{contract.runtime_binding_count} runtime records")
+        if len(gameplay["runtimePoints"]) != contract.runtime_point_count:
+            raise AuthoringError(
+                f"{contract.id}: gameplay.runtimePoints must retain all "
+                f"{contract.runtime_point_count} dedicated runtime controls")
+        if referenced_runtime_points != marker_ids.get("runtimePoints", set()):
+            raise AuthoringError(
+                f"{contract.id}: every dedicated runtime point must be referenced by a binding")
+        if existing_marker_bindings != contract.existing_marker_binding_count:
+            raise AuthoringError(
+                f"{contract.id}: runtime binding offsets disagree with the region contract")
     seed_source = document["sources"]["runtimeBindingSeed"]
     seed_path = _source_path(seed_source["path"], "sources.runtimeBindingSeed.path")
     seed = _object(json.loads(seed_path.read_text(encoding="utf-8")), "runtime binding seed")
-    if seed.get("schema") != "eloria-runtime-binding-seed-v1" or seed.get("regionId") != SUNMANE:
+    region_id = _string(document.get("regionId"), "regionId")
+    if (seed.get("schema") != "eloria-runtime-binding-seed-v1" or
+            seed.get("regionId") != region_id):
         raise AuthoringError("runtime binding seed schema or region is unsupported")
     provenance = _object(seed.get("provenance"), "runtime binding seed.provenance")
     profile_hashes = {
@@ -593,6 +631,7 @@ class Snapshot:
     resolved_heights_path: Path
     terrain_width: int
     terrain_height: int
+    contract: RegionContract | None = None
 
     @property
     def digest(self) -> str:
@@ -625,6 +664,13 @@ class Snapshot:
     def bound_sources(self) -> dict[str, str]:
         """Every raw source or sidecar whose bytes certify this snapshot."""
         result = dict(self.source_sha256)
+        if self.contract is not None:
+            # Catalog membership and the strict region contract decide which
+            # scene is authoritative and how its local frame enters the shared
+            # continent. They are composition inputs even though the Godot
+            # scene does not depend on them as res:// resources.
+            for path in (self.contract.spec_path, CATALOG_PATH):
+                result[path.relative_to(CLIENT).as_posix()] = sha256(path)
         for field in ("baseHeights", "resolvedHeights"):
             path = _contained(self.path.parent, self.document["terrain"][field]["path"],
                               f"terrain.{field}.path")
@@ -781,8 +827,9 @@ def replace_routes(world: Any, snapshot: Snapshot) -> dict[str, Any]:
     # claimed-site fitter must neither grade its terrain nor regenerate it.
     suppressed=[]
     retained=[]
+    region = snapshot.document["regionId"]
     for site in getattr(world, "crossing_sites", ()):
-        if site.get("region") == SUNMANE:
+        if site.get("region") == region:
             suppressed.append(int(site["id"]))
         else:
             retained.append(site)
@@ -806,11 +853,12 @@ def marker_position(record: dict[str, Any]) -> list[float]:
     return list(_vector(record.get("position"), 3, "gameplay marker position"))
 
 
-def server_tile(position: Iterable[float]) -> list[int]:
+def server_tile(position: Iterable[float], snapshot: Snapshot | None = None) -> list[int]:
     """Derive the published tile from a territory-local marker position."""
     x, _, z = _vector(list(position), 3, "gameplay marker position")
-    return [math.floor(x + SUNMANE_SERVER_ORIGIN[0]),
-            math.floor(SUNMANE_SERVER_ORIGIN[1] - z)]
+    origin = (snapshot.contract.server_origin if snapshot is not None and snapshot.contract
+              is not None else SUNMANE_SERVER_ORIGIN)
+    return [math.floor(x + origin[0]), math.floor(origin[1] - z)]
 
 
 def authored_gameplay(snapshot: Snapshot) -> dict[str, Any]:
@@ -835,7 +883,8 @@ def authored_gameplay(snapshot: Snapshot) -> dict[str, Any]:
                     f"gameplay.{name}.{source['id']}.extras duplicates top-level fields {sorted(overlap)}")
             entry.update(copy.deepcopy(extras))
             position = marker_position(source)
-            entry.update(id=source["id"], position=position, serverTile=server_tile(position))
+            entry.update(id=source["id"], position=position,
+                         serverTile=server_tile(position, snapshot))
             if name in ("harvestables", "ambientPopulation"):
                 entry["center"] = list(position)
             authored.append(entry)
@@ -854,7 +903,9 @@ def apply_runtime_bindings(content: Any, snapshot: Snapshot) -> dict[str, Any]:
     sections = {name: {record["id"]: record for record in records}
                 for name, records in gameplay.items()
                 if name != "runtimeBindings"}
-    points: dict[tuple[str, str], np.ndarray] = {}
+    region = snapshot.document["regionId"]
+    points: dict[tuple[str, str], np.ndarray] = dict(
+        getattr(content, "authored_runtime_points", {}))
     records: dict[str, dict[str, Any]] = {}
     source_index: dict[tuple[str, int, tuple[int, int]], str] = {}
     source_lines: dict[tuple[str, int], list[str]] = {}
@@ -871,7 +922,7 @@ def apply_runtime_bindings(content: Any, snapshot: Snapshot) -> dict[str, Any]:
         # authority while every linked endpoint translates with marker edits.
         local[[0, 2]] += offset[[0, 2]]
         point = snapshot.continent_point(local)
-        points[(SUNMANE, identity)] = point
+        points[(region, identity)] = point
         records[identity] = binding
         source = binding["source"]
         source_key = (source["path"].replace("\\", "/"), int(source["line"]),
@@ -883,14 +934,36 @@ def apply_runtime_bindings(content: Any, snapshot: Snapshot) -> dict[str, Any]:
         source_lines.setdefault(line_key, []).append(identity)
         source_tiles.setdefault((source_key[0], source_key[2]), []).append(identity)
         if binding["roads"] == "entrance":
-            entrance_tiles.add((SUNMANE, tuple(map(int, source["oldTile"]))))
+            entrance_tiles.add((region, tuple(map(int, source["oldTile"]))))
     content.authored_runtime_points = points
-    content.runtime_bindings = records
-    content.runtime_binding_sources = source_index
+    by_region = dict(getattr(content, "runtime_bindings_by_region", {}))
+    by_region[region] = records
+    content.runtime_bindings_by_region = by_region
+    flat = dict(getattr(content, "runtime_bindings", {}))
+    duplicates = set(flat) & set(records)
+    if duplicates:
+        raise AuthoringError(
+            f"{region}: runtime binding ids collide across authored regions: {sorted(duplicates)}")
+    flat.update(records)
+    content.runtime_bindings = flat
+    merged_sources = dict(getattr(content, "runtime_binding_sources", {}))
+    for key, identity in source_index.items():
+        if key in merged_sources:
+            raise AuthoringError(f"{region}: duplicate runtime source identity {key}")
+        merged_sources[key] = identity
+    content.runtime_binding_sources = merged_sources
+    merged_lines = {key: list(values) for key, values in
+                    getattr(content, "runtime_binding_source_lines", {}).items()}
+    for key, values in source_lines.items():
+        merged_lines.setdefault(key, []).extend(values)
     content.runtime_binding_source_lines = {
-        key: tuple(sorted(values)) for key, values in source_lines.items()}
+        key: tuple(sorted(values)) for key, values in merged_lines.items()}
+    merged_tiles = {key: list(values) for key, values in
+                    getattr(content, "runtime_binding_source_tiles", {}).items()}
+    for key, values in source_tiles.items():
+        merged_tiles.setdefault(key, []).extend(values)
     content.runtime_binding_source_tiles = {
-        key: tuple(sorted(values)) for key, values in source_tiles.items()}
+        key: tuple(sorted(values)) for key, values in merged_tiles.items()}
     content.entrance_road_tiles = entrance_tiles
     return {"bindings": len(records), "runtimePoints": len(gameplay["runtimePoints"])}
 
@@ -915,19 +988,23 @@ def apply_gameplay(template: dict[str, Any], snapshot: Snapshot) -> dict[str, An
 def apply_terrain(world: Any, snapshot: Snapshot) -> dict[str, Any]:
     """Install the scene preview's final vertices on the shared grid.
 
-    The 792 m authored envelope deliberately overlaps neighbouring ownership.
-    It is clipped only by the continent bounds; later partitioning therefore
-    reads the same shared vertices on both sides of every territory seam.
+    Each authored envelope may overlap neighbouring ownership. It is clipped
+    by its territory's owned vertices plus one shared-grid ring so later
+    partitioning reads the same seam vertices from both sides.
     """
     origin = np.asarray(snapshot.document["terrain"]["origin"], dtype=np.float64)
     global_origin = origin + snapshot.translation[[0, 2]]
     heights = snapshot.effective_heights()
-    x = global_origin[0] + np.arange(snapshot.terrain_width) * 2.0
-    z = global_origin[1] + np.arange(snapshot.terrain_height) * 2.0
-    ix = np.rint((x - world.x0) / 2.0).astype(int)
-    iz = np.rint((z - world.z0) / 2.0).astype(int)
-    aligned_x = world.x0 + ix * 2.0
-    aligned_z = world.z0 + iz * 2.0
+    cell = float(snapshot.document["terrain"]["cellMetres"])
+    if cell != 2.0:
+        raise AuthoringError(
+            f"{snapshot.document['regionId']}: authored terrain cellMetres must match the shared two-metre grid")
+    x = global_origin[0] + np.arange(snapshot.terrain_width) * cell
+    z = global_origin[1] + np.arange(snapshot.terrain_height) * cell
+    ix = np.rint((x - world.x0) / cell).astype(int)
+    iz = np.rint((z - world.z0) / cell).astype(int)
+    aligned_x = world.x0 + ix * cell
+    aligned_z = world.z0 + iz * cell
     if not np.allclose(aligned_x, x, rtol=0.0, atol=1e-9) or not np.allclose(aligned_z, z, rtol=0.0, atol=1e-9):
         raise AuthoringError("authored terrain is not aligned to the shared two-metre grid")
     keep_x = (ix >= 0) & (ix < world.height.shape[1])
@@ -937,9 +1014,10 @@ def apply_terrain(world: Any, snapshot: Snapshot) -> dict[str, Any]:
     source = heights[np.ix_(keep_z, keep_x)]
     target = np.ix_(iz[keep_z], ix[keep_x])
     authority = np.ones(source.shape, dtype=bool)
-    if hasattr(world, "owner") and hasattr(world, "ids") and SUNMANE in world.ids:
+    region = snapshot.document["regionId"]
+    if hasattr(world, "owner") and hasattr(world, "ids") and region in world.ids:
         from scipy.ndimage import binary_dilation
-        owned_cells = world.owner == world.ids.index(SUNMANE)
+        owned_cells = world.owner == world.ids.index(region)
         if owned_cells.shape == world.height.shape:
             # Small test worlds may provide vertex ownership directly.
             owned = owned_cells
@@ -956,6 +1034,18 @@ def apply_terrain(world: Any, snapshot: Snapshot) -> dict[str, Any]:
                 f"shared ownership shape {owned_cells.shape} does not match terrain {world.height.shape}")
         authority = binary_dilation(owned, structure=np.ones((3, 3), dtype=bool))[target]
     current = world.height[target]
+    previous_authority = getattr(world, "authored_terrain_authority", None)
+    previous_height = getattr(world, "authored_terrain_height", None)
+    if previous_authority is not None:
+        overlap = previous_authority[target] & authority
+        mismatch = overlap & (np.abs(previous_height[target] - source) > 1e-5)
+        if mismatch.any():
+            existing = sorted(name for name, mask in
+                              getattr(world, "authored_terrain_region_masks", {}).items()
+                              if (mask[target] & mismatch).any())
+            raise AuthoringError(
+                f"{region}: authored terrain conflicts with {existing} on "
+                f"{int(mismatch.sum())} shared ownership-ring vertices")
     world.height[target] = np.where(authority, source, current)
     # Road grading may fit neighbouring approaches to these vertices, but it
     # must not temporarily grade them and rely on a later restore.  That can
@@ -963,13 +1053,19 @@ def apply_terrain(world: Any, snapshot: Snapshot) -> dict[str, Any]:
     # the exact editor preview is reinstated.  Keep the full-grid mask/value
     # pair on the world so every road pass treats the same saved vertices as
     # fixed ground.
-    world.authored_terrain_authority = np.zeros_like(world.height, dtype=bool)
+    if previous_authority is None:
+        world.authored_terrain_authority = np.zeros_like(world.height, dtype=bool)
     # Snapshot samples are f32 by contract; retaining them as f32 avoids a
     # second continent-sized f64 height allocation while preserving every
     # authoritative bit.
-    world.authored_terrain_height = np.zeros_like(world.height, dtype=np.float32)
-    world.authored_terrain_authority[target] = authority
-    world.authored_terrain_height[target] = source
+        world.authored_terrain_height = np.zeros_like(world.height, dtype=np.float32)
+        world.authored_terrain_region_masks = {}
+    world.authored_terrain_authority[target] |= authority
+    stored = world.authored_terrain_height[target]
+    world.authored_terrain_height[target] = np.where(authority, source, stored)
+    region_mask = np.zeros_like(world.height, dtype=bool)
+    region_mask[target] = authority
+    world.authored_terrain_region_masks[region] = region_mask
     return {"sourceVertices": int(heights.size),
             "appliedVertices": int(authority.sum()),
             "globalBounds": [[float(x[0]), float(z[0])], [float(x[-1]), float(z[-1])]]}
@@ -1170,6 +1266,42 @@ def _embed_external_images(document: dict[str, Any], body: bytes, source_path: P
     return document,bytes(binary)
 
 
+def transformed_authored_crossings(objects: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Resolve saved asset-local crossing endpoints with the asset matrix.
+
+    The visual and ``Walk_`` subtree is exported under this same matrix.  By
+    keeping endpoints local until this boundary, an editor move/turn/scale can
+    never leave crossing support metadata at the old world-space position.
+    """
+    result: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for entry in objects:
+        crossing = entry.get("metadata", {}).get("authoredCrossing")
+        if crossing is None:
+            continue
+        identity = crossing["id"]
+        if identity in seen:
+            raise AuthoringError(f"duplicate authored crossing id {identity!r}")
+        seen.add(identity)
+        matrix = np.asarray(entry["matrix"], dtype=float).reshape(4, 4, order="F")
+        endpoints = []
+        for point in crossing["localEndpoints"]:
+            transformed = matrix @ np.asarray([*point, 1.0], dtype=float)
+            if not np.isfinite(transformed).all() or abs(float(transformed[3])) < 1e-12:
+                raise AuthoringError(f"{entry['id']}: invalid authored crossing transform")
+            endpoints.append((transformed[:3] / transformed[3]).tolist())
+        result.append({
+            "id": identity,
+            "endpoints": endpoints,
+            "assetId": entry["id"],
+            "node": entry["nodeName"],
+            "walkNode": crossing["walkNode"],
+            "authority": "saved-asset",
+        })
+    result.sort(key=lambda value: value["id"])
+    return result
+
+
 def build_retained_library(snapshot: Snapshot, root: Path) -> dict[str, str]:
     """Build Content's retained-source bridge from declared GLB subtrees.
 
@@ -1221,10 +1353,11 @@ def build_retained_library(snapshot: Snapshot, root: Path) -> dict[str, str]:
         placements.append(metadata)
     exporter.write()
     metadata = {
-        "region": SUNMANE,
+        "region": snapshot.document["regionId"],
         "continentAuthoring": {"schema": SCHEMA, "snapshotSha256": snapshot.digest,
                                "coordinateSpace": "territory-local"},
         "placements": placements,
+        "crossings": transformed_authored_crossings(snapshot.document["objects"]),
     }
     library_json = root / "library.json"
     library_json.write_text(json.dumps(metadata, indent=2, ensure_ascii=False) + "\n",
@@ -1238,27 +1371,30 @@ def build_retained_library(snapshot: Snapshot, root: Path) -> dict[str, str]:
             ("library.glb", "library.json", "foundation-samples.npz")}
 
 
-def ownership_polygon_sha256(world: Any) -> str:
-    points = world.polygons[SUNMANE]
+def ownership_polygon_sha256(world: Any, region: str = SUNMANE) -> str:
+    points = world.polygons[region]
     encoded = json.dumps(points, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 
 def verify_ownership(world: Any, snapshot: Snapshot) -> None:
+    region = snapshot.document["regionId"]
     expected = snapshot.document["seams"]["ownershipPolygonSha256"]
-    actual = ownership_polygon_sha256(world)
+    actual = ownership_polygon_sha256(world, region)
     if actual != expected:
         raise AuthoringError(
-            "Sunmane ownership polygon changed after scene export; rebake before composition")
+            f"{region}: ownership polygon changed after scene export; rebake before composition")
 
 
 def verify_seam_anchors(world: Any, snapshot: Snapshot) -> None:
     """Keep the shared connection frame fixed to the saved scene seam controls."""
+    region = snapshot.document["regionId"]
     authored={entry["id"]:entry for entry in snapshot.document["seams"]["anchors"]}
-    actual={link["id"]:link for link in world.connections if SUNMANE in link.get("regions",())}
+    actual={link["id"]:link for link in world.connections if region in link.get("regions",())}
     if set(actual)!=set(authored):
         raise AuthoringError(
-            f"Sunmane seam links differ from the saved scene: expected {sorted(authored)}, got {sorted(actual)}")
+            f"{region}: seam links differ from the saved scene: "
+            f"expected {sorted(authored)}, got {sorted(actual)}")
     for identity,entry in authored.items():
         expected=snapshot.continent_point(entry["anchor"])
         value=np.asarray(actual[identity]["anchor"],float)
@@ -1272,10 +1408,36 @@ def verify_seam_anchors(world: Any, snapshot: Snapshot) -> None:
             raise AuthoringError(f"{identity}: continent seam anchor moved after scene export")
 
 
-def load_snapshot(path: Path | str = SUNMANE_SNAPSHOT, *, production: bool = True) -> Snapshot:
+def _contract_for(region_id: str, contract: RegionContract | None) -> RegionContract:
+    if contract is not None:
+        if contract.id != region_id:
+            raise AuthoringError(
+                f"snapshot.regionId {region_id!r} disagrees with contract {contract.id!r}")
+        return contract
+    matches = [value for value in authored_contracts() if value.id == region_id]
+    if len(matches) != 1:
+        raise AuthoringError(
+            f"{region_id}: expected exactly one authored region contract, found {len(matches)}")
+    return matches[0]
+
+
+def load_snapshots(*, production: bool = True) -> tuple[Snapshot, ...]:
+    """Load every complete authored territory in deterministic catalog order."""
+    contracts = authored_contracts()
+    snapshots = tuple(load_snapshot(contract.snapshot_path, production=production,
+                                    contract=contract)
+                      for contract in contracts)
+    regions = [snapshot.document["regionId"] for snapshot in snapshots]
+    if len(regions) != len(set(regions)):
+        raise AuthoringError(f"authored territory catalog contains duplicate regions: {regions}")
+    return snapshots
+
+
+def load_snapshot(path: Path | str = SUNMANE_SNAPSHOT, *, production: bool = True,
+                  contract: RegionContract | None = None) -> Snapshot:
     path = Path(path).resolve()
     if not path.is_file():
-        raise AuthoringError(f"{path}: required Sunmane authoring snapshot is missing")
+        raise AuthoringError(f"{path}: required authoring snapshot is missing")
     try:
         document = json.loads(path.read_text(encoding="utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
@@ -1283,34 +1445,52 @@ def load_snapshot(path: Path | str = SUNMANE_SNAPSHOT, *, production: bool = Tru
     document = _object(document, "snapshot")
     if document.get("schema") != SCHEMA:
         raise AuthoringError(f"snapshot.schema must be {SCHEMA!r}")
-    if document.get("regionId") != SUNMANE:
-        raise AuthoringError(f"snapshot.regionId must be {SUNMANE!r}")
+    region_id = _string(document.get("regionId"), "snapshot.regionId")
+    active_contract = _contract_for(region_id, contract) if production else contract
+    if active_contract is not None and active_contract.id != region_id:
+        raise AuthoringError(
+            f"snapshot.regionId {region_id!r} disagrees with contract {active_contract.id!r}")
     if document.get("coordinateSpace") != "territory-local":
         raise AuthoringError("snapshot.coordinateSpace must be territory-local")
     if document.get("axes") != {"x": "east", "y": "up", "z": "south"}:
         raise AuthoringError("snapshot.axes must declare x east, y up and z south")
-    if _vector(document.get("continentTranslation"), 3, "continentTranslation") != SUNMANE_TRANSLATION:
-        raise AuthoringError(f"continentTranslation must be {list(SUNMANE_TRANSLATION)}")
+    translation = _vector(document.get("continentTranslation"), 3, "continentTranslation")
+    if active_contract is not None and translation != active_contract.continent_translation:
+        raise AuthoringError(
+            f"{region_id}: continentTranslation must be "
+            f"{list(active_contract.continent_translation)}")
     server = _object(document.get("server"), "server")
     if _number(server.get("metresPerTile"), "server.metresPerTile") != 1.0:
         raise AuthoringError("server.metresPerTile must be one")
-    if _integer_vector(server.get("origin"), 2, "server.origin") != SUNMANE_SERVER_ORIGIN:
-        raise AuthoringError(f"server.origin must be {list(SUNMANE_SERVER_ORIGIN)}")
-    if _integer_vector(server.get("cells"), 2, "server.cells") != SUNMANE_SERVER_CELLS:
-        raise AuthoringError(f"server.cells must be {list(SUNMANE_SERVER_CELLS)}")
-    if _vector(server.get("collisionOriginMetres"), 2, "server.collisionOriginMetres") != (-194.0, 292.0):
-        raise AuthoringError("server.collisionOriginMetres must be [-194, 292]")
+    origin = _integer_vector(server.get("origin"), 2, "server.origin")
+    cells = _integer_vector(server.get("cells"), 2, "server.cells")
+    collision_origin = _vector(server.get("collisionOriginMetres"), 2,
+                               "server.collisionOriginMetres")
+    if active_contract is not None:
+        if origin != active_contract.server_origin:
+            raise AuthoringError(
+                f"{region_id}: server.origin must be {list(active_contract.server_origin)}")
+        if cells != active_contract.server_cells:
+            raise AuthoringError(
+                f"{region_id}: server.cells must be {list(active_contract.server_cells)}")
+        if collision_origin != active_contract.collision_origin_metres:
+            raise AuthoringError(
+                f"{region_id}: server.collisionOriginMetres must be "
+                f"{list(active_contract.collision_origin_metres)}")
     authority = _object(document.get("authority"), "authority")
     required_authority = ("terrain", "water", "paths", "objects", "gameplay")
     if any(authority.get(section) is not True for section in required_authority):
-        raise AuthoringError("Sunmane authority must explicitly cover terrain, water, paths, objects and gameplay")
-    _validate_replacements(document, production)
+        raise AuthoringError(
+            f"{region_id}: authority must explicitly cover terrain, water, paths, objects and gameplay")
+    _validate_replacements(document, production, active_contract)
     source_sha256 = _validate_sources(document, path, production)
-    base, resolved, width, height = _validate_terrain(document, path, production, source_sha256)
+    base, resolved, width, height = _validate_terrain(
+        document, path, production, source_sha256, active_contract)
     _validate_ground_regions(document, source_sha256)
     _validate_paths(document, source_sha256)
     _validate_bridges(document, source_sha256)
     _validate_objects(document, source_sha256, path, production)
-    _validate_gameplay(document, production)
+    _validate_gameplay(document, production, active_contract)
     _validate_seams(document)
-    return Snapshot(path, document, source_sha256, base, resolved, width, height)
+    return Snapshot(path, document, source_sha256, base, resolved, width, height,
+                    active_contract)

@@ -1,11 +1,14 @@
 {
-  "glbBytes": 178992616,
-  "nodes": 21541,
-  "meshes": 4837,
+  "glbBytes": 211600944,
+  "nodes": 21973,
+  "meshes": 4981,
   "externalResources": {},
   "sharedResourceResidentBytes": {
     "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
     "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
+    "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805": 5592406,
+    "ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5": 1398102,
+    "6ebd390dd8d1694b88f8fc0654471317b6c31c4839fca038c879db059fcd4cb7": 1398102,
     "a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0": 1398102,
     "ac13bbd1da6bf69614719d9c5f7acc495a08dbf494baf3ad7a8bcae8042d972e": 349526,
     "ff74f94ec5d2fc41f89f7beac812f127e6612f64a2ba1b5f814de9639792fe65": 1398102,
@@ -144,24 +147,24 @@
     "71c16d61028d81e7fe8676f7410f7cfffc9ce0c41baec41d38ff7ad9d1ae43ac": 349526,
     "861c0b82c1bfeb753dbc6ee5a65f0e408beb984ef7481509703f05eaca6a2355": 1398102,
     "4a94b1614cda42c42a66fa7237ad9d38fec320503f1cfc0779c4c617dd841690": 349526,
-    "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805": 5592406,
-    "ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5": 1398102,
-    "6ebd390dd8d1694b88f8fc0654471317b6c31c4839fca038c879db059fcd4cb7": 1398102,
-    "6fff540a6fe89e81d4ad635f8feefc5f634417d37d6269f32053c446375a6343": 1398102,
-    "c35fd097da43f1be248f33482091876f21814feca22d5eaecd72010c2eaa3024": 349526,
-    "4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748": 1398102,
-    "8e5bb7eac252d5a7c9794989ae89f3ffddee812918be4b2f36e9dae0ff02142c": 349526,
-    "5567382363d22f17a2870f87552ea7e235fd70c5d0616481dc961e29f279ac77": 349526,
-    "172b9b3a78cf649e588a90cb24e15dfdfa508765d43cd46da2d33ca83327cad9": 349526,
-    "6c72a20af3c3a103a45d58f1b58a483dd550705958963cc508ae7c187df5eaf3": 349526,
-    "50c00d127d279501874ccb99fde85c0a2f5d72bd2f6ca72fecd220e0fd31c959": 349526,
-    "1b416116cedf6854f49e1d4c7365f60e193d6384cf3875ff8de99ab9808f754e": 349526,
-    "a20fba3965dfb7221686317ecd09383be431cf595192daacab2430e23cad1be1": 349526,
-    "859f15f656a2a726c56d0759e9af284f64755998518b14ac351f84c142538cfe": 349526,
-    "bbb5e3280ae009b5d4661df689d7fd6f308bf4a13b78a6cb1e6b87340c72ca8a": 349526,
+    "1936d69255537879eb1012c5b23b6f37ed1034a9ac878ac2f4f5d26bd8c6e262": 349526,
+    "066d316378c867696b10d31b57301567a068eaefa512f10ad54ed8b0b4b70d71": 87382,
+    "fb2267513cc71685566f1091d73efa7bc102867341d2ed82e3c4630a406b55e0": 87382,
     "c7a5783de549df31ae6d34299e65553254f46b9ac19350dd079a3e9f179fcee4": 1398102,
     "e353fad467123931b67a85a250604c22f64dd5738be04a19aab7eb51246ed2ef": 349526,
     "962f4cd3b1ca9883a0f7dc6e150b9aa098e00140bc7788108f308abfe2ffccb0": 1398102,
+    "6c72a20af3c3a103a45d58f1b58a483dd550705958963cc508ae7c187df5eaf3": 349526,
+    "50c00d127d279501874ccb99fde85c0a2f5d72bd2f6ca72fecd220e0fd31c959": 349526,
+    "1b416116cedf6854f49e1d4c7365f60e193d6384cf3875ff8de99ab9808f754e": 349526,
+    "6fff540a6fe89e81d4ad635f8feefc5f634417d37d6269f32053c446375a6343": 1398102,
+    "c35fd097da43f1be248f33482091876f21814feca22d5eaecd72010c2eaa3024": 349526,
+    "4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748": 1398102,
+    "a20fba3965dfb7221686317ecd09383be431cf595192daacab2430e23cad1be1": 349526,
+    "859f15f656a2a726c56d0759e9af284f64755998518b14ac351f84c142538cfe": 349526,
+    "bbb5e3280ae009b5d4661df689d7fd6f308bf4a13b78a6cb1e6b87340c72ca8a": 349526,
+    "8e5bb7eac252d5a7c9794989ae89f3ffddee812918be4b2f36e9dae0ff02142c": 349526,
+    "5567382363d22f17a2870f87552ea7e235fd70c5d0616481dc961e29f279ac77": 349526,
+    "172b9b3a78cf649e588a90cb24e15dfdfa508765d43cd46da2d33ca83327cad9": 349526,
     "217b3848572bbca0294d1dbf5a15a48c1e444f5a02197063af4b830365198912": 349526,
     "a9daa5c1a3bdf53c8e59d0f68f22bf7e784d11973272eb12f07cec3487639fb3": 349526,
     "2c9765d66e69827ee8396c905fa30b9de367e0193ec2ebd940d495abb409250a": 349526,
@@ -196,9 +199,6 @@
     "1536228a69528acd56c649c5555e5a3dbbd25e8324cd891322046f5afecf7e6d": 349526,
     "dc007b56b0106096b20579a6da6fdfb4d67e9fd5fac656fc47a87d66113be95f": 87382,
     "4f84c72d31eb2d3e1246047a0ad955ea041b62ac42c959c307d9b113195fe755": 87382,
-    "1936d69255537879eb1012c5b23b6f37ed1034a9ac878ac2f4f5d26bd8c6e262": 349526,
-    "066d316378c867696b10d31b57301567a068eaefa512f10ad54ed8b0b4b70d71": 87382,
-    "fb2267513cc71685566f1091d73efa7bc102867341d2ed82e3c4630a406b55e0": 87382,
     "69da8391f26e20f20efb513718249107a2c82def0d583b63c50fe1e91c3dabb6": 1398102,
     "99823fecf7a7b2f85cafafd909dadd21b78797e545f6f2ec8daa5c5f11bebf4e": 349526,
     "53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441": 349526,
@@ -348,7 +348,7 @@
     "370790616ae0f5ae9f7dca4e36c502ccdbc3094daee999986e7733d0b08a6999": 349526,
     "5d99c9774bacfb4be57c9b2c015b4c28614feda9e74b0ce2c102024f91a0ef8a": 1398102
   },
-  "sha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+  "sha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
   "regions": [
     "whitehorn_range",
     "grey_moors",
@@ -365,6 +365,98 @@
   ],
   "authoredOverlays": {
     "nodes": [
+      {
+        "name": "AuthoredGround_amethyst_barrensBase",
+        "triangles": 148470
+      },
+      {
+        "name": "Walk_amethyst_barrens_amethyst_barrens--mirrorhold-amethyst_barrens",
+        "triangles": 2100
+      },
+      {
+        "name": "Walk_amethyst_barrens_amethyst_barrens--sunmane_steppe-amethyst_barrens",
+        "triangles": 5172
+      },
+      {
+        "name": "Walk_amethyst_barrens_amethyst_barrens--whitehorn_range-amethyst_barrens",
+        "triangles": 4368
+      },
+      {
+        "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-1276",
+        "triangles": 2532
+      },
+      {
+        "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-699",
+        "triangles": 708
+      },
+      {
+        "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-700",
+        "triangles": 1284
+      },
+      {
+        "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-701",
+        "triangles": 1800
+      },
+      {
+        "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-702",
+        "triangles": 480
+      },
+      {
+        "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-703",
+        "triangles": 8256
+      },
+      {
+        "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-704",
+        "triangles": 108
+      },
+      {
+        "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-705",
+        "triangles": 1500
+      },
+      {
+        "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-706",
+        "triangles": 1140
+      },
+      {
+        "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-707",
+        "triangles": 876
+      },
+      {
+        "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-708",
+        "triangles": 468
+      },
+      {
+        "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-710",
+        "triangles": 252
+      },
+      {
+        "name": "Walk_amethyst_barrens_door-amethyst_barrens-counting-house-door",
+        "triangles": 3180
+      },
+      {
+        "name": "Walk_amethyst_barrens_door-amethyst_barrens-geode-hollow-mouth",
+        "triangles": 4332
+      },
+      {
+        "name": "Walk_amethyst_barrens_door-amethyst_barrens-measure-house-door",
+        "triangles": 3996
+      },
+      {
+        "name": "Walk_amethyst_barrens_door-amethyst_barrens-resonant-vault-stair",
+        "triangles": 4248
+      },
+      {
+        "name": "Walk_amethyst_barrens_door-amethyst_barrens-shardworks-headframe",
+        "triangles": 1620
+      },
+      {
+        "name": "Walk_amethyst_barrens_door-amethyst_barrens-sour-cut-mouth",
+        "triangles": 5256
+      },
+      {
+        "name": "Walk_amethyst_barrens_door-amethyst_barrens-storm-barrow-stair",
+        "triangles": 3804
+      },
       {
         "name": "AuthoredGround_SunmaneBase",
         "triangles": 124162
@@ -454,10 +546,11 @@
         "triangles": 7920
       }
     ],
-    "triangles": 194926,
+    "triangles": 400876,
     "waterMaterials": [
       {
         "id": "southern_river",
+        "region": "sunmane_steppe",
         "material": "authored_southern_river_water",
         "triangles": 10495
       }

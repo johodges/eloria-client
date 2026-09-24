@@ -11212,7 +11212,7 @@
           "portal": "road-to-amethyst_barrens",
           "position": [
             240.5,
-            89.91,
+            89.91000366210938,
             119.5
           ],
           "frame": {
@@ -11221,12 +11221,12 @@
             "destination": "amethyst_barrens",
             "anchor": [
               240.0,
-              89.91,
+              89.91000366210938,
               119.0
             ],
             "globalAnchor": [
               790.0,
-              89.91,
+              89.91000366210938,
               339.0
             ],
             "globalTranslation": [
@@ -15175,7 +15175,7 @@
           "portal": "road-to-whitehorn_range",
           "position": [
             -160.5,
-            89.91,
+            89.91000366210938,
             -61.5
           ],
           "frame": {
@@ -15184,12 +15184,12 @@
             "destination": "whitehorn_range",
             "anchor": [
               -160.0,
-              89.91,
+              89.91000366210938,
               -61.0
             ],
             "globalAnchor": [
               790.0,
-              89.91,
+              89.91000366210938,
               339.0
             ],
             "globalTranslation": [
@@ -33847,7 +33847,7 @@
           "portal": "road-to-amethyst_barrens",
           "position": [
             81.5,
-            51.59,
+            51.59000015258789,
             -154.5
           ],
           "frame": {
@@ -33856,12 +33856,12 @@
             "destination": "amethyst_barrens",
             "anchor": [
               81.0,
-              51.59,
+              51.59000015258789,
               -154.0
             ],
             "globalAnchor": [
               921.0,
-              51.59,
+              51.59000015258789,
               496.0
             ],
             "globalTranslation": [
@@ -35915,7 +35915,7 @@
           "portal": "road-to-mirrorhold",
           "position": [
             -28.5,
-            51.59,
+            51.59000015258789,
             96.5
           ],
           "frame": {
@@ -35924,12 +35924,12 @@
             "destination": "mirrorhold",
             "anchor": [
               -29.0,
-              51.59,
+              51.59000015258789,
               96.0
             ],
             "globalAnchor": [
               921.0,
-              51.59,
+              51.59000015258789,
               496.0
             ],
             "globalTranslation": [

@@ -78939,7 +78939,7 @@
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "a876f4d936abf6aa77ba705f5b87f51a706f7ec200e7124f28173cb429927654"
+        "sha256": "3d5ad2475522d8e1744ae15f39494d9c348036b4d1835640b7bc27b059ac55cb"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",

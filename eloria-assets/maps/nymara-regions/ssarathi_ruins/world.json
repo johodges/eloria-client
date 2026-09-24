@@ -213,8 +213,8 @@
       244.0
     ],
     "heightEncoding": {
-      "origin": -0.5739772164108695,
-      "step": 0.22399203508360274,
+      "origin": -0.5739772167793777,
+      "step": 0.22399203508505355,
       "range": [
         1,
         255
@@ -234,7 +234,7 @@
     },
     "walkableCells": 609094,
     "walkableFraction": 0.250285,
-    "sourceGlbSha256": "bde88b393099572c38c221966277d675aabd7e23ce3d22175734868f1d58dbdc",
+    "sourceGlbSha256": "135e50890947766f3a5eab9c9cdf27d6fc5889c00fe81a6c8bbdb39ced3436b8",
     "exportStatistics": {
       "walkMeshes": 40,
       "structuralMeshes": 245,
@@ -1740,7 +1740,7 @@
       "resource": "orchid",
       "position": [
         -119.11000000000001,
-        19.482039249627263,
+        19.482038551248007,
         -16.779999999999973
       ],
       "serverTile": [
@@ -2309,7 +2309,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+      "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
       "globalMin": [
         728.0,
         1280.0
@@ -2328,7 +2328,7 @@
     }
   },
   "performance": {
-    "glbBytes": 12544560,
+    "glbBytes": 12544580,
     "nodes": 2963,
     "meshes": 457,
     "externalResources": {
@@ -3023,7 +3023,7 @@
       240.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:0eb39a43715b3c97c8836f4d4fde15365bf71b2e121ca52877a15668a6e5b7b2",
+  "terrainRevision": "diagonal-spine-v1:260de20a4889f83c61b45ae46e877b98d8f8d77db19dbce04d7ccdda6895224c",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -3097,7 +3097,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "streamingChunks": {
@@ -3431,7 +3431,7 @@
           ],
           "max": [
             -130.91898787325886,
-            41.8384226664058,
+            41.838422221073806,
             101.28464089064573
           ]
         },
@@ -3478,7 +3478,7 @@
           ],
           "max": [
             -140.0,
-            15.310754175310514,
+            15.310754203818513,
             192.0
           ]
         },
@@ -3527,7 +3527,7 @@
           ],
           "max": [
             -30.61956741976701,
-            67.22848017023543,
+            67.22848011566208,
             -96.0
           ]
         },
@@ -3567,18 +3567,18 @@
         "bounds": {
           "min": [
             -156.23733081153227,
-            0.3261188586878796,
+            0.32611879434247193,
             -101.28652067865096
           ],
           "max": [
             -44.0,
-            52.024889944835245,
+            52.02488994872547,
             7.37322905723363
           ]
         },
-        "estimatedResidentBytes": 23039664,
-        "glbBytes": 815580,
-        "geometryResidentBytes": 4077900,
+        "estimatedResidentBytes": 23039684,
+        "glbBytes": 815584,
+        "geometryResidentBytes": 4077920,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "feed0ccaa70930ef63453cb77dce7990b83b6503db24b8e2f8c3c88381dbc912": 1398102,
@@ -3615,7 +3615,7 @@
           ],
           "max": [
             -36.190513610839844,
-            27.92236184712608,
+            27.922361873207436,
             97.79947203499364
           ]
         },
@@ -3768,13 +3768,13 @@
           ],
           "max": [
             52.0,
-            73.25690642188995,
+            73.25690644346938,
             -96.0
           ]
         },
-        "estimatedResidentBytes": 14853174,
-        "glbBytes": 296764,
-        "geometryResidentBytes": 1483820,
+        "estimatedResidentBytes": 14853194,
+        "glbBytes": 296768,
+        "geometryResidentBytes": 1483840,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "9820fe56c04ba3933f8cfd219b728bb1521504eedf685a1691e1eac7df128dd6": 1398102,
@@ -3855,7 +3855,7 @@
           ],
           "max": [
             62.312793446388696,
-            31.237123832603004,
+            31.23712380098656,
             96.0
           ]
         },
@@ -3910,13 +3910,13 @@
           ],
           "max": [
             57.59795244140628,
-            31.216948698598145,
+            31.216948739793104,
             192.66666666666674
           ]
         },
-        "estimatedResidentBytes": 42809100,
-        "glbBytes": 1099448,
-        "geometryResidentBytes": 5497240,
+        "estimatedResidentBytes": 42809120,
+        "glbBytes": 1099452,
+        "geometryResidentBytes": 5497260,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -4121,7 +4121,7 @@
           ],
           "max": [
             155.12766808378933,
-            42.27092370597247,
+            42.27092350917778,
             115.07321548461914
           ]
         },
@@ -4180,13 +4180,13 @@
           ],
           "max": [
             148.0,
-            39.01411212090457,
+            39.014112211539064,
             223.6500244140625
           ]
         },
-        "estimatedResidentBytes": 38892622,
-        "glbBytes": 1015204,
-        "geometryResidentBytes": 5076020,
+        "estimatedResidentBytes": 38892642,
+        "glbBytes": 1015208,
+        "geometryResidentBytes": 5076040,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -4342,7 +4342,7 @@
           ],
           "max": [
             257.2611120219542,
-            49.64228973914645,
+            49.642289695792044,
             99.03848003324129
           ]
         },
@@ -4394,13 +4394,13 @@
           ],
           "max": [
             257.2799608865005,
-            38.491924828607914,
+            38.491924902736955,
             192.0
           ]
         },
-        "estimatedResidentBytes": 36772994,
-        "glbBytes": 940804,
-        "geometryResidentBytes": 4704020,
+        "estimatedResidentBytes": 36773014,
+        "glbBytes": 940808,
+        "geometryResidentBytes": 4704040,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -4747,12 +4747,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:0eb39a43715b3c97c8836f4d4fde15365bf71b2e121ca52877a15668a6e5b7b2"
+    "terrainRevision": "diagonal-spine-v1:260de20a4889f83c61b45ae46e877b98d8f8d77db19dbce04d7ccdda6895224c"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "collisionSha256": "169c8513b26820baa57253c84ed184febdcddd30adb2cdf0ba0ad34840cb6490",
-    "terrainRevision": "diagonal-spine-v1:0eb39a43715b3c97c8836f4d4fde15365bf71b2e121ca52877a15668a6e5b7b2"
+    "terrainRevision": "diagonal-spine-v1:260de20a4889f83c61b45ae46e877b98d8f8d77db19dbce04d7ccdda6895224c"
   }
 }

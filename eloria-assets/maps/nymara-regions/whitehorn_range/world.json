@@ -181,19 +181,19 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 426066,
-    "walkableFraction": 0.212496,
-    "sourceGlbSha256": "0140a4e7b227cdc3498cf40dd0d12dc6fa65c5a371340ed9da0883102d3f1cb8",
+    "walkableCells": 426018,
+    "walkableFraction": 0.212472,
+    "sourceGlbSha256": "7eddf612ac9d7711b6db51d98f4e321704d1b24ea2fbb8137ecf7514721e9e8e",
     "exportStatistics": {
-      "walkMeshes": 11,
+      "walkMeshes": 12,
       "structuralMeshes": 141,
       "structuralTriangles": 28336,
-      "walkTriangles": 1060,
-      "steepCells": 402155,
+      "walkTriangles": 1126,
+      "steepCells": 402207,
       "waterCells": 150846,
       "structuralCells": 3106,
       "thresholdHaloCells": 184,
-      "seamCollarCells": 2215
+      "seamCollarCells": 2219
     }
   },
   "navigation": {
@@ -324,7 +324,7 @@
       "type": "natural",
       "position": [
         -55.581850497536436,
-        210.24732000161922,
+        210.24732008517526,
         -75.60871578117306
       ],
       "authority": "client-visual"
@@ -336,7 +336,7 @@
       "type": "shrine",
       "position": [
         -33.75686174877137,
-        162.61986403400186,
+        162.6198636198874,
         184.46837284674075
       ],
       "authority": "client-visual"
@@ -348,7 +348,7 @@
       "type": "shrine",
       "position": [
         -152.9672257376642,
-        236.46684092263968,
+        236.46684088519328,
         -78.10625904401579
       ],
       "authority": "client-visual"
@@ -452,7 +452,7 @@
       "type": "shelter",
       "position": [
         -21.100089962124798,
-        173.7157866179862,
+        173.71578661992064,
         27.264910327810355
       ]
     },
@@ -520,7 +520,7 @@
       "type": "transition",
       "position": [
         -0.7631732400426472,
-        177.96010428929824,
+        177.96010360692904,
         178.18069353199803
       ],
       "note": "The retained Mirrorhold march sign beside its grounded road station."
@@ -532,7 +532,7 @@
       "type": "waystation",
       "position": [
         3.7203335846214713,
-        175.0369921007235,
+        175.0369914183543,
         176.36741711837487
       ]
     },
@@ -566,7 +566,7 @@
       "type": "transition",
       "position": [
         105.2567060525696,
-        194.69506162527588,
+        194.6950611291035,
         -28.538137891269372
       ],
       "note": "Where the Whitehorn Range gives way to the Amethyst Barrens: votary road furniture, a march stone, a waystation, and 16 pieces of the country beyond."
@@ -578,7 +578,7 @@
       "type": "waystation",
       "position": [
         96.34553050830618,
-        192.5648253186562,
+        192.5648248224838,
         -28.88424268020131
       ]
     }
@@ -601,7 +601,7 @@
       "type": "use",
       "position": [
         -33.75686174877137,
-        162.61986403400186,
+        162.6198636198874,
         184.46837284674075
       ],
       "authority": "server"
@@ -755,7 +755,7 @@
       "destinationSpawn": "horn-cascade-spring",
       "position": [
         -59.342823603158024,
-        203.44029790986812,
+        203.4402980176141,
         -65.91342355703122
       ],
       "authority": "server",
@@ -2073,7 +2073,7 @@
       "name": "Road to Amethyst Barrens",
       "position": [
         241.5,
-        89.91,
+        89.91000366210938,
         118.5
       ],
       "serverTile": [
@@ -2244,7 +2244,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+      "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
       "globalMin": [
         192.0,
         0.0
@@ -2263,12 +2263,15 @@
     }
   },
   "performance": {
-    "glbBytes": 5500440,
-    "nodes": 1130,
-    "meshes": 297,
+    "glbBytes": 5514100,
+    "nodes": 1132,
+    "meshes": 298,
     "externalResources": {
       "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
+      "../_continent/shared-assets/8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805.png": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805",
+      "../_continent/shared-assets/ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5.png": "ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5",
+      "../_continent/shared-assets/6ebd390dd8d1694b88f8fc0654471317b6c31c4839fca038c879db059fcd4cb7.png": "6ebd390dd8d1694b88f8fc0654471317b6c31c4839fca038c879db059fcd4cb7",
       "../_continent/shared-assets/a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0.png": "a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0",
       "../_continent/shared-assets/ac13bbd1da6bf69614719d9c5f7acc495a08dbf494baf3ad7a8bcae8042d972e.png": "ac13bbd1da6bf69614719d9c5f7acc495a08dbf494baf3ad7a8bcae8042d972e",
       "../_continent/shared-assets/ff74f94ec5d2fc41f89f7beac812f127e6612f64a2ba1b5f814de9639792fe65.png": "ff74f94ec5d2fc41f89f7beac812f127e6612f64a2ba1b5f814de9639792fe65",
@@ -2333,6 +2336,9 @@
     "sharedResourceResidentBytes": {
       "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
       "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
+      "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805": 5592406,
+      "ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5": 1398102,
+      "6ebd390dd8d1694b88f8fc0654471317b6c31c4839fca038c879db059fcd4cb7": 1398102,
       "a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0": 1398102,
       "ac13bbd1da6bf69614719d9c5f7acc495a08dbf494baf3ad7a8bcae8042d972e": 349526,
       "ff74f94ec5d2fc41f89f7beac812f127e6612f64a2ba1b5f814de9639792fe65": 1398102,
@@ -2484,12 +2490,12 @@
       "destination": "amethyst_barrens",
       "anchor": [
         240.0,
-        89.91,
+        89.91000366210938,
         119.0
       ],
       "globalAnchor": [
         790.0,
-        89.91,
+        89.91000366210938,
         339.0
       ],
       "globalTranslation": [
@@ -5016,10 +5022,13 @@
       356.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:0be7ec782a7442b249348b902fa27c284ac3a97d56e7f73c3160ed788614b7a5",
+  "terrainRevision": "diagonal-spine-v1:fd4992a7daea20980fbb361754cc2e93bcf4cd69674209960236a30a326bc45d",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
+    "../_continent/shared-assets/8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805.png": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805",
+    "../_continent/shared-assets/ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5.png": "ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5",
+    "../_continent/shared-assets/6ebd390dd8d1694b88f8fc0654471317b6c31c4839fca038c879db059fcd4cb7.png": "6ebd390dd8d1694b88f8fc0654471317b6c31c4839fca038c879db059fcd4cb7",
     "../_continent/shared-assets/a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0.png": "a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0",
     "../_continent/shared-assets/ac13bbd1da6bf69614719d9c5f7acc495a08dbf494baf3ad7a8bcae8042d972e.png": "ac13bbd1da6bf69614719d9c5f7acc495a08dbf494baf3ad7a8bcae8042d972e",
     "../_continent/shared-assets/ff74f94ec5d2fc41f89f7beac812f127e6612f64a2ba1b5f814de9639792fe65.png": "ff74f94ec5d2fc41f89f7beac812f127e6612f64a2ba1b5f814de9639792fe65",
@@ -5083,7 +5092,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "streamingChunks": {
@@ -5174,7 +5183,7 @@
           ],
           "max": [
             -166.0,
-            241.96156817830143,
+            241.9615679905824,
             -28.0
           ]
         },
@@ -5197,7 +5206,7 @@
           ],
           "max": [
             -166.0,
-            229.37651450208875,
+            229.3765143789327,
             68.0
           ]
         },
@@ -5263,7 +5272,7 @@
         "bounds": {
           "min": [
             -172.0,
-            59.807978174429586,
+            59.80797789846526,
             164.0
           ],
           "max": [
@@ -5317,9 +5326,9 @@
             -28.0
           ]
         },
-        "estimatedResidentBytes": 42280496,
-        "glbBytes": 521868,
-        "geometryResidentBytes": 2609340,
+        "estimatedResidentBytes": 42280476,
+        "glbBytes": 521864,
+        "geometryResidentBytes": 2609320,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5375,7 +5384,7 @@
         "bounds": {
           "min": [
             -166.0,
-            155.1419551067617,
+            155.1419551072887,
             -28.0
           ],
           "max": [
@@ -5384,9 +5393,9 @@
             68.0
           ]
         },
-        "estimatedResidentBytes": 8710582,
-        "glbBytes": 221680,
-        "geometryResidentBytes": 1108400,
+        "estimatedResidentBytes": 8710602,
+        "glbBytes": 221684,
+        "geometryResidentBytes": 1108420,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5573,9 +5582,9 @@
             71.64595819938972
           ]
         },
-        "estimatedResidentBytes": 27223008,
-        "glbBytes": 359004,
-        "geometryResidentBytes": 1795020,
+        "estimatedResidentBytes": 27223028,
+        "glbBytes": 359008,
+        "geometryResidentBytes": 1795040,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5620,7 +5629,7 @@
           ],
           "max": [
             27.61882370113949,
-            187.75644591714934,
+            187.75644591806724,
             165.97669590671865
           ]
         },
@@ -5790,13 +5799,13 @@
           ],
           "max": [
             122.0,
-            204.3359318092917,
+            204.33593110057478,
             68.02761814609937
           ]
         },
-        "estimatedResidentBytes": 14952578,
-        "glbBytes": 246740,
-        "geometryResidentBytes": 1233700,
+        "estimatedResidentBytes": 14952558,
+        "glbBytes": 246736,
+        "geometryResidentBytes": 1233680,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "a3674d6d39229d54e189bda6aa49cfab8efe8a2b7ef34902282f50a99896e392": 1398102,
@@ -5819,7 +5828,7 @@
         "bounds": {
           "min": [
             25.612821070558084,
-            153.7781113666361,
+            153.77811134104502,
             66.09280655202895
           ],
           "max": [
@@ -5976,7 +5985,7 @@
           ],
           "max": [
             219.1607806188115,
-            191.37374050439647,
+            191.3737405025983,
             -28.0
           ]
         },
@@ -6004,7 +6013,7 @@
           ],
           "max": [
             218.0,
-            199.3679784178096,
+            199.3679784081627,
             68.0
           ]
         },
@@ -6119,7 +6128,7 @@
         "bounds": {
           "min": [
             218.0,
-            -6.635973488143928,
+            -6.6359734535217285,
             -124.0
           ],
           "max": [
@@ -6145,18 +6154,18 @@
         "bounds": {
           "min": [
             218.0,
-            52.01549524314651,
+            52.01549530029297,
             -28.0
           ],
           "max": [
             252.0,
-            83.62523183010383,
+            83.62522888183594,
             68.0
           ]
         },
-        "estimatedResidentBytes": 7676258,
-        "glbBytes": 49768,
-        "geometryResidentBytes": 248840,
+        "estimatedResidentBytes": 7676238,
+        "glbBytes": 49764,
+        "geometryResidentBytes": 248820,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "a3674d6d39229d54e189bda6aa49cfab8efe8a2b7ef34902282f50a99896e392": 1398102,
@@ -6173,7 +6182,7 @@
         "bounds": {
           "min": [
             218.0,
-            80.29978231537604,
+            80.2997817993164,
             68.0
           ],
           "max": [
@@ -6182,11 +6191,14 @@
             164.0
           ]
         },
-        "estimatedResidentBytes": 7731958,
-        "glbBytes": 60908,
-        "geometryResidentBytes": 304540,
+        "estimatedResidentBytes": 16188708,
+        "glbBytes": 74536,
+        "geometryResidentBytes": 372680,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
+          "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805": 5592406,
+          "ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5": 1398102,
+          "6ebd390dd8d1694b88f8fc0654471317b6c31c4839fca038c879db059fcd4cb7": 1398102,
           "a3674d6d39229d54e189bda6aa49cfab8efe8a2b7ef34902282f50a99896e392": 1398102,
           "ccb2144527be090a9f3ea30be4e302cee8c09dc1f2c301ec40d1b6ea8334d5b0": 349526,
           "7de3002e705e29e032805c3d4a9216297094b34e43c2c64aac4111c95fd4d3f2": 1398102,
@@ -6201,7 +6213,7 @@
         "bounds": {
           "min": [
             218.0,
-            70.01020526950408,
+            70.01020812988281,
             164.0
           ],
           "max": [
@@ -6210,9 +6222,9 @@
             260.0
           ]
         },
-        "estimatedResidentBytes": 501722,
-        "glbBytes": 82868,
-        "geometryResidentBytes": 414340,
+        "estimatedResidentBytes": 501702,
+        "glbBytes": 82864,
+        "geometryResidentBytes": 414320,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382
         }
@@ -6223,7 +6235,7 @@
         "bounds": {
           "min": [
             218.0,
-            92.28104744919112,
+            92.28022726673485,
             260.0
           ],
           "max": [
@@ -6245,7 +6257,7 @@
         "bounds": {
           "min": [
             314.0,
-            -20.412555515249554,
+            -20.412555694580078,
             -220.0
           ],
           "max": [
@@ -6254,21 +6266,21 @@
             -166.0
           ]
         },
-        "estimatedResidentBytes": 288704,
-        "glbBytes": 22788,
-        "geometryResidentBytes": 113940,
+        "estimatedResidentBytes": 288684,
+        "glbBytes": 22784,
+        "geometryResidentBytes": 113920,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:0be7ec782a7442b249348b902fa27c284ac3a97d56e7f73c3160ed788614b7a5"
+    "terrainRevision": "diagonal-spine-v1:fd4992a7daea20980fbb361754cc2e93bcf4cd69674209960236a30a326bc45d"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
-    "collisionSha256": "b09f105f18a4d612a61902cd48da2d7f3cf862dc40629d1cba7c5f856c0dea97",
-    "terrainRevision": "diagonal-spine-v1:0be7ec782a7442b249348b902fa27c284ac3a97d56e7f73c3160ed788614b7a5"
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
+    "collisionSha256": "a905d8fdcec46bd00f4dae1fbaab6d1a4eae4e328c04a6fac75713ce32fdc94d",
+    "terrainRevision": "diagonal-spine-v1:fd4992a7daea20980fbb361754cc2e93bcf4cd69674209960236a30a326bc45d"
   }
 }

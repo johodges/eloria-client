@@ -38,6 +38,11 @@ def package(region):
     return MAPS / 'four-gates' if region == 'four_gates' else REGIONS / region
 
 
+def authored_snapshot(region):
+    return next((snapshot for snapshot in AUTHORING.load_snapshots()
+                 if snapshot.document['regionId'] == region), None)
+
+
 def clean(value):
     if isinstance(value, dict): return {str(k): clean(v) for k, v in value.items()}
     if isinstance(value, (tuple, list)): return [clean(v) for v in value]
@@ -47,8 +52,8 @@ def clean(value):
 
 
 def inputs(region):
-    if region == 'sunmane_steppe':
-        snapshot = AUTHORING.load_snapshot()
+    snapshot = authored_snapshot(region)
+    if snapshot is not None:
         sources = set(TOOLKIT.rglob('*.py'))
         sources.update((Path(__file__).resolve(), HERE/'authoring.py', HERE/'scene_io.py',
                         HERE/'legacy-geography.json', HERE/'legacy-contracts.json'))
@@ -131,9 +136,9 @@ def build(region, output, force=False):
         if previous.get('inputs') == certificate and all((root/p).exists() and hashlib.sha256((root/p).read_bytes()).hexdigest() == digest for p,digest in previous.get('outputs',{}).items()):
             print(f'{region}: retained content is current', flush=True)
             return
-    if region == 'sunmane_steppe':
+    snapshot = authored_snapshot(region)
+    if snapshot is not None:
         started = time.monotonic()
-        snapshot = AUTHORING.load_snapshot()
         print(f'{region}: exporting Godot-authored retained-content GLB', flush=True)
         products = AUTHORING.build_retained_library(snapshot, root)
         if certificate != inputs(region):

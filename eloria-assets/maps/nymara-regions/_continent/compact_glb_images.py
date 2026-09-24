@@ -1,9 +1,10 @@
-"""Compact repeated embedded image payloads in a self-contained GLB.
+"""Compact repeated buffer-view payloads in a self-contained GLB.
 
 The continent terrain exporter gives every authored surface a stable image,
 texture and material record.  Many of those records intentionally reference
-the same PNG source.  Keep all of those records and their indices, but let
-their buffer views share one exact payload range.
+the same PNG source, and exported meshes can contain byte-identical attribute
+or index views.  Keep every JSON record and index, but let exact payloads
+share one physical range.
 """
 from __future__ import annotations
 
@@ -89,7 +90,7 @@ def _validated_views(document: dict, binary: bytes) -> tuple[list[dict], int]:
 
 
 def compact_document(document: dict, binary: bytes) -> tuple[dict, bytes, dict]:
-    """Return an equivalent document/BIN pair with exact image bytes shared."""
+    """Return an equivalent document/BIN pair with exact view bytes shared."""
     views, logical_length = _validated_views(document, binary)
     images = document.get("images", [])
     if not isinstance(images, list):
@@ -115,32 +116,47 @@ def compact_document(document: dict, binary: bytes) -> tuple[dict, bytes, dict]:
             raise GlbCompactionError(f"bufferView {view} is shared by image and accessor data")
 
     output = bytearray()
-    payload_offsets: dict[tuple[str, bytes], int] = {}
+    # Keep image MIME identity as the image-only compactor did. Other views
+    # can share a range only after both their digest and complete bytes match;
+    # the latter makes hash collisions harmless.
+    payloads_by_digest: dict[tuple[str, str, bytes], list[tuple[bytes, int]]] = {}
+    unique_image_keys: set[tuple[str, bytes]] = set()
+    duplicate_image_views = 0
     duplicate_views = 0
     saved_payload_bytes = 0
     for index, view in enumerate(views):
         start, size = view.get("byteOffset", 0), view["byteLength"]
         payload = bytes(binary[start:start + size])
         mime = image_mime_by_view.get(index)
-        key = None if mime is None else (mime, payload)
-        if key is not None and key in payload_offsets:
-            offset = payload_offsets[key]
+        category = "bufferView" if mime is None else "image"
+        identity = "" if mime is None else mime
+        digest_key = (category, identity, hashlib.sha256(payload).digest())
+        matches = payloads_by_digest.setdefault(digest_key, [])
+        matching = next((offset for previous, offset in matches if previous == payload), None)
+        if matching is not None:
+            offset = matching
             duplicate_views += 1
+            if mime is not None:
+                duplicate_image_views += 1
             saved_payload_bytes += size
         else:
             _align(output)
             offset = len(output)
             output.extend(payload)
-            if key is not None:
-                payload_offsets[key] = offset
+            matches.append((payload, offset))
+        if mime is not None:
+            unique_image_keys.add((mime, payload))
         view["byteOffset"] = offset
     _align(output)
     document["buffers"][0]["byteLength"] = len(output)
     report = {
-        "schema": 1,
+        "schema": 2,
         "images": len(images),
-        "uniqueImagePayloads": len(payload_offsets),
-        "aliasedImageBufferViews": duplicate_views,
+        "uniqueImagePayloads": len(unique_image_keys),
+        "aliasedImageBufferViews": duplicate_image_views,
+        "bufferViews": len(views),
+        "uniqueBufferViewPayloads": len(views) - duplicate_views,
+        "aliasedBufferViews": duplicate_views,
         "beforeBinaryBytes": logical_length,
         "afterBinaryBytes": len(output),
         "savedPayloadBytes": saved_payload_bytes,

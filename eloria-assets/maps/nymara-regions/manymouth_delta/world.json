@@ -363,7 +363,7 @@
     },
     "walkableCells": 442249,
     "walkableFraction": 0.425076,
-    "sourceGlbSha256": "fa7bcef554bc4a09209c7a0b805fec5387fbe4baa1bc9cdf5dbf276b46294670",
+    "sourceGlbSha256": "393bb84898dcd4a2e1bc6a6a4167a0805053591200a61748bfe1cacbe2c70e43",
     "exportStatistics": {
       "walkMeshes": 206,
       "structuralMeshes": 434,
@@ -506,7 +506,7 @@
       "node": "Landmark_LabyrinthMouth",
       "position": [
         113.66237315707804,
-        -0.637052982329136,
+        -0.6370529861544973,
         29.36733026232696
       ],
       "serverTile": [
@@ -596,7 +596,7 @@
       "node": "Landmark_SouthShrine",
       "position": [
         34.33785312747966,
-        6.920793184077015,
+        6.920793169044899,
         104.2074595816382
       ],
       "serverTile": [
@@ -611,7 +611,7 @@
       "node": "Landmark_EastWatch",
       "position": [
         212.6855469346949,
-        8.393778958739478,
+        8.393778959966141,
         13.242618710345141
       ],
       "serverTile": [
@@ -692,7 +692,7 @@
       "type": "transition",
       "position": [
         203.21482262158202,
-        8.614659123600548,
+        8.614659123531961,
         4.067029212493935
       ],
       "note": "Where the Manymouth Delta gives way to the Ssarathi Ruins: ssarathi road furniture, a march stone, a waystation, and 16 pieces of the country beyond."
@@ -704,7 +704,7 @@
       "type": "waystation",
       "position": [
         190.82892262158202,
-        5.884659123600548,
+        5.884659123531961,
         -2.1329707875061104
       ]
     },
@@ -1691,7 +1691,7 @@
       "species": "drowned-sentinel",
       "position": [
         54.02837430921841,
-        8.068504148519446,
+        8.068504159793862,
         -60.09550426023111
       ],
       "authority": "server"
@@ -1746,7 +1746,7 @@
       "species": "labyrinth-crawler",
       "position": [
         127.97577315707804,
-        -1.7270529823291358,
+        -1.7270529861544972,
         22.687330262326896
       ],
       "authority": "server"
@@ -2908,7 +2908,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+      "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
       "globalMin": [
         316.0,
         984.0
@@ -2927,7 +2927,7 @@
     }
   },
   "performance": {
-    "glbBytes": 8003648,
+    "glbBytes": 8003644,
     "nodes": 1872,
     "meshes": 509,
     "externalResources": {
@@ -4700,7 +4700,7 @@
       306.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:22657aac82858cd42c72a74cf43a3b0fd385f41a2650237b6d36608ab9af1fac",
+  "terrainRevision": "diagonal-spine-v1:f59c72d5103eddd2c748ce146e3a536431d3daeef68ce53d95f3c1cc9540a774",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4785,7 +4785,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "streamingChunks": {
@@ -4802,7 +4802,7 @@
         "bounds": {
           "min": [
             -164.0,
-            2.089259329797749,
+            2.089259332616028,
             -156.0
           ],
           "max": [
@@ -5071,7 +5071,7 @@
           ],
           "max": [
             56.0,
-            15.409652257476573,
+            15.409652256684879,
             -72.81369908569332
           ]
         },
@@ -5172,9 +5172,9 @@
             110.63464911098163
           ]
         },
-        "estimatedResidentBytes": 36698400,
-        "glbBytes": 576360,
-        "geometryResidentBytes": 2881800,
+        "estimatedResidentBytes": 36698420,
+        "glbBytes": 576364,
+        "geometryResidentBytes": 2881820,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5229,9 +5229,9 @@
             211.35528430195973
           ]
         },
-        "estimatedResidentBytes": 33283294,
-        "glbBytes": 470056,
-        "geometryResidentBytes": 2350280,
+        "estimatedResidentBytes": 33283274,
+        "glbBytes": 470052,
+        "geometryResidentBytes": 2350260,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5342,9 +5342,9 @@
             13.4111328125
           ]
         },
-        "estimatedResidentBytes": 31706306,
-        "glbBytes": 783804,
-        "geometryResidentBytes": 3919020,
+        "estimatedResidentBytes": 31706286,
+        "glbBytes": 783800,
+        "geometryResidentBytes": 3919000,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5392,7 +5392,7 @@
           ],
           "max": [
             152.0,
-            10.061782782435866,
+            10.061782778610505,
             108.0
           ]
         },
@@ -5552,9 +5552,9 @@
             14.167028434295617
           ]
         },
-        "estimatedResidentBytes": 39031614,
-        "glbBytes": 885716,
-        "geometryResidentBytes": 4428580,
+        "estimatedResidentBytes": 39031594,
+        "glbBytes": 885712,
+        "geometryResidentBytes": 4428560,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "4d2b6f27be220e450bcb89dbffba0b651ad081621c0db5e675f45b5b0e4ea3b2": 1398102,
@@ -5608,7 +5608,7 @@
           ],
           "max": [
             248.0,
-            13.996539679219744,
+            13.996539680446407,
             108.0
           ]
         },
@@ -5721,7 +5721,7 @@
         "bounds": {
           "min": [
             248.0,
-            18.454945943485612,
+            18.45494594346108,
             -142.0
           ],
           "max": [
@@ -5743,12 +5743,12 @@
         "bounds": {
           "min": [
             245.0587385958695,
-            12.940137016831907,
+            12.940136865048215,
             -84.0
           ],
           "max": [
             300.0440996983426,
-            44.08422404123971,
+            44.084223997229614,
             12.0
           ]
         },
@@ -5778,7 +5778,7 @@
           ],
           "max": [
             302.16110294926864,
-            38.9864578917951,
+            38.98645788804147,
             111.244912495368
           ]
         },
@@ -5871,12 +5871,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:22657aac82858cd42c72a74cf43a3b0fd385f41a2650237b6d36608ab9af1fac"
+    "terrainRevision": "diagonal-spine-v1:f59c72d5103eddd2c748ce146e3a536431d3daeef68ce53d95f3c1cc9540a774"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "collisionSha256": "9f6e0c44d4b4141e1850adbc6007553dcaa155527e738922336352c77c472e44",
-    "terrainRevision": "diagonal-spine-v1:22657aac82858cd42c72a74cf43a3b0fd385f41a2650237b6d36608ab9af1fac"
+    "terrainRevision": "diagonal-spine-v1:f59c72d5103eddd2c748ce146e3a536431d3daeef68ce53d95f3c1cc9540a774"
   }
 }

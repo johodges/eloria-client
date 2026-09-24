@@ -449,8 +449,10 @@ class Content:
         self.attachments={};self.attachment_order=[]
         self.ids=world.ids
         self.edits=OE.ObjectEdits(OE.load_edits(),world.ids)
+        self.authoring_snapshots=dict(getattr(world,'authoring_snapshots',{}))
         snapshot=getattr(world,'authoring_snapshot',None)
-        self.authoring_snapshots={snapshot.document['regionId']:snapshot} if snapshot is not None else {}
+        if snapshot is not None:
+            self.authoring_snapshots.setdefault(snapshot.document['regionId'],snapshot)
         self.authored_regions=set(self.authoring_snapshots)
         for region in self.authored_regions:self.edits.exclude_authored_region(region)
 

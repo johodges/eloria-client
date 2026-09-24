@@ -5852,15 +5852,16 @@
         227
       ],
       "expectedTile": [
-        315.078,
-        226.956
+        315.0,
+        227.0
       ],
-      "displacementMetres": 0.09,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:685:door:amethyst_barrens->resonant_vault@320:175"
     },
     {
       "region": "amethyst_barrens",
@@ -5874,15 +5875,16 @@
         226
       ],
       "expectedTile": [
-        315.347,
-        225.549
+        315.0,
+        226.0
       ],
-      "displacementMetres": 0.569,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:686:return:resonant_vault->amethyst_barrens@318:175"
     },
     {
       "region": "amethyst_barrens",
@@ -5896,15 +5898,16 @@
         242
       ],
       "expectedTile": [
-        342.346,
-        242.167
+        342.0,
+        242.0
       ],
-      "displacementMetres": 0.384,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:687:door:amethyst_barrens->resonant_vault@353:194"
     },
     {
       "region": "amethyst_barrens",
@@ -5918,15 +5921,16 @@
         240
       ],
       "expectedTile": [
-        342.346,
-        240.167
+        342.0,
+        240.0
       ],
-      "displacementMetres": 0.384,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:688:return:resonant_vault->amethyst_barrens@353:192"
     },
     {
       "region": "amethyst_barrens",
@@ -5940,15 +5944,16 @@
         210
       ],
       "expectedTile": [
-        255.755,
-        209.796
+        256.0,
+        210.0
       ],
-      "displacementMetres": 0.319,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:689:door:amethyst_barrens->resonant_vault@244:153"
     },
     {
       "region": "amethyst_barrens",
@@ -5962,15 +5967,16 @@
         210
       ],
       "expectedTile": [
-        253.755,
-        209.796
+        254.0,
+        210.0
       ],
-      "displacementMetres": 0.319,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:690:return:resonant_vault->amethyst_barrens@242:153"
     },
     {
       "region": "amethyst_barrens",
@@ -5984,15 +5990,16 @@
         318
       ],
       "expectedTile": [
-        120.792,
-        317.656
+        121.0,
+        318.0
       ],
-      "displacementMetres": 0.402,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:691:door:amethyst_barrens->resonant_vault@71:291"
     },
     {
       "region": "amethyst_barrens",
@@ -6006,15 +6013,16 @@
         318
       ],
       "expectedTile": [
-        118.792,
-        317.656
+        119.0,
+        318.0
       ],
-      "displacementMetres": 0.402,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:692:return:resonant_vault->amethyst_barrens@69:291"
     },
     {
       "region": "amethyst_barrens",
@@ -6028,15 +6036,16 @@
         198
       ],
       "expectedTile": [
-        244.089,
-        198.391
+        244.0,
+        198.0
       ],
-      "displacementMetres": 0.401,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:693:door:amethyst_barrens->resonant_vault@232:137"
     },
     {
       "region": "amethyst_barrens",
@@ -6050,15 +6059,16 @@
         198
       ],
       "expectedTile": [
-        242.089,
-        198.391
+        242.0,
+        198.0
       ],
-      "displacementMetres": 0.401,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:694:return:resonant_vault->amethyst_barrens@230:137"
     },
     {
       "region": "amethyst_barrens",
@@ -6072,15 +6082,16 @@
         316
       ],
       "expectedTile": [
-        257.743,
-        316.515
+        258.0,
+        316.0
       ],
-      "displacementMetres": 0.576,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:695:door:amethyst_barrens->resonant_vault@272:327"
     },
     {
       "region": "amethyst_barrens",
@@ -6094,15 +6105,16 @@
         317
       ],
       "expectedTile": [
-        255.743,
-        316.515
+        256.0,
+        317.0
       ],
-      "displacementMetres": 0.549,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:696:return:resonant_vault->amethyst_barrens@270:327"
     },
     {
       "region": "amethyst_barrens",
@@ -6116,15 +6128,16 @@
         276
       ],
       "expectedTile": [
-        288.615,
-        275.779
+        289.0,
+        276.0
       ],
-      "displacementMetres": 0.444,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:697:door:amethyst_barrens->resonant_vault@286:242"
     },
     {
       "region": "amethyst_barrens",
@@ -6138,15 +6151,16 @@
         276
       ],
       "expectedTile": [
-        286.615,
-        275.779
+        287.0,
+        276.0
       ],
-      "displacementMetres": 0.444,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:698:return:resonant_vault->amethyst_barrens@284:242"
     },
     {
       "region": "amethyst_barrens",
@@ -6160,15 +6174,16 @@
         300
       ],
       "expectedTile": [
-        298.727,
-        300.442
+        300.0,
+        300.0
       ],
-      "displacementMetres": 1.348,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:699:door:amethyst_barrens->amethyst_barrens_secrets@299:268"
     },
     {
       "region": "amethyst_barrens",
@@ -6182,15 +6197,16 @@
         145
       ],
       "expectedTile": [
-        325.815,
-        144.998
+        326.0,
+        145.0
       ],
-      "displacementMetres": 0.185,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:700:door:amethyst_barrens->amethyst_barrens_secrets@332:70"
     },
     {
       "region": "amethyst_barrens",
@@ -6204,15 +6220,16 @@
         127
       ],
       "expectedTile": [
-        228.499,
-        126.895
+        228.0,
+        127.0
       ],
-      "displacementMetres": 0.51,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:701:door:amethyst_barrens->amethyst_barrens_secrets@207:44"
     },
     {
       "region": "amethyst_barrens",
@@ -6226,15 +6243,16 @@
         232
       ],
       "expectedTile": [
-        340.711,
-        233.151
+        341.0,
+        232.0
       ],
-      "displacementMetres": 1.186,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:702:door:amethyst_barrens->amethyst_barrens_secrets@353:182"
     },
     {
       "region": "amethyst_barrens",
@@ -6256,7 +6274,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:703:door:amethyst_barrens->amethyst_barrens_secrets@260:329"
     },
     {
       "region": "amethyst_barrens",
@@ -6270,15 +6289,16 @@
         319
       ],
       "expectedTile": [
-        142.412,
-        318.536
+        142.0,
+        319.0
       ],
-      "displacementMetres": 0.621,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:704:door:amethyst_barrens->amethyst_barrens_secrets@99:291"
     },
     {
       "region": "amethyst_barrens",
@@ -6292,15 +6312,16 @@
         119
       ],
       "expectedTile": [
-        329.216,
-        120.162
+        329.0,
+        119.0
       ],
-      "displacementMetres": 1.182,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:705:door:amethyst_barrens->amethyst_barrens_secrets@338:37"
     },
     {
       "region": "amethyst_barrens",
@@ -6314,15 +6335,16 @@
         134
       ],
       "expectedTile": [
-        229.638,
-        133.548
+        231.0,
+        134.0
       ],
-      "displacementMetres": 1.435,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:706:door:amethyst_barrens->amethyst_barrens_secrets@210:54"
     },
     {
       "region": "amethyst_barrens",
@@ -6336,15 +6358,16 @@
         125
       ],
       "expectedTile": [
-        261.882,
-        124.806
+        263.0,
+        125.0
       ],
-      "displacementMetres": 1.134,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:707:door:amethyst_barrens->amethyst_barrens_secrets@252:43"
     },
     {
       "region": "amethyst_barrens",
@@ -6358,15 +6381,16 @@
         272
       ],
       "expectedTile": [
-        269.218,
-        272.296
+        269.0,
+        272.0
       ],
-      "displacementMetres": 0.367,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:708:door:amethyst_barrens->amethyst_barrens_secrets@261:232"
     },
     {
       "region": "amethyst_barrens",
@@ -6380,15 +6404,16 @@
         135
       ],
       "expectedTile": [
-        234.441,
-        134.6
+        233.0,
+        135.0
       ],
-      "displacementMetres": 1.495,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:709:door:amethyst_barrens->amethyst_barrens_secrets@217:55"
     },
     {
       "region": "amethyst_barrens",
@@ -6402,15 +6427,16 @@
         110
       ],
       "expectedTile": [
-        242.925,
-        110.294
+        243.0,
+        110.0
       ],
-      "displacementMetres": 0.303,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:710:door:amethyst_barrens->amethyst_barrens_secrets@227:24"
     },
     {
       "region": "amethyst_barrens",
@@ -6424,15 +6450,16 @@
         135
       ],
       "expectedTile": [
-        221.231,
-        134.6
+        220.0,
+        135.0
       ],
-      "displacementMetres": 1.294,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:711:door:amethyst_barrens->amethyst_barrens_secrets@200:55"
     },
     {
       "region": "sunmane_steppe",
@@ -6469,15 +6496,16 @@
         232
       ],
       "expectedTile": [
-        340.711,
-        233.151
+        341.0,
+        232.0
       ],
-      "displacementMetres": 1.186,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:714:return:amethyst_barrens_secrets->amethyst_barrens@353:182"
     },
     {
       "region": "amethyst_barrens",
@@ -6491,15 +6519,16 @@
         125
       ],
       "expectedTile": [
-        261.882,
-        124.806
+        263.0,
+        125.0
       ],
-      "displacementMetres": 1.134,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:715:return:amethyst_barrens_secrets->amethyst_barrens@252:43"
     },
     {
       "region": "amethyst_barrens",
@@ -6513,15 +6542,16 @@
         272
       ],
       "expectedTile": [
-        269.218,
-        272.296
+        269.0,
+        272.0
       ],
-      "displacementMetres": 0.367,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:716:return:amethyst_barrens_secrets->amethyst_barrens@261:232"
     },
     {
       "region": "amethyst_barrens",
@@ -6535,15 +6565,16 @@
         319
       ],
       "expectedTile": [
-        142.412,
-        318.536
+        142.0,
+        319.0
       ],
-      "displacementMetres": 0.621,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:717:return:amethyst_barrens_secrets->amethyst_barrens@99:291"
     },
     {
       "region": "amethyst_barrens",
@@ -6557,15 +6588,16 @@
         300
       ],
       "expectedTile": [
-        298.727,
-        300.442
+        300.0,
+        300.0
       ],
-      "displacementMetres": 1.348,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:718:return:amethyst_barrens_secrets->amethyst_barrens@299:268"
     },
     {
       "region": "amethyst_barrens",
@@ -6579,15 +6611,16 @@
         110
       ],
       "expectedTile": [
-        242.925,
-        110.294
+        243.0,
+        110.0
       ],
-      "displacementMetres": 0.303,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:719:return:amethyst_barrens_secrets->amethyst_barrens@227:24"
     },
     {
       "region": "amethyst_barrens",
@@ -6601,15 +6634,16 @@
         119
       ],
       "expectedTile": [
-        329.216,
-        120.162
+        329.0,
+        119.0
       ],
-      "displacementMetres": 1.182,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:720:return:amethyst_barrens_secrets->amethyst_barrens@338:37"
     },
     {
       "region": "amethyst_barrens",
@@ -6623,15 +6657,16 @@
         145
       ],
       "expectedTile": [
-        325.815,
-        144.998
+        326.0,
+        145.0
       ],
-      "displacementMetres": 0.185,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:721:return:amethyst_barrens_secrets->amethyst_barrens@332:70"
     },
     {
       "region": "amethyst_barrens",
@@ -6653,7 +6688,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:722:return:amethyst_barrens_secrets->amethyst_barrens@260:329"
     },
     {
       "region": "amethyst_barrens",
@@ -6667,15 +6703,16 @@
         135
       ],
       "expectedTile": [
-        234.441,
-        134.6
+        233.0,
+        135.0
       ],
-      "displacementMetres": 1.495,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:723:return:amethyst_barrens_secrets->amethyst_barrens@217:55"
     },
     {
       "region": "amethyst_barrens",
@@ -6689,15 +6726,16 @@
         134
       ],
       "expectedTile": [
-        229.638,
-        133.548
+        231.0,
+        134.0
       ],
-      "displacementMetres": 1.435,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:725:return:amethyst_barrens_secrets->amethyst_barrens@210:54"
     },
     {
       "region": "sunmane_steppe",
@@ -6734,15 +6772,16 @@
         135
       ],
       "expectedTile": [
-        221.231,
-        134.6
+        220.0,
+        135.0
       ],
-      "displacementMetres": 1.294,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:727:return:amethyst_barrens_secrets->amethyst_barrens@200:55"
     },
     {
       "region": "amethyst_barrens",
@@ -6756,15 +6795,16 @@
         127
       ],
       "expectedTile": [
-        228.499,
-        126.895
+        228.0,
+        127.0
       ],
-      "displacementMetres": 0.51,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:731:return:amethyst_barrens_secrets->amethyst_barrens@207:44"
     },
     {
       "region": "grey_moors",
@@ -11404,15 +11444,16 @@
         357
       ],
       "expectedTile": [
-        105.813,
-        357.976
+        106.0,
+        357.0
       ],
-      "displacementMetres": 0.994,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:1276:return:amethyst_gauntlet->amethyst_barrens@50:343"
     },
     {
       "region": "amethyst_barrens",
@@ -11426,15 +11467,16 @@
         357
       ],
       "expectedTile": [
-        105.813,
-        357.976
+        106.0,
+        357.0
       ],
-      "displacementMetres": 0.994,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:1277:return:amethyst_gauntlet->amethyst_barrens@50:343"
     },
     {
       "region": "amethyst_barrens",
@@ -11448,15 +11490,16 @@
         357
       ],
       "expectedTile": [
-        105.813,
-        357.976
+        106.0,
+        357.0
       ],
-      "displacementMetres": 0.994,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:1287:return:amethyst_gauntlet_2->amethyst_barrens@50:343"
     },
     {
       "region": "amethyst_barrens",
@@ -11470,15 +11513,16 @@
         357
       ],
       "expectedTile": [
-        105.813,
-        357.976
+        106.0,
+        357.0
       ],
-      "displacementMetres": 0.994,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:1288:return:amethyst_gauntlet_2->amethyst_barrens@50:343"
     },
     {
       "region": "amethyst_barrens",
@@ -11492,15 +11536,16 @@
         357
       ],
       "expectedTile": [
-        105.813,
-        357.976
+        106.0,
+        357.0
       ],
-      "displacementMetres": 0.994,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:1298:return:amethyst_gauntlet_3->amethyst_barrens@50:343"
     },
     {
       "region": "amethyst_barrens",
@@ -11514,15 +11559,16 @@
         357
       ],
       "expectedTile": [
-        105.813,
-        357.976
+        106.0,
+        357.0
       ],
-      "displacementMetres": 0.994,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "maps.txt:1299:return:amethyst_gauntlet_3->amethyst_barrens@50:343"
     },
     {
       "region": "manymouth_delta",
@@ -22822,15 +22868,16 @@
         183
       ],
       "expectedTile": [
-        186.212,
-        182.596
+        186.0,
+        183.0
       ],
-      "displacementMetres": 0.456,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12.0,
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:82:14@156:117"
     },
     {
       "region": "amethyst_barrens",
@@ -22844,15 +22891,16 @@
         169
       ],
       "expectedTile": [
-        181.481,
-        168.693
+        181.0,
+        169.0
       ],
-      "displacementMetres": 0.571,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:81:13@145:103"
     },
     {
       "region": "amethyst_barrens",
@@ -22866,15 +22914,16 @@
         183
       ],
       "expectedTile": [
-        194.212,
-        182.596
+        194.0,
+        183.0
       ],
-      "displacementMetres": 0.456,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:83:15@164:117"
     },
     {
       "region": "amethyst_barrens",
@@ -22888,15 +22937,16 @@
         170
       ],
       "expectedTile": [
-        195.212,
-        169.596
+        195.0,
+        170.0
       ],
-      "displacementMetres": 0.456,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:84:16@165:104"
     },
     {
       "region": "amethyst_barrens",
@@ -22910,15 +22960,16 @@
         300
       ],
       "expectedTile": [
-        298.727,
-        300.442
+        300.0,
+        300.0
       ],
-      "displacementMetres": 1.348,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:185:500@299:268"
     },
     {
       "region": "amethyst_barrens",
@@ -22932,15 +22983,16 @@
         145
       ],
       "expectedTile": [
-        325.815,
-        144.998
+        326.0,
+        145.0
       ],
-      "displacementMetres": 0.185,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:186:501@332:70"
     },
     {
       "region": "amethyst_barrens",
@@ -22954,15 +23006,16 @@
         127
       ],
       "expectedTile": [
-        228.499,
-        126.895
+        228.0,
+        127.0
       ],
-      "displacementMetres": 0.51,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:187:502@207:44"
     },
     {
       "region": "amethyst_barrens",
@@ -22976,15 +23029,16 @@
         232
       ],
       "expectedTile": [
-        340.711,
-        233.151
+        341.0,
+        232.0
       ],
-      "displacementMetres": 1.186,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:188:503@353:182"
     },
     {
       "region": "amethyst_barrens",
@@ -23006,7 +23060,8 @@
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:189:504@260:329"
     },
     {
       "region": "amethyst_barrens",
@@ -23020,15 +23075,16 @@
         319
       ],
       "expectedTile": [
-        142.412,
-        318.536
+        142.0,
+        319.0
       ],
-      "displacementMetres": 0.621,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:190:505@99:291"
     },
     {
       "region": "amethyst_barrens",
@@ -23042,15 +23098,16 @@
         119
       ],
       "expectedTile": [
-        329.216,
-        120.162
+        329.0,
+        119.0
       ],
-      "displacementMetres": 1.182,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:191:506@338:37"
     },
     {
       "region": "amethyst_barrens",
@@ -23064,15 +23121,16 @@
         134
       ],
       "expectedTile": [
-        229.638,
-        133.548
+        231.0,
+        134.0
       ],
-      "displacementMetres": 1.435,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:192:507@210:54"
     },
     {
       "region": "amethyst_barrens",
@@ -23086,15 +23144,16 @@
         125
       ],
       "expectedTile": [
-        261.882,
-        124.806
+        263.0,
+        125.0
       ],
-      "displacementMetres": 1.134,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:193:508@252:43"
     },
     {
       "region": "amethyst_barrens",
@@ -23108,15 +23167,16 @@
         272
       ],
       "expectedTile": [
-        269.218,
-        272.296
+        269.0,
+        272.0
       ],
-      "displacementMetres": 0.367,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:194:509@261:232"
     },
     {
       "region": "amethyst_barrens",
@@ -23130,15 +23190,16 @@
         135
       ],
       "expectedTile": [
-        234.441,
-        134.6
+        233.0,
+        135.0
       ],
-      "displacementMetres": 1.495,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:195:510@217:55"
     },
     {
       "region": "amethyst_barrens",
@@ -23152,15 +23213,16 @@
         110
       ],
       "expectedTile": [
-        242.925,
-        110.294
+        243.0,
+        110.0
       ],
-      "displacementMetres": 0.303,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:196:511@227:24"
     },
     {
       "region": "amethyst_barrens",
@@ -23174,15 +23236,16 @@
         135
       ],
       "expectedTile": [
-        221.231,
-        134.6
+        220.0,
+        135.0
       ],
-      "displacementMetres": 1.294,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "interactives.txt:197:512@200:55"
     },
     {
       "region": "amethyst_barrens",
@@ -23196,15 +23259,16 @@
         173
       ],
       "expectedTile": [
-        177.481,
-        172.693
+        177.0,
+        173.0
       ],
-      "displacementMetres": 0.571,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:82:Ione Brass@141:107"
     },
     {
       "region": "amethyst_barrens",
@@ -23218,15 +23282,16 @@
         179
       ],
       "expectedTile": [
-        191.212,
-        178.596
+        191.0,
+        179.0
       ],
-      "displacementMetres": 0.456,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:83:Varric Lens@161:113"
     },
     {
       "region": "amethyst_barrens",
@@ -23240,15 +23305,16 @@
         299
       ],
       "expectedTile": [
-        111.792,
-        300.656
+        111.0,
+        299.0
       ],
-      "displacementMetres": 1.835,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:84:Observatory Warden Sela Prism@62:274"
     },
     {
       "region": "amethyst_barrens",
@@ -23262,15 +23328,16 @@
         133
       ],
       "expectedTile": [
-        320.139,
-        133.27
+        320.0,
+        133.0
       ],
-      "displacementMetres": 0.304,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:85:Tuning Adept Ollum Ghast@329:52"
     },
     {
       "region": "amethyst_barrens",
@@ -23284,15 +23351,16 @@
         178
       ],
       "expectedTile": [
-        161.481,
-        177.693
+        161.0,
+        178.0
       ],
-      "displacementMetres": 0.571,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:86:Field Station Cook Naia Flint@125:112"
     },
     {
       "region": "amethyst_barrens",
@@ -23306,15 +23374,16 @@
         229
       ],
       "expectedTile": [
-        316.078,
-        229.956
+        316.0,
+        229.0
       ],
-      "displacementMetres": 0.959,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:87:Shard Counter Bel Ammon@321:178"
     },
     {
       "region": "amethyst_barrens",
@@ -23328,15 +23397,16 @@
         355
       ],
       "expectedTile": [
-        98.813,
-        354.976
+        99.0,
+        355.0
       ],
-      "displacementMetres": 0.189,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:88:Geode Digger Torvin Slate@43:340"
     },
     {
       "region": "amethyst_barrens",
@@ -23350,15 +23420,16 @@
         273
       ],
       "expectedTile": [
-        285.615,
-        272.779
+        286.0,
+        273.0
       ],
-      "displacementMetres": 0.444,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:89:Storm-Ruin Surveyor Ash Kell@283:239"
     },
     {
       "region": "amethyst_barrens",
@@ -23372,15 +23443,16 @@
         136
       ],
       "expectedTile": [
-        342.677,
-        136.169
+        343.0,
+        136.0
       ],
-      "displacementMetres": 0.365,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:90:Freight Factor Nils Corrow@356:55"
     },
     {
       "region": "amethyst_barrens",
@@ -23394,15 +23466,16 @@
         188
       ],
       "expectedTile": [
-        349.339,
-        188.096
+        349.0,
+        188.0
       ],
-      "displacementMetres": 0.352,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:91:Watchtower Sentinel Ivar Quill@365:128"
     },
     {
       "region": "amethyst_barrens",
@@ -23416,15 +23489,16 @@
         162
       ],
       "expectedTile": [
-        165.592,
-        162.096
+        166.0,
+        162.0
       ],
-      "displacementMetres": 0.419,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:92:Shard-Hauler Damu Orun@129:91"
     },
     {
       "region": "amethyst_barrens",
@@ -23438,15 +23512,16 @@
         203
       ],
       "expectedTile": [
-        243.089,
-        203.391
+        243.0,
+        203.0
       ],
-      "displacementMetres": 0.401,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:93:Cluster Warden Peri Vance@231:142"
     },
     {
       "region": "amethyst_barrens",
@@ -23460,15 +23535,16 @@
         314
       ],
       "expectedTile": [
-        257.743,
-        315.515
+        258.0,
+        314.0
       ],
-      "displacementMetres": 1.537,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:94:Deaf Digger Ollo Marrow@272:326"
     },
     {
       "region": "amethyst_barrens",
@@ -23482,15 +23558,16 @@
         357
       ],
       "expectedTile": [
-        93.813,
-        356.976
+        94.0,
+        357.0
       ],
-      "displacementMetres": 0.189,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "npcs.txt:321:Grinder Vell@38:342"
     },
     {
       "region": "amethyst_barrens",
@@ -23504,15 +23581,16 @@
         251
       ],
       "expectedTile": [
-        254.597,
-        253.536
+        255.0,
+        251.0
       ],
-      "displacementMetres": 2.568,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:163:42@246:204"
     },
     {
       "region": "amethyst_barrens",
@@ -23526,15 +23604,16 @@
         163
       ],
       "expectedTile": [
-        277.211,
-        162.96
+        277.0,
+        163.0
       ],
-      "displacementMetres": 0.215,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:164:43@277:88"
     },
     {
       "region": "amethyst_barrens",
@@ -23548,15 +23627,16 @@
         246
       ],
       "expectedTile": [
-        256.597,
-        245.536
+        257.0,
+        246.0
       ],
-      "displacementMetres": 0.615,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:165:44@248:196"
     },
     {
       "region": "amethyst_barrens",
@@ -23570,15 +23650,16 @@
         192
       ],
       "expectedTile": [
-        240.089,
-        192.391
+        240.0,
+        192.0
       ],
-      "displacementMetres": 0.401,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:166:45@228:131"
     },
     {
       "region": "amethyst_barrens",
@@ -23592,15 +23673,16 @@
         208
       ],
       "expectedTile": [
-        250.089,
-        208.391
+        250.0,
+        208.0
       ],
-      "displacementMetres": 0.401,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:167:46@238:147"
     },
     {
       "region": "amethyst_barrens",
@@ -23614,15 +23696,16 @@
         353
       ],
       "expectedTile": [
-        216.431,
-        353.287
+        216.0,
+        353.0
       ],
-      "displacementMetres": 0.518,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:168:47@194:335"
     },
     {
       "region": "amethyst_barrens",
@@ -23636,15 +23719,16 @@
         304
       ],
       "expectedTile": [
-        293.727,
-        304.442
+        294.0,
+        304.0
       ],
-      "displacementMetres": 0.52,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:169:48@294:272"
     },
     {
       "region": "amethyst_barrens",
@@ -23658,15 +23742,16 @@
         311
       ],
       "expectedTile": [
-        277.743,
-        310.515
+        278.0,
+        311.0
       ],
-      "displacementMetres": 0.549,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:170:49@292:321"
     },
     {
       "region": "amethyst_barrens",
@@ -23680,15 +23765,16 @@
         256
       ],
       "expectedTile": [
-        337.346,
-        254.167
+        337.0,
+        256.0
       ],
-      "displacementMetres": 1.865,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:171:50@348:206"
     },
     {
       "region": "amethyst_barrens",
@@ -23702,15 +23788,16 @@
         264
       ],
       "expectedTile": [
-        189.403,
-        263.901
+        189.0,
+        264.0
       ],
-      "displacementMetres": 0.415,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:172:51@159:221"
     },
     {
       "region": "amethyst_barrens",
@@ -23724,15 +23811,16 @@
         272
       ],
       "expectedTile": [
-        180.823,
-        272.481
+        181.0,
+        272.0
       ],
-      "displacementMetres": 0.513,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:173:52@148:232"
     },
     {
       "region": "amethyst_barrens",
@@ -23746,15 +23834,16 @@
         341
       ],
       "expectedTile": [
-        100.813,
-        340.976
+        101.0,
+        341.0
       ],
-      "displacementMetres": 0.189,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:174:53@45:326"
     },
     {
       "region": "amethyst_barrens",
@@ -23768,15 +23857,16 @@
         360
       ],
       "expectedTile": [
-        88.813,
-        359.976
+        89.0,
+        360.0
       ],
-      "displacementMetres": 0.189,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:175:54@33:345"
     },
     {
       "region": "amethyst_barrens",
@@ -23790,15 +23880,16 @@
         303
       ],
       "expectedTile": [
-        323.933,
-        302.957
+        324.0,
+        303.0
       ],
-      "displacementMetres": 0.079,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:176:55@330:273"
     },
     {
       "region": "amethyst_barrens",
@@ -23812,15 +23903,16 @@
         315
       ],
       "expectedTile": [
-        309.914,
-        315.27
+        310.0,
+        315.0
       ],
-      "displacementMetres": 0.283,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:177:56@309:288"
     },
     {
       "region": "amethyst_barrens",
@@ -23834,15 +23926,16 @@
         227
       ],
       "expectedTile": [
-        123.444,
-        226.836
+        123.0,
+        227.0
       ],
-      "displacementMetres": 0.474,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:178:57@72:174"
     },
     {
       "region": "amethyst_barrens",
@@ -23856,15 +23949,16 @@
         232
       ],
       "expectedTile": [
-        112.444,
-        231.836
+        112.0,
+        232.0
       ],
-      "displacementMetres": 0.474,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:179:58@61:179"
     },
     {
       "region": "amethyst_barrens",
@@ -23878,15 +23972,16 @@
         223
       ],
       "expectedTile": [
-        321.078,
-        222.956
+        321.0,
+        223.0
       ],
-      "displacementMetres": 0.09,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:180:59@326:171"
     },
     {
       "region": "amethyst_barrens",
@@ -23900,15 +23995,16 @@
         166
       ],
       "expectedTile": [
-        337.951,
-        165.944
+        338.0,
+        166.0
       ],
-      "displacementMetres": 0.074,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:181:60@351:93"
     },
     {
       "region": "amethyst_barrens",
@@ -23922,15 +24018,16 @@
         146
       ],
       "expectedTile": [
-        193.64,
-        146.331
+        194.0,
+        146.0
       ],
-      "displacementMetres": 0.489,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:182:61@165:73"
     },
     {
       "region": "amethyst_barrens",
@@ -23944,15 +24041,16 @@
         163
       ],
       "expectedTile": [
-        204.64,
-        163.331
+        205.0,
+        163.0
       ],
-      "displacementMetres": 0.489,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:183:62@176:90"
     },
     {
       "region": "amethyst_barrens",
@@ -23966,15 +24064,16 @@
         155
       ],
       "expectedTile": [
-        146.503,
-        155.481
+        147.0,
+        155.0
       ],
-      "displacementMetres": 0.692,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:184:63@104:82"
     },
     {
       "region": "amethyst_barrens",
@@ -23988,15 +24087,16 @@
         143
       ],
       "expectedTile": [
-        207.499,
-        142.895
+        207.0,
+        143.0
       ],
-      "displacementMetres": 0.51,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:185:64@186:60"
     },
     {
       "region": "amethyst_barrens",
@@ -24010,15 +24110,16 @@
         204
       ],
       "expectedTile": [
-        256.089,
-        204.391
+        256.0,
+        204.0
       ],
-      "displacementMetres": 0.401,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:470:65@244:143"
     },
     {
       "region": "amethyst_barrens",
@@ -24032,15 +24133,16 @@
         319
       ],
       "expectedTile": [
-        240.865,
-        328.365
+        244.0,
+        319.0
       ],
-      "displacementMetres": 9.876,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:471:66@224:306"
     },
     {
       "region": "amethyst_barrens",
@@ -24054,15 +24156,16 @@
         319
       ],
       "expectedTile": [
-        245.865,
-        330.365
+        246.0,
+        319.0
       ],
-      "displacementMetres": 11.366,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:472:67@229:308"
     },
     {
       "region": "amethyst_barrens",
@@ -24076,15 +24179,16 @@
         322
       ],
       "expectedTile": [
-        233.865,
-        322.365
+        231.0,
+        322.0
       ],
-      "displacementMetres": 2.888,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:473:68@217:300"
     },
     {
       "region": "amethyst_barrens",
@@ -24098,15 +24202,16 @@
         209
       ],
       "expectedTile": [
-        244.755,
-        208.796
+        245.0,
+        209.0
       ],
-      "displacementMetres": 0.319,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:474:69@233:152"
     },
     {
       "region": "amethyst_barrens",
@@ -24120,15 +24225,16 @@
         336
       ],
       "expectedTile": [
-        222.865,
-        336.365
+        223.0,
+        336.0
       ],
-      "displacementMetres": 0.39,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:475:70@206:314"
     },
     {
       "region": "amethyst_barrens",
@@ -24142,15 +24248,16 @@
         294
       ],
       "expectedTile": [
-        276.615,
-        293.779
+        277.0,
+        294.0
       ],
-      "displacementMetres": 0.444,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:476:71@274:260"
     },
     {
       "region": "amethyst_barrens",
@@ -24164,15 +24271,16 @@
         290
       ],
       "expectedTile": [
-        271.615,
-        289.779
+        272.0,
+        290.0
       ],
-      "displacementMetres": 0.444,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:477:72@269:256"
     },
     {
       "region": "amethyst_barrens",
@@ -24186,15 +24294,16 @@
         344
       ],
       "expectedTile": [
-        226.431,
-        344.287
+        226.0,
+        344.0
       ],
-      "displacementMetres": 0.518,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:478:73@204:326"
     },
     {
       "region": "amethyst_barrens",
@@ -24208,15 +24317,16 @@
         354
       ],
       "expectedTile": [
-        219.431,
-        354.287
+        219.0,
+        354.0
       ],
-      "displacementMetres": 0.518,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:479:74@197:336"
     },
     {
       "region": "amethyst_barrens",
@@ -24230,15 +24340,16 @@
         304
       ],
       "expectedTile": [
-        289.914,
-        304.27
+        290.0,
+        304.0
       ],
-      "displacementMetres": 0.283,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:480:75@289:277"
     },
     {
       "region": "amethyst_barrens",
@@ -24252,15 +24363,16 @@
         294
       ],
       "expectedTile": [
-        297.615,
-        293.779
+        298.0,
+        294.0
       ],
-      "displacementMetres": 0.444,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:481:76@295:260"
     },
     {
       "region": "amethyst_barrens",
@@ -24274,15 +24386,16 @@
         305
       ],
       "expectedTile": [
-        251.743,
-        305.515
+        252.0,
+        305.0
       ],
-      "displacementMetres": 0.576,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:482:77@266:316"
     },
     {
       "region": "amethyst_barrens",
@@ -24296,15 +24409,16 @@
         240
       ],
       "expectedTile": [
-        318.346,
-        240.167
+        318.0,
+        240.0
       ],
-      "displacementMetres": 0.384,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:483:78@329:192"
     },
     {
       "region": "amethyst_barrens",
@@ -24318,15 +24432,16 @@
         253
       ],
       "expectedTile": [
-        330.346,
-        253.167
+        330.0,
+        253.0
       ],
-      "displacementMetres": 0.384,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:484:79@341:205"
     },
     {
       "region": "amethyst_barrens",
@@ -24340,15 +24455,16 @@
         148
       ],
       "expectedTile": [
-        186.64,
-        148.331
+        187.0,
+        148.0
       ],
-      "displacementMetres": 0.489,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:485:80@158:75"
     },
     {
       "region": "amethyst_barrens",
@@ -24362,15 +24478,16 @@
         155
       ],
       "expectedTile": [
-        207.64,
-        155.331
+        208.0,
+        155.0
       ],
-      "displacementMetres": 0.489,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:486:81@179:82"
     },
     {
       "region": "amethyst_barrens",
@@ -24384,15 +24501,16 @@
         166
       ],
       "expectedTile": [
-        197.64,
-        166.331
+        198.0,
+        166.0
       ],
-      "displacementMetres": 0.489,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:487:82@169:93"
     },
     {
       "region": "amethyst_barrens",
@@ -24406,15 +24524,16 @@
         141
       ],
       "expectedTile": [
-        216.51,
-        141.065
+        217.0,
+        141.0
       ],
-      "displacementMetres": 0.494,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:488:83@198:63"
     },
     {
       "region": "amethyst_barrens",
@@ -24428,15 +24547,16 @@
         148
       ],
       "expectedTile": [
-        152.743,
-        147.681
+        153.0,
+        148.0
       ],
-      "displacementMetres": 0.409,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:489:84@112:72"
     },
     {
       "region": "amethyst_barrens",
@@ -24450,15 +24570,16 @@
         152
       ],
       "expectedTile": [
-        144.163,
-        151.581
+        144.0,
+        152.0
       ],
-      "displacementMetres": 0.449,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:490:85@101:77"
     },
     {
       "region": "amethyst_barrens",
@@ -24472,15 +24593,16 @@
         304
       ],
       "expectedTile": [
-        305.727,
-        304.442
+        306.0,
+        304.0
       ],
-      "displacementMetres": 0.52,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:491:86@306:272"
     },
     {
       "region": "amethyst_barrens",
@@ -24494,15 +24616,16 @@
         130
       ],
       "expectedTile": [
-        230.499,
-        129.895
+        230.0,
+        130.0
       ],
-      "displacementMetres": 0.51,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:492:87@209:47"
     },
     {
       "region": "amethyst_barrens",
@@ -24516,15 +24639,16 @@
         236
       ],
       "expectedTile": [
-        318.078,
-        235.956
+        318.0,
+        236.0
       ],
-      "displacementMetres": 0.09,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:493:88@323:184"
     },
     {
       "region": "amethyst_barrens",
@@ -24538,15 +24662,16 @@
         249
       ],
       "expectedTile": [
-        310.347,
-        248.549
+        310.0,
+        249.0
       ],
-      "displacementMetres": 0.569,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:494:89@313:198"
     },
     {
       "region": "amethyst_barrens",
@@ -24560,15 +24685,16 @@
         349
       ],
       "expectedTile": [
-        97.813,
-        348.976
+        98.0,
+        349.0
       ],
-      "displacementMetres": 0.189,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:495:90@42:334"
     },
     {
       "region": "amethyst_barrens",
@@ -24582,15 +24708,16 @@
         349
       ],
       "expectedTile": [
-        91.813,
-        348.976
+        92.0,
+        349.0
       ],
-      "displacementMetres": 0.189,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:496:91@36:334"
     },
     {
       "region": "amethyst_barrens",
@@ -24604,15 +24731,16 @@
         318
       ],
       "expectedTile": [
-        306.933,
-        317.957
+        307.0,
+        318.0
       ],
-      "displacementMetres": 0.079,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:497:92@313:288"
     },
     {
       "region": "amethyst_barrens",
@@ -24626,15 +24754,16 @@
         320
       ],
       "expectedTile": [
-        308.914,
-        320.27
+        309.0,
+        320.0
       ],
-      "displacementMetres": 0.283,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "harvesting.txt:498:93@308:293"
     },
     {
       "region": "amethyst_barrens",
@@ -24648,15 +24777,16 @@
         200
       ],
       "expectedTile": [
-        308.532,
-        200.376
+        373.0,
+        200.0
       ],
-      "displacementMetres": 64.469,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:166:0@306:135"
     },
     {
       "region": "amethyst_barrens",
@@ -24670,15 +24800,16 @@
         195
       ],
       "expectedTile": [
-        307.678,
-        194.696
+        372.0,
+        195.0
       ],
-      "displacementMetres": 64.323,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:167:1@315:128"
     },
     {
       "region": "amethyst_barrens",
@@ -24692,15 +24823,16 @@
         220
       ],
       "expectedTile": [
-        236.755,
-        219.796
+        301.0,
+        220.0
       ],
-      "displacementMetres": 64.245,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:168:2@225:163"
     },
     {
       "region": "amethyst_barrens",
@@ -24714,15 +24846,16 @@
         213
       ],
       "expectedTile": [
-        233.089,
-        213.391
+        297.0,
+        213.0
       ],
-      "displacementMetres": 63.912,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:169:3@221:152"
     },
     {
       "region": "amethyst_barrens",
@@ -24736,15 +24869,16 @@
         269
       ],
       "expectedTile": [
-        276.218,
-        269.296
+        340.0,
+        269.0
       ],
-      "displacementMetres": 63.783,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:170:4@268:229"
     },
     {
       "region": "amethyst_barrens",
@@ -24758,15 +24892,16 @@
         334
       ],
       "expectedTile": [
-        305.914,
-        333.27
+        371.0,
+        334.0
       ],
-      "displacementMetres": 65.09,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:171:5@305:306"
     },
     {
       "region": "amethyst_barrens",
@@ -24780,15 +24915,16 @@
         320
       ],
       "expectedTile": [
-        313.933,
-        319.957
+        378.0,
+        320.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:172:6@320:290"
     },
     {
       "region": "amethyst_barrens",
@@ -24802,15 +24938,16 @@
         255
       ],
       "expectedTile": [
-        133.444,
-        254.836
+        197.0,
+        255.0
       ],
-      "displacementMetres": 63.556,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:173:7@82:202"
     },
     {
       "region": "amethyst_barrens",
@@ -24824,15 +24961,16 @@
         140
       ],
       "expectedTile": [
-        200.64,
-        140.331
+        265.0,
+        140.0
       ],
-      "displacementMetres": 64.361,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:174:8@172:67"
     },
     {
       "region": "amethyst_barrens",
@@ -24846,15 +24984,16 @@
         143
       ],
       "expectedTile": [
-        215.231,
-        142.6
+        279.0,
+        143.0
       ],
-      "displacementMetres": 63.77,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:175:9@194:63"
     },
     {
       "region": "amethyst_barrens",
@@ -24868,15 +25007,16 @@
         259
       ],
       "expectedTile": [
-        277.218,
-        259.296
+        341.0,
+        259.0
       ],
-      "displacementMetres": 63.783,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:176:10@269:219"
     },
     {
       "region": "amethyst_barrens",
@@ -24890,15 +25030,16 @@
         308
       ],
       "expectedTile": [
-        300.061,
-        307.957
+        364.0,
+        308.0
       ],
-      "displacementMetres": 63.939,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:177:11@316:304"
     },
     {
       "region": "amethyst_barrens",
@@ -24912,15 +25053,16 @@
         251
       ],
       "expectedTile": [
-        141.444,
-        250.836
+        205.0,
+        251.0
       ],
-      "displacementMetres": 63.556,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:178:12@90:198"
     },
     {
       "region": "amethyst_barrens",
@@ -24934,15 +25076,16 @@
         141
       ],
       "expectedTile": [
-        195.499,
-        140.895
+        259.0,
+        141.0
       ],
-      "displacementMetres": 63.501,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:179:13@174:58"
     },
     {
       "region": "amethyst_barrens",
@@ -24956,15 +25099,16 @@
         148
       ],
       "expectedTile": [
-        200.64,
-        148.331
+        265.0,
+        148.0
       ],
-      "displacementMetres": 64.361,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:180:14@172:75"
     },
     {
       "region": "amethyst_barrens",
@@ -24978,15 +25122,16 @@
         228
       ],
       "expectedTile": [
-        234.755,
-        227.796
+        299.0,
+        228.0
       ],
-      "displacementMetres": 64.245,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:181:15@223:171"
     },
     {
       "region": "amethyst_barrens",
@@ -25000,15 +25145,16 @@
         222
       ],
       "expectedTile": [
-        234.081,
-        222.307
+        298.0,
+        222.0
       ],
-      "displacementMetres": 63.92,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:182:16@211:161"
     },
     {
       "region": "amethyst_barrens",
@@ -25022,15 +25168,16 @@
         177
       ],
       "expectedTile": [
-        304.678,
-        176.696
+        369.0,
+        177.0
       ],
-      "displacementMetres": 64.323,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:183:17@312:110"
     },
     {
       "region": "amethyst_barrens",
@@ -25044,15 +25191,16 @@
         344
       ],
       "expectedTile": [
-        120.813,
-        343.976
+        185.0,
+        344.0
       ],
-      "displacementMetres": 64.187,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:184:18@65:329"
     },
     {
       "region": "amethyst_barrens",
@@ -25066,15 +25214,16 @@
         370
       ],
       "expectedTile": [
-        116.813,
-        370.976
+        181.0,
+        370.0
       ],
-      "displacementMetres": 64.195,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:185:19@61:356"
     },
     {
       "region": "amethyst_barrens",
@@ -25088,15 +25237,16 @@
         355
       ],
       "expectedTile": [
-        126.813,
-        370.976
+        132.0,
+        355.0
       ],
-      "displacementMetres": 16.797,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:186:20@71:356"
     },
     {
       "region": "amethyst_barrens",
@@ -25110,15 +25260,16 @@
         355
       ],
       "expectedTile": [
-        107.813,
-        355.976
+        172.0,
+        355.0
       ],
-      "displacementMetres": 64.195,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:187:21@52:341"
     },
     {
       "region": "amethyst_barrens",
@@ -25132,15 +25283,16 @@
         117
       ],
       "expectedTile": [
-        332.139,
-        117.27
+        396.0,
+        117.0
       ],
-      "displacementMetres": 63.861,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:188:22@341:36"
     },
     {
       "region": "amethyst_barrens",
@@ -25154,15 +25306,16 @@
         118
       ],
       "expectedTile": [
-        320.139,
-        118.27
+        384.0,
+        118.0
       ],
-      "displacementMetres": 63.861,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:189:23@329:37"
     },
     {
       "region": "amethyst_barrens",
@@ -25176,15 +25329,16 @@
         331
       ],
       "expectedTile": [
-        312.061,
-        330.957
+        376.0,
+        331.0
       ],
-      "displacementMetres": 63.939,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:190:24@328:327"
     },
     {
       "region": "amethyst_barrens",
@@ -25198,15 +25352,16 @@
         337
       ],
       "expectedTile": [
-        296.824,
-        338.954
+        361.0,
+        337.0
       ],
-      "displacementMetres": 64.206,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:191:25@310:339"
     },
     {
       "region": "amethyst_barrens",
@@ -25220,15 +25375,16 @@
         229
       ],
       "expectedTile": [
-        235.081,
-        229.307
+        299.0,
+        229.0
       ],
-      "displacementMetres": 63.92,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:192:26@212:168"
     },
     {
       "region": "amethyst_barrens",
@@ -25242,15 +25398,16 @@
         187
       ],
       "expectedTile": [
-        307.532,
-        187.376
+        372.0,
+        187.0
       ],
-      "displacementMetres": 64.469,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:193:27@305:122"
     },
     {
       "region": "amethyst_barrens",
@@ -25264,15 +25421,16 @@
         360
       ],
       "expectedTile": [
-        212.85,
-        359.669
+        213.0,
+        360.0
       ],
-      "displacementMetres": 0.363,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:194:28@196:362"
     },
     {
       "region": "amethyst_barrens",
@@ -25286,15 +25444,16 @@
         354
       ],
       "expectedTile": [
-        222.85,
-        353.669
+        223.0,
+        354.0
       ],
-      "displacementMetres": 0.363,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:195:29@206:356"
     },
     {
       "region": "amethyst_barrens",
@@ -25308,15 +25467,16 @@
         318
       ],
       "expectedTile": [
-        288.061,
-        317.957
+        352.0,
+        318.0
       ],
-      "displacementMetres": 63.939,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:196:30@304:314"
     },
     {
       "region": "amethyst_barrens",
@@ -25330,15 +25490,16 @@
         352
       ],
       "expectedTile": [
-        117.813,
-        351.976
+        182.0,
+        352.0
       ],
-      "displacementMetres": 64.187,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:197:31@62:337"
     },
     {
       "region": "amethyst_barrens",
@@ -25352,15 +25513,16 @@
         310
       ],
       "expectedTile": [
-        274.743,
-        296.515
+        347.0,
+        310.0
       ],
-      "displacementMetres": 73.504,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:198:32@289:307"
     },
     {
       "region": "amethyst_barrens",
@@ -25374,15 +25536,16 @@
         334
       ],
       "expectedTile": [
-        307.824,
-        343.954
+        374.0,
+        334.0
       ],
-      "displacementMetres": 66.921,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         6,
         6
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:199:33@321:344"
     },
     {
       "region": "amethyst_barrens",
@@ -25396,15 +25559,16 @@
         332
       ],
       "expectedTile": [
-        293.824,
-        331.954
+        360.0,
+        332.0
       ],
-      "displacementMetres": 66.176,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         6,
         6
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:200:34@307:332"
     },
     {
       "region": "amethyst_barrens",
@@ -25418,15 +25582,16 @@
         334
       ],
       "expectedTile": [
-        314.061,
-        339.957
+        380.0,
+        334.0
       ],
-      "displacementMetres": 66.208,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         6,
         6
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:201:35@330:336"
     },
     {
       "region": "amethyst_barrens",
@@ -25440,15 +25605,16 @@
         328
       ],
       "expectedTile": [
-        324.933,
-        327.957
+        389.0,
+        328.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:202:36@331:298"
     },
     {
       "region": "amethyst_barrens",
@@ -25462,15 +25628,16 @@
         255
       ],
       "expectedTile": [
-        286.347,
-        254.549
+        350.0,
+        255.0
       ],
-      "displacementMetres": 63.655,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:203:37@289:204"
     },
     {
       "region": "amethyst_barrens",
@@ -25484,15 +25651,16 @@
         262
       ],
       "expectedTile": [
-        277.597,
-        261.536
+        342.0,
+        262.0
       ],
-      "displacementMetres": 64.405,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:204:38@269:212"
     },
     {
       "region": "amethyst_barrens",
@@ -25506,15 +25674,16 @@
         129
       ],
       "expectedTile": [
-        198.499,
-        128.895
+        262.0,
+        129.0
       ],
-      "displacementMetres": 63.501,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:205:39@177:46"
     },
     {
       "region": "amethyst_barrens",
@@ -25528,15 +25697,16 @@
         260
       ],
       "expectedTile": [
-        129.343,
-        260.001
+        193.0,
+        260.0
       ],
-      "displacementMetres": 63.657,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:206:40@82:216"
     },
     {
       "region": "amethyst_barrens",
@@ -25550,15 +25720,16 @@
         262
       ],
       "expectedTile": [
-        141.043,
-        262.341
+        205.0,
+        262.0
       ],
-      "displacementMetres": 63.958,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
         2
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:207:41@97:219"
     },
     {
       "region": "amethyst_barrens",
@@ -25572,15 +25743,16 @@
         337
       ],
       "expectedTile": [
-        300.824,
-        346.954
+        355.0,
+        337.0
       ],
-      "displacementMetres": 55.083,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         4,
         4
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:208:42@314:347"
     },
     {
       "region": "amethyst_barrens",
@@ -25594,15 +25766,16 @@
         329
       ],
       "expectedTile": [
-        307.061,
-        338.957
+        371.0,
+        329.0
       ],
-      "displacementMetres": 64.71,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         4,
         4
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:209:43@323:335"
     },
     {
       "region": "amethyst_barrens",
@@ -25616,15 +25789,16 @@
         320
       ],
       "expectedTile": [
-        299.061,
-        320.957
+        365.0,
+        320.0
       ],
-      "displacementMetres": 65.946,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         4,
         4
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:210:44@315:317"
     },
     {
       "region": "amethyst_barrens",
@@ -25638,15 +25812,16 @@
         336
       ],
       "expectedTile": [
-        314.824,
-        342.954
+        385.0,
+        336.0
       ],
-      "displacementMetres": 70.52,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:211:45@328:343"
     },
     {
       "region": "amethyst_barrens",
@@ -25660,15 +25835,16 @@
         330
       ],
       "expectedTile": [
-        305.061,
-        331.957
+        368.0,
+        330.0
       ],
-      "displacementMetres": 62.97,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:212:46@321:328"
     },
     {
       "region": "amethyst_barrens",
@@ -25682,15 +25858,16 @@
         332
       ],
       "expectedTile": [
-        307.824,
-        350.954
+        365.0,
+        332.0
       ],
-      "displacementMetres": 60.236,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
         3
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:213:47@321:351"
     },
     {
       "region": "amethyst_barrens",
@@ -25704,15 +25881,16 @@
         324
       ],
       "expectedTile": [
-        309.061,
-        323.957
+        373.0,
+        324.0
       ],
-      "displacementMetres": 63.939,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:214:48@325:320"
     },
     {
       "region": "amethyst_barrens",
@@ -25726,15 +25904,16 @@
         339
       ],
       "expectedTile": [
-        286.824,
-        338.954
+        351.0,
+        339.0
       ],
-      "displacementMetres": 64.176,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:215:49@300:339"
     },
     {
       "region": "amethyst_barrens",
@@ -25748,15 +25927,16 @@
         327
       ],
       "expectedTile": [
-        294.676,
-        326.707
+        359.0,
+        327.0
       ],
-      "displacementMetres": 64.325,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:216:50@328:350"
     },
     {
       "region": "amethyst_barrens",
@@ -25770,15 +25950,16 @@
         325
       ],
       "expectedTile": [
-        192.059,
-        324.895
+        192.0,
+        325.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:217:51@158:333"
     },
     {
       "region": "amethyst_barrens",
@@ -25792,15 +25973,16 @@
         329
       ],
       "expectedTile": [
-        296.824,
-        327.954
+        361.0,
+        329.0
       ],
-      "displacementMetres": 64.185,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:218:52@310:328"
     },
     {
       "region": "amethyst_barrens",
@@ -25814,15 +25996,16 @@
         125
       ],
       "expectedTile": [
-        155.863,
-        125.061
+        156.0,
+        125.0
       ],
-      "displacementMetres": 0.15,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:219:53@116:43"
     },
     {
       "region": "amethyst_barrens",
@@ -25836,15 +26019,16 @@
         146
       ],
       "expectedTile": [
-        339.951,
-        145.944
+        404.0,
+        146.0
       ],
-      "displacementMetres": 64.049,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:220:54@353:73"
     },
     {
       "region": "amethyst_barrens",
@@ -25858,15 +26042,16 @@
         272
       ],
       "expectedTile": [
-        91.123,
-        271.701
+        155.0,
+        272.0
       ],
-      "displacementMetres": 63.878,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:221:55@33:231"
     },
     {
       "region": "amethyst_barrens",
@@ -25880,15 +26065,16 @@
         184
       ],
       "expectedTile": [
-        212.081,
-        184.307
+        276.0,
+        184.0
       ],
-      "displacementMetres": 63.92,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "spawns.txt:222:56@189:123"
     },
     {
       "region": "mirrorhold",
@@ -46348,15 +46534,16 @@
         162
       ],
       "expectedTile": [
-        95.917,
-        161.722
+        96.0,
+        162.0
       ],
-      "displacementMetres": 0.29,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35.0,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "territories.txt@40:95"
     },
     {
       "region": "amethyst_barrens",
@@ -46370,15 +46557,39 @@
         166
       ],
       "expectedTile": [
-        245.563,
-        165.621
+        246.0,
+        166.0
       ],
-      "displacementMetres": 0.578,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35.0,
       "footprint": [
         1,
         1
-      ]
+      ],
+      "runtimeBindingId": "territories.txt@231:95"
+    },
+    {
+      "region": "amethyst_barrens",
+      "record": "territories.txt",
+      "oldTile": [
+        149,
+        95
+      ],
+      "tile": [
+        181,
+        165
+      ],
+      "expectedTile": [
+        181.0,
+        165.0
+      ],
+      "displacementMetres": 0.0,
+      "maximumDisplacementMetres": 35.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "runtimeBindingId": "territories.txt@149:95"
     },
     {
       "region": "sunmane_steppe",
@@ -58077,10 +58288,10 @@
         327
       ],
       "expectedTile": [
-        324.933,
-        326.957
+        388.0,
+        337.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 10.05,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58099,10 +58310,10 @@
         328
       ],
       "expectedTile": [
-        323.933,
-        327.957
+        387.0,
+        338.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 10.05,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58121,10 +58332,10 @@
         328
       ],
       "expectedTile": [
-        325.933,
-        327.957
+        389.0,
+        338.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 10.05,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58143,10 +58354,10 @@
         325
       ],
       "expectedTile": [
-        324.933,
-        324.957
+        388.0,
+        335.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 10.05,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58165,10 +58376,10 @@
         327
       ],
       "expectedTile": [
-        322.933,
-        326.957
+        386.0,
+        337.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 10.05,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58187,10 +58398,10 @@
         327
       ],
       "expectedTile": [
-        326.933,
-        326.957
+        390.0,
+        337.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 10.05,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58209,10 +58420,10 @@
         329
       ],
       "expectedTile": [
-        324.933,
-        328.957
+        388.0,
+        339.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 10.05,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58231,10 +58442,10 @@
         325
       ],
       "expectedTile": [
-        322.933,
-        324.957
+        386.0,
+        335.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 10.05,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58253,10 +58464,10 @@
         325
       ],
       "expectedTile": [
-        326.933,
-        324.957
+        390.0,
+        335.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 10.05,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58275,10 +58486,10 @@
         329
       ],
       "expectedTile": [
-        322.933,
-        328.957
+        386.0,
+        339.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 10.05,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58297,10 +58508,10 @@
         329
       ],
       "expectedTile": [
-        326.933,
-        328.957
+        390.0,
+        339.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 10.05,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58319,10 +58530,10 @@
         324
       ],
       "expectedTile": [
-        323.933,
-        323.957
+        387.0,
+        334.0
       ],
-      "displacementMetres": 64.067,
+      "displacementMetres": 10.05,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58341,10 +58552,10 @@
         145
       ],
       "expectedTile": [
-        91.903,
-        144.561
+        91.0,
+        108.0
       ],
-      "displacementMetres": 64.099,
+      "displacementMetres": 74.793,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58363,10 +58574,10 @@
         145
       ],
       "expectedTile": [
-        91.123,
-        145.341
+        90.0,
+        109.0
       ],
-      "displacementMetres": 63.878,
+      "displacementMetres": 74.303,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58385,10 +58596,10 @@
         145
       ],
       "expectedTile": [
-        92.683,
-        145.341
+        92.0,
+        109.0
       ],
-      "displacementMetres": 64.318,
+      "displacementMetres": 74.303,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58407,10 +58618,10 @@
         143
       ],
       "expectedTile": [
-        91.903,
-        143.001
+        91.0,
+        106.0
       ],
-      "displacementMetres": 64.097,
+      "displacementMetres": 74.793,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58429,10 +58640,10 @@
         145
       ],
       "expectedTile": [
-        90.343,
-        144.561
+        89.0,
+        108.0
       ],
-      "displacementMetres": 63.659,
+      "displacementMetres": 74.793,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58451,10 +58662,10 @@
         145
       ],
       "expectedTile": [
-        93.463,
-        144.561
+        93.0,
+        108.0
       ],
-      "displacementMetres": 63.539,
+      "displacementMetres": 73.926,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58473,10 +58684,10 @@
         146
       ],
       "expectedTile": [
-        91.903,
-        146.121
+        91.0,
+        110.0
       ],
-      "displacementMetres": 64.097,
+      "displacementMetres": 74.303,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58495,10 +58706,10 @@
         143
       ],
       "expectedTile": [
-        90.343,
-        143.001
+        89.0,
+        106.0
       ],
-      "displacementMetres": 63.657,
+      "displacementMetres": 74.793,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58517,10 +58728,10 @@
         143
       ],
       "expectedTile": [
-        93.463,
-        143.001
+        93.0,
+        106.0
       ],
-      "displacementMetres": 63.537,
+      "displacementMetres": 73.926,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58539,10 +58750,10 @@
         146
       ],
       "expectedTile": [
-        90.343,
-        146.121
+        89.0,
+        110.0
       ],
-      "displacementMetres": 63.657,
+      "displacementMetres": 74.303,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58561,10 +58772,10 @@
         146
       ],
       "expectedTile": [
-        93.463,
-        146.121
+        93.0,
+        110.0
       ],
-      "displacementMetres": 63.537,
+      "displacementMetres": 73.43,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58583,10 +58794,10 @@
         142
       ],
       "expectedTile": [
-        91.123,
-        142.221
+        90.0,
+        105.0
       ],
-      "displacementMetres": 63.878,
+      "displacementMetres": 74.793,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58605,10 +58816,10 @@
         302
       ],
       "expectedTile": [
-        228.403,
-        302.121
+        266.0,
+        310.0
       ],
-      "displacementMetres": 63.597,
+      "displacementMetres": 27.203,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58627,10 +58838,10 @@
         303
       ],
       "expectedTile": [
-        227.623,
-        302.901
+        265.0,
+        311.0
       ],
-      "displacementMetres": 64.377,
+      "displacementMetres": 28.16,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58649,10 +58860,10 @@
         303
       ],
       "expectedTile": [
-        229.183,
-        302.901
+        267.0,
+        311.0
       ],
-      "displacementMetres": 63.817,
+      "displacementMetres": 27.203,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58671,10 +58882,10 @@
         301
       ],
       "expectedTile": [
-        228.403,
-        300.561
+        266.0,
+        308.0
       ],
-      "displacementMetres": 63.599,
+      "displacementMetres": 26.926,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58693,10 +58904,10 @@
         302
       ],
       "expectedTile": [
-        226.843,
-        302.121
+        264.0,
+        310.0
       ],
-      "displacementMetres": 64.157,
+      "displacementMetres": 28.16,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58715,10 +58926,10 @@
         303
       ],
       "expectedTile": [
-        222.25,
-        303.036
+        268.0,
+        310.0
       ],
-      "displacementMetres": 63.75,
+      "displacementMetres": 19.313,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58737,10 +58948,10 @@
         304
       ],
       "expectedTile": [
-        228.403,
-        303.681
+        266.0,
+        312.0
       ],
-      "displacementMetres": 63.598,
+      "displacementMetres": 27.203,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58759,10 +58970,10 @@
         301
       ],
       "expectedTile": [
-        226.843,
-        300.561
+        264.0,
+        308.0
       ],
-      "displacementMetres": 64.159,
+      "displacementMetres": 27.893,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58781,10 +58992,10 @@
         301
       ],
       "expectedTile": [
-        222.25,
-        301.036
+        268.0,
+        308.0
       ],
-      "displacementMetres": 63.75,
+      "displacementMetres": 19.313,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58803,10 +59014,10 @@
         304
       ],
       "expectedTile": [
-        226.843,
-        303.681
+        264.0,
+        312.0
       ],
-      "displacementMetres": 64.158,
+      "displacementMetres": 28.16,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58825,10 +59036,10 @@
         305
       ],
       "expectedTile": [
-        222.25,
-        305.036
+        268.0,
+        312.0
       ],
-      "displacementMetres": 0.252,
+      "displacementMetres": 46.53,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58847,10 +59058,10 @@
         300
       ],
       "expectedTile": [
-        227.623,
-        299.781
+        265.0,
+        307.0
       ],
-      "displacementMetres": 64.377,
+      "displacementMetres": 27.893,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58869,10 +59080,10 @@
         241
       ],
       "expectedTile": [
-        193.303,
-        241.281
+        221.0,
+        232.0
       ],
-      "displacementMetres": 63.698,
+      "displacementMetres": 37.108,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58891,10 +59102,10 @@
         242
       ],
       "expectedTile": [
-        192.523,
-        242.061
+        220.0,
+        233.0
       ],
-      "displacementMetres": 64.477,
+      "displacementMetres": 38.079,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58913,10 +59124,10 @@
         242
       ],
       "expectedTile": [
-        194.083,
-        242.061
+        222.0,
+        233.0
       ],
-      "displacementMetres": 63.917,
+      "displacementMetres": 37.108,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58935,10 +59146,10 @@
         240
       ],
       "expectedTile": [
-        193.303,
-        239.721
+        221.0,
+        230.0
       ],
-      "displacementMetres": 63.698,
+      "displacementMetres": 37.363,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58957,10 +59168,10 @@
         241
       ],
       "expectedTile": [
-        191.743,
-        241.281
+        219.0,
+        232.0
       ],
-      "displacementMetres": 64.258,
+      "displacementMetres": 38.079,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -58979,10 +59190,10 @@
         241
       ],
       "expectedTile": [
-        194.863,
-        241.281
+        223.0,
+        232.0
       ],
-      "displacementMetres": 64.138,
+      "displacementMetres": 37.108,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59001,10 +59212,10 @@
         243
       ],
       "expectedTile": [
-        193.303,
-        242.841
+        221.0,
+        234.0
       ],
-      "displacementMetres": 63.697,
+      "displacementMetres": 37.108,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59023,10 +59234,10 @@
         240
       ],
       "expectedTile": [
-        191.743,
-        239.721
+        219.0,
+        230.0
       ],
-      "displacementMetres": 64.258,
+      "displacementMetres": 38.328,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59045,10 +59256,10 @@
         240
       ],
       "expectedTile": [
-        194.863,
-        239.721
+        223.0,
+        230.0
       ],
-      "displacementMetres": 64.138,
+      "displacementMetres": 37.363,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59067,10 +59278,10 @@
         243
       ],
       "expectedTile": [
-        191.743,
-        242.841
+        219.0,
+        234.0
       ],
-      "displacementMetres": 64.257,
+      "displacementMetres": 38.079,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59089,10 +59300,10 @@
         243
       ],
       "expectedTile": [
-        194.863,
-        242.841
+        223.0,
+        234.0
       ],
-      "displacementMetres": 64.137,
+      "displacementMetres": 37.108,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59111,10 +59322,10 @@
         239
       ],
       "expectedTile": [
-        192.523,
-        238.941
+        220.0,
+        229.0
       ],
-      "displacementMetres": 64.477,
+      "displacementMetres": 38.328,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59133,10 +59344,10 @@
         271
       ],
       "expectedTile": [
-        290.803,
-        270.921
+        346.0,
+        270.0
       ],
-      "displacementMetres": 64.197,
+      "displacementMetres": 9.055,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59155,10 +59366,10 @@
         271
       ],
       "expectedTile": [
-        294.703,
-        270.921
+        351.0,
+        270.0
       ],
-      "displacementMetres": 64.297,
+      "displacementMetres": 8.062,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59177,10 +59388,10 @@
         269
       ],
       "expectedTile": [
-        291.615,
-        268.779
+        346.0,
+        275.0
       ],
-      "displacementMetres": 64.385,
+      "displacementMetres": 11.662,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59199,10 +59410,10 @@
         265
       ],
       "expectedTile": [
-        292.218,
-        265.296
+        341.0,
+        265.0
       ],
-      "displacementMetres": 63.783,
+      "displacementMetres": 15.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59221,10 +59432,10 @@
         267
       ],
       "expectedTile": [
-        294.703,
-        267.021
+        351.0,
+        265.0
       ],
-      "displacementMetres": 64.297,
+      "displacementMetres": 8.246,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59243,10 +59454,10 @@
         269
       ],
       "expectedTile": [
-        296.615,
-        268.779
+        351.0,
+        275.0
       ],
-      "displacementMetres": 64.385,
+      "displacementMetres": 11.662,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59265,10 +59476,10 @@
         274
       ],
       "expectedTile": [
-        288.218,
-        274.296
+        337.0,
+        274.0
       ],
-      "displacementMetres": 63.783,
+      "displacementMetres": 15.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59287,10 +59498,10 @@
         263
       ],
       "expectedTile": [
-        290.803,
-        263.121
+        346.0,
+        260.0
       ],
-      "displacementMetres": 64.197,
+      "displacementMetres": 9.487,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59309,10 +59520,10 @@
         271
       ],
       "expectedTile": [
-        298.603,
-        270.921
+        356.0,
+        270.0
       ],
-      "displacementMetres": 64.397,
+      "displacementMetres": 7.071,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59331,10 +59542,10 @@
         269
       ],
       "expectedTile": [
-        287.218,
-        269.296
+        336.0,
+        269.0
       ],
-      "displacementMetres": 63.783,
+      "displacementMetres": 15.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59353,10 +59564,10 @@
         274
       ],
       "expectedTile": [
-        292.615,
-        273.779
+        347.0,
+        280.0
       ],
-      "displacementMetres": 64.385,
+      "displacementMetres": 11.662,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59375,10 +59586,10 @@
         263
       ],
       "expectedTile": [
-        286.903,
-        263.121
+        341.0,
+        260.0
       ],
-      "displacementMetres": 64.097,
+      "displacementMetres": 10.44,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59397,10 +59608,10 @@
         371
       ],
       "expectedTile": [
-        148.063,
-        370.761
+        163.0,
+        398.0
       ],
-      "displacementMetres": 0.247,
+      "displacementMetres": 30.887,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59419,10 +59630,10 @@
         350
       ],
       "expectedTile": [
-        147.059,
-        349.895
+        170.0,
+        398.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59441,10 +59652,10 @@
         376
       ],
       "expectedTile": [
-        148.063,
-        376.221
+        163.0,
+        405.0
       ],
-      "displacementMetres": 0.23,
+      "displacementMetres": 32.65,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59463,10 +59674,10 @@
         366
       ],
       "expectedTile": [
-        142.603,
-        365.301
+        156.0,
+        391.0
       ],
-      "displacementMetres": 3.468,
+      "displacementMetres": 26.926,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59485,10 +59696,10 @@
         343
       ],
       "expectedTile": [
-        147.059,
-        342.895
+        170.0,
+        391.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59507,10 +59718,10 @@
         378
       ],
       "expectedTile": [
-        142.603,
-        376.221
+        156.0,
+        405.0
       ],
-      "displacementMetres": 2.262,
+      "displacementMetres": 29.547,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59529,10 +59740,10 @@
         357
       ],
       "expectedTile": [
-        147.059,
-        356.895
+        170.0,
+        405.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59551,10 +59762,10 @@
         360
       ],
       "expectedTile": [
-        148.063,
-        359.841
+        163.0,
+        384.0
       ],
-      "displacementMetres": 63.937,
+      "displacementMetres": 54.562,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59573,10 +59784,10 @@
         372
       ],
       "expectedTile": [
-        161.059,
-        371.895
+        184.0,
+        420.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59595,10 +59806,10 @@
         372
       ],
       "expectedTile": [
-        160.059,
-        372.895
+        183.0,
+        421.0
       ],
-      "displacementMetres": 1.299,
+      "displacementMetres": 53.712,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59617,10 +59828,10 @@
         373
       ],
       "expectedTile": [
-        162.059,
-        372.895
+        185.0,
+        421.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59639,10 +59850,10 @@
         373
       ],
       "expectedTile": [
-        161.059,
-        369.895
+        184.0,
+        418.0
       ],
-      "displacementMetres": 3.244,
+      "displacementMetres": 50.09,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59661,10 +59872,10 @@
         372
       ],
       "expectedTile": [
-        159.059,
-        371.895
+        182.0,
+        420.0
       ],
-      "displacementMetres": 1.943,
+      "displacementMetres": 52.393,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59683,10 +59894,10 @@
         373
       ],
       "expectedTile": [
-        163.059,
-        371.895
+        186.0,
+        420.0
       ],
-      "displacementMetres": 1.531,
+      "displacementMetres": 52.773,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59705,10 +59916,10 @@
         372
       ],
       "expectedTile": [
-        161.059,
-        373.895
+        184.0,
+        422.0
       ],
-      "displacementMetres": 1.896,
+      "displacementMetres": 55.036,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59727,10 +59938,10 @@
         372
       ],
       "expectedTile": [
-        159.059,
-        369.895
+        182.0,
+        418.0
       ],
-      "displacementMetres": 2.863,
+      "displacementMetres": 50.567,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59749,10 +59960,10 @@
         370
       ],
       "expectedTile": [
-        163.059,
-        369.895
+        186.0,
+        418.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59771,10 +59982,10 @@
         374
       ],
       "expectedTile": [
-        159.059,
-        373.895
+        182.0,
+        422.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59793,10 +60004,10 @@
         373
       ],
       "expectedTile": [
-        163.059,
-        373.895
+        186.0,
+        422.0
       ],
-      "displacementMetres": 1.387,
+      "displacementMetres": 54.562,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59815,10 +60026,10 @@
         369
       ],
       "expectedTile": [
-        160.059,
-        368.895
+        183.0,
+        417.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59837,10 +60048,10 @@
         245
       ],
       "expectedTile": [
-        220.045,
-        245.222
+        262.0,
+        241.0
       ],
-      "displacementMetres": 63.955,
+      "displacementMetres": 22.361,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59859,10 +60070,10 @@
         247
       ],
       "expectedTile": [
-        218.045,
-        247.222
+        260.0,
+        243.0
       ],
-      "displacementMetres": 63.955,
+      "displacementMetres": 22.361,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59881,10 +60092,10 @@
         247
       ],
       "expectedTile": [
-        222.045,
-        247.222
+        264.0,
+        243.0
       ],
-      "displacementMetres": 63.955,
+      "displacementMetres": 22.361,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59903,10 +60114,10 @@
         241
       ],
       "expectedTile": [
-        220.045,
-        241.222
+        262.0,
+        237.0
       ],
-      "displacementMetres": 63.955,
+      "displacementMetres": 22.361,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59925,10 +60136,10 @@
         245
       ],
       "expectedTile": [
-        216.045,
-        245.222
+        258.0,
+        241.0
       ],
-      "displacementMetres": 63.955,
+      "displacementMetres": 22.361,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59947,10 +60158,10 @@
         245
       ],
       "expectedTile": [
-        224.045,
-        245.222
+        266.0,
+        241.0
       ],
-      "displacementMetres": 63.955,
+      "displacementMetres": 22.361,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59969,10 +60180,10 @@
         249
       ],
       "expectedTile": [
-        220.045,
-        249.222
+        262.0,
+        245.0
       ],
-      "displacementMetres": 63.955,
+      "displacementMetres": 22.361,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -59991,10 +60202,10 @@
         241
       ],
       "expectedTile": [
-        216.045,
-        241.222
+        258.0,
+        237.0
       ],
-      "displacementMetres": 63.955,
+      "displacementMetres": 22.361,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60013,10 +60224,10 @@
         241
       ],
       "expectedTile": [
-        224.045,
-        241.222
+        266.0,
+        237.0
       ],
-      "displacementMetres": 63.955,
+      "displacementMetres": 22.361,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60035,10 +60246,10 @@
         249
       ],
       "expectedTile": [
-        216.045,
-        249.222
+        258.0,
+        245.0
       ],
-      "displacementMetres": 63.955,
+      "displacementMetres": 22.361,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60057,10 +60268,10 @@
         249
       ],
       "expectedTile": [
-        224.045,
-        249.222
+        266.0,
+        245.0
       ],
-      "displacementMetres": 63.955,
+      "displacementMetres": 22.361,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60079,10 +60290,10 @@
         239
       ],
       "expectedTile": [
-        218.045,
-        239.222
+        260.0,
+        235.0
       ],
-      "displacementMetres": 63.955,
+      "displacementMetres": 22.361,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60101,10 +60312,10 @@
         298
       ],
       "expectedTile": [
-        226.063,
-        298.221
+        263.0,
+        305.0
       ],
-      "displacementMetres": 63.938,
+      "displacementMetres": 27.893,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60123,10 +60334,10 @@
         299
       ],
       "expectedTile": [
-        225.283,
-        299.001
+        262.0,
+        306.0
       ],
-      "displacementMetres": 63.717,
+      "displacementMetres": 27.893,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60145,10 +60356,10 @@
         299
       ],
       "expectedTile": [
-        226.843,
-        299.001
+        264.0,
+        306.0
       ],
-      "displacementMetres": 64.157,
+      "displacementMetres": 27.893,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60167,10 +60378,10 @@
         297
       ],
       "expectedTile": [
-        226.063,
-        296.661
+        263.0,
+        303.0
       ],
-      "displacementMetres": 63.938,
+      "displacementMetres": 27.659,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60189,10 +60400,10 @@
         298
       ],
       "expectedTile": [
-        224.503,
-        298.221
+        261.0,
+        305.0
       ],
-      "displacementMetres": 64.497,
+      "displacementMetres": 28.862,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60211,10 +60422,10 @@
         298
       ],
       "expectedTile": [
-        227.623,
-        298.221
+        265.0,
+        305.0
       ],
-      "displacementMetres": 0.437,
+      "displacementMetres": 37.656,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60233,10 +60444,10 @@
         300
       ],
       "expectedTile": [
-        226.063,
-        299.781
+        263.0,
+        307.0
       ],
-      "displacementMetres": 1.949,
+      "displacementMetres": 35.693,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60255,10 +60466,10 @@
         297
       ],
       "expectedTile": [
-        224.503,
-        296.661
+        261.0,
+        303.0
       ],
-      "displacementMetres": 3.513,
+      "displacementMetres": 33.541,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60277,10 +60488,10 @@
         297
       ],
       "expectedTile": [
-        227.623,
-        296.661
+        265.0,
+        303.0
       ],
-      "displacementMetres": 0.507,
+      "displacementMetres": 37.483,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60299,10 +60510,10 @@
         300
       ],
       "expectedTile": [
-        224.503,
-        299.781
+        261.0,
+        307.0
       ],
-      "displacementMetres": 64.497,
+      "displacementMetres": 28.862,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60321,10 +60532,10 @@
         297
       ],
       "expectedTile": [
-        225.283,
-        295.881
+        262.0,
+        302.0
       ],
-      "displacementMetres": 2.938,
+      "displacementMetres": 34.366,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60343,10 +60554,10 @@
         368
       ],
       "expectedTile": [
-        167.059,
-        367.895
+        190.0,
+        416.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60365,10 +60576,10 @@
         370
       ],
       "expectedTile": [
-        165.059,
-        369.895
+        188.0,
+        418.0
       ],
-      "displacementMetres": 2.062,
+      "displacementMetres": 54.12,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60387,10 +60598,10 @@
         370
       ],
       "expectedTile": [
-        169.059,
-        369.895
+        192.0,
+        418.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60409,10 +60620,10 @@
         364
       ],
       "expectedTile": [
-        167.059,
-        363.895
+        190.0,
+        412.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60431,10 +60642,10 @@
         370
       ],
       "expectedTile": [
-        163.059,
-        367.895
+        186.0,
+        416.0
       ],
-      "displacementMetres": 2.106,
+      "displacementMetres": 51.43,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60453,10 +60664,10 @@
         368
       ],
       "expectedTile": [
-        171.059,
-        367.895
+        194.0,
+        416.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60475,10 +60686,10 @@
         372
       ],
       "expectedTile": [
-        167.059,
-        371.895
+        190.0,
+        420.0
       ],
-      "displacementMetres": 0.12,
+      "displacementMetres": 53.226,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60497,10 +60708,10 @@
         339
       ],
       "expectedTile": [
-        296.824,
-        343.954
+        367.0,
+        384.0
       ],
-      "displacementMetres": 61.377,
+      "displacementMetres": 45.891,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60515,14 +60726,14 @@
         343
       ],
       "tile": [
-        293,
-        336
+        362,
+        339
       ],
       "expectedTile": [
-        291.824,
-        342.954
+        362.0,
+        383.0
       ],
-      "displacementMetres": 7.053,
+      "displacementMetres": 44.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60541,10 +60752,10 @@
         339
       ],
       "expectedTile": [
-        294.824,
-        338.954
+        365.0,
+        379.0
       ],
-      "displacementMetres": 63.176,
+      "displacementMetres": 40.608,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60559,14 +60770,14 @@
         340
       ],
       "tile": [
-        293,
-        336
+        362,
+        339
       ],
       "expectedTile": [
-        291.824,
-        339.954
+        362.0,
+        380.0
       ],
-      "displacementMetres": 4.126,
+      "displacementMetres": 41.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60585,10 +60796,10 @@
         160
       ],
       "expectedTile": [
-        239.968,
-        159.626
+        277.0,
+        124.0
       ],
-      "displacementMetres": 64.034,
+      "displacementMetres": 45.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60607,10 +60818,10 @@
         162
       ],
       "expectedTile": [
-        237.968,
-        161.626
+        275.0,
+        126.0
       ],
-      "displacementMetres": 64.034,
+      "displacementMetres": 45.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60629,10 +60840,10 @@
         162
       ],
       "expectedTile": [
-        241.968,
-        161.626
+        279.0,
+        126.0
       ],
-      "displacementMetres": 64.034,
+      "displacementMetres": 45.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60651,10 +60862,10 @@
         156
       ],
       "expectedTile": [
-        239.968,
-        155.626
+        277.0,
+        120.0
       ],
-      "displacementMetres": 64.034,
+      "displacementMetres": 45.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60673,10 +60884,10 @@
         160
       ],
       "expectedTile": [
-        235.968,
-        159.626
+        273.0,
+        124.0
       ],
-      "displacementMetres": 64.034,
+      "displacementMetres": 45.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60695,10 +60906,10 @@
         160
       ],
       "expectedTile": [
-        243.968,
-        159.626
+        281.0,
+        124.0
       ],
-      "displacementMetres": 64.034,
+      "displacementMetres": 45.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60717,10 +60928,10 @@
         164
       ],
       "expectedTile": [
-        239.968,
-        163.626
+        277.0,
+        128.0
       ],
-      "displacementMetres": 64.034,
+      "displacementMetres": 45.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60739,10 +60950,10 @@
         156
       ],
       "expectedTile": [
-        235.968,
-        155.626
+        273.0,
+        120.0
       ],
-      "displacementMetres": 64.034,
+      "displacementMetres": 45.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60761,10 +60972,10 @@
         158
       ],
       "expectedTile": [
-        242.51,
-        158.065
+        281.0,
+        120.0
       ],
-      "displacementMetres": 64.49,
+      "displacementMetres": 46.043,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60783,10 +60994,10 @@
         164
       ],
       "expectedTile": [
-        235.968,
-        163.626
+        273.0,
+        128.0
       ],
-      "displacementMetres": 64.034,
+      "displacementMetres": 45.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60805,10 +61016,10 @@
         164
       ],
       "expectedTile": [
-        243.968,
-        163.626
+        281.0,
+        128.0
       ],
-      "displacementMetres": 64.034,
+      "displacementMetres": 45.0,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -60827,10 +61038,10 @@
         154
       ],
       "expectedTile": [
-        237.968,
-        153.626
+        275.0,
+        118.0
       ],
-      "displacementMetres": 0.376,
+      "displacementMetres": 51.624,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -80667,10 +80878,10 @@
     "whitehorn_range": {
       "stageFactor": 24,
       "stageMetres": 4.800000000000001,
-      "walkableServerTiles": 104246,
-      "largestComponentTiles": 96999,
+      "walkableServerTiles": 104233,
+      "largestComponentTiles": 96984,
       "reachableByStage": {
-        "24": 96999
+        "24": 96984
       },
       "crossings": {
         "declared": [
@@ -80733,7 +80944,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 96999,
+      "hubReachableTiles": 96984,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80742,9 +80953,9 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 96990,
+      "hubReachableAfterStorageTiles": 96975,
       "updatedAuthoredMarkers": 75,
-      "terrainRevision": "diagonal-spine-v1:0be7ec782a7442b249348b902fa27c284ac3a97d56e7f73c3160ed788614b7a5",
+      "terrainRevision": "diagonal-spine-v1:fd4992a7daea20980fbb361754cc2e93bcf4cd69674209960236a30a326bc45d",
       "servedTileContinuity": {
         "keptServedTile": 281,
         "movedTogether": 0,
@@ -80813,7 +81024,7 @@
       },
       "hubReachableAfterStorageTiles": 114716,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:1dd3cdb3a14a33c019e440e42030003e2eddf659775768b66399493d126fa46d",
+      "terrainRevision": "diagonal-spine-v1:336c8b183cc3d04b207f00d408bfe71dfe1cf5329097814a7e67d504f5eff4ae",
       "servedTileContinuity": {
         "keptServedTile": 291,
         "movedTogether": 0,
@@ -80900,7 +81111,7 @@
       },
       "hubReachableAfterStorageTiles": 51763,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:24d56d633d6d3efee6d7fdc054fee146edcbbf8cf85c03a163e6a04613328b4c",
+      "terrainRevision": "diagonal-spine-v1:462681912293868bea260a9390ddbe8e1a756decdaf0889e5ac206bbf7d0b3cc",
       "servedTileContinuity": {
         "keptServedTile": 307,
         "movedTogether": 0,
@@ -80910,37 +81121,18 @@
     "amethyst_barrens": {
       "stageFactor": 8,
       "stageMetres": 1.6,
-      "walkableServerTiles": 130310,
-      "largestComponentTiles": 129012,
+      "walkableServerTiles": 130227,
+      "largestComponentTiles": 129016,
       "reachableByStage": {
-        "8": 129012
+        "8": 129016
       },
       "crossings": {
-        "declared": [
-          {
-            "id": "ContinentalBridgeUnion_500",
-            "site": null,
-            "deckTiles": 88,
-            "parts": [
-              88
-            ],
-            "endTiles": [
-              [
-                316,
-                339
-              ],
-              [
-                287,
-                355
-              ]
-            ]
-          }
-        ],
+        "declared": [],
         "notWalkable": [],
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 129012,
+      "hubReachableTiles": 129016,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80949,22 +81141,22 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 129003,
-      "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:24b6fe5a56752d43e188cdad61e4658c4cc9019cd9b609c2cb217cc915c1aff5",
+      "hubReachableAfterStorageTiles": 129007,
+      "updatedAuthoredMarkers": 0,
+      "terrainRevision": "diagonal-spine-v1:f9b894b1fbbc8399977fcad09ad09fbfe2cbd198a2ddc56caaeac795d49ed3c5",
       "servedTileContinuity": {
-        "keptServedTile": 269,
-        "movedTogether": 0,
-        "movedFromServedTile": 0
+        "keptServedTile": 124,
+        "movedTogether": 1,
+        "movedFromServedTile": 1
       }
     },
     "mirrorhold": {
       "stageFactor": 15,
       "stageMetres": 3.0,
-      "walkableServerTiles": 83038,
-      "largestComponentTiles": 67235,
+      "walkableServerTiles": 83012,
+      "largestComponentTiles": 67303,
       "reachableByStage": {
-        "15": 67235
+        "15": 67303
       },
       "crossings": {
         "declared": [
@@ -80991,7 +81183,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 67235,
+      "hubReachableTiles": 67303,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -81000,9 +81192,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 67226,
+      "hubReachableAfterStorageTiles": 67294,
       "updatedAuthoredMarkers": 3,
-      "terrainRevision": "diagonal-spine-v1:e83921314702de75e4c6f9d2690d948587d2088208defc28bc3cfb51e70f522d",
+      "terrainRevision": "diagonal-spine-v1:91f2b8de7eaf23ee887556c54db48c52eb90db5e026af48e361da008307db8ac",
       "servedTileContinuity": {
         "keptServedTile": 222,
         "movedTogether": 0,
@@ -81034,7 +81226,7 @@
       },
       "hubReachableAfterStorageTiles": 172016,
       "updatedAuthoredMarkers": 0,
-      "terrainRevision": "diagonal-spine-v1:7fb800977bc5898943f6e3fee5130cc01dd0f18746e83a90cd39c3aafe784125",
+      "terrainRevision": "diagonal-spine-v1:bb8a8c3a8f1a2d9e09be449b65ccfe65b81f741a65d04fdf3ac7f5f8df889a0b",
       "servedTileContinuity": {
         "keptServedTile": 126,
         "movedTogether": 0,
@@ -81095,7 +81287,7 @@
       },
       "hubReachableAfterStorageTiles": 83445,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:57ac3879a4f3fbf66cd3f9ccf0f6fbb4dfbd8a3c8e6cca96a6e1ff97a4039c46",
+      "terrainRevision": "diagonal-spine-v1:8f4abbd396061a29868557728f5afce9d86e2a8aaa054283707ae11447971f83",
       "servedTileContinuity": {
         "keptServedTile": 225,
         "movedTogether": 0,
@@ -81197,7 +81389,7 @@
       },
       "hubReachableAfterStorageTiles": 91877,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:d69df223bf4f43e524097599945d88e22122a84ef7b8f636fe3cf48a26bf2730",
+      "terrainRevision": "diagonal-spine-v1:3342e753633e05711a9a57f01cd62ca41359f84507be303ea878bbfdb6357a01",
       "servedTileContinuity": {
         "keptServedTile": 238,
         "movedTogether": 0,
@@ -81323,7 +81515,7 @@
       },
       "hubReachableAfterStorageTiles": 106190,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:22657aac82858cd42c72a74cf43a3b0fd385f41a2650237b6d36608ab9af1fac",
+      "terrainRevision": "diagonal-spine-v1:f59c72d5103eddd2c748ce146e3a536431d3daeef68ce53d95f3c1cc9540a774",
       "servedTileContinuity": {
         "keptServedTile": 262,
         "movedTogether": 0,
@@ -81536,7 +81728,7 @@
       },
       "hubReachableAfterStorageTiles": 39909,
       "updatedAuthoredMarkers": 9,
-      "terrainRevision": "diagonal-spine-v1:49069626f0d100608f269404f729b5833a5e96de9d917fd11104f7789db224d9",
+      "terrainRevision": "diagonal-spine-v1:bb8245d20628980561b4e6ef15960a3ad1f8fba38c76cdbeb348269b33137851",
       "servedTileContinuity": {
         "keptServedTile": 255,
         "movedTogether": 0,
@@ -81605,7 +81797,7 @@
       },
       "hubReachableAfterStorageTiles": 173545,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:bd682d735d362a8424c89ab9734b2a76dd6dd5a926d9cfbaece73c5b86381a42",
+      "terrainRevision": "diagonal-spine-v1:318c5edc2d1657d6dcfb51963952e49642d7946d97af42f1bd78089c6e3a3a5e",
       "servedTileContinuity": {
         "keptServedTile": 237,
         "movedTogether": 0,
@@ -81748,7 +81940,7 @@
       },
       "hubReachableAfterStorageTiles": 136218,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:0eb39a43715b3c97c8836f4d4fde15365bf71b2e121ca52877a15668a6e5b7b2",
+      "terrainRevision": "diagonal-spine-v1:260de20a4889f83c61b45ae46e877b98d8f8d77db19dbce04d7ccdda6895224c",
       "servedTileContinuity": {
         "keptServedTile": 224,
         "movedTogether": 0,
@@ -81757,7 +81949,7 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "e6508b11625ef69c42572e857bd2a534b3d66c9197b8eca8f8355d924c6fb361",
+    "client_content_manifest.json": "be85083cdd866f48161a48fd95ea82831295485a6c672f2cbf5c32448fab2ed8",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
     "harvesting.txt": "8c3b50d47cef3715e51dd533a8e7df75839e8d7c3a696f25e6bb539aed064718",
     "instances/amberwood_gauntlet_low.def": "e2a5c0ca17b0c0af42f65728241c6f6d08ae6faea086505572af2fd2e417ae36",

@@ -819,7 +819,7 @@ def write_scene(output: Path, world_manifest: dict, provenance: dict,
                                                    encoding="utf-8", newline="\n")
 
 
-def arguments() -> argparse.Namespace:
+def arguments(argv: list[str] | None = None) -> argparse.Namespace:
     repo = Path(__file__).resolve().parents[2]
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-world", type=Path, required=True,
@@ -840,11 +840,11 @@ def arguments() -> argparse.Namespace:
                         default=repo / f"godot-client/world_authoring/regions/{REGION_ID}")
     parser.add_argument("--force", action="store_true",
                         help="Replace an existing authored scene after explicit review")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
-def main() -> int:
-    args = arguments()
+def main(argv: list[str] | None = None) -> int:
+    args = arguments(argv)
     repo = Path(__file__).resolve().parents[2]
     toolkit = repo / "eloria-assets/maps/nymara-regions/_toolkit"
     continent = repo / "eloria-assets/maps/nymara-regions/_continent"

@@ -24,7 +24,7 @@
       ],
       "max": [
         -27.534837481836462,
-        48.27712790676759,
+        48.277127973897876,
         145.14068603515625
       ]
     },
@@ -370,7 +370,7 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 2780412,
+    "glbBytes": 2780424,
     "nodes": 525,
     "meshes": 125,
     "externalResources": {
@@ -1969,11 +1969,11 @@
     ],
     "max": [
       -27.534837481836462,
-      48.27712790676759,
+      48.277127973897876,
       145.14068603515625
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:24d56d633d6d3efee6d7fdc054fee146edcbbf8cf85c03a163e6a04613328b4c",
+  "terrainRevision": "diagonal-spine-v1:462681912293868bea260a9390ddbe8e1a756decdaf0889e5ac206bbf7d0b3cc",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -2040,13 +2040,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "collisionSha256": "a6c8f6bcc90181fb513783b0596b20b5e5fe7be0a0e3f1e6a4994c7361bf2471",
-    "terrainRevision": "diagonal-spine-v1:24d56d633d6d3efee6d7fdc054fee146edcbbf8cf85c03a163e6a04613328b4c"
+    "terrainRevision": "diagonal-spine-v1:462681912293868bea260a9390ddbe8e1a756decdaf0889e5ac206bbf7d0b3cc"
   }
 }

@@ -327,12 +327,12 @@
     },
     "walkableCells": 702301,
     "walkableFraction": 0.279906,
-    "sourceGlbSha256": "6b1c7a153132a7dcbc3b96e17e1bccc563dd8fc4150b8a247bc62555f78e42dd",
+    "sourceGlbSha256": "747cff35208eaf2374aa0669797fe013bc250b7b1c8591e668d2b06a4b424075",
     "exportStatistics": {
-      "walkMeshes": 65,
+      "walkMeshes": 66,
       "structuralMeshes": 710,
       "structuralTriangles": 141354,
-      "walkTriangles": 71134,
+      "walkTriangles": 71218,
       "steepCells": 23057,
       "waterCells": 268468,
       "structuralCells": 13318,
@@ -4591,7 +4591,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+      "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
       "globalMin": [
         1010.0,
         228.0
@@ -5376,9 +5376,9 @@
     }
   ],
   "performance": {
-    "glbBytes": 38222312,
-    "nodes": 2508,
-    "meshes": 436,
+    "glbBytes": 38238276,
+    "nodes": 2510,
+    "meshes": 437,
     "externalResources": {
       "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -8267,7 +8267,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:7fb800977bc5898943f6e3fee5130cc01dd0f18746e83a90cd39c3aafe784125",
+  "terrainRevision": "diagonal-spine-v1:bb8a8c3a8f1a2d9e09be449b65ccfe65b81f741a65d04fdf3ac7f5f8df889a0b",
   "sources": [
     "_continent/diagonal-plan.json",
     "_continent/build_continent.py",
@@ -8314,7 +8314,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "streamingChunks": {
@@ -8444,15 +8444,15 @@
             -144.0
           ]
         },
-        "estimatedResidentBytes": 26051220,
-        "glbBytes": 649308,
-        "geometryResidentBytes": 3246540,
+        "estimatedResidentBytes": 26131320,
+        "glbBytes": 665328,
+        "geometryResidentBytes": 3326640,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
-          "5d3d975e645bf4fd460f1022d0522c29b3dbc7b4e281bf0deb9559062fc9570a": 8386752,
+          "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805": 5592406,
           "ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5": 1398102,
           "6ebd390dd8d1694b88f8fc0654471317b6c31c4839fca038c879db059fcd4cb7": 1398102,
-          "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805": 5592406,
+          "5d3d975e645bf4fd460f1022d0522c29b3dbc7b4e281bf0deb9559062fc9570a": 8386752,
           "f176f3c33b51e9febc9e1c928fc101059e5d2acaa6910f96fadf49b28aba0aa3": 1398102,
           "c2e63b92affec50d60b4eb6a5272962f804215f12bcbb621ffcf22c9167c7350": 349526,
           "d8c2578d76c1c26df32c7d7827db41910434f86c66d0c111cb8a596efff00b78": 349526,
@@ -9706,12 +9706,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:7fb800977bc5898943f6e3fee5130cc01dd0f18746e83a90cd39c3aafe784125"
+    "terrainRevision": "diagonal-spine-v1:bb8a8c3a8f1a2d9e09be449b65ccfe65b81f741a65d04fdf3ac7f5f8df889a0b"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "collisionSha256": "8508b0af1dbf44b4158aab7d1f91002886c3f88c773fdbe160a848629ab3e018",
-    "terrainRevision": "diagonal-spine-v1:7fb800977bc5898943f6e3fee5130cc01dd0f18746e83a90cd39c3aafe784125"
+    "terrainRevision": "diagonal-spine-v1:bb8a8c3a8f1a2d9e09be449b65ccfe65b81f741a65d04fdf3ac7f5f8df889a0b"
   }
 }

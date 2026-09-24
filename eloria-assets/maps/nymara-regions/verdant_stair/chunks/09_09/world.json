@@ -19,7 +19,7 @@
     "bounds": {
       "min": [
         -226.0,
-        61.791914698426716,
+        61.791914686924805,
         -208.0
       ],
       "max": [
@@ -456,7 +456,7 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 33692,
+    "glbBytes": 33700,
     "nodes": 4,
     "meshes": 2,
     "externalResources": {
@@ -1498,7 +1498,7 @@
   "bounds": {
     "min": [
       -226.0,
-      61.791914698426716,
+      61.791914686924805,
       -208.0
     ],
     "max": [
@@ -1507,7 +1507,7 @@
       -160.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:bd682d735d362a8424c89ab9734b2a76dd6dd5a926d9cfbaece73c5b86381a42",
+  "terrainRevision": "diagonal-spine-v1:318c5edc2d1657d6dcfb51963952e49642d7946d97af42f1bd78089c6e3a3a5e",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/dc5b6721703e6b9add7d746445501d29787d64079373dd2ad5624ad9f66715e5.png": "dc5b6721703e6b9add7d746445501d29787d64079373dd2ad5624ad9f66715e5",
@@ -1515,13 +1515,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "collisionSha256": "0b610ab413707618f1a0f5f17095c114960e6d4b18dd71f29590ede437bb1662",
-    "terrainRevision": "diagonal-spine-v1:bd682d735d362a8424c89ab9734b2a76dd6dd5a926d9cfbaece73c5b86381a42"
+    "terrainRevision": "diagonal-spine-v1:318c5edc2d1657d6dcfb51963952e49642d7946d97af42f1bd78089c6e3a3a5e"
   }
 }

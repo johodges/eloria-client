@@ -3436,11 +3436,20 @@ def _authored_bridge_geometry(world,builder):
     single vertical lift preserves that shape when water clearance requires it.
     The top strip is the walk collision authority; fascia and piers are visual.
     """
-    snapshot=getattr(world,'authoring_snapshot',None)
-    if snapshot is None:return [],[],[]
+    snapshots=getattr(world,'authoring_snapshots',None)
+    if snapshots is None:
+        snapshot=getattr(world,'authoring_snapshot',None)
+        if snapshot is None:return [],[],[]
+        snapshots={snapshot.document.get('regionId','sunmane_steppe'):snapshot}
     from terrain_export import authored_surface_material,_rotated_uv
     records=[];parts=[];walk_triangles=[]
-    for bridge in snapshot.document.get('bridges',()):
+    bridges=[]
+    for source_region,snapshot in sorted(snapshots.items()):
+        if source_region not in world.ids:
+            raise ValueError(f'authored bridge region {source_region!r} is absent from the continent')
+        bridges.extend((source_region,snapshot,bridge)
+                       for bridge in snapshot.document.get('bridges',()))
+    for source_region,snapshot,bridge in bridges:
         start=snapshot.continent_point(bridge['start']);end=snapshot.continent_point(bridge['end'])
         delta=end[[0,2]]-start[[0,2]];length=float(np.linalg.norm(delta))
         if length<=1e-6:raise ValueError(f"authored bridge {bridge['id']} has coincident endpoints")
@@ -3471,15 +3480,22 @@ def _authored_bridge_geometry(world,builder):
         deck_surface=dict(bridge['deckSurface'])
         deck_surface['rotationDegrees']=float(deck_surface.get('rotationDegrees',0.))+float(
             bridge.get('deckTextureRotationDegrees',0.))
-        name=bridge['id'];deck_material,density=authored_surface_material(builder,deck_surface,name+'_deck')
+        name=bridge['id']
+        identity=name if source_region=='sunmane_steppe' else source_region+'__'+name
+        deck_material,density=authored_surface_material(builder,deck_surface,identity+'_deck')
         mesh=M.Mesh(positions=vertices,normals=np.tile([0.,1.,0.],(len(vertices),1)),
                     uvs=_rotated_uv(raw_uv/.24,deck_surface,density),indices=faces.ravel(),
                     material=deck_material)
         mesh.recompute_normals(180)
         top=mesh.positions[mesh.indices.reshape(-1,3)];walk_triangles.append(top)
-        region=world.ids[int(world.owner_at(*centres[len(centres)//2,[0,2]]))]
-        node=f'Walk_AuthoredBridge_{name}_{region}'
-        parts.append((region,node,mesh,True,name))
+        # A saved bridge belongs to the scene that declares it. Midpoint
+        # ownership can change at a seam and must not silently reattribute an
+        # editable control to its neighbour. Preserve Sunmane's published node
+        # and record ids; qualify later territories so local ids may repeat.
+        region=(world.ids[int(world.owner_at(*centres[len(centres)//2,[0,2]]))]
+                if source_region=='sunmane_steppe' else source_region)
+        node=f'Walk_AuthoredBridge_{identity}_{region}'
+        parts.append((region,node,mesh,True,identity))
         # A shallow fascia makes the span readable from the water without
         # changing its collision surface.
         fascia_vertices=[];fascia_faces=[];fascia_uv=[];depth=.22
@@ -3494,8 +3510,9 @@ def _authored_bridge_geometry(world,builder):
         fascia=M.Mesh(positions=np.asarray(fascia_vertices),normals=np.zeros((len(fascia_vertices),3)),
                       uvs=_rotated_uv(fascia_uv,deck_surface,density),indices=np.asarray(fascia_faces),
                       material=deck_material);fascia.recompute_normals(180)
-        parts.append((region,f'AuthoredBridgeEdge_{name}_{region}',fascia,False,name))
-        support_material,_=authored_surface_material(builder,bridge['supportSurface'],name+'_support')
+        parts.append((region,f'AuthoredBridgeEdge_{identity}_{region}',fascia,False,identity))
+        support_material,_=authored_surface_material(
+            builder,bridge['supportSurface'],identity+'_support')
         support_count=max(0,int(math.ceil(length/5.))-1);supports=[]
         for number in range(1,support_count+1):
             station=number/(support_count+1);centre=start*(1-station)+end*station
@@ -3504,17 +3521,17 @@ def _authored_bridge_geometry(world,builder):
             if height<=.3:continue
             support=M.box((.55,height,.55),center=(centre[0],bottom+height*.5,centre[2]),
                           uv_scale=1.,material=support_material)
-            support_node=f'AuthoredBridgeSupport_{name}_{number:02d}_{region}'
-            parts.append((region,support_node,support,False,name));supports.append({
+            support_node=f'AuthoredBridgeSupport_{identity}_{number:02d}_{region}'
+            parts.append((region,support_node,support,False,identity));supports.append({
                 'station':station,'position':[float(centre[0]),float(centre[2])],
                 'bottom':bottom,'top':float(centre[1])})
-        records.append({'id':name,'length':length,'segments':segments,'width':float(bridge['width']),
+        records.append({'id':identity,'length':length,'segments':segments,'width':float(bridge['width']),
                         'arch':float(bridge['arch']),'waterClearance':float(bridge['waterClearance']),
                         'uniformClearanceLift':lift,'supports':supports})
     return parts,walk_triangles,records
 
 
-def _suppresses_generated_authored_component(component,owners,authored_owner):
+def _suppresses_generated_authored_component(component,owners,authored_owners):
     """Whether bridge authority replaces this complete procedural component.
 
     Claimed crossings belong to their stable crossing site even when a landing
@@ -3522,8 +3539,8 @@ def _suppresses_generated_authored_component(component,owners,authored_owner):
     floor face belongs to the authored territory; mixed-owner coverage remains
     intact as one component instead of losing a territory-shaped slice.
     """
-    return (authored_owner is not None and not component.get('sites')
-            and len(owners)>0 and bool(np.all(owners==authored_owner)))
+    return (not component.get('sites') and len(owners)>0 and
+            len(set(map(int,owners)))==1 and int(owners[0]) in authored_owners)
 
 
 def build_bridges(world,path, *, water_fields=None):
@@ -3537,9 +3554,11 @@ def build_bridges(world,path, *, water_fields=None):
     builder.add_material(G.Material('bridge_edge_timber',base_color=(.085,.061,.04,1),roughness=.95,double_sided=True))
     builder.add_material(G.Material('threshold_invisible',base_color=(0,0,0,0),alpha_mode='BLEND'))
     result=[];triangles=[];support_reports=[];suppressed_components=[]
-    authored_owner=(world.ids.index('sunmane_steppe')
-                    if getattr(world,'authoring_snapshot',None) is not None and 'sunmane_steppe' in world.ids
-                    else None)
+    authored_owners={world.ids.index(region) for region in
+                     getattr(world,'authoring_snapshots',{}) if region in world.ids}
+    if not authored_owners and getattr(world,'authoring_snapshot',None) is not None \
+            and 'sunmane_steppe' in world.ids:
+        authored_owners.add(world.ids.index('sunmane_steppe'))
     def add(region,name,mesh, *, collides=False,record_id=None):
         builder.add_mesh(name,mesh,with_tangents=False)
         root=builder.add_node(G.Node(name,mesh=name))
@@ -3557,7 +3576,7 @@ def build_bridges(world,path, *, water_fields=None):
     for component in field['components']:
         token=C.component_token(component)
         mesh,owners=deck_mesh(world,component)
-        if _suppresses_generated_authored_component(component,owners,authored_owner):
+        if _suppresses_generated_authored_component(component,owners,authored_owners):
             suppressed_components.append(component['id'])
             continue
         faces=mesh.positions[mesh.indices.reshape(-1,3)]

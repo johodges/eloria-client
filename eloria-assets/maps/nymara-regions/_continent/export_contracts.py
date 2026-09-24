@@ -448,6 +448,23 @@ class RegionPlacement:
     def runtime_binding(self, identity):
         return getattr(self.content, 'runtime_bindings', {}).get(identity)
 
+    def runtime_binding_region(self, identity):
+        """Return the one saved scene that owns a qualified binding marker."""
+        if identity is None:
+            return None
+        qualified = getattr(self.content, 'runtime_bindings_by_region', None)
+        if qualified is None:
+            return self.region if self.runtime_binding(identity) is not None else None
+        owners = [region for region, bindings in qualified.items() if identity in bindings]
+        if len(owners) > 1:
+            raise PlacementError(
+                f'{self.region}:{identity}: authored runtime binding has ambiguous region owners {sorted(owners)}')
+        if not owners:
+            if self.runtime_binding(identity) is not None:
+                raise PlacementError(f'{self.region}:{identity}: authored runtime binding lost its region owner')
+            return None
+        return owners[0]
+
     def runtime_identity(self, source_path, old, line=None):
         """Resolve one saved binding by certified source identity, never by tile alone."""
         old = tuple(map(int, old))
@@ -510,8 +527,9 @@ class RegionPlacement:
             entry = next((e for e in entries if e.get('doorNode') or e.get('node')), entries[0] if entries else {})
         # Server coordinates are authoritative. A linked architectural root
         # determines displacement, but stale marker coordinates cannot move it.
-        authored = (getattr(self.content, 'authored_runtime_points', {}).get((self.region, identity))
-                    if identity else None)
+        binding_region = self.runtime_binding_region(identity)
+        authored = (getattr(self.content, 'authored_runtime_points', {}).get((binding_region, identity))
+                    if binding_region is not None else None)
         if identity and self.runtime_binding(identity) is not None and authored is None:
             raise PlacementError(f'{self.region}:{identity}: saved runtime marker is missing')
         if authored is None:
@@ -626,15 +644,29 @@ class RegionPlacement:
             return tile
         return None
 
-    def place(self, old, label, radius, shape=(1, 1), reserve=False, identity=None, body=False):
+    def place(self, old, label, radius, shape=(1, 1), reserve=False, identity=None, body=False,
+              reuse_existing=False):
         old = list(map(int, old))
         expected = self.expected(old, identity)
         binding = self.runtime_binding(identity)
+        if binding is not None:
+            self.spec.setdefault('runtimeBindings', {}).setdefault(identity, copy.deepcopy(binding))
         marker_key = None if binding is None else (
             binding['marker']['section'], binding['marker']['id'],
             tuple(map(float, binding['targetOffset'])))
         existing = (self.spec['runtimeMarkerPositions'].get(marker_key)
                     if marker_key is not None else self.spec['tilePositions'].get(key(old)))
+        # A high-level contract can seat a shared point before its record is
+        # visited.  The territory arrival is the concrete case: connect_hub()
+        # chooses its exact walkable tile before territories.txt is rewritten.
+        # Preserve that tile while still consuming the qualified authored
+        # binding; marker aliases remain governed by runtimeMarkerPositions.
+        if (reuse_existing and existing is None and binding is not None
+                and key(old) in self.spec['tilePositions']):
+            candidate = self.spec['tilePositions'][key(old)]
+            if (list(candidate) == list(self.spec['arrival']) and
+                    float(np.linalg.norm(np.asarray(candidate, float) - expected)) <= radius + 1e-8):
+                existing = candidate
         served = None if body or binding is not None else self.previous_tile(old)
         if existing is not None:
             # Records that share both a marker and its semantic endpoint offset
@@ -816,6 +848,13 @@ def collect_gameplay_points(server, profile_text, placements, records, shared, p
     def remap(region, old):
         p = placements[region]
         if key(old) in p.spec['tilePositions']:
+            identity = p.runtime_identity(current['source'], old)
+            if identity is not None:
+                binding = p.runtime_binding(identity)
+                reuse_arrival = bool(binding and binding.get('role') == 'territory' and
+                                     binding.get('marker', {}).get('section') == 'spawnPoints')
+                return p.place(old, current['label'], current['radius'], identity=identity,
+                               reuse_existing=reuse_arrival)
             return p.spec['tilePositions'][key(old)]
         if current['area']:
             # Region rectangles are bounds, not standing points; preserve their
@@ -927,11 +966,14 @@ def update_markers(placement, manifest):
                 if return_tile is not None:
                     entry['arrivalPosition'] = placement.local_position(return_tile)
             updated += 1
-    if placement.region=='sunmane_steppe':
+    authored_regions = getattr(placement.content, 'authored_regions', None)
+    is_authored = (placement.region in authored_regions if authored_regions is not None
+                   else placement.region == 'sunmane_steppe')
+    if is_authored:
         spawns=manifest.get('spawnPoints',[])
-        if not spawns:raise PlacementError('sunmane_steppe: authored publication lost every spawn point')
+        if not spawns:raise PlacementError(f'{placement.region}: authored publication lost every spawn point')
         defaults=[spawn for spawn in spawns if spawn.get('default')]
-        if len(defaults)>1:raise PlacementError('sunmane_steppe: authored publication has multiple default spawns')
+        if len(defaults)>1:raise PlacementError(f'{placement.region}: authored publication has multiple default spawns')
         selected=defaults[0] if defaults else spawns[0]
         manifest.setdefault('navigation', {})['defaultSpawn']=str(selected['id'])
         manifest['coordinateTransform']['walkingHeight']=float(selected['position'][1])
@@ -942,6 +984,22 @@ def update_markers(placement, manifest):
         manifest.setdefault('navigation', {})['defaultSpawn'] = 'continent-arrival'
         manifest['coordinateTransform']['walkingHeight'] = placement.local_position(arrival)[1]
     placement.report['regions'][placement.region]['updatedAuthoredMarkers'] = updated
+
+
+def region_runtime_bindings(content, region):
+    """Return only one authored region's bindings for its publication.
+
+    Old single-region Sunmane compositions predate the qualified mapping.  Its
+    flat dictionary remains a compatibility source only when no qualified map
+    exists at all; once any region map is present, a missing key means that
+    region deliberately has no bindings.
+    """
+    qualified = getattr(content, 'runtime_bindings_by_region', None)
+    if qualified is not None:
+        return copy.deepcopy(qualified.get(region, {}))
+    if region == 'sunmane_steppe':
+        return copy.deepcopy(getattr(content, 'runtime_bindings', {}))
+    return {}
 
 
 def content_transform(content, region):
@@ -1061,7 +1119,11 @@ def export_contracts(world, content, manifests, output, server_path):
                 'previousServerOrigin': list(content.templates[region]['coordinateTransform']['serverOrigin']),
                 'contentTransform': content_transform(content, region),
                 'contentPositions': {group: {} for group in records}, 'tilePositions': {},
-                'runtimeBindings': copy.deepcopy(getattr(content, 'runtime_bindings', {})) if region == 'sunmane_steppe' else {},
+                # Runtime bindings are published by the server record's region,
+                # not by the saved marker's region. A Whitehorn door can be
+                # driven by an Amethyst marker, for example. ``place`` installs
+                # each exact binding when that qualified source record is used.
+                'runtimeBindings': {},
                 'runtimeBindingPositions': {}, 'runtimeBindingSourceTiles': {},
                 'runtimeMarkerPositions': {},
                 'portalPositions': {}, 'removedInteractiveIds': [],
@@ -1168,6 +1230,21 @@ def export_contracts(world, content, manifests, output, server_path):
             # Return metadata may name the same point as a bound doorway.
             identity = p.runtime_identity('config/eloria/maps.txt', target['oldTile'])
             p.place(target['oldTile'], 'interior return:' + target['source'], 5., identity=identity)
+        expected_bindings = set(getattr(content, 'runtime_bindings', {}))
+        binding_regions = {}
+        for region, placement in placements.items():
+            for identity in placement.spec['runtimeBindings']:
+                if identity in binding_regions:
+                    raise PlacementError(
+                        f'{identity}: authored runtime binding was consumed by both '
+                        f'{binding_regions[identity]} and {region}')
+                binding_regions[identity] = region
+        if set(binding_regions) != expected_bindings:
+            missing = sorted(expected_bindings - set(binding_regions))
+            extra = sorted(set(binding_regions) - expected_bindings)
+            raise PlacementError(
+                f'authored runtime bindings were not consumed exactly once; '
+                f'missing={missing[:8]}, extra={extra[:8]}')
         if report['failures']:
             raise PlacementError(f'{len(report["failures"])} continent contracts need authored geometry or placement corrections; see contract-placement-report.json')
         # The frozen inputs must still be the source of every remap we emit.

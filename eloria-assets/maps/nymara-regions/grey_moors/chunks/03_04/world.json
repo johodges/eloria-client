@@ -19,7 +19,7 @@
     "bounds": {
       "min": [
         65.81881682678716,
-        29.441480788084487,
+        29.441480799277375,
         -50.949974609497076
       ],
       "max": [
@@ -335,7 +335,7 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 1533924,
+    "glbBytes": 1533920,
     "nodes": 153,
     "meshes": 87,
     "externalResources": {
@@ -2073,7 +2073,7 @@
   "bounds": {
     "min": [
       65.81881682678716,
-      29.441480788084487,
+      29.441480799277375,
       -50.949974609497076
     ],
     "max": [
@@ -2082,7 +2082,7 @@
       67.81349496473695
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:1dd3cdb3a14a33c019e440e42030003e2eddf659775768b66399493d126fa46d",
+  "terrainRevision": "diagonal-spine-v1:336c8b183cc3d04b207f00d408bfe71dfe1cf5329097814a7e67d504f5eff4ae",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/ab5881fb0f1107266d0692b9c22bb22d3fd692dffa94c058823a27a2dd937b35.png": "ab5881fb0f1107266d0692b9c22bb22d3fd692dffa94c058823a27a2dd937b35",
@@ -2138,13 +2138,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
     "collisionSha256": "3a8d097f367283c0c1e41f74da5d049a2be74e3fb13f1953b3f94427a2235182",
-    "terrainRevision": "diagonal-spine-v1:1dd3cdb3a14a33c019e440e42030003e2eddf659775768b66399493d126fa46d"
+    "terrainRevision": "diagonal-spine-v1:336c8b183cc3d04b207f00d408bfe71dfe1cf5329097814a7e67d504f5eff4ae"
   }
 }

@@ -50,16 +50,65 @@ def water(x,z,*,height,plan):
 
 
 class BridgeUnionTests(unittest.TestCase):
+    def test_authored_bridge_controls_export_from_each_region_without_generated_duplicates(self):
+        from amberwood import gltf as G
+
+        class Snapshot:
+            def __init__(self,region,translation):
+                self.translation=np.asarray(translation,float)
+                self.document={'regionId':region,'bridges':[{
+                    'id':'shared','start':[0.,1.,0.],'end':[4.,1.,0.],
+                    'width':2.,'arch':0.,'waterClearance':0.,
+                    'deckTextureRotationDegrees':0.,
+                    'deckSurface':{'preset':'Timber','rotationDegrees':0.},
+                    'supportSurface':{'preset':'Stone','rotationDegrees':0.}}]}
+            def continent_point(self,point):
+                return np.asarray(point,float)+self.translation
+
+        snapshots={
+            'sunmane_steppe':Snapshot('sunmane_steppe',[10.,0.,0.]),
+            'amethyst_barrens':Snapshot('amethyst_barrens',[100.,0.,20.]),
+        }
+        current=SimpleNamespace(authoring_snapshots=snapshots,
+            authoring_snapshot=snapshots['sunmane_steppe'],
+            ids=['sunmane_steppe','amethyst_barrens'],plan={'rivers':[]})
+        # Midpoint ownership deliberately says Sunmane for both controls. A
+        # saved Amethyst control must still remain Amethyst authority.
+        current.owner_at=lambda x,z:0
+        current.height_at=lambda x,z:np.asarray(x)*0
+
+        parts,triangles,records=B._authored_bridge_geometry(
+            current,G.GltfBuilder('two authored regions'))
+        walks=[part for part in parts if part[3]]
+
+        self.assertEqual({part[1] for part in walks},{
+            'Walk_AuthoredBridge_shared_sunmane_steppe',
+            'Walk_AuthoredBridge_amethyst_barrens__shared_amethyst_barrens'})
+        self.assertEqual({part[0] for part in walks},
+                         {'sunmane_steppe','amethyst_barrens'})
+        self.assertEqual({record['id'] for record in records},
+                         {'shared','amethyst_barrens__shared'})
+        self.assertEqual(len(triangles),2)
+        self.assertEqual(sorted(round(float(value[:,:,0].min())) for value in triangles),
+                         [10,100])
+        authored_owners={current.ids.index(region) for region in snapshots}
+        # The corresponding wholly-owned loose components are suppressed, so
+        # neither saved control is accompanied by a generated duplicate.
+        self.assertTrue(B._suppresses_generated_authored_component(
+            {'id':501,'sites':[]},np.array([0,0]),authored_owners))
+        self.assertTrue(B._suppresses_generated_authored_component(
+            {'id':502,'sites':[]},np.array([1,1]),authored_owners))
+
     def test_authored_bridge_authority_suppresses_only_wholly_owned_loose_components(self):
         owners=np.array([1,1,1])
         self.assertTrue(B._suppresses_generated_authored_component(
-            {'id':501,'sites':[]},owners,1))
+            {'id':501,'sites':[]},owners,{1,3}))
         self.assertFalse(B._suppresses_generated_authored_component(
-            {'id':15,'sites':[14]},owners,1),'a stable claimed crossing survives overlap')
+            {'id':15,'sites':[14]},owners,{1,3}),'a stable claimed crossing survives overlap')
         self.assertFalse(B._suppresses_generated_authored_component(
-            {'id':502,'sites':[]},np.array([0,1,1]),1),'mixed neighbour coverage stays whole')
+            {'id':502,'sites':[]},np.array([0,1,1]),{1,3}),'mixed neighbour coverage stays whole')
         self.assertFalse(B._suppresses_generated_authored_component(
-            {'id':501,'sites':[]},owners,None),'procedural builds retain their component')
+            {'id':501,'sites':[]},owners,set()),'procedural builds retain their component')
 
     def test_keeper_crossing_uses_bounded_asymmetric_landings_after_site_reordering(self):
         w=world();road=w.roads[0]

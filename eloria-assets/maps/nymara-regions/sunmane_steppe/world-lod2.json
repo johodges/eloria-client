@@ -881,12 +881,12 @@
     },
     "walkableCells": 702301,
     "walkableFraction": 0.279906,
-    "sourceGlbSha256": "6b1c7a153132a7dcbc3b96e17e1bccc563dd8fc4150b8a247bc62555f78e42dd",
+    "sourceGlbSha256": "747cff35208eaf2374aa0669797fe013bc250b7b1c8591e668d2b06a4b424075",
     "exportStatistics": {
-      "walkMeshes": 65,
+      "walkMeshes": 66,
       "structuralMeshes": 710,
       "structuralTriangles": 141354,
-      "walkTriangles": 71134,
+      "walkTriangles": 71218,
       "steepCells": 23057,
       "waterCells": 268468,
       "structuralCells": 13318,
@@ -6579,7 +6579,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "9d00ba21ca42123a51307bacffa18a1fc48a8f670c5b849676ec500fe2dd5ff7",
+      "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
       "globalMin": [
         1010.0,
         228.0
