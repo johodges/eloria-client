@@ -44,14 +44,24 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 		_fail("Could not create snapshot directory %s: %s" % [
 			output_directory, error_string(error)])
 		return {}
-	var base_source := ProjectSettings.globalize_path(terrain.base_heights_path)
-	var base_bytes := FileAccess.get_file_as_bytes(base_source)
-	if base_bytes.size() != terrain.grid_size.x * terrain.grid_size.y * 4:
-		_fail("%s: base height byte count changed during export." % terrain.get_path())
-		return {}
 	var base_output := output_directory.path_join(BASE_HEIGHT_SIDECAR)
-	if not _write_bytes(base_output, base_bytes):
-		return {}
+	if terrain.sculpt_layer == null:
+		# Preserve the original bytes exactly when no sculpt layer is active.
+		var base_source := ProjectSettings.globalize_path(terrain.base_heights_path)
+		var base_bytes := FileAccess.get_file_as_bytes(base_source)
+		if base_bytes.size() != terrain.grid_size.x * terrain.grid_size.y * 4:
+			_fail("%s: base height byte count changed during export." % terrain.get_path())
+			return {}
+		if not _write_bytes(base_output, base_bytes):
+			return {}
+	else:
+		var sculpted_base: PackedFloat32Array = terrain.sculpted_base_heights()
+		if sculpted_base.size() != terrain.grid_size.x * terrain.grid_size.y:
+			_fail("%s: Terrain Sculpt Layer could not produce the bound base grid." % \
+				terrain.get_path())
+			return {}
+		if not _write_float32(base_output, sculpted_base):
+			return {}
 	var resolved_output := output_directory.path_join(RESOLVED_HEIGHT_SIDECAR)
 	if not _write_float32(resolved_output, terrain.effective_heights()):
 		return {}

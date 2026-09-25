@@ -18,6 +18,7 @@ var _source_mesh_ids: Dictionary = {}
 var _cache: Dictionary = {}
 var _cache_order := PackedStringArray()
 var _generation := 0
+var _sculpt_preview_active := false
 
 
 func configure(root: Node3D, entry: Dictionary) -> void:
@@ -29,6 +30,7 @@ func configure(root: Node3D, entry: Dictionary) -> void:
 
 
 func clear() -> void:
+	set_sculpt_preview_active(false)
 	_generation += 1
 	_restore_sources()
 	for child in get_children():
@@ -86,6 +88,8 @@ func source_state() -> Dictionary:
 
 
 func refresh_if_changed() -> bool:
+	if _sculpt_preview_active:
+		return false
 	if active_root == null or _references.is_empty():
 		return false
 	var source := active_root.get_node_or_null("Terrain/__TerrainPreview") as MeshInstance3D
@@ -98,6 +102,24 @@ func refresh_if_changed() -> bool:
 			selected.append((value as Dictionary).entry)
 	set_references(selected)
 	return true
+
+
+## A brush rebuilds the source mesh repeatedly. Show that fresh mesh directly
+## during the stroke and defer ownership clipping until the one final refresh.
+func set_sculpt_preview_active(active: bool) -> void:
+	_sculpt_preview_active = active
+	if active_root == null:
+		return
+	var source := active_root.get_node_or_null(
+		"Terrain/__TerrainPreview") as MeshInstance3D
+	if source != null and _source_visibility.has(source.get_instance_id()):
+		source.visible = active
+	for child in get_children(true):
+		if child is Node3D and (String(child.name).begins_with("Owned_") or
+				String(child.name).begins_with("OwnedTerrain_") or
+				String(child.name).begins_with("Reference_") or
+				String(child.name) == ACTIVE_CLIP_NAME):
+			(child as Node3D).visible = not active
 
 
 func _add_reference(entry: Dictionary, generation: int) -> String:

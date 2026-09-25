@@ -44,6 +44,11 @@ changes its route and rendering while leaving saved ground unchanged. Enable
 roads shape terrain by default. Landforms, including islands, are saved ground;
 water feature controls edit water independently of the terrain.
 
+To change saved ground directly, use **Territories → Sculpt terrain in 3D**,
+choose a brush, and drag on the active terrain. [Terrain sculpting](terrain-sculpting.md)
+explains the protected border, undo/save behavior, and how sculpted heights feed
+the normal build.
+
 Whole-feature water ownership follows the registered source IDs: Amberwood owns
 `western_river`, `amber_tributary`, and `whitehorn_torrent`; Grey Moors owns
 `moor_tributary`, `moor_headwater_tarn`, and `moorwater_pool`; Manymouth Delta

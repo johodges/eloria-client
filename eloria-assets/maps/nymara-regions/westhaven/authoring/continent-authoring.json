@@ -77759,7 +77759,7 @@
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "bba17999ebee276a88aaed2c2778e5ab7282e1609a3ede101c09f89f3ca345cf"
+        "sha256": "558bc03ab1ad43eabcb02eabb058d22cb7046e34713549234620991cd412c778"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/water_region_control.gd",

@@ -15,6 +15,17 @@ godot-client/src/dev/map_authoring_pilot/style/texture_presets.gd -text whitespa
 godot-client/src/dev/map_authoring_pilot/style/object_surfaces/*.tres -text whitespace=cr-at-eol
 godot-client/src/dev/map_authoring_region/terrain_control.gd -text whitespace=cr-at-eol
 godot-client/src/dev/map_authoring_region/region_snapshot.gd -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_region/terrain_sculpt_layer.gd -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_region/terrain_sculpt_brush.gd -text whitespace=cr-at-eol
+# Preserve the CRLF bytes already certified by the saved region snapshots.
+godot-client/src/dev/map_authoring_pilot/style/worn_path.gdshader -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_region/asset_control.gd -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_region/asset_surface_override.gd -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_region/bridge_control.gd -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_region/gameplay_marker.gd -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_region/path_control.gd -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_region/region_control.gd -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_region/water_region_control.gd -text whitespace=cr-at-eol
 godot-client/src/dev/map_authoring_region/biome_palette_entry.gd -text
 godot-client/src/world/biome_blend.gdshader -text
 godot-client/src/world/biome_blend_material.gd -text
