@@ -1,5 +1,7 @@
-[gd_scene load_steps=293 format=3]
+[gd_scene load_steps=302 format=3]
 
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres" id="object_weathered_limestone"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/path_control.gd" id="path"]
@@ -7,6 +9,7 @@
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_control.gd" id="asset"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/gameplay_marker.gd" id="marker"]
 [ext_resource type="Resource" path="res://world_authoring/regions/grey_moors/surfaces/continental-ground.tres" id="terrain_surface"]
+[ext_resource type="Resource" path="res://world_authoring/regions/grey_moors/surfaces/biome-grass.tres" id="biome_entry"]
 [ext_resource type="Resource" path="res://world_authoring/regions/grey_moors/surfaces/road.tres" id="road_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/grey_moors/surfaces/river.tres" id="river_surface"]
 [ext_resource type="Curve3D" path="res://world_authoring/regions/grey_moors/paths/amberwood-grey-moors-grey-moors.tres" id="curve_00"]
@@ -293,6 +296,48 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/grey_moors/assets/prototypes/woodlandfloor-0054-0ce34df5adad.glb" id="prototype_253"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/grey_moors/assets/prototypes/woodlandfloor-0059-524b55380a9e.glb" id="prototype_254"]
 
+[sub_resource type="Resource" id="object_material_0000"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Lore_breached_barrows/Lore_breached_barrows__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0001"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Lore_breached_barrows/Lore_breached_barrows__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0002"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_004_276_540_WorldPlacement/BridgeUnionPier_004_276_540"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0003"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_004_284_540_WorldPlacement/BridgeUnionPier_004_284_540"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0004"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_001_244_412_WorldPlacement/BridgeUnionPier_001_244_412"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0005"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_001_252_412_WorldPlacement/BridgeUnionPier_001_252_412"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
 [node name="GreyMoors" type="Node3D"]
 script = ExtResource("region")
 region_id = "grey_moors"
@@ -319,6 +364,7 @@ base_heights_path = "res://world_authoring/regions/grey_moors/base-heights.f32le
 base_colors_path = "res://world_authoring/regions/grey_moors/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
 base_surface = ExtResource("terrain_surface")
+biome_palette = [ExtResource("biome_entry")]
 
 [node name="Patches" type="Node3D" parent="Terrain"]
 
@@ -1706,6 +1752,7 @@ metadata = {"composedSourceRegion": "grey_moors", "kind": "landmark", "mesh": "f
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.027198215, 128.475453314, -115.921462388)
 asset_id = "Lore_breached_barrows"
+material_overrides = [SubResource("object_material_0000"), SubResource("object_material_0001")]
 node_name = "Lore_breached_barrows"
 catalog_asset_id = "grey_moors:lore-breached-barrows-4f34c12176c9"
 scene_path = "res://world_authoring/regions/grey_moors/assets/prototypes/lore-breached-barrows-4f34c12176c9.glb"
@@ -3955,6 +4002,7 @@ metadata = {"composedSourceRegion": "amberwood"}
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -220, 0, -420)
 asset_id = "published-grey-moors-moor-tributary-196"
+material_overrides = [SubResource("object_material_0002"), SubResource("object_material_0003")]
 node_name = "Walk_ContinentalBridgeUnion_004_grey_moors_WorldPlacement"
 catalog_asset_id = "grey_moors:published-grey-moors-moor-tributary-196"
 scene_path = "res://world_authoring/regions/grey_moors/assets/prototypes/published-grey-moors-moor-tributary-196.glb"
@@ -3968,6 +4016,7 @@ metadata = {"authoredCrossing": {"id": "moor_tributary@196", "localEndpoints": [
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -220, 0, -420)
 asset_id = "published-grey-moors-moor-tributary-62"
+material_overrides = [SubResource("object_material_0004"), SubResource("object_material_0005")]
 node_name = "Walk_ContinentalBridgeUnion_001_grey_moors_WorldPlacement"
 catalog_asset_id = "grey_moors:published-grey-moors-moor-tributary-62"
 scene_path = "res://world_authoring/regions/grey_moors/assets/prototypes/published-grey-moors-moor-tributary-62.glb"

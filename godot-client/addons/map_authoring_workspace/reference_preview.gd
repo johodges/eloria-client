@@ -8,6 +8,7 @@ const HOST_NAME := "__TerritoryReferenceHost"
 const ACTIVE_CLIP_NAME := "ActiveOwnedTerrain"
 const BOUNDARY_SAMPLE_METRES := 2.0
 const PUBLISHED_HEIGHT_BIN_METRES := 8.0
+const BIOME_BLEND_MATERIAL := preload("res://src/world/biome_blend_material.gd")
 
 var active_root: Node3D
 var active_entry: Dictionary = {}
@@ -70,6 +71,7 @@ func set_references(entries: Array[Dictionary]) -> void:
 			return
 		if not failure.is_empty():
 			failures.append(failure)
+	_synchronize_live_biome_palettes()
 	status_changed.emit("Showing %d read-only reference%s.%s" % [
 		_references.size(), "" if _references.size() == 1 else "s",
 		" " + " ".join(failures) if not failures.is_empty() else ""])
@@ -144,15 +146,62 @@ func _add_reference(entry: Dictionary, generation: int) -> String:
 			instance.queue_free()
 			return "%s published terrain could not be ownership-clipped." % String(entry.label)
 	var boundary_coverage := _add_boundary(instance, entry)
+	var live_biome_palette := {}
 	if String(entry.source_kind) == "saved_authored":
+		_collect_live_biome_palette(instance, live_biome_palette)
 		_strip_reference_scripts(instance)
 	instance.process_mode = Node.PROCESS_MODE_DISABLED
 	_references[String(entry.id)] = {
 		"entry": entry.duplicate(true),
 		"node": instance,
 		"boundary_coverage": boundary_coverage,
+		"biome_palette": live_biome_palette,
 	}
 	return ""
+
+
+func _synchronize_live_biome_palettes() -> void:
+	BIOME_BLEND_MATERIAL.begin_source_verification()
+	var overrides := {}
+	_collect_live_biome_palette(active_root, overrides)
+	for value: Variant in _references.values():
+		if value is Dictionary:
+			overrides.merge((value as Dictionary).get("biome_palette", {}) as Dictionary,
+				true)
+	if overrides.is_empty():
+		return
+	for child in get_children(true):
+		if not child is MeshInstance3D:
+			continue
+		var mesh := (child as MeshInstance3D).mesh
+		if mesh == null:
+			continue
+		for surface_index in mesh.get_surface_count():
+			var material := mesh.surface_get_material(surface_index) as ShaderMaterial
+			if material == null or material.resource_name != "continent_biome_blend" or \
+					not material.has_meta(&"biome_blend_config"):
+				continue
+			var config: Dictionary = material.get_meta(&"biome_blend_config")
+			var patched := BIOME_BLEND_MATERIAL.with_palette_overrides(config,
+				overrides)
+			var replacement := BIOME_BLEND_MATERIAL.create_runtime(patched,
+				Vector3.ZERO)
+			if replacement == null:
+				continue
+			var to_continent: Transform3D = material.get_shader_parameter(
+				&"terrain_to_continent")
+			BIOME_BLEND_MATERIAL.set_terrain_to_continent(replacement, to_continent)
+			mesh.surface_set_material(surface_index, replacement)
+
+
+static func _collect_live_biome_palette(region: Node3D,
+		result: Dictionary) -> void:
+	if region == null:
+		return
+	var terrain := region.get_node_or_null("Terrain")
+	if terrain == null or not terrain.has_method("live_biome_palette"):
+		return
+	result.merge(terrain.call("live_biome_palette") as Dictionary, true)
 
 
 func _load_source(entry: Dictionary, is_authored: bool) -> PackedScene:

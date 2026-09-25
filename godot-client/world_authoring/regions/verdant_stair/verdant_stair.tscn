@@ -1,11 +1,16 @@
-[gd_scene load_steps=813 format=3]
+[gd_scene load_steps=891 format=3]
 
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/jade-masonry.tres" id="object_jade_masonry"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/reed-thatch.tres" id="object_reed_thatch"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres" id="object_weathered_limestone"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/path_control.gd" id="path"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/water_region_control.gd" id="water"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_control.gd" id="asset"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/gameplay_marker.gd" id="marker"]
+[ext_resource type="Resource" path="res://world_authoring/regions/verdant_stair/surfaces/biome-forest-floor.tres" id="biome_entry"]
 [ext_resource type="Resource" path="res://world_authoring/regions/verdant_stair/surfaces/continental-ground.tres" id="terrain_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/verdant_stair/surfaces/road.tres" id="road_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/verdant_stair/surfaces/river.tres" id="river_surface"]
@@ -813,6 +818,517 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/verdant_stair/assets/prototypes/woodlandfloor-0321-de34540caed6.glb" id="prototype_776"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/verdant_stair/assets/prototypes/woodlandfloor-0322-ec6c7a1dbea1.glb" id="prototype_777"]
 
+[sub_resource type="Resource" id="object_material_0000"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_Herbalist/Building_Herbalist__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0001"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_Provisioner/Building_Provisioner__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0002"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_TownHall/Walk_Building_TownHall__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0003"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_Lower_00/House_Lower_00__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0004"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_Lower_01/House_Lower_01__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0005"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_Lower_02/House_Lower_02__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0006"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_Quay_00/House_Quay_00__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0007"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_Quay_01/House_Quay_01__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0008"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Aqueduct/Landmark_Aqueduct__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0009"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Aqueduct/Walk_Landmark_Aqueduct__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0010"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_EastLookout/Walk_Landmark_EastLookout__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0011"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_GrandStair/Walk_Landmark_GrandStair__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0012"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_GreatTemple/Walk_Landmark_GreatTemple__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0013"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_HangingGardens/Walk_Landmark_HangingGardens__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0014"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_QuayMarket/Walk_Landmark_QuayMarket__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0015"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_RidgeShrine/Walk_Landmark_RidgeShrine__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0016"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_SouthQuay/Walk_Landmark_SouthQuay__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0017"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Stair_lower_climb/Walk_Landmark_Stair_lower_climb__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0018"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Stair_quay_climb/Walk_Landmark_Stair_quay_climb__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0019"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Stair_shrine_climb/Walk_Landmark_Stair_shrine_climb__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0020"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Stair_summit_climb/Walk_Landmark_Stair_summit_climb__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0021"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Stair_temple_climb/Walk_Landmark_Stair_temple_climb__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0022"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Statue"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0023"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_SummitWatch/Walk_Landmark_SummitWatch__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0024"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_SunPavilion/Walk_Landmark_SunPavilion__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0025"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_UpperCourt/Walk_Landmark_UpperCourt__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0026"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Lore_moved_anchor/Lore_moved_anchor__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0027"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Well/Prop_Well__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0028"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_boundary_shrine_00"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0029"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_boundary_shrine_01"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0030"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_boundary_shrine_02"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0031"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_boundary_shrine_03"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0032"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_deep_jungle_00"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0033"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_deep_jungle_01"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0034"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_deep_jungle_02"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0035"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_deep_jungle_03"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0036"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_deep_jungle_04"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0037"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_north_watch_00"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0038"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_north_watch_01"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0039"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_north_watch_02"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0040"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_north_watch_03"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0041"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_old_terrace_00"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0042"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_old_terrace_01"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0043"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_old_terrace_02"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0044"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_old_terrace_03"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0045"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_old_terrace_04"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0046"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_old_terrace_05"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0047"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_old_terrace_06"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0048"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_stone_ring_00"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0049"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_stone_ring_01"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0050"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_stone_ring_02"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0051"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_stone_ring_03"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0052"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_stone_ring_04"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0053"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_stone_ring_05"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0054"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_stone_ring_06"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0055"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_stone_ring_07"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0056"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_stone_ring_08"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0057"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_stair_cenote_hollow/Secret_stair_cenote_hollow__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0058"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_stair_culvert/Secret_stair_culvert__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0059"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_stair_hanging_garden/Secret_stair_hanging_garden__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0060"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_stair_house_school/Secret_stair_house_school__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0061"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_stair_ridge_reliquary/Secret_stair_ridge_reliquary__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0062"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_stair_summit_eyrie/Secret_stair_summit_eyrie__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0063"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_stair_sun_focus/Secret_stair_sun_focus__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0064"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_stair_temple_vault/Secret_stair_temple_vault__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0065"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_stair_waystone/Secret_stair_waystone__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0066"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Stall_Lower_00/Stall_Lower_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0067"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Stall_Lower_01/Stall_Lower_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0068"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Stall_Lower_02/Stall_Lower_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0069"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Stall_Quay_00/Stall_Quay_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0070"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Stall_Quay_01/Stall_Quay_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0071"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Stall_Quay_02/Stall_Quay_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0072"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Stall_Quay_03/Stall_Quay_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
 [node name="VerdantStair" type="Node3D"]
 script = ExtResource("region")
 region_id = "verdant_stair"
@@ -839,6 +1355,7 @@ base_heights_path = "res://world_authoring/regions/verdant_stair/base-heights.f3
 base_colors_path = "res://world_authoring/regions/verdant_stair/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
 base_surface = ExtResource("terrain_surface")
+biome_palette = [ExtResource("biome_entry")]
 
 [node name="Patches" type="Node3D" parent="Terrain"]
 
@@ -1408,6 +1925,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "bridge", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.375928124181, 0, 0.926648825311, 0, 1, 0, -0.926648825311, 0, 0.375928124181, -14.0363088069, 85.2185324043, -4.68000165633)
 asset_id = "Building_Herbalist"
+material_overrides = [SubResource("object_material_0000")]
 node_name = "Building_Herbalist"
 catalog_asset_id = "verdant_stair:building-herbalist-7a30b23ea3b8"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/building-herbalist-7a30b23ea3b8.glb"
@@ -1421,6 +1939,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "building", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.926648825311, 0, 0.375928124181, 0, 1, 0, -0.375928124181, 0, 0.926648825311, 11.6999983437, 75.4125322322, -2.33630880689)
 asset_id = "Building_Provisioner"
+material_overrides = [SubResource("object_material_0001")]
 node_name = "Building_Provisioner"
 catalog_asset_id = "verdant_stair:building-provisioner-26347c03b92b"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/building-provisioner-26347c03b92b.glb"
@@ -1434,6 +1953,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "building", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.707106781187, 0, 0.707106781187, 0, 1, 0, -0.707106781187, 0, 0.707106781187, 10.14, 75.417378111, -10.14)
 asset_id = "Building_TownHall"
+material_overrides = [SubResource("object_material_0002")]
 node_name = "Building_TownHall"
 catalog_asset_id = "verdant_stair:building-townhall-7f2010088255"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/building-townhall-7f2010088255.glb"
@@ -6803,6 +7323,7 @@ metadata = {"composedSourceRegion": "verdant_stair"}
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -23.4000043535, 82.0077816784, 5.46)
 asset_id = "House_Lower_00"
+material_overrides = [SubResource("object_material_0003")]
 node_name = "House_Lower_00"
 catalog_asset_id = "verdant_stair:house-lower-00-27ca024f8a05"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/house-lower-00-27ca024f8a05.glb"
@@ -6816,6 +7337,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "building", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.62, 83.8112908978, -18.6599741983)
 asset_id = "House_Lower_01"
+material_overrides = [SubResource("object_material_0004")]
 node_name = "House_Lower_01"
 catalog_asset_id = "verdant_stair:house-lower-01-610b9a3a1feb"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/house-lower-01-610b9a3a1feb.glb"
@@ -6829,6 +7351,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "building", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, 77.6398282979, -21.840004406)
 asset_id = "House_Lower_02"
+material_overrides = [SubResource("object_material_0005")]
 node_name = "House_Lower_02"
 catalog_asset_id = "verdant_stair:house-lower-02-3b3bec2dd0dd"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/house-lower-02-3b3bec2dd0dd.glb"
@@ -6842,6 +7365,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "building", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -59.28, 74.3643906839, 23.4000043535)
 asset_id = "House_Quay_00"
+material_overrides = [SubResource("object_material_0006")]
 node_name = "House_Quay_00"
 catalog_asset_id = "verdant_stair:house-quay-00-250d6820e1ec"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/house-quay-00-250d6820e1ec.glb"
@@ -6855,6 +7379,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "building", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -44.3999741983, 75.1688900796, 36.66)
 asset_id = "House_Quay_01"
+material_overrides = [SubResource("object_material_0007")]
 node_name = "House_Quay_01"
 catalog_asset_id = "verdant_stair:house-quay-01-c5f10fa1a627"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/house-quay-01-c5f10fa1a627.glb"
@@ -7076,6 +7601,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "building", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.690156268369, 0, 0.723660365939, 0, 1, 0, -0.723660365939, 0, 0.690156268369, -35.3865255856, 63.5625874365, -170.029071001)
 asset_id = "Landmark_Aqueduct"
+material_overrides = [SubResource("object_material_0008"), SubResource("object_material_0009")]
 node_name = "Landmark_Aqueduct"
 catalog_asset_id = "verdant_stair:landmark-aqueduct-edd328ae7bdd"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-aqueduct-edd328ae7bdd.glb"
@@ -7167,6 +7693,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "bridge", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.929947861712, 0, -0.367691412053, 0, 1, 0, 0.367691412053, 0, -0.929947861712, 77.8043, 24.4231133672, -9.2)
 asset_id = "Landmark_EastLookout"
+material_overrides = [SubResource("object_material_0010")]
 node_name = "Landmark_EastLookout"
 catalog_asset_id = "verdant_stair:landmark-eastlookout-d29f119a014a"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-eastlookout-d29f119a014a.glb"
@@ -7180,6 +7707,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "landma
 script = ExtResource("asset")
 transform = Transform3D(-0.539753369736, 0, 0.841823199882, 0, 1, 0, -0.841823199882, 0, -0.539753369736, -35.0825408448, 75.3711723425, -20.2487763668)
 asset_id = "Landmark_GrandStair"
+material_overrides = [SubResource("object_material_0011")]
 node_name = "Landmark_GrandStair"
 catalog_asset_id = "verdant_stair:landmark-grandstair-cc55dbdd2150"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-grandstair-cc55dbdd2150.glb"
@@ -7193,6 +7721,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "stair", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(0.707106781187, 0, 0.707106781187, 0, 1, 0, -0.707106781187, 0, 0.707106781187, 109.042793558, 33.7774883969, -102.491276498)
 asset_id = "Landmark_GreatTemple"
+material_overrides = [SubResource("object_material_0012")]
 node_name = "Landmark_GreatTemple"
 catalog_asset_id = "verdant_stair:landmark-greattemple-c8230eea63e0"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-greattemple-c8230eea63e0.glb"
@@ -7206,6 +7735,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "landma
 script = ExtResource("asset")
 transform = Transform3D(-0.992452665644, 0, -0.122628326483, 0, 1, 0, 0.122628326483, 0, -0.992452665644, 97.51326, 21.4396836432, -21.06)
 asset_id = "Landmark_HangingGardens"
+material_overrides = [SubResource("object_material_0013")]
 node_name = "Landmark_HangingGardens"
 catalog_asset_id = "verdant_stair:landmark-hanginggardens-303a86c9d7c3"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-hanginggardens-303a86c9d7c3.glb"
@@ -7232,6 +7762,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "landma
 script = ExtResource("asset")
 transform = Transform3D(-0.29199942123, 0, 0.956418495221, 0, 1, 0, -0.956418495221, 0, -0.29199942123, -31.39656, 76.1690930626, 39.8775)
 asset_id = "Landmark_QuayMarket"
+material_overrides = [SubResource("object_material_0014")]
 node_name = "Landmark_QuayMarket"
 catalog_asset_id = "verdant_stair:landmark-quaymarket-5fafce121073"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-quaymarket-5fafce121073.glb"
@@ -7245,6 +7776,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "landma
 script = ExtResource("asset")
 transform = Transform3D(-0.818967898053, 0, -0.573839334621, 0, 1, 0, 0.573839334621, 0, -0.818967898053, 155.8557, 45.6093629111, -104.39442)
 asset_id = "Landmark_RidgeShrine"
+material_overrides = [SubResource("object_material_0015")]
 node_name = "Landmark_RidgeShrine"
 catalog_asset_id = "verdant_stair:landmark-ridgeshrine-e60e8993be77"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-ridgeshrine-e60e8993be77.glb"
@@ -7258,6 +7790,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "landma
 script = ExtResource("asset")
 transform = Transform3D(-0.98300355472, 0, -0.183586522949, 0, 1, 0, 0.183586522949, 0, -0.98300355472, 107.01054, 6.78287256525, 61.425)
 asset_id = "Landmark_SouthQuay"
+material_overrides = [SubResource("object_material_0016")]
 node_name = "Landmark_SouthQuay"
 catalog_asset_id = "verdant_stair:landmark-southquay-b36608b432a8"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-southquay-b36608b432a8.glb"
@@ -7271,6 +7804,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "landma
 script = ExtResource("asset")
 transform = Transform3D(-0.686171144175, 0, 0.727440142487, 0, 1, 0, -0.727440142487, 0, -0.686171144175, -41.1853528898, 73.8272963509, 39.5109236894)
 asset_id = "Landmark_Stair_lower_climb"
+material_overrides = [SubResource("object_material_0017")]
 node_name = "Landmark_Stair_lower_climb"
 catalog_asset_id = "verdant_stair:landmark-stair-lower-climb-dbcbf4d879b5"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-stair-lower-climb-dbcbf4d879b5.glb"
@@ -7284,6 +7818,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "stair", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(-0.707106781187, 0, 0.707106781187, 0, 1, 0, -0.707106781187, 0, -0.707106781187, -56.8007171214, 74.257189438, 38.8586046303)
 asset_id = "Landmark_Stair_quay_climb"
+material_overrides = [SubResource("object_material_0018")]
 node_name = "Landmark_Stair_quay_climb"
 catalog_asset_id = "verdant_stair:landmark-stair-quay-climb-1af83fd6395e"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-stair-quay-climb-1af83fd6395e.glb"
@@ -7297,6 +7832,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "stair", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(-0.688127302061, 0, 0.725589977989, 0, 1, 0, -0.725589977989, 0, -0.688127302061, 26.888511782, 45.5340657692, -46.5855163656)
 asset_id = "Landmark_Stair_shrine_climb"
+material_overrides = [SubResource("object_material_0019")]
 node_name = "Landmark_Stair_shrine_climb"
 catalog_asset_id = "verdant_stair:landmark-stair-shrine-climb-be174328607c"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-stair-shrine-climb-be174328607c.glb"
@@ -7310,6 +7846,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "stair", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(-0.707106781187, 0, 0.707106781187, 0, 1, 0, -0.707106781187, 0, -0.707106781187, 117.370793558, 33.8174883969, -61.2332764985)
 asset_id = "Landmark_Stair_summit_climb"
+material_overrides = [SubResource("object_material_0020")]
 node_name = "Landmark_Stair_summit_climb"
 catalog_asset_id = "verdant_stair:landmark-stair-summit-climb-0bde55dd1d72"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-stair-summit-climb-0bde55dd1d72.glb"
@@ -7323,6 +7860,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "stair", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(-0.717214248221, 0, 0.696852726298, 0, 1, 0, -0.696852726298, 0, -0.717214248221, 81.2107935579, 19.7974883969, -52.3622764985)
 asset_id = "Landmark_Stair_temple_climb"
+material_overrides = [SubResource("object_material_0021")]
 node_name = "Landmark_Stair_temple_climb"
 catalog_asset_id = "verdant_stair:landmark-stair-temple-climb-4c9f3ac2d8cc"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-stair-temple-climb-4c9f3ac2d8cc.glb"
@@ -7336,6 +7874,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "stair", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(0.707106781187, 0, 0.707106781187, 0, 1, 0, -0.707106781187, 0, 0.707106781187, 6.24047254456, 76.5593763515, 2.34020834873)
 asset_id = "Landmark_Statue"
+material_overrides = [SubResource("object_material_0022")]
 node_name = "Landmark_Statue"
 catalog_asset_id = "verdant_stair:landmark-statue-68a58f908338"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-statue-68a58f908338.glb"
@@ -7349,6 +7888,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.669993582727, 0, 0.742366889822, 0, 1, 0, -0.742366889822, 0, 0.669993582727, 120.57864, 29.2465128972, -157.45938)
 asset_id = "Landmark_SummitWatch"
+material_overrides = [SubResource("object_material_0023")]
 node_name = "Landmark_SummitWatch"
 catalog_asset_id = "verdant_stair:landmark-summitwatch-3979d6fa2551"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-summitwatch-3979d6fa2551.glb"
@@ -7362,6 +7902,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "landma
 script = ExtResource("asset")
 transform = Transform3D(-0.309844298495, 0, 0.950787310964, 0, 1, 0, -0.950787310964, 0, -0.309844298495, 95.1267935579, 33.7774883969, -131.136276498)
 asset_id = "Landmark_SunPavilion"
+material_overrides = [SubResource("object_material_0024")]
 node_name = "Landmark_SunPavilion"
 catalog_asset_id = "verdant_stair:landmark-sunpavilion-310b6b560215"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-sunpavilion-310b6b560215.glb"
@@ -7375,6 +7916,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "landma
 script = ExtResource("asset")
 transform = Transform3D(-0.737849628574, 0, 0.674965129183, 0, 1, 0, -0.674965129183, 0, -0.737849628574, 77.7317935579, 19.7774883969, -34.4592764985)
 asset_id = "Landmark_UpperCourt"
+material_overrides = [SubResource("object_material_0025")]
 node_name = "Landmark_UpperCourt"
 catalog_asset_id = "verdant_stair:landmark-uppercourt-367549c5feeb"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/landmark-uppercourt-367549c5feeb.glb"
@@ -7414,6 +7956,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "landma
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75.0975000079, 19.4820788705, -27.1593)
 asset_id = "Lore_moved_anchor"
+material_overrides = [SubResource("object_material_0026")]
 node_name = "Lore_moved_anchor"
 catalog_asset_id = "verdant_stair:lore-moved-anchor-a9425e380b59"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/lore-moved-anchor-a9425e380b59.glb"
@@ -8493,6 +9036,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Ph
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.82713427186, 76.9219374861, -1.56)
 asset_id = "Prop_Well"
+material_overrides = [SubResource("object_material_0027")]
 node_name = "Prop_Well"
 catalog_asset_id = "verdant_stair:prop-well-0d8a0ab22feb"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/prop-well-0d8a0ab22feb.glb"
@@ -9182,6 +9726,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-0.194361961977, 0, 0.783735179511, 0, 0.807475946308, 0, -0.783735179511, 0, -0.194361961977, 173.174739982, 13.6298745958, -153.877548871)
 asset_id = "Ruin_boundary_shrine_00"
+material_overrides = [SubResource("object_material_0028")]
 node_name = "Ruin_boundary_shrine_00"
 catalog_asset_id = "verdant_stair:ruin-boundary-shrine-00-1c5f5000ca9b"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-boundary-shrine-00-1c5f5000ca9b.glb"
@@ -9195,6 +9740,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-0.0345453698553, 0, 1.47092317015, 0, 1.47132877191, 0, -1.47092317015, 0, -0.0345453698553, 179.912916893, 13.1115092943, -131.817029914)
 asset_id = "Ruin_boundary_shrine_01"
+material_overrides = [SubResource("object_material_0029")]
 node_name = "Ruin_boundary_shrine_01"
 catalog_asset_id = "verdant_stair:ruin-boundary-shrine-01-d53547df2e85"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-boundary-shrine-01-d53547df2e85.glb"
@@ -9208,6 +9754,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.429371345146, 0, -0.794801415622, 0, 0.903365398002, 0, 0.794801415622, 0, 0.429371345146, 149.885627987, 44.9330378598, -127.887850543)
 asset_id = "Ruin_boundary_shrine_02"
+material_overrides = [SubResource("object_material_0030")]
 node_name = "Ruin_boundary_shrine_02"
 catalog_asset_id = "verdant_stair:ruin-boundary-shrine-02-d49069e8eb6e"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-boundary-shrine-02-d49069e8eb6e.glb"
@@ -9221,6 +9768,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(1.23579859002, 0, 0.414432830204, 0, 1.30343880786, 0, -0.414432830204, 0, 1.23579859002, 151.309806905, 26.5241302576, -136.60711778)
 asset_id = "Ruin_boundary_shrine_03"
+material_overrides = [SubResource("object_material_0031")]
 node_name = "Ruin_boundary_shrine_03"
 catalog_asset_id = "verdant_stair:ruin-boundary-shrine-03-45430575d7bb"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-boundary-shrine-03-45430575d7bb.glb"
@@ -9234,6 +9782,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-0.257230494268, 0, 1.08282116802, 0, 1.1129551694, 0, -1.08282116802, 0, -0.257230494268, 24.8351532697, 41.7325989991, -180.406988093)
 asset_id = "Ruin_deep_jungle_00"
+material_overrides = [SubResource("object_material_0032")]
 node_name = "Ruin_deep_jungle_00"
 catalog_asset_id = "verdant_stair:ruin-deep-jungle-00-1eae1a4a8507"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-deep-jungle-00-1eae1a4a8507.glb"
@@ -9247,6 +9796,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(1.15924638372, 0, -0.258248481994, 0, 1.18766344417, 0, 0.258248481994, 0, 1.15924638372, -9.82743587048, 56.0475934006, -166.64180099)
 asset_id = "Ruin_deep_jungle_01"
+material_overrides = [SubResource("object_material_0033")]
 node_name = "Ruin_deep_jungle_01"
 catalog_asset_id = "verdant_stair:ruin-deep-jungle-01-87f85e9f8c24"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-deep-jungle-01-87f85e9f8c24.glb"
@@ -9260,6 +9810,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-0.229779177178, 0, -1.08997428805, 0, 1.11393106558, 0, 1.08997428805, 0, -0.229779177178, 3.95691709727, 47.5981522133, -174.730073149)
 asset_id = "Ruin_deep_jungle_02"
+material_overrides = [SubResource("object_material_0034")]
 node_name = "Ruin_deep_jungle_02"
 catalog_asset_id = "verdant_stair:ruin-deep-jungle-02-2bd650381a73"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-deep-jungle-02-2bd650381a73.glb"
@@ -9273,6 +9824,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.966483267117, 0, 0.317881694726, 0, 1.01741765144, 0, -0.317881694726, 0, 0.966483267117, -10.1934741045, 55.8509310668, -171.88717419)
 asset_id = "Ruin_deep_jungle_03"
+material_overrides = [SubResource("object_material_0035")]
 node_name = "Ruin_deep_jungle_03"
 catalog_asset_id = "verdant_stair:ruin-deep-jungle-03-2aec03d039b1"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-deep-jungle-03-2aec03d039b1.glb"
@@ -9286,6 +9838,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-0.291631434622, 0, -1.06181066787, 0, 1.10113159435, 0, 1.06181066787, 0, -0.291631434622, 9.47593735286, 45.8004000672, -181.135675223)
 asset_id = "Ruin_deep_jungle_04"
+material_overrides = [SubResource("object_material_0036")]
 node_name = "Ruin_deep_jungle_04"
 catalog_asset_id = "verdant_stair:ruin-deep-jungle-04-e7581b72f780"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-deep-jungle-04-e7581b72f780.glb"
@@ -9299,6 +9852,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-0.260852293573, 0, 1.15122618347, 0, 1.18040910051, 0, -1.15122618347, 0, -0.260852293573, 13.0684257238, 49.1250945708, -154.68632334)
 asset_id = "Ruin_north_watch_00"
+material_overrides = [SubResource("object_material_0037")]
 node_name = "Ruin_north_watch_00"
 catalog_asset_id = "verdant_stair:ruin-north-watch-00-ac2a72794834"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-north-watch-00-ac2a72794834.glb"
@@ -9312,6 +9866,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.790328427048, 0, 0.524621889284, 0, 0.948602735246, 0, -0.524621889284, 0, 0.790328427048, -2.5713402919, 59.8249312687, -121.72370765)
 asset_id = "Ruin_north_watch_01"
+material_overrides = [SubResource("object_material_0038")]
 node_name = "Ruin_north_watch_01"
 catalog_asset_id = "verdant_stair:ruin-north-watch-01-e41421181b68"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-north-watch-01-e41421181b68.glb"
@@ -9325,6 +9880,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.576746981533, 0, -0.837631176361, 0, 1.01698725081, 0, 0.837631176361, 0, 0.576746981533, -2.18594410995, 54.9856083288, -138.806801829)
 asset_id = "Ruin_north_watch_02"
+material_overrides = [SubResource("object_material_0039")]
 node_name = "Ruin_north_watch_02"
 catalog_asset_id = "verdant_stair:ruin-north-watch-02-393bc276ddd7"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-north-watch-02-393bc276ddd7.glb"
@@ -9338,6 +9894,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-0.887912664373, 0, -1.07894704221, 0, 1.39732445031, 0, 1.07894704221, 0, -0.887912664373, 11.0491062645, 53.9787302291, -130.252331585)
 asset_id = "Ruin_north_watch_03"
+material_overrides = [SubResource("object_material_0040")]
 node_name = "Ruin_north_watch_03"
 catalog_asset_id = "verdant_stair:ruin-north-watch-03-8157f07456f7"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-north-watch-03-8157f07456f7.glb"
@@ -9351,6 +9908,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-0.463050977117, 0, 1.25710467473, 0, 1.33967472568, 0, -1.25710467473, 0, -0.463050977117, 8.40933583762, 54.1659570554, -125.769983675)
 asset_id = "Ruin_old_terrace_00"
+material_overrides = [SubResource("object_material_0041")]
 node_name = "Ruin_old_terrace_00"
 catalog_asset_id = "verdant_stair:ruin-old-terrace-00-132b988829a7"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-old-terrace-00-132b988829a7.glb"
@@ -9364,6 +9922,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(1.30456322729, 0, 0.28555333742, 0, 1.33544970797, 0, -0.28555333742, 0, 1.30456322729, 13.4585874324, 53.1502452457, -118.103828123)
 asset_id = "Ruin_old_terrace_01"
+material_overrides = [SubResource("object_material_0042")]
 node_name = "Ruin_old_terrace_01"
 catalog_asset_id = "verdant_stair:ruin-old-terrace-01-03cf6b5ae0a9"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-old-terrace-01-03cf6b5ae0a9.glb"
@@ -9377,6 +9936,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-1.08052608902, 0, -0.109273589869, 0, 1.08603745171, 0, 0.109273589869, 0, -1.08052608902, 46.7651734508, 40.4594722603, -126.506910217)
 asset_id = "Ruin_old_terrace_02"
+material_overrides = [SubResource("object_material_0043")]
 node_name = "Ruin_old_terrace_02"
 catalog_asset_id = "verdant_stair:ruin-old-terrace-02-4f273fc0b2e3"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-old-terrace-02-4f273fc0b2e3.glb"
@@ -9390,6 +9950,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(1.22131746325, 0, 0.868080357165, 0, 1.49839242274, 0, -0.868080357165, 0, 1.22131746325, 16.6034862926, 52.9632778572, -123.008913908)
 asset_id = "Ruin_old_terrace_03"
+material_overrides = [SubResource("object_material_0044")]
 node_name = "Ruin_old_terrace_03"
 catalog_asset_id = "verdant_stair:ruin-old-terrace-03-0f2d4bfdbc28"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-old-terrace-03-0f2d4bfdbc28.glb"
@@ -9403,6 +9964,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-0.557846118202, 0, -0.837650085847, 0, 1.00640447034, 0, 0.837650085847, 0, -0.557846118202, 39.791521135, 43.8135927666, -127.902556883)
 asset_id = "Ruin_old_terrace_04"
+material_overrides = [SubResource("object_material_0045")]
 node_name = "Ruin_old_terrace_04"
 catalog_asset_id = "verdant_stair:ruin-old-terrace-04-b221441d54da"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-old-terrace-04-b221441d54da.glb"
@@ -9416,6 +9978,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.252739461361, 0, -0.845868816947, 0, 0.882820078392, 0, 0.845868816947, 0, 0.252739461361, 19.730300629, 52.3938250925, -117.513069476)
 asset_id = "Ruin_old_terrace_05"
+material_overrides = [SubResource("object_material_0046")]
 node_name = "Ruin_old_terrace_05"
 catalog_asset_id = "verdant_stair:ruin-old-terrace-05-336e241590be"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-old-terrace-05-336e241590be.glb"
@@ -9429,6 +9992,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.32867952216, 0, 0.916625387422, 0, 0.973772216256, 0, -0.916625387422, 0, 0.32867952216, 33.9502818306, 47.3183102563, -108.765632498)
 asset_id = "Ruin_old_terrace_06"
+material_overrides = [SubResource("object_material_0047")]
 node_name = "Ruin_old_terrace_06"
 catalog_asset_id = "verdant_stair:ruin-old-terrace-06-ef97fc09f3d6"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-old-terrace-06-ef97fc09f3d6.glb"
@@ -9442,6 +10006,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-0.0415515134372, 0, -0.906022376754, 0, 0.906974682914, 0, 0.906022376754, 0, -0.0415515134372, -56.1972896368, 69.8736638611, -157.850075619)
 asset_id = "Ruin_stone_ring_00"
+material_overrides = [SubResource("object_material_0048")]
 node_name = "Ruin_stone_ring_00"
 catalog_asset_id = "verdant_stair:ruin-stone-ring-00-444798f78185"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-stone-ring-00-444798f78185.glb"
@@ -9455,6 +10020,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-1.35394899571, 0, -0.618583688855, 0, 1.48856429592, 0, 0.618583688855, 0, -1.35394899571, -74.2310943041, 79.8293160507, -165.042698047)
 asset_id = "Ruin_stone_ring_01"
+material_overrides = [SubResource("object_material_0049")]
 node_name = "Ruin_stone_ring_01"
 catalog_asset_id = "verdant_stair:ruin-stone-ring-01-7ef125af0d14"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-stone-ring-01-7ef125af0d14.glb"
@@ -9468,6 +10034,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-0.829837173903, 0, 0.849588419264, 0, 1.18761534907, 0, -0.849588419264, 0, -0.829837173903, -71.3425421411, 75.9232877905, -174.900526677)
 asset_id = "Ruin_stone_ring_02"
+material_overrides = [SubResource("object_material_0050")]
 node_name = "Ruin_stone_ring_02"
 catalog_asset_id = "verdant_stair:ruin-stone-ring-02-e18a06ad410c"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-stone-ring-02-e18a06ad410c.glb"
@@ -9481,6 +10048,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.71514022601, 0, 0.737258125746, 0, 1.0271198016, 0, -0.737258125746, 0, 0.71514022601, -64.4235084339, 76.0691427105, -154.056177803)
 asset_id = "Ruin_stone_ring_03"
+material_overrides = [SubResource("object_material_0051")]
 node_name = "Ruin_stone_ring_03"
 catalog_asset_id = "verdant_stair:ruin-stone-ring-03-a77cf16d88f9"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-stone-ring-03-a77cf16d88f9.glb"
@@ -9494,6 +10062,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-0.487635593133, 0, -1.33908909684, 0, 1.42511335723, 0, 1.33908909684, 0, -0.487635593133, -47.3774437846, 67.582510991, -170.133825461)
 asset_id = "Ruin_stone_ring_04"
+material_overrides = [SubResource("object_material_0052")]
 node_name = "Ruin_stone_ring_04"
 catalog_asset_id = "verdant_stair:ruin-stone-ring-04-a7b9bae79049"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-stone-ring-04-a7b9bae79049.glb"
@@ -9507,6 +10076,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(-1.00207067156, 0, 0.792043412215, 0, 1.27729338745, 0, -0.792043412215, 0, -1.00207067156, -69.6639787661, 78.190087734, -164.465375454)
 asset_id = "Ruin_stone_ring_05"
+material_overrides = [SubResource("object_material_0053")]
 node_name = "Ruin_stone_ring_05"
 catalog_asset_id = "verdant_stair:ruin-stone-ring-05-774e5fb0aee8"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-stone-ring-05-774e5fb0aee8.glb"
@@ -9520,6 +10090,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(1.18249722474, 0, 0.807299737639, 0, 1.43179347425, 0, -0.807299737639, 0, 1.18249722474, -56.1960815653, 68.504080553, -167.770261613)
 asset_id = "Ruin_stone_ring_06"
+material_overrides = [SubResource("object_material_0054")]
 node_name = "Ruin_stone_ring_06"
 catalog_asset_id = "verdant_stair:ruin-stone-ring-06-549efcc75964"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-stone-ring-06-549efcc75964.glb"
@@ -9533,6 +10104,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(1.05046493052, 0, -0.208203734586, 0, 1.07089932549, 0, 0.208203734586, 0, 1.05046493052, -57.7433590158, 67.6785077749, -180.297488375)
 asset_id = "Ruin_stone_ring_07"
+material_overrides = [SubResource("object_material_0055")]
 node_name = "Ruin_stone_ring_07"
 catalog_asset_id = "verdant_stair:ruin-stone-ring-07-acd2251e7074"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-stone-ring-07-acd2251e7074.glb"
@@ -9546,6 +10118,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.81750170146, 0, 0.128364830983, 0, 0.827518315038, 0, -0.128364830983, 0, 0.81750170146, -72.925088391, 80.2357069401, -160.893718351)
 asset_id = "Ruin_stone_ring_08"
+material_overrides = [SubResource("object_material_0056")]
 node_name = "Ruin_stone_ring_08"
 catalog_asset_id = "verdant_stair:ruin-stone-ring-08-5d2a8bc15728"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/ruin-stone-ring-08-5d2a8bc15728.glb"
@@ -9559,6 +10132,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "landmark", "mesh":
 script = ExtResource("asset")
 transform = Transform3D(0.80156262566, 0, 0.597910827084, 0, 1, 0, -0.597910827084, 0, 0.80156262566, 20.7313373257, 67.1562156498, -39.0514652523)
 asset_id = "Secret_stair_cenote_hollow"
+material_overrides = [SubResource("object_material_0057")]
 node_name = "Secret_stair_cenote_hollow"
 catalog_asset_id = "verdant_stair:secret-stair-cenote-hollow-3b18cc8d4743"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/secret-stair-cenote-hollow-3b18cc8d4743.glb"
@@ -9585,6 +10159,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Se
 script = ExtResource("asset")
 transform = Transform3D(0.881703187432, 0, 0.471804503234, 0, 1, 0, -0.471804503234, 0, 0.881703187432, 153.479049939, 31.2066528248, -133.998993918)
 asset_id = "Secret_stair_culvert"
+material_overrides = [SubResource("object_material_0058")]
 node_name = "Secret_stair_culvert"
 catalog_asset_id = "verdant_stair:secret-stair-culvert-20365a1e5bc2"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/secret-stair-culvert-20365a1e5bc2.glb"
@@ -9598,6 +10173,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Se
 script = ExtResource("asset")
 transform = Transform3D(-0.696204058291, 0, 0.717843930962, 0, 1, 0, -0.717843930962, 0, -0.696204058291, 109.946002475, 25.1926504664, -22.9588075024)
 asset_id = "Secret_stair_hanging_garden"
+material_overrides = [SubResource("object_material_0059")]
 node_name = "Secret_stair_hanging_garden"
 catalog_asset_id = "verdant_stair:secret-stair-hanging-garden-434e325da164"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/secret-stair-hanging-garden-434e325da164.glb"
@@ -9611,6 +10187,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Se
 script = ExtResource("asset")
 transform = Transform3D(-0.95997433132, 0, 0.280087991902, 0, 1, 0, -0.280087991902, 0, -0.95997433132, 20.28, 73.2850723062, -3.9)
 asset_id = "Secret_stair_house_school"
+material_overrides = [SubResource("object_material_0060")]
 node_name = "Secret_stair_house_school"
 catalog_asset_id = "verdant_stair:secret-stair-house-school-b170deb9f403"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/secret-stair-house-school-b170deb9f403.glb"
@@ -9650,6 +10227,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Se
 script = ExtResource("asset")
 transform = Transform3D(-0.103539355198, 0, 0.994625357572, 0, 1, 0, -0.994625357572, 0, -0.103539355198, 168.3396, 29.4377761512, -98.1552)
 asset_id = "Secret_stair_ridge_reliquary"
+material_overrides = [SubResource("object_material_0061")]
 node_name = "Secret_stair_ridge_reliquary"
 catalog_asset_id = "verdant_stair:secret-stair-ridge-reliquary-6ba1ac2b7bcb"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/secret-stair-ridge-reliquary-6ba1ac2b7bcb.glb"
@@ -9663,6 +10241,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Se
 script = ExtResource("asset")
 transform = Transform3D(-0.731863605684, 0, -0.681451144745, 0, 1, 0, 0.681451144745, 0, -0.731863605684, 131.439511504, 28.0487597106, -151.236756566)
 asset_id = "Secret_stair_summit_eyrie"
+material_overrides = [SubResource("object_material_0062")]
 node_name = "Secret_stair_summit_eyrie"
 catalog_asset_id = "verdant_stair:secret-stair-summit-eyrie-202395cfaec5"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/secret-stair-summit-eyrie-202395cfaec5.glb"
@@ -9676,6 +10255,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Se
 script = ExtResource("asset")
 transform = Transform3D(0.354269321792, 0, -0.935143436932, 0, 1, 0, 0.935143436932, 0, 0.354269321792, 111.130793558, 33.3744883969, -133.525276498)
 asset_id = "Secret_stair_sun_focus"
+material_overrides = [SubResource("object_material_0063")]
 node_name = "Secret_stair_sun_focus"
 catalog_asset_id = "verdant_stair:secret-stair-sun-focus-873d13b8ef5b"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/secret-stair-sun-focus-873d13b8ef5b.glb"
@@ -9689,6 +10269,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Se
 script = ExtResource("asset")
 transform = Transform3D(0.856527454135, 0, -0.516101463196, 0, 1, 0, 0.516101463196, 0, 0.856527454135, 123.040793558, 33.5384883969, -124.493276498)
 asset_id = "Secret_stair_temple_vault"
+material_overrides = [SubResource("object_material_0064")]
 node_name = "Secret_stair_temple_vault"
 catalog_asset_id = "verdant_stair:secret-stair-temple-vault-285df53ec30d"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/secret-stair-temple-vault-285df53ec30d.glb"
@@ -9715,6 +10296,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Se
 script = ExtResource("asset")
 transform = Transform3D(-0.581474524725, 0, 0.813564611507, 0, 1, 0, -0.813564611507, 0, -0.581474524725, 96.7307935579, 21.3874883969, -26.4632764985)
 asset_id = "Secret_stair_waystone"
+material_overrides = [SubResource("object_material_0065")]
 node_name = "Secret_stair_waystone"
 catalog_asset_id = "verdant_stair:secret-stair-waystone-d377f2f60b28"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/secret-stair-waystone-d377f2f60b28.glb"
@@ -9819,6 +10401,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Si
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 6.24, 77.2630658463, 15.6)
 asset_id = "Stall_Lower_00"
+material_overrides = [SubResource("object_material_0066")]
 node_name = "Stall_Lower_00"
 catalog_asset_id = "verdant_stair:stall-lower-00-60cc915aa59f"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/stall-lower-00-60cc915aa59f.glb"
@@ -9832,6 +10415,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Ma
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 11.7, 76.4023726115, 16.38)
 asset_id = "Stall_Lower_01"
+material_overrides = [SubResource("object_material_0067")]
 node_name = "Stall_Lower_01"
 catalog_asset_id = "verdant_stair:stall-lower-01-f08a611d94b9"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/stall-lower-01-f08a611d94b9.glb"
@@ -9845,6 +10429,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Ma
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 17.16, 75.9426912688, 17.16)
 asset_id = "Stall_Lower_02"
+material_overrides = [SubResource("object_material_0068")]
 node_name = "Stall_Lower_02"
 catalog_asset_id = "verdant_stair:stall-lower-02-06836f2ae478"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/stall-lower-02-06836f2ae478.glb"
@@ -9858,6 +10443,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Ma
 script = ExtResource("asset")
 transform = Transform3D(0.921060994003, 0, -0.389418342309, 0, 1, 0, 0.389418342309, 0, 0.921060994003, -24.93036, 77.2221862705, 42.6114)
 asset_id = "Stall_Quay_00"
+material_overrides = [SubResource("object_material_0069")]
 node_name = "Stall_Quay_00"
 catalog_asset_id = "verdant_stair:stall-quay-00-2e5799dd14f8"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/stall-quay-00-2e5799dd14f8.glb"
@@ -9871,6 +10457,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Ma
 script = ExtResource("asset")
 transform = Transform3D(-0.389418342309, 0, -0.921060994003, 0, 1, 0, 0.921060994003, 0, -0.389418342309, -34.13046, 76.6530825856, 46.3437)
 asset_id = "Stall_Quay_01"
+material_overrides = [SubResource("object_material_0070")]
 node_name = "Stall_Quay_01"
 catalog_asset_id = "verdant_stair:stall-quay-01-fe6f6311d955"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/stall-quay-01-fe6f6311d955.glb"
@@ -9884,6 +10471,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Ma
 script = ExtResource("asset")
 transform = Transform3D(-0.921060994003, 0, 0.389418342309, 0, 1, 0, -0.389418342309, 0, -0.921060994003, -37.86198, 75.7768968048, 37.1436)
 asset_id = "Stall_Quay_02"
+material_overrides = [SubResource("object_material_0071")]
 node_name = "Stall_Quay_02"
 catalog_asset_id = "verdant_stair:stall-quay-02-f52247d1413c"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/stall-quay-02-f52247d1413c.glb"
@@ -9897,6 +10485,7 @@ metadata = {"composedSourceRegion": "verdant_stair", "kind": "prop", "mesh": "Ma
 script = ExtResource("asset")
 transform = Transform3D(0.389418342309, 0, 0.921060994003, 0, 1, 0, -0.921060994003, 0, 0.389418342309, -28.66266, 76.2482103682, 33.4113)
 asset_id = "Stall_Quay_03"
+material_overrides = [SubResource("object_material_0072")]
 node_name = "Stall_Quay_03"
 catalog_asset_id = "verdant_stair:stall-quay-03-a5e7cddd57a3"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/stall-quay-03-a5e7cddd57a3.glb"

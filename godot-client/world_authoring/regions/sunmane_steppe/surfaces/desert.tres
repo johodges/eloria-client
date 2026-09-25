@@ -23,5 +23,6 @@ cull_mode = 2
 resource_local_to_scene = true
 script = ExtResource("1_surface")
 texture_preset = "Desert"
+biome_blend_enabled = true
 rotation_degrees = 0.0
 source_material = SubResource("ORMMaterial3D_desert")

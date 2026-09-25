@@ -7919,7 +7919,76 @@
       },
       "collisionRole": "none",
       "id": "Bridge_great_causeway__channel_main",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Bridge_great_causeway__channel_main/Bridge_great_causeway__channel_main__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Bridge_great_causeway__channel_main/Walk_Bridge_great_causeway__channel_main__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.0,
         0.0,
@@ -7958,7 +8027,76 @@
       },
       "collisionRole": "none",
       "id": "Bridge_great_causeway__channel_south",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Bridge_great_causeway__channel_south/Bridge_great_causeway__channel_south__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Bridge_great_causeway__channel_south/Walk_Bridge_great_causeway__channel_south__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.0,
         0.0,
@@ -7997,7 +8135,76 @@
       },
       "collisionRole": "none",
       "id": "Bridge_spur_stela__channel_main",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Bridge_spur_stela__channel_main/Bridge_spur_stela__channel_main__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Bridge_spur_stela__channel_main/Walk_Bridge_spur_stela__channel_main__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.12403473258018494,
         0.0,
@@ -8036,7 +8243,76 @@
       },
       "collisionRole": "none",
       "id": "Bridge_street_courts__channel_main",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Bridge_street_courts__channel_main/Bridge_street_courts__channel_main__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Bridge_street_courts__channel_main/Walk_Bridge_street_courts__channel_main__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9989685416221619,
         0.0,
@@ -8075,7 +8351,76 @@
       },
       "collisionRole": "none",
       "id": "Bridge_street_far_e__channel_east",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Bridge_street_far_e__channel_east/Bridge_street_far_e__channel_east__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Bridge_street_far_e__channel_east/Walk_Bridge_street_far_e__channel_east__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9805806875228882,
         0.0,
@@ -8114,7 +8459,42 @@
       },
       "collisionRole": "solid",
       "id": "CisternShaft",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "CisternShaft/CisternShaft__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8157,7 +8537,76 @@
       },
       "collisionRole": "solid",
       "id": "Colonnade_lily_court",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Colonnade_lily_court/Colonnade_lily_court__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Colonnade_lily_court/Colonnade_lily_court__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8196,7 +8645,76 @@
       },
       "collisionRole": "solid",
       "id": "Colonnade_ritual_plaza",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Colonnade_ritual_plaza/Colonnade_ritual_plaza__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Colonnade_ritual_plaza/Colonnade_ritual_plaza__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8235,7 +8753,76 @@
       },
       "collisionRole": "solid",
       "id": "CourtShrine_lily_court",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "CourtShrine_lily_court/CourtShrine_lily_court__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "CourtShrine_lily_court/Walk_CourtShrine_lily_court__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8275,7 +8862,76 @@
       },
       "collisionRole": "solid",
       "id": "CourtShrine_ritual_plaza",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "CourtShrine_ritual_plaza/CourtShrine_ritual_plaza__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "CourtShrine_ritual_plaza/Walk_CourtShrine_ritual_plaza__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8666,7 +9322,42 @@
       },
       "collisionRole": "solid",
       "id": "DrownedColumn_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedColumn_0",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.5938724875450134,
         0.0,
@@ -8705,7 +9396,42 @@
       },
       "collisionRole": "solid",
       "id": "DrownedColumn_12",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedColumn_12",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9396747350692749,
         0.0,
@@ -8744,7 +9470,42 @@
       },
       "collisionRole": "solid",
       "id": "DrownedColumn_21",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedColumn_21",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.36048316955566406,
         0.0,
@@ -8783,7 +9544,42 @@
       },
       "collisionRole": "solid",
       "id": "DrownedColumn_24",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedColumn_24",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.14122463762760162,
         0.0,
@@ -8822,7 +9618,42 @@
       },
       "collisionRole": "solid",
       "id": "DrownedColumn_3",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedColumn_3",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.8354128003120422,
         0.0,
@@ -8861,7 +9692,42 @@
       },
       "collisionRole": "solid",
       "id": "DrownedColumn_6",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedColumn_6",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.718981921672821,
         0.0,
@@ -8900,7 +9766,42 @@
       },
       "collisionRole": "solid",
       "id": "DrownedColumn_9",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedColumn_9",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.9157136082649231,
         0.0,
@@ -8939,7 +9840,42 @@
       },
       "collisionRole": "none",
       "id": "DrownedRubble_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedRubble_1",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.8974658250808716,
         0.0,
@@ -8978,7 +9914,42 @@
       },
       "collisionRole": "none",
       "id": "DrownedRubble_11",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedRubble_11",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.4207492768764496,
         0.0,
@@ -9017,7 +9988,42 @@
       },
       "collisionRole": "none",
       "id": "DrownedRubble_13",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedRubble_13",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.8399563431739807,
         0.0,
@@ -9056,7 +10062,42 @@
       },
       "collisionRole": "none",
       "id": "DrownedRubble_14",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedRubble_14",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9936515688896179,
         0.0,
@@ -9095,7 +10136,42 @@
       },
       "collisionRole": "none",
       "id": "DrownedRubble_16",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedRubble_16",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.732785701751709,
         0.0,
@@ -9134,7 +10210,42 @@
       },
       "collisionRole": "none",
       "id": "DrownedRubble_2",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedRubble_2",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.29622429609298706,
         0.0,
@@ -9173,7 +10284,42 @@
       },
       "collisionRole": "none",
       "id": "DrownedRubble_22",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedRubble_22",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.5569108128547668,
         0.0,
@@ -9212,7 +10358,42 @@
       },
       "collisionRole": "none",
       "id": "DrownedRubble_23",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedRubble_23",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.853393018245697,
         0.0,
@@ -9251,7 +10432,42 @@
       },
       "collisionRole": "none",
       "id": "DrownedRubble_25",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedRubble_25",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.5731766819953918,
         0.0,
@@ -9290,7 +10506,42 @@
       },
       "collisionRole": "none",
       "id": "DrownedRubble_4",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedRubble_4",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9137735366821289,
         0.0,
@@ -9329,7 +10580,42 @@
       },
       "collisionRole": "none",
       "id": "DrownedRubble_5",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "DrownedRubble_5",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.6253185272216797,
         0.0,
@@ -25258,7 +26544,42 @@
       },
       "collisionRole": "solid",
       "id": "HatcheryColumn_-1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "HatcheryColumn_-1/HatcheryColumn_-1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -25297,7 +26618,42 @@
       },
       "collisionRole": "solid",
       "id": "HatcheryColumn_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "HatcheryColumn_1/HatcheryColumn_1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -25336,7 +26692,76 @@
       },
       "collisionRole": "solid",
       "id": "HatcheryDescent",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "HatcheryDescent/HatcheryDescent__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "HatcheryDescent/Walk_HatcheryDescent__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -1.0,
         0.0,
@@ -25376,7 +26801,42 @@
       },
       "collisionRole": "solid",
       "id": "House_archive-workers",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "House_archive-workers/House_archive-workers__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -1.0,
         0.0,
@@ -25425,7 +26885,42 @@
       },
       "collisionRole": "solid",
       "id": "House_lily-copyists",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "House_lily-copyists/House_lily-copyists__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -1.0,
         0.0,
@@ -25474,7 +26969,42 @@
       },
       "collisionRole": "solid",
       "id": "House_lineage-house",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "House_lineage-house/House_lineage-house__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -1.0,
         0.0,
@@ -25523,7 +27053,42 @@
       },
       "collisionRole": "solid",
       "id": "House_market-copyist",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "House_market-copyist/House_market-copyist__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -25572,7 +27137,42 @@
       },
       "collisionRole": "solid",
       "id": "House_market-poler",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "House_market-poler/House_market-poler__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -25621,7 +27221,42 @@
       },
       "collisionRole": "solid",
       "id": "House_quay-stores",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "House_quay-stores/House_quay-stores__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -1.0,
         0.0,
@@ -25670,7 +27305,76 @@
       },
       "collisionRole": "solid",
       "id": "MarketShrine",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "MarketShrine/MarketShrine__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "MarketShrine/Walk_MarketShrine__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -26216,7 +27920,42 @@
       },
       "collisionRole": "solid",
       "id": "Obelisk_street_far_e_99",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Obelisk_street_far_e_99/Obelisk_street_far_e_99__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.30450329184532166,
         0.0,
@@ -26255,7 +27994,42 @@
       },
       "collisionRole": "solid",
       "id": "Obelisk_street_market_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Obelisk_street_market_0/Obelisk_street_market_0__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.35613054037094116,
         0.0,
@@ -26294,7 +28068,42 @@
       },
       "collisionRole": "solid",
       "id": "Obelisk_street_market_128",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Obelisk_street_market_128/Obelisk_street_market_128__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.3859754502773285,
         0.0,
@@ -26333,7 +28142,42 @@
       },
       "collisionRole": "solid",
       "id": "Obelisk_street_market_192",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Obelisk_street_market_192/Obelisk_street_market_192__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.8342610597610474,
         0.0,
@@ -26372,7 +28216,42 @@
       },
       "collisionRole": "solid",
       "id": "Obelisk_street_market_64",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Obelisk_street_market_64/Obelisk_street_market_64__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.015499291941523552,
         0.0,
@@ -26411,7 +28290,42 @@
       },
       "collisionRole": "solid",
       "id": "Obelisk_street_north_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Obelisk_street_north_0/Obelisk_street_north_0__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.007297814358025789,
         0.0,
@@ -26450,7 +28364,42 @@
       },
       "collisionRole": "solid",
       "id": "Obelisk_street_north_139",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Obelisk_street_north_139/Obelisk_street_north_139__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.8076318502426147,
         0.0,
@@ -26489,7 +28438,42 @@
       },
       "collisionRole": "solid",
       "id": "Obelisk_street_north_69",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Obelisk_street_north_69/Obelisk_street_north_69__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9701393246650696,
         0.0,
@@ -27055,7 +29039,42 @@
       },
       "collisionRole": "none",
       "id": "QuayShelter_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "QuayShelter_0/QuayShelter_0__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -27094,7 +29113,42 @@
       },
       "collisionRole": "none",
       "id": "QuayShelter_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "QuayShelter_1/QuayShelter_1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -27211,7 +29265,76 @@
       },
       "collisionRole": "solid",
       "id": "RootArch",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "RootArch/RootArch__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "RootArch/RootArch__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9135454297065735,
         0.0,
@@ -27251,7 +29374,42 @@
       },
       "collisionRole": "none",
       "id": "Rubble_spur_arrival_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Rubble_spur_arrival_0",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.9683589339256287,
         0.0,
@@ -27290,7 +29448,42 @@
       },
       "collisionRole": "none",
       "id": "Rubble_spur_east_shrine_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Rubble_spur_east_shrine_0",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.6461858749389648,
         0.0,
@@ -27329,7 +29522,42 @@
       },
       "collisionRole": "none",
       "id": "Rubble_spur_south_shrine_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Rubble_spur_south_shrine_0",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.22901594638824463,
         0.0,
@@ -27368,7 +29596,42 @@
       },
       "collisionRole": "none",
       "id": "Rubble_spur_stela_69",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Rubble_spur_stela_69",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.36773982644081116,
         0.0,
@@ -27407,7 +29670,42 @@
       },
       "collisionRole": "none",
       "id": "Rubble_street_courts_40",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Rubble_street_courts_40",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.48265746235847473,
         0.0,
@@ -27446,7 +29744,42 @@
       },
       "collisionRole": "none",
       "id": "Rubble_street_market_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Rubble_street_market_0",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.7794408798217773,
         0.0,
@@ -27485,7 +29818,42 @@
       },
       "collisionRole": "none",
       "id": "Rubble_street_north_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Rubble_street_north_0",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9323809146881104,
         0.0,
@@ -27524,7 +29892,42 @@
       },
       "collisionRole": "none",
       "id": "Rubble_street_north_93",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Rubble_street_north_93",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9783735871315002,
         0.0,
@@ -27563,7 +29966,76 @@
       },
       "collisionRole": "solid",
       "id": "RuinTower_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "RuinTower_1/RuinTower_1__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "RuinTower_1/RuinTower_1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9789419174194336,
         0.0,
@@ -27602,7 +30074,76 @@
       },
       "collisionRole": "solid",
       "id": "RuinTower_6",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "RuinTower_6/RuinTower_6__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "RuinTower_6/RuinTower_6__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9695419073104858,
         0.0,
@@ -27641,7 +30182,76 @@
       },
       "collisionRole": "solid",
       "id": "Ruin_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Ruin_0/Ruin_0__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Ruin_0/Ruin_0__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9447638392448425,
         0.0,
@@ -27680,7 +30290,76 @@
       },
       "collisionRole": "solid",
       "id": "Ruin_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Ruin_1/Ruin_1__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Ruin_1/Ruin_1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9789419174194336,
         0.0,
@@ -27719,7 +30398,76 @@
       },
       "collisionRole": "solid",
       "id": "Ruin_2",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Ruin_2/Ruin_2__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Ruin_2/Ruin_2__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.987869143486023,
         0.0,
@@ -27758,7 +30506,76 @@
       },
       "collisionRole": "solid",
       "id": "Ruin_3",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Ruin_3/Ruin_3__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Ruin_3/Ruin_3__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9669339656829834,
         0.0,
@@ -27797,7 +30614,76 @@
       },
       "collisionRole": "solid",
       "id": "Ruin_4",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Ruin_4/Ruin_4__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Ruin_4/Ruin_4__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9999831318855286,
         0.0,
@@ -27836,7 +30722,76 @@
       },
       "collisionRole": "solid",
       "id": "Ruin_5",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Ruin_5/Ruin_5__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Ruin_5/Ruin_5__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9905416965484619,
         0.0,
@@ -27875,7 +30830,76 @@
       },
       "collisionRole": "solid",
       "id": "Ruin_6",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Ruin_6/Ruin_6__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Ruin_6/Ruin_6__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9695419073104858,
         0.0,
@@ -27914,7 +30938,76 @@
       },
       "collisionRole": "solid",
       "id": "Ruin_7",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Ruin_7/Ruin_7__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Ruin_7/Ruin_7__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9771459698677063,
         0.0,
@@ -27953,7 +31046,76 @@
       },
       "collisionRole": "solid",
       "id": "Ruin_8",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Ruin_8/Ruin_8__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Ruin_8/Ruin_8__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9408635497093201,
         0.0,
@@ -27992,7 +31154,42 @@
       },
       "collisionRole": "solid",
       "id": "Secret_ruins_culvert_mouth",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_ruins_culvert_mouth/Secret_ruins_culvert_mouth__verdant_terrace_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.7700676918029785,
         0.0,
@@ -28148,7 +31345,42 @@
       },
       "collisionRole": "solid",
       "id": "Secret_ruins_stela_reliquary",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_ruins_stela_reliquary/Secret_ruins_stela_reliquary__verdant_terrace_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.1035393550992012,
         0.0,
@@ -28187,7 +31419,42 @@
       },
       "collisionRole": "solid",
       "id": "Secret_ruins_temple_focus",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_ruins_temple_focus/Secret_ruins_temple_focus__verdant_terrace_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.3542693257331848,
         0.0,
@@ -28226,7 +31493,42 @@
       },
       "collisionRole": "solid",
       "id": "SerpentColumn_0_-1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "SerpentColumn_0_-1/SerpentColumn_0_-1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.8682214021682739,
         0.0,
@@ -28265,7 +31567,42 @@
       },
       "collisionRole": "solid",
       "id": "SerpentColumn_0_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "SerpentColumn_0_1/SerpentColumn_0_1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.6687918305397034,
         0.0,
@@ -28304,7 +31641,42 @@
       },
       "collisionRole": "solid",
       "id": "SerpentColumn_1_-1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "SerpentColumn_1_-1/SerpentColumn_1_-1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.32693520188331604,
         0.0,
@@ -28343,7 +31715,42 @@
       },
       "collisionRole": "solid",
       "id": "SerpentColumn_1_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "SerpentColumn_1_1/SerpentColumn_1_1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.4798436760902405,
         0.0,
@@ -28382,7 +31789,42 @@
       },
       "collisionRole": "solid",
       "id": "SerpentColumn_2_-1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "SerpentColumn_2_-1/SerpentColumn_2_-1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.5502842664718628,
         0.0,
@@ -28421,7 +31863,42 @@
       },
       "collisionRole": "solid",
       "id": "SerpentColumn_2_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "SerpentColumn_2_1/SerpentColumn_2_1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.7602033019065857,
         0.0,
@@ -28460,7 +31937,42 @@
       },
       "collisionRole": "solid",
       "id": "SerpentGateColumn_-1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "SerpentGateColumn_-1/SerpentGateColumn_-1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -28500,7 +32012,42 @@
       },
       "collisionRole": "solid",
       "id": "SerpentGateColumn_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "SerpentGateColumn_1/SerpentGateColumn_1__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -28539,7 +32086,76 @@
       },
       "collisionRole": "solid",
       "id": "Shrine_east_shrine",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Shrine_east_shrine/Shrine_east_shrine__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Shrine_east_shrine/Walk_Shrine_east_shrine__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.8622111678123474,
         0.0,
@@ -28579,7 +32195,76 @@
       },
       "collisionRole": "solid",
       "id": "Shrine_south_shrine",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Shrine_south_shrine/Shrine_south_shrine__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Shrine_south_shrine/Walk_Shrine_south_shrine__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.20024022459983826,
         0.0,
@@ -28619,7 +32304,76 @@
       },
       "collisionRole": "solid",
       "id": "Shrine_west_shrine",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Shrine_west_shrine/Shrine_west_shrine__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Shrine_west_shrine/Walk_Shrine_west_shrine__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.8471906185150146,
         0.0,
@@ -29010,7 +32764,42 @@
       },
       "collisionRole": "none",
       "id": "Structure_TempleSummitRoof",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Structure_TempleSummitRoof/Structure_TempleSummitRoof__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -29049,7 +32838,76 @@
       },
       "collisionRole": "solid",
       "id": "SunStela",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "SunStela/SunStela__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "SunStela/Walk_SunStela__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -29167,7 +33025,76 @@
       },
       "collisionRole": "solid",
       "id": "Temple_Ssarathi",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Temple_Ssarathi/Temple_Ssarathi__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Temple_Ssarathi/Walk_Temple_Ssarathi__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -29207,7 +33134,76 @@
       },
       "collisionRole": "solid",
       "id": "Temple_VaultPortal",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Temple_VaultPortal/Temple_VaultPortal__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Temple_VaultPortal/Walk_Temple_VaultPortal__ssarathi_jade_paving",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -29325,7 +33321,76 @@
       },
       "collisionRole": "solid",
       "id": "UndercroftMouth",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "UndercroftMouth/UndercroftMouth__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "UndercroftMouth/Walk_UndercroftMouth__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9135454297065735,
         0.0,
@@ -29365,7 +33430,42 @@
       },
       "collisionRole": "solid",
       "id": "WaterGate",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "WaterGate/WaterGate__ssarathi_jade_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.8999999761581421,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Jade masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -34051,7 +38151,280 @@
       },
       "collisionRole": "walk_surface",
       "id": "published-ssarathi-ruins-ferry-quay-02",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_PilesAndPosts_WorldPlacement/FerryQuay_ssarathi_ruins_02_PilesAndPosts",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/marine-timber/marine-timber-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9399999976158142,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Marine timber",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Signpost_WorldPlacement/FerryQuay_ssarathi_ruins_02_Signpost",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/marine-timber/marine-timber-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9399999976158142,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Marine timber",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Floor_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Floor",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/marine-timber/marine-timber-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9399999976158142,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Marine timber",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Mast_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Mast",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/marine-timber/marine-timber-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9399999976158142,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Marine timber",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Seat_0_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Seat_0",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/marine-timber/marine-timber-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9399999976158142,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Marine timber",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Seat_1_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Seat_1",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/marine-timber/marine-timber-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9399999976158142,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Marine timber",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Seat_2_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Seat_2",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/marine-timber/marine-timber-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9399999976158142,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Marine timber",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Walk_FerryQuay_ssarathi_ruins_02_WorldPlacement/Walk_FerryQuay_ssarathi_ruins_02",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/marine-timber/marine-timber-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9399999976158142,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Marine timber",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -34214,7 +38587,246 @@
       },
       "collisionRole": "walk_surface",
       "id": "published-ssarathi-ruins-loose-520",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "BridgeUnionPier_520_1164_1604_WorldPlacement/BridgeUnionPier_520_1164_1604",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "BridgeUnionPier_520_1180_1620_WorldPlacement/BridgeUnionPier_520_1180_1620",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "BridgeUnionPier_520_1204_1660_WorldPlacement/BridgeUnionPier_520_1204_1660",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "BridgeUnionPier_520_1212_1660_WorldPlacement/BridgeUnionPier_520_1212_1660",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "BridgeUnionPier_520_1220_1660_WorldPlacement/BridgeUnionPier_520_1220_1660",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "BridgeUnionPier_520_1228_1652_WorldPlacement/BridgeUnionPier_520_1228_1652",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "BridgeUnionPier_520_1236_1628_WorldPlacement/BridgeUnionPier_520_1236_1628",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -73232,31 +77844,71 @@
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
-        "sha256": "7609a484863ea722fb8a65314ea35c4f83098d5b5e6aeead1db217eafec83180"
+        "sha256": "5f34c8606855d7d8b4e0b7528759b6302b855b1460b511887fe6885670a75f72"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/object_surfaces/jade-masonry.tres",
+        "sha256": "aab56123e25573ff6dacad1c8688c24ce3d02c996c3eacd00d3183ac146ba5db"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/object_surfaces/marine-timber.tres",
+        "sha256": "6cbc2f3b9a61fbe8f32cd0618e4bcfa6d23c61ca5f1ca98cc3c67e6a7805c849"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres",
+        "sha256": "683f24567b4c4c814b84afe124445d80939e7b548075663ebfcdebff4f21894d"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/forest-floor-moss/forest-floor-moss-v001.png",
+        "sha256": "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+        "sha256": "12c8a17228d73ebd97911bd7e6ba4f02122bbfb854b2c86813b974675c1bd82a"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/marine-timber/marine-timber-v001.png",
+        "sha256": "6a032a5225735aab3a2dd30b8afe6422b0ec4e042512d94940b83f48ecb8577a"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+        "sha256": "e9adde18e1b92def62b1a8a83748d3ce0a32ff8c3d53753bbd363e6a9bcff951"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+        "sha256": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/asset_control.gd",
-        "sha256": "03f66aea24f846327fd9a5222f496e41ae953aba2acff3263c144c1a8853c051"
+        "sha256": "89f4693ed3de906162ae7b0fd6448dc1cd29402f0efbf26d54a2163ba505ffaf"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/asset_surface_override.gd",
+        "sha256": "a56d0f134035f3fbf5df0f8cf2edd4ba3f1a895ec8961c8aaddabf39fc43f4f7"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/biome_palette_entry.gd",
+        "sha256": "5d1e213929e31f2dec1e2987808aa02a173ac76f949857a396ea5b8dac2c81c5"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/gameplay_marker.gd",
-        "sha256": "39ed18fbd9540f8153c0caeab81418e5cebc6df720caa36a2bfb22968264e6cc"
+        "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "3d5ad2475522d8e1744ae15f39494d9c348036b4d1835640b7bc27b059ac55cb"
+        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "dca1ed421d9e98fa8765acc26c94cfad12e4d8a94bea0a1b9d4d446f36462151"
+        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "4a03a1da48eb684e461cb5682820a99afa9eb91d2b2629db41be87629daaddb7"
+        "sha256": "bba17999ebee276a88aaed2c2778e5ab7282e1609a3ede101c09f89f3ca345cf"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/water_region_control.gd",
-        "sha256": "81afed6386a1e208850047b4d6a1165866a3362efb6bf8d4788e10c55d4e2dd3"
+        "sha256": "471bc74f2119254e2d86fca59ada9b88dbad5879c0865ce9fccb4c195329f59b"
       },
       {
         "path": "godot-client/world_authoring/regions/ssarathi_ruins/assets/prototypes/axislamp-0-8b3d82485d35.glb",
@@ -76451,10 +81103,6 @@
         "sha256": "cf5e93f99689c4e46e705e395f8f09e59814848f787ed52007e47047d4c423ae"
       },
       {
-        "path": "godot-client/world_authoring/regions/ssarathi_ruins/assets/textures/continental-ground.png",
-        "sha256": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035"
-      },
-      {
         "path": "godot-client/world_authoring/regions/ssarathi_ruins/assets/textures/continental-water.png",
         "sha256": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac"
       },
@@ -76599,8 +81247,12 @@
         "sha256": "7a9c9dfc945e94caafc11dcd8d0eaa0f028ab68bfd730503f67cd455e735d95e"
       },
       {
+        "path": "godot-client/world_authoring/regions/ssarathi_ruins/surfaces/biome-forest-floor.tres",
+        "sha256": "b4d442d1cff433bd3ccf0c91be6889e3674d7aeffa8c96dcb311af55fe2c3b4c"
+      },
+      {
         "path": "godot-client/world_authoring/regions/ssarathi_ruins/surfaces/continental-ground.tres",
-        "sha256": "ef2fe3ba9a9f411dde0b8f3d9055b2bc391e692a57565200e7031477a3bbfcf2"
+        "sha256": "ff0a2b5583e9cb69ed0605c6d8c273ddccb3bdeea0c14cc104eb2733c76a5208"
       },
       {
         "path": "godot-client/world_authoring/regions/ssarathi_ruins/surfaces/river.tres",
@@ -76617,7 +81269,7 @@
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/ssarathi_ruins/ssarathi_ruins.tscn",
-      "sha256": "c95ce8b3bdebf134974681020e4a82789626b3343941f2153cf196fb9ff7673c"
+      "sha256": "345aaff77ddda500be2cd49a9607bf46c3d04470fcc982c50d2da88c96c74817"
     }
   },
   "terrain": {
@@ -76632,19 +81284,20 @@
       "sha256": "55e672b870767b6eab095e45e76c6fb368b078e2e37e2fd4c7c422f28021a8f2"
     },
     "baseSurface": {
+      "biomeBlendEnabled": true,
       "materialMode": "surface",
-      "pbr": {
+      "pbrOverrides": {
         "albedoColor": [
-          1.0,
-          1.0,
-          1.0,
+          0.7400000095367432,
+          0.8299999833106995,
+          0.6600000262260437,
           1.0
         ],
-        "albedoTexture": "godot-client/world_authoring/regions/ssarathi_ruins/assets/textures/continental-ground.png",
+        "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
         "metallic": 0.0,
         "normalScale": 1.0,
         "normalTexture": null,
-        "roughness": 0.949999988079071,
+        "roughness": 1.0,
         "triplanar": false,
         "uvOffset": [
           0.800000011920929,
@@ -76652,15 +81305,51 @@
           0.0
         ],
         "uvScale": [
-          1.0,
-          1.0,
+          1.470588207244873,
+          1.470588207244873,
           1.0
         ],
         "worldTriplanar": false
       },
-      "preset": "Custom",
+      "preset": "Grass",
       "rotationDegrees": 0.0
     },
+    "biomePalette": [
+      {
+        "id": "forest-floor",
+        "role": "woodland",
+        "surface": {
+          "materialMode": "surface",
+          "pbrOverrides": {
+            "albedoColor": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/forest-floor-moss/forest-floor-moss-v001.png",
+            "metallic": 0.0,
+            "normalScale": 1.0,
+            "normalTexture": null,
+            "roughness": 0.9800000190734863,
+            "triplanar": false,
+            "uvOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "uvScale": [
+              1.470588207244873,
+              1.470588207244873,
+              1.0
+            ],
+            "worldTriplanar": false
+          },
+          "preset": "Forest floor moss",
+          "rotationDegrees": 0.0
+        }
+      }
+    ],
     "cellMetres": 2.0,
     "height": 201,
     "origin": [

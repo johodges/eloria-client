@@ -1,11 +1,17 @@
-[gd_scene load_steps=435 format=3]
+[gd_scene load_steps=581 format=3]
 
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/jade-masonry.tres" id="object_jade_masonry"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/marine-timber.tres" id="object_marine_timber"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/reed-thatch.tres" id="object_reed_thatch"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres" id="object_weathered_limestone"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/path_control.gd" id="path"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/water_region_control.gd" id="water"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_control.gd" id="asset"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/gameplay_marker.gd" id="marker"]
+[ext_resource type="Resource" path="res://world_authoring/regions/manymouth_delta/surfaces/biome-wet-grass.tres" id="biome_entry"]
 [ext_resource type="Resource" path="res://world_authoring/regions/manymouth_delta/surfaces/continental-ground.tres" id="terrain_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/manymouth_delta/surfaces/road.tres" id="road_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/manymouth_delta/surfaces/river.tres" id="river_surface"]
@@ -435,6 +441,986 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/manymouth_delta/assets/prototypes/woodlandfloor-0374-ca51f58f2581.glb" id="prototype_396"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/manymouth_delta/assets/prototypes/woodlandfloor-0381-611b7f1ec7f3.glb" id="prototype_397"]
 
+[sub_resource type="Resource" id="object_material_0000"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_EastWatch/Landmark_EastWatch__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0001"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_MootHall/Landmark_MootHall__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0002"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_PaddyTower/Landmark_PaddyTower__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0003"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Lore_stelae_court/Lore_stelae_court__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0004"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Lore_stelae_court/Walk_Lore_stelae_court__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0005"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_delta_banyan_eyrie/Secret_delta_banyan_eyrie__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0006"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_delta_moot_vault/Secret_delta_moot_vault__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0007"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_delta_shrine_well/Secret_delta_shrine_well__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0008"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_delta_stelae_reliquary/Secret_delta_stelae_reliquary__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0009"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_delta_waystone/Secret_delta_waystone__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0010"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "boat_yard_house_00/boat_yard_house_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0011"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "boat_yard_house_01/boat_yard_house_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0012"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "boat_yard_house_02/boat_yard_house_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0013"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "boat_yard_house_03/boat_yard_house_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0014"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "boat_yard_house_04/boat_yard_house_04__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0015"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "boat_yard_house_05/boat_yard_house_05__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0016"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "deep_grove_house_00/deep_grove_house_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0017"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "deep_grove_house_01/deep_grove_house_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0018"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "deep_grove_house_02/deep_grove_house_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0019"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "deep_grove_house_03/deep_grove_house_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0020"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "deep_grove_house_04/deep_grove_house_04__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0021"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "east_hamlet_house_00/east_hamlet_house_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0022"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "east_hamlet_house_01/east_hamlet_house_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0023"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "east_hamlet_house_02/east_hamlet_house_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0024"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "east_hamlet_house_03/east_hamlet_house_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0025"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "east_hamlet_house_04/east_hamlet_house_04__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0026"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "east_hamlet_house_05/east_hamlet_house_05__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0027"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "east_hamlet_house_06/east_hamlet_house_06__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0028"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "east_hamlet_house_07/east_hamlet_house_07__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0029"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "east_hamlet_house_08/east_hamlet_house_08__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0030"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "far_bar_house_00/far_bar_house_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0031"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "far_bar_house_01/far_bar_house_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0032"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "far_bar_house_02/far_bar_house_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0033"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "far_bar_house_03/far_bar_house_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0034"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "market_stall_00/market_stall_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0035"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "market_stall_01/market_stall_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0036"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "market_stall_02/market_stall_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0037"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "market_stall_03/market_stall_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0038"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "market_stall_04/market_stall_04__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0039"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "market_stall_05/market_stall_05__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0040"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "north_fishing_house_00/north_fishing_house_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0041"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "north_fishing_house_01/north_fishing_house_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0042"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "north_fishing_house_02/north_fishing_house_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0043"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "north_fishing_house_03/north_fishing_house_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0044"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "paddy_hamlet_house_00/paddy_hamlet_house_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0045"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "paddy_hamlet_house_01/paddy_hamlet_house_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0046"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "paddy_hamlet_house_02/paddy_hamlet_house_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0047"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "paddy_hamlet_house_03/paddy_hamlet_house_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0048"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "paddy_hamlet_house_04/paddy_hamlet_house_04__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0049"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "paddy_hamlet_house_05/paddy_hamlet_house_05__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0050"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "paddy_hamlet_house_06/paddy_hamlet_house_06__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0051"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "paddy_hamlet_house_07/paddy_hamlet_house_07__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0052"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_009_572_1156_WorldPlacement/BridgeUnionPier_009_572_1156"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0053"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_FerryQuay_manymouth_delta_00_WorldPlacement/Walk_FerryQuay_manymouth_delta_00"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0054"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_manymouth_delta_00_PilesAndPosts_WorldPlacement/FerryQuay_manymouth_delta_00_PilesAndPosts"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0055"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_manymouth_delta_00_Signpost_WorldPlacement/FerryQuay_manymouth_delta_00_Signpost"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0056"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Floor_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Floor"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0057"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Seat_0_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_0"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0058"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Seat_1_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_1"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0059"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Seat_2_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_2"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0060"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Mast_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Mast"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0061"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_502_412_988_WorldPlacement/BridgeUnionPier_502_412_988"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0062"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_502_420_988_WorldPlacement/BridgeUnionPier_502_420_988"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0063"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_502_428_988_WorldPlacement/BridgeUnionPier_502_428_988"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0064"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_502_396_996_WorldPlacement/BridgeUnionPier_502_396_996"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0065"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_502_436_996_WorldPlacement/BridgeUnionPier_502_436_996"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0066"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Manymouth_Village_boat_yard_WorldPlacement/Walk_Manymouth_Village_boat_yard"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0067"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Fascia_boat_yard_WorldPlacement/Manymouth_Village_Fascia_boat_yard"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0068"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Piles_boat_yard_WorldPlacement/Manymouth_Village_Piles_boat_yard"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0069"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Manymouth_Village_deep_grove_WorldPlacement/Walk_Manymouth_Village_deep_grove"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0070"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Fascia_deep_grove_WorldPlacement/Manymouth_Village_Fascia_deep_grove"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0071"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Piles_deep_grove_WorldPlacement/Manymouth_Village_Piles_deep_grove"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0072"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Manymouth_Village_east_hamlet_WorldPlacement/Walk_Manymouth_Village_east_hamlet"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0073"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Fascia_east_hamlet_WorldPlacement/Manymouth_Village_Fascia_east_hamlet"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0074"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Piles_east_hamlet_WorldPlacement/Manymouth_Village_Piles_east_hamlet"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0075"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Manymouth_Village_far_bar_WorldPlacement/Walk_Manymouth_Village_far_bar"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0076"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Fascia_far_bar_WorldPlacement/Manymouth_Village_Fascia_far_bar"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0077"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Piles_far_bar_WorldPlacement/Manymouth_Village_Piles_far_bar"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0078"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Manymouth_Village_floating_market_WorldPlacement/Walk_Manymouth_Village_floating_market"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0079"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Fascia_floating_market_WorldPlacement/Manymouth_Village_Fascia_floating_market"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0080"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Piles_floating_market_WorldPlacement/Manymouth_Village_Piles_floating_market"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0081"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Manymouth_Village_sea_landing_WorldPlacement/Walk_Manymouth_Village_sea_landing"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0082"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Fascia_sea_landing_WorldPlacement/Manymouth_Village_Fascia_sea_landing"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0083"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Piles_sea_landing_WorldPlacement/Manymouth_Village_Piles_sea_landing"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0084"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Manymouth_Village_south_hamlet_WorldPlacement/Walk_Manymouth_Village_south_hamlet"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0085"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Fascia_south_hamlet_WorldPlacement/Manymouth_Village_Fascia_south_hamlet"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0086"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Piles_south_hamlet_WorldPlacement/Manymouth_Village_Piles_south_hamlet"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0087"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Manymouth_Village_town_WorldPlacement/Walk_Manymouth_Village_town"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0088"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Fascia_town_WorldPlacement/Manymouth_Village_Fascia_town"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0089"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_Village_Piles_town_WorldPlacement/Manymouth_Village_Piles_town"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0090"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Manymouth_FishingBoardwalk_WorldPlacement/Walk_Manymouth_FishingBoardwalk"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0091"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_FishingBoardwalk_Piles_WorldPlacement/Manymouth_FishingBoardwalk_Piles"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0092"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Manymouth_MarketEntrance_WorldPlacement/Walk_Manymouth_MarketEntrance"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0093"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Manymouth_PaddyStreet_WorldPlacement/Walk_Manymouth_PaddyStreet"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0094"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_PaddyStreet_Fascia_WorldPlacement/Manymouth_PaddyStreet_Fascia"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0095"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Manymouth_PaddyStreet_Piles_WorldPlacement/Manymouth_PaddyStreet_Piles"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0096"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_011_468_1036_WorldPlacement/BridgeUnionPier_011_468_1036"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0097"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_011_468_1044_WorldPlacement/BridgeUnionPier_011_468_1044"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0098"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_010_508_1052_WorldPlacement/BridgeUnionPier_010_508_1052"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0099"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_010_516_1060_WorldPlacement/BridgeUnionPier_010_516_1060"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0100"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_010_524_1060_WorldPlacement/BridgeUnionPier_010_524_1060"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0101"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_012_444_1268_WorldPlacement/BridgeUnionPier_012_444_1268"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0102"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_012_452_1268_WorldPlacement/BridgeUnionPier_012_452_1268"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0103"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_012_460_1268_WorldPlacement/BridgeUnionPier_012_460_1268"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0104"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "sea_landing_house_00/sea_landing_house_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0105"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "sea_landing_house_01/sea_landing_house_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0106"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "sea_landing_house_02/sea_landing_house_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0107"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "sea_landing_house_03/sea_landing_house_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0108"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "sea_landing_house_04/sea_landing_house_04__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0109"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "south_hamlet_house_00/south_hamlet_house_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0110"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "south_hamlet_house_01/south_hamlet_house_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0111"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "south_hamlet_house_02/south_hamlet_house_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0112"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "south_hamlet_house_03/south_hamlet_house_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0113"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "south_hamlet_house_04/south_hamlet_house_04__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0114"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "south_hamlet_house_05/south_hamlet_house_05__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0115"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "south_hamlet_house_06/south_hamlet_house_06__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0116"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "south_hamlet_house_07/south_hamlet_house_07__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0117"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "south_hamlet_house_08/south_hamlet_house_08__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0118"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "temple_quay_house_00/temple_quay_house_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0119"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "temple_quay_house_01/temple_quay_house_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0120"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "temple_quay_house_02/temple_quay_house_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0121"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "temple_quay_house_03/temple_quay_house_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0122"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "temple_quay_house_04/temple_quay_house_04__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0123"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "temple_quay_house_05/temple_quay_house_05__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0124"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "town_house_00/town_house_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0125"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "town_house_01/town_house_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0126"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "town_house_02/town_house_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0127"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "town_house_03/town_house_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0128"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "town_house_04/town_house_04__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0129"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "town_house_05/town_house_05__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0130"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "town_house_06/town_house_06__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0131"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "town_house_07/town_house_07__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0132"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "town_house_08/town_house_08__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0133"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "west_hamlet_house_00/west_hamlet_house_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0134"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "west_hamlet_house_01/west_hamlet_house_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0135"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "west_hamlet_house_02/west_hamlet_house_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0136"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "west_hamlet_house_03/west_hamlet_house_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0137"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "west_hamlet_house_04/west_hamlet_house_04__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0138"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "west_hamlet_house_05/west_hamlet_house_05__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0139"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "west_hamlet_house_06/west_hamlet_house_06__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
 [node name="ManymouthDelta" type="Node3D"]
 script = ExtResource("region")
 region_id = "manymouth_delta"
@@ -461,6 +1447,7 @@ base_heights_path = "res://world_authoring/regions/manymouth_delta/base-heights.
 base_colors_path = "res://world_authoring/regions/manymouth_delta/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
 base_surface = ExtResource("terrain_surface")
+biome_palette = [ExtResource("biome_entry")]
 
 [node name="Patches" type="Node3D" parent="Terrain"]
 
@@ -1390,6 +2377,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "landmark", "land
 script = ExtResource("asset")
 transform = Transform3D(0.848048096156, 0, -0.529919264233, 0, 1, 0, 0.529919264233, 0, 0.848048096156, 212.685546935, 8.39061984249, 13.2426187103)
 asset_id = "Landmark_EastWatch"
+material_overrides = [SubResource("object_material_0000")]
 node_name = "Landmark_EastWatch"
 catalog_asset_id = "manymouth_delta:landmark-eastwatch-636113984ec3"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/landmark-eastwatch-636113984ec3.glb"
@@ -1455,6 +2443,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "landmark", "land
 script = ExtResource("asset")
 transform = Transform3D(0.951056516295, 0, 0.309016994375, 0, 1, 0, -0.309016994375, 0, 0.951056516295, -4.68, 2.2, -10.53)
 asset_id = "Landmark_MootHall"
+material_overrides = [SubResource("object_material_0001")]
 node_name = "Landmark_MootHall"
 catalog_asset_id = "manymouth_delta:landmark-moothall-a242a7f95c89"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/landmark-moothall-a242a7f95c89.glb"
@@ -1481,6 +2470,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "landmark", "land
 script = ExtResource("asset")
 transform = Transform3D(-0.587785252292, 0, 0.809016994375, 0, 1, 0, -0.809016994375, 0, -0.587785252292, -31.1867807696, 8.57521800828, -119.832709463)
 asset_id = "Landmark_PaddyTower"
+material_overrides = [SubResource("object_material_0002")]
 node_name = "Landmark_PaddyTower"
 catalog_asset_id = "manymouth_delta:landmark-paddytower-0f670271be02"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/landmark-paddytower-0f670271be02.glb"
@@ -1520,6 +2510,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "landmark", "land
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 172.11748223, 14.8032152319, -26.8515072107)
 asset_id = "Lore_stelae_court"
+material_overrides = [SubResource("object_material_0003"), SubResource("object_material_0004")]
 node_name = "Lore_stelae_court"
 catalog_asset_id = "manymouth_delta:lore-stelae-court-3e48d8ec3df2"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/lore-stelae-court-3e48d8ec3df2.glb"
@@ -2014,6 +3005,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.731863605684, 0, -0.681451144745, 0, 1, 0, 0.681451144745, 0, -0.731863605684, 3.68922952685, 1.99085092657, -67.9671465095)
 asset_id = "Secret_delta_banyan_eyrie"
+material_overrides = [SubResource("object_material_0005")]
 node_name = "Secret_delta_banyan_eyrie"
 catalog_asset_id = "manymouth_delta:secret-delta-banyan-eyrie-12aae07aa990"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/secret-delta-banyan-eyrie-12aae07aa990.glb"
@@ -2066,6 +3058,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.856527454135, 0, -0.516101463196, 0, 1, 0, 0.516101463196, 0, 0.856527454135, 14.32, 1.006, -2.53)
 asset_id = "Secret_delta_moot_vault"
+material_overrides = [SubResource("object_material_0006")]
 node_name = "Secret_delta_moot_vault"
 catalog_asset_id = "manymouth_delta:secret-delta-moot-vault-ffdbd04f3692"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/secret-delta-moot-vault-ffdbd04f3692.glb"
@@ -2105,6 +3098,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.972994490785, 0, -0.230828336438, 0, 1, 0, 0.230828336438, 0, -0.972994490785, 40.56, 6.93876430941, 108.044196)
 asset_id = "Secret_delta_shrine_well"
+material_overrides = [SubResource("object_material_0007")]
 node_name = "Secret_delta_shrine_well"
 catalog_asset_id = "manymouth_delta:secret-delta-shrine-well-9ab4540dc513"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/secret-delta-shrine-well-9ab4540dc513.glb"
@@ -2118,6 +3112,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.103539355198, 0, 0.994625357572, 0, 1, 0, -0.994625357572, 0, -0.103539355198, 209.48, 8.28601781202, 4.9165)
 asset_id = "Secret_delta_stelae_reliquary"
+material_overrides = [SubResource("object_material_0008")]
 node_name = "Secret_delta_stelae_reliquary"
 catalog_asset_id = "manymouth_delta:secret-delta-stelae-reliquary-e7c5dc0ae54e"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/secret-delta-stelae-reliquary-e7c5dc0ae54e.glb"
@@ -2170,6 +3165,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.581474524725, 0, 0.813564611507, 0, 1, 0, -0.813564611507, 0, -0.581474524725, 117.8736, 0.327994371259, 18.95712)
 asset_id = "Secret_delta_waystone"
+material_overrides = [SubResource("object_material_0009")]
 node_name = "Secret_delta_waystone"
 catalog_asset_id = "manymouth_delta:secret-delta-waystone-f6edbd574f43"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/secret-delta-waystone-f6edbd574f43.glb"
@@ -3158,6 +4154,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "landmark", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.952161515177, 0, 0.305595237226, 0, 1, 0, -0.305595237226, 0, -0.952161515177, -44.2275340634, 1.75, 120.194832064)
 asset_id = "boat_yard_house_00"
+material_overrides = [SubResource("object_material_0010")]
 node_name = "boat_yard_house_00"
 catalog_asset_id = "manymouth_delta:boat-yard-house-00-850703d9f847"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/boat-yard-house-00-850703d9f847.glb"
@@ -3171,6 +4168,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.952161515177, 0, -0.305595237226, 0, 1, 0, 0.305595237226, 0, 0.952161515177, -35.6126352762, 1.75, 106.996096597)
 asset_id = "boat_yard_house_01"
+material_overrides = [SubResource("object_material_0011")]
 node_name = "boat_yard_house_01"
 catalog_asset_id = "manymouth_delta:boat-yard-house-01-ffa136d83ecb"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/boat-yard-house-01-ffa136d83ecb.glb"
@@ -3184,6 +4182,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.952161515177, 0, 0.305595237226, 0, 1, 0, -0.305595237226, 0, -0.952161515177, -54.4211558276, 1.75, 116.923199876)
 asset_id = "boat_yard_house_02"
+material_overrides = [SubResource("object_material_0012")]
 node_name = "boat_yard_house_02"
 catalog_asset_id = "manymouth_delta:boat-yard-house-02-ed78921d461a"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/boat-yard-house-02-ed78921d461a.glb"
@@ -3197,6 +4196,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.952161515177, 0, -0.305595237226, 0, 1, 0, 0.305595237226, 0, 0.952161515177, -45.8062279428, 1.75, 103.724473747)
 asset_id = "boat_yard_house_03"
+material_overrides = [SubResource("object_material_0013")]
 node_name = "boat_yard_house_03"
 catalog_asset_id = "manymouth_delta:boat-yard-house-03-a3220d7352dd"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/boat-yard-house-03-a3220d7352dd.glb"
@@ -3210,6 +4210,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.961478393176, 0, 0.274880518508, 0, 1, 0, -0.274880518508, 0, -0.961478393176, -66.5341327695, 1.75, 113.373037984)
 asset_id = "boat_yard_house_04"
+material_overrides = [SubResource("object_material_0014")]
 node_name = "boat_yard_house_04"
 catalog_asset_id = "manymouth_delta:boat-yard-house-04-28df3cf9a6da"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/boat-yard-house-04-28df3cf9a6da.glb"
@@ -3223,6 +4224,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.961478393176, 0, -0.274880518508, 0, 1, 0, 0.274880518508, 0, 0.961478393176, -59.3934036981, 1.75, 99.6055391154)
 asset_id = "boat_yard_house_05"
+material_overrides = [SubResource("object_material_0015")]
 node_name = "boat_yard_house_05"
 catalog_asset_id = "manymouth_delta:boat-yard-house-05-c72aca841b0b"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/boat-yard-house-05-c72aca841b0b.glb"
@@ -3405,6 +4407,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.951896925046, 0, 0.30641841343, 0, 1, 0, -0.30641841343, 0, -0.951896925046, 119.791083516, 2.39799603993, 20.1256866631)
 asset_id = "deep_grove_house_00"
+material_overrides = [SubResource("object_material_0016")]
 node_name = "deep_grove_house_00"
 catalog_asset_id = "manymouth_delta:deep-grove-house-00-bc475f45d0a9"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/deep-grove-house-00-bc475f45d0a9.glb"
@@ -3418,6 +4421,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.951896925046, 0, 0.30641841343, 0, 1, 0, -0.30641841343, 0, -0.951896925046, 108.68539251, 2.33166749417, 16.5507321396)
 asset_id = "deep_grove_house_01"
+material_overrides = [SubResource("object_material_0017")]
 node_name = "deep_grove_house_01"
 catalog_asset_id = "manymouth_delta:deep-grove-house-01-fa8445c7b912"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/deep-grove-house-01-fa8445c7b912.glb"
@@ -3431,6 +4435,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.951896925046, 0, -0.30641841343, 0, 1, 0, 0.30641841343, 0, 0.951896925046, 117.680023215, 2.35757057398, 3.47801470316)
 asset_id = "deep_grove_house_02"
+material_overrides = [SubResource("object_material_0018")]
 node_name = "deep_grove_house_02"
 catalog_asset_id = "manymouth_delta:deep-grove-house-02-fd6a94b4e129"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/deep-grove-house-02-fd6a94b4e129.glb"
@@ -3444,6 +4449,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.962878174701, 0, 0.269936327093, 0, 1, 0, -0.269936327093, 0, -0.962878174701, 96.9508892396, 2.27165384207, 13.1885540814)
 asset_id = "deep_grove_house_03"
+material_overrides = [SubResource("object_material_0019")]
 node_name = "deep_grove_house_03"
 catalog_asset_id = "manymouth_delta:deep-grove-house-03-90c0111a56a6"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/deep-grove-house-03-90c0111a56a6.glb"
@@ -3457,6 +4463,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.962878174701, 0, -0.269936327093, 0, 1, 0, 0.269936327093, 0, 0.962878174701, 105.285770816, 2.29202958036, -0.260824065034)
 asset_id = "deep_grove_house_04"
+material_overrides = [SubResource("object_material_0020")]
 node_name = "deep_grove_house_04"
 catalog_asset_id = "manymouth_delta:deep-grove-house-04-5e5b6d096f4c"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/deep-grove-house-04-5e5b6d096f4c.glb"
@@ -3535,6 +4542,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "structure", "mes
 script = ExtResource("asset")
 transform = Transform3D(0.65947094497, 0, 0.751730053104, 0, 1, 0, -0.751730053104, 0, 0.65947094497, 187.504707049, 14.669805934, -70.585846591)
 asset_id = "east_hamlet_house_00"
+material_overrides = [SubResource("object_material_0021")]
 node_name = "east_hamlet_house_00"
 catalog_asset_id = "manymouth_delta:east-hamlet-house-00-1be733bc2089"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/east-hamlet-house-00-1be733bc2089.glb"
@@ -3548,6 +4556,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.426488847453, 0, 0.904492820866, 0, 1, 0, -0.904492820866, 0, 0.426488847453, 181.791642936, 14.3642152319, -48.9208525527)
 asset_id = "east_hamlet_house_01"
+material_overrides = [SubResource("object_material_0022")]
 node_name = "east_hamlet_house_01"
 catalog_asset_id = "manymouth_delta:east-hamlet-house-01-635939419264"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/east-hamlet-house-01-635939419264.glb"
@@ -3561,6 +4570,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.875027410239, 0, 0.484073373911, 0, 1, 0, -0.484073373911, 0, 0.875027410239, 178.338055924, 15.5537567751, -63.368511413)
 asset_id = "east_hamlet_house_02"
+material_overrides = [SubResource("object_material_0023")]
 node_name = "east_hamlet_house_02"
 catalog_asset_id = "manymouth_delta:east-hamlet-house-02-2455dd8431ac"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/east-hamlet-house-02-2455dd8431ac.glb"
@@ -3574,6 +4584,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.875027410239, 0, -0.484073373911, 0, 1, 0, 0.484073373911, 0, -0.875027410239, 172.421313693, 16.137097809, -42.7244296812)
 asset_id = "east_hamlet_house_03"
+material_overrides = [SubResource("object_material_0024")]
 node_name = "east_hamlet_house_03"
 catalog_asset_id = "manymouth_delta:east-hamlet-house-03-01e6ef1b5d3f"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/east-hamlet-house-03-01e6ef1b5d3f.glb"
@@ -3587,6 +4598,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.875027410239, 0, 0.484073373911, 0, 1, 0, -0.484073373911, 0, 0.875027410239, 168.40906777, 15.9900758446, -57.875702)
 asset_id = "east_hamlet_house_04"
+material_overrides = [SubResource("object_material_0025")]
 node_name = "east_hamlet_house_04"
 catalog_asset_id = "manymouth_delta:east-hamlet-house-04-ed8cb6b4c908"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/east-hamlet-house-04-ed8cb6b4c908.glb"
@@ -3600,6 +4612,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.00475277577453, 0, -0.999988705497, 0, 1, 0, 0.999988705497, 0, 0.00475277577453, 210.555119128, 14.4248586374, -64.2661665684)
 asset_id = "east_hamlet_house_05"
+material_overrides = [SubResource("object_material_0026")]
 node_name = "east_hamlet_house_05"
 catalog_asset_id = "manymouth_delta:east-hamlet-house-05-911980d874e6"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/east-hamlet-house-05-911980d874e6.glb"
@@ -3613,6 +4626,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.359940926613, 0, -0.932975095782, 0, 1, 0, 0.932975095782, 0, 0.359940926613, 212.39827514, 15.0039369843, -51.9992501265)
 asset_id = "east_hamlet_house_06"
+material_overrides = [SubResource("object_material_0027")]
 node_name = "east_hamlet_house_06"
 catalog_asset_id = "manymouth_delta:east-hamlet-house-06-6c2b068eaff3"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/east-hamlet-house-06-6c2b068eaff3.glb"
@@ -3626,6 +4640,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.426488847453, 0, -0.904492820866, 0, 1, 0, 0.904492820866, 0, -0.426488847453, 198.6191424, 14.3642152319, -48.9685735149)
 asset_id = "east_hamlet_house_07"
+material_overrides = [SubResource("object_material_0028")]
 node_name = "east_hamlet_house_07"
 catalog_asset_id = "manymouth_delta:east-hamlet-house-07-0b5132ed269a"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/east-hamlet-house-07-0b5132ed269a.glb"
@@ -3639,6 +4654,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.359940926613, 0, -0.932975095782, 0, 1, 0, 0.932975095782, 0, 0.359940926613, 217.164999646, 15.3032587608, -39.6437914292)
 asset_id = "east_hamlet_house_08"
+material_overrides = [SubResource("object_material_0029")]
 node_name = "east_hamlet_house_08"
 catalog_asset_id = "manymouth_delta:east-hamlet-house-08-51cf3cbc29db"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/east-hamlet-house-08-51cf3cbc29db.glb"
@@ -3769,6 +4785,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "structure", "mes
 script = ExtResource("asset")
 transform = Transform3D(0.980505551175, 0, 0.196491384325, 0, 1, 0, -0.196491384325, 0, 0.980505551175, 160.449718428, 1.75, 63.6321242059)
 asset_id = "far_bar_house_00"
+material_overrides = [SubResource("object_material_0030")]
 node_name = "far_bar_house_00"
 catalog_asset_id = "manymouth_delta:far-bar-house-00-260c615696cd"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/far-bar-house-00-260c615696cd.glb"
@@ -3782,6 +4799,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.974507668914, 0, -0.224354191465, 0, 1, 0, 0.224354191465, 0, -0.974507668914, 143.637309429, 1.75, 82.6827684151)
 asset_id = "far_bar_house_01"
+material_overrides = [SubResource("object_material_0031")]
 node_name = "far_bar_house_01"
 catalog_asset_id = "manymouth_delta:far-bar-house-01-6a7d821b3210"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/far-bar-house-01-6a7d821b3210.glb"
@@ -3795,6 +4813,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.974507668914, 0, -0.224354191465, 0, 1, 0, 0.224354191465, 0, -0.974507668914, 132.163693126, 1.75, 85.3242601048)
 asset_id = "far_bar_house_02"
+material_overrides = [SubResource("object_material_0032")]
 node_name = "far_bar_house_02"
 catalog_asset_id = "manymouth_delta:far-bar-house-02-12e1e1fa15c8"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/far-bar-house-02-12e1e1fa15c8.glb"
@@ -3808,6 +4827,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.974507668914, 0, 0.224354191465, 0, 1, 0, -0.224354191465, 0, 0.974507668914, 130.526316193, 1.75, 70.103602438)
 asset_id = "far_bar_house_03"
+material_overrides = [SubResource("object_material_0033")]
 node_name = "far_bar_house_03"
 catalog_asset_id = "manymouth_delta:far-bar-house-03-54d646e5eb04"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/far-bar-house-03-54d646e5eb04.glb"
@@ -3873,6 +4893,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "structure", "mes
 script = ExtResource("asset")
 transform = Transform3D(0.939692620786, 0, 0.342020143326, 0, 1, 0, -0.342020143326, 0, 0.939692620786, -26.9047, 2.2, 22.2758)
 asset_id = "market_stall_00"
+material_overrides = [SubResource("object_material_0034")]
 node_name = "market_stall_00"
 catalog_asset_id = "manymouth_delta:market-stall-00-ec55eb5bd9c6"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/market-stall-00-ec55eb5bd9c6.glb"
@@ -3886,6 +4907,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.939692620786, 0, 0.342020143326, 0, 1, 0, -0.342020143326, 0, 0.939692620786, -22.3942, 2.2, 20.6341)
 asset_id = "market_stall_01"
+material_overrides = [SubResource("object_material_0035")]
 node_name = "market_stall_01"
 catalog_asset_id = "manymouth_delta:market-stall-01-c1adf7263adf"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/market-stall-01-c1adf7263adf.glb"
@@ -3899,6 +4921,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.939692620786, 0, 0.342020143326, 0, 1, 0, -0.342020143326, 0, 0.939692620786, -17.8837, 2.2, 18.9924)
 asset_id = "market_stall_02"
+material_overrides = [SubResource("object_material_0036")]
 node_name = "market_stall_02"
 catalog_asset_id = "manymouth_delta:market-stall-02-7fe309cd23ee"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/market-stall-02-7fe309cd23ee.glb"
@@ -3912,6 +4935,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.939692620786, 0, -0.342020143326, 0, 1, 0, 0.342020143326, 0, -0.939692620786, -24.4764, 2.2, 28.9476)
 asset_id = "market_stall_03"
+material_overrides = [SubResource("object_material_0037")]
 node_name = "market_stall_03"
 catalog_asset_id = "manymouth_delta:market-stall-03-e62df386b7ac"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/market-stall-03-e62df386b7ac.glb"
@@ -3925,6 +4949,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.939692620786, 0, -0.342020143326, 0, 1, 0, 0.342020143326, 0, -0.939692620786, -19.9658, 2.2, 27.3059)
 asset_id = "market_stall_04"
+material_overrides = [SubResource("object_material_0038")]
 node_name = "market_stall_04"
 catalog_asset_id = "manymouth_delta:market-stall-04-71dfebd68cc8"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/market-stall-04-71dfebd68cc8.glb"
@@ -3938,6 +4963,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.939692620786, 0, -0.342020143326, 0, 1, 0, 0.342020143326, 0, -0.939692620786, -15.4553, 2.2, 25.6642)
 asset_id = "market_stall_05"
+material_overrides = [SubResource("object_material_0039")]
 node_name = "market_stall_05"
 catalog_asset_id = "manymouth_delta:market-stall-05-4aae11f1fae8"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/market-stall-05-4aae11f1fae8.glb"
@@ -4198,6 +5224,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.958098386186, 0, -0.286439317111, 0, 1, 0, 0.286439317111, 0, -0.958098386186, 65.9163566589, 1.75, 163.754758044)
 asset_id = "north_fishing_house_00"
+material_overrides = [SubResource("object_material_0040")]
 node_name = "north_fishing_house_00"
 catalog_asset_id = "manymouth_delta:north-fishing-house-00-50451aeec89d"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/north-fishing-house-00-50451aeec89d.glb"
@@ -4211,6 +5238,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.958098386186, 0, 0.286439317111, 0, 1, 0, -0.286439317111, 0, 0.958098386186, 58.0909205653, 1.75, 150.229542245)
 asset_id = "north_fishing_house_01"
+material_overrides = [SubResource("object_material_0041")]
 node_name = "north_fishing_house_01"
 catalog_asset_id = "manymouth_delta:north-fishing-house-01-99fa9597dae6"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/north-fishing-house-01-99fa9597dae6.glb"
@@ -4224,6 +5252,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.980806824529, 0, -0.194981981111, 0, 1, 0, 0.194981981111, 0, -0.980806824529, 42.1959060951, 1.75, 170.093670251)
 asset_id = "north_fishing_house_02"
+material_overrides = [SubResource("object_material_0042")]
 node_name = "north_fishing_house_02"
 catalog_asset_id = "manymouth_delta:north-fishing-house-02-231c917d5a19"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/north-fishing-house-02-231c917d5a19.glb"
@@ -4237,6 +5266,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.980806824529, 0, 0.194981981111, 0, 1, 0, -0.194981981111, 0, 0.980806824529, 36.4315354933, 1.75, 155.742167745)
 asset_id = "north_fishing_house_03"
+material_overrides = [SubResource("object_material_0043")]
 node_name = "north_fishing_house_03"
 catalog_asset_id = "manymouth_delta:north-fishing-house-03-a16627b63e81"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/north-fishing-house-03-a16627b63e81.glb"
@@ -4302,6 +5332,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "structure", "mes
 script = ExtResource("asset")
 transform = Transform3D(-0.366633447645, 0, -0.930365473923, 0, 1, 0, 0.930365473923, 0, -0.366633447645, -82.2844869574, 4.15, -96.725878034)
 asset_id = "paddy_hamlet_house_00"
+material_overrides = [SubResource("object_material_0044")]
 node_name = "paddy_hamlet_house_00"
 catalog_asset_id = "manymouth_delta:paddy-hamlet-house-00-9e84b4a924f3"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/paddy-hamlet-house-00-9e84b4a924f3.glb"
@@ -4315,6 +5346,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.366633447645, 0, 0.930365473923, 0, 1, 0, -0.930365473923, 0, 0.366633447645, -96.984195613, 4.15, -100.882341662)
 asset_id = "paddy_hamlet_house_01"
+material_overrides = [SubResource("object_material_0045")]
 node_name = "paddy_hamlet_house_01"
 catalog_asset_id = "manymouth_delta:paddy-hamlet-house-01-9fe3cdcc44a1"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/paddy-hamlet-house-01-9fe3cdcc44a1.glb"
@@ -4328,6 +5360,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.366633447645, 0, -0.930365473923, 0, 1, 0, 0.930365473923, 0, -0.366633447645, -86.4083038279, 4.15, -86.261320417)
 asset_id = "paddy_hamlet_house_02"
+material_overrides = [SubResource("object_material_0046")]
 node_name = "paddy_hamlet_house_02"
 catalog_asset_id = "manymouth_delta:paddy-hamlet-house-02-005799a3ffda"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/paddy-hamlet-house-02-005799a3ffda.glb"
@@ -4341,6 +5374,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.310626391951, 0, 0.950532085005, 0, 1, 0, -0.950532085005, 0, 0.310626391951, -101.380385115, 4.15, -89.527597639)
 asset_id = "paddy_hamlet_house_03"
+material_overrides = [SubResource("object_material_0047")]
 node_name = "paddy_hamlet_house_03"
 catalog_asset_id = "manymouth_delta:paddy-hamlet-house-03-c512a04664cb"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/paddy-hamlet-house-03-c512a04664cb.glb"
@@ -4354,6 +5388,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.310626391951, 0, -0.950532085005, 0, 1, 0, 0.950532085005, 0, -0.310626391951, -90.0318376847, 4.15, -75.3213303568)
 asset_id = "paddy_hamlet_house_04"
+material_overrides = [SubResource("object_material_0048")]
 node_name = "paddy_hamlet_house_04"
 catalog_asset_id = "manymouth_delta:paddy-hamlet-house-04-76e64bff1681"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/paddy-hamlet-house-04-76e64bff1681.glb"
@@ -4367,6 +5402,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.310626391951, 0, 0.950532085005, 0, 1, 0, -0.950532085005, 0, 0.310626391951, -104.886262322, 4.15, -78.799440413)
 asset_id = "paddy_hamlet_house_05"
+material_overrides = [SubResource("object_material_0049")]
 node_name = "paddy_hamlet_house_05"
 catalog_asset_id = "manymouth_delta:paddy-hamlet-house-05-ecdacf4d20ee"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/paddy-hamlet-house-05-ecdacf4d20ee.glb"
@@ -4380,6 +5416,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.478294289506, 0, -0.878199620033, 0, 1, 0, 0.878199620033, 0, -0.478294289506, -93.8112920546, 4.15, -64.7493329249)
 asset_id = "paddy_hamlet_house_06"
+material_overrides = [SubResource("object_material_0050")]
 node_name = "paddy_hamlet_house_06"
 catalog_asset_id = "manymouth_delta:paddy-hamlet-house-06-ff94cf65f4b5"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/paddy-hamlet-house-06-ff94cf65f4b5.glb"
@@ -4393,6 +5430,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.478294289506, 0, 0.878199620033, 0, 1, 0, -0.878199620033, 0, 0.478294289506, -109.935914287, 4.15, -66.9223943745)
 asset_id = "paddy_hamlet_house_07"
+material_overrides = [SubResource("object_material_0051")]
 node_name = "paddy_hamlet_house_07"
 catalog_asset_id = "manymouth_delta:paddy-hamlet-house-07-ffb4a064f639"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/paddy-hamlet-house-07-ffb4a064f639.glb"
@@ -4510,6 +5548,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "structure", "mes
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-eastern-distributary-86"
+material_overrides = [SubResource("object_material_0052")]
 node_name = "Walk_ContinentalBridgeUnion_009_manymouth_delta_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-eastern-distributary-86"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-eastern-distributary-86.glb"
@@ -4523,6 +5562,7 @@ metadata = {"authoredCrossing": {"id": "eastern_distributary@86", "localEndpoint
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-ferry-quay-00"
+material_overrides = [SubResource("object_material_0053"), SubResource("object_material_0054"), SubResource("object_material_0055"), SubResource("object_material_0056"), SubResource("object_material_0057"), SubResource("object_material_0058"), SubResource("object_material_0059"), SubResource("object_material_0060")]
 node_name = "Walk_FerryQuay_manymouth_delta_00_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-ferry-quay-00"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-ferry-quay-00.glb"
@@ -4536,6 +5576,7 @@ metadata = {"authoredAccessAssembly": {"id": "ferry-quay-00", "walkNode": "Walk_
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-loose-502"
+material_overrides = [SubResource("object_material_0061"), SubResource("object_material_0062"), SubResource("object_material_0063"), SubResource("object_material_0064"), SubResource("object_material_0065")]
 node_name = "Walk_ContinentalBridgeUnion_502_manymouth_delta_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-loose-502"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-loose-502.glb"
@@ -4562,6 +5603,7 @@ metadata = {"authoredAccessAssembly": {"id": "loose-coastal-502", "walkNode": "W
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-manymouth-village-boat-yard"
+material_overrides = [SubResource("object_material_0066"), SubResource("object_material_0067"), SubResource("object_material_0068")]
 node_name = "Walk_Manymouth_Village_boat_yard_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-manymouth-village-boat-yard"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-manymouth-village-boat-yard.glb"
@@ -4575,6 +5617,7 @@ metadata = {"authoredAccessAssembly": {"id": "manymouth-village-boat_yard", "wal
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-manymouth-village-deep-grove"
+material_overrides = [SubResource("object_material_0069"), SubResource("object_material_0070"), SubResource("object_material_0071")]
 node_name = "Walk_Manymouth_Village_deep_grove_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-manymouth-village-deep-grove"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-manymouth-village-deep-grove.glb"
@@ -4588,6 +5631,7 @@ metadata = {"authoredAccessAssembly": {"id": "manymouth-village-deep_grove", "wa
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-manymouth-village-east-hamlet"
+material_overrides = [SubResource("object_material_0072"), SubResource("object_material_0073"), SubResource("object_material_0074")]
 node_name = "Walk_Manymouth_Village_east_hamlet_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-manymouth-village-east-hamlet"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-manymouth-village-east-hamlet.glb"
@@ -4601,6 +5645,7 @@ metadata = {"authoredAccessAssembly": {"id": "manymouth-village-east_hamlet", "w
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-manymouth-village-far-bar"
+material_overrides = [SubResource("object_material_0075"), SubResource("object_material_0076"), SubResource("object_material_0077")]
 node_name = "Walk_Manymouth_Village_far_bar_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-manymouth-village-far-bar"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-manymouth-village-far-bar.glb"
@@ -4614,6 +5659,7 @@ metadata = {"authoredAccessAssembly": {"id": "manymouth-village-far_bar", "walkN
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-manymouth-village-floating-market"
+material_overrides = [SubResource("object_material_0078"), SubResource("object_material_0079"), SubResource("object_material_0080")]
 node_name = "Walk_Manymouth_Village_floating_market_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-manymouth-village-floating-market"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-manymouth-village-floating-market.glb"
@@ -4627,6 +5673,7 @@ metadata = {"authoredAccessAssembly": {"id": "manymouth-village-floating_market"
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-manymouth-village-sea-landing"
+material_overrides = [SubResource("object_material_0081"), SubResource("object_material_0082"), SubResource("object_material_0083")]
 node_name = "Walk_Manymouth_Village_sea_landing_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-manymouth-village-sea-landing"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-manymouth-village-sea-landing.glb"
@@ -4640,6 +5687,7 @@ metadata = {"authoredAccessAssembly": {"id": "manymouth-village-sea_landing", "w
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-manymouth-village-south-hamlet"
+material_overrides = [SubResource("object_material_0084"), SubResource("object_material_0085"), SubResource("object_material_0086")]
 node_name = "Walk_Manymouth_Village_south_hamlet_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-manymouth-village-south-hamlet"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-manymouth-village-south-hamlet.glb"
@@ -4653,6 +5701,7 @@ metadata = {"authoredAccessAssembly": {"id": "manymouth-village-south_hamlet", "
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-manymouth-village-town"
+material_overrides = [SubResource("object_material_0087"), SubResource("object_material_0088"), SubResource("object_material_0089")]
 node_name = "Walk_Manymouth_Village_town_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-manymouth-village-town"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-manymouth-village-town.glb"
@@ -4666,6 +5715,7 @@ metadata = {"authoredAccessAssembly": {"id": "manymouth-village-town", "walkNode
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-walk-manymouth-fishingboardwalk"
+material_overrides = [SubResource("object_material_0090"), SubResource("object_material_0091")]
 node_name = "Walk_Manymouth_FishingBoardwalk_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-walk-manymouth-fishingboardwalk"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-walk-manymouth-fishingboardwalk.glb"
@@ -4679,6 +5729,7 @@ metadata = {"authoredAccessAssembly": {"id": "walk-manymouth-fishingboardwalk", 
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-walk-manymouth-marketentrance"
+material_overrides = [SubResource("object_material_0092")]
 node_name = "Walk_Manymouth_MarketEntrance_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-walk-manymouth-marketentrance"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-walk-manymouth-marketentrance.glb"
@@ -4692,6 +5743,7 @@ metadata = {"authoredAccessAssembly": {"id": "walk-manymouth-marketentrance", "w
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-walk-manymouth-paddystreet"
+material_overrides = [SubResource("object_material_0093"), SubResource("object_material_0094"), SubResource("object_material_0095")]
 node_name = "Walk_Manymouth_PaddyStreet_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-walk-manymouth-paddystreet"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-walk-manymouth-paddystreet.glb"
@@ -4705,6 +5757,7 @@ metadata = {"authoredAccessAssembly": {"id": "walk-manymouth-paddystreet", "walk
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-western-distributary-48"
+material_overrides = [SubResource("object_material_0096"), SubResource("object_material_0097")]
 node_name = "Walk_ContinentalBridgeUnion_011_manymouth_delta_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-western-distributary-48"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-western-distributary-48.glb"
@@ -4718,6 +5771,7 @@ metadata = {"authoredCrossing": {"id": "western_distributary@48", "localEndpoint
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-western-river-760"
+material_overrides = [SubResource("object_material_0098"), SubResource("object_material_0099"), SubResource("object_material_0100")]
 node_name = "Walk_ContinentalBridgeUnion_010_manymouth_delta_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-western-river-760"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-western-river-760.glb"
@@ -4731,6 +5785,7 @@ metadata = {"authoredCrossing": {"id": "western_river@760", "localEndpoints": [[
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -520, 0, -1140)
 asset_id = "published-manymouth-delta-western-river-982"
+material_overrides = [SubResource("object_material_0101"), SubResource("object_material_0102"), SubResource("object_material_0103")]
 node_name = "Walk_ContinentalBridgeUnion_012_manymouth_delta_WorldPlacement"
 catalog_asset_id = "manymouth_delta:published-manymouth-delta-western-river-982"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/published-manymouth-delta-western-river-982.glb"
@@ -4744,6 +5799,7 @@ metadata = {"authoredCrossing": {"id": "western_river@982", "localEndpoints": [[
 script = ExtResource("asset")
 transform = Transform3D(0.601375566072, 0, -0.798966475224, 0, 1, 0, 0.798966475224, 0, 0.601375566072, -99.3668996997, 1.75, -135.764728586)
 asset_id = "sea_landing_house_00"
+material_overrides = [SubResource("object_material_0104")]
 node_name = "sea_landing_house_00"
 catalog_asset_id = "manymouth_delta:sea-landing-house-00-08ed2a4d0a3e"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/sea-landing-house-00-08ed2a4d0a3e.glb"
@@ -4757,6 +5813,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.601375566072, 0, 0.798966475224, 0, 1, 0, -0.798966475224, 0, -0.601375566072, -112.861835311, 1.75, -128.418239785)
 asset_id = "sea_landing_house_01"
+material_overrides = [SubResource("object_material_0105")]
 node_name = "sea_landing_house_01"
 catalog_asset_id = "manymouth_delta:sea-landing-house-01-66daf55a61e5"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/sea-landing-house-01-66daf55a61e5.glb"
@@ -4770,6 +5827,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.601375566072, 0, -0.798966475224, 0, 1, 0, 0.798966475224, 0, 0.601375566072, -92.9963170444, 1.75, -127.300996009)
 asset_id = "sea_landing_house_02"
+material_overrides = [SubResource("object_material_0106")]
 node_name = "sea_landing_house_02"
 catalog_asset_id = "manymouth_delta:sea-landing-house-02-f328195aa0b6"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/sea-landing-house-02-f328195aa0b6.glb"
@@ -4783,6 +5841,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.601375566072, 0, 0.798966475224, 0, 1, 0, -0.798966475224, 0, -0.601375566072, -106.491288821, 1.75, -119.954555256)
 asset_id = "sea_landing_house_03"
+material_overrides = [SubResource("object_material_0107")]
 node_name = "sea_landing_house_03"
 catalog_asset_id = "manymouth_delta:sea-landing-house-03-1ebaaea6853d"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/sea-landing-house-03-1ebaaea6853d.glb"
@@ -4796,6 +5855,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.507939032043, 0, -0.861393022799, 0, 1, 0, 0.861393022799, 0, 0.507939032043, -87.1832122038, 1.75, -118.226485847)
 asset_id = "sea_landing_house_04"
+material_overrides = [SubResource("object_material_0108")]
 node_name = "sea_landing_house_04"
 catalog_asset_id = "manymouth_delta:sea-landing-house-04-0ba2c21717d1"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/sea-landing-house-04-0ba2c21717d1.glb"
@@ -4874,6 +5934,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "structure", "mes
 script = ExtResource("asset")
 transform = Transform3D(-0.258953997004, 0, 0.965889655932, 0, 1, 0, -0.965889655932, 0, -0.258953997004, 85.0326930899, 1.81696578651, 88.7085415186)
 asset_id = "south_hamlet_house_00"
+material_overrides = [SubResource("object_material_0109")]
 node_name = "south_hamlet_house_00"
 catalog_asset_id = "manymouth_delta:south-hamlet-house-00-c700cfcc5db0"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/south-hamlet-house-00-c700cfcc5db0.glb"
@@ -4887,6 +5948,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.258953997004, 0, -0.965889655932, 0, 1, 0, 0.965889655932, 0, 0.258953997004, 99.9995531641, 1.80052103105, 85.8367392636)
 asset_id = "south_hamlet_house_01"
+material_overrides = [SubResource("object_material_0110")]
 node_name = "south_hamlet_house_01"
 catalog_asset_id = "manymouth_delta:south-hamlet-house-01-fb757f7ce232"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/south-hamlet-house-01-fb757f7ce232.glb"
@@ -4900,6 +5962,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.258953997004, 0, 0.965889655932, 0, 1, 0, -0.965889655932, 0, -0.258953997004, 81.6257057147, 2.01331962255, 76.0005937688)
 asset_id = "south_hamlet_house_02"
+material_overrides = [SubResource("object_material_0111")]
 node_name = "south_hamlet_house_02"
 catalog_asset_id = "manymouth_delta:south-hamlet-house-02-8c4b19c9fd5e"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/south-hamlet-house-02-8c4b19c9fd5e.glb"
@@ -4913,6 +5976,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.258953997004, 0, -0.965889655932, 0, 1, 0, 0.965889655932, 0, 0.258953997004, 96.5925657889, 1.9968748671, 73.1287915138)
 asset_id = "south_hamlet_house_03"
+material_overrides = [SubResource("object_material_0112")]
 node_name = "south_hamlet_house_03"
 catalog_asset_id = "manymouth_delta:south-hamlet-house-03-826fe3553982"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/south-hamlet-house-03-826fe3553982.glb"
@@ -4926,6 +5990,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.280102246417, 0, 0.95997017222, 0, 1, 0, -0.95997017222, 0, -0.280102246417, 78.029225223, 2.22039546354, 63.3857995828)
 asset_id = "south_hamlet_house_04"
+material_overrides = [SubResource("object_material_0113")]
 node_name = "south_hamlet_house_04"
 catalog_asset_id = "manymouth_delta:south-hamlet-house-04-aca4420d3ca9"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/south-hamlet-house-04-aca4420d3ca9.glb"
@@ -4939,6 +6004,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.280102246417, 0, -0.95997017222, 0, 1, 0, 0.95997017222, 0, 0.280102246417, 93.0008377434, 2.19888929291, 60.4308123917)
 asset_id = "south_hamlet_house_05"
+material_overrides = [SubResource("object_material_0114")]
 node_name = "south_hamlet_house_05"
 catalog_asset_id = "manymouth_delta:south-hamlet-house-05-39fdad37292b"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/south-hamlet-house-05-39fdad37292b.glb"
@@ -4952,6 +6018,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.89068976069, 0, -0.454611647675, 0, 1, 0, 0.454611647675, 0, -0.89068976069, 91.88278136, 3.14316696559, 48.3994793979)
 asset_id = "south_hamlet_house_06"
+material_overrides = [SubResource("object_material_0115")]
 node_name = "south_hamlet_house_06"
 catalog_asset_id = "manymouth_delta:south-hamlet-house-06-78f8d35e99c5"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/south-hamlet-house-06-78f8d35e99c5.glb"
@@ -4965,6 +6032,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.89068976069, 0, -0.454611647675, 0, 1, 0, 0.454611647675, 0, -0.89068976069, 101.830270104, 4.96872358262, 43.322241006)
 asset_id = "south_hamlet_house_07"
+material_overrides = [SubResource("object_material_0116")]
 node_name = "south_hamlet_house_07"
 catalog_asset_id = "manymouth_delta:south-hamlet-house-07-6bf09a4ee9d6"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/south-hamlet-house-07-6bf09a4ee9d6.glb"
@@ -4978,6 +6046,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.991863793148, 0, -0.127303636402, 0, 1, 0, 0.127303636402, 0, -0.991863793148, 85.7395457618, 1.75, 104.141509673)
 asset_id = "south_hamlet_house_08"
+material_overrides = [SubResource("object_material_0117")]
 node_name = "south_hamlet_house_08"
 catalog_asset_id = "manymouth_delta:south-hamlet-house-08-9d4f73fea102"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/south-hamlet-house-08-9d4f73fea102.glb"
@@ -5264,6 +6333,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.672356442017, 0, -0.740227542637, 0, 1, 0, 0.740227542637, 0, -0.672356442017, 153.902810626, 10.7582619543, -58.5495003414)
 asset_id = "temple_quay_house_00"
+material_overrides = [SubResource("object_material_0118")]
 node_name = "temple_quay_house_00"
 catalog_asset_id = "manymouth_delta:temple-quay-house-00-34551eca33fd"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/temple-quay-house-00-34551eca33fd.glb"
@@ -5277,6 +6347,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.672356442017, 0, 0.740227542637, 0, 1, 0, -0.740227542637, 0, 0.672356442017, 141.056126709, 10.7639688216, -67.0130627881)
 asset_id = "temple_quay_house_01"
+material_overrides = [SubResource("object_material_0119")]
 node_name = "temple_quay_house_01"
 catalog_asset_id = "manymouth_delta:temple-quay-house-01-ef2fe9cba8cd"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/temple-quay-house-01-ef2fe9cba8cd.glb"
@@ -5290,6 +6361,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.672356442017, 0, -0.740227542637, 0, 1, 0, 0.740227542637, 0, -0.672356442017, 146.678846843, 10.784105453, -50.596312679)
 asset_id = "temple_quay_house_02"
+material_overrides = [SubResource("object_material_0120")]
 node_name = "temple_quay_house_02"
 catalog_asset_id = "manymouth_delta:temple-quay-house-02-387bea53000f"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/temple-quay-house-02-387bea53000f.glb"
@@ -5303,6 +6375,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.700719921235, 0, 0.713436466677, 0, 1, 0, -0.713436466677, 0, 0.700719921235, 133.841797943, 10.7903781554, -59.1198970701)
 asset_id = "temple_quay_house_03"
+material_overrides = [SubResource("object_material_0121")]
 node_name = "temple_quay_house_03"
 catalog_asset_id = "manymouth_delta:temple-quay-house-03-e3044b0ebf76"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/temple-quay-house-03-e3044b0ebf76.glb"
@@ -5316,6 +6389,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.700719921235, 0, -0.713436466677, 0, 1, 0, 0.713436466677, 0, -0.700719921235, 137.74067101, 10.8139551491, -41.3975498118)
 asset_id = "temple_quay_house_04"
+material_overrides = [SubResource("object_material_0122")]
 node_name = "temple_quay_house_04"
 catalog_asset_id = "manymouth_delta:temple-quay-house-04-0735d5496f7c"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/temple-quay-house-04-0735d5496f7c.glb"
@@ -5329,6 +6403,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.919145030018, 0, 0.393919298579, 0, 1, 0, -0.393919298579, 0, -0.919145030018, 129.973963762, 12.4231457362, -73.3757818703)
 asset_id = "temple_quay_house_05"
+material_overrides = [SubResource("object_material_0123")]
 node_name = "temple_quay_house_05"
 catalog_asset_id = "manymouth_delta:temple-quay-house-05-24fef56008e6"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/temple-quay-house-05-24fef56008e6.glb"
@@ -5524,6 +6599,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.722688347164, 0, -0.691174039496, 0, 1, 0, 0.691174039496, 0, -0.722688347164, -5.14145029959, 2.2, 19.6659508139)
 asset_id = "town_house_00"
+material_overrides = [SubResource("object_material_0124")]
 node_name = "town_house_00"
 catalog_asset_id = "manymouth_delta:town-house-00-f3ad8f3f7b26"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/town-house-00-f3ad8f3f7b26.glb"
@@ -5537,6 +6613,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.722688347164, 0, 0.691174039496, 0, 1, 0, -0.691174039496, 0, 0.722688347164, -15.712674815, 2.2, 8.74361606169)
 asset_id = "town_house_01"
+material_overrides = [SubResource("object_material_0125")]
 node_name = "town_house_01"
 catalog_asset_id = "manymouth_delta:town-house-01-855c4193371b"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/town-house-01-855c4193371b.glb"
@@ -5550,6 +6627,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.279472381894, 0, -0.960153731315, 0, 1, 0, 0.960153731315, 0, -0.279472381894, 13.16010534, 2.18189367481, -10.5136984457)
 asset_id = "town_house_02"
+material_overrides = [SubResource("object_material_0126")]
 node_name = "town_house_02"
 catalog_asset_id = "manymouth_delta:town-house-02-2b0afddf09b0"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/town-house-02-2b0afddf09b0.glb"
@@ -5563,6 +6641,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.279472381894, 0, 0.960153731315, 0, 1, 0, -0.960153731315, 0, 0.279472381894, 1.77968844253, 2.15875806719, -25.803403364)
 asset_id = "town_house_03"
+material_overrides = [SubResource("object_material_0127")]
 node_name = "town_house_03"
 catalog_asset_id = "manymouth_delta:town-house-03-d4038c18d536"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/town-house-03-d4038c18d536.glb"
@@ -5576,6 +6655,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.279472381894, 0, -0.960153731315, 0, 1, 0, 0.960153731315, 0, -0.279472381894, 16.3740169791, 2.15875812607, -21.5553950579)
 asset_id = "town_house_04"
+material_overrides = [SubResource("object_material_0128")]
 node_name = "town_house_04"
 catalog_asset_id = "manymouth_delta:town-house-04-e753d4d7f4cc"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/town-house-04-e753d4d7f4cc.glb"
@@ -5589,6 +6669,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.516639239853, 0, 0.856203186075, 0, 1, 0, -0.856203186075, 0, 0.516639239853, 8.36601029797, 2.12934175773, -40.7630591221)
 asset_id = "town_house_05"
+material_overrides = [SubResource("object_material_0129")]
 node_name = "town_house_05"
 catalog_asset_id = "manymouth_delta:town-house-05-283a3e6d519f"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/town-house-05-283a3e6d519f.glb"
@@ -5602,6 +6683,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.516639239853, 0, -0.856203186075, 0, 1, 0, 0.856203186075, 0, -0.516639239853, 22.6959879811, 2.12413310276, -35.0905758392)
 asset_id = "town_house_06"
+material_overrides = [SubResource("object_material_0130")]
 node_name = "town_house_06"
 catalog_asset_id = "manymouth_delta:town-house-06-05baa896d40b"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/town-house-06-05baa896d40b.glb"
@@ -5615,6 +6697,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.516639239853, 0, 0.856203186075, 0, 1, 0, -0.856203186075, 0, 0.516639239853, 14.013325032, 2.10698472028, -50.1221021352)
 asset_id = "town_house_07"
+material_overrides = [SubResource("object_material_0131")]
 node_name = "town_house_07"
 catalog_asset_id = "manymouth_delta:town-house-07-70bbac310bb5"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/town-house-07-70bbac310bb5.glb"
@@ -5628,6 +6711,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.516639239853, 0, -0.856203186075, 0, 1, 0, 0.856203186075, 0, -0.516639239853, 29.0782199535, 2.09886661666, -45.6675644369)
 asset_id = "town_house_08"
+material_overrides = [SubResource("object_material_0132")]
 node_name = "town_house_08"
 catalog_asset_id = "manymouth_delta:town-house-08-cd47bf3f74b5"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/town-house-08-cd47bf3f74b5.glb"
@@ -5771,6 +6855,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "landmark", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.94061465043, 0, 0.339476183842, 0, 1, 0, -0.339476183842, 0, 0.94061465043, -117.535082634, 1.78296031312, 81.8111428508)
 asset_id = "west_hamlet_house_00"
+material_overrides = [SubResource("object_material_0133")]
 node_name = "west_hamlet_house_00"
 catalog_asset_id = "manymouth_delta:west-hamlet-house-00-3efe9a03fe37"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/west-hamlet-house-00-3efe9a03fe37.glb"
@@ -5784,6 +6869,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.94061465043, 0, 0.339476183842, 0, 1, 0, -0.339476183842, 0, 0.94061465043, -106.609063518, 1.86287920192, 77.8678454844)
 asset_id = "west_hamlet_house_01"
+material_overrides = [SubResource("object_material_0134")]
 node_name = "west_hamlet_house_01"
 catalog_asset_id = "manymouth_delta:west-hamlet-house-01-3c77891aacaf"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/west-hamlet-house-01-3c77891aacaf.glb"
@@ -5797,6 +6883,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.94061465043, 0, -0.339476183842, 0, 1, 0, 0.339476183842, 0, -0.94061465043, -102.677863758, 1.85389080595, 92.6086868067)
 asset_id = "west_hamlet_house_02"
+material_overrides = [SubResource("object_material_0135")]
 node_name = "west_hamlet_house_02"
 catalog_asset_id = "manymouth_delta:west-hamlet-house-02-c3d4878c9c42"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/west-hamlet-house-02-c3d4878c9c42.glb"
@@ -5810,6 +6897,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.800372734131, 0, 0.599502699293, 0, 1, 0, -0.599502699293, 0, 0.800372734131, -95.3041454182, 1.95457313124, 70.9404922869)
 asset_id = "west_hamlet_house_03"
+material_overrides = [SubResource("object_material_0136")]
 node_name = "west_hamlet_house_03"
 catalog_asset_id = "manymouth_delta:west-hamlet-house-03-058cfd7d3a3e"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/west-hamlet-house-03-058cfd7d3a3e.glb"
@@ -5823,6 +6911,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.800372734131, 0, -0.599502699293, 0, 1, 0, 0.599502699293, 0, -0.800372734131, -89.0262307835, 1.93571407301, 85.2293014166)
 asset_id = "west_hamlet_house_04"
+material_overrides = [SubResource("object_material_0137")]
 node_name = "west_hamlet_house_04"
 catalog_asset_id = "manymouth_delta:west-hamlet-house-04-5e1a5c0e2bf0"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/west-hamlet-house-04-5e1a5c0e2bf0.glb"
@@ -5836,6 +6925,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.800372734131, 0, 0.599502699293, 0, 1, 0, -0.599502699293, 0, 0.800372734131, -85.0976395534, 2.02248045035, 63.2955194444)
 asset_id = "west_hamlet_house_05"
+material_overrides = [SubResource("object_material_0138")]
 node_name = "west_hamlet_house_05"
 catalog_asset_id = "manymouth_delta:west-hamlet-house-05-24a037b45f1b"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/west-hamlet-house-05-24a037b45f1b.glb"
@@ -5849,6 +6939,7 @@ metadata = {"composedSourceRegion": "manymouth_delta", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.800372734131, 0, -0.599502699293, 0, 1, 0, 0.599502699293, 0, -0.800372734131, -79.9989124436, 1.9957758606, 78.4675746842)
 asset_id = "west_hamlet_house_06"
+material_overrides = [SubResource("object_material_0139")]
 node_name = "west_hamlet_house_06"
 catalog_asset_id = "manymouth_delta:west-hamlet-house-06-8cd62c6d05f3"
 scene_path = "res://world_authoring/regions/manymouth_delta/assets/prototypes/west-hamlet-house-06-8cd62c6d05f3.glb"

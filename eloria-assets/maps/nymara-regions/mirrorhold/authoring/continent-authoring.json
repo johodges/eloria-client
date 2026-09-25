@@ -7417,7 +7417,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_0/Building_CliffHouse_0__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7456,7 +7491,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_1/Building_CliffHouse_1__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7495,7 +7565,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_10",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_10/Building_CliffHouse_10__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7534,7 +7639,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_11",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_11/Building_CliffHouse_11__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7573,7 +7713,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_12",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_12/Building_CliffHouse_12__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7612,7 +7787,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_13",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_13/Building_CliffHouse_13__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7651,7 +7861,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_14",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_14/Building_CliffHouse_14__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7690,7 +7935,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_2",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_2/Building_CliffHouse_2__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7729,7 +8009,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_3",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_3/Building_CliffHouse_3__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7768,7 +8083,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_4",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_4/Building_CliffHouse_4__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7807,7 +8157,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_5",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_5/Building_CliffHouse_5__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7846,7 +8231,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_6",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_6/Building_CliffHouse_6__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7885,7 +8305,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_7",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_7/Building_CliffHouse_7__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7924,7 +8379,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_8",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_8/Building_CliffHouse_8__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -7963,7 +8453,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_CliffHouse_9",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_CliffHouse_9/Building_CliffHouse_9__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8002,7 +8527,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_VaultEntry_cistern-door",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_VaultEntry_cistern-door/Building_VaultEntry_cistern-door__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8041,7 +8601,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_VaultEntry_lens-vault-stair",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_VaultEntry_lens-vault-stair/Building_VaultEntry_lens-vault-stair__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8080,7 +8675,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_VaultEntry_stair-cellars-door",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_VaultEntry_stair-cellars-door/Building_VaultEntry_stair-cellars-door__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8119,7 +8749,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_east-bench_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_east-bench_0/Building_east-bench_0__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8158,7 +8823,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_east-bench_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_east-bench_1/Building_east-bench_1__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8197,7 +8897,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_lake-north_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_lake-north_0/Building_lake-north_0__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8236,7 +8971,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_lake-north_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_lake-north_1/Building_lake-north_1__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8275,7 +9045,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_lower-terrace_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_lower-terrace_0/Building_lower-terrace_0__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8314,7 +9119,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_lower-terrace_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_lower-terrace_1/Building_lower-terrace_1__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8353,7 +9193,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_mid-bench_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_mid-bench_0/Building_mid-bench_0__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8392,7 +9267,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_mid-bench_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_mid-bench_1/Building_mid-bench_1__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8431,7 +9341,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_west-bench_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_west-bench_0/Building_west-bench_0__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8470,7 +9415,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_west-bench_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_west-bench_1/Building_west-bench_1__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8509,7 +9489,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_west-shore_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_west-shore_0/Building_west-shore_0__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8548,7 +9563,42 @@
       },
       "collisionRole": "solid",
       "id": "Building_west-shore_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Building_west-shore_1/Building_west-shore_1__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -8805,7 +9855,76 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Aqueduct",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Aqueduct/Landmark_Aqueduct__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "Landmark_Aqueduct/Landmark_Aqueduct__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.0,
         0.0,
@@ -8962,7 +10081,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Channel_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Channel_0/Landmark_Channel_0__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.0,
         0.0,
@@ -9001,7 +10155,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Channel_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Channel_1/Landmark_Channel_1__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.0,
         0.0,
@@ -9040,7 +10229,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Channel_2",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Channel_2/Landmark_Channel_2__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.0,
         0.0,
@@ -9079,7 +10303,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Channel_3",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Channel_3/Landmark_Channel_3__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.0,
         0.0,
@@ -9118,7 +10377,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Channel_4",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Channel_4/Landmark_Channel_4__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.0,
         0.0,
@@ -9157,7 +10451,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_CitadelCourt",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_CitadelCourt/Landmark_CitadelCourt__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -9196,7 +10525,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_CitadelHigh",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_CitadelHigh/Landmark_CitadelHigh__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -9431,7 +10795,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Fountain",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Fountain/Landmark_Fountain__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -9471,7 +10870,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Gallery",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Gallery/Landmark_Gallery__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -9511,7 +10945,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_GateWall",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_GateWall/Landmark_GateWall__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -9551,7 +11020,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_GateWing_-1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_GateWing_-1/Landmark_GateWing_-1__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.800000011920929,
         0.0,
@@ -9590,7 +11094,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_GateWing_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_GateWing_1/Landmark_GateWing_1__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.800000011920929,
         0.0,
@@ -9629,7 +11168,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_LakeLink_City",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_LakeLink_City/Landmark_LakeLink_City__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -9668,7 +11242,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_LakeLink_EastPier",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_LakeLink_EastPier/Landmark_LakeLink_EastPier__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -9707,7 +11316,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_LakeLink_Sanctuary",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_LakeLink_Sanctuary/Landmark_LakeLink_Sanctuary__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -9746,7 +11390,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_LakeLink_WestPier",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_LakeLink_WestPier/Landmark_LakeLink_WestPier__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -9825,7 +11504,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_OrreryDrum",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_OrreryDrum/Landmark_OrreryDrum__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -9864,7 +11578,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Overlook",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Overlook/Landmark_Overlook__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -9904,7 +11653,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_PlazaStatue_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_PlazaStatue_0",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.7071067690849304,
         0.0,
@@ -9943,7 +11727,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_PlazaStatue_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_PlazaStatue_1",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.7071067690849304,
         0.0,
@@ -9982,7 +11801,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_PlazaStatue_2",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_PlazaStatue_2",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.7071067690849304,
         0.0,
@@ -10021,7 +11875,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_PlazaStatue_3",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_PlazaStatue_3",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.7071067690849304,
         0.0,
@@ -10060,7 +11949,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Quay",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Quay/Landmark_Quay__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10100,7 +12024,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Retaining_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Retaining_1",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10139,7 +12098,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Retaining_3",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Retaining_3",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10178,7 +12172,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_Ring",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_Ring/Landmark_Ring__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10218,7 +12247,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_RoadWall_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_RoadWall_1",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.06237828731536865,
         0.0,
@@ -10296,7 +12360,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_SouthWatch",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_SouthWatch",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10336,7 +12435,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_cistern-yard",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_cistern-yard",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10375,7 +12509,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_east-post",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_east-post",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10414,7 +12583,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_east_islet",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_east_islet",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9985666275024414,
         0.0,
@@ -10453,7 +12657,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_far-west",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_far-west",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10492,7 +12731,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_gorge-head",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_gorge-head",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10531,7 +12805,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_lens-works",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_lens-works",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10570,7 +12879,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_lens_tower_east",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_lens_tower_east/Landmark_lens_tower_east__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10610,7 +12954,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_lens_tower_west",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_lens_tower_west/Landmark_lens_tower_west__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10650,7 +13029,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_north-post",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_north-post",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10689,7 +13103,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_quarry-shelf",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_quarry-shelf",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10728,7 +13177,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_upper-shrine",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_upper-shrine/Landmark_upper-shrine__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10767,7 +13251,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_west-shrine",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_west-shrine/Landmark_west-shrine__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -10806,7 +13325,42 @@
       },
       "collisionRole": "solid",
       "id": "Landmark_west_islet",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Landmark_west_islet",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.30915406346321106,
         0.0,
@@ -10845,7 +13399,42 @@
       },
       "collisionRole": "solid",
       "id": "Lore_ringing_quarry",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Lore_ringing_quarry/Lore_ringing_quarry__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -13030,7 +15619,42 @@
       },
       "collisionRole": "solid",
       "id": "Prop_cistern-yard_bollard_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Prop_cistern-yard_bollard_0",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0028026103973389,
         0.0,
@@ -13069,7 +15693,42 @@
       },
       "collisionRole": "solid",
       "id": "Prop_cistern-yard_bollard_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Prop_cistern-yard_bollard_1",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0749562978744507,
         0.0,
@@ -13108,7 +15767,42 @@
       },
       "collisionRole": "solid",
       "id": "Prop_lens-works_bollard_0",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Prop_lens-works_bollard_0",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.1407157182693481,
         0.0,
@@ -13147,7 +15841,42 @@
       },
       "collisionRole": "solid",
       "id": "Prop_lens-works_bollard_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Prop_lens-works_bollard_1",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.8854770064353943,
         0.0,
@@ -13186,7 +15915,42 @@
       },
       "collisionRole": "solid",
       "id": "Prop_lens-works_bollard_2",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Prop_lens-works_bollard_2",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9693180918693542,
         0.0,
@@ -13225,7 +15989,42 @@
       },
       "collisionRole": "solid",
       "id": "Prop_quarry-shelf_bollard_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Prop_quarry-shelf_bollard_1",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0782305002212524,
         0.0,
@@ -13264,7 +16063,42 @@
       },
       "collisionRole": "solid",
       "id": "Prop_quarry-shelf_bollard_2",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Prop_quarry-shelf_bollard_2",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.9746291637420654,
         0.0,
@@ -13381,7 +16215,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_mirror_cistern_well",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_mirror_cistern_well/Secret_mirror_cistern_well__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.9906204342842102,
         0.0,
@@ -13420,7 +16289,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_mirror_citadel_reliquary",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_mirror_citadel_reliquary/Secret_mirror_citadel_reliquary__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         0.2631393074989319,
         0.0,
@@ -13537,7 +16441,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_mirror_lens_garden",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_mirror_lens_garden/Secret_mirror_lens_garden__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.38950663805007935,
         0.0,
@@ -13576,7 +16515,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_mirror_orrery_vault",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_mirror_orrery_vault/Secret_mirror_orrery_vault__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -13615,7 +16589,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_mirror_overlook_eyrie",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_mirror_overlook_eyrie/Secret_mirror_overlook_eyrie__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.9287596940994263,
         0.0,
@@ -13693,7 +16702,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_mirror_rose_school",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_mirror_rose_school/Secret_mirror_rose_school__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.7937262058258057,
         0.0,
@@ -13810,7 +16854,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_mirror_waystone",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_mirror_waystone/Secret_mirror_waystone__pale_ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         -0.24792708456516266,
         0.0,
@@ -13849,7 +16928,42 @@
       },
       "collisionRole": "solid",
       "id": "Walk_Landmark_EastStair",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Walk_Landmark_EastStair",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -93232,31 +96346,55 @@
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
-        "sha256": "7609a484863ea722fb8a65314ea35c4f83098d5b5e6aeead1db217eafec83180"
+        "sha256": "5f34c8606855d7d8b4e0b7528759b6302b855b1460b511887fe6885670a75f72"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres",
+        "sha256": "683f24567b4c4c814b84afe124445d80939e7b548075663ebfcdebff4f21894d"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
+        "sha256": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-snow-crust/alpine-snow-crust-v002.png",
+        "sha256": "e8895b714d8db2ce8a19056f34d4f642ea4c9ce9a50e8265c8b7186fea569539"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+        "sha256": "e9adde18e1b92def62b1a8a83748d3ce0a32ff8c3d53753bbd363e6a9bcff951"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/asset_control.gd",
-        "sha256": "03f66aea24f846327fd9a5222f496e41ae953aba2acff3263c144c1a8853c051"
+        "sha256": "89f4693ed3de906162ae7b0fd6448dc1cd29402f0efbf26d54a2163ba505ffaf"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/asset_surface_override.gd",
+        "sha256": "a56d0f134035f3fbf5df0f8cf2edd4ba3f1a895ec8961c8aaddabf39fc43f4f7"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/biome_palette_entry.gd",
+        "sha256": "5d1e213929e31f2dec1e2987808aa02a173ac76f949857a396ea5b8dac2c81c5"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/gameplay_marker.gd",
-        "sha256": "39ed18fbd9540f8153c0caeab81418e5cebc6df720caa36a2bfb22968264e6cc"
+        "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "3d5ad2475522d8e1744ae15f39494d9c348036b4d1835640b7bc27b059ac55cb"
+        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "dca1ed421d9e98fa8765acc26c94cfad12e4d8a94bea0a1b9d4d446f36462151"
+        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "4a03a1da48eb684e461cb5682820a99afa9eb91d2b2629db41be87629daaddb7"
+        "sha256": "bba17999ebee276a88aaed2c2778e5ab7282e1609a3ede101c09f89f3ca345cf"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/water_region_control.gd",
-        "sha256": "81afed6386a1e208850047b4d6a1165866a3362efb6bf8d4788e10c55d4e2dd3"
+        "sha256": "471bc74f2119254e2d86fca59ada9b88dbad5879c0865ce9fccb4c195329f59b"
       },
       {
         "path": "godot-client/world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-0-b38c3f3d03b0.glb",
@@ -94235,10 +97373,6 @@
         "sha256": "cf5e93f99689c4e46e705e395f8f09e59814848f787ed52007e47047d4c423ae"
       },
       {
-        "path": "godot-client/world_authoring/regions/mirrorhold/assets/textures/continental-ground.png",
-        "sha256": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035"
-      },
-      {
         "path": "godot-client/world_authoring/regions/mirrorhold/assets/textures/continental-water.png",
         "sha256": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac"
       },
@@ -94507,8 +97641,12 @@
         "sha256": "20c282cdb16475873f6a8600f862ffb4a53c3cec25829b96ea22d828137857dd"
       },
       {
+        "path": "godot-client/world_authoring/regions/mirrorhold/surfaces/biome-snow.tres",
+        "sha256": "8ee0496ec392a205ccde9447ada0b8725225e7da84fdc8c7b5555998482b9bf4"
+      },
+      {
         "path": "godot-client/world_authoring/regions/mirrorhold/surfaces/continental-ground.tres",
-        "sha256": "3b7059459a0694f9f16e7810531789985e7ea3b198b3faf0d2e41d631ddb0ee7"
+        "sha256": "540425be9be6c9609c223c10dc3e78b9f29cbde3b34aa05361db1fe52a799b8e"
       },
       {
         "path": "godot-client/world_authoring/regions/mirrorhold/surfaces/river.tres",
@@ -94525,7 +97663,7 @@
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/mirrorhold/mirrorhold.tscn",
-      "sha256": "17fe6d4b49e2ac4768e20d2df66c343474327891aea94d044114bfb940da7c34"
+      "sha256": "dab101661e68517a1cbbe199d05f57f0402cba7692a2289e07061ac229ac168f"
     }
   },
   "terrain": {
@@ -94540,19 +97678,20 @@
       "sha256": "0511c783876d44444e27a435cb3f78f88f1f9fa2869907102cfa628aebff12ab"
     },
     "baseSurface": {
+      "biomeBlendEnabled": true,
       "materialMode": "surface",
-      "pbr": {
+      "pbrOverrides": {
         "albedoColor": [
           1.0,
           1.0,
           1.0,
           1.0
         ],
-        "albedoTexture": "godot-client/world_authoring/regions/mirrorhold/assets/textures/continental-ground.png",
+        "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
         "metallic": 0.0,
         "normalScale": 1.0,
         "normalTexture": null,
-        "roughness": 0.949999988079071,
+        "roughness": 0.9700000286102295,
         "triplanar": false,
         "uvOffset": [
           0.800000011920929,
@@ -94560,15 +97699,51 @@
           0.0
         ],
         "uvScale": [
-          1.0,
-          1.0,
+          1.470588207244873,
+          1.470588207244873,
           1.0
         ],
         "worldTriplanar": false
       },
-      "preset": "Custom",
+      "preset": "Alpine scree lichen",
       "rotationDegrees": 0.0
     },
+    "biomePalette": [
+      {
+        "id": "snow",
+        "role": "snow",
+        "surface": {
+          "materialMode": "surface",
+          "pbrOverrides": {
+            "albedoColor": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-snow-crust/alpine-snow-crust-v002.png",
+            "metallic": 0.0,
+            "normalScale": 1.0,
+            "normalTexture": null,
+            "roughness": 0.8799999952316284,
+            "triplanar": false,
+            "uvOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "uvScale": [
+              1.470588207244873,
+              1.470588207244873,
+              1.0
+            ],
+            "worldTriplanar": false
+          },
+          "preset": "Alpine snow crust",
+          "rotationDegrees": 0.0
+        }
+      }
+    ],
     "cellMetres": 2.0,
     "height": 271,
     "origin": [

@@ -27,6 +27,9 @@ godot-client/Godot_v*
 # all of these, so none of them belong in the tree.
 godot-client/.godot/
 *.import
+# Biome masks encode four independent numeric weights, including alpha.
+# Keep their import settings so Godot never bleeds RGB under zero alpha.
+!godot-client/assets/world/biome_blend/masks/*.png.import
 *.uid
 godot-client/assets/actors/native/creatures/*-basecolor.png
 godot-client/assets/actors/native/races/*Atlas.png

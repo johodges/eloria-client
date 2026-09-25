@@ -14390,7 +14390,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_gates_civic_focus",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_gates_civic_focus/Secret_gates_civic_focus__Secret_gates_civic_focus__solid__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -14429,7 +14464,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_gates_deposit_vault",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_gates_deposit_vault/Secret_gates_deposit_vault__Secret_gates_deposit_vault__solid__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -14468,7 +14538,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_gates_drain_mouth",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_gates_drain_mouth/Secret_gates_drain_mouth__Secret_gates_drain_mouth__solid__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -14585,7 +14690,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_gates_mirrorsmith_well",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_gates_mirrorsmith_well/Secret_gates_mirrorsmith_well__Secret_gates_mirrorsmith_well__solid__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -14624,7 +14764,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_gates_otter_pit",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_gates_otter_pit/Secret_gates_otter_pit__Secret_gates_otter_pit__solid__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -14663,7 +14838,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_gates_plaza_spring",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_gates_plaza_spring/Secret_gates_plaza_spring__Secret_gates_plaza_spring__solid__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -14702,7 +14912,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_gates_reedworks_garden",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_gates_reedworks_garden/Secret_gates_reedworks_garden__Secret_gates_reedworks_garden__solid__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -14741,7 +14986,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_gates_sanctuary_reliquary",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_gates_sanctuary_reliquary/Secret_gates_sanctuary_reliquary__Secret_gates_sanctuary_reliquary__solid__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -14780,7 +15060,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_gates_stormglass_school",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_gates_stormglass_school/Secret_gates_stormglass_school__Secret_gates_stormglass_school__solid__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -14819,7 +15134,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_gates_sunleaf_hollow",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_gates_sunleaf_hollow/Secret_gates_sunleaf_hollow__Secret_gates_sunleaf_hollow__solid__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -14858,7 +15208,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_gates_wall_eyrie",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_gates_wall_eyrie/Secret_gates_wall_eyrie__Secret_gates_wall_eyrie__solid__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -14897,7 +15282,42 @@
       },
       "collisionRole": "none",
       "id": "Secret_gates_waystone",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "Secret_gates_waystone/Secret_gates_waystone__Secret_gates_waystone__solid__ashlar",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -15404,7 +15824,42 @@
       },
       "collisionRole": "none",
       "id": "SouthOuter_Foundation_-1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "SouthOuter_Foundation_-1/SouthOuter_Foundation_-1__SouthOuter_Foundation_-1__solid__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -15443,7 +15898,42 @@
       },
       "collisionRole": "none",
       "id": "SouthOuter_Foundation_1",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "SouthOuter_Foundation_1/SouthOuter_Foundation_1__SouthOuter_Foundation_1__solid__rubble_stone",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -17558,7 +18048,76 @@
       },
       "collisionRole": "walk_surface",
       "id": "published-four-gates-western-river-428",
-      "materialOverrides": [],
+      "materialOverrides": [
+        {
+          "meshNodePath": "BridgeUnionPier_007_356_788_WorldPlacement/BridgeUnionPier_007_356_788",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        },
+        {
+          "meshNodePath": "BridgeUnionPier_007_364_796_WorldPlacement/BridgeUnionPier_007_364_796",
+          "surface": {
+            "materialMode": "surface",
+            "pbrOverrides": {
+              "albedoColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+              "metallic": 0.0,
+              "normalScale": 1.0,
+              "normalTexture": null,
+              "roughness": 0.9200000166893005,
+              "triplanar": false,
+              "uvOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "uvScale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "worldTriplanar": false
+            },
+            "preset": "Weathered limestone masonry",
+            "rotationDegrees": 0.0
+          },
+          "surfaceIndex": 0
+        }
+      ],
       "matrix": [
         1.0,
         0.0,
@@ -57651,31 +58210,55 @@
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
-        "sha256": "7609a484863ea722fb8a65314ea35c4f83098d5b5e6aeead1db217eafec83180"
+        "sha256": "5f34c8606855d7d8b4e0b7528759b6302b855b1460b511887fe6885670a75f72"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres",
+        "sha256": "683f24567b4c4c814b84afe124445d80939e7b548075663ebfcdebff4f21894d"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+        "sha256": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+        "sha256": "e9adde18e1b92def62b1a8a83748d3ce0a32ff8c3d53753bbd363e6a9bcff951"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+        "sha256": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/asset_control.gd",
-        "sha256": "03f66aea24f846327fd9a5222f496e41ae953aba2acff3263c144c1a8853c051"
+        "sha256": "89f4693ed3de906162ae7b0fd6448dc1cd29402f0efbf26d54a2163ba505ffaf"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/asset_surface_override.gd",
+        "sha256": "a56d0f134035f3fbf5df0f8cf2edd4ba3f1a895ec8961c8aaddabf39fc43f4f7"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/biome_palette_entry.gd",
+        "sha256": "5d1e213929e31f2dec1e2987808aa02a173ac76f949857a396ea5b8dac2c81c5"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/gameplay_marker.gd",
-        "sha256": "39ed18fbd9540f8153c0caeab81418e5cebc6df720caa36a2bfb22968264e6cc"
+        "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "3d5ad2475522d8e1744ae15f39494d9c348036b4d1835640b7bc27b059ac55cb"
+        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "dca1ed421d9e98fa8765acc26c94cfad12e4d8a94bea0a1b9d4d446f36462151"
+        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "4a03a1da48eb684e461cb5682820a99afa9eb91d2b2629db41be87629daaddb7"
+        "sha256": "bba17999ebee276a88aaed2c2778e5ab7282e1609a3ede101c09f89f3ca345cf"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/water_region_control.gd",
-        "sha256": "81afed6386a1e208850047b4d6a1165866a3362efb6bf8d4788e10c55d4e2dd3"
+        "sha256": "471bc74f2119254e2d86fca59ada9b88dbad5879c0865ce9fccb4c195329f59b"
       },
       {
         "path": "godot-client/world_authoring/regions/four_gates/assets/prototypes/avenue-standard-0-e50d9319bd52.glb",
@@ -59206,10 +59789,6 @@
         "sha256": "cf5e93f99689c4e46e705e395f8f09e59814848f787ed52007e47047d4c423ae"
       },
       {
-        "path": "godot-client/world_authoring/regions/four_gates/assets/textures/continental-ground.png",
-        "sha256": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035"
-      },
-      {
         "path": "godot-client/world_authoring/regions/four_gates/assets/textures/continental-water.png",
         "sha256": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac"
       },
@@ -59386,8 +59965,12 @@
         "sha256": "58f69be285072709290d902ac0adf47d77ebed0c7531437b666891f61b6e1b00"
       },
       {
+        "path": "godot-client/world_authoring/regions/four_gates/surfaces/biome-coastal-gravel.tres",
+        "sha256": "475705e63923f6403754f7c9b13e18e8578e42b98b937f235622b9a8fd947734"
+      },
+      {
         "path": "godot-client/world_authoring/regions/four_gates/surfaces/continental-ground.tres",
-        "sha256": "ecf20926839d4cda26826c6edb7f0f6976c2b98e3de091f6b895a85b5c9b929a"
+        "sha256": "76278f04e0c7c76d3ac166f591137d3bafbe7dd14a227c52e6ab5edff51634ff"
       },
       {
         "path": "godot-client/world_authoring/regions/four_gates/surfaces/river.tres",
@@ -59404,7 +59987,7 @@
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/four_gates/four_gates.tscn",
-      "sha256": "7082a8589a32ff0e6c11ca888bf74aebe7e37ccaa081a00013f6c0ac26ea8827"
+      "sha256": "2017502f7438763a574ef40b22556480c91d039f427175b48fafc36f3eb94567"
     }
   },
   "terrain": {
@@ -59419,19 +60002,20 @@
       "sha256": "198e61cb323ecfa08440ddc647860775917d1b465c7b7c3be46333820b845ed2"
     },
     "baseSurface": {
+      "biomeBlendEnabled": true,
       "materialMode": "surface",
-      "pbr": {
+      "pbrOverrides": {
         "albedoColor": [
-          1.0,
-          1.0,
-          1.0,
+          0.7200000286102295,
+          0.8500000238418579,
+          0.6499999761581421,
           1.0
         ],
-        "albedoTexture": "godot-client/world_authoring/regions/four_gates/assets/textures/continental-ground.png",
+        "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
         "metallic": 0.0,
         "normalScale": 1.0,
         "normalTexture": null,
-        "roughness": 0.949999988079071,
+        "roughness": 1.0,
         "triplanar": false,
         "uvOffset": [
           0.800000011920929,
@@ -59439,15 +60023,51 @@
           0.0
         ],
         "uvScale": [
-          1.0,
-          1.0,
+          1.470588207244873,
+          1.470588207244873,
           1.0
         ],
         "worldTriplanar": false
       },
-      "preset": "Custom",
+      "preset": "Grass",
       "rotationDegrees": 0.0
     },
+    "biomePalette": [
+      {
+        "id": "coastal-gravel",
+        "role": "limestone",
+        "surface": {
+          "materialMode": "surface",
+          "pbrOverrides": {
+            "albedoColor": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+            "metallic": 0.0,
+            "normalScale": 1.0,
+            "normalTexture": null,
+            "roughness": 0.9399999976158142,
+            "triplanar": false,
+            "uvOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "uvScale": [
+              1.470588207244873,
+              1.470588207244873,
+              1.0
+            ],
+            "worldTriplanar": false
+          },
+          "preset": "Coastal limestone gravel",
+          "rotationDegrees": 0.0
+        }
+      }
+    ],
     "cellMetres": 2.0,
     "height": 156,
     "origin": [

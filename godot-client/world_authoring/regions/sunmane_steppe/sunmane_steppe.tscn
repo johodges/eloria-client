@@ -1,4 +1,4 @@
-[gd_scene load_steps=112 format=3]
+[gd_scene load_steps=113 format=3]
 
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/bridge_control.gd" id="bridge"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_control.gd" id="asset"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/gameplay_marker.gd" id="marker"]
+[ext_resource type="Resource" path="res://world_authoring/regions/sunmane_steppe/surfaces/biome-dry-grass.tres" id="biome_entry"]
 [ext_resource type="Resource" path="res://world_authoring/regions/sunmane_steppe/surfaces/desert.tres" id="desert"]
 [ext_resource type="Resource" path="res://world_authoring/regions/sunmane_steppe/surfaces/worn-earth-road.tres" id="road_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/sunmane_steppe/surfaces/river-water.tres" id="river_surface"]
@@ -137,6 +138,7 @@ cell_metres = 2.0
 grid_size = Vector2i(397, 397)
 base_heights_path = "res://world_authoring/regions/sunmane_steppe/base-heights.f32le"
 base_surface = ExtResource("desert")
+biome_palette = [ExtResource("biome_entry")]
 
 [node name="Patches" type="Node3D" parent="Terrain"]
 

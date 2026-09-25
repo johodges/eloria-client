@@ -34,12 +34,13 @@ from world_layout import World,CELL,CHUNK,ROAD_EARTHWORKS_GRADE
 from content import Content,spawn_position
 import scene_io as S
 from terrain_export import partition_surface
+from biome_blend import build_masks
 from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
 from build_progress import Progress
 SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','authoring.py','authoring_catalog.py','saved_seam_profile.py','saved-seam-grey-whitehorn-v1.json','saved_post_support_profile.py','saved-seam-post-support-v1.json','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
-EXPORT_SOURCES=('build_continent.py','scene_io.py','terrain_export.py','compact_glb_images.py','bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_prepare.py','coastal_bridge_export.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py')
+EXPORT_SOURCES=('build_continent.py','scene_io.py','terrain_export.py','biome_blend.py','compact_glb_images.py','bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_prepare.py','coastal_bridge_export.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py')
 
 
 EMPTY_SHA256=hashlib.sha256(b'').hexdigest()
@@ -1085,6 +1086,14 @@ def export_geometry(world,content,output):
         'crossingSites':crossing_report(world)['sites'] if hasattr(world,'crossing_sites') else [],
         'designedDecks':world.plan.get('designed_decks',[])})
     partitions=partition_surface(world,terrain_path)
+    # Appearance masks are generated during export from the final world and
+    # saved Surface records. Geometry and collision remain byte-identical.
+    chunk_cells={(int(name[:2]),int(name[3:])) for chunks in partitions.values() for name in chunks}
+    world.biome_blend_chunks=build_masks(world,chunk_cells)
+    catalog={"schema":"eloria-biome-blend-catalog-v1","chunkMetres":CHUNK,
+             "chunks":[world.biome_blend_chunks[key] for key in sorted(world.biome_blend_chunks,
+                       key=lambda cell:(cell[1],cell[0]))]}
+    json_write(CLIENT/'godot-client/assets/world/biome_blend/catalog.json',catalog)
     from compact_glb_images import compact_embedded_images
     terrain_image_compaction=compact_embedded_images(terrain_path)
     print('Shared terrain image compaction: '+json.dumps(terrain_image_compaction,sort_keys=True),flush=True)
@@ -1144,6 +1153,17 @@ def export_geometry(world,content,output):
             c['collision'].pop('file',None);c['collision'].pop('binary',None)
             c['navigation'].pop('collisionFile',None)
             c['performance']=chunk_stats;c['externalResources']=chunk_stats['externalResources']
+            blend=getattr(world,'biome_blend_chunks',{}).get(tuple(entry['cell']))
+            if blend is not None and f'{region}:base' in {item['id'] for item in blend['palettes']}:
+                c['biomeBlend']=blend
+            else:
+                # Field presence is authority: an opted-out/newly baked chunk
+                # must not inherit an older colour-refresh catalog entry.
+                c['biomeBlend']=None
+            # Retained asset material edits are baked into the new GLB. The
+            # explicit empty list invalidates an older color-only catalog;
+            # existing published chunks without this key still use it.
+            c['objectMaterialOverrides']={'schema':'eloria-object-material-overrides-v1','entries':[]}
             json_write(chunk_root/'world.json',c)
             # Conservative geometry + BVH + texture allowance. Runtime has an
             # independent shared-texture pool; this deliberately overestimates.

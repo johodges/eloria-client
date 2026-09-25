@@ -78882,7 +78882,7 @@
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
-        "sha256": "7609a484863ea722fb8a65314ea35c4f83098d5b5e6aeead1db217eafec83180"
+        "sha256": "5f34c8606855d7d8b4e0b7528759b6302b855b1460b511887fe6885670a75f72"
       },
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/textures/desert-basecolor.png",
@@ -78926,31 +78926,35 @@
       },
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/worn_path.gdshader",
-        "sha256": "8c8001272e972b0e79e99c24dde9db3a23d227a79774d88a60f241bab1eb2076"
+        "sha256": "6e339c5751da70db5b45a96ffa22a1dc21bad7ecf787780c6a465275a732a68c"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/asset_control.gd",
-        "sha256": "03f66aea24f846327fd9a5222f496e41ae953aba2acff3263c144c1a8853c051"
+        "sha256": "89f4693ed3de906162ae7b0fd6448dc1cd29402f0efbf26d54a2163ba505ffaf"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/biome_palette_entry.gd",
+        "sha256": "5d1e213929e31f2dec1e2987808aa02a173ac76f949857a396ea5b8dac2c81c5"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/bridge_control.gd",
-        "sha256": "538cde36b36d0a63afb580a38974335f07256d5c136dad32dcd17a128345e4d5"
+        "sha256": "5fcac2d5c093e755cfccd327128ba7246a78ab00e8c365ba481c5f6302e83e8f"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/gameplay_marker.gd",
-        "sha256": "39ed18fbd9540f8153c0caeab81418e5cebc6df720caa36a2bfb22968264e6cc"
+        "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "3d5ad2475522d8e1744ae15f39494d9c348036b4d1835640b7bc27b059ac55cb"
+        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "dca1ed421d9e98fa8765acc26c94cfad12e4d8a94bea0a1b9d4d446f36462151"
+        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "4a03a1da48eb684e461cb5682820a99afa9eb91d2b2629db41be87629daaddb7"
+        "sha256": "bba17999ebee276a88aaed2c2778e5ab7282e1609a3ede101c09f89f3ca345cf"
       },
       {
         "path": "godot-client/world_authoring/regions/sunmane_steppe/assets/prototypes/kit-animal-pen-0.glb",
@@ -79501,8 +79505,12 @@
         "sha256": "1fa1af52b23a89f2641b0a0ba6baf1f0360f36582d855d3f8b4a4af38c3dc5a6"
       },
       {
+        "path": "godot-client/world_authoring/regions/sunmane_steppe/surfaces/biome-dry-grass.tres",
+        "sha256": "962787168b521d56cb1ee209455a98870473f42d377a4b28d40d5893b83e5b34"
+      },
+      {
         "path": "godot-client/world_authoring/regions/sunmane_steppe/surfaces/desert.tres",
-        "sha256": "12fa093adb8d7017511edb6c14724bc5f3755248c810c6d7de2005b661337ec6"
+        "sha256": "c9db49d4e4c7c60dfebe8e206c16272c9380e019a19a20ce808c83162b254dfc"
       },
       {
         "path": "godot-client/world_authoring/regions/sunmane_steppe/surfaces/river-water.tres",
@@ -79527,7 +79535,7 @@
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/sunmane_steppe/sunmane_steppe.tscn",
-      "sha256": "8e9dc40eaab387af506281feb7fdf7545b20cf7de2cf2a74563562382529718d"
+      "sha256": "507ced92781eeb01f10cb13abae2dfde0724aa23d004b9f49a8480fc84384bca"
     }
   },
   "terrain": {
@@ -79537,6 +79545,7 @@
       "sha256": "bb18a189f0b6ccc7ed3d1e47eaa83cb953cb7b6422a04f91be4ae57c938eedf3"
     },
     "baseSurface": {
+      "biomeBlendEnabled": true,
       "materialMode": "surface",
       "pbrOverrides": {
         "albedoColor": [
@@ -79567,6 +79576,42 @@
       "preset": "Desert",
       "rotationDegrees": 0.0
     },
+    "biomePalette": [
+      {
+        "id": "dry-grass",
+        "role": "steppe",
+        "surface": {
+          "materialMode": "surface",
+          "pbrOverrides": {
+            "albedoColor": [
+              0.7300000190734863,
+              0.7400000095367432,
+              0.5099999904632568,
+              1.0
+            ],
+            "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+            "metallic": 0.0,
+            "normalScale": 1.0,
+            "normalTexture": null,
+            "roughness": 1.0,
+            "triplanar": false,
+            "uvOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "uvScale": [
+              1.0416667461395264,
+              1.0416667461395264,
+              1.0
+            ],
+            "worldTriplanar": false
+          },
+          "preset": "Grass",
+          "rotationDegrees": 0.0
+        }
+      }
+    ],
     "cellMetres": 2.0,
     "height": 397,
     "origin": [

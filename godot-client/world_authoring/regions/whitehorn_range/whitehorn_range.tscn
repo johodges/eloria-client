@@ -1,10 +1,13 @@
-[gd_scene load_steps=416 format=3]
+[gd_scene load_steps=484 format=3]
 
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres" id="object_weathered_limestone"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/path_control.gd" id="path"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_control.gd" id="asset"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/gameplay_marker.gd" id="marker"]
+[ext_resource type="Resource" path="res://world_authoring/regions/whitehorn_range/surfaces/biome-scree.tres" id="biome_entry"]
 [ext_resource type="Resource" path="res://world_authoring/regions/whitehorn_range/surfaces/continental-ground.tres" id="terrain_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/whitehorn_range/surfaces/road.tres" id="road_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/whitehorn_range/surfaces/river.tres" id="river_surface"]
@@ -416,6 +419,461 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/whitehorn_range/assets/prototypes/structure-watch-01-69c2ae7734aa.glb" id="prototype_381"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/whitehorn_range/assets/prototypes/structure-watch-02-d1478794bd7f.glb" id="prototype_382"]
 
+[sub_resource type="Resource" id="object_material_0000"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_BridgeWatch/Landmark_BridgeWatch__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0001"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_EastCamp/Landmark_EastCamp__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0002"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_GateStore/Landmark_GateStore__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0003"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_GateWorkshop/Landmark_GateWorkshop__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0004"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_HighOverlook/Landmark_HighOverlook__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0005"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_LowerCamp/Landmark_LowerCamp__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0006"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_MineYard/Landmark_MineYard__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0007"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_TemplePinnacle0/Landmark_TemplePinnacle0__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0008"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_TemplePinnacle1/Landmark_TemplePinnacle1__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0009"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_TemplePinnacle2/Landmark_TemplePinnacle2__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0010"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_TempleRest/Landmark_TempleRest__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0011"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_glacier_temple/Landmark_glacier_temple__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0012"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_glacier_temple/Landmark_glacier_temple__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0013"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_mine_portal/Landmark_mine_portal__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0014"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_mine_portal/Walk_Landmark_mine_portal__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0015"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_shrine_00/Landmark_shrine_00__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0016"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_shrine_00/Landmark_shrine_00__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0017"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_shrine_02/Landmark_shrine_02__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0018"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_shrine_02/Landmark_shrine_02__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0019"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_south_gate/Landmark_south_gate__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0020"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_south_gate/Landmark_south_gate__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0021"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Lore_snowline_stones/Lore_snowline_stones__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0022"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Lore_snowline_stones/Walk_Lore_snowline_stones__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0023"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_000/Prop_waystone_000__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0024"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_000/Prop_waystone_000__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0025"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_001/Prop_waystone_001__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0026"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_001/Prop_waystone_001__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0027"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_002/Prop_waystone_002__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0028"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_002/Prop_waystone_002__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0029"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_003/Prop_waystone_003__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0030"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_003/Prop_waystone_003__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0031"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_004/Prop_waystone_004__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0032"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_004/Prop_waystone_004__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0033"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_005/Prop_waystone_005__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0034"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_005/Prop_waystone_005__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0035"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_006/Prop_waystone_006__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0036"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_006/Prop_waystone_006__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0037"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_007/Prop_waystone_007__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0038"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_007/Prop_waystone_007__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0039"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_008/Prop_waystone_008__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0040"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_008/Prop_waystone_008__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0041"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_009/Prop_waystone_009__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0042"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_009/Prop_waystone_009__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0043"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_010/Prop_waystone_010__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0044"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_010/Prop_waystone_010__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0045"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_011/Prop_waystone_011__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0046"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_011/Prop_waystone_011__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0047"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_012/Prop_waystone_012__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0048"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_012/Prop_waystone_012__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0049"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_013/Prop_waystone_013__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0050"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_013/Prop_waystone_013__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0051"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_014/Prop_waystone_014__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0052"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_014/Prop_waystone_014__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0053"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_015/Prop_waystone_015__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0054"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_015/Prop_waystone_015__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0055"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_016/Prop_waystone_016__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0056"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_waystone_016/Prop_waystone_016__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0057"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_horn_shrine_school/Secret_horn_shrine_school__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0058"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_horn_temple_vault/Secret_horn_temple_vault__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0059"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Structure_watch_00/Structure_watch_00__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0060"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Structure_watch_00/Structure_watch_00__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0061"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Structure_watch_01/Structure_watch_01__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0062"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Structure_watch_01/Structure_watch_01__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0063"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Structure_watch_02/Structure_watch_02__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0064"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Structure_watch_02/Structure_watch_02__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
 [node name="WhitehornRange" type="Node3D"]
 script = ExtResource("region")
 region_id = "whitehorn_range"
@@ -441,6 +899,7 @@ base_heights_path = "res://world_authoring/regions/whitehorn_range/base-heights.
 base_colors_path = "res://world_authoring/regions/whitehorn_range/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
 base_surface = ExtResource("terrain_surface")
+biome_palette = [ExtResource("biome_entry")]
 
 [node name="Patches" type="Node3D" parent="Terrain"]
 
@@ -724,6 +1183,7 @@ surface = ExtResource("river_surface")
 script = ExtResource("asset")
 transform = Transform3D(-0.829037572555, 0, -0.559192903471, 0, 1, 0, 0.559192903471, 0, -0.829037572555, -21.1000899621, 173.71578662, 27.2649103278)
 asset_id = "Landmark_BridgeWatch"
+material_overrides = [SubResource("object_material_0000")]
 node_name = "Landmark_BridgeWatch"
 catalog_asset_id = "whitehorn:landmark-bridgewatch-a111df2dd767"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-bridgewatch-a111df2dd767.glb"
@@ -737,6 +1197,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.829037572555, 0, -0.559192903471, 0, 1, 0, 0.559192903471, 0, -0.829037572555, 51.9835361559, 157.619859229, 193.981038355)
 asset_id = "Landmark_EastCamp"
+material_overrides = [SubResource("object_material_0001")]
 node_name = "Landmark_EastCamp"
 catalog_asset_id = "whitehorn:landmark-eastcamp-2478cc90715e"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-eastcamp-2478cc90715e.glb"
@@ -750,6 +1211,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.829037572555, 0, 0.559192903471, 0, 1, 0, -0.559192903471, 0, 0.829037572555, -48.5026422407, 168.414083939, 155.453687639)
 asset_id = "Landmark_GateStore"
+material_overrides = [SubResource("object_material_0002")]
 node_name = "Landmark_GateStore"
 catalog_asset_id = "whitehorn:landmark-gatestore-cf333c3cb109"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-gatestore-cf333c3cb109.glb"
@@ -763,6 +1225,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.829037572555, 0, 0.559192903471, 0, 1, 0, -0.559192903471, 0, 0.829037572555, -25.9528202672, 168.999217451, 140.243640665)
 asset_id = "Landmark_GateWorkshop"
+material_overrides = [SubResource("object_material_0003")]
 node_name = "Landmark_GateWorkshop"
 catalog_asset_id = "whitehorn:landmark-gateworkshop-eec155550f2d"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-gateworkshop-eec155550f2d.glb"
@@ -776,6 +1239,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.829037572555, 0, -0.559192903471, 0, 1, 0, 0.559192903471, 0, -0.829037572555, 34.4660203458, 175.7045751, 172.993221974)
 asset_id = "Landmark_HighOverlook"
+material_overrides = [SubResource("object_material_0004")]
 node_name = "Landmark_HighOverlook"
 catalog_asset_id = "whitehorn:landmark-highoverlook-ad54d06c136a"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-highoverlook-ad54d06c136a.glb"
@@ -789,6 +1253,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.829037572555, 0, 0.559192903471, 0, 1, 0, -0.559192903471, 0, 0.829037572555, 17.1047219866, 181.305899791, 109.593371327)
 asset_id = "Landmark_LowerCamp"
+material_overrides = [SubResource("object_material_0005")]
 node_name = "Landmark_LowerCamp"
 catalog_asset_id = "whitehorn:landmark-lowercamp-433632b78dd0"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-lowercamp-433632b78dd0.glb"
@@ -802,6 +1267,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.829037572555, 0, -0.559192903471, 0, 1, 0, 0.559192903471, 0, -0.829037572555, 24.2262571292, 214.374215188, -65.8504974526)
 asset_id = "Landmark_MineYard"
+material_overrides = [SubResource("object_material_0006")]
 node_name = "Landmark_MineYard"
 catalog_asset_id = "whitehorn:landmark-mineyard-bacf42868ab4"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-mineyard-bacf42868ab4.glb"
@@ -815,6 +1281,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.829037572555, 0, 0.559192903471, 0, 1, 0, -0.559192903471, 0, 0.829037572555, -102.3320509, 229.3, -96.0276909945)
 asset_id = "Landmark_TemplePinnacle0"
+material_overrides = [SubResource("object_material_0007")]
 node_name = "Landmark_TemplePinnacle0"
 catalog_asset_id = "whitehorn:landmark-templepinnacle0-411d18d2c1aa"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-templepinnacle0-411d18d2c1aa.glb"
@@ -828,6 +1295,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.829037572555, 0, 0.559192903471, 0, 1, 0, -0.559192903471, 0, 0.829037572555, -95.6997503196, 229.3, -100.501234222)
 asset_id = "Landmark_TemplePinnacle1"
+material_overrides = [SubResource("object_material_0008")]
 node_name = "Landmark_TemplePinnacle1"
 catalog_asset_id = "whitehorn:landmark-templepinnacle1-51194c36347f"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-templepinnacle1-51194c36347f.glb"
@@ -841,6 +1309,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.829037572555, 0, 0.559192903471, 0, 1, 0, -0.559192903471, 0, 0.829037572555, -89.0674497392, 229.3, -104.97477745)
 asset_id = "Landmark_TemplePinnacle2"
+material_overrides = [SubResource("object_material_0009")]
 node_name = "Landmark_TemplePinnacle2"
 catalog_asset_id = "whitehorn:landmark-templepinnacle2-51b46224ffd6"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-templepinnacle2-51b46224ffd6.glb"
@@ -854,6 +1323,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.559192903471, 0, 0.829037572555, 0, 1, 0, -0.829037572555, 0, -0.559192903471, -93.2963451422, 201.810856659, -62.6028398352)
 asset_id = "Landmark_TempleRest"
+material_overrides = [SubResource("object_material_0010")]
 node_name = "Landmark_TempleRest"
 catalog_asset_id = "whitehorn:landmark-templerest-9f7f7d5e49d6"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-templerest-9f7f7d5e49d6.glb"
@@ -906,6 +1376,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "land
 script = ExtResource("asset")
 transform = Transform3D(-0.829037572555, 0, -0.559192903471, 0, 1, 0, 0.559192903471, 0, -0.829037572555, -91.2286675406, 211, -93.8725814071)
 asset_id = "Landmark_glacier_temple"
+material_overrides = [SubResource("object_material_0011"), SubResource("object_material_0012")]
 node_name = "Landmark_glacier_temple"
 catalog_asset_id = "whitehorn:landmark-glacier-temple-35b3b32a0edc"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-glacier-temple-35b3b32a0edc.glb"
@@ -932,6 +1403,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "land
 script = ExtResource("asset")
 transform = Transform3D(-0.964101404446, 0, 0.265534332895, 0, 1, 0, -0.265534332895, 0, -0.964101404446, 24.5719019726, 214.473621368, -84.2687390518)
 asset_id = "Landmark_mine_portal"
+material_overrides = [SubResource("object_material_0013"), SubResource("object_material_0014")]
 node_name = "Landmark_mine_portal"
 catalog_asset_id = "whitehorn:landmark-mine-portal-b3fad7b21f87"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-mine-portal-b3fad7b21f87.glb"
@@ -945,6 +1417,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "land
 script = ExtResource("asset")
 transform = Transform3D(0.936902283613, 0, -0.349591348522, 0, 1, 0, 0.349591348522, 0, 0.936902283613, -33.6642295526, 162.62486362, 184.292839274)
 asset_id = "Landmark_shrine_00"
+material_overrides = [SubResource("object_material_0015"), SubResource("object_material_0016")]
 node_name = "Landmark_shrine_00"
 catalog_asset_id = "whitehorn:landmark-shrine-00-8add73848fca"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-shrine-00-8add73848fca.glb"
@@ -958,6 +1431,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "land
 script = ExtResource("asset")
 transform = Transform3D(-0.959366627229, 0, 0.282162496725, 0, 1, 0, -0.282162496725, 0, -0.959366627229, -12.0835516983, 169.091680033, 164.221633855)
 asset_id = "Landmark_shrine_02"
+material_overrides = [SubResource("object_material_0017"), SubResource("object_material_0018")]
 node_name = "Landmark_shrine_02"
 catalog_asset_id = "whitehorn:landmark-shrine-02-1c635e4f526e"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-shrine-02-1c635e4f526e.glb"
@@ -971,6 +1445,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "land
 script = ExtResource("asset")
 transform = Transform3D(0.829037572555, 0, 0.559192903471, 0, 1, 0, -0.559192903471, 0, 0.829037572555, -26.9543958626, 168.985798679, 164.498143551)
 asset_id = "Landmark_south_gate"
+material_overrides = [SubResource("object_material_0019"), SubResource("object_material_0020")]
 node_name = "Landmark_south_gate"
 catalog_asset_id = "whitehorn:landmark-south-gate-5b41bc5f27b6"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/landmark-south-gate-5b41bc5f27b6.glb"
@@ -984,6 +1459,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "landmark", "land
 script = ExtResource("asset")
 transform = Transform3D(0.829037572555, 0, 0.559192903471, 0, 1, 0, -0.559192903471, 0, 0.829037572555, 36.9647979239, 177.206464168, 170.420097001)
 asset_id = "Lore_snowline_stones"
+material_overrides = [SubResource("object_material_0021"), SubResource("object_material_0022")]
 node_name = "Lore_snowline_stones"
 catalog_asset_id = "whitehorn:lore-snowline-stones-164eeb7514e6"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/lore-snowline-stones-164eeb7514e6.glb"
@@ -5222,6 +5698,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.644931224953, 0, -0.764240613342, 0, 1, 0, 0.764240613342, 0, -0.644931224953, -176.000169897, 219.49541639, 21.1368170767)
 asset_id = "Prop_waystone_000"
+material_overrides = [SubResource("object_material_0023"), SubResource("object_material_0024")]
 node_name = "Prop_waystone_000"
 catalog_asset_id = "whitehorn:prop-waystone-000-994c85063d13"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-000-994c85063d13.glb"
@@ -5235,6 +5712,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.716508548159, 0, 0.697578311314, 0, 1, 0, -0.697578311314, 0, 0.716508548159, -182.823709178, 216.196505631, 19.0725375865)
 asset_id = "Prop_waystone_001"
+material_overrides = [SubResource("object_material_0025"), SubResource("object_material_0026")]
 node_name = "Prop_waystone_001"
 catalog_asset_id = "whitehorn:prop-waystone-001-79524c67cf5c"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-001-79524c67cf5c.glb"
@@ -5248,6 +5726,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.538721602932, 0, -0.842483848233, 0, 1, 0, 0.842483848233, 0, -0.538721602932, -184.031038417, 215.716317583, 18.1976314525)
 asset_id = "Prop_waystone_002"
+material_overrides = [SubResource("object_material_0027"), SubResource("object_material_0028")]
 node_name = "Prop_waystone_002"
 catalog_asset_id = "whitehorn:prop-waystone-002-7e6dffcf0568"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-002-7e6dffcf0568.glb"
@@ -5261,6 +5740,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.868708409294, 0, -0.495323833085, 0, 1, 0, 0.495323833085, 0, -0.868708409294, -177.472623439, 219.561232997, 17.0288977958)
 asset_id = "Prop_waystone_003"
+material_overrides = [SubResource("object_material_0029"), SubResource("object_material_0030")]
 node_name = "Prop_waystone_003"
 catalog_asset_id = "whitehorn:prop-waystone-003-393811e95081"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-003-393811e95081.glb"
@@ -5274,6 +5754,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.81797499254, 0, -0.575253780153, 0, 1, 0, 0.575253780153, 0, -0.81797499254, -63.0749483208, 191.92519664, -31.7015136926)
 asset_id = "Prop_waystone_004"
+material_overrides = [SubResource("object_material_0031"), SubResource("object_material_0032")]
 node_name = "Prop_waystone_004"
 catalog_asset_id = "whitehorn:prop-waystone-004-6f0667b93dee"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-004-6f0667b93dee.glb"
@@ -5287,6 +5768,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.740539042668, 0, 0.672013337877, 0, 1, 0, -0.672013337877, 0, 0.740539042668, -76.7630621758, 192.410971631, -38.762206855)
 asset_id = "Prop_waystone_005"
+material_overrides = [SubResource("object_material_0033"), SubResource("object_material_0034")]
 node_name = "Prop_waystone_005"
 catalog_asset_id = "whitehorn:prop-waystone-005-ada8364127cf"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-005-ada8364127cf.glb"
@@ -5300,6 +5782,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.690029850563, 0, 0.723780909759, 0, 1, 0, -0.723780909759, 0, 0.690029850563, -78.8168791046, 192.606841148, -30.9643457379)
 asset_id = "Prop_waystone_006"
+material_overrides = [SubResource("object_material_0035"), SubResource("object_material_0036")]
 node_name = "Prop_waystone_006"
 catalog_asset_id = "whitehorn:prop-waystone-006-3a51f17683c9"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-006-3a51f17683c9.glb"
@@ -5313,6 +5796,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.431108913018, 0, -0.902299897549, 0, 1, 0, 0.902299897549, 0, 0.431108913018, -76.4286550734, 201.59393249, -83.8306685453)
 asset_id = "Prop_waystone_007"
+material_overrides = [SubResource("object_material_0037"), SubResource("object_material_0038")]
 node_name = "Prop_waystone_007"
 catalog_asset_id = "whitehorn:prop-waystone-007-e33940a25b35"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-007-e33940a25b35.glb"
@@ -5326,6 +5810,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.890287777368, 0, 0.455398367881, 0, 1, 0, -0.455398367881, 0, -0.890287777368, -88.5321606885, 204.475640849, -77.8103148095)
 asset_id = "Prop_waystone_008"
+material_overrides = [SubResource("object_material_0039"), SubResource("object_material_0040")]
 node_name = "Prop_waystone_008"
 catalog_asset_id = "whitehorn:prop-waystone-008-4d5c04f52744"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-008-4d5c04f52744.glb"
@@ -5339,6 +5824,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.999880582285, 0, 0.0154538399395, 0, 1, 0, -0.0154538399395, 0, -0.999880582285, -79.7759335417, 204.831664534, -85.9147787133)
 asset_id = "Prop_waystone_009"
+material_overrides = [SubResource("object_material_0041"), SubResource("object_material_0042")]
 node_name = "Prop_waystone_009"
 catalog_asset_id = "whitehorn:prop-waystone-009-232c87ec61eb"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-009-232c87ec61eb.glb"
@@ -5352,6 +5838,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.883435656275, 0, -0.468552495695, 0, 1, 0, 0.468552495695, 0, 0.883435656275, -75.555475331, 201.318614216, -84.1799240254)
 asset_id = "Prop_waystone_010"
+material_overrides = [SubResource("object_material_0043"), SubResource("object_material_0044")]
 node_name = "Prop_waystone_010"
 catalog_asset_id = "whitehorn:prop-waystone-010-91ca73a1fd17"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-010-91ca73a1fd17.glb"
@@ -5365,6 +5852,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.243769090142, 0, -0.969833300465, 0, 1, 0, 0.969833300465, 0, -0.243769090142, -28.3995790234, 165.177501135, 183.436508297)
 asset_id = "Prop_waystone_011"
+material_overrides = [SubResource("object_material_0045"), SubResource("object_material_0046")]
 node_name = "Prop_waystone_011"
 catalog_asset_id = "whitehorn:prop-waystone-011-f287567a9c55"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-011-f287567a9c55.glb"
@@ -5378,6 +5866,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.00462677574381, 0, 0.999989296416, 0, 1, 0, -0.999989296416, 0, -0.00462677574381, -32.6856840899, 161.998075053, 189.633042334)
 asset_id = "Prop_waystone_012"
+material_overrides = [SubResource("object_material_0047"), SubResource("object_material_0048")]
 node_name = "Prop_waystone_012"
 catalog_asset_id = "whitehorn:prop-waystone-012-53e8fe5477e9"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-012-53e8fe5477e9.glb"
@@ -5391,6 +5880,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.81149757853, 0, -0.584355782072, 0, 1, 0, 0.584355782072, 0, 0.81149757853, -138.773243065, 176.028348545, 109.131998613)
 asset_id = "Prop_waystone_013"
+material_overrides = [SubResource("object_material_0049"), SubResource("object_material_0050")]
 node_name = "Prop_waystone_013"
 catalog_asset_id = "whitehorn:prop-waystone-013-be2b99b284a0"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-013-be2b99b284a0.glb"
@@ -5404,6 +5894,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.992176086233, 0, 0.12484636121, 0, 1, 0, -0.12484636121, 0, 0.992176086233, -141.77335774, 176.73161975, 103.816609649)
 asset_id = "Prop_waystone_014"
+material_overrides = [SubResource("object_material_0051"), SubResource("object_material_0052")]
 node_name = "Prop_waystone_014"
 catalog_asset_id = "whitehorn:prop-waystone-014-d1e2e410ff6f"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-014-d1e2e410ff6f.glb"
@@ -5417,6 +5908,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.197639091703, 0, -0.980274854023, 0, 1, 0, 0.980274854023, 0, -0.197639091703, -160.917467267, 238.183841039, -72.7182238189)
 asset_id = "Prop_waystone_015"
+material_overrides = [SubResource("object_material_0053"), SubResource("object_material_0054")]
 node_name = "Prop_waystone_015"
 catalog_asset_id = "whitehorn:prop-waystone-015-c4aea8d7309e"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-015-c4aea8d7309e.glb"
@@ -5430,6 +5922,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.0501450075332, 0, 0.998741947762, 0, 1, 0, -0.998741947762, 0, -0.0501450075332, -147.578117297, 237.301840885, -84.8592535778)
 asset_id = "Prop_waystone_016"
+material_overrides = [SubResource("object_material_0055"), SubResource("object_material_0056")]
 node_name = "Prop_waystone_016"
 catalog_asset_id = "whitehorn:prop-waystone-016-16b7c984c3cd"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/prop-waystone-016-16b7c984c3cd.glb"
@@ -5560,6 +6053,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(-0.998172015609, 0, 0.0604369692734, 0, 1, 0, -0.0604369692734, 0, -0.998172015609, -15.6172554597, 168.950691997, 172.99426312)
 asset_id = "Secret_horn_shrine_school"
+material_overrides = [SubResource("object_material_0057")]
 node_name = "Secret_horn_shrine_school"
 catalog_asset_id = "whitehorn:secret-horn-shrine-school-051aaf5c93ba"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/secret-horn-shrine-school-051aaf5c93ba.glb"
@@ -5599,6 +6093,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.949586770726, 0, -0.313504329893, 0, 1, 0, 0.313504329893, 0, 0.949586770726, -78.6646547422, 211.062015273, -99.5664328639)
 asset_id = "Secret_horn_temple_vault"
+material_overrides = [SubResource("object_material_0058")]
 node_name = "Secret_horn_temple_vault"
 catalog_asset_id = "whitehorn:secret-horn-temple-vault-a2a16cf9ac28"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/secret-horn-temple-vault-a2a16cf9ac28.glb"
@@ -5625,6 +6120,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "prop", "mesh": "
 script = ExtResource("asset")
 transform = Transform3D(0.0317647549202, 0, -0.999495372848, 0, 1, 0, 0.999495372848, 0, 0.0317647549202, -178.800885235, 194.529384967, 56.5541867034)
 asset_id = "Structure_watch_00"
+material_overrides = [SubResource("object_material_0059"), SubResource("object_material_0060")]
 node_name = "Structure_watch_00"
 catalog_asset_id = "whitehorn:structure-watch-00-5680b680f94b"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/structure-watch-00-5680b680f94b.glb"
@@ -5638,6 +6134,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.28163211814, 0, 0.959522459368, 0, 1, 0, -0.959522459368, 0, 0.28163211814, 28.0167158221, 176.195749127, 165.039909728)
 asset_id = "Structure_watch_01"
+material_overrides = [SubResource("object_material_0061"), SubResource("object_material_0062")]
 node_name = "Structure_watch_01"
 catalog_asset_id = "whitehorn:structure-watch-01-69c2ae7734aa"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/structure-watch-01-69c2ae7734aa.glb"
@@ -5651,6 +6148,7 @@ metadata = {"composedSourceRegion": "whitehorn_range", "kind": "building", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.714744356676, 0, 0.699385805261, 0, 1, 0, -0.699385805261, 0, -0.714744356676, -24.9026017057, 174.08650671, 21.6274548344)
 asset_id = "Structure_watch_02"
+material_overrides = [SubResource("object_material_0063"), SubResource("object_material_0064")]
 node_name = "Structure_watch_02"
 catalog_asset_id = "whitehorn:structure-watch-02-d1478794bd7f"
 scene_path = "res://world_authoring/regions/whitehorn_range/assets/prototypes/structure-watch-02-d1478794bd7f.glb"

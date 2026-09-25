@@ -19,6 +19,8 @@ const ASSET_OVERRIDE_SCRIPT := preload(
 	"res://src/dev/map_authoring_region/asset_surface_override.gd")
 const GAMEPLAY_SCRIPT := preload(
 	"res://src/dev/map_authoring_region/gameplay_marker.gd")
+const BIOME_PALETTE_ENTRY := preload(
+	"res://src/dev/map_authoring_region/biome_palette_entry.gd")
 
 var errors: Array[String] = []
 
@@ -78,8 +80,9 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 	var runtime_seed: Variant = _runtime_binding_seed_record(region)
 	var replacements := _replacement_record(region, paths, water_regions)
 	var base_surface_record := _surface_record(terrain.base_surface,
-		String(terrain.get_path()))
-	var emitted_surface_records: Array = [base_surface_record, ground_regions,
+		String(terrain.get_path()), false, true)
+	var biome_palette := _biome_palette_records(terrain)
+	var emitted_surface_records: Array = [base_surface_record, biome_palette, ground_regions,
 		paths, bridges, objects]
 	var terrain_patches: Array[Dictionary] = terrain.patch_records()
 	_validate_terrain_patches(terrain_patches)
@@ -119,6 +122,8 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 		"baseSurface": base_surface_record,
 		"patches": terrain_patches,
 	}
+	if not biome_palette.is_empty():
+		terrain_record["biomePalette"] = biome_palette
 	if base_colors is Dictionary:
 		terrain_record["baseColors"] = base_colors
 	var document := {
@@ -680,7 +685,8 @@ func _replacement_record(region: Node3D, paths: Array[Dictionary],
 
 
 func _surface_record(surface: MapAuthoringSurface, node_path: String,
-		allow_default_water: bool = false) -> Dictionary:
+		allow_default_water: bool = false,
+		emit_biome_opt_in: bool = false) -> Dictionary:
 	if surface == null:
 		if allow_default_water:
 			return {"preset": "Water", "rotationDegrees": 0.0,
@@ -691,6 +697,8 @@ func _surface_record(surface: MapAuthoringSurface, node_path: String,
 		"rotationDegrees": surface.rotation_degrees,
 		"materialMode": "road" if surface.material_mode == \
 			MapAuthoringSurface.MaterialMode.ROAD_SHADER else "surface"}
+	if emit_biome_opt_in and surface.biome_blend_enabled:
+		record["biomeBlendEnabled"] = true
 	var material := surface.source_material
 	if surface.material_mode == MapAuthoringSurface.MaterialMode.ROAD_SHADER:
 		if surface.texture_preset != MapAuthoringTexturePresets.WORN_EARTH or \
@@ -740,6 +748,29 @@ func _surface_record(surface: MapAuthoringSurface, node_path: String,
 	record["pbr" if surface.texture_preset == MapAuthoringTexturePresets.CUSTOM \
 		else "pbrOverrides"] = pbr
 	return record
+
+
+func _biome_palette_records(terrain: Node) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var entries: Array = terrain.get("biome_palette")
+	if entries.size() > 1:
+		_fail("%s: Biome Palette supports at most one secondary surface." %
+			terrain.get_path())
+	for raw in entries:
+		if not _uses_script(raw, BIOME_PALETTE_ENTRY):
+			_fail("%s: invalid Biome Palette entry." % terrain.get_path())
+			continue
+		raw.bind_local_surface()
+		var identity := String(raw.id).strip_edges()
+		if identity.is_empty():
+			_fail("%s: Biome Palette entry needs a stable Id." % terrain.get_path())
+		if not BIOME_PALETTE_ENTRY.VALID_ROLES.has(String(raw.role)):
+			_fail("%s: unsupported Biome Palette role %s." % [terrain.get_path(), raw.role])
+		result.append({"id": identity, "role": String(raw.role),
+			"surface": _surface_record(raw.surface,
+				"%s/BiomePalette/%s" % [terrain.get_path(), identity])})
+	result.sort_custom(_sort_id)
+	return result
 
 
 func _same_resource(first: Variant, second: Variant) -> bool:
