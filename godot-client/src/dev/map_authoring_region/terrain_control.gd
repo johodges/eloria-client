@@ -11,6 +11,8 @@ const GROUND_REGION_MATERIAL := preload(
 const BIOME_BLEND_MATERIAL := preload("res://src/world/biome_blend_material.gd")
 const BIOME_PALETTE_ENTRY := preload(
 	"res://src/dev/map_authoring_region/biome_palette_entry.gd")
+const SCULPT_LAYER := preload(
+	"res://src/dev/map_authoring_region/terrain_sculpt_layer.gd")
 const BIOME_CATALOG_PATH := "res://assets/world/biome_blend/catalog.json"
 
 @export var origin := Vector2(-194.0, -500.0)
@@ -19,6 +21,8 @@ const BIOME_CATALOG_PATH := "res://assets/world/biome_blend/catalog.json"
 @export_file("*.f32le", "*.bin") var base_heights_path := ""
 @export_file("*.rgba8", "*.bin") var base_colors_path := ""
 @export var base_surface: MapAuthoringSurface
+## Sparse non-destructive edits bound to the original height file and grid.
+@export var sculpt_layer: Resource
 ## One optional within-region material mixed by a named landscape biome role.
 ## The production masks retain at most four region channels per chunk.
 @export var biome_palette: Array[Resource] = []
@@ -35,6 +39,7 @@ var _loaded_colors_sha := ""
 var _preview_signature: Array = []
 var _elapsed := 0.0
 var _bound_surface: MapAuthoringSurface
+var _bound_sculpt_layer: Resource
 var _bound_palette_entries: Array[Resource] = []
 var last_error := ""
 var preview_revision := 0
@@ -43,6 +48,7 @@ var preview_revision := 0
 func _ready() -> void:
 	set_process(true)
 	_sync_surface()
+	_sync_sculpt_layer()
 	_sync_palette()
 	refresh_preview()
 
@@ -50,6 +56,8 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if base_surface != _bound_surface:
 		_sync_surface()
+	if sculpt_layer != _bound_sculpt_layer:
+		_sync_sculpt_layer()
 	_sync_palette()
 	if not Engine.is_editor_hint():
 		return
@@ -75,6 +83,10 @@ func refresh_preview() -> bool:
 		_clear_preview()
 		update_configuration_warnings()
 		return false
+	if not _resolve_sculpted_base():
+		_clear_preview()
+		update_configuration_warnings()
+		return false
 	_apply_patches()
 	_apply_path_effects()
 	_preview_signature = _current_signature()
@@ -93,6 +105,30 @@ func base_heights() -> PackedFloat32Array:
 	return _base_heights.duplicate()
 
 
+func sculpted_base_heights() -> PackedFloat32Array:
+	if not _load_base_heights():
+		return PackedFloat32Array()
+	return _sculpted_base_result()
+
+
+func apply_sculpt_layer(next_layer: Resource) -> bool:
+	if not _load_base_heights():
+		return false
+	if next_layer != null:
+		if next_layer.get_script() != SCULPT_LAYER:
+			last_error = "Terrain Sculpt Layer uses an unsupported resource type."
+			return false
+		var error: String = next_layer.validation_error(_loaded_sha, origin,
+			grid_size, cell_metres)
+		if not error.is_empty():
+			last_error = error
+			return false
+		next_layer.resource_local_to_scene = true
+	sculpt_layer = next_layer
+	_sync_sculpt_layer()
+	return refresh_preview()
+
+
 func effective_heights() -> PackedFloat32Array:
 	if _effective_heights.size() != grid_size.x * grid_size.y:
 		refresh_preview()
@@ -102,6 +138,19 @@ func effective_heights() -> PackedFloat32Array:
 func base_sha256() -> String:
 	_load_base_heights()
 	return _loaded_sha
+
+
+func terrain_hit_world(ray_origin: Vector3, ray_direction: Vector3,
+		max_distance: float = 4096.0) -> Variant:
+	if not ray_origin.is_finite() or not ray_direction.is_finite() or \
+			ray_direction.length_squared() <= 0.000001 or \
+			not is_finite(max_distance) or max_distance <= 0.0:
+		return null
+	var inverse := global_transform.affine_inverse()
+	var local_start := inverse * ray_origin
+	var local_end := inverse * (ray_origin + ray_direction.normalized() * max_distance)
+	var hit: Variant = intersect_local_segment(local_start, local_end)
+	return global_transform * (hit as Vector3) if hit is Vector3 else null
 
 
 func live_biome_palette() -> Dictionary:
@@ -309,8 +358,32 @@ func _load_base_colors() -> bool:
 	return true
 
 
+func _resolve_sculpted_base() -> bool:
+	var result := _sculpted_base_result()
+	if result.size() != _base_heights.size():
+		if last_error.is_empty():
+			last_error = "Terrain Sculpt Layer could not be applied."
+		return false
+	_effective_heights = result
+	return true
+
+
+func _sculpted_base_result() -> PackedFloat32Array:
+	if sculpt_layer == null:
+		return _base_heights.duplicate()
+	if sculpt_layer.get_script() != SCULPT_LAYER:
+		last_error = "Terrain Sculpt Layer uses an unsupported resource type."
+		return PackedFloat32Array()
+	var error: String = sculpt_layer.validation_error(_loaded_sha, origin,
+		grid_size, cell_metres)
+	if not error.is_empty():
+		last_error = error
+		return PackedFloat32Array()
+	return sculpt_layer.apply_to(_base_heights, _loaded_sha, origin, grid_size,
+		cell_metres)
+
+
 func _apply_patches() -> void:
-	_effective_heights = _base_heights.duplicate()
 	var patches := get_node_or_null("Patches")
 	if patches == null:
 		return
@@ -844,6 +917,8 @@ func _current_signature() -> Array:
 			if not base_colors_path.is_empty() and FileAccess.file_exists(
 				ProjectSettings.globalize_path(base_colors_path)) else "",
 		base_surface.signature() if base_surface != null else [],
+		sculpt_layer.signature() if sculpt_layer != null and \
+			sculpt_layer.get_script() == SCULPT_LAYER else [],
 		_palette_signature(),
 		FileAccess.get_sha256(ProjectSettings.globalize_path(BIOME_CATALOG_PATH))
 			if FileAccess.file_exists(ProjectSettings.globalize_path(
@@ -899,6 +974,13 @@ func _sync_surface() -> void:
 		base_surface.resource_local_to_scene = true
 		base_surface.enable_region_uv_projection(preview_uv_metres_inverse)
 	_bound_surface = base_surface
+
+
+func _sync_sculpt_layer() -> void:
+	if sculpt_layer != null and sculpt_layer != _bound_sculpt_layer:
+		sculpt_layer = sculpt_layer.duplicate(true)
+		sculpt_layer.resource_local_to_scene = true
+	_bound_sculpt_layer = sculpt_layer
 
 
 func _sync_palette() -> void:

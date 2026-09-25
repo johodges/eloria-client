@@ -4,6 +4,8 @@ extends EditorPlugin
 const Dock := preload("res://addons/map_asset_palette/map_asset_dock.gd")
 const Placement := preload("res://addons/map_asset_palette/placement.gd")
 const RAY_LENGTH := 2048.0
+const SCULPT_PLUGIN_META := &"map_authoring_sculpt_plugin"
+const ASSET_PLUGIN_META := &"map_asset_palette_plugin"
 
 var _dock: EditorDock
 var _pending_entry: Dictionary = {}
@@ -11,6 +13,7 @@ var _edited_root: Node
 
 
 func _enter_tree() -> void:
+	get_editor_interface().get_base_control().set_meta(ASSET_PLUGIN_META, self)
 	_dock = Dock.new()
 	_dock.configure(get_editor_interface())
 	_dock.place_requested.connect(_arm_placement)
@@ -24,6 +27,9 @@ func _enter_tree() -> void:
 
 func _exit_tree() -> void:
 	_pending_entry.clear()
+	var base := get_editor_interface().get_base_control()
+	if base.get_meta(ASSET_PLUGIN_META, null) == self:
+		base.remove_meta(ASSET_PLUGIN_META)
 	if _dock != null:
 		remove_dock(_dock)
 		_dock.queue_free()
@@ -63,6 +69,11 @@ func _arm_placement(entry: Dictionary) -> void:
 	if _pilot_root() == null:
 		_dock.show_message("Open a map authoring scene before placing assets.")
 		return
+	var sculpt_plugin: Variant = get_editor_interface().get_base_control().get_meta(
+		SCULPT_PLUGIN_META, null)
+	if sculpt_plugin is Object and is_instance_valid(sculpt_plugin) and \
+			sculpt_plugin.has_method("deactivate_terrain_sculpt"):
+		sculpt_plugin.call("deactivate_terrain_sculpt")
 	_pending_entry = entry.duplicate(true)
 	_dock.set_placement_armed(true, String(entry.label))
 	get_editor_interface().set_main_screen_editor("3D")
@@ -72,6 +83,10 @@ func _cancel_placement() -> void:
 	_pending_entry.clear()
 	if _dock != null:
 		_dock.set_placement_armed(false)
+
+
+func cancel_placement_for_terrain_sculpt() -> void:
+	_cancel_placement()
 
 
 func _add_at_view_center(entry: Dictionary) -> void:
