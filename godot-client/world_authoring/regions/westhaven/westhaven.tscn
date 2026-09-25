@@ -1,11 +1,16 @@
-[gd_scene load_steps=563 format=3]
+[gd_scene load_steps=750 format=3]
 
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/marine-timber.tres" id="object_marine_timber"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/reed-thatch.tres" id="object_reed_thatch"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres" id="object_weathered_limestone"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/path_control.gd" id="path"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/water_region_control.gd" id="water"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_control.gd" id="asset"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/gameplay_marker.gd" id="marker"]
+[ext_resource type="Resource" path="res://world_authoring/regions/westhaven/surfaces/biome-coastal-gravel.tres" id="biome_entry"]
 [ext_resource type="Resource" path="res://world_authoring/regions/westhaven/surfaces/continental-ground.tres" id="terrain_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/westhaven/surfaces/road.tres" id="road_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/westhaven/surfaces/river.tres" id="river_surface"]
@@ -563,6 +568,1280 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/westhaven/assets/prototypes/yard-upper-4-fence-acefa8bdd8e6.glb" id="prototype_526"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/westhaven/assets/prototypes/yard-upper-4-sacks-a0d0cb2bd431.glb" id="prototype_527"]
 
+[sub_resource type="Resource" id="object_material_0000"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Entry_bonded_vaults_door"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0001"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Entry_gullstone_door"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0002"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Entry_haven_undercroft_door"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0003"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Entry_lamp_rock_door"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0004"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Entry_salvage_hole_mouth"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0005"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Farm_Water_Store/Farm_Water_Store__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0006"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Haven_Civic_Retaining_0"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0007"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Haven_Civic_Retaining_1"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0008"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Haven_Civic_Retaining_2"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0009"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_bell_0/House_bell_0__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0010"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_bell_1/House_bell_1__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0011"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_crown_0/House_crown_0__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0012"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_crown_1/House_crown_1__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0013"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_crown_2/House_crown_2__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0014"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_crown_3/House_crown_3__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0015"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_crown_4/House_crown_4__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0016"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_lower_0/House_lower_0__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0017"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_lower_1/House_lower_1__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0018"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_lower_2/House_lower_2__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0019"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_lower_3/House_lower_3__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0020"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_lower_4/House_lower_4__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0021"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_middle_0/House_middle_0__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0022"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_middle_1/House_middle_1__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0023"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_middle_2/House_middle_2__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0024"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_ridge_0/House_ridge_0__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0025"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_ridge_1/House_ridge_1__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0026"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_ridge_2/House_ridge_2__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0027"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_ridge_3/House_ridge_3__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0028"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_ridge_4/House_ridge_4__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0029"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_scribe_0/House_scribe_0__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0030"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_upper_0/House_upper_0__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0031"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_upper_1/House_upper_1__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0032"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_upper_2/House_upper_2__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0033"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_upper_3/House_upper_3__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0034"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_upper_4/House_upper_4__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0035"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Jetty_00/Walk_Jetty_00__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0036"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Jetty_01/Walk_Jetty_01__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0037"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Jetty_02/Walk_Jetty_02__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0038"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Jetty_03/Walk_Jetty_03__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0039"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Jetty_04/Walk_Jetty_04__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0040"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Jetty_05/Walk_Jetty_05__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0041"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Jetty_10/Walk_Jetty_10__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0042"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Jetty_11/Walk_Jetty_11__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0043"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Campanile/Landmark_Campanile__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0044"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Campanile/Landmark_Campanile__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0045"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Cart_Gate/Landmark_Cart_Gate__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0046"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Cart_Gate/Landmark_Cart_Gate__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0047"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Cathedral/Landmark_Cathedral__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0048"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_City_Gate/Landmark_City_Gate__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0049"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Custom_House/Landmark_Custom_House__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0050"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Domed_Hall/Landmark_Domed_Hall__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0051"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_East_Watch"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0052"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Fish_Market/Landmark_Fish_Market__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0053"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Great_Arcade/Landmark_Great_Arcade__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0054"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Great_Lighthouse/Landmark_Great_Lighthouse__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0055"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Great_Lighthouse/Landmark_Great_Lighthouse__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0056"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Great_Lighthouse/Walk_Landmark_Great_Lighthouse__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0057"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Guild_Hall"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0058"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Gullstone_Watch"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0059"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Harbour_Gate/Landmark_Harbour_Gate__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0060"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Harbour_Gate/Landmark_Harbour_Gate__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0061"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_High_Spire"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0062"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Hill_Estate"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0063"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Lesser_Tower_5"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0064"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Lesser_Tower_6/Landmark_Lesser_Tower_6__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0065"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Lesser_Tower_6/Landmark_Lesser_Tower_6__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0066"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Mole_Bastion/Landmark_Mole_Bastion__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0067"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Mole_Bastion/Landmark_Mole_Bastion__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0068"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Mole_Light/Landmark_Mole_Light__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0069"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Mole_Light/Landmark_Mole_Light__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0070"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Mole_Light/Walk_Landmark_Mole_Light__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0071"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Pier_A/Walk_Landmark_Pier_A__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0072"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Pier_B/Walk_Landmark_Pier_B__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0073"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Quay_Arch/Landmark_Quay_Arch__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0074"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Quay_Arch/Landmark_Quay_Arch__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0075"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Ropewalk/Landmark_Ropewalk__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0076"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Sea_Arch/Landmark_Sea_Arch__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0077"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Upland_Chapel/Landmark_Upland_Chapel__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0078"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Upland_Farm"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0079"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Warehouse_00/Landmark_Warehouse_00__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0080"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Warehouse_04/Landmark_Warehouse_04__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0081"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Warehouse_08/Landmark_Warehouse_08__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0082"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Warehouse_12/Landmark_Warehouse_12__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0083"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Warehouse_16/Landmark_Warehouse_16__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0084"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Yard_Shed_0/Landmark_Yard_Shed_0__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0085"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Yard_Shed_1/Landmark_Yard_Shed_1__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0086"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Lore_league_post_house/Lore_league_post_house__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0087"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Mole_Run_00/Mole_Run_00__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0088"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Mole_Run_01/Mole_Run_01__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0089"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Mole_Run_02/Mole_Run_02__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0090"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Mole_Run_03/Mole_Run_03__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0091"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Mole_Run_04/Mole_Run_04__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0092"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Mole_Run_05/Mole_Run_05__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0093"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Mole_Run_06/Mole_Run_06__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0094"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Mole_Run_07/Mole_Run_07__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0095"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Chandlery_03/Prop_Chandlery_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0096"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Cistern_crown_terrace/Prop_Cistern_crown_terrace__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0097"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Cistern_lower_square/Prop_Cistern_lower_square__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0098"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Cistern_mid_street/Prop_Cistern_mid_street__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0099"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Fish_Stall_00/Prop_Fish_Stall_00__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0100"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Fish_Stall_01/Prop_Fish_Stall_01__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0101"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Fish_Stall_02/Prop_Fish_Stall_02__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0102"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Fish_Stall_03/Prop_Fish_Stall_03__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0103"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Fish_Stall_04/Prop_Fish_Stall_04__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0104"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Fish_Stall_05/Prop_Fish_Stall_05__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0105"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Fish_Stall_06/Prop_Fish_Stall_06__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0106"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Fish_Stall_07/Prop_Fish_Stall_07__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0107"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Fish_Stall_08/Prop_Fish_Stall_08__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0108"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Quay_000/Prop_Quay_000__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0109"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Quay_002/Prop_Quay_002__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0110"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Quay_012/Prop_Quay_012__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0111"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Quay_017/Prop_Quay_017__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0112"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Quay_018/Prop_Quay_018__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0113"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Quay_022/Prop_Quay_022__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0114"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Quay_030/Prop_Quay_030__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0115"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Quay_068/Prop_Quay_068__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0116"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Quay_070/Prop_Quay_070__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0117"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_Quay_077/Prop_Quay_077__thatch_reed"
+surface_index = 0
+surface = ExtResource("object_reed_thatch")
+
+[sub_resource type="Resource" id="object_material_0118"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_00/Quay_Wall_00__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0119"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_00/Quay_Wall_00__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0120"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_01/Quay_Wall_01__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0121"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_01/Quay_Wall_01__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0122"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_02/Quay_Wall_02__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0123"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_02/Quay_Wall_02__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0124"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_03/Quay_Wall_03__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0125"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_03/Quay_Wall_03__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0126"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_04/Quay_Wall_04__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0127"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_04/Quay_Wall_04__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0128"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_05/Quay_Wall_05__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0129"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_05/Quay_Wall_05__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0130"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_06/Quay_Wall_06__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0131"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_06/Quay_Wall_06__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0132"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_07/Quay_Wall_07__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0133"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_07/Quay_Wall_07__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0134"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_08/Quay_Wall_08__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0135"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Quay_Wall_08/Quay_Wall_08__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0136"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_haven_arcade_school/Secret_haven_arcade_school__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0137"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_haven_cathedral_reliquary/Secret_haven_cathedral_reliquary__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0138"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_haven_gate_well/Secret_haven_gate_well__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0139"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_haven_guild_vault/Secret_haven_guild_vault__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0140"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_haven_lighthouse_eyrie/Secret_haven_lighthouse_eyrie__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0141"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_haven_mole_pit/Secret_haven_mole_pit__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0142"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_haven_spire_focus/Secret_haven_spire_focus__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0143"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_haven_waystone/Secret_haven_waystone__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0144"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ship_Anchored_00/Ship_Anchored_00__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0145"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ship_Anchored_02/Ship_Anchored_02__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0146"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ship_Anchored_04/Ship_Anchored_04__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0147"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ship_At_Cargo_Pier/Ship_At_Cargo_Pier__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0148"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ship_At_Crane_Pier/Ship_At_Crane_Pier__westhaven_quay_plank"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0149"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_FerryQuay_westhaven_04_WorldPlacement/Walk_FerryQuay_westhaven_04"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0150"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_westhaven_04_PilesAndPosts_WorldPlacement/FerryQuay_westhaven_04_PilesAndPosts"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0151"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_westhaven_04_Signpost_WorldPlacement/FerryQuay_westhaven_04_Signpost"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0152"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_westhaven_04_Skiff_Floor_WorldPlacement/FerryQuay_westhaven_04_Skiff_Floor"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0153"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_westhaven_04_Skiff_Seat_0_WorldPlacement/FerryQuay_westhaven_04_Skiff_Seat_0"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0154"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_westhaven_04_Skiff_Seat_1_WorldPlacement/FerryQuay_westhaven_04_Skiff_Seat_1"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0155"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_westhaven_04_Skiff_Seat_2_WorldPlacement/FerryQuay_westhaven_04_Skiff_Seat_2"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0156"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_westhaven_04_Skiff_Mast_WorldPlacement/FerryQuay_westhaven_04_Skiff_Mast"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0157"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_503_36_1132_WorldPlacement/BridgeUnionPier_503_36_1132"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0158"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_503_28_1148_WorldPlacement/BridgeUnionPier_503_28_1148"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0159"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_503_20_1156_WorldPlacement/BridgeUnionPier_503_20_1156"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0160"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_503_12_1172_WorldPlacement/BridgeUnionPier_503_12_1172"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0161"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_503_12_1180_WorldPlacement/BridgeUnionPier_503_12_1180"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0162"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_503_12_1188_WorldPlacement/BridgeUnionPier_503_12_1188"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0163"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_503_28_1204_WorldPlacement/BridgeUnionPier_503_28_1204"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0164"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_504_204_1148_WorldPlacement/BridgeUnionPier_504_204_1148"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0165"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_504_212_1156_WorldPlacement/BridgeUnionPier_504_212_1156"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0166"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_504_220_1172_WorldPlacement/BridgeUnionPier_504_220_1172"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0167"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_504_220_1180_WorldPlacement/BridgeUnionPier_504_220_1180"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0168"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_504_220_1188_WorldPlacement/BridgeUnionPier_504_220_1188"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0169"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_504_220_1196_WorldPlacement/BridgeUnionPier_504_220_1196"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0170"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_504_220_1204_WorldPlacement/BridgeUnionPier_504_220_1204"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0171"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_504_220_1212_WorldPlacement/BridgeUnionPier_504_220_1212"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0172"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_504_220_1220_WorldPlacement/BridgeUnionPier_504_220_1220"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0173"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_506_116_1140_WorldPlacement/BridgeUnionPier_506_116_1140"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0174"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_506_132_1148_WorldPlacement/BridgeUnionPier_506_132_1148"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0175"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_506_140_1148_WorldPlacement/BridgeUnionPier_506_140_1148"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0176"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_506_148_1156_WorldPlacement/BridgeUnionPier_506_148_1156"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0177"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_506_156_1164_WorldPlacement/BridgeUnionPier_506_156_1164"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0178"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Westhaven_FerryLandingStair_WorldPlacement/Walk_Westhaven_FerryLandingStair"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0179"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "AccessDeck_Edge_Westhaven_FerryLandingStair_WorldPlacement/AccessDeck_Edge_Westhaven_FerryLandingStair"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0180"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Westhaven_LampCausewayLink_WorldPlacement/Walk_Westhaven_LampCausewayLink"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0181"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "AccessDeck_Edge_Westhaven_LampCausewayLink_WorldPlacement/AccessDeck_Edge_Westhaven_LampCausewayLink"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
 [node name="Westhaven" type="Node3D"]
 script = ExtResource("region")
 region_id = "westhaven"
@@ -589,6 +1868,7 @@ base_heights_path = "res://world_authoring/regions/westhaven/base-heights.f32le"
 base_colors_path = "res://world_authoring/regions/westhaven/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
 base_surface = ExtResource("terrain_surface")
+biome_palette = [ExtResource("biome_entry")]
 
 [node name="Patches" type="Node3D" parent="Terrain"]
 
@@ -885,6 +2165,7 @@ surface = ExtResource("road_surface")
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -79, 7.45651404502, 36.6)
 asset_id = "Entry_bonded_vaults_door"
+material_overrides = [SubResource("object_material_0000")]
 node_name = "Entry_bonded_vaults_door"
 catalog_asset_id = "westhaven:entry-bonded-vaults-door-2a89b7d42ad3"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/entry-bonded-vaults-door-2a89b7d42ad3.glb"
@@ -898,6 +2179,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Haven_
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -117, 17.0588235294, 130.6)
 asset_id = "Entry_gullstone_door"
+material_overrides = [SubResource("object_material_0001")]
 node_name = "Entry_gullstone_door"
 catalog_asset_id = "westhaven:entry-gullstone-door-1d8ddc97fead"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/entry-gullstone-door-1d8ddc97fead.glb"
@@ -911,6 +2193,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Haven_
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.82, 13.4790652978, -66.612)
 asset_id = "Entry_haven_undercroft_door"
+material_overrides = [SubResource("object_material_0002")]
 node_name = "Entry_haven_undercroft_door"
 catalog_asset_id = "westhaven:entry-haven-undercroft-door-0dfaf11c05a3"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/entry-haven-undercroft-door-0dfaf11c05a3.glb"
@@ -924,6 +2207,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Haven_
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 16.9997301137, 147.6)
 asset_id = "Entry_lamp_rock_door"
+material_overrides = [SubResource("object_material_0003")]
 node_name = "Entry_lamp_rock_door"
 catalog_asset_id = "westhaven:entry-lamp-rock-door-98343fca42ac"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/entry-lamp-rock-door-98343fca42ac.glb"
@@ -937,6 +2221,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Haven_
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 156.78, 12.3768662114, -73.632)
 asset_id = "Entry_salvage_hole_mouth"
+material_overrides = [SubResource("object_material_0004")]
 node_name = "Entry_salvage_hole_mouth"
 catalog_asset_id = "westhaven:entry-salvage-hole-mouth-87bd61199a47"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/entry-salvage-hole-mouth-87bd61199a47.glb"
@@ -1028,6 +2313,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Farm_W
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100.62, 14.1874335917, -97.5)
 asset_id = "Farm_Water_Store"
+material_overrides = [SubResource("object_material_0005")]
 node_name = "Farm_Water_Store"
 catalog_asset_id = "westhaven:farm-water-store-8743b207ac0b"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/farm-water-store-8743b207ac0b.glb"
@@ -1197,6 +2483,7 @@ metadata = {"composedSourceRegion": "amberwood"}
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.99, -8.49339405597, 10.7420005035)
 asset_id = "Haven_Civic_Retaining_0"
+material_overrides = [SubResource("object_material_0006")]
 node_name = "Haven_Civic_Retaining_0"
 catalog_asset_id = "westhaven:haven-civic-retaining-0-faec65bebb35"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/haven-civic-retaining-0-faec65bebb35.glb"
@@ -1210,6 +2497,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Ha
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -39.72, -7.48461535587, 10.7420005035)
 asset_id = "Haven_Civic_Retaining_1"
+material_overrides = [SubResource("object_material_0007")]
 node_name = "Haven_Civic_Retaining_1"
 catalog_asset_id = "westhaven:haven-civic-retaining-1-443a61f7a342"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/haven-civic-retaining-1-443a61f7a342.glb"
@@ -1223,6 +2511,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Ha
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45.8579994965, -13.7304735361, 15.45)
 asset_id = "Haven_Civic_Retaining_2"
+material_overrides = [SubResource("object_material_0008")]
 node_name = "Haven_Civic_Retaining_2"
 catalog_asset_id = "westhaven:haven-civic-retaining-2-422278c573e2"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/haven-civic-retaining-2-422278c573e2.glb"
@@ -1236,6 +2525,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Ha
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -68.094, 2.09733115773, -98.982)
 asset_id = "House_bell_0"
+material_overrides = [SubResource("object_material_0009")]
 node_name = "House_bell_0"
 catalog_asset_id = "westhaven:house-bell-0-4a1db1e23450"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-bell-0-4a1db1e23450.glb"
@@ -1249,6 +2539,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -62.4, 2.23089008347, -109.98)
 asset_id = "House_bell_1"
+material_overrides = [SubResource("object_material_0010")]
 node_name = "House_bell_1"
 catalog_asset_id = "westhaven:house-bell-1-51c192e624a9"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-bell-1-51c192e624a9.glb"
@@ -1262,6 +2553,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -59.28, 2.38676023321, -122.46)
 asset_id = "House_crown_0"
+material_overrides = [SubResource("object_material_0011")]
 node_name = "House_crown_0"
 catalog_asset_id = "westhaven:house-crown-0-04b48d388fa3"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-crown-0-04b48d388fa3.glb"
@@ -1275,6 +2567,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -46.02, 4.33189163387, -122.46)
 asset_id = "House_crown_1"
+material_overrides = [SubResource("object_material_0012")]
 node_name = "House_crown_1"
 catalog_asset_id = "westhaven:house-crown-1-d827a52a5b64"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-crown-1-d827a52a5b64.glb"
@@ -1288,6 +2581,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -13.26, 9.54098917507, -122.46)
 asset_id = "House_crown_2"
+material_overrides = [SubResource("object_material_0013")]
 node_name = "House_crown_2"
 catalog_asset_id = "westhaven:house-crown-2-995765b7cf8f"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-crown-2-995765b7cf8f.glb"
@@ -1301,6 +2595,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.78, 11.2924222942, -122.46)
 asset_id = "House_crown_3"
+material_overrides = [SubResource("object_material_0014")]
 node_name = "House_crown_3"
 catalog_asset_id = "westhaven:house-crown-3-784ecc1ea911"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-crown-3-784ecc1ea911.glb"
@@ -1314,6 +2609,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 39.78, 14.3329412385, -122.46)
 asset_id = "House_crown_4"
+material_overrides = [SubResource("object_material_0015")]
 node_name = "House_crown_4"
 catalog_asset_id = "westhaven:house-crown-4-00e738c2f430"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-crown-4-00e738c2f430.glb"
@@ -1327,6 +2623,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -115, 8.4, 17)
 asset_id = "House_lower_0"
+material_overrides = [SubResource("object_material_0016")]
 node_name = "House_lower_0"
 catalog_asset_id = "westhaven:house-lower-0-1a8f51f7765a"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-lower-0-1a8f51f7765a.glb"
@@ -1340,6 +2637,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -97, 8.4, 17)
 asset_id = "House_lower_1"
+material_overrides = [SubResource("object_material_0017")]
 node_name = "House_lower_1"
 catalog_asset_id = "westhaven:house-lower-1-52e29b3ea02a"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-lower-1-52e29b3ea02a.glb"
@@ -1353,6 +2651,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -79, 8.4, 17)
 asset_id = "House_lower_2"
+material_overrides = [SubResource("object_material_0018")]
 node_name = "House_lower_2"
 catalog_asset_id = "westhaven:house-lower-2-695d9ace8bc7"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-lower-2-695d9ace8bc7.glb"
@@ -1366,6 +2665,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 35, 8.4, 17)
 asset_id = "House_lower_3"
+material_overrides = [SubResource("object_material_0019")]
 node_name = "House_lower_3"
 catalog_asset_id = "westhaven:house-lower-3-c37be8e831fd"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-lower-3-c37be8e831fd.glb"
@@ -1379,6 +2679,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 54, 8.4, 17)
 asset_id = "House_lower_4"
+material_overrides = [SubResource("object_material_0020")]
 node_name = "House_lower_4"
 catalog_asset_id = "westhaven:house-lower-4-132baa51bd6e"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-lower-4-132baa51bd6e.glb"
@@ -1392,6 +2693,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -77.22, 2.9124625804, -64.74)
 asset_id = "House_middle_0"
+material_overrides = [SubResource("object_material_0021")]
 node_name = "House_middle_0"
 catalog_asset_id = "westhaven:house-middle-0-449d0c579406"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-middle-0-449d0c579406.glb"
@@ -1405,6 +2707,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -62.4, 5.59777370084, -64.74)
 asset_id = "House_middle_1"
+material_overrides = [SubResource("object_material_0022")]
 node_name = "House_middle_1"
 catalog_asset_id = "westhaven:house-middle-1-8d199f4aa57c"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-middle-1-8d199f4aa57c.glb"
@@ -1418,6 +2721,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 46.02, 14.2086924027, -64.74)
 asset_id = "House_middle_2"
+material_overrides = [SubResource("object_material_0023")]
 node_name = "House_middle_2"
 catalog_asset_id = "westhaven:house-middle-2-8ccf2db97096"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-middle-2-8ccf2db97096.glb"
@@ -1431,6 +2735,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -3.601, 10.2346643375, -152.101)
 asset_id = "House_ridge_0"
+material_overrides = [SubResource("object_material_0024")]
 node_name = "House_ridge_0"
 catalog_asset_id = "westhaven:house-ridge-0-be32b2634218"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-ridge-0-be32b2634218.glb"
@@ -1444,6 +2749,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -60.06, 1.30919693782, -152.1)
 asset_id = "House_ridge_1"
+material_overrides = [SubResource("object_material_0025")]
 node_name = "House_ridge_1"
 catalog_asset_id = "westhaven:house-ridge-1-b5e82ac9f2e5"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-ridge-1-b5e82ac9f2e5.glb"
@@ -1457,6 +2763,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -46.02, 3.60902724493, -152.1)
 asset_id = "House_ridge_2"
+material_overrides = [SubResource("object_material_0026")]
 node_name = "House_ridge_2"
 catalog_asset_id = "westhaven:house-ridge-2-a9bdeb9926d1"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-ridge-2-a9bdeb9926d1.glb"
@@ -1470,6 +2777,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -31.98, 5.88152949734, -152.1)
 asset_id = "House_ridge_3"
+material_overrides = [SubResource("object_material_0027")]
 node_name = "House_ridge_3"
 catalog_asset_id = "westhaven:house-ridge-3-44113d8ae3b5"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-ridge-3-44113d8ae3b5.glb"
@@ -1483,6 +2791,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -17.94, 8.09109587487, -152.1)
 asset_id = "House_ridge_4"
+material_overrides = [SubResource("object_material_0028")]
 node_name = "House_ridge_4"
 catalog_asset_id = "westhaven:house-ridge-4-e02f7d167ee2"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-ridge-4-e02f7d167ee2.glb"
@@ -1496,6 +2805,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -17.16, 9.37117057433, -102.18)
 asset_id = "House_scribe_0"
+material_overrides = [SubResource("object_material_0029")]
 node_name = "House_scribe_0"
 catalog_asset_id = "westhaven:house-scribe-0-09daa65d9699"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-scribe-0-09daa65d9699.glb"
@@ -1509,6 +2819,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -75.66, 1.59549858319, -88.92)
 asset_id = "House_upper_0"
+material_overrides = [SubResource("object_material_0030")]
 node_name = "House_upper_0"
 catalog_asset_id = "westhaven:house-upper-0-c9a7ad7367a7"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-upper-0-c9a7ad7367a7.glb"
@@ -1522,6 +2833,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -61.62, 3.33306255439, -88.92)
 asset_id = "House_upper_1"
+material_overrides = [SubResource("object_material_0031")]
 node_name = "House_upper_1"
 catalog_asset_id = "westhaven:house-upper-1-075e3446285b"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-upper-1-075e3446285b.glb"
@@ -1535,6 +2847,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -48.36, 4.0249756118, -88.92)
 asset_id = "House_upper_2"
+material_overrides = [SubResource("object_material_0032")]
 node_name = "House_upper_2"
 catalog_asset_id = "westhaven:house-upper-2-cc3072285e7f"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-upper-2-cc3072285e7f.glb"
@@ -1548,6 +2861,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 52.26, 14.596939501, -88.92)
 asset_id = "House_upper_3"
+material_overrides = [SubResource("object_material_0033")]
 node_name = "House_upper_3"
 catalog_asset_id = "westhaven:house-upper-3-51fc49608dfc"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-upper-3-51fc49608dfc.glb"
@@ -1561,6 +2875,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 66.3, 14.5296058241, -88.92)
 asset_id = "House_upper_4"
+material_overrides = [SubResource("object_material_0034")]
 node_name = "House_upper_4"
 catalog_asset_id = "westhaven:house-upper-4-54bb1cf20772"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/house-upper-4-54bb1cf20772.glb"
@@ -1574,6 +2889,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(0.999523609013, 0, -0.0308634901619, 0, 1, 0, 0.0308634901619, 0, 0.999523609013, -108.541061031, 3.4, 69.3599035427)
 asset_id = "Jetty_00"
+material_overrides = [SubResource("object_material_0035")]
 node_name = "Jetty_00"
 catalog_asset_id = "westhaven:jetty-00-267aa54587ad"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/jetty-00-267aa54587ad.glb"
@@ -1587,6 +2903,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Je
 script = ExtResource("asset")
 transform = Transform3D(0.99998726661, 0, -0.0050464460532, 0, 1, 0, 0.0050464460532, 0, 0.99998726661, -89.6231830924, 3.4, 71.079710628)
 asset_id = "Jetty_01"
+material_overrides = [SubResource("object_material_0036")]
 node_name = "Jetty_01"
 catalog_asset_id = "westhaven:jetty-01-bf590225fa32"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/jetty-01-bf590225fa32.glb"
@@ -1600,6 +2917,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Je
 script = ExtResource("asset")
 transform = Transform3D(0.99876346059, 0, 0.0497146838409, 0, 1, 0, -0.0497146838409, 0, 0.99876346059, -70.6987966015, 3.4, 72.7258174342)
 asset_id = "Jetty_02"
+material_overrides = [SubResource("object_material_0037")]
 node_name = "Jetty_02"
 catalog_asset_id = "westhaven:jetty-02-faa938947243"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/jetty-02-faa938947243.glb"
@@ -1613,6 +2931,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Je
 script = ExtResource("asset")
 transform = Transform3D(0.995867231612, 0, 0.0908210162947, 0, 1, 0, -0.0908210162947, 0, 0.995867231612, -51.7723051178, 3.4, 74.3480881328)
 asset_id = "Jetty_03"
+material_overrides = [SubResource("object_material_0038")]
 node_name = "Jetty_03"
 catalog_asset_id = "westhaven:jetty-03-843cfa80f764"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/jetty-03-843cfa80f764.glb"
@@ -1626,6 +2945,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Je
 script = ExtResource("asset")
 transform = Transform3D(0.997399074352, 0, 0.0720769483363, 0, 1, 0, -0.0720769483363, 0, 0.997399074352, -32.7829135749, 3.4, 74.5)
 asset_id = "Jetty_04"
+material_overrides = [SubResource("object_material_0039")]
 node_name = "Jetty_04"
 catalog_asset_id = "westhaven:jetty-04-3bafe9f1a5cd"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/jetty-04-3bafe9f1a5cd.glb"
@@ -1639,6 +2959,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Je
 script = ExtResource("asset")
 transform = Transform3D(0.999801681857, 0, -0.0199147421695, 0, 1, 0, 0.0199147421695, 0, 0.999801681857, -13.8016093082, 3.4, 74.2463395356)
 asset_id = "Jetty_05"
+material_overrides = [SubResource("object_material_0040")]
 node_name = "Jetty_05"
 catalog_asset_id = "westhaven:jetty-05-8293e98ede52"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/jetty-05-8293e98ede52.glb"
@@ -1652,6 +2973,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Je
 script = ExtResource("asset")
 transform = Transform3D(0.999602680742, 0, 0.0281865332024, 0, 1, 0, -0.0281865332024, 0, 0.999602680742, 80.8380815305, 3.4, 69.4150628884)
 asset_id = "Jetty_10"
+material_overrides = [SubResource("object_material_0041")]
 node_name = "Jetty_10"
 catalog_asset_id = "westhaven:jetty-10-98a6c31cea90"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/jetty-10-98a6c31cea90.glb"
@@ -1665,6 +2987,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Je
 script = ExtResource("asset")
 transform = Transform3D(0.99999810141, 0, 0.00194863472161, 0, 1, 0, -0.00194863472161, 0, 0.99999810141, 99.6312846955, 3.4, 71.9385474492)
 asset_id = "Jetty_11"
+material_overrides = [SubResource("object_material_0042")]
 node_name = "Jetty_11"
 catalog_asset_id = "westhaven:jetty-11-fced5f4d9810"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/jetty-11-fced5f4d9810.glb"
@@ -1678,6 +3001,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Je
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.2, 6.60171894784, -118.56)
 asset_id = "Landmark_Campanile"
+material_overrides = [SubResource("object_material_0043"), SubResource("object_material_0044")]
 node_name = "Landmark_Campanile"
 catalog_asset_id = "westhaven:landmark-campanile-9bbf83b1b999"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-campanile-9bbf83b1b999.glb"
@@ -1691,6 +3015,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Ca
 script = ExtResource("asset")
 transform = Transform3D(0.857708681364, 0, 0.514135991653, 0, 1, 0, -0.514135991653, 0, 0.857708681364, 55.5072486579, 15.1794819541, -125.367717101)
 asset_id = "Landmark_Cart_Gate"
+material_overrides = [SubResource("object_material_0045"), SubResource("object_material_0046")]
 node_name = "Landmark_Cart_Gate"
 catalog_asset_id = "westhaven:landmark-cart-gate-89bde9076261"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-cart-gate-89bde9076261.glb"
@@ -1704,6 +3029,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Ca
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 14.4803051758, 13.891569753, -78.78)
 asset_id = "Landmark_Cathedral"
+material_overrides = [SubResource("object_material_0047")]
 node_name = "Landmark_Cathedral"
 catalog_asset_id = "westhaven:landmark-cathedral-1a5382a3e99d"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-cathedral-1a5382a3e99d.glb"
@@ -1717,6 +3043,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Ca
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -23.3994501972, 10.1090636231, -45.47749897)
 asset_id = "Landmark_City_Gate"
+material_overrides = [SubResource("object_material_0048")]
 node_name = "Landmark_City_Gate"
 catalog_asset_id = "westhaven:landmark-city-gate-54322cd9aba6"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-city-gate-54322cd9aba6.glb"
@@ -1730,6 +3057,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Ci
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -101, 3.4, 46)
 asset_id = "Landmark_Custom_House"
+material_overrides = [SubResource("object_material_0049")]
 node_name = "Landmark_Custom_House"
 catalog_asset_id = "westhaven:landmark-custom-house-614bd72da414"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-custom-house-614bd72da414.glb"
@@ -1743,6 +3071,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.38, 13.2464806757, -122.46)
 asset_id = "Landmark_Domed_Hall"
+material_overrides = [SubResource("object_material_0050")]
 node_name = "Landmark_Domed_Hall"
 catalog_asset_id = "westhaven:landmark-domed-hall-a7b10b335466"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-domed-hall-a7b10b335466.glb"
@@ -1756,6 +3085,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Do
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 156.78, 12.8467902908, -81.9)
 asset_id = "Landmark_East_Watch"
+material_overrides = [SubResource("object_material_0051")]
 node_name = "Landmark_East_Watch"
 catalog_asset_id = "westhaven:landmark-east-watch-df6705f29c8d"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-east-watch-df6705f29c8d.glb"
@@ -1769,6 +3099,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Ea
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -58, 8.4, 38)
 asset_id = "Landmark_Fish_Market"
+material_overrides = [SubResource("object_material_0052")]
 node_name = "Landmark_Fish_Market"
 catalog_asset_id = "westhaven:landmark-fish-market-5567d6535c0e"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-fish-market-5567d6535c0e.glb"
@@ -1795,6 +3126,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Ga
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -31.98, 8.3879857737, -74.662984314)
 asset_id = "Landmark_Great_Arcade"
+material_overrides = [SubResource("object_material_0053")]
 node_name = "Landmark_Great_Arcade"
 catalog_asset_id = "westhaven:landmark-great-arcade-ac2b39a9725c"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-great-arcade-ac2b39a9725c.glb"
@@ -1808,6 +3140,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Gr
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 83.065, 17, 152.665)
 asset_id = "Landmark_Great_Lighthouse"
+material_overrides = [SubResource("object_material_0054"), SubResource("object_material_0055"), SubResource("object_material_0056")]
 node_name = "Landmark_Great_Lighthouse"
 catalog_asset_id = "westhaven:landmark-great-lighthouse-32ebeef4261d"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-great-lighthouse-32ebeef4261d.glb"
@@ -1821,6 +3154,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Gr
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 15, 8.4, 25)
 asset_id = "Landmark_Guild_Hall"
+material_overrides = [SubResource("object_material_0057")]
 node_name = "Landmark_Guild_Hall"
 catalog_asset_id = "westhaven:landmark-guild-hall-be861ea07113"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-guild-hall-be861ea07113.glb"
@@ -1834,6 +3168,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -104, 23.2051806451, 132)
 asset_id = "Landmark_Gullstone_Watch"
+material_overrides = [SubResource("object_material_0058")]
 node_name = "Landmark_Gullstone_Watch"
 catalog_asset_id = "westhaven:landmark-gullstone-watch-652ef73ead55"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-gullstone-watch-652ef73ead55.glb"
@@ -1860,6 +3195,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Ha
 script = ExtResource("asset")
 transform = Transform3D(0.882947592859, 0, 0.469471562786, 0, 1, 0, -0.469471562786, 0, 0.882947592859, -121.115, 0, 41.745)
 asset_id = "Landmark_Harbour_Gate"
+material_overrides = [SubResource("object_material_0059"), SubResource("object_material_0060")]
 node_name = "Landmark_Harbour_Gate"
 catalog_asset_id = "westhaven:landmark-harbour-gate-e31d4753dbd1"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-harbour-gate-e31d4753dbd1.glb"
@@ -1873,6 +3209,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Ha
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.5, 14.5238298658, -89.7)
 asset_id = "Landmark_High_Spire"
+material_overrides = [SubResource("object_material_0061")]
 node_name = "Landmark_High_Spire"
 catalog_asset_id = "westhaven:landmark-high-spire-88a19a288881"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-high-spire-88a19a288881.glb"
@@ -1886,6 +3223,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Hi
 script = ExtResource("asset")
 transform = Transform3D(-0.891006524188, 0, -0.45399049974, 0, 1, 0, 0.45399049974, 0, -0.891006524188, 160.009730983, 10.6628122875, -39.5646408206)
 asset_id = "Landmark_Hill_Estate"
+material_overrides = [SubResource("object_material_0062")]
 node_name = "Landmark_Hill_Estate"
 catalog_asset_id = "westhaven:landmark-hill-estate-2895f242c351"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-hill-estate-2895f242c351.glb"
@@ -1899,6 +3237,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.4735, 11.2631853027, -106.9965)
 asset_id = "Landmark_Lesser_Tower_5"
+material_overrides = [SubResource("object_material_0063")]
 node_name = "Landmark_Lesser_Tower_5"
 catalog_asset_id = "westhaven:landmark-lesser-tower-5-15e19bc765a2"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-lesser-tower-5-15e19bc765a2.glb"
@@ -1912,6 +3251,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Le
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.8083, 9.27973776548, -129.3903)
 asset_id = "Landmark_Lesser_Tower_6"
+material_overrides = [SubResource("object_material_0064"), SubResource("object_material_0065")]
 node_name = "Landmark_Lesser_Tower_6"
 catalog_asset_id = "westhaven:landmark-lesser-tower-6-d149b0076a2c"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-lesser-tower-6-d149b0076a2c.glb"
@@ -1925,6 +3265,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Le
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -106, 5.2, 91)
 asset_id = "Landmark_Mole_Bastion"
+material_overrides = [SubResource("object_material_0066"), SubResource("object_material_0067")]
 node_name = "Landmark_Mole_Bastion"
 catalog_asset_id = "westhaven:landmark-mole-bastion-a149b29cb6af"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-mole-bastion-a149b29cb6af.glb"
@@ -1938,6 +3279,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Mo
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, 5.2, 124)
 asset_id = "Landmark_Mole_Light"
+material_overrides = [SubResource("object_material_0068"), SubResource("object_material_0069"), SubResource("object_material_0070")]
 node_name = "Landmark_Mole_Light"
 catalog_asset_id = "westhaven:landmark-mole-light-44b7262f14d3"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-mole-light-44b7262f14d3.glb"
@@ -1951,6 +3293,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Mo
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 3.4, 73)
 asset_id = "Landmark_Pier_A"
+material_overrides = [SubResource("object_material_0071")]
 node_name = "Landmark_Pier_A"
 catalog_asset_id = "westhaven:landmark-pier-a-c4ae7f992615"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-pier-a-c4ae7f992615.glb"
@@ -1964,6 +3307,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Pi
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 3.4, 74)
 asset_id = "Landmark_Pier_B"
+material_overrides = [SubResource("object_material_0072")]
 node_name = "Landmark_Pier_B"
 catalog_asset_id = "westhaven:landmark-pier-b-a22c3ff82b69"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-pier-b-a22c3ff82b69.glb"
@@ -1977,6 +3321,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Pi
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -67.655, 8.4, 46.635)
 asset_id = "Landmark_Quay_Arch"
+material_overrides = [SubResource("object_material_0073"), SubResource("object_material_0074")]
 node_name = "Landmark_Quay_Arch"
 catalog_asset_id = "westhaven:landmark-quay-arch-b58233edfb85"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-quay-arch-b58233edfb85.glb"
@@ -1990,6 +3335,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "St
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 85, 3.4, 45)
 asset_id = "Landmark_Ropewalk"
+material_overrides = [SubResource("object_material_0075")]
 node_name = "Landmark_Ropewalk"
 catalog_asset_id = "westhaven:landmark-ropewalk-a4a316f07101"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-ropewalk-a4a316f07101.glb"
@@ -2055,6 +3401,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Ro
 script = ExtResource("asset")
 transform = Transform3D(0.819152044289, 0, 0.573576436351, 0, 1, 0, -0.573576436351, 0, 0.819152044289, -23.105, 15.559242003, 154.545)
 asset_id = "Landmark_Sea_Arch"
+material_overrides = [SubResource("object_material_0076")]
 node_name = "Landmark_Sea_Arch"
 catalog_asset_id = "westhaven:landmark-sea-arch-da64e6cc26fd"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-sea-arch-da64e6cc26fd.glb"
@@ -2081,6 +3428,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Sh
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 146.610125599, 13.9074977784, -103.74)
 asset_id = "Landmark_Upland_Chapel"
+material_overrides = [SubResource("object_material_0077")]
 node_name = "Landmark_Upland_Chapel"
 catalog_asset_id = "westhaven:landmark-upland-chapel-1bffdbc1b0d0"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-upland-chapel-1bffdbc1b0d0.glb"
@@ -2094,6 +3442,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Up
 script = ExtResource("asset")
 transform = Transform3D(0.921060994003, 0, 0.389418342309, 0, 1, 0, -0.389418342309, 0, 0.921060994003, 91.1698799597, 14.2928430145, -98.4931539398)
 asset_id = "Landmark_Upland_Farm"
+material_overrides = [SubResource("object_material_0078")]
 node_name = "Landmark_Upland_Farm"
 catalog_asset_id = "westhaven:landmark-upland-farm-9b340f57789a"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-upland-farm-9b340f57789a.glb"
@@ -2107,6 +3456,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -129, 8.4, 10)
 asset_id = "Landmark_Warehouse_00"
+material_overrides = [SubResource("object_material_0079")]
 node_name = "Landmark_Warehouse_00"
 catalog_asset_id = "westhaven:landmark-warehouse-00-cd2412d60d45"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-warehouse-00-cd2412d60d45.glb"
@@ -2120,6 +3470,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -25, 3.4, 43)
 asset_id = "Landmark_Warehouse_04"
+material_overrides = [SubResource("object_material_0080")]
 node_name = "Landmark_Warehouse_04"
 catalog_asset_id = "westhaven:landmark-warehouse-04-c021abaf24ec"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-warehouse-04-c021abaf24ec.glb"
@@ -2133,6 +3484,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -3, 3.4, 42)
 asset_id = "Landmark_Warehouse_08"
+material_overrides = [SubResource("object_material_0081")]
 node_name = "Landmark_Warehouse_08"
 catalog_asset_id = "westhaven:landmark-warehouse-08-f655df1f9939"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-warehouse-08-f655df1f9939.glb"
@@ -2146,6 +3498,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 42, 8.4, 16)
 asset_id = "Landmark_Warehouse_12"
+material_overrides = [SubResource("object_material_0082")]
 node_name = "Landmark_Warehouse_12"
 catalog_asset_id = "westhaven:landmark-warehouse-12-1435cc81600e"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-warehouse-12-1435cc81600e.glb"
@@ -2159,6 +3512,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 67, 3.4, 47)
 asset_id = "Landmark_Warehouse_16"
+material_overrides = [SubResource("object_material_0083")]
 node_name = "Landmark_Warehouse_16"
 catalog_asset_id = "westhaven:landmark-warehouse-16-cf7d937a164f"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-warehouse-16-cf7d937a164f.glb"
@@ -2172,6 +3526,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(0.995004165278, 0, 0.0998334166468, 0, 1, 0, -0.0998334166468, 0, 0.995004165278, 98, 3.4, 58)
 asset_id = "Landmark_Yard_Shed_0"
+material_overrides = [SubResource("object_material_0084")]
 node_name = "Landmark_Yard_Shed_0"
 catalog_asset_id = "westhaven:landmark-yard-shed-0-224c043e1414"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-yard-shed-0-224c043e1414.glb"
@@ -2185,6 +3540,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(0.998200539935, 0, -0.0599640064794, 0, 1, 0, 0.0599640064794, 0, 0.998200539935, 111, 3.4, 54)
 asset_id = "Landmark_Yard_Shed_1"
+material_overrides = [SubResource("object_material_0085")]
 node_name = "Landmark_Yard_Shed_1"
 catalog_asset_id = "westhaven:landmark-yard-shed-1-454960c08040"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/landmark-yard-shed-1-454960c08040.glb"
@@ -2198,6 +3554,7 @@ metadata = {"composedSourceRegion": "westhaven", "extras": {"solidBox": true}, "
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -87, 5.89, 38)
 asset_id = "Lore_league_post_house"
+material_overrides = [SubResource("object_material_0086")]
 node_name = "Lore_league_post_house"
 catalog_asset_id = "westhaven:lore-league-post-house-332e26cd65b3"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/lore-league-post-house-332e26cd65b3.glb"
@@ -2211,6 +3568,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "landmark":
 script = ExtResource("asset")
 transform = Transform3D(0.450814063085, 0, -0.892617880465, 0, 1, 0, 0.892617880465, 0, 0.450814063085, -111.160717162, 5.2, 79.5618581971)
 asset_id = "Mole_Run_00"
+material_overrides = [SubResource("object_material_0087")]
 node_name = "Mole_Run_00"
 catalog_asset_id = "westhaven:mole-run-00-7e92c461b438"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/mole-run-00-7e92c461b438.glb"
@@ -2224,6 +3582,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Mo
 script = ExtResource("asset")
 transform = Transform3D(0.98378282961, 0, -0.179363720316, 0, 1, 0, 0.179363720316, 0, 0.98378282961, -92.4413318716, 5.2, 93.472022366)
 asset_id = "Mole_Run_01"
+material_overrides = [SubResource("object_material_0088")]
 node_name = "Mole_Run_01"
 catalog_asset_id = "westhaven:mole-run-01-f1969b16d2dd"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/mole-run-01-f1969b16d2dd.glb"
@@ -2237,6 +3596,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Mo
 script = ExtResource("asset")
 transform = Transform3D(0.98378282961, 0, -0.179363720316, 0, 1, 0, 0.179363720316, 0, 0.98378282961, -66.6811269683, 5.2, 98.1686343097)
 asset_id = "Mole_Run_02"
+material_overrides = [SubResource("object_material_0089")]
 node_name = "Mole_Run_02"
 catalog_asset_id = "westhaven:mole-run-02-617b0724593f"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/mole-run-02-617b0724593f.glb"
@@ -2250,6 +3610,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Mo
 script = ExtResource("asset")
 transform = Transform3D(0.98378282961, 0, -0.179363720316, 0, 1, 0, 0.179363720316, 0, 0.98378282961, -40.920922065, 5.2, 102.865246253)
 asset_id = "Mole_Run_03"
+material_overrides = [SubResource("object_material_0090")]
 node_name = "Mole_Run_03"
 catalog_asset_id = "westhaven:mole-run-03-79ac30401563"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/mole-run-03-79ac30401563.glb"
@@ -2263,6 +3624,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Mo
 script = ExtResource("asset")
 transform = Transform3D(0.98378282961, 0, -0.179363720316, 0, 1, 0, 0.179363720316, 0, 0.98378282961, -15.1607171616, 5.2, 107.561858197)
 asset_id = "Mole_Run_04"
+material_overrides = [SubResource("object_material_0091")]
 node_name = "Mole_Run_04"
 catalog_asset_id = "westhaven:mole-run-04-358972b20994"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/mole-run-04-358972b20994.glb"
@@ -2276,6 +3638,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Mo
 script = ExtResource("asset")
 transform = Transform3D(0.98378282961, 0, -0.179363720316, 0, 1, 0, 0.179363720316, 0, 0.98378282961, 10.5994877417, 5.2, 112.258470141)
 asset_id = "Mole_Run_05"
+material_overrides = [SubResource("object_material_0092")]
 node_name = "Mole_Run_05"
 catalog_asset_id = "westhaven:mole-run-05-d31af6159bc3"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/mole-run-05-d31af6159bc3.glb"
@@ -2289,6 +3652,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Mo
 script = ExtResource("asset")
 transform = Transform3D(0.98378282961, 0, -0.179363720316, 0, 1, 0, 0.179363720316, 0, 0.98378282961, 36.359692645, 5.2, 116.955082084)
 asset_id = "Mole_Run_06"
+material_overrides = [SubResource("object_material_0093")]
 node_name = "Mole_Run_06"
 catalog_asset_id = "westhaven:mole-run-06-0c0d1afa8719"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/mole-run-06-0c0d1afa8719.glb"
@@ -2302,6 +3666,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Mo
 script = ExtResource("asset")
 transform = Transform3D(0.98378282961, 0, -0.179363720316, 0, 1, 0, 0.179363720316, 0, 0.98378282961, 62.1198975483, 5.2, 121.651694028)
 asset_id = "Mole_Run_07"
+material_overrides = [SubResource("object_material_0094")]
 node_name = "Mole_Run_07"
 catalog_asset_id = "westhaven:mole-run-07-e29e906410aa"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/mole-run-07-e29e906410aa.glb"
@@ -2562,6 +3927,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Barrel
 script = ExtResource("asset")
 transform = Transform3D(-0.588501117255, 0, 0.80849640382, 0, 1, 0, -0.80849640382, 0, -0.588501117255, 36.3, 3.4, 56.1)
 asset_id = "Prop_Chandlery_03"
+material_overrides = [SubResource("object_material_0095")]
 node_name = "Prop_Chandlery_03"
 catalog_asset_id = "westhaven:prop-chandlery-03-a8ed0003e966"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-chandlery-03-a8ed0003e966.glb"
@@ -2653,6 +4019,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Chain_
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.36, 12.5407953825, -133.38)
 asset_id = "Prop_Cistern_crown_terrace"
+material_overrides = [SubResource("object_material_0096")]
 node_name = "Prop_Cistern_crown_terrace"
 catalog_asset_id = "westhaven:prop-cistern-crown-terrace-a3e45f77a444"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-cistern-crown-terrace-a3e45f77a444.glb"
@@ -2666,6 +4033,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Cister
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 8.4, 29)
 asset_id = "Prop_Cistern_lower_square"
+material_overrides = [SubResource("object_material_0097")]
 node_name = "Prop_Cistern_lower_square"
 catalog_asset_id = "westhaven:prop-cistern-lower-square-be1bda8a8d14"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-cistern-lower-square-be1bda8a8d14.glb"
@@ -2679,6 +4047,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Cister
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.9, 12.049387782, -49.14)
 asset_id = "Prop_Cistern_mid_street"
+material_overrides = [SubResource("object_material_0098")]
 node_name = "Prop_Cistern_mid_street"
 catalog_asset_id = "westhaven:prop-cistern-mid-street-728f770a9345"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-cistern-mid-street-728f770a9345.glb"
@@ -3472,6 +4841,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Field_
 script = ExtResource("asset")
 transform = Transform3D(0.996465164285, 0, -0.0840070018931, 0, 1, 0, 0.0840070018931, 0, 0.996465164285, -64.7629459378, 8.4, 43)
 asset_id = "Prop_Fish_Stall_00"
+material_overrides = [SubResource("object_material_0099")]
 node_name = "Prop_Fish_Stall_00"
 catalog_asset_id = "westhaven:prop-fish-stall-00-0b1db1b0cda6"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-fish-stall-00-0b1db1b0cda6.glb"
@@ -3485,6 +4855,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Fish_S
 script = ExtResource("asset")
 transform = Transform3D(0.990750007106, 0, -0.135699754675, 0, 1, 0, 0.135699754675, 0, 0.990750007106, -61.5093234736, 8.4, 43)
 asset_id = "Prop_Fish_Stall_01"
+material_overrides = [SubResource("object_material_0100")]
 node_name = "Prop_Fish_Stall_01"
 catalog_asset_id = "westhaven:prop-fish-stall-01-5d9964315120"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-fish-stall-01-5d9964315120.glb"
@@ -3498,6 +4869,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Fish_S
 script = ExtResource("asset")
 transform = Transform3D(0.995735970741, 0, 0.0922489922541, 0, 1, 0, -0.0922489922541, 0, 0.995735970741, -57.669391426, 8.4, 43)
 asset_id = "Prop_Fish_Stall_02"
+material_overrides = [SubResource("object_material_0101")]
 node_name = "Prop_Fish_Stall_02"
 catalog_asset_id = "westhaven:prop-fish-stall-02-e881f252694d"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-fish-stall-02-e881f252694d.glb"
@@ -3511,6 +4883,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Fish_S
 script = ExtResource("asset")
 transform = Transform3D(0.998886194373, 0, 0.047184432725, 0, 1, 0, -0.047184432725, 0, 0.998886194373, -54.3860297792, 8.4, 43)
 asset_id = "Prop_Fish_Stall_03"
+material_overrides = [SubResource("object_material_0102")]
 node_name = "Prop_Fish_Stall_03"
 catalog_asset_id = "westhaven:prop-fish-stall-03-200d8f97cb2f"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-fish-stall-03-200d8f97cb2f.glb"
@@ -3524,6 +4897,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Fish_S
 script = ExtResource("asset")
 transform = Transform3D(0.997002187006, 0, 0.0773733746496, 0, 1, 0, -0.0773733746496, 0, 0.997002187006, -51.0208853802, 8.4, 43)
 asset_id = "Prop_Fish_Stall_04"
+material_overrides = [SubResource("object_material_0103")]
 node_name = "Prop_Fish_Stall_04"
 catalog_asset_id = "westhaven:prop-fish-stall-04-9a9cbb37517d"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-fish-stall-04-9a9cbb37517d.glb"
@@ -3537,6 +4911,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Fish_S
 script = ExtResource("asset")
 transform = Transform3D(0.999347032036, 0, -0.0361318358434, 0, 1, 0, 0.0361318358434, 0, 0.999347032036, -64.9154791646, 8.4, 46.6)
 asset_id = "Prop_Fish_Stall_05"
+material_overrides = [SubResource("object_material_0104")]
 node_name = "Prop_Fish_Stall_05"
 catalog_asset_id = "westhaven:prop-fish-stall-05-97351935cad0"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-fish-stall-05-97351935cad0.glb"
@@ -3550,6 +4925,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Fish_S
 script = ExtResource("asset")
 transform = Transform3D(0.99888052902, 0, 0.047304214881, 0, 1, 0, -0.047304214881, 0, 0.99888052902, -61.1228739882, 8.4, 46.6)
 asset_id = "Prop_Fish_Stall_06"
+material_overrides = [SubResource("object_material_0105")]
 node_name = "Prop_Fish_Stall_06"
 catalog_asset_id = "westhaven:prop-fish-stall-06-46571996360e"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-fish-stall-06-46571996360e.glb"
@@ -3563,6 +4939,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Fish_S
 script = ExtResource("asset")
 transform = Transform3D(0.998164225711, 0, 0.0605654894364, 0, 1, 0, -0.0605654894364, 0, 0.998164225711, -57.6932147497, 8.4, 46.6)
 asset_id = "Prop_Fish_Stall_07"
+material_overrides = [SubResource("object_material_0106")]
 node_name = "Prop_Fish_Stall_07"
 catalog_asset_id = "westhaven:prop-fish-stall-07-4a9967aedbf3"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-fish-stall-07-4a9967aedbf3.glb"
@@ -3576,6 +4953,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Fish_S
 script = ExtResource("asset")
 transform = Transform3D(0.996717386771, 0, 0.0809595634206, 0, 1, 0, -0.0809595634206, 0, 0.996717386771, -54.5200159888, 8.4, 46.6)
 asset_id = "Prop_Fish_Stall_08"
+material_overrides = [SubResource("object_material_0107")]
 node_name = "Prop_Fish_Stall_08"
 catalog_asset_id = "westhaven:prop-fish-stall-08-5c64aafe1ba2"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-fish-stall-08-5c64aafe1ba2.glb"
@@ -4200,6 +5578,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Bollar
 script = ExtResource("asset")
 transform = Transform3D(-0.358584329019, 0, -0.933497337426, 0, 1, 0, 0.933497337426, 0, -0.358584329019, -113.515244301, 3.4, 66.0095065298)
 asset_id = "Prop_Quay_000"
+material_overrides = [SubResource("object_material_0108")]
 node_name = "Prop_Quay_000"
 catalog_asset_id = "westhaven:prop-quay-000-797393ff181b"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-quay-000-797393ff181b.glb"
@@ -4226,6 +5605,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Barrel
 script = ExtResource("asset")
 transform = Transform3D(0.676877167795, 0, -0.736095985397, 0, 1, 0, 0.736095985397, 0, 0.676877167795, -118.016513299, 3.4, 64.7032736304)
 asset_id = "Prop_Quay_002"
+material_overrides = [SubResource("object_material_0109")]
 node_name = "Prop_Quay_002"
 catalog_asset_id = "westhaven:prop-quay-002-70d1e73a3b63"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-quay-002-70d1e73a3b63.glb"
@@ -4343,6 +5723,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Cart",
 script = ExtResource("asset")
 transform = Transform3D(0.106558457372, 0, 0.994306439264, 0, 1, 0, -0.994306439264, 0, 0.106558457372, -87.3502790969, 3.07180498495, 70.7199256618)
 asset_id = "Prop_Quay_012"
+material_overrides = [SubResource("object_material_0110")]
 node_name = "Prop_Quay_012"
 catalog_asset_id = "westhaven:prop-quay-012-01e487ff6e37"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-quay-012-01e487ff6e37.glb"
@@ -4408,6 +5789,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Cart",
 script = ExtResource("asset")
 transform = Transform3D(-0.901168800632, 0, 0.433468329602, 0, 1, 0, -0.433468329602, 0, -0.901168800632, -71.0361292273, 3.4, 69.5103537937)
 asset_id = "Prop_Quay_017"
+material_overrides = [SubResource("object_material_0111")]
 node_name = "Prop_Quay_017"
 catalog_asset_id = "westhaven:prop-quay-017-0dfe9f86dc0e"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-quay-017-0dfe9f86dc0e.glb"
@@ -4421,6 +5803,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Fishin
 script = ExtResource("asset")
 transform = Transform3D(-0.884725134199, 0, 0.46611311601, 0, 1, 0, -0.46611311601, 0, -0.884725134199, -74.764451898, 3.39999572767, 69.1836083015)
 asset_id = "Prop_Quay_018"
+material_overrides = [SubResource("object_material_0112")]
 node_name = "Prop_Quay_018"
 catalog_asset_id = "westhaven:prop-quay-018-034cdc386c98"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-quay-018-034cdc386c98.glb"
@@ -4473,6 +5856,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Brazie
 script = ExtResource("asset")
 transform = Transform3D(-0.922799662943, 0, -0.385280134541, 0, 1, 0, 0.385280134541, 0, -0.922799662943, -66.7421974622, 3.4, 70.9964424617)
 asset_id = "Prop_Quay_022"
+material_overrides = [SubResource("object_material_0113")]
 node_name = "Prop_Quay_022"
 catalog_asset_id = "westhaven:prop-quay-022-0a7e08c5c078"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-quay-022-0a7e08c5c078.glb"
@@ -4577,6 +5961,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Cart",
 script = ExtResource("asset")
 transform = Transform3D(-0.711600361962, 0, -0.702584461012, 0, 1, 0, 0.702584461012, 0, -0.711600361962, -49.9550093493, 3.25015875474, 73.1373538523)
 asset_id = "Prop_Quay_030"
+material_overrides = [SubResource("object_material_0114")]
 node_name = "Prop_Quay_030"
 catalog_asset_id = "westhaven:prop-quay-030-836328b1a221"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-quay-030-836328b1a221.glb"
@@ -4811,6 +6196,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Barrel
 script = ExtResource("asset")
 transform = Transform3D(0.222438894295, 0, -0.974946633568, 0, 1, 0, 0.974946633568, 0, 0.222438894295, 40.7304239625, 3.4, 66.9621975894)
 asset_id = "Prop_Quay_068"
+material_overrides = [SubResource("object_material_0115")]
 node_name = "Prop_Quay_068"
 catalog_asset_id = "westhaven:prop-quay-068-9a2d2eefef33"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-quay-068-9a2d2eefef33.glb"
@@ -4837,6 +6223,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Crate"
 script = ExtResource("asset")
 transform = Transform3D(-0.729216070795, 0, -0.684283510026, 0, 1, 0, 0.684283510026, 0, -0.729216070795, 48.9199987348, 3.4, 64.1428366008)
 asset_id = "Prop_Quay_070"
+material_overrides = [SubResource("object_material_0116")]
 node_name = "Prop_Quay_070"
 catalog_asset_id = "westhaven:prop-quay-070-52dbbf54d1b4"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-quay-070-52dbbf54d1b4.glb"
@@ -4928,6 +6315,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Workbe
 script = ExtResource("asset")
 transform = Transform3D(0.792364736004, 0, 0.610047641695, 0, 1, 0, -0.610047641695, 0, 0.792364736004, 59.1696001749, 3.4, 66.9918214167)
 asset_id = "Prop_Quay_077"
+material_overrides = [SubResource("object_material_0117")]
 node_name = "Prop_Quay_077"
 catalog_asset_id = "westhaven:prop-quay-077-b852c4f99afa"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/prop-quay-077-b852c4f99afa.glb"
@@ -5643,6 +7031,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Timber
 script = ExtResource("asset")
 transform = Transform3D(0.995893206468, 0, -0.0905357460425, 0, 1, 0, 0.0905357460425, 0, 0.995893206468, -105.388081374, 3.4, 70.1465380569)
 asset_id = "Quay_Wall_00"
+material_overrides = [SubResource("object_material_0118"), SubResource("object_material_0119")]
 node_name = "Quay_Wall_00"
 catalog_asset_id = "westhaven:quay-wall-00-214e2aaad65e"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/quay-wall-00-214e2aaad65e.glb"
@@ -5656,6 +7045,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Qu
 script = ExtResource("asset")
 transform = Transform3D(0.996209681134, 0, -0.0869843159081, 0, 1, 0, 0.0869843159081, 0, 0.996209681134, -80.1602720515, 3.4, 72.3946359988)
 asset_id = "Quay_Wall_01"
+material_overrides = [SubResource("object_material_0120"), SubResource("object_material_0121")]
 node_name = "Quay_Wall_01"
 catalog_asset_id = "westhaven:quay-wall-01-638923600e90"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/quay-wall-01-638923600e90.glb"
@@ -5669,6 +7059,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Qu
 script = ExtResource("asset")
 transform = Transform3D(0.998233097825, 0, -0.0594195456627, 0, 1, 0, 0.0594195456627, 0, 0.998233097825, -54.9126199988, 3.4, 74.248097942)
 asset_id = "Quay_Wall_02"
+material_overrides = [SubResource("object_material_0122"), SubResource("object_material_0123")]
 node_name = "Quay_Wall_02"
 catalog_asset_id = "westhaven:quay-wall-02-a5f89b2bada2"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/quay-wall-02-a5f89b2bada2.glb"
@@ -5682,6 +7073,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Qu
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.6169318853, 3.4, 75)
 asset_id = "Quay_Wall_03"
+material_overrides = [SubResource("object_material_0124"), SubResource("object_material_0125")]
 node_name = "Quay_Wall_03"
 catalog_asset_id = "westhaven:quay-wall-03-c493cee8849d"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/quay-wall-03-c493cee8849d.glb"
@@ -5695,6 +7087,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Qu
 script = ExtResource("asset")
 transform = Transform3D(0.993894176271, 0, 0.110337511186, 0, 1, 0, -0.110337511186, 0, 0.993894176271, -4.36940646358, 3.4, 73.6030273731)
 asset_id = "Quay_Wall_04"
+material_overrides = [SubResource("object_material_0126"), SubResource("object_material_0127")]
 node_name = "Quay_Wall_04"
 catalog_asset_id = "westhaven:quay-wall-04-0b03bc62e0f5"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/quay-wall-04-0b03bc62e0f5.glb"
@@ -5708,6 +7101,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Qu
 script = ExtResource("asset")
 transform = Transform3D(0.993408935871, 0, 0.114624107985, 0, 1, 0, -0.114624107985, 0, 0.993408935871, 20.7946502048, 3.4, 70.7544634379)
 asset_id = "Quay_Wall_05"
+material_overrides = [SubResource("object_material_0128"), SubResource("object_material_0129")]
 node_name = "Quay_Wall_05"
 catalog_asset_id = "westhaven:quay-wall-05-95fbc6a26be5"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/quay-wall-05-95fbc6a26be5.glb"
@@ -5721,6 +7115,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Qu
 script = ExtResource("asset")
 transform = Transform3D(0.999980011989, 0, -0.00632262782911, 0, 1, 0, 0.00632262782911, 0, 0.999980011989, 46.0279658029, 3.4, 69.3828730383)
 asset_id = "Quay_Wall_06"
+material_overrides = [SubResource("object_material_0130"), SubResource("object_material_0131")]
 node_name = "Quay_Wall_06"
 catalog_asset_id = "westhaven:quay-wall-06-c0e260e60239"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/quay-wall-06-c0e260e60239.glb"
@@ -5734,6 +7129,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Qu
 script = ExtResource("asset")
 transform = Transform3D(0.999791818463, 0, -0.0204039146625, 0, 1, 0, 0.0204039146625, 0, 0.999791818463, 71.3421137587, 3.4, 69.7212676277)
 asset_id = "Quay_Wall_07"
+material_overrides = [SubResource("object_material_0132"), SubResource("object_material_0133")]
 node_name = "Quay_Wall_07"
 catalog_asset_id = "westhaven:quay-wall-07-7c601361240f"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/quay-wall-07-7c601361240f.glb"
@@ -5747,6 +7143,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Qu
 script = ExtResource("asset")
 transform = Transform3D(0.987311623059, 0, -0.158794707003, 0, 1, 0, 0.158794707003, 0, 0.987311623059, 96.5017020605, 3.4, 71.9898306543)
 asset_id = "Quay_Wall_08"
+material_overrides = [SubResource("object_material_0134"), SubResource("object_material_0135")]
 node_name = "Quay_Wall_08"
 catalog_asset_id = "westhaven:quay-wall-08-cbcd0275e354"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/quay-wall-08-cbcd0275e354.glb"
@@ -5760,6 +7157,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Qu
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44.46, 8.02619894831, -71.604)
 asset_id = "Secret_haven_arcade_school"
+material_overrides = [SubResource("object_material_0136")]
 node_name = "Secret_haven_arcade_school"
 catalog_asset_id = "westhaven:secret-haven-arcade-school-0cee0b24ae9e"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/secret-haven-arcade-school-0cee0b24ae9e.glb"
@@ -5773,6 +7171,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Secret
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.66, 14.2107396602, -84.084)
 asset_id = "Secret_haven_cathedral_reliquary"
+material_overrides = [SubResource("object_material_0137")]
 node_name = "Secret_haven_cathedral_reliquary"
 catalog_asset_id = "westhaven:secret-haven-cathedral-reliquary-489ba8b21618"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/secret-haven-cathedral-reliquary-489ba8b21618.glb"
@@ -5786,6 +7185,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Secret
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.2, 9.54611769176, -44.304)
 asset_id = "Secret_haven_gate_well"
+material_overrides = [SubResource("object_material_0138")]
 node_name = "Secret_haven_gate_well"
 catalog_asset_id = "westhaven:secret-haven-gate-well-e2e42735c697"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/secret-haven-gate-well-e2e42735c697.glb"
@@ -5799,6 +7199,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Secret
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 8.35, 14.2)
 asset_id = "Secret_haven_guild_vault"
+material_overrides = [SubResource("object_material_0139")]
 node_name = "Secret_haven_guild_vault"
 catalog_asset_id = "westhaven:secret-haven-guild-vault-b8297a106a40"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/secret-haven-guild-vault-b8297a106a40.glb"
@@ -5825,6 +7226,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Secret
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 91, 16.9494296677, 157.2)
 asset_id = "Secret_haven_lighthouse_eyrie"
+material_overrides = [SubResource("object_material_0140")]
 node_name = "Secret_haven_lighthouse_eyrie"
 catalog_asset_id = "westhaven:secret-haven-lighthouse-eyrie-f4ca18fcf783"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/secret-haven-lighthouse-eyrie-f4ca18fcf783.glb"
@@ -5838,6 +7240,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Secret
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -119, 4.11100085733, 69.2)
 asset_id = "Secret_haven_mole_pit"
+material_overrides = [SubResource("object_material_0141")]
 node_name = "Secret_haven_mole_pit"
 catalog_asset_id = "westhaven:secret-haven-mole-pit-835493375179"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/secret-haven-mole-pit-835493375179.glb"
@@ -5903,6 +7306,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Secret
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.86, 14.6064293575, -98.904)
 asset_id = "Secret_haven_spire_focus"
+material_overrides = [SubResource("object_material_0142")]
 node_name = "Secret_haven_spire_focus"
 catalog_asset_id = "westhaven:secret-haven-spire-focus-91cb232b1ec2"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/secret-haven-spire-focus-91cb232b1ec2.glb"
@@ -5916,6 +7320,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Secret
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -80, 7.88170928255, 46.2)
 asset_id = "Secret_haven_waystone"
+material_overrides = [SubResource("object_material_0143")]
 node_name = "Secret_haven_waystone"
 catalog_asset_id = "westhaven:secret-haven-waystone-6fe219a6d5a1"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/secret-haven-waystone-6fe219a6d5a1.glb"
@@ -5942,6 +7347,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Secret
 script = ExtResource("asset")
 transform = Transform3D(0.955336489126, 0, 0.295520206661, 0, 1, 0, -0.295520206661, 0, 0.955336489126, -68.15, 0, 81.78)
 asset_id = "Ship_Anchored_00"
+material_overrides = [SubResource("object_material_0144")]
 node_name = "Ship_Anchored_00"
 catalog_asset_id = "westhaven:ship-anchored-00-fca3d58efe22"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/ship-anchored-00-fca3d58efe22.glb"
@@ -5955,6 +7361,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Sh
 script = ExtResource("asset")
 transform = Transform3D(-0.461072691377, 0, 0.887362368633, 0, 1, 0, -0.887362368633, 0, -0.461072691377, 25.9, 0, 91.185)
 asset_id = "Ship_Anchored_02"
+material_overrides = [SubResource("object_material_0145")]
 node_name = "Ship_Anchored_02"
 catalog_asset_id = "westhaven:ship-anchored-02-d9db43322a62"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/ship-anchored-02-d9db43322a62.glb"
@@ -5968,6 +7375,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Sh
 script = ExtResource("asset")
 transform = Transform3D(-0.856888753369, 0, 0.515501371821, 0, 1, 0, -0.515501371821, 0, -0.856888753369, -94.385, 0, 77.325)
 asset_id = "Ship_Anchored_04"
+material_overrides = [SubResource("object_material_0146")]
 node_name = "Ship_Anchored_04"
 catalog_asset_id = "westhaven:ship-anchored-04-6f8285641eb0"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/ship-anchored-04-6f8285641eb0.glb"
@@ -5981,6 +7389,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Sh
 script = ExtResource("asset")
 transform = Transform3D(-0.0399893341866, 0, 0.999200106661, 0, 1, 0, -0.999200106661, 0, -0.0399893341866, 7.5, 0, 91)
 asset_id = "Ship_At_Cargo_Pier"
+material_overrides = [SubResource("object_material_0147")]
 node_name = "Ship_At_Cargo_Pier"
 catalog_asset_id = "westhaven:ship-at-cargo-pier-d1a8279ac10e"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/ship-at-cargo-pier-d1a8279ac10e.glb"
@@ -5994,6 +7403,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "landmark", "mesh": "Sh
 script = ExtResource("asset")
 transform = Transform3D(0.0599640064794, 0, 0.998200539935, 0, 1, 0, -0.998200539935, 0, 0.0599640064794, 64.5, 0, 96)
 asset_id = "Ship_At_Crane_Pier"
+material_overrides = [SubResource("object_material_0148")]
 node_name = "Ship_At_Crane_Pier"
 catalog_asset_id = "westhaven:ship-at-crane-pier-b02a2ae060d9"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/ship-at-crane-pier-b02a2ae060d9.glb"
@@ -7658,6 +9068,7 @@ metadata = {"composedSourceRegion": "westhaven", "kind": "prop", "mesh": "Haven_
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -170, 0, -1060)
 asset_id = "published-westhaven-ferry-quay-04"
+material_overrides = [SubResource("object_material_0149"), SubResource("object_material_0150"), SubResource("object_material_0151"), SubResource("object_material_0152"), SubResource("object_material_0153"), SubResource("object_material_0154"), SubResource("object_material_0155"), SubResource("object_material_0156")]
 node_name = "Walk_FerryQuay_westhaven_04_WorldPlacement"
 catalog_asset_id = "westhaven:published-westhaven-ferry-quay-04"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/published-westhaven-ferry-quay-04.glb"
@@ -7671,6 +9082,7 @@ metadata = {"authoredAccessAssembly": {"id": "ferry-quay-04", "walkNode": "Walk_
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -170, 0, -1060)
 asset_id = "published-westhaven-loose-503"
+material_overrides = [SubResource("object_material_0157"), SubResource("object_material_0158"), SubResource("object_material_0159"), SubResource("object_material_0160"), SubResource("object_material_0161"), SubResource("object_material_0162"), SubResource("object_material_0163")]
 node_name = "Walk_ContinentalBridgeUnion_503_westhaven_WorldPlacement"
 catalog_asset_id = "westhaven:published-westhaven-loose-503"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/published-westhaven-loose-503.glb"
@@ -7684,6 +9096,7 @@ metadata = {"authoredAccessAssembly": {"id": "loose-503", "walkNode": "Walk_Cont
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -170, 0, -1060)
 asset_id = "published-westhaven-loose-504"
+material_overrides = [SubResource("object_material_0164"), SubResource("object_material_0165"), SubResource("object_material_0166"), SubResource("object_material_0167"), SubResource("object_material_0168"), SubResource("object_material_0169"), SubResource("object_material_0170"), SubResource("object_material_0171"), SubResource("object_material_0172")]
 node_name = "Walk_ContinentalBridgeUnion_504_westhaven_WorldPlacement"
 catalog_asset_id = "westhaven:published-westhaven-loose-504"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/published-westhaven-loose-504.glb"
@@ -7710,6 +9123,7 @@ metadata = {"authoredAccessAssembly": {"id": "loose-505", "walkNode": "Walk_Cont
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -170, 0, -1060)
 asset_id = "published-westhaven-loose-506"
+material_overrides = [SubResource("object_material_0173"), SubResource("object_material_0174"), SubResource("object_material_0175"), SubResource("object_material_0176"), SubResource("object_material_0177")]
 node_name = "Walk_ContinentalBridgeUnion_506_westhaven_WorldPlacement"
 catalog_asset_id = "westhaven:published-westhaven-loose-506"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/published-westhaven-loose-506.glb"
@@ -7723,6 +9137,7 @@ metadata = {"authoredAccessAssembly": {"id": "loose-506", "walkNode": "Walk_Cont
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -170, 0, -1060)
 asset_id = "published-westhaven-walk-westhaven-ferrylandingstair"
+material_overrides = [SubResource("object_material_0178"), SubResource("object_material_0179")]
 node_name = "Walk_Westhaven_FerryLandingStair_WorldPlacement"
 catalog_asset_id = "westhaven:published-westhaven-walk-westhaven-ferrylandingstair"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/published-westhaven-walk-westhaven-ferrylandingstair.glb"
@@ -7736,6 +9151,7 @@ metadata = {"authoredAccessAssembly": {"id": "walk-westhaven-ferrylandingstair",
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -170, 0, -1060)
 asset_id = "published-westhaven-walk-westhaven-lampcausewaylink"
+material_overrides = [SubResource("object_material_0180"), SubResource("object_material_0181")]
 node_name = "Walk_Westhaven_LampCausewayLink_WorldPlacement"
 catalog_asset_id = "westhaven:published-westhaven-walk-westhaven-lampcausewaylink"
 scene_path = "res://world_authoring/regions/westhaven/assets/prototypes/published-westhaven-walk-westhaven-lampcausewaylink.glb"

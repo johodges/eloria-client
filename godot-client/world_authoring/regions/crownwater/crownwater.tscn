@@ -1,11 +1,15 @@
-[gd_scene load_steps=335 format=3]
+[gd_scene load_steps=449 format=3]
 
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/marine-timber.tres" id="object_marine_timber"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres" id="object_weathered_limestone"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/path_control.gd" id="path"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/water_region_control.gd" id="water"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_control.gd" id="asset"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/gameplay_marker.gd" id="marker"]
+[ext_resource type="Resource" path="res://world_authoring/regions/crownwater/surfaces/biome-coastal-gravel.tres" id="biome_entry"]
 [ext_resource type="Resource" path="res://world_authoring/regions/crownwater/surfaces/continental-ground.tres" id="terrain_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/crownwater/surfaces/road.tres" id="road_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/crownwater/surfaces/river.tres" id="river_surface"]
@@ -335,6 +339,776 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/crownwater/assets/prototypes/woodlandfloor-0479-45369a40b85f.glb" id="prototype_300"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/crownwater/assets/prototypes/woodlandfloor-0480-94debdca3235.glb" id="prototype_301"]
 
+[sub_resource type="Resource" id="object_material_0000"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_Shore_chart-house/Building_Shore_chart-house__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0001"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_Shore_ferriers/Building_Shore_ferriers__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0002"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_Shore_garden-tender/Building_Shore_garden-tender__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0003"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_Shore_market-cook/Building_Shore_market-cook__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0004"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_Shore_net-menders/Building_Shore_net-menders__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0005"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_Shore_north-packet-crew/Building_Shore_north-packet-crew__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0006"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_Shore_pearl-factors/Building_Shore_pearl-factors__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0007"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_Shore_west-packet-crew/Building_Shore_west-packet-crew__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0008"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_reach_outer_east/Causeway_reach_outer_east__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0009"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_reach_outer_north/Causeway_reach_outer_north__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0010"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_reach_outer_northeast/Causeway_reach_outer_northeast__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0011"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_reach_outer_northwest/Causeway_reach_outer_northwest__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0012"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_reach_outer_south/Causeway_reach_outer_south__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0013"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_reach_outer_southeast/Causeway_reach_outer_southeast__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0014"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_reach_outer_southwest/Causeway_reach_outer_southwest__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0015"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_reach_outer_west/Causeway_reach_outer_west__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0016"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_ring_harbour_isle_pavilion_west/Causeway_ring_harbour_isle_pavilion_west__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0017"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_ring_pavilion_east_pavilion_southeast/Causeway_ring_pavilion_east_pavilion_southeast__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0018"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_ring_pavilion_north_pavilion_northeast/Causeway_ring_pavilion_north_pavilion_northeast__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0019"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_ring_pavilion_northeast_pavilion_east/Causeway_ring_pavilion_northeast_pavilion_east__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0020"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_ring_pavilion_northwest_pavilion_north/Causeway_ring_pavilion_northwest_pavilion_north__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0021"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_ring_pavilion_south_harbour_isle/Causeway_ring_pavilion_south_harbour_isle__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0022"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_ring_pavilion_southeast_pavilion_south/Causeway_ring_pavilion_southeast_pavilion_south__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0023"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_ring_pavilion_west_pavilion_northwest/Causeway_ring_pavilion_west_pavilion_northwest__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0024"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_spoke_harbour_isle/Causeway_spoke_harbour_isle__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0025"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_spoke_pavilion_east/Causeway_spoke_pavilion_east__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0026"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_spoke_pavilion_north/Causeway_spoke_pavilion_north__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0027"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_spoke_pavilion_northeast/Causeway_spoke_pavilion_northeast__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0028"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_spoke_pavilion_northwest/Causeway_spoke_pavilion_northwest__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0029"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_spoke_pavilion_south/Causeway_spoke_pavilion_south__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0030"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_spoke_pavilion_southeast/Causeway_spoke_pavilion_southeast__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0031"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Causeway_spoke_pavilion_west/Causeway_spoke_pavilion_west__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0032"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_CustomsHouse/Landmark_CustomsHouse__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0033"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Lore_court_grating/Lore_court_grating__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0034"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_CrownFountain/Prop_CrownFountain__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0035"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_CrownStatue_0"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0036"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_CrownStatue_1"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0037"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_CrownStatue_2"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0038"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_CrownStatue_3"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0039"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_CrownStatue_4"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0040"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_CrownStatue_5"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0041"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_CrownStatue_6"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0042"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_CrownStatue_7"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0043"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_GardenFountain/Prop_GardenFountain__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0044"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_SunkenColumn_0"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0045"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_SunkenColumn_1"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0046"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_SunkenColumn_2"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0047"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_SunkenColumn_3"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0048"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_SunkenColumn_4"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0049"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_SunkenColumn_5"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0050"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_SunkenColumn_6"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0051"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_SunkenColumn_7"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0052"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_SunkenColumn_8"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0053"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_crown_campanile_eyrie/Secret_crown_campanile_eyrie__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0054"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_crown_campanile_vault/Secret_crown_campanile_vault__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0055"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_crown_cathedral_school/Secret_crown_cathedral_school__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0056"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_crown_cistern_well/Secret_crown_cistern_well__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0057"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_crown_court_reliquary/Secret_crown_court_reliquary__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0058"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_crown_drain/Secret_crown_drain__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0059"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_crown_kelp_garden/Secret_crown_kelp_garden__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0060"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_crown_lake_focus/Secret_crown_lake_focus__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0061"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_crown_pavilion_butts/Secret_crown_pavilion_butts__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0062"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_crown_waystone/Secret_crown_waystone__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0063"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_CustomsCargoRamp/Walk_CustomsCargoRamp__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0064"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_FourGatesNativeLanding/Walk_FourGatesNativeLanding__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0065"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_QuayRun_crown_quay_north/Walk_QuayRun_crown_quay_north__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0066"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_QuayRun_crown_quay_south/Walk_QuayRun_crown_quay_south__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0067"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_QuayRun_harbour_lamp_walk/Walk_QuayRun_harbour_lamp_walk__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0068"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_QuayRun_harbour_quay/Walk_QuayRun_harbour_quay__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0069"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Quay_pavilion_west_0/Walk_Quay_pavilion_west_0__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0070"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Quay_pavilion_west_2/Walk_Quay_pavilion_west_2__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0071"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_FerryQuay_crownwater_01_WorldPlacement/Walk_FerryQuay_crownwater_01"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0072"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_01_PilesAndPosts_WorldPlacement/FerryQuay_crownwater_01_PilesAndPosts"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0073"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_01_Signpost_WorldPlacement/FerryQuay_crownwater_01_Signpost"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0074"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_01_Skiff_Floor_WorldPlacement/FerryQuay_crownwater_01_Skiff_Floor"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0075"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_01_Skiff_Seat_0_WorldPlacement/FerryQuay_crownwater_01_Skiff_Seat_0"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0076"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_01_Skiff_Seat_1_WorldPlacement/FerryQuay_crownwater_01_Skiff_Seat_1"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0077"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_01_Skiff_Seat_2_WorldPlacement/FerryQuay_crownwater_01_Skiff_Seat_2"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0078"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_01_Skiff_Mast_WorldPlacement/FerryQuay_crownwater_01_Skiff_Mast"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0079"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_FerryQuay_crownwater_03_WorldPlacement/Walk_FerryQuay_crownwater_03"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0080"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_03_PilesAndPosts_WorldPlacement/FerryQuay_crownwater_03_PilesAndPosts"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0081"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_03_Signpost_WorldPlacement/FerryQuay_crownwater_03_Signpost"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0082"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_03_Skiff_Floor_WorldPlacement/FerryQuay_crownwater_03_Skiff_Floor"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0083"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_03_Skiff_Seat_0_WorldPlacement/FerryQuay_crownwater_03_Skiff_Seat_0"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0084"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_03_Skiff_Seat_1_WorldPlacement/FerryQuay_crownwater_03_Skiff_Seat_1"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0085"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_03_Skiff_Seat_2_WorldPlacement/FerryQuay_crownwater_03_Skiff_Seat_2"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0086"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_03_Skiff_Mast_WorldPlacement/FerryQuay_crownwater_03_Skiff_Mast"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0087"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_FerryQuay_crownwater_05_WorldPlacement/Walk_FerryQuay_crownwater_05"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0088"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_05_PilesAndPosts_WorldPlacement/FerryQuay_crownwater_05_PilesAndPosts"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0089"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_05_Signpost_WorldPlacement/FerryQuay_crownwater_05_Signpost"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0090"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_05_Skiff_Floor_WorldPlacement/FerryQuay_crownwater_05_Skiff_Floor"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0091"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_05_Skiff_Seat_0_WorldPlacement/FerryQuay_crownwater_05_Skiff_Seat_0"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0092"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_05_Skiff_Seat_1_WorldPlacement/FerryQuay_crownwater_05_Skiff_Seat_1"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0093"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_05_Skiff_Seat_2_WorldPlacement/FerryQuay_crownwater_05_Skiff_Seat_2"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0094"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_crownwater_05_Skiff_Mast_WorldPlacement/FerryQuay_crownwater_05_Skiff_Mast"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0095"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_507_316_1404_WorldPlacement/BridgeUnionPier_507_316_1404"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0096"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_507_324_1404_WorldPlacement/BridgeUnionPier_507_324_1404"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0097"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_507_332_1404_WorldPlacement/BridgeUnionPier_507_332_1404"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0098"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_507_340_1404_WorldPlacement/BridgeUnionPier_507_340_1404"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0099"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_507_396_1404_WorldPlacement/BridgeUnionPier_507_396_1404"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0100"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_507_356_1412_WorldPlacement/BridgeUnionPier_507_356_1412"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0101"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_507_380_1412_WorldPlacement/BridgeUnionPier_507_380_1412"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0102"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_507_364_1420_WorldPlacement/BridgeUnionPier_507_364_1420"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0103"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_508_460_1436_WorldPlacement/BridgeUnionPier_508_460_1436"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0104"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_511_484_1516_WorldPlacement/BridgeUnionPier_511_484_1516"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0105"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_518_484_1564_WorldPlacement/BridgeUnionPier_518_484_1564"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0106"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_518_476_1572_WorldPlacement/BridgeUnionPier_518_476_1572"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0107"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_519_316_1596_WorldPlacement/BridgeUnionPier_519_316_1596"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0108"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_519_324_1612_WorldPlacement/BridgeUnionPier_519_324_1612"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0109"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_519_332_1628_WorldPlacement/BridgeUnionPier_519_332_1628"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
 [node name="Crownwater" type="Node3D"]
 script = ExtResource("region")
 region_id = "crownwater"
@@ -361,6 +1135,7 @@ base_heights_path = "res://world_authoring/regions/crownwater/base-heights.f32le
 base_colors_path = "res://world_authoring/regions/crownwater/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
 base_surface = ExtResource("terrain_surface")
+biome_palette = [ExtResource("biome_entry")]
 
 [node name="Patches" type="Node3D" parent="Terrain"]
 
@@ -635,6 +1410,7 @@ surface = ExtResource("road_surface")
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 184, 3.96974187863, -106)
 asset_id = "Building_Shore_chart-house"
+material_overrides = [SubResource("object_material_0000")]
 node_name = "Building_Shore_chart-house"
 catalog_asset_id = "crownwater:building-shore-chart-house-ad0b206c606e"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/building-shore-chart-house-ad0b206c606e.glb"
@@ -648,6 +1424,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "building", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 18, 4.25517426073, -23)
 asset_id = "Building_Shore_ferriers"
+material_overrides = [SubResource("object_material_0001")]
 node_name = "Building_Shore_ferriers"
 catalog_asset_id = "crownwater:building-shore-ferriers-09f3a42e2db5"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/building-shore-ferriers-09f3a42e2db5.glb"
@@ -661,6 +1438,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "building", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -56, 4.45932477479, -92)
 asset_id = "Building_Shore_garden-tender"
+material_overrides = [SubResource("object_material_0002")]
 node_name = "Building_Shore_garden-tender"
 catalog_asset_id = "crownwater:building-shore-garden-tender-987b2816c83b"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/building-shore-garden-tender-987b2816c83b.glb"
@@ -674,6 +1452,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "building", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -20, 3.9513652906, 20)
 asset_id = "Building_Shore_market-cook"
+material_overrides = [SubResource("object_material_0003")]
 node_name = "Building_Shore_market-cook"
 catalog_asset_id = "crownwater:building-shore-market-cook-2fce51d0bbb4"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/building-shore-market-cook-2fce51d0bbb4.glb"
@@ -687,6 +1466,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "building", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -18, 4.58031047763, -25)
 asset_id = "Building_Shore_net-menders"
+material_overrides = [SubResource("object_material_0004")]
 node_name = "Building_Shore_net-menders"
 catalog_asset_id = "crownwater:building-shore-net-menders-05508e9125ab"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/building-shore-net-menders-05508e9125ab.glb"
@@ -700,6 +1480,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "building", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 141, 4.20034905979, -240)
 asset_id = "Building_Shore_north-packet-crew"
+material_overrides = [SubResource("object_material_0005")]
 node_name = "Building_Shore_north-packet-crew"
 catalog_asset_id = "crownwater:building-shore-north-packet-crew-dc65eee281f3"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/building-shore-north-packet-crew-dc65eee281f3.glb"
@@ -713,6 +1494,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "building", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 190, 3.97, -94)
 asset_id = "Building_Shore_pearl-factors"
+material_overrides = [SubResource("object_material_0006")]
 node_name = "Building_Shore_pearl-factors"
 catalog_asset_id = "crownwater:building-shore-pearl-factors-b37cd0c5a49b"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/building-shore-pearl-factors-b37cd0c5a49b.glb"
@@ -726,6 +1508,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "building", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -88, 2.95889001072, -160)
 asset_id = "Building_Shore_west-packet-crew"
+material_overrides = [SubResource("object_material_0007")]
 node_name = "Building_Shore_west-packet-crew"
 catalog_asset_id = "crownwater:building-shore-west-packet-crew-eb5780ac75d9"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/building-shore-west-packet-crew-eb5780ac75d9.glb"
@@ -739,6 +1522,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "building", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.489534756708, 0, -0.871983785385, 0, 1, 0, 0.871983785385, 0, 0.489534756708, 195.713371648, 0, -56.4480567512)
 asset_id = "Causeway_reach_outer_east"
+material_overrides = [SubResource("object_material_0008")]
 node_name = "Causeway_reach_outer_east"
 catalog_asset_id = "crownwater:causeway-reach-outer-east-dcee6d691c56"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-reach-outer-east-dcee6d691c56.glb"
@@ -752,6 +1536,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.742102642751, 0, 0.670286257969, 0, 1, 0, -0.670286257969, 0, 0.742102642751, 121.484205286, 0, -220.340572516)
 asset_id = "Causeway_reach_outer_north"
+material_overrides = [SubResource("object_material_0009")]
 node_name = "Causeway_reach_outer_north"
 catalog_asset_id = "crownwater:causeway-reach-outer-north-66bdcc60a0d6"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-reach-outer-north-66bdcc60a0d6.glb"
@@ -765,6 +1550,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.993150604323, 0, -0.116841247567, 0, 1, 0, 0.116841247567, 0, 0.993150604323, 209.476027115, 0, -169.591055634)
 asset_id = "Causeway_reach_outer_northeast"
+material_overrides = [SubResource("object_material_0010")]
 node_name = "Causeway_reach_outer_northeast"
 catalog_asset_id = "crownwater:causeway-reach-outer-northeast-369e44ccb4f3"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-reach-outer-northeast-369e44ccb4f3.glb"
@@ -778,6 +1564,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.258361739899, 0, 0.966048244839, 0, 1, 0, -0.966048244839, 0, 0.258361739899, 12.2750852197, 0, -218.898144735)
 asset_id = "Causeway_reach_outer_northwest"
+material_overrides = [SubResource("object_material_0011")]
 node_name = "Causeway_reach_outer_northwest"
 catalog_asset_id = "crownwater:causeway-reach-outer-northwest-a96dff7686b6"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-reach-outer-northwest-a96dff7686b6.glb"
@@ -791,6 +1578,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.780868809443, 0, -0.624695047554, 0, 1, 0, 0.624695047554, 0, -0.780868809443, 44.2191311906, 0, 60.6246950476)
 asset_id = "Causeway_reach_outer_south"
+material_overrides = [SubResource("object_material_0012")]
 node_name = "Causeway_reach_outer_south"
 catalog_asset_id = "crownwater:causeway-reach-outer-south-653b4c6e018f"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-reach-outer-south-653b4c6e018f.glb"
@@ -804,6 +1592,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.023522901136, 0, -0.999723298279, 0, 1, 0, 0.999723298279, 0, -0.023522901136, 153.929431297, 0, 42.4991698948)
 asset_id = "Causeway_reach_outer_southeast"
+material_overrides = [SubResource("object_material_0013")]
 node_name = "Causeway_reach_outer_southeast"
 catalog_asset_id = "crownwater:causeway-reach-outer-southeast-ba99f0aee0ce"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-reach-outer-southeast-ba99f0aee0ce.glb"
@@ -817,6 +1606,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.882018256262, 0, -0.471215232798, 0, 1, 0, 0.471215232798, 0, -0.882018256262, -47.0842190751, 0, 17.1545827936)
 asset_id = "Causeway_reach_outer_southwest"
+material_overrides = [SubResource("object_material_0014")]
 node_name = "Causeway_reach_outer_southwest"
 catalog_asset_id = "crownwater:causeway-reach-outer-southwest-0fa68e759a33"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-reach-outer-southwest-0fa68e759a33.glb"
@@ -830,6 +1620,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.589695128953, 0, 0.807625937479, 0, 1, 0, -0.807625937479, 0, -0.589695128953, -68.2433232092, 0, -123.941942656)
 asset_id = "Causeway_reach_outer_west"
+material_overrides = [SubResource("object_material_0015")]
 node_name = "Causeway_reach_outer_west"
 catalog_asset_id = "crownwater:causeway-reach-outer-west-e2559383177b"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-reach-outer-west-e2559383177b.glb"
@@ -843,6 +1634,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.46483389899, 0, 0.885397902838, 0, 1, 0, -0.885397902838, 0, -0.46483389899, -24.4862542424, 0, -54.6404842713)
 asset_id = "Causeway_ring_harbour_isle_pavilion_west"
+material_overrides = [SubResource("object_material_0016")]
 node_name = "Causeway_ring_harbour_isle_pavilion_west"
 catalog_asset_id = "crownwater:causeway-ring-harbour-isle-pavilion-west-b2f0850c7cd5"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-ring-harbour-isle-pavilion-west-b2f0850c7cd5.glb"
@@ -856,6 +1648,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.261195047275, 0, -0.965286044278, 0, 1, 0, 0.965286044278, 0, -0.261195047275, 166.108207429, 0, -44.0520709336)
 asset_id = "Causeway_ring_pavilion_east_pavilion_southeast"
+material_overrides = [SubResource("object_material_0017")]
 node_name = "Causeway_ring_pavilion_east_pavilion_southeast"
 catalog_asset_id = "crownwater:causeway-ring-pavilion-east-pavilion-southeast-ceb3111f0aa3"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-ring-pavilion-east-pavilion-southeast-ceb3111f0aa3.glb"
@@ -869,6 +1662,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.979662231896, 0, -0.200653710147, 0, 1, 0, 0.200653710147, 0, 0.979662231896, 129.520337768, 0, -182.70065371)
 asset_id = "Causeway_ring_pavilion_north_pavilion_northeast"
+material_overrides = [SubResource("object_material_0018")]
 node_name = "Causeway_ring_pavilion_north_pavilion_northeast"
 catalog_asset_id = "crownwater:causeway-ring-pavilion-north-pavilion-northeast-0bf7ed6707c6"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-ring-pavilion-north-pavilion-northeast-0bf7ed6707c6.glb"
@@ -882,6 +1676,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.069598262849, 0, -0.997575100836, 0, 1, 0, 0.997575100836, 0, 0.069598262849, 174.791205211, 0, -133.992725303)
 asset_id = "Causeway_ring_pavilion_northeast_pavilion_east"
+material_overrides = [SubResource("object_material_0019")]
 node_name = "Causeway_ring_pavilion_northeast_pavilion_east"
 catalog_asset_id = "crownwater:causeway-ring-pavilion-northeast-pavilion-east-4dad964e1a16"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-ring-pavilion-northeast-pavilion-east-4dad964e1a16.glb"
@@ -895,6 +1690,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.980154812588, 0, 0.198233557602, 0, 1, 0, -0.198233557602, 0, 0.980154812588, 44.9900774063, 0, -182.099116779)
 asset_id = "Causeway_ring_pavilion_northwest_pavilion_north"
+material_overrides = [SubResource("object_material_0020")]
 node_name = "Causeway_ring_pavilion_northwest_pavilion_north"
 catalog_asset_id = "crownwater:causeway-ring-pavilion-northwest-pavilion-north-c93a7f480252"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-ring-pavilion-northwest-pavilion-north-c93a7f480252.glb"
@@ -908,6 +1704,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.824728851846, 0, 0.565528355552, 0, 1, 0, -0.565528355552, 0, -0.824728851846, 43.6596529444, 0, 21.9380477333)
 asset_id = "Causeway_ring_pavilion_south_harbour_isle"
+material_overrides = [SubResource("object_material_0021")]
 node_name = "Causeway_ring_pavilion_south_harbour_isle"
 catalog_asset_id = "crownwater:causeway-ring-pavilion-south-harbour-isle-64d8d88fe1d0"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-ring-pavilion-south-harbour-isle-64d8d88fe1d0.glb"
@@ -921,6 +1718,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.892317762706, 0, -0.451407809369, 0, 1, 0, 0.451407809369, 0, -0.892317762706, 114.284635525, 0, 17.5971843813)
 asset_id = "Causeway_ring_pavilion_southeast_pavilion_south"
+material_overrides = [SubResource("object_material_0022")]
 node_name = "Causeway_ring_pavilion_southeast_pavilion_south"
 catalog_asset_id = "crownwater:causeway-ring-pavilion-southeast-pavilion-south-01fbc0c975bb"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-ring-pavilion-southeast-pavilion-south-01fbc0c975bb.glb"
@@ -934,6 +1732,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.442989671103, 0, 0.896526715328, 0, 1, 0, -0.896526715328, 0, 0.442989671103, -21.2214948356, 0, -130.051736642)
 asset_id = "Causeway_ring_pavilion_west_pavilion_northwest"
+material_overrides = [SubResource("object_material_0023")]
 node_name = "Causeway_ring_pavilion_west_pavilion_northwest"
 catalog_asset_id = "crownwater:causeway-ring-pavilion-west-pavilion-northwest-c1d10fb3e5f4"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-ring-pavilion-west-pavilion-northwest-c1d10fb3e5f4.glb"
@@ -947,6 +1746,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.707106781187, 0, -0.707106781187, 0, 1, 0, 0.707106781187, 0, -0.707106781187, 30.8682720164, 0, -38.8682720164)
 asset_id = "Causeway_spoke_harbour_isle"
+material_overrides = [SubResource("object_material_0024")]
 node_name = "Causeway_spoke_harbour_isle"
 catalog_asset_id = "crownwater:causeway-spoke-harbour-isle-c5189c84cf54"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-spoke-harbour-isle-c5189c84cf54.glb"
@@ -960,6 +1760,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.99980005998, 0, 0.0199960011996, 0, 1, 0, -0.0199960011996, 0, 0.99980005998, 147.49610117, 0, -87.3899220234)
 asset_id = "Causeway_spoke_pavilion_east"
+material_overrides = [SubResource("object_material_0025")]
 node_name = "Causeway_spoke_pavilion_east"
 catalog_asset_id = "crownwater:causeway-spoke-pavilion-east-de571c729d2f"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-spoke-pavilion-east-de571c729d2f.glb"
@@ -973,6 +1774,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.104191710011, 0, 0.99455723192, 0, 1, 0, -0.99455723192, 0, 0.104191710011, 85.3754507802, 0, -156.402030175)
 asset_id = "Causeway_spoke_pavilion_north"
+material_overrides = [SubResource("object_material_0026")]
 node_name = "Causeway_spoke_pavilion_north"
 catalog_asset_id = "crownwater:causeway-spoke-pavilion-north-835de03c7267"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-spoke-pavilion-north-835de03c7267.glb"
@@ -986,6 +1788,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.730021398632, 0, 0.683424288081, 0, 1, 0, -0.683424288081, 0, 0.730021398632, 136.680342378, 0, -140.934788609)
 asset_id = "Causeway_spoke_pavilion_northeast"
+material_overrides = [SubResource("object_material_0027")]
 node_name = "Causeway_spoke_pavilion_northeast"
 catalog_asset_id = "crownwater:causeway-spoke-pavilion-northeast-95372b2bd815"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-spoke-pavilion-northeast-95372b2bd815.glb"
@@ -999,6 +1802,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.667545015752, 0, 0.744569440646, 0, 1, 0, -0.744569440646, 0, -0.667545015752, 25.3153271771, 0, -144.763673533)
 asset_id = "Causeway_spoke_pavilion_northwest"
+material_overrides = [SubResource("object_material_0028")]
 node_name = "Causeway_spoke_pavilion_northwest"
 catalog_asset_id = "crownwater:causeway-spoke-pavilion-northwest-f052df022cf0"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-spoke-pavilion-northwest-f052df022cf0.glb"
@@ -1012,6 +1816,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.0633644731828, 0, -0.997990452629, 0, 1, 0, 0.997990452629, 0, -0.0633644731828, 72.9228039559, 0, -6.03416230531)
 asset_id = "Causeway_spoke_pavilion_south"
+material_overrides = [SubResource("object_material_0029")]
 node_name = "Causeway_spoke_pavilion_south"
 catalog_asset_id = "crownwater:causeway-spoke-pavilion-south-dbcd5fc6e67a"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-spoke-pavilion-south-dbcd5fc6e67a.glb"
@@ -1025,6 +1830,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.680112240973, 0, -0.73310800001, 0, 1, 0, 0.73310800001, 0, 0.680112240973, 130.78235706, 0, -29.1047319998)
 asset_id = "Causeway_spoke_pavilion_southeast"
+material_overrides = [SubResource("object_material_0030")]
 node_name = "Causeway_spoke_pavilion_southeast"
 catalog_asset_id = "crownwater:causeway-spoke-pavilion-southeast-ad60ccc312a0"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-spoke-pavilion-southeast-ad60ccc312a0.glb"
@@ -1038,6 +1844,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.99986114004, 0, 0.016664352334, 0, 1, 0, -0.016664352334, 0, -0.99986114004, -1.99722280079, 0, -87.3332870467)
 asset_id = "Causeway_spoke_pavilion_west"
+material_overrides = [SubResource("object_material_0031")]
 node_name = "Causeway_spoke_pavilion_west"
 catalog_asset_id = "crownwater:causeway-spoke-pavilion-west-eba84382ef65"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/causeway-spoke-pavilion-west-eba84382ef65.glb"
@@ -1896,6 +2703,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 23, 4.5, 0)
 asset_id = "Landmark_CustomsHouse"
+material_overrides = [SubResource("object_material_0032")]
 node_name = "Landmark_CustomsHouse"
 catalog_asset_id = "crownwater:landmark-customshouse-2bc0e3a3dd0a"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/landmark-customshouse-2bc0e3a3dd0a.glb"
@@ -2130,6 +2938,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "U
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 86, 14.179, -130)
 asset_id = "Lore_court_grating"
+material_overrides = [SubResource("object_material_0033")]
 node_name = "Lore_court_grating"
 catalog_asset_id = "crownwater:lore-court-grating-c3c071b90fa2"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/lore-court-grating-c3c071b90fa2.glb"
@@ -2494,6 +3303,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Campa
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 78, 13.8195292685, -43)
 asset_id = "Prop_CrownFountain"
+material_overrides = [SubResource("object_material_0034")]
 node_name = "Prop_CrownFountain"
 catalog_asset_id = "crownwater:prop-crownfountain-3c94b69908cb"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-crownfountain-3c94b69908cb.glb"
@@ -2507,6 +3317,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Crown
 script = ExtResource("asset")
 transform = Transform3D(0.852029048672, 0, 0.523494508299, 0, 1, 0, -0.523494508299, 0, 0.852029048672, 96.621264979, 13.2604670807, -55.2252827149)
 asset_id = "Prop_CrownStatue_0"
+material_overrides = [SubResource("object_material_0035")]
 node_name = "Prop_CrownStatue_0"
 catalog_asset_id = "crownwater:prop-crownstatue-0-d0ec0729f895"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-crownstatue-0-d0ec0729f895.glb"
@@ -2520,6 +3331,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Crown
 script = ExtResource("asset")
 transform = Transform3D(-0.975931625982, 0, 0.218076732845, 0, 1, 0, -0.218076732845, 0, -0.975931625982, 88.4980945516, 13.1126817167, -43.1636490697)
 asset_id = "Prop_CrownStatue_1"
+material_overrides = [SubResource("object_material_0036")]
 node_name = "Prop_CrownStatue_1"
 catalog_asset_id = "crownwater:prop-crownstatue-1-1ef6566f7303"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-crownstatue-1-1ef6566f7303.glb"
@@ -2533,6 +3345,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Crown
 script = ExtResource("asset")
 transform = Transform3D(-0.332890650651, 0, -0.942965436646, 0, 1, 0, 0.942965436646, 0, -0.332890650651, 74.2252827149, 12.9966079515, -40.378735021)
 asset_id = "Prop_CrownStatue_2"
+material_overrides = [SubResource("object_material_0037")]
 node_name = "Prop_CrownStatue_2"
 catalog_asset_id = "crownwater:prop-crownstatue-2-f833cefecc5d"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-crownstatue-2-f833cefecc5d.glb"
@@ -2546,6 +3359,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Crown
 script = ExtResource("asset")
 transform = Transform3D(-0.943251621472, 0, -0.332078874049, 0, 1, 0, 0.332078874049, 0, -0.943251621472, 62.1636490697, 13.0940130392, -48.5019054484)
 asset_id = "Prop_CrownStatue_3"
+material_overrides = [SubResource("object_material_0038")]
 node_name = "Prop_CrownStatue_3"
 catalog_asset_id = "crownwater:prop-crownstatue-3-b6e632abe1d1"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-crownstatue-3-b6e632abe1d1.glb"
@@ -2559,6 +3373,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Crown
 script = ExtResource("asset")
 transform = Transform3D(-0.123456697222, 0, -0.992349960403, 0, 1, 0, 0.992349960403, 0, -0.123456697222, 59.378735021, 13.1542259222, -62.7747172851)
 asset_id = "Prop_CrownStatue_4"
+material_overrides = [SubResource("object_material_0039")]
 node_name = "Prop_CrownStatue_4"
 catalog_asset_id = "crownwater:prop-crownstatue-4-41b4e992a1d3"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-crownstatue-4-41b4e992a1d3.glb"
@@ -2572,6 +3387,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Crown
 script = ExtResource("asset")
 transform = Transform3D(-0.614495281, 0, -0.788920496393, 0, 1, 0, 0.788920496393, 0, -0.614495281, 67.5019054484, 13.733552989, -74.8363509303)
 asset_id = "Prop_CrownStatue_5"
+material_overrides = [SubResource("object_material_0040")]
 node_name = "Prop_CrownStatue_5"
 catalog_asset_id = "crownwater:prop-crownstatue-5-e58713d6f962"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-crownstatue-5-e58713d6f962.glb"
@@ -2585,6 +3401,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Crown
 script = ExtResource("asset")
 transform = Transform3D(-0.897608312088, 0, -0.440793963287, 0, 1, 0, 0.440793963287, 0, -0.897608312088, 81.7747172851, 14.4028995348, -77.621264979)
 asset_id = "Prop_CrownStatue_6"
+material_overrides = [SubResource("object_material_0041")]
 node_name = "Prop_CrownStatue_6"
 catalog_asset_id = "crownwater:prop-crownstatue-6-ec6cef86d62a"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-crownstatue-6-ec6cef86d62a.glb"
@@ -2598,6 +3415,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Crown
 script = ExtResource("asset")
 transform = Transform3D(0.0947932487877, 0, -0.995496981404, 0, 1, 0, 0.995496981404, 0, 0.0947932487877, 93.8363509303, 13.293306997, -69.4980945516)
 asset_id = "Prop_CrownStatue_7"
+material_overrides = [SubResource("object_material_0042")]
 node_name = "Prop_CrownStatue_7"
 catalog_asset_id = "crownwater:prop-crownstatue-7-00b5fe22a6a8"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-crownstatue-7-00b5fe22a6a8.glb"
@@ -2611,6 +3429,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Crown
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 4.5, -88)
 asset_id = "Prop_GardenFountain"
+material_overrides = [SubResource("object_material_0043")]
 node_name = "Prop_GardenFountain"
 catalog_asset_id = "crownwater:prop-gardenfountain-60b887e8dfa6"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-gardenfountain-60b887e8dfa6.glb"
@@ -3612,6 +4431,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Stall
 script = ExtResource("asset")
 transform = Transform3D(0.969538203184, 0, -0.244940140782, 0, 1, 0, 0.244940140782, 0, 0.969538203184, -13, -5.86499326482, -50)
 asset_id = "Prop_SunkenColumn_0"
+material_overrides = [SubResource("object_material_0044")]
 node_name = "Prop_SunkenColumn_0"
 catalog_asset_id = "crownwater:prop-sunkencolumn-0-b96e3f50fc78"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-sunkencolumn-0-b96e3f50fc78.glb"
@@ -3625,6 +4445,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Sunke
 script = ExtResource("asset")
 transform = Transform3D(0.855907597065, 0, 0.517128789845, 0, 1, 0, -0.517128789845, 0, 0.855907597065, -16.5093333532, -0.20835122708, -40.3581858547)
 asset_id = "Prop_SunkenColumn_1"
+material_overrides = [SubResource("object_material_0045")]
 node_name = "Prop_SunkenColumn_1"
 catalog_asset_id = "crownwater:prop-sunkencolumn-1-7b53f3522816"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-sunkencolumn-1-7b53f3522816.glb"
@@ -3638,6 +4459,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Sunke
 script = ExtResource("asset")
 transform = Transform3D(0.792216809236, 0, -0.610239729257, 0, 1, 0, 0.610239729257, 0, 0.792216809236, -25.395277335, -0.0867427750674, -35.2278837048)
 asset_id = "Prop_SunkenColumn_2"
+material_overrides = [SubResource("object_material_0046")]
 node_name = "Prop_SunkenColumn_2"
 catalog_asset_id = "crownwater:prop-sunkencolumn-2-5060b059f79b"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-sunkencolumn-2-5060b059f79b.glb"
@@ -3651,6 +4473,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Sunke
 script = ExtResource("asset")
 transform = Transform3D(0.907388600767, 0, -0.420292668504, 0, 1, 0, 0.420292668504, 0, 0.907388600767, -35.5, -1.05, -37.0096189432)
 asset_id = "Prop_SunkenColumn_3"
+material_overrides = [SubResource("object_material_0047")]
 node_name = "Prop_SunkenColumn_3"
 catalog_asset_id = "crownwater:prop-sunkencolumn-3-c71ac9f736e8"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-sunkencolumn-3-c71ac9f736e8.glb"
@@ -3664,6 +4487,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Sunke
 script = ExtResource("asset")
 transform = Transform3D(0.986780015419, 0, -0.162065422497, 0, 1, 0, 0.162065422497, 0, 0.986780015419, -42.0953893118, -5.41935549013, -44.8696978501)
 asset_id = "Prop_SunkenColumn_4"
+material_overrides = [SubResource("object_material_0048")]
 node_name = "Prop_SunkenColumn_4"
 catalog_asset_id = "crownwater:prop-sunkencolumn-4-5e87d0c8a04b"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-sunkencolumn-4-5e87d0c8a04b.glb"
@@ -3677,6 +4501,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Sunke
 script = ExtResource("asset")
 transform = Transform3D(0.992536696451, 0, -0.121946325068, 0, 1, 0, 0.121946325068, 0, 0.992536696451, -42.0953893118, -4.3404759027, -55.1303021499)
 asset_id = "Prop_SunkenColumn_5"
+material_overrides = [SubResource("object_material_0049")]
 node_name = "Prop_SunkenColumn_5"
 catalog_asset_id = "crownwater:prop-sunkencolumn-5-9197030b44b0"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-sunkencolumn-5-9197030b44b0.glb"
@@ -3690,6 +4515,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Sunke
 script = ExtResource("asset")
 transform = Transform3D(0.970510421005, 0, -0.241059168506, 0, 1, 0, 0.241059168506, 0, 0.970510421005, -35.5, -1.05, -62.9903810568)
 asset_id = "Prop_SunkenColumn_6"
+material_overrides = [SubResource("object_material_0050")]
 node_name = "Prop_SunkenColumn_6"
 catalog_asset_id = "crownwater:prop-sunkencolumn-6-d3835d2709a5"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-sunkencolumn-6-d3835d2709a5.glb"
@@ -3703,6 +4529,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Sunke
 script = ExtResource("asset")
 transform = Transform3D(-0.137494746421, 0, 0.990502496063, 0, 1, 0, -0.990502496063, 0, -0.137494746421, -25.395277335, 1.86805706111, -64.7721162952)
 asset_id = "Prop_SunkenColumn_7"
+material_overrides = [SubResource("object_material_0051")]
 node_name = "Prop_SunkenColumn_7"
 catalog_asset_id = "crownwater:prop-sunkencolumn-7-0f0a43b40303"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-sunkencolumn-7-0f0a43b40303.glb"
@@ -3716,6 +4543,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Sunke
 script = ExtResource("asset")
 transform = Transform3D(0.981301394596, 0, -0.192477460924, 0, 1, 0, 0.192477460924, 0, 0.981301394596, -16.5093333532, -1.05, -59.6418141453)
 asset_id = "Prop_SunkenColumn_8"
+material_overrides = [SubResource("object_material_0052")]
 node_name = "Prop_SunkenColumn_8"
 catalog_asset_id = "crownwater:prop-sunkencolumn-8-6fde51976607"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/prop-sunkencolumn-8-6fde51976607.glb"
@@ -3729,6 +4557,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Sunke
 script = ExtResource("asset")
 transform = Transform3D(-0.999952531336, 0, -0.00974346313887, 0, 1, 0, 0.00974346313887, 0, -0.999952531336, 110.804, 11.965, -127)
 asset_id = "Secret_crown_campanile_eyrie"
+material_overrides = [SubResource("object_material_0053")]
 node_name = "Secret_crown_campanile_eyrie"
 catalog_asset_id = "crownwater:secret-crown-campanile-eyrie-d5a701d59f86"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/secret-crown-campanile-eyrie-d5a701d59f86.glb"
@@ -3742,6 +4571,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(0.28451761744, 0, -0.958670811784, 0, 1, 0, 0.958670811784, 0, 0.28451761744, 134, 11.021, -108)
 asset_id = "Secret_crown_campanile_vault"
+material_overrides = [SubResource("object_material_0054")]
 node_name = "Secret_crown_campanile_vault"
 catalog_asset_id = "crownwater:secret-crown-campanile-vault-bdd48e52694f"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/secret-crown-campanile-vault-bdd48e52694f.glb"
@@ -3755,6 +4585,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(-0.52005091434, 0, 0.854135262411, 0, 1, 0, -0.854135262411, 0, -0.52005091434, 51.01, 10.176, -103.5)
 asset_id = "Secret_crown_cathedral_school"
+material_overrides = [SubResource("object_material_0055")]
 node_name = "Secret_crown_cathedral_school"
 catalog_asset_id = "crownwater:secret-crown-cathedral-school-356f45f272e4"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/secret-crown-cathedral-school-356f45f272e4.glb"
@@ -3768,6 +4599,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(-0.874170596527, 0, 0.485618953675, 0, 1, 0, -0.485618953675, 0, -0.874170596527, -2, 4.45, 15.981)
 asset_id = "Secret_crown_cistern_well"
+material_overrides = [SubResource("object_material_0056")]
 node_name = "Secret_crown_cistern_well"
 catalog_asset_id = "crownwater:secret-crown-cistern-well-e8d402f2b8fb"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/secret-crown-cistern-well-e8d402f2b8fb.glb"
@@ -3781,6 +4613,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(0.594203296236, 0, 0.80431489029, 0, 1, 0, -0.80431489029, 0, 0.594203296236, -28.5, 4.089, -23.813)
 asset_id = "Secret_crown_court_reliquary"
+material_overrides = [SubResource("object_material_0057")]
 node_name = "Secret_crown_court_reliquary"
 catalog_asset_id = "crownwater:secret-crown-court-reliquary-14eb60547931"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/secret-crown-court-reliquary-14eb60547931.glb"
@@ -3807,6 +4640,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(0.969242155407, 0, -0.246109008738, 0, 1, 0, 0.246109008738, 0, 0.969242155407, 166, 3.95, -98)
 asset_id = "Secret_crown_drain"
+material_overrides = [SubResource("object_material_0058")]
 node_name = "Secret_crown_drain"
 catalog_asset_id = "crownwater:secret-crown-drain-80b467fec0f6"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/secret-crown-drain-80b467fec0f6.glb"
@@ -3820,6 +4654,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(-0.0300913231319, 0, 0.999547153601, 0, 1, 0, -0.999547153601, 0, -0.0300913231319, 54.804, 4.248, 43)
 asset_id = "Secret_crown_kelp_garden"
+material_overrides = [SubResource("object_material_0059")]
 node_name = "Secret_crown_kelp_garden"
 catalog_asset_id = "crownwater:secret-crown-kelp-garden-043db3b2220d"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/secret-crown-kelp-garden-043db3b2220d.glb"
@@ -3833,6 +4668,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(-0.368939159038, 0, -0.929453547483, 0, 1, 0, 0.929453547483, 0, -0.368939159038, 166, 4.049, 5)
 asset_id = "Secret_crown_lake_focus"
+material_overrides = [SubResource("object_material_0060")]
 node_name = "Secret_crown_lake_focus"
 catalog_asset_id = "crownwater:secret-crown-lake-focus-0293fdd8af0e"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/secret-crown-lake-focus-0293fdd8af0e.glb"
@@ -3846,6 +4682,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(0.721050950528, 0, -0.692882043888, 0, 1, 0, 0.692882043888, 0, 0.721050950528, 100.5, 4.249, -180.402)
 asset_id = "Secret_crown_pavilion_butts"
+material_overrides = [SubResource("object_material_0061")]
 node_name = "Secret_crown_pavilion_butts"
 catalog_asset_id = "crownwater:secret-crown-pavilion-butts-476c121d172d"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/secret-crown-pavilion-butts-476c121d172d.glb"
@@ -3885,6 +4722,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(0.119176127953, 0, 0.992873129119, 0, 1, 0, -0.992873129119, 0, 0.119176127953, 17, 3.354, -165)
 asset_id = "Secret_crown_waystone"
+material_overrides = [SubResource("object_material_0062")]
 node_name = "Secret_crown_waystone"
 catalog_asset_id = "crownwater:secret-crown-waystone-95c9b5f938bc"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/secret-crown-waystone-95c9b5f938bc.glb"
@@ -3911,6 +4749,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "P
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 4.5, 0)
 asset_id = "Walk_CustomsCargoRamp"
+material_overrides = [SubResource("object_material_0063")]
 node_name = "Walk_CustomsCargoRamp"
 catalog_asset_id = "crownwater:walk-customscargoramp-4829cec46f6d"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/walk-customscargoramp-4829cec46f6d.glb"
@@ -3924,6 +4763,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "C
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 224.25, 0.022591294328, -18.5)
 asset_id = "Walk_FourGatesNativeLanding"
+material_overrides = [SubResource("object_material_0064")]
 node_name = "Walk_FourGatesNativeLanding"
 catalog_asset_id = "crownwater:walk-fourgatesnativelanding-f06f984da358"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/walk-fourgatesnativelanding-f06f984da358.glb"
@@ -4015,6 +4855,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "P
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 72, 5.78160641356, -140)
 asset_id = "Walk_QuayRun_crown_quay_north"
+material_overrides = [SubResource("object_material_0065")]
 node_name = "Walk_QuayRun_crown_quay_north"
 catalog_asset_id = "crownwater:walk-quayrun-crown-quay-north-b126e32e9253"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/walk-quayrun-crown-quay-north-b126e32e9253.glb"
@@ -4028,6 +4869,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "Q
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 81, 2.9708285256, -32)
 asset_id = "Walk_QuayRun_crown_quay_south"
+material_overrides = [SubResource("object_material_0066")]
 node_name = "Walk_QuayRun_crown_quay_south"
 catalog_asset_id = "crownwater:walk-quayrun-crown-quay-south-154e4647cb65"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/walk-quayrun-crown-quay-south-154e4647cb65.glb"
@@ -4041,6 +4883,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "Q
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.7, -41)
 asset_id = "Walk_QuayRun_harbour_lamp_walk"
+material_overrides = [SubResource("object_material_0067")]
 node_name = "Walk_QuayRun_harbour_lamp_walk"
 catalog_asset_id = "crownwater:walk-quayrun-harbour-lamp-walk-979f105d049e"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/walk-quayrun-harbour-lamp-walk-979f105d049e.glb"
@@ -4054,6 +4897,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "Q
 script = ExtResource("asset")
 transform = Transform3D(0.939372712847, 0, 0.342897807455, 0, 1, 0, -0.342897807455, 0, 0.939372712847, 27, 2.7, -29)
 asset_id = "Walk_QuayRun_harbour_quay"
+material_overrides = [SubResource("object_material_0068")]
 node_name = "Walk_QuayRun_harbour_quay"
 catalog_asset_id = "crownwater:walk-quayrun-harbour-quay-aaa3e9204017"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/walk-quayrun-harbour-quay-aaa3e9204017.glb"
@@ -4067,6 +4911,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "Q
 script = ExtResource("asset")
 transform = Transform3D(-0.342897807455, 0, -0.939372712847, 0, 1, 0, 0.939372712847, 0, -0.342897807455, -16.8248112957, 1.9861564957, -78.8103387602)
 asset_id = "Walk_Quay_pavilion_west_0"
+material_overrides = [SubResource("object_material_0069")]
 node_name = "Walk_Quay_pavilion_west_0"
 catalog_asset_id = "crownwater:walk-quay-pavilion-west-0-969418f1db7e"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/walk-quay-pavilion-west-0-969418f1db7e.glb"
@@ -4080,6 +4925,7 @@ metadata = {"composedSourceRegion": "crownwater", "kind": "landmark", "mesh": "Q
 script = ExtResource("asset")
 transform = Transform3D(0.342897807455, 0, 0.939372712847, 0, 1, 0, -0.939372712847, 0, 0.342897807455, -67.1751887043, 0.442322547906, -97.1896612398)
 asset_id = "Walk_Quay_pavilion_west_2"
+material_overrides = [SubResource("object_material_0070")]
 node_name = "Walk_Quay_pavilion_west_2"
 catalog_asset_id = "crownwater:walk-quay-pavilion-west-2-fd224f3ba592"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/walk-quay-pavilion-west-2-fd224f3ba592.glb"
@@ -4392,6 +5238,7 @@ metadata = {"composedSourceRegion": "amberwood"}
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -290, 0, -1570)
 asset_id = "published-crownwater-ferry-quay-01"
+material_overrides = [SubResource("object_material_0071"), SubResource("object_material_0072"), SubResource("object_material_0073"), SubResource("object_material_0074"), SubResource("object_material_0075"), SubResource("object_material_0076"), SubResource("object_material_0077"), SubResource("object_material_0078")]
 node_name = "Walk_FerryQuay_crownwater_01_WorldPlacement"
 catalog_asset_id = "crownwater:published-crownwater-ferry-quay-01"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/published-crownwater-ferry-quay-01.glb"
@@ -4405,6 +5252,7 @@ metadata = {"authoredAccessAssembly": {"id": "ferry-quay-01", "walkNode": "Walk_
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -290, 0, -1570)
 asset_id = "published-crownwater-ferry-quay-03"
+material_overrides = [SubResource("object_material_0079"), SubResource("object_material_0080"), SubResource("object_material_0081"), SubResource("object_material_0082"), SubResource("object_material_0083"), SubResource("object_material_0084"), SubResource("object_material_0085"), SubResource("object_material_0086")]
 node_name = "Walk_FerryQuay_crownwater_03_WorldPlacement"
 catalog_asset_id = "crownwater:published-crownwater-ferry-quay-03"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/published-crownwater-ferry-quay-03.glb"
@@ -4418,6 +5266,7 @@ metadata = {"authoredAccessAssembly": {"id": "ferry-quay-03", "walkNode": "Walk_
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -290, 0, -1570)
 asset_id = "published-crownwater-ferry-quay-05"
+material_overrides = [SubResource("object_material_0087"), SubResource("object_material_0088"), SubResource("object_material_0089"), SubResource("object_material_0090"), SubResource("object_material_0091"), SubResource("object_material_0092"), SubResource("object_material_0093"), SubResource("object_material_0094")]
 node_name = "Walk_FerryQuay_crownwater_05_WorldPlacement"
 catalog_asset_id = "crownwater:published-crownwater-ferry-quay-05"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/published-crownwater-ferry-quay-05.glb"
@@ -4431,6 +5280,7 @@ metadata = {"authoredAccessAssembly": {"id": "ferry-quay-05", "walkNode": "Walk_
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -290, 0, -1570)
 asset_id = "published-crownwater-loose-507"
+material_overrides = [SubResource("object_material_0095"), SubResource("object_material_0096"), SubResource("object_material_0097"), SubResource("object_material_0098"), SubResource("object_material_0099"), SubResource("object_material_0100"), SubResource("object_material_0101"), SubResource("object_material_0102")]
 node_name = "Walk_ContinentalBridgeUnion_507_crownwater_WorldPlacement"
 catalog_asset_id = "crownwater:published-crownwater-loose-507"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/published-crownwater-loose-507.glb"
@@ -4444,6 +5294,7 @@ metadata = {"authoredAccessAssembly": {"id": "loose-507", "walkNode": "Walk_Cont
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -290, 0, -1570)
 asset_id = "published-crownwater-loose-508"
+material_overrides = [SubResource("object_material_0103")]
 node_name = "Walk_ContinentalBridgeUnion_508_crownwater_WorldPlacement"
 catalog_asset_id = "crownwater:published-crownwater-loose-508"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/published-crownwater-loose-508.glb"
@@ -4470,6 +5321,7 @@ metadata = {"authoredAccessAssembly": {"id": "loose-510", "walkNode": "Walk_Cont
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -290, 0, -1570)
 asset_id = "published-crownwater-loose-511"
+material_overrides = [SubResource("object_material_0104")]
 node_name = "Walk_ContinentalBridgeUnion_511_crownwater_WorldPlacement"
 catalog_asset_id = "crownwater:published-crownwater-loose-511"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/published-crownwater-loose-511.glb"
@@ -4535,6 +5387,7 @@ metadata = {"authoredAccessAssembly": {"id": "loose-517", "walkNode": "Walk_Cont
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -290, 0, -1570)
 asset_id = "published-crownwater-loose-518"
+material_overrides = [SubResource("object_material_0105"), SubResource("object_material_0106")]
 node_name = "Walk_ContinentalBridgeUnion_518_crownwater_WorldPlacement"
 catalog_asset_id = "crownwater:published-crownwater-loose-518"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/published-crownwater-loose-518.glb"
@@ -4548,6 +5401,7 @@ metadata = {"authoredAccessAssembly": {"id": "loose-518", "walkNode": "Walk_Cont
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -290, 0, -1570)
 asset_id = "published-crownwater-loose-519"
+material_overrides = [SubResource("object_material_0107"), SubResource("object_material_0108"), SubResource("object_material_0109")]
 node_name = "Walk_ContinentalBridgeUnion_519_crownwater_WorldPlacement"
 catalog_asset_id = "crownwater:published-crownwater-loose-519"
 scene_path = "res://world_authoring/regions/crownwater/assets/prototypes/published-crownwater-loose-519.glb"

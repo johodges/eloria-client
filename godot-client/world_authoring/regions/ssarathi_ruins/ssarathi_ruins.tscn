@@ -1,11 +1,16 @@
-[gd_scene load_steps=773 format=3]
+[gd_scene load_steps=911 format=3]
 
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/jade-masonry.tres" id="object_jade_masonry"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/marine-timber.tres" id="object_marine_timber"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres" id="object_weathered_limestone"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/path_control.gd" id="path"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/water_region_control.gd" id="water"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_control.gd" id="asset"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/gameplay_marker.gd" id="marker"]
+[ext_resource type="Resource" path="res://world_authoring/regions/ssarathi_ruins/surfaces/biome-forest-floor.tres" id="biome_entry"]
 [ext_resource type="Resource" path="res://world_authoring/regions/ssarathi_ruins/surfaces/continental-ground.tres" id="terrain_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/ssarathi_ruins/surfaces/road.tres" id="road_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/ssarathi_ruins/surfaces/river.tres" id="river_surface"]
@@ -773,6 +778,937 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/ssarathi_ruins/assets/prototypes/woodlandfloor-0483-e9f1b285a23b.glb" id="prototype_740"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/ssarathi_ruins/assets/prototypes/woodlandfloor-0486-2a23f5791287.glb" id="prototype_741"]
 
+[sub_resource type="Resource" id="object_material_0000"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Bridge_great_causeway__channel_main/Bridge_great_causeway__channel_main__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0001"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Bridge_great_causeway__channel_main/Walk_Bridge_great_causeway__channel_main__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0002"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Bridge_great_causeway__channel_south/Bridge_great_causeway__channel_south__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0003"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Bridge_great_causeway__channel_south/Walk_Bridge_great_causeway__channel_south__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0004"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Bridge_spur_stela__channel_main/Bridge_spur_stela__channel_main__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0005"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Bridge_spur_stela__channel_main/Walk_Bridge_spur_stela__channel_main__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0006"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Bridge_street_courts__channel_main/Bridge_street_courts__channel_main__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0007"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Bridge_street_courts__channel_main/Walk_Bridge_street_courts__channel_main__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0008"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Bridge_street_far_e__channel_east/Bridge_street_far_e__channel_east__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0009"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Bridge_street_far_e__channel_east/Walk_Bridge_street_far_e__channel_east__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0010"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "CisternShaft/CisternShaft__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0011"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Colonnade_lily_court/Colonnade_lily_court__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0012"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Colonnade_lily_court/Colonnade_lily_court__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0013"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Colonnade_ritual_plaza/Colonnade_ritual_plaza__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0014"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Colonnade_ritual_plaza/Colonnade_ritual_plaza__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0015"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "CourtShrine_lily_court/CourtShrine_lily_court__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0016"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "CourtShrine_lily_court/Walk_CourtShrine_lily_court__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0017"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "CourtShrine_ritual_plaza/CourtShrine_ritual_plaza__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0018"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "CourtShrine_ritual_plaza/Walk_CourtShrine_ritual_plaza__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0019"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedColumn_0"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0020"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedColumn_12"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0021"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedColumn_21"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0022"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedColumn_24"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0023"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedColumn_3"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0024"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedColumn_6"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0025"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedColumn_9"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0026"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedRubble_1"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0027"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedRubble_11"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0028"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedRubble_13"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0029"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedRubble_14"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0030"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedRubble_16"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0031"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedRubble_2"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0032"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedRubble_22"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0033"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedRubble_23"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0034"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedRubble_25"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0035"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedRubble_4"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0036"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "DrownedRubble_5"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0037"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "HatcheryColumn_-1/HatcheryColumn_-1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0038"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "HatcheryColumn_1/HatcheryColumn_1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0039"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "HatcheryDescent/HatcheryDescent__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0040"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "HatcheryDescent/Walk_HatcheryDescent__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0041"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_archive-workers/House_archive-workers__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0042"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_lily-copyists/House_lily-copyists__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0043"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_lineage-house/House_lineage-house__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0044"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_market-copyist/House_market-copyist__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0045"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_market-poler/House_market-poler__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0046"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "House_quay-stores/House_quay-stores__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0047"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "MarketShrine/MarketShrine__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0048"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "MarketShrine/Walk_MarketShrine__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0049"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Obelisk_street_far_e_99/Obelisk_street_far_e_99__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0050"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Obelisk_street_market_0/Obelisk_street_market_0__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0051"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Obelisk_street_market_128/Obelisk_street_market_128__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0052"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Obelisk_street_market_192/Obelisk_street_market_192__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0053"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Obelisk_street_market_64/Obelisk_street_market_64__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0054"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Obelisk_street_north_0/Obelisk_street_north_0__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0055"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Obelisk_street_north_139/Obelisk_street_north_139__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0056"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Obelisk_street_north_69/Obelisk_street_north_69__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0057"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "QuayShelter_0/QuayShelter_0__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0058"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "QuayShelter_1/QuayShelter_1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0059"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "RootArch/RootArch__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0060"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "RootArch/RootArch__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0061"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Rubble_spur_arrival_0"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0062"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Rubble_spur_east_shrine_0"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0063"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Rubble_spur_south_shrine_0"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0064"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Rubble_spur_stela_69"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0065"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Rubble_street_courts_40"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0066"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Rubble_street_market_0"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0067"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Rubble_street_north_0"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0068"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Rubble_street_north_93"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0069"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "RuinTower_1/RuinTower_1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0070"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "RuinTower_1/RuinTower_1__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0071"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "RuinTower_6/RuinTower_6__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0072"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "RuinTower_6/RuinTower_6__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0073"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_0/Ruin_0__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0074"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_0/Ruin_0__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0075"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_1/Ruin_1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0076"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_1/Ruin_1__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0077"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_2/Ruin_2__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0078"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_2/Ruin_2__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0079"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_3/Ruin_3__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0080"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_3/Ruin_3__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0081"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_4/Ruin_4__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0082"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_4/Ruin_4__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0083"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_5/Ruin_5__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0084"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_5/Ruin_5__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0085"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_6/Ruin_6__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0086"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_6/Ruin_6__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0087"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_7/Ruin_7__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0088"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_7/Ruin_7__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0089"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_8/Ruin_8__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0090"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Ruin_8/Ruin_8__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0091"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_ruins_culvert_mouth/Secret_ruins_culvert_mouth__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0092"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_ruins_stela_reliquary/Secret_ruins_stela_reliquary__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0093"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_ruins_temple_focus/Secret_ruins_temple_focus__verdant_terrace_stone"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0094"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "SerpentColumn_0_-1/SerpentColumn_0_-1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0095"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "SerpentColumn_0_1/SerpentColumn_0_1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0096"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "SerpentColumn_1_-1/SerpentColumn_1_-1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0097"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "SerpentColumn_1_1/SerpentColumn_1_1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0098"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "SerpentColumn_2_-1/SerpentColumn_2_-1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0099"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "SerpentColumn_2_1/SerpentColumn_2_1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0100"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "SerpentGateColumn_-1/SerpentGateColumn_-1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0101"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "SerpentGateColumn_1/SerpentGateColumn_1__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0102"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Shrine_east_shrine/Shrine_east_shrine__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0103"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Shrine_east_shrine/Walk_Shrine_east_shrine__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0104"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Shrine_south_shrine/Shrine_south_shrine__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0105"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Shrine_south_shrine/Walk_Shrine_south_shrine__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0106"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Shrine_west_shrine/Shrine_west_shrine__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0107"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Shrine_west_shrine/Walk_Shrine_west_shrine__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0108"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Structure_TempleSummitRoof/Structure_TempleSummitRoof__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0109"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "SunStela/SunStela__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0110"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "SunStela/Walk_SunStela__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0111"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Temple_Ssarathi/Temple_Ssarathi__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0112"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Temple_Ssarathi/Walk_Temple_Ssarathi__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0113"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Temple_VaultPortal/Temple_VaultPortal__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0114"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Temple_VaultPortal/Walk_Temple_VaultPortal__ssarathi_jade_paving"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0115"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "UndercroftMouth/UndercroftMouth__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0116"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "UndercroftMouth/Walk_UndercroftMouth__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0117"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "WaterGate/WaterGate__ssarathi_jade_ashlar"
+surface_index = 0
+surface = ExtResource("object_jade_masonry")
+
+[sub_resource type="Resource" id="object_material_0118"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_FerryQuay_ssarathi_ruins_02_WorldPlacement/Walk_FerryQuay_ssarathi_ruins_02"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0119"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_ssarathi_ruins_02_PilesAndPosts_WorldPlacement/FerryQuay_ssarathi_ruins_02_PilesAndPosts"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0120"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_ssarathi_ruins_02_Signpost_WorldPlacement/FerryQuay_ssarathi_ruins_02_Signpost"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0121"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_ssarathi_ruins_02_Skiff_Floor_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Floor"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0122"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_ssarathi_ruins_02_Skiff_Seat_0_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Seat_0"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0123"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_ssarathi_ruins_02_Skiff_Seat_1_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Seat_1"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0124"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_ssarathi_ruins_02_Skiff_Seat_2_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Seat_2"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0125"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "FerryQuay_ssarathi_ruins_02_Skiff_Mast_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Mast"
+surface_index = 0
+surface = ExtResource("object_marine_timber")
+
+[sub_resource type="Resource" id="object_material_0126"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_520_1164_1604_WorldPlacement/BridgeUnionPier_520_1164_1604"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0127"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_520_1180_1620_WorldPlacement/BridgeUnionPier_520_1180_1620"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0128"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_520_1236_1628_WorldPlacement/BridgeUnionPier_520_1236_1628"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0129"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_520_1228_1652_WorldPlacement/BridgeUnionPier_520_1228_1652"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0130"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_520_1204_1660_WorldPlacement/BridgeUnionPier_520_1204_1660"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0131"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_520_1212_1660_WorldPlacement/BridgeUnionPier_520_1212_1660"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0132"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_520_1220_1660_WorldPlacement/BridgeUnionPier_520_1220_1660"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
 [node name="SsarathiRuins" type="Node3D"]
 script = ExtResource("region")
 region_id = "ssarathi_ruins"
@@ -799,6 +1735,7 @@ base_heights_path = "res://world_authoring/regions/ssarathi_ruins/base-heights.f
 base_colors_path = "res://world_authoring/regions/ssarathi_ruins/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
 base_surface = ExtResource("terrain_surface")
+biome_palette = [ExtResource("biome_entry")]
 
 [node name="Patches" type="Node3D" parent="Terrain"]
 
@@ -1155,6 +2092,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "A
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 55)
 asset_id = "Bridge_great_causeway__channel_main"
+material_overrides = [SubResource("object_material_0000"), SubResource("object_material_0001")]
 node_name = "Bridge_great_causeway__channel_main"
 catalog_asset_id = "ssarathi_ruins:bridge-great-causeway-channel-main-24133fe1a7e8"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/bridge-great-causeway-channel-main-24133fe1a7e8.glb"
@@ -1168,6 +2106,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 177.666666667)
 asset_id = "Bridge_great_causeway__channel_south"
+material_overrides = [SubResource("object_material_0002"), SubResource("object_material_0003")]
 node_name = "Bridge_great_causeway__channel_south"
 catalog_asset_id = "ssarathi_ruins:bridge-great-causeway-channel-south-48ebd8d79267"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/bridge-great-causeway-channel-south-48ebd8d79267.glb"
@@ -1181,6 +2120,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.124034734589, 0, 0.992277876714, 0, 1, 0, -0.992277876714, 0, 0.124034734589, 80.347826087, 0, 32.2173913043)
 asset_id = "Bridge_spur_stela__channel_main"
+material_overrides = [SubResource("object_material_0004"), SubResource("object_material_0005")]
 node_name = "Bridge_spur_stela__channel_main"
 catalog_asset_id = "ssarathi_ruins:bridge-spur-stela-channel-main-5cc9b3b1032e"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/bridge-spur-stela-channel-main-5cc9b3b1032e.glb"
@@ -1194,6 +2134,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.99896854021, 0, -0.0454076609187, 0, 1, 0, 0.0454076609187, 0, 0.99896854021, -26.9387755102, 0, 65.7755102041)
 asset_id = "Bridge_street_courts__channel_main"
+material_overrides = [SubResource("object_material_0006"), SubResource("object_material_0007")]
 node_name = "Bridge_street_courts__channel_main"
 catalog_asset_id = "ssarathi_ruins:bridge-street-courts-channel-main-f96470f177a2"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/bridge-street-courts-channel-main-f96470f177a2.glb"
@@ -1207,6 +2148,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.980580675691, 0, -0.196116135138, 0, 1, 0, 0.196116135138, 0, 0.980580675691, 139.428571429, 0, 89.2857142857)
 asset_id = "Bridge_street_far_e__channel_east"
+material_overrides = [SubResource("object_material_0008"), SubResource("object_material_0009")]
 node_name = "Bridge_street_far_e__channel_east"
 catalog_asset_id = "ssarathi_ruins:bridge-street-far-e-channel-east-5bf3038e1246"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/bridge-street-far-e-channel-east-5bf3038e1246.glb"
@@ -1220,6 +2162,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -125, 2, 79)
 asset_id = "CisternShaft"
+material_overrides = [SubResource("object_material_0010")]
 node_name = "CisternShaft"
 catalog_asset_id = "ssarathi_ruins:cisternshaft-4b93afc911a0"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/cisternshaft-4b93afc911a0.glb"
@@ -1233,6 +2176,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "extras": {"solidRadius": 
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -72, 1.2426046354, 63)
 asset_id = "Colonnade_lily_court"
+material_overrides = [SubResource("object_material_0011"), SubResource("object_material_0012")]
 node_name = "Colonnade_lily_court"
 catalog_asset_id = "ssarathi_ruins:colonnade-lily-court-e12d503e3975"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/colonnade-lily-court-e12d503e3975.glb"
@@ -1246,6 +2190,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "landmark", "mesh"
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 2.25, 71)
 asset_id = "Colonnade_ritual_plaza"
+material_overrides = [SubResource("object_material_0013"), SubResource("object_material_0014")]
 node_name = "Colonnade_ritual_plaza"
 catalog_asset_id = "ssarathi_ruins:colonnade-ritual-plaza-b2279caf3712"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/colonnade-ritual-plaza-b2279caf3712.glb"
@@ -1259,6 +2204,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "landmark", "mesh"
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -72, 2.75360433974, 34.92)
 asset_id = "CourtShrine_lily_court"
+material_overrides = [SubResource("object_material_0015"), SubResource("object_material_0016")]
 node_name = "CourtShrine_lily_court"
 catalog_asset_id = "ssarathi_ruins:courtshrine-lily-court-c4a833d7a75e"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/courtshrine-lily-court-c4a833d7a75e.glb"
@@ -1272,6 +2218,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "landmark", "landm
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 2.25, 36.44)
 asset_id = "CourtShrine_ritual_plaza"
+material_overrides = [SubResource("object_material_0017"), SubResource("object_material_0018")]
 node_name = "CourtShrine_ritual_plaza"
 catalog_asset_id = "ssarathi_ruins:courtshrine-ritual-plaza-1d466121b889"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/courtshrine-ritual-plaza-1d466121b889.glb"
@@ -1402,6 +2349,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.593872462737, 0, -0.804559194841, 0, 1, 0, 0.804559194841, 0, 0.593872462737, -126.049011883, -0.7, 103.049357069)
 asset_id = "DrownedColumn_0"
+material_overrides = [SubResource("object_material_0019")]
 node_name = "DrownedColumn_0"
 catalog_asset_id = "ssarathi_ruins:drownedcolumn-0-a981130d7101"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedcolumn-0-a981130d7101.glb"
@@ -1415,6 +2363,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.93967472496, 0, -0.342069307701, 0, 1, 0, 0.342069307701, 0, 0.93967472496, -118.934525369, -0.7, 85.0168654446)
 asset_id = "DrownedColumn_12"
+material_overrides = [SubResource("object_material_0020")]
 node_name = "DrownedColumn_12"
 catalog_asset_id = "ssarathi_ruins:drownedcolumn-12-cca1e11cda7f"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedcolumn-12-cca1e11cda7f.glb"
@@ -1428,6 +2377,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.360483162355, 0, -0.932765720671, 0, 1, 0, 0.932765720671, 0, -0.360483162355, -102.033228152, -0.7, 80.4410724967)
 asset_id = "DrownedColumn_21"
+material_overrides = [SubResource("object_material_0021")]
 node_name = "DrownedColumn_21"
 catalog_asset_id = "ssarathi_ruins:drownedcolumn-21-da40c09296dc"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedcolumn-21-da40c09296dc.glb"
@@ -1441,6 +2391,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.141224633591, 0, -0.989977576952, 0, 1, 0, 0.989977576952, 0, -0.141224633591, -121.579753779, -0.7, 99.7618058842)
 asset_id = "DrownedColumn_24"
+material_overrides = [SubResource("object_material_0022")]
 node_name = "DrownedColumn_24"
 catalog_asset_id = "ssarathi_ruins:drownedcolumn-24-4d1991cf24ca"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedcolumn-24-4d1991cf24ca.glb"
@@ -1454,6 +2405,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.835412808408, 0, 0.549622997652, 0, 1, 0, -0.549622997652, 0, -0.835412808408, -125.336680689, -0.7, 90.0367994615)
 asset_id = "DrownedColumn_3"
+material_overrides = [SubResource("object_material_0023")]
 node_name = "DrownedColumn_3"
 catalog_asset_id = "ssarathi_ruins:drownedcolumn-3-6189a73dd8cb"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedcolumn-3-6189a73dd8cb.glb"
@@ -1467,6 +2419,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.718981930487, 0, 0.695028764608, 0, 1, 0, -0.695028764608, 0, 0.718981930487, -87.4985728567, -0.7, 68.0226508982)
 asset_id = "DrownedColumn_6"
+material_overrides = [SubResource("object_material_0024")]
 node_name = "DrownedColumn_6"
 catalog_asset_id = "ssarathi_ruins:drownedcolumn-6-afa6058b0a9a"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedcolumn-6-afa6058b0a9a.glb"
@@ -1480,6 +2433,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.915713583927, 0, 0.40183159683, 0, 1, 0, -0.40183159683, 0, -0.915713583927, -141.599932134, -0.7, 103.42713431)
 asset_id = "DrownedColumn_9"
+material_overrides = [SubResource("object_material_0025")]
 node_name = "DrownedColumn_9"
 catalog_asset_id = "ssarathi_ruins:drownedcolumn-9-cfae249b591b"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedcolumn-9-cfae249b591b.glb"
@@ -1493,6 +2447,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.897465824727, 0, -0.441083998176, 0, 1, 0, 0.441083998176, 0, -0.897465824727, -94.817416066, -0.7, 76.6726663563)
 asset_id = "DrownedRubble_1"
+material_overrides = [SubResource("object_material_0026")]
 node_name = "DrownedRubble_1"
 catalog_asset_id = "ssarathi_ruins:drownedrubble-1-649e38364131"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedrubble-1-649e38364131.glb"
@@ -1506,6 +2461,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(-0.420749278254, 0, -0.907176964461, 0, 1, 0, 0.907176964461, 0, -0.420749278254, -133.49158919, -0.7, 71.9316112741)
 asset_id = "DrownedRubble_11"
+material_overrides = [SubResource("object_material_0027")]
 node_name = "DrownedRubble_11"
 catalog_asset_id = "ssarathi_ruins:drownedrubble-11-160ead891e8a"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedrubble-11-160ead891e8a.glb"
@@ -1519,6 +2475,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(-0.839956335223, 0, 0.542653991895, 0, 1, 0, -0.542653991895, 0, -0.839956335223, -77.9756919996, -0.7, 68.1071270028)
 asset_id = "DrownedRubble_13"
+material_overrides = [SubResource("object_material_0028")]
 node_name = "DrownedRubble_13"
 catalog_asset_id = "ssarathi_ruins:drownedrubble-13-0bbf58ecc851"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedrubble-13-0bbf58ecc851.glb"
@@ -1532,6 +2489,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(0.993651556591, 0, 0.112501484806, 0, 1, 0, -0.112501484806, 0, 0.993651556591, -132.636487983, -0.7, 70.5491708193)
 asset_id = "DrownedRubble_14"
+material_overrides = [SubResource("object_material_0029")]
 node_name = "DrownedRubble_14"
 catalog_asset_id = "ssarathi_ruins:drownedrubble-14-2aa751d3fe69"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedrubble-14-2aa751d3fe69.glb"
@@ -1545,6 +2503,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(0.732785683453, 0, 0.680459508072, 0, 1, 0, -0.680459508072, 0, 0.732785683453, -92.3779523307, -0.7, 115.320082818)
 asset_id = "DrownedRubble_16"
+material_overrides = [SubResource("object_material_0030")]
 node_name = "DrownedRubble_16"
 catalog_asset_id = "ssarathi_ruins:drownedrubble-16-bb87c4dbcfe9"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedrubble-16-bb87c4dbcfe9.glb"
@@ -1558,6 +2517,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(0.296224304497, 0, -0.955118401783, 0, 1, 0, 0.955118401783, 0, 0.296224304497, -82.0319162293, -0.7, 88.5411748098)
 asset_id = "DrownedRubble_2"
+material_overrides = [SubResource("object_material_0031")]
 node_name = "DrownedRubble_2"
 catalog_asset_id = "ssarathi_ruins:drownedrubble-2-d01fccc4f555"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedrubble-2-d01fccc4f555.glb"
@@ -1571,6 +2531,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(0.556910833195, 0, -0.830572286962, 0, 1, 0, 0.830572286962, 0, 0.556910833195, -90.6087233783, -0.7, 96.8323897183)
 asset_id = "DrownedRubble_22"
+material_overrides = [SubResource("object_material_0032")]
 node_name = "DrownedRubble_22"
 catalog_asset_id = "ssarathi_ruins:drownedrubble-22-0d4b09ec4723"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedrubble-22-0d4b09ec4723.glb"
@@ -1584,6 +2545,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(0.853393024959, 0, -0.521268016428, 0, 1, 0, 0.521268016428, 0, 0.853393024959, -102.682660675, -0.7, 85.2339412193)
 asset_id = "DrownedRubble_23"
+material_overrides = [SubResource("object_material_0033")]
 node_name = "DrownedRubble_23"
 catalog_asset_id = "ssarathi_ruins:drownedrubble-23-7530e9780ff2"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedrubble-23-7530e9780ff2.glb"
@@ -1597,6 +2559,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(0.573176654946, 0, 0.819431828906, 0, 1, 0, -0.819431828906, 0, 0.573176654946, -105.137909702, -0.7, 96.4809929852)
 asset_id = "DrownedRubble_25"
+material_overrides = [SubResource("object_material_0034")]
 node_name = "DrownedRubble_25"
 catalog_asset_id = "ssarathi_ruins:drownedrubble-25-8ffe0fdad095"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedrubble-25-8ffe0fdad095.glb"
@@ -1610,6 +2573,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(0.913773536619, 0, -0.406223982273, 0, 1, 0, 0.406223982273, 0, 0.913773536619, -134.689560661, -0.7, 95.6609602799)
 asset_id = "DrownedRubble_4"
+material_overrides = [SubResource("object_material_0035")]
 node_name = "DrownedRubble_4"
 catalog_asset_id = "ssarathi_ruins:drownedrubble-4-a653536fe05d"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedrubble-4-a653536fe05d.glb"
@@ -1623,6 +2587,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(-0.625318556277, 0, 0.780369593959, 0, 1, 0, -0.780369593959, 0, -0.625318556277, -74.2726469418, -0.7, 76.5014210944)
 asset_id = "DrownedRubble_5"
+material_overrides = [SubResource("object_material_0036")]
 node_name = "DrownedRubble_5"
 catalog_asset_id = "ssarathi_ruins:drownedrubble-5-4029ce6b2ede"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/drownedrubble-5-4029ce6b2ede.glb"
@@ -7538,6 +8503,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins"}
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67, 2.05360308335, 32.6)
 asset_id = "HatcheryColumn_-1"
+material_overrides = [SubResource("object_material_0037")]
 node_name = "HatcheryColumn_-1"
 catalog_asset_id = "ssarathi_ruins:hatcherycolumn-1-8a9fc575749e"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/hatcherycolumn-1-8a9fc575749e.glb"
@@ -7551,6 +8517,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 77, 1.46936928732, 32.6)
 asset_id = "HatcheryColumn_1"
+material_overrides = [SubResource("object_material_0038")]
 node_name = "HatcheryColumn_1"
 catalog_asset_id = "ssarathi_ruins:hatcherycolumn-1-1a0792916c29"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/hatcherycolumn-1-1a0792916c29.glb"
@@ -7564,6 +8531,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 72, 0.808788212263, 32.6)
 asset_id = "HatcheryDescent"
+material_overrides = [SubResource("object_material_0039"), SubResource("object_material_0040")]
 node_name = "HatcheryDescent"
 catalog_asset_id = "ssarathi_ruins:hatcherydescent-4a1597359609"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/hatcherydescent-4a1597359609.glb"
@@ -7577,6 +8545,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "landmark", "landm
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -67, 1.45, 113)
 asset_id = "House_archive-workers"
+material_overrides = [SubResource("object_material_0041")]
 node_name = "House_archive-workers"
 catalog_asset_id = "ssarathi_ruins:house-archive-workers-9efc420b38c7"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/house-archive-workers-9efc420b38c7.glb"
@@ -7590,6 +8559,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "extras": {"solidRects": [
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -52, 2.05, 30)
 asset_id = "House_lily-copyists"
+material_overrides = [SubResource("object_material_0042")]
 node_name = "House_lily-copyists"
 catalog_asset_id = "ssarathi_ruins:house-lily-copyists-5d4359c02bc8"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/house-lily-copyists-5d4359c02bc8.glb"
@@ -7603,6 +8573,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "extras": {"solidRects": [
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 10, 1.95, 102)
 asset_id = "House_lineage-house"
+material_overrides = [SubResource("object_material_0043")]
 node_name = "House_lineage-house"
 catalog_asset_id = "ssarathi_ruins:house-lineage-house-715786bb26fc"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/house-lineage-house-715786bb26fc.glb"
@@ -7616,6 +8587,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "extras": {"solidRects": [
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 125, 1.9, 166)
 asset_id = "House_market-copyist"
+material_overrides = [SubResource("object_material_0044")]
 node_name = "House_market-copyist"
 catalog_asset_id = "ssarathi_ruins:house-market-copyist-843e24bf56f2"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/house-market-copyist-843e24bf56f2.glb"
@@ -7629,6 +8601,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "extras": {"solidRects": [
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 1.9, 166)
 asset_id = "House_market-poler"
+material_overrides = [SubResource("object_material_0045")]
 node_name = "House_market-poler"
 catalog_asset_id = "ssarathi_ruins:house-market-poler-ad118d5aa740"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/house-market-poler-ad118d5aa740.glb"
@@ -7642,6 +8615,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "extras": {"solidRects": [
 script = ExtResource("asset")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -13, 1.45, 113)
 asset_id = "House_quay-stores"
+material_overrides = [SubResource("object_material_0046")]
 node_name = "House_quay-stores"
 catalog_asset_id = "ssarathi_ruins:house-quay-stores-b5522085ae90"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/house-quay-stores-b5522085ae90.glb"
@@ -7655,6 +8629,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "extras": {"solidRects": [
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 124, 1.87058451198, 143)
 asset_id = "MarketShrine"
+material_overrides = [SubResource("object_material_0047"), SubResource("object_material_0048")]
 node_name = "MarketShrine"
 catalog_asset_id = "ssarathi_ruins:marketshrine-9f71442a5b84"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/marketshrine-9f71442a5b84.glb"
@@ -7837,6 +8812,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(0.304503298352, 0, 0.952511281452, 0, 1, 0, -0.952511281452, 0, 0.304503298352, 166.646798668, 3.42106356489, 101.766006662)
 asset_id = "Obelisk_street_far_e_99"
+material_overrides = [SubResource("object_material_0049")]
 node_name = "Obelisk_street_far_e_99"
 catalog_asset_id = "ssarathi_ruins:obelisk-street-far-e-99-167ad566360b"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/obelisk-street-far-e-99-167ad566360b.glb"
@@ -7850,6 +8826,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.356130542664, 0, -0.934436213223, 0, 1, 0, 0.934436213223, 0, -0.356130542664, -99.1778979777, 1.26211715324, 153.850850186)
 asset_id = "Obelisk_street_market_0"
+material_overrides = [SubResource("object_material_0050")]
 node_name = "Obelisk_street_market_0"
 catalog_asset_id = "ssarathi_ruins:obelisk-street-market-0-d324d268e0a6"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/obelisk-street-market-0-d324d268e0a6.glb"
@@ -7863,6 +8840,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.38597544402, 0, -0.92250905503, 0, 1, 0, 0.92250905503, 0, 0.38597544402, 28.0922617826, 1.78407036421, 140.685115974)
 asset_id = "Obelisk_street_market_128"
+material_overrides = [SubResource("object_material_0051")]
 node_name = "Obelisk_street_market_128"
 catalog_asset_id = "ssarathi_ruins:obelisk-street-market-128-bd7a5760d4bf"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/obelisk-street-market-128-bd7a5760d4bf.glb"
@@ -7876,6 +8854,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.834261059938, 0, -0.551369643588, 0, 1, 0, 0.551369643588, 0, -0.834261059938, 92.2997168475, 1.9, 137.893487493)
 asset_id = "Obelisk_street_market_192"
+material_overrides = [SubResource("object_material_0052")]
 node_name = "Obelisk_street_market_192"
 catalog_asset_id = "ssarathi_ruins:obelisk-street-market-192-b5e3765f510b"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/obelisk-street-market-192-b5e3765f510b.glb"
@@ -7889,6 +8868,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.0154992923722, 0, -0.999879878753, 0, 1, 0, 0.999879878753, 0, -0.0154992923722, -35.3675761465, 0.598646365191, 146.193611566)
 asset_id = "Obelisk_street_market_64"
+material_overrides = [SubResource("object_material_0053")]
 node_name = "Obelisk_street_market_64"
 catalog_asset_id = "ssarathi_ruins:obelisk-street-market-64-db3ae54f9e53"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/obelisk-street-market-64-db3ae54f9e53.glb"
@@ -7902,6 +8882,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.00729781424479, 0, 0.999973370599, 0, 1, 0, -0.999973370599, 0, -0.00729781424479, -89.8155101, 1.8, -18.3431296335)
 asset_id = "Obelisk_street_north_0"
+material_overrides = [SubResource("object_material_0054")]
 node_name = "Obelisk_street_north_0"
 catalog_asset_id = "ssarathi_ruins:obelisk-street-north-0-aa31a33fea88"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/obelisk-street-north-0-aa31a33fea88.glb"
@@ -7915,6 +8896,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.807631832156, 0, -0.589687055724, 0, 1, 0, 0.589687055724, 0, 0.807631832156, 49.1343530124, 6, -2.19388192556)
 asset_id = "Obelisk_street_north_139"
+material_overrides = [SubResource("object_material_0055")]
 node_name = "Obelisk_street_north_139"
 catalog_asset_id = "ssarathi_ruins:obelisk-street-north-139-59269ba07311"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/obelisk-street-north-139-59269ba07311.glb"
@@ -7928,6 +8910,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.970139298398, 0, -0.242548431665, 0, 1, 0, 0.242548431665, 0, 0.970139298398, -22.3417932103, 11.8267775044, 0.0587931546264)
 asset_id = "Obelisk_street_north_69"
+material_overrides = [SubResource("object_material_0056")]
 node_name = "Obelisk_street_north_69"
 catalog_asset_id = "ssarathi_ruins:obelisk-street-north-69-307f6aafe13a"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/obelisk-street-north-69-307f6aafe13a.glb"
@@ -8110,6 +9093,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "extras": {"solidRects": [
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -49, 1.45, 117)
 asset_id = "QuayShelter_0"
+material_overrides = [SubResource("object_material_0057")]
 node_name = "QuayShelter_0"
 catalog_asset_id = "ssarathi_ruins:quayshelter-0-3efc5f05a522"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/quayshelter-0-3efc5f05a522.glb"
@@ -8123,6 +9107,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31, 1.45, 117)
 asset_id = "QuayShelter_1"
+material_overrides = [SubResource("object_material_0058")]
 node_name = "QuayShelter_1"
 catalog_asset_id = "ssarathi_ruins:quayshelter-1-37f823c61f6e"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/quayshelter-1-37f823c61f6e.glb"
@@ -8162,6 +9147,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "Q
 script = ExtResource("asset")
 transform = Transform3D(0.913545457643, 0, 0.406736643076, 0, 1, 0, -0.406736643076, 0, 0.913545457643, 116, 1.9, 167)
 asset_id = "RootArch"
+material_overrides = [SubResource("object_material_0059"), SubResource("object_material_0060")]
 node_name = "RootArch"
 catalog_asset_id = "ssarathi_ruins:rootarch-bf4717712d9f"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/rootarch-bf4717712d9f.glb"
@@ -8175,6 +9161,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "landmark", "landm
 script = ExtResource("asset")
 transform = Transform3D(-0.968358949043, 0, -0.249561507066, 0, 1, 0, 0.249561507066, 0, -0.968358949043, -36.422291236, 1.45, 115.844582472)
 asset_id = "Rubble_spur_arrival_0"
+material_overrides = [SubResource("object_material_0061")]
 node_name = "Rubble_spur_arrival_0"
 catalog_asset_id = "ssarathi_ruins:rubble-spur-arrival-0-064f87406604"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/rubble-spur-arrival-0-064f87406604.glb"
@@ -8188,6 +9175,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(-0.646185853984, 0, -0.76318008498, 0, 1, 0, 0.76318008498, 0, -0.646185853984, 160.061776986, 1.79708529036, 95.9922778767)
 asset_id = "Rubble_spur_east_shrine_0"
+material_overrides = [SubResource("object_material_0062")]
 node_name = "Rubble_spur_east_shrine_0"
 catalog_asset_id = "ssarathi_ruins:rubble-spur-east-shrine-0-7b58e8f635f0"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/rubble-spur-east-shrine-0-7b58e8f635f0.glb"
@@ -8201,6 +9189,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(0.229015953796, 0, -0.973422669197, 0, 1, 0, 0.973422669197, 0, 0.229015953796, 3.577708764, 1.79860974079, 202.155417528)
 asset_id = "Rubble_spur_south_shrine_0"
+material_overrides = [SubResource("object_material_0063")]
 node_name = "Rubble_spur_south_shrine_0"
 catalog_asset_id = "ssarathi_ruins:rubble-spur-south-shrine-0-3a198198f718"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/rubble-spur-south-shrine-0-3a198198f718.glb"
@@ -8214,6 +9203,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(0.367739819398, 0, -0.92992872051, 0, 1, 0, 0.92992872051, 0, 0.367739819398, 91.9382230137, 4.43274910889, 3.99227787671)
 asset_id = "Rubble_spur_stela_69"
+material_overrides = [SubResource("object_material_0064")]
 node_name = "Rubble_spur_stela_69"
 catalog_asset_id = "ssarathi_ruins:rubble-spur-stela-69-474c266e2986"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/rubble-spur-stela-69-474c266e2986.glb"
@@ -8227,6 +9217,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(-0.482657459698, 0, -0.875809212442, 0, 1, 0, 0.875809212442, 0, -0.482657459698, -47.6275772411, 2.56294906536, 56.826849927)
 asset_id = "Rubble_street_courts_40"
+material_overrides = [SubResource("object_material_0065")]
 node_name = "Rubble_street_courts_40"
 catalog_asset_id = "ssarathi_ruins:rubble-street-courts-40-60ec6ff3424e"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/rubble-street-courts-40-60ec6ff3424e.glb"
@@ -8240,6 +9231,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(-0.779440882199, 0, 0.626475786569, 0, 1, 0, -0.626475786569, 0, -0.779440882199, -99.0468382351, 1.26302107843, 154.943014708)
 asset_id = "Rubble_street_market_0"
+material_overrides = [SubResource("object_material_0066")]
 node_name = "Rubble_street_market_0"
 catalog_asset_id = "ssarathi_ruins:rubble-street-market-0-fcca450e19e8"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/rubble-street-market-0-fcca450e19e8.glb"
@@ -8253,6 +9245,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(0.932380934541, 0, -0.361477237048, 0, 1, 0, 0.361477237048, 0, 0.932380934541, -85.8950607537, 4.45148885107, -32.7181105699)
 asset_id = "Rubble_street_north_0"
+material_overrides = [SubResource("object_material_0067")]
 node_name = "Rubble_street_north_0"
 catalog_asset_id = "ssarathi_ruins:rubble-street-north-0-d1699d9ab756"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/rubble-street-north-0-d1699d9ab756.glb"
@@ -8266,6 +9259,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(0.978373581748, 0, 0.206845678073, 0, 1, 0, -0.206845678073, 0, 0.978373581748, 3.32420226056, 20.0096168807, 6.5563163303)
 asset_id = "Rubble_street_north_93"
+material_overrides = [SubResource("object_material_0068")]
 node_name = "Rubble_street_north_93"
 catalog_asset_id = "ssarathi_ruins:rubble-street-north-93-6a0abec2fc82"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/rubble-street-north-93-6a0abec2fc82.glb"
@@ -8279,6 +9273,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "R
 script = ExtResource("asset")
 transform = Transform3D(0.978941919652, 0, 0.204138967244, 0, 1, 0, -0.204138967244, 0, 0.978941919652, -110.555273449, 1.72010809373, 174.298921527)
 asset_id = "RuinTower_1"
+material_overrides = [SubResource("object_material_0069"), SubResource("object_material_0070")]
 node_name = "RuinTower_1"
 catalog_asset_id = "ssarathi_ruins:ruintower-1-b6453c2c6063"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/ruintower-1-b6453c2c6063.glb"
@@ -8292,6 +9287,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.969541880302, 0, 0.244925585312, 0, 1, 0, -0.244925585312, 0, 0.969541880302, 44.1690432087, 1.90736636932, 204.090915117)
 asset_id = "RuinTower_6"
+material_overrides = [SubResource("object_material_0071"), SubResource("object_material_0072")]
 node_name = "RuinTower_6"
 catalog_asset_id = "ssarathi_ruins:ruintower-6-d1aade47edd1"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/ruintower-6-d1aade47edd1.glb"
@@ -8305,6 +9301,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.9447638097, 0, -0.327751954809, 0, 1, 0, 0.327751954809, 0, 0.9447638097, -149.960997359, 2.0846467203, 31.0371442207)
 asset_id = "Ruin_0"
+material_overrides = [SubResource("object_material_0073"), SubResource("object_material_0074")]
 node_name = "Ruin_0"
 catalog_asset_id = "ssarathi_ruins:ruin-0-0809001d7a2d"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/ruin-0-0809001d7a2d.glb"
@@ -8318,6 +9315,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.978941919652, 0, 0.204138967244, 0, 1, 0, -0.204138967244, 0, 0.978941919652, -110.555273449, 1.72010809373, 174.298921527)
 asset_id = "Ruin_1"
+material_overrides = [SubResource("object_material_0075"), SubResource("object_material_0076")]
 node_name = "Ruin_1"
 catalog_asset_id = "ssarathi_ruins:ruin-1-fb72dfb8ff1f"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/ruin-1-fb72dfb8ff1f.glb"
@@ -8331,6 +9329,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.987869137273, 0, 0.155288659028, 0, 1, 0, -0.155288659028, 0, 0.987869137273, -94.0242835384, 2.95608604736, 192.941790254)
 asset_id = "Ruin_2"
+material_overrides = [SubResource("object_material_0077"), SubResource("object_material_0078")]
 node_name = "Ruin_2"
 catalog_asset_id = "ssarathi_ruins:ruin-2-d91ce4863110"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/ruin-2-d91ce4863110.glb"
@@ -8344,6 +9343,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.966933965938, 0, -0.255026872144, 0, 1, 0, 0.255026872144, 0, 0.966933965938, -75.4725376096, 2.45761093917, 170.376951094)
 asset_id = "Ruin_3"
+material_overrides = [SubResource("object_material_0079"), SubResource("object_material_0080")]
 node_name = "Ruin_3"
 catalog_asset_id = "ssarathi_ruins:ruin-3-b7ac78d092a3"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/ruin-3-b7ac78d092a3.glb"
@@ -8357,6 +9357,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.999983107182, 0, 0.00581251680683, 0, 1, 0, -0.00581251680683, 0, 0.999983107182, -45.7991150583, 1.79456743692, 165.622284285)
 asset_id = "Ruin_4"
+material_overrides = [SubResource("object_material_0081"), SubResource("object_material_0082")]
 node_name = "Ruin_4"
 catalog_asset_id = "ssarathi_ruins:ruin-4-486a897b1b8d"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/ruin-4-486a897b1b8d.glb"
@@ -8370,6 +9371,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.990541713932, 0, 0.137211927181, 0, 1, 0, -0.137211927181, 0, 0.990541713932, 21.7948743335, 2.20794061432, 220.597278582)
 asset_id = "Ruin_5"
+material_overrides = [SubResource("object_material_0083"), SubResource("object_material_0084")]
 node_name = "Ruin_5"
 catalog_asset_id = "ssarathi_ruins:ruin-5-b249da61b9d3"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/ruin-5-b249da61b9d3.glb"
@@ -8383,6 +9385,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.969541880302, 0, 0.244925585312, 0, 1, 0, -0.244925585312, 0, 0.969541880302, 44.1690432087, 1.90736636932, 204.090915117)
 asset_id = "Ruin_6"
+material_overrides = [SubResource("object_material_0085"), SubResource("object_material_0086")]
 node_name = "Ruin_6"
 catalog_asset_id = "ssarathi_ruins:ruin-6-cc5d0381132b"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/ruin-6-cc5d0381132b.glb"
@@ -8396,6 +9399,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.977145961798, 0, 0.212569445927, 0, 1, 0, -0.212569445927, 0, 0.977145961798, 52.982684605, 2.49222644198, 183.423057804)
 asset_id = "Ruin_7"
+material_overrides = [SubResource("object_material_0087"), SubResource("object_material_0088")]
 node_name = "Ruin_7"
 catalog_asset_id = "ssarathi_ruins:ruin-7-04a1410ee2fa"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/ruin-7-04a1410ee2fa.glb"
@@ -8409,6 +9413,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.940863567095, 0, 0.338785696442, 0, 1, 0, -0.338785696442, 0, 0.940863567095, 152.072918525, 2.80502425769, 110.970235029)
 asset_id = "Ruin_8"
+material_overrides = [SubResource("object_material_0089"), SubResource("object_material_0090")]
 node_name = "Ruin_8"
 catalog_asset_id = "ssarathi_ruins:ruin-8-8f143510c6e3"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/ruin-8-8f143510c6e3.glb"
@@ -8422,6 +9427,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.770067716573, 0, -0.637962155533, 0, 1, 0, 0.637962155533, 0, 0.770067716573, -49, 5.95, -123.412)
 asset_id = "Secret_ruins_culvert_mouth"
+material_overrides = [SubResource("object_material_0091")]
 node_name = "Secret_ruins_culvert_mouth"
 catalog_asset_id = "ssarathi_ruins:secret-ruins-culvert-mouth-245622bf40eb"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/secret-ruins-culvert-mouth-245622bf40eb.glb"
@@ -8474,6 +9480,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.103539355198, 0, 0.994625357572, 0, 1, 0, -0.994625357572, 0, -0.103539355198, 113, 10.45, -19)
 asset_id = "Secret_ruins_stela_reliquary"
+material_overrides = [SubResource("object_material_0092")]
 node_name = "Secret_ruins_stela_reliquary"
 catalog_asset_id = "ssarathi_ruins:secret-ruins-stela-reliquary-6b355a5eef83"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/secret-ruins-stela-reliquary-6b355a5eef83.glb"
@@ -8487,6 +9494,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(0.354269321792, 0, -0.935143436932, 0, 1, 0, 0.935143436932, 0, 0.354269321792, 11, 12.95, -8)
 asset_id = "Secret_ruins_temple_focus"
+material_overrides = [SubResource("object_material_0093")]
 node_name = "Secret_ruins_temple_focus"
 catalog_asset_id = "ssarathi_ruins:secret-ruins-temple-focus-f1989f48b73f"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/secret-ruins-temple-focus-f1989f48b73f.glb"
@@ -8500,6 +9508,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(-0.868221409239, 0, 0.496176968973, 0, 1, 0, -0.496176968973, 0, -0.868221409239, -5.15, 2.45841398842, 148)
 asset_id = "SerpentColumn_0_-1"
+material_overrides = [SubResource("object_material_0094")]
 node_name = "SerpentColumn_0_-1"
 catalog_asset_id = "ssarathi_ruins:serpentcolumn-0-1-a2671b3e67d1"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/serpentcolumn-0-1-a2671b3e67d1.glb"
@@ -8513,6 +9522,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.668791838264, 0, 0.743449713882, 0, 1, 0, -0.743449713882, 0, -0.668791838264, 5.15, 2.1, 148)
 asset_id = "SerpentColumn_0_1"
+material_overrides = [SubResource("object_material_0095")]
 node_name = "SerpentColumn_0_1"
 catalog_asset_id = "ssarathi_ruins:serpentcolumn-0-1-a54842b6e7c3"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/serpentcolumn-0-1-a54842b6e7c3.glb"
@@ -8526,6 +9536,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.32693521577, 0, 0.945046752647, 0, 1, 0, -0.945046752647, 0, -0.32693521577, -5.15, 1.8, 93)
 asset_id = "SerpentColumn_1_-1"
+material_overrides = [SubResource("object_material_0096")]
 node_name = "SerpentColumn_1_-1"
 catalog_asset_id = "ssarathi_ruins:serpentcolumn-1-1-85fd8ddc44c1"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/serpentcolumn-1-1-85fd8ddc44c1.glb"
@@ -8539,6 +9550,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.479843681966, 0, 0.87735399975, 0, 1, 0, -0.87735399975, 0, -0.479843681966, 5.15, 1.8, 93)
 asset_id = "SerpentColumn_1_1"
+material_overrides = [SubResource("object_material_0097")]
 node_name = "SerpentColumn_1_1"
 catalog_asset_id = "ssarathi_ruins:serpentcolumn-1-1-fc2d0e64252a"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/serpentcolumn-1-1-fc2d0e64252a.glb"
@@ -8552,6 +9564,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(0.550284292703, 0, 0.834977363288, 0, 1, 0, -0.834977363288, 0, 0.550284292703, -5.15, 2.2, -17)
 asset_id = "SerpentColumn_2_-1"
+material_overrides = [SubResource("object_material_0098")]
 node_name = "SerpentColumn_2_-1"
 catalog_asset_id = "ssarathi_ruins:serpentcolumn-2-1-bb8014786e1a"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/serpentcolumn-2-1-bb8014786e1a.glb"
@@ -8565,6 +9578,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(-0.760203278599, 0, 0.649685289358, 0, 1, 0, -0.649685289358, 0, -0.760203278599, 5.15, 13, -17)
 asset_id = "SerpentColumn_2_1"
+material_overrides = [SubResource("object_material_0099")]
 node_name = "SerpentColumn_2_1"
 catalog_asset_id = "ssarathi_ruins:serpentcolumn-2-1-4a7ccd4bdb59"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/serpentcolumn-2-1-4a7ccd4bdb59.glb"
@@ -8578,6 +9592,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.95, 1.45, 111)
 asset_id = "SerpentGateColumn_-1"
+material_overrides = [SubResource("object_material_0100")]
 node_name = "SerpentGateColumn_-1"
 catalog_asset_id = "ssarathi_ruins:serpentgatecolumn-1-db4f71081688"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/serpentgatecolumn-1-db4f71081688.glb"
@@ -8591,6 +9606,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "landmark", "landm
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.95, 1.95, 111)
 asset_id = "SerpentGateColumn_1"
+material_overrides = [SubResource("object_material_0101")]
 node_name = "SerpentGateColumn_1"
 catalog_asset_id = "ssarathi_ruins:serpentgatecolumn-1-90447055bc46"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/serpentgatecolumn-1-90447055bc46.glb"
@@ -8604,6 +9620,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "landmark", "mesh"
 script = ExtResource("asset")
 transform = Transform3D(-0.862211146606, 0, 0.506549048631, 0, 1, 0, -0.506549048631, 0, -0.862211146606, 160, 1.8, 35)
 asset_id = "Shrine_east_shrine"
+material_overrides = [SubResource("object_material_0102"), SubResource("object_material_0103")]
 node_name = "Shrine_east_shrine"
 catalog_asset_id = "ssarathi_ruins:shrine-east-shrine-19abefcaae27"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/shrine-east-shrine-19abefcaae27.glb"
@@ -8617,6 +9634,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "landmark", "landm
 script = ExtResource("asset")
 transform = Transform3D(0.200240228048, 0, 0.97974683009, 0, 1, 0, -0.97974683009, 0, 0.200240228048, -56, 1.8, 215)
 asset_id = "Shrine_south_shrine"
+material_overrides = [SubResource("object_material_0104"), SubResource("object_material_0105")]
 node_name = "Shrine_south_shrine"
 catalog_asset_id = "ssarathi_ruins:shrine-south-shrine-609f282804b3"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/shrine-south-shrine-609f282804b3.glb"
@@ -8630,6 +9648,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "landmark", "landm
 script = ExtResource("asset")
 transform = Transform3D(0.847190627169, 0, 0.531289037377, 0, 1, 0, -0.531289037377, 0, 0.847190627169, -118, 1.8, 15)
 asset_id = "Shrine_west_shrine"
+material_overrides = [SubResource("object_material_0106"), SubResource("object_material_0107")]
 node_name = "Shrine_west_shrine"
 catalog_asset_id = "ssarathi_ruins:shrine-west-shrine-defa969adf34"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/shrine-west-shrine-defa969adf34.glb"
@@ -8760,6 +9779,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 21, -59)
 asset_id = "Structure_TempleSummitRoof"
+material_overrides = [SubResource("object_material_0108")]
 node_name = "Structure_TempleSummitRoof"
 catalog_asset_id = "ssarathi_ruins:structure-templesummitroof-df280254015d"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/structure-templesummitroof-df280254015d.glb"
@@ -8773,6 +9793,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 13.9, -27)
 asset_id = "SunStela"
+material_overrides = [SubResource("object_material_0109"), SubResource("object_material_0110")]
 node_name = "SunStela"
 catalog_asset_id = "ssarathi_ruins:sunstela-ddbae79e73d7"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/sunstela-ddbae79e73d7.glb"
@@ -8812,6 +9833,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "structure", "mesh
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 21, -59)
 asset_id = "Temple_Ssarathi"
+material_overrides = [SubResource("object_material_0111"), SubResource("object_material_0112")]
 node_name = "Temple_Ssarathi"
 catalog_asset_id = "ssarathi_ruins:temple-ssarathi-a2de30f1dce3"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/temple-ssarathi-a2de30f1dce3.glb"
@@ -8825,6 +9847,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "landmark", "landm
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 13, -3.5)
 asset_id = "Temple_VaultPortal"
+material_overrides = [SubResource("object_material_0113"), SubResource("object_material_0114")]
 node_name = "Temple_VaultPortal"
 catalog_asset_id = "ssarathi_ruins:temple-vaultportal-a29001bd7f25"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/temple-vaultportal-a29001bd7f25.glb"
@@ -8864,6 +9887,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "prop", "mesh": "T
 script = ExtResource("asset")
 transform = Transform3D(0.913545457643, 0, 0.406736643076, 0, 1, 0, -0.406736643076, 0, 0.913545457643, 102, 3.7, 179)
 asset_id = "UndercroftMouth"
+material_overrides = [SubResource("object_material_0115"), SubResource("object_material_0116")]
 node_name = "UndercroftMouth"
 catalog_asset_id = "ssarathi_ruins:undercroftmouth-7264be06a83b"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/undercroftmouth-7264be06a83b.glb"
@@ -8877,6 +9901,7 @@ metadata = {"composedSourceRegion": "ssarathi_ruins", "kind": "landmark", "landm
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.18344314218, 155)
 asset_id = "WaterGate"
+material_overrides = [SubResource("object_material_0117")]
 node_name = "WaterGate"
 catalog_asset_id = "ssarathi_ruins:watergate-ffb7249062aa"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/watergate-ffb7249062aa.glb"
@@ -10606,6 +11631,7 @@ metadata = {"composedSourceRegion": "verdant_stair"}
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1100, 0, -1440)
 asset_id = "published-ssarathi-ruins-ferry-quay-02"
+material_overrides = [SubResource("object_material_0118"), SubResource("object_material_0119"), SubResource("object_material_0120"), SubResource("object_material_0121"), SubResource("object_material_0122"), SubResource("object_material_0123"), SubResource("object_material_0124"), SubResource("object_material_0125")]
 node_name = "Walk_FerryQuay_ssarathi_ruins_02_WorldPlacement"
 catalog_asset_id = "ssarathi_ruins:published-ssarathi-ruins-ferry-quay-02"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/published-ssarathi-ruins-ferry-quay-02.glb"
@@ -10658,6 +11684,7 @@ metadata = {"authoredAccessAssembly": {"id": "loose-516", "walkNode": "Walk_Cont
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1100, 0, -1440)
 asset_id = "published-ssarathi-ruins-loose-520"
+material_overrides = [SubResource("object_material_0126"), SubResource("object_material_0127"), SubResource("object_material_0128"), SubResource("object_material_0129"), SubResource("object_material_0130"), SubResource("object_material_0131"), SubResource("object_material_0132")]
 node_name = "Walk_ContinentalBridgeUnion_520_ssarathi_ruins_WorldPlacement"
 catalog_asset_id = "ssarathi_ruins:published-ssarathi-ruins-loose-520"
 scene_path = "res://world_authoring/regions/ssarathi_ruins/assets/prototypes/published-ssarathi-ruins-loose-520.glb"

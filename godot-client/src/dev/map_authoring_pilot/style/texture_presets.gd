@@ -23,10 +23,23 @@ const BONE := "Bone"
 const CRYSTAL := "Crystal"
 const CAVERN := "Cavern"
 const SLATE := "Slate"
+const MOOR_PEAT_HEATHER := "Moor peat heather"
+const DELTA_SILT := "Delta silt"
+const COASTAL_LIMESTONE_GRAVEL := "Coastal limestone gravel"
+const ALPINE_SCREE_LICHEN := "Alpine scree lichen"
+const FOREST_FLOOR_MOSS := "Forest floor moss"
+const ALPINE_SNOW_CRUST := "Alpine snow crust"
+const WEATHERED_LIMESTONE_MASONRY := "Weathered limestone masonry"
+const JADE_MASONRY := "Jade masonry"
+const MARINE_TIMBER := "Marine timber"
+const REED_THATCH := "Reed thatch"
 
 const PRESET_NAMES := [
 	CUSTOM, GRASS, WORN_EARTH, SOIL, SAND, DESERT, TIMBER, STONE, THATCH, TEXTILE, CANVAS,
 	METAL, LEATHER, HIDE, BONE, CRYSTAL, CAVERN, SLATE,
+	MOOR_PEAT_HEATHER, DELTA_SILT, COASTAL_LIMESTONE_GRAVEL,
+	ALPINE_SCREE_LICHEN, FOREST_FLOOR_MOSS, ALPINE_SNOW_CRUST,
+	WEATHERED_LIMESTONE_MASONRY, JADE_MASONRY, MARINE_TIMBER, REED_THATCH,
 ]
 
 const ROAD_MESH_UV_DENSITY := 0.24
@@ -110,6 +123,66 @@ const _PRESETS := {
 		"family": "cavern", "tint": Color(0.66, 0.62, 0.56, 1.0),
 		"roughness": 0.93, "normal_strength": 0.72, "density": 0.23,
 	},
+	MOOR_PEAT_HEATHER: {
+		"family": "moor-peat-heather", "detail_family": "ground",
+		"albedo_path": "res://src/dev/map_authoring_pilot/style/texture_packs/moor-peat-heather/moor-peat-heather-v001.png",
+		"tint": Color.WHITE, "roughness": 0.98, "normal_strength": 0.65,
+		"density": 0.25, "world_density": 0.25,
+	},
+	DELTA_SILT: {
+		"family": "delta-silt", "detail_family": "ground",
+		"albedo_path": "res://src/dev/map_authoring_pilot/style/texture_packs/delta-silt/delta-silt-v001.png",
+		"tint": Color.WHITE, "roughness": 0.98, "normal_strength": 0.45,
+		"density": 0.25, "world_density": 0.25,
+	},
+	COASTAL_LIMESTONE_GRAVEL: {
+		"family": "coastal-limestone-gravel", "detail_family": "stone",
+		"albedo_path": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+		"tint": Color.WHITE, "roughness": 0.94, "normal_strength": 0.75,
+		"density": 0.25, "world_density": 0.25,
+	},
+	ALPINE_SCREE_LICHEN: {
+		"family": "alpine-scree-lichen", "detail_family": "stone",
+		"albedo_path": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
+		"tint": Color.WHITE, "roughness": 0.97, "normal_strength": 0.80,
+		"density": 0.25, "world_density": 0.25,
+	},
+	FOREST_FLOOR_MOSS: {
+		"family": "forest-floor-moss", "detail_family": "ground",
+		"albedo_path": "res://src/dev/map_authoring_pilot/style/texture_packs/forest-floor-moss/forest-floor-moss-v001.png",
+		"tint": Color.WHITE, "roughness": 0.96, "normal_strength": 0.65,
+		"density": 0.25, "world_density": 0.25,
+	},
+	ALPINE_SNOW_CRUST: {
+		"family": "alpine-snow-crust", "detail_family": "ground",
+		"albedo_path": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-snow-crust/alpine-snow-crust-v002.png",
+		"tint": Color.WHITE, "roughness": 0.88, "normal_strength": 0.65,
+		"density": 0.25, "world_density": 0.25,
+	},
+	WEATHERED_LIMESTONE_MASONRY: {
+		"family": "weathered-limestone-masonry", "detail_family": "stone",
+		"albedo_path": "res://src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
+		"tint": Color.WHITE, "roughness": 0.95, "normal_strength": 0.78,
+		"density": 0.8,
+	},
+	JADE_MASONRY: {
+		"family": "jade-masonry", "detail_family": "stone",
+		"albedo_path": "res://src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png",
+		"tint": Color.WHITE, "roughness": 0.72, "normal_strength": 0.65,
+		"density": 0.8,
+	},
+	MARINE_TIMBER: {
+		"family": "marine-timber", "detail_family": "timber",
+		"albedo_path": "res://src/dev/map_authoring_pilot/style/texture_packs/marine-timber/marine-timber-v001.png",
+		"tint": Color.WHITE, "roughness": 0.84, "normal_strength": 0.80,
+		"density": 0.5,
+	},
+	REED_THATCH: {
+		"family": "reed-thatch", "detail_family": "thatch",
+		"albedo_path": "res://src/dev/map_authoring_pilot/style/texture_packs/reed-thatch/reed-thatch-v001.png",
+		"tint": Color.WHITE, "roughness": 0.94, "normal_strength": 0.70,
+		"density": 0.56,
+	},
 }
 
 
@@ -130,7 +203,7 @@ static func create_material(preset: String) -> Material:
 	var detail_family: String = spec.get("detail_family", family)
 	var material := ORMMaterial3D.new()
 	material.albedo_color = spec["tint"]
-	material.albedo_texture = _texture(family, "basecolor")
+	material.albedo_texture = _preset_texture(spec, family, "basecolor")
 	material.roughness = spec["roughness"]
 	material.metallic = spec.get("metallic", 0.0)
 	material.normal_enabled = true
@@ -165,7 +238,8 @@ static func create_road_material(preset: String) -> ShaderMaterial:
 		var spec: Dictionary = _PRESETS[preset]
 		var family: String = spec["family"]
 		var detail_family: String = spec.get("detail_family", family)
-		material.set_shader_parameter("ground_albedo", _texture(family, "basecolor"))
+		material.set_shader_parameter("ground_albedo",
+			_preset_texture(spec, family, "basecolor"))
 		material.set_shader_parameter("ground_normal", _texture(detail_family, "normal"))
 		material.set_shader_parameter("ground_orm", _texture(detail_family, "orm"))
 		material.set_shader_parameter("worn_tint", spec["tint"])
@@ -175,6 +249,19 @@ static func create_road_material(preset: String) -> ShaderMaterial:
 		material.set_shader_parameter("normal_strength", spec["normal_strength"])
 	material.set_shader_parameter("edge_feather", 0.16)
 	return material
+
+
+## Generated ground packs declare their intended repeat in world metres.
+## Terrain already scales local XZ by its saved preview density, so a bound
+## terrain Surface stores the compensating material scale. Other presets keep
+## their established authored scale unchanged.
+static func region_uv_scale(preset: String,
+		base_uv_metres_inverse: float) -> float:
+	if base_uv_metres_inverse <= 0.0 or not _PRESETS.has(preset):
+		return 0.0
+	var world_density := float((_PRESETS[preset] as Dictionary).get(
+		"world_density", 0.0))
+	return world_density / base_uv_metres_inverse if world_density > 0.0 else 0.0
 
 
 static func create_oriented_material(source: Material,
@@ -282,3 +369,10 @@ static func _has_only_supported_base_features(base: BaseMaterial3D) -> bool:
 
 static func _texture(family: String, map_name: String) -> Texture2D:
 	return load(_TEXTURE_ROOT + family + "-" + map_name + ".png") as Texture2D
+
+
+static func _preset_texture(spec: Dictionary, family: String,
+		map_name: String) -> Texture2D:
+	if map_name == "basecolor" and spec.has("albedo_path"):
+		return load(String(spec.albedo_path)) as Texture2D
+	return _texture(family, map_name)

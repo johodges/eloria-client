@@ -1,10 +1,11 @@
-[gd_scene load_steps=154 format=3]
+[gd_scene load_steps=155 format=3]
 
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/path_control.gd" id="path"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_control.gd" id="asset"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/gameplay_marker.gd" id="marker"]
+[ext_resource type="Resource" path="res://world_authoring/regions/amethyst_barrens/surfaces/biome-scree.tres" id="biome_entry"]
 [ext_resource type="Resource" path="res://world_authoring/regions/amethyst_barrens/surfaces/crystal.tres" id="terrain_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/amethyst_barrens/surfaces/road.tres" id="road_surface"]
 [ext_resource type="Curve3D" path="res://world_authoring/regions/amethyst_barrens/paths/amethyst-barrens-mirrorhold-amethyst-barrens.tres" id="curve_00"]
@@ -177,6 +178,7 @@ cell_metres = 2.0
 grid_size = Vector2i(370, 370)
 base_heights_path = "res://world_authoring/regions/amethyst_barrens/base-heights.f32le"
 base_surface = ExtResource("terrain_surface")
+biome_palette = [ExtResource("biome_entry")]
 
 [node name="Patches" type="Node3D" parent="Terrain"]
 

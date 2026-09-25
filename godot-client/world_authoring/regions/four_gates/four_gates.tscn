@@ -1,11 +1,14 @@
-[gd_scene load_steps=324 format=3]
+[gd_scene load_steps=343 format=3]
 
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres" id="object_weathered_limestone"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/path_control.gd" id="path"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/water_region_control.gd" id="water"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_control.gd" id="asset"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/gameplay_marker.gd" id="marker"]
+[ext_resource type="Resource" path="res://world_authoring/regions/four_gates/surfaces/biome-coastal-gravel.tres" id="biome_entry"]
 [ext_resource type="Resource" path="res://world_authoring/regions/four_gates/surfaces/continental-ground.tres" id="terrain_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/four_gates/surfaces/road.tres" id="road_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/four_gates/surfaces/river.tres" id="river_surface"]
@@ -324,6 +327,118 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/four_gates/assets/prototypes/woodlandfloor-0147-08615a681ce2.glb" id="prototype_288"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/four_gates/assets/prototypes/woodlandfloor-0153-58311899495d.glb" id="prototype_289"]
 
+[sub_resource type="Resource" id="object_material_0000"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_gates_civic_focus/Secret_gates_civic_focus__Secret_gates_civic_focus__solid__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0001"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_gates_deposit_vault/Secret_gates_deposit_vault__Secret_gates_deposit_vault__solid__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0002"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_gates_drain_mouth/Secret_gates_drain_mouth__Secret_gates_drain_mouth__solid__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0003"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_gates_mirrorsmith_well/Secret_gates_mirrorsmith_well__Secret_gates_mirrorsmith_well__solid__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0004"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_gates_otter_pit/Secret_gates_otter_pit__Secret_gates_otter_pit__solid__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0005"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_gates_plaza_spring/Secret_gates_plaza_spring__Secret_gates_plaza_spring__solid__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0006"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_gates_reedworks_garden/Secret_gates_reedworks_garden__Secret_gates_reedworks_garden__solid__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0007"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_gates_sanctuary_reliquary/Secret_gates_sanctuary_reliquary__Secret_gates_sanctuary_reliquary__solid__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0008"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_gates_stormglass_school/Secret_gates_stormglass_school__Secret_gates_stormglass_school__solid__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0009"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_gates_sunleaf_hollow/Secret_gates_sunleaf_hollow__Secret_gates_sunleaf_hollow__solid__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0010"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_gates_wall_eyrie/Secret_gates_wall_eyrie__Secret_gates_wall_eyrie__solid__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0011"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_gates_waystone/Secret_gates_waystone__Secret_gates_waystone__solid__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0012"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "SouthOuter_Foundation_-1/SouthOuter_Foundation_-1__SouthOuter_Foundation_-1__solid__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0013"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "SouthOuter_Foundation_1/SouthOuter_Foundation_1__SouthOuter_Foundation_1__solid__rubble_stone"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0014"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_007_356_788_WorldPlacement/BridgeUnionPier_007_356_788"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0015"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "BridgeUnionPier_007_364_796_WorldPlacement/BridgeUnionPier_007_364_796"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
 [node name="FourGates" type="Node3D"]
 script = ExtResource("region")
 region_id = "four_gates"
@@ -350,6 +465,7 @@ base_heights_path = "res://world_authoring/regions/four_gates/base-heights.f32le
 base_colors_path = "res://world_authoring/regions/four_gates/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
 base_surface = ExtResource("terrain_surface")
+biome_palette = [ExtResource("biome_entry")]
 
 [node name="Patches" type="Node3D" parent="Terrain"]
 
@@ -3261,6 +3377,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 21.6634541125, 15.4069057899)
 asset_id = "Secret_gates_civic_focus"
+material_overrides = [SubResource("object_material_0000")]
 node_name = "Secret_gates_civic_focus"
 catalog_asset_id = "four_gates:secret-gates-civic-focus-28a2f65524a0"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/secret-gates-civic-focus-28a2f65524a0.glb"
@@ -3274,6 +3391,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74, 21.6634541125, 39.4069057899)
 asset_id = "Secret_gates_deposit_vault"
+material_overrides = [SubResource("object_material_0001")]
 node_name = "Secret_gates_deposit_vault"
 catalog_asset_id = "four_gates:secret-gates-deposit-vault-3fa0c47bd9fa"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/secret-gates-deposit-vault-3fa0c47bd9fa.glb"
@@ -3287,6 +3405,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -106, 19.5699892581, 14.4069057899)
 asset_id = "Secret_gates_drain_mouth"
+material_overrides = [SubResource("object_material_0002")]
 node_name = "Secret_gates_drain_mouth"
 catalog_asset_id = "four_gates:secret-gates-drain-mouth-bcd66e255663"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/secret-gates-drain-mouth-bcd66e255663.glb"
@@ -3326,6 +3445,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 21.6634541125, -81.5930942101)
 asset_id = "Secret_gates_mirrorsmith_well"
+material_overrides = [SubResource("object_material_0003")]
 node_name = "Secret_gates_mirrorsmith_well"
 catalog_asset_id = "four_gates:secret-gates-mirrorsmith-well-28d402aa9616"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/secret-gates-mirrorsmith-well-28d402aa9616.glb"
@@ -3339,6 +3459,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 121.5, 15.8711058827, 77.4)
 asset_id = "Secret_gates_otter_pit"
+material_overrides = [SubResource("object_material_0004")]
 node_name = "Secret_gates_otter_pit"
 catalog_asset_id = "four_gates:secret-gates-otter-pit-41e3ddb0474d"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/secret-gates-otter-pit-41e3ddb0474d.glb"
@@ -3352,6 +3473,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 21.6634541125, 9.40690578993)
 asset_id = "Secret_gates_plaza_spring"
+material_overrides = [SubResource("object_material_0005")]
 node_name = "Secret_gates_plaza_spring"
 catalog_asset_id = "four_gates:secret-gates-plaza-spring-8109df4a0b3d"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/secret-gates-plaza-spring-8109df4a0b3d.glb"
@@ -3365,6 +3487,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76, 21.6634541125, 66.4069057899)
 asset_id = "Secret_gates_reedworks_garden"
+material_overrides = [SubResource("object_material_0006")]
 node_name = "Secret_gates_reedworks_garden"
 catalog_asset_id = "four_gates:secret-gates-reedworks-garden-25cc775a5267"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/secret-gates-reedworks-garden-25cc775a5267.glb"
@@ -3378,6 +3501,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -221.037, 28.0811111111, -63.247)
 asset_id = "Secret_gates_sanctuary_reliquary"
+material_overrides = [SubResource("object_material_0007")]
 node_name = "Secret_gates_sanctuary_reliquary"
 catalog_asset_id = "four_gates:secret-gates-sanctuary-reliquary-5d153e279c61"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/secret-gates-sanctuary-reliquary-5d153e279c61.glb"
@@ -3391,6 +3515,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45, 21.6634541125, -80.5930942101)
 asset_id = "Secret_gates_stormglass_school"
+material_overrides = [SubResource("object_material_0008")]
 node_name = "Secret_gates_stormglass_school"
 catalog_asset_id = "four_gates:secret-gates-stormglass-school-51a0d9d34d1f"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/secret-gates-stormglass-school-51a0d9d34d1f.glb"
@@ -3404,6 +3529,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 86, 21.6634541125, 35.4069057899)
 asset_id = "Secret_gates_sunleaf_hollow"
+material_overrides = [SubResource("object_material_0009")]
 node_name = "Secret_gates_sunleaf_hollow"
 catalog_asset_id = "four_gates:secret-gates-sunleaf-hollow-c251212277df"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/secret-gates-sunleaf-hollow-c251212277df.glb"
@@ -3417,6 +3543,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108, 21.6539158534, -38.5930942101)
 asset_id = "Secret_gates_wall_eyrie"
+material_overrides = [SubResource("object_material_0010")]
 node_name = "Secret_gates_wall_eyrie"
 catalog_asset_id = "four_gates:secret-gates-wall-eyrie-960eb33b90f6"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/secret-gates-wall-eyrie-960eb33b90f6.glb"
@@ -3430,6 +3557,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 21.6634541125, 57.4069057899)
 asset_id = "Secret_gates_waystone"
+material_overrides = [SubResource("object_material_0011")]
 node_name = "Secret_gates_waystone"
 catalog_asset_id = "four_gates:secret-gates-waystone-46eb1f26c004"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/secret-gates-waystone-46eb1f26c004.glb"
@@ -3599,6 +3727,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "small_dressing", "mes
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.55, 12.485, 138.5)
 asset_id = "SouthOuter_Foundation_-1"
+material_overrides = [SubResource("object_material_0012")]
 node_name = "SouthOuter_Foundation_-1"
 catalog_asset_id = "four_gates:southouter-foundation-1-070acd42d56f"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/southouter-foundation-1-070acd42d56f.glb"
@@ -3612,6 +3741,7 @@ metadata = {"composedSourceRegion": "four_gates", "kind": "landmark", "mesh": "S
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.45, 12.485, 138.5)
 asset_id = "SouthOuter_Foundation_1"
+material_overrides = [SubResource("object_material_0013")]
 node_name = "SouthOuter_Foundation_1"
 catalog_asset_id = "four_gates:southouter-foundation-1-9cdf5be2856c"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/southouter-foundation-1-9cdf5be2856c.glb"
@@ -4392,6 +4522,7 @@ metadata = {"authoredAccessAssembly": {"id": "loose-502", "walkNode": "Walk_Cont
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -530, 0, -840)
 asset_id = "published-four-gates-western-river-428"
+material_overrides = [SubResource("object_material_0014"), SubResource("object_material_0015")]
 node_name = "Walk_ContinentalBridgeUnion_007_four_gates_WorldPlacement"
 catalog_asset_id = "four_gates:published-four-gates-western-river-428"
 scene_path = "res://world_authoring/regions/four_gates/assets/prototypes/published-four-gates-western-river-428.glb"

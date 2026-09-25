@@ -4,6 +4,8 @@ extends Node3D
 const WORLD_COLLISION_LAYER := 1
 const NAVIGATION_SURFACE_LAYER := 8
 const ExternalTexturePool := preload("res://src/world/external_texture_pool.gd")
+const BiomeBlendMaterial := preload("res://src/world/biome_blend_material.gd")
+const ObjectMaterialRefresh := preload("res://src/world/object_material_refresh.gd")
 
 # Static-instance batching. A region such as Four Gates imports ~1700 mesh
 # nodes that between them reference only 42 meshes, so almost every draw call
@@ -288,6 +290,8 @@ func load_world(manifest_path: String, arrival := Vector3.INF, wait_for_arrival 
 	mark = _phase(&"index", mark)
 	_apply_continent_water(mesh_instances)
 	_apply_material_passes(mesh_instances)
+	_apply_biome_blend(mesh_instances)
+	ObjectMaterialRefresh.apply_catalog(manifest.data, mesh_instances)
 	mark = _phase(&"materials", mark)
 	_apply_collision_declarations(index["byName"] as Dictionary)
 	mark = _phase(&"collision", mark)
@@ -823,6 +827,73 @@ func _apply_material_passes(mesh_instances: Array) -> int:
 			material.vertex_color_use_as_albedo = true
 			applied += 1
 	return applied
+
+
+## Restores the shared world-space biome material after glTF import. Only the
+## explicitly named base terrain receives it; roads, local ground overlays,
+## water, and authored objects retain their own materials. Invalid portable
+## resources leave the exported dominant PBR fallback untouched.
+func _apply_biome_blend(mesh_instances: Array) -> int:
+	if manifest == null:
+		return 0
+	var config: Variant
+	if manifest.data.has("biomeBlend"):
+		config = manifest.data.get("biomeBlend")
+		# Presence is current export authority. Null or an explicit disabled
+		# sentinel prevents an older portable catalog from resurrecting a blend
+		# the author turned off. Malformed present data also fails closed.
+		if config == null or (config is Dictionary and not bool(config.get(
+				"enabled", true))):
+			return 0
+		if not config is Dictionary:
+			push_warning("Child biome blend is invalid; the exported terrain material remains active.")
+			return 0
+	else:
+		config = BiomeBlendMaterial.catalog_config(manifest.data)
+	if not config is Dictionary:
+		return 0
+	var raw_translation: Variant = manifest.data.get("continentGeography", {}).get(
+		"translation", [0.0, 0.0, 0.0])
+	if not raw_translation is Array or raw_translation.size() != 3:
+		return 0
+	var translation := Vector3(float(raw_translation[0]), float(raw_translation[1]),
+		float(raw_translation[2]))
+	var material := BiomeBlendMaterial.create_runtime(config, translation)
+	if material == null:
+		push_warning("Biome blend was not applied; the exported terrain material remains active.")
+		return 0
+	var applied := 0
+	for value: Variant in mesh_instances:
+		var node := value as MeshInstance3D
+		if node == null or node.mesh == null or not _is_authored_base_terrain(
+				node.name, config.palettes):
+			continue
+		var local := node.transform
+		var parent := node.get_parent()
+		while parent != world_root and parent is Node3D:
+			local = (parent as Node3D).transform * local
+			parent = parent.get_parent()
+		var node_material := material.duplicate(true) as ShaderMaterial
+		BiomeBlendMaterial.set_terrain_to_continent(node_material,
+			Transform3D(Basis.IDENTITY, translation) * local)
+		for surface in node.mesh.get_surface_count():
+			node.set_surface_override_material(surface, node_material)
+			applied += 1
+	return applied
+
+
+static func _is_authored_base_terrain(node_name: StringName,
+		palettes: Array) -> bool:
+	var text := String(node_name)
+	for palette: Dictionary in palettes:
+		var palette_id := String(palette.get("id", ""))
+		var region_id := palette_id.get_slice(":", 0)
+		if region_id.is_empty():
+			continue
+		var expected := "AuthoredGround_%sBase" % region_id
+		if text == expected or text.begins_with(expected + "_"):
+			return true
+	return false
 
 func unload_world() -> void:
 	# A map change while a cache write is still queued drops the write: the

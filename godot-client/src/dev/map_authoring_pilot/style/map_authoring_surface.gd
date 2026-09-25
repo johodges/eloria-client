@@ -13,6 +13,7 @@ enum MaterialMode {
 var _material_choices := {}
 var _backend := MapAuthoringVisualStyle.new()
 var _region_uv_projection := false
+var _region_uv_metres_inverse := 0.0
 
 # Keep this order: loading must establish the factory mode and preset before it
 # restores a hand-edited source material from the resource file.
@@ -29,7 +30,10 @@ var _region_uv_projection := false
 
 @export_enum("Custom", "Grass", "Worn earth", "Soil", "Sand", "Desert", "Timber",
 	"Stone", "Thatch", "Textile", "Canvas", "Metal", "Leather", "Hide",
-	"Bone", "Crystal", "Cavern", "Slate") var texture_preset := \
+	"Bone", "Crystal", "Cavern", "Slate", "Moor peat heather", "Delta silt",
+	"Coastal limestone gravel", "Alpine scree lichen", "Forest floor moss",
+	"Alpine snow crust", "Weathered limestone masonry", "Jade masonry",
+	"Marine timber", "Reed thatch") var texture_preset := \
 	MapAuthoringTexturePresets.CUSTOM:
 	set(value):
 		if texture_preset == value:
@@ -62,6 +66,15 @@ var _region_uv_projection := false
 			return
 		source_material = value
 		_sync_backend_source()
+		emit_changed()
+
+## Terrain base surfaces opt in explicitly. Existing Custom surfaces retain
+## their exact single-material appearance until an author enables blending.
+@export var biome_blend_enabled := false:
+	set(value):
+		if biome_blend_enabled == value:
+			return
+		biome_blend_enabled = value
 		emit_changed()
 
 
@@ -98,22 +111,40 @@ func get_material(extra_rotation_degrees: float = 0.0) -> Material:
 ## ordinary named preset choices on that explicit projection so preview and
 ## production export cannot silently depend on editor-only triplanar mapping.
 ## Custom materials retain their authored settings and are validated at bake.
-func enable_region_uv_projection() -> void:
+func enable_region_uv_projection(base_uv_metres_inverse: float = 0.0) -> void:
 	_region_uv_projection = true
+	if base_uv_metres_inverse > 0.0:
+		_region_uv_metres_inverse = base_uv_metres_inverse
 	if texture_preset == MapAuthoringTexturePresets.CUSTOM or \
 			not source_material is BaseMaterial3D:
 		return
 	var base := source_material as BaseMaterial3D
-	if not base.uv1_triplanar and not base.uv1_world_triplanar:
+	# A triplanar preset has not yet been converted to the region's explicit UV
+	# projection. Once converted, its UV scale is authored data: refreshes and
+	# save/reopen must not replace a user's later Inspector edit merely because
+	# the material still carries a named preset.
+	var first_projection := base.uv1_triplanar or base.uv1_world_triplanar
+	var changed := false
+	var region_scale := MapAuthoringTexturePresets.region_uv_scale(texture_preset,
+		_region_uv_metres_inverse)
+	if first_projection and region_scale > 0.0 and \
+			(not is_equal_approx(base.uv1_scale.x, region_scale) or
+			not is_equal_approx(base.uv1_scale.y, region_scale)):
+		base.uv1_scale = Vector3(region_scale, region_scale, base.uv1_scale.z)
+		changed = true
+	if base.uv1_triplanar or base.uv1_world_triplanar:
+		base.uv1_triplanar = false
+		base.uv1_world_triplanar = false
+		changed = true
+	if not changed:
 		return
-	base.uv1_triplanar = false
-	base.uv1_world_triplanar = false
 	_sync_backend_source()
 	emit_changed()
 
 
 func signature() -> Array:
-	return [get_instance_id(), material_mode, texture_preset, rotation_degrees] + \
+	return [get_instance_id(), material_mode, texture_preset, rotation_degrees,
+		biome_blend_enabled] + \
 		_backend.rotation_signature()
 
 
@@ -177,6 +208,11 @@ func _region_uv_material(material: Material, preset: String) -> Material:
 			not material is BaseMaterial3D:
 		return material
 	var base := material as BaseMaterial3D
+	var first_projection := base.uv1_triplanar or base.uv1_world_triplanar
+	var region_scale := MapAuthoringTexturePresets.region_uv_scale(preset,
+		_region_uv_metres_inverse)
+	if first_projection and region_scale > 0.0:
+		base.uv1_scale = Vector3(region_scale, region_scale, base.uv1_scale.z)
 	base.uv1_triplanar = false
 	base.uv1_world_triplanar = false
 	return material

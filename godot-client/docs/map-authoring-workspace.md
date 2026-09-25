@@ -65,3 +65,27 @@ Ferry landings move with their saved quay controls and are checked against the
 connected bank and water. A saved endpoint does not receive a regenerated quay
 or native approach road. Deleting its quay disables that ferry connection
 rather than restoring a generated replacement.
+
+## Terrain appearance
+
+Select **Terrain**, expand **Base Surface**, and choose a named **Texture** to
+change the territory's main ground. The new ground textures repeat about every
+four metres at the territory's saved Terrain UV setting; Texture Rotation and
+advanced UV scale remain saved per Surface. Enable **Biome Blend** on the Base
+Surface to
+let adjacent opted-in territories share a soft, world-aligned boundary. The
+exported dominant material remains the fallback on clients that cannot load a
+blend mask.
+
+Opted terrain replaces the old absolute biome vertex colour with its selected
+palette. Local Ground Regions and roads remain separate meshes, so their saved
+paint and materials are unchanged.
+
+Each territory may add one **Biome Palette** entry on Terrain. Give it a stable
+Id, choose the landscape Role that should reveal it, and choose its local
+Surface. The build turns an existing landscape weight such as woodland,
+grassland, heath, wetland, rock, snow, sand, or limestone into the secondary
+mix; there is no separate paint layer to keep in sync. Ground Regions still
+provide explicit local patches and
+continue to draw over the shared base. Roads, rivers, water, and object Surface
+overrides also retain their own materials.

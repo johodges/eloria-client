@@ -232,6 +232,23 @@ def _validate_terrain(document: dict[str, Any], snapshot: Path, production: bool
             f"{contract.id}: terrain width and height must cover the full "
             f"{contract.terrain_vertices[0]}x{contract.terrain_vertices[1]} shared envelope")
     _validate_surface(terrain.get("baseSurface"), source_sha256, "terrain.baseSurface")
+    blend_enabled = terrain["baseSurface"].get("biomeBlendEnabled", False)
+    if not isinstance(blend_enabled, bool):
+        raise AuthoringError("terrain.baseSurface.biomeBlendEnabled must be boolean")
+    biome_palette = _array(terrain.get("biomePalette", []), "terrain.biomePalette")
+    if len(biome_palette) > 1:
+        raise AuthoringError("terrain.biomePalette supports one secondary surface in v1")
+    if biome_palette:
+        entry = _object(biome_palette[0], "terrain.biomePalette[0]")
+        identity = _string(entry.get("id"), "terrain.biomePalette[0].id")
+        if ":" in identity:
+            raise AuthoringError("terrain.biomePalette[0].id must be a local stable id")
+        if entry.get("role") not in ("woodland", "heath", "wetland", "rock", "snow",
+                                     "sand", "limestone", "steppe", "badland", "grassland",
+                                     "tree_density"):
+            raise AuthoringError("terrain.biomePalette[0].role is unsupported")
+        _validate_surface(entry.get("surface"), source_sha256,
+                          "terrain.biomePalette[0].surface")
     base_path = _height_sidecar(terrain, snapshot, "baseHeights", width, height)
     resolved_path = _height_sidecar(terrain, snapshot, "resolvedHeights", width, height)
     colors = terrain.get("baseColors")
@@ -323,9 +340,17 @@ def _validate_surface(surface: Any, source_sha256: dict[str, str], where: str) -
     mode=record.get("materialMode")
     if mode not in ("surface", "road", "water"):
         raise AuthoringError(f"{where}.materialMode is unsupported")
+    if "biomeBlendEnabled" in record and not isinstance(record["biomeBlendEnabled"], bool):
+        raise AuthoringError(f"{where}.biomeBlendEnabled must be boolean")
+    biome_packs = {"Moor peat heather", "Delta silt", "Coastal limestone gravel",
+                   "Alpine scree lichen", "Forest floor moss", "Alpine snow crust",
+                   "Weathered limestone masonry", "Jade masonry", "Marine timber",
+                   "Reed thatch"}
     if preset != "Custom":
-        if preset not in _PRESET_MATERIALS and preset != "Water":
+        if preset not in _PRESET_MATERIALS and preset != "Water" and preset not in biome_packs:
             raise AuthoringError(f"{where}.preset {preset!r} is unsupported")
+        if preset in biome_packs and "pbrOverrides" not in record:
+            raise AuthoringError(f"{where}.pbrOverrides is required for texture-pack presets")
         if "pbr" in record:
             raise AuthoringError(f"{where}.pbr is valid only for Custom surfaces")
         pbr_override=record.get("pbrOverrides")

@@ -17,6 +17,8 @@ const SURFACE := preload(
 	"res://src/dev/map_authoring_pilot/style/map_authoring_surface.gd")
 const PRESETS := preload(
 	"res://src/dev/map_authoring_pilot/style/texture_presets.gd")
+const BIOME_PALETTE_ENTRY := preload(
+	"res://src/dev/map_authoring_region/biome_palette_entry.gd")
 
 const SCENE_PATH := "res://tests/.continent-authoring-framework.tscn"
 const ASSET_SCENE_PATH := "res://tests/.continent-authoring-asset.tscn"
@@ -114,6 +116,12 @@ func _run() -> void:
 			document.terrain.baseSurface.pbrOverrides.albedoColor,
 			Color(0.7, 0.6, 0.5, 1.0)),
 			"saved preset StandardMaterial edits cannot silently fall back to defaults")
+		_expect(bool(document.terrain.baseSurface.biomeBlendEnabled) and
+			document.terrain.biomePalette.size() == 1 and
+			document.terrain.biomePalette[0].id == "forest-floor" and
+			document.terrain.biomePalette[0].role == "woodland" and
+			document.terrain.biomePalette[0].surface.preset == PRESETS.SAND,
+			"terrain exports its explicit blend opt-in and one stable secondary palette")
 		_expect(not bool(document.groundRegions[0].surface.pbrOverrides.triplanar) and
 			not bool(document.groundRegions[0].surface.pbrOverrides.worldTriplanar),
 			"named region textures normalize to the supported UV projection")
@@ -134,7 +142,7 @@ func _run() -> void:
 	reopened.queue_free()
 	_cleanup()
 	print("continent authoring framework: %d assertions, %d failures" % [
-		31, failures])
+		32, failures])
 	quit(1 if failures else 0)
 
 
@@ -162,8 +170,14 @@ func _scene() -> Node3D:
 	terrain.base_heights_path = HEIGHT_PATH
 	terrain.base_colors_path = COLOR_PATH
 	terrain.base_surface = SURFACE.from_preset(PRESETS.GRASS)
+	terrain.base_surface.biome_blend_enabled = true
 	(terrain.base_surface.source_material as BaseMaterial3D).albedo_color = \
 		Color(0.7, 0.6, 0.5, 1.0)
+	var palette := BIOME_PALETTE_ENTRY.new()
+	palette.id = "forest-floor"
+	palette.role = "woodland"
+	palette.surface = SURFACE.from_preset(PRESETS.SAND)
+	terrain.biome_palette = [palette]
 	_add_owned(region, terrain)
 	var patches := Node3D.new()
 	patches.name = "Patches"

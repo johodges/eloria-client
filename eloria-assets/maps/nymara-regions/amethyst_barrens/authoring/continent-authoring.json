@@ -52857,7 +52857,11 @@
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
-        "sha256": "7609a484863ea722fb8a65314ea35c4f83098d5b5e6aeead1db217eafec83180"
+        "sha256": "5f34c8606855d7d8b4e0b7528759b6302b855b1460b511887fe6885670a75f72"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
+        "sha256": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
       },
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/textures/crystal-basecolor.png",
@@ -52873,23 +52877,27 @@
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/asset_control.gd",
-        "sha256": "03f66aea24f846327fd9a5222f496e41ae953aba2acff3263c144c1a8853c051"
+        "sha256": "89f4693ed3de906162ae7b0fd6448dc1cd29402f0efbf26d54a2163ba505ffaf"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/biome_palette_entry.gd",
+        "sha256": "5d1e213929e31f2dec1e2987808aa02a173ac76f949857a396ea5b8dac2c81c5"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/gameplay_marker.gd",
-        "sha256": "39ed18fbd9540f8153c0caeab81418e5cebc6df720caa36a2bfb22968264e6cc"
+        "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "3d5ad2475522d8e1744ae15f39494d9c348036b4d1835640b7bc27b059ac55cb"
+        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "dca1ed421d9e98fa8765acc26c94cfad12e4d8a94bea0a1b9d4d446f36462151"
+        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "4a03a1da48eb684e461cb5682820a99afa9eb91d2b2629db41be87629daaddb7"
+        "sha256": "bba17999ebee276a88aaed2c2778e5ab7282e1609a3ede101c09f89f3ca345cf"
       },
       {
         "path": "godot-client/world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-massifspire-0-c1f757301d89.glb",
@@ -53652,8 +53660,12 @@
         "sha256": "b082e71a4956da4466e4356e917b94011098d6025725a54ec9a6d16a8f1e6075"
       },
       {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/surfaces/biome-scree.tres",
+        "sha256": "905cf9ceca0f35d069b8d99dd9b2374f7eb8be9bf29990795b5a9d502e428825"
+      },
+      {
         "path": "godot-client/world_authoring/regions/amethyst_barrens/surfaces/crystal.tres",
-        "sha256": "899c3fbef16cb85f46a574fba581cae5993b3ed9a0b96e65873d11a637dc382d"
+        "sha256": "f8ee167bc50fae1864414be6e076937cafcff6f03e94699a20c9998683c22a45"
       },
       {
         "path": "godot-client/world_authoring/regions/amethyst_barrens/surfaces/road.tres",
@@ -53666,7 +53678,7 @@
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/amethyst_barrens/amethyst_barrens.tscn",
-      "sha256": "773c077467ec3e7287760a3eda89e3314e5520913540a99587d79f320e5ebbb7"
+      "sha256": "65a3a22db51e5f0b5d8bb9061a8f8c77757a90bcd563e566e2c9f72461b9e00e"
     }
   },
   "terrain": {
@@ -53676,6 +53688,7 @@
       "sha256": "f06b63a51f3c4ebea99d7a137aca2bbc16908c4f5bfa28782ffcc71739fab963"
     },
     "baseSurface": {
+      "biomeBlendEnabled": true,
       "materialMode": "surface",
       "pbrOverrides": {
         "albedoColor": [
@@ -53706,6 +53719,42 @@
       "preset": "Crystal",
       "rotationDegrees": 0.0
     },
+    "biomePalette": [
+      {
+        "id": "scree",
+        "role": "rock",
+        "surface": {
+          "materialMode": "surface",
+          "pbrOverrides": {
+            "albedoColor": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
+            "metallic": 0.0,
+            "normalScale": 1.0,
+            "normalTexture": null,
+            "roughness": 0.9700000286102295,
+            "triplanar": false,
+            "uvOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "uvScale": [
+              1.0416667461395264,
+              1.0416667461395264,
+              1.0
+            ],
+            "worldTriplanar": false
+          },
+          "preset": "Alpine scree lichen",
+          "rotationDegrees": 0.0
+        }
+      }
+    ],
     "cellMetres": 2.0,
     "height": 370,
     "origin": [

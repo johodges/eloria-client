@@ -9,6 +9,18 @@ godot-client/world_authoring/** -text
 godot-client/world_authoring/**/*.f32le binary
 godot-client/world_authoring/**/*.rgba8 binary
 godot-client/world_authoring/**/*.glb binary
+godot-client/assets/world/biome_blend/masks/*.png.import -text
+godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_pilot/style/texture_presets.gd -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_pilot/style/object_surfaces/*.tres -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_region/terrain_control.gd -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_region/region_snapshot.gd -text whitespace=cr-at-eol
+godot-client/src/dev/map_authoring_region/biome_palette_entry.gd -text
+godot-client/src/world/biome_blend.gdshader -text
+godot-client/src/world/biome_blend_material.gd -text
+godot-client/src/world/object_material_refresh.gd -text
+godot-client/src/world/world_loader.gd -text whitespace=cr-at-eol
+godot-client/addons/map_authoring_workspace/reference_preview.gd -text whitespace=cr-at-eol
 godot-client/src/dev/map_authoring_pilot/style/water.gdshader -text
 godot-client/src/world/soft_ground.gdshader -text
 eloria-assets/tools/atlas_soft_ground.py -text

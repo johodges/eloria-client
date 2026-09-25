@@ -8,6 +8,10 @@ const GROUND_SCRIPT := preload(
 	"res://src/dev/map_authoring_region/ground_region_control.gd")
 const GROUND_REGION_MATERIAL := preload(
 	"res://src/dev/map_authoring_pilot/style/ground_region_material.gd")
+const BIOME_BLEND_MATERIAL := preload("res://src/world/biome_blend_material.gd")
+const BIOME_PALETTE_ENTRY := preload(
+	"res://src/dev/map_authoring_region/biome_palette_entry.gd")
+const BIOME_CATALOG_PATH := "res://assets/world/biome_blend/catalog.json"
 
 @export var origin := Vector2(-194.0, -500.0)
 @export_range(0.25, 16.0, 0.25) var cell_metres := 2.0
@@ -15,6 +19,9 @@ const GROUND_REGION_MATERIAL := preload(
 @export_file("*.f32le", "*.bin") var base_heights_path := ""
 @export_file("*.rgba8", "*.bin") var base_colors_path := ""
 @export var base_surface: MapAuthoringSurface
+## One optional within-region material mixed by a named landscape biome role.
+## The production masks retain at most four region channels per chunk.
+@export var biome_palette: Array[Resource] = []
 @export var preview_enabled := true
 @export_range(0.01, 2.0, 0.01) var preview_uv_metres_inverse := 0.24
 
@@ -28,6 +35,7 @@ var _loaded_colors_sha := ""
 var _preview_signature: Array = []
 var _elapsed := 0.0
 var _bound_surface: MapAuthoringSurface
+var _bound_palette_entries: Array[Resource] = []
 var last_error := ""
 var preview_revision := 0
 
@@ -35,12 +43,14 @@ var preview_revision := 0
 func _ready() -> void:
 	set_process(true)
 	_sync_surface()
+	_sync_palette()
 	refresh_preview()
 
 
 func _process(delta: float) -> void:
 	if base_surface != _bound_surface:
 		_sync_surface()
+	_sync_palette()
 	if not Engine.is_editor_hint():
 		return
 	_elapsed += delta
@@ -54,6 +64,9 @@ func _process(delta: float) -> void:
 
 func refresh_preview() -> bool:
 	last_error = ""
+	if base_surface != null:
+		base_surface.enable_region_uv_projection(preview_uv_metres_inverse)
+	_sync_palette()
 	if not _load_base_heights():
 		_clear_preview()
 		update_configuration_warnings()
@@ -89,6 +102,27 @@ func effective_heights() -> PackedFloat32Array:
 func base_sha256() -> String:
 	_load_base_heights()
 	return _loaded_sha
+
+
+func live_biome_palette() -> Dictionary:
+	if base_surface == null or not base_surface.biome_blend_enabled:
+		return {}
+	var region := get_parent()
+	var region_id := String(region.get("region_id")) if region != null else ""
+	var base := BIOME_BLEND_MATERIAL.surface_palette(base_surface,
+		preview_uv_metres_inverse)
+	if region_id.is_empty() or base.is_empty():
+		return {}
+	var secondary: Variant = null
+	if biome_palette.size() == 1 and _uses_script(biome_palette[0],
+			BIOME_PALETTE_ENTRY):
+		var entry: Resource = biome_palette[0]
+		secondary = BIOME_BLEND_MATERIAL.surface_palette(entry.surface,
+			preview_uv_metres_inverse)
+		if secondary is Dictionary and not secondary.is_empty():
+			secondary["id"] = "%s:%s" % [region_id, entry.id]
+			secondary["role"] = entry.role
+	return {region_id: {"base": base, "secondary": secondary}}
 
 
 func patch_records() -> Array[Dictionary]:
@@ -446,6 +480,10 @@ func _apply_river_effect(path: Node, points: Array[Dictionary],
 
 
 func _build_preview_mesh() -> void:
+	# One refresh may build dozens of chunk materials using the same few large
+	# source textures. Share those digests, while making the next Inspector
+	# refresh observe even a rapid same-size source edit.
+	BIOME_BLEND_MATERIAL.begin_source_verification()
 	var vertices := PackedVector3Array()
 	var normals := PackedVector3Array()
 	var uvs := PackedVector2Array()
@@ -481,14 +519,168 @@ func _build_preview_mesh() -> void:
 		arrays[Mesh.ARRAY_COLOR] = _base_colors
 	arrays[Mesh.ARRAY_INDEX] = indices
 	var mesh := ArrayMesh.new()
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	var chunk_configs := _editor_biome_configs()
+	if base_surface != null and base_surface.biome_blend_enabled and \
+			not chunk_configs.is_empty():
+		_build_chunked_preview_mesh(mesh, vertices, normals, uvs, chunk_configs)
+	else:
+		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+		mesh.surface_set_material(0,
+			base_surface.get_material() if base_surface != null else null)
 	var preview := get_node_or_null("__TerrainPreview") as MeshInstance3D
 	if preview == null:
 		preview = MeshInstance3D.new()
 		preview.name = "__TerrainPreview"
 		add_child(preview)
 	preview.mesh = mesh
-	preview.material_override = base_surface.get_material() if base_surface != null else null
+	preview.material_override = null
+
+
+func _build_chunked_preview_mesh(mesh: ArrayMesh, vertices: PackedVector3Array,
+		normals: PackedVector3Array, uvs: PackedVector2Array,
+		configs: Array[Dictionary]) -> void:
+	var usable_configs: Array[Dictionary] = []
+	var materials: Array[Material] = []
+	for config in configs:
+		var material := BIOME_BLEND_MATERIAL.create_runtime(config,
+			_continent_translation())
+		if material != null:
+			var region := get_parent() as Node3D
+			var terrain_relative := region.global_transform.affine_inverse() * \
+				global_transform if region != null else transform
+			BIOME_BLEND_MATERIAL.set_terrain_to_continent(material,
+				Transform3D(Basis.IDENTITY, _continent_translation()) * terrain_relative)
+			usable_configs.append(config)
+			materials.append(material)
+	if usable_configs.is_empty():
+		var fallback := _preview_arrays_for_all(vertices, normals, uvs)
+		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, fallback)
+		mesh.surface_set_material(0,
+			base_surface.get_material() if base_surface != null else null)
+		return
+	var cell_count := (grid_size.x - 1) * (grid_size.y - 1)
+	var assignments := PackedInt32Array()
+	assignments.resize(cell_count)
+	assignments.fill(-1)
+	var translation := _continent_translation()
+	for config_index in usable_configs.size():
+		var config := usable_configs[config_index]
+		var chunk_origin := Vector2(float(config.origin[0]), float(config.origin[1]))
+		var chunk_size := Vector2(float(config.innerSize[0]),
+			float(config.innerSize[1])) * float(config.metresPerPixel)
+		var first_x := maxi(0, ceili((chunk_origin.x - translation.x - origin.x) /
+			cell_metres - 0.5))
+		var last_x := mini(grid_size.x - 2, ceili((chunk_origin.x + chunk_size.x -
+			translation.x - origin.x) / cell_metres - 0.5) - 1)
+		var first_z := maxi(0, ceili((chunk_origin.y - translation.z - origin.y) /
+			cell_metres - 0.5))
+		var last_z := mini(grid_size.y - 2, ceili((chunk_origin.y + chunk_size.y -
+			translation.z - origin.y) / cell_metres - 0.5) - 1)
+		if first_x > last_x or first_z > last_z:
+			continue
+		for z_index in range(first_z, last_z + 1):
+			for x_index in range(first_x, last_x + 1):
+				assignments[z_index * (grid_size.x - 1) + x_index] = config_index
+	var groups: Array = []
+	groups.resize(usable_configs.size() + 1)
+	for index in groups.size():
+		groups[index] = []
+	for z_index in grid_size.y - 1:
+		for x_index in grid_size.x - 1:
+			var assignment := assignments[z_index * (grid_size.x - 1) + x_index]
+			groups[assignment + 1].append(Vector2i(x_index, z_index))
+	for group_index in groups.size():
+		if groups[group_index].is_empty():
+			continue
+		var surface_arrays := _preview_arrays_for_cells(groups[group_index],
+			vertices, normals, uvs)
+		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_arrays)
+		var surface_index := mesh.get_surface_count() - 1
+		mesh.surface_set_material(surface_index,
+			base_surface.get_material() if group_index == 0 else materials[group_index - 1])
+
+
+func _preview_arrays_for_all(vertices: PackedVector3Array,
+		normals: PackedVector3Array, uvs: PackedVector2Array) -> Array:
+	var cells: Array = []
+	for z_index in grid_size.y - 1:
+		for x_index in grid_size.x - 1:
+			cells.append(Vector2i(x_index, z_index))
+	return _preview_arrays_for_cells(cells, vertices, normals, uvs)
+
+
+func _preview_arrays_for_cells(cells: Array, vertices: PackedVector3Array,
+		normals: PackedVector3Array, uvs: PackedVector2Array) -> Array:
+	var result_vertices := PackedVector3Array()
+	var result_normals := PackedVector3Array()
+	var result_uvs := PackedVector2Array()
+	var result_colors := PackedColorArray()
+	var result_indices := PackedInt32Array()
+	var remap := {}
+	for cell: Vector2i in cells:
+		var first := cell.y * grid_size.x + cell.x
+		for source_index in [first, first + grid_size.x, first + 1,
+				first + 1, first + grid_size.x, first + grid_size.x + 1]:
+			if not remap.has(source_index):
+				remap[source_index] = result_vertices.size()
+				result_vertices.append(vertices[source_index])
+				result_normals.append(normals[source_index])
+				result_uvs.append(uvs[source_index])
+				if not _base_colors.is_empty():
+					result_colors.append(_base_colors[source_index])
+			result_indices.append(int(remap[source_index]))
+	var result := []
+	result.resize(Mesh.ARRAY_MAX)
+	result[Mesh.ARRAY_VERTEX] = result_vertices
+	result[Mesh.ARRAY_NORMAL] = result_normals
+	result[Mesh.ARRAY_TANGENT] = _generated_tangents(result_vertices,
+		result_normals, result_uvs, result_indices)
+	result[Mesh.ARRAY_TEX_UV] = result_uvs
+	if not result_colors.is_empty():
+		result[Mesh.ARRAY_COLOR] = result_colors
+	result[Mesh.ARRAY_INDEX] = result_indices
+	return result
+
+
+func _editor_biome_configs() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if not FileAccess.file_exists(BIOME_CATALOG_PATH):
+		return result
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(
+		BIOME_CATALOG_PATH))
+	if not parsed is Dictionary or String(parsed.get("schema", "")) != \
+			"eloria-biome-blend-catalog-v1" or not parsed.get("chunks") is Array:
+		return result
+	var region := get_parent()
+	var region_id := String(region.get("region_id")) if region != null else ""
+	var current_base := BIOME_BLEND_MATERIAL.surface_palette(base_surface,
+		preview_uv_metres_inverse)
+	if current_base.is_empty():
+		return result
+	var current_secondary: Variant = null
+	if biome_palette.size() == 1 and _uses_script(biome_palette[0],
+			BIOME_PALETTE_ENTRY):
+		var entry: Resource = biome_palette[0]
+		current_secondary = BIOME_BLEND_MATERIAL.surface_palette(entry.surface,
+			preview_uv_metres_inverse)
+		if not (current_secondary as Dictionary).is_empty():
+			current_secondary["id"] = "%s:%s" % [region_id, entry.id]
+			current_secondary["role"] = entry.role
+	for raw_config in parsed.chunks:
+		if not raw_config is Dictionary:
+			continue
+		var config: Dictionary = raw_config.duplicate(true)
+		var contains_region := false
+		for palette: Dictionary in config.get("palettes", []):
+			if String(palette.get("id", "")) != "%s:base" % region_id:
+				continue
+			contains_region = true
+			palette["base"] = current_base.duplicate(true)
+			palette["secondary"] = current_secondary.duplicate(true) \
+				if current_secondary is Dictionary else null
+		if contains_region:
+			result.append(config)
+	return result
 
 
 func _build_ground_region_previews() -> void:
@@ -508,7 +700,7 @@ func _build_ground_region_previews() -> void:
 		var region: Node3D = regions[region_index]
 		if not region.enabled or not region.is_visible_in_tree() or region.surface == null:
 			continue
-		region.surface.enable_region_uv_projection()
+		region.surface.enable_region_uv_projection(preview_uv_metres_inverse)
 		var bounds: Rect2 = region.world_bounds()
 		if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 			continue
@@ -651,7 +843,12 @@ func _current_signature() -> Array:
 		FileAccess.get_sha256(ProjectSettings.globalize_path(base_colors_path))
 			if not base_colors_path.is_empty() and FileAccess.file_exists(
 				ProjectSettings.globalize_path(base_colors_path)) else "",
-		base_surface.signature() if base_surface != null else [], preview_enabled,
+		base_surface.signature() if base_surface != null else [],
+		_palette_signature(),
+		FileAccess.get_sha256(ProjectSettings.globalize_path(BIOME_CATALOG_PATH))
+			if FileAccess.file_exists(ProjectSettings.globalize_path(
+				BIOME_CATALOG_PATH)) else "",
+		preview_enabled,
 		preview_uv_metres_inverse, patches, paths, grounds]
 
 
@@ -700,8 +897,49 @@ func _sync_surface() -> void:
 	if base_surface != null:
 		base_surface = base_surface.duplicate(true) as MapAuthoringSurface
 		base_surface.resource_local_to_scene = true
-		base_surface.enable_region_uv_projection()
+		base_surface.enable_region_uv_projection(preview_uv_metres_inverse)
 	_bound_surface = base_surface
+
+
+func _sync_palette() -> void:
+	if biome_palette == _bound_palette_entries:
+		for entry in biome_palette:
+			if _uses_script(entry, BIOME_PALETTE_ENTRY):
+				entry.bind_local_surface()
+				if entry.surface != null:
+					entry.surface.enable_region_uv_projection(
+						preview_uv_metres_inverse)
+		return
+	var localized: Array[Resource] = []
+	for raw in biome_palette:
+		if not _uses_script(raw, BIOME_PALETTE_ENTRY):
+			localized.append(raw)
+			continue
+		var entry: Resource = raw.duplicate(true)
+		entry.resource_local_to_scene = true
+		entry.bind_local_surface()
+		if entry.surface != null:
+			entry.surface.enable_region_uv_projection(preview_uv_metres_inverse)
+		localized.append(entry)
+	biome_palette = localized
+	_bound_palette_entries = biome_palette.duplicate()
+
+
+func _palette_signature() -> Array:
+	var result: Array = []
+	for entry in biome_palette:
+		result.append(entry.signature() if _uses_script(entry,
+			BIOME_PALETTE_ENTRY) else [])
+	return result
+
+
+func _continent_translation() -> Vector3:
+	var region := get_parent()
+	if region != null:
+		var value: Variant = region.get("continent_translation")
+		if value is Vector3:
+			return value
+	return Vector3.ZERO
 
 
 func _get_configuration_warnings() -> PackedStringArray:
@@ -710,4 +948,36 @@ func _get_configuration_warnings() -> PackedStringArray:
 		warnings.append(last_error)
 	if base_surface == null:
 		warnings.append("Terrain needs a local Base Surface before export.")
+	if biome_palette.size() > 1:
+		warnings.append("Biome Palette supports one secondary surface per region.")
+	for entry in biome_palette:
+		if not _uses_script(entry, BIOME_PALETTE_ENTRY):
+			warnings.append("Biome Palette entries must use MapAuthoringBiomePaletteEntry.")
+		elif String(entry.id).strip_edges().is_empty() or entry.surface == null:
+			warnings.append("Each Biome Palette entry needs a stable Id and Surface.")
+	if _catalog_role_is_stale():
+		warnings.append("Biome Palette Role changed. Bake/rebuild masks to preview its new area.")
 	return warnings
+
+
+func _catalog_role_is_stale() -> bool:
+	if biome_palette.size() != 1 or not _uses_script(biome_palette[0],
+			BIOME_PALETTE_ENTRY):
+		return false
+	var entry: Resource = biome_palette[0]
+	if not FileAccess.file_exists(ProjectSettings.globalize_path(BIOME_CATALOG_PATH)):
+		return false
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(
+		BIOME_CATALOG_PATH))
+	if not parsed is Dictionary or not parsed.get("chunks") is Array:
+		return false
+	for config in parsed.chunks:
+		if not config is Dictionary:
+			continue
+		for palette: Dictionary in config.get("palettes", []):
+			if String(palette.get("id", "")) == "%s:base" % String(
+					get_parent().get("region_id")):
+				var catalog_secondary: Variant = palette.get("secondary")
+				return not catalog_secondary is Dictionary or String(
+					catalog_secondary.get("role", "")) != String(entry.role)
+	return false

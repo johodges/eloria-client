@@ -6,4 +6,5 @@
 resource_local_to_scene = true
 script = ExtResource("1_surface")
 texture_preset = "Crystal"
+biome_blend_enabled = true
 rotation_degrees = 0.0

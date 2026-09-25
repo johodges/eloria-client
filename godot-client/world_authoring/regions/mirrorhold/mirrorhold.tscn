@@ -1,11 +1,14 @@
-[gd_scene load_steps=230 format=3]
+[gd_scene load_steps=322 format=3]
 
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
+[ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres" id="object_weathered_limestone"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/path_control.gd" id="path"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/water_region_control.gd" id="water"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_control.gd" id="asset"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/gameplay_marker.gd" id="marker"]
+[ext_resource type="Resource" path="res://world_authoring/regions/mirrorhold/surfaces/biome-snow.tres" id="biome_entry"]
 [ext_resource type="Resource" path="res://world_authoring/regions/mirrorhold/surfaces/continental-ground.tres" id="terrain_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/mirrorhold/surfaces/road.tres" id="road_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/mirrorhold/surfaces/river.tres" id="river_surface"]
@@ -230,6 +233,629 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/mirrorhold/assets/prototypes/woodlandfloor-0061-df4562dc8c04.glb" id="prototype_169"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/mirrorhold/assets/prototypes/woodlandfloor-0148-b54c4092e465.glb" id="prototype_170"]
 
+[sub_resource type="Resource" id="object_material_0000"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_0/Building_CliffHouse_0__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0001"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_1/Building_CliffHouse_1__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0002"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_10/Building_CliffHouse_10__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0003"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_11/Building_CliffHouse_11__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0004"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_12/Building_CliffHouse_12__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0005"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_13/Building_CliffHouse_13__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0006"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_14/Building_CliffHouse_14__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0007"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_2/Building_CliffHouse_2__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0008"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_3/Building_CliffHouse_3__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0009"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_4/Building_CliffHouse_4__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0010"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_5/Building_CliffHouse_5__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0011"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_6/Building_CliffHouse_6__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0012"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_7/Building_CliffHouse_7__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0013"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_8/Building_CliffHouse_8__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0014"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_CliffHouse_9/Building_CliffHouse_9__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0015"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_VaultEntry_cistern-door/Building_VaultEntry_cistern-door__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0016"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_VaultEntry_lens-vault-stair/Building_VaultEntry_lens-vault-stair__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0017"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_VaultEntry_stair-cellars-door/Building_VaultEntry_stair-cellars-door__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0018"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_east-bench_0/Building_east-bench_0__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0019"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_east-bench_1/Building_east-bench_1__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0020"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_lake-north_0/Building_lake-north_0__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0021"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_lake-north_1/Building_lake-north_1__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0022"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_lower-terrace_0/Building_lower-terrace_0__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0023"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_lower-terrace_1/Building_lower-terrace_1__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0024"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_mid-bench_0/Building_mid-bench_0__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0025"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_mid-bench_1/Building_mid-bench_1__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0026"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_west-bench_0/Building_west-bench_0__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0027"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_west-bench_1/Building_west-bench_1__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0028"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_west-shore_0/Building_west-shore_0__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0029"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Building_west-shore_1/Building_west-shore_1__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0030"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Aqueduct/Landmark_Aqueduct__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0031"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Aqueduct/Landmark_Aqueduct__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0032"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Channel_0/Landmark_Channel_0__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0033"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Channel_1/Landmark_Channel_1__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0034"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Channel_2/Landmark_Channel_2__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0035"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Channel_3/Landmark_Channel_3__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0036"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Channel_4/Landmark_Channel_4__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0037"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_CitadelCourt/Landmark_CitadelCourt__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0038"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_CitadelHigh/Landmark_CitadelHigh__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0039"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Fountain/Landmark_Fountain__ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0040"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Gallery/Landmark_Gallery__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0041"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_GateWall/Landmark_GateWall__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0042"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_GateWing_-1/Landmark_GateWing_-1__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0043"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_GateWing_1/Landmark_GateWing_1__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0044"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_LakeLink_City/Landmark_LakeLink_City__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0045"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_LakeLink_EastPier/Landmark_LakeLink_EastPier__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0046"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_LakeLink_Sanctuary/Landmark_LakeLink_Sanctuary__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0047"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_LakeLink_WestPier/Landmark_LakeLink_WestPier__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0048"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_OrreryDrum/Landmark_OrreryDrum__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0049"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Overlook/Landmark_Overlook__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0050"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_PlazaStatue_0"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0051"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_PlazaStatue_1"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0052"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_PlazaStatue_2"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0053"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_PlazaStatue_3"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0054"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Quay/Landmark_Quay__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0055"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Retaining_1"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0056"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Retaining_3"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0057"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_Ring/Landmark_Ring__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0058"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_RoadWall_1"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0059"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_SouthWatch"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0060"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_cistern-yard"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0061"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_east-post"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0062"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_east_islet"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0063"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_far-west"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0064"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_gorge-head"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0065"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_lens-works"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0066"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_lens_tower_east/Landmark_lens_tower_east__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0067"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_lens_tower_west/Landmark_lens_tower_west__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0068"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_north-post"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0069"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_quarry-shelf"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0070"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_upper-shrine/Landmark_upper-shrine__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0071"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_west-shrine/Landmark_west-shrine__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0072"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Landmark_west_islet"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0073"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Lore_ringing_quarry/Lore_ringing_quarry__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0074"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_cistern-yard_bollard_0"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0075"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_cistern-yard_bollard_1"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0076"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_lens-works_bollard_0"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0077"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_lens-works_bollard_1"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0078"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_lens-works_bollard_2"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0079"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_quarry-shelf_bollard_1"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0080"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Prop_quarry-shelf_bollard_2"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0081"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_mirror_cistern_well/Secret_mirror_cistern_well__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0082"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_mirror_citadel_reliquary/Secret_mirror_citadel_reliquary__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0083"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_mirror_lens_garden/Secret_mirror_lens_garden__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0084"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_mirror_orrery_vault/Secret_mirror_orrery_vault__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0085"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_mirror_overlook_eyrie/Secret_mirror_overlook_eyrie__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0086"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_mirror_rose_school/Secret_mirror_rose_school__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0087"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Secret_mirror_waystone/Secret_mirror_waystone__pale_ashlar"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
+[sub_resource type="Resource" id="object_material_0088"]
+resource_local_to_scene = true
+script = ExtResource("asset_override_script")
+mesh_node_path = "Walk_Landmark_EastStair"
+surface_index = 0
+surface = ExtResource("object_weathered_limestone")
+
 [node name="Mirrorhold" type="Node3D"]
 script = ExtResource("region")
 region_id = "mirrorhold"
@@ -255,6 +881,7 @@ base_heights_path = "res://world_authoring/regions/mirrorhold/base-heights.f32le
 base_colors_path = "res://world_authoring/regions/mirrorhold/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
 base_surface = ExtResource("terrain_surface")
+biome_palette = [ExtResource("biome_entry")]
 
 [node name="Patches" type="Node3D" parent="Terrain"]
 
@@ -824,6 +1451,7 @@ baseline_plan_depth = 4.0
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -114, 109.82, 91)
 asset_id = "Building_CliffHouse_0"
+material_overrides = [SubResource("object_material_0000")]
 node_name = "Building_CliffHouse_0"
 catalog_asset_id = "mirrorhold:building-cliffhouse-0-b38c3f3d03b0"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-0-b38c3f3d03b0.glb"
@@ -837,6 +1465,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -101, 109.82, 91)
 asset_id = "Building_CliffHouse_1"
+material_overrides = [SubResource("object_material_0001")]
 node_name = "Building_CliffHouse_1"
 catalog_asset_id = "mirrorhold:building-cliffhouse-1-d52077c3788d"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-1-d52077c3788d.glb"
@@ -850,6 +1479,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -114, 96.82, 125)
 asset_id = "Building_CliffHouse_10"
+material_overrides = [SubResource("object_material_0002")]
 node_name = "Building_CliffHouse_10"
 catalog_asset_id = "mirrorhold:building-cliffhouse-10-d708fd454857"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-10-d708fd454857.glb"
@@ -863,6 +1493,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -101, 96.82, 125)
 asset_id = "Building_CliffHouse_11"
+material_overrides = [SubResource("object_material_0003")]
 node_name = "Building_CliffHouse_11"
 catalog_asset_id = "mirrorhold:building-cliffhouse-11-491843acea6a"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-11-491843acea6a.glb"
@@ -876,6 +1507,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 96.82, 125)
 asset_id = "Building_CliffHouse_12"
+material_overrides = [SubResource("object_material_0004")]
 node_name = "Building_CliffHouse_12"
 catalog_asset_id = "mirrorhold:building-cliffhouse-12-25ce5b82ed07"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-12-25ce5b82ed07.glb"
@@ -889,6 +1521,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -75, 96.82, 125)
 asset_id = "Building_CliffHouse_13"
+material_overrides = [SubResource("object_material_0005")]
 node_name = "Building_CliffHouse_13"
 catalog_asset_id = "mirrorhold:building-cliffhouse-13-5dc380778379"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-13-5dc380778379.glb"
@@ -902,6 +1535,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62, 96.82, 125)
 asset_id = "Building_CliffHouse_14"
+material_overrides = [SubResource("object_material_0006")]
 node_name = "Building_CliffHouse_14"
 catalog_asset_id = "mirrorhold:building-cliffhouse-14-39cb6dcd8c54"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-14-39cb6dcd8c54.glb"
@@ -915,6 +1549,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 109.82, 91)
 asset_id = "Building_CliffHouse_2"
+material_overrides = [SubResource("object_material_0007")]
 node_name = "Building_CliffHouse_2"
 catalog_asset_id = "mirrorhold:building-cliffhouse-2-6ca150029744"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-2-6ca150029744.glb"
@@ -928,6 +1563,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -75, 109.82, 91)
 asset_id = "Building_CliffHouse_3"
+material_overrides = [SubResource("object_material_0008")]
 node_name = "Building_CliffHouse_3"
 catalog_asset_id = "mirrorhold:building-cliffhouse-3-e5f64b5cb0b9"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-3-e5f64b5cb0b9.glb"
@@ -941,6 +1577,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62, 109.82, 91)
 asset_id = "Building_CliffHouse_4"
+material_overrides = [SubResource("object_material_0009")]
 node_name = "Building_CliffHouse_4"
 catalog_asset_id = "mirrorhold:building-cliffhouse-4-8db769b8c1ef"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-4-8db769b8c1ef.glb"
@@ -954,6 +1591,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -114, 103.32, 108)
 asset_id = "Building_CliffHouse_5"
+material_overrides = [SubResource("object_material_0010")]
 node_name = "Building_CliffHouse_5"
 catalog_asset_id = "mirrorhold:building-cliffhouse-5-4ce43c5fae17"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-5-4ce43c5fae17.glb"
@@ -967,6 +1605,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -101, 103.32, 108)
 asset_id = "Building_CliffHouse_6"
+material_overrides = [SubResource("object_material_0011")]
 node_name = "Building_CliffHouse_6"
 catalog_asset_id = "mirrorhold:building-cliffhouse-6-a50f60a30936"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-6-a50f60a30936.glb"
@@ -980,6 +1619,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 103.32, 108)
 asset_id = "Building_CliffHouse_7"
+material_overrides = [SubResource("object_material_0012")]
 node_name = "Building_CliffHouse_7"
 catalog_asset_id = "mirrorhold:building-cliffhouse-7-516d4230681a"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-7-516d4230681a.glb"
@@ -993,6 +1633,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -75, 103.32, 108)
 asset_id = "Building_CliffHouse_8"
+material_overrides = [SubResource("object_material_0013")]
 node_name = "Building_CliffHouse_8"
 catalog_asset_id = "mirrorhold:building-cliffhouse-8-c9db33689c69"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-8-c9db33689c69.glb"
@@ -1006,6 +1647,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62, 103.32, 108)
 asset_id = "Building_CliffHouse_9"
+material_overrides = [SubResource("object_material_0014")]
 node_name = "Building_CliffHouse_9"
 catalog_asset_id = "mirrorhold:building-cliffhouse-9-efdf372c96a4"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-cliffhouse-9-efdf372c96a4.glb"
@@ -1019,6 +1661,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.6788, 138, 105.3536)
 asset_id = "Building_VaultEntry_cistern-door"
+material_overrides = [SubResource("object_material_0015")]
 node_name = "Building_VaultEntry_cistern-door"
 catalog_asset_id = "mirrorhold:building-vaultentry-cistern-door-90baf44abde1"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-vaultentry-cistern-door-90baf44abde1.glb"
@@ -1032,6 +1675,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 171, -60)
 asset_id = "Building_VaultEntry_lens-vault-stair"
+material_overrides = [SubResource("object_material_0016")]
 node_name = "Building_VaultEntry_lens-vault-stair"
 catalog_asset_id = "mirrorhold:building-vaultentry-lens-vault-stair-9d17a94f2cba"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-vaultentry-lens-vault-stair-9d17a94f2cba.glb"
@@ -1045,6 +1689,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -93.3942, 97, 129.337)
 asset_id = "Building_VaultEntry_stair-cellars-door"
+material_overrides = [SubResource("object_material_0017")]
 node_name = "Building_VaultEntry_stair-cellars-door"
 catalog_asset_id = "mirrorhold:building-vaultentry-stair-cellars-door-da92c0530fbe"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-vaultentry-stair-cellars-door-da92c0530fbe.glb"
@@ -1058,6 +1703,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135.5, 101.82, 133)
 asset_id = "Building_east-bench_0"
+material_overrides = [SubResource("object_material_0018")]
 node_name = "Building_east-bench_0"
 catalog_asset_id = "mirrorhold:building-east-bench-0-fe05694dc041"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-east-bench-0-fe05694dc041.glb"
@@ -1071,6 +1717,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135.5, 110.82, 112)
 asset_id = "Building_east-bench_1"
+material_overrides = [SubResource("object_material_0019")]
 node_name = "Building_east-bench_1"
 catalog_asset_id = "mirrorhold:building-east-bench-1-99741b7ceea9"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-east-bench-1-99741b7ceea9.glb"
@@ -1084,6 +1731,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 87.82, 155)
 asset_id = "Building_lake-north_0"
+material_overrides = [SubResource("object_material_0020")]
 node_name = "Building_lake-north_0"
 catalog_asset_id = "mirrorhold:building-lake-north-0-cc38a6f581ac"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-lake-north-0-cc38a6f581ac.glb"
@@ -1097,6 +1745,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 87.82, 155)
 asset_id = "Building_lake-north_1"
+material_overrides = [SubResource("object_material_0021")]
 node_name = "Building_lake-north_1"
 catalog_asset_id = "mirrorhold:building-lake-north-1-b4a2df615d1d"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-lake-north-1-b4a2df615d1d.glb"
@@ -1110,6 +1759,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -51.5, 92.82, 167)
 asset_id = "Building_lower-terrace_0"
+material_overrides = [SubResource("object_material_0022")]
 node_name = "Building_lower-terrace_0"
 catalog_asset_id = "mirrorhold:building-lower-terrace-0-6591d0187c68"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-lower-terrace-0-6591d0187c68.glb"
@@ -1123,6 +1773,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36.5, 92.82, 167)
 asset_id = "Building_lower-terrace_1"
+material_overrides = [SubResource("object_material_0023")]
 node_name = "Building_lower-terrace_1"
 catalog_asset_id = "mirrorhold:building-lower-terrace-1-b4593cb7d1c8"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-lower-terrace-1-b4593cb7d1c8.glb"
@@ -1136,6 +1787,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57.5, 114.82, 77)
 asset_id = "Building_mid-bench_0"
+material_overrides = [SubResource("object_material_0024")]
 node_name = "Building_mid-bench_0"
 catalog_asset_id = "mirrorhold:building-mid-bench-0-951a1dbe52ca"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-mid-bench-0-951a1dbe52ca.glb"
@@ -1149,6 +1801,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42.5, 114.82, 77)
 asset_id = "Building_mid-bench_1"
+material_overrides = [SubResource("object_material_0025")]
 node_name = "Building_mid-bench_1"
 catalog_asset_id = "mirrorhold:building-mid-bench-1-038f3856710b"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-mid-bench-1-038f3856710b.glb"
@@ -1162,6 +1815,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -126.5, 120.82, 34)
 asset_id = "Building_west-bench_0"
+material_overrides = [SubResource("object_material_0026")]
 node_name = "Building_west-bench_0"
 catalog_asset_id = "mirrorhold:building-west-bench-0-9065e64afb4f"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-west-bench-0-9065e64afb4f.glb"
@@ -1175,6 +1829,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.5, 120.82, 34)
 asset_id = "Building_west-bench_1"
+material_overrides = [SubResource("object_material_0027")]
 node_name = "Building_west-bench_1"
 catalog_asset_id = "mirrorhold:building-west-bench-1-049debea50f9"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-west-bench-1-049debea50f9.glb"
@@ -1188,6 +1843,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -59.5, 93.82, 185)
 asset_id = "Building_west-shore_0"
+material_overrides = [SubResource("object_material_0028")]
 node_name = "Building_west-shore_0"
 catalog_asset_id = "mirrorhold:building-west-shore-0-f9a831a081aa"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-west-shore-0-f9a831a081aa.glb"
@@ -1201,6 +1857,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "building", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44.5, 93.82, 185)
 asset_id = "Building_west-shore_1"
+material_overrides = [SubResource("object_material_0029")]
 node_name = "Building_west-shore_1"
 catalog_asset_id = "mirrorhold:building-west-shore-1-8f0bf0017117"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/building-west-shore-1-8f0bf0017117.glb"
@@ -1292,6 +1949,7 @@ metadata = {"composedSourceRegion": "amberwood", "groupedRootNames": ["Tree_0463
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 166.4526, 118.67806957, 99.3536)
 asset_id = "Landmark_Aqueduct"
+material_overrides = [SubResource("object_material_0030"), SubResource("object_material_0031")]
 node_name = "Landmark_Aqueduct"
 catalog_asset_id = "mirrorhold:landmark-aqueduct-8e71be2abb86"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-aqueduct-8e71be2abb86.glb"
@@ -1344,6 +2002,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -35.3139, 126.151689664, 81.3536)
 asset_id = "Landmark_Channel_0"
+material_overrides = [SubResource("object_material_0032")]
 node_name = "Landmark_Channel_0"
 catalog_asset_id = "mirrorhold:landmark-channel-0-534ad37fc109"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-channel-0-534ad37fc109.glb"
@@ -1357,6 +2016,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -28.9197, 123.449931355, 81.3536)
 asset_id = "Landmark_Channel_1"
+material_overrides = [SubResource("object_material_0033")]
 node_name = "Landmark_Channel_1"
 catalog_asset_id = "mirrorhold:landmark-channel-1-d29711e3b18f"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-channel-1-d29711e3b18f.glb"
@@ -1370,6 +2030,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -18.3212, 126.100886294, 81.3536)
 asset_id = "Landmark_Channel_2"
+material_overrides = [SubResource("object_material_0034")]
 node_name = "Landmark_Channel_2"
 catalog_asset_id = "mirrorhold:landmark-channel-2-ce64ad52b062"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-channel-2-ce64ad52b062.glb"
@@ -1383,6 +2044,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6.3212, 126.228051335, 81.3536)
 asset_id = "Landmark_Channel_3"
+material_overrides = [SubResource("object_material_0035")]
 node_name = "Landmark_Channel_3"
 catalog_asset_id = "mirrorhold:landmark-channel-3-29b40946cab4"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-channel-3-29b40946cab4.glb"
@@ -1396,6 +2058,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 5.6788, 126.256599092, 81.3536)
 asset_id = "Landmark_Channel_4"
+material_overrides = [SubResource("object_material_0036")]
 node_name = "Landmark_Channel_4"
 catalog_asset_id = "mirrorhold:landmark-channel-4-ce40573d4a5c"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-channel-4-ce40573d4a5c.glb"
@@ -1409,6 +2072,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59.6788, 178, 0.3536)
 asset_id = "Landmark_CitadelCourt"
+material_overrides = [SubResource("object_material_0037")]
 node_name = "Landmark_CitadelCourt"
 catalog_asset_id = "mirrorhold:landmark-citadelcourt-a0022902c03d"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-citadelcourt-a0022902c03d.glb"
@@ -1422,6 +2086,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59.6788, 192, -38.6464)
 asset_id = "Landmark_CitadelHigh"
+material_overrides = [SubResource("object_material_0038")]
 node_name = "Landmark_CitadelHigh"
 catalog_asset_id = "mirrorhold:landmark-citadelhigh-ac8fed78073b"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-citadelhigh-ac8fed78073b.glb"
@@ -1500,6 +2165,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.6788, 137.931068297, 99.3536)
 asset_id = "Landmark_Fountain"
+material_overrides = [SubResource("object_material_0039")]
 node_name = "Landmark_Fountain"
 catalog_asset_id = "mirrorhold:landmark-fountain-a55fe8bcfe01"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-fountain-a55fe8bcfe01.glb"
@@ -1513,6 +2179,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.6788, 178, 30.3536)
 asset_id = "Landmark_Gallery"
+material_overrides = [SubResource("object_material_0040")]
 node_name = "Landmark_Gallery"
 catalog_asset_id = "mirrorhold:landmark-gallery-d2b1ec2c787a"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-gallery-d2b1ec2c787a.glb"
@@ -1526,6 +2193,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53.6788, 163.688729546, 46.8536)
 asset_id = "Landmark_GateWall"
+material_overrides = [SubResource("object_material_0041")]
 node_name = "Landmark_GateWall"
 catalog_asset_id = "mirrorhold:landmark-gatewall-290cd5179d6c"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-gatewall-290cd5179d6c.glb"
@@ -1539,6 +2207,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 14.6788, 162.449234851, 46.8536)
 asset_id = "Landmark_GateWing_-1"
+material_overrides = [SubResource("object_material_0042")]
 node_name = "Landmark_GateWing_-1"
 catalog_asset_id = "mirrorhold:landmark-gatewing-1-0f00b953aa03"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-gatewing-1-0f00b953aa03.glb"
@@ -1552,6 +2221,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 92.6788, 144.993144562, 46.8536)
 asset_id = "Landmark_GateWing_1"
+material_overrides = [SubResource("object_material_0043")]
 node_name = "Landmark_GateWing_1"
 catalog_asset_id = "mirrorhold:landmark-gatewing-1-5ca98e0b78b3"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-gatewing-1-5ca98e0b78b3.glb"
@@ -1565,6 +2235,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53.6788, 80, 158.7348)
 asset_id = "Landmark_LakeLink_City"
+material_overrides = [SubResource("object_material_0044")]
 node_name = "Landmark_LakeLink_City"
 catalog_asset_id = "mirrorhold:landmark-lakelink-city-639164acd117"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-lakelink-city-639164acd117.glb"
@@ -1578,6 +2249,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 94.8288, 80, 181.4641)
 asset_id = "Landmark_LakeLink_EastPier"
+material_overrides = [SubResource("object_material_0045")]
 node_name = "Landmark_LakeLink_EastPier"
 catalog_asset_id = "mirrorhold:landmark-lakelink-eastpier-8d486377e925"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-lakelink-eastpier-8d486377e925.glb"
@@ -1591,6 +2263,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.6788, 80, 209.3591)
 asset_id = "Landmark_LakeLink_Sanctuary"
+material_overrides = [SubResource("object_material_0046")]
 node_name = "Landmark_LakeLink_Sanctuary"
 catalog_asset_id = "mirrorhold:landmark-lakelink-sanctuary-be74ff6b683e"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-lakelink-sanctuary-be74ff6b683e.glb"
@@ -1604,6 +2277,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.5288, 80, 181.4641)
 asset_id = "Landmark_LakeLink_WestPier"
+material_overrides = [SubResource("object_material_0047")]
 node_name = "Landmark_LakeLink_WestPier"
 catalog_asset_id = "mirrorhold:landmark-lakelink-westpier-37c620082fe7"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-lakelink-westpier-37c620082fe7.glb"
@@ -1630,6 +2304,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59.6788, 204, -77.6464)
 asset_id = "Landmark_OrreryDrum"
+material_overrides = [SubResource("object_material_0048")]
 node_name = "Landmark_OrreryDrum"
 catalog_asset_id = "mirrorhold:landmark-orrerydrum-c36a88ba94aa"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-orrerydrum-c36a88ba94aa.glb"
@@ -1643,6 +2318,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 113.6788, 144, 63.3536)
 asset_id = "Landmark_Overlook"
+material_overrides = [SubResource("object_material_0049")]
 node_name = "Landmark_Overlook"
 catalog_asset_id = "mirrorhold:landmark-overlook-c6dabf261646"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-overlook-c6dabf261646.glb"
@@ -1656,6 +2332,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(-0.707106781187, 0, -0.707106781187, 0, 1, 0, 0.707106781187, 0, -0.707106781187, 41.3461, 137.999992737, 111.0209)
 asset_id = "Landmark_PlazaStatue_0"
+material_overrides = [SubResource("object_material_0050")]
 node_name = "Landmark_PlazaStatue_0"
 catalog_asset_id = "mirrorhold:landmark-plazastatue-0-43420afc5d9a"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-plazastatue-0-43420afc5d9a.glb"
@@ -1669,6 +2346,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(-0.707106781187, 0, 0.707106781187, 0, 1, 0, -0.707106781187, 0, -0.707106781187, 18.0116, 138, 111.0209)
 asset_id = "Landmark_PlazaStatue_1"
+material_overrides = [SubResource("object_material_0051")]
 node_name = "Landmark_PlazaStatue_1"
 catalog_asset_id = "mirrorhold:landmark-plazastatue-1-35109ce5dc77"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-plazastatue-1-35109ce5dc77.glb"
@@ -1682,6 +2360,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(0.707106781187, 0, 0.707106781187, 0, 1, 0, -0.707106781187, 0, 0.707106781187, 18.0116, 137.986609063, 87.6863)
 asset_id = "Landmark_PlazaStatue_2"
+material_overrides = [SubResource("object_material_0052")]
 node_name = "Landmark_PlazaStatue_2"
 catalog_asset_id = "mirrorhold:landmark-plazastatue-2-48b514e0a760"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-plazastatue-2-48b514e0a760.glb"
@@ -1695,6 +2374,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(0.707106781187, 0, -0.707106781187, 0, 1, 0, 0.707106781187, 0, 0.707106781187, 41.3461, 142.090371223, 87.6863)
 asset_id = "Landmark_PlazaStatue_3"
+material_overrides = [SubResource("object_material_0053")]
 node_name = "Landmark_PlazaStatue_3"
 catalog_asset_id = "mirrorhold:landmark-plazastatue-3-8ee9988021c8"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-plazastatue-3-8ee9988021c8.glb"
@@ -1708,6 +2388,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 95.6788, 81.1, 144.8343)
 asset_id = "Landmark_Quay"
+material_overrides = [SubResource("object_material_0054")]
 node_name = "Landmark_Quay"
 catalog_asset_id = "mirrorhold:landmark-quay-9105617cba21"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-quay-9105617cba21.glb"
@@ -1721,6 +2402,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.6788, 113.313747885, 125.1105)
 asset_id = "Landmark_Retaining_1"
+material_overrides = [SubResource("object_material_0055")]
 node_name = "Landmark_Retaining_1"
 catalog_asset_id = "mirrorhold:landmark-retaining-1-82c21f63baa4"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-retaining-1-82c21f63baa4.glb"
@@ -1734,6 +2416,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 113.6788, 129.6687364, 82.8536)
 asset_id = "Landmark_Retaining_3"
+material_overrides = [SubResource("object_material_0056")]
 node_name = "Landmark_Retaining_3"
 catalog_asset_id = "mirrorhold:landmark-retaining-3-a96f8bcfff4c"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-retaining-3-a96f8bcfff4c.glb"
@@ -1747,6 +2430,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53.6788, 83.5, 181.4641)
 asset_id = "Landmark_Ring"
+material_overrides = [SubResource("object_material_0057")]
 node_name = "Landmark_Ring"
 catalog_asset_id = "mirrorhold:landmark-ring-f88fda7dd4a0"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-ring-f88fda7dd4a0.glb"
@@ -1760,6 +2444,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(-0.0623782861552, 0, 0.998052578483, 0, 1, 0, -0.998052578483, 0, -0.0623782861552, 46.0571, 77.7666170266, 149.8197)
 asset_id = "Landmark_RoadWall_1"
+material_overrides = [SubResource("object_material_0058")]
 node_name = "Landmark_RoadWall_1"
 catalog_asset_id = "mirrorhold:landmark-roadwall-1-3a1d2f2255b4"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-roadwall-1-3a1d2f2255b4.glb"
@@ -1786,6 +2471,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6788, 88.3449790412, 226.547)
 asset_id = "Landmark_SouthWatch"
+material_overrides = [SubResource("object_material_0059")]
 node_name = "Landmark_SouthWatch"
 catalog_asset_id = "mirrorhold:landmark-southwatch-4c8ecba80812"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-southwatch-4c8ecba80812.glb"
@@ -1799,6 +2485,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 107.4, 125)
 asset_id = "Landmark_cistern-yard"
+material_overrides = [SubResource("object_material_0060")]
 node_name = "Landmark_cistern-yard"
 catalog_asset_id = "mirrorhold:landmark-cistern-yard-b4fe21dc7963"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-cistern-yard-b4fe21dc7963.glb"
@@ -1812,6 +2499,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 182.438, 110.44431279, 133.5635)
 asset_id = "Landmark_east-post"
+material_overrides = [SubResource("object_material_0061")]
 node_name = "Landmark_east-post"
 catalog_asset_id = "mirrorhold:landmark-east-post-2bd0cafb5e90"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-east-post-2bd0cafb5e90.glb"
@@ -1825,6 +2513,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(0.998566609538, 0, -0.0535231381363, 0, 1, 0, 0.0535231381363, 0, 0.998566609538, 163.2555, 98.2326745774, 201.1878)
 asset_id = "Landmark_east_islet"
+material_overrides = [SubResource("object_material_0062")]
 node_name = "Landmark_east_islet"
 catalog_asset_id = "mirrorhold:landmark-east-islet-e75e432f6c26"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-east-islet-e75e432f6c26.glb"
@@ -1838,6 +2527,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -121.635, 97.0010986985, 127.9282)
 asset_id = "Landmark_far-west"
+material_overrides = [SubResource("object_material_0063")]
 node_name = "Landmark_far-west"
 catalog_asset_id = "mirrorhold:landmark-far-west-90a29c0e49d3"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-far-west-90a29c0e49d3.glb"
@@ -1851,6 +2541,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -115.2409, 96.9924398593, 170.1934)
 asset_id = "Landmark_gorge-head"
+material_overrides = [SubResource("object_material_0064")]
 node_name = "Landmark_gorge-head"
 catalog_asset_id = "mirrorhold:landmark-gorge-head-083f881a10be"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-gorge-head-083f881a10be.glb"
@@ -1864,6 +2555,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 95, 134.4, 85)
 asset_id = "Landmark_lens-works"
+material_overrides = [SubResource("object_material_0065")]
 node_name = "Landmark_lens-works"
 catalog_asset_id = "mirrorhold:landmark-lens-works-16f6458e3f24"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-lens-works-16f6458e3f24.glb"
@@ -1877,6 +2569,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 119.6788, 184, -38.6464)
 asset_id = "Landmark_lens_tower_east"
+material_overrides = [SubResource("object_material_0066")]
 node_name = "Landmark_lens_tower_east"
 catalog_asset_id = "mirrorhold:landmark-lens-tower-east-67d54255ef4b"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-lens-tower-east-67d54255ef4b.glb"
@@ -1890,6 +2583,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3212, 184, -38.6464)
 asset_id = "Landmark_lens_tower_west"
+material_overrides = [SubResource("object_material_0067")]
 node_name = "Landmark_lens_tower_west"
 catalog_asset_id = "mirrorhold:landmark-lens-tower-west-7c64dcac756e"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-lens-tower-west-7c64dcac756e.glb"
@@ -1903,6 +2597,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "landmark"
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3212, 177.174933733, 3.3536)
 asset_id = "Landmark_north-post"
+material_overrides = [SubResource("object_material_0068")]
 node_name = "Landmark_north-post"
 catalog_asset_id = "mirrorhold:landmark-north-post-976d31ad01bb"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-north-post-976d31ad01bb.glb"
@@ -1916,6 +2611,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 161, 158.4, 21)
 asset_id = "Landmark_quarry-shelf"
+material_overrides = [SubResource("object_material_0069")]
 node_name = "Landmark_quarry-shelf"
 catalog_asset_id = "mirrorhold:landmark-quarry-shelf-6830913bd735"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-quarry-shelf-6830913bd735.glb"
@@ -1929,6 +2625,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 89.6788, 178, 15.3536)
 asset_id = "Landmark_upper-shrine"
+material_overrides = [SubResource("object_material_0070")]
 node_name = "Landmark_upper-shrine"
 catalog_asset_id = "mirrorhold:landmark-upper-shrine-230d6b58e830"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-upper-shrine-230d6b58e830.glb"
@@ -1942,6 +2639,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -99.2555, 98.9936602773, 150.4696)
 asset_id = "Landmark_west-shrine"
+material_overrides = [SubResource("object_material_0071")]
 node_name = "Landmark_west-shrine"
 catalog_asset_id = "mirrorhold:landmark-west-shrine-083fd4fc5100"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-west-shrine-083fd4fc5100.glb"
@@ -1955,6 +2653,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(-0.309154049735, 0, 0.951011973391, 0, 1, 0, -0.951011973391, 0, -0.309154049735, -44.9051, 77.2820267906, 209.6409)
 asset_id = "Landmark_west_islet"
+material_overrides = [SubResource("object_material_0072")]
 node_name = "Landmark_west_islet"
 catalog_asset_id = "mirrorhold:landmark-west-islet-e3ff7ae41780"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/landmark-west-islet-e3ff7ae41780.glb"
@@ -1968,6 +2667,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "landmark", "mesh": "M
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 151, 169.987393803, 13.3536)
 asset_id = "Lore_ringing_quarry"
+material_overrides = [SubResource("object_material_0073")]
 node_name = "Lore_ringing_quarry"
 catalog_asset_id = "mirrorhold:lore-ringing-quarry-3cd9a3294120"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/lore-ringing-quarry-3cd9a3294120.glb"
@@ -2696,6 +3396,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Prop_
 script = ExtResource("asset")
 transform = Transform3D(1.00280266968, 0, 0, 0, 1.00280266968, 0, 0, 0, 1.00280266968, 4.8111, 112.994666007, 132.537)
 asset_id = "Prop_cistern-yard_bollard_0"
+material_overrides = [SubResource("object_material_0074")]
 node_name = "Prop_cistern-yard_bollard_0"
 catalog_asset_id = "mirrorhold:prop-cistern-yard-bollard-0-4ab5edcd469c"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/prop-cistern-yard-bollard-0-4ab5edcd469c.glb"
@@ -2709,6 +3410,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Mirro
 script = ExtResource("asset")
 transform = Transform3D(1.07495631999, 0, 0, 0, 1.07495631999, 0, 0, 0, 1.07495631999, -3.9779, 110.745461102, 136.9822)
 asset_id = "Prop_cistern-yard_bollard_1"
+material_overrides = [SubResource("object_material_0075")]
 node_name = "Prop_cistern-yard_bollard_1"
 catalog_asset_id = "mirrorhold:prop-cistern-yard-bollard-1-aa9ffc5af638"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/prop-cistern-yard-bollard-1-aa9ffc5af638.glb"
@@ -2722,6 +3424,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Mirro
 script = ExtResource("asset")
 transform = Transform3D(1.14071568508, 0, 0, 0, 1.14071568508, 0, 0, 0, 1.14071568508, 100.1235, 132.977638491, 101.5306)
 asset_id = "Prop_lens-works_bollard_0"
+material_overrides = [SubResource("object_material_0076")]
 node_name = "Prop_lens-works_bollard_0"
 catalog_asset_id = "mirrorhold:prop-lens-works-bollard-0-a2a1bd51f8c2"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/prop-lens-works-bollard-0-a2a1bd51f8c2.glb"
@@ -2735,6 +3438,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Mirro
 script = ExtResource("asset")
 transform = Transform3D(0.885477008121, 0, 0, 0, 0.885477008121, 0, 0, 0, 0.885477008121, 85.8444, 132.655376221, 102.3508)
 asset_id = "Prop_lens-works_bollard_1"
+material_overrides = [SubResource("object_material_0077")]
 node_name = "Prop_lens-works_bollard_1"
 catalog_asset_id = "mirrorhold:prop-lens-works-bollard-1-25ebec531b17"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/prop-lens-works-bollard-1-25ebec531b17.glb"
@@ -2748,6 +3452,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Mirro
 script = ExtResource("asset")
 transform = Transform3D(0.969318120725, 0, 0, 0, 0.969318120725, 0, 0, 0, 0.969318120725, 85.9274, 131.562524865, 104.9875)
 asset_id = "Prop_lens-works_bollard_2"
+material_overrides = [SubResource("object_material_0078")]
 node_name = "Prop_lens-works_bollard_2"
 catalog_asset_id = "mirrorhold:prop-lens-works-bollard-2-b0f6f6850ba0"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/prop-lens-works-bollard-2-b0f6f6850ba0.glb"
@@ -2761,6 +3466,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Mirro
 script = ExtResource("asset")
 transform = Transform3D(1.07823050436, 0, 0, 0, 1.07823050436, 0, 0, 0, 1.07823050436, 159.3129, 162.001828583, 35.3509)
 asset_id = "Prop_quarry-shelf_bollard_1"
+material_overrides = [SubResource("object_material_0079")]
 node_name = "Prop_quarry-shelf_bollard_1"
 catalog_asset_id = "mirrorhold:prop-quarry-shelf-bollard-1-ea3d57b482a6"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/prop-quarry-shelf-bollard-1-ea3d57b482a6.glb"
@@ -2774,6 +3480,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Mirro
 script = ExtResource("asset")
 transform = Transform3D(0.974629159552, 0, 0, 0, 0.974629159552, 0, 0, 0, 0.974629159552, 165.0896, 160.135801656, 32.1854)
 asset_id = "Prop_quarry-shelf_bollard_2"
+material_overrides = [SubResource("object_material_0080")]
 node_name = "Prop_quarry-shelf_bollard_2"
 catalog_asset_id = "mirrorhold:prop-quarry-shelf-bollard-2-be61c838a3dc"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/prop-quarry-shelf-bollard-2-be61c838a3dc.glb"
@@ -2813,6 +3520,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(-0.990620459585, 0, 0.136642252071, 0, 1, 0, -0.136642252071, 0, -0.990620459585, 9.25, 85.6746065989, 145.95)
 asset_id = "Secret_mirror_cistern_well"
+material_overrides = [SubResource("object_material_0081")]
 node_name = "Secret_mirror_cistern_well"
 catalog_asset_id = "mirrorhold:secret-mirror-cistern-well-fc3176a88232"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/secret-mirror-cistern-well-fc3176a88232.glb"
@@ -2826,6 +3534,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(0.263139305334, 0, 0.964757848368, 0, 1, 0, -0.964757848368, 0, 0.263139305334, 98, 177.952901111, 10.2)
 asset_id = "Secret_mirror_citadel_reliquary"
+material_overrides = [SubResource("object_material_0082")]
 node_name = "Secret_mirror_citadel_reliquary"
 catalog_asset_id = "mirrorhold:secret-mirror-citadel-reliquary-64d0552690bf"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/secret-mirror-citadel-reliquary-64d0552690bf.glb"
@@ -2865,6 +3574,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(-0.389506639243, 0, 0.921023657669, 0, 1, 0, -0.921023657669, 0, -0.389506639243, 103, 137.95, 99.2)
 asset_id = "Secret_mirror_lens_garden"
+material_overrides = [SubResource("object_material_0083")]
 node_name = "Secret_mirror_lens_garden"
 catalog_asset_id = "mirrorhold:secret-mirror-lens-garden-7799b6c7f83b"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/secret-mirror-lens-garden-7799b6c7f83b.glb"
@@ -2878,6 +3588,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.5, 171.208919459, -52)
 asset_id = "Secret_mirror_orrery_vault"
+material_overrides = [SubResource("object_material_0084")]
 node_name = "Secret_mirror_orrery_vault"
 catalog_asset_id = "mirrorhold:secret-mirror-orrery-vault-114b20626e32"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/secret-mirror-orrery-vault-114b20626e32.glb"
@@ -2891,6 +3602,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(-0.9287597026, 0, -0.370682363793, 0, 1, 0, 0.370682363793, 0, -0.9287597026, 121.7, 143.95004107, 73.2)
 asset_id = "Secret_mirror_overlook_eyrie"
+material_overrides = [SubResource("object_material_0085")]
 node_name = "Secret_mirror_overlook_eyrie"
 catalog_asset_id = "mirrorhold:secret-mirror-overlook-eyrie-12e7f1a89f51"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/secret-mirror-overlook-eyrie-12e7f1a89f51.glb"
@@ -2917,6 +3629,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(-0.793726180488, 0, 0.608275225871, 0, 1, 0, -0.608275225871, 0, -0.793726180488, 0, 177.95, 39.2)
 asset_id = "Secret_mirror_rose_school"
+material_overrides = [SubResource("object_material_0086")]
 node_name = "Secret_mirror_rose_school"
 catalog_asset_id = "mirrorhold:secret-mirror-rose-school-fea763770d19"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/secret-mirror-rose-school-fea763770d19.glb"
@@ -2956,6 +3669,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(-0.247927082547, 0, 0.968778695957, 0, 1, 0, -0.968778695957, 0, -0.247927082547, 15.7, 136.854984549, 111.55)
 asset_id = "Secret_mirror_waystone"
+material_overrides = [SubResource("object_material_0087")]
 node_name = "Secret_mirror_waystone"
 catalog_asset_id = "mirrorhold:secret-mirror-waystone-2198ae930bb3"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/secret-mirror-waystone-2198ae930bb3.glb"
@@ -2969,6 +3683,7 @@ metadata = {"composedSourceRegion": "mirrorhold", "kind": "prop", "mesh": "Secre
 script = ExtResource("asset")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 137.6788, 101.925782956, 130.7459)
 asset_id = "Walk_Landmark_EastStair"
+material_overrides = [SubResource("object_material_0088")]
 node_name = "Walk_Landmark_EastStair"
 catalog_asset_id = "mirrorhold:walk-landmark-eaststair-da75459b6e96"
 scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/walk-landmark-eaststair-da75459b6e96.glb"
