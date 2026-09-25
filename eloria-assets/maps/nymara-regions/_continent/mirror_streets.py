@@ -49,6 +49,10 @@ def actual_footprints(world, objects):
 
 def apply_mirror_street_footings(world, content):
     """Set road-only support weights without changing terrain or architecture."""
+    if REGION in getattr(world, 'authoring_snapshots', {}):
+        report = {'region': REGION, 'skipped': 'saved-authoring-authority'}
+        world.mirror_streets = content.mirror_streets = report
+        return report
     owned = world.owner_at(world.gx, world.gz) == world.ids.index(REGION)
     protected, retained = actual_footprints(world, content.objects)
     if not retained:
@@ -75,6 +79,11 @@ def add_mirror_streets(world, content):
     city translation as the buildings. The shared road solver sets final grades;
     source road meshes and former region edges are never copied into the world.
     """
+    if REGION in getattr(world, 'authoring_snapshots', {}):
+        report = {'region': REGION, 'streets': [],
+                  'skipped': 'saved-authoring-authority'}
+        world.mirror_circulation = report
+        return report
     roads = content.metadata[REGION].get('authored_roads', [])
     by_id = {road['id']: road for road in roads}
     if not REQUIRED_ROADS <= by_id.keys():
@@ -202,6 +211,11 @@ def grade_open_approach(world, content, name, start, stop, width=2., merge_lengt
 
 def apply_mirror_access(world, content):
     """Finish the northern exploration trail and the working quay's bank path."""
+    if REGION in getattr(world, 'authoring_snapshots', {}):
+        report = {'region': REGION, 'paths': [],
+                  'skipped': 'saved-authoring-authority'}
+        world.mirror_access = content.mirror_access = report
+        return report
     paths = [grade_open_approach(world, content, 'access-mirrorhold-north-plateau',
                                 [854.,582.], [854.,622.])]
     # This service belongs on the retained quay beside the moored boats. Its

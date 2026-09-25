@@ -22,10 +22,11 @@ def test_product_catalog_is_sorted_complete_and_authored_contracts_are_exact():
         "four_gates", "manymouth_delta", "mirrorhold", "ssarathi_ruins", "sunmane_steppe",
         "verdant_stair", "westhaven", "whitehorn_range",
     }
-    assert [entry.id for entry in entries if entry.authored] == [
-        "amethyst_barrens", "sunmane_steppe"]
+    assert all(entry.authored and entry.scene_path.is_file() and
+               entry.authoring_spec_path.is_file() for entry in entries)
     contracts = {value.id: value for value in C.authored_contracts()}
-    assert set(contracts) == {"amethyst_barrens", "sunmane_steppe"}
+    assert set(contracts) == {entry.id for entry in entries}
+    assert sum(value.runtime_binding_count for value in contracts.values()) == 2094
     contract = contracts["sunmane_steppe"]
     assert contract.continent_translation == (1200.0, 0.0, 720.0)
     assert contract.server_origin == (194, 292)
@@ -43,6 +44,18 @@ def test_product_catalog_is_sorted_complete_and_authored_contracts_are_exact():
     assert amethyst.terrain_vertices == (370, 370)
     assert amethyst.runtime_binding_count == 189
     assert amethyst.runtime_point_count == 130
+    mirrorhold = contracts["mirrorhold"]
+    assert mirrorhold.continent_translation == (840.0, 0.0, 650.0)
+    assert mirrorhold.server_origin == (208, 350)
+    assert mirrorhold.terrain_vertices == (271, 271)
+    assert mirrorhold.runtime_binding_count == 139
+    assert mirrorhold.runtime_point_count == 93
+    whitehorn = contracts["whitehorn_range"]
+    assert whitehorn.continent_translation == (550.0, 0.0, 220.0)
+    assert whitehorn.server_origin == (362, 360)
+    assert whitehorn.terrain_vertices == (350, 289)
+    assert whitehorn.runtime_binding_count == 197
+    assert whitehorn.runtime_point_count == 67
 
 
 def _write_fixture(tmp_path: Path, monkeypatch, catalog: dict, spec: dict | None = None):

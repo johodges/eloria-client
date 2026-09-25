@@ -99,7 +99,7 @@ class BridgeUnionTests(unittest.TestCase):
         self.assertTrue(B._suppresses_generated_authored_component(
             {'id':502,'sites':[]},np.array([1,1]),authored_owners))
 
-    def test_authored_bridge_authority_suppresses_only_wholly_owned_loose_components(self):
+    def test_authored_bridge_authority_suppresses_only_fully_saved_loose_components(self):
         owners=np.array([1,1,1])
         self.assertTrue(B._suppresses_generated_authored_component(
             {'id':501,'sites':[]},owners,{1,3}))
@@ -107,8 +107,98 @@ class BridgeUnionTests(unittest.TestCase):
             {'id':15,'sites':[14]},owners,{1,3}),'a stable claimed crossing survives overlap')
         self.assertFalse(B._suppresses_generated_authored_component(
             {'id':502,'sites':[]},np.array([0,1,1]),{1,3}),'mixed neighbour coverage stays whole')
+        self.assertTrue(B._suppresses_generated_authored_component(
+            {'id':502,'sites':[]},np.array([1,3,1]),{1,3}),
+            'two saved slices jointly replace one published component')
         self.assertFalse(B._suppresses_generated_authored_component(
             {'id':501,'sites':[]},owners,set()),'procedural builds retain their component')
+
+    def test_saved_loose_component_is_suppressed_before_equivalent_mesh_clipping(self):
+        class FullOutline:
+            @staticmethod
+            def clip(triangle):return [triangle]
+
+        current=SimpleNamespace(x0=0.,z0=0.)
+        current.owner_at=lambda x,z:np.where(np.asarray(x)<1.,0,1)
+        component={'id':501,'sites':[],'slice':(slice(0,1),slice(0,2)),
+                   'cells':np.ones((1,2),bool),'height':np.zeros((2,3)),
+                   'arch':None,'outline':FullOutline()}
+        vertices,indices,source_owners=B._component_source_triangles(current,component)
+        mesh,emitted_owners=B.deck_mesh(current,component)
+
+        self.assertGreater(len(mesh.indices),0)
+        self.assertEqual(source_owners.tolist(),emitted_owners.tolist())
+        self.assertTrue(B._suppresses_generated_authored_component_before_mesh(
+            current,component,{0,1}))
+        self.assertEqual(
+            B._suppresses_generated_authored_component(
+                component,emitted_owners,{0,1}),
+            B._suppresses_generated_authored_component_before_mesh(
+                current,component,{0,1}))
+
+    def test_saved_loose_precheck_preserves_mixed_unowned_site_and_empty_failures(self):
+        class FullOutline:
+            @staticmethod
+            def clip(triangle):return [triangle]
+        class EmptyOutline:
+            @staticmethod
+            def clip(triangle):return []
+
+        current=SimpleNamespace(x0=0.,z0=0.)
+        current.owner_at=lambda x,z:np.where(np.asarray(x)<1.,0,1)
+        base={'id':501,'sites':[],'slice':(slice(0,1),slice(0,2)),
+              'cells':np.ones((1,2),bool),'height':np.zeros((2,3)),
+              'arch':None,'outline':FullOutline()}
+        self.assertFalse(B._suppresses_generated_authored_component_before_mesh(
+            current,base,{0}),'mixed saved/procedural coverage must still build')
+        self.assertFalse(B._suppresses_generated_authored_component_before_mesh(
+            current,base,set()),'an unowned component must still build')
+        self.assertFalse(B._suppresses_generated_authored_component_before_mesh(
+            current,{**base,'sites':[17]},{0,1}),
+            'stable crossing sites use their exact claim path')
+        empty={**base,'outline':EmptyOutline()}
+        self.assertFalse(B._suppresses_generated_authored_component_before_mesh(
+            current,empty,{0,1}))
+        with self.assertRaisesRegex(ValueError,'no road-width deck'):
+            B.deck_mesh(current,empty)
+
+    def test_saved_asset_crossing_claims_are_stable_across_site_reordering(self):
+        def snapshot(region,key,asset):
+            return SimpleNamespace(document={'regionId':region,'objects':[{
+                'id':asset,'metadata':{'authoredCrossing':{'id':key}}}]})
+        current=SimpleNamespace(
+            authoring_snapshots={
+                'mirrorhold':snapshot('mirrorhold','mirror_outlet@16','mirror-bridge'),
+                'whitehorn_range':snapshot(
+                    'whitehorn_range','horn_tributary@128','whitehorn-bridge'),
+            },
+            crossing_sites=[
+                {'id':91,'key':'horn_tributary@128'},
+                {'id':7,'key':'mirror_outlet@16'},
+                {'id':23,'key':'unclaimed@2'},
+            ])
+        claims=B._authored_crossing_claims(current)
+        self.assertEqual(set(claims),{'mirror_outlet@16','horn_tributary@128'})
+        self.assertEqual(B._claimed_component_crossings(
+            current,{'sites':[91]},claims),('horn_tributary@128',))
+        self.assertEqual(B._claimed_component_crossings(
+            current,{'sites':[7]},claims),('mirror_outlet@16',))
+        self.assertEqual(B._claimed_component_crossings(
+            current,{'sites':[23]},claims),())
+        with self.assertRaisesRegex(ValueError,'mixes saved and procedural'):
+            B._claimed_component_crossings(current,{'sites':[91,23]},claims)
+
+    def test_duplicate_saved_crossing_claims_fail_closed(self):
+        def snapshot(region):
+            return SimpleNamespace(document={'regionId':region,'objects':[{
+                'id':region+'-bridge',
+                'metadata':{'authoredCrossing':{'id':'shared-river@8'}}}]})
+        current=SimpleNamespace(authoring_snapshots={
+            'mirrorhold':snapshot('mirrorhold'),
+            'whitehorn_range':snapshot('whitehorn_range'),
+        })
+        with self.assertRaisesRegex(ValueError,'claimed by both'):
+            B._authored_crossing_claims(current)
 
     def test_keeper_crossing_uses_bounded_asymmetric_landings_after_site_reordering(self):
         w=world();road=w.roads[0]
@@ -139,6 +229,41 @@ class BridgeUnionTests(unittest.TestCase):
         faces=B.triangulate_floor(square)
         self.assertEqual(len(faces),2)
         self.assertAlmostEqual(sum(abs(B._area_xz(np.asarray(face))) for face in faces),16.)
+
+    def test_float32_retrace_in_clipped_deck_preserves_the_floor(self):
+        outline=np.array([
+            [535.70195163,160.09912967,270.86097846],
+            [535.70194465,160.09912782,270.86098311],
+            [535.70193499,160.09912526,270.86098953],
+            [535.70192390,160.09912231,270.86099690],
+            [535.72059446,160.10407295,270.84858346],
+            [535.89778436,160.17541211,270.64747367],
+            [535.83373155,160.15842807,270.69006017],
+            [535.65653879,160.08708863,270.89117022],
+        ])
+        faces=B.triangulate_floor(outline)
+        self.assertTrue(faces)
+        self.assertAlmostEqual(sum(abs(B._area_xz(face)) for face in faces),
+                               abs(B._area_xz(outline)),places=8)
+        self.assertLess(sum(abs(B._area_xz(face)) for face in faces
+                            if abs(B._area_xz(face))<1e-8),1e-8)
+        two_retraces=np.array([
+            [535.7019516318896,160.09912966755485,270.86097846202097],
+            [535.7019238964467,160.09912231349648,270.86099690172836],
+            [535.7205944634438,160.10407295012647,270.8485834597882],
+            [535.7205669596289,160.10406389485416,270.84860222121523],
+            [535.8977843565757,160.17541211193614,270.6474736730304],
+            [535.8337315542072,160.1584280708138,270.69006017450533],
+            [535.6565387899158,160.08708862923012,270.8911702232607],
+        ])
+        with self.assertRaisesRegex(ValueError,'could not be triangulated'):
+            B.triangulate_floor(two_retraces,minimum_area=0.)
+        # A material self-crossing must still fail rather than lose a deck.
+        bowtie=np.array([[-.21191726,0.,1.56931111],[1.69286930,0.,.86946590],
+                         [1.96348870,0.,1.84700546],[-1.87172593,0.,-1.60839886],
+                         [.80992050,0.,2.47169805]])
+        with self.assertRaisesRegex(ValueError,'could not be triangulated'):
+            B.triangulate_floor(bowtie,minimum_area=0.)
 
     def test_encoded_pier_cap_stays_under_entire_sloping_floor(self):
         x,z=1000.5,1400.5

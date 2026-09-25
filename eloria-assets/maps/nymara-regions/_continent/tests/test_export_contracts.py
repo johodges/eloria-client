@@ -307,6 +307,53 @@ def test_authored_spawn_contract_rejects_missing_or_multiple_defaults():
         })
 
 
+def test_unbound_authored_default_spawn_moves_and_restores_contract_arrival():
+    """A visible default control seats the hub without a fabricated binding."""
+    region = 'whitehorn_range'
+
+    def publish(source_tile):
+        world = types.SimpleNamespace(
+            regions={region: {'center': [0., 0.]}},
+            hub=lambda _region: np.array([99., 99.]))
+        template = {
+            'coordinateTransform': {'serverOrigin': [15, 15]},
+            'spawnPoints': [{
+                'id': 'continent-arrival', 'default': True,
+                'position': [source_tile[0] - 14.5, 10., 14.5 - source_tile[1]],
+                'serverTile': list(source_tile),
+            }],
+        }
+        content = types.SimpleNamespace(
+            authored_regions={region}, templates={region: template}, runtime_bindings={})
+        spec = {'serverOrigin': [15, 15], 'previousServerOrigin': [15, 15],
+                'tilePositions': {}, 'runtimeBindings': {},
+                'runtimeBindingPositions': {}, 'runtimeBindingSourceTiles': {},
+                'runtimeMarkerPositions': {}, 'portalPositions': {}, 'arrival': [15, 15]}
+        report = {'placements': [], 'failures': [], 'regions': {region: {}}}
+        placement = E.RegionPlacement(
+            world, content, region, spec,
+            {'heights': np.full((60, 60), 10., dtype=np.float32)},
+            np.ones((30, 30), dtype=np.uint8), Sources, report)
+        placement.connect_hub([112, 78], np.ones((30, 30), dtype=bool))
+        manifest = copy.deepcopy(template)
+        E.update_markers(placement, manifest)
+        return spec, manifest, report
+
+    original_spec, original_manifest, original_report = publish([7, 8])
+    moved_spec, moved_manifest, moved_report = publish([9, 10])
+    restored_spec, restored_manifest, restored_report = publish([7, 8])
+
+    assert original_spec['arrival'] == [7, 8]
+    assert moved_spec['arrival'] == [9, 10]
+    assert restored_spec['arrival'] == original_spec['arrival']
+    assert moved_manifest['spawnPoints'][0]['serverTile'] == [9, 10]
+    assert moved_manifest['spawnPoints'][0]['position'] == [-5.5, 10., 4.5]
+    assert moved_manifest['navigation']['defaultSpawn'] == 'continent-arrival'
+    assert not moved_spec['runtimeBindings']
+    assert original_manifest == restored_manifest
+    assert original_report['failures'] == moved_report['failures'] == restored_report['failures'] == []
+
+
 def test_legacy_flat_runtime_bindings_are_sunmane_only_and_never_override_a_qualified_map():
     aliases = {
         'door': {'marker': {'section': 'interactives', 'id': 'shared'}},
@@ -366,8 +413,14 @@ def test_saved_runtime_edits_reach_normal_placement_with_distinct_endpoint_offse
         return {identity: np.asarray(spec['runtimeBindingPositions'][identity], dtype=int)
                 for identity in cave_ids + [runtime_id]}
 
-    before = placed(A.load_snapshot(artifacts / 'before/continent-authoring.json'))
-    after = placed(A.load_snapshot(artifacts / 'after/continent-authoring.json'))
+    # Frozen edit fixtures predate the current production source digests and
+    # persistent route claims. Reuse their immutable gameplay data for this
+    # endpoint-offset test without representing them as buildable snapshots.
+    def runtime_fixture(path):
+        document = json.loads(path.read_text(encoding='utf-8'))
+        return A.Snapshot(path, document, {}, path, path, 0, 0)
+    before = placed(runtime_fixture(artifacts / 'before/continent-authoring.json'))
+    after = placed(runtime_fixture(artifacts / 'after/continent-authoring.json'))
     assert not np.array_equal(before[cave_ids[0]], before[cave_ids[1]])
     assert np.array_equal(after[cave_ids[0]] - before[cave_ids[0]], [4, 3])
     assert np.array_equal(after[cave_ids[1]] - before[cave_ids[1]], [4, 3])
@@ -537,6 +590,38 @@ def placement(grid=None, preferred=None, hub=None):
     return p
 
 
+def test_only_build_regenerated_invasion_profile_skips_static_point_remapping(tmp_path):
+    seen = []
+    p = placement()
+    original_place = p.place
+
+    def record_place(old, label, *args, **kwargs):
+        seen.append((label, list(old)))
+        return original_place(old, label, *args, **kwargs)
+
+    p.place = record_place
+    shared = types.SimpleNamespace(
+        RULES={}, rewrite_profile=lambda text, rule, mappings: (text, 0),
+        rewrite_definition=lambda text, mappings: (
+            mappings['test']['_native_mapper']([6, 7]), 1))
+    publisher = types.SimpleNamespace(
+        CONTENT={}, transform_tile=lambda old, spec: old,
+        remap_metadata=lambda *args: None,
+        rewrite_gameplay_source=lambda text, kind, mappings: text)
+
+    E.collect_gameplay_points(
+        tmp_path,
+        {
+            'spawn_groups/invasion/invasion_nymara.def': '[spawn]\\n',
+            'spawn_groups/ordinary.def': '[spawn]\\n',
+            'client_content_manifest.json': '{"maps": []}',
+        }, {'test': p},
+        {group: {'test': []} for group in ('npcs', 'harvest', 'spawns', 'interactives')},
+        shared, publisher)
+
+    assert seen == [('spawn_groups/ordinary.def', [6, 7])]
+
+
 class ServedProfileTests(unittest.TestCase):
     def test_repeat_profile_reconstructs_the_explicit_runtime_portal_alias_used_by_definitions(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -661,7 +746,8 @@ class ServedProfileTests(unittest.TestCase):
             certificate = {'files': {relative: 'x'}}; previous = {'regions': {}, 'connections': []}
             shared = types.SimpleNamespace(RULES={}, rewrite_definition=lambda text, mappings: (text, None))
             publisher = types.SimpleNamespace(CONTENT={'harvesting.txt': None}, transform_tile=None,
-                rewrite_content=lambda text, name, specs, flag: ('node | four_gates | 2506 | 329 | 115 | Sage\n', None))
+                content_source_tile_counts=lambda texts: {},
+                rewrite_content=lambda text, name, specs, flag, counts: ('node | four_gates | 2506 | 329 | 115 | Sage\n', None))
             E.verify_current_profile(server, baseline, certificate, previous, shared, publisher)
             (server/relative).write_text('node | four_gates | 2506 | 329 |  116 | Sage\n')
             with self.assertRaisesRegex(ValueError, 'beyond the previous coordinated publication'):
@@ -1036,6 +1122,33 @@ class ServedTileContinuityTests(unittest.TestCase):
         p = placement(); p.previous = self.previous([7, 7])
         self.assertEqual(p.place([5, 5], 'spawn', 5), [7, 7])
         self.assertEqual(p.records[-1]['tile'], [7, 7])
+
+    def test_unbound_authored_territory_uses_certified_served_frame_and_still_requires_walkable_budget(self):
+        p = placement(); p.content.authored_regions = {'test'}
+        p.previous = self.previous([7, 7])
+        p.content.mapped_point = lambda *args: np.array([1000., 0., 1000.])
+        self.assertEqual(p.place([5, 5], 'territories.txt', 5), [7, 7])
+        self.assertEqual(p.records[-1]['oldTile'], [5, 5])
+        grid = np.zeros((30, 30), dtype=np.uint8); grid[15, 15] = 1
+        p = placement(grid); p.content.authored_regions = {'test'}
+        p.previous = self.previous([7, 7])
+        p.content.mapped_point = lambda *args: np.array([1000., 0., 1000.])
+        self.assertIsNone(p.place([5, 5], 'territories.txt', 5))
+        self.assertTrue(any(f['record'] == 'territories.txt' for f in p.failures))
+        p = placement(); p.content.authored_regions = {'test'}
+        p.previous = self.previous([20, 5])
+        self.assertEqual(p.place([5, 5], 'territories.txt', 5), [5, 5])
+        p = placement(); p.content.authored_regions = {'test'}
+        p.previous = self.previous([7, 7], old='other:key')
+        p.content.mapped_point = lambda *args: np.array([1000., 0., 1000.])
+        self.assertIsNone(p.place([5, 5], 'territories.txt', 5))
+        p = placement(); p.content.authored_regions = {'test'}
+        p.previous = self.previous([7, 7])
+        p.content.runtime_bindings = {'bound': {'marker': {'section': 'runtimePoints', 'id': 'bound'},
+            'targetOffset': [0., 0., 0.]}}
+        p.content.authored_runtime_points = {('test', 'bound'): np.array([94.5, 10., 205.5])}
+        p.spec.update(runtimeBindingPositions={}, runtimeBindingSourceTiles={}, runtimeMarkerPositions={})
+        self.assertEqual(p.place([5, 5], 'territories.txt', 5, identity='bound'), [9, 9])
 
     def test_a_blocked_or_distant_served_tile_falls_back_to_the_nearest_standing_point(self):
         grid = np.ones((30, 30), dtype=np.uint8); grid[7, 7] = 0

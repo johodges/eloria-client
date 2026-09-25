@@ -287,10 +287,38 @@ def rewrite_runtime_binding_sources(original_texts, rewritten_texts, specs,
             rewritten_texts[filename] = ''.join(rewritten)
 
 
-def rewrite_content(text, filename, specs, repeated):
+def content_source_tile_counts(texts):
+    """Count content source tiles across all profile files, including other record types."""
+    counts = {}
+    for filename, text in texts.items():
+        keyword, mi, xi, yi, _, _ = CONTENT[filename]
+        for line in text.splitlines():
+            fields = [field.strip() for field in line.split('|')]
+            if line.lstrip().startswith('#') or len(fields) <= max(mi, xi, yi):
+                continue
+            if keyword is not None and fields[0] != keyword:
+                continue
+            source_key = (fields[mi], point_key([int(fields[xi]), int(fields[yi])]))
+            counts[source_key] = counts.get(source_key, 0) + 1
+    return counts
+
+
+def rewrite_content(text, filename, specs, repeated, source_tile_counts=None):
     keyword, mi, xi, yi, group, identity_index = CONTENT[filename]
     rows, counts, used, retired = [], {}, {}, {}
-    for line in text.splitlines(keepends=True):
+    if source_tile_counts is None:
+        source_tile_counts = content_source_tile_counts({filename: text})
+    source_identity_counts = {}
+    if identity_index is not None:
+        for source_line in text.splitlines():
+            source = [field.strip() for field in source_line.split('|')]
+            if source_line.lstrip().startswith('#') or len(source) <= max(mi, xi, yi):
+                continue
+            if source[mi] not in specs or keyword is not None and source[0] != keyword:
+                continue
+            source_identity = (source[mi], source[identity_index])
+            source_identity_counts[source_identity] = source_identity_counts.get(source_identity, 0) + 1
+    for line_number, line in enumerate(text.splitlines(keepends=True), 1):
         fields = line.split('|')
         if line.lstrip().startswith('#') or len(fields) <= max(mi, xi, yi):
             rows.append(line)
@@ -317,8 +345,28 @@ def rewrite_content(text, filename, specs, repeated):
             key = point_key(old)
             existing = spec['tilePositions'].get(key)
             if existing is not None and list(existing) != new:
-                raise ValueError(f'{region}: conflicting authored destinations for standing point {key}')
-            spec['tilePositions'][key] = new
+                unique_content_record = (explicit is not None and
+                                         source_tile_counts[(region, key)] == 1 and
+                                         (identity_index is None or source_identity_counts[(region, str(identity))] == 1))
+                # A unique saved content row has its own stable ID even when
+                # an unrelated portal uses the same generic tile mapping.
+                # Preserve a meaningful non-identity mapping; only replace
+                # an identity mapping. Shared content source tiles instead
+                # require a qualified saved row/identity binding.
+                qualified = [binding_id for binding_id, binding in spec.get('runtimeBindings', {}).items()
+                    if binding.get('role') == group and
+                    binding.get('source', {}).get('path') == 'config/eloria/' + filename and
+                    binding['source'].get('line') == line_number and
+                    str(binding['source'].get('recordId')) == str(identity) and
+                    binding['source'].get('oldTile') is not None and
+                    binding['source']['oldTile'] == spec.get('runtimeBindingSourceTiles', {}).get(binding_id) and
+                    (binding['source']['oldTile'] == old or
+                     spec.get('baselineTilePositions', {}).get(point_key(binding['source']['oldTile'])) == old) and
+                    spec.get('runtimeBindingPositions', {}).get(binding_id) == new]
+                if not unique_content_record and (explicit is None or len(qualified) != 1):
+                    raise ValueError(f'{region}: conflicting authored destinations for standing point {key}')
+            elif explicit is None:
+                spec['tilePositions'][key] = new
         fields[xi], fields[yi] = shared.field_number(fields[xi], new[0]), shared.field_number(fields[yi], new[1])
         rows.append('|'.join(fields))
     for region, spec in specs.items():
@@ -669,12 +717,12 @@ def plan(client, server, publication_path):
         worlds[region], blobs[region], world_paths[region] = world, collision, world_path
 
     texts, records = {}, {}
-    original_texts = {}
+    original_texts = {filename: read(profile / filename).decode('utf-8') for filename in CONTENT}
+    source_tile_counts = content_source_tile_counts(original_texts)
     # Establish exact shared-point mappings before rewriting portals or quests.
     for filename in CONTENT:
-        path = profile / filename
-        original_texts[filename] = read(path).decode('utf-8')
-        texts[filename], records[filename] = rewrite_content(original_texts[filename], filename, specs, repeated)
+        texts[filename], records[filename] = rewrite_content(
+            original_texts[filename], filename, specs, repeated, source_tile_counts)
     mappings = {region: {'delta': [0, 0], '_native_mapper':
                         (lambda point: list(point)) if repeated else (lambda point, spec=spec: transform_tile(point, spec))}
                 for region, spec in specs.items()}

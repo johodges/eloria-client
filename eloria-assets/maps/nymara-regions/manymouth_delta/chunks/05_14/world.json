@@ -19,24 +19,24 @@
     "bounds": {
       "min": [
         18.0,
-        3.2655077108564106,
+        3.265507698059082,
         204.0
       ],
       "max": [
         56.0,
-        8.919241777078268,
+        8.925241905212403,
         224.0
       ]
     },
     "playableBounds": {
       "min": [
         -204.0,
-        -22.99749953330043,
+        -22.997499465942383,
         -156.0
       ],
       "max": [
         296.0,
-        344.15944658837685,
+        344.1594543457031,
         306.0
       ]
     },
@@ -45,12 +45,12 @@
     "mapBounds": {
       "min": [
         -204.0,
-        -22.99749953330043,
+        -22.997499465942383,
         -156.0
       ],
       "max": [
         296.0,
-        344.15944658837685,
+        344.1594543457031,
         306.0
       ]
     }
@@ -90,12 +90,12 @@
       "destination": "four_gates",
       "anchor": [
         -71.0,
-        4.18634191209774,
+        4.186342000961304,
         -152.0
       ],
       "globalAnchor": [
         449.0,
-        4.18634191209774,
+        4.186342000961304,
         988.0
       ],
       "globalTranslation": [
@@ -124,12 +124,12 @@
       "destination": "westhaven",
       "anchor": [
         -168.0,
-        1.8564676086650451,
+        1.856467604637146,
         -71.0
       ],
       "globalAnchor": [
         352.0,
-        1.8564676086650451,
+        1.856467604637146,
         1069.0
       ],
       "globalTranslation": [
@@ -158,12 +158,12 @@
       "destination": "verdant_stair",
       "anchor": [
         290.0,
-        18.666218556302688,
+        18.666217803955078,
         -3.0
       ],
       "globalAnchor": [
         810.0,
-        18.666218556302688,
+        18.666217803955078,
         1137.0
       ],
       "globalTranslation": [
@@ -465,12 +465,12 @@
     "bounds": {
       "min": [
         -204.0,
-        -22.99749953330043,
+        -22.997499465942383,
         -156.0
       ],
       "max": [
         296.0,
-        344.15944658837685,
+        344.1594543457031,
         306.0
       ]
     },
@@ -490,9 +490,9 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 8096,
-    "nodes": 2,
-    "meshes": 1,
+    "glbBytes": 43768,
+    "nodes": 4,
+    "meshes": 2,
     "externalResources": {
       "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035"
     },
@@ -2093,31 +2093,34 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
+  "ambientPopulation": {
+    "groups": []
+  },
   "bounds": {
     "min": [
       18.0,
-      3.2655077108564106,
+      3.265507698059082,
       204.0
     ],
     "max": [
       56.0,
-      8.919241777078268,
+      8.925241905212403,
       224.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:f59c72d5103eddd2c748ce146e3a536431d3daeef68ce53d95f3c1cc9540a774",
+  "terrainRevision": "diagonal-spine-v1:2fbc7b733830b004a2ef719ab80541172cb8359413564f019dd515e21c5a27b0",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
+    "masterSha256": "0ce92c6a3007f8f91451f61a5ca7b23bf72e18b8f9e59685f8264dbe09ea2c1e",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
-    "collisionSha256": "9f6e0c44d4b4141e1850adbc6007553dcaa155527e738922336352c77c472e44",
-    "terrainRevision": "diagonal-spine-v1:f59c72d5103eddd2c748ce146e3a536431d3daeef68ce53d95f3c1cc9540a774"
+    "masterSha256": "0ce92c6a3007f8f91451f61a5ca7b23bf72e18b8f9e59685f8264dbe09ea2c1e",
+    "collisionSha256": "ecea26329b2fe9fb5fab251ae89ca0f0fbade721637746bcc0fdcf8927925965",
+    "terrainRevision": "diagonal-spine-v1:2fbc7b733830b004a2ef719ab80541172cb8359413564f019dd515e21c5a27b0"
   }
 }

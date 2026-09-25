@@ -4,6 +4,8 @@ const REGION := preload("res://src/dev/map_authoring_region/region_control.gd")
 const TERRAIN := preload("res://src/dev/map_authoring_region/terrain_control.gd")
 const PATCH := preload("res://src/dev/map_authoring_region/terrain_patch.gd")
 const PATH := preload("res://src/dev/map_authoring_region/path_control.gd")
+const WATER := preload(
+	"res://src/dev/map_authoring_region/water_region_control.gd")
 const GROUND := preload(
 	"res://src/dev/map_authoring_region/ground_region_control.gd")
 const ASSET := preload("res://src/dev/map_authoring_region/asset_control.gd")
@@ -19,9 +21,11 @@ const PRESETS := preload(
 const SCENE_PATH := "res://tests/.continent-authoring-framework.tscn"
 const ASSET_SCENE_PATH := "res://tests/.continent-authoring-asset.tscn"
 const HEIGHT_PATH := "res://tests/.continent-authoring-heights.f32le"
+const COLOR_PATH := "res://tests/.continent-authoring-colors.rgba8"
 const RUNTIME_SEED_PATH := "res://tests/.continent-authoring-runtime-seed.json"
 const OUTPUT_PATH := \
 	"res://test-artifacts/continent-authoring-framework/continent-authoring.json"
+const TEST_ROUTE_ID := "east-gate-main-ramp"
 
 var failures := 0
 
@@ -32,6 +36,7 @@ func _initialize() -> void:
 
 func _run() -> void:
 	_write_heights()
+	_write_colors()
 	_write_asset_scene()
 	_write_runtime_seed()
 	var authored := _scene()
@@ -55,9 +60,23 @@ func _run() -> void:
 			document.server.origin == [194, 292] and
 			is_equal_approx(float(document.terrain.previewUvMetresInverse), 0.24),
 			"snapshot keeps the production coordinate contract")
-		_expect(document.replacements.routeIds == ["composer:test-road"] and
-			document.paths[0].replacesRouteId == "composer:test-road",
+		var fixture_spec: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(
+			"res://world_authoring/regions/sunmane_steppe/region-authoring-spec.json"))
+		_expect(document.replacements.routeIds == fixture_spec.authority.ownedRouteIds and
+			document.paths[0].replacesRouteId == TEST_ROUTE_ID,
 			"persistent replacement registry and path identity agree")
+		_expect(document.replacements.planFeatureIds == ["test-lake"] and
+			document.waterRegions.size() == 1 and
+			document.waterRegions[0].center == [1.0, 2.0] and
+			is_equal_approx(float(document.waterRegions[0].level), 3.0) and
+			document.waterRegions[0].radii == [4.0, 2.0] and
+			is_equal_approx(float(document.waterRegions[0].depth), 1.25),
+			"elliptical water control exports its persistent claim and exact parameters")
+		_expect(document.terrain.baseColors.encoding == "rgba8-srgb" and
+			FileAccess.get_file_as_bytes(
+				ProjectSettings.globalize_path(OUTPUT_PATH).get_base_dir().path_join(
+					"base-colors.rgba8")).size() == 36,
+			"optional full-grid RGBA8 terrain colors export as a hash-bound sidecar")
 		_expect(document.objects[0].matrix.size() == 16 and
 			document.objects[0].matrix[12] == 3.0,
 			"object transform uses glTF column-major translation slots")
@@ -115,7 +134,7 @@ func _run() -> void:
 	reopened.queue_free()
 	_cleanup()
 	print("continent authoring framework: %d assertions, %d failures" % [
-		28, failures])
+		31, failures])
 	quit(1 if failures else 0)
 
 
@@ -128,7 +147,10 @@ func _scene() -> Node3D:
 	region.server_cells = Vector2i(792, 792)
 	region.collision_origin_metres = Vector2(-194.0, 292.0)
 	region.ownership_polygon_sha256 = "a".repeat(64)
-	region.owned_route_ids = PackedStringArray(["composer:test-road"])
+	# The persistent registry is the source of deletion authority; the test
+	# route therefore uses a real owned ID from the Sunmane fixture spec.
+	region.owned_route_ids = PackedStringArray([TEST_ROUTE_ID])
+	region.owned_plan_feature_ids = PackedStringArray(["test-lake"])
 	region.runtime_binding_seed_path = RUNTIME_SEED_PATH
 	region.runtime_binding_seed_sha256 = FileAccess.get_sha256(
 		ProjectSettings.globalize_path(RUNTIME_SEED_PATH))
@@ -138,6 +160,7 @@ func _scene() -> Node3D:
 	terrain.grid_size = Vector2i(3, 3)
 	terrain.cell_metres = 2.0
 	terrain.base_heights_path = HEIGHT_PATH
+	terrain.base_colors_path = COLOR_PATH
 	terrain.base_surface = SURFACE.from_preset(PRESETS.GRASS)
 	(terrain.base_surface.source_material as BaseMaterial3D).albedo_color = \
 		Color(0.7, 0.6, 0.5, 1.0)
@@ -170,7 +193,7 @@ func _scene() -> Node3D:
 	var road := PATH.new()
 	road.name = "TestRoad"
 	road.path_id = "test-road"
-	road.replaces_route_id = "composer:test-road"
+	road.replaces_route_id = TEST_ROUTE_ID
 	road.surface = SURFACE.from_preset(PRESETS.WORN_EARTH, true)
 	(road.surface.source_material as ShaderMaterial).set_shader_parameter(
 		"worn_tint", Color(0.9, 0.78, 0.59, 1.0))
@@ -182,6 +205,18 @@ func _scene() -> Node3D:
 		var container := Node3D.new()
 		container.name = name
 		_add_owned(region, container)
+	var water_regions := Node3D.new()
+	water_regions.name = "WaterRegions"
+	_add_owned(region, water_regions)
+	var lake := WATER.new()
+	lake.name = "TestLake"
+	lake.water_id = "test-lake-control"
+	lake.replaces_plan_feature_id = "test-lake"
+	lake.display_name = "Test Lake"
+	lake.position = Vector3(1.0, 3.0, 2.0)
+	lake.radii = Vector2(4.0, 2.0)
+	lake.baseline_plan_depth = 1.25
+	_add_owned(water_regions, lake, region)
 	var assets := Node3D.new()
 	assets.name = "AuthoredAssets"
 	_add_owned(region, assets)
@@ -320,6 +355,13 @@ func _check_export_rejections(region: Node3D) -> void:
 		"is tilted" in " ".join(exporter.errors),
 		"bake rejects terrain patch tilt rather than ignoring it")
 	patch.rotation_degrees.x = 0.0
+	var lake := region.get_node("WaterRegions/TestLake") as Node3D
+	lake.rotation_degrees.y = 5.0
+	exporter = SNAPSHOT.new()
+	_expect(exporter.export_region(region, OUTPUT_PATH).is_empty() and
+		"support translation only" in " ".join(exporter.errors),
+		"bake rejects water-region rotation instead of silently ignoring it")
+	lake.rotation_degrees.y = 0.0
 	var saved_seed_hash: String = region.runtime_binding_seed_sha256
 	region.runtime_binding_seed_sha256 = "0".repeat(64)
 	exporter = SNAPSHOT.new()
@@ -370,6 +412,16 @@ func _write_heights() -> void:
 	file.close()
 
 
+func _write_colors() -> void:
+	var file := FileAccess.open(COLOR_PATH, FileAccess.WRITE)
+	for index in 9:
+		file.store_8(index * 11)
+		file.store_8(255 - index * 7)
+		file.store_8(index * 3)
+		file.store_8(255)
+	file.close()
+
+
 func _write_asset_scene() -> void:
 	var source := Node3D.new()
 	source.name = "FixtureAsset"
@@ -406,12 +458,13 @@ func _add_owned(parent: Node, child: Node, scene_owner: Node = null) -> void:
 func _cleanup() -> void:
 	for path in [SCENE_PATH, SCENE_PATH + ".uid", ASSET_SCENE_PATH,
 			ASSET_SCENE_PATH + ".uid", HEIGHT_PATH, HEIGHT_PATH + ".uid",
+			COLOR_PATH, COLOR_PATH + ".uid",
 			RUNTIME_SEED_PATH, RUNTIME_SEED_PATH + ".uid"]:
 		if FileAccess.file_exists(path):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	var output_dir := ProjectSettings.globalize_path(OUTPUT_PATH).get_base_dir()
 	for name in ["continent-authoring.json", "base-heights.f32le",
-			"resolved-heights.f32le"]:
+			"resolved-heights.f32le", "base-colors.rgba8"]:
 		DirAccess.remove_absolute(output_dir.path_join(name))
 	var prototypes := output_dir.path_join("prototypes")
 	if DirAccess.dir_exists_absolute(prototypes):

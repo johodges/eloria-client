@@ -5,6 +5,8 @@ extends Node3D
 const SNAPSHOT := preload("res://src/dev/map_authoring_region/region_snapshot.gd")
 const TERRAIN_SCRIPT := preload("res://src/dev/map_authoring_region/terrain_control.gd")
 const PATH_SCRIPT := preload("res://src/dev/map_authoring_region/path_control.gd")
+const WATER_SCRIPT := preload(
+	"res://src/dev/map_authoring_region/water_region_control.gd")
 const ASSET_SCRIPT := preload("res://src/dev/map_authoring_region/asset_control.gd")
 
 @export_category("Region contract")
@@ -22,6 +24,8 @@ const ASSET_SCRIPT := preload("res://src/dev/map_authoring_region/asset_control.
 ## silently restores its former procedural route or water feature.
 @export var owned_route_ids := PackedStringArray()
 @export var owned_plan_feature_ids := PackedStringArray()
+## A deleted saved quay stays removed; its connection remains in this registry.
+@export var owned_ferry_connection_ids := PackedStringArray()
 
 @export_category("Authority")
 @export var authority_terrain := true
@@ -58,6 +62,11 @@ func refresh_all() -> void:
 		for child in container.get_children():
 			if _uses_script(child, PATH_SCRIPT):
 				child.call_deferred("_refresh_preview")
+	var water_regions := get_node_or_null("WaterRegions")
+	if water_regions != null:
+		for child in water_regions.get_children():
+			if _uses_script(child, WATER_SCRIPT):
+				child.call_deferred("refresh_preview")
 
 
 func save_and_export_snapshot() -> Dictionary:

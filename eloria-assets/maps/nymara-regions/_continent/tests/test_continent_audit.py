@@ -262,6 +262,65 @@ def rule_fixture():
 
 
 class RoadRuleTests(unittest.TestCase):
+    def test_saved_walk_floor_uses_certified_wrapper_and_emitted_walkable_triangles(self):
+        rivers, water, ground, site, policy = rule_fixture()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = Path('amberwood/authoring/continent-authoring.json')
+            path = root / source
+            path.parent.mkdir(parents=True)
+            snapshot = {'regionId': 'amberwood', 'objects': [{
+                'nodeName': 'Walk_Bridge_WorldPlacement', 'collisionRole': 'walk_surface',
+                'metadata': {'authoredCrossing': {'id': 'main@104', 'walkNode': 'Walk_Bridge'}}}]}
+            path.write_text(json.dumps(snapshot))
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            composition = {'continentAuthoring': {'regions': {'amberwood': {
+                'snapshotSha256': digest, 'sources': {source.as_posix(): digest}}}}}
+            # A second Walk_Bridge outside the certified wrapper and a roof
+            # inside it both stand higher, but neither can support this road.
+            nodes = [
+                {'name': 'amberwood_Walk_Bridge_WorldPlacement_WorldPlacement', 'children': [1]},
+                {'name': 'Walk_Bridge_WorldPlacement', 'children': [2]},
+                {'name': 'Walk_Bridge', 'children': [3, 4]},
+                {'name': 'deck', 'mesh': 0},
+                {'name': 'bridge_roof', 'mesh': 1},
+                {'name': 'other_region_Walk_Bridge_WorldPlacement_WorldPlacement', 'children': [6]},
+                {'name': 'Walk_Bridge', 'children': [7]},
+                {'name': 'alias_deck', 'mesh': 2},
+            ]
+            doc = {'nodes': nodes, 'meshes': [
+                {'primitives': [{'attributes': {'POSITION': 0}, 'indices': 1}]},
+                {'primitives': [{'attributes': {'POSITION': 2}, 'indices': 1}]},
+                {'primitives': [{'attributes': {'POSITION': 2}, 'indices': 1}]},
+            ]}
+            deck = np.array([[112., 3., 104.], [128., 3., 104.], [120., 3., 96.],
+                             [112., 3., 104.], [120., 3., 112.], [128., 3., 104.]])
+            roof = deck.copy(); roof[:, 1] = 10.
+            arrays = {0: deck, 1: np.arange(6), 2: roof}
+            with patch.object(A.GR, 'load', return_value=(doc, b'')), patch.object(A.GR, 'accessor', side_effect=lambda _d, _b, i: arrays[i]):
+                groups = A.saved_walk_decks(root, root, composition, A.Inputs())
+            self.assertEqual(len(groups), 1)
+            supported = {'id': 'saved-crossing', 'points': [[112., 2.5, 104.], [128., 2.5, 104.]]}
+            self.assertEqual(A.road_rule_findings([supported], [], rivers, policy, ground, water,
+                                                  saved_deck_groups=groups)['violations'], [])
+            # The different wrapper/roof cannot rescue a road above the real deck.
+            high = {'id': 'above-deck', 'points': [[112., 4., 104.], [128., 4., 104.]]}
+            beside = {'id': 'beside-deck', 'points': [[127., 6., 96.], [127., 6., 112.]]}
+            found = A.road_rule_findings([high, beside], [], rivers, policy, ground, water,
+                                         saved_deck_groups=groups)
+            self.assertIn('above-deck:', ' | '.join(found['violations']))
+            self.assertIn('beside-deck:', ' | '.join(found['violations']))
+            moved = [(low + np.array([100., 0.]), high + np.array([100., 0.]), tri + np.array([100., 0., 0.]))
+                     for low, high, tri in groups]
+            self.assertTrue(A.road_rule_findings([supported], [], rivers, policy, ground, water,
+                                                 saved_deck_groups=moved)['violations'])
+            # A declared active floor missing from the emitted master fails closed.
+            missing = copy.deepcopy(doc)
+            missing['nodes'][2]['name'] = 'Walk_Deleted'
+            with patch.object(A.GR, 'load', return_value=(missing, b'')), patch.object(A.GR, 'accessor', side_effect=lambda _d, _b, i: arrays[i]):
+                with self.assertRaisesRegex(A.AuditError, 'saved walk root'):
+                    A.saved_walk_decks(root, root, composition, A.Inputs())
+
     def test_a_square_crossing_at_a_site_on_the_ground_passes(self):
         rivers, water, ground, site, policy = rule_fixture()
         road = {'id': 'seam', 'points': [[60., 4., 104.], [114., 4., 104.], [126., .85, 104.], [180., 4., 104.]]}

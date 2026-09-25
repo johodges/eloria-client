@@ -121,7 +121,7 @@ def main():
     parser.add_argument('--library',type=Path,help='Verified retained-content cache (default artifacts/library)')
     parser.add_argument('--stage',choices=('all','libraries','compose','geometry','contracts','publish','atlas','verify'),default='all')
     parser.add_argument('--cores',type=int,choices=range(1,9),default=8)
-    parser.add_argument('--godot',type=Path,help='Godot console executable used to bake the saved Sunmane scene')
+    parser.add_argument('--godot',type=Path,help='Godot console executable used to bake registered saved region scenes')
     args=parser.parse_args();limit_cores(args.cores)
     server=args.server.resolve();artifacts=args.artifacts.resolve();artifacts.mkdir(parents=True,exist_ok=True)
     library=(args.library or artifacts/'library').resolve();output=HERE/'generated';output.mkdir(exist_ok=True)

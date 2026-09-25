@@ -27,7 +27,7 @@ sys.path.insert(0, str(HERE.parent / '_toolkit'))
 import glb_reader as GR
 from world_layout import triangle_sample
 
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','authoring.py','authoring_catalog.py','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','authoring.py','authoring_catalog.py','saved_seam_profile.py','saved-seam-grey-whitehorn-v1.json','saved_post_support_profile.py','saved-seam-post-support-v1.json','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
 EXPORT_SOURCES={'build_continent.py','scene_io.py','terrain_export.py','compact_glb_images.py','bridge_export.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py'}
 
 
@@ -529,6 +529,93 @@ def authored_deck_height(xz, triangles):
     return result
 
 
+def saved_deck_height(xz, deck_groups):
+    """Sample only emitted, certified walk floors whose actual bounds meet the road."""
+    xz = np.asarray(xz, float).reshape(-1, 2)
+    result = np.full(len(xz), -np.inf)
+    for low, high, triangles in deck_groups:
+        nearby = np.all((xz >= low) & (xz <= high), axis=1)
+        if nearby.any():
+            result[nearby] = np.maximum(result[nearby], authored_deck_height(xz[nearby], triangles))
+    return result
+
+
+def saved_walk_decks(client, generated, composition, inputs):
+    """Read active saved crossing/access floors from their exact emitted master subtrees.
+
+    The snapshot records select the physical Walk root. A persistent crossing
+    claim alone never makes a missing or moved floor pass the road audit.
+    """
+    import collision_export as C
+    master, body = GR.load(generated / 'continent.glb')
+    nodes = master['nodes']
+    matrices, parents = GR.hierarchy(master)
+    names = parent_names(master)
+    by_name = defaultdict(list)
+    for index, node in enumerate(nodes):
+        by_name[node.get('name', '')].append(index)
+
+    def subtree(root):
+        pending = [root]
+        while pending:
+            index = pending.pop()
+            yield index
+            pending.extend(nodes[index].get('children', ()))
+
+    def triangles_of(indices):
+        parts = []
+        for index in indices:
+            node = nodes[index]
+            if 'mesh' not in node or any(any(word in name.lower() for word in C.CEILINGS) for name in names[index]):
+                continue
+            matrix = matrices[index]
+            for primitive in master['meshes'][node['mesh']]['primitives']:
+                if primitive.get('mode', 4) != 4:
+                    continue
+                points = GR.accessor(master, body, primitive['attributes']['POSITION']).astype(np.float64)
+                order = (GR.accessor(master, body, primitive['indices']).reshape(-1).astype(np.int64)
+                         if 'indices' in primitive else np.arange(len(points)))
+                world = (matrix[:3, :3] @ points.T).T + matrix[:3, 3]
+                parts.append(world[order].reshape(-1, 3, 3))
+        triangles = np.concatenate(parts) if parts else np.zeros((0, 3, 3))
+        if len(triangles):
+            normal = np.cross(triangles[:, 1] - triangles[:, 0], triangles[:, 2] - triangles[:, 0])
+            length = np.linalg.norm(normal, axis=1)
+            upward = 1 / np.sqrt(1 + C.MAX_GRADE ** 2) - 1e-9
+            triangles = triangles[(length > 1e-9) & (normal[:, 1] > length * upward)]
+        return triangles
+
+    groups = []
+    records = composition.get('continentAuthoring', {}).get('regions', {})
+    for region, certificate in records.items():
+        source = [path for path in certificate['sources'] if path.endswith('/authoring/continent-authoring.json')]
+        require(len(source) == 1, f'{region}: missing unique certified saved snapshot')
+        path = client / source[0]
+        require(inputs.digest(path) == certificate['sources'][source[0]] == certificate['snapshotSha256'],
+                f'{region}: saved snapshot changed after composition')
+        snapshot = inputs.json(path)
+        require(snapshot['regionId'] == region, f'{region}: saved snapshot region differs from composition')
+        for obj in snapshot['objects']:
+            if obj.get('collisionRole') != 'walk_surface':
+                continue
+            metadata = obj.get('metadata', {})
+            keys = [key for key in ('authoredCrossing', 'authoredAccessAssembly') if key in metadata]
+            if not keys:
+                continue
+            require(len(keys) == 1, f'{region}: ambiguous saved walk assembly metadata on {obj.get("nodeName")}')
+            walk_name = metadata[keys[0]]['walkNode']
+            wrapper_name = f'{region}_{obj["nodeName"]}_WorldPlacement'
+            wrappers = by_name[wrapper_name]
+            require(len(wrappers) == 1, f'{region}: saved walk wrapper {wrapper_name} missing or ambiguous in emitted master')
+            roots = [index for index in subtree(wrappers[0]) if nodes[index].get('name') == walk_name]
+            require(len(roots) == 1, f'{region}: saved walk root {walk_name} missing or ambiguous under {wrapper_name}')
+            triangles = triangles_of(subtree(roots[0]))
+            require(len(triangles) > 0, f'{region}: saved walk root {walk_name} has no walkable emitted triangles')
+            projected = triangles[:, :, [0, 2]]
+            groups.append((projected.min(axis=(0, 1)), projected.max(axis=(0, 1)), triangles))
+    return groups
+
+
 def river_curve(river):
     import landscape as L
     points = L.river_points(river)[:, :2]
@@ -560,7 +647,7 @@ def wet_width(river_water_at, centre, normal, reach, edges=False):
 
 def road_rule_findings(roads, sites, rivers, policy, ground_at, river_water_at, piers=(), designed_boxes=(), union_vertices=None,
                        authored_deck_triangles=(),
-                       sea_near_at=None, sea_at=None, seam_near_at=None):
+                       sea_near_at=None, sea_at=None, seam_near_at=None, saved_deck_groups=()):
     """Every breach of the road rules, with the measured totals; pure over its inputs (the audit's and tests' fixtures).
 
     ``sea_near_at(x, z)`` marks points over the sea or within a deck landing of it: a road there is on a sea span or its
@@ -591,6 +678,8 @@ def road_rule_findings(roads, sites, rivers, policy, ground_at, river_water_at, 
         totals['stations'] += len(stations)
         xz = stations[:, [0, 2]]
         deck_height = authored_deck_height(xz, authored_deck_triangles)
+        if saved_deck_groups:
+            deck_height = np.maximum(deck_height, saved_deck_height(xz, saved_deck_groups))
         # A saved walk deck supports the road only where its emitted triangle
         # covers the station and reaches at least the road surface.  A road
         # floating above a deck is still a road-rule failure.
@@ -705,7 +794,7 @@ def road_rule_findings(roads, sites, rivers, policy, ground_at, river_water_at, 
     return {'totals': totals, 'violations': violations}
 
 
-def audit_road_rules(generated, plan, surface, inputs):
+def audit_road_rules(generated, plan, surface, inputs, composition):
     """The road rules on the emitted terrain, the composed roads (roads.json) and the emitted bridge structures."""
     import landscape as L
     record = inputs.json(generated / 'roads.json')
@@ -762,9 +851,10 @@ def audit_road_rules(generated, plan, surface, inputs):
     seam_distance = np.pad(distance_transform_edt(~boundary) * surface.cell, ((0, 1), (0, 1)), mode='edge') if boundary.any() else np.full(heights.shape, np.inf)
     def seam_near_at(x, z):
         return lattice(seam_distance, x, z) <= float(policy['seam_metres'])
+    saved_decks = saved_walk_decks(surface.client, generated, composition, inputs)
     findings = road_rule_findings(record['roads'], record.get('crossingSites', []), plan.get('rivers', []), policy, ground_at, river_water_at,
                                   piers, boxes, np.concatenate(union) if union else None,
-                                  np.concatenate(authored_decks) if authored_decks else (), sea_near_at, sea_at, seam_near_at)
+                                  np.concatenate(authored_decks) if authored_decks else (), sea_near_at, sea_at, seam_near_at, saved_decks)
     require(not findings['violations'], 'Road rules: ' + '; '.join(findings['violations'][:12]) + (f' (and {len(findings["violations"]) - 12} more)' if len(findings['violations']) > 12 else ''))
     return findings['totals']
 
@@ -851,7 +941,7 @@ def run(client, generated, report_path, server=None, require_collision=False, ge
         # The owner's road rules (R1): every composition since records its crossing sites and its roads.
         if 'riverCrossings' in composition:
             require((generated/'roads.json').is_file(),'Geometry export did not record the composed roads (roads.json)')
-            report['roadRules']=audit_road_rules(generated,plan,surface,inputs)
+            report['roadRules']=audit_road_rules(generated,plan,surface,inputs,composition)
         if not geometry_only:
             publication = inputs.json(generated/'publication.json')
             report['frames'] = audit_frames(publication,manifests,surface.translations)

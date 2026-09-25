@@ -96,3 +96,68 @@ def test_support_updates_settling_fields_only_inside_named_islands(tmp_path):
     assert world.original_height[far].item()==-8 and world.foundation_weight[far].item()==1
     assert world.ferry_exclusion[near].item() and not world.ferry_exclusion[far].item()
     assert report['islands']==17 and report['supportedVertices']>0
+
+
+def test_saved_crownwater_keeps_scene_and_terrain_but_preserves_ferry_exclusion():
+    x=np.arange(90.,130.,2.);z=np.arange(190.,230.,2.);gx,gz=np.meshgrid(x,z)
+    height=np.full(gx.shape,3.25)
+    original=np.full(gx.shape,7.5)
+    document={'nodes':[{'name':'SavedCauseway'}]};body=b'saved-binary'
+    world=SimpleNamespace(ids=['crownwater'],gx=gx,gz=gz,height=height,
+        original_height=original,
+        authoring_snapshots={'crownwater':SimpleNamespace(translation=np.array([100.,0.,200.]))})
+    quay={'region':'crownwater','node':'Saved_Quay','low':np.array([116.,2.,216.]),
+          'high':np.array([118.,4.,218.])}
+    content=SimpleNamespace(metadata={'crownwater':{'crossings':[
+        {'id':'saved-spoke','endpoints':[[0.,4.,0.],[10.,4.,0.]]}]}},
+        objects=[quay],documents={'crownwater':(document,body)})
+    before=height.copy();before_original=original.copy()
+    report=C.apply_crown_support(world,content)
+    np.testing.assert_array_equal(world.height,before)
+    np.testing.assert_array_equal(world.original_height,before_original)
+    assert content.documents['crownwater']==(document,body)
+    assert world.ferry_exclusion[(gz==200.)&(gx==104.)].all()
+    assert world.ferry_exclusion[(gz==216.)&(gx==118.)].all()
+    assert not world.ferry_exclusion[(gz==228.)&(gx==90.)].any()
+    assert report['savedCrossings']==1 and report['savedQuayAssets']==1
+
+
+def test_saved_quay_exclusion_can_omit_only_its_exact_connection_source():
+    x=np.arange(0.,22.,2.);z=np.arange(0.,22.,2.);gx,gz=np.meshgrid(x,z)
+    connection='crownwater--westhaven'
+    control={'id':'owned','matrix':np.eye(4).reshape(-1,order='F').tolist(),
+             'metadata':{'authoredFerryQuay':{'connectionIds':[connection],
+                 'walkNode':'Walk_FerryQuay_owned','localLanding':[0.,0.,0.]}}}
+    snapshot=SimpleNamespace(translation=np.zeros(3),document={
+        'regionId':'crownwater','authority':{'ownedFerryConnectionIds':[connection]},
+        'replacements':{'ferryConnectionIds':[connection]},'objects':[control]})
+    world=SimpleNamespace(ids=['crownwater'],gx=gx,gz=gz,height=np.ones_like(gx),
+        original_height=np.ones_like(gx),ferry_exclusion=np.zeros_like(gx,bool),
+        authoring_snapshots={'crownwater':snapshot})
+    owned={'region':'crownwater','node':'Walk_FerryQuay_owned','low':np.array([8.,0.,8.]),
+           'high':np.array([10.,2.,10.]),'source':{'authoredFerryQuay':{
+               'connectionIds':[connection]}}}
+    unrelated={'region':'crownwater','node':'Working_Quay_unrelated','low':np.array([12.,0.,8.]),
+               'high':np.array([14.,2.,10.]),'source':{}}
+    content=SimpleNamespace(metadata={'crownwater':{'crossings':[]}},objects=[owned,unrelated])
+    C.apply_crown_support(world,content)
+    F.install_saved_ferry_exclusions(world,content)
+    complete=F.ferry_exclusion(world)
+    without_own=F.ferry_exclusion(world,[connection],ignore_region='crownwater')
+    opposing_side=F.ferry_exclusion(world,[connection],ignore_region='westhaven')
+    owned_only=(gx==2.)&(gz==2.)
+    overlap=(gx==8.)&(gz==8.)
+    unrelated_only=(gx==20.)&(gz==8.)
+    assert complete[owned_only].all() and not without_own[owned_only].any()
+    assert without_own[overlap].all() and without_own[unrelated_only].all()
+    np.testing.assert_array_equal(opposing_side,complete)
+    np.testing.assert_array_equal(world.height,np.ones_like(gx))
+
+
+def test_self_exclusion_refuses_unattributed_union_mutation():
+    world=SimpleNamespace(ferry_exclusion=np.zeros((3,3),bool),
+        ferry_exclusion_base=np.zeros((3,3),bool),
+        ferry_exclusion_by_owner={('crownwater','a--b'):np.zeros((3,3),bool)})
+    world.ferry_exclusion[1,1]=True
+    with pytest.raises(ValueError,match='attribution is stale'):
+        F.ferry_exclusion(world,['a--b'],ignore_region='crownwater')

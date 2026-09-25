@@ -101,14 +101,18 @@ func refresh_if_changed() -> bool:
 func _add_reference(entry: Dictionary, generation: int) -> String:
 	var source_path := String(entry.get("source_path", ""))
 	var is_authored := String(entry.source_kind) == "saved_authored"
+	var source_error := String(entry.get("source_error", ""))
+	if not source_error.is_empty():
+		return "%s: %s" % [String(entry.label), source_error]
 	if source_path.is_empty() or (not ResourceLoader.exists(source_path) if is_authored \
-			else not FileAccess.file_exists(source_path)):
+			else not _published_paths_available(entry)):
 		return "%s source is unavailable." % String(entry.label)
 	var packed := _cache.get(String(entry.get("cache_key", source_path))) as PackedScene
 	if packed == null:
-		packed = _load_source(source_path, is_authored)
+		packed = _load_source(entry, is_authored)
 		if packed == null:
-			return "%s could not load %s." % [String(entry.label), source_path]
+			return "%s could not load its declared %s." % [String(entry.label),
+				"saved authored scene" if is_authored else "published GLB dependencies"]
 		_store_cache(String(entry.get("cache_key", source_path)), packed)
 	var instance := packed.instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE) as Node3D
 	if instance == null:
@@ -151,23 +155,76 @@ func _add_reference(entry: Dictionary, generation: int) -> String:
 	return ""
 
 
-func _load_source(source_path: String, is_authored: bool) -> PackedScene:
+func _load_source(entry: Dictionary, is_authored: bool) -> PackedScene:
+	var source_path := String(entry.get("source_path", ""))
 	if is_authored:
 		return ResourceLoader.load(source_path, "PackedScene",
 			ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+	var paths: PackedStringArray = entry.get("published_paths",
+		PackedStringArray([source_path]))
+	if paths.is_empty():
+		return null
+	if paths.size() == 1:
+		var generated := _load_published_glb(paths[0])
+		if generated == null:
+			return null
+		var packed := PackedScene.new()
+		if packed.pack(generated) != OK:
+			generated.free()
+			return null
+		generated.free()
+		return packed
+	var roots: Array[Node3D] = []
+	for path: String in paths:
+		var generated := _load_published_glb(path)
+		if generated == null:
+			for root: Node3D in roots:
+				root.free()
+			return null
+		roots.append(generated)
+	return _pack_published_roots(roots)
+
+
+func _load_published_glb(source_path: String) -> Node3D:
 	var state := GLTFState.new()
 	var document := GLTFDocument.new()
 	if document.append_from_file(ProjectSettings.globalize_path(source_path), state) != OK:
 		return null
-	var generated := document.generate_scene(state)
-	if generated == null:
+	return document.generate_scene(state) as Node3D
+
+
+func _pack_published_roots(roots: Array[Node3D]) -> PackedScene:
+	if roots.is_empty():
 		return null
+	var combined := Node3D.new()
+	combined.name = "PublishedChunks"
+	for index in roots.size():
+		var chunk := roots[index]
+		chunk.name = "PublishedChunk_%03d" % index
+		combined.add_child(chunk, true)
+		_assign_owner(chunk, combined)
 	var packed := PackedScene.new()
-	if packed.pack(generated) != OK:
-		generated.free()
+	if packed.pack(combined) != OK:
+		combined.free()
 		return null
-	generated.free()
+	combined.free()
 	return packed
+
+
+func _assign_owner(node: Node, owner: Node) -> void:
+	node.owner = owner
+	for child in node.get_children():
+		_assign_owner(child, owner)
+
+
+func _published_paths_available(entry: Dictionary) -> bool:
+	var paths: PackedStringArray = entry.get("published_paths", PackedStringArray())
+	if paths.is_empty():
+		paths.append(String(entry.get("source_path", "")))
+	for path: String in paths:
+		if path.is_empty() or not FileAccess.file_exists(path):
+			return false
+	return true
 
 
 func clear_source_cache() -> void:
@@ -230,6 +287,7 @@ func _add_owned_terrain(region: Node3D, entry: Dictionary, display_name: String,
 
 func _add_published_owned_surfaces(region: Node3D, entry: Dictionary) -> bool:
 	var clipped_count := 0
+	var claimed_water_exclusions := _active_claimed_water_exclusions()
 	var terrain_material := StandardMaterial3D.new()
 	terrain_material.albedo_color = Color(0.46, 0.39, 0.56, 0.92)
 	terrain_material.roughness = 0.9
@@ -245,7 +303,8 @@ func _add_published_owned_surfaces(region: Node3D, entry: Dictionary) -> bool:
 				not source_name.begins_with("Water_"):
 			continue
 		var mesh := clipped_mesh(source, active_root, entry.ownership_polygon,
-			active_entry.translation)
+			active_entry.translation, claimed_water_exclusions \
+				if source_name.begins_with("Water_") else [])
 		_hide_source(source)
 		if mesh == null or mesh.get_surface_count() == 0:
 			continue
@@ -260,6 +319,85 @@ func _add_published_owned_surfaces(region: Node3D, entry: Dictionary) -> bool:
 		add_child(display, false, Node.INTERNAL_MODE_FRONT)
 		clipped_count += 1
 	return clipped_count > 0
+
+
+func _active_claimed_water_exclusions() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if active_root == null:
+		return result
+	var owned_value: Variant = active_root.get("owned_plan_feature_ids")
+	if not owned_value is PackedStringArray:
+		return result
+	var owned: PackedStringArray = owned_value
+	var stable_value: Variant = active_entry.get("claimed_plan_feature_footprints", {})
+	if stable_value is Dictionary:
+		var stable: Dictionary = stable_value
+		for claim_id: String in owned:
+			var polygon_value: Variant = stable.get(claim_id)
+			if not polygon_value is PackedVector2Array or polygon_value.size() < 3:
+				continue
+			var polygon: PackedVector2Array = polygon_value
+			result.append({
+				"claim_id": claim_id,
+				"polygon": polygon,
+				"bounds": _polygon_bounds(polygon),
+				"source": "certified_original",
+			})
+	for child in active_root.find_children("*", "Path3D", true, false):
+		var path := child as Path3D
+		if not path.has_method("snapshot_points") or String(path.get("kind")) != "river":
+			continue
+		var claim_id := String(path.get("replaces_plan_feature_id")).strip_edges()
+		if claim_id.is_empty() or not owned.has(claim_id):
+			continue
+		if path.get("preview_enabled") is bool and not bool(path.get("preview_enabled")):
+			continue
+		var polygon := _path_corridor_global(path, path.call("snapshot_points"))
+		if polygon.size() < 3:
+			continue
+		result.append({
+			"claim_id": claim_id,
+			"polygon": polygon,
+			"bounds": _polygon_bounds(polygon),
+			"source": "saved_current",
+		})
+	return result
+
+
+func _path_corridor_global(path: Path3D, points: Array) -> PackedVector2Array:
+	if points.size() < 2:
+		return PackedVector2Array()
+	var centres := PackedVector2Array()
+	var half_widths := PackedFloat32Array()
+	var path_to_active := active_root.global_transform.affine_inverse() * path.global_transform
+	var active_translation_value: Vector3 = active_entry.translation
+	for record_value: Variant in points:
+		if not record_value is Dictionary:
+			return PackedVector2Array()
+		var record: Dictionary = record_value
+		var raw: Array = record.get("position", [])
+		if raw.size() != 3:
+			return PackedVector2Array()
+		var active_point := path_to_active * Vector3(float(raw[0]), float(raw[1]),
+			float(raw[2]))
+		centres.append(Vector2(active_point.x + active_translation_value.x,
+			active_point.z + active_translation_value.z))
+		half_widths.append(maxf(0.0, float(record.get("width", 0.0))) * 0.5)
+	var left := PackedVector2Array()
+	var right := PackedVector2Array()
+	for index in centres.size():
+		var previous := centres[maxi(0, index - 1)]
+		var following := centres[mini(centres.size() - 1, index + 1)]
+		var tangent := (following - previous).normalized()
+		if tangent.length_squared() <= 0.000001:
+			return PackedVector2Array()
+		var side := Vector2(-tangent.y, tangent.x) * half_widths[index]
+		left.append(centres[index] + side)
+		right.append(centres[index] - side)
+	var polygon := left
+	for index in range(right.size() - 1, -1, -1):
+		polygon.append(right[index])
+	return polygon
 
 
 func _hide_source(source: GeometryInstance3D) -> void:
@@ -479,7 +617,8 @@ static func _height_key(point: Vector2) -> Vector2i:
 
 
 static func clipped_mesh(source: MeshInstance3D, active: Node3D,
-		polygon_global: PackedVector2Array, active_translation: Vector3) -> ArrayMesh:
+		polygon_global: PackedVector2Array, active_translation: Vector3,
+		exclusions: Array = []) -> ArrayMesh:
 	if source == null or source.mesh == null or active == null or polygon_global.size() < 3:
 		return null
 	var result := ArrayMesh.new()
@@ -527,15 +666,34 @@ static func clipped_mesh(source: MeshInstance3D, active: Node3D,
 				original[offset + 2]])
 			var inside_count := int(inside[triangle_indices[0]]) + \
 				int(inside[triangle_indices[1]]) + int(inside[triangle_indices[2]])
-			if inside_count == 3:
-				kept.append_array(triangle_indices)
-				continue
 			var triangle := PackedVector2Array([projected[triangle_indices[0]],
 				projected[triangle_indices[1]], projected[triangle_indices[2]]])
+			var triangle_bounds := _polygon_bounds(triangle)
+			var relevant_exclusions: Array = []
+			for exclusion_value: Variant in exclusions:
+				if not exclusion_value is Dictionary:
+					continue
+				var exclusion: Dictionary = exclusion_value
+				var exclusion_bounds: Rect2 = exclusion.get("bounds", Rect2())
+				if triangle_bounds.intersects(exclusion_bounds, true):
+					relevant_exclusions.append(exclusion)
+			if inside_count == 3 and relevant_exclusions.is_empty():
+				kept.append_array(triangle_indices)
+				continue
 			if inside_count == 0 and not _triangle_near_boundary(triangle, edge_bins):
 				continue
-			for piece: PackedVector2Array in Geometry2D.intersect_polygons(
-					triangle, polygon_global):
+			var pieces: Array[PackedVector2Array] = Geometry2D.intersect_polygons(
+				triangle, polygon_global)
+			for exclusion: Dictionary in relevant_exclusions:
+				var remaining: Array[PackedVector2Array] = []
+				var exclusion_polygon: PackedVector2Array = exclusion.polygon
+				for piece: PackedVector2Array in pieces:
+					remaining.append_array(Geometry2D.clip_polygons(piece,
+						exclusion_polygon))
+				pieces = remaining
+				if pieces.is_empty():
+					break
+			for piece: PackedVector2Array in pieces:
 				if piece.size() < 3:
 					continue
 				var triangulated := Geometry2D.triangulate_polygon(piece)
@@ -582,6 +740,17 @@ static func clipped_mesh(source: MeshInstance3D, active: Node3D,
 		if material != null:
 			result.surface_set_material(result.get_surface_count() - 1, material)
 	return result
+
+
+static func _polygon_bounds(polygon: PackedVector2Array) -> Rect2:
+	if polygon.is_empty():
+		return Rect2()
+	var minimum := polygon[0]
+	var maximum := polygon[0]
+	for point in polygon:
+		minimum = minimum.min(point)
+		maximum = maximum.max(point)
+	return Rect2(minimum, maximum - minimum)
 
 
 static func _polygon_edge_bins(polygon: PackedVector2Array) -> Dictionary:

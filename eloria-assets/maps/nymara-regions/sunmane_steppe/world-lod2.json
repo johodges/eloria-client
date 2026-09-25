@@ -39,12 +39,12 @@
     "mapBounds": {
       "min": [
         -190.0,
-        -22.99749953330043,
+        -22.997499465942383,
         -492.0
       ],
       "max": [
         300.0,
-        344.15944658837685,
+        344.1594543457031,
         288.0
       ]
     }
@@ -881,12 +881,12 @@
     },
     "walkableCells": 702301,
     "walkableFraction": 0.279906,
-    "sourceGlbSha256": "747cff35208eaf2374aa0669797fe013bc250b7b1c8591e668d2b06a4b424075",
+    "sourceGlbSha256": "dbc9543e482240ac09d93d87ffc3a8bccfa4b327b13de7a7bab1acdee5645589",
     "exportStatistics": {
-      "walkMeshes": 66,
+      "walkMeshes": 69,
       "structuralMeshes": 710,
       "structuralTriangles": 141354,
-      "walkTriangles": 71218,
+      "walkTriangles": 71385,
       "steepCells": 23057,
       "waterCells": 268468,
       "structuralCells": 13318,
@@ -6552,12 +6552,12 @@
     "bounds": {
       "min": [
         -190.0,
-        -22.99749953330043,
+        -22.997499465942383,
         -492.0
       ],
       "max": [
         300.0,
-        344.15944658837685,
+        344.1594543457031,
         288.0
       ]
     },
@@ -6579,7 +6579,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
+      "masterSha256": "0ce92c6a3007f8f91451f61a5ca7b23bf72e18b8f9e59685f8264dbe09ea2c1e",
       "globalMin": [
         1010.0,
         228.0
@@ -8261,12 +8261,12 @@
   "bounds": {
     "min": [
       -190.0,
-      -22.99749953330043,
+      -22.997499465942383,
       -492.0
     ],
     "max": [
       300.0,
-      344.15944658837685,
+      344.1594543457031,
       288.0
     ]
   },
@@ -8299,14 +8299,14 @@
       ],
       "node": "Spawn_server_arrival",
       "serverTile": [
-        193,
-        292
+        194,
+        288
       ],
       "id": "server-arrival",
       "position": [
-        -0.5,
-        26.646358489990234,
-        -0.5
+        0.5,
+        26.717023849487305,
+        3.5
       ]
     }
   ],

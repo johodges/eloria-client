@@ -22,6 +22,7 @@ SunmaneSteppe
 |  `- Regions              MapAuthoringGroundRegion children
 |- Roads                   MapAuthoringRegionPath children
 |- Rivers                  MapAuthoringRegionPath children
+|- WaterRegions            MapAuthoringRegionWater children
 |- Bridges                 MapAuthoringRegionBridge children
 |- AuthoredAssets          MapAuthoringAssetControl children
 |- Gameplay
@@ -58,6 +59,23 @@ terrain** on to make that road's curve heights grade the ground, or add saved
 terrain patches for deliberate height edits. New roads default to **Shape
 terrain** on. This Inspector control writes the existing
 `properties.terrainConform` value; it is not a second saved terrain mode.
+
+An imported terrain may also provide `terrain.baseColors`, a full-grid
+RGBA8-sRGB sidecar with exactly `width * height * 4` bytes. The authoring
+preview and production terrain export use those vertex colours under the
+normal base material; Texture Regions remain independent overlays. Scenes
+without the optional sidecar retain the procedural terrain-colour behavior.
+
+Elliptical plan water uses saved `WaterRegions` controls. Moving a control
+changes its centre and water level, while `radii` changes its horizontal
+domain. Rotation and scale fail the bake because the production ellipse has no
+lossless rotated or scaled representation. The imported plan depth is shown as
+reference metadata only: authored regions keep their saved resolved ground,
+so actual depth is water level minus that ground. Edit the terrain itself to
+change the bed. `replacements.planFeatureIds` is the persistent authority
+registry; deleting or disabling a claimed water control removes the feature
+and never revives the retired procedural lake or river. Feature claims must be
+globally unique across all authored territory snapshots.
 
 ```json
 {
@@ -113,10 +131,27 @@ terrain** on. This Inspector control writes the existing
 	  "encoding": "float32-le",
 	  "includes": ["patches", "road-earthworks", "river-cuts"]
 	},
+    "baseColors": {
+      "path": "base-colors.rgba8",
+      "sha256": "<64 lowercase hex>",
+      "encoding": "rgba8-srgb"
+    },
     "baseSurface": {"preset": "Grass", "rotationDegrees": 0.0},
     "patches": []
   },
   "groundRegions": [],
+  "waterRegions": [
+    {
+      "id": "mirror-lake",
+      "shape": "ellipse",
+      "replacesPlanFeatureId": "mirror_lake",
+      "name": "Mirror Lake",
+      "center": [53.6788, 181.4641],
+      "level": 80.0,
+      "radii": [48.0, 33.0],
+      "depth": 4.0
+    }
+  ],
   "paths": [
     {
       "id": "road-to-mirrorhold",

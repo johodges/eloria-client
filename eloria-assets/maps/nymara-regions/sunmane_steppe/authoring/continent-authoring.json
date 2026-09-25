@@ -78727,6 +78727,7 @@
   ],
   "regionId": "sunmane_steppe",
   "replacements": {
+    "ferryConnectionIds": [],
     "planFeatureIds": [
       "southern_river"
     ],
@@ -78748,6 +78749,8 @@
       "discovery-sunmane_steppe-713",
       "door-sunmane_steppe-cave-crystal_hollow",
       "door-sunmane_steppe-cave-wind_caves",
+      "east-gate-main-ramp",
+      "east-gate-town-ramp",
       "mirrorhold--sunmane_steppe-sunmane_steppe",
       "sunmane_steppe--verdant_stair-sunmane_steppe"
     ]
@@ -78943,11 +78946,11 @@
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "503856d2e5028e621b9b51df642f32a3cc00af8af64225f4a5eb065844e66b2d"
+        "sha256": "dca1ed421d9e98fa8765acc26c94cfad12e4d8a94bea0a1b9d4d446f36462151"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "68c2cd1fb3152cdeb34b35e5276757b09192509dfb9966e8dbfd69645c682184"
+        "sha256": "4a03a1da48eb684e461cb5682820a99afa9eb91d2b2629db41be87629daaddb7"
       },
       {
         "path": "godot-client/world_authoring/regions/sunmane_steppe/assets/prototypes/kit-animal-pen-0.glb",
@@ -79583,5 +79586,6 @@
       "sha256": "d14ed203d5a347041e87ff2f269bd3411d7935eb3b3694d8b327cbfa7c15aeb4"
     },
     "width": 397
-  }
+  },
+  "waterRegions": []
 }

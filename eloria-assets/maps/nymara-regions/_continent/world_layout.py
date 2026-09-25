@@ -606,21 +606,25 @@ class World:
         # Include a full triangle ring outside the walking corridor. Otherwise
         # a half-metre server sample at a bend can share an ungraded shoulder
         # vertex even though the centreline itself has an acceptable grade.
-        active=binary_dilation(self.road_distance<=1.65,iterations=1)
+        authored=np.asarray(getattr(self,'authored_terrain_authority',np.zeros_like(self.height,dtype=bool)),bool)
+        if authored.shape!=self.height.shape:
+            raise ValueError('authored terrain authority does not match the shared road grid')
+        # A saved preview is already the complete roadbed inside its authored
+        # terrain.  Its incidental overlap with an unrelated procedural road
+        # shoulder is not a structural footing: propagating that height across
+        # the entire shared road graph can reshape a distant served approach.
+        # Solve only the procedural side; the exact saved side and their shared
+        # handoff are checked by the final seam/served-collision gates.
+        active=binary_dilation(self.road_distance<=1.65,iterations=1)&~authored
         target=corridor_grade(self.road_target,active)
         dz,dx=np.gradient(self.assembly_target,CELL)
         footing_weight=getattr(self,'road_footing_weight',self.assembly_weight)
         fixed=active&(footing_weight>=.999)&(np.hypot(dx,dz)<.5)&~self.water['mask']
         fixed_height=self.assembly_target.copy();quay_fixed=np.zeros_like(active)
-        authored=np.asarray(getattr(self,'authored_terrain_authority',np.zeros_like(active)),bool)
-        if authored.shape!=active.shape:
-            raise ValueError('authored terrain authority does not match the shared road grid')
         if authored.any():
             authored_height=np.asarray(self.authored_terrain_height)
-            if authored_height.shape!=active.shape:
+            if authored_height.shape!=self.height.shape:
                 raise ValueError('authored terrain height does not match the shared road grid')
-            fixed_height[active&authored]=authored_height[active&authored]
-            fixed|=active&authored
         # After the support stages, ground that retained content stands on, or
         # that a footing feather blends toward it, is never moved by a road:
         # the road is fitted to it. Pinned footings hold their surveyed plane,
@@ -646,8 +650,9 @@ class World:
         target,earthworks=limit_corridor_earthworks(target,active,limited,before)
         distance=distance_transform_edt(~active)*CELL
         footing_weight=getattr(self,'road_footing_weight',self.assembly_weight)
-        target=road_shoulder_field(target,active,self.height,distance,footing_weight>=.999)
+        target=road_shoulder_field(target,active,self.height,distance,(footing_weight>=.999)|authored)
         weight=1-L.smoothstep(0,24,distance)
+        weight[authored]=0
         # Shoulders inside standing ground stay as they are; the road's shoulder
         # influence fades out continuously as the standing weight rises, so no
         # step forms along the zone's contour.
@@ -664,7 +669,7 @@ class World:
         # cross-fall at the road edge in such feathers is per-site support work.
         support=np.where(active,(footing_weight>=.999).astype(float),footing_weight)
         protected=self.height*(1-support)+self.assembly_target*support
-        self.height=np.where(wet,self.height,protected)
+        self.height=np.where(wet|authored,self.height,protected)
         # What the road pass writes outside footings is bounded by the same limits (shoulders included).
         bounded=outside_footings&~wet&~quay_fixed&~ferry_fixed&~authored
         change=self.height-before
@@ -675,6 +680,7 @@ class World:
         self._respect_standing=bool(respect_standing)
         self.restore_drainage_corridor('roads')
         restore_graded_shores(self,active)
+        if authored.any():self.height[authored]=authored_height[authored]
         target[ferry_fixed]=self.height[ferry_fixed]
         self.refresh_road_heights(target)
         self.road_grading_passes=getattr(self,'road_grading_passes',[])

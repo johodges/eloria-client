@@ -282,6 +282,7 @@ MAXIMUM_DOOR_DISTANCE_METRES = 12.
 
 def prepare_door_approaches(world, content):
     """Validate and expose the pinned road ends and the authored door and seam waypoints before the roads are routed."""
+    saved = set(getattr(world, 'authoring_snapshots', {}))
     def validated(region, label, x, z):
         if int(world.owner_at(x, z)) != world.ids.index(region):
             raise ValueError(f'{region}:{label}: authored door road end lies outside its territory')
@@ -295,11 +296,11 @@ def prepare_door_approaches(world, content):
         return np.array([x, z], dtype=float)
     ends = {}
     for (region, portal), (x, z) in ROAD_ENDS.items():
-        if region in world.ids:
+        if region in world.ids and region not in saved:
             ends[(region, portal)] = validated(region, portal, x, z)
     retained_ends = {}
     for (region, portal), (node, (dx, dz)) in RETAINED_ROAD_ENDS.items():
-        if region not in world.ids:
+        if region not in world.ids or region in saved:
             continue
         anchor = next((obj for obj in getattr(content, 'objects', ()) if obj.get('region') == region and obj.get('node') == node), None)
         if anchor is None:
@@ -314,7 +315,7 @@ def prepare_door_approaches(world, content):
                                            'pivot': pivot[[0, 2]].tolist(), 'end': ends[(region, portal)].tolist()}
     server_ends = {}
     for (region, source, target), pins in SERVER_ROAD_ENDS.items():
-        if region in world.ids:
+        if region in world.ids and region not in saved:
             pins = [pins] if not isinstance(pins, list) else pins
             server_ends[(region, source, target)] = [validated(region, f'{source}->{target}', x, z) for x, z in pins]
     def waypoints_of(authored, retained):
@@ -325,10 +326,10 @@ def prepare_door_approaches(world, content):
         """
         prepared = {}
         for (region, road), points in authored.items():
-            if region in world.ids:
+            if region in world.ids and region not in saved:
                 prepared[(region, road)] = [validated(region, f'{road} waypoint {index}', x, z) for index, (x, z) in enumerate(points)]
         for (region, road), points in retained.items():
-            if region not in world.ids:
+            if region not in world.ids or region in saved:
                 continue
             transform = getattr(world, 'plan', {}).get('retained_transforms', {}).get(region)
             if transform is None:

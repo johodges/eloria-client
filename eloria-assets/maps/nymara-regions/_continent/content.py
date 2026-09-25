@@ -480,14 +480,25 @@ class Content:
         retained=[];natural=[]
         translation=snapshot.translation
         for placement in metadata['placements']:
-            name=placement['node'];index=by_name.get(name)
-            if index is None:
-                raise ValueError(f'{region}: authored placement {name!r} is absent from its certified library')
-            low,high=S.subtree_bounds(document,body,index,matrices)
+            name=placement['node']
+            grouped=placement.get('groupedNodes',[name])
+            if (not isinstance(grouped,list) or not grouped or grouped[0]!=name or
+                    any(not isinstance(value,str) or not value for value in grouped) or
+                    len(set(grouped))!=len(grouped)):
+                raise ValueError(f'{region}: authored placement {name!r} has invalid grouped scene roots')
+            missing=[value for value in grouped if value not in by_name]
+            if missing:
+                raise ValueError(
+                    f'{region}: authored placement {name!r} is missing certified roots {missing}')
+            indices=[by_name[value] for value in grouped];index=indices[0]
+            bounds=[S.subtree_bounds(document,body,value,matrices) for value in indices]
+            low=np.min([value[0] for value in bounds],axis=0)
+            high=np.max([value[1] for value in bounds],axis=0)
             shift=translation.copy()
-            names={document['nodes'][child].get('name','') for child in S.descendants(document,[index])}
+            names={document['nodes'][child].get('name','')
+                   for child in S.descendants(document,indices)}
             kind=placement.get('kind','prop')
-            obj={'region':region,'index':index,'indices':[index],'shift':shift,
+            obj={'region':region,'index':index,'indices':indices,'shift':shift,
                  'low':low+shift,'high':high+shift,'kind':kind,'node':name,'names':names,
                  'collides':placement.get('collides',False),'walk':placement.get('walk_surface',False),
                  'source':placement,'sourcePivot':(low+high)*.5,

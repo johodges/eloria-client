@@ -5,9 +5,12 @@ extends RefCounted
 const SCHEMA := "eloria-continent-authoring-v1"
 const BASE_HEIGHT_SIDECAR := "base-heights.f32le"
 const RESOLVED_HEIGHT_SIDECAR := "resolved-heights.f32le"
+const BASE_COLOR_SIDECAR := "base-colors.rgba8"
 const TERRAIN_SCRIPT := preload("res://src/dev/map_authoring_region/terrain_control.gd")
 const PATCH_SCRIPT := preload("res://src/dev/map_authoring_region/terrain_patch.gd")
 const PATH_SCRIPT := preload("res://src/dev/map_authoring_region/path_control.gd")
+const WATER_SCRIPT := preload(
+	"res://src/dev/map_authoring_region/water_region_control.gd")
 const GROUND_SCRIPT := preload(
 	"res://src/dev/map_authoring_region/ground_region_control.gd")
 const BRIDGE_SCRIPT := preload("res://src/dev/map_authoring_region/bridge_control.gd")
@@ -50,13 +53,30 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 	var resolved_output := output_directory.path_join(RESOLVED_HEIGHT_SIDECAR)
 	if not _write_float32(resolved_output, terrain.effective_heights()):
 		return {}
+	var base_colors: Variant = null
+	var base_colors_path := String(terrain.get("base_colors_path")).strip_edges()
+	if not base_colors_path.is_empty():
+		if not base_colors_path.begins_with("res://"):
+			_fail("%s: base colors must be a saved res:// sidecar." % terrain.get_path())
+			return {}
+		var color_source := ProjectSettings.globalize_path(base_colors_path)
+		var color_bytes := FileAccess.get_file_as_bytes(color_source)
+		if color_bytes.size() != terrain.grid_size.x * terrain.grid_size.y * 4:
+			_fail("%s: base color byte count must be width × height × 4." % terrain.get_path())
+			return {}
+		var color_output := output_directory.path_join(BASE_COLOR_SIDECAR)
+		if not _write_bytes(color_output, color_bytes):
+			return {}
+		base_colors = {"path": BASE_COLOR_SIDECAR,
+			"sha256": FileAccess.get_sha256(color_output), "encoding": "rgba8-srgb"}
 	var paths := _path_records(region)
+	var water_regions := _water_region_records(region)
 	var ground_regions := _ground_region_records(region)
 	var bridges := _bridge_records(region)
 	var objects := _object_records(region, output_directory)
 	var gameplay := _gameplay_records(region)
 	var runtime_seed: Variant = _runtime_binding_seed_record(region)
-	var replacements := _replacement_record(region, paths)
+	var replacements := _replacement_record(region, paths, water_regions)
 	var base_surface_record := _surface_record(terrain.base_surface,
 		String(terrain.get_path()))
 	var emitted_surface_records: Array = [base_surface_record, ground_regions,
@@ -65,10 +85,12 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 	_validate_terrain_patches(terrain_patches)
 	_validate_unique_ids("terrain patches", terrain_patches)
 	_validate_unique_ids("paths", paths)
+	_validate_unique_ids("water regions", water_regions)
 	_validate_unique_ids("bridges", bridges)
 	_validate_unique_ids("objects", objects)
 	for section: String in gameplay:
-		_validate_unique_ids("gameplay.%s" % section, gameplay[section])
+		_validate_unique_ids("gameplay.%s" % section, gameplay[section],
+			String(region.get("region_id")))
 	if not errors.is_empty():
 		return {}
 	var scene_path := region.scene_file_path
@@ -83,6 +105,22 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 	}
 	if runtime_seed is Dictionary:
 		sources["runtimeBindingSeed"] = runtime_seed
+	var terrain_record := {
+		"origin": [terrain.origin.x, terrain.origin.y],
+		"cellMetres": terrain.cell_metres,
+		"previewUvMetresInverse": terrain.preview_uv_metres_inverse,
+		"width": terrain.grid_size.x,
+		"height": terrain.grid_size.y,
+		"baseHeights": {"path": BASE_HEIGHT_SIDECAR,
+			"sha256": FileAccess.get_sha256(base_output), "encoding": "float32-le"},
+		"resolvedHeights": {"path": RESOLVED_HEIGHT_SIDECAR,
+			"sha256": FileAccess.get_sha256(resolved_output), "encoding": "float32-le",
+			"includes": ["patches", "road-earthworks", "river-cuts"]},
+		"baseSurface": base_surface_record,
+		"patches": terrain_patches,
+	}
+	if base_colors is Dictionary:
+		terrain_record["baseColors"] = base_colors
 	var document := {
 		"schema": SCHEMA,
 		"regionId": String(region.get("region_id")),
@@ -104,22 +142,10 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 			"gameplay": bool(region.get("authority_gameplay")),
 		},
 		"replacements": replacements,
-		"terrain": {
-			"origin": [terrain.origin.x, terrain.origin.y],
-			"cellMetres": terrain.cell_metres,
-			"previewUvMetresInverse": terrain.preview_uv_metres_inverse,
-			"width": terrain.grid_size.x,
-			"height": terrain.grid_size.y,
-			"baseHeights": {"path": BASE_HEIGHT_SIDECAR,
-				"sha256": FileAccess.get_sha256(base_output), "encoding": "float32-le"},
-			"resolvedHeights": {"path": RESOLVED_HEIGHT_SIDECAR,
-				"sha256": FileAccess.get_sha256(resolved_output), "encoding": "float32-le",
-				"includes": ["patches", "road-earthworks", "river-cuts"]},
-			"baseSurface": base_surface_record,
-			"patches": terrain_patches,
-		},
+		"terrain": terrain_record,
 		"groundRegions": ground_regions,
 		"paths": paths,
+		"waterRegions": water_regions,
 		"bridges": bridges,
 		"objects": objects,
 		"gameplay": gameplay,
@@ -174,6 +200,34 @@ func _path_records(region: Node3D) -> Array[Dictionary]:
 				"points": points,
 				"properties": _clean_value(path.properties, "%s.properties" % path.get_path()),
 			})
+	records.sort_custom(_sort_id)
+	return records
+
+
+func _water_region_records(region: Node3D) -> Array[Dictionary]:
+	var records: Array[Dictionary] = []
+	var container := region.get_node_or_null("WaterRegions")
+	if container == null:
+		return records
+	for child in container.get_children():
+		if not _uses_script(child, WATER_SCRIPT):
+			continue
+		var water = child
+		var relative: Transform3D = region.global_transform.affine_inverse() * \
+			water.global_transform
+		if not relative.basis.is_equal_approx(Basis.IDENTITY):
+			_fail("%s: elliptical water regions support translation only; rotation and scale are not represented." % water.get_path())
+		var replacement := String(water.replaces_plan_feature_id).strip_edges()
+		records.append({
+			"id": String(water.water_id),
+			"shape": "ellipse",
+			"replacesPlanFeatureId": null if replacement.is_empty() else replacement,
+			"name": String(water.display_name),
+			"center": [relative.origin.x, relative.origin.z],
+			"level": relative.origin.y,
+			"radii": [float(water.radii.x), float(water.radii.y)],
+			"depth": float(water.baseline_plan_depth),
+		})
 	records.sort_custom(_sort_id)
 	return records
 
@@ -574,10 +628,28 @@ func _runtime_binding_seed_record(region: Node3D) -> Variant:
 	return {"path": _repo_path(path), "sha256": actual}
 
 
-func _replacement_record(region: Node3D, paths: Array[Dictionary]) -> Dictionary:
+func _replacement_record(region: Node3D, paths: Array[Dictionary],
+		water_regions: Array[Dictionary]) -> Dictionary:
 	var route_ids := _sorted_unique(region.get("owned_route_ids"), "owned_route_ids")
+	var spec_path := "res://world_authoring/regions/%s/region-authoring-spec.json" % \
+		String(region.get("region_id"))
+	if FileAccess.file_exists(spec_path):
+		var spec: Variant = JSON.parse_string(FileAccess.get_file_as_string(spec_path))
+		if not spec is Dictionary or String(spec.get("regionId", "")) != \
+				String(region.get("region_id")) or not spec.get("authority") is Dictionary:
+			_fail("Region route ownership spec is invalid: %s" % spec_path)
+		else:
+			var persistent := _sorted_unique(spec.authority.get("ownedRouteIds", []),
+				"region spec authority.ownedRouteIds")
+			for identity in route_ids:
+				if not persistent.has(identity):
+					_fail("Scene route claim %s is absent from persistent region spec." % identity)
+			route_ids = persistent
 	var plan_ids := _sorted_unique(region.get("owned_plan_feature_ids"),
 		"owned_plan_feature_ids")
+	var ferry_ids := _sorted_unique(region.get("owned_ferry_connection_ids"),
+		"owned_ferry_connection_ids")
+	var plan_claims := {}
 	for path in paths:
 		if path.replacesRouteId != null and not route_ids.has(String(path.replacesRouteId)):
 			_fail("Path %s replaces route %s, which is absent from owned_route_ids." % [
@@ -586,7 +658,25 @@ func _replacement_record(region: Node3D, paths: Array[Dictionary]) -> Dictionary
 				String(path.replacesPlanFeatureId)):
 			_fail("Path %s replaces plan feature %s, which is absent from owned_plan_feature_ids." % [
 				path.id, path.replacesPlanFeatureId])
-	return {"routeIds": route_ids, "planFeatureIds": plan_ids}
+		if path.replacesPlanFeatureId != null:
+			var path_claim := String(path.replacesPlanFeatureId)
+			if plan_claims.has(path_claim):
+				_fail("Plan feature %s is claimed by both %s and path %s." % [
+					path_claim, plan_claims[path_claim], path.id])
+			plan_claims[path_claim] = "path %s" % path.id
+	for water in water_regions:
+		if water.replacesPlanFeatureId != null and not plan_ids.has(
+				String(water.replacesPlanFeatureId)):
+			_fail("Water region %s replaces plan feature %s, which is absent from owned_plan_feature_ids." % [
+				water.id, water.replacesPlanFeatureId])
+		if water.replacesPlanFeatureId != null:
+			var water_claim := String(water.replacesPlanFeatureId)
+			if plan_claims.has(water_claim):
+				_fail("Plan feature %s is claimed by both %s and water region %s." % [
+					water_claim, plan_claims[water_claim], water.id])
+			plan_claims[water_claim] = "water region %s" % water.id
+	return {"routeIds": route_ids, "planFeatureIds": plan_ids,
+		"ferryConnectionIds": ferry_ids}
 
 
 func _surface_record(surface: MapAuthoringSurface, node_path: String,
@@ -670,6 +760,19 @@ func _validate_document(region: Node3D, document: Dictionary) -> void:
 		_fail("Terrain Preview UV Metres Inverse must be positive and finite.")
 	if bool(document.authority.gameplay) and document.gameplay.spawnPoints.is_empty():
 		_fail("Authoritative gameplay needs at least one spawn point.")
+	for water: Dictionary in document.waterRegions:
+		if water.shape != "ellipse":
+			_fail("Water region %s uses unsupported shape %s." % [water.id, water.shape])
+		if String(water.id).strip_edges().is_empty():
+			_fail("Water regions need a stable id.")
+		if not water.center is Array or water.center.size() != 2 or \
+				not water.radii is Array or water.radii.size() != 2:
+			_fail("Water region %s needs two-dimensional center and radii." % water.id)
+		elif float(water.radii[0]) <= 0.0 or float(water.radii[1]) <= 0.0:
+			_fail("Water region %s radii must be positive." % water.id)
+		if not is_finite(float(water.level)) or not is_finite(float(water.depth)) or \
+				float(water.depth) < 0.0:
+			_fail("Water region %s level/depth reference must be finite and non-negative." % water.id)
 	if not _is_sha(String(document.seams.ownershipPolygonSha256)):
 		_fail("Ownership Polygon Sha256 must contain 64 lowercase hex characters.")
 
@@ -716,6 +819,7 @@ func _dependency_records(scene_path: String, region: Node3D,
 	var paths: Dictionary = {}
 	_collect_dependencies(scene_path, paths)
 	_add_dependency_path(String(terrain.get("base_heights_path")), paths)
+	_add_dependency_path(String(terrain.get("base_colors_path")), paths)
 	_add_dependency_path(String(region.get("runtime_binding_seed_path")), paths)
 	_collect_emitted_texture_dependencies(emitted_surface_records, paths)
 	var assets := region.get_node_or_null("AuthoredAssets")
@@ -841,15 +945,27 @@ func _sorted_unique(value: Variant, where: String) -> Array[String]:
 	return result
 
 
-func _validate_unique_ids(section: String, records: Array) -> void:
+func _validate_unique_ids(section: String, records: Array, region_id: String = "") -> void:
 	var seen := {}
+	var legacy_stelae_nodes: Array[String] = []
 	for record in records:
 		var identity := String(record.get("id", "")).strip_edges()
 		if identity.is_empty():
 			_fail("%s contains a record without a stable id." % section)
 		elif seen.has(identity):
-			_fail("%s contains duplicate id %s." % [section, identity])
-		seen[identity] = true
+			if region_id == "manymouth_delta" and section == "gameplay.landmarks" and \
+					identity == "stelae-court" and seen[identity] == 1:
+				legacy_stelae_nodes.append(String(record.get("node", "")))
+			else:
+				_fail("%s contains duplicate id %s." % [section, identity])
+		if region_id == "manymouth_delta" and section == "gameplay.landmarks" and \
+				identity == "stelae-court" and not seen.has(identity):
+			legacy_stelae_nodes.append(String(record.get("node", "")))
+		seen[identity] = int(seen.get(identity, 0)) + 1
+	for node in legacy_stelae_nodes:
+		if not ["Landmark_StelaeCourt", "Lore_stelae_court"].has(node) or \
+				legacy_stelae_nodes.count(node) != 1:
+			_fail("Manymouth's published stelae-court landmarks must keep distinct source nodes.")
 
 
 func _server_tile(region: Node3D, position: Vector3) -> Array:

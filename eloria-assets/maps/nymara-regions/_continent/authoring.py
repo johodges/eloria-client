@@ -49,6 +49,15 @@ SUNMANE_REQUIRED_LINK_ROUTE_IDS = tuple(sorted((
 )))
 SUNMANE_PLAN_FEATURE_IDS = ("southern_river",)
 SUNMANE_SNAPSHOT = REGIONS / SUNMANE / "authoring" / "continent-authoring.json"
+# These three lake records in the byte-frozen published plan predate stable IDs.
+# Editor IDs are new ownership names for their exact original records, not
+# edits to historical plan bytes.  The values prevent a matching name on a
+# different lake from acquiring an old saved claim.
+NAMELESS_PUBLISHED_LAKES = {
+    "Moor headwater tarn": ("moor_headwater_tarn", (255, 350), (25, 18), 27, 2.5),
+    "Moorwater pool": ("moorwater_pool", (250, 470), (21, 32), 22, 2.3),
+    "Mirror Lake": ("mirror_lake", (893.6788, 831.4641), (48, 33), 80, 4),
+}
 AUTHORING_FRAMEWORK_GLOBS = (
     "godot-client/src/dev/map_authoring_region/*.gd",
     "godot-client/src/dev/map_authoring_pilot/style/*.gd",
@@ -225,6 +234,19 @@ def _validate_terrain(document: dict[str, Any], snapshot: Path, production: bool
     _validate_surface(terrain.get("baseSurface"), source_sha256, "terrain.baseSurface")
     base_path = _height_sidecar(terrain, snapshot, "baseHeights", width, height)
     resolved_path = _height_sidecar(terrain, snapshot, "resolvedHeights", width, height)
+    colors = terrain.get("baseColors")
+    if colors is not None:
+        colors = _object(colors, "terrain.baseColors")
+        if colors.get("encoding") != "rgba8-srgb":
+            raise AuthoringError("terrain.baseColors.encoding must be rgba8-srgb")
+        color_path = _contained(snapshot.parent, colors.get("path"),
+                                "terrain.baseColors.path")
+        _verify_hash(color_path, colors.get("sha256"), "terrain.baseColors.sha256")
+        expected_colors = width * height * 4
+        if color_path.stat().st_size != expected_colors:
+            raise AuthoringError(
+                f"terrain baseColors has {color_path.stat().st_size} bytes; "
+                f"expected {expected_colors}")
     includes = _array(terrain["resolvedHeights"].get("includes"),
                       "terrain.resolvedHeights.includes")
     if includes != ["patches", "road-earthworks", "river-cuts"]:
@@ -366,6 +388,28 @@ def _validate_paths(document: dict[str, Any], source_sha256: dict[str, str]) -> 
         raise AuthoringError("paths may replace a composer route only once")
 
 
+def _validate_water_regions(document: dict[str, Any]) -> None:
+    records = [_object(value, f"waterRegions[{index}]")
+               for index, value in enumerate(
+                   _array(document.get("waterRegions", []), "waterRegions"))]
+    _ordered_unique(records, "waterRegions")
+    for index, record in enumerate(records):
+        where = f"waterRegions[{index}]"
+        if record.get("shape") != "ellipse":
+            raise AuthoringError(f"{where}.shape must be ellipse")
+        replacement = record.get("replacesPlanFeatureId")
+        if replacement is not None:
+            _string(replacement, f"{where}.replacesPlanFeatureId")
+        _string(record.get("name"), f"{where}.name")
+        _vector(record.get("center"), 2, f"{where}.center")
+        radii = _vector(record.get("radii"), 2, f"{where}.radii")
+        if min(radii) <= 0.0:
+            raise AuthoringError(f"{where}.radii must be positive")
+        _number(record.get("level"), f"{where}.level")
+        if _number(record.get("depth"), f"{where}.depth") < 0.0:
+            raise AuthoringError(f"{where}.depth must be non-negative")
+
+
 def _validate_replacements(document: dict[str, Any], production: bool,
                            contract: RegionContract | None = None) -> None:
     replacements = _object(document.get("replacements"), "replacements")
@@ -375,14 +419,26 @@ def _validate_replacements(document: dict[str, Any], production: bool,
     feature_ids = [_string(value, f"replacements.planFeatureIds[{index}]")
                    for index, value in enumerate(
                        _array(replacements.get("planFeatureIds"), "replacements.planFeatureIds"))]
-    for name, values in (("routeIds", route_ids), ("planFeatureIds", feature_ids)):
+    ferry_ids = [_string(value, f"replacements.ferryConnectionIds[{index}]")
+                 for index, value in enumerate(_array(
+                     replacements.get("ferryConnectionIds", []),
+                     "replacements.ferryConnectionIds"))]
+    for name, values in (("routeIds", route_ids), ("planFeatureIds", feature_ids),
+                         ("ferryConnectionIds", ferry_ids)):
         if values != sorted(values) or len(values) != len(set(values)):
             raise AuthoringError(f"replacements.{name} must be unique and sorted")
     paths = document["paths"]
     declared_routes = {path["replacesRouteId"] for path in paths
                        if path.get("replacesRouteId") is not None}
-    declared_features = {path["replacesPlanFeatureId"] for path in paths
-                         if path.get("replacesPlanFeatureId") is not None}
+    feature_claims = [path["replacesPlanFeatureId"] for path in paths
+                      if path.get("replacesPlanFeatureId") is not None]
+    feature_claims.extend(
+        region["replacesPlanFeatureId"]
+        for region in document.get("waterRegions", [])
+        if region.get("replacesPlanFeatureId") is not None)
+    if len(feature_claims) != len(set(feature_claims)):
+        raise AuthoringError("a planned water feature may be claimed by only one saved control")
+    declared_features = set(feature_claims)
     if declared_routes - set(route_ids):
         raise AuthoringError("a path replaces a route the persistent registry does not own")
     if declared_features - set(feature_ids):
@@ -404,6 +460,10 @@ def _validate_replacements(document: dict[str, Any], production: bool,
             raise AuthoringError(
                 f"{contract.id}: plan feature registry must be "
                 f"{list(contract.owned_plan_feature_ids)}")
+        if tuple(ferry_ids) != contract.owned_ferry_connection_ids:
+            raise AuthoringError(
+                f"{contract.id}: ferry connection registry must be "
+                f"{list(contract.owned_ferry_connection_ids)}")
 
 
 def _validate_bridges(document: dict[str, Any], source_sha256: dict[str, str]) -> None:
@@ -477,6 +537,23 @@ def _validate_objects(document: dict[str, Any], source_sha256: dict[str, str],
             for endpoint, point in enumerate(endpoints):
                 _vector(point, 3,
                         f"{where}.metadata.authoredCrossing.localEndpoints[{endpoint}]")
+        ferry = metadata.get("authoredFerryQuay")
+        if ferry is not None:
+            ferry = _object(ferry, f"{where}.metadata.authoredFerryQuay")
+            if entry["collisionRole"] != "walk_surface":
+                raise AuthoringError(f"{where}: an authored ferry quay needs walk_surface")
+            _string(ferry.get("walkNode"), f"{where}.metadata.authoredFerryQuay.walkNode")
+            _vector(ferry.get("localLanding"), 3,
+                    f"{where}.metadata.authoredFerryQuay.localLanding")
+            connections = [_string(value, f"{where}.metadata.authoredFerryQuay.connectionIds")
+                           for value in _array(ferry.get("connectionIds"),
+                                               f"{where}.metadata.authoredFerryQuay.connectionIds")]
+            if not connections or connections != sorted(set(connections)) or \
+                    not set(connections) <= set(document.get("replacements", {}).get(
+                        "ferryConnectionIds", [])):
+                raise AuthoringError(
+                    f"{where}: authored ferry quay connections must be sorted claims in "
+                    "persistent ferry replacements")
         overrides = [_object(value, f"{where}.materialOverrides[{override}]")
                      for override, value in enumerate(_array(
                          entry.get("materialOverrides", []), f"{where}.materialOverrides"))]
@@ -502,7 +579,19 @@ def _validate_gameplay(document: dict[str, Any], production: bool,
     for section in required:
         records = [_object(value, f"gameplay.{section}[{index}]")
                    for index, value in enumerate(_array(gameplay.get(section), f"gameplay.{section}"))]
-        _ordered_unique(records, f"gameplay.{section}")
+        if section == "landmarks" and document.get("regionId") == "manymouth_delta":
+            ids = [_string(record.get("id"), f"gameplay.{section}[{index}].id")
+                   for index, record in enumerate(records)]
+            if ids != sorted(ids) or any(ids.count(identity) > (2 if identity == "stelae-court" else 1)
+                                          for identity in set(ids)):
+                raise AuthoringError("Manymouth landmarks must retain sorted unique published identities")
+            pair = [record.get("node") for record in records
+                    if record["id"] == "stelae-court"]
+            allowed_pair = {"Landmark_StelaeCourt", "Lore_stelae_court"}
+            if len(pair) != len(set(pair)) or any(node not in allowed_pair for node in pair):
+                raise AuthoringError("Manymouth's published stelae-court pair must keep distinct source nodes")
+        else:
+            _ordered_unique(records, f"gameplay.{section}")
         marker_ids[section] = {record["id"] for record in records}
         for index, record in enumerate(records):
             where = f"gameplay.{section}[{index}]"
@@ -656,6 +745,15 @@ class Snapshot:
         return np.fromfile(self.resolved_heights_path, dtype="<f4").reshape(
             self.terrain_height, self.terrain_width).astype(np.float64)
 
+    def base_colors(self) -> np.ndarray | None:
+        """Return optional exact sRGB RGBA8 vertex colors for this terrain."""
+        record = self.document["terrain"].get("baseColors")
+        if record is None:
+            return None
+        path = _contained(self.path.parent, record["path"], "terrain.baseColors.path")
+        return np.fromfile(path, dtype=np.uint8).reshape(
+            self.terrain_height, self.terrain_width, 4)
+
     def replacement_paths(self) -> dict[str, dict[str, Any]]:
         """Exact composer route identities owned by this authored scene."""
         return {path["replacesRouteId"]: path for path in self.document["paths"]
@@ -671,7 +769,9 @@ class Snapshot:
             # scene does not depend on them as res:// resources.
             for path in (self.contract.spec_path, CATALOG_PATH):
                 result[path.relative_to(CLIENT).as_posix()] = sha256(path)
-        for field in ("baseHeights", "resolvedHeights"):
+        for field in ("baseHeights", "resolvedHeights", "baseColors"):
+            if field not in self.document["terrain"]:
+                continue
             path = _contained(self.path.parent, self.document["terrain"][field]["path"],
                               f"terrain.{field}.path")
             result[path.relative_to(CLIENT).as_posix()] = sha256(path)
@@ -709,10 +809,38 @@ def apply_plan(plan: dict[str, Any], snapshot: Snapshot) -> dict[str, Any]:
                 f"{registered}; update the shared connection contract explicitly")
         sites[identity] = point
     owned = set(snapshot.document["replacements"]["planFeatureIds"])
+    # A saved full-grid terrain surface can own a named procedural island
+    # without a live water/path control.  Suppress that exact old landform by
+    # its stable source ID before World samples the plan, even if the author
+    # later lowers or deletes the island in the scene. Crownwater's ferry
+    # exclusion is recovered separately from saved crossing/quay assets.
+    result["islands"] = [entry for entry in result.get("islands", [])
+                         if entry.get("crownSourceIsland") not in owned]
     prior = {entry.get("id"): entry for entry in result.get("rivers", [])
              if entry.get("id") in owned}
+    def lake_identity(entry: dict[str, Any]) -> str | None:
+        if entry.get("id"):
+            return str(entry["id"])
+        source = NAMELESS_PUBLISHED_LAKES.get(entry.get("name"))
+        if source is None:
+            return None
+        identity, center, radii, level, depth = source
+        if tuple(entry.get("center", ())) != center or \
+                tuple(entry.get("radii", ())) != radii or \
+                entry.get("level") != level or entry.get("depth") != depth:
+            raise AuthoringError(f"{identity}: idless published lake source record changed")
+        return identity
+
+    lake_ids = [lake_identity(entry) for entry in result.get("lakes", [])]
+    if len([identity for identity in lake_ids if identity is not None]) != \
+            len({identity for identity in lake_ids if identity is not None}):
+        raise AuthoringError("published lake source identities are duplicated")
+    prior_lakes = {lake_identity(entry): entry for entry in result.get("lakes", [])
+                   if lake_identity(entry) in owned}
     result["rivers"] = [entry for entry in result.get("rivers", [])
                         if entry.get("id") not in owned]
+    result["lakes"] = [entry for entry in result.get("lakes", [])
+                       if lake_identity(entry) not in owned]
     for path in snapshot.document["paths"]:
         if path["kind"] != "river":
             continue
@@ -759,6 +887,48 @@ def apply_plan(plan: dict[str, Any], snapshot: Snapshot) -> dict[str, Any]:
                           "cutsRelief": "cuts_relief"}[field]
                 record[target] = copy.deepcopy(properties[field])
         result["rivers"].append(record)
+    for water in snapshot.document.get("waterRegions", []):
+        replacement = water.get("replacesPlanFeatureId")
+        identity = replacement or water["id"]
+        if water["shape"] != "ellipse":
+            raise AuthoringError(f"{water['id']}: unsupported water region shape")
+        center = np.asarray(water["center"], dtype=np.float64) + snapshot.translation[[0, 2]]
+        record = {
+            "id": identity,
+            "name": water["name"] or identity,
+            "center": center.tolist(),
+            "radii": [float(value) for value in water["radii"]],
+            "level": float(water["level"]) + float(snapshot.translation[1]),
+            # Reference metadata for the retired procedural bed.  Authored
+            # resolved terrain remains the actual lake bed authority.
+            "depth": float(water["depth"]),
+            "authored": True,
+            "resolvedBedAuthority": "saved-terrain",
+        }
+        old = prior_lakes.get(replacement)
+        if replacement is not None and old is None:
+            raise AuthoringError(
+                f"{water['id']}: claimed lake {replacement!r} is absent from the plan")
+        result["lakes"].append(record)
+    return result
+
+
+def apply_plans(plan: dict[str, Any], snapshots: Iterable[Snapshot]) -> dict[str, Any]:
+    """Apply persistent authored feature registries with duplicate-claim checks."""
+    ordered = tuple(snapshots)
+    claims: dict[str, str] = {}
+    for snapshot in ordered:
+        region = snapshot.document["regionId"]
+        for identity in snapshot.document["replacements"]["planFeatureIds"]:
+            previous = claims.get(identity)
+            if previous is not None:
+                raise AuthoringError(
+                    f"planned feature {identity!r} is claimed by both "
+                    f"{previous} and {region}")
+            claims[identity] = region
+    result = plan
+    for snapshot in ordered:
+        result = apply_plan(result, snapshot)
     return result
 
 
@@ -1328,9 +1498,12 @@ def build_retained_library(snapshot: Snapshot, root: Path) -> dict[str, str]:
         else:
             matches = [index for index, node in enumerate(document.get("nodes", []))
                        if node.get("name") == source_node]
-        if len(matches) != 1:
+        if not matches or (source_node != "." and len(matches) != 1):
             raise AuthoringError(
                 f"{entry['id']}: baked sourceNode {source_node!r} resolves to {len(matches)} roots in {source_path}")
+        if len(matches) > 1 and entry.get("materialOverrides"):
+            raise AuthoringError(
+                f"{entry['id']}: material overrides require one baked source root in {source_path}")
         root_index = matches[0]
         object_document, object_body = _apply_material_overrides(
             document, body, root_index, entry.get("materialOverrides", []))
@@ -1338,14 +1511,29 @@ def build_retained_library(snapshot: Snapshot, root: Path) -> dict[str, str]:
             # Exporter memoizes by object identity.  Keep private override
             # documents alive until write so CPython cannot reuse their ids.
             retained_documents.append((object_document, object_body))
-        exporter.add(object_document, object_body, [root_index], matrices={root_index: entry["matrix"]},
-                     root_names={root_index: entry["nodeName"]})
+        if len(matches) == 1:
+            matrices = {root_index: entry["matrix"]}
+            root_names = {root_index: entry["nodeName"]}
+        else:
+            # A saved AssetControl instances the complete imported scene under
+            # its own transform.  Preserve every declared scene root (including
+            # companion visual/walk subtrees) under that same transform instead
+            # of dropping all but the first root or overwriting their relative
+            # transforms.
+            matrices = {index: entry["matrix"] for index in matches}
+            root_names = {matches[0]: entry["nodeName"]}
+            for ordinal, index in enumerate(matches[1:], start=1):
+                original = object_document["nodes"][index].get("name") or f"root-{ordinal}"
+                root_names[index] = f"{entry['nodeName']}__companion_{ordinal}_{original}"
+        exporter.add(object_document, object_body, matches, matrices=matrices,
+                     root_names=root_names)
         metadata = dict(entry.get("metadata", {}))
-        forbidden = {"node", "position", "collides", "walk_surface"} & metadata.keys()
+        forbidden = {"node", "groupedNodes", "position", "collides", "walk_surface"} & metadata.keys()
         if forbidden:
             raise AuthoringError(f"{entry['id']}: object metadata cannot replace {sorted(forbidden)}")
         matrix = entry["matrix"]
-        metadata.update(node=entry["nodeName"], position=[matrix[12], matrix[13], matrix[14]],
+        metadata.update(node=entry["nodeName"], groupedNodes=list(root_names.values()),
+                        position=[matrix[12], matrix[13], matrix[14]],
                         kind=metadata.get("kind", "prop"),
                         collides=entry["collisionRole"] == "solid",
                         walk_surface=entry["collisionRole"] == "walk_surface",
@@ -1390,7 +1578,13 @@ def verify_seam_anchors(world: Any, snapshot: Snapshot) -> None:
     """Keep the shared connection frame fixed to the saved scene seam controls."""
     region = snapshot.document["regionId"]
     authored={entry["id"]:entry for entry in snapshot.document["seams"]["anchors"]}
-    actual={link["id"]:link for link in world.connections if region in link.get("regions",())}
+    # Ferry neighbours have no road seam station or anchor. Their landing frames
+    # are checked by ferry fitting; only walk links belong to saved seam controls.
+    neighbours=[link for link in world.connections if region in link.get("regions",())]
+    unknown={link.get("type") for link in neighbours if link.get("type", "walk") not in ("walk", "ferry")}
+    if unknown:
+        raise AuthoringError(f"{region}: unknown seam connection types {sorted(map(str, unknown))}")
+    actual={link["id"]:link for link in neighbours if link.get("type", "walk") == "walk"}
     if set(actual)!=set(authored):
         raise AuthoringError(
             f"{region}: seam links differ from the saved scene: "
@@ -1488,6 +1682,7 @@ def load_snapshot(path: Path | str = SUNMANE_SNAPSHOT, *, production: bool = Tru
         document, path, production, source_sha256, active_contract)
     _validate_ground_regions(document, source_sha256)
     _validate_paths(document, source_sha256)
+    _validate_water_regions(document)
     _validate_bridges(document, source_sha256)
     _validate_objects(document, source_sha256, path, production)
     _validate_gameplay(document, production, active_contract)

@@ -166,9 +166,9 @@ cut at ownership boundaries; buildings stay whole and are assigned once.
 All chunk geometry remains in its territory's local coordinate system.
 The complete GLB is a reproducible review artifact, not a runtime load.
 `generated/shared-terrain.glb` is the reproducible geometry intermediate used by continent audit
-and freshness checks, not a runtime region or chunk asset. The geometry exporter shares exact
-duplicate embedded image payloads so the raw checked-in GLB remains below the ordinary Git object
-limit. A fresh build regenerates the file without Git LFS.
+and freshness checks, not a runtime region or chunk asset. A normal build regenerates it locally
+before the audit; it is ignored by Git because the complete twelve-region terrain and Walk surface
+exceeds the ordinary Git object limit.
 
 The twelve named territories retain their identities and content contracts.
 Their irregular ownership shapes are independent of the 96-metre loading

@@ -172,6 +172,10 @@ def apply_city_quay_turnout(world):
 def apply_mirror_support(world,content):
     """Clear exposed link floors, then cut the adjacent bounded City turnout."""
     if 'mirrorhold' not in world.ids:return {}
+    if 'mirrorhold' in getattr(world,'authoring_snapshots',{}):
+        report={'region':'mirrorhold','skipped':'saved-authoring-authority'}
+        world.mirror_support=report
+        return report
     objects={o['node']:o for o in content.objects if o['region']=='mirrorhold'}
     reports=[]
     for name in LINKS:

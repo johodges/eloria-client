@@ -8,6 +8,8 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import mirror_streets as M
+import mirror_lake_support as LAKE
+import mirror_support as SUPPORT
 import world_layout as W
 from world_layout import World
 
@@ -207,3 +209,27 @@ def test_impossible_approach_fails_before_altering_the_field():
     with pytest.raises(ValueError,match='longer approach'):
         M.grade_open_approach(world,content,'impossible',[-20.,0.],[20.,0.])
     np.testing.assert_array_equal(world.height,before)
+
+
+def test_saved_mirrorhold_authority_skips_every_legacy_street_lake_and_access_mutation():
+    world, content = city()
+    world.authoring_snapshots = {'mirrorhold': object()}
+    before_height = world.height.copy()
+    before_roads = list(world.roads)
+
+    reports = [
+        M.apply_mirror_street_footings(world, content),
+        LAKE.prepare_mirror_lake_support(world, content),
+        M.add_mirror_streets(world, content),
+        SUPPORT.apply_mirror_support(world, content),
+        M.apply_mirror_access(world, content),
+        LAKE.finish_mirror_lake_support(world, content),
+    ]
+
+    np.testing.assert_array_equal(world.height, before_height)
+    assert world.roads == before_roads
+    assert all(report['skipped'] == 'saved-authoring-authority'
+               for report in reports)
+    assert world.mirror_circulation['streets'] == []
+    assert world.mirror_access['paths'] == []
+    assert not hasattr(world, 'mirror_lake_shore_state')

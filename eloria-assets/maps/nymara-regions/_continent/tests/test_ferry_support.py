@@ -83,3 +83,15 @@ def test_changed_protected_ground_fails_final_readback_even_if_fit_still_exists(
     world=shore();fit=F.fit_landing(world,[-12.,0.],'a');S.remember_ferry_fit(world,fit)
     world.height[world.ferry_shore_mask]+=.01
     with pytest.raises(ValueError,match='moved fitted ferry terrain'):S.validate_final_ferries(world)
+
+
+def test_final_readback_ignores_only_the_group_owned_quay(monkeypatch):
+    world=shore();seen=[]
+    original=F.fit_landing
+    def fit(candidate,landing,region,**kwargs):
+        seen.append(list(kwargs.get('ignore_connection_ids',())))
+        return original(candidate,landing,region,**kwargs)
+    monkeypatch.setattr(F,'fit_landing',fit)
+    report=S.validate_final_ferries(world)
+    assert len(report['finalFits'])==1
+    assert seen==[F.landing_groups(world)[0]['connections']]

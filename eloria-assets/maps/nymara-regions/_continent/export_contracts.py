@@ -28,6 +28,8 @@ GAMEPLAY_SOURCES = ('eloria/daily_quests.py', 'eloria/world.py', 'eloria/walkthr
 # The coordinated build regenerates these from the served profile after the
 # plan is applied; a re-run accepts only their exact deterministic regeneration.
 BUILD_REGENERATED = ('config/eloria/spawn_groups/invasion/invasion_nymara.def',)
+BUILD_REGENERATED_PROFILE = frozenset(
+    path.removeprefix('config/eloria/') for path in BUILD_REGENERATED)
 
 
 def write_json(path, value):
@@ -220,6 +222,9 @@ def verify_current_profile(server, baseline, certificate, previous, shared, publ
         publisher.rewrite_runtime_binding_sources(
             bound_originals, bound_rewritten, specs,
             previous_placements=None, certified_texts=bound_originals)
+    certified_content = {name: (baseline / 'config/eloria' / name).read_text(encoding='utf-8')
+                         for name in publisher.CONTENT}
+    content_source_tiles = publisher.content_source_tile_counts(certified_content) if certified_content else {}
     regenerated = []
     for relative, expected in certificate['files'].items():
         path = server / relative
@@ -230,7 +235,7 @@ def verify_current_profile(server, baseline, certificate, previous, shared, publ
         if name == 'client_content_manifest.json':
             continue  # Digests and generated package metadata legitimately change at publication.
         if name in publisher.CONTENT:
-            text, _ = publisher.rewrite_content(old_text, name, specs, False)
+            text, _ = publisher.rewrite_content(old_text, name, specs, False, content_source_tiles)
         elif name in shared.RULES:
             if name in bound_rewritten:
                 text = bound_rewritten[name]
@@ -648,6 +653,18 @@ class RegionPlacement:
               reuse_existing=False):
         old = list(map(int, old))
         expected = self.expected(old, identity)
+        if (label == 'territories.txt' and identity is None and self.previous is not None and
+                self.region in getattr(self.content, 'authored_regions', ()) and
+                self.nearest(expected, radius, shape, allow_reserved=True) is None):
+            # These legacy attacker/defender coordinates have no scene marker.
+            # Once the terrain is saved, its source frame is no longer the
+            # procedural layout transform. If that raw position has no
+            # reachable ground within the original budget, the last certified
+            # publication supplies the served source frame instead. Ordinary
+            # viable points and exact authored bindings retain their behavior.
+            served = self.previous_tile(old)
+            if served is not None:
+                expected = np.asarray(served, float)
         binding = self.runtime_binding(identity)
         if binding is not None:
             self.spec.setdefault('runtimeBindings', {}).setdefault(identity, copy.deepcopy(binding))
@@ -720,6 +737,30 @@ class RegionPlacement:
             **({'runtimeBindingId': identity} if binding is not None else {})})
         return tile
 
+    def authored_default_spawn_tile(self):
+        """Return the saved default spawn tile for an authored territory.
+
+        A saved default spawn is a visible authoring control even when no
+        immutable server-profile record names it.  It therefore seats the
+        contract hub without inventing a runtime binding identity.
+        """
+        authored_regions = getattr(self.content, 'authored_regions', None)
+        if authored_regions is None or self.region not in authored_regions:
+            return None
+        spawns = self.content.templates[self.region].get('spawnPoints', [])
+        if not spawns:
+            raise PlacementError(f'{self.region}: authored publication lost every spawn point')
+        defaults = [spawn for spawn in spawns if spawn.get('default')]
+        if len(defaults) > 1:
+            raise PlacementError(f'{self.region}: authored publication has multiple default spawns')
+        selected = defaults[0] if defaults else spawns[0]
+        tile = selected.get('serverTile', selected.get('server_tile'))
+        if not (isinstance(tile, (list, tuple)) and len(tile) == 2
+                and all(isinstance(value, (int, np.integer)) for value in tile)):
+            raise PlacementError(
+                f'{self.region}:{selected.get("id")}: authored default spawn has no exact server tile')
+        return list(map(int, tile))
+
     def connect_hub(self, old_arrival, preferred=None):
         center = np.asarray(self.world.regions[self.region]['center'], dtype=float)
         hub = np.asarray(self.world.hub(self.region) if hasattr(self.world, 'hub') else center, dtype=float)
@@ -727,6 +768,9 @@ class RegionPlacement:
         # Express it in the same unchanged territory-local server address.
         offset = hub - center
         expected = np.asarray(self.spec['serverOrigin'], dtype=float) + offset * [1., -1.] - .5
+        authored_spawn_tile = self.authored_default_spawn_tile()
+        if authored_spawn_tile is not None:
+            expected = np.asarray(authored_spawn_tile, dtype=float)
         arrival = self.nearest(expected, 12., mask=preferred) if preferred is not None else None
         preference = 'largest component within hub budget' if arrival is not None else 'nearest local component'
         if arrival is None:
@@ -737,6 +781,8 @@ class RegionPlacement:
             return
         self.spec['arrival'] = arrival
         self.spec['tilePositions'][key(old_arrival)] = arrival
+        if authored_spawn_tile is not None:
+            self.spec['tilePositions'][key(authored_spawn_tile)] = arrival
         self.reachable = self.sources.reachable_from(self.grid, tuple(arrival), 2)
         self.reserve(arrival, margin=2)
         self.fixed.add(tuple(arrival))
@@ -900,6 +946,11 @@ def collect_gameplay_points(server, profile_text, placements, records, shared, p
             shared.rewrite_profile(profile_text[filename], shared.RULES[filename], mappings)
     for relative, text in profile_text.items():
         if relative.endswith('.def') or relative == 'questlines.txt':
+            # The publisher regenerates these deterministic files after it has
+            # synced the current authored collision. Their old generated
+            # coordinates are not source placements to preserve or remap.
+            if relative in BUILD_REGENERATED_PROFILE:
+                continue
             radius = 5. if relative.startswith('instances/') else 80. if relative.startswith('spawn_groups/') else 35.
             current.update(label=relative, radius=radius, area=False, source=relative)
             shared.rewrite_definition(text, mappings)

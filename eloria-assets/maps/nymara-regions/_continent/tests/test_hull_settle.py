@@ -116,3 +116,20 @@ def test_no_hulls_records_an_empty_report():
     w = world()
     report = H.apply_hull_settle(w, content([prop('amberwood', 'Prop_Sack', [0, 0, 0], [1, 1, 1], 0.)]))
     assert report['hulls'] == [] and report['afloat'] == 0 and w.hull_settle is report
+
+
+def test_saved_hull_and_nearby_saved_companion_keep_scene_transforms():
+    w = world(-3.)
+    water = rectangle(-15, 15, -15, 15, 0.)
+    old = prop('amberwood', 'Prop_HarbourPacket', [-3, 7.4, -1], [3, 9, 1], 8.)
+    saved_hull = prop('crownwater', 'Prop_Boat_Harbour_0', [4, 7.4, -1], [8, 9, 1], 8.)
+    saved_rig = prop('crownwater', 'Prop_PacketRig', [-.5, 8.6, -.2], [.5, 14, .2], 8.)
+    c = content([old, saved_hull, saved_rig])
+    c.authored_regions = {'crownwater'}
+    report = H.apply_hull_settle(
+        w, c, triangles={'Prop_HarbourPacket': rectangle(-3, 3, -1, 1, -.6)},
+        faces=water)
+    assert [entry['node'] for entry in report['hulls']] == ['Prop_HarbourPacket']
+    assert report['hulls'][0]['companions'] == []
+    assert saved_hull['shift'][1] == saved_rig['shift'][1] == 8.
+    assert saved_hull['low'][1] == 7.4 and saved_rig['low'][1] == 8.6

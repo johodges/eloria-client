@@ -126,7 +126,12 @@ def build_access_decks(world, content, path):
     builder.add_image('access_deck_ashlar', stone_texture())
     builder.add_material(G.Material('access_deck_stone', base_color_texture='access_deck_ashlar', roughness=.95, double_sided=True))
     parts, reports = [], []
+    saved=set(getattr(world,'authoring_snapshots',{}))
     for deck in entries(plan):
+        if deck['region'] in saved:
+            reports.append({'name':deck['name'],'region':deck['region'],
+                            'skipped':'saved-authoring-authority'})
+            continue
         mesh, report = deck_mesh(deck, 'access_deck_stone')
         builder.add_mesh(deck['name'], mesh, with_tangents=False); root = builder.add_node(G.Node(deck['name'], mesh=deck['name']))
         parts.append({'region': deck['region'], 'node': deck['name'], 'roots': [root], 'bounds': mesh.bounds(), 'segment': [], 'collides': False})

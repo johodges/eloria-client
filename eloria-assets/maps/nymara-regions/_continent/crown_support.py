@@ -95,6 +95,42 @@ def apply_crown_support(world,content):
     structures. The exporter checks its whole quay/hull footprint against it.
     """
     if REGION not in world.ids:return {}
+    saved=getattr(world,'authoring_snapshots',{}).get(REGION)
+    if saved is not None:
+        # Keep the ferry selector's *actual saved* causeway/quay exclusion,
+        # while leaving every scene mesh, placement, and terrain sample alone.
+        # Crossing metadata is emitted from the current AssetControl set, so
+        # deleting a saved bridge also removes its exclusion on the next bake.
+        base_exclusion=np.asarray(getattr(world,'ferry_exclusion',
+            np.zeros_like(world.height,dtype=bool)),dtype=bool).copy()
+        crossings=content.metadata[REGION].get('crossings',())
+        for crossing in crossings:
+            endpoints=np.asarray(crossing['endpoints'],float)+saved.translation
+            if endpoints.shape!=(2,3) or not np.isfinite(endpoints).all():
+                raise ValueError(f"{REGION}: invalid saved ferry crossing {crossing.get('id')}")
+            base_exclusion|=segment_distance(world.gx,world.gz,
+                endpoints[0,[0,2]],endpoints[1,[0,2]])<=9.
+        quays=0;saved_ferry_quays=0
+        for obj in content.objects:
+            if obj.get('region')!=REGION or 'quay' not in obj.get('node','').lower():continue
+            low,high=np.asarray(obj['low'])[[0,2]]-6.,np.asarray(obj['high'])[[0,2]]+6.
+            mask=(world.gx>=low[0])&(world.gx<=high[0])&\
+                (world.gz>=low[1])&(world.gz<=high[1])
+            ferry=(obj.get('source') or {}).get('authoredFerryQuay')
+            if ferry is None:base_exclusion|=mask
+            else:saved_ferry_quays+=1
+            quays+=1
+        world.ferry_exclusion_base=base_exclusion
+        world.ferry_exclusion_by_owner={}
+        world.ferry_exclusion=base_exclusion.copy()
+        report={'region':REGION,'skipped':'saved-authoring-authority',
+            'savedCrossings':len(crossings),'savedQuayAssets':quays,
+            'savedFerryQuayAssets':saved_ferry_quays,
+            'ferryExcludedVertices':int(base_exclusion.sum()),
+            'supportedVertices':0,
+            'policy':'Ferry exclusion from current saved crossing and quay geometry; no native scene or terrain shaping.'}
+        world.crown_support_report=report
+        return report
     islands=[i for i in world.plan['islands'] if i.get('crownSourceIsland')]
     if len(islands)!=17:raise ValueError('Crownwater requires its 17 named causeway islands')
     shift=np.asarray(content.assembly_records[ASSEMBLY]['translation'],float)
@@ -175,6 +211,8 @@ def apply_crown_support(world,content):
         low,high=obj['low'][[0,2]]-6,obj['high'][[0,2]]+6
         exclusion|=(world.gx>=low[0])&(world.gx<=high[0])&(world.gz>=low[1])&(world.gz<=high[1])
     world.ferry_exclusion=exclusion
+    world.ferry_exclusion_base=exclusion.copy()
+    world.ferry_exclusion_by_owner={}
     world.water=L.water_fields(world.gx,world.gz,height=world.height,plan=world.plan)
     report={'islands':len(islands),'sourceSha256':hashlib.sha256(file.read_bytes()).hexdigest(),
         'retainedTranslation':shift.tolist(),'reprofiledBridges':repaired,'abutments':abutments,

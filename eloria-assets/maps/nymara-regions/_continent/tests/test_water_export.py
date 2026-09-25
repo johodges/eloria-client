@@ -172,6 +172,29 @@ class WaterExportTests(unittest.TestCase):
             self.assertTrue(output.is_file())
             self.assertEqual(w.authored_overlay_report['waterMaterials'][0]['id'],'authored-river')
 
+    def test_two_authored_regions_both_supply_river_water_materials(self):
+        rivers=[
+            {'id':'mirror_outlet','width':2.,'points':[[2.,0.,2.],[2.,8.,2.]]},
+            {'id':'horn_tributary','width':2.,'points':[[6.,0.,2.],[6.,8.,2.]]},
+        ]
+        plan={'seed':2042,'sea_level':-10.,'lakes':[],'rivers':rivers}
+        w=world(np.arange(0,9,2.),np.arange(0,9,2.),lambda x,z:np.full_like(x,-1.),plan)
+        surface={'preset':'Water','rotationDegrees':0.,'materialMode':'surface'}
+        w.authoring_snapshots={
+            'mirrorhold':SimpleNamespace(document={'regionId':'mirrorhold','paths':[
+                {'id':'mirror-outlet','kind':'river','replacesPlanFeatureId':'mirror_outlet',
+                 'surface':surface}]},translation=np.array([840.,0.,650.])),
+            'whitehorn_range':SimpleNamespace(document={'regionId':'whitehorn_range','paths':[
+                {'id':'horn-tributary','kind':'river','replacesPlanFeatureId':'horn_tributary',
+                 'surface':surface}]},translation=np.array([550.,0.,220.])),
+        }
+        with tempfile.TemporaryDirectory() as temporary, patch.object(T,'authored_overlays',return_value=[]):
+            T.partition_surface(w,Path(temporary)/'surface.glb')
+        records=w.authored_overlay_report['waterMaterials']
+        self.assertEqual([(item['region'],item['id']) for item in records],[
+            ('mirrorhold','mirror-outlet'),('whitehorn_range','horn-tributary')])
+        self.assertTrue(all(item['triangles']>0 for item in records))
+
     def test_chunked_authored_road_emits_scalar_triangle_indices(self):
         mesh=M.Mesh(positions=np.array([[0.,0.,0.],[1.,0.,0.],[0.,0.,1.],[1.,0.,1.]]),
             normals=np.tile([0.,1.,0.],(4,1)),uvs=np.zeros((4,2)),

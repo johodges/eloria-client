@@ -29,6 +29,35 @@ class Shore:
         return -.15 * np.asarray(x)
 
 
+def saved_snapshot(region, connection_ids, objects):
+    return SimpleNamespace(translation=np.zeros(3), document={
+        'regionId': region,
+        'authority': {'ownedFerryConnectionIds': sorted(connection_ids)},
+        'replacements': {'ferryConnectionIds': sorted(connection_ids)},
+        'objects': objects,
+    })
+
+
+def saved_quay(world, region='a', shift=(0., 0., 0.)):
+    groups = F.landing_groups(world)
+    number, group = next((index, group) for index, group in enumerate(groups)
+                         if group['region'] == region)
+    fit = F.fit_landing(world, group['landing'], region)
+    station = int(np.argmin(abs(np.asarray(fit['stations']))))
+    expected = np.array([fit['landing'][0], fit['heights'][station], fit['landing'][1]])
+    matrix = np.eye(4)
+    matrix[:3, 3] = expected + np.asarray(shift)
+    return group, {
+        'id': region + '-saved-quay',
+        'matrix': matrix.reshape(-1, order='F').tolist(),
+        'metadata': {'authoredFerryQuay': {
+            'connectionIds': sorted(group['connections']),
+            'walkNode': f'Walk_FerryQuay_{region}_{number:02d}',
+            'localLanding': [0., 0., 0.],
+        }},
+    }
+
+
 def test_fit_follows_actual_water_and_keeps_clear_access_and_grade():
     world = Shore()
     fit = F.fit_landing(world, [-12, 0], 'a')
@@ -124,3 +153,88 @@ def test_emitted_walk_floor_faces_up_piles_touch_bed_and_export_is_repeatable(tm
     second = tmp_path / 'second.glb'
     F.build_ferries(world, second)
     assert first.read_bytes() == second.read_bytes()
+
+
+def test_saved_quay_suppresses_only_its_generated_parts_and_deletion_stays_owned(tmp_path):
+    world = Shore()
+    group, control = saved_quay(world)
+    saved_matrix = list(control['matrix'])
+    saved_connections = repr(world.connections)
+    bank_samples = np.asarray(world.height_at([-12., 4., 12.], [0., 0., 0.])).copy()
+    world.authoring_snapshots = {
+        'a': saved_snapshot('a', group['connections'], [control]),
+    }
+    target = tmp_path / 'mixed.glb'
+    parts = F.build_ferries(world, target)
+    assert target.exists()
+    assert not any('FerryQuay_a_00' in part['node'] for part in parts)
+    assert world.ferry_report['savedQuays'] == 1
+    assert world.ferry_report['proceduralQuays'] == 3
+    saved = next(row for row in world.ferry_report['landings'] if row['region'] == 'a')
+    assert saved['status'] == 'saved-control' and saved['landingError'] <= .011
+    assert world.ferry_report['ferryEnds'] == 6, 'travel connectivity remains unchanged'
+    assert control['matrix'] == saved_matrix
+    np.testing.assert_array_equal(world.height_at([-12., 4., 12.], [0., 0., 0.]),
+                                  bank_samples)
+    assert repr(world.connections) == saved_connections
+
+    # Removing the saved object is an authored deletion. Persistent connection
+    # ownership must keep the old generated quay from returning.
+    world.authoring_snapshots = {}
+    world.authoring_snapshot = saved_snapshot('a', group['connections'], [])
+    deleted = tmp_path / 'deleted.glb'
+    parts = F.build_ferries(world, deleted)
+    assert not any('FerryQuay_a_00' in part['node'] for part in parts)
+    saved = next(row for row in world.ferry_report['landings'] if row['region'] == 'a')
+    assert saved['status'] == 'saved-deleted'
+
+
+def test_moved_saved_quay_fails_instead_of_regenerating_a_shifted_copy(tmp_path):
+    world = Shore()
+    group, control = saved_quay(world, shift=(.2, 0., 0.))
+    world.authoring_snapshots = {
+        'a': saved_snapshot('a', group['connections'], [control]),
+    }
+    target = tmp_path / 'moved.glb'
+    with pytest.raises(ValueError, match='landing moved or no longer fits'):
+        F.build_ferries(world, target)
+    assert not target.exists()
+
+
+def test_shared_quay_cannot_mix_saved_and_procedural_connections(tmp_path):
+    world = Shore()
+    island = next(group for group in F.landing_groups(world)
+                  if group['region'] == 'island')
+    world.authoring_snapshots = {
+        'island': saved_snapshot('island', [island['connections'][0]], []),
+    }
+    with pytest.raises(ValueError, match='mixes saved and procedural connections'):
+        F.build_ferries(world, tmp_path / 'partial.glb')
+
+
+def test_all_saved_or_deleted_quays_produce_an_empty_native_layer(tmp_path):
+    world = Shore()
+    groups = F.landing_groups(world)
+    world.authoring_snapshots = {
+        region: saved_snapshot(region,
+            sorted(connection for group in groups if group['region'] == region
+                   for connection in group['connections']), [])
+        for region in {group['region'] for group in groups}
+    }
+    target = tmp_path / 'all-saved.glb'
+    parts = F.build_ferries(world, target)
+    document, _body = GLB.load(target)
+    assert parts == [] and document.get('nodes', []) == []
+    assert world.ferry_triangles.shape == (0, 3, 3)
+    assert world.ferry_report['savedQuays'] == 4
+    assert world.ferry_report['ferryEnds'] == 6
+
+
+def test_export_refits_each_group_without_only_its_connection_exclusion(tmp_path, monkeypatch):
+    world=Shore();seen=[];original=F.fit_landing
+    def fit(candidate,landing,region,**kwargs):
+        seen.append(tuple(kwargs.get('ignore_connection_ids',())))
+        return original(candidate,landing,region,**kwargs)
+    monkeypatch.setattr(F,'fit_landing',fit)
+    F.build_ferries(world,tmp_path/'ferries.glb')
+    assert seen==[tuple(group['connections']) for group in F.landing_groups(world)]

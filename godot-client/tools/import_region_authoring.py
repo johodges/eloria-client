@@ -22,7 +22,10 @@ import authoring_catalog as catalog
 
 ADAPTERS = {
     "amethyst-v1": "import_amethyst_authoring",
+    "mirrorhold-v1": "import_mirrorhold_authoring",
+    "published-generic-v1": "import_published_authoring",
     "sunmane-v1": "import_sunmane_authoring",
+    "whitehorn-v1": "import_whitehorn_authoring",
 }
 
 
@@ -36,11 +39,15 @@ def arguments(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--base-heights", type=Path, required=True)
     parser.add_argument("--resolved-heights", type=Path, required=True)
     parser.add_argument("--runtime-bindings", type=Path, required=True)
+    parser.add_argument("--runtime-report", type=Path)
     parser.add_argument("--runtime-profile-root", type=Path, required=True)
+    parser.add_argument("--baseline-proof", type=Path)
     parser.add_argument("--composed", type=Path)
     parser.add_argument("--composition", type=Path)
     parser.add_argument("--export-ledger", type=Path)
     parser.add_argument("--published-master", type=Path)
+    parser.add_argument("--crossing-report", type=Path)
+    parser.add_argument("--ferry-fit", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--force", action="store_true")
     return parser.parse_args(argv)
@@ -82,7 +89,19 @@ def main(argv: list[str] | None = None) -> int:
             f"{args.region_spec}: unsupported explicit adapter {contract.adapter!r}; "
             f"registered adapters: {supported}")
     module = importlib.import_module(module_name)
-    return int(module.main(adapter_arguments(args, contract)))
+    values = adapter_arguments(args, contract)
+    if contract.adapter == "published-generic-v1":
+        if args.baseline_proof is None or args.runtime_report is None or \
+                args.crossing_report is None or args.ferry_fit is None:
+            raise catalog.CatalogError(
+                "published-generic-v1 requires --baseline-proof, --runtime-report, "
+                "--crossing-report, and --ferry-fit")
+        values.extend(("--region-spec", str(contract.spec_path)))
+        values.extend(("--baseline-proof", str(args.baseline_proof)))
+        values.extend(("--runtime-report", str(args.runtime_report)))
+        values.extend(("--crossing-report", str(args.crossing_report)))
+        values.extend(("--ferry-fit", str(args.ferry_fit)))
+    return int(module.main(values))
 
 
 if __name__ == "__main__":

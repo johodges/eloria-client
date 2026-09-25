@@ -3,6 +3,7 @@ extends SceneTree
 const Catalog := preload("res://addons/map_authoring_workspace/territory_catalog.gd")
 const Preview := preload("res://addons/map_authoring_workspace/reference_preview.gd")
 const Region := preload("res://src/dev/map_authoring_region/region_control.gd")
+const RegionPath := preload("res://src/dev/map_authoring_region/path_control.gd")
 
 var failures := 0
 var assertions := 0
@@ -14,8 +15,10 @@ func _initialize() -> void:
 
 func _run() -> void:
 	_test_catalog()
+	await _test_chunked_published_sources()
 	_test_shared_anchor_frames()
 	_test_relative_clipping()
+	_test_claimed_reference_water_exclusion()
 	_test_preview_visibility_restore()
 	_test_ownerless_host_is_not_serialized()
 	_test_fail_closed_ownership()
@@ -54,6 +57,8 @@ func _test_catalog() -> void:
 	_expect(original_labels == sorted, "territories are sorted by label")
 	var sunmane := catalog.find(entries, "sunmane_steppe")
 	var amethyst := catalog.find(entries, "amethyst_barrens")
+	var amberwood := catalog.find(entries, "amberwood")
+	var whitehorn := catalog.find(entries, "whitehorn_range")
 	_expect(not sunmane.is_empty() and String(sunmane.source_label) == "Saved authored source",
 		"Sunmane is labeled as saved authored source")
 	_expect(String(sunmane.source_error).is_empty(),
@@ -79,10 +84,100 @@ func _test_catalog() -> void:
 	saved_root.free()
 	copied_root.free()
 	_expect(not amethyst.is_empty(), "Amethyst Barrens is catalogued")
+	_expect(String(amberwood.source_error).is_empty(),
+		"Amberwood's declared streaming chunks are available")
+	_expect((amberwood.published_paths as PackedStringArray).size() == 19,
+		"Amberwood reference resolves all nineteen declared chunk GLBs")
+	_expect(not (amberwood.published_paths as PackedStringArray).has(
+		String(amberwood.source_path)),
+		"chunked references exclude the alternate top-level GLB")
+	_expect((amberwood.source_dependencies as PackedStringArray).size() > 39 and \
+			not String(amberwood.source_sha256).is_empty(),
+		"chunk manifests, GLBs and external resources participate in the source hash")
+	var whitehorn_claims: Dictionary = whitehorn.claimed_plan_feature_footprints
+	_expect(String(whitehorn.source_error).is_empty() and \
+			whitehorn_claims.get("horn_tributary", PackedVector2Array()).size() == 530,
+		"Whitehorn's persistent water claim has the exact 6x Catmull original footprint")
+	_expect((whitehorn.claim_source_dependencies as PackedStringArray).size() == 2,
+		"original claim geometry is hash-bound to migration provenance and continent plan")
 	for entry in entries:
-		if String(entry.id) not in ["sunmane_steppe", "amethyst_barrens"]:
+		if String(entry.scene_path).is_empty():
 			_expect(not bool(entry.editable) and String(entry.source_label) == \
 				"Published reference only", "%s is reference-only" % entry.id)
+
+
+func _test_chunked_published_sources() -> void:
+	var base := "user://map-authoring-workspace/chunked-reference"
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(
+		base.path_join("chunks/a")))
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(
+		base.path_join("chunks/b")))
+	_write_text(base.path_join("top.glb"), "top without terrain")
+	_write_text(base.path_join("chunks/a/a.glb"), "terrain chunk")
+	_write_text(base.path_join("chunks/b/b.glb"), "water chunk")
+	_write_text(base.path_join("chunks/a/world.json"), JSON.stringify({
+		"asset": {"glb": "a.glb"}}))
+	_write_text(base.path_join("chunks/b/world.json"), JSON.stringify({
+		"asset": {"glb": "b.glb"}}))
+	var manifest_path := base.path_join("world.json")
+	_write_text(manifest_path, JSON.stringify({
+		"asset": {"glb": "top.glb"},
+		"streamingChunks": {"chunks": [
+			{"id": "a", "manifest": "chunks/a/world.json"},
+			{"id": "b", "manifest": "chunks/b/world.json"}]}}))
+	var catalog := Catalog.new()
+	var sources := catalog._published_sources(manifest_path, base.path_join("top.glb"))
+	var paths: PackedStringArray = sources.get("paths", PackedStringArray())
+	_expect(String(sources.get("error", "")).is_empty() and paths.size() == 2,
+		"continent-chunks-v1 resolves every declared chunk")
+	_expect(not paths.has(base.path_join("top.glb")),
+		"chunked reference loading does not duplicate the alternate top-level scene")
+	var terrain_chunk := Node3D.new()
+	var terrain := MeshInstance3D.new()
+	terrain.name = "Terrain_Test"
+	terrain.mesh = PlaneMesh.new()
+	terrain_chunk.add_child(terrain)
+	var water_chunk := Node3D.new()
+	var water := MeshInstance3D.new()
+	water.name = "Water_Test"
+	water.mesh = PlaneMesh.new()
+	water_chunk.add_child(water)
+	var preview := Preview.new()
+	var roots: Array[Node3D] = [terrain_chunk, water_chunk]
+	var packed := preview._pack_published_roots(roots)
+	_expect(packed != null, "declared chunk scenes pack into one cached reference")
+	if packed == null:
+		preview.free()
+		return
+	var instance := packed.instantiate(PackedScene.GEN_EDIT_STATE_DISABLED)
+	_expect(instance.find_children("Terrain_*", "MeshInstance3D", true, false).size() == 1 and \
+		instance.find_children("Water_*", "MeshInstance3D", true, false).size() == 1,
+		"chunked reference contains one terrain and one water surface without duplication")
+	instance.free()
+	_write_text(base.path_join("missing.json"), JSON.stringify({
+		"asset": {"glb": "top.glb"},
+		"streamingChunks": {"chunks": [
+			{"id": "missing", "manifest": "chunks/missing/world.json"}]}}))
+	var missing := catalog._published_sources(base.path_join("missing.json"),
+		base.path_join("top.glb"))
+	_expect("chunk missing manifest" in String(missing.get("error", "")),
+		"missing chunk dependencies fail closed with an actionable error")
+	var refused := await preview._add_reference({
+		"label": "Broken authored territory",
+		"source_kind": "published",
+		"source_path": base.path_join("top.glb"),
+		"published_paths": PackedStringArray([base.path_join("top.glb")]),
+		"source_error": "authoring spec identity does not match",
+	}, preview._generation)
+	_expect("authoring spec identity" in refused and preview.get_child_count() == 0,
+		"a declared authored-source error refuses the published fallback")
+	preview.free()
+
+
+func _write_text(path: String, value: String) -> void:
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	file.store_string(value)
+	file.close()
 
 
 func _test_shared_anchor_frames() -> void:
@@ -219,6 +314,88 @@ func _test_relative_clipping() -> void:
 	_expect(published_terrain.visible,
 		"hiding published references restores their source terrain visibility")
 	active.queue_free()
+
+
+func _test_claimed_reference_water_exclusion() -> void:
+	var region := Region.new()
+	root.add_child(region)
+	region.owned_plan_feature_ids = PackedStringArray(["claimed_water"])
+	var rivers := Node3D.new()
+	rivers.name = "Rivers"
+	region.add_child(rivers)
+	var preview := Preview.new()
+	region.add_child(preview)
+	preview.active_root = region
+	preview.active_entry = {
+		"translation": Vector3.ZERO,
+		"claimed_plan_feature_footprints": {
+			"claimed_water": PackedVector2Array([
+				Vector2(0, -0.5), Vector2(4, -0.5),
+				Vector2(4, 0.5), Vector2(0, 0.5)]),
+		},
+	}
+	var exclusions := preview._active_claimed_water_exclusions()
+	_expect(exclusions.size() == 1 and String(exclusions[0].source) == \
+			"certified_original",
+		"deleting a river control retains its persistent original water exclusion")
+	var river := Path3D.new()
+	river.set_script(RegionPath)
+	river.name = "ClaimedRiver"
+	river.set("kind", "river")
+	river.set("replaces_plan_feature_id", "claimed_water")
+	river.set("default_width", 1.0)
+	var curve := Curve3D.new()
+	curve.add_point(Vector3(0, 2, 1.5))
+	curve.add_point(Vector3(4, 2, 1.5))
+	river.curve = curve
+	rivers.add_child(river)
+	exclusions = preview._active_claimed_water_exclusions()
+	_expect(exclusions.size() == 2 and String(exclusions[1].source) == "saved_current",
+		"moving an enabled river excludes both original and current saved footprints")
+	var source := MeshInstance3D.new()
+	region.add_child(source)
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = PackedVector3Array([
+		Vector3(-1, 1, -2), Vector3(5, 1, -2), Vector3(-1, 1, 2),
+		Vector3(5, 1, -2), Vector3(5, 1, 2), Vector3(-1, 1, 2)])
+	arrays[Mesh.ARRAY_INDEX] = PackedInt32Array([0, 1, 2, 3, 4, 5])
+	var source_mesh := ArrayMesh.new()
+	source_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	source.mesh = source_mesh
+	var ownership := PackedVector2Array([
+		Vector2(-2, -3), Vector2(6, -3), Vector2(6, 3), Vector2(-2, 3)])
+	var retained := Preview.clipped_mesh(source, region, ownership, Vector3.ZERO,
+		exclusions)
+	_expect(retained != null and is_equal_approx(_mesh_area_xz(retained), 16.0),
+		"original and moved active water are subtracted while other published water remains")
+	river.set("preview_enabled", false)
+	var disabled := Preview.clipped_mesh(source, region, ownership, Vector3.ZERO,
+		preview._active_claimed_water_exclusions())
+	_expect(disabled != null and is_equal_approx(_mesh_area_xz(disabled), 20.0),
+		"disabling a saved river still suppresses only its original published footprint")
+	region.owned_plan_feature_ids = PackedStringArray(["another_feature"])
+	var untouched := Preview.clipped_mesh(source, region, ownership, Vector3.ZERO,
+		preview._active_claimed_water_exclusions())
+	_expect(untouched != null and is_equal_approx(_mesh_area_xz(untouched), 24.0),
+		"an unrelated plan-feature claim leaves published water untouched")
+	region.queue_free()
+
+
+func _mesh_area_xz(mesh: ArrayMesh) -> float:
+	var result := 0.0
+	for surface_index in mesh.get_surface_count():
+		var arrays: Array = mesh.surface_get_arrays(surface_index)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+		for offset in range(0, indices.size() - 2, 3):
+			var a := Vector2(vertices[indices[offset]].x, vertices[indices[offset]].z)
+			var b := Vector2(vertices[indices[offset + 1]].x,
+				vertices[indices[offset + 1]].z)
+			var c := Vector2(vertices[indices[offset + 2]].x,
+				vertices[indices[offset + 2]].z)
+			result += absf((b - a).cross(c - a)) * 0.5
+	return result
 
 
 func _test_preview_visibility_restore() -> void:

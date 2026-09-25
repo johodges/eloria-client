@@ -93,7 +93,8 @@ def validate_final_ferries(world):
     """Final actual-ground readback, using exactly the exporter fit contract."""
     results=[]
     for group in F.landing_groups(world):
-        fit=F.fit_landing(world,group['landing'],group['region'])
+        fit=F.fit_landing(world,group['landing'],group['region'],
+                          ignore_connection_ids=group['connections'])
         results.append({'region':fit['region'],'landing':fit['landing'].tolist(),
             'connections':group['connections'],'forward':fit['forward'].tolist(),'reach':fit['reach'],
             'contactError':fit['contactError'],'maximumGrade':fit['maximumGrade'],

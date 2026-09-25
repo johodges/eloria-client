@@ -13,14 +13,18 @@ const GROUND_REGION_MATERIAL := preload(
 @export_range(0.25, 16.0, 0.25) var cell_metres := 2.0
 @export var grid_size := Vector2i(397, 397)
 @export_file("*.f32le", "*.bin") var base_heights_path := ""
+@export_file("*.rgba8", "*.bin") var base_colors_path := ""
 @export var base_surface: MapAuthoringSurface
 @export var preview_enabled := true
 @export_range(0.01, 2.0, 0.01) var preview_uv_metres_inverse := 0.24
 
 var _base_heights := PackedFloat32Array()
 var _effective_heights := PackedFloat32Array()
+var _base_colors := PackedColorArray()
 var _loaded_path := ""
 var _loaded_sha := ""
+var _loaded_colors_path := ""
+var _loaded_colors_sha := ""
 var _preview_signature: Array = []
 var _elapsed := 0.0
 var _bound_surface: MapAuthoringSurface
@@ -51,6 +55,10 @@ func _process(delta: float) -> void:
 func refresh_preview() -> bool:
 	last_error = ""
 	if not _load_base_heights():
+		_clear_preview()
+		update_configuration_warnings()
+		return false
+	if not _load_base_colors():
 		_clear_preview()
 		update_configuration_warnings()
 		return false
@@ -232,6 +240,38 @@ func _load_base_heights() -> bool:
 	_base_heights = loaded
 	_loaded_path = base_heights_path
 	_loaded_sha = sha
+	return true
+
+
+func _load_base_colors() -> bool:
+	if base_colors_path.strip_edges().is_empty():
+		_base_colors = PackedColorArray()
+		_loaded_colors_path = ""
+		_loaded_colors_sha = ""
+		return true
+	var absolute := ProjectSettings.globalize_path(base_colors_path)
+	if not FileAccess.file_exists(absolute):
+		last_error = "Terrain base colors file is missing: %s" % base_colors_path
+		return false
+	var sha := FileAccess.get_sha256(absolute)
+	if base_colors_path == _loaded_colors_path and sha == _loaded_colors_sha and \
+			_base_colors.size() == grid_size.x * grid_size.y:
+		return true
+	var bytes := FileAccess.get_file_as_bytes(absolute)
+	var expected_bytes := grid_size.x * grid_size.y * 4
+	if bytes.size() != expected_bytes:
+		last_error = "Terrain base colors has %d bytes; expected %d for %d×%d RGBA8 samples." % [
+			bytes.size(), expected_bytes, grid_size.x, grid_size.y]
+		return false
+	var loaded := PackedColorArray()
+	loaded.resize(grid_size.x * grid_size.y)
+	for index in loaded.size():
+		var offset := index * 4
+		loaded[index] = Color8(bytes[offset], bytes[offset + 1], bytes[offset + 2],
+			bytes[offset + 3])
+	_base_colors = loaded
+	_loaded_colors_path = base_colors_path
+	_loaded_colors_sha = sha
 	return true
 
 
@@ -437,6 +477,8 @@ func _build_preview_mesh() -> void:
 	arrays[Mesh.ARRAY_TANGENT] = _generated_tangents(vertices, normals, uvs,
 		indices)
 	arrays[Mesh.ARRAY_TEX_UV] = uvs
+	if not _base_colors.is_empty():
+		arrays[Mesh.ARRAY_COLOR] = _base_colors
 	arrays[Mesh.ARRAY_INDEX] = indices
 	var mesh := ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
@@ -605,6 +647,10 @@ func _current_signature() -> Array:
 		FileAccess.get_sha256(ProjectSettings.globalize_path(base_heights_path))
 			if not base_heights_path.is_empty() and FileAccess.file_exists(
 				ProjectSettings.globalize_path(base_heights_path)) else "",
+		base_colors_path,
+		FileAccess.get_sha256(ProjectSettings.globalize_path(base_colors_path))
+			if not base_colors_path.is_empty() and FileAccess.file_exists(
+				ProjectSettings.globalize_path(base_colors_path)) else "",
 		base_surface.signature() if base_surface != null else [], preview_enabled,
 		preview_uv_metres_inverse, patches, paths, grounds]
 

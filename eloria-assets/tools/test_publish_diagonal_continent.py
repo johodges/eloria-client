@@ -157,7 +157,78 @@ class PublicationTests(unittest.TestCase):
         moved, count = P.rewrite_content(text, 'spawns.txt', regions, False)
         self.assertEqual(moved, 'spawn | four_gates | otter | 13 | 14\nspawn | four_gates | otter | 18 | 19\n')
         self.assertEqual(count, {'four_gates': 2})
-        self.assertEqual(regions['four_gates']['tilePositions']['8:8'], [18, 19])
+        self.assertNotIn('8:8', regions['four_gates']['tilePositions'])
+
+    def test_two_qualified_harvest_records_can_move_from_one_served_tile_independently(self):
+        text = ('node | four_gates | 69 | 7 | 8 | Riverflax\n'
+                'node | four_gates | 70 | 7 | 8 | Riverflax\n')
+        regions = specs(); spec = regions['four_gates']
+        spec['tilePositions']['7:8'] = [13, 14]
+        spec['contentPositions']['harvest'] = {'69': [13, 14], '70': [13, 13]}
+        spec['runtimeBindings'] = {
+            identity: {'role': 'harvest', 'source': {
+                'path': 'config/eloria/harvesting.txt', 'line': line,
+                'recordId': record, 'oldTile': [7, 8]}}
+            for identity, line, record in (('first', 1, '69'), ('second', 2, '70'))}
+        spec['runtimeBindingPositions'] = {'first': [13, 14], 'second': [13, 13]}
+        spec['runtimeBindingSourceTiles'] = {'first': [7, 8], 'second': [7, 8]}
+        moved, counts = P.rewrite_content(text, 'harvesting.txt', regions, False)
+        self.assertEqual(moved, ('node | four_gates | 69 | 13 | 14 | Riverflax\n'
+                                 'node | four_gates | 70 | 13 | 13 | Riverflax\n'))
+        self.assertEqual(counts, {'four_gates': 2})
+        self.assertEqual(spec['tilePositions']['7:8'], [13, 14])
+        # The next contract run reconstructs served text from the same frozen
+        # source and hash-addressed publication before doing another rewrite.
+        reconstructed, _ = P.rewrite_content(text, 'harvesting.txt', copy.deepcopy(regions), False)
+        self.assertEqual(reconstructed, moved)
+        repeated, _ = P.rewrite_content(moved, 'harvesting.txt', regions, True)
+        self.assertEqual(repeated, moved)
+        for drift in ('missing', 'wrong-line', 'wrong-destination', 'wrong-source-tile'):
+            bad = copy.deepcopy(regions)
+            if drift == 'missing':
+                del bad['four_gates']['runtimeBindings']['second']
+            elif drift == 'wrong-line':
+                bad['four_gates']['runtimeBindings']['second']['source']['line'] = 3
+            elif drift == 'wrong-source-tile':
+                bad['four_gates']['runtimeBindings']['second']['source']['oldTile'] = [6, 8]
+            else:
+                bad['four_gates']['runtimeBindingPositions']['second'] = [12, 13]
+            with self.assertRaisesRegex(ValueError, 'conflicting authored destinations'):
+                P.rewrite_content(text, 'harvesting.txt', bad, False)
+        served = copy.deepcopy(regions)
+        served['four_gates']['runtimeBindings']['first']['source']['oldTile'] = [2, 3]
+        served['four_gates']['runtimeBindings']['second']['source']['oldTile'] = [2, 3]
+        served['four_gates']['runtimeBindingSourceTiles'] = {'first': [2, 3], 'second': [2, 3]}
+        served['four_gates']['baselineTilePositions'] = {'2:3': [7, 8]}
+        self.assertEqual(P.rewrite_content(text, 'harvesting.txt', served, False)[0], moved)
+
+    def test_unique_saved_content_id_supersedes_only_an_identity_mapping(self):
+        text = 'four_gates | 500 | 7 | 8 | secret | key:Resin | shrine\n'
+        regions = specs(); spec = regions['four_gates']
+        spec['tilePositions']['7:8'] = [7, 8]
+        spec['contentPositions']['interactives'] = {'500': [9, 8]}
+        moved, counts = P.rewrite_content(text, 'interactives.txt', regions, False)
+        self.assertIn('500 | 9 | 8 | secret', moved)
+        self.assertEqual(counts, {'four_gates': 1})
+        self.assertEqual(spec['tilePositions']['7:8'], [7, 8])
+        unrelated = 'node | four_gates | 70 | 7 | 8 | Riverflax\n'
+        all_counts = P.content_source_tile_counts({
+            'interactives.txt': text, 'harvesting.txt': unrelated})
+        blocked = specs(); blocked['four_gates']['tilePositions']['7:8'] = [7, 8]
+        blocked['four_gates']['contentPositions']['interactives'] = {'500': [9, 8]}
+        with self.assertRaisesRegex(ValueError, 'conflicting authored destinations'):
+            P.rewrite_content(text, 'interactives.txt', blocked, False, all_counts)
+        blocked['four_gates']['tilePositions']['7:8'] = [8, 8]
+        moved, _ = P.rewrite_content(text, 'interactives.txt', blocked, False)
+        self.assertIn('500 | 9 | 8 | secret', moved)
+        self.assertEqual(blocked['four_gates']['tilePositions']['7:8'], [8, 8])
+        mapper = {'four_gates': {'delta': [0, 0], '_native_mapper':
+                  lambda tile: P.transform_tile(tile, blocked['four_gates'])}}
+        portal = 'portal | four_gates | 7 | 8 | room | 9 | 10\n'
+        self.assertIn('four_gates | 8 | 8 | room',
+            P.shared.rewrite_profile(portal, P.shared.RULES['maps.txt'], mapper)[0])
+        definition = 'map_id: maps/four_gates.elm\ntype: otter\nx_pos: 7\ny_pos: 8\n'
+        self.assertIn('x_pos: 8\ny_pos: 8', P.shared.rewrite_definition(definition, mapper)[0])
 
     def test_only_declared_obsolete_portal_posts_can_be_removed(self):
         regions = specs()

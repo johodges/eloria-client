@@ -154,6 +154,15 @@ def foundation_faces(world,mesh,material):
 
 
 def build_mirror_access(world,content,path):
+    if REGION in getattr(world,'authoring_snapshots',{}):
+        # The imported Mirrorhold scene owns exact saved copies of both bank
+        # ramp/foundation pairs. Keep the auxiliary GLB structurally valid for
+        # the normal export pipeline without regenerating duplicate geometry.
+        builder=G.GltfBuilder('Saved Mirrorhold bank access authority')
+        Path(path).parent.mkdir(parents=True,exist_ok=True);builder.write_glb(str(path))
+        world.mirror_bank_access=[{'authority':'saved-authored-assets','region':REGION}]
+        world.mirror_bank_opening={'authority':'saved-resolved-terrain','region':REGION}
+        return []
     opening=open_sanctuary_landing(content)
     builder=G.GltfBuilder('Eloria Mirrorhold bank access')
     # Coursed stone instead of one flat pale colour; the ramp UVs are metres.

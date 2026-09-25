@@ -89,8 +89,10 @@ POLICY = ('Rigid translation: afloat on the actual water surface with a complete
 
 def hulls(content):
     """Decorative hull props anywhere, except the delta dugouts their own module settles."""
+    saved=set(getattr(content,'authored_regions',()))
     return [o for o in content.objects
-            if o.get('kind') == 'prop' and not o.get('walk') and HULL.search(o.get('node', ''))
+            if o.get('region') not in saved and o.get('kind') == 'prop' and
+            not o.get('walk') and HULL.search(o.get('node', ''))
             and not NOT_HULL.search(o.get('node', ''))
             and not (o.get('region') == 'manymouth_delta' and MANYMOUTH_OWN.fullmatch(o.get('node', '')))]
 
@@ -101,7 +103,8 @@ def companions(content, hull, taken):
     other_hulls = {id(o) for o in hulls(content)}
     result = []
     for o in content.objects:
-        if o is hull or id(o) in taken or id(o) in other_hulls or o.get('kind') != 'prop' or o.get('walk'):
+        if o is hull or o.get('region') in getattr(content,'authored_regions',()) or \
+                id(o) in taken or id(o) in other_hulls or o.get('kind') != 'prop' or o.get('walk'):
             continue
         if o.get('region') != hull.get('region'):
             continue

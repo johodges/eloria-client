@@ -1,6 +1,6 @@
 """Grey Moors consolidation: exact span retirement, pinned semantics, real floor identities."""
 from pathlib import Path
-import inspect,sys,tempfile,types,unittest
+import copy,inspect,sys,tempfile,types,unittest
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import content as C
@@ -170,16 +170,52 @@ class LandmarkRemapTests(unittest.TestCase):
                 X.remap_grey_crossing_landmarks(world,content,REGION,manifest,doc,body,bridges)
 
 
+class SavedLandmarkAuthorityTests(unittest.TestCase):
+    def fixture(self):
+        node='Walk_ContinentalBridgeUnion_001_grey_moors'
+        landmarks=[{'id':identity,'node':node,'position':[26.,25.5,-12.],
+                    'replacedSpan':retired}
+                   for identity,retired in X.RETAINED_IDENTITIES.items()]
+        snapshot=types.SimpleNamespace(document={'gameplay':{'landmarks':copy.deepcopy(landmarks)}})
+        world=world_stub();world.authoring_snapshots={REGION:snapshot}
+        content=types.SimpleNamespace(objects=[{'region':REGION,'node':node+'_WorldPlacement',
+            'source':{'authoredCrossing':{'id':'moor_tributary@62','walkNode':node}}}])
+        manifest={'landmarks':copy.deepcopy(landmarks)}
+        return world,content,manifest
+
+    def test_saved_landmarks_keep_exact_nodes_and_positions_without_generated_floor(self):
+        world,content,manifest=self.fixture();before=copy.deepcopy(manifest)
+        report=B.saved_grey_crossing_landmarks(world,content,REGION,manifest)
+        self.assertEqual(manifest,before)
+        self.assertEqual(len(report),3)
+        self.assertEqual({row['crossingId'] for row in report},{'moor_tributary@62'})
+        self.assertEqual({row['authority'] for row in report},{'saved-scene'})
+        self.assertTrue(all(row['globalPosition']==[246.,25.5,408.] for row in report))
+
+    def test_deletion_is_authoritative_and_dangling_reference_fails(self):
+        world,content,manifest=self.fixture()
+        content.objects=[]
+        with self.assertRaisesRegex(ValueError,'no active authored crossing Walk root'):
+            B.saved_grey_crossing_landmarks(world,content,REGION,manifest)
+        world.authoring_snapshots[REGION].document['gameplay']['landmarks']=[]
+        manifest['landmarks']=[]
+        self.assertEqual(B.saved_grey_crossing_landmarks(world,content,REGION,manifest),[])
+        manifest['landmarks']=[{'id':'other','node':'Landmark_boardwalk_gate'}]
+        with self.assertRaisesRegex(ValueError,'still referenced by saved landmarks'):
+            B.saved_grey_crossing_landmarks(world,content,REGION,manifest)
+
+
 class CertificateTests(unittest.TestCase):
     def test_helper_is_a_shaping_and_geometry_export_source(self):
         self.assertIn('grey_crossings.py',B.SHAPING_SOURCES)
-        self.assertIn("'grey_crossings.py'",inspect.getsource(B.export_geometry))
-        self.assertIn("'grey_crossings.py'",inspect.getsource(B.verify_geometry_export))
+        self.assertIn('grey_crossings.py',B.EXPORT_SOURCES)
+        self.assertIn('EXPORT_SOURCES',inspect.getsource(B.export_geometry))
+        self.assertIn('EXPORT_SOURCES',inspect.getsource(B.verify_geometry_export))
         self.assertIn('remap_grey_crossing_landmarks(world,content,region,manifest,bridge_doc,bridge_body,bridges)',inspect.getsource(B.export_geometry))
+        self.assertIn('saved_grey_crossing_landmarks(world,content,region,manifest)',inspect.getsource(B.export_geometry))
         self.assertIn('prepare_grey_crossings(world,content)',inspect.getsource(B.prepare))
         self.assertIn('refresh_grey_crossing_heights(world,content)',inspect.getsource(B.prepare))
-        self.assertIn("'grey_crossings.py'",inspect.getsource(AU.audit_shaping))
-        self.assertIn("'grey_crossings.py'",inspect.getsource(AU))
+        self.assertIn('SHAPING_SOURCES',inspect.getsource(AU.audit_shaping))
 
 
 if __name__=='__main__':

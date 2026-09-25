@@ -97,7 +97,20 @@ def authored_overlays(world,builder):
         tri=np.stack((a,a+nx,a+1,a+1,a+nx,a+nx+1),axis=1).reshape(-1,3)
         preview_uv=float(snapshot.document['terrain']['previewUvMetresInverse'])
         local_uv=(positions[tri][...,[0,2]]-translation[[0,2]])*preview_uv
-        add(node_name(region_id,'',base=True),positions[tri],snapshot.document['terrain']['baseSurface'],local_uv)
+        base_colors=getattr(snapshot,'base_colors',lambda:None)();vertex_colors=None
+        if base_colors is not None:
+            terrain=snapshot.document['terrain'];origin=np.asarray(terrain['origin'],float)
+            cell=float(terrain['cellMetres']);local=positions[tri][...,[0,2]]-translation[[0,2]]
+            indices=np.rint((local-origin)/cell).astype(int)
+            reconstructed=origin+indices*cell
+            if (np.abs(reconstructed-local)>1e-6).any() or (indices<0).any() or \
+                    (indices[...,0]>=snapshot.terrain_width).any() or \
+                    (indices[...,1]>=snapshot.terrain_height).any():
+                raise AUTHORING.AuthoringError(
+                    f'{region_id}: owned terrain vertices fall outside exact baseColors grid')
+            vertex_colors=base_colors[indices[...,1],indices[...,0]].astype(float)/255.
+        add(node_name(region_id,'',base=True),positions[tri],snapshot.document['terrain']['baseSurface'],local_uv,
+            vertex_colors)
         ordered_regions=sorted(snapshot.document['groundRegions'],key=lambda value:(value['priority'],value['id']))
         for layer,ground_region in enumerate(ordered_regions):
             if not ground_region['enabled']:continue

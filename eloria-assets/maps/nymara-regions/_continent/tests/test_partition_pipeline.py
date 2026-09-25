@@ -60,7 +60,7 @@ class PipelineTests(unittest.TestCase):
             np.testing.assert_allclose((low+high)/2,[10,0,20])
 
             bad=dict(metadata);bad['placements']=[dict(metadata['placements'][0],node='Missing')]
-            with self.assertRaisesRegex(ValueError,"authored placement 'Missing' is absent"):
+            with self.assertRaisesRegex(ValueError,r"sunmane_steppe: authored placement 'Missing' is missing certified roots \['Missing'\]"):
                 content.load_authored_region('sunmane_steppe',document,body,bad)
             document['scenes'][0]['nodes'].append(duplicate)
             with self.assertRaisesRegex(ValueError,"duplicate scene root 'Placed'"):

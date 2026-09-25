@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 import hashlib
+import copy
+from dataclasses import replace
 import json
 from pathlib import Path
 import sys
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -13,6 +16,105 @@ import pytest
 HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE))
 import authoring as A
+import authoring_catalog as C
+
+
+def test_published_manymouth_stelae_pair_keeps_both_ids_when_one_moves():
+    contract = C.load_region_spec(
+        C.CLIENT / "godot-client/world_authoring/regions/manymouth_delta/region-authoring-spec.json")
+    baked = A.load_snapshot(contract.snapshot_path, contract=contract)
+    original = copy.deepcopy(baked.document)
+    records = [entry for entry in original["gameplay"]["landmarks"]
+               if entry["id"] == "stelae-court"]
+    assert len(records) == 2
+    assert {entry["node"] for entry in records} == {
+        "Landmark_StelaeCourt", "Lore_stelae_court"}
+    original_positions = {entry["node"]: entry["position"][:] for entry in records}
+    moved = next(entry for entry in records if entry["node"] == "Lore_stelae_court")
+    moved["position"][0] += 1.25
+    A._validate_gameplay(original, True, contract)
+    snapshot = replace(baked, document=original)
+    manifest = A.authored_gameplay(snapshot)
+    emitted = [entry for entry in manifest["landmarks"] if entry["id"] == "stelae-court"]
+    assert len(emitted) == 2
+    by_node = {entry["node"]: entry for entry in emitted}
+    assert set(by_node) == set(original_positions)
+    assert by_node["Landmark_StelaeCourt"]["position"] == original_positions["Landmark_StelaeCourt"]
+    assert by_node["Lore_stelae_court"]["position"][0] == pytest.approx(
+        original_positions["Lore_stelae_court"][0] + 1.25)
+    moved["node"] = "Landmark_StelaeCourt"
+    with pytest.raises(A.AuthoringError, match="distinct source nodes"):
+        A._validate_gameplay(original, True, contract)
+    original["gameplay"]["landmarks"] = [entry for entry in original["gameplay"]["landmarks"]
+                                            if entry is not moved]
+    next(entry for entry in original["gameplay"]["landmarks"]
+         if entry["id"] == "stelae-court")["node"] = "Foreign_StelaeCourt"
+    with pytest.raises(A.AuthoringError, match="distinct source nodes"):
+        A._validate_gameplay(original, True, contract)
+
+
+def test_sunmane_deleted_ramp_routes_remain_claimed_and_do_not_resurrect():
+    contract = C.load_region_spec(
+        C.CLIENT / "godot-client/world_authoring/regions/sunmane_steppe/region-authoring-spec.json")
+    baked = A.load_snapshot(contract.snapshot_path, contract=contract)
+    ramp_ids = {"east-gate-main-ramp", "east-gate-town-ramp"}
+    assert ramp_ids <= set(baked.document["replacements"]["routeIds"])
+    def world_with_native_ramps():
+        return SimpleNamespace(
+            roads=[{"id": identity, "points": []} for identity in sorted(ramp_ids)],
+            height=np.zeros((2, 2)), x=np.arange(2), z=np.arange(2),
+            gx=np.zeros((2, 2)), gz=np.zeros((2, 2)), x0=0.0, z0=0.0,
+            crossing_sites=[])
+
+    present = world_with_native_ramps()
+    A.replace_routes(present, baked)
+    for identity in ramp_ids:
+        path = next(path for path in baked.document["paths"] if path["id"] == identity)
+        output = [road for road in present.roads if road["id"] == identity]
+        assert len(output) == 1
+        assert len(output[0]["points"]) == len(path["points"])
+        assert output[0]["widths"] == pytest.approx(
+            [point["width"] * 0.5 for point in path["points"]])
+    deleted = copy.deepcopy(baked.document)
+    deleted["paths"] = [path for path in deleted["paths"] if path["id"] not in ramp_ids]
+    A._validate_replacements(deleted, True, contract)
+    snapshot = replace(baked, document=deleted)
+    world = world_with_native_ramps()
+    A.replace_routes(world, snapshot)
+    assert not ramp_ids & {road["id"] for road in world.roads}
+
+
+def test_idless_published_moor_lake_claims_survive_control_deletion():
+    contract = C.load_region_spec(
+        C.CLIENT / "godot-client/world_authoring/regions/grey_moors/region-authoring-spec.json")
+    baked = A.load_snapshot(contract.snapshot_path, contract=contract)
+    assert {"moor_headwater_tarn", "moorwater_pool"} <= set(
+        baked.document["replacements"]["planFeatureIds"])
+    plan = json.loads((A.HERE / "diagonal-plan.json").read_text(encoding="utf-8"))
+    assert all("id" not in lake for lake in plan["lakes"])
+    deleted = copy.deepcopy(baked.document)
+    deleted["waterRegions"] = []
+    A._validate_replacements(deleted, True, contract)
+    after = A.apply_plan(plan, replace(baked, document=deleted))
+    assert {lake["name"] for lake in after["lakes"]} == {"Mirror Lake"}
+    altered = copy.deepcopy(plan)
+    altered["lakes"][0]["radii"][0] += 1
+    with pytest.raises(A.AuthoringError, match="source record changed"):
+        A.apply_plan(altered, replace(baked, document=deleted))
+
+
+def test_ferry_replacement_registry_persists_without_a_quay_control():
+    contract = SimpleNamespace(
+        id="crownwater", owned_route_ids=(), required_route_ids=(),
+        owned_plan_feature_ids=(),
+        owned_ferry_connection_ids=("crownwater--westhaven",))
+    document = {"paths": [], "waterRegions": [], "replacements": {
+        "routeIds": [], "planFeatureIds": [],
+        "ferryConnectionIds": ["crownwater--westhaven"]}}
+    A._validate_replacements(document, True, contract)
+    document["replacements"]["ferryConnectionIds"] = []
+    with pytest.raises(A.AuthoringError, match="ferry connection registry"):
+        A._validate_replacements(document, True, contract)
 
 
 def digest(path: Path) -> str:
@@ -66,6 +168,7 @@ def fixture(tmp_path: Path, monkeypatch) -> tuple[Path, dict]:
                                     "materialMode": "surface"},
                     "patches": []},
         "groundRegions": [],
+        "waterRegions": [],
         "paths": [{"id": "road-a", "kind": "road", "routingRole": "required",
                    "replacesRouteId": "road-a", "replacesPlanFeatureId": None,
                    "closed": False, "surface": {"preset": "Worn earth", "rotationDegrees": 0.0,
@@ -204,11 +307,40 @@ def test_saved_seam_anchors_must_match_shared_connection_frame(tmp_path, monkeyp
     A.verify_seam_anchors(world, snapshot)
     world.connections[0]["anchor"] = [1190.0, 735.0]
     A.verify_seam_anchors(world, snapshot)
+    world.connections.append({
+        "id": "sunmane--ferry-neighbour", "type": "ferry",
+        "regions": ["sunmane_steppe", "ferry_neighbour"],
+    })
+    A.verify_seam_anchors(world, snapshot)
     world.connections[0]["anchor"][0] += 0.01
     with pytest.raises(A.AuthoringError, match="seam anchor moved"):
         A.verify_seam_anchors(world, snapshot)
     world.connections.clear()
     with pytest.raises(A.AuthoringError, match="seam links differ"):
+        A.verify_seam_anchors(world, snapshot)
+
+
+def test_saved_region_with_ferry_only_neighbours_needs_no_road_seam_anchors(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
+    path, document = fixture(tmp_path, monkeypatch)
+    document["seams"]["anchors"] = []
+    path.write_text(json.dumps(document), encoding="utf-8")
+    snapshot = A.load_snapshot(path, production=False)
+    world = SimpleNamespace(connections=[{
+        "id": "sunmane--ferry-neighbour", "type": "ferry",
+        "regions": ["sunmane_steppe", "ferry_neighbour"],
+    }])
+    A.verify_seam_anchors(world, snapshot)
+    world.connections.append({
+        "id": "sunmane--walk-neighbour", "type": "walk",
+        "regions": ["sunmane_steppe", "walk_neighbour"],
+        "anchor": [1190.0, 735.0],
+    })
+    with pytest.raises(A.AuthoringError, match="seam links differ"):
+        A.verify_seam_anchors(world, snapshot)
+    world.connections[-1]["type"] = "unknown"
+    with pytest.raises(A.AuthoringError, match="unknown seam connection types"):
         A.verify_seam_anchors(world, snapshot)
 
 
@@ -537,7 +669,7 @@ def test_multiple_authored_terrain_regions_reject_conflicting_shared_ring(tmp_pa
         A.apply_terrain(world, east)
 
 
-def test_road_settlement_fits_to_authored_overlap_without_mutating_it():
+def test_road_settlement_preserves_authored_overlap_without_mutating_it():
     import landscape as L
     from world_layout import World
     world=World.__new__(World)
@@ -560,6 +692,48 @@ def test_road_settlement_fits_to_authored_overlap_without_mutating_it():
     np.testing.assert_array_equal(
         world.height[world.authored_terrain_authority],before[world.authored_terrain_authority])
     assert np.any(world.height[~world.authored_terrain_authority]!=before[~world.authored_terrain_authority])
+
+
+def test_authored_preview_does_not_become_a_distant_procedural_footing():
+    import landscape as L
+    from world_layout import World
+
+    def road_world(saved_height):
+        world=World.__new__(World)
+        world.x=np.arange(-80.,82.,2.);world.z=np.arange(-20.,22.,2.)
+        world.x0=world.x[0];world.z0=world.z[0]
+        world.gx,world.gz=np.meshgrid(world.x,world.z)
+        world.height=np.where(world.gx>=0.,saved_height,0.)
+        structure=(world.gx>=-62.)&(world.gx<=-58.)
+        world.height[structure]=4.
+        world.plan={'sea_level':-100.,'rivers':[],'lakes':[]}
+        world.water=L.water_fields(world.gx,world.gz,height=world.height,plan=world.plan)
+        world.assembly_target=world.height.copy()
+        world.assembly_weight=structure.astype(float)
+        world.road_target=np.zeros_like(world.height)
+        world.road_distance=np.abs(world.gz)
+        world.roads=[{'points':[[-78.,0.,0.],[78.,saved_height,0.]]}]
+        world.quay_contacts=[]
+        world.restore_drainage_corridor=lambda stage:None
+        world.authored_terrain_authority=world.gx>=0.
+        world.authored_terrain_height=world.height.copy()
+        return world
+
+    low,high=road_world(40.),road_world(80.)
+    low.settle_roads();high.settle_roads()
+
+    # Both editor previews remain exact, while their different elevations do
+    # not pull the unrelated procedural road forty metres away. The genuine
+    # built footing at x=-60 remains fixed in both solves.
+    for world,saved_height in ((low,40.),(high,80.)):
+        np.testing.assert_array_equal(world.height[world.gx>=0.],saved_height)
+        assert world.height[world.z==0.,world.x==-60.][0]==4.
+    # The bounded exterior shoulder interpolation may carry centimetres of
+    # visual blend; the road core cannot inherit tens of metres from the saved
+    # hillside through the global footing envelope.
+    assert np.max(abs(low.height[:,low.x==-40.]-high.height[:,high.x==-40.]))<.05
+    np.testing.assert_allclose(low.height[low.z==0.,low.x==-40.],
+                               high.height[high.z==0.,high.x==-40.],atol=1e-9)
 
 
 def test_effective_heights_are_the_hash_bound_editor_preview(tmp_path, monkeypatch):
@@ -627,6 +801,102 @@ def test_owned_plan_water_is_suppressed_before_authored_river_is_added(tmp_path,
     assert authored["points"] == [[1200.0, 720.0, 9.0, 6.5], [1210.0, 730.0, 8.0, 8.5]]
 
 
+def test_saved_ellipse_replaces_lake_and_deleted_control_does_not_restore_it(
+        tmp_path, monkeypatch):
+    path, document = fixture(tmp_path, monkeypatch)
+    document["replacements"]["planFeatureIds"] = ["mirror_lake"]
+    document["waterRegions"] = [{
+        "id": "mirror-lake", "shape": "ellipse",
+        "replacesPlanFeatureId": "mirror_lake", "name": "Mirror Lake",
+        "center": [3.0, 5.0], "radii": [7.0, 4.0],
+        "level": 11.0, "depth": 2.5,
+    }]
+    path.write_text(json.dumps(document), encoding="utf-8")
+    snapshot = A.load_snapshot(path, production=False)
+    plan = {"sea_level": -10.0, "rivers": [], "lakes": [{
+        "id": "mirror_lake", "name": "retired", "center": [0, 0],
+        "radii": [1, 1], "level": 0, "depth": 99,
+    }]}
+    applied = A.apply_plan(plan, snapshot)
+    assert applied["lakes"] == [{
+        "id": "mirror_lake", "name": "Mirror Lake",
+        "center": [1203.0, 725.0], "radii": [7.0, 4.0],
+        "level": 11.0, "depth": 2.5, "authored": True,
+        "resolvedBedAuthority": "saved-terrain",
+    }]
+
+    from landscape import water_fields
+    x = np.asarray([[1203.0, 1211.0]])
+    z = np.asarray([[725.0, 725.0]])
+    water = water_fields(x, z, height=np.asarray([[9.0, 9.0]]), plan=applied)
+    assert water["mask"].tolist() == [[True, False]]
+    assert water["surface"].tolist() == [[11.0, -10.0]]
+    # The imported legacy bed-depth is reference metadata. Actual water depth
+    # and collision follow water level minus the unchanged saved ground.
+    assert water["depth"].tolist() == [[2.0, 0.0]]
+
+    document["waterRegions"] = []
+    path.write_text(json.dumps(document), encoding="utf-8")
+    deleted = A.apply_plan(plan, A.load_snapshot(path, production=False))
+    assert deleted["lakes"] == []
+
+
+def test_plan_feature_claims_are_unique_across_controls_and_snapshots(
+        tmp_path, monkeypatch):
+    path, document = fixture(tmp_path, monkeypatch)
+    document["replacements"]["planFeatureIds"] = ["shared_water"]
+    document["waterRegions"] = [{
+        "id": "lake", "shape": "ellipse",
+        "replacesPlanFeatureId": "shared_water", "name": "Lake",
+        "center": [0, 0], "radii": [3, 2], "level": 4, "depth": 1,
+    }]
+    document["paths"].append({
+        "id": "river", "kind": "river", "routingRole": "decorative",
+        "replacesRouteId": None, "replacesPlanFeatureId": "shared_water",
+        "closed": False, "surface": {"preset": "Water", "rotationDegrees": 0.0,
+                                         "materialMode": "water"},
+        "points": [{"position": [0, 4, 0], "width": 2},
+                   {"position": [2, 4, 0], "width": 2}],
+        "properties": {"channelDepth": 1, "valleyWidth": 3, "bankHeight": 1},
+    })
+    path.write_text(json.dumps(document), encoding="utf-8")
+    with pytest.raises(A.AuthoringError, match="only one saved control"):
+        A.load_snapshot(path, production=False)
+
+    document["paths"].pop()
+    path.write_text(json.dumps(document), encoding="utf-8")
+    first = A.load_snapshot(path, production=False)
+    second_document = json.loads(json.dumps(first.document))
+    second_document["regionId"] = "other"
+    second = A.Snapshot(first.path, second_document, first.source_sha256,
+                        first.base_heights_path, first.resolved_heights_path,
+                        first.terrain_width, first.terrain_height)
+    with pytest.raises(A.AuthoringError, match="claimed by both sunmane_steppe and other"):
+        A.apply_plans({"rivers": [], "lakes": []}, [first, second])
+
+
+def test_optional_rgba8_base_colors_are_hash_bound_and_exact(tmp_path, monkeypatch):
+    path, document = fixture(tmp_path, monkeypatch)
+    colors = np.arange(397 * 397 * 4, dtype=np.uint8).reshape(397, 397, 4)
+    color_path = path.with_name("base-colors.rgba8")
+    color_path.write_bytes(colors.tobytes())
+    document["terrain"]["baseColors"] = {
+        "path": color_path.name, "sha256": digest(color_path),
+        "encoding": "rgba8-srgb",
+    }
+    path.write_text(json.dumps(document), encoding="utf-8")
+    snapshot = A.load_snapshot(path, production=False)
+    np.testing.assert_array_equal(snapshot.base_colors(), colors)
+    monkeypatch.setattr(A, "AUTHORING_FRAMEWORK_GLOBS", ())
+    assert color_path.relative_to(A.CLIENT).as_posix() in snapshot.bound_sources()
+
+    color_path.write_bytes(color_path.read_bytes()[:-1])
+    document["terrain"]["baseColors"]["sha256"] = digest(color_path)
+    path.write_text(json.dumps(document), encoding="utf-8")
+    with pytest.raises(A.AuthoringError, match="expected"):
+        A.load_snapshot(path, production=False)
+
+
 def test_authored_river_samples_are_exact_linear_spans_without_legacy_resmoothing():
     import landscape as L
     river={"id":"authored","authoredSampled":True,"width":4.,
@@ -652,6 +922,9 @@ def test_route_replacement_preserves_neighbour_order_and_rebuilds_fields(tmp_pat
         id="road-new", routingRole="decorative", replacesRouteId=None,
         points=[{"position": [5, 3, 5], "width": 4}, {"position": [9, 3, 9], "width": 6}])
     document["paths"].append(added)
+    # Deleting every saved bridge control must not return an obsolete
+    # region-owned procedural crossing or loose bridge component.
+    document["objects"] = []
     path.write_text(json.dumps(document), encoding="utf-8")
     snapshot = A.load_snapshot(path, production=False)
     world = SimpleNamespace(
@@ -679,6 +952,11 @@ def test_route_replacement_preserves_neighbour_order_and_rebuilds_fields(tmp_pat
     assert [site["id"] for site in world.crossing_sites] == [6]
     assert world.crossing_site_use == {6: 1}
     assert np.isfinite(world.road_distance).any()
+    import bridge_export as B
+    world.authoring_snapshots = {"sunmane_steppe": snapshot}
+    assert B._authored_crossing_claims(world) == {}
+    assert B._suppresses_generated_authored_component(
+        {"id": 501, "sites": []}, np.array([1, 1]), {1})
 
 
 def test_visual_overlays_preserve_variable_widths_and_godot_uv_order():
@@ -687,8 +965,13 @@ def test_visual_overlays_preserve_variable_widths_and_godot_uv_order():
     from amberwood import gltf as G
     class Snapshot:
         translation = np.array([1.3,0.,2.7])
+        terrain_width = terrain_height = 4
+        @staticmethod
+        def base_colors():
+            return np.arange(4 * 4 * 4, dtype=np.uint8).reshape(4, 4, 4)
         document = {
-            "terrain": {"previewUvMetresInverse":.24,
+            "terrain": {"origin":[-1.3,-2.7],"cellMetres":2.,
+                        "previewUvMetresInverse":.24,
                         "baseSurface": {"preset": "Desert", "rotationDegrees": 0}},
             "groundRegions": [
                 {"id":"low","enabled":True,"shape":"rectangle","matrix":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
@@ -713,7 +996,12 @@ def test_visual_overlays_preserve_variable_widths_and_godot_uv_order():
     world.height_at=lambda x,z:5.+.1*np.asarray(x)
 
     builder=G.GltfBuilder("test");overlays=T.authored_overlays(world,builder)
+    base=next(item["mesh"] for item in overlays if item["name"]=="AuthoredGround_SunmaneBase")
     road=next(item["mesh"] for item in overlays if item["name"].startswith("Walk_variable-road"))
+
+    assert base.colors is not None
+    assert np.all((base.colors >= 0.) & (base.colors <= 1.))
+    assert np.unique(np.rint(base.colors * 255).astype(np.uint8),axis=0).shape[0] > 1
 
     # Full authored widths become the exact endpoint edge lengths. The visible
     # ribbon samples the resolved terrain authority instead of intersecting it.
@@ -1048,3 +1336,80 @@ def test_real_godot_saved_edit_reaches_terrain_collision_routes_objects_and_game
     assert portal["assetId"] == "Landmark_sunmane_cave_crystal_hollow"
     assert np.asarray(portal["position"])-before_portal["position"] == pytest.approx([4.,.5,-3.])
     assert portal["serverTile"] == A.server_tile(portal["position"])
+
+
+def test_retained_library_moves_every_root_in_a_grouped_scene(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    sys.path.insert(0, str(HERE.parent / "_toolkit"))
+    from amberwood import gltf as G, mesh as M
+    from content import Content
+    import scene_io as S
+
+    path, document = fixture(tmp_path, monkeypatch)
+    asset = A.CLIENT / document["objects"][0]["bakedSource"]["path"]
+    builder = G.GltfBuilder("grouped retained fixture")
+    builder.add_material(G.Material("plain"))
+    mesh = M.Mesh(
+        positions=np.asarray([[0., 0., 0.], [1., 0., 0.], [0., 0., 1.]]),
+        normals=np.tile([0., 1., 0.], (3, 1)),
+        uvs=np.asarray([[0., 0.], [1., 0.], [0., 1.]]),
+        indices=np.asarray([0, 1, 2]), material="plain")
+    builder.add_mesh("triangle", mesh, with_tangents=False)
+    builder.add_node(G.Node("visual-root", mesh="triangle", translation=(1., 0., 0.)))
+    builder.add_node(G.Node("walk-root", mesh="triangle", translation=(0., 0., 2.)))
+    builder.write_glb(str(asset))
+
+    digest = A.sha256(asset)
+    dependency = next(entry for entry in document["sources"]["dependencies"]
+                      if entry["path"] == document["objects"][0]["bakedSource"]["path"])
+    dependency["sha256"] = digest
+    entry = document["objects"][0]
+    entry["bakedSource"]["sha256"] = digest
+    entry["sourceNode"] = entry["bakedSource"]["sourceNode"] = "."
+    entry["nodeName"] = "GroupedObject"
+    entry["matrix"][12:15] = [10., 1., 20.]
+    path.write_text(json.dumps(document), encoding="utf-8")
+
+    snapshot = A.load_snapshot(path, production=False)
+    A.build_retained_library(snapshot, tmp_path / "library")
+    output, body = S.GR.load(tmp_path / "library/library.glb")
+    metadata = json.loads((tmp_path / "library/library.json").read_text(encoding="utf-8"))
+    roots = output["scenes"][output.get("scene", 0)]["nodes"]
+    assert len(roots) == 2
+    mesh_nodes = [index for index, node in enumerate(output["nodes"])
+                  if node.get("mesh") is not None]
+    values = S.GR.triangles(output, body, mesh_nodes)
+    centres = sorted(np.mean(triangle, axis=0).tolist() for triangle in values)
+    assert np.asarray(centres) == pytest.approx(np.asarray(sorted([
+        [11. + 1. / 3., 1., 20. + 1. / 3.],
+        [10. + 1. / 3., 1., 22. + 1. / 3.],
+    ])))
+    assert output["nodes"][roots[0]]["name"] == "GroupedObject"
+    assert output["nodes"][roots[1]]["name"].startswith("GroupedObject__companion_1_")
+    assert metadata["placements"][0]["groupedNodes"] == [
+        output["nodes"][roots[0]]["name"], output["nodes"][roots[1]]["name"]]
+
+    content = Content.__new__(Content)
+    content.authoring_snapshots = {"sunmane_steppe": snapshot}
+    content.documents = {}; content.metadata = {}; content.transforms = {}
+    content.source_centers = {}; content.scales = {}; content.objects = []
+    content.mapping = {}; content.placement_by_name = {}; content.bounds_by_name = {}
+    content.prototypes = {}; content.world = SimpleNamespace(height_at=lambda x, z: 2.)
+    content.load_authored_region("sunmane_steppe", output, body, metadata)
+    placed = content.objects[0]
+    assert placed["indices"] == roots
+    np.testing.assert_allclose(placed["low"], [1210., 1., 740.])
+    np.testing.assert_allclose(placed["high"], [1212., 1., 743.])
+
+    downstream = tmp_path / "downstream.glb"
+    exporter = S.Exporter(downstream)
+    exporter.add(output, body, placed["indices"],
+                 transforms={index: placed["shift"] for index in placed["indices"]})
+    exporter.write()
+    final, final_body = S.GR.load(downstream)
+    final_meshes = [index for index, node in enumerate(final["nodes"])
+                    if node.get("mesh") is not None]
+    final_triangles = S.GR.triangles(final, final_body, final_meshes)
+    assert len(final_triangles) == 2
+    final_centres = sorted(np.mean(triangle, axis=0).tolist() for triangle in final_triangles)
+    np.testing.assert_allclose(final_centres, np.asarray(centres) + snapshot.translation)

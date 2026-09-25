@@ -28,6 +28,8 @@ CLIENT=MAPS.parents[1]
 sys.path.insert(0,str(HERE))
 import landscape as L
 import authoring as AUTHORING
+from saved_seam_profile import apply_saved_seam_profile
+from saved_post_support_profile import apply_post_support_seam_profile
 from world_layout import World,CELL,CHUNK,ROAD_EARTHWORKS_GRADE
 from content import Content,spawn_position
 import scene_io as S
@@ -36,7 +38,7 @@ from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
 from build_progress import Progress
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','authoring.py','authoring_catalog.py','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','authoring.py','authoring_catalog.py','saved_seam_profile.py','saved-seam-grey-whitehorn-v1.json','saved_post_support_profile.py','saved-seam-post-support-v1.json','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
 EXPORT_SOURCES=('build_continent.py','scene_io.py','terrain_export.py','compact_glb_images.py','bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_prepare.py','coastal_bridge_export.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py')
 
 
@@ -67,6 +69,12 @@ def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def source_key(path):return Path(path).resolve().relative_to(CLIENT.resolve()).as_posix()
 
 def shaping_source_keys():return frozenset(source_key(HERE/name) for name in SHAPING_SOURCES)
+
+def composition_certificate_paths():
+    """Record every shaping input, including fixed data sidecars, with the composition."""
+    return (tuple(HERE.glob('*.py'))+
+            tuple(HERE/name for name in SHAPING_SOURCES if name.endswith('.json'))+
+            (HERE/'../_northern/requirements.txt',))
 
 def geometry_dependencies():
     import shapely
@@ -115,6 +123,68 @@ def ferry_landing(world,region,toward):
             del world.quay_contacts[contact_count:]
         if len(attempted)>=64:break
     raise ValueError(f'{region}: none of {len(attempted)} ranked shoreline sites fits an actual quay and mooring; last failures: {errors[-3:]}')
+
+
+def resolve_saved_ferry_connections(world):
+    """Resolve persistent saved endpoints before any procedural shore choice.
+
+    A claimed endpoint with no surviving control is an authored deletion.  The
+    complete connection is omitted before routing, so neither side can revive
+    a generated quay or approach road.
+    """
+    import ferry_export as F
+    authority=F.saved_ferry_authority(world)
+    active=[];resolved={};report=[]
+    for link in world.connections:
+        if link['type']!='ferry':
+            active.append(link);continue
+        sides=[F.saved_ferry_endpoint(authority,link['id'],region)
+               for region in link['regions']]
+        deleted=[side for side in sides if side is not None and side['status']=='saved-deleted']
+        if deleted:
+            report.append({'id':link['id'],'status':'saved-deleted',
+                           'regions':[side['region'] for side in deleted]})
+            continue
+        active.append(link);resolved[link['id']]=sides
+        for side in sides:
+            if side is not None:
+                report.append({'id':link['id'],'region':side['region'],
+                               'status':'saved-control','control':side['control']})
+    world.connections=active
+    world.saved_ferry_handoff=report
+    return resolved
+
+
+def prepare_ferry_connection(world,link,saved_sides):
+    """Fit one ferry, selecting and shaping only its procedural endpoints."""
+    import ferry_export as F
+    from ferry_support import remember_ferry_fit,restore_selected_shores
+    ends=[]
+    for side,region in enumerate(link['regions']):
+        saved=saved_sides[side]
+        if saved is not None:
+            landing=np.asarray(saved['landing'],float)[[0,2]]
+            restore_selected_shores(world)
+            fit=F.fit_landing(world,landing,region,
+                              ignore_connection_ids=saved['connectionIds'])
+            landing_error=F.validate_saved_ferry_endpoint(saved,fit)
+            remember_ferry_fit(world,fit)
+            next(record for record in world.saved_ferry_handoff
+                 if record.get('id')==link['id'] and record.get('region')==region).update(
+                     landing=landing.tolist(),landingError=landing_error,
+                     contactError=fit['contactError'],maximumGrade=fit['maximumGrade'])
+        else:
+            other=link['regions'][1-side]
+            landing=ferry_landing(world,region,world.regions[other]['center'])
+            world.prepare_quay_court(landing)
+            restore_selected_shores(world)
+            remember_ferry_fit(world,F.fit_landing(world,landing,region))
+            hub=world.hub(region)
+            world.add_road(world.route(hub,landing,region=region,width=2.5,
+                                      public=True,name=link['id']+'-'+region),
+                           width=2.5,name=link['id']+'-'+region)
+        ends.append(landing.tolist())
+    link['landings']=ends
 
 
 SEAM_APPROACH_DEPTHS=(4.,8.,12.)
@@ -238,9 +308,22 @@ def route_saved_seam_neighbour(world,link,region,anchor,outward,route_in_legs,
     tangent=np.array([-outward[1],outward[0]])
     for depth in SEAM_APPROACH_DEPTHS:
         terminal=anchor-outward*depth
+        # A deeper straight terminal can be the exact established neighbour
+        # corridor even when the historical 9 m handoff is infeasible.  Try
+        # it before inventing a lateral switchback at the same depth.
+        candidates.append((depth,()))
         for offset in SEAM_APPROACH_OFFSETS:
             waypoint=terminal+tangent*offset
             if _owned_approach(world,region,waypoint,terminal):candidates.append((depth,(waypoint,)))
+    # The broad switchbacks can still descend across a sharp procedural bank
+    # immediately outside a saved, level ring.  Before declaring the seam
+    # infeasible, approach the nearest terminal along either short contour.
+    # Keep these last so established straight and broad routes retain priority.
+    terminal=anchor-outward*SEAM_APPROACH_DEPTHS[0]
+    for side in (1.,-1.):
+        waypoint=terminal+outward*6.+tangent*(side*6.)
+        if _owned_approach(world,region,waypoint,terminal):
+            candidates.append((SEAM_APPROACH_DEPTHS[0],(waypoint,)))
     failures=[]
     for depth,extra in candidates:
         terminal=anchor-outward*depth;claims=snapshot_claims(world);routing_start=len(world.routing)
@@ -249,7 +332,16 @@ def route_saved_seam_neighbour(world,link,region,anchor,outward,route_in_legs,
                 own=world.solids_at_ends(hub),width=4,public=True,name=name)
             connector=np.vstack([terminal,anchor-outward*4,anchor,anchor+outward*4])
             joined=np.vstack([np.asarray(prefix,float).reshape(-1,2),path,connector[1:]])
-            if _seam_approach_feasible(world,joined,anchor,world.routing[routing_start:]):
+            profiled=_seam_approach_feasible(world,joined,anchor,world.routing[routing_start:])
+            # add_road densifies this route before exporting it.  The bounded
+            # road profile can pass while its actual finished ground still has
+            # an impassable step at one of those emitted stations.
+            raw_grade=np.inf
+            if profiled:
+                dense,_=world.road_profile(joined)
+                raw_grade=saved_seam_approach_grade(world,
+                    {'points':np.c_[dense[:,0],np.zeros(len(dense)),dense[:,1]]},region,anchor)
+            if profiled and raw_grade<=SERVED_MAX_GRADE+1e-8:
                 old=next((np.asarray(road['points'],float)[:,[0,2]] for road in getattr(world,'roads',())
                           if road['id']==name),np.empty((0,2)))
                 prefix_path=np.vstack([np.asarray(prefix,float).reshape(-1,2),hub])
@@ -258,7 +350,8 @@ def route_saved_seam_neighbour(world,link,region,anchor,outward,route_in_legs,
                 return joined,{'depth':depth,'waypoint':None if not extra else np.asarray(extra[0]).tolist(),
                                'attempts':len(failures)+1}
             failures.append(f'depth {depth:g}, waypoint {None if not extra else np.asarray(extra[0]).tolist()}: '
-                            'terminal earthworks cannot meet the road grade within cut/fill bounds')
+                            +('terminal earthworks cannot meet the road grade within cut/fill bounds'
+                              if not profiled else f'emitted final-ground grade {raw_grade:.3f} exceeds {SERVED_MAX_GRADE:.2f}'))
         except ValueError as error:failures.append(str(error))
         restore_claims(world,claims);del world.routing[routing_start:]
     raise ValueError(f'{name}: no neighbour-owned approach can meet the saved seam: {failures[-4:]}')
@@ -343,6 +436,21 @@ def repair_saved_seam_approaches(world,content,route_in_legs,snapshot_claims,res
     return repairs
 
 
+def _saved_native_region(world,region,report_field=None,content=None):
+    """Reserve a legacy one-region helper for an unsaved procedural region.
+
+    This is a persistent region-authority decision, independent of which
+    scene children currently survive. Deleting an imported helper must not
+    cause the old native generator to recreate it on the next build.
+    """
+    if region not in getattr(world,'authoring_snapshots',{}):return False
+    if report_field is not None:
+        report={'region':region,'skipped':'saved-authoring-authority'}
+        setattr(world,report_field,report)
+        if content is not None:setattr(content,report_field,report)
+    return True
+
+
 def prepare(library,output):
     PROGRESS.start('compose',4);PROGRESS.step('loading libraries and content',0,4)
     snapshots=AUTHORING.load_snapshots();snapshots_by_region={
@@ -353,7 +461,7 @@ def prepare(library,output):
     profile_sha=digest(HERE/'legacy-server-profile/config/eloria/maps.txt')
     algorithm_sha=composition_algorithm_sha()
     dependencies=geometry_dependencies()
-    certificate_paths=tuple(HERE.glob('*.py'))+(HERE/'../_northern/requirements.txt',)
+    certificate_paths=composition_certificate_paths()
     sources={source_key(p):digest(p) for p in certificate_paths}
     for snapshot in snapshots:sources.update(snapshot.bound_sources())
     shaping={name:digest(HERE/name) for name in SHAPING_SOURCES}
@@ -362,7 +470,7 @@ def prepare(library,output):
         templates[region]=AUTHORING.apply_gameplay(templates[region],snapshot)
     legacy=json.loads((HERE/'legacy-geography.json').read_text())
     plan=L.load_plan()
-    for snapshot in snapshots:plan=AUTHORING.apply_plan(plan,snapshot)
+    plan=AUTHORING.apply_plans(plan,snapshots)
     started=time.monotonic();world=World(plan)
     world.authoring_snapshots=snapshots_by_region
     world.authoring_snapshot=snapshots_by_region.get(AUTHORING.SUNMANE)
@@ -379,11 +487,14 @@ def prepare(library,output):
     PROGRESS.step('roads and routing',1,4)
     from amberwood_access import prepare_amberwood_access,refresh_amberwood_access_heights
     from amberwood_support import prepare_amberwood_routes,apply_amberwood_support
-    prepare_amberwood_access(world,content)
+    if not _saved_native_region(world,'amberwood','amberwood_access'):
+        prepare_amberwood_access(world,content)
     from grey_crossings import prepare_grey_crossings,refresh_grey_crossing_heights
-    prepare_grey_crossings(world,content)
+    if not _saved_native_region(world,'grey_moors','grey_crossings'):
+        prepare_grey_crossings(world,content)
     from four_gates_sage import prepare_four_gates_sage,refresh_four_gates_sage_heights
-    prepare_four_gates_sage(world,content)
+    if not _saved_native_region(world,'four_gates','four_gates_sage'):
+        prepare_four_gates_sage(world,content)
     # Records the plan relocates to reachable ground (a door on a cliff face) are pinned before any road seeks them.
     from authored_points import prepare_authored_points,refresh_authored_point_heights
     prepare_authored_points(world,content)
@@ -394,8 +505,16 @@ def prepare(library,output):
     from manymouth_support import apply_manymouth_support
     from mirror_streets import apply_mirror_street_footings,add_mirror_streets,apply_mirror_access
     apply_crown_support(world,content)
-    apply_westhaven_support(world,content)
-    apply_manymouth_support(world,content)
+    if not _saved_native_region(world,'westhaven','westhaven_support',content):
+        apply_westhaven_support(world,content)
+    if not _saved_native_region(world,'manymouth_delta','manymouth_support',content):
+        apply_manymouth_support(world,content)
+    # Preserve the complete regional support union as the base, then add each
+    # active saved quay under its exact (region, connection) owner. This lets a
+    # saved endpoint validate against its own source geometry without hiding an
+    # overlapping unrelated harbour obstacle.
+    import ferry_export as FERRY
+    FERRY.install_saved_ferry_exclusions(world,content)
     apply_mirror_street_footings(world,content)
     world.settle_foundations()
     from mirror_lake_support import prepare_mirror_lake_support,finish_mirror_lake_support
@@ -418,8 +537,8 @@ def prepare(library,output):
     saved_seam_ids={entry['id'] for snapshot in snapshots
                     for entry in snapshot.document['seams']['anchors']}
     add_mirror_streets(world,content)
-    from ferry_export import fit_landing
-    from ferry_support import remember_ferry_fit,restore_selected_shores,validate_final_ferries
+    from ferry_support import validate_final_ferries
+    saved_ferry_endpoints=resolve_saved_ferry_connections(world)
     world.unrouted=[]
     for link in world.connections:
         if link['type']=='walk':
@@ -480,17 +599,7 @@ def prepare(library,output):
             else:
                 raise ValueError(f"{link['id']}: no seam station of the crossing can be reached from both hubs: {failures}")
         else:
-            ends=[]
-            for side,region in enumerate(link['regions']):
-                other=link['regions'][1-side]
-                landing=ferry_landing(world,region,world.regions[other]['center'])
-                world.prepare_quay_court(landing)
-                restore_selected_shores(world)
-                remember_ferry_fit(world,fit_landing(world,landing,region))
-                hub=world.hub(region)
-                world.add_road(world.route(hub,landing,region=region,width=2.5,public=True,name=link['id']+'-'+region),width=2.5,name=link['id']+'-'+region)
-                ends.append(landing.tolist())
-            link['landings']=ends
+            prepare_ferry_connection(world,link,saved_ferry_endpoints[link['id']])
     # Inhabited approaches grow from the public roads to existing doorways.
     # Close destinations share a trail; resources remain in the wilderness.
     for region in world.ids:
@@ -566,13 +675,19 @@ def prepare(library,output):
     trails=prepare_resource_trails(world,content,HERE/'legacy-server-profile/config/eloria',
                                    exclude_regions=authored_regions)
     print(f"Resource trails: {len(trails['trails'])} for {trails['steepSites']} steep sites ({trails['servedSites']} already beside a road)",flush=True)
-    prepare_amberwood_routes(world,content)
+    if not _saved_native_region(world,'amberwood'):
+        prepare_amberwood_routes(world,content)
     # Every alignment exists now: record the retained solids any road still crosses.
     world.road_solid_crossings=world.solid_crossings(content.solid_boxes())
     print(f'Roads through retained solids: {len(world.road_solid_crossings)} (solid fallbacks {len(world.routing_report()["solidFallbacks"])})',flush=True)
     print(f'River crossings: {len(world.crossing_sites)} sites claimed of {len(world.crossing_candidates)} candidates; {len(world.unrouted)} optional roads unrouted',flush=True)
     for key in ('_water_passage_cache','_bank_labels'):world.__dict__.pop(key,None)
     world.settle_roads()
+    world.saved_seam_profile=apply_saved_seam_profile(
+        world,authored_regions,_seam_approach_feasible)
+    if world.saved_seam_profile:
+        print('Saved seam neighbour profile: '+json.dumps(
+            world.saved_seam_profile,sort_keys=True,separators=(',',':')),flush=True)
     world.saved_seam_approach_repairs=repair_saved_seam_approaches(
         world,content,route_in_legs,snapshot_claims,restore_claims)
     if world.saved_seam_approach_repairs:
@@ -581,12 +696,15 @@ def prepare(library,output):
     PROGRESS.step('supports and ground',2,4)
     from mirror_support import apply_mirror_support
     from four_gates_support import apply_four_gates_support
-    apply_four_gates_support(world,content)
+    if not _saved_native_region(world,'four_gates','four_gates_support'):
+        apply_four_gates_support(world,content)
     apply_mirror_support(world,content)
     apply_mirror_access(world,content)
-    apply_amberwood_support(world,content)
+    if not _saved_native_region(world,'amberwood','amberwood_support'):
+        apply_amberwood_support(world,content)
     from ssarathi_bank_support import apply_ssarathi_banks
-    apply_ssarathi_banks(world,content)
+    if not _saved_native_region(world,'ssarathi_ruins','ssarathi_bank_support'):
+        apply_ssarathi_banks(world,content)
     finish_mirror_lake_support(world,content)
     # Reach links are written on the finished ground: the roads are settled and the supports done, so nothing
     # grades them again; road heights and placements follow them below.
@@ -598,6 +716,14 @@ def prepare(library,output):
     final_authoring_terrain={region:AUTHORING.apply_terrain(world,snapshot)
                              for region,snapshot in snapshots_by_region.items()}
     world.water=L.water_fields(world.gx,world.gz,height=world.height,plan=world.plan)
+    # The fixed shoulder samples contain no road XZ changes.  Road distance
+    # queries stay valid; refresh_road_heights below reads their final Y after
+    # bridge preparation, as it does for every other late terrain support.
+    world.saved_post_support_profile=apply_post_support_seam_profile(
+        world,authored_regions,_seam_approach_feasible,saved_seam_approach_grade)
+    if world.saved_post_support_profile['changedCells']:
+        print('Saved post-support seam shoulders: '+json.dumps(
+            world.saved_post_support_profile,sort_keys=True,separators=(',',':')),flush=True)
     validate_saved_seam_approaches(world)
     from bridge_prepare import prepare_bridges
     bridge_events=[]
@@ -612,16 +738,26 @@ def prepare(library,output):
         world.claimed_bridge_progress_events=bridge_events
     # The support stages have finished the ground: every road station stands on it again (bridges excepted).
     world.refresh_road_heights()
+    # Claimed bridge fitting can still commit terrain edits. Check every saved
+    # approach on the actual post-bridge ground before final placements/export.
+    validate_saved_seam_approaches(world)
     final_ferries=validate_final_ferries(world)
     print(f'Final ferry shore readback: {len(final_ferries["finalFits"])} complete quay/mooring fits',flush=True)
     content.reground()
     from manymouth_boats import apply_manymouth_boats
-    apply_manymouth_boats(world,content)
+    if _saved_native_region(world,'manymouth_delta'):
+        world.manymouth_boats={'boats':[],'afloat':0,'hauledUp':0,
+            'skipped':'saved-authoring-authority'}
+        content.manymouth_boats=world.manymouth_boats
+    else:apply_manymouth_boats(world,content)
     from hull_settle import apply_hull_settle
     apply_hull_settle(world,content)
-    refresh_amberwood_access_heights(world,content)
-    refresh_grey_crossing_heights(world,content)
-    refresh_four_gates_sage_heights(world,content)
+    if not _saved_native_region(world,'amberwood'):
+        refresh_amberwood_access_heights(world,content)
+    if not _saved_native_region(world,'grey_moors'):
+        refresh_grey_crossing_heights(world,content)
+    if not _saved_native_region(world,'four_gates'):
+        refresh_four_gates_sage_heights(world,content)
     refresh_authored_point_heights(world,content)
     content.ecological_scatter()
     if any(digest(HERE/name)!=sha for name,sha in shaping.items()):
@@ -659,6 +795,7 @@ def prepare(library,output):
         'riverCrossings':crossing_report(world),'movedSeamCrossings':getattr(world,'moved_seam_crossings',[]),
         'savedSeamApproaches':getattr(world,'saved_seam_approaches',[]),
         'savedSeamApproachRepairs':getattr(world,'saved_seam_approach_repairs',[]),
+        'savedPostSupportProfile':getattr(world,'saved_post_support_profile',None),
         'dryRoadEnds':getattr(world,'dry_road_ends',[]),
         'bridgePreparation':world.bridge_preparation,'claimedBridgeProgress':bridge_events,
         'routing':{**world.routing_report(),'solidCrossings':world.road_solid_crossings},
@@ -744,6 +881,55 @@ def bridge_scene(world,path):
     for name in ('bridge_report','bridge_triangles','bridge_field'):
         setattr(world,name,getattr(export_world,name))
     return result
+
+
+def saved_grey_crossing_landmarks(world,content,region,manifest):
+    """Keep Grey's saved landmark bindings on its actual retained Walk roots.
+
+    The procedural Grey exporter moves retired boardwalk identities onto new
+    generated bridge floors. A saved Grey scene already carries those final
+    landmark nodes and positions; native floors may be intentionally absent.
+    """
+    if region!='grey_moors':return []
+    from grey_crossings import RETAINED_IDENTITIES
+    snapshot=world.authoring_snapshots[region]
+    source={entry['id']:entry for entry in snapshot.document['gameplay']['landmarks']
+            if entry.get('id') in RETAINED_IDENTITIES}
+    landmarks=manifest.get('landmarks',[])
+    selected=[entry for entry in landmarks if entry.get('id') in RETAINED_IDENTITIES]
+    if len(selected)!=len({entry['id'] for entry in selected}):
+        raise ValueError('Grey Moors saved boardwalk landmark IDs are duplicated')
+    by_id={entry['id']:entry for entry in selected}
+    active={}
+    for obj in content.objects:
+        if obj.get('region')!=region:continue
+        crossing=(obj.get('source') or {}).get('authoredCrossing')
+        if not isinstance(crossing,dict):continue
+        node=crossing.get('walkNode')
+        if node in active:raise ValueError(f'Grey Moors saved crossing Walk root {node} is duplicated')
+        active[node]=crossing
+    center=np.asarray(world.regions[region]['center'],float)
+    report=[]
+    for identity,retired in RETAINED_IDENTITIES.items():
+        entry=by_id.get(identity);original=source.get(identity)
+        if (entry is None)!=(original is None):
+            raise ValueError(f'{identity}: saved scene and exported landmark presence differ')
+        if entry is None:continue  # an explicit saved landmark deletion stays deleted
+        node=entry.get('node')
+        if node!=original.get('node') or node not in active:
+            raise ValueError(f'{identity}: saved landmark node {node!r} has no active authored crossing Walk root')
+        position=np.asarray(entry.get('position',()),float)
+        if position.shape!=(3,) or not np.isfinite(position).all():
+            raise ValueError(f'{identity}: saved landmark position is invalid')
+        report.append({'id':identity,'node':node,'crossingId':active[node]['id'],
+                       'replacedSpan':retired,'authority':'saved-scene',
+                       'globalPosition':[float(position[0]+center[0]),float(position[1]),
+                                         float(position[2]+center[1])]})
+    dangling=[entry.get('id') for entry in landmarks
+              if entry.get('node') in RETAINED_IDENTITIES.values()]
+    if dangling:raise ValueError('Retired Grey Moors spans are still referenced by saved landmarks: '
+                                 +', '.join(map(str,dangling)))
+    return report
 
 
 def local_point(point,center):
@@ -920,7 +1106,10 @@ def export_geometry(world,content,output):
         objects=by_region[region];bridges=by_bridge[region]
         manifest['collision']['nodeNames'].extend(part['node'] for part in bridges if part.get('collides'))
         # Retired Grey survey spans keep their generic identities on the actual emitted crossing floors.
-        grey_landmarks+=remap_grey_crossing_landmarks(world,content,region,manifest,bridge_doc,bridge_body,bridges)
+        if region=='grey_moors' and region in world.authoring_snapshots:
+            grey_landmarks+=saved_grey_crossing_landmarks(world,content,region,manifest)
+        else:
+            grey_landmarks+=remap_grey_crossing_landmarks(world,content,region,manifest,bridge_doc,bridge_body,bridges)
         chunks=partitions[region]
         for obj in objects:
             midpoint=(obj['low']+obj['high'])*.5

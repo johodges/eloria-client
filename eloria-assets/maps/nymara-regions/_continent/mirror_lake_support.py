@@ -144,6 +144,10 @@ def shoreline_proof(world,lake,outlet):
 
 def prepare_mirror_lake_support(world,content):
     if REGION not in world.ids:return {}
+    if REGION in getattr(world,'authoring_snapshots',{}):
+        report={'region':REGION,'skipped':'saved-authoring-authority'}
+        world.mirror_lake_support=report
+        return report
     lake=next(q for q in world.plan['lakes'] if q.get('name')=='Mirror Lake')
     outlet=next(q for q in world.plan['rivers'] if q['id']=='mirror_outlet')
     # Conservative bounds for the ellipse and its geographical shoulder.
@@ -188,6 +192,9 @@ def prepare_mirror_lake_support(world,content):
 
 def finish_mirror_lake_support(world,content):
     """Restore the prepared underwater beach after generic drainage grading."""
+    if REGION in getattr(world,'authoring_snapshots',{}):
+        return getattr(world,'mirror_lake_support',
+                       {'region':REGION,'skipped':'saved-authoring-authority'})
     state=getattr(world,'mirror_lake_shore_state',None)
     if state is None:return {}
     iz0,iz1,ix0,ix1=state['slice'];sl=np.s_[iz0:iz1,ix0:ix1]

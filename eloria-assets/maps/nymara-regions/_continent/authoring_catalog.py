@@ -48,6 +48,7 @@ class RegionContract:
     runtime_binding_count: int
     runtime_point_count: int
     existing_marker_binding_count: int
+    owned_ferry_connection_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -193,6 +194,9 @@ def load_region_spec(path: Path, *, expected_id: str | None = None,
         existing_marker_binding_count=_nonnegative_integer(
             gameplay.get("existingMarkerBindingCount"),
             "gameplay.existingMarkerBindingCount"),
+        owned_ferry_connection_ids=_sorted_ids(
+            authority.get("ownedFerryConnectionIds", []),
+            "authority.ownedFerryConnectionIds"),
     )
 
 

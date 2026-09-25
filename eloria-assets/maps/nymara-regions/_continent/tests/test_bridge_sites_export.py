@@ -32,6 +32,26 @@ def water(x, z, *, height, plan):
 
 
 class SiteDeckTests(unittest.TestCase):
+    def test_all_saved_crossings_need_no_procedural_site_fit(self):
+        w = crossing()
+        w.crossing_sites = []
+        w.height = np.array([[2., 3.], [4., 5.]])
+        w.authored_terrain_authority = np.ones((2, 2), bool)
+        w.water = {"mask": np.zeros((2, 2), bool)}
+        original = w.height.copy(); water_authority = w.water
+        saved = SimpleNamespace(authored_regions=set(w.ids))
+        report = B.fit_claimed_sites(w, content=saved)
+        self.assertEqual(report["selectedSiteIds"], [])
+        self.assertEqual(report["changedTerrainVertices"], 0)
+        self.assertEqual(report["authoredTerrainVertices"], 4)
+        np.testing.assert_array_equal(w.height, original)
+        self.assertIs(w.water, water_authority)
+        self.assertEqual(w.claimed_bridge_protected_nodes.shape, (0, 2))
+        with self.assertRaisesRegex(B.BP.ProfileError, "no claimed bridge sites"):
+            B.fit_claimed_sites(w, site_ids=[], content=saved)
+        with self.assertRaisesRegex(B.BP.ProfileError, "no claimed bridge sites"):
+            B.fit_claimed_sites(w, content=SimpleNamespace(authored_regions={"west"}))
+
     def test_the_deck_is_the_span_plus_landings_of_at_most_six_metres(self):
         w = crossing()
         field = B.common_surface(w, water_fields=water)

@@ -71,8 +71,13 @@ def prepare_authored_points(world, content):
     if not hasattr(content, 'entrance_road_tiles'):
         content.entrance_road_tiles = set()
     report = {'points': []}
+    saved = set(getattr(world, 'authoring_snapshots', {}))
     for entry in entries(world.plan):
         region, tile = entry['region'], tuple(entry['tile'])
+        # The source profile record is now bound to a saved marker by identity.
+        # A retired plan pin must not override or recreate that marker.
+        if region in saved:
+            continue
         x, z = (float(v) for v in entry['point'])
         if (region, tile) in content.authored_server_points:
             raise ValueError(f'{region}:{list(tile)}: already pinned by another module')

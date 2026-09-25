@@ -2,6 +2,7 @@
 from pathlib import Path
 import copy
 import sys
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -106,3 +107,74 @@ def test_no_coast_does_not_trial_any_geometry(monkeypatch):
     with pytest.raises(ValueError,match='no coast for ferry landing'):
         B.ferry_landing(world,'port',[40.,24.])
     assert world.quay_contacts==[]
+
+
+def _saved_snapshot(region, connection, controls):
+    return SimpleNamespace(translation=np.zeros(3),document={
+        'regionId':region,
+        'authority':{'ownedFerryConnectionIds':[connection]},
+        'replacements':{'ferryConnectionIds':[connection]},
+        'objects':controls})
+
+
+def _saved_control(connection, landing):
+    matrix=np.eye(4);matrix[:3,3]=landing
+    return {'id':'saved-a-quay','matrix':matrix.reshape(-1,order='F').tolist(),
+            'metadata':{'authoredFerryQuay':{
+                'connectionIds':[connection],'walkNode':'Walk_FerryQuay_a_00',
+                'localLanding':[0.,0.,0.]}}}
+
+
+def test_saved_side_uses_exact_endpoint_and_existing_approach_while_other_side_stays_procedural(monkeypatch):
+    connection='a--b';link={'id':connection,'type':'ferry','regions':['a','b']}
+    class Mixed:
+        connections=[link]
+        regions={'a':{'center':[0.,0.]},'b':{'center':[100.,0.]}}
+        roads=[{'id':connection+'-a','points':'saved'}]
+        authoring_snapshots={'a':_saved_snapshot('a',connection,
+            [_saved_control(connection,[4.,1.,6.])])}
+        def __init__(self):self.courts=[];self.added=[]
+        def prepare_quay_court(self,point):self.courts.append(np.asarray(point).tolist())
+        def hub(self,region):return np.array([0.,0.])
+        def route(self,*args,**kwargs):return np.array([[0.,0.],[20.,30.]])
+        def add_road(self,path,**kwargs):self.added.append(kwargs['name'])
+    world=Mixed();fits=[];remembered=[]
+    monkeypatch.setattr(B,'ferry_landing',lambda candidate,region,toward:np.array([20.,30.]))
+    def fit(candidate,landing,region,**kwargs):
+        fits.append((region,np.asarray(landing).tolist(),list(kwargs.get('ignore_connection_ids',()))))
+        return {'region':region,'landing':np.asarray(landing,float),'stations':np.array([0.]),
+                'heights':np.array([1.]),'contactError':.02,'maximumGrade':.2}
+    monkeypatch.setattr(F,'fit_landing',fit)
+    import ferry_support as S
+    monkeypatch.setattr(S,'restore_selected_shores',lambda candidate:None)
+    monkeypatch.setattr(S,'remember_ferry_fit',lambda candidate,value:remembered.append(value['region']))
+    resolved=B.resolve_saved_ferry_connections(world)
+    B.prepare_ferry_connection(world,link,resolved[connection])
+    assert link['landings']==[[4.,6.],[20.,30.]]
+    assert fits==[('a',[4.,6.],[connection]),('b',[20.,30.],[])]
+    assert world.courts==[[20.,30.]] and world.added==[connection+'-b']
+    assert world.roads==[{'id':connection+'-a','points':'saved'}]
+    assert remembered==['a','b']
+    record=next(row for row in world.saved_ferry_handoff if row.get('region')=='a')
+    assert record['landing']==[4.,6.] and record['landingError']==0.
+
+
+def test_deleted_saved_endpoint_disables_connection_before_any_shore_mutation(monkeypatch):
+    connection='a--b';link={'id':connection,'type':'ferry','regions':['a','b']}
+    world=SimpleNamespace(connections=[link],authoring_snapshots={
+        'a':_saved_snapshot('a',connection,[])})
+    monkeypatch.setattr(B,'ferry_landing',lambda *args:pytest.fail('deleted ferry must not select a shore'))
+    resolved=B.resolve_saved_ferry_connections(world)
+    assert resolved=={} and world.connections==[]
+    assert world.saved_ferry_handoff==[{'id':connection,'status':'saved-deleted','regions':['a']}]
+
+
+def test_ambiguous_saved_endpoint_fails_before_shore_selection(monkeypatch):
+    connection='a--b';link={'id':connection,'type':'ferry','regions':['a','b']}
+    controls=[_saved_control(connection,[4.,1.,6.]),
+              dict(_saved_control(connection,[4.,1.,6.]),id='duplicate-quay')]
+    world=SimpleNamespace(connections=[link],authoring_snapshots={
+        'a':_saved_snapshot('a',connection,controls)})
+    monkeypatch.setattr(B,'ferry_landing',lambda *args:pytest.fail('ambiguous ferry must not select a shore'))
+    with pytest.raises(ValueError,match='duplicate saved ferry quay controls'):
+        B.resolve_saved_ferry_connections(world)

@@ -242,7 +242,7 @@ def normalize_floor_polygon(polygon):
     return polygon
 
 
-def triangulate_floor(polygon,minimum_area=NEGLIGIBLE_FLOOR_AREA,normalize=True):
+def triangulate_floor(polygon,minimum_area=NEGLIGIBLE_FLOOR_AREA,normalize=True,_retrace_retry=False):
     """Stable ear clipping of a clockwise, possibly concave floor outline."""
     polygon=np.asarray(polygon)
     # A deck cell clipped at a tangent of the road outline can leave a sliver
@@ -266,6 +266,25 @@ def triangulate_floor(polygon,minimum_area=NEGLIGIBLE_FLOOR_AREA,normalize=True)
             score=area/max(longest,1e-20)
             if score>best_score:best=i;best_score=score
         if best is None:
+            # The clipped road union can retrace a vertex by less than one
+            # exported float32 XZ unit. That loop has no legal ear even though
+            # removing the duplicate preserves its area and simple footprint.
+            # Keep this fallback local to the failed outline; all other
+            # polygons retain the existing exact ear-clipping path.
+            if not _retrace_retry:
+                remaining=polygon[indices]
+                ulp=float(np.abs(np.spacing(remaining[:,[0,2]].astype(np.float32))).max())
+                area=_area_xz(remaining)
+                for j in range(len(remaining)):
+                    neighbour=remaining[(j+1)%len(remaining)]
+                    if np.linalg.norm(remaining[j,[0,2]]-neighbour[[0,2]])>ulp:continue
+                    candidate=np.delete(remaining,j,axis=0)
+                    candidate_area=_area_xz(candidate)
+                    if (len(candidate)<3 or np.sign(candidate_area)!=np.sign(area) or
+                            abs(candidate_area-area)>1e-8 or
+                            not SH.Polygon(candidate[:,[0,2]]).is_valid):continue
+                    return result+triangulate_floor(candidate,minimum_area=0.,normalize=False,
+                                                    _retrace_retry=True)
             raise ValueError('Clipped bridge outline could not be triangulated')
         ids=[indices[best-1],indices[best],indices[(best+1)%len(indices)]]
         result.append(polygon[ids]);indices.pop(best)
@@ -2514,7 +2533,28 @@ def fit_claimed_sites(world,site_ids=None,content=None):
         missing=[site_id for site_id in requested if site_id not in by_id]
         if missing:raise BP.ProfileError(f'claimed bridge ids are absent: {missing}')
         sites=[by_id[site_id] for site_id in requested]
-    if not sites:raise BP.ProfileError('no claimed bridge sites were explicitly selected')
+    if not sites:
+        # Once every territory owns its saved crossings, route replacement removes
+        # every procedural river site. There is then no native deck or terrain
+        # stencil to fit; saved deck geometry is exported from its scene assembly.
+        # Preserve the old failure for a missing/empty selection in a mixed world.
+        authored=set(getattr(content, 'authored_regions', ())) if content is not None else set()
+        if site_ids is not None or set(getattr(world, 'ids', ())) != authored or not authored:
+            raise BP.ProfileError('no claimed bridge sites were explicitly selected')
+        if not hasattr(world, 'water'):
+            raise BP.ProfileError('claimed bridge fitting requires the current hydrology authority')
+        world.claimed_bridge_profiles={}
+        world.claimed_bridge_v7_contracts={}
+        world.claimed_bridge_water_authority={}
+        world.claimed_bridge_final_water_authority={}
+        world.claimed_bridge_protected_nodes=np.empty((0,2),np.int32)
+        world.claimed_bridge_fit={
+            'sites':[], 'selectedSiteIds':[], 'mutableTerrainVertices':0,
+            'changedTerrainVertices':0, 'protectedTerrainVertices':0,
+            'authoredTerrainVertices':int(np.count_nonzero(getattr(world, 'authored_terrain_authority', ()))),
+            'outsideDeclaredStencilChangedVertices':0, 'waterAuthority':{},
+            'maximumCutMetres':0., 'maximumFillMetres':0.}
+        return world.claimed_bridge_fit
     if not hasattr(world,'water'):
         raise BP.ProfileError('claimed bridge fitting requires the current hydrology authority')
     landing,lift,clearance=deck_policy(world);reference=np.asarray(world.height,float).copy()
@@ -3240,9 +3280,14 @@ def _prepared_deck_mesh(world,component):
     return component['_preparedMeshCache']
 
 
-def deck_mesh(world,component):
-    if component.get('arch') is not None and component['arch'].get('prepared',False):
-        return _prepared_deck_mesh(world,component)
+def _component_source_triangles(world,component):
+    """Return grid triangles and their inherited territory owners.
+
+    ``deck_mesh`` deliberately attributes every clipped descendant to the
+    source cell centre.  Keeping that rule in one helper lets saved-territory
+    authority prove that an entire loose component is replaceable before the
+    expensive road-union clipping pass.
+    """
     sl=component['slice'];mask=component['cells'];heights=component['height']
     gx,gz=np.meshgrid(world.x0+np.arange(sl[1].start,sl[1].stop+1)*CELL,
                       world.z0+np.arange(sl[0].start,sl[0].stop+1)*CELL)
@@ -3251,6 +3296,40 @@ def deck_mesh(world,component):
     vertices=np.c_[gx.ravel(),heights.ravel(),gz.ravel()]
     centers=np.c_[world.x0+(sl[1].start+col+.5)*CELL,world.z0+(sl[0].start+row+.5)*CELL]
     owners=np.repeat(world.owner_at(centers[:,0],centers[:,1]).astype(int),2)
+    return vertices,indices,owners
+
+
+def _component_has_road_width_face(world,component,vertices,indices):
+    """Cheaply preserve the existing empty-deck failure before suppression."""
+    outline=component.get('outline') or RoadOutline(world)
+    arch=component.get('arch')
+    for triangle in vertices[indices]:
+        for polygon in outline.clip(triangle):
+            pieces=arch_station_slices(polygon,arch) if arch is not None else [polygon]
+            for piece in pieces:
+                for face in triangulate_floor(piece,minimum_area=(
+                        0. if arch is not None and arch.get('prepared',False)
+                        else NEGLIGIBLE_FLOOR_AREA),
+                        normalize=not (arch is not None and arch.get('prepared',False))):
+                    if abs(_area_xz(face))>=1e-8:return True
+    return False
+
+
+def _suppresses_generated_authored_component_before_mesh(world,component,authored_owners):
+    """Prove the existing loose-component suppression without building it."""
+    if component.get('sites'):return False
+    vertices,indices,owners=_component_source_triangles(world,component)
+    if not _suppresses_generated_authored_component(component,owners,authored_owners):return False
+    # An empty clip currently fails in deck_mesh.  Only skip after finding one
+    # face accepted by the same clip and triangulation rules; otherwise retain
+    # that validation by falling through to the full mesh path.
+    return _component_has_road_width_face(world,component,vertices,indices)
+
+
+def deck_mesh(world,component):
+    if component.get('arch') is not None and component['arch'].get('prepared',False):
+        return _prepared_deck_mesh(world,component)
+    vertices,indices,owners=_component_source_triangles(world,component)
     outline=component.get('outline') or RoadOutline(world)
     arch=component.get('arch')
     clipped=[]
@@ -3535,12 +3614,54 @@ def _suppresses_generated_authored_component(component,owners,authored_owners):
     """Whether bridge authority replaces this complete procedural component.
 
     Claimed crossings belong to their stable crossing site even when a landing
-    overlaps Sunmane.  Loose components are suppressed only when every emitted
-    floor face belongs to the authored territory; mixed-owner coverage remains
-    intact as one component instead of losing a territory-shaped slice.
+    overlaps Sunmane. Loose components are suppressed only when every emitted
+    floor face belongs to a saved territory. Mixed saved/procedural coverage
+    remains intact; adjacent saved territories replace their respective slices.
     """
     return (not component.get('sites') and len(owners)>0 and
-            len(set(map(int,owners)))==1 and int(owners[0]) in authored_owners)
+            set(map(int,owners)).issubset(authored_owners))
+
+
+def _authored_crossing_claims(world):
+    """Stable claimed crossing keys owned by exact saved asset assemblies."""
+    claims={}
+    snapshots=dict(getattr(world,'authoring_snapshots',{}) or {})
+    legacy=getattr(world,'authoring_snapshot',None)
+    if legacy is not None:
+        snapshots.setdefault(legacy.document.get('regionId','sunmane_steppe'),legacy)
+    for region,snapshot in sorted(snapshots.items()):
+        for asset in snapshot.document.get('objects',()):
+            crossing=asset.get('metadata',{}).get('authoredCrossing')
+            if not isinstance(crossing,dict):continue
+            identity=str(crossing.get('id','')).strip()
+            if not identity:raise ValueError(
+                f"{region}/{asset.get('id')}: authoredCrossing needs a stable id")
+            previous=claims.get(identity)
+            owner=(region,str(asset.get('id','')))
+            if previous is not None and previous!=owner:
+                raise ValueError(
+                    f"authored crossing {identity!r} is claimed by both "
+                    f"{previous[0]}/{previous[1]} and {owner[0]}/{owner[1]}")
+            claims[identity]=owner
+    return claims
+
+
+def _claimed_component_crossings(world,component,claims):
+    """Return stable keys when every claimed site in a component is saved."""
+    if not component.get('sites'):return ()
+    sites={int(site['id']):str(site.get('key',''))
+           for site in getattr(world,'crossing_sites',())}
+    keys=[]
+    for raw in component['sites']:
+        site_id=int(raw)
+        if site_id not in sites or not sites[site_id]:
+            raise ValueError(f'bridge component references unknown crossing site {site_id}')
+        keys.append(sites[site_id])
+    selected=tuple(sorted({key for key in keys if key in claims}))
+    if selected and len(selected)!=len(set(keys)):
+        raise ValueError(
+            f'bridge component mixes saved and procedural crossing claims: {sorted(set(keys))}')
+    return selected
 
 
 def build_bridges(world,path, *, water_fields=None):
@@ -3559,6 +3680,7 @@ def build_bridges(world,path, *, water_fields=None):
     if not authored_owners and getattr(world,'authoring_snapshot',None) is not None \
             and 'sunmane_steppe' in world.ids:
         authored_owners.add(world.ids.index('sunmane_steppe'))
+    authored_crossings=_authored_crossing_claims(world)
     def add(region,name,mesh, *, collides=False,record_id=None):
         builder.add_mesh(name,mesh,with_tangents=False)
         root=builder.add_node(G.Node(name,mesh=name))
@@ -3575,6 +3697,15 @@ def build_bridges(world,path, *, water_fields=None):
         else:add(region,name,mesh)
     for component in field['components']:
         token=C.component_token(component)
+        claimed_crossings=_claimed_component_crossings(
+            world,component,authored_crossings)
+        if claimed_crossings:
+            suppressed_components.append(component['id'])
+            continue
+        if _suppresses_generated_authored_component_before_mesh(
+                world,component,authored_owners):
+            suppressed_components.append(component['id'])
+            continue
         mesh,owners=deck_mesh(world,component)
         if _suppresses_generated_authored_component(component,owners,authored_owners):
             suppressed_components.append(component['id'])

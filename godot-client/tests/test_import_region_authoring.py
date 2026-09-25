@@ -15,6 +15,16 @@ I = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(I)
 
 
+def test_all_explicit_authored_region_adapters_are_registered():
+    assert I.ADAPTERS == {
+        "amethyst-v1": "import_amethyst_authoring",
+        "mirrorhold-v1": "import_mirrorhold_authoring",
+        "published-generic-v1": "import_published_authoring",
+        "sunmane-v1": "import_sunmane_authoring",
+        "whitehorn-v1": "import_whitehorn_authoring",
+    }
+
+
 def test_generic_importer_has_no_default_region_adapter(tmp_path, monkeypatch):
     spec = tmp_path / "region.json"
     scene = tmp_path / "client/godot-client/world_authoring/regions/example/example.tscn"

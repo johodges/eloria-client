@@ -31,12 +31,12 @@
     "playableBounds": {
       "min": [
         -178.0,
-        -22.99749953330043,
+        -22.997499465942383,
         -400.0
       ],
       "max": [
         550.0,
-        344.15944658837685,
+        344.1594543457031,
         162.0
       ]
     },
@@ -45,12 +45,12 @@
     "mapBounds": {
       "min": [
         -178.0,
-        -22.99749953330043,
+        -22.997499465942383,
         -400.0
       ],
       "max": [
         550.0,
-        344.15944658837685,
+        344.1594543457031,
         162.0
       ]
     }
@@ -371,12 +371,12 @@
     "bounds": {
       "min": [
         -178.0,
-        -22.99749953330043,
+        -22.997499465942383,
         -400.0
       ],
       "max": [
         550.0,
-        344.15944658837685,
+        344.1594543457031,
         162.0
       ]
     },
@@ -2982,7 +2982,7 @@
       -208.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:f9b894b1fbbc8399977fcad09ad09fbfe2cbd198a2ddc56caaeac795d49ed3c5",
+  "terrainRevision": "diagonal-spine-v1:db92d1718ab9fc501eeed3bfe3f612080cb53f274cac2a69f5e1442d12b5b4f2",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -2992,13 +2992,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
+    "masterSha256": "0ce92c6a3007f8f91451f61a5ca7b23bf72e18b8f9e59685f8264dbe09ea2c1e",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
+    "masterSha256": "0ce92c6a3007f8f91451f61a5ca7b23bf72e18b8f9e59685f8264dbe09ea2c1e",
     "collisionSha256": "3737e5ed2c2f95c5f517e988f40ebf37f687a508db8a74204b0891c885adb0c3",
-    "terrainRevision": "diagonal-spine-v1:f9b894b1fbbc8399977fcad09ad09fbfe2cbd198a2ddc56caaeac795d49ed3c5"
+    "terrainRevision": "diagonal-spine-v1:db92d1718ab9fc501eeed3bfe3f612080cb53f274cac2a69f5e1442d12b5b4f2"
   }
 }

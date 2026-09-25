@@ -52703,6 +52703,7 @@
   ],
   "regionId": "amethyst_barrens",
   "replacements": {
+    "ferryConnectionIds": [],
     "planFeatureIds": [],
     "routeIds": [
       "amethyst_barrens--mirrorhold-amethyst_barrens",
@@ -52884,11 +52885,11 @@
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "503856d2e5028e621b9b51df642f32a3cc00af8af64225f4a5eb065844e66b2d"
+        "sha256": "dca1ed421d9e98fa8765acc26c94cfad12e4d8a94bea0a1b9d4d446f36462151"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "68c2cd1fb3152cdeb34b35e5276757b09192509dfb9966e8dbfd69645c682184"
+        "sha256": "4a03a1da48eb684e461cb5682820a99afa9eb91d2b2629db41be87629daaddb7"
       },
       {
         "path": "godot-client/world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-massifspire-0-c1f757301d89.glb",
@@ -53724,5 +53725,6 @@
       "sha256": "f06b63a51f3c4ebea99d7a137aca2bbc16908c4f5bfa28782ffcc71739fab963"
     },
     "width": 370
-  }
+  },
+  "waterRegions": []
 }

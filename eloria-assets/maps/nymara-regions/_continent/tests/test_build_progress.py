@@ -23,6 +23,7 @@ HERE=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(HERE))
 import build_continent as B
 import build_progress as P
+import audit_continent as A
 import river_crossings as RC
 
 
@@ -30,11 +31,20 @@ def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
 class ProgressRecordTests(unittest.TestCase):
+    def test_composition_certificate_covers_fixed_shaping_data(self):
+        certified={B.source_key(path) for path in B.composition_certificate_paths()}
+        self.assertLessEqual(B.shaping_source_keys(),certified)
+        self.assertEqual(set(B.SHAPING_SOURCES),set(A.SHAPING_SOURCES))
+        self.assertEqual(set(B.EXPORT_SOURCES),A.EXPORT_SOURCES)
+        for name in ('saved-seam-grey-whitehorn-v1.json','saved-seam-post-support-v1.json'):
+            self.assertIn(B.source_key(B.HERE/name),certified)
+
     def test_saved_seam_retries_an_infeasible_terminal_on_neighbor_owned_ground(self):
         class World:
             ids=['neighbor','sunmane'];routing=[]
             def hub(self,region):return np.array([0.,0.])
             def owner_at(self,x,z):return np.zeros(np.asarray(x).shape,dtype=int)
+            def height_at(self,x,z):return np.zeros(np.asarray(x).shape,dtype=float)
             def solids_at_ends(self,point):return None
             def road_profile(self,path):
                 points=np.asarray(path,float)
@@ -47,8 +57,96 @@ class ProgressRecordTests(unittest.TestCase):
         link={'id':'neighbor--sunmane','regions':['neighbor','sunmane']}
         path,report=B.route_saved_seam_neighbour(world,link,'neighbor',
             np.array([100.,0.]),np.array([1.,0.]),route,lambda w:None,lambda w,c:None,start=np.array([0.,0.]))
-        self.assertEqual(report['attempts'],2);self.assertEqual(report['waypoint'],[96.,24.])
+        self.assertEqual(report['attempts'],3);self.assertEqual(report['waypoint'],[96.,24.])
         self.assertEqual(path[-2:].tolist(),[[100.,0.],[104.,0.]])
+
+    def test_saved_seam_tries_the_certified_deeper_straight_corridor(self):
+        class World:
+            ids=['neighbor','saved'];routing=[]
+            def owner_at(self,x,z):return np.zeros(np.asarray(x).shape,dtype=int)
+            def height_at(self,x,z):return np.zeros(np.asarray(x).shape,dtype=float)
+            def solids_at_ends(self,point):return None
+            def road_profile(self,path):
+                points=np.asarray(path,float)
+                return points,np.zeros(len(points))
+        world=World();attempts=[]
+        def route(_world,legs,*args,**kwargs):
+            attempts.append(np.asarray(legs,float));_world.routing.append({'earthworks':{'excessAt':[]}})
+            return attempts[-1]
+        def feasible(_world,path,_anchor,_routing):
+            # The published Grey/Whitehorn approach reaches the seam from the
+            # straight 12 m terminal; lateral candidates are not substitutes.
+            return any(np.allclose(point,[88.,0.]) for point in np.asarray(path,float)) and \
+                not any(abs(point[1])>1e-9 for point in np.asarray(path,float))
+        link={'id':'neighbor--saved','regions':['neighbor','saved']}
+        with patch.object(B,'_seam_approach_feasible',side_effect=feasible):
+            _path,report=B.route_saved_seam_neighbour(
+                world,link,'neighbor',np.array([100.,0.]),np.array([1.,0.]),route,
+                lambda _world:None,lambda _world,_claims:None,start=np.array([0.,0.]))
+        self.assertEqual(report['depth'],12.)
+        self.assertIsNone(report['waypoint'])
+        self.assertTrue(any(np.allclose(call[-1],[88.,0.]) for call in attempts))
+
+    def test_saved_seam_rejects_a_profiled_route_with_a_steep_emitted_ground_station(self):
+        class World:
+            ids=['neighbor','saved']
+            def __init__(self):self.routing=[]
+            def owner_at(self,x,z):return np.zeros(np.asarray(x).shape,dtype=int)
+            def height_at(self,x,z):
+                x=np.asarray(x);z=np.asarray(z)
+                return np.where((x>=90.)&(x<=92.)&(np.abs(z)<1.),2.,0.)
+            def solids_at_ends(self,point):return None
+            def road_profile(self,path):
+                path=np.asarray(path,float);dense=[]
+                for a,b in zip(path,path[1:]):
+                    count=max(1,int(np.ceil(np.linalg.norm(b-a)/2.)))
+                    dense.extend(a+(b-a)*t for t in np.arange(count)/count)
+                points=np.vstack((dense,path[-1]))
+                return points,np.zeros(len(points))
+        world=World();attempts=[]
+        def route(_world,legs,*args,**kwargs):
+            terminal=np.asarray(legs[-1],float);attempts.append(terminal.tolist())
+            _world.routing.append({'earthworks':{'excessAt':[]}})
+            if terminal[0]==91.:
+                return np.asarray([legs[0],terminal],float)
+            return np.asarray([legs[0],[0.,10.],[terminal[0],10.],terminal],float)
+        link={'id':'neighbor--saved','regions':['neighbor','saved']}
+        with patch.object(B,'_reconcile_terminal_reroute'):
+            _path,report=B.route_saved_seam_neighbour(
+                world,link,'neighbor',np.array([100.,0.]),np.array([1.,0.]),route,
+                lambda _world:None,lambda _world,_claims:None,start=np.array([0.,0.]))
+        self.assertEqual(report['attempts'],2)
+        self.assertEqual(report['depth'],4.)
+        self.assertEqual(attempts[:2],[[91.,0.],[96.,0.]])
+
+    def test_saved_seam_can_follow_a_short_owned_contour_at_the_ring(self):
+        class World:
+            ids=['neighbor','saved']
+            def __init__(self):self.routing=[]
+            def owner_at(self,x,z):return np.zeros(np.asarray(x).shape,dtype=int)
+            def height_at(self,x,z):return np.zeros(np.asarray(x).shape,dtype=float)
+            def solids_at_ends(self,point):return None
+            def road_profile(self,path):
+                points=np.asarray(path,float)
+                return points,np.zeros(len(points))
+        world=World();attempts=[]
+        def route(_world,legs,*args,**kwargs):
+            attempts.append(np.asarray(legs,float))
+            _world.routing.append({'earthworks':{'excessAt':[]}})
+            return attempts[-1]
+        def feasible(_world,path,_anchor,_routing):
+            return any(np.allclose(point,[102.,6.]) for point in np.asarray(path,float))
+        link={'id':'neighbor--saved','regions':['neighbor','saved']}
+        with (patch.object(B,'_owned_approach',side_effect=lambda _w,_r,waypoint,_end:
+                    np.allclose(waypoint,[102.,6.])),
+              patch.object(B,'_seam_approach_feasible',side_effect=feasible),
+              patch.object(B,'_reconcile_terminal_reroute')):
+            _path,report=B.route_saved_seam_neighbour(
+                world,link,'neighbor',np.array([100.,0.]),np.array([1.,0.]),route,
+                lambda _world:None,lambda _world,_claims:None,start=np.array([0.,0.]))
+        self.assertEqual(report['waypoint'],[102.,6.])
+        self.assertEqual(report['depth'],4.)
+        self.assertEqual(report['attempts'],5)
 
     def test_saved_seam_grade_follows_the_lane_not_the_transverse_bank(self):
         class World:
@@ -155,6 +253,7 @@ class ProgressRecordTests(unittest.TestCase):
                       'earthworks':{'passes':0,'excessMetres':0.,'excessAt':[]}}]
             roads=[{'id':name,'points':[[0.,0.,0.],[5.,0.,0.],[10.,0.,0.],[15.,0.,0.]],'width':4.}]
             def owner_at(self,x,z):return np.zeros(np.asarray(x).shape,dtype=int)
+            def height_at(self,x,z):return np.zeros(np.asarray(x).shape,dtype=float)
             def solids_at_ends(self,point):return None
             def road_profile(self,path):
                 points=np.asarray(path,float).reshape(-1,2)

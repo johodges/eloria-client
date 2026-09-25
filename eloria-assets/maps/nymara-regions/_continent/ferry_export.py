@@ -22,6 +22,191 @@ RAMP_GRADE = .445
 HALF_WIDTH = 1.35
 MAX_REACH = 48.
 DECK_CLEARANCE = .72
+# Source GLB/node transforms are float32 (well below 1mm error at continent
+# scale). The extra 10mm is the reviewed capture/serialization envelope, while
+# 11mm stays below half the 25mm deck-to-bed skin used by the fitter: a landing
+# measured from the wrong surface plane still fails.
+SAVED_LANDING_TOLERANCE = .011
+
+
+def _stable_ids(values, where):
+    result = [str(value) for value in values]
+    if result != sorted(result) or len(result) != len(set(result)) or any(not value for value in result):
+        raise ValueError(f'{where} must contain sorted unique non-empty connection IDs')
+    return result
+
+
+def _saved_ferry_authority(world):
+    """Return persistent claims and optional saved quay controls by region.
+
+    Claims live outside the current object list, so deleting a saved quay does
+    not resurrect its previous generated replacement on the next build.
+    """
+    snapshots = dict(getattr(world, 'authoring_snapshots', None) or {})
+    legacy = getattr(world, 'authoring_snapshot', None)
+    if legacy is not None:
+        legacy_region = legacy.document.get('regionId', 'sunmane_steppe')
+        snapshots.setdefault(legacy_region, legacy)
+    result = {}
+    for region, snapshot in sorted(snapshots.items()):
+        document = snapshot.document
+        replacements = _stable_ids(
+            document.get('replacements', {}).get('ferryConnectionIds', ()),
+            f'{region}: replacements.ferryConnectionIds')
+        authority = document.get('authority', {}).get('ownedFerryConnectionIds')
+        if authority is not None:
+            authority = _stable_ids(authority,
+                f'{region}: authority.ownedFerryConnectionIds')
+            if authority != replacements:
+                raise ValueError(f'{region}: ferry authority and persistent replacements disagree')
+        claimed = set(replacements)
+        controls = []
+        for obj in document.get('objects', ()):
+            metadata = obj.get('metadata', {})
+            quay = metadata.get('authoredFerryQuay') if isinstance(metadata, dict) else None
+            if quay is None:
+                continue
+            where = f"{region}: authored ferry quay {obj.get('id', '<missing>')}"
+            connection_ids = _stable_ids(quay.get('connectionIds', ()),
+                                         where + '.connectionIds')
+            if not connection_ids or not set(connection_ids) <= claimed:
+                raise ValueError(where + ' claims connections absent from persistent ferry replacements')
+            walk_node = str(quay.get('walkNode', ''))
+            landing = np.asarray(quay.get('localLanding', ()), float)
+            matrix = np.asarray(obj.get('matrix', ()), float)
+            if not walk_node or landing.shape != (3,) or matrix.shape != (16,) or \
+                    not np.isfinite(landing).all() or not np.isfinite(matrix).all():
+                raise ValueError(where + ' needs walkNode, finite localLanding[3], and matrix[16]')
+            transform = matrix.reshape((4, 4), order='F')
+            local = transform @ np.r_[landing, 1.]
+            if abs(local[3]) <= 1e-9:
+                raise ValueError(where + ' has a singular landing transform')
+            global_landing = local[:3] / local[3] + np.asarray(snapshot.translation, float)
+            controls.append(dict(id=str(obj.get('id', '')), connectionIds=connection_ids,
+                                 walkNode=walk_node, landing=global_landing))
+        result[region] = dict(claimed=claimed, controls=controls)
+    return result
+
+
+def saved_ferry_authority(world):
+    """Validated persistent ferry claims used before shoreline selection."""
+    return _saved_ferry_authority(world)
+
+
+def saved_ferry_endpoint(authority, connection_id, region):
+    """Return one saved endpoint, a persistent deletion, or ``None``.
+
+    The persistent replacement claim is deliberately independent from the
+    current object list.  Removing a saved quay therefore disables that ferry
+    connection instead of asking the procedural selector to recreate it at a
+    different shore point.
+    """
+    record = authority.get(region)
+    if record is None or connection_id not in record['claimed']:
+        return None
+    matching = [control for control in record['controls']
+                if connection_id in control['connectionIds']]
+    if len(matching) > 1:
+        raise ValueError(f'{region}: duplicate saved ferry quay controls for {connection_id}')
+    if not matching:
+        return dict(status='saved-deleted', connectionId=connection_id, region=region)
+    control = matching[0]
+    return dict(status='saved-control', connectionId=connection_id, region=region,
+                control=control['id'], connectionIds=list(control['connectionIds']),
+                walkNode=control['walkNode'], landing=np.asarray(control['landing'], float).copy())
+
+
+def validate_saved_ferry_endpoint(saved, fit):
+    """Prove a saved landing still matches the current fitted bank."""
+    station = int(np.argmin(abs(np.asarray(fit['stations'], float))))
+    expected = np.array([fit['landing'][0], fit['heights'][station], fit['landing'][1]])
+    error = float(np.max(abs(np.asarray(saved['landing'], float) - expected)))
+    if error > SAVED_LANDING_TOLERANCE:
+        raise ValueError(f"{saved['region']}: saved ferry quay {saved['control']} landing moved or no longer "
+                         f"fits the certified bank ({error:.3f}m error; "
+                         f"{SAVED_LANDING_TOLERANCE:.3f}m allowed). Move the saved control back "
+                         "or update the ferry connection explicitly; generated geometry will not shift it.")
+    return error
+
+
+def install_saved_ferry_exclusions(world, content):
+    """Attribute every active saved quay mask by its region and connection.
+
+    Call after the regional support stages have contributed their complete
+    procedural/causeway union.  Saved controls from every territory are then
+    added as separate sources, allowing only the quay currently being fitted
+    to be omitted while retaining all overlapping unrelated geometry.
+    """
+    base = np.asarray(getattr(world, 'ferry_exclusion',
+        np.zeros_like(world.height, dtype=bool)), dtype=bool).copy()
+    authority = _saved_ferry_authority(world)
+    sources = {}
+    controls = 0
+    for obj in content.objects:
+        source = obj.get('source') or {}
+        quay = source.get('authoredFerryQuay') if isinstance(source, dict) else None
+        if quay is None:
+            continue
+        region = str(obj.get('region', ''))
+        where = f"{region}: authored ferry quay {obj.get('node', '<missing>')}"
+        connection_ids = _stable_ids(quay.get('connectionIds', ()), where + '.connectionIds')
+        record = authority.get(region)
+        if not connection_ids or record is None or not set(connection_ids) <= record['claimed']:
+            raise ValueError(where + ' has no matching persistent ferry authority')
+        low, high = np.asarray(obj.get('low'), float), np.asarray(obj.get('high'), float)
+        if low.shape != (3,) or high.shape != (3,) or not np.isfinite(low).all() or not np.isfinite(high).all():
+            raise ValueError(where + ' has invalid retained bounds')
+        low, high = low[[0, 2]] - 6., high[[0, 2]] + 6.
+        mask = ((world.gx >= low[0]) & (world.gx <= high[0]) &
+                (world.gz >= low[1]) & (world.gz <= high[1]))
+        for identity in connection_ids:
+            owner = (region, identity)
+            sources.setdefault(owner, np.zeros_like(mask, dtype=bool))
+            sources[owner] |= mask
+        controls += 1
+    full = base.copy()
+    for mask in sources.values():
+        full |= mask
+    world.ferry_exclusion_base = base
+    world.ferry_exclusion_by_owner = sources
+    world.ferry_exclusion = full
+    world.saved_ferry_exclusion_report = {
+        'controls': controls, 'owners': len(sources),
+        'baseVertices': int(base.sum()), 'totalVertices': int(full.sum())}
+    return world.saved_ferry_exclusion_report
+
+
+def _saved_group_control(authority, group, fit, expected_walk_node):
+    """Return deletion/control status, or None for a procedural landing group."""
+    region = group['region']
+    record = authority.get(region)
+    if record is None:
+        return None
+    connections = set(group['connections'])
+    overlap = connections & record['claimed']
+    if not overlap:
+        return None
+    if overlap != connections:
+        raise ValueError(f'{region}: ferry landing group mixes saved and procedural connections; '
+                         f'claim all of {sorted(connections)} or none')
+    intersecting = [control for control in record['controls']
+                    if connections & set(control['connectionIds'])]
+    matching = [control for control in intersecting
+                if set(control['connectionIds']) == connections]
+    if len(intersecting) != len(matching):
+        raise ValueError(f'{region}: saved ferry quay connection IDs do not match landing group '
+                         f'{sorted(connections)}')
+    if len(matching) > 1:
+        raise ValueError(f'{region}: duplicate saved ferry quay controls for {sorted(connections)}')
+    if not matching:
+        return dict(status='saved-deleted', control=None)
+    control = matching[0]
+    if control['walkNode'] != expected_walk_node:
+        raise ValueError(f"{region}: saved ferry quay {control['id']} walkNode "
+                         f"{control['walkNode']!r} does not match {expected_walk_node!r}")
+    error = validate_saved_ferry_endpoint(
+        dict(region=region, control=control['id'], landing=control['landing']), fit)
+    return dict(status='saved-control', control=control['id'], landingError=error)
 
 
 def samples(world, points, water_fields=None):
@@ -76,9 +261,44 @@ def ocean_membership(world):
     return query
 
 
-def clear_of_retained_routes(world, points):
+def ferry_exclusion(world, ignore_connection_ids=(), *, ignore_region=None):
+    """Return the complete exclusion, optionally omitting exact owned quays.
+
+    Source masks stay separate so an overlapping unrelated quay/causeway is
+    never erased by subtracting pixels from the final union.
+    """
+    full = getattr(world, 'ferry_exclusion', None)
+    if full is None:
+        return None
+    full = np.asarray(full, bool)
+    ignored = set(ignore_connection_ids)
+    if not ignored:
+        return full
+    sources = getattr(world, 'ferry_exclusion_by_owner', None)
+    base = getattr(world, 'ferry_exclusion_base', None)
+    if sources is None or base is None:
+        return full
+    result = np.asarray(base, bool).copy()
+    if result.shape != full.shape:
+        raise ValueError('Ferry exclusion attribution has a different grid shape')
+    ignored_owners={(ignore_region,identity) for identity in ignored}
+    for owner, mask in sorted(sources.items()):
+        mask = np.asarray(mask, bool)
+        if mask.shape != full.shape:
+            raise ValueError(f'Ferry exclusion for {owner} has a different grid shape')
+        if owner not in ignored_owners:
+            result |= mask
+    complete = np.asarray(base, bool).copy()
+    for mask in sources.values():
+        complete |= np.asarray(mask, bool)
+    if not np.array_equal(complete, full):
+        raise ValueError('Ferry exclusion attribution is stale; a support stage changed the union without a source mask')
+    return result
+
+
+def clear_of_retained_routes(world, points, *, ignore_connection_ids=(), ignore_region=None):
     """A quay/skiff must not cross retained causeways or existing working quays."""
-    mask=getattr(world,'ferry_exclusion',None)
+    mask=ferry_exclusion(world, ignore_connection_ids, ignore_region=ignore_region)
     if mask is None:return True
     points=np.asarray(points,float).reshape(-1,2)
     spacing=float(world.x[1]-world.x[0])
@@ -90,7 +310,7 @@ def clear_of_retained_routes(world, points):
     return True
 
 
-def fit_landing(world, landing, region, *, water_fields=None):
+def fit_landing(world, landing, region, *, water_fields=None, ignore_connection_ids=()):
     """Search actual water directions rather than a continent-centre bearing."""
     landing = np.asarray(landing, float)
     ground, initial = samples(world, landing[None, :], water_fields)
@@ -118,7 +338,8 @@ def fit_landing(world, landing, region, *, water_fields=None):
         for mooring_side in (-1., 1.):
             boat_center = endpoint + side * (4.1 * mooring_side) - forward * 1.2
             footprint = boat_points(boat_center, forward, side)
-            if not clear_of_retained_routes(world,footprint):continue
+            if not clear_of_retained_routes(world,footprint,
+                    ignore_connection_ids=ignore_connection_ids,ignore_region=region):continue
             boat_bed, boat_water = samples(world, footprint, water_fields)
             if not (np.asarray(boat_water['mask']).all() and in_ocean(footprint).all() and np.min(boat_water['depth']) >= .65
                     and np.ptp(boat_water['surface']) < .12):
@@ -126,7 +347,8 @@ def fit_landing(world, landing, region, *, water_fields=None):
             stations = np.linspace(-4., distance, int(round((distance + 4.) * 2)) + 1)
             centres = landing + stations[:, None] * forward
             banks = centres[:, None, :] + np.array([-HALF_WIDTH, 0., HALF_WIDTH])[None, :, None] * side
-            if not clear_of_retained_routes(world,banks):continue
+            if not clear_of_retained_routes(world,banks,
+                    ignore_connection_ids=ignore_connection_ids,ignore_region=region):continue
             bed, water = samples(world, banks, water_fields)
             lower = np.max(np.where(water['mask'], np.maximum(bed + .025, water['surface'] + DECK_CLEARANCE), bed + .025), axis=1)
             heights = profile_above(lower, stations[1] - stations[0])
@@ -249,7 +471,9 @@ def skiff_meshes(fit):
 def build_ferries(world, path, *, water_fields=None):
     """Return global scene parts for named ownership/chunk export, like bridges."""
     groups = landing_groups(world, water_fields=water_fields)
-    fits = [fit_landing(world, group['landing'], group['region'], water_fields=water_fields) for group in groups]
+    fits = [fit_landing(world, group['landing'], group['region'], water_fields=water_fields,
+                        ignore_connection_ids=group['connections']) for group in groups]
+    saved_authority = _saved_ferry_authority(world)
     builder = G.GltfBuilder('Eloria bank-fitted timber ferry landings')
     for name, color in [('timber', (.47, .31, .17)), ('hull', (.24, .18, .13)),
                         ('trim', (.68, .54, .30)), ('canvas', (.78, .73, .56))]:
@@ -267,6 +491,16 @@ def build_ferries(world, path, *, water_fields=None):
         name = f"FerryQuay_{group['region']}_{number:02d}"
         region, side, forward = group['region'], fit['side'], fit['forward']
         centres, heights = fit['centres'], fit['heights']
+        saved = _saved_group_control(saved_authority, group, fit, 'Walk_' + name)
+        report = {key: (value.tolist() if isinstance(value, np.ndarray) else value)
+                  for key, value in fit.items() if key not in ('centres', 'heights', 'stations')}
+        report['connections'] = group['connections']
+        report['node'] = 'Walk_' + name
+        report['emission'] = 'saved' if saved is not None else 'procedural'
+        if saved is not None:
+            report.update(saved)
+            reports.append(report)
+            continue
         deck = ribbon(centres, heights, side, HALF_WIDTH, 'ferry_timber')
         add(region, 'Walk_' + name, deck)
         walk_triangles.append(deck.positions[deck.indices.reshape(-1, 3)])
@@ -303,13 +537,13 @@ def build_ferries(world, path, *, water_fields=None):
             ropes.append(mooring_rope((dock[0], heights[station]+.65, dock[1]),
                                        (boat[0], fit['waterLevel']+.48, boat[1])))
         add(region, name + '_MooringRopes', M.merge(ropes, material='ferry_trim'))
-        reports.append({key: (value.tolist() if isinstance(value, np.ndarray) else value)
-                        for key, value in fit.items() if key not in ('centres', 'heights', 'stations')})
-        reports[-1]['connections'] = group['connections']
-        reports[-1]['node'] = 'Walk_' + name
+        reports.append(report)
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     builder.write_glb(str(path))
     world.ferry_triangles = np.concatenate(walk_triangles) if walk_triangles else np.empty((0, 3, 3))
     world.ferry_report = dict(landings=reports, uniqueQuays=len(groups), ferryEnds=sum(len(c['regions']) for c in world.connections if c['type']=='ferry'),
-                             maximumGrade=MAX_GRADE, policy='Actual frozen bank and wet boat footprint; no terrain or travel-contract movement.')
+                             maximumGrade=MAX_GRADE,
+                             savedQuays=sum(row['emission']=='saved' for row in reports),
+                             proceduralQuays=sum(row['emission']=='procedural' for row in reports),
+                             policy='Actual frozen bank and wet boat footprint; saved ownership suppresses generation without terrain or travel-contract movement.')
     return parts

@@ -339,6 +339,13 @@ def prepare_amberwood_access(world,content):
 
 def build_amberwood_access(world,content,path):
     if REGION not in world.ids:return []
+    if REGION in getattr(world,'authoring_snapshots',{}):
+        # All access Walk roots and their visible supports are captured by the
+        # saved scene. An empty valid auxiliary GLB keeps the shared exporter
+        # shape without resurrecting a scene child the author later deletes.
+        destination=Path(path);destination.parent.mkdir(parents=True,exist_ok=True)
+        G.GltfBuilder('Saved Amberwood access authority').write_glb(str(destination))
+        return []
     builder=G.GltfBuilder('Eloria Amberwood inhabited access')
     for name,color in [('timber',(.40,.25,.12)),('dark',(.20,.13,.075)),('iron',(.17,.18,.16))]:
         builder.add_material(G.Material('amber_access_'+name,base_color=tuple(np.asarray(color)**2.2)+(1.,),roughness=.9,double_sided=True))

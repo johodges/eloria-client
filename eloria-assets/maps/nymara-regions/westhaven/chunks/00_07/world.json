@@ -19,24 +19,24 @@
     "bounds": {
       "min": [
         -170.0,
-        -17.49168238729659,
+        -17.491682052612305,
         -336.0
       ],
       "max": [
         -74.0,
-        0.7909492122189362,
+        0.7969492254257202,
         -292.0
       ]
     },
     "playableBounds": {
       "min": [
         -170.0,
-        -22.99749953330043,
+        -22.997499465942383,
         -336.0
       ],
       "max": [
         202.0,
-        344.15944658837685,
+        344.1594543457031,
         240.0
       ]
     },
@@ -45,12 +45,12 @@
     "mapBounds": {
       "min": [
         -170.0,
-        -22.99749953330043,
+        -22.997499465942383,
         -336.0
       ],
       "max": [
         202.0,
-        344.15944658837685,
+        344.1594543457031,
         240.0
       ]
     }
@@ -109,12 +109,12 @@
       "destination": "grey_moors",
       "anchor": [
         -7.0,
-        17.873927615234777,
+        17.87392807006836,
         -322.0
       ],
       "globalAnchor": [
         163.0,
-        17.873927615234777,
+        17.87392807006836,
         738.0
       ],
       "globalTranslation": [
@@ -143,12 +143,12 @@
       "destination": "four_gates",
       "anchor": [
         182.0,
-        12.493893595484314,
+        12.49389362335205,
         -107.0
       ],
       "globalAnchor": [
         352.0,
-        12.493893595484314,
+        12.49389362335205,
         953.0
       ],
       "globalTranslation": [
@@ -177,12 +177,12 @@
       "destination": "manymouth_delta",
       "anchor": [
         182.0,
-        1.8564676086650451,
+        1.856467604637146,
         9.0
       ],
       "globalAnchor": [
         352.0,
-        1.8564676086650451,
+        1.856467604637146,
         1069.0
       ],
       "globalTranslation": [
@@ -459,12 +459,12 @@
     "bounds": {
       "min": [
         -170.0,
-        -22.99749953330043,
+        -22.997499465942383,
         -336.0
       ],
       "max": [
         202.0,
-        344.15944658837685,
+        344.1594543457031,
         240.0
       ]
     },
@@ -484,9 +484,9 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 95492,
-    "nodes": 4,
-    "meshes": 2,
+    "glbBytes": 403960,
+    "nodes": 6,
+    "meshes": 3,
     "externalResources": {
       "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac"
@@ -1730,32 +1730,35 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
+  "ambientPopulation": {
+    "groups": []
+  },
   "bounds": {
     "min": [
       -170.0,
-      -17.49168238729659,
+      -17.491682052612305,
       -336.0
     ],
     "max": [
       -74.0,
-      0.7909492122189362,
+      0.7969492254257202,
       -292.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:3342e753633e05711a9a57f01cd62ca41359f84507be303ea878bbfdb6357a01",
+  "terrainRevision": "diagonal-spine-v1:97ed1fd0874380a429465a162b588d23a93fc4c0cc4c3bb493dba0b03f083965",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
+    "masterSha256": "0ce92c6a3007f8f91451f61a5ca7b23bf72e18b8f9e59685f8264dbe09ea2c1e",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "af8fd0db996aa05f8b3e840d30d823ca918f841c552ee9dc2367458027c8b634",
-    "collisionSha256": "ff8f9a6f7e156480f5e1d15548bbf13455dcb42325fa2e156d70df2e6af525b4",
-    "terrainRevision": "diagonal-spine-v1:3342e753633e05711a9a57f01cd62ca41359f84507be303ea878bbfdb6357a01"
+    "masterSha256": "0ce92c6a3007f8f91451f61a5ca7b23bf72e18b8f9e59685f8264dbe09ea2c1e",
+    "collisionSha256": "fe89a63f7be14b673c3e7f3976ddb1e94bb6586c84564120475225ae4bbb5585",
+    "terrainRevision": "diagonal-spine-v1:97ed1fd0874380a429465a162b588d23a93fc4c0cc4c3bb493dba0b03f083965"
   }
 }

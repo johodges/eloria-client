@@ -172,6 +172,11 @@ def boardwalk_fascia(faces,material):
 
 def build_manymouth_access(world,content,path):
     if REGION not in world.ids:return []
+    if REGION in getattr(world,'authoring_snapshots',{}):
+        destination=Path(path);destination.parent.mkdir(parents=True,exist_ok=True)
+        G.GltfBuilder('Saved Manymouth access authority').write_glb(str(destination))
+        world.manymouth_access={'region':REGION,'skipped':'saved-authoring-authority'}
+        return []
     destination=Path(path)
     faces,paths,level=fishing_faces(world,content)
     builder=G.GltfBuilder('Eloria Manymouth fishing boardwalk')
