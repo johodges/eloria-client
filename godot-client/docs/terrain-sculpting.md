@@ -27,7 +27,7 @@ While sculpting, these keys work in the 3D view:
 
 ## Heightmaps and plateaus
 
-**Import heightmap…** in the sculpt section writes a greyscale image into the same sparse layer, with explicit heights for black and white, **Replace** or **Offset**, and the same border protection. **Map tools > Stamp plateaus…** adds Set or Add terrain patches instead, refusing any that would touch the protected border. Both are described in [map-authoring-usability.md](map-authoring-usability.md).
+**Import heightmap…** in the sculpt section writes a greyscale image into the same sparse layer, with explicit heights for black and white, **Replace** or **Offset**, and the same border protection. Its area can be dragged out on the map, and **Preview** shows the result before anything is kept. **Map tools > Stamp plateaus…** adds Set or Add terrain patches instead, refusing any that would touch the protected border. Both are described in [map-authoring-usability.md](map-authoring-usability.md).
 
 ## Strokes, undo and saving
 
@@ -49,5 +49,5 @@ is visible, then return when the drag ends. Save/reopen keeps the layer.
 Terrain patches, road shaping, and river shaping still run after the sculpted
 base. Existing objects and water do not automatically snap to edited ground;
 inspect them after large height changes. **Map tools > Drop selection to
-ground** re-seats selected assets and markers on the new surface. Image heightmap import is not part of
-this first sculpting phase.
+ground** re-seats selected assets and markers on the new surface. A heightmap
+import writes the same layer (see above).

@@ -38,6 +38,10 @@ var _pending: Resource
 var _last_sample := Vector2.INF
 var _preview_elapsed := 0.0
 var _settings := {}
+## A heightmap shown on the terrain but not imported yet, and the layer it
+## replaced (see preview_heightmap).
+var _heightmap_previewing := false
+var _heightmap_original: Resource
 var _hover_reason := ""
 
 
@@ -80,6 +84,7 @@ func bind(root: Node3D, terrain: MapAuthoringTerrainControl,
 
 
 func unbind() -> void:
+	cancel_heightmap_preview()
 	cancel_stroke()
 	_enabled = false
 	_picking_height = false
@@ -321,24 +326,13 @@ func import_heightmap(image: Image, area: Rect2, low: float, high: float,
 		return {"error": "Open an editable territory from the Territories dock first."}
 	if _dragging:
 		return {"error": "Finish the current stroke first."}
+	# A preview is put back first, so the undo step returns to the ground as it was.
+	cancel_heightmap_preview()
 	var current: Resource = _terrain.sculpt_layer
-	var result := heightmap_layer_deltas(image, area, low, high, replace, _base,
-		current.indices if current != null else PackedInt32Array(),
-		current.deltas if current != null else PackedFloat32Array(),
-		_locked, _boundary_weights, _terrain.origin, _terrain.grid_size, _terrain.cell_metres)
+	var result := _heightmap_layer(image, area, low, high, replace, current)
 	if result.has("error"):
 		return result
-	var layer: Resource = _terrain.sculpt_layer.copy_with(result.indices, result.deltas) \
-		if current != null else null
-	if layer == null:
-		layer = load("res://src/dev/map_authoring_region/terrain_sculpt_layer.gd").new()
-		layer.bind_base(_base_sha, _terrain.origin, _terrain.grid_size, _terrain.cell_metres)
-		layer.indices = result.indices
-		layer.deltas = result.deltas
-	var error: String = layer.validation_error(_base_sha, _terrain.origin, _terrain.grid_size,
-		_terrain.cell_metres)
-	if not error.is_empty():
-		return {"error": error}
+	var layer: Resource = result.layer
 	if _undo_redo is EditorUndoRedoManager:
 		_undo_redo.create_action("Import heightmap", UndoRedo.MERGE_DISABLE, _root)
 	else:
@@ -349,6 +343,68 @@ func import_heightmap(image: Image, area: Rect2, low: float, high: float,
 	status_changed.emit("Heightmap imported into the sculpt layer: %d samples changed, %d protected." % [
 		int(result.changed), int(result.protected)])
 	return {"changed": result.changed, "protected": result.protected}
+
+
+## Shows what import_heightmap would do on the terrain, without an undo step or
+## any change to the saved layer: import_heightmap keeps it (as one undo step),
+## cancel_heightmap_preview puts the ground back. Previewing again replaces the
+## previous preview. Returns {"changed", "protected"} or {"error"}.
+func preview_heightmap(image: Image, area: Rect2, low: float, high: float,
+		replace: bool) -> Dictionary:
+	if _terrain == null or not is_instance_valid(_terrain) or _base.is_empty():
+		return {"error": "Open an editable territory from the Territories dock first."}
+	if _dragging:
+		return {"error": "Finish the current stroke first."}
+	var original: Resource = _heightmap_original if _heightmap_previewing else _terrain.sculpt_layer
+	var result := _heightmap_layer(image, area, low, high, replace, original)
+	if result.has("error"):
+		return result
+	if not _heightmap_previewing:
+		_heightmap_original = original
+		_heightmap_previewing = true
+	_terrain.apply_sculpt_layer(result.layer)
+	status_changed.emit(("Previewing the heightmap: %d samples change, %d protected. Import keeps " +
+		"it as one undo step; Cancel puts the ground back.") % [int(result.changed),
+		int(result.protected)])
+	return {"changed": result.changed, "protected": result.protected}
+
+
+func is_previewing_heightmap() -> bool:
+	return _heightmap_previewing
+
+
+## Puts the ground back as it was before preview_heightmap.
+func cancel_heightmap_preview() -> void:
+	if not _heightmap_previewing:
+		return
+	_heightmap_previewing = false
+	if _terrain != null and is_instance_valid(_terrain):
+		_terrain.apply_sculpt_layer(_heightmap_original)
+	_heightmap_original = null
+
+
+## The sculpt layer a heightmap import makes from `current`, with its counts,
+## or {"error"}.
+func _heightmap_layer(image: Image, area: Rect2, low: float, high: float, replace: bool,
+		current: Resource) -> Dictionary:
+	var result := heightmap_layer_deltas(image, area, low, high, replace, _base,
+		current.indices if current != null else PackedInt32Array(),
+		current.deltas if current != null else PackedFloat32Array(),
+		_locked, _boundary_weights, _terrain.origin, _terrain.grid_size, _terrain.cell_metres)
+	if result.has("error"):
+		return result
+	var layer: Resource = current.copy_with(result.indices, result.deltas) \
+		if current != null else null
+	if layer == null:
+		layer = load("res://src/dev/map_authoring_region/terrain_sculpt_layer.gd").new()
+		layer.bind_base(_base_sha, _terrain.origin, _terrain.grid_size, _terrain.cell_metres)
+		layer.indices = result.indices
+		layer.deltas = result.deltas
+	var error: String = layer.validation_error(_base_sha, _terrain.origin, _terrain.grid_size,
+		_terrain.cell_metres)
+	if not error.is_empty():
+		return {"error": error}
+	return {"layer": layer, "changed": result.changed, "protected": result.protected}
 
 
 ## The pure heightmap-to-sculpt-layer computation behind import_heightmap.

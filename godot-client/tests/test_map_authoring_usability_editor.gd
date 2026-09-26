@@ -29,6 +29,45 @@ const MARKER := preload("res://src/dev/map_authoring_region/gameplay_marker.gd")
 const WATER := preload("res://src/dev/map_authoring_region/water_region_control.gd")
 const GroupTools := preload("res://addons/map_authoring_usability/group_tools.gd")
 const Walker := preload("res://addons/map_authoring_usability/playtest_walker.gd")
+const Structures := preload("res://addons/map_authoring_usability/structure_raster.gd")
+const PathDraw := preload("res://addons/map_authoring_usability/path_draw_tool.gd")
+const PlanWater := preload("res://addons/map_authoring_usability/plan_water.gd")
+const Scatter := preload("res://addons/map_authoring_usability/scatter_tool.gd")
+const ReviewNotes := preload("res://addons/map_authoring_usability/review_notes.gd")
+## Heights in 0.2 m units on a 24 x 24 grid with walls and a steep band, and
+## what eloria-server's sync_authored_collision.choose_stage makes of them: the
+## largest reachable area at each stage factor, and the factor it picks.
+const STAGE_REFERENCE := {
+	"units": [
+		2, 1, 1, 1, 5, 5, 5, 6, 9, 9, 9, 9, 13, 13, 14, 13, 17, 17, 17, 17, 21, 22, 21, 21,
+		1, 1, 1, 1, 6, 5, 5, 5, 9, 9, 9, 10, 13, 13, 13, 13, 17, 17, 18, 17, 21, 21, 21, 21,
+		1, 2, 1, 1, 5, 5, 5, 5, 10, 9, 9, 9, 13, 13, 13, 14, 17, 17, 17, 17, 21, 21, 22, 21,
+		1, 1, 1, 1, 5, 6, 5, 5, 9, 9, 9, 9, 14, 13, 13, 13, 17, 17, 17, 18, 21, 21, 21, 21,
+		1, 1, 2, 1, 5, 5, 5, 5, 9, 10, 9, 9, 13, 13, 13, 13, 18, 17, 17, 17, 21, 21, 21, 22,
+		1, 1, 1, 1, 5, 5, 6, 5, 9, 9, 0, 9, 13, 14, 13, 13, 17, 17, 17, 17, 22, 21, 21, 21,
+		1, 1, 1, 2, 5, 5, 5, 5, 9, 9, 0, 9, 13, 13, 13, 13, 17, 18, 17, 17, 21, 21, 21, 21,
+		2, 1, 1, 1, 5, 5, 5, 6, 9, 9, 0, 9, 13, 13, 14, 13, 17, 17, 17, 17, 21, 22, 21, 21,
+		1, 1, 1, 1, 6, 5, 5, 5, 9, 9, 9, 10, 13, 13, 13, 13, 17, 17, 18, 17, 21, 21, 21, 21,
+		1, 2, 1, 1, 5, 5, 5, 5, 10, 9, 9, 9, 13, 13, 13, 14, 17, 17, 17, 17, 21, 21, 22, 21,
+		1, 1, 1, 1, 5, 6, 5, 5, 9, 9, 9, 9, 14, 13, 13, 13, 17, 17, 17, 18, 21, 21, 21, 21,
+		1, 1, 2, 1, 5, 5, 5, 5, 9, 10, 9, 9, 13, 13, 13, 13, 18, 17, 17, 17, 21, 21, 21, 22,
+		1, 1, 1, 1, 5, 5, 6, 5, 9, 9, 9, 9, 13, 14, 13, 13, 17, 17, 17, 17, 22, 21, 21, 21,
+		1, 1, 1, 2, 5, 5, 5, 5, 9, 9, 10, 9, 13, 13, 13, 13, 17, 18, 17, 17, 21, 21, 21, 21,
+		2, 1, 1, 1, 5, 5, 5, 6, 9, 9, 9, 9, 13, 13, 14, 13, 17, 17, 17, 17, 21, 22, 21, 21,
+		1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 21, 21,
+		1, 2, 1, 1, 5, 5, 5, 5, 10, 9, 9, 9, 13, 13, 13, 14, 17, 17, 17, 17, 21, 21, 22, 21,
+		1, 1, 1, 1, 5, 6, 5, 5, 9, 9, 9, 9, 14, 13, 13, 13, 17, 17, 17, 18, 21, 21, 21, 21,
+		1, 1, 2, 1, 5, 5, 5, 5, 9, 10, 9, 9, 13, 13, 13, 13, 18, 17, 17, 17, 21, 21, 21, 22,
+		1, 1, 1, 1, 5, 5, 6, 5, 9, 9, 9, 9, 13, 14, 13, 13, 17, 17, 17, 17, 22, 21, 21, 21,
+		1, 1, 1, 2, 5, 5, 5, 5, 9, 9, 10, 9, 13, 13, 13, 13, 17, 18, 17, 17, 21, 21, 21, 21,
+		2, 1, 1, 1, 5, 5, 5, 6, 9, 9, 9, 9, 13, 13, 14, 13, 17, 17, 17, 17, 21, 22, 21, 21,
+		1, 1, 1, 1, 6, 5, 5, 5, 9, 9, 9, 10, 13, 13, 13, 13, 17, 17, 18, 17, 21, 21, 21, 21,
+		1, 2, 1, 1, 5, 5, 5, 5, 10, 9, 9, 9, 13, 13, 13, 14, 17, 17, 17, 17, 21, 21, 22, 21,
+	],
+	"scores": {1: 96, 2: 555, 3: 555, 4: 555},
+	"factor": 2,
+}
+const ASSET := preload("res://src/dev/map_authoring_region/asset_control.gd")
 ## Expected results computed with eloria-server's own fold functions
 ## (tools/collision_sources.requantise, sync_authored_collision stage rules) and a
 ## line-by-line replica of World.find_path; see the play-test walker parity check.
@@ -178,11 +217,16 @@ func _run() -> void:
 	await _test_top_down(usability, root)
 	_test_marker_palette(palette, usability, root, camera)
 	_test_walkability(usability, root)
+	_test_structure_rules()
+	await _test_structure_background(root)
+	_test_plan_water(usability, root)
+	_test_published_minimap(usability)
 	_test_path_drawing(palette, usability, root, camera, entry)
 	_test_road_extension(usability, root, camera)
 	await _test_groups_and_copies(usability, root, camera)
 	_test_selection_bar(usability, root)
 	_test_walker_parity()
+	_test_walker_stages_and_reach()
 	_test_play_test(usability, root, camera)
 	await _test_minimap(usability, root)
 	_test_territory_picker()
@@ -190,6 +234,8 @@ func _run() -> void:
 	_test_contract_guards(palette, usability, root, camera)
 	_test_ground_and_plateaus(usability, root, camera)
 	_test_heightmap_import(root)
+	_test_scatter(palette, usability, root, camera, entry)
+	_test_review_notes(usability, root, camera)
 	_test_low_spec(usability, root)
 	_test_toolbar(usability)
 	usability.call("set_time_preview", true, 90.0)
@@ -950,6 +996,387 @@ func _test_walkability(usability: Object, root: Node3D) -> void:
 		"switching the overlay off removes its tint")
 
 
+## The bake's own collision fixtures (_continent/tests/test_collision_export.py),
+## rebuilt as editor assets on flat ground: the live port must block and carry
+## the same half-cells. Coordinates are the fixtures' territory-local ones.
+func _test_structure_rules() -> void:
+	var fixture := Node3D.new()
+	fixture.name = "StructureFixture"
+	get_root().add_child(fixture)
+	var assets := Node3D.new()
+	assets.name = "AuthoredAssets"
+	fixture.add_child(assets)
+	var heights := PackedFloat32Array()
+	heights.resize(49)
+	heights.fill(0.0)
+	var ground := Structures.ground_frame({"heights": heights, "grid": Vector2i(7, 7),
+		"cell": 2.0, "terrain_x0": -6.0, "terrain_z0": -6.0, "x0": -6.0, "z0": -6.0,
+		"tile": 1.0, "width": 12, "rows": 12})
+	var door := _half_cell(-0.25, 0.25)
+	# An arch: posts block, the doorway under a roof lintel stays open.
+	_fixture_asset(assets, "GateArch", "solid", [_fixture_group("GateArch", [
+		_fixture_mesh("LeftPost", _box(-2.5, 0, -1, -1.5, 4, 1)),
+		_fixture_mesh("RightPost", _box(1.5, 0, -1, 2.5, 4, 1)),
+		_fixture_mesh("RoofLintel", _box(-2.5, 3, -1, 2.5, 4, 1))])])
+	var arch := _structure_result(fixture, ground)
+	_fixture_asset(assets, "LowLintel", "solid", [_fixture_mesh("LowLintel",
+		_box(-2.5, 1.8, -1, 2.5, 2.5, 1))])
+	var low := _structure_result(fixture, ground)
+	_expect(not arch.blocked.has(door) and arch.blocked.has(_half_cell(-2.25, 0.25)) and
+		low.blocked.has(door),
+		"an arch blocks at its posts but not under a roof above head height; a low lintel blocks")
+	# A closed solid blocks inside itself; the same shape left open does not.
+	var rock := _box(-2, -1, -2, 2, 8, 2)
+	_fixture_asset(assets, "SolidRock", "solid", [_fixture_mesh("SolidRock", rock)])
+	var closed := _structure_result(fixture, ground)
+	var open_rock: Array[Vector3] = []
+	open_rock.append_array(rock.slice(0, 6))
+	open_rock.append_array(rock.slice(12))
+	_fixture_asset(assets, "OpenRock", "solid", [_fixture_mesh("OpenRock", open_rock)])
+	var open := _structure_result(fixture, ground)
+	_expect(closed.blocked.has(door) and not open.blocked.has(door) and
+		open.blocked.has(_half_cell(-1.75, 0.25)),
+		"a tall closed solid blocks its interior; an open one only its walls")
+	var wall: Array[Vector3] = [Vector3(0, 0, -2), Vector3(0, 3, -2), Vector3(0, 3, 2),
+		Vector3(0, 0, -2), Vector3(0, 3, 2), Vector3(0, 0, 2)]
+	_fixture_asset(assets, "ThinWall", "solid", [_fixture_mesh("ThinWall", wall)])
+	var thin := _structure_result(fixture, ground)
+	_expect(thin.blocked.has(door) and not thin.blocked.has(_half_cell(-1.25, 0.25)),
+		"a thin edge-on wall blocks the cells its plane touches and no others")
+	# Decks come from Walk_ names, whatever the role, and never from a ceiling.
+	_fixture_asset(assets, "Bridge01", "walk_surface", [_fixture_group("Bridge01", [
+		_fixture_mesh("Walk_Bridge", _quad(-2, -2, 2, 2, 1.5))])])
+	var bridge := _structure_result(fixture, ground)
+	_fixture_asset(assets, "Bridge02", "walk_surface", [_fixture_group("Bridge02", [
+		_fixture_mesh("Walk_Ceiling", _quad(-2, -2, 2, 2, 1.5))])])
+	var ceiling := _structure_result(fixture, ground)
+	_fixture_asset(assets, "Dock01", "walk_surface", [_fixture_group("Dock01", [
+		_fixture_mesh("Planks", _quad(-2, -2, 2, 2, 0.5))])])
+	var unnamed := _structure_result(fixture, ground)
+	_fixture_asset(assets, "Walk_Dock", "none", [_fixture_mesh("Planks", _quad(-2, -2, 2, 2, 0.5))])
+	var named := _structure_result(fixture, ground)
+	_expect(is_equal_approx(float(bridge.decks.get(door, -1.0)), 1.5) and
+		not bridge.decks.has(_half_cell(-3.25, 0.25)) and ceiling.decks.is_empty() and
+		unnamed.decks.is_empty() and is_equal_approx(float(named.decks.get(door, -1.0)), 0.5),
+		"only a Walk_ ancestor makes a deck (the placement's node name counts), never a ceiling")
+	# The exporter keeps only an asset's first scene root under its solid node
+	# name; a Walk_ roof inside a solid is a ceiling, so it blocks and carries nothing.
+	_fixture_asset(assets, "Hut", "solid", [_fixture_mesh("Body", _box(-2, 0, -2, -1, 3, 2)),
+		_fixture_mesh("Porch", _box(1, 0, -2, 2, 3, 2))])
+	var hut := _structure_result(fixture, ground)
+	_fixture_asset(assets, "Tower", "solid", [_fixture_group("Tower", [
+		_fixture_mesh("Walk_Roof", _quad(-2, -2, 2, 2, 1.0))])])
+	var tower := _structure_result(fixture, ground)
+	_expect(hut.blocked.has(_half_cell(-1.25, 0.25)) and not hut.blocked.has(_half_cell(1.25, 0.25)) and
+		tower.blocked.has(door) and tower.decks.is_empty(),
+		"companion scene roots are not solid, and a Walk_ roof inside a solid blocks")
+	fixture.free()
+
+
+func _structure_result(fixture: Node3D, ground: Dictionary) -> Dictionary:
+	var shapes := Structures.gather(fixture)
+	var blocked := {}
+	for solid: Dictionary in shapes.solids:
+		for index in Structures.blocked_cells(solid.parts, ground):
+			blocked[index] = true
+	var decks: Dictionary = Structures.deck_cells(ground, shapes.decks).cells
+	for asset in fixture.get_node("AuthoredAssets").get_children():
+		asset.free()
+	return {"blocked": blocked, "decks": decks}
+
+
+func _half_cell(x: float, z: float) -> int:
+	return floori((z + 6.0) / 0.5) * 24 + floori((x + 6.0) / 0.5)
+
+
+func _fixture_asset(parent: Node3D, node_name: String, role: String, roots: Array) -> void:
+	var asset: Node3D = ASSET.new()
+	asset.name = node_name
+	asset.set("node_name", node_name)
+	asset.set("collision_role", role)
+	var content := Node3D.new()
+	content.name = "fixture-scene"
+	asset.add_child(content)
+	for scene_root: Node in roots:
+		content.add_child(scene_root)
+	parent.add_child(asset)
+
+
+func _fixture_group(label: String, children: Array) -> Node3D:
+	var group := Node3D.new()
+	group.name = label
+	for child: Node in children:
+		group.add_child(child)
+	return group
+
+
+## A mesh from triangles in glTF (counter-clockwise) order, stored clockwise as
+## Godot's glTF importer stores them.
+func _fixture_mesh(label: String, triangles: Array[Vector3]) -> MeshInstance3D:
+	var vertices := PackedVector3Array()
+	for index in range(0, triangles.size(), 3):
+		vertices.append_array([triangles[index], triangles[index + 2], triangles[index + 1]])
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	var node := MeshInstance3D.new()
+	node.name = label
+	node.mesh = mesh
+	return node
+
+
+func _box(x0: float, y0: float, z0: float, x1: float, y1: float, z1: float) -> Array[Vector3]:
+	var v := [Vector3(x0, y0, z0), Vector3(x1, y0, z0), Vector3(x1, y0, z1), Vector3(x0, y0, z1),
+		Vector3(x0, y1, z0), Vector3(x1, y1, z0), Vector3(x1, y1, z1), Vector3(x0, y1, z1)]
+	var result: Array[Vector3] = []
+	for face: Array in [[0, 1, 2], [0, 2, 3], [4, 6, 5], [4, 7, 6], [0, 3, 7], [0, 7, 4],
+			[1, 5, 6], [1, 6, 2], [0, 4, 5], [0, 5, 1], [3, 2, 6], [3, 6, 7]]:
+		for corner: int in face:
+			result.append(v[corner])
+	return result
+
+
+func _quad(x0: float, z0: float, x1: float, z1: float, y: float) -> Array[Vector3]:
+	var result: Array[Vector3] = [Vector3(x0, y, z0), Vector3(x1, y, z1), Vector3(x1, y, z0),
+		Vector3(x0, y, z0), Vector3(x0, y, z1), Vector3(x1, y, z1)]
+	return result
+
+
+## Opening LIVE shows box estimates at once and swaps in the exact result when
+## the background check finishes, with a status notice; nothing is left running.
+func _test_structure_background(root: Node3D) -> void:
+	var asset := root.get_node("AuthoredAssets").get_child(0) as Node3D
+	asset.set("collision_role", "solid")
+	var walk := Walkability.new()
+	walk.set_mode(root, Walkability.Mode.LIVE)
+	var pending_at_start := walk.structures_pending()
+	var legend_text := str(walk.legend())
+	var notice := ""
+	for _attempt in 300:
+		walk.poll(false)
+		notice += walk.take_notice()
+		if walk.structures_pending() == 0:
+			break
+		await process_frame
+	var live := walk.live_data()
+	_expect(pending_at_start > 0 and "box estimates" in legend_text and
+		walk.structures_pending() == 0 and "exactly" in notice and
+		(live.pending as Array).is_empty() and int(live.solids) == pending_at_start,
+		"live structures start as box estimates and turn exact in the background (%s)" % notice)
+	walk.release()
+	asset.set("collision_role", "none")
+
+
+## The continent plan's water: features near the territory in its frame, the
+## claimed ones marked, plan-only water in the live walkability, and the
+## read-only display.
+func _test_plan_water(usability: Object, root: Node3D) -> void:
+	var plan := {"rivers": [
+		{"id": "test_river", "name": "Test River", "width": 6.0,
+			"points": [[5.0, 20.0, 100.0], [35.0, 20.0, 100.0]]},
+		{"id": "far_river", "name": "Far River", "width": 6.0,
+			"points": [[900.0, 900.0, 1.0], [950.0, 900.0, 1.0]]}],
+		"lakes": [{"name": "Mirror Lake", "center": [20.0, 32.0], "radii": [4.0, 3.0],
+			"level": 100.0, "depth": 2.0}]}
+	var saved_owned: PackedStringArray = root.get("owned_plan_feature_ids")
+	var saved_translation: Vector3 = root.get("continent_translation")
+	root.set("continent_translation", Vector3.ZERO)
+	root.set("owned_plan_feature_ids", PackedStringArray(["mirror_lake"]))
+	var found := PlanWater.features(root, plan)
+	var river := {}
+	var lake := {}
+	for feature in found:
+		if String(feature.kind) == "river":
+			river = feature
+		else:
+			lake = feature
+	_expect(found.size() == 2 and not bool(river.get("claimed", true)) and
+		(river.get("points", PackedVector3Array()) as PackedVector3Array)[0].is_equal_approx(
+			Vector3(5.0, 100.0, 20.0)) and String(lake.get("id", "")) == "mirror_lake" and
+		bool(lake.get("claimed", false)),
+		"plan water near the territory is found in its frame; an owned lake counts as claimed")
+	var live := Walkability.compute_live(root)
+	var before: PackedByteArray = (live.classes as PackedByteArray).duplicate()
+	Walkability._plan_water_pass(root, live, plan)
+	var after: PackedByteArray = live.classes
+	var width := int(live.width)
+	var at := func(classes: PackedByteArray, x: float, z: float) -> int:
+		return classes[floori(z - float(live.z0)) * width + floori(x - float(live.x0))]
+	_expect(at.call(after, 20.5, 20.5) == Walkability.Tile.WATER and
+		at.call(after, 20.5, 26.5) == at.call(before, 20.5, 26.5) and
+		at.call(after, 20.5, 32.5) == at.call(before, 20.5, 32.5),
+		"live walkability floods under plan-only rivers but not under water the territory claims")
+	var plan_file := DIR + "/plan.json"
+	var file := FileAccess.open(plan_file, FileAccess.WRITE)
+	file.store_string(JSON.stringify(plan))
+	file.close()
+	var display: RefCounted = usability.call("plan_water")
+	display.set("plan_path", plan_file)
+	var shown: bool = usability.call("set_plan_water", true)
+	var node: Node3D = display.call("node")
+	var labels := node.find_children("*", "Label3D", true, false).size() if node != null else 0
+	var message := String(display.get("last_message"))
+	usability.call("set_plan_water", false)
+	_expect(shown and node != null and node.owner == null and labels == 2 and
+		"1 plan-only" in message and "1 claimed" in message and display.call("node") == null,
+		"the plan's water is drawn read-only, plan-only and claimed told apart (%s)" % message)
+	display.set("plan_path", PlanWater.PLAN_PATH)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(plan_file))
+	root.set("owned_plan_feature_ids", saved_owned)
+	root.set("continent_translation", saved_translation)
+
+
+## The published minimap is cut to the live picture's frame from its manifest
+## corners, and the dock can show both.
+func _test_published_minimap(usability: Object) -> void:
+	var source := Image.create_empty(372, 576, false, Image.FORMAT_RGBA8)
+	source.fill(Color(0.0, 0.0, 1.0, 1.0))
+	source.set_pixel(170, 336, Color(1.0, 0.0, 0.0, 1.0))
+	source.set_pixel(175, 341, Color(0.0, 1.0, 0.0, 1.0))
+	var picture: Image = UsabilityPlugin.resample_published(source, Vector2(-170.0, -336.0), 1.0,
+		{"rect": Rect2(0.0, 0.0, 10.0, 10.0), "size": Vector2i(10, 10)})
+	var edge: Image = UsabilityPlugin.resample_published(source, Vector2(-170.0, -336.0), 1.0,
+		{"rect": Rect2(195.0, 0.0, 10.0, 10.0), "size": Vector2i(10, 10)})
+	var westhaven: Node3D = REGION.new()
+	westhaven.set("region_id", "westhaven")
+	var published: Dictionary = UsabilityPlugin.published_minimap(westhaven,
+		{"rect": Rect2(-50.0, -50.0, 100.0, 100.0), "size": Vector2i(50, 50)})
+	westhaven.free()
+	var dock: Object = usability.get("_minimap")
+	dock.call("set_show", 2)
+	var both := (dock.call("view") as Control).visible and (dock.call("published_view") as Control).visible
+	dock.call("set_show", 0)
+	_expect(picture.get_pixel(0, 0).is_equal_approx(Color(1.0, 0.0, 0.0, 1.0)) and
+		picture.get_pixel(5, 5).is_equal_approx(Color(0.0, 1.0, 0.0, 1.0)) and
+		is_equal_approx(edge.get_pixel(0, 0).b, 1.0) and is_zero_approx(edge.get_pixel(9, 0).a) and
+		published.get("image") is Image and "published" in String(published.get("note", "")).to_lower() and
+		both and not (dock.call("published_view") as Control).visible,
+		"the last published minimap lines up with the live one (Westhaven's pixel edge 170, 336 is local 0, 0)")
+
+
+## Scatter: seeded, spaced points and one undo step per stroke.
+func _test_scatter(palette: Object, usability: Object, root: Node3D, camera: Camera3D,
+		entry: Dictionary) -> void:
+	var history := _undo.get_history_undo_redo(_undo.get_object_history_id(root))
+	var tool := _bind_fixture_sculpt(root)
+	var polygon := PackedVector2Array([Vector2(0, 0), Vector2(40, 0), Vector2(40, 40), Vector2(0, 40)])
+	var first_rng := RandomNumberGenerator.new()
+	first_rng.seed = 7
+	var second_rng := RandomNumberGenerator.new()
+	second_rng.seed = 7
+	var first := Scatter.stamp_points(first_rng, Vector2(20.0, 20.0), 5.0, 20.0, 1.5,
+		PackedVector2Array(), polygon)
+	var second := Scatter.stamp_points(second_rng, Vector2(20.0, 20.0), 5.0, 20.0, 1.5,
+		PackedVector2Array(), polygon)
+	var spaced := true
+	for a in first.size():
+		spaced = spaced and first[a].distance_to(Vector2(20.0, 20.0)) <= 5.0
+		for b in range(a + 1, first.size()):
+			spaced = spaced and first[a].distance_to(first[b]) >= 1.5
+	_expect(first == second and first.size() >= 5 and spaced,
+		"scatter points repeat for a seed and keep their spacing inside the brush (%d)" % first.size())
+	var dock: Object = palette.get("_dock")
+	dock.call("select_entry_by_id", String(entry.id))
+	var assets := root.get_node("AuthoredAssets")
+	var before := assets.get_child_count()
+	var started: bool = usability.call("start_scatter", {"radius": 4.0, "density": 15.0,
+		"spacing": 2.0, "random_turn": true, "size_variation": 0.1, "seed": 3}, entry)
+	_stroke(usability, camera, root, [Vector2(12.0, 12.0), Vector2(16.0, 12.0), Vector2(20.5, 12.0)])
+	var added: Array[Node3D] = []
+	for index in range(before, assets.get_child_count()):
+		added.append(assets.get_child(index) as Node3D)
+	var others := {}
+	for index in before:
+		others[String(assets.get_child(index).get("asset_id"))] = true
+	var fresh := {}
+	for node in added:
+		if not others.has(String(node.get("asset_id"))):
+			fresh[String(node.get("asset_id"))] = true
+	var apart := true
+	for a in added.size():
+		for b in range(a + 1, added.size()):
+			apart = apart and Vector2(added[a].global_position.x - added[b].global_position.x,
+				added[a].global_position.z - added[b].global_position.z).length() >= 1.99
+	var owned := true
+	for node in added:
+		owned = owned and node.owner == root and String(node.get("catalog_asset_id")) == String(entry.id)
+	history.undo()
+	var undone := assets.get_child_count() == before
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_ESCAPE))
+	var scatter: RefCounted = usability.call("scatter_tool")
+	_expect(started and added.size() >= 3 and fresh.size() == added.size() and
+		apart and owned and undone and not bool(scatter.call("is_active")),
+		"a scatter stroke places spaced copies of the chosen asset with fresh ids in one undo step (%d; %s; started %s, fresh %d, apart %s, owned %s, undone %s)" %
+			[added.size(), String(scatter.get("last_message")), started, fresh.size(), apart, owned, undone])
+	if tool != null:
+		tool.call("unbind")
+
+
+## Review notes: the sidecar beside the scene, its validation, and pins.
+func _test_review_notes(usability: Object, root: Node3D, camera: Camera3D) -> void:
+	var centre := camera.get_viewport().get_visible_rect().size * 0.5
+	var notes: RefCounted = usability.call("review_notes")
+	var path := ReviewNotes.path_for(root)
+	var region := String(root.get("region_id"))
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	notes.call("open", root)
+	var armed: bool = usability.call("start_review_note", "Check the ford")
+	_aim(camera, root, Vector2(20.0, 20.0))
+	var consumed: int = usability.call("_forward_3d_gui_input", camera, _click(centre))
+	var loaded := ReviewNotes.read(path, region)
+	var first: Dictionary = (loaded.notes as Array)[0] if not (loaded.notes as Array).is_empty() else {}
+	_expect(armed and consumed == EditorPlugin.AFTER_GUI_INPUT_STOP and path.ends_with(".editor-notes.json") and
+		(loaded.errors as PackedStringArray).is_empty() and (loaded.notes as Array).size() == 1 and
+		String(first.get("id", "")) == "review-001" and String(first.get("status", "")) == "open" and
+		String(first.get("text", "")) == "Check the ford" and
+		Vector2((first.get("position", Vector3.INF) as Vector3).x - 20.0,
+			(first.get("position", Vector3.INF) as Vector3).z - 20.0).length() < 0.1,
+		"a click pins a review note into <region>.editor-notes.json beside the scene")
+	notes.call("set_status", "review-001", "resolved")
+	notes.call("set_text", "review-001", "Ford checked")
+	notes.call("add", Vector3(5.0, 1.0, 5.0), "Second look")
+	var reread := ReviewNotes.read(path, region)
+	var pins: Node3D = notes.call("pins")
+	var document: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	var notes_dock: Object = usability.call("review_notes_dock")
+	usability.call("_sync_notes_dock")
+	_expect((reread.notes as Array).size() == 2 and String((reread.notes as Array)[0].status) == "resolved" and
+		String((reread.notes as Array)[0].text) == "Ford checked" and
+		String((reread.notes as Array)[1].id) == "review-002" and document is Dictionary and
+		String(document.schema) == "eloria-editor-notes-v1" and String(document.regionId) == region and
+		pins != null and pins.owner == null and
+		pins.find_children("*", "Label3D", true, false).size() == 2 and
+		bool(notes_dock.call("select_id", "review-002")),
+		"notes resolve, change text and number themselves; pins are internal and never saved (%s; pins %s; dock %s)" % [
+			str(reread.notes), str(pins), str(notes_dock.call("selected_id"))])
+	notes.call("remove", "review-002")
+	var bad := {"schema": "eloria-editor-notes-v1", "regionId": "elsewhere", "notes": [
+		{"id": "a", "position": [1, 2, 3], "text": "x", "status": "open"},
+		{"id": "a", "position": [1, 2, 3], "text": "y", "status": "open"},
+		{"id": "b", "position": [1, "x", 3], "text": "z", "status": "open"},
+		{"id": "c", "position": [1, 2, 3], "text": "w", "status": "done"}]}
+	var bad_file := FileAccess.open(path, FileAccess.WRITE)
+	bad_file.store_string(JSON.stringify(bad))
+	bad_file.close()
+	var bad_bytes := FileAccess.get_file_as_bytes(path)
+	notes.call("open", root)
+	var problems := " ".join(notes.get("errors") as PackedStringArray)
+	var refused: Dictionary = notes.call("add", Vector3.ZERO, "Should not be written")
+	_expect(not bool(notes.call("can_write")) and (notes.get("notes") as Array).size() == 1 and
+		"elsewhere" in problems and "twice" in problems and "three finite numbers" in problems and
+		"open or resolved" in problems and refused.is_empty() and
+		FileAccess.get_file_as_bytes(path) == bad_bytes,
+		"a notes file with problems is read for what is valid and never rewritten (%s)" % problems)
+	var packaging := FileAccess.get_file_as_string("res://tools/package_client.py")
+	_expect(packaging.count("*.editor-notes.json") == 2,
+		"both client export presets leave review notes out of the package")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	notes.call("open", root)
+
+
 func _test_path_drawing(palette: Object, usability: Object, root: Node3D, camera: Camera3D,
 		entry: Dictionary) -> void:
 	var centre := camera.get_viewport().get_visible_rect().size * 0.5
@@ -1007,6 +1434,19 @@ func _test_path_drawing(palette: Object, usability: Object, root: Node3D, camera
 	_expect(river != null and String(river.get("kind")) == "river" and
 		String(river.get("routing_role")) == "decorative",
 		"right-click finishes a decorative river-01")
+	var channel: Dictionary = river.get("properties") if river != null else {}
+	var wider := PathDraw.river_properties(root, "river-02", float(river.get("default_width")) * 2.0) \
+		if river != null else {}
+	_expect(float(channel.get("channelDepth", 0.0)) > 0.0 and
+		float(channel.get("bankHeight", 0.0)) > 0.0 and
+		float(channel.get("valleyWidth", 0.0)) >= 30.0 and
+		String(channel.get("name", "")) == "river-01" and
+		not bool(channel.get("terrainConform", true)) and
+		is_equal_approx(float(wider.get("valleyWidth", 0.0)),
+			maxf(30.0, float(channel.get("valleyWidth", 0.0)) * 2.0)) and
+		is_equal_approx(float(wider.get("channelDepth", 0.0)), float(channel.get("channelDepth", -1.0))),
+		"a drawn river carries the channel depth, valley width and bank height the composer needs, " +
+			"in proportion to a river the territory has")
 	# A click beside an existing road point joins it exactly.
 	usability.call("start_path_drawing", "road")
 	var first: Vector3 = road.global_transform * road.curve.get_point_position(0)
@@ -1073,6 +1513,24 @@ func _test_road_extension(usability: Object, root: Node3D, camera: Camera3D) -> 
 	_expect(tool.call("extending") == null and (tool.get("points") as Array).size() == 1,
 		"Ctrl+click on a road's end starts a separate road there")
 	usability.call("_forward_3d_gui_input", camera, _key(KEY_ESCAPE))
+	var points_before := road.curve.point_count
+	var tail: Vector3 = road.global_transform * road.curve.get_point_position(0)
+	road.set("replaces_route_id", "route-17")
+	usability.call("start_path_drawing", "road")
+	_aim(camera, root, Vector2(tail.x, tail.z))
+	usability.call("_forward_3d_gui_input", camera, _click(centre))
+	var refused := tool.call("extending") == null and (tool.get("points") as Array).is_empty() and \
+		"route-17" in String(tool.get("last_message"))
+	road.set("replaces_route_id", "")
+	var properties: Dictionary = (road.get("properties") as Dictionary).duplicate()
+	road.set("properties", properties.merged({"joins": "river-01"}, true))
+	var joined_reason := String(tool.call("ownership_reason", road, tail))
+	road.set("properties", properties)
+	var free_reason := String(tool.call("ownership_reason", road, tail))
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_ESCAPE))
+	_expect(refused and road.curve.point_count == points_before and "joins" in joined_reason and
+		free_reason.is_empty(),
+		"a road that replaces a composer route or joins shared water is not extended")
 
 
 func _test_groups_and_copies(usability: Object, root: Node3D, camera: Camera3D) -> void:
@@ -1152,6 +1610,49 @@ func _test_groups_and_copies(usability: Object, root: Node3D, camera: Camera3D) 
 		String(marker_copies[0].get("record_id")) != "crystal-01" and
 		records.size() == Markers.markers(root).size(),
 		"a copied marker gets a fresh record id in its kind's container")
+	# What a copy must not keep: server bindings, the default spawn, placement
+	# extras, and a follow or link to an asset that was not copied with it.
+	var saved := {}
+	for field: String in ["runtime_bindings", "default_spawn", "extras", "follow_asset_id",
+			"linked_node_name"]:
+		saved[field] = crystal.get(field)
+	var bound: Array[Dictionary] = [{"recordId": "crystal-01", "service": "harvest"}]
+	crystal.set("runtime_bindings", bound)
+	crystal.set("default_spawn", true)
+	crystal.set("extras", {"propPosition": [1, 2, 3], "reachable": true, "tier": 2})
+	crystal.set("follow_asset_id", String(a.get("asset_id")))
+	crystal.set("linked_node_name", String(a.get("node_name")))
+	_select([crystal])
+	var alone := (usability.call("duplicate_selection", Vector3(0.0, 0.0, 2.0)) as Array)[0] as Node
+	var reset := (alone.get("runtime_bindings") as Array).is_empty() and \
+		not bool(alone.get("default_spawn")) and (alone.get("extras") as Dictionary) == {"tier": 2} and \
+		String(alone.get("follow_asset_id")).is_empty() and String(alone.get("linked_node_name")).is_empty()
+	_select([a, crystal])
+	await _frames(2)
+	var together: Array = usability.call("duplicate_selection", Vector3(0.0, 0.0, 4.0))
+	var marker_copy: Node = null
+	var followed: Node = null
+	for copy: Node in together:
+		if copy.get_script() == MARKER:
+			marker_copy = copy
+	for copy: Node in together:
+		if marker_copy != null and copy.get_script() != MARKER and \
+				String(copy.get("asset_id")) == String(marker_copy.get("follow_asset_id")):
+			followed = copy
+	history.undo()
+	history.undo()
+	for field: String in saved:
+		crystal.set(field, saved[field])
+	var portal: Node = MARKER.new()
+	portal.set("kind", "portal")
+	portal.set("destination_map", "amberwood")
+	var note := GroupTools.copy_review_note([portal])
+	portal.free()
+	_expect(reset and followed != null and
+		String(marker_copy.get("linked_node_name")) == String(followed.get("node_name")) and
+		"still leads to the original's destination" in note,
+		"copies drop bindings, the default spawn and placement extras, follow the copied asset, " +
+			"and flag a copied portal's destination")
 	# Alt+drag on a selected object copies it to where the drag ends.
 	_select([a])
 	await _frames(2)
@@ -1281,6 +1782,58 @@ func _test_walker_parity() -> void:
 		int(published.rows) == 792 and float(published.stage_metres) > 0.0,
 		"Sunmane's published package folds to its 792 x 792 server tiles (stage %.1f m, %d ms)" % [
 			float(published.get("stage_metres", 0.0)), elapsed])
+
+
+## The stage ladder on a low-relief grid, the reachable-area flood and the
+## published crossings, against the server's rules.
+func _test_walker_stages_and_reach() -> void:
+	var units := PackedInt32Array(STAGE_REFERENCE.units)
+	var codes_for := func(factor: int) -> PackedByteArray:
+		var result := PackedByteArray()
+		result.resize(units.size())
+		for index in units.size():
+			if units[index] > 0:
+				result[index] = Walker._coarsen(units[index], factor)
+		return result
+	var scores := {}
+	for factor in [1, 2, 3, 4]:
+		scores[factor] = Walker.largest_component(codes_for.call(factor), 24, 24)
+	var lowest := 255
+	var highest := 0
+	for value in units:
+		if value > 0:
+			lowest = mini(lowest, value)
+			highest = maxi(highest, value)
+	var factor := Walker.choose_factor(highest - lowest, codes_for, 24, 24)
+	_expect(scores == STAGE_REFERENCE.scores and factor == int(STAGE_REFERENCE.factor),
+		"on a low-relief map the walker tries the server's stage ladder and picks factor %d as it does" %
+			factor)
+	# A 5 x 5 grid: an island walled in by blocked tiles and a step too high.
+	var walker := Walker.new()
+	walker.set("_grid", {"codes": PackedByteArray([
+		5, 5, 5, 5, 5,
+		5, 0, 0, 0, 5,
+		5, 0, 5, 0, 5,
+		5, 0, 0, 0, 5,
+		5, 5, 5, 5, 20]), "width": 5, "rows": 5, "origin": Vector2i.ZERO,
+		"crossings": {Vector2i(2, 0): "the portal Gate"}})
+	var shown: bool = walker.show_reachable(true, Vector2i(0, 0))
+	var classes: PackedByteArray = walker.grid().get("reach_classes", PackedByteArray())
+	_expect(shown and walker.is_reachable(Vector2i(4, 0)) and not walker.is_reachable(Vector2i(2, 2)) and
+		not walker.is_reachable(Vector2i(4, 4)) and classes.size() == 25 and classes[12] == 2 and
+		classes[24] == 2 and classes[6] == 0 and classes[0] == 1,
+		"the reachable-area flood separates ground the walker can reach from ground cut off from it")
+	var through: Array[Vector2i] = [Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0)]
+	var onto: Array[Vector2i] = [Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0)]
+	var crossings := Walker.published_crossings({
+		"portals": [{"serverTile": [5, 6], "label": "Gate"}],
+		"streamingBorders": [{"anchor": [10.0, 0.0, -20.0], "outward": [1.0, 0.0],
+			"halfWidthTiles": 1, "destination": "east"}]}, Vector2i(100, 200))
+	_expect("the portal Gate at tile 2, 0" in walker.crossing_on(through) and
+		walker.crossing_on(onto).is_empty() and crossings.size() == 4 and
+		crossings.has(Vector2i(5, 6)) and crossings.has(Vector2i(110, 219)) and
+		crossings.has(Vector2i(110, 221)),
+		"a route over a portal or border lane it was not sent to is flagged; one ending there is not")
 
 
 func _test_play_test(usability: Object, root: Node3D, camera: Camera3D) -> void:
@@ -1550,6 +2103,65 @@ func _test_asset_intake(palette: Object) -> void:
 		await process_frame
 	await _frames(3)
 	_remove_tree_recursive(outside)
+	# Admission notes name what the bake or the game will not carry as it looks.
+	var checks := DIR + "/admission"
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(checks))
+	var clean_notes := Catalog.admission_notes(library + "/Rocks/tiny_rock.tscn")
+	var scripted := _admission_scene(Node3D.new(), BoxMesh.new())
+	var script := GDScript.new()
+	script.source_code = "extends Node3D\n"
+	script.reload()
+	scripted.set_script(script)
+	var shaded := _admission_scene(Node3D.new(), BoxMesh.new())
+	var shader := ShaderMaterial.new()
+	shader.shader = Shader.new()
+	shader.shader.code = "shader_type spatial;\n"
+	(shaded.get_child(0) as MeshInstance3D).material_override = shader
+	var huge_mesh := BoxMesh.new()
+	huge_mesh.size = Vector3(120.0, 2.0, 2.0)
+	var huge := _admission_scene(Node3D.new(), huge_mesh)
+	var flat := _admission_scene(Node2D.new(), null)
+	var notes := {}
+	for pair: Array in [["scripted", scripted], ["shaded", shaded], ["huge", huge], ["flat", flat]]:
+		var packed_check := PackedScene.new()
+		packed_check.pack(pair[1])
+		var check_path := checks + "/%s.tscn" % pair[0]
+		ResourceSaver.save(packed_check, check_path)
+		(pair[1] as Node).free()
+		notes[pair[0]] = " ".join(Catalog.admission_notes(check_path))
+	_expect(clean_notes.is_empty() and "script" in String(notes.scripted) and
+		"custom shader" in String(notes.shaded) and "120 x 2 x 2 m" in String(notes.huge) and
+		"Node2D" in String(notes.flat) and "no mesh" in String(notes.flat),
+		"library admission notes flag scripts, custom shaders, oversize models and non-3D scenes (%s)" %
+			[notes])
+	_remove_tree_recursive(checks)
+
+
+func _admission_scene(root_node: Node, mesh: Mesh) -> Node:
+	root_node.name = "Check"
+	if mesh != null:
+		var instance := MeshInstance3D.new()
+		instance.mesh = mesh
+		root_node.add_child(instance)
+		instance.owner = root_node
+	return root_node
+
+
+func _stroke(usability: Object, camera: Camera3D, root: Node3D, points: Array) -> void:
+	var centre := camera.get_viewport().get_visible_rect().size * 0.5
+	for index in points.size():
+		_aim(camera, root, points[index])
+		if index == 0:
+			usability.call("_forward_3d_gui_input", camera, _click(centre))
+			continue
+		var motion := InputEventMouseMotion.new()
+		motion.position = centre
+		motion.button_mask = MOUSE_BUTTON_MASK_LEFT
+		usability.call("_forward_3d_gui_input", camera, motion)
+		if index == points.size() - 1:
+			var release := _click(centre)
+			release.pressed = false
+			usability.call("_forward_3d_gui_input", camera, release)
 
 
 func _test_contract_guards(palette: Object, usability: Object, root: Node3D,
@@ -1633,17 +2245,48 @@ func _test_contract_guards(palette: Object, usability: Object, root: Node3D,
 		node.get_parent().remove_child(node)
 		node.free()
 	usability.call("_remember_duplicate_baseline", root)
-	# Prefabs keep placed assets only and say what they left out.
+	# Prefabs keep assets and gameplay markers; placed, a marker takes a fresh
+	# id in its kind's container, drops what a copy must not keep, and follows
+	# the placed copy of the asset it followed.
 	var crystal := root.get_node("Gameplay/Harvestables/crystal-01") as Node3D
+	var saved_follow := String(crystal.get("follow_asset_id"))
+	var saved_bindings: Array[Dictionary] = []
+	saved_bindings.assign(crystal.get("runtime_bindings"))
+	crystal.set("follow_asset_id", String(source.get("asset_id")))
+	var bound: Array[Dictionary] = [{"recordId": "crystal-01", "service": "harvest"}]
+	crystal.set("runtime_bindings", bound)
 	_select([source, crystal])
 	var mixed: Dictionary = palette.call("save_selection_as_prefab", "Mixed Pick")
 	_select([crystal])
 	var markers_only: Dictionary = palette.call("save_selection_as_prefab", "Only Markers")
-	var dock: Object = palette.get("_dock")
-	_expect(int(mixed.get("members", 0)) == 1 and int(mixed.get("left_out_markers", 0)) == 1 and
-		"gameplay marker" in String(dock.call("status_text")) and
-		String(markers_only.get("error", "")).contains("assets only"),
-		"a prefab keeps placed assets only and reports the markers it left out")
+	crystal.set("follow_asset_id", saved_follow)
+	crystal.set("runtime_bindings", saved_bindings)
+	var harvestables := root.get_node("Gameplay/Harvestables")
+	var markers_before := harvestables.get_child_count()
+	var created := Prefabs.instantiate(_entry(Prefabs.entries(), "prefab:mixed_pick"))
+	var placed_members: Array[Node3D] = []
+	if created.get("node") != null:
+		placed_members = Prefabs.commit_with_undo(_undo, root, created.node, Transform3D(
+			Basis(Vector3.UP, PI / 2.0), Probe.ray_hit(root, Vector3(28.0, 60.0, 28.0),
+			Vector3.DOWN) as Vector3), true, 0.0, "Mixed Pick")
+	var marker_copy: Node = null
+	var asset_copy: Node = null
+	for member in placed_members:
+		if member.get_script() == MARKER:
+			marker_copy = member
+		else:
+			asset_copy = member
+	_expect(int(mixed.get("members", 0)) == 2 and int(mixed.get("markers", 0)) == 1 and
+		int(mixed.get("left_out_markers", 0)) == 0 and int(markers_only.get("members", 0)) == 1 and
+		marker_copy != null and marker_copy.get_parent() == harvestables and
+		String(marker_copy.get("record_id")) != "crystal-01" and
+		(marker_copy.get("runtime_bindings") as Array).is_empty() and asset_copy != null and
+		asset_copy.get_parent() == root.get_node("AuthoredAssets") and
+		String(marker_copy.get("follow_asset_id")) == String(asset_copy.get("asset_id")),
+		"a prefab keeps assets and markers; a placed marker gets a fresh id in its container, no bindings, and follows the placed asset")
+	history.undo()
+	_expect(harvestables.get_child_count() == markers_before,
+		"placing a prefab with markers is one undo step")
 	selection.clear()
 
 
@@ -1710,6 +2353,50 @@ func _test_ground_and_plateaus(usability: Object, root: Node3D, camera: Camera3D
 		regions.remove_child(filler)
 		filler.free()
 	_expect("127" in full, "a territory never exceeds the 127 ground regions the preview draws")
+	# Q turns the next shape 15 degrees; its size is measured in the turned frame.
+	for _turn in 3:
+		usability.call("_forward_3d_gui_input", camera, _key(KEY_Q))
+	var turned: Node3D = area.call("create", _undo, root.global_transform * Vector3(20.0, 0.0, 30.0),
+		root.global_transform * Vector3(24.0, 0.0, 30.0))
+	var expected_axis := Vector3(cos(PI / 4.0), 0.0, -sin(PI / 4.0))
+	_expect(turned != null and is_equal_approx(float(area.call("yaw")), PI / 4.0) and
+		turned.global_basis.x.normalized().is_equal_approx(expected_axis) and
+		(turned.get("size") as Vector2).is_equal_approx(Vector2.ONE * 4.0 * sqrt(2.0)),
+		"Q/E turn a ground region; the dragged corner sets its size in the turned frame")
+	if turned != null:
+		history.undo()
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_ESCAPE))
+	# A stroke paints a region every 60% of the brush along the drag, in one step.
+	usability.call("start_area_tool", "ground", {"preset": "Grass", "surface_label": "Preset: Grass",
+		"shape": 0, "blend_width": 1.0, "opacity": 0.8, "priority": 5, "stroke": true,
+		"brush": 4.0})
+	var counted := func() -> int:
+		return root.get_node("Ground/Regions").get_children().filter(func(node: Node) -> bool:
+			return node.get_script() == load("res://src/dev/map_authoring_region/ground_region_control.gd")).size()
+	var regions_before: int = counted.call()
+	_stroke(usability, camera, root, [Vector2(10.0, 30.0), Vector2(13.0, 30.0), Vector2(17.0, 30.0),
+		Vector2(21.5, 30.0)])
+	var painted: int = counted.call() - regions_before
+	history.undo()
+	var stroke_undone: int = counted.call() - regions_before
+	for index in 125 - regions_before:
+		var filler: Node3D = load("res://src/dev/map_authoring_region/ground_region_control.gd").new()
+		regions.add_child(filler)
+		fillers.append(filler)
+	_stroke(usability, camera, root, [Vector2(10.0, 30.0), Vector2(21.5, 30.0)])
+	var capped_message := String(area.get("last_message"))
+	var capped: int = counted.call() - 125
+	history.undo()
+	for filler in fillers:
+		if is_instance_valid(filler):
+			regions.remove_child(filler)
+			filler.free()
+	_expect(painted == 5 and stroke_undone == 0 and capped == 2 and "127" in capped_message,
+		"a ground stroke paints a brush-sized region every 60%% of the brush in one undo step, up to the cap (%d, %s)" %
+			[painted, capped_message])
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_ESCAPE))
+	usability.call("start_area_tool", "ground", {"preset": "Grass", "surface_label": "Preset: Grass",
+		"shape": 0, "blend_width": 2.0, "opacity": 0.8, "priority": 5})
 	usability.call("_forward_3d_gui_input", camera, _key(KEY_ESCAPE))
 	_expect(not bool(area.call("is_active")), "Escape stops the ground tool")
 	# Plateaus: terrain patches, refused where they would touch the protected border.
@@ -1737,6 +2424,16 @@ func _test_ground_and_plateaus(usability: Object, root: Node3D, camera: Camera3D
 		root.global_transform * Vector3(7.0, 0.0, 24.0))
 	_expect(border == null and "protected border" in String(area.get("last_message")),
 		"a plateau touching the protected border band is refused")
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_E))
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_E))
+	var tilted: Node3D = area.call("create", _undo, root.global_transform * Vector3(26.0, 0.0, 14.0),
+		root.global_transform * Vector3(30.0, 0.0, 14.0))
+	var tilted_axis := Vector3(cos(-PI / 6.0), 0.0, -sin(-PI / 6.0))
+	_expect(tilted != null and tilted.global_basis.x.normalized().is_equal_approx(tilted_axis) and
+		(tilted.get("size") as Vector2).is_equal_approx(Vector2(8.0 * cos(PI / 6.0), 8.0 * sin(PI / 6.0))),
+		"a plateau turns with Q/E as well")
+	if tilted != null:
+		history.undo()
 	usability.call("_forward_3d_gui_input", camera, _click(centre, MOUSE_BUTTON_RIGHT))
 	_expect(not bool(area.call("is_active")), "right-click stops the plateau tool")
 	tool.call("unbind")
@@ -1798,6 +2495,36 @@ func _test_heightmap_import(root: Node3D) -> void:
 		"a layer bound to another base is rejected and the base height file is never rewritten")
 	history.undo()
 	history.undo()
+	# Preview shows the import without an undo step; cancel puts the ground back;
+	# importing after a preview is still one step back to the original ground.
+	var steps := history.get_history_count()
+	var previewed: Dictionary = tool.call("preview_heightmap", image, Rect2(10.0, 10.0, 20.0, 20.0),
+		0.0, 10.0, true)
+	var shown: PackedFloat32Array = terrain.call("sculpted_base_heights")
+	var no_step := history.get_history_count() == steps
+	tool.call("cancel_heightmap_preview")
+	var put_back: PackedFloat32Array = terrain.call("sculpted_base_heights")
+	tool.call("preview_heightmap", image, Rect2(10.0, 10.0, 20.0, 20.0), 0.0, 10.0, true)
+	var kept: Dictionary = tool.call("import_heightmap", image, Rect2(10.0, 10.0, 20.0, 20.0),
+		0.0, 10.0, true)
+	var imported: PackedFloat32Array = terrain.call("sculpted_base_heights")
+	history.undo()
+	var reverted: PackedFloat32Array = terrain.call("sculpted_base_heights")
+	_expect(not previewed.has("error") and absf(shown[10 * width + 30] - 10.0) < 0.001 and no_step and
+		put_back == before and not kept.has("error") and imported == shown and reverted == before and
+		not bool(tool.call("is_previewing_heightmap")),
+		"a heightmap preview changes the terrain without an undo step; cancel restores, import keeps it as one step")
+	var base_control := _editor.call("get_base_control") as Control
+	var workspace: Object = base_control.get_meta(&"map_authoring_sculpt_plugin")
+	var picked: Rect2 = workspace.call("finish_heightmap_area_pick", Vector3(25.0, 3.0, 16.0),
+		Vector3(5.0, 1.0, 6.0))
+	var dock: Object = workspace.get("_dock")
+	var dialog := dock.get("_heightmap_dialog") as Window
+	var shown_again := dialog != null and dialog.visible
+	if dialog != null:
+		dialog.hide()
+	_expect(picked == Rect2(5.0, 6.0, 20.0, 10.0) and dock.call("heightmap_area") == picked and
+		shown_again, "dragging out the area on the map fills the import dialog's area and reopens it")
 	tool.call("unbind")
 
 

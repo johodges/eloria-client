@@ -90,7 +90,9 @@ SMOKE_FAILURES = ("SCRIPT ERROR", "Parse Error", "Failed to load script",
                   "No loader found", "Cannot open file", "Failed loading resource")
 
 # The export preset is not tracked, so the build writes its own. The pack
-# leaves out assets/actors (read loose, see above) along with dev material.
+# leaves out assets/actors (read loose, see above) along with dev material,
+# including the map editor's review notes (<region>.editor-notes.json beside
+# each region scene): editor-only, never read by the game.
 EXPORT_PRESETS = """[preset.0]
 
 name="Windows Desktop"
@@ -101,7 +103,7 @@ dedicated_server=false
 custom_features=""
 export_filter="all_resources"
 include_filter="*.json,*.bin"
-exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,*.md,assets/actors/*"
+exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,*.md,assets/actors/*,*.editor-notes.json"
 export_path=""
 patches=PackedStringArray()
 encryption_include_filters=""
@@ -146,7 +148,7 @@ dedicated_server=false
 custom_features=""
 export_filter="all_resources"
 include_filter="*.json,*.bin"
-exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,*.md,assets/actors/*"
+exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,*.md,assets/actors/*,*.editor-notes.json"
 export_path=""
 patches=PackedStringArray()
 encryption_include_filters=""

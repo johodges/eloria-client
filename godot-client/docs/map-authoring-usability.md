@@ -3,12 +3,12 @@
 The map editor still runs inside Godot, but the placement and viewport tools now work more like a dedicated map editor. Three plugins are involved:
 
 - **Map Assets** (`addons/map_asset_palette`): the asset library with its drop-in model folder, ghost placement, and prefabs.
-- **Map Authoring Usability** (`addons/map_authoring_usability`): the cursor readout, the cursor grid, the **Map tools** menu, the toolbar toggles, the selection bar, groups and copies, readable gameplay markers, the walkability overlay, road and river drawing, ground regions and plateaus, the play-test walker, the **Minimap** dock, the low-spec view, the time-of-day preview and the top-down capture.
-- **Territories** (`addons/map_authoring_workspace`): now also has sculpt brush keys (see [terrain-sculpting.md](terrain-sculpting.md)), heightmap import and a **Browse…** map picker.
+- **Map Authoring Usability** (`addons/map_authoring_usability`): the cursor readout, the cursor grid, the **Map tools** menu, the toolbar toggles, the selection bar, groups and copies, readable gameplay markers, the walkability overlay, road and river drawing, the continent plan's water, ground regions and plateaus, scatter, the play-test walker, the **Minimap** and **Review notes** docks, the low-spec view, the time-of-day preview and the top-down capture.
+- **Territories** (`addons/map_authoring_workspace`): now also has sculpt brush keys (see [terrain-sculpting.md](terrain-sculpting.md)), heightmap import with a preview and an area picked on the map, and a **Browse…** map picker.
 
 The map team's answers on what each tool may write are in [map-team-editor-contracts.md](map-team-editor-contracts.md).
 
-Everything in this document works in production region scenes, and everything except the terrain-based tools works in the pilot. None of it changes the save, snapshot, or bake contracts. Ghosts, grids, pins, the walker and every other helper are ownerless nodes, so they are never packed into a scene. The only new thing a scene saves besides ordinary controls is the group tag on grouped objects; the snapshot's geometry and gameplay records ignore it, although saving the scene changes its source hash as any save does. Every edit goes through Godot's normal undo history, which you can see and jump through in the **History** dock next to FileSystem.
+Everything in this document works in production region scenes, and everything except the terrain-based tools works in the pilot. None of it changes the save, snapshot, or bake contracts. Ghosts, grids, pins, the walker and every other helper are ownerless nodes, so they are never packed into a scene. The only new thing a scene saves besides ordinary controls is the group tag on grouped objects; the snapshot's geometry and gameplay records ignore it, although saving the scene changes its source hash as any save does. Review notes live in a separate file beside the scene that nothing references (see [Review notes](#review-notes)). Every edit goes through Godot's normal undo history, which you can see and jump through in the **History** dock next to FileSystem.
 
 ## Toolbar
 
@@ -74,7 +74,16 @@ Any `.glb`, `.tscn` or `.scn` file under `res://assets/world/library/` is a pale
 
 **Import models…** does the copying for you: type a category (for example `Rocks`) and pick one or more `.glb`/`.gltf` files anywhere on disk. A `.glb` is copied as it is; a `.gltf` is converted to one self-contained `.glb`, because the bake accepts only static GLB sources. Nothing is overwritten, and the palette lists the models once Godot has imported them. A `.gltf` dropped into the folder by hand is not listed; Refresh says so. **Folder** shows the library in the FileSystem dock.
 
-Library assets place like catalog ones. Their catalog id is `library:<category>/<name>`, and the scene path goes into the snapshot like any other asset's. Being listed is not the same as being admitted to production: prefer self-contained static GLB models with a Node3D root, metre-scale geometry and PBR textures; the bake still checks surfaces and paths. The collision role starts from the category name (`solid` when it contains "structure", "interactive" or "landmark", otherwise `none`). Treat that as a suggestion, choose `walk_surface` deliberately, and leave collision changes to the map team's review.
+Library assets place like catalog ones. Their catalog id is `library:<category>/<name>`, and the scene path goes into the snapshot like any other asset's. Being listed is not the same as being admitted to production: prefer self-contained static GLB models with a Node3D root, metre-scale geometry and PBR textures; the bake still checks surfaces and paths.
+
+Selecting a library asset lists under **Check before use** anything the bake or the game will not carry as the editor shows it. The scene file is read without running any of its scripts. The list covers:
+
+- a root that is not a Node3D;
+- scripts (they never run in the game);
+- custom shaders, which do not survive the export to GLB;
+- triplanar materials, which the bake does not support;
+- no mesh at all;
+- any side longer than 80 m, the library extractor's limit for one asset and usually a unit slip. The collision role starts from the category name (`solid` when it contains "structure", "interactive" or "landmark", otherwise `none`). Treat that as a suggestion, choose `walk_surface` deliberately, and leave collision changes to the map team's review.
 
 ### What gets created
 
@@ -111,6 +120,8 @@ The grid needs region terrain. The pilot has no fast height query, so the grid i
 | **Save selection as prefab** | Saves the selection as a prefab (see below). |
 | **Group selection**, **Ungroup** | See [Groups and copies](#groups-and-copies). |
 | **Duplicate with fresh ids** | Copies the selection one grid step south-east with new ids (see below). |
+| **Show the continent plan's water** | Draws the plan's rivers and lakes over the territory, read-only (see [The continent plan's water](#the-continent-plans-water)). |
+| **Scatter the selected asset…** | Paints copies of the asset chosen in Map Assets (see [Scatter](#scatter)). |
 | **Play test** | Starts or stops the play-test walker. |
 | **Low spec view** | Switches the low-spec view. |
 | **Time of day preview…** | Opens the time panel (see below). |
@@ -141,8 +152,9 @@ Every change is one undo step.
 
 - Every copy gets a fresh asset id or marker record id, its own copies of local material overrides, and new group ids (a copied group becomes a new group).
 - Each copy keeps its height above the ground, so copies on a slope sit on the ground.
-- A marker that follows a copied asset follows the copy; a marker copied without its asset stops following. Runtime bindings are never copied, and a copied default spawn is not a default spawn.
-- Other marker fields (portal destinations, linked nodes, extras) are copied as they are; check them in the Inspector.
+- A marker that follows or links to a copied asset follows or links to the copy; one copied without its asset stops following and loses the link.
+- Runtime bindings are never copied, a copied default spawn is not a default spawn, and the extras that describe one placement (`propPosition`, `destinationTile`, `rotationDegrees`, `reachable`) are dropped.
+- Portal destinations are kept. The status line says how many copied portals still lead to the original's destination, so you can check them in the Inspector.
 - With **Snap** on, the drag moves in whole grid steps.
 
 **Godot's Ctrl+D.** It keeps the original asset and record ids, and the snapshot rejects two objects with one id. In the 3D view, Ctrl+D on placed objects is therefore redirected: it duplicates them in place with fresh ids. A duplicate made another way (the Scene dock's Duplicate) is caught within a second: a warning appears at the top of the 3D view and **Map tools > Give duplicated copies fresh ids** fixes it in one undo step. Only the copies change; the originals keep their ids. Ids are compared the way the snapshot compares them (assets together, each gameplay kind on its own), and duplicates a scene already had when it opened, such as Manymouth's retained `stelae-court` pair, are left alone.
@@ -153,16 +165,19 @@ Alt+drag on empty ground, or while placing, still orbits the camera.
 
 ### Save a prefab
 
-1. Select placed assets.
+1. Select placed assets and, if you like, gameplay markers.
 2. Type a name next to **Save selection** in Map Assets, then press it (or use **Map tools > Save selection as prefab**).
 
 The prefab is written to `res://world_authoring/prefabs/<name>.tscn`, and **Folder** shows it in the FileSystem dock.
 
 ### Place a prefab
 
-Prefabs hold placed assets only. Selected gameplay markers and other controls are left out, and the message says how many.
+Prefabs hold placed assets and gameplay markers. Other controls (paths, water, terrain) are left out, and the message says how many. A marker is saved without what a copy must not keep (runtime bindings, a default spawn, placement extras), and a follow or link to something outside the prefab is dropped.
 
 Place a prefab like any other asset: the ghost shows every member, and turn, lift, size and snap apply to the whole group.
+
+- Markers go into their kind's container under `Gameplay` with fresh record ids, and turn with the prefab. A marker that followed or linked to an asset in the prefab follows or links to that asset's placed copy.
+- Copied portals keep their destination, and the status line says so.
 
 - Members follow the terrain. Each member keeps the height above the ground it had when the prefab was saved, so a camp placed on a slope still sits on the ground.
 - Each placement creates ordinary, independent assets. They get fresh asset ids and their own copies of local material overrides.
@@ -232,26 +247,36 @@ The live suggestion classifies each tile as follows:
 - **Water.** A tile is blocked when it is more than 0.35 m under water. Water means:
   - the sea level from the territory's manifest (or the continent plan);
   - authored rivers, using their point heights as the water surface;
-  - water regions.
-- **Structures.** Solid assets block the actor's body, from 0.06 m to 2.10 m above the ground. The live suggestion estimates this from each mesh's bounding box; the bake tests the actual triangles against the body at every half-metre cell and also blocks the inside of closed meshes, so pens, fences and archways are exact only in the published grid.
-- **Decks.** Walk-surface assets use their upward triangles within the grade limit; procedural bridges use their deck quads.
+  - water regions;
+  - the continent plan's rivers and lakes that this territory has not claimed (see [The continent plan's water](#the-continent-plans-water)).
+- **Structures.** These are exact: the bake's own test (`structural_mask`) runs on the editor's meshes at every half-metre cell, and a tile is blocked when any of its four cells is.
+  - A triangle blocks a cell when it crosses the actor's body there: 0.5 × 0.5 m, from 0.06 m to 2.10 m above where the actor stands.
+  - A closed mesh also blocks the cells inside it.
+  - A roof over head height leaves a doorway open, while a fence blocks only its rails.
+  - Which meshes count follows the exported hierarchy. A mesh is solid when its asset is `solid` and it sits under the asset's first scene root, unless it is under a `Terrain_` or `Walk_` surface that is not a ceiling. Further scene roots are exported as companions, which the bake does not treat as solid.
+  - On 26 September 2026 the port matched the bake's Python cell for cell on all 159 of Sunmane's solid assets. The editor checks solids on a worker thread and reuses results for assets whose meshes and ground did not change; until an asset's check finishes it is estimated from its mesh boxes, and the legend says how many still are.
+- **Decks.** A mesh is a deck when a `Walk_` node is among its ancestors (the asset's node name counts) and none of them names a ceiling, soffit, underside or roof, whatever the asset's collision role. A `walk_surface` asset without a `Walk_` node makes no deck in the bake, so it makes none here either. A deck supports a cell when its highest upward face there is no more than 3 cm below the terrain; the actor then stands on it. Procedural bridges use their deck quads.
+  - A tile is a deck when each of its half-cells is carried or stands on gentle ground.
+  - A deck never overrides a structure, and only partly covering deep water leaves a tile under water.
+  - Decks matched the bake on Sunmane too: the same supported cells and the same heights.
 - **Ownership.** Only land inside the territory's ownership polygon is shown.
 
-How close it gets, measured against the published grids of three territories:
+How close it gets, measured on 26 September 2026 against the published grids of three territories:
 
 | Territory | Tiles agreeing with the published grid |
 |---|---|
-| Sunmane Steppe | about 98% |
-| Verdant Stair | about 97% |
-| Westhaven | about 98% |
+| Westhaven | 99.85% |
+| Verdant Stair | 98.8% |
+| Sunmane Steppe | 94.1% |
 
-It builds in 0.1–0.25 s.
+Sunmane's scene is newer than its package: 128 of its objects, 103 of them solid, have moved since it was last published. Most of its difference is those edits, which **Changes since publish** shows; the structure test itself matched the bake cell for cell there.
 
-Where it differs:
+A full rebuild of Sunmane takes about 1.2 s with every solid checked, and about 0.2 s when the checks are reused.
 
-- **Open structures.** Pens and fences are over-blocked, because they are estimated by their boxes.
-- **Planned water.** Lakes and rivers that exist only in the continent plan are missing, because the authoring scene doesn't contain them.
-- **Bake-only rules.** Seam and gate halos are not reproduced.
+Where it still differs:
+
+- **Water** is sampled at tile centres, not half-cells.
+- **Bake-only rules.** The certified seam collar and gate halos are not reproduced.
 
 Use **Published grid** for the truth, and **Changes since publish** to judge an edit.
 
@@ -272,6 +297,13 @@ A click within 2.5 m of an existing path point snaps onto it exactly, so new pat
 
 **Extend a road.** Start drawing on either end of an existing road (or river) and the new points are added to that path instead of a new one: it keeps its id, surface, width and settings. Starting on the last point appends; starting on the first point adds the new points in front. The extension is one undo step. To start a separate path at an end, Ctrl+click it.
 
+Paths the map team owns are never extended. The click says why, and Ctrl+click still starts a separate path there. They are:
+
+- a path that replaces a composer route or a planned water feature;
+- a path the territory lists among its owned routes or plan features;
+- a river that joins shared water;
+- an end within 4 m of the ownership border, or past it (a seam tail).
+
 Finishing creates an ordinary `MapAuthoringRegionPath` under `Roads` or `Rivers`, as one undo step:
 
 - **Id:** a fresh `road-NN` or `river-NN`.
@@ -282,6 +314,9 @@ Finishing creates an ordinary `MapAuthoringRegionPath` under `Roads` or `Rivers`
   - roads: the territory's road surface, or a Worn earth road surface from the same factory the bake checks;
   - rivers: default water.
 - **Point heights:** taken from the ground under each click. A road grades the ground between them. A river's heights are its water surface, and the river carves its channel below.
+- **River channel:** the composer refuses a river without `channelDepth`, `valleyWidth` and `bankHeight`, so a drawn river always has them.
+  - If the territory already has a river, the new one copies its depth, bank and feather, with the valley scaled to the new width.
+  - Otherwise it gets the map team's defaults: depth 1.45 m, feather 5.5 m, bank 2.5 m, and a valley of six widths (at least 30 m). Shape terrain is off.
 
 Afterwards Godot's Path3D tools and the Inspector edit the path as usual.
 
@@ -301,18 +336,26 @@ Drawing, asset placement and sculpting are mutually exclusive; starting one stop
 
 The route is the one the server would take:
 
-- **Grid.** The server walks one-metre tiles. Its grid is folded from the territory's published package (`collision.bin`): a tile is blocked when any of its four half-metre cells is, otherwise it takes the highest, and heights become codes at the map's stage (1.4 m on Sunmane, 4.8 m on Whitehorn). The walker repeats that fold; on 26 September 2026 it matched the server's grids byte for byte on all twelve territories. On a map with less than 12.4 m of relief the server may choose a coarser stage, and the message says so.
+- **Grid.** The server walks one-metre tiles. Its grid is folded from the territory's published package (`collision.bin`): a tile is blocked when any of its four half-metre cells is, otherwise it takes the highest, and heights become codes at the map's stage (1.4 m on Sunmane, 4.8 m on Whitehorn). The walker repeats that fold; on 26 September 2026 it matched the server's grids byte for byte on all twelve territories.
+  - The stage is chosen the server's way. It tries the stages its ladder allows and keeps the smallest whose largest connected area is within 1% of the best. A low-relief map can therefore get a coarser stage than its relief alone needs.
 - **Steps.** Neighbours are tried N, NE, E, SE, S, SW, W, NW. A step needs both tiles walkable and a code change of at most 2 (`max_walk_height_change`); a diagonal also needs both of its orthogonal steps. The search gives up after 100 000 tiles, a route is at most 512 steps (click again to go on), and a click on a blocked tile goes to the nearest walkable tile within 19.
 - **Pace.** 600 ms a metre walking and 200 ms running, times √2 on a diagonal.
 - **Heights.** The walker stands on the terrain, or on the published deck height where a bridge or floor is higher.
 
 A territory that has never been published uses the live walkability suggestion with the same rules; those routes are estimates. The live server also accounts for other players and creatures, doors and portals, storage-body footprints and a few legacy floors, which the walker does not. Loading the grid takes about 0.1 s on Sunmane; routes take 30–600 ms, and up to about a second when the search runs out.
 
-The walker, its route line and goal ring are never saved. Starting placement, sculpting, road drawing or a ground tool ends the play test.
+**When a route fails**, the reachable area is tinted: blue where the walker can go, orange for walkable ground cut off from it. **V** shows or hides the tint at any time. The message says whether the goal lies in the walker's area but beyond the server's search, or is fenced, walled, too steep a climb or cut off.
+
+**Portals and border lanes.** A route that steps on a published walk-on portal or a border crossing lane on the way (not as its goal) is flagged. The server never walks across a portal it was not sent to, so its route goes round it. The walker only warns here, because the full portal table and the exterior connections are server configuration.
+
+The walker, its route line, goal ring and tint are never saved. Starting placement, sculpting, road drawing or a ground tool ends the play test.
 
 ## Paint ground regions
 
 **Ground** (or **Map tools > Paint ground regions…**) opens the options: a surface (one the territory already uses, or a texture preset), the shape, feather, opacity and priority. **Start drawing**, then press where a region's centre goes and drag out its size. Each release adds an ordinary ground region control under `Ground/Regions` with a fresh `ground-NN` id, one undo step each; the tool stays armed until Esc (with no draft) or right-click. `[` and `]` change the feather.
+
+- **Turn:** Q and E turn the next shape 15° (5° with Shift). The region keeps that yaw, and the dragged corner sets its size along the turned sides.
+- **Paint along a stroke** (the **Mode** option): press and drag to lay a region of the **Brush size** every 60% of the brush along the drag. The whole stroke is one undo step. Stamps outside the owned land are left out, and the stroke stops at the 127-region limit; the message says how many were placed.
 
 - A shared surface file is reused as it is, so later edits to it change every region using it; a surface embedded in another region is copied, and a preset makes a new local surface.
 - The region and its feather must stay inside the land the territory owns.
@@ -320,7 +363,7 @@ The walker, its route line and goal ring are never saved. Starting placement, sc
 
 ## Stamp plateaus
 
-**Plateau** (or **Map tools > Stamp plateaus…**) creates terrain patches under `Terrain/Patches` the same way: press at the centre, drag out the size. **Level at a height (Set)** flattens the ground to the chosen height above the point you pressed; **Raise or lower (Add)** moves it by a delta. Page Up and Page Down change the height, and `[` / `]` the feather. Each stamp is a `stamp-NN` patch, one undo step.
+**Plateau** (or **Map tools > Stamp plateaus…**) creates terrain patches under `Terrain/Patches` the same way: press at the centre, drag out the size. **Level at a height (Set)** flattens the ground to the chosen height above the point you pressed; **Raise or lower (Add)** moves it by a delta. Page Up and Page Down change the height, `[` / `]` the feather, and Q / E turn it. Each stamp is a `stamp-NN` patch, one undo step.
 
 - A stamp may only touch ground the sculpt brush could edit fully: none of its terrain samples may be locked or in the faded border band. The tool refuses a stamp that reaches them, and it only starts once the Territories dock has loaded the territory's borders.
 - Patches apply before road and river shaping, so a road running through a plateau still grades its own corridor.
@@ -329,6 +372,9 @@ The walker, its route line and goal ring are never saved. Starting placement, sc
 ## Import a heightmap
 
 **Territories > Import heightmap…** writes a greyscale image into the terrain's sparse sculpt layer. Choose the image, **Replace heights** or **Offset heights (add)**, the height black maps to and the height white maps to (there is no implied scale), and the area it covers in terrain metres (it starts as the whole terrain grid). The image's top row is north.
+
+- **Pick area on map** hides the dialog. Drag a rectangle on the terrain in the 3D view, and the dialog comes back with the area filled in. Esc or right-click keeps the area as it was.
+- **Preview** shows the result on the terrain without keeping it and without an undo step. **Import** keeps it as one undo step back to the ground as it was before the preview, and **Cancel** puts the ground back.
 
 - **Replace** sets each editable sample to the image's height; **Offset** adds the image's height to what is there.
 - Borders are protected as for the brush: locked samples never change and the fade band blends in. The original base height file is never rewritten, and the layer stays bound to it, so a changed base rejects the layer.
@@ -345,7 +391,62 @@ The **Minimap** dock shows the open territory from above, north up, clipped to t
 
 Click or drag on the minimap to move the 3D view there. The view centres on the spot and keeps its angle and zoom; the selection is left as it was.
 
-The picture is rendered from the scene when a territory opens, at 0.5 px/m (**Editor Settings > Map Authoring > Minimap**), lit at noon unless the time preview is on, so it shows unpublished source edits. The authoring terrain preview renders much darker than the game, for a reason not yet diagnosed, so the dock brightens its copy of the picture; that is compensation, not a fix, and top-down captures are left as rendered. Press **Refresh** after large edits. The overlays follow the scene continuously.
+The picture is rendered from the scene when a territory opens, at 0.5 px/m (**Editor Settings > Map Authoring > Minimap**), lit at noon unless the time preview is on, so it shows unpublished source edits. The dock brightens its copy so the owned land reads at a steady level, because a map seen straight down at a territory's own light can be dim. That is for reading the map only; top-down captures are left as rendered. Press **Refresh** after large edits. The overlays follow the scene continuously.
+
+The menu next to **Refresh** switches between **Live**, **Last published** and **Side by side**. **Last published** is the package's own minimap image (`world.json` `minimap`), cut to the same frame so the two line up; it is what the game shows now and has none of the unpublished edits. The overlays and click-to-jump work on both.
+
+**Why the terrain can look darker in the editor than in the game.** A controlled render on 26 September 2026 compared the editor preview with the game's own loader. Both used the Compatibility renderer, the manifest's noon light and exposure, one camera, and grey cards.
+
+- **Amberwood:** the preview and the game agree within 1%.
+- **Sunmane:** the game shows the base ground with its plain exported material, while the editor draws the biome blend the continent catalog defines.
+  - The game's loader applies the blend only to nodes named `AuthoredGround_<region id>Base`.
+  - Sunmane's package keeps its already-published name `AuthoredGround_SunmaneBase`.
+  - The fix belongs to the runtime or the exporter, not to the editor preview.
+
+It is the only territory where this happens.
+
+## The continent plan's water
+
+**Map tools > Show the continent plan's water** draws the rivers and lakes of `_continent/diagonal-plan.json` that reach the open territory, in its own frame.
+
+- **Claimed water (grey)** is water the territory replaces: a scene river or lake whose **Replaces Plan Feature Id** names it, or an id in the territory's owned plan features.
+- **Plan-only water (blue)** is the map team's. The composer adds it whether or not the scene has it.
+- **Labels** give each feature's name and who claims it.
+- **Walkability:** the live walkability suggestion floods under plan-only water too.
+
+The display is read-only: nothing edits the plan, and shared topology, mouths, joins and claims stay with the map team. It is never saved.
+
+## Scatter
+
+**Map tools > Scatter the selected asset…** paints copies of the asset chosen in the Map Assets dock (not a marker or prefab). The options are:
+
+- the brush radius;
+- the density (copies per 100 m²);
+- the minimum spacing;
+- random turn;
+- size variation;
+- the seed.
+
+Press and drag in the 3D view.
+
+- **Where copies go.** A stamp is taken where the stroke starts and every brush radius along it. Each stamp tries density × area spots spread over the brush and keeps those at least the spacing from every copy already kept and from placed copies of the same asset, inside the owned land.
+- **Undo.** A stroke is one undo step.
+- **Seeds.** The same seed gives the same spots, and each committed stroke moves to the next seed.
+- **Keys.** `[` / `]` change the radius, Page Up and Page Down the density. Esc discards a stroke; right-click stops.
+- **What is saved.** Only ordinary asset wrappers, exactly as if each copy had been placed by hand, with fresh ids and the asset's collision role suggestion. The seed is used only while placing.
+
+This is not foliage painting: there is no density map or LOD, and dense grass still needs the map team's foliage budget.
+
+## Review notes
+
+The **Review notes** dock keeps comments pinned to spots in the open territory. It stores them in `<region>.editor-notes.json` beside the region scene, in the map team's proposed format (`eloria-editor-notes-v1`: `regionId`, and notes with `id`, territory-local `position`, `text` and `status` open or resolved).
+
+- **Add at click**, then click the spot, to pin a note with the typed text. Ids run `review-001`, `review-002` and so on.
+- **Edit.** **Save text**, **Resolve** or **Reopen**, and **Delete…** (which asks first) change the chosen note. **Go to** (or a double-click) moves the 3D view to it.
+- **Pins.** Open notes show as orange pins and resolved ones as grey. The pins are internal and never saved.
+- **No undo.** Notes are not scene edits: every change is written to the file straight away.
+- **Problems.** A notes file with problems keeps working for its valid notes, and the dock lists what is wrong. Problems are an unsupported schema, a different region, duplicate ids, bad positions, text or statuses. Such a file is never rewritten, so nothing in it is lost or silently fixed.
+- **Kept out of the game.** Nothing references the file, so the snapshot, bake and runtime never see it; the test checks that a snapshot is identical with and without notes. The client package leaves out `*.editor-notes.json` (`tools/package_client.py`).
 
 ## Open a territory by map
 
@@ -404,15 +505,19 @@ The focused editor test builds a disposable 41×41 region fixture under `res://t
 - the time-of-day preview, on both the fallback and Sunmane's real manifest;
 - marker templates, placement, facing and the readable-marker overlay;
 - the walkability grade rule tile by tile, live water, structures and decks, and Sunmane's real published grid;
-- road and river drawing, endpoint snapping, road extension at either end, undo and discard;
+- the structure and deck port against the bake's own fixtures: an arch doorway, a low lintel, a closed solid's interior, a thin edge-on wall, `Walk_` and ceiling naming, companion roots; and the background check swapping box estimates for exact results;
+- the continent plan's water: claims, the frame, plan-only flooding and the read-only display;
+- the published minimap resample (Westhaven's frame) and the side-by-side view;
+- road and river drawing, endpoint snapping, road extension at either end, undo and discard; river channel properties; owned roads left alone;
 - groups (Ctrl+G, selection expansion, double-click to open), Duplicate and Alt+drag copies with fresh ids;
 - the selection bar's fields and buttons;
-- the play-test walker: the published-grid fold and five routes checked against results from the server's own fold functions and a replica of its A*, legal server steps on the fixture, walking and running pace, refusal of cut-off goals, the nearest-free-tile redirect, and Sunmane's 792 x 792 fold;
-- the contract guards: copied default spawns, the Ctrl+D redirect, shared-id detection and fixing (per section, pre-existing duplicates kept), and prefabs leaving markers out;
-- ground regions and plateaus (sizes, surfaces, ownership and border refusals, the 127 limit, undo) and heightmap import (Replace and Offset, orientation, border protection, stale layers, untouched base bytes);
+- the play-test walker: the published-grid fold and five routes checked against results from the server's own fold functions and a replica of its A*, the stage ladder against the server's choose_stage, legal server steps on the fixture, walking and running pace, refusal of cut-off goals, the reachable-area flood, portal and border-lane warnings, the nearest-free-tile redirect, and Sunmane's 792 x 792 fold;
+- the contract guards: copied default spawns, the Ctrl+D redirect, shared-id detection and fixing (per section, pre-existing duplicates kept), copies dropping bindings and placement extras and following their copied asset, and prefabs placing markers with fresh ids;
+- ground regions and plateaus (sizes, surfaces, turning, strokes, ownership and border refusals, the 127 limit, undo) and heightmap import (Replace and Offset, orientation, border protection, stale layers, untouched base bytes, preview and cancel, the area picked on the map);
+- scatter (seeded spots, spacing, fresh ids, one undo step) and review notes (the sidecar, validation, pins, the package exclusion);
 - the minimap's framing, pixel mapping, overlays and camera jump;
 - the territory picker's thumbnails and open request;
-- the library folder and model import, including `.gltf` conversion and skipping;
+- the library folder and model import, including `.gltf` conversion and skipping, and the admission notes;
 - the low-spec view and the toolbar toggles;
 - top-down framing and ownership clipping;
 - that no helper node (ghost, grid, preview lights, walker, copy ghost, focus helper) is ever saved, and that group tags are.
@@ -423,15 +528,16 @@ The focused editor test builds a disposable 41×41 region fixture under `res://t
 
 The test waits for the editor to finish its first scan before opening the fixture, and restores every Editor Settings value it changes.
 
+`tests/test_continent_authoring_framework.gd` also checks that a review-notes file beside a scene leaves its snapshot and sidecar files unchanged.
+
 `tests/test_terrain_sculpt_editor.gd` now uses an isolated catalog, manifest and authoring spec under `test-artifacts/terrain-sculpt/`, checks that the edited scene is exactly its fixture before any input or save, and stops without saving otherwise.
 
 ## Not in this editor yet
 
 The map team's answers (see [map-team-editor-contracts.md](map-team-editor-contracts.md)) set the order and the owners:
 
-- **Polygon lakes, ponds and shorelines** come after an explicit polygon-water contract; plan water will be shown read-only first.
-- **Grass and foliage painting** needs a foliage runtime budget first; a scatter tool that places ordinary assets could come sooner.
-- **Map annotations** are proposed as an editor-only `<region>.editor-notes.json` beside the scene.
+- **Polygon lakes, ponds and shorelines** come after an explicit polygon-water contract; the plan's water is shown read-only meanwhile.
+- **Grass and foliage painting** needs a foliage runtime budget first; the scatter tool places ordinary assets meanwhile.
 - **Named place labels** on the in-game map need a label schema, client rendering and a naming policy.
 - **Lights, particles and sound emitters** exist in manifests today, owned by the map team, but have no scene controls or snapshot section yet.
 - **NPC walking paths** need a server patrol feature first.

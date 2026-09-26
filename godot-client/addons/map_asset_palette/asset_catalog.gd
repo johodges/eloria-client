@@ -29,6 +29,10 @@ const IMPORT_EXTENSIONS := ["glb", "gltf"]
 const LIBRARY_CATEGORY := "Library"
 const LIBRARY_PREFIX := "library:"
 
+## The largest dimension the continent's own library extractor admits for one
+## asset (export_map_asset_library.py); anything bigger is usually a unit slip.
+const MAX_LIBRARY_DIMENSION := 80.0
+
 static var library_directory := LIBRARY_DIRECTORY
 ## Library files the last scan left out (a .gltf the bake cannot take directly).
 static var skipped_library_files: PackedStringArray = []
@@ -190,6 +194,99 @@ static func import_models(sources: PackedStringArray, category: String) -> Dicti
 			continue
 		copied.append(folder.path_join(target_name))
 	return {"copied": copied, "skipped": skipped}
+
+
+## What to check before a library asset goes into a territory: the things the
+## palette will place but the bake or the game will not carry as they look in
+## the editor. Read from the packed scene's state without instantiating it, so
+## none of its scripts run. Empty when nothing needs a look.
+static func admission_notes(scene_path: String) -> PackedStringArray:
+	var notes := PackedStringArray()
+	var packed := ResourceLoader.load(scene_path) as PackedScene \
+		if ResourceLoader.exists(scene_path) else null
+	if packed == null:
+		notes.append("It does not load as a scene; the editor may still be importing it.")
+		return notes
+	var state := packed.get_state()
+	if state.get_node_count() == 0:
+		notes.append("The scene is empty.")
+		return notes
+	var root_type := String(state.get_node_type(0))
+	if root_type.is_empty() and state.get_node_instance(0) != null:
+		root_type = String(state.get_node_instance(0).get_state().get_node_type(0))
+	if not root_type.is_empty() and not ClassDB.is_parent_class(root_type, "Node3D"):
+		notes.append("Its root is a %s, not a Node3D; placement and the bake expect a 3D scene." %
+			root_type)
+	var found := {"scripts": [], "shaders": 0, "triplanar": 0, "meshes": 0,
+		"box": AABB(), "sized": false}
+	_scan_scene_state(state, Transform3D.IDENTITY, found, 0)
+	var scripts := PackedStringArray(found.scripts)
+	if not scripts.is_empty():
+		notes.append(("It carries %d script%s (%s). Scripts never run in the game: the bake " +
+			"exports geometry and materials only.") % [scripts.size(),
+			"" if scripts.size() == 1 else "s", ", ".join(scripts.slice(0, 3))])
+	if int(found.shaders) > 0:
+		notes.append(("%d surface%s use%s a custom shader, which does not survive the export to " +
+			"GLB; the game shows a plain material there.") % [int(found.shaders),
+			"" if int(found.shaders) == 1 else "s", "s" if int(found.shaders) == 1 else ""])
+	if int(found.triplanar) > 0:
+		notes.append("%d material%s triplanar mapping, which the production bake does not support." % [
+			int(found.triplanar), " uses" if int(found.triplanar) == 1 else "s use"])
+	if int(found.meshes) == 0:
+		notes.append("It has no mesh, so nothing would be drawn or baked.")
+	elif bool(found.sized):
+		var size: Vector3 = (found.box as AABB).size
+		var largest := maxf(size.x, maxf(size.y, size.z))
+		if largest > MAX_LIBRARY_DIMENSION:
+			notes.append(("It is %.0f x %.0f x %.0f m, over the %.0f m the library extractor admits " +
+				"for one asset; check it was exported in metres.") % [size.x, size.y, size.z,
+				MAX_LIBRARY_DIMENSION])
+	return notes
+
+
+static func _scan_scene_state(state: SceneState, base: Transform3D, found: Dictionary,
+		depth: int) -> void:
+	var transforms := {}
+	for index in state.get_node_count():
+		var path := String(state.get_node_path(index))
+		var parent := String(state.get_node_path(index, true))
+		var local := Transform3D.IDENTITY
+		var mesh: Mesh = null
+		var materials: Array[Material] = []
+		for property in state.get_node_property_count(index):
+			var property_name := String(state.get_node_property_name(index, property))
+			var value: Variant = state.get_node_property_value(index, property)
+			if property_name == "transform" and value is Transform3D:
+				local = value
+			elif property_name == "script" and value is Script:
+				var script_path := (value as Script).resource_path
+				(found.scripts as Array).append(script_path.get_file()
+					if not script_path.is_empty() and not "::" in script_path else "a built-in script")
+			elif property_name == "mesh" and value is Mesh:
+				mesh = value
+			elif (property_name in ["material_override", "material_overlay"] or
+					property_name.begins_with("surface_material_override/")) and value is Material:
+				materials.append(value)
+		var global: Transform3D = (transforms.get(parent, base) as Transform3D) * local
+		transforms[path] = global
+		if mesh != null:
+			found.meshes = int(found.meshes) + 1
+			var box: AABB = global * mesh.get_aabb()
+			found.box = box if not bool(found.sized) else (found.box as AABB).merge(box)
+			found.sized = true
+			for surface in mesh.get_surface_count():
+				var material := mesh.surface_get_material(surface)
+				if material != null:
+					materials.append(material)
+		for material in materials:
+			if material is ShaderMaterial:
+				found.shaders = int(found.shaders) + 1
+			elif material is BaseMaterial3D and ((material as BaseMaterial3D).uv1_triplanar or
+					(material as BaseMaterial3D).uv1_world_triplanar):
+				found.triplanar = int(found.triplanar) + 1
+		var instance := state.get_node_instance(index)
+		if instance != null and depth < 4:
+			_scan_scene_state(instance.get_state(), global, found, depth + 1)
 
 
 ## Reads a .gltf with its buffers and images and writes one binary .glb.

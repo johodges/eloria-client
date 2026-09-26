@@ -32,6 +32,10 @@ const ViewToolbar := preload("res://addons/map_authoring_usability/view_toolbar.
 const Markers := preload("res://addons/map_asset_palette/marker_library.gd")
 const AreaTool := preload("res://addons/map_authoring_usability/area_tool.gd")
 const AreaPanel := preload("res://addons/map_authoring_usability/area_panel.gd")
+const PlanWater := preload("res://addons/map_authoring_usability/plan_water.gd")
+const Scatter := preload("res://addons/map_authoring_usability/scatter_tool.gd")
+const ReviewNotes := preload("res://addons/map_authoring_usability/review_notes.gd")
+const ReviewNotesDock := preload("res://addons/map_authoring_usability/review_notes_dock.gd")
 const FOCUS_HELPER := "__MapAuthoringFocus"
 const UI_REFRESH_SECONDS := 0.25
 const MINIMAP_TARGET_LUMINANCE := 0.4
@@ -69,6 +73,8 @@ enum MenuId {
 	FIX_DUPLICATE_IDS,
 	PAINT_GROUND,
 	STAMP_PLATEAU,
+	PLAN_WATER,
+	SCATTER,
 }
 
 var _menu: MenuButton
@@ -117,6 +123,11 @@ var _pending_focus: Array = []
 ## Placed objects sharing an id (Godot's Ctrl+D copies ids), refreshed by the poll.
 var _duplicate_groups: Array[Dictionary] = []
 var _area := AreaTool.new()
+var _plan_water := PlanWater.new()
+var _scatter := Scatter.new()
+var _notes := ReviewNotes.new()
+var _notes_dock: ReviewNotesDock
+var _plan_water_on := false
 var _area_panel: AreaPanel
 var _duplicate_signature := ""
 ## Instance ids of objects that already shared an id when the scene opened
@@ -145,7 +156,10 @@ func _enter_tree() -> void:
 	_toolbar.tool_requested.connect(func(tool: String) -> void: open_area_panel(tool))
 	_area_panel = AreaPanel.new()
 	_area_panel.start_requested.connect(func(kind: String, options: Dictionary) -> void:
-		start_area_tool(kind, options))
+		if kind == "scatter":
+			start_scatter(options)
+		else:
+			start_area_tool(kind, options))
 	get_editor_interface().get_base_control().add_child(_area_panel)
 	add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, _toolbar)
 	_selection_bar = SelectionBar.new()
@@ -157,6 +171,25 @@ func _enter_tree() -> void:
 	_minimap.jump_requested.connect(_on_minimap_jump)
 	_minimap.refresh_requested.connect(func() -> void: refresh_minimap())
 	add_dock(_minimap)
+	_notes_dock = ReviewNotesDock.new()
+	_notes_dock.add_requested.connect(func(text: String) -> void: start_review_note(text))
+	_notes_dock.text_saved.connect(func(identity: String, text: String) -> void:
+		_notes.set_text(identity, text)
+		_sync_notes_dock())
+	_notes_dock.status_toggled.connect(func(identity: String) -> void:
+		var note := _notes.find(identity)
+		if not note.is_empty():
+			_notes.set_status(identity, "open" if String(note.status) == "resolved" else "resolved")
+		_sync_notes_dock())
+	_notes_dock.delete_requested.connect(func(identity: String) -> void:
+		_notes.remove(identity)
+		_sync_notes_dock())
+	_notes_dock.focus_requested.connect(func(identity: String) -> void:
+		var note := _notes.find(identity)
+		var root := _authoring_root()
+		if not note.is_empty() and root != null:
+			focus_camera_at(root.global_transform * (note.position as Vector3)))
+	add_dock(_notes_dock)
 	_build_capture_dialog()
 	set_input_event_forwarding_always_enabled()
 	set_force_draw_over_forwarding_enabled()
@@ -174,6 +207,8 @@ func _exit_tree() -> void:
 	_walker.stop()
 	_copy.cancel_drag()
 	_area.cancel()
+	_scatter.cancel()
+	_plan_water.release()
 	if is_instance_valid(_area_panel):
 		_area_panel.queue_free()
 	_area_panel = null
@@ -194,6 +229,11 @@ func _exit_tree() -> void:
 		remove_dock(_minimap)
 		_minimap.queue_free()
 		_minimap = null
+	_notes.release()
+	if _notes_dock != null:
+		remove_dock(_notes_dock)
+		_notes_dock.queue_free()
+		_notes_dock = null
 	if _time_button != null:
 		remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, _time_button)
 		_time_button.queue_free()
@@ -255,6 +295,10 @@ func poll_overlays() -> void:
 	if sculpt != null and sculpt.get("_sculpt") != null:
 		dragging = bool(sculpt.get("_sculpt").call("is_dragging"))
 	_walk.poll(dragging)
+	var notice := _walk.take_notice()
+	if not notice.is_empty():
+		_status(notice)
+		update_overlays()
 	_performance.refresh()
 	_check_duplicate_ids(root)
 	_sync_toolbar()
@@ -272,6 +316,12 @@ func _forward_3d_gui_input(camera: Camera3D, event: InputEvent) -> int:
 func _viewport_input(camera: Camera3D, event: InputEvent) -> int:
 	if _authoring_root() == null:
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
+	if _notes.is_adding():
+		var note_result := _notes.handle_input(camera, event)
+		if note_result == EditorPlugin.AFTER_GUI_INPUT_STOP:
+			_status(_notes.last_message)
+			_sync_notes_dock()
+		return note_result
 	if _walker.active:
 		if Settings.matches("focus_walker", event) and _walker.is_placed():
 			focus_camera_at(_authoring_root().global_transform * _walker.position())
@@ -284,6 +334,14 @@ func _viewport_input(camera: Camera3D, event: InputEvent) -> int:
 		if event is InputEventMouseMotion:
 			_note_hover(camera, (event as InputEventMouseMotion).position)
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
+	if _scatter.is_active():
+		var scatter_result := _scatter.handle_input(camera, event, get_undo_redo())
+		if not _scatter.last_message.is_empty() and not event is InputEventMouseMotion:
+			_status(_scatter.last_message)
+		if event is InputEventMouseMotion:
+			_note_hover(camera, (event as InputEventMouseMotion).position)
+		update_overlays()
+		return scatter_result
 	if _area.is_active():
 		var area_result := _area.handle_input(camera, event, get_undo_redo())
 		if not _area.last_message.is_empty() and not event is InputEventMouseMotion:
@@ -377,6 +435,9 @@ func _forward_3d_force_draw_over_viewport(overlay: Control) -> void:
 		return
 	if _area.is_active():
 		PalettePlugin.draw_overlay_lines(overlay, _area.hint_lines(), bottom)
+		return
+	if _scatter.is_active():
+		PalettePlugin.draw_overlay_lines(overlay, _scatter.hint_lines(), bottom)
 		return
 	if _copy.is_dragging():
 		PalettePlugin.draw_overlay_lines(overlay, PackedStringArray([
@@ -531,9 +592,11 @@ func _build_menu(popup: PopupMenu) -> void:
 	popup.add_separator("Paths")
 	_add_tool_item(popup, "Draw road", MenuId.DRAW_ROAD, "draw_road", settings)
 	_add_tool_item(popup, "Draw river", MenuId.DRAW_RIVER, "draw_river", settings)
+	popup.add_check_item("Show the continent plan's water (read-only)", MenuId.PLAN_WATER)
 	popup.add_separator("Terrain and ground")
 	popup.add_item("Paint ground regions…", MenuId.PAINT_GROUND)
 	popup.add_item("Stamp plateaus…", MenuId.STAMP_PLATEAU)
+	popup.add_item("Scatter the selected asset…", MenuId.SCATTER)
 	popup.add_separator("Play and view")
 	popup.add_check_item("Play test: walk the territory", MenuId.PLAY_TEST)
 	popup.add_check_item("Low spec view (half resolution, far assets hidden)", MenuId.LOW_SPEC)
@@ -571,6 +634,7 @@ func _sync_menu() -> void:
 		popup.set_item_checked(popup.get_item_index(int(pair[0])), _walk_mode == int(pair[1]))
 	popup.set_item_checked(popup.get_item_index(MenuId.PLAY_TEST), _walker.active)
 	popup.set_item_checked(popup.get_item_index(MenuId.LOW_SPEC), _performance.active)
+	popup.set_item_checked(popup.get_item_index(MenuId.PLAN_WATER), _plan_water_on)
 
 
 func _on_menu_id(id: int) -> void:
@@ -609,10 +673,14 @@ func _on_menu_id(id: int) -> void:
 				start_play_test()
 		MenuId.LOW_SPEC:
 			set_low_spec(not _performance.active)
+		MenuId.PLAN_WATER:
+			set_plan_water(not _plan_water_on)
 		MenuId.PAINT_GROUND:
 			open_area_panel("ground")
 		MenuId.STAMP_PLATEAU:
 			open_area_panel("plateau")
+		MenuId.SCATTER:
+			open_area_panel("scatter")
 		MenuId.TIME_OF_DAY:
 			_show_time_panel()
 		MenuId.CAPTURE_TOP_DOWN:
@@ -705,6 +773,7 @@ func _on_scene_changed(root: Node) -> void:
 	_walker.stop()
 	_copy.cancel_drag()
 	_area.cancel()
+	_scatter.cancel()
 	_open_group = ""
 	_remember_duplicate_baseline(_authoring_root())
 	_markers.release()
@@ -720,6 +789,14 @@ func _on_scene_changed(root: Node) -> void:
 	_walk.release()
 	if mode != Walkability.Mode.OFF:
 		set_walkability_mode(mode)
+	if _plan_water_on:
+		set_plan_water(true)
+	var opened := _authoring_root()
+	if opened != null:
+		_notes.open(opened)
+	else:
+		_notes.release()
+	_sync_notes_dock()
 	poll_overlays()
 	# The preview follows the open scene; a scene with saved lighting turns it off.
 	if _time.is_active() or (_time_toggle != null and _time_toggle.button_pressed):
@@ -973,6 +1050,49 @@ func set_walkability_mode(mode: int) -> bool:
 	return shown
 
 
+## Shows or hides the continent plan's rivers and lakes over the open territory
+## (see plan_water.gd). Returns whether they are showing.
+func set_plan_water(visible: bool) -> bool:
+	_plan_water_on = visible
+	_plan_water.release()
+	var root := _authoring_root()
+	if not visible or root == null:
+		return false
+	var shown := _plan_water.show_on(root)
+	_status(_plan_water.last_message)
+	return shown
+
+
+func plan_water() -> RefCounted:
+	return _plan_water
+
+
+## Waits for a click in the 3D view to pin a review note with `text` (see
+## review_notes.gd). Returns whether it is waiting.
+func start_review_note(text: String) -> bool:
+	if _notes.path.is_empty() and _authoring_root() != null:
+		_notes.open(_authoring_root())
+	var armed := _notes.arm_add(text)
+	_status(_notes.last_message)
+	if armed:
+		get_editor_interface().set_main_screen_editor("3D")
+	_sync_notes_dock()
+	return armed
+
+
+func review_notes() -> RefCounted:
+	return _notes
+
+
+func review_notes_dock() -> Control:
+	return _notes_dock
+
+
+func _sync_notes_dock() -> void:
+	if _notes_dock != null:
+		_notes_dock.show_notes(_notes.notes, _notes.last_message, _notes.can_write())
+
+
 func rebuild_walkability() -> void:
 	_walk.rebuild()
 	update_overlays()
@@ -1003,7 +1123,8 @@ func start_path_drawing(kind: String) -> bool:
 		sculpt.call("deactivate_terrain_sculpt")
 	_walker.stop()
 	_area.cancel()
-	var started := _draw.start(root, kind)
+	_scatter.cancel()
+	var started := _draw.start(root, kind, _ownership_polygon(root))
 	_status(_draw.last_message)
 	if started:
 		get_editor_interface().set_main_screen_editor("3D")
@@ -1021,6 +1142,9 @@ func cancel_path_drawing() -> void:
 		stop_play_test()
 	if _area.is_active():
 		_area.cancel()
+		update_overlays()
+	if _scatter.is_active():
+		_scatter.cancel()
 		update_overlays()
 
 
@@ -1105,7 +1229,7 @@ func duplicate_selection(offset: Vector3 = Vector3.INF) -> Array[Node3D]:
 		offset = root.global_transform.basis * Vector3(step, 0.0, step)
 	copies = GroupTools.commit_copies(get_undo_redo(), root, nodes, offset)
 	_select(copies)
-	_status("Copied %d object%s with fresh ids." % [copies.size(), "" if copies.size() == 1 else "s"])
+	_status(_copied_message(copies))
 	return copies
 
 
@@ -1188,6 +1312,12 @@ func _is_godot_duplicate(event: InputEventKey) -> bool:
 		not event.alt_pressed
 
 
+func _copied_message(copies: Array) -> String:
+	var note := GroupTools.copy_review_note(copies)
+	return "Copied %d object%s with fresh ids.%s" % [copies.size(),
+		"" if copies.size() == 1 else "s", (" " + note + ".") if not note.is_empty() else ""]
+
+
 func copy_drag_tool() -> RefCounted:
 	return _copy
 
@@ -1252,8 +1382,7 @@ func _handle_copy_drag(camera: Camera3D, event: InputEvent) -> int:
 		var copies := _copy.finish_drag(get_undo_redo())
 		if not copies.is_empty():
 			_select(copies)
-			_status("Copied %d object%s with fresh ids." % [copies.size(),
-				"" if copies.size() == 1 else "s"])
+			_status(_copied_message(copies))
 	update_overlays()
 	return EditorPlugin.AFTER_GUI_INPUT_STOP if event is InputEventMouse else \
 		EditorPlugin.AFTER_GUI_INPUT_PASS
@@ -1421,6 +1550,7 @@ func start_play_test() -> bool:
 		sculpt.call("deactivate_terrain_sculpt")
 	_draw.cancel()
 	_area.cancel()
+	_scatter.cancel()
 	var started := _walker.start(root)
 	_status(_walker.last_message)
 	if not started:
@@ -1452,7 +1582,7 @@ func open_area_panel(kind: String) -> void:
 		return
 	var anchor := Rect2i(Vector2i(get_editor_interface().get_base_control().get_global_mouse_position()),
 		Vector2i(360, 0))
-	_area_panel.open_for(kind, root, anchor)
+	_area_panel.open_for(kind, root, anchor, _selected_palette_entry())
 
 
 ## Arms the ground-region or plateau tool (see area_tool.gd); placement,
@@ -1467,6 +1597,7 @@ func start_area_tool(kind: String, options: Dictionary) -> bool:
 		sculpt.call("deactivate_terrain_sculpt")
 	_draw.cancel()
 	_walker.stop()
+	_scatter.cancel()
 	var started := _area.start(root, kind, options, _ownership_polygon(root), _protection())
 	_status(_area.last_message)
 	if not started:
@@ -1480,6 +1611,43 @@ func start_area_tool(kind: String, options: Dictionary) -> bool:
 
 func area_tool() -> RefCounted:
 	return _area
+
+
+## Arms the scatter tool (see scatter_tool.gd) for `asset`, or the asset
+## selected in the Map Assets dock; placement, drawing and the play test stop.
+func start_scatter(options: Dictionary, asset: Dictionary = {}) -> bool:
+	var root := _authoring_root()
+	var palette := _palette_plugin()
+	var entry := asset if not asset.is_empty() else _selected_palette_entry()
+	if palette != null and palette.has_method("cancel_placement_for_terrain_sculpt"):
+		palette.call("cancel_placement_for_terrain_sculpt")
+	var sculpt := _sculpt_plugin()
+	if sculpt != null and sculpt.has_method("deactivate_terrain_sculpt"):
+		sculpt.call("deactivate_terrain_sculpt")
+	_draw.cancel()
+	_walker.stop()
+	_area.cancel()
+	var started := _scatter.start(root, entry, options, _ownership_polygon(root))
+	_status(_scatter.last_message)
+	if not started:
+		_toast(_scatter.last_message)
+	else:
+		get_editor_interface().set_main_screen_editor("3D")
+	_sync_toolbar()
+	update_overlays()
+	return started
+
+
+func scatter_tool() -> RefCounted:
+	return _scatter
+
+
+func _selected_palette_entry() -> Dictionary:
+	var palette := _palette_plugin()
+	var dock: Variant = palette.get("_dock") if palette != null else null
+	if dock == null or not (dock as Object).has_method("selected_entry"):
+		return {}
+	return (dock as Object).call("selected_entry")
 
 
 func area_panel() -> Window:
@@ -1564,15 +1732,75 @@ func refresh_minimap() -> Dictionary:
 	else:
 		var framing: Dictionary = rendered.framing
 		_minimap.set_image(levelled_minimap(rendered.image), framing)
+		var published := published_minimap(root, framing)
+		_minimap.set_published(published.get("image"), framing, String(published.get("note", "")))
 		_minimap.set_status("%.0f × %.0f m, north up. Click to jump." % [
 			(framing.rect as Rect2).size.x, (framing.rect as Rect2).size.y])
 	_update_minimap_state()
 	return rendered
 
 
-## The minimap picture brightened so its owned land averages a readable level:
-## the authoring terrain preview renders far darker than the game does. Only
-## the dock's copy is changed; top-down captures stay as rendered.
+## The package's published minimap (world.json "minimap": worldMin/worldMax in
+## territory-local X/Z, pixelsPerMetre, imageSize; north up, top-left at
+## worldMin) resampled to the live picture's `framing`, so the two line up.
+## Pixels the published image does not cover are transparent. Returns
+## {"image", "note"} or {"note"} when there is nothing to show.
+static func published_minimap(root: Node3D, framing: Dictionary) -> Dictionary:
+	var manifest_path := TimeOfDay.manifest_path_for(String(root.get("region_id")))
+	if manifest_path.is_empty():
+		return {"note": "No published package for this territory."}
+	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))
+	var minimap: Variant = (manifest as Dictionary).get("minimap") if manifest is Dictionary else null
+	if not minimap is Dictionary:
+		return {"note": "The published package has no minimap."}
+	var data: Dictionary = minimap
+	var file_name := String(data.get("image", data.get("file", "")))
+	var low: Array = data.get("worldMin", [])
+	var high: Array = data.get("worldMax", [])
+	var size: Array = data.get("imageSize", [])
+	var ppm := float(data.get("pixelsPerMetre", 0.0))
+	if file_name.is_empty() or low.size() != 2 or high.size() != 2 or size.size() != 2 or ppm <= 0.0:
+		return {"note": "The published minimap record is incomplete."}
+	var image_path := manifest_path.get_base_dir().path_join(file_name)
+	var source := Image.load_from_file(ProjectSettings.globalize_path(image_path)) \
+		if FileAccess.file_exists(image_path) else null
+	if source == null or source.is_empty():
+		return {"note": "The published minimap image %s is missing." % file_name}
+	if source.get_width() != int(size[0]) or source.get_height() != int(size[1]):
+		return {"note": "The published minimap is %d x %d px, not the %d x %d its manifest states." % [
+			source.get_width(), source.get_height(), int(size[0]), int(size[1])]}
+	source.convert(Image.FORMAT_RGBA8)
+	var picture := resample_published(source, Vector2(float(low[0]), float(low[1])), ppm, framing)
+	return {"image": picture, "note": "Last published minimap (%s)." % image_path.get_file()}
+
+
+## Nearest-pixel resample of a published minimap (top-left at `origin`, `ppm`
+## pixels per metre) onto `framing` (top_down_capture.plan: rect, size).
+static func resample_published(source: Image, origin: Vector2, ppm: float,
+		framing: Dictionary) -> Image:
+	var target_size: Vector2i = framing.size
+	var rect: Rect2 = framing.rect
+	var picture := Image.create_empty(maxi(target_size.x, 1), maxi(target_size.y, 1), false,
+		Image.FORMAT_RGBA8)
+	for y in picture.get_height():
+		var z := rect.position.y + (float(y) + 0.5) * rect.size.y / float(picture.get_height())
+		var v := floori((z - origin.y) * ppm)
+		if v < 0 or v >= source.get_height():
+			continue
+		for x in picture.get_width():
+			var along := rect.position.x + (float(x) + 0.5) * rect.size.x / float(picture.get_width())
+			var u := floori((along - origin.x) * ppm)
+			if u >= 0 and u < source.get_width():
+				picture.set_pixel(x, y, source.get_pixel(u, v))
+	return picture
+
+
+## The minimap picture brightened so its owned land averages a readable level.
+## This is for reading the map, not a correction: under the same light the
+## terrain preview matches the game wherever the game applies the biome blend
+## (measured on Amberwood). A map seen from straight above at a territory's own
+## light can still be dim (forest lighting, low sun), so the dock levels its
+## copy. Top-down captures stay as rendered.
 static func levelled_minimap(image: Image) -> Image:
 	var levelled := image.duplicate() as Image
 	var total := 0.0

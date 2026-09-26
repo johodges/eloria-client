@@ -8,6 +8,10 @@ signal sculpt_toggled(enabled: bool)
 signal sculpt_pick_height_requested
 signal heightmap_import_requested(path: String, area: Rect2, low: float, high: float,
 		replace: bool)
+signal heightmap_preview_requested(path: String, area: Rect2, low: float, high: float,
+		replace: bool)
+signal heightmap_preview_cancelled
+signal heightmap_area_pick_requested
 
 var _entries: Array[Dictionary] = []
 var _active_id := ""
@@ -284,9 +288,20 @@ func _build_heightmap_dialog() -> void:
 	var note := Label.new()
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	note.text = ("The image's top row is north. The area is in terrain metres and starts as the " +
-		"whole terrain grid. Locked border samples never change, the fade band blends, and " +
-		"one undo step reverts it.")
+		"whole terrain grid; Pick area on map drags it out in the 3D view. Preview shows the " +
+		"result on the terrain without keeping it. Locked border samples never change, the " +
+		"fade band blends, and one undo step reverts an import.")
 	column.add_child(note)
+	_heightmap_dialog.add_button("Pick area on map", false, "pick")
+	_heightmap_dialog.add_button("Preview", false, "preview")
+	_heightmap_dialog.custom_action.connect(func(action: StringName) -> void:
+		if action == &"preview":
+			heightmap_preview_requested.emit(_heightmap_path.text, heightmap_area(),
+				_heightmap_low.value, _heightmap_high.value, _heightmap_mode.selected == 0)
+		elif action == &"pick":
+			_heightmap_dialog.hide()
+			heightmap_area_pick_requested.emit())
+	_heightmap_dialog.canceled.connect(func() -> void: heightmap_preview_cancelled.emit())
 	_heightmap_dialog.confirmed.connect(func() -> void:
 		heightmap_import_requested.emit(_heightmap_path.text, heightmap_area(),
 			_heightmap_low.value, _heightmap_high.value, _heightmap_mode.selected == 0))

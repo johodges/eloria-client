@@ -544,6 +544,11 @@ func _select_index(index: int) -> void:
 		String(_selected_entry.category),
 		"\n%.2f m tall" % float(_selected_entry.height) \
 			if float(_selected_entry.height) > 0.0 else ""]
+	if String(_selected_entry.id).begins_with(LIBRARY_ID_PREFIX):
+		var notes := Catalog.admission_notes(String(_selected_entry.scene_path))
+		_selected_entry["admission_notes"] = notes
+		if not notes.is_empty():
+			_details.text += "\nCheck before use:\n• " + "\n• ".join(notes)
 	_preview.texture = _thumbnails.get(String(_selected_entry.id))
 	_queue_selected_preview()
 	_update_buttons()

@@ -216,13 +216,16 @@ func save_selection_as_prefab(prefab_name: String) -> Dictionary:
 	var left_markers := int(result.get("left_out_markers", 0))
 	var left_other := int(result.get("left_out_other", 0))
 	if left_markers + left_other > 0:
-		note = " Left out %s (prefabs hold placed assets only)." % ", ".join(PackedStringArray(
+		note = " Left out %s (prefabs hold placed assets and gameplay markers)." % ", ".join(PackedStringArray(
 			(["%d gameplay marker%s" % [left_markers, "" if left_markers == 1 else "s"]]
 				if left_markers > 0 else []) +
 			(["%d other object%s" % [left_other, "" if left_other == 1 else "s"]]
 				if left_other > 0 else [])))
-	_dock.show_message("Saved prefab %s with %d assets.%s Select it and click Place on terrain." % [
-		String(result.path).get_file(), int(result.members), note])
+	var marker_count := int(result.get("markers", 0))
+	_dock.show_message("Saved prefab %s with %d assets%s.%s Select it and click Place on terrain." % [
+		String(result.path).get_file(), int(result.members) - marker_count,
+		" and %d marker%s" % [marker_count, "" if marker_count == 1 else "s"] if marker_count > 0 else "",
+		note])
 	return result
 
 
@@ -495,8 +498,10 @@ func _place_prefab(pilot: Node3D, entry: Dictionary, ground: Vector3, keep_armed
 		_dock.show_message("The prefab %s has no assets to place." % String(entry.label))
 		return null
 	_select_placed(placed)
-	_dock.show_message("Placed prefab %s (%d assets)%s" % [String(entry.label), placed.size(),
-		". Keep clicking to place more." if keep_armed else "."])
+	var review := Markers.copy_review_note(placed)
+	_dock.show_message("Placed prefab %s (%d members)%s%s" % [String(entry.label), placed.size(),
+		". Keep clicking to place more." if keep_armed else ".",
+		" " + review + "." if not review.is_empty() else ""])
 	return placed[0]
 
 

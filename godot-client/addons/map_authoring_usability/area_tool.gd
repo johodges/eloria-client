@@ -12,8 +12,11 @@ extends RefCounted
 ##   border band the sculpt brush also respects; the patch schema itself does not
 ##   enforce that. A plateau does not make ground walkable: the 0.65 grade,
 ##   water and structure rules still apply when it is baked.
-## Press where the centre goes, drag out the size, release to create. The tool
-## stays armed for the next one; Esc or right-click stops.
+## Press where the centre goes, drag out the size, release to create; Q/E turn
+## the shape (both controls keep their yaw). Ground regions can instead be
+## painted along a stroke: a region of the brush size every 60% of it along the
+## drag, all in one undo step, each still inside the owned land and within the
+## 127 cap. The tool stays armed for the next one; Esc or right-click stops.
 
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
 const Settings := preload("res://addons/map_authoring_usability/usability_settings.gd")
@@ -24,10 +27,15 @@ const MAX_GROUND_REGIONS := 127
 const MIN_SIZE := 1.0
 const PROTECTED_WEIGHT := 0.999
 const COLORS := {"ground": Color(0.55, 0.9, 0.45), "plateau": Color(0.95, 0.7, 0.35)}
+const TURN_STEP := 15.0
+const FINE_TURN_STEP := 5.0
+## Stroke stamps are this fraction of the brush size apart.
+const STROKE_SPACING := 0.6
 
 var kind := ""
 ## ground: surface (Resource) or preset (String), shape, blend_width, opacity,
-## priority. plateau: operation ("set" or "add"), shape, feather, height.
+## priority, stroke (bool) and brush (metres, the stamp size when stroking).
+## plateau: operation ("set" or "add"), shape, feather, height.
 var options := {}
 var last_message := ""
 var _root: Node3D
@@ -35,6 +43,10 @@ var _polygon := PackedVector2Array()
 var _protection: Dictionary = {}
 var _anchor := Vector3.INF
 var _hover: Variant = null
+## Yaw of the next shape, radians about +Y in the territory's frame.
+var _yaw := 0.0
+## Territory-local centres stamped so far along the current stroke.
+var _stroke: Array[Vector3] = []
 var _node: MeshInstance3D
 var _mesh: ImmediateMesh
 
@@ -64,8 +76,12 @@ func start(root: Node3D, tool_kind: String, tool_options: Dictionary,
 	_root = root
 	_polygon = polygon
 	_protection = protection
+	_yaw = 0.0
+	_stroke.clear()
 	last_message = "Press where the %s's centre goes and drag out its size." % (
 		"ground region" if kind == "ground" else "plateau")
+	if is_stroking():
+		last_message = "Press and drag to paint %.0f m ground regions along the stroke." % brush()
 	_redraw()
 	return true
 
@@ -74,6 +90,7 @@ func cancel() -> void:
 	kind = ""
 	_anchor = Vector3.INF
 	_hover = null
+	_stroke.clear()
 	if _node != null and is_instance_valid(_node):
 		if _node.get_parent() != null:
 			_node.get_parent().remove_child(_node)
@@ -88,6 +105,8 @@ func handle_input(camera: Camera3D, event: InputEvent, undo_redo: EditorUndoRedo
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
 	if event is InputEventMouseMotion:
 		_hover = _ground_point(camera, (event as InputEventMouseMotion).position)
+		if is_stroking() and _anchor.is_finite() and _hover is Vector3:
+			extend_stroke(_hover as Vector3)
 		_redraw()
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
 	if event is InputEventKey and event.pressed:
@@ -95,6 +114,7 @@ func handle_input(camera: Camera3D, event: InputEvent, undo_redo: EditorUndoRedo
 		if key.keycode == KEY_ESCAPE and not key.echo:
 			if _anchor.is_finite():
 				_anchor = Vector3.INF
+				_stroke.clear()
 				last_message = "Draft discarded; press to start another."
 			else:
 				var drawn := kind
@@ -107,6 +127,12 @@ func handle_input(camera: Camera3D, event: InputEvent, undo_redo: EditorUndoRedo
 			var factor := 1.05 if key.shift_pressed else 1.25
 			options[field] = clampf(float(options.get(field, 3.0)) *
 				(1.0 / factor if Settings.matches("path_narrower", key) else factor), 0.0, 64.0)
+			_redraw()
+			return EditorPlugin.AFTER_GUI_INPUT_STOP
+		if Settings.matches("rotate_left", key) or Settings.matches("rotate_right", key):
+			var step := deg_to_rad(FINE_TURN_STEP if key.shift_pressed else TURN_STEP)
+			_yaw = wrapf(_yaw + (step if Settings.matches("rotate_left", key) else -step), -PI, PI)
+			last_message = "Turned to %.0f°." % rad_to_deg(_yaw)
 			_redraw()
 			return EditorPlugin.AFTER_GUI_INPUT_STOP
 		if kind == "plateau" and (Settings.matches("raise", key) or Settings.matches("lower", key)):
@@ -132,6 +158,16 @@ func handle_input(camera: Camera3D, event: InputEvent, undo_redo: EditorUndoRedo
 				return EditorPlugin.AFTER_GUI_INPUT_STOP
 			_anchor = point as Vector3
 			_hover = point
+			if is_stroking():
+				_stroke.clear()
+				_stroke.append(_root.global_transform.affine_inverse() * (point as Vector3))
+			_redraw()
+			return EditorPlugin.AFTER_GUI_INPUT_STOP
+		if _anchor.is_finite() and is_stroking():
+			if point is Vector3:
+				extend_stroke(point as Vector3)
+			commit_stroke(undo_redo)
+			_anchor = Vector3.INF
 			_redraw()
 			return EditorPlugin.AFTER_GUI_INPUT_STOP
 		if _anchor.is_finite():
@@ -151,10 +187,76 @@ func create(undo_redo: EditorUndoRedoManager, centre_world: Vector3,
 	var inverse := _root.global_transform.affine_inverse()
 	var centre: Vector3 = inverse * centre_world
 	var corner: Vector3 = inverse * corner_world
-	var size := Vector2(maxf(absf(corner.x - centre.x) * 2.0, MIN_SIZE),
-		maxf(absf(corner.z - centre.z) * 2.0, MIN_SIZE))
+	var half := turned_half(Vector2(corner.x - centre.x, corner.z - centre.z), _yaw)
+	var size := Vector2(maxf(half.x * 2.0, MIN_SIZE), maxf(half.y * 2.0, MIN_SIZE))
 	return commit_ground(undo_redo, centre, size) if kind == "ground" \
 		else commit_plateau(undo_redo, centre, size)
+
+
+func is_stroking() -> bool:
+	return kind == "ground" and bool(options.get("stroke", false))
+
+
+func brush() -> float:
+	return maxf(float(options.get("brush", 6.0)), MIN_SIZE)
+
+
+func yaw() -> float:
+	return _yaw
+
+
+func stroke_points() -> Array[Vector3]:
+	return _stroke
+
+
+## Adds stamps every STROKE_SPACING × brush along the way to `world`.
+func extend_stroke(world: Vector3) -> void:
+	if _stroke.is_empty():
+		return
+	var target: Vector3 = _root.global_transform.affine_inverse() * world
+	var spacing := brush() * STROKE_SPACING
+	var last := _stroke[_stroke.size() - 1]
+	var flat := Vector2(target.x - last.x, target.z - last.z)
+	var steps := floori(flat.length() / spacing)
+	for step in steps:
+		var along := last + Vector3(flat.x, 0.0, flat.y).normalized() * spacing * float(step + 1)
+		_stroke.append(Vector3(along.x, target.y, along.z))
+
+
+## Creates a ground region at every stamp of the stroke that may hold one, in
+## one undo step. Stamps outside the owned land or past the cap are skipped.
+func commit_stroke(undo_redo: EditorUndoRedoManager) -> Array[Node3D]:
+	var size := Vector2.ONE * brush()
+	var allowed: Array[Vector3] = []
+	var skipped := 0
+	var capped := false
+	for centre in _stroke:
+		var error := ground_error(centre, size, allowed.size())
+		if error.is_empty():
+			allowed.append(centre)
+		elif error.begins_with("This territory already has"):
+			capped = true
+			break
+		else:
+			skipped += 1
+	_stroke.clear()
+	var made := commit_grounds(undo_redo, allowed, size)
+	last_message = "Painted %d ground region%s (%.0f m brush)." % [made.size(),
+		"" if made.size() == 1 else "s", size.x]
+	if skipped > 0:
+		last_message += " %d stamp%s outside the owned land %s left out." % [skipped,
+			"" if skipped == 1 else "s", "was" if skipped == 1 else "were"]
+	if capped:
+		last_message += " The stroke stopped at the %d ground regions the terrain preview draws." % \
+			MAX_GROUND_REGIONS
+	return made
+
+
+## Half-extents of a shape turned by `turn` whose corner is `offset` from its centre.
+static func turned_half(offset: Vector2, turn: float) -> Vector2:
+	var along := Vector2(cos(turn), -sin(turn))
+	var across := Vector2(sin(turn), cos(turn))
+	return Vector2(absf(offset.dot(along)), absf(offset.dot(across)))
 
 
 ## A ground region at territory-local `centre` (ground height taken there).
@@ -163,6 +265,23 @@ func commit_ground(undo_redo: EditorUndoRedoManager, centre: Vector3, size: Vect
 	if not error.is_empty():
 		last_message = error
 		return null
+	var centres: Array[Vector3] = [centre]
+	var made := commit_grounds(undo_redo, centres, size)
+	var region: Node3D = made[0] if not made.is_empty() else null
+	if region != null:
+		last_message = "Added ground region %s (%.0f x %.0f m, %s%s)." % [String(region.name),
+			size.x, size.y, String(options.get("surface_label", "surface")),
+			", turned %.0f°" % rad_to_deg(_yaw) if not is_zero_approx(_yaw) else ""]
+	return region
+
+
+## Ground regions of one size at territory-local `centres`, turned by the
+## current yaw, as one undo step. The caller has checked ground_error.
+func commit_grounds(undo_redo: EditorUndoRedoManager, centres: Array[Vector3],
+		size: Vector2) -> Array[Node3D]:
+	var made: Array[Node3D] = []
+	if centres.is_empty():
+		return made
 	var ground := _root.get_node_or_null("Ground") as Node3D
 	var regions := _root.get_node_or_null("Ground/Regions") as Node3D
 	var new_ground := ground == null
@@ -173,21 +292,28 @@ func commit_ground(undo_redo: EditorUndoRedoManager, centre: Vector3, size: Vect
 	if new_regions:
 		regions = Node3D.new()
 		regions.name = "Regions"
-	var region: Node3D = GROUND_SCRIPT.new()
-	var identity := fresh_id(regions if not new_regions else null, "ground", "region_id")
-	region.name = identity
-	region.set("region_id", identity)
-	region.set("shape", int(options.get("shape", 0)))
-	region.set("size", size)
-	region.set("blend_width", float(options.get("blend_width", 3.0)))
-	region.set("opacity", float(options.get("opacity", 0.9)))
-	region.set("priority", int(options.get("priority", 10)))
-	region.set("surface", _surface())
-	region.set("enabled", true)
-	var height := Probe.height_at(_root, _root.global_transform * centre)
-	var world := _root.global_transform * Vector3(centre.x, height if not is_nan(height) else centre.y,
-		centre.z)
-	undo_redo.create_action("Add ground region %s" % identity, UndoRedo.MERGE_DISABLE, _root)
+	var identities := fresh_ids(regions if not new_regions else null, "ground", "region_id",
+		centres.size())
+	var surface := _surface()
+	var transforms: Array[Transform3D] = []
+	for index in centres.size():
+		var centre := centres[index]
+		var region: Node3D = GROUND_SCRIPT.new()
+		region.name = identities[index]
+		region.set("region_id", identities[index])
+		region.set("shape", int(options.get("shape", 0)))
+		region.set("size", size)
+		region.set("blend_width", float(options.get("blend_width", 3.0)))
+		region.set("opacity", float(options.get("opacity", 0.9)))
+		region.set("priority", int(options.get("priority", 10)))
+		region.set("surface", surface)
+		region.set("enabled", true)
+		var height := Probe.height_at(_root, _root.global_transform * centre)
+		transforms.append(_root.global_transform * Transform3D(Basis(Vector3.UP, _yaw),
+			Vector3(centre.x, height if not is_nan(height) else centre.y, centre.z)))
+		made.append(region)
+	undo_redo.create_action("Add ground region %s" % identities[0] if made.size() == 1 else
+		"Paint %d ground regions" % made.size(), UndoRedo.MERGE_DISABLE, _root)
 	if new_ground:
 		undo_redo.add_do_method(_root, &"add_child", ground, true)
 		undo_redo.add_do_method(ground, &"set_owner", _root)
@@ -196,25 +322,27 @@ func commit_ground(undo_redo: EditorUndoRedoManager, centre: Vector3, size: Vect
 		undo_redo.add_do_method(ground, &"add_child", regions, true)
 		undo_redo.add_do_method(regions, &"set_owner", _root)
 		undo_redo.add_do_reference(regions)
-	undo_redo.add_do_method(regions, &"add_child", region, true)
-	undo_redo.add_do_method(region, &"set_owner", _root)
-	undo_redo.add_do_property(region, &"global_position", world)
-	undo_redo.add_do_reference(region)
-	undo_redo.add_undo_method(regions, &"remove_child", region)
+	for index in made.size():
+		var region := made[index]
+		undo_redo.add_do_method(regions, &"add_child", region, true)
+		undo_redo.add_do_method(region, &"set_owner", _root)
+		undo_redo.add_do_property(region, &"global_transform", transforms[index])
+		undo_redo.add_do_reference(region)
+	for index in range(made.size() - 1, -1, -1):
+		undo_redo.add_undo_method(regions, &"remove_child", made[index])
 	if new_regions:
 		undo_redo.add_undo_method(ground, &"remove_child", regions)
 	if new_ground:
 		undo_redo.add_undo_method(_root, &"remove_child", ground)
 	undo_redo.commit_action()
-	last_message = "Added ground region %s (%.0f x %.0f m, %s)." % [identity, size.x, size.y,
-		String(options.get("surface_label", "surface"))]
-	return region
+	return made
 
 
-## Why a ground region there is refused, or "".
-func ground_error(centre: Vector3, size: Vector2) -> String:
+## Why a ground region there is refused, or "". `pending` regions are about to
+## be added in the same step and count towards the cap.
+func ground_error(centre: Vector3, size: Vector2, pending := 0) -> String:
 	var regions := _root.get_node_or_null("Ground/Regions")
-	var count := 0
+	var count := pending
 	if regions != null:
 		for child in regions.get_children():
 			if child.get_script() == GROUND_SCRIPT:
@@ -226,7 +354,7 @@ func ground_error(centre: Vector3, size: Vector2) -> String:
 		return "Choose a surface for the ground region first."
 	var reach := Vector2(size.x * 0.5, size.y * 0.5) + Vector2.ONE * float(
 		options.get("blend_width", 3.0))
-	for point in outline(Vector2(centre.x, centre.z), reach, int(options.get("shape", 0)), 32):
+	for point in outline(Vector2(centre.x, centre.z), reach, int(options.get("shape", 0)), 32, _yaw):
 		if not Geometry2D.is_point_in_polygon(point, _polygon):
 			return "The region (with its feather) must stay inside the land this territory owns."
 	return ""
@@ -249,7 +377,8 @@ func commit_plateau(undo_redo: EditorUndoRedoManager, centre: Vector3, size: Vec
 	patch.set("operation", 1 if operation == "set" else 0)
 	patch.set("size", size)
 	patch.set("feather", float(options.get("feather", 6.0)))
-	var patch_to_terrain := Transform3D(Basis.IDENTITY, Vector3(local.x, patch_y, local.z))
+	var patch_to_terrain := Transform3D(to_terrain.basis * Basis(Vector3.UP, _yaw),
+		Vector3(local.x, patch_y, local.z))
 	var error := plateau_error(patch, patch_to_terrain)
 	if not error.is_empty():
 		patch.free()
@@ -276,9 +405,10 @@ func commit_plateau(undo_redo: EditorUndoRedoManager, centre: Vector3, size: Vec
 	if new_patches:
 		undo_redo.add_undo_method(terrain, &"remove_child", patches)
 	undo_redo.commit_action()
-	last_message = ("Stamped %s: %s %.1f m over %.0f x %.0f m. It shapes the terrain; walkability " +
+	last_message = ("Stamped %s: %s %.1f m over %.0f x %.0f m%s. It shapes the terrain; walkability " +
 		"still follows the grade and water rules.") % [identity,
-		"level at" if operation == "set" else "raise by", patch_y, size.x, size.y]
+		"level at" if operation == "set" else "raise by", patch_y, size.x, size.y,
+		", turned %.0f°" % rad_to_deg(_yaw) if not is_zero_approx(_yaw) else ""]
 	return patch
 
 
@@ -316,6 +446,25 @@ func plateau_error(patch: Node3D, patch_to_terrain: Transform3D) -> String:
 	return ""
 
 
+## `count` fresh `<prefix>-NN` ids, unique among `container`'s children and
+## each other.
+static func fresh_ids(container: Node, prefix: String, field: String, count: int) -> PackedStringArray:
+	var used := {}
+	if container != null:
+		for child in container.get_children():
+			used[String(child.name)] = true
+			if child.get(field) != null:
+				used[String(child.get(field))] = true
+	var result := PackedStringArray()
+	var index := 1
+	while result.size() < count:
+		var identity := "%s-%02d" % [prefix, index]
+		if not used.has(identity):
+			result.append(identity)
+		index += 1
+	return result
+
+
 ## `<prefix>-NN`, unique among `container`'s children (by `field` and name).
 static func fresh_id(container: Node, prefix: String, field: String) -> String:
 	var used := {}
@@ -330,16 +479,20 @@ static func fresh_id(container: Node, prefix: String, field: String) -> String:
 	return "%s-%02d" % [prefix, index]
 
 
-## Points around an ellipse or rectangle footprint in X/Z.
-static func outline(centre: Vector2, half: Vector2, shape: int, segments: int) -> PackedVector2Array:
+## Points around an ellipse or rectangle footprint in X/Z, turned by `turn`
+## radians about +Y as a control's yaw turns it.
+static func outline(centre: Vector2, half: Vector2, shape: int, segments: int,
+		turn := 0.0) -> PackedVector2Array:
+	var along := Vector2(cos(turn), -sin(turn))
+	var across := Vector2(sin(turn), cos(turn))
 	var points := PackedVector2Array()
 	if shape == 1:
 		for corner: Vector2 in [Vector2(-1, -1), Vector2(1, -1), Vector2(1, 1), Vector2(-1, 1)]:
-			points.append(centre + corner * half)
+			points.append(centre + along * corner.x * half.x + across * corner.y * half.y)
 		return points
 	for index in segments:
 		var angle := TAU * float(index) / float(segments)
-		points.append(centre + Vector2(cos(angle) * half.x, sin(angle) * half.y))
+		points.append(centre + along * cos(angle) * half.x + across * sin(angle) * half.y)
 	return points
 
 
@@ -349,16 +502,21 @@ func hint_lines() -> PackedStringArray:
 	var shape := "rectangle" if int(options.get("shape", 0)) == 1 else "ellipse"
 	var head := ""
 	if kind == "ground":
-		head = "Ground region  ·  %s  ·  %s  ·  feather %.1f m  ·  opacity %.2f  ·  priority %d" % [
+		head = "Ground region  ·  %s  ·  %s%s  ·  feather %.1f m  ·  opacity %.2f  ·  priority %d" % [
 			String(options.get("surface_label", "surface")), shape,
+			" %.0f m brush strokes" % brush() if is_stroking() else "",
 			float(options.get("blend_width", 3.0)), float(options.get("opacity", 0.9)),
 			int(options.get("priority", 10))]
 	else:
 		head = "Plateau  ·  %s  ·  %s %.1f m  ·  feather %.1f m" % [shape,
 			"level at ground +" if String(options.get("operation", "set")) == "set" else "raise by",
 			float(options.get("height", 3.0)), float(options.get("feather", 6.0))]
+	if not is_zero_approx(_yaw):
+		head += "  ·  turned %.0f°" % rad_to_deg(_yaw)
 	return PackedStringArray([head, last_message,
-		("Press and drag: centre then size  ·  %s/%s: feather%s  ·  Esc: discard  ·  right-click: stop") % [
+		("%s  ·  %s/%s: turn  ·  %s/%s: feather%s  ·  Esc: discard  ·  right-click: stop") % [
+			"Press and drag to paint" if is_stroking() else "Press and drag: centre then size",
+			Settings.shortcut_text("rotate_left"), Settings.shortcut_text("rotate_right"),
 			Settings.shortcut_text("path_narrower"), Settings.shortcut_text("path_wider"),
 			"  ·  PgUp/PgDn: height" if kind == "plateau" else ""]])
 
@@ -398,24 +556,37 @@ func _redraw() -> void:
 		_root.add_child(_node, false, Node.INTERNAL_MODE_BACK)
 		_node.global_transform = Transform3D.IDENTITY
 	_mesh.clear_surfaces()
+	var inverse := _root.global_transform.affine_inverse()
+	var color: Color = COLORS.get(kind, Color.WHITE)
+	var shape := int(options.get("shape", 0))
+	if is_stroking():
+		# The brush under the cursor, and every stamp of the stroke so far.
+		var stamps: Array[Vector3] = _stroke.duplicate()
+		if stamps.is_empty() and _hover is Vector3:
+			stamps.append(inverse * (_hover as Vector3))
+		if stamps.is_empty():
+			return
+		_mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+		for stamp in stamps:
+			_draw_outline(outline(Vector2(stamp.x, stamp.z), Vector2.ONE * brush() * 0.5, shape, 24,
+				_yaw), color)
+		_mesh.surface_end()
+		return
 	if not _anchor.is_finite() or not _hover is Vector3:
 		return
-	var inverse := _root.global_transform.affine_inverse()
 	var centre: Vector3 = inverse * _anchor
 	var corner: Vector3 = inverse * (_hover as Vector3)
-	var half := Vector2(maxf(absf(corner.x - centre.x), MIN_SIZE * 0.5),
-		maxf(absf(corner.z - centre.z), MIN_SIZE * 0.5))
-	var color: Color = COLORS.get(kind, Color.WHITE)
+	var half := turned_half(Vector2(corner.x - centre.x, corner.z - centre.z), _yaw).max(
+		Vector2.ONE * MIN_SIZE * 0.5)
 	var feather := float(options.get("blend_width" if kind == "ground" else "feather", 3.0))
 	_mesh.surface_begin(Mesh.PRIMITIVE_LINES)
-	var shape := int(options.get("shape", 0))
-	_draw_outline(outline(Vector2(centre.x, centre.z), half, shape, 48), color)
+	_draw_outline(outline(Vector2(centre.x, centre.z), half, shape, 48, _yaw), color)
 	if kind == "plateau" and feather > 0.0:
 		var inner := Vector2(maxf(half.x - feather, 0.05), maxf(half.y - feather, 0.05))
-		_draw_outline(outline(Vector2(centre.x, centre.z), inner, shape, 48), Color(color, 0.5))
+		_draw_outline(outline(Vector2(centre.x, centre.z), inner, shape, 48, _yaw), Color(color, 0.5))
 	elif kind == "ground" and feather > 0.0:
-		_draw_outline(outline(Vector2(centre.x, centre.z), half + Vector2.ONE * feather, shape, 48),
-			Color(color, 0.45))
+		_draw_outline(outline(Vector2(centre.x, centre.z), half + Vector2.ONE * feather, shape, 48,
+			_yaw), Color(color, 0.45))
 	_mesh.surface_end()
 
 

@@ -8,6 +8,8 @@ const Sculpt := preload("res://addons/map_authoring_workspace/terrain_sculpt_too
 const SCULPT_PLUGIN_META := &"map_authoring_sculpt_plugin"
 const ASSET_PLUGIN_META := &"map_asset_palette_plugin"
 const Settings := preload("res://addons/map_authoring_usability/usability_settings.gd")
+const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
+const AREA_PICK_NODE := "__HeightmapAreaPick"
 const SCULPT_MODE_NAMES := ["Raise", "Lower", "Smooth", "Flatten"]
 const SCULPT_MODE_KEYS := ["sculpt_raise", "sculpt_lower", "sculpt_smooth", "sculpt_flatten"]
 ## Ring colours per brush: cyan raise, orange lower, blue smooth, gold flatten.
@@ -25,6 +27,12 @@ var _sculpt: MapAuthoringTerrainSculptTool = Sculpt.new()
 var _active_root: Node3D
 var _elapsed := 0.0
 var _sculpt_tearing_down := false
+## Picking the heightmap area in the 3D view: the first corner (terrain-local)
+## once pressed, and the outline drawn while dragging.
+var _picking_area := false
+var _pick_anchor := Vector3.INF
+var _pick_node: MeshInstance3D
+var _pick_mesh: ImmediateMesh
 
 
 func _enter_tree() -> void:
@@ -36,6 +44,10 @@ func _enter_tree() -> void:
 	_dock.sculpt_pick_height_requested.connect(_sculpt.pick_flatten_height)
 	_dock.heightmap_import_requested.connect(func(path: String, area: Rect2, low: float,
 			high: float, replace: bool) -> void: import_heightmap(path, area, low, high, replace))
+	_dock.heightmap_preview_requested.connect(func(path: String, area: Rect2, low: float,
+			high: float, replace: bool) -> void: preview_heightmap(path, area, low, high, replace))
+	_dock.heightmap_preview_cancelled.connect(cancel_heightmap_preview)
+	_dock.heightmap_area_pick_requested.connect(start_heightmap_area_pick)
 	_sculpt.status_changed.connect(_dock.show_sculpt_status)
 	_sculpt.flatten_height_picked.connect(_dock.set_flatten_target)
 	_sculpt.stroke_started.connect(_on_sculpt_started)
@@ -50,6 +62,7 @@ func _enter_tree() -> void:
 
 
 func _exit_tree() -> void:
+	_stop_area_pick()
 	_sculpt_tearing_down = true
 	deactivate_terrain_sculpt()
 	_sculpt.unbind()
@@ -87,6 +100,8 @@ func _handles(_object: Object) -> bool:
 
 
 func _forward_3d_gui_input(camera: Camera3D, event: InputEvent) -> int:
+	if _picking_area:
+		return _area_pick_input(camera, event)
 	if not _sculpt.is_enabled():
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
 	if _handle_sculpt_shortcut(event):
@@ -106,6 +121,9 @@ func _forward_3d_gui_input(camera: Camera3D, event: InputEvent) -> int:
 ## The viewport hint lines for the active brush, top first; empty when idle. The
 ## Map Authoring Usability plugin draws them above its cursor readout.
 func overlay_lines() -> PackedStringArray:
+	if _picking_area:
+		return PackedStringArray(["Heightmap area: press one corner and drag to the opposite one",
+			"Release: back to the import dialog  ·  Esc or right-click: keep the area as it was"])
 	if not _sculpt.is_enabled() or _dock == null:
 		return PackedStringArray()
 	var settings: Dictionary = _dock.sculpt_settings()
@@ -282,16 +300,150 @@ func _bind_sculpt(entry: Dictionary) -> void:
 ## (see terrain_sculpt_tool.gd import_heightmap). Returns its result.
 func import_heightmap(path: String, area: Rect2, low: float, high: float,
 		replace: bool) -> Dictionary:
-	var absolute := ProjectSettings.globalize_path(path) if path.begins_with("res://") else path
-	var image := Image.load_from_file(absolute) if FileAccess.file_exists(absolute) else null
+	var image := _heightmap_image(path)
 	var result: Dictionary
-	if image == null or image.is_empty():
+	if image == null:
+		_sculpt.cancel_heightmap_preview()
 		result = {"error": "Could not read the heightmap image %s." % path}
 	else:
 		result = _sculpt.import_heightmap(image, area, low, high, replace)
 	if result.has("error"):
 		_dock.show_sculpt_status(String(result.error))
 	return result
+
+
+## Shows the import on the terrain without keeping it (see
+## terrain_sculpt_tool.gd preview_heightmap). Returns its result.
+func preview_heightmap(path: String, area: Rect2, low: float, high: float,
+		replace: bool) -> Dictionary:
+	var image := _heightmap_image(path)
+	var result: Dictionary = {"error": "Could not read the heightmap image %s." % path} \
+		if image == null else _sculpt.preview_heightmap(image, area, low, high, replace)
+	if result.has("error"):
+		_dock.show_sculpt_status(String(result.error))
+	return result
+
+
+func cancel_heightmap_preview() -> void:
+	_sculpt.cancel_heightmap_preview()
+
+
+func is_previewing_heightmap() -> bool:
+	return _sculpt.is_previewing_heightmap()
+
+
+func _heightmap_image(path: String) -> Image:
+	var absolute := ProjectSettings.globalize_path(path) if path.begins_with("res://") else path
+	var image := Image.load_from_file(absolute) if FileAccess.file_exists(absolute) else null
+	return image if image != null and not image.is_empty() else null
+
+
+## Lets the heightmap area be dragged out on the terrain in the 3D view; the
+## import dialog comes back with it filled in.
+func start_heightmap_area_pick() -> bool:
+	var terrain := _active_root.get_node_or_null("Terrain") as Node3D if _active_root != null else null
+	if terrain == null:
+		_dock.show_sculpt_status("Open an editable territory before picking the heightmap area.")
+		_dock.open_heightmap_dialog()
+		return false
+	_picking_area = true
+	_pick_anchor = Vector3.INF
+	_dock.show_sculpt_status("Drag out the heightmap area in the 3D view.")
+	return true
+
+
+func is_picking_heightmap_area() -> bool:
+	return _picking_area
+
+
+func _area_pick_input(camera: Camera3D, event: InputEvent) -> int:
+	var terrain := _active_root.get_node_or_null("Terrain") as Node3D if _active_root != null else null
+	if terrain == null:
+		_stop_area_pick()
+		return EditorPlugin.AFTER_GUI_INPUT_PASS
+	if (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE) or \
+			(event is InputEventMouseButton and event.pressed and
+				event.button_index == MOUSE_BUTTON_RIGHT):
+		_stop_area_pick()
+		_dock.open_heightmap_dialog()
+		return EditorPlugin.AFTER_GUI_INPUT_STOP
+	if event is InputEventMouseMotion:
+		if _pick_anchor.is_finite():
+			var hover: Variant = _pick_point(camera, (event as InputEventMouseMotion).position, terrain)
+			if hover is Vector3:
+				_draw_pick(terrain, _pick_anchor, hover as Vector3)
+		return EditorPlugin.AFTER_GUI_INPUT_PASS
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == \
+			MOUSE_BUTTON_LEFT and not (event as InputEventMouseButton).alt_pressed:
+		var button := event as InputEventMouseButton
+		var point: Variant = _pick_point(camera, button.position, terrain)
+		if button.pressed:
+			if point is Vector3:
+				_pick_anchor = point as Vector3
+			return EditorPlugin.AFTER_GUI_INPUT_STOP
+		if _pick_anchor.is_finite() and point is Vector3:
+			finish_heightmap_area_pick(_pick_anchor, point as Vector3)
+		return EditorPlugin.AFTER_GUI_INPUT_STOP
+	return EditorPlugin.AFTER_GUI_INPUT_PASS
+
+
+## Sets the dialog's area to the rectangle between two terrain-local corners
+## and brings the dialog back.
+func finish_heightmap_area_pick(first: Vector3, second: Vector3) -> Rect2:
+	var area := Rect2(Vector2(minf(first.x, second.x), minf(first.z, second.z)),
+		Vector2(absf(second.x - first.x), absf(second.z - first.z)))
+	_stop_area_pick()
+	if area.size.x < 1.0 or area.size.y < 1.0:
+		_dock.show_sculpt_status("That area is too small; the heightmap area is unchanged.")
+	else:
+		_dock.set_heightmap_area(area)
+		_dock.show_sculpt_status("Heightmap area set to %.0f x %.0f m from the map." % [
+			area.size.x, area.size.y])
+	_dock.open_heightmap_dialog()
+	return area
+
+
+func _pick_point(camera: Camera3D, screen: Vector2, terrain: Node3D) -> Variant:
+	var hit: Variant = Probe.ray_hit(_active_root, camera.project_ray_origin(screen),
+		camera.project_ray_normal(screen), 4096.0)
+	return terrain.global_transform.affine_inverse() * (hit as Vector3) if hit is Vector3 else null
+
+
+func _draw_pick(terrain: Node3D, first: Vector3, second: Vector3) -> void:
+	if _pick_node == null or not is_instance_valid(_pick_node):
+		_pick_mesh = ImmediateMesh.new()
+		_pick_node = MeshInstance3D.new()
+		_pick_node.name = AREA_PICK_NODE
+		_pick_node.mesh = _pick_mesh
+		_pick_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var material := StandardMaterial3D.new()
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		material.no_depth_test = true
+		material.albedo_color = Color(1.0, 0.86, 0.35)
+		_pick_node.material_override = material
+		terrain.add_child(_pick_node, false, Node.INTERNAL_MODE_BACK)
+	_pick_mesh.clear_surfaces()
+	_pick_mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+	var corners := [Vector2(first.x, first.z), Vector2(second.x, first.z),
+		Vector2(second.x, second.z), Vector2(first.x, second.z)]
+	var lift := maxf(first.y, second.y) + 0.5
+	for index in 4:
+		var a: Vector2 = corners[index]
+		var b: Vector2 = corners[(index + 1) % 4]
+		_pick_mesh.surface_add_vertex(Vector3(a.x, lift, a.y))
+		_pick_mesh.surface_add_vertex(Vector3(b.x, lift, b.y))
+	_pick_mesh.surface_end()
+
+
+func _stop_area_pick() -> void:
+	_picking_area = false
+	_pick_anchor = Vector3.INF
+	if _pick_node != null and is_instance_valid(_pick_node):
+		if _pick_node.get_parent() != null:
+			_pick_node.get_parent().remove_child(_pick_node)
+		_pick_node.queue_free()
+	_pick_node = null
+	_pick_mesh = null
 
 
 func _remove_host() -> void:
