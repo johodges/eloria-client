@@ -303,14 +303,14 @@
 [sub_resource type="Resource" id="object_material_0000"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Lore_breached_barrows/Lore_breached_barrows__rubble_stone"
+mesh_node_path = "Lore_breached_barrows2/Lore_breached_barrows/Lore_breached_barrows__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0001"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Lore_breached_barrows/Lore_breached_barrows__pale_ashlar"
+mesh_node_path = "Lore_breached_barrows2/Lore_breached_barrows/Lore_breached_barrows__pale_ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 

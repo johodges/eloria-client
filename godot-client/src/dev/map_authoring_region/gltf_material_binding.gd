@@ -51,8 +51,9 @@ func _load_source(source_path: String) -> Dictionary:
 	var scene := int(raw.get("scene", 0))
 	if scene < 0 or scene >= scenes.size():
 		return {"error": "Material source has no selected GLB scene."}
-	if scenes[scene].get("nodes", []).size() <= 1:
-		return {"required": false}
+	if scenes[scene].get("nodes", []).is_empty():
+		return {"error": "Material source has no selected GLB roots."}
+	# Imported names can differ even for a single root. Bind every overridden GLB.
 	var bytes := FileAccess.get_file_as_bytes(absolute)
 	var context := generate_context(raw, bytes, absolute)
 	var hash := HashingContext.new()
@@ -125,9 +126,20 @@ func bind_context(context: Dictionary, content: Node3D,
 		var primitive: Dictionary = primitives[i]
 		var material_index := int(primitive.get("material", -1))
 		var name := String(materials[material_index].get("name", "")) if material_index >= 0 and material_index < materials.size() else ""
+		var generated_arrays := target.mesh.surface_get_arrays(i)
+		var cached_arrays := cached.mesh.surface_get_arrays(i)
+		var generated_indices: PackedInt32Array = generated_arrays[Mesh.ARRAY_INDEX]
+		var cached_indices: PackedInt32Array = cached_arrays[Mesh.ARRAY_INDEX]
+		if generated_arrays[Mesh.ARRAY_VERTEX].size() != cached_arrays[Mesh.ARRAY_VERTEX].size() or \
+				generated_indices.size() != cached_indices.size():
+			return {"error": "Generated and cached material surface geometry counts differ."}
 		for mesh: Mesh in [target.mesh, cached.mesh]:
 			if not mesh is ArrayMesh or mesh.surface_get_name(i) != name:
 				return {"error": "Material surface order/name differs from original GLB."}
+			# Native import may weld redundant vertices. A sole surface has no
+			# primitive-order ambiguity; the exporter still retains original bytes.
+			if primitives.size() == 1:
+				continue
 			var arrays := mesh.surface_get_arrays(i)
 			var position := int(primitive.get("attributes", {}).get("POSITION", -1))
 			var indices := int(primitive.get("indices", -1))

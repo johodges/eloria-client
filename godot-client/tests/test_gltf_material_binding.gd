@@ -50,6 +50,69 @@ func find_index(node: Node, index: int) -> Node:
 	return null
 
 
+func representation_mesh(vertices: int, indices: int = 3, surfaces: int = 1) -> ArrayMesh:
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	var points := PackedVector3Array([Vector3.ZERO, Vector3.RIGHT, Vector3.BACK])
+	while points.size() < vertices:
+		points.append(Vector3.ZERO)
+	var elements := PackedInt32Array([0, 1, 2])
+	while elements.size() < indices:
+		elements.append(elements.size() % 3)
+	arrays[Mesh.ARRAY_VERTEX] = points
+	arrays[Mesh.ARRAY_INDEX] = elements
+	var mesh := ArrayMesh.new()
+	for i in surfaces:
+		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+		mesh.surface_set_name(i, "stone")
+	return mesh
+
+
+func test_single_root_representation(binder, raw: Dictionary, body: PackedByteArray) -> void:
+	var single := raw.duplicate(true)
+	single.scenes[0].nodes = [4]
+	var context: Dictionary = binder.generate_context(single, glb(single, body))
+	var peer: Dictionary = binder.generate_context(single, glb(single, body))
+	expect(not context.has("error") and not peer.has("error"), "single-root GLB imports")
+	if context.has("error") or peer.has("error"):
+		if context.has("generated"):
+			context.generated.free()
+		if peer.has("generated"):
+			peer.generated.free()
+		return
+	var generated: Node3D = context.generated
+	var cached: Node3D = peer.generated
+	var target := find_index(generated, 1) as MeshInstance3D
+	expect(target != null, "single-root live target has original provenance")
+	if target == null:
+		generated.free()
+		cached.free()
+		return
+	var path := String(generated.get_path_to(target))
+	var cached_target := cached.get_node(NodePath(path)) as MeshInstance3D
+	expect(binder.bind_context(context, cached, path, 0).get("bakedMeshNodeIndex", -1) == 1,
+		"actual single-root imported path binds exact raw node")
+	# Model a redundant vertex representation without changing the source GLB.
+	# Both imported trees agree; the original sole primitive remains three vertices.
+	target.mesh = representation_mesh(4)
+	cached_target.mesh = representation_mesh(4)
+	expect(binder.bind_context(context, cached, path, 0).get("bakedMeshNodeIndex", -1) == 1,
+		"sole-surface identity permits equal imported counts differing from raw")
+	cached_target.mesh = representation_mesh(3)
+	expect(binder.bind_context(context, cached, path, 0).has("error"),
+		"cached/generated vertex count mismatch rejected")
+	cached_target.mesh = representation_mesh(4, 6)
+	expect(binder.bind_context(context, cached, path, 0).has("error"),
+		"cached/generated index count mismatch rejected")
+	context.raw.meshes[0].primitives.append(context.raw.meshes[0].primitives[0].duplicate(true))
+	target.mesh = representation_mesh(4, 3, 2)
+	cached_target.mesh = representation_mesh(4, 3, 2)
+	expect(binder.bind_context(context, cached, path, 0).has("error"),
+		"multi-surface representation changes retain strict raw count guard")
+	generated.free()
+	cached.free()
+
+
 func run() -> void:
 	# Synthetic GLB bytes only: no fixture files, imports, scenes or resources saved.
 	var body := PackedFloat32Array([0, 0, 0, 1, 0, 0, 0, 0, 1]).to_byte_array()
@@ -114,6 +177,7 @@ func run() -> void:
 			"snapshot rejects invalid saved mesh/surface: %s" % str(invalid))
 	asset.free()
 	generated.free()
+	test_single_root_representation(binder, raw, body)
 	binder.clear()
 	print("GLTF material binding: %d assertions, %d failures" % [assertions, failures])
 	quit(1 if failures else 0)

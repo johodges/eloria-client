@@ -448,364 +448,364 @@
 [sub_resource type="Resource" id="object_material_0000"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Landmark_EastWatch/Landmark_EastWatch__thatch_reed"
+mesh_node_path = "Landmark_EastWatch2/Landmark_EastWatch/Landmark_EastWatch__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0001"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Landmark_MootHall/Landmark_MootHall__thatch_reed"
+mesh_node_path = "Landmark_MootHall2/Landmark_MootHall/Landmark_MootHall__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0002"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Landmark_PaddyTower/Landmark_PaddyTower__thatch_reed"
+mesh_node_path = "Landmark_PaddyTower2/Landmark_PaddyTower/Landmark_PaddyTower__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0003"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Lore_stelae_court/Lore_stelae_court__verdant_terrace_stone"
+mesh_node_path = "Lore_stelae_court2/Lore_stelae_court/Lore_stelae_court__verdant_terrace_stone"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0004"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Lore_stelae_court/Walk_Lore_stelae_court__verdant_terrace_stone"
+mesh_node_path = "Lore_stelae_court2/Lore_stelae_court/Walk_Lore_stelae_court__verdant_terrace_stone"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0005"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_delta_banyan_eyrie/Secret_delta_banyan_eyrie__ashlar"
+mesh_node_path = "Secret_delta_banyan_eyrie2/Secret_delta_banyan_eyrie/Secret_delta_banyan_eyrie__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0006"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_delta_moot_vault/Secret_delta_moot_vault__ashlar"
+mesh_node_path = "Secret_delta_moot_vault2/Secret_delta_moot_vault/Secret_delta_moot_vault__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0007"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_delta_shrine_well/Secret_delta_shrine_well__ashlar"
+mesh_node_path = "Secret_delta_shrine_well2/Secret_delta_shrine_well/Secret_delta_shrine_well__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0008"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_delta_stelae_reliquary/Secret_delta_stelae_reliquary__ashlar"
+mesh_node_path = "Secret_delta_stelae_reliquary2/Secret_delta_stelae_reliquary/Secret_delta_stelae_reliquary__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0009"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_delta_waystone/Secret_delta_waystone__ashlar"
+mesh_node_path = "Secret_delta_waystone2/Secret_delta_waystone/Secret_delta_waystone__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0010"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "boat_yard_house_00/boat_yard_house_00__thatch_reed"
+mesh_node_path = "boat_yard_house_002/boat_yard_house_00/boat_yard_house_00__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0011"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "boat_yard_house_01/boat_yard_house_01__thatch_reed"
+mesh_node_path = "boat_yard_house_012/boat_yard_house_01/boat_yard_house_01__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0012"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "boat_yard_house_02/boat_yard_house_02__thatch_reed"
+mesh_node_path = "boat_yard_house_022/boat_yard_house_02/boat_yard_house_02__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0013"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "boat_yard_house_03/boat_yard_house_03__thatch_reed"
+mesh_node_path = "boat_yard_house_032/boat_yard_house_03/boat_yard_house_03__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0014"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "boat_yard_house_04/boat_yard_house_04__thatch_reed"
+mesh_node_path = "boat_yard_house_042/boat_yard_house_04/boat_yard_house_04__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0015"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "boat_yard_house_05/boat_yard_house_05__thatch_reed"
+mesh_node_path = "boat_yard_house_052/boat_yard_house_05/boat_yard_house_05__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0016"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "deep_grove_house_00/deep_grove_house_00__thatch_reed"
+mesh_node_path = "deep_grove_house_002/deep_grove_house_00/deep_grove_house_00__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0017"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "deep_grove_house_01/deep_grove_house_01__thatch_reed"
+mesh_node_path = "deep_grove_house_012/deep_grove_house_01/deep_grove_house_01__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0018"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "deep_grove_house_02/deep_grove_house_02__thatch_reed"
+mesh_node_path = "deep_grove_house_022/deep_grove_house_02/deep_grove_house_02__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0019"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "deep_grove_house_03/deep_grove_house_03__thatch_reed"
+mesh_node_path = "deep_grove_house_032/deep_grove_house_03/deep_grove_house_03__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0020"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "deep_grove_house_04/deep_grove_house_04__thatch_reed"
+mesh_node_path = "deep_grove_house_042/deep_grove_house_04/deep_grove_house_04__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0021"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "east_hamlet_house_00/east_hamlet_house_00__thatch_reed"
+mesh_node_path = "east_hamlet_house_002/east_hamlet_house_00/east_hamlet_house_00__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0022"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "east_hamlet_house_01/east_hamlet_house_01__thatch_reed"
+mesh_node_path = "east_hamlet_house_012/east_hamlet_house_01/east_hamlet_house_01__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0023"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "east_hamlet_house_02/east_hamlet_house_02__thatch_reed"
+mesh_node_path = "east_hamlet_house_022/east_hamlet_house_02/east_hamlet_house_02__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0024"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "east_hamlet_house_03/east_hamlet_house_03__thatch_reed"
+mesh_node_path = "east_hamlet_house_032/east_hamlet_house_03/east_hamlet_house_03__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0025"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "east_hamlet_house_04/east_hamlet_house_04__thatch_reed"
+mesh_node_path = "east_hamlet_house_042/east_hamlet_house_04/east_hamlet_house_04__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0026"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "east_hamlet_house_05/east_hamlet_house_05__thatch_reed"
+mesh_node_path = "east_hamlet_house_052/east_hamlet_house_05/east_hamlet_house_05__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0027"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "east_hamlet_house_06/east_hamlet_house_06__thatch_reed"
+mesh_node_path = "east_hamlet_house_062/east_hamlet_house_06/east_hamlet_house_06__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0028"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "east_hamlet_house_07/east_hamlet_house_07__thatch_reed"
+mesh_node_path = "east_hamlet_house_072/east_hamlet_house_07/east_hamlet_house_07__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0029"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "east_hamlet_house_08/east_hamlet_house_08__thatch_reed"
+mesh_node_path = "east_hamlet_house_082/east_hamlet_house_08/east_hamlet_house_08__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0030"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "far_bar_house_00/far_bar_house_00__thatch_reed"
+mesh_node_path = "far_bar_house_002/far_bar_house_00/far_bar_house_00__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0031"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "far_bar_house_01/far_bar_house_01__thatch_reed"
+mesh_node_path = "far_bar_house_012/far_bar_house_01/far_bar_house_01__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0032"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "far_bar_house_02/far_bar_house_02__thatch_reed"
+mesh_node_path = "far_bar_house_022/far_bar_house_02/far_bar_house_02__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0033"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "far_bar_house_03/far_bar_house_03__thatch_reed"
+mesh_node_path = "far_bar_house_032/far_bar_house_03/far_bar_house_03__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0034"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "market_stall_00/market_stall_00__thatch_reed"
+mesh_node_path = "market_stall_002/market_stall_00/market_stall_00__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0035"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "market_stall_01/market_stall_01__thatch_reed"
+mesh_node_path = "market_stall_012/market_stall_01/market_stall_01__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0036"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "market_stall_02/market_stall_02__thatch_reed"
+mesh_node_path = "market_stall_022/market_stall_02/market_stall_02__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0037"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "market_stall_03/market_stall_03__thatch_reed"
+mesh_node_path = "market_stall_032/market_stall_03/market_stall_03__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0038"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "market_stall_04/market_stall_04__thatch_reed"
+mesh_node_path = "market_stall_042/market_stall_04/market_stall_04__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0039"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "market_stall_05/market_stall_05__thatch_reed"
+mesh_node_path = "market_stall_052/market_stall_05/market_stall_05__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0040"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "north_fishing_house_00/north_fishing_house_00__thatch_reed"
+mesh_node_path = "north_fishing_house_002/north_fishing_house_00/north_fishing_house_00__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0041"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "north_fishing_house_01/north_fishing_house_01__thatch_reed"
+mesh_node_path = "north_fishing_house_012/north_fishing_house_01/north_fishing_house_01__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0042"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "north_fishing_house_02/north_fishing_house_02__thatch_reed"
+mesh_node_path = "north_fishing_house_022/north_fishing_house_02/north_fishing_house_02__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0043"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "north_fishing_house_03/north_fishing_house_03__thatch_reed"
+mesh_node_path = "north_fishing_house_032/north_fishing_house_03/north_fishing_house_03__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0044"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "paddy_hamlet_house_00/paddy_hamlet_house_00__thatch_reed"
+mesh_node_path = "paddy_hamlet_house_002/paddy_hamlet_house_00/paddy_hamlet_house_00__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0045"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "paddy_hamlet_house_01/paddy_hamlet_house_01__thatch_reed"
+mesh_node_path = "paddy_hamlet_house_012/paddy_hamlet_house_01/paddy_hamlet_house_01__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0046"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "paddy_hamlet_house_02/paddy_hamlet_house_02__thatch_reed"
+mesh_node_path = "paddy_hamlet_house_022/paddy_hamlet_house_02/paddy_hamlet_house_02__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0047"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "paddy_hamlet_house_03/paddy_hamlet_house_03__thatch_reed"
+mesh_node_path = "paddy_hamlet_house_032/paddy_hamlet_house_03/paddy_hamlet_house_03__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0048"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "paddy_hamlet_house_04/paddy_hamlet_house_04__thatch_reed"
+mesh_node_path = "paddy_hamlet_house_042/paddy_hamlet_house_04/paddy_hamlet_house_04__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0049"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "paddy_hamlet_house_05/paddy_hamlet_house_05__thatch_reed"
+mesh_node_path = "paddy_hamlet_house_052/paddy_hamlet_house_05/paddy_hamlet_house_05__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0050"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "paddy_hamlet_house_06/paddy_hamlet_house_06__thatch_reed"
+mesh_node_path = "paddy_hamlet_house_062/paddy_hamlet_house_06/paddy_hamlet_house_06__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0051"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "paddy_hamlet_house_07/paddy_hamlet_house_07__thatch_reed"
+mesh_node_path = "paddy_hamlet_house_072/paddy_hamlet_house_07/paddy_hamlet_house_07__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
@@ -1092,7 +1092,7 @@ surface = ExtResource("object_marine_timber")
 [sub_resource type="Resource" id="object_material_0092"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Manymouth_MarketEntrance_WorldPlacement/Walk_Manymouth_MarketEntrance"
+mesh_node_path = "Walk_Manymouth_MarketEntrance_WorldPlacement2/Walk_Manymouth_MarketEntrance_WorldPlacement/Walk_Manymouth_MarketEntrance"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
@@ -1176,252 +1176,252 @@ surface = ExtResource("object_weathered_limestone")
 [sub_resource type="Resource" id="object_material_0104"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "sea_landing_house_00/sea_landing_house_00__thatch_reed"
+mesh_node_path = "sea_landing_house_002/sea_landing_house_00/sea_landing_house_00__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0105"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "sea_landing_house_01/sea_landing_house_01__thatch_reed"
+mesh_node_path = "sea_landing_house_012/sea_landing_house_01/sea_landing_house_01__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0106"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "sea_landing_house_02/sea_landing_house_02__thatch_reed"
+mesh_node_path = "sea_landing_house_022/sea_landing_house_02/sea_landing_house_02__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0107"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "sea_landing_house_03/sea_landing_house_03__thatch_reed"
+mesh_node_path = "sea_landing_house_032/sea_landing_house_03/sea_landing_house_03__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0108"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "sea_landing_house_04/sea_landing_house_04__thatch_reed"
+mesh_node_path = "sea_landing_house_042/sea_landing_house_04/sea_landing_house_04__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0109"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "south_hamlet_house_00/south_hamlet_house_00__thatch_reed"
+mesh_node_path = "south_hamlet_house_002/south_hamlet_house_00/south_hamlet_house_00__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0110"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "south_hamlet_house_01/south_hamlet_house_01__thatch_reed"
+mesh_node_path = "south_hamlet_house_012/south_hamlet_house_01/south_hamlet_house_01__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0111"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "south_hamlet_house_02/south_hamlet_house_02__thatch_reed"
+mesh_node_path = "south_hamlet_house_022/south_hamlet_house_02/south_hamlet_house_02__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0112"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "south_hamlet_house_03/south_hamlet_house_03__thatch_reed"
+mesh_node_path = "south_hamlet_house_032/south_hamlet_house_03/south_hamlet_house_03__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0113"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "south_hamlet_house_04/south_hamlet_house_04__thatch_reed"
+mesh_node_path = "south_hamlet_house_042/south_hamlet_house_04/south_hamlet_house_04__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0114"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "south_hamlet_house_05/south_hamlet_house_05__thatch_reed"
+mesh_node_path = "south_hamlet_house_052/south_hamlet_house_05/south_hamlet_house_05__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0115"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "south_hamlet_house_06/south_hamlet_house_06__thatch_reed"
+mesh_node_path = "south_hamlet_house_062/south_hamlet_house_06/south_hamlet_house_06__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0116"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "south_hamlet_house_07/south_hamlet_house_07__thatch_reed"
+mesh_node_path = "south_hamlet_house_072/south_hamlet_house_07/south_hamlet_house_07__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0117"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "south_hamlet_house_08/south_hamlet_house_08__thatch_reed"
+mesh_node_path = "south_hamlet_house_082/south_hamlet_house_08/south_hamlet_house_08__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0118"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "temple_quay_house_00/temple_quay_house_00__thatch_reed"
+mesh_node_path = "temple_quay_house_002/temple_quay_house_00/temple_quay_house_00__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0119"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "temple_quay_house_01/temple_quay_house_01__thatch_reed"
+mesh_node_path = "temple_quay_house_012/temple_quay_house_01/temple_quay_house_01__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0120"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "temple_quay_house_02/temple_quay_house_02__thatch_reed"
+mesh_node_path = "temple_quay_house_022/temple_quay_house_02/temple_quay_house_02__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0121"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "temple_quay_house_03/temple_quay_house_03__thatch_reed"
+mesh_node_path = "temple_quay_house_032/temple_quay_house_03/temple_quay_house_03__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0122"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "temple_quay_house_04/temple_quay_house_04__thatch_reed"
+mesh_node_path = "temple_quay_house_042/temple_quay_house_04/temple_quay_house_04__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0123"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "temple_quay_house_05/temple_quay_house_05__thatch_reed"
+mesh_node_path = "temple_quay_house_052/temple_quay_house_05/temple_quay_house_05__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0124"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "town_house_00/town_house_00__thatch_reed"
+mesh_node_path = "town_house_002/town_house_00/town_house_00__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0125"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "town_house_01/town_house_01__thatch_reed"
+mesh_node_path = "town_house_012/town_house_01/town_house_01__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0126"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "town_house_02/town_house_02__thatch_reed"
+mesh_node_path = "town_house_022/town_house_02/town_house_02__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0127"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "town_house_03/town_house_03__thatch_reed"
+mesh_node_path = "town_house_032/town_house_03/town_house_03__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0128"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "town_house_04/town_house_04__thatch_reed"
+mesh_node_path = "town_house_042/town_house_04/town_house_04__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0129"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "town_house_05/town_house_05__thatch_reed"
+mesh_node_path = "town_house_052/town_house_05/town_house_05__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0130"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "town_house_06/town_house_06__thatch_reed"
+mesh_node_path = "town_house_062/town_house_06/town_house_06__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0131"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "town_house_07/town_house_07__thatch_reed"
+mesh_node_path = "town_house_072/town_house_07/town_house_07__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0132"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "town_house_08/town_house_08__thatch_reed"
+mesh_node_path = "town_house_082/town_house_08/town_house_08__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0133"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "west_hamlet_house_00/west_hamlet_house_00__thatch_reed"
+mesh_node_path = "west_hamlet_house_002/west_hamlet_house_00/west_hamlet_house_00__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0134"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "west_hamlet_house_01/west_hamlet_house_01__thatch_reed"
+mesh_node_path = "west_hamlet_house_012/west_hamlet_house_01/west_hamlet_house_01__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0135"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "west_hamlet_house_02/west_hamlet_house_02__thatch_reed"
+mesh_node_path = "west_hamlet_house_022/west_hamlet_house_02/west_hamlet_house_02__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0136"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "west_hamlet_house_03/west_hamlet_house_03__thatch_reed"
+mesh_node_path = "west_hamlet_house_032/west_hamlet_house_03/west_hamlet_house_03__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0137"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "west_hamlet_house_04/west_hamlet_house_04__thatch_reed"
+mesh_node_path = "west_hamlet_house_042/west_hamlet_house_04/west_hamlet_house_04__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0138"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "west_hamlet_house_05/west_hamlet_house_05__thatch_reed"
+mesh_node_path = "west_hamlet_house_052/west_hamlet_house_05/west_hamlet_house_05__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 
 [sub_resource type="Resource" id="object_material_0139"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "west_hamlet_house_06/west_hamlet_house_06__thatch_reed"
+mesh_node_path = "west_hamlet_house_062/west_hamlet_house_06/west_hamlet_house_06__thatch_reed"
 surface_index = 0
 surface = ExtResource("object_reed_thatch")
 

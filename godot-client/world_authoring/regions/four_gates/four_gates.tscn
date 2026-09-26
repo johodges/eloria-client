@@ -337,98 +337,98 @@
 [sub_resource type="Resource" id="object_material_0000"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_gates_civic_focus/Secret_gates_civic_focus__Secret_gates_civic_focus__solid__ashlar"
+mesh_node_path = "Secret_gates_civic_focus2/Secret_gates_civic_focus/Secret_gates_civic_focus__Secret_gates_civic_focus__solid__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0001"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_gates_deposit_vault/Secret_gates_deposit_vault__Secret_gates_deposit_vault__solid__ashlar"
+mesh_node_path = "Secret_gates_deposit_vault2/Secret_gates_deposit_vault/Secret_gates_deposit_vault__Secret_gates_deposit_vault__solid__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0002"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_gates_drain_mouth/Secret_gates_drain_mouth__Secret_gates_drain_mouth__solid__ashlar"
+mesh_node_path = "Secret_gates_drain_mouth2/Secret_gates_drain_mouth/Secret_gates_drain_mouth__Secret_gates_drain_mouth__solid__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0003"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_gates_mirrorsmith_well/Secret_gates_mirrorsmith_well__Secret_gates_mirrorsmith_well__solid__ashlar"
+mesh_node_path = "Secret_gates_mirrorsmith_well2/Secret_gates_mirrorsmith_well/Secret_gates_mirrorsmith_well__Secret_gates_mirrorsmith_well__solid__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0004"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_gates_otter_pit/Secret_gates_otter_pit__Secret_gates_otter_pit__solid__ashlar"
+mesh_node_path = "Secret_gates_otter_pit2/Secret_gates_otter_pit/Secret_gates_otter_pit__Secret_gates_otter_pit__solid__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0005"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_gates_plaza_spring/Secret_gates_plaza_spring__Secret_gates_plaza_spring__solid__ashlar"
+mesh_node_path = "Secret_gates_plaza_spring2/Secret_gates_plaza_spring/Secret_gates_plaza_spring__Secret_gates_plaza_spring__solid__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0006"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_gates_reedworks_garden/Secret_gates_reedworks_garden__Secret_gates_reedworks_garden__solid__ashlar"
+mesh_node_path = "Secret_gates_reedworks_garden2/Secret_gates_reedworks_garden/Secret_gates_reedworks_garden__Secret_gates_reedworks_garden__solid__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0007"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_gates_sanctuary_reliquary/Secret_gates_sanctuary_reliquary__Secret_gates_sanctuary_reliquary__solid__ashlar"
+mesh_node_path = "Secret_gates_sanctuary_reliquary2/Secret_gates_sanctuary_reliquary/Secret_gates_sanctuary_reliquary__Secret_gates_sanctuary_reliquary__solid__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0008"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_gates_stormglass_school/Secret_gates_stormglass_school__Secret_gates_stormglass_school__solid__ashlar"
+mesh_node_path = "Secret_gates_stormglass_school2/Secret_gates_stormglass_school/Secret_gates_stormglass_school__Secret_gates_stormglass_school__solid__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0009"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_gates_sunleaf_hollow/Secret_gates_sunleaf_hollow__Secret_gates_sunleaf_hollow__solid__ashlar"
+mesh_node_path = "Secret_gates_sunleaf_hollow2/Secret_gates_sunleaf_hollow/Secret_gates_sunleaf_hollow__Secret_gates_sunleaf_hollow__solid__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0010"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_gates_wall_eyrie/Secret_gates_wall_eyrie__Secret_gates_wall_eyrie__solid__ashlar"
+mesh_node_path = "Secret_gates_wall_eyrie2/Secret_gates_wall_eyrie/Secret_gates_wall_eyrie__Secret_gates_wall_eyrie__solid__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0011"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_gates_waystone/Secret_gates_waystone__Secret_gates_waystone__solid__ashlar"
+mesh_node_path = "Secret_gates_waystone2/Secret_gates_waystone/Secret_gates_waystone__Secret_gates_waystone__solid__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0012"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "SouthOuter_Foundation_-1/SouthOuter_Foundation_-1__SouthOuter_Foundation_-1__solid__rubble_stone"
+mesh_node_path = "SouthOuter_Foundation_-12/SouthOuter_Foundation_-1/SouthOuter_Foundation_-1__SouthOuter_Foundation_-1__solid__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0013"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "SouthOuter_Foundation_1/SouthOuter_Foundation_1__SouthOuter_Foundation_1__solid__rubble_stone"
+mesh_node_path = "SouthOuter_Foundation_12/SouthOuter_Foundation_1/SouthOuter_Foundation_1__SouthOuter_Foundation_1__solid__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 

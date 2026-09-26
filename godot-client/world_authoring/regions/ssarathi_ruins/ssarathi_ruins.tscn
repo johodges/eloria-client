@@ -785,826 +785,826 @@
 [sub_resource type="Resource" id="object_material_0000"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Bridge_great_causeway__channel_main/Bridge_great_causeway__channel_main__ssarathi_jade_ashlar"
+mesh_node_path = "Bridge_great_causeway__channel_main2/Bridge_great_causeway__channel_main/Bridge_great_causeway__channel_main__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0001"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Bridge_great_causeway__channel_main/Walk_Bridge_great_causeway__channel_main__ssarathi_jade_paving"
+mesh_node_path = "Bridge_great_causeway__channel_main2/Bridge_great_causeway__channel_main/Walk_Bridge_great_causeway__channel_main__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0002"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Bridge_great_causeway__channel_south/Bridge_great_causeway__channel_south__ssarathi_jade_ashlar"
+mesh_node_path = "Bridge_great_causeway__channel_south2/Bridge_great_causeway__channel_south/Bridge_great_causeway__channel_south__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0003"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Bridge_great_causeway__channel_south/Walk_Bridge_great_causeway__channel_south__ssarathi_jade_paving"
+mesh_node_path = "Bridge_great_causeway__channel_south2/Bridge_great_causeway__channel_south/Walk_Bridge_great_causeway__channel_south__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0004"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Bridge_spur_stela__channel_main/Bridge_spur_stela__channel_main__ssarathi_jade_ashlar"
+mesh_node_path = "Bridge_spur_stela__channel_main2/Bridge_spur_stela__channel_main/Bridge_spur_stela__channel_main__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0005"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Bridge_spur_stela__channel_main/Walk_Bridge_spur_stela__channel_main__ssarathi_jade_paving"
+mesh_node_path = "Bridge_spur_stela__channel_main2/Bridge_spur_stela__channel_main/Walk_Bridge_spur_stela__channel_main__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0006"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Bridge_street_courts__channel_main/Bridge_street_courts__channel_main__ssarathi_jade_ashlar"
+mesh_node_path = "Bridge_street_courts__channel_main2/Bridge_street_courts__channel_main/Bridge_street_courts__channel_main__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0007"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Bridge_street_courts__channel_main/Walk_Bridge_street_courts__channel_main__ssarathi_jade_paving"
+mesh_node_path = "Bridge_street_courts__channel_main2/Bridge_street_courts__channel_main/Walk_Bridge_street_courts__channel_main__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0008"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Bridge_street_far_e__channel_east/Bridge_street_far_e__channel_east__ssarathi_jade_ashlar"
+mesh_node_path = "Bridge_street_far_e__channel_east2/Bridge_street_far_e__channel_east/Bridge_street_far_e__channel_east__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0009"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Bridge_street_far_e__channel_east/Walk_Bridge_street_far_e__channel_east__ssarathi_jade_paving"
+mesh_node_path = "Bridge_street_far_e__channel_east2/Bridge_street_far_e__channel_east/Walk_Bridge_street_far_e__channel_east__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0010"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "CisternShaft/CisternShaft__ssarathi_jade_ashlar"
+mesh_node_path = "CisternShaft2/CisternShaft/CisternShaft__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0011"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Colonnade_lily_court/Colonnade_lily_court__ssarathi_jade_ashlar"
+mesh_node_path = "Colonnade_lily_court2/Colonnade_lily_court/Colonnade_lily_court__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0012"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Colonnade_lily_court/Colonnade_lily_court__ashlar"
+mesh_node_path = "Colonnade_lily_court2/Colonnade_lily_court/Colonnade_lily_court__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0013"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Colonnade_ritual_plaza/Colonnade_ritual_plaza__ssarathi_jade_ashlar"
+mesh_node_path = "Colonnade_ritual_plaza2/Colonnade_ritual_plaza/Colonnade_ritual_plaza__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0014"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Colonnade_ritual_plaza/Colonnade_ritual_plaza__ashlar"
+mesh_node_path = "Colonnade_ritual_plaza2/Colonnade_ritual_plaza/Colonnade_ritual_plaza__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0015"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "CourtShrine_lily_court/CourtShrine_lily_court__ssarathi_jade_ashlar"
+mesh_node_path = "CourtShrine_lily_court2/CourtShrine_lily_court/CourtShrine_lily_court__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0016"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "CourtShrine_lily_court/Walk_CourtShrine_lily_court__ssarathi_jade_paving"
+mesh_node_path = "CourtShrine_lily_court2/CourtShrine_lily_court/Walk_CourtShrine_lily_court__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0017"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "CourtShrine_ritual_plaza/CourtShrine_ritual_plaza__ssarathi_jade_ashlar"
+mesh_node_path = "CourtShrine_ritual_plaza2/CourtShrine_ritual_plaza/CourtShrine_ritual_plaza__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0018"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "CourtShrine_ritual_plaza/Walk_CourtShrine_ritual_plaza__ssarathi_jade_paving"
+mesh_node_path = "CourtShrine_ritual_plaza2/CourtShrine_ritual_plaza/Walk_CourtShrine_ritual_plaza__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0019"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedColumn_0"
+mesh_node_path = "DrownedColumn_02/DrownedColumn_0"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0020"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedColumn_12"
+mesh_node_path = "DrownedColumn_122/DrownedColumn_12"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0021"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedColumn_21"
+mesh_node_path = "DrownedColumn_212/DrownedColumn_21"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0022"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedColumn_24"
+mesh_node_path = "DrownedColumn_242/DrownedColumn_24"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0023"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedColumn_3"
+mesh_node_path = "DrownedColumn_32/DrownedColumn_3"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0024"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedColumn_6"
+mesh_node_path = "DrownedColumn_62/DrownedColumn_6"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0025"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedColumn_9"
+mesh_node_path = "DrownedColumn_92/DrownedColumn_9"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0026"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedRubble_1"
+mesh_node_path = "DrownedRubble_12/DrownedRubble_1"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0027"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedRubble_11"
+mesh_node_path = "DrownedRubble_112/DrownedRubble_11"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0028"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedRubble_13"
+mesh_node_path = "DrownedRubble_132/DrownedRubble_13"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0029"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedRubble_14"
+mesh_node_path = "DrownedRubble_142/DrownedRubble_14"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0030"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedRubble_16"
+mesh_node_path = "DrownedRubble_162/DrownedRubble_16"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0031"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedRubble_2"
+mesh_node_path = "DrownedRubble_22/DrownedRubble_2"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0032"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedRubble_22"
+mesh_node_path = "DrownedRubble_222/DrownedRubble_22"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0033"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedRubble_23"
+mesh_node_path = "DrownedRubble_232/DrownedRubble_23"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0034"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedRubble_25"
+mesh_node_path = "DrownedRubble_252/DrownedRubble_25"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0035"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedRubble_4"
+mesh_node_path = "DrownedRubble_42/DrownedRubble_4"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0036"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "DrownedRubble_5"
+mesh_node_path = "DrownedRubble_52/DrownedRubble_5"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0037"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "HatcheryColumn_-1/HatcheryColumn_-1__ssarathi_jade_ashlar"
+mesh_node_path = "HatcheryColumn_-12/HatcheryColumn_-1/HatcheryColumn_-1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0038"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "HatcheryColumn_1/HatcheryColumn_1__ssarathi_jade_ashlar"
+mesh_node_path = "HatcheryColumn_12/HatcheryColumn_1/HatcheryColumn_1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0039"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "HatcheryDescent/HatcheryDescent__ssarathi_jade_ashlar"
+mesh_node_path = "HatcheryDescent2/HatcheryDescent/HatcheryDescent__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0040"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "HatcheryDescent/Walk_HatcheryDescent__ssarathi_jade_paving"
+mesh_node_path = "HatcheryDescent2/HatcheryDescent/Walk_HatcheryDescent__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0041"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "House_archive-workers/House_archive-workers__ssarathi_jade_ashlar"
+mesh_node_path = "House_archive-workers2/House_archive-workers/House_archive-workers__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0042"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "House_lily-copyists/House_lily-copyists__ssarathi_jade_ashlar"
+mesh_node_path = "House_lily-copyists2/House_lily-copyists/House_lily-copyists__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0043"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "House_lineage-house/House_lineage-house__ssarathi_jade_ashlar"
+mesh_node_path = "House_lineage-house2/House_lineage-house/House_lineage-house__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0044"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "House_market-copyist/House_market-copyist__ssarathi_jade_ashlar"
+mesh_node_path = "House_market-copyist2/House_market-copyist/House_market-copyist__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0045"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "House_market-poler/House_market-poler__ssarathi_jade_ashlar"
+mesh_node_path = "House_market-poler2/House_market-poler/House_market-poler__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0046"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "House_quay-stores/House_quay-stores__ssarathi_jade_ashlar"
+mesh_node_path = "House_quay-stores2/House_quay-stores/House_quay-stores__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0047"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "MarketShrine/MarketShrine__ssarathi_jade_ashlar"
+mesh_node_path = "MarketShrine2/MarketShrine/MarketShrine__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0048"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "MarketShrine/Walk_MarketShrine__ssarathi_jade_paving"
+mesh_node_path = "MarketShrine2/MarketShrine/Walk_MarketShrine__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0049"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Obelisk_street_far_e_99/Obelisk_street_far_e_99__ssarathi_jade_ashlar"
+mesh_node_path = "Obelisk_street_far_e_992/Obelisk_street_far_e_99/Obelisk_street_far_e_99__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0050"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Obelisk_street_market_0/Obelisk_street_market_0__ssarathi_jade_ashlar"
+mesh_node_path = "Obelisk_street_market_02/Obelisk_street_market_0/Obelisk_street_market_0__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0051"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Obelisk_street_market_128/Obelisk_street_market_128__ssarathi_jade_ashlar"
+mesh_node_path = "Obelisk_street_market_1282/Obelisk_street_market_128/Obelisk_street_market_128__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0052"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Obelisk_street_market_192/Obelisk_street_market_192__ssarathi_jade_ashlar"
+mesh_node_path = "Obelisk_street_market_1922/Obelisk_street_market_192/Obelisk_street_market_192__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0053"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Obelisk_street_market_64/Obelisk_street_market_64__ssarathi_jade_ashlar"
+mesh_node_path = "Obelisk_street_market_642/Obelisk_street_market_64/Obelisk_street_market_64__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0054"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Obelisk_street_north_0/Obelisk_street_north_0__ssarathi_jade_ashlar"
+mesh_node_path = "Obelisk_street_north_02/Obelisk_street_north_0/Obelisk_street_north_0__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0055"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Obelisk_street_north_139/Obelisk_street_north_139__ssarathi_jade_ashlar"
+mesh_node_path = "Obelisk_street_north_1392/Obelisk_street_north_139/Obelisk_street_north_139__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0056"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Obelisk_street_north_69/Obelisk_street_north_69__ssarathi_jade_ashlar"
+mesh_node_path = "Obelisk_street_north_692/Obelisk_street_north_69/Obelisk_street_north_69__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0057"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "QuayShelter_0/QuayShelter_0__ssarathi_jade_ashlar"
+mesh_node_path = "QuayShelter_02/QuayShelter_0/QuayShelter_0__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0058"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "QuayShelter_1/QuayShelter_1__ssarathi_jade_ashlar"
+mesh_node_path = "QuayShelter_12/QuayShelter_1/QuayShelter_1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0059"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "RootArch/RootArch__ssarathi_jade_ashlar"
+mesh_node_path = "RootArch2/RootArch/RootArch__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0060"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "RootArch/RootArch__ashlar"
+mesh_node_path = "RootArch2/RootArch/RootArch__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0061"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Rubble_spur_arrival_0"
+mesh_node_path = "Rubble_spur_arrival_02/Rubble_spur_arrival_0"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0062"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Rubble_spur_east_shrine_0"
+mesh_node_path = "Rubble_spur_east_shrine_02/Rubble_spur_east_shrine_0"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0063"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Rubble_spur_south_shrine_0"
+mesh_node_path = "Rubble_spur_south_shrine_02/Rubble_spur_south_shrine_0"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0064"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Rubble_spur_stela_69"
+mesh_node_path = "Rubble_spur_stela_692/Rubble_spur_stela_69"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0065"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Rubble_street_courts_40"
+mesh_node_path = "Rubble_street_courts_402/Rubble_street_courts_40"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0066"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Rubble_street_market_0"
+mesh_node_path = "Rubble_street_market_02/Rubble_street_market_0"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0067"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Rubble_street_north_0"
+mesh_node_path = "Rubble_street_north_02/Rubble_street_north_0"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0068"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Rubble_street_north_93"
+mesh_node_path = "Rubble_street_north_932/Rubble_street_north_93"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0069"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "RuinTower_1/RuinTower_1__ssarathi_jade_ashlar"
+mesh_node_path = "RuinTower_12/RuinTower_1/RuinTower_1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0070"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "RuinTower_1/RuinTower_1__rubble_stone"
+mesh_node_path = "RuinTower_12/RuinTower_1/RuinTower_1__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0071"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "RuinTower_6/RuinTower_6__ssarathi_jade_ashlar"
+mesh_node_path = "RuinTower_62/RuinTower_6/RuinTower_6__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0072"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "RuinTower_6/RuinTower_6__rubble_stone"
+mesh_node_path = "RuinTower_62/RuinTower_6/RuinTower_6__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0073"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_0/Ruin_0__ssarathi_jade_ashlar"
+mesh_node_path = "Ruin_02/Ruin_0/Ruin_0__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0074"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_0/Ruin_0__rubble_stone"
+mesh_node_path = "Ruin_02/Ruin_0/Ruin_0__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0075"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_1/Ruin_1__ssarathi_jade_ashlar"
+mesh_node_path = "Ruin_12/Ruin_1/Ruin_1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0076"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_1/Ruin_1__rubble_stone"
+mesh_node_path = "Ruin_12/Ruin_1/Ruin_1__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0077"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_2/Ruin_2__ssarathi_jade_ashlar"
+mesh_node_path = "Ruin_22/Ruin_2/Ruin_2__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0078"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_2/Ruin_2__rubble_stone"
+mesh_node_path = "Ruin_22/Ruin_2/Ruin_2__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0079"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_3/Ruin_3__ssarathi_jade_ashlar"
+mesh_node_path = "Ruin_32/Ruin_3/Ruin_3__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0080"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_3/Ruin_3__rubble_stone"
+mesh_node_path = "Ruin_32/Ruin_3/Ruin_3__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0081"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_4/Ruin_4__ssarathi_jade_ashlar"
+mesh_node_path = "Ruin_42/Ruin_4/Ruin_4__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0082"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_4/Ruin_4__rubble_stone"
+mesh_node_path = "Ruin_42/Ruin_4/Ruin_4__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0083"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_5/Ruin_5__ssarathi_jade_ashlar"
+mesh_node_path = "Ruin_52/Ruin_5/Ruin_5__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0084"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_5/Ruin_5__rubble_stone"
+mesh_node_path = "Ruin_52/Ruin_5/Ruin_5__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0085"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_6/Ruin_6__ssarathi_jade_ashlar"
+mesh_node_path = "Ruin_62/Ruin_6/Ruin_6__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0086"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_6/Ruin_6__rubble_stone"
+mesh_node_path = "Ruin_62/Ruin_6/Ruin_6__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0087"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_7/Ruin_7__ssarathi_jade_ashlar"
+mesh_node_path = "Ruin_72/Ruin_7/Ruin_7__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0088"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_7/Ruin_7__rubble_stone"
+mesh_node_path = "Ruin_72/Ruin_7/Ruin_7__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0089"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_8/Ruin_8__ssarathi_jade_ashlar"
+mesh_node_path = "Ruin_82/Ruin_8/Ruin_8__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0090"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Ruin_8/Ruin_8__rubble_stone"
+mesh_node_path = "Ruin_82/Ruin_8/Ruin_8__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0091"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_ruins_culvert_mouth/Secret_ruins_culvert_mouth__verdant_terrace_stone"
+mesh_node_path = "Secret_ruins_culvert_mouth2/Secret_ruins_culvert_mouth/Secret_ruins_culvert_mouth__verdant_terrace_stone"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0092"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_ruins_stela_reliquary/Secret_ruins_stela_reliquary__verdant_terrace_stone"
+mesh_node_path = "Secret_ruins_stela_reliquary2/Secret_ruins_stela_reliquary/Secret_ruins_stela_reliquary__verdant_terrace_stone"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0093"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Secret_ruins_temple_focus/Secret_ruins_temple_focus__verdant_terrace_stone"
+mesh_node_path = "Secret_ruins_temple_focus2/Secret_ruins_temple_focus/Secret_ruins_temple_focus__verdant_terrace_stone"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0094"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "SerpentColumn_0_-1/SerpentColumn_0_-1__ssarathi_jade_ashlar"
+mesh_node_path = "SerpentColumn_0_-12/SerpentColumn_0_-1/SerpentColumn_0_-1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0095"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "SerpentColumn_0_1/SerpentColumn_0_1__ssarathi_jade_ashlar"
+mesh_node_path = "SerpentColumn_0_12/SerpentColumn_0_1/SerpentColumn_0_1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0096"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "SerpentColumn_1_-1/SerpentColumn_1_-1__ssarathi_jade_ashlar"
+mesh_node_path = "SerpentColumn_1_-12/SerpentColumn_1_-1/SerpentColumn_1_-1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0097"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "SerpentColumn_1_1/SerpentColumn_1_1__ssarathi_jade_ashlar"
+mesh_node_path = "SerpentColumn_1_12/SerpentColumn_1_1/SerpentColumn_1_1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0098"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "SerpentColumn_2_-1/SerpentColumn_2_-1__ssarathi_jade_ashlar"
+mesh_node_path = "SerpentColumn_2_-12/SerpentColumn_2_-1/SerpentColumn_2_-1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0099"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "SerpentColumn_2_1/SerpentColumn_2_1__ssarathi_jade_ashlar"
+mesh_node_path = "SerpentColumn_2_12/SerpentColumn_2_1/SerpentColumn_2_1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0100"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "SerpentGateColumn_-1/SerpentGateColumn_-1__ssarathi_jade_ashlar"
+mesh_node_path = "SerpentGateColumn_-12/SerpentGateColumn_-1/SerpentGateColumn_-1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0101"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "SerpentGateColumn_1/SerpentGateColumn_1__ssarathi_jade_ashlar"
+mesh_node_path = "SerpentGateColumn_12/SerpentGateColumn_1/SerpentGateColumn_1__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0102"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Shrine_east_shrine/Shrine_east_shrine__ssarathi_jade_ashlar"
+mesh_node_path = "Shrine_east_shrine2/Shrine_east_shrine/Shrine_east_shrine__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0103"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Shrine_east_shrine/Walk_Shrine_east_shrine__ssarathi_jade_paving"
+mesh_node_path = "Shrine_east_shrine2/Shrine_east_shrine/Walk_Shrine_east_shrine__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0104"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Shrine_south_shrine/Shrine_south_shrine__ssarathi_jade_ashlar"
+mesh_node_path = "Shrine_south_shrine2/Shrine_south_shrine/Shrine_south_shrine__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0105"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Shrine_south_shrine/Walk_Shrine_south_shrine__ssarathi_jade_paving"
+mesh_node_path = "Shrine_south_shrine2/Shrine_south_shrine/Walk_Shrine_south_shrine__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0106"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Shrine_west_shrine/Shrine_west_shrine__ssarathi_jade_ashlar"
+mesh_node_path = "Shrine_west_shrine2/Shrine_west_shrine/Shrine_west_shrine__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0107"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Shrine_west_shrine/Walk_Shrine_west_shrine__ssarathi_jade_paving"
+mesh_node_path = "Shrine_west_shrine2/Shrine_west_shrine/Walk_Shrine_west_shrine__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0108"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Structure_TempleSummitRoof/Structure_TempleSummitRoof__ssarathi_jade_ashlar"
+mesh_node_path = "Structure_TempleSummitRoof2/Structure_TempleSummitRoof/Structure_TempleSummitRoof__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0109"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "SunStela/SunStela__ssarathi_jade_ashlar"
+mesh_node_path = "SunStela2/SunStela/SunStela__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0110"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "SunStela/Walk_SunStela__ssarathi_jade_paving"
+mesh_node_path = "SunStela2/SunStela/Walk_SunStela__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0111"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Temple_Ssarathi/Temple_Ssarathi__ssarathi_jade_ashlar"
+mesh_node_path = "Temple_Ssarathi2/Temple_Ssarathi/Temple_Ssarathi__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0112"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Temple_Ssarathi/Walk_Temple_Ssarathi__ssarathi_jade_paving"
+mesh_node_path = "Temple_Ssarathi2/Temple_Ssarathi/Walk_Temple_Ssarathi__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0113"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Temple_VaultPortal/Temple_VaultPortal__ssarathi_jade_ashlar"
+mesh_node_path = "Temple_VaultPortal2/Temple_VaultPortal/Temple_VaultPortal__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0114"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Temple_VaultPortal/Walk_Temple_VaultPortal__ssarathi_jade_paving"
+mesh_node_path = "Temple_VaultPortal2/Temple_VaultPortal/Walk_Temple_VaultPortal__ssarathi_jade_paving"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
 [sub_resource type="Resource" id="object_material_0115"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "UndercroftMouth/UndercroftMouth__ashlar"
+mesh_node_path = "UndercroftMouth2/UndercroftMouth/UndercroftMouth__ashlar"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0116"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "UndercroftMouth/Walk_UndercroftMouth__rubble_stone"
+mesh_node_path = "UndercroftMouth2/UndercroftMouth/Walk_UndercroftMouth__rubble_stone"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0117"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "WaterGate/WaterGate__ssarathi_jade_ashlar"
+mesh_node_path = "WaterGate2/WaterGate/WaterGate__ssarathi_jade_ashlar"
 surface_index = 0
 surface = ExtResource("object_jade_masonry")
 
