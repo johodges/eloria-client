@@ -32,6 +32,8 @@ const DEFAULTS := {
 	"capture/pixels_per_metre": 2.0,
 	"capture/include_references": false,
 	"capture/clip_to_ownership": true,
+	"markers/show": true,
+	"markers/labels": true,
 }
 
 const HINTS := {
@@ -70,6 +72,10 @@ const SHORTCUTS := {
 	"sculpt_flatten": ["Sculpt: Flatten brush", KEY_4, false, false, false],
 	"sculpt_smaller": ["Sculpt: smaller brush (Shift: weaker)", KEY_BRACKETLEFT, false, false, false],
 	"sculpt_larger": ["Sculpt: larger brush (Shift: stronger)", KEY_BRACKETRIGHT, false, false, false],
+	"path_narrower": ["Path drawing: narrower (Shift: fine)", KEY_BRACKETLEFT, false, false, false],
+	"path_wider": ["Path drawing: wider (Shift: fine)", KEY_BRACKETRIGHT, false, false, false],
+	"draw_road": ["Paths: draw a road", KEY_NONE, false, false, false],
+	"draw_river": ["Paths: draw a river", KEY_NONE, false, false, false],
 }
 
 const KEY_SYMBOLS := {"BracketLeft": "[", "BracketRight": "]", "PageUp": "PgUp",

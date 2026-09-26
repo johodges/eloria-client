@@ -20,6 +20,10 @@ const Tools := preload("res://addons/map_authoring_usability/selection_tools.gd"
 const UsabilityPlugin := preload("res://addons/map_authoring_usability/plugin.gd")
 const TimeOfDay := preload("res://addons/map_authoring_usability/time_of_day_preview.gd")
 const TopDown := preload("res://addons/map_authoring_usability/top_down_capture.gd")
+const Markers := preload("res://addons/map_asset_palette/marker_library.gd")
+const Walkability := preload("res://addons/map_authoring_usability/walkability_overlay.gd")
+const MARKER := preload("res://src/dev/map_authoring_region/gameplay_marker.gd")
+const WATER := preload("res://src/dev/map_authoring_region/water_region_control.gd")
 const DIR := "res://test-artifacts/map-usability"
 const HEIGHT_PATH := DIR + "/fixture-heights.f32le"
 const SCENE_PATH := DIR + "/fixture.tscn"
@@ -28,7 +32,8 @@ const PREFAB_DIR := DIR + "/prefabs"
 const GRID := Vector2i(41, 41)
 const SETTING_KEYS := ["placement/keep_placing", "placement/snap_to_grid", "grid/step",
 	"grid/cursor_grid", "placement/random_rotation", "placement/size_variation",
-	"placement/align_to_surface", "viewport/show_cursor_readout", "time_of_day/minute"]
+	"placement/align_to_surface", "viewport/show_cursor_readout", "time_of_day/minute",
+	"markers/show", "markers/labels"]
 
 var failures := 0
 var _saved_settings := {}
@@ -111,8 +116,18 @@ func _run() -> void:
 		_test_sculpt_keys(sculpt, usability, root, camera)
 	_test_time_of_day(usability, root)
 	await _test_top_down(usability, root)
+	_test_marker_palette(palette, usability, root, camera)
+	_test_walkability(usability, root)
+	_test_path_drawing(palette, usability, root, camera, entry)
 	usability.call("set_time_preview", true, 90.0)
+	usability.call("set_walkability_mode", Walkability.Mode.LIVE)
+	usability.call("start_path_drawing", "road")
+	_aim(camera, root, Vector2(12.0, 30.0))
+	usability.call("_forward_3d_gui_input", camera,
+		_click(camera.get_viewport().get_visible_rect().size * 0.5))
 	await _test_save_excludes_helpers(palette, usability, root, entry, camera)
+	usability.call("cancel_path_drawing")
+	usability.call("set_walkability_mode", Walkability.Mode.OFF)
 	usability.call("set_time_preview", false)
 	if sculpt != null:
 		sculpt.get("_sculpt").call("unbind")
@@ -296,7 +311,8 @@ func _open_fixture() -> Node3D:
 	terrain.grid_size = GRID
 	terrain.cell_metres = 1.0
 	terrain.base_heights_path = HEIGHT_PATH
-	terrain.preview_enabled = false
+	terrain.preview_enabled = true
+	terrain.base_surface = MapAuthoringSurface.from_preset(MapAuthoringTexturePresets.GRASS)
 	fixture.add_child(terrain)
 	terrain.owner = fixture
 	for container in ["Roads", "Rivers", "Bridges", "AuthoredAssets", "Gameplay",
@@ -305,6 +321,30 @@ func _open_fixture() -> Node3D:
 		node.name = container
 		fixture.add_child(node)
 		node.owner = fixture
+	var harvestables := Node3D.new()
+	harvestables.name = "Harvestables"
+	fixture.get_node("Gameplay").add_child(harvestables)
+	harvestables.owner = fixture
+	var crystal: Node3D = MARKER.new()
+	crystal.name = "crystal-01"
+	crystal.set("record_id", "crystal-01")
+	crystal.set("kind", "harvestable")
+	crystal.set("label", "Crystal")
+	crystal.set("extras", {"extent": [4, 4], "harvestHook": "harvest.test", "kind": "mineral",
+		"propPosition": [1, 2, 3]})
+	crystal.position = Vector3(6.0, 6.0, 34.0)
+	harvestables.add_child(crystal)
+	crystal.owner = fixture
+	var lakes := Node3D.new()
+	lakes.name = "WaterRegions"
+	fixture.add_child(lakes)
+	lakes.owner = fixture
+	var lake: Node3D = WATER.new()
+	lake.name = "test-lake"
+	lake.set("water_id", "test-lake")
+	lake.set("radii", Vector2(4.0, 4.0))
+	lakes.add_child(lake)
+	lake.owner = fixture
 	var packed := PackedScene.new()
 	var saved: bool = packed.pack(fixture) == OK and ResourceSaver.save(packed, SCENE_PATH) == OK
 	fixture.free()
@@ -643,6 +683,10 @@ func _test_save_excludes_helpers(palette: Object, usability: Object, root: Node3
 	get_root().add_child(reopened)
 	await process_frame
 	var helpers := reopened.find_children("__Map*", "", true, false)
+	_expect(saved and not "__MapAuthoringMarkerOverlay" in text and
+		not "__MapAuthoringWalkability" in text and not "__MapAuthoringPathDraft" in text and
+		'path_id = "road-01"' in text and 'record_id = "crystal-02"' in text,
+		"new markers and roads are saved; marker pins, walkability tint and path drafts never are")
 	_expect(saved and not "__MapAssetGhost" in text and not "__MapAuthoringCursorGrid" in text and
 		not "__MapAuthoringTimeOfDay" in text and not "DirectionalLight3D" in text and
 		helpers.is_empty() and reopened.get_node("AuthoredAssets").get_child_count() ==
@@ -650,6 +694,255 @@ func _test_save_excludes_helpers(palette: Object, usability: Object, root: Node3
 		"save/reopen keeps every placed asset and never the ghost or cursor grid")
 	reopened.queue_free()
 	await process_frame
+
+
+func _test_marker_palette(palette: Object, usability: Object, root: Node3D,
+		camera: Camera3D) -> void:
+	var entries := Markers.entries(root)
+	var template := {}
+	for candidate in entries:
+		if String(candidate.label) == "Harvestable: Crystal (mineral)":
+			template = candidate
+	var kinds := {}
+	for candidate in entries:
+		kinds[String(candidate.marker_kind)] = true
+	_expect(kinds.size() == Markers.KINDS.size() and not kinds.has("runtime_point") and
+		not template.is_empty() and String(template.marker_label) == "Crystal" and
+		(template.marker_extras as Dictionary).has("harvestHook") and
+		not (template.marker_extras as Dictionary).has("propPosition"),
+		"marker palette offers every exported kind plus templates from the territory's own markers")
+	var dock: Object = palette.get("_dock")
+	dock.call("select_category", Markers.CATEGORY)
+	_expect(String(template.id) in (dock.call("visible_entry_ids") as PackedStringArray),
+		"the Map Assets dock lists gameplay markers under their own category")
+	palette.call("_arm_placement", template)
+	_aim(camera, root, Vector2(16.0, 26.0))
+	var centre := camera.get_viewport().get_visible_rect().size * 0.5
+	var motion := InputEventMouseMotion.new()
+	motion.position = centre
+	palette.call("_forward_3d_gui_input", camera, motion)
+	palette.call("_refresh_hover")
+	var ghost := (palette.call("placement_state") as Dictionary).ghost as Node3D
+	_expect(ghost != null and ghost.owner == null and
+		not ghost.find_children("*", "MeshInstance3D", true, false).is_empty(),
+		"a marker ghost is a see-through pin in the kind's colour")
+	palette.call("_forward_3d_gui_input", camera, _click(centre))
+	var created := root.get_node_or_null("Gameplay/Harvestables/crystal-02") as Node3D
+	var ground := Probe.height_at(root, created.global_position) if created != null else NAN
+	_expect(created != null and created.get_script() == MARKER and
+		String(created.get("record_id")) == "crystal-02" and String(created.get("label")) == "Crystal" and
+		(created.get("extras") as Dictionary).get("harvestHook") == "harvest.test" and
+		not (created.get("extras") as Dictionary).has("propPosition") and
+		absf(created.global_position.y - ground) < 0.001 and created.owner == root,
+		"a click places a harvestable with a fresh id, copied conventions and no copied position")
+	var history := _undo.get_history_undo_redo(_undo.get_object_history_id(root))
+	history.undo()
+	var removed := root.get_node_or_null("Gameplay/Harvestables/crystal-02") == null
+	history.redo()
+	_expect(removed and root.get_node_or_null("Gameplay/Harvestables/crystal-02") != null,
+		"each marker placement is one undo step")
+	var spawn := {}
+	for candidate in entries:
+		if String(candidate.marker_kind) == "spawn":
+			spawn = candidate
+	palette.call("_arm_placement", spawn)
+	palette.call("_forward_3d_gui_input", camera, _key(KEY_Q))
+	palette.call("_forward_3d_gui_input", camera, _key(KEY_Q))
+	_aim(camera, root, Vector2(24.0, 30.0))
+	palette.call("_forward_3d_gui_input", camera, _click(centre))
+	palette.call("_cancel_placement")
+	var spawns := root.get_node_or_null("Gameplay/Spawns")
+	var spawn_marker := spawns.get_child(0) as Node3D if spawns != null and \
+		spawns.get_child_count() > 0 else null
+	_expect(spawn_marker != null and String(spawn_marker.get("kind")) == "spawn" and
+		(spawn_marker.get("facing") as Vector3).is_equal_approx(
+			Basis(Vector3.UP, deg_to_rad(30.0)) * Vector3.FORWARD),
+		"a spawn creates its container and Q/E turn its facing (30° here)")
+	usability.call("poll_overlays")
+	var overlay := usability.call("marker_overlay_state") as Dictionary
+	var pins := overlay.node as Node3D
+	var mesh := (pins.get_node("Pins") as MeshInstance3D).mesh if pins != null else null
+	_expect(pins != null and pins.owner == null and not root.get_children().has(pins) and
+		int(overlay.labels) == Markers.markers(root).size() and mesh != null and
+		mesh.get_surface_count() > 0,
+		"every marker gets a coloured pin and a name label in an internal overlay")
+	Settings.set_value("markers/show", false)
+	usability.call("poll_overlays")
+	_expect((usability.call("marker_overlay_state") as Dictionary).node == null,
+		"marker pins can be switched off")
+	Settings.set_value("markers/show", true)
+	usability.call("poll_overlays")
+
+
+func _test_walkability(usability: Object, root: Node3D) -> void:
+	var shown: bool = usability.call("set_walkability_mode", Walkability.Mode.PUBLISHED)
+	var state := usability.call("walkability_state") as Dictionary
+	_expect(not shown and int(state.mode) == Walkability.Mode.OFF and
+		"published" in String(state.message).to_lower(),
+		"a territory without a published grid says so instead of tinting nothing")
+	# The fast path (terrain cells twice the tile size, as in production's 2 m / 1 m)
+	# must equal the pipeline rule tile by tile; here 1 m cells over 0.5 m tiles.
+	var terrain := root.get_node("Terrain")
+	var heights: PackedFloat32Array = terrain.call("effective_heights")
+	var grid: Vector2i = terrain.get("grid_size")
+	var width := (grid.x - 1) * 2
+	var rows := (grid.y - 1) * 2
+	var classes := PackedByteArray()
+	classes.resize(width * rows)
+	classes.fill(Walkability.Tile.WALKABLE)
+	var data := {"heights": heights, "grid": grid, "cell": 1.0, "tile": 0.5,
+		"width": width, "rows": rows, "classes": classes}
+	Walkability._grade_pass(data)
+	var mismatches := 0
+	var steep_tiles := 0
+	for row in rows:
+		for column in width:
+			var worst := 0.0
+			for half: Vector2 in [Vector2(0.25, 0.25), Vector2(0.75, 0.25), Vector2(0.25, 0.75),
+					Vector2(0.75, 0.75)]:
+				var fx := (float(column) + half.x) / 2.0
+				var fz := (float(row) + half.y) / 2.0
+				var ix := mini(floori(fx), grid.x - 2)
+				var iz := mini(floori(fz), grid.y - 2)
+				var u := fx - float(ix)
+				var v := fz - float(iz)
+				var a := heights[iz * grid.x + ix]
+				var b := heights[iz * grid.x + ix + 1]
+				var c := heights[(iz + 1) * grid.x + ix]
+				var d := heights[(iz + 1) * grid.x + ix + 1]
+				var dx := b - a if u + v <= 1.0 else d - c
+				var dz := c - a if u + v <= 1.0 else d - b
+				worst = maxf(worst, sqrt(dx * dx + dz * dz))
+			var expected := worst > Walkability.MAX_GRADE
+			steep_tiles += 1 if expected else 0
+			if expected != ((data.classes as PackedByteArray)[row * width + column] ==
+					Walkability.Tile.STEEP):
+				mismatches += 1
+	_expect(mismatches == 0 and steep_tiles > 0,
+		"the fast grade pass marks exactly the tiles whose half-cells exceed grade 0.65 (%d steep)" %
+			steep_tiles)
+	# Live mode on the fixture itself (1 m cells take the general path).
+	var lake := root.get_node("WaterRegions/test-lake") as Node3D
+	var lake_ground := Probe.height_at(root, Vector3(30.0, 0.0, 30.0))
+	lake.global_position = Vector3(30.0, lake_ground + 1.2, 30.0)
+	var asset := root.get_node("AuthoredAssets").get_child(0) as Node3D
+	asset.set("collision_role", "solid")
+	shown = usability.call("set_walkability_mode", Walkability.Mode.LIVE)
+	usability.call("rebuild_walkability")
+	state = usability.call("walkability_state") as Dictionary
+	var overlay := state.node as MeshInstance3D
+	var walk := Walkability.new()
+	walk.set_mode(root, Walkability.Mode.LIVE)
+	var lake_tile := walk.live_tile(Vector3(30.5, 0.0, 30.5))
+	var dry_tile := walk.live_tile(Vector3(30.5, 0.0, 20.5))
+	var asset_tile := walk.live_tile(asset.global_position)
+	var steep_sample := -1
+	for row in range(0, 40, 3):
+		for column in range(0, 40, 3):
+			var point := Vector3(float(column) + 0.5, 0.0, float(row) + 0.5)
+			var tile := walk.live_tile(point)
+			if tile == Walkability.Tile.STEEP:
+				steep_sample = int(walk.grade_at(point) > Walkability.MAX_GRADE)
+	var description := String(usability.call("walkability_describe", asset.global_position))
+	_expect(shown and overlay != null and overlay.owner == null and overlay.visible and
+		overlay.mesh == (terrain.get_node("__TerrainPreview") as MeshInstance3D).mesh and
+		lake_tile == Walkability.Tile.WATER and dry_tile != Walkability.Tile.WATER and
+		asset_tile == Walkability.Tile.BLOCKED and steep_sample == 1 and
+		String(asset.name) in description,
+		"live walkability marks steep ground, deep water and solid assets (%s)" % description)
+	walk.release()
+	asset.set("collision_role", "none")
+	shown = usability.call("set_walkability_mode", Walkability.Mode.CHANGES)
+	_expect(not shown, "changes since publish needs a published grid to compare with")
+	# A real published grid: Sunmane's collision.bin, as the server walks it.
+	var region := String(root.get("region_id"))
+	root.set("region_id", "sunmane_steppe")
+	var published := Walkability.published_grid(root)
+	root.set("region_id", region)
+	var fraction := 0.0
+	if not published.has("error"):
+		var bytes: PackedByteArray = published.bytes
+		fraction = float(bytes.size() - bytes.count(0)) / float(bytes.size())
+	_expect(not published.has("error") and int(published.width) == 1584 and
+		int(published.rows) == 1584 and is_equal_approx(float(published.cell), 0.5) and
+		absf(fraction - float(published.walkable_fraction)) < 0.000001,
+		"the published grid loads Sunmane's EWCG exactly (%.4f walkable, as its manifest records)" %
+			fraction)
+	usability.call("set_walkability_mode", Walkability.Mode.OFF)
+	_expect((usability.call("walkability_state") as Dictionary).node == null,
+		"switching the overlay off removes its tint")
+
+
+func _test_path_drawing(palette: Object, usability: Object, root: Node3D, camera: Camera3D,
+		entry: Dictionary) -> void:
+	var centre := camera.get_viewport().get_visible_rect().size * 0.5
+	palette.call("_arm_placement", entry)
+	var started: bool = usability.call("start_path_drawing", "road")
+	var tool: RefCounted = usability.call("path_draw_tool")
+	_expect(started and bool(tool.call("is_active")) and
+		not bool((palette.call("placement_state") as Dictionary).armed),
+		"drawing a road stops asset placement")
+	var clicked: Array[Vector3] = []
+	for xz in [Vector2(10.0, 10.0), Vector2(20.0, 15.0), Vector2(33.0, 8.0)]:
+		_aim(camera, root, xz)
+		usability.call("_forward_3d_gui_input", camera, _click(centre))
+		clicked.append(Probe.ray_hit(root, Vector3(xz.x, 60.0, xz.y), Vector3.DOWN) as Vector3)
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_BACKSPACE))
+	clicked.pop_back()
+	_aim(camera, root, Vector2(28.0, 25.0))
+	usability.call("_forward_3d_gui_input", camera, _click(centre))
+	clicked.append(Probe.ray_hit(root, Vector3(28.0, 60.0, 25.0), Vector3.DOWN) as Vector3)
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_BRACKETRIGHT))
+	var draft := root.get_children(true).filter(func(node: Node) -> bool:
+		return String(node.name).begins_with("__MapAuthoringPathDraft"))
+	_expect(draft.size() == 1 and (draft[0] as Node).owner == null and
+		(tool.get("points") as Array).size() == 3 and is_equal_approx(float(tool.get("width")), 5.0),
+		"clicks add draped points, Backspace removes the last, ] widens the draft")
+	var result: int = usability.call("_forward_3d_gui_input", camera, _key(KEY_ENTER))
+	var road := root.get_node_or_null("Roads/road-01") as Path3D
+	var matches := road != null and road.curve != null and road.curve.point_count == 3
+	if matches:
+		for index in 3:
+			var world: Vector3 = road.global_transform * road.curve.get_point_position(index)
+			matches = matches and world.distance_to(clicked[index]) < 0.05
+	_expect(result == EditorPlugin.AFTER_GUI_INPUT_STOP and matches and road.owner == root and
+		String(road.get("path_id")) == "road-01" and String(road.get("kind")) == "road" and
+		String(road.get("routing_role")) == "required" and
+		bool((road.get("properties") as Dictionary).get("terrainConform", false)) and
+		is_equal_approx(float(road.get("default_width")), 5.0) and
+		(road.call("snapshot_points") as Array).size() >= 3 and
+		not bool(tool.call("is_active")) and road.get("surface") is MapAuthoringSurface and
+		(road.get("surface") as MapAuthoringSurface).material_mode ==
+			MapAuthoringSurface.MaterialMode.ROAD_SHADER,
+		"Enter creates road-01 through the clicked ground points, terrain-shaped, with a road surface")
+	var history := _undo.get_history_undo_redo(_undo.get_object_history_id(root))
+	history.undo()
+	var gone := root.get_node_or_null("Roads/road-01") == null
+	history.redo()
+	_expect(gone and root.get_node_or_null("Roads/road-01") != null,
+		"a drawn road is one undo step")
+	usability.call("start_path_drawing", "river")
+	for xz in [Vector2(5.0, 30.0), Vector2(15.0, 36.0)]:
+		_aim(camera, root, xz)
+		usability.call("_forward_3d_gui_input", camera, _click(centre))
+	usability.call("_forward_3d_gui_input", camera, _click(centre, MOUSE_BUTTON_RIGHT))
+	var river := root.get_node_or_null("Rivers/river-01")
+	_expect(river != null and String(river.get("kind")) == "river" and
+		String(river.get("routing_role")) == "decorative",
+		"right-click finishes a decorative river-01")
+	# A click beside an existing road point joins it exactly.
+	usability.call("start_path_drawing", "road")
+	var first: Vector3 = road.global_transform * road.curve.get_point_position(0)
+	_aim(camera, root, Vector2(first.x + 1.2, first.z - 0.8))
+	usability.call("_forward_3d_gui_input", camera, _click(centre))
+	var joined := (tool.get("points") as Array)
+	_expect(joined.size() == 1 and (joined[0] as Vector3).is_equal_approx(first),
+		"a click within 2.5 m of a path point snaps onto it")
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_ESCAPE))
+	_expect(not bool(tool.call("is_active")) and root.get_node_or_null("Roads/road-02") == null and
+		root.get_children(true).all(func(node: Node) -> bool:
+			return not String(node.name).begins_with("__MapAuthoringPathDraft")),
+		"Escape discards a draft without adding anything")
 
 
 func _aim(camera: Camera3D, root: Node3D, xz: Vector2) -> void:

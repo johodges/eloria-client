@@ -17,7 +17,8 @@ extends RefCounted
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
 const REFERENCE_SCRIPT := preload("res://addons/map_authoring_workspace/reference_preview.gd")
 const MAX_SIDE := 8192
-const HELPER_PREFIXES := ["__MapAssetGhost", "__MapAuthoringCursorGrid", "__TerrainSculptCursor"]
+const HELPER_PREFIXES := ["__MapAssetGhost", "__MapAuthoringCursorGrid", "__TerrainSculptCursor",
+	"__MapAuthoringMarkerOverlay", "__MapAuthoringWalkability", "__MapAuthoringPathDraft"]
 const CAMERA_CLEARANCE := 60.0
 const MAP_MINIMUM_AMBIENT := 0.9
 

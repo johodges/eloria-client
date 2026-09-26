@@ -16,6 +16,7 @@ signal thumbnail_ready(entry_id: String, texture: Texture2D)
 
 const Placement := preload("res://addons/map_asset_palette/placement.gd")
 const Prefabs := preload("res://addons/map_asset_palette/prefab_library.gd")
+const Markers := preload("res://addons/map_asset_palette/marker_library.gd")
 const SIZE := 128
 const MAX_SURFACES := 96
 const CACHE_FOLDER := "map_asset_thumbnails"
@@ -162,8 +163,13 @@ static func cached(directory: String, entry: Dictionary) -> Texture2D:
 
 ## One mesh holding every visible surface of the entry in the entry's own frame.
 static func merged_mesh(entry: Dictionary) -> ArrayMesh:
-	var created := Prefabs.instantiate(entry) if Prefabs.is_prefab_entry(entry) \
-		else Placement.instantiate_entry(entry)
+	var created := {}
+	if Markers.is_marker_entry(entry):
+		created = {"node": Markers.pin_node(String(entry.get("marker_kind", "")))}
+	elif Prefabs.is_prefab_entry(entry):
+		created = Prefabs.instantiate(entry)
+	else:
+		created = Placement.instantiate_entry(entry)
 	var root := created.get("node") as Node3D
 	if root == null:
 		return null

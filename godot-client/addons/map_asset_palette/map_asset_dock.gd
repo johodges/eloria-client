@@ -19,6 +19,7 @@ var _visible_entries: Array[Dictionary] = []
 var _selected_entry: Dictionary = {}
 var _thumbnails: Dictionary = {}
 var _renderer: Node
+var _marker_entries: Array[Dictionary] = []
 var _search: LineEdit
 var _category: OptionButton
 var _thumbnail_toggle: CheckButton
@@ -152,6 +153,16 @@ func cancel_placement() -> void:
 func reload_library() -> void:
 	var previous := String(_selected_entry.get("id", ""))
 	_reload_entries(true)
+	if not previous.is_empty():
+		select_entry_by_id(previous)
+
+
+## Gameplay marker entries for the open scene (see marker_library.gd); they are
+## listed after the library and prefabs under "Gameplay markers".
+func set_marker_entries(entries: Array[Dictionary]) -> void:
+	_marker_entries = entries.duplicate(true)
+	var previous := String(_selected_entry.get("id", ""))
+	_reload_entries(false)
 	if not previous.is_empty():
 		select_entry_by_id(previous)
 
@@ -392,6 +403,7 @@ func _reload_entries(refresh_cache: bool) -> void:
 	_cancel_if_armed()
 	_entries = Catalog.entries(refresh_cache)
 	_entries.append_array(Prefabs.entries())
+	_entries.append_array(_marker_entries)
 	if refresh_cache:
 		_thumbnails.clear()
 		if _renderer != null:

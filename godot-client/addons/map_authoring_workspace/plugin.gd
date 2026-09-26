@@ -182,6 +182,10 @@ func _on_sculpt_toggled(enabled: bool) -> void:
 		if asset_plugin is Object and is_instance_valid(asset_plugin) and \
 				asset_plugin.has_method("cancel_placement_for_terrain_sculpt"):
 			asset_plugin.call("cancel_placement_for_terrain_sculpt")
+		if base.has_meta(&"map_authoring_usability_plugin"):
+			var usability: Object = base.get_meta(&"map_authoring_usability_plugin")
+			if is_instance_valid(usability) and usability.has_method("cancel_path_drawing"):
+				usability.call("cancel_path_drawing")
 	_sculpt.set_enabled(enabled)
 	_sculpt.set_ring_color(SCULPT_RING_COLORS[int(_dock.sculpt_settings().mode)])
 	update_overlays()

@@ -4,6 +4,7 @@ extends EditorPlugin
 const Dock := preload("res://addons/map_asset_palette/map_asset_dock.gd")
 const Placement := preload("res://addons/map_asset_palette/placement.gd")
 const Prefabs := preload("res://addons/map_asset_palette/prefab_library.gd")
+const Markers := preload("res://addons/map_asset_palette/marker_library.gd")
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
 const Settings := preload("res://addons/map_authoring_usability/usability_settings.gd")
 const RAY_LENGTH := 2048.0
@@ -247,6 +248,11 @@ func _arm_placement(entry: Dictionary) -> void:
 	if sculpt_plugin is Object and is_instance_valid(sculpt_plugin) and \
 			sculpt_plugin.has_method("deactivate_terrain_sculpt"):
 		sculpt_plugin.call("deactivate_terrain_sculpt")
+	if base.has_meta(USABILITY_PLUGIN_META):
+		var usability: Variant = base.get_meta(USABILITY_PLUGIN_META)
+		if usability is Object and is_instance_valid(usability) and \
+				usability.has_method("cancel_path_drawing"):
+			usability.call("cancel_path_drawing")
 	_pending_entry = entry.duplicate(true)
 	_hover_hit = null
 	_yaw = 0.0
@@ -353,7 +359,10 @@ func _refresh_hover() -> void:
 	if ghost != null:
 		ghost.visible = true
 		var ground := _snapped_ground(root, hit as Vector3)
-		if Prefabs.is_prefab_entry(_pending_entry):
+		if Markers.is_marker_entry(_pending_entry):
+			ghost.global_transform = Transform3D(Basis(Vector3.UP, deg_to_rad(_total_yaw())),
+				ground + Vector3.UP * _lift)
+		elif Prefabs.is_prefab_entry(_pending_entry):
 			var pivot := _prefab_pivot(ground)
 			for member_value in ghost.get_children():
 				var member := member_value as Node3D
@@ -377,7 +386,9 @@ func _ensure_ghost(root: Node3D) -> Node3D:
 		return _ghost
 	_free_ghost()
 	var node: Node3D
-	if Prefabs.is_prefab_entry(_pending_entry):
+	if Markers.is_marker_entry(_pending_entry):
+		node = Markers.pin_node(String(_pending_entry.get("marker_kind", "")))
+	elif Prefabs.is_prefab_entry(_pending_entry):
 		var created := Prefabs.instantiate(_pending_entry)
 		node = created.get("node") as Node3D
 		if node != null:
@@ -425,6 +436,8 @@ func _place_entry(entry: Dictionary, ground_position: Vector3, keep_armed: bool 
 	if pilot == null:
 		return null
 	var ground := _snapped_ground(pilot, ground_position)
+	if Markers.is_marker_entry(entry):
+		return _place_marker(pilot, entry, ground, keep_armed)
 	if Prefabs.is_prefab_entry(entry):
 		return _place_prefab(pilot, entry, ground, keep_armed)
 	var created := Placement.instantiate_entry(entry)
@@ -469,6 +482,23 @@ func _place_prefab(pilot: Node3D, entry: Dictionary, ground: Vector3, keep_armed
 	return placed[0]
 
 
+## Gameplay markers stand at the ground (plus any lift); Q/E turn their facing.
+func _place_marker(root: Node3D, entry: Dictionary, ground: Vector3, keep_armed: bool) -> Node3D:
+	if root.get_node_or_null(Markers.GAMEPLAY) == null:
+		_dock.show_message("This scene has no Gameplay container for markers.")
+		return null
+	var facing := Basis(Vector3.UP, deg_to_rad(_total_yaw())) * Vector3.FORWARD
+	var marker := Markers.create_marker(root, entry, ground + Vector3.UP * _lift, facing)
+	Markers.commit_with_undo(get_undo_redo(), root, marker)
+	_select_placed([marker])
+	var kind := String(entry.get("marker_kind", ""))
+	var reminder := " Set its Destination Map and Destination Spawn in the Inspector." \
+		if kind == "portal" else " Name it in the Inspector." if kind == "npc_marker" else ""
+	_dock.show_message("Placed %s marker %s.%s%s" % [kind, String(marker.get("record_id")),
+		reminder, " Keep clicking to place more." if keep_armed else ""])
+	return marker
+
+
 func _select_placed(nodes: Array[Node3D]) -> void:
 	var selection := get_editor_interface().get_selection()
 	selection.clear()
@@ -484,6 +514,7 @@ func _on_scene_changed(scene_root: Node) -> void:
 	_cancel_placement()
 	if _dock != null:
 		_dock.set_scene_available(_pilot_root() != null)
+		_dock.set_marker_entries(Markers.entries(_pilot_root()))
 
 
 func _pilot_root() -> Node3D:

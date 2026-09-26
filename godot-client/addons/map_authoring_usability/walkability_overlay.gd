@@ -1,0 +1,801 @@
+@tool
+extends RefCounted
+## Walkability overlay for authored territories, in three modes:
+##
+## - PUBLISHED: the exact served grid, read from the territory's published
+##   collision.bin (EWCG-v2, half-metre cells). This is what the server walks
+##   today, as of the last publish.
+## - LIVE: a suggestion computed from the current authoring on 1 m tiles, using
+##   the pipeline's rules (collision_export.py): the grade of the terrain
+##   triangle is at most MAX_GRADE, water no deeper than WADE, no solid
+##   structure in the actor's body height, and inside the owned polygon. Grade
+##   and ownership are exact. Structures are approximated by each solid mesh's
+##   bounding box, and bridge or walk-surface decks by their footprint, so the
+##   bake can differ at fences, doorways and deck edges.
+## - CHANGES: where LIVE disagrees with PUBLISHED, i.e. what the next bake is
+##   likely to open or close.
+##
+## The tint is a second draw of the terrain preview mesh with a small shader;
+## it is internal and ownerless, so it is never saved or baked.
+
+const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
+const TopDown := preload("res://addons/map_authoring_usability/top_down_capture.gd")
+const TimeOfDay := preload("res://addons/map_authoring_usability/time_of_day_preview.gd")
+const ASSET_SCRIPT := preload("res://src/dev/map_authoring_region/asset_control.gd")
+const PATH_SCRIPT := preload("res://src/dev/map_authoring_region/path_control.gd")
+const WATER_SCRIPT := preload("res://src/dev/map_authoring_region/water_region_control.gd")
+const NODE_NAME := "__MapAuthoringWalkability"
+
+enum Mode { OFF, PUBLISHED, LIVE, CHANGES }
+enum Tile { OUTSIDE, WALKABLE, STEEP, WATER, BLOCKED, DECK }
+
+const MAX_GRADE := 0.65
+const WADE := 0.35
+const ACTOR_FLOOR_CLEARANCE := 0.06
+const ACTOR_HEIGHT := 2.1
+const TILE_NAMES := ["outside this territory", "walkable", "too steep", "under water",
+	"blocked by a structure", "bridge or walk deck"]
+const LEGEND := {
+	Mode.PUBLISHED: [["walkable (published)", Color(0.25, 0.85, 0.35)],
+		["not walkable (published)", Color(0.9, 0.25, 0.25)]],
+	Mode.LIVE: [["walkable", Color(0.25, 0.85, 0.35)], ["too steep (> 0.65)", Color(1.0, 0.6, 0.15)],
+		["under water (> 0.35 m; sea, rivers, lakes)", Color(0.2, 0.5, 1.0)],
+		["blocked by a structure (box estimate)", Color(0.9, 0.2, 0.25)],
+		["bridge / walk deck", Color(0.3, 0.95, 0.9)]],
+	Mode.CHANGES: [["newly walkable", Color(0.3, 1.0, 0.6)],
+		["newly blocked", Color(1.0, 0.25, 0.8)]],
+}
+const SHADER_CODE := """
+shader_type spatial;
+render_mode unshaded, cull_disabled, depth_draw_never, shadows_disabled, blend_mix;
+
+uniform sampler2D live_classes : filter_nearest, repeat_disable;
+uniform sampler2D owned_mask : filter_nearest, repeat_disable;
+uniform sampler2D published : filter_nearest, repeat_disable;
+uniform mat4 region_inverse;
+uniform vec4 live_rect;
+uniform vec4 published_rect;
+uniform int mode = 2;
+uniform bool has_published = false;
+uniform float opacity = 0.5;
+varying vec3 local_position;
+
+void vertex() {
+	VERTEX += NORMAL * 0.06;
+	local_position = (region_inverse * MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+}
+
+vec3 live_color(float value) {
+	if (value < 1.5) return vec3(0.25, 0.85, 0.35);
+	if (value < 2.5) return vec3(1.0, 0.6, 0.15);
+	if (value < 3.5) return vec3(0.2, 0.5, 1.0);
+	if (value < 4.5) return vec3(0.9, 0.2, 0.25);
+	return vec3(0.3, 0.95, 0.9);
+}
+
+void fragment() {
+	vec2 luv = (local_position.xz - live_rect.xy) / live_rect.zw;
+	vec2 puv = vec2((local_position.x - published_rect.x) / published_rect.z,
+		(published_rect.y - local_position.z) / published_rect.w);
+	bool in_live = all(greaterThanEqual(luv, vec2(0.0))) && all(lessThan(luv, vec2(1.0)));
+	bool in_published = has_published && all(greaterThanEqual(puv, vec2(0.0))) &&
+		all(lessThan(puv, vec2(1.0)));
+	float value = in_live ? floor(texture(live_classes, luv).r * 255.0 + 0.5) : 0.0;
+	bool owned = in_live && texture(owned_mask, luv).a > 0.5;
+	bool published_walk = in_published && texture(published, puv).r > 0.0;
+	vec3 color = vec3(0.0);
+	if (mode == 1) {
+		if (!in_published) discard;
+		color = published_walk ? vec3(0.25, 0.85, 0.35) : vec3(0.9, 0.25, 0.25);
+	} else if (mode == 2) {
+		if (!owned || value < 0.5) discard;
+		color = live_color(value);
+	} else {
+		if (!owned || !in_published) discard;
+		bool live_walk = value > 0.5 && (value < 1.5 || value > 4.5);
+		if (live_walk == published_walk) discard;
+		color = live_walk ? vec3(0.3, 1.0, 0.6) : vec3(1.0, 0.25, 0.8);
+	}
+	ALBEDO = color;
+	ALPHA = opacity;
+}
+"""
+
+var mode := Mode.OFF
+var last_message := ""
+var _root: Node3D
+var _node: MeshInstance3D
+var _material: ShaderMaterial
+var _live: Dictionary = {}
+var _published: Dictionary = {}
+var _live_signature := ""
+var _pending_signature := ""
+var _pending_since := 0
+
+
+## Shows `next_mode` on `root`; builds whatever data the mode needs.
+func set_mode(root: Node3D, next_mode: int) -> bool:
+	mode = next_mode
+	if mode == Mode.OFF or root == null or Probe.region_terrain(root) == null:
+		release()
+		if mode != Mode.OFF:
+			last_message = "The walkability overlay needs a territory with region terrain."
+			mode = Mode.OFF
+		return false
+	if _root != root:
+		release()
+		mode = next_mode
+		_root = root
+	if _published.is_empty():
+		_published = published_grid(root)
+	if mode in [Mode.PUBLISHED, Mode.CHANGES] and _published.has("error"):
+		# Nothing to show or compare against: say why and switch off.
+		var reason := String(_published.error)
+		release()
+		mode = Mode.OFF
+		last_message = reason
+		return false
+	if mode in [Mode.LIVE, Mode.CHANGES] and _live.is_empty():
+		_rebuild_live()
+	return _apply()
+
+
+## Recomputes LIVE now (the overlay otherwise waits for edits to settle).
+func rebuild() -> void:
+	if _root != null and is_instance_valid(_root) and mode in [Mode.LIVE, Mode.CHANGES]:
+		_rebuild_live()
+		_apply()
+
+
+func is_active() -> bool:
+	return mode != Mode.OFF and _node != null and is_instance_valid(_node)
+
+
+func node() -> MeshInstance3D:
+	return _node if _node != null and is_instance_valid(_node) else null
+
+
+func live_data() -> Dictionary:
+	return _live
+
+
+func published_data() -> Dictionary:
+	return _published
+
+
+## Call regularly: rebuilds LIVE after the terrain or blockers stop changing.
+func poll(dragging: bool) -> void:
+	if _root == null or not is_instance_valid(_root) or mode == Mode.OFF:
+		return
+	_sync_mesh()
+	if not mode in [Mode.LIVE, Mode.CHANGES] or dragging:
+		return
+	var signature := live_signature(_root)
+	if signature == _live_signature:
+		_pending_signature = ""
+		return
+	if signature != _pending_signature:
+		_pending_signature = signature
+		_pending_since = Time.get_ticks_msec()
+		return
+	if Time.get_ticks_msec() - _pending_since >= 600:
+		_rebuild_live()
+		_apply()
+
+
+func release() -> void:
+	if _node != null and is_instance_valid(_node):
+		if _node.get_parent() != null:
+			_node.get_parent().remove_child(_node)
+		_node.queue_free()
+	_node = null
+	_root = null
+	_live = {}
+	_published = {}
+	_live_signature = ""
+	_pending_signature = ""
+
+
+## What the cursor tile is, for the readout line. Empty when the overlay is off.
+func describe(local: Vector3) -> String:
+	if mode == Mode.OFF:
+		return ""
+	var parts := PackedStringArray()
+	if not _published.is_empty() and not _published.has("error"):
+		var walk: Variant = published_walkable(local)
+		if walk != null:
+			parts.append("published %s" % ("walkable" if walk else "not walkable"))
+	if not _live.is_empty():
+		var tile := live_tile(local)
+		if tile >= 0:
+			var text := String(TILE_NAMES[tile])
+			if tile == Tile.STEEP:
+				text += " (grade %.2f)" % grade_at(local)
+			elif tile == Tile.BLOCKED:
+				var index := _live_index(local)
+				text = "blocked by %s" % String(_live.blockers.get(index, "a structure"))
+			elif tile == Tile.DECK:
+				text = "deck of %s" % String(_live.decks.get(_live_index(local), "a bridge"))
+			parts.append("live %s" % text)
+	return "  ·  ".join(parts)
+
+
+func legend() -> Array:
+	return LEGEND.get(mode, [])
+
+
+## -1 outside the live grid, else a Tile value.
+func live_tile(local: Vector3) -> int:
+	var index := _live_index(local)
+	if index < 0:
+		return -1
+	if not bool(_live.owned.get_pixel(index % int(_live.width),
+			index / int(_live.width)).a > 0.5):
+		return Tile.OUTSIDE
+	return int((_live.classes as PackedByteArray)[index])
+
+
+## true / false inside the published grid, null outside it or without one.
+func published_walkable(local: Vector3) -> Variant:
+	if _published.is_empty() or _published.has("error"):
+		return null
+	var column := floori((local.x - float(_published.x0)) / float(_published.cell))
+	var row := floori((float(_published.z1) - local.z) / float(_published.cell))
+	if column < 0 or row < 0 or column >= int(_published.width) or row >= int(_published.rows):
+		return null
+	return (_published.bytes as PackedByteArray)[row * int(_published.width) + column] > 0
+
+
+## The pipeline's grade: the plane slope of the terrain triangle under `local`.
+func grade_at(local: Vector3) -> float:
+	if _live.is_empty():
+		return NAN
+	var heights: PackedFloat32Array = _live.heights
+	var grid: Vector2i = _live.grid
+	var cell := float(_live.cell)
+	var fx := clampf((local.x - float(_live.terrain_x0)) / cell, 0.0, float(grid.x) - 1.0000001)
+	var fz := clampf((local.z - float(_live.terrain_z0)) / cell, 0.0, float(grid.y) - 1.0000001)
+	var ix := mini(floori(fx), grid.x - 2)
+	var iz := mini(floori(fz), grid.y - 2)
+	var u := fx - float(ix)
+	var v := fz - float(iz)
+	var a := heights[iz * grid.x + ix]
+	var b := heights[iz * grid.x + ix + 1]
+	var c := heights[(iz + 1) * grid.x + ix]
+	var d := heights[(iz + 1) * grid.x + ix + 1]
+	var dx := (b - a if u + v <= 1.0 else d - c) / cell
+	var dz := (c - a if u + v <= 1.0 else d - b) / cell
+	return sqrt(dx * dx + dz * dz)
+
+
+## The published grid of the open territory, from its manifest's collision block.
+static func published_grid(root: Node3D) -> Dictionary:
+	var manifest_path := TimeOfDay.manifest_path_for(String(root.get("region_id")))
+	if manifest_path.is_empty():
+		return {"error": "No published manifest for this territory, so no published grid."}
+	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))
+	if not manifest is Dictionary or not (manifest as Dictionary).get("collision") is Dictionary:
+		return {"error": "The published manifest has no collision block."}
+	var collision: Dictionary = manifest.collision
+	var binary := manifest_path.get_base_dir().path_join(String(collision.get("binary",
+		collision.get("file", "collision.bin"))))
+	if not FileAccess.file_exists(binary):
+		return {"error": "Published collision grid is missing: %s" % binary}
+	var bytes := FileAccess.get_file_as_bytes(binary)
+	if bytes.size() < 16 or bytes.slice(0, 4).get_string_from_ascii() != "EWCG":
+		return {"error": "%s is not an EWCG grid." % binary.get_file()}
+	var width := bytes.decode_u32(8)
+	var rows := bytes.decode_u32(12)
+	var grid := bytes.slice(16)
+	if width <= 0 or rows <= 0 or grid.size() != width * rows:
+		return {"error": "%s has an unexpected size." % binary.get_file()}
+	var origin: Array = collision.get("originMetres", [0.0, 0.0])
+	var image := Image.create_from_data(width, rows, false, Image.FORMAT_L8, grid)
+	return {"bytes": grid, "width": width, "rows": rows, "x0": float(origin[0]),
+		"z1": float(origin[1]), "cell": float(collision.get("cellMetres", 0.5)),
+		"texture": ImageTexture.create_from_image(image), "path": binary,
+		"walkable_fraction": float(collision.get("walkableFraction", NAN))}
+
+
+const CONTINENT_PLAN_PATH := 	"res://../eloria-assets/maps/nymara-regions/_continent/diagonal-plan.json"
+
+
+## The sea level the bake floods to, or null for a territory with no published
+## manifest. The authoring scene has no sea node, so LIVE compares the saved
+## heights against this level. The manifest states it for some territories;
+## the rest take the continent plan's sea_level, as the bake itself does.
+static func manifest_sea_level(root: Node3D) -> Variant:
+	var manifest_path := TimeOfDay.manifest_path_for(String(root.get("region_id")))
+	if manifest_path.is_empty():
+		return null
+	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))
+	if manifest is Dictionary:
+		var water: Variant = ((manifest as Dictionary).get("environment", {}) as Dictionary).get("water")
+		if water is Dictionary and (water as Dictionary).has("seaLevel"):
+			return float(water.seaLevel)
+	if FileAccess.file_exists(CONTINENT_PLAN_PATH):
+		var plan: Variant = JSON.parse_string(FileAccess.get_file_as_string(CONTINENT_PLAN_PATH))
+		if plan is Dictionary and (plan as Dictionary).has("sea_level"):
+			return float(plan.sea_level)
+	return 0.0
+
+
+## Ground more than WADE below the sea level is under the sea. Whole terrain
+## cells clear of it are skipped; cells straddling it are checked per tile.
+static func _sea_pass(data: Dictionary, sea_level: float) -> void:
+	var heights: PackedFloat32Array = data.heights
+	var grid: Vector2i = data.grid
+	var cell := float(data.cell)
+	var tile := float(data.tile)
+	var width := int(data.width)
+	var rows := int(data.rows)
+	var classes: PackedByteArray = data.classes
+	var limit := sea_level - WADE
+	var per_cell := maxi(roundi(cell / tile), 1)
+	for iz in grid.y - 1:
+		for ix in grid.x - 1:
+			var a := heights[iz * grid.x + ix]
+			var b := heights[iz * grid.x + ix + 1]
+			var c := heights[(iz + 1) * grid.x + ix]
+			var d := heights[(iz + 1) * grid.x + ix + 1]
+			if minf(minf(a, b), minf(c, d)) >= limit:
+				continue
+			var whole := maxf(maxf(a, b), maxf(c, d)) < limit
+			for oz in per_cell:
+				for ox in per_cell:
+					var column := ix * per_cell + ox
+					var row := iz * per_cell + oz
+					if column >= width or row >= rows:
+						continue
+					if whole or _ground(data, float(data.x0) + (float(column) + 0.5) * tile,
+							float(data.z0) + (float(row) + 0.5) * tile) < limit:
+						classes[row * width + column] = Tile.WATER
+	data.classes = classes
+
+
+## Cheap fingerprint of everything LIVE depends on.
+static func live_signature(root: Node3D) -> String:
+	var terrain := Probe.region_terrain(root)
+	var parts := PackedStringArray([str(terrain.get("preview_revision")) if terrain != null else "-"])
+	var assets := root.get_node_or_null("AuthoredAssets")
+	if assets != null:
+		for child in assets.get_children():
+			if child.get_script() == ASSET_SCRIPT and String(child.get("collision_role")) != "none":
+				parts.append("%s%s" % [String(child.get("collision_role")),
+					str((child as Node3D).global_transform)])
+	for container in ["WaterRegions", "Bridges", "Rivers"]:
+		var node := root.get_node_or_null(container)
+		if node == null:
+			continue
+		for child in node.find_children("*", "Node3D", true, false):
+			parts.append("%s%s" % [child.name, str((child as Node3D).global_transform)])
+			if child is Path3D and (child as Path3D).curve != null:
+				parts.append(str((child as Path3D).curve.get_baked_points().size()))
+	return str(hash("|".join(parts)))
+
+
+func _rebuild_live() -> void:
+	var started := Time.get_ticks_msec()
+	_live = compute_live(_root)
+	_live_signature = live_signature(_root)
+	_pending_signature = ""
+	if _live.has("error"):
+		last_message = String(_live.error)
+		_live = {}
+		return
+	last_message = "Live walkability rebuilt in %d ms (%d × %d tiles)." % [
+		Time.get_ticks_msec() - started, int(_live.width), int(_live.rows)]
+
+
+## The LIVE classification on 1 m tiles (or the territory's metres per tile).
+static func compute_live(root: Node3D) -> Dictionary:
+	var terrain := Probe.region_terrain(root)
+	if terrain == null:
+		return {"error": "No region terrain."}
+	var heights: PackedFloat32Array = terrain.call("effective_heights")
+	var grid: Vector2i = terrain.get("grid_size")
+	var cell: float = terrain.get("cell_metres")
+	var origin: Vector2 = terrain.get("origin")
+	if heights.size() != grid.x * grid.y or grid.x < 2 or grid.y < 2:
+		return {"error": "The terrain height grid is not ready."}
+	var terrain_to_root: Transform3D = root.global_transform.affine_inverse() * terrain.global_transform
+	var terrain_origin: Vector3 = terrain_to_root * Vector3(origin.x, 0.0, origin.y)
+	var tile := float(root.get("metres_per_tile")) if root.get("metres_per_tile") != null else 1.0
+	tile = tile if tile > 0.0 else 1.0
+	var width := roundi(float(grid.x - 1) * cell / tile)
+	var rows := roundi(float(grid.y - 1) * cell / tile)
+	var classes := PackedByteArray()
+	classes.resize(width * rows)
+	classes.fill(Tile.WALKABLE)
+	var data := {"heights": heights, "grid": grid, "cell": cell, "tile": tile,
+		"terrain_x0": terrain_origin.x, "terrain_z0": terrain_origin.z,
+		"x0": terrain_origin.x, "z0": terrain_origin.z, "width": width, "rows": rows,
+		"classes": classes, "blockers": {}, "decks": {}}
+	_grade_pass(data)
+	var sea_level: Variant = manifest_sea_level(root)
+	if sea_level != null:
+		_sea_pass(data, float(sea_level))
+	_water_pass(root, data)
+	_structure_pass(root, data)
+	_deck_pass(root, data)
+	var framing := {"size": Vector2i(width, rows), "rect": Rect2(terrain_origin.x,
+		terrain_origin.z, float(width) * tile, float(rows) * tile), "pixels_per_metre": 1.0 / tile}
+	var polygon := TopDown.ownership_polygon_local(root)
+	var owned: Image
+	if polygon.size() >= 3:
+		owned = TopDown.ownership_mask(framing, polygon)
+	else:
+		owned = Image.create_empty(width, rows, false, Image.FORMAT_RGBA8)
+		owned.fill(Color(1, 1, 1, 1))
+	data.owned = owned
+	data.owned_texture = ImageTexture.create_from_image(owned)
+	data.texture = ImageTexture.create_from_image(Image.create_from_data(width, rows, false,
+		Image.FORMAT_L8, classes))
+	return data
+
+
+static func _grade_pass(data: Dictionary) -> void:
+	var heights: PackedFloat32Array = data.heights
+	var grid: Vector2i = data.grid
+	var cell := float(data.cell)
+	var tile := float(data.tile)
+	var width := int(data.width)
+	var classes: PackedByteArray = data.classes
+	var limit := MAX_GRADE * MAX_GRADE
+	if is_equal_approx(cell, tile * 2.0):
+		# Fast path: each 2 m terrain cell covers 2 × 2 tiles. A tile takes the
+		# worse of the triangles its half-metre cells fall in, like the served
+		# grid's fold, so the north-west tile sees only the lower triangle, the
+		# south-east only the upper, and the two diagonal tiles both.
+		for iz in grid.y - 1:
+			var row_a := iz * grid.x
+			var row_b := row_a + grid.x
+			for ix in grid.x - 1:
+				var a := heights[row_a + ix]
+				var b := heights[row_a + ix + 1]
+				var c := heights[row_b + ix]
+				var d := heights[row_b + ix + 1]
+				var lower := ((b - a) * (b - a) + (c - a) * (c - a)) / (cell * cell) > limit
+				var upper := ((d - c) * (d - c) + (d - b) * (d - b)) / (cell * cell) > limit
+				if not lower and not upper:
+					continue
+				var t := (iz * 2) * width + ix * 2
+				if lower:
+					classes[t] = Tile.STEEP
+				classes[t + 1] = Tile.STEEP
+				classes[t + width] = Tile.STEEP
+				if upper:
+					classes[t + width + 1] = Tile.STEEP
+		data.classes = classes
+		return
+	var rows := int(data.rows)
+	for row in rows:
+		for column in width:
+			var x := (float(column) + 0.5) * tile / cell
+			var z := (float(row) + 0.5) * tile / cell
+			var ix := mini(floori(x), grid.x - 2)
+			var iz := mini(floori(z), grid.y - 2)
+			var u := x - float(ix)
+			var v := z - float(iz)
+			var a := heights[iz * grid.x + ix]
+			var b := heights[iz * grid.x + ix + 1]
+			var c := heights[(iz + 1) * grid.x + ix]
+			var d := heights[(iz + 1) * grid.x + ix + 1]
+			var dx := (b - a if u + v <= 1.0 else d - c) / cell
+			var dz := (c - a if u + v <= 1.0 else d - b) / cell
+			if dx * dx + dz * dz > limit:
+				classes[row * width + column] = Tile.STEEP
+	data.classes = classes
+
+
+static func _ground(data: Dictionary, x: float, z: float) -> float:
+	var heights: PackedFloat32Array = data.heights
+	var grid: Vector2i = data.grid
+	var cell := float(data.cell)
+	var fx := clampf((x - float(data.terrain_x0)) / cell, 0.0, float(grid.x) - 1.0000001)
+	var fz := clampf((z - float(data.terrain_z0)) / cell, 0.0, float(grid.y) - 1.0000001)
+	var ix := mini(floori(fx), grid.x - 2)
+	var iz := mini(floori(fz), grid.y - 2)
+	var u := fx - float(ix)
+	var v := fz - float(iz)
+	var a := heights[iz * grid.x + ix]
+	var b := heights[iz * grid.x + ix + 1]
+	var c := heights[(iz + 1) * grid.x + ix]
+	var d := heights[(iz + 1) * grid.x + ix + 1]
+	if u + v <= 1.0:
+		return a + (b - a) * u + (c - a) * v
+	return d + (c - d) * (1.0 - u) + (b - d) * (1.0 - v)
+
+
+## Column and row bounds (inclusive) of the tiles whose centres can lie in the
+## XZ box; x > y means empty. Loops stay inline because GDScript lambdas capture
+## packed arrays by value, so writes made inside a callback would be lost.
+static func _tile_range(data: Dictionary, minimum: Vector2, maximum: Vector2) -> Vector4i:
+	var tile := float(data.tile)
+	return Vector4i(maxi(floori((minimum.x - float(data.x0)) / tile), 0),
+		mini(floori((maximum.x - float(data.x0)) / tile), int(data.width) - 1),
+		maxi(floori((minimum.y - float(data.z0)) / tile), 0),
+		mini(floori((maximum.y - float(data.z0)) / tile), int(data.rows) - 1))
+
+
+static func _tile_centre(data: Dictionary, column: int, row: int) -> Vector2:
+	var tile := float(data.tile)
+	return Vector2(float(data.x0) + (float(column) + 0.5) * tile,
+		float(data.z0) + (float(row) + 0.5) * tile)
+
+
+static func _water_pass(root: Node3D, data: Dictionary) -> void:
+	var classes: PackedByteArray = data.classes
+	var width := int(data.width)
+	var inverse := root.global_transform.affine_inverse()
+	var rivers := root.get_node_or_null("Rivers")
+	if rivers != null:
+		for path in rivers.get_children():
+			if path.get_script() != PATH_SCRIPT or String(path.get("kind")) != "river":
+				continue
+			var to_root: Transform3D = inverse * (path as Node3D).global_transform
+			var scale := Vector2(to_root.basis.x.x, to_root.basis.x.z).length()
+			var points: Array = path.call("snapshot_points")
+			for index in points.size() - 1:
+				var first: Vector3 = to_root * _vec3(points[index].position)
+				var second: Vector3 = to_root * _vec3(points[index + 1].position)
+				var first_half := float(points[index].width) * scale * 0.5
+				var second_half := float(points[index + 1].width) * scale * 0.5
+				var reach := maxf(first_half, second_half)
+				var a := Vector2(first.x, first.z)
+				var ab := Vector2(second.x, second.z) - a
+				var length_squared := maxf(ab.length_squared(), 0.000001)
+				var span := _tile_range(data, Vector2(minf(first.x, second.x),
+					minf(first.z, second.z)) - Vector2.ONE * reach, Vector2(maxf(first.x,
+					second.x), maxf(first.z, second.z)) + Vector2.ONE * reach)
+				for row in range(span.z, span.w + 1):
+					for column in range(span.x, span.y + 1):
+						var centre := _tile_centre(data, column, row)
+						var t := clampf((centre - a).dot(ab) / length_squared, 0.0, 1.0)
+						if centre.distance_to(a + ab * t) > lerpf(first_half, second_half, t):
+							continue
+						if lerpf(first.y, second.y, t) - _ground(data, centre.x, centre.y) > WADE:
+							classes[row * width + column] = Tile.WATER
+	var lakes := root.get_node_or_null("WaterRegions")
+	if lakes != null:
+		for lake in lakes.get_children():
+			if lake.get_script() != WATER_SCRIPT:
+				continue
+			var centre_3d: Vector3 = inverse * (lake as Node3D).global_position
+			var middle := Vector2(centre_3d.x, centre_3d.z)
+			var radii: Vector2 = lake.get("radii")
+			if radii.x <= 0.0 or radii.y <= 0.0:
+				continue
+			var span := _tile_range(data, middle - radii, middle + radii)
+			for row in range(span.z, span.w + 1):
+				for column in range(span.x, span.y + 1):
+					var centre := _tile_centre(data, column, row)
+					var offset := (centre - middle) / radii
+					if offset.length_squared() <= 1.0 and \
+							centre_3d.y - _ground(data, centre.x, centre.y) > WADE:
+						classes[row * width + column] = Tile.WATER
+	data.classes = classes
+
+
+static func _structure_pass(root: Node3D, data: Dictionary) -> void:
+	var assets := root.get_node_or_null("AuthoredAssets")
+	if assets == null:
+		return
+	var classes: PackedByteArray = data.classes
+	var blockers: Dictionary = data.blockers
+	var width := int(data.width)
+	var inverse := root.global_transform.affine_inverse()
+	for asset in assets.get_children():
+		if asset.get_script() != ASSET_SCRIPT or String(asset.get("collision_role")) != "solid":
+			continue
+		for mesh_value in (asset as Node).find_children("*", "MeshInstance3D", true, false):
+			var mesh_node := mesh_value as MeshInstance3D
+			if mesh_node.mesh == null or not mesh_node.is_visible_in_tree():
+				continue
+			var box := _footprint(inverse * mesh_node.global_transform, mesh_node.get_aabb())
+			var corners: Array[Vector2] = box.corners
+			var span := _tile_range(data, box.minimum, box.maximum)
+			for row in range(span.z, span.w + 1):
+				for column in range(span.x, span.y + 1):
+					var centre := _tile_centre(data, column, row)
+					if not _inside_quad(corners, centre):
+						continue
+					var ground := _ground(data, centre.x, centre.y)
+					if float(box.bottom) < ground + ACTOR_FLOOR_CLEARANCE + ACTOR_HEIGHT and \
+							float(box.top) > ground + ACTOR_FLOOR_CLEARANCE:
+						classes[row * width + column] = Tile.BLOCKED
+						blockers[row * width + column] = String(asset.name)
+	data.classes = classes
+
+
+static func _deck_pass(root: Node3D, data: Dictionary) -> void:
+	var classes: PackedByteArray = data.classes
+	var width := int(data.width)
+	var inverse := root.global_transform.affine_inverse()
+	var decks: Array = []
+	var sources: Array[String] = []
+	var deck_sources: Dictionary = data.decks
+	var assets := root.get_node_or_null("AuthoredAssets")
+	if assets != null:
+		for asset in assets.get_children():
+			if asset.get_script() == ASSET_SCRIPT and \
+					String(asset.get("collision_role")) == "walk_surface":
+				for mesh_value in (asset as Node).find_children("*", "MeshInstance3D", true, false):
+					var mesh_node := mesh_value as MeshInstance3D
+					if mesh_node.mesh != null and mesh_node.is_visible_in_tree():
+						_rasterise_walk_triangles(data, inverse * mesh_node.global_transform,
+							mesh_node.mesh.get_faces(), String(asset.name))
+	var bridges := root.get_node_or_null("Bridges")
+	if bridges != null:
+		for bridge in bridges.get_children():
+			var start := bridge.get_node_or_null("Start") as Node3D
+			var finish := bridge.get_node_or_null("End") as Node3D
+			if start == null or finish == null or bridge.get("width") == null:
+				continue
+			var a: Vector3 = inverse * start.global_position
+			var b: Vector3 = inverse * finish.global_position
+			var along := Vector2(b.x - a.x, b.z - a.z)
+			if along.length_squared() < 0.0001:
+				continue
+			var side := Vector2(-along.y, along.x).normalized() * float(bridge.get("width")) * 0.5
+			var quad: Array[Vector2] = [Vector2(a.x, a.z) + side, Vector2(b.x, b.z) + side,
+				Vector2(b.x, b.z) - side, Vector2(a.x, a.z) - side]
+			decks.append(quad)
+			sources.append(String(bridge.name))
+	classes = data.classes
+	for deck_index in decks.size():
+		var corners_value: Variant = decks[deck_index]
+		var corners: Array[Vector2] = []
+		corners.assign(corners_value)
+		var minimum := Vector2(INF, INF)
+		var maximum := Vector2(-INF, -INF)
+		for point in corners:
+			minimum = minimum.min(point)
+			maximum = maximum.max(point)
+		var span := _tile_range(data, minimum, maximum)
+		for row in range(span.z, span.w + 1):
+			for column in range(span.x, span.y + 1):
+				if _inside_quad(corners, _tile_centre(data, column, row)):
+					classes[row * width + column] = Tile.DECK
+					deck_sources[row * width + column] = sources[deck_index]
+	data.classes = classes
+
+
+## Marks the tiles whose centres lie under a walkable (upward, within
+## MAX_GRADE) triangle of a walk-surface mesh, as the bake's deck raster does.
+static func _rasterise_walk_triangles(data: Dictionary, transform: Transform3D,
+		faces: PackedVector3Array, source: String) -> void:
+	var classes: PackedByteArray = data.classes
+	var deck_sources: Dictionary = data.decks
+	var width := int(data.width)
+	var upward := 1.0 / sqrt(1.0 + MAX_GRADE * MAX_GRADE) - 0.000001
+	for index in range(0, faces.size() - 2, 3):
+		var a: Vector3 = transform * faces[index]
+		var b: Vector3 = transform * faces[index + 1]
+		var c: Vector3 = transform * faces[index + 2]
+		var normal := (b - a).cross(c - a)
+		if normal.length_squared() < 0.000001:
+			continue
+		normal = normal.normalized()
+		if absf(normal.y) < upward:
+			continue
+		var pa := Vector2(a.x, a.z)
+		var pb := Vector2(b.x, b.z)
+		var pc := Vector2(c.x, c.z)
+		var span := _tile_range(data, pa.min(pb).min(pc), pa.max(pb).max(pc))
+		for row in range(span.z, span.w + 1):
+			for column in range(span.x, span.y + 1):
+				if Geometry2D.point_is_inside_triangle(_tile_centre(data, column, row), pa, pb, pc):
+					classes[row * width + column] = Tile.DECK
+					deck_sources[row * width + column] = source
+	data.classes = classes
+
+
+## An oriented box's XZ footprint (as a quad) and its vertical extent.
+static func _footprint(transform: Transform3D, box: AABB) -> Dictionary:
+	var low := box.position
+	var high := box.end
+	var quad: Array[Vector2] = []
+	for corner in [Vector3(low.x, low.y, low.z), Vector3(high.x, low.y, low.z),
+			Vector3(high.x, low.y, high.z), Vector3(low.x, low.y, high.z)]:
+		var point: Vector3 = transform * corner
+		quad.append(Vector2(point.x, point.z))
+	var bottom := INF
+	var top := -INF
+	for x in [low.x, high.x]:
+		for y in [low.y, high.y]:
+			for z in [low.z, high.z]:
+				var point: Vector3 = transform * Vector3(x, y, z)
+				bottom = minf(bottom, point.y)
+				top = maxf(top, point.y)
+	var minimum := Vector2(INF, INF)
+	var maximum := Vector2(-INF, -INF)
+	for point in quad:
+		minimum = minimum.min(point)
+		maximum = maximum.max(point)
+	return {"corners": quad, "bottom": bottom, "top": top, "minimum": minimum, "maximum": maximum}
+
+
+static func _inside_quad(quad: Array[Vector2], point: Vector2) -> bool:
+	var sign := 0.0
+	for index in 4:
+		var a := quad[index]
+		var b := quad[(index + 1) % 4]
+		var cross := (b - a).cross(point - a)
+		if absf(cross) < 0.000001:
+			continue
+		if sign == 0.0:
+			sign = signf(cross)
+		elif signf(cross) != sign:
+			return false
+	return true
+
+
+static func _vec3(value: Variant) -> Vector3:
+	var values: Array = value
+	return Vector3(float(values[0]), float(values[1]), float(values[2]))
+
+
+func _live_index(local: Vector3) -> int:
+	if _live.is_empty():
+		return -1
+	var column := floori((local.x - float(_live.x0)) / float(_live.tile))
+	var row := floori((local.z - float(_live.z0)) / float(_live.tile))
+	if column < 0 or row < 0 or column >= int(_live.width) or row >= int(_live.rows):
+		return -1
+	return row * int(_live.width) + column
+
+
+func _apply() -> bool:
+	if _root == null or not is_instance_valid(_root):
+		return false
+	if _node == null or not is_instance_valid(_node):
+		_node = MeshInstance3D.new()
+		_node.name = NODE_NAME
+		_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_node.top_level = true
+		var shader := Shader.new()
+		shader.code = SHADER_CODE
+		_material = ShaderMaterial.new()
+		_material.shader = shader
+		_material.render_priority = 3
+		_node.material_override = _material
+		_root.add_child(_node, false, Node.INTERNAL_MODE_BACK)
+	_sync_mesh()
+	_material.set_shader_parameter("mode", int(mode))
+	_material.set_shader_parameter("region_inverse",
+		Projection(_root.global_transform.affine_inverse()))
+	var has_published := not _published.is_empty() and not _published.has("error")
+	_material.set_shader_parameter("has_published", has_published)
+	if has_published:
+		_material.set_shader_parameter("published", _published.texture)
+		_material.set_shader_parameter("published_rect", Vector4(float(_published.x0),
+			float(_published.z1), float(_published.width) * float(_published.cell),
+			float(_published.rows) * float(_published.cell)))
+	if not _live.is_empty():
+		_material.set_shader_parameter("live_classes", _live.texture)
+		_material.set_shader_parameter("owned_mask", _live.owned_texture)
+		_material.set_shader_parameter("live_rect", Vector4(float(_live.x0), float(_live.z0),
+			float(_live.width) * float(_live.tile), float(_live.rows) * float(_live.tile)))
+	_node.visible = true
+	if mode == Mode.PUBLISHED and has_published:
+		last_message = "Published grid: %s (%d × %d half-metre cells, %.1f%% walkable)." % [
+			String(_published.path).get_file(), int(_published.width), int(_published.rows),
+			float(_published.walkable_fraction) * 100.0]
+	elif mode == Mode.CHANGES and not has_published:
+		last_message = "No published grid to compare with; showing nothing."
+	return true
+
+
+func _sync_mesh() -> void:
+	if _node == null or not is_instance_valid(_node) or _root == null:
+		return
+	var terrain := Probe.region_terrain(_root)
+	var preview := terrain.get_node_or_null("__TerrainPreview") as MeshInstance3D \
+		if terrain != null else null
+	if preview == null:
+		_node.visible = false
+		return
+	if _node.mesh != preview.mesh:
+		_node.mesh = preview.mesh
+	_node.global_transform = preview.global_transform
