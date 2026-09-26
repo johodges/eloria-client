@@ -8172,11 +8172,18 @@ static func _banner_colour(kind: String, percent: float) -> Color:
 	return Color(1.0, 0.55, 0.9).lerp(Color(0.73, 0.28, 0.86), fraction)
 
 func _update_legacy_clock_and_compass() -> void:
-	var elapsed_seconds := 0.0
+	# Carried forward at the pace the server's minutes actually arrive (an
+	# invasion master's #speed changes it), a real minute each until two have
+	# been seen, and never on into a minute the server has not stated.
+	var through_minute := 0.0
 	if AppState.game_minute_anchor_msec > 0:
-		elapsed_seconds = maxf(0.0,
-			float(Time.get_ticks_msec() - AppState.game_minute_anchor_msec) / 1000.0)
-	var minute_fraction: float = fmod(float(AppState.game_minute) + elapsed_seconds / 60.0, 360.0)
+		var interval_msec: int = AppState.game_minute_interval_msec
+		if interval_msec <= 0:
+			interval_msec = 60000
+		through_minute = clampf(
+			float(Time.get_ticks_msec() - AppState.game_minute_anchor_msec)
+				/ float(interval_msec), 0.0, 59.0 / 60.0)
+	var minute_fraction: float = fmod(float(AppState.game_minute) + through_minute, 360.0)
 	var display_minute: int = floori(minute_fraction)
 	# Eternal Lands' digital clock is H:MM, with seconds behind an option; its
 	# analog dial is the whole 360-minute day - one degree per game minute - so

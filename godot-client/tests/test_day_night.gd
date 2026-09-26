@@ -248,6 +248,13 @@ func _run() -> void:
 	var carried: float = float(app_state.call("continuous_game_minute"))
 	_expect(carried >= 101.0 and carried < 102.0,
 		"after two minutes the clock runs on from the second: %f" % carried)
+	# A #set_clock jump is not a pace: the time since the last minute says
+	# nothing about how fast the clock runs, so the measured interval stands.
+	app_state.set("game_minute_interval_msec", 1500)
+	app_state.call("_on_packet", 5, PackedByteArray([200, 0]))
+	_expect(int(app_state.get("game_minute")) == 200
+		and int(app_state.get("game_minute_interval_msec")) == 1500,
+		"a jumped minute is taken without re-measuring the clock's pace")
 
 	print("day night tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)

@@ -528,7 +528,11 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			state_changed.emit(&"clock")
 		"new_minute":
 			var minute_arrived_msec: int = Time.get_ticks_msec()
-			if game_minute_anchor_msec > 0 and int(event.minute) != game_minute:
+			# Only a minute that follows the last one measures the pace. An
+			# invasion master's #set_clock jumps the clock, and the time since
+			# the previous minute says nothing about how fast it is running.
+			if (game_minute_anchor_msec > 0
+					and int(event.minute) == (game_minute + 1) % 360):
 				game_minute_interval_msec = (minute_arrived_msec
 					- game_minute_anchor_msec)
 			game_minute = int(event.minute)
