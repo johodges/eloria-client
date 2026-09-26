@@ -18,7 +18,8 @@ const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
 const REFERENCE_SCRIPT := preload("res://addons/map_authoring_workspace/reference_preview.gd")
 const MAX_SIDE := 8192
 const HELPER_PREFIXES := ["__MapAssetGhost", "__MapAuthoringCursorGrid", "__TerrainSculptCursor",
-	"__MapAuthoringMarkerOverlay", "__MapAuthoringWalkability", "__MapAuthoringPathDraft"]
+	"__MapAuthoringMarkerOverlay", "__MapAuthoringWalkability", "__MapAuthoringPathDraft",
+	"__MapAuthoringCopyDrag", "__MapAuthoringPlaytest", "__MapAuthoringFocus"]
 const CAMERA_CLEARANCE := 60.0
 const MAP_MINIMUM_AMBIENT := 0.9
 
@@ -65,6 +66,49 @@ static func plan(root: Node3D, pixels_per_metre: float,
 static func capture(root: Node3D, path: String, pixels_per_metre: float,
 		include_references: bool, time_label: String = "",
 		clip_to_ownership: bool = true) -> Dictionary:
+	var rendered: Dictionary = await render(root, pixels_per_metre, include_references,
+		clip_to_ownership)
+	if rendered.has("error"):
+		return rendered
+	var image: Image = rendered.image
+	var framing: Dictionary = rendered.framing
+	var polygon: PackedVector2Array = rendered.polygon
+	var absolute := ProjectSettings.globalize_path(path)
+	DirAccess.make_dir_recursive_absolute(absolute.get_base_dir())
+	var save_error := image.save_png(absolute)
+	if save_error != OK:
+		return {"error": "Could not write %s (%s)." % [absolute, error_string(save_error)]}
+	var rect: Rect2 = framing.rect
+	var sidecar := {
+		"schema": "eloria-map-top-down-capture-v1",
+		"regionId": String(root.get("region_id")) if root.get("region_id") != null else "",
+		"scene": root.scene_file_path,
+		"image": absolute.get_file(),
+		"widthPixels": image.get_width(),
+		"heightPixels": image.get_height(),
+		"metresPerPixel": 1.0 / float(framing.pixels_per_metre),
+		"orientation": "north-up; +X east to the right, +Z south downward",
+		"territoryLocalBounds": {"minX": rect.position.x, "minZ": rect.position.y,
+			"maxX": rect.end.x, "maxZ": rect.end.y},
+		"heightRange": [framing.min_height, framing.max_height],
+		"includesReferences": include_references,
+		"clippedToOwnership": polygon.size() >= 3,
+		"lighting": time_label,
+		"capturedAt": Time.get_datetime_string_from_system(true) + "Z",
+	}
+	var sidecar_path := absolute.get_basename() + ".json"
+	var file := FileAccess.open(sidecar_path, FileAccess.WRITE)
+	if file != null:
+		file.store_string(JSON.stringify(sidecar, "  ") + "\n")
+		file.close()
+	return {"path": absolute, "sidecar": sidecar_path, "size": image.get_size()}
+
+
+## Renders the top-down image in memory. Awaits two frames; returns
+## {"image", "framing", "polygon"} or {"error"}. Pixels outside the ownership
+## polygon are transparent when `clip_to_ownership` is set.
+static func render(root: Node3D, pixels_per_metre: float, include_references: bool,
+		clip_to_ownership: bool = true) -> Dictionary:
 	var polygon := ownership_polygon_local(root) if clip_to_ownership else PackedVector2Array()
 	var framing := plan(root, pixels_per_metre, polygon)
 	if framing.has("error"):
@@ -100,7 +144,8 @@ static func capture(root: Node3D, path: String, pixels_per_metre: float,
 	for node: Node3D in hidden:
 		if is_instance_valid(node):
 			node.visible = true
-	root.remove_child(viewport)
+	if is_instance_valid(root) and viewport.get_parent() == root:
+		root.remove_child(viewport)
 	viewport.queue_free()
 	if image == null or image.is_empty():
 		return {"error": "The renderer returned no image."}
@@ -111,35 +156,7 @@ static func capture(root: Node3D, path: String, pixels_per_metre: float,
 		clipped.blend_rect_mask(image, ownership_mask(framing, polygon),
 			Rect2i(Vector2i.ZERO, image.get_size()), Vector2i.ZERO)
 		image = clipped
-	var absolute := ProjectSettings.globalize_path(path)
-	DirAccess.make_dir_recursive_absolute(absolute.get_base_dir())
-	var save_error := image.save_png(absolute)
-	if save_error != OK:
-		return {"error": "Could not write %s (%s)." % [absolute, error_string(save_error)]}
-	var rect: Rect2 = framing.rect
-	var sidecar := {
-		"schema": "eloria-map-top-down-capture-v1",
-		"regionId": String(root.get("region_id")) if root.get("region_id") != null else "",
-		"scene": root.scene_file_path,
-		"image": absolute.get_file(),
-		"widthPixels": image.get_width(),
-		"heightPixels": image.get_height(),
-		"metresPerPixel": 1.0 / float(framing.pixels_per_metre),
-		"orientation": "north-up; +X east to the right, +Z south downward",
-		"territoryLocalBounds": {"minX": rect.position.x, "minZ": rect.position.y,
-			"maxX": rect.end.x, "maxZ": rect.end.y},
-		"heightRange": [framing.min_height, framing.max_height],
-		"includesReferences": include_references,
-		"clippedToOwnership": polygon.size() >= 3,
-		"lighting": time_label,
-		"capturedAt": Time.get_datetime_string_from_system(true) + "Z",
-	}
-	var sidecar_path := absolute.get_basename() + ".json"
-	var file := FileAccess.open(sidecar_path, FileAccess.WRITE)
-	if file != null:
-		file.store_string(JSON.stringify(sidecar, "  ") + "\n")
-		file.close()
-	return {"path": absolute, "sidecar": sidecar_path, "size": image.get_size()}
+	return {"image": image, "framing": framing, "polygon": polygon}
 
 
 ## The pixel a territory-local point lands on in a capture described by `framing`.

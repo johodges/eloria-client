@@ -2,7 +2,10 @@ extends SceneTree
 ## Editor-mode checks for the map authoring usability layer on a tiny disposable
 ## region fixture: the fast terrain probe, the cursor readout and grid, ghost
 ## placement with its hotkeys and keep-placing, batch selection tools, prefabs,
-## undo/redo, and that no helper node is ever saved.
+## sculpt keys, time of day, top-down capture, markers, walkability, path
+## drawing and extension, groups and copies, the selection bar, the play-test
+## walker, the minimap, the territory picker, asset intake, the low-spec view,
+## the toolbar, undo/redo, and that no helper node is ever saved.
 ##
 ## Godot_v4.7.2-stable_win64_console.exe --editor --headless --path . \
 ##     --script res://tests/test_map_authoring_usability_editor.gd
@@ -24,6 +27,7 @@ const Markers := preload("res://addons/map_asset_palette/marker_library.gd")
 const Walkability := preload("res://addons/map_authoring_usability/walkability_overlay.gd")
 const MARKER := preload("res://src/dev/map_authoring_region/gameplay_marker.gd")
 const WATER := preload("res://src/dev/map_authoring_region/water_region_control.gd")
+const GroupTools := preload("res://addons/map_authoring_usability/group_tools.gd")
 const DIR := "res://test-artifacts/map-usability"
 const HEIGHT_PATH := DIR + "/fixture-heights.f32le"
 const SCENE_PATH := DIR + "/fixture.tscn"
@@ -33,7 +37,7 @@ const GRID := Vector2i(41, 41)
 const SETTING_KEYS := ["placement/keep_placing", "placement/snap_to_grid", "grid/step",
 	"grid/cursor_grid", "placement/random_rotation", "placement/size_variation",
 	"placement/align_to_surface", "viewport/show_cursor_readout", "time_of_day/minute",
-	"markers/show", "markers/labels"]
+	"markers/show", "markers/labels", "performance/low_spec"]
 
 var failures := 0
 var _saved_settings := {}
@@ -67,6 +71,14 @@ func _run() -> void:
 	if palette == null or usability == null:
 		_finish()
 		return
+	# Let the editor finish its first scan and layout load, as it has before a
+	# person opens a scene; loading the layout mid-test is not a real situation.
+	var filesystem := _editor.call("get_resource_filesystem") as EditorFileSystem
+	for _attempt in 1200:
+		if not filesystem.is_scanning():
+			break
+		await create_timer(0.1).timeout
+	await create_timer(1.5).timeout
 	var settings := _editor.call("get_editor_settings") as EditorSettings
 	_expect(settings.has_setting("map_authoring/grid/step") and
 		settings.has_shortcut("map_authoring/rotate_left") and
@@ -119,6 +131,15 @@ func _run() -> void:
 	_test_marker_palette(palette, usability, root, camera)
 	_test_walkability(usability, root)
 	_test_path_drawing(palette, usability, root, camera, entry)
+	_test_road_extension(usability, root, camera)
+	await _test_groups_and_copies(usability, root, camera)
+	_test_selection_bar(usability, root)
+	_test_play_test(usability, root, camera)
+	await _test_minimap(usability, root)
+	_test_territory_picker()
+	await _test_asset_intake(palette)
+	_test_low_spec(usability, root)
+	_test_toolbar(usability)
 	usability.call("set_time_preview", true, 90.0)
 	usability.call("set_walkability_mode", Walkability.Mode.LIVE)
 	usability.call("start_path_drawing", "road")
@@ -687,6 +708,10 @@ func _test_save_excludes_helpers(palette: Object, usability: Object, root: Node3
 		not "__MapAuthoringWalkability" in text and not "__MapAuthoringPathDraft" in text and
 		'path_id = "road-01"' in text and 'record_id = "crystal-02"' in text,
 		"new markers and roads are saved; marker pins, walkability tint and path drafts never are")
+	_expect(saved and 'metadata/map_authoring_group = "group-01"' in text and
+		not "__MapAuthoringCopyDrag" in text and not "__MapAuthoringPlaytest" in text and
+		not "__MapAuthoringFocus" in text,
+		"group tags are saved with their objects; copy ghosts, the walker and focus helpers never are")
 	_expect(saved and not "__MapAssetGhost" in text and not "__MapAuthoringCursorGrid" in text and
 		not "__MapAuthoringTimeOfDay" in text and not "DirectionalLight3D" in text and
 		helpers.is_empty() and reopened.get_node("AuthoredAssets").get_child_count() ==
@@ -945,6 +970,498 @@ func _test_path_drawing(palette: Object, usability: Object, root: Node3D, camera
 		"Escape discards a draft without adding anything")
 
 
+func _test_road_extension(usability: Object, root: Node3D, camera: Camera3D) -> void:
+	var centre := camera.get_viewport().get_visible_rect().size * 0.5
+	var tool: RefCounted = usability.call("path_draw_tool")
+	var road := root.get_node("Roads/road-01") as Path3D
+	var original: Array[Vector3] = []
+	for index in road.curve.point_count:
+		original.append(road.curve.get_point_position(index))
+	var last: Vector3 = road.global_transform * original[original.size() - 1]
+	usability.call("start_path_drawing", "road")
+	_aim(camera, root, Vector2(last.x + 0.8, last.z + 0.6))
+	usability.call("_forward_3d_gui_input", camera, _click(centre))
+	var extending: Node3D = tool.call("extending")
+	var added: Array[Vector3] = []
+	for xz in [Vector2(34.0, 30.0), Vector2(36.0, 36.0)]:
+		_aim(camera, root, xz)
+		usability.call("_forward_3d_gui_input", camera, _click(centre))
+		added.append(Probe.ray_hit(root, Vector3(xz.x, 60.0, xz.y), Vector3.DOWN) as Vector3)
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_ENTER))
+	var count := road.curve.point_count
+	var at_end := count == original.size() + 2 and \
+		(road.global_transform * road.curve.get_point_position(count - 1)).distance_to(added[1]) < 0.05 and \
+		road.curve.get_point_position(original.size() - 1).is_equal_approx(original[original.size() - 1])
+	_expect(extending == road and at_end and root.get_node_or_null("Roads/road-02") == null,
+		"starting on a road's end extends that road instead of drawing a new one")
+	var history := _undo.get_history_undo_redo(_undo.get_object_history_id(root))
+	history.undo()
+	var undone := road.curve.point_count == original.size()
+	history.redo()
+	_expect(undone and road.curve.point_count == original.size() + 2,
+		"extending a road is one undo step")
+	var first: Vector3 = road.global_transform * original[0]
+	usability.call("start_path_drawing", "road")
+	_aim(camera, root, Vector2(first.x, first.z))
+	usability.call("_forward_3d_gui_input", camera, _click(centre))
+	_aim(camera, root, Vector2(4.0, 4.0))
+	usability.call("_forward_3d_gui_input", camera, _click(centre))
+	var front := Probe.ray_hit(root, Vector3(4.0, 60.0, 4.0), Vector3.DOWN) as Vector3
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_ENTER))
+	_expect(road.curve.point_count == original.size() + 3 and
+		(road.global_transform * road.curve.get_point_position(0)).distance_to(front) < 0.05 and
+		road.curve.get_point_position(1).is_equal_approx(original[0]),
+		"starting on a road's first point extends it at the start")
+	history.undo()
+	usability.call("start_path_drawing", "road")
+	_aim(camera, root, Vector2(first.x, first.z))
+	var ctrl_click := _click(centre)
+	ctrl_click.ctrl_pressed = true
+	usability.call("_forward_3d_gui_input", camera, ctrl_click)
+	_expect(tool.call("extending") == null and (tool.get("points") as Array).size() == 1,
+		"Ctrl+click on a road's end starts a separate road there")
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_ESCAPE))
+
+
+func _test_groups_and_copies(usability: Object, root: Node3D, camera: Camera3D) -> void:
+	var selection := _editor.call("get_selection") as EditorSelection
+	var history := _undo.get_history_undo_redo(_undo.get_object_history_id(root))
+	var centre := camera.get_viewport().get_visible_rect().size * 0.5
+	var assets := root.get_node("AuthoredAssets")
+	var a := assets.get_child(0) as Node3D
+	var b := assets.get_child(1) as Node3D
+	_select([a, b])
+	var identity: String = usability.call("group_selection")
+	var tagged := GroupTools.group_of(a) == identity and GroupTools.group_of(b) == identity
+	history.undo()
+	var untagged := GroupTools.group_of(a).is_empty() and GroupTools.group_of(b).is_empty()
+	history.redo()
+	_expect(identity == "group-01" and tagged and untagged and GroupTools.group_of(b) == identity,
+		"Group tags the selection as group-01 in one undo step")
+	_select([a])
+	await _frames(2)
+	var expanded := selection.get_selected_nodes()
+	_expect(expanded.size() == 2 and b in expanded,
+		"selecting one group member selects the whole group")
+	var double := _click(centre)
+	double.double_click = true
+	usability.call("_forward_3d_gui_input", camera, double)
+	_select([a])
+	await _frames(2)
+	_expect(selection.get_selected_nodes().size() == 1 and
+		String(usability.call("open_group")) == identity,
+		"a double-click opens the group so a single member can be picked")
+	var crystal := root.get_node("Gameplay/Harvestables/crystal-01") as Node3D
+	_select([crystal])
+	await _frames(2)
+	_expect(String(usability.call("open_group")).is_empty(),
+		"selecting outside an open group closes it")
+	_select([a])
+	await _frames(2)
+	usability.call("_forward_3d_gui_input", camera, _ctrl_key(KEY_G, true))
+	var ungrouped := GroupTools.group_of(a).is_empty() and GroupTools.group_of(b).is_empty()
+	_select([a, b])
+	usability.call("_forward_3d_gui_input", camera, _ctrl_key(KEY_G, false))
+	_expect(ungrouped and GroupTools.group_of(a) == "group-01" and
+		GroupTools.group_of(b) == "group-01",
+		"Ctrl+Shift+G ungroups and Ctrl+G groups in the 3D view")
+	var ids := {}
+	for child in assets.get_children():
+		ids[String(child.get("asset_id"))] = true
+	var before := assets.get_child_count()
+	_select([a, b])
+	var copies: Array = usability.call("duplicate_selection", Vector3(3.0, 0.0, 3.0))
+	var fresh := copies.size() == 2
+	for index in copies.size():
+		var copy := copies[index] as Node3D
+		var source: Node3D = [a, b][index]
+		var clearance := source.global_position.y - Probe.height_at(root, source.global_position)
+		var copied_clearance := copy.global_position.y - Probe.height_at(root, copy.global_position)
+		var content: Node = copy.call("content_root")
+		fresh = fresh and not ids.has(String(copy.get("asset_id"))) and copy.owner == root and \
+			content != null and content.owner == root and not content.scene_file_path.is_empty() and \
+			Vector2(copy.global_position.x - source.global_position.x - 3.0,
+				copy.global_position.z - source.global_position.z - 3.0).length() < 0.001 and \
+			absf(copied_clearance - clearance) < 0.001 and GroupTools.group_of(copy) == "group-02"
+	_expect(fresh and assets.get_child_count() == before + 2 and
+		String(copies[0].get("asset_id")) != String(copies[1].get("asset_id")) and
+		selection.get_selected_nodes().size() == 2 and copies[0] in selection.get_selected_nodes(),
+		"Duplicate makes linked copies with fresh ids, a new group and the same ground clearance")
+	history.undo()
+	var one_step := assets.get_child_count() == before
+	history.redo()
+	_expect(one_step and assets.get_child_count() == before + 2, "a duplicate is one undo step")
+	_select([crystal])
+	var marker_copies: Array = usability.call("duplicate_selection", Vector3(2.0, 0.0, 0.0))
+	var records := {}
+	for marker in Markers.markers(root):
+		records[String(marker.get("record_id"))] = true
+	_expect(marker_copies.size() == 1 and (marker_copies[0] as Node).get_parent() == crystal.get_parent() and
+		String(marker_copies[0].get("record_id")) != "crystal-01" and
+		records.size() == Markers.markers(root).size(),
+		"a copied marker gets a fresh record id in its kind's container")
+	# Alt+drag on a selected object copies it to where the drag ends.
+	_select([a])
+	await _frames(2)
+	before = assets.get_child_count()
+	_aim(camera, root, Vector2(a.global_position.x, a.global_position.z))
+	var press := _click(centre)
+	press.alt_pressed = true
+	var consumed: int = usability.call("_forward_3d_gui_input", camera, press)
+	var drag: RefCounted = usability.call("copy_drag_tool")
+	var ghost: Node3D = drag.call("ghost")
+	var ghost_ok := ghost != null and ghost.owner == null and ghost.get_child_count() == 2
+	_aim(camera, root, Vector2(a.global_position.x + 5.0, a.global_position.z + 2.0))
+	var motion := InputEventMouseMotion.new()
+	motion.position = centre
+	usability.call("_forward_3d_gui_input", camera, motion)
+	var release := _click(centre)
+	release.pressed = false
+	release.alt_pressed = true
+	usability.call("_forward_3d_gui_input", camera, release)
+	var dragged := selection.get_selected_nodes()
+	var moved := dragged.size() == 2
+	for node in dragged:
+		moved = moved and not node in [a, b] and (node as Node).owner == root
+	var offset := Vector2.INF
+	for node in dragged:
+		if String(node.get("catalog_asset_id")) == String(a.get("catalog_asset_id")) and \
+				GroupTools.group_of(node as Node) != "group-01":
+			offset = Vector2((node as Node3D).global_position.x - a.global_position.x,
+				(node as Node3D).global_position.z - a.global_position.z)
+	_expect(consumed == EditorPlugin.AFTER_GUI_INPUT_STOP and ghost_ok and moved and
+		assets.get_child_count() == before + 2 and drag.call("ghost") == null and
+		offset.is_finite(),
+		"Alt+drag on a selected group shows a ghost and drops copies where the drag ends")
+	history.undo()
+	var drag_undone := assets.get_child_count() == before
+	history.redo()
+	_expect(drag_undone and assets.get_child_count() == before + 2, "an Alt+drag copy is one undo step")
+	selection.clear()
+
+
+func _test_selection_bar(usability: Object, root: Node3D) -> void:
+	var selection := _editor.call("get_selection") as EditorSelection
+	var history := _undo.get_history_undo_redo(_undo.get_object_history_id(root))
+	var bar: Control = usability.call("selection_bar")
+	var loose: Array[Node3D] = []
+	for child in root.get_node("AuthoredAssets").get_children():
+		if GroupTools.group_of(child).is_empty():
+			loose.append(child as Node3D)
+	if not _expect(loose.size() >= 2, "the fixture has ungrouped assets for the selection bar"):
+		return
+	var c := loose[0]
+	_select([c])
+	usability.call("_refresh_selection_bar")
+	var local: Vector3 = root.global_transform.affine_inverse() * c.global_position
+	var x_spin := bar.call("spin", "x") as SpinBox
+	_expect(bar.visible and String(bar.call("name_text")).begins_with(String(c.name)) and
+		absf(x_spin.value - local.x) < 0.01,
+		"the selection bar shows the selected object's name and territory position")
+	x_spin.value = snappedf(local.x + 2.0, 0.01)
+	var moved := absf((root.global_transform.affine_inverse() * c.global_position).x -
+		(local.x + 2.0)) < 0.011
+	(bar.call("spin", "turn") as SpinBox).value = 45.0
+	var turned := absf(float(Tools.summary(root, [c]).turn) - 45.0) < 0.01
+	(bar.call("spin", "size") as SpinBox).value = 1.5
+	var sized := absf(float(Tools.summary(root, [c]).size) - 1.5) < 0.01
+	history.undo()
+	history.undo()
+	history.undo()
+	_expect(moved and turned and sized and
+		(root.global_transform.affine_inverse() * c.global_position).distance_to(local) < 0.001,
+		"typing X, Turn and Size moves, turns and resizes the object, each one undo step")
+	var d := loose[1]
+	_select([c, d])
+	usability.call("_refresh_selection_bar")
+	var centre: Vector3 = Tools.summary(root, [c, d]).position
+	var d_before: Vector3 = root.global_transform.affine_inverse() * d.global_position
+	(bar.call("spin", "turn") as SpinBox).value = 90.0
+	usability.call("_refresh_selection_bar")
+	var d_after: Vector3 = root.global_transform.affine_inverse() * d.global_position
+	var expected := centre + Basis(Vector3.UP, deg_to_rad(90.0)) * (d_before - centre)
+	_expect(String(bar.call("name_text")).begins_with("2 objects") and
+		(Tools.summary(root, [c, d]).position as Vector3).distance_to(centre) < 0.001 and
+		d_after.distance_to(expected) < 0.01 and
+		is_zero_approx((bar.call("spin", "turn") as SpinBox).value),
+		"with several objects, Turn by rotates the selection about its centre and resets to 0")
+	history.undo()
+	(bar.call("button", "group") as Button).pressed.emit()
+	var grouped := not GroupTools.group_of(c).is_empty() and \
+		GroupTools.group_of(c) == GroupTools.group_of(d)
+	(bar.call("button", "ungroup") as Button).pressed.emit()
+	_expect(grouped and GroupTools.group_of(c).is_empty(), "the bar's Group and Ungroup buttons work")
+	selection.clear()
+	usability.call("_refresh_selection_bar")
+	_expect(not bar.visible, "the selection bar hides when nothing placed is selected")
+
+
+func _test_play_test(usability: Object, root: Node3D, camera: Camera3D) -> void:
+	var centre := camera.get_viewport().get_visible_rect().size * 0.5
+	var started: bool = usability.call("start_play_test")
+	var walker: RefCounted = usability.call("play_test_walker")
+	_expect(started and String(walker.get("source")) == "live" and
+		walker.call("node") != null and (walker.call("node") as Node).owner == null,
+		"Play test starts on the live grid for an unpublished territory, as an unsaved helper")
+	_aim(camera, root, Vector2(12.0, 20.0))
+	var placed_result: int = usability.call("_forward_3d_gui_input", camera, _click(centre))
+	var placed: Vector3 = walker.call("position")
+	# Earlier sections sculpt, grade roads and carve a river, so the reachable
+	# area is worked out here with the server's rules (8 neighbours, no corner
+	# cutting) instead of assuming fixed points.
+	var start: Vector2i = walker.call("cell_of", placed)
+	var reachable := _walk_component(walker, start)
+	var goal := start
+	var outside := Vector2i(-1, -1)
+	var grid: Dictionary = walker.call("grid")
+	for row in int(grid.rows):
+		for column in int(grid.width):
+			var cell := Vector2i(column, row)
+			if reachable.has(cell):
+				if Vector2(cell - start).length() > Vector2(goal - start).length():
+					goal = cell
+			elif outside.x < 0 and bool(walker.call("is_walkable", cell)):
+				outside = cell
+	var goal_point: Vector3 = walker.call("cell_point", goal)
+	_aim(camera, root, Vector2(goal_point.x, goal_point.z))
+	usability.call("_forward_3d_gui_input", camera, _click(centre))
+	var route: PackedVector3Array = walker.call("route")
+	var walkable := route.size() >= 2
+	var grounded := true
+	for point in route:
+		walkable = walkable and bool(walker.call("is_walkable", walker.call("cell_of", point)))
+		grounded = grounded and absf(point.y - Probe.height_at(root, root.global_transform * point)) < 0.01
+	_expect(placed_result == EditorPlugin.AFTER_GUI_INPUT_STOP and placed.is_finite() and
+		walkable and grounded and route[0].is_equal_approx(placed) and
+		route[route.size() - 1].is_equal_approx(goal_point) and
+		int(walker.get("steps")) == route.size() - 1,
+		"clicks place the walker and route it over walkable ground to the goal (%s; %d points)" % [
+			String(walker.get("last_message")), route.size()])
+	walker.call("advance", 0.25)
+	var stepped: Vector3 = walker.call("position")
+	walker.call("advance", 1000.0)
+	_expect(route.size() >= 2 and stepped.distance_to(route[1]) < 0.01 and not bool(walker.call("is_walking")) and
+		(walker.call("position") as Vector3).is_equal_approx(route[route.size() - 1]),
+		"the walker takes one step per 250 ms and stops at the goal")
+	var across := outside.x >= 0 and bool(walker.call("walk_to", walker.call("cell_point", outside)))
+	_expect(outside.x >= 0 and not across and
+		"No walkable route" in String(walker.get("last_message")),
+		"a walkable goal cut off by steep ground or water is reported unreachable")
+	var codes: PackedByteArray = (walker.call("grid") as Dictionary).codes
+	var blocked := codes.find(0)
+	var width := int((walker.call("grid") as Dictionary).width)
+	var none := PackedVector3Array()
+	if blocked >= 0:
+		var cell := Vector2i(blocked % width, blocked / width)
+		none = walker.call("find_route", walker.call("position"),
+			walker.call("cell_point", cell))
+	_expect(blocked >= 0 and none.is_empty() and "not walkable" in String(walker.get("last_message")),
+		"a route to a blocked tile is refused with a reason")
+	var packed := PackedScene.new()
+	var text := ""
+	if packed.pack(root) == OK:
+		var state := packed.get_state()
+		for index in state.get_node_count():
+			text += String(state.get_node_name(index)) + "\n"
+	_expect(not text.is_empty() and not "__MapAuthoringPlaytest" in text,
+		"the walker is never packed into the scene")
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_ESCAPE))
+	_expect(not bool(walker.get("active")) and root.get_children(true).all(
+		func(node: Node) -> bool: return not String(node.name).begins_with("__MapAuthoringPlaytest")),
+		"Escape ends the play test and removes the walker")
+	var sunmane: Node3D = REGION.new()
+	sunmane.set("region_id", "sunmane_steppe")
+	var published := Walkability.published_grid(sunmane)
+	sunmane.free()
+	_expect(not published.has("error") and float(published.height_step) > 0.0 and
+		is_finite(float(published.height_origin)),
+		"the published grid carries the height encoding the walker climbs with")
+
+
+func _test_minimap(usability: Object, root: Node3D) -> void:
+	var selection := _editor.call("get_selection") as EditorSelection
+	var result: Dictionary = await usability.call("refresh_minimap")
+	var dock: Object = usability.call("minimap_dock")
+	var framing: Dictionary = dock.call("framing")
+	_expect(result.has("error") and not framing.is_empty() and
+		(framing.rect as Rect2).has_point(Vector2(20.0, 20.0)),
+		"without a renderer the minimap still frames the territory for jumps and overlays")
+	var dark := Image.create_empty(8, 8, false, Image.FORMAT_RGBA8)
+	dark.fill(Color(0.1, 0.08, 0.05, 1.0))
+	dark.set_pixel(0, 0, Color(0.0, 0.0, 0.0, 0.0))
+	var levelled: Image = UsabilityPlugin.levelled_minimap(dark)
+	_expect(levelled.get_pixel(4, 4).get_luminance() > 0.3 and
+		is_zero_approx(levelled.get_pixel(0, 0).a) and
+		absf(dark.get_pixel(4, 4).r - 0.1) < 0.01,
+		"the minimap brightens a dark render of the owned land, leaving transparency alone")
+	var view: Control = dock.call("view")
+	view.size = Vector2(200.0, 100.0)
+	var rect: Rect2 = framing.rect
+	var point := Vector3(10.0, 0.0, 30.0)
+	var back: Vector3 = view.call("to_territory", view.call("to_view", point))
+	var shown: Rect2 = view.call("image_rect")
+	_expect(back.distance_to(point) < 0.001 and is_equal_approx(shown.size.x / shown.size.y,
+		rect.size.x / rect.size.y) and (view.call("to_view",
+		Vector3(rect.position.x, 0.0, rect.position.y)) as Vector2).is_equal_approx(shown.position),
+		"minimap pixels map to territory metres and back, north up")
+	var crystal := root.get_node("Gameplay/Harvestables/crystal-01") as Node3D
+	_select([crystal])
+	usability.call("_update_minimap_state")
+	var state: Dictionary = view.get("state")
+	_expect(state.has("camera") and (state.get("selection", []) as Array).size() == 1 and
+		(state.get("markers", []) as Array).size() == Markers.markers(root).size(),
+		"the minimap shows the camera, the selection and every marker")
+	var editor_camera := (_editor.call("get_editor_viewport_3d", 0) as SubViewport).get_camera_3d()
+	var target := Probe.ray_hit(root, Vector3(30.0, 60.0, 8.0), Vector3.DOWN) as Vector3
+	var pressed: bool = await usability.call("focus_camera_at", target)
+	# The editor camera eases towards its new target over time, not frames.
+	var miss := INF
+	for _attempt in 60:
+		await create_timer(0.05).timeout
+		var forward := -editor_camera.global_transform.basis.z
+		var to_target := target - editor_camera.global_position
+		miss = (to_target - forward * to_target.dot(forward)).length()
+		if miss < 0.5:
+			break
+	var helpers := root.get_children(true).filter(func(node: Node) -> bool:
+		return String(node.name).begins_with("__MapAuthoringFocus"))
+	_expect(pressed and miss < 1.0 and helpers.is_empty() and
+		selection.get_selected_nodes() == [crystal],
+		"a minimap jump points the 3D view at the spot and restores the selection (miss %.2f m)" % miss)
+	selection.clear()
+
+
+func _test_territory_picker() -> void:
+	var base := _editor.call("get_base_control") as Control
+	var workspace: Object = base.get_meta(&"map_authoring_sculpt_plugin") \
+		if base.has_meta(&"map_authoring_sculpt_plugin") else null
+	if not _expect(workspace != null, "the Territories plugin is active for the map picker"):
+		return
+	var dock: Object = workspace.get("_dock")
+	var items: Array = dock.call("picker_items")
+	var thumbnails := items.filter(func(item: Dictionary) -> bool:
+		return item.thumbnail is Texture2D).size()
+	_expect(items.size() >= 12 and thumbnails == items.size(),
+		"Browse… lists every territory with its published minimap (%d of %d)" % [thumbnails,
+			items.size()])
+	var index := -1
+	for position in items.size():
+		if bool(items[position].editable):
+			index = position
+			break
+	var opened: Array[String] = []
+	var spy := func(path: String) -> void: opened.append(path)
+	var handler := Callable(workspace, "_open_scene")
+	var connected: bool = dock.is_connected("open_requested", handler)
+	if connected:
+		dock.disconnect("open_requested", handler)
+	dock.connect("open_requested", spy)
+	if index >= 0:
+		dock.call("pick", index)
+	dock.disconnect("open_requested", spy)
+	if connected:
+		dock.connect("open_requested", handler)
+	_expect(index >= 0 and opened.size() == 1 and opened[0].ends_with(".tscn"),
+		"clicking a territory thumbnail asks to open its authored scene")
+
+
+func _test_asset_intake(palette: Object) -> void:
+	var library := DIR + "/library"
+	_remove_tree_recursive(library)
+	Catalog.library_directory = library
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(library + "/Rocks"))
+	var rock := Node3D.new()
+	rock.name = "TinyRock"
+	var mesh := MeshInstance3D.new()
+	mesh.mesh = BoxMesh.new()
+	rock.add_child(mesh)
+	mesh.owner = rock
+	var packed := PackedScene.new()
+	packed.pack(rock)
+	ResourceSaver.save(packed, library + "/Rocks/tiny_rock.tscn")
+	rock.free()
+	var entry := _entry(Catalog.entries(true), "library:Rocks/tiny_rock")
+	var created := Placement.instantiate_entry(entry) if not entry.is_empty() else {}
+	var node: Node = created.get("node")
+	_expect(String(entry.get("category", "")) == "Library: Rocks" and
+		String(entry.get("label", "")) == "Tiny Rock" and node != null,
+		"a scene dropped into the library folder is a palette asset, no JSON needed")
+	if node != null:
+		node.free()
+	var outside := OS.get_user_data_dir().path_join("map-usability-import")
+	DirAccess.make_dir_recursive_absolute(outside)
+	var source := outside.path_join("Test Crate.glb")
+	var crate := Node3D.new()
+	var crate_mesh := MeshInstance3D.new()
+	crate_mesh.mesh = BoxMesh.new()
+	crate.add_child(crate_mesh)
+	crate_mesh.owner = crate
+	var document := GLTFDocument.new()
+	var gltf := GLTFState.new()
+	var exported := document.append_from_scene(crate, gltf) == OK and \
+		document.write_to_filesystem(gltf, source) == OK
+	crate.free()
+	var dock: Object = palette.get("_dock")
+	var result: Dictionary = dock.call("import_models",
+		PackedStringArray([source, source, outside.path_join("notes.txt")]), "Imported Stuff")
+	var copied: Array = result.copied
+	var ids := Catalog.library_entries().map(func(item: Dictionary) -> String: return String(item.id))
+	_expect(exported and copied == [library + "/Imported_Stuff/Test_Crate.glb",
+		library + "/Imported_Stuff/Test_Crate_2.glb"] and (result.skipped as Array).size() == 1 and
+		"library:Imported_Stuff/Test_Crate" in ids and "library:Imported_Stuff/Test_Crate_2" in ids,
+		"Import models copies .glb files into a library category without overwriting (%s)" % [copied])
+	var filesystem := _editor.call("get_resource_filesystem") as EditorFileSystem
+	for _attempt in 600:
+		if not filesystem.is_scanning():
+			break
+		await process_frame
+	await _frames(3)
+	_remove_tree_recursive(outside)
+
+
+func _test_low_spec(usability: Object, root: Node3D) -> void:
+	var meshes: Array[GeometryInstance3D] = []
+	for container in ["AuthoredAssets", "AuthoredScenery", "GeneratedPreview"]:
+		var holder := root.get_node_or_null(container)
+		if holder != null:
+			for node in holder.find_children("*", "GeometryInstance3D", true, false):
+				meshes.append(node as GeometryInstance3D)
+	var culled: int = usability.call("set_low_spec", true)
+	var on: Dictionary = usability.call("performance_state")
+	var untouched := meshes.all(func(mesh: GeometryInstance3D) -> bool:
+		return is_zero_approx(mesh.visibility_range_end))
+	var off_count: int = usability.call("set_low_spec", false)
+	var off: Dictionary = usability.call("performance_state")
+	_expect(culled == meshes.size() and meshes.size() > 0 and bool(on.active) and
+		bool(on.half_resolution) and untouched and off_count == 0 and not bool(off.active) and
+		not bool(off.half_resolution) and int(off.culled) == 0,
+		"Low spec halves the 3D view and hides far meshes through the renderer, then restores both")
+
+
+func _test_toolbar(usability: Object) -> void:
+	var toolbar: Object = usability.call("toolbar")
+	var snap := toolbar.call("button", "snap") as Button
+	snap.button_pressed = true
+	var snapped_on := bool(Settings.value("placement/snap_to_grid"))
+	snap.button_pressed = false
+	var pins := toolbar.call("button", "pins") as Button
+	pins.button_pressed = false
+	var hidden := not bool(Settings.value("markers/show"))
+	pins.button_pressed = true
+	var walk := toolbar.call("walk_menu") as MenuButton
+	walk.get_popup().id_pressed.emit(Walkability.Mode.LIVE)
+	var live := int((usability.call("walkability_state") as Dictionary).mode) == Walkability.Mode.LIVE
+	walk.get_popup().id_pressed.emit(Walkability.Mode.OFF)
+	var play := toolbar.call("button", "play") as Button
+	play.button_pressed = true
+	var playing := bool((usability.call("play_test_walker") as RefCounted).get("active"))
+	play.button_pressed = false
+	_expect(snapped_on and not bool(Settings.value("placement/snap_to_grid")) and hidden and
+		bool(Settings.value("markers/show")) and live and playing and
+		not bool((usability.call("play_test_walker") as RefCounted).get("active")),
+		"toolbar toggles switch snap, pins, the walkability mode and the play test in one click")
+
+
 func _aim(camera: Camera3D, root: Node3D, xz: Vector2) -> void:
 	var target := Probe.ray_hit(root, Vector3(xz.x, 60.0, xz.y), Vector3.DOWN) as Vector3
 	camera.global_position = target + Vector3(0.0, 30.0, 0.01)
@@ -1010,6 +1527,53 @@ func _remove_tree(path: String) -> void:
 	DirAccess.remove_absolute(absolute)
 
 
+func _walk_component(walker: RefCounted, start: Vector2i) -> Dictionary:
+	var seen := {start: true}
+	var queue: Array[Vector2i] = [start]
+	while not queue.is_empty():
+		var cell: Vector2i = queue.pop_back()
+		for dy in [-1, 0, 1]:
+			for dx in [-1, 0, 1]:
+				var next := cell + Vector2i(dx, dy)
+				if (dx == 0 and dy == 0) or seen.has(next) or not bool(walker.call("is_walkable", next)):
+					continue
+				if dx != 0 and dy != 0 and (not bool(walker.call("is_walkable", cell + Vector2i(dx, 0))) or
+						not bool(walker.call("is_walkable", cell + Vector2i(0, dy)))):
+					continue
+				seen[next] = true
+				queue.append(next)
+	return seen
+
+
+func _select(nodes: Array) -> void:
+	var selection := _editor.call("get_selection") as EditorSelection
+	selection.clear()
+	for node in nodes:
+		selection.add_node(node)
+
+
+func _frames(count: int) -> void:
+	for _frame in count:
+		await process_frame
+
+
+func _ctrl_key(keycode: Key, shift: bool) -> InputEventKey:
+	var event := _key(keycode, shift)
+	event.ctrl_pressed = true
+	return event
+
+
+func _remove_tree_recursive(path: String) -> void:
+	var absolute := ProjectSettings.globalize_path(path)
+	if not DirAccess.dir_exists_absolute(absolute):
+		return
+	for folder in DirAccess.get_directories_at(absolute):
+		_remove_tree_recursive(absolute.path_join(folder))
+	for file_name in DirAccess.get_files_at(absolute):
+		DirAccess.remove_absolute(absolute.path_join(file_name))
+	DirAccess.remove_absolute(absolute)
+
+
 func _expect(condition: bool, message: String) -> bool:
 	if condition:
 		print("PASS: ", message)
@@ -1024,6 +1588,9 @@ func _finish() -> void:
 		Settings.set_value(key, _saved_settings[key])
 	Prefabs.directory = Prefabs.PREFAB_DIRECTORY
 	_remove_tree(PREFAB_DIR)
+	Catalog.library_directory = Catalog.LIBRARY_DIRECTORY
+	Catalog.entries(true)
+	_remove_tree_recursive(DIR + "/library")
 	for path in [HEIGHT_PATH, SCENE_PATH, RELOAD_PATH]:
 		if FileAccess.file_exists(path):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(path))

@@ -42,6 +42,10 @@ var _prefab_name: LineEdit
 var _save_prefab: Button
 var _scene_available := false
 var _syncing_options := false
+var _library_category: LineEdit
+var _import_dialog: EditorFileDialog
+var _pending_library_selection := ""
+const LIBRARY_ID_PREFIX := "library:"
 
 
 func configure(editor_interface: EditorInterface) -> void:
@@ -360,6 +364,85 @@ func _build_prefab_row(column: VBoxContainer) -> void:
 	folder.pressed.connect(_show_prefab_folder)
 	row.add_child(folder)
 	column.add_child(row)
+	_build_intake_row(column)
+
+
+## "Import models…" copies .glb/.gltf files into the drop-in library folder,
+## where the catalog lists them by subfolder. No JSON to edit.
+func _build_intake_row(column: VBoxContainer) -> void:
+	var row := HBoxContainer.new()
+	_library_category = LineEdit.new()
+	_library_category.placeholder_text = "Library category"
+	_library_category.tooltip_text = ("Subfolder of %s for imported models; it becomes the " +
+		"palette category \"Library: <name>\".") % Catalog.library_directory
+	_library_category.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(_library_category)
+	var import_button := Button.new()
+	import_button.text = "Import models…"
+	import_button.tooltip_text = ("Copy .glb/.gltf models into the library folder and list " +
+		"them here. Files you drop into that folder yourself appear after Refresh.")
+	import_button.pressed.connect(_show_import_dialog)
+	row.add_child(import_button)
+	var folder := Button.new()
+	folder.text = "Folder"
+	folder.tooltip_text = "Show the model library folder in the FileSystem dock."
+	folder.pressed.connect(_show_library_folder)
+	row.add_child(folder)
+	column.add_child(row)
+
+
+## Imports model files into the library (see asset_catalog.gd import_models)
+## and refreshes the palette once the editor has imported them.
+func import_models(paths: PackedStringArray, category: String = "") -> Dictionary:
+	if category.is_empty() and _library_category != null:
+		category = _library_category.text
+	var result := Catalog.import_models(paths, category)
+	var copied: Array = result.copied
+	var message := "Imported %d model%s into %s." % [copied.size(),
+		"" if copied.size() == 1 else "s",
+		(copied[0] as String).get_base_dir() if not copied.is_empty() else Catalog.library_directory]
+	if not (result.skipped as Array).is_empty():
+		message += " Skipped: %s." % "; ".join(PackedStringArray(result.skipped))
+	_status.text = message
+	if not copied.is_empty():
+		_pending_library_selection = LIBRARY_ID_PREFIX + String(copied[0]).trim_prefix(
+			Catalog.library_directory.trim_suffix("/") + "/").get_basename()
+		if _editor_interface != null:
+			var filesystem := _editor_interface.get_resource_filesystem()
+			if not filesystem.filesystem_changed.is_connected(_on_library_scanned):
+				filesystem.filesystem_changed.connect(_on_library_scanned, CONNECT_ONE_SHOT)
+			filesystem.scan()
+		else:
+			_on_library_scanned()
+	return result
+
+
+func _show_import_dialog() -> void:
+	if _import_dialog == null:
+		_import_dialog = EditorFileDialog.new()
+		_import_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILES
+		_import_dialog.access = EditorFileDialog.ACCESS_FILESYSTEM
+		_import_dialog.filters = PackedStringArray(["*.glb, *.gltf ; glTF models"])
+		_import_dialog.title = "Import models into the map asset library"
+		_import_dialog.files_selected.connect(func(paths: PackedStringArray) -> void:
+			import_models(paths))
+		add_child(_import_dialog)
+	_import_dialog.popup_file_dialog()
+
+
+func _on_library_scanned() -> void:
+	reload_library()
+	if not _pending_library_selection.is_empty():
+		select_entry_by_id(_pending_library_selection)
+		_pending_library_selection = ""
+
+
+func _show_library_folder() -> void:
+	if _editor_interface == null:
+		return
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(Catalog.library_directory))
+	_editor_interface.get_resource_filesystem().scan()
+	_editor_interface.get_file_system_dock().navigate_to_path(Catalog.library_directory)
 
 
 func _request_save_prefab() -> void:

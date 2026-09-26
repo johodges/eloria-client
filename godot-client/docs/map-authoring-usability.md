@@ -2,11 +2,26 @@
 
 The map editor still runs inside Godot, but the placement and viewport tools now work more like a dedicated map editor. Three plugins are involved:
 
-- **Map Assets** (`addons/map_asset_palette`): the asset library, ghost placement, and prefabs.
-- **Map Authoring Usability** (`addons/map_authoring_usability`): the cursor readout, the cursor grid, the **Map tools** menu, readable gameplay markers, the walkability overlay, road and river drawing, the time-of-day preview and the top-down capture.
-- **Territories** (`addons/map_authoring_workspace`): now also has sculpt brush keys; see [terrain-sculpting.md](terrain-sculpting.md).
+- **Map Assets** (`addons/map_asset_palette`): the asset library with its drop-in model folder, ghost placement, and prefabs.
+- **Map Authoring Usability** (`addons/map_authoring_usability`): the cursor readout, the cursor grid, the **Map tools** menu, the toolbar toggles, the selection bar, groups and copies, readable gameplay markers, the walkability overlay, road and river drawing, the play-test walker, the **Minimap** dock, the low-spec view, the time-of-day preview and the top-down capture.
+- **Territories** (`addons/map_authoring_workspace`): now also has sculpt brush keys (see [terrain-sculpting.md](terrain-sculpting.md)) and a **Browse…** map picker.
 
-Everything in this document works in production region scenes and in the pilot. None of it changes the save, snapshot, or bake contracts. Ghosts and grids are internal, ownerless nodes, so they are never packed into a scene. Every edit goes through Godot's normal undo history, which you can see and jump through in the **History** dock next to FileSystem.
+Everything in this document works in production region scenes, and everything except the terrain-based tools works in the pilot. None of it changes the save, snapshot, or bake contracts. Ghosts, grids, pins, the walker and every other helper are ownerless nodes, so they are never packed into a scene; the only new thing a scene saves is the group tag on grouped objects, which the snapshot ignores. Every edit goes through Godot's normal undo history, which you can see and jump through in the **History** dock next to FileSystem.
+
+## Toolbar
+
+The 3D toolbar has one-click toggles next to **Map tools** and **Time**:
+
+| Button | What it switches |
+|---|---|
+| **Grid** | The cursor grid all the time (off: only while placing). |
+| **Snap** | Grid snapping for placement, copies and drawn points (same as G). |
+| **Pins** | Gameplay marker pins and labels. |
+| **Walk** | The walkability overlay mode (a small menu). |
+| **Play** | The play-test walker. |
+| **Low spec** | The low-spec view. |
+
+The buttons and the **Map tools** menu always agree; either can be used.
 
 ## Place assets
 
@@ -50,6 +65,14 @@ The ghost is re-rolled after every click, so it always shows what the next click
 
 These options are per-user preferences stored under **Editor Settings > Map Authoring**. Every key in the table above can be rebound under **Editor Settings > Shortcuts > Map Authoring**.
 
+### Add your own models (no JSON)
+
+Any `.glb`, `.gltf`, `.tscn` or `.scn` file under `res://assets/world/library/` is a palette asset. A first-level subfolder names its category: `library/Rocks/boulder.glb` is listed as **Boulder** under **Library: Rocks**; files directly in `library/` are under **Library**. Press **Refresh** after adding files yourself.
+
+**Import models…** does the copying for you: type a category (for example `Rocks`) and pick one or more `.glb`/`.gltf` files anywhere on disk. They are copied into that category folder (a `.gltf` brings its buffers and images along), never overwriting a file with the same name, and the palette lists them once Godot has imported them. **Folder** shows the library in the FileSystem dock.
+
+Library assets place like catalog ones. Their catalog id is `library:<category>/<name>`, and the scene path goes into the snapshot like any other asset's.
+
 ### What gets created
 
 Assets are placed as before. They become `MapAuthoringAssetControl` wrappers under `AuthoredAssets`, with a fresh asset id, the catalog id, the scene path and the default collision role. Grounding uses the visible mesh bounds, and each click is one undo step.
@@ -83,10 +106,44 @@ The grid needs region terrain. The pilot has no fast height query, so the grid i
 | **Rotate each 90°** | Turns every object about its own pivot, not the selection centre. |
 | **Random turn for each**, **Random size for each** | Scatter variation. Random size keeps each object's base on the ground. It uses the **Size ±** amount, or ±15% when that is 0. |
 | **Save selection as prefab** | Saves the selection as a prefab (see below). |
+| **Group selection**, **Ungroup** | See [Groups and copies](#groups-and-copies). |
+| **Duplicate with fresh ids** | Copies the selection one grid step south-east with new ids (see below). |
+| **Play test** | Starts or stops the play-test walker. |
+| **Low spec view** | Switches the low-spec view. |
 | **Time of day preview…** | Opens the time panel (see below). |
 | **Capture top-down image…** | Saves a map image of the territory (see below). |
 
 Each item is a single undo step. The items can be given keys under **Editor Settings > Shortcuts > Map Authoring**; they are unbound by default.
+
+## Selection bar
+
+While placed assets, scenery or markers are selected, a bar under the 3D view shows what is selected and lets you type exact values:
+
+- **X / Y / Z**: territory-local metres (the same frame as the cursor readout).
+- **Turn**: degrees about the vertical axis. **Size**: uniform scale; a single asset keeps its visible base on the ground.
+- With several objects the bar shows their centre. Typing X, Y or Z moves them together; **Turn by** and **Scale by** turn or scale the whole selection about its centre and then reset to 0 and 1.
+- Buttons: **Drop**, **Rotate 90°**, **Duplicate**, **Group**, **Ungroup**, **Edit members** and **Save prefab**.
+
+Every change is one undo step.
+
+## Groups and copies
+
+**Groups.** Select two or more placed objects and press **Ctrl+G** in the 3D view (or **Group** in the selection bar or Map tools). Clicking any member then selects the whole group, so it moves, turns and copies as one. **Ctrl+Shift+G** ungroups.
+
+- **Pick one member:** double-click it, or press **Edit members**. The group stays open for single picks until you select something outside it.
+- **What is saved:** each member keeps its place in `AuthoredAssets` or `Gameplay`; a group is only a `map_authoring_group` tag in the members' metadata. The snapshot and bake ignore it, so grouping never changes an export.
+- Ctrl+G and Ctrl+Shift+G group only while the 3D view has keyboard focus (click in it first). Elsewhere Godot's own **Group Selected Nodes** shortcut, which makes clicks on children select their parent, takes those keys. The **Group** button always does the map group.
+
+**Copies.** Hold **Alt** and drag a selected object: a ghost of the selection follows the cursor and the copies are dropped where you release (Esc cancels). **Duplicate** in the selection bar or Map tools copies one grid step away instead. Either way the copies are one undo step and are selected afterwards.
+
+- Every copy gets a fresh asset id or marker record id, its own copies of local material overrides, and new group ids (a copied group becomes a new group).
+- Each copy keeps its height above the ground, so copies on a slope sit on the ground.
+- A marker that follows a copied asset follows the copy; runtime bindings are never copied.
+- With **Snap** on, the drag moves in whole grid steps.
+
+Use these instead of Godot's Ctrl+D for placements: Ctrl+D keeps the original asset and record ids, which the snapshot needs to be unique.
+
+Alt+drag on empty ground, or while placing, still orbits the camera.
 
 ## Prefabs
 
@@ -207,6 +264,8 @@ Use **Published grid** for the truth, and **Changes since publish** to judge an 
 
 A click within 2.5 m of an existing path point snaps onto it exactly, so new paths join cleanly.
 
+**Extend a road.** Start drawing on either end of an existing road (or river) and the new points are added to that path instead of a new one: it keeps its id, surface, width and settings. Starting on the last point appends; starting on the first point adds the new points in front. The extension is one undo step. To start a separate path at an end, Ctrl+click it.
+
 Finishing creates an ordinary `MapAuthoringRegionPath` under `Roads` or `Rivers`, as one undo step:
 
 - **Id:** a fresh `road-NN` or `river-NN`.
@@ -221,6 +280,55 @@ Finishing creates an ordinary `MapAuthoringRegionPath` under `Roads` or `Rivers`
 Afterwards Godot's Path3D tools and the Inspector edit the path as usual.
 
 Drawing, asset placement and sculpting are mutually exclusive; starting one stops the others.
+
+## Play test
+
+**Play** (or **Map tools > Play test**) puts a stand-in character on the open territory:
+
+| Input | Action |
+|---|---|
+| Click the ground | Place the walker, then walk it there on the next clicks. |
+| Shift+click | Place the walker somewhere else. |
+| F | Centre the 3D view on the walker. |
+| Esc or right-click | Stop the play test. |
+
+The route follows the server's movement rules:
+
+- **Grid.** It uses the territory's published walk grid (`collision.bin`, half-metre cells), so the walker goes exactly where the served map lets a player go. A territory that has not been published yet uses the live walkability suggestion (1 m tiles) and says so.
+- **Steps.** Eight directions, no cutting past a blocked corner, and at most a 0.4 m climb or drop per half-metre step (`max_walk_height_change`).
+- **Pace.** One step every 250 ms (`player_move_interval_ms`); the message gives the steps, time and distance.
+- **Heights.** The walker stands on the grid's height codes, so it crosses bridges and decks at deck height.
+
+If no route exists it says so: the goal is fenced, walled or otherwise cut off, or the spot itself is not walkable. The search first looks around both points and then across the whole territory. A territory-wide search runs on 1 m (or 1.5 m) blocks that count as walkable only when all their half-metre cells are, so it never slips through a fence or wall; it can miss a gap narrower than a block, and the message says when blocks were used. Routes on Sunmane take 30–460 ms.
+
+The walker, its route line and goal ring are never saved. Starting placement, sculpting or road drawing ends the play test.
+
+## Minimap
+
+The **Minimap** dock shows the open territory from above, north up, clipped to the land it owns:
+
+- the 3D camera as a blue dot with its view direction;
+- the selection as orange squares;
+- gameplay markers in their pin colours (when **Pins** is on);
+- the play-test walker and its route.
+
+Click or drag on the minimap to move the 3D view there. The view centres on the spot and keeps its angle and zoom; the selection is left as it was.
+
+The picture is rendered from the scene when a territory opens, at 0.5 px/m (**Editor Settings > Map Authoring > Minimap**), lit at noon unless the time preview is on. The authoring terrain preview renders much darker than the game, so the dock brightens its copy of the picture (top-down captures are left as rendered). Press **Refresh** after large edits. The overlays follow the scene continuously.
+
+## Open a territory by map
+
+**Territories > Browse…** shows every territory as its published minimap. Click one to open its authored scene. The open territory and territories without an authored source are shown but cannot be picked.
+
+## Low spec view
+
+**Low spec** makes big territories lighter to work in:
+
+- the 3D view renders at half resolution (Godot's own **View > Half Resolution**);
+- placed assets, scenery and generated preview meshes more than 200 m from the camera are not drawn (**Editor Settings > Map Authoring > Performance > Far Asset Metres**);
+- Godot's frame-time readout is shown, and the cursor readout adds frames per second.
+
+The distance culling is set on the renderer directly, so no node property changes and nothing is saved. Switching it off restores each mesh's own visibility range and the view options as they were. The setting is remembered and reapplied when a territory opens.
 
 ## Time of day preview
 
@@ -265,15 +373,22 @@ The focused editor test builds a disposable 41×41 region fixture under `res://t
 - the time-of-day preview, on both the fallback and Sunmane's real manifest;
 - marker templates, placement, facing and the readable-marker overlay;
 - the walkability grade rule tile by tile, live water, structures and decks, and Sunmane's real published grid;
-- road and river drawing, endpoint snapping, undo and discard;
+- road and river drawing, endpoint snapping, road extension at either end, undo and discard;
+- groups (Ctrl+G, selection expansion, double-click to open), Duplicate and Alt+drag copies with fresh ids;
+- the selection bar's fields and buttons;
+- the play-test walker: routing on the fixture's own reachable area, refusal of cut-off and blocked goals, pacing, and the published grid's height encoding;
+- the minimap's framing, pixel mapping, overlays and camera jump;
+- the territory picker's thumbnails and open request;
+- the library folder and model import;
+- the low-spec view and the toolbar toggles;
 - top-down framing and ownership clipping;
-- that no helper node (ghost, grid, preview lights) is ever saved.
+- that no helper node (ghost, grid, preview lights, walker, copy ghost, focus helper) is ever saved, and that group tags are.
 
 ```powershell
 & 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --editor --headless --path . --script res://tests/test_map_authoring_usability_editor.gd
 ```
 
-The test restores every Editor Settings value it changes.
+The test waits for the editor to finish its first scan before opening the fixture, and restores every Editor Settings value it changes.
 
 ## Not in this editor yet
 

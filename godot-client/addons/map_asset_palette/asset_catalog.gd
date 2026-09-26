@@ -19,6 +19,16 @@ const STARTER_ENTRIES := [
 	["starter:weathered_sign", "Weathered Sign", "WeatheredSign", "sign timber"],
 ]
 
+## Drop-in library: every model or scene under this folder becomes a palette
+## entry with no JSON to edit. A first-level subfolder names its category
+## ("Library: Rocks"); files directly inside are listed under "Library".
+const LIBRARY_DIRECTORY := "res://assets/world/library"
+const LIBRARY_EXTENSIONS := ["glb", "gltf", "tscn", "scn"]
+const IMPORT_EXTENSIONS := ["glb", "gltf"]
+const LIBRARY_CATEGORY := "Library"
+const LIBRARY_PREFIX := "library:"
+
+static var library_directory := LIBRARY_DIRECTORY
 static var _cache: Array[Dictionary] = []
 static var _cache_ready := false
 
@@ -79,7 +89,131 @@ static func _build_entries() -> Array[Dictionary]:
 		push_warning("Map asset catalog skipped missing starter scene: %s" %
 			STARTER_SCENE_PATH)
 	_append_extras(result)
+	_append_library(result)
 	return result
+
+
+## Library entries, found by walking library_directory (see LIBRARY_DIRECTORY).
+static func library_entries() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	_append_library(result)
+	return result
+
+
+static func _append_library(result: Array[Dictionary]) -> void:
+	var root := library_directory.trim_suffix("/")
+	if not DirAccess.dir_exists_absolute(root):
+		return
+	var known_ids := {}
+	for existing: Dictionary in result:
+		known_ids[String(existing.id)] = true
+	_scan_library(result, known_ids, root, root, "")
+
+
+static func _scan_library(result: Array[Dictionary], known_ids: Dictionary, root: String,
+		directory: String, category: String) -> void:
+	var files := DirAccess.get_files_at(directory)
+	var sorted_files := Array(files)
+	sorted_files.sort_custom(func(a: String, b: String) -> bool:
+		return a.naturalnocasecmp_to(b) < 0)
+	for file_name: String in sorted_files:
+		if file_name.begins_with(".") or not file_name.get_extension().to_lower() in \
+				LIBRARY_EXTENSIONS:
+			continue
+		var path := directory.path_join(file_name)
+		var relative := path.trim_prefix(root + "/").get_basename()
+		var id := LIBRARY_PREFIX + relative
+		if known_ids.has(id):
+			id = LIBRARY_PREFIX + path.trim_prefix(root + "/")
+		if known_ids.has(id):
+			continue
+		known_ids[id] = true
+		var label := file_name.get_basename().replace("_", " ").replace("-", " ").capitalize()
+		var category_name := LIBRARY_CATEGORY if category.is_empty() else \
+			"%s: %s" % [LIBRARY_CATEGORY, category]
+		result.append(_entry(id, label, category_name, path, "", 0.0,
+			"library imported %s %s" % [category, relative.replace("/", " ")]))
+	var folders := Array(DirAccess.get_directories_at(directory))
+	folders.sort_custom(func(a: String, b: String) -> bool:
+		return a.naturalnocasecmp_to(b) < 0)
+	for folder: String in folders:
+		if folder.begins_with("."):
+			continue
+		_scan_library(result, known_ids, root, directory.path_join(folder),
+			folder if category.is_empty() else category)
+
+
+## Copies model files from anywhere on disk into library_directory/<category>
+## (glTF keeps its buffers and images beside it). Existing names get a numeric
+## suffix; nothing is overwritten. Returns {"copied": [res paths],
+## "skipped": [reasons]}. The editor still has to scan and import the copies.
+static func import_models(sources: PackedStringArray, category: String) -> Dictionary:
+	var copied: Array[String] = []
+	var skipped: Array[String] = []
+	var folder := library_directory.trim_suffix("/")
+	var cleaned := _clean_name(category)
+	if not cleaned.is_empty():
+		folder = folder.path_join(cleaned)
+	var absolute_folder := ProjectSettings.globalize_path(folder)
+	DirAccess.make_dir_recursive_absolute(absolute_folder)
+	for source in sources:
+		var extension := source.get_extension().to_lower()
+		if not extension in IMPORT_EXTENSIONS:
+			skipped.append("%s: only .glb and .gltf models can be imported" % source.get_file())
+			continue
+		if not FileAccess.file_exists(source):
+			skipped.append("%s: file not found" % source)
+			continue
+		var stem := _clean_name(source.get_file().get_basename())
+		if stem.is_empty():
+			stem = "model"
+		var target_name := "%s.%s" % [stem, extension]
+		var suffix := 2
+		while FileAccess.file_exists(absolute_folder.path_join(target_name)):
+			target_name = "%s_%d.%s" % [stem, suffix, extension]
+			suffix += 1
+		var error := DirAccess.copy_absolute(source, absolute_folder.path_join(target_name))
+		if error != OK:
+			skipped.append("%s: copy failed (%s)" % [source.get_file(), error_string(error)])
+			continue
+		if extension == "gltf":
+			for companion in _gltf_companions(source):
+				var from := source.get_base_dir().path_join(companion)
+				var to := absolute_folder.path_join(companion)
+				DirAccess.make_dir_recursive_absolute(to.get_base_dir())
+				if FileAccess.file_exists(from) and not FileAccess.file_exists(to):
+					DirAccess.copy_absolute(from, to)
+		copied.append(folder.path_join(target_name))
+	return {"copied": copied, "skipped": skipped}
+
+
+## Relative buffer and image files a .gltf refers to.
+static func _gltf_companions(path: String) -> PackedStringArray:
+	var result := PackedStringArray()
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if not parsed is Dictionary:
+		return result
+	for key in ["buffers", "images"]:
+		var items: Variant = (parsed as Dictionary).get(key, [])
+		if not items is Array:
+			continue
+		for item: Variant in items:
+			if item is Dictionary and (item as Dictionary).has("uri"):
+				var uri := String(item.uri).uri_decode()
+				if not uri.begins_with("data:") and not uri.contains("..") and \
+						not uri.is_absolute_path():
+					result.append(uri)
+	return result
+
+
+static func _clean_name(text: String) -> String:
+	var cleaned := ""
+	for character in text.strip_edges():
+		if character.is_valid_identifier() or character.is_valid_int() or character == "-":
+			cleaned += character
+		elif not cleaned.ends_with("_"):
+			cleaned += "_"
+	return cleaned.trim_prefix("_").trim_suffix("_")
 
 
 static func _append_native_group(result: Array[Dictionary], catalog: Dictionary,

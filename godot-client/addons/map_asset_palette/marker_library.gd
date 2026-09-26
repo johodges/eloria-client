@@ -169,8 +169,10 @@ static func commit_with_undo(undo_redo: EditorUndoRedoManager, root: Node3D,
 	return "%s/%s" % [GAMEPLAY, container_name]
 
 
-## `<slug>-NN`, unique across every gameplay marker of the territory.
-static func fresh_record_id(root: Node, label: String, kind: String) -> String:
+## `<slug>-NN`, unique across every gameplay marker of the territory and any
+## ids already handed out in the same batch (`reserved`).
+static func fresh_record_id(root: Node, label: String, kind: String,
+		reserved: Dictionary = {}) -> String:
 	var base := label.strip_edges().to_lower() if not label.strip_edges().is_empty() \
 		else String((KINDS.get(kind, ["", kind]) as Array)[1]).to_lower()
 	var cleaned := ""
@@ -182,7 +184,7 @@ static func fresh_record_id(root: Node, label: String, kind: String) -> String:
 	cleaned = cleaned.replace("_", "-").trim_prefix("-").trim_suffix("-")
 	if cleaned.is_empty():
 		cleaned = "marker"
-	var used := {}
+	var used := reserved.duplicate()
 	for marker in markers(root):
 		used[String(marker.get("record_id"))] = true
 	var index := 1

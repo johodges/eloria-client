@@ -6,8 +6,12 @@ extends EditorPlugin
 ## - a Map tools menu with undoable batch edits for selected placements,
 ## - a time-of-day lighting preview and a top-down map capture,
 ## - readable gameplay markers, a walkability overlay, and road/river drawing,
+## - groups (Ctrl+G), Alt+drag copies, a selection bar with editable fields,
+## - a play-test walker, a live minimap dock and a low-spec view,
+## - one-click toolbar toggles,
 ## - rebindable shortcuts and preferences in Editor Settings > Map Authoring.
-## Nothing here is saved into scenes; every helper node is internal and ownerless.
+## Nothing here is saved into scenes except group tags on grouped objects; every
+## helper node is ownerless.
 
 const Settings := preload("res://addons/map_authoring_usability/usability_settings.gd")
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
@@ -19,6 +23,16 @@ const TopDown := preload("res://addons/map_authoring_usability/top_down_capture.
 const MarkerOverlay := preload("res://addons/map_authoring_usability/marker_overlay.gd")
 const Walkability := preload("res://addons/map_authoring_usability/walkability_overlay.gd")
 const PathDraw := preload("res://addons/map_authoring_usability/path_draw_tool.gd")
+const GroupTools := preload("res://addons/map_authoring_usability/group_tools.gd")
+const Walker := preload("res://addons/map_authoring_usability/playtest_walker.gd")
+const MinimapDock := preload("res://addons/map_authoring_usability/minimap_dock.gd")
+const SelectionBar := preload("res://addons/map_authoring_usability/selection_bar.gd")
+const PerformanceMode := preload("res://addons/map_authoring_usability/performance_mode.gd")
+const ViewToolbar := preload("res://addons/map_authoring_usability/view_toolbar.gd")
+const Markers := preload("res://addons/map_asset_palette/marker_library.gd")
+const FOCUS_HELPER := "__MapAuthoringFocus"
+const UI_REFRESH_SECONDS := 0.25
+const MINIMAP_TARGET_LUMINANCE := 0.4
 const POLL_SECONDS := 0.5
 const ASSET_PLUGIN_META := &"map_asset_palette_plugin"
 const SCULPT_PLUGIN_META := &"map_authoring_sculpt_plugin"
@@ -45,6 +59,11 @@ enum MenuId {
 	WALK_CHANGES,
 	DRAW_ROAD,
 	DRAW_RIVER,
+	GROUP,
+	UNGROUP,
+	DUPLICATE,
+	PLAY_TEST,
+	LOW_SPEC,
 }
 
 var _menu: MenuButton
@@ -76,6 +95,20 @@ var _walk := Walkability.new()
 var _draw := PathDraw.new()
 var _walk_mode := Walkability.Mode.OFF
 var _poll_elapsed := 0.0
+var _copy := GroupTools.new()
+var _walker := Walker.new()
+var _performance := PerformanceMode.new()
+var _minimap: MinimapDock
+var _selection_bar: SelectionBar
+var _toolbar: ViewToolbar
+var _open_group := ""
+var _opening_group_click := false
+var _selection_guard := false
+var _ui_elapsed := 0.0
+var _minimap_countdown := -1.0
+var _minimap_rendering := false
+var _focusing := false
+var _pending_focus: Array = []
 
 
 func _enter_tree() -> void:
@@ -92,10 +125,25 @@ func _enter_tree() -> void:
 	add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, _menu)
 	_build_time_controls()
 	add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, _time_button)
+	_toolbar = ViewToolbar.new()
+	_toolbar.option_toggled.connect(_on_toolbar_toggled)
+	_toolbar.walk_mode_selected.connect(func(mode: int) -> void: set_walkability_mode(mode))
+	add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, _toolbar)
+	_selection_bar = SelectionBar.new()
+	_selection_bar.visible = false
+	_selection_bar.field_edited.connect(_on_bar_field_edited)
+	_selection_bar.tool_pressed.connect(_on_bar_tool)
+	add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_BOTTOM, _selection_bar)
+	_minimap = MinimapDock.new()
+	_minimap.jump_requested.connect(_on_minimap_jump)
+	_minimap.refresh_requested.connect(func() -> void: refresh_minimap())
+	add_dock(_minimap)
 	_build_capture_dialog()
 	set_input_event_forwarding_always_enabled()
 	set_force_draw_over_forwarding_enabled()
 	scene_changed.connect(_on_scene_changed)
+	get_editor_interface().get_selection().selection_changed.connect(_on_selection_changed)
+	_sync_toolbar()
 
 
 func _exit_tree() -> void:
@@ -104,6 +152,25 @@ func _exit_tree() -> void:
 	_markers.release()
 	_walk.release()
 	_draw.cancel()
+	_walker.stop()
+	_copy.cancel_drag()
+	if _performance.active:
+		_performance.set_active(get_editor_interface().get_base_control(), null, false,
+			_performance.distance)
+	var selection := get_editor_interface().get_selection()
+	if selection.selection_changed.is_connected(_on_selection_changed):
+		selection.selection_changed.disconnect(_on_selection_changed)
+	for pair: Array in [[_toolbar, EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU],
+			[_selection_bar, EditorPlugin.CONTAINER_SPATIAL_EDITOR_BOTTOM]]:
+		if pair[0] != null and is_instance_valid(pair[0]):
+			remove_control_from_container(int(pair[1]), pair[0] as Control)
+			(pair[0] as Control).queue_free()
+	_toolbar = null
+	_selection_bar = null
+	if _minimap != null:
+		remove_dock(_minimap)
+		_minimap.queue_free()
+		_minimap = null
 	if _time_button != null:
 		remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, _time_button)
 		_time_button.queue_free()
@@ -130,10 +197,24 @@ func _process(delta: float) -> void:
 	if _hover_dirty:
 		_hover_dirty = false
 		_refresh_hover()
+	var was_walking := _walker.is_walking()
+	_walker.advance(delta)
+	if was_walking and not _walker.is_walking():
+		_status(_walker.last_message)
+		update_overlays()
 	_poll_elapsed += delta
 	if _poll_elapsed >= POLL_SECONDS:
 		_poll_elapsed = 0.0
 		poll_overlays()
+	_ui_elapsed += delta
+	if _ui_elapsed >= UI_REFRESH_SECONDS:
+		_ui_elapsed = 0.0
+		_refresh_selection_bar()
+		_update_minimap_state()
+	if _minimap_countdown >= 0.0:
+		_minimap_countdown -= delta
+		if _minimap_countdown < 0.0:
+			refresh_minimap()
 
 
 ## Refreshes the marker pins and the live walkability after edits settle.
@@ -151,11 +232,56 @@ func poll_overlays() -> void:
 	if sculpt != null and sculpt.get("_sculpt") != null:
 		dragging = bool(sculpt.get("_sculpt").call("is_dragging"))
 	_walk.poll(dragging)
+	_performance.refresh()
+	_sync_toolbar()
 
 
 func _forward_3d_gui_input(camera: Camera3D, event: InputEvent) -> int:
+	var result := _viewport_input(camera, event)
+	if result == EditorPlugin.AFTER_GUI_INPUT_STOP and event is InputEventKey and is_inside_tree():
+		# The 3D viewport returns on STOP without accepting a key, so Godot's own
+		# shortcut for it (Ctrl+G grouping, F focus, Q/E tool modes) would run too.
+		get_viewport().set_input_as_handled()
+	return result
+
+
+func _viewport_input(camera: Camera3D, event: InputEvent) -> int:
 	if _authoring_root() == null:
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
+	if _walker.active:
+		if Settings.matches("focus_walker", event) and _walker.is_placed():
+			focus_camera_at(_authoring_root().global_transform * _walker.position())
+			return EditorPlugin.AFTER_GUI_INPUT_STOP
+		if _walker.handle_input(camera, event):
+			_status(_walker.last_message)
+			_sync_toolbar()
+			update_overlays()
+			return EditorPlugin.AFTER_GUI_INPUT_STOP
+		if event is InputEventMouseMotion:
+			_note_hover(camera, (event as InputEventMouseMotion).position)
+		return EditorPlugin.AFTER_GUI_INPUT_PASS
+	if _copy.is_dragging() or _starts_copy_drag(camera, event):
+		return _handle_copy_drag(camera, event)
+	if event is InputEventKey and event.pressed and not event.echo:
+		for action: String in ["ungroup", "group", "duplicate_fresh", "play_test"]:
+			if Settings.matches(action, event) and \
+					(action != "group" or not (event as InputEventKey).shift_pressed):
+				match action:
+					"ungroup":
+						ungroup_selection()
+					"group":
+						group_selection()
+					"duplicate_fresh":
+						duplicate_selection()
+					"play_test":
+						start_play_test()
+				return EditorPlugin.AFTER_GUI_INPUT_STOP
+	if event is InputEventMouseButton and event.pressed and \
+			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT and \
+			(event as InputEventMouseButton).double_click:
+		# The editor's click that follows picks one object; the selection handler
+		# then opens its group instead of expanding to all members.
+		_opening_group_click = true
 	if _draw.is_active():
 		var drawn_before := _draw.points.size()
 		var result := _draw.handle_input(camera, event, get_undo_redo())
@@ -171,14 +297,18 @@ func _forward_3d_gui_input(camera: Camera3D, event: InputEvent) -> int:
 			_hover_dirty = true
 		return result
 	if event is InputEventMouseMotion:
-		_hover_camera = camera
-		_hover_position = (event as InputEventMouseMotion).position
-		_hover_inside = true
-		_hover_dirty = true
+		_note_hover(camera, (event as InputEventMouseMotion).position)
 	elif event is InputEventMouseButton or event is InputEventKey:
 		# Placement adjustments (turn, lift, snap) change what the grid shows.
 		_hover_dirty = true
 	return EditorPlugin.AFTER_GUI_INPUT_PASS
+
+
+func _note_hover(camera: Camera3D, position: Vector2) -> void:
+	_hover_camera = camera
+	_hover_position = position
+	_hover_inside = true
+	_hover_dirty = true
 
 
 func _forward_3d_force_draw_over_viewport(overlay: Control) -> void:
@@ -199,6 +329,14 @@ func _forward_3d_force_draw_over_viewport(overlay: Control) -> void:
 	_draw_walkability_legend(overlay, font, font_size)
 	# Drawing, placement and sculpt hints sit above the readout. Drawing them here
 	# (this plugin force-draws) keeps them visible when nothing is selected.
+	if _walker.active:
+		PalettePlugin.draw_overlay_lines(overlay, _walker.hint_lines(), bottom)
+		return
+	if _copy.is_dragging():
+		PalettePlugin.draw_overlay_lines(overlay, PackedStringArray([
+			"Copying %d object%s: release to place, Esc cancels" % [_copy_count(),
+				"" if _copy_count() == 1 else "s"]]), bottom)
+		return
 	if _draw.is_active():
 		PalettePlugin.draw_overlay_lines(overlay, _draw.hint_lines(), bottom)
 		return
@@ -254,6 +392,8 @@ func readout_text() -> String:
 			get_editor_interface().get_selection().get_selected_nodes()).size()
 		if count > 0:
 			parts.append("%d selected" % count)
+	if _performance.active:
+		parts.append("%d fps" % roundi(Engine.get_frames_per_second()))
 	return "  ·  ".join(parts)
 
 
@@ -269,6 +409,13 @@ func run_tool(id: int) -> int:
 		_toast("Open a map authoring scene first.")
 		return 0
 	var selection := get_editor_interface().get_selection().get_selected_nodes()
+	match id:
+		MenuId.GROUP:
+			return 1 if not group_selection().is_empty() else 0
+		MenuId.UNGROUP:
+			return ungroup_selection()
+		MenuId.DUPLICATE:
+			return duplicate_selection().size()
 	if id == MenuId.SAVE_PREFAB:
 		var palette := _palette_plugin()
 		if palette == null:
@@ -314,6 +461,10 @@ func _build_menu(popup: PopupMenu) -> void:
 	popup.add_item("Random size for each", MenuId.RANDOM_SIZE)
 	popup.add_separator()
 	_add_tool_item(popup, "Save selection as prefab", MenuId.SAVE_PREFAB, "save_prefab", settings)
+	popup.add_item("Group selection (Ctrl+G in the 3D view)", MenuId.GROUP)
+	popup.add_item("Ungroup (Ctrl+Shift+G)", MenuId.UNGROUP)
+	_add_tool_item(popup, "Duplicate with fresh ids (or Alt+drag)", MenuId.DUPLICATE,
+		"duplicate_fresh", settings)
 	popup.add_separator("Cursor grid")
 	popup.add_radio_check_item("Off", MenuId.GRID_OFF)
 	popup.add_radio_check_item("While placing", MenuId.GRID_WHILE_PLACING)
@@ -331,6 +482,9 @@ func _build_menu(popup: PopupMenu) -> void:
 	popup.add_separator("Paths")
 	_add_tool_item(popup, "Draw road", MenuId.DRAW_ROAD, "draw_road", settings)
 	_add_tool_item(popup, "Draw river", MenuId.DRAW_RIVER, "draw_river", settings)
+	popup.add_separator("Play and view")
+	popup.add_check_item("Play test: walk the territory", MenuId.PLAY_TEST)
+	popup.add_check_item("Low spec view (half resolution, far assets hidden)", MenuId.LOW_SPEC)
 	popup.add_separator()
 	popup.add_item("Time of day preview…", MenuId.TIME_OF_DAY)
 	popup.add_item("Capture top-down image…", MenuId.CAPTURE_TOP_DOWN)
@@ -363,6 +517,8 @@ func _sync_menu() -> void:
 			[MenuId.WALK_PUBLISHED, Walkability.Mode.PUBLISHED],
 			[MenuId.WALK_LIVE, Walkability.Mode.LIVE], [MenuId.WALK_CHANGES, Walkability.Mode.CHANGES]]:
 		popup.set_item_checked(popup.get_item_index(int(pair[0])), _walk_mode == int(pair[1]))
+	popup.set_item_checked(popup.get_item_index(MenuId.PLAY_TEST), _walker.active)
+	popup.set_item_checked(popup.get_item_index(MenuId.LOW_SPEC), _performance.active)
 
 
 func _on_menu_id(id: int) -> void:
@@ -394,6 +550,13 @@ func _on_menu_id(id: int) -> void:
 			start_path_drawing("road")
 		MenuId.DRAW_RIVER:
 			start_path_drawing("river")
+		MenuId.PLAY_TEST:
+			if _walker.active:
+				stop_play_test()
+			else:
+				start_play_test()
+		MenuId.LOW_SPEC:
+			set_low_spec(not _performance.active)
 		MenuId.TIME_OF_DAY:
 			_show_time_panel()
 		MenuId.CAPTURE_TOP_DOWN:
@@ -483,7 +646,18 @@ func _toast(message: String) -> void:
 func _on_scene_changed(root: Node) -> void:
 	_clear_hover()
 	_draw.cancel()
+	_walker.stop()
+	_copy.cancel_drag()
+	_open_group = ""
 	_markers.release()
+	if bool(Settings.value("performance/low_spec")) or _performance.active:
+		_performance.set_active(get_editor_interface().get_base_control(), _authoring_root(),
+			bool(Settings.value("performance/low_spec")),
+			float(Settings.value("performance/far_asset_metres")))
+	if _minimap != null:
+		_minimap.clear("Rendering…" if _authoring_root() != null else
+			"Open a territory to see its minimap.")
+		_minimap_countdown = 1.0 if _authoring_root() != null else -1.0
 	var mode := _walk_mode
 	_walk.release()
 	if mode != Walkability.Mode.OFF:
@@ -769,6 +943,7 @@ func start_path_drawing(kind: String) -> bool:
 	var sculpt := _sculpt_plugin()
 	if sculpt != null and sculpt.has_method("deactivate_terrain_sculpt"):
 		sculpt.call("deactivate_terrain_sculpt")
+	_walker.stop()
 	var started := _draw.start(root, kind)
 	_status(_draw.last_message)
 	if started:
@@ -777,10 +952,14 @@ func start_path_drawing(kind: String) -> bool:
 	return started
 
 
+## Called by placement and sculpting when they take the viewport: stops this
+## plugin's click tools (path drawing and the play-test walker).
 func cancel_path_drawing() -> void:
 	if _draw.is_active():
 		_draw.cancel()
 		update_overlays()
+	if _walker.active:
+		stop_play_test()
 
 
 func path_draw_tool() -> RefCounted:
@@ -811,3 +990,493 @@ func _status(message: String) -> void:
 	var dock: Object = palette.get("_dock") if palette != null else null
 	if dock != null and dock.has_method("show_message"):
 		dock.call("show_message", message)
+
+
+# Groups and copies ---------------------------------------------------------
+
+## Groups the selected placements (see group_tools.gd); returns the group id.
+func group_selection() -> String:
+	var root := _authoring_root()
+	if root == null:
+		return ""
+	var nodes := Tools.placements(root, get_editor_interface().get_selection().get_selected_nodes())
+	if nodes.size() < 2:
+		_toast("Select two or more placed objects to group them.")
+		return ""
+	var identity := GroupTools.group(get_undo_redo(), root, nodes)
+	_open_group = ""
+	_status("Grouped %d objects as %s. Clicking one selects all; double-click to pick one." % [
+		nodes.size(), identity])
+	_refresh_selection_bar()
+	return identity
+
+
+## Ungroups every group the selection touches; returns how many objects changed.
+func ungroup_selection() -> int:
+	var root := _authoring_root()
+	if root == null:
+		return 0
+	var changed := GroupTools.ungroup(get_undo_redo(), root,
+		Tools.placements(root, get_editor_interface().get_selection().get_selected_nodes()))
+	if changed == 0:
+		_toast("The selection is not grouped.")
+	else:
+		_open_group = ""
+		_status("Ungrouped %d objects." % changed)
+	_refresh_selection_bar()
+	return changed
+
+
+## Copies the selection with fresh ids `offset` away (default: one grid step
+## east and south) as one undo step, and selects the copies.
+func duplicate_selection(offset: Vector3 = Vector3.INF) -> Array[Node3D]:
+	var root := _authoring_root()
+	var copies: Array[Node3D] = []
+	if root == null:
+		return copies
+	var nodes := Tools.placements(root, get_editor_interface().get_selection().get_selected_nodes())
+	if nodes.is_empty():
+		_toast("Select placed assets, scenery or gameplay markers first.")
+		return copies
+	if not offset.is_finite():
+		var step := maxf(float(Settings.value("grid/step")), 1.0)
+		offset = root.global_transform.basis * Vector3(step, 0.0, step)
+	copies = GroupTools.commit_copies(get_undo_redo(), root, nodes, offset)
+	_select(copies)
+	_status("Copied %d object%s with fresh ids." % [copies.size(), "" if copies.size() == 1 else "s"])
+	return copies
+
+
+func copy_drag_tool() -> RefCounted:
+	return _copy
+
+
+func open_group() -> String:
+	return _open_group
+
+
+## Lets single members of `group_id` be picked until the selection leaves it.
+func set_open_group(group_id: String) -> void:
+	_open_group = group_id
+	_refresh_selection_bar()
+
+
+func _copy_count() -> int:
+	var ghost := _copy.ghost()
+	return ghost.get_child_count() if ghost != null else 0
+
+
+## Alt+press on a selected object starts a copy-drag (not while placing).
+func _starts_copy_drag(camera: Camera3D, event: InputEvent) -> bool:
+	if not event is InputEventMouseButton:
+		return false
+	var button := event as InputEventMouseButton
+	if not button.pressed or button.button_index != MOUSE_BUTTON_LEFT or not button.alt_pressed or \
+			button.ctrl_pressed or button.shift_pressed or button.meta_pressed:
+		return false
+	var palette := _palette_plugin()
+	if palette != null and bool((palette.call("placement_state") as Dictionary).get("armed", false)):
+		return false
+	var root := _authoring_root()
+	var nodes := Tools.placements(root, get_editor_interface().get_selection().get_selected_nodes())
+	if nodes.is_empty():
+		return false
+	var hit: Variant = Probe.ray_hit(root, camera.project_ray_origin(button.position),
+		camera.project_ray_normal(button.position), RAY_LENGTH)
+	if not hit is Vector3 or not GroupTools.hits_selection(nodes, hit as Vector3):
+		return false
+	_copy.begin_drag(root, nodes, hit as Vector3)
+	return true
+
+
+func _handle_copy_drag(camera: Camera3D, event: InputEvent) -> int:
+	var root := _authoring_root()
+	if event is InputEventKey and event.pressed and (event as InputEventKey).keycode == KEY_ESCAPE:
+		_copy.cancel_drag()
+		update_overlays()
+		return EditorPlugin.AFTER_GUI_INPUT_STOP
+	var position := Vector2.INF
+	if event is InputEventMouse:
+		position = (event as InputEventMouse).position
+	if position.is_finite() and not (event is InputEventMouseButton and event.pressed):
+		var hit: Variant = Probe.ray_hit(root, camera.project_ray_origin(position),
+			camera.project_ray_normal(position), RAY_LENGTH)
+		if hit is Vector3:
+			var ground := hit as Vector3
+			if bool(Settings.value("placement/snap_to_grid")):
+				ground = _snap_offset_target(ground)
+			_copy.update_drag(ground)
+	if event is InputEventMouseButton and not event.pressed and \
+			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		var copies := _copy.finish_drag(get_undo_redo())
+		if not copies.is_empty():
+			_select(copies)
+			_status("Copied %d object%s with fresh ids." % [copies.size(),
+				"" if copies.size() == 1 else "s"])
+	update_overlays()
+	return EditorPlugin.AFTER_GUI_INPUT_STOP if event is InputEventMouse else \
+		EditorPlugin.AFTER_GUI_INPUT_PASS
+
+
+## With grid snap on, the drag moves in whole grid steps from where it began.
+func _snap_offset_target(ground: Vector3) -> Vector3:
+	var step := float(Settings.value("grid/step"))
+	var start: Vector3 = _copy.get("_drag_start")
+	if not start.is_finite() or step <= 0.0:
+		return ground
+	return Vector3(start.x + roundf((ground.x - start.x) / step) * step, ground.y,
+		start.z + roundf((ground.z - start.z) / step) * step)
+
+
+func _select(nodes: Array[Node3D]) -> void:
+	var selection := get_editor_interface().get_selection()
+	_selection_guard = true
+	selection.clear()
+	for node in nodes:
+		selection.add_node(node)
+	_selection_guard = false
+
+
+## Completes groups in the selection, or opens one after a double-click.
+func _on_selection_changed() -> void:
+	var root := _authoring_root()
+	if root == null or _selection_guard or _focusing:
+		return
+	var selection := get_editor_interface().get_selection()
+	var nodes := selection.get_selected_nodes()
+	if _opening_group_click:
+		_opening_group_click = false
+		var picked := Tools.placements(root, nodes)
+		if picked.size() == 1 and not GroupTools.group_of(picked[0]).is_empty():
+			_open_group = GroupTools.group_of(picked[0])
+			_status("Editing group %s member by member; select outside it to close it." % _open_group)
+			_refresh_selection_bar()
+			return
+	if not _open_group.is_empty():
+		var inside := false
+		for node in nodes:
+			if node is Node and GroupTools.group_of(node as Node) == _open_group:
+				inside = true
+				break
+		if not inside:
+			_open_group = ""
+	var expanded := GroupTools.expand(root, nodes, _open_group)
+	if expanded.size() > nodes.size():
+		_selection_guard = true
+		for node in expanded:
+			if not node in nodes:
+				selection.add_node(node)
+		_selection_guard = false
+	_refresh_selection_bar()
+
+
+# Selection bar and toolbar -------------------------------------------------
+
+func selection_bar() -> Control:
+	return _selection_bar
+
+
+func toolbar() -> Control:
+	return _toolbar
+
+
+func _refresh_selection_bar() -> void:
+	if _selection_bar == null:
+		return
+	var root := _authoring_root()
+	if root == null:
+		_selection_bar.show_summary({}, false, "")
+		return
+	var nodes := Tools.placements(root, get_editor_interface().get_selection().get_selected_nodes())
+	var grouped := false
+	for node in nodes:
+		if not GroupTools.group_of(node).is_empty():
+			grouped = true
+			break
+	_selection_bar.show_summary(Tools.summary(root, nodes), grouped, _open_group)
+
+
+func _on_bar_field_edited(field: String, value: float) -> void:
+	var root := _authoring_root()
+	if root == null:
+		return
+	var nodes := Tools.placements(root, get_editor_interface().get_selection().get_selected_nodes())
+	Tools.apply_field(get_undo_redo(), root, nodes, field, value)
+	_refresh_selection_bar()
+
+
+func _on_bar_tool(tool: String) -> void:
+	match tool:
+		"drop":
+			run_tool(MenuId.DROP_TO_GROUND)
+		"rotate":
+			run_tool(MenuId.ROTATE_EACH)
+		"copy":
+			duplicate_selection()
+		"group":
+			group_selection()
+		"ungroup":
+			ungroup_selection()
+		"open_group":
+			var root := _authoring_root()
+			if root != null:
+				for node in Tools.placements(root,
+						get_editor_interface().get_selection().get_selected_nodes()):
+					if not GroupTools.group_of(node).is_empty():
+						set_open_group(GroupTools.group_of(node))
+						_status("Editing group %s: click single members; select outside it to close." %
+							_open_group)
+						break
+		"prefab":
+			run_tool(MenuId.SAVE_PREFAB)
+	_refresh_selection_bar()
+
+
+func _on_toolbar_toggled(option: String, on: bool) -> void:
+	match option:
+		"grid":
+			Settings.set_value("grid/cursor_grid",
+				Settings.CursorGrid.ALWAYS if on else Settings.CursorGrid.WHILE_PLACING)
+		"snap":
+			Settings.set_value("placement/snap_to_grid", on)
+		"pins":
+			Settings.set_value("markers/show", on)
+			poll_overlays()
+		"play":
+			if on:
+				start_play_test()
+			else:
+				stop_play_test()
+		"low_spec":
+			set_low_spec(on)
+	_sync_toolbar()
+	_refresh_hover()
+
+
+func _sync_toolbar() -> void:
+	if _toolbar == null:
+		return
+	_toolbar.sync({
+		"grid": int(Settings.value("grid/cursor_grid")) == Settings.CursorGrid.ALWAYS,
+		"snap": bool(Settings.value("placement/snap_to_grid")),
+		"pins": bool(Settings.value("markers/show")),
+		"play": _walker.active,
+		"low_spec": _performance.active,
+		"walk_mode": _walk_mode,
+	})
+
+
+# Play test -----------------------------------------------------------------
+
+## Starts the play-test walker on the open territory (placement, sculpting and
+## drawing stop). Returns whether it started.
+func start_play_test() -> bool:
+	var root := _authoring_root()
+	var palette := _palette_plugin()
+	if palette != null and palette.has_method("cancel_placement_for_terrain_sculpt"):
+		palette.call("cancel_placement_for_terrain_sculpt")
+	var sculpt := _sculpt_plugin()
+	if sculpt != null and sculpt.has_method("deactivate_terrain_sculpt"):
+		sculpt.call("deactivate_terrain_sculpt")
+	_draw.cancel()
+	var started := _walker.start(root)
+	_status(_walker.last_message)
+	if not started:
+		_toast(_walker.last_message)
+	else:
+		get_editor_interface().set_main_screen_editor("3D")
+	_sync_toolbar()
+	update_overlays()
+	return started
+
+
+func stop_play_test() -> void:
+	_walker.stop()
+	_sync_toolbar()
+	update_overlays()
+
+
+func play_test_walker() -> RefCounted:
+	return _walker
+
+
+# Low spec ------------------------------------------------------------------
+
+## Half resolution, far assets hidden and frame time shown (see
+## performance_mode.gd). Returns the number of culled meshes.
+func set_low_spec(on: bool) -> int:
+	Settings.set_value("performance/low_spec", on)
+	var culled := _performance.set_active(get_editor_interface().get_base_control(),
+		_authoring_root(), on, float(Settings.value("performance/far_asset_metres")))
+	_status("Low spec view on: half resolution, %d meshes beyond %.0f m hidden." % [culled,
+		_performance.distance] if on else "Low spec view off.")
+	_sync_toolbar()
+	update_overlays()
+	return culled
+
+
+func performance_state() -> Dictionary:
+	return {"active": _performance.active, "culled": _performance.culled_count(),
+		"distance": _performance.distance,
+		"half_resolution": PerformanceMode.view_option(get_editor_interface().get_base_control(),
+			PerformanceMode.HALF_RESOLUTION_ID)}
+
+
+# Minimap and camera jumps --------------------------------------------------
+
+func minimap_dock() -> Control:
+	return _minimap
+
+
+## Renders the minimap picture again (see top_down_capture.gd render). Lighting
+## is the noon preview unless a time preview is on.
+func refresh_minimap() -> Dictionary:
+	var root := _authoring_root()
+	if _minimap == null:
+		return {"error": "No minimap dock."}
+	if root == null:
+		_minimap.clear("Open a territory to see its minimap.")
+		return {"error": "Open a map authoring scene first."}
+	if _minimap_rendering or _capturing:
+		return {"error": "A render is already running."}
+	_minimap_rendering = true
+	var ppm := float(Settings.value("minimap/pixels_per_metre"))
+	var temporary_light := not _time.is_active() and TimeOfDay.saved_lighting(root).is_empty()
+	if temporary_light and DisplayServer.get_name() != "headless":
+		_time.enable(root, 180.0)
+	else:
+		temporary_light = false
+	var rendered: Dictionary = await TopDown.render(root, ppm, false, true)
+	if temporary_light:
+		_time.disable()
+	_minimap_rendering = false
+	if _minimap == null or root != _authoring_root():
+		return rendered
+	if rendered.has("error"):
+		var framing := TopDown.plan(root, ppm, TopDown.ownership_polygon_local(root))
+		_minimap.set_image(null, framing if not framing.has("error") else {})
+		_minimap.set_status(String(rendered.error))
+	else:
+		var framing: Dictionary = rendered.framing
+		_minimap.set_image(levelled_minimap(rendered.image), framing)
+		_minimap.set_status("%.0f × %.0f m, north up. Click to jump." % [
+			(framing.rect as Rect2).size.x, (framing.rect as Rect2).size.y])
+	_update_minimap_state()
+	return rendered
+
+
+## The minimap picture brightened so its owned land averages a readable level:
+## the authoring terrain preview renders far darker than the game does. Only
+## the dock's copy is changed; top-down captures stay as rendered.
+static func levelled_minimap(image: Image) -> Image:
+	var levelled := image.duplicate() as Image
+	var total := 0.0
+	var count := 0
+	for y in range(0, levelled.get_height(), 3):
+		for x in range(0, levelled.get_width(), 3):
+			var pixel := levelled.get_pixel(x, y)
+			if pixel.a > 0.5:
+				total += pixel.get_luminance()
+				count += 1
+	if count == 0 or total <= 0.0:
+		return levelled
+	var factor := clampf(MINIMAP_TARGET_LUMINANCE / (total / float(count)), 1.0, 6.0)
+	if factor > 1.01:
+		levelled.adjust_bcs(factor, 1.0, 1.0)
+	return levelled
+
+
+func _update_minimap_state() -> void:
+	if _minimap == null or _minimap.framing().is_empty():
+		return
+	var root := _authoring_root()
+	if root == null:
+		return
+	var inverse := root.global_transform.affine_inverse()
+	var state := {}
+	var viewport := get_editor_interface().get_editor_viewport_3d(0)
+	var camera := viewport.get_camera_3d() if viewport != null else null
+	if camera != null:
+		state.camera = inverse * camera.global_position
+		state.camera_forward = inverse.basis * -camera.global_transform.basis.z
+	var selected: Array[Vector3] = []
+	for node in Tools.placements(root, get_editor_interface().get_selection().get_selected_nodes()):
+		selected.append(inverse * node.global_position)
+	state.selection = selected
+	if bool(Settings.value("markers/show")):
+		var markers: Array = []
+		for marker in Markers.markers(root):
+			markers.append([inverse * (marker as Node3D).global_position,
+				Markers.color_for(String(marker.get("kind")))])
+		state.markers = markers
+	if _walker.active and _walker.is_placed():
+		state.walker = _walker.position()
+		state.route = _walker.route()
+	_minimap.set_state(state)
+
+
+func _on_minimap_jump(local: Vector3) -> void:
+	var root := _authoring_root()
+	if root == null:
+		return
+	var world := root.global_transform * local
+	var ground := Probe.height_at(root, world)
+	world.y = ground if not is_nan(ground) else world.y
+	focus_camera_at(world)
+
+
+## Centres the 3D view on `world`, keeping its angle and zoom (the viewport's
+## Focus Selection only moves the orbit pivot). Godot has no public call for
+## that, so a hidden, unsaved helper is selected, Focus Selection runs on it,
+## and the previous selection is restored. Returns whether focus ran.
+func focus_camera_at(world: Vector3) -> bool:
+	var root := _authoring_root()
+	if root == null:
+		return false
+	if _focusing:
+		_pending_focus = [world]
+		return false
+	_focusing = true
+	var selection := get_editor_interface().get_selection()
+	var previous := selection.get_selected_nodes()
+	var helper := MeshInstance3D.new()
+	helper.name = FOCUS_HELPER
+	helper.mesh = BoxMesh.new()
+	helper.visible = false
+	root.add_child(helper)
+	helper.global_position = world
+	selection.clear()
+	selection.add_node(helper)
+	var tree := root.get_tree()
+	for _frame in 3:
+		await tree.process_frame
+	var pressed := _press_view_item("Focus Selection")
+	for _frame in 2:
+		await tree.process_frame
+	selection.clear()
+	for node in previous:
+		if is_instance_valid(node) and node.is_inside_tree():
+			selection.add_node(node)
+	if is_instance_valid(helper):
+		if helper.get_parent() != null:
+			helper.get_parent().remove_child(helper)
+		helper.queue_free()
+	for _frame in 2:
+		await tree.process_frame
+	_focusing = false
+	if not _pending_focus.is_empty():
+		var next: Array = _pending_focus
+		_pending_focus = []
+		focus_camera_at(next[0] as Vector3)
+	return pressed
+
+
+func _press_view_item(text: String) -> bool:
+	for popup_node in get_editor_interface().get_base_control().find_children("*", "PopupMenu",
+			true, false):
+		var popup := popup_node as PopupMenu
+		for index in popup.item_count:
+			if popup.get_item_text(index) == text:
+				popup.id_pressed.emit(popup.get_item_id(index))
+				return true
+	return false

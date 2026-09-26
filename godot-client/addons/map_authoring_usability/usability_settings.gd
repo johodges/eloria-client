@@ -34,6 +34,9 @@ const DEFAULTS := {
 	"capture/clip_to_ownership": true,
 	"markers/show": true,
 	"markers/labels": true,
+	"performance/low_spec": false,
+	"performance/far_asset_metres": 200.0,
+	"minimap/pixels_per_metre": 0.5,
 }
 
 const HINTS := {
@@ -51,6 +54,8 @@ const HINTS := {
 	"sculpt/strength_factor": [TYPE_FLOAT, PROPERTY_HINT_RANGE, "1.05,2,0.05"],
 	"time_of_day/minute": [TYPE_FLOAT, PROPERTY_HINT_RANGE, "0,359.75,0.25"],
 	"capture/pixels_per_metre": [TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.25,8,0.25"],
+	"performance/far_asset_metres": [TYPE_FLOAT, PROPERTY_HINT_RANGE, "40,2000,10"],
+	"minimap/pixels_per_metre": [TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.1,2,0.05"],
 }
 
 ## Shortcut path -> [display name, keycode, shift, ctrl, alt]. KEY_NONE is unbound.
@@ -76,6 +81,11 @@ const SHORTCUTS := {
 	"path_wider": ["Path drawing: wider (Shift: fine)", KEY_BRACKETRIGHT, false, false, false],
 	"draw_road": ["Paths: draw a road", KEY_NONE, false, false, false],
 	"draw_river": ["Paths: draw a river", KEY_NONE, false, false, false],
+	"group": ["Selection: group", KEY_G, false, true, false],
+	"ungroup": ["Selection: ungroup", KEY_G, true, true, false],
+	"duplicate_fresh": ["Selection: duplicate with fresh ids", KEY_NONE, false, false, false],
+	"play_test": ["Play test: start or stop", KEY_NONE, false, false, false],
+	"focus_walker": ["Play test: look at the walker", KEY_F, false, false, false],
 }
 
 const KEY_SYMBOLS := {"BracketLeft": "[", "BracketRight": "]", "PageUp": "PgUp",

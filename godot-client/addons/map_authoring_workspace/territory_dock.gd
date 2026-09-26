@@ -26,6 +26,12 @@ var _sculpt_flatten: SpinBox
 var _sculpt_pick: Button
 var _sculpt_status: Label
 var _sculpt_allowed := false
+var _browse: Button
+var _picker: PopupPanel
+var _picker_list: ItemList
+var _thumbnails := {}
+## Map picker thumbnails: each territory's published minimap, this many pixels.
+const PICKER_THUMBNAIL := 160
 
 
 func configure(entries: Array[Dictionary], active_id: String,
@@ -145,7 +151,13 @@ func _build_ui() -> void:
 	_open.text = "Open"
 	_open.pressed.connect(_open_selected)
 	row.add_child(_open)
+	_browse = Button.new()
+	_browse.text = "Browse…"
+	_browse.tooltip_text = "Pick a territory from its published minimap."
+	_browse.pressed.connect(open_picker)
+	row.add_child(_browse)
 	column.add_child(row)
+	_build_picker()
 	_build_sculpt_ui(column)
 	var reference_label := Label.new()
 	reference_label.text = "Read-only references"
@@ -289,6 +301,93 @@ func _update_open() -> void:
 		String(entry.id) == _active_id
 	_open.tooltip_text = "Open this saved authored scene in its native editor tab." \
 		if not _open.disabled else "This territory has no complete authored source yet."
+
+
+func _build_picker() -> void:
+	_picker = PopupPanel.new()
+	_picker.title = "Open territory"
+	_picker_list = ItemList.new()
+	_picker_list.max_columns = 0
+	_picker_list.icon_mode = ItemList.ICON_MODE_TOP
+	_picker_list.fixed_column_width = PICKER_THUMBNAIL + 16
+	_picker_list.fixed_icon_size = Vector2i(PICKER_THUMBNAIL, PICKER_THUMBNAIL)
+	_picker_list.same_column_width = true
+	# Four columns by three rows shows every territory without scrolling.
+	_picker_list.custom_minimum_size = Vector2(4 * (PICKER_THUMBNAIL + 44) + 24, 3 * (PICKER_THUMBNAIL + 60))
+	_picker_list.item_activated.connect(_open_picked)
+	_picker_list.item_clicked.connect(func(index: int, _at: Vector2, button: int) -> void:
+		if button == MOUSE_BUTTON_LEFT:
+			_open_picked(index))
+	_picker.add_child(_picker_list)
+	add_child(_picker)
+
+
+## Shows every territory as its published minimap; clicking an editable one
+## opens its authored scene.
+func open_picker() -> void:
+	_fill_picker()
+	if is_inside_tree():
+		_picker.popup_centered()
+
+
+## The picker's items, for tests: [{label, id, editable, thumbnail}].
+func picker_items() -> Array[Dictionary]:
+	_fill_picker()
+	var result: Array[Dictionary] = []
+	for index in _picker_list.item_count:
+		var entry: Dictionary = _picker_list.get_item_metadata(index)
+		result.append({"label": _picker_list.get_item_text(index), "id": String(entry.id),
+			"editable": not _picker_list.is_item_disabled(index),
+			"thumbnail": _picker_list.get_item_icon(index)})
+	return result
+
+
+func pick(index: int) -> void:
+	_open_picked(index)
+
+
+func _fill_picker() -> void:
+	_picker_list.clear()
+	for entry in _entries:
+		var text := String(entry.label)
+		if String(entry.id) == _active_id:
+			text += " (open)"
+		elif not bool(entry.editable):
+			text += " (reference only)"
+		var index := _picker_list.add_item(text, _thumbnail(entry))
+		_picker_list.set_item_metadata(index, entry)
+		_picker_list.set_item_tooltip(index, _tooltip(entry))
+		_picker_list.set_item_disabled(index, not bool(entry.editable) or
+			String(entry.id) == _active_id)
+
+
+func _thumbnail(entry: Dictionary) -> Texture2D:
+	var manifest := String(entry.get("manifest_path", ""))
+	if manifest.is_empty():
+		return null
+	var path := manifest.get_base_dir().path_join("minimap.webp")
+	if _thumbnails.has(path):
+		return _thumbnails[path]
+	var texture: Texture2D = null
+	var absolute := ProjectSettings.globalize_path(path)
+	if FileAccess.file_exists(absolute):
+		var image := Image.load_from_file(absolute)
+		if image != null and not image.is_empty():
+			var longest := maxi(image.get_width(), image.get_height())
+			var factor := float(PICKER_THUMBNAIL) / float(longest)
+			image.resize(maxi(roundi(image.get_width() * factor), 1),
+				maxi(roundi(image.get_height() * factor), 1), Image.INTERPOLATE_LANCZOS)
+			texture = ImageTexture.create_from_image(image)
+	_thumbnails[path] = texture
+	return texture
+
+
+func _open_picked(index: int) -> void:
+	if index < 0 or index >= _picker_list.item_count or _picker_list.is_item_disabled(index):
+		return
+	var entry: Dictionary = _picker_list.get_item_metadata(index)
+	_picker.hide()
+	open_requested.emit(String(entry.scene_path))
 
 
 func _open_selected() -> void:

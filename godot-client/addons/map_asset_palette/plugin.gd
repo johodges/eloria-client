@@ -73,6 +73,15 @@ func _process(_delta: float) -> void:
 
 
 func _forward_3d_gui_input(camera: Camera3D, event: InputEvent) -> int:
+	var result := _viewport_input(camera, event)
+	if result == EditorPlugin.AFTER_GUI_INPUT_STOP and event is InputEventKey and is_inside_tree():
+		# The 3D viewport returns on STOP without accepting a key, so Godot's own
+		# shortcut for it (Ctrl+G grouping, F focus, Q/E tool modes) would run too.
+		get_viewport().set_input_as_handled()
+	return result
+
+
+func _viewport_input(camera: Camera3D, event: InputEvent) -> int:
 	if _pending_entry.is_empty() or _pilot_root() == null:
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
 	if event is InputEventMouseMotion:

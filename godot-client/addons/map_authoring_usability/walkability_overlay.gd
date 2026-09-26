@@ -291,10 +291,15 @@ static func published_grid(root: Node3D) -> Dictionary:
 		return {"error": "%s has an unexpected size." % binary.get_file()}
 	var origin: Array = collision.get("originMetres", [0.0, 0.0])
 	var image := Image.create_from_data(width, rows, false, Image.FORMAT_L8, grid)
+	# A walkable cell's byte is its height code: origin + code * step metres.
+	var encoding: Dictionary = collision.get("heightEncoding", {}) \
+		if collision.get("heightEncoding") is Dictionary else {}
 	return {"bytes": grid, "width": width, "rows": rows, "x0": float(origin[0]),
 		"z1": float(origin[1]), "cell": float(collision.get("cellMetres", 0.5)),
 		"texture": ImageTexture.create_from_image(image), "path": binary,
-		"walkable_fraction": float(collision.get("walkableFraction", NAN))}
+		"walkable_fraction": float(collision.get("walkableFraction", NAN)),
+		"height_origin": float(encoding.get("origin", NAN)),
+		"height_step": float(encoding.get("step", NAN))}
 
 
 const CONTINENT_PLAN_PATH := 	"res://../eloria-assets/maps/nymara-regions/_continent/diagonal-plan.json"

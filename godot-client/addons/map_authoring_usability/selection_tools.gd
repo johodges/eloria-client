@@ -102,6 +102,82 @@ static func randomize_size(undo_redo: EditorUndoRedoManager, root: Node3D,
 	return _commit(undo_redo, root, changes, "Randomly resize %d object%s")
 
 
+## What the selection bar shows: one object's territory-local position, turn
+## (degrees about up) and size, or for several objects their centre with a
+## relative turn (0) and size factor (1).
+static func summary(root: Node3D, nodes: Array[Node3D]) -> Dictionary:
+	if nodes.is_empty():
+		return {"count": 0}
+	var inverse := root.global_transform.affine_inverse()
+	var centre := Vector3.ZERO
+	for node in nodes:
+		centre += inverse * node.global_position
+	centre /= float(nodes.size())
+	if nodes.size() == 1:
+		var basis := nodes[0].global_transform.basis
+		return {"count": 1, "name": String(nodes[0].name), "position": centre,
+			"turn": _yaw_degrees(basis), "size": _uniform_scale(basis)}
+	return {"count": nodes.size(), "name": "%d objects" % nodes.size(), "position": centre,
+		"turn": 0.0, "size": 1.0}
+
+
+## Applies one selection bar field ("x", "y", "z", "turn" or "size") as one
+## undo step. Several objects move rigidly, turn about their centre and scale
+## about it; one object takes the values as absolute.
+static func apply_field(undo_redo: EditorUndoRedoManager, root: Node3D, nodes: Array[Node3D],
+		field: String, value: float) -> int:
+	var shown := summary(root, nodes)
+	if int(shown.get("count", 0)) == 0:
+		return 0
+	var changes: Array[Dictionary] = []
+	var centre_local: Vector3 = shown.position
+	var centre: Vector3 = root.global_transform * centre_local
+	var up := root.global_transform.basis.y.normalized()
+	for node in nodes:
+		var transform := node.global_transform
+		match field:
+			"x", "y", "z":
+				var target := centre_local
+				target[["x", "y", "z"].find(field)] = value
+				var shift: Vector3 = root.global_transform.basis * (target - centre_local)
+				transform.origin += shift
+			"turn":
+				var degrees := value - float(shown.turn)
+				var turn := Basis(up, deg_to_rad(degrees))
+				transform.basis = turn * transform.basis
+				if nodes.size() > 1:
+					transform.origin = centre + turn * (transform.origin - centre)
+			"size":
+				var factor := value / maxf(float(shown.size), 0.0001)
+				if value <= 0.0 or is_equal_approx(factor, 1.0):
+					continue
+				var bounds := Placement.mesh_bounds(node)
+				var base := NAN
+				if bool(bounds.get("valid", false)) and nodes.size() == 1:
+					base = transform.origin.y + (Transform3D(transform.basis, Vector3.ZERO) *
+						(bounds.bounds as AABB)).position.y
+				transform.basis = transform.basis.scaled(Vector3.ONE * factor)
+				if nodes.size() > 1:
+					transform.origin = centre + (transform.origin - centre) * factor
+				elif not is_nan(base):
+					transform.origin.y = base - (Transform3D(transform.basis, Vector3.ZERO) *
+						(bounds.bounds as AABB)).position.y
+		if not transform.is_equal_approx(node.global_transform):
+			changes.append({"node": node, "transform": transform})
+	var labels := {"x": "Move", "y": "Raise", "z": "Move", "turn": "Turn", "size": "Resize"}
+	return _commit(undo_redo, root, changes, String(labels.get(field, "Edit")) + " %d object%s")
+
+
+static func _yaw_degrees(basis: Basis) -> float:
+	var forward := -basis.z
+	return rad_to_deg(atan2(-forward.x, -forward.z))
+
+
+static func _uniform_scale(basis: Basis) -> float:
+	var scale := basis.get_scale()
+	return (absf(scale.x) + absf(scale.y) + absf(scale.z)) / 3.0
+
+
 static func _commit(undo_redo: EditorUndoRedoManager, root: Node3D,
 		changes: Array[Dictionary], name_format: String) -> int:
 	if changes.is_empty() or undo_redo == null:

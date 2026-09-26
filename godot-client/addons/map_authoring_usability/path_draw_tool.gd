@@ -14,6 +14,10 @@ extends RefCounted
 ##   ground between them; a river's heights are its water surface, and the
 ##   river effect carves the channel below.
 ## It is one undo step, and afterwards Godot's normal Path3D tools edit it.
+##
+## Starting on either end of an existing road (or river) extends that path
+## instead: the new points are added to it as one undo step, keeping its id,
+## surface and settings. Ctrl+click on an end starts a separate path there.
 
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
 const Settings := preload("res://addons/map_authoring_usability/usability_settings.gd")
@@ -31,6 +35,9 @@ var _root: Node3D
 var _hover: Variant = null
 var _node: MeshInstance3D
 var _mesh: ImmediateMesh
+## The path being extended (null for a new one) and whether at its first point.
+var _extending: Node3D
+var _extend_at_start := false
 
 
 func is_active() -> bool:
@@ -60,6 +67,8 @@ func cancel() -> void:
 	kind = ""
 	points.clear()
 	_hover = null
+	_extending = null
+	_extend_at_start = false
 	if _node != null and is_instance_valid(_node):
 		if _node.get_parent() != null:
 			_node.get_parent().remove_child(_node)
@@ -115,6 +124,8 @@ func handle_input(camera: Camera3D, event: InputEvent, undo_redo: EditorUndoRedo
 		if point == null:
 			last_message = "That click missed the terrain."
 			return EditorPlugin.AFTER_GUI_INPUT_STOP
+		if points.is_empty() and not button.ctrl_pressed and begin_extension(point as Vector3):
+			return EditorPlugin.AFTER_GUI_INPUT_STOP
 		add_point(point as Vector3)
 		return EditorPlugin.AFTER_GUI_INPUT_STOP
 	return EditorPlugin.AFTER_GUI_INPUT_PASS
@@ -124,9 +135,58 @@ func add_point(world: Vector3) -> void:
 	if not points.is_empty() and points[points.size() - 1].distance_to(world) < 0.25:
 		return
 	points.append(world)
-	last_message = "%d point%s. Double-click, Enter or right-click finishes." % [points.size(),
-		"" if points.size() == 1 else "s"]
+	if _extending != null:
+		last_message = "Extending %s: %d new point%s. Double-click, Enter or right-click finishes." % [
+			String(_extending.get("path_id")), points.size() - 1, "" if points.size() == 2 else "s"]
+	else:
+		last_message = "%d point%s. Double-click, Enter or right-click finishes." % [points.size(),
+			"" if points.size() == 1 else "s"]
 	_redraw()
+
+
+## When `world` is on the first or last point of a path of the kind being
+## drawn, continues that path from there. Returns whether it did.
+func begin_extension(world: Vector3) -> bool:
+	var end := endpoint_at(world)
+	if end.is_empty():
+		return false
+	_extending = end.path
+	_extend_at_start = int(end.index) == 0
+	width = float(_extending.get("default_width"))
+	points = [end.position as Vector3]
+	last_message = ("Extending %s from its %s. Click to add points; Ctrl+click an end to " +
+		"start a separate %s there instead.") % [String(_extending.get("path_id")),
+		"start" if _extend_at_start else "end", kind]
+	_redraw()
+	return true
+
+
+func extending() -> Node3D:
+	return _extending
+
+
+## The end (first or last point) of a same-kind path within ENDPOINT_SNAP of
+## `world`: {path, index, position}, or empty.
+func endpoint_at(world: Vector3) -> Dictionary:
+	var container := _root.get_node_or_null("Roads" if kind == "road" else "Rivers")
+	if container == null:
+		return {}
+	var best := {}
+	var best_distance := ENDPOINT_SNAP
+	for child in container.get_children():
+		if child.get_script() != PATH_SCRIPT or (child as Path3D).curve == null or \
+				String(child.get("kind")) != kind:
+			continue
+		var curve := (child as Path3D).curve
+		if curve.point_count < 2 or curve.closed:
+			continue
+		for index: int in [0, curve.point_count - 1]:
+			var candidate: Vector3 = (child as Node3D).global_transform * curve.get_point_position(index)
+			var distance := Vector2(candidate.x - world.x, candidate.z - world.z).length()
+			if distance < best_distance:
+				best_distance = distance
+				best = {"path": child, "index": index, "position": candidate}
+	return best
 
 
 func length() -> float:
@@ -149,6 +209,8 @@ func finish(undo_redo: EditorUndoRedoManager) -> Node3D:
 		cancel()
 		last_message = "A %s needs at least two points; nothing was added." % drawn
 		return null
+	if _extending != null:
+		return _finish_extension(undo_redo)
 	var root := _root
 	var container := root.get_node("Roads" if kind == "road" else "Rivers") as Node3D
 	var path: Node3D = PATH_SCRIPT.new()
@@ -179,6 +241,32 @@ func finish(undo_redo: EditorUndoRedoManager) -> Node3D:
 	cancel()
 	last_message = ("Added %s %s with %d points. Edit its points with the Path3D tools; " +
 		"Default Width and Shape terrain are in the Inspector.") % [drawn_kind, identity, count]
+	return path
+
+
+func _finish_extension(undo_redo: EditorUndoRedoManager) -> Node3D:
+	var path := _extending
+	var curve := (path as Path3D).curve
+	var to_path := path.global_transform.affine_inverse()
+	var added := points.slice(1)
+	var at_start := _extend_at_start
+	var identity := String(path.get("path_id"))
+	var before := curve.point_count
+	undo_redo.create_action("Extend %s %s by %d point%s" % [kind, identity, added.size(),
+		"" if added.size() == 1 else "s"], UndoRedo.MERGE_DISABLE, _root)
+	for point: Vector3 in added:
+		if at_start:
+			undo_redo.add_do_method(curve, &"add_point", to_path * point, Vector3.ZERO,
+				Vector3.ZERO, 0)
+		else:
+			undo_redo.add_do_method(curve, &"add_point", to_path * point)
+	for index in added.size():
+		undo_redo.add_undo_method(curve, &"remove_point",
+			0 if at_start else before + added.size() - 1 - index)
+	undo_redo.commit_action()
+	cancel()
+	last_message = "Extended %s by %d point%s at its %s." % [identity, added.size(),
+		"" if added.size() == 1 else "s", "start" if at_start else "end"]
 	return path
 
 
@@ -224,6 +312,7 @@ func hint_lines() -> PackedStringArray:
 	if not is_active():
 		return PackedStringArray()
 	return PackedStringArray([
+		("Extending %s  ·  " % String(_extending.get("path_id")) if _extending != null else "") +
 		"Drawing %s  ·  %d point%s  ·  width %.1f m  ·  %.0f m long%s" % [kind, points.size(),
 			"" if points.size() == 1 else "s", width, length(),
 			"  ·  snap %s m" % str(Settings.value("grid/step")) \
