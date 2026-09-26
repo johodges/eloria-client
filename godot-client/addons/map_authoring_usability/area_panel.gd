@@ -1,7 +1,8 @@
 @tool
 extends PopupPanel
-## Options for the ground-region and plateau tools (see area_tool.gd), opened
-## from Map tools or the toolbar. Start closes it and arms the tool.
+## Options for the ground-region and plateau tools (see area_tool.gd) and the
+## scatter tool (scatter_tool.gd), opened from Map tools or the toolbar. Start
+## closes it and arms the tool.
 
 signal start_requested(kind: String, options: Dictionary)
 
@@ -17,11 +18,23 @@ var _ground_shape: OptionButton
 var _blend: SpinBox
 var _opacity: SpinBox
 var _priority: SpinBox
+var _mode: OptionButton
+var _brush: SpinBox
+var _brush_label: Label
 var _operation: OptionButton
 var _plateau_shape: OptionButton
 var _height: SpinBox
 var _feather: SpinBox
 var _height_label: Label
+var _scatter: GridContainer
+var _scatter_asset: Label
+var _scatter_radius: SpinBox
+var _scatter_density: SpinBox
+var _scatter_spacing: SpinBox
+var _scatter_turn: CheckBox
+var _scatter_size: SpinBox
+var _scatter_seed: SpinBox
+var _note: Label
 
 
 func _init() -> void:
@@ -46,6 +59,13 @@ func _init() -> void:
 	_field(_ground, "Opacity", _opacity)
 	_priority = _spin(-1000.0, 1000.0, 1.0, 10.0, "")
 	_field(_ground, "Priority", _priority)
+	_mode = OptionButton.new()
+	_mode.add_item("Drag out one region")
+	_mode.add_item("Paint along a stroke")
+	_mode.item_selected.connect(func(_index: int) -> void: _sync_brush())
+	_field(_ground, "Mode", _mode)
+	_brush = _spin(1.0, 64.0, 0.5, 6.0, " m")
+	_brush_label = _field(_ground, "Brush size", _brush)
 	_plateau = GridContainer.new()
 	_plateau.columns = 2
 	column.add_child(_plateau)
@@ -60,10 +80,29 @@ func _init() -> void:
 	_height_label = _field(_plateau, "Above ground", _height)
 	_feather = _spin(0.0, 64.0, 0.5, 6.0, " m")
 	_field(_plateau, "Feather", _feather)
-	var note := Label.new()
-	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	note.text = "Press where the centre goes in the 3D view and drag out the size. Esc discards a draft; right-click stops."
-	column.add_child(note)
+	_scatter = GridContainer.new()
+	_scatter.columns = 2
+	column.add_child(_scatter)
+	_scatter_asset = Label.new()
+	_scatter_asset.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_field(_scatter, "Asset", _scatter_asset)
+	_scatter_radius = _spin(0.5, 64.0, 0.5, 6.0, " m")
+	_field(_scatter, "Brush radius", _scatter_radius)
+	_scatter_density = _spin(0.5, 400.0, 0.5, 10.0, " per 100 m²")
+	_field(_scatter, "Density", _scatter_density)
+	_scatter_spacing = _spin(0.1, 32.0, 0.1, 1.5, " m")
+	_field(_scatter, "Min spacing", _scatter_spacing)
+	_scatter_turn = CheckBox.new()
+	_scatter_turn.button_pressed = true
+	_scatter_turn.text = "Random turn"
+	_field(_scatter, "Turn", _scatter_turn)
+	_scatter_size = _spin(0.0, 0.5, 0.01, 0.15, "")
+	_field(_scatter, "Size variation (±)", _scatter_size)
+	_scatter_seed = _spin(0.0, 999999.0, 1.0, 1.0, "")
+	_field(_scatter, "Seed", _scatter_seed)
+	_note = Label.new()
+	_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	column.add_child(_note)
 	var start := Button.new()
 	start.text = "Start drawing"
 	start.pressed.connect(func() -> void:
@@ -72,14 +111,23 @@ func _init() -> void:
 	column.add_child(start)
 
 
-## Opens for "ground" or "plateau"; `root` supplies the territory's own surfaces.
-func open_for(tool_kind: String, root: Node, anchor: Rect2i) -> void:
+## Opens for "ground", "plateau" or "scatter"; `root` supplies the territory's
+## own surfaces, `asset` the Map Assets entry a scatter would place.
+func open_for(tool_kind: String, root: Node, anchor: Rect2i, asset: Dictionary = {}) -> void:
 	kind = tool_kind
-	_title.text = "Paint ground regions" if kind == "ground" else "Stamp plateaus"
+	_title.text = {"ground": "Paint ground regions", "plateau": "Stamp plateaus",
+		"scatter": "Scatter assets"}.get(kind, "")
 	_ground.visible = kind == "ground"
 	_plateau.visible = kind == "plateau"
+	_scatter.visible = kind == "scatter"
+	_scatter_asset.text = String(asset.get("label", "Select an asset in the Map Assets dock first"))
+	_note.text = ("Press and drag in the 3D view to paint copies of the asset; each stroke is one " +
+		"undo step and moves to the next seed. Esc discards a stroke; right-click stops.") \
+		if kind == "scatter" else ("Press where the centre goes in the 3D view and drag out the " +
+		"size (or paint along a stroke); Q/E turn the shape. Esc discards a draft; right-click stops.")
 	fill_surfaces(root)
 	_sync_height_label()
+	_sync_brush()
 	if is_inside_tree():
 		popup(anchor)
 
@@ -114,14 +162,19 @@ func fill_surfaces(root: Node) -> void:
 			_surface.select(_surface.item_count - 1)
 
 
-## The options area_tool.gd expects.
+## The options area_tool.gd (or scatter_tool.gd) expects.
 func current_options() -> Dictionary:
+	if kind == "scatter":
+		return {"radius": _scatter_radius.value, "density": _scatter_density.value,
+			"spacing": _scatter_spacing.value, "random_turn": _scatter_turn.button_pressed,
+			"size_variation": _scatter_size.value, "seed": int(_scatter_seed.value)}
 	if kind == "ground":
 		var choice: Dictionary = _surface_choices[_surface.selected] \
 			if _surface.selected >= 0 and _surface.selected < _surface_choices.size() else {}
 		var options := {"shape": _ground_shape.selected, "blend_width": _blend.value,
 			"opacity": _opacity.value, "priority": int(_priority.value),
-			"surface_label": String(choice.get("label", ""))}
+			"surface_label": String(choice.get("label", "")), "stroke": _mode.selected == 1,
+			"brush": _brush.value}
 		if choice.has("surface"):
 			options["surface"] = (choice.surface as Resource).duplicate(true) \
 				if bool(choice.get("copy", false)) else choice.surface
@@ -138,6 +191,17 @@ func select_surface(label: String) -> bool:
 			_surface.select(index)
 			return true
 	return false
+
+
+func set_stroke(enabled: bool, size := 6.0) -> void:
+	_mode.select(1 if enabled else 0)
+	_brush.value = size
+	_sync_brush()
+
+
+func _sync_brush() -> void:
+	_brush.visible = _mode.selected == 1
+	_brush_label.visible = _mode.selected == 1
 
 
 func _sync_height_label() -> void:

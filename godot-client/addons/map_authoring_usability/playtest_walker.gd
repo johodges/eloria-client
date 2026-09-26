@@ -8,12 +8,11 @@ extends RefCounted
 ## and sync_authored_collision): a tile is blocked when any of its four
 ## half-metre cells is, otherwise it takes the highest of them; heights become
 ## 0.2 m units above the lowest walkable tile and are then coarsened to the
-## map's stage, the smallest multiple of 0.2 m that fits the relief into 63
-## codes. The walker repeats that fold. On 2026-09-26 it reproduced the
-## server's tools/collision/<id>.escg.gz byte for byte for all twelve
-## territories. Only a map with under 12.4 m of relief could differ: the server
-## may then pick a coarser stage (up to 0.8 m) after comparing reachable area,
-## and the message says so.
+## map's stage: the smallest multiple of 0.2 m that fits the relief into 63
+## codes, or on a map with under 12.4 m of relief the smallest of 0.2-0.8 m
+## whose largest reachable area is within 1% of the best (choose_stage). The
+## walker repeats that fold; on 2026-09-26 it reproduced the server's
+## tools/collision/<id>.escg.gz byte for byte for all twelve territories.
 ##
 ## Routes use the server's search (World.find_path): neighbours tried N, NE, E,
 ## SE, S, SW, W, NW; a step needs both tiles walkable and a code change of at
@@ -23,14 +22,20 @@ extends RefCounted
 ## tile goes to the nearest walkable tile within 19, as the server does. Steps
 ## take 600 ms walking or 200 ms running (R), times sqrt(2) on a diagonal.
 ##
-## Not modelled: other players and creatures, doors and portals, storage-body
-## footprints and legacy floor overrides the live server adds, and anything
-## changed since the last publish. An unpublished territory uses the live
-## walkability estimate with the same rules, so its routes are estimates too.
+## Not modelled: other players and creatures, storage-body footprints and
+## legacy floor overrides the live server adds, and anything changed since the
+## last publish. Walkway portals and open borders block every step but the one
+## a walk is sent to; the server's full table of them is server configuration,
+## so the walker only warns when a route steps on a portal or border crossing
+## the published package lists. When a route fails, V (or the failure itself)
+## tints what the walker can reach, to show where the ground is cut off. An
+## unpublished territory uses the live walkability estimate with the same
+## rules, so its routes are estimates too.
 ## The walker and its route are editor-only helpers and are never saved.
 
 const Walkability := preload("res://addons/map_authoring_usability/walkability_overlay.gd")
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
+const TimeOfDay := preload("res://addons/map_authoring_usability/time_of_day_preview.gd")
 const NODE_NAME := "__MapAuthoringPlaytest"
 ## eloria-server settings: player_move_interval_ms, player_run_interval_ms,
 ## max_walk_height_change; World.find_path limits.
@@ -44,7 +49,30 @@ const FREE_TILE_RADIUS := 20
 const UNIT_METRES := 0.2
 const MIN_CODE := 1
 const MAX_CODE := 63
-const STAGE_LADDER_TOP := 4
+const STAGE_LADDER := [1, 2, 3, 4]
+const STAGE_GAIN := 1.01
+const REACH_NODE_NAME := "Reachable"
+const REACH_SHADER := """
+shader_type spatial;
+render_mode unshaded, cull_disabled, depth_draw_never, shadows_disabled, blend_mix;
+uniform sampler2D reach : filter_nearest, repeat_disable;
+uniform mat4 region_inverse;
+uniform vec4 tiles;
+varying vec3 local_position;
+void vertex() {
+	VERTEX += NORMAL * 0.08;
+	local_position = (region_inverse * MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+}
+void fragment() {
+	vec2 tile = vec2(floor(local_position.x + tiles.x), floor(tiles.y - local_position.z));
+	vec2 uv = (tile + vec2(0.5)) / tiles.zw;
+	if (any(lessThan(uv, vec2(0.0))) || any(greaterThanEqual(uv, vec2(1.0)))) discard;
+	float value = floor(texture(reach, uv).r * 255.0 + 0.5);
+	if (value < 0.5) discard;
+	ALBEDO = value < 1.5 ? vec3(0.2, 0.85, 1.0) : vec3(1.0, 0.55, 0.15);
+	ALPHA = 0.42;
+}
+"""
 ## World DIRS order, which decides between equal-cost routes.
 const DIRECTIONS := [Vector2i(0, 1), Vector2i(1, 1), Vector2i(1, 0), Vector2i(1, -1),
 	Vector2i(0, -1), Vector2i(-1, -1), Vector2i(-1, 0), Vector2i(-1, 1)]
@@ -71,6 +99,8 @@ var _step_index := 0
 var _step_elapsed := 0.0
 var _position := Vector3.INF
 var _facing := Vector3.FORWARD
+var _reach: MeshInstance3D
+var _reach_start := Vector2i(-1, -1)
 
 
 ## Loads the walk grid and shows usage. Returns false when there is nothing to
@@ -107,6 +137,7 @@ func stop() -> void:
 	_body = null
 	_line = null
 	_goal_ring = null
+	_reach = null
 	_root = null
 	_grid = {}
 
@@ -139,11 +170,7 @@ func grid_description() -> String:
 	var stage := "stage %.1f m" % float(_grid.stage_metres)
 	if String(_grid.source) == "live":
 		return "Play test on the live (unpublished) grid, an estimate of the next publish (%s)." % stage
-	var note := ""
-	if int(_grid.stage_factor) <= STAGE_LADDER_TOP:
-		note = "; on this low-relief map the server may choose a coarser stage, up to 0.8 m"
-	return "Play test on the server's walk grid, folded from the published package (%s%s)." % [
-		stage, note]
+	return "Play test on the server's walk grid, folded from the published package (%s)." % stage
 
 
 func hint_lines() -> PackedStringArray:
@@ -152,8 +179,8 @@ func hint_lines() -> PackedStringArray:
 		return lines
 	lines.append("Play test (%s grid, %s)" % [source, "running" if running else "walking"])
 	lines.append(last_message)
-	lines.append("Click: walk there   Shift+click: place   R: walk/run   F: centre on walker   " +
-		"Esc/right-click: stop")
+	lines.append("Click: walk there   Shift+click: place   R: walk/run   V: reachable area   " +
+		"F: centre on walker   Esc/right-click: stop")
 	return lines
 
 
@@ -166,6 +193,9 @@ func handle_input(camera: Camera3D, event: InputEvent) -> bool:
 		if key.keycode == KEY_ESCAPE:
 			stop()
 			last_message = "Play test ended."
+			return true
+		if key.keycode == KEY_V and not key.ctrl_pressed and not key.alt_pressed:
+			show_reachable(not reachable_visible())
 			return true
 		if key.keycode == KEY_R and not key.ctrl_pressed and not key.alt_pressed:
 			running = not running
@@ -206,6 +236,7 @@ func place(local: Vector3) -> bool:
 	_step_index = 0
 	_step_elapsed = 0.0
 	steps = 0
+	show_reachable(false)
 	_position = cell_point(tile)
 	_update_nodes()
 	last_message = "Walker placed on tile %d, %d. Click somewhere to walk there." % [tile.x, tile.y]
@@ -275,7 +306,14 @@ static func load_grid(root: Node3D) -> Dictionary:
 		else Vector2i.ZERO
 	var published := Walkability.published_grid(root)
 	if not published.has("error") and not is_nan(float(published.get("height_step", NAN))):
-		return fold_published(published, origin)
+		var folded := fold_published(published, origin)
+		var manifest_path := TimeOfDay.manifest_path_for(String(root.get("region_id")))
+		var manifest: Variant = null
+		if not manifest_path.is_empty():
+			manifest = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))
+		if manifest is Dictionary and not folded.has("error"):
+			folded["crossings"] = published_crossings(manifest, origin)
+		return folded
 	var live := Walkability.compute_live(root)
 	if live.has("error"):
 		return {"error": "No walk grid: %s" % String(live.error)}
@@ -321,14 +359,23 @@ static func fold_published(published: Dictionary, origin: Vector2i) -> Dictionar
 	var height_origin := float(published.height_origin)
 	var table := _stage_table(func(code: int) -> float: return float(code) * step + height_origin,
 		lowest, highest)
-	var codes := PackedByteArray()
-	codes.resize(width * rows)
-	var lookup: PackedByteArray = table.codes
-	for index in folded.size():
-		codes[index] = lookup[folded[index]]
+	var units: PackedInt32Array = table.units
+	var codes_for := func(factor: int) -> PackedByteArray:
+		var lookup := PackedByteArray()
+		lookup.resize(256)
+		for code in range(1, 256):
+			lookup[code] = _coarsen(units[code], factor)
+		var result := PackedByteArray()
+		result.resize(folded.size())
+		for index in folded.size():
+			result[index] = lookup[folded[index]]
+		return result
+	var factor := choose_factor(units[highest] - units[lowest] if highest > 0 else 0, codes_for,
+		width, rows)
+	var codes: PackedByteArray = codes_for.call(factor)
 	return {"source": "published", "codes": codes, "width": width, "rows": rows,
-		"origin": origin, "stage_factor": table.factor,
-		"stage_metres": float(table.factor) * UNIT_METRES,
+		"origin": origin, "stage_factor": factor,
+		"stage_metres": float(factor) * UNIT_METRES, "crossings": {},
 		"display_bytes": bytes, "display_width": cells_x, "height_step": step,
 		"height_origin": height_origin}
 
@@ -381,10 +428,15 @@ static func fold_live(live: Dictionary, origin: Vector2i, root: Node3D) -> Dicti
 			continue
 		units[index] = int(round_half_even((metres[index] - lowest) / UNIT_METRES)) + MIN_CODE
 		highest_units = maxi(highest_units, units[index])
-	var factor := stage_factor(highest_units - MIN_CODE)
-	for index in units.size():
-		if units[index] > 0:
-			codes[index] = _coarsen(units[index], factor)
+	var codes_for := func(stage: int) -> PackedByteArray:
+		var result := PackedByteArray()
+		result.resize(units.size())
+		for index in units.size():
+			if units[index] > 0:
+				result[index] = _coarsen(units[index], stage)
+		return result
+	var factor := choose_factor(highest_units - MIN_CODE, codes_for, width, rows)
+	codes = codes_for.call(factor)
 	return {"source": "live", "codes": codes, "width": width, "rows": rows,
 		"origin": origin, "stage_factor": factor, "stage_metres": float(factor) * UNIT_METRES,
 		"root": root}
@@ -396,13 +448,82 @@ static func stage_factor(relief: int) -> int:
 	return maxi(1, ceili(float(relief) / float(MAX_CODE - MIN_CODE)))
 
 
+## sync_authored_collision.choose_stage: the stages worth trying are those of
+## 1-4 units at or above the relief's lower bound (or just that bound when it
+## is higher); the smallest whose largest reachable area is within 1% of the
+## best any of them gives wins. `codes_for` builds the grid at one stage.
+static func choose_factor(relief: int, codes_for: Callable, width: int, rows: int) -> int:
+	var smallest := stage_factor(relief)
+	var ladder: Array[int] = []
+	for factor: int in STAGE_LADDER:
+		if factor >= smallest:
+			ladder.append(factor)
+	if ladder.is_empty():
+		return smallest
+	if ladder.size() == 1:
+		return ladder[0]
+	var scores := {}
+	var best := 0
+	for factor in ladder:
+		scores[factor] = largest_component(codes_for.call(factor), width, rows)
+		best = maxi(best, int(scores[factor]))
+	for factor in ladder:
+		if float(scores[factor]) * STAGE_GAIN >= float(best):
+			return factor
+	return ladder[ladder.size() - 1]
+
+
+## The size of the largest set of tiles that can all reach each other.
+static func largest_component(codes: PackedByteArray, width: int, rows: int) -> int:
+	var seen := PackedByteArray()
+	seen.resize(codes.size())
+	var best := 0
+	var queue := PackedInt32Array()
+	for index in codes.size():
+		if codes[index] == 0 or seen[index] != 0:
+			continue
+		best = maxi(best, _flood(codes, width, rows, index, seen, queue, 1))
+	return best
+
+
+## Marks every tile reachable from `start` with `mark` in `seen`; returns how many.
+static func _flood(codes: PackedByteArray, width: int, rows: int, start: int,
+		seen: PackedByteArray, queue: PackedInt32Array, mark: int) -> int:
+	var count := codes.size()
+	queue.resize(0)
+	queue.append(start)
+	seen[start] = mark
+	var head := 0
+	while head < queue.size():
+		var current := queue[head]
+		head += 1
+		var cx := current % width
+		var cy := current / width
+		var here := codes[current]
+		for direction: Vector2i in DIRECTIONS:
+			var nx := cx + direction.x
+			var ny := cy + direction.y
+			if nx < 0 or ny < 0 or nx >= width or ny >= rows:
+				continue
+			var next := ny * width + nx
+			if seen[next] != 0 or not _step_ok(codes, width, count, cx, cy, nx, ny, here):
+				continue
+			if direction.x != 0 and direction.y != 0 and (
+					not _step_ok(codes, width, count, cx, cy, nx, cy, here) or
+					not _step_ok(codes, width, count, cx, cy, cx, ny, here)):
+				continue
+			seen[next] = mark
+			queue.append(next)
+	return head
+
+
 ## Per published code: requantised units and the final stage code, as a
 ## lookup table over 0-255 (requantise rebases on the lowest walkable tile).
 static func _stage_table(decode: Callable, lowest: int, highest: int) -> Dictionary:
 	var codes := PackedByteArray()
 	codes.resize(256)
 	if highest == 0:
-		return {"codes": codes, "factor": 1}
+		return {"codes": codes, "factor": 1, "units": PackedInt32Array()}
 	var floor_metres: float = decode.call(lowest)
 	var units := PackedInt32Array()
 	units.resize(256)
@@ -412,7 +533,7 @@ static func _stage_table(decode: Callable, lowest: int, highest: int) -> Diction
 	var factor := stage_factor(units[highest] - units[lowest])
 	for code in range(1, 256):
 		codes[code] = _coarsen(units[code], factor)
-	return {"codes": codes, "factor": factor}
+	return {"codes": codes, "factor": factor, "units": units}
 
 
 ## rescale(): ceil(units / factor) clamped to the codes an ELM byte holds.
@@ -532,10 +653,12 @@ func find_route(from_local: Vector3, to_local: Vector3) -> PackedVector3Array:
 	var path := search(start, target)
 	if path.is_empty():
 		steps = 0
-		last_message = ("You cannot reach that location: the server finds no route%s. It is " +
-			"fenced, walled, too steep a climb, or cut off.") % [
+		show_reachable(true, start)
+		last_message = ("You cannot reach that location: the server finds no route%s. %s" +
+			" Tinted: blue is where the walker can go, orange is walkable ground cut off from it (V hides).") % [
 			" within its 100 000-tile search" if int(_grid.get("last_search_nodes", 0)) > SEARCH_LIMIT
-				else ""]
+				else "", "The goal is in the walker's reachable area, but farther than the server searches." \
+				if is_reachable(target) else "It is fenced, walled, too steep a climb, or cut off."]
 		return result
 	result.append(cell_point(start))
 	for tile in path:
@@ -551,6 +674,10 @@ func find_route(from_local: Vector3, to_local: Vector3) -> PackedVector3Array:
 	last_message = "%s %d steps, %.1f s." % ["Running" if running else "Walking", steps, seconds]
 	if target != clicked:
 		last_message += " That spot is blocked, so the route ends on the nearest walkable tile."
+	var crossing := crossing_on(path)
+	if not crossing.is_empty():
+		last_message += (" It steps on %s; the server never walks across a portal it was not " +
+			"sent to, so its route goes round it.") % crossing
 	if bool(_grid.get("last_search_truncated", false)):
 		last_message += " The server walks at most 512 steps per click; click again to go on."
 	return result
@@ -622,6 +749,122 @@ func search(start: Vector2i, target: Vector2i) -> Array[Vector2i]:
 	if path.size() > MAX_ROUTE_STEPS:
 		path.resize(MAX_ROUTE_STEPS)
 	return path
+
+
+## The first published portal or border crossing a route steps on before its
+## last tile, described for the status line, or "".
+func crossing_on(path: Array[Vector2i]) -> String:
+	var crossings: Dictionary = _grid.get("crossings", {})
+	if crossings.is_empty():
+		return ""
+	for index in path.size() - 1:
+		if crossings.has(path[index]):
+			return "%s at tile %d, %d" % [String(crossings[path[index]]), path[index].x, path[index].y]
+	return ""
+
+
+## The published package's walk-on portals and border crossing lanes, by tile.
+static func published_crossings(manifest: Dictionary, origin: Vector2i) -> Dictionary:
+	var result := {}
+	for portal: Variant in manifest.get("portals", []):
+		if not portal is Dictionary:
+			continue
+		var record: Dictionary = portal
+		var tile := Vector2i(-1, -1)
+		if record.get("serverTile") is Array and (record.serverTile as Array).size() == 2:
+			tile = Vector2i(int(record.serverTile[0]), int(record.serverTile[1]))
+		elif record.get("position") is Array and (record.position as Array).size() == 3:
+			tile = Vector2i(floori(float(record.position[0]) + float(origin.x)),
+				floori(float(origin.y) - float(record.position[2])))
+		if tile.x >= 0:
+			result[tile] = "the portal %s" % String(record.get("label", record.get("name", record.get("id", ""))))
+	for border: Variant in manifest.get("streamingBorders", []):
+		if not border is Dictionary or not (border as Dictionary).get("anchor") is Array or \
+				not (border as Dictionary).get("outward") is Array:
+			continue
+		var record: Dictionary = border
+		var anchor := Vector2(float(record.anchor[0]), float(record.anchor[2]))
+		var outward := Vector2(float(record.outward[0]), float(record.outward[1]))
+		var along := Vector2(-outward.y, outward.x)
+		var half := int(record.get("halfWidthTiles", 3))
+		for offset in range(-half, half + 1):
+			var point := anchor + along * float(offset)
+			result[Vector2i(floori(point.x + float(origin.x)), floori(float(origin.y) - point.y))] = \
+				"the crossing to %s" % String(record.get("destination", "a neighbour"))
+	return result
+
+
+## Tints the tiles the walker (or `from`) can reach, and walkable tiles it
+## cannot (is_reachable answers for one tile). Returns whether it is showing.
+func show_reachable(visible: bool, from: Vector2i = Vector2i(-1, -1)) -> bool:
+	if not visible or _grid.is_empty():
+		if _reach != null and is_instance_valid(_reach):
+			_reach.visible = false
+		return false
+	var start := from if from.x >= 0 else cell_of(_position)
+	if not is_walkable(start):
+		return false
+	var width := int(_grid.width)
+	var rows := int(_grid.rows)
+	var codes: PackedByteArray = _grid.codes
+	var seen := PackedByteArray()
+	seen.resize(codes.size())
+	_flood(codes, width, rows, start.y * width + start.x, seen, PackedInt32Array(), 1)
+	var classes := PackedByteArray()
+	classes.resize(codes.size())
+	for index in codes.size():
+		if seen[index] != 0:
+			classes[index] = 1
+		elif codes[index] != 0:
+			classes[index] = 2
+	_grid["reach_classes"] = classes
+	_grid["reach_seen"] = seen
+	_reach_start = start
+	_show_reach_texture(classes, width, rows)
+	return true
+
+
+func reachable_visible() -> bool:
+	return _reach != null and is_instance_valid(_reach) and _reach.visible
+
+
+## Whether `tile` is in the last reachable-area flood.
+func is_reachable(tile: Vector2i) -> bool:
+	var seen: PackedByteArray = _grid.get("reach_seen", PackedByteArray())
+	var width := int(_grid.get("width", 0))
+	return _inside(tile) and not seen.is_empty() and seen[tile.y * width + tile.x] != 0
+
+
+func _show_reach_texture(classes: PackedByteArray, width: int, rows: int) -> void:
+	if _root == null or _node == null:
+		return
+	var terrain := Probe.region_terrain(_root)
+	var preview := terrain.get_node_or_null("__TerrainPreview") as MeshInstance3D \
+		if terrain != null else null
+	if preview == null:
+		return
+	if _reach == null or not is_instance_valid(_reach):
+		_reach = MeshInstance3D.new()
+		_reach.name = REACH_NODE_NAME
+		_reach.top_level = true
+		_reach.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var shader := Shader.new()
+		shader.code = REACH_SHADER
+		var material := ShaderMaterial.new()
+		material.shader = shader
+		material.render_priority = 4
+		_reach.material_override = material
+		_node.add_child(_reach)
+	_reach.mesh = preview.mesh
+	_reach.global_transform = preview.global_transform
+	var image := Image.create_from_data(width, rows, false, Image.FORMAT_L8, classes)
+	var material := _reach.material_override as ShaderMaterial
+	var origin: Vector2i = _grid.origin
+	material.set_shader_parameter("reach", ImageTexture.create_from_image(image))
+	material.set_shader_parameter("region_inverse", Projection(_root.global_transform.affine_inverse()))
+	material.set_shader_parameter("tiles", Vector4(float(origin.x), float(origin.y), float(width),
+		float(rows)))
+	_reach.visible = true
 
 
 static func _step_ok(codes: PackedByteArray, width: int, count: int, x: int, y: int,

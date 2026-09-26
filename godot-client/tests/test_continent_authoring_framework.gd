@@ -13,6 +13,7 @@ const ASSET_OVERRIDE := preload(
 	"res://src/dev/map_authoring_region/asset_surface_override.gd")
 const MARKER := preload("res://src/dev/map_authoring_region/gameplay_marker.gd")
 const SNAPSHOT := preload("res://src/dev/map_authoring_region/region_snapshot.gd")
+const REVIEW_NOTES := preload("res://addons/map_authoring_usability/review_notes.gd")
 const SURFACE := preload(
 	"res://src/dev/map_authoring_pilot/style/map_authoring_surface.gd")
 const PRESETS := preload(
@@ -132,6 +133,7 @@ func _run() -> void:
 			_dependency_matches_file(document.sources.dependencies,
 			"godot-client/src/dev/map_authoring_pilot/style/textures/ground-orm.png"),
 			"every emitted PBR texture has a current hash-bound dependency")
+	_check_review_notes_stay_out(reopened, document)
 	_check_ground_preview_uvs(reopened)
 	_check_override_removal(reopened)
 	_check_export_rejections(reopened)
@@ -142,7 +144,7 @@ func _run() -> void:
 	reopened.queue_free()
 	_cleanup()
 	print("continent authoring framework: %d assertions, %d failures" % [
-		32, failures])
+		33, failures])
 	quit(1 if failures else 0)
 
 
@@ -284,6 +286,29 @@ func _scene() -> Node3D:
 	generated.name = "GeneratedPreview"
 	_add_owned(region, generated)
 	return region
+
+
+## A review-notes sidecar beside the scene (review_notes.gd) changes nothing
+## the snapshot exports: document, dependencies and written sidecars.
+func _check_review_notes_stay_out(region: Node3D, before: Dictionary) -> void:
+	var notes_path := REVIEW_NOTES.path_for(region)
+	var output := ProjectSettings.globalize_path(OUTPUT_PATH).get_base_dir()
+	var written := {}
+	for name in ["base-heights.f32le", "resolved-heights.f32le", "base-colors.rgba8"]:
+		written[name] = FileAccess.get_file_as_bytes(output.path_join(name))
+	var file := FileAccess.open(notes_path, FileAccess.WRITE)
+	file.store_string(JSON.stringify(REVIEW_NOTES.document(String(region.get("region_id")), [
+		{"id": "review-001", "position": Vector3(1.0, 2.0, 3.0), "text": "Check the ramp",
+			"status": "open"}])))
+	file.close()
+	var with_notes: Dictionary = region.call("export_snapshot", OUTPUT_PATH)
+	var same_files := true
+	for name: String in written:
+		same_files = same_files and FileAccess.get_file_as_bytes(output.path_join(name)) == written[name]
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(notes_path))
+	_expect(not notes_path.is_empty() and not before.is_empty() and with_notes == before and
+		same_files and not "editor-notes" in JSON.stringify(with_notes),
+		"a review-notes sidecar beside the scene leaves the snapshot and its files unchanged")
 
 
 func _check_override_removal(region: Node3D) -> void:

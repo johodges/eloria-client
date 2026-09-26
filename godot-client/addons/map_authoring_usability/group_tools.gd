@@ -232,6 +232,7 @@ static func commit_copies(undo_redo: EditorUndoRedoManager, root: Node3D, nodes:
 	var reserved_groups := {}
 	var group_map := {}
 	var asset_map := {}
+	var node_map := {}
 	var followers: Array[Node3D] = []
 	for source in sources:
 		var copy := source.duplicate() as Node3D
@@ -248,17 +249,15 @@ static func commit_copies(undo_redo: EditorUndoRedoManager, root: Node3D, nodes:
 			copy.set("asset_id", identity)
 			copy.set("node_name", "Authored_%s" % identity.replace(":", "_").replace("-", "_"))
 			asset_map[String(source.get("asset_id"))] = identity
+			node_map[String(source.get("node_name"))] = String(copy.get("node_name"))
+			node_map[String(source.name)] = String(copy.get("node_name"))
 		elif copy.get_script() == MARKER_SCRIPT:
 			var record := Markers.fresh_record_id(root, String(copy.get("label")),
 				String(copy.get("kind")), reserved_records)
 			reserved_records[record] = true
 			copy.set("record_id", record)
 			copy.name = record
-			# Runtime bindings name certified server records of the original, and a
-			# territory has one default spawn.
-			var unbound: Array[Dictionary] = []
-			copy.set("runtime_bindings", unbound)
-			copy.set("default_spawn", false)
+			reset_copied_marker(copy)
 			followers.append(copy)
 		var old_group := group_of(copy)
 		if not old_group.is_empty():
@@ -271,12 +270,7 @@ static func commit_copies(undo_redo: EditorUndoRedoManager, root: Node3D, nodes:
 			Prefabs._localize_resources(twin)
 		copies.append(copy)
 		owned.append(owned_here)
-	# A marker riding on a copied asset follows the copy; one copied without its
-	# asset would jump back onto the original, so it stops following.
-	for marker in followers:
-		var followed := String(marker.get("follow_asset_id"))
-		if not followed.is_empty():
-			marker.set("follow_asset_id", String(asset_map.get(followed, "")))
+	relink_copied_markers(followers, asset_map, node_map)
 	if copies.is_empty():
 		return copies
 	undo_redo.create_action("Copy %d object%s" % [copies.size(), "" if copies.size() == 1 else "s"],
@@ -294,6 +288,27 @@ static func commit_copies(undo_redo: EditorUndoRedoManager, root: Node3D, nodes:
 		undo_redo.add_undo_method(parent, &"remove_child", copy)
 	undo_redo.commit_action()
 	return copies
+
+
+## What every copied gameplay marker loses, whatever made the copy (copy-drag,
+## Duplicate, the shared-id fix, a prefab): runtime bindings name certified
+## server records of the original, a territory has one default spawn, and
+## prop positions, destination tiles, rotations and reachability describe the
+## original's placement. Portal destinations are kept and reported instead.
+static func reset_copied_marker(marker: Node) -> void:
+	Markers.reset_copy(marker)
+
+
+## Copied markers that followed or linked to a copied asset now follow or link
+## to its copy (see marker_library.gd relink_copies).
+static func relink_copied_markers(markers: Array, asset_map: Dictionary,
+		node_map: Dictionary) -> void:
+	Markers.relink_copies(markers, asset_map, node_map)
+
+
+## A note for the status line about what copies still need a look, or "".
+static func copy_review_note(copies: Array) -> String:
+	return Markers.copy_review_note(copies)
 
 
 # Shared ids (Godot's own Ctrl+D) --------------------------------------------
@@ -345,6 +360,7 @@ static func fix_duplicate_ids(undo_redo: EditorUndoRedoManager, root: Node3D,
 	var reserved_assets := {}
 	var reserved_records := {}
 	var renamed := {}
+	var renamed_nodes := {}
 	var changes: Array[Array] = []
 	for group: Dictionary in groups:
 		var nodes: Array = group.nodes
@@ -362,27 +378,35 @@ static func fix_duplicate_ids(undo_redo: EditorUndoRedoManager, root: Node3D,
 					reserved_assets)
 				reserved_assets[identity] = true
 				renamed[String(group.id)] = identity
+				var new_node_name := "Authored_%s" % identity.replace(":", "_").replace("-", "_")
+				renamed_nodes[String(node.get("node_name"))] = new_node_name
 				changes.append([node, "asset_id", identity])
-				changes.append([node, "node_name",
-					"Authored_%s" % identity.replace(":", "_").replace("-", "_")])
+				changes.append([node, "node_name", new_node_name])
 			else:
 				var record := Markers.fresh_record_id(root, String(node.get("label")),
 					String(node.get("kind")), reserved_records)
 				reserved_records[record] = true
 				var unbound: Array[Dictionary] = []
+				var extras: Dictionary = (node.get("extras") as Dictionary).duplicate(true)
+				for key: String in Markers.PLACEMENT_EXTRAS:
+					extras.erase(key)
 				changes.append([node, "record_id", record])
 				changes.append([node, "runtime_bindings", unbound])
 				changes.append([node, "default_spawn", false])
+				changes.append([node, "extras", extras])
 	# A copied follower follows its copied asset, or nothing: never the original.
 	for group: Dictionary in groups:
 		if String(group.kind) != "marker":
 			continue
 		for node: Node in group.nodes:
-			var followed := String(node.get("follow_asset_id"))
-			if followed.is_empty() or changes.filter(func(change: Array) -> bool:
-					return change[0] == node).is_empty():
+			if changes.filter(func(change: Array) -> bool: return change[0] == node).is_empty():
 				continue
-			changes.append([node, "follow_asset_id", String(renamed.get(followed, ""))])
+			var followed := String(node.get("follow_asset_id"))
+			if not followed.is_empty():
+				changes.append([node, "follow_asset_id", String(renamed.get(followed, ""))])
+			var linked := String(node.get("linked_node_name"))
+			if not linked.is_empty():
+				changes.append([node, "linked_node_name", String(renamed_nodes.get(linked, ""))])
 	var count := changes.filter(func(change: Array) -> bool:
 		return change[1] in ["asset_id", "record_id"]).size()
 	undo_redo.create_action("Give %d duplicated object%s fresh ids" % [count,

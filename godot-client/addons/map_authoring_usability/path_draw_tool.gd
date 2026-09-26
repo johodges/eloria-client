@@ -12,12 +12,18 @@ extends RefCounted
 ## - the territory's own road surface (rivers use the default water);
 ## - point heights taken from the ground under each click. A road grades the
 ##   ground between them; a river's heights are its water surface, and the
-##   river effect carves the channel below.
+##   river effect carves the channel below;
+## - for rivers, the channel properties the continent composer requires
+##   (channelDepth, valleyWidth, bankHeight), copied in proportion from a river
+##   the territory already has, else the map team's defaults.
 ## It is one undo step, and afterwards Godot's normal Path3D tools edit it.
 ##
 ## Starting on either end of an existing road (or river) extends that path
 ## instead: the new points are added to it as one undo step, keeping its id,
 ## surface and settings. Ctrl+click on an end starts a separate path there.
+## Paths the map team owns are never extended: ones that replace a composer
+## route or a planned water feature, ones the territory lists as owned, and
+## ends that sit on the ownership border (seam tails).
 
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
 const Settings := preload("res://addons/map_authoring_usability/usability_settings.gd")
@@ -25,6 +31,15 @@ const PATH_SCRIPT := preload("res://src/dev/map_authoring_region/path_control.gd
 const NODE_NAME := "__MapAuthoringPathDraft"
 const ENDPOINT_SNAP := 2.5
 const DEFAULT_WIDTHS := {"road": 4.0, "river": 6.0}
+## River channel defaults when the territory has no river to copy: the map
+## team's proposed channelDepth and terrainFeather; a bank height and a valley
+## of about six widths (never under 30 m) as the plan's own small rivers have.
+const RIVER_DEFAULTS := {"channelDepth": 1.45, "terrainFeather": 5.5, "bankHeight": 2.5,
+	"bankShelfWidth": 0.0, "cutsRelief": false, "terrainConform": false}
+const RIVER_VALLEY_PER_WIDTH := 6.0
+const RIVER_MIN_VALLEY := 30.0
+## An end this close to the ownership border is a seam tail.
+const SEAM_DISTANCE := 4.0
 const COLORS := {"road": Color(1.0, 0.82, 0.5), "river": Color(0.35, 0.65, 1.0)}
 
 var kind := ""
@@ -37,6 +52,7 @@ var _node: MeshInstance3D
 var _mesh: ImmediateMesh
 ## The path being extended (null for a new one) and whether at its first point.
 var _extending: Node3D
+var _polygon := PackedVector2Array()
 var _extend_at_start := false
 
 
@@ -46,8 +62,10 @@ func is_active() -> bool:
 
 ## Starts drawing a "road" or "river" on `root`. Returns false with a message
 ## when the scene cannot hold one.
-func start(root: Node3D, path_kind: String) -> bool:
+func start(root: Node3D, path_kind: String,
+		ownership_polygon: PackedVector2Array = PackedVector2Array()) -> bool:
 	cancel()
+	_polygon = ownership_polygon
 	if root == null or Probe.region_terrain(root) == null:
 		last_message = "Open a territory with region terrain to draw %ss." % path_kind
 		return false
@@ -150,6 +168,13 @@ func begin_extension(world: Vector3) -> bool:
 	var end := endpoint_at(world)
 	if end.is_empty():
 		return false
+	var reason := ownership_reason(end.path, end.position)
+	if not reason.is_empty():
+		# The click is used up: the path is left alone and nothing is drawn.
+		last_message = "%s is not extended here: %s Ctrl+click that end to start a separate %s." % [
+			String(end.path.get("path_id")), reason, kind]
+		_redraw()
+		return true
 	_extending = end.path
 	_extend_at_start = int(end.index) == 0
 	width = float(_extending.get("default_width"))
@@ -157,8 +182,68 @@ func begin_extension(world: Vector3) -> bool:
 	last_message = ("Extending %s from its %s. Click to add points; Ctrl+click an end to " +
 		"start a separate %s there instead.") % [String(_extending.get("path_id")),
 		"start" if _extend_at_start else "end", kind]
+	if not bool((_extending.get("properties") as Dictionary).get("terrainConform", true)):
+		last_message += " It follows the ground without shaping it (Shape terrain off), and so will the new part."
 	_redraw()
 	return true
+
+
+## Why the map team owns this path end (so it must not be extended), or "".
+func ownership_reason(path: Node, end_world: Vector3) -> String:
+	var route := String(path.get("replaces_route_id"))
+	if not route.is_empty():
+		return "it replaces the composer route %s, which the map team changes." % route
+	var feature := String(path.get("replaces_plan_feature_id"))
+	if not feature.is_empty():
+		return "it replaces the planned water feature %s, which the map team changes." % feature
+	var identity := String(path.get("path_id"))
+	for field: String in ["owned_route_ids", "owned_plan_feature_ids"]:
+		var owned: Variant = _root.get(field)
+		if owned is PackedStringArray and identity in (owned as PackedStringArray):
+			return "the territory lists it among its owned routes and water."
+	var joins := String((path.get("properties") as Dictionary).get("joins", ""))
+	if not joins.is_empty():
+		return "it joins %s, and shared water topology is the map team's." % joins
+	if _polygon.size() >= 3:
+		var local: Vector3 = _root.global_transform.affine_inverse() * end_world
+		var point := Vector2(local.x, local.z)
+		var nearest := INF
+		for index in _polygon.size():
+			var a := _polygon[index]
+			var b := _polygon[(index + 1) % _polygon.size()]
+			var segment := b - a
+			var t := clampf((point - a).dot(segment) / maxf(segment.length_squared(), 0.000001), 0.0, 1.0)
+			nearest = minf(nearest, point.distance_to(a + segment * t))
+		if nearest <= SEAM_DISTANCE or not Geometry2D.is_point_in_polygon(point, _polygon):
+			return "that end is a seam tail on the territory border, which the map team changes."
+	return ""
+
+
+## The channel properties a new river needs: copied in proportion from the
+## territory's first existing river, else RIVER_DEFAULTS.
+static func river_properties(root: Node, identity: String, river_width: float) -> Dictionary:
+	var result := RIVER_DEFAULTS.duplicate()
+	result["valleyWidth"] = maxf(RIVER_MIN_VALLEY, snappedf(river_width * RIVER_VALLEY_PER_WIDTH, 0.5))
+	var container := root.get_node_or_null("Rivers")
+	if container != null:
+		for child in container.get_children():
+			if child.get_script() != PATH_SCRIPT or String(child.get("kind")) != "river":
+				continue
+			var template: Dictionary = child.get("properties")
+			if not (template.has("channelDepth") and template.has("valleyWidth") and
+					template.has("bankHeight")):
+				continue
+			for field: String in ["channelDepth", "bankHeight", "bankShelfWidth", "cutsRelief",
+					"terrainFeather", "terrainConform"]:
+				if template.has(field):
+					result[field] = template[field]
+			var template_width := maxf(float(child.get("default_width")), 0.5)
+			result["valleyWidth"] = maxf(RIVER_MIN_VALLEY, snappedf(float(template.valleyWidth) *
+				river_width / template_width, 0.5))
+			break
+	result["name"] = identity
+	result["joins"] = ""
+	return result
 
 
 func extending() -> Node3D:
@@ -219,7 +304,8 @@ func finish(undo_redo: EditorUndoRedoManager) -> Node3D:
 	path.set("path_id", identity)
 	path.set("kind", kind)
 	path.set("routing_role", "required" if kind == "road" else "decorative")
-	path.set("properties", {"terrainConform": true, "terrainFeather": 2} if kind == "road" else {})
+	path.set("properties", {"terrainConform": true, "terrainFeather": 2} if kind == "road"
+		else river_properties(root, identity, width))
 	path.set("default_width", width)
 	var surface: Resource = template_surface(root, kind)
 	if surface != null:

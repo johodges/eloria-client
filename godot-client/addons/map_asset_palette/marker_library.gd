@@ -169,6 +169,52 @@ static func commit_with_undo(undo_redo: EditorUndoRedoManager, root: Node3D,
 	return "%s/%s" % [GAMEPLAY, container_name]
 
 
+## What every copied gameplay marker loses, whatever made the copy (copy-drag,
+## Duplicate, the shared-id fix, a prefab): runtime bindings name certified
+## server records of the original, a territory has one default spawn, and
+## prop positions, destination tiles, rotations and reachability describe the
+## original's placement. Portal destinations are kept and reported instead.
+static func reset_copy(marker: Node) -> void:
+	var unbound: Array[Dictionary] = []
+	marker.set("runtime_bindings", unbound)
+	marker.set("default_spawn", false)
+	var extras: Dictionary = (marker.get("extras") as Dictionary).duplicate(true)
+	for key: String in PLACEMENT_EXTRAS:
+		extras.erase(key)
+	marker.set("extras", extras)
+
+
+## Copied markers that followed or linked to a copied asset now follow or link
+## to its copy (`asset_map` old asset id -> new, `node_map` old node name ->
+## new); ones copied without their asset would jump back onto the original,
+## so they stop following and lose the link.
+static func relink_copies(copies: Array, asset_map: Dictionary, node_map: Dictionary) -> void:
+	for marker: Node in copies:
+		if marker.get_script() != MARKER_SCRIPT:
+			continue
+		var followed := String(marker.get("follow_asset_id"))
+		if not followed.is_empty():
+			marker.set("follow_asset_id", String(asset_map.get(followed, "")))
+		var linked := String(marker.get("linked_node_name"))
+		if not linked.is_empty():
+			marker.set("linked_node_name", String(node_map.get(linked, "")))
+
+
+## A note for the status line about what copies still need a look, or "".
+static func copy_review_note(copies: Array) -> String:
+	var portals := 0
+	for copy: Node in copies:
+		if copy.get_script() != MARKER_SCRIPT:
+			continue
+		if String(copy.get("kind")) == "portal" and (not String(copy.get("destination_map")).is_empty() or
+				not String(copy.get("destination_spawn")).is_empty()):
+			portals += 1
+	if portals == 0:
+		return ""
+	return "%d copied portal%s still lead%s to the original's destination; check %s in the Inspector" % [
+		portals, "" if portals == 1 else "s", "s" if portals == 1 else "", "it" if portals == 1 else "them"]
+
+
 ## `<slug>-NN`, unique across every gameplay marker of the territory and any
 ## ids already handed out in the same batch (`reserved`).
 static func fresh_record_id(root: Node, label: String, kind: String,

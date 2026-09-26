@@ -3,13 +3,18 @@ extends RefCounted
 ## Reusable groups of placed assets ("prefabs").
 ##
 ## A prefab is a small PackedScene under PREFAB_DIRECTORY holding copies of the
-## selected authored assets around a ground-level pivot. It is only an authoring
-## convenience: placing one creates ordinary, independent AuthoredAssets entries
-## with fresh asset ids, so bakes and snapshots never see the prefab itself.
+## selected authored assets and gameplay markers around a ground-level pivot.
+## It is only an authoring convenience: placing one creates ordinary,
+## independent AuthoredAssets entries with fresh asset ids, and markers in
+## their kind's Gameplay container with fresh record ids and the copy rules
+## (marker_library.gd reset_copy: no server bindings, never a default spawn, no
+## placement extras; a follow or link to a member follows that member's copy),
+## so bakes and snapshots never see the prefab itself.
 
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
 const ASSET_SCRIPT := preload("res://src/dev/map_authoring_region/asset_control.gd")
 const MARKER_SCRIPT := preload("res://src/dev/map_authoring_region/gameplay_marker.gd")
+const Markers := preload("res://addons/map_asset_palette/marker_library.gd")
 const PREFAB_DIRECTORY := "res://world_authoring/prefabs"
 ## Tests point this at a disposable folder; editors keep the default.
 static var directory := PREFAB_DIRECTORY
@@ -50,14 +55,16 @@ static func is_prefab_entry(entry: Dictionary) -> bool:
 
 
 ## Nodes a prefab may capture: placed asset wrappers (and the pilot's cosmetic
-## scenery), never the root, containers, generated previews, gameplay markers,
-## terrain, paths or water, or a node whose ancestor is chosen. Placement puts
-## every member under AuthoredAssets, where anything but a wrapper fails the
-## snapshot, so the filter is enforced here rather than left to the UI.
+## scenery) and gameplay markers of a known kind, never the root, containers,
+## generated previews, terrain, paths or water, or a node whose ancestor is
+## chosen. Placement puts wrappers under AuthoredAssets and markers under their
+## kind's Gameplay container; anything else there would fail the snapshot, so
+## the filter is enforced here rather than left to the UI.
 static func capturable(root: Node3D, nodes: Array) -> Array[Node3D]:
 	var result: Array[Node3D] = []
 	var generated := root.get_node_or_null("GeneratedPreview")
 	var scenery := root.get_node_or_null("AuthoredScenery")
+	var gameplay := root.get_node_or_null(Markers.GAMEPLAY)
 	for value in nodes:
 		if not value is Node3D:
 			continue
@@ -68,7 +75,9 @@ static func capturable(root: Node3D, nodes: Array) -> Array[Node3D]:
 			continue
 		if node.owner != root:
 			continue
-		if node.get_script() != ASSET_SCRIPT and \
+		var marker: bool = node.get_script() == MARKER_SCRIPT and gameplay != null and \
+			gameplay.is_ancestor_of(node) and Markers.KINDS.has(String(node.get("kind")))
+		if node.get_script() != ASSET_SCRIPT and not marker and \
 				not (scenery != null and node.get_parent() == scenery):
 			continue
 		result.append(node)
@@ -84,8 +93,9 @@ static func capturable(root: Node3D, nodes: Array) -> Array[Node3D]:
 	return filtered
 
 
-## Selected nodes a prefab leaves out: gameplay markers and other authored
-## controls. Returned so the caller can say so instead of dropping them quietly.
+## Selected nodes a prefab leaves out: markers it cannot place (outside
+## Gameplay or of an unknown kind) and other authored controls. Returned so the
+## caller can say so instead of dropping them quietly.
 static func left_out(root: Node3D, nodes: Array) -> Dictionary:
 	var members := capturable(root, nodes)
 	var markers := 0
@@ -113,9 +123,7 @@ static func save_selection(root: Node3D, nodes: Array, prefab_name: String) -> D
 	var members := capturable(root, nodes)
 	var skipped := left_out(root, nodes)
 	if members.is_empty():
-		if int(skipped.markers) > 0:
-			return {"error": "Prefabs hold placed assets only; gameplay markers cannot be saved in a prefab yet."}
-		return {"error": "Select one or more placed assets to save as a prefab."}
+		return {"error": "Select one or more placed assets or gameplay markers to save as a prefab."}
 	var file_stem := _file_stem(prefab_name)
 	if file_stem.is_empty():
 		return {"error": "Give the prefab a name."}
@@ -131,12 +139,30 @@ static func save_selection(root: Node3D, nodes: Array, prefab_name: String) -> D
 	var pivot := Transform3D(Basis.IDENTITY, Vector3(centre.x, pivot_height, centre.z))
 	var prefab := Node3D.new()
 	prefab.name = file_stem.to_pascal_case()
-	prefab.set_meta(PREFAB_META, {"version": 1, "label": prefab_name.strip_edges(),
-		"members": members.size()})
+	var marker_count := 0
+	var member_assets := {}
+	var member_nodes := {}
+	for member in members:
+		if member.get_script() == MARKER_SCRIPT:
+			marker_count += 1
+		elif member.get_script() == ASSET_SCRIPT:
+			member_assets[String(member.get("asset_id"))] = true
+			member_nodes[String(member.get("node_name"))] = true
+			member_nodes[String(member.name)] = true
+	prefab.set_meta(PREFAB_META, {"version": 2 if marker_count > 0 else 1,
+		"label": prefab_name.strip_edges(), "members": members.size(), "markers": marker_count})
 	for member in members:
 		var copy := member.duplicate() as Node3D
 		if copy == null:
 			continue
+		if copy.get_script() == MARKER_SCRIPT:
+			# The template never carries what a copy must not keep, nor a follow
+			# or link to something outside the prefab.
+			Markers.reset_copy(copy)
+			if not member_assets.has(String(copy.get("follow_asset_id"))):
+				copy.set("follow_asset_id", "")
+			if not member_nodes.has(String(copy.get("linked_node_name"))):
+				copy.set("linked_node_name", "")
 		var ground := Probe.height_at(root, member.global_position)
 		var offset := member.global_position.y - (ground if not is_nan(ground) else pivot_height)
 		copy.set_meta(GROUND_OFFSET_META, offset)
@@ -153,7 +179,8 @@ static func save_selection(root: Node3D, nodes: Array, prefab_name: String) -> D
 	var save_error := ResourceSaver.save(packed, path)
 	if save_error != OK:
 		return {"error": "Could not save %s (%s)." % [path, error_string(save_error)]}
-	return {"path": path, "members": members.size(), "id": ID_PREFIX + file_stem,
+	return {"path": path, "members": members.size(), "markers": marker_count,
+		"id": ID_PREFIX + file_stem,
 		"left_out_markers": int(skipped.markers), "left_out_other": int(skipped.other)}
 
 
@@ -173,34 +200,38 @@ static func instantiate(entry: Dictionary) -> Dictionary:
 	return {"node": node}
 
 
-## Moves the members out of an instantiated prefab into AuthoredAssets as one
-## undoable action, with fresh identities and independent local resources.
+## Moves the members out of an instantiated prefab as one undoable action:
+## assets into AuthoredAssets with fresh asset ids and independent local
+## resources, markers into their kind's Gameplay container with fresh record
+## ids, the copy rules, their facing turned with the prefab, and follows and
+## links moved onto the placed copies of their members.
 static func commit_with_undo(undo_redo: EditorUndoRedoManager, scene_root: Node3D,
 		prefab: Node3D, pivot: Transform3D, conform_to_ground: bool, lift: float,
 		label: String) -> Array[Node3D]:
 	var placed: Array[Node3D] = []
 	if undo_redo == null or scene_root == null or prefab == null:
 		return placed
-	var container := scene_root.get_node_or_null(NodePath(CONTAINER_NAME)) as Node3D
-	var new_container := false
-	if container == null:
-		if scene_root.has_node(NodePath(CONTAINER_NAME)):
-			return placed
-		container = Node3D.new()
-		container.name = CONTAINER_NAME
-		new_container = true
+	var containers := {}
+	var new_containers: Array[Array] = []
 	var reserved := {}
+	var reserved_records := {}
+	var asset_map := {}
+	var node_map := {}
 	var records: Array[Dictionary] = []
 	for member_value in prefab.get_children():
 		var member := member_value as Node3D
 		if member == null:
+			continue
+		var parent := _container_for(scene_root, member, containers, new_containers)
+		if parent == null:
 			continue
 		var world := member_world_transform(scene_root, member, pivot, conform_to_ground, lift)
 		var owned: Array[Node] = []
 		for descendant in _descendants(member):
 			if descendant.owner == prefab:
 				owned.append(descendant)
-		records.append({"node": member, "world": world, "owned": owned})
+		records.append({"node": member, "world": world, "owned": owned, "parent": parent})
+	var markers: Array[Node] = []
 	for record: Dictionary in records:
 		var member := record.node as Node3D
 		prefab.remove_child(member)
@@ -211,35 +242,86 @@ static func commit_with_undo(undo_redo: EditorUndoRedoManager, scene_root: Node3
 			descendant.owner = null
 		member.remove_meta(GROUND_OFFSET_META)
 		if member.get_script() == ASSET_SCRIPT:
-			var identity := _fresh_asset_id(container, String(member.get("catalog_asset_id")),
+			var identity := _fresh_asset_id(record.parent, String(member.get("catalog_asset_id")),
 				String(member.get("asset_id")), reserved)
 			reserved[identity] = true
+			asset_map[String(member.get("asset_id"))] = identity
+			var node_name := "Authored_%s" % identity.replace(":", "_").replace("-", "_")
+			node_map[String(member.get("node_name"))] = node_name
+			node_map[String(member.name)] = node_name
 			member.set("asset_id", identity)
-			member.set("node_name", "Authored_%s" % identity.replace(":", "_").replace("-", "_"))
+			member.set("node_name", node_name)
+		elif member.get_script() == MARKER_SCRIPT:
+			var record_id := Markers.fresh_record_id(scene_root, String(member.get("label")),
+				String(member.get("kind")), reserved_records)
+			reserved_records[record_id] = true
+			member.set("record_id", record_id)
+			member.name = record_id
+			Markers.reset_copy(member)
+			var facing: Vector3 = member.get("facing")
+			var turned := pivot.basis.orthonormalized() * facing
+			var flat := Vector3(turned.x, 0.0, turned.z)
+			if flat.length_squared() > 0.0001:
+				member.set("facing", flat.normalized())
+			markers.append(member)
 		_localize_resources(member)
 		for descendant: Node in record.owned:
 			_localize_resources(descendant)
-	undo_redo.create_action("Place prefab %s (%d assets)" % [label, records.size()],
+	Markers.relink_copies(markers, asset_map, node_map)
+	undo_redo.create_action("Place prefab %s (%d members)" % [label, records.size()],
 		UndoRedo.MERGE_DISABLE, scene_root)
-	if new_container:
-		undo_redo.add_do_method(scene_root, &"add_child", container, true)
-		undo_redo.add_do_method(container, &"set_owner", scene_root)
-		undo_redo.add_do_reference(container)
+	for pair: Array in new_containers:
+		undo_redo.add_do_method(pair[0], &"add_child", pair[1], true)
+		undo_redo.add_do_method(pair[1], &"set_owner", scene_root)
+		undo_redo.add_do_reference(pair[1])
 	for record: Dictionary in records:
 		var member := record.node as Node3D
-		undo_redo.add_do_method(container, &"add_child", member, true)
+		undo_redo.add_do_method(record.parent, &"add_child", member, true)
 		undo_redo.add_do_method(member, &"set_owner", scene_root)
 		for descendant: Node in record.owned:
 			undo_redo.add_do_method(descendant, &"set_owner", scene_root)
 		undo_redo.add_do_property(member, &"global_transform", record.world)
 		undo_redo.add_do_reference(member)
-		undo_redo.add_undo_method(container, &"remove_child", member)
+		undo_redo.add_undo_method(record.parent, &"remove_child", member)
 		placed.append(member)
-	if new_container:
-		undo_redo.add_undo_method(scene_root, &"remove_child", container)
+	for index in range(new_containers.size() - 1, -1, -1):
+		undo_redo.add_undo_method(new_containers[index][0], &"remove_child", new_containers[index][1])
 	undo_redo.commit_action()
 	prefab.free()
 	return placed
+
+
+## The node a member is placed under: AuthoredAssets for assets, the kind's
+## Gameplay container for markers. Missing ones are made (and listed in
+## `created` as [parent, node] to add in the undo step); null when a name is
+## taken by something that is not a Node3D, or the marker kind is unknown.
+static func _container_for(scene_root: Node3D, member: Node3D, known: Dictionary,
+		created: Array[Array]) -> Node3D:
+	var path := CONTAINER_NAME
+	if member.get_script() == MARKER_SCRIPT:
+		var kind := String(member.get("kind"))
+		if not Markers.KINDS.has(kind):
+			return null
+		path = "%s/%s" % [Markers.GAMEPLAY, String((Markers.KINDS[kind] as Array)[0])]
+	if known.has(path):
+		return known[path]
+	var parent: Node3D = scene_root
+	var walked := ""
+	for part in path.split("/"):
+		walked = part if walked.is_empty() else walked + "/" + part
+		if known.has(walked):
+			parent = known[walked]
+			continue
+		var existing := parent.get_node_or_null(NodePath(part))
+		if existing != null and not existing is Node3D:
+			return null
+		if existing == null:
+			existing = Node3D.new()
+			existing.name = part
+			created.append([parent, existing])
+		known[walked] = existing
+		parent = existing as Node3D
+	return parent
 
 
 ## Where a member lands for a given pivot. With conform_to_ground each member

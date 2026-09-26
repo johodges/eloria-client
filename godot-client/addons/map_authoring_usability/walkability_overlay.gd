@@ -8,10 +8,15 @@ extends RefCounted
 ## - LIVE: a suggestion computed from the current authoring on 1 m tiles, using
 ##   the pipeline's rules (collision_export.py): the grade of the terrain
 ##   triangle is at most MAX_GRADE, water no deeper than WADE, no solid
-##   structure in the actor's body height, and inside the owned polygon. Grade
-##   and ownership are exact. Structures are approximated by each solid mesh's
-##   bounding box, and bridge or walk-surface decks by their footprint, so the
-##   bake can differ at fences, doorways and deck edges.
+##   structure in the actor's body height, and inside the owned polygon.
+##   Grade, ownership, solids and Walk_ decks follow the bake on its half-metre
+##   cells (structure_raster.gd), folded to tiles as the server folds them: a
+##   tile is blocked when any of its half-cells is. Solids are checked on a
+##   worker thread; until an asset's check finishes it is estimated from its
+##   mesh boxes. Water is sampled at tile centres from the authored rivers
+##   and lakes, the continent plan's water the territory has not claimed
+##   (plan_water.gd), and the sea level; the certified halo and seam collar at
+##   borders are not modelled, so the bake can still differ there.
 ## - CHANGES: where LIVE disagrees with PUBLISHED, i.e. what the next bake is
 ##   likely to open or close.
 ##
@@ -24,6 +29,8 @@ const TimeOfDay := preload("res://addons/map_authoring_usability/time_of_day_pre
 const ASSET_SCRIPT := preload("res://src/dev/map_authoring_region/asset_control.gd")
 const PATH_SCRIPT := preload("res://src/dev/map_authoring_region/path_control.gd")
 const WATER_SCRIPT := preload("res://src/dev/map_authoring_region/water_region_control.gd")
+const Structures := preload("res://addons/map_authoring_usability/structure_raster.gd")
+const PlanWater := preload("res://addons/map_authoring_usability/plan_water.gd")
 const NODE_NAME := "__MapAuthoringWalkability"
 
 enum Mode { OFF, PUBLISHED, LIVE, CHANGES }
@@ -42,7 +49,7 @@ const LEGEND := {
 		["not walkable (published)", Color(0.9, 0.25, 0.25)]],
 	Mode.LIVE: [["walkable", Color(0.25, 0.85, 0.35)], ["too steep (> 0.65)", Color(1.0, 0.6, 0.15)],
 		["under water (> 0.35 m; sea, rivers, lakes)", Color(0.2, 0.5, 1.0)],
-		["blocked by a structure (box estimate)", Color(0.9, 0.2, 0.25)],
+		["blocked by a structure", Color(0.9, 0.2, 0.25)],
 		["bridge / walk deck", Color(0.3, 0.95, 0.9)]],
 	Mode.CHANGES: [["newly walkable", Color(0.3, 1.0, 0.6)],
 		["newly blocked", Color(1.0, 0.25, 0.8)]],
@@ -113,6 +120,13 @@ var _published: Dictionary = {}
 var _live_signature := ""
 var _pending_signature := ""
 var _pending_since := 0
+## Exact structure results by asset: key -> {signature, cells}. Kept across
+## rebuilds, so an edit re-checks only the assets it touched.
+var _structure_cache := {}
+var _group_task := -1
+var _group_jobs: Array = []
+var _group_cancel: Array = [false]
+var _notice := ""
 
 
 ## Shows `next_mode` on `root`; builds whatever data the mode needs.
@@ -142,10 +156,11 @@ func set_mode(root: Node3D, next_mode: int) -> bool:
 	return _apply()
 
 
-## Recomputes LIVE now (the overlay otherwise waits for edits to settle).
+## Recomputes LIVE now, structures included (the overlay otherwise waits for
+## edits to settle and checks structures in the background).
 func rebuild() -> void:
 	if _root != null and is_instance_valid(_root) and mode in [Mode.LIVE, Mode.CHANGES]:
-		_rebuild_live()
+		_rebuild_live(true)
 		_apply()
 
 
@@ -170,6 +185,7 @@ func poll(dragging: bool) -> void:
 	if _root == null or not is_instance_valid(_root) or mode == Mode.OFF:
 		return
 	_sync_mesh()
+	_collect_structures()
 	if not mode in [Mode.LIVE, Mode.CHANGES] or dragging:
 		return
 	var signature := live_signature(_root)
@@ -186,6 +202,7 @@ func poll(dragging: bool) -> void:
 
 
 func release() -> void:
+	_stop_structures()
 	if _node != null and is_instance_valid(_node):
 		if _node.get_parent() != null:
 			_node.get_parent().remove_child(_node)
@@ -223,7 +240,24 @@ func describe(local: Vector3) -> String:
 
 
 func legend() -> Array:
-	return LEGEND.get(mode, [])
+	var items: Array = (LEGEND.get(mode, []) as Array).duplicate(true)
+	if mode == Mode.LIVE and structures_pending() > 0:
+		for item: Array in items:
+			if String(item[0]) == "blocked by a structure":
+				item[0] = "blocked by a structure (%d still box estimates)" % structures_pending()
+	return items
+
+
+## Solid assets whose exact check is still running (they show box estimates).
+func structures_pending() -> int:
+	return _group_jobs.size() if _group_task >= 0 else 0
+
+
+## A one-off status line (the background check finishing), then "".
+func take_notice() -> String:
+	var notice := _notice
+	_notice = ""
+	return notice
 
 
 ## -1 outside the live grid, else a Tile value.
@@ -252,11 +286,15 @@ func published_walkable(local: Vector3) -> Variant:
 func grade_at(local: Vector3) -> float:
 	if _live.is_empty():
 		return NAN
-	var heights: PackedFloat32Array = _live.heights
-	var grid: Vector2i = _live.grid
-	var cell := float(_live.cell)
-	var fx := clampf((local.x - float(_live.terrain_x0)) / cell, 0.0, float(grid.x) - 1.0000001)
-	var fz := clampf((local.z - float(_live.terrain_z0)) / cell, 0.0, float(grid.y) - 1.0000001)
+	return _grade(_live, local.x, local.z)
+
+
+static func _grade(data: Dictionary, x: float, z: float) -> float:
+	var heights: PackedFloat32Array = data.heights
+	var grid: Vector2i = data.grid
+	var cell := float(data.cell)
+	var fx := clampf((x - float(data.terrain_x0)) / cell, 0.0, float(grid.x) - 1.0000001)
+	var fz := clampf((z - float(data.terrain_z0)) / cell, 0.0, float(grid.y) - 1.0000001)
 	var ix := mini(floori(fx), grid.x - 2)
 	var iz := mini(floori(fz), grid.y - 2)
 	var u := fx - float(ix)
@@ -381,21 +419,77 @@ static func live_signature(root: Node3D) -> String:
 	return str(hash("|".join(parts)))
 
 
-func _rebuild_live() -> void:
+func _rebuild_live(exact_now := false) -> void:
 	var started := Time.get_ticks_msec()
-	_live = compute_live(_root)
+	_live = compute_live(_root, _structure_cache, not exact_now)
 	_live_signature = live_signature(_root)
 	_pending_signature = ""
 	if _live.has("error"):
 		last_message = String(_live.error)
 		_live = {}
 		return
-	last_message = "Live walkability rebuilt in %d ms (%d × %d tiles)." % [
-		Time.get_ticks_msec() - started, int(_live.width), int(_live.rows)]
+	_start_structures()
+	var pending := (_live.pending as Array).size()
+	last_message = "Live walkability rebuilt in %d ms (%d × %d tiles)%s." % [
+		Time.get_ticks_msec() - started, int(_live.width), int(_live.rows),
+		"; %d of %d solid assets are box estimates until their exact check finishes" % [
+			pending, int(_live.solids)] if pending > 0 else ""]
+
+
+## Hands the solids LIVE could not take from the cache to a worker group.
+func _start_structures() -> void:
+	if _group_task >= 0 or _live.is_empty():
+		return
+	var jobs: Array = _live.get("pending", [])
+	if jobs.is_empty():
+		return
+	var ground: Dictionary = _live.ground
+	var cancel: Array = [false]
+	_group_cancel = cancel
+	_group_jobs = jobs
+	var work := func(index: int) -> void:
+		if cancel[0]:
+			return
+		var job: Dictionary = jobs[index]
+		job["cells"] = Structures.blocked_cells(job.parts, ground)
+	_group_task = WorkerThreadPool.add_group_task(work, jobs.size(),
+		clampi(OS.get_processor_count() / 2, 1, 4), false, "Live walkability structures")
+
+
+## Takes finished exact results into the cache and redraws with them.
+func _collect_structures() -> void:
+	if _group_task < 0 or not WorkerThreadPool.is_group_task_completed(_group_task):
+		return
+	WorkerThreadPool.wait_for_group_task_completion(_group_task)
+	_group_task = -1
+	var finished := 0
+	for job: Dictionary in _group_jobs:
+		if job.has("cells"):
+			_structure_cache[job.key] = {"signature": job.signature, "cells": job.cells}
+			finished += 1
+	_group_jobs = []
+	if bool(_group_cancel[0]) or finished == 0 or not mode in [Mode.LIVE, Mode.CHANGES]:
+		return
+	_rebuild_live()
+	_apply()
+	if structures_pending() == 0:
+		_notice = "Live walkability: every solid asset now checked exactly (%d)." % int(_live.solids)
+
+
+func _stop_structures() -> void:
+	if _group_task >= 0:
+		_group_cancel[0] = true
+		WorkerThreadPool.wait_for_group_task_completion(_group_task)
+		_group_task = -1
+	_group_jobs = []
 
 
 ## The LIVE classification on 1 m tiles (or the territory's metres per tile).
-static func compute_live(root: Node3D) -> Dictionary:
+## Solid assets are checked exactly, reusing `cache` (key -> {signature,
+## cells}) where their meshes and ground are unchanged; with `defer` the rest
+## are estimated from their mesh boxes and listed in "pending" for a worker
+## (with "ground", the frame they need), instead of being checked here.
+static func compute_live(root: Node3D, cache: Variant = null, defer := false) -> Dictionary:
 	var terrain := Probe.region_terrain(root)
 	if terrain == null:
 		return {"error": "No region terrain."}
@@ -423,8 +517,12 @@ static func compute_live(root: Node3D) -> Dictionary:
 	if sea_level != null:
 		_sea_pass(data, float(sea_level))
 	_water_pass(root, data)
-	_structure_pass(root, data)
-	_deck_pass(root, data)
+	_plan_water_pass(root, data)
+	var shapes := Structures.gather(root)
+	var ground := Structures.ground_frame(data)
+	_deck_pass(root, data, ground, shapes.decks)
+	_structure_pass(data, ground, shapes.solids, cache if cache is Dictionary else {}, defer)
+	data.ground = ground
 	var framing := {"size": Vector2i(width, rows), "rect": Rect2(terrain_origin.x,
 		terrain_origin.z, float(width) * tile, float(rows) * tile), "pixels_per_metre": 1.0 / tile}
 	var polygon := TopDown.ownership_polygon_local(root)
@@ -584,54 +682,132 @@ static func _water_pass(root: Node3D, data: Dictionary) -> void:
 	data.classes = classes
 
 
-static func _structure_pass(root: Node3D, data: Dictionary) -> void:
-	var assets := root.get_node_or_null("AuthoredAssets")
-	if assets == null:
+## The continent plan's rivers and lakes that this territory has not claimed:
+## the composer adds them whether or not the scene has them.
+static func _plan_water_pass(root: Node3D, data: Dictionary, plan: Dictionary = {}) -> void:
+	if plan.is_empty():
+		plan = PlanWater.load_plan()
+	if plan.is_empty():
 		return
-	var classes: PackedByteArray = data.classes
-	var blockers: Dictionary = data.blockers
-	var width := int(data.width)
-	var inverse := root.global_transform.affine_inverse()
-	for asset in assets.get_children():
-		if asset.get_script() != ASSET_SCRIPT or String(asset.get("collision_role")) != "solid":
+	var marked := PackedInt32Array()
+	for feature: Dictionary in PlanWater.features(root, plan):
+		if bool(feature.claimed):
 			continue
-		for mesh_value in (asset as Node).find_children("*", "MeshInstance3D", true, false):
-			var mesh_node := mesh_value as MeshInstance3D
-			if mesh_node.mesh == null or not mesh_node.is_visible_in_tree():
-				continue
-			var box := _footprint(inverse * mesh_node.global_transform, mesh_node.get_aabb())
-			var corners: Array[Vector2] = box.corners
-			var span := _tile_range(data, box.minimum, box.maximum)
-			for row in range(span.z, span.w + 1):
-				for column in range(span.x, span.y + 1):
-					var centre := _tile_centre(data, column, row)
-					if not _inside_quad(corners, centre):
-						continue
-					var ground := _ground(data, centre.x, centre.y)
-					if float(box.bottom) < ground + ACTOR_HEIGHT and \
-							float(box.top) > ground + ACTOR_FLOOR_CLEARANCE:
-						classes[row * width + column] = Tile.BLOCKED
-						blockers[row * width + column] = String(asset.name)
+		if String(feature.kind) == "river":
+			var points: PackedVector3Array = feature.points
+			var halves: PackedFloat32Array = feature.halves
+			for index in points.size() - 1:
+				marked.append_array(_river_segment_tiles(data, points[index], points[index + 1],
+					halves[index], halves[index + 1]))
+		else:
+			marked.append_array(_lake_tiles(data, feature.centre, feature.radii))
+	var classes: PackedByteArray = data.classes
+	for tile_index in marked:
+		classes[tile_index] = Tile.WATER
 	data.classes = classes
 
 
-static func _deck_pass(root: Node3D, data: Dictionary) -> void:
-	var classes: PackedByteArray = data.classes
+## Tiles within a river segment's width whose ground lies more than WADE
+## below its water surface (both interpolated along the segment).
+static func _river_segment_tiles(data: Dictionary, first: Vector3, second: Vector3,
+		first_half: float, second_half: float) -> PackedInt32Array:
+	var tiles := PackedInt32Array()
 	var width := int(data.width)
+	var reach := maxf(first_half, second_half)
+	var a := Vector2(first.x, first.z)
+	var ab := Vector2(second.x, second.z) - a
+	var length_squared := maxf(ab.length_squared(), 0.000001)
+	var span := _tile_range(data, Vector2(minf(first.x, second.x), minf(first.z, second.z)) -
+		Vector2.ONE * reach, Vector2(maxf(first.x, second.x), maxf(first.z, second.z)) +
+		Vector2.ONE * reach)
+	for row in range(span.z, span.w + 1):
+		for column in range(span.x, span.y + 1):
+			var centre := _tile_centre(data, column, row)
+			var t := clampf((centre - a).dot(ab) / length_squared, 0.0, 1.0)
+			if centre.distance_to(a + ab * t) > lerpf(first_half, second_half, t):
+				continue
+			if lerpf(first.y, second.y, t) - _ground(data, centre.x, centre.y) > WADE:
+				tiles.append(row * width + column)
+	return tiles
+
+
+## Tiles inside a lake ellipse whose ground lies more than WADE below its level.
+static func _lake_tiles(data: Dictionary, centre: Vector3, radii: Vector2) -> PackedInt32Array:
+	var tiles := PackedInt32Array()
+	if radii.x <= 0.0 or radii.y <= 0.0:
+		return tiles
+	var width := int(data.width)
+	var middle := Vector2(centre.x, centre.z)
+	var span := _tile_range(data, middle - radii, middle + radii)
+	for row in range(span.z, span.w + 1):
+		for column in range(span.x, span.y + 1):
+			var point := _tile_centre(data, column, row)
+			if ((point - middle) / radii).length_squared() <= 1.0 and \
+					centre.y - _ground(data, point.x, point.y) > WADE:
+				tiles.append(row * width + column)
+	return tiles
+
+
+## Solid assets as the bake tests them (structure_raster.gd), folded from
+## half-cells to tiles. Blocking is final: no deck or water class overrides it.
+static func _structure_pass(data: Dictionary, ground: Dictionary, solids: Array,
+		cache: Dictionary, defer: bool) -> void:
+	var pending: Array = []
+	var classes: PackedByteArray = data.classes
+	var blockers: Dictionary = data.blockers
+	var width := int(data.width)
+	var sub := int(ground.sub)
+	var columns := int(ground.columns)
+	for solid: Dictionary in solids:
+		var signature := Structures.solid_signature(solid, ground)
+		var cached: Variant = cache.get(solid.key)
+		var tiles := PackedInt32Array()
+		if cached is Dictionary and String(cached.signature) == signature:
+			for cell_index: int in cached.cells:
+				tiles.append((cell_index / columns / sub) * width + (cell_index % columns) / sub)
+		elif defer:
+			pending.append({"key": solid.key, "signature": signature, "parts": solid.parts})
+			tiles = _box_estimate(data, solid)
+		else:
+			var cells := Structures.blocked_cells(solid.parts, ground)
+			cache[solid.key] = {"signature": signature, "cells": cells}
+			for cell_index in cells:
+				tiles.append((cell_index / columns / sub) * width + (cell_index % columns) / sub)
+		for tile_index in tiles:
+			classes[tile_index] = Tile.BLOCKED
+			blockers[tile_index] = String(solid.name)
+	data.classes = classes
+	data.pending = pending
+	data.solids = solids.size()
+
+
+## The tiles a solid's mesh boxes cover in the actor's body height: the quick
+## stand-in shown while its exact check runs.
+static func _box_estimate(data: Dictionary, solid: Dictionary) -> PackedInt32Array:
+	var tiles := PackedInt32Array()
+	var width := int(data.width)
+	for part: Dictionary in solid.parts:
+		var box := _footprint(part.transform, part.aabb)
+		var corners: Array[Vector2] = box.corners
+		var span := _tile_range(data, box.minimum, box.maximum)
+		for row in range(span.z, span.w + 1):
+			for column in range(span.x, span.y + 1):
+				var centre := _tile_centre(data, column, row)
+				if not _inside_quad(corners, centre):
+					continue
+				var ground := _ground(data, centre.x, centre.y)
+				if float(box.bottom) < ground + ACTOR_HEIGHT and \
+						float(box.top) > ground + ACTOR_FLOOR_CLEARANCE:
+					tiles.append(row * width + column)
+	return tiles
+
+
+## Walk_ decks (structure_raster.gd) and editor bridges, on half-cells. A tile
+## becomes a deck when each of its half-cells is carried by one or stands on
+## gentle ground; a deck that only partly covers deep water leaves it water.
+static func _deck_pass(root: Node3D, data: Dictionary, ground: Dictionary, decks: Array) -> void:
+	var sources: Array = decks.duplicate()
 	var inverse := root.global_transform.affine_inverse()
-	var decks: Array = []
-	var sources: Array[String] = []
-	var deck_sources: Dictionary = data.decks
-	var assets := root.get_node_or_null("AuthoredAssets")
-	if assets != null:
-		for asset in assets.get_children():
-			if asset.get_script() == ASSET_SCRIPT and \
-					String(asset.get("collision_role")) == "walk_surface":
-				for mesh_value in (asset as Node).find_children("*", "MeshInstance3D", true, false):
-					var mesh_node := mesh_value as MeshInstance3D
-					if mesh_node.mesh != null and mesh_node.is_visible_in_tree():
-						_rasterise_walk_triangles(data, inverse * mesh_node.global_transform,
-							mesh_node.mesh.get_faces(), String(asset.name))
 	var bridges := root.get_node_or_null("Bridges")
 	if bridges != null:
 		for bridge in bridges.get_children():
@@ -644,57 +820,43 @@ static func _deck_pass(root: Node3D, data: Dictionary) -> void:
 			var along := Vector2(b.x - a.x, b.z - a.z)
 			if along.length_squared() < 0.0001:
 				continue
-			var side := Vector2(-along.y, along.x).normalized() * float(bridge.get("width")) * 0.5
-			var quad: Array[Vector2] = [Vector2(a.x, a.z) + side, Vector2(b.x, b.z) + side,
-				Vector2(b.x, b.z) - side, Vector2(a.x, a.z) - side]
-			decks.append(quad)
-			sources.append(String(bridge.name))
-	classes = data.classes
-	for deck_index in decks.size():
-		var corners_value: Variant = decks[deck_index]
-		var corners: Array[Vector2] = []
-		corners.assign(corners_value)
-		var minimum := Vector2(INF, INF)
-		var maximum := Vector2(-INF, -INF)
-		for point in corners:
-			minimum = minimum.min(point)
-			maximum = maximum.max(point)
-		var span := _tile_range(data, minimum, maximum)
-		for row in range(span.z, span.w + 1):
-			for column in range(span.x, span.y + 1):
-				if _inside_quad(corners, _tile_centre(data, column, row)):
-					classes[row * width + column] = Tile.DECK
-					deck_sources[row * width + column] = sources[deck_index]
-	data.classes = classes
-
-
-## Marks the tiles whose centres lie under a walkable (upward, within
-## MAX_GRADE) triangle of a walk-surface mesh, as the bake's deck raster does.
-static func _rasterise_walk_triangles(data: Dictionary, transform: Transform3D,
-		faces: PackedVector3Array, source: String) -> void:
+			var flat := Vector2(-along.y, along.x).normalized() * float(bridge.get("width")) * 0.5
+			var side := Vector3(flat.x, 0.0, flat.y)
+			sources.append({"name": String(bridge.name), "either_side": true,
+				"triangles": PackedVector3Array([a + side, b + side, b - side,
+					a + side, b - side, a - side])})
+	var raster := Structures.deck_cells(ground, sources)
+	ground.decks = raster.cells
+	var cells: Dictionary = raster.cells
+	var names: Dictionary = raster.sources
 	var classes: PackedByteArray = data.classes
 	var deck_sources: Dictionary = data.decks
 	var width := int(data.width)
-	var upward := 1.0 / sqrt(1.0 + MAX_GRADE * MAX_GRADE) - 0.000001
-	for index in range(0, faces.size() - 2, 3):
-		var a: Vector3 = transform * faces[index]
-		var b: Vector3 = transform * faces[index + 1]
-		var c: Vector3 = transform * faces[index + 2]
-		var normal := (b - a).cross(c - a)
-		if normal.length_squared() < 0.000001:
+	var sub := int(ground.sub)
+	var columns := int(ground.columns)
+	var tiles := {}
+	for cell_index: int in cells:
+		tiles[(cell_index / columns / sub) * width + (cell_index % columns) / sub] = cell_index
+	for tile_index: int in tiles:
+		var column := tile_index % width
+		var row := tile_index / width
+		var carried := true
+		var spared := true
+		for oz in sub:
+			for ox in sub:
+				var cell_index := (row * sub + oz) * columns + column * sub + ox
+				if cells.has(cell_index):
+					continue
+				carried = false
+				var x := float(ground.x0) + (float(column * sub + ox) + 0.5) * Structures.CELL
+				var z := float(ground.z0) + (float(row * sub + oz) + 0.5) * Structures.CELL
+				if _grade(data, x, z) > MAX_GRADE:
+					spared = false
+		var current := classes[tile_index]
+		if (current == Tile.WATER and not carried) or (current == Tile.STEEP and not spared):
 			continue
-		normal = normal.normalized()
-		if absf(normal.y) < upward:
-			continue
-		var pa := Vector2(a.x, a.z)
-		var pb := Vector2(b.x, b.z)
-		var pc := Vector2(c.x, c.z)
-		var span := _tile_range(data, pa.min(pb).min(pc), pa.max(pb).max(pc))
-		for row in range(span.z, span.w + 1):
-			for column in range(span.x, span.y + 1):
-				if Geometry2D.point_is_inside_triangle(_tile_centre(data, column, row), pa, pb, pc):
-					classes[row * width + column] = Tile.DECK
-					deck_sources[row * width + column] = source
+		classes[tile_index] = Tile.DECK
+		deck_sources[tile_index] = String(names[tiles[tile_index]])
 	data.classes = classes
 
 
