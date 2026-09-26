@@ -7,6 +7,26 @@ strength, and edge softness in the dock. For Flatten, enter a target Y height or
 press **Pick** and click the desired terrain height. The cursor ring shows the
 brush radius; a missed ray or protected border reports why it cannot paint.
 
+## Brush keys
+
+While sculpting, these keys work in the 3D view:
+
+| Key | Action |
+|---|---|
+| 1 / 2 / 3 / 4 | Pick **Raise**, **Lower**, **Smooth** or **Flatten**. |
+| `[` / `]`, or Shift+mouse wheel | Shrink or grow the radius. |
+| Shift+`[` / Shift+`]` | Change the strength. |
+| Ctrl+drag | Swap Raise and Lower for that stroke. |
+| Ctrl+click with Flatten | Sample the target height, like **Pick**. |
+
+- The cursor ring is coloured by brush: cyan for Raise, orange for Lower, blue for Smooth and gold for Flatten.
+- Two lines at the bottom of the 3D view show the brush settings and these keys.
+- The keys can be rebound under **Editor Settings > Shortcuts > Map Authoring**.
+- The radius and strength step factors are under **Editor Settings > Map Authoring > Sculpt**.
+- The brush cursor uses the fast terrain probe from [map-authoring-usability.md](map-authoring-usability.md), so hovering stays smooth on the full 397×397 grids.
+
+## Strokes, undo and saving
+
 Each drag is one undo step. **Escape** cancels a drag. Releasing the mouse,
 switching scenes, or using a camera gesture ends or cancels it safely. Alt,
 right mouse, and middle mouse remain camera controls. Asset placement and
@@ -24,5 +44,6 @@ is visible, then return when the drag ends. Save/reopen keeps the layer.
 
 Terrain patches, road shaping, and river shaping still run after the sculpted
 base. Existing objects and water do not automatically snap to edited ground;
-inspect them after large height changes. Image heightmap import is not part of
+inspect them after large height changes. **Map tools > Drop selection to
+ground** re-seats selected assets and markers on the new surface. Image heightmap import is not part of
 this first sculpting phase.

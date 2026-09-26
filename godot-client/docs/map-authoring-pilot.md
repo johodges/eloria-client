@@ -32,7 +32,7 @@ Godot may import project assets on the first launch. Select the `MapAuthoringPil
 
 ## Place library assets
 
-Open **Map Assets** from the editor docks, search by name, and optionally narrow the category. Select an item to see its preview, press **Place on terrain**, then click the terrain in the 3D view. Escape or right-click cancels. **Add at view center** places at the terrain point under the middle of the 3D view. Use **Refresh Library** after changing the project asset catalog.
+Open **Map Assets** from the editor docks, search by name, and optionally narrow the category. Select an item, press **Place on terrain**, then click the terrain in the 3D view. A see-through ghost follows the cursor, and placement stays armed for more clicks until you right-click or press Escape. **Add at view center** places at the terrain point under the middle of the 3D view. Use **Refresh** after changing the project asset catalog. The turn, raise and size keys, grid snapping, prefabs and the batch **Map tools** are described in [map-authoring-usability.md](map-authoring-usability.md).
 
 Placed items are selected immediately. Move, rotate, scale, duplicate, delete, undo, and redo them with Godot's normal scene tools, then save the pilot scene. The dock grounds the visible bounds on the actual preview terrain and uses the catalog height for the initial size of world-library models. Items live under `AuthoredAssets`, so refreshing generated terrain, roads, bridges, or buildings does not erase them.
 

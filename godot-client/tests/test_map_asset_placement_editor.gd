@@ -6,6 +6,7 @@ const Catalog := preload("res://addons/map_asset_palette/asset_catalog.gd")
 const Placement := preload("res://addons/map_asset_palette/placement.gd")
 const Dock := preload("res://addons/map_asset_palette/map_asset_dock.gd")
 const Plugin := preload("res://addons/map_asset_palette/plugin.gd")
+const Settings := preload("res://addons/map_authoring_usability/usability_settings.gd")
 
 var _failures := 0
 
@@ -213,11 +214,14 @@ func _test_plugin_forwarding(pilot: Node3D, entry: Dictionary,
 	click.position = screen_center
 	var click_result: int = plugin.call("_forward_3d_gui_input", camera, click)
 	var plugin_dock: Object = plugin.get("_dock")
+	# "Keep placing" (on by default) leaves placement armed after a click.
+	var keep_placing := bool(Settings.value("placement/keep_placing"))
 	_expect(escaped and alt_passed and click_result == EditorPlugin.AFTER_GUI_INPUT_STOP and
-		(plugin.get("_pending_entry") as Dictionary).is_empty() and
+		(plugin.get("_pending_entry") as Dictionary).is_empty() != keep_placing and
 		pilot.get_node("AuthoredAssets").get_child_count() == before_count + 1 and
 		String(plugin_dock.call("status_text")).begins_with("Placed"),
 		"real plugin forwarding cancels Escape, passes Alt orbit, and places on left-click")
+	plugin.call("_cancel_placement")
 	camera.queue_free()
 	plugin.queue_free()
 	await process_frame

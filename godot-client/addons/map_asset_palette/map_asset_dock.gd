@@ -4,17 +4,24 @@ extends EditorDock
 signal place_requested(entry: Dictionary)
 signal add_at_center_requested(entry: Dictionary)
 signal placement_cancel_requested
+signal save_prefab_requested(prefab_name: String)
 
 const Catalog := preload("res://addons/map_asset_palette/asset_catalog.gd")
 const Placement := preload("res://addons/map_asset_palette/placement.gd")
+const Prefabs := preload("res://addons/map_asset_palette/prefab_library.gd")
+const Settings := preload("res://addons/map_authoring_usability/usability_settings.gd")
+const Thumbnails := preload("res://addons/map_asset_palette/thumbnail_renderer.gd")
+const THUMBNAIL_SIZE := Vector2i(64, 64)
 
 var _editor_interface: EditorInterface
 var _entries: Array[Dictionary] = []
 var _visible_entries: Array[Dictionary] = []
 var _selected_entry: Dictionary = {}
-var _preview_resources: Dictionary = {}
+var _thumbnails: Dictionary = {}
+var _renderer: Node
 var _search: LineEdit
 var _category: OptionButton
+var _thumbnail_toggle: CheckButton
 var _items: ItemList
 var _preview: TextureRect
 var _details: Label
@@ -23,14 +30,37 @@ var _center: Button
 var _cancel: Button
 var _refresh: Button
 var _status: Label
+var _options: FoldableContainer
+var _keep_placing: CheckBox
+var _random_rotation: CheckBox
+var _size_variation: SpinBox
+var _align_to_surface: CheckBox
+var _snap_to_grid: CheckBox
+var _grid_step: SpinBox
+var _prefab_name: LineEdit
+var _save_prefab: Button
 var _scene_available := false
+var _syncing_options := false
 
 
 func configure(editor_interface: EditorInterface) -> void:
 	_editor_interface = editor_interface
 	if _search == null:
 		_build_ui()
+	var settings := Settings.editor_settings()
+	if settings != null and not settings.settings_changed.is_connected(sync_options):
+		settings.settings_changed.connect(sync_options)
+	if _editor_interface != null and _renderer == null:
+		_renderer = Thumbnails.new()
+		_renderer.set("cache_directory", _editor_interface.get_editor_paths().get_cache_dir())
+		_renderer.connect(&"thumbnail_ready", _set_thumbnail)
+		add_child(_renderer, false, Node.INTERNAL_MODE_BACK)
 	_reload_entries(false)
+
+
+## True once every requested thumbnail has been rendered or read from cache.
+func thumbnails_idle() -> bool:
+	return _renderer == null or _renderer.call("is_idle")
 
 
 func set_scene_available(available: bool) -> void:
@@ -48,7 +78,8 @@ func set_placement_armed(armed: bool, label: String = "") -> void:
 	_place.disabled = armed or not _can_place()
 	_center.disabled = armed or not _can_place()
 	if armed:
-		_status.text = "Click the terrain to place %s. Escape or right-click cancels." % label
+		_status.text = ("Placing %s: click the terrain. Q/E turn, PgUp/PgDn raise, " +
+			"Home/End size, Shift for fine steps. Right-click or Escape stops.") % label
 	elif _scene_available and not _selected_entry.is_empty():
 		_status.text = "Ready to place %s." % String(_selected_entry.label)
 
@@ -117,6 +148,40 @@ func cancel_placement() -> void:
 	set_placement_armed(false)
 
 
+## Reloads the library and prefabs, keeping the current selection when possible.
+func reload_library() -> void:
+	var previous := String(_selected_entry.get("id", ""))
+	_reload_entries(true)
+	if not previous.is_empty():
+		select_entry_by_id(previous)
+
+
+func thumbnails_enabled() -> bool:
+	return _thumbnail_toggle != null and _thumbnail_toggle.button_pressed
+
+
+func set_thumbnails_enabled(enabled: bool) -> void:
+	_thumbnail_toggle.button_pressed = enabled
+
+
+func thumbnail_for(entry_id: String) -> Texture2D:
+	return _thumbnails.get(entry_id) as Texture2D
+
+
+## Mirrors the saved preferences into the option controls (e.g. after G toggles snap).
+func sync_options() -> void:
+	if _keep_placing == null:
+		return
+	_syncing_options = true
+	_keep_placing.button_pressed = bool(Settings.value("placement/keep_placing"))
+	_random_rotation.button_pressed = bool(Settings.value("placement/random_rotation"))
+	_size_variation.value = float(Settings.value("placement/size_variation")) * 100.0
+	_align_to_surface.button_pressed = bool(Settings.value("placement/align_to_surface"))
+	_snap_to_grid.button_pressed = bool(Settings.value("placement/snap_to_grid"))
+	_grid_step.value = float(Settings.value("grid/step"))
+	_syncing_options = false
+
+
 func _build_ui() -> void:
 	title = "Map Assets"
 	layout_key = "MapAssetPalette"
@@ -132,12 +197,8 @@ func _build_ui() -> void:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 6)
 	margin.add_child(column)
-	var heading := Label.new()
-	heading.text = "Place library assets"
-	heading.add_theme_font_size_override("font_size", 16)
-	column.add_child(heading)
 	_search = LineEdit.new()
-	_search.placeholder_text = "Search assets…"
+	_search.placeholder_text = "Search assets and prefabs…"
 	_search.clear_button_enabled = true
 	_search.text_changed.connect(func(_text: String) -> void: _apply_filter())
 	column.add_child(_search)
@@ -146,10 +207,16 @@ func _build_ui() -> void:
 	_category.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_category.item_selected.connect(func(_index: int) -> void: _apply_filter())
 	filters.add_child(_category)
+	_thumbnail_toggle = CheckButton.new()
+	_thumbnail_toggle.text = "Grid"
+	_thumbnail_toggle.tooltip_text = "Show the library as a thumbnail grid instead of a list."
+	_thumbnail_toggle.button_pressed = true
+	_thumbnail_toggle.toggled.connect(func(_on: bool) -> void: _apply_view_mode())
+	filters.add_child(_thumbnail_toggle)
 	_refresh = Button.new()
-	_refresh.text = "Refresh Library"
-	_refresh.tooltip_text = "Reload objects.json and starter-scene entries."
-	_refresh.pressed.connect(func() -> void: _reload_entries(true))
+	_refresh.text = "Refresh"
+	_refresh.tooltip_text = "Reload objects.json, starter-scene entries, and saved prefabs."
+	_refresh.pressed.connect(reload_library)
 	filters.add_child(_refresh)
 	column.add_child(filters)
 	_items = ItemList.new()
@@ -160,18 +227,23 @@ func _build_ui() -> void:
 		_select_index(index)
 		_request_place())
 	column.add_child(_items)
+	var detail_row := HBoxContainer.new()
 	_preview = TextureRect.new()
-	_preview.custom_minimum_size = Vector2(260, 150)
-	_preview.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	_preview.custom_minimum_size = Vector2(96, 96)
+	_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	column.add_child(_preview)
+	detail_row.add_child(_preview)
 	_details = Label.new()
 	_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	column.add_child(_details)
+	_details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_details.custom_minimum_size = Vector2(120, 0)
+	detail_row.add_child(_details)
+	column.add_child(detail_row)
 	var actions := HBoxContainer.new()
 	_place = Button.new()
 	_place.text = "Place on terrain"
-	_place.tooltip_text = "Arm placement, then click the terrain in the 3D view."
+	_place.tooltip_text = ("Arm placement, then click the terrain in the 3D view. A see-through " +
+		"ghost follows the cursor; keep clicking to place more.")
 	_place.pressed.connect(_request_place)
 	actions.add_child(_place)
 	_center = Button.new()
@@ -181,19 +253,149 @@ func _build_ui() -> void:
 		if _can_place(): add_at_center_requested.emit(selected_entry()))
 	actions.add_child(_center)
 	_cancel = Button.new()
-	_cancel.text = "Cancel"
+	_cancel.text = "Stop placing"
 	_cancel.visible = false
 	_cancel.pressed.connect(cancel_placement)
 	column.add_child(actions)
 	column.add_child(_cancel)
+	_build_options(column)
+	_build_prefab_row(column)
 	_status = Label.new()
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(_status)
+	sync_options()
+	_apply_view_mode()
+
+
+func _build_options(column: VBoxContainer) -> void:
+	_options = FoldableContainer.new()
+	_options.title = "Placement options"
+	_options.tooltip_text = ("Saved per user in Editor Settings > Map Authoring. Keys are " +
+		"rebindable under Editor Settings > Shortcuts > Map Authoring.")
+	column.add_child(_options)
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 10)
+	_options.add_child(grid)
+	_keep_placing = _option_check(grid, "Keep placing",
+		"Stay in placement after each click; right-click or Escape stops.",
+		"placement/keep_placing")
+	_random_rotation = _option_check(grid, "Random turn",
+		"Give every placed asset a random turn about its up axis.",
+		"placement/random_rotation")
+	_align_to_surface = _option_check(grid, "Align to slope",
+		"Tilt assets so they follow the terrain slope under them.",
+		"placement/align_to_surface")
+	var size_row := HBoxContainer.new()
+	var size_label := Label.new()
+	size_label.text = "Size ±"
+	size_row.add_child(size_label)
+	_size_variation = SpinBox.new()
+	_size_variation.min_value = 0.0
+	_size_variation.max_value = 90.0
+	_size_variation.step = 1.0
+	_size_variation.suffix = "%"
+	_size_variation.tooltip_text = "Random size variation for each placed asset (0 = off)."
+	_size_variation.value_changed.connect(func(value: float) -> void:
+		if not _syncing_options: Settings.set_value("placement/size_variation", value / 100.0))
+	size_row.add_child(_size_variation)
+	grid.add_child(size_row)
+	_snap_to_grid = _option_check(grid, "Snap to grid",
+		"Snap placement to the territory grid (G toggles while placing).",
+		"placement/snap_to_grid")
+	var step_row := HBoxContainer.new()
+	var step_label := Label.new()
+	step_label.text = "Grid"
+	step_row.add_child(step_label)
+	_grid_step = SpinBox.new()
+	_grid_step.min_value = 0.125
+	_grid_step.max_value = 16.0
+	_grid_step.step = 0.125
+	_grid_step.suffix = "m"
+	_grid_step.tooltip_text = ("Grid spacing in territory metres for snapping and for the " +
+		"cursor grid. 1 m matches one server tile in the production regions.")
+	_grid_step.value_changed.connect(func(value: float) -> void:
+		if not _syncing_options: Settings.set_value("grid/step", value))
+	step_row.add_child(_grid_step)
+	grid.add_child(step_row)
+
+
+func _option_check(parent: Control, text: String, tooltip: String, key: String) -> CheckBox:
+	var check := CheckBox.new()
+	check.text = text
+	check.tooltip_text = tooltip
+	check.toggled.connect(func(pressed: bool) -> void:
+		if not _syncing_options: Settings.set_value(key, pressed))
+	parent.add_child(check)
+	return check
+
+
+func _build_prefab_row(column: VBoxContainer) -> void:
+	var row := HBoxContainer.new()
+	_prefab_name = LineEdit.new()
+	_prefab_name.placeholder_text = "Prefab name"
+	_prefab_name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_prefab_name.text_submitted.connect(func(_text: String) -> void: _request_save_prefab())
+	row.add_child(_prefab_name)
+	_save_prefab = Button.new()
+	_save_prefab.text = "Save selection"
+	_save_prefab.tooltip_text = ("Save the selected placed assets as a reusable prefab in " +
+		"%s. Placing it later creates ordinary assets with fresh ids." % Prefabs.directory)
+	_save_prefab.pressed.connect(_request_save_prefab)
+	row.add_child(_save_prefab)
+	var folder := Button.new()
+	folder.text = "Folder"
+	folder.tooltip_text = "Show the prefab folder in the FileSystem dock."
+	folder.pressed.connect(_show_prefab_folder)
+	row.add_child(folder)
+	column.add_child(row)
+
+
+func _request_save_prefab() -> void:
+	save_prefab_requested.emit(_prefab_name.text)
+
+
+func clear_prefab_name() -> void:
+	_prefab_name.text = ""
+
+
+func _show_prefab_folder() -> void:
+	if _editor_interface == null:
+		return
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(Prefabs.directory))
+	_editor_interface.get_resource_filesystem().scan()
+	_editor_interface.get_file_system_dock().navigate_to_path(Prefabs.directory)
+
+
+func _apply_view_mode() -> void:
+	if _items == null:
+		return
+	if thumbnails_enabled():
+		_items.icon_mode = ItemList.ICON_MODE_TOP
+		_items.max_columns = 0
+		_items.same_column_width = true
+		_items.fixed_column_width = THUMBNAIL_SIZE.x + 20
+		_items.fixed_icon_size = THUMBNAIL_SIZE
+		_items.max_text_lines = 2
+		_items.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	else:
+		_items.icon_mode = ItemList.ICON_MODE_LEFT
+		_items.max_columns = 1
+		_items.same_column_width = false
+		_items.fixed_column_width = 0
+		_items.fixed_icon_size = Vector2i(24, 24)
+		_items.max_text_lines = 1
+	_apply_filter(false)
 
 
 func _reload_entries(refresh_cache: bool) -> void:
 	_cancel_if_armed()
 	_entries = Catalog.entries(refresh_cache)
+	_entries.append_array(Prefabs.entries())
+	if refresh_cache:
+		_thumbnails.clear()
+		if _renderer != null:
+			_renderer.call("clear")
 	var previous_category := _category.get_item_text(_category.selected) \
 		if _category.item_count > 0 else "All"
 	_category.clear()
@@ -204,24 +406,32 @@ func _reload_entries(refresh_cache: bool) -> void:
 	if _category.selected < 0:
 		_category.select(0)
 	_apply_filter()
-	_status.text = "Library refreshed: %d assets." % _entries.size()
+	_status.text = "Library refreshed: %d assets and prefabs." % _entries.size()
 
 
-func _apply_filter() -> void:
+func _apply_filter(reset_selection: bool = true) -> void:
 	if _items == null:
 		return
-	_cancel_if_armed()
+	if reset_selection:
+		_cancel_if_armed()
 	var category := _category.get_item_text(_category.selected) \
 		if _category.selected >= 0 else "All"
+	var selected_id := String(_selected_entry.get("id", ""))
 	_visible_entries = Catalog.filter_entries(_entries, _search.text, category)
 	_items.clear()
 	for entry in _visible_entries:
-		_items.add_item(String(entry.label))
-		_items.set_item_tooltip(_items.item_count - 1, "%s\n%s" % [
+		var index := _items.add_item(String(entry.label), _thumbnails.get(String(entry.id)))
+		_items.set_item_tooltip(index, "%s\n%s\n%s" % [String(entry.label),
 			String(entry.category), String(entry.scene_path)])
-	_selected_entry = {}
-	_preview.texture = null
-	_details.text = "%d assets" % _visible_entries.size()
+		_queue_thumbnail(entry)
+	if reset_selection:
+		_selected_entry = {}
+		_preview.texture = null
+		_details.text = "%d assets" % _visible_entries.size()
+	else:
+		for index in _visible_entries.size():
+			if String(_visible_entries[index].id) == selected_id:
+				_items.select(index)
 	_update_buttons()
 
 
@@ -232,9 +442,9 @@ func _select_index(index: int) -> void:
 	_selected_entry = _visible_entries[index].duplicate(true)
 	_details.text = "%s\n%s%s" % [String(_selected_entry.label),
 		String(_selected_entry.category),
-		" · %.2f m tall" % float(_selected_entry.height) \
+		"\n%.2f m tall" % float(_selected_entry.height) \
 			if float(_selected_entry.height) > 0.0 else ""]
-	_preview.texture = null
+	_preview.texture = _thumbnails.get(String(_selected_entry.id))
 	_queue_selected_preview()
 	_update_buttons()
 	if _scene_available:
@@ -242,27 +452,27 @@ func _select_index(index: int) -> void:
 
 
 func _queue_selected_preview() -> void:
-	if _editor_interface == null or _selected_entry.is_empty():
+	if _renderer == null or _selected_entry.is_empty() or \
+			_thumbnails.has(String(_selected_entry.id)):
 		return
-	var previewer := _editor_interface.get_resource_previewer()
-	var entry_id := String(_selected_entry.id)
-	if String(_selected_entry.source_node).is_empty():
-		previewer.queue_resource_preview(String(_selected_entry.scene_path), self,
-			&"_on_preview_ready", entry_id)
-		return
-	var packed := Placement.preview_scene(_selected_entry)
-	if packed != null:
-		_preview_resources[entry_id] = packed
-		previewer.queue_edited_resource_preview(packed, self, &"_on_preview_ready", entry_id)
+	# Jump the queue so the chosen asset's preview appears first.
+	_renderer.call("request", _selected_entry, true)
 
 
-func _on_preview_ready(_path: String, preview: Texture2D, thumbnail: Texture2D,
-		entry_id: Variant) -> void:
-	var id := String(entry_id)
-	_preview_resources.erase(id)
-	if _selected_entry.is_empty() or String(_selected_entry.id) != id:
+func _queue_thumbnail(entry: Dictionary) -> void:
+	if _renderer == null or _thumbnails.has(String(entry.id)):
 		return
-	_preview.texture = preview if preview != null else thumbnail
+	_renderer.call("request", entry, false)
+
+
+func _set_thumbnail(entry_id: String, texture: Texture2D) -> void:
+	# A null texture is remembered too, so filtering never re-queues a miss.
+	_thumbnails[entry_id] = texture
+	for index in _visible_entries.size():
+		if String(_visible_entries[index].id) == entry_id and index < _items.item_count:
+			_items.set_item_icon(index, texture)
+	if not _selected_entry.is_empty() and String(_selected_entry.id) == entry_id:
+		_preview.texture = texture
 
 
 func _request_place() -> void:
