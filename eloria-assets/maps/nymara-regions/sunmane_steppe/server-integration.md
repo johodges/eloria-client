@@ -33,7 +33,7 @@ unchanged:
 | Arrival datum | `(58, 58)` |
 | Addressable tiles | 0..191 on both axes |
 | Addressable world band | X -58..133, Z -133..58 |
-| Crossing west | `(6, 58)` to the Four Gates (the causeway road); the gate is a pair of menhirs astride the road |
+| Crossing west | `(6, 58)` to Mirrorhold (the west road); the gate is a pair of menhirs astride the road |
 | Crossing north | `(66, 184)` to the Amethyst Barrens (the desert track) |
 | Crossing south | `(62, 18)` to the Verdant Stair (the shore road) |
 | North barrow | `(58, 100)`, a sealed passage; the Ssarathi Royal Archive is entered from the Ssarathi Ruins |
@@ -84,7 +84,7 @@ a safe spawn. The positions the manifests name explicitly:
 | Spawn id | Server tile | Map | Note |
 |---|---|---|---|
 | arrival-datum | `(58, 58)` | sunmane_steppe | ceremonial crossroads at the shared market |
-| west-caravanserai | `(6, 58)` | sunmane_steppe | arrival from the Four Gates causeway |
+| west-caravanserai | `(6, 58)` | sunmane_steppe | arrival from Mirrorhold along the west road |
 | east-caravanserai | `(110, 58)` | sunmane_steppe | the east caravanserai; the east gate is the frontier and leads nowhere |
 | north-barrowfield | `(58, 100)` | sunmane_steppe | the barrow field; the passage barrow is sealed |
 | default | `(43, 27)` | sunmane_wind_caves | Arrival for the wind caves mouth, and the map default. |

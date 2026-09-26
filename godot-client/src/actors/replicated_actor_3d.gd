@@ -1510,7 +1510,7 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 				action = &"attack_primary" if _swing_index % 2 == 0 else &"attack_secondary"
 				_swing_index += 1
 			play_action(action, fresh_command and action in [&"attack_primary", &"attack_secondary", &"pain"])
-	var aiming: bool = int(dto.get("aiming_at", -1)) >= 0 or dto.get("aiming_at_tile", Vector2i(-1, -1)) != Vector2i(-1, -1)
+	var aiming: bool = int(dto.get("aiming_at", -1)) >= 0 or dto.get("aiming_at_tile") is Vector2i
 	if aiming != _ranged_aiming and current_action != &"death":
 		_ranged_aiming = aiming
 		if aiming:

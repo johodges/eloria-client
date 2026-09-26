@@ -1,4 +1,4 @@
-[gd_scene load_steps=911 format=3]
+[gd_scene load_steps=914 format=3]
 
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
 [ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/jade-masonry.tres" id="object_jade_masonry"]
@@ -777,6 +777,10 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/ssarathi_ruins/assets/prototypes/woodlandfloor-0482-512f3d0884af.glb" id="prototype_739"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/ssarathi_ruins/assets/prototypes/woodlandfloor-0483-e9f1b285a23b.glb" id="prototype_740"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/ssarathi_ruins/assets/prototypes/woodlandfloor-0486-2a23f5791287.glb" id="prototype_741"]
+
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/ground_region_control.gd" id="pass1_ground"]
+[ext_resource type="Resource" path="res://world_authoring/regions/ssarathi_ruins/surfaces/pass1-worn-stone.tres" id="pass1_worn-stone"]
+[ext_resource type="Resource" path="res://world_authoring/regions/ssarathi_ruins/surfaces/pass1-market-earth.tres" id="pass1_market-earth"]
 
 [sub_resource type="Resource" id="object_material_0000"]
 resource_local_to_scene = true
@@ -1728,9 +1732,9 @@ export_directory = "res://../eloria-assets/maps/nymara-regions/ssarathi_ruins/au
 
 [node name="Terrain" type="Node3D" parent="."]
 script = ExtResource("terrain")
-origin = Vector2(-372, -160)
+origin = Vector2(-374, -162)
 cell_metres = 2
-grid_size = Vector2i(387, 201)
+grid_size = Vector2i(388, 202)
 base_heights_path = "res://world_authoring/regions/ssarathi_ruins/base-heights.f32le"
 base_colors_path = "res://world_authoring/regions/ssarathi_ruins/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
@@ -1742,6 +1746,30 @@ biome_palette = [ExtResource("biome_entry")]
 [node name="Ground" type="Node3D" parent="."]
 
 [node name="Regions" type="Node3D" parent="Ground"]
+
+[node name="Pass1_MarketCourt" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(104, 1.953963995, 143)
+rotation = Vector3(0, 0.000000000, 0)
+region_id = "ssarathi_ruins-pass1-marketcourt"
+enabled = true
+size = Vector2(42, 22)
+blend_width = 5.500
+opacity = 0.82
+priority = 0
+surface = ExtResource("pass1_worn-stone")
+
+[node name="Pass1_MarketApron" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(93, 1.902326763, 146)
+rotation = Vector3(0, -0.209439510, 0)
+region_id = "ssarathi_ruins-pass1-marketapron"
+enabled = true
+size = Vector2(26, 18)
+blend_width = 4.500
+opacity = 0.7
+priority = 1
+surface = ExtResource("pass1_market-earth")
 
 [node name="Roads" type="Node3D" parent="."]
 

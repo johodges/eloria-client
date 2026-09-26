@@ -63,7 +63,7 @@ var afk_reason := ""
 ## Set by the owner so location-aware commands can answer. Kept as plain data
 ## rather than a node reference so this class stays testable on its own.
 var current_map := ""
-var current_tile := Vector2i(-1, -1)
+var current_tile: Variant = null
 
 ## Every address in a line the server said. Detection only: nothing is opened,
 ## nothing is fetched, and the text is left exactly as it arrived.
@@ -178,8 +178,8 @@ func _calculate(argument: String) -> String:
 		return "#calc could not work that out."
 	return "%s = %s" % [argument, str(value)]
 
-func _mark(tile: Vector2i, label: String) -> Result:
-	if tile.x < 0 or current_map.is_empty():
+func _mark(tile: Variant, label: String) -> Result:
+	if not tile is Vector2i or current_map.is_empty():
 		return Result.new(true, ["There is nowhere to mark yet."])
 	return _store_mark(tile, label if not label.is_empty() else "Mark")
 

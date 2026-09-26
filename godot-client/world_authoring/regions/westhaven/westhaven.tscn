@@ -1,4 +1,4 @@
-[gd_scene load_steps=750 format=3]
+[gd_scene load_steps=752 format=3]
 
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
 [ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/marine-timber.tres" id="object_marine_timber"]
@@ -567,6 +567,9 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/westhaven/assets/prototypes/yard-upper-4-bench-77c508babfc4.glb" id="prototype_525"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/westhaven/assets/prototypes/yard-upper-4-fence-acefa8bdd8e6.glb" id="prototype_526"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/westhaven/assets/prototypes/yard-upper-4-sacks-a0d0cb2bd431.glb" id="prototype_527"]
+
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/ground_region_control.gd" id="pass1_ground"]
+[ext_resource type="Resource" path="res://world_authoring/regions/westhaven/surfaces/pass1-quayside-gravel.tres" id="pass1_quayside-gravel"]
 
 [sub_resource type="Resource" id="object_material_0000"]
 resource_local_to_scene = true
@@ -1861,9 +1864,9 @@ export_directory = "res://../eloria-assets/maps/nymara-regions/westhaven/authori
 
 [node name="Terrain" type="Node3D" parent="."]
 script = ExtResource("terrain")
-origin = Vector2(-170, -336)
+origin = Vector2(-170, -412)
 cell_metres = 2
-grid_size = Vector2i(187, 289)
+grid_size = Vector2i(191, 328)
 base_heights_path = "res://world_authoring/regions/westhaven/base-heights.f32le"
 base_colors_path = "res://world_authoring/regions/westhaven/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
@@ -1875,6 +1878,18 @@ biome_palette = [ExtResource("biome_entry")]
 [node name="Ground" type="Node3D" parent="."]
 
 [node name="Regions" type="Node3D" parent="Ground"]
+
+[node name="Pass1_FishMarketCourt" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(-57, 8.393305302, 34)
+rotation = Vector3(0, 0.000000000, 0)
+region_id = "westhaven-pass1-fishmarketcourt"
+enabled = true
+size = Vector2(34, 22)
+blend_width = 5.500
+opacity = 0.98
+priority = 0
+surface = ExtResource("pass1_quayside-gravel")
 
 [node name="Roads" type="Node3D" parent="."]
 

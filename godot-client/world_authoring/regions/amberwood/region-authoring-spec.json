@@ -34,14 +34,24 @@
   },
   "terrain": {
     "origin": [
-      -238.0,
-      -118.0
+      -292.0,
+      -152.0
     ],
     "cellMetres": 2.0,
     "vertices": [
-      209,
-      149
-    ]
+      243,
+      166
+    ],
+    "migration": {
+      "revision": "global-lattice-envelope-v1",
+      "sharedFieldPath": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+      "sharedFieldSha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c",
+      "globalVertexMin": [
+        109,
+        194
+      ],
+      "previousGridSha256": "f7f0d87bc489c449b0fe4fc3515da4158eb6b54d770c4c477ce0ebe0e84aa896"
+    }
   },
   "authority": {
     "ownedRouteIds": [

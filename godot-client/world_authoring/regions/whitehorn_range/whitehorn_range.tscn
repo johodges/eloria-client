@@ -1,4 +1,10 @@
-[gd_scene load_steps=484 format=3]
+[gd_scene load_steps=489 format=3]
+
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/ground_region_control.gd" id="pass1_ground"]
+[ext_resource type="Resource" path="res://world_authoring/regions/whitehorn_range/surfaces/pass1-cold-scree.tres" id="pass1_cold-scree"]
+[ext_resource type="Resource" path="res://world_authoring/regions/whitehorn_range/surfaces/pass1-thaw-earth.tres" id="pass1_thaw-earth"]
+[ext_resource type="Resource" path="res://world_authoring/regions/whitehorn_range/surfaces/pass1-frost.tres" id="pass1_frost"]
+[ext_resource type="Resource" path="res://world_authoring/regions/whitehorn_range/surfaces/pass1-base-snow.tres" id="pass1_base-snow"]
 
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
 [ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres" id="object_weathered_limestone"]
@@ -892,13 +898,13 @@ export_directory = "res://../eloria-assets/maps/nymara-regions/whitehorn_range/a
 
 [node name="Terrain" type="Node3D" parent="."]
 script = ExtResource("terrain")
-origin = Vector2(-358, -220)
+origin = Vector2(-360, -220)
 cell_metres = 2.0
-grid_size = Vector2i(350, 289)
+grid_size = Vector2i(352, 289)
 base_heights_path = "res://world_authoring/regions/whitehorn_range/base-heights.f32le"
 base_colors_path = "res://world_authoring/regions/whitehorn_range/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
-base_surface = ExtResource("terrain_surface")
+base_surface = ExtResource("pass1_base-snow")
 biome_palette = [ExtResource("biome_entry")]
 
 [node name="Patches" type="Node3D" parent="Terrain"]
@@ -9492,3 +9498,107 @@ extras = {}
 runtime_bindings = []
 
 [node name="GeneratedPreview" type="Node3D" parent="."]
+
+[node name="pass1-gate-thaw" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.8290375726, 0, 0.5591929035, 0, 1, 0, -0.5591929035, 0, 0.8290375726, -37, 168.961463928, 149)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-gate-thaw"
+enabled = true
+size = Vector2(43, 30)
+blend_width = 8.0
+opacity = 0.63
+priority = 10
+surface = ExtResource("pass1_thaw-earth")
+
+
+[node name="pass1-lower-refuge" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9063077870, 0, -0.4226182617, 0, 1, 0, 0.4226182617, 0, 0.9063077870, 16, 181.305709839, 113)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-lower-refuge"
+enabled = true
+size = Vector2(40, 31)
+blend_width = 8.0
+opacity = 0.52
+priority = 10
+surface = ExtResource("pass1_thaw-earth")
+
+
+[node name="pass1-cave-scree" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9063077870, 0, 0.4226182617, 0, 1, 0, -0.4226182617, 0, 0.9063077870, -130, 177.14402771, 104)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-cave-scree"
+enabled = true
+size = Vector2(44, 29)
+blend_width = 8.0
+opacity = 0.68
+priority = 12
+surface = ExtResource("pass1_cold-scree")
+
+
+[node name="pass1-cave-snow-edge" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.8480480962, 0, -0.5299192642, 0, 1, 0, 0.5299192642, 0, 0.8480480962, -150, 155.389816284, 120)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-cave-snow-edge"
+enabled = true
+size = Vector2(30, 19)
+blend_width = 8.0
+opacity = 0.47
+priority = 13
+surface = ExtResource("pass1_frost")
+
+
+[node name="pass1-mine-spoil" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9135454576, 0, 0.4067366431, 0, 1, 0, -0.4067366431, 0, 0.9135454576, 30, 214.370880127, -66)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-mine-spoil"
+enabled = true
+size = Vector2(42, 32)
+blend_width = 8.0
+opacity = 0.74
+priority = 12
+surface = ExtResource("pass1_cold-scree")
+
+
+[node name="pass1-mine-yard-earth" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9510565163, 0, -0.3090169944, 0, 1, 0, 0.3090169944, 0, 0.9510565163, 20, 214.424499512, -80)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-mine-yard-earth"
+enabled = true
+size = Vector2(27, 21)
+blend_width = 8.0
+opacity = 0.48
+priority = 13
+surface = ExtResource("pass1_thaw-earth")
+
+
+[node name="pass1-temple-scree-shoulder" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.7880107536, 0, 0.6156614753, 0, 1, 0, -0.6156614753, 0, 0.7880107536, -110, 211.728164673, -72)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-temple-scree-shoulder"
+enabled = true
+size = Vector2(33, 26)
+blend_width = 8.0
+opacity = 0.5
+priority = 12
+surface = ExtResource("pass1_cold-scree")
+
+
+[node name="pass1-temple-frost-apron" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9205048535, 0, -0.3907311285, 0, 1, 0, 0.3907311285, 0, 0.9205048535, -89, 207.105918884, -81)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-temple-frost-apron"
+enabled = true
+size = Vector2(38, 28)
+blend_width = 8.0
+opacity = 0.62
+priority = 13
+surface = ExtResource("pass1_frost")
+

@@ -948,11 +948,18 @@ func _ready() -> void:
 	creation_options = model_registry.get("creationOptions", [])
 	animation_config = _json("res://data/animations/luminous.json")
 	animation_configs["res://data/animations/luminous.json"] = animation_config
-	map_registry = _json("res://data/maps/registry.json").get("maps", {})
+	var registry_document := _json("res://data/maps/registry.json")
+	map_registry = registry_document.get("maps", {})
+	var coordinate_catalog: Dictionary = Network.configure_coordinate_profiles(
+		registry_document.get("coordinateProfiles", {}), registry_document.get("coordinateMapNames", {}), map_registry)
+	if not coordinate_catalog.ok:
+		push_error("Invalid coordinate registry: " + str(coordinate_catalog.error))
 	exterior_stream = ExteriorRegionStream.new()
 	exterior_stream.name = "ExteriorRegionStream"
 	world_root.add_child(exterior_stream)
 	exterior_stream.configure(map_registry)
+	exterior_stream.coordinate_context = Network.coordinates
+	Network.coordinate_route_cancelled.connect(func() -> void: exterior_stream.pending_walk.clear())
 	get_tree().auto_accept_quit = false
 	get_tree().root.close_requested.connect(_close_client)
 	world_object_models = _json("res://data/world/objects.json")
@@ -1017,6 +1024,7 @@ func _ready() -> void:
 	invasion_assistant_window = InvasionAssistantScript.new()
 	add_child(invasion_assistant_window)
 	invasion_assistant_window.configure_registry(map_registry)
+	invasion_assistant_window.coordinate_context = Network.coordinates
 	invasion_assistant_window.command_requested.connect(
 		_on_invasion_assistant_command_requested)
 	cartography = _json("res://data/maps/cartography.json")
@@ -4154,7 +4162,7 @@ func _update_console_location() -> void:
 	console_commands.current_tile = (Vector2i(
 		int((actor as Dictionary).get("x", 0)),
 		int((actor as Dictionary).get("y", 0)))
-		if actor is Dictionary else Vector2i(-1, -1))
+		if actor is Dictionary else null)
 
 func _apply_day_night() -> void:
 	if world_loader.manifest == null:
@@ -4336,7 +4344,9 @@ func _sync_world(changed: Variant = null) -> void:
 	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id) and AppState.actors.has(AppState.local_actor_id):
 		_update_local_actor_follow()
 		var local_dto: Dictionary = AppState.actors[AppState.local_actor_id]
-		var continuation := exterior_stream.take_continuation(MapRegistry.normalize_server_map_id(AppState.current_map))
+		var continuation: Dictionary = {}
+		if not Network.coordinates.selected or (Network.coordinates.ready() and str(local_dto.get("map", "")) == Network.coordinates.map_id):
+			continuation = exterior_stream.take_continuation(MapRegistry.normalize_server_map_id(AppState.current_map))
 		if not continuation.is_empty():
 			Network.move_to(continuation.tile, bool(continuation.run))
 		overhead_player_name.text = str(local_dto.get("name", "Player"))

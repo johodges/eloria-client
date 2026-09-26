@@ -579,8 +579,8 @@ func _build_preview_mesh() -> void:
 	for z_index in grid_size.y - 1:
 		for x_index in grid_size.x - 1:
 			var index := z_index * grid_size.x + x_index
-			indices.append_array(PackedInt32Array([index, index + grid_size.x,
-				index + 1, index + 1, index + grid_size.x, index + grid_size.x + 1]))
+			indices.append_array(PackedInt32Array([index, index + 1,
+				index + grid_size.x, index + 1, index + grid_size.x + 1, index + grid_size.x]))
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX] = vertices
@@ -702,6 +702,11 @@ func _preview_arrays_for_cells(cells: Array, vertices: PackedVector3Array,
 				if not _base_colors.is_empty():
 					result_colors.append(_base_colors[source_index])
 			result_indices.append(int(remap[source_index]))
+	# Match Godot's clockwise front faces while retaining vertex/UV order.
+	for triangle_index in range(0, result_indices.size(), 3):
+		var second := result_indices[triangle_index + 1]
+		result_indices[triangle_index + 1] = result_indices[triangle_index + 2]
+		result_indices[triangle_index + 2] = second
 	var result := []
 	result.resize(Mesh.ARRAY_MAX)
 	result[Mesh.ARRAY_VERTEX] = result_vertices
@@ -809,6 +814,10 @@ func _build_ground_region_previews() -> void:
 					normals.append(normal1)
 		if vertices.is_empty():
 			continue
+		for triangle_index in range(0, indices.size(), 3):
+			var second := indices[triangle_index + 1]
+			indices[triangle_index + 1] = indices[triangle_index + 2]
+			indices[triangle_index + 2] = second
 		var arrays := []
 		arrays.resize(Mesh.ARRAY_MAX)
 		arrays[Mesh.ARRAY_VERTEX] = vertices

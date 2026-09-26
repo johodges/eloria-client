@@ -1,4 +1,4 @@
-[gd_scene load_steps=581 format=3]
+[gd_scene load_steps=584 format=3]
 
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
 [ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/jade-masonry.tres" id="object_jade_masonry"]
@@ -440,6 +440,10 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/manymouth_delta/assets/prototypes/woodlandfloor-0373-503c39560ee1.glb" id="prototype_395"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/manymouth_delta/assets/prototypes/woodlandfloor-0374-ca51f58f2581.glb" id="prototype_396"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/manymouth_delta/assets/prototypes/woodlandfloor-0381-611b7f1ec7f3.glb" id="prototype_397"]
+
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/ground_region_control.gd" id="pass1_ground"]
+[ext_resource type="Resource" path="res://world_authoring/regions/manymouth_delta/surfaces/pass1-temple-earth.tres" id="pass1_temple-earth"]
+[ext_resource type="Resource" path="res://world_authoring/regions/manymouth_delta/surfaces/pass1-settlement-silt.tres" id="pass1_settlement-silt"]
 
 [sub_resource type="Resource" id="object_material_0000"]
 resource_local_to_scene = true
@@ -1440,9 +1444,9 @@ export_directory = "res://../eloria-assets/maps/nymara-regions/manymouth_delta/a
 
 [node name="Terrain" type="Node3D" parent="."]
 script = ExtResource("terrain")
-origin = Vector2(-204, -156)
+origin = Vector2(-206, -180)
 cell_metres = 2
-grid_size = Vector2i(251, 232)
+grid_size = Vector2i(253, 245)
 base_heights_path = "res://world_authoring/regions/manymouth_delta/base-heights.f32le"
 base_colors_path = "res://world_authoring/regions/manymouth_delta/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
@@ -1454,6 +1458,43 @@ biome_palette = [ExtResource("biome_entry")]
 [node name="Ground" type="Node3D" parent="."]
 
 [node name="Regions" type="Node3D" parent="Ground"]
+
+[node name="Pass1_TempleApproach" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(142, 11.857515335, -108)
+rotation = Vector3(0, 0.174532925, 0)
+region_id = "manymouth_delta-pass1-templeapproach"
+enabled = true
+size = Vector2(62, 48)
+blend_width = 8
+opacity = 0.82
+priority = 0
+surface = ExtResource("pass1_temple-earth")
+
+
+[node name="Pass1_TempleEast" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(147, 11.313513279, -86)
+rotation = Vector3(0, -0.209439510, 0)
+region_id = "manymouth_delta-pass1-templeeast"
+enabled = true
+size = Vector2(46, 30)
+blend_width = 7
+opacity = 0.72
+priority = 2
+surface = ExtResource("pass1_temple-earth")
+
+[node name="Pass1_TempleQuayYard" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(166, 11.132541656, -80)
+rotation = Vector3(0, 0.436332313, 0)
+region_id = "manymouth_delta-pass1-templequayyard"
+enabled = true
+size = Vector2(28, 22)
+blend_width = 6
+opacity = 0.61
+priority = 3
+surface = ExtResource("pass1_settlement-silt")
 
 [node name="Roads" type="Node3D" parent="."]
 

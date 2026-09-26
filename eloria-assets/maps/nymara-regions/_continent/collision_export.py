@@ -1,6 +1,6 @@
 """Derive strict actor collision from the shared field and exported geometry.
 
-Half-metre cells cover server tiles [2t:2t+2] on both axes. Terrain follows the
+Half-metre cells cover logical tiles [2(t-min):2(t-min)+2] on both axes. Terrain follows the
 same two triangles per two-metre square as the continent master. Declared Walk
 faces may support bridges and thresholds; structural triangle intersections
 close the actual actor volume, without filling an archway beneath its roof.
@@ -16,6 +16,7 @@ import struct
 import sys
 
 import numpy as np
+from storage_bounds import StorageBounds, authoring_storage
 
 TOOLKIT = Path(__file__).resolve().parents[1] / '_toolkit'
 if str(TOOLKIT) not in sys.path:
@@ -305,6 +306,42 @@ def encode_heights(heights, walkable, basis=None):
             {'origin': origin, 'step': step, 'range': [1, 255]})
 
 
+def storage_contract(world, region):
+    """Use World's source authority; historical World-like fixtures are zero-min."""
+    if hasattr(world, 'storage_contract'):
+        return world.storage_contract(region)
+    origin, cells = world.address(region)
+    bounds = world.storage(region) if hasattr(world, 'storage') else StorageBounds(*cells)
+    return {'serverOrigin': list(origin), 'serverCells': list(cells), **bounds.metadata()}
+
+
+def validate_storage_frame(world, region, manifest):
+    """Check metadata before reading geometry or reusing any collision cache."""
+    declared = storage_contract(world, region)
+    bounds = StorageBounds.from_metadata(declared['serverCells'], declared)
+    transform = manifest['coordinateTransform']
+    if list(transform['serverOrigin']) != declared['serverOrigin']:
+        raise ValueError(f'{region}: authored world and manifest address origins differ')
+    if list(transform['serverCells']) != declared['serverCells']:
+        raise ValueError(f'{region}: authored world and manifest address extents differ')
+    if StorageBounds.from_metadata(transform['serverCells'], transform) != bounds:
+        raise ValueError(f'{region}: authored world and manifest storage minima differ')
+    x0, z1 = bounds.physical_origin(declared['serverOrigin'])
+    server = {'origin': declared['serverOrigin'], 'cells': declared['serverCells'],
+              **bounds.metadata(), 'localOrigin': transform.get('origin', [0, 0, 0]),
+              'metresPerTile': transform.get('metresPerTile', 1),
+              'invertServerY': transform.get('invertServerY', True),
+              'collisionOriginMetres': [x0, z1]}
+    authoring_storage(server)
+    collision = manifest.get('collision', {})
+    if 'originMetres' in collision and collision['originMetres'] != [x0, z1]:
+        raise ValueError(f'{region}: collision physical storage origin differs')
+    if ('serverStorageVersion' in collision or 'serverTileMin' in collision or 'serverCells' in collision):
+        if StorageBounds.from_metadata(collision.get('serverCells', declared['serverCells']), collision) != bounds:
+            raise ValueError(f'{region}: collision metadata storage differs')
+    return declared, bounds
+
+
 def export_collision(world, region, manifest, glb_path, output_path):
     """Return collision metadata plus arrays; write only the requested EWCG file.
 
@@ -312,14 +349,11 @@ Keys: ``collision`` is JSON-safe metadata; ``heights`` contains metre heights,
 ``walkable`` the authoritative half-cell mask, and ``grid`` encoded EWCG bytes.
 The caller installs collision metadata into its final world manifest itself.
     """
-    origin, cells = world.address(region)
-    if list(manifest['coordinateTransform']['serverOrigin']) != list(origin):
-        raise ValueError(f'{region}: authored world and manifest address origins differ')
-    if list(manifest['coordinateTransform']['serverCells']) != list(cells):
-        raise ValueError(f'{region}: authored world and manifest address extents differ')
+    declared, bounds = validate_storage_frame(world, region, manifest)
+    origin, cells = declared['serverOrigin'], declared['serverCells']
     center = np.asarray(world.regions[region]['center'], dtype=float)
     width, rows = int(cells[0] * 2), int(cells[1] * 2)
-    x0, z1 = -float(origin[0]), float(origin[1])
+    x0, z1 = map(float, bounds.physical_origin(origin))
     lx, lz = np.meshgrid(x0 + (np.arange(width) + .5) * CELL, z1 - (np.arange(rows) + .5) * CELL)
     gx, gz = lx + center[0], lz + center[1]
     surface = np.asarray(world.height_at(gx, gz), dtype=float)
@@ -346,10 +380,13 @@ The caller installs collision metadata into its final world manifest itself.
     grid, encoding = encode_heights(surface, walkable, basis=settled)
     walkable &= grid != 0
     path = Path(output_path)
+    if storage_contract(world, region) != declared:
+        raise ValueError(f'{region}: storage source changed during collision export; recompose')
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(struct.pack('<4sHHII', b'EWCG', 2, 0, width, rows) + grid.tobytes())
     collision = copy.deepcopy(manifest.get('collision', {}))
     collision.update(binary=path.name, format='EWCG-v2', width=width, height=rows, cellMetres=CELL,
+        **bounds.metadata(), serverCells=cells,
         originMetres=[x0, z1], heightEncoding=encoding, gridAlignment='tile-centres-v1',
         authoredSurfaceExport=True, maxTerrainGrade=MAX_GRADE, maximumWadingDepth=WADE,
         thresholdHalo={'inwardMetres': GATE_INWARD_DEPTH, 'outwardMetres': GATE_DEPTH,
@@ -361,4 +398,6 @@ The caller installs collision metadata into its final world manifest itself.
             'steepCells': int((own & ~slope_allowed).sum()), 'waterCells': int((own & submerged).sum()),
             'structuralCells': int((own & structure).sum()), 'thresholdHaloCells': int(halo.sum()),
             'seamCollarCells': int((collar & ~own & ~halo & walkable).sum())})
+    if 'authoringSpecSha256' in declared:
+        collision['authoringSpecSha256'] = declared['authoringSpecSha256']
     return {'collision': collision, 'heights': surface.astype(np.float32), 'walkable': walkable, 'grid': grid}

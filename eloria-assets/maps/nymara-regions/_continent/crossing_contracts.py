@@ -33,6 +33,7 @@ import numpy as np
 from scipy.ndimage import binary_dilation
 
 from collision_export import CELL, GR, MAX_GRADE
+from storage_bounds import StorageBounds
 
 FLOOR_PREFIX = 'Walk_ContinentalBridgeUnion_'
 LOOSE_DECK_BASE = 500   # bridge_export numbers decks away from every crossing site from here
@@ -107,14 +108,18 @@ def crossing_point(tile, floor, origin):
     return [tile_x + .5 - origin[0] - INSET, float(floor), origin[1] - tile_y - .5 + INSET]
 
 
-def declare_crossings(document, body, region, grid, climb, origin, cells, heights):
+def declare_crossings(document, body, region, grid, climb, origin, cells, heights, *, bounds=None):
     """(crossings, declared, notWalkable) for one territory on its served grid.
 
     ``grid`` is the folded, requantised and rescaled server grid (``[y, x]``),
     ``heights`` the exporter's half-cell surface heights in metres.
     """
     width, rows = int(cells[0]) * 2, int(cells[1]) * 2
-    x0, z1 = -float(origin[0]), float(origin[1])
+    bounds = StorageBounds(*cells) if bounds is None else bounds
+    if ((bounds.width, bounds.height) != tuple(cells) or
+            np.shape(grid) != (bounds.height, bounds.width) or np.shape(heights) != (rows, width)):
+        raise ValueError(f'{region}: crossing arrays differ from storage dimensions')
+    x0, z1 = bounds.physical_origin(origin)
     walkable = np.asarray(grid) != 0
     crossings, declared, not_walkable = [], [], []
     for identity in floor_ids(document, region):
@@ -138,11 +143,11 @@ def declare_crossings(document, body, region, grid, climb, origin, cells, height
             not_walkable.append(record)
             continue
         ends = extreme_tiles([(x, y) for y, x in largest])
-        record['endTiles'] = ends
+        record['endTiles'] = [list(bounds.logical_xy(x, y)) for x, y in ends]
         declared.append(record)
         endpoints = []
         for x, y in ends:
             floor = float(np.mean(np.asarray(heights, dtype=float)[y * 2:y * 2 + 2, x * 2:x * 2 + 2]))
-            endpoints.append(crossing_point((x, y), floor, origin))
+            endpoints.append(crossing_point(bounds.logical_xy(x, y), floor, origin))
         crossings.append({'id': record['id'], 'site': record['site'], 'endpoints': endpoints})
     return crossings, declared, not_walkable

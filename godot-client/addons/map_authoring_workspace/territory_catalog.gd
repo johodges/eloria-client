@@ -3,15 +3,18 @@ extends RefCounted
 
 const SCHEMA := "eloria-map-authoring-territories-v1"
 const CATALOG_PATH := "res://world_authoring/territories.json"
-const CONTINENT_PLAN_PATH := \
-	"res://../eloria-assets/maps/nymara-regions/_continent/diagonal-plan.json"
+const OWNERSHIP := preload("res://src/dev/map_authoring_region/ownership_source.gd")
 
 var errors: PackedStringArray = []
 
 
-func entries() -> Array[Dictionary]:
+func entries(ownership_project_directory: String = "", catalog_path: String = CATALOG_PATH) -> Array[Dictionary]:
 	errors.clear()
-	var source := _json(CATALOG_PATH)
+	var ownership := OWNERSHIP.load_source(ownership_project_directory)
+	if not String(ownership.get("error", "")).is_empty():
+		errors.append(ownership.error)
+		return []
+	var source := _json(catalog_path)
 	if source.is_empty() or String(source.get("schema", "")) != SCHEMA:
 		errors.append("Territory catalog is missing or has an unsupported schema.")
 		return []
@@ -34,6 +37,13 @@ func entries() -> Array[Dictionary]:
 		var asset: Dictionary = manifest.get("asset", {})
 		var translation := _vec3(geography.get("translation"))
 		var polygon := _polygon(geography.get("ownershipPolygon"))
+		var selected := OWNERSHIP.region_data(ownership, id)
+		if not String(selected.get("error", "")).is_empty():
+			errors.append(selected.error)
+			return []
+		if selected.get("selected", false):
+			translation = _vec3(selected.frame.continentTranslation)
+			polygon = _polygon(selected.polygon_scalars)
 		if translation == null or polygon.size() < 3:
 			errors.append("%s has no valid continent translation/ownership polygon." % id)
 			continue
@@ -43,10 +53,19 @@ func entries() -> Array[Dictionary]:
 			errors.append("%s must declare both scenePath and authoringSpecPath, or neither." % id)
 			continue
 		var authored_error := ""
+		var migration := {"error": "", "dependency_paths": PackedStringArray()}
 		var claim_source := {"features": {}, "dependencies": PackedStringArray(), "error": ""}
 		if not scene_path.is_empty():
+			migration = OWNERSHIP.migration_sources(ownership.checkout, _json(spec_path))
+			if not String(migration.get("error", "")).is_empty():
+				errors.append("%s: %s" % [id, migration.error])
+				return []
+			var frame_message := OWNERSHIP.frame_error(selected, _json(spec_path))
+			if not frame_message.is_empty():
+				errors.append("%s: %s" % [id, frame_message])
+				return []
 			authored_error = _authored_error(scene_path, spec_path, manifest_path, id, label)
-			claim_source = _claimed_plan_feature_footprints(spec_path, label)
+			claim_source = _claimed_plan_feature_footprints(spec_path, label, ownership)
 			if authored_error.is_empty() and not String(claim_source.error).is_empty():
 				authored_error = String(claim_source.error)
 			if not authored_error.is_empty():
@@ -70,6 +89,8 @@ func entries() -> Array[Dictionary]:
 			"manifest_sha256": _sha(manifest_path),
 			"scene_path": scene_path,
 			"authoring_spec_path": spec_path,
+			"authoring_spec_sha256": _sha(spec_path) if not spec_path.is_empty() else "",
+			"ownership_project": ownership.project,
 			"editable": scene_exists,
 			"source_kind": "saved_authored" if scene_exists else "published",
 			"source_label": "Saved authored source" if scene_exists else "Published reference only",
@@ -83,9 +104,22 @@ func entries() -> Array[Dictionary]:
 			"claim_source_dependencies": claim_source.dependencies,
 			"translation": translation,
 			"ownership_polygon": polygon,
-			"ownership_sha256": JSON.stringify(_polygon_array(polygon)).sha256_text(),
+			"ownership_sha256": selected.source_sha256 if selected.get("selected", false) else \
+				JSON.stringify(_polygon_array(polygon)).sha256_text(),
 			"revision": String(geography.get("revision", "unversioned")),
 		})
+		var entry := result[-1]
+		entry["ownership_dependency_paths"] = ownership.dependency_paths
+		entry["migration_dependency_paths"] = migration.dependency_paths
+		if selected.get("selected", false):
+			entry["ownership_source"] = selected.binding
+			entry["ownership_repository_dependencies"] = selected.repository_dependencies
+			entry["ownership_project"] = selected.project
+			entry["ownership_polygon_scalars"] = selected.polygon_scalars
+			entry["ownership_sha256"] = selected.source_sha256
+			entry["ownership_identity"] = "%s:%s" % [selected.source_sha256, id]
+			entry["ownership_validation"] = "Source hash/frame checked; strict topology validation runs at bake."
+			entry["revision"] = selected.document.revision
 	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return String(a.label).naturalnocasecmp_to(String(b.label)) < 0)
 	for entry in result:
@@ -106,7 +140,7 @@ func active_scene_error(root: Node, entry: Dictionary) -> String:
 		return "The active scene root does not match the catalogued territory ID."
 	if String(root.scene_file_path) != String(entry.get("scene_path", "")):
 		return "The active scene path is not the territory's registered authored scene."
-	return ""
+	return OWNERSHIP.entry_error(root, entry)
 
 
 func _json(path: String) -> Dictionary:
@@ -164,6 +198,10 @@ func _cache_key(entry: Dictionary) -> String:
 	_collect_dependencies(String(entry.authoring_spec_path), dependencies)
 	for path: String in entry.get("claim_source_dependencies", PackedStringArray()):
 		_collect_dependencies(path, dependencies)
+	for path: String in entry.get("ownership_dependency_paths", PackedStringArray()):
+		dependencies[path] = true
+	for path: String in entry.get("migration_dependency_paths", PackedStringArray()):
+		dependencies[path] = true
 	var paths := dependencies.keys()
 	paths.sort()
 	var records := PackedStringArray()
@@ -172,7 +210,10 @@ func _cache_key(entry: Dictionary) -> String:
 	return "\n".join(records).sha256_text()
 
 
-func _claimed_plan_feature_footprints(spec_path: String, label: String) -> Dictionary:
+func _claimed_plan_feature_footprints(spec_path: String, label: String, ownership: Dictionary) -> Dictionary:
+	if not String(ownership.get("error", "")).is_empty():
+		return {"features": {}, "dependencies": PackedStringArray(), "error": ownership.error}
+	var continent_plan_path: String = ownership.plan_path
 	var spec := _json(spec_path)
 	var authority: Dictionary = spec.get("authority", {})
 	var owned: Variant = authority.get("ownedPlanFeatureIds", [])
@@ -186,30 +227,38 @@ func _claimed_plan_feature_footprints(spec_path: String, label: String) -> Dicti
 	# behavior; migrations that declare a plan hash are validated and fail closed.
 	if expected_sha.is_empty():
 		return {"features": {}, "dependencies": PackedStringArray(), "error": ""}
-	var actual_sha := _sha(CONTINENT_PLAN_PATH)
+	var actual_sha := _sha(continent_plan_path)
 	# Mirrorhold and Whitehorn were captured with a later, ID-annotated plan;
 	# the byte-frozen plan used for the published composition is separately
 	# recorded in the same migration proof.  Its exact original feature records
 	# remain valid read-only footprint sources when restored for all-12 editing.
 	var composed_sha := String((provenance.get("inputs", {}) as Dictionary).get(
 		"compositionPlanSha256", ""))
+	if ownership.get("selected", false) and actual_sha != expected_sha and actual_sha != composed_sha:
+		# A selector changes the file hash, never the certified original features.
+		# The byte-frozen baseline must match the existing per-region certificate;
+		# load_source already requires all other active plan content to match it.
+		var baseline_sha := String(ownership.get("feature_baseline_sha256", ""))
+		if not baseline_sha.is_empty() and baseline_sha in [expected_sha, composed_sha]:
+			continent_plan_path = ownership.feature_baseline_path
+			actual_sha = baseline_sha
 	if actual_sha.is_empty() or (actual_sha != expected_sha and actual_sha != composed_sha):
 		return {"features": {}, "dependencies": PackedStringArray(
-			[provenance_path, CONTINENT_PLAN_PATH]),
+			[provenance_path, continent_plan_path]),
 			"error": "%s original plan-feature footprint hash does not match its migration provenance." % label}
-	var plan := _json(CONTINENT_PLAN_PATH)
+	var plan := _json(continent_plan_path)
 	var result := {}
 	for feature_id_value: Variant in owned:
 		var feature_id := String(feature_id_value)
 		var polygon := _plan_feature_polygon(plan, feature_id)
 		if polygon.size() < 3:
 			return {"features": {}, "dependencies": PackedStringArray(
-				[provenance_path, CONTINENT_PLAN_PATH]),
+				[provenance_path, continent_plan_path]),
 				"error": "%s claimed plan feature %s has no certified original footprint." % [
 					label, feature_id]}
 		result[feature_id] = polygon
 	return {"features": result, "dependencies": PackedStringArray(
-		[provenance_path, CONTINENT_PLAN_PATH]), "error": ""}
+		[provenance_path, continent_plan_path]), "error": ""}
 
 
 func _plan_feature_polygon(plan: Dictionary, feature_id: String) -> PackedVector2Array:

@@ -1,4 +1,9 @@
-[gd_scene load_steps=449 format=3]
+[gd_scene load_steps=453 format=3]
+
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/ground_region_control.gd" id="pass1_ground"]
+[ext_resource type="Resource" path="res://world_authoring/regions/crownwater/surfaces/pass1-civic-limestone.tres" id="pass1_civic-limestone"]
+[ext_resource type="Resource" path="res://world_authoring/regions/crownwater/surfaces/pass1-harbor-earth.tres" id="pass1_harbor-earth"]
+[ext_resource type="Resource" path="res://world_authoring/regions/crownwater/surfaces/pass1-garden-soil.tres" id="pass1_garden-soil"]
 
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
 [ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/marine-timber.tres" id="object_marine_timber"]
@@ -1128,9 +1133,9 @@ export_directory = "res://../eloria-assets/maps/nymara-regions/crownwater/author
 
 [node name="Terrain" type="Node3D" parent="."]
 script = ExtResource("terrain")
-origin = Vector2(-290, -344)
+origin = Vector2(-290, -346)
 cell_metres = 2
-grid_size = Vector2i(384, 228)
+grid_size = Vector2i(385, 229)
 base_heights_path = "res://world_authoring/regions/crownwater/base-heights.f32le"
 base_colors_path = "res://world_authoring/regions/crownwater/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
@@ -9694,3 +9699,81 @@ extras = {}
 runtime_bindings = []
 
 [node name="GeneratedPreview" type="Node3D" parent="."]
+
+[node name="pass1-civic-east-court" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9271838546, 0, -0.3746065934, 0, 1, 0, 0.3746065934, 0, 0.9271838546, 111, 11.0412483215, -65)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-civic-east-court"
+enabled = true
+size = Vector2(25, 19)
+blend_width = 3.5
+opacity = 0.92
+priority = 10
+surface = ExtResource("pass1_civic-limestone")
+
+
+[node name="pass1-civic-west-walk" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9612616959, 0, 0.2756373558, 0, 1, 0, -0.2756373558, 0, 0.9612616959, 53, 7.99965310097, -67)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-civic-west-walk"
+enabled = true
+size = Vector2(18, 23)
+blend_width = 3.5
+opacity = 0.9
+priority = 10
+surface = ExtResource("pass1_civic-limestone")
+
+
+[node name="pass1-bell-approach" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9902680687, 0, -0.1391731010, 0, 1, 0, 0.1391731010, 0, 0.9902680687, 114, 13.5466284752, -99)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-bell-approach"
+enabled = true
+size = Vector2(17, 21)
+blend_width = 3.5
+opacity = 0.9
+priority = 10
+surface = ExtResource("pass1_civic-limestone")
+
+
+[node name="pass1-harbor-workyard" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9781476007, 0, 0.2079116908, 0, 1, 0, -0.2079116908, 0, 0.9781476007, -2, 4.5, -13)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-harbor-workyard"
+enabled = true
+size = Vector2(23, 19)
+blend_width = 6
+opacity = 0.62
+priority = 10
+surface = ExtResource("pass1_harbor-earth")
+
+
+[node name="pass1-garden-south-margin" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9902680687, 0, 0.1391731010, 0, 1, 0, -0.1391731010, 0, 0.9902680687, -46, 4.51391458511, -74)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-garden-south-margin"
+enabled = true
+size = Vector2(18, 8)
+blend_width = 2.6666667
+opacity = 0.56
+priority = 10
+surface = ExtResource("pass1_garden-soil")
+
+
+[node name="pass1-garden-west-margin" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9781476007, 0, -0.2079116908, 0, 1, 0, 0.2079116908, 0, 0.9781476007, -58, 4.31869721413, -81)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-garden-west-margin"
+enabled = true
+size = Vector2(8, 9)
+blend_width = 2.6666667
+opacity = 0.52
+priority = 10
+surface = ExtResource("pass1_garden-soil")
+

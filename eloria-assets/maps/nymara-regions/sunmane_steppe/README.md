@@ -51,7 +51,7 @@ and minimap load directly.
 | Addressable band | X -58..133, Z -133..58 (server tiles 0..191 on both axes) |
 | Elevation range | -20.5 m to 74.0 m |
 | North axis | `-Z` |
-| West crossing | server `(6, 58)`, the caravan road down to the Four Gates causeway |
+| West crossing | server `(6, 58)`, the caravan road to Mirrorhold |
 | North crossing | server `(66, 184)`, the desert track into the Amethyst Barrens |
 | South crossing | server `(62, 18)`, the shore road to the Verdant Stair |
 | North barrow | server `(58, 100)`, a sealed passage; the Ssarathi Royal Archive is entered from the Ssarathi Ruins |

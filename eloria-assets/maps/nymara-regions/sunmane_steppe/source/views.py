@@ -44,7 +44,7 @@ PLACED.extend([
  ("salt-pan",(-5,-118,6),(-21,-122,0),60,"salt pan below the dune road"),
  ("desert-camp",(-10,-126,4),(-19,-113,2),58,"drovers camp on the sheltered floor beside the salt road"),
  ("cave-mouth-wind",(68,-109,3),(70,-117,2.7),58,"Wind Caves mouth from the graded watch approach"),
- ("review-west-arrival",(-51,0,1.7),(-24,0,4.5),60,"ford and west gate from the Four Gates approach"),
+ ("review-west-arrival",(-51,0,1.7),(-24,0,4.5),60,"West gate on the Mirrorhold approach"),
  ("review-pasture-bridge",(-42,-28,1.7),(-26,-28,1.7),58,"bridge deck and the pasture approach"),
  ("review-cove-bridge",(-43,25,1.7),(-55,25,1.7),58,"sloping drovers bridge over the beck"),
  ("review-north-gate",(0,-29,1.7),(0,-20,4),60,"north approach with the hall as a landmark"),

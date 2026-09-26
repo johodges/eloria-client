@@ -3,6 +3,7 @@ class_name MapAuthoringRegion
 extends Node3D
 
 const SNAPSHOT := preload("res://src/dev/map_authoring_region/region_snapshot.gd")
+const OWNERSHIP := preload("res://src/dev/map_authoring_region/ownership_source.gd")
 const TERRAIN_SCRIPT := preload("res://src/dev/map_authoring_region/terrain_control.gd")
 const PATH_SCRIPT := preload("res://src/dev/map_authoring_region/path_control.gd")
 const WATER_SCRIPT := preload(
@@ -15,6 +16,9 @@ const ASSET_SCRIPT := preload("res://src/dev/map_authoring_region/asset_control.
 @export_range(0.01, 16.0, 0.01, "or_greater") var metres_per_tile := 1.0
 @export var server_origin := Vector2i.ZERO
 @export var server_cells := Vector2i.ZERO
+## Zero means the historical omitted contract, valid only with a zero minimum.
+@export var server_storage_version := 0
+@export var server_tile_min := Vector2i.ZERO
 @export var collision_origin_metres := Vector2.ZERO
 @export var ownership_polygon_sha256 := ""
 @export var seam_anchors: Array[Dictionary] = []
@@ -181,12 +185,18 @@ func _uses_script(value: Variant, script: Script) -> bool:
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
+	var ownership := OWNERSHIP.region_data(OWNERSHIP.load_source(), region_id)
+	var ownership_error := OWNERSHIP.scene_error(ownership, self)
+	if not ownership_error.is_empty():
+		warnings.append(ownership_error)
+	elif ownership.get("selected", false):
+		warnings.append("Ownership source hash/frame checked. Strict polygon/partition validation is required and runs during bake.")
 	if region_id.strip_edges().is_empty():
 		warnings.append("Region Id is required.")
 	if server_cells.x <= 0 or server_cells.y <= 0:
 		warnings.append("Server Cells must be positive.")
-	if ownership_polygon_sha256.length() != 64 or \
-			not ownership_polygon_sha256.is_valid_hex_number(false):
+	if not ownership.get("selected", false) and (ownership_polygon_sha256.length() != 64 or \
+			not ownership_polygon_sha256.is_valid_hex_number(false)):
 		warnings.append("Ownership Polygon Sha256 must be a 64-character hash.")
 	if runtime_binding_seed_path.is_empty() != runtime_binding_seed_sha256.is_empty():
 		warnings.append("Runtime Binding Seed Path and Sha256 must be set together.")

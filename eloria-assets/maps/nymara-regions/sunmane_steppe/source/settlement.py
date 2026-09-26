@@ -1169,14 +1169,14 @@ SECRET_ASSETS = {
 }
 
 # Where the steppe hands over to its neighbours (region-connections.json). The
-# west caravan road runs down to the Four Gates causeway, the desert track
+# west caravan road runs west to Mirrorhold, the desert track
 # climbs north into the Barrens, and the shore road goes south to the Verdant
 # Stair. Each gate stands inside the server's addressable band, astride the
 # road it ends; the crossing tile is the gap between its two stones.
 # id, x, z, rotation (stones flank the road), destination map, label
 CROSSING_SITES = (
-    ("west-landing", -52.0, 0.0, math.pi * 0.5, "four_gates",
-     "The causeway road to the Four Gates"),
+    ("west-landing", -52.0, 0.0, math.pi * 0.5, "mirrorhold",
+     "The west road to Mirrorhold"),
     ("north-track", 8.0, -126.0, 0.0, "amethyst_barrens",
      "The desert track into the Amethyst Barrens"),
     ("south-track", 4.0, 40.0, 0.0, "verdant_stair",

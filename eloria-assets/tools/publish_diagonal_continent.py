@@ -24,6 +24,10 @@ import sys
 import publish_continent_geography as shared
 
 CLIENT = Path(__file__).resolve().parents[2]
+CONTINENT = CLIENT / 'eloria-assets/maps/nymara-regions/_continent'
+if str(CONTINENT) not in sys.path:
+    sys.path.insert(0, str(CONTINENT))
+from storage_bounds import StorageBounds, authoring_storage, storage_record
 PUBLICATION = CLIENT / 'eloria-assets/maps/nymara-regions/_continent/publication.json'
 STATE = 'diagonalContinent'
 BEGIN = '# --- Diagonal continent crossings: generated from the shared continent ---'
@@ -100,7 +104,7 @@ def destination_tile(region, point, specs):
     spec = specs[region]
     x = int(round(point[0] - spec['translation'][0] + spec['serverOrigin'][0] - .5))
     y = int(round(spec['serverOrigin'][1] + spec['translation'][2] - point[1] - .5))
-    if not (0 <= x < spec['serverCells'][0] and 0 <= y < spec['serverCells'][1]):
+    if not StorageBounds.from_metadata(spec['serverCells'], spec).contains(x, y):
         return None
     return [x, y] if world_point(region, (x, y), specs) == point else None
 
@@ -109,6 +113,7 @@ def validate_spec(region, spec, previous):
     for name in ('serverOrigin', 'previousServerOrigin', 'serverCells', 'arrival'):
         spec[name] = list(shared.integer_pair(spec.get(name), f'{region}.{name}'))
     size = spec['serverCells']
+    storage_record(size, spec)
     if size[0] != size[1] or size[0] <= 0 or size[0] % 6:
         raise ValueError(f'{region}: served envelope must be square and divisible by six')
     if previous and spec['previousServerOrigin'] != previous.get('serverOrigin'):
@@ -149,6 +154,44 @@ def validate_spec(region, spec, previous):
         positions[identity] = list(shared.integer_pair(tile, f'{region}.runtimeBindingPositions.{identity}'))
         source_tiles[identity] = list(shared.integer_pair(
             source_tiles[identity], f'{region}.runtimeBindingSourceTiles.{identity}'))
+
+
+def storage_fields(spec):
+    """Carry declared storage while preserving unversioned legacy output shape."""
+    if any(key in spec for key in ('serverStorageVersion', 'serverTileMin', 'authoringSpecSha256')):
+        return storage_record(spec['serverCells'], spec)
+    return {}
+
+
+def validate_package_storage(region, spec, world, collision_bytes):
+    """A spec, package, collision and publication certificate name one storage."""
+    wanted = storage_record(spec['serverCells'], spec)
+    transform = world['coordinateTransform']
+    if (transform['serverOrigin'] != spec['serverOrigin'] or
+            storage_record(transform['serverCells'], transform) != wanted):
+        raise ValueError(f'{region}: final client package and publication use different address/storage frames')
+    collision = world.get('collision', {})
+    if storage_record(collision.get('serverCells', spec['serverCells']), collision) != wanted:
+        raise ValueError(f'{region}: collision storage certificate differs from publication')
+    bounds = StorageBounds.from_metadata(spec['serverCells'], spec)
+    origin = list(bounds.physical_origin(spec['serverOrigin']))
+    authoring_storage({'origin':spec['serverOrigin'], 'cells':spec['serverCells'], **bounds.metadata(),
+        'localOrigin':transform.get('origin',[0,0,0]), 'metresPerTile':transform.get('metresPerTile',1),
+        'invertServerY':transform.get('invertServerY',True),
+        **({'walkingHeight':transform['walkingHeight']} if 'walkingHeight' in transform else {}),
+        'collisionOriginMetres':collision.get('originMetres',origin)})
+    if 'addressableWorldBounds' in transform:
+        expected = dict(zip(('min','max'),bounds.physical_bounds(spec['serverOrigin'])))
+        if transform['addressableWorldBounds'] != expected:
+            raise ValueError(f'{region}: addressable physical bounds differ from storage')
+    for name in ('continentPublication', 'singleContinentSource', 'streamingChunks'):
+        certificate = world.get(name,{})
+        if 'storage' in certificate and certificate['storage'] != wanted:
+            raise ValueError(f'{region}: {name} storage certificate differs from publication')
+    certificate = world.get('continentPublication', {})
+    if 'collisionSha256' in certificate and certificate['collisionSha256'] != shared.digest(collision_bytes):
+        raise ValueError(f'{region}: final collision bytes differ from publication certificate')
+    return wanted
 
 
 def _runtime_binding_profile_texts(client, specs):
@@ -389,6 +432,7 @@ def runtime_specs(specs, previous):
         legacy = previous.get(region, {})
         result[region] = {key: copy.deepcopy(spec[key]) for key in (
             'serverOrigin', 'serverCells', 'arrival', 'translation', 'terrainRevision')}
+        result[region].update(storage_fields(spec))
         result[region].update(nativeServerOrigin=legacy.get('nativeServerOrigin', spec['previousServerOrigin']),
                               nativeServerCells=legacy.get('nativeServerCells', spec['serverCells']),
                               previousServerOrigin=spec['previousServerOrigin'],
@@ -405,6 +449,7 @@ def placement_contracts(specs):
     by the previous diagonal layout, not by the original semantic source frame.
     """
     return {region: {
+        **({'storage':storage_fields(spec)} if storage_fields(spec) else {}),
         'baselineServerOrigin': copy.deepcopy(spec.get('baselineServerOrigin', spec['previousServerOrigin'])),
         'baselineTilePositions': copy.deepcopy(spec.get('baselineTilePositions', spec.get('tilePositions', {}))),
         'baselineContentTransform': copy.deepcopy(spec.get('baselineContentTransform', spec['contentTransform'])),
@@ -550,27 +595,33 @@ def validate_standing_points(specs, blobs, texts, connections):
     grids = {}
     for region, spec in specs.items():
         blob = blobs[region]
+        if len(blob) < 16:
+            raise ValueError(f'{region}: truncated collision header')
         magic, version, _, width, height = struct.unpack_from('<4sHHII', blob)
         if magic != b'EWCG' or version != 2 or [width, height] != [n * 2 for n in spec['serverCells']]:
             raise ValueError(f'{region}: exported EWCGv2 dimensions do not match the served frame')
         if len(blob) < 16 + width * height:
             raise ValueError(f'{region}: truncated collision payload')
-        grids[region] = (width, blob[16:16 + width * height])
+        grids[region] = (width, blob[16:16 + width * height], StorageBounds.from_metadata(spec['serverCells'], spec))
     checked = set()
     def check(region, point, label):
         if region not in specs:
             return
         x, y = shared.integer_pair(point, label)
-        width, height = specs[region]['serverCells']
-        if not (0 <= x < width and 0 <= y < height):
+        stride, data, bounds = grids[region]
+        index = bounds.index_xy(x, y)
+        if index is None:
             raise ValueError(f'{label}: {region} tile {(x, y)} is outside its served envelope')
-        stride, data = grids[region]
-        at = 2 * y * stride + 2 * x
+        column, row = index
+        at = 2 * row * stride + 2 * column
         if not all(data[index] for index in (at, at + 1, at + stride, at + stride + 1)):
             raise ValueError(f'{label}: {region} tile {(x, y)} is blocked by the authored collision')
         checked.add((region, x, y))
     for region, spec in specs.items():
         check(region, spec['arrival'], 'safe arrival')
+    for source, x, y, target, tx, ty in connections:
+        check(source, [x,y], 'exterior departure')
+        check(target, [tx,ty], 'exterior arrival')
     for filename, rules in shared.RULES.items():
         for number, line in enumerate(texts.get(filename, '').splitlines(), 1):
             if line.lstrip().startswith('#'):
@@ -629,6 +680,8 @@ def connection_manifests(publication, worlds, specs):
                                               if frame.get('portal') == end['portal']), None)
             if not frame:
                 raise ValueError(f'{connection["id"]}: exported land crossing lacks its authored frame')
+            if 'globalTranslation' in frame and frame['globalTranslation'] != specs[region]['translation']:
+                raise ValueError(f'{connection["id"]}: endpoint frame translation differs from publication')
             tile, origin = end['tile'], specs[region]['serverOrigin']
             position = end.get('position', [tile[0] + .5 - origin[0], frame['anchor'][1], origin[1] - tile[1] - .5])
             ends.append({'map': region, 'portal': end['portal'], 'position': position,
@@ -707,9 +760,7 @@ def plan(client, server, publication_path):
         world_path = resolve_input(client, publication_path, spec['worldManifestPath'])
         collision_path = resolve_input(client, publication_path, spec['collisionPath'])
         world, collision = json.loads(read(world_path)), read(collision_path)
-        transform = world['coordinateTransform']
-        if transform['serverOrigin'] != spec['serverOrigin'] or transform['serverCells'] != spec['serverCells']:
-            raise ValueError(f'{region}: final client package and publication use different address frames')
+        validate_package_storage(region, spec, world, collision)
         if not world.get('collision', {}).get('authoredSurfaceExport'):
             raise ValueError(f'{region}: shared-continent collision requires authoredSurfaceExport to prohibit legacy carving')
         if world['collision'].get('gridAlignment') != 'tile-centres-v1':
@@ -764,7 +815,8 @@ def plan(client, server, publication_path):
             raise ValueError(f'{region}: missing existing client registry identity')
         entry = registry['maps'][region]
         entry.update(coordinateTransform=copy.deepcopy(worlds[region]['coordinateTransform']), landscapeTransitions=True,
-                     continentGeography={'translation': spec['translation'], 'geometryMode': 'continent-chunks-v1'})
+                     continentGeography={'translation': spec['translation'], 'geometryMode': 'continent-chunks-v1',
+                                         **storage_fields(spec)})
     stage(registry_path, shared.json_bytes(registry))
     # Room-local positions stay local. Only metadata naming an exterior target
     # follows the continent deformation, including gauntlet completion returns.
@@ -790,6 +842,7 @@ def plan(client, server, publication_path):
             spec = specs[region]
             manifest['maps'][index].update(arrival=spec['arrival'], server_cells=spec['serverCells'][0],
                                            server_origin=spec['serverOrigin'],
+                                           **storage_fields(spec),
                                            coordinateTransform=copy.deepcopy(worlds[region]['coordinateTransform']))
     for key, value in list(manifest.items()):
         if key in ('maps', STATE, 'continentGeography'):
@@ -815,6 +868,9 @@ def plan(client, server, publication_path):
     manifest[STATE] = {'schema': 1, 'revision': publication['revision'], 'publicationSha256': publication_hash,
                       'masterSha256': publication['masterSha256'], 'placements': placements, 'collisionSha256':
                       {region: shared.digest(blob) for region, blob in blobs.items()}}
+    declared_storage = {region:storage_fields(spec) for region,spec in specs.items() if storage_fields(spec)}
+    if declared_storage:
+        manifest[STATE]['storageByRegion'] = declared_storage
     stage(manifest_path, shared.json_bytes(manifest))
     stage(server / 'eloria/continent_geography.py', shared.runtime_migration_source(runtime).encode('utf-8'))
     database_path = server / 'eloria/database.py'
@@ -831,6 +887,17 @@ def plan(client, server, publication_path):
                   'beforeSha256': shared.digest(before[path]) if before[path] is not None else None,
                   'afterSha256': shared.digest(payload)} for path, payload in pending.items()]}
     return before, pending, report
+
+
+def apply_publication(before, pending, publication_path):
+    """Keep signed storage inactive until persisted standing points are migrated."""
+    publication = json.loads(before[Path(publication_path).resolve()])
+    signed = [region for region,spec in publication['regions'].items()
+              if StorageBounds.from_metadata(spec['serverCells'],spec).metadata()['serverTileMin'] != [0,0]]
+    if signed:
+        raise ValueError('Signed-storage publication requires the not-yet-implemented validity-based persistence migration; '
+                         'no target writes are allowed for nonzero storage minima: '+', '.join(sorted(signed)))
+    shared.apply_plan(before,pending)
 
 
 def build_contracts(client, server, publication_path, data):
@@ -861,7 +928,7 @@ def main():
         parser.error('--build requires --apply and --data')
     before, pending, report = plan(args.client, args.server, args.publication)
     if args.apply:
-        shared.apply_plan(before, pending)
+        apply_publication(before, pending, args.publication)
     if args.build:
         build_contracts(args.client.resolve(), args.server.resolve(), args.publication.resolve(), args.data.resolve())
     report.update(applied=args.apply, built=args.build)

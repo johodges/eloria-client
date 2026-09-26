@@ -39,8 +39,11 @@ from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
 from build_progress import Progress
+from storage_bounds import storage_record
 SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','authoring.py','authoring_catalog.py','saved_seam_profile.py','saved-seam-grey-whitehorn-v1.json','saved_post_support_profile.py','saved-seam-post-support-v1.json','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
 EXPORT_SOURCES=('build_continent.py','scene_io.py','terrain_export.py','biome_blend.py','compact_glb_images.py','bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_prepare.py','coastal_bridge_export.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py')
+SHAPING_SOURCES+=('storage_bounds.py',)
+EXPORT_SOURCES+=('storage_bounds.py',)
 
 
 EMPTY_SHA256=hashlib.sha256(b'').hexdigest()
@@ -73,8 +76,10 @@ def shaping_source_keys():return frozenset(source_key(HERE/name) for name in SHA
 
 def composition_certificate_paths():
     """Record every shaping input, including fixed data sidecars, with the composition."""
+    from ownership_contract import source_dependencies
     return (tuple(HERE.glob('*.py'))+
             tuple(HERE/name for name in SHAPING_SOURCES if name.endswith('.json'))+
+            tuple(source_dependencies(L.load_plan()))+
             (HERE/'../_northern/requirements.txt',))
 
 def geometry_dependencies():
@@ -472,7 +477,9 @@ def prepare(library,output):
     legacy=json.loads((HERE/'legacy-geography.json').read_text())
     plan=L.load_plan()
     plan=AUTHORING.apply_plans(plan,snapshots)
-    started=time.monotonic();world=World(plan)
+    started=time.monotonic();world=World(plan,
+        region_contracts={region:snapshot.contract for region,snapshot in snapshots_by_region.items()},
+        require_authored_storage=True)
     world.authoring_snapshots=snapshots_by_region
     world.authoring_snapshot=snapshots_by_region.get(AUTHORING.SUNMANE)
     initial_authoring_terrain={}
@@ -781,6 +788,7 @@ def prepare(library,output):
         'continentAuthoring':{'schema':3,'regions':{
             region:{'snapshotSchema':snapshot.document['schema'],
                 'snapshotSha256':snapshot.digest,'sources':snapshot.bound_sources(),
+                'storage':world.storage_contract(region),
                 'terrainInitial':initial_authoring_terrain[region],
                 'terrainFinal':final_authoring_terrain[region],
                 'routes':authoring_routes[region],
@@ -822,6 +830,12 @@ def load_composed(output,library):
             raise ValueError(f'{region}: authoring snapshot changed; recompose before export')
         if authored[region].get('sources')!=snapshot.bound_sources():
             raise ValueError(f'{region}: authoring scene or sidecars changed; recompose before export')
+        contract=snapshot.contract
+        expected_storage={'serverOrigin':list(contract.server_origin),'serverCells':list(contract.server_cells),
+            'serverStorageVersion':1,'serverTileMin':list(contract.server_tile_min),
+            'authoringSpecSha256':contract.spec_sha256}
+        if authored[region].get('storage')!=expected_storage:
+            raise ValueError(f'{region}: authored storage certificate changed; recompose before export')
     for region,sha in certificate['library'].items():
         if sha!=digest(Path(library)/region/'source-certificate.json'):raise ValueError(f'{region}: source content changed; recompose')
     sources={relative.replace('\\','/'):sha for relative,sha in certificate['sources'].items()}
@@ -939,6 +953,8 @@ def local_point(point,center):
 
 def manifest_for(world,content,region):
     m=copy.deepcopy(content.templates[region]);center=np.array(world.regions[region]['center']);origin,cells=world.address(region)
+    storage=world.storage(region)
+    storage_source=world.storage_contract(region)
     hub=world.hub(region);arrival=local_point([hub[0],float(world.height_at(*hub)),hub[1]],center)
     def transform(item):
         if isinstance(item,list):return [transform(v) for v in item]
@@ -976,8 +992,9 @@ def manifest_for(world,content,region):
     m['asset']['playableBounds']={'min':minimum,'max':maximum}
     m['bounds']={'min':minimum,'max':maximum}
     m['coordinateTransform']={'metresPerTile':1.,'serverOrigin':origin,'serverCells':cells,'origin':[0,0,0],
-        'walkingHeight':arrival[1],'invertServerY':True,
-        'addressableWorldBounds':{'min':[-origin[0],origin[1]-cells[1]],'max':[cells[0]-origin[0],origin[1]]}}
+        'walkingHeight':arrival[1],'invertServerY':True,**storage.metadata(),
+        'addressableWorldBounds':dict(zip(('min','max'),storage.physical_bounds(origin)))}
+    m['coordinateTransform'].update(storage_record(cells,storage_source))
     authored=region in getattr(world,'authoring_snapshots',{})
     if authored:
         spawns=m.get('spawnPoints',[])
@@ -990,11 +1007,17 @@ def manifest_for(world,content,region):
         default_spawn='continent-arrival';walking_height=arrival[1]
         m['spawnPoints']=[{'id':default_spawn,'default':True,'position':arrival,'facing':[0,0,-1]}]
     m['coordinateTransform']['walkingHeight']=walking_height
+    source_contract=getattr(world,'_storage_contracts',{}).get(region)
+    if source_contract is not None and source_contract.server_frame[4]:
+        m['coordinateTransform']['walkingHeight']=source_contract.server_frame[5]
     m['navigation']={'surfaceNodePrefixes':['Terrain_','Walk_'],'terrainConforming':True,'authority':'server',
                      'defaultSpawn':default_spawn,'collisionFile':'collision.bin'}
     solid=[o['node'] for o in content.objects if o['region']==region and o.get('collides')]
     m['collision']={'file':'collision.bin','binary':'collision.bin','format':'EWCG','formatVersion':2,'version':2,
-                    'cellMetres':.5,'cellSize':.5,'authoredSurfaceExport':True,'gridAlignment':'tile-centres-v1','nodeNames':solid}
+                    'cellMetres':.5,'cellSize':.5,'authoredSurfaceExport':True,'gridAlignment':'tile-centres-v1','nodeNames':solid,
+                    **storage.metadata(),'serverCells':cells,'originMetres':list(storage.physical_origin(origin))}
+    if 'authoringSpecSha256' in storage_source:
+        m['collision']['authoringSpecSha256']=storage_source['authoringSpecSha256']
     m['minimap']={'file':'minimap.webp','image':'minimap.webp','bounds':m['bounds'],'northUp':True,
         'worldMin':[minimum[0],minimum[2]],'worldMax':[maximum[0],maximum[2]],
         'imageSize':[int(round(maximum[0]-minimum[0])),int(round(maximum[2]-minimum[2]))],'pixelsPerMetre':1}
@@ -1106,6 +1129,7 @@ def export_geometry(world,content,output):
         add_to_exporter(master,world,content,region,terrain_doc,terrain_body,roots,by_region[region],bridge_doc,bridge_body,by_bridge[region],True)
     master_stats=master.write();master_sha=digest(master_path)
     json_write(output/'master-scene.json',dict(master_stats,sha256=master_sha,regions=world.ids,
+                                               storageByRegion={r:world.storage_contract(r) for r in world.ids},
                                                authoredOverlays=getattr(world,'authored_overlay_report',{})))
     del master
     manifests={};grey_landmarks=[]
@@ -1136,8 +1160,10 @@ def export_geometry(world,content,output):
         add_to_exporter(exporter,world,content,region,terrain_doc,terrain_body,[r for c in chunks.values() for r in c['roots']],objects,bridge_doc,bridge_body,bridges)
         stats=exporter.write();manifest['performance']=stats;manifest['externalResources']=stats['externalResources']
         manifest['singleContinentSource']={'revision':'diagonal-spine-v1','masterSha256':master_sha,'planSha256':digest(HERE/'diagonal-plan.json')}
+        manifest['singleContinentSource']['storage']=storage_record(world.address(region)[1],world.storage_contract(region))
         manifest['streamingChunks']={'schemaVersion':'1.0','coordinateSpace':'territory-local','preloadDistance':240,'retainDistance':320,
             'maximumLoadedChunks':64,'maximumResidentBytes':268435456,'chunks':[]}
+        manifest['streamingChunks']['storage']=copy.deepcopy(manifest['singleContinentSource']['storage'])
         for name,entry in sorted(chunks.items()):
             chunk_root=root/'chunks'/name;chunk=S.Exporter(chunk_root/'world.glb',shared)
             add_to_exporter(chunk,world,content,region,terrain_doc,terrain_body,entry['roots'],entry.get('objects',[]),bridge_doc,bridge_body,entry.get('bridges',[]))
@@ -1184,7 +1210,8 @@ def export_geometry(world,content,output):
     json_write(output/'export.json',{'masterPath':str(master_path),'masterSha256':master_sha,
         'geometrySources':export_sources,'geometryDependencies':dependencies,'compositionSha256':composition_sha,'greyCrossingLandmarks':grey_landmarks,
         'sharedTerrainImageCompaction':terrain_image_compaction,
-        'regions':{r:{'world':str(package(r)/'world.json'),'glbSha256':digest(package(r)/'world.glb'),'chunks':len(m['streamingChunks']['chunks'])} for r,m in manifests.items()}})
+        'regions':{r:{'world':str(package(r)/'world.json'),'glbSha256':digest(package(r)/'world.glb'),'chunks':len(m['streamingChunks']['chunks']),
+            'storage':world.storage_contract(r)} for r,m in manifests.items()}})
     return manifests
 
 
@@ -1201,6 +1228,10 @@ def verify_geometry_export(output):
     if digest(output/'continent.glb')!=ledger['masterSha256']:raise ValueError('Exported master bytes changed')
     for region,entry in ledger['regions'].items():
         if digest(package(region)/'world.glb')!=entry['glbSha256']:raise ValueError(f'{region}: named geometry differs from its master export')
+        manifest=json.loads((package(region)/'world.json').read_text(encoding='utf-8'))
+        transform=manifest['coordinateTransform']
+        declared={'serverOrigin':transform['serverOrigin'],**storage_record(transform['serverCells'],transform)}
+        if entry.get('storage')!=declared:raise ValueError(f'{region}: geometry storage certificate changed; export again')
     return ledger
 
 
@@ -1228,6 +1259,8 @@ def publish_geography(world,manifests,output):
         'masterSource':'_continent/generated/continent.glb','planSource':'_continent/diagonal-plan.json','regions':{},'connections':[]}
     for region,m in manifests.items():
         lo,hi=world.bounds(region);center=world.centers[world.ids.index(region)];origin,cells=world.address(region)
+        bounds=world.storage(region)
+        storage=storage_record(cells,world.storage_contract(region))
         local_lo=(lo-center).tolist();local_hi=(hi-center).tolist()
         protected=[]
         for key in ('landmarks','portals','spawnPoints'):
@@ -1237,8 +1270,10 @@ def publish_geography(world,manifests,output):
             'nativeManifestSha256':digest(package(region)/'world.json'),'translation':[float(center[0]),0,float(center[1])],'rotationDegrees':0,
             'nativeServerOrigin':origin,'nativeServerCells':cells,'nativePlayableBounds':[local_lo,local_hi],
             'coreBounds':[lo.tolist(),hi.tolist()],'protectedDestinations':protected,
-            'ownershipPolygon':world.polygons[region],'serverBounds':[[-origin[0],origin[1]-cells[1]],[cells[0]-origin[0],origin[1]]],
-            'serverOrigin':origin,'serverCells':cells,'serverTileShift':[0,0],'atlasLabel':center.tolist()}
+            'ownershipPolygon':world.polygons[region],'serverBounds':bounds.physical_bounds(origin),
+            'serverOrigin':origin,**storage,'serverTileShift':[0,0],'atlasLabel':center.tolist(),
+            'nativeServerStorageVersion':storage['serverStorageVersion'],'nativeServerTileMin':storage['serverTileMin'],
+            'coordinateTransform':copy.deepcopy(m['coordinateTransform'])}
     legacy_connections=json.loads((HERE/'legacy-geography.json').read_text(encoding='utf-8')).get('connections',[])
     for connection in world.publication_connections:
         if connection['type']!='walk':continue
@@ -1302,6 +1337,11 @@ def composition_freshness(output=None):
             record=authored.get(region,{})
             compare(f'continentAuthoring.{region}.snapshot',record.get('snapshotSha256'),snapshot.digest)
             compare(f'continentAuthoring.{region}.sources',record.get('sources'),snapshot.bound_sources())
+            contract=snapshot.contract
+            compare(f'continentAuthoring.{region}.storage',record.get('storage'),{
+                'serverOrigin':list(contract.server_origin),'serverCells':list(contract.server_cells),
+                'serverStorageVersion':1,'serverTileMin':list(contract.server_tile_min),
+                'authoringSpecSha256':contract.spec_sha256})
     sources={relative.replace('\\','/'):sha for relative,sha in composition.get('sources',{}).items()}
     for relative in sorted(shaping_source_keys()):
         source=CLIENT/relative;current=digest(source) if source.exists() else None

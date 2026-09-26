@@ -32,6 +32,8 @@ var _next_update := 0
 var events: Array[Dictionary] = []
 var last_handoff: Dictionary = {}
 var pending_walk: Dictionary = {}
+## Optional live network context. Offline scenery/tests retain legacy routing.
+var coordinate_context: RefCounted
 ## Retiring trees still occupy their old neighbour slots until their resources
 ## are released. Do not dispatch another preload while any retirement remains.
 ## One worker already in flight may finish: the temporary allowance is the
@@ -516,9 +518,9 @@ func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction:
 		var tile := adapter.godot_to_server(imported.transform.affine_inverse() * point)
 		var dimensions: Variant = target_manifest.data.get("coordinateTransform", {}).get("serverCells",
 			target_manifest.data.get("asset", {}).get("serverCells", 0))
-		var width := int(dimensions[0]) if dimensions is Array else int(dimensions)
-		var height := int(dimensions[1]) if dimensions is Array else width
-		if tile.x < 0 or tile.y < 0 or (width > 0 and (tile.x >= width or tile.y >= height)):
+		var bounds: Dictionary = target_manifest.data.get("coordinateTransform", {}).duplicate(true)
+		bounds["serverCells"] = dimensions
+		if not tile_inside(bounds, tile):
 			return null
 		# Route through the centre of the surveyed road. The server decides
 		# whether the approach and the continuation are walkable.
@@ -538,6 +540,11 @@ func arm_walk_to(map_id: String, tile: Vector2i, run: bool, world_point: Vector3
 		return null
 	pending_walk = {"map": map_id, "tile": tile, "run": run, "world_point": world_point,
 		"routed": true, "issued_from": active_map, "next_map": str(leg.there.map)}
+	if coordinate_context != null and coordinate_context.selected:
+		if not coordinate_context.ready():
+			pending_walk.clear()
+			return null
+		pending_walk["coordinate_token"] = coordinate_context.token()
 	var fallback: Dictionary = active_manifest.data.get("coordinateTransform", {}) if active_manifest != null else {}
 	var here_adapter := CoordinateAdapter.new(leg.here.get("coordinateTransform", fallback))
 	var crossing := best_crossing(leg.here, here_adapter, _last_position, world_point)
@@ -654,14 +661,16 @@ func neighbour_coordinates(map_id: String) -> Dictionary:
 			return candidate.there.get("coordinateTransform", {}) as Dictionary
 	return {}
 
-## Whether a server tile lies inside a map's served cells (unknown cells accept every non-negative tile).
+## Logical minima do not alter the map's world/tile frame.
 static func tile_inside(coordinates: Dictionary, tile: Vector2i) -> bool:
-	if tile.x < 0 or tile.y < 0:
+	var minimum: Array = coordinates.get("serverTileMin", [0, 0])
+	var relative := tile - Vector2i(int(minimum[0]), int(minimum[1]))
+	if relative.x < 0 or relative.y < 0:
 		return false
 	var dimensions: Variant = coordinates.get("serverCells", 0)
 	var width := int(dimensions[0]) if dimensions is Array else int(dimensions)
 	var height := int(dimensions[1]) if dimensions is Array else width
-	return width <= 0 or (tile.x < width and tile.y < height)
+	return width <= 0 or (relative.x < width and relative.y < height)
 
 ## The region whose served tiles hold a point of the active map's frame, with
 ## that tile: what a map click past the seam means. The direct neighbours are
@@ -722,6 +731,9 @@ func _arm_walk_leg(map_id: String, tile: Vector2i, actor: Dictionary) -> void:
 
 func take_continuation(map_id: String, actor := {}) -> Dictionary:
 	if pending_walk.is_empty():
+		return {}
+	if not _walk_context_current(map_id):
+		pending_walk.clear()
 		return {}
 	if actor.is_empty():
 		actor = _local_walk_actor(map_id)
@@ -793,6 +805,25 @@ func take_continuation(map_id: String, actor := {}) -> Dictionary:
 	pending_walk.observed_commands = 0
 	_record("walk_renewed", map_id, {"target": [target.x, target.y], "renewal": pending_walk.renewals})
 	return {"tile": target, "run": pending_walk.run}
+
+func _walk_context_current(map_id: String) -> bool:
+	if coordinate_context == null or not coordinate_context.selected:
+		# A route from an earlier capable connection must never become legacy.
+		return not pending_walk.has("coordinate_token")
+	if not coordinate_context.ready() or not pending_walk.has("coordinate_token"):
+		return false
+	var old: Dictionary = pending_walk.coordinate_token
+	var current: Dictionary = coordinate_context.token()
+	if current == old:
+		return true
+	# Only the immediately expected next road leg may capture the new epoch.
+	# Same-map teleports and A→B→A before presentation cannot revive a click.
+	if current.generation != old.generation or current.epoch != old.epoch + 1 \
+			or current.map == old.map or map_id != current.map \
+			or str(pending_walk.get("next_map", "")) != current.map:
+		return false
+	pending_walk.coordinate_token = current
+	return true
 
 func _first_walk_leg(source: String, destination: String) -> Dictionary:
 	# Visible geography can meet across a river or cliff without a crossing.

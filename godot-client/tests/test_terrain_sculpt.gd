@@ -197,6 +197,10 @@ func _make_region() -> Node3D:
 	var region := REGION.new()
 	region.name = "SculptRegion"
 	region.region_id = "sculpt_test"
+	# Five vertices at two metre spacing cover an eight metre storage square.
+	region.server_cells = Vector2i(8, 8)
+	region.server_origin = Vector2i(4, 4)
+	region.collision_origin_metres = Vector2(-4.0, 4.0)
 	region.ownership_polygon_sha256 = "a".repeat(64)
 	region.runtime_binding_seed_path = RUNTIME_SEED_PATH
 	region.runtime_binding_seed_sha256 = FileAccess.get_sha256(

@@ -60,6 +60,14 @@ terrain patches for deliberate height edits. New roads default to **Shape
 terrain** on. This Inspector control writes the existing
 `properties.terrainConform` value; it is not a second saved terrain mode.
 
+Region path **Snapshot mode** defaults to **Baked curve**, which samples the
+Bezier curve at **Snapshot spacing** intervals. Choose **Control polygon** for
+a path whose saved control positions and per-point widths must be exported as
+straight segments without resampling the full curve. Moving an interior
+control then leaves the other exported stations in place. Bezier handles are
+ignored in this mode; the Inspector warns when they are present. Closed paths
+include a final segment back to the first control.
+
 An imported terrain may also provide `terrain.baseColors`, a full-grid
 RGBA8-sRGB sidecar with exactly `width * height * 4` bytes. The authoring
 preview and production terrain export use those vertex colours under the

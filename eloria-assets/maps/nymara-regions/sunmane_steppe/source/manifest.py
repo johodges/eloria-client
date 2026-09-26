@@ -49,7 +49,7 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
     for identifier, tile, facing, note in (
             ("arrival-datum", (58, 58), [0, 0, -1],
              "ceremonial crossroads at the shared market"),
-            ("west-caravanserai", (6, 58), [1, 0, 0], "arrival from the Four Gates"),
+            ("west-caravanserai", (6, 58), [1, 0, 0], "arrival from Mirrorhold along the west road"),
             ("east-caravanserai", (110, 58), [-1, 0, 0], "eastern frontier; no exterior map link"),
             ("north-barrowfield", (58, 100), [0, 0, 1],
              "sealed Orun barrow approach")):
