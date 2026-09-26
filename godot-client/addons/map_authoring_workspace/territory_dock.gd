@@ -83,6 +83,28 @@ func set_flatten_target(height: float) -> void:
 	show_sculpt_status("Flatten target sampled: %.2f m. Borders protected." % height)
 
 
+## Brush index: 0 Raise, 1 Lower, 2 Smooth, 3 Flatten. Used by the 1-4 keys.
+func set_sculpt_mode(index: int) -> void:
+	if _sculpt_mode == null or index < 0 or index >= _sculpt_mode.item_count or \
+			index == _sculpt_mode.selected:
+		return
+	_sculpt_mode.select(index)
+	_mode_changed(index)
+
+
+## Multiplies the brush radius or strength, clamped to the fields' own ranges.
+func scale_sculpt_radius(factor: float) -> float:
+	_sculpt_radius.value = clampf(_sculpt_radius.value * factor, _sculpt_radius.min_value,
+		_sculpt_radius.max_value)
+	return _sculpt_radius.value
+
+
+func scale_sculpt_strength(factor: float) -> float:
+	_sculpt_strength.value = clampf(_sculpt_strength.value * factor,
+		_sculpt_strength.min_value, _sculpt_strength.max_value)
+	return _sculpt_strength.value
+
+
 func show_sculpt_status(message: String) -> void:
 	if _sculpt_status != null:
 		_sculpt_status.text = message

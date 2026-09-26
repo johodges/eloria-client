@@ -7,6 +7,12 @@ const Preview := preload("res://addons/map_authoring_workspace/reference_preview
 const Sculpt := preload("res://addons/map_authoring_workspace/terrain_sculpt_tool.gd")
 const SCULPT_PLUGIN_META := &"map_authoring_sculpt_plugin"
 const ASSET_PLUGIN_META := &"map_asset_palette_plugin"
+const Settings := preload("res://addons/map_authoring_usability/usability_settings.gd")
+const SCULPT_MODE_NAMES := ["Raise", "Lower", "Smooth", "Flatten"]
+const SCULPT_MODE_KEYS := ["sculpt_raise", "sculpt_lower", "sculpt_smooth", "sculpt_flatten"]
+## Ring colours per brush: cyan raise, orange lower, blue smooth, gold flatten.
+const SCULPT_RING_COLORS := [Color(0.22, 0.94, 0.79), Color(1.0, 0.55, 0.25),
+	Color(0.45, 0.65, 1.0), Color(1.0, 0.86, 0.35)]
 
 var _catalog := Catalog.new()
 var _entries: Array[Dictionary] = []
@@ -78,13 +84,95 @@ func _handles(_object: Object) -> bool:
 func _forward_3d_gui_input(camera: Camera3D, event: InputEvent) -> int:
 	if not _sculpt.is_enabled():
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
-	return _sculpt.handle_input(camera, event, _dock.sculpt_settings())
+	if _handle_sculpt_shortcut(event):
+		return EditorPlugin.AFTER_GUI_INPUT_STOP
+	var settings: Dictionary = _dock.sculpt_settings()
+	if event is InputEventWithModifiers and not _sculpt.is_dragging():
+		settings = _modified_settings(settings, (event as InputEventWithModifiers).ctrl_pressed)
+		_sculpt.set_ring_color(SCULPT_RING_COLORS[int(settings.mode)])
+		if event is InputEventMouseButton and event.pressed and \
+				event.button_index == MOUSE_BUTTON_LEFT and event.ctrl_pressed and \
+				int(settings.mode) == 3:
+			# Ctrl+click with Flatten samples the target height under the brush.
+			_sculpt.pick_flatten_height()
+	return _sculpt.handle_input(camera, event, settings)
+
+
+## The viewport hint lines for the active brush, top first; empty when idle. The
+## Map Authoring Usability plugin draws them above its cursor readout.
+func overlay_lines() -> PackedStringArray:
+	if not _sculpt.is_enabled() or _dock == null:
+		return PackedStringArray()
+	var settings: Dictionary = _dock.sculpt_settings()
+	var mode := int(settings.mode)
+	var strength := "%.2f m/stamp" % float(settings.strength) if mode < 2 \
+		else "%d%% blend" % roundi(float(settings.strength) * 100.0)
+	return PackedStringArray([
+		"Sculpt %s  ·  radius %.1f m  ·  strength %s  ·  softness %.2f%s" % [
+			SCULPT_MODE_NAMES[mode], float(settings.radius), strength,
+			float(settings.softness),
+			"  ·  flatten to %.2f m" % float(settings.flatten_target) if mode == 3 else ""],
+		("Drag: sculpt  ·  Ctrl+drag: %s  ·  1-4: brush  ·  %s/%s or Shift+wheel: radius  ·  " +
+			"Shift+%s/%s: strength  ·  Esc: cancel stroke") % [
+			"sample flatten height" if mode == 3 else "Raise/Lower swapped" if mode < 2 \
+				else "smooth",
+			Settings.shortcut_text("sculpt_smaller"), Settings.shortcut_text("sculpt_larger"),
+			Settings.shortcut_text("sculpt_smaller"), Settings.shortcut_text("sculpt_larger")],
+	])
+
+
+## Brush keys while sculpting: 1-4 pick the brush, [ and ] (or Shift+wheel) size
+## it, Shift+[ and Shift+] change strength. Rebindable in Editor Settings.
+func _handle_sculpt_shortcut(event: InputEvent) -> bool:
+	if event is InputEventMouseButton and event.pressed and event.shift_pressed and \
+			event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+		var factor := float(Settings.value("sculpt/radius_factor"))
+		_dock.scale_sculpt_radius(factor if event.button_index == MOUSE_BUTTON_WHEEL_UP \
+			else 1.0 / factor)
+		_after_sculpt_shortcut()
+		return true
+	if not event is InputEventKey or not event.pressed:
+		return false
+	for index in SCULPT_MODE_KEYS.size():
+		if Settings.matches(SCULPT_MODE_KEYS[index], event):
+			_dock.set_sculpt_mode(index)
+			_after_sculpt_shortcut()
+			return true
+	var smaller := Settings.matches("sculpt_smaller", event)
+	if smaller or Settings.matches("sculpt_larger", event):
+		if event.shift_pressed:
+			var factor := float(Settings.value("sculpt/strength_factor"))
+			_dock.scale_sculpt_strength(1.0 / factor if smaller else factor)
+		else:
+			var factor := float(Settings.value("sculpt/radius_factor"))
+			_dock.scale_sculpt_radius(1.0 / factor if smaller else factor)
+		_after_sculpt_shortcut()
+		return true
+	return false
+
+
+func _after_sculpt_shortcut() -> void:
+	var settings: Dictionary = _dock.sculpt_settings()
+	_sculpt.set_ring_color(SCULPT_RING_COLORS[int(settings.mode)])
+	_dock.show_sculpt_status("%s brush, radius %.1f m." % [SCULPT_MODE_NAMES[int(settings.mode)],
+		float(settings.radius)])
+	update_overlays()
+
+
+## Ctrl swaps Raise and Lower for the stroke it starts; other brushes keep theirs.
+static func _modified_settings(settings: Dictionary, ctrl: bool) -> Dictionary:
+	var result := settings.duplicate()
+	if ctrl and int(result.mode) < 2:
+		result.mode = 1 - int(result.mode)
+	return result
 
 
 func deactivate_terrain_sculpt() -> void:
 	_sculpt.set_enabled(false)
 	if _dock != null:
 		_dock.set_sculpt_active(false)
+	if is_inside_tree():
+		update_overlays()
 
 
 func _on_sculpt_toggled(enabled: bool) -> void:
@@ -95,6 +183,8 @@ func _on_sculpt_toggled(enabled: bool) -> void:
 				asset_plugin.has_method("cancel_placement_for_terrain_sculpt"):
 			asset_plugin.call("cancel_placement_for_terrain_sculpt")
 	_sculpt.set_enabled(enabled)
+	_sculpt.set_ring_color(SCULPT_RING_COLORS[int(_dock.sculpt_settings().mode)])
+	update_overlays()
 	if enabled and _sculpt.is_enabled():
 		get_editor_interface().set_main_screen_editor("3D")
 	elif enabled:

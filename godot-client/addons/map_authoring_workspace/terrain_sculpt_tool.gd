@@ -11,6 +11,11 @@ const BRUSH := preload("res://src/dev/map_authoring_region/terrain_sculpt_brush.
 const PREVIEW_INTERVAL := 0.14
 const RING_SEGMENTS := 48
 
+## Hover rays walk only the grid cells they cross; MapAuthoringTerrainControl's
+## own ray test scans the whole height grid, which stalls large territories on
+## every mouse move while sculpting.
+const PROBE := preload("res://addons/map_authoring_usability/terrain_probe.gd")
+
 var _root: Node3D
 var _terrain: MapAuthoringTerrainControl
 var _undo_redo: Object
@@ -288,9 +293,15 @@ func _clear_stroke() -> void:
 	_preview_elapsed = 0.0
 
 
+## Tints the brush ring so the active brush reads at a glance.
+func set_ring_color(color: Color) -> void:
+	if _ring_material != null:
+		_ring_material.albedo_color = color
+
+
 func _hover(camera: Camera3D, position: Vector2, radius: float) -> Dictionary:
-	var hit: Variant = _terrain.terrain_hit_world(
-		camera.project_ray_origin(position), camera.project_ray_normal(position))
+	var hit: Variant = PROBE.ray_hit(_root, camera.project_ray_origin(position),
+		camera.project_ray_normal(position), 4096.0)
 	if not hit is Vector3:
 		_ring.visible = false
 		return {"ok": false, "reason": "Brush ray missed the active terrain."}

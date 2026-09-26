@@ -58,6 +58,74 @@ static func ground_transform(node: Node3D, entry: Dictionary,
 	return transform
 
 
+## ground_transform plus the interactive placement adjustments: an extra turn
+## about world up, a lift above the ground, a size multiplier on top of the
+## catalog height, and an optional tilt so the asset's up follows `surface_normal`.
+## With the defaults it matches ground_transform.
+static func adjusted_ground_transform(node: Node3D, entry: Dictionary,
+		ground_position: Vector3, yaw_degrees: float = 0.0, lift: float = 0.0,
+		size: float = 1.0, surface_normal: Vector3 = Vector3.UP) -> Transform3D:
+	var grounded := ground_transform(node, entry, ground_position)
+	var basis := grounded.basis
+	if absf(yaw_degrees) > 0.0:
+		basis = Basis(Vector3.UP, deg_to_rad(yaw_degrees)) * basis
+	if is_finite(size) and size > 0.0 and absf(size - 1.0) > 0.0:
+		basis = basis.scaled(Vector3.ONE * size)
+	var up := surface_normal.normalized()
+	if up.is_finite() and up.y > 0.0 and up.dot(Vector3.UP) < 0.99999:
+		basis = Basis(Quaternion(Vector3.UP, up)) * basis
+	var transform := Transform3D(basis, ground_position)
+	var bounds_result := mesh_bounds(node)
+	if bool(bounds_result.get("valid", false)):
+		var oriented := Transform3D(basis, Vector3.ZERO) * (bounds_result.bounds as AABB)
+		transform.origin.y = ground_position.y - oriented.position.y
+	else:
+		transform.origin.y = grounded.origin.y
+	transform.origin.y += lift
+	return transform
+
+
+## Makes an unsaved stand-in look like a ghost: see-through with a faint blue
+## tint, no shadows, and no lights or physics, so previews never mutate anything.
+## Materials are per-ghost copies on surface overrides (GeometryInstance3D
+## transparency alone does nothing in the Compatibility renderer).
+static func make_ghost(node: Node3D, opacity: float = 0.5) -> void:
+	var nodes: Array[Node] = [node]
+	nodes.append_array(_descendants(node))
+	var fallback := StandardMaterial3D.new()
+	fallback.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	fallback.albedo_color = Color(0.7, 0.88, 1.0, opacity)
+	fallback.cull_mode = BaseMaterial3D.CULL_DISABLED
+	for descendant in nodes:
+		if descendant is MeshInstance3D and (descendant as MeshInstance3D).mesh != null:
+			var mesh_node := descendant as MeshInstance3D
+			for index in mesh_node.mesh.get_surface_count():
+				mesh_node.set_surface_override_material(index,
+					_ghost_material(mesh_node.get_active_material(index), opacity, fallback))
+		elif descendant is GeometryInstance3D:
+			(descendant as GeometryInstance3D).material_override = fallback
+		if descendant is GeometryInstance3D:
+			var geometry := descendant as GeometryInstance3D
+			geometry.transparency = clampf(1.0 - opacity, 0.0, 1.0)
+			geometry.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if descendant is Light3D:
+			(descendant as Light3D).visible = false
+		if descendant is CollisionObject3D:
+			(descendant as CollisionObject3D).process_mode = Node.PROCESS_MODE_DISABLED
+
+
+static func _ghost_material(source: Material, opacity: float,
+		fallback: StandardMaterial3D) -> Material:
+	if not source is BaseMaterial3D:
+		return fallback
+	var copy := (source as BaseMaterial3D).duplicate() as BaseMaterial3D
+	copy.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_DEPTH_PRE_PASS
+	var tinted := copy.albedo_color.lerp(Color(0.7, 0.88, 1.0), 0.3)
+	tinted.a = copy.albedo_color.a * opacity
+	copy.albedo_color = tinted
+	return copy
+
+
 static func mesh_bounds(root: Node3D) -> Dictionary:
 	var state := {"valid": false, "bounds": AABB()}
 	_collect_mesh_bounds(root, Transform3D.IDENTITY, true, state)
