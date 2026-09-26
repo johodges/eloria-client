@@ -277,6 +277,25 @@ the marker's stable ID and link fields, derives `position` and `serverTile`, and
 merges its `extras` fields without allowing extras to replace identity or
 position fields.
 
+For named exterior road/ferry portals, distinguish the saved marker from the
+published crossing. The source snapshot remains unchanged: its `serverTile`
+is the projection of the editable marker, and its `destinationTile` is retained
+from extras. Final world manifests preserve the marker's exact local XYZ,
+ID, label, name, type, destination map and other authored fields, but publish
+`serverTile` and `destinationTile` from the certified crossing. A walk departs
+on a legal settled lane and arrives at that same physical cell in the other
+map's frame; a ferry uses the destination quay's explicit arrival. Marker XYZ
+need not project to that published trigger tile.
+
+Runtime connection endpoint XYZ stays at the derived crossing, independently
+of marker XYZ, for navigation fallback and preloading. Packed crossing lanes
+remain the normal walking route authority. Published-data editor playtests
+use the final manifest `serverTile`, so they indicate the actual trigger.
+Export rejects ambiguous identities, incompatible frames and invalid source
+projections; collision, ownership, legal-step and reachability checks still
+decide which crossing lanes can be published. Moving a marker does not reshape
+terrain or make its projected tile a legal border crossing.
+
 Markers with `follow_asset_id` store an asset-local offset. Their exported
 absolute position is derived from the current object transform during every
 bake, and the record includes both `assetId` and the production node link.

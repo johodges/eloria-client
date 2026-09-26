@@ -70,10 +70,7 @@ def test_authored_crossing_export_preserves_xyz_labels_without_changing_lanes(
     world, derived = _authored_crossing_fixture(monkeypatch, kind, terrain_y, source_y)
     saved = {r: copy.deepcopy(s.document) for r, s in world.authoring_snapshots.items()}
     exported = X.prepare_contracts(world)
-    without_marker_y = copy.deepcopy(exported)
-    for end in without_marker_y[0]['ends']:
-        end['position'][1] = terrain_y
-    assert without_marker_y == derived  # Frames, lanes, tiles and terrain heights unchanged.
+    assert exported == derived  # Runtime positions, frames, lanes and tiles all unchanged.
     for region in ('west', 'east'):
         manifest = {}
         X.apply_manifest(world, region, manifest)
@@ -86,8 +83,8 @@ def test_authored_crossing_export_preserves_xyz_labels_without_changing_lanes(
 
 @pytest.mark.parametrize('field,value', [
     ('missing', None), ('duplicate', None), ('id', 'unrelated'), ('type', 'ferry'),
-    ('destinationMap', 'unknown'), ('serverTile', [1, 2]), ('destinationTile', [3, 4]),
-    ('position', [11.75, 27., -.5]), ('position', [11.5, float('nan'), -.5]),
+    ('destinationMap', 'unknown'), ('serverTile', [1, 2]),
+    ('position', [13.5, 27., -.5]), ('position', [11.5, float('nan'), -.5]),
     ('regionId', 'other'), ('coordinateSpace', 'continent'),
     ('continentTranslation', [0., 1., 0.]), ('axes', {'x': 'east', 'y': 'down', 'z': 'south'}),
     ('server', {'origin': [31, 30], 'metresPerTile': 1.}),
@@ -112,7 +109,7 @@ def test_authored_crossing_export_rejects_stale_or_ambiguous_source(monkeypatch,
 def test_authored_crossing_rejects_duplicate_generated_identity(monkeypatch):
     world, _ = _authored_crossing_fixture(monkeypatch)
     world.connections.append(copy.deepcopy(world.connections[0]))
-    with pytest.raises(ValueError, match='duplicate generated crossing portal'):
+    with pytest.raises(ValueError, match='authored crossing'):
         X.prepare_contracts(world)
 
 
@@ -128,8 +125,60 @@ def test_crossing_export_without_authored_snapshots_retains_legacy_generation(mo
     assert 'label' not in portal
 
 
-@pytest.mark.parametrize('change', ['height', 'tile', 'arrival', 'xz', 'missing', 'duplicate'])
-def test_settled_crossing_keeps_source_y_but_refuses_moved_authored_pins(monkeypatch, change):
+@pytest.mark.parametrize('kind', ['walk', 'ferry'])
+def test_settled_trigger_tiles_preserve_marker_and_runtime_positions_independently(monkeypatch, kind):
+    world, _ = _authored_crossing_fixture(monkeypatch, kind)
+    X.prepare_contracts(world)
+    settled = copy.deepcopy(world.publication_connections)
+    end, other = settled[0]['ends']
+    end['tile'][0] -= 1
+    end['position'][0] -= 1.
+    if kind == 'walk':
+        end['lanes'] = [{'tile': list(end['tile']), 'arrival': list(end['arrival'])}]
+    # The opposite lane's return partner need not be this departure's physical
+    # cell. Walking uses same-cell mapping; a ferry uses this explicit arrival.
+    other['arrival'][1] += 3
+    before = copy.deepcopy(settled)
+    doc = world.authoring_snapshots['west'].document
+    original = copy.deepcopy(doc)
+    markers = X.authored_portals(world, 'west', settled)
+    record = markers[end['portal']]
+    saved = doc['gameplay']['portals'][0]
+    assert record['position'] == saved['position']
+    assert record['label'] == saved['label']
+    assert record['serverTile'] == end['tile']
+    actual_arrival = list(map(int, X.tiles_at(world, 'east', *X.global_tile(world, 'west', end['tile']))))
+    assert actual_arrival != other['arrival']
+    assert record['destinationTile'] == (actual_arrival if kind == 'walk' else other['arrival'])
+    assert settled == before  # Client fallback/preload XYZ stays on the derived endpoint.
+    assert doc == original
+    monkeypatch.syspath_prepend(str(E.TOOLS))
+    publisher = importlib.import_module('publish_diagonal_continent')
+    specs = {r: {'serverOrigin': [30, 30], 'serverCells': [60, 60],
+                 'translation': [value['center'][0], 0., value['center'][1]]}
+             for r, value in world.regions.items()}
+    runtime = copy.deepcopy(settled)
+    if kind == 'walk':
+        for endpoint in runtime[0]['ends']:
+            endpoint['lanes'] = [{'tile': endpoint['tile'], 'arrival': endpoint['arrival']}]
+    _, rows = publisher.connection_rows(runtime, specs)
+    row = next(row for row in rows if row[:3] == ('west', *end['tile']))
+    assert list(row[4:6]) == record['destinationTile']
+    if kind == 'walk':
+        worlds = {r: {'coordinateTransform': {'serverOrigin': [30, 30]}} for r in specs}
+        _, streaming = publisher.connection_manifests(
+            {'revision': 'fixture', 'connections': runtime}, worlds, specs)
+        streamed = next(e for e in streaming['connections'][0]['ends'] if e['map'] == 'west')
+        assert streamed['position'] == end['position']
+        assert streamed['position'] != record['position']
+        assert streamed['crossingRuns'] == publisher.crossing_runs([end['tile']])
+    record['customMetadata']['preserve'].append(3)
+    assert doc == original
+
+
+@pytest.mark.parametrize('change', [
+    'missing', 'duplicate', 'identity', 'type', 'destination', 'tile_type', 'withdrawn', 'runtime_xz'])
+def test_settled_marker_join_rejects_missing_ambiguous_or_invalid_connection(monkeypatch, change):
     world, _ = _authored_crossing_fixture(monkeypatch)
     X.prepare_contracts(world)
     settled = copy.deepcopy(world.publication_connections)
@@ -137,24 +186,35 @@ def test_settled_crossing_keeps_source_y_but_refuses_moved_authored_pins(monkeyp
         settled.clear()
     elif change == 'duplicate':
         settled.append(copy.deepcopy(settled[0]))
+    elif change == 'identity':
+        settled[0]['ends'][0]['portal'] = 'unrelated'
+    elif change == 'type':
+        settled[0]['type'] = 'ferry'
+    elif change == 'destination':
+        settled[0]['ends'][1]['region'] = 'unknown'
+    elif change == 'withdrawn':
+        settled[0]['ends'][0]['lanes'].clear()
+    elif change == 'runtime_xz':
+        settled[0]['ends'][0]['position'][0] += 1.
     else:
-        end = settled[0]['ends'][0]
-        if change == 'height':
-            end['position'][1] = 99.
-        elif change == 'xz':
-            end['position'][0] += 1.
-        else:
-            end[change][0] += 1
+        settled[0]['ends'][0]['tile'][0] = 1.5
     # A generated roadless border has no saved portal and is not a named pin.
     border = {'id': 'roadless', 'road': False, 'type': 'walk', 'ends': []}
     settled.append(copy.deepcopy(border))
-    if change == 'height':
-        X.preserve_authored_portals(world, settled)
-        assert settled[:-1] == world.publication_connections
-        assert settled[-1] == border
-    else:
-        with pytest.raises(ValueError, match='authored crossing'):
-            X.preserve_authored_portals(world, settled)
+    with pytest.raises(ValueError, match='authored crossing'):
+        X.authored_portals(world, 'west', settled)
+
+
+def test_inherited_destination_metadata_is_replaced_without_changing_the_source(monkeypatch):
+    world, _ = _authored_crossing_fixture(monkeypatch)
+    doc = world.authoring_snapshots['west'].document
+    doc['gameplay']['portals'][0]['destinationTile'] = [999, 888]
+    original = copy.deepcopy(doc)
+    X.prepare_contracts(world)
+    manifest = {}
+    X.apply_manifest(world, 'west', manifest)
+    assert manifest['portals'][0]['destinationTile'] != [999, 888]
+    assert doc == original
 
 
 @pytest.mark.parametrize('kind', ['walk', 'ferry'])
@@ -167,6 +227,14 @@ def test_update_markers_preserves_authored_crossing_but_reseats_ordinary_portal(
     pin = copy.deepcopy(manifest['portals'][0])
     ordinary = {'id': 'cave', 'serverTile': [1, 1], 'position': [-28.5, 4., 28.5]}
     manifest['portals'].append(copy.deepcopy(ordinary))
+    settled = copy.deepcopy(world.publication_connections)
+    settled[0]['ends'][0]['tile'][0] -= 1
+    settled[0]['ends'][0]['position'][0] -= 1
+    if kind == 'walk':
+        settled[0]['ends'][0]['lanes'] = [{
+            'tile': list(settled[0]['ends'][0]['tile']),
+            'arrival': list(settled[0]['ends'][0]['arrival'])}]
+    crossing_markers = X.authored_portals(world, 'west', settled)
     placement = types.SimpleNamespace(
         world=world, region='west', content=types.SimpleNamespace(
             authored_regions={'west'}, templates={'west': {'portals': [pin, ordinary]}}),
@@ -174,14 +242,18 @@ def test_update_markers_preserves_authored_crossing_but_reseats_ordinary_portal(
               'tilePositions': {E.key(pin['serverTile']): [50, 50], '1:1': [2, 2]}},
         local_position=lambda tile: [tile[0] - 29.5, 99., 29.5 - tile[1]],
         report={'regions': {'west': {}}})
-    E.update_markers(placement, manifest)
-    assert manifest['portals'][0] == pin
+    E.update_markers(placement, manifest, crossing_markers)
+    published = manifest['portals'][0]
+    assert published == crossing_markers[pin['id']]
+    assert published['position'] == pin['position']
+    assert published['serverTile'] == settled[0]['ends'][0]['tile']
+    assert published['serverTile'] != pin['serverTile']
     assert manifest['portals'][1]['serverTile'] == [2, 2]
     assert manifest['portals'][1]['position'] == [-27.5, 99., 27.5]
     assert placement.report['regions']['west']['updatedAuthoredMarkers'] == 1
 
 
-@pytest.mark.parametrize('change', ['missing', 'duplicate', 'position', 'label', 'serverTile'])
+@pytest.mark.parametrize('change', ['missing', 'duplicate', 'position', 'label'])
 def test_update_markers_rejects_corrupted_generated_authored_pin(monkeypatch, change):
     world, _ = _authored_crossing_fixture(monkeypatch)
     X.prepare_contracts(world)

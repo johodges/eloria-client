@@ -1045,15 +1045,20 @@ def collect_gameplay_points(server, profile_text, placements, records, shared, p
     return mappings
 
 
-def update_markers(placement, manifest):
+def update_markers(placement, manifest, crossing_markers=None):
     """Keep authored marker identities and room targets while seating their posts."""
     from crossings import authored_portals
-    protected = authored_portals(getattr(placement, 'world', None), placement.region)
+    protected = (authored_portals(getattr(placement, 'world', None), placement.region)
+                 if crossing_markers is None else crossing_markers)
+    trigger_fields = {'serverTile', 'destinationTile'}
     for identity, source in protected.items():
         matches = [entry for entry in manifest.get('portals', [])
                    if isinstance(entry, dict) and entry.get('id') == identity]
-        if len(matches) != 1 or matches[0] != source:
+        if len(matches) != 1 or {k: v for k, v in matches[0].items() if k not in trigger_fields} != {
+                k: v for k, v in source.items() if k not in trigger_fields}:
             raise PlacementError(f'{placement.region}:{identity}: authored crossing portal changed before placement')
+        for field in trigger_fields:
+            matches[0][field] = list(source[field])
     template = placement.content.templates[placement.region]
     metadata_keys = ('portals', 'harvestables', 'npcMarkers', 'interactives', 'pointsOfInterest', 'creatureSpawns', 'spawns')
     updated = 0
@@ -1272,14 +1277,15 @@ def export_contracts(world, content, manifests, output, server_path):
             print(f'{region}: exact server grid, stage {factor}, hub reaches {int(p.reachable.sum())} tiles in {time.monotonic()-started:.1f}s', flush=True)
         # Every seam's lanes come from the served grids of both its maps, so
         # this waits until the last of them has been folded.
-        from crossings import settle_crossings, widen_seams, preserve_authored_portals
+        from crossings import settle_crossings, widen_seams, authored_portals
         step = lambda heights, y, x, dy, dx: sources.walk_step_ok(heights, y, x, dy, dx, 2)
         report['seams'] = widen_seams(world, publication['connections'], served, step)
         # Borders no road crosses, opened wherever their ground meets; then only
         # the lanes a walker from some hub can get onto and step off are kept.
         settled = settle_crossings(world, publication, served, step,
                                     {region: p.spec['arrival'] for region, p in placements.items()})
-        preserve_authored_portals(world, publication['connections'])
+        crossing_markers = {region: authored_portals(world, region, publication['connections'])
+                            for region in placements}
         report['seams'] += settled['roadless']
         report['openBorders'], report['withdrawnLanes'] = settled['opened'], settled['withdrawnLanes']
         print('open roadless borders: %s; %d lanes no walker can use withdrawn' % (
@@ -1386,7 +1392,7 @@ def export_contracts(world, content, manifests, output, server_path):
                 raise ValueError(f'{path}: profile changed during content placement')
         for region, p in placements.items():
             path, manifest = outputs[region]
-            update_markers(p, manifest)
+            update_markers(p, manifest, crossing_markers[region])
             p.spec.pop('runtimeMarkerPositions', None)
             p.spec['terrainRevision'] = terrain_revision(p.spec, p.collision, p.grid)
             report['regions'][region]['terrainRevision'] = p.spec['terrainRevision']

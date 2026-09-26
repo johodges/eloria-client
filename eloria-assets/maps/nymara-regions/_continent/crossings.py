@@ -509,7 +509,7 @@ def ferry_arrival(world, link, region, landing):
 
 
 def authored_portal(world, connection, end):
-    """Resolve a saved marker without using its Y to reshape the crossing."""
+    """Keep saved marker fields; derive trigger tiles from the legal connection."""
     region = end['region']
     snapshots = getattr(world, 'authoring_snapshots', {})
     if region not in snapshots:
@@ -543,23 +543,62 @@ def authored_portal(world, connection, end):
     if (record.get('type') != connection['type']
             or record.get('destinationMap') != other['region']):
         raise ValueError(f'{prefix} type or destination differs from the generated crossing')
-    if (record.get('serverTile') != end['tile']
-            or record.get('destinationTile') != other['arrival']
-            or position[0] != end['position'][0] or position[2] != end['position'][2]):
-        raise ValueError(f'{prefix} tile or XZ differs from the generated crossing')
-    # Saved XYZ is already local metres. Only XZ receives a continent translation
-    # elsewhere; marker Y is independent of the terrain-derived seam frame.
-    return copy.deepcopy(record)
+    projected = [int(np.floor(position[0] + origin[0])),
+                 int(np.floor(origin[1] - position[2]))]
+    if record.get('serverTile') != projected:
+        raise ValueError(f'{prefix} source tile differs from its marker projection')
+    for tile in (end['tile'], other['arrival']):
+        if (not isinstance(tile, list) or len(tile) != 2
+                or not all(isinstance(v, int) and not isinstance(v, bool) for v in tile)):
+            raise ValueError(f'{prefix} requires integer derived trigger tiles')
+    if connection['type'] == 'walk' and not any(
+            lane['tile'] == end['tile'] for lane in end.get('lanes', [])):
+        raise ValueError(f'{prefix} selected departure is not a surviving crossing lane')
+    endpoint = end.get('position')
+    point = global_tile(world, region, end['tile'])
+    if (not isinstance(endpoint, list) or len(endpoint) != 3
+            or not all(isinstance(v, (int, float)) and not isinstance(v, bool)
+                       and np.isfinite(v) for v in endpoint)
+            or endpoint[0] != point[0] - center[0] or endpoint[2] != point[1] - center[1]):
+        raise ValueError(f'{prefix} runtime position differs from its derived trigger cell')
+    # Snapshot serverTile is the marker projection, not necessarily the first
+    # legal tile across a widened border. Its inherited destinationTile is not
+    # the settled counterpart's arrival either. Preserve the editable marker
+    # while publishing the trigger contract consumed by runtime and playtest.
+    result = copy.deepcopy(record)
+    result['serverTile'] = list(end['tile'])
+    # Match publish_diagonal_continent.connection_rows: walking hands the actor
+    # over at this same physical cell, independently of the reverse lane's
+    # partner. Boats instead land at the explicit destination quay arrival.
+    if connection['type'] not in ('ferry', 'ship', 'boat', 'teleport'):
+        destination = list(map(int, tiles_at(world, other['region'], *point)))
+        if (not storage_bounds(world, other['region']).contains(*destination)
+                or not np.array_equal(global_tile(world, other['region'], destination), point)):
+            raise ValueError(f'{prefix} departure has no matching destination cell')
+        result['destinationTile'] = destination
+    else:
+        result['destinationTile'] = list(other['arrival'])
+    return result
 
 
-def authored_portals(world, region):
-    """Validated generated exterior markers, keyed by their unique saved IDs."""
+def authored_portals(world, region, connections=None):
+    """Join named source markers to initial or settled connections by identity."""
     if region not in getattr(world, 'authoring_snapshots', {}):
         return {}
     if not hasattr(world, 'publication_connections'):
         raise ValueError(f'{region}: authored crossing portals require prepared connections')
     records = {}
-    for connection in world.publication_connections:
+    actual = world.publication_connections if connections is None else connections
+    for original in world.publication_connections:
+        if not any(end['region'] == region for end in original['ends']):
+            continue
+        matches = [connection for connection in actual if connection['id'] == original['id']]
+        if len(matches) != 1:
+            raise ValueError(f"{original['id']}: authored crossing requires one derived connection")
+        connection = matches[0]
+        if sorted((end['region'], end['portal']) for end in connection['ends']) != sorted(
+                (end['region'], end['portal']) for end in original['ends']):
+            raise ValueError(f"{original['id']}: authored crossing endpoint identities changed")
         for end in connection['ends']:
             if end['region'] != region:
                 continue
@@ -568,25 +607,6 @@ def authored_portals(world, region):
                 raise ValueError(f'{region}:{identity}: duplicate generated crossing portal')
             records[identity] = authored_portal(world, connection, end)
     return records
-
-
-def preserve_authored_portals(world, connections):
-    """Check settled named crossings; roadless borders remain derived contracts."""
-    snapshots = getattr(world, 'authoring_snapshots', {})
-    for original in world.publication_connections:
-        if not any(end['region'] in snapshots for end in original['ends']):
-            continue
-        matches = [connection for connection in connections if connection['id'] == original['id']]
-        if len(matches) != 1:
-            raise ValueError(f"{original['id']}: authored crossing requires one settled connection")
-        connection = matches[0]
-        if sorted((end['region'], end['portal']) for end in connection['ends']) != sorted(
-                (end['region'], end['portal']) for end in original['ends']):
-            raise ValueError(f"{original['id']}: authored crossing settled endpoint identities changed")
-        for end in connection['ends']:
-            record = authored_portal(world, connection, end)
-            if record is not None:
-                end['position'] = record['position']
 
 
 def prepare_contracts(world):
@@ -619,12 +639,7 @@ def prepare_contracts(world):
                 arrival=ferry_arrival(world,link,region,landing)
                 ends.append({'region':region,'portal':'ferry-to-'+other,'tile':tile,'arrival':arrival,
                     'position':[float(p[0]-center[0]),height,float(p[1]-center[1])]})
-        connection = {'id':link['id'],'type':link['type'],'ends':ends}
-        for end in ends:
-            record = authored_portal(world, connection, end)
-            if record is not None:
-                end['position'] = record['position']
-        connections.append(connection)
+        connections.append({'id':link['id'],'type':link['type'],'ends':ends})
     world.publication_connections=connections
     for region in getattr(world, 'authoring_snapshots', {}):
         authored_portals(world, region)
