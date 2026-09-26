@@ -508,6 +508,87 @@ def ferry_arrival(world, link, region, landing):
     return arrival
 
 
+def authored_portal(world, connection, end):
+    """Resolve a saved marker without using its Y to reshape the crossing."""
+    region = end['region']
+    snapshots = getattr(world, 'authoring_snapshots', {})
+    if region not in snapshots:
+        return None
+    document = snapshots[region].document
+    identity = end['portal']
+    prefix = f'{region}:{identity}: authored crossing portal'
+    matches = [record for record in document['gameplay']['portals']
+               if record.get('id') == identity]
+    if len(matches) != 1:
+        raise ValueError(f'{prefix} requires one exact source record, found {len(matches)}')
+    record = matches[0]
+    others = [other for other in connection['ends'] if other['region'] != region]
+    if len(others) != 1:
+        raise ValueError(f'{prefix} requires one destination endpoint')
+    other = others[0]
+    center = world.regions[region]['center']
+    origin, _ = world.address(region)
+    if (document.get('regionId') != region
+            or document.get('coordinateSpace') != 'territory-local'
+            or document.get('axes') != {'x': 'east', 'y': 'up', 'z': 'south'}
+            or document.get('continentTranslation') != [center[0], 0, center[1]]
+            or document.get('server', {}).get('origin') != list(origin)
+            or document.get('server', {}).get('metresPerTile') != 1):
+        raise ValueError(f'{prefix} source frame differs from the generated crossing')
+    position = record.get('position')
+    if (not isinstance(position, list) or len(position) != 3
+            or not all(isinstance(v, (int, float)) and not isinstance(v, bool)
+                       and np.isfinite(v) for v in position)):
+        raise ValueError(f'{prefix} requires a finite local XYZ position')
+    if (record.get('type') != connection['type']
+            or record.get('destinationMap') != other['region']):
+        raise ValueError(f'{prefix} type or destination differs from the generated crossing')
+    if (record.get('serverTile') != end['tile']
+            or record.get('destinationTile') != other['arrival']
+            or position[0] != end['position'][0] or position[2] != end['position'][2]):
+        raise ValueError(f'{prefix} tile or XZ differs from the generated crossing')
+    # Saved XYZ is already local metres. Only XZ receives a continent translation
+    # elsewhere; marker Y is independent of the terrain-derived seam frame.
+    return copy.deepcopy(record)
+
+
+def authored_portals(world, region):
+    """Validated generated exterior markers, keyed by their unique saved IDs."""
+    if region not in getattr(world, 'authoring_snapshots', {}):
+        return {}
+    if not hasattr(world, 'publication_connections'):
+        raise ValueError(f'{region}: authored crossing portals require prepared connections')
+    records = {}
+    for connection in world.publication_connections:
+        for end in connection['ends']:
+            if end['region'] != region:
+                continue
+            identity = end['portal']
+            if identity in records:
+                raise ValueError(f'{region}:{identity}: duplicate generated crossing portal')
+            records[identity] = authored_portal(world, connection, end)
+    return records
+
+
+def preserve_authored_portals(world, connections):
+    """Check settled named crossings; roadless borders remain derived contracts."""
+    snapshots = getattr(world, 'authoring_snapshots', {})
+    for original in world.publication_connections:
+        if not any(end['region'] in snapshots for end in original['ends']):
+            continue
+        matches = [connection for connection in connections if connection['id'] == original['id']]
+        if len(matches) != 1:
+            raise ValueError(f"{original['id']}: authored crossing requires one settled connection")
+        connection = matches[0]
+        if sorted((end['region'], end['portal']) for end in connection['ends']) != sorted(
+                (end['region'], end['portal']) for end in original['ends']):
+            raise ValueError(f"{original['id']}: authored crossing settled endpoint identities changed")
+        for end in connection['ends']:
+            record = authored_portal(world, connection, end)
+            if record is not None:
+                end['position'] = record['position']
+
+
 def prepare_contracts(world):
     """Same physical cell for departure/arrival; reverse triggers are across it."""
     connections=[]
@@ -538,8 +619,15 @@ def prepare_contracts(world):
                 arrival=ferry_arrival(world,link,region,landing)
                 ends.append({'region':region,'portal':'ferry-to-'+other,'tile':tile,'arrival':arrival,
                     'position':[float(p[0]-center[0]),height,float(p[1]-center[1])]})
-        connections.append({'id':link['id'],'type':link['type'],'ends':ends})
+        connection = {'id':link['id'],'type':link['type'],'ends':ends}
+        for end in ends:
+            record = authored_portal(world, connection, end)
+            if record is not None:
+                end['position'] = record['position']
+        connections.append(connection)
     world.publication_connections=connections
+    for region in getattr(world, 'authoring_snapshots', {}):
+        authored_portals(world, region)
     existing={tuple(sorted(c['regions'])) for c in world.connections if c['type']=='walk'}
     visuals=[]
     for (ia,ib),segments in world.adjacent_edges().items():
@@ -564,12 +652,13 @@ def prepare_contracts(world):
 
 
 def apply_manifest(world,region,manifest):
+    authored = authored_portals(world, region)
     for connection in world.publication_connections:
         end=next((e for e in connection['ends'] if e['region']==region),None)
         if end is None:continue
         other=next(e for e in connection['ends'] if e['region']!=region)
-        portal={'id':end['portal'],'name':('Road to ' if connection['type']=='walk' else 'Ferry to ')+other['region'].replace('_',' ').title(),
+        portal=authored.get(end['portal'], {'id':end['portal'],'name':('Road to ' if connection['type']=='walk' else 'Ferry to ')+other['region'].replace('_',' ').title(),
             'position':end['position'],'serverTile':end['tile'],'destinationMap':other['region'],
-            'destinationTile':other['arrival'],'type':connection['type']}
+            'destinationTile':other['arrival'],'type':connection['type']})
         manifest.setdefault('portals',[]).append(portal)
         if 'frame' in end:manifest.setdefault('streamingBorders',[]).append(end['frame'])

@@ -1047,6 +1047,13 @@ def collect_gameplay_points(server, profile_text, placements, records, shared, p
 
 def update_markers(placement, manifest):
     """Keep authored marker identities and room targets while seating their posts."""
+    from crossings import authored_portals
+    protected = authored_portals(getattr(placement, 'world', None), placement.region)
+    for identity, source in protected.items():
+        matches = [entry for entry in manifest.get('portals', [])
+                   if isinstance(entry, dict) and entry.get('id') == identity]
+        if len(matches) != 1 or matches[0] != source:
+            raise PlacementError(f'{placement.region}:{identity}: authored crossing portal changed before placement')
     template = placement.content.templates[placement.region]
     metadata_keys = ('portals', 'harvestables', 'npcMarkers', 'interactives', 'pointsOfInterest', 'creatureSpawns', 'spawns')
     updated = 0
@@ -1055,6 +1062,10 @@ def update_markers(placement, manifest):
         by_id = {str(v['id']): v for v in originals if isinstance(v, dict) and 'id' in v}
         for index, entry in enumerate(manifest.get(group, [])):
             if not isinstance(entry, dict):
+                continue
+            if group == 'portals' and entry.get('id') in protected:
+                # Lane legality is checked separately against the served fold.
+                # A generic tile remap must not reseat the saved marker's XYZ.
                 continue
             old_entry = by_id.get(str(entry.get('id')))
             if old_entry is None:
@@ -1261,13 +1272,14 @@ def export_contracts(world, content, manifests, output, server_path):
             print(f'{region}: exact server grid, stage {factor}, hub reaches {int(p.reachable.sum())} tiles in {time.monotonic()-started:.1f}s', flush=True)
         # Every seam's lanes come from the served grids of both its maps, so
         # this waits until the last of them has been folded.
-        from crossings import settle_crossings, widen_seams
+        from crossings import settle_crossings, widen_seams, preserve_authored_portals
         step = lambda heights, y, x, dy, dx: sources.walk_step_ok(heights, y, x, dy, dx, 2)
         report['seams'] = widen_seams(world, publication['connections'], served, step)
         # Borders no road crosses, opened wherever their ground meets; then only
         # the lanes a walker from some hub can get onto and step off are kept.
         settled = settle_crossings(world, publication, served, step,
-                                   {region: p.spec['arrival'] for region, p in placements.items()})
+                                    {region: p.spec['arrival'] for region, p in placements.items()})
+        preserve_authored_portals(world, publication['connections'])
         report['seams'] += settled['roadless']
         report['openBorders'], report['withdrawnLanes'] = settled['opened'], settled['withdrawnLanes']
         print('open roadless borders: %s; %d lanes no walker can use withdrawn' % (

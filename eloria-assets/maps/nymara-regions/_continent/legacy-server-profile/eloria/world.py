@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import copy
 import heapq
 import logging
 import math
@@ -18,6 +19,8 @@ from .areas import (CHEAP_MAGIC, EXPERIENCE, FAST_READING, FAST_REGENERATION,
                     HARVEST_SPEED, NO_MAGIC, load_special_areas,
                     multiplier_at)
 from .calendar import ElderDate
+from .coordinate_session import CoordinateFrame, CoordinateSession
+from .coordinate_output import legacy_map_supported, map_packet, named_rows_packet
 from .models import (ATTRIBUTE_LABELS, ATTRIBUTES, NEXUS, Actor, Animal, BossFight,
                      Character, NPCActor, carry_capacity,
                      might, normalize_inventory_slots, refresh_derived_points)
@@ -1064,8 +1067,13 @@ class Session:
     inventory_names: tuple | None = None
     # Resolved once on first send; the writer's transport never changes.
     _transport: object | None = None
-    # Packets waiting for this tick's flush. See queue().
-    outbox: list[bytes] = None
+    # Packets waiting for this tick's flush. CoordinateFrame tags let explicit
+    # coordinate producers be rejected if their captured context becomes stale.
+    outbox: list[bytes | CoordinateFrame] = None
+    # Explicit injection only; ordinary login/dispatch does not enable this yet.
+    coordinate_state: object | None = None
+    _coordinate_transition: bool = False
+    _coordinate_lifecycle: bool = False
 
     def __post_init__(self):
         if self.aggressors is None:
@@ -1107,7 +1115,7 @@ class Session:
         if self.connected_at <= 0.0:
             self.connected_at = time.monotonic()
 
-    def queue(self, data: bytes) -> None:
+    def queue(self, data: bytes | CoordinateFrame | None) -> None:
         """Hold a packet for this tick's flush.
 
         Per-actor fan-out is the server's largest outbound cost: five hundred
@@ -1116,29 +1124,134 @@ class Session:
         session per tick. Ordering against send() is preserved because send()
         emits whatever is queued ahead of its own payload.
         """
+        if data is None or (isinstance(data, CoordinateFrame)
+                            and not self.coordinate_token_current(data.token)):
+            return
         self.outbox.append(data)
+
+    def install_coordinate_transport(self, catalog) -> None:
+        """Inject the world's verified catalog before login; no negotiation IO."""
+        if self.coordinate_state is not None or self.character is not None or self._coordinate_transition:
+            raise ValueError("coordinate transport must be installed once before login")
+        self.coordinate_state = CoordinateSession(catalog)
+
+    def coordinate_token(self):
+        if self.coordinate_state is None:
+            raise ValueError("coordinate transport is not configured")
+        return self.coordinate_state.capture()
+
+    def coordinate_token_current(self, token) -> bool:
+        return bool(self.coordinate_state and self.coordinate_state.is_current(token))
+
+    def queue_coordinates(self, token, data: bytes) -> bool:
+        """Tag already map-aware bytes; stale producers cause no side effects."""
+        if not self.coordinate_token_current(token):
+            return False
+        if not isinstance(data, bytes):
+            raise ValueError("coordinate output must be bytes")
+        self.outbox.append(CoordinateFrame(token, data))
+        return True
+
+    async def send_coordinates(self, token, data: bytes) -> bool:
+        if not self.coordinate_token_current(token):
+            return False
+        if not isinstance(data, bytes):
+            raise ValueError("coordinate output must be bytes")
+        return await self.send(CoordinateFrame(token, data)) is not False
+
+    def _take_outbox(self) -> list[bytes]:
+        queued, self.outbox = self.outbox, []
+        return [entry.data if isinstance(entry, CoordinateFrame) else entry
+                for entry in queued if not isinstance(entry, CoordinateFrame)
+                or self.coordinate_token_current(entry.token)]
+
+    def reset_coordinate_transport(self) -> None:
+        """Connection reset invalidates tokens and all pending output."""
+        if self.coordinate_state is not None:
+            self.coordinate_state.close()
+        self.coordinate_state = None
+        self.outbox.clear()
+
+    async def activate_coordinates(self, map_id: str, client_name: str, handles,
+                                   *, commit=None):
+        """Write old queue + activate + CHANGE_MAP atomically, then allow drain.
+
+        `commit`, if supplied, must synchronously perform already-validated world
+        mutations without IO. Once write is attempted a failure closes this
+        connection; a partially delivered boundary cannot be safely rolled back.
+        All preparation failures occur before queue/state/world mutation.
+        """
+        if self.coordinate_state is None or self._coordinate_transition:
+            raise ValueError("coordinate transport absent or activation in progress")
+        if (not isinstance(client_name, str) or not client_name or "\0" in client_name
+                or len(client_name.encode("utf-8")) > 65530):
+            raise ValueError("invalid map client name")
+        if commit is not None and (not callable(commit) or asyncio.iscoroutinefunction(commit)
+                                   or asyncio.iscoroutinefunction(getattr(commit, "__call__", None))):
+            raise ValueError("coordinate commit must be synchronous")
+        state = self.coordinate_state
+        activation = state.prepare_activation(map_id, handles)
+        old_frames = self._take_outbox()  # evaluate tags under the OLD context
+        boundary = (p.packet(p.ELORIA_COORDINATE_CONTEXT, activation.payload)
+                    + p.packet(p.CHANGE_MAP, client_name.encode("utf-8") + b"\0"))
+        self._coordinate_transition = True
+        state.begin(activation)
+
+        def apply_commit():
+            state.commit(activation)
+            if commit is not None:
+                result = commit()
+                if result is not None:
+                    if asyncio.iscoroutine(result):
+                        result.close()
+                    raise ValueError("coordinate commit must return None")
+
+        try:
+            await self._write(b"".join(old_frames) + boundary, after_write=apply_commit)
+            if self.coordinate_state is not state or not state.is_current(activation.token):
+                raise ValueError("coordinate connection reset during activation")
+        except BaseException:
+            # No rollback after write: bytes may already be on the socket.
+            self.reset_coordinate_transport()
+            self.disconnect_requested = True
+            close = getattr(self.writer, "close", None)
+            if callable(close):
+                close()
+            raise
+        finally:
+            self._coordinate_transition = False
+        return activation.token
 
     async def flush(self) -> None:
         """Write this session's queued packets as a single frame."""
         if not self.outbox:
             return
-        frames, self.outbox = self.outbox, []
-        await self._write(b"".join(frames))
+        frames = self._take_outbox()
+        if frames:
+            await self._write(b"".join(frames))
 
-    async def send(self, data: bytes):
+    async def send(self, data: bytes | CoordinateFrame | None):
+        if data is None:
+            return False
+        if isinstance(data, CoordinateFrame):
+            if not self.coordinate_token_current(data.token):
+                return False
+            data = data.data
         if self.outbox:
-            frames, self.outbox = self.outbox, []
+            frames = self._take_outbox()
             frames.append(data)
             data = b"".join(frames)
         await self._write(data)
 
-    async def _write(self, data: bytes):
+    async def _write(self, data: bytes, *, after_write=None):
         now = time.monotonic()
         command = data[0] if data else -1
         transport = self._transport
         if transport is None:
             transport = self._transport = getattr(self.writer, "transport", None)
         self.writer.write(data)
+        if after_write is not None:
+            after_write()
         write_buffer = transport.get_write_buffer_size() if transport else 0
         self.packet_history.append((now, command, len(data), write_buffer))
         self.packet_window.append((now, len(data)))
@@ -1153,19 +1266,23 @@ class Session:
         if transport and write_buffer >= 64 * 1024:
             await self.writer.drain()
 
-    async def send_many(self, frames: list[bytes]) -> None:
+    async def send_many(self, frames: list[bytes | CoordinateFrame | None]) -> None:
         """Send several packets in one socket write.
 
         EL frames are self-delimiting on a byte stream, so concatenating them
         is transparent to the client and saves a write per actor. Filling a
         player's view could otherwise mean hundreds of one-packet writes.
         """
+        if any(isinstance(frame, CoordinateFrame) and not self.coordinate_token_current(frame.token)
+               for frame in frames):
+            return
+        token = next((frame.token for frame in frames if isinstance(frame, CoordinateFrame)), None)
+        frames = [frame.data if isinstance(frame, CoordinateFrame) else frame
+                  for frame in frames if frame is not None]
         if not frames:
             return
-        if len(frames) == 1:
-            await self.send(frames[0])
-            return
-        await self.send(b"".join(frames))
+        joined = b"".join(frames)
+        await self.send(CoordinateFrame(token, joined) if token is not None else joined)
 
     def packet_diagnostic_lines(self) -> list[str]:
         """Return payload-free recent send diagnostics for disconnect logging."""
@@ -1398,6 +1515,9 @@ class World(MagicRuntime):
         self.content_options = {k: v for k, v in locals().copy().items()
                                 if k not in {'self', 'database', 'creatures', 'drop_tables', '__class__'}}
         self.db = database
+        # Explicitly installed, verified metadata only. This does not enable
+        # coordinate transport; negotiation remains inactive until integration.
+        self.coordinate_catalog = None
         self.creatures = creatures
         self.drop_tables = drop_tables if drop_tables is not None else load_drops(f"{PROFILE}/drops.txt")
         self.maps, self.portals = load_maps(map_path)
@@ -1625,6 +1745,22 @@ class World(MagicRuntime):
         bell.initialize(self, harvesting_path)
         sky.initialize(self, harvesting_path)
 
+    def configure_coordinate_catalog(self, catalog) -> None:
+        """Install a verified startup snapshot without changing map coordinates.
+
+        No file discovery, collision reload, minima assignment, or capability
+        negotiation happens here. A failed/repeated/live install changes nothing.
+        """
+        from .coordinate_catalog import CoordinateProfileCatalog
+        if not isinstance(catalog, CoordinateProfileCatalog):
+            raise ValueError("expected a verified coordinate profile catalog")
+        if getattr(self, "coordinate_catalog", None) is not None or self.sessions:
+            raise ValueError("coordinate catalog can only be installed once before sessions")
+        if any(map_id not in self.maps for map_id in catalog.map_ids):
+            raise ValueError("coordinate catalog contains an unknown world map")
+        catalog.validate_collisions(self.collision_maps)
+        self.coordinate_catalog = catalog
+
     def populate_static_spawns(self) -> int:
         """Instantiate every `spawns.txt` entry as a live creature.
 
@@ -1704,6 +1840,18 @@ class World(MagicRuntime):
         return None
 
     async def start_territory_raid(self, aggressor: str, defender: str):
+        left = self.territory_raids.territories.get(aggressor.casefold())
+        right = self.territory_raids.territories.get(defender.casefold())
+        if left and right:
+            route = next((portal for portal in portals_leaving(self, right.map_id)
+                          if portal.destination == left.map_id), None)
+            entry = (route.x, route.y) if route else left.attacker_spawn
+            for connected in list(self.sessions):
+                c = connected.character
+                team = self.territory_raids.pending_choices.get(c.username.casefold()) if c else None
+                if team in (left.key, right.key):
+                    spawn = entry if team == left.key else right.defender_spawn
+                    self.require_coordinate_destination(connected, right.map_id, *spawn)
         raid = self.territory_raids.start(aggressor, defender)
         route = next((
             portal for portal in portals_leaving(self, raid.defender.map_id)
@@ -3545,6 +3693,9 @@ class World(MagicRuntime):
         if ineligible:
             raise ValueError("Team cannot enter: " + "; ".join(ineligible))
 
+        for member in team:
+            self.require_coordinate_destination(member, self.map_id_for_spawn(definition.map_file),
+                                                definition.entry_x, definition.entry_y)
         active = await self.start_instance(
             definition.name,
             participant_ids={member.character.actor_id for member in team})
@@ -3751,7 +3902,7 @@ class World(MagicRuntime):
                     and self.can_walk_step(map_id, start, (x, y + sy), shape)))
 
     def search_mask(self, collision):
-        """One map's step mask and dimensions, or None where there is none.
+        """One map's step mask and logical bounds, or None where there is none.
 
         Resolved once for a whole A* traversal. Every node a search expands
         asks up to sixteen questions of `can_walk_step` - eight moves and, for
@@ -3772,7 +3923,7 @@ class World(MagicRuntime):
         mask = collision.steps
         if mask is None:
             return None
-        return mask, collision.width, collision.height
+        return mask, collision.bounds
 
     def can_walk_step(self, map_id: str, start: tuple[int, int],
                       end: tuple[int, int], shape: Footprint = SINGLE) -> bool:
@@ -3811,7 +3962,7 @@ class World(MagicRuntime):
             target = self.free_player_tile(map_id, *target, shape=shape)
         goal_radius = 1 if target in occupied else 0
         masked = self.search_mask(collision)
-        mask_bytes, mask_width, mask_height = masked or (None, 0, 0)
+        mask_bytes, mask_bounds = masked or (None, None)
         queue = [(0, 0, start)]
         previous: dict[tuple[int, int], tuple[int, int] | None] = {start: None}
         cost = {start: 0}
@@ -3824,9 +3975,9 @@ class World(MagicRuntime):
                 destination = current
                 break
             cx, cy = current
-            masked_here = (mask_bytes is not None and 0 <= cx < mask_width
-                           and 0 <= cy < mask_height)
-            for dx, dy in (LEGAL_STEPS[mask_bytes[cy * mask_width + cx]]
+            mask_index = mask_bounds.index(cx, cy) if mask_bounds is not None else None
+            masked_here = mask_bytes is not None and mask_index is not None
+            for dx, dy in (LEGAL_STEPS[mask_bytes[mask_index]]
                            if masked_here else DIRS):
                 nxt = cx + dx, cy + dy
                 if nxt in occupied:
@@ -3911,7 +4062,7 @@ class World(MagicRuntime):
                             min_y - y, 0, y - max_y)
 
         masked = self.search_mask(collision)
-        mask_bytes, mask_width, mask_height = masked or (None, 0, 0)
+        mask_bytes, mask_bounds = masked or (None, None)
         queue = [(heuristic(start), 0, start)]
         previous: dict[tuple[int, int], tuple[int, int] | None] = {start: None}
         cost = {start: 0}
@@ -3926,9 +4077,9 @@ class World(MagicRuntime):
             if steps[current] >= max_steps:
                 continue
             cx, cy = current
-            masked_here = (mask_bytes is not None and 0 <= cx < mask_width
-                           and 0 <= cy < mask_height)
-            for dx, dy in (LEGAL_STEPS[mask_bytes[cy * mask_width + cx]]
+            mask_index = mask_bounds.index(cx, cy) if mask_bounds is not None else None
+            masked_here = mask_bytes is not None and mask_index is not None
+            for dx, dy in (LEGAL_STEPS[mask_bytes[mask_index]]
                            if masked_here else DIRS):
                 nxt = cx + dx, cy + dy
                 if nxt in occupied:
@@ -4052,6 +4203,85 @@ class World(MagicRuntime):
         for session in list(self.sessions):
             if session.character and session.character.map_id == map_id:
                 await self.deliver(session, data)
+
+    def coordinate_packet(self, session, map_id, build, *, handle=None, named=False):
+        return map_packet(session, getattr(self, "coordinate_catalog", None), map_id,
+                          build, handle=handle, named=named,
+                          collision_maps=getattr(self, 'collision_maps', None))
+
+    def tutorial_state_packet(self, session, state, *, source_map=None):
+        from .coordinate_json import tutorial_packet
+        return tutorial_packet(self, session, state, source_map=source_map)
+
+    def magic_options_packet(self, session, state):
+        from .coordinate_json import recall_packet
+        return recall_packet(self, session, state)
+
+    async def broadcast_coordinates(self, map_id, build, *, excluding=None, source_current=None):
+        # Build before yielding so a delayed fanout retains each viewer's epoch.
+        frames = [(session, self.coordinate_packet(session, map_id, build))
+                  for session in list(self.sessions)
+                  if session is not excluding and session.character and session.character.map_id == map_id]
+        for session, frame in frames:
+            if source_current is not None and not source_current():
+                return
+            await self.deliver(session, frame)
+
+    async def broadcast_player_actor(self, character, *, remove_first=False):
+        frames = []
+        for viewer in list(self.sessions):
+            if viewer.character and viewer.character.map_id == character.map_id:
+                frame = self.player_actor_packet(viewer, character)
+                if remove_first and frame is not None:
+                    prefix = p.packet(p.REMOVE_ACTOR, struct.pack("<H", character.actor_id))
+                    frame = (CoordinateFrame(frame.token, prefix + frame.data)
+                             if isinstance(frame, CoordinateFrame) else prefix + frame)
+                frames.append((viewer, frame))
+        for viewer, frame in frames:
+            await self.deliver(viewer, frame)
+
+    async def send_map_marker(self, session, marker_id, x, y, map_name, text):
+        map_id = next((key for key, definition in self.maps.items()
+                       if map_name in (key, definition.client_name)), None)
+        if map_id is None:
+            map_id = self.resolve_map(map_name)
+        if map_id is None and session.coordinate_state is not None:
+            raise ValueError("unknown marker map")
+        frame = self.coordinate_packet(session, map_id or map_name,
+            lambda point: p.map_marker(marker_id, *point(x, y), map_name, text), named=True)
+        if frame is None:
+            await session.send(p.raw_text("This destination needs a client with map storage coordinate support."))
+        else:
+            await session.send(frame)
+
+    def bags_packet(self, session, map_id):
+        def build(point):
+            rows = [struct.pack("<HHB", *point(x, y), self.bag_wire_id(bag_id))
+                    for bag_id, (x, y, _) in self.bags.items()
+                    if self.bag_maps.get(bag_id, "") == map_id]
+            return p.packet(p.GET_BAGS_LIST, bytes((len(rows),)) + b"".join(rows))
+        return self.coordinate_packet(session, map_id, build)
+
+    async def send_party_rows(self, session, rows, **options):
+        rows = tuple(rows)
+        def build(point):
+            converted = []
+            for row in rows:
+                map_id, x, y = row[7:10]
+                # Empty-map offline/invitation rows carry clearing sentinels.
+                if map_id:
+                    x, y = point(map_id, x, y)
+                elif session.coordinate_state is not None and (x, y) != (0, 0):
+                    raise ValueError("empty party map requires zero location sentinel")
+                converted.append((*row[:8], x, y))
+            return p.party_state(converted, **options)
+        frame = named_rows_packet(session, getattr(self, "coordinate_catalog", None),
+                                  [row[7] for row in rows if row[7]], build,
+                                  collision_maps=getattr(self, 'collision_maps', None))
+        if frame is None:
+            await session.send(p.raw_text("Party location display needs map storage coordinate support."))
+        else:
+            await session.send(frame)
 
     def record_actor_move(self, actor_id: int, now: float | None = None) -> None:
         """Track recent movement pressure for resync diagnostics."""
@@ -4194,7 +4424,7 @@ class World(MagicRuntime):
         for actor_id in sorted(desired - previous):
             npc = self.npcs[actor_id][0]
             visible.add(actor_id)
-            added.append(self.npc_actor_packet(npc))
+            added.append(self.npc_actor_packet(npc, recipient=session, map_id=self.npcs[actor_id][1]))
         await session.send_many(added)
 
     async def send_stats(self, session: Session, *, force: bool = False):
@@ -4504,10 +4734,18 @@ class World(MagicRuntime):
     async def send_adjacent_maps(self, session: Session) -> None:
         """Name the handles the actor packets of this client's neighbours carry."""
         c = session.character
-        if not c or not self.adjacent_actors_enabled(session):
+        if not c:
+            return
+        if session.coordinate_state is not None:
+            await session.send(CoordinateFrame(session.coordinate_token(),
+                p.packet(p.ELORIA_COORDINATE_CONTEXT, session.coordinate_state.definition_payload())))
+            return
+        if not self.adjacent_actors_enabled(session):
             return
         entries = [(handle, self.maps[far].client_name)
-                   for far, handle in self.adjacent_handles(c.map_id).items() if far in self.maps]
+                   for far, handle in self.adjacent_handles(c.map_id).items()
+                   if far in self.maps and legacy_map_supported(getattr(self, "coordinate_catalog", None), far,
+                                                               getattr(self, 'collision_maps', None))]
         await session.send(p.adjacent_maps_packet(entries))
 
     def actor_map(self, actor_id: int) -> str | None:
@@ -4527,10 +4765,15 @@ class World(MagicRuntime):
         radius = self.creature_visibility_distance(session)
         found: dict[int, tuple] = {}
         for far in self.adjacent_maps(c.map_id):
+            if session.coordinate_state is None and not legacy_map_supported(
+                    getattr(self, "coordinate_catalog", None), far,
+                    getattr(self, 'collision_maps', None)):
+                continue
             frames = self.land_frames[c.map_id, far]
             fx, fy = neighbour_tile(frames, c.x, c.y)
-            cells = frames[1].cells
-            if fx < -radius or fy < -radius or fx >= cells[0] + radius or fy >= cells[1] + radius:
+            bounds = frames[1].bounds
+            if (fx < bounds.min_x - radius or fy < bounds.min_y - radius
+                    or fx >= bounds.max_x + radius or fy >= bounds.max_y + radius):
                 continue
             for animal in self.creatures_near(far, fx, fy, radius):
                 if animal.alive and abs(animal.x - fx) <= radius and abs(animal.y - fy) <= radius:
@@ -4545,10 +4788,23 @@ class World(MagicRuntime):
                     found[oc.actor_id] = (far, oc)
         return found
 
-    def npc_actor_packet(self, npc, map_handle: int = 0) -> bytes:
-        return (p.actor_packet(npc, map_handle=map_handle)
-                if npc.actor_type == 6 or npc.actor_type > 0xFF
-                else p.enhanced_actor_packet(npc, map_handle=map_handle))
+    @staticmethod
+    def wire_actor(actor, point):
+        wire = copy.copy(actor)
+        wire.x, wire.y = point(actor.x, actor.y)
+        return wire
+
+    def npc_actor_packet(self, npc, map_handle: int = 0, *, recipient=None, map_id=None):
+        def build(point):
+            actor = self.wire_actor(npc, point)
+            return (p.actor_packet(actor, map_handle=map_handle)
+                    if actor.actor_type == 6 or actor.actor_type > 0xFF
+                    else p.enhanced_actor_packet(actor, map_handle=map_handle))
+        if recipient is None:
+            return build(lambda x, y: (x, y))
+        if map_id is None:
+            raise ValueError("NPC output requires its explicit map")
+        return self.coordinate_packet(recipient, map_id, build, handle=map_handle)
 
     def drop_adjacent_viewer(self, session: Session, actor_id: int) -> None:
         watching = self.adjacent_viewer_table().get(actor_id)
@@ -4603,7 +4859,7 @@ class World(MagicRuntime):
                 if actor.summoned:
                     added.append(p.actor_health(actor.actor_id, actor.max_health))
             elif actor_id in self.npcs:
-                added.append(self.npc_actor_packet(actor, map_handle=handle))
+                added.append(self.npc_actor_packet(actor, map_handle=handle, recipient=session, map_id=far))
             else:
                 added.append(self.player_actor_packet(session, actor, map_handle=handle))
         await session.send_many(added)
@@ -4678,7 +4934,9 @@ class World(MagicRuntime):
             owner = self.find_player_by_actor(animal.owner_id)
             if owner and owner.character:
                 color = self.guild_tag_color_for(recipient.character, owner.character)
-        return p.actor_packet(animal, guild_tag_color=color, map_handle=map_handle)
+        return self.coordinate_packet(recipient, animal.map_id,
+            lambda point: p.actor_packet(self.wire_actor(animal, point), guild_tag_color=color,
+                                          map_handle=map_handle), handle=map_handle)
 
     def player_actor_packet(self, recipient: Session, character: Character, map_handle: int = 0) -> bytes:
         color = None
@@ -4692,10 +4950,11 @@ class World(MagicRuntime):
                       if raid_enemy or pk_zone_at(
                           character.map_id, character.x, character.y)
                       else character.actor_type)
-        return p.enhanced_actor_packet(
-            character, guild_tag_color=color, actor_type=actor_type,
-            wardrobe="actor_wardrobe_v1" in recipient.client_capabilities,
-            map_handle=map_handle)
+        return self.coordinate_packet(recipient, character.map_id,
+            lambda point: p.enhanced_actor_packet(
+                self.wire_actor(character, point), guild_tag_color=color, actor_type=actor_type,
+                wardrobe="actor_wardrobe_v1" in recipient.client_capabilities,
+                map_handle=map_handle), handle=map_handle)
 
     async def refresh_player_view(self, session: Session) -> None:
         """Refresh player names using this recipient's guild-color preferences."""
@@ -4709,20 +4968,32 @@ class World(MagicRuntime):
                 await session.send(self.player_actor_packet(session, target))
 
     async def enter(self, session: Session, character: Character):
+        self.require_coordinate_login(session, character)
         session.character = character
-        self.sessions.add(session)
+        if session.coordinate_state is None:
+            self.sessions.add(session)
         character = await sky.login(self, session, character)
         from .creature_retirements import migrate_progress
         migrate_progress(character, self.creatures)
         lantern.prepare(self, character)
         await bell.prepare(self, character)
         self.reconcile_research(character)
+        destination = ((character.map_id, character.x, character.y)
+                       if character.map_id in self.maps else BEAM_RESPAWN)
+        map_id, x, y = destination
+        x, y = self.free_player_tile(map_id, x, y, exclude=character)
+        self.require_coordinate_destination(session, map_id, x, y)
         await session.send(p.packet(p.LOG_IN_OK))
-        if character.map_id not in self.maps:
-            character.map_id, character.x, character.y = BEAM_RESPAWN
-        character.x, character.y = self.free_player_tile(character.map_id, character.x,
-                                                          character.y, exclude=character)
-        await session.send(p.packet(p.CHANGE_MAP, self.maps[character.map_id].client_name.encode() + b"\0"))
+        if session.coordinate_state is not None:
+            def commit_login():
+                character.map_id, character.x, character.y = map_id, x, y
+                self.sessions.add(session)
+            await session.activate_coordinates(map_id, self.maps[map_id].client_name,
+                                              self.coordinate_handles(session, map_id),
+                                              commit=commit_login)
+        else:
+            character.map_id, character.x, character.y = map_id, x, y
+            await session.send(p.packet(p.CHANGE_MAP, self.maps[map_id].client_name.encode() + b"\0"))
         await session.send(stats_packet(character))
         await self.send_knowledge_list(session)
         session.inventory_slots = self.sync_inventory_slots(character)
@@ -4757,10 +5028,7 @@ class World(MagicRuntime):
         # Anyone watching for this character is told they are here.
         await self.announce_buddy_presence(character, True)
         if self.bags:
-            bag_entries = [struct.pack("<HHB", x, y, self.bag_wire_id(bag_id))
-                           for bag_id, (x, y, _) in self.bags.items()
-                           if self.bag_maps.get(bag_id, "") == character.map_id]
-            await session.send(p.packet(p.GET_BAGS_LIST, bytes((len(bag_entries),)) + b"".join(bag_entries)))
+            await session.send(self.bags_packet(session, character.map_id))
         await session.send(self.player_actor_packet(session, character))
         for other in self.sessions:
             if (other is not session and other.character
@@ -4807,6 +5075,8 @@ class World(MagicRuntime):
         c = session.character
         if not c:
             return
+        if session.coordinate_state is not None:
+            await self.send_adjacent_maps(session)
         self.drop_animal_viewer(session, tuple(session.visible_animals))
         session.visible_animals.clear()
         session.visible_npcs.clear()
@@ -4941,7 +5211,7 @@ class World(MagicRuntime):
                     pass
 
     @staticmethod
-    def stray_arrow_tile(shooter, target) -> tuple[int, int]:
+    def stray_arrow_tile(shooter, target, bounds=None) -> tuple[int, int]:
         """Where a missed arrow lands: past the target, off to one side.
 
         It is deliberately a function of the two positions rather than a fresh
@@ -4951,8 +5221,17 @@ class World(MagicRuntime):
         step_x = (target.x - shooter.x)
         step_y = (target.y - shooter.y)
         drift = 1 if (target.x + target.y) % 2 else -1
-        return (max(0, target.x + (1 if step_x > 0 else -1 if step_x < 0 else drift)),
-                max(0, target.y + (1 if step_y > 0 else -1 if step_y < 0 else drift)))
+        x = target.x + (1 if step_x > 0 else -1 if step_x < 0 else drift)
+        y = target.y + (1 if step_y > 0 else -1 if step_y < 0 else drift)
+        if bounds is not None:
+            return (max(bounds.min_x, min(bounds.max_x - 1, x)),
+                    max(bounds.min_y, min(bounds.max_y - 1, y)))
+        return max(0, x), max(0, y)
+
+    @staticmethod
+    def location_context_current(session, map_id, token):
+        return (session.character is not None and session.character.map_id == map_id
+                and (token is None or session.coordinate_token_current(token)))
 
     async def fire_at_ground(self, session: Session, x: int, y: int) -> None:
         """Loose an arrow at a place instead of at somebody.
@@ -4964,6 +5243,10 @@ class World(MagicRuntime):
         c = session.character
         if not c:
             return
+        source_map = c.map_id
+        token = session.coordinate_token() if session.coordinate_state is not None else None
+        if token is not None:
+            session.coordinate_state.catalog.profile(source_map).to_wire(x, y)
         loadout = equipped_ranging_items(c)
         if not loadout:
             await session.send(p.raw_text(
@@ -4975,12 +5258,19 @@ class World(MagicRuntime):
             await session.send(p.raw_text(
                 "That is too close to range; aim at least four spaces away."))
             return
-        await self.broadcast_map(c.map_id, p.missile_aim_at_ground(c.actor_id, x, y))
+        await self.broadcast_coordinates(source_map,
+            lambda point: p.missile_aim_at_ground(c.actor_id, *point(x, y)))
         await asyncio.sleep(0.25)
-        await self.broadcast_map(c.map_id, p.missile_fire_at_ground(c.actor_id, x, y))
+        if not self.location_context_current(session, source_map, token):
+            return
+        await self.broadcast_coordinates(source_map,
+            lambda point: p.missile_fire_at_ground(c.actor_id, *point(x, y)))
+        if not self.location_context_current(session, source_map, token):
+            return
         await self.consume_ranging_ammunition(
             session, weapon_name, ammunition_name)
-        await self.drop_into_bag(x, y, [(ammunition_name, 1)], c.map_id)
+        if self.location_context_current(session, source_map, token):
+            await self.drop_into_bag(x, y, [(ammunition_name, 1)], source_map)
 
     def weather_on(self, map_id: str) -> tuple[int, int]:
         """The sky over a map as (kind, intensity). Clear until rolled."""
@@ -5004,9 +5294,14 @@ class World(MagicRuntime):
         c = session.character
         if not c:
             return
-        for fire in self.fires:
-            if fire.map_id == c.map_id:
-                await session.send(p.fire_particles(fire.x, fire.y, fire.kind))
+        map_id = c.map_id
+        frames = [self.coordinate_packet(session, map_id,
+                    lambda point: p.fire_particles(*point(fire.x, fire.y), fire.kind))
+                  for fire in self.fires if fire.map_id == map_id]
+        await session.send_many(frames)
+
+    async def remove_fire_at(self, map_id: str, x: int, y: int) -> None:
+        await self.broadcast_coordinates(map_id, lambda point: p.remove_fire_at(*point(x, y)))
 
     async def set_weather(self, map_id: str, kind: int, intensity: int) -> None:
         """Change the sky over one map and tell everyone standing under it.
@@ -5048,14 +5343,15 @@ class World(MagicRuntime):
         What it cannot know is what somebody else is doing, and that is what
         this carries.
         """
-        frame = p.play_sound(name, x, y, gain)
-        for session in list(getattr(self, "sessions", ())):
-            if (session is not excluding and session.character
-                    and session.character.map_id == map_id):
-                try:
-                    await session.send(frame)
-                except (ConnectionError, asyncio.CancelledError):
-                    pass
+        frames = [(session, self.coordinate_packet(session, map_id,
+                    lambda point: p.play_sound(name, *point(x, y), gain)))
+                  for session in list(getattr(self, "sessions", ()))
+                  if session is not excluding and session.character and session.character.map_id == map_id]
+        for session, frame in frames:
+            try:
+                await session.send(frame)
+            except (ConnectionError, asyncio.CancelledError):
+                pass
 
     async def send_map_music(self, session: Session) -> None:
         """State the music for the map the character is standing on."""
@@ -5168,25 +5464,32 @@ class World(MagicRuntime):
         if not c or "navigation_hud_v1" not in session.client_capabilities:
             return
         if not waypoint:
-            await session.send(p.navigation_state(False, 0, 0, 0, "", ""))
+            frame = p.navigation_state(False, 0, 0, 0, "", "")
+            await session.send(CoordinateFrame(session.coordinate_token(), frame)
+                               if session.coordinate_state is not None else frame)
             return
         map_id, x, y, label = waypoint
         distance = (max(abs(c.x - x), abs(c.y - y))
                     if c.map_id == map_id else 0)
-        await session.send(p.navigation_state(
-            True, x, y, distance, map_id, label))
+        frame = self.coordinate_packet(session, map_id,
+            lambda point: p.navigation_state(True, *point(x, y), distance, map_id, label), named=True)
+        if frame is None:
+            await session.send(p.raw_text("Waypoint location needs map storage coordinate support."))
+        else:
+            await session.send(frame)
 
     async def set_waypoint(self, session: Session, x: int, y: int,
                            label: str = "Waypoint") -> None:
         c = session.character
         if not c:
             return
-        if not 0 <= x <= 2047 or not 0 <= y <= 2047:
+        if session.coordinate_state is not None:
+            session.coordinate_state.catalog.profile(c.map_id).to_wire(x, y)
+        elif not 0 <= x <= 2047 or not 0 <= y <= 2047:
             raise ValueError("Waypoint coordinates must be between 0 and 2047.")
         label = label.strip()[:79] or "Waypoint"
         session.waypoint = (c.map_id, x, y, label)
-        await session.send(p.map_marker(
-            490, x, y, c.map_id, label))
+        await self.send_map_marker(session, 490, x, y, c.map_id, label)
         await self.send_navigation_state(session)
 
     async def clear_waypoint(self, session: Session) -> None:
@@ -5233,14 +5536,30 @@ class World(MagicRuntime):
         blocked = self.blocking_tiles(map_id, ignore=ignore)
         return blocked | (walkway_portals(self, map_id) - {tuple(target)})
 
+    def create_location_task(self, session, function, *args):
+        """Capture before task scheduling, not when its coroutine first runs."""
+        map_id = session.character.map_id
+        token = session.coordinate_token() if session.coordinate_state is not None else None
+        async def run():
+            if self.location_context_current(session, map_id, token):
+                return await function(*args)
+        return asyncio.create_task(run())
+
     async def move(self, c: Character, target_x: int, target_y: int):
         # The EL client applies one tile per actor command; keep server authoritative.
+        session = next((item for item in self.sessions if item.character is c), None)
+        map_id = c.map_id
+        token = session.coordinate_token() if session and session.coordinate_state is not None else None
+        def current():
+            return c.map_id == map_id and (session is None or self.location_context_current(session, map_id, token))
         occupied = self.walk_blocked(c.map_id, (target_x, target_y), ignore=(c,))
         path = self.find_path(c.map_id, (c.x, c.y), (target_x, target_y), occupied,
                               footprint_of(c))
         session = next((item for item in self.sessions if item.character is c), None)
         if path and session and session.sitting:
             await self.set_sitting(session, False)
+        if not current():
+            return
         at_destination = ((c.x, c.y) == (target_x, target_y)
                           or ((target_x, target_y) in occupied
                               and max(abs(c.x - target_x), abs(c.y - target_y)) == 1))
@@ -5255,6 +5574,8 @@ class World(MagicRuntime):
                 and not session.harvest_task.done():
             session.harvest_task.cancel()
         for next_pos in path:
+            if not current():
+                return
             previous_pk_zone = pk_zone_at(c.map_id, c.x, c.y)
             dx, dy = next_pos[0] - c.x, next_pos[1] - c.y
             command = movement_direction(dx, dy, c.running)
@@ -5271,7 +5592,7 @@ class World(MagicRuntime):
                 break
             step_origin = (c.map_id, c.x, c.y)
             await self.await_player_step(session, c, dx, dy)
-            if (c.map_id, c.x, c.y) != step_origin:
+            if not current() or (c.map_id, c.x, c.y) != step_origin:
                 # Another route or teleport took over while this step waited.
                 # Its delta was computed from the old position: publishing it
                 # now would permanently offset clients from the server tile.
@@ -5292,6 +5613,8 @@ class World(MagicRuntime):
                     await self.walkthrough_event(session, "reach")
             if session and c.map_id in self.questline_visit_maps:
                 await self.questline_event(session, "visit")
+            if not current():
+                return
             if session and session.waypoint:
                 waypoint_map, waypoint_x, waypoint_y, _ = session.waypoint
                 if (c.map_id, c.x, c.y) == (waypoint_map, waypoint_x, waypoint_y):
@@ -5299,12 +5622,20 @@ class World(MagicRuntime):
                     await session.send(p.raw_text("Waypoint reached."))
                 else:
                     await self.send_navigation_state(session)
+            if not current():
+                return
             current_pk_zone = pk_zone_at(c.map_id, c.x, c.y)
             speed_hax = c.speed_hax_active
             # BUFF_DOUBLE_SPEED makes the stock client choose its running frames
             # and halve step_duration. Explicit run commands as well cause the
             # local movement queue to diverge and eventually request a resync.
-            await self.broadcast_map(c.map_id, p.actor_command(c.actor_id, command))
+            if token is not None:
+                await self.broadcast_coordinates(map_id,
+                    lambda point: p.actor_command(c.actor_id, command), source_current=current)
+            else:
+                await self.broadcast_map(c.map_id, p.actor_command(c.actor_id, command))
+            if not current():
+                return
             # The replacement actor already contains this step's new position.
             # Send it after the delta, otherwise clients take that step twice.
             if session and current_pk_zone != previous_pk_zone:
@@ -5327,6 +5658,8 @@ class World(MagicRuntime):
                     await session.flush()
                 except (ConnectionError, OSError):
                     session.outbox.clear()
+            if not current():
+                return
             self.record_actor_move(c.actor_id)
             if speed_hax:
                 if random.random() < self.speed_food_loss_chance(c):
@@ -5346,6 +5679,8 @@ class World(MagicRuntime):
                     await session.send(p.packet(p.CLOSE_BAG))
             if session and await self.check_portal(session):
                 return
+        if not current():
+            return
         self.save_soon(c)
         if session and session.pending_bag is not None:
             bag = self.bags.get(session.pending_bag)
@@ -5363,6 +5698,7 @@ class World(MagicRuntime):
             # An object portal is entered by using its object, not by walking
             # over its tile: a secret stays secret from anyone crossing the spot.
             return False
+        self.require_coordinate_destination(session, portal.destination, portal.destination_x, portal.destination_y)
         session.portal_intent = None
         departure = (c.map_id, c.x, c.y)
         land = (getattr(self, 'land_connections', {}).get((c.map_id, portal.destination))
@@ -5486,8 +5822,10 @@ class World(MagicRuntime):
         c = session.character
         if not c:
             return
-        for frame in p.map_object_packets(self.map_object_entries(c.map_id)):
-            await session.send(frame)
+        await session.send(self.coordinate_packet(session, c.map_id,
+            lambda point: b"".join(p.map_object_packets(
+                (object_id, kind, *point(x, y), label, detail)
+                for object_id, kind, x, y, label, detail in self.map_object_entries(c.map_id)))))
 
     async def send_harvest_state(self, session: Session, active: bool,
                                  object_id: int = 0, resource: str = "") -> None:
@@ -5504,6 +5842,17 @@ class World(MagicRuntime):
         if not c or session.combat_target is not None or session.aggressors:
             return
         interactive = self.interactives.get((c.map_id, object_id))
+        # Gates can award/save progress before selecting their portal below.
+        if ((getattr(self, 'coordinate_catalog', None) is not None or session.coordinate_state is not None)
+                and (interactive is None or interactive.role in ('portal', 'secret', 'gate'))):
+            leaving = portals_leaving(self, c.map_id)
+            exact = [portal for portal in leaving if portal.object_id == object_id]
+            choices = exact or [portal for portal in leaving if portal.object_id is None
+                               and max(abs(c.x-portal.x), abs(c.y-portal.y)) <= self.settings.portal_activation_distance]
+            if choices:
+                portal = min(choices, key=lambda entry: max(abs(c.x-entry.x), abs(c.y-entry.y)))
+                self.require_coordinate_destination(session, portal.destination,
+                                                    portal.destination_x, portal.destination_y)
         if interactive:
             distance = max(abs(c.x - interactive.x), abs(c.y - interactive.y))
             if distance > self.settings.portal_activation_distance:
@@ -5572,7 +5921,8 @@ class World(MagicRuntime):
             # maps.txt remains the authoritative list of usable exits.
             return
         portal = min(choices, key=lambda entry:
-                     max(abs(c.x-entry.x), abs(c.y-entry.y)))
+                      max(abs(c.x-entry.x), abs(c.y-entry.y)))
+        self.require_coordinate_destination(session, portal.destination, portal.destination_x, portal.destination_y)
         session.portal_intent = (c.map_id, portal.x, portal.y)
         if session.move_task and not session.move_task.done():
             session.move_task.cancel()
@@ -5584,7 +5934,7 @@ class World(MagicRuntime):
             await self.change_map(session, portal.destination,
                                   portal.destination_x, portal.destination_y)
             return
-        session.move_task = asyncio.create_task(self.move(c, portal.x, portal.y))
+        session.move_task = self.create_location_task(session, self.move, c, portal.x, portal.y)
 
     async def inspect_map_object(self, session: Session, object_id: int):
         c = session.character
@@ -5607,7 +5957,53 @@ class World(MagicRuntime):
             return
         await session.send(p.raw_text("There is nothing to see there."))
 
+    def require_coordinate_destination(self, session, map_id, x=None, y=None):
+        from .coordinate_admission import require_destination
+        require_destination(self, session, map_id, x, y)
+        if session.coordinate_state is not None:
+            if map_id not in self.maps:
+                raise ValueError("Coordinate destination is not loaded.")
+            session.coordinate_state.prepare_activation(map_id, self.coordinate_handles(session, map_id))
+
+    def coordinate_handles(self, session, map_id):
+        handles = {0: map_id}
+        # Rendering capabilities may arrive after login; the coordinate table
+        # must already bind every handle before a later adjacent actor appears.
+        handles.update({handle: far for far, handle in self.adjacent_handles(map_id).items()})
+        return handles
+
+    def require_coordinate_login(self, session, character):
+        from .coordinate_admission import require_private_support
+        if session.coordinate_state is not None:
+            if character.map_id not in self.maps:
+                raise ValueError("Saved coordinate map is not loaded.")
+            if ((character.quest_state.get('sky_run') and not character.quest_state.get('sky_paused'))
+                    or (lantern.active(character) and getattr(self, 'lantern_layout', None)
+                        and lantern.current(character).key != 'handoff')
+                    or (bell.active(character) and getattr(self, 'bell_layout', None)
+                        and not bell.flag(character, 'paused'))):
+                require_private_support(session)
+        destination = ((character.map_id, character.x, character.y)
+                       if character.map_id in self.maps else BEAM_RESPAWN)
+        self.require_coordinate_destination(session, *destination)
+        if session.coordinate_state is not None:
+            session.coordinate_state.prepare_activation(destination[0],
+                self.coordinate_handles(session, destination[0]))
+
     async def change_map(self, session: Session, map_id: str, x: int, y: int):
+        self.require_coordinate_destination(session, map_id, x, y)
+        if session.coordinate_state is None:
+            return await self._change_map(session, map_id, x, y)
+        if getattr(session, '_coordinate_lifecycle', False):
+            raise ValueError("Map transition already in progress.")
+        session.coordinate_state.prepare_activation(map_id, self.coordinate_handles(session, map_id))
+        session._coordinate_lifecycle = True
+        try:
+            return await self._change_map(session, map_id, x, y)
+        finally:
+            session._coordinate_lifecycle = False
+
+    async def _change_map(self, session: Session, map_id: str, x: int, y: int):
         c = session.character
         if not c or map_id not in self.maps:
             return
@@ -5623,14 +6019,21 @@ class World(MagicRuntime):
             await session.send(p.raw_text("Finish the crossing, or choose Skip tutorial to leave." if lantern.on_island(c) else "That rescue belongs to another traveler."))
             return
         old_map = c.map_id
+        token = session.coordinate_token() if session.coordinate_state is not None else None
+        x, y = self.free_player_tile(map_id, x, y, exclude=c)
+        self.require_coordinate_destination(session, map_id, x, y)
         if old_map == wt.HOME_MAP and map_id != wt.HOME_MAP:
             await self.walkthrough_event(session, "travel")
+        if not self.location_context_current(session, old_map, token):
+            return
         land_crossing = (self.adjacent_actors_enabled(session)
                          and (old_map, map_id) in (getattr(self, "land_frames", None) or {}))
         await self.broadcast_except(p.packet(p.REMOVE_ACTOR, struct.pack("<H", c.actor_id)), session)
-        x, y = self.free_player_tile(map_id, x, y, exclude=c)
-        c.map_id, c.x, c.y = map_id, x, y
-        await gauntlets.on_map_change(self, session, old_map)
+        if not self.location_context_current(session, old_map, token):
+            return
+        if session.coordinate_state is None:
+            c.map_id, c.x, c.y = map_id, x, y
+            await gauntlets.on_map_change(self, session, old_map)
         carried_players: set[int] = set()
         if land_crossing:
             # A seamless crossing keeps every actor the client already shows:
@@ -5648,7 +6051,18 @@ class World(MagicRuntime):
             # CHANGE_MAP does not reliably discard the stock client's old actor
             # table. Clear it explicitly, then repopulate destination-map actors.
             await session.send(p.packet(p.KILL_ALL_ACTORS))
-        await session.send(p.packet(p.CHANGE_MAP, self.maps[map_id].client_name.encode() + b"\0"))
+        if session.coordinate_state is not None:
+            if not self.location_context_current(session, old_map, token):
+                return
+            def commit_location():
+                c.map_id, c.x, c.y = map_id, x, y
+                session.pending_spell = None
+            await session.activate_coordinates(map_id, self.maps[map_id].client_name,
+                                              self.coordinate_handles(session, map_id),
+                                              commit=commit_location)
+            await gauntlets.on_map_change(self, session, old_map)
+        else:
+            await session.send(p.packet(p.CHANGE_MAP, self.maps[map_id].client_name.encode() + b"\0"))
         # Immediately behind the map change rather than with the scenery below:
         # the client starts loading the package the moment CHANGE_MAP arrives,
         # and the digest is what it checks that package against.
@@ -5669,12 +6083,8 @@ class World(MagicRuntime):
         await self.send_fires(session)
         await self.send_teleporters(session)
         await self.send_world_objects(session)
-        bag_entries = [struct.pack("<HHB", bx, by, self.bag_wire_id(bag_id))
-                       for bag_id, (bx, by, _) in self.bags.items()
-                       if self.bag_maps.get(bag_id, "") == map_id]
-        if bag_entries:
-            await session.send(p.packet(p.GET_BAGS_LIST,
-                                        bytes((len(bag_entries),)) + b"".join(bag_entries)))
+        if any(self.bag_maps.get(bag_id, "") == map_id for bag_id in self.bags):
+            await session.send(self.bags_packet(session, map_id))
         await session.send(self.player_actor_packet(session, c))
         for other in self.sessions:
             if other is not session and other.character and other.character.map_id == map_id:
@@ -5718,11 +6128,12 @@ class World(MagicRuntime):
     async def teleport(self, session: Session, x: int, y: int, map_id: str):
         if not session.character:
             return
-        if not 0 <= x <= 2047 or not 0 <= y <= 2047:
+        if session.coordinate_state is None and (not 0 <= x <= 2047 or not 0 <= y <= 2047):
             raise ValueError("Coordinates must be between 0 and 2047.")
         resolved = self.resolve_map(map_id)
         if not resolved:
             raise ValueError(f"Unknown map {map_id!r}.")
+        self.require_coordinate_destination(session, resolved, x, y)
         if session.move_task and session.move_task is not asyncio.current_task() \
                 and not session.move_task.done():
             session.move_task.cancel()
@@ -6450,9 +6861,13 @@ class World(MagicRuntime):
 
     async def ranging_loop(self, session: Session, target_id: int) -> None:
         c = session.character
+        source_map = c.map_id if c else ""
+        token = session.coordinate_token() if session.coordinate_state is not None else None
         task = asyncio.current_task()
         try:
             while c and c.health > 0 and not player_in_combat(session):
+                if not self.location_context_current(session, source_map, token):
+                    break
                 animal = self.animals.get(target_id)
                 if (session.ranging_target != target_id or not animal
                         or not animal.alive or animal.map_id != c.map_id):
@@ -6465,13 +6880,17 @@ class World(MagicRuntime):
                 weapon_name, ammunition_name = loadout
                 distance = actor_distance(c, animal)
                 await self.face_toward(c, animal)
+                if not self.location_context_current(session, source_map, token):
+                    break
                 await self.broadcast_map(
                     c.map_id, p.missile_aim(c.actor_id, animal.actor_id))
                 await asyncio.sleep(0.25)
-                if session.ranging_target != target_id:
+                if session.ranging_target != target_id or not self.location_context_current(session, source_map, token):
                     break
                 await self.consume_ranging_ammunition(
                     session, weapon_name, ammunition_name)
+                if not self.location_context_current(session, source_map, token):
+                    break
                 target_moving = (
                     time.monotonic() - animal.last_moved_at <= 0.75)
                 struck = ranging_critical(c) > random.randrange(100) or (
@@ -6493,9 +6912,12 @@ class World(MagicRuntime):
                     await self.broadcast_map(
                         c.map_id, p.missile_fire(c.actor_id, animal.actor_id))
                 else:
-                    stray_x, stray_y = self.stray_arrow_tile(c, animal)
-                    await self.broadcast_map(c.map_id, p.missile_fire_at_ground(
-                        c.actor_id, stray_x, stray_y))
+                    bounds = session.coordinate_state.catalog.profile(source_map).bounds if token else None
+                    stray_x, stray_y = self.stray_arrow_tile(c, animal, bounds)
+                    await self.broadcast_coordinates(source_map,
+                        lambda point: p.missile_fire_at_ground(c.actor_id, *point(stray_x, stray_y)))
+                if not self.location_context_current(session, source_map, token):
+                    break
                 if struck:
                     attacker_gear = equipment_stats(c.equipment)
                     defender_gear = equipment_stats(animal.equipment)
@@ -6534,6 +6956,8 @@ class World(MagicRuntime):
                         c, animal, session, "on_hit")
                     await self.apply_item_effects(
                         animal, c, None, "when_hit", session)
+                    if not self.location_context_current(session, source_map, token):
+                        break
                     animal.health = max(0, animal.health - damage)
                     animal.ranged_aggressor_id = c.actor_id
                     animal.pursuit_retry_at = 0.0
@@ -7351,6 +7775,8 @@ class World(MagicRuntime):
         return random.randrange(100) >= self.settings.flee_failure_percent
 
     async def begin_flee(self, session: Session, target_x: int, target_y: int):
+        source_map = session.character.map_id if session.character else None
+        token = session.coordinate_token() if session.coordinate_state is not None else None
         c = session.character
         if self.special_day_has("brave") and not bell.on_map(c):
             await session.send(p.raw_text("You cannot flee during the Day of the Brave."))
@@ -7417,7 +7843,8 @@ class World(MagicRuntime):
             # did not survive, it took the character out of the game
             # entirely: unable to attack, to be attacked, to walk or to flee.
             session.fleeing = False
-        await self.move(c, target_x, target_y)
+        if self.location_context_current(session, source_map, token):
+            await self.move(c, target_x, target_y)
 
     def player_approach_step(self, c: Character, target) -> tuple[int, int] | None:
         """One step of a player's walk to somewhere they can strike `target` from.
@@ -7959,8 +8386,23 @@ class World(MagicRuntime):
         finally:
             session.dying = False
 
+    def _coordinate_death_destination(self, c):
+        destination = gauntlets.death_exit(self, c)
+        if destination is not None:
+            return destination
+        raid = self.territory_raids.active
+        team = self.territory_raids.team_for(c.username)
+        if raid and not raid.finished and team:
+            spawn = raid.attacker_entry if team == raid.aggressor.key else raid.defender.defender_spawn
+            return raid.defender.map_id, *spawn
+        return BEAM_RESPAWN if c.skills['overall'] < NEW_PLAYER_DEATH_LEVEL else UNDERWORLD_RESPAWN
+
     async def _respawn_after_death(self, session: Session, c: Character,
                                    cause: str) -> None:
+        destination = self._coordinate_death_destination(c)
+        self.require_coordinate_destination(session, *destination)
+        source_map = c.map_id
+        token = session.coordinate_token() if session.coordinate_state is not None else None
         # A same-map respawn keeps the actor id. Drop the creature-side
         # memories before yielding so retaliation cannot follow that id to
         # the beam after the player's combat state has been cleared.
@@ -8020,18 +8462,8 @@ class World(MagicRuntime):
                     connected.combat_target = None
                 connected.combat_xp_events.pop(c.actor_id, None)
             session.fleeing = True
-            gauntlet_exit = gauntlets.death_exit(self, c)
-            if gauntlet_exit is not None:
-                destination = gauntlet_exit
-            elif raid and not raid.finished and raid_team:
-                spawn = (raid.attacker_entry
-                         if raid_team == raid.aggressor.key
-                         else raid.defender.defender_spawn)
-                destination = (raid.defender.map_id, *spawn)
-            elif c.skills["overall"] < NEW_PLAYER_DEATH_LEVEL:
-                destination = BEAM_RESPAWN
-            else:
-                destination = UNDERWORLD_RESPAWN
+            if not self.location_context_current(session, source_map, token):
+                return
             c.health = DEATH_RESPAWN_HEALTH
             await self.change_map(session, *destination)
             await self.send_stats(session, force=True)
@@ -10432,7 +10864,8 @@ class World(MagicRuntime):
         c = session.character
         if not c:
             return
-        await session.send(p.teleporters_list(self.teleporter_tiles(c.map_id)))
+        await session.send(self.coordinate_packet(session, c.map_id,
+            lambda point: p.teleporters_list([point(x, y) for x, y in self.teleporter_tiles(c.map_id)])))
 
     async def place_world_object(self, map_id: str, object_id: int, x: int,
                                  y: int, rotation: int, model: str) -> None:
@@ -10444,8 +10877,8 @@ class World(MagicRuntime):
         """
         self.world_objects.setdefault(map_id, {})[object_id] = (
             x, y, rotation, model)
-        await self.broadcast_map(
-            map_id, p.world_object(object_id, x, y, rotation, model))
+        await self.broadcast_coordinates(map_id,
+            lambda point: p.world_object(object_id, *point(x, y), rotation, model))
 
     async def remove_world_object(self, map_id: str, object_id: int) -> None:
         placed = self.world_objects.get(map_id, {})
@@ -10462,8 +10895,10 @@ class World(MagicRuntime):
         placed = self.world_objects.get(c.map_id, {})
         if not placed:
             return
-        await session.send(p.world_object_list(
-            [(object_id, *rest) for object_id, rest in sorted(placed.items())]))
+        await session.send(self.coordinate_packet(session, c.map_id,
+            lambda point: p.world_object_list(
+                [(object_id, *point(x, y), rotation, model)
+                 for object_id, (x, y, rotation, model) in sorted(placed.items())])))
 
     async def announce_teleport(self, character, from_tile, to_tile) -> None:
         """Both ends of a teleport, each to the map it happened on.
@@ -10473,11 +10908,11 @@ class World(MagicRuntime):
         is told about the arrival, the departure has already gone.
         """
         if from_tile is not None:
-            await self.broadcast_map(from_tile[0],
-                                     p.teleport_out(from_tile[1], from_tile[2]))
+            await self.broadcast_coordinates(from_tile[0],
+                lambda point: p.teleport_out(*point(from_tile[1], from_tile[2])))
         if to_tile is not None:
-            await self.broadcast_map(to_tile[0],
-                                     p.teleport_in(to_tile[1], to_tile[2]))
+            await self.broadcast_coordinates(to_tile[0],
+                lambda point: p.teleport_in(*point(to_tile[1], to_tile[2])))
 
     async def add_buddy(self, session: Session, name: str) -> None:
         """Put a name on the player's own list.
@@ -10821,10 +11256,7 @@ class World(MagicRuntime):
         definition = self.maps.get(wt.HOME_MAP)
         if not definition:
             return
-        await session.send(p.map_marker(
-            wt.MARKER_ID, target[0], target[1],
-            definition.client_name,
-            panel.marker_label or panel.title))
+        await self.send_map_marker(session, wt.MARKER_ID, target[0], target[1], definition.client_name, panel.marker_label or panel.title)
 
     async def send_walkthrough_text(self, session: Session, title: str,
                                     *paragraphs: str) -> None:
@@ -11061,15 +11493,13 @@ class World(MagicRuntime):
         marker_map = home.client_name if home else wt.HOME_MAP
         if stage == 1:
             for offset, (x, y) in enumerate(TUTORIAL_ROUTE_MARKERS):
-                await session.send(p.map_marker(
-                    500 + offset, x, y, marker_map,
-                    f"To {TUTORIAL_ROUTE_NPC}"))
+                await self.send_map_marker(session, 500 + offset, x, y, marker_map, f"To {TUTORIAL_ROUTE_NPC}")
         elif stage == 3 and c.quest_state.get("harvest_tutorial_started"):
             index = int(c.quest_state.get("tutorial_flower_index", 0))
             if index >= len(TUTORIAL_HARVESTS):
                 return
             name, x, y, _ = TUTORIAL_HARVESTS[index]
-            await session.send(p.map_marker(506, x, y, marker_map, name))
+            await self.send_map_marker(session, 506, x, y, marker_map, name)
 
     async def tutorial_page(self, session: Session, actor_id: int, response_id: int) -> None:
         scouting = [
@@ -14050,7 +14480,11 @@ class World(MagicRuntime):
     async def cast_spell(self, session: Session, sigils: tuple[int, ...], *,
                          power: int | None = None):
         c = session.character
+        source_map = c.map_id if c else None
+        token = session.coordinate_token() if session.coordinate_state is not None else None
         spell = self.spells.get(sigils)
+        if spell and spell.spell_id == 9:
+            self.require_coordinate_destination(session, *BEAM_RESPAWN)
         if spell and spell.effect:
             try:
                 return await self.begin_book_spell(session, spell, power)
@@ -14083,6 +14517,8 @@ class World(MagicRuntime):
         problem = can_cast(c, spell)
         if problem:
             await session.send(p.raw_text(problem)); await session.send(p.spell_result(2, spell.spell_id)); return
+        if not self.location_context_current(session, source_map, token):
+            return
         if not spend_cast(c, spell):
             self.save_soon(c)
             await session.send(p.raw_text(f"You failed to cast {spell.name}."))
@@ -14100,6 +14536,8 @@ class World(MagicRuntime):
         if spell.focus_name:
             await session.send(p.raw_text(
                 f"{spell.focus_name} consumed one Attunement Charge and replaced the anchor."))
+        if not self.location_context_current(session, source_map, token):
+            return
         if spell.spell_id == 5:
             session.pending_spell = spell
             await self.send_spell_visual_result(
@@ -14456,11 +14894,96 @@ class World(MagicRuntime):
         return "\n".join(lines)
 
     async def food_loop(self):
+        """Once a real minute: food, regeneration, reading and buff decay.
+
+        This runs on real time whatever the game clock is doing. `#speed`
+        moves the sky for a tester; it must not starve, heal or finish a book
+        for anyone faster, so the per-player upkeep that used to ride the
+        game-minute tick is kept apart from it.
+        """
         while True:
             await asyncio.sleep(60)
-            await self.advance_minute()
+            await self.player_minute()
+
+    async def clock_loop(self):
+        """Advance the game clock one minute per real minute times its speed.
+
+        Progress through the current game minute is banked whenever the speed
+        changes, so going from 1x to 60x half-way through a minute finishes that
+        minute in half a real second rather than starting it again, and a
+        `#set_clock` restarts the minute it names from the beginning.
+        """
+        self.clock_mark = time.monotonic()
+        while True:
+            wake = self._clock_wake_event()
+            # Cleared before banking: a speed change that lands while a minute
+            # is being broadcast sets it again, and the wait below returns at
+            # once instead of sleeping out the old speed's interval.
+            wake.clear()
+            self._bank_clock_progress()
+            while self.clock_progress >= 1.0:
+                self.clock_progress -= 1.0
+                await self.advance_clock()
+            speed = self.clock_speed
+            timeout = (None if speed <= 0
+                       else (1.0 - self.clock_progress) * 60.0 / speed)
+            try:
+                await asyncio.wait_for(wake.wait(), timeout)
+            except asyncio.TimeoutError:
+                pass
+
+    # Read with getattr: tests build worlds with object.__new__, and a world
+    # nobody has touched runs its clock at the ordinary speed.
+    clock_speed = 1.0
+    clock_progress = 0.0
+    clock_mark = 0.0
+    # `#speed` ceiling: a whole six-hour game day each real minute. Faster
+    # only means a NEW_MINUTE broadcast every few frames; `#set_clock` is the
+    # way to get somewhere sooner.
+    MAX_CLOCK_SPEED = 360.0
+
+    def _clock_wake_event(self) -> asyncio.Event:
+        wake = self.__dict__.get("_clock_wake")
+        if wake is None:
+            wake = self._clock_wake = asyncio.Event()
+        return wake
+
+    def _bank_clock_progress(self) -> None:
+        now = time.monotonic()
+        if self.clock_mark:
+            self.clock_progress += (
+                (now - self.clock_mark) * self.clock_speed / 60.0)
+        self.clock_mark = now
+
+    def set_clock_speed(self, speed: float) -> None:
+        """Run the game clock at `speed` times its base rate (0 stops it).
+
+        Only the clock: creatures, regeneration, food, cooldowns and every
+        other real-time system keep their pace. Not saved - a forgotten 60x
+        should not outlive a restart.
+        """
+        if not (math.isfinite(speed) and 0.0 <= speed <= self.MAX_CLOCK_SPEED):
+            raise ValueError(
+                f"Clock speed must be between 0 and {self.MAX_CLOCK_SPEED:g}.")
+        self._bank_clock_progress()
+        self.clock_speed = float(speed)
+        self._clock_wake_event().set()
+
+    async def set_game_clock(self, minute: int) -> None:
+        """Jump the clock to `minute` of the day; the date does not change."""
+        self.game_minute = int(minute) % 360
+        self.clock_progress = 0.0
+        self.clock_mark = time.monotonic()
+        self._clock_wake_event().set()
+        self.save_world_state()
+        await self.broadcast(p.new_minute(self.game_minute))
 
     async def advance_minute(self):
+        """One game minute and one real minute's upkeep together."""
+        await self.advance_clock()
+        await self.player_minute()
+
+    async def advance_clock(self):
         previous_minute = self.game_minute
         self.game_minute = (self.game_minute + 1) % 360
         if previous_minute == 359:
@@ -14473,6 +14996,8 @@ class World(MagicRuntime):
             await self.turn_weather()
         self.save_world_state()
         await self.broadcast(p.new_minute(self.game_minute))
+
+    async def player_minute(self):
         for session in list(self.sessions):
             c = session.character
             if not c:
@@ -14691,10 +15216,9 @@ class World(MagicRuntime):
         self.bags[bag_id] = (x, y, items)
         self.bag_maps[bag_id] = map_id
         self.bag_activity[bag_id] = time.monotonic()
-        await self.broadcast_map(
-            map_id,
-            p.packet(p.GET_NEW_BAG,
-                     struct.pack("<HHB", x, y, self.bag_wire_id(bag_id))))
+        await self.broadcast_coordinates(map_id,
+            lambda point: p.packet(p.GET_NEW_BAG,
+                struct.pack("<HHB", *point(x, y), self.bag_wire_id(bag_id))))
         return bag_id
 
     async def expire_inactive_bags(self, now: float | None = None) -> None:
