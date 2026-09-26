@@ -317,28 +317,28 @@ surface = ExtResource("object_weathered_limestone")
 [sub_resource type="Resource" id="object_material_0002"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_004_276_540_WorldPlacement/BridgeUnionPier_004_276_540"
+mesh_node_path = "BridgeUnionPier_004_276_540_WorldPlacement2/BridgeUnionPier_004_276_540_WorldPlacement/BridgeUnionPier_004_276_540"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0003"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_004_284_540_WorldPlacement/BridgeUnionPier_004_284_540"
+mesh_node_path = "BridgeUnionPier_004_284_540_WorldPlacement2/BridgeUnionPier_004_284_540_WorldPlacement/BridgeUnionPier_004_284_540"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0004"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_001_244_412_WorldPlacement/BridgeUnionPier_001_244_412"
+mesh_node_path = "BridgeUnionPier_001_244_412_WorldPlacement2/BridgeUnionPier_001_244_412_WorldPlacement/BridgeUnionPier_001_244_412"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0005"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_001_252_412_WorldPlacement/BridgeUnionPier_001_252_412"
+mesh_node_path = "BridgeUnionPier_001_252_412_WorldPlacement2/BridgeUnionPier_001_252_412_WorldPlacement/BridgeUnionPier_001_252_412"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 

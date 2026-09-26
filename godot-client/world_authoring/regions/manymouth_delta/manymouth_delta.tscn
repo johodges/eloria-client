@@ -812,280 +812,280 @@ surface = ExtResource("object_reed_thatch")
 [sub_resource type="Resource" id="object_material_0052"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_009_572_1156_WorldPlacement/BridgeUnionPier_009_572_1156"
+mesh_node_path = "BridgeUnionPier_009_572_1156_WorldPlacement2/BridgeUnionPier_009_572_1156_WorldPlacement/BridgeUnionPier_009_572_1156"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0053"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_FerryQuay_manymouth_delta_00_WorldPlacement/Walk_FerryQuay_manymouth_delta_00"
+mesh_node_path = "Walk_FerryQuay_manymouth_delta_00_WorldPlacement2/Walk_FerryQuay_manymouth_delta_00_WorldPlacement/Walk_FerryQuay_manymouth_delta_00"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0054"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_manymouth_delta_00_PilesAndPosts_WorldPlacement/FerryQuay_manymouth_delta_00_PilesAndPosts"
+mesh_node_path = "FerryQuay_manymouth_delta_00_PilesAndPosts_WorldPlacement2/FerryQuay_manymouth_delta_00_PilesAndPosts_WorldPlacement/FerryQuay_manymouth_delta_00_PilesAndPosts"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0055"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_manymouth_delta_00_Signpost_WorldPlacement/FerryQuay_manymouth_delta_00_Signpost"
+mesh_node_path = "FerryQuay_manymouth_delta_00_Signpost_WorldPlacement2/FerryQuay_manymouth_delta_00_Signpost_WorldPlacement/FerryQuay_manymouth_delta_00_Signpost"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0056"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Floor_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Floor"
+mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Floor_WorldPlacement2/FerryQuay_manymouth_delta_00_Skiff_Floor_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Floor"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0057"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Seat_0_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_0"
+mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Seat_0_WorldPlacement2/FerryQuay_manymouth_delta_00_Skiff_Seat_0_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_0"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0058"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Seat_1_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_1"
+mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Seat_1_WorldPlacement2/FerryQuay_manymouth_delta_00_Skiff_Seat_1_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_1"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0059"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Seat_2_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_2"
+mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Seat_2_WorldPlacement2/FerryQuay_manymouth_delta_00_Skiff_Seat_2_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_2"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0060"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Mast_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Mast"
+mesh_node_path = "FerryQuay_manymouth_delta_00_Skiff_Mast_WorldPlacement2/FerryQuay_manymouth_delta_00_Skiff_Mast_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Mast"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0061"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_502_412_988_WorldPlacement/BridgeUnionPier_502_412_988"
+mesh_node_path = "BridgeUnionPier_502_412_988_WorldPlacement2/BridgeUnionPier_502_412_988_WorldPlacement/BridgeUnionPier_502_412_988"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0062"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_502_420_988_WorldPlacement/BridgeUnionPier_502_420_988"
+mesh_node_path = "BridgeUnionPier_502_420_988_WorldPlacement2/BridgeUnionPier_502_420_988_WorldPlacement/BridgeUnionPier_502_420_988"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0063"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_502_428_988_WorldPlacement/BridgeUnionPier_502_428_988"
+mesh_node_path = "BridgeUnionPier_502_428_988_WorldPlacement2/BridgeUnionPier_502_428_988_WorldPlacement/BridgeUnionPier_502_428_988"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0064"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_502_396_996_WorldPlacement/BridgeUnionPier_502_396_996"
+mesh_node_path = "BridgeUnionPier_502_396_996_WorldPlacement2/BridgeUnionPier_502_396_996_WorldPlacement/BridgeUnionPier_502_396_996"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0065"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_502_436_996_WorldPlacement/BridgeUnionPier_502_436_996"
+mesh_node_path = "BridgeUnionPier_502_436_996_WorldPlacement2/BridgeUnionPier_502_436_996_WorldPlacement/BridgeUnionPier_502_436_996"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0066"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Manymouth_Village_boat_yard_WorldPlacement/Walk_Manymouth_Village_boat_yard"
+mesh_node_path = "Walk_Manymouth_Village_boat_yard_WorldPlacement2/Walk_Manymouth_Village_boat_yard_WorldPlacement/Walk_Manymouth_Village_boat_yard"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0067"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Fascia_boat_yard_WorldPlacement/Manymouth_Village_Fascia_boat_yard"
+mesh_node_path = "Manymouth_Village_Fascia_boat_yard_WorldPlacement2/Manymouth_Village_Fascia_boat_yard_WorldPlacement/Manymouth_Village_Fascia_boat_yard"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0068"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Piles_boat_yard_WorldPlacement/Manymouth_Village_Piles_boat_yard"
+mesh_node_path = "Manymouth_Village_Piles_boat_yard_WorldPlacement2/Manymouth_Village_Piles_boat_yard_WorldPlacement/Manymouth_Village_Piles_boat_yard"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0069"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Manymouth_Village_deep_grove_WorldPlacement/Walk_Manymouth_Village_deep_grove"
+mesh_node_path = "Walk_Manymouth_Village_deep_grove_WorldPlacement2/Walk_Manymouth_Village_deep_grove_WorldPlacement/Walk_Manymouth_Village_deep_grove"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0070"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Fascia_deep_grove_WorldPlacement/Manymouth_Village_Fascia_deep_grove"
+mesh_node_path = "Manymouth_Village_Fascia_deep_grove_WorldPlacement2/Manymouth_Village_Fascia_deep_grove_WorldPlacement/Manymouth_Village_Fascia_deep_grove"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0071"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Piles_deep_grove_WorldPlacement/Manymouth_Village_Piles_deep_grove"
+mesh_node_path = "Manymouth_Village_Piles_deep_grove_WorldPlacement2/Manymouth_Village_Piles_deep_grove_WorldPlacement/Manymouth_Village_Piles_deep_grove"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0072"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Manymouth_Village_east_hamlet_WorldPlacement/Walk_Manymouth_Village_east_hamlet"
+mesh_node_path = "Walk_Manymouth_Village_east_hamlet_WorldPlacement2/Walk_Manymouth_Village_east_hamlet_WorldPlacement/Walk_Manymouth_Village_east_hamlet"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0073"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Fascia_east_hamlet_WorldPlacement/Manymouth_Village_Fascia_east_hamlet"
+mesh_node_path = "Manymouth_Village_Fascia_east_hamlet_WorldPlacement2/Manymouth_Village_Fascia_east_hamlet_WorldPlacement/Manymouth_Village_Fascia_east_hamlet"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0074"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Piles_east_hamlet_WorldPlacement/Manymouth_Village_Piles_east_hamlet"
+mesh_node_path = "Manymouth_Village_Piles_east_hamlet_WorldPlacement2/Manymouth_Village_Piles_east_hamlet_WorldPlacement/Manymouth_Village_Piles_east_hamlet"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0075"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Manymouth_Village_far_bar_WorldPlacement/Walk_Manymouth_Village_far_bar"
+mesh_node_path = "Walk_Manymouth_Village_far_bar_WorldPlacement2/Walk_Manymouth_Village_far_bar_WorldPlacement/Walk_Manymouth_Village_far_bar"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0076"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Fascia_far_bar_WorldPlacement/Manymouth_Village_Fascia_far_bar"
+mesh_node_path = "Manymouth_Village_Fascia_far_bar_WorldPlacement2/Manymouth_Village_Fascia_far_bar_WorldPlacement/Manymouth_Village_Fascia_far_bar"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0077"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Piles_far_bar_WorldPlacement/Manymouth_Village_Piles_far_bar"
+mesh_node_path = "Manymouth_Village_Piles_far_bar_WorldPlacement2/Manymouth_Village_Piles_far_bar_WorldPlacement/Manymouth_Village_Piles_far_bar"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0078"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Manymouth_Village_floating_market_WorldPlacement/Walk_Manymouth_Village_floating_market"
+mesh_node_path = "Walk_Manymouth_Village_floating_market_WorldPlacement2/Walk_Manymouth_Village_floating_market_WorldPlacement/Walk_Manymouth_Village_floating_market"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0079"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Fascia_floating_market_WorldPlacement/Manymouth_Village_Fascia_floating_market"
+mesh_node_path = "Manymouth_Village_Fascia_floating_market_WorldPlacement2/Manymouth_Village_Fascia_floating_market_WorldPlacement/Manymouth_Village_Fascia_floating_market"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0080"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Piles_floating_market_WorldPlacement/Manymouth_Village_Piles_floating_market"
+mesh_node_path = "Manymouth_Village_Piles_floating_market_WorldPlacement2/Manymouth_Village_Piles_floating_market_WorldPlacement/Manymouth_Village_Piles_floating_market"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0081"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Manymouth_Village_sea_landing_WorldPlacement/Walk_Manymouth_Village_sea_landing"
+mesh_node_path = "Walk_Manymouth_Village_sea_landing_WorldPlacement2/Walk_Manymouth_Village_sea_landing_WorldPlacement/Walk_Manymouth_Village_sea_landing"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0082"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Fascia_sea_landing_WorldPlacement/Manymouth_Village_Fascia_sea_landing"
+mesh_node_path = "Manymouth_Village_Fascia_sea_landing_WorldPlacement2/Manymouth_Village_Fascia_sea_landing_WorldPlacement/Manymouth_Village_Fascia_sea_landing"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0083"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Piles_sea_landing_WorldPlacement/Manymouth_Village_Piles_sea_landing"
+mesh_node_path = "Manymouth_Village_Piles_sea_landing_WorldPlacement2/Manymouth_Village_Piles_sea_landing_WorldPlacement/Manymouth_Village_Piles_sea_landing"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0084"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Manymouth_Village_south_hamlet_WorldPlacement/Walk_Manymouth_Village_south_hamlet"
+mesh_node_path = "Walk_Manymouth_Village_south_hamlet_WorldPlacement2/Walk_Manymouth_Village_south_hamlet_WorldPlacement/Walk_Manymouth_Village_south_hamlet"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0085"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Fascia_south_hamlet_WorldPlacement/Manymouth_Village_Fascia_south_hamlet"
+mesh_node_path = "Manymouth_Village_Fascia_south_hamlet_WorldPlacement2/Manymouth_Village_Fascia_south_hamlet_WorldPlacement/Manymouth_Village_Fascia_south_hamlet"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0086"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Piles_south_hamlet_WorldPlacement/Manymouth_Village_Piles_south_hamlet"
+mesh_node_path = "Manymouth_Village_Piles_south_hamlet_WorldPlacement2/Manymouth_Village_Piles_south_hamlet_WorldPlacement/Manymouth_Village_Piles_south_hamlet"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0087"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Manymouth_Village_town_WorldPlacement/Walk_Manymouth_Village_town"
+mesh_node_path = "Walk_Manymouth_Village_town_WorldPlacement2/Walk_Manymouth_Village_town_WorldPlacement/Walk_Manymouth_Village_town"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0088"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Fascia_town_WorldPlacement/Manymouth_Village_Fascia_town"
+mesh_node_path = "Manymouth_Village_Fascia_town_WorldPlacement2/Manymouth_Village_Fascia_town_WorldPlacement/Manymouth_Village_Fascia_town"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0089"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_Village_Piles_town_WorldPlacement/Manymouth_Village_Piles_town"
+mesh_node_path = "Manymouth_Village_Piles_town_WorldPlacement2/Manymouth_Village_Piles_town_WorldPlacement/Manymouth_Village_Piles_town"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0090"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Manymouth_FishingBoardwalk_WorldPlacement/Walk_Manymouth_FishingBoardwalk"
+mesh_node_path = "Walk_Manymouth_FishingBoardwalk_WorldPlacement2/Walk_Manymouth_FishingBoardwalk_WorldPlacement/Walk_Manymouth_FishingBoardwalk"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0091"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_FishingBoardwalk_Piles_WorldPlacement/Manymouth_FishingBoardwalk_Piles"
+mesh_node_path = "Manymouth_FishingBoardwalk_Piles_WorldPlacement2/Manymouth_FishingBoardwalk_Piles_WorldPlacement/Manymouth_FishingBoardwalk_Piles"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
@@ -1099,77 +1099,77 @@ surface = ExtResource("object_marine_timber")
 [sub_resource type="Resource" id="object_material_0093"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Manymouth_PaddyStreet_WorldPlacement/Walk_Manymouth_PaddyStreet"
+mesh_node_path = "Walk_Manymouth_PaddyStreet_WorldPlacement2/Walk_Manymouth_PaddyStreet_WorldPlacement/Walk_Manymouth_PaddyStreet"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0094"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_PaddyStreet_Fascia_WorldPlacement/Manymouth_PaddyStreet_Fascia"
+mesh_node_path = "Manymouth_PaddyStreet_Fascia_WorldPlacement2/Manymouth_PaddyStreet_Fascia_WorldPlacement/Manymouth_PaddyStreet_Fascia"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0095"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Manymouth_PaddyStreet_Piles_WorldPlacement/Manymouth_PaddyStreet_Piles"
+mesh_node_path = "Manymouth_PaddyStreet_Piles_WorldPlacement2/Manymouth_PaddyStreet_Piles_WorldPlacement/Manymouth_PaddyStreet_Piles"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0096"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_011_468_1036_WorldPlacement/BridgeUnionPier_011_468_1036"
+mesh_node_path = "BridgeUnionPier_011_468_1036_WorldPlacement2/BridgeUnionPier_011_468_1036_WorldPlacement/BridgeUnionPier_011_468_1036"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0097"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_011_468_1044_WorldPlacement/BridgeUnionPier_011_468_1044"
+mesh_node_path = "BridgeUnionPier_011_468_1044_WorldPlacement2/BridgeUnionPier_011_468_1044_WorldPlacement/BridgeUnionPier_011_468_1044"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0098"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_010_508_1052_WorldPlacement/BridgeUnionPier_010_508_1052"
+mesh_node_path = "BridgeUnionPier_010_508_1052_WorldPlacement2/BridgeUnionPier_010_508_1052_WorldPlacement/BridgeUnionPier_010_508_1052"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0099"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_010_516_1060_WorldPlacement/BridgeUnionPier_010_516_1060"
+mesh_node_path = "BridgeUnionPier_010_516_1060_WorldPlacement2/BridgeUnionPier_010_516_1060_WorldPlacement/BridgeUnionPier_010_516_1060"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0100"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_010_524_1060_WorldPlacement/BridgeUnionPier_010_524_1060"
+mesh_node_path = "BridgeUnionPier_010_524_1060_WorldPlacement2/BridgeUnionPier_010_524_1060_WorldPlacement/BridgeUnionPier_010_524_1060"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0101"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_012_444_1268_WorldPlacement/BridgeUnionPier_012_444_1268"
+mesh_node_path = "BridgeUnionPier_012_444_1268_WorldPlacement2/BridgeUnionPier_012_444_1268_WorldPlacement/BridgeUnionPier_012_444_1268"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0102"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_012_452_1268_WorldPlacement/BridgeUnionPier_012_452_1268"
+mesh_node_path = "BridgeUnionPier_012_452_1268_WorldPlacement2/BridgeUnionPier_012_452_1268_WorldPlacement/BridgeUnionPier_012_452_1268"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0103"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_012_460_1268_WorldPlacement/BridgeUnionPier_012_460_1268"
+mesh_node_path = "BridgeUnionPier_012_460_1268_WorldPlacement2/BridgeUnionPier_012_460_1268_WorldPlacement/BridgeUnionPier_012_460_1268"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 

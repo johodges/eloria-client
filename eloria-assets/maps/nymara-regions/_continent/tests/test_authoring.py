@@ -1274,6 +1274,121 @@ def test_material_override_clones_shared_mesh_and_matches_godot_uv_order(tmp_pat
     assert material["alphaMode"]=="BLEND"
 
 
+@pytest.mark.parametrize("child_name", ["Landmark_BridgeWatch", "OrdinaryChild"])
+def test_material_override_resolves_relative_nested_mesh_without_changing_geometry(child_name):
+    document = {
+        "nodes": [
+            {"name": child_name, "children": [1], "translation": [1, 2, 3]},
+            {"name": "Landmark_BridgeWatch__pale_ashlar", "mesh": 0, "scale": [2, 3, 4]},
+            {"name": "OtherInstance", "mesh": 0, "translation": [5, 6, 7]},
+            {"name": "Unrelated", "children": [2]},
+            {"name": "Landmark_BridgeWatch", "children": [0, 3], "translation": [8, 9, 10]},
+        ],
+        "scenes": [{"nodes": [4]}], "scene": 0,
+        "meshes": [{"primitives": [
+            {"attributes": {"POSITION": 0}, "material": 0},
+            {"attributes": {"POSITION": 0}, "material": 1},
+        ]}],
+        "materials": [{"name": "OriginalStone"}, {"name": "OriginalRoof"}],
+        "accessors": [{"bufferView": 0, "componentType": 5126, "count": 1, "type": "VEC3"}],
+        "bufferViews": [{"buffer": 0, "byteOffset": 0, "byteLength": 12}],
+        "buffers": [{"byteLength": 12}],
+    }
+    original = copy.deepcopy(document)
+    binary = bytes(range(12))
+    surface = {"preset": "Custom", "pbr": {
+        "albedoColor": [.4, .5, .6, 1], "roughness": .8, "metallic": 0,
+        "normalScale": 1, "uvScale": [1, 1, 1], "uvOffset": [0, 0, 0],
+    }}
+    result, body = A._apply_material_overrides(document, binary, 4, [{
+        "meshNodePath": f"{child_name}/Landmark_BridgeWatch__pale_ashlar",
+        "surfaceIndex": 1, "surface": surface,
+    }])
+
+    assert document == original
+    assert body == binary
+    target_mesh = result["nodes"][1]["mesh"]
+    assert target_mesh != 0
+    assert result["nodes"][2]["mesh"] == 0
+    assert result["meshes"][0] == original["meshes"][0]
+    assert result["materials"][:2] == original["materials"]
+    assert result["meshes"][target_mesh]["primitives"][0] == original["meshes"][0]["primitives"][0]
+    assert result["meshes"][target_mesh]["primitives"][1] == {
+        "attributes": {"POSITION": 0}, "material": 2}
+    assert result["materials"][2]["pbrMetallicRoughness"]["roughnessFactor"] == .8
+    expected_nodes = copy.deepcopy(original["nodes"])
+    expected_nodes[1]["mesh"] = target_mesh
+    assert result["nodes"] == expected_nodes
+    for field in ("scenes", "scene", "accessors", "bufferViews", "buffers"):
+        assert result[field] == original[field]
+
+
+@pytest.mark.parametrize("case", ["missing", "ambiguous", "surface_bounds"])
+def test_material_override_rejects_invalid_relative_target(case):
+    document = {"nodes": [
+        {"name": "Root", "children": [1]},
+        {"name": "Child", "mesh": 0},
+        {"name": "Child", "mesh": 0},
+    ], "meshes": [{"primitives": [{"attributes": {}}]}]}
+    if case == "ambiguous":
+        document["nodes"][0]["children"].append(2)
+    path = "Missing" if case == "missing" else "Child"
+    index = 1 if case == "surface_bounds" else 0
+    original = copy.deepcopy(document)
+    with pytest.raises(A.AuthoringError, match="does not identify one mesh node|has no surface"):
+        A._apply_material_overrides(document, b"", 0, [{
+            "meshNodePath": path, "surfaceIndex": index, "surface": {},
+        }])
+    assert document == original
+
+
+def test_material_override_indexed_multiroot_preserves_source_graph_and_shared_mesh():
+    document = {"nodes": [
+        {"name": "Root", "children": [1], "translation": [1, 2, 3]},
+        {"name": "Target", "mesh": 0, "scale": [2, 3, 4]},
+        {"name": "OtherRoot", "mesh": 0, "translation": [4, 5, 6]},
+    ], "scenes": [{"nodes": [0, 2]}], "scene": 0,
+        "meshes": [{"primitives": [{"attributes": {"POSITION": 0}, "material": 0}]}],
+        "materials": [{"name": "Original"}],
+        "accessors": [{"bufferView": 0}], "bufferViews": [{"buffer": 0, "byteLength": 4}],
+        "buffers": [{"byteLength": 4}]}
+    original = copy.deepcopy(document)
+    surface = {"preset": "Custom", "pbr": {
+        "albedoColor": [.4, .5, .6, 1], "roughness": .8, "metallic": 0,
+        "normalScale": 1, "uvScale": [1, 1, 1], "uvOffset": [0, 0, 0]}}
+    result, body = A._apply_material_overrides(document, b"abcd", [0, 2], [{
+        "meshNodePath": "GodotRenamedRoot/Target", "bakedMeshNodeIndex": 1,
+        "surfaceIndex": 0, "surface": surface}])
+    assert document == original and body == b"abcd"
+    expected = copy.deepcopy(original)
+    expected["nodes"][1]["mesh"] = 1
+    expected["meshes"].append({"primitives": [{"attributes": {"POSITION": 0}, "material": 1}]})
+    expected["materials"].append(result["materials"][1])
+    assert result == expected
+    assert result["materials"][1]["pbrMetallicRoughness"]["roughnessFactor"] == .8
+
+
+@pytest.mark.parametrize("binding", [{}, {"bakedMeshNodeIndex": True},
+    {"bakedMeshNodeIndex": -1}, {"bakedMeshNodeIndex": 1.0},
+    {"bakedMeshNodeIndex": 3}, {"bakedMeshNodeIndex": 99}])
+def test_material_override_multiroot_rejects_missing_invalid_or_unreachable_binding(binding):
+    document = {"nodes": [{"children": [1]}, {"mesh": 0}, {}, {"mesh": 0}],
+                "meshes": [{"primitives": [{"attributes": {}}]}]}
+    override = {"meshNodePath": "irrelevant", "surfaceIndex": 0, "surface": {}, **binding}
+    with pytest.raises(A.AuthoringError, match="bakedMeshNodeIndex"):
+        A._apply_material_overrides(document, b"", [0, 2], [override])
+
+
+@pytest.mark.parametrize("index", [True, -1, 1.0, "1"])
+def test_material_override_snapshot_rejects_noninteger_binding(tmp_path, monkeypatch, index):
+    path, document = fixture(tmp_path, monkeypatch)
+    document["objects"][0]["materialOverrides"] = [{
+        "meshNodePath": ".", "surfaceIndex": 0, "bakedMeshNodeIndex": index, "surface": {}}]
+    path.write_text(json.dumps(document), encoding="utf-8")
+    with pytest.raises(A.AuthoringError, match="bakedMeshNodeIndex must be a non-negative integer"):
+        A.load_snapshot(path, production=False)
+
+
 def test_real_godot_saved_edit_reaches_terrain_collision_routes_objects_and_gameplay(tmp_path):
     from types import SimpleNamespace
     import collision_export as collision
@@ -1338,7 +1453,8 @@ def test_real_godot_saved_edit_reaches_terrain_collision_routes_objects_and_game
     assert portal["serverTile"] == A.server_tile(portal["position"])
 
 
-def test_retained_library_moves_every_root_in_a_grouped_scene(tmp_path, monkeypatch):
+@pytest.mark.parametrize("with_material_override", [False, True])
+def test_retained_library_moves_every_root_in_a_grouped_scene(tmp_path, monkeypatch, with_material_override):
     from types import SimpleNamespace
     sys.path.insert(0, str(HERE.parent / "_toolkit"))
     from amberwood import gltf as G, mesh as M
@@ -1368,6 +1484,12 @@ def test_retained_library_moves_every_root_in_a_grouped_scene(tmp_path, monkeypa
     entry["sourceNode"] = entry["bakedSource"]["sourceNode"] = "."
     entry["nodeName"] = "GroupedObject"
     entry["matrix"][12:15] = [10., 1., 20.]
+    if with_material_override:
+        entry["materialOverrides"] = [{"meshNodePath": "visual-root", "bakedMeshNodeIndex": 0,
+            "surfaceIndex": 0, "surface": {"preset": "Custom", "materialMode": "surface",
+            "rotationDegrees": 0, "pbr": {"albedoColor": [.4, .5, .6, 1], "roughness": .8,
+            "metallic": 0, "normalScale": 1, "uvScale": [1, 1, 1], "uvOffset": [0, 0, 0],
+            "triplanar": False, "worldTriplanar": False}}}]
     path.write_text(json.dumps(document), encoding="utf-8")
 
     snapshot = A.load_snapshot(path, production=False)

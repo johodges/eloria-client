@@ -1617,231 +1617,231 @@ surface = ExtResource("object_marine_timber")
 [sub_resource type="Resource" id="object_material_0149"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_FerryQuay_westhaven_04_WorldPlacement/Walk_FerryQuay_westhaven_04"
+mesh_node_path = "Walk_FerryQuay_westhaven_04_WorldPlacement2/Walk_FerryQuay_westhaven_04_WorldPlacement/Walk_FerryQuay_westhaven_04"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0150"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_westhaven_04_PilesAndPosts_WorldPlacement/FerryQuay_westhaven_04_PilesAndPosts"
+mesh_node_path = "FerryQuay_westhaven_04_PilesAndPosts_WorldPlacement2/FerryQuay_westhaven_04_PilesAndPosts_WorldPlacement/FerryQuay_westhaven_04_PilesAndPosts"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0151"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_westhaven_04_Signpost_WorldPlacement/FerryQuay_westhaven_04_Signpost"
+mesh_node_path = "FerryQuay_westhaven_04_Signpost_WorldPlacement2/FerryQuay_westhaven_04_Signpost_WorldPlacement/FerryQuay_westhaven_04_Signpost"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0152"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_westhaven_04_Skiff_Floor_WorldPlacement/FerryQuay_westhaven_04_Skiff_Floor"
+mesh_node_path = "FerryQuay_westhaven_04_Skiff_Floor_WorldPlacement2/FerryQuay_westhaven_04_Skiff_Floor_WorldPlacement/FerryQuay_westhaven_04_Skiff_Floor"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0153"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_westhaven_04_Skiff_Seat_0_WorldPlacement/FerryQuay_westhaven_04_Skiff_Seat_0"
+mesh_node_path = "FerryQuay_westhaven_04_Skiff_Seat_0_WorldPlacement2/FerryQuay_westhaven_04_Skiff_Seat_0_WorldPlacement/FerryQuay_westhaven_04_Skiff_Seat_0"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0154"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_westhaven_04_Skiff_Seat_1_WorldPlacement/FerryQuay_westhaven_04_Skiff_Seat_1"
+mesh_node_path = "FerryQuay_westhaven_04_Skiff_Seat_1_WorldPlacement2/FerryQuay_westhaven_04_Skiff_Seat_1_WorldPlacement/FerryQuay_westhaven_04_Skiff_Seat_1"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0155"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_westhaven_04_Skiff_Seat_2_WorldPlacement/FerryQuay_westhaven_04_Skiff_Seat_2"
+mesh_node_path = "FerryQuay_westhaven_04_Skiff_Seat_2_WorldPlacement2/FerryQuay_westhaven_04_Skiff_Seat_2_WorldPlacement/FerryQuay_westhaven_04_Skiff_Seat_2"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0156"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "FerryQuay_westhaven_04_Skiff_Mast_WorldPlacement/FerryQuay_westhaven_04_Skiff_Mast"
+mesh_node_path = "FerryQuay_westhaven_04_Skiff_Mast_WorldPlacement2/FerryQuay_westhaven_04_Skiff_Mast_WorldPlacement/FerryQuay_westhaven_04_Skiff_Mast"
 surface_index = 0
 surface = ExtResource("object_marine_timber")
 
 [sub_resource type="Resource" id="object_material_0157"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_503_36_1132_WorldPlacement/BridgeUnionPier_503_36_1132"
+mesh_node_path = "BridgeUnionPier_503_36_1132_WorldPlacement2/BridgeUnionPier_503_36_1132_WorldPlacement/BridgeUnionPier_503_36_1132"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0158"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_503_28_1148_WorldPlacement/BridgeUnionPier_503_28_1148"
+mesh_node_path = "BridgeUnionPier_503_28_1148_WorldPlacement2/BridgeUnionPier_503_28_1148_WorldPlacement/BridgeUnionPier_503_28_1148"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0159"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_503_20_1156_WorldPlacement/BridgeUnionPier_503_20_1156"
+mesh_node_path = "BridgeUnionPier_503_20_1156_WorldPlacement2/BridgeUnionPier_503_20_1156_WorldPlacement/BridgeUnionPier_503_20_1156"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0160"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_503_12_1172_WorldPlacement/BridgeUnionPier_503_12_1172"
+mesh_node_path = "BridgeUnionPier_503_12_1172_WorldPlacement2/BridgeUnionPier_503_12_1172_WorldPlacement/BridgeUnionPier_503_12_1172"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0161"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_503_12_1180_WorldPlacement/BridgeUnionPier_503_12_1180"
+mesh_node_path = "BridgeUnionPier_503_12_1180_WorldPlacement2/BridgeUnionPier_503_12_1180_WorldPlacement/BridgeUnionPier_503_12_1180"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0162"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_503_12_1188_WorldPlacement/BridgeUnionPier_503_12_1188"
+mesh_node_path = "BridgeUnionPier_503_12_1188_WorldPlacement2/BridgeUnionPier_503_12_1188_WorldPlacement/BridgeUnionPier_503_12_1188"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0163"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_503_28_1204_WorldPlacement/BridgeUnionPier_503_28_1204"
+mesh_node_path = "BridgeUnionPier_503_28_1204_WorldPlacement2/BridgeUnionPier_503_28_1204_WorldPlacement/BridgeUnionPier_503_28_1204"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0164"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_504_204_1148_WorldPlacement/BridgeUnionPier_504_204_1148"
+mesh_node_path = "BridgeUnionPier_504_204_1148_WorldPlacement2/BridgeUnionPier_504_204_1148_WorldPlacement/BridgeUnionPier_504_204_1148"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0165"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_504_212_1156_WorldPlacement/BridgeUnionPier_504_212_1156"
+mesh_node_path = "BridgeUnionPier_504_212_1156_WorldPlacement2/BridgeUnionPier_504_212_1156_WorldPlacement/BridgeUnionPier_504_212_1156"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0166"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_504_220_1172_WorldPlacement/BridgeUnionPier_504_220_1172"
+mesh_node_path = "BridgeUnionPier_504_220_1172_WorldPlacement2/BridgeUnionPier_504_220_1172_WorldPlacement/BridgeUnionPier_504_220_1172"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0167"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_504_220_1180_WorldPlacement/BridgeUnionPier_504_220_1180"
+mesh_node_path = "BridgeUnionPier_504_220_1180_WorldPlacement2/BridgeUnionPier_504_220_1180_WorldPlacement/BridgeUnionPier_504_220_1180"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0168"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_504_220_1188_WorldPlacement/BridgeUnionPier_504_220_1188"
+mesh_node_path = "BridgeUnionPier_504_220_1188_WorldPlacement2/BridgeUnionPier_504_220_1188_WorldPlacement/BridgeUnionPier_504_220_1188"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0169"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_504_220_1196_WorldPlacement/BridgeUnionPier_504_220_1196"
+mesh_node_path = "BridgeUnionPier_504_220_1196_WorldPlacement2/BridgeUnionPier_504_220_1196_WorldPlacement/BridgeUnionPier_504_220_1196"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0170"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_504_220_1204_WorldPlacement/BridgeUnionPier_504_220_1204"
+mesh_node_path = "BridgeUnionPier_504_220_1204_WorldPlacement2/BridgeUnionPier_504_220_1204_WorldPlacement/BridgeUnionPier_504_220_1204"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0171"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_504_220_1212_WorldPlacement/BridgeUnionPier_504_220_1212"
+mesh_node_path = "BridgeUnionPier_504_220_1212_WorldPlacement2/BridgeUnionPier_504_220_1212_WorldPlacement/BridgeUnionPier_504_220_1212"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0172"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_504_220_1220_WorldPlacement/BridgeUnionPier_504_220_1220"
+mesh_node_path = "BridgeUnionPier_504_220_1220_WorldPlacement2/BridgeUnionPier_504_220_1220_WorldPlacement/BridgeUnionPier_504_220_1220"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0173"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_506_116_1140_WorldPlacement/BridgeUnionPier_506_116_1140"
+mesh_node_path = "BridgeUnionPier_506_116_1140_WorldPlacement2/BridgeUnionPier_506_116_1140_WorldPlacement/BridgeUnionPier_506_116_1140"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0174"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_506_132_1148_WorldPlacement/BridgeUnionPier_506_132_1148"
+mesh_node_path = "BridgeUnionPier_506_132_1148_WorldPlacement2/BridgeUnionPier_506_132_1148_WorldPlacement/BridgeUnionPier_506_132_1148"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0175"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_506_140_1148_WorldPlacement/BridgeUnionPier_506_140_1148"
+mesh_node_path = "BridgeUnionPier_506_140_1148_WorldPlacement2/BridgeUnionPier_506_140_1148_WorldPlacement/BridgeUnionPier_506_140_1148"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0176"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_506_148_1156_WorldPlacement/BridgeUnionPier_506_148_1156"
+mesh_node_path = "BridgeUnionPier_506_148_1156_WorldPlacement2/BridgeUnionPier_506_148_1156_WorldPlacement/BridgeUnionPier_506_148_1156"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0177"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "BridgeUnionPier_506_156_1164_WorldPlacement/BridgeUnionPier_506_156_1164"
+mesh_node_path = "BridgeUnionPier_506_156_1164_WorldPlacement2/BridgeUnionPier_506_156_1164_WorldPlacement/BridgeUnionPier_506_156_1164"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0178"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Westhaven_FerryLandingStair_WorldPlacement/Walk_Westhaven_FerryLandingStair"
+mesh_node_path = "Walk_Westhaven_FerryLandingStair_WorldPlacement2/Walk_Westhaven_FerryLandingStair_WorldPlacement/Walk_Westhaven_FerryLandingStair"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0179"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "AccessDeck_Edge_Westhaven_FerryLandingStair_WorldPlacement/AccessDeck_Edge_Westhaven_FerryLandingStair"
+mesh_node_path = "AccessDeck_Edge_Westhaven_FerryLandingStair_WorldPlacement2/AccessDeck_Edge_Westhaven_FerryLandingStair_WorldPlacement/AccessDeck_Edge_Westhaven_FerryLandingStair"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0180"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "Walk_Westhaven_LampCausewayLink_WorldPlacement/Walk_Westhaven_LampCausewayLink"
+mesh_node_path = "Walk_Westhaven_LampCausewayLink_WorldPlacement2/Walk_Westhaven_LampCausewayLink_WorldPlacement/Walk_Westhaven_LampCausewayLink"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
 [sub_resource type="Resource" id="object_material_0181"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
-mesh_node_path = "AccessDeck_Edge_Westhaven_LampCausewayLink_WorldPlacement/AccessDeck_Edge_Westhaven_LampCausewayLink"
+mesh_node_path = "AccessDeck_Edge_Westhaven_LampCausewayLink_WorldPlacement2/AccessDeck_Edge_Westhaven_LampCausewayLink_WorldPlacement/AccessDeck_Edge_Westhaven_LampCausewayLink"
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 

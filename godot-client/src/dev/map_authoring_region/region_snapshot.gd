@@ -3,6 +3,8 @@ class_name MapAuthoringRegionSnapshot
 extends RefCounted
 
 const SCHEMA := "eloria-continent-authoring-v1"
+const GLTF_MATERIAL_BINDING := preload(
+	"res://src/dev/map_authoring_region/gltf_material_binding.gd")
 const OWNERSHIP := preload("res://src/dev/map_authoring_region/ownership_source.gd")
 const BASE_HEIGHT_SIDECAR := "base-heights.f32le"
 const RESOLVED_HEIGHT_SIDECAR := "resolved-heights.f32le"
@@ -360,6 +362,7 @@ func _bridge_records(region: Node3D) -> Array[Dictionary]:
 
 func _object_records(region: Node3D, output_directory: String) -> Array[Dictionary]:
 	var records: Array[Dictionary] = []
+	var material_binding := GLTF_MATERIAL_BINDING.new()
 	var container := region.get_node_or_null("AuthoredAssets")
 	if container == null:
 		return records
@@ -370,19 +373,21 @@ func _object_records(region: Node3D, output_directory: String) -> Array[Dictiona
 		var asset = child
 		_validate_asset_source_boundary(asset)
 		var relative: Transform3D = region.global_transform.affine_inverse() * asset.global_transform
+		var baked_source := _baked_source_record(asset, output_directory)
 		records.append({
 			"id": asset.asset_id,
 			"nodeName": asset.node_name,
 			"assetId": asset.catalog_asset_id,
 			"scenePath": asset.scene_path,
 			"sourceNode": asset.source_node,
-			"bakedSource": _baked_source_record(asset, output_directory),
+			"bakedSource": baked_source,
 			"matrix": _matrix(relative),
 			"collisionRole": asset.collision_role,
-			"materialOverrides": _asset_surface_records(asset),
+			"materialOverrides": _asset_surface_records(asset, material_binding, baked_source),
 			"metadata": _clean_value(asset.metadata, "%s.metadata" % asset.get_path()),
 		})
 	records.sort_custom(_sort_id)
+	material_binding.clear()
 	return records
 
 
@@ -515,7 +520,8 @@ func _resource_identity(resource: Resource) -> Array:
 	return [resource.get_class(), resource.resource_path]
 
 
-func _asset_surface_records(asset: Node) -> Array[Dictionary]:
+func _asset_surface_records(asset: Node, material_binding = null,
+		baked_source: Dictionary = {}) -> Array[Dictionary]:
 	var records: Array[Dictionary] = []
 	var seen := {}
 	for override in asset.material_overrides:
@@ -526,16 +532,33 @@ func _asset_surface_records(asset: Node) -> Array[Dictionary]:
 			_fail("%s/%s: material surface index cannot be negative." % [
 				asset.get_path(), override.mesh_node_path])
 			continue
+		var content: Node3D = asset.call("content_root")
+		var mesh := (content.get_node_or_null(NodePath(override.mesh_node_path)) as MeshInstance3D
+			if content != null else null)
+		if mesh == null or mesh.mesh == null or override.surface_index >= mesh.mesh.get_surface_count():
+			_fail("%s/%s: material override must identify an existing mesh surface." % [asset.get_path(), override.mesh_node_path])
+			continue
 		var target := "%s:%d" % [override.mesh_node_path, override.surface_index]
 		if seen.has(target):
 			_fail("%s: duplicate material override target %s." % [asset.get_path(), target])
 			continue
 		seen[target] = true
-		records.append({"meshNodePath": override.mesh_node_path,
+		var binding := {}
+		if (material_binding != null and String(asset.scene_path).get_extension().to_lower() == "glb"
+				and String(asset.source_node) in ["", "."]):
+			binding = material_binding.bind(asset.scene_path, String(baked_source.get("sha256", "")),
+				content, override.mesh_node_path, override.surface_index)
+			if binding.has("error"):
+				_fail("%s/%s: %s" % [asset.get_path(), override.mesh_node_path, binding.error])
+				continue
+		var record := {"meshNodePath": override.mesh_node_path,
 			"surfaceIndex": override.surface_index,
 			"surface": _surface_record(override.surface,
 				"%s/%s[%d]" % [asset.get_path(), override.mesh_node_path,
-					override.surface_index])})
+					override.surface_index])}
+		if binding.has("bakedMeshNodeIndex"):
+			record["bakedMeshNodeIndex"] = binding.bakedMeshNodeIndex
+		records.append(record)
 	records.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return "%s:%08d" % [String(a.meshNodePath), int(a.surfaceIndex)] < \
 			"%s:%08d" % [String(b.meshNodePath), int(b.surfaceIndex)])
@@ -900,6 +923,7 @@ func _dependency_records(scene_path: String, region: Node3D,
 		terrain: Node, emitted_surface_records: Array) -> Array[Dictionary]:
 	var paths: Dictionary = {}
 	_collect_dependencies(scene_path, paths)
+	_add_dependency_path("res://src/dev/map_authoring_region/gltf_material_binding.gd", paths)
 	_add_dependency_path(String(terrain.get("base_heights_path")), paths)
 	_add_dependency_path(String(terrain.get("base_colors_path")), paths)
 	_add_dependency_path(String(region.get("runtime_binding_seed_path")), paths)

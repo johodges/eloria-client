@@ -587,6 +587,10 @@ def _validate_objects(document: dict[str, Any], source_sha256: dict[str, str],
             material_where = f"{where}.materialOverrides[{override}]"
             if not isinstance(material.get("meshNodePath"), str):
                 raise AuthoringError(f"{material_where}.meshNodePath must be a string")
+            if "bakedMeshNodeIndex" in material:
+                bound_index = material["bakedMeshNodeIndex"]
+                if type(bound_index) is not int or bound_index < 0:
+                    raise AuthoringError(f"{material_where}.bakedMeshNodeIndex must be a non-negative integer")
             surface_index = material.get("surfaceIndex")
             if isinstance(surface_index, bool) or not isinstance(surface_index, int) or surface_index < 0:
                 raise AuthoringError(f"{material_where}.surfaceIndex must be a non-negative integer")
@@ -1420,7 +1424,7 @@ def _material_record(document: dict[str, Any], body: bytearray, surface: dict[st
     return len(document["materials"]) - 1
 
 
-def _apply_material_overrides(document: dict[str, Any], body: bytes, root: int,
+def _apply_material_overrides(document: dict[str, Any], body: bytes, root: int | list[int],
                               overrides: list[dict[str, Any]]) -> tuple[dict[str, Any], bytes]:
     if not overrides:
         return document, body
@@ -1429,8 +1433,7 @@ def _apply_material_overrides(document: dict[str, Any], body: bytes, root: int,
     def resolve(path: str) -> int:
         parts = [part for part in path.replace("\\", "/").split("/") if part and part != "."]
         current = root
-        if parts and parts[0] == document["nodes"][root].get("name"):
-            parts.pop(0)
+        # Match Godot get_node: paths are relative to the selected Content root.
         for part in parts:
             matches = [child for child in document["nodes"][current].get("children", [])
                        if document["nodes"][child].get("name") == part]
@@ -1438,9 +1441,25 @@ def _apply_material_overrides(document: dict[str, Any], body: bytes, root: int,
                 raise AuthoringError(f"material override path {path!r} does not identify one mesh node")
             current = matches[0]
         return current
+    # Indexed bindings belong to the already hash-verified bakedSource document.
+    roots = [root] if isinstance(root, int) else root
+    reachable = set()
+    pending = list(roots)
+    while pending:
+        node = pending.pop()
+        if node not in reachable:
+            reachable.add(node)
+            pending.extend(document["nodes"][node].get("children", []))
     cloned_meshes={}
     for override in overrides:
-        node = resolve(override["meshNodePath"])
+        if "bakedMeshNodeIndex" in override:
+            node = override["bakedMeshNodeIndex"]
+            if type(node) is not int or node < 0 or node not in reachable:
+                raise AuthoringError("material override bakedMeshNodeIndex is outside the selected source subtree")
+        elif not isinstance(root, int):
+            raise AuthoringError("multi-root material overrides require bakedMeshNodeIndex")
+        else:
+            node = resolve(override["meshNodePath"])
         if "mesh" not in document["nodes"][node]:
             raise AuthoringError(f"material override target {override['meshNodePath']!r} has no mesh")
         if node not in cloned_meshes:
@@ -1554,12 +1573,10 @@ def build_retained_library(snapshot: Snapshot, root: Path) -> dict[str, str]:
         if not matches or (source_node != "." and len(matches) != 1):
             raise AuthoringError(
                 f"{entry['id']}: baked sourceNode {source_node!r} resolves to {len(matches)} roots in {source_path}")
-        if len(matches) > 1 and entry.get("materialOverrides"):
-            raise AuthoringError(
-                f"{entry['id']}: material overrides require one baked source root in {source_path}")
         root_index = matches[0]
         object_document, object_body = _apply_material_overrides(
-            document, body, root_index, entry.get("materialOverrides", []))
+            document, body, root_index if len(matches) == 1 else matches,
+            entry.get("materialOverrides", []))
         if object_document is not document:
             # Exporter memoizes by object identity.  Keep private override
             # documents alive until write so CPython cannot reuse their ids.
