@@ -379,8 +379,9 @@ func _build_intake_row(column: VBoxContainer) -> void:
 	row.add_child(_library_category)
 	var import_button := Button.new()
 	import_button.text = "Import models…"
-	import_button.tooltip_text = ("Copy .glb/.gltf models into the library folder and list " +
-		"them here. Files you drop into that folder yourself appear after Refresh.")
+	import_button.tooltip_text = ("Copy .glb models into the library folder (a .gltf is " +
+		"converted to .glb, which the bake requires) and list them here. Files you drop into " +
+		"that folder yourself appear after Refresh.")
 	import_button.pressed.connect(_show_import_dialog)
 	row.add_child(import_button)
 	var folder := Button.new()
@@ -502,6 +503,10 @@ func _reload_entries(refresh_cache: bool) -> void:
 		_category.select(0)
 	_apply_filter()
 	_status.text = "Library refreshed: %d assets and prefabs." % _entries.size()
+	if not Catalog.skipped_library_files.is_empty():
+		_status.text += (" %d .gltf file%s in the library are not listed: the bake needs .glb. " +
+			"Import models... converts them.") % [Catalog.skipped_library_files.size(),
+			"" if Catalog.skipped_library_files.size() == 1 else "s"]
 
 
 func _apply_filter(reset_selection: bool = true) -> void:

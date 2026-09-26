@@ -212,8 +212,17 @@ func save_selection_as_prefab(prefab_name: String) -> Dictionary:
 	_dock.clear_prefab_name()
 	_dock.reload_library()
 	_dock.select_entry_by_id(String(result.id))
-	_dock.show_message("Saved prefab %s with %d assets. Select it and click Place on terrain." % [
-		String(result.path).get_file(), int(result.members)])
+	var note := ""
+	var left_markers := int(result.get("left_out_markers", 0))
+	var left_other := int(result.get("left_out_other", 0))
+	if left_markers + left_other > 0:
+		note = " Left out %s (prefabs hold placed assets only)." % ", ".join(PackedStringArray(
+			(["%d gameplay marker%s" % [left_markers, "" if left_markers == 1 else "s"]]
+				if left_markers > 0 else []) +
+			(["%d other object%s" % [left_other, "" if left_other == 1 else "s"]]
+				if left_other > 0 else [])))
+	_dock.show_message("Saved prefab %s with %d assets.%s Select it and click Place on terrain." % [
+		String(result.path).get_file(), int(result.members), note])
 	return result
 
 

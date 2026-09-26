@@ -4,13 +4,24 @@ const TOOL := preload("res://addons/map_authoring_workspace/terrain_sculpt_tool.
 const TERRAIN := preload("res://src/dev/map_authoring_region/terrain_control.gd")
 const REGION := preload("res://src/dev/map_authoring_region/region_control.gd")
 const PREVIEW := preload("res://addons/map_authoring_workspace/reference_preview.gd")
-const HEIGHT_PATH := "res://test-artifacts/terrain-sculpt/editor-base.f32le"
-const SCENE_PATH := "res://test-artifacts/terrain-sculpt/editor-saved.tscn"
+const FIXTURE_DIR := "res://test-artifacts/terrain-sculpt"
+const HEIGHT_PATH := FIXTURE_DIR + "/editor-base.f32le"
+const SCENE_PATH := FIXTURE_DIR + "/editor-saved.tscn"
+# An isolated catalog, manifest and authoring spec for the fixture alone: the
+# shared territory catalog never gains a test entry.
+const CATALOG_PATH := FIXTURE_DIR + "/editor-catalog.json"
+const MANIFEST_PATH := FIXTURE_DIR + "/editor-world.json"
+const SPEC_PATH := FIXTURE_DIR + "/editor-region-authoring-spec.json"
+const REGION_ID := "sculpt_editor_fixture"
+const REGION_LABEL := "Sculpt Editor Fixture"
+const SERVER_ORIGIN := Vector2i(100, 200)
+const SERVER_CELLS := Vector2i(20, 20)
 const GRID := Vector2i(11, 11)
 const SETTINGS := {"mode": 0, "radius": 3.0, "strength": 1.0,
 	"softness": 0.0, "flatten_target": 0.0}
 
 var failures := 0
+var _plugin: Object
 
 
 func _initialize() -> void:
@@ -43,6 +54,11 @@ func _run() -> void:
 	if plugin == null:
 		_finish(1)
 		return
+	_plugin = plugin
+	for path: String in [HEIGHT_PATH, SCENE_PATH, CATALOG_PATH, MANIFEST_PATH, SPEC_PATH]:
+		if not path.begins_with(FIXTURE_DIR + "/"):
+			_abort("fixture path escapes the fixture directory: " + path)
+			return
 	var dir := ProjectSettings.globalize_path(HEIGHT_PATH).get_base_dir()
 	DirAccess.make_dir_recursive_absolute(dir)
 	var file := FileAccess.open(ProjectSettings.globalize_path(HEIGHT_PATH),
@@ -54,9 +70,15 @@ func _run() -> void:
 	var original_bytes := FileAccess.get_file_as_bytes(
 		ProjectSettings.globalize_path(HEIGHT_PATH))
 
+	_write_fixture_catalog()
 	var root: Variant = REGION.new()
 	root.name = "SculptEditorFixture"
-	root.region_id = "sculpt_editor_fixture"
+	root.region_id = REGION_ID
+	root.continent_translation = Vector3.ZERO
+	root.metres_per_tile = 1.0
+	root.server_origin = SERVER_ORIGIN
+	root.server_cells = SERVER_CELLS
+	root.collision_origin_metres = Vector2(-SERVER_ORIGIN.x, SERVER_ORIGIN.y)
 	var polygon := PackedVector2Array([
 		Vector2(0, 0), Vector2(20, 0), Vector2(20, 20), Vector2(0, 20)])
 	var polygon_rows := []
@@ -81,24 +103,38 @@ func _run() -> void:
 		"initial fixture scene saves")
 	root.queue_free()
 	await process_frame
+	plugin.set("catalog_path", CATALOG_PATH)
 	plugin.call("_reload_sources")
 	editor_interface.call("open_scene_from_path", SCENE_PATH)
-	await process_frame
-	await process_frame
-	root = editor_interface.call("get_edited_scene_root")
-	terrain = root.get_node_or_null("Terrain") \
-		if root != null else null
-	if root == null or terrain == null:
-		_expect(false, "editor opens the saved sculpt fixture")
-		_finish(1)
+	# Nothing below may send input or save until the edited scene is provably
+	# this fixture: the editor can still hold a scene reopened from its layout.
+	root = null
+	for _attempt in 120:
+		await process_frame
+		root = editor_interface.call("get_edited_scene_root")
+		if _is_fixture_root(root):
+			break
+	if not _is_fixture_root(root):
+		_abort("the edited scene is not the sculpt fixture (%s); nothing was sent or saved" % [
+			root.scene_file_path if root != null else "no scene"])
 		return
+	_expect(true, "editor opens the saved sculpt fixture as the edited scene")
+	terrain = root.get_node_or_null("Terrain")
+	if terrain == null:
+		_abort("the fixture scene has no Terrain")
+		return
+	var fixture_root: Node = root
 
 	var catalog: Object = plugin.get("_catalog")
 	var entry: Dictionary = catalog.call("find", plugin.get("_entries"),
 		root.region_id)
 	_expect(not entry.is_empty() and bool(entry.get("editable", false)) and
-		String(entry.get("ownership_sha256", "")) == root.ownership_polygon_sha256,
-		"real fixture catalog enables only the matching saved authored scene")
+		String(entry.get("ownership_sha256", "")) == root.ownership_polygon_sha256 and
+		(catalog.get("errors") as PackedStringArray).is_empty(),
+		"the isolated fixture catalog enables only the matching saved authored scene: %s" %
+			"; ".join(catalog.get("errors") as PackedStringArray))
+	_expect(catalog.call("find", catalog.call("entries"), REGION_ID).is_empty(),
+		"the shared territory catalog never lists the fixture")
 	var fields: Dictionary = TOOL.boundary_fields(polygon, Vector3.ZERO,
 		Vector2.ZERO, GRID, 2.0)
 	_expect(fields.locked[5 * GRID.x + 2] == 1 and
@@ -259,6 +295,10 @@ func _run() -> void:
 	_expect(not tool.is_dragging(),
 		"global editor Ctrl+S flushes the in-flight stroke before saving")
 
+	if editor_interface.call("get_edited_scene_root") != fixture_root or \
+			not _is_fixture_root(fixture_root):
+		_abort("the edited scene changed before saving; nothing was saved")
+		return
 	var save_result: Variant = editor_interface.call("save_scene")
 	_expect(save_result == null or save_result == OK,
 		"normal editor save writes the active sculpt scene")
@@ -274,10 +314,62 @@ func _run() -> void:
 	if reopened != null:
 		reopened.free()
 	# The editor owns the active scene; the process exit closes it.
-	DirAccess.remove_absolute(ProjectSettings.globalize_path(SCENE_PATH))
-	DirAccess.remove_absolute(ProjectSettings.globalize_path(HEIGHT_PATH))
+	_cleanup()
 	print("terrain sculpt editor: %d failures" % failures)
 	call_deferred("_finish", 1 if failures else 0)
+
+
+func _is_fixture_root(root: Variant) -> bool:
+	return root is Node3D and root.get_script() == REGION and \
+		String((root as Node).scene_file_path) == SCENE_PATH and \
+		String(root.get("region_id")) == REGION_ID
+
+
+## Stops before any further input or save, restores the shared catalog and
+## removes the fixture files.
+func _abort(reason: String) -> void:
+	_expect(false, reason)
+	_cleanup()
+	print("terrain sculpt editor: aborted, %d failures" % failures)
+	call_deferred("_finish", 1)
+
+
+func _cleanup() -> void:
+	if _plugin != null and is_instance_valid(_plugin):
+		_plugin.set("catalog_path", "res://world_authoring/territories.json")
+		_plugin.call("_reload_sources")
+	for path: String in [SCENE_PATH, HEIGHT_PATH, CATALOG_PATH, MANIFEST_PATH, SPEC_PATH]:
+		if FileAccess.file_exists(path):
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+
+func _write_fixture_catalog() -> void:
+	var polygon := [[0, 0], [20, 0], [20, 20], [0, 20]]
+	_write_json(MANIFEST_PATH, {"continentGeography": {"translation": [0, 0, 0],
+		"ownershipPolygon": polygon, "revision": "sculpt-editor-fixture"},
+		"asset": {"glb": "editor-world.glb"}})
+	_write_json(SPEC_PATH, {"schema": "eloria-region-authoring-spec-v1",
+		"regionId": REGION_ID, "label": REGION_LABEL,
+		"paths": {"scene": _repository_path(SCENE_PATH), "manifest": _repository_path(MANIFEST_PATH)},
+		"continentTranslation": [0, 0, 0],
+		"server": {"origin": [SERVER_ORIGIN.x, SERVER_ORIGIN.y],
+			"cells": [SERVER_CELLS.x, SERVER_CELLS.y],
+			"collisionOriginMetres": [-SERVER_ORIGIN.x, SERVER_ORIGIN.y]},
+		"terrain": {}})
+	_write_json(CATALOG_PATH, {"schema": "eloria-map-authoring-territories-v1", "entries": [{
+		"id": REGION_ID, "label": REGION_LABEL, "manifestPath": MANIFEST_PATH,
+		"scenePath": SCENE_PATH, "authoringSpecPath": SPEC_PATH}]})
+
+
+## The spec's repository-relative form of a res:// path (res:// is godot-client/).
+func _repository_path(path: String) -> String:
+	return "godot-client/" + path.trim_prefix("res://")
+
+
+func _write_json(path: String, value: Dictionary) -> void:
+	var file := FileAccess.open(ProjectSettings.globalize_path(path), FileAccess.WRITE)
+	file.store_string(JSON.stringify(value, "  ") + "\n")
+	file.close()
 
 
 func _expect(ok: bool, description: String) -> void:

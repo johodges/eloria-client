@@ -1,36 +1,53 @@
 @tool
 extends RefCounted
 ## Play-test walking inside the editor: a stand-in character that walks the
-## open territory the way the server would move a player.
+## open territory the way the server moves a player.
 ##
-## Routes come from the territory's published walk grid (collision.bin, half-
-## metre cells), so the walker goes exactly where the served map lets a player
-## go. A territory with no published grid falls back to the live suggestion
-## from the walkability overlay (1 m tiles, terrain heights). Like the server,
-## a step may climb or drop at most 0.4 m (max_walk_height_change 2 x 0.2 m),
-## diagonals may not cut corners, and each step takes 250 ms
-## (player_move_interval_ms).
+## The server walks one-metre logical tiles whose grid its sync tool folds from
+## the published package's collision.bin (eloria-server tools/collision_sources
+## and sync_authored_collision): a tile is blocked when any of its four
+## half-metre cells is, otherwise it takes the highest of them; heights become
+## 0.2 m units above the lowest walkable tile and are then coarsened to the
+## map's stage, the smallest multiple of 0.2 m that fits the relief into 63
+## codes. The walker repeats that fold. On 2026-09-26 it reproduced the
+## server's tools/collision/<id>.escg.gz byte for byte for all twelve
+## territories. Only a map with under 12.4 m of relief could differ: the server
+## may then pick a coarser stage (up to 0.8 m) after comparing reachable area,
+## and the message says so.
 ##
-## The search runs on a window around the start and goal, then, when that finds
-## nothing, on the whole territory. A search wider than its cell cap runs on
-## 2x2 (or 3x3) blocks that are walkable only when all their cells are, so it
-## never crosses a thin wall but can miss a gap narrower than a block; the
-## route message says when that happened.
+## Routes use the server's search (World.find_path): neighbours tried N, NE, E,
+## SE, S, SW, W, NW; a step needs both tiles walkable and a code change of at
+## most max_walk_height_change (2); a diagonal also needs both orthogonal steps
+## from the same tile; costs 10 and 14 with a Chebyshev estimate; it gives up
+## after 100 000 tiles, and a route is at most 512 steps. A click on a blocked
+## tile goes to the nearest walkable tile within 19, as the server does. Steps
+## take 600 ms walking or 200 ms running (R), times sqrt(2) on a diagonal.
+##
+## Not modelled: other players and creatures, doors and portals, storage-body
+## footprints and legacy floor overrides the live server adds, and anything
+## changed since the last publish. An unpublished territory uses the live
+## walkability estimate with the same rules, so its routes are estimates too.
 ## The walker and its route are editor-only helpers and are never saved.
 
 const Walkability := preload("res://addons/map_authoring_usability/walkability_overlay.gd")
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
 const NODE_NAME := "__MapAuthoringPlaytest"
-const STEP_SECONDS := 0.25
-const MAX_CLIMB := 0.4
-## The server's step length; the climb allowance scales with the searched cell.
-const SERVER_CELL := 0.5
-const WINDOW_MARGIN := 48.0
-const MAX_WINDOW_CELLS := 640
-## The whole-territory retry samples at most this many cells a side (a 792 m
-## territory is searched on 1 m cells, which still finds any 1 m gap).
-const MAX_TERRITORY_CELLS := 800
-const SNAP_RADIUS := 3.0
+## eloria-server settings: player_move_interval_ms, player_run_interval_ms,
+## max_walk_height_change; World.find_path limits.
+const WALK_SECONDS := 0.6
+const RUN_SECONDS := 0.2
+const MAX_HEIGHT_CHANGE := 2
+const SEARCH_LIMIT := 100000
+const MAX_ROUTE_STEPS := 512
+const FREE_TILE_RADIUS := 20
+## The server's sync fold constants (tools/collision_sources, sync_authored_collision).
+const UNIT_METRES := 0.2
+const MIN_CODE := 1
+const MAX_CODE := 63
+const STAGE_LADDER_TOP := 4
+## World DIRS order, which decides between equal-cost routes.
+const DIRECTIONS := [Vector2i(0, 1), Vector2i(1, 1), Vector2i(1, 0), Vector2i(1, -1),
+	Vector2i(0, -1), Vector2i(-1, -1), Vector2i(-1, 0), Vector2i(-1, 1)]
 const BODY_COLOR := Color(1.0, 0.78, 0.18)
 const ROUTE_COLOR := Color(1.0, 0.9, 0.35, 0.95)
 
@@ -38,9 +55,10 @@ var active := false
 var last_message := ""
 ## "published" or "live" once a grid is loaded.
 var source := ""
-## Steps of the current route and the sampling stride it was found at.
+## Steps of the current route.
 var steps := 0
-var stride := 1
+## Walking (600 ms a metre) or running (200 ms).
+var running := false
 
 var _root: Node3D
 var _grid: Dictionary = {}
@@ -49,10 +67,10 @@ var _body: Node3D
 var _line: MeshInstance3D
 var _goal_ring: MeshInstance3D
 var _route := PackedVector3Array()
-var _progress := 0.0
+var _step_index := 0
+var _step_elapsed := 0.0
 var _position := Vector3.INF
 var _facing := Vector3.FORWARD
-var _pooled := {}
 
 
 ## Loads the walk grid and shows usage. Returns false when there is nothing to
@@ -72,8 +90,7 @@ func start(root: Node3D) -> bool:
 	source = String(_grid.source)
 	active = true
 	_build_nodes()
-	last_message = "Play test on the %s grid: click the ground to place the walker." % (
-		"published" if source == "published" else "live (unpublished)")
+	last_message = "%s Click the ground to place the walker." % grid_description()
 	return true
 
 
@@ -92,7 +109,6 @@ func stop() -> void:
 	_goal_ring = null
 	_root = null
 	_grid = {}
-	_pooled = {}
 
 
 func is_placed() -> bool:
@@ -100,7 +116,7 @@ func is_placed() -> bool:
 
 
 func is_walking() -> bool:
-	return _route.size() >= 2 and _progress < float(_route.size() - 1)
+	return _route.size() >= 2 and _step_index < _route.size() - 1
 
 
 ## The walker's territory-local position (INF before it is placed).
@@ -116,13 +132,28 @@ func node() -> Node3D:
 	return _node
 
 
+## What the grid is and how exact it is, in one sentence.
+func grid_description() -> String:
+	if _grid.is_empty():
+		return ""
+	var stage := "stage %.1f m" % float(_grid.stage_metres)
+	if String(_grid.source) == "live":
+		return "Play test on the live (unpublished) grid, an estimate of the next publish (%s)." % stage
+	var note := ""
+	if int(_grid.stage_factor) <= STAGE_LADDER_TOP:
+		note = "; on this low-relief map the server may choose a coarser stage, up to 0.8 m"
+	return "Play test on the server's walk grid, folded from the published package (%s%s)." % [
+		stage, note]
+
+
 func hint_lines() -> PackedStringArray:
 	var lines := PackedStringArray()
 	if not active:
 		return lines
-	lines.append("Play test (%s grid)" % source)
+	lines.append("Play test (%s grid, %s)" % [source, "running" if running else "walking"])
 	lines.append(last_message)
-	lines.append("Click: walk there   Shift+click: place   F: centre on walker   Esc/right-click: stop")
+	lines.append("Click: walk there   Shift+click: place   R: walk/run   F: centre on walker   " +
+		"Esc/right-click: stop")
 	return lines
 
 
@@ -131,9 +162,15 @@ func handle_input(camera: Camera3D, event: InputEvent) -> bool:
 	if not active:
 		return false
 	if event is InputEventKey and event.pressed and not event.echo:
-		if (event as InputEventKey).keycode == KEY_ESCAPE:
+		var key := event as InputEventKey
+		if key.keycode == KEY_ESCAPE:
 			stop()
 			last_message = "Play test ended."
+			return true
+		if key.keycode == KEY_R and not key.ctrl_pressed and not key.alt_pressed:
+			running = not running
+			last_message = "Now %s (%d ms a metre)." % ["running" if running else "walking",
+				roundi((RUN_SECONDS if running else WALK_SECONDS) * 1000.0)]
 			return true
 		return false
 	if not event is InputEventMouseButton or not event.pressed:
@@ -159,326 +196,474 @@ func handle_input(camera: Camera3D, event: InputEvent) -> bool:
 	return true
 
 
-## Puts the walker on the nearest walkable cell within SNAP_RADIUS of `local`.
+## Puts the walker on the tile under `local`, or the nearest walkable one.
 func place(local: Vector3) -> bool:
-	var cell: Variant = nearest_walkable(local, SNAP_RADIUS)
-	if cell == null:
-		last_message = "Not walkable here (nothing walkable within %.0f m)." % SNAP_RADIUS
+	var tile := free_tile(cell_of(local))
+	if not is_walkable(tile):
+		last_message = "Nothing walkable within %d m of that spot." % (FREE_TILE_RADIUS - 1)
 		return false
 	_route = PackedVector3Array()
-	_progress = 0.0
+	_step_index = 0
+	_step_elapsed = 0.0
 	steps = 0
-	_position = cell_point(cell as Vector2i)
+	_position = cell_point(tile)
 	_update_nodes()
-	last_message = "Walker placed at %s. Click somewhere to walk there." % _describe(_position)
+	last_message = "Walker placed on tile %d, %d. Click somewhere to walk there." % [tile.x, tile.y]
 	return true
 
 
-## Finds a route from the walker to `local` and starts walking it.
+## Finds the server's route from the walker to `local` and starts walking it.
 func walk_to(local: Vector3) -> bool:
 	if not is_placed():
 		return place(local)
-	var goal: Variant = nearest_walkable(local, SNAP_RADIUS)
-	if goal == null:
-		last_message = "That spot is not walkable (nothing walkable within %.0f m)." % SNAP_RADIUS
-		return false
-	var found := find_route(_position, cell_point(goal as Vector2i))
+	var found := find_route(_position, local)
 	if found.size() < 2:
 		_route = PackedVector3Array()
 		_update_nodes()
 		return false
 	_route = found
-	_progress = 0.0
+	_step_index = 0
+	_step_elapsed = 0.0
 	_update_nodes()
 	return true
+
+
+## Seconds step `index` of the current route takes at the chosen pace.
+func step_duration(index: int) -> float:
+	var interval := RUN_SECONDS if running else WALK_SECONDS
+	if index < 0 or index >= _route.size() - 1:
+		return interval
+	var from := _route[index]
+	var to := _route[index + 1]
+	var diagonal := absf(to.x - from.x) > 0.5 and absf(to.z - from.z) > 0.5
+	return interval * (sqrt(2.0) if diagonal else 1.0)
 
 
 ## Moves the walker along its route; call every frame.
 func advance(delta: float) -> void:
 	if not active or not is_walking():
 		return
-	_progress = minf(_progress + delta / (STEP_SECONDS * float(stride)), float(_route.size() - 1))
-	var index := mini(floori(_progress), _route.size() - 2)
-	var t := _progress - float(index)
-	var from := _route[index]
-	var to := _route[index + 1]
-	_position = from.lerp(to, t)
-	var flat := Vector3(to.x - from.x, 0.0, to.z - from.z)
-	if flat.length_squared() > 0.0001:
-		_facing = flat.normalized()
-	if not is_walking():
-		last_message = "Arrived: %d steps, %.1f s of walking." % [steps, float(steps) * STEP_SECONDS]
+	_step_elapsed += delta
+	while is_walking() and _step_elapsed >= step_duration(_step_index):
+		_step_elapsed -= step_duration(_step_index)
+		_step_index += 1
+	if is_walking():
+		var from := _route[_step_index]
+		var to := _route[_step_index + 1]
+		_position = from.lerp(to, clampf(_step_elapsed / step_duration(_step_index), 0.0, 1.0))
+		var flat := Vector3(to.x - from.x, 0.0, to.z - from.z)
+		if flat.length_squared() > 0.0001:
+			_facing = flat.normalized()
+	else:
+		_position = _route[_route.size() - 1]
+		var seconds := 0.0
+		for index in _route.size() - 1:
+			seconds += step_duration(index)
+		last_message = "Arrived: %d steps, %.1f s %s." % [steps, seconds,
+			"running" if running else "walking"]
 	_update_body()
 
 
 # Grid ----------------------------------------------------------------------
 
-## The walk grid in one shape for both sources:
-## {source, codes (walkable when > 0), width, rows, cell, x0, z_start, row_sign,
-##  height_origin, height_step} for published; live adds nothing but uses
-## terrain heights (height_step NAN).
+## The server's tile grid for the territory:
+## {source, codes (0 blocked, 1-63 heights), width, rows, origin (serverOrigin
+##  tiles), stage_factor, stage_metres, and for display either the published
+##  half-metre bytes and their height encoding or "root" for terrain heights}.
 static func load_grid(root: Node3D) -> Dictionary:
+	var origin: Vector2i = root.get("server_origin") if root.get("server_origin") is Vector2i \
+		else Vector2i.ZERO
 	var published := Walkability.published_grid(root)
-	if not published.has("error"):
-		return {"source": "published", "codes": published.bytes, "width": published.width,
-			"rows": published.rows, "cell": published.cell, "x0": published.x0,
-			"z_start": published.z1, "row_sign": -1.0,
-			"height_origin": published.get("height_origin", NAN),
-			"height_step": published.get("height_step", NAN)}
+	if not published.has("error") and not is_nan(float(published.get("height_step", NAN))):
+		return fold_published(published, origin)
 	var live := Walkability.compute_live(root)
 	if live.has("error"):
 		return {"error": "No walk grid: %s" % String(live.error)}
+	return fold_live(live, origin, root)
+
+
+## Folds a published half-metre EWCG grid onto one-metre server tiles exactly
+## as fold_server_grid / requantise / choose_stage / rescale do.
+static func fold_published(published: Dictionary, origin: Vector2i) -> Dictionary:
+	var bytes: PackedByteArray = published.bytes
+	var cells_x := int(published.width)
+	var cells_y := int(published.rows)
+	if cells_x % 2 != 0 or cells_y % 2 != 0:
+		return {"error": "The published walk grid does not fold onto one-metre tiles."}
+	# The published frame must start on a tile edge: x0 = -originX, z1 = originY.
+	var tile_x0 := float(published.x0) + float(origin.x)
+	var tile_y0 := float(origin.y) - float(published.z1)
+	if not is_zero_approx(tile_x0) or not is_zero_approx(tile_y0):
+		return {"error": "The published walk grid is not aligned to the server tiles."}
+	var width := cells_x / 2
+	var rows := cells_y / 2
+	var folded := PackedByteArray()
+	folded.resize(width * rows)
+	var lowest := 256
+	var highest := 0
+	for ty in rows:
+		var top := 2 * ty * cells_x
+		var bottom := top + cells_x
+		var out := ty * width
+		for tx in width:
+			var column := 2 * tx
+			var a := bytes[top + column]
+			var b := bytes[top + column + 1]
+			var c := bytes[bottom + column]
+			var d := bytes[bottom + column + 1]
+			if a == 0 or b == 0 or c == 0 or d == 0:
+				continue
+			var code := maxi(maxi(a, b), maxi(c, d))
+			folded[out + tx] = code
+			lowest = mini(lowest, code)
+			highest = maxi(highest, code)
+	var step := float(published.height_step)
+	var height_origin := float(published.height_origin)
+	var table := _stage_table(func(code: int) -> float: return float(code) * step + height_origin,
+		lowest, highest)
+	var codes := PackedByteArray()
+	codes.resize(width * rows)
+	var lookup: PackedByteArray = table.codes
+	for index in folded.size():
+		codes[index] = lookup[folded[index]]
+	return {"source": "published", "codes": codes, "width": width, "rows": rows,
+		"origin": origin, "stage_factor": table.factor,
+		"stage_metres": float(table.factor) * UNIT_METRES,
+		"display_bytes": bytes, "display_width": cells_x, "height_step": step,
+		"height_origin": height_origin}
+
+
+## The live estimate on the same tiles and rules: walkable live tiles, with
+## terrain heights re-expressed like a published grid.
+static func fold_live(live: Dictionary, origin: Vector2i, root: Node3D) -> Dictionary:
 	var classes: PackedByteArray = live.classes
 	var owned: PackedByteArray = (live.owned as Image).get_data()
+	var tile := float(live.tile)
+	if not is_equal_approx(tile, 1.0):
+		return {"error": "The live walkability grid is not on one-metre tiles."}
+	var live_width := int(live.width)
+	var live_rows := int(live.rows)
+	var min_x := floori(float(live.x0) + 0.5 + float(origin.x))
+	var max_x := floori(float(live.x0) + float(live_width) - 0.5 + float(origin.x))
+	var min_y := floori(float(origin.y) - (float(live.z0) + float(live_rows) - 0.5))
+	var max_y := floori(float(origin.y) - (float(live.z0) + 0.5))
+	var width := max_x + 1
+	var rows := max_y + 1
+	if min_x < 0 or min_y < 0:
+		return {"error": "The live grid lies outside the server tiles (negative tiles)."}
+	var metres := PackedFloat64Array()
+	metres.resize(width * rows)
+	metres.fill(NAN)
+	var lowest := INF
+	for row in live_rows:
+		for column in live_width:
+			var index := row * live_width + column
+			var value := classes[index]
+			if (value != Walkability.Tile.WALKABLE and value != Walkability.Tile.DECK) or \
+					owned[index * 4 + 3] <= 127:
+				continue
+			var x := float(live.x0) + float(column) + 0.5
+			var z := float(live.z0) + float(row) + 0.5
+			var height := Walkability._ground(live, x, z)
+			if is_nan(height):
+				continue
+			var tx := floori(x + float(origin.x))
+			var ty := floori(float(origin.y) - z)
+			metres[ty * width + tx] = height
+			lowest = minf(lowest, height)
 	var codes := PackedByteArray()
-	codes.resize(classes.size())
-	for index in classes.size():
-		var value := classes[index]
-		if (value == Walkability.Tile.WALKABLE or value == Walkability.Tile.DECK) and \
-				owned[index * 4 + 3] > 127:
-			codes[index] = 1
-	return {"source": "live", "codes": codes, "width": live.width, "rows": live.rows,
-		"cell": live.tile, "x0": live.x0, "z_start": live.z0, "row_sign": 1.0,
-		"height_origin": NAN, "height_step": NAN, "root": root}
+	codes.resize(width * rows)
+	var highest_units := 1
+	var units := PackedInt32Array()
+	units.resize(width * rows)
+	for index in metres.size():
+		if is_nan(metres[index]):
+			continue
+		units[index] = int(round_half_even((metres[index] - lowest) / UNIT_METRES)) + MIN_CODE
+		highest_units = maxi(highest_units, units[index])
+	var factor := stage_factor(highest_units - MIN_CODE)
+	for index in units.size():
+		if units[index] > 0:
+			codes[index] = _coarsen(units[index], factor)
+	return {"source": "live", "codes": codes, "width": width, "rows": rows,
+		"origin": origin, "stage_factor": factor, "stage_metres": float(factor) * UNIT_METRES,
+		"root": root}
+
+
+## The smallest stage (in 0.2 m units) that fits `relief` units into 63 codes;
+## sync_authored_collision.stage_ladder's lower bound.
+static func stage_factor(relief: int) -> int:
+	return maxi(1, ceili(float(relief) / float(MAX_CODE - MIN_CODE)))
+
+
+## Per published code: requantised units and the final stage code, as a
+## lookup table over 0-255 (requantise rebases on the lowest walkable tile).
+static func _stage_table(decode: Callable, lowest: int, highest: int) -> Dictionary:
+	var codes := PackedByteArray()
+	codes.resize(256)
+	if highest == 0:
+		return {"codes": codes, "factor": 1}
+	var floor_metres: float = decode.call(lowest)
+	var units := PackedInt32Array()
+	units.resize(256)
+	for code in range(1, 256):
+		units[code] = int(round_half_even((float(decode.call(code)) - floor_metres) /
+			UNIT_METRES)) + MIN_CODE
+	var factor := stage_factor(units[highest] - units[lowest])
+	for code in range(1, 256):
+		codes[code] = _coarsen(units[code], factor)
+	return {"codes": codes, "factor": factor}
+
+
+## rescale(): ceil(units / factor) clamped to the codes an ELM byte holds.
+static func _coarsen(units: int, factor: int) -> int:
+	if factor == 1:
+		return clampi(units, 0, 255)
+	return clampi(ceili(float(units) / float(factor)), MIN_CODE, MAX_CODE)
+
+
+## numpy.round: halves go to the even neighbour.
+static func round_half_even(value: float) -> float:
+	var lower := floorf(value)
+	var fraction := value - lower
+	if fraction > 0.5:
+		return lower + 1.0
+	if fraction < 0.5:
+		return lower
+	return lower if fmod(lower, 2.0) == 0.0 else lower + 1.0
 
 
 func grid() -> Dictionary:
 	return _grid
 
 
-## The grid cell under a territory-local point, or (-1, -1) outside the grid.
+## The server tile under a territory-local point (it may be outside the grid).
 func cell_of(local: Vector3) -> Vector2i:
-	var cell := float(_grid.cell)
-	var column := floori((local.x - float(_grid.x0)) / cell)
-	var row := floori(float(_grid.row_sign) * (local.z - float(_grid.z_start)) / cell)
-	if column < 0 or row < 0 or column >= int(_grid.width) or row >= int(_grid.rows):
-		return Vector2i(-1, -1)
-	return Vector2i(column, row)
+	var origin: Vector2i = _grid.origin
+	return Vector2i(floori(local.x + float(origin.x)), floori(float(origin.y) - local.z))
 
 
-func is_walkable(cell: Vector2i) -> bool:
-	if cell.x < 0 or cell.y < 0 or cell.x >= int(_grid.width) or cell.y >= int(_grid.rows):
+func _inside(tile: Vector2i) -> bool:
+	return tile.x >= 0 and tile.y >= 0 and tile.x < int(_grid.width) and tile.y < int(_grid.rows)
+
+
+func code_at(tile: Vector2i) -> int:
+	return (_grid.codes as PackedByteArray)[tile.y * int(_grid.width) + tile.x] \
+		if _inside(tile) else 0
+
+
+func is_walkable(tile: Vector2i) -> bool:
+	return code_at(tile) & 0x3F != 0
+
+
+## CollisionMap.can_step: both tiles walkable and the code change within the limit.
+func can_step(from: Vector2i, to: Vector2i) -> bool:
+	var start := code_at(from)
+	var end := code_at(to)
+	return start & 0x3F != 0 and end & 0x3F != 0 and absi(end - start) <= MAX_HEIGHT_CHANGE
+
+
+## World.step_allowed for a single step, corners included.
+func step_allowed(from: Vector2i, to: Vector2i) -> bool:
+	var delta := to - from
+	if not can_step(from, to):
 		return false
-	return (_grid.codes as PackedByteArray)[cell.y * int(_grid.width) + cell.x] > 0
+	return delta.x == 0 or delta.y == 0 or (can_step(from, Vector2i(to.x, from.y)) and
+		can_step(from, Vector2i(from.x, to.y)))
 
 
-## The server's height of a walkable cell (territory-local metres), or NAN.
-func cell_height(cell: Vector2i) -> float:
-	if not is_walkable(cell):
-		return NAN
-	var step := float(_grid.height_step)
-	if not is_nan(step):
-		var code := (_grid.codes as PackedByteArray)[cell.y * int(_grid.width) + cell.x]
-		return float(_grid.height_origin) + float(code) * step
-	return _terrain_height(_cell_centre(cell))
+## World.free_player_tile without occupants: the tile itself when walkable,
+## otherwise the first walkable tile ring by ring out to 19.
+func free_tile(tile: Vector2i) -> Vector2i:
+	if is_walkable(tile):
+		return tile
+	for radius in range(1, FREE_TILE_RADIUS):
+		for dx in range(-radius, radius + 1):
+			for dy in range(-radius, radius + 1):
+				if maxi(absi(dx), absi(dy)) == radius and is_walkable(tile + Vector2i(dx, dy)):
+					return tile + Vector2i(dx, dy)
+	return tile
 
 
-## A walkable cell's centre on the ground the walker stands on. Where the grid
-## height matches the terrain (within a code step) the smooth terrain is used;
-## elsewhere (bridge decks, floors) the grid height.
-func cell_point(cell: Vector2i) -> Vector3:
-	var centre := _cell_centre(cell)
-	var served := cell_height(cell)
-	var ground := _terrain_height(centre)
-	var tolerance := maxf(float(_grid.height_step) * 1.5, 0.45) \
-		if not is_nan(float(_grid.height_step)) else INF
-	var y := ground if not is_nan(ground) and (is_nan(served) or absf(served - ground) <= tolerance) \
-		else served
-	return Vector3(centre.x, y if not is_nan(y) else 0.0, centre.y)
+## A tile's centre on the ground the walker stands on (territory-local).
+func cell_point(tile: Vector2i) -> Vector3:
+	var origin: Vector2i = _grid.origin
+	var x := float(tile.x) + 0.5 - float(origin.x)
+	var z := float(origin.y) - float(tile.y) - 0.5
+	var ground := _terrain_height(Vector2(x, z))
+	var y := ground
+	if _grid.has("display_bytes"):
+		# The published grid knows decks and floors the terrain does not.
+		var deck := _published_height(tile)
+		if not is_nan(deck) and (is_nan(ground) or deck > ground + 0.5):
+			y = deck
+	return Vector3(x, y if not is_nan(y) else 0.0, z)
 
 
-func nearest_walkable(local: Vector3, radius: float) -> Variant:
-	var centre := cell_of(local)
-	if centre.x < 0:
-		return null
-	if is_walkable(centre):
-		return centre
-	var reach := ceili(radius / float(_grid.cell))
-	var best: Variant = null
-	var best_distance := INF
-	for dy in range(-reach, reach + 1):
-		for dx in range(-reach, reach + 1):
-			var cell := centre + Vector2i(dx, dy)
-			if not is_walkable(cell):
-				continue
-			var distance := float(dx * dx + dy * dy)
-			if distance < best_distance:
-				best_distance = distance
-				best = cell
-	return best
+func _published_height(tile: Vector2i) -> float:
+	var bytes: PackedByteArray = _grid.display_bytes
+	var cells_x := int(_grid.display_width)
+	var highest := 0
+	for offset: Vector2i in [Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)]:
+		var column := 2 * tile.x + offset.x
+		var row := 2 * tile.y + offset.y
+		var index := row * cells_x + column
+		if column < cells_x and index < bytes.size():
+			highest = maxi(highest, bytes[index])
+	return float(_grid.height_origin) + float(highest) * float(_grid.height_step) \
+		if highest > 0 else NAN
 
 
-## A route between two territory-local points as ground points, one per step;
-## empty (with last_message saying why) when there is none. The search first
-## covers a window around both points, then the whole territory.
+## World.find_path from the tile under `from_local` to the tile under
+## `to_local`: ground points of the route, start included; empty (with
+## last_message saying why) when the server would not move.
 func find_route(from_local: Vector3, to_local: Vector3) -> PackedVector3Array:
-	var start := cell_of(from_local)
-	var goal := cell_of(to_local)
-	if not is_walkable(start) or not is_walkable(goal):
-		last_message = "Start or goal is not walkable."
-		return PackedVector3Array()
-	var margin := ceili(WINDOW_MARGIN / float(_grid.cell))
-	var low := Vector2i(maxi(mini(start.x, goal.x) - margin, 0),
-		maxi(mini(start.y, goal.y) - margin, 0))
-	var high := Vector2i(mini(maxi(start.x, goal.x) + margin, int(_grid.width) - 1),
-		mini(maxi(start.y, goal.y) + margin, int(_grid.rows) - 1))
-	var result := _search(start, goal, low, high, MAX_WINDOW_CELLS)
-	var whole := low == Vector2i.ZERO and high == Vector2i(int(_grid.width) - 1, int(_grid.rows) - 1)
-	if result.is_empty() and not whole and not last_message.begins_with("Start or goal"):
-		result = _search(start, goal, Vector2i.ZERO,
-			Vector2i(int(_grid.width) - 1, int(_grid.rows) - 1), MAX_TERRITORY_CELLS)
-	return result
-
-
-func _search(start: Vector2i, goal: Vector2i, low: Vector2i, high: Vector2i,
-		cap: int) -> PackedVector3Array:
 	var result := PackedVector3Array()
-	var span := maxi(high.x - low.x + 1, high.y - low.y + 1)
-	stride = maxi(1, ceili(float(span) / float(cap)))
-	var grid := _search_grid(stride)
-	var grid_width := int(grid.width)
-	var low_c := Vector2i(low.x / stride, low.y / stride)
-	var high_c := Vector2i(mini(high.x / stride, grid_width - 1),
-		mini(high.y / stride, int(grid.rows) - 1))
-	var size := high_c - low_c + Vector2i.ONE
-	var centre := Vector2i(stride / 2, stride / 2)
-	var heights := PackedFloat32Array()
-	heights.resize(size.x * size.y)
-	var astar := AStarGrid2D.new()
-	astar.region = Rect2i(Vector2i.ZERO, size)
-	astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
-	astar.default_compute_heuristic = AStarGrid2D.HEURISTIC_OCTILE
-	astar.default_estimate_heuristic = AStarGrid2D.HEURISTIC_OCTILE
-	astar.update()
-	var codes: PackedByteArray = grid.codes
-	var coded := not is_nan(float(_grid.height_step))
-	var origin := float(_grid.height_origin)
-	var step := float(_grid.height_step)
-	for gy in size.y:
-		var base := (low_c.y + gy) * grid_width + low_c.x
-		for gx in size.x:
-			var code := codes[base + gx]
-			if code == 0:
-				heights[gy * size.x + gx] = NAN
-				astar.set_point_solid(Vector2i(gx, gy))
-			elif coded:
-				heights[gy * size.x + gx] = origin + float(code) * step
-			else:
-				heights[gy * size.x + gx] = _terrain_height(_cell_centre(
-					(low_c + Vector2i(gx, gy)) * stride + centre))
-	# A step the server refuses (too high a climb or drop) is removed by making
-	# the lower cell of the pair solid: nothing can then reach the upper cell
-	# across that edge, while the upper cell (a deck rim) keeps its full width.
-	# Diagonal neighbours are a longer step apart, so a slope the grade rule
-	# allows is not mistaken for a ledge there.
-	# Codes round each end by up to half a step, so a legal slope can differ
-	# by one code more than its true height change.
-	var tolerance := step if coded else 0.05
-	var climb := MAX_CLIMB * float(stride) * float(_grid.cell) / SERVER_CELL + tolerance
-	var diagonal_climb := climb * sqrt(2.0)
-	for gy in size.y:
-		var row_index := gy * size.x
-		for gx in size.x:
-			var here := heights[row_index + gx]
-			if is_nan(here):
-				continue
-			if gx + 1 < size.x:
-				_mark_ledge(astar, heights, size, gx, gy, gx + 1, gy, here, climb)
-			if gy + 1 < size.y:
-				_mark_ledge(astar, heights, size, gx, gy, gx, gy + 1, here, climb)
-				if gx + 1 < size.x:
-					_mark_ledge(astar, heights, size, gx, gy, gx + 1, gy + 1, here, diagonal_climb)
-				if gx > 0:
-					_mark_ledge(astar, heights, size, gx, gy, gx - 1, gy + 1, here, diagonal_climb)
-	var from := _open_near(astar, start / stride - low_c, size)
-	var to := _open_near(astar, goal / stride - low_c, size)
-	if from.x < 0 or to.x < 0:
-		last_message = "Start or goal sits on a ledge the server would not step off."
+	var start := cell_of(from_local)
+	if not is_walkable(start):
+		last_message = "The walker is not on a walkable tile."
 		return result
-	var path := astar.get_id_path(from, to)
-	var metres := float(stride) * float(_grid.cell)
-	if path.is_empty():
-		last_message = "No walkable route: the goal is fenced, walled or cut off from the walker (searched %.0f x %.0f m%s)." % [
-			float(size.x) * metres, float(size.y) * metres,
-			" on %.1f m cells" % metres if stride > 1 else ""]
+	var clicked := cell_of(to_local)
+	var target := free_tile(clicked)
+	if target == start:
 		steps = 0
+		last_message = "The walker is already there."
 		return result
-	for point in path:
-		result.append(cell_point((low_c + point) * stride + centre))
-	steps = (path.size() - 1) * stride
-	last_message = "Walking %d steps (%.1f s, %.0f m)%s." % [steps, float(steps) * STEP_SECONDS,
-		_length(result), "; searched on %.1f m cells" % metres if stride > 1 else ""]
+	var path := search(start, target)
+	if path.is_empty():
+		steps = 0
+		last_message = ("You cannot reach that location: the server finds no route%s. It is " +
+			"fenced, walled, too steep a climb, or cut off.") % [
+			" within its 100 000-tile search" if int(_grid.get("last_search_nodes", 0)) > SEARCH_LIMIT
+				else ""]
+		return result
+	result.append(cell_point(start))
+	for tile in path:
+		result.append(cell_point(tile))
+	steps = path.size()
+	var seconds := 0.0
+	var interval := RUN_SECONDS if running else WALK_SECONDS
+	var previous := start
+	for tile in path:
+		var delta := tile - previous
+		seconds += interval * (sqrt(2.0) if delta.x != 0 and delta.y != 0 else 1.0)
+		previous = tile
+	last_message = "%s %d steps, %.1f s." % ["Running" if running else "Walking", steps, seconds]
+	if target != clicked:
+		last_message += " That spot is blocked, so the route ends on the nearest walkable tile."
+	if bool(_grid.get("last_search_truncated", false)):
+		last_message += " The server walks at most 512 steps per click; click again to go on."
 	return result
 
 
-## The grid searched at `sample` cells per side: the walk grid itself, or a
-## coarser one where a cell is walkable only when every fine cell in it is, so
-## a coarse search never slips through a wall one cell thick. Cached per play
-## test.
-func _search_grid(sample: int) -> Dictionary:
-	if sample <= 1:
-		return {"codes": _grid.codes, "width": int(_grid.width), "rows": int(_grid.rows)}
-	if _pooled.has(sample):
-		return _pooled[sample]
+## The server's A*: returns the tiles after `start` up to `target` (at most 512),
+## or empty when the search fails.
+func search(start: Vector2i, target: Vector2i) -> Array[Vector2i]:
 	var width := int(_grid.width)
-	var coarse_width := width / sample
-	var coarse_rows := int(_grid.rows) / sample
 	var codes: PackedByteArray = _grid.codes
-	var pooled := PackedByteArray()
-	pooled.resize(coarse_width * coarse_rows)
-	var centre := sample / 2
-	for cy in coarse_rows:
-		var top := cy * sample * width
-		for cx in coarse_width:
-			var corner := top + cx * sample
-			var open := true
-			if sample == 2:
-				open = codes[corner] > 0 and codes[corner + 1] > 0 and \
-					codes[corner + width] > 0 and codes[corner + width + 1] > 0
-			else:
-				for oy in sample:
-					var row_start := corner + oy * width
-					for ox in sample:
-						if codes[row_start + ox] == 0:
-							open = false
-							break
-					if not open:
-						break
-			if open:
-				pooled[cy * coarse_width + cx] = codes[corner + centre * width + centre]
-	var result := {"codes": pooled, "width": coarse_width, "rows": coarse_rows}
-	_pooled[sample] = result
-	return result
+	var count := width * int(_grid.rows)
+	var cost := PackedInt32Array()
+	cost.resize(count)
+	cost.fill(-1)
+	var previous := PackedInt32Array()
+	previous.resize(count)
+	previous.fill(-1)
+	var start_index := start.y * width + start.x
+	var target_index := target.y * width + target.x
+	cost[start_index] = 0
+	var discovered := 1
+	var heap := PackedInt64Array()
+	var nodes := PackedInt32Array()
+	# Keys order like the server's (f, sequence) tuples; the sequence indexes nodes.
+	_heap_push(heap, 0)
+	nodes.append(start_index)
+	var sequence := 0
+	var destination := -1
+	while not heap.is_empty() and discovered <= SEARCH_LIMIT:
+		var key := _heap_pop(heap)
+		var current := nodes[key & 0xFFFFFFFFFF]
+		var cx := current % width
+		var cy := current / width
+		if maxi(absi(target.x - cx), absi(target.y - cy)) <= 0:
+			destination = current
+			break
+		var here := codes[current]
+		for direction: Vector2i in DIRECTIONS:
+			var nx := cx + direction.x
+			var ny := cy + direction.y
+			if not _step_ok(codes, width, count, cx, cy, nx, ny, here):
+				continue
+			if direction.x != 0 and direction.y != 0 and (
+					not _step_ok(codes, width, count, cx, cy, nx, cy, here) or
+					not _step_ok(codes, width, count, cx, cy, cx, ny, here)):
+				continue
+			var next := ny * width + nx
+			var new_cost := cost[current] + (14 if direction.x != 0 and direction.y != 0 else 10)
+			if cost[next] < 0 or new_cost < cost[next]:
+				if cost[next] < 0:
+					discovered += 1
+				cost[next] = new_cost
+				previous[next] = current
+				sequence += 1
+				var estimate := 10 * maxi(maxi(absi(target.x - nx), absi(target.y - ny)), 0)
+				_heap_push(heap, (int(new_cost + estimate) << 40) | sequence)
+				nodes.append(next)
+	_grid["last_search_nodes"] = discovered
+	var path: Array[Vector2i] = []
+	if destination < 0:
+		_grid["last_search_truncated"] = false
+		return path
+	var walk := destination
+	while walk != start_index:
+		path.append(Vector2i(walk % width, walk / width))
+		walk = previous[walk]
+	path.reverse()
+	_grid["last_search_truncated"] = path.size() > MAX_ROUTE_STEPS
+	if path.size() > MAX_ROUTE_STEPS:
+		path.resize(MAX_ROUTE_STEPS)
+	return path
 
 
-static func _mark_ledge(astar: AStarGrid2D, heights: PackedFloat32Array, size: Vector2i,
-		gx: int, gy: int, nx: int, ny: int, here: float, limit: float) -> void:
-	var there := heights[ny * size.x + nx]
-	if is_nan(there) or absf(there - here) <= limit:
-		return
-	if there < here:
-		astar.set_point_solid(Vector2i(nx, ny))
-	else:
-		astar.set_point_solid(Vector2i(gx, gy))
+static func _step_ok(codes: PackedByteArray, width: int, count: int, x: int, y: int,
+		nx: int, ny: int, here: int) -> bool:
+	if nx < 0 or ny < 0 or nx >= width or ny * width + nx >= count:
+		return false
+	var there := codes[ny * width + nx]
+	return here & 0x3F != 0 and there & 0x3F != 0 and absi(there - here) <= MAX_HEIGHT_CHANGE
 
 
-static func _open_near(astar: AStarGrid2D, cell: Vector2i, size: Vector2i) -> Vector2i:
-	for radius in 4:
-		for dy in range(-radius, radius + 1):
-			for dx in range(-radius, radius + 1):
-				if maxi(absi(dx), absi(dy)) != radius:
-					continue
-				var probe := cell + Vector2i(dx, dy)
-				if probe.x >= 0 and probe.y >= 0 and probe.x < size.x and probe.y < size.y and \
-						not astar.is_point_solid(probe):
-					return probe
-	return Vector2i(-1, -1)
+static func _heap_push(heap: PackedInt64Array, key: int) -> void:
+	heap.append(key)
+	var index := heap.size() - 1
+	while index > 0:
+		var parent := (index - 1) >> 1
+		if heap[parent] <= key:
+			break
+		heap[index] = heap[parent]
+		index = parent
+	heap[index] = key
 
 
-func _cell_centre(cell: Vector2i) -> Vector2:
-	var size := float(_grid.cell)
-	return Vector2(float(_grid.x0) + (float(cell.x) + 0.5) * size,
-		float(_grid.z_start) + float(_grid.row_sign) * (float(cell.y) + 0.5) * size)
+static func _heap_pop(heap: PackedInt64Array) -> int:
+	var top := heap[0]
+	var last := heap[heap.size() - 1]
+	heap.resize(heap.size() - 1)
+	var size := heap.size()
+	if size == 0:
+		return top
+	var index := 0
+	while true:
+		var child := 2 * index + 1
+		if child >= size:
+			break
+		if child + 1 < size and heap[child + 1] < heap[child]:
+			child += 1
+		if heap[child] >= last:
+			break
+		heap[index] = heap[child]
+		index = child
+	heap[index] = last
+	return top
 
 
 func _terrain_height(point: Vector2) -> float:
@@ -490,21 +675,6 @@ func _terrain_height(point: Vector2) -> float:
 	if is_nan(height):
 		return NAN
 	return (root.global_transform.affine_inverse() * Vector3(world.x, height, world.z)).y
-
-
-static func _length(points: PackedVector3Array) -> float:
-	var total := 0.0
-	for index in range(1, points.size()):
-		total += points[index - 1].distance_to(points[index])
-	return total
-
-
-func _describe(local: Vector3) -> String:
-	var info := Probe.describe_point(_root, _root.global_transform * local)
-	if bool(info.get("has_tile", false)):
-		var tile: Vector2i = info.tile
-		return "tile %d, %d" % [tile.x, tile.y]
-	return "%.1f, %.1f" % [local.x, local.z]
 
 
 # Nodes ---------------------------------------------------------------------

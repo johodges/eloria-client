@@ -25,6 +25,10 @@ While sculpting, these keys work in the 3D view:
 - The radius and strength step factors are under **Editor Settings > Map Authoring > Sculpt**.
 - The brush cursor uses the fast terrain probe from [map-authoring-usability.md](map-authoring-usability.md), so hovering stays smooth on the full 397×397 grids.
 
+## Heightmaps and plateaus
+
+**Import heightmap…** in the sculpt section writes a greyscale image into the same sparse layer, with explicit heights for black and white, **Replace** or **Offset**, and the same border protection. **Map tools > Stamp plateaus…** adds Set or Add terrain patches instead, refusing any that would touch the protected border. Both are described in [map-authoring-usability.md](map-authoring-usability.md).
+
 ## Strokes, undo and saving
 
 Each drag is one undo step. **Escape** cancels a drag. Releasing the mouse,

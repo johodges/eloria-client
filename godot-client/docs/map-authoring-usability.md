@@ -3,10 +3,12 @@
 The map editor still runs inside Godot, but the placement and viewport tools now work more like a dedicated map editor. Three plugins are involved:
 
 - **Map Assets** (`addons/map_asset_palette`): the asset library with its drop-in model folder, ghost placement, and prefabs.
-- **Map Authoring Usability** (`addons/map_authoring_usability`): the cursor readout, the cursor grid, the **Map tools** menu, the toolbar toggles, the selection bar, groups and copies, readable gameplay markers, the walkability overlay, road and river drawing, the play-test walker, the **Minimap** dock, the low-spec view, the time-of-day preview and the top-down capture.
-- **Territories** (`addons/map_authoring_workspace`): now also has sculpt brush keys (see [terrain-sculpting.md](terrain-sculpting.md)) and a **Browse…** map picker.
+- **Map Authoring Usability** (`addons/map_authoring_usability`): the cursor readout, the cursor grid, the **Map tools** menu, the toolbar toggles, the selection bar, groups and copies, readable gameplay markers, the walkability overlay, road and river drawing, ground regions and plateaus, the play-test walker, the **Minimap** dock, the low-spec view, the time-of-day preview and the top-down capture.
+- **Territories** (`addons/map_authoring_workspace`): now also has sculpt brush keys (see [terrain-sculpting.md](terrain-sculpting.md)), heightmap import and a **Browse…** map picker.
 
-Everything in this document works in production region scenes, and everything except the terrain-based tools works in the pilot. None of it changes the save, snapshot, or bake contracts. Ghosts, grids, pins, the walker and every other helper are ownerless nodes, so they are never packed into a scene; the only new thing a scene saves is the group tag on grouped objects, which the snapshot ignores. Every edit goes through Godot's normal undo history, which you can see and jump through in the **History** dock next to FileSystem.
+The map team's answers on what each tool may write are in [map-team-editor-contracts.md](map-team-editor-contracts.md).
+
+Everything in this document works in production region scenes, and everything except the terrain-based tools works in the pilot. None of it changes the save, snapshot, or bake contracts. Ghosts, grids, pins, the walker and every other helper are ownerless nodes, so they are never packed into a scene. The only new thing a scene saves besides ordinary controls is the group tag on grouped objects; the snapshot's geometry and gameplay records ignore it, although saving the scene changes its source hash as any save does. Every edit goes through Godot's normal undo history, which you can see and jump through in the **History** dock next to FileSystem.
 
 ## Toolbar
 
@@ -16,6 +18,7 @@ The 3D toolbar has one-click toggles next to **Map tools** and **Time**:
 |---|---|
 | **Grid** | The cursor grid all the time (off: only while placing). |
 | **Snap** | Grid snapping for placement, copies and drawn points (same as G). |
+| **Ground**, **Plateau** | Open the ground-region or plateau options (see below). |
 | **Pins** | Gameplay marker pins and labels. |
 | **Walk** | The walkability overlay mode (a small menu). |
 | **Play** | The play-test walker. |
@@ -67,11 +70,11 @@ These options are per-user preferences stored under **Editor Settings > Map Auth
 
 ### Add your own models (no JSON)
 
-Any `.glb`, `.gltf`, `.tscn` or `.scn` file under `res://assets/world/library/` is a palette asset. A first-level subfolder names its category: `library/Rocks/boulder.glb` is listed as **Boulder** under **Library: Rocks**; files directly in `library/` are under **Library**. Press **Refresh** after adding files yourself.
+Any `.glb`, `.tscn` or `.scn` file under `res://assets/world/library/` is a palette asset. A first-level subfolder names its category: `library/Rocks/boulder.glb` is listed as **Boulder** under **Library: Rocks**; files directly in `library/` are under **Library**. Press **Refresh** after adding files yourself.
 
-**Import models…** does the copying for you: type a category (for example `Rocks`) and pick one or more `.glb`/`.gltf` files anywhere on disk. They are copied into that category folder (a `.gltf` brings its buffers and images along), never overwriting a file with the same name, and the palette lists them once Godot has imported them. **Folder** shows the library in the FileSystem dock.
+**Import models…** does the copying for you: type a category (for example `Rocks`) and pick one or more `.glb`/`.gltf` files anywhere on disk. A `.glb` is copied as it is; a `.gltf` is converted to one self-contained `.glb`, because the bake accepts only static GLB sources. Nothing is overwritten, and the palette lists the models once Godot has imported them. A `.gltf` dropped into the folder by hand is not listed; Refresh says so. **Folder** shows the library in the FileSystem dock.
 
-Library assets place like catalog ones. Their catalog id is `library:<category>/<name>`, and the scene path goes into the snapshot like any other asset's.
+Library assets place like catalog ones. Their catalog id is `library:<category>/<name>`, and the scene path goes into the snapshot like any other asset's. Being listed is not the same as being admitted to production: prefer self-contained static GLB models with a Node3D root, metre-scale geometry and PBR textures; the bake still checks surfaces and paths. The collision role starts from the category name (`solid` when it contains "structure", "interactive" or "landmark", otherwise `none`). Treat that as a suggestion, choose `walk_surface` deliberately, and leave collision changes to the map team's review.
 
 ### What gets created
 
@@ -131,17 +134,18 @@ Every change is one undo step.
 **Groups.** Select two or more placed objects and press **Ctrl+G** in the 3D view (or **Group** in the selection bar or Map tools). Clicking any member then selects the whole group, so it moves, turns and copies as one. **Ctrl+Shift+G** ungroups.
 
 - **Pick one member:** double-click it, or press **Edit members**. The group stays open for single picks until you select something outside it.
-- **What is saved:** each member keeps its place in `AuthoredAssets` or `Gameplay`; a group is only a `map_authoring_group` tag in the members' metadata. The snapshot and bake ignore it, so grouping never changes an export.
+- **What is saved:** each member keeps its place in `AuthoredAssets` or `Gameplay`; a group is only a `map_authoring_group` tag in the members' node metadata (not the asset's exported `metadata` dictionary). The snapshot's object and gameplay records ignore it; saving the scene still changes its source hash, as any save does.
 - Ctrl+G and Ctrl+Shift+G group only while the 3D view has keyboard focus (click in it first). Elsewhere Godot's own **Group Selected Nodes** shortcut, which makes clicks on children select their parent, takes those keys. The **Group** button always does the map group.
 
 **Copies.** Hold **Alt** and drag a selected object: a ghost of the selection follows the cursor and the copies are dropped where you release (Esc cancels). **Duplicate** in the selection bar or Map tools copies one grid step away instead. Either way the copies are one undo step and are selected afterwards.
 
 - Every copy gets a fresh asset id or marker record id, its own copies of local material overrides, and new group ids (a copied group becomes a new group).
 - Each copy keeps its height above the ground, so copies on a slope sit on the ground.
-- A marker that follows a copied asset follows the copy; runtime bindings are never copied.
+- A marker that follows a copied asset follows the copy; a marker copied without its asset stops following. Runtime bindings are never copied, and a copied default spawn is not a default spawn.
+- Other marker fields (portal destinations, linked nodes, extras) are copied as they are; check them in the Inspector.
 - With **Snap** on, the drag moves in whole grid steps.
 
-Use these instead of Godot's Ctrl+D for placements: Ctrl+D keeps the original asset and record ids, which the snapshot needs to be unique.
+**Godot's Ctrl+D.** It keeps the original asset and record ids, and the snapshot rejects two objects with one id. In the 3D view, Ctrl+D on placed objects is therefore redirected: it duplicates them in place with fresh ids. A duplicate made another way (the Scene dock's Duplicate) is caught within a second: a warning appears at the top of the 3D view and **Map tools > Give duplicated copies fresh ids** fixes it in one undo step. Only the copies change; the originals keep their ids. Ids are compared the way the snapshot compares them (assets together, each gameplay kind on its own), and duplicates a scene already had when it opened, such as Manymouth's retained `stelae-court` pair, are left alone.
 
 Alt+drag on empty ground, or while placing, still orbits the camera.
 
@@ -155,6 +159,8 @@ Alt+drag on empty ground, or while placing, still orbits the camera.
 The prefab is written to `res://world_authoring/prefabs/<name>.tscn`, and **Folder** shows it in the FileSystem dock.
 
 ### Place a prefab
+
+Prefabs hold placed assets only. Selected gameplay markers and other controls are left out, and the message says how many.
 
 Place a prefab like any other asset: the ghost shows every member, and turn, lift, size and snap apply to the whole group.
 
@@ -227,7 +233,7 @@ The live suggestion classifies each tile as follows:
   - the sea level from the territory's manifest (or the continent plan);
   - authored rivers, using their point heights as the water surface;
   - water regions.
-- **Structures.** Solid assets block the actor's 0.06–2.16 m body. This is estimated from each mesh's bounding box.
+- **Structures.** Solid assets block the actor's body, from 0.06 m to 2.10 m above the ground. The live suggestion estimates this from each mesh's bounding box; the bake tests the actual triangles against the body at every half-metre cell and also blocks the inside of closed meshes, so pens, fences and archways are exact only in the published grid.
 - **Decks.** Walk-surface assets use their upward triangles within the grade limit; procedural bridges use their deck quads.
 - **Ownership.** Only land inside the territory's ownership polygon is shown.
 
@@ -289,19 +295,44 @@ Drawing, asset placement and sculpting are mutually exclusive; starting one stop
 |---|---|
 | Click the ground | Place the walker, then walk it there on the next clicks. |
 | Shift+click | Place the walker somewhere else. |
+| R | Switch between walking and running. |
 | F | Centre the 3D view on the walker. |
 | Esc or right-click | Stop the play test. |
 
-The route follows the server's movement rules:
+The route is the one the server would take:
 
-- **Grid.** It uses the territory's published walk grid (`collision.bin`, half-metre cells), so the walker goes exactly where the served map lets a player go. A territory that has not been published yet uses the live walkability suggestion (1 m tiles) and says so.
-- **Steps.** Eight directions, no cutting past a blocked corner, and at most a 0.4 m climb or drop per half-metre step (`max_walk_height_change`).
-- **Pace.** One step every 250 ms (`player_move_interval_ms`); the message gives the steps, time and distance.
-- **Heights.** The walker stands on the grid's height codes, so it crosses bridges and decks at deck height.
+- **Grid.** The server walks one-metre tiles. Its grid is folded from the territory's published package (`collision.bin`): a tile is blocked when any of its four half-metre cells is, otherwise it takes the highest, and heights become codes at the map's stage (1.4 m on Sunmane, 4.8 m on Whitehorn). The walker repeats that fold; on 26 September 2026 it matched the server's grids byte for byte on all twelve territories. On a map with less than 12.4 m of relief the server may choose a coarser stage, and the message says so.
+- **Steps.** Neighbours are tried N, NE, E, SE, S, SW, W, NW. A step needs both tiles walkable and a code change of at most 2 (`max_walk_height_change`); a diagonal also needs both of its orthogonal steps. The search gives up after 100 000 tiles, a route is at most 512 steps (click again to go on), and a click on a blocked tile goes to the nearest walkable tile within 19.
+- **Pace.** 600 ms a metre walking and 200 ms running, times √2 on a diagonal.
+- **Heights.** The walker stands on the terrain, or on the published deck height where a bridge or floor is higher.
 
-If no route exists it says so: the goal is fenced, walled or otherwise cut off, or the spot itself is not walkable. The search first looks around both points and then across the whole territory. A territory-wide search runs on 1 m (or 1.5 m) blocks that count as walkable only when all their half-metre cells are, so it never slips through a fence or wall; it can miss a gap narrower than a block, and the message says when blocks were used. Routes on Sunmane take 30–460 ms.
+A territory that has never been published uses the live walkability suggestion with the same rules; those routes are estimates. The live server also accounts for other players and creatures, doors and portals, storage-body footprints and a few legacy floors, which the walker does not. Loading the grid takes about 0.1 s on Sunmane; routes take 30–600 ms, and up to about a second when the search runs out.
 
-The walker, its route line and goal ring are never saved. Starting placement, sculpting or road drawing ends the play test.
+The walker, its route line and goal ring are never saved. Starting placement, sculpting, road drawing or a ground tool ends the play test.
+
+## Paint ground regions
+
+**Ground** (or **Map tools > Paint ground regions…**) opens the options: a surface (one the territory already uses, or a texture preset), the shape, feather, opacity and priority. **Start drawing**, then press where a region's centre goes and drag out its size. Each release adds an ordinary ground region control under `Ground/Regions` with a fresh `ground-NN` id, one undo step each; the tool stays armed until Esc (with no draft) or right-click. `[` and `]` change the feather.
+
+- A shared surface file is reused as it is, so later edits to it change every region using it; a surface embedded in another region is copied, and a preset makes a new local surface.
+- The region and its feather must stay inside the land the territory owns.
+- A territory holds at most 127 ground regions, the most the terrain preview draws; the tool refuses more.
+
+## Stamp plateaus
+
+**Plateau** (or **Map tools > Stamp plateaus…**) creates terrain patches under `Terrain/Patches` the same way: press at the centre, drag out the size. **Level at a height (Set)** flattens the ground to the chosen height above the point you pressed; **Raise or lower (Add)** moves it by a delta. Page Up and Page Down change the height, and `[` / `]` the feather. Each stamp is a `stamp-NN` patch, one undo step.
+
+- A stamp may only touch ground the sculpt brush could edit fully: none of its terrain samples may be locked or in the faded border band. The tool refuses a stamp that reaches them, and it only starts once the Territories dock has loaded the territory's borders.
+- Patches apply before road and river shaping, so a road running through a plateau still grades its own corridor.
+- A plateau shapes terrain only: it does not make ground walkable (the 0.65 grade, water and structure rules still apply) and cannot make caves or overhangs.
+
+## Import a heightmap
+
+**Territories > Import heightmap…** writes a greyscale image into the terrain's sparse sculpt layer. Choose the image, **Replace heights** or **Offset heights (add)**, the height black maps to and the height white maps to (there is no implied scale), and the area it covers in terrain metres (it starts as the whole terrain grid). The image's top row is north.
+
+- **Replace** sets each editable sample to the image's height; **Offset** adds the image's height to what is there.
+- Borders are protected as for the brush: locked samples never change and the fade band blends in. The original base height file is never rewritten, and the layer stays bound to it, so a changed base rejects the layer.
+- It is one undo step, saved with the scene like any sculpt. Patches and road and river shaping still apply on top, so the finished ground can differ from the image where those are.
 
 ## Minimap
 
@@ -314,7 +345,7 @@ The **Minimap** dock shows the open territory from above, north up, clipped to t
 
 Click or drag on the minimap to move the 3D view there. The view centres on the spot and keeps its angle and zoom; the selection is left as it was.
 
-The picture is rendered from the scene when a territory opens, at 0.5 px/m (**Editor Settings > Map Authoring > Minimap**), lit at noon unless the time preview is on. The authoring terrain preview renders much darker than the game, so the dock brightens its copy of the picture (top-down captures are left as rendered). Press **Refresh** after large edits. The overlays follow the scene continuously.
+The picture is rendered from the scene when a territory opens, at 0.5 px/m (**Editor Settings > Map Authoring > Minimap**), lit at noon unless the time preview is on, so it shows unpublished source edits. The authoring terrain preview renders much darker than the game, for a reason not yet diagnosed, so the dock brightens its copy of the picture; that is compensation, not a fix, and top-down captures are left as rendered. Press **Refresh** after large edits. The overlays follow the scene continuously.
 
 ## Open a territory by map
 
@@ -376,10 +407,12 @@ The focused editor test builds a disposable 41×41 region fixture under `res://t
 - road and river drawing, endpoint snapping, road extension at either end, undo and discard;
 - groups (Ctrl+G, selection expansion, double-click to open), Duplicate and Alt+drag copies with fresh ids;
 - the selection bar's fields and buttons;
-- the play-test walker: routing on the fixture's own reachable area, refusal of cut-off and blocked goals, pacing, and the published grid's height encoding;
+- the play-test walker: the published-grid fold and five routes checked against results from the server's own fold functions and a replica of its A*, legal server steps on the fixture, walking and running pace, refusal of cut-off goals, the nearest-free-tile redirect, and Sunmane's 792 x 792 fold;
+- the contract guards: copied default spawns, the Ctrl+D redirect, shared-id detection and fixing (per section, pre-existing duplicates kept), and prefabs leaving markers out;
+- ground regions and plateaus (sizes, surfaces, ownership and border refusals, the 127 limit, undo) and heightmap import (Replace and Offset, orientation, border protection, stale layers, untouched base bytes);
 - the minimap's framing, pixel mapping, overlays and camera jump;
 - the territory picker's thumbnails and open request;
-- the library folder and model import;
+- the library folder and model import, including `.gltf` conversion and skipping;
 - the low-spec view and the toolbar toggles;
 - top-down framing and ownership clipping;
 - that no helper node (ghost, grid, preview lights, walker, copy ghost, focus helper) is ever saved, and that group tags are.
@@ -390,6 +423,16 @@ The focused editor test builds a disposable 41×41 region fixture under `res://t
 
 The test waits for the editor to finish its first scan before opening the fixture, and restores every Editor Settings value it changes.
 
+`tests/test_terrain_sculpt_editor.gd` now uses an isolated catalog, manifest and authoring spec under `test-artifacts/terrain-sculpt/`, checks that the edited scene is exactly its fixture before any input or save, and stops without saving otherwise.
+
 ## Not in this editor yet
 
-The partner editor also paints water, grass, ground textures, walkability overrides, named places, sounds and cliff "plateaus". Each of those needs a new source control and a new snapshot/bake contract, which the map team owns. They are proposals, not features. Image heightmap import and map annotations are also not implemented.
+The map team's answers (see [map-team-editor-contracts.md](map-team-editor-contracts.md)) set the order and the owners:
+
+- **Polygon lakes, ponds and shorelines** come after an explicit polygon-water contract; plan water will be shown read-only first.
+- **Grass and foliage painting** needs a foliage runtime budget first; a scatter tool that places ordinary assets could come sooner.
+- **Map annotations** are proposed as an editor-only `<region>.editor-notes.json` beside the scene.
+- **Named place labels** on the in-game map need a label schema, client rendering and a naming policy.
+- **Lights, particles and sound emitters** exist in manifests today, owned by the map team, but have no scene controls or snapshot section yet.
+- **NPC walking paths** need a server patrol feature first.
+- **Walkability overrides** come last, and only as areas that remove walkability; forcing ground walkable is not planned.

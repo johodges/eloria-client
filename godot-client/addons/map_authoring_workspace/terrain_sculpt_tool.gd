@@ -293,6 +293,127 @@ func _clear_stroke() -> void:
 	_preview_elapsed = 0.0
 
 
+## The bound territory's border protection, for other editor tools that write
+## terrain (the plateau stamp): {locked, weights, origin, grid, cell, polygon
+## (territory-local)}, or empty when no editable territory is bound.
+func protection_fields() -> Dictionary:
+	if _terrain == null or not is_instance_valid(_terrain) or _locked.is_empty():
+		return {}
+	var translation: Vector3 = _entry.get("translation", Vector3.ZERO)
+	var polygon := PackedVector2Array()
+	for point: Vector2 in _entry.get("ownership_polygon", PackedVector2Array()):
+		polygon.append(point - Vector2(translation.x, translation.z))
+	return {"locked": _locked, "weights": _boundary_weights, "origin": _terrain.origin,
+		"grid": _terrain.grid_size, "cell": _terrain.cell_metres, "polygon": polygon,
+		"terrain": _terrain}
+
+
+## Imports a greyscale heightmap into the sparse sculpt layer as one undo step.
+## `area` is the terrain-local X/Z rectangle the image covers, north (smaller Z)
+## at the top row; black maps to `low` metres and white to `high`. Replace sets
+## editable samples to that height; Offset adds it to what is there. Borders are
+## protected as for the brush: locked samples never change, the fade band is
+## blended, and the original base heights are never rewritten. Returns
+## {"changed": n} or {"error"}.
+func import_heightmap(image: Image, area: Rect2, low: float, high: float,
+		replace: bool) -> Dictionary:
+	if _terrain == null or not is_instance_valid(_terrain) or _base.is_empty():
+		return {"error": "Open an editable territory from the Territories dock first."}
+	if _dragging:
+		return {"error": "Finish the current stroke first."}
+	var current: Resource = _terrain.sculpt_layer
+	var result := heightmap_layer_deltas(image, area, low, high, replace, _base,
+		current.indices if current != null else PackedInt32Array(),
+		current.deltas if current != null else PackedFloat32Array(),
+		_locked, _boundary_weights, _terrain.origin, _terrain.grid_size, _terrain.cell_metres)
+	if result.has("error"):
+		return result
+	var layer: Resource = _terrain.sculpt_layer.copy_with(result.indices, result.deltas) \
+		if current != null else null
+	if layer == null:
+		layer = load("res://src/dev/map_authoring_region/terrain_sculpt_layer.gd").new()
+		layer.bind_base(_base_sha, _terrain.origin, _terrain.grid_size, _terrain.cell_metres)
+		layer.indices = result.indices
+		layer.deltas = result.deltas
+	var error: String = layer.validation_error(_base_sha, _terrain.origin, _terrain.grid_size,
+		_terrain.cell_metres)
+	if not error.is_empty():
+		return {"error": error}
+	if _undo_redo is EditorUndoRedoManager:
+		_undo_redo.create_action("Import heightmap", UndoRedo.MERGE_DISABLE, _root)
+	else:
+		_undo_redo.create_action("Import heightmap", UndoRedo.MERGE_DISABLE)
+	_undo_redo.add_do_method(_terrain, &"apply_sculpt_layer", layer)
+	_undo_redo.add_undo_method(_terrain, &"apply_sculpt_layer", current)
+	_undo_redo.commit_action()
+	status_changed.emit("Heightmap imported into the sculpt layer: %d samples changed, %d protected." % [
+		int(result.changed), int(result.protected)])
+	return {"changed": result.changed, "protected": result.protected}
+
+
+## The pure heightmap-to-sculpt-layer computation behind import_heightmap.
+static func heightmap_layer_deltas(image: Image, area: Rect2, low: float, high: float,
+		replace: bool, base: PackedFloat32Array, indices: PackedInt32Array,
+		deltas: PackedFloat32Array, locked: PackedByteArray, weights: PackedFloat32Array,
+		origin: Vector2, grid: Vector2i, cell: float) -> Dictionary:
+	if image == null or image.is_empty():
+		return {"error": "The heightmap image could not be read."}
+	if area.size.x <= 0.0 or area.size.y <= 0.0 or not is_finite(low) or not is_finite(high):
+		return {"error": "Give the heightmap a positive area and finite metre heights."}
+	var samples := image.duplicate() as Image
+	if samples.is_compressed():
+		samples.decompress()
+	samples.convert(Image.FORMAT_RF)
+	var width := samples.get_width()
+	var height := samples.get_height()
+	var existing := PackedFloat32Array()
+	existing.resize(grid.x * grid.y)
+	for offset in indices.size():
+		existing[indices[offset]] = deltas[offset]
+	var changed := 0
+	var protected := 0
+	for z in grid.y:
+		for x in grid.x:
+			var index := z * grid.x + x
+			var point := Vector2(origin.x + float(x) * cell, origin.y + float(z) * cell)
+			if point.x < area.position.x - 0.0001 or point.x > area.end.x + 0.0001 or \
+					point.y < area.position.y - 0.0001 or point.y > area.end.y + 0.0001:
+				continue
+			if locked[index] != 0 or weights[index] <= 0.0:
+				protected += 1
+				continue
+			# Pixel centres: pixel i covers [i, i+1) of width in image space.
+			var u := clampf((point.x - area.position.x) / area.size.x * float(width) - 0.5,
+				0.0, float(width - 1))
+			var v := clampf((point.y - area.position.y) / area.size.y * float(height) - 0.5,
+				0.0, float(height - 1))
+			var x0 := floori(u)
+			var y0 := floori(v)
+			var x1 := mini(x0 + 1, width - 1)
+			var y1 := mini(y0 + 1, height - 1)
+			var fx := u - float(x0)
+			var fy := v - float(y0)
+			var value := lerpf(lerpf(samples.get_pixel(x0, y0).r, samples.get_pixel(x1, y0).r, fx),
+				lerpf(samples.get_pixel(x0, y1).r, samples.get_pixel(x1, y1).r, fx), fy)
+			var metres := lerpf(low, high, value)
+			var before := existing[index]
+			var after := lerpf(before, metres - base[index], weights[index]) if replace \
+				else before + metres * weights[index]
+			if absf(after) > 4096.0 or not is_finite(after):
+				return {"error": "The heightmap would move the ground more than 4096 m."}
+			if not is_equal_approx(after, before):
+				changed += 1
+			existing[index] = after
+	var new_indices := PackedInt32Array()
+	var new_deltas := PackedFloat32Array()
+	for index in existing.size():
+		if absf(existing[index]) > 0.000001:
+			new_indices.append(index)
+			new_deltas.append(existing[index])
+	return {"indices": new_indices, "deltas": new_deltas, "changed": changed,
+		"protected": protected}
+
+
 ## Tints the brush ring so the active brush reads at a glance.
 func set_ring_color(color: Color) -> void:
 	if _ring_material != null:
