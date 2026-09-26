@@ -6,7 +6,7 @@ placement a coherent economy and travel route.
 
 | Concept / place | Authored layout | Review view |
 |---|---|---|
-| Caravan road | Four Gates approach crosses the beck and faces the west gate; side inns leave the road clear | review-west-arrival |
+| Caravan road | Mirrorhold approach crosses the beck and faces the west gate; side inns leave the road clear | review-west-arrival |
 | Round-tent camps | Four clan groups retain their shared market and separate horse grounds | p02-round-tent-camp |
 | Seasonal market | Storage, crafting, training and information share the south court; story NPCs gather around the hall | review-service-court |
 | Banner shrines | Clan shrines sit beside the camp paths and pasture crossings | p04-banner-shrine |

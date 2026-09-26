@@ -52,7 +52,8 @@ var _combat_event := -1
 var _inventory_totals: Dictionary = {}
 ## Where the server last said the player was standing, so a step is heard when
 ## the tile changes rather than on every actor packet.
-var _local_tile := Vector2i(-1, -1)
+var _local_tile := Vector2i.ZERO
+var _has_local_tile := false
 var _last_step_msec := -STEP_INTERVAL_MSEC
 var _step_actor_id := -1
 var _last_step_variant := -1
@@ -229,11 +230,12 @@ func _on_local_actor_moved() -> void:
 		_step_actor_id = AppState.local_actor_id
 	var tile := Vector2i(int((actor as Dictionary).get("x", 0)),
 		int((actor as Dictionary).get("y", 0)))
-	if tile == _local_tile:
+	if _has_local_tile and tile == _local_tile:
 		return
-	var first_sighting: bool = _local_tile == Vector2i(-1, -1)
+	var first_sighting: bool = not _has_local_tile
 	var displacement := tile - _local_tile
 	_local_tile = tile
+	_has_local_tile = true
 	var now: int = Time.get_ticks_msec()
 	if first_sighting or maxi(absi(displacement.x), absi(displacement.y)) > 2:
 		return
@@ -253,7 +255,8 @@ func _on_local_actor_moved() -> void:
 	play(sound, _step_random.randf_range(0.97, 1.03), _step_random.randf_range(0.94, 1.0))
 
 func _reset_steps() -> void:
-	_local_tile = Vector2i(-1, -1)
+	_local_tile = Vector2i.ZERO
+	_has_local_tile = false
 	_step_actor_id = -1
 	_last_step_msec = -STEP_INTERVAL_MSEC
 	_last_step_variant = -1

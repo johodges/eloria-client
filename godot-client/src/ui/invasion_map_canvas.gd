@@ -14,7 +14,8 @@ const MARKER_FONT_SIZE := 10
 const MAX_LOCATION_LABELS := 6
 
 var state: Dictionary = {}
-var selected_tile := Vector2i(-1, -1)
+var selected_tile: Variant = null
+var coordinates_supported := true
 var background: Texture2D
 var _hover_text := ""
 var _adapter: CoordinateAdapter
@@ -36,6 +37,7 @@ func set_map_state(value: Dictionary, texture: Texture2D = null,
 	var previous_map := str((state.get("map", {}) as Dictionary).get("id", ""))
 	var next_map := str((value.get("map", {}) as Dictionary).get("id", ""))
 	state = value.duplicate(true)
+	coordinates_supported = bool(value.get("coordinatesSupported", true))
 	background = texture
 	_adapter = null
 	_world_rect = Rect2()
@@ -47,8 +49,8 @@ func set_map_state(value: Dictionary, texture: Texture2D = null,
 			Vector2(float(high[0]) - float(low[0]), float(high[1]) - float(low[1])))
 		if _world_rect.size.x > 0.0 and _world_rect.size.y > 0.0:
 			_adapter = CoordinateAdapter.new(projection.get("coordinateTransform", {}))
-	if previous_map != next_map:
-		selected_tile = Vector2i(-1, -1)
+	if previous_map != next_map or not coordinates_supported:
+		selected_tile = null
 	_hover_text = ""
 	tooltip_text = "Click the tactical map to select teleport coordinates."
 	queue_redraw()
@@ -64,13 +66,17 @@ func _bounds() -> Vector2:
 	return Vector2(maxf(1.0, float(map.get("width", 2048))),
 		maxf(1.0, float(map.get("height", 2048))))
 
+func _minimum() -> Vector2:
+	var minimum: Array = state.get("map", {}).get("serverTileMin", [0, 0])
+	return Vector2(float(minimum[0]), float(minimum[1]))
+
 
 func _point(tile: Vector2) -> Vector2:
 	var rect := _map_rect()
 	var bounds := _bounds()
 	# Server Y increases north; image Y increases south. Use the image's
 	# authored world bounds, which can include scenery outside the server grid.
-	var relative := (tile + Vector2(0.5, 0.5)) / bounds
+	var relative := (tile - _minimum() + Vector2(0.5, 0.5)) / bounds
 	relative.y = 1.0 - relative.y
 	if _adapter != null:
 		var world := _adapter.server_to_godot(tile.x + 0.5, tile.y + 0.5)
@@ -82,13 +88,14 @@ func _tile(point: Vector2) -> Vector2i:
 	var rect := _map_rect()
 	var bounds := _bounds()
 	var relative := (point - rect.position) / rect.size
-	var tile := Vector2i(floori(relative.x * bounds.x),
+	var minimum := Vector2i(_minimum())
+	var tile := minimum + Vector2i(floori(relative.x * bounds.x),
 		floori((1.0 - relative.y) * bounds.y))
 	if _adapter != null:
 		var world := _world_rect.position + relative * _world_rect.size
 		tile = _adapter.godot_to_server(Vector3(world.x, 0.0, world.y))
-	return Vector2i(clampi(tile.x, 0, int(bounds.x) - 1),
-		clampi(tile.y, 0, int(bounds.y) - 1))
+	return Vector2i(clampi(tile.x, minimum.x, minimum.x + int(bounds.x) - 1),
+		clampi(tile.y, minimum.y, minimum.y + int(bounds.y) - 1))
 
 
 ## Keep a handful of readable names; every location still has a hover label
@@ -166,7 +173,7 @@ func _draw() -> void:
 			point + Vector2(0, -5), point + Vector2(5, 0),
 			point + Vector2(0, 5), point + Vector2(-5, 0)])
 		draw_colored_polygon(diamond, color)
-	if selected_tile.x >= 0:
+	if selected_tile is Vector2i:
 		var selected_point := _point(Vector2(selected_tile))
 		draw_circle(selected_point, 7.0, Color("f4ef7a"), false, 2.0)
 		draw_line(selected_point - Vector2(10, 0), selected_point + Vector2(10, 0),
@@ -176,6 +183,8 @@ func _draw() -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
+	if not coordinates_supported:
+		return
 	if event is InputEventMouseButton:
 		var button := event as InputEventMouseButton
 		if button.button_index == MOUSE_BUTTON_LEFT and button.pressed \

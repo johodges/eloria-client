@@ -5,6 +5,7 @@ signal selection_changed
 signal cast_submitted(spell_id: int, power: int)
 var catalog: SpellCatalog
 var pending: Dictionary = {}
+var _coordinate_token: Dictionary = {}
 var popup: AcceptDialog
 var choices: OptionButton
 var quantity: SpinBox
@@ -20,6 +21,8 @@ var _feedback := ""
 var _feedback_until := 0
 
 func _send(data: Dictionary) -> Error:
+	if not request_sender.is_valid() and Network.coordinates.selected and not Network.coordinates.matches(_coordinate_token):
+		return ERR_INVALID_PARAMETER
 	var error: Error = int(request_sender.call(data)) if request_sender.is_valid() else Network.magic_request(data)
 	if error != OK: status_changed.emit("Could not send spell. Check your connection.")
 	elif data.get("op") == "cast": cast_submitted.emit(int(data.id), int(data.power))
@@ -69,7 +72,8 @@ func _ready() -> void:
 		_feedback_until = 0
 		selection_changed.emit())
 	Network.connection_state_changed.connect(func(state: String) -> void:
-		if state == "disconnected": cancel())
+		if state == "disconnected": cancel(false))
+	Network.coordinate_intents_invalidated.connect(func() -> void: cancel(false))
 
 func _process(_delta: float) -> void:
 	var aiming := not pending.is_empty() and not AppState.pending_spell_target.is_empty()
@@ -86,12 +90,12 @@ func begin(spell_id: int, power: int, selected_target_id := -1) -> void:
 	var spell: Dictionary = catalog.spell(spell_id)
 	if spell.is_empty(): return
 	pending = {"op": "cast", "id": spell_id, "power": maxi(1, power)}
+	_coordinate_token = Network.coordinates.token()
 	var scope := str(spell.get("scope", "self"))
 	if scope == "inventory" or (spell.get("effect") == "recall" and power >= 5):
 		_send({"op": "options", "id": spell_id})
 	elif scope in ["target", "burst", "location"]:
-		Network.magic_pending = pending.duplicate()
-		Network.magic_scope = scope
+		Network.begin_magic_selection(pending, scope)
 		AppState.pending_spell_target = "actor" if scope == "target" else "location"
 		if scope == "target" and target_mode == "prepared" and selected_target_id >= 0 \
 				and target_validator.is_valid() and bool(target_validator.call(spell_id, selected_target_id)):
@@ -126,8 +130,8 @@ func _finish(selection: Dictionary) -> void:
 	selection_changed.emit()
 	_send(request)
 
-func cancel() -> void:
-	if not pending.is_empty() or not Network.magic_pending.is_empty():
+func cancel(notify_server := true) -> void:
+	if notify_server and (not pending.is_empty() or not Network.magic_pending.is_empty()):
 		_send({"op":"cancel"})
 		AppState.actor_animation_requested.emit({"actor_id": AppState.local_actor_id, "action": &"cast_exit"})
 	pending.clear()

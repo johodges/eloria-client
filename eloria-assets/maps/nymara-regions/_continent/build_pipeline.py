@@ -61,7 +61,8 @@ def bake_authored_regions(godot=None, catalog_path=None):
             raise RuntimeError(f'{contract.id}: authored scene is outside the Godot project') from error
         command=[executable,'--headless','--path',str(project),
                  '--script','res://src/dev/map_authoring_region/region_bake_cli.gd','--',
-                 '--scene','res://'+relative,'--output',str(contract.snapshot_path)]
+                 '--scene','res://'+relative,'--output',str(contract.snapshot_path),
+                 '--python',sys.executable]
         try:completed=subprocess.run(command,cwd=CLIENT,check=False,timeout=180)
         except subprocess.TimeoutExpired as error:
             raise RuntimeError(f'{contract.id}: authoring bake did not finish within 180 seconds') from error
@@ -84,7 +85,7 @@ def bake_sunmane(godot=None):
             f'Godot asset import failed with exit code {imported.returncode}; fix the reported import errors before baking')
     command=[executable,'--headless','--path',str(CLIENT/'godot-client'),
              '--script','res://src/dev/map_authoring_region/region_bake_cli.gd','--',
-             '--scene',SUNMANE_SCENE,'--output',str(SUNMANE_SNAPSHOT)]
+             '--scene',SUNMANE_SCENE,'--output',str(SUNMANE_SNAPSHOT),'--python',sys.executable]
     try:completed=subprocess.run(command,cwd=CLIENT,check=False,timeout=180)
     except subprocess.TimeoutExpired as error:
         raise RuntimeError('Sunmane authoring bake did not finish within 180 seconds') from error

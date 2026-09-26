@@ -5,17 +5,86 @@ signal connection_state_changed(state: String)
 signal packet_received(command: int, payload: PackedByteArray)
 signal protocol_error(message: String)
 signal magic_selection_completed
+signal coordinate_intents_invalidated
+signal coordinate_route_cancelled
+const CoordinateContext = preload("res://src/network/coordinate_context.gd")
+var coordinates = CoordinateContext.new()
 var magic_pending: Dictionary = {}
 var magic_scope := ""
+var magic_token: Dictionary = {}
+var coordinate_registry_error := ""
+
+func configure_coordinate_profiles(catalog: Variant, names: Variant = {}, registry_maps: Variant = {}) -> Dictionary:
+	var result: Dictionary
+	if not catalog is Dictionary or not names is Dictionary or not registry_maps is Dictionary:
+		result = {"ok": false, "error": "coordinate_registry_shape"}
+	else:
+		result = coordinates.configure(catalog, names)
+		if result.ok:
+			for map_id: Variant in registry_maps:
+				var entry: Variant = registry_maps[map_id]
+				if not entry is Dictionary:
+					continue
+				var transform: Variant = entry.get("coordinateTransform", {})
+				if not transform is Dictionary:
+					continue
+				var minimum: Variant = transform.get("serverTileMin", [0, 0])
+				if minimum != [0, 0] and (not coordinates.expected.has(map_id) or coordinates.expected[map_id].serverTileMin != minimum):
+					result = {"ok": false, "error": "coordinate_catalog_offset_missing_or_mismatched"}
+					break
+	coordinate_registry_error = "" if result.ok else str(result.error)
+	return result
+
+func clear_coordinate_intents() -> void:
+	magic_pending.clear()
+	magic_scope = ""
+	magic_token.clear()
+	coordinate_intents_invalidated.emit()
+
+func _reset_coordinate_session() -> void:
+	coordinates.reset()
+	clear_coordinate_intents()
+	coordinate_route_cancelled.emit()
+	_rx.clear()
+
+func fail_coordinate_context(reason: String) -> void:
+	_reconnect_enabled = false
+	_drop_connection(reason)
+
+func begin_magic_selection(request: Dictionary, scope: String) -> void:
+	magic_pending = request.duplicate(true)
+	magic_scope = scope
+	magic_token = coordinates.token()
+
+func _send_map_payload(command: int, payload: PackedByteArray) -> Error:
+	if not coordinates.selected:
+		return send_frame(EloriaProtocol.encode(command, payload))
+	if not coordinates.ready():
+		return ERR_UNCONFIGURED
+	var framed: Dictionary = EloriaProtocol.map_command(coordinates.epoch, command, payload)
+	return send_frame(framed.frame) if framed.ok else ERR_INVALID_PARAMETER
 
 func magic_request(data: Dictionary) -> Error:
-	return send_frame(EloriaProtocol.encode(202, JSON.stringify(data).to_utf8_buffer()))
+	if coordinates.selected:
+		if not coordinates.ready():
+			return ERR_UNCONFIGURED
+		if data.has("x") or data.has("y"):
+			var valid: Dictionary = coordinates.logical_point(coordinates.map_id, data.get("x"), data.get("y"))
+			if not valid.ok:
+				return ERR_INVALID_PARAMETER
+	return _send_map_payload(202, JSON.stringify(data).to_utf8_buffer())
 
 func _finish_magic_selection(selection: Dictionary) -> Error:
+	if coordinates.selected and not coordinates.matches(magic_token):
+		clear_coordinate_intents()
+		return ERR_INVALID_PARAMETER
 	var request := magic_pending.duplicate()
+	var captured := coordinates.token()
 	request.merge(selection, true)
 	magic_pending.clear()
 	magic_selection_completed.emit()
+	if not coordinates.matches(captured):
+		return ERR_INVALID_PARAMETER
 	return magic_request(request)
 
 
@@ -68,6 +137,7 @@ func _link() -> StreamPeer:
 
 func connect_to_server(host: String, port: int, secure := false,
 		trusted_certificate_path := "") -> Error:
+	_reset_coordinate_session()
 	_host = host
 	_port = port
 	_secure = secure
@@ -106,6 +176,7 @@ func _begin_handshake() -> bool:
 ## A disconnect the player asked for. Cancels any pending reconnect, so the
 ## client does not fight the person who just pressed the button.
 func disconnect_from_server() -> void:
+	_reset_coordinate_session()
 	_reconnect_enabled = false
 	_reconnect_attempt = 0
 	_reconnect_at_msec = 0
@@ -153,6 +224,7 @@ func _schedule_reconnect() -> void:
 	reconnect_progress.emit(_reconnect_attempt, RECONNECT_DELAYS_MSEC.size(), delay)
 
 func _drop_connection(reason: String) -> void:
+	_reset_coordinate_session()
 	protocol_error.emit(reason)
 	if _secure:
 		_tls.disconnect_from_stream()
@@ -172,12 +244,29 @@ func send_frame(frame: PackedByteArray, sensitive := false) -> Error:
 	return _link().put_data(frame)
 
 func login(username: String, password: String) -> Error:
+	if not coordinate_registry_error.is_empty():
+		protocol_error.emit(coordinate_registry_error)
+		return ERR_INVALID_DATA
 	return send_frame(EloriaProtocol.login(username, password), true)
 
 func move_to(tile: Vector2i, run := false) -> Error:
 	if not magic_pending.is_empty() and magic_scope in ["burst", "location"]:
 		return _finish_magic_selection({"x": tile.x, "y": tile.y})
-	return send_frame(EloriaProtocol.move_to(tile.x, tile.y, run))
+	if not coordinates.selected:
+		return send_frame(EloriaProtocol.move_to(tile.x, tile.y, run))
+	return _send_point(6 if run else 1, tile)
+
+func _send_point(command: int, tile: Vector2i) -> Error:
+	if not coordinates.ready():
+		return ERR_UNCONFIGURED
+	var converted: Dictionary = coordinates.logical_point(coordinates.map_id, tile.x, tile.y)
+	if not converted.ok:
+		return ERR_INVALID_PARAMETER
+	var payload := PackedByteArray()
+	payload.resize(4)
+	payload.encode_u16(0, converted.tile.x)
+	payload.encode_u16(2, converted.tile.y)
+	return _send_map_payload(command, payload)
 
 func set_sitting(sitting: bool) -> Error:
 	return send_frame(EloriaProtocol.set_sitting(sitting))
@@ -221,6 +310,8 @@ func use_inventory_item(slot: int) -> Error:
 	return send_frame(EloriaProtocol.use_inventory_item(slot))
 
 func fire_missile_at_object(x: int, y: int) -> Error:
+	if coordinates.selected:
+		return _send_point(51, Vector2i(x, y))
 	return send_frame(EloriaProtocol.fire_missile_at_object(x, y))
 
 func what_quest_is_this_id(quest_id: int) -> Error:
@@ -327,6 +418,7 @@ func create_character(username: String, password: String, appearance: Dictionary
 
 func _process(_delta: float) -> void:
 	if _reconnect_at_msec > 0 and Time.get_ticks_msec() >= _reconnect_at_msec:
+		_reset_coordinate_session()
 		_reconnect_at_msec = 0
 		_set_state("connecting")
 		# A reconnect gets a fresh TLS session. Reusing the old one would try
@@ -400,6 +492,7 @@ func _drain_packets() -> void:
 	# once per packet, which is quadratic across a burst. The buffer is now
 	# trimmed once, after the burst has been decoded.
 	var consumed := 0
+	var generation: int = coordinates.generation
 	while true:
 		var decoded := EloriaProtocol.try_decode(_rx, consumed)
 		match decoded.status:
@@ -413,6 +506,10 @@ func _drain_packets() -> void:
 			"ok":
 				consumed += int(decoded.consumed)
 				packet_received.emit(decoded.command, decoded.payload)
+				# A synchronous reducer may close/reset the link. Do not decode
+				# another row from this burst or trim a replacement connection.
+				if generation != coordinates.generation:
+					return
 
 func _send_due_heartbeat() -> void:
 	var now: int = Time.get_ticks_msec()

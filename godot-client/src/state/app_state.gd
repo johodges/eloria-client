@@ -406,6 +406,7 @@ func _on_connection_state_changed(value: String) -> void:
 		active_channels = [0, 0, 0]
 		active_channel_index = 0
 		current_map = ""
+		adjacent_maps.clear()
 		lantern_tutorial.clear()
 		selected_actor_id = -1
 		npc_dialogue = {"open": false, "name": "", "text": "", "options": [],
@@ -495,9 +496,33 @@ func _queue_map_marker_removal(marker_id: int) -> void:
 			state_changed.emit(&"map_markers"), CONNECT_ONE_SHOT)
 
 func _on_packet(command: int, payload: PackedByteArray) -> void:
+	var boundary: Dictionary = Network.coordinates.before_packet(command, EloriaProtocol.ServerMessage.CHANGE_MAP)
+	if not boundary.ok:
+		Network.fail_coordinate_context(boundary.error)
+		return
+	if command == EloriaProtocol.ServerMessage.ELORIA_COORDINATE_CONTEXT:
+		var context: Dictionary = Network.coordinates.receive(payload)
+		if not context.ok:
+			Network.fail_coordinate_context(context.error)
+		elif not Network.coordinates.pending.is_empty():
+			Network.clear_coordinate_intents()
+		return
+	if Network.coordinates.selected and command == EloriaProtocol.ServerMessage.ADD_ACTOR_COMMAND and not Network.coordinates.ready():
+		Network.fail_coordinate_context("coordinate_no_active_context")
+		return
 	if _try_native_actor_commands(command, payload):
 		return
-	var event := EloriaProtocol.decode_server(command, payload)
+	var event := EloriaProtocol.decode_server(command, payload, Network.coordinates.selected)
+	if event.type == "change_map":
+		var committed: Dictionary = Network.coordinates.commit(str(event.map_name))
+		if not committed.ok:
+			Network.fail_coordinate_context(committed.error)
+			return
+	var converted: Dictionary = Network.coordinates.convert(event)
+	if not converted.ok:
+		Network.fail_coordinate_context(converted.error)
+		return
+	event = converted.event
 	match event.type:
 		"invasion_assistant":
 			var update: Dictionary = (event.state as Dictionary).duplicate(true)
@@ -548,6 +573,8 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			# every actor the client shows and re-files them on its side. The
 			# handles of the old map's neighbours are stale, and named afresh.
 			adjacent_maps.clear()
+			if Network.coordinates.selected:
+				adjacent_maps = Network.coordinates.handles.duplicate()
 			selected_actor_id = -1
 			npc_dialogue = {"open": false, "name": "", "text": "",
 				"options": [], "quest": false, "quest_id": 0}
@@ -570,7 +597,8 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			# 0 the map the client stands on. Resolved here, once, so neither a
 			# change of map nor a new handle table can re-tag it.
 			var map_handle: int = int(event.get("map_handle", 0))
-			event["map"] = str(adjacent_maps.get(map_handle, current_map)) if map_handle > 0 else current_map
+			if not Network.coordinates.selected:
+				event["map"] = str(adjacent_maps.get(map_handle, current_map)) if map_handle > 0 else current_map
 			actors[event.actor_id] = event
 			mark_actor_changed(int(event.actor_id))
 			state_changed.emit(&"actors")
@@ -583,6 +611,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 					state_changed.emit(&"selection")
 			state_changed.emit(&"actors")
 		"clear_actors":
+			Network.coordinate_route_cancelled.emit()
 			actors.clear()
 			state_changed.emit(&"actors")
 		"actor_commands":
@@ -969,9 +998,10 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			if actors.has(ground_shooter_id):
 				var ground_shooter: Dictionary = actors[ground_shooter_id] as Dictionary
 				ground_shooter["aiming_at"] = -1
-				ground_shooter["aiming_at_tile"] = (Vector2i(-1, -1)
-					if bool(event.fired)
-					else Vector2i(int(event.x), int(event.y)))
+				if bool(event.fired):
+					ground_shooter.erase("aiming_at_tile")
+				else:
+					ground_shooter["aiming_at_tile"] = Vector2i(int(event.x), int(event.y))
 				actors[ground_shooter_id] = ground_shooter
 				mark_actor_changed(ground_shooter_id)
 				state_changed.emit(&"actors")

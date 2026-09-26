@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import deque
 import copy
 import numpy as np
+from storage_bounds import StorageBounds
 
 # A land crossing has been a gate: seven lanes about a surveyed anchor, with an
 # authored threshold deck under them, and the rest of the border impassable
@@ -20,6 +21,11 @@ GATED_SEAMS = ()
 def widened(identity):
     """Whether a land seam is crossed along its length or only at its gate."""
     return identity not in GATED_SEAMS
+
+
+def storage_bounds(world, region):
+    """Logical envelope; legacy World-like fixtures retain zero minima."""
+    return world.storage(region) if hasattr(world, 'storage') else StorageBounds(*world.address(region)[1])
 
 
 def tile_for(world, region, global_xz):
@@ -62,13 +68,14 @@ def seam_tiles(world, link, side):
     """
     from scipy.ndimage import binary_dilation
     region, other = link['regions'][side], link['regions'][1 - side]
-    origin, cells = world.address(region)
+    origin, _ = world.address(region)
+    bounds = storage_bounds(world, region)
     segments = np.asarray(link['edgeSegments'], dtype=float).reshape(-1, 2)
     low, high = segments.min(axis=0) - 4., segments.max(axis=0) + 4.
     x0, y1 = tiles_at(world, region, low[0], low[1])
     x1, y0 = tiles_at(world, region, high[0], high[1])
-    xs = np.arange(max(0, int(x0)), min(int(cells[0]), int(x1) + 1))
-    ys = np.arange(max(0, int(y0)), min(int(cells[1]), int(y1) + 1))
+    xs = np.arange(max(bounds.min_x, int(x0)), min(bounds.max_x, int(x1) + 1))
+    ys = np.arange(max(bounds.min_y, int(y0)), min(bounds.max_y, int(y1) + 1))
     if xs.size == 0 or ys.size == 0:
         return None
     tx, ty = np.meshgrid(xs, ys)
@@ -85,8 +92,12 @@ def seam_tiles(world, link, side):
 def own_ground(world, region, grid):
     """A map's served grid and the tiles its territory owns."""
     origin, _ = world.address(region)
+    bounds = storage_bounds(world, region)
+    if grid.shape != (bounds.height, bounds.width):
+        raise ValueError(f'{region}: served grid dimensions differ from storage')
     center = world.regions[region]['center']
     ys, xs = np.indices(grid.shape)
+    xs, ys = xs + bounds.min_x, ys + bounds.min_y
     mine = np.asarray(world.owner_at(xs + .5 - origin[0] + center[0], origin[1] - ys - .5 + center[1])) \
         == world.ids.index(region)
     return {'grid': grid, 'own': mine}
@@ -121,18 +132,25 @@ def crossing_lanes(world, link, side, served, step):
     mask = rings['outward']
     tx, ty = rings['tx'][mask], rings['ty'][mask]
     ox, oy = tiles_at(world, other, rings['gx'][mask], rings['gz'][mask])
-    rows, columns = near['grid'].shape
-    far_rows, far_columns = far['grid'].shape
+    near_bounds, far_bounds = storage_bounds(world, region), storage_bounds(world, other)
     lanes = []
     for x, y, fx, fy in zip(tx.tolist(), ty.tolist(), ox.tolist(), oy.tolist()):
-        if not (0 <= fx < far_columns and 0 <= fy < far_rows) or not far['grid'][fy, fx]:
+        far_index = far_bounds.index_xy(fx, fy)
+        if far_index is None or not far['grid'][far_index[1], far_index[0]]:
             continue
         # From each tile of this map's own ground beside it, straight steps
         # first so a straight seam pairs straight across.
-        partners = [(x + dx, y + dy) for dx in (0, -1, 1) for dy in (0, -1, 1) if dx or dy
-                    if 0 <= x + dx < columns and 0 <= y + dy < rows
-                    and near['own'][y + dy, x + dx] and near['grid'][y + dy, x + dx]
-                    and step(near['grid'], y + dy, x + dx, -dy, -dx)]
+        partners = []
+        for dx in (0, -1, 1):
+            for dy in (0, -1, 1):
+                if not (dx or dy):
+                    continue
+                index = near_bounds.index_xy(x + dx, y + dy)
+                if index is not None:
+                    ix, iy = index
+                    if (near['own'][iy, ix] and near['grid'][iy, ix]
+                            and step(near['grid'], iy, ix, -dy, -dx)):
+                        partners.append((x + dx, y + dy))
         if not partners:
             continue
         partner = min(partners, key=lambda t: (abs(t[0] - x) + abs(t[1] - y), t[1], t[0]))
@@ -369,6 +387,7 @@ def prune_lanes(world, connections, served, hubs, limit):
     """
     walks = [c for c in connections if c.get('type') == 'walk']
     bits = {region: step_bits(entry['grid'], limit) for region, entry in served.items()}
+    bounds = {region: storage_bounds(world, region) for region in served}
     withdrawn = 0
     while True:
         lanes, terminals = [], {region: set() for region in served}
@@ -381,10 +400,14 @@ def prune_lanes(world, connections, served, hubs, limit):
                     tile = (int(lane['tile'][0]), int(lane['tile'][1]))
                     point = global_tile(world, region, tile)
                     cell = tuple(int(v) for v in tiles_at(world, far, point[0], point[1]))
-                    lanes.append((region, tile, far, cell, lane))
-                    terminals[region].add(tile)
+                    tile_index, cell_index = bounds[region].index_xy(*tile), bounds[far].index_xy(*cell)
+                    lanes.append((region, tile_index, far, cell_index, lane))
+                    if tile_index is not None:
+                        terminals[region].add(tile_index)
 
         def lands(region, cell):
+            if cell is None:
+                return False
             x, y = cell
             rows, columns = served[region]['grid'].shape
             if not (0 <= x < columns and 0 <= y < rows) or not served[region]['grid'][y, x]:
@@ -395,16 +418,17 @@ def prune_lanes(world, connections, served, hubs, limit):
 
         landing = {(far, cell): lands(far, cell) for _, _, far, cell, _ in lanes}
         seen = {region: np.zeros(entry['grid'].shape, dtype=bool) for region, entry in served.items()}
-        seeds = {region: [tuple(int(v) for v in hubs[region])] for region in served if region in hubs}
+        seeds = {region: [index] for region in served if region in hubs
+                 if (index := bounds[region].index_xy(*map(int, hubs[region]))) is not None}
         while seeds:
             for region, points in seeds.items():
                 flood(bits[region], seen[region], points, terminals[region])
             seeds = {}
-            for region, (x, y), far, cell, _ in lanes:
-                if seen[region][y, x] and landing[far, cell] and not seen[far][cell[1], cell[0]]:
+            for region, index, far, cell, _ in lanes:
+                if index is not None and seen[region][index[1], index[0]] and landing[far, cell] and not seen[far][cell[1], cell[0]]:
                     seeds.setdefault(far, []).append(cell)
-        gone = {id(lane) for region, (x, y), far, cell, lane in lanes
-                if not (seen[region][y, x] and landing[far, cell])}
+        gone = {id(lane) for region, index, far, cell, lane in lanes
+                if index is None or not (seen[region][index[1], index[0]] and landing[far, cell])}
         if not gone:
             return withdrawn
         withdrawn += len(gone)

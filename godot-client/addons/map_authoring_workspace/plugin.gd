@@ -164,8 +164,7 @@ func _on_scene_changed(scene_root: Node) -> void:
 func _bind_sculpt(entry: Dictionary) -> void:
 	if _active_root == null or entry.is_empty() or not bool(entry.editable):
 		return
-	if String(_active_root.get("ownership_polygon_sha256")) != \
-			String(entry.get("ownership_sha256", "")):
+	if not _catalog.active_scene_error(_active_root, entry).is_empty():
 		_dock.set_sculpt_available(false,
 			"Saved ownership boundary does not match the catalog; sculpt disabled.")
 		return

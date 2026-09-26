@@ -1,6 +1,8 @@
 """One sampled continent, followed by named ownership and travel planning."""
 from __future__ import annotations
 import heapq
+import hashlib
+import json
 import math
 import numpy as np
 from scipy.ndimage import gaussian_filter, distance_transform_edt, binary_dilation, label, maximum_filter
@@ -8,6 +10,8 @@ from scipy.spatial import cKDTree
 from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import cg
 import landscape as L
+import ownership_contract as OWNERSHIP
+from storage_bounds import StorageBounds, authoring_storage, frame_values
 
 CELL=2.0
 # Graded road corridors through the natural bank apron and beside partial footing feathers.
@@ -342,7 +346,9 @@ def ownership_map(plan,cell=CELL,ids=None):
     indices into them, row 0 at ``z0`` and column 0 at ``x0``, whose cell [row][column] covers the metres
     [x0+column*cell, x0+(column+1)*cell) by [z0+row*cell, z0+(row+1)*cell) and is scored at their centre.
 
-    The partition is centres, ``ownership_bias`` and ``ownership_sites`` alone -- no heights, no water, no
+    An explicit hash-pinned ``ownership_contract`` samples canonical polygons;
+    boundary ties use lexical region IDs, independently of output index order.
+    Without it the partition is centres, ``ownership_bias`` and ``ownership_sites`` alone -- no heights, no water, no
     sampled continent -- so a plan editor can draw it at 8 m without building a World. A region's score at a
     cell is the least squared distance to its centre and to any extra site it declares, less its bias; the
     lowest score owns the cell and a tie keeps the region listed first. The constructor reads this at CELL
@@ -350,6 +356,17 @@ def ownership_map(plan,cell=CELL,ids=None):
     """
     regions={r['id']:r for r in plan['regions']}
     ids=list(regions) if ids is None else list(ids)
+    contract=OWNERSHIP.for_plan(plan,ids)
+    if contract is not None:
+        if isinstance(cell,bool) or not np.isfinite(cell) or cell<=0:
+            raise ValueError('ownership cell spacing must be finite and positive')
+        x0,z0,x1,z1=contract.bounds
+        # A preview may have a partial final cell (1500 m is not divisible by
+        # 8 m). Sample its actual center inside the domain, not beyond it.
+        x=np.arange(x0,x1,cell);z=np.arange(z0,z1,cell)
+        gx,gz=np.meshgrid((x+np.minimum(x+cell,x1))*.5,
+                         (z+np.minimum(z+cell,z1))*.5)
+        return ids,contract.sample(gx,gz,ids),x0,z0
     centers=np.array([regions[region]['center'] for region in ids],float)
     sites=ownership_sites(plan,ids);bias=plan.get('ownership_bias',{})
     x0,z0,x1,z1=plan['bounds']
@@ -400,10 +417,13 @@ class World:
         """Inhabited arrival is independent of the territory's geographic seed."""
         return np.asarray(self.plan.get('inhabited_hubs',{}).get(region,self.regions[region]['center']),float)
 
-    def __init__(self, plan=None):
+    def __init__(self, plan=None, *, region_contracts=None, require_authored_storage=False):
         self.plan=L.load_plan() if plan is None else plan
         self.regions={r['id']:r for r in self.plan['regions']}
         self.ids=list(self.regions)
+        self.ownership_contract=OWNERSHIP.for_plan(self.plan,self.ids)
+        self.ownership_source_dependencies=OWNERSHIP.source_dependencies(self.plan)
+        self._install_storage_contracts(region_contracts, require_authored_storage)
         self.centers=np.array([r['center'] for r in self.regions.values()],float)
         self.x0,self.z0,self.x1,self.z1=self.plan['bounds']
         self.x=np.arange(self.x0,self.x1+CELL*.5,CELL)
@@ -412,10 +432,12 @@ class World:
         self.height=L.height_at(self.gx,self.gz,self.plan)
         self.water=L.water_fields(self.gx,self.gz,height=self.height,plan=self.plan)
         self.original_height=self.height.copy()
-        self.ownership_sites=ownership_sites(self.plan,self.ids)
+        self.ownership_sites=({} if self.ownership_contract is not None else
+                              ownership_sites(self.plan,self.ids))
         # Scored by the module-level partition, so an editor's preview at another spacing cannot drift from it.
         self.owner=ownership_map(self.plan,CELL,self.ids)[1]
-        self.polygons={r:outline(self.owner==i,self.x0,self.z0) for i,r in enumerate(self.ids)}
+        self.polygons=(self.ownership_contract.polygons() if self.ownership_contract is not None else
+                       {r:outline(self.owner==i,self.x0,self.z0) for i,r in enumerate(self.ids)})
         self.obstacles=np.zeros_like(self.height,dtype=bool)
         self.solids=np.zeros_like(self.height,dtype=bool)
         self.routing=[]
@@ -436,13 +458,88 @@ class World:
         p=np.array(self.polygons[region]);return p.min(axis=0),p.max(axis=0)
 
     def address(self,region):
+        source=getattr(self,'_source_storage',{}).get(region)
+        if source is not None:
+            origin,bounds=source
+            return list(origin),[bounds.width,bounds.height]
+        contract=getattr(self,'ownership_contract',None)
+        if contract is not None:
+            # A polygon edit must never rebase existing logical coordinates.
+            # Later storage migration may expand this baseline independently.
+            return contract.frame(region)['serverOrigin'],contract.storage(region)['serverCells']
         lo,hi=self.bounds(region);center=self.centers[self.ids.index(region)]
         local_lo=np.floor(lo-center)-4;local_hi=np.ceil(hi-center)+4
         cells=int(math.ceil(max(local_hi-local_lo)/6)*6)
         origin=[int(-local_lo[0]),int(local_hi[1])]
         return origin,[cells,cells]
 
+    def _install_storage_contracts(self, contracts, require_authored):
+        """Install validated source addresses before terrain or address consumers.
+
+        Production selected composition requires every region. Synthetic worlds
+        may deliberately omit all source contracts and use ownership baselines.
+        """
+        from authoring_catalog import RegionContract
+        self._source_storage={}
+        self._storage_contracts={}
+        contracts={} if contracts is None else dict(contracts)
+        if set(contracts)-set(self.ids):
+            raise ValueError('storage contracts name unknown regions')
+        if require_authored and self.ownership_contract is not None and set(contracts)!=set(self.ids):
+            raise ValueError('selected production requires authored storage contracts for every region; missing '+
+                             ', '.join(sorted(set(self.ids)-set(contracts))))
+        for region,contract in contracts.items():
+            if not isinstance(contract,RegionContract) or contract.id!=region or contract.spec_sha256 is None:
+                raise ValueError(f'{region}: expected a validated hash-bound RegionContract')
+            payload=contract.spec_path.read_bytes()
+            if hashlib.sha256(payload).hexdigest()!=contract.spec_sha256:
+                raise ValueError(f'{region}: authoring spec changed before World construction')
+            document=json.loads(payload)
+            server=document['server']
+            bounds=authoring_storage(server)
+            if (document.get('regionId')!=region or tuple(server['origin'])!=contract.server_origin or
+                    (bounds.width,bounds.height)!=contract.server_cells or
+                    (bounds.min_x,bounds.min_y)!=contract.server_tile_min or
+                    server.get('serverStorageVersion')!=contract.server_storage_version or
+                    tuple(server['collisionOriginMetres'])!=contract.collision_origin_metres or
+                    frame_values(server)!=contract.server_frame or
+                    tuple(document['continentTranslation'])!=contract.continent_translation):
+                raise ValueError(f'{region}: source storage/frame differs from validated contract')
+            center=self.regions[region]['center']
+            if contract.continent_translation!=(center[0],0,center[1]):
+                raise ValueError(f'{region}: authored translation differs from immutable plan frame')
+            if self.ownership_contract is not None:
+                OWNERSHIP.validate_authoring_frame({'binding':{'regionId':region},
+                    'coordinateFrame':self.ownership_contract.frame(region),
+                    'baselineStorage':self.ownership_contract.storage(region)},document)
+            self._source_storage[region]=(contract.server_origin,bounds)
+            self._storage_contracts[region]=contract
+
+    def storage(self,region):
+        """Logical bounds; array indices subtract minima, transforms do not."""
+        source=getattr(self,'_source_storage',{}).get(region)
+        if source is not None:return source[1]
+        contract=getattr(self,'ownership_contract',None)
+        if contract is not None:
+            baseline=contract.storage(region)
+            return StorageBounds(*baseline['serverCells'],*baseline['serverTileMin'])
+        return StorageBounds(*self.address(region)[1])
+
+    def storage_contract(self,region):
+        """Portable effective address and exact source identity for export caches."""
+        origin,cells=self.address(region)
+        result={'serverOrigin':origin,'serverCells':cells,**self.storage(region).metadata()}
+        contract=getattr(self,'_storage_contracts',{}).get(region)
+        if contract is not None:
+            if hashlib.sha256(contract.spec_path.read_bytes()).hexdigest()!=contract.spec_sha256:
+                raise ValueError(f'{region}: storage source changed; recompose before export')
+            result['authoringSpecSha256']=contract.spec_sha256
+        return result
+
     def owner_at(self,x,z):
+        contract=getattr(self,'ownership_contract',None)
+        if contract is not None:
+            return contract.sample(x,z,self.ids)
         ix=np.clip(((np.asarray(x)-self.x0)/CELL).astype(int),0,self.owner.shape[1]-1)
         iz=np.clip(((np.asarray(z)-self.z0)/CELL).astype(int),0,self.owner.shape[0]-1)
         outside=(np.asarray(x)<self.x0)|(np.asarray(x)>self.x1)|(np.asarray(z)<self.z0)|(np.asarray(z)>self.z1)

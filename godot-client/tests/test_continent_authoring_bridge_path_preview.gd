@@ -1,6 +1,7 @@
 extends SceneTree
 
 const TERRAIN := preload("res://src/dev/map_authoring_region/terrain_control.gd")
+const REGION := preload("res://src/dev/map_authoring_region/region_control.gd")
 const PATH := preload("res://src/dev/map_authoring_region/path_control.gd")
 const BRIDGE := preload("res://src/dev/map_authoring_region/bridge_control.gd")
 const GROUND := preload("res://src/dev/map_authoring_region/ground_region_control.gd")
@@ -70,6 +71,14 @@ func _run() -> void:
 		"__GroundRegionPreviews/GroundRegion_test-ground") as MeshInstance3D
 	_check(ground_preview.mesh != null and ground_preview.material_override != null,
 		"enabled ground-region surfaces render on resolved terrain")
+	var terrain_preview := terrain.get_node("__TerrainPreview") as MeshInstance3D
+	var terrain_arrays := terrain_preview.mesh.surface_get_arrays(0)
+	_check_front_faces(terrain_arrays, "full terrain")
+	var chunk_arrays: Array = terrain.call("_preview_arrays_for_cells",
+		[Vector2i(0, 0), Vector2i(2, 2)], terrain_arrays[Mesh.ARRAY_VERTEX],
+		terrain_arrays[Mesh.ARRAY_NORMAL], terrain_arrays[Mesh.ARRAY_TEX_UV])
+	_check_front_faces(chunk_arrays, "chunk terrain")
+	_check_front_faces(ground_preview.mesh.surface_get_arrays(0), "ground region")
 
 	var old_width := deck.mesh.get_aabb().size.x
 	bridge.width = 5.0
@@ -79,6 +88,7 @@ func _run() -> void:
 		deck.material_override != null,
 		"bridge width and local deck rotation rebuild only its generated preview")
 	_check_curved_snapshot()
+	_check_control_polygon_snapshot()
 
 	region.queue_free()
 	await process_frame
@@ -89,8 +99,9 @@ func _run() -> void:
 
 
 func _scene() -> Node3D:
-	var region := Node3D.new()
+	var region := REGION.new()
 	region.name = "PreviewRegion"
+	region.region_id = "preview-region"
 	var terrain := TERRAIN.new()
 	terrain.name = "Terrain"
 	terrain.origin = Vector2(-6.0, -6.0)
@@ -187,6 +198,7 @@ func _check_path_clearance(path: Path3D, terrain: Node3D,
 		expect_water_surface: bool) -> void:
 	var preview := path.get_node("__PathPreview") as MeshInstance3D
 	var arrays: Array = preview.mesh.surface_get_arrays(0)
+	_check_front_faces(arrays, "river" if expect_water_surface else "road")
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
 	var tangents: PackedFloat32Array = arrays[Mesh.ARRAY_TANGENT]
@@ -224,6 +236,33 @@ func _check_path_clearance(path: Path3D, terrain: Node3D,
 		"path preview has upward normals and metre-scaled cross-path UVs")
 
 
+func _check_front_faces(arrays: Array, label: String) -> void:
+	var native := PlaneMesh.new().get_mesh_arrays()
+	var nv: PackedVector3Array = native[Mesh.ARRAY_VERTEX]
+	var ni: PackedInt32Array = native[Mesh.ARRAY_INDEX]
+	var nn: PackedVector3Array = native[Mesh.ARRAY_NORMAL]
+	var native_sign := (nv[ni[1]] - nv[ni[0]]).cross(
+		nv[ni[2]] - nv[ni[0]]).dot(nn[ni[0]])
+	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+	var all_front := not indices.is_empty()
+	var checked := 0
+	for offset in range(0, indices.size(), 3):
+		var a := indices[offset]
+		var b := indices[offset + 1]
+		var c := indices[offset + 2]
+		var cross := (vertices[b] - vertices[a]).cross(vertices[c] - vertices[a])
+		if cross.length_squared() < 0.00000001:
+			continue
+		var shading_normal := (normals[a] + normals[b] + normals[c]).normalized()
+		all_front = all_front and shading_normal.y > 0.0 and \
+			cross.dot(shading_normal) * native_sign > 0.0
+		checked += 1
+	_check(all_front and checked > 0,
+		label + " front faces match native upward PlaneMesh with upward shading normals")
+
+
 func _check_curved_snapshot() -> void:
 	var path := PATH.new()
 	path.curve = Curve3D.new()
@@ -248,6 +287,83 @@ func _check_curved_snapshot() -> void:
 	_check(middle_anchor,
 		"snapshot retains exact curve stations and their per-point widths")
 	path.free()
+
+
+func _check_control_polygon_snapshot() -> void:
+	var path := PATH.new()
+	path.curve = Curve3D.new()
+	_check(path.snapshot_points().is_empty(),
+		"control polygon has no records for an empty curve")
+	path.curve.add_point(Vector3.ZERO)
+	path.snapshot_mode = 1
+	var singleton := path.snapshot_points()
+	_check(singleton.size() == 1 and singleton[0].position == [0.0, 0.0, 0.0],
+		"control polygon preserves a lone control")
+	path.curve.add_point(Vector3(10.0, 0.0, 0.0))
+	path.curve.add_point(Vector3(20.0, 0.0, 0.0))
+	path.curve.add_point(Vector3(30.0, 0.0, 0.0))
+	path.curve.add_point(Vector3(40.0, 0.0, 0.0))
+	path.sync_curve_binding()
+	path.point_widths = PackedFloat32Array([2.0, 4.0, 0.0, 6.0, 8.0])
+	path.snapshot_spacing = 0.1
+	var baseline := path.snapshot_points()
+	_check(baseline.size() == 5 and baseline[2].position == [20.0, 0.0, 0.0]
+		and is_equal_approx(float(baseline[2].width), 5.0),
+		"control polygon keeps only authored stations and resolves inherited width")
+	path.snapshot_mode = 0
+	var baked := path.snapshot_points()
+	path.snapshot_mode = 1
+	_check(baked.size() > baseline.size() and path.snapshot_points() == baseline,
+		"switching modes does not reuse baked stations or widths")
+	var prior_signature: Array = path.call("_current_preview_signature")
+	path.curve.set_point_position(2, Vector3(20.0, 0.0, 5.0))
+	var moved := path.snapshot_points()
+	var far_controls_stable := moved.size() == baseline.size()
+	for index in [0, 1, 3, 4]:
+		far_controls_stable = far_controls_stable and moved[index] == baseline[index]
+	_check(far_controls_stable and moved[2].position == [20.0, 0.0, 5.0]
+		and path.call("_current_preview_signature") != prior_signature,
+		"an interior move preserves far stations and invalidates preview")
+	path.curve.add_point(Vector3(25.0, 0.0, 3.0), Vector3.ZERO, Vector3.ZERO, 3)
+	var inserted := path.snapshot_points()
+	_check(inserted.size() == 6 and inserted[0] == baseline[0]
+		and inserted[1] == baseline[1] and inserted[4] == baseline[3]
+		and inserted[5] == baseline[4] and float(inserted[3].width) > 4.0
+		and float(inserted[3].width) < 6.0,
+		"inserting a control retains surviving widths and gives the new point a taper")
+	path.curve.remove_point(3)
+	_check(path.snapshot_points() == moved,
+		"removing the inserted control restores the moved polygon")
+	path.curve.set_point_position(2, Vector3(20.0, 0.0, 0.0))
+	path.curve.set_point_out(1, Vector3(5.0, 0.0, 8.0))
+	_check(path.snapshot_points() == baseline and
+		(path.call("_get_configuration_warnings") as PackedStringArray).has(
+			"Control polygon sampling uses straight segments; Bezier handles are ignored."),
+		"control polygon ignores Bezier handles and reports them")
+	path.curve.closed = true
+	var closed := path.snapshot_points()
+	_check(closed.size() == baseline.size() + 1 and closed[closed.size() - 1] == closed[0],
+		"closed control polygon includes its return segment for preview and terrain")
+	path.free()
+
+	var duplicates := PATH.new()
+	duplicates.curve = Curve3D.new()
+	duplicates.curve.add_point(Vector3.ZERO)
+	duplicates.curve.add_point(Vector3.ZERO)
+	duplicates.sync_curve_binding()
+	duplicates.point_widths = PackedFloat32Array([2.0, 4.0])
+	duplicates.snapshot_mode = 1
+	var coincident := duplicates.snapshot_points()
+	_check(coincident.size() == 2 and coincident[0].position == coincident[1].position
+		and is_equal_approx(float(coincident[0].width), 2.0)
+		and is_equal_approx(float(coincident[1].width), 4.0),
+		"coincident controls remain distinct with their own authored widths")
+	duplicates.curve.add_point(Vector3.ZERO, Vector3.ZERO, Vector3.ZERO, 1)
+	duplicates.point_widths = PackedFloat32Array([2.0, 0.0, 4.0])
+	var zero_span := duplicates.snapshot_points()
+	_check(zero_span.size() == 3 and is_equal_approx(float(zero_span[1].width), 2.0),
+		"an inherited width in a zero-length span takes the preceding anchor")
+	duplicates.free()
 
 
 func _check_shape_terrain_control(region: Node3D, terrain: Node3D) -> void:

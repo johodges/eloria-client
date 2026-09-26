@@ -8,6 +8,7 @@ signal stroke_started
 signal stroke_ended
 
 const BRUSH := preload("res://src/dev/map_authoring_region/terrain_sculpt_brush.gd")
+const OWNERSHIP := preload("res://src/dev/map_authoring_region/ownership_source.gd")
 const PREVIEW_INTERVAL := 0.14
 const RING_SEGMENTS := 48
 
@@ -41,8 +42,7 @@ func bind(root: Node3D, terrain: MapAuthoringTerrainControl,
 	if root == null or terrain == null or undo_redo == null or \
 			not entry.get("ownership_polygon") is PackedVector2Array:
 		return false
-	if String(root.get("ownership_polygon_sha256")) != \
-			String(entry.get("ownership_sha256", "")):
+	if not OWNERSHIP.entry_error(root, entry).is_empty():
 		return false
 	_root = root
 	_terrain = terrain

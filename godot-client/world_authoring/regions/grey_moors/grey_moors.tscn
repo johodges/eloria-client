@@ -1,4 +1,8 @@
-[gd_scene load_steps=302 format=3]
+[gd_scene load_steps=305 format=3]
+
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/ground_region_control.gd" id="pass1_ground"]
+[ext_resource type="Resource" path="res://world_authoring/regions/grey_moors/surfaces/pass1-worn-earth.tres" id="pass1_worn-earth"]
+[ext_resource type="Resource" path="res://world_authoring/regions/grey_moors/surfaces/pass1-worked-peat.tres" id="pass1_worked-peat"]
 
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
 [ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres" id="object_weathered_limestone"]
@@ -10400,3 +10404,55 @@ extras = {}
 runtime_bindings = []
 
 [node name="GeneratedPreview" type="Node3D" parent="."]
+
+[node name="pass1-refuge-peat-yard" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9781476007, 0, 0.2079116908, 0, 1, 0, -0.2079116908, 0, 0.9781476007, -25, 49.2589912415, -23)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-refuge-peat-yard"
+enabled = true
+size = Vector2(25, 18)
+blend_width = 3.5
+opacity = 0.9
+priority = 10
+surface = ExtResource("pass1_worked-peat")
+
+
+[node name="pass1-refuge-croft-earth" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9563047560, 0, -0.2923717047, 0, 1, 0, 0.2923717047, 0, 0.9563047560, -48, 48.2350616455, 1)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-refuge-croft-earth"
+enabled = true
+size = Vector2(22, 19)
+blend_width = 3.5
+opacity = 0.9
+priority = 10
+surface = ExtResource("pass1_worn-earth")
+
+
+[node name="pass1-north-causeway-heather" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9271838546, 0, 0.3746065934, 0, 1, 0, -0.3746065934, 0, 0.9271838546, -10, 47.1850986481, -125)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-north-causeway-heather"
+enabled = true
+size = Vector2(24, 17)
+blend_width = 3.5
+opacity = 0.84
+priority = 10
+surface = ExtResource("pass1_worked-peat")
+
+
+[node name="pass1-west-croft-heather" type="Marker3D" parent="Ground/Regions"]
+transform = Transform3D(0.9743700648, 0, -0.2249510543, 0, 1, 0, 0.2249510543, 0, 0.9743700648, -58, 47.6960029602, -59)
+gizmo_extents = 0.7
+script = ExtResource("pass1_ground")
+region_id = "pass1-west-croft-heather"
+enabled = true
+size = Vector2(24, 17)
+blend_width = 3.5
+opacity = 0.84
+priority = 10
+surface = ExtResource("pass1_worked-peat")
+

@@ -20,6 +20,7 @@ import sys
 import time
 
 import numpy as np
+from storage_bounds import storage_record
 
 HERE = Path(__file__).resolve().parent
 TOOLS = HERE.parents[2] / 'tools'
@@ -64,6 +65,9 @@ def terrain_revision(spec, collision, server_grid):
         **{field: spec[field] for field in ('serverOrigin', 'serverCells', 'translation', 'arrival',
                                            'contentPositions')},
         'runtimeBindingPositions': spec.get('runtimeBindingPositions', {})}
+    storage = storage_record(spec['serverCells'], spec)
+    if storage['serverTileMin'] != [0, 0] or 'authoringSpecSha256' in storage:
+        identity['storage'] = storage
     encoded = json.dumps(identity, sort_keys=True, separators=(',', ':'), allow_nan=False).encode('utf-8')
     return REVISION + ':' + hashlib.sha256(encoded).hexdigest()
 
@@ -73,20 +77,39 @@ def revision_metadata(path, manifest, spec, master_sha):
     manifest['terrainRevision'] = spec['terrainRevision']
     manifest['continentPublication'] = {'revision': REVISION, 'masterSha256': master_sha,
         'collisionSha256': sha(Path(spec['collisionPath'])), 'terrainRevision': spec['terrainRevision']}
+    storage = storage_record(spec['serverCells'], spec) if 'serverCells' in spec else None
+    if storage is not None:
+        transform=manifest['coordinateTransform']
+        if 'serverCells' in transform and storage_record(transform['serverCells'],transform)!=storage:
+            raise ValueError('Final manifest storage differs from placement certificate')
+        collision=manifest.get('collision',{})
+        if storage_record(collision.get('serverCells',spec['serverCells']),collision)!=storage:
+            raise ValueError('Final collision storage differs from placement certificate')
+        manifest['coordinateTransform'].update(storage)
+        manifest.setdefault('collision', {}).update(storage)
+        manifest['continentPublication']['storage'] = copy.deepcopy(storage)
     children = []
     if 'streamingChunks' in manifest:
         manifest['streamingChunks']['terrainRevision'] = spec['terrainRevision']
+        if storage is not None:
+            manifest['streamingChunks']['storage'] = copy.deepcopy(storage)
         folder = Path(path).parent.resolve()
         for entry in manifest['streamingChunks']['chunks']:
             child_path = (folder / entry['manifest']).resolve()
             if not child_path.is_relative_to(folder):
                 raise ValueError(f'{child_path}: chunk revision metadata must remain inside its named territory')
             child = json.loads(child_path.read_text(encoding='utf-8'))
+            if storage is not None and 'serverCells' in child.get('coordinateTransform',{}):
+                transform=child['coordinateTransform']
+                if storage_record(transform['serverCells'],transform)!=storage:
+                    raise ValueError(f'{child_path}: chunk storage differs from placement certificate')
             child['terrainRevision'] = spec['terrainRevision']
             child['continentPublication'] = copy.deepcopy(manifest['continentPublication'])
             # The territory frame is final only after contracts (arrival walking
             # height); every independent cell must carry the identical frame.
             child['coordinateTransform'] = copy.deepcopy(manifest['coordinateTransform'])
+            if storage is not None:
+                child.setdefault('collision', {}).update(storage)
             children.append((child_path, child))
     return children
 
@@ -367,6 +390,11 @@ def fold_server_grid(result, sources, sync):
     height, width = grid.shape
     if height % 2 or width % 2 or height != width:
         raise ValueError('Named territory collision must have a square even half-cell envelope')
+    from storage_bounds import StorageBounds
+    collision=result['collision']
+    bounds=StorageBounds.from_metadata([width//2,height//2],collision)
+    if collision.get('serverCells',[width//2,height//2])!=[width//2,height//2]:
+        raise ValueError('EWCG declared logical storage dimensions differ from half-cell arrays')
     blocks = grid.reshape(height // 2, 2, width // 2, 2)
     folded = blocks.max(axis=(1, 3))
     folded[~blocks.all(axis=(1, 3))] = 0
@@ -375,11 +403,16 @@ def fold_server_grid(result, sources, sync):
         metres_per_unit=encoding['step'], height_origin=encoding['origin'])
     quantised = sources.requantise(folded, transform)
     factor, largest, detail = sync.choose_stage(quantised)
+    detail=dict(detail)
+    detail['storage']={'serverCells':[bounds.width,bounds.height],**bounds.metadata()}
+    if 'authoringSpecSha256' in collision:
+        detail['storage']['authoringSpecSha256']=collision['authoringSpecSha256']
     return sync.rescale(quantised, factor), factor, largest, detail
 
 
 def collision_world_digest(world):
     """Include every shared field used by exact collision, excluding content posts."""
+    from collision_export import storage_contract
     digest = hashlib.sha256()
     for name, value in (('height', world.height), ('owner', world.owner),
                         ('water-mask', world.water['mask']), ('water-surface', world.water['surface'])):
@@ -388,6 +421,7 @@ def collision_world_digest(world):
         digest.update(memoryview(array).cast('B'))
     digest.update(json.dumps({'bounds': [world.x0, world.z0, world.x1, world.z1],
         'cell': getattr(world, 'cell', 2.), 'ids': world.ids,
+        'storage':{region:storage_contract(world,region) for region in world.ids},
         'waterPlan': {name: getattr(world, 'plan', {}).get(name) for name in ('sea_level', 'rivers', 'lakes')}}, sort_keys=True).encode())
     return digest.hexdigest()
 
@@ -395,12 +429,15 @@ def collision_world_digest(world):
 def cached_collision(world, region, manifest, glb_path, collision_path, output, world_digest):
     """Keep expensive completed rasters after a later placement failure."""
     import collision_export as exporter
-    signature = {'schema': 1, 'worldSha256': world_digest, 'region': region, 'glbSha256': sha(glb_path),
+    if 'coordinateTransform' in manifest:
+        exporter.validate_storage_frame(world,region,manifest)
+    signature = {'schema': 2, 'worldSha256': world_digest, 'region': region, 'glbSha256': sha(glb_path),
+        'storage':exporter.storage_contract(world,region),'coordinateTransform':manifest.get('coordinateTransform'),
         'address': world.address(region), 'center': world.regions[region]['center'],
         'collisionRoots': sorted(manifest.get('collision', {}).get('nodeNames', [])),
         'surfacePrefixes': manifest.get('navigation', {}).get('surfaceNodePrefixes', ['Terrain_', 'Walk_']),
         'connections': [c for c in world.connections if region in c.get('regions', [])],
-        'sources': {name: sha(HERE / name) for name in ('collision_export.py', 'world_layout.py', 'terrain_export.py', 'landscape.py', 'crossings.py')},
+        'sources': {name: sha(HERE / name) for name in ('collision_export.py', 'world_layout.py', 'storage_bounds.py', 'terrain_export.py', 'landscape.py', 'crossings.py')},
         'readerSha256': sha(Path(exporter.GR.__file__))}
     signature_text = json.dumps(signature, sort_keys=True, default=lambda a: np.asarray(a).tolist())
     signature_hash = hashlib.sha256(signature_text.encode()).hexdigest()
@@ -432,6 +469,15 @@ class RegionPlacement:
     def __init__(self, world, content, region, spec, collision, grid, sources, report, previous=None):
         self.world, self.content, self.region, self.spec = world, content, region, spec
         self.collision, self.grid, self.sources = collision, grid.copy(), sources
+        from storage_bounds import StorageBounds
+        self.bounds = StorageBounds.from_metadata(spec.get('serverCells', [grid.shape[1], grid.shape[0]]), spec)
+        if (grid.shape != (self.bounds.height, self.bounds.width) or
+                hasattr(world, 'storage') and world.storage(region) != self.bounds):
+            raise ValueError(f'{region}: placement grid/spec differs from World storage')
+        if 'collision' in collision:
+            declared = collision['collision']
+            if StorageBounds.from_metadata(declared.get('serverCells', [grid.shape[1], grid.shape[0]]), declared) != self.bounds:
+                raise ValueError(f'{region}: placement fold differs from collision storage')
         self.report = report
         self.previous = previous
         self.moved = {}   # served tile lost this publication -> where its first point went
@@ -565,13 +611,24 @@ class RegionPlacement:
         return None if served is None else [int(served[0]), int(served[1])]
 
     def in_grid(self, tile):
-        return 0 <= tile[0] < self.grid.shape[1] and 0 <= tile[1] < self.grid.shape[0]
+        return self.bounds.index_xy(*map(int, tile)) is not None
+
+    def array_tile(self, tile):
+        """Convert one logical public tile at an array/flood boundary."""
+        index = self.bounds.index_xy(*map(int, tile))
+        if index is None:
+            raise ValueError(f'{self.region}: logical tile {tile} is outside storage')
+        return index
 
     def valid(self, tile, shape=(1, 1), allow_reserved=False, mask=None):
         width, depth = shape
         x0, y0 = tile[0] - (width - 1) // 2, tile[1] - (depth - 1) // 2
+        index = self.bounds.index_xy(int(x0), int(y0))
+        if index is None:
+            return False
+        x0, y0 = index
         x1, y1 = x0 + width, y0 + depth
-        if x0 < 0 or y0 < 0 or x1 > self.grid.shape[1] or y1 > self.grid.shape[0]:
+        if x1 > self.bounds.width or y1 > self.bounds.height:
             return False
         ground = self.reachable if mask is None else mask
         return bool(ground[y0:y1, x0:x1].all() and
@@ -579,8 +636,9 @@ class RegionPlacement:
 
     def reserve(self, tile, shape=(1, 1), margin=0):
         width, depth = shape
-        x0 = max(0, tile[0] - (width - 1) // 2 - margin)
-        y0 = max(0, tile[1] - (depth - 1) // 2 - margin)
+        x, y = self.array_tile(tile)
+        x0 = max(0, x - (width - 1) // 2 - margin)
+        y0 = max(0, y - (depth - 1) // 2 - margin)
         self.reserved[y0:min(self.grid.shape[0], y0 + depth + 2 * margin),
                       x0:min(self.grid.shape[1], x0 + width + 2 * margin)] = True
 
@@ -595,12 +653,13 @@ class RegionPlacement:
 
     def nearest(self, expected, radius, shape=(1, 1), allow_reserved=False, mask=None):
         x, y = expected
-        x0, x1 = max(0, math.ceil(x - radius)), min(self.grid.shape[1], math.floor(x + radius) + 1)
-        y0, y1 = max(0, math.ceil(y - radius)), min(self.grid.shape[0], math.floor(y + radius) + 1)
+        x0, x1 = max(self.bounds.min_x, math.ceil(x - radius)), min(self.bounds.max_x, math.floor(x + radius) + 1)
+        y0, y1 = max(self.bounds.min_y, math.ceil(y - radius)), min(self.bounds.max_y, math.floor(y + radius) + 1)
         if x0 >= x1 or y0 >= y1:
             return None
         ground = self.reachable if mask is None else mask
-        ys, xs = np.nonzero(ground[y0:y1, x0:x1])
+        ix, iy = self.bounds.index_xy(x0, y0)
+        ys, xs = np.nonzero(ground[iy:iy+y1-y0, ix:ix+x1-x0])
         xs, ys = xs + x0, ys + y0
         distance = (xs - x) ** 2 + (ys - y) ** 2
         # Stable y/x tie-breaking makes byte-identical source produce byte-identical output.
@@ -622,21 +681,23 @@ class RegionPlacement:
         """
         width, depth = shape
         excluded = np.zeros(self.grid.shape, dtype=bool)
-        arrival = tuple(self.spec['arrival'])
+        arrival = self.array_tile(self.spec['arrival'])
         placed = {tuple(t) for t in self.spec['tilePositions'].values()} | set(self.fixed) | set(self.held)
+        placed = {self.array_tile(tile) for tile in placed}
         # Held lanes run the length of every border: thousands of tiles, asked after every trial body.
         px, py = (np.array(v, dtype=int) for v in zip(*placed)) if placed else (np.zeros(0, int), np.zeros(0, int))
         for _ in range(256):
             tile = self.nearest(expected, radius, shape, mask=self.reachable & ~excluded)
             if tile is None:
                 return None
-            x0, y0 = tile[0] - (width - 1) // 2, tile[1] - (depth - 1) // 2
+            x, y = self.array_tile(tile)
+            x0, y0 = x - (width - 1) // 2, y - (depth - 1) // 2
             window = np.s_[y0:y0 + depth, x0:x0 + width]
             saved = self.grid[window].copy()
             self.grid[window] = 0
             reachable = self.sources.reachable_from(self.grid, arrival, 2)
             lost = int(self.reachable.sum()) - int(reachable.sum())
-            cut = self.reachable[py, px] & ~reachable[py, px] & ((px != tile[0]) | (py != tile[1]))
+            cut = self.reachable[py, px] & ~reachable[py, px] & ((px != x) | (py != y))
             severed = lost > width * depth + 2 or bool(cut.any())
             if severed:
                 self.grid[window] = saved
@@ -783,7 +844,7 @@ class RegionPlacement:
         self.spec['tilePositions'][key(old_arrival)] = arrival
         if authored_spawn_tile is not None:
             self.spec['tilePositions'][key(authored_spawn_tile)] = arrival
-        self.reachable = self.sources.reachable_from(self.grid, tuple(arrival), 2)
+        self.reachable = self.sources.reachable_from(self.grid, self.array_tile(arrival), 2)
         self.reserve(arrival, margin=2)
         self.fixed.add(tuple(arrival))
         self.report['regions'][self.region]['hubReachableTiles'] = int(self.reachable.sum())
@@ -810,10 +871,10 @@ class RegionPlacement:
     def stamp_storage(self, tiles):
         for tile in tiles:
             self.storage.add(tuple(tile))
-            x, y = tile
+            x, y = self.array_tile(tile)
             self.grid[max(0, y - 1):y + 2, max(0, x - 1):x + 2] = 0
             self.reserve(tile, (3, 3))
-        self.reachable = self.sources.reachable_from(self.grid, tuple(self.spec['arrival']), 2)
+        self.reachable = self.sources.reachable_from(self.grid, self.array_tile(self.spec['arrival']), 2)
         for tile in self.fixed:
             self.check_fixed(tile, 'fixed route after storage bodies')
         for tile in tiles:
@@ -824,7 +885,8 @@ class RegionPlacement:
 
     def local_position(self, tile):
         x, y = tile
-        floor = float(np.mean(self.collision['heights'][y * 2:y * 2 + 2, x * 2:x * 2 + 2]))
+        ix, iy = self.array_tile(tile)
+        floor = float(np.mean(self.collision['heights'][iy * 2:iy * 2 + 2, ix * 2:ix * 2 + 2]))
         return [x + .5 - self.spec['serverOrigin'][0], floor,
                 self.spec['serverOrigin'][1] - y - .5]
 
@@ -1027,13 +1089,17 @@ def update_markers(placement, manifest):
         if len(defaults)>1:raise PlacementError(f'{placement.region}: authored publication has multiple default spawns')
         selected=defaults[0] if defaults else spawns[0]
         manifest.setdefault('navigation', {})['defaultSpawn']=str(selected['id'])
-        manifest['coordinateTransform']['walkingHeight']=float(selected['position'][1])
+        walking_height=float(selected['position'][1])
     else:
         arrival = placement.spec['arrival']
         manifest['spawnPoints'] = [{'id': 'continent-arrival', 'default': True,
                                    'position': placement.local_position(arrival), 'serverTile': arrival}]
         manifest.setdefault('navigation', {})['defaultSpawn'] = 'continent-arrival'
-        manifest['coordinateTransform']['walkingHeight'] = placement.local_position(arrival)[1]
+        walking_height=placement.local_position(arrival)[1]
+    source_contract=getattr(getattr(placement,'world',None),'_storage_contracts',{}).get(placement.region)
+    if source_contract is not None and source_contract.server_frame[4]:
+        walking_height=source_contract.server_frame[5]
+    manifest['coordinateTransform']['walkingHeight']=walking_height
     placement.report['regions'][placement.region]['updatedAuthoredMarkers'] = updated
 
 
@@ -1134,8 +1200,9 @@ def export_contracts(world, content, manifests, output, server_path):
     placements, outputs, served = {}, {}, {}
     if str(HERE) not in sys.path:
         sys.path.insert(0, str(HERE))
-    from collision_export import export_collision
+    from collision_export import export_collision, storage_contract
     from crossing_contracts import GR, POLICY as CROSSING_POLICY, declare_crossings
+    from crossings import storage_bounds
     world_digest = None
     try:
         for region in world.ids:
@@ -1158,13 +1225,14 @@ def export_contracts(world, content, manifests, output, server_path):
             # Declared crossings come from this served fold, never from the geometry stage.
             document, body = GR.load(glb_path)
             crossings, declared, not_walkable = declare_crossings(document, body, region, grid, sync.CLIMB_LIMIT,
-                                                                  origin, cells, result['heights'])
+                                                                  origin, cells, result['heights'], bounds=storage_bounds(world, region))
             del document, body
             manifest.setdefault('navigation', {})['crossings'] = crossings
             report['regions'][region] = {'stageFactor': factor, 'stageMetres': factor * .2,
                 'walkableServerTiles': int((grid != 0).sum()), 'largestComponentTiles': int(largest.sum()), **detail,
                 'crossings': {'declared': declared, 'notWalkable': not_walkable, 'climbLimit': sync.CLIMB_LIMIT, 'policy': CROSSING_POLICY}}
             spec = {'serverOrigin': list(origin), 'serverCells': list(cells),
+                **storage_record(cells, storage_contract(world, region)),
                 'translation': [float(center[0]), 0, float(center[1])], 'arrival': list(origin),
                 'terrainRevision': REVISION,
                 'previousServerOrigin': list(content.templates[region]['coordinateTransform']['serverOrigin']),
@@ -1216,8 +1284,10 @@ def export_contracts(world, content, manifests, output, server_path):
         # actor be put down where the crossing sends them.
         widened = {(end['region'], other['region']) for seam in report['seams']
                    for end, other in (seam['ends'], seam['ends'][::-1])}
-        stranded = [row for row in rows if row[0] in served and row[3] in served
-                    and not served[row[3]]['grid'][row[5], row[4]]]
+        def arrival_stands(row):
+            index = placements[row[3]].bounds.index_xy(int(row[4]), int(row[5]))
+            return index is not None and bool(served[row[3]]['grid'][index[1], index[0]])
+        stranded = [row for row in rows if row[0] in served and row[3] in served and not arrival_stands(row)]
         report['crossingArrivals'] = {'rows': len(rows), 'unreachable': len(stranded),
                                       'examples': [list(row) for row in stranded[:8]]}
         refused = [row for row in stranded if (row[0], row[3]) in widened]

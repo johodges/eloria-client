@@ -3,6 +3,7 @@ class_name MapAuthoringRegionSnapshot
 extends RefCounted
 
 const SCHEMA := "eloria-continent-authoring-v1"
+const OWNERSHIP := preload("res://src/dev/map_authoring_region/ownership_source.gd")
 const BASE_HEIGHT_SIDECAR := "base-heights.f32le"
 const RESOLVED_HEIGHT_SIDECAR := "resolved-heights.f32le"
 const BASE_COLOR_SIDECAR := "base-colors.rgba8"
@@ -23,6 +24,8 @@ const BIOME_PALETTE_ENTRY := preload(
 	"res://src/dev/map_authoring_region/biome_palette_entry.gd")
 
 var errors: Array[String] = []
+# Programmatic fixture checkout override; never serialized into scenes/snapshots.
+var ownership_project_directory := ""
 
 
 func export_region(region: Node3D, output_json_path: String) -> Dictionary:
@@ -30,10 +33,31 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 	if region == null:
 		_fail("Authoring region root is missing.")
 		return {}
+	var ownership := OWNERSHIP.region_data(OWNERSHIP.load_source(ownership_project_directory), String(region.get("region_id")))
+	var storage := OWNERSHIP.scene_contract(ownership, region)
+	var ownership_error := String(storage.error)
+	if not ownership_error.is_empty():
+		_fail(ownership_error)
+		return {}
+	var verified := OWNERSHIP.validate_for_bake(ownership)
+	if not String(verified.get("error", "")).is_empty():
+		_fail(verified.error)
+		return {}
 	var terrain = region.get_node_or_null("Terrain")
 	if not _uses_script(terrain, TERRAIN_SCRIPT):
 		_fail("%s: Terrain must use MapAuthoringTerrainControl." % region.get_path())
 		return {}
+	var migration := OWNERSHIP.region_migration(ownership, String(region.get("region_id")))
+	if not String(migration.get("error", "")).is_empty():
+		_fail(migration.error)
+		return {}
+	if migration.has("migration"):
+		var grid_check := OWNERSHIP.migration_sources(ownership.checkout, {
+			"continentTranslation": _vec3(region.get("continent_translation")),
+			"terrain": {"origin": [terrain.origin.x, terrain.origin.y], "migration": migration.migration}})
+		if not String(grid_check.get("error", "")).is_empty():
+			_fail(grid_check.error)
+			return {}
 	if not terrain.refresh_preview():
 		_fail("%s: %s" % [terrain.get_path(), terrain.last_error])
 		return {}
@@ -116,8 +140,16 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 		"dependencies": _dependency_records(scene_path, region, terrain,
 			emitted_surface_records),
 	}
+	if not storage.source.binding.is_empty():
+		sources["authoringSpec"] = storage.source.binding.duplicate(true)
 	if runtime_seed is Dictionary:
 		sources["runtimeBindingSeed"] = runtime_seed
+	var repository_dependencies: Array = migration.repository_dependencies.duplicate(true)
+	if ownership.get("selected", false):
+		repository_dependencies.append_array(verified.repositoryDependencies)
+	if not repository_dependencies.is_empty():
+		repository_dependencies.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.path < b.path)
+		sources["repositoryDependencies"] = repository_dependencies
 	var terrain_record := {
 		"origin": [terrain.origin.x, terrain.origin.y],
 		"cellMetres": terrain.cell_metres,
@@ -132,6 +164,8 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 		"baseSurface": base_surface_record,
 		"patches": terrain_patches,
 	}
+	if migration.has("migration"):
+		terrain_record["migration"] = migration.migration
 	if not biome_palette.is_empty():
 		terrain_record["biomePalette"] = biome_palette
 	if base_colors is Dictionary:
@@ -142,12 +176,7 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 		"coordinateSpace": "territory-local",
 		"axes": {"x": "east", "y": "up", "z": "south"},
 		"continentTranslation": _vec3(region.get("continent_translation")),
-		"server": {
-			"metresPerTile": float(region.get("metres_per_tile")),
-			"origin": _vec2i(region.get("server_origin")),
-			"cells": _vec2i(region.get("server_cells")),
-			"collisionOriginMetres": _vec2(region.get("collision_origin_metres")),
-		},
+		"server": storage.server.duplicate(true),
 		"sources": sources,
 		"authority": {
 			"terrain": bool(region.get("authority_terrain")),
@@ -169,8 +198,20 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 			"anchors": _seam_records(region),
 		},
 	}
+	if ownership.get("selected", false):
+		document["ownershipSource"] = verified.binding
+		document.seams["ownershipPolygonSha256"] = verified.ownershipPolygonSha256
 	_validate_document(region, document)
 	if not errors.is_empty():
+		return {}
+	if ownership.get("selected", false) and not OWNERSHIP.unchanged(ownership):
+		_fail("Ownership inputs changed during export; retry the bake.")
+		return {}
+	if OWNERSHIP.region_migration(ownership, String(region.get("region_id"))) != migration:
+		_fail("Terrain migration sources changed during export; retry the bake.")
+		return {}
+	if OWNERSHIP.scene_contract(ownership, region) != storage:
+		_fail("Authoring spec or scene storage/frame changed during export; retry the bake.")
 		return {}
 	var file := FileAccess.open(output_absolute, FileAccess.WRITE)
 	if file == null:

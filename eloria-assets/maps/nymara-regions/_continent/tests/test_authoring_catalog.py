@@ -47,13 +47,13 @@ def test_product_catalog_is_sorted_complete_and_authored_contracts_are_exact():
     mirrorhold = contracts["mirrorhold"]
     assert mirrorhold.continent_translation == (840.0, 0.0, 650.0)
     assert mirrorhold.server_origin == (208, 350)
-    assert mirrorhold.terrain_vertices == (271, 271)
+    assert mirrorhold.terrain_vertices == (271, 289)
     assert mirrorhold.runtime_binding_count == 139
     assert mirrorhold.runtime_point_count == 93
     whitehorn = contracts["whitehorn_range"]
     assert whitehorn.continent_translation == (550.0, 0.0, 220.0)
     assert whitehorn.server_origin == (362, 360)
-    assert whitehorn.terrain_vertices == (350, 289)
+    assert whitehorn.terrain_vertices == (352, 289)
     assert whitehorn.runtime_binding_count == 197
     assert whitehorn.runtime_point_count == 67
 

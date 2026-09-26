@@ -25,6 +25,7 @@ const RESIZE_GRIP_SIZE := Vector2(22, 22)
 const SIZE_SAVE_DELAY := 0.5
 
 var map_registry: Dictionary = {}
+var coordinate_context: RefCounted
 var index_state: Dictionary = {}
 var map_state: Dictionary = {}
 var groups_state: Dictionary = {}
@@ -262,10 +263,16 @@ func apply_update(update: Dictionary) -> void:
 	match kind:
 		"index":
 			index_state = update.duplicate(true)
-			selected_map_id = str(update.get("selected_map", selected_map_id))
+			if selected_map_id.is_empty():
+				selected_map_id = str(update.get("selected_map", ""))
 			_rebuild_maps()
 			_update_summary()
 		"map":
+			var incoming: String = str(update.get("map", {}).get("id", ""))
+			if not selected_map_id.is_empty() and incoming != selected_map_id:
+				return # A response for the previous selection cannot change bounds.
+			if int(update.get("page", 0)) > 0 and incoming != str(map_state.get("map", {}).get("id", "")):
+				return
 			map_state = _accumulate(map_state, update, "creatures")
 			var map: Dictionary = map_state.get("map", {}) as Dictionary
 			selected_map_id = str(map.get("id", selected_map_id))
@@ -749,13 +756,27 @@ func _rebuild_maps() -> void:
 func _on_map_selected(index: int) -> void:
 	var map: Dictionary = map_list.get_item_metadata(index) as Dictionary
 	selected_map_id = str(map.get("id", ""))
+	teleport_button.disabled = true
+	map_canvas.coordinates_supported = false
 	map_status.text = "Refreshing live markers for %s…" % map.get("name", selected_map_id)
 	command_requested.emit("#invasion_assistant map " + selected_map_id)
 
 
 func _show_map_state() -> void:
 	var map: Dictionary = map_state.get("map", {}) as Dictionary
+	var bounds := _logical_bounds(str(map.get("id", "")))
+	if not bounds.has_area() or not bool(map_state.get("coordinatesSupported", true)):
+		teleport_button.disabled = true
+		coordinate_x.editable = false
+		coordinate_y.editable = false
+		location_picker.disabled = true
+		map_status.text = "Coordinates unavailable: this map has no verified bounds."
+		map_canvas.set_map_state({"map": {"id": map.get("id", "")}, "coordinatesSupported": false})
+		return
 	var display_state: Dictionary = map_state.duplicate(true)
+	display_state.map["serverTileMin"] = [bounds.position.x, bounds.position.y]
+	display_state.map["width"] = bounds.size.x
+	display_state.map["height"] = bounds.size.y
 	var locations: Array = (display_state.get("locations", []) as Array).duplicate(true)
 	for local: Dictionary in _local_landmarks(str(map.get("id", ""))):
 		var duplicate := false
@@ -770,8 +791,13 @@ func _show_map_state() -> void:
 			locations.append(local)
 	display_state["locations"] = locations
 	map_title.text = "%s  —  %s" % [str(map.get("name", "Map")), str(map.get("id", ""))]
-	coordinate_x.max_value = maxi(0, int(map.get("width", 2048)) - 1)
-	coordinate_y.max_value = maxi(0, int(map.get("height", 2048)) - 1)
+	coordinate_x.min_value = bounds.position.x
+	coordinate_x.max_value = bounds.end.x - 1
+	coordinate_y.min_value = bounds.position.y
+	coordinate_y.max_value = bounds.end.y - 1
+	coordinate_x.editable = true
+	coordinate_y.editable = true
+	location_picker.disabled = false
 	teleport_button.disabled = false
 	location_picker.clear()
 	location_picker.add_item("Named locations…")
@@ -783,15 +809,15 @@ func _show_map_state() -> void:
 		location_picker.set_item_metadata(location_picker.item_count - 1, location)
 	var map_id := str(map.get("id", ""))
 	map_canvas.set_map_state(display_state, _map_texture(map_id), _map_projection(map_id))
-	if map_canvas.selected_tile.x < 0:
+	if not map_canvas.selected_tile is Vector2i:
 		var players: Array = map_state.get("players", []) as Array
 		if not players.is_empty():
 			var player := players[0] as Dictionary
 			coordinate_x.value = int(player.get("x", 0))
 			coordinate_y.value = int(player.get("y", 0))
 		else:
-			coordinate_x.value = int(map.get("width", 1)) / 2
-			coordinate_y.value = int(map.get("height", 1)) / 2
+			coordinate_x.value = bounds.position.x + bounds.size.x / 2
+			coordinate_y.value = bounds.position.y + bounds.size.y / 2
 	_rebuild_roster()
 	map_status.text = "%d named locations, %d players, %d invasion creatures. Live markers are server-authoritative." % [
 		locations.size(),
@@ -825,6 +851,8 @@ func _rebuild_roster() -> void:
 
 
 func _on_coordinate_selected(tile: Vector2i) -> void:
+	if not _valid_logical_tile(selected_map_id, tile):
+		return
 	coordinate_x.value = tile.x
 	coordinate_y.value = tile.y
 	location_picker.select(0)
@@ -838,6 +866,8 @@ func _on_location_selected(index: int) -> void:
 	location_picker.tooltip_text = location_picker.get_item_text(index) if index > 0 else ""
 	if location.is_empty():
 		return
+	if not _valid_logical_tile(selected_map_id, Vector2i(int(location.get("x", 0)), int(location.get("y", 0)))):
+		return
 	coordinate_x.value = int(location.get("x", 0))
 	coordinate_y.value = int(location.get("y", 0))
 	map_canvas.selected_tile = Vector2i(int(coordinate_x.value), int(coordinate_y.value))
@@ -849,6 +879,8 @@ func _teleport() -> void:
 		return
 	var x := int(coordinate_x.value)
 	var y := int(coordinate_y.value)
+	if teleport_button.disabled or not _valid_logical_tile(selected_map_id, Vector2i(x, y)):
+		return
 	status.text = "Teleporting to %s [%d, %d]…" % [selected_map_id, x, y]
 	_map_refresh_elapsed = 0.0
 	_index_refresh_elapsed = 0.0
@@ -961,6 +993,8 @@ func _active_summary(group: Dictionary) -> String:
 
 func _open_group_map() -> void:
 	selected_map_id = str(selected_group.get("map_id", ""))
+	teleport_button.disabled = true
+	map_canvas.coordinates_supported = false
 	tabs.current_tab = 0
 	command_requested.emit("#invasion_assistant map " + selected_map_id)
 
@@ -1160,7 +1194,10 @@ func _add_monster_to_group() -> void:
 	if selected_monster.is_empty() or monster_group.item_count == 0:
 		return
 	var group := monster_group.get_item_metadata(monster_group.selected) as Dictionary
-	var location := _spawn_location_for_group(group)
+	var location: Variant = _spawn_location_for_group(group)
+	if not location is Vector2i:
+		status.text = "Coordinates unavailable: this map has no verified spawn location."
+		return
 	command_requested.emit("#invasion_assistant group add %s|%s|%d|%d|%d" % [
 		_clean_field(str(group.get("name", ""))), selected_monster.get("type", ""),
 		int(monster_quantity.value), location.x, location.y])
@@ -1178,16 +1215,47 @@ func _spawn_monster_here() -> void:
 		int(monster_quantity.value), selected_monster.get("name", "monster")]
 
 
-func _spawn_location_for_group(group: Dictionary) -> Vector2i:
-	if str(group.get("map_id", "")) == selected_map_id and map_canvas.selected_tile.x >= 0:
-		return Vector2i(int(coordinate_x.value), int(coordinate_y.value))
+func _spawn_location_for_group(group: Dictionary) -> Variant:
+	if group.has("coordinatesSupported") and (not group.coordinatesSupported is bool or not group.coordinatesSupported):
+		return null
+	var map_id := str(group.get("map_id", ""))
+	if map_id == selected_map_id and map_canvas.selected_tile is Vector2i:
+		var tile := Vector2i(int(coordinate_x.value), int(coordinate_y.value))
+		return tile if _valid_logical_tile(map_id, tile) else null
 	var locations: Array = group.get("locations", []) as Array
 	if not locations.is_empty():
 		var first := locations[0] as Dictionary
-		return Vector2i(int(first.get("x", 0)), int(first.get("y", 0)))
-	if str(group.get("map_id", "")) == selected_map_id:
-		return Vector2i(int(coordinate_x.value), int(coordinate_y.value))
-	return Vector2i.ZERO
+		var tile := Vector2i(int(first.get("x", 0)), int(first.get("y", 0)))
+		return tile if _valid_logical_tile(map_id, tile) else null
+	if map_id == selected_map_id:
+		var tile := Vector2i(int(coordinate_x.value), int(coordinate_y.value))
+		return tile if _valid_logical_tile(map_id, tile) else null
+	return Vector2i.ZERO if _valid_logical_tile(map_id, Vector2i.ZERO) else null
+
+func _logical_bounds(map_id: String) -> Rect2i:
+	var map: Dictionary = map_state.get("map", {})
+	if str(map.get("id", "")) != map_id:
+		map = {}
+		for row: Dictionary in index_state.get("maps", []):
+			if str(row.get("id", "")) == map_id:
+				map = row
+				break
+	if coordinate_context != null and coordinate_context.selected:
+		var bounds: Dictionary = coordinate_context.admin_bounds(map if not map.is_empty() else {"id": map_id})
+		if not bounds.ok:
+			return Rect2i()
+		return Rect2i(Vector2i(bounds.minimum[0], bounds.minimum[1]), Vector2i(bounds.cells[0], bounds.cells[1]))
+	# Existing legacy zero-based snapshots remain supported; an explicit
+	# nonzero minimum is never silently admitted without the verified catalog.
+	if map.is_empty() or map.get("serverTileMin", [0, 0]) != [0, 0]:
+		return Rect2i()
+	return Rect2i(0, 0, int(map.get("width", 2048)), int(map.get("height", 2048)))
+
+func _valid_logical_tile(map_id: String, tile: Vector2i) -> bool:
+	if str(map_state.get("map", {}).get("id", "")) == map_id and not bool(map_state.get("coordinatesSupported", true)):
+		return false
+	var bounds := _logical_bounds(map_id)
+	return bounds.has_area() and bounds.has_point(tile)
 
 
 func _on_tab_changed(tab: int) -> void:
@@ -1312,7 +1380,7 @@ func _local_landmarks(map_id: String) -> Array[Dictionary]:
 			if not raw_landmark is Dictionary:
 				continue
 			var landmark := raw_landmark as Dictionary
-			var tile := Vector2i(-1, -1)
+			var tile: Variant = null
 			var server_tile: Variant = landmark.get("serverTile", [])
 			if server_tile is Array and (server_tile as Array).size() >= 2:
 				tile = Vector2i(int(server_tile[0]), int(server_tile[1]))
@@ -1321,7 +1389,7 @@ func _local_landmarks(map_id: String) -> Array[Dictionary]:
 				if raw_position is Array and (raw_position as Array).size() >= 3:
 					tile = adapter.godot_to_server(Vector3(
 						float(raw_position[0]), float(raw_position[1]), float(raw_position[2])))
-			if tile.x < 0 or tile.y < 0:
+			if not tile is Vector2i:
 				continue
 			var name := str(landmark.get("name", landmark.get("id",
 				landmark.get("kind", "Landmark")))).replace("_", " ").capitalize()

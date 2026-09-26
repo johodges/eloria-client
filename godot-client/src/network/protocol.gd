@@ -9,6 +9,9 @@ const FRAME_COMBAT_IDLE := 15
 ## The only actor-buff bit this server sets: doubled movement speed.
 const ACTOR_BUFF_DOUBLE_SPEED := 1024
 const MAX_PAYLOAD := 65532
+# Reserved raw codecs only; do not advertise before runtime integration.
+const MAP_STORAGE_COORDS_CAPABILITY := "map_storage_coords_v1"
+const CoordinateTransport = preload("res://src/network/coordinate_transport.gd")
 
 ## The guild packet's permissions field: what the server says this reader may
 ## do. They live here, with the packet they arrive in, and the rank each power
@@ -47,7 +50,8 @@ enum ClientMessage {
 	CREATE_CHAR = 141, GET_DATE = 230, GET_TIME = 231,
 	# Eternal Lands spoke for everything below 200, so what this client asks
 	# for that Eternal Lands never had is numbered from there up.
-	ELORIA_MIX_REQUEST = 200, ELORIA_TOOL_REQUEST = 201, ELORIA_TUTORIAL_UI = 203
+	ELORIA_MIX_REQUEST = 200, ELORIA_TOOL_REQUEST = 201, ELORIA_TUTORIAL_UI = 203,
+	ELORIA_MAP_COMMAND = 204
 }
 
 enum ServerMessage {
@@ -113,6 +117,7 @@ enum ServerMessage {
 	# Which map package the server was built against. Continues the same
 	# downward run below 211.
 	ELORIA_MAP_DIGEST = 209,
+	ELORIA_COORDINATE_CONTEXT = 208,
 	ELORIA_LANTERN_STATE = 207,
 	# The land neighbours of the map the client stands on, with the handle each
 	# one's actors carry in the stock "z" field of the actor packets (0 is the
@@ -132,6 +137,24 @@ static func encode(command: int, payload := PackedByteArray()) -> PackedByteArra
 	frame.append((wire_length >> 8) & 0xff)
 	frame.append_array(payload)
 	return frame
+
+static func coordinate_context(context: Dictionary) -> Dictionary:
+	var result := CoordinateTransport.encode_context(context)
+	if result.ok:
+		result["frame"] = encode(ServerMessage.ELORIA_COORDINATE_CONTEXT, result.payload)
+	return result
+
+static func decode_coordinate_context(payload: PackedByteArray, expected_profiles: Dictionary) -> Dictionary:
+	return CoordinateTransport.decode_context(payload, expected_profiles)
+
+static func map_command(epoch: Variant, command: Variant, payload: PackedByteArray) -> Dictionary:
+	var result := CoordinateTransport.encode_map_command(epoch, command, payload)
+	if result.ok:
+		result["frame"] = encode(ClientMessage.ELORIA_MAP_COMMAND, result.payload)
+	return result
+
+static func decode_map_command(payload: PackedByteArray) -> Dictionary:
+	return CoordinateTransport.decode_map_command(payload)
 
 ## Decodes the packet that starts at `offset`. Reading in place lets a caller
 ## drain a burst of packets from one receive buffer without re-slicing the
@@ -564,7 +587,7 @@ static func actor_command_direction(command: int) -> Vector2i:
 		27: return Vector2i(-1, 1)
 		_: return Vector2i.ZERO
 
-static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
+static func decode_server(command: int, payload: PackedByteArray, logical_coordinates := false) -> Dictionary:
 	match command:
 		ServerMessage.ELORIA_INVASION_ASSISTANT_STATE:
 			var parsed: Variant = JSON.parse_string(payload.get_string_from_utf8())
@@ -1035,7 +1058,7 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 		ServerMessage.ELORIA_MAP_DIGEST:
 			return decode_map_digest(payload)
 		ServerMessage.ELORIA_LANTERN_STATE:
-			return decode_lantern(payload)
+			return decode_lantern(payload, logical_coordinates)
 		ServerMessage.ELORIA_EXPERIENCE_STATE:
 			return decode_experience_state(payload)
 		ServerMessage.ELORIA_INVENTORY_NAMES:
@@ -2167,7 +2190,7 @@ static func decode_map_marker(payload: PackedByteArray) -> Dictionary:
 	var values: Array = text.values as Array
 	return {"type": "map_marker", "marker_id": u16(payload),
 		"x": u16(payload, 2), "y": u16(payload, 4),
-		"map_id": map_id_from_reference(str(values[0])), "label": str(values[1])}
+		"map_id": map_id_from_reference(str(values[0])), "map_reference": str(values[0]), "label": str(values[1])}
 
 ## `./maps/four_gates.elm` is the map id `four_gates`. The server names its own
 ## maps this way in every marker; matching on the reference itself would tie the
@@ -2871,7 +2894,7 @@ static func s32(bytes: PackedByteArray, offset := 0) -> int:
 	return value - 4294967296 if value >= 2147483648 else value
 
 
-static func decode_lantern(payload: PackedByteArray) -> Dictionary:
+static func decode_lantern(payload: PackedByteArray, logical_coordinates := false) -> Dictionary:
 	if payload.is_empty() or payload.size() > 8192:
 		return {"type":"invalid", "error":"lantern_length"}
 	var json := JSON.new()
@@ -2919,7 +2942,7 @@ static func decode_lantern(payload: PackedByteArray) -> Dictionary:
 		if value.target.size() != 2:
 			return {"type":"invalid", "error":"lantern_target"}
 		for coordinate: Variant in value.target:
-			if typeof(coordinate) not in [TYPE_FLOAT, TYPE_INT] or not is_finite(float(coordinate)) or coordinate<0 or coordinate>65535 or int(coordinate)!=coordinate:
+			if typeof(coordinate) not in [TYPE_FLOAT, TYPE_INT] or not is_finite(float(coordinate)) or coordinate < (-2147483648 if logical_coordinates else 0) or coordinate > (2147483647 if logical_coordinates else 65535) or int(coordinate)!=coordinate:
 				return {"type":"invalid", "error":"lantern_target"}
 		var required_flags: Array = ["north","east","south","west"] if value.get("tutorial", "") == "followup" else ["crafted","prepared","repaired","lit"]
 		for key in required_flags:

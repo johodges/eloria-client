@@ -1,4 +1,4 @@
-[gd_scene load_steps=1084 format=3]
+[gd_scene load_steps=1088 format=3]
 
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_surface_override.gd" id="asset_override_script"]
 [ext_resource type="Resource" path="res://src/dev/map_authoring_pilot/style/object_surfaces/reed-thatch.tres" id="object_reed_thatch"]
@@ -822,6 +822,11 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/amberwood/assets/prototypes/woodlandfloor-0053-c19186151200.glb" id="prototype_772"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/amberwood/assets/prototypes/woodlandfloor-0055-01a8bf87458b.glb" id="prototype_773"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/amberwood/assets/prototypes/woodlandfloor-0056-73007ea58329.glb" id="prototype_774"]
+
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/ground_region_control.gd" id="pass1_ground"]
+[ext_resource type="Resource" path="res://world_authoring/regions/amberwood/surfaces/pass1-gate-gravel.tres" id="pass1_gate-gravel"]
+[ext_resource type="Resource" path="res://world_authoring/regions/amberwood/surfaces/pass1-workyard-earth.tres" id="pass1_workyard-earth"]
+[ext_resource type="Resource" path="res://world_authoring/regions/amberwood/surfaces/pass1-woodland-litter.tres" id="pass1_woodland-litter"]
 
 [sub_resource type="Resource" id="object_material_0000"]
 resource_local_to_scene = true
@@ -2650,6 +2655,7 @@ mesh_node_path = "BridgeUnionPier_006_412_676_WorldPlacement/BridgeUnionPier_006
 surface_index = 0
 surface = ExtResource("object_weathered_limestone")
 
+
 [node name="Amberwood" type="Node3D"]
 script = ExtResource("region")
 region_id = "amberwood"
@@ -2669,9 +2675,9 @@ export_directory = "res://../eloria-assets/maps/nymara-regions/amberwood/authori
 
 [node name="Terrain" type="Node3D" parent="."]
 script = ExtResource("terrain")
-origin = Vector2(-238, -118)
+origin = Vector2(-292, -152)
 cell_metres = 2
-grid_size = Vector2i(209, 149)
+grid_size = Vector2i(243, 166)
 base_heights_path = "res://world_authoring/regions/amberwood/base-heights.f32le"
 base_colors_path = "res://world_authoring/regions/amberwood/base-colors.rgba8"
 preview_uv_metres_inverse = 0.17
@@ -2683,6 +2689,150 @@ biome_palette = [ExtResource("biome_entry")]
 [node name="Ground" type="Node3D" parent="."]
 
 [node name="Regions" type="Node3D" parent="Ground"]
+
+[node name="Pass1_GateCourt" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(70, 42.985889435, 44)
+rotation = Vector3(0, -0.436332313, 0)
+region_id = "amberwood-pass1-gatecourt"
+enabled = true
+size = Vector2(34, 20)
+blend_width = 5.940
+opacity = 0.84
+priority = 0
+surface = ExtResource("pass1_gate-gravel")
+
+[node name="Pass1_GateApproach" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(79, 45.470245361, 29)
+rotation = Vector3(0, -0.523598776, 0)
+region_id = "amberwood-pass1-gateapproach"
+enabled = true
+size = Vector2(27, 14)
+blend_width = 4.620
+opacity = 0.58
+priority = 1
+surface = ExtResource("pass1_gate-gravel")
+
+[node name="Pass1_HallYard" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(32, 47.393978119, 17)
+rotation = Vector3(0, 0.174532925, 0)
+region_id = "amberwood-pass1-hallyard"
+enabled = true
+size = Vector2(30, 24)
+blend_width = 7.920
+opacity = 0.7
+priority = 2
+surface = ExtResource("pass1_workyard-earth")
+
+[node name="Pass1_HallTrail" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(43, 48.047281265, 34)
+rotation = Vector3(0, -0.349065850, 0)
+region_id = "amberwood-pass1-halltrail"
+enabled = true
+size = Vector2(32, 20)
+blend_width = 5.280
+opacity = 0.7
+priority = 3
+surface = ExtResource("pass1_workyard-earth")
+
+[node name="Pass1_MootYard" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(-28, 39.399063110, -16)
+rotation = Vector3(0, 0.174532925, 0)
+region_id = "amberwood-pass1-mootyard"
+enabled = true
+size = Vector2(25, 20)
+blend_width = 6.600
+opacity = 0.67
+priority = 4
+surface = ExtResource("pass1_workyard-earth")
+
+[node name="Pass1_MootApron" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(-9, 44.042238235, 3)
+rotation = Vector3(0, -0.436332313, 0)
+region_id = "amberwood-pass1-mootapron"
+enabled = true
+size = Vector2(28, 19)
+blend_width = 3.960
+opacity = 0.7
+priority = 5
+surface = ExtResource("pass1_workyard-earth")
+
+[node name="Pass1_GreatTreeLeaf" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(14, 53.614650726, -46)
+rotation = Vector3(0, 0.349065850, 0)
+region_id = "amberwood-pass1-greattreeleaf"
+enabled = true
+size = Vector2(40, 31)
+blend_width = 8.000
+opacity = 0.65
+priority = 6
+surface = ExtResource("pass1_woodland-litter")
+
+[node name="Pass1_TreeLower" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(45, 50.213476181, -26)
+rotation = Vector3(0, -0.261799388, 0)
+region_id = "amberwood-pass1-treelower"
+enabled = true
+size = Vector2(28, 19)
+blend_width = 5.940
+opacity = 0.62
+priority = 7
+surface = ExtResource("pass1_woodland-litter")
+
+[node name="Pass1_RootGrove" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(-60, 39.369810104, -63)
+rotation = Vector3(0, 0.174532925, 0)
+region_id = "amberwood-pass1-rootgrove"
+enabled = true
+size = Vector2(28, 22)
+blend_width = 7.260
+opacity = 0.61
+priority = 8
+surface = ExtResource("pass1_woodland-litter")
+
+[node name="Pass1_RootLower" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(-53, 39.691942215, -51)
+rotation = Vector3(0, -0.610865238, 0)
+region_id = "amberwood-pass1-rootlower"
+enabled = true
+size = Vector2(23, 16)
+blend_width = 5.280
+opacity = 0.44
+priority = 9
+surface = ExtResource("pass1_woodland-litter")
+
+[node name="Pass1_CoppiceWorkyard" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(-87, 20.828227043, 77)
+rotation = Vector3(0, 0.383972435, 0)
+region_id = "amberwood-pass1-coppiceworkyard"
+enabled = true
+size = Vector2(23, 17)
+blend_width = 5.610
+opacity = 0.6
+priority = 10
+surface = ExtResource("pass1_workyard-earth")
+
+[node name="Pass1_CoppiceMargin" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(-79, 22.836284637, 78)
+rotation = Vector3(0, -0.488692191, 0)
+region_id = "amberwood-pass1-coppicemargin"
+enabled = true
+size = Vector2(18, 12)
+blend_width = 3.960
+opacity = 0.43
+priority = 11
+surface = ExtResource("pass1_woodland-litter")
 
 [node name="Roads" type="Node3D" parent="."]
 

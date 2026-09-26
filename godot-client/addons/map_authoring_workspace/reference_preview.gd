@@ -5,6 +5,7 @@ extends Node3D
 signal status_changed(message: String)
 
 const HOST_NAME := "__TerritoryReferenceHost"
+const OWNERSHIP := preload("res://src/dev/map_authoring_region/ownership_source.gd")
 const ACTIVE_CLIP_NAME := "ActiveOwnedTerrain"
 const BOUNDARY_SAMPLE_METRES := 2.0
 const PUBLISHED_HEIGHT_BIN_METRES := 8.0
@@ -315,9 +316,7 @@ func _store_cache(key: String, packed: PackedScene) -> void:
 func _validate_authored(root: Node3D, entry: Dictionary) -> String:
 	if root == null or String(root.get("region_id")) != String(entry.id):
 		return "%s authored scene has the wrong region ID." % String(entry.label)
-	var expected := String(root.get("ownership_polygon_sha256"))
-	var actual := String(entry.get("ownership_sha256", ""))
-	if expected.is_empty() or expected != actual:
+	if not OWNERSHIP.entry_error(root, entry).is_empty():
 		return "%s ownership polygon does not match its saved authored scene; reference hidden." % \
 			String(entry.label)
 	return ""

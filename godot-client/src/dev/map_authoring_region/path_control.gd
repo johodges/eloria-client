@@ -9,6 +9,7 @@ extends "res://src/dev/map_authoring_pilot/width_path.gd"
 @export var replaces_plan_feature_id := ""
 @export var properties: Dictionary = {}
 @export_range(0.1, 8.0, 0.1) var snapshot_spacing := 1.0
+@export_enum("Baked curve", "Control polygon") var snapshot_mode := 0
 @export var preview_enabled := true
 
 const LATERAL_STEPS := 6
@@ -71,6 +72,16 @@ func snapshot_points() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	if curve == null or curve.point_count == 0:
 		return result
+	if snapshot_mode == 1:
+		sync_curve_binding()
+		var control_widths := _control_polygon_widths()
+		for index in curve.point_count:
+			var control := curve.get_point_position(index)
+			result.append({"position": [control.x, control.y, control.z],
+				"width": control_widths[index]})
+		if curve.closed and curve.point_count > 1:
+			result.append(result[0].duplicate(true))
+		return result
 	var total := curve.get_baked_length()
 	if total <= 0.000001:
 		var only := curve.get_point_position(0)
@@ -98,6 +109,45 @@ func snapshot_points() -> Array[Dictionary]:
 		result.append({"position": [point.x, point.y, point.z],
 			"width": width_at_offset(offset)})
 	return result
+
+
+func _control_polygon_widths() -> PackedFloat32Array:
+	var widths := PackedFloat32Array()
+	var count := curve.point_count
+	widths.resize(count)
+	var stations := PackedFloat32Array([0.0])
+	for index in range(1, count):
+		var previous := curve.get_point_position(index - 1)
+		var current := curve.get_point_position(index)
+		stations.append(stations[index - 1] + previous.distance_to(current))
+	var anchors: Array[Vector2] = []
+	for index in count:
+		if index < point_widths.size() and point_widths[index] > 0.0:
+			anchors.append(Vector2(stations[index], point_widths[index]))
+	if anchors.is_empty():
+		widths.fill(default_width)
+		return widths
+	# Explicit widths belong to their indices, even when two controls occupy
+	# the same station. An inherited width at a zero-length span takes the
+	# preceding anchor, matching the normal left-to-right taper lookup.
+	if curve.closed and count > 1:
+		if anchors.size() == 1:
+			widths.fill(anchors[0].y)
+			return widths
+		var total := stations[count - 1] + curve.get_point_position(count - 1).distance_to(
+			curve.get_point_position(0))
+		anchors.push_front(Vector2(anchors[anchors.size() - 1].x - total,
+			anchors[anchors.size() - 1].y))
+		anchors.append(Vector2(anchors[1].x + total, anchors[1].y))
+	else:
+		if anchors[0].x > 0.0:
+			anchors.push_front(Vector2(0.0, default_width))
+		if anchors[anchors.size() - 1].x < stations[count - 1]:
+			anchors.append(Vector2(stations[count - 1], default_width))
+	for index in count:
+		widths[index] = point_widths[index] if index < point_widths.size() and \
+			point_widths[index] > 0.0 else _interpolate_anchors(anchors, stations[index])
+	return widths
 
 
 func replacement_route_value() -> Variant:
@@ -177,6 +227,12 @@ func _refresh_preview() -> void:
 	if indices.is_empty():
 		mesh_instance.mesh = null
 		return
+	# Godot's front faces are clockwise; the strip and clipping helpers above
+	# use the opposite convention. Keep every vertex/UV and reverse only faces.
+	for triangle_index in range(0, indices.size(), 3):
+		var second := indices[triangle_index + 1]
+		indices[triangle_index + 1] = indices[triangle_index + 2]
+		indices[triangle_index + 2] = second
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX] = vertices
@@ -277,7 +333,7 @@ func _generated_normals(vertices: PackedVector3Array,
 		var a := indices[triangle_index]
 		var b := indices[triangle_index + 1]
 		var c := indices[triangle_index + 2]
-		var normal := (vertices[b] - vertices[a]).cross(vertices[c] - vertices[a])
+		var normal := (vertices[c] - vertices[a]).cross(vertices[b] - vertices[a])
 		if normal.length_squared() <= 0.0000000001:
 			continue
 		normal = normal.normalized()
@@ -361,6 +417,7 @@ func _current_preview_signature() -> Array:
 	var terrain_revision: int = int(terrain.get("preview_revision")) \
 		if terrain != null else -1
 	return [curve_state, width_signature(), kind, preview_enabled, snapshot_spacing,
+		snapshot_mode,
 		surface.signature() if surface != null else [], terrain_revision]
 
 
@@ -370,6 +427,12 @@ func _get_configuration_warnings() -> PackedStringArray:
 		warnings.append("Region paths need a stable Path Id before export.")
 	if curve == null or curve.point_count < 2:
 		warnings.append("Region paths need at least two curve points.")
+	if snapshot_mode == 1 and curve != null:
+		for index in curve.point_count:
+			if curve.get_point_in(index).length_squared() > 0.0000000001 or \
+					curve.get_point_out(index).length_squared() > 0.0000000001:
+				warnings.append("Control polygon sampling uses straight segments; Bezier handles are ignored.")
+				break
 	if kind == "river" and not replaces_route_id.is_empty():
 		warnings.append("River paths cannot replace composer road routes.")
 	if kind == "road" and not replaces_plan_feature_id.is_empty():

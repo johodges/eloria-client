@@ -1,9 +1,8 @@
 [gd_resource type="Curve3D" format=3]
 
 [resource]
-resource_local_to_scene = true
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 4.5, 29.82, -17.5, 0, 0, 0, 0, 0, 0, 2.5, 28.91, -14.5, 0, 0, 0, 0, 0, 0, 4.5, 28.3, -12.5, 0, 0, 0, 0, 0, 0, 8.5, 26.75, -16.5),
-"tilts": PackedFloat32Array(0, 0, 0, 0)
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -12, 28.645666, -16, 0, 0, 0, 0, 0, 0, -6.38, 28.96836, -16, 0, 0, 0, 0, 0, 0, 0, 29.073925, -16),
+"tilts": PackedFloat32Array(0, 0, 0)
 }
-point_count = 4
+point_count = 3

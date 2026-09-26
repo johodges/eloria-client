@@ -9,9 +9,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import json
+import hashlib
 import math
 from pathlib import Path
 import re
+import ownership_contract
+from storage_bounds import authoring_storage, frame_values
 from typing import Any
 
 
@@ -49,6 +52,12 @@ class RegionContract:
     runtime_point_count: int
     existing_marker_binding_count: int
     owned_ferry_connection_ids: tuple[str, ...] = ()
+    ownership_binding: dict | None = None
+    terrain_migration: dict | None = None
+    server_tile_min: tuple[int, int] = (0, 0)
+    server_storage_version: int | None = None
+    spec_sha256: str | None = None
+    server_frame: tuple | None = None
 
 
 @dataclass(frozen=True)
@@ -140,8 +149,10 @@ def _sorted_ids(value: Any, where: str) -> tuple[str, ...]:
 def load_region_spec(path: Path, *, expected_id: str | None = None,
                      scene_path: Path | None = None,
                      manifest_path: Path | None = None,
-                     require_scene: bool = True) -> RegionContract:
-    document = _object(json.loads(path.read_text(encoding="utf-8")), "region spec")
+                     require_scene: bool = True,
+                     ownership_plan_path: Path | None = None) -> RegionContract:
+    spec_bytes = path.read_bytes()
+    document = _object(json.loads(spec_bytes), "region spec")
     if document.get("schema") != SPEC_SCHEMA:
         raise CatalogError(f"{path}: schema must be {SPEC_SCHEMA}")
     region_id = _string(document.get("regionId"), "regionId")
@@ -169,6 +180,15 @@ def load_region_spec(path: Path, *, expected_id: str | None = None,
     cell_metres = _vector([terrain.get("cellMetres")], 1, "terrain.cellMetres")[0]
     if cell_metres <= 0 or min(vertices) < 2:
         raise CatalogError("terrain cellMetres must be positive and vertices at least two")
+    migration_sources(document)
+    try:
+        ownership = ownership_contract.editor_binding(region_id, ownership_plan_path)
+        ownership_contract.validate_authoring_frame(ownership, document)
+        storage = authoring_storage(server)
+    except ownership_contract.OwnershipContractError as error:
+        raise CatalogError(f"{path}: {error}") from error
+    if path.read_bytes() != spec_bytes:
+        raise CatalogError("region authoring spec changed during validation; retry")
     return RegionContract(
         id=region_id, label=label, adapter=adapter,
         scene_path=declared_scene, manifest_path=declared_manifest,
@@ -197,7 +217,70 @@ def load_region_spec(path: Path, *, expected_id: str | None = None,
         owned_ferry_connection_ids=_sorted_ids(
             authority.get("ownedFerryConnectionIds", []),
             "authority.ownedFerryConnectionIds"),
+        ownership_binding=ownership.get("binding"),
+        terrain_migration=terrain.get("migration"),
+        server_tile_min=(storage.min_x, storage.min_y),
+        server_storage_version=server.get("serverStorageVersion"),
+        spec_sha256=hashlib.sha256(spec_bytes).hexdigest(),
+        server_frame=frame_values(server),
     )
+
+
+def migration_sources(document, *, client=None):
+    """Hash-bound shared-field provenance; source grids remain independently editable."""
+    client = Path(client or CLIENT)
+    terrain = document.get("terrain", {})
+    migration = terrain.get("migration")
+    if migration is None:
+        return []
+    migration = _object(migration, "terrain.migration")
+    if migration.get("revision") != "global-lattice-envelope-v1":
+        raise CatalogError("unsupported terrain migration revision")
+    # Godot JSON preserves integer values as floats when copying parsed metadata.
+    minimum = _vector(migration.get("globalVertexMin"), 2, "terrain.migration.globalVertexMin")
+    if any(value != int(value) for value in minimum):
+        raise CatalogError("terrain.migration.globalVertexMin must contain integer values")
+    try:
+        ownership_contract._sha(migration.get("previousGridSha256"), "terrain.migration.previousGridSha256")
+        manifest_path = ownership_contract.contained_path(client, migration.get("sharedFieldPath"))
+    except ownership_contract.OwnershipContractError as error:
+        raise CatalogError(str(error)) from error
+    records = []
+    def verify(path, expected):
+        try:
+            ownership_contract._sha(expected, "terrain migration source hash")
+            if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+                raise CatalogError(f"terrain migration source hash changed: {path}")
+        except (OSError, ownership_contract.OwnershipContractError) as error:
+            raise CatalogError(f"terrain migration source is missing/invalid: {error}") from error
+        records.append({"path": path.relative_to(client).as_posix(), "sha256": expected})
+    verify(manifest_path, migration.get("sharedFieldSha256"))
+    manifest = _object(json.loads(manifest_path.read_bytes()), "shared terrain field")
+    lattice = _object(manifest.get("lattice"), "shared terrain lattice")
+    if manifest.get("schema") != "eloria-terrain-shared-field-v1" or lattice.get("order") != "row-major-x-fast" or lattice.get("spacing") != 2:
+        raise CatalogError("unsupported shared terrain field schema/lattice")
+    lattice_origin = _vector(lattice.get("originMetres"), 2, "lattice.originMetres")
+    vertices = _integer_vector(lattice.get("vertices"), 2, "lattice.vertices")
+    if min(vertices) < 2:
+        raise CatalogError("shared terrain field needs positive dimensions")
+    translation = _vector(document.get("continentTranslation"), 3, "continentTranslation")
+    origin = _vector(terrain.get("origin"), 2, "terrain.origin")
+    if any(origin[i] + translation[(0, 2)[i]] != lattice_origin[i] + minimum[i] * 2 for i in (0, 1)):
+        raise CatalogError("terrain migration globalVertexMin differs from the saved grid identity")
+    for key, encoding in (("heights", "float32-little-endian"), ("colors", "rgba8")):
+        record = _object(manifest.get(key), f"shared terrain {key}")
+        if record.get("encoding") != encoding:
+            raise CatalogError(f"shared terrain {key} encoding is unsupported")
+        try:
+            path = ownership_contract.contained_path(client, record.get("path"))
+        except ownership_contract.OwnershipContractError as error:
+            raise CatalogError(str(error)) from error
+        verify(path, record.get("sha256"))
+        if path.stat().st_size != vertices[0] * vertices[1] * 4:
+            raise CatalogError(f"shared terrain {key} byte count differs from lattice")
+    if len({r["path"] for r in records}) != len(records):
+        raise CatalogError("shared terrain source paths must be distinct")
+    return sorted(records, key=lambda row: row["path"])
 
 
 def _scene_region_id(path: Path) -> str:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=155 format=3]
+[gd_scene load_steps=160 format=3]
 
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
@@ -6,7 +6,7 @@
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/asset_control.gd" id="asset"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/gameplay_marker.gd" id="marker"]
 [ext_resource type="Resource" path="res://world_authoring/regions/amethyst_barrens/surfaces/biome-scree.tres" id="biome_entry"]
-[ext_resource type="Resource" path="res://world_authoring/regions/amethyst_barrens/surfaces/crystal.tres" id="terrain_surface"]
+[ext_resource type="Resource" path="res://world_authoring/regions/amethyst_barrens/surfaces/pass1-crystal-ground.tres" id="terrain_surface"]
 [ext_resource type="Resource" path="res://world_authoring/regions/amethyst_barrens/surfaces/road.tres" id="road_surface"]
 [ext_resource type="Curve3D" path="res://world_authoring/regions/amethyst_barrens/paths/amethyst-barrens-mirrorhold-amethyst-barrens.tres" id="curve_00"]
 [ext_resource type="Curve3D" path="res://world_authoring/regions/amethyst_barrens/paths/amethyst-barrens-sunmane-steppe-amethyst-barrens.tres" id="curve_01"]
@@ -155,6 +155,12 @@
 [ext_resource type="PackedScene" path="res://world_authoring/regions/amethyst_barrens/assets/prototypes/secret-barrens-tower-school-bc9c039bcbf0.glb" id="prototype_122"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/amethyst_barrens/assets/prototypes/secret-barrens-waystone-87e09fe8f76a.glb" id="prototype_123"]
 
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/ground_region_control.gd" id="pass1_ground"]
+[ext_resource type="Resource" path="res://world_authoring/regions/amethyst_barrens/surfaces/pass1-mineral-dust.tres" id="pass1_mineral-dust"]
+[ext_resource type="Resource" path="res://world_authoring/regions/amethyst_barrens/surfaces/pass1-violet-scree.tres" id="pass1_violet-scree"]
+[ext_resource type="Resource" path="res://world_authoring/regions/amethyst_barrens/surfaces/pass1-court-gravel.tres" id="pass1_court-gravel"]
+[ext_resource type="Resource" path="res://world_authoring/regions/amethyst_barrens/surfaces/pass1-camp-dust.tres" id="pass1_camp-dust"]
+
 [node name="AmethystBarrens" type="Node3D"]
 script = ExtResource("region")
 region_id = "amethyst_barrens"
@@ -185,6 +191,174 @@ biome_palette = [ExtResource("biome_entry")]
 [node name="Ground" type="Node3D" parent="."]
 
 [node name="Regions" type="Node3D" parent="Ground"]
+
+[node name="Pass1_BasinWest" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(-35, 29.814378738, -95)
+rotation = Vector3(0, 0.349065850, 0)
+region_id = "amethyst-pass1-basinwest"
+enabled = true
+size = Vector2(130, 85)
+blend_width = 8.000
+opacity = 0.38
+priority = 0
+surface = ExtResource("pass1_mineral-dust")
+
+[node name="Pass1_BasinMiddle" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(30, 22.819120407, -87)
+rotation = Vector3(0, -0.436332313, 0)
+region_id = "amethyst-pass1-basinmiddle"
+enabled = true
+size = Vector2(155, 98)
+blend_width = 8.000
+opacity = 0.52
+priority = 1
+surface = ExtResource("pass1_mineral-dust")
+
+[node name="Pass1_BasinEast" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(95, 18.427049637, -88)
+rotation = Vector3(0, 0.261799388, 0)
+region_id = "amethyst-pass1-basineast"
+enabled = true
+size = Vector2(110, 155)
+blend_width = 8.000
+opacity = 0.34
+priority = 2
+surface = ExtResource("pass1_mineral-dust")
+
+[node name="Pass1_BasinSouth" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(38, 28.430492401, -2)
+rotation = Vector3(0, -0.261799388, 0)
+region_id = "amethyst-pass1-basinsouth"
+enabled = true
+size = Vector2(165, 100)
+blend_width = 8.000
+opacity = 0.57
+priority = 3
+surface = ExtResource("pass1_mineral-dust")
+
+[node name="Pass1_BasinNorth" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(0, 11.559540749, -156)
+rotation = Vector3(0, 0.174532925, 0)
+region_id = "amethyst-pass1-basinnorth"
+enabled = true
+size = Vector2(155, 64)
+blend_width = 8.000
+opacity = 0.28
+priority = 4
+surface = ExtResource("pass1_violet-scree")
+
+[node name="Pass1_BasinWestLower" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(-53, 38.265728951, -25)
+rotation = Vector3(0, -0.436332313, 0)
+region_id = "amethyst-pass1-basinwestlower"
+enabled = true
+size = Vector2(55, 82)
+blend_width = 8.000
+opacity = 0.43
+priority = 5
+surface = ExtResource("pass1_violet-scree")
+
+[node name="Pass1_MassifApron" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(65, 25.305445671, -162)
+rotation = Vector3(0, 0.261799388, 0)
+region_id = "amethyst-pass1-massifapron"
+enabled = true
+size = Vector2(65, 47)
+blend_width = 8.000
+opacity = 1
+priority = 12
+surface = ExtResource("pass1_violet-scree")
+
+[node name="Pass1_MassifScatter" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(87, 5.581956029, -145)
+rotation = Vector3(0, -0.383972435, 0)
+region_id = "amethyst-pass1-massifscatter"
+enabled = true
+size = Vector2(45, 70)
+blend_width = 8.000
+opacity = 0.9
+priority = 13
+surface = ExtResource("pass1_violet-scree")
+
+[node name="Pass1_CourtForecourt" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(-61, 28.281946659, -147)
+rotation = Vector3(0, -0.349065850, 0)
+region_id = "amethyst-pass1-courtforecourt"
+enabled = true
+size = Vector2(35, 29)
+blend_width = 8.000
+opacity = 1
+priority = 20
+surface = ExtResource("pass1_court-gravel")
+
+[node name="Pass1_CourtApproach" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(-48, 26.634450912, -138)
+rotation = Vector3(0, 0.436332313, 0)
+region_id = "amethyst-pass1-courtapproach"
+enabled = true
+size = Vector2(29, 17)
+blend_width = 4.760
+opacity = 0.94
+priority = 21
+surface = ExtResource("pass1_court-gravel")
+
+[node name="Pass1_AssayYard" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(0, 30.383106232, -24)
+rotation = Vector3(0, 0.209439510, 0)
+region_id = "amethyst-pass1-assayyard"
+enabled = true
+size = Vector2(54, 30)
+blend_width = 8.000
+opacity = 1
+priority = 22
+surface = ExtResource("pass1_camp-dust")
+
+[node name="Pass1_AssayApproach" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(17, 31.547046661, -10)
+rotation = Vector3(0, -0.261799388, 0)
+region_id = "amethyst-pass1-assayapproach"
+enabled = true
+size = Vector2(30, 24)
+blend_width = 6.720
+opacity = 0.92
+priority = 23
+surface = ExtResource("pass1_camp-dust")
+
+[node name="Pass1_NorthCamp" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(78, 2.995643377, -108)
+rotation = Vector3(0, 0.349065850, 0)
+region_id = "amethyst-pass1-northcamp"
+enabled = true
+size = Vector2(20, 13)
+blend_width = 3.640
+opacity = 0.94
+priority = 24
+surface = ExtResource("pass1_camp-dust")
+
+[node name="Pass1_EastCamp" type="Marker3D" parent="Ground/Regions"]
+script = ExtResource("pass1_ground")
+position = Vector3(148, 22.922964096, -11)
+rotation = Vector3(0, -0.523598776, 0)
+region_id = "amethyst-pass1-eastcamp"
+enabled = true
+size = Vector2(18, 15)
+blend_width = 4.200
+opacity = 0.94
+priority = 25
+surface = ExtResource("pass1_camp-dust")
 
 [node name="Roads" type="Node3D" parent="."]
 
@@ -7196,3 +7370,99 @@ extras = {}
 runtime_bindings = [{"id": "territories.txt@149:95", "provenance": {"sourceProfileSha256": "de46f5b1c47c9dbf392be8551e3b389b0e23a7a0e0f630943725f78e8325218d", "sourceReportSha256": "31a68d6df89ca2658f821f5d4ac414c32112ff8b44e4fe25eb0af8853e1c802b"}, "roads": "marker", "role": "territory", "source": {"line": 36, "oldTile": [149, 95], "path": "config/eloria/territories.txt"}, "targetOffset": [0, 0, 0]}]
 
 [node name="GeneratedPreview" type="Node3D" parent="."]
+
+[node name="Pass1_CrystalWestCourt" type="Node3D" parent="AuthoredAssets"]
+script = ExtResource("asset")
+transform = Transform3D(0.676148078, 0, -0.181173332, 0, 0.7, 0, 0.181173332, 0, 0.676148078, -80, 38.653497009, -142)
+asset_id = "Pass1_CrystalWestCourt"
+node_name = "Pass1_CrystalWestCourt"
+scene_path = "res://world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb"
+source_node = "."
+collision_role = "none"
+metadata = {"kind": "prop", "authoringPass": "amethyst-visual-pass1", "cosmeticOnly": true}
+
+[node name="Content" parent="AuthoredAssets/Pass1_CrystalWestCourt" instance=ExtResource("prototype_009")]
+
+[node name="Pass1_CrystalNorthCourt" type="Node3D" parent="AuthoredAssets"]
+script = ExtResource("asset")
+transform = Transform3D(-0.145153137, 0, -0.582177436, 0, 0.6, 0, 0.582177436, 0, -0.145153137, -46, 18.604082527, -177)
+asset_id = "Pass1_CrystalNorthCourt"
+node_name = "Pass1_CrystalNorthCourt"
+scene_path = "res://world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb"
+source_node = "."
+collision_role = "none"
+metadata = {"kind": "prop", "authoringPass": "amethyst-visual-pass1", "cosmeticOnly": true}
+
+[node name="Content" parent="AuthoredAssets/Pass1_CrystalNorthCourt" instance=ExtResource("prototype_009")]
+
+[node name="Pass1_CrystalMassifWest" type="Node3D" parent="AuthoredAssets"]
+script = ExtResource("asset")
+transform = Transform3D(0.892707990, 0, 0.324919136, 0, 0.95, 0, -0.324919136, 0, 0.892707990, 44, 8.271530533, -154)
+asset_id = "Pass1_CrystalMassifWest"
+node_name = "Pass1_CrystalMassifWest"
+scene_path = "res://world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb"
+source_node = "."
+collision_role = "none"
+metadata = {"kind": "prop", "authoringPass": "amethyst-visual-pass1", "cosmeticOnly": true}
+
+[node name="Content" parent="AuthoredAssets/Pass1_CrystalMassifWest" instance=ExtResource("prototype_009")]
+
+[node name="Pass1_CrystalMassifEast" type="Node3D" parent="AuthoredAssets"]
+script = ExtResource("asset")
+transform = Transform3D(0.332121459, 0, -0.782429125, 0, 0.85, 0, 0.782429125, 0, 0.332121459, 86, 29.936359787, -166)
+asset_id = "Pass1_CrystalMassifEast"
+node_name = "Pass1_CrystalMassifEast"
+scene_path = "res://world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb"
+source_node = "."
+collision_role = "none"
+metadata = {"kind": "prop", "authoringPass": "amethyst-visual-pass1", "cosmeticOnly": true}
+
+[node name="Content" parent="AuthoredAssets/Pass1_CrystalMassifEast" instance=ExtResource("prototype_009")]
+
+[node name="Pass1_CrystalMassifSouth" type="Node3D" parent="AuthoredAssets"]
+script = ExtResource("asset")
+transform = Transform3D(-0.532448829, 0, -0.372824684, 0, 0.65, 0, 0.372824684, 0, -0.532448829, 91, 2.469751263, -142)
+asset_id = "Pass1_CrystalMassifSouth"
+node_name = "Pass1_CrystalMassifSouth"
+scene_path = "res://world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb"
+source_node = "."
+collision_role = "none"
+metadata = {"kind": "prop", "authoringPass": "amethyst-visual-pass1", "cosmeticOnly": true}
+
+[node name="Content" parent="AuthoredAssets/Pass1_CrystalMassifSouth" instance=ExtResource("prototype_009")]
+
+[node name="Pass1_CrystalAssayEdge" type="Node3D" parent="AuthoredAssets"]
+script = ExtResource("asset")
+transform = Transform3D(0.300000000, 0, -0.519615242, 0, 0.6, 0, 0.519615242, 0, 0.300000000, 29, 27.113936806, -32)
+asset_id = "Pass1_CrystalAssayEdge"
+node_name = "Pass1_CrystalAssayEdge"
+scene_path = "res://world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb"
+source_node = "."
+collision_role = "none"
+metadata = {"kind": "prop", "authoringPass": "amethyst-visual-pass1", "cosmeticOnly": true}
+
+[node name="Content" parent="AuthoredAssets/Pass1_CrystalAssayEdge" instance=ExtResource("prototype_009")]
+
+[node name="Pass1_StoresAssayWest" type="Node3D" parent="AuthoredAssets"]
+script = ExtResource("asset")
+transform = Transform3D(0.891006524, 0, -0.453990500, 0, 1, 0, 0.453990500, 0, 0.891006524, -24, 33.911795654, -30)
+asset_id = "Pass1_StoresAssayWest"
+node_name = "Pass1_StoresAssayWest"
+scene_path = "res://world_authoring/regions/amethyst_barrens/assets/prototypes/prop-outpoststores-0-25ce6678df91.glb"
+source_node = "."
+collision_role = "none"
+metadata = {"kind": "prop", "authoringPass": "amethyst-visual-pass1", "cosmeticOnly": true}
+
+[node name="Content" parent="AuthoredAssets/Pass1_StoresAssayWest" instance=ExtResource("prototype_107")]
+
+[node name="Pass1_StoresAssayEast" type="Node3D" parent="AuthoredAssets"]
+script = ExtResource("asset")
+transform = Transform3D(0.970295726, 0, 0.241921896, 0, 1, 0, -0.241921896, 0, 0.970295726, 27, 28.470799522, -18)
+asset_id = "Pass1_StoresAssayEast"
+node_name = "Pass1_StoresAssayEast"
+scene_path = "res://world_authoring/regions/amethyst_barrens/assets/prototypes/prop-outpoststores-2-9a413446f474.glb"
+source_node = "."
+collision_role = "none"
+metadata = {"kind": "prop", "authoringPass": "amethyst-visual-pass1", "cosmeticOnly": true}
+
+[node name="Content" parent="AuthoredAssets/Pass1_StoresAssayEast" instance=ExtResource("prototype_109")]

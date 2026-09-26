@@ -18,6 +18,7 @@ from typing import Any, Iterable
 import numpy as np
 
 from authoring_catalog import CATALOG_PATH, RegionContract, authored_contracts
+from storage_bounds import authoring_storage, frame_values
 
 
 HERE = Path(__file__).resolve().parent
@@ -787,13 +788,22 @@ class Snapshot:
     def bound_sources(self) -> dict[str, str]:
         """Every raw source or sidecar whose bytes certify this snapshot."""
         result = dict(self.source_sha256)
+        spec_record = self.document.get("sources", {}).get("authoringSpec")
+        if spec_record is not None:
+            import ownership_contract
+            spec_path = ownership_contract.contained_path(CLIENT, spec_record["path"])
+            if sha256(spec_path) != spec_record["sha256"]:
+                raise AuthoringError("authoring spec changed after snapshot load; rebake before composition")
         if self.contract is not None:
             # Catalog membership and the strict region contract decide which
             # scene is authoritative and how its local frame enters the shared
             # continent. They are composition inputs even though the Godot
             # scene does not depend on them as res:// resources.
             for path in (self.contract.spec_path, CATALOG_PATH):
-                result[path.relative_to(CLIENT).as_posix()] = sha256(path)
+                current = sha256(path)
+                if path == self.contract.spec_path and self.contract.spec_sha256 is not None and current != self.contract.spec_sha256:
+                    raise AuthoringError("authoring spec changed after catalog load; reload before composition")
+                result[path.relative_to(CLIENT).as_posix()] = current
         for field in ("baseHeights", "resolvedHeights", "baseColors"):
             if field not in self.document["terrain"]:
                 continue
@@ -1180,6 +1190,37 @@ def apply_gameplay(template: dict[str, Any], snapshot: Snapshot) -> dict[str, An
     return result
 
 
+def required_terrain_vertices(owner: np.ndarray, region_index: int,
+                              vertex_shape: tuple[int, int]) -> np.ndarray:
+    """Full in-world incident-owned-vertex mask plus one 3x3 seam ring."""
+    from scipy.ndimage import binary_dilation
+    cells = owner == region_index
+    if cells.shape == vertex_shape:
+        owned = cells  # Small legacy fixtures may provide vertex ownership.
+    elif cells.shape == (vertex_shape[0] - 1, vertex_shape[1] - 1):
+        owned = np.zeros(vertex_shape, dtype=bool)
+        owned[:-1, :-1] |= cells
+        owned[1:, :-1] |= cells
+        owned[:-1, 1:] |= cells
+        owned[1:, 1:] |= cells
+    else:
+        raise AuthoringError(f"shared ownership shape {cells.shape} does not match terrain {vertex_shape}")
+    return binary_dilation(owned, structure=np.ones((3, 3), dtype=bool))
+
+
+def validate_required_coverage(required: np.ndarray, ix: np.ndarray, iz: np.ndarray,
+                               region: str, world_origin=(0.0, 0.0), cell=2.0) -> None:
+    """Reject missing required global vertices before local-envelope clipping."""
+    missing = required.copy()
+    columns = ix[(ix >= 0) & (ix < required.shape[1])]
+    rows = iz[(iz >= 0) & (iz < required.shape[0])]
+    missing[np.ix_(rows, columns)] = False
+    if missing.any():
+        row, column = np.argwhere(missing)[0]
+        point = [world_origin[0] + int(column) * cell, world_origin[1] + int(row) * cell]
+        raise AuthoringError(f"{region}: authored envelope omits {int(missing.sum())} required ownership/ring vertices; first global vertex {point}")
+
+
 def apply_terrain(world: Any, snapshot: Snapshot) -> dict[str, Any]:
     """Install the scene preview's final vertices on the shared grid.
 
@@ -1211,23 +1252,10 @@ def apply_terrain(world: Any, snapshot: Snapshot) -> dict[str, Any]:
     authority = np.ones(source.shape, dtype=bool)
     region = snapshot.document["regionId"]
     if hasattr(world, "owner") and hasattr(world, "ids") and region in world.ids:
-        from scipy.ndimage import binary_dilation
-        owned_cells = world.owner == world.ids.index(region)
-        if owned_cells.shape == world.height.shape:
-            # Small test worlds may provide vertex ownership directly.
-            owned = owned_cells
-        elif owned_cells.shape == (world.height.shape[0]-1, world.height.shape[1]-1):
-            # Production ownership names terrain cells. A shared vertex belongs
-            # to Sunmane when any of its four incident cells does.
-            owned = np.zeros(world.height.shape, dtype=bool)
-            owned[:-1, :-1] |= owned_cells
-            owned[1:, :-1] |= owned_cells
-            owned[:-1, 1:] |= owned_cells
-            owned[1:, 1:] |= owned_cells
-        else:
-            raise AuthoringError(
-                f"shared ownership shape {owned_cells.shape} does not match terrain {world.height.shape}")
-        authority = binary_dilation(owned, structure=np.ones((3, 3), dtype=bool))[target]
+        required = required_terrain_vertices(world.owner, world.ids.index(region), world.height.shape)
+        if getattr(world, "ownership_contract", None) is not None:
+            validate_required_coverage(required, ix, iz, region, (world.x0, world.z0), cell)
+        authority = required[target]
     current = world.height[target]
     previous_authority = getattr(world, "authored_terrain_authority", None)
     previous_height = getattr(world, "authored_terrain_height", None)
@@ -1592,6 +1620,13 @@ def ownership_polygon_sha256(world: Any, region: str = SUNMANE) -> str:
 
 def verify_ownership(world: Any, snapshot: Snapshot) -> None:
     region = snapshot.document["regionId"]
+    selected = getattr(world, "ownership_contract", None)
+    binding = snapshot.document.get("ownershipSource")
+    if selected is not None:
+        if not isinstance(binding, dict) or binding.get("sha256") != selected.sha256 or binding.get("revision") != selected.revision or binding.get("regionId") != region:
+            raise AuthoringError(f"{region}: selected ownership source changed; rebake before composition")
+    elif binding is not None:
+        raise AuthoringError(f"{region}: snapshot selects ownership but composed world does not")
     expected = snapshot.document["seams"]["ownershipPolygonSha256"]
     actual = ownership_polygon_sha256(world, region)
     if actual != expected:
@@ -1652,8 +1687,41 @@ def load_snapshots(*, production: bool = True) -> tuple[Snapshot, ...]:
     return snapshots
 
 
+def validate_snapshot_ownership(document, plan_path=None):
+    import ownership_contract as ownership
+    from authoring_catalog import migration_sources, CatalogError
+    try:
+        expected = ownership.editor_binding(document["regionId"], plan_path)
+        ownership.validate_authoring_frame(expected, document)
+    except ownership.OwnershipContractError as error:
+        raise AuthoringError(str(error)) from error
+    actual = document.get("ownershipSource")
+    if not expected and actual is not None:
+        raise AuthoringError("snapshot ownership selection is stale; rebake against the current plan")
+    dependencies = document.get("sources", {}).get("repositoryDependencies")
+    client = Path(plan_path).parents[4] if plan_path is not None else None
+    try:
+        required = migration_sources(document, client=client)
+    except (CatalogError, ValueError, OSError) as error:
+        raise AuthoringError(str(error)) from error
+    if expected:
+        required += expected["repositoryDependencies"]
+    required.sort(key=lambda row: row["path"])
+    if (dependencies or []) != required:
+        raise AuthoringError("snapshot repository dependencies changed; rebake before composition")
+    if not expected:
+        if actual is not None:
+            raise AuthoringError("snapshot ownership selection is stale; rebake against the current plan")
+        return
+    if actual != expected["binding"]:
+        raise AuthoringError("snapshot ownership source/dependencies changed; rebake before composition")
+    if document.get("seams", {}).get("ownershipPolygonSha256") != expected["ownershipPolygonSha256"]:
+        raise AuthoringError("snapshot selected polygon hash differs; rebake before composition")
+
+
 def load_snapshot(path: Path | str = SUNMANE_SNAPSHOT, *, production: bool = True,
-                  contract: RegionContract | None = None) -> Snapshot:
+                  contract: RegionContract | None = None,
+                  ownership_plan_path: Path | None = None) -> Snapshot:
     path = Path(path).resolve()
     if not path.is_file():
         raise AuthoringError(f"{path}: required authoring snapshot is missing")
@@ -1665,7 +1733,12 @@ def load_snapshot(path: Path | str = SUNMANE_SNAPSHOT, *, production: bool = Tru
     if document.get("schema") != SCHEMA:
         raise AuthoringError(f"snapshot.schema must be {SCHEMA!r}")
     region_id = _string(document.get("regionId"), "snapshot.regionId")
+    validate_snapshot_ownership(document, ownership_plan_path)
     active_contract = _contract_for(region_id, contract) if production else contract
+    spec_source = validate_snapshot_storage_source(document, active_contract,
+        client=Path(ownership_plan_path).parents[4] if ownership_plan_path is not None else CLIENT)
+    if active_contract is not None and document.get("terrain", {}).get("migration") != active_contract.terrain_migration:
+        raise AuthoringError("snapshot terrain migration provenance differs from its region spec; rebake")
     if active_contract is not None and active_contract.id != region_id:
         raise AuthoringError(
             f"snapshot.regionId {region_id!r} disagrees with contract {active_contract.id!r}")
@@ -1703,6 +1776,9 @@ def load_snapshot(path: Path | str = SUNMANE_SNAPSHOT, *, production: bool = Tru
             f"{region_id}: authority must explicitly cover terrain, water, paths, objects and gameplay")
     _validate_replacements(document, production, active_contract)
     source_sha256 = _validate_sources(document, path, production)
+    source_sha256.update(spec_source)
+    for dependency in document.get("sources", {}).get("repositoryDependencies", []):
+        source_sha256[dependency["path"]] = dependency["sha256"]
     base, resolved, width, height = _validate_terrain(
         document, path, production, source_sha256, active_contract)
     _validate_ground_regions(document, source_sha256)
@@ -1712,5 +1788,53 @@ def load_snapshot(path: Path | str = SUNMANE_SNAPSHOT, *, production: bool = Tru
     _validate_objects(document, source_sha256, path, production)
     _validate_gameplay(document, production, active_contract)
     _validate_seams(document)
+    for relative, expected_sha in spec_source.items():
+        import ownership_contract
+        root = Path(ownership_plan_path).parents[4] if ownership_plan_path is not None else CLIENT
+        if sha256(ownership_contract.contained_path(root, relative)) != expected_sha:
+            raise AuthoringError("authoring spec changed during snapshot validation; rebake")
     return Snapshot(path, document, source_sha256, base, resolved, width, height,
                     active_contract)
+
+
+def validate_snapshot_storage_source(document, contract=None, *, client=None):
+    """Bind versioned storage to exact saved source bytes, without rebasing tiles.
+
+    Old zero-min snapshots may omit this additive binding. New exports bind a
+    registered spec even in legacy mode; explicit storage always requires one.
+    """
+    import ownership_contract as ownership
+    try:
+        bounds = authoring_storage(document.get("server"))
+        if contract is not None:
+            if (bounds.width, bounds.height) != contract.server_cells or (
+                    bounds.min_x, bounds.min_y) != contract.server_tile_min:
+                raise ValueError("snapshot storage differs from its region spec; rebake")
+            if contract.server_frame is not None and frame_values(document["server"]) != contract.server_frame:
+                raise ValueError("snapshot immutable frame differs from its region spec; rebake")
+        record = document.get("sources", {}).get("authoringSpec")
+        if record is None:
+            if "serverStorageVersion" in document["server"] or (contract is not None and contract.server_storage_version is not None):
+                raise ValueError("versioned snapshot storage requires sources.authoringSpec; rebake")
+            return {}
+        if not isinstance(record, dict) or set(record) != {"path", "sha256"}:
+            raise ValueError("sources.authoringSpec requires exactly path and sha256")
+        relative = f"godot-client/world_authoring/regions/{document['regionId']}/region-authoring-spec.json"
+        if record["path"] != relative:
+            raise ValueError("snapshot authoringSpec must name its registered regional source")
+        path = ownership.contained_path(Path(client or CLIENT), relative)
+        payload = path.read_bytes()
+        ownership._sha(record["sha256"], "sources.authoringSpec.sha256")
+        if hashlib.sha256(payload).hexdigest() != record["sha256"] or (
+                contract is not None and contract.spec_sha256 is not None and contract.spec_sha256 != record["sha256"]):
+            raise ValueError("snapshot authoring spec hash changed; rebake")
+        spec = json.loads(payload)
+        if (spec.get("schema") != "eloria-region-authoring-spec-v1" or
+                spec.get("regionId") != document["regionId"] or
+                authoring_storage(spec.get("server")) != bounds or
+                frame_values(spec["server"]) != frame_values(document["server"]) or
+                spec.get("continentTranslation") != document.get("continentTranslation")):
+            raise ValueError("snapshot storage/frame differs from bound authoring spec; rebake")
+        return {relative: record["sha256"]}
+    except (ValueError, OSError, KeyError, TypeError) as error:
+        raise AuthoringError(str(error)) from error

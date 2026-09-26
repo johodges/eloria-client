@@ -28,7 +28,9 @@ import glb_reader as GR
 from world_layout import triangle_sample
 
 SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py','winding.py','river_crossings.py','reach_links.py','authored_points.py','authoring.py','authoring_catalog.py','saved_seam_profile.py','saved-seam-grey-whitehorn-v1.json','saved_post_support_profile.py','saved-seam-post-support-v1.json','bridge_export.py','bridge_prepare.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt')
-EXPORT_SOURCES={'build_continent.py','scene_io.py','terrain_export.py','compact_glb_images.py','bridge_export.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py'}
+EXPORT_SOURCES={'build_continent.py','scene_io.py','terrain_export.py','biome_blend.py','compact_glb_images.py','bridge_export.py','coastal_prepare.py','coastal_bridge_export.py','bridge_profiles.py','sea_crossings.py','coastal_bank_fit.py','../_northern/requirements.txt','ferry_export.py','crossings.py','amberwood_access.py','manymouth_access.py','manymouth_village_streets.py','collision_export.py','mirror_access_geometry.py','grey_crossings.py','access_decks.py'}
+SHAPING_SOURCES+=('storage_bounds.py',)
+EXPORT_SOURCES.add('storage_bounds.py')
 
 
 class AuditError(ValueError):
