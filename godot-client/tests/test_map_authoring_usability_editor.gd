@@ -28,6 +28,54 @@ const Walkability := preload("res://addons/map_authoring_usability/walkability_o
 const MARKER := preload("res://src/dev/map_authoring_region/gameplay_marker.gd")
 const WATER := preload("res://src/dev/map_authoring_region/water_region_control.gd")
 const GroupTools := preload("res://addons/map_authoring_usability/group_tools.gd")
+const Walker := preload("res://addons/map_authoring_usability/playtest_walker.gd")
+## Expected results computed with eloria-server's own fold functions
+## (tools/collision_sources.requantise, sync_authored_collision stage rules) and a
+## line-by-line replica of World.find_path; see the play-test walker parity check.
+const WALKER_REFERENCE := {
+	"fold_half": [
+		10, 10, 12, 12, 40, 41, 90, 90, 200, 200, 250, 249,
+		10, 11, 12, 13, 40, 42, 90, 91, 200, 201, 250, 250,
+		0, 20, 30, 30, 60, 60, 120, 0, 180, 180, 220, 220,
+		20, 20, 30, 31, 60, 61, 120, 121, 180, 181, 220, 221,
+		5, 5, 7, 7, 9, 9, 11, 11, 13, 13, 15, 15,
+		5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+		100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+		100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100,
+		3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+		77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88,
+		77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88,
+	],
+	"fold_factor": 6,
+	"fold_codes": [
+		3, 3, 10, 23, 50, 62,
+		0, 8, 15, 0, 45, 55,
+		1, 2, 2, 3, 3, 4,
+		25, 25, 25, 25, 25, 0,
+		1, 1, 1, 1, 1, 1,
+		19, 20, 20, 21, 21, 22,
+	],
+	"grid": [
+		5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+		5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+		5, 5, 9, 9, 9, 9, 9, 9, 5, 5,
+		5, 5, 9, 0, 0, 0, 0, 9, 5, 5,
+		5, 5, 9, 0, 6, 6, 0, 9, 5, 5,
+		5, 5, 9, 0, 6, 6, 0, 9, 5, 5,
+		5, 5, 7, 7, 7, 0, 0, 9, 5, 5,
+		5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+		5, 0, 5, 0, 5, 3, 3, 2, 5, 5,
+		5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+	],
+	"searches": [
+		{"start": [0, 0], "target": [9, 9], "path": [[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [2, 6], [3, 6], [4, 7], [5, 7], [6, 8], [7, 9], [8, 9], [9, 9]]},
+		{"start": [4, 4], "target": [0, 0], "path": [[4, 5], [4, 6], [3, 6], [2, 6], [1, 5], [1, 4], [1, 3], [1, 2], [1, 1], [0, 0]]},
+		{"start": [0, 9], "target": [9, 0], "path": [[1, 9], [2, 9], [3, 9], [4, 9], [5, 8], [6, 7], [7, 7], [8, 7], [8, 6], [8, 5], [8, 4], [8, 3], [8, 2], [8, 1], [9, 0]]},
+		{"start": [8, 9], "target": [6, 8], "path": [[7, 9], [6, 9], [6, 8]]},
+		{"start": [0, 0], "target": [5, 4], "path": [[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [2, 6], [3, 6], [4, 6], [4, 5], [5, 4]]},
+	],
+}
 const DIR := "res://test-artifacts/map-usability"
 const HEIGHT_PATH := DIR + "/fixture-heights.f32le"
 const SCENE_PATH := DIR + "/fixture.tscn"
@@ -134,10 +182,14 @@ func _run() -> void:
 	_test_road_extension(usability, root, camera)
 	await _test_groups_and_copies(usability, root, camera)
 	_test_selection_bar(usability, root)
+	_test_walker_parity()
 	_test_play_test(usability, root, camera)
 	await _test_minimap(usability, root)
 	_test_territory_picker()
 	await _test_asset_intake(palette)
+	_test_contract_guards(palette, usability, root, camera)
+	_test_ground_and_plateaus(usability, root, camera)
+	_test_heightmap_import(root)
 	_test_low_spec(usability, root)
 	_test_toolbar(usability)
 	usability.call("set_time_preview", true, 90.0)
@@ -1196,6 +1248,41 @@ func _test_selection_bar(usability: Object, root: Node3D) -> void:
 	_expect(not bar.visible, "the selection bar hides when nothing placed is selected")
 
 
+func _test_walker_parity() -> void:
+	var folded := Walker.fold_published({"bytes": PackedByteArray(WALKER_REFERENCE.fold_half),
+		"width": 12, "rows": 12, "x0": -100.0, "z1": 200.0, "height_step": 0.3,
+		"height_origin": -1.0}, Vector2i(100, 200))
+	_expect(int(folded.get("stage_factor", 0)) == int(WALKER_REFERENCE.fold_factor) and
+		Array(folded.get("codes", PackedByteArray())) == WALKER_REFERENCE.fold_codes,
+		"the published grid folds onto server tiles exactly as the server's sync does")
+	var walker := Walker.new()
+	walker.set("_grid", {"codes": PackedByteArray(WALKER_REFERENCE.grid), "width": 10,
+		"rows": 10, "origin": Vector2i.ZERO})
+	var matching := 0
+	for case: Dictionary in WALKER_REFERENCE.searches:
+		var found: Array[Vector2i] = walker.search(Vector2i(case.start[0], case.start[1]),
+			Vector2i(case.target[0], case.target[1]))
+		var expected: Array[Vector2i] = []
+		for point: Array in case.path:
+			expected.append(Vector2i(point[0], point[1]))
+		if found == expected:
+			matching += 1
+	_expect(matching == WALKER_REFERENCE.searches.size(),
+		"routes match the server's A* tile for tile (%d of %d)" % [matching,
+			WALKER_REFERENCE.searches.size()])
+	var sunmane: Node3D = REGION.new()
+	sunmane.set("region_id", "sunmane_steppe")
+	sunmane.set("server_origin", Vector2i(194, 292))
+	var started := Time.get_ticks_msec()
+	var published := Walker.load_grid(sunmane)
+	var elapsed := Time.get_ticks_msec() - started
+	sunmane.free()
+	_expect(String(published.get("source", "")) == "published" and int(published.width) == 792 and
+		int(published.rows) == 792 and float(published.stage_metres) > 0.0,
+		"Sunmane's published package folds to its 792 x 792 server tiles (stage %.1f m, %d ms)" % [
+			float(published.get("stage_metres", 0.0)), elapsed])
+
+
 func _test_play_test(usability: Object, root: Node3D, camera: Camera3D) -> void:
 	var centre := camera.get_viewport().get_visible_rect().size * 0.5
 	var started: bool = usability.call("start_play_test")
@@ -1203,60 +1290,77 @@ func _test_play_test(usability: Object, root: Node3D, camera: Camera3D) -> void:
 	_expect(started and String(walker.get("source")) == "live" and
 		walker.call("node") != null and (walker.call("node") as Node).owner == null,
 		"Play test starts on the live grid for an unpublished territory, as an unsaved helper")
+	_expect(walker.call("cell_of", Vector3(12.3, 0.0, 20.7)) == Vector2i(112, 179),
+		"the walker uses the snapshot's server tiles, floor(x + ox) and floor(oy - z)")
 	_aim(camera, root, Vector2(12.0, 20.0))
 	var placed_result: int = usability.call("_forward_3d_gui_input", camera, _click(centre))
 	var placed: Vector3 = walker.call("position")
 	# Earlier sections sculpt, grade roads and carve a river, so the reachable
-	# area is worked out here with the server's rules (8 neighbours, no corner
-	# cutting) instead of assuming fixed points.
+	# area is worked out here with the server's step rule instead of assuming
+	# fixed points.
 	var start: Vector2i = walker.call("cell_of", placed)
 	var reachable := _walk_component(walker, start)
 	var goal := start
 	var outside := Vector2i(-1, -1)
+	var blocked := Vector2i(-1, -1)
 	var grid: Dictionary = walker.call("grid")
-	for row in int(grid.rows):
-		for column in int(grid.width):
-			var cell := Vector2i(column, row)
-			if reachable.has(cell):
-				if Vector2(cell - start).length() > Vector2(goal - start).length():
-					goal = cell
-			elif outside.x < 0 and bool(walker.call("is_walkable", cell)):
-				outside = cell
+	for ty in int(grid.rows):
+		for tx in int(grid.width):
+			var tile := Vector2i(tx, ty)
+			if reachable.has(tile):
+				if Vector2(tile - start).length() > Vector2(goal - start).length():
+					goal = tile
+			elif bool(walker.call("is_walkable", tile)):
+				if outside.x < 0:
+					outside = tile
+			elif blocked.x < 0 and reachable.has(walker.call("free_tile", tile)) and \
+					walker.call("free_tile", tile) != start:
+				blocked = tile
 	var goal_point: Vector3 = walker.call("cell_point", goal)
 	_aim(camera, root, Vector2(goal_point.x, goal_point.z))
 	usability.call("_forward_3d_gui_input", camera, _click(centre))
 	var route: PackedVector3Array = walker.call("route")
-	var walkable := route.size() >= 2
+	var legal := route.size() >= 2
 	var grounded := true
-	for point in route:
-		walkable = walkable and bool(walker.call("is_walkable", walker.call("cell_of", point)))
-		grounded = grounded and absf(point.y - Probe.height_at(root, root.global_transform * point)) < 0.01
+	for index in route.size():
+		grounded = grounded and absf(route[index].y - Probe.height_at(root,
+			root.global_transform * route[index])) < 0.01
+		if index > 0:
+			legal = legal and bool(walker.call("step_allowed", walker.call("cell_of", route[index - 1]),
+				walker.call("cell_of", route[index])))
 	_expect(placed_result == EditorPlugin.AFTER_GUI_INPUT_STOP and placed.is_finite() and
-		walkable and grounded and route[0].is_equal_approx(placed) and
+		legal and grounded and route[0].is_equal_approx(placed) and
 		route[route.size() - 1].is_equal_approx(goal_point) and
 		int(walker.get("steps")) == route.size() - 1,
-		"clicks place the walker and route it over walkable ground to the goal (%s; %d points)" % [
+		"clicks place the walker and route it by legal server steps to the goal (%s; %d points)" % [
 			String(walker.get("last_message")), route.size()])
-	walker.call("advance", 0.25)
+	var first_step: float = walker.call("step_duration", 0)
+	walker.call("advance", first_step + 0.001)
 	var stepped: Vector3 = walker.call("position")
-	walker.call("advance", 1000.0)
-	_expect(route.size() >= 2 and stepped.distance_to(route[1]) < 0.01 and not bool(walker.call("is_walking")) and
+	walker.call("advance", 10000.0)
+	_expect(route.size() >= 2 and stepped.distance_to(route[1]) < 0.05 and
+		(is_equal_approx(first_step, 0.6) or is_equal_approx(first_step, 0.6 * sqrt(2.0))) and
+		not bool(walker.call("is_walking")) and
 		(walker.call("position") as Vector3).is_equal_approx(route[route.size() - 1]),
-		"the walker takes one step per 250 ms and stops at the goal")
+		"the walker takes 600 ms a metre (x sqrt 2 on diagonals) and stops at the goal")
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_R))
+	var run_step: float = walker.call("step_duration", 0)
+	_expect(bool(walker.get("running")) and
+		(is_equal_approx(run_step, 0.2) or is_equal_approx(run_step, 0.2 * sqrt(2.0))),
+		"R switches to the 200 ms running pace")
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_R))
 	var across := outside.x >= 0 and bool(walker.call("walk_to", walker.call("cell_point", outside)))
 	_expect(outside.x >= 0 and not across and
-		"No walkable route" in String(walker.get("last_message")),
-		"a walkable goal cut off by steep ground or water is reported unreachable")
-	var codes: PackedByteArray = (walker.call("grid") as Dictionary).codes
-	var blocked := codes.find(0)
-	var width := int((walker.call("grid") as Dictionary).width)
-	var none := PackedVector3Array()
-	if blocked >= 0:
-		var cell := Vector2i(blocked % width, blocked / width)
-		none = walker.call("find_route", walker.call("position"),
-			walker.call("cell_point", cell))
-	_expect(blocked >= 0 and none.is_empty() and "not walkable" in String(walker.get("last_message")),
-		"a route to a blocked tile is refused with a reason")
+		"cannot reach" in String(walker.get("last_message")),
+		"a walkable goal cut off by steep ground, water or a climb is reported unreachable")
+	var redirected := PackedVector3Array()
+	if blocked.x >= 0:
+		redirected = walker.call("find_route", walker.call("position"),
+			walker.call("cell_point", blocked))
+	_expect(blocked.x >= 0 and redirected.size() >= 2 and
+		walker.call("cell_of", redirected[redirected.size() - 1]) == walker.call("free_tile", blocked) and
+		"nearest walkable" in String(walker.get("last_message")),
+		"a click on a blocked tile routes to the nearest walkable tile, as the server does")
 	var packed := PackedScene.new()
 	var text := ""
 	if packed.pack(root) == OK:
@@ -1275,7 +1379,7 @@ func _test_play_test(usability: Object, root: Node3D, camera: Camera3D) -> void:
 	sunmane.free()
 	_expect(not published.has("error") and float(published.height_step) > 0.0 and
 		is_finite(float(published.height_origin)),
-		"the published grid carries the height encoding the walker climbs with")
+		"the published grid carries the height encoding the fold needs")
 
 
 func _test_minimap(usability: Object, root: Node3D) -> void:
@@ -1401,15 +1505,44 @@ func _test_asset_intake(palette: Object) -> void:
 	var exported := document.append_from_scene(crate, gltf) == OK and \
 		document.write_to_filesystem(gltf, source) == OK
 	crate.free()
+	# A text glTF with its own .bin, which the bake cannot take directly.
+	var barrel_source := outside.path_join("Test Barrel.gltf")
+	var barrel := Node3D.new()
+	var barrel_mesh := MeshInstance3D.new()
+	barrel_mesh.mesh = CylinderMesh.new()
+	barrel.add_child(barrel_mesh)
+	barrel_mesh.owner = barrel
+	var barrel_state := GLTFState.new()
+	var barrel_written := GLTFDocument.new().append_from_scene(barrel, barrel_state) == OK and \
+		GLTFDocument.new().write_to_filesystem(barrel_state, barrel_source) == OK
+	barrel.free()
 	var dock: Object = palette.get("_dock")
 	var result: Dictionary = dock.call("import_models",
-		PackedStringArray([source, source, outside.path_join("notes.txt")]), "Imported Stuff")
+		PackedStringArray([source, source, outside.path_join("notes.txt"), barrel_source]),
+		"Imported Stuff")
 	var copied: Array = result.copied
 	var ids := Catalog.library_entries().map(func(item: Dictionary) -> String: return String(item.id))
-	_expect(exported and copied == [library + "/Imported_Stuff/Test_Crate.glb",
+	_expect(exported and copied.slice(0, 2) == [library + "/Imported_Stuff/Test_Crate.glb",
 		library + "/Imported_Stuff/Test_Crate_2.glb"] and (result.skipped as Array).size() == 1 and
 		"library:Imported_Stuff/Test_Crate" in ids and "library:Imported_Stuff/Test_Crate_2" in ids,
 		"Import models copies .glb files into a library category without overwriting (%s)" % [copied])
+	var converted := library + "/Imported_Stuff/Test_Barrel.glb"
+	var glb_bytes := FileAccess.get_file_as_bytes(converted) if FileAccess.file_exists(converted) \
+		else PackedByteArray()
+	_expect(barrel_written and converted in copied and glb_bytes.size() > 12 and
+		glb_bytes.slice(0, 4).get_string_from_ascii() == "glTF" and
+		not FileAccess.file_exists(library + "/Imported_Stuff/Test_Barrel.gltf"),
+		"a .gltf is imported as a self-contained .glb, the only glTF form the bake accepts")
+	# A .gltf dropped into the library by hand is reported, not listed.
+	var loose_file := FileAccess.open(ProjectSettings.globalize_path(library + "/Rocks/loose.gltf"),
+		FileAccess.WRITE)
+	loose_file.store_string('{"asset": {"version": "2.0"}, "scene": 0, "scenes": [{"nodes": []}]}')
+	loose_file.close()
+	var listed := Catalog.library_entries().map(func(item: Dictionary) -> String: return String(item.id))
+	_expect(not "library:Rocks/loose" in listed and
+		Array(Catalog.skipped_library_files).any(func(path: String) -> bool:
+			return path.ends_with("Rocks/loose.gltf")),
+		"a loose .gltf in the library is left out and reported")
 	var filesystem := _editor.call("get_resource_filesystem") as EditorFileSystem
 	for _attempt in 600:
 		if not filesystem.is_scanning():
@@ -1417,6 +1550,255 @@ func _test_asset_intake(palette: Object) -> void:
 		await process_frame
 	await _frames(3)
 	_remove_tree_recursive(outside)
+
+
+func _test_contract_guards(palette: Object, usability: Object, root: Node3D,
+		camera: Camera3D) -> void:
+	var selection := _editor.call("get_selection") as EditorSelection
+	var history := _undo.get_history_undo_redo(_undo.get_object_history_id(root))
+	var assets := root.get_node("AuthoredAssets")
+	# A copied spawn is never a second default spawn.
+	var spawns := Node3D.new()
+	spawns.name = "Spawns"
+	root.get_node("Gameplay").add_child(spawns)
+	spawns.owner = root
+	var spawn: Node3D = MARKER.new()
+	spawn.name = "arrival"
+	spawn.set("record_id", "arrival")
+	spawn.set("kind", "spawn")
+	spawn.set("default_spawn", true)
+	spawns.add_child(spawn)
+	spawn.owner = root
+	spawn.global_position = Probe.ray_hit(root, Vector3(20.0, 60.0, 30.0), Vector3.DOWN) as Vector3
+	_select([spawn])
+	var spawn_copies: Array = usability.call("duplicate_selection", Vector3(2.0, 0.0, 0.0))
+	_expect(spawn_copies.size() == 1 and not bool(spawn_copies[0].get("default_spawn")) and
+		bool(spawn.get("default_spawn")),
+		"a copied default spawn is not a default spawn; the original stays one")
+	# Ctrl+D in the 3D view duplicates placements in place with fresh ids.
+	var loose: Array[Node3D] = []
+	for child in assets.get_children():
+		if GroupTools.group_of(child).is_empty():
+			loose.append(child as Node3D)
+	var source := loose[0]
+	_select([source])
+	var before := assets.get_child_count()
+	var ctrl_d := _ctrl_key(KEY_D, false)
+	var redirected: int = usability.call("_forward_3d_gui_input", camera, ctrl_d)
+	var copy := assets.get_child(assets.get_child_count() - 1) as Node3D
+	_expect(redirected == EditorPlugin.AFTER_GUI_INPUT_STOP and assets.get_child_count() == before + 1 and
+		String(copy.get("asset_id")) != String(source.get("asset_id")) and
+		copy.global_transform.is_equal_approx(source.global_transform),
+		"Ctrl+D in the 3D view duplicates placements in place with fresh ids")
+	# Godot's own duplicate (from the Scene dock) is caught and can be fixed.
+	usability.call("poll_overlays")
+	var clone := source.duplicate() as Node3D
+	assets.add_child(clone, true)
+	clone.owner = root
+	for descendant in clone.find_children("*", "", true, false):
+		if descendant.get_parent() == clone:
+			descendant.owner = root
+	usability.call("poll_overlays")
+	var flagged: Array = usability.call("duplicate_id_groups")
+	_select([clone])
+	var fixed: int = usability.call("fix_duplicate_ids")
+	var fresh := String(clone.get("asset_id")) != String(source.get("asset_id"))
+	history.undo()
+	var restored := String(clone.get("asset_id")) == String(source.get("asset_id"))
+	history.redo()
+	usability.call("poll_overlays")
+	_expect(flagged.size() == 1 and String(flagged[0].kind) == "asset" and fixed == 1 and fresh and
+		restored and (usability.call("duplicate_id_groups") as Array).is_empty(),
+		"a shared asset id is flagged, and the fix gives only the copy a fresh id in one undo step")
+	# Duplicates a scene already had when opened are left alone, and marker ids
+	# only have to be unique within their own section.
+	var legacy := source.duplicate() as Node3D
+	assets.add_child(legacy, true)
+	legacy.owner = root
+	usability.call("_remember_duplicate_baseline", root)
+	var twin: Node3D = MARKER.new()
+	twin.name = "crystal-twin"
+	twin.set("record_id", "crystal-01")
+	twin.set("kind", "landmark")
+	var landmarks := Node3D.new()
+	landmarks.name = "Landmarks"
+	root.get_node("Gameplay").add_child(landmarks)
+	landmarks.owner = root
+	landmarks.add_child(twin)
+	twin.owner = root
+	usability.call("poll_overlays")
+	_expect((usability.call("duplicate_id_groups") as Array).is_empty(),
+		"pre-existing shared ids and equal ids in different gameplay sections are not flagged")
+	for node: Node in [legacy, twin, landmarks]:
+		node.get_parent().remove_child(node)
+		node.free()
+	usability.call("_remember_duplicate_baseline", root)
+	# Prefabs keep placed assets only and say what they left out.
+	var crystal := root.get_node("Gameplay/Harvestables/crystal-01") as Node3D
+	_select([source, crystal])
+	var mixed: Dictionary = palette.call("save_selection_as_prefab", "Mixed Pick")
+	_select([crystal])
+	var markers_only: Dictionary = palette.call("save_selection_as_prefab", "Only Markers")
+	var dock: Object = palette.get("_dock")
+	_expect(int(mixed.get("members", 0)) == 1 and int(mixed.get("left_out_markers", 0)) == 1 and
+		"gameplay marker" in String(dock.call("status_text")) and
+		String(markers_only.get("error", "")).contains("assets only"),
+		"a prefab keeps placed assets only and reports the markers it left out")
+	selection.clear()
+
+
+func _bind_fixture_sculpt(root: Node3D) -> Object:
+	var base := _editor.call("get_base_control") as Control
+	var sculpt: Object = base.get_meta(&"map_authoring_sculpt_plugin") \
+		if base.has_meta(&"map_authoring_sculpt_plugin") else null
+	if sculpt == null:
+		return null
+	var tool: Object = sculpt.get("_sculpt")
+	var entry := {"ownership_polygon": PackedVector2Array([Vector2(0, 0), Vector2(40, 0),
+		Vector2(40, 40), Vector2(0, 40)]), "translation": Vector3.ZERO,
+		"ownership_sha256": String(root.get("ownership_polygon_sha256")), "editable": true}
+	return tool if bool(tool.call("bind", root, root.get_node("Terrain"), entry, _undo)) else null
+
+
+func _test_ground_and_plateaus(usability: Object, root: Node3D, camera: Camera3D) -> void:
+	var history := _undo.get_history_undo_redo(_undo.get_object_history_id(root))
+	var centre := camera.get_viewport().get_visible_rect().size * 0.5
+	var tool := _bind_fixture_sculpt(root)
+	if not _expect(tool != null, "the sculpt tool binds the fixture for border protection"):
+		return
+	var area: RefCounted = usability.call("area_tool")
+	var started: bool = usability.call("start_area_tool", "ground", {"preset": "Grass",
+		"surface_label": "Preset: Grass", "shape": 0, "blend_width": 2.0, "opacity": 0.8,
+		"priority": 5})
+	var had_ground := root.get_node_or_null("Ground") != null
+	_aim(camera, root, Vector2(20.0, 20.0))
+	usability.call("_forward_3d_gui_input", camera, _click(centre))
+	_aim(camera, root, Vector2(26.0, 23.0))
+	var release := _click(centre)
+	release.pressed = false
+	usability.call("_forward_3d_gui_input", camera, release)
+	var region := root.get_node_or_null("Ground/Regions/ground-01") as Node3D
+	var ground_at := Probe.height_at(root, region.global_position) if region != null else NAN
+	_expect(started and region != null and region.owner == root and
+		String(region.get("region_id")) == "ground-01" and
+		(region.get("size") as Vector2).is_equal_approx(Vector2(12.0, 6.0)) and
+		is_equal_approx(float(region.get("blend_width")), 2.0) and
+		is_equal_approx(float(region.get("opacity")), 0.8) and int(region.get("priority")) == 5 and
+		region.get("surface") is MapAuthoringSurface and
+		String((region.get("surface") as MapAuthoringSurface).texture_preset) == "Grass" and
+		Vector2(region.global_position.x - 20.0, region.global_position.z - 20.0).length() < 0.05 and
+		absf(region.global_position.y - ground_at) < 0.01,
+		"dragging on the terrain adds a ground region control of the chosen surface and size")
+	history.undo()
+	var undone := root.get_node_or_null("Ground/Regions/ground-01") == null and \
+		(had_ground or root.get_node_or_null("Ground") == null)
+	history.redo()
+	_expect(undone and root.get_node_or_null("Ground/Regions/ground-01") != null,
+		"a ground region is one undo step")
+	var outside: Node3D = area.call("create", _undo, root.global_transform * Vector3(38.0, 0.0, 20.0),
+		root.global_transform * Vector3(43.0, 0.0, 23.0))
+	_expect(outside == null and "inside the land" in String(area.get("last_message")),
+		"a ground region reaching past the owned land is refused")
+	var regions := root.get_node("Ground/Regions")
+	var fillers: Array[Node] = []
+	for index in 126:
+		var filler: Node3D = load("res://src/dev/map_authoring_region/ground_region_control.gd").new()
+		regions.add_child(filler)
+		fillers.append(filler)
+	var full: String = area.call("ground_error", Vector3(20.0, 0.0, 20.0), Vector2(4.0, 4.0))
+	for filler in fillers:
+		regions.remove_child(filler)
+		filler.free()
+	_expect("127" in full, "a territory never exceeds the 127 ground regions the preview draws")
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_ESCAPE))
+	_expect(not bool(area.call("is_active")), "Escape stops the ground tool")
+	# Plateaus: terrain patches, refused where they would touch the protected border.
+	started = usability.call("start_area_tool", "plateau", {"operation": "set", "shape": 1,
+		"height": 2.0, "feather": 2.0})
+	var terrain := root.get_node("Terrain")
+	var before_centre := float(terrain.call("height_at_local", 12.0, 22.0))
+	var patch: Node3D = area.call("create", _undo, root.global_transform * Vector3(12.0, 0.0, 22.0),
+		root.global_transform * Vector3(18.0, 0.0, 28.0))
+	terrain.call("refresh_preview")
+	var levelled := float(terrain.call("height_at_local", 12.0, 22.0))
+	_expect(started and patch != null and patch.get_parent().name == "Patches" and
+		patch.owner == root and String(patch.get("patch_id")) == "stamp-01" and
+		int(patch.get("operation")) == 1 and
+		absf(patch.global_position.y - (before_centre + 2.0)) < 0.01 and
+		absf(levelled - (before_centre + 2.0)) < 0.01,
+		"a plateau stamp adds a Set terrain patch that levels the ground 2 m above the click")
+	history.undo()
+	terrain.call("refresh_preview")
+	var restored := absf(float(terrain.call("height_at_local", 12.0, 22.0)) - before_centre) < 0.01
+	history.redo()
+	_expect(restored and root.get_node_or_null("Terrain/Patches/stamp-01") != null,
+		"a plateau is one undo step")
+	var border: Node3D = area.call("create", _undo, root.global_transform * Vector3(3.0, 0.0, 20.0),
+		root.global_transform * Vector3(7.0, 0.0, 24.0))
+	_expect(border == null and "protected border" in String(area.get("last_message")),
+		"a plateau touching the protected border band is refused")
+	usability.call("_forward_3d_gui_input", camera, _click(centre, MOUSE_BUTTON_RIGHT))
+	_expect(not bool(area.call("is_active")), "right-click stops the plateau tool")
+	tool.call("unbind")
+	var unbound: bool = usability.call("start_area_tool", "plateau", {"operation": "add",
+		"height": 1.0})
+	_expect(not unbound and "Border protection" in String(area.get("last_message")),
+		"without the Territories binding the plateau tool refuses to start")
+
+
+func _test_heightmap_import(root: Node3D) -> void:
+	var tool := _bind_fixture_sculpt(root)
+	if not _expect(tool != null, "the sculpt tool binds the fixture for the heightmap import"):
+		return
+	var terrain := root.get_node("Terrain")
+	var history := _undo.get_history_undo_redo(_undo.get_object_history_id(root))
+	var base_bytes := FileAccess.get_file_as_bytes(ProjectSettings.globalize_path(HEIGHT_PATH))
+	var base: PackedFloat32Array = terrain.call("base_heights")
+	var before: PackedFloat32Array = terrain.call("sculpted_base_heights")
+	var image := Image.create_empty(2, 2, false, Image.FORMAT_RF)
+	image.set_pixel(0, 0, Color(0.0, 0.0, 0.0))
+	image.set_pixel(1, 0, Color(1.0, 0.0, 0.0))
+	image.set_pixel(0, 1, Color(0.5, 0.0, 0.0))
+	image.set_pixel(1, 1, Color(0.25, 0.0, 0.0))
+	var result: Dictionary = tool.call("import_heightmap", image, Rect2(10.0, 10.0, 20.0, 20.0),
+		0.0, 10.0, true)
+	var after: PackedFloat32Array = terrain.call("sculpted_base_heights")
+	var width := GRID.x
+	_expect(not result.has("error") and absf(after[10 * width + 10] - 0.0) < 0.001 and
+		absf(after[10 * width + 30] - 10.0) < 0.001 and absf(after[30 * width + 10] - 5.0) < 0.001 and
+		absf(after[30 * width + 30] - 2.5) < 0.001 and after[5 * width + 5] == before[5 * width + 5],
+		"Replace writes black-to-white heights with the image's top row north, and leaves ground outside the area alone")
+	history.undo()
+	var undone: PackedFloat32Array = terrain.call("sculpted_base_heights")
+	history.redo()
+	_expect(undone == before, "a heightmap import is one undo step")
+	var offset: Dictionary = tool.call("import_heightmap", Image.create_empty(1, 1, false,
+		Image.FORMAT_RF), Rect2(0.0, 0.0, 40.0, 40.0), 5.0, 5.0, false)
+	var offset_heights: PackedFloat32Array = terrain.call("sculpted_base_heights")
+	var fields: Dictionary = tool.call("protection_fields")
+	var locked: PackedByteArray = fields.locked
+	var weights: PackedFloat32Array = fields.weights
+	var protected_kept := true
+	var fade_blended := false
+	for index in locked.size():
+		if locked[index] != 0:
+			protected_kept = protected_kept and offset_heights[index] == after[index]
+		elif weights[index] > 0.0 and weights[index] < 1.0:
+			fade_blended = fade_blended or absf(offset_heights[index] - after[index] -
+				5.0 * weights[index]) < 0.001
+	_expect(not offset.has("error") and int(offset.get("protected", 0)) > 0 and protected_kept and
+		fade_blended and absf(offset_heights[20 * width + 20] - after[20 * width + 20] - 5.0) < 0.001,
+		"Offset adds its height, blends the fade band and never changes locked border samples")
+	var stale: Resource = load("res://src/dev/map_authoring_region/terrain_sculpt_layer.gd").new()
+	stale.bind_base("0".repeat(64), terrain.get("origin"), terrain.get("grid_size"),
+		terrain.get("cell_metres"))
+	_expect(not bool(terrain.call("apply_sculpt_layer", stale)) and
+		FileAccess.get_file_as_bytes(ProjectSettings.globalize_path(HEIGHT_PATH)) == base_bytes and
+		base == terrain.call("base_heights"),
+		"a layer bound to another base is rejected and the base height file is never rewritten")
+	history.undo()
+	history.undo()
+	tool.call("unbind")
 
 
 func _test_low_spec(usability: Object, root: Node3D) -> void:
@@ -1535,10 +1917,9 @@ func _walk_component(walker: RefCounted, start: Vector2i) -> Dictionary:
 		for dy in [-1, 0, 1]:
 			for dx in [-1, 0, 1]:
 				var next := cell + Vector2i(dx, dy)
-				if (dx == 0 and dy == 0) or seen.has(next) or not bool(walker.call("is_walkable", next)):
+				if (dx == 0 and dy == 0) or seen.has(next):
 					continue
-				if dx != 0 and dy != 0 and (not bool(walker.call("is_walkable", cell + Vector2i(dx, 0))) or
-						not bool(walker.call("is_walkable", cell + Vector2i(0, dy)))):
+				if not bool(walker.call("step_allowed", cell, next)):
 					continue
 				seen[next] = true
 				queue.append(next)

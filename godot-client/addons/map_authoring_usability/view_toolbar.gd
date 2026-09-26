@@ -2,12 +2,14 @@
 extends HBoxContainer
 ## One-click toggles in the 3D editor's toolbar for the map editor's view
 ## options, so the common ones need no trip into the Map tools menu:
-## Grid (cursor grid always on), Snap (placement grid snap), Pins (gameplay
-## markers), Walk (walkability overlay mode), Play (play-test walker) and
-## Low spec (half resolution and far-asset culling).
+## Grid (cursor grid always on), Snap (placement grid snap), Ground and Plateau
+## (open the ground-region and plateau tools), Pins (gameplay markers), Walk
+## (walkability overlay mode), Play (play-test walker) and Low spec (half
+## resolution and far-asset culling).
 
 signal option_toggled(option: String, on: bool)
 signal walk_mode_selected(mode: int)
+signal tool_requested(tool: String)
 
 const WALK_MODES := ["Off", "Published grid (exact)", "Live suggestion", "Changes since publish"]
 const TOGGLES := [
@@ -19,6 +21,7 @@ const TOGGLES := [
 ]
 
 var _buttons := {}
+var _tool_buttons := {}
 var _walk: MenuButton
 
 
@@ -36,6 +39,17 @@ func _init() -> void:
 		button.toggled.connect(func(on: bool) -> void: option_toggled.emit(String(spec[0]), on))
 		add_child(button)
 		_buttons[spec[0]] = button
+		if spec[0] == "snap":
+			for tool: Array in [["ground", "Ground", "Paint ground regions: drag out areas of a surface."],
+					["plateau", "Plateau", "Stamp plateaus: drag out raised or levelled ground."]]:
+				var tool_button := Button.new()
+				tool_button.text = String(tool[1])
+				tool_button.tooltip_text = String(tool[2])
+				tool_button.flat = true
+				tool_button.focus_mode = Control.FOCUS_NONE
+				tool_button.pressed.connect(func() -> void: tool_requested.emit(String(tool[0])))
+				add_child(tool_button)
+				_tool_buttons[tool[0]] = tool_button
 		if spec[0] == "pins":
 			_walk = MenuButton.new()
 			_walk.text = "Walk"
@@ -61,6 +75,10 @@ func sync(state: Dictionary) -> void:
 
 func button(option: String) -> Button:
 	return _buttons.get(option) as Button
+
+
+func tool_button(tool: String) -> Button:
+	return _tool_buttons.get(tool) as Button
 
 
 func walk_menu() -> MenuButton:

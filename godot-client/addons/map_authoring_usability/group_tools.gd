@@ -254,9 +254,11 @@ static func commit_copies(undo_redo: EditorUndoRedoManager, root: Node3D, nodes:
 			reserved_records[record] = true
 			copy.set("record_id", record)
 			copy.name = record
-			# Runtime bindings name certified server records of the original.
+			# Runtime bindings name certified server records of the original, and a
+			# territory has one default spawn.
 			var unbound: Array[Dictionary] = []
 			copy.set("runtime_bindings", unbound)
+			copy.set("default_spawn", false)
 			followers.append(copy)
 		var old_group := group_of(copy)
 		if not old_group.is_empty():
@@ -292,6 +294,105 @@ static func commit_copies(undo_redo: EditorUndoRedoManager, root: Node3D, nodes:
 		undo_redo.add_undo_method(parent, &"remove_child", copy)
 	undo_redo.commit_action()
 	return copies
+
+
+# Shared ids (Godot's own Ctrl+D) --------------------------------------------
+
+## Groups of placed assets, or gameplay markers of one kind (the snapshot
+## checks each gameplay section on its own), sharing one id:
+## [{"kind": "asset"|"marker", "section", "id", "nodes": [...]}].
+static func duplicate_ids(root: Node3D) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if root == null:
+		return result
+	var assets := {}
+	var container := root.get_node_or_null("AuthoredAssets")
+	if container != null:
+		for child in container.get_children():
+			if child.get_script() == ASSET_SCRIPT:
+				var identity := String(child.get("asset_id"))
+				if not assets.has(identity):
+					assets[identity] = []
+				(assets[identity] as Array).append(child)
+	var records := {}
+	for marker in Markers.markers(root):
+		var key := "%s|%s" % [String(marker.get("kind")), String(marker.get("record_id"))]
+		if not records.has(key):
+			records[key] = []
+		(records[key] as Array).append(marker)
+	for identity: String in assets:
+		if (assets[identity] as Array).size() > 1 and not identity.is_empty():
+			result.append({"kind": "asset", "section": "objects", "id": identity,
+				"nodes": assets[identity]})
+	for key: String in records:
+		var parts := key.split("|", true, 1)
+		if (records[key] as Array).size() > 1 and not parts[1].is_empty():
+			result.append({"kind": "marker", "section": parts[0], "id": parts[1],
+				"nodes": records[key]})
+	return result
+
+
+## Gives the copies in each shared-id group fresh ids (one undo step) and
+## leaves the originals alone. Nodes in `keep` (instance ids, e.g. the
+## duplicates a scene already had when it opened) are never changed; otherwise
+## the original is the one not selected when exactly one is unselected, else the
+## first in scene order. Returns how many changed.
+static func fix_duplicate_ids(undo_redo: EditorUndoRedoManager, root: Node3D,
+		selected: Array, keep: Dictionary = {}) -> int:
+	var groups := duplicate_ids(root)
+	if groups.is_empty():
+		return 0
+	var reserved_assets := {}
+	var reserved_records := {}
+	var renamed := {}
+	var changes: Array[Array] = []
+	for group: Dictionary in groups:
+		var nodes: Array = group.nodes
+		var originals := nodes.filter(func(node: Node) -> bool:
+			return keep.has(node.get_instance_id()))
+		if originals.is_empty():
+			var unselected := nodes.filter(func(node: Node) -> bool: return not node in selected)
+			originals = [unselected[0] if unselected.size() == 1 else nodes[0]]
+		for node: Node in nodes:
+			if node in originals:
+				continue
+			if String(group.kind) == "asset":
+				var identity := Prefabs._fresh_asset_id(node.get_parent(),
+					String(node.get("catalog_asset_id")), String(node.get("asset_id")),
+					reserved_assets)
+				reserved_assets[identity] = true
+				renamed[String(group.id)] = identity
+				changes.append([node, "asset_id", identity])
+				changes.append([node, "node_name",
+					"Authored_%s" % identity.replace(":", "_").replace("-", "_")])
+			else:
+				var record := Markers.fresh_record_id(root, String(node.get("label")),
+					String(node.get("kind")), reserved_records)
+				reserved_records[record] = true
+				var unbound: Array[Dictionary] = []
+				changes.append([node, "record_id", record])
+				changes.append([node, "runtime_bindings", unbound])
+				changes.append([node, "default_spawn", false])
+	# A copied follower follows its copied asset, or nothing: never the original.
+	for group: Dictionary in groups:
+		if String(group.kind) != "marker":
+			continue
+		for node: Node in group.nodes:
+			var followed := String(node.get("follow_asset_id"))
+			if followed.is_empty() or changes.filter(func(change: Array) -> bool:
+					return change[0] == node).is_empty():
+				continue
+			changes.append([node, "follow_asset_id", String(renamed.get(followed, ""))])
+	var count := changes.filter(func(change: Array) -> bool:
+		return change[1] in ["asset_id", "record_id"]).size()
+	undo_redo.create_action("Give %d duplicated object%s fresh ids" % [count,
+		"" if count == 1 else "s"], UndoRedo.MERGE_DISABLE, root)
+	for change: Array in changes:
+		var node: Node = change[0]
+		undo_redo.add_do_property(node, StringName(change[1]), change[2])
+		undo_redo.add_undo_property(node, StringName(change[1]), node.get(StringName(change[1])))
+	undo_redo.commit_action()
+	return count
 
 
 static func _descendants(node: Node) -> Array[Node]:

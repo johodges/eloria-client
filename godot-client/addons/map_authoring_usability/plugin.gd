@@ -30,6 +30,8 @@ const SelectionBar := preload("res://addons/map_authoring_usability/selection_ba
 const PerformanceMode := preload("res://addons/map_authoring_usability/performance_mode.gd")
 const ViewToolbar := preload("res://addons/map_authoring_usability/view_toolbar.gd")
 const Markers := preload("res://addons/map_asset_palette/marker_library.gd")
+const AreaTool := preload("res://addons/map_authoring_usability/area_tool.gd")
+const AreaPanel := preload("res://addons/map_authoring_usability/area_panel.gd")
 const FOCUS_HELPER := "__MapAuthoringFocus"
 const UI_REFRESH_SECONDS := 0.25
 const MINIMAP_TARGET_LUMINANCE := 0.4
@@ -64,6 +66,9 @@ enum MenuId {
 	DUPLICATE,
 	PLAY_TEST,
 	LOW_SPEC,
+	FIX_DUPLICATE_IDS,
+	PAINT_GROUND,
+	STAMP_PLATEAU,
 }
 
 var _menu: MenuButton
@@ -109,6 +114,15 @@ var _minimap_countdown := -1.0
 var _minimap_rendering := false
 var _focusing := false
 var _pending_focus: Array = []
+## Placed objects sharing an id (Godot's Ctrl+D copies ids), refreshed by the poll.
+var _duplicate_groups: Array[Dictionary] = []
+var _area := AreaTool.new()
+var _area_panel: AreaPanel
+var _duplicate_signature := ""
+## Instance ids of objects that already shared an id when the scene opened
+## (such as Manymouth's retained stelae-court pair): never flagged or changed.
+var _baseline_duplicates := {}
+var _baseline_root_id := 0
 
 
 func _enter_tree() -> void:
@@ -128,6 +142,11 @@ func _enter_tree() -> void:
 	_toolbar = ViewToolbar.new()
 	_toolbar.option_toggled.connect(_on_toolbar_toggled)
 	_toolbar.walk_mode_selected.connect(func(mode: int) -> void: set_walkability_mode(mode))
+	_toolbar.tool_requested.connect(func(tool: String) -> void: open_area_panel(tool))
+	_area_panel = AreaPanel.new()
+	_area_panel.start_requested.connect(func(kind: String, options: Dictionary) -> void:
+		start_area_tool(kind, options))
+	get_editor_interface().get_base_control().add_child(_area_panel)
 	add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, _toolbar)
 	_selection_bar = SelectionBar.new()
 	_selection_bar.visible = false
@@ -154,6 +173,10 @@ func _exit_tree() -> void:
 	_draw.cancel()
 	_walker.stop()
 	_copy.cancel_drag()
+	_area.cancel()
+	if is_instance_valid(_area_panel):
+		_area_panel.queue_free()
+	_area_panel = null
 	if _performance.active:
 		_performance.set_active(get_editor_interface().get_base_control(), null, false,
 			_performance.distance)
@@ -233,6 +256,7 @@ func poll_overlays() -> void:
 		dragging = bool(sculpt.get("_sculpt").call("is_dragging"))
 	_walk.poll(dragging)
 	_performance.refresh()
+	_check_duplicate_ids(root)
 	_sync_toolbar()
 
 
@@ -260,8 +284,26 @@ func _viewport_input(camera: Camera3D, event: InputEvent) -> int:
 		if event is InputEventMouseMotion:
 			_note_hover(camera, (event as InputEventMouseMotion).position)
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
+	if _area.is_active():
+		var area_result := _area.handle_input(camera, event, get_undo_redo())
+		if not _area.last_message.is_empty() and not event is InputEventMouseMotion:
+			_status(_area.last_message)
+		if event is InputEventMouseMotion:
+			_note_hover(camera, (event as InputEventMouseMotion).position)
+		update_overlays()
+		return area_result
 	if _copy.is_dragging() or _starts_copy_drag(camera, event):
 		return _handle_copy_drag(camera, event)
+	if event is InputEventKey and event.pressed and not event.echo and \
+			_is_godot_duplicate(event as InputEventKey):
+		# Godot's Ctrl+D keeps asset and record ids, which the snapshot rejects:
+		# in the 3D view it duplicates placements in place with fresh ids instead.
+		var root := _authoring_root()
+		var selected := get_editor_interface().get_selection().get_selected_nodes()
+		var placed := Tools.placements(root, selected)
+		if not placed.is_empty() and placed.size() == selected.size():
+			duplicate_selection(Vector3.ZERO)
+			return EditorPlugin.AFTER_GUI_INPUT_STOP
 	if event is InputEventKey and event.pressed and not event.echo:
 		for action: String in ["ungroup", "group", "duplicate_fresh", "play_test"]:
 			if Settings.matches(action, event) and \
@@ -327,10 +369,14 @@ func _forward_3d_force_draw_over_viewport(overlay: Control) -> void:
 			HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0.72, 0.95, 0.86))
 		bottom = top
 	_draw_walkability_legend(overlay, font, font_size)
+	_draw_duplicate_warning(overlay, font, font_size)
 	# Drawing, placement and sculpt hints sit above the readout. Drawing them here
 	# (this plugin force-draws) keeps them visible when nothing is selected.
 	if _walker.active:
 		PalettePlugin.draw_overlay_lines(overlay, _walker.hint_lines(), bottom)
+		return
+	if _area.is_active():
+		PalettePlugin.draw_overlay_lines(overlay, _area.hint_lines(), bottom)
 		return
 	if _copy.is_dragging():
 		PalettePlugin.draw_overlay_lines(overlay, PackedStringArray([
@@ -416,6 +462,8 @@ func run_tool(id: int) -> int:
 			return ungroup_selection()
 		MenuId.DUPLICATE:
 			return duplicate_selection().size()
+		MenuId.FIX_DUPLICATE_IDS:
+			return fix_duplicate_ids()
 	if id == MenuId.SAVE_PREFAB:
 		var palette := _palette_plugin()
 		if palette == null:
@@ -465,6 +513,7 @@ func _build_menu(popup: PopupMenu) -> void:
 	popup.add_item("Ungroup (Ctrl+Shift+G)", MenuId.UNGROUP)
 	_add_tool_item(popup, "Duplicate with fresh ids (or Alt+drag)", MenuId.DUPLICATE,
 		"duplicate_fresh", settings)
+	popup.add_item("Give duplicated copies fresh ids", MenuId.FIX_DUPLICATE_IDS)
 	popup.add_separator("Cursor grid")
 	popup.add_radio_check_item("Off", MenuId.GRID_OFF)
 	popup.add_radio_check_item("While placing", MenuId.GRID_WHILE_PLACING)
@@ -482,6 +531,9 @@ func _build_menu(popup: PopupMenu) -> void:
 	popup.add_separator("Paths")
 	_add_tool_item(popup, "Draw road", MenuId.DRAW_ROAD, "draw_road", settings)
 	_add_tool_item(popup, "Draw river", MenuId.DRAW_RIVER, "draw_river", settings)
+	popup.add_separator("Terrain and ground")
+	popup.add_item("Paint ground regions…", MenuId.PAINT_GROUND)
+	popup.add_item("Stamp plateaus…", MenuId.STAMP_PLATEAU)
 	popup.add_separator("Play and view")
 	popup.add_check_item("Play test: walk the territory", MenuId.PLAY_TEST)
 	popup.add_check_item("Low spec view (half resolution, far assets hidden)", MenuId.LOW_SPEC)
@@ -557,6 +609,10 @@ func _on_menu_id(id: int) -> void:
 				start_play_test()
 		MenuId.LOW_SPEC:
 			set_low_spec(not _performance.active)
+		MenuId.PAINT_GROUND:
+			open_area_panel("ground")
+		MenuId.STAMP_PLATEAU:
+			open_area_panel("plateau")
 		MenuId.TIME_OF_DAY:
 			_show_time_panel()
 		MenuId.CAPTURE_TOP_DOWN:
@@ -648,7 +704,9 @@ func _on_scene_changed(root: Node) -> void:
 	_draw.cancel()
 	_walker.stop()
 	_copy.cancel_drag()
+	_area.cancel()
 	_open_group = ""
+	_remember_duplicate_baseline(_authoring_root())
 	_markers.release()
 	if bool(Settings.value("performance/low_spec")) or _performance.active:
 		_performance.set_active(get_editor_interface().get_base_control(), _authoring_root(),
@@ -944,6 +1002,7 @@ func start_path_drawing(kind: String) -> bool:
 	if sculpt != null and sculpt.has_method("deactivate_terrain_sculpt"):
 		sculpt.call("deactivate_terrain_sculpt")
 	_walker.stop()
+	_area.cancel()
 	var started := _draw.start(root, kind)
 	_status(_draw.last_message)
 	if started:
@@ -960,6 +1019,9 @@ func cancel_path_drawing() -> void:
 		update_overlays()
 	if _walker.active:
 		stop_play_test()
+	if _area.is_active():
+		_area.cancel()
+		update_overlays()
 
 
 func path_draw_tool() -> RefCounted:
@@ -1045,6 +1107,85 @@ func duplicate_selection(offset: Vector3 = Vector3.INF) -> Array[Node3D]:
 	_select(copies)
 	_status("Copied %d object%s with fresh ids." % [copies.size(), "" if copies.size() == 1 else "s"])
 	return copies
+
+
+## Gives the copies among objects that share an id fresh ids (see
+## group_tools.gd fix_duplicate_ids); originals keep theirs.
+func fix_duplicate_ids() -> int:
+	var root := _authoring_root()
+	if root == null:
+		return 0
+	var fixed := GroupTools.fix_duplicate_ids(get_undo_redo(), root,
+		get_editor_interface().get_selection().get_selected_nodes(), _baseline_duplicates)
+	_check_duplicate_ids(root)
+	if fixed == 0:
+		_toast("No placed objects share an id.")
+	else:
+		_status("Gave %d duplicated object%s fresh ids; the originals kept theirs." % [fixed,
+			"" if fixed == 1 else "s"])
+	update_overlays()
+	return fixed
+
+
+func duplicate_id_groups() -> Array[Dictionary]:
+	return _duplicate_groups
+
+
+## Records the ids a scene already shares when it opens, so only duplicates
+## made in this session are reported.
+func _remember_duplicate_baseline(root: Node3D) -> void:
+	_baseline_duplicates = {}
+	_duplicate_signature = ""
+	_baseline_root_id = root.get_instance_id() if root != null else 0
+	for group: Dictionary in GroupTools.duplicate_ids(root):
+		for node: Node in group.nodes:
+			_baseline_duplicates[node.get_instance_id()] = true
+
+
+func _check_duplicate_ids(root: Node3D) -> void:
+	if root != null and root.get_instance_id() != _baseline_root_id:
+		_remember_duplicate_baseline(root)
+	_duplicate_groups = []
+	for group: Dictionary in GroupTools.duplicate_ids(root):
+		if (group.nodes as Array).any(func(node: Node) -> bool:
+				return not _baseline_duplicates.has(node.get_instance_id())):
+			_duplicate_groups.append(group)
+	var signature := ",".join(PackedStringArray(_duplicate_groups.map(func(group: Dictionary) -> String:
+		return "%s:%s:%d" % [group.kind, group.id, (group.nodes as Array).size()])))
+	if signature == _duplicate_signature:
+		return
+	_duplicate_signature = signature
+	if not _duplicate_groups.is_empty():
+		var plural := _duplicate_groups.size() != 1
+		_toast(("%d placed object id%s now appear%s more than once (Godot's Ctrl+D copies ids, " +
+			"and the bake rejects that). Use Map tools > Give duplicated copies fresh ids, or undo.") % [
+			_duplicate_groups.size(), "s" if plural else "", "" if plural else "s"])
+	update_overlays()
+
+
+func _draw_duplicate_warning(overlay: Control, font: Font, font_size: int) -> void:
+	if _duplicate_groups.is_empty():
+		return
+	var names := PackedStringArray()
+	for group: Dictionary in _duplicate_groups.slice(0, 3):
+		names.append(String(group.id))
+	var text := "%d shared id%s (%s%s): Map tools > Give duplicated copies fresh ids" % [
+		_duplicate_groups.size(), "" if _duplicate_groups.size() == 1 else "s", ", ".join(names),
+		"…" if _duplicate_groups.size() > 3 else ""]
+	var line_height := font.get_height(font_size) + 6.0
+	var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	overlay.draw_rect(Rect2(8.0, 40.0, width + 16.0, line_height), Color(0.25, 0.12, 0.0, 0.8))
+	overlay.draw_string(font, Vector2(16.0, 40.0 + line_height - 8.0), text,
+		HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(1.0, 0.78, 0.35))
+
+
+func _is_godot_duplicate(event: InputEventKey) -> bool:
+	var settings := Settings.editor_settings()
+	for path: String in ["scene_tree/duplicate", "editor/duplicate"]:
+		if settings != null and settings.has_shortcut(path):
+			return settings.is_shortcut(path, event)
+	return event.keycode == KEY_D and event.ctrl_pressed and not event.shift_pressed and \
+		not event.alt_pressed
 
 
 func copy_drag_tool() -> RefCounted:
@@ -1279,6 +1420,7 @@ func start_play_test() -> bool:
 	if sculpt != null and sculpt.has_method("deactivate_terrain_sculpt"):
 		sculpt.call("deactivate_terrain_sculpt")
 	_draw.cancel()
+	_area.cancel()
 	var started := _walker.start(root)
 	_status(_walker.last_message)
 	if not started:
@@ -1298,6 +1440,69 @@ func stop_play_test() -> void:
 
 func play_test_walker() -> RefCounted:
 	return _walker
+
+
+# Ground regions and plateaus ----------------------------------------------
+
+## Opens the options for "ground" (paint ground regions) or "plateau".
+func open_area_panel(kind: String) -> void:
+	var root := _authoring_root()
+	if root == null:
+		_toast("Open a map authoring scene first.")
+		return
+	var anchor := Rect2i(Vector2i(get_editor_interface().get_base_control().get_global_mouse_position()),
+		Vector2i(360, 0))
+	_area_panel.open_for(kind, root, anchor)
+
+
+## Arms the ground-region or plateau tool (see area_tool.gd); placement,
+## sculpting, path drawing and the play test stop. Returns whether it started.
+func start_area_tool(kind: String, options: Dictionary) -> bool:
+	var root := _authoring_root()
+	var palette := _palette_plugin()
+	if palette != null and palette.has_method("cancel_placement_for_terrain_sculpt"):
+		palette.call("cancel_placement_for_terrain_sculpt")
+	var sculpt := _sculpt_plugin()
+	if sculpt != null and sculpt.has_method("deactivate_terrain_sculpt"):
+		sculpt.call("deactivate_terrain_sculpt")
+	_draw.cancel()
+	_walker.stop()
+	var started := _area.start(root, kind, options, _ownership_polygon(root), _protection())
+	_status(_area.last_message)
+	if not started:
+		_toast(_area.last_message)
+	else:
+		get_editor_interface().set_main_screen_editor("3D")
+	_sync_toolbar()
+	update_overlays()
+	return started
+
+
+func area_tool() -> RefCounted:
+	return _area
+
+
+func area_panel() -> Window:
+	return _area_panel
+
+
+## The owned land in territory-local X/Z: from the Territories reference host,
+## else from the bound sculpt tool.
+func _ownership_polygon(root: Node3D) -> PackedVector2Array:
+	var polygon := TopDown.ownership_polygon_local(root) if root != null else PackedVector2Array()
+	if polygon.size() >= 3:
+		return polygon
+	var fields := _protection()
+	return fields.get("polygon", PackedVector2Array())
+
+
+## The bound sculpt tool's border protection (see terrain_sculpt_tool.gd).
+func _protection() -> Dictionary:
+	var sculpt := _sculpt_plugin()
+	var tool: Variant = sculpt.get("_sculpt") if sculpt != null else null
+	if tool == null or not (tool as Object).has_method("protection_fields"):
+		return {}
+	return (tool as Object).call("protection_fields")
 
 
 # Low spec ------------------------------------------------------------------

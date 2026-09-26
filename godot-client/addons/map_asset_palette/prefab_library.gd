@@ -9,6 +9,7 @@ extends RefCounted
 
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
 const ASSET_SCRIPT := preload("res://src/dev/map_authoring_region/asset_control.gd")
+const MARKER_SCRIPT := preload("res://src/dev/map_authoring_region/gameplay_marker.gd")
 const PREFAB_DIRECTORY := "res://world_authoring/prefabs"
 ## Tests point this at a disposable folder; editors keep the default.
 static var directory := PREFAB_DIRECTORY
@@ -48,11 +49,15 @@ static func is_prefab_entry(entry: Dictionary) -> bool:
 	return bool(entry.get("prefab", false))
 
 
-## Nodes a prefab may capture: authored content below the saved containers, never
-## the root, containers, generated previews, or a node whose ancestor is chosen.
+## Nodes a prefab may capture: placed asset wrappers (and the pilot's cosmetic
+## scenery), never the root, containers, generated previews, gameplay markers,
+## terrain, paths or water, or a node whose ancestor is chosen. Placement puts
+## every member under AuthoredAssets, where anything but a wrapper fails the
+## snapshot, so the filter is enforced here rather than left to the UI.
 static func capturable(root: Node3D, nodes: Array) -> Array[Node3D]:
 	var result: Array[Node3D] = []
 	var generated := root.get_node_or_null("GeneratedPreview")
+	var scenery := root.get_node_or_null("AuthoredScenery")
 	for value in nodes:
 		if not value is Node3D:
 			continue
@@ -62,6 +67,9 @@ static func capturable(root: Node3D, nodes: Array) -> Array[Node3D]:
 		if generated != null and generated.is_ancestor_of(node):
 			continue
 		if node.owner != root:
+			continue
+		if node.get_script() != ASSET_SCRIPT and \
+				not (scenery != null and node.get_parent() == scenery):
 			continue
 		result.append(node)
 	var filtered: Array[Node3D] = []
@@ -76,9 +84,37 @@ static func capturable(root: Node3D, nodes: Array) -> Array[Node3D]:
 	return filtered
 
 
+## Selected nodes a prefab leaves out: gameplay markers and other authored
+## controls. Returned so the caller can say so instead of dropping them quietly.
+static func left_out(root: Node3D, nodes: Array) -> Dictionary:
+	var members := capturable(root, nodes)
+	var markers := 0
+	var other := 0
+	for value in nodes:
+		if not value is Node3D or value in members or value == root or \
+				not root.is_ancestor_of(value) or (value as Node).owner != root or \
+				(value as Node).get_parent() == root:
+			continue
+		var covered := false
+		for member in members:
+			if member.is_ancestor_of(value):
+				covered = true
+				break
+		if covered:
+			continue
+		if (value as Node).get_script() == MARKER_SCRIPT:
+			markers += 1
+		else:
+			other += 1
+	return {"markers": markers, "other": other}
+
+
 static func save_selection(root: Node3D, nodes: Array, prefab_name: String) -> Dictionary:
 	var members := capturable(root, nodes)
+	var skipped := left_out(root, nodes)
 	if members.is_empty():
+		if int(skipped.markers) > 0:
+			return {"error": "Prefabs hold placed assets only; gameplay markers cannot be saved in a prefab yet."}
 		return {"error": "Select one or more placed assets to save as a prefab."}
 	var file_stem := _file_stem(prefab_name)
 	if file_stem.is_empty():
@@ -117,7 +153,8 @@ static func save_selection(root: Node3D, nodes: Array, prefab_name: String) -> D
 	var save_error := ResourceSaver.save(packed, path)
 	if save_error != OK:
 		return {"error": "Could not save %s (%s)." % [path, error_string(save_error)]}
-	return {"path": path, "members": members.size(), "id": ID_PREFIX + file_stem}
+	return {"path": path, "members": members.size(), "id": ID_PREFIX + file_stem,
+		"left_out_markers": int(skipped.markers), "left_out_other": int(skipped.other)}
 
 
 ## Instantiates a prefab for previewing or placing. Returns {"node": root} whose

@@ -6,6 +6,8 @@ signal references_changed(ids: PackedStringArray)
 signal refresh_requested
 signal sculpt_toggled(enabled: bool)
 signal sculpt_pick_height_requested
+signal heightmap_import_requested(path: String, area: Rect2, low: float, high: float,
+		replace: bool)
 
 var _entries: Array[Dictionary] = []
 var _active_id := ""
@@ -26,6 +28,14 @@ var _sculpt_flatten: SpinBox
 var _sculpt_pick: Button
 var _sculpt_status: Label
 var _sculpt_allowed := false
+var _heightmap_button: Button
+var _heightmap_dialog: ConfirmationDialog
+var _heightmap_path: LineEdit
+var _heightmap_mode: OptionButton
+var _heightmap_low: SpinBox
+var _heightmap_high: SpinBox
+var _heightmap_area: Array[SpinBox] = []
+var _heightmap_files: EditorFileDialog
 var _browse: Button
 var _picker: PopupPanel
 var _picker_list: ItemList
@@ -60,6 +70,8 @@ func set_sculpt_available(available: bool, reason := "") -> void:
 	if not available:
 		_sculpt_toggle.set_pressed_no_signal(false)
 	_sculpt_toggle.disabled = not available
+	if _heightmap_button != null:
+		_heightmap_button.disabled = not available
 	_sculpt_toggle.tooltip_text = "Paint the active authored terrain in the 3D view." \
 		if available else reason
 	_set_sculpt_controls_enabled(available and _sculpt_toggle.button_pressed)
@@ -221,11 +233,89 @@ func _build_sculpt_ui(column: VBoxContainer) -> void:
 	_sculpt_pick.pressed.connect(func() -> void: sculpt_pick_height_requested.emit())
 	flatten_row.add_child(_sculpt_pick)
 	_add_sculpt_field(grid, "Flatten Y", flatten_row)
+	_heightmap_button = Button.new()
+	_heightmap_button.text = "Import heightmap…"
+	_heightmap_button.tooltip_text = ("Write a greyscale image into the sculpt layer: black and " +
+		"white map to heights you choose. Borders stay protected; the base heights are never " +
+		"rewritten.")
+	_heightmap_button.disabled = true
+	_heightmap_button.pressed.connect(open_heightmap_dialog)
+	column.add_child(_heightmap_button)
+	_build_heightmap_dialog()
 	_sculpt_status = Label.new()
 	_sculpt_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(_sculpt_status)
 	_mode_changed(0)
 	_set_sculpt_controls_enabled(false)
+
+
+func _build_heightmap_dialog() -> void:
+	_heightmap_dialog = ConfirmationDialog.new()
+	_heightmap_dialog.title = "Import heightmap"
+	_heightmap_dialog.ok_button_text = "Import"
+	var column := VBoxContainer.new()
+	column.custom_minimum_size = Vector2(430, 0)
+	_heightmap_dialog.add_child(column)
+	var file_row := HBoxContainer.new()
+	_heightmap_path = LineEdit.new()
+	_heightmap_path.placeholder_text = "Greyscale image (PNG, EXR, WebP…)"
+	_heightmap_path.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	file_row.add_child(_heightmap_path)
+	var browse := Button.new()
+	browse.text = "Browse…"
+	browse.pressed.connect(func() -> void: _heightmap_files.popup_file_dialog())
+	file_row.add_child(browse)
+	column.add_child(file_row)
+	var grid := GridContainer.new()
+	grid.columns = 2
+	column.add_child(grid)
+	_heightmap_mode = OptionButton.new()
+	_heightmap_mode.add_item("Replace heights")
+	_heightmap_mode.add_item("Offset heights (add)")
+	_add_sculpt_field(grid, "Mode", _heightmap_mode)
+	_heightmap_low = _spin(-2000.0, 4000.0, 0.1, 0.0, " m")
+	_add_sculpt_field(grid, "Black is", _heightmap_low)
+	_heightmap_high = _spin(-2000.0, 4000.0, 0.1, 20.0, " m")
+	_add_sculpt_field(grid, "White is", _heightmap_high)
+	for label in ["Area west X", "Area north Z", "Area width", "Area depth"]:
+		var field := _spin(-100000.0, 100000.0, 0.5, 0.0, " m")
+		_heightmap_area.append(field)
+		_add_sculpt_field(grid, label, field)
+	var note := Label.new()
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	note.text = ("The image's top row is north. The area is in terrain metres and starts as the " +
+		"whole terrain grid. Locked border samples never change, the fade band blends, and " +
+		"one undo step reverts it.")
+	column.add_child(note)
+	_heightmap_dialog.confirmed.connect(func() -> void:
+		heightmap_import_requested.emit(_heightmap_path.text, heightmap_area(),
+			_heightmap_low.value, _heightmap_high.value, _heightmap_mode.selected == 0))
+	add_child(_heightmap_dialog)
+	_heightmap_files = EditorFileDialog.new()
+	_heightmap_files.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
+	_heightmap_files.access = EditorFileDialog.ACCESS_FILESYSTEM
+	_heightmap_files.filters = PackedStringArray(["*.png, *.exr, *.webp, *.jpg, *.jpeg, *.hdr ; Images"])
+	_heightmap_files.file_selected.connect(func(path: String) -> void: _heightmap_path.text = path)
+	add_child(_heightmap_files)
+
+
+func open_heightmap_dialog() -> void:
+	if is_inside_tree():
+		_heightmap_dialog.popup_centered()
+
+
+## The terrain-local rectangle the heightmap covers (from the dialog's fields).
+func heightmap_area() -> Rect2:
+	return Rect2(_heightmap_area[0].value, _heightmap_area[1].value,
+		_heightmap_area[2].value, _heightmap_area[3].value)
+
+
+func set_heightmap_area(area: Rect2) -> void:
+	if _heightmap_area.size() != 4:
+		return
+	for pair: Array in [[0, area.position.x], [1, area.position.y], [2, area.size.x],
+			[3, area.size.y]]:
+		(_heightmap_area[pair[0]] as SpinBox).value = float(pair[1])
 
 
 func _add_sculpt_field(grid: GridContainer, label: String, field: Control) -> void:

@@ -19,16 +19,19 @@ const STARTER_ENTRIES := [
 	["starter:weathered_sign", "Weathered Sign", "WeatheredSign", "sign timber"],
 ]
 
-## Drop-in library: every model or scene under this folder becomes a palette
-## entry with no JSON to edit. A first-level subfolder names its category
+## Drop-in library: every .glb, .tscn or .scn under this folder becomes a palette
+## entry with no JSON to edit (a loose .gltf is listed in skipped_library_files:
+## the bake needs .glb, and Import models converts it). A first-level subfolder names its category
 ## ("Library: Rocks"); files directly inside are listed under "Library".
 const LIBRARY_DIRECTORY := "res://assets/world/library"
-const LIBRARY_EXTENSIONS := ["glb", "gltf", "tscn", "scn"]
+const LIBRARY_EXTENSIONS := ["glb", "tscn", "scn"]
 const IMPORT_EXTENSIONS := ["glb", "gltf"]
 const LIBRARY_CATEGORY := "Library"
 const LIBRARY_PREFIX := "library:"
 
 static var library_directory := LIBRARY_DIRECTORY
+## Library files the last scan left out (a .gltf the bake cannot take directly).
+static var skipped_library_files: PackedStringArray = []
 static var _cache: Array[Dictionary] = []
 static var _cache_ready := false
 
@@ -101,6 +104,7 @@ static func library_entries() -> Array[Dictionary]:
 
 
 static func _append_library(result: Array[Dictionary]) -> void:
+	skipped_library_files = PackedStringArray()
 	var root := library_directory.trim_suffix("/")
 	if not DirAccess.dir_exists_absolute(root):
 		return
@@ -117,6 +121,9 @@ static func _scan_library(result: Array[Dictionary], known_ids: Dictionary, root
 	sorted_files.sort_custom(func(a: String, b: String) -> bool:
 		return a.naturalnocasecmp_to(b) < 0)
 	for file_name: String in sorted_files:
+		if file_name.get_extension().to_lower() == "gltf":
+			skipped_library_files.append(directory.path_join(file_name))
+			continue
 		if file_name.begins_with(".") or not file_name.get_extension().to_lower() in \
 				LIBRARY_EXTENSIONS:
 			continue
@@ -143,10 +150,12 @@ static func _scan_library(result: Array[Dictionary], known_ids: Dictionary, root
 			folder if category.is_empty() else category)
 
 
-## Copies model files from anywhere on disk into library_directory/<category>
-## (glTF keeps its buffers and images beside it). Existing names get a numeric
-## suffix; nothing is overwritten. Returns {"copied": [res paths],
-## "skipped": [reasons]}. The editor still has to scan and import the copies.
+## Copies model files from anywhere on disk into library_directory/<category>.
+## A .glb is copied as it is; a .gltf is converted to a self-contained .glb,
+## because the bake accepts only static GLB sources ("bakedSource.path must be
+## a static GLB"). Existing names get a numeric suffix; nothing is overwritten.
+## Returns {"copied": [res paths], "skipped": [reasons]}. The editor still has
+## to scan and import the copies.
 static func import_models(sources: PackedStringArray, category: String) -> Dictionary:
 	var copied: Array[String] = []
 	var skipped: Array[String] = []
@@ -167,43 +176,39 @@ static func import_models(sources: PackedStringArray, category: String) -> Dicti
 		var stem := _clean_name(source.get_file().get_basename())
 		if stem.is_empty():
 			stem = "model"
-		var target_name := "%s.%s" % [stem, extension]
+		var target_name := "%s.glb" % stem
 		var suffix := 2
 		while FileAccess.file_exists(absolute_folder.path_join(target_name)):
-			target_name = "%s_%d.%s" % [stem, suffix, extension]
+			target_name = "%s_%d.glb" % [stem, suffix]
 			suffix += 1
-		var error := DirAccess.copy_absolute(source, absolute_folder.path_join(target_name))
+		var target := absolute_folder.path_join(target_name)
+		var error := DirAccess.copy_absolute(source, target) if extension == "glb" \
+			else _gltf_to_glb(source, target)
 		if error != OK:
-			skipped.append("%s: copy failed (%s)" % [source.get_file(), error_string(error)])
+			skipped.append("%s: %s failed (%s)" % [source.get_file(),
+				"copy" if extension == "glb" else "conversion to .glb", error_string(error)])
 			continue
-		if extension == "gltf":
-			for companion in _gltf_companions(source):
-				var from := source.get_base_dir().path_join(companion)
-				var to := absolute_folder.path_join(companion)
-				DirAccess.make_dir_recursive_absolute(to.get_base_dir())
-				if FileAccess.file_exists(from) and not FileAccess.file_exists(to):
-					DirAccess.copy_absolute(from, to)
 		copied.append(folder.path_join(target_name))
 	return {"copied": copied, "skipped": skipped}
 
 
-## Relative buffer and image files a .gltf refers to.
-static func _gltf_companions(path: String) -> PackedStringArray:
-	var result := PackedStringArray()
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
-	if not parsed is Dictionary:
-		return result
-	for key in ["buffers", "images"]:
-		var items: Variant = (parsed as Dictionary).get(key, [])
-		if not items is Array:
-			continue
-		for item: Variant in items:
-			if item is Dictionary and (item as Dictionary).has("uri"):
-				var uri := String(item.uri).uri_decode()
-				if not uri.begins_with("data:") and not uri.contains("..") and \
-						not uri.is_absolute_path():
-					result.append(uri)
-	return result
+## Reads a .gltf with its buffers and images and writes one binary .glb.
+static func _gltf_to_glb(source: String, target: String) -> Error:
+	var reader := GLTFDocument.new()
+	var state := GLTFState.new()
+	var error := reader.append_from_file(source, state)
+	if error != OK:
+		return error
+	var scene := reader.generate_scene(state)
+	if scene == null:
+		return ERR_PARSE_ERROR
+	var writer := GLTFDocument.new()
+	var output := GLTFState.new()
+	error = writer.append_from_scene(scene, output)
+	if error == OK:
+		error = writer.write_to_filesystem(output, target)
+	scene.free()
+	return error
 
 
 static func _clean_name(text: String) -> String:

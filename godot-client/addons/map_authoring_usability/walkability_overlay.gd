@@ -31,6 +31,8 @@ enum Tile { OUTSIDE, WALKABLE, STEEP, WATER, BLOCKED, DECK }
 
 const MAX_GRADE := 0.65
 const WADE := 0.35
+## The actor body the bake tests solids against runs from standing + 0.06 m to
+## standing + 2.10 m (collision_export.py: ACTOR_HEIGHT is the top, not a length).
 const ACTOR_FLOOR_CLEARANCE := 0.06
 const ACTOR_HEIGHT := 2.1
 const TILE_NAMES := ["outside this territory", "walkable", "too steep", "under water",
@@ -606,7 +608,7 @@ static func _structure_pass(root: Node3D, data: Dictionary) -> void:
 					if not _inside_quad(corners, centre):
 						continue
 					var ground := _ground(data, centre.x, centre.y)
-					if float(box.bottom) < ground + ACTOR_FLOOR_CLEARANCE + ACTOR_HEIGHT and \
+					if float(box.bottom) < ground + ACTOR_HEIGHT and \
 							float(box.top) > ground + ACTOR_FLOOR_CLEARANCE:
 						classes[row * width + column] = Tile.BLOCKED
 						blockers[row * width + column] = String(asset.name)

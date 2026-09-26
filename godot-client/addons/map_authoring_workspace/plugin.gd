@@ -15,6 +15,9 @@ const SCULPT_RING_COLORS := [Color(0.22, 0.94, 0.79), Color(1.0, 0.55, 0.25),
 	Color(0.45, 0.65, 1.0), Color(1.0, 0.86, 0.35)]
 
 var _catalog := Catalog.new()
+## The territory catalog Refresh sources reads. Only tests point it elsewhere
+## (an isolated fixture catalog); the editor always uses the shared catalog.
+var catalog_path := Catalog.CATALOG_PATH
 var _entries: Array[Dictionary] = []
 var _dock: EditorDock
 var _host: MapAuthoringReferencePreview
@@ -31,6 +34,8 @@ func _enter_tree() -> void:
 	_dock.refresh_requested.connect(_reload_sources)
 	_dock.sculpt_toggled.connect(_on_sculpt_toggled)
 	_dock.sculpt_pick_height_requested.connect(_sculpt.pick_flatten_height)
+	_dock.heightmap_import_requested.connect(func(path: String, area: Rect2, low: float,
+			high: float, replace: bool) -> void: import_heightmap(path, area, low, high, replace))
 	_sculpt.status_changed.connect(_dock.show_sculpt_status)
 	_sculpt.flatten_height_picked.connect(_dock.set_flatten_target)
 	_sculpt.stroke_started.connect(_on_sculpt_started)
@@ -215,7 +220,7 @@ func _reload_sources() -> void:
 	_sculpt_tearing_down = false
 	var selected: PackedStringArray = _dock.selected_reference_ids() \
 		if _dock != null else PackedStringArray()
-	_entries = _catalog.entries()
+	_entries = _catalog.entries("", catalog_path)
 	var active_id := String(_active_root.get("region_id")) if _active_root != null else ""
 	_dock.configure(_entries, active_id, selected)
 	if not _catalog.errors.is_empty():
@@ -269,6 +274,24 @@ func _bind_sculpt(entry: Dictionary) -> void:
 			"Active terrain grid is unavailable; sculpt disabled.")
 		return
 	_dock.set_sculpt_available(true)
+	_dock.set_heightmap_area(Rect2(terrain.origin,
+		Vector2(terrain.grid_size - Vector2i.ONE) * terrain.cell_metres))
+
+
+## Loads a greyscale image and writes it into the active terrain's sculpt layer
+## (see terrain_sculpt_tool.gd import_heightmap). Returns its result.
+func import_heightmap(path: String, area: Rect2, low: float, high: float,
+		replace: bool) -> Dictionary:
+	var absolute := ProjectSettings.globalize_path(path) if path.begins_with("res://") else path
+	var image := Image.load_from_file(absolute) if FileAccess.file_exists(absolute) else null
+	var result: Dictionary
+	if image == null or image.is_empty():
+		result = {"error": "Could not read the heightmap image %s." % path}
+	else:
+		result = _sculpt.import_heightmap(image, area, low, high, replace)
+	if result.has("error"):
+		_dock.show_sculpt_status(String(result.error))
+	return result
 
 
 func _remove_host() -> void:
