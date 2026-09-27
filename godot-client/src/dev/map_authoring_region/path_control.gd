@@ -215,15 +215,14 @@ func _refresh_preview() -> void:
 					source_vertices, source_uvs, source_uv2s, wet_scalars,
 					vertices, uvs, uv2s, indices)
 	else:
-		vertices = source_vertices
-		uvs = source_uvs
-		uv2s = source_uv2s
+		var terrain := _terrain_control()
 		for station in points.size() - 1:
 			for lateral_index in LATERAL_STEPS:
 				var first := station * (LATERAL_STEPS + 1) + lateral_index
 				var next := first + LATERAL_STEPS + 1
-				indices.append_array(PackedInt32Array([first, next, first + 1,
-					first + 1, next, next + 1]))
+				for face in [[first, next, first + 1], [first + 1, next, next + 1]]:
+					_append_terrain_road_triangle(face, source_vertices, source_uvs,
+						source_uv2s, terrain, vertices, uvs, uv2s, indices)
 	if indices.is_empty():
 		mesh_instance.mesh = null
 		return
@@ -323,6 +322,123 @@ func _append_clipped_water_triangle(source_indices: Array,
 			vertices.append(record.position)
 			uvs.append(record.uv)
 			uv2s.append(record.uv2)
+
+
+
+# A vertex-only drape can bridge a valley inside a ribbon face. Intersect the
+# original footprint with each terrain triangle before lifting it. Scalar grid
+# coordinates retain float64 precision during clipping; output remains Godot's
+# normal packed vertex/UV representation. No authored path or terrain is edited.
+func _append_terrain_road_triangle(face: Array, source: PackedVector3Array,
+		source_uv: PackedVector2Array, source_uv2: PackedVector2Array, terrain: Node3D,
+		vertices: PackedVector3Array, uvs: PackedVector2Array,
+		uv2s: PackedVector2Array, indices: PackedInt32Array) -> void:
+	if terrain == null or not terrain.has_method("height_at_local"):
+		for index in face:
+			indices.append(vertices.size())
+			vertices.append(source[index])
+			uvs.append(source_uv[index])
+			uv2s.append(source_uv2[index])
+		return
+	var origin: Vector2 = terrain.get("origin")
+	var cell: float = terrain.get("cell_metres")
+	var size: Vector2i = terrain.get("grid_size")
+	if cell <= 0.0 or size.x < 2 or size.y < 2:
+		return
+	var to_terrain := terrain.global_transform.affine_inverse() * global_transform
+	var to_path := to_terrain.affine_inverse()
+	var polygon: Array[Dictionary] = []
+	var xmin := INF
+	var xmax := -INF
+	var zmin := INF
+	var zmax := -INF
+	for index in face:
+		var point: Vector3 = to_terrain * source[index]
+		var x := (float(point.x) - float(origin.x)) / cell
+		var z := (float(point.z) - float(origin.y)) / cell
+		polygon.append({"x": x, "z": z, "uv": source_uv[index], "uv2": source_uv2[index]})
+		xmin = minf(xmin, x)
+		xmax = maxf(xmax, x)
+		zmin = minf(zmin, z)
+		zmax = maxf(zmax, z)
+	# Include clamped exterior strips/corners: the existing height sampler extends
+	# the outer edge affinely. Dropping those pieces would shorten receiving tails.
+	for iz in range(clampi(floori(zmin), -1, size.y - 1),
+			clampi(floori(zmax), -1, size.y - 1) + 1):
+		for ix in range(clampi(floori(xmin), -1, size.x - 1),
+				clampi(floori(xmax), -1, size.x - 1) + 1):
+			var lo_x := xmin if ix < 0 else float(ix)
+			var hi_x := xmax if ix >= size.x - 1 else float(ix + 1)
+			var lo_z := zmin if iz < 0 else float(iz)
+			var hi_z := zmax if iz >= size.y - 1 else float(iz + 1)
+			var piece := _clip_road_polygon(polygon, 1.0, 0.0, -lo_x)
+			piece = _clip_road_polygon(piece, -1.0, 0.0, hi_x)
+			piece = _clip_road_polygon(piece, 0.0, 1.0, -lo_z)
+			piece = _clip_road_polygon(piece, 0.0, -1.0, hi_z)
+			if ix >= 0 and ix < size.x - 1 and iz >= 0 and iz < size.y - 1:
+				_emit_road_polygon(_clip_road_polygon(piece, -1.0, -1.0,
+					float(ix + iz + 1)), terrain, origin, cell, to_path,
+					vertices, uvs, uv2s, indices)
+				piece = _clip_road_polygon(piece, 1.0, 1.0, -float(ix + iz + 1))
+			_emit_road_polygon(piece, terrain, origin, cell, to_path,
+				vertices, uvs, uv2s, indices)
+
+
+func _clip_road_polygon(polygon: Array[Dictionary], a: float, b: float,
+		c: float) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for index in polygon.size():
+		var current := polygon[index]
+		var following := polygon[(index + 1) % polygon.size()]
+		var first := a * float(current.x) + b * float(current.z) + c
+		var second := a * float(following.x) + b * float(following.z) + c
+		if first >= 0.0:
+			result.append(current)
+		if (first >= 0.0) != (second >= 0.0):
+			var amount := first / (first - second)
+			result.append({"x": lerpf(float(current.x), float(following.x), amount),
+				"z": lerpf(float(current.z), float(following.z), amount),
+				"uv": (current.uv as Vector2).lerp(following.uv, amount),
+				"uv2": (current.uv2 as Vector2).lerp(following.uv2, amount)})
+	return result
+
+
+func _emit_road_polygon(polygon: Array[Dictionary], terrain: Node3D,
+		origin: Vector2, cell: float, to_path: Transform3D,
+		vertices: PackedVector3Array, uvs: PackedVector2Array,
+		uv2s: PackedVector2Array, indices: PackedInt32Array) -> void:
+	for index in range(1, polygon.size() - 1):
+		var a := polygon[0]
+		var b := polygon[index]
+		var c := polygon[index + 1]
+		var area := (float(b.x) - float(a.x)) * (float(c.z) - float(a.z)) - \
+			(float(b.z) - float(a.z)) * (float(c.x) - float(a.x))
+		if area == 0.0:
+			continue
+		var records := [a, b, c]
+		var encoded := PackedVector3Array()
+		for record in records:
+			var x := float(origin.x) + float(record.x) * cell
+			var z := float(origin.y) + float(record.z) * cell
+			var height: float = terrain.height_at_local(x, z)
+			encoded.append(to_path * Vector3(x, height + 0.055, z))
+		# Packed float32 vertices can collapse or reverse a microscopic clipping
+		# sliver after a transformed round trip. Drop only exact zero area; retain
+		# every nonzero encoded footprint and restore its original orientation.
+		var to_terrain := to_path.affine_inverse()
+		var pa := to_terrain * encoded[0]
+		var pb := to_terrain * encoded[1]
+		var pc := to_terrain * encoded[2]
+		var encoded_area := (float(pb.x) - float(pa.x)) * (float(pc.z) - float(pa.z)) - \
+			(float(pb.z) - float(pa.z)) * (float(pc.x) - float(pa.x))
+		if encoded_area == 0.0:
+			continue
+		var order := [0, 1, 2] if (encoded_area > 0.0) == (area > 0.0) else [0, 2, 1]
+		for slot in order:
+			indices.append(vertices.size())
+			vertices.append(encoded[slot])
+			uvs.append(records[slot].uv)
+			uv2s.append(records[slot].uv2)
 
 
 func _generated_normals(vertices: PackedVector3Array,

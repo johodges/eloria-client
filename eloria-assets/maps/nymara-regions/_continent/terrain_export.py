@@ -60,12 +60,113 @@ def _rotated_uv(points,surface,density):
     return uv@np.array([[c,s],[-s,c]])
 
 
+def conform_road_faces(world,faces,uv,colors):
+    """Subdivide each ribbon face on the terrain's affine triangles.
+
+    Keep overlapping source faces and their attributes separate. Vertex-only
+    draping can bridge a valley inside a face; after this partition the entire
+    face, not just its corners, is terrain + .055 metres. No terrain is edited.
+    """
+    from sea_crossings import _clip_positive
+    faces=np.asarray(faces,float).reshape(-1,3,3)
+    attributes=np.concatenate((faces,np.asarray(uv,float),np.asarray(colors,float)),axis=2)
+    origin=np.array([world.x0,world.z0],float)
+    extent=origin+CELL*(np.asarray(world.height.shape[::-1])-1)
+    xz=faces[...,[0,2]]
+    if not np.isfinite(attributes).all() or (xz<origin).any() or (xz>extent).any():
+        raise ValueError('Authored road lies outside the finite shared terrain field')
+    output=[]
+    for original in attributes:
+        # A zero projected area is not a road surface. Do not discard positive
+        # slivers with a size threshold or weld different source-face layers.
+        a,b,c=original[:,[0,2]]
+        if (b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0])==0:continue
+        first=np.floor((original[:,[0,2]].min(axis=0)-origin)/CELL).astype(int)
+        last=np.floor((original[:,[0,2]].max(axis=0)-origin)/CELL).astype(int)
+        last=np.minimum(last,np.asarray(world.height.shape[::-1])-2)
+        for iz in range(first[1],last[1]+1):
+            for ix in range(first[0],last[0]+1):
+                x,z=origin+CELL*np.array([ix,iz]); polygon=original
+                for axis,bound,sign in ((0,x,1),(0,x+CELL,-1),(2,z,1),(2,z+CELL,-1)):
+                    values=sign*(polygon[:,axis]-bound)
+                    if (values>=0).all():continue
+                    polygon=_clip_positive(polygon,values)
+                    if len(polygon)<3:break
+                if len(polygon)<3:continue
+                diagonal=x+z+CELL-polygon[:,0]-polygon[:,2]
+                halves=([polygon] if (diagonal>=0).all() or (diagonal<=0).all() else
+                        [_clip_positive(polygon,diagonal),_clip_positive(polygon,-diagonal)])
+                for part in halves:
+                    for j in range(1,len(part)-1):
+                        face=part[[0,j,j+1]].copy();a,b,c=face[:,[0,2]]
+                        if (b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0])!=0:output.append(face)
+    if not output:
+        return np.empty((0,3,3)),np.empty((0,3,2)),np.empty((0,3,4))
+    result=np.asarray(output)
+    result[:,:,1]=world.height_at(result[:,:,0],result[:,:,2])+.055
+    return result[:,:,:3],result[:,:,3:5],result[:,:,5:]
+
+
+def authored_road_faces(world,snapshot,path):
+    """Original saved ribbon topology and attributes, before ground subdivision."""
+    controls=path['points'];vertices=[];uv=[];colors=[];indices=[];along=0.;lateral_steps=6
+    road_override=path['surface'].get('roadOverrides');feather=float(road_override['edgeFeather']) if road_override else 0.
+    control_points=[snapshot.continent_point(value['position']) for value in controls]
+    control_widths=[float(value['width']) for value in controls]
+    points=[];widths=[]
+    for index,(start,end) in enumerate(zip(control_points,control_points[1:])):
+        count=max(1,int(math.ceil(np.linalg.norm(end[[0,2]]-start[[0,2]]))))
+        amount=np.linspace(0.,1.,count+1)[:-1]
+        points.extend(start*(1-value)+end*value for value in amount)
+        widths.extend(control_widths[index]*(1-value)+control_widths[index+1]*value for value in amount)
+    points.append(control_points[-1]);widths.append(control_widths[-1])
+    for index,(point,width) in enumerate(zip(points,widths)):
+        previous=point if index==0 else points[index-1];following=point if index==len(points)-1 else points[index+1]
+        tangent=(following-previous)[[0,2]];tangent/=max(np.linalg.norm(tangent),1e-12);side=np.array([-tangent[1],tangent[0]])
+        if index:along+=float(np.linalg.norm(point-points[index-1]))
+        for lateral_index in range(lateral_steps+1):
+            u=lateral_index/lateral_steps;lateral=width*(.5-u)
+            vertex=point.copy();vertex[[0,2]]+=side*lateral
+            vertex[1]=float(world.height_at(vertex[0],vertex[2]))+.055
+            vertices.append(vertex);uv.append([u*width,along])
+            distance_from_edge=1.-abs(u*2.-1.)
+            alpha=1. if feather<=0 else float(L.smoothstep(0.,feather,distance_from_edge))
+            colors.append([1.,1.,1.,alpha])
+        if index<len(points)-1:
+            base=index*(lateral_steps+1);following=base+lateral_steps+1
+            for lateral_index in range(lateral_steps):
+                a=base+lateral_index;b=a+1;c=following+lateral_index;d=c+1
+                indices.extend((a,d,b,a,c,d))
+    vertices=np.asarray(vertices,float);face_indices=np.asarray(indices).reshape(-1,3)
+    return vertices[face_indices],np.asarray(uv)[face_indices],np.asarray(colors)[face_indices]
+
+
+def encoded_road_faces(faces,uv,colors):
+    """Keep every nonzero stored footprint, oriented like its source face.
+
+    The builder stores global POSITION as float32; region/chunk exports copy
+    those bytes and add translation wrappers only. Preserve double positions
+    until that normal encoding, but inspect its actual represented determinant.
+    """
+    def signed_area(points):
+        a,b=points[:,1]-points[:,0],points[:,2]-points[:,0]
+        return a[:,0]*b[:,2]-a[:,2]*b[:,0]
+    source_area=signed_area(faces)
+    encoded_area=signed_area(np.asarray(faces,dtype=np.float32).astype(float))
+    keep=encoded_area!=0
+    reverse=(source_area[keep]>0)!=(encoded_area[keep]>0)
+    arrays=[np.asarray(values)[keep].copy() for values in (faces,uv,colors)]
+    for values in arrays:values[reverse]=values[reverse][:,[0,2,1]]
+    return (*arrays,{'inputFaces':len(faces),'collapsedFaces':int((~keep).sum()),
+                    'reorientedFaces':int(reverse.sum()),'outputFaces':int(keep.sum())})
+
+
 def authored_overlays(world,builder):
     snapshots=dict(getattr(world,'authoring_snapshots',{}))
     snapshot=getattr(world,'authoring_snapshot',None)
     if snapshot is not None:snapshots.setdefault(snapshot.document.get('regionId',AUTHORING.SUNMANE),snapshot)
     if not snapshots:return []
-    overlays=[]
+    overlays=[];road_encoding=[]
     def node_name(region_id,name, *, base=False):
         # Preserve the already-published Sunmane node identities while making
         # every additional territory's otherwise-local ids globally unique.
@@ -74,11 +175,17 @@ def authored_overlays(world,builder):
         return region_id+'Base' if base else region_id+'_'+name
     def add(name,faces,surface,uv_source,colors=None,walk=False,blend=False):
         faces=np.asarray(faces,float).reshape(-1,3,3)
+        if walk:
+            faces,uv_source,colors,encoding=encoded_road_faces(faces,uv_source,colors)
+            road_encoding.append({'name':name,**encoding})
         if not len(faces):return
         material,density=authored_surface_material(builder,surface,name,blend=blend)
         vertices=faces.reshape(-1,3);indices=np.arange(len(vertices),dtype=np.int32)
         uv=_rotated_uv(np.asarray(uv_source,float).reshape(-1,2),surface,density)
-        face_normal=np.cross(faces[:,1]-faces[:,0],faces[:,2]-faces[:,0])
+        # Road normals must agree with the represented, possibly microscopic
+        # face, not with its pre-encoding sliver. Other overlay normals stay as-is.
+        normal_faces=faces.astype(np.float32).astype(float) if walk else faces
+        face_normal=np.cross(normal_faces[:,1]-normal_faces[:,0],normal_faces[:,2]-normal_faces[:,0])
         face_normal/=np.maximum(np.linalg.norm(face_normal,axis=1,keepdims=True),1e-12)
         mesh=M.Mesh(positions=vertices,normals=np.repeat(face_normal,3,axis=0),uvs=uv,
                     colors=None if colors is None else np.asarray(colors,float).reshape(-1,4),
@@ -129,38 +236,11 @@ def authored_overlays(world,builder):
                 colors,blend=True)
         for path in snapshot.document['paths']:
             if path['kind']!='road':continue
-            controls=path['points'];vertices=[];uv=[];colors=[];indices=[];along=0.;lateral_steps=6
-            road_override=path['surface'].get('roadOverrides');feather=float(road_override['edgeFeather']) if road_override else 0.
-            control_points=[snapshot.continent_point(value['position']) for value in controls]
-            control_widths=[float(value['width']) for value in controls]
-            points=[];widths=[]
-            for index,(start,end) in enumerate(zip(control_points,control_points[1:])):
-                count=max(1,int(math.ceil(np.linalg.norm(end[[0,2]]-start[[0,2]]))))
-                amount=np.linspace(0.,1.,count+1)[:-1]
-                points.extend(start*(1-value)+end*value for value in amount)
-                widths.extend(control_widths[index]*(1-value)+control_widths[index+1]*value for value in amount)
-            points.append(control_points[-1]);widths.append(control_widths[-1])
-            for index,(point,width) in enumerate(zip(points,widths)):
-                previous=point if index==0 else points[index-1];following=point if index==len(points)-1 else points[index+1]
-                tangent=(following-previous)[[0,2]];tangent/=max(np.linalg.norm(tangent),1e-12);side=np.array([-tangent[1],tangent[0]])
-                if index:along+=float(np.linalg.norm(point-points[index-1]))
-                for lateral_index in range(lateral_steps+1):
-                    u=lateral_index/lateral_steps;lateral=width*(.5-u)
-                    vertex=point.copy();vertex[[0,2]]+=side*lateral
-                    vertex[1]=float(world.height_at(vertex[0],vertex[2]))+.055
-                    vertices.append(vertex);uv.append([u*width,along])
-                    distance_from_edge=1.-abs(u*2.-1.)
-                    alpha=1. if feather<=0 else float(L.smoothstep(0.,feather,distance_from_edge))
-                    colors.append([1.,1.,1.,alpha])
-                if index<len(points)-1:
-                    base=index*(lateral_steps+1);following=base+lateral_steps+1
-                    for lateral_index in range(lateral_steps):
-                        a=base+lateral_index;b=a+1;c=following+lateral_index;d=c+1
-                        indices.extend((a,d,b,a,c,d))
-            vertices=np.asarray(vertices,float);faces=vertices[np.asarray(indices).reshape(-1,3)]
-            face_indices=np.asarray(indices).reshape(-1,3)
-            add(node_name(region_id,path['id']),faces,path['surface'],np.asarray(uv)[face_indices],
-                np.asarray(colors)[face_indices],walk=True,blend=road_override is not None)
+            faces,uv,colors=conform_road_faces(world,*authored_road_faces(world,snapshot,path))
+            road_override=path['surface'].get('roadOverrides')
+            add(node_name(region_id,path['id']),faces,path['surface'],uv,
+                colors,walk=True,blend=road_override is not None)
+    world.authored_road_encoding_report=road_encoding
     return overlays
 
 
@@ -410,6 +490,7 @@ def partition_surface(world,path):
     world.authored_overlay_report={
         'nodes':[{'name':item['name'],'triangles':int(item['mesh'].triangle_count)} for item in overlays],
         'triangles':sum(int(item['mesh'].triangle_count) for item in overlays),
+        'roadEncoding':getattr(world,'authored_road_encoding_report',[]),
         'waterMaterials':[{key:value for key,value in item.items()
                            if key not in ('surface','density','translation','nodeId')}
                           for item in authored_water]}
