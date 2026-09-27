@@ -194,6 +194,95 @@ def validate_package_storage(region, spec, world, collision_bytes):
     return wanted
 
 
+def instance_exit_records(relative, text, regions):
+    """Identify exterior instance exits without using their mutable coordinates."""
+    result = {}
+    def observe(region, old, context):
+        if context['section'] != 'instance' or context['pairKind'] != 'exit':
+            return None
+        if (not relative.startswith('config/eloria/instances/') or
+                context['recordField'] != 'spawn_name' or not context['recordId'] or
+                context['fields'] != ['exit_x', 'exit_y'] or context['map'] != region):
+            raise ValueError(f'{relative}: instance exit requires a named, complete source context')
+        identity = json.dumps([relative, context['recordId'], 'exit_x', 'exit_y', region],
+                              separators=(',', ':'), ensure_ascii=False)
+        if identity in result:
+            raise ValueError(f'{relative}: duplicate instance exit context {identity}')
+        result[identity] = {'path': relative, 'spawnName': context['recordId'],
+                            'fields': ['exit_x', 'exit_y'], 'map': region, 'originalTile': list(old)}
+        return list(old)
+    shared.rewrite_definition(text, {r: {'delta': [0, 0]} for r in regions}, point_mapper=observe)
+    return result
+
+
+def certified_instance_exit_sources(client, regions):
+    root = client / 'eloria-assets/maps/nymara-regions/_continent/legacy-server-profile'
+    certificate = json.loads((root / 'snapshot.json').read_text(encoding='utf-8'))
+    result = {}
+    for relative, expected in certificate['files'].items():
+        if not relative.startswith('config/eloria/instances/') or not relative.endswith('.def'):
+            continue
+        payload = (root / relative).read_bytes()
+        if shared.digest(payload) != expected:
+            raise ValueError(f'{relative}: immutable instance source digest changed')
+        for identity, source in instance_exit_records(relative, payload.decode('utf-8'), regions).items():
+            source['sha256'] = expected
+            result[identity] = source
+    return result
+
+
+def validate_instance_exit_table(specs, sources):
+    """Require one independently placed record for every certified source exit."""
+    entries = {}
+    for region, spec in specs.items():
+        table = spec.get('instanceExitPositions')
+        if not isinstance(table, dict):
+            raise ValueError(f'{region}: missing instance exit table')
+        for identity, entry in table.items():
+            if identity in entries or identity not in sources or entry.get('source') != sources[identity]:
+                raise ValueError(f'{identity}: duplicate or changed instance source provenance')
+            if entry['source']['map'] != region:
+                raise ValueError(f'{identity}: instance exit is stored under the wrong region')
+            for field in ('previousTile', 'tile'):
+                pair = entry.get(field)
+                if (not isinstance(pair, list) or len(pair) != 2 or
+                        any(type(v) is not int for v in pair)):
+                    raise ValueError(f'{identity}: invalid instance {field}')
+            expected = entry.get('expectedTile')
+            if (not isinstance(expected, list) or len(expected) != 2 or
+                    any(type(v) not in (int, float) or not math.isfinite(v) for v in expected) or
+                    entry.get('maximumDisplacementMetres') != 5 or
+                    math.dist(expected, entry['tile']) > 5 + 1e-8):
+                raise ValueError(f'{identity}: independent instance placement exceeds its five metre budget')
+            if entry.get('postContent') != {'standing': True, 'hubAccessible': True, 'noPortalTrigger': True}:
+                raise ValueError(f'{identity}: missing post-content instance access proof')
+            entries[identity] = entry
+    if set(entries) != set(sources):
+        raise ValueError('Instance exit table is incomplete for the certified source inventory')
+    return entries
+
+
+def rewrite_instance_exits(relative, text, mappings, entries, *, mode):
+    """Use the same identity join for guard reconstruction and actual publication."""
+    found = instance_exit_records(relative, text, mappings)
+    wanted = {k: v for k, v in entries.items() if v['source']['path'] == relative}
+    if set(found) != set(wanted):
+        raise ValueError(f'{relative}: missing or unexpected instance exit context')
+    for identity, source in found.items():
+        entry = wanted[identity]
+        expected = (entry['source']['originalTile'] if mode == 'source' else
+                    entry['tile'] if mode == 'repeated' else entry['previousTile'])
+        if source['originalTile'] != expected:
+            raise ValueError(f'{identity}: instance field differs from certified {mode} coordinates')
+    def mapper(region, old, context):
+        if context['section'] != 'instance' or context['pairKind'] != 'exit':
+            return None
+        identity = json.dumps([relative, context['recordId'], 'exit_x', 'exit_y', region],
+                              separators=(',', ':'), ensure_ascii=False)
+        return list(wanted[identity]['tile'])
+    return shared.rewrite_definition(text, mappings, point_mapper=mapper)
+
+
 def _runtime_binding_profile_texts(client, specs):
     """Load the immutable profile rows named by authored binding provenance."""
     expected = {}
@@ -455,6 +544,8 @@ def placement_contracts(specs):
         'baselineContentTransform': copy.deepcopy(spec.get('baselineContentTransform', spec['contentTransform'])),
         'contentPositions': copy.deepcopy(spec.get('contentPositions', {})),
         'portalPositions': copy.deepcopy(spec.get('portalPositions', {})),
+        **({'instanceExitPositions': copy.deepcopy(spec['instanceExitPositions'])}
+           if 'instanceExitPositions' in spec else {}),
         'runtimeBindings': copy.deepcopy(spec.get('runtimeBindings', {})),
         'runtimeBindingPositions': copy.deepcopy(spec.get('runtimeBindingPositions', {})),
         'runtimeBindingSourceTiles': copy.deepcopy(spec.get('runtimeBindingSourceTiles', {})),
@@ -590,7 +681,7 @@ def replace_crossings(text, connections, specs):
     return ''.join(rows).rstrip() + '\n\n' + BEGIN + '\n' + emitted + END + '\n', entries
 
 
-def validate_standing_points(specs, blobs, texts, connections):
+def validate_standing_points(specs, blobs, texts, connections, definition_exits=None):
     """Reject blocked/out-of-envelope content; never repair geometry silently."""
     grids = {}
     for region, spec in specs.items():
@@ -635,6 +726,17 @@ def validate_standing_points(specs, blobs, texts, connections):
                 # Area rectangle corners bound a zone and need not be walkable.
                 if matches and filename != 'special_areas.txt':
                     check(fields[mi], [int(fields[xi]), int(fields[yi])], f'{filename}:{number}')
+    departures = set()
+    for line in texts.get('maps.txt', '').splitlines():
+        fields = [v.strip() for v in line.split('|')]
+        if fields[0] == 'portal' and len(fields) in (7, 8):
+            start = 2 if len(fields) == 7 else 3
+            departures.add((fields[1], int(fields[start]), int(fields[start + 1])))
+    for identity, entry in (definition_exits or {}).items():
+        region, point = entry['source']['map'], entry['tile']
+        check(region, point, identity)
+        if (region, *point) in departures:
+            raise ValueError(f'{identity}: instance exit immediately triggers an unrelated portal')
     return len(checked)
 
 
@@ -789,14 +891,39 @@ def plan(client, server, publication_path):
             previous_placements=current.get('placements', {}),
             certified_texts=_runtime_binding_profile_texts(client, specs))
     texts['maps.txt'], portal_entries = replace_crossings(texts['maps.txt'], publication['connections'], specs)
-    checked = validate_standing_points(specs, blobs, texts, portal_entries)
+    instance_entries = None
+    schema = publication.get('instanceExitSchema')
+    if schema is not None and (type(schema) is not int or schema != 1):
+        raise ValueError('Unsupported instance exit schema')
+    if any('instanceExitPositions' in spec for spec in current.get('placements', {}).values()) and publication.get('instanceExitSchema') != 1:
+        raise ValueError('A revised publication cannot discard certified instance exit identities')
+    if publication.get('instanceExitSchema') == 1:
+        instance_entries = validate_instance_exit_table(specs, certified_instance_exit_sources(client, specs))
+    elif any('instanceExitPositions' in spec for spec in specs.values()):
+        raise ValueError('Instance exit table requires its explicit publication schema')
     for filename, text in texts.items():
         stage(profile / filename, text.encode('utf-8'))
+    staged_exits = {}
     definitions = [*profile.glob('instances/*.def'), *profile.glob('spawn_groups/**/*.def'), profile / 'questlines.txt']
     for path in sorted(definitions):
         if path.exists():
-            text, _ = shared.rewrite_definition(read(path).decode('utf-8'), mappings)
+            original = read(path).decode('utf-8')
+            relative = 'config/eloria/' + path.relative_to(profile).as_posix()
+            if instance_entries is not None and relative.startswith('config/eloria/instances/'):
+                text, _ = rewrite_instance_exits(relative, original, mappings, instance_entries,
+                                                  mode='repeated' if repeated else 'served')
+                actual = instance_exit_records(relative, text, specs)
+                for identity, source in actual.items():
+                    entry = instance_entries[identity]
+                    if source['originalTile'] != entry['tile']:
+                        raise ValueError(f'{identity}: staged instance exit differs from its contract')
+                    staged_exits[identity] = entry
+            else:
+                text, _ = shared.rewrite_definition(original, mappings)
             stage(path, text.encode('utf-8'))
+    if instance_entries is not None and set(staged_exits) != set(instance_entries):
+        raise ValueError('Staged definition exits do not cover the certified instance table')
+    checked = validate_standing_points(specs, blobs, texts, portal_entries, staged_exits)
     for relative, kind in (('tools/generate_nymara_maps.py', 'generator'), ('eloria/map_layout.py', 'layout'),
                            ('eloria/world.py', 'world'), ('eloria/walkthrough.py', 'walkthrough'),
                            ('eloria/pk.py', 'pk'), ('eloria/daily_quests.py', 'daily')):
@@ -883,6 +1010,7 @@ def plan(client, server, publication_path):
               'repeatedPublication': repeated, 'masterSha256': publication['masterSha256'],
               'territories': len(specs), 'connections': len(publication['connections']),
               'exteriorPortalLanes': len(portal_entries), 'verifiedStandingPoints': checked,
+              'instanceExits': copy.deepcopy(staged_exits),
               'contentRecords': records, 'files': [{'path': str(path),
                   'beforeSha256': shared.digest(before[path]) if before[path] is not None else None,
                   'afterSha256': shared.digest(payload)} for path, payload in pending.items()]}

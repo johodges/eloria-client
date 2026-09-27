@@ -61,6 +61,66 @@ class PublicationTests(unittest.TestCase):
         self.assertIn('type: river_otter\nx_pos: 15\ny_pos: 22', result)
         self.assertTrue(result.endswith('type: old_species\nx_pos: 11\ny_pos: 12\n'))
 
+    def test_definition_mapper_context_preserves_crlf_and_unselected_pairs(self):
+        text = ('# preserved header\r\n[instance]\r\nspawn_name: canyon_low\r\n'
+                'map_id: maps/room.elm\r\nentry_x: 2\r\nentry_y: 3\r\n'
+                'exit_map: four_gates\r\nexit_x:  7  \r\nexit_y: 8\r\n'
+                'keeper: Rider Anse\r\n[/instance]\r\n'
+                '[spawn]\r\nspawn_name: wildlife\r\nmap_id: maps/four_gates.elm\r\n'
+                'type: otter\r\nx_pos: 9\r\ny_pos: 10\r\n[/spawn]\r\n')
+        calls = []
+        def mapper(region, old, context):
+            calls.append((region, old, context))
+            return [21, 22] if context['section'] == 'instance' else None
+        result, count = P.rewrite_definition(text, maps(), point_mapper=mapper)
+        self.assertEqual(count, 4)
+        self.assertEqual(result, text.replace('exit_x:  7  ', 'exit_x:  21  ')
+                         .replace('exit_y: 8', 'exit_y: 22')
+                         .replace('x_pos: 9', 'x_pos: 15').replace('y_pos: 10', 'y_pos: 22'))
+        self.assertEqual(calls[0], ('four_gates', [7, 8], {
+            'section': 'instance', 'recordId': 'canyon_low', 'recordField': 'spawn_name',
+            'sectionOrdinal': 0, 'pairKind': 'exit', 'fields': ['exit_x', 'exit_y'],
+            'map': 'four_gates', 'sourceIndices': [7, 8]}))
+        self.assertEqual(calls[1][2]['recordId'], 'wildlife')
+        self.assertEqual(calls[1][2]['pairKind'], 'monster')
+
+    def test_definition_mapper_distinguishes_records_without_coordinate_identity(self):
+        text = ''.join('[instance]\nspawn_name: %s\nmap_id: room\nexit_map: four_gates\n'
+                       'exit_y: 8\nexit_x: 7\n[/instance]\n' % name for name in ('low', 'mid'))
+        calls = []
+        def mapper(region, old, context):
+            calls.append(context)
+            return [20 + context['sectionOrdinal'], 22]
+        result, count = P.rewrite_definition(text, maps(), point_mapper=mapper)
+        self.assertEqual(count, 4)
+        self.assertIn('exit_y: 22\nexit_x: 20', result)
+        self.assertIn('exit_y: 22\nexit_x: 21', result)
+        self.assertEqual([c['recordId'] for c in calls], ['low', 'mid'])
+        self.assertEqual([c['sourceIndices'] for c in calls], [[5, 4], [12, 11]])
+        changed = text.replace('exit_x: 7', 'exit_x: 107')
+        original_contexts = list(calls); calls.clear()
+        P.rewrite_definition(changed, maps(), point_mapper=mapper)
+        self.assertEqual(calls, original_contexts)
+
+    def test_definition_mapper_none_matches_default_and_keeps_record_field_provenance(self):
+        text = ('[instance]\nid: not_a_spawn_name\nmap_id: room\n'
+                'exit_map: four_gates\nexit_x: 7\nexit_y: 8')
+        calls = []
+        def mapper(region, old, context):
+            calls.append(context)
+            old[0] = 999  # Callback input is a copy; fallback retains parsed coordinates.
+        self.assertEqual(P.rewrite_definition(text, maps(), point_mapper=mapper),
+                         P.rewrite_definition(text, maps()))
+        self.assertEqual(calls[0]['recordField'], 'id')
+        self.assertFalse(P.rewrite_definition(text, maps())[0].endswith('\n'))
+
+    def test_definition_mapper_rejects_noninteger_targets_before_returning_text(self):
+        text = '[instance]\nspawn_name: low\nexit_map: four_gates\nexit_x: 7\nexit_y: 8\n'
+        for target in ([True, 2], [1.5, 2], [1.0, 2], [float('nan'), 2],
+                       [float('inf'), 2], ['1', 2], [1], [1, 2, 3], {'x': 1, 'y': 2}):
+            with self.subTest(target=target), self.assertRaisesRegex(ValueError, 'exact integers'):
+                P.rewrite_definition(text, maps(), point_mapper=lambda *_: target)
+
     def test_interior_return_marker_uses_destination_frame(self):
         record = {'id': 'room', 'arrival': [2, 3], 'exit': {'serverTile': [4, 5],
                   'destinationMap': 'four_gates', 'destinationTile': [7, 8], 'position': [1, 2, 3]}}

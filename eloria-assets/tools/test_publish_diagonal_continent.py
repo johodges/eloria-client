@@ -346,5 +346,71 @@ class PublicationTests(unittest.TestCase):
                 P.plan(client, server, path)
 
 
+
+
+class InstanceExitRecordTests(unittest.TestCase):
+    relative = 'config/eloria/instances/example.def'
+
+    def definition(self, tile=(4, 5), name='arena'):
+        return ('[instance]\nspawn_name: ' + name + '\nmap_id: interior\nentry_x: 9\nentry_y: 8\n'
+                'exit_map: four_gates\nexit_x: %d\nexit_y: %d\n' % tuple(tile))
+
+    def fixture(self):
+        regions = specs()
+        identity, source = next(iter(P.instance_exit_records(self.relative, self.definition(), regions).items()))
+        source['sha256'] = 'a' * 64
+        entry = {'source': source, 'previousTile': [10, 11], 'expectedTile': [16., 17.],
+                 'tile': [16, 17], 'maximumDisplacementMetres': 5,
+                 'postContent': {'standing': True, 'hubAccessible': True, 'noPortalTrigger': True}}
+        for spec in regions.values():
+            spec['instanceExitPositions'] = {}
+        regions['four_gates']['instanceExitPositions'][identity] = entry
+        mappings = {r: {'delta': [99, 99]} for r in regions}
+        return regions, identity, entry, mappings
+
+    def test_two_successive_publications_and_repeat_keep_record_separate_from_portals(self):
+        regions, identity, entry, mappings = self.fixture()
+        regions['four_gates']['tilePositions']['4:5'] = [1, 2]
+        regions['four_gates']['portalPositions'] = {'a': {'tile': [1, 2]}, 'b': {'tile': [2, 3]}}
+        entries = P.validate_instance_exit_table(regions, {identity: entry['source']})
+        first, _ = P.rewrite_instance_exits(self.relative, self.definition((10, 11)), mappings, entries, mode='served')
+        self.assertEqual(P.instance_exit_records(self.relative, first, regions)[identity]['originalTile'], [16, 17])
+        repeat, _ = P.rewrite_instance_exits(self.relative, first, mappings, entries, mode='repeated')
+        self.assertEqual(first, repeat)
+        next_entry = copy.deepcopy(entry); next_entry.update(previousTile=[16, 17], tile=[17, 17])
+        second, _ = P.rewrite_instance_exits(self.relative, first, mappings, {identity: next_entry}, mode='served')
+        reconstructed, _ = P.rewrite_instance_exits(self.relative, self.definition(), mappings, {identity: next_entry}, mode='source')
+        self.assertEqual(second, reconstructed)
+        self.assertEqual(regions['four_gates']['tilePositions'], {'4:5': [1, 2]})
+        self.assertEqual(regions['four_gates']['portalPositions']['b']['tile'], [2, 3])
+        self.assertEqual(P.placement_contracts(regions)['four_gates']['instanceExitPositions'][identity], entry)
+
+    def test_manual_edit_missing_duplicate_or_renamed_context_is_rejected(self):
+        regions, identity, entry, mappings = self.fixture()
+        for text in (self.definition((10, 12)), '', self.definition((10, 11))*2,
+                     self.definition((10, 11), 'other'), self.definition((10, 11)).replace('spawn_name:', 'id:')):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                P.rewrite_instance_exits(self.relative, text, mappings, {identity: entry}, mode='served')
+        for mutate in ('missing', 'wrong-source', 'over-budget', 'no-access'):
+            altered = copy.deepcopy(regions)
+            target = altered['four_gates']['instanceExitPositions']
+            if mutate == 'missing': target.clear()
+            elif mutate == 'wrong-source': target[identity]['source']['originalTile'] = [5, 5]
+            elif mutate == 'over-budget': target[identity]['tile'] = [23, 23]
+            else: target[identity].pop('postContent')
+            with self.subTest(mutate=mutate), self.assertRaises(ValueError):
+                P.validate_instance_exit_table(altered, {identity: entry['source']})
+
+    def test_staged_exit_is_checked_for_standing_and_actual_portal_trigger(self):
+        regions, identity, entry, _ = self.fixture()
+        blobs = {r: struct.pack('<4sHHII', b'EWCG', 2, 0, 48, 48) + bytes([20])*48*48 for r in regions}
+        self.assertEqual(P.validate_standing_points(regions, blobs, {}, [], {identity: entry}), 3)
+        with self.assertRaisesRegex(ValueError, 'immediately triggers'):
+            P.validate_standing_points(regions, blobs, {'maps.txt': 'portal|four_gates|16|17|room|1|2'}, [], {identity: entry})
+        raw = bytearray(blobs['four_gates']); raw[16 + 34*48 + 32] = 0; blobs['four_gates'] = bytes(raw)
+        with self.assertRaisesRegex(ValueError, 'blocked'):
+            P.validate_standing_points(regions, blobs, {}, [], {identity: entry})
+
+
 if __name__ == '__main__':
     unittest.main()

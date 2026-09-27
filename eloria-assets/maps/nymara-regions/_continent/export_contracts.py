@@ -64,7 +64,8 @@ def terrain_revision(spec, collision, server_grid):
         'serverGridSha256': hashlib.sha256(np.ascontiguousarray(server_grid, dtype=np.uint8).tobytes()).hexdigest(),
         **{field: spec[field] for field in ('serverOrigin', 'serverCells', 'translation', 'arrival',
                                            'contentPositions')},
-        'runtimeBindingPositions': spec.get('runtimeBindingPositions', {})}
+        'runtimeBindingPositions': spec.get('runtimeBindingPositions', {}),
+        'instanceExitPositions': {identity: entry['tile'] for identity, entry in spec.get('instanceExitPositions', {}).items()}}
     storage = storage_record(spec['serverCells'], spec)
     if storage['serverTileMin'] != [0, 0] or 'authoringSpecSha256' in storage:
         identity['storage'] = storage
@@ -248,6 +249,21 @@ def verify_current_profile(server, baseline, certificate, previous, shared, publ
     certified_content = {name: (baseline / 'config/eloria' / name).read_text(encoding='utf-8')
                          for name in publisher.CONTENT}
     content_source_tiles = publisher.content_source_tile_counts(certified_content) if certified_content else {}
+    instance_entries = None
+    schema = previous.get('instanceExitSchema')
+    if schema is not None and (type(schema) is not int or schema != 1):
+        raise ValueError('Unsupported instance exit schema in previous publication')
+    if any('instanceExitPositions' in spec for spec in specs.values()) and schema != 1:
+        raise ValueError('Previous instance exit table requires its explicit schema')
+    if schema == 1:
+        sources = {}
+        for relative, digest in certificate['files'].items():
+            if relative.startswith('config/eloria/instances/') and relative.endswith('.def'):
+                for identity, source in publisher.instance_exit_records(
+                        relative, (baseline / relative).read_text(encoding='utf-8'), specs).items():
+                    source['sha256'] = digest
+                    sources[identity] = source
+        instance_entries = publisher.validate_instance_exit_table(specs, sources)
     regenerated = []
     for relative, expected in certificate['files'].items():
         path = server / relative
@@ -267,7 +283,10 @@ def verify_current_profile(server, baseline, certificate, previous, shared, publ
             if name == 'maps.txt':
                 text, _ = publisher.replace_crossings(text, previous['connections'], specs)
         elif name.endswith('.def') or name == 'questlines.txt':
-            text, _ = shared.rewrite_definition(old_text, mappings)
+            if instance_entries is not None and relative.startswith('config/eloria/instances/'):
+                text, _ = publisher.rewrite_instance_exits(relative, old_text, mappings, instance_entries, mode='source')
+            else:
+                text, _ = shared.rewrite_definition(old_text, mappings)
         elif relative in GAMEPLAY_SOURCES:
             kind = {'daily_quests.py': 'daily', 'world.py': 'world', 'walkthrough.py': 'walkthrough', 'pk.py': 'pk'}[name]
             text = publisher.rewrite_gameplay_source(old_text, kind, mappings)
@@ -347,8 +366,19 @@ def rebase_publication(publication, previous):
             mapping[current_key] = target
         spec['tilePositions'] = mapping
         spec['estimatedSourceTiles'] = estimated
-        for portal in spec['portalPositions'].values():
-            portal['oldTile'] = list(old_baseline[key(portal['oldTile'])])
+        for portal_id, portal in spec['portalPositions'].items():
+            identity = portal.get('runtimeBindingId')
+            if identity is not None:
+                current = prior.get('runtimeBindingPositions', {}).get(identity)
+                source = prior.get('runtimeBindingSourceTiles', {}).get(identity)
+                if current is None or source != portal['oldTile']:
+                    raise ValueError(f'{region}:{identity}: previous qualified portal provenance is missing')
+            else:
+                old_portal = prior.get('portalPositions', {}).get(portal_id)
+                if old_portal is None:
+                    raise ValueError(f'{region}:{portal_id}: previous portal identity is missing')
+                current = old_portal['tile']
+            portal['oldTile'] = list(current)
         spec['previousServerOrigin'] = list(prior['serverOrigin'])
         # All semantic points are explicit. The continuous fallback is identity
         # in the previous local frame; changed geographic rectangles are also
@@ -798,6 +828,48 @@ class RegionPlacement:
             **({'runtimeBindingId': identity} if binding is not None else {})})
         return tile
 
+    def place_instance_exit(self, identity, source, previous_tile):
+        """Reserve an independently identified return, never the generic tile cache."""
+        old = source['originalTile']
+        expected = self.expected(old, identity=None)
+        table = self.spec.setdefault('instanceExitPositions', {})
+        if identity in table:
+            raise PlacementError(f'{identity}: duplicate instance placement')
+        shared_exit = next((entry['tile'] for entry in table.values()
+                            if entry['expectedTile'] == expected.tolist() and
+                            self.valid(entry['tile'], allow_reserved=True)), None)
+        tile = shared_exit
+        if tile is None and self.valid(previous_tile) and math.dist(previous_tile, expected) <= 5 + 1e-8:
+            tile = list(previous_tile)
+        if tile is None:
+            tile = self.nearest(expected, 5.)
+        if tile is None:
+            self.failure(identity, old, expected, 5., 'No independent hub-connected instance exit within five metres')
+            return None
+        tile = list(map(int, tile))
+        entry = {'source': copy.deepcopy(source), 'previousTile': list(previous_tile),
+                 'expectedTile': expected.tolist(), 'tile': tile, 'maximumDisplacementMetres': 5}
+        table[identity] = entry
+        self.fixed.add(tuple(tile))
+        self.reserve(tile)
+        self.records.append({'region': self.region, 'record': identity, 'oldTile': list(old),
+                             'previousTile': list(previous_tile), 'expectedTile': expected.tolist(),
+                             'tile': tile, 'displacementMetres': math.dist(tile, expected),
+                             'previousServedDisplacementMetres': math.dist(tile, previous_tile),
+                             'maximumDisplacementMetres': 5, 'footprint': [1, 1],
+                             'binding': 'independent instance exit'})
+        return tile
+
+    def validate_instance_exits(self, departures):
+        # NPC placement owns a copy of the served grid. Recompute from that final
+        # grid, not the earlier crossing fold, before certifying every return.
+        self.reachable = self.sources.reachable_from(self.grid, self.array_tile(self.spec['arrival']), 2)
+        for identity, entry in self.spec.get('instanceExitPositions', {}).items():
+            tile = entry['tile']
+            if not self.valid(tile, allow_reserved=True) or tuple(tile) in departures:
+                raise PlacementError(f'{identity}: post-content instance exit lost hub access or triggers a portal')
+            entry['postContent'] = {'standing': True, 'hubAccessible': True, 'noPortalTrigger': True}
+
     def authored_default_spawn_tile(self):
         """Return the saved default spawn tile for an authored territory.
 
@@ -950,6 +1022,22 @@ def place_doors(text, placements, connections):
     return old_departures
 
 
+def instance_exit_predecessors(server, baseline, certificate, placements, publisher):
+    """Called only after the unchanged predecessor profile guard succeeded."""
+    result = {}
+    for relative, digest in certificate['files'].items():
+        if not relative.startswith('config/eloria/instances/') or not relative.endswith('.def'):
+            continue
+        original = publisher.instance_exit_records(relative, (baseline / relative).read_text(encoding='utf-8'), placements)
+        current = publisher.instance_exit_records(relative, (server / relative).read_text(encoding='utf-8'), placements)
+        if set(original) != set(current):
+            raise PlacementError(f'{relative}: predecessor instance identities changed')
+        for identity, source in original.items():
+            source['sha256'] = digest
+            result[identity] = (source, current[identity]['originalTile'])
+    return result
+
+
 def collect_gameplay_points(server, profile_text, placements, records, shared, publisher):
     """Exercise publication's own readers, so no supported source coordinate is omitted."""
     current = {'label': '', 'radius': 12., 'area': False, 'source': ''}
@@ -1015,7 +1103,12 @@ def collect_gameplay_points(server, profile_text, placements, records, shared, p
                 continue
             radius = 5. if relative.startswith('instances/') else 80. if relative.startswith('spawn_groups/') else 35.
             current.update(label=relative, radius=radius, area=False, source=relative)
-            shared.rewrite_definition(text, mappings)
+            if relative.startswith('instances/') and all('instanceExitPositions' in p.spec for p in placements.values()):
+                entries = {identity: entry for p in placements.values()
+                           for identity, entry in p.spec['instanceExitPositions'].items()}
+                publisher.rewrite_instance_exits('config/eloria/' + relative, text, mappings, entries, mode='source')
+            else:
+                shared.rewrite_definition(text, mappings)
     for relative, kind_ in (('eloria/world.py', 'world'), ('eloria/walkthrough.py', 'walkthrough'),
                              ('eloria/pk.py', 'pk'), ('eloria/daily_quests.py', 'daily')):
         path = server / relative
@@ -1206,6 +1299,7 @@ def export_contracts(world, content, manifests, output, server_path):
         for relative in GAMEPLAY_SOURCES if (server / relative).exists()}, 'baselineSha256': sha(baseline / 'snapshot.json')}
     publication = {'schema': 1, 'revision': REVISION, 'masterPath': exported['masterPath'],
         'masterSha256': exported['masterSha256'], 'sourceProfileSha256': fingerprints,
+        'instanceExitSchema': 1,
         'regions': {}, 'connections': copy.deepcopy(world.publication_connections),
         'visualConnections': copy.deepcopy(getattr(world, 'visual_connections', [])),
         'preloadDistance': 320, 'retainDistance': 420, 'maxResidentAdjacentMaps': 3,
@@ -1295,7 +1389,7 @@ def export_contracts(world, content, manifests, output, server_path):
                 '%s %d lanes (gate %d on its own lanes, %d moved)' % (
                     end['region'], end['lanes'], end['gateLanes'], end.get('gateLanesMoved', 0))
                 for end in seam['ends'])), flush=True)
-        _, rows = publisher.connection_rows(publication['connections'], publication['regions'])
+        _, crossing_rows = publisher.connection_rows(publication['connections'], publication['regions'])
         # The publish tool used to prove a departure against the far side's own
         # lane list; now that it reads the arrival straight out of the shared
         # grid, this is the question that check was standing in for - can an
@@ -1305,8 +1399,8 @@ def export_contracts(world, content, manifests, output, server_path):
         def arrival_stands(row):
             index = placements[row[3]].bounds.index_xy(int(row[4]), int(row[5]))
             return index is not None and bool(served[row[3]]['grid'][index[1], index[0]])
-        stranded = [row for row in rows if row[0] in served and row[3] in served and not arrival_stands(row)]
-        report['crossingArrivals'] = {'rows': len(rows), 'unreachable': len(stranded),
+        stranded = [row for row in crossing_rows if row[0] in served and row[3] in served and not arrival_stands(row)]
+        report['crossingArrivals'] = {'rows': len(crossing_rows), 'unreachable': len(stranded),
                                       'examples': [list(row) for row in stranded[:8]]}
         refused = [row for row in stranded if (row[0], row[3]) in widened]
         if refused:
@@ -1314,10 +1408,17 @@ def export_contracts(world, content, manifests, output, server_path):
                              + ', '.join('%s %s -> %s %s' % (r[0], r[1:3], r[3], r[4:6]) for r in refused[:8]))
         # Where a crossing puts a walker down is kept clear of content on the far
         # map as well: an actor stood there would leave the arrival nowhere to go.
-        for row in rows:
+        for row in crossing_rows:
             if (row[0], row[3]) in widened and row[3] in placements:
                 placements[row[3]].hold([row[4], row[5]])
         place_doors(texts['maps.txt'], placements, publication['connections'])
+        for p in placements.values():
+            p.spec['instanceExitPositions'] = {}
+        instance_sources = instance_exit_predecessors(server, baseline, certificate, placements, publisher)
+        for identity, (source, previous_tile) in instance_sources.items():
+            placements[source['map']].place_instance_exit(identity, source, previous_tile)
+        if report['failures']:
+            raise PlacementError('Instance exit placement failed; see contract-placement-report.json')
         chunk_metadata = []
         for region, p in placements.items():
             storage = []
@@ -1369,6 +1470,24 @@ def export_contracts(world, content, manifests, output, server_path):
             # Return metadata may name the same point as a bound doorway.
             identity = p.runtime_identity('config/eloria/maps.txt', target['oldTile'])
             p.place(target['oldTile'], 'interior return:' + target['source'], 5., identity=identity)
+        # Exact published departures include room doors as well as shared borders.
+        instance_specs = {r: p.spec for r, p in placements.items()}
+        instance_maps = {r: {'delta': [0, 0], '_native_mapper': lambda old, spec=spec: publisher.transform_tile(old, spec)}
+                         for r, spec in instance_specs.items()}
+        bound_originals = {name: texts[name] for name in ('maps.txt', 'territories.txt')}
+        bound_rewritten = {name: shared.rewrite_profile(text, shared.RULES[name], instance_maps)[0]
+                           for name, text in bound_originals.items()}
+        publisher.rewrite_runtime_binding_sources(bound_originals, bound_rewritten, instance_specs,
+                                                  certified_texts=bound_originals)
+        staged_maps, _ = publisher.replace_crossings(bound_rewritten['maps.txt'], publication['connections'], instance_specs)
+        departures = {r: set() for r in placements}
+        for _, fields in rows(staged_maps):
+            if fields[0] == 'portal' and len(fields) in (7, 8) and fields[1] in departures:
+                start = 2 if len(fields) == 7 else 3
+                departures[fields[1]].add(tuple(map(int, fields[start:start + 2])))
+        for region, p in placements.items():
+            p.validate_instance_exits(departures[region])
+        publisher.validate_instance_exit_table(instance_specs, {k: v[0] for k, v in instance_sources.items()})
         expected_bindings = set(getattr(content, 'runtime_bindings', {}))
         binding_regions = {}
         for region, placement in placements.items():

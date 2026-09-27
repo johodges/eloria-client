@@ -139,18 +139,29 @@ def map_name(raw):
     return Path(raw.strip().replace('\\', '/')).name.removesuffix('.gz').removesuffix('.elm')
 
 
-def rewrite_definition(text, maps):
-    """Map-scoped monster positions and instance return/entry points only."""
+def rewrite_definition(text, maps, *, point_mapper=None):
+    """Rewrite coordinate pairs, optionally with certified record context.
+
+    A mapper returns a two-integer target or None for the legacy map shift.
+    Context identifies syntax, never a mutable served coordinate; the caller
+    supplies the source path and validates uniqueness/certified provenance.
+    """
     current, destination, count, pairs = '', '', 0, {}
+    section, record_id, record_field, section_ordinal = '', '', '', -1
     rows = text.splitlines(keepends=True)
     for index, line in enumerate(rows):
         if line.strip() in ('[spawn]', '[instance]', '[stage]'):
+            section = line.strip()[1:-1]
+            record_id, record_field = '', ''
+            section_ordinal += 1
             current, destination = '', ''
             pairs.clear()
         match = re.fullmatch(r'(\s*)([a-z_]+)(\s*:\s*)([^\r\n]*)(\r?\n)?', line)
         if not match:
             continue
         key, value = match[2], match[4]
+        if key == 'spawn_name' or (key in ('id', 'key') and not record_field):
+            record_id, record_field = value.strip(), key
         if key in ('map_id', 'map'):
             current = map_name(value)
         elif key == 'exit_map':
@@ -165,7 +176,19 @@ def rewrite_definition(text, maps):
             pair[spec[1]] = (index, match)
             if len(pair) == 2:
                 old = [int(pair[axis][1][4]) for axis in (0, 1)]
-                point = shifted(old, spec[0], maps)
+                point = None
+                if point_mapper is not None:
+                    context = {'section': section, 'recordId': record_id,
+                               'recordField': record_field, 'sectionOrdinal': section_ordinal,
+                               'pairKind': kind, 'fields': [pair[i][1][2] for i in (0, 1)],
+                               'map': spec[0], 'sourceIndices': [pair[i][0] for i in (0, 1)]}
+                    point = point_mapper(spec[0], list(old), context)
+                    if point is not None:
+                        if (not isinstance(point, (list, tuple)) or len(point) != 2 or
+                                any(isinstance(n, bool) or not isinstance(n, int) for n in point)):
+                            raise ValueError('Definition point mapper must return two exact integers or None')
+                if point is None:
+                    point = shifted(old, spec[0], maps)
                 for axis in (0, 1):
                     at, found = pair[axis]
                     if point[axis] != old[axis]:

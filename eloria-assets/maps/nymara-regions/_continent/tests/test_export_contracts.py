@@ -1516,3 +1516,108 @@ class ContentTransformTests(unittest.TestCase):
         old = (np.asarray(self.PROBES, float) - source) * published['scale'] + [900., 500.]
         np.testing.assert_allclose(old, self.mapped(published, self.PROBES), atol=1e-7)
         np.testing.assert_allclose(old, L.retained_map_xz(transform, self.PROBES), atol=1e-7)
+
+
+def test_instance_exit_placement_ignores_generic_cache_and_preserves_shared_returns():
+    p = placement(); p.reserved[:] = False
+    p.spec['tilePositions']['6:7'] = [28, 28]
+    source = {'originalTile': [6, 7], 'map': 'test', 'path': 'config/eloria/instances/a.def'}
+    generic = copy.deepcopy(p.spec['tilePositions'])
+    tile = p.place_instance_exit('a', source, [28, 28])
+    assert tile == [6, 7]
+    assert p.spec['tilePositions'] == generic
+    assert p.place_instance_exit('b', source, [28, 28]) == tile
+    assert tuple(tile) in p.fixed and p.reserved[7, 6]
+    p.validate_instance_exits(set())
+    assert p.spec['instanceExitPositions']['a']['postContent']['hubAccessible']
+    assert p.spec['instanceExitPositions']['a']['previousTile'] == [28, 28]
+    with pytest.raises(E.PlacementError, match='duplicate'):
+        p.place_instance_exit('a', source, [28, 28])
+
+
+def test_instance_exit_budget_and_postcontent_checks_are_not_waived():
+    source = {'originalTile': [6, 7], 'map': 'test'}
+    p = placement(); p.reserved[:] = True
+    assert p.place_instance_exit('a', source, [28, 28]) is None
+    assert p.failures[-1]['maximumDisplacementMetres'] == 5
+    for kind in ('blocked', 'disconnected', 'trigger'):
+        p = placement(); p.reserved[:] = False
+        p.place_instance_exit('a', source, [6, 7])
+        if kind == 'blocked': p.grid[7, 6] = 0
+        if kind == 'disconnected': p.grid[10, :] = 0
+        with pytest.raises(E.PlacementError, match='post-content'):
+            p.validate_instance_exits({(6, 7)} if kind == 'trigger' else set())
+
+
+def test_instance_exit_fixed_destination_survives_storage_and_body_policy():
+    p = placement(); p.reserved[:] = False
+    p.place_instance_exit('a', {'originalTile': [6, 7], 'map': 'test'}, [6, 7])
+    assert not p.valid([6, 7])
+    # A malicious later body write is caught even if it bypassed reservation.
+    p.stamp_storage([[6, 7]])
+    assert any('fixed route' in row['record'] for row in p.failures)
+
+
+def test_qualified_portal_rebase_uses_each_prior_record_not_collapsed_tile():
+    def current(a, b):
+        return {'regions': {'test': {'tilePositions': {'4:5': a}, 'previousServerOrigin': [15,15],
+            'serverOrigin': [15,15], 'contentTransform': {}, 'removedInteractiveIds': [],
+            'runtimeBindingPositions': {'a': a, 'b': b},
+            'runtimeBindingSourceTiles': {'a': [4,5], 'b': [4,5]},
+            'portalPositions': {'first': {'oldTile': [4,5], 'tile': a, 'runtimeBindingId': 'a'},
+                                'second': {'oldTile': [4,5], 'tile': b, 'runtimeBindingId': 'b'}}}}}
+    first = current([10,11], [12,13]); E.rebase_publication(first, None)
+    second = current([11,11], [13,13]); E.rebase_publication(second, first)
+    third = current([11,12], [13,14]); E.rebase_publication(third, second)
+    assert second['regions']['test']['portalPositions']['second']['oldTile'] == [12,13]
+    assert third['regions']['test']['portalPositions']['second']['oldTile'] == [13,13]
+    broken = current([11,11], [13,13]); del first['regions']['test']['runtimeBindingPositions']['b']
+    with pytest.raises(ValueError, match='qualified portal provenance'):
+        E.rebase_publication(broken, first)
+
+
+def test_instance_guard_and_predecessor_read_exact_record_history_across_publications(tmp_path, monkeypatch):
+    monkeypatch.syspath_prepend(str(E.TOOLS))
+    import publish_diagonal_continent as publisher
+    shared = publisher.shared
+    monkeypatch.setattr(publisher, 'CONTENT', {})
+    server, baseline = tmp_path/'server', tmp_path/'baseline'
+    relative = 'config/eloria/instances/example.def'
+    def definition(tile):
+        return '[instance]\nspawn_name: arena\nexit_map: test\nexit_x: %d\nexit_y: %d\n' % tuple(tile)
+    for base, tile in ((baseline, [4,5]), (server, [16,17])):
+        target = base/relative; target.parent.mkdir(parents=True); target.write_text(definition(tile))
+    digest = E.sha(baseline/relative)
+    identity, source = next(iter(publisher.instance_exit_records(relative, definition([4,5]), {'test': {}}).items()))
+    source['sha256'] = digest
+    entry = {'source': source, 'previousTile': [10,11], 'expectedTile': [16.,17.], 'tile': [16,17],
+             'maximumDisplacementMetres': 5,
+             'postContent': {'standing': True, 'hubAccessible': True, 'noPortalTrigger': True}}
+    previous = {'instanceExitSchema': 1, 'connections': [], 'regions': {'test': {
+        'baselineTilePositions': {'4:5': [1,2]}, 'baselineServerOrigin': [15,15],
+        'serverOrigin': [15,15], 'baselineContentTransform': {}, 'baselineRemovedInteractiveIds': [],
+        'runtimeBindingSourceTiles': {'a': [4,5], 'b': [4,5]},
+        'portalPositions': {'a': {'runtimeBindingId': 'a', 'tile': [1,2]},
+                            'b': {'runtimeBindingId': 'b', 'tile': [2,3]}},
+        'instanceExitPositions': {identity: entry}}}}
+    certificate = {'files': {relative: digest}}
+    E.verify_current_profile(server, baseline, certificate, previous, shared, publisher)
+    predecessors = E.instance_exit_predecessors(server, baseline, certificate, previous['regions'], publisher)
+    assert predecessors[identity] == (source, [16,17])
+    # Second coordinated publication has its own previous/final record history.
+    entry.update(previousTile=[16,17], tile=[17,17])
+    (server/relative).write_text(definition([17,17]))
+    E.verify_current_profile(server, baseline, certificate, previous, shared, publisher)
+    for changed in (definition([2,3]), definition([17,18]), definition([17,17])+'name: edited\n'):
+        (server/relative).write_text(changed)
+        with pytest.raises(ValueError, match='beyond the previous coordinated'):
+            E.verify_current_profile(server, baseline, certificate, previous, shared, publisher)
+    (server/relative).write_text(definition([17,17]))
+    for invalid_schema in (None, 2, True):
+        previous['instanceExitSchema'] = invalid_schema
+        with pytest.raises(ValueError, match='schema'):
+            E.verify_current_profile(server, baseline, certificate, previous, shared, publisher)
+    previous['instanceExitSchema'] = 1
+    previous['regions']['test']['instanceExitPositions'].clear()
+    with pytest.raises(ValueError, match='incomplete'):
+        E.verify_current_profile(server, baseline, certificate, previous, shared, publisher)
