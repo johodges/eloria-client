@@ -15,6 +15,7 @@ import hashlib
 import inspect
 import json
 from pathlib import Path
+import re
 import struct
 import sys
 import time
@@ -542,8 +543,8 @@ def saved_deck_height(xz, deck_groups):
     return result
 
 
-def saved_walk_decks(client, generated, composition, inputs):
-    """Read active saved crossing/access floors from their exact emitted master subtrees.
+def saved_walk_surfaces(client, generated, composition, inputs, roads=()):
+    """Read certified saved decks and road surfaces from the emitted master.
 
     The snapshot records select the physical Walk root. A persistent crossing
     claim alone never makes a missing or moved floor pass the road audit.
@@ -564,11 +565,11 @@ def saved_walk_decks(client, generated, composition, inputs):
             yield index
             pending.extend(nodes[index].get('children', ()))
 
-    def triangles_of(indices):
+    def triangles_of(indices, *, walkable_only=True):
         parts = []
         for index in indices:
             node = nodes[index]
-            if 'mesh' not in node or any(any(word in name.lower() for word in C.CEILINGS) for name in names[index]):
+            if 'mesh' not in node or (walkable_only and any(any(word in name.lower() for word in C.CEILINGS) for name in names[index])):
                 continue
             matrix = matrices[index]
             for primitive in master['meshes'][node['mesh']]['primitives']:
@@ -580,15 +581,18 @@ def saved_walk_decks(client, generated, composition, inputs):
                 world = (matrix[:3, :3] @ points.T).T + matrix[:3, 3]
                 parts.append(world[order].reshape(-1, 3, 3))
         triangles = np.concatenate(parts) if parts else np.zeros((0, 3, 3))
-        if len(triangles):
+        if len(triangles) and walkable_only:
             normal = np.cross(triangles[:, 1] - triangles[:, 0], triangles[:, 2] - triangles[:, 0])
             length = np.linalg.norm(normal, axis=1)
             upward = 1 / np.sqrt(1 + C.MAX_GRADE ** 2) - 1e-9
             triangles = triangles[(length > 1e-9) & (normal[:, 1] > length * upward)]
         return triangles
 
-    groups = []
+    groups, road_groups = [], {}
     records = composition.get('continentAuthoring', {}).get('regions', {})
+    published = {road['id']: road for road in roads}
+    require(len(published) == len(roads), 'Ambiguous published road identities')
+    owner_pattern = '|'.join(re.escape(region) for region in records)
     for region, certificate in records.items():
         source = [path for path in certificate['sources'] if path.endswith('/authoring/continent-authoring.json')]
         require(len(source) == 1, f'{region}: missing unique certified saved snapshot')
@@ -597,6 +601,31 @@ def saved_walk_decks(client, generated, composition, inputs):
                 f'{region}: saved snapshot changed after composition')
         snapshot = inputs.json(path)
         require(snapshot['regionId'] == region, f'{region}: saved snapshot region differs from composition')
+        for road in snapshot.get('paths', []):
+            if road['kind'] != 'road':
+                continue
+            identity = road.get('replacesRouteId') or road['id']
+            require(identity in published, f'{region}: saved road {identity} missing from published routes')
+            require(identity not in road_groups, f'{region}: ambiguous saved road identity {identity}')
+            # Route IDs may differ from local authoring IDs. Bind both the
+            # certified source XZ and the exporter's exact mesh-name format.
+            controls = np.asarray([point['position'] for point in road['points']], float)
+            controls += np.asarray(snapshot['continentTranslation'], float)
+            route = np.asarray(published[identity]['points'], float)
+            require(route.shape == controls.shape and np.allclose(route[:, [0, 2]], controls[:, [0, 2]], rtol=0., atol=1e-6),
+                    f'{region}: saved road {identity} differs from published route XZ')
+            local_name = road['id'] if region == 'sunmane_steppe' else region + '_' + road['id']
+            pattern = re.compile(r'Walk_' + re.escape(local_name) + r'_(?:' + owner_pattern + r')_[0-9]+_[0-9]+')
+            selected = [index for index, node in enumerate(nodes)
+                        if 'mesh' in node and pattern.fullmatch(node.get('name', ''))]
+            selected_names = [nodes[index]['name'] for index in selected]
+            require(selected and len(selected_names) == len(set(selected_names)),
+                    f'{region}: saved road {identity} missing or ambiguous in emitted master')
+            triangles = triangles_of(selected, walkable_only=False)
+            require(len(triangles) > 0 and np.isfinite(triangles).all(),
+                    f'{region}: saved road {identity} has no finite emitted triangles')
+            projected = triangles[:, :, [0, 2]]
+            road_groups[identity] = [(projected.min(axis=(0, 1)), projected.max(axis=(0, 1)), triangles)]
         for obj in snapshot['objects']:
             if obj.get('collisionRole') != 'walk_surface':
                 continue
@@ -615,7 +644,7 @@ def saved_walk_decks(client, generated, composition, inputs):
             require(len(triangles) > 0, f'{region}: saved walk root {walk_name} has no walkable emitted triangles')
             projected = triangles[:, :, [0, 2]]
             groups.append((projected.min(axis=(0, 1)), projected.max(axis=(0, 1)), triangles))
-    return groups
+    return groups, road_groups
 
 
 def river_curve(river):
@@ -649,7 +678,7 @@ def wet_width(river_water_at, centre, normal, reach, edges=False):
 
 def road_rule_findings(roads, sites, rivers, policy, ground_at, river_water_at, piers=(), designed_boxes=(), union_vertices=None,
                        authored_deck_triangles=(),
-                       sea_near_at=None, sea_at=None, seam_near_at=None, saved_deck_groups=()):
+                       sea_near_at=None, sea_at=None, seam_near_at=None, saved_deck_groups=(), saved_road_groups=None):
     """Every breach of the road rules, with the measured totals; pure over its inputs (the audit's and tests' fixtures).
 
     ``sea_near_at(x, z)`` marks points over the sea or within a deck landing of it: a road there is on a sea span or its
@@ -679,6 +708,14 @@ def road_rule_findings(roads, sites, rivers, policy, ground_at, river_water_at, 
             continue
         totals['stations'] += len(stations)
         xz = stations[:, [0, 2]]
+        if saved_road_groups is not None and road['id'] in saved_road_groups:
+            height = saved_deck_height(xz, saved_road_groups[road['id']])
+            require(np.isfinite(height).all(), f"{road['id']}: emitted saved road does not cover every rule station")
+            # Source curve Y controls terrain shaping, not the rendered ribbon.
+            # Keep the same stations/rules, measuring the actual highest road
+            # triangle where consistent chunk boundaries overlap. A raised
+            # emitted road still fails the unchanged clearance limit.
+            stations[:, 1] = height
         deck_height = authored_deck_height(xz, authored_deck_triangles)
         if saved_deck_groups:
             deck_height = np.maximum(deck_height, saved_deck_height(xz, saved_deck_groups))
@@ -853,10 +890,10 @@ def audit_road_rules(generated, plan, surface, inputs, composition):
     seam_distance = np.pad(distance_transform_edt(~boundary) * surface.cell, ((0, 1), (0, 1)), mode='edge') if boundary.any() else np.full(heights.shape, np.inf)
     def seam_near_at(x, z):
         return lattice(seam_distance, x, z) <= float(policy['seam_metres'])
-    saved_decks = saved_walk_decks(surface.client, generated, composition, inputs)
+    saved_decks, saved_roads = saved_walk_surfaces(surface.client, generated, composition, inputs, record['roads'])
     findings = road_rule_findings(record['roads'], record.get('crossingSites', []), plan.get('rivers', []), policy, ground_at, river_water_at,
                                   piers, boxes, np.concatenate(union) if union else None,
-                                  np.concatenate(authored_decks) if authored_decks else (), sea_near_at, sea_at, seam_near_at, saved_decks)
+                                  np.concatenate(authored_decks) if authored_decks else (), sea_near_at, sea_at, seam_near_at, saved_decks, saved_roads)
     require(not findings['violations'], 'Road rules: ' + '; '.join(findings['violations'][:12]) + (f' (and {len(findings["violations"]) - 12} more)' if len(findings['violations']) > 12 else ''))
     return findings['totals']
 

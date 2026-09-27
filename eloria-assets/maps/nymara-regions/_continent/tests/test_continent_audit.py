@@ -262,6 +262,82 @@ def rule_fixture():
 
 
 class RoadRuleTests(unittest.TestCase):
+    def test_saved_road_association_uses_certified_alias_xz_and_exact_emitted_nodes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            relative = Path('amberwood/authoring/continent-authoring.json')
+            path = root / relative
+            path.parent.mkdir(parents=True)
+            snapshot = {'regionId': 'amberwood', 'continentTranslation': [10., 0., 20.], 'objects': [],
+                        'paths': [{'kind': 'road', 'id': 'local-lane', 'replacesRouteId': 'published-lane',
+                                   'points': [{'position': [0., 9., 0.]}, {'position': [4., 9., 0.]}]}]}
+            route = {'id': 'published-lane', 'points': [[10., 9., 20.], [14., 9., 20.]]}
+            doc = {'nodes': [{'name': 'placement', 'translation': [10., 0., 20.], 'children': [1]},
+                             {'name': 'Walk_amberwood_local-lane_amberwood_00_00', 'mesh': 0},
+                             {'name': 'Walk_amberwood_local-lane-other_amberwood_00_00', 'mesh': 1}],
+                   'meshes': [{'primitives': [{'attributes': {'POSITION': 0}, 'indices': 1}]},
+                              {'primitives': [{'attributes': {'POSITION': 2}, 'indices': 1}]}]}
+            points = np.array([[0., .055, -1.], [0., .055, 1.], [4., .055, -1.],
+                               [4., .055, -1.], [0., .055, 1.], [4., .055, 1.]])
+            unrelated = points.copy(); unrelated[:, 1] = 10.
+            arrays = {0: points, 1: np.arange(6), 2: unrelated}
+
+            def read_surfaces(document, roads, saved=snapshot, stale=False):
+                path.write_text(json.dumps(saved))
+                digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                certificate = {'continentAuthoring': {'regions': {'amberwood': {
+                    'snapshotSha256': digest, 'sources': {relative.as_posix(): digest}}}}}
+                if stale:
+                    path.write_text(json.dumps(saved) + ' ')
+                with patch.object(A.GR, 'load', return_value=(document, b'')), patch.object(A.GR, 'accessor', side_effect=lambda _d, _b, i: arrays[i]):
+                    return A.saved_walk_surfaces(root, root, certificate, A.Inputs(), roads)
+
+            decks, surfaces = read_surfaces(doc, [route])
+            self.assertEqual(decks, [])
+            np.testing.assert_allclose(A.saved_deck_height([[10., 20.], [12., 20.], [14., 20.]], surfaces['published-lane']), .055)
+            missing = copy.deepcopy(doc); missing['nodes'][1]['name'] = 'Walk_unrelated_amberwood_00_00'
+            duplicate = copy.deepcopy(doc); duplicate['nodes'].append(copy.deepcopy(duplicate['nodes'][1]))
+            wrong_route = copy.deepcopy(route); wrong_route['points'][1][0] += 1.
+            duplicate_saved = copy.deepcopy(snapshot); duplicate_saved['paths'].append(copy.deepcopy(snapshot['paths'][0]))
+            cases = [(doc, [], snapshot, False, 'missing from published'),
+                     (doc, [route, route], snapshot, False, 'Ambiguous published'),
+                     (missing, [route], snapshot, False, 'missing or ambiguous'),
+                     (duplicate, [route], snapshot, False, 'missing or ambiguous'),
+                     (doc, [wrong_route], snapshot, False, 'route XZ'),
+                     (doc, [route], duplicate_saved, False, 'ambiguous saved road'),
+                     (doc, [route], snapshot, True, 'changed after composition')]
+            for document, roads, saved, stale, message in cases:
+                with self.subTest(message=message), self.assertRaisesRegex(A.AuditError, message):
+                    read_surfaces(document, roads, saved, stale)
+
+    def test_saved_road_rules_measure_actual_surface_and_keep_float_and_water_limits(self):
+        road = {'id': 'saved', 'points': [[0., 9., 0.], [4., 9., 0.]]}
+        original = copy.deepcopy(road)
+        def group(height, low=0., high=4.):
+            tri = np.array([[[low, height, -1.], [low, height, 1.], [high, height, -1.]],
+                            [[high, height, -1.], [low, height, 1.], [high, height, 1.]]])
+            return (np.array([low, -1.]), np.array([high, 1.]), tri)
+        ground = lambda x, z: np.zeros_like(x)
+        dry = lambda x, z: np.zeros_like(x, dtype=bool)
+        policy = {'deck_landing_metres': 6., 'minimum_spacing_metres': 100.}
+        for heights, floating in [([.055], False), ([.055, .055], False), ([.055, 3.], True), ([3., .055], True)]:
+            with self.subTest(heights=heights):
+                result = A.road_rule_findings([road], [], [], policy, ground, dry,
+                    saved_road_groups={'saved': [group(h) for h in heights]})
+                self.assertEqual(bool(result['violations']), floating)
+                if floating:
+                    self.assertIn('above the ground', result['violations'][0])
+        # A procedural route still measures its original Y, and grounded
+        # authored roads over water still require a real crossing span.
+        self.assertTrue(A.road_rule_findings([road], [], [], policy, ground, dry)['violations'])
+        wet = lambda x, z: np.ones_like(x, dtype=bool)
+        self.assertIn('over river water', A.road_rule_findings([road], [], [], policy, ground, wet,
+            saved_road_groups={'saved': [group(.055)]})['violations'][0])
+        with self.assertRaisesRegex(A.AuditError, 'cover every rule station'):
+            A.road_rule_findings([road], [], [], policy, ground, dry,
+                saved_road_groups={'saved': [group(.055, low=1.)]})
+        self.assertEqual(road, original)
+
     def test_saved_walk_floor_uses_certified_wrapper_and_emitted_walkable_triangles(self):
         rivers, water, ground, site, policy = rule_fixture()
         with tempfile.TemporaryDirectory() as tmp:
@@ -298,7 +374,7 @@ class RoadRuleTests(unittest.TestCase):
             roof = deck.copy(); roof[:, 1] = 10.
             arrays = {0: deck, 1: np.arange(6), 2: roof}
             with patch.object(A.GR, 'load', return_value=(doc, b'')), patch.object(A.GR, 'accessor', side_effect=lambda _d, _b, i: arrays[i]):
-                groups = A.saved_walk_decks(root, root, composition, A.Inputs())
+                groups, _ = A.saved_walk_surfaces(root, root, composition, A.Inputs())
             self.assertEqual(len(groups), 1)
             supported = {'id': 'saved-crossing', 'points': [[112., 2.5, 104.], [128., 2.5, 104.]]}
             self.assertEqual(A.road_rule_findings([supported], [], rivers, policy, ground, water,
@@ -319,7 +395,7 @@ class RoadRuleTests(unittest.TestCase):
             missing['nodes'][2]['name'] = 'Walk_Deleted'
             with patch.object(A.GR, 'load', return_value=(missing, b'')), patch.object(A.GR, 'accessor', side_effect=lambda _d, _b, i: arrays[i]):
                 with self.assertRaisesRegex(A.AuditError, 'saved walk root'):
-                    A.saved_walk_decks(root, root, composition, A.Inputs())
+                    A.saved_walk_surfaces(root, root, composition, A.Inputs())
 
     def test_a_square_crossing_at_a_site_on_the_ground_passes(self):
         rivers, water, ground, site, policy = rule_fixture()
