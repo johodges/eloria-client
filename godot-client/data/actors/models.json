@@ -4654,7 +4654,7 @@
         "body": "body",
         "neck": "neck"
       },
-      "serverActorType": null
+      "serverActorType": 785
     },
     "sunmane_dun_mare": {
       "scene": "res://assets/actors/native/creatures/sunmane_dun_mare.glb",
@@ -4672,7 +4672,7 @@
         "body": "body",
         "neck": "neck"
       },
-      "serverActorType": null
+      "serverActorType": 786
     },
     "sunmane_grey_pony": {
       "scene": "res://assets/actors/native/creatures/sunmane_grey_pony.glb",
@@ -4690,7 +4690,7 @@
         "body": "body",
         "neck": "neck"
       },
-      "serverActorType": null
+      "serverActorType": 787
     },
     "abyssal_armored_fish": {
       "scene": "res://assets/actors/native/creatures/abyssal_armored_fish.glb",
@@ -8917,7 +8917,10 @@
     "781": "animated_sword",
     "782": "giant_antlion",
     "783": "sphinx",
-    "784": "air_elemental"
+    "784": "air_elemental",
+    "785": "sunmane_steppe_horse",
+    "786": "sunmane_dun_mare",
+    "787": "sunmane_grey_pony"
   },
   "creationOptions": [
     {
