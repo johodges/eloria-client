@@ -21,6 +21,7 @@ import time
 
 import numpy as np
 from storage_bounds import storage_record
+import runtime_content_amendment as amendments
 
 HERE = Path(__file__).resolve().parent
 TOOLS = HERE.parents[2] / 'tools'
@@ -195,9 +196,15 @@ def profile_fields(text):
     return [[field.strip() for field in line.split('|')] for line in text.splitlines() if line.strip()]
 
 
-def verify_current_profile(server, baseline, certificate, previous, shared, publisher):
-    """Reject content edits that an old snapshot would silently overwrite."""
+def verify_current_profile(server, baseline, certificate, previous, shared, publisher, amendment=None):
+    """Reject content edits that an old snapshot would silently overwrite.
+
+    ``amendment`` (runtime_content_amendment.load) lists rows appended to the
+    frozen content files after their freeze; they are rebuilt with the rest.
+    """
     if previous is None:
+        if amendment is not None:
+            raise ValueError('A runtime content amendment needs a certified publication to seat its rows')
         for relative, expected in certificate['files'].items():
             if not (server / relative).exists() or sha(server / relative) != expected:
                 raise ValueError(f'{relative}: current server differs from immutable pre-publication baseline')
@@ -246,8 +253,9 @@ def verify_current_profile(server, baseline, certificate, previous, shared, publ
         publisher.rewrite_runtime_binding_sources(
             bound_originals, bound_rewritten, specs,
             previous_placements=None, certified_texts=bound_originals)
-    certified_content = {name: (baseline / 'config/eloria' / name).read_text(encoding='utf-8')
-                         for name in publisher.CONTENT}
+    certified_content = amendments.amend(
+        {name: (baseline / 'config/eloria' / name).read_text(encoding='utf-8')
+         for name in publisher.CONTENT}, amendment)
     content_source_tiles = publisher.content_source_tile_counts(certified_content) if certified_content else {}
     instance_entries = None
     schema = previous.get('instanceExitSchema')
@@ -274,6 +282,7 @@ def verify_current_profile(server, baseline, certificate, previous, shared, publ
         if name == 'client_content_manifest.json':
             continue  # Digests and generated package metadata legitimately change at publication.
         if name in publisher.CONTENT:
+            old_text = certified_content[name]
             text, _ = publisher.rewrite_content(old_text, name, specs, False, content_source_tiles)
         elif name in shared.RULES:
             if name in bound_rewritten:
@@ -1299,12 +1308,17 @@ def export_contracts(world, content, manifests, output, server_path):
     if previous and not (baseline / 'interior-return-targets.json').exists():
         raise ValueError('Original interior return snapshot is missing after publication; do not sample already-transformed room metadata')
     interior_returns = freeze_return_targets(baseline, publisher)
-    verify_current_profile(server, baseline, certificate, previous, shared, publisher)
+    # Rows added after the freeze are certified by the committed amendment.
+    amendment = amendments.for_certificate(amendments.load(HERE / amendments.PATH.name), certificate)
+    amendments.validate(amendment, {name: (baseline / 'config/eloria' / name).read_text(encoding='utf-8')
+                                    for name in publisher.CONTENT}, publisher.CONTENT)
+    verify_current_profile(server, baseline, certificate, previous, shared, publisher, amendment)
     profile = baseline / 'config/eloria'
     relative_paths = [relative for relative in certificate['files'] if relative.startswith('config/eloria/')]
     profile_paths = [server / relative for relative in relative_paths]
     fingerprints = {relative.removeprefix('config/eloria/'): sha(server / relative) for relative in relative_paths}
-    texts = {relative.removeprefix('config/eloria/'): (baseline / relative).read_text(encoding='utf-8') for relative in relative_paths}
+    texts = amendments.amend({relative.removeprefix('config/eloria/'): (baseline / relative).read_text(encoding='utf-8')
+                              for relative in relative_paths}, amendment)
     old_manifest = json.loads(texts['client_content_manifest.json'])
     old_maps = {v['id']: v for v in old_manifest['maps']}
     creatures = modules['eloria.creatures'].load_creatures(profile / 'creatures.txt')
@@ -1312,13 +1326,16 @@ def export_contracts(world, content, manifests, output, server_path):
     report = {'schema': 1, 'revision': REVISION, 'placements': [], 'failures': [], 'regions': {},
         'sourceProfileSha256': fingerprints, 'sourceCodeSha256': {relative: sha(server / relative)
         for relative in GAMEPLAY_SOURCES if (server / relative).exists()}, 'baselineSha256': sha(baseline / 'snapshot.json')}
+    if amendment is not None:
+        report['contentAmendmentSha256'] = amendment['sha256']
     publication = {'schema': 1, 'revision': REVISION, 'masterPath': exported['masterPath'],
         'masterSha256': exported['masterSha256'], 'sourceProfileSha256': fingerprints,
         'instanceExitSchema': 2,
         'regions': {}, 'connections': copy.deepcopy(world.publication_connections),
         'visualConnections': copy.deepcopy(getattr(world, 'visual_connections', [])),
         'preloadDistance': 320, 'retainDistance': 420, 'maxResidentAdjacentMaps': 3,
-        'baselineSha256': report['baselineSha256'], 'sourceCodeSha256': report['sourceCodeSha256']}
+        'baselineSha256': report['baselineSha256'], 'sourceCodeSha256': report['sourceCodeSha256'],
+        **({'contentAmendmentSha256': amendment['sha256']} if amendment is not None else {})}
     previous_publication = current_manifest.get('diagonalContinent', {}).get('publicationSha256')
     if previous_publication:
         publication['sourcePublicationSha256'] = previous_publication

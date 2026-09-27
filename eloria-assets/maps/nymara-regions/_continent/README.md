@@ -507,6 +507,17 @@ it does not carve invisible routes through cliffs or move a doorway far from
 its building.
 
 `legacy-server-profile/` preserves the original coordinate authority.
+Content rows added after that freeze are listed in
+`runtime-content-amendments.json` (`runtime_content_amendment.py`). Each block
+is appended after the last line of its frozen content file, so frozen rows keep
+their lines and identities and the new rows take the next lines and ordinals.
+Contract export places and binds them like frozen rows (each needs a saved
+runtime marker, in the region's seed and counts), the profile check rebuilds
+them, and publication rewrites them by the same identity.
+`python runtime_content_amendment.py --server <server> [--check]` writes (or
+checks) the blocks in a server's served files, at the tiles the last certified
+publication gives them. Sunmane's herds (`sunmane-herds-v1`: wild golden plains
+horses and `tame` camp horses) are the first block.
 `publication-history/` records exact prior remaps so a revised build can move
 from currently served coordinates without deforming them twice. Interior-local
 coordinates remain local; exterior return positions follow the new landscape.
