@@ -1,6 +1,6 @@
 {
-  "masterPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\nymara-regions\\_continent\\generated\\continent.glb",
-  "masterSha256": "e3a139bd73ae2be28ba66a22600bbdc39d0ef22e6cc78c9a9ab7de45db12f066",
+  "masterPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\_continent\\generated\\continent.glb",
+  "masterSha256": "ce1f472e785339ade101ad86e131bac2d39fb587949ef6a37f8e30bb5bc8d1a7",
   "geometrySources": {
     "build_continent.py": "482ce2c09764b0c98d73a91b57b0493328b1a2a51c766149e39ca909c3acc8c6",
     "scene_io.py": "cd45695b93412a174731d5e6932fbc52d5530afda56a38c428d46f20e0633f64",
@@ -29,7 +29,7 @@
     "shapely": "2.1.2",
     "geos": "3.13.1"
   },
-  "compositionSha256": "a49c012f10e7522ebac76a68c2e66c37193cfaf20194c0c1c3b06fd27085b92e",
+  "compositionSha256": "1b43b98a1f68e9f06b34d1f60a327bf81d382a84b2d6b9bc519b4fc968c50623",
   "greyCrossingLandmarks": [
     {
       "id": "grey-boardwalk-0",
@@ -79,14 +79,14 @@
     "beforeBinaryBytes": 1589044392,
     "afterBinaryBytes": 763136352,
     "savedPayloadBytes": 825906047,
-    "beforeBytes": 1592657544,
-    "afterBytes": 766735684,
-    "beforeSha256": "9b094009acf95bf2db9fb859dcddb2ed73d9185eac730f05d3e60ff43a828d3a",
-    "afterSha256": "f12780b99b29132373a09bef978e7bbd4c5ec2ad24fadfdc963d8210cc19882f"
+    "beforeBytes": 1592657252,
+    "afterBytes": 766735396,
+    "beforeSha256": "3d7861a0b4966e2e705af69e473365782a0dfe8addf5bf309ffd9c60d52e35bd",
+    "afterSha256": "9a090682bcfd6458f1405bfc88b4a2e93b58d9362bb80ab14e1752d9905557f2"
   },
   "regions": {
     "whitehorn_range": {
-      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\nymara-regions\\whitehorn_range\\world.json",
+      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\whitehorn_range\\world.json",
       "glbSha256": "a57f9d92fb3a7cd7a25cf28c4906121de2536e101cb97fb7b92209263f4ee488",
       "chunks": 36,
       "storage": {
@@ -107,7 +107,7 @@
       }
     },
     "grey_moors": {
-      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\nymara-regions\\grey_moors\\world.json",
+      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\grey_moors\\world.json",
       "glbSha256": "a91e84b69b8b35a39ffaa56c7f7359e4f58bbcba2ec31a2a25448d2227658a09",
       "chunks": 31,
       "storage": {
@@ -128,7 +128,7 @@
       }
     },
     "amberwood": {
-      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\nymara-regions\\amberwood\\world.json",
+      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\amberwood\\world.json",
       "glbSha256": "86b97a2ae02e4ae645c55b197e0f01005631d6c0f807391f4006673868a94c4f",
       "chunks": 19,
       "storage": {
@@ -149,7 +149,7 @@
       }
     },
     "amethyst_barrens": {
-      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\world.json",
+      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\world.json",
       "glbSha256": "661ddb75dec6529d9fdb6b389f2e1fca69cfb4e3fe1c8cecd3d02debc92d57b9",
       "chunks": 41,
       "storage": {
@@ -170,7 +170,7 @@
       }
     },
     "mirrorhold": {
-      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world.json",
+      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world.json",
       "glbSha256": "23f511bb6d3d56ea02cf64ddadac5ba5f4d304346c7c87b778f626c8386868c9",
       "chunks": 29,
       "storage": {
@@ -191,8 +191,8 @@
       }
     },
     "sunmane_steppe": {
-      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\nymara-regions\\sunmane_steppe\\world.json",
-      "glbSha256": "e2ca4b74a3b727ad9df4b63af8b3c904702c6391e9bd0e182f1a829b41497096",
+      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\sunmane_steppe\\world.json",
+      "glbSha256": "8ce452214fe5c527743d26092a3eb507e52d7679a7c821a35ff1b22774dd2c5a",
       "chunks": 41,
       "storage": {
         "serverOrigin": [
@@ -208,11 +208,11 @@
           0,
           0
         ],
-        "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
+        "authoringSpecSha256": "7b8a72a3eca2f33850ea71a43392244dcdd91cf1fca6b4d43507ef0788c4649e"
       }
     },
     "four_gates": {
-      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\four-gates\\world.json",
+      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\four-gates\\world.json",
       "glbSha256": "6c407008a0c53478da9224d75cefe9a4725f024036b11375fe884c322a557e4a",
       "chunks": 23,
       "storage": {
@@ -233,7 +233,7 @@
       }
     },
     "westhaven": {
-      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\nymara-regions\\westhaven\\world.json",
+      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\westhaven\\world.json",
       "glbSha256": "087570cec728157ea87db5010702d52ccf06ba151cb68e76fe724f37cbd73cae",
       "chunks": 26,
       "storage": {
@@ -254,7 +254,7 @@
       }
     },
     "manymouth_delta": {
-      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\nymara-regions\\manymouth_delta\\world.json",
+      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\manymouth_delta\\world.json",
       "glbSha256": "1f5c3d38dc831ca7d4ff17cc04d39d44906bd1b5cb0ddc81b12000f8898bc04d",
       "chunks": 29,
       "storage": {
@@ -275,7 +275,7 @@
       }
     },
     "crownwater": {
-      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\nymara-regions\\crownwater\\world.json",
+      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\crownwater\\world.json",
       "glbSha256": "6fcfe65e9bcc7ae7b291d80ff0704880aeaee2c08c2364c529d64b2c1ccdfa6a",
       "chunks": 40,
       "storage": {
@@ -296,7 +296,7 @@
       }
     },
     "verdant_stair": {
-      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\nymara-regions\\verdant_stair\\world.json",
+      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\verdant_stair\\world.json",
       "glbSha256": "75897817e410c4b47a1df3645d884824022aca4b096cb4550c4072d5c561e7d3",
       "chunks": 37,
       "storage": {
@@ -317,7 +317,7 @@
       }
     },
     "ssarathi_ruins": {
-      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\editor-team-contract-response-2026-09-26\\integration-client\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\world.json",
+      "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\world.json",
       "glbSha256": "5650c766f943e730624661a76fd9860dc1ded9e0bc213ce76eb2d114a026bfc1",
       "chunks": 44,
       "storage": {

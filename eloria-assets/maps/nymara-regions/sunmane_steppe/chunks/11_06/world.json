@@ -93,7 +93,7 @@
         292
       ]
     },
-    "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
+    "authoringSpecSha256": "7b8a72a3eca2f33850ea71a43392244dcdd91cf1fca6b4d43507ef0788c4649e"
   },
   "collision": {
     "format": "EWCG",
@@ -115,7 +115,8 @@
       "Landmark_sunmane_secret_steppe-banner-focus",
       "Landmark_sunmane_secret_steppe-caravan-school",
       "Landmark_sunmane_secret_steppe-well-garden",
-      "Landmark_sunmane_well_01"
+      "Landmark_sunmane_well_01",
+      "Authored_sunmane_kit_hay_feeder_1_003"
     ],
     "serverStorageVersion": 1,
     "serverTileMin": [
@@ -130,7 +131,7 @@
       -194,
       292
     ],
-    "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
+    "authoringSpecSha256": "7b8a72a3eca2f33850ea71a43392244dcdd91cf1fca6b4d43507ef0788c4649e"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -433,492 +434,7 @@
     "pixelsPerMetre": 1
   },
   "ambientPopulation": {
-    "groups": [
-      {
-        "animation": "Idle_A",
-        "count": 5,
-        "model": "sunmane_grey_pony",
-        "radius": 5.6,
-        "seed": 2595,
-        "serverTile": [
-          264,
-          189
-        ],
-        "id": "herd-barrow-paddock",
-        "position": [
-          70.0,
-          35.43014144897461,
-          103.0
-        ],
-        "center": [
-          70.0,
-          35.43014144897461,
-          103.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 6,
-        "model": "sunmane_dun_mare",
-        "radius": 11,
-        "seed": 14314,
-        "serverTile": [
-          304,
-          418
-        ],
-        "id": "herd-dune-margin",
-        "position": [
-          110.0,
-          47.114200592041016,
-          -126.0
-        ],
-        "center": [
-          110.0,
-          47.114200592041016,
-          -126.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 6,
-        "model": "sunmane_dun_mare",
-        "radius": 6.2,
-        "seed": 75438,
-        "serverTile": [
-          128,
-          226
-        ],
-        "id": "herd-duskrider-paddock",
-        "position": [
-          -66.0,
-          31.71771240234375,
-          66.0
-        ],
-        "center": [
-          -66.0,
-          31.71771240234375,
-          66.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 6,
-        "model": "sunmane_dun_mare",
-        "radius": 5.6,
-        "seed": 12857,
-        "serverTile": [
-          260,
-          252
-        ],
-        "id": "herd-east-paddock",
-        "position": [
-          66.0,
-          36.3876953125,
-          40.0
-        ],
-        "center": [
-          66.0,
-          36.3876953125,
-          40.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 6,
-        "model": "sunmane_steppe_horse",
-        "radius": 11,
-        "seed": 24325,
-        "serverTile": [
-          340,
-          271
-        ],
-        "id": "herd-foothill-pasture",
-        "position": [
-          146.0,
-          24.2869930267334,
-          21.0
-        ],
-        "center": [
-          146.0,
-          24.2869930267334,
-          21.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 7,
-        "model": "sunmane_steppe_horse",
-        "radius": 5.4,
-        "seed": 74190,
-        "serverTile": [
-          80,
-          387
-        ],
-        "id": "herd-north-pasture",
-        "position": [
-          -114.0,
-          31.212867736816406,
-          -95.0
-        ],
-        "center": [
-          -114.0,
-          31.212867736816406,
-          -95.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 8,
-        "model": "sunmane_dun_mare",
-        "radius": 12,
-        "seed": 94632,
-        "serverTile": [
-          329,
-          252
-        ],
-        "id": "herd-open-steppe-east",
-        "position": [
-          135.0,
-          27.39483642578125,
-          40.0
-        ],
-        "center": [
-          135.0,
-          27.39483642578125,
-          40.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 7,
-        "model": "sunmane_steppe_horse",
-        "radius": 12,
-        "seed": 46592,
-        "serverTile": [
-          317,
-          410
-        ],
-        "id": "herd-open-steppe-north",
-        "position": [
-          123.0,
-          44.4458122253418,
-          -118.0
-        ],
-        "center": [
-          123.0,
-          44.4458122253418,
-          -118.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 7,
-        "model": "sunmane_dun_mare",
-        "radius": 12,
-        "seed": 16374,
-        "serverTile": [
-          257,
-          155
-        ],
-        "id": "herd-open-steppe-south",
-        "position": [
-          63.0,
-          30.91810417175293,
-          137.0
-        ],
-        "center": [
-          63.0,
-          30.91810417175293,
-          137.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 8,
-        "model": "sunmane_steppe_horse",
-        "radius": 13,
-        "seed": 49824,
-        "serverTile": [
-          61,
-          179
-        ],
-        "id": "herd-open-steppe-west",
-        "position": [
-          -133.0,
-          44.50204849243164,
-          113.0
-        ],
-        "center": [
-          -133.0,
-          44.50204849243164,
-          113.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 6,
-        "model": "sunmane_steppe_horse",
-        "radius": 5.8,
-        "seed": 23468,
-        "serverTile": [
-          150,
-          227
-        ],
-        "id": "herd-saltmane-paddock",
-        "position": [
-          -44.0,
-          30.324054718017578,
-          65.0
-        ],
-        "center": [
-          -44.0,
-          30.324054718017578,
-          65.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 5,
-        "model": "sunmane_steppe_horse",
-        "radius": 5.4,
-        "seed": 32661,
-        "serverTile": [
-          128,
-          187
-        ],
-        "id": "herd-south-paddock",
-        "position": [
-          -66.0,
-          32.8635139465332,
-          105.0
-        ],
-        "center": [
-          -66.0,
-          32.8635139465332,
-          105.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 4,
-        "model": "sunmane_grey_pony",
-        "radius": 2.6,
-        "seed": 8626,
-        "serverTile": [
-          150,
-          278
-        ],
-        "id": "mounts-crossroads",
-        "position": [
-          -44.0,
-          29.911344528198242,
-          14.0
-        ],
-        "center": [
-          -44.0,
-          29.911344528198242,
-          14.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 3,
-        "model": "sunmane_dun_mare",
-        "radius": 3,
-        "seed": 90839,
-        "serverTile": [
-          322,
-          420
-        ],
-        "id": "mounts-dune-camp-east",
-        "position": [
-          128.39109802246094,
-          42.61780548095703,
-          -128.423828125
-        ],
-        "center": [
-          128.39109802246094,
-          42.61780548095703,
-          -128.423828125
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 3,
-        "model": "sunmane_grey_pony",
-        "radius": 3,
-        "seed": 927,
-        "serverTile": [
-          291,
-          441
-        ],
-        "id": "mounts-dune-camp-mid",
-        "position": [
-          97.7018051147461,
-          47.055606842041016,
-          -149.7627410888672
-        ],
-        "center": [
-          97.7018051147461,
-          47.055606842041016,
-          -149.7627410888672
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 3,
-        "model": "sunmane_dun_mare",
-        "radius": 3,
-        "seed": 40447,
-        "serverTile": [
-          161,
-          427
-        ],
-        "id": "mounts-dune-camp-north",
-        "position": [
-          -32.584991455078125,
-          27.681642532348633,
-          -135.8330078125
-        ],
-        "center": [
-          -32.584991455078125,
-          27.681642532348633,
-          -135.8330078125
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 3,
-        "model": "sunmane_grey_pony",
-        "radius": 2.8,
-        "seed": 7216,
-        "serverTile": [
-          309,
-          438
-        ],
-        "id": "mounts-dune-station-east",
-        "position": [
-          115.7018051147461,
-          44.97157669067383,
-          -146.7627410888672
-        ],
-        "center": [
-          115.7018051147461,
-          44.97157669067383,
-          -146.7627410888672
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 3,
-        "model": "sunmane_grey_pony",
-        "radius": 2.8,
-        "seed": 35736,
-        "serverTile": [
-          166,
-          412
-        ],
-        "id": "mounts-dune-station-west",
-        "position": [
-          -28.0,
-          27.937986373901367,
-          -120.0
-        ],
-        "center": [
-          -28.0,
-          27.937986373901367,
-          -120.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 4,
-        "model": "sunmane_grey_pony",
-        "radius": 2.2,
-        "seed": 36896,
-        "serverTile": [
-          299,
-          293
-        ],
-        "id": "mounts-east-caravanserai",
-        "position": [
-          105.0,
-          41.11269760131836,
-          -1.0
-        ],
-        "center": [
-          105.0,
-          41.11269760131836,
-          -1.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 4,
-        "model": "sunmane_grey_pony",
-        "radius": 2.6,
-        "seed": 45277,
-        "serverTile": [
-          190,
-          298
-        ],
-        "id": "mounts-east-hitching",
-        "position": [
-          -4.0,
-          28.49201202392578,
-          -6.0
-        ],
-        "center": [
-          -4.0,
-          28.49201202392578,
-          -6.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 3,
-        "model": "sunmane_steppe_horse",
-        "radius": 1.8,
-        "seed": 60343,
-        "serverTile": [
-          143,
-          282
-        ],
-        "id": "mounts-market",
-        "position": [
-          -51.0,
-          30.077116012573242,
-          10.0
-        ],
-        "center": [
-          -51.0,
-          30.077116012573242,
-          10.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 4,
-        "model": "sunmane_grey_pony",
-        "radius": 2.2,
-        "seed": 30941,
-        "serverTile": [
-          126,
-          331
-        ],
-        "id": "mounts-west-caravanserai",
-        "position": [
-          -68.0,
-          28.92655372619629,
-          -39.0
-        ],
-        "center": [
-          -68.0,
-          28.92655372619629,
-          -39.0
-        ]
-      }
-    ],
+    "groups": [],
     "note": "Scenery livestock instanced by the client's ambient population system. They carry no actor id and no collision, and are deliberately not baked into the world mesh."
   },
   "provenance": {
@@ -1046,9 +562,9 @@
     }
   ],
   "performance": {
-    "glbBytes": 3090244,
-    "nodes": 173,
-    "meshes": 91,
+    "glbBytes": 3274712,
+    "nodes": 179,
+    "meshes": 93,
     "externalResources": {
       "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -1080,7 +596,13 @@
       "../../../_continent/shared-assets/69da8391f26e20f20efb513718249107a2c82def0d583b63c50fe1e91c3dabb6.png": "69da8391f26e20f20efb513718249107a2c82def0d583b63c50fe1e91c3dabb6",
       "../../../_continent/shared-assets/99823fecf7a7b2f85cafafd909dadd21b78797e545f6f2ec8daa5c5f11bebf4e.png": "99823fecf7a7b2f85cafafd909dadd21b78797e545f6f2ec8daa5c5f11bebf4e",
       "../../../_continent/shared-assets/53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441.png": "53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441",
-      "../../../_continent/shared-assets/f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3.png": "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3"
+      "../../../_continent/shared-assets/f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3.png": "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3",
+      "../../../_continent/shared-assets/25a2e7ef711fe48a4554c77031b618ec5176f0e91679835e570881d4d63e549c.jpg": "25a2e7ef711fe48a4554c77031b618ec5176f0e91679835e570881d4d63e549c",
+      "../../../_continent/shared-assets/d902b3bab9b7adac2f542cd452adbb38d5860b7d86d51d2584968e3a3d8b0ce2.jpg": "d902b3bab9b7adac2f542cd452adbb38d5860b7d86d51d2584968e3a3d8b0ce2",
+      "../../../_continent/shared-assets/2bed2370672587b3d65bccbce62f54c99f88c2cfa79675aad983f8d74a2d7e14.jpg": "2bed2370672587b3d65bccbce62f54c99f88c2cfa79675aad983f8d74a2d7e14",
+      "../../../_continent/shared-assets/db3fac5aec7e93be36eddd19f37e19048effaccbfb7517a8b951bf69755af164.jpg": "db3fac5aec7e93be36eddd19f37e19048effaccbfb7517a8b951bf69755af164",
+      "../../../_continent/shared-assets/f5ad8b541b41031b2a4f0e11647de949bc350fb6b97a85bc64a995de85c733b6.jpg": "f5ad8b541b41031b2a4f0e11647de949bc350fb6b97a85bc64a995de85c733b6",
+      "../../../_continent/shared-assets/e8916eb647294d9930a8a23558a3bb3ea1fece5d81a0aba6c3b4b1be5f397a4c.jpg": "e8916eb647294d9930a8a23558a3bb3ea1fece5d81a0aba6c3b4b1be5f397a4c"
     },
     "sharedResourceResidentBytes": {
       "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
@@ -1113,7 +635,13 @@
       "69da8391f26e20f20efb513718249107a2c82def0d583b63c50fe1e91c3dabb6": 1398102,
       "99823fecf7a7b2f85cafafd909dadd21b78797e545f6f2ec8daa5c5f11bebf4e": 349526,
       "53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441": 349526,
-      "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3": 349526
+      "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3": 349526,
+      "25a2e7ef711fe48a4554c77031b618ec5176f0e91679835e570881d4d63e549c": 1398102,
+      "d902b3bab9b7adac2f542cd452adbb38d5860b7d86d51d2584968e3a3d8b0ce2": 1398102,
+      "2bed2370672587b3d65bccbce62f54c99f88c2cfa79675aad983f8d74a2d7e14": 1398102,
+      "db3fac5aec7e93be36eddd19f37e19048effaccbfb7517a8b951bf69755af164": 1398102,
+      "f5ad8b541b41031b2a4f0e11647de949bc350fb6b97a85bc64a995de85c733b6": 1398102,
+      "e8916eb647294d9930a8a23558a3bb3ea1fece5d81a0aba6c3b4b1be5f397a4c": 1398102
     }
   },
   "rendering": {
@@ -3218,7 +2746,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:59f3bcfa65e69e9511127105019f61c7dd1423e49a68124ef534ff11f2326e4a",
+  "terrainRevision": "diagonal-spine-v1:fbfd00f06795c870df3209501c1b2fef232a008d62eba411d30f2bed24773979",
   "sources": [
     "_continent/diagonal-plan.json",
     "_continent/build_continent.py",
@@ -3256,11 +2784,17 @@
     "../../../_continent/shared-assets/69da8391f26e20f20efb513718249107a2c82def0d583b63c50fe1e91c3dabb6.png": "69da8391f26e20f20efb513718249107a2c82def0d583b63c50fe1e91c3dabb6",
     "../../../_continent/shared-assets/99823fecf7a7b2f85cafafd909dadd21b78797e545f6f2ec8daa5c5f11bebf4e.png": "99823fecf7a7b2f85cafafd909dadd21b78797e545f6f2ec8daa5c5f11bebf4e",
     "../../../_continent/shared-assets/53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441.png": "53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441",
-    "../../../_continent/shared-assets/f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3.png": "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3"
+    "../../../_continent/shared-assets/f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3.png": "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3",
+    "../../../_continent/shared-assets/25a2e7ef711fe48a4554c77031b618ec5176f0e91679835e570881d4d63e549c.jpg": "25a2e7ef711fe48a4554c77031b618ec5176f0e91679835e570881d4d63e549c",
+    "../../../_continent/shared-assets/d902b3bab9b7adac2f542cd452adbb38d5860b7d86d51d2584968e3a3d8b0ce2.jpg": "d902b3bab9b7adac2f542cd452adbb38d5860b7d86d51d2584968e3a3d8b0ce2",
+    "../../../_continent/shared-assets/2bed2370672587b3d65bccbce62f54c99f88c2cfa79675aad983f8d74a2d7e14.jpg": "2bed2370672587b3d65bccbce62f54c99f88c2cfa79675aad983f8d74a2d7e14",
+    "../../../_continent/shared-assets/db3fac5aec7e93be36eddd19f37e19048effaccbfb7517a8b951bf69755af164.jpg": "db3fac5aec7e93be36eddd19f37e19048effaccbfb7517a8b951bf69755af164",
+    "../../../_continent/shared-assets/f5ad8b541b41031b2a4f0e11647de949bc350fb6b97a85bc64a995de85c733b6.jpg": "f5ad8b541b41031b2a4f0e11647de949bc350fb6b97a85bc64a995de85c733b6",
+    "../../../_continent/shared-assets/e8916eb647294d9930a8a23558a3bb3ea1fece5d81a0aba6c3b4b1be5f397a4c.jpg": "e8916eb647294d9930a8a23558a3bb3ea1fece5d81a0aba6c3b4b1be5f397a4c"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "e3a139bd73ae2be28ba66a22600bbdc39d0ef22e6cc78c9a9ab7de45db12f066",
+    "masterSha256": "ce1f472e785339ade101ad86e131bac2d39fb587949ef6a37f8e30bb5bc8d1a7",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a",
     "storage": {
       "serverCells": [
@@ -3272,7 +2806,7 @@
         0,
         0
       ],
-      "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
+      "authoringSpecSha256": "7b8a72a3eca2f33850ea71a43392244dcdd91cf1fca6b4d43507ef0788c4649e"
     }
   },
   "biomeBlend": {
@@ -3434,9 +2968,9 @@
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "e3a139bd73ae2be28ba66a22600bbdc39d0ef22e6cc78c9a9ab7de45db12f066",
-    "collisionSha256": "3594425fde1ab9f8135d2858ed0c131ab2c27045ac8dc2acfafcae4b3fe61557",
-    "terrainRevision": "diagonal-spine-v1:59f3bcfa65e69e9511127105019f61c7dd1423e49a68124ef534ff11f2326e4a",
+    "masterSha256": "ce1f472e785339ade101ad86e131bac2d39fb587949ef6a37f8e30bb5bc8d1a7",
+    "collisionSha256": "0438e9e643c7b4b9427f3c1337503bfa228a8e697431cf4de1c1715a54d5084f",
+    "terrainRevision": "diagonal-spine-v1:fbfd00f06795c870df3209501c1b2fef232a008d62eba411d30f2bed24773979",
     "storage": {
       "serverCells": [
         792,
@@ -3447,7 +2981,7 @@
         0,
         0
       ],
-      "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
+      "authoringSpecSha256": "7b8a72a3eca2f33850ea71a43392244dcdd91cf1fca6b4d43507ef0788c4649e"
     }
   }
 }

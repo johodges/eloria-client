@@ -12154,8 +12154,8 @@
         117
       ],
       "previousTile": [
-        373,
-        82
+        375,
+        79
       ],
       "expectedTile": [
         375.0,
@@ -12166,7 +12166,7 @@
         79
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 3.605551275463989,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12182,8 +12182,8 @@
         117
       ],
       "previousTile": [
-        373,
-        82
+        375,
+        79
       ],
       "expectedTile": [
         375.0,
@@ -12194,7 +12194,7 @@
         79
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 3.605551275463989,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12211,7 +12211,7 @@
       ],
       "previousTile": [
         106,
-        357
+        356
       ],
       "expectedTile": [
         106.0,
@@ -12222,7 +12222,7 @@
         356
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 1.0,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12239,7 +12239,7 @@
       ],
       "previousTile": [
         106,
-        357
+        356
       ],
       "expectedTile": [
         106.0,
@@ -12250,7 +12250,7 @@
         356
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 1.0,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12266,7 +12266,7 @@
         122
       ],
       "previousTile": [
-        325,
+        327,
         123
       ],
       "expectedTile": [
@@ -12278,7 +12278,7 @@
         123
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 2.0,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12294,7 +12294,7 @@
         122
       ],
       "previousTile": [
-        325,
+        327,
         123
       ],
       "expectedTile": [
@@ -12306,7 +12306,7 @@
         123
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 2.0,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12322,8 +12322,8 @@
         278
       ],
       "previousTile": [
-        303,
-        445
+        304,
+        443
       ],
       "expectedTile": [
         304.0,
@@ -12334,7 +12334,7 @@
         443
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 2.23606797749979,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12350,8 +12350,8 @@
         278
       ],
       "previousTile": [
-        303,
-        445
+        304,
+        443
       ],
       "expectedTile": [
         304.0,
@@ -12362,7 +12362,7 @@
         443
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 2.23606797749979,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12378,7 +12378,7 @@
         317
       ],
       "previousTile": [
-        172,
+        174,
         433
       ],
       "expectedTile": [
@@ -12390,7 +12390,7 @@
         433
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 2.0,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12406,7 +12406,7 @@
         317
       ],
       "previousTile": [
-        172,
+        174,
         433
       ],
       "expectedTile": [
@@ -12418,7 +12418,7 @@
         433
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 2.0,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12434,8 +12434,8 @@
         81
       ],
       "previousTile": [
-        382,
-        85
+        380,
+        87
       ],
       "expectedTile": [
         380.0,
@@ -12446,7 +12446,7 @@
         87
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 2.8284271247461903,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12462,8 +12462,8 @@
         81
       ],
       "previousTile": [
-        382,
-        85
+        380,
+        87
       ],
       "expectedTile": [
         380.0,
@@ -12474,7 +12474,7 @@
         87
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 2.8284271247461903,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12490,8 +12490,8 @@
         142
       ],
       "previousTile": [
-        225,
-        320
+        231,
+        319
       ],
       "expectedTile": [
         231.0,
@@ -12502,7 +12502,7 @@
         319
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 6.082762530298219,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12518,8 +12518,8 @@
         142
       ],
       "previousTile": [
-        225,
-        320
+        231,
+        319
       ],
       "expectedTile": [
         231.0,
@@ -12530,7 +12530,7 @@
         319
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 6.082762530298219,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12546,7 +12546,7 @@
         274
       ],
       "previousTile": [
-        389,
+        388,
         449
       ],
       "expectedTile": [
@@ -12558,7 +12558,7 @@
         449
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 1.0,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -12574,7 +12574,7 @@
         274
       ],
       "previousTile": [
-        389,
+        388,
         449
       ],
       "expectedTile": [
@@ -12586,7 +12586,7 @@
         449
       ],
       "displacementMetres": 0.0,
-      "previousServedDisplacementMetres": 1.0,
+      "previousServedDisplacementMetres": 0.0,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -31991,12 +31991,12 @@
         99
       ],
       "tile": [
-        260,
-        261
+        386,
+        323
       ],
       "expectedTile": [
-        260.5,
-        261.5
+        386.5,
+        323.5
       ],
       "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
@@ -32014,12 +32014,12 @@
         216
       ],
       "tile": [
-        258,
-        246
+        397,
+        282
       ],
       "expectedTile": [
-        258.5,
-        246.5
+        397.5,
+        282.5
       ],
       "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
@@ -32037,14 +32037,14 @@
         236
       ],
       "tile": [
-        129,
-        227
+        271,
+        496
       ],
       "expectedTile": [
-        127.5,
-        225.5
+        271.5,
+        496.5
       ],
-      "displacementMetres": 2.121,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
@@ -32060,12 +32060,12 @@
         226
       ],
       "tile": [
-        81,
-        386
+        281,
+        489
       ],
       "expectedTile": [
-        81.5,
-        386.5
+        281.5,
+        489.5
       ],
       "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
@@ -33224,6 +33224,1202 @@
         1
       ],
       "runtimeBindingId": "spawns.txt:278:53@95:356"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:707:54",
+      "oldTile": [
+        13,
+        220
+      ],
+      "tile": [
+        83,
+        387
+      ],
+      "expectedTile": [
+        83.5,
+        387.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:707:54@13:220"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:708:55",
+      "oldTile": [
+        15,
+        222
+      ],
+      "tile": [
+        85,
+        389
+      ],
+      "expectedTile": [
+        85.5,
+        389.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:708:55@15:222"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:709:56",
+      "oldTile": [
+        11,
+        218
+      ],
+      "tile": [
+        81,
+        385
+      ],
+      "expectedTile": [
+        81.5,
+        385.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:709:56@11:218"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:710:57",
+      "oldTile": [
+        218,
+        162
+      ],
+      "tile": [
+        288,
+        329
+      ],
+      "expectedTile": [
+        288.5,
+        329.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:710:57@218:162"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:711:58",
+      "oldTile": [
+        216,
+        160
+      ],
+      "tile": [
+        286,
+        327
+      ],
+      "expectedTile": [
+        286.5,
+        327.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:711:58@216:160"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:712:59",
+      "oldTile": [
+        220,
+        164
+      ],
+      "tile": [
+        290,
+        331
+      ],
+      "expectedTile": [
+        290.5,
+        331.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:712:59@220:164"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:713:60",
+      "oldTile": [
+        203,
+        82
+      ],
+      "tile": [
+        273,
+        249
+      ],
+      "expectedTile": [
+        273.5,
+        249.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:713:60@203:82"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:714:61",
+      "oldTile": [
+        201,
+        80
+      ],
+      "tile": [
+        271,
+        247
+      ],
+      "expectedTile": [
+        271.5,
+        247.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:714:61@201:80"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:715:62",
+      "oldTile": [
+        206,
+        82
+      ],
+      "tile": [
+        276,
+        249
+      ],
+      "expectedTile": [
+        276.5,
+        249.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:715:62@206:82"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:716:63",
+      "oldTile": [
+        53,
+        54
+      ],
+      "tile": [
+        123,
+        221
+      ],
+      "expectedTile": [
+        123.5,
+        221.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:716:63@53:54"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:717:64",
+      "oldTile": [
+        51,
+        56
+      ],
+      "tile": [
+        121,
+        223
+      ],
+      "expectedTile": [
+        121.5,
+        223.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:717:64@51:56"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:718:65",
+      "oldTile": [
+        55,
+        52
+      ],
+      "tile": [
+        125,
+        219
+      ],
+      "expectedTile": [
+        125.5,
+        219.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:718:65@55:52"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:719:66",
+      "oldTile": [
+        85,
+        55
+      ],
+      "tile": [
+        155,
+        222
+      ],
+      "expectedTile": [
+        155.5,
+        222.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:719:66@85:55"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:720:67",
+      "oldTile": [
+        84,
+        52
+      ],
+      "tile": [
+        154,
+        219
+      ],
+      "expectedTile": [
+        154.5,
+        219.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:720:67@84:52"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:721:68",
+      "oldTile": [
+        87,
+        53
+      ],
+      "tile": [
+        157,
+        220
+      ],
+      "expectedTile": [
+        157.5,
+        220.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:721:68@87:53"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:722:69",
+      "oldTile": [
+        215,
+        240
+      ],
+      "tile": [
+        285,
+        407
+      ],
+      "expectedTile": [
+        285.5,
+        407.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:722:69@215:240"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:723:70",
+      "oldTile": [
+        213,
+        238
+      ],
+      "tile": [
+        283,
+        405
+      ],
+      "expectedTile": [
+        283.5,
+        405.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:723:70@213:238"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:724:71",
+      "oldTile": [
+        217,
+        242
+      ],
+      "tile": [
+        287,
+        409
+      ],
+      "expectedTile": [
+        287.5,
+        409.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:724:71@217:242"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:725:72",
+      "oldTile": [
+        326,
+        221
+      ],
+      "tile": [
+        396,
+        388
+      ],
+      "expectedTile": [
+        396.5,
+        388.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:725:72@326:221"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:726:73",
+      "oldTile": [
+        324,
+        219
+      ],
+      "tile": [
+        394,
+        386
+      ],
+      "expectedTile": [
+        394.5,
+        386.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:726:73@324:219"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:727:74",
+      "oldTile": [
+        328,
+        223
+      ],
+      "tile": [
+        398,
+        390
+      ],
+      "expectedTile": [
+        398.5,
+        390.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:727:74@328:223"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:728:75",
+      "oldTile": [
+        132,
+        -43
+      ],
+      "tile": [
+        202,
+        124
+      ],
+      "expectedTile": [
+        202.5,
+        124.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:728:75@132:-43"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:729:76",
+      "oldTile": [
+        130,
+        -41
+      ],
+      "tile": [
+        200,
+        126
+      ],
+      "expectedTile": [
+        200.5,
+        126.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:729:76@130:-41"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:730:77",
+      "oldTile": [
+        134,
+        -45
+      ],
+      "tile": [
+        204,
+        122
+      ],
+      "expectedTile": [
+        204.5,
+        122.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:730:77@134:-45"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:731:78",
+      "oldTile": [
+        28,
+        188
+      ],
+      "tile": [
+        98,
+        355
+      ],
+      "expectedTile": [
+        98.5,
+        355.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:731:78@28:188"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:732:79",
+      "oldTile": [
+        208,
+        210
+      ],
+      "tile": [
+        278,
+        377
+      ],
+      "expectedTile": [
+        278.5,
+        377.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:732:79@208:210"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:733:80",
+      "oldTile": [
+        107,
+        85
+      ],
+      "tile": [
+        177,
+        252
+      ],
+      "expectedTile": [
+        177.5,
+        252.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:733:80@107:85"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:734:81",
+      "oldTile": [
+        41,
+        84
+      ],
+      "tile": [
+        111,
+        251
+      ],
+      "expectedTile": [
+        111.5,
+        251.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:734:81@41:84"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:735:82",
+      "oldTile": [
+        96,
+        288
+      ],
+      "tile": [
+        166,
+        455
+      ],
+      "expectedTile": [
+        166.5,
+        455.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:735:82@96:288"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:736:83",
+      "oldTile": [
+        176,
+        230
+      ],
+      "tile": [
+        246,
+        397
+      ],
+      "expectedTile": [
+        246.5,
+        397.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:736:83@176:230"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:737:84",
+      "oldTile": [
+        229,
+        244
+      ],
+      "tile": [
+        299,
+        411
+      ],
+      "expectedTile": [
+        299.5,
+        411.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:737:84@229:244"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:738:85",
+      "oldTile": [
+        69,
+        127
+      ],
+      "tile": [
+        139,
+        294
+      ],
+      "expectedTile": [
+        139.5,
+        294.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:738:85@69:127"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:739:86",
+      "oldTile": [
+        130,
+        126
+      ],
+      "tile": [
+        200,
+        293
+      ],
+      "expectedTile": [
+        200.5,
+        293.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:739:86@130:126"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:740:87",
+      "oldTile": [
+        334,
+        229
+      ],
+      "tile": [
+        404,
+        396
+      ],
+      "expectedTile": [
+        404.5,
+        396.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:740:87@334:229"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:741:88",
+      "oldTile": [
+        124,
+        -35
+      ],
+      "tile": [
+        194,
+        132
+      ],
+      "expectedTile": [
+        194.5,
+        132.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:741:88@124:-35"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:742:89",
+      "oldTile": [
+        189,
+        336
+      ],
+      "tile": [
+        259,
+        503
+      ],
+      "expectedTile": [
+        259.5,
+        503.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:742:89@189:336"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:743:90",
+      "oldTile": [
+        191,
+        338
+      ],
+      "tile": [
+        261,
+        505
+      ],
+      "expectedTile": [
+        261.5,
+        505.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:743:90@191:338"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:744:91",
+      "oldTile": [
+        316,
+        159
+      ],
+      "tile": [
+        386,
+        326
+      ],
+      "expectedTile": [
+        386.5,
+        326.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:744:91@316:159"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:745:92",
+      "oldTile": [
+        313,
+        158
+      ],
+      "tile": [
+        383,
+        325
+      ],
+      "expectedTile": [
+        383.5,
+        325.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:745:92@313:158"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:746:93",
+      "oldTile": [
+        72,
+        -62
+      ],
+      "tile": [
+        142,
+        105
+      ],
+      "expectedTile": [
+        142.5,
+        105.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:746:93@72:-62"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:747:94",
+      "oldTile": [
+        74,
+        -60
+      ],
+      "tile": [
+        144,
+        107
+      ],
+      "expectedTile": [
+        144.5,
+        107.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:747:94@74:-60"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:748:95",
+      "oldTile": [
+        8,
+        52
+      ],
+      "tile": [
+        78,
+        219
+      ],
+      "expectedTile": [
+        78.5,
+        219.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:748:95@8:52"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:749:96",
+      "oldTile": [
+        10,
+        54
+      ],
+      "tile": [
+        80,
+        221
+      ],
+      "expectedTile": [
+        80.5,
+        221.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:749:96@10:54"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:750:97",
+      "oldTile": [
+        6,
+        54
+      ],
+      "tile": [
+        76,
+        221
+      ],
+      "expectedTile": [
+        76.5,
+        221.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:750:97@6:54"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:751:98",
+      "oldTile": [
+        311,
+        356
+      ],
+      "tile": [
+        381,
+        523
+      ],
+      "expectedTile": [
+        381.5,
+        523.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:751:98@311:356"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:752:99",
+      "oldTile": [
+        313,
+        358
+      ],
+      "tile": [
+        383,
+        525
+      ],
+      "expectedTile": [
+        383.5,
+        525.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:752:99@313:358"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:753:100",
+      "oldTile": [
+        309,
+        358
+      ],
+      "tile": [
+        379,
+        525
+      ],
+      "expectedTile": [
+        379.5,
+        525.5
+      ],
+      "displacementMetres": 0.707,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        2,
+        2
+      ],
+      "runtimeBindingId": "spawns.txt:753:100@309:358"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:754:101",
+      "oldTile": [
+        329,
+        221
+      ],
+      "tile": [
+        399,
+        388
+      ],
+      "expectedTile": [
+        399.0,
+        388.0
+      ],
+      "displacementMetres": 0.0,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        1,
+        1
+      ],
+      "runtimeBindingId": "spawns.txt:754:101@329:221"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:755:102",
+      "oldTile": [
+        133,
+        -40
+      ],
+      "tile": [
+        203,
+        127
+      ],
+      "expectedTile": [
+        203.0,
+        127.0
+      ],
+      "displacementMetres": 0.0,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        1,
+        1
+      ],
+      "runtimeBindingId": "spawns.txt:755:102@133:-40"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:756:103",
+      "oldTile": [
+        203,
+        85
+      ],
+      "tile": [
+        273,
+        252
+      ],
+      "expectedTile": [
+        273.0,
+        252.0
+      ],
+      "displacementMetres": 0.0,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        1,
+        1
+      ],
+      "runtimeBindingId": "spawns.txt:756:103@203:85"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:757:104",
+      "oldTile": [
+        213,
+        241
+      ],
+      "tile": [
+        283,
+        408
+      ],
+      "expectedTile": [
+        283.0,
+        408.0
+      ],
+      "displacementMetres": 0.0,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        1,
+        1
+      ],
+      "runtimeBindingId": "spawns.txt:757:104@213:241"
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "spawns.txt:758:105",
+      "oldTile": [
+        216,
+        163
+      ],
+      "tile": [
+        286,
+        330
+      ],
+      "expectedTile": [
+        286.0,
+        330.0
+      ],
+      "displacementMetres": 0.0,
+      "maximumDisplacementMetres": 80,
+      "footprint": [
+        1,
+        1
+      ],
+      "runtimeBindingId": "spawns.txt:758:105@216:163"
     },
     {
       "region": "four_gates",
@@ -49901,10 +51097,10 @@
     "sunmane_steppe": {
       "stageFactor": 7,
       "stageMetres": 1.4000000000000001,
-      "walkableServerTiles": 174108,
-      "largestComponentTiles": 173051,
+      "walkableServerTiles": 169274,
+      "largestComponentTiles": 167174,
       "reachableByStage": {
-        "7": 173051
+        "7": 167174
       },
       "storage": {
         "serverCells": [
@@ -49916,7 +51112,7 @@
           0,
           0
         ],
-        "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
+        "authoringSpecSha256": "7b8a72a3eca2f33850ea71a43392244dcdd91cf1fca6b4d43507ef0788c4649e"
       },
       "crossings": {
         "declared": [],
@@ -49924,7 +51120,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 173051,
+      "hubReachableTiles": 167174,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -49933,9 +51129,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 173042,
+      "hubReachableAfterStorageTiles": 167165,
       "updatedAuthoredMarkers": 1,
-      "terrainRevision": "diagonal-spine-v1:59f3bcfa65e69e9511127105019f61c7dd1423e49a68124ef534ff11f2326e4a",
+      "terrainRevision": "diagonal-spine-v1:fbfd00f06795c870df3209501c1b2fef232a008d62eba411d30f2bed24773979",
       "servedTileContinuity": {
         "keptServedTile": 0,
         "movedTogether": 0,
@@ -50730,43 +51926,44 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "340cfb11cb67fd46b8fa58595f79ae6636fc722a6abc6d85371ae213e757bb28",
-    "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
-    "harvesting.txt": "fcd050730c3ca0583f42c3e6f4603456f2ec26fcd2b13fac30211367974b57c1",
-    "instances/amberwood_gauntlet_low.def": "f2115c7202109de7aa9fee83b6c8311e0d334f5c0fb58f91e61bab5e233b866c",
-    "instances/amberwood_gauntlet_mid.def": "c90bccdac0629f58eeea954f4a945800942143001a951ab4f5d1a68f9735d837",
-    "instances/amethyst_gauntlet_high.def": "644d0d0978354c06d3dec430c9d52a50db2aed224060b403509677a8a8a8d298",
-    "instances/amethyst_gauntlet_low.def": "732e8b3a588b803d1b7f6806d2cc4de2e2c0fbf485f3eab0a7647284aa48cb24",
-    "instances/crownwater_gauntlet_low.def": "deb8a510226f3e3ebbff9837a0406903b0ce9315f7d0f4c1b3025edb28be67ee",
-    "instances/crownwater_gauntlet_mid.def": "75698a9e24efbb45f8ad000ca67a66db0bd2b86e3bd0016a0a302a7be1bc8090",
-    "instances/grey_moors_gauntlet_low.def": "f734158e3271a46dc4de48887c3b5030e1c1d5bc557eb7358292065b7fa0ce8b",
-    "instances/grey_moors_gauntlet_mid.def": "b9e98ad085405c385f6ca4f78769f20012a5cc0f194a468136c5e445e7dabe1e",
-    "instances/manymouth_gauntlet_high.def": "447be667e0a835069d709e3370c9808e48a708e8dae0dc1ca7c2e891c3ae00c6",
-    "instances/manymouth_gauntlet_low.def": "43eb0565c06cbd48d926b87e69ff5e8b00c09f7cbd0c7e488d0be470c212f5fa",
-    "instances/ssarathi_gauntlet_high.def": "8ef05e744621a6249a1f70f013048ded08bd4874d1df40e26b3164158877a2b9",
-    "instances/ssarathi_gauntlet_mid.def": "bc6b28c71d624d6c987359af279b59213fefbf8d2fbfda75bb4756ea99fab329",
-    "instances/sunmane_gauntlet_low.def": "95e4fac9aade327b73ebc88512dcb5b1fa5a1292de5712eaac6f1b1611c2dc4c",
-    "instances/sunmane_gauntlet_mid.def": "1f6fa05cace1eeca796959b93b8c04ee8546b821484273071acbaa17aeb9e899",
-    "instances/whitehorn_gauntlet_high.def": "8feae1eebe2cd08299e5938bb0fc9a527596877d26112b8da33f8d67aa260df5",
-    "instances/whitehorn_gauntlet_low.def": "14e6e6894db6cede5ca63ac84acd0e4abb6aa35ccbd1b62f9cf2496779a2b3f4",
-    "interactives.txt": "5dcaefced3839155faa1b32b98aa0aadbdc526914bb3d8ef3456bfe0ab98d70f",
-    "maps.txt": "8152757dc39621198c4f10d047816bfbe953c70d7c8712e355783371402dc402",
-    "npcs.txt": "a0d18aae3f86f53561bacd1d63b23bf77b22b1c89e4c8cb5e75a7b9249c429bd",
+    "client_content_manifest.json": "286d3cb416ec4f60db1eacda401ad68b64de03411008a67eaca63ef0b0f064ae",
+    "creatures.txt": "f683a45b2da53f03557c7fdf45bc731a304dda241c70f64a7240f776260cde79",
+    "harvesting.txt": "e93130fed2350ad6c54d79e40ecedc97a3f748110ee4137424e0075a9677abb7",
+    "instances/amberwood_gauntlet_low.def": "dfa704f5be40551d8a3d926845980ae934d4e9445be20a9810c4d5c21b806b67",
+    "instances/amberwood_gauntlet_mid.def": "cdde7f5e03a0f9e1118a5642d711f0c479b2db7a0d740e952efe2215414a13eb",
+    "instances/amethyst_gauntlet_high.def": "a1ff59e68423d6ff4757dd356899b4a781f7bf67decca0deff820c1f1edbc0a1",
+    "instances/amethyst_gauntlet_low.def": "89bfcd9ede0284db52251fa95f47db5a6cc08240094e6070da440ea83905e691",
+    "instances/crownwater_gauntlet_low.def": "c035093e6ce648ea5990963097415999ccc559f2f6a6e84666ba13fb0c475611",
+    "instances/crownwater_gauntlet_mid.def": "7f3815fea4cb7c16ce543fcfdd93d58b3ce2b47020ae8fbd32e7e924778d80ae",
+    "instances/grey_moors_gauntlet_low.def": "0378617b27700cd4613c0d7328b1fe36c5e37b2cf517bad9d50008b71d1df1ea",
+    "instances/grey_moors_gauntlet_mid.def": "e669e4029ccc4e307c6690821b3d91330f5a6e2c9238fe8632a53d21b3baddb6",
+    "instances/manymouth_gauntlet_high.def": "461329bab09b2da7f63d42fee55f762451cfd0a5b59afb08a69eff1a8261c995",
+    "instances/manymouth_gauntlet_low.def": "f8a4f88280bfe012790aa512f2399697e0fcd1343291be934eea075148d76c7e",
+    "instances/ssarathi_gauntlet_high.def": "6a34d235f090c18e65599cee3ffd4ac94733bd1d865b0d2093c459d9706bcad9",
+    "instances/ssarathi_gauntlet_mid.def": "99bbc671e499b08133b4c437926af81eabd4e6678e4180a0df4cf60d308b1119",
+    "instances/sunmane_gauntlet_low.def": "d33fdcb938cf574c9e4cbbeb4a8c49a50ca2f445a62e25d834f322abcc922acd",
+    "instances/sunmane_gauntlet_mid.def": "a7ea80c410798105b3e66c695c1a58594635bee352299f1e85bc2c4cef190807",
+    "instances/whitehorn_gauntlet_high.def": "15c17e9224e791040f8d90c945781df5cce8fdc2f1b48b59d8943193e27bb5fa",
+    "instances/whitehorn_gauntlet_low.def": "2c09f4a26ca26333cf03489b314288586a618ab6f145b7a9147ca7468910eef7",
+    "interactives.txt": "3bb8740c78591e4b7fa4f0fe4551adca8a64edbecf54146e6c428094c64b4927",
+    "maps.txt": "d08fd953e54c1812542613d1f7c6e15c1f26e7eee0ffeea08dc495dbf883d0b8",
+    "npcs.txt": "195f30416bcbd0c8e156c55174927369b0131735359e6d8256e7719814f75463",
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "5027e9faf16b05773c4bffd1c457cdf866df087c14f01df1481096b1a4bf2c24",
-    "spawns.txt": "ee3d4333385da7b34b9af2003aaef0afdf72c39f0fa8000b927d00c6bc82e352",
+    "spawn_groups/invasion/invasion_nymara.def": "182b807005796d652d06799452e2b8bc74bee557d551d98b9742c448286992b3",
+    "spawns.txt": "ed222144f47c12e0fc4ee529dc63c7d6875ead9f93431f1219f624d0adf1f55d",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
-    "territories.txt": "504a2e405b1c607e8945c03e4668ca994a234a91f08dd38b9705c0f3ac5100bc"
+    "territories.txt": "4de4708d5d139ca4c98d5d0c8297a7d108422420628300800c10b4555f56c607"
   },
   "sourceCodeSha256": {
-    "eloria/daily_quests.py": "cc0d148f52690f13a1a598c6cd30abf152efd0176354055077f7341f43b32956",
-    "eloria/world.py": "b1eae51fd59b15743d40cb36b7a18bfbf85cfa79f7edb3cb366bb13dbbfc4560",
+    "eloria/daily_quests.py": "a1c0d6449662bc2a0061bb3dad293920a5cd8b1ac84d84af3e873445c67ac3b4",
+    "eloria/world.py": "cb78474ab7d3a70f9e8f8b93f312a2d688500918a70d68bc554f3d33d6909ef8",
     "eloria/walkthrough.py": "b31dcb6f1c85ec661f43202fc03fbb6e2f6113ccd1714328c78c8ef7c9333892",
     "eloria/pk.py": "e804af513664fce19d2b9ddc104c4cd89403ea2f0c5fb2631eba2b15ceea88c9"
   },
-  "baselineSha256": "4967d51d7f4a71b05c1f6d57b3b90dcaba8aefb4457a5ab56ca02f79744ab448",
+  "baselineSha256": "ac826a9d920646254239d6a790cae4ffcc742946318342d74eccf41963f29e2a",
+  "contentAmendmentSha256": "6ac57b3ef271425d3d7f0503f2a7a8e80ca5f2519cbb4ad99622e6ed10305534",
   "seams": [
     {
       "id": "grey_moors--whitehorn_range",

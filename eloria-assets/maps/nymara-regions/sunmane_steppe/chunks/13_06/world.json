@@ -23,9 +23,9 @@
         -144.0
       ],
       "max": [
-        144.0,
+        144.80934925856286,
         55.86596488952637,
-        -47.62944374868334
+        -45.286568512527424
       ]
     },
     "regionSpanMeters": 384,
@@ -93,7 +93,7 @@
         292
       ]
     },
-    "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
+    "authoringSpecSha256": "7b8a72a3eca2f33850ea71a43392244dcdd91cf1fca6b4d43507ef0788c4649e"
   },
   "collision": {
     "format": "EWCG",
@@ -131,7 +131,23 @@
       "Landmark_sunmane_spire_02",
       "Landmark_sunmane_spire_06",
       "Landmark_sunmane_waystone_01",
-      "Landmark_sunmane_waystone_04"
+      "Landmark_sunmane_waystone_04",
+      "Authored_sunmane_kit_hay_feeder_1_008",
+      "Authored_sunmane_kit_mesa_face_1_012",
+      "Authored_sunmane_kit_mesa_face_2_011",
+      "Authored_sunmane_kit_mesa_face_2_012",
+      "Authored_sunmane_kit_mesa_face_3_010",
+      "Authored_sunmane_kit_mesa_face_3_011",
+      "Authored_sunmane_kit_mesa_face_4_010",
+      "Authored_sunmane_kit_mesa_face_4_011",
+      "Authored_sunmane_kit_mesa_talus_1_005",
+      "Authored_sunmane_kit_mesa_talus_1_006",
+      "Authored_sunmane_kit_mesa_talus_2_006",
+      "Authored_sunmane_kit_mesa_talus_2_007",
+      "Authored_sunmane_kit_mesa_talus_3_010",
+      "Authored_sunmane_kit_sand_boulder_0_001",
+      "Authored_sunmane_kit_sand_boulder_1_001",
+      "Authored_sunmane_kit_sand_boulder_1_002"
     ],
     "serverStorageVersion": 1,
     "serverTileMin": [
@@ -146,7 +162,7 @@
       -194,
       292
     ],
-    "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
+    "authoringSpecSha256": "7b8a72a3eca2f33850ea71a43392244dcdd91cf1fca6b4d43507ef0788c4649e"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -449,492 +465,7 @@
     "pixelsPerMetre": 1
   },
   "ambientPopulation": {
-    "groups": [
-      {
-        "animation": "Idle_A",
-        "count": 5,
-        "model": "sunmane_grey_pony",
-        "radius": 5.6,
-        "seed": 2595,
-        "serverTile": [
-          264,
-          189
-        ],
-        "id": "herd-barrow-paddock",
-        "position": [
-          70.0,
-          35.43014144897461,
-          103.0
-        ],
-        "center": [
-          70.0,
-          35.43014144897461,
-          103.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 6,
-        "model": "sunmane_dun_mare",
-        "radius": 11,
-        "seed": 14314,
-        "serverTile": [
-          304,
-          418
-        ],
-        "id": "herd-dune-margin",
-        "position": [
-          110.0,
-          47.114200592041016,
-          -126.0
-        ],
-        "center": [
-          110.0,
-          47.114200592041016,
-          -126.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 6,
-        "model": "sunmane_dun_mare",
-        "radius": 6.2,
-        "seed": 75438,
-        "serverTile": [
-          128,
-          226
-        ],
-        "id": "herd-duskrider-paddock",
-        "position": [
-          -66.0,
-          31.71771240234375,
-          66.0
-        ],
-        "center": [
-          -66.0,
-          31.71771240234375,
-          66.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 6,
-        "model": "sunmane_dun_mare",
-        "radius": 5.6,
-        "seed": 12857,
-        "serverTile": [
-          260,
-          252
-        ],
-        "id": "herd-east-paddock",
-        "position": [
-          66.0,
-          36.3876953125,
-          40.0
-        ],
-        "center": [
-          66.0,
-          36.3876953125,
-          40.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 6,
-        "model": "sunmane_steppe_horse",
-        "radius": 11,
-        "seed": 24325,
-        "serverTile": [
-          340,
-          271
-        ],
-        "id": "herd-foothill-pasture",
-        "position": [
-          146.0,
-          24.2869930267334,
-          21.0
-        ],
-        "center": [
-          146.0,
-          24.2869930267334,
-          21.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 7,
-        "model": "sunmane_steppe_horse",
-        "radius": 5.4,
-        "seed": 74190,
-        "serverTile": [
-          80,
-          387
-        ],
-        "id": "herd-north-pasture",
-        "position": [
-          -114.0,
-          31.212867736816406,
-          -95.0
-        ],
-        "center": [
-          -114.0,
-          31.212867736816406,
-          -95.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 8,
-        "model": "sunmane_dun_mare",
-        "radius": 12,
-        "seed": 94632,
-        "serverTile": [
-          329,
-          252
-        ],
-        "id": "herd-open-steppe-east",
-        "position": [
-          135.0,
-          27.39483642578125,
-          40.0
-        ],
-        "center": [
-          135.0,
-          27.39483642578125,
-          40.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 7,
-        "model": "sunmane_steppe_horse",
-        "radius": 12,
-        "seed": 46592,
-        "serverTile": [
-          317,
-          410
-        ],
-        "id": "herd-open-steppe-north",
-        "position": [
-          123.0,
-          44.4458122253418,
-          -118.0
-        ],
-        "center": [
-          123.0,
-          44.4458122253418,
-          -118.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 7,
-        "model": "sunmane_dun_mare",
-        "radius": 12,
-        "seed": 16374,
-        "serverTile": [
-          257,
-          155
-        ],
-        "id": "herd-open-steppe-south",
-        "position": [
-          63.0,
-          30.91810417175293,
-          137.0
-        ],
-        "center": [
-          63.0,
-          30.91810417175293,
-          137.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 8,
-        "model": "sunmane_steppe_horse",
-        "radius": 13,
-        "seed": 49824,
-        "serverTile": [
-          61,
-          179
-        ],
-        "id": "herd-open-steppe-west",
-        "position": [
-          -133.0,
-          44.50204849243164,
-          113.0
-        ],
-        "center": [
-          -133.0,
-          44.50204849243164,
-          113.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 6,
-        "model": "sunmane_steppe_horse",
-        "radius": 5.8,
-        "seed": 23468,
-        "serverTile": [
-          150,
-          227
-        ],
-        "id": "herd-saltmane-paddock",
-        "position": [
-          -44.0,
-          30.324054718017578,
-          65.0
-        ],
-        "center": [
-          -44.0,
-          30.324054718017578,
-          65.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 5,
-        "model": "sunmane_steppe_horse",
-        "radius": 5.4,
-        "seed": 32661,
-        "serverTile": [
-          128,
-          187
-        ],
-        "id": "herd-south-paddock",
-        "position": [
-          -66.0,
-          32.8635139465332,
-          105.0
-        ],
-        "center": [
-          -66.0,
-          32.8635139465332,
-          105.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 4,
-        "model": "sunmane_grey_pony",
-        "radius": 2.6,
-        "seed": 8626,
-        "serverTile": [
-          150,
-          278
-        ],
-        "id": "mounts-crossroads",
-        "position": [
-          -44.0,
-          29.911344528198242,
-          14.0
-        ],
-        "center": [
-          -44.0,
-          29.911344528198242,
-          14.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 3,
-        "model": "sunmane_dun_mare",
-        "radius": 3,
-        "seed": 90839,
-        "serverTile": [
-          322,
-          420
-        ],
-        "id": "mounts-dune-camp-east",
-        "position": [
-          128.39109802246094,
-          42.61780548095703,
-          -128.423828125
-        ],
-        "center": [
-          128.39109802246094,
-          42.61780548095703,
-          -128.423828125
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 3,
-        "model": "sunmane_grey_pony",
-        "radius": 3,
-        "seed": 927,
-        "serverTile": [
-          291,
-          441
-        ],
-        "id": "mounts-dune-camp-mid",
-        "position": [
-          97.7018051147461,
-          47.055606842041016,
-          -149.7627410888672
-        ],
-        "center": [
-          97.7018051147461,
-          47.055606842041016,
-          -149.7627410888672
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 3,
-        "model": "sunmane_dun_mare",
-        "radius": 3,
-        "seed": 40447,
-        "serverTile": [
-          161,
-          427
-        ],
-        "id": "mounts-dune-camp-north",
-        "position": [
-          -32.584991455078125,
-          27.681642532348633,
-          -135.8330078125
-        ],
-        "center": [
-          -32.584991455078125,
-          27.681642532348633,
-          -135.8330078125
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 3,
-        "model": "sunmane_grey_pony",
-        "radius": 2.8,
-        "seed": 7216,
-        "serverTile": [
-          309,
-          438
-        ],
-        "id": "mounts-dune-station-east",
-        "position": [
-          115.7018051147461,
-          44.97157669067383,
-          -146.7627410888672
-        ],
-        "center": [
-          115.7018051147461,
-          44.97157669067383,
-          -146.7627410888672
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 3,
-        "model": "sunmane_grey_pony",
-        "radius": 2.8,
-        "seed": 35736,
-        "serverTile": [
-          166,
-          412
-        ],
-        "id": "mounts-dune-station-west",
-        "position": [
-          -28.0,
-          27.937986373901367,
-          -120.0
-        ],
-        "center": [
-          -28.0,
-          27.937986373901367,
-          -120.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 4,
-        "model": "sunmane_grey_pony",
-        "radius": 2.2,
-        "seed": 36896,
-        "serverTile": [
-          299,
-          293
-        ],
-        "id": "mounts-east-caravanserai",
-        "position": [
-          105.0,
-          41.11269760131836,
-          -1.0
-        ],
-        "center": [
-          105.0,
-          41.11269760131836,
-          -1.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 4,
-        "model": "sunmane_grey_pony",
-        "radius": 2.6,
-        "seed": 45277,
-        "serverTile": [
-          190,
-          298
-        ],
-        "id": "mounts-east-hitching",
-        "position": [
-          -4.0,
-          28.49201202392578,
-          -6.0
-        ],
-        "center": [
-          -4.0,
-          28.49201202392578,
-          -6.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 3,
-        "model": "sunmane_steppe_horse",
-        "radius": 1.8,
-        "seed": 60343,
-        "serverTile": [
-          143,
-          282
-        ],
-        "id": "mounts-market",
-        "position": [
-          -51.0,
-          30.077116012573242,
-          10.0
-        ],
-        "center": [
-          -51.0,
-          30.077116012573242,
-          10.0
-        ]
-      },
-      {
-        "animation": "Idle_A",
-        "count": 4,
-        "model": "sunmane_grey_pony",
-        "radius": 2.2,
-        "seed": 30941,
-        "serverTile": [
-          126,
-          331
-        ],
-        "id": "mounts-west-caravanserai",
-        "position": [
-          -68.0,
-          28.92655372619629,
-          -39.0
-        ],
-        "center": [
-          -68.0,
-          28.92655372619629,
-          -39.0
-        ]
-      }
-    ],
+    "groups": [],
     "note": "Scenery livestock instanced by the client's ambient population system. They carry no actor id and no collision, and are deliberately not baked into the world mesh."
   },
   "provenance": {
@@ -952,9 +483,9 @@
       -144.0
     ],
     "max": [
-      144.0,
+      144.80934925856286,
       55.86596488952637,
-      -47.62944374868334
+      -45.286568512527424
     ]
   },
   "streamingBorders": [
@@ -1062,9 +593,9 @@
     }
   ],
   "performance": {
-    "glbBytes": 3526448,
-    "nodes": 272,
-    "meshes": 97,
+    "glbBytes": 4751464,
+    "nodes": 427,
+    "meshes": 115,
     "externalResources": {
       "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../../../_continent/shared-assets/5d3d975e645bf4fd460f1022d0522c29b3dbc7b4e281bf0deb9559062fc9570a.png": "5d3d975e645bf4fd460f1022d0522c29b3dbc7b4e281bf0deb9559062fc9570a",
@@ -1098,7 +629,37 @@
       "../../../_continent/shared-assets/53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441.png": "53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441",
       "../../../_continent/shared-assets/9bc7a88b27821940168ab9d381b558f24d0b74ccd5ba573651968da59d5a3bee.png": "9bc7a88b27821940168ab9d381b558f24d0b74ccd5ba573651968da59d5a3bee",
       "../../../_continent/shared-assets/7feeb1e75a59491990af669476a7f12531f4eec9cee2319d49358e6b46ac8701.png": "7feeb1e75a59491990af669476a7f12531f4eec9cee2319d49358e6b46ac8701",
-      "../../../_continent/shared-assets/f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3.png": "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3"
+      "../../../_continent/shared-assets/f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3.png": "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3",
+      "../../../_continent/shared-assets/c572d84bef46dcc741167212a5447f57fa057af4a9e0add1becbaa57c86768c9.jpg": "c572d84bef46dcc741167212a5447f57fa057af4a9e0add1becbaa57c86768c9",
+      "../../../_continent/shared-assets/4401066e06bf180bf28bcffcbe623052b1b6adbae45f405003d45625dfc42f87.jpg": "4401066e06bf180bf28bcffcbe623052b1b6adbae45f405003d45625dfc42f87",
+      "../../../_continent/shared-assets/2a5066e3eb0051a0e339003ad06f59009657dbacc453a32086169130893eea8d.jpg": "2a5066e3eb0051a0e339003ad06f59009657dbacc453a32086169130893eea8d",
+      "../../../_continent/shared-assets/25a2e7ef711fe48a4554c77031b618ec5176f0e91679835e570881d4d63e549c.jpg": "25a2e7ef711fe48a4554c77031b618ec5176f0e91679835e570881d4d63e549c",
+      "../../../_continent/shared-assets/d902b3bab9b7adac2f542cd452adbb38d5860b7d86d51d2584968e3a3d8b0ce2.jpg": "d902b3bab9b7adac2f542cd452adbb38d5860b7d86d51d2584968e3a3d8b0ce2",
+      "../../../_continent/shared-assets/2bed2370672587b3d65bccbce62f54c99f88c2cfa79675aad983f8d74a2d7e14.jpg": "2bed2370672587b3d65bccbce62f54c99f88c2cfa79675aad983f8d74a2d7e14",
+      "../../../_continent/shared-assets/5c6ca57de2b178e9ab5617550088b54d58202f1512b766aafcf73f5283c8e3f7.jpg": "5c6ca57de2b178e9ab5617550088b54d58202f1512b766aafcf73f5283c8e3f7",
+      "../../../_continent/shared-assets/796a068e3230a362eab3859e1a9e44f96abb64f5ef592f04f4f950bad224ac05.jpg": "796a068e3230a362eab3859e1a9e44f96abb64f5ef592f04f4f950bad224ac05",
+      "../../../_continent/shared-assets/8ebdc862857e725aeeb0bd758d987a55a4a19c32fd2f7a139b35411756c07a92.jpg": "8ebdc862857e725aeeb0bd758d987a55a4a19c32fd2f7a139b35411756c07a92",
+      "../../../_continent/shared-assets/fc8103be70bab19c686d65e67ba3627cde3241837f2b562f76746d8f979b360f.jpg": "fc8103be70bab19c686d65e67ba3627cde3241837f2b562f76746d8f979b360f",
+      "../../../_continent/shared-assets/2acf8caabc740f22dd791d445da1798adae822e1e3256dbf1ddbef349fe968e8.jpg": "2acf8caabc740f22dd791d445da1798adae822e1e3256dbf1ddbef349fe968e8",
+      "../../../_continent/shared-assets/02a82c939757487fd8a7198630fd57b92adfea61daa470d61916baa1ecd693c8.jpg": "02a82c939757487fd8a7198630fd57b92adfea61daa470d61916baa1ecd693c8",
+      "../../../_continent/shared-assets/c227afed15ab47baf32160da0abe56a8168023945b793b143d026b8433b3bef1.jpg": "c227afed15ab47baf32160da0abe56a8168023945b793b143d026b8433b3bef1",
+      "../../../_continent/shared-assets/233b2bde48a8409d1bbba914952415bdd6b344c75e1fee6e617bdf09c6df9585.jpg": "233b2bde48a8409d1bbba914952415bdd6b344c75e1fee6e617bdf09c6df9585",
+      "../../../_continent/shared-assets/adfc8574a3ac29ebcc8762274ff04509731441c7b058b78a1f8ede7f827b2a57.jpg": "adfc8574a3ac29ebcc8762274ff04509731441c7b058b78a1f8ede7f827b2a57",
+      "../../../_continent/shared-assets/2e65d525620dbbf2b0285c922b660eeb3e78fa602c414b9f9744742e4689c3bd.jpg": "2e65d525620dbbf2b0285c922b660eeb3e78fa602c414b9f9744742e4689c3bd",
+      "../../../_continent/shared-assets/b44bd5faa19c26f309af49ce7cadf06e64a36b7f6389582fffdff34919222c5e.jpg": "b44bd5faa19c26f309af49ce7cadf06e64a36b7f6389582fffdff34919222c5e",
+      "../../../_continent/shared-assets/73c134882af10820fc36567a32cbb59b9ff4b2e5340e58f5ef478c089610e949.jpg": "73c134882af10820fc36567a32cbb59b9ff4b2e5340e58f5ef478c089610e949",
+      "../../../_continent/shared-assets/4a47084798c6be04dd8a47d1a792c620a3229ebb35207195bfb53f7f6fe9885c.jpg": "4a47084798c6be04dd8a47d1a792c620a3229ebb35207195bfb53f7f6fe9885c",
+      "../../../_continent/shared-assets/6b96d4a300136f4f515304bdca9f67840d30cdeb88e01554e788e32dab263338.jpg": "6b96d4a300136f4f515304bdca9f67840d30cdeb88e01554e788e32dab263338",
+      "../../../_continent/shared-assets/cfd44a9a724ffacfb53dd2b2e44c10799eb017d507b1a40195e76818ea56e23e.jpg": "cfd44a9a724ffacfb53dd2b2e44c10799eb017d507b1a40195e76818ea56e23e",
+      "../../../_continent/shared-assets/6941b968c46694f3b3242570b8e72cb03ec0949a2d8df6a3a5746a476d8b6b9e.jpg": "6941b968c46694f3b3242570b8e72cb03ec0949a2d8df6a3a5746a476d8b6b9e",
+      "../../../_continent/shared-assets/97a617366c57f5255a79bc4c9ebadc3c0a0d0aaa3eb8c7a5ee7d448309b57b68.jpg": "97a617366c57f5255a79bc4c9ebadc3c0a0d0aaa3eb8c7a5ee7d448309b57b68",
+      "../../../_continent/shared-assets/48ebbab76d14ee7294174dd51b4d908d945b75afd4110bb9ff3c256a7cc68742.jpg": "48ebbab76d14ee7294174dd51b4d908d945b75afd4110bb9ff3c256a7cc68742",
+      "../../../_continent/shared-assets/0118d48a7ac3d163953175a71b65fcafa9ab00aae3ed5bc0aae3d0fd67b47397.jpg": "0118d48a7ac3d163953175a71b65fcafa9ab00aae3ed5bc0aae3d0fd67b47397",
+      "../../../_continent/shared-assets/4971c084f68a3050ee87534fcbe925bdf17a26b9f444c8d2c99e1dbd0593322c.jpg": "4971c084f68a3050ee87534fcbe925bdf17a26b9f444c8d2c99e1dbd0593322c",
+      "../../../_continent/shared-assets/05ba51249bd80721486f617bc07f548f354c8ef5ac37a246f9d3e2eca971e060.jpg": "05ba51249bd80721486f617bc07f548f354c8ef5ac37a246f9d3e2eca971e060",
+      "../../../_continent/shared-assets/db3fac5aec7e93be36eddd19f37e19048effaccbfb7517a8b951bf69755af164.jpg": "db3fac5aec7e93be36eddd19f37e19048effaccbfb7517a8b951bf69755af164",
+      "../../../_continent/shared-assets/f5ad8b541b41031b2a4f0e11647de949bc350fb6b97a85bc64a995de85c733b6.jpg": "f5ad8b541b41031b2a4f0e11647de949bc350fb6b97a85bc64a995de85c733b6",
+      "../../../_continent/shared-assets/e8916eb647294d9930a8a23558a3bb3ea1fece5d81a0aba6c3b4b1be5f397a4c.jpg": "e8916eb647294d9930a8a23558a3bb3ea1fece5d81a0aba6c3b4b1be5f397a4c"
     },
     "sharedResourceResidentBytes": {
       "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
@@ -1133,7 +694,37 @@
       "53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441": 349526,
       "9bc7a88b27821940168ab9d381b558f24d0b74ccd5ba573651968da59d5a3bee": 1398102,
       "7feeb1e75a59491990af669476a7f12531f4eec9cee2319d49358e6b46ac8701": 349526,
-      "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3": 349526
+      "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3": 349526,
+      "c572d84bef46dcc741167212a5447f57fa057af4a9e0add1becbaa57c86768c9": 1398102,
+      "4401066e06bf180bf28bcffcbe623052b1b6adbae45f405003d45625dfc42f87": 1398102,
+      "2a5066e3eb0051a0e339003ad06f59009657dbacc453a32086169130893eea8d": 1398102,
+      "25a2e7ef711fe48a4554c77031b618ec5176f0e91679835e570881d4d63e549c": 1398102,
+      "d902b3bab9b7adac2f542cd452adbb38d5860b7d86d51d2584968e3a3d8b0ce2": 1398102,
+      "2bed2370672587b3d65bccbce62f54c99f88c2cfa79675aad983f8d74a2d7e14": 1398102,
+      "5c6ca57de2b178e9ab5617550088b54d58202f1512b766aafcf73f5283c8e3f7": 5592406,
+      "796a068e3230a362eab3859e1a9e44f96abb64f5ef592f04f4f950bad224ac05": 5592406,
+      "8ebdc862857e725aeeb0bd758d987a55a4a19c32fd2f7a139b35411756c07a92": 5592406,
+      "fc8103be70bab19c686d65e67ba3627cde3241837f2b562f76746d8f979b360f": 5592406,
+      "2acf8caabc740f22dd791d445da1798adae822e1e3256dbf1ddbef349fe968e8": 5592406,
+      "02a82c939757487fd8a7198630fd57b92adfea61daa470d61916baa1ecd693c8": 5592406,
+      "c227afed15ab47baf32160da0abe56a8168023945b793b143d026b8433b3bef1": 5592406,
+      "233b2bde48a8409d1bbba914952415bdd6b344c75e1fee6e617bdf09c6df9585": 5592406,
+      "adfc8574a3ac29ebcc8762274ff04509731441c7b058b78a1f8ede7f827b2a57": 5592406,
+      "2e65d525620dbbf2b0285c922b660eeb3e78fa602c414b9f9744742e4689c3bd": 5592406,
+      "b44bd5faa19c26f309af49ce7cadf06e64a36b7f6389582fffdff34919222c5e": 5592406,
+      "73c134882af10820fc36567a32cbb59b9ff4b2e5340e58f5ef478c089610e949": 5592406,
+      "4a47084798c6be04dd8a47d1a792c620a3229ebb35207195bfb53f7f6fe9885c": 1398102,
+      "6b96d4a300136f4f515304bdca9f67840d30cdeb88e01554e788e32dab263338": 1398102,
+      "cfd44a9a724ffacfb53dd2b2e44c10799eb017d507b1a40195e76818ea56e23e": 1398102,
+      "6941b968c46694f3b3242570b8e72cb03ec0949a2d8df6a3a5746a476d8b6b9e": 1398102,
+      "97a617366c57f5255a79bc4c9ebadc3c0a0d0aaa3eb8c7a5ee7d448309b57b68": 1398102,
+      "48ebbab76d14ee7294174dd51b4d908d945b75afd4110bb9ff3c256a7cc68742": 1398102,
+      "0118d48a7ac3d163953175a71b65fcafa9ab00aae3ed5bc0aae3d0fd67b47397": 1398102,
+      "4971c084f68a3050ee87534fcbe925bdf17a26b9f444c8d2c99e1dbd0593322c": 1398102,
+      "05ba51249bd80721486f617bc07f548f354c8ef5ac37a246f9d3e2eca971e060": 1398102,
+      "db3fac5aec7e93be36eddd19f37e19048effaccbfb7517a8b951bf69755af164": 1398102,
+      "f5ad8b541b41031b2a4f0e11647de949bc350fb6b97a85bc64a995de85c733b6": 1398102,
+      "e8916eb647294d9930a8a23558a3bb3ea1fece5d81a0aba6c3b4b1be5f397a4c": 1398102
     }
   },
   "rendering": {
@@ -3238,7 +2829,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:59f3bcfa65e69e9511127105019f61c7dd1423e49a68124ef534ff11f2326e4a",
+  "terrainRevision": "diagonal-spine-v1:fbfd00f06795c870df3209501c1b2fef232a008d62eba411d30f2bed24773979",
   "sources": [
     "_continent/diagonal-plan.json",
     "_continent/build_continent.py",
@@ -3278,11 +2869,41 @@
     "../../../_continent/shared-assets/53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441.png": "53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441",
     "../../../_continent/shared-assets/9bc7a88b27821940168ab9d381b558f24d0b74ccd5ba573651968da59d5a3bee.png": "9bc7a88b27821940168ab9d381b558f24d0b74ccd5ba573651968da59d5a3bee",
     "../../../_continent/shared-assets/7feeb1e75a59491990af669476a7f12531f4eec9cee2319d49358e6b46ac8701.png": "7feeb1e75a59491990af669476a7f12531f4eec9cee2319d49358e6b46ac8701",
-    "../../../_continent/shared-assets/f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3.png": "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3"
+    "../../../_continent/shared-assets/f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3.png": "f0e4f0677c9583120a0378cfe5dbb5fddb9c67612f419c70d655711c8eaecdf3",
+    "../../../_continent/shared-assets/c572d84bef46dcc741167212a5447f57fa057af4a9e0add1becbaa57c86768c9.jpg": "c572d84bef46dcc741167212a5447f57fa057af4a9e0add1becbaa57c86768c9",
+    "../../../_continent/shared-assets/4401066e06bf180bf28bcffcbe623052b1b6adbae45f405003d45625dfc42f87.jpg": "4401066e06bf180bf28bcffcbe623052b1b6adbae45f405003d45625dfc42f87",
+    "../../../_continent/shared-assets/2a5066e3eb0051a0e339003ad06f59009657dbacc453a32086169130893eea8d.jpg": "2a5066e3eb0051a0e339003ad06f59009657dbacc453a32086169130893eea8d",
+    "../../../_continent/shared-assets/25a2e7ef711fe48a4554c77031b618ec5176f0e91679835e570881d4d63e549c.jpg": "25a2e7ef711fe48a4554c77031b618ec5176f0e91679835e570881d4d63e549c",
+    "../../../_continent/shared-assets/d902b3bab9b7adac2f542cd452adbb38d5860b7d86d51d2584968e3a3d8b0ce2.jpg": "d902b3bab9b7adac2f542cd452adbb38d5860b7d86d51d2584968e3a3d8b0ce2",
+    "../../../_continent/shared-assets/2bed2370672587b3d65bccbce62f54c99f88c2cfa79675aad983f8d74a2d7e14.jpg": "2bed2370672587b3d65bccbce62f54c99f88c2cfa79675aad983f8d74a2d7e14",
+    "../../../_continent/shared-assets/5c6ca57de2b178e9ab5617550088b54d58202f1512b766aafcf73f5283c8e3f7.jpg": "5c6ca57de2b178e9ab5617550088b54d58202f1512b766aafcf73f5283c8e3f7",
+    "../../../_continent/shared-assets/796a068e3230a362eab3859e1a9e44f96abb64f5ef592f04f4f950bad224ac05.jpg": "796a068e3230a362eab3859e1a9e44f96abb64f5ef592f04f4f950bad224ac05",
+    "../../../_continent/shared-assets/8ebdc862857e725aeeb0bd758d987a55a4a19c32fd2f7a139b35411756c07a92.jpg": "8ebdc862857e725aeeb0bd758d987a55a4a19c32fd2f7a139b35411756c07a92",
+    "../../../_continent/shared-assets/fc8103be70bab19c686d65e67ba3627cde3241837f2b562f76746d8f979b360f.jpg": "fc8103be70bab19c686d65e67ba3627cde3241837f2b562f76746d8f979b360f",
+    "../../../_continent/shared-assets/2acf8caabc740f22dd791d445da1798adae822e1e3256dbf1ddbef349fe968e8.jpg": "2acf8caabc740f22dd791d445da1798adae822e1e3256dbf1ddbef349fe968e8",
+    "../../../_continent/shared-assets/02a82c939757487fd8a7198630fd57b92adfea61daa470d61916baa1ecd693c8.jpg": "02a82c939757487fd8a7198630fd57b92adfea61daa470d61916baa1ecd693c8",
+    "../../../_continent/shared-assets/c227afed15ab47baf32160da0abe56a8168023945b793b143d026b8433b3bef1.jpg": "c227afed15ab47baf32160da0abe56a8168023945b793b143d026b8433b3bef1",
+    "../../../_continent/shared-assets/233b2bde48a8409d1bbba914952415bdd6b344c75e1fee6e617bdf09c6df9585.jpg": "233b2bde48a8409d1bbba914952415bdd6b344c75e1fee6e617bdf09c6df9585",
+    "../../../_continent/shared-assets/adfc8574a3ac29ebcc8762274ff04509731441c7b058b78a1f8ede7f827b2a57.jpg": "adfc8574a3ac29ebcc8762274ff04509731441c7b058b78a1f8ede7f827b2a57",
+    "../../../_continent/shared-assets/2e65d525620dbbf2b0285c922b660eeb3e78fa602c414b9f9744742e4689c3bd.jpg": "2e65d525620dbbf2b0285c922b660eeb3e78fa602c414b9f9744742e4689c3bd",
+    "../../../_continent/shared-assets/b44bd5faa19c26f309af49ce7cadf06e64a36b7f6389582fffdff34919222c5e.jpg": "b44bd5faa19c26f309af49ce7cadf06e64a36b7f6389582fffdff34919222c5e",
+    "../../../_continent/shared-assets/73c134882af10820fc36567a32cbb59b9ff4b2e5340e58f5ef478c089610e949.jpg": "73c134882af10820fc36567a32cbb59b9ff4b2e5340e58f5ef478c089610e949",
+    "../../../_continent/shared-assets/4a47084798c6be04dd8a47d1a792c620a3229ebb35207195bfb53f7f6fe9885c.jpg": "4a47084798c6be04dd8a47d1a792c620a3229ebb35207195bfb53f7f6fe9885c",
+    "../../../_continent/shared-assets/6b96d4a300136f4f515304bdca9f67840d30cdeb88e01554e788e32dab263338.jpg": "6b96d4a300136f4f515304bdca9f67840d30cdeb88e01554e788e32dab263338",
+    "../../../_continent/shared-assets/cfd44a9a724ffacfb53dd2b2e44c10799eb017d507b1a40195e76818ea56e23e.jpg": "cfd44a9a724ffacfb53dd2b2e44c10799eb017d507b1a40195e76818ea56e23e",
+    "../../../_continent/shared-assets/6941b968c46694f3b3242570b8e72cb03ec0949a2d8df6a3a5746a476d8b6b9e.jpg": "6941b968c46694f3b3242570b8e72cb03ec0949a2d8df6a3a5746a476d8b6b9e",
+    "../../../_continent/shared-assets/97a617366c57f5255a79bc4c9ebadc3c0a0d0aaa3eb8c7a5ee7d448309b57b68.jpg": "97a617366c57f5255a79bc4c9ebadc3c0a0d0aaa3eb8c7a5ee7d448309b57b68",
+    "../../../_continent/shared-assets/48ebbab76d14ee7294174dd51b4d908d945b75afd4110bb9ff3c256a7cc68742.jpg": "48ebbab76d14ee7294174dd51b4d908d945b75afd4110bb9ff3c256a7cc68742",
+    "../../../_continent/shared-assets/0118d48a7ac3d163953175a71b65fcafa9ab00aae3ed5bc0aae3d0fd67b47397.jpg": "0118d48a7ac3d163953175a71b65fcafa9ab00aae3ed5bc0aae3d0fd67b47397",
+    "../../../_continent/shared-assets/4971c084f68a3050ee87534fcbe925bdf17a26b9f444c8d2c99e1dbd0593322c.jpg": "4971c084f68a3050ee87534fcbe925bdf17a26b9f444c8d2c99e1dbd0593322c",
+    "../../../_continent/shared-assets/05ba51249bd80721486f617bc07f548f354c8ef5ac37a246f9d3e2eca971e060.jpg": "05ba51249bd80721486f617bc07f548f354c8ef5ac37a246f9d3e2eca971e060",
+    "../../../_continent/shared-assets/db3fac5aec7e93be36eddd19f37e19048effaccbfb7517a8b951bf69755af164.jpg": "db3fac5aec7e93be36eddd19f37e19048effaccbfb7517a8b951bf69755af164",
+    "../../../_continent/shared-assets/f5ad8b541b41031b2a4f0e11647de949bc350fb6b97a85bc64a995de85c733b6.jpg": "f5ad8b541b41031b2a4f0e11647de949bc350fb6b97a85bc64a995de85c733b6",
+    "../../../_continent/shared-assets/e8916eb647294d9930a8a23558a3bb3ea1fece5d81a0aba6c3b4b1be5f397a4c.jpg": "e8916eb647294d9930a8a23558a3bb3ea1fece5d81a0aba6c3b4b1be5f397a4c"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "e3a139bd73ae2be28ba66a22600bbdc39d0ef22e6cc78c9a9ab7de45db12f066",
+    "masterSha256": "ce1f472e785339ade101ad86e131bac2d39fb587949ef6a37f8e30bb5bc8d1a7",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a",
     "storage": {
       "serverCells": [
@@ -3294,7 +2915,7 @@
         0,
         0
       ],
-      "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
+      "authoringSpecSha256": "7b8a72a3eca2f33850ea71a43392244dcdd91cf1fca6b4d43507ef0788c4649e"
     }
   },
   "biomeBlend": {
@@ -3393,9 +3014,9 @@
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "e3a139bd73ae2be28ba66a22600bbdc39d0ef22e6cc78c9a9ab7de45db12f066",
-    "collisionSha256": "3594425fde1ab9f8135d2858ed0c131ab2c27045ac8dc2acfafcae4b3fe61557",
-    "terrainRevision": "diagonal-spine-v1:59f3bcfa65e69e9511127105019f61c7dd1423e49a68124ef534ff11f2326e4a",
+    "masterSha256": "ce1f472e785339ade101ad86e131bac2d39fb587949ef6a37f8e30bb5bc8d1a7",
+    "collisionSha256": "0438e9e643c7b4b9427f3c1337503bfa228a8e697431cf4de1c1715a54d5084f",
+    "terrainRevision": "diagonal-spine-v1:fbfd00f06795c870df3209501c1b2fef232a008d62eba411d30f2bed24773979",
     "storage": {
       "serverCells": [
         792,
@@ -3406,7 +3027,7 @@
         0,
         0
       ],
-      "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
+      "authoringSpecSha256": "7b8a72a3eca2f33850ea71a43392244dcdd91cf1fca6b4d43507ef0788c4649e"
     }
   }
 }
