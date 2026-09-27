@@ -20,6 +20,7 @@ var _selected_entry: Dictionary = {}
 var _thumbnails: Dictionary = {}
 var _renderer: Node
 var _marker_entries: Array[Dictionary] = []
+var _territory_entries: Array[Dictionary] = []
 var _search: LineEdit
 var _category: OptionButton
 var _thumbnail_toggle: CheckButton
@@ -165,6 +166,16 @@ func reload_library() -> void:
 ## listed after the library and prefabs under "Gameplay markers".
 func set_marker_entries(entries: Array[Dictionary]) -> void:
 	_marker_entries = entries.duplicate(true)
+	var previous := String(_selected_entry.get("id", ""))
+	_reload_entries(false)
+	if not previous.is_empty():
+		select_entry_by_id(previous)
+
+
+## The open territory's own kit (asset_catalog.territory_entries), listed after
+## the library under "Territory kit: scenery" and "Territory kit: structures".
+func set_territory_entries(entries: Array[Dictionary]) -> void:
+	_territory_entries = entries.duplicate(true)
 	var previous := String(_selected_entry.get("id", ""))
 	_reload_entries(false)
 	if not previous.is_empty():
@@ -486,6 +497,7 @@ func _apply_view_mode() -> void:
 func _reload_entries(refresh_cache: bool) -> void:
 	_cancel_if_armed()
 	_entries = Catalog.entries(refresh_cache)
+	_entries.append_array(_territory_entries)
 	_entries.append_array(Prefabs.entries())
 	_entries.append_array(_marker_entries)
 	if refresh_cache:

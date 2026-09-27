@@ -1,6 +1,7 @@
 @tool
 extends EditorPlugin
 
+const Catalog := preload("res://addons/map_asset_palette/asset_catalog.gd")
 const Dock := preload("res://addons/map_asset_palette/map_asset_dock.gd")
 const Placement := preload("res://addons/map_asset_palette/placement.gd")
 const Prefabs := preload("res://addons/map_asset_palette/prefab_library.gd")
@@ -537,6 +538,7 @@ func _on_scene_changed(scene_root: Node) -> void:
 	_cancel_placement()
 	if _dock != null:
 		_dock.set_scene_available(_pilot_root() != null)
+		_dock.set_territory_entries(Catalog.territory_entries(_pilot_root()))
 		_dock.set_marker_entries(Markers.entries(_pilot_root()))
 
 

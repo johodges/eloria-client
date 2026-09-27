@@ -1,6 +1,9 @@
 extends SceneTree
 
 const Catalog := preload("res://addons/map_asset_palette/asset_catalog.gd")
+const ASSET_SCRIPT := preload("res://src/dev/map_authoring_region/asset_control.gd")
+const KIT_SOURCE := "res://world_authoring/regions/sunmane_steppe/assets/prototypes/"
+const KIT_FIXTURE := "res://test-artifacts/territory-kit"
 const OBJECTS_PATH := "res://data/world/objects.json"
 const EXTRAS_PATH := "res://data/world/map_asset_extras.json"
 const STARTER_PATH := \
@@ -25,6 +28,7 @@ func _run() -> void:
 	_test_extra_manifest(entries)
 	_test_metadata_and_stability(entries)
 	_test_filtering(entries)
+	_test_territory_kit()
 	print("map asset catalog: ",
 		"PASS" if _failures == 0 else "FAIL (%d)" % _failures)
 	quit(_failures)
@@ -163,6 +167,51 @@ func _by_id(entries: Array[Dictionary], id: String) -> Dictionary:
 		if entry.id == id:
 			return entry
 	return {}
+
+
+## A territory's own kit is listed from the prototypes folder beside its scene.
+## Copied pieces keep the saved copies' id and role; a new piece takes the
+## scene's prefix and a role from its name. Uses a throwaway folder, never a
+## production territory.
+func _test_territory_kit() -> void:
+	var folder := KIT_FIXTURE.path_join("assets/prototypes")
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
+	for file in ["kit-cart.glb", "kit-steppe-shrub-0.glb", "kit-grey-boulder-1.glb"]:
+		DirAccess.copy_absolute(ProjectSettings.globalize_path(KIT_SOURCE + file),
+			ProjectSettings.globalize_path(folder.path_join(file)))
+	var root := Node3D.new()
+	root.scene_file_path = KIT_FIXTURE.path_join("fixture.tscn")
+	var container := Node3D.new()
+	container.name = "AuthoredAssets"
+	root.add_child(container)
+	for pair: Array in [["demo:kit-cart", "solid"], ["demo:kit-cart", "solid"]]:
+		var wrapper: Node3D = ASSET_SCRIPT.new()
+		wrapper.set("scene_path", folder.path_join("kit-cart.glb"))
+		wrapper.set("catalog_asset_id", pair[0])
+		wrapper.set("collision_role", pair[1])
+		container.add_child(wrapper)
+	var listed := Catalog.territory_entries(root)
+	var by_file := {}
+	for entry: Dictionary in listed:
+		by_file[String(entry.scene_path).get_file()] = entry
+	_expect(listed.size() == 3, "the territory kit lists every .glb beside the scene")
+	_expect(String(by_file.get("kit-cart.glb", {}).get("id", "")) == "demo:kit-cart" and
+		String(by_file["kit-cart.glb"].category) == Catalog.TERRITORY_STRUCTURES,
+		"a placed kit piece keeps its copies' catalog id and solid role")
+	_expect(String(by_file.get("kit-steppe-shrub-0.glb", {}).get("id", "")) ==
+		"demo:kit-steppe-shrub-0" and
+		String(by_file["kit-steppe-shrub-0.glb"].category) == Catalog.TERRITORY_SCENERY,
+		"a new ground-cover piece takes the scene's prefix and starts walk-through")
+	_expect(String(by_file.get("kit-grey-boulder-1.glb", {}).get("category", "")) ==
+		Catalog.TERRITORY_STRUCTURES, "a new boulder starts solid")
+	_expect(Catalog.territory_entries(Node3D.new()).is_empty(),
+		"an unsaved scene has no territory kit")
+	root.free()
+	for file in DirAccess.get_files_at(folder):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(folder.path_join(file)))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(folder))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(KIT_FIXTURE.path_join("assets")))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(KIT_FIXTURE))
 
 
 func _expect(condition: bool, message: String) -> bool:

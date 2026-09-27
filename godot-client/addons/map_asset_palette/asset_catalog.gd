@@ -28,6 +28,16 @@ const LIBRARY_EXTENSIONS := ["glb", "tscn", "scn"]
 const IMPORT_EXTENSIONS := ["glb", "gltf"]
 const LIBRARY_CATEGORY := "Library"
 const LIBRARY_PREFIX := "library:"
+## The open territory's own kit: every .glb in `assets/prototypes` beside its
+## scene. The category decides the collision role a placed copy starts with
+## (region_control.prepare_palette_asset makes "structure" categories solid).
+const TERRITORY_KIT_FOLDER := "assets/prototypes"
+const TERRITORY_SCENERY := "Territory kit: scenery"
+const TERRITORY_STRUCTURES := "Territory kit: structures"
+## Words in a kit file name that mean something you walk through, for a piece
+## no saved copy has given a role yet; anything else starts solid.
+const WALK_THROUGH_WORDS := ["shrub", "sage", "scrub", "grass", "bones", "tree", "scree",
+	"crystal", "rack", "fire-pit", "hitching", "earthrock", "flower", "reed", "fern"]
 
 ## The largest dimension the continent's own library extractor admits for one
 ## asset (export_map_asset_library.py); anything bigger is usually a unit slip.
@@ -98,6 +108,74 @@ static func _build_entries() -> Array[Dictionary]:
 	_append_extras(result)
 	_append_library(result)
 	return result
+
+
+## Palette entries for the kit of the territory `root` belongs to: each .glb in
+## the `assets/prototypes` folder beside its scene. A piece the scene already
+## places keeps that copy's catalog id and its most common collision role, so
+## a new copy matches the old ones; a piece nobody has placed yet is named
+## "<prefix>:<file>" with the prefix the scene's kit copies use, and starts
+## walk-through or solid by its name (WALK_THROUGH_WORDS). Empty when `root`
+## is not a saved territory scene.
+static func territory_entries(root: Node) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if root == null or root.scene_file_path.is_empty():
+		return result
+	var folder := root.scene_file_path.get_base_dir().path_join(TERRITORY_KIT_FOLDER)
+	if not DirAccess.dir_exists_absolute(folder):
+		return result
+	var used := {}
+	var prefixes := {}
+	var container := root.get_node_or_null("AuthoredAssets")
+	if container != null:
+		for child in container.get_children():
+			var scene_path := String(child.get("scene_path")) if "scene_path" in child else ""
+			if not scene_path.begins_with(folder + "/"):
+				continue
+			var record: Dictionary = used.get(scene_path, {"ids": {}, "roles": {}})
+			var catalog_id := String(child.get("catalog_asset_id"))
+			var role := String(child.get("collision_role"))
+			record.ids[catalog_id] = int(record.ids.get(catalog_id, 0)) + 1
+			record.roles[role] = int(record.roles.get(role, 0)) + 1
+			used[scene_path] = record
+			if ":" in catalog_id:
+				var prefix := catalog_id.get_slice(":", 0)
+				prefixes[prefix] = int(prefixes.get(prefix, 0)) + 1
+	var prefix := _most_common(prefixes)
+	if prefix.is_empty():
+		prefix = String(root.get("region_id")) if "region_id" in root else "territory"
+	var files := Array(DirAccess.get_files_at(folder))
+	files.sort()
+	for file: String in files:
+		if file.get_extension().to_lower() != "glb":
+			continue
+		var scene_path := folder.path_join(file)
+		var stem := file.get_basename()
+		var record: Dictionary = used.get(scene_path, {})
+		var identity := _most_common(record.get("ids", {}))
+		if identity.is_empty():
+			identity = "%s:%s" % [prefix, stem]
+		var role := _most_common(record.get("roles", {}))
+		if role.is_empty():
+			role = "none" if WALK_THROUGH_WORDS.any(func(word: String) -> bool:
+				return word in stem) else "solid"
+		var label := stem.trim_prefix("kit-").replace("-", " ").capitalize()
+		result.append(_entry(identity, label,
+			TERRITORY_STRUCTURES if role == "solid" else TERRITORY_SCENERY, scene_path, "", 0.0,
+			"%s territory kit %s" % [stem, "solid" if role == "solid" else "walk-through"]))
+	return result
+
+
+static func _most_common(counts: Dictionary) -> String:
+	var best := ""
+	var best_count := 0
+	var keys := counts.keys()
+	keys.sort()
+	for key: Variant in keys:
+		if int(counts[key]) > best_count:
+			best = String(key)
+			best_count = int(counts[key])
+	return best
 
 
 ## Library entries, found by walking library_directory (see LIBRARY_DIRECTORY).

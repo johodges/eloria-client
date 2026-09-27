@@ -36,6 +36,14 @@ The buttons and the **Map tools** menu always agree; either can be used.
 
 Thumbnails are rendered from the models themselves and cached in the editor cache folder, so only the first open of the library takes time.
 
+### The territory's own kit
+
+With a territory open, its own kit is listed too: every `.glb` in the `assets/prototypes` folder beside its scene, under **Territory kit: scenery** (walk-through pieces) and **Territory kit: structures** (solid ones). So more of a territory's tents, rocks or trees are placed or scattered straight from the palette, rather than by copying a placed one.
+
+- **Same identity as the copies already placed.** A piece the scene already uses keeps that copy's catalog id (for example `sunmane:kit-cart`) and its most common collision role.
+- **New pieces.** A piece nobody has placed yet is named `<prefix>:<file>`, with the prefix the scene's kit copies use. It starts walk-through when its file name says ground cover (shrub, grass, scrub, sage, bones, tree, scree and the like), otherwise solid.
+- **Adding pieces.** Sunmane's ground cover and herding props are exported by `eloria-assets/maps/nymara-regions/sunmane_steppe/source/export_editor_kit.py` from the territory's own kit builders; `--check` confirms the committed files match.
+
 ### Place it
 
 A see-through, blue-tinted ghost follows the cursor over the terrain. It shows exactly what the next click will create.
