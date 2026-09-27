@@ -32,6 +32,8 @@ var _root: Node3D
 var _pins: Node3D
 var _adding := false
 var _pending_text := ""
+## Which notes get pins: "all", "open" or "resolved" (the dock's filter).
+var _shown := "all"
 
 
 ## The sidecar beside the open scene, or "" for an unsaved scene.
@@ -240,6 +242,12 @@ func handle_input(camera: Camera3D, event: InputEvent) -> int:
 	return EditorPlugin.AFTER_GUI_INPUT_PASS
 
 
+func set_shown(which: String) -> void:
+	if which != _shown:
+		_shown = which
+		_draw_pins()
+
+
 func pins() -> Node3D:
 	return _pins if _pins != null and is_instance_valid(_pins) else null
 
@@ -281,6 +289,8 @@ func _draw_pins() -> void:
 	_pins.name = NODE_NAME
 	_root.add_child(_pins, false, Node.INTERNAL_MODE_BACK)
 	for note in notes:
+		if _shown != "all" and String(note.status) != _shown:
+			continue
 		var color := RESOLVED_COLOR if String(note.status) == "resolved" else OPEN_COLOR
 		var stem := MeshInstance3D.new()
 		var mesh := CylinderMesh.new()

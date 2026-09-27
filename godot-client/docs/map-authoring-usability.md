@@ -3,7 +3,7 @@
 The map editor still runs inside Godot, but the placement and viewport tools now work more like a dedicated map editor. Three plugins are involved:
 
 - **Map Assets** (`addons/map_asset_palette`): the asset library with its drop-in model folder, ghost placement, and prefabs.
-- **Map Authoring Usability** (`addons/map_authoring_usability`): the cursor readout, the cursor grid, the **Map tools** menu, the toolbar toggles, the selection bar, groups and copies, readable gameplay markers, the walkability overlay, road and river drawing, the continent plan's water, ground regions and plateaus, scatter, the play-test walker, the **Minimap** and **Review notes** docks, the low-spec view, the time-of-day preview and the top-down capture.
+- **Map Authoring Usability** (`addons/map_authoring_usability`): the cursor readout, the cursor grid, the **Map tools** menu, the toolbar toggles, the selection bar, groups and copies, readable gameplay markers, the walkability overlay, road and river drawing, the continent plan's water, the concept master overlay, ground regions and plateaus, scatter, the play-test walker, the **Minimap** and **Review notes** docks, the low-spec view, the time-of-day preview and the top-down capture.
 - **Territories** (`addons/map_authoring_workspace`): now also has sculpt brush keys (see [terrain-sculpting.md](terrain-sculpting.md)), heightmap import with a preview and an area picked on the map, and a **Browse…** map picker.
 
 The map team's answers on what each tool may write are in [map-team-editor-contracts.md](map-team-editor-contracts.md).
@@ -121,7 +121,8 @@ The grid needs region terrain. The pilot has no fast height query, so the grid i
 | **Group selection**, **Ungroup** | See [Groups and copies](#groups-and-copies). |
 | **Duplicate with fresh ids** | Copies the selection one grid step south-east with new ids (see below). |
 | **Show the continent plan's water** | Draws the plan's rivers and lakes over the territory, read-only (see [The continent plan's water](#the-continent-plans-water)). |
-| **Scatter the selected asset…** | Paints copies of the asset chosen in Map Assets (see [Scatter](#scatter)). |
+| **Show the concept master on the terrain** | Lays the coordinate-locked concept art over the terrain, read-only (see [Concept master](#concept-master)). |
+| **Scatter the selected asset…** | Paints or erases copies of the asset chosen in Map Assets (see [Scatter](#scatter)). |
 | **Play test** | Starts or stops the play-test walker. |
 | **Low spec view** | Switches the low-spec view. |
 | **Time of day preview…** | Opens the time panel (see below). |
@@ -244,7 +245,7 @@ A legend sits at the top right of the 3D view. The cursor readout adds the tile'
 The live suggestion classifies each tile as follows:
 
 - **Grade.** The terrain triangle's slope must be at most 0.65. This is computed exactly from the saved heights, and a tile takes the worst of the triangles its half-cells fall in, like the served grid's fold.
-- **Water.** A tile is blocked when it is more than 0.35 m under water. Water means:
+- **Water.** A tile is blocked when any of its half-cells stands more than 0.35 m under water, measured from where the actor stands there (a deck that carries the cell, else the terrain). A deck over a river keeps the cells it carries dry; a deck that only partly covers deep water leaves the tile under water. Water means:
   - the sea level from the territory's manifest (or the continent plan);
   - authored rivers, using their point heights as the water surface;
   - water regions;
@@ -259,24 +260,29 @@ The live suggestion classifies each tile as follows:
   - A tile is a deck when each of its half-cells is carried or stands on gentle ground.
   - A deck never overrides a structure, and only partly covering deep water leaves a tile under water.
   - Decks matched the bake on Sunmane too: the same supported cells and the same heights.
+- **Composer context.** The published package also has decks and solids the scene doesn't contain: border thresholds, cave-door decks, discovery decks, designed decks. They are read, read-only, from the package the bake reads (`world.glb`), using the bake's own naming rules. Anything whose names match something the scene carries (a placed asset, a bridge) is left out, so the scene's own version wins. The cursor readout names them "published …".
 - **Ownership.** Only land inside the territory's ownership polygon is shown.
 
-How close it gets, measured on 26 September 2026 against the published grids of three territories:
+How close it gets, measured on 27 September 2026 against the published grids of the 27 September release (owned tiles that agree):
 
-| Territory | Tiles agreeing with the published grid |
-|---|---|
-| Westhaven | 99.85% |
-| Verdant Stair | 98.8% |
-| Sunmane Steppe | 94.1% |
+| Territory | Agreement | Territory | Agreement |
+|---|---|---|---|
+| Amberwood | 99.71% | Mirrorhold | 100.00% |
+| Amethyst Barrens | 99.98% | Ssarathi Ruins | 99.99% |
+| Crownwater | 99.98% | Sunmane Steppe | 99.99% |
+| Four Gates | 99.46% | Verdant Stair | 99.99% |
+| Grey Moors | 99.95% | Westhaven | 99.99% |
+| Manymouth Delta | 99.76% | Whitehorn Range | 99.96% |
 
-Sunmane's scene is newer than its package: 128 of its objects, 103 of them solid, have moved since it was last published. Most of its difference is those edits, which **Changes since publish** shows; the structure test itself matched the bake cell for cell there.
+The remaining differences are all water along river banks: live calls a few bank tiles water that the published grid walks.
 
-A full rebuild of Sunmane takes about 1.2 s with every solid checked, and about 0.2 s when the checks are reused.
+A full rebuild takes 1.5–4 s with every solid checked, and well under a second when the checks are reused.
 
 Where it still differs:
 
-- **Water** is sampled at tile centres, not half-cells.
+- **River banks.** The composer blends a plan river's levels across bends, which the editor doesn't copy, so a few bank tiles near the 0.35 m limit differ.
 - **Bake-only rules.** The certified seam collar and gate halos are not reproduced.
+- **Unpublished edits.** When the scene is newer than its package, the difference is the edits, which **Changes since publish** shows. On 26 September Sunmane agreed only 94% for that reason, because 128 of its objects had moved since its last publish; its republished package now agrees 99.99%.
 
 Use **Published grid** for the truth, and **Changes since publish** to judge an edit.
 
@@ -303,6 +309,8 @@ Paths the map team owns are never extended. The click says why, and Ctrl+click s
 - a path the territory lists among its owned routes or plan features;
 - a river that joins shared water;
 - an end within 4 m of the ownership border, or past it (a seam tail).
+
+An extension keeps the path's point widths on their points: a width set on the old first point stays on it when points are added in front, and undo puts them back.
 
 Finishing creates an ordinary `MapAuthoringRegionPath` under `Roads` or `Rivers`, as one undo step:
 
@@ -393,7 +401,12 @@ Click or drag on the minimap to move the 3D view there. The view centres on the 
 
 The picture is rendered from the scene when a territory opens, at 0.5 px/m (**Editor Settings > Map Authoring > Minimap**), lit at noon unless the time preview is on, so it shows unpublished source edits. The dock brightens its copy so the owned land reads at a steady level, because a map seen straight down at a territory's own light can be dim. That is for reading the map only; top-down captures are left as rendered. Press **Refresh** after large edits. The overlays follow the scene continuously.
 
-The menu next to **Refresh** switches between **Live**, **Last published** and **Side by side**. **Last published** is the package's own minimap image (`world.json` `minimap`), cut to the same frame so the two line up; it is what the game shows now and has none of the unpublished edits. The overlays and click-to-jump work on both.
+The menu next to **Refresh** switches between **Live**, **Last published**, **Side by side**, **Concept master** and **Live beside concept**.
+
+- **Last published** is the package's own minimap image (`world.json` `minimap`), cut to the same frame so the two line up. It is what the game shows now and has none of the unpublished edits.
+- **Concept master** is the coordinate-locked concept art for the territory (see [Concept master](#concept-master)), cut the same way.
+
+The overlays and click-to-jump work on every picture. Review notes show as small diamonds, orange for open and grey for resolved, following the notes dock's filter.
 
 **Why the terrain can look darker in the editor than in the game.** A controlled render on 26 September 2026 compared the editor preview with the game's own loader. Both used the Compatibility renderer, the manifest's noon light and exposure, one camera, and grey cards.
 
@@ -411,6 +424,7 @@ It is the only territory where this happens.
 
 - **Claimed water (grey)** is water the territory replaces: a scene river or lake whose **Replaces Plan Feature Id** names it, or an id in the territory's owned plan features.
 - **Plan-only water (blue)** is the map team's. The composer adds it whether or not the scene has it.
+- **Shape.** Rivers follow the composer's own centreline: a Catmull-Rom curve through the plan's points, six samples a span. Plan widths are half-widths from the centreline, as the composer reads them. Lakes honour their angle.
 - **Labels** give each feature's name and who claims it.
 - **Walkability:** the live walkability suggestion floods under plan-only water too.
 
@@ -434,6 +448,12 @@ Press and drag in the 3D view.
 - **Seeds.** The same seed gives the same spots, and each committed stroke moves to the next seed.
 - **Keys.** `[` / `]` change the radius, Page Up and Page Down the density. Esc discards a stroke; right-click stops.
 - **What is saved.** Only ordinary asset wrappers, exactly as if each copy had been placed by hand, with fresh ids and the asset's collision role suggestion. The seed is used only while placing.
+- **Avoid.** Copies can avoid four kinds of ground, each a checkbox that starts on. A refused spot uses no random numbers, so a seed still gives the same spots.
+  - water: the sea, rivers, water regions and the plan's unclaimed water;
+  - steep ground: steeper than **Steepest ground**, 0.65 by default;
+  - roads: their width plus half a metre;
+  - structures: the footprints of solid assets.
+- **Erase.** **Mode: Erase copies**, or X while the tool is armed, removes every placed copy of the chosen asset under the stroke, including copies placed earlier, as one undo step. Nothing else is ever removed.
 
 This is not foliage painting: there is no density map or LOD, and dense grass still needs the map team's foliage budget.
 
@@ -443,10 +463,22 @@ The **Review notes** dock keeps comments pinned to spots in the open territory. 
 
 - **Add at click**, then click the spot, to pin a note with the typed text. Ids run `review-001`, `review-002` and so on.
 - **Edit.** **Save text**, **Resolve** or **Reopen**, and **Delete…** (which asks first) change the chosen note. **Go to** (or a double-click) moves the 3D view to it.
-- **Pins.** Open notes show as orange pins and resolved ones as grey. The pins are internal and never saved.
+- **Pins.** Open notes show as orange pins and resolved ones as grey, in the 3D view and on the minimap. The pins are internal and never saved.
+- **Filter.** Show all, open or resolved notes; the list, pins and minimap follow it, and the dock counts open and resolved notes.
 - **No undo.** Notes are not scene edits: every change is written to the file straight away.
 - **Problems.** A notes file with problems keeps working for its valid notes, and the dock lists what is wrong. Problems are an unsupported schema, a different region, duplicate ids, bad positions, text or statuses. Such a file is never rewritten, so nothing in it is lost or silently fixed.
 - **Kept out of the game.** Nothing references the file, so the snapshot, bake and runtime never see it; the test checks that a snapshot is identical with and without notes. The client package leaves out `*.editor-notes.json` (`tools/package_client.py`).
+
+## Concept master
+
+**Map tools > Show the concept master on the terrain** lays the coordinate-locked concept art over the territory as a design reference. The art comes from `work-output/continent-region-masters`, which replaces the older regional concepts as the visual boundary authority.
+
+- **Placement.** Each region's `contract.json` places its master. `cropRectWorld` gives continent X and Z at exactly 1 m a pixel, north (−Z) at the top, with 96 m of context around the ownership. The territory frame subtracts the scene's continent translation.
+- **Boundaries.** White is the current (develop) ownership and magenta the proposed one from the contract.
+- **Minimap.** The same picture is a minimap mode, alone or beside the live render.
+- **Settings.** The package is found above the project automatically; **Editor Settings > Map Authoring > Concept > Masters Folder** points elsewhere, and **Opacity** sets the overlay's strength.
+
+It is concept art, not a heightmap, and not an ownership change. Nothing edits the scene or the package, and the overlay is never saved.
 
 ## Open a territory by map
 
@@ -507,14 +539,16 @@ The focused editor test builds a disposable 41×41 region fixture under `res://t
 - the walkability grade rule tile by tile, live water, structures and decks, and Sunmane's real published grid;
 - the structure and deck port against the bake's own fixtures: an arch doorway, a low lintel, a closed solid's interior, a thin edge-on wall, `Walk_` and ceiling naming, companion roots; and the background check swapping box estimates for exact results;
 - the continent plan's water: claims, the frame, plan-only flooding and the read-only display;
+- water judged per half-cell against the deck or ground each stands on; the published package's composer decks and solids read from a GLB (and Sunmane's real package);
+- the concept master's placement by contract, its minimap cut and terrain overlay (and Sunmane's real package);
 - the published minimap resample (Westhaven's frame) and the side-by-side view;
-- road and river drawing, endpoint snapping, road extension at either end, undo and discard; river channel properties; owned roads left alone;
+- road and river drawing, endpoint snapping, road extension at either end with width anchors kept, undo and discard; river channel properties; owned roads left alone;
 - groups (Ctrl+G, selection expansion, double-click to open), Duplicate and Alt+drag copies with fresh ids;
 - the selection bar's fields and buttons;
 - the play-test walker: the published-grid fold and five routes checked against results from the server's own fold functions and a replica of its A*, the stage ladder against the server's choose_stage, legal server steps on the fixture, walking and running pace, refusal of cut-off goals, the reachable-area flood, portal and border-lane warnings, the nearest-free-tile redirect, and Sunmane's 792 x 792 fold;
 - the contract guards: copied default spawns, the Ctrl+D redirect, shared-id detection and fixing (per section, pre-existing duplicates kept), copies dropping bindings and placement extras and following their copied asset, and prefabs placing markers with fresh ids;
 - ground regions and plateaus (sizes, surfaces, turning, strokes, ownership and border refusals, the 127 limit, undo) and heightmap import (Replace and Offset, orientation, border protection, stale layers, untouched base bytes, preview and cancel, the area picked on the map);
-- scatter (seeded spots, spacing, fresh ids, one undo step) and review notes (the sidecar, validation, pins, the package exclusion);
+- scatter (seeded spots, spacing, avoiding water, steep ground, roads and structures, erasing only its own copies, fresh ids, one undo step) and review notes (the sidecar, validation, pins, the filter, the dock's buttons, the package exclusion);
 - the minimap's framing, pixel mapping, overlays and camera jump;
 - the territory picker's thumbnails and open request;
 - the library folder and model import, including `.gltf` conversion and skipping, and the admission notes;
@@ -539,6 +573,6 @@ The map team's answers (see [map-team-editor-contracts.md](map-team-editor-contr
 - **Polygon lakes, ponds and shorelines** come after an explicit polygon-water contract; the plan's water is shown read-only meanwhile.
 - **Grass and foliage painting** needs a foliage runtime budget first; the scatter tool places ordinary assets meanwhile.
 - **Named place labels** on the in-game map need a label schema, client rendering and a naming policy.
-- **Lights, particles and sound emitters** exist in manifests today, owned by the map team, but have no scene controls or snapshot section yet.
+- **Lights, particles and sound emitters** have runtime support for manifest lights, but the twelve territory manifests carry no lights today, and Four Gates' `effects` are material effects on named nodes. Authoring them from scenes needs a new snapshot contract.
 - **NPC walking paths** need a server patrol feature first.
 - **Walkability overrides** come last, and only as areas that remove walkability; forcing ground walkable is not planned.

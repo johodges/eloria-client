@@ -36,6 +36,7 @@ const PlanWater := preload("res://addons/map_authoring_usability/plan_water.gd")
 const Scatter := preload("res://addons/map_authoring_usability/scatter_tool.gd")
 const ReviewNotes := preload("res://addons/map_authoring_usability/review_notes.gd")
 const ReviewNotesDock := preload("res://addons/map_authoring_usability/review_notes_dock.gd")
+const ConceptMaster := preload("res://addons/map_authoring_usability/concept_master.gd")
 const FOCUS_HELPER := "__MapAuthoringFocus"
 const UI_REFRESH_SECONDS := 0.25
 const MINIMAP_TARGET_LUMINANCE := 0.4
@@ -75,6 +76,7 @@ enum MenuId {
 	STAMP_PLATEAU,
 	PLAN_WATER,
 	SCATTER,
+	CONCEPT,
 }
 
 var _menu: MenuButton
@@ -126,6 +128,8 @@ var _area := AreaTool.new()
 var _plan_water := PlanWater.new()
 var _scatter := Scatter.new()
 var _notes := ReviewNotes.new()
+var _concept := ConceptMaster.new()
+var _concept_on := false
 var _notes_dock: ReviewNotesDock
 var _plan_water_on := false
 var _area_panel: AreaPanel
@@ -184,6 +188,7 @@ func _enter_tree() -> void:
 	_notes_dock.delete_requested.connect(func(identity: String) -> void:
 		_notes.remove(identity)
 		_sync_notes_dock())
+	_notes_dock.filter_changed.connect(func() -> void: _sync_notes_dock())
 	_notes_dock.focus_requested.connect(func(identity: String) -> void:
 		var note := _notes.find(identity)
 		var root := _authoring_root()
@@ -209,6 +214,7 @@ func _exit_tree() -> void:
 	_area.cancel()
 	_scatter.cancel()
 	_plan_water.release()
+	_concept.release()
 	if is_instance_valid(_area_panel):
 		_area_panel.queue_free()
 	_area_panel = null
@@ -295,6 +301,7 @@ func poll_overlays() -> void:
 	if sculpt != null and sculpt.get("_sculpt") != null:
 		dragging = bool(sculpt.get("_sculpt").call("is_dragging"))
 	_walk.poll(dragging)
+	_concept.sync()
 	var notice := _walk.take_notice()
 	if not notice.is_empty():
 		_status(notice)
@@ -593,6 +600,7 @@ func _build_menu(popup: PopupMenu) -> void:
 	_add_tool_item(popup, "Draw road", MenuId.DRAW_ROAD, "draw_road", settings)
 	_add_tool_item(popup, "Draw river", MenuId.DRAW_RIVER, "draw_river", settings)
 	popup.add_check_item("Show the continent plan's water (read-only)", MenuId.PLAN_WATER)
+	popup.add_check_item("Show the concept master on the terrain (reference)", MenuId.CONCEPT)
 	popup.add_separator("Terrain and ground")
 	popup.add_item("Paint ground regions…", MenuId.PAINT_GROUND)
 	popup.add_item("Stamp plateaus…", MenuId.STAMP_PLATEAU)
@@ -635,6 +643,7 @@ func _sync_menu() -> void:
 	popup.set_item_checked(popup.get_item_index(MenuId.PLAY_TEST), _walker.active)
 	popup.set_item_checked(popup.get_item_index(MenuId.LOW_SPEC), _performance.active)
 	popup.set_item_checked(popup.get_item_index(MenuId.PLAN_WATER), _plan_water_on)
+	popup.set_item_checked(popup.get_item_index(MenuId.CONCEPT), _concept_on)
 
 
 func _on_menu_id(id: int) -> void:
@@ -675,6 +684,8 @@ func _on_menu_id(id: int) -> void:
 			set_low_spec(not _performance.active)
 		MenuId.PLAN_WATER:
 			set_plan_water(not _plan_water_on)
+		MenuId.CONCEPT:
+			set_concept_overlay(not _concept_on)
 		MenuId.PAINT_GROUND:
 			open_area_panel("ground")
 		MenuId.STAMP_PLATEAU:
@@ -791,6 +802,8 @@ func _on_scene_changed(root: Node) -> void:
 		set_walkability_mode(mode)
 	if _plan_water_on:
 		set_plan_water(true)
+	if _concept_on:
+		set_concept_overlay(true)
 	var opened := _authoring_root()
 	if opened != null:
 		_notes.open(opened)
@@ -1067,6 +1080,27 @@ func plan_water() -> RefCounted:
 	return _plan_water
 
 
+## Shows or hides the concept master on the terrain (see concept_master.gd).
+## Returns whether it is showing.
+func set_concept_overlay(visible: bool) -> bool:
+	_concept_on = visible
+	_concept.release()
+	var root := _authoring_root()
+	if not visible or root == null:
+		return false
+	var shown := _concept.show_on(root)
+	_status(_concept.last_message)
+	if not shown:
+		# Nothing to show here: switch off rather than retry on every scene.
+		_concept_on = false
+		_toast(_concept.last_message)
+	return shown
+
+
+func concept_overlay() -> RefCounted:
+	return _concept
+
+
 ## Waits for a click in the 3D view to pin a review note with `text` (see
 ## review_notes.gd). Returns whether it is waiting.
 func start_review_note(text: String) -> bool:
@@ -1091,6 +1125,8 @@ func review_notes_dock() -> Control:
 func _sync_notes_dock() -> void:
 	if _notes_dock != null:
 		_notes_dock.show_notes(_notes.notes, _notes.last_message, _notes.can_write())
+	_notes.set_shown(_notes_dock.showing() if _notes_dock != null else "all")
+	_update_minimap_state()
 
 
 func rebuild_walkability() -> void:
@@ -1734,6 +1770,8 @@ func refresh_minimap() -> Dictionary:
 		_minimap.set_image(levelled_minimap(rendered.image), framing)
 		var published := published_minimap(root, framing)
 		_minimap.set_published(published.get("image"), framing, String(published.get("note", "")))
+		var concept := ConceptMaster.minimap_picture(root, framing)
+		_minimap.set_concept(concept.get("image"), framing, String(concept.get("note", "")))
 		_minimap.set_status("%.0f × %.0f m, north up. Click to jump." % [
 			(framing.rect as Rect2).size.x, (framing.rect as Rect2).size.y])
 	_update_minimap_state()
@@ -1845,6 +1883,12 @@ func _update_minimap_state() -> void:
 	if _walker.active and _walker.is_placed():
 		state.walker = _walker.position()
 		state.route = _walker.route()
+	var notes: Array = []
+	var shown := _notes_dock.showing() if _notes_dock != null else "all"
+	for note: Dictionary in _notes.notes:
+		if shown == "all" or String(note.status) == shown:
+			notes.append([note.position, String(note.status) == "resolved"])
+	state.notes = notes
 	_minimap.set_state(state)
 
 

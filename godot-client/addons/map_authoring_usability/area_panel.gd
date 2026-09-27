@@ -34,6 +34,9 @@ var _scatter_spacing: SpinBox
 var _scatter_turn: CheckBox
 var _scatter_size: SpinBox
 var _scatter_seed: SpinBox
+var _scatter_mode: OptionButton
+var _scatter_avoid: Dictionary = {}
+var _scatter_grade: SpinBox
 var _note: Label
 
 
@@ -86,6 +89,10 @@ func _init() -> void:
 	_scatter_asset = Label.new()
 	_scatter_asset.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_field(_scatter, "Asset", _scatter_asset)
+	_scatter_mode = OptionButton.new()
+	_scatter_mode.add_item("Paint copies")
+	_scatter_mode.add_item("Erase copies")
+	_field(_scatter, "Mode", _scatter_mode)
 	_scatter_radius = _spin(0.5, 64.0, 0.5, 6.0, " m")
 	_field(_scatter, "Brush radius", _scatter_radius)
 	_scatter_density = _spin(0.5, 400.0, 0.5, 10.0, " per 100 m²")
@@ -100,6 +107,17 @@ func _init() -> void:
 	_field(_scatter, "Size variation (±)", _scatter_size)
 	_scatter_seed = _spin(0.0, 999999.0, 1.0, 1.0, "")
 	_field(_scatter, "Seed", _scatter_seed)
+	var avoid := HFlowContainer.new()
+	for pair: Array in [["avoid_water", "Water"], ["avoid_steep", "Steep ground"],
+			["avoid_roads", "Roads"], ["avoid_structures", "Structures"]]:
+		var check := CheckBox.new()
+		check.text = pair[1]
+		check.button_pressed = true
+		avoid.add_child(check)
+		_scatter_avoid[pair[0]] = check
+	_field(_scatter, "Avoid", avoid)
+	_scatter_grade = _spin(0.05, 3.0, 0.05, 0.65, "")
+	_field(_scatter, "Steepest ground", _scatter_grade)
 	_note = Label.new()
 	_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(_note)
@@ -121,8 +139,9 @@ func open_for(tool_kind: String, root: Node, anchor: Rect2i, asset: Dictionary =
 	_plateau.visible = kind == "plateau"
 	_scatter.visible = kind == "scatter"
 	_scatter_asset.text = String(asset.get("label", "Select an asset in the Map Assets dock first"))
-	_note.text = ("Press and drag in the 3D view to paint copies of the asset; each stroke is one " +
-		"undo step and moves to the next seed. Esc discards a stroke; right-click stops.") \
+	_note.text = ("Press and drag in the 3D view to paint copies of the asset, or with Erase to " +
+		"remove its copies (X switches); each stroke is one undo step and moves to the next seed. " +
+		"Esc discards a stroke; right-click stops.") \
 		if kind == "scatter" else ("Press where the centre goes in the 3D view and drag out the " +
 		"size (or paint along a stroke); Q/E turn the shape. Esc discards a draft; right-click stops.")
 	fill_surfaces(root)
@@ -165,9 +184,13 @@ func fill_surfaces(root: Node) -> void:
 ## The options area_tool.gd (or scatter_tool.gd) expects.
 func current_options() -> Dictionary:
 	if kind == "scatter":
-		return {"radius": _scatter_radius.value, "density": _scatter_density.value,
+		var options := {"radius": _scatter_radius.value, "density": _scatter_density.value,
 			"spacing": _scatter_spacing.value, "random_turn": _scatter_turn.button_pressed,
-			"size_variation": _scatter_size.value, "seed": int(_scatter_seed.value)}
+			"size_variation": _scatter_size.value, "seed": int(_scatter_seed.value),
+			"erase": _scatter_mode.selected == 1, "max_grade": _scatter_grade.value}
+		for key: String in _scatter_avoid:
+			options[key] = (_scatter_avoid[key] as CheckBox).button_pressed
+		return options
 	if kind == "ground":
 		var choice: Dictionary = _surface_choices[_surface.selected] \
 			if _surface.selected >= 0 and _surface.selected < _surface_choices.size() else {}

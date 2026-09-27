@@ -13,10 +13,13 @@ extends RefCounted
 ##   cells (structure_raster.gd), folded to tiles as the server folds them: a
 ##   tile is blocked when any of its half-cells is. Solids are checked on a
 ##   worker thread; until an asset's check finishes it is estimated from its
-##   mesh boxes. Water is sampled at tile centres from the authored rivers
-##   and lakes, the continent plan's water the territory has not claimed
-##   (plan_water.gd), and the sea level; the certified halo and seam collar at
-##   borders are not modelled, so the bake can still differ there.
+##   mesh boxes. Water is tested on the same half-cells against where the
+##   actor stands (deck or terrain): the sea level, the authored rivers and
+##   lakes, and the continent plan's water the territory has not claimed
+##   (plan_water.gd). Decks and solids the composer adds outside the scene
+##   (thresholds, cave doors, discovery decks) come read-only from the
+##   published package (published_context.gd). The certified halo and seam
+##   collar at borders are not modelled, so the bake can still differ there.
 ## - CHANGES: where LIVE disagrees with PUBLISHED, i.e. what the next bake is
 ##   likely to open or close.
 ##
@@ -31,6 +34,7 @@ const PATH_SCRIPT := preload("res://src/dev/map_authoring_region/path_control.gd
 const WATER_SCRIPT := preload("res://src/dev/map_authoring_region/water_region_control.gd")
 const Structures := preload("res://addons/map_authoring_usability/structure_raster.gd")
 const PlanWater := preload("res://addons/map_authoring_usability/plan_water.gd")
+const Published := preload("res://addons/map_authoring_usability/published_context.gd")
 const NODE_NAME := "__MapAuthoringWalkability"
 
 enum Mode { OFF, PUBLISHED, LIVE, CHANGES }
@@ -365,39 +369,6 @@ static func manifest_sea_level(root: Node3D) -> Variant:
 	return 0.0
 
 
-## Ground more than WADE below the sea level is under the sea. Whole terrain
-## cells clear of it are skipped; cells straddling it are checked per tile.
-static func _sea_pass(data: Dictionary, sea_level: float) -> void:
-	var heights: PackedFloat32Array = data.heights
-	var grid: Vector2i = data.grid
-	var cell := float(data.cell)
-	var tile := float(data.tile)
-	var width := int(data.width)
-	var rows := int(data.rows)
-	var classes: PackedByteArray = data.classes
-	var limit := sea_level - WADE
-	var per_cell := maxi(roundi(cell / tile), 1)
-	for iz in grid.y - 1:
-		for ix in grid.x - 1:
-			var a := heights[iz * grid.x + ix]
-			var b := heights[iz * grid.x + ix + 1]
-			var c := heights[(iz + 1) * grid.x + ix]
-			var d := heights[(iz + 1) * grid.x + ix + 1]
-			if minf(minf(a, b), minf(c, d)) >= limit:
-				continue
-			var whole := maxf(maxf(a, b), maxf(c, d)) < limit
-			for oz in per_cell:
-				for ox in per_cell:
-					var column := ix * per_cell + ox
-					var row := iz * per_cell + oz
-					if column >= width or row >= rows:
-						continue
-					if whole or _ground(data, float(data.x0) + (float(column) + 0.5) * tile,
-							float(data.z0) + (float(row) + 0.5) * tile) < limit:
-						classes[row * width + column] = Tile.WATER
-	data.classes = classes
-
-
 ## Cheap fingerprint of everything LIVE depends on.
 static func live_signature(root: Node3D) -> String:
 	var terrain := Probe.region_terrain(root)
@@ -484,6 +455,23 @@ func _stop_structures() -> void:
 	_group_jobs = []
 
 
+## The territory's terrain as the grade and ground samplers read it
+## (_grade, _ground, structure_raster.terrain_at), or {"error"}.
+static func terrain_frame(root: Node3D) -> Dictionary:
+	var terrain := Probe.region_terrain(root)
+	if terrain == null:
+		return {"error": "No region terrain."}
+	var heights: PackedFloat32Array = terrain.call("effective_heights")
+	var grid: Vector2i = terrain.get("grid_size")
+	var origin: Vector2 = terrain.get("origin")
+	if heights.size() != grid.x * grid.y or grid.x < 2 or grid.y < 2:
+		return {"error": "The terrain height grid is not ready."}
+	var terrain_to_root: Transform3D = root.global_transform.affine_inverse() * terrain.global_transform
+	var terrain_origin: Vector3 = terrain_to_root * Vector3(origin.x, 0.0, origin.y)
+	return {"heights": heights, "grid": grid, "cell": float(terrain.get("cell_metres")),
+		"terrain_x0": terrain_origin.x, "terrain_z0": terrain_origin.z}
+
+
 ## The LIVE classification on 1 m tiles (or the territory's metres per tile).
 ## Solid assets are checked exactly, reusing `cache` (key -> {signature,
 ## cells}) where their meshes and ground are unchanged; with `defer` the rest
@@ -513,16 +501,20 @@ static func compute_live(root: Node3D, cache: Variant = null, defer := false) ->
 		"x0": terrain_origin.x, "z0": terrain_origin.z, "width": width, "rows": rows,
 		"classes": classes, "blockers": {}, "decks": {}}
 	_grade_pass(data)
-	var sea_level: Variant = manifest_sea_level(root)
-	if sea_level != null:
-		_sea_pass(data, float(sea_level))
-	_water_pass(root, data)
-	_plan_water_pass(root, data)
 	var shapes := Structures.gather(root)
+	var published := Published.context_for(root)
+	var decks: Array = shapes.decks.duplicate()
+	for deck: Dictionary in published.get("decks", []):
+		decks.append({"name": "published %s" % String(deck.name), "triangles": deck.triangles})
+	var solids: Array = shapes.solids.duplicate()
+	solids.append_array(published_solids(published))
 	var ground := Structures.ground_frame(data)
-	_deck_pass(root, data, ground, shapes.decks)
-	_structure_pass(data, ground, shapes.solids, cache if cache is Dictionary else {}, defer)
+	_deck_pass(root, data, ground, decks)
+	_water_pass(root, data, ground)
+	_structure_pass(data, ground, solids, cache if cache is Dictionary else {}, defer)
 	data.ground = ground
+	data.published_decks = (published.get("decks", []) as Array).size()
+	data.published_solids = (published.get("solids", []) as Array).size()
 	var framing := {"size": Vector2i(width, rows), "rect": Rect2(terrain_origin.x,
 		terrain_origin.z, float(width) * tile, float(rows) * tile), "pixels_per_metre": 1.0 / tile}
 	var polygon := TopDown.ownership_polygon_local(root)
@@ -535,8 +527,30 @@ static func compute_live(root: Node3D, cache: Variant = null, defer := false) ->
 	data.owned = owned
 	data.owned_texture = ImageTexture.create_from_image(owned)
 	data.texture = ImageTexture.create_from_image(Image.create_from_data(width, rows, false,
-		Image.FORMAT_L8, classes))
+		Image.FORMAT_L8, data.classes))
 	return data
+
+
+## Solid records (structure_raster.gd gather's shape) for the published
+## package's composer-only solids; they are already in the territory frame.
+static func published_solids(published: Dictionary) -> Array:
+	var result: Array = []
+	var index := 0
+	for solid: Dictionary in published.get("solids", []):
+		var triangles: PackedVector3Array = solid.triangles
+		if triangles.is_empty():
+			continue
+		var box := AABB(triangles[0], Vector3.ZERO)
+		for point in triangles:
+			box = box.expand(point)
+		var key := "published:%s:%d" % [String(solid.name), index]
+		result.append({"key": key, "name": "published %s" % String(solid.name),
+			"parts": [{"faces": triangles, "transform": Transform3D.IDENTITY,
+				"closed": Structures.closed_faces(triangles), "aabb": box}],
+			"low": box.position, "high": box.end,
+			"signature": "%s|%s" % [key, str(published.get("path", ""))]})
+		index += 1
+	return result
 
 
 static func _grade_pass(data: Dictionary) -> void:
@@ -629,9 +643,35 @@ static func _tile_centre(data: Dictionary, column: int, row: int) -> Vector2:
 		float(data.z0) + (float(row) + 0.5) * tile)
 
 
-static func _water_pass(root: Node3D, data: Dictionary) -> void:
+## Water, per half-metre cell as the bake samples it: a tile is under water
+## when any of its half-cells stands (on the terrain, or on a deck that carries
+## it) more than WADE below a water surface. The surfaces are the sea level,
+## the scene's rivers (point heights along each segment, within its width)
+## and water regions, and the continent plan's water the territory has not
+## claimed. `plan` stands in for the plan file (tests).
+static func _water_pass(root: Node3D, data: Dictionary, ground: Dictionary,
+		plan: Dictionary = {}) -> void:
+	var wet := PackedByteArray()
+	wet.resize(int(data.width) * int(data.rows))
+	var sea_level: Variant = manifest_sea_level(root)
+	if sea_level != null:
+		_sea_cells(data, ground, float(sea_level) - WADE, wet)
+	for feature: Dictionary in water_features(root, plan):
+		if String(feature.kind) == "segment":
+			_segment_cells(data, ground, feature, wet)
+		else:
+			_ellipse_cells(data, ground, feature, wet)
 	var classes: PackedByteArray = data.classes
-	var width := int(data.width)
+	for index in wet.size():
+		if wet[index] != 0:
+			classes[index] = Tile.WATER
+
+
+## The water surfaces LIVE tests against, in the territory frame:
+## {"kind": "segment", "a", "b" (surface points), "half_a", "half_b"} and
+## {"kind": "ellipse", "centre" (surface level in y), "radii"}.
+static func water_features(root: Node3D, plan: Dictionary = {}) -> Array:
+	var result: Array = []
 	var inverse := root.global_transform.affine_inverse()
 	var rivers := root.get_node_or_null("Rivers")
 	if rivers != null:
@@ -642,110 +682,138 @@ static func _water_pass(root: Node3D, data: Dictionary) -> void:
 			var scale := Vector2(to_root.basis.x.x, to_root.basis.x.z).length()
 			var points: Array = path.call("snapshot_points")
 			for index in points.size() - 1:
-				var first: Vector3 = to_root * _vec3(points[index].position)
-				var second: Vector3 = to_root * _vec3(points[index + 1].position)
-				var first_half := float(points[index].width) * scale * 0.5
-				var second_half := float(points[index + 1].width) * scale * 0.5
-				var reach := maxf(first_half, second_half)
-				var a := Vector2(first.x, first.z)
-				var ab := Vector2(second.x, second.z) - a
-				var length_squared := maxf(ab.length_squared(), 0.000001)
-				var span := _tile_range(data, Vector2(minf(first.x, second.x),
-					minf(first.z, second.z)) - Vector2.ONE * reach, Vector2(maxf(first.x,
-					second.x), maxf(first.z, second.z)) + Vector2.ONE * reach)
-				for row in range(span.z, span.w + 1):
-					for column in range(span.x, span.y + 1):
-						var centre := _tile_centre(data, column, row)
-						var t := clampf((centre - a).dot(ab) / length_squared, 0.0, 1.0)
-						if centre.distance_to(a + ab * t) > lerpf(first_half, second_half, t):
-							continue
-						if lerpf(first.y, second.y, t) - _ground(data, centre.x, centre.y) > WADE:
-							classes[row * width + column] = Tile.WATER
+				result.append({"kind": "segment", "a": to_root * _vec3(points[index].position),
+					"b": to_root * _vec3(points[index + 1].position),
+					"half_a": float(points[index].width) * scale * 0.5,
+					"half_b": float(points[index + 1].width) * scale * 0.5})
 	var lakes := root.get_node_or_null("WaterRegions")
 	if lakes != null:
 		for lake in lakes.get_children():
-			if lake.get_script() != WATER_SCRIPT:
-				continue
-			var centre_3d: Vector3 = inverse * (lake as Node3D).global_position
-			var middle := Vector2(centre_3d.x, centre_3d.z)
-			var radii: Vector2 = lake.get("radii")
-			if radii.x <= 0.0 or radii.y <= 0.0:
-				continue
-			var span := _tile_range(data, middle - radii, middle + radii)
-			for row in range(span.z, span.w + 1):
-				for column in range(span.x, span.y + 1):
-					var centre := _tile_centre(data, column, row)
-					var offset := (centre - middle) / radii
-					if offset.length_squared() <= 1.0 and \
-							centre_3d.y - _ground(data, centre.x, centre.y) > WADE:
-						classes[row * width + column] = Tile.WATER
-	data.classes = classes
-
-
-## The continent plan's rivers and lakes that this territory has not claimed:
-## the composer adds them whether or not the scene has them.
-static func _plan_water_pass(root: Node3D, data: Dictionary, plan: Dictionary = {}) -> void:
-	if plan.is_empty():
-		plan = PlanWater.load_plan()
-	if plan.is_empty():
-		return
-	var marked := PackedInt32Array()
-	for feature: Dictionary in PlanWater.features(root, plan):
+			if lake.get_script() == WATER_SCRIPT:
+				result.append({"kind": "ellipse",
+					"centre": inverse * (lake as Node3D).global_position, "radii": lake.get("radii")})
+	var source := plan if not plan.is_empty() else PlanWater.load_plan()
+	for feature: Dictionary in PlanWater.features(root, source):
 		if bool(feature.claimed):
 			continue
 		if String(feature.kind) == "river":
 			var points: PackedVector3Array = feature.points
 			var halves: PackedFloat32Array = feature.halves
 			for index in points.size() - 1:
-				marked.append_array(_river_segment_tiles(data, points[index], points[index + 1],
-					halves[index], halves[index + 1]))
+				result.append({"kind": "segment", "a": points[index], "b": points[index + 1],
+					"half_a": halves[index], "half_b": halves[index + 1]})
 		else:
-			marked.append_array(_lake_tiles(data, feature.centre, feature.radii))
-	var classes: PackedByteArray = data.classes
-	for tile_index in marked:
-		classes[tile_index] = Tile.WATER
-	data.classes = classes
+			result.append({"kind": "ellipse", "centre": feature.centre, "radii": feature.radii,
+				"angle": float(feature.get("angle", 0.0))})
+	return result
 
 
-## Tiles within a river segment's width whose ground lies more than WADE
-## below its water surface (both interpolated along the segment).
-static func _river_segment_tiles(data: Dictionary, first: Vector3, second: Vector3,
-		first_half: float, second_half: float) -> PackedInt32Array:
-	var tiles := PackedInt32Array()
-	var width := int(data.width)
+## Where the actor stands on a half-cell: the deck carrying it, else terrain.
+static func _standing(ground: Dictionary, cell_index: int, x: float, z: float) -> float:
+	var decks: Dictionary = ground.decks
+	return float(decks[cell_index]) if decks.has(cell_index) else Structures.terrain_at(ground, x, z)
+
+
+static func _tile_of(ground: Dictionary, data: Dictionary, cell_index: int) -> int:
+	var columns := int(ground.columns)
+	var sub := int(ground.sub)
+	return (cell_index / columns / sub) * int(data.width) + (cell_index % columns) / sub
+
+
+## The sea: half-cells standing below `limit` (sea level minus WADE). Terrain
+## cells wholly above it are skipped; wholly below it, only a deck can keep a
+## half-cell dry.
+static func _sea_cells(data: Dictionary, ground: Dictionary, limit: float,
+		wet: PackedByteArray) -> void:
+	var heights: PackedFloat32Array = data.heights
+	var grid: Vector2i = data.grid
+	var cell := float(data.cell)
+	var decks: Dictionary = ground.decks
+	for iz in grid.y - 1:
+		for ix in grid.x - 1:
+			var a := heights[iz * grid.x + ix]
+			var b := heights[iz * grid.x + ix + 1]
+			var c := heights[(iz + 1) * grid.x + ix]
+			var d := heights[(iz + 1) * grid.x + ix + 1]
+			if minf(minf(a, b), minf(c, d)) >= limit:
+				continue
+			var whole := maxf(maxf(a, b), maxf(c, d)) < limit
+			var span := _cell_range(ground, Vector2(float(data.terrain_x0) + float(ix) * cell,
+				float(data.terrain_z0) + float(iz) * cell), Vector2.ONE * cell)
+			for row in range(span.z, span.w):
+				var z := float(ground.z0) + (float(row) + 0.5) * Structures.CELL
+				for column in range(span.x, span.y):
+					var cell_index := row * int(ground.columns) + column
+					var standing: float
+					if whole and not decks.has(cell_index):
+						standing = -INF
+					else:
+						standing = _standing(ground, cell_index,
+							float(ground.x0) + (float(column) + 0.5) * Structures.CELL, z)
+					if standing < limit:
+						wet[_tile_of(ground, data, cell_index)] = 1
+
+
+static func _segment_cells(data: Dictionary, ground: Dictionary, feature: Dictionary,
+		wet: PackedByteArray) -> void:
+	var first: Vector3 = feature.a
+	var second: Vector3 = feature.b
+	var first_half := float(feature.half_a)
+	var second_half := float(feature.half_b)
 	var reach := maxf(first_half, second_half)
 	var a := Vector2(first.x, first.z)
 	var ab := Vector2(second.x, second.z) - a
 	var length_squared := maxf(ab.length_squared(), 0.000001)
-	var span := _tile_range(data, Vector2(minf(first.x, second.x), minf(first.z, second.z)) -
-		Vector2.ONE * reach, Vector2(maxf(first.x, second.x), maxf(first.z, second.z)) +
-		Vector2.ONE * reach)
-	for row in range(span.z, span.w + 1):
-		for column in range(span.x, span.y + 1):
-			var centre := _tile_centre(data, column, row)
+	var low := Vector2(minf(first.x, second.x), minf(first.z, second.z)) - Vector2.ONE * reach
+	var span := _cell_range(ground, low, Vector2(absf(ab.x), absf(ab.y)) + Vector2.ONE * reach * 2.0)
+	for row in range(span.z, span.w):
+		var z := float(ground.z0) + (float(row) + 0.5) * Structures.CELL
+		for column in range(span.x, span.y):
+			var x := float(ground.x0) + (float(column) + 0.5) * Structures.CELL
+			var centre := Vector2(x, z)
 			var t := clampf((centre - a).dot(ab) / length_squared, 0.0, 1.0)
 			if centre.distance_to(a + ab * t) > lerpf(first_half, second_half, t):
 				continue
-			if lerpf(first.y, second.y, t) - _ground(data, centre.x, centre.y) > WADE:
-				tiles.append(row * width + column)
-	return tiles
+			var cell_index := row * int(ground.columns) + column
+			if lerpf(first.y, second.y, t) - _standing(ground, cell_index, x, z) > WADE:
+				wet[_tile_of(ground, data, cell_index)] = 1
 
 
-## Tiles inside a lake ellipse whose ground lies more than WADE below its level.
-static func _lake_tiles(data: Dictionary, centre: Vector3, radii: Vector2) -> PackedInt32Array:
-	var tiles := PackedInt32Array()
+static func _ellipse_cells(data: Dictionary, ground: Dictionary, feature: Dictionary,
+		wet: PackedByteArray) -> void:
+	var centre: Vector3 = feature.centre
+	var radii: Vector2 = feature.radii
 	if radii.x <= 0.0 or radii.y <= 0.0:
-		return tiles
-	var width := int(data.width)
+		return
 	var middle := Vector2(centre.x, centre.z)
-	var span := _tile_range(data, middle - radii, middle + radii)
-	for row in range(span.z, span.w + 1):
-		for column in range(span.x, span.y + 1):
-			var point := _tile_centre(data, column, row)
-			if ((point - middle) / radii).length_squared() <= 1.0 and \
-					centre.y - _ground(data, point.x, point.y) > WADE:
-				tiles.append(row * width + column)
-	return tiles
+	# The plan's lake angle turns x toward z (landscape._ellipse_distance).
+	var turn := float(feature.get("angle", 0.0))
+	var reach := Vector2.ONE * maxf(radii.x, radii.y)
+	var span := _cell_range(ground, middle - reach, reach * 2.0)
+	for row in range(span.z, span.w):
+		var z := float(ground.z0) + (float(row) + 0.5) * Structures.CELL
+		for column in range(span.x, span.y):
+			var x := float(ground.x0) + (float(column) + 0.5) * Structures.CELL
+			var offset := Vector2(x, z) - middle
+			var u := offset.x * cos(turn) + offset.y * sin(turn)
+			var v := -offset.x * sin(turn) + offset.y * cos(turn)
+			if (u / radii.x) * (u / radii.x) + (v / radii.y) * (v / radii.y) > 1.0:
+				continue
+			var cell_index := row * int(ground.columns) + column
+			if centre.y - _standing(ground, cell_index, x, z) > WADE:
+				wet[_tile_of(ground, data, cell_index)] = 1
+
+
+## Half-cell bounds [x, x_end) x [z, z_end) whose centres fall in the box at
+## `position` of `size`, clipped to the grid.
+static func _cell_range(ground: Dictionary, position: Vector2, size: Vector2) -> Vector4i:
+	var x0 := float(ground.x0)
+	var z0 := float(ground.z0)
+	var xa := maxi(0, ceili((position.x - x0) / Structures.CELL - 0.5))
+	var xb := mini(int(ground.columns), ceili((position.x + size.x - x0) / Structures.CELL - 0.5))
+	var za := maxi(0, ceili((position.y - z0) / Structures.CELL - 0.5))
+	var zb := mini(int(ground.rows), ceili((position.y + size.y - z0) / Structures.CELL - 0.5))
+	return Vector4i(xa, maxi(xa, xb), za, maxi(za, zb))
 
 
 ## Solid assets as the bake tests them (structure_raster.gd), folded from
@@ -804,7 +872,7 @@ static func _box_estimate(data: Dictionary, solid: Dictionary) -> PackedInt32Arr
 
 ## Walk_ decks (structure_raster.gd) and editor bridges, on half-cells. A tile
 ## becomes a deck when each of its half-cells is carried by one or stands on
-## gentle ground; a deck that only partly covers deep water leaves it water.
+## gentle ground. Water is decided afterwards against where the actor stands.
 static func _deck_pass(root: Node3D, data: Dictionary, ground: Dictionary, decks: Array) -> void:
 	var sources: Array = decks.duplicate()
 	var inverse := root.global_transform.affine_inverse()
@@ -840,20 +908,17 @@ static func _deck_pass(root: Node3D, data: Dictionary, ground: Dictionary, decks
 	for tile_index: int in tiles:
 		var column := tile_index % width
 		var row := tile_index / width
-		var carried := true
 		var spared := true
 		for oz in sub:
 			for ox in sub:
 				var cell_index := (row * sub + oz) * columns + column * sub + ox
 				if cells.has(cell_index):
 					continue
-				carried = false
 				var x := float(ground.x0) + (float(column * sub + ox) + 0.5) * Structures.CELL
 				var z := float(ground.z0) + (float(row * sub + oz) + 0.5) * Structures.CELL
 				if _grade(data, x, z) > MAX_GRADE:
 					spared = false
-		var current := classes[tile_index]
-		if (current == Tile.WATER and not carried) or (current == Tile.STEEP and not spared):
+		if classes[tile_index] == Tile.STEEP and not spared:
 			continue
 		classes[tile_index] = Tile.DECK
 		deck_sources[tile_index] = String(names[tiles[tile_index]])

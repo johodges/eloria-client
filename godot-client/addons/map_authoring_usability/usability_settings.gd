@@ -37,6 +37,8 @@ const DEFAULTS := {
 	"performance/low_spec": false,
 	"performance/far_asset_metres": 200.0,
 	"minimap/pixels_per_metre": 0.5,
+	"concept/masters_folder": "",
+	"concept/opacity": 0.6,
 }
 
 const HINTS := {
@@ -56,6 +58,8 @@ const HINTS := {
 	"capture/pixels_per_metre": [TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.25,8,0.25"],
 	"performance/far_asset_metres": [TYPE_FLOAT, PROPERTY_HINT_RANGE, "40,2000,10"],
 	"minimap/pixels_per_metre": [TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.1,2,0.05"],
+	"concept/masters_folder": [TYPE_STRING, PROPERTY_HINT_GLOBAL_DIR, ""],
+	"concept/opacity": [TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.1,1,0.05"],
 }
 
 ## Shortcut path -> [display name, keycode, shift, ctrl, alt]. KEY_NONE is unbound.

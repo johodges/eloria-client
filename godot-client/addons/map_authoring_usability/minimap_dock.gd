@@ -9,15 +9,18 @@ extends EditorDock
 ## opens and on Refresh; the overlays follow the scene continuously. The view
 ## can instead show the last published minimap (the package's minimap image,
 ## cut to the same frame), or both side by side: the published one is what the
-## game shows now and never has unpublished edits.
+## game shows now and never has unpublished edits. The concept master (the
+## coordinate-locked design reference, concept_master.gd) can be shown the
+## same way, alone or beside the live picture.
 
 signal jump_requested(local: Vector3)
 signal refresh_requested
 
-enum Show { LIVE, PUBLISHED, BOTH }
+enum Show { LIVE, PUBLISHED, BOTH, CONCEPT, CONCEPT_BESIDE }
 
 var _view: MinimapView
 var _published: MinimapView
+var _concept: MinimapView
 var _status: Label
 var _refresh: Button
 var _show: OptionButton
@@ -41,6 +44,8 @@ func _init() -> void:
 	_show.add_item("Live", Show.LIVE)
 	_show.add_item("Last published", Show.PUBLISHED)
 	_show.add_item("Side by side", Show.BOTH)
+	_show.add_item("Concept master", Show.CONCEPT)
+	_show.add_item("Live beside concept", Show.CONCEPT_BESIDE)
 	_show.tooltip_text = ("Live renders the scene with unpublished edits; Last published is the " +
 		"package's minimap image, as the game shows it now.")
 	_show.item_selected.connect(func(_index: int) -> void: _sync_views())
@@ -67,6 +72,13 @@ func _init() -> void:
 	_published.caption = "last published"
 	_published.jump_requested.connect(func(local: Vector3) -> void: jump_requested.emit(local))
 	views.add_child(_published)
+	_concept = MinimapView.new()
+	_concept.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_concept.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_concept.custom_minimum_size = Vector2(160, 160)
+	_concept.caption = "concept master"
+	_concept.jump_requested.connect(func(local: Vector3) -> void: jump_requested.emit(local))
+	views.add_child(_concept)
 	_sync_views()
 
 
@@ -87,8 +99,20 @@ func set_published(image: Image, framing: Dictionary, note: String) -> void:
 	_published.queue_redraw()
 
 
+## The concept master cut to `framing` (null when there is none) and a note.
+func set_concept(image: Image, framing: Dictionary, note: String) -> void:
+	_concept.texture = ImageTexture.create_from_image(image) if image != null else null
+	_concept.framing = framing
+	_concept.missing = note if image == null else ""
+	_concept.queue_redraw()
+
+
+func concept_view() -> Control:
+	return _concept
+
+
 func clear(message: String = "") -> void:
-	for view in [_view, _published]:
+	for view in [_view, _published, _concept]:
 		view.texture = null
 		view.framing = {}
 		view.state = {}
@@ -112,8 +136,9 @@ func published_view() -> Control:
 
 func _sync_views() -> void:
 	var mode := _show.get_selected_id()
-	_view.visible = mode != Show.PUBLISHED
-	_published.visible = mode != Show.LIVE
+	_view.visible = mode in [Show.LIVE, Show.BOTH, Show.CONCEPT_BESIDE]
+	_published.visible = mode in [Show.PUBLISHED, Show.BOTH]
+	_concept.visible = mode in [Show.CONCEPT, Show.CONCEPT_BESIDE]
 
 
 func set_status(message: String) -> void:
@@ -122,12 +147,15 @@ func set_status(message: String) -> void:
 
 
 ## Overlay state: camera (local position and forward), selected local points,
-## markers [[local, colour]], walker local position and route.
+## markers [[local, colour]], review notes [[local, resolved]], walker local
+## position and route.
 func set_state(state: Dictionary) -> void:
 	_view.state = state
 	_view.queue_redraw()
 	_published.state = state
 	_published.queue_redraw()
+	_concept.state = state
+	_concept.queue_redraw()
 
 
 func view() -> Control:
@@ -219,6 +247,11 @@ class MinimapView extends Control:
 		for point: Vector3 in state.get("selection", []):
 			var at := to_view(point)
 			draw_rect(Rect2(at - Vector2(3, 3), Vector2(6, 6)), Color(1.0, 0.55, 0.15), false, 1.5)
+		for note: Array in state.get("notes", []):
+			var at := to_view(note[0] as Vector3)
+			var tint := Color(0.62, 0.66, 0.7) if bool(note[1]) else Color(1.0, 0.62, 0.2)
+			draw_colored_polygon(PackedVector2Array([at + Vector2(0, -5), at + Vector2(4, 0),
+				at + Vector2(0, 5), at + Vector2(-4, 0)]), tint)
 		var walker: Variant = state.get("walker")
 		if walker is Vector3 and (walker as Vector3).is_finite():
 			draw_circle(to_view(walker as Vector3), 4.0, Color(1.0, 0.78, 0.18))

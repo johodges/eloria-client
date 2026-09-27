@@ -34,6 +34,8 @@ const PathDraw := preload("res://addons/map_authoring_usability/path_draw_tool.g
 const PlanWater := preload("res://addons/map_authoring_usability/plan_water.gd")
 const Scatter := preload("res://addons/map_authoring_usability/scatter_tool.gd")
 const ReviewNotes := preload("res://addons/map_authoring_usability/review_notes.gd")
+const Published := preload("res://addons/map_authoring_usability/published_context.gd")
+const ConceptMaster := preload("res://addons/map_authoring_usability/concept_master.gd")
 ## Heights in 0.2 m units on a 24 x 24 grid with walls and a steep band, and
 ## what eloria-server's sync_authored_collision.choose_stage makes of them: the
 ## largest reachable area at each stage factor, and the factor it picks.
@@ -124,7 +126,8 @@ const GRID := Vector2i(41, 41)
 const SETTING_KEYS := ["placement/keep_placing", "placement/snap_to_grid", "grid/step",
 	"grid/cursor_grid", "placement/random_rotation", "placement/size_variation",
 	"placement/align_to_surface", "viewport/show_cursor_readout", "time_of_day/minute",
-	"markers/show", "markers/labels", "performance/low_spec"]
+	"markers/show", "markers/labels", "performance/low_spec", "concept/masters_folder",
+	"concept/opacity"]
 
 var failures := 0
 var _saved_settings := {}
@@ -221,6 +224,9 @@ func _run() -> void:
 	await _test_structure_background(root)
 	_test_plan_water(usability, root)
 	_test_published_minimap(usability)
+	_test_half_cell_water()
+	_test_published_context()
+	_test_concept_master(usability, root)
 	_test_path_drawing(palette, usability, root, camera, entry)
 	_test_road_extension(usability, root, camera)
 	await _test_groups_and_copies(usability, root, camera)
@@ -235,7 +241,9 @@ func _run() -> void:
 	_test_ground_and_plateaus(usability, root, camera)
 	_test_heightmap_import(root)
 	_test_scatter(palette, usability, root, camera, entry)
+	_test_scatter_avoid_and_erase(usability, root, camera, entry)
 	_test_review_notes(usability, root, camera)
+	_test_notes_filter_and_dock(usability, root, camera)
 	_test_low_spec(usability, root)
 	_test_toolbar(usability)
 	usability.call("set_time_preview", true, 90.0)
@@ -1174,9 +1182,9 @@ func _test_structure_background(root: Node3D) -> void:
 ## read-only display.
 func _test_plan_water(usability: Object, root: Node3D) -> void:
 	var plan := {"rivers": [
-		{"id": "test_river", "name": "Test River", "width": 6.0,
+		{"id": "test_river", "name": "Test River", "width": 3.0,
 			"points": [[5.0, 20.0, 100.0], [35.0, 20.0, 100.0]]},
-		{"id": "far_river", "name": "Far River", "width": 6.0,
+		{"id": "far_river", "name": "Far River", "width": 3.0,
 			"points": [[900.0, 900.0, 1.0], [950.0, 900.0, 1.0]]}],
 		"lakes": [{"name": "Mirror Lake", "center": [20.0, 32.0], "radii": [4.0, 3.0],
 			"level": 100.0, "depth": 2.0}]}
@@ -1199,7 +1207,7 @@ func _test_plan_water(usability: Object, root: Node3D) -> void:
 		"plan water near the territory is found in its frame; an owned lake counts as claimed")
 	var live := Walkability.compute_live(root)
 	var before: PackedByteArray = (live.classes as PackedByteArray).duplicate()
-	Walkability._plan_water_pass(root, live, plan)
+	Walkability._water_pass(root, live, live.ground, plan)
 	var after: PackedByteArray = live.classes
 	var width := int(live.width)
 	var at := func(classes: PackedByteArray, x: float, z: float) -> int:
@@ -1377,6 +1385,265 @@ func _test_review_notes(usability: Object, root: Node3D, camera: Camera3D) -> vo
 	notes.call("open", root)
 
 
+## Water is tested per half-metre cell against where the actor stands: a
+## tile whose centre is dry but one half-cell is deep is water; a deck above
+## the water keeps the cells it carries dry.
+func _test_half_cell_water() -> void:
+	var heights := PackedFloat32Array()
+	heights.resize(36)
+	heights.fill(0.0)
+	var classes := PackedByteArray()
+	classes.resize(100)
+	classes.fill(Walkability.Tile.WALKABLE)
+	var data := {"heights": heights, "grid": Vector2i(6, 6), "cell": 2.0, "tile": 1.0,
+		"terrain_x0": 0.0, "terrain_z0": 0.0, "x0": 0.0, "z0": 0.0, "width": 10, "rows": 10,
+		"classes": classes}
+	var ground := Structures.ground_frame(data)
+	var carried := {}
+	for cell in [5 * 2 * 20 + 5 * 2, 5 * 2 * 20 + 5 * 2 + 1, (5 * 2 + 1) * 20 + 5 * 2,
+			(5 * 2 + 1) * 20 + 5 * 2 + 1, 4 * 2 * 20 + 5 * 2, 4 * 2 * 20 + 5 * 2 + 1]:
+		carried[cell] = 1.2
+	ground.decks = carried
+	var wet := PackedByteArray()
+	wet.resize(100)
+	Walkability._ellipse_cells(data, ground, {"centre": Vector3(5.0, 1.0, 5.0),
+		"radii": Vector2(2.3, 2.3)}, wet)
+	_expect(wet[5 * 10 + 7] == 1 and wet[5 * 10 + 5] == 0 and wet[4 * 10 + 5] == 1 and
+		wet[5 * 10 + 8] == 0,
+		"water is judged per half-cell against the deck or ground each stands on")
+
+
+## The published package's composer-only decks and solids, read from a GLB,
+## leaving out what the scene carries; and Sunmane's real package.
+func _test_published_context() -> void:
+	var scene := Node3D.new()
+	scene.name = "PackageRoot"
+	var parent := Node3D.new()
+	parent.name = "Thresholds"
+	parent.position = Vector3(10.0, 0.0, 0.0)
+	scene.add_child(parent)
+	parent.owner = scene
+	for pair: Array in [["Walk_Threshold", parent], ["Gatehouse", scene], ["Authored_Carried", scene]]:
+		var mesh_node := MeshInstance3D.new()
+		mesh_node.name = pair[0]
+		if pair[0] == "Walk_Threshold":
+			var plane := PlaneMesh.new()
+			plane.size = Vector2(4.0, 4.0)
+			mesh_node.mesh = plane
+		else:
+			mesh_node.mesh = BoxMesh.new()
+		(pair[1] as Node).add_child(mesh_node)
+		mesh_node.owner = scene
+	var path := ProjectSettings.globalize_path(DIR + "/published-context.glb")
+	var state := GLTFState.new()
+	var written := GLTFDocument.new().append_from_scene(scene, state) == OK and \
+		GLTFDocument.new().write_to_filesystem(state, path) == OK
+	scene.free()
+	var read := Published.read_package(path, {"Gatehouse": true, "Authored_Carried": true},
+		["Terrain_", "Walk_"], {"assets": {"Authored_Carried": true}, "bridges": PackedStringArray()})
+	var deck_box := AABB()
+	var decks: Array = read.get("decks", [])
+	if not decks.is_empty():
+		var corners: PackedVector3Array = decks[0].triangles
+		deck_box = AABB(corners[0], Vector3.ZERO)
+		for point in corners:
+			deck_box = deck_box.expand(point)
+	var heights := PackedFloat32Array()
+	heights.resize(100)
+	heights.fill(-1.0)
+	var ground := Structures.ground_frame({"heights": heights, "grid": Vector2i(10, 10), "cell": 2.0,
+		"terrain_x0": 0.0, "terrain_z0": -9.0, "x0": 0.0, "z0": -9.0, "tile": 1.0, "width": 18,
+		"rows": 18})
+	var carried: Dictionary = Structures.deck_cells(ground, decks).cells
+	var sunmane: Node3D = REGION.new()
+	sunmane.set("region_id", "sunmane_steppe")
+	var real := Published.context_for(sunmane)
+	sunmane.free()
+	DirAccess.remove_absolute(path)
+	_expect(written and decks.size() == 1 and String(decks[0].name) == "Walk_Threshold" and
+		(read.get("solids", []) as Array).size() == 1 and
+		String((read.solids as Array)[0].name) == "Gatehouse" and
+		deck_box.position.is_equal_approx(Vector3(8.0, 0.0, -2.0)) and carried.size() == 64 and
+		(real.get("decks", []) as Array).size() > 10,
+		"published composer decks and solids are read in place, upward, without what the scene carries (%d Sunmane decks)" %
+			(real.get("decks", []) as Array).size())
+
+
+## The coordinate-locked concept master: placed by its contract in the
+## territory frame, cut to the minimap frame, drawn on the terrain with both
+## boundaries; and Sunmane's real package.
+func _test_concept_master(usability: Object, root: Node3D) -> void:
+	var package := ProjectSettings.globalize_path(DIR + "/concept")
+	var region := String(root.get("region_id"))
+	var slug := region.replace("_", "-")
+	var folder := package.path_join("regions").path_join(slug)
+	DirAccess.make_dir_recursive_absolute(folder)
+	var translation: Vector3 = root.get("continent_translation")
+	var master := Image.create_empty(40, 30, false, Image.FORMAT_RGBA8)
+	master.fill(Color(0.0, 0.0, 1.0, 1.0))
+	master.set_pixel(12, 7, Color(1.0, 0.0, 0.0, 1.0))
+	master.save_png(folder.path_join("%s-master.png" % slug))
+	var contract := {"id": region, "cropRectWorld": [translation.x - 2.0, translation.z - 3.0,
+		translation.x + 38.0, translation.z + 27.0], "master": "%s-master.png" % slug,
+		"developOwnershipPolygon": [[translation.x, translation.z], [translation.x + 40.0, translation.z],
+			[translation.x + 40.0, translation.z + 40.0], [translation.x, translation.z + 40.0]],
+		"ownershipPolygon": [[translation.x + 2.0, translation.z], [translation.x + 40.0, translation.z],
+			[translation.x + 40.0, translation.z + 40.0], [translation.x + 2.0, translation.z + 40.0]]}
+	var file := FileAccess.open(folder.path_join("contract.json"), FileAccess.WRITE)
+	file.store_string(JSON.stringify(contract))
+	file.close()
+	var loaded := ConceptMaster.load_for(root, package)
+	var picture: Dictionary = ConceptMaster.minimap_picture(root, {"rect": Rect2(10.0, 4.0, 4.0, 4.0),
+		"size": Vector2i(4, 4)}, package)
+	Settings.set_value("concept/masters_folder", package)
+	var shown: bool = usability.call("set_concept_overlay", true)
+	var overlay: Object = usability.call("concept_overlay")
+	var node: MeshInstance3D = overlay.call("node")
+	var message := String(overlay.get("last_message"))
+	usability.call("set_concept_overlay", false)
+	var sunmane: Node3D = REGION.new()
+	sunmane.set("region_id", "sunmane_steppe")
+	sunmane.set("continent_translation", Vector3(1200.0, 0.0, 720.0))
+	Settings.set_value("concept/masters_folder", "")
+	var real := ConceptMaster.load_for(sunmane)
+	sunmane.free()
+	_remove_tree_recursive(DIR + "/concept")
+	_expect(not loaded.has("error") and (loaded.rect as Rect2).is_equal_approx(Rect2(-2.0, -3.0, 40.0, 30.0)) and
+		(loaded.proposed as PackedVector2Array)[0].is_equal_approx(Vector2(2.0, 0.0)) and
+		picture.get("image") is Image and
+		(picture.image as Image).get_pixel(0, 0).is_equal_approx(Color(1.0, 0.0, 0.0, 1.0)) and
+		shown and node != null and node.owner == null and "proposed" in message and
+		overlay.call("node") == null and not real.has("error") and
+		(real.rect as Rect2).is_equal_approx(Rect2(-286.0, -588.0, 626.0, 972.0)),
+		"the concept master lines up by its contract, on the minimap and the terrain, with both boundaries (%s)" %
+			[real.get("error", "Sunmane found")])
+
+
+## Scatter avoids water, steep ground, roads and structures, still repeats for
+## a seed, and erases only copies of its own asset in one undo step.
+func _test_scatter_avoid_and_erase(usability: Object, root: Node3D, camera: Camera3D,
+		entry: Dictionary) -> void:
+	var flat := PackedFloat32Array()
+	flat.resize(36)
+	flat.fill(0.0)
+	var slope := PackedFloat32Array()
+	for row in 6:
+		for column in 6:
+			slope.append(float(column) * 2.0)
+	var terrain := {"heights": flat, "grid": Vector2i(6, 6), "cell": 2.0, "terrain_x0": 0.0,
+		"terrain_z0": 0.0}
+	var steep := terrain.duplicate()
+	steep.heights = slope
+	var box := Walkability._footprint(Transform3D.IDENTITY, AABB(Vector3(6.0, 0.0, 6.0),
+		Vector3(2.0, 3.0, 2.0)))
+	var avoid := {"terrain": terrain, "roads": [[Vector2(0.0, 2.0), Vector2(10.0, 2.0), 1.5]],
+		"structures": [box], "water": [{"kind": "ellipse", "centre": Vector3(2.0, 1.0, 8.0),
+			"radii": Vector2(1.5, 1.5)}], "sea": null}
+	var reasons := [Scatter.spot_problem(avoid, Vector2(5.0, 2.5)),
+		Scatter.spot_problem(avoid, Vector2(7.0, 7.0)), Scatter.spot_problem(avoid, Vector2(2.0, 8.0)),
+		Scatter.spot_problem({"terrain": steep, "max_grade": 0.65}, Vector2(5.0, 5.0)),
+		Scatter.spot_problem(avoid, Vector2(8.5, 5.0))]
+	var first_rng := RandomNumberGenerator.new()
+	first_rng.seed = 5
+	var second_rng := RandomNumberGenerator.new()
+	second_rng.seed = 5
+	var first := Scatter.stamp_points(first_rng, Vector2(5.0, 5.0), 5.0, 40.0, 0.8,
+		PackedVector2Array(), PackedVector2Array(), avoid)
+	var second := Scatter.stamp_points(second_rng, Vector2(5.0, 5.0), 5.0, 40.0, 0.8,
+		PackedVector2Array(), PackedVector2Array(), avoid)
+	var clean := first.size() > 0
+	for point in first:
+		clean = clean and Scatter.spot_problem(avoid, point).is_empty()
+	_expect(reasons == ["road", "structure", "water", "steep", ""] and first == second and clean,
+		"scatter avoids roads, structures, water and steep ground, and still repeats for a seed")
+	# Paint, then erase over the same ground: only this asset's copies go.
+	var tool := _bind_fixture_sculpt(root)
+	var history := _undo.get_history_undo_redo(_undo.get_object_history_id(root))
+	var assets := root.get_node("AuthoredAssets")
+	var before := assets.get_child_count()
+	usability.call("start_scatter", {"radius": 4.0, "density": 15.0, "spacing": 2.0,
+		"random_turn": true, "size_variation": 0.0, "seed": 9, "avoid_roads": false,
+		"avoid_structures": false, "avoid_water": false, "avoid_steep": false}, entry)
+	_stroke(usability, camera, root, [Vector2(12.0, 30.0), Vector2(16.0, 30.0), Vector2(20.5, 30.0)])
+	var painted := assets.get_child_count() - before
+	var other: Node3D = null
+	for child in assets.get_children():
+		if String(child.get("catalog_asset_id")) != String(entry.id):
+			other = child as Node3D
+			break
+	var other_place := other.global_position if other != null else Vector3.ZERO
+	if other != null:
+		other.global_position = root.global_transform * Vector3(16.0, 0.0, 30.0)
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_X))
+	var scatter: RefCounted = usability.call("scatter_tool")
+	var erasing := bool(scatter.call("erasing"))
+	# The same path gives the same stamp centres, so every painted copy is under it.
+	_stroke(usability, camera, root, [Vector2(12.0, 30.0), Vector2(16.0, 30.0), Vector2(20.5, 30.0)])
+	var erase_message := String(scatter.get("last_message"))
+	# Every copy of the asset under the stroke is gone (placed earlier or just
+	# now); anything else, like `other`, stays.
+	var left_under := 0
+	var centres := [Vector2(12.0, 30.0), Vector2(16.0, 30.0), Vector2(20.0, 30.0)]
+	for child in assets.get_children():
+		if String(child.get("catalog_asset_id")) != String(entry.id):
+			continue
+		var local: Vector3 = root.global_transform.affine_inverse() * (child as Node3D).global_position
+		for centre: Vector2 in centres:
+			if Vector2(local.x, local.z).distance_to(centre) < 3.9:
+				left_under += 1
+	var erased := left_under == 0 and "Erased" in erase_message and 		(other == null or other.get_parent() == assets)
+	history.undo()
+	var restored := assets.get_child_count() == before + painted
+	history.undo()
+	if other != null:
+		other.global_position = other_place
+	usability.call("_forward_3d_gui_input", camera, _key(KEY_ESCAPE))
+	if tool != null:
+		tool.call("unbind")
+	_expect(painted >= 3 and erasing and erased and restored and assets.get_child_count() == before,
+		"erase removes every copy of the chosen asset under the stroke and nothing else, in one undo step (%d painted; %s)" % [
+			painted, erase_message])
+
+
+## The review notes filter: the list, the pins and the minimap follow it; the
+## dock's buttons edit the chosen note.
+func _test_notes_filter_and_dock(usability: Object, root: Node3D, camera: Camera3D) -> void:
+	var notes: RefCounted = usability.call("review_notes")
+	var path := ReviewNotes.path_for(root)
+	notes.call("open", root)
+	notes.call("add", Vector3(10.0, 1.0, 10.0), "First")
+	notes.call("add", Vector3(20.0, 1.0, 20.0), "Second")
+	notes.call("set_status", "review-001", "resolved")
+	usability.call("_sync_notes_dock")
+	var dock: Object = usability.call("review_notes_dock")
+	dock.call("set_filter", "open")
+	var listed: PackedStringArray = dock.call("listed_ids")
+	var pins: Node3D = notes.call("pins")
+	var pin_labels := pins.find_children("*", "Label3D", true, false).size() if pins != null else -1
+	var minimap: Object = usability.get("_minimap")
+	var view: Object = minimap.call("view")
+	var shown_notes := (view.get("state") as Dictionary).get("notes", []) as Array
+	dock.call("set_filter", "all")
+	dock.call("select_id", "review-002")
+	(dock.call("text_field") as LineEdit).text = "Second, checked"
+	((dock.get("_buttons") as Dictionary).save as Button).pressed.emit()
+	((dock.get("_buttons") as Dictionary).resolve as Button).pressed.emit()
+	var middle := ReviewNotes.read(path, String(root.get("region_id")))
+	(dock.get("_confirm") as ConfirmationDialog).confirmed.emit()
+	var left := ReviewNotes.read(path, String(root.get("region_id")))
+	_expect(listed == PackedStringArray(["review-002"]) and pin_labels == 1 and
+		((minimap.call("framing") as Dictionary).is_empty() or shown_notes.size() == 1),
+		"the notes filter narrows the list, the pins and the minimap to open notes")
+	var edited: Dictionary = (middle.notes as Array)[1] if (middle.notes as Array).size() == 2 else {}
+	_expect(String(edited.get("text", "")) == "Second, checked" and
+		String(edited.get("status", "")) == "resolved" and (left.notes as Array).size() == 1 and
+		String((left.notes as Array)[0].id) == "review-001",
+		"the dock's buttons save text, resolve and delete the chosen note")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	notes.call("open", root)
+	usability.call("_sync_notes_dock")
+
+
 func _test_path_drawing(palette: Object, usability: Object, root: Node3D, camera: Camera3D,
 		entry: Dictionary) -> void:
 	var centre := camera.get_viewport().get_visible_rect().size * 0.5
@@ -1493,6 +1760,10 @@ func _test_road_extension(usability: Object, root: Node3D, camera: Camera3D) -> 
 	_expect(undone and road.curve.point_count == original.size() + 2,
 		"extending a road is one undo step")
 	var first: Vector3 = road.global_transform * original[0]
+	var anchored := PackedFloat32Array()
+	anchored.resize(road.curve.point_count)
+	anchored[0] = 6.0
+	road.set("point_widths", anchored)
 	usability.call("start_path_drawing", "road")
 	_aim(camera, root, Vector2(first.x, first.z))
 	usability.call("_forward_3d_gui_input", camera, _click(centre))
@@ -1504,7 +1775,14 @@ func _test_road_extension(usability: Object, root: Node3D, camera: Camera3D) -> 
 		(road.global_transform * road.curve.get_point_position(0)).distance_to(front) < 0.05 and
 		road.curve.get_point_position(1).is_equal_approx(original[0]),
 		"starting on a road's first point extends it at the start")
+	var widths_after: PackedFloat32Array = road.get("point_widths")
 	history.undo()
+	var widths_undone: PackedFloat32Array = road.get("point_widths")
+	_expect(widths_after.size() == road.curve.point_count + 1 and is_equal_approx(widths_after[1], 6.0) and
+		is_zero_approx(widths_after[0]) and widths_undone.size() == road.curve.point_count and
+		is_equal_approx(widths_undone[0], 6.0),
+		"extending a road at its start keeps its width anchors on their points, through undo (%s, %s)" % [
+			widths_after, widths_undone])
 	usability.call("start_path_drawing", "road")
 	_aim(camera, root, Vector2(first.x, first.z))
 	var ctrl_click := _click(centre)

@@ -11,7 +11,9 @@ extends RefCounted
 ## shared topology, mouths, joins and claims are the map team's.
 ##
 ## Plan coordinates are continent X, Z with the water level as the third
-## value; the territory frame subtracts the scene's continent_translation.
+## value and, optionally, the half-width as the fourth; a river's "width" is a
+## half-width too. The territory frame subtracts the scene's
+## continent_translation.
 ## Drawn as an internal, ownerless node, so it is never saved or baked.
 
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
@@ -72,17 +74,21 @@ static func features(root: Node3D, plan: Dictionary) -> Array[Dictionary]:
 		var points := PackedVector3Array()
 		var halves := PackedFloat32Array()
 		var box := Rect2()
-		for point_value: Variant in river.get("points", []):
+		var controls: Array = river.get("points", [])
+		var samples: Array = controls if bool(river.get("authoredSampled", false)) 			else curved_points(controls)
+		for point_value: Variant in samples:
 			var point: Array = point_value
 			if point.size() < 3:
 				continue
 			var local := Vector3(float(point[0]) - translation.x, float(point[2]) - translation.y,
 				float(point[1]) - translation.z)
 			points.append(local)
-			halves.append(float(point[3] if point.size() > 3 else river.get("width", 6.0)) * 0.5)
+			# Plan river widths are half-widths from the centreline (landscape.py
+			# water_fields), per point when the point carries a fourth value.
+			halves.append(float(point[3] if point.size() > 3 else river.get("width", 3.0)))
 			box = Rect2(Vector2(local.x, local.z), Vector2.ZERO) if points.size() == 1 else \
 				box.expand(Vector2(local.x, local.z))
-		if points.size() < 2 or not box.grow(float(river.get("width", 6.0))).intersects(bounds):
+		if points.size() < 2 or not box.grow(float(river.get("width", 3.0))).intersects(bounds):
 			continue
 		var identity := String(river.get("id", ""))
 		result.append({"id": identity, "name": String(river.get("name", identity)),
@@ -103,9 +109,48 @@ static func features(root: Node3D, plan: Dictionary) -> Array[Dictionary]:
 			continue
 		var identity := String(lake.get("id", NAMELESS_LAKES.get(String(lake.get("name", "")), "")))
 		result.append({"id": identity, "name": String(lake.get("name", identity)), "kind": "lake",
-			"centre": centre, "radii": radii, "depth": float(lake.get("depth", 0.0)),
+			"centre": centre, "radii": radii, "angle": float(lake.get("angle", 0.0)),
+			"depth": float(lake.get("depth", 0.0)),
 			"claimed": not identity.is_empty() and claims.has(identity),
 			"claim": String(claims.get(identity, "")) if not identity.is_empty() else ""})
+	return result
+
+
+## The composer's river centreline (landscape._curved_points): Catmull-Rom
+## through the control points, six samples a span, with the level and any
+## width interpolated linearly along each span and the last point kept.
+static func curved_points(controls: Array) -> Array:
+	var result: Array = []
+	var count := controls.size()
+	if count < 2:
+		return controls.duplicate()
+	for index in count - 1:
+		var a: Array = controls[index]
+		var b: Array = controls[index + 1]
+		var before: Array = controls[index - 1] if index > 0 else _mirror(a, b)
+		var after: Array = controls[index + 2] if index + 2 < count else _mirror(b, a)
+		for step in 6:
+			var t := float(step) / 6.0
+			var sample: Array = []
+			for axis in 2:
+				var p0 := float(before[axis])
+				var p1 := float(a[axis])
+				var p2 := float(b[axis])
+				var p3 := float(after[axis])
+				sample.append(0.5 * (2.0 * p1 + (-p0 + p2) * t + (2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3) *
+					t * t + (-p0 + 3.0 * p1 - 3.0 * p2 + p3) * t * t * t))
+			for attribute in range(2, mini(a.size(), b.size())):
+				sample.append(lerpf(float(a[attribute]), float(b[attribute]), t))
+			result.append(sample)
+	result.append(controls[count - 1])
+	return result
+
+
+static func _mirror(point: Array, other: Array) -> Array:
+	var result: Array = []
+	for index in point.size():
+		result.append(float(point[index]) * 2.0 - float(other[index]) if index < other.size()
+			else float(point[index]))
 	return result
 
 
@@ -235,12 +280,14 @@ func _draw_river(feature: Dictionary, color: Color) -> void:
 func _draw_lake(feature: Dictionary, color: Color) -> void:
 	var centre: Vector3 = feature.centre
 	var radii: Vector2 = feature.radii
+	var turn := float(feature.get("angle", 0.0))
 	var segments := 64
 	for index in segments:
 		var a := TAU * float(index) / float(segments)
 		var b := TAU * float(index + 1) / float(segments)
-		_line(centre + Vector3(cos(a) * radii.x, 0.0, sin(a) * radii.y),
-			centre + Vector3(cos(b) * radii.x, 0.0, sin(b) * radii.y), color)
+		var p := Vector2(cos(a) * radii.x, sin(a) * radii.y).rotated(turn)
+		var q := Vector2(cos(b) * radii.x, sin(b) * radii.y).rotated(turn)
+		_line(centre + Vector3(p.x, 0.0, p.y), centre + Vector3(q.x, 0.0, q.y), color)
 
 
 func _line(a: Vector3, b: Vector3, color: Color) -> void:
