@@ -9073,3 +9073,72 @@ aggressive: 0
 model: final
 spawn_mode: livestock
 [/monster]
+
+# Their foals, kept in the camps' pens beside the mares (same `tame` rows).
+[monster]
+type: sunmane_foal_dun
+name: Dun Foal
+actor_type: 788
+footprint: 1
+level: 3
+attack: 6
+defense: 7
+matter: 4
+toughness: 4
+carry: 3
+charm: 9
+reaction: 6
+perception: 6
+rationality: 3
+magic_offense: 2
+magic_defense: 2
+dexterity: 6
+ethereality: 3
+might: 3
+material_points: 30
+ethereal_points: 8
+damage_min: 1
+damage_max: 2
+armor_min: 0
+armor_max: 0
+wander_chance: 40
+time_to_respawn: 60
+combat_engage_distance: 1
+aggressive: 0
+model: final
+spawn_mode: livestock
+[/monster]
+
+[monster]
+type: sunmane_foal_grey
+name: Grey Foal
+actor_type: 789
+footprint: 1
+level: 3
+attack: 6
+defense: 7
+matter: 4
+toughness: 4
+carry: 3
+charm: 9
+reaction: 6
+perception: 6
+rationality: 3
+magic_offense: 2
+magic_defense: 2
+dexterity: 6
+ethereality: 3
+might: 3
+material_points: 30
+ethereal_points: 8
+damage_min: 1
+damage_max: 2
+armor_min: 0
+armor_max: 0
+wander_chance: 40
+time_to_respawn: 60
+combat_engage_distance: 1
+aggressive: 0
+model: final
+spawn_mode: livestock
+[/monster]
