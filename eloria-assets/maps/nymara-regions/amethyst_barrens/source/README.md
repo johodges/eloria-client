@@ -70,3 +70,28 @@ materials, so this package embeds its selected palette and the reciprocal border
 materials. Adding a kit piece that introduces a new material means
 adding its name there; an unpinned material is a `KeyError` at export rather
 than a silent omission.
+
+## Editor kit
+
+The territory palette paints the barrens with `kit-*.glb` pieces in
+`godot-client/world_authoring/regions/amethyst_barrens/assets/prototypes/`. The
+saved-source migration kept only the all-crystal outcrops and spires, so the
+barrens had no grey rock for the amethyst to come through and no ground cover.
+
+- `prepare_meshy_kit.py --input <folder>` seats the generated models (from
+  `work-output/amethyst-barrens-2026-09-27/asset-prompts.md`): crystal-veined
+  boulders and crags, basalt columns, split geodes, a rock arch, crystal vents and
+  growths, vein scree, lichen mats, ashen brush, dead thorn, and prospector props
+  (ore cart, mine rail, crates, lean-to, sluice, tripod, tool rack, lantern post).
+  Each is scaled to its size in `SIZES`, stood on the origin, and its textures are
+  shrunk and content-addressed into `assets/textures/`; `prepare-meshy-kit.json`
+  records the input and output digests and `--check` verifies them.
+- `export_editor_kit.py` builds the few pieces no model covers: grey rubble scree
+  with a glint of shard, a crystal-burning brazier, a workbench and a survey
+  signpost. Its stone is the territory's storm rock lifted to a mid grey, written
+  beside the other textures under its content digest; `--check` verifies.
+
+A piece whose file name holds a walk-through word (`scree`, `crystal`, `brush`,
+`thorn`, `lichen`, `mine-rail`, ... in `asset_catalog.gd` `WALK_THROUGH_WORDS`)
+starts walk-through in the palette, the rest start solid; the arch and the sluice
+were made solid on their first copies, and the palette keeps a placed piece's role.
