@@ -2763,6 +2763,78 @@
     "runtimeBindings": [
       {
         "aliases": [],
+        "id": "[\"config/eloria/instances/manymouth_gauntlet_high.def\",\"manymouth_gauntlet_high\",\"exit_x\",\"exit_y\",\"manymouth_delta\"]",
+        "marker": {
+          "id": "runtime-instance-return-manymouth_delta",
+          "section": "runtimePoints"
+        },
+        "provenance": {
+          "sourceProfileSha256": "3fd07c0ffb9c4995e548bc561b76581bb28514dcd0cac940c1560ddf03da7526",
+          "sourceReportSha256": "02abd0667dcfe3fc556559fc0a9087727b51883ae68a6bb6fd7a327acc3dc8c0"
+        },
+        "roads": "marker",
+        "role": "return",
+        "source": {
+          "amendmentReport": {
+            "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+            "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+          },
+          "fields": [
+            "exit_x",
+            "exit_y"
+          ],
+          "line": 19,
+          "oldTile": [
+            179,
+            317
+          ],
+          "path": "config/eloria/instances/manymouth_gauntlet_high.def",
+          "recordId": "manymouth_gauntlet_high"
+        },
+        "targetOffset": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "aliases": [],
+        "id": "[\"config/eloria/instances/manymouth_gauntlet_low.def\",\"manymouth_gauntlet_low\",\"exit_x\",\"exit_y\",\"manymouth_delta\"]",
+        "marker": {
+          "id": "runtime-instance-return-manymouth_delta",
+          "section": "runtimePoints"
+        },
+        "provenance": {
+          "sourceProfileSha256": "a4c2a67c9572a8728285a22d88b3c928e6a28ac9786fd7aa1e4c053a98ce88d2",
+          "sourceReportSha256": "02abd0667dcfe3fc556559fc0a9087727b51883ae68a6bb6fd7a327acc3dc8c0"
+        },
+        "roads": "marker",
+        "role": "return",
+        "source": {
+          "amendmentReport": {
+            "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+            "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+          },
+          "fields": [
+            "exit_x",
+            "exit_y"
+          ],
+          "line": 19,
+          "oldTile": [
+            179,
+            317
+          ],
+          "path": "config/eloria/instances/manymouth_gauntlet_low.def",
+          "recordId": "manymouth_gauntlet_low"
+        },
+        "targetOffset": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "aliases": [],
         "id": "harvesting.txt:289:52@68:371",
         "marker": {
           "id": "runtime-harvest-harvesting-txt-289-52-68-371",
@@ -8749,6 +8821,19 @@
         ]
       },
       {
+        "id": "runtime-instance-return-manymouth_delta",
+        "label": "Independent instance return",
+        "position": [
+          -33.5,
+          3.2410035133361816,
+          -123.5
+        ],
+        "serverTile": [
+          174,
+          433
+        ]
+      },
+      {
         "id": "runtime-interactive-interactives-txt-134-13-218-160",
         "label": "13",
         "position": [
@@ -10044,7 +10129,188 @@
       }
     ]
   },
-  "groundRegions": [],
+  "groundRegions": [
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "manymouth_delta-pass1-templeapproach",
+      "matrix": [
+        0.9848077297210693,
+        0.0,
+        -0.1736481785774231,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.1736481785774231,
+        0.0,
+        0.9848077297210693,
+        0.0,
+        142.0,
+        11.857515335083008,
+        -108.0,
+        1.0
+      ],
+      "opacity": 0.82,
+      "priority": 0,
+      "shape": "ellipse",
+      "size": [
+        62.0,
+        48.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6399999856948853,
+            0.5600000023841858,
+            0.4399999976158142,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Soil",
+        "rotationDegrees": 13.0
+      }
+    },
+    {
+      "blendWidth": 7.0,
+      "enabled": true,
+      "id": "manymouth_delta-pass1-templeeast",
+      "matrix": [
+        0.9781476259231567,
+        0.0,
+        0.20791170001029968,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.20791170001029968,
+        0.0,
+        0.9781476259231567,
+        0.0,
+        147.0,
+        11.31351375579834,
+        -86.0,
+        1.0
+      ],
+      "opacity": 0.72,
+      "priority": 2,
+      "shape": "ellipse",
+      "size": [
+        46.0,
+        30.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6399999856948853,
+            0.5600000023841858,
+            0.4399999976158142,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Soil",
+        "rotationDegrees": 13.0
+      }
+    },
+    {
+      "blendWidth": 6.0,
+      "enabled": true,
+      "id": "manymouth_delta-pass1-templequayyard",
+      "matrix": [
+        0.9063077569007874,
+        0.0,
+        -0.4226182699203491,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.4226182699203491,
+        0.0,
+        0.9063077569007874,
+        0.0,
+        166.0,
+        11.13254165649414,
+        -80.0,
+        1.0
+      ],
+      "opacity": 0.61,
+      "priority": 3,
+      "shape": "ellipse",
+      "size": [
+        28.0,
+        22.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6600000262260437,
+            0.5400000214576721,
+            0.38999998569488525,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Soil",
+        "rotationDegrees": -19.0
+      }
+    }
+  ],
   "objects": [
     {
       "assetId": "manymouth_delta:grove-00248-478a3681ea95",
@@ -11843,7 +12109,8 @@
       "id": "Landmark_EastWatch",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_EastWatch/Landmark_EastWatch__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Landmark_EastWatch2/Landmark_EastWatch/Landmark_EastWatch__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12078,7 +12345,8 @@
       "id": "Landmark_MootHall",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_MootHall/Landmark_MootHall__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Landmark_MootHall2/Landmark_MootHall/Landmark_MootHall__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12193,7 +12461,8 @@
       "id": "Landmark_PaddyTower",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_PaddyTower/Landmark_PaddyTower__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Landmark_PaddyTower2/Landmark_PaddyTower/Landmark_PaddyTower__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12348,7 +12617,8 @@
       "id": "Lore_stelae_court",
       "materialOverrides": [
         {
-          "meshNodePath": "Lore_stelae_court/Lore_stelae_court__verdant_terrace_stone",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "Lore_stelae_court2/Lore_stelae_court/Lore_stelae_court__verdant_terrace_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12382,7 +12652,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Lore_stelae_court/Walk_Lore_stelae_court__verdant_terrace_stone",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Lore_stelae_court2/Lore_stelae_court/Walk_Lore_stelae_court__verdant_terrace_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -13804,7 +14075,8 @@
       "id": "Secret_delta_banyan_eyrie",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_delta_banyan_eyrie/Secret_delta_banyan_eyrie__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_delta_banyan_eyrie2/Secret_delta_banyan_eyrie/Secret_delta_banyan_eyrie__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -13995,7 +14267,8 @@
       "id": "Secret_delta_moot_vault",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_delta_moot_vault/Secret_delta_moot_vault__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_delta_moot_vault2/Secret_delta_moot_vault/Secret_delta_moot_vault__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -14147,7 +14420,8 @@
       "id": "Secret_delta_shrine_well",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_delta_shrine_well/Secret_delta_shrine_well__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_delta_shrine_well2/Secret_delta_shrine_well/Secret_delta_shrine_well__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -14221,7 +14495,8 @@
       "id": "Secret_delta_stelae_reliquary",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_delta_stelae_reliquary/Secret_delta_stelae_reliquary__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_delta_stelae_reliquary2/Secret_delta_stelae_reliquary/Secret_delta_stelae_reliquary__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -14412,7 +14687,8 @@
       "id": "Secret_delta_waystone",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_delta_waystone/Secret_delta_waystone__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_delta_waystone2/Secret_delta_waystone/Secret_delta_waystone__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -17115,7 +17391,8 @@
       "id": "boat_yard_house_00",
       "materialOverrides": [
         {
-          "meshNodePath": "boat_yard_house_00/boat_yard_house_00__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "boat_yard_house_002/boat_yard_house_00/boat_yard_house_00__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -17189,7 +17466,8 @@
       "id": "boat_yard_house_01",
       "materialOverrides": [
         {
-          "meshNodePath": "boat_yard_house_01/boat_yard_house_01__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "boat_yard_house_012/boat_yard_house_01/boat_yard_house_01__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -17263,7 +17541,8 @@
       "id": "boat_yard_house_02",
       "materialOverrides": [
         {
-          "meshNodePath": "boat_yard_house_02/boat_yard_house_02__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "boat_yard_house_022/boat_yard_house_02/boat_yard_house_02__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -17337,7 +17616,8 @@
       "id": "boat_yard_house_03",
       "materialOverrides": [
         {
-          "meshNodePath": "boat_yard_house_03/boat_yard_house_03__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "boat_yard_house_032/boat_yard_house_03/boat_yard_house_03__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -17411,7 +17691,8 @@
       "id": "boat_yard_house_04",
       "materialOverrides": [
         {
-          "meshNodePath": "boat_yard_house_04/boat_yard_house_04__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "boat_yard_house_042/boat_yard_house_04/boat_yard_house_04__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -17485,7 +17766,8 @@
       "id": "boat_yard_house_05",
       "materialOverrides": [
         {
-          "meshNodePath": "boat_yard_house_05/boat_yard_house_05__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "boat_yard_house_052/boat_yard_house_05/boat_yard_house_05__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18066,7 +18348,8 @@
       "id": "deep_grove_house_00",
       "materialOverrides": [
         {
-          "meshNodePath": "deep_grove_house_00/deep_grove_house_00__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "deep_grove_house_002/deep_grove_house_00/deep_grove_house_00__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18140,7 +18423,8 @@
       "id": "deep_grove_house_01",
       "materialOverrides": [
         {
-          "meshNodePath": "deep_grove_house_01/deep_grove_house_01__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "deep_grove_house_012/deep_grove_house_01/deep_grove_house_01__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18214,7 +18498,8 @@
       "id": "deep_grove_house_02",
       "materialOverrides": [
         {
-          "meshNodePath": "deep_grove_house_02/deep_grove_house_02__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "deep_grove_house_022/deep_grove_house_02/deep_grove_house_02__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18288,7 +18573,8 @@
       "id": "deep_grove_house_03",
       "materialOverrides": [
         {
-          "meshNodePath": "deep_grove_house_03/deep_grove_house_03__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "deep_grove_house_032/deep_grove_house_03/deep_grove_house_03__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18362,7 +18648,8 @@
       "id": "deep_grove_house_04",
       "materialOverrides": [
         {
-          "meshNodePath": "deep_grove_house_04/deep_grove_house_04__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "deep_grove_house_042/deep_grove_house_04/deep_grove_house_04__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18631,7 +18918,8 @@
       "id": "east_hamlet_house_00",
       "materialOverrides": [
         {
-          "meshNodePath": "east_hamlet_house_00/east_hamlet_house_00__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "east_hamlet_house_002/east_hamlet_house_00/east_hamlet_house_00__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18705,7 +18993,8 @@
       "id": "east_hamlet_house_01",
       "materialOverrides": [
         {
-          "meshNodePath": "east_hamlet_house_01/east_hamlet_house_01__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "east_hamlet_house_012/east_hamlet_house_01/east_hamlet_house_01__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18779,7 +19068,8 @@
       "id": "east_hamlet_house_02",
       "materialOverrides": [
         {
-          "meshNodePath": "east_hamlet_house_02/east_hamlet_house_02__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "east_hamlet_house_022/east_hamlet_house_02/east_hamlet_house_02__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18853,7 +19143,8 @@
       "id": "east_hamlet_house_03",
       "materialOverrides": [
         {
-          "meshNodePath": "east_hamlet_house_03/east_hamlet_house_03__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "east_hamlet_house_032/east_hamlet_house_03/east_hamlet_house_03__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18927,7 +19218,8 @@
       "id": "east_hamlet_house_04",
       "materialOverrides": [
         {
-          "meshNodePath": "east_hamlet_house_04/east_hamlet_house_04__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "east_hamlet_house_042/east_hamlet_house_04/east_hamlet_house_04__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19001,7 +19293,8 @@
       "id": "east_hamlet_house_05",
       "materialOverrides": [
         {
-          "meshNodePath": "east_hamlet_house_05/east_hamlet_house_05__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "east_hamlet_house_052/east_hamlet_house_05/east_hamlet_house_05__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19075,7 +19368,8 @@
       "id": "east_hamlet_house_06",
       "materialOverrides": [
         {
-          "meshNodePath": "east_hamlet_house_06/east_hamlet_house_06__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "east_hamlet_house_062/east_hamlet_house_06/east_hamlet_house_06__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19149,7 +19443,8 @@
       "id": "east_hamlet_house_07",
       "materialOverrides": [
         {
-          "meshNodePath": "east_hamlet_house_07/east_hamlet_house_07__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "east_hamlet_house_072/east_hamlet_house_07/east_hamlet_house_07__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19223,7 +19518,8 @@
       "id": "east_hamlet_house_08",
       "materialOverrides": [
         {
-          "meshNodePath": "east_hamlet_house_08/east_hamlet_house_08__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "east_hamlet_house_082/east_hamlet_house_08/east_hamlet_house_08__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19648,7 +19944,8 @@
       "id": "far_bar_house_00",
       "materialOverrides": [
         {
-          "meshNodePath": "far_bar_house_00/far_bar_house_00__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "far_bar_house_002/far_bar_house_00/far_bar_house_00__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19722,7 +20019,8 @@
       "id": "far_bar_house_01",
       "materialOverrides": [
         {
-          "meshNodePath": "far_bar_house_01/far_bar_house_01__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "far_bar_house_012/far_bar_house_01/far_bar_house_01__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19796,7 +20094,8 @@
       "id": "far_bar_house_02",
       "materialOverrides": [
         {
-          "meshNodePath": "far_bar_house_02/far_bar_house_02__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "far_bar_house_022/far_bar_house_02/far_bar_house_02__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19870,7 +20169,8 @@
       "id": "far_bar_house_03",
       "materialOverrides": [
         {
-          "meshNodePath": "far_bar_house_03/far_bar_house_03__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "far_bar_house_032/far_bar_house_03/far_bar_house_03__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20100,7 +20400,8 @@
       "id": "market_stall_00",
       "materialOverrides": [
         {
-          "meshNodePath": "market_stall_00/market_stall_00__thatch_reed",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "market_stall_002/market_stall_00/market_stall_00__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20174,7 +20475,8 @@
       "id": "market_stall_01",
       "materialOverrides": [
         {
-          "meshNodePath": "market_stall_01/market_stall_01__thatch_reed",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "market_stall_012/market_stall_01/market_stall_01__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20248,7 +20550,8 @@
       "id": "market_stall_02",
       "materialOverrides": [
         {
-          "meshNodePath": "market_stall_02/market_stall_02__thatch_reed",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "market_stall_022/market_stall_02/market_stall_02__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20322,7 +20625,8 @@
       "id": "market_stall_03",
       "materialOverrides": [
         {
-          "meshNodePath": "market_stall_03/market_stall_03__thatch_reed",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "market_stall_032/market_stall_03/market_stall_03__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20396,7 +20700,8 @@
       "id": "market_stall_04",
       "materialOverrides": [
         {
-          "meshNodePath": "market_stall_04/market_stall_04__thatch_reed",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "market_stall_042/market_stall_04/market_stall_04__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20470,7 +20775,8 @@
       "id": "market_stall_05",
       "materialOverrides": [
         {
-          "meshNodePath": "market_stall_05/market_stall_05__thatch_reed",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "market_stall_052/market_stall_05/market_stall_05__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21285,7 +21591,8 @@
       "id": "north_fishing_house_00",
       "materialOverrides": [
         {
-          "meshNodePath": "north_fishing_house_00/north_fishing_house_00__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "north_fishing_house_002/north_fishing_house_00/north_fishing_house_00__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21359,7 +21666,8 @@
       "id": "north_fishing_house_01",
       "materialOverrides": [
         {
-          "meshNodePath": "north_fishing_house_01/north_fishing_house_01__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "north_fishing_house_012/north_fishing_house_01/north_fishing_house_01__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21433,7 +21741,8 @@
       "id": "north_fishing_house_02",
       "materialOverrides": [
         {
-          "meshNodePath": "north_fishing_house_02/north_fishing_house_02__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "north_fishing_house_022/north_fishing_house_02/north_fishing_house_02__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21507,7 +21816,8 @@
       "id": "north_fishing_house_03",
       "materialOverrides": [
         {
-          "meshNodePath": "north_fishing_house_03/north_fishing_house_03__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "north_fishing_house_032/north_fishing_house_03/north_fishing_house_03__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21737,7 +22047,8 @@
       "id": "paddy_hamlet_house_00",
       "materialOverrides": [
         {
-          "meshNodePath": "paddy_hamlet_house_00/paddy_hamlet_house_00__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "paddy_hamlet_house_002/paddy_hamlet_house_00/paddy_hamlet_house_00__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21811,7 +22122,8 @@
       "id": "paddy_hamlet_house_01",
       "materialOverrides": [
         {
-          "meshNodePath": "paddy_hamlet_house_01/paddy_hamlet_house_01__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "paddy_hamlet_house_012/paddy_hamlet_house_01/paddy_hamlet_house_01__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21885,7 +22197,8 @@
       "id": "paddy_hamlet_house_02",
       "materialOverrides": [
         {
-          "meshNodePath": "paddy_hamlet_house_02/paddy_hamlet_house_02__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "paddy_hamlet_house_022/paddy_hamlet_house_02/paddy_hamlet_house_02__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21959,7 +22272,8 @@
       "id": "paddy_hamlet_house_03",
       "materialOverrides": [
         {
-          "meshNodePath": "paddy_hamlet_house_03/paddy_hamlet_house_03__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "paddy_hamlet_house_032/paddy_hamlet_house_03/paddy_hamlet_house_03__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22033,7 +22347,8 @@
       "id": "paddy_hamlet_house_04",
       "materialOverrides": [
         {
-          "meshNodePath": "paddy_hamlet_house_04/paddy_hamlet_house_04__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "paddy_hamlet_house_042/paddy_hamlet_house_04/paddy_hamlet_house_04__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22107,7 +22422,8 @@
       "id": "paddy_hamlet_house_05",
       "materialOverrides": [
         {
-          "meshNodePath": "paddy_hamlet_house_05/paddy_hamlet_house_05__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "paddy_hamlet_house_052/paddy_hamlet_house_05/paddy_hamlet_house_05__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22181,7 +22497,8 @@
       "id": "paddy_hamlet_house_06",
       "materialOverrides": [
         {
-          "meshNodePath": "paddy_hamlet_house_06/paddy_hamlet_house_06__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "paddy_hamlet_house_062/paddy_hamlet_house_06/paddy_hamlet_house_06__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22255,7 +22572,8 @@
       "id": "paddy_hamlet_house_07",
       "materialOverrides": [
         {
-          "meshNodePath": "paddy_hamlet_house_07/paddy_hamlet_house_07__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "paddy_hamlet_house_072/paddy_hamlet_house_07/paddy_hamlet_house_07__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22641,7 +22959,8 @@
       "id": "published-manymouth-delta-eastern-distributary-86",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_009_572_1156_WorldPlacement/BridgeUnionPier_009_572_1156",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_009_572_1156_WorldPlacement2/BridgeUnionPier_009_572_1156_WorldPlacement/BridgeUnionPier_009_572_1156",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22727,7 +23046,8 @@
       "id": "published-manymouth-delta-ferry-quay-00",
       "materialOverrides": [
         {
-          "meshNodePath": "FerryQuay_manymouth_delta_00_PilesAndPosts_WorldPlacement/FerryQuay_manymouth_delta_00_PilesAndPosts",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "FerryQuay_manymouth_delta_00_PilesAndPosts_WorldPlacement2/FerryQuay_manymouth_delta_00_PilesAndPosts_WorldPlacement/FerryQuay_manymouth_delta_00_PilesAndPosts",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22761,7 +23081,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_manymouth_delta_00_Signpost_WorldPlacement/FerryQuay_manymouth_delta_00_Signpost",
+          "bakedMeshNodeIndex": 8,
+          "meshNodePath": "FerryQuay_manymouth_delta_00_Signpost_WorldPlacement2/FerryQuay_manymouth_delta_00_Signpost_WorldPlacement/FerryQuay_manymouth_delta_00_Signpost",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22795,7 +23116,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_manymouth_delta_00_Skiff_Floor_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Floor",
+          "bakedMeshNodeIndex": 16,
+          "meshNodePath": "FerryQuay_manymouth_delta_00_Skiff_Floor_WorldPlacement2/FerryQuay_manymouth_delta_00_Skiff_Floor_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Floor",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22829,7 +23151,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_manymouth_delta_00_Skiff_Mast_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Mast",
+          "bakedMeshNodeIndex": 24,
+          "meshNodePath": "FerryQuay_manymouth_delta_00_Skiff_Mast_WorldPlacement2/FerryQuay_manymouth_delta_00_Skiff_Mast_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Mast",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22863,7 +23186,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_manymouth_delta_00_Skiff_Seat_0_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_0",
+          "bakedMeshNodeIndex": 18,
+          "meshNodePath": "FerryQuay_manymouth_delta_00_Skiff_Seat_0_WorldPlacement2/FerryQuay_manymouth_delta_00_Skiff_Seat_0_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22897,7 +23221,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_manymouth_delta_00_Skiff_Seat_1_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_1",
+          "bakedMeshNodeIndex": 20,
+          "meshNodePath": "FerryQuay_manymouth_delta_00_Skiff_Seat_1_WorldPlacement2/FerryQuay_manymouth_delta_00_Skiff_Seat_1_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22931,7 +23256,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_manymouth_delta_00_Skiff_Seat_2_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_2",
+          "bakedMeshNodeIndex": 22,
+          "meshNodePath": "FerryQuay_manymouth_delta_00_Skiff_Seat_2_WorldPlacement2/FerryQuay_manymouth_delta_00_Skiff_Seat_2_WorldPlacement/FerryQuay_manymouth_delta_00_Skiff_Seat_2",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22965,7 +23291,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_FerryQuay_manymouth_delta_00_WorldPlacement/Walk_FerryQuay_manymouth_delta_00",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_FerryQuay_manymouth_delta_00_WorldPlacement2/Walk_FerryQuay_manymouth_delta_00_WorldPlacement/Walk_FerryQuay_manymouth_delta_00",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23049,7 +23376,8 @@
       "id": "published-manymouth-delta-loose-502",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_502_396_996_WorldPlacement/BridgeUnionPier_502_396_996",
+          "bakedMeshNodeIndex": 10,
+          "meshNodePath": "BridgeUnionPier_502_396_996_WorldPlacement2/BridgeUnionPier_502_396_996_WorldPlacement/BridgeUnionPier_502_396_996",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23083,7 +23411,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_502_412_988_WorldPlacement/BridgeUnionPier_502_412_988",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_502_412_988_WorldPlacement2/BridgeUnionPier_502_412_988_WorldPlacement/BridgeUnionPier_502_412_988",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23117,7 +23446,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_502_420_988_WorldPlacement/BridgeUnionPier_502_420_988",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "BridgeUnionPier_502_420_988_WorldPlacement2/BridgeUnionPier_502_420_988_WorldPlacement/BridgeUnionPier_502_420_988",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23151,7 +23481,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_502_428_988_WorldPlacement/BridgeUnionPier_502_428_988",
+          "bakedMeshNodeIndex": 8,
+          "meshNodePath": "BridgeUnionPier_502_428_988_WorldPlacement2/BridgeUnionPier_502_428_988_WorldPlacement/BridgeUnionPier_502_428_988",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23185,7 +23516,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_502_436_996_WorldPlacement/BridgeUnionPier_502_436_996",
+          "bakedMeshNodeIndex": 12,
+          "meshNodePath": "BridgeUnionPier_502_436_996_WorldPlacement2/BridgeUnionPier_502_436_996_WorldPlacement/BridgeUnionPier_502_436_996",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23296,7 +23628,8 @@
       "id": "published-manymouth-delta-manymouth-village-boat-yard",
       "materialOverrides": [
         {
-          "meshNodePath": "Manymouth_Village_Fascia_boat_yard_WorldPlacement/Manymouth_Village_Fascia_boat_yard",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Manymouth_Village_Fascia_boat_yard_WorldPlacement2/Manymouth_Village_Fascia_boat_yard_WorldPlacement/Manymouth_Village_Fascia_boat_yard",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23330,7 +23663,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Manymouth_Village_Piles_boat_yard_WorldPlacement/Manymouth_Village_Piles_boat_yard",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Manymouth_Village_Piles_boat_yard_WorldPlacement2/Manymouth_Village_Piles_boat_yard_WorldPlacement/Manymouth_Village_Piles_boat_yard",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23364,7 +23698,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_Manymouth_Village_boat_yard_WorldPlacement/Walk_Manymouth_Village_boat_yard",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_Manymouth_Village_boat_yard_WorldPlacement2/Walk_Manymouth_Village_boat_yard_WorldPlacement/Walk_Manymouth_Village_boat_yard",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23437,7 +23772,8 @@
       "id": "published-manymouth-delta-manymouth-village-deep-grove",
       "materialOverrides": [
         {
-          "meshNodePath": "Manymouth_Village_Fascia_deep_grove_WorldPlacement/Manymouth_Village_Fascia_deep_grove",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Manymouth_Village_Fascia_deep_grove_WorldPlacement2/Manymouth_Village_Fascia_deep_grove_WorldPlacement/Manymouth_Village_Fascia_deep_grove",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23471,7 +23807,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Manymouth_Village_Piles_deep_grove_WorldPlacement/Manymouth_Village_Piles_deep_grove",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Manymouth_Village_Piles_deep_grove_WorldPlacement2/Manymouth_Village_Piles_deep_grove_WorldPlacement/Manymouth_Village_Piles_deep_grove",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23505,7 +23842,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_Manymouth_Village_deep_grove_WorldPlacement/Walk_Manymouth_Village_deep_grove",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_Manymouth_Village_deep_grove_WorldPlacement2/Walk_Manymouth_Village_deep_grove_WorldPlacement/Walk_Manymouth_Village_deep_grove",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23578,7 +23916,8 @@
       "id": "published-manymouth-delta-manymouth-village-east-hamlet",
       "materialOverrides": [
         {
-          "meshNodePath": "Manymouth_Village_Fascia_east_hamlet_WorldPlacement/Manymouth_Village_Fascia_east_hamlet",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Manymouth_Village_Fascia_east_hamlet_WorldPlacement2/Manymouth_Village_Fascia_east_hamlet_WorldPlacement/Manymouth_Village_Fascia_east_hamlet",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23612,7 +23951,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Manymouth_Village_Piles_east_hamlet_WorldPlacement/Manymouth_Village_Piles_east_hamlet",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Manymouth_Village_Piles_east_hamlet_WorldPlacement2/Manymouth_Village_Piles_east_hamlet_WorldPlacement/Manymouth_Village_Piles_east_hamlet",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23646,7 +23986,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_Manymouth_Village_east_hamlet_WorldPlacement/Walk_Manymouth_Village_east_hamlet",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_Manymouth_Village_east_hamlet_WorldPlacement2/Walk_Manymouth_Village_east_hamlet_WorldPlacement/Walk_Manymouth_Village_east_hamlet",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23719,7 +24060,8 @@
       "id": "published-manymouth-delta-manymouth-village-far-bar",
       "materialOverrides": [
         {
-          "meshNodePath": "Manymouth_Village_Fascia_far_bar_WorldPlacement/Manymouth_Village_Fascia_far_bar",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Manymouth_Village_Fascia_far_bar_WorldPlacement2/Manymouth_Village_Fascia_far_bar_WorldPlacement/Manymouth_Village_Fascia_far_bar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23753,7 +24095,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Manymouth_Village_Piles_far_bar_WorldPlacement/Manymouth_Village_Piles_far_bar",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Manymouth_Village_Piles_far_bar_WorldPlacement2/Manymouth_Village_Piles_far_bar_WorldPlacement/Manymouth_Village_Piles_far_bar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23787,7 +24130,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_Manymouth_Village_far_bar_WorldPlacement/Walk_Manymouth_Village_far_bar",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_Manymouth_Village_far_bar_WorldPlacement2/Walk_Manymouth_Village_far_bar_WorldPlacement/Walk_Manymouth_Village_far_bar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23860,7 +24204,8 @@
       "id": "published-manymouth-delta-manymouth-village-floating-market",
       "materialOverrides": [
         {
-          "meshNodePath": "Manymouth_Village_Fascia_floating_market_WorldPlacement/Manymouth_Village_Fascia_floating_market",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Manymouth_Village_Fascia_floating_market_WorldPlacement2/Manymouth_Village_Fascia_floating_market_WorldPlacement/Manymouth_Village_Fascia_floating_market",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23894,7 +24239,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Manymouth_Village_Piles_floating_market_WorldPlacement/Manymouth_Village_Piles_floating_market",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Manymouth_Village_Piles_floating_market_WorldPlacement2/Manymouth_Village_Piles_floating_market_WorldPlacement/Manymouth_Village_Piles_floating_market",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23928,7 +24274,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_Manymouth_Village_floating_market_WorldPlacement/Walk_Manymouth_Village_floating_market",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_Manymouth_Village_floating_market_WorldPlacement2/Walk_Manymouth_Village_floating_market_WorldPlacement/Walk_Manymouth_Village_floating_market",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24001,7 +24348,8 @@
       "id": "published-manymouth-delta-manymouth-village-sea-landing",
       "materialOverrides": [
         {
-          "meshNodePath": "Manymouth_Village_Fascia_sea_landing_WorldPlacement/Manymouth_Village_Fascia_sea_landing",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Manymouth_Village_Fascia_sea_landing_WorldPlacement2/Manymouth_Village_Fascia_sea_landing_WorldPlacement/Manymouth_Village_Fascia_sea_landing",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24035,7 +24383,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Manymouth_Village_Piles_sea_landing_WorldPlacement/Manymouth_Village_Piles_sea_landing",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Manymouth_Village_Piles_sea_landing_WorldPlacement2/Manymouth_Village_Piles_sea_landing_WorldPlacement/Manymouth_Village_Piles_sea_landing",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24069,7 +24418,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_Manymouth_Village_sea_landing_WorldPlacement/Walk_Manymouth_Village_sea_landing",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_Manymouth_Village_sea_landing_WorldPlacement2/Walk_Manymouth_Village_sea_landing_WorldPlacement/Walk_Manymouth_Village_sea_landing",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24142,7 +24492,8 @@
       "id": "published-manymouth-delta-manymouth-village-south-hamlet",
       "materialOverrides": [
         {
-          "meshNodePath": "Manymouth_Village_Fascia_south_hamlet_WorldPlacement/Manymouth_Village_Fascia_south_hamlet",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Manymouth_Village_Fascia_south_hamlet_WorldPlacement2/Manymouth_Village_Fascia_south_hamlet_WorldPlacement/Manymouth_Village_Fascia_south_hamlet",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24176,7 +24527,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Manymouth_Village_Piles_south_hamlet_WorldPlacement/Manymouth_Village_Piles_south_hamlet",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Manymouth_Village_Piles_south_hamlet_WorldPlacement2/Manymouth_Village_Piles_south_hamlet_WorldPlacement/Manymouth_Village_Piles_south_hamlet",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24210,7 +24562,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_Manymouth_Village_south_hamlet_WorldPlacement/Walk_Manymouth_Village_south_hamlet",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_Manymouth_Village_south_hamlet_WorldPlacement2/Walk_Manymouth_Village_south_hamlet_WorldPlacement/Walk_Manymouth_Village_south_hamlet",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24283,7 +24636,8 @@
       "id": "published-manymouth-delta-manymouth-village-town",
       "materialOverrides": [
         {
-          "meshNodePath": "Manymouth_Village_Fascia_town_WorldPlacement/Manymouth_Village_Fascia_town",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Manymouth_Village_Fascia_town_WorldPlacement2/Manymouth_Village_Fascia_town_WorldPlacement/Manymouth_Village_Fascia_town",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24317,7 +24671,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Manymouth_Village_Piles_town_WorldPlacement/Manymouth_Village_Piles_town",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Manymouth_Village_Piles_town_WorldPlacement2/Manymouth_Village_Piles_town_WorldPlacement/Manymouth_Village_Piles_town",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24351,7 +24706,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_Manymouth_Village_town_WorldPlacement/Walk_Manymouth_Village_town",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_Manymouth_Village_town_WorldPlacement2/Walk_Manymouth_Village_town_WorldPlacement/Walk_Manymouth_Village_town",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24424,7 +24780,8 @@
       "id": "published-manymouth-delta-walk-manymouth-fishingboardwalk",
       "materialOverrides": [
         {
-          "meshNodePath": "Manymouth_FishingBoardwalk_Piles_WorldPlacement/Manymouth_FishingBoardwalk_Piles",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Manymouth_FishingBoardwalk_Piles_WorldPlacement2/Manymouth_FishingBoardwalk_Piles_WorldPlacement/Manymouth_FishingBoardwalk_Piles",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24458,7 +24815,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_Manymouth_FishingBoardwalk_WorldPlacement/Walk_Manymouth_FishingBoardwalk",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_Manymouth_FishingBoardwalk_WorldPlacement2/Walk_Manymouth_FishingBoardwalk_WorldPlacement/Walk_Manymouth_FishingBoardwalk",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24531,7 +24889,8 @@
       "id": "published-manymouth-delta-walk-manymouth-marketentrance",
       "materialOverrides": [
         {
-          "meshNodePath": "Walk_Manymouth_MarketEntrance_WorldPlacement/Walk_Manymouth_MarketEntrance",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_Manymouth_MarketEntrance_WorldPlacement2/Walk_Manymouth_MarketEntrance_WorldPlacement/Walk_Manymouth_MarketEntrance",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24604,7 +24963,8 @@
       "id": "published-manymouth-delta-walk-manymouth-paddystreet",
       "materialOverrides": [
         {
-          "meshNodePath": "Manymouth_PaddyStreet_Fascia_WorldPlacement/Manymouth_PaddyStreet_Fascia",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Manymouth_PaddyStreet_Fascia_WorldPlacement2/Manymouth_PaddyStreet_Fascia_WorldPlacement/Manymouth_PaddyStreet_Fascia",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24638,7 +24998,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Manymouth_PaddyStreet_Piles_WorldPlacement/Manymouth_PaddyStreet_Piles",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Manymouth_PaddyStreet_Piles_WorldPlacement2/Manymouth_PaddyStreet_Piles_WorldPlacement/Manymouth_PaddyStreet_Piles",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24672,7 +25033,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_Manymouth_PaddyStreet_WorldPlacement/Walk_Manymouth_PaddyStreet",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_Manymouth_PaddyStreet_WorldPlacement2/Walk_Manymouth_PaddyStreet_WorldPlacement/Walk_Manymouth_PaddyStreet",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24745,7 +25107,8 @@
       "id": "published-manymouth-delta-western-distributary-48",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_011_468_1036_WorldPlacement/BridgeUnionPier_011_468_1036",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_011_468_1036_WorldPlacement2/BridgeUnionPier_011_468_1036_WorldPlacement/BridgeUnionPier_011_468_1036",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24779,7 +25142,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_011_468_1044_WorldPlacement/BridgeUnionPier_011_468_1044",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "BridgeUnionPier_011_468_1044_WorldPlacement2/BridgeUnionPier_011_468_1044_WorldPlacement/BridgeUnionPier_011_468_1044",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24865,7 +25229,8 @@
       "id": "published-manymouth-delta-western-river-760",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_010_508_1052_WorldPlacement/BridgeUnionPier_010_508_1052",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_010_508_1052_WorldPlacement2/BridgeUnionPier_010_508_1052_WorldPlacement/BridgeUnionPier_010_508_1052",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24899,7 +25264,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_010_516_1060_WorldPlacement/BridgeUnionPier_010_516_1060",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "BridgeUnionPier_010_516_1060_WorldPlacement2/BridgeUnionPier_010_516_1060_WorldPlacement/BridgeUnionPier_010_516_1060",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24933,7 +25299,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_010_524_1060_WorldPlacement/BridgeUnionPier_010_524_1060",
+          "bakedMeshNodeIndex": 8,
+          "meshNodePath": "BridgeUnionPier_010_524_1060_WorldPlacement2/BridgeUnionPier_010_524_1060_WorldPlacement/BridgeUnionPier_010_524_1060",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25019,7 +25386,8 @@
       "id": "published-manymouth-delta-western-river-982",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_012_444_1268_WorldPlacement/BridgeUnionPier_012_444_1268",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_012_444_1268_WorldPlacement2/BridgeUnionPier_012_444_1268_WorldPlacement/BridgeUnionPier_012_444_1268",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25053,7 +25421,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_012_452_1268_WorldPlacement/BridgeUnionPier_012_452_1268",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "BridgeUnionPier_012_452_1268_WorldPlacement2/BridgeUnionPier_012_452_1268_WorldPlacement/BridgeUnionPier_012_452_1268",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25087,7 +25456,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_012_460_1268_WorldPlacement/BridgeUnionPier_012_460_1268",
+          "bakedMeshNodeIndex": 8,
+          "meshNodePath": "BridgeUnionPier_012_460_1268_WorldPlacement2/BridgeUnionPier_012_460_1268_WorldPlacement/BridgeUnionPier_012_460_1268",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25173,7 +25543,8 @@
       "id": "sea_landing_house_00",
       "materialOverrides": [
         {
-          "meshNodePath": "sea_landing_house_00/sea_landing_house_00__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "sea_landing_house_002/sea_landing_house_00/sea_landing_house_00__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25247,7 +25618,8 @@
       "id": "sea_landing_house_01",
       "materialOverrides": [
         {
-          "meshNodePath": "sea_landing_house_01/sea_landing_house_01__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "sea_landing_house_012/sea_landing_house_01/sea_landing_house_01__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25321,7 +25693,8 @@
       "id": "sea_landing_house_02",
       "materialOverrides": [
         {
-          "meshNodePath": "sea_landing_house_02/sea_landing_house_02__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "sea_landing_house_022/sea_landing_house_02/sea_landing_house_02__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25395,7 +25768,8 @@
       "id": "sea_landing_house_03",
       "materialOverrides": [
         {
-          "meshNodePath": "sea_landing_house_03/sea_landing_house_03__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "sea_landing_house_032/sea_landing_house_03/sea_landing_house_03__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25469,7 +25843,8 @@
       "id": "sea_landing_house_04",
       "materialOverrides": [
         {
-          "meshNodePath": "sea_landing_house_04/sea_landing_house_04__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "sea_landing_house_042/sea_landing_house_04/sea_landing_house_04__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25738,7 +26113,8 @@
       "id": "south_hamlet_house_00",
       "materialOverrides": [
         {
-          "meshNodePath": "south_hamlet_house_00/south_hamlet_house_00__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "south_hamlet_house_002/south_hamlet_house_00/south_hamlet_house_00__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25812,7 +26188,8 @@
       "id": "south_hamlet_house_01",
       "materialOverrides": [
         {
-          "meshNodePath": "south_hamlet_house_01/south_hamlet_house_01__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "south_hamlet_house_012/south_hamlet_house_01/south_hamlet_house_01__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25886,7 +26263,8 @@
       "id": "south_hamlet_house_02",
       "materialOverrides": [
         {
-          "meshNodePath": "south_hamlet_house_02/south_hamlet_house_02__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "south_hamlet_house_022/south_hamlet_house_02/south_hamlet_house_02__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25960,7 +26338,8 @@
       "id": "south_hamlet_house_03",
       "materialOverrides": [
         {
-          "meshNodePath": "south_hamlet_house_03/south_hamlet_house_03__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "south_hamlet_house_032/south_hamlet_house_03/south_hamlet_house_03__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -26034,7 +26413,8 @@
       "id": "south_hamlet_house_04",
       "materialOverrides": [
         {
-          "meshNodePath": "south_hamlet_house_04/south_hamlet_house_04__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "south_hamlet_house_042/south_hamlet_house_04/south_hamlet_house_04__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -26108,7 +26488,8 @@
       "id": "south_hamlet_house_05",
       "materialOverrides": [
         {
-          "meshNodePath": "south_hamlet_house_05/south_hamlet_house_05__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "south_hamlet_house_052/south_hamlet_house_05/south_hamlet_house_05__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -26182,7 +26563,8 @@
       "id": "south_hamlet_house_06",
       "materialOverrides": [
         {
-          "meshNodePath": "south_hamlet_house_06/south_hamlet_house_06__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "south_hamlet_house_062/south_hamlet_house_06/south_hamlet_house_06__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -26256,7 +26638,8 @@
       "id": "south_hamlet_house_07",
       "materialOverrides": [
         {
-          "meshNodePath": "south_hamlet_house_07/south_hamlet_house_07__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "south_hamlet_house_072/south_hamlet_house_07/south_hamlet_house_07__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -26330,7 +26713,8 @@
       "id": "south_hamlet_house_08",
       "materialOverrides": [
         {
-          "meshNodePath": "south_hamlet_house_08/south_hamlet_house_08__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "south_hamlet_house_082/south_hamlet_house_08/south_hamlet_house_08__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27223,7 +27607,8 @@
       "id": "temple_quay_house_00",
       "materialOverrides": [
         {
-          "meshNodePath": "temple_quay_house_00/temple_quay_house_00__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "temple_quay_house_002/temple_quay_house_00/temple_quay_house_00__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27297,7 +27682,8 @@
       "id": "temple_quay_house_01",
       "materialOverrides": [
         {
-          "meshNodePath": "temple_quay_house_01/temple_quay_house_01__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "temple_quay_house_012/temple_quay_house_01/temple_quay_house_01__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27371,7 +27757,8 @@
       "id": "temple_quay_house_02",
       "materialOverrides": [
         {
-          "meshNodePath": "temple_quay_house_02/temple_quay_house_02__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "temple_quay_house_022/temple_quay_house_02/temple_quay_house_02__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27445,7 +27832,8 @@
       "id": "temple_quay_house_03",
       "materialOverrides": [
         {
-          "meshNodePath": "temple_quay_house_03/temple_quay_house_03__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "temple_quay_house_032/temple_quay_house_03/temple_quay_house_03__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27519,7 +27907,8 @@
       "id": "temple_quay_house_04",
       "materialOverrides": [
         {
-          "meshNodePath": "temple_quay_house_04/temple_quay_house_04__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "temple_quay_house_042/temple_quay_house_04/temple_quay_house_04__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27593,7 +27982,8 @@
       "id": "temple_quay_house_05",
       "materialOverrides": [
         {
-          "meshNodePath": "temple_quay_house_05/temple_quay_house_05__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "temple_quay_house_052/temple_quay_house_05/temple_quay_house_05__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28213,7 +28603,8 @@
       "id": "town_house_00",
       "materialOverrides": [
         {
-          "meshNodePath": "town_house_00/town_house_00__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "town_house_002/town_house_00/town_house_00__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28287,7 +28678,8 @@
       "id": "town_house_01",
       "materialOverrides": [
         {
-          "meshNodePath": "town_house_01/town_house_01__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "town_house_012/town_house_01/town_house_01__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28361,7 +28753,8 @@
       "id": "town_house_02",
       "materialOverrides": [
         {
-          "meshNodePath": "town_house_02/town_house_02__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "town_house_022/town_house_02/town_house_02__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28435,7 +28828,8 @@
       "id": "town_house_03",
       "materialOverrides": [
         {
-          "meshNodePath": "town_house_03/town_house_03__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "town_house_032/town_house_03/town_house_03__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28509,7 +28903,8 @@
       "id": "town_house_04",
       "materialOverrides": [
         {
-          "meshNodePath": "town_house_04/town_house_04__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "town_house_042/town_house_04/town_house_04__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28583,7 +28978,8 @@
       "id": "town_house_05",
       "materialOverrides": [
         {
-          "meshNodePath": "town_house_05/town_house_05__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "town_house_052/town_house_05/town_house_05__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28657,7 +29053,8 @@
       "id": "town_house_06",
       "materialOverrides": [
         {
-          "meshNodePath": "town_house_06/town_house_06__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "town_house_062/town_house_06/town_house_06__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28731,7 +29128,8 @@
       "id": "town_house_07",
       "materialOverrides": [
         {
-          "meshNodePath": "town_house_07/town_house_07__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "town_house_072/town_house_07/town_house_07__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28805,7 +29203,8 @@
       "id": "town_house_08",
       "materialOverrides": [
         {
-          "meshNodePath": "town_house_08/town_house_08__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "town_house_082/town_house_08/town_house_08__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29269,7 +29668,8 @@
       "id": "west_hamlet_house_00",
       "materialOverrides": [
         {
-          "meshNodePath": "west_hamlet_house_00/west_hamlet_house_00__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "west_hamlet_house_002/west_hamlet_house_00/west_hamlet_house_00__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29343,7 +29743,8 @@
       "id": "west_hamlet_house_01",
       "materialOverrides": [
         {
-          "meshNodePath": "west_hamlet_house_01/west_hamlet_house_01__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "west_hamlet_house_012/west_hamlet_house_01/west_hamlet_house_01__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29417,7 +29818,8 @@
       "id": "west_hamlet_house_02",
       "materialOverrides": [
         {
-          "meshNodePath": "west_hamlet_house_02/west_hamlet_house_02__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "west_hamlet_house_022/west_hamlet_house_02/west_hamlet_house_02__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29491,7 +29893,8 @@
       "id": "west_hamlet_house_03",
       "materialOverrides": [
         {
-          "meshNodePath": "west_hamlet_house_03/west_hamlet_house_03__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "west_hamlet_house_032/west_hamlet_house_03/west_hamlet_house_03__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29565,7 +29968,8 @@
       "id": "west_hamlet_house_04",
       "materialOverrides": [
         {
-          "meshNodePath": "west_hamlet_house_04/west_hamlet_house_04__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "west_hamlet_house_042/west_hamlet_house_04/west_hamlet_house_04__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29639,7 +30043,8 @@
       "id": "west_hamlet_house_05",
       "materialOverrides": [
         {
-          "meshNodePath": "west_hamlet_house_05/west_hamlet_house_05__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "west_hamlet_house_052/west_hamlet_house_05/west_hamlet_house_05__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29713,7 +30118,8 @@
       "id": "west_hamlet_house_06",
       "materialOverrides": [
         {
-          "meshNodePath": "west_hamlet_house_06/west_hamlet_house_06__thatch_reed",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "west_hamlet_house_062/west_hamlet_house_06/west_hamlet_house_06__thatch_reed",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -89882,6 +90288,10 @@
     ]
   },
   "sources": {
+    "authoringSpec": {
+      "path": "godot-client/world_authoring/regions/manymouth_delta/region-authoring-spec.json",
+      "sha256": "184cde8deb84f6a3d9829fa8e0b9d05291a7e8120c0aebdd160f15f2c1187eb5"
+    },
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
@@ -89944,16 +90354,24 @@
         "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
+        "path": "godot-client/src/dev/map_authoring_region/gltf_material_binding.gd",
+        "sha256": "4d37d216212fe0ca53be4e41579b6ed44c9b52f3e7fc97cc43ef4195a6d4255f"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/ground_region_control.gd",
+        "sha256": "22b5ff872793a8e2599be7a27bfcfce3e255440be8cca81e26b92d3e87deee28"
+      },
+      {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
+        "sha256": "e70fdcf47863bc1375921ac337ac008b8d8c4c0be2cbb8f362de2c57ff552ef6"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
+        "sha256": "4a4103da29f3b4d873460d064d1ad83f2ffa17c72f31601745d7af84b8035d48"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "558bc03ab1ad43eabcb02eabb058d22cb7046e34713549234620991cd412c778"
+        "sha256": "7f55a17b606339d1a6ec77b01097f135cd6a0fd9ef87680d46745e16c69101ff"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/water_region_control.gd",
@@ -91869,11 +92287,11 @@
       },
       {
         "path": "godot-client/world_authoring/regions/manymouth_delta/base-colors.rgba8",
-        "sha256": "f818bd63c66ba74dba622cdd3891ba477d84d00b3293a807a69e7a347751cd34"
+        "sha256": "bf3d89404bbb0086314bdca38493e5e980c5867c7f24f67bb2115eaa8344e30d"
       },
       {
         "path": "godot-client/world_authoring/regions/manymouth_delta/base-heights.f32le",
-        "sha256": "d09754f04ddf39c99782b7f79ebeee7cbad4fa3e0701af486fd57c93fb2c0fa6"
+        "sha256": "e75799d15f64c185f5381ac78ea874a59b3c634f2da22bb9ee783c6930aa31f7"
       },
       {
         "path": "godot-client/world_authoring/regions/manymouth_delta/paths/crownwater-manymouth-delta-manymouth-delta.tres",
@@ -91985,7 +92403,7 @@
       },
       {
         "path": "godot-client/world_authoring/regions/manymouth_delta/runtime-bindings.seed.json",
-        "sha256": "21308fd9008331f646ffb9e0abc4677ef492c70afb99862d0a179d9ebf44b6ee"
+        "sha256": "39dc74f3c7c4f5fc78a66954a9545335d45558f945a594b3837bd1b8e8f3917e"
       },
       {
         "path": "godot-client/world_authoring/regions/manymouth_delta/surfaces/biome-wet-grass.tres",
@@ -91996,6 +92414,14 @@
         "sha256": "eb0751a3fe503e8f34cb56d2096e5291ba2f3bafd2c080651f2bff70e6dff1ed"
       },
       {
+        "path": "godot-client/world_authoring/regions/manymouth_delta/surfaces/pass1-settlement-silt.tres",
+        "sha256": "d08b02c83aa9420a55db4cb5daf3a02f2771ff623944507574bd02dc78fa7c0a"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/manymouth_delta/surfaces/pass1-temple-earth.tres",
+        "sha256": "1caa1a3c8ea22e219ee33acbfcd883af95cd3c295add65afd7a03c7bb2725cd6"
+      },
+      {
         "path": "godot-client/world_authoring/regions/manymouth_delta/surfaces/river.tres",
         "sha256": "9bc37d4f96ff33b3654554ab1ce9fa388b92ff82402ec62d185d0e3d4cc255e7"
       },
@@ -92004,25 +92430,39 @@
         "sha256": "2a6cfa248f60c0432e92e20a68bb6a2dc0ae96525d7a9c5e34e65c6ad46baa1e"
       }
     ],
+    "repositoryDependencies": [
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/legacy-colors.rgba8",
+        "sha256": "a5862f256274a35b164923e1b7d6fd4201e2e5b485aa1e5634cee110157cd145"
+      },
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+        "sha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c"
+      },
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/resolved-heights.f32le",
+        "sha256": "f8569fac42ac47e3145a68b2df54e74821021d7ae98ef06debb5fb45acebc8bd"
+      }
+    ],
     "runtimeBindingSeed": {
       "path": "godot-client/world_authoring/regions/manymouth_delta/runtime-bindings.seed.json",
-      "sha256": "21308fd9008331f646ffb9e0abc4677ef492c70afb99862d0a179d9ebf44b6ee"
+      "sha256": "39dc74f3c7c4f5fc78a66954a9545335d45558f945a594b3837bd1b8e8f3917e"
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/manymouth_delta/manymouth_delta.tscn",
-      "sha256": "36352121f6eab782c30f58950c704b9d38c8940df514603ba073ba40f2c3560e"
+      "sha256": "2eb470753e573c187a8dc8a4f5eedc4a13a3d3e6ae122cae10b50057946a2789"
     }
   },
   "terrain": {
     "baseColors": {
       "encoding": "rgba8-srgb",
       "path": "base-colors.rgba8",
-      "sha256": "f818bd63c66ba74dba622cdd3891ba477d84d00b3293a807a69e7a347751cd34"
+      "sha256": "bf3d89404bbb0086314bdca38493e5e980c5867c7f24f67bb2115eaa8344e30d"
     },
     "baseHeights": {
       "encoding": "float32-le",
       "path": "base-heights.f32le",
-      "sha256": "d09754f04ddf39c99782b7f79ebeee7cbad4fa3e0701af486fd57c93fb2c0fa6"
+      "sha256": "e75799d15f64c185f5381ac78ea874a59b3c634f2da22bb9ee783c6930aa31f7"
     },
     "baseSurface": {
       "biomeBlendEnabled": true,
@@ -92092,10 +92532,20 @@
       }
     ],
     "cellMetres": 2.0,
-    "height": 232,
+    "height": 245,
+    "migration": {
+      "globalVertexMin": [
+        157.0,
+        480.0
+      ],
+      "previousGridSha256": "d09754f04ddf39c99782b7f79ebeee7cbad4fa3e0701af486fd57c93fb2c0fa6",
+      "revision": "global-lattice-envelope-v1",
+      "sharedFieldPath": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+      "sharedFieldSha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c"
+    },
     "origin": [
-      -204.0,
-      -156.0
+      -206.0,
+      -180.0
     ],
     "patches": [],
     "previewUvMetresInverse": 0.17,
@@ -92107,9 +92557,9 @@
         "river-cuts"
       ],
       "path": "resolved-heights.f32le",
-      "sha256": "d09754f04ddf39c99782b7f79ebeee7cbad4fa3e0701af486fd57c93fb2c0fa6"
+      "sha256": "e75799d15f64c185f5381ac78ea874a59b3c634f2da22bb9ee783c6930aa31f7"
     },
-    "width": 251
+    "width": 253
   },
   "waterRegions": []
 }

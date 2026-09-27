@@ -16,7 +16,7 @@
   "regions": {
     "whitehorn_range": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/whitehorn_range/world.json",
-      "nativeManifestSha256": "1c97f39bb3eb612ebbb7bf4ae0d58914670414d8dfb633fe5ffd30ef50dbcab4",
+      "nativeManifestSha256": "26585b39f4dbb97415dd9917de3ce8a997a4227fa3b21a4892d6de765146175a",
       "translation": [
         550.0,
         0,
@@ -417,7 +417,7 @@
           "kind": "portals",
           "position": [
             -152.5,
-            47.951951026916504,
+            47.95195007324219,
             202.5
           ],
           "radius": 3
@@ -2943,6 +2943,12 @@
         708,
         708
       ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "c661b36ceae9c825e1ee2fe602f5ca5930240c86e393bd3cb963180c8cb01e59",
       "serverTileShift": [
         0,
         0
@@ -2950,11 +2956,50 @@
       "atlasLabel": [
         550.0,
         220.0
-      ]
+      ],
+      "nativeServerStorageVersion": 1,
+      "nativeServerTileMin": [
+        0,
+        0
+      ],
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          362,
+          360
+        ],
+        "serverCells": [
+          708,
+          708
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 168.99960327148438,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -362,
+            -348
+          ],
+          "max": [
+            346,
+            360
+          ]
+        },
+        "authoringSpecSha256": "c661b36ceae9c825e1ee2fe602f5ca5930240c86e393bd3cb963180c8cb01e59"
+      }
     },
     "grey_moors": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/grey_moors/world.json",
-      "nativeManifestSha256": "0d991c3884c9a0db002af591eb7739d6ea0250100306b39c3906c8f587c24c96",
+      "nativeManifestSha256": "d305acee426dd977919f85953d77353a90293461dbfc6dedbdbaf617dabad6f3",
       "translation": [
         220.0,
         0,
@@ -3795,7 +3840,7 @@
           "kind": "portals",
           "position": [
             141.5,
-            37.588059425354004,
+            37.58805847167969,
             70.5
           ],
           "radius": 3
@@ -5337,6 +5382,12 @@
         750,
         750
       ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "810ec91bcf212911702005916d6bc24ac405bd7fdad5b41f301e2db78181f280",
       "serverTileShift": [
         0,
         0
@@ -5344,11 +5395,50 @@
       "atlasLabel": [
         220.0,
         420.0
-      ]
+      ],
+      "nativeServerStorageVersion": 1,
+      "nativeServerTileMin": [
+        0,
+        0
+      ],
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          224,
+          326
+        ],
+        "serverCells": [
+          750,
+          750
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 27.01974105834961,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -224,
+            -424
+          ],
+          "max": [
+            526,
+            326
+          ]
+        },
+        "authoringSpecSha256": "810ec91bcf212911702005916d6bc24ac405bd7fdad5b41f301e2db78181f280"
+      }
     },
     "amberwood": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/amberwood/world.json",
-      "nativeManifestSha256": "2b02b46089576fdaf1ccd7d212736328f808d91944a968975a96958258c4517a",
+      "nativeManifestSha256": "6ea7c5aa1be57f0335b83c0274384f32f8c688b147eb448fdd32a365eeebc05a",
       "translation": [
         510.0,
         0,
@@ -6399,7 +6489,7 @@
           "kind": "portals",
           "position": [
             -150.5,
-            37.35373592376709,
+            37.353736877441406,
             -49.5
           ],
           "radius": 3
@@ -7751,6 +7841,12 @@
         426,
         426
       ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "d5bd2c2ef68246f096cd4343ff2aefedf47e9b2fb7b586d52b761d1b3f0e4091",
       "serverTileShift": [
         0,
         0
@@ -7758,11 +7854,50 @@
       "atlasLabel": [
         510.0,
         540.0
-      ]
+      ],
+      "nativeServerStorageVersion": 1,
+      "nativeServerTileMin": [
+        0,
+        0
+      ],
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          242,
+          182
+        ],
+        "serverCells": [
+          426,
+          426
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 57.791343688964844,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -242,
+            -244
+          ],
+          "max": [
+            184,
+            182
+          ]
+        },
+        "authoringSpecSha256": "d5bd2c2ef68246f096cd4343ff2aefedf47e9b2fb7b586d52b761d1b3f0e4091"
+      }
     },
     "amethyst_barrens": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/amethyst_barrens/world.json",
-      "nativeManifestSha256": "406271fb8856d92272dbd9aca7ce7f5b5434d361d4b1717dbaa04905a0f4e98b",
+      "nativeManifestSha256": "6e202433d8095120e8fc11fb56c39558ebd0a41333392b64b6ce140bb0be3097",
       "translation": [
         950.0,
         0,
@@ -8513,7 +8648,7 @@
           "kind": "portals",
           "position": [
             149.5,
-            27.714965343475342,
+            27.7149658203125,
             142.5
           ],
           "radius": 3
@@ -11077,6 +11212,12 @@
         738,
         738
       ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "aa4616afdc70c02502021c4d2362de76ecc310a442a974b10e719748e4c769c5",
       "serverTileShift": [
         0,
         0
@@ -11084,11 +11225,50 @@
       "atlasLabel": [
         950.0,
         400.0
-      ]
+      ],
+      "nativeServerStorageVersion": 1,
+      "nativeServerTileMin": [
+        0,
+        0
+      ],
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          182,
+          166
+        ],
+        "serverCells": [
+          738,
+          738
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 33.29356384277344,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -182,
+            -572
+          ],
+          "max": [
+            556,
+            166
+          ]
+        },
+        "authoringSpecSha256": "aa4616afdc70c02502021c4d2362de76ecc310a442a974b10e719748e4c769c5"
+      }
     },
     "mirrorhold": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/mirrorhold/world.json",
-      "nativeManifestSha256": "1f59397a55f3764e4e7162f121fad3745cd943a1b4e28c01a7d0d184288036b6",
+      "nativeManifestSha256": "923de6a188aacbb51af5f2835b92fa2e89aa225481e6be5dbcfa4419d732e8d9",
       "translation": [
         840.0,
         0,
@@ -11619,7 +11799,7 @@
           "kind": "portals",
           "position": [
             163.5,
-            78.86654281616211,
+            78.86653900146484,
             238.5
           ],
           "radius": 3
@@ -14063,6 +14243,12 @@
         540,
         540
       ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "47bda36d4c882def4d9d18979579722c85ea586751022be5c6627b338e07f261",
       "serverTileShift": [
         0,
         0
@@ -14070,11 +14256,50 @@
       "atlasLabel": [
         840.0,
         650.0
-      ]
+      ],
+      "nativeServerStorageVersion": 1,
+      "nativeServerTileMin": [
+        0,
+        0
+      ],
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          208,
+          350
+        ],
+        "serverCells": [
+          540,
+          540
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 95.35431671142578,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -208,
+            -190
+          ],
+          "max": [
+            332,
+            350
+          ]
+        },
+        "authoringSpecSha256": "47bda36d4c882def4d9d18979579722c85ea586751022be5c6627b338e07f261"
+      }
     },
     "sunmane_steppe": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/sunmane_steppe/world.json",
-      "nativeManifestSha256": "947ef852d5929c6551aef0b428116f45dfc7e68438f4c59d43c177a40560b389",
+      "nativeManifestSha256": "53b378d5a462d006ca52bec88664f41b319720d57aa0d03e1b126dc93e214189",
       "translation": [
         1200.0,
         0,
@@ -14114,7 +14339,7 @@
           "id": "Gate_East",
           "kind": "landmarks",
           "position": [
-            8.619999885559082,
+            -6.380000114440918,
             26.70745849609375,
             -16.3799991607666
           ],
@@ -14124,8 +14349,8 @@
           "id": "Gate_North",
           "kind": "landmarks",
           "position": [
-            -16.3799991607666,
-            27.895431518554688,
+            -31.3799991607666,
+            27.867097854614258,
             -41.380001068115234
           ],
           "radius": 3
@@ -14134,7 +14359,7 @@
           "id": "Gate_South",
           "kind": "landmarks",
           "position": [
-            -16.3799991607666,
+            -31.3799991607666,
             29.08152961730957,
             8.619999885559082
           ],
@@ -14144,7 +14369,7 @@
           "id": "Gate_West",
           "kind": "landmarks",
           "position": [
-            -41.380001068115234,
+            -56.380001068115234,
             26.286651611328125,
             -16.3799991607666
           ],
@@ -14154,9 +14379,9 @@
           "id": "Landmark_orun_banner_shrine_00",
           "kind": "landmarks",
           "position": [
-            -43.15778350830078,
-            27.63257598876953,
-            -75.54399871826172
+            -62.0,
+            26.8739013671875,
+            -101.0
           ],
           "radius": 3
         },
@@ -14164,9 +14389,9 @@
           "id": "Landmark_orun_banner_shrine_01",
           "kind": "landmarks",
           "position": [
-            53.612876892089844,
-            38.771053314208984,
-            -41.723472595214844
+            113.0,
+            46.66265869140625,
+            -102.0
           ],
           "radius": 3
         },
@@ -14174,9 +14399,9 @@
           "id": "Landmark_orun_banner_shrine_02",
           "kind": "landmarks",
           "position": [
-            10.231109619140625,
-            30.931365966796875,
-            24.081172943115234
+            -27.0,
+            30.8729305267334,
+            79.0
           ],
           "radius": 3
         },
@@ -14184,9 +14409,9 @@
           "id": "Landmark_orun_banner_shrine_03",
           "kind": "landmarks",
           "position": [
-            -57.345428466796875,
-            30.725542068481445,
-            36.20738983154297
+            -110.0,
+            33.939727783203125,
+            23.0
           ],
           "radius": 3
         },
@@ -14194,9 +14419,9 @@
           "id": "Landmark_orun_banner_shrine_04",
           "kind": "landmarks",
           "position": [
-            -40.380001068115234,
-            27.465394973754883,
-            -37.380001068115234
+            -54.0,
+            28.44384002685547,
+            -35.0
           ],
           "radius": 3
         },
@@ -14204,9 +14429,9 @@
           "id": "Landmark_orun_banner_shrine_05",
           "kind": "landmarks",
           "position": [
-            8.619999885559082,
-            29.802875518798828,
-            -36.380001068115234
+            83.0,
+            42.37281799316406,
+            -23.0
           ],
           "radius": 3
         },
@@ -14214,9 +14439,9 @@
           "id": "Landmark_orun_banner_shrine_06",
           "kind": "landmarks",
           "position": [
-            -41.380001068115234,
-            25.866846084594727,
-            5.619999885559082
+            -49.0,
+            30.133350372314453,
+            25.0
           ],
           "radius": 3
         },
@@ -14224,9 +14449,9 @@
           "id": "Landmark_orun_banner_shrine_07",
           "kind": "landmarks",
           "position": [
-            9.619999885559082,
-            27.28411865234375,
-            7.619999885559082
+            102.0,
+            37.919158935546875,
+            40.0
           ],
           "radius": 3
         },
@@ -14234,9 +14459,9 @@
           "id": "Landmark_orun_round_tent_00",
           "kind": "landmarks",
           "position": [
-            -55.74321746826172,
-            27.834096908569336,
-            -81.03264617919922
+            -90.0,
+            29.334300994873047,
+            -85.0
           ],
           "radius": 3
         },
@@ -14244,9 +14469,9 @@
           "id": "Landmark_orun_round_tent_01",
           "kind": "landmarks",
           "position": [
-            -52.18199920654297,
-            27.72406768798828,
-            -87.51599884033203
+            -107.0,
+            30.723989486694336,
+            -77.0
           ],
           "radius": 3
         },
@@ -14254,9 +14479,9 @@
           "id": "Landmark_orun_round_tent_02",
           "kind": "landmarks",
           "position": [
-            -44.96084213256836,
-            27.633586883544922,
-            -89.11943054199219
+            -85.0,
+            29.269609451293945,
+            -64.0
           ],
           "radius": 3
         },
@@ -14264,9 +14489,9 @@
           "id": "Landmark_orun_round_tent_03",
           "kind": "landmarks",
           "position": [
-            60.1907844543457,
-            40.49911880493164,
-            -52.53733444213867
+            88.0,
+            48.10190200805664,
+            -102.0
           ],
           "radius": 3
         },
@@ -14274,9 +14499,9 @@
           "id": "Landmark_orun_round_tent_04",
           "kind": "landmarks",
           "position": [
-            65.68423461914062,
-            41.65400695800781,
-            -48.520652770996094
+            105.0,
+            47.09737014770508,
+            -84.0
           ],
           "radius": 3
         },
@@ -14284,9 +14509,9 @@
           "id": "Landmark_orun_round_tent_05",
           "kind": "landmarks",
           "position": [
-            66.29216003417969,
-            41.59719467163086,
-            -41.74258804321289
+            90.0,
+            45.96831130981445,
+            -65.0
           ],
           "radius": 3
         },
@@ -14294,9 +14519,9 @@
           "id": "Landmark_orun_round_tent_06",
           "kind": "landmarks",
           "position": [
-            22.64778709411621,
-            32.53464126586914,
-            21.446889877319336
+            -8.0,
+            29.856950759887695,
+            33.0
           ],
           "radius": 3
         },
@@ -14304,9 +14529,9 @@
           "id": "Landmark_orun_round_tent_07",
           "kind": "landmarks",
           "position": [
-            23.47675132751465,
-            32.797210693359375,
-            28.20148468017578
+            -21.0,
+            30.090999603271484,
+            48.0
           ],
           "radius": 3
         },
@@ -14314,9 +14539,9 @@
           "id": "Landmark_orun_round_tent_08",
           "kind": "landmarks",
           "position": [
-            18.949256896972656,
-            32.3094482421875,
-            33.282188415527344
+            -5.0,
+            28.953109741210938,
+            63.0
           ],
           "radius": 3
         },
@@ -14324,9 +14549,9 @@
           "id": "Landmark_orun_round_tent_09",
           "kind": "landmarks",
           "position": [
-            -61.7545280456543,
-            31.080934524536133,
-            48.03741455078125
+            -84.0,
+            31.973270416259766,
+            28.0
           ],
           "radius": 3
         },
@@ -14334,9 +14559,9 @@
           "id": "Landmark_orun_round_tent_10",
           "kind": "landmarks",
           "position": [
-            -67.90782928466797,
-            31.375585556030273,
-            45.12465286254883
+            -104.0,
+            34.04344177246094,
+            41.0
           ],
           "radius": 3
         },
@@ -14344,9 +14569,9 @@
           "id": "Landmark_orun_round_tent_11",
           "kind": "landmarks",
           "position": [
-            -69.78519439697266,
-            31.377004623413086,
-            38.583457946777344
+            -84.0,
+            32.588260650634766,
+            51.0
           ],
           "radius": 3
         },
@@ -14354,9 +14579,9 @@
           "id": "Landmark_orun_seasonal_market_00",
           "kind": "landmarks",
           "position": [
-            -23.010000228881836,
-            28.65384864807129,
-            -10.920000076293945
+            -47.0,
+            29.17264175415039,
+            -8.0
           ],
           "radius": 3
         },
@@ -14364,9 +14589,9 @@
           "id": "Landmark_orun_seasonal_market_01",
           "kind": "landmarks",
           "position": [
-            -9.75,
-            28.948545455932617,
-            -10.529999732971191
+            -16.0,
+            28.814189910888672,
+            -8.0
           ],
           "radius": 3
         },
@@ -14374,9 +14599,9 @@
           "id": "Landmark_orun_seasonal_market_02",
           "kind": "landmarks",
           "position": [
-            -23.790000915527344,
-            28.300935745239258,
-            -3.9000000953674316
+            -47.0,
+            29.597000122070312,
+            1.0
           ],
           "radius": 3
         },
@@ -14384,9 +14609,9 @@
           "id": "Landmark_orun_seasonal_market_03",
           "kind": "landmarks",
           "position": [
-            -9.359999656677246,
-            29.158355712890625,
-            -3.509999990463257
+            -16.0,
+            29.130531311035156,
+            1.0
           ],
           "radius": 3
         },
@@ -14394,9 +14619,9 @@
           "id": "Landmark_sunmane_animal_pen_00",
           "kind": "landmarks",
           "position": [
-            -54.14424133300781,
-            24.631446838378906,
-            -52.9637565612793
+            -110.0,
+            30.769731521606445,
+            -96.0
           ],
           "radius": 3
         },
@@ -14404,9 +14629,9 @@
           "id": "Landmark_sunmane_animal_pen_01",
           "kind": "landmarks",
           "position": [
-            49.83954620361328,
-            38.00104522705078,
-            -56.84639358520508
+            95.0,
+            44.386077880859375,
+            -38.0
           ],
           "radius": 3
         },
@@ -14414,9 +14639,9 @@
           "id": "Landmark_sunmane_animal_pen_02",
           "kind": "landmarks",
           "position": [
-            43.511680603027344,
-            35.856685638427734,
-            13.829657554626465
+            80.0,
+            38.60384750366211,
+            42.0
           ],
           "radius": 3
         },
@@ -14424,9 +14649,9 @@
           "id": "Landmark_sunmane_animal_pen_03",
           "kind": "landmarks",
           "position": [
-            -44.58076095581055,
-            29.946582794189453,
-            25.707599639892578
+            -70.0,
+            31.880290985107422,
+            70.0
           ],
           "radius": 3
         },
@@ -14434,9 +14659,9 @@
           "id": "Landmark_sunmane_animal_pen_04",
           "kind": "landmarks",
           "position": [
-            5.6929731369018555,
-            30.460453033447266,
-            21.703853607177734
+            -40.0,
+            29.998090744018555,
+            69.0
           ],
           "radius": 3
         },
@@ -14444,9 +14669,9 @@
           "id": "Landmark_sunmane_animal_pen_05",
           "kind": "landmarks",
           "position": [
-            60.8895378112793,
-            43.003021240234375,
-            -113.2139663696289
+            92.0,
+            48.44302749633789,
+            -116.0
           ],
           "radius": 3
         },
@@ -14454,9 +14679,9 @@
           "id": "Landmark_sunmane_burial_mound_00",
           "kind": "landmarks",
           "position": [
-            -16.3799991607666,
-            27.760536193847656,
-            -49.01900100708008
+            95.0,
+            39.78096008300781,
+            20.0
           ],
           "radius": 3
         },
@@ -14464,9 +14689,9 @@
           "id": "Landmark_sunmane_burial_mound_01",
           "kind": "landmarks",
           "position": [
-            -24.959999084472656,
-            27.632986068725586,
-            -52.2599983215332
+            100.0,
+            37.964481353759766,
+            42.0
           ],
           "radius": 3
         },
@@ -14474,9 +14699,9 @@
           "id": "Landmark_sunmane_burial_mound_02",
           "kind": "landmarks",
           "position": [
-            -7.800000190734863,
-            28.114627838134766,
-            -53.040000915527344
+            85.0,
+            37.781288146972656,
+            65.0
           ],
           "radius": 3
         },
@@ -14484,9 +14709,9 @@
           "id": "Landmark_sunmane_burial_mound_03",
           "kind": "landmarks",
           "position": [
-            -21.059999465942383,
-            27.612119674682617,
-            -58.5
+            80.0,
+            36.89801025390625,
+            85.0
           ],
           "radius": 3
         },
@@ -14494,9 +14719,9 @@
           "id": "Landmark_sunmane_burial_mound_04",
           "kind": "landmarks",
           "position": [
-            -10.920000076293945,
-            27.910667419433594,
-            -59.279998779296875
+            85.0,
+            36.19179916381836,
+            105.0
           ],
           "radius": 3
         },
@@ -14504,9 +14729,9 @@
           "id": "Landmark_sunmane_burial_mound_05",
           "kind": "landmarks",
           "position": [
-            -19.5,
-            27.64204216003418,
-            -65.5199966430664
+            90.0,
+            35.28266143798828,
+            125.0
           ],
           "radius": 3
         },
@@ -14514,9 +14739,9 @@
           "id": "Landmark_sunmane_caravanserai_00",
           "kind": "landmarks",
           "position": [
-            -51.47999954223633,
-            29.04133415222168,
-            -5.099200248718262
+            -79.0,
+            28.76750946044922,
+            -47.0
           ],
           "radius": 3
         },
@@ -14524,9 +14749,9 @@
           "id": "Landmark_sunmane_caravanserai_01",
           "kind": "landmarks",
           "position": [
-            18.719999313354492,
-            31.745662689208984,
-            -5.879199981689453
+            95.0,
+            42.16316604614258,
+            -10.0
           ],
           "radius": 3
         },
@@ -14534,9 +14759,9 @@
           "id": "Landmark_sunmane_caravanserai_02",
           "kind": "landmarks",
           "position": [
-            4.260799884796143,
-            29.159395217895508,
-            -72.54000091552734
+            -31.0,
+            27.71613883972168,
+            -112.0
           ],
           "radius": 3
         },
@@ -14544,9 +14769,9 @@
           "id": "Landmark_sunmane_caravanserai_03",
           "kind": "landmarks",
           "position": [
-            -19.55784797668457,
-            23.397424697875977,
-            18.95400047302246
+            -55.0,
+            32.55598068237305,
+            87.0
           ],
           "radius": 3
         },
@@ -14594,9 +14819,9 @@
           "id": "Landmark_sunmane_desert_station_00",
           "kind": "landmarks",
           "position": [
-            -12.50043773651123,
-            28.676790237426758,
-            -132.48248291015625
+            -39.0,
+            27.60552978515625,
+            -118.0
           ],
           "radius": 3
         },
@@ -14614,9 +14839,9 @@
           "id": "Landmark_sunmane_filled_well",
           "kind": "landmarks",
           "position": [
-            -21.062789916992188,
-            22.710046768188477,
-            13.340350151062012
+            -104.0,
+            33.7017707824707,
+            37.0
           ],
           "radius": 3
         },
@@ -14624,9 +14849,9 @@
           "id": "Landmark_sunmane_great_hall",
           "kind": "landmarks",
           "position": [
-            -16.3799991607666,
-            28.193899154663086,
-            -28.3799991607666
+            -31.3799991607666,
+            28.24871826171875,
+            -24.3799991607666
           ],
           "radius": 3
         },
@@ -14634,9 +14859,9 @@
           "id": "Landmark_sunmane_landing_00",
           "kind": "landmarks",
           "position": [
-            -88.13999938964844,
-            32.00306701660156,
-            19.5
+            30.0,
+            23.700000762939453,
+            108.0
           ],
           "radius": 3
         },
@@ -14644,9 +14869,9 @@
           "id": "Landmark_sunmane_march_north-track",
           "kind": "landmarks",
           "position": [
-            11.297013282775879,
-            30.775758743286133,
-            -192.27000427246094
+            -44.0,
+            26.22024917602539,
+            -135.0
           ],
           "radius": 3
         },
@@ -14654,9 +14879,9 @@
           "id": "Landmark_sunmane_march_south-track",
           "kind": "landmarks",
           "position": [
-            119.7300033569336,
-            28.53453254699707,
-            71.74700927734375
+            -36.0,
+            30.410940170288086,
+            122.0
           ],
           "radius": 3
         },
@@ -14664,9 +14889,9 @@
           "id": "Landmark_sunmane_march_west-landing",
           "kind": "landmarks",
           "position": [
-            -70.58999633789062,
-            29.304677963256836,
-            -46.39701461791992
+            -117.0,
+            33.53512954711914,
+            -31.0
           ],
           "radius": 3
         },
@@ -14714,9 +14939,9 @@
           "id": "Landmark_sunmane_outpost_04",
           "kind": "landmarks",
           "position": [
-            92.81999969482422,
-            47.52943801879883,
-            -85.0199966430664
+            130.0,
+            42.02724838256836,
+            -91.0
           ],
           "radius": 3
         },
@@ -14725,7 +14950,7 @@
           "kind": "landmarks",
           "position": [
             -14.819999694824219,
-            28.497058868408203,
+            28.530927658081055,
             -183.3000030517578
           ],
           "radius": 3
@@ -14754,9 +14979,9 @@
           "id": "Landmark_sunmane_secret_steppe-banner-focus",
           "kind": "landmarks",
           "position": [
-            14.819999694824219,
-            28.421566009521484,
-            21.84000015258789
+            -56.0,
+            29.32744026184082,
+            -106.0
           ],
           "radius": 3
         },
@@ -14764,9 +14989,9 @@
           "id": "Landmark_sunmane_secret_steppe-barrow-reliquary",
           "kind": "landmarks",
           "position": [
-            -29.499359130859375,
-            27.701824188232422,
-            -86.11920166015625
+            107.0,
+            37.82046890258789,
+            34.0
           ],
           "radius": 3
         },
@@ -14774,9 +14999,9 @@
           "id": "Landmark_sunmane_secret_steppe-caravan-school",
           "kind": "landmarks",
           "position": [
-            -74.87999725341797,
-            30.489408493041992,
-            6.239999771118164
+            -69.0,
+            28.510730743408203,
+            -57.0
           ],
           "radius": 3
         },
@@ -14784,9 +15009,9 @@
           "id": "Landmark_sunmane_secret_steppe-dune-eyrie",
           "kind": "landmarks",
           "position": [
-            -9.359999656677246,
-            28.83147621154785,
-            -138.83999633789062
+            139.0,
+            38.78025817871094,
+            -100.0
           ],
           "radius": 3
         },
@@ -14794,9 +15019,9 @@
           "id": "Landmark_sunmane_secret_steppe-fox-pit",
           "kind": "landmarks",
           "position": [
-            107.63713073730469,
-            44.68695068359375,
-            -163.7922821044922
+            -71.0,
+            32.334083557128906,
+            79.0
           ],
           "radius": 3
         },
@@ -14804,9 +15029,9 @@
           "id": "Landmark_sunmane_secret_steppe-hall-vault",
           "kind": "landmarks",
           "position": [
-            -26.3799991607666,
-            27.889219284057617,
-            -21.3799991607666
+            -39.0,
+            28.95863151550293,
+            -10.0
           ],
           "radius": 3
         },
@@ -14814,9 +15039,9 @@
           "id": "Landmark_sunmane_secret_steppe-mill-cache",
           "kind": "landmarks",
           "position": [
-            28.860000610351562,
-            32.47900390625,
-            25.739999771118164
+            -113.0,
+            44.54957580566406,
+            23.0
           ],
           "radius": 3
         },
@@ -14824,9 +15049,9 @@
           "id": "Landmark_sunmane_secret_steppe-outpost-butts",
           "kind": "landmarks",
           "position": [
-            -65.5199966430664,
-            27.685218811035156,
-            -120.12000274658203
+            139.0,
+            38.07944869995117,
+            -83.0
           ],
           "radius": 3
         },
@@ -14834,9 +15059,9 @@
           "id": "Landmark_sunmane_secret_steppe-sap-mouth",
           "kind": "landmarks",
           "position": [
-            -16.27945327758789,
-            28.242128372192383,
-            -183.07554626464844
+            150.0,
+            33.86831283569336,
+            -111.0
           ],
           "radius": 3
         },
@@ -14844,9 +15069,9 @@
           "id": "Landmark_sunmane_secret_steppe-seed-hollow",
           "kind": "landmarks",
           "position": [
-            -58.72927474975586,
-            27.51827621459961,
-            -130.50648498535156
+            129.0,
+            23.24776840209961,
+            85.0
           ],
           "radius": 3
         },
@@ -14854,9 +15079,9 @@
           "id": "Landmark_sunmane_secret_steppe-spring",
           "kind": "landmarks",
           "position": [
-            6.7826714515686035,
-            31.532743453979492,
-            31.085350036621094
+            -2.0,
+            30.61878776550293,
+            88.0
           ],
           "radius": 3
         },
@@ -14864,9 +15089,9 @@
           "id": "Landmark_sunmane_secret_steppe-standing-well",
           "kind": "landmarks",
           "position": [
-            -62.088863372802734,
-            25.461416244506836,
-            -72.60478973388672
+            76.0,
+            39.48174285888672,
+            -39.0
           ],
           "radius": 3
         },
@@ -14874,9 +15099,9 @@
           "id": "Landmark_sunmane_secret_steppe-waystone",
           "kind": "landmarks",
           "position": [
-            71.2248764038086,
-            42.11214065551758,
-            -36.927921295166016
+            -47.0,
+            28.423768997192383,
+            -131.0
           ],
           "radius": 3
         },
@@ -14884,9 +15109,9 @@
           "id": "Landmark_sunmane_secret_steppe-well-garden",
           "kind": "landmarks",
           "position": [
-            -56.19669723510742,
-            30.61520767211914,
-            31.899377822875977
+            -98.0,
+            33.166412353515625,
+            34.0
           ],
           "radius": 3
         },
@@ -14974,9 +15199,9 @@
           "id": "Landmark_sunmane_standing_stone_000",
           "kind": "landmarks",
           "position": [
-            -40.00529098510742,
-            23.975648880004883,
-            -27.369590759277344
+            68.0,
+            37.53403854370117,
+            10.0
           ],
           "radius": 3
         },
@@ -14984,9 +15209,9 @@
           "id": "Landmark_sunmane_standing_stone_001",
           "kind": "landmarks",
           "position": [
-            -37.860618591308594,
-            23.53156089782715,
-            -20.7292423248291
+            81.0,
+            39.84981918334961,
+            8.0
           ],
           "radius": 3
         },
@@ -14994,9 +15219,9 @@
           "id": "Landmark_sunmane_standing_stone_002",
           "kind": "landmarks",
           "position": [
-            -52.087493896484375,
-            23.89352798461914,
-            -24.348526000976562
+            93.0,
+            41.12148666381836,
+            4.0
           ],
           "radius": 3
         },
@@ -15004,9 +15229,9 @@
           "id": "Landmark_sunmane_standing_stone_003",
           "kind": "landmarks",
           "position": [
-            -56.33053207397461,
-            24.74323272705078,
-            -27.715370178222656
+            107.0,
+            39.89400863647461,
+            9.0
           ],
           "radius": 3
         },
@@ -15014,9 +15239,9 @@
           "id": "Landmark_sunmane_standing_stone_004",
           "kind": "landmarks",
           "position": [
-            -56.341102600097656,
-            24.128013610839844,
-            -33.091243743896484
+            119.0,
+            37.15467834472656,
+            15.0
           ],
           "radius": 3
         },
@@ -15024,9 +15249,9 @@
           "id": "Landmark_sunmane_standing_stone_005",
           "kind": "landmarks",
           "position": [
-            -42.18734359741211,
-            23.77145767211914,
-            -29.554813385009766
+            132.0,
+            31.727170944213867,
+            18.0
           ],
           "radius": 3
         },
@@ -15034,9 +15259,9 @@
           "id": "Landmark_sunmane_standing_stone_006",
           "kind": "landmarks",
           "position": [
-            -42.11647415161133,
-            24.120044708251953,
-            -31.77033233642578
+            140.0,
+            25.9820499420166,
+            32.0
           ],
           "radius": 3
         },
@@ -15044,9 +15269,9 @@
           "id": "Landmark_sunmane_standing_stone_100",
           "kind": "landmarks",
           "position": [
-            8.822380065917969,
-            30.835355758666992,
-            19.46916961669922
+            64.0,
+            35.50846862792969,
+            64.0
           ],
           "radius": 3
         },
@@ -15054,9 +15279,9 @@
           "id": "Landmark_sunmane_standing_stone_101",
           "kind": "landmarks",
           "position": [
-            5.081701278686523,
-            30.580678939819336,
-            22.952211380004883
+            65.0,
+            35.27375793457031,
+            78.0
           ],
           "radius": 3
         },
@@ -15064,9 +15289,9 @@
           "id": "Landmark_sunmane_standing_stone_102",
           "kind": "landmarks",
           "position": [
-            0.12890592217445374,
-            30.18287467956543,
-            21.432350158691406
+            99.0,
+            34.782676696777344,
+            89.0
           ],
           "radius": 3
         },
@@ -15074,9 +15299,9 @@
           "id": "Landmark_sunmane_standing_stone_103",
           "kind": "landmarks",
           "position": [
-            -1.0223803520202637,
-            30.023880004882812,
-            16.410829544067383
+            106.0,
+            32.43305969238281,
+            95.0
           ],
           "radius": 3
         },
@@ -15084,9 +15309,9 @@
           "id": "Landmark_sunmane_standing_stone_104",
           "kind": "landmarks",
           "position": [
-            2.7182986736297607,
-            30.296735763549805,
-            12.927787780761719
+            124.0,
+            25.73219108581543,
+            82.0
           ],
           "radius": 3
         },
@@ -15094,9 +15319,9 @@
           "id": "Landmark_sunmane_standing_stone_105",
           "kind": "landmarks",
           "position": [
-            7.671093940734863,
-            30.827184677124023,
-            14.447649955749512
+            140.0,
+            19.91339111328125,
+            67.0
           ],
           "radius": 3
         },
@@ -15184,9 +15409,9 @@
           "id": "Landmark_sunmane_well_00",
           "kind": "landmarks",
           "position": [
-            -23.8799991607666,
-            28.40753173828125,
-            -4.380000114440918
+            -47.0,
+            29.446090698242188,
+            -3.0
           ],
           "radius": 3
         },
@@ -15194,9 +15419,9 @@
           "id": "Landmark_sunmane_well_01",
           "kind": "landmarks",
           "position": [
-            -42.03636932373047,
-            27.725854873657227,
-            6.979898929595947
+            -95.0,
+            30.033700942993164,
+            -60.0
           ],
           "radius": 3
         },
@@ -15204,9 +15429,9 @@
           "id": "Landmark_sunmane_well_02",
           "kind": "landmarks",
           "position": [
-            20.27532958984375,
-            31.440959930419922,
-            -38.17896270751953
+            81.0,
+            43.56618118286133,
+            -45.0
           ],
           "radius": 3
         },
@@ -15214,9 +15439,9 @@
           "id": "Landmark_sunmane_well_03",
           "kind": "landmarks",
           "position": [
-            31.920761108398438,
-            32.54820251464844,
-            0.7180692553520203
+            -8.0,
+            29.227611541748047,
+            80.0
           ],
           "radius": 3
         },
@@ -15224,9 +15449,9 @@
           "id": "Landmark_sunmane_windmill_00",
           "kind": "landmarks",
           "position": [
-            28.830150604248047,
-            31.118467330932617,
-            19.429399490356445
+            -118.0,
+            33.94055938720703,
+            -8.0
           ],
           "radius": 3
         },
@@ -15234,9 +15459,9 @@
           "id": "Landmark_sunmane_windmill_01",
           "kind": "landmarks",
           "position": [
-            45.28327941894531,
-            35.65303039550781,
-            28.796737670898438
+            -111.0,
+            33.763999938964844,
+            16.0
           ],
           "radius": 3
         },
@@ -15244,9 +15469,9 @@
           "id": "Landmark_sunmane_windmill_02",
           "kind": "landmarks",
           "position": [
-            -57.79144287109375,
-            28.744958877563477,
-            -21.867774963378906
+            -127.0,
+            37.54433059692383,
+            43.0
           ],
           "radius": 3
         },
@@ -15254,9 +15479,9 @@
           "id": "Landmark_sunmane_windmill_03",
           "kind": "landmarks",
           "position": [
-            23.348224639892578,
-            32.844390869140625,
-            -94.32347869873047
+            -103.0,
+            35.504581451416016,
+            70.0
           ],
           "radius": 3
         },
@@ -15264,9 +15489,9 @@
           "id": "Landmark_sunmane_windmill_04",
           "kind": "landmarks",
           "position": [
-            -56.0916862487793,
-            27.82725715637207,
-            -85.05477142333984
+            -122.0,
+            39.749778747558594,
+            85.0
           ],
           "radius": 3
         },
@@ -15274,9 +15499,9 @@
           "id": "Landmark_sunmane_windmill_05",
           "kind": "landmarks",
           "position": [
-            98.21995544433594,
-            44.589073181152344,
-            -41.38764572143555
+            -91.0,
+            31.55290985107422,
+            -1.0
           ],
           "radius": 3
         },
@@ -15284,9 +15509,9 @@
           "id": "Structure_Bridge_00",
           "kind": "landmarks",
           "position": [
-            -44.959999084472656,
-            27.277950286865234,
-            -17.3799991607666
+            -31.3799991607666,
+            28.0,
+            -40.0
           ],
           "radius": 3
         },
@@ -15294,9 +15519,9 @@
           "id": "Structure_Bridge_01",
           "kind": "landmarks",
           "position": [
-            -45.2400016784668,
-            26.152034759521484,
-            -38.220001220703125
+            4.484453201293945,
+            29.149999618530273,
+            -76.9861831665039
           ],
           "radius": 3
         },
@@ -15304,9 +15529,9 @@
           "id": "Structure_Bridge_02",
           "kind": "landmarks",
           "position": [
-            -54.209999084472656,
-            32.704551696777344,
-            3.119999885559082
+            35.54999923706055,
+            22.899999618530273,
+            74.43000793457031
           ],
           "radius": 3
         },
@@ -15345,7 +15570,7 @@
           "kind": "portals",
           "position": [
             -100.5,
-            27.712074279785156,
+            27.742361068725586,
             -179.5
           ],
           "radius": 3
@@ -15355,7 +15580,7 @@
           "kind": "portals",
           "position": [
             -38.5,
-            35.09055709838867,
+            34.9501838684082,
             202.5
           ],
           "radius": 3
@@ -17489,6 +17714,12 @@
         792,
         792
       ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a",
       "serverTileShift": [
         0,
         0
@@ -17496,11 +17727,50 @@
       "atlasLabel": [
         1200.0,
         720.0
-      ]
+      ],
+      "nativeServerStorageVersion": 1,
+      "nativeServerTileMin": [
+        0,
+        0
+      ],
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          194,
+          292
+        ],
+        "serverCells": [
+          792,
+          792
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 26.646358489990234,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -194,
+            -500
+          ],
+          "max": [
+            598,
+            292
+          ]
+        },
+        "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
+      }
     },
     "four_gates": {
       "nativeManifestSource": "eloria-assets/maps/four-gates/world.json",
-      "nativeManifestSha256": "1bb3bdd26eb7490b9f8f3d57475a76117bbcf8082e7e0aebfed3f5ee6a94ccf8",
+      "nativeManifestSha256": "511b927768c79a232b1bf9fe8fbce5694fa91bbd1061a07d61a76e49967e6f53",
       "translation": [
         530.0,
         0,
@@ -17711,7 +17981,7 @@
           "kind": "portals",
           "position": [
             -124.5,
-            15.989619493484497,
+            15.989619255065918,
             -143.5
           ],
           "radius": 3
@@ -17731,7 +18001,7 @@
           "kind": "portals",
           "position": [
             -178.5,
-            12.512781381607056,
+            12.512781143188477,
             112.5
           ],
           "radius": 3
@@ -17741,7 +18011,7 @@
           "kind": "portals",
           "position": [
             -80.5,
-            4.186302900314331,
+            4.186302661895752,
             148.5
           ],
           "radius": 3
@@ -19433,6 +19703,12 @@
         594,
         594
       ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "f9cafcc95c58f1c059ac1eaf83112485c7f1b3e04d24fa78d74082b95b597e1f",
       "serverTileShift": [
         0,
         0
@@ -19440,11 +19716,50 @@
       "atlasLabel": [
         530.0,
         840.0
-      ]
+      ],
+      "nativeServerStorageVersion": 1,
+      "nativeServerTileMin": [
+        0,
+        0
+      ],
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          310,
+          164
+        ],
+        "serverCells": [
+          594,
+          594
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 21.69345474243164,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -310,
+            -430
+          ],
+          "max": [
+            284,
+            164
+          ]
+        },
+        "authoringSpecSha256": "f9cafcc95c58f1c059ac1eaf83112485c7f1b3e04d24fa78d74082b95b597e1f"
+      }
     },
     "westhaven": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/westhaven/world.json",
-      "nativeManifestSha256": "347d98521ac2149ba07af8d631ed1b37258afae6d765cb9d8b7b1bdb7dbc8b91",
+      "nativeManifestSha256": "c8fa537094a4efee4bac93f3d198c818efd1e8fad8493b3d5613823a7d94a956",
       "translation": [
         170.0,
         0,
@@ -20025,7 +20340,7 @@
           "kind": "portals",
           "position": [
             -6.5,
-            18.015092372894287,
+            18.015092849731445,
             -323.5
           ],
           "radius": 3
@@ -20035,7 +20350,7 @@
           "kind": "portals",
           "position": [
             183.5,
-            12.430189371109009,
+            12.43018913269043,
             -107.5
           ],
           "radius": 3
@@ -20045,7 +20360,7 @@
           "kind": "portals",
           "position": [
             183.5,
-            1.8493896126747131,
+            1.8493895530700684,
             8.5
           ],
           "radius": 3
@@ -21291,6 +21606,12 @@
         588,
         588
       ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "34da3cd93a5876bf75e2d390ce40f9ccb3953dfcb79e967de22ac417906b1b37",
       "serverTileShift": [
         0,
         0
@@ -21298,11 +21619,50 @@
       "atlasLabel": [
         170.0,
         1060.0
-      ]
+      ],
+      "nativeServerStorageVersion": 1,
+      "nativeServerTileMin": [
+        0,
+        0
+      ],
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          174,
+          244
+        ],
+        "serverCells": [
+          588,
+          588
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 14.555402755737305,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -174,
+            -344
+          ],
+          "max": [
+            414,
+            244
+          ]
+        },
+        "authoringSpecSha256": "34da3cd93a5876bf75e2d390ce40f9ccb3953dfcb79e967de22ac417906b1b37"
+      }
     },
     "manymouth_delta": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/manymouth_delta/world.json",
-      "nativeManifestSha256": "755ff9f992ecb4e6716f00c661810b0f2c50387882fc438f96a5ad47a161ed55",
+      "nativeManifestSha256": "4848a3c7049e846fc6010f8f82fbcf9e43409afb9e0edccfd9b347353e9a23c8",
       "translation": [
         520.0,
         0,
@@ -21633,7 +21993,7 @@
           "kind": "portals",
           "position": [
             -70.5,
-            4.318033933639526,
+            4.318033695220947,
             -153.5
           ],
           "radius": 3
@@ -21643,7 +22003,7 @@
           "kind": "portals",
           "position": [
             -168.5,
-            1.8604312241077423,
+            1.86043119430542,
             -71.5
           ],
           "radius": 3
@@ -21653,7 +22013,7 @@
           "kind": "portals",
           "position": [
             291.5,
-            18.792414665222168,
+            18.792415618896484,
             -3.5
           ],
           "radius": 3
@@ -23267,6 +23627,12 @@
         510,
         510
       ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "184cde8deb84f6a3d9829fa8e0b9d05291a7e8120c0aebdd160f15f2c1187eb5",
       "serverTileShift": [
         0,
         0
@@ -23274,11 +23640,50 @@
       "atlasLabel": [
         520.0,
         1140.0
-      ]
+      ],
+      "nativeServerStorageVersion": 1,
+      "nativeServerTileMin": [
+        0,
+        0
+      ],
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          208,
+          310
+        ],
+        "serverCells": [
+          510,
+          510
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 2.200000047683716,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -208,
+            -200
+          ],
+          "max": [
+            302,
+            310
+          ]
+        },
+        "authoringSpecSha256": "184cde8deb84f6a3d9829fa8e0b9d05291a7e8120c0aebdd160f15f2c1187eb5"
+      }
     },
     "crownwater": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/crownwater/world.json",
-      "nativeManifestSha256": "093630167691808e40ce9d2f114b16e74d24f80becc487d9fa024974f8802341",
+      "nativeManifestSha256": "c57dae454ea879e47b6f5a8086078556fec73d841cdc750dfe36f0f87c7eff65",
       "translation": [
         290.0,
         0,
@@ -24989,6 +25394,12 @@
         774,
         774
       ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "a3dca08cf1085c312545b17627e12ce4c4a8302714353cb09fba44b04b36a808",
       "serverTileShift": [
         0,
         0
@@ -24996,11 +25407,50 @@
       "atlasLabel": [
         290.0,
         1570.0
-      ]
+      ],
+      "nativeServerStorageVersion": 1,
+      "nativeServerTileMin": [
+        0,
+        0
+      ],
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          294,
+          114
+        ],
+        "serverCells": [
+          774,
+          774
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 4.5,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -294,
+            -660
+          ],
+          "max": [
+            480,
+            114
+          ]
+        },
+        "authoringSpecSha256": "a3dca08cf1085c312545b17627e12ce4c4a8302714353cb09fba44b04b36a808"
+      }
     },
     "verdant_stair": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/verdant_stair/world.json",
-      "nativeManifestSha256": "c29e059ab6533748e0be9536abaf6324cce538b780966d9b5abb2c0b0ac97211",
+      "nativeManifestSha256": "cf5b1ab02fd838bc86c12b18280238973dbca32a6977f98dff3c25f3fba9098f",
       "translation": [
         1100.0,
         0,
@@ -25561,7 +26011,7 @@
           "kind": "portals",
           "position": [
             -96.5,
-            78.72179794311523,
+            78.72179412841797,
             -233.5
           ],
           "radius": 3
@@ -25571,7 +26021,7 @@
           "kind": "portals",
           "position": [
             61.5,
-            35.058576583862305,
+            35.05857849121094,
             -199.5
           ],
           "radius": 3
@@ -25581,7 +26031,7 @@
           "kind": "portals",
           "position": [
             -290.5,
-            18.618603229522705,
+            18.61860466003418,
             16.5
           ],
           "radius": 3
@@ -25591,7 +26041,7 @@
           "kind": "portals",
           "position": [
             -30.5,
-            48.9777193069458,
+            48.977718353271484,
             160.5
           ],
           "radius": 3
@@ -26627,6 +27077,12 @@
         702,
         702
       ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "3fb281869a0ab80c56743c2cbf353859bb86503bc8015ac3e47890f02c921cb1",
       "serverTileShift": [
         0,
         0
@@ -26634,11 +27090,50 @@
       "atlasLabel": [
         1100.0,
         1120.0
-      ]
+      ],
+      "nativeServerStorageVersion": 1,
+      "nativeServerTileMin": [
+        0,
+        0
+      ],
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          298,
+          164
+        ],
+        "serverCells": [
+          702,
+          702
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 77.51676940917969,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -298,
+            -538
+          ],
+          "max": [
+            404,
+            164
+          ]
+        },
+        "authoringSpecSha256": "3fb281869a0ab80c56743c2cbf353859bb86503bc8015ac3e47890f02c921cb1"
+      }
     },
     "ssarathi_ruins": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/ssarathi_ruins/world.json",
-      "nativeManifestSha256": "0099f7bcf17c54496b544ddb0e95d38c39b0c69a05a6989a7fed511db6284c9b",
+      "nativeManifestSha256": "01a3fafe02858573be38b21975deb50835a34705d81a63b25adea91e907007d8",
       "translation": [
         1100.0,
         0,
@@ -27009,7 +27504,7 @@
           "kind": "portals",
           "position": [
             -30.5,
-            49.50976085662842,
+            49.509761810302734,
             -161.5
           ],
           "radius": 3
@@ -27567,6 +28062,12 @@
         780,
         780
       ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "90839428d8d44bd18f2b28688dac9d664dd4399fadf9cd25b9b69a4953ff30cc",
       "serverTileShift": [
         0,
         0
@@ -27574,7 +28075,46 @@
       "atlasLabel": [
         1100.0,
         1440.0
-      ]
+      ],
+      "nativeServerStorageVersion": 1,
+      "nativeServerTileMin": [
+        0,
+        0
+      ],
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          376,
+          244
+        ],
+        "serverCells": [
+          780,
+          780
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 2.2352070808410645,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -376,
+            -536
+          ],
+          "max": [
+            404,
+            244
+          ]
+        },
+        "authoringSpecSha256": "90839428d8d44bd18f2b28688dac9d664dd4399fadf9cd25b9b69a4953ff30cc"
+      }
     }
   },
   "connections": [
@@ -29167,20 +29707,20 @@
     "source": "shared global grid before partition",
     "releaseRevision": "diagonal-spine-v1",
     "terrainRevisions": {
-      "whitehorn_range": "diagonal-spine-v1:82605693a7cc6ed57ccc6863de8eb0e4a6a0d2d93afb759a96aba7df3372d47e",
-      "grey_moors": "diagonal-spine-v1:0f36776f5e602f26646d9b46415fb965249a08e840e3e25d8cd721e8d5f8dd31",
-      "amberwood": "diagonal-spine-v1:b8c8fc9904ceaa3191be0b1bc7da4974e1881fe16503c0dc91be69c3e2bec2b7",
-      "amethyst_barrens": "diagonal-spine-v1:db92d1718ab9fc501eeed3bfe3f612080cb53f274cac2a69f5e1442d12b5b4f2",
-      "mirrorhold": "diagonal-spine-v1:fb61e19a1377d8df38f967966e7bbe020964a26286e3035fe1d7470dd84c7e37",
-      "sunmane_steppe": "diagonal-spine-v1:5964f5dc3f7659a739488f52bdc878302979ae60fac7838bf1ed73a0e8a85324",
-      "four_gates": "diagonal-spine-v1:d72a4958bb0e89781677df8b4e2a2ec7671b73e68133b51a96918dc7963b846f",
-      "westhaven": "diagonal-spine-v1:97ed1fd0874380a429465a162b588d23a93fc4c0cc4c3bb493dba0b03f083965",
-      "manymouth_delta": "diagonal-spine-v1:2fbc7b733830b004a2ef719ab80541172cb8359413564f019dd515e21c5a27b0",
-      "crownwater": "diagonal-spine-v1:5e1c3f2137009fc717f00088f6b8e7550a03c73a6786e0aa587f4c0f7df0818a",
-      "verdant_stair": "diagonal-spine-v1:1621d2ed7919aae5b63b62cc16f68e1b47f8f345ccf3d7a7f9d82fb0613a3e59",
-      "ssarathi_ruins": "diagonal-spine-v1:e2f8b5d89d0661780f3c0d8030eb2131f970f53320ae78292e3d6074736caa3d"
+      "whitehorn_range": "diagonal-spine-v1:050b3ead36acc397f84698c170f563b9d2c292d3985ab5c3308fcf48c9ec4a5d",
+      "grey_moors": "diagonal-spine-v1:fdde31045f4d45900dc2d3e723f22c67a36f602b98d6e13db08f5f79ec674183",
+      "amberwood": "diagonal-spine-v1:c48eb73693dffd5e78fe731a57b4ca04581fbc2e6d779e4e16c32313002b9a96",
+      "amethyst_barrens": "diagonal-spine-v1:b8dd7ef5ab5e2b7347692779ac7f4c57023bfd179fcabd96831b02523728a490",
+      "mirrorhold": "diagonal-spine-v1:233386421fd93b948fedceb397f002d0bdbdcc8404133ecdebc4dd14aa5ddfcf",
+      "sunmane_steppe": "diagonal-spine-v1:59f3bcfa65e69e9511127105019f61c7dd1423e49a68124ef534ff11f2326e4a",
+      "four_gates": "diagonal-spine-v1:8415ad1aea272fb386ed5ab31fd29532cb447cc902270bf7f8532b39b73941f8",
+      "westhaven": "diagonal-spine-v1:b5f8c388a30bc5320b490a25b684f6a8b405f53f249b39104ed818ef29ace66e",
+      "manymouth_delta": "diagonal-spine-v1:63ad0751a81b1fc0d762527e7ea3e7ccadb8f30548693ac7bedb7bdb43dfc193",
+      "crownwater": "diagonal-spine-v1:6f5431183e25114cc932a5af439aaef80a21e49cc552c93ba6df874d3a93c50b",
+      "verdant_stair": "diagonal-spine-v1:5292e861c9b96606f0ffca8808c6fa35e1278a826f1c3fc440f343b368eb9c69",
+      "ssarathi_ruins": "diagonal-spine-v1:ca0e24817c9345cee48b1c595f229559bbc48b67369820fd8a3f0a4af9820c20"
     },
-    "sharedSurfaceSha256": "ef8b9c4d26b3b0149555df6202ec299233b05b44943de2094318e6a7d886e2f6",
-    "masterSha256": "0ce92c6a3007f8f91451f61a5ca7b23bf72e18b8f9e59685f8264dbe09ea2c1e"
+    "sharedSurfaceSha256": "f12780b99b29132373a09bef978e7bbd4c5ec2ad24fadfdc963d8210cc19882f",
+    "masterSha256": "e3a139bd73ae2be28ba66a22600bbdc39d0ef22e6cc78c9a9ab7de45db12f066"
   }
 }

@@ -2801,6 +2801,78 @@
     ],
     "runtimeBindings": [
       {
+        "aliases": [],
+        "id": "[\"config/eloria/instances/amethyst_gauntlet_high.def\",\"amethyst_gauntlet_high\",\"exit_x\",\"exit_y\",\"amethyst_barrens\"]",
+        "marker": {
+          "id": "runtime-instance-return-amethyst_barrens",
+          "section": "runtimePoints"
+        },
+        "provenance": {
+          "sourceProfileSha256": "2b4b65e43285bce12cd1366acf05620ed433f8c0f97e2a71f8d82c043fb1afe8",
+          "sourceReportSha256": "31a68d6df89ca2658f821f5d4ac414c32112ff8b44e4fe25eb0af8853e1c802b"
+        },
+        "roads": "marker",
+        "role": "return",
+        "source": {
+          "amendmentReport": {
+            "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+            "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+          },
+          "fields": [
+            "exit_x",
+            "exit_y"
+          ],
+          "line": 19,
+          "oldTile": [
+            50,
+            343
+          ],
+          "path": "config/eloria/instances/amethyst_gauntlet_high.def",
+          "recordId": "amethyst_gauntlet_high"
+        },
+        "targetOffset": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "aliases": [],
+        "id": "[\"config/eloria/instances/amethyst_gauntlet_low.def\",\"amethyst_gauntlet_low\",\"exit_x\",\"exit_y\",\"amethyst_barrens\"]",
+        "marker": {
+          "id": "runtime-instance-return-amethyst_barrens",
+          "section": "runtimePoints"
+        },
+        "provenance": {
+          "sourceProfileSha256": "116b54b74f65e6c391ee0ce90ede2ef2a9e92fef2009a2ff8d574a2abe36bda3",
+          "sourceReportSha256": "31a68d6df89ca2658f821f5d4ac414c32112ff8b44e4fe25eb0af8853e1c802b"
+        },
+        "roads": "marker",
+        "role": "return",
+        "source": {
+          "amendmentReport": {
+            "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+            "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+          },
+          "fields": [
+            "exit_x",
+            "exit_y"
+          ],
+          "line": 19,
+          "oldTile": [
+            50,
+            343
+          ],
+          "path": "config/eloria/instances/amethyst_gauntlet_low.def",
+          "recordId": "amethyst_gauntlet_low"
+        },
+        "targetOffset": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
         "id": "harvesting.txt:163:42@246:204",
         "marker": {
           "id": "runtime-harvest-42",
@@ -8572,6 +8644,19 @@
         ]
       },
       {
+        "id": "runtime-instance-return-amethyst_barrens",
+        "label": "Independent instance return",
+        "position": [
+          -75.5,
+          22.962783813476563,
+          -190.5
+        ],
+        "serverTile": [
+          106,
+          356
+        ]
+      },
+      {
         "id": "runtime-interactive-13",
         "label": "13",
         "position": [
@@ -9607,7 +9692,848 @@
       }
     ]
   },
-  "groundRegions": [],
+  "groundRegions": [
+    {
+      "blendWidth": 6.72,
+      "enabled": true,
+      "id": "amethyst-pass1-assayapproach",
+      "matrix": [
+        0.9659258127212524,
+        0.0,
+        0.258819043636322,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.258819043636322,
+        0.0,
+        0.9659258127212524,
+        0.0,
+        17.0,
+        31.547046661376953,
+        -10.0,
+        1.0
+      ],
+      "opacity": 0.92,
+      "priority": 23,
+      "shape": "ellipse",
+      "size": [
+        30.0,
+        24.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.49000000953674316,
+            0.3700000047683716,
+            0.25999999046325684,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.5199999809265137,
+            0.5199999809265137,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": -31.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "amethyst-pass1-assayyard",
+      "matrix": [
+        0.9781476259231567,
+        0.0,
+        -0.20791170001029968,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.20791170001029968,
+        0.0,
+        0.9781476259231567,
+        0.0,
+        0.0,
+        30.383106231689453,
+        -24.0,
+        1.0
+      ],
+      "opacity": 1.0,
+      "priority": 22,
+      "shape": "ellipse",
+      "size": [
+        54.0,
+        30.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.49000000953674316,
+            0.3700000047683716,
+            0.25999999046325684,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.5199999809265137,
+            0.5199999809265137,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": -31.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "amethyst-pass1-basineast",
+      "matrix": [
+        0.9659258127212524,
+        0.0,
+        -0.258819043636322,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.258819043636322,
+        0.0,
+        0.9659258127212524,
+        0.0,
+        95.0,
+        18.42704963684082,
+        -88.0,
+        1.0
+      ],
+      "opacity": 0.34,
+      "priority": 2,
+      "shape": "ellipse",
+      "size": [
+        110.0,
+        155.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.46000000834465027,
+            0.4000000059604645,
+            0.4399999976158142,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.4300000071525574,
+            0.4300000071525574,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 23.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "amethyst-pass1-basinmiddle",
+      "matrix": [
+        0.9063077569007874,
+        0.0,
+        0.4226182699203491,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.4226182699203491,
+        0.0,
+        0.9063077569007874,
+        0.0,
+        30.0,
+        22.819120407104492,
+        -87.0,
+        1.0
+      ],
+      "opacity": 0.52,
+      "priority": 1,
+      "shape": "ellipse",
+      "size": [
+        155.0,
+        98.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.46000000834465027,
+            0.4000000059604645,
+            0.4399999976158142,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.4300000071525574,
+            0.4300000071525574,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 23.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "amethyst-pass1-basinnorth",
+      "matrix": [
+        0.9848077297210693,
+        0.0,
+        -0.1736481785774231,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.1736481785774231,
+        0.0,
+        0.9848077297210693,
+        0.0,
+        0.0,
+        11.559540748596191,
+        -156.0,
+        1.0
+      ],
+      "opacity": 0.28,
+      "priority": 4,
+      "shape": "ellipse",
+      "size": [
+        155.0,
+        64.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.33000001311302185,
+            0.28999999165534973,
+            0.38999998569488525,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.550000011920929,
+            0.550000011920929,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Alpine scree lichen",
+        "rotationDegrees": -17.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "amethyst-pass1-basinsouth",
+      "matrix": [
+        0.9659258127212524,
+        0.0,
+        0.258819043636322,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.258819043636322,
+        0.0,
+        0.9659258127212524,
+        0.0,
+        38.0,
+        28.430492401123047,
+        -2.0,
+        1.0
+      ],
+      "opacity": 0.57,
+      "priority": 3,
+      "shape": "ellipse",
+      "size": [
+        165.0,
+        100.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.46000000834465027,
+            0.4000000059604645,
+            0.4399999976158142,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.4300000071525574,
+            0.4300000071525574,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 23.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "amethyst-pass1-basinwest",
+      "matrix": [
+        0.9396926164627075,
+        0.0,
+        -0.3420201241970062,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.3420201241970062,
+        0.0,
+        0.9396926164627075,
+        0.0,
+        -35.0,
+        29.81437873840332,
+        -95.0,
+        1.0
+      ],
+      "opacity": 0.38,
+      "priority": 0,
+      "shape": "ellipse",
+      "size": [
+        130.0,
+        85.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.46000000834465027,
+            0.4000000059604645,
+            0.4399999976158142,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.4300000071525574,
+            0.4300000071525574,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 23.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "amethyst-pass1-basinwestlower",
+      "matrix": [
+        0.9063077569007874,
+        0.0,
+        0.4226182699203491,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.4226182699203491,
+        0.0,
+        0.9063077569007874,
+        0.0,
+        -53.0,
+        38.26572799682617,
+        -25.0,
+        1.0
+      ],
+      "opacity": 0.43,
+      "priority": 5,
+      "shape": "ellipse",
+      "size": [
+        55.0,
+        82.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.33000001311302185,
+            0.28999999165534973,
+            0.38999998569488525,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.550000011920929,
+            0.550000011920929,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Alpine scree lichen",
+        "rotationDegrees": -17.0
+      }
+    },
+    {
+      "blendWidth": 4.76,
+      "enabled": true,
+      "id": "amethyst-pass1-courtapproach",
+      "matrix": [
+        0.9063077569007874,
+        0.0,
+        -0.4226182699203491,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.4226182699203491,
+        0.0,
+        0.9063077569007874,
+        0.0,
+        -48.0,
+        26.634450912475586,
+        -138.0,
+        1.0
+      ],
+      "opacity": 0.94,
+      "priority": 21,
+      "shape": "ellipse",
+      "size": [
+        29.0,
+        17.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6299999952316284,
+            0.5799999833106995,
+            0.49000000953674316,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.550000011920929,
+            0.550000011920929,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 11.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "amethyst-pass1-courtforecourt",
+      "matrix": [
+        0.9396926164627075,
+        0.0,
+        0.3420201241970062,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.3420201241970062,
+        0.0,
+        0.9396926164627075,
+        0.0,
+        -61.0,
+        28.281946182250977,
+        -147.0,
+        1.0
+      ],
+      "opacity": 1.0,
+      "priority": 20,
+      "shape": "ellipse",
+      "size": [
+        35.0,
+        29.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6299999952316284,
+            0.5799999833106995,
+            0.49000000953674316,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.550000011920929,
+            0.550000011920929,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 11.0
+      }
+    },
+    {
+      "blendWidth": 4.2,
+      "enabled": true,
+      "id": "amethyst-pass1-eastcamp",
+      "matrix": [
+        0.8660253882408142,
+        0.0,
+        0.5,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.5,
+        0.0,
+        0.8660253882408142,
+        0.0,
+        148.0,
+        22.922964096069336,
+        -11.0,
+        1.0
+      ],
+      "opacity": 0.94,
+      "priority": 25,
+      "shape": "ellipse",
+      "size": [
+        18.0,
+        15.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.49000000953674316,
+            0.3700000047683716,
+            0.25999999046325684,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.5199999809265137,
+            0.5199999809265137,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": -31.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "amethyst-pass1-massifapron",
+      "matrix": [
+        0.9659258127212524,
+        0.0,
+        -0.258819043636322,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.258819043636322,
+        0.0,
+        0.9659258127212524,
+        0.0,
+        65.0,
+        25.305444717407227,
+        -162.0,
+        1.0
+      ],
+      "opacity": 1.0,
+      "priority": 12,
+      "shape": "ellipse",
+      "size": [
+        65.0,
+        47.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.33000001311302185,
+            0.28999999165534973,
+            0.38999998569488525,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.550000011920929,
+            0.550000011920929,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Alpine scree lichen",
+        "rotationDegrees": -17.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "amethyst-pass1-massifscatter",
+      "matrix": [
+        0.9271838665008545,
+        0.0,
+        0.37460657954216003,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.37460657954216003,
+        0.0,
+        0.9271838665008545,
+        0.0,
+        87.0,
+        5.581955909729004,
+        -145.0,
+        1.0
+      ],
+      "opacity": 0.9,
+      "priority": 13,
+      "shape": "ellipse",
+      "size": [
+        45.0,
+        70.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.33000001311302185,
+            0.28999999165534973,
+            0.38999998569488525,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.550000011920929,
+            0.550000011920929,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Alpine scree lichen",
+        "rotationDegrees": -17.0
+      }
+    },
+    {
+      "blendWidth": 3.64,
+      "enabled": true,
+      "id": "amethyst-pass1-northcamp",
+      "matrix": [
+        0.9396926164627075,
+        0.0,
+        -0.3420201241970062,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.3420201241970062,
+        0.0,
+        0.9396926164627075,
+        0.0,
+        78.0,
+        2.995643377304077,
+        -108.0,
+        1.0
+      ],
+      "opacity": 0.94,
+      "priority": 24,
+      "shape": "ellipse",
+      "size": [
+        20.0,
+        13.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.49000000953674316,
+            0.3700000047683716,
+            0.25999999046325684,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9700000286102295,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.5199999809265137,
+            0.5199999809265137,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": -31.0
+      }
+    }
+  ],
   "objects": [
     {
       "assetId": "amethyst:crystal-massifspire-0-c1f757301d89",
@@ -13951,6 +14877,302 @@
       },
       "nodeName": "PacketTender",
       "scenePath": "res://world_authoring/regions/amethyst_barrens/assets/prototypes/packettender-5fb46d3fe551.glb",
+      "sourceNode": "."
+    },
+    {
+      "assetId": "amethyst:crystal-outcrop-13-3cf59635e574",
+      "bakedSource": {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb",
+        "sha256": "c5603d1ddfc4545d2e7eb4f4d579bde673d2376a3ab7904fc1ae71a97ba75461",
+        "sourceNode": "."
+      },
+      "collisionRole": "none",
+      "id": "Pass1_CrystalAssayEdge",
+      "materialOverrides": [],
+      "matrix": [
+        0.30000001192092896,
+        0.0,
+        0.5196152329444885,
+        0.0,
+        0.0,
+        0.6000000238418579,
+        0.0,
+        0.0,
+        -0.5196152329444885,
+        0.0,
+        0.30000001192092896,
+        0.0,
+        29.0,
+        27.113937377929688,
+        -32.0,
+        1.0
+      ],
+      "metadata": {
+        "authoringPass": "amethyst-visual-pass1",
+        "cosmeticOnly": true,
+        "kind": "prop"
+      },
+      "nodeName": "Pass1_CrystalAssayEdge",
+      "scenePath": "res://world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb",
+      "sourceNode": "."
+    },
+    {
+      "assetId": "amethyst:crystal-outcrop-13-3cf59635e574",
+      "bakedSource": {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb",
+        "sha256": "c5603d1ddfc4545d2e7eb4f4d579bde673d2376a3ab7904fc1ae71a97ba75461",
+        "sourceNode": "."
+      },
+      "collisionRole": "none",
+      "id": "Pass1_CrystalMassifEast",
+      "materialOverrides": [],
+      "matrix": [
+        0.33212146162986755,
+        0.0,
+        0.7824290990829468,
+        0.0,
+        0.0,
+        0.8500000238418579,
+        0.0,
+        0.0,
+        -0.7824290990829468,
+        0.0,
+        0.33212146162986755,
+        0.0,
+        86.0,
+        29.936359405517578,
+        -166.0,
+        1.0
+      ],
+      "metadata": {
+        "authoringPass": "amethyst-visual-pass1",
+        "cosmeticOnly": true,
+        "kind": "prop"
+      },
+      "nodeName": "Pass1_CrystalMassifEast",
+      "scenePath": "res://world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb",
+      "sourceNode": "."
+    },
+    {
+      "assetId": "amethyst:crystal-outcrop-13-3cf59635e574",
+      "bakedSource": {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb",
+        "sha256": "c5603d1ddfc4545d2e7eb4f4d579bde673d2376a3ab7904fc1ae71a97ba75461",
+        "sourceNode": "."
+      },
+      "collisionRole": "none",
+      "id": "Pass1_CrystalMassifSouth",
+      "materialOverrides": [],
+      "matrix": [
+        -0.5324488282203674,
+        0.0,
+        0.37282469868659973,
+        0.0,
+        0.0,
+        0.6499999761581421,
+        0.0,
+        0.0,
+        -0.37282469868659973,
+        0.0,
+        -0.5324488282203674,
+        0.0,
+        91.0,
+        2.4697513580322266,
+        -142.0,
+        1.0
+      ],
+      "metadata": {
+        "authoringPass": "amethyst-visual-pass1",
+        "cosmeticOnly": true,
+        "kind": "prop"
+      },
+      "nodeName": "Pass1_CrystalMassifSouth",
+      "scenePath": "res://world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb",
+      "sourceNode": "."
+    },
+    {
+      "assetId": "amethyst:crystal-outcrop-13-3cf59635e574",
+      "bakedSource": {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb",
+        "sha256": "c5603d1ddfc4545d2e7eb4f4d579bde673d2376a3ab7904fc1ae71a97ba75461",
+        "sourceNode": "."
+      },
+      "collisionRole": "none",
+      "id": "Pass1_CrystalMassifWest",
+      "materialOverrides": [],
+      "matrix": [
+        0.8927080035209656,
+        0.0,
+        -0.3249191343784332,
+        0.0,
+        0.0,
+        0.949999988079071,
+        0.0,
+        0.0,
+        0.3249191343784332,
+        0.0,
+        0.8927080035209656,
+        0.0,
+        44.0,
+        8.271530151367188,
+        -154.0,
+        1.0
+      ],
+      "metadata": {
+        "authoringPass": "amethyst-visual-pass1",
+        "cosmeticOnly": true,
+        "kind": "prop"
+      },
+      "nodeName": "Pass1_CrystalMassifWest",
+      "scenePath": "res://world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb",
+      "sourceNode": "."
+    },
+    {
+      "assetId": "amethyst:crystal-outcrop-13-3cf59635e574",
+      "bakedSource": {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb",
+        "sha256": "c5603d1ddfc4545d2e7eb4f4d579bde673d2376a3ab7904fc1ae71a97ba75461",
+        "sourceNode": "."
+      },
+      "collisionRole": "none",
+      "id": "Pass1_CrystalNorthCourt",
+      "materialOverrides": [],
+      "matrix": [
+        -0.14515313506126404,
+        0.0,
+        0.582177460193634,
+        0.0,
+        0.0,
+        0.6000000238418579,
+        0.0,
+        0.0,
+        -0.582177460193634,
+        0.0,
+        -0.14515313506126404,
+        0.0,
+        -46.0,
+        18.604082107543945,
+        -177.0,
+        1.0
+      ],
+      "metadata": {
+        "authoringPass": "amethyst-visual-pass1",
+        "cosmeticOnly": true,
+        "kind": "prop"
+      },
+      "nodeName": "Pass1_CrystalNorthCourt",
+      "scenePath": "res://world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb",
+      "sourceNode": "."
+    },
+    {
+      "assetId": "amethyst:crystal-outcrop-13-3cf59635e574",
+      "bakedSource": {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb",
+        "sha256": "c5603d1ddfc4545d2e7eb4f4d579bde673d2376a3ab7904fc1ae71a97ba75461",
+        "sourceNode": "."
+      },
+      "collisionRole": "none",
+      "id": "Pass1_CrystalWestCourt",
+      "materialOverrides": [],
+      "matrix": [
+        0.6761480569839478,
+        0.0,
+        0.18117332458496094,
+        0.0,
+        0.0,
+        0.699999988079071,
+        0.0,
+        0.0,
+        -0.18117332458496094,
+        0.0,
+        0.6761480569839478,
+        0.0,
+        -80.0,
+        38.65349578857422,
+        -142.0,
+        1.0
+      ],
+      "metadata": {
+        "authoringPass": "amethyst-visual-pass1",
+        "cosmeticOnly": true,
+        "kind": "prop"
+      },
+      "nodeName": "Pass1_CrystalWestCourt",
+      "scenePath": "res://world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-outcrop-13-3cf59635e574.glb",
+      "sourceNode": "."
+    },
+    {
+      "assetId": "amethyst:prop-outpoststores-2-9a413446f474",
+      "bakedSource": {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/assets/prototypes/prop-outpoststores-2-9a413446f474.glb",
+        "sha256": "280b8052c373f7b673278511ae21f621443db3a337df67a9ac87992948e584b4",
+        "sourceNode": "."
+      },
+      "collisionRole": "none",
+      "id": "Pass1_StoresAssayEast",
+      "materialOverrides": [],
+      "matrix": [
+        0.9702957272529602,
+        0.0,
+        -0.24192190170288086,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.24192190170288086,
+        0.0,
+        0.9702957272529602,
+        0.0,
+        27.0,
+        28.470800399780273,
+        -18.0,
+        1.0
+      ],
+      "metadata": {
+        "authoringPass": "amethyst-visual-pass1",
+        "cosmeticOnly": true,
+        "kind": "prop"
+      },
+      "nodeName": "Pass1_StoresAssayEast",
+      "scenePath": "res://world_authoring/regions/amethyst_barrens/assets/prototypes/prop-outpoststores-2-9a413446f474.glb",
+      "sourceNode": "."
+    },
+    {
+      "assetId": "amethyst:prop-outpoststores-0-25ce6678df91",
+      "bakedSource": {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/assets/prototypes/prop-outpoststores-0-25ce6678df91.glb",
+        "sha256": "08426fc47fd0b1be7d34446534952ab37fefc61635042fa86d41c2139d4feeaa",
+        "sourceNode": "."
+      },
+      "collisionRole": "none",
+      "id": "Pass1_StoresAssayWest",
+      "materialOverrides": [],
+      "matrix": [
+        0.8910065293312073,
+        0.0,
+        0.45399048924446106,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.45399048924446106,
+        0.0,
+        0.8910065293312073,
+        0.0,
+        -24.0,
+        33.91179656982422,
+        -30.0,
+        1.0
+      ],
+      "metadata": {
+        "authoringPass": "amethyst-visual-pass1",
+        "cosmeticOnly": true,
+        "kind": "prop"
+      },
+      "nodeName": "Pass1_StoresAssayWest",
+      "scenePath": "res://world_authoring/regions/amethyst_barrens/assets/prototypes/prop-outpoststores-0-25ce6678df91.glb",
       "sourceNode": "."
     },
     {
@@ -52854,6 +54076,10 @@
     ]
   },
   "sources": {
+    "authoringSpec": {
+      "path": "godot-client/world_authoring/regions/amethyst_barrens/region-authoring-spec.json",
+      "sha256": "aa4616afdc70c02502021c4d2362de76ecc310a442a974b10e719748e4c769c5"
+    },
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
@@ -52864,16 +54090,8 @@
         "sha256": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
       },
       {
-        "path": "godot-client/src/dev/map_authoring_pilot/style/textures/crystal-basecolor.png",
-        "sha256": "1936d69255537879eb1012c5b23b6f37ed1034a9ac878ac2f4f5d26bd8c6e262"
-      },
-      {
-        "path": "godot-client/src/dev/map_authoring_pilot/style/textures/crystal-normal.png",
-        "sha256": "fb2267513cc71685566f1091d73efa7bc102867341d2ed82e3c4630a406b55e0"
-      },
-      {
-        "path": "godot-client/src/dev/map_authoring_pilot/style/textures/crystal-orm.png",
-        "sha256": "066d316378c867696b10d31b57301567a068eaefa512f10ad54ed8b0b4b70d71"
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+        "sha256": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/asset_control.gd",
@@ -52888,16 +54106,24 @@
         "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
+        "path": "godot-client/src/dev/map_authoring_region/gltf_material_binding.gd",
+        "sha256": "4d37d216212fe0ca53be4e41579b6ed44c9b52f3e7fc97cc43ef4195a6d4255f"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/ground_region_control.gd",
+        "sha256": "22b5ff872793a8e2599be7a27bfcfce3e255440be8cca81e26b92d3e87deee28"
+      },
+      {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
+        "sha256": "e70fdcf47863bc1375921ac337ac008b8d8c4c0be2cbb8f362de2c57ff552ef6"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
+        "sha256": "4a4103da29f3b4d873460d064d1ad83f2ffa17c72f31601745d7af84b8035d48"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "558bc03ab1ad43eabcb02eabb058d22cb7046e34713549234620991cd412c778"
+        "sha256": "7f55a17b606339d1a6ec77b01097f135cd6a0fd9ef87680d46745e16c69101ff"
       },
       {
         "path": "godot-client/world_authoring/regions/amethyst_barrens/assets/prototypes/crystal-massifspire-0-c1f757301d89.glb",
@@ -53657,15 +54883,31 @@
       },
       {
         "path": "godot-client/world_authoring/regions/amethyst_barrens/runtime-bindings.seed.json",
-        "sha256": "b082e71a4956da4466e4356e917b94011098d6025725a54ec9a6d16a8f1e6075"
+        "sha256": "f3ef981dcbf9f81497b753b92891598f73ab58a209c42df69735885f96fcb8af"
       },
       {
         "path": "godot-client/world_authoring/regions/amethyst_barrens/surfaces/biome-scree.tres",
         "sha256": "905cf9ceca0f35d069b8d99dd9b2374f7eb8be9bf29990795b5a9d502e428825"
       },
       {
-        "path": "godot-client/world_authoring/regions/amethyst_barrens/surfaces/crystal.tres",
-        "sha256": "f8ee167bc50fae1864414be6e076937cafcff6f03e94699a20c9998683c22a45"
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/surfaces/pass1-camp-dust.tres",
+        "sha256": "b90381f5e9bbc95eb5636158bbe93bf83449bef15df12eeb02265130794a8e80"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/surfaces/pass1-court-gravel.tres",
+        "sha256": "bd94951e42518d980153d0a3eaea1d74bee8fef59c032dfb7b13f051504d8b65"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/surfaces/pass1-crystal-ground.tres",
+        "sha256": "f70fa5aea2f37e3d135883d51898d95a63495e05e9b8b9f09f3467dd84264da0"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/surfaces/pass1-mineral-dust.tres",
+        "sha256": "90b0e6d07e32d3025a51161cff7f903478a3dc3720960a844ca373ea9e5d8abc"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/amethyst_barrens/surfaces/pass1-violet-scree.tres",
+        "sha256": "60a343e47134f757044066feb64fe7844d64d12767e4b359aa32248233f4f218"
       },
       {
         "path": "godot-client/world_authoring/regions/amethyst_barrens/surfaces/road.tres",
@@ -53674,11 +54916,11 @@
     ],
     "runtimeBindingSeed": {
       "path": "godot-client/world_authoring/regions/amethyst_barrens/runtime-bindings.seed.json",
-      "sha256": "b082e71a4956da4466e4356e917b94011098d6025725a54ec9a6d16a8f1e6075"
+      "sha256": "f3ef981dcbf9f81497b753b92891598f73ab58a209c42df69735885f96fcb8af"
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/amethyst_barrens/amethyst_barrens.tscn",
-      "sha256": "65a3a22db51e5f0b5d8bb9061a8f8c77757a90bcd563e566e2c9f72461b9e00e"
+      "sha256": "fc0746501df157c7a671efa87568d72cc3b39a480f841e3eb2c430752eadb1d5"
     }
   },
   "terrain": {
@@ -53692,17 +54934,16 @@
       "materialMode": "surface",
       "pbrOverrides": {
         "albedoColor": [
-          0.7200000286102295,
-          0.5600000023841858,
-          0.8600000143051147,
+          0.30000001192092896,
+          0.25,
+          0.36000001430511475,
           1.0
         ],
-        "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/crystal-basecolor.png",
+        "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
         "metallic": 0.0,
-        "normalScale": 0.800000011920929,
-        "normalTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/crystal-normal.png",
-        "ormTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/crystal-orm.png",
-        "roughness": 1.0,
+        "normalScale": 1.0,
+        "normalTexture": null,
+        "roughness": 0.9700000286102295,
         "triplanar": false,
         "uvOffset": [
           0.0,
@@ -53710,14 +54951,14 @@
           0.0
         ],
         "uvScale": [
-          0.8999999761581421,
-          0.8999999761581421,
-          0.8999999761581421
+          0.4300000071525574,
+          0.4300000071525574,
+          1.0
         ],
         "worldTriplanar": false
       },
-      "preset": "Crystal",
-      "rotationDegrees": 0.0
+      "preset": "Coastal limestone gravel",
+      "rotationDegrees": -9.0
     },
     "biomePalette": [
       {

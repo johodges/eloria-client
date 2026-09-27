@@ -1479,6 +1479,78 @@
     "runtimeBindings": [
       {
         "aliases": [],
+        "id": "[\"config/eloria/instances/crownwater_gauntlet_low.def\",\"crownwater_gauntlet_low\",\"exit_x\",\"exit_y\",\"crownwater\"]",
+        "marker": {
+          "id": "runtime-instance-return-crownwater",
+          "section": "runtimePoints"
+        },
+        "provenance": {
+          "sourceProfileSha256": "280068082e9803fc923a8ce11b09d702bc892b192ed49b87127e5b912c5a1197",
+          "sourceReportSha256": "65fd27bb51aff089ce09ba6fe38a7da8d0ec543a5584b233a2757eb212ff075c"
+        },
+        "roads": "marker",
+        "role": "return",
+        "source": {
+          "amendmentReport": {
+            "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+            "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+          },
+          "fields": [
+            "exit_x",
+            "exit_y"
+          ],
+          "line": 19,
+          "oldTile": [
+            152,
+            122
+          ],
+          "path": "config/eloria/instances/crownwater_gauntlet_low.def",
+          "recordId": "crownwater_gauntlet_low"
+        },
+        "targetOffset": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "aliases": [],
+        "id": "[\"config/eloria/instances/crownwater_gauntlet_mid.def\",\"crownwater_gauntlet_mid\",\"exit_x\",\"exit_y\",\"crownwater\"]",
+        "marker": {
+          "id": "runtime-instance-return-crownwater",
+          "section": "runtimePoints"
+        },
+        "provenance": {
+          "sourceProfileSha256": "69d0f2b8ebb721cd94e32847f770da5aaa135ae471d01dd6d43659e3ff59cd8f",
+          "sourceReportSha256": "65fd27bb51aff089ce09ba6fe38a7da8d0ec543a5584b233a2757eb212ff075c"
+        },
+        "roads": "marker",
+        "role": "return",
+        "source": {
+          "amendmentReport": {
+            "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+            "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+          },
+          "fields": [
+            "exit_x",
+            "exit_y"
+          ],
+          "line": 19,
+          "oldTile": [
+            152,
+            122
+          ],
+          "path": "config/eloria/instances/crownwater_gauntlet_mid.def",
+          "recordId": "crownwater_gauntlet_mid"
+        },
+        "targetOffset": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "aliases": [],
         "id": "harvesting.txt:100:67@105:78",
         "marker": {
           "id": "runtime-harvest-harvesting-txt-100-67-105-78",
@@ -6954,6 +7026,19 @@
         ]
       },
       {
+        "id": "runtime-instance-return-crownwater",
+        "label": "Independent instance return",
+        "position": [
+          33.5,
+          4.554999828338623,
+          -9.5
+        ],
+        "serverTile": [
+          327,
+          123
+        ]
+      },
+      {
         "id": "runtime-interactive-interactives-txt-219-500-232-237",
         "label": "500",
         "position": [
@@ -8353,7 +8438,368 @@
       }
     ]
   },
-  "groundRegions": [],
+  "groundRegions": [
+    {
+      "blendWidth": 3.5,
+      "enabled": true,
+      "id": "pass1-bell-approach",
+      "matrix": [
+        0.9902680516242981,
+        0.0,
+        0.13917310535907745,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.13917310535907745,
+        0.0,
+        0.9902680516242981,
+        0.0,
+        114.0,
+        13.546628952026367,
+        -99.0,
+        1.0
+      ],
+      "opacity": 0.9,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        17.0,
+        21.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.8199999928474426,
+            0.7799999713897705,
+            0.6700000166893005,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.949999988079071,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 9.0
+      }
+    },
+    {
+      "blendWidth": 3.5,
+      "enabled": true,
+      "id": "pass1-civic-east-court",
+      "matrix": [
+        0.9271838665008545,
+        0.0,
+        0.37460657954216003,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.37460657954216003,
+        0.0,
+        0.9271838665008545,
+        0.0,
+        111.0,
+        11.041248321533203,
+        -65.0,
+        1.0
+      ],
+      "opacity": 0.92,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        25.0,
+        19.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.8199999928474426,
+            0.7799999713897705,
+            0.6700000166893005,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.949999988079071,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 9.0
+      }
+    },
+    {
+      "blendWidth": 3.5,
+      "enabled": true,
+      "id": "pass1-civic-west-walk",
+      "matrix": [
+        0.9612616896629333,
+        0.0,
+        -0.27563735842704773,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.27563735842704773,
+        0.0,
+        0.9612616896629333,
+        0.0,
+        53.0,
+        7.999653339385986,
+        -67.0,
+        1.0
+      ],
+      "opacity": 0.9,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        18.0,
+        23.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.8199999928474426,
+            0.7799999713897705,
+            0.6700000166893005,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.949999988079071,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 9.0
+      }
+    },
+    {
+      "blendWidth": 2.6666667,
+      "enabled": true,
+      "id": "pass1-garden-south-margin",
+      "matrix": [
+        0.9902680516242981,
+        0.0,
+        -0.13917310535907745,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.13917310535907745,
+        0.0,
+        0.9902680516242981,
+        0.0,
+        -46.0,
+        4.513914585113525,
+        -74.0,
+        1.0
+      ],
+      "opacity": 0.56,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        18.0,
+        8.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.38999998569488525,
+            0.47999998927116394,
+            0.3100000023841858,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/forest-floor-moss/forest-floor-moss-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.949999988079071,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Forest floor moss",
+        "rotationDegrees": 9.0
+      }
+    },
+    {
+      "blendWidth": 2.6666667,
+      "enabled": true,
+      "id": "pass1-garden-west-margin",
+      "matrix": [
+        0.9781476259231567,
+        0.0,
+        0.2079116851091385,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.2079116851091385,
+        0.0,
+        0.9781476259231567,
+        0.0,
+        -58.0,
+        4.318697452545166,
+        -81.0,
+        1.0
+      ],
+      "opacity": 0.52,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        8.0,
+        9.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.38999998569488525,
+            0.47999998927116394,
+            0.3100000023841858,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/forest-floor-moss/forest-floor-moss-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.949999988079071,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Forest floor moss",
+        "rotationDegrees": 9.0
+      }
+    },
+    {
+      "blendWidth": 6.0,
+      "enabled": true,
+      "id": "pass1-harbor-workyard",
+      "matrix": [
+        0.9781476259231567,
+        0.0,
+        -0.2079116851091385,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.2079116851091385,
+        0.0,
+        0.9781476259231567,
+        0.0,
+        -2.0,
+        4.5,
+        -13.0,
+        1.0
+      ],
+      "opacity": 0.62,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        23.0,
+        19.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.4300000071525574,
+            0.3799999952316284,
+            0.28999999165534973,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.949999988079071,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Worn earth",
+        "rotationDegrees": 9.0
+      }
+    }
+  ],
   "objects": [
     {
       "assetId": "crownwater:building-shore-chart-house-ad0b206c606e",
@@ -8366,7 +8812,8 @@
       "id": "Building_Shore_chart-house",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_Shore_chart-house/Building_Shore_chart-house__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_Shore_chart-house2/Building_Shore_chart-house/Building_Shore_chart-house__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8440,7 +8887,8 @@
       "id": "Building_Shore_ferriers",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_Shore_ferriers/Building_Shore_ferriers__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_Shore_ferriers2/Building_Shore_ferriers/Building_Shore_ferriers__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8514,7 +8962,8 @@
       "id": "Building_Shore_garden-tender",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_Shore_garden-tender/Building_Shore_garden-tender__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_Shore_garden-tender2/Building_Shore_garden-tender/Building_Shore_garden-tender__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8588,7 +9037,8 @@
       "id": "Building_Shore_market-cook",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_Shore_market-cook/Building_Shore_market-cook__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_Shore_market-cook2/Building_Shore_market-cook/Building_Shore_market-cook__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8662,7 +9112,8 @@
       "id": "Building_Shore_net-menders",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_Shore_net-menders/Building_Shore_net-menders__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_Shore_net-menders2/Building_Shore_net-menders/Building_Shore_net-menders__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8736,7 +9187,8 @@
       "id": "Building_Shore_north-packet-crew",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_Shore_north-packet-crew/Building_Shore_north-packet-crew__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_Shore_north-packet-crew2/Building_Shore_north-packet-crew/Building_Shore_north-packet-crew__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8810,7 +9262,8 @@
       "id": "Building_Shore_pearl-factors",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_Shore_pearl-factors/Building_Shore_pearl-factors__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_Shore_pearl-factors2/Building_Shore_pearl-factors/Building_Shore_pearl-factors__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8884,7 +9337,8 @@
       "id": "Building_Shore_west-packet-crew",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_Shore_west-packet-crew/Building_Shore_west-packet-crew__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_Shore_west-packet-crew2/Building_Shore_west-packet-crew/Building_Shore_west-packet-crew__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8958,7 +9412,8 @@
       "id": "Causeway_reach_outer_east",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_reach_outer_east/Causeway_reach_outer_east__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_reach_outer_east2/Causeway_reach_outer_east/Causeway_reach_outer_east__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9032,7 +9487,8 @@
       "id": "Causeway_reach_outer_north",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_reach_outer_north/Causeway_reach_outer_north__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_reach_outer_north2/Causeway_reach_outer_north/Causeway_reach_outer_north__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9106,7 +9562,8 @@
       "id": "Causeway_reach_outer_northeast",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_reach_outer_northeast/Causeway_reach_outer_northeast__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_reach_outer_northeast2/Causeway_reach_outer_northeast/Causeway_reach_outer_northeast__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9180,7 +9637,8 @@
       "id": "Causeway_reach_outer_northwest",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_reach_outer_northwest/Causeway_reach_outer_northwest__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_reach_outer_northwest2/Causeway_reach_outer_northwest/Causeway_reach_outer_northwest__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9254,7 +9712,8 @@
       "id": "Causeway_reach_outer_south",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_reach_outer_south/Causeway_reach_outer_south__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_reach_outer_south2/Causeway_reach_outer_south/Causeway_reach_outer_south__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9328,7 +9787,8 @@
       "id": "Causeway_reach_outer_southeast",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_reach_outer_southeast/Causeway_reach_outer_southeast__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_reach_outer_southeast2/Causeway_reach_outer_southeast/Causeway_reach_outer_southeast__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9402,7 +9862,8 @@
       "id": "Causeway_reach_outer_southwest",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_reach_outer_southwest/Causeway_reach_outer_southwest__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_reach_outer_southwest2/Causeway_reach_outer_southwest/Causeway_reach_outer_southwest__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9476,7 +9937,8 @@
       "id": "Causeway_reach_outer_west",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_reach_outer_west/Causeway_reach_outer_west__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_reach_outer_west2/Causeway_reach_outer_west/Causeway_reach_outer_west__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9550,7 +10012,8 @@
       "id": "Causeway_ring_harbour_isle_pavilion_west",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_ring_harbour_isle_pavilion_west/Causeway_ring_harbour_isle_pavilion_west__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_ring_harbour_isle_pavilion_west2/Causeway_ring_harbour_isle_pavilion_west/Causeway_ring_harbour_isle_pavilion_west__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9624,7 +10087,8 @@
       "id": "Causeway_ring_pavilion_east_pavilion_southeast",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_ring_pavilion_east_pavilion_southeast/Causeway_ring_pavilion_east_pavilion_southeast__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_ring_pavilion_east_pavilion_southeast2/Causeway_ring_pavilion_east_pavilion_southeast/Causeway_ring_pavilion_east_pavilion_southeast__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9698,7 +10162,8 @@
       "id": "Causeway_ring_pavilion_north_pavilion_northeast",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_ring_pavilion_north_pavilion_northeast/Causeway_ring_pavilion_north_pavilion_northeast__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_ring_pavilion_north_pavilion_northeast2/Causeway_ring_pavilion_north_pavilion_northeast/Causeway_ring_pavilion_north_pavilion_northeast__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9772,7 +10237,8 @@
       "id": "Causeway_ring_pavilion_northeast_pavilion_east",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_ring_pavilion_northeast_pavilion_east/Causeway_ring_pavilion_northeast_pavilion_east__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_ring_pavilion_northeast_pavilion_east2/Causeway_ring_pavilion_northeast_pavilion_east/Causeway_ring_pavilion_northeast_pavilion_east__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9846,7 +10312,8 @@
       "id": "Causeway_ring_pavilion_northwest_pavilion_north",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_ring_pavilion_northwest_pavilion_north/Causeway_ring_pavilion_northwest_pavilion_north__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_ring_pavilion_northwest_pavilion_north2/Causeway_ring_pavilion_northwest_pavilion_north/Causeway_ring_pavilion_northwest_pavilion_north__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9920,7 +10387,8 @@
       "id": "Causeway_ring_pavilion_south_harbour_isle",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_ring_pavilion_south_harbour_isle/Causeway_ring_pavilion_south_harbour_isle__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_ring_pavilion_south_harbour_isle2/Causeway_ring_pavilion_south_harbour_isle/Causeway_ring_pavilion_south_harbour_isle__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9994,7 +10462,8 @@
       "id": "Causeway_ring_pavilion_southeast_pavilion_south",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_ring_pavilion_southeast_pavilion_south/Causeway_ring_pavilion_southeast_pavilion_south__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_ring_pavilion_southeast_pavilion_south2/Causeway_ring_pavilion_southeast_pavilion_south/Causeway_ring_pavilion_southeast_pavilion_south__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10068,7 +10537,8 @@
       "id": "Causeway_ring_pavilion_west_pavilion_northwest",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_ring_pavilion_west_pavilion_northwest/Causeway_ring_pavilion_west_pavilion_northwest__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_ring_pavilion_west_pavilion_northwest2/Causeway_ring_pavilion_west_pavilion_northwest/Causeway_ring_pavilion_west_pavilion_northwest__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10142,7 +10612,8 @@
       "id": "Causeway_spoke_harbour_isle",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_spoke_harbour_isle/Causeway_spoke_harbour_isle__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_spoke_harbour_isle2/Causeway_spoke_harbour_isle/Causeway_spoke_harbour_isle__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10216,7 +10687,8 @@
       "id": "Causeway_spoke_pavilion_east",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_spoke_pavilion_east/Causeway_spoke_pavilion_east__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_spoke_pavilion_east2/Causeway_spoke_pavilion_east/Causeway_spoke_pavilion_east__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10290,7 +10762,8 @@
       "id": "Causeway_spoke_pavilion_north",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_spoke_pavilion_north/Causeway_spoke_pavilion_north__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_spoke_pavilion_north2/Causeway_spoke_pavilion_north/Causeway_spoke_pavilion_north__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10364,7 +10837,8 @@
       "id": "Causeway_spoke_pavilion_northeast",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_spoke_pavilion_northeast/Causeway_spoke_pavilion_northeast__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_spoke_pavilion_northeast2/Causeway_spoke_pavilion_northeast/Causeway_spoke_pavilion_northeast__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10438,7 +10912,8 @@
       "id": "Causeway_spoke_pavilion_northwest",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_spoke_pavilion_northwest/Causeway_spoke_pavilion_northwest__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_spoke_pavilion_northwest2/Causeway_spoke_pavilion_northwest/Causeway_spoke_pavilion_northwest__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10512,7 +10987,8 @@
       "id": "Causeway_spoke_pavilion_south",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_spoke_pavilion_south/Causeway_spoke_pavilion_south__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_spoke_pavilion_south2/Causeway_spoke_pavilion_south/Causeway_spoke_pavilion_south__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10586,7 +11062,8 @@
       "id": "Causeway_spoke_pavilion_southeast",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_spoke_pavilion_southeast/Causeway_spoke_pavilion_southeast__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_spoke_pavilion_southeast2/Causeway_spoke_pavilion_southeast/Causeway_spoke_pavilion_southeast__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10660,7 +11137,8 @@
       "id": "Causeway_spoke_pavilion_west",
       "materialOverrides": [
         {
-          "meshNodePath": "Causeway_spoke_pavilion_west/Causeway_spoke_pavilion_west__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Causeway_spoke_pavilion_west2/Causeway_spoke_pavilion_west/Causeway_spoke_pavilion_west__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -13239,7 +13717,8 @@
       "id": "Landmark_CustomsHouse",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_CustomsHouse/Landmark_CustomsHouse__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_CustomsHouse2/Landmark_CustomsHouse/Landmark_CustomsHouse__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -13985,7 +14464,8 @@
       "id": "Lore_court_grating",
       "materialOverrides": [
         {
-          "meshNodePath": "Lore_court_grating/Lore_court_grating__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Lore_court_grating2/Lore_court_grating/Lore_court_grating__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15113,7 +15593,8 @@
       "id": "Prop_CrownFountain",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_CrownFountain/Prop_CrownFountain__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_CrownFountain2/Prop_CrownFountain/Prop_CrownFountain__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15187,7 +15668,8 @@
       "id": "Prop_CrownStatue_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_CrownStatue_0",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_CrownStatue_02/Prop_CrownStatue_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15261,7 +15743,8 @@
       "id": "Prop_CrownStatue_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_CrownStatue_1",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_CrownStatue_12/Prop_CrownStatue_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15335,7 +15818,8 @@
       "id": "Prop_CrownStatue_2",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_CrownStatue_2",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_CrownStatue_22/Prop_CrownStatue_2",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15409,7 +15893,8 @@
       "id": "Prop_CrownStatue_3",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_CrownStatue_3",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_CrownStatue_32/Prop_CrownStatue_3",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15483,7 +15968,8 @@
       "id": "Prop_CrownStatue_4",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_CrownStatue_4",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_CrownStatue_42/Prop_CrownStatue_4",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15557,7 +16043,8 @@
       "id": "Prop_CrownStatue_5",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_CrownStatue_5",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_CrownStatue_52/Prop_CrownStatue_5",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15631,7 +16118,8 @@
       "id": "Prop_CrownStatue_6",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_CrownStatue_6",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_CrownStatue_62/Prop_CrownStatue_6",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15705,7 +16193,8 @@
       "id": "Prop_CrownStatue_7",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_CrownStatue_7",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_CrownStatue_72/Prop_CrownStatue_7",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15779,7 +16268,8 @@
       "id": "Prop_GardenFountain",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_GardenFountain/Prop_GardenFountain__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_GardenFountain2/Prop_GardenFountain/Prop_GardenFountain__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18817,7 +19307,8 @@
       "id": "Prop_SunkenColumn_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_SunkenColumn_0",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_SunkenColumn_02/Prop_SunkenColumn_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18891,7 +19382,8 @@
       "id": "Prop_SunkenColumn_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_SunkenColumn_1",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_SunkenColumn_12/Prop_SunkenColumn_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18965,7 +19457,8 @@
       "id": "Prop_SunkenColumn_2",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_SunkenColumn_2",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_SunkenColumn_22/Prop_SunkenColumn_2",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19039,7 +19532,8 @@
       "id": "Prop_SunkenColumn_3",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_SunkenColumn_3",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_SunkenColumn_32/Prop_SunkenColumn_3",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19113,7 +19607,8 @@
       "id": "Prop_SunkenColumn_4",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_SunkenColumn_4",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_SunkenColumn_42/Prop_SunkenColumn_4",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19187,7 +19682,8 @@
       "id": "Prop_SunkenColumn_5",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_SunkenColumn_5",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_SunkenColumn_52/Prop_SunkenColumn_5",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19261,7 +19757,8 @@
       "id": "Prop_SunkenColumn_6",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_SunkenColumn_6",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_SunkenColumn_62/Prop_SunkenColumn_6",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19335,7 +19832,8 @@
       "id": "Prop_SunkenColumn_7",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_SunkenColumn_7",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_SunkenColumn_72/Prop_SunkenColumn_7",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19409,7 +19907,8 @@
       "id": "Prop_SunkenColumn_8",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_SunkenColumn_8",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_SunkenColumn_82/Prop_SunkenColumn_8",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19483,7 +19982,8 @@
       "id": "Secret_crown_campanile_eyrie",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_crown_campanile_eyrie/Secret_crown_campanile_eyrie__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_crown_campanile_eyrie2/Secret_crown_campanile_eyrie/Secret_crown_campanile_eyrie__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19557,7 +20057,8 @@
       "id": "Secret_crown_campanile_vault",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_crown_campanile_vault/Secret_crown_campanile_vault__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_crown_campanile_vault2/Secret_crown_campanile_vault/Secret_crown_campanile_vault__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19631,7 +20132,8 @@
       "id": "Secret_crown_cathedral_school",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_crown_cathedral_school/Secret_crown_cathedral_school__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_crown_cathedral_school2/Secret_crown_cathedral_school/Secret_crown_cathedral_school__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19705,7 +20207,8 @@
       "id": "Secret_crown_cistern_well",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_crown_cistern_well/Secret_crown_cistern_well__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_crown_cistern_well2/Secret_crown_cistern_well/Secret_crown_cistern_well__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19779,7 +20282,8 @@
       "id": "Secret_crown_court_reliquary",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_crown_court_reliquary/Secret_crown_court_reliquary__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_crown_court_reliquary2/Secret_crown_court_reliquary/Secret_crown_court_reliquary__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19892,7 +20396,8 @@
       "id": "Secret_crown_drain",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_crown_drain/Secret_crown_drain__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_crown_drain2/Secret_crown_drain/Secret_crown_drain__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -19966,7 +20471,8 @@
       "id": "Secret_crown_kelp_garden",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_crown_kelp_garden/Secret_crown_kelp_garden__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_crown_kelp_garden2/Secret_crown_kelp_garden/Secret_crown_kelp_garden__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20040,7 +20546,8 @@
       "id": "Secret_crown_lake_focus",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_crown_lake_focus/Secret_crown_lake_focus__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_crown_lake_focus2/Secret_crown_lake_focus/Secret_crown_lake_focus__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20114,7 +20621,8 @@
       "id": "Secret_crown_pavilion_butts",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_crown_pavilion_butts/Secret_crown_pavilion_butts__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_crown_pavilion_butts2/Secret_crown_pavilion_butts/Secret_crown_pavilion_butts__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20266,7 +20774,8 @@
       "id": "Secret_crown_waystone",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_crown_waystone/Secret_crown_waystone__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_crown_waystone2/Secret_crown_waystone/Secret_crown_waystone__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20379,7 +20888,8 @@
       "id": "Walk_CustomsCargoRamp",
       "materialOverrides": [
         {
-          "meshNodePath": "Walk_CustomsCargoRamp/Walk_CustomsCargoRamp__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Walk_CustomsCargoRamp2/Walk_CustomsCargoRamp/Walk_CustomsCargoRamp__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20453,7 +20963,8 @@
       "id": "Walk_FourGatesNativeLanding",
       "materialOverrides": [
         {
-          "meshNodePath": "Walk_FourGatesNativeLanding/Walk_FourGatesNativeLanding__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Walk_FourGatesNativeLanding2/Walk_FourGatesNativeLanding/Walk_FourGatesNativeLanding__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20761,7 +21272,8 @@
       "id": "Walk_QuayRun_crown_quay_north",
       "materialOverrides": [
         {
-          "meshNodePath": "Walk_QuayRun_crown_quay_north/Walk_QuayRun_crown_quay_north__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Walk_QuayRun_crown_quay_north2/Walk_QuayRun_crown_quay_north/Walk_QuayRun_crown_quay_north__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20835,7 +21347,8 @@
       "id": "Walk_QuayRun_crown_quay_south",
       "materialOverrides": [
         {
-          "meshNodePath": "Walk_QuayRun_crown_quay_south/Walk_QuayRun_crown_quay_south__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Walk_QuayRun_crown_quay_south2/Walk_QuayRun_crown_quay_south/Walk_QuayRun_crown_quay_south__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20909,7 +21422,8 @@
       "id": "Walk_QuayRun_harbour_lamp_walk",
       "materialOverrides": [
         {
-          "meshNodePath": "Walk_QuayRun_harbour_lamp_walk/Walk_QuayRun_harbour_lamp_walk__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Walk_QuayRun_harbour_lamp_walk2/Walk_QuayRun_harbour_lamp_walk/Walk_QuayRun_harbour_lamp_walk__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -20983,7 +21497,8 @@
       "id": "Walk_QuayRun_harbour_quay",
       "materialOverrides": [
         {
-          "meshNodePath": "Walk_QuayRun_harbour_quay/Walk_QuayRun_harbour_quay__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Walk_QuayRun_harbour_quay2/Walk_QuayRun_harbour_quay/Walk_QuayRun_harbour_quay__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21057,7 +21572,8 @@
       "id": "Walk_Quay_pavilion_west_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Walk_Quay_pavilion_west_0/Walk_Quay_pavilion_west_0__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Walk_Quay_pavilion_west_02/Walk_Quay_pavilion_west_0/Walk_Quay_pavilion_west_0__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21131,7 +21647,8 @@
       "id": "Walk_Quay_pavilion_west_2",
       "materialOverrides": [
         {
-          "meshNodePath": "Walk_Quay_pavilion_west_2/Walk_Quay_pavilion_west_2__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Walk_Quay_pavilion_west_22/Walk_Quay_pavilion_west_2/Walk_Quay_pavilion_west_2__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22010,7 +22527,8 @@
       "id": "published-crownwater-ferry-quay-01",
       "materialOverrides": [
         {
-          "meshNodePath": "FerryQuay_crownwater_01_PilesAndPosts_WorldPlacement/FerryQuay_crownwater_01_PilesAndPosts",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "FerryQuay_crownwater_01_PilesAndPosts_WorldPlacement2/FerryQuay_crownwater_01_PilesAndPosts_WorldPlacement/FerryQuay_crownwater_01_PilesAndPosts",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22044,7 +22562,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_01_Signpost_WorldPlacement/FerryQuay_crownwater_01_Signpost",
+          "bakedMeshNodeIndex": 8,
+          "meshNodePath": "FerryQuay_crownwater_01_Signpost_WorldPlacement2/FerryQuay_crownwater_01_Signpost_WorldPlacement/FerryQuay_crownwater_01_Signpost",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22078,7 +22597,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_01_Skiff_Floor_WorldPlacement/FerryQuay_crownwater_01_Skiff_Floor",
+          "bakedMeshNodeIndex": 16,
+          "meshNodePath": "FerryQuay_crownwater_01_Skiff_Floor_WorldPlacement2/FerryQuay_crownwater_01_Skiff_Floor_WorldPlacement/FerryQuay_crownwater_01_Skiff_Floor",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22112,7 +22632,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_01_Skiff_Mast_WorldPlacement/FerryQuay_crownwater_01_Skiff_Mast",
+          "bakedMeshNodeIndex": 24,
+          "meshNodePath": "FerryQuay_crownwater_01_Skiff_Mast_WorldPlacement2/FerryQuay_crownwater_01_Skiff_Mast_WorldPlacement/FerryQuay_crownwater_01_Skiff_Mast",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22146,7 +22667,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_01_Skiff_Seat_0_WorldPlacement/FerryQuay_crownwater_01_Skiff_Seat_0",
+          "bakedMeshNodeIndex": 18,
+          "meshNodePath": "FerryQuay_crownwater_01_Skiff_Seat_0_WorldPlacement2/FerryQuay_crownwater_01_Skiff_Seat_0_WorldPlacement/FerryQuay_crownwater_01_Skiff_Seat_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22180,7 +22702,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_01_Skiff_Seat_1_WorldPlacement/FerryQuay_crownwater_01_Skiff_Seat_1",
+          "bakedMeshNodeIndex": 20,
+          "meshNodePath": "FerryQuay_crownwater_01_Skiff_Seat_1_WorldPlacement2/FerryQuay_crownwater_01_Skiff_Seat_1_WorldPlacement/FerryQuay_crownwater_01_Skiff_Seat_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22214,7 +22737,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_01_Skiff_Seat_2_WorldPlacement/FerryQuay_crownwater_01_Skiff_Seat_2",
+          "bakedMeshNodeIndex": 22,
+          "meshNodePath": "FerryQuay_crownwater_01_Skiff_Seat_2_WorldPlacement2/FerryQuay_crownwater_01_Skiff_Seat_2_WorldPlacement/FerryQuay_crownwater_01_Skiff_Seat_2",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22248,7 +22772,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_FerryQuay_crownwater_01_WorldPlacement/Walk_FerryQuay_crownwater_01",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_FerryQuay_crownwater_01_WorldPlacement2/Walk_FerryQuay_crownwater_01_WorldPlacement/Walk_FerryQuay_crownwater_01",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22332,7 +22857,8 @@
       "id": "published-crownwater-ferry-quay-03",
       "materialOverrides": [
         {
-          "meshNodePath": "FerryQuay_crownwater_03_PilesAndPosts_WorldPlacement/FerryQuay_crownwater_03_PilesAndPosts",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "FerryQuay_crownwater_03_PilesAndPosts_WorldPlacement2/FerryQuay_crownwater_03_PilesAndPosts_WorldPlacement/FerryQuay_crownwater_03_PilesAndPosts",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22366,7 +22892,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_03_Signpost_WorldPlacement/FerryQuay_crownwater_03_Signpost",
+          "bakedMeshNodeIndex": 8,
+          "meshNodePath": "FerryQuay_crownwater_03_Signpost_WorldPlacement2/FerryQuay_crownwater_03_Signpost_WorldPlacement/FerryQuay_crownwater_03_Signpost",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22400,7 +22927,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_03_Skiff_Floor_WorldPlacement/FerryQuay_crownwater_03_Skiff_Floor",
+          "bakedMeshNodeIndex": 16,
+          "meshNodePath": "FerryQuay_crownwater_03_Skiff_Floor_WorldPlacement2/FerryQuay_crownwater_03_Skiff_Floor_WorldPlacement/FerryQuay_crownwater_03_Skiff_Floor",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22434,7 +22962,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_03_Skiff_Mast_WorldPlacement/FerryQuay_crownwater_03_Skiff_Mast",
+          "bakedMeshNodeIndex": 24,
+          "meshNodePath": "FerryQuay_crownwater_03_Skiff_Mast_WorldPlacement2/FerryQuay_crownwater_03_Skiff_Mast_WorldPlacement/FerryQuay_crownwater_03_Skiff_Mast",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22468,7 +22997,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_03_Skiff_Seat_0_WorldPlacement/FerryQuay_crownwater_03_Skiff_Seat_0",
+          "bakedMeshNodeIndex": 18,
+          "meshNodePath": "FerryQuay_crownwater_03_Skiff_Seat_0_WorldPlacement2/FerryQuay_crownwater_03_Skiff_Seat_0_WorldPlacement/FerryQuay_crownwater_03_Skiff_Seat_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22502,7 +23032,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_03_Skiff_Seat_1_WorldPlacement/FerryQuay_crownwater_03_Skiff_Seat_1",
+          "bakedMeshNodeIndex": 20,
+          "meshNodePath": "FerryQuay_crownwater_03_Skiff_Seat_1_WorldPlacement2/FerryQuay_crownwater_03_Skiff_Seat_1_WorldPlacement/FerryQuay_crownwater_03_Skiff_Seat_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22536,7 +23067,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_03_Skiff_Seat_2_WorldPlacement/FerryQuay_crownwater_03_Skiff_Seat_2",
+          "bakedMeshNodeIndex": 22,
+          "meshNodePath": "FerryQuay_crownwater_03_Skiff_Seat_2_WorldPlacement2/FerryQuay_crownwater_03_Skiff_Seat_2_WorldPlacement/FerryQuay_crownwater_03_Skiff_Seat_2",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22570,7 +23102,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_FerryQuay_crownwater_03_WorldPlacement/Walk_FerryQuay_crownwater_03",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_FerryQuay_crownwater_03_WorldPlacement2/Walk_FerryQuay_crownwater_03_WorldPlacement/Walk_FerryQuay_crownwater_03",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22654,7 +23187,8 @@
       "id": "published-crownwater-ferry-quay-05",
       "materialOverrides": [
         {
-          "meshNodePath": "FerryQuay_crownwater_05_PilesAndPosts_WorldPlacement/FerryQuay_crownwater_05_PilesAndPosts",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "FerryQuay_crownwater_05_PilesAndPosts_WorldPlacement2/FerryQuay_crownwater_05_PilesAndPosts_WorldPlacement/FerryQuay_crownwater_05_PilesAndPosts",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22688,7 +23222,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_05_Signpost_WorldPlacement/FerryQuay_crownwater_05_Signpost",
+          "bakedMeshNodeIndex": 8,
+          "meshNodePath": "FerryQuay_crownwater_05_Signpost_WorldPlacement2/FerryQuay_crownwater_05_Signpost_WorldPlacement/FerryQuay_crownwater_05_Signpost",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22722,7 +23257,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_05_Skiff_Floor_WorldPlacement/FerryQuay_crownwater_05_Skiff_Floor",
+          "bakedMeshNodeIndex": 16,
+          "meshNodePath": "FerryQuay_crownwater_05_Skiff_Floor_WorldPlacement2/FerryQuay_crownwater_05_Skiff_Floor_WorldPlacement/FerryQuay_crownwater_05_Skiff_Floor",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22756,7 +23292,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_05_Skiff_Mast_WorldPlacement/FerryQuay_crownwater_05_Skiff_Mast",
+          "bakedMeshNodeIndex": 24,
+          "meshNodePath": "FerryQuay_crownwater_05_Skiff_Mast_WorldPlacement2/FerryQuay_crownwater_05_Skiff_Mast_WorldPlacement/FerryQuay_crownwater_05_Skiff_Mast",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22790,7 +23327,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_05_Skiff_Seat_0_WorldPlacement/FerryQuay_crownwater_05_Skiff_Seat_0",
+          "bakedMeshNodeIndex": 18,
+          "meshNodePath": "FerryQuay_crownwater_05_Skiff_Seat_0_WorldPlacement2/FerryQuay_crownwater_05_Skiff_Seat_0_WorldPlacement/FerryQuay_crownwater_05_Skiff_Seat_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22824,7 +23362,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_05_Skiff_Seat_1_WorldPlacement/FerryQuay_crownwater_05_Skiff_Seat_1",
+          "bakedMeshNodeIndex": 20,
+          "meshNodePath": "FerryQuay_crownwater_05_Skiff_Seat_1_WorldPlacement2/FerryQuay_crownwater_05_Skiff_Seat_1_WorldPlacement/FerryQuay_crownwater_05_Skiff_Seat_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22858,7 +23397,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_crownwater_05_Skiff_Seat_2_WorldPlacement/FerryQuay_crownwater_05_Skiff_Seat_2",
+          "bakedMeshNodeIndex": 22,
+          "meshNodePath": "FerryQuay_crownwater_05_Skiff_Seat_2_WorldPlacement2/FerryQuay_crownwater_05_Skiff_Seat_2_WorldPlacement/FerryQuay_crownwater_05_Skiff_Seat_2",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22892,7 +23432,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_FerryQuay_crownwater_05_WorldPlacement/Walk_FerryQuay_crownwater_05",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_FerryQuay_crownwater_05_WorldPlacement2/Walk_FerryQuay_crownwater_05_WorldPlacement/Walk_FerryQuay_crownwater_05",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22976,7 +23517,8 @@
       "id": "published-crownwater-loose-507",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_507_316_1404_WorldPlacement/BridgeUnionPier_507_316_1404",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_507_316_1404_WorldPlacement2/BridgeUnionPier_507_316_1404_WorldPlacement/BridgeUnionPier_507_316_1404",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23010,7 +23552,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_507_324_1404_WorldPlacement/BridgeUnionPier_507_324_1404",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "BridgeUnionPier_507_324_1404_WorldPlacement2/BridgeUnionPier_507_324_1404_WorldPlacement/BridgeUnionPier_507_324_1404",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23044,7 +23587,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_507_332_1404_WorldPlacement/BridgeUnionPier_507_332_1404",
+          "bakedMeshNodeIndex": 8,
+          "meshNodePath": "BridgeUnionPier_507_332_1404_WorldPlacement2/BridgeUnionPier_507_332_1404_WorldPlacement/BridgeUnionPier_507_332_1404",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23078,7 +23622,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_507_340_1404_WorldPlacement/BridgeUnionPier_507_340_1404",
+          "bakedMeshNodeIndex": 10,
+          "meshNodePath": "BridgeUnionPier_507_340_1404_WorldPlacement2/BridgeUnionPier_507_340_1404_WorldPlacement/BridgeUnionPier_507_340_1404",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23112,7 +23657,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_507_356_1412_WorldPlacement/BridgeUnionPier_507_356_1412",
+          "bakedMeshNodeIndex": 14,
+          "meshNodePath": "BridgeUnionPier_507_356_1412_WorldPlacement2/BridgeUnionPier_507_356_1412_WorldPlacement/BridgeUnionPier_507_356_1412",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23146,7 +23692,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_507_364_1420_WorldPlacement/BridgeUnionPier_507_364_1420",
+          "bakedMeshNodeIndex": 18,
+          "meshNodePath": "BridgeUnionPier_507_364_1420_WorldPlacement2/BridgeUnionPier_507_364_1420_WorldPlacement/BridgeUnionPier_507_364_1420",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23180,7 +23727,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_507_380_1412_WorldPlacement/BridgeUnionPier_507_380_1412",
+          "bakedMeshNodeIndex": 16,
+          "meshNodePath": "BridgeUnionPier_507_380_1412_WorldPlacement2/BridgeUnionPier_507_380_1412_WorldPlacement/BridgeUnionPier_507_380_1412",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23214,7 +23762,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_507_396_1404_WorldPlacement/BridgeUnionPier_507_396_1404",
+          "bakedMeshNodeIndex": 12,
+          "meshNodePath": "BridgeUnionPier_507_396_1404_WorldPlacement2/BridgeUnionPier_507_396_1404_WorldPlacement/BridgeUnionPier_507_396_1404",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23287,7 +23836,8 @@
       "id": "published-crownwater-loose-508",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_508_460_1436_WorldPlacement/BridgeUnionPier_508_460_1436",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_508_460_1436_WorldPlacement2/BridgeUnionPier_508_460_1436_WorldPlacement/BridgeUnionPier_508_460_1436",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23398,7 +23948,8 @@
       "id": "published-crownwater-loose-511",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_511_484_1516_WorldPlacement/BridgeUnionPier_511_484_1516",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_511_484_1516_WorldPlacement2/BridgeUnionPier_511_484_1516_WorldPlacement/BridgeUnionPier_511_484_1516",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23623,7 +24174,8 @@
       "id": "published-crownwater-loose-518",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_518_476_1572_WorldPlacement/BridgeUnionPier_518_476_1572",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "BridgeUnionPier_518_476_1572_WorldPlacement2/BridgeUnionPier_518_476_1572_WorldPlacement/BridgeUnionPier_518_476_1572",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23657,7 +24209,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_518_484_1564_WorldPlacement/BridgeUnionPier_518_484_1564",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_518_484_1564_WorldPlacement2/BridgeUnionPier_518_484_1564_WorldPlacement/BridgeUnionPier_518_484_1564",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23730,7 +24283,8 @@
       "id": "published-crownwater-loose-519",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_519_316_1596_WorldPlacement/BridgeUnionPier_519_316_1596",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_519_316_1596_WorldPlacement2/BridgeUnionPier_519_316_1596_WorldPlacement/BridgeUnionPier_519_316_1596",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23764,7 +24318,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_519_324_1612_WorldPlacement/BridgeUnionPier_519_324_1612",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "BridgeUnionPier_519_324_1612_WorldPlacement2/BridgeUnionPier_519_324_1612_WorldPlacement/BridgeUnionPier_519_324_1612",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23798,7 +24353,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_519_332_1628_WorldPlacement/BridgeUnionPier_519_332_1628",
+          "bakedMeshNodeIndex": 8,
+          "meshNodePath": "BridgeUnionPier_519_332_1628_WorldPlacement2/BridgeUnionPier_519_332_1628_WorldPlacement/BridgeUnionPier_519_332_1628",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -51105,6 +51661,10 @@
     ]
   },
   "sources": {
+    "authoringSpec": {
+      "path": "godot-client/world_authoring/regions/crownwater/region-authoring-spec.json",
+      "sha256": "a3dca08cf1085c312545b17627e12ce4c4a8302714353cb09fba44b04b36a808"
+    },
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
@@ -51121,6 +51681,10 @@
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
         "sha256": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/forest-floor-moss/forest-floor-moss-v001.png",
+        "sha256": "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5"
       },
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/marine-timber/marine-timber-v001.png",
@@ -51151,16 +51715,24 @@
         "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
+        "path": "godot-client/src/dev/map_authoring_region/gltf_material_binding.gd",
+        "sha256": "4d37d216212fe0ca53be4e41579b6ed44c9b52f3e7fc97cc43ef4195a6d4255f"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/ground_region_control.gd",
+        "sha256": "22b5ff872793a8e2599be7a27bfcfce3e255440be8cca81e26b92d3e87deee28"
+      },
+      {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
+        "sha256": "e70fdcf47863bc1375921ac337ac008b8d8c4c0be2cbb8f362de2c57ff552ef6"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
+        "sha256": "4a4103da29f3b4d873460d064d1ad83f2ffa17c72f31601745d7af84b8035d48"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "558bc03ab1ad43eabcb02eabb058d22cb7046e34713549234620991cd412c778"
+        "sha256": "7f55a17b606339d1a6ec77b01097f135cd6a0fd9ef87680d46745e16c69101ff"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/water_region_control.gd",
@@ -52660,11 +53232,11 @@
       },
       {
         "path": "godot-client/world_authoring/regions/crownwater/base-colors.rgba8",
-        "sha256": "a45ec14851f01bec497cde7e4dce180e99eb3e860873b66d9de057bbc2998e88"
+        "sha256": "dc35a40d6edd076102bc3ee804eb27c6f7daf9a1d9e01753ed6f866e84a03954"
       },
       {
         "path": "godot-client/world_authoring/regions/crownwater/base-heights.f32le",
-        "sha256": "11a919a24a6ae92cdcc92681e27a814451f4bec8e4d18e73fdebfb52025d036d"
+        "sha256": "6b86d448b95c9c196f3efaa61e9028077bcf4bee8a09d9ac68b981c4ba061ac9"
       },
       {
         "path": "godot-client/world_authoring/regions/crownwater/paths/crownwater-manymouth-delta-crownwater.tres",
@@ -52760,7 +53332,7 @@
       },
       {
         "path": "godot-client/world_authoring/regions/crownwater/runtime-bindings.seed.json",
-        "sha256": "2162111d0b871744533322e12a08edff1fb93a119a4188644c09a9b67c442e46"
+        "sha256": "11de909a3dc57d804a518f61952972a5b5b1ac42841ec51760bf3383f27530c8"
       },
       {
         "path": "godot-client/world_authoring/regions/crownwater/surfaces/biome-coastal-gravel.tres",
@@ -52771,6 +53343,18 @@
         "sha256": "76278f04e0c7c76d3ac166f591137d3bafbe7dd14a227c52e6ab5edff51634ff"
       },
       {
+        "path": "godot-client/world_authoring/regions/crownwater/surfaces/pass1-civic-limestone.tres",
+        "sha256": "a635d657f4c2bda5cd258e31c515ef5add6fa4848f07dd132d12804477782e5e"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/crownwater/surfaces/pass1-garden-soil.tres",
+        "sha256": "1e6a1db024215edc1270c8d60bb80769210505f384744fef569ad2cb9e13c91e"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/crownwater/surfaces/pass1-harbor-earth.tres",
+        "sha256": "5e406738f2d273f36151f32962f292e05984161aeb68ca89caeaa350cdd46c18"
+      },
+      {
         "path": "godot-client/world_authoring/regions/crownwater/surfaces/river.tres",
         "sha256": "8d57e046d49e8100f90212cc25ed3754391d1b39a763b05c9c6464cc83e0aebe"
       },
@@ -52779,25 +53363,39 @@
         "sha256": "2a6cfa248f60c0432e92e20a68bb6a2dc0ae96525d7a9c5e34e65c6ad46baa1e"
       }
     ],
+    "repositoryDependencies": [
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/legacy-colors.rgba8",
+        "sha256": "a5862f256274a35b164923e1b7d6fd4201e2e5b485aa1e5634cee110157cd145"
+      },
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+        "sha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c"
+      },
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/resolved-heights.f32le",
+        "sha256": "f8569fac42ac47e3145a68b2df54e74821021d7ae98ef06debb5fb45acebc8bd"
+      }
+    ],
     "runtimeBindingSeed": {
       "path": "godot-client/world_authoring/regions/crownwater/runtime-bindings.seed.json",
-      "sha256": "2162111d0b871744533322e12a08edff1fb93a119a4188644c09a9b67c442e46"
+      "sha256": "11de909a3dc57d804a518f61952972a5b5b1ac42841ec51760bf3383f27530c8"
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/crownwater/crownwater.tscn",
-      "sha256": "f9b335fab21c874716f0eaf4038d96ce80bbcd9f8964c76089a7cbfccdc43460"
+      "sha256": "37af27fd4f11a60f9cd50b3ef8c8922503f996b7ea3897dd45e99cd23f39ce51"
     }
   },
   "terrain": {
     "baseColors": {
       "encoding": "rgba8-srgb",
       "path": "base-colors.rgba8",
-      "sha256": "a45ec14851f01bec497cde7e4dce180e99eb3e860873b66d9de057bbc2998e88"
+      "sha256": "dc35a40d6edd076102bc3ee804eb27c6f7daf9a1d9e01753ed6f866e84a03954"
     },
     "baseHeights": {
       "encoding": "float32-le",
       "path": "base-heights.f32le",
-      "sha256": "11a919a24a6ae92cdcc92681e27a814451f4bec8e4d18e73fdebfb52025d036d"
+      "sha256": "6b86d448b95c9c196f3efaa61e9028077bcf4bee8a09d9ac68b981c4ba061ac9"
     },
     "baseSurface": {
       "biomeBlendEnabled": true,
@@ -52867,10 +53465,20 @@
       }
     ],
     "cellMetres": 2.0,
-    "height": 228,
+    "height": 229,
+    "migration": {
+      "globalVertexMin": [
+        0.0,
+        612.0
+      ],
+      "previousGridSha256": "11a919a24a6ae92cdcc92681e27a814451f4bec8e4d18e73fdebfb52025d036d",
+      "revision": "global-lattice-envelope-v1",
+      "sharedFieldPath": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+      "sharedFieldSha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c"
+    },
     "origin": [
       -290.0,
-      -344.0
+      -346.0
     ],
     "patches": [],
     "previewUvMetresInverse": 0.17,
@@ -52882,9 +53490,9 @@
         "river-cuts"
       ],
       "path": "resolved-heights.f32le",
-      "sha256": "11a919a24a6ae92cdcc92681e27a814451f4bec8e4d18e73fdebfb52025d036d"
+      "sha256": "6b86d448b95c9c196f3efaa61e9028077bcf4bee8a09d9ac68b981c4ba061ac9"
     },
-    "width": 384
+    "width": 385
   },
   "waterRegions": []
 }

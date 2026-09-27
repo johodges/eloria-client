@@ -6541,7 +6541,728 @@
       }
     ]
   },
-  "groundRegions": [],
+  "groundRegions": [
+    {
+      "blendWidth": 6.0,
+      "enabled": true,
+      "id": "four_gates-pass1-crystaleast",
+      "matrix": [
+        0.9781476259231567,
+        0.0,
+        0.20791170001029968,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.20791170001029968,
+        0.0,
+        0.9781476259231567,
+        0.0,
+        15.0,
+        21.69345474243164,
+        -12.0,
+        1.0
+      ],
+      "opacity": 0.96,
+      "priority": 0,
+      "shape": "ellipse",
+      "size": [
+        50.0,
+        42.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.800000011920929,
+            0.7300000190734863,
+            0.6100000143051147,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.7200000286102295,
+            0.7200000286102295,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 13.0
+      }
+    },
+    {
+      "blendWidth": 7.0,
+      "enabled": true,
+      "id": "four_gates-pass1-crystalsouth",
+      "matrix": [
+        0.9510565400123596,
+        0.0,
+        -0.30901700258255005,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.30901700258255005,
+        0.0,
+        0.9510565400123596,
+        0.0,
+        -5.0,
+        21.69345474243164,
+        14.0,
+        1.0
+      ],
+      "opacity": 0.92,
+      "priority": 1,
+      "shape": "ellipse",
+      "size": [
+        50.0,
+        40.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.800000011920929,
+            0.7300000190734863,
+            0.6100000143051147,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.7200000286102295,
+            0.7200000286102295,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 13.0
+      }
+    },
+    {
+      "blendWidth": 6.6,
+      "enabled": true,
+      "id": "four_gates-pass1-deposityard",
+      "matrix": [
+        0.9781476259231567,
+        0.0,
+        -0.20791170001029968,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.20791170001029968,
+        0.0,
+        0.9781476259231567,
+        0.0,
+        -68.0,
+        21.69345474243164,
+        30.0,
+        1.0
+      ],
+      "opacity": 0.64,
+      "priority": 9,
+      "shape": "ellipse",
+      "size": [
+        24.0,
+        20.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6000000238418579,
+            0.4399999976158142,
+            0.30000001192092896,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.75,
+            0.75,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Soil",
+        "rotationDegrees": -19.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "four_gates-pass1-eastforecourt",
+      "matrix": [
+        0.9961947202682495,
+        0.0,
+        -0.08715573698282242,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.08715573698282242,
+        0.0,
+        0.9961947202682495,
+        0.0,
+        94.0,
+        20.75213050842285,
+        -9.0,
+        1.0
+      ],
+      "opacity": 0.81,
+      "priority": 2,
+      "shape": "ellipse",
+      "size": [
+        25.0,
+        35.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6800000071525574,
+            0.6200000047683716,
+            0.5099999904632568,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.7200000286102295,
+            0.7200000286102295,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 13.0
+      }
+    },
+    {
+      "blendWidth": 6.27,
+      "enabled": true,
+      "id": "four_gates-pass1-eastmarketapron",
+      "matrix": [
+        0.9063077569007874,
+        0.0,
+        -0.4226182699203491,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.4226182699203491,
+        0.0,
+        0.9063077569007874,
+        0.0,
+        55.0,
+        21.69345474243164,
+        51.0,
+        1.0
+      ],
+      "opacity": 0.7,
+      "priority": 7,
+      "shape": "ellipse",
+      "size": [
+        27.0,
+        19.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6000000238418579,
+            0.4399999976158142,
+            0.30000001192092896,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.75,
+            0.75,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Soil",
+        "rotationDegrees": -19.0
+      }
+    },
+    {
+      "blendWidth": 6.27,
+      "enabled": true,
+      "id": "four_gates-pass1-forgeapron",
+      "matrix": [
+        0.9702957272529602,
+        0.0,
+        0.24192190170288086,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.24192190170288086,
+        0.0,
+        0.9702957272529602,
+        0.0,
+        49.0,
+        21.69345474243164,
+        -78.0,
+        1.0
+      ],
+      "opacity": 0.69,
+      "priority": 8,
+      "shape": "ellipse",
+      "size": [
+        26.0,
+        19.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6000000238418579,
+            0.4399999976158142,
+            0.30000001192092896,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.75,
+            0.75,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Soil",
+        "rotationDegrees": -19.0
+      }
+    },
+    {
+      "blendWidth": 4.29,
+      "enabled": true,
+      "id": "four_gates-pass1-gardenfootpath",
+      "matrix": [
+        0.9510565400123596,
+        0.0,
+        -0.30901700258255005,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.30901700258255005,
+        0.0,
+        0.9510565400123596,
+        0.0,
+        35.0,
+        21.67186737060547,
+        97.0,
+        1.0
+      ],
+      "opacity": 0.48,
+      "priority": 11,
+      "shape": "ellipse",
+      "size": [
+        24.0,
+        13.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.5,
+            0.4699999988079071,
+            0.2800000011920929,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/forest-floor-moss/forest-floor-moss-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.949999988079071,
+            0.949999988079071,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Forest floor moss",
+        "rotationDegrees": 27.0
+      }
+    },
+    {
+      "blendWidth": 6.93,
+      "enabled": true,
+      "id": "four_gates-pass1-gardenmargin",
+      "matrix": [
+        0.9063077569007874,
+        0.0,
+        0.4226182699203491,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.4226182699203491,
+        0.0,
+        0.9063077569007874,
+        0.0,
+        48.0,
+        21.692468643188477,
+        89.0,
+        1.0
+      ],
+      "opacity": 0.65,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        29.0,
+        21.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.5,
+            0.4699999988079071,
+            0.2800000011920929,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/forest-floor-moss/forest-floor-moss-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.949999988079071,
+            0.949999988079071,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Forest floor moss",
+        "rotationDegrees": 27.0
+      }
+    },
+    {
+      "blendWidth": 6.27,
+      "enabled": true,
+      "id": "four_gates-pass1-marketapron",
+      "matrix": [
+        0.9510565400123596,
+        0.0,
+        0.30901700258255005,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.30901700258255005,
+        0.0,
+        0.9510565400123596,
+        0.0,
+        -45.0,
+        21.69345474243164,
+        60.0,
+        1.0
+      ],
+      "opacity": 0.68,
+      "priority": 6,
+      "shape": "ellipse",
+      "size": [
+        26.0,
+        19.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6000000238418579,
+            0.4399999976158142,
+            0.30000001192092896,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.75,
+            0.75,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Soil",
+        "rotationDegrees": -19.0
+      }
+    },
+    {
+      "blendWidth": 7.26,
+      "enabled": true,
+      "id": "four_gates-pass1-northforecourt",
+      "matrix": [
+        0.9902680516242981,
+        0.0,
+        -0.13917310535907745,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.13917310535907745,
+        0.0,
+        0.9902680516242981,
+        0.0,
+        1.0,
+        20.492441177368164,
+        -107.0,
+        1.0
+      ],
+      "opacity": 0.73,
+      "priority": 5,
+      "shape": "ellipse",
+      "size": [
+        32.0,
+        22.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6800000071525574,
+            0.6200000047683716,
+            0.5099999904632568,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.7200000286102295,
+            0.7200000286102295,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 13.0
+      }
+    },
+    {
+      "blendWidth": 7.26,
+      "enabled": true,
+      "id": "four_gates-pass1-southforecourt",
+      "matrix": [
+        0.9961947202682495,
+        0.0,
+        0.08715573698282242,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.08715573698282242,
+        0.0,
+        0.9961947202682495,
+        0.0,
+        2.0,
+        20.539438247680664,
+        89.0,
+        1.0
+      ],
+      "opacity": 0.83,
+      "priority": 4,
+      "shape": "ellipse",
+      "size": [
+        37.0,
+        22.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6800000071525574,
+            0.6200000047683716,
+            0.5099999904632568,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.7200000286102295,
+            0.7200000286102295,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 13.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "four_gates-pass1-westforecourt",
+      "matrix": [
+        0.9902680516242981,
+        0.0,
+        0.13917310535907745,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.13917310535907745,
+        0.0,
+        0.9902680516242981,
+        0.0,
+        -96.0,
+        20.6362361907959,
+        -7.0,
+        1.0
+      ],
+      "opacity": 0.74,
+      "priority": 3,
+      "shape": "ellipse",
+      "size": [
+        25.0,
+        34.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6800000071525574,
+            0.6200000047683716,
+            0.5099999904632568,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.7200000286102295,
+            0.7200000286102295,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 13.0
+      }
+    }
+  ],
   "objects": [
     {
       "assetId": "four_gates:avenue-standard-0-e50d9319bd52",
@@ -14392,7 +15113,8 @@
       "id": "Secret_gates_civic_focus",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_gates_civic_focus/Secret_gates_civic_focus__Secret_gates_civic_focus__solid__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_gates_civic_focus2/Secret_gates_civic_focus/Secret_gates_civic_focus__Secret_gates_civic_focus__solid__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -14466,7 +15188,8 @@
       "id": "Secret_gates_deposit_vault",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_gates_deposit_vault/Secret_gates_deposit_vault__Secret_gates_deposit_vault__solid__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_gates_deposit_vault2/Secret_gates_deposit_vault/Secret_gates_deposit_vault__Secret_gates_deposit_vault__solid__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -14540,7 +15263,8 @@
       "id": "Secret_gates_drain_mouth",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_gates_drain_mouth/Secret_gates_drain_mouth__Secret_gates_drain_mouth__solid__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_gates_drain_mouth2/Secret_gates_drain_mouth/Secret_gates_drain_mouth__Secret_gates_drain_mouth__solid__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -14692,7 +15416,8 @@
       "id": "Secret_gates_mirrorsmith_well",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_gates_mirrorsmith_well/Secret_gates_mirrorsmith_well__Secret_gates_mirrorsmith_well__solid__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_gates_mirrorsmith_well2/Secret_gates_mirrorsmith_well/Secret_gates_mirrorsmith_well__Secret_gates_mirrorsmith_well__solid__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -14766,7 +15491,8 @@
       "id": "Secret_gates_otter_pit",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_gates_otter_pit/Secret_gates_otter_pit__Secret_gates_otter_pit__solid__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_gates_otter_pit2/Secret_gates_otter_pit/Secret_gates_otter_pit__Secret_gates_otter_pit__solid__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -14840,7 +15566,8 @@
       "id": "Secret_gates_plaza_spring",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_gates_plaza_spring/Secret_gates_plaza_spring__Secret_gates_plaza_spring__solid__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_gates_plaza_spring2/Secret_gates_plaza_spring/Secret_gates_plaza_spring__Secret_gates_plaza_spring__solid__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -14914,7 +15641,8 @@
       "id": "Secret_gates_reedworks_garden",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_gates_reedworks_garden/Secret_gates_reedworks_garden__Secret_gates_reedworks_garden__solid__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_gates_reedworks_garden2/Secret_gates_reedworks_garden/Secret_gates_reedworks_garden__Secret_gates_reedworks_garden__solid__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -14988,7 +15716,8 @@
       "id": "Secret_gates_sanctuary_reliquary",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_gates_sanctuary_reliquary/Secret_gates_sanctuary_reliquary__Secret_gates_sanctuary_reliquary__solid__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_gates_sanctuary_reliquary2/Secret_gates_sanctuary_reliquary/Secret_gates_sanctuary_reliquary__Secret_gates_sanctuary_reliquary__solid__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15062,7 +15791,8 @@
       "id": "Secret_gates_stormglass_school",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_gates_stormglass_school/Secret_gates_stormglass_school__Secret_gates_stormglass_school__solid__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_gates_stormglass_school2/Secret_gates_stormglass_school/Secret_gates_stormglass_school__Secret_gates_stormglass_school__solid__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15136,7 +15866,8 @@
       "id": "Secret_gates_sunleaf_hollow",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_gates_sunleaf_hollow/Secret_gates_sunleaf_hollow__Secret_gates_sunleaf_hollow__solid__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_gates_sunleaf_hollow2/Secret_gates_sunleaf_hollow/Secret_gates_sunleaf_hollow__Secret_gates_sunleaf_hollow__solid__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15210,7 +15941,8 @@
       "id": "Secret_gates_wall_eyrie",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_gates_wall_eyrie/Secret_gates_wall_eyrie__Secret_gates_wall_eyrie__solid__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_gates_wall_eyrie2/Secret_gates_wall_eyrie/Secret_gates_wall_eyrie__Secret_gates_wall_eyrie__solid__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15284,7 +16016,8 @@
       "id": "Secret_gates_waystone",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_gates_waystone/Secret_gates_waystone__Secret_gates_waystone__solid__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_gates_waystone2/Secret_gates_waystone/Secret_gates_waystone__Secret_gates_waystone__solid__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15826,7 +16559,8 @@
       "id": "SouthOuter_Foundation_-1",
       "materialOverrides": [
         {
-          "meshNodePath": "SouthOuter_Foundation_-1/SouthOuter_Foundation_-1__SouthOuter_Foundation_-1__solid__rubble_stone",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "SouthOuter_Foundation_-12/SouthOuter_Foundation_-1/SouthOuter_Foundation_-1__SouthOuter_Foundation_-1__solid__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15900,7 +16634,8 @@
       "id": "SouthOuter_Foundation_1",
       "materialOverrides": [
         {
-          "meshNodePath": "SouthOuter_Foundation_1/SouthOuter_Foundation_1__SouthOuter_Foundation_1__solid__rubble_stone",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "SouthOuter_Foundation_12/SouthOuter_Foundation_1/SouthOuter_Foundation_1__SouthOuter_Foundation_1__solid__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18050,7 +18785,8 @@
       "id": "published-four-gates-western-river-428",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_007_356_788_WorldPlacement/BridgeUnionPier_007_356_788",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_007_356_788_WorldPlacement2/BridgeUnionPier_007_356_788_WorldPlacement/BridgeUnionPier_007_356_788",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -18084,7 +18820,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_007_364_796_WorldPlacement/BridgeUnionPier_007_364_796",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "BridgeUnionPier_007_364_796_WorldPlacement2/BridgeUnionPier_007_364_796_WorldPlacement/BridgeUnionPier_007_364_796",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -58207,6 +58944,10 @@
     ]
   },
   "sources": {
+    "authoringSpec": {
+      "path": "godot-client/world_authoring/regions/four_gates/region-authoring-spec.json",
+      "sha256": "f9cafcc95c58f1c059ac1eaf83112485c7f1b3e04d24fa78d74082b95b597e1f"
+    },
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
@@ -58219,6 +58960,10 @@
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
         "sha256": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/forest-floor-moss/forest-floor-moss-v001.png",
+        "sha256": "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5"
       },
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
@@ -58245,16 +58990,24 @@
         "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
+        "path": "godot-client/src/dev/map_authoring_region/gltf_material_binding.gd",
+        "sha256": "4d37d216212fe0ca53be4e41579b6ed44c9b52f3e7fc97cc43ef4195a6d4255f"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/ground_region_control.gd",
+        "sha256": "22b5ff872793a8e2599be7a27bfcfce3e255440be8cca81e26b92d3e87deee28"
+      },
+      {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
+        "sha256": "e70fdcf47863bc1375921ac337ac008b8d8c4c0be2cbb8f362de2c57ff552ef6"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
+        "sha256": "4a4103da29f3b4d873460d064d1ad83f2ffa17c72f31601745d7af84b8035d48"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "558bc03ab1ad43eabcb02eabb058d22cb7046e34713549234620991cd412c778"
+        "sha256": "7f55a17b606339d1a6ec77b01097f135cd6a0fd9ef87680d46745e16c69101ff"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/water_region_control.gd",
@@ -59858,11 +60611,11 @@
       },
       {
         "path": "godot-client/world_authoring/regions/four_gates/base-colors.rgba8",
-        "sha256": "e3c16e2819056b3abf815a71c39e08bdb7dfd19e1c9eb3acc231e7552201f617"
+        "sha256": "fa0db940a7683ec40af05a8b91cfaefb3e2d8c3af16697465d4e96b21a89e465"
       },
       {
         "path": "godot-client/world_authoring/regions/four_gates/base-heights.f32le",
-        "sha256": "198e61cb323ecfa08440ddc647860775917d1b465c7b7c3be46333820b845ed2"
+        "sha256": "ef4054f7e98dbb80637658664eed150073ceedb6d22141c854bca6622d1bf017"
       },
       {
         "path": "godot-client/world_authoring/regions/four_gates/paths/amberwood-four-gates-four-gates.tres",
@@ -59973,6 +60726,22 @@
         "sha256": "76278f04e0c7c76d3ac166f591137d3bafbe7dd14a227c52e6ab5edff51634ff"
       },
       {
+        "path": "godot-client/world_authoring/regions/four_gates/surfaces/pass1-civic-gravel.tres",
+        "sha256": "c1a0b303b73b41ea969a35d6ca2bbc52cb609fcebfaad90afa9ece4f8a7697f6"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/four_gates/surfaces/pass1-civic-plaza.tres",
+        "sha256": "f9d740ae06b2f0212f9974e0ce307d874ba9fc7bdda9dc59aaa2a1f9b2658f18"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/four_gates/surfaces/pass1-garden-loam.tres",
+        "sha256": "3faa7f16815d4fdeb01927351bf3281ecf045eb60aba6ab1de60233fa7e796ed"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/four_gates/surfaces/pass1-workyard-earth.tres",
+        "sha256": "cd4c1078d0026838858a0225659914379009777bb2fa1fde9f7fcd7767843827"
+      },
+      {
         "path": "godot-client/world_authoring/regions/four_gates/surfaces/river.tres",
         "sha256": "10204819d08a222d970fbd352e8530522dbd3f212a1c2d68cd20d7e3883a650b"
       },
@@ -59981,25 +60750,39 @@
         "sha256": "2a6cfa248f60c0432e92e20a68bb6a2dc0ae96525d7a9c5e34e65c6ad46baa1e"
       }
     ],
+    "repositoryDependencies": [
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/legacy-colors.rgba8",
+        "sha256": "a5862f256274a35b164923e1b7d6fd4201e2e5b485aa1e5634cee110157cd145"
+      },
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+        "sha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c"
+      },
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/resolved-heights.f32le",
+        "sha256": "f8569fac42ac47e3145a68b2df54e74821021d7ae98ef06debb5fb45acebc8bd"
+      }
+    ],
     "runtimeBindingSeed": {
       "path": "godot-client/world_authoring/regions/four_gates/runtime-bindings.seed.json",
       "sha256": "58f69be285072709290d902ac0adf47d77ebed0c7531437b666891f61b6e1b00"
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/four_gates/four_gates.tscn",
-      "sha256": "2017502f7438763a574ef40b22556480c91d039f427175b48fafc36f3eb94567"
+      "sha256": "a2e11f9f800642b5b17ba361d01c9ae483b898b10bbe1c34949dffa0828c2d98"
     }
   },
   "terrain": {
     "baseColors": {
       "encoding": "rgba8-srgb",
       "path": "base-colors.rgba8",
-      "sha256": "e3c16e2819056b3abf815a71c39e08bdb7dfd19e1c9eb3acc231e7552201f617"
+      "sha256": "fa0db940a7683ec40af05a8b91cfaefb3e2d8c3af16697465d4e96b21a89e465"
     },
     "baseHeights": {
       "encoding": "float32-le",
       "path": "base-heights.f32le",
-      "sha256": "198e61cb323ecfa08440ddc647860775917d1b465c7b7c3be46333820b845ed2"
+      "sha256": "ef4054f7e98dbb80637658664eed150073ceedb6d22141c854bca6622d1bf017"
     },
     "baseSurface": {
       "biomeBlendEnabled": true,
@@ -60069,10 +60852,20 @@
       }
     ],
     "cellMetres": 2.0,
-    "height": 156,
+    "height": 203,
+    "migration": {
+      "globalVertexMin": [
+        112.0,
+        309.0
+      ],
+      "previousGridSha256": "198e61cb323ecfa08440ddc647860775917d1b465c7b7c3be46333820b845ed2",
+      "revision": "global-lattice-envelope-v1",
+      "sharedFieldPath": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+      "sharedFieldSha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c"
+    },
     "origin": [
       -306.0,
-      -150.0
+      -222.0
     ],
     "patches": [],
     "previewUvMetresInverse": 0.17,
@@ -60084,7 +60877,7 @@
         "river-cuts"
       ],
       "path": "resolved-heights.f32le",
-      "sha256": "198e61cb323ecfa08440ddc647860775917d1b465c7b7c3be46333820b845ed2"
+      "sha256": "ef4054f7e98dbb80637658664eed150073ceedb6d22141c854bca6622d1bf017"
     },
     "width": 292
   },

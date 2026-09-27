@@ -1,17 +1,17 @@
 {
-  "glbBytes": 583030828,
-  "nodes": 34267,
-  "meshes": 11904,
+  "glbBytes": 974735468,
+  "nodes": 34759,
+  "meshes": 12089,
   "externalResources": {},
   "sharedResourceResidentBytes": {
     "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
     "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
+    "e8895b714d8db2ce8a19056f34d4f642ea4c9ce9a50e8265c8b7186fea569539": 8386752,
+    "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac": 8386752,
     "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805": 5592406,
     "ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5": 1398102,
     "6ebd390dd8d1694b88f8fc0654471317b6c31c4839fca038c879db059fcd4cb7": 1398102,
-    "a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0": 1398102,
-    "ac13bbd1da6bf69614719d9c5f7acc495a08dbf494baf3ad7a8bcae8042d972e": 349526,
-    "ff74f94ec5d2fc41f89f7beac812f127e6612f64a2ba1b5f814de9639792fe65": 1398102,
+    "e9adde18e1b92def62b1a8a83748d3ce0a32ff8c3d53753bbd363e6a9bcff951": 8386752,
     "9e840c611ba957b1cb1421eca2a4eab4884aea934ef633bb5ac65cacfe8df0be": 1398102,
     "06b2238495c21e9f2f051941c8bafb10fdcb9900dfa855367b918c6de44d770d": 349526,
     "4680650bcb14d3a120707e93004c4fe7db2ebdc8d57e8c567d360d65ac0836a4": 1398102,
@@ -38,12 +38,6 @@
     "ffc87ec7d1c1a19c1077592f968adc86475a1d47ca17e0fbcec477d1f3fbb8d0": 1398102,
     "4e2da3431b7682a3cf9b420c5c870a0c0e848c231654f27937e38f9edc11bb91": 349526,
     "2b6d7dece02ce78f3fc4cf3a421473357486dad0583d52de66db16c64fee3776": 1398102,
-    "3c6d723b621fbc18f296c19362b666ff1803a213ab092a438d7dde7399dec288": 1398102,
-    "a0f97fec99a1074575ac09be0db99ff713525a43797abc6c2f99a6481c0c672e": 349526,
-    "fdc104c8f52acf092f24da6bf467acca15f7dde32a85f3084ee5bdaa9f327b3c": 1398102,
-    "34bfe9afef5484824ff7d670ae779edda8e8ea9e86183c4c0c75de066583480c": 1398102,
-    "cf5e93f99689c4e46e705e395f8f09e59814848f787ed52007e47047d4c423ae": 349526,
-    "c9cc3c07bf21582b0ba5d730dff40cf6c58d977d2088f85c91e9f7cff11a7a77": 1398102,
     "a58bcee53f47ac1441871efda0cbe0023f55771cbbd0ab783430391739669c6c": 1398102,
     "1e5f12e87291a8ad077f017e3a2715de967e545db77ca342953e258b04512621": 349526,
     "af2a3dc164769a1f70404a3f45e183d4be6bd92ad95fe870f571ec719af81cc2": 1398102,
@@ -69,6 +63,7 @@
     "93bbf1c04e3b6bec0e22897bd63f2d68298c2698f9551f36a434a38d9250eb57": 349526,
     "40ae2223911a179955bd8b1c17991c7dc21ce244efd7ab1f22d5d9dc38a8e92c": 1398102,
     "d575609332890a0fdce2def3286959f4f752d1a35d7f2b83c7a667295268ee5e": 87382,
+    "207c6bf4216ca797f0bb12cc3dcd4a35c4fdd65068b8ff4e889a4aa3a87d9a8d": 8386752,
     "085d2a6f8d8e88f0947b465552ad6d39cf5fa446a87992a6f21997c0bbf11427": 1398102,
     "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a": 349526,
     "4c2770e35bd13a214bc744c28f8514256b95e72b627b90e28563395cd3d67168": 1398102,
@@ -123,11 +118,11 @@
     "99205f0067f2a85a00d64101565243d28834e2af9c4e7db09d0cf2bb529210bd": 1398102,
     "a1efec4b8887f77d48f1c78b90e7c54b50bc2cbc752bea41720506ace533625c": 1398102,
     "c7c2237eafb9ab130807c7418c813e93679170fe553669889c91bca93b4031c9": 349526,
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5": 8386752,
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7": 8386752,
     "0f3d3b4aaae613ef1ff908c258ab3745b50b6a72cce44b2780946aa176e2c94f": 349526,
     "4ede901fad7604256f79ec12fec84fae91c2947e5b05b0984b1b95ddb7927a22": 349526,
-    "8e92dbe343e1dcdbfef1fe4be5dfb6b26902a6826903344aa598f3418beee3d9": 1398102,
-    "48a64c8578faa7e669b0d00a1feeae3535ee5288a78b6cb8b43836fa5bffd4ed": 349526,
-    "5b9a55bfb012826a8507fb79136439bdb06608eb3d66a4bb6ae4b726b6581c03": 1398102,
+    "9c52152e3efb5aa99f8d96bd6f5145bedd9cd6084564d36a08656cdaec6b474f": 8386752,
     "0bfe9c7929374300820f5d357cdb572bfd4d3af7e512f0b54c8a936979007de9": 349526,
     "367b3e10291ca513cf68c0012c33706d2dd85bff2f663a79f3dcc062f704000c": 349526,
     "fcfc3101d99b5cb9640013e6ced0514fb3d240b13f82beba0b6dfed0bda922fe": 349526,
@@ -147,9 +142,6 @@
     "ce26722ce5699a7886144552229c8dacf4fed682cb0417e29ca0d2228afe90b2": 349526,
     "90fff08e827d09605d090a05360d05036ec5b8b3a0674816be9c9c5381fdfb6a": 349526,
     "71c16d61028d81e7fe8676f7410f7cfffc9ce0c41baec41d38ff7ad9d1ae43ac": 349526,
-    "1936d69255537879eb1012c5b23b6f37ed1034a9ac878ac2f4f5d26bd8c6e262": 349526,
-    "066d316378c867696b10d31b57301567a068eaefa512f10ad54ed8b0b4b70d71": 87382,
-    "fb2267513cc71685566f1091d73efa7bc102867341d2ed82e3c4630a406b55e0": 87382,
     "c7a5783de549df31ae6d34299e65553254f46b9ac19350dd079a3e9f179fcee4": 1398102,
     "e353fad467123931b67a85a250604c22f64dd5738be04a19aab7eb51246ed2ef": 349526,
     "962f4cd3b1ca9883a0f7dc6e150b9aa098e00140bc7788108f308abfe2ffccb0": 1398102,
@@ -181,6 +173,9 @@
     "21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0": 349526,
     "991ef9e383e481c885e8a54cc4ee00444a2bbd28693cd36acdda308a7b05aa2d": 87382,
     "5d3d975e645bf4fd460f1022d0522c29b3dbc7b4e281bf0deb9559062fc9570a": 8386752,
+    "0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630": 349526,
+    "1bd5132efaa99527f1873c902c7416430c7a97b31fd90c1dd3c42ea6677226ac": 349526,
+    "21895b5643263cd4041cef57994c269f39dfdc941cca9bc7203241d21c855ba3": 8386752,
     "f176f3c33b51e9febc9e1c928fc101059e5d2acaa6910f96fadf49b28aba0aa3": 1398102,
     "c2e63b92affec50d60b4eb6a5272962f804215f12bcbb621ffcf22c9167c7350": 349526,
     "d8c2578d76c1c26df32c7d7827db41910434f86c66d0c111cb8a596efff00b78": 349526,
@@ -194,11 +189,12 @@
     "e8d3a6ffa08f64505436f7ecb218b0ea42f0c10db98bfaf1466751e937e88551": 87382,
     "b6e3514b0710c10922611a854074b9c3643ee2469965aff2ca17afc5930b9906": 87382,
     "ccada634290b55490b333393c4213a30b597ed8474a08060332921e371b38760": 1398102,
-    "0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630": 349526,
-    "1bd5132efaa99527f1873c902c7416430c7a97b31fd90c1dd3c42ea6677226ac": 349526,
     "1536228a69528acd56c649c5555e5a3dbbd25e8324cd891322046f5afecf7e6d": 349526,
     "dc007b56b0106096b20579a6da6fdfb4d67e9fd5fac656fc47a87d66113be95f": 87382,
     "4f84c72d31eb2d3e1246047a0ad955ea041b62ac42c959c307d9b113195fe755": 87382,
+    "1936d69255537879eb1012c5b23b6f37ed1034a9ac878ac2f4f5d26bd8c6e262": 349526,
+    "066d316378c867696b10d31b57301567a068eaefa512f10ad54ed8b0b4b70d71": 87382,
+    "fb2267513cc71685566f1091d73efa7bc102867341d2ed82e3c4630a406b55e0": 87382,
     "69da8391f26e20f20efb513718249107a2c82def0d583b63c50fe1e91c3dabb6": 1398102,
     "99823fecf7a7b2f85cafafd909dadd21b78797e545f6f2ec8daa5c5f11bebf4e": 349526,
     "53c892178a774c350e298fab11237916f8f185e29ad033c7e99b840849b75441": 349526,
@@ -269,9 +265,7 @@
     "88a72ad6f9dbed534b62ffb399c13787c31f388516196a667fbb5fbba19ec5c6": 1398102,
     "a31945bd3099624966b5e5ff1e015b9a1fa79245e78b2f644966f4494d370947": 349526,
     "b4b25d334498ea650388b26512f0b6673e0b27583c54c70e5e347892378a8d39": 1398102,
-    "22bb2076baa4100a3664da38707774e762d5cab4689c68e9d6f560406f84e095": 1398102,
-    "750f327817c7cab5295bc9dfaa73f02724fdaef26918e35c5ca722a847452b2a": 349526,
-    "4f2b4d4d74e0a09ec1bb588e28a220fbe4692324ae9faa75cfc9a2354ec26e75": 1398102,
+    "6a032a5225735aab3a2dd30b8afe6422b0ec4e042512d94940b83f48ecb8577a": 8386752,
     "5fb08fd6777b4fe2654b0403cdd05f30fea4619e488d2cce4dcad6d35ca8f314": 1398102,
     "4c6c26e676f9b3b71b41bab3deb295d851c70e39dc762b6de8c31c3819a84af2": 349526,
     "249937f2b014a26bb95a5a0d7a6c8ee17b1be1806e679dc453e58b1b075fdf91": 1398102,
@@ -290,9 +284,7 @@
     "9f687313b3caa2f367c9624e62d20ab28bc198221a545387ffcba253cd014d60": 1398102,
     "2b7d3d42f1cba2b844ff2710cec6c67cb47a61f51f3f2048074914d821d06a1f": 349526,
     "86609be04fe7f1a2749d884bc996f1fe4b9a69ba1ad37e76b255f5f8a6554bf0": 1398102,
-    "70fc5d26c53ab75ccb13cc730db31e3295527dbd4ca3bc7504c180b4a4722f0b": 1398102,
-    "374375a66523f050aba6dd6de74293ccd268211420390232c4f674fc130a2669": 349526,
-    "4e3adbd13a3f22fe6d723cc8f8b4477cc8e250b37f75e829013339e951deaa6f": 1398102,
+    "12c8a17228d73ebd97911bd7e6ba4f02122bbfb854b2c86813b974675c1bd82a": 8386752,
     "29cf3e77438a371afb144e2cb4340e21be201241893f412c38d075b268774535": 1398102,
     "d4f7f86d98cf2675ebcd2bc4ce47553a18dccb278f54b6aeb835adfefe5169d3": 349526,
     "325ed686de27437c35eddc9d8928a7d68cc5d249c555a1cefeeac613fff7d2dd": 1398102,
@@ -327,15 +319,9 @@
     "153eb59040ce875a3e419e537749371999ee995e16be1f25e24a8d4d12aef3b7": 349526,
     "d4a7aebc97f9a3af9d11a4b9f38107d82e8cf9759d78b7a2cc8ca6f6a6eae20b": 1398102,
     "332b3162d659936c0ceca6badb78ba0e657ccfafffca1ab5078d2948942d0471": 349526,
-    "feed0ccaa70930ef63453cb77dce7990b83b6503db24b8e2f8c3c88381dbc912": 1398102,
-    "d72d0b3b9efe4671e7dbcce75587ecf87999b552a88ebefffa66bcf78c9edeed": 349526,
-    "27de4c32f8b3e2af380f4062f972e62bd776c293f19450b79f393157419ab02d": 1398102,
     "cba844159f5ebadeb2ebe5368aae7188308334c9821fd2bc9da96da93fff8edc": 1398102,
     "be913cf09ab73db46d5c7acea951ede51a6f451317d27458e4b3860b615441cd": 349526,
     "8fdb62a3dd31849bff9827a766e826e4ed7a8e8af3c33946946945b5997b4ca8": 1398102,
-    "960aed83984fef43cff0620b22ff071520800a7d4a420b5ffd337ef856662238": 1398102,
-    "50ec541cd66583b04ff23098636525c6407d2cabed2802d7486f2be54d07db20": 349526,
-    "57e2d4d9aef865b99ba2ea291d83cbb9c084cfa9a0cb714cfeef97f10f283be9": 1398102,
     "d2448fcc28b6c214b9e1a4cc98ef29f530bc6d6065f38abf63ec3063dad47209": 1398102,
     "2bb72fb67793e79e8a986e6016a84afadb94432203f15db874d9611ee518effe": 349526,
     "5a697e14d4cbeae369ccb30e653eb57c7e9962a725965d2bcc7a9927d16bda10": 1398102,
@@ -348,7 +334,7 @@
     "370790616ae0f5ae9f7dca4e36c502ccdbc3094daee999986e7733d0b08a6999": 349526,
     "5d99c9774bacfb4be57c9b2c015b4c28614feda9e74b0ce2c102024f91a0ef8a": 1398102
   },
-  "sha256": "0ce92c6a3007f8f91451f61a5ca7b23bf72e18b8f9e59685f8264dbe09ea2c1e",
+  "sha256": "e3a139bd73ae2be28ba66a22600bbdc39d0ef22e6cc78c9a9ab7de45db12f066",
   "regions": [
     "whitehorn_range",
     "grey_moors",
@@ -363,6 +349,200 @@
     "verdant_stair",
     "ssarathi_ruins"
   ],
+  "storageByRegion": {
+    "whitehorn_range": {
+      "serverOrigin": [
+        362,
+        360
+      ],
+      "serverCells": [
+        708,
+        708
+      ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "c661b36ceae9c825e1ee2fe602f5ca5930240c86e393bd3cb963180c8cb01e59"
+    },
+    "grey_moors": {
+      "serverOrigin": [
+        224,
+        326
+      ],
+      "serverCells": [
+        750,
+        750
+      ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "810ec91bcf212911702005916d6bc24ac405bd7fdad5b41f301e2db78181f280"
+    },
+    "amberwood": {
+      "serverOrigin": [
+        242,
+        182
+      ],
+      "serverCells": [
+        426,
+        426
+      ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "d5bd2c2ef68246f096cd4343ff2aefedf47e9b2fb7b586d52b761d1b3f0e4091"
+    },
+    "amethyst_barrens": {
+      "serverOrigin": [
+        182,
+        166
+      ],
+      "serverCells": [
+        738,
+        738
+      ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "aa4616afdc70c02502021c4d2362de76ecc310a442a974b10e719748e4c769c5"
+    },
+    "mirrorhold": {
+      "serverOrigin": [
+        208,
+        350
+      ],
+      "serverCells": [
+        540,
+        540
+      ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "47bda36d4c882def4d9d18979579722c85ea586751022be5c6627b338e07f261"
+    },
+    "sunmane_steppe": {
+      "serverOrigin": [
+        194,
+        292
+      ],
+      "serverCells": [
+        792,
+        792
+      ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
+    },
+    "four_gates": {
+      "serverOrigin": [
+        310,
+        164
+      ],
+      "serverCells": [
+        594,
+        594
+      ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "f9cafcc95c58f1c059ac1eaf83112485c7f1b3e04d24fa78d74082b95b597e1f"
+    },
+    "westhaven": {
+      "serverOrigin": [
+        174,
+        244
+      ],
+      "serverCells": [
+        588,
+        588
+      ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "34da3cd93a5876bf75e2d390ce40f9ccb3953dfcb79e967de22ac417906b1b37"
+    },
+    "manymouth_delta": {
+      "serverOrigin": [
+        208,
+        310
+      ],
+      "serverCells": [
+        510,
+        510
+      ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "184cde8deb84f6a3d9829fa8e0b9d05291a7e8120c0aebdd160f15f2c1187eb5"
+    },
+    "crownwater": {
+      "serverOrigin": [
+        294,
+        114
+      ],
+      "serverCells": [
+        774,
+        774
+      ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "a3dca08cf1085c312545b17627e12ce4c4a8302714353cb09fba44b04b36a808"
+    },
+    "verdant_stair": {
+      "serverOrigin": [
+        298,
+        164
+      ],
+      "serverCells": [
+        702,
+        702
+      ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "3fb281869a0ab80c56743c2cbf353859bb86503bc8015ac3e47890f02c921cb1"
+    },
+    "ssarathi_ruins": {
+      "serverOrigin": [
+        376,
+        244
+      ],
+      "serverCells": [
+        780,
+        780
+      ],
+      "serverStorageVersion": 1,
+      "serverTileMin": [
+        0,
+        0
+      ],
+      "authoringSpecSha256": "90839428d8d44bd18f2b28688dac9d664dd4399fadf9cd25b9b69a4953ff30cc"
+    }
+  },
   "authoredOverlays": {
     "nodes": [
       {
@@ -370,1311 +550,3878 @@
         "triangles": 41992
       },
       {
+        "name": "AuthoredGround_amberwood_amberwood-pass1-gatecourt",
+        "triangles": 308
+      },
+      {
+        "name": "AuthoredGround_amberwood_amberwood-pass1-gateapproach",
+        "triangles": 198
+      },
+      {
+        "name": "AuthoredGround_amberwood_amberwood-pass1-hallyard",
+        "triangles": 334
+      },
+      {
+        "name": "AuthoredGround_amberwood_amberwood-pass1-halltrail",
+        "triangles": 306
+      },
+      {
+        "name": "AuthoredGround_amberwood_amberwood-pass1-mootyard",
+        "triangles": 238
+      },
+      {
+        "name": "AuthoredGround_amberwood_amberwood-pass1-mootapron",
+        "triangles": 260
+      },
+      {
+        "name": "AuthoredGround_amberwood_amberwood-pass1-greattreeleaf",
+        "triangles": 546
+      },
+      {
+        "name": "AuthoredGround_amberwood_amberwood-pass1-treelower",
+        "triangles": 250
+      },
+      {
+        "name": "AuthoredGround_amberwood_amberwood-pass1-rootgrove",
+        "triangles": 280
+      },
+      {
+        "name": "AuthoredGround_amberwood_amberwood-pass1-rootlower",
+        "triangles": 186
+      },
+      {
+        "name": "AuthoredGround_amberwood_amberwood-pass1-coppiceworkyard",
+        "triangles": 186
+      },
+      {
+        "name": "AuthoredGround_amberwood_amberwood-pass1-coppicemargin",
+        "triangles": 112
+      },
+      {
         "name": "Walk_amberwood_amber-chapel-climb",
-        "triangles": 924
+        "triangles": 3129
       },
       {
         "name": "Walk_amberwood_amber-moot-path",
-        "triangles": 300
+        "triangles": 1106
       },
       {
         "name": "Walk_amberwood_amber-motherroot-yard",
-        "triangles": 180
+        "triangles": 655
       },
       {
         "name": "Walk_amberwood_amber-ridge-camp",
-        "triangles": 840
+        "triangles": 3036
       },
       {
         "name": "Walk_amberwood_amber-side-kilnyard",
-        "triangles": 444
+        "triangles": 1730
       },
       {
         "name": "Walk_amberwood_amber-undercut-path",
-        "triangles": 636
+        "triangles": 2143
       },
       {
         "name": "Walk_amberwood_amber-yard-approach",
-        "triangles": 420
+        "triangles": 1432
       },
       {
         "name": "Walk_amberwood_amberwood--four_gates-amberwood",
-        "triangles": 5448
+        "triangles": 24549
       },
       {
         "name": "Walk_amberwood_amberwood--grey_moors-amberwood",
-        "triangles": 5304
+        "triangles": 21751
       },
       {
         "name": "Walk_amberwood_amberwood--mirrorhold-amberwood",
-        "triangles": 7320
+        "triangles": 30864
       },
       {
         "name": "Walk_amberwood_amberwood--whitehorn_range-amberwood",
-        "triangles": 6744
+        "triangles": 27421
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-1078",
-        "triangles": 312
+        "triangles": 931
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-467",
-        "triangles": 948
+        "triangles": 2610
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-472",
-        "triangles": 360
+        "triangles": 1185
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-473",
-        "triangles": 396
+        "triangles": 1183
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-474",
-        "triangles": 564
+        "triangles": 1884
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-475",
-        "triangles": 2052
+        "triangles": 5155
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-476",
-        "triangles": 720
+        "triangles": 2140
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-477",
-        "triangles": 516
+        "triangles": 1606
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-478",
-        "triangles": 132
+        "triangles": 423
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-479",
-        "triangles": 1056
+        "triangles": 2796
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-480",
-        "triangles": 432
+        "triangles": 1401
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-481",
-        "triangles": 516
+        "triangles": 1660
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-482",
-        "triangles": 216
+        "triangles": 644
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-483",
-        "triangles": 1320
+        "triangles": 3996
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-484",
-        "triangles": 648
+        "triangles": 2067
       },
       {
         "name": "Walk_amberwood_discovery-amberwood-825",
-        "triangles": 252
+        "triangles": 809
       },
       {
         "name": "Walk_amberwood_door-amberwood-amber-hall-door",
-        "triangles": 636
+        "triangles": 1734
       },
       {
         "name": "Walk_amberwood_door-amberwood-cinder-chapel-door",
-        "triangles": 3936
+        "triangles": 11110
       },
       {
         "name": "Walk_amberwood_door-amberwood-gate-undercroft-stair",
-        "triangles": 6852
+        "triangles": 18132
       },
       {
         "name": "Walk_amberwood_door-amberwood-motherroot-mouth",
-        "triangles": 1164
+        "triangles": 3131
       },
       {
         "name": "AuthoredGround_amethyst_barrensBase",
         "triangles": 148470
       },
       {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-basinwest",
+        "triangles": 4524
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-basinmiddle",
+        "triangles": 6204
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-basineast",
+        "triangles": 6916
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-basinsouth",
+        "triangles": 6740
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-basinnorth",
+        "triangles": 4096
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-basinwestlower",
+        "triangles": 1870
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-massifapron",
+        "triangles": 1294
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-massifscatter",
+        "triangles": 1330
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-courtforecourt",
+        "triangles": 450
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-courtapproach",
+        "triangles": 222
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-assayyard",
+        "triangles": 696
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-assayapproach",
+        "triangles": 332
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-northcamp",
+        "triangles": 134
+      },
+      {
+        "name": "AuthoredGround_amethyst_barrens_amethyst-pass1-eastcamp",
+        "triangles": 138
+      },
+      {
         "name": "Walk_amethyst_barrens_amethyst_barrens--mirrorhold-amethyst_barrens",
-        "triangles": 2100
+        "triangles": 10989
       },
       {
         "name": "Walk_amethyst_barrens_amethyst_barrens--sunmane_steppe-amethyst_barrens",
-        "triangles": 5172
+        "triangles": 22791
       },
       {
         "name": "Walk_amethyst_barrens_amethyst_barrens--whitehorn_range-amethyst_barrens",
-        "triangles": 4368
+        "triangles": 20185
       },
       {
         "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-1276",
-        "triangles": 2532
+        "triangles": 7522
       },
       {
         "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-699",
-        "triangles": 708
+        "triangles": 2196
       },
       {
         "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-700",
-        "triangles": 1284
+        "triangles": 4413
       },
       {
         "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-701",
-        "triangles": 1800
+        "triangles": 4896
       },
       {
         "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-702",
-        "triangles": 480
+        "triangles": 1486
       },
       {
         "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-703",
-        "triangles": 8256
+        "triangles": 25042
       },
       {
         "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-704",
-        "triangles": 108
+        "triangles": 342
       },
       {
         "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-705",
-        "triangles": 1500
+        "triangles": 4494
       },
       {
         "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-706",
-        "triangles": 1140
+        "triangles": 2948
       },
       {
         "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-707",
-        "triangles": 876
+        "triangles": 2594
       },
       {
         "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-708",
-        "triangles": 468
+        "triangles": 1250
       },
       {
         "name": "Walk_amethyst_barrens_discovery-amethyst_barrens-710",
-        "triangles": 252
+        "triangles": 892
       },
       {
         "name": "Walk_amethyst_barrens_door-amethyst_barrens-counting-house-door",
-        "triangles": 3180
+        "triangles": 9353
       },
       {
         "name": "Walk_amethyst_barrens_door-amethyst_barrens-geode-hollow-mouth",
-        "triangles": 4332
+        "triangles": 12375
       },
       {
         "name": "Walk_amethyst_barrens_door-amethyst_barrens-measure-house-door",
-        "triangles": 3996
+        "triangles": 11651
       },
       {
         "name": "Walk_amethyst_barrens_door-amethyst_barrens-resonant-vault-stair",
-        "triangles": 4248
+        "triangles": 11594
       },
       {
         "name": "Walk_amethyst_barrens_door-amethyst_barrens-shardworks-headframe",
-        "triangles": 1620
+        "triangles": 4908
       },
       {
         "name": "Walk_amethyst_barrens_door-amethyst_barrens-sour-cut-mouth",
-        "triangles": 5256
+        "triangles": 16999
       },
       {
         "name": "Walk_amethyst_barrens_door-amethyst_barrens-storm-barrow-stair",
-        "triangles": 3804
+        "triangles": 11300
       },
       {
         "name": "AuthoredGround_crownwaterBase",
         "triangles": 138182
       },
       {
+        "name": "AuthoredGround_crownwater_pass1-bell-approach",
+        "triangles": 178
+      },
+      {
+        "name": "AuthoredGround_crownwater_pass1-civic-east-court",
+        "triangles": 232
+      },
+      {
+        "name": "AuthoredGround_crownwater_pass1-civic-west-walk",
+        "triangles": 202
+      },
+      {
+        "name": "AuthoredGround_crownwater_pass1-garden-south-margin",
+        "triangles": 86
+      },
+      {
+        "name": "AuthoredGround_crownwater_pass1-garden-west-margin",
+        "triangles": 38
+      },
+      {
+        "name": "AuthoredGround_crownwater_pass1-harbor-workyard",
+        "triangles": 212
+      },
+      {
         "name": "Walk_crownwater_crownwater--manymouth_delta-crownwater",
-        "triangles": 1188
+        "triangles": 3902
       },
       {
         "name": "Walk_crownwater_crownwater--ssarathi_ruins-crownwater",
-        "triangles": 648
+        "triangles": 2159
       },
       {
         "name": "Walk_crownwater_crownwater--westhaven-crownwater",
-        "triangles": 552
+        "triangles": 1876
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-899",
-        "triangles": 876
+        "triangles": 3011
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-900",
-        "triangles": 168
+        "triangles": 569
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-901",
-        "triangles": 3864
+        "triangles": 11899
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-902",
-        "triangles": 312
+        "triangles": 974
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-903",
-        "triangles": 492
+        "triangles": 1556
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-904",
-        "triangles": 504
+        "triangles": 1651
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-905",
-        "triangles": 96
+        "triangles": 310
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-906",
-        "triangles": 696
+        "triangles": 2174
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-907",
-        "triangles": 2700
+        "triangles": 8420
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-908",
-        "triangles": 2184
+        "triangles": 6771
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-909",
-        "triangles": 360
+        "triangles": 1129
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-910",
-        "triangles": 588
+        "triangles": 1943
       },
       {
         "name": "Walk_crownwater_discovery-crownwater-911",
-        "triangles": 1548
+        "triangles": 4787
       },
       {
         "name": "Walk_crownwater_door-crownwater-basilica-undercroft",
-        "triangles": 3912
+        "triangles": 11365
       },
       {
         "name": "Walk_crownwater_door-crownwater-campanile-door",
-        "triangles": 4764
+        "triangles": 13113
       },
       {
         "name": "Walk_crownwater_door-crownwater-case-room-door",
-        "triangles": 5196
+        "triangles": 15180
       },
       {
         "name": "Walk_crownwater_door-crownwater-cistern-stair",
-        "triangles": 2448
+        "triangles": 7107
       },
       {
         "name": "Walk_crownwater_door-crownwater-customs-door",
-        "triangles": 192
+        "triangles": 614
       },
       {
         "name": "Walk_crownwater_door-crownwater-eleventh-bell-door",
-        "triangles": 6912
+        "triangles": 19651
       },
       {
         "name": "Walk_crownwater_door-crownwater-grating-mouth",
-        "triangles": 2280
+        "triangles": 6664
       },
       {
         "name": "AuthoredGround_four_gatesBase",
         "triangles": 61746
       },
       {
+        "name": "AuthoredGround_four_gates_four_gates-pass1-crystaleast",
+        "triangles": 904
+      },
+      {
+        "name": "AuthoredGround_four_gates_four_gates-pass1-crystalsouth",
+        "triangles": 860
+      },
+      {
+        "name": "AuthoredGround_four_gates_four_gates-pass1-eastforecourt",
+        "triangles": 402
+      },
+      {
+        "name": "AuthoredGround_four_gates_four_gates-pass1-westforecourt",
+        "triangles": 386
+      },
+      {
+        "name": "AuthoredGround_four_gates_four_gates-pass1-southforecourt",
+        "triangles": 374
+      },
+      {
+        "name": "AuthoredGround_four_gates_four_gates-pass1-northforecourt",
+        "triangles": 324
+      },
+      {
+        "name": "AuthoredGround_four_gates_four_gates-pass1-marketapron",
+        "triangles": 228
+      },
+      {
+        "name": "AuthoredGround_four_gates_four_gates-pass1-eastmarketapron",
+        "triangles": 238
+      },
+      {
+        "name": "AuthoredGround_four_gates_four_gates-pass1-forgeapron",
+        "triangles": 224
+      },
+      {
+        "name": "AuthoredGround_four_gates_four_gates-pass1-deposityard",
+        "triangles": 224
+      },
+      {
+        "name": "AuthoredGround_four_gates_four_gates-pass1-gardenmargin",
+        "triangles": 286
+      },
+      {
+        "name": "AuthoredGround_four_gates_four_gates-pass1-gardenfootpath",
+        "triangles": 152
+      },
+      {
         "name": "Walk_four_gates_amberwood--four_gates-four_gates",
-        "triangles": 7896
+        "triangles": 36724
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-257",
-        "triangles": 288
+        "triangles": 956
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-258",
-        "triangles": 372
+        "triangles": 1328
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-259",
-        "triangles": 156
+        "triangles": 520
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-260",
-        "triangles": 468
+        "triangles": 1554
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-261",
-        "triangles": 564
+        "triangles": 2000
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-262",
-        "triangles": 5220
+        "triangles": 16502
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-263",
-        "triangles": 96
+        "triangles": 335
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-264",
-        "triangles": 612
+        "triangles": 2121
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-265",
-        "triangles": 3072
+        "triangles": 8992
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-266",
-        "triangles": 192
+        "triangles": 620
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-267",
-        "triangles": 552
+        "triangles": 1764
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-268",
-        "triangles": 804
+        "triangles": 2680
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-269",
-        "triangles": 504
+        "triangles": 1550
       },
       {
         "name": "Walk_four_gates_discovery-four_gates-913",
-        "triangles": 408
+        "triangles": 1260
       },
       {
         "name": "Walk_four_gates_door-four_gates-interior-four-gates-deposit-four-keys",
-        "triangles": 2016
+        "triangles": 5851
       },
       {
         "name": "Walk_four_gates_door-four_gates-interior-four-gates-ferrymans-rest",
-        "triangles": 3444
+        "triangles": 10024
       },
       {
         "name": "Walk_four_gates_door-four_gates-interior-four-gates-lantern-row",
-        "triangles": 1704
+        "triangles": 5537
       },
       {
         "name": "Walk_four_gates_door-four_gates-interior-four-gates-mirrorsmith-forge",
-        "triangles": 3840
+        "triangles": 11678
       },
       {
         "name": "Walk_four_gates_door-four_gates-interior-four-gates-reedworks",
-        "triangles": 1968
+        "triangles": 6362
       },
       {
         "name": "Walk_four_gates_door-four_gates-interior-four-gates-stormglass-house",
-        "triangles": 3792
+        "triangles": 10694
       },
       {
         "name": "Walk_four_gates_four_gates--manymouth_delta-four_gates",
-        "triangles": 11232
+        "triangles": 50712
       },
       {
         "name": "Walk_four_gates_four_gates--mirrorhold-four_gates",
-        "triangles": 5028
+        "triangles": 23679
       },
       {
         "name": "Walk_four_gates_four_gates--westhaven-four_gates",
-        "triangles": 9780
+        "triangles": 42874
       },
       {
         "name": "AuthoredGround_grey_moorsBase",
         "triangles": 115120
       },
       {
+        "name": "AuthoredGround_grey_moors_pass1-north-causeway-heather",
+        "triangles": 190
+      },
+      {
+        "name": "AuthoredGround_grey_moors_pass1-refuge-croft-earth",
+        "triangles": 210
+      },
+      {
+        "name": "AuthoredGround_grey_moors_pass1-refuge-peat-yard",
+        "triangles": 218
+      },
+      {
+        "name": "AuthoredGround_grey_moors_pass1-west-croft-heather",
+        "triangles": 192
+      },
+      {
         "name": "Walk_grey_moors_amberwood--grey_moors-grey_moors",
-        "triangles": 7080
+        "triangles": 34466
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-1001",
-        "triangles": 372
+        "triangles": 1199
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-1177",
-        "triangles": 1092
+        "triangles": 3200
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-764",
-        "triangles": 588
+        "triangles": 1632
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-765",
-        "triangles": 1284
+        "triangles": 3864
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-766",
-        "triangles": 1104
+        "triangles": 3448
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-767",
-        "triangles": 312
+        "triangles": 1088
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-768",
-        "triangles": 1752
+        "triangles": 5513
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-769",
-        "triangles": 264
+        "triangles": 928
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-770",
-        "triangles": 1176
+        "triangles": 3786
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-771",
-        "triangles": 1548
+        "triangles": 3997
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-772",
-        "triangles": 912
+        "triangles": 2808
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-773",
-        "triangles": 792
+        "triangles": 2640
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-774",
-        "triangles": 1104
+        "triangles": 3077
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-775",
-        "triangles": 984
+        "triangles": 2502
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-776",
-        "triangles": 696
+        "triangles": 2292
       },
       {
         "name": "Walk_grey_moors_discovery-grey_moors-777",
-        "triangles": 204
+        "triangles": 525
       },
       {
         "name": "Walk_grey_moors_door-grey_moors-east-crypt-stair",
-        "triangles": 9648
+        "triangles": 27587
       },
       {
         "name": "Walk_grey_moors_door-grey_moors-fifth-chamber-mouth",
-        "triangles": 7836
+        "triangles": 22080
       },
       {
         "name": "Walk_grey_moors_door-grey_moors-great-barrow-mouth",
-        "triangles": 7968
+        "triangles": 22999
       },
       {
         "name": "Walk_grey_moors_door-grey_moors-peat-croft-door",
-        "triangles": 6564
+        "triangles": 20909
       },
       {
         "name": "Walk_grey_moors_door-grey_moors-south-crypt-stair",
-        "triangles": 2520
+        "triangles": 7413
       },
       {
         "name": "Walk_grey_moors_door-grey_moors-warm-stone-door",
-        "triangles": 7872
+        "triangles": 22898
       },
       {
         "name": "Walk_grey_moors_door-grey_moors-west-crypt-stair",
-        "triangles": 4716
+        "triangles": 13572
       },
       {
         "name": "Walk_grey_moors_grey_moors--westhaven-grey_moors",
-        "triangles": 6864
+        "triangles": 30737
       },
       {
         "name": "Walk_grey_moors_grey_moors--whitehorn_range-grey_moors",
-        "triangles": 6732
+        "triangles": 28336
       },
       {
         "name": "Walk_grey_moors_trail-grey_moors-0",
-        "triangles": 1536
+        "triangles": 4968
       },
       {
         "name": "AuthoredGround_manymouth_deltaBase",
         "triangles": 83234
       },
       {
+        "name": "AuthoredGround_manymouth_delta_manymouth_delta-pass1-templeapproach",
+        "triangles": 1268
+      },
+      {
+        "name": "AuthoredGround_manymouth_delta_manymouth_delta-pass1-templeeast",
+        "triangles": 612
+      },
+      {
+        "name": "AuthoredGround_manymouth_delta_manymouth_delta-pass1-templequayyard",
+        "triangles": 280
+      },
+      {
         "name": "Walk_manymouth_delta_crownwater--manymouth_delta-manymouth_delta",
-        "triangles": 6756
+        "triangles": 24932
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1002",
-        "triangles": 288
+        "triangles": 938
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1003",
-        "triangles": 348
+        "triangles": 1008
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1004",
-        "triangles": 276
+        "triangles": 956
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1005",
-        "triangles": 720
+        "triangles": 2264
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1006",
-        "triangles": 552
+        "triangles": 1656
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1007",
-        "triangles": 192
+        "triangles": 711
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1009",
-        "triangles": 372
+        "triangles": 1308
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1010",
-        "triangles": 864
+        "triangles": 2808
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1011",
-        "triangles": 660
+        "triangles": 1971
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1012",
-        "triangles": 192
+        "triangles": 644
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1013",
-        "triangles": 7464
+        "triangles": 23054
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1014",
-        "triangles": 600
+        "triangles": 1636
       },
       {
         "name": "Walk_manymouth_delta_discovery-manymouth_delta-1015",
-        "triangles": 1584
+        "triangles": 4142
       },
       {
         "name": "Walk_manymouth_delta_door-manymouth_delta-bund-shrine-door",
-        "triangles": 2352
+        "triangles": 7573
       },
       {
         "name": "Walk_manymouth_delta_door-manymouth_delta-bund-warden-door",
-        "triangles": 11904
+        "triangles": 37201
       },
       {
         "name": "Walk_manymouth_delta_door-manymouth_delta-gate-descent",
-        "triangles": 2196
+        "triangles": 7123
       },
       {
         "name": "Walk_manymouth_delta_door-manymouth_delta-labyrinth-mouth",
-        "triangles": 5700
+        "triangles": 18146
       },
       {
         "name": "Walk_manymouth_delta_door-manymouth_delta-paddy-sump-mouth",
-        "triangles": 11976
+        "triangles": 37546
       },
       {
         "name": "Walk_manymouth_delta_door-manymouth_delta-temple-sanctum-door",
-        "triangles": 4800
+        "triangles": 14968
       },
       {
         "name": "Walk_manymouth_delta_door-manymouth_delta-tide-hall-door",
-        "triangles": 96
+        "triangles": 389
       },
       {
         "name": "Walk_manymouth_delta_door-manymouth_delta-underdeck-hatch",
-        "triangles": 564
+        "triangles": 1603
       },
       {
         "name": "Walk_manymouth_delta_four_gates--manymouth_delta-manymouth_delta",
-        "triangles": 9336
+        "triangles": 44068
       },
       {
         "name": "Walk_manymouth_delta_manymouth_delta--verdant_stair-manymouth_delta",
-        "triangles": 7680
+        "triangles": 35680
       },
       {
         "name": "Walk_manymouth_delta_manymouth_delta--westhaven-manymouth_delta",
-        "triangles": 12264
+        "triangles": 58578
       },
       {
         "name": "AuthoredGround_mirrorholdBase",
         "triangles": 74682
       },
       {
+        "name": "AuthoredGround_mirrorhold_pass1-cistern-apron",
+        "triangles": 136
+      },
+      {
+        "name": "AuthoredGround_mirrorhold_pass1-civic-court",
+        "triangles": 174
+      },
+      {
         "name": "Walk_mirrorhold_access-mirrorhold-north-plateau",
-        "triangles": 720
+        "triangles": 1440
       },
       {
         "name": "Walk_mirrorhold_amberwood--mirrorhold-mirrorhold",
-        "triangles": 8436
+        "triangles": 41258
       },
       {
         "name": "Walk_mirrorhold_amethyst_barrens--mirrorhold-mirrorhold",
-        "triangles": 11052
+        "triangles": 55120
       },
       {
         "name": "Walk_mirrorhold_discovery-mirrorhold-606",
-        "triangles": 780
+        "triangles": 2370
       },
       {
         "name": "Walk_mirrorhold_discovery-mirrorhold-607",
-        "triangles": 60
+        "triangles": 158
       },
       {
         "name": "Walk_mirrorhold_discovery-mirrorhold-608",
-        "triangles": 84
+        "triangles": 292
       },
       {
         "name": "Walk_mirrorhold_discovery-mirrorhold-612",
-        "triangles": 132
+        "triangles": 395
       },
       {
         "name": "Walk_mirrorhold_discovery-mirrorhold-73",
-        "triangles": 1500
+        "triangles": 4184
       },
       {
         "name": "Walk_mirrorhold_door-mirrorhold-cistern-door",
-        "triangles": 12588
+        "triangles": 39456
       },
       {
         "name": "Walk_mirrorhold_door-mirrorhold-lens-vault-stair",
-        "triangles": 7716
+        "triangles": 24100
       },
       {
         "name": "Walk_mirrorhold_door-mirrorhold-stair-cellars-door",
-        "triangles": 252
+        "triangles": 833
       },
       {
         "name": "Walk_mirrorhold_four_gates--mirrorhold-mirrorhold",
-        "triangles": 11004
+        "triangles": 53627
       },
       {
         "name": "Walk_mirrorhold_mirrorhold--sunmane_steppe-mirrorhold",
-        "triangles": 15288
+        "triangles": 74066
       },
       {
         "name": "Walk_mirrorhold_mirrorhold--verdant_stair-mirrorhold",
-        "triangles": 8436
+        "triangles": 40296
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-arrival-lane",
-        "triangles": 2676
+        "triangles": 12149
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-canal-sluice-lane",
-        "triangles": 288
+        "triangles": 1068
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-cistern-yard-lane",
-        "triangles": 840
+        "triangles": 2754
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-citadel-service-road",
-        "triangles": 3756
+        "triangles": 15979
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-civic-ascent",
-        "triangles": 1716
+        "triangles": 8167
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-civic-bridge-exit",
-        "triangles": 648
+        "triangles": 2786
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-east-bench-yard-link",
-        "triangles": 84
+        "triangles": 279
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-east-stair-home-yard-link",
-        "triangles": 108
+        "triangles": 328
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-east-stair-yard",
-        "triangles": 312
+        "triangles": 1050
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-east-working-road",
-        "triangles": 4500
+        "triangles": 17892
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-icebore-lane",
-        "triangles": 300
+        "triangles": 1038
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-lake-north-yard-link",
-        "triangles": 156
+        "triangles": 559
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-lens-vault-lane",
-        "triangles": 36
+        "triangles": 104
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-lens-yard-lane",
-        "triangles": 780
+        "triangles": 2776
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-lower-terrace-yard-link",
-        "triangles": 588
+        "triangles": 2055
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-mid-bench-yard-link",
-        "triangles": 840
+        "triangles": 3071
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-orrery-pilgrim-road",
-        "triangles": 1140
+        "triangles": 4098
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-overlook-lane",
-        "triangles": 876
+        "triangles": 2883
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-quarry-adit-lane",
-        "triangles": 300
+        "triangles": 1010
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-quarry-road",
-        "triangles": 864
+        "triangles": 3646
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-quay-descent",
-        "triangles": 2952
+        "triangles": 12749
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-reed-cut-lane",
-        "triangles": 108
+        "triangles": 274
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-rose-gallery-lane",
-        "triangles": 2832
+        "triangles": 8113
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-sanctuary-causeway-approach",
-        "triangles": 840
+        "triangles": 3707
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-south-shore-yard-link",
-        "triangles": 996
+        "triangles": 3433
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-south-watch-lane",
-        "triangles": 192
+        "triangles": 683
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-stair-town-0",
-        "triangles": 1296
+        "triangles": 2052
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-stair-town-1",
-        "triangles": 1080
+        "triangles": 1620
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-stair-town-2",
-        "triangles": 1080
+        "triangles": 1620
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-watch-hatch-approach",
-        "triangles": 180
+        "triangles": 527
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-west-bench-yard-link",
-        "triangles": 420
+        "triangles": 1187
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-west-shore-yard-link",
-        "triangles": 852
+        "triangles": 3097
       },
       {
         "name": "Walk_mirrorhold_street-mirrorhold-western-lens-lane",
-        "triangles": 804
+        "triangles": 2186
       },
       {
         "name": "Walk_mirrorhold_trail-mirrorhold-0",
-        "triangles": 780
+        "triangles": 2600
       },
       {
         "name": "AuthoredGround_ssarathi_ruinsBase",
         "triangles": 147306
       },
       {
+        "name": "AuthoredGround_ssarathi_ruins_ssarathi_ruins-pass1-marketcourt",
+        "triangles": 420
+      },
+      {
+        "name": "AuthoredGround_ssarathi_ruins_ssarathi_ruins-pass1-marketapron",
+        "triangles": 214
+      },
+      {
         "name": "Walk_ssarathi_ruins_crownwater--ssarathi_ruins-ssarathi_ruins",
-        "triangles": 312
+        "triangles": 1169
       },
       {
         "name": "Walk_ssarathi_ruins_discovery-ssarathi_ruins-1144",
-        "triangles": 96
+        "triangles": 247
       },
       {
         "name": "Walk_ssarathi_ruins_discovery-ssarathi_ruins-431",
-        "triangles": 1044
+        "triangles": 3383
       },
       {
         "name": "Walk_ssarathi_ruins_discovery-ssarathi_ruins-432",
-        "triangles": 1476
+        "triangles": 5016
       },
       {
         "name": "Walk_ssarathi_ruins_discovery-ssarathi_ruins-433",
-        "triangles": 300
+        "triangles": 793
       },
       {
         "name": "Walk_ssarathi_ruins_discovery-ssarathi_ruins-435",
-        "triangles": 132
+        "triangles": 385
       },
       {
         "name": "Walk_ssarathi_ruins_discovery-ssarathi_ruins-436",
-        "triangles": 1464
+        "triangles": 4312
       },
       {
         "name": "Walk_ssarathi_ruins_discovery-ssarathi_ruins-437",
-        "triangles": 180
+        "triangles": 567
       },
       {
         "name": "Walk_ssarathi_ruins_discovery-ssarathi_ruins-438",
-        "triangles": 180
+        "triangles": 657
       },
       {
         "name": "Walk_ssarathi_ruins_discovery-ssarathi_ruins-439",
-        "triangles": 696
+        "triangles": 2274
       },
       {
         "name": "Walk_ssarathi_ruins_discovery-ssarathi_ruins-440",
-        "triangles": 2004
+        "triangles": 6559
       },
       {
         "name": "Walk_ssarathi_ruins_discovery-ssarathi_ruins-441",
-        "triangles": 1092
+        "triangles": 3650
       },
       {
         "name": "Walk_ssarathi_ruins_discovery-ssarathi_ruins-442",
-        "triangles": 288
+        "triangles": 917
       },
       {
         "name": "Walk_ssarathi_ruins_door-ssarathi_ruins-archive-vault-door",
-        "triangles": 14220
+        "triangles": 41637
       },
       {
         "name": "Walk_ssarathi_ruins_door-ssarathi_ruins-cistern-shaft",
-        "triangles": 5460
+        "triangles": 16483
       },
       {
         "name": "Walk_ssarathi_ruins_door-ssarathi_ruins-hatchery-descent",
-        "triangles": 3336
+        "triangles": 9564
       },
       {
         "name": "Walk_ssarathi_ruins_door-ssarathi_ruins-lineage-house-door",
-        "triangles": 1872
+        "triangles": 5794
       },
       {
         "name": "Walk_ssarathi_ruins_door-ssarathi_ruins-tenth-mouth-door",
-        "triangles": 10632
+        "triangles": 33030
       },
       {
         "name": "Walk_ssarathi_ruins_door-ssarathi_ruins-undercroft-mouth",
-        "triangles": 3816
+        "triangles": 10116
       },
       {
         "name": "Walk_ssarathi_ruins_door-ssarathi_ruins-water-gate-undercut-mouth",
-        "triangles": 1452
+        "triangles": 4168
       },
       {
         "name": "Walk_ssarathi_ruins_ssarathi_ruins--verdant_stair-ssarathi_ruins",
-        "triangles": 10212
+        "triangles": 49121
       },
       {
         "name": "AuthoredGround_SunmaneBase",
         "triangles": 124162
       },
       {
+        "name": "AuthoredGround_grain-west-north",
+        "triangles": 1968
+      },
+      {
+        "name": "AuthoredGround_pasture-east-main",
+        "triangles": 5534
+      },
+      {
+        "name": "AuthoredGround_verdant-transition",
+        "triangles": 2862
+      },
+      {
+        "name": "AuthoredGround_grain-west-south",
+        "triangles": 2086
+      },
+      {
+        "name": "AuthoredGround_pasture-east-south",
+        "triangles": 3424
+      },
+      {
+        "name": "AuthoredGround_pass4-pasture-margin-east",
+        "triangles": 526
+      },
+      {
+        "name": "AuthoredGround_pass4-pasture-margin-west",
+        "triangles": 408
+      },
+      {
+        "name": "AuthoredGround_north-violet-scree",
+        "triangles": 2188
+      },
+      {
+        "name": "AuthoredGround_north-salt-lens",
+        "triangles": 564
+      },
+      {
+        "name": "AuthoredGround_pass4-bank-lower",
+        "triangles": 124
+      },
+      {
+        "name": "AuthoredGround_pass4-bank-middle",
+        "triangles": 141
+      },
+      {
+        "name": "AuthoredGround_river-east-wet-north",
+        "triangles": 740
+      },
+      {
+        "name": "AuthoredGround_river-east-wet-south",
+        "triangles": 232
+      },
+      {
+        "name": "AuthoredGround_ancestral-pale-rise",
+        "triangles": 1360
+      },
+      {
+        "name": "AuthoredGround_ancestral-overlook",
+        "triangles": 940
+      },
+      {
+        "name": "AuthoredGround_pass4-ritual-earth-north",
+        "triangles": 368
+      },
+      {
+        "name": "AuthoredGround_pass4-ritual-earth-south",
+        "triangles": 526
+      },
+      {
+        "name": "AuthoredGround_pass4-ritual-grass-cleft",
+        "triangles": 798
+      },
+      {
+        "name": "AuthoredGround_duskrider-court",
+        "triangles": 802
+      },
+      {
+        "name": "AuthoredGround_redgrass-court",
+        "triangles": 754
+      },
+      {
+        "name": "AuthoredGround_saltmane-court",
+        "triangles": 672
+      },
+      {
+        "name": "AuthoredGround_windmane-court",
+        "triangles": 732
+      },
+      {
+        "name": "AuthoredGround_civic-ochre",
+        "triangles": 1932
+      },
+      {
+        "name": "AuthoredGround_civic-market-soil",
+        "triangles": 386
+      },
+      {
         "name": "Walk_amethyst_barrens--sunmane_steppe-sunmane_steppe",
-        "triangles": 11100
+        "triangles": 26105
       },
       {
         "name": "Walk_discovery-sunmane_steppe-301",
-        "triangles": 420
+        "triangles": 7023
       },
       {
         "name": "Walk_discovery-sunmane_steppe-302",
-        "triangles": 7260
+        "triangles": 848
       },
       {
         "name": "Walk_discovery-sunmane_steppe-303",
-        "triangles": 816
+        "triangles": 1406
       },
       {
         "name": "Walk_discovery-sunmane_steppe-304",
-        "triangles": 1272
+        "triangles": 743
       },
       {
         "name": "Walk_discovery-sunmane_steppe-305",
-        "triangles": 552
+        "triangles": 838
       },
       {
         "name": "Walk_discovery-sunmane_steppe-306",
-        "triangles": 10008
+        "triangles": 1603
       },
       {
         "name": "Walk_discovery-sunmane_steppe-307",
-        "triangles": 444
+        "triangles": 1754
       },
       {
         "name": "Walk_discovery-sunmane_steppe-308",
-        "triangles": 900
+        "triangles": 968
       },
       {
         "name": "Walk_discovery-sunmane_steppe-309",
-        "triangles": 396
+        "triangles": 1318
       },
       {
         "name": "Walk_discovery-sunmane_steppe-310",
-        "triangles": 696
+        "triangles": 2257
       },
       {
         "name": "Walk_discovery-sunmane_steppe-311",
-        "triangles": 504
+        "triangles": 2940
       },
       {
         "name": "Walk_discovery-sunmane_steppe-312",
-        "triangles": 2640
+        "triangles": 3340
       },
       {
         "name": "Walk_discovery-sunmane_steppe-313",
-        "triangles": 768
+        "triangles": 2894
       },
       {
         "name": "Walk_discovery-sunmane_steppe-713",
-        "triangles": 2136
+        "triangles": 1284
       },
       {
         "name": "Walk_door-sunmane_steppe-cave-crystal_hollow",
-        "triangles": 6816
+        "triangles": 13593
       },
       {
         "name": "Walk_door-sunmane_steppe-cave-wind_caves",
-        "triangles": 6324
+        "triangles": 12319
       },
       {
         "name": "Walk_east-gate-main-ramp",
-        "triangles": 36
+        "triangles": 1404
       },
       {
         "name": "Walk_east-gate-town-ramp",
-        "triangles": 180
+        "triangles": 404
       },
       {
         "name": "Walk_mirrorhold--sunmane_steppe-sunmane_steppe",
-        "triangles": 9576
+        "triangles": 9807
       },
       {
         "name": "Walk_sunmane_steppe--verdant_stair-sunmane_steppe",
-        "triangles": 7920
+        "triangles": 17786
       },
       {
         "name": "AuthoredGround_verdant_stairBase",
         "triangles": 115506
       },
       {
+        "name": "AuthoredGround_verdant_stair_pass1-garden-apron",
+        "triangles": 88
+      },
+      {
+        "name": "AuthoredGround_verdant_stair_pass1-upper-court",
+        "triangles": 170
+      },
+      {
         "name": "Walk_verdant_stair_discovery-verdant_stair-345",
-        "triangles": 192
+        "triangles": 702
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-353",
-        "triangles": 168
+        "triangles": 558
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-357",
-        "triangles": 7392
+        "triangles": 23924
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-358",
-        "triangles": 5844
+        "triangles": 19017
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-359",
-        "triangles": 1356
+        "triangles": 3804
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-360",
-        "triangles": 708
+        "triangles": 2210
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-361",
-        "triangles": 792
+        "triangles": 2242
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-362",
-        "triangles": 300
+        "triangles": 997
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-363",
-        "triangles": 300
+        "triangles": 897
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-364",
-        "triangles": 1308
+        "triangles": 3500
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-365",
-        "triangles": 396
+        "triangles": 1320
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-366",
-        "triangles": 288
+        "triangles": 940
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-368",
-        "triangles": 852
+        "triangles": 2440
       },
       {
         "name": "Walk_verdant_stair_discovery-verdant_stair-369",
-        "triangles": 876
+        "triangles": 2776
       },
       {
         "name": "Walk_verdant_stair_door-verdant_stair-anchor-hollow-mouth",
-        "triangles": 3384
+        "triangles": 11210
       },
       {
         "name": "Walk_verdant_stair_door-verdant_stair-banyan-hollow-arch",
-        "triangles": 2964
+        "triangles": 9478
       },
       {
         "name": "Walk_verdant_stair_door-verdant_stair-cenote-deeps-stair",
-        "triangles": 2940
+        "triangles": 9614
       },
       {
         "name": "Walk_verdant_stair_door-verdant_stair-nine-lost-door",
-        "triangles": 9396
+        "triangles": 29109
       },
       {
         "name": "Walk_verdant_stair_door-verdant_stair-physick-still-door",
-        "triangles": 2004
+        "triangles": 6321
       },
       {
         "name": "Walk_verdant_stair_door-verdant_stair-stair-quarry-adit",
-        "triangles": 12432
+        "triangles": 35736
       },
       {
         "name": "Walk_verdant_stair_door-verdant_stair-temple-sanctum-door",
-        "triangles": 11664
+        "triangles": 34070
       },
       {
         "name": "Walk_verdant_stair_manymouth_delta--verdant_stair-verdant_stair",
-        "triangles": 8268
+        "triangles": 37296
       },
       {
         "name": "Walk_verdant_stair_mirrorhold--verdant_stair-verdant_stair",
-        "triangles": 6720
+        "triangles": 28684
       },
       {
         "name": "Walk_verdant_stair_ssarathi_ruins--verdant_stair-verdant_stair",
-        "triangles": 3888
+        "triangles": 19137
       },
       {
         "name": "Walk_verdant_stair_sunmane_steppe--verdant_stair-verdant_stair",
-        "triangles": 9432
+        "triangles": 41849
       },
       {
         "name": "AuthoredGround_westhavenBase",
         "triangles": 84364
       },
       {
+        "name": "AuthoredGround_westhaven_westhaven-pass1-fishmarketcourt",
+        "triangles": 344
+      },
+      {
         "name": "Walk_westhaven_crownwater--westhaven-westhaven",
-        "triangles": 4392
+        "triangles": 16720
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-826",
-        "triangles": 1260
+        "triangles": 3634
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-827",
-        "triangles": 576
+        "triangles": 1774
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-828",
-        "triangles": 948
+        "triangles": 3278
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-829",
-        "triangles": 492
+        "triangles": 1641
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-830",
-        "triangles": 300
+        "triangles": 985
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-831",
-        "triangles": 1080
+        "triangles": 3409
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-832",
-        "triangles": 1128
+        "triangles": 3513
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-833",
-        "triangles": 804
+        "triangles": 2582
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-834",
-        "triangles": 8304
+        "triangles": 20884
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-835",
-        "triangles": 828
+        "triangles": 2392
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-836",
-        "triangles": 1332
+        "triangles": 4196
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-837",
-        "triangles": 144
+        "triangles": 466
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-838",
-        "triangles": 1032
+        "triangles": 3231
       },
       {
         "name": "Walk_westhaven_discovery-westhaven-839",
-        "triangles": 636
+        "triangles": 2094
       },
       {
         "name": "Walk_westhaven_door-westhaven-bonded-vaults-door",
-        "triangles": 1968
+        "triangles": 6082
       },
       {
         "name": "Walk_westhaven_door-westhaven-custom-house-door",
-        "triangles": 3024
+        "triangles": 9265
       },
       {
         "name": "Walk_westhaven_door-westhaven-gullscar-farmhouse-door",
-        "triangles": 2808
+        "triangles": 8938
       },
       {
         "name": "Walk_westhaven_door-westhaven-gullstone-door",
-        "triangles": 6348
+        "triangles": 19997
       },
       {
         "name": "Walk_westhaven_door-westhaven-haven-undercroft-door",
-        "triangles": 2112
+        "triangles": 6591
       },
       {
         "name": "Walk_westhaven_door-westhaven-lamp-rock-door",
-        "triangles": 7680
+        "triangles": 23240
       },
       {
         "name": "Walk_westhaven_door-westhaven-salvage-hole-mouth",
-        "triangles": 3528
+        "triangles": 10673
       },
       {
         "name": "Walk_westhaven_four_gates--westhaven-westhaven",
-        "triangles": 4452
+        "triangles": 22422
       },
       {
         "name": "Walk_westhaven_grey_moors--westhaven-westhaven",
-        "triangles": 7656
+        "triangles": 32007
       },
       {
         "name": "Walk_westhaven_manymouth_delta--westhaven-westhaven",
-        "triangles": 4056
+        "triangles": 17351
       },
       {
         "name": "AuthoredGround_whitehorn_rangeBase",
         "triangles": 122058
       },
       {
+        "name": "AuthoredGround_whitehorn_range_pass1-gate-thaw",
+        "triangles": 572
+      },
+      {
+        "name": "AuthoredGround_whitehorn_range_pass1-lower-refuge",
+        "triangles": 548
+      },
+      {
+        "name": "AuthoredGround_whitehorn_range_pass1-cave-scree",
+        "triangles": 558
+      },
+      {
+        "name": "AuthoredGround_whitehorn_range_pass1-mine-spoil",
+        "triangles": 592
+      },
+      {
+        "name": "AuthoredGround_whitehorn_range_pass1-temple-scree-shoulder",
+        "triangles": 396
+      },
+      {
+        "name": "AuthoredGround_whitehorn_range_pass1-cave-snow-edge",
+        "triangles": 264
+      },
+      {
+        "name": "AuthoredGround_whitehorn_range_pass1-mine-yard-earth",
+        "triangles": 266
+      },
+      {
+        "name": "AuthoredGround_whitehorn_range_pass1-temple-frost-apron",
+        "triangles": 470
+      },
+      {
         "name": "Walk_whitehorn_range_amberwood--whitehorn_range-whitehorn_range",
-        "triangles": 10704
+        "triangles": 43702
       },
       {
         "name": "Walk_whitehorn_range_amethyst_barrens--whitehorn_range-whitehorn_range",
-        "triangles": 11592
+        "triangles": 55165
       },
       {
         "name": "Walk_whitehorn_range_discovery-whitehorn_range-1111",
-        "triangles": 120
+        "triangles": 408
       },
       {
         "name": "Walk_whitehorn_range_discovery-whitehorn_range-516",
-        "triangles": 144
+        "triangles": 512
       },
       {
         "name": "Walk_whitehorn_range_discovery-whitehorn_range-528",
-        "triangles": 1668
+        "triangles": 5438
       },
       {
         "name": "Walk_whitehorn_range_discovery-whitehorn_range-530",
-        "triangles": 1260
+        "triangles": 4037
       },
       {
         "name": "Walk_whitehorn_range_discovery-whitehorn_range-531",
-        "triangles": 540
+        "triangles": 1557
       },
       {
         "name": "Walk_whitehorn_range_discovery-whitehorn_range-532",
-        "triangles": 96
+        "triangles": 360
       },
       {
         "name": "Walk_whitehorn_range_discovery-whitehorn_range-534",
-        "triangles": 2520
+        "triangles": 8246
       },
       {
         "name": "Walk_whitehorn_range_discovery-whitehorn_range-535",
-        "triangles": 756
+        "triangles": 2644
       },
       {
         "name": "Walk_whitehorn_range_discovery-whitehorn_range-537",
-        "triangles": 528
+        "triangles": 1550
       },
       {
         "name": "Walk_whitehorn_range_discovery-whitehorn_range-538",
-        "triangles": 732
+        "triangles": 2316
       },
       {
         "name": "Walk_whitehorn_range_discovery-whitehorn_range-539",
-        "triangles": 2064
+        "triangles": 6148
       },
       {
         "name": "Walk_whitehorn_range_discovery-whitehorn_range-620",
-        "triangles": 156
+        "triangles": 534
       },
       {
         "name": "Walk_whitehorn_range_door-whitehorn_range-gate-store-door",
-        "triangles": 660
+        "triangles": 2127
       },
       {
         "name": "Walk_whitehorn_range_door-whitehorn_range-snowline-cell-door",
-        "triangles": 22620
+        "triangles": 73272
       },
       {
         "name": "Walk_whitehorn_range_door-whitehorn_range-west-watch-cave-mouth",
-        "triangles": 4908
+        "triangles": 14707
       },
       {
         "name": "Walk_whitehorn_range_door-whitehorn_range-whitehorn-barrow-door",
-        "triangles": 5856
+        "triangles": 17570
       },
       {
         "name": "Walk_whitehorn_range_door-whitehorn_range-whitehorn-glacier-temple-door",
-        "triangles": 15324
+        "triangles": 48815
       },
       {
         "name": "Walk_whitehorn_range_door-whitehorn_range-whitehorn-ice-cave-mouth",
-        "triangles": 4488
+        "triangles": 13471
       },
       {
         "name": "Walk_whitehorn_range_door-whitehorn_range-whitehorn-mine-adit",
-        "triangles": 14412
+        "triangles": 46945
       },
       {
         "name": "Walk_whitehorn_range_grey_moors--whitehorn_range-whitehorn_range",
-        "triangles": 9132
+        "triangles": 38012
       },
       {
         "name": "Walk_whitehorn_range_trail-whitehorn_range-0",
-        "triangles": 2412
+        "triangles": 7686
       }
     ],
-    "triangles": 2163374,
+    "triangles": 4419942,
+    "roadEncoding": [
+      {
+        "name": "amberwood_amber-chapel-climb",
+        "inputFaces": 3135,
+        "collapsedFaces": 6,
+        "reorientedFaces": 0,
+        "outputFaces": 3129
+      },
+      {
+        "name": "amberwood_amber-moot-path",
+        "inputFaces": 1106,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1106
+      },
+      {
+        "name": "amberwood_amber-motherroot-yard",
+        "inputFaces": 655,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 655
+      },
+      {
+        "name": "amberwood_amber-ridge-camp",
+        "inputFaces": 3042,
+        "collapsedFaces": 6,
+        "reorientedFaces": 0,
+        "outputFaces": 3036
+      },
+      {
+        "name": "amberwood_amber-side-kilnyard",
+        "inputFaces": 1730,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1730
+      },
+      {
+        "name": "amberwood_amber-undercut-path",
+        "inputFaces": 2145,
+        "collapsedFaces": 2,
+        "reorientedFaces": 0,
+        "outputFaces": 2143
+      },
+      {
+        "name": "amberwood_amber-yard-approach",
+        "inputFaces": 1436,
+        "collapsedFaces": 4,
+        "reorientedFaces": 0,
+        "outputFaces": 1432
+      },
+      {
+        "name": "amberwood_amberwood--four_gates-amberwood",
+        "inputFaces": 24703,
+        "collapsedFaces": 154,
+        "reorientedFaces": 0,
+        "outputFaces": 24549
+      },
+      {
+        "name": "amberwood_amberwood--grey_moors-amberwood",
+        "inputFaces": 21867,
+        "collapsedFaces": 116,
+        "reorientedFaces": 1,
+        "outputFaces": 21751
+      },
+      {
+        "name": "amberwood_amberwood--mirrorhold-amberwood",
+        "inputFaces": 31157,
+        "collapsedFaces": 293,
+        "reorientedFaces": 0,
+        "outputFaces": 30864
+      },
+      {
+        "name": "amberwood_amberwood--whitehorn_range-amberwood",
+        "inputFaces": 27597,
+        "collapsedFaces": 176,
+        "reorientedFaces": 0,
+        "outputFaces": 27421
+      },
+      {
+        "name": "amberwood_discovery-amberwood-1078",
+        "inputFaces": 939,
+        "collapsedFaces": 8,
+        "reorientedFaces": 0,
+        "outputFaces": 931
+      },
+      {
+        "name": "amberwood_discovery-amberwood-467",
+        "inputFaces": 2622,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 2610
+      },
+      {
+        "name": "amberwood_discovery-amberwood-472",
+        "inputFaces": 1187,
+        "collapsedFaces": 2,
+        "reorientedFaces": 0,
+        "outputFaces": 1185
+      },
+      {
+        "name": "amberwood_discovery-amberwood-473",
+        "inputFaces": 1187,
+        "collapsedFaces": 4,
+        "reorientedFaces": 0,
+        "outputFaces": 1183
+      },
+      {
+        "name": "amberwood_discovery-amberwood-474",
+        "inputFaces": 1895,
+        "collapsedFaces": 11,
+        "reorientedFaces": 0,
+        "outputFaces": 1884
+      },
+      {
+        "name": "amberwood_discovery-amberwood-475",
+        "inputFaces": 5191,
+        "collapsedFaces": 36,
+        "reorientedFaces": 2,
+        "outputFaces": 5155
+      },
+      {
+        "name": "amberwood_discovery-amberwood-476",
+        "inputFaces": 2146,
+        "collapsedFaces": 6,
+        "reorientedFaces": 0,
+        "outputFaces": 2140
+      },
+      {
+        "name": "amberwood_discovery-amberwood-477",
+        "inputFaces": 1610,
+        "collapsedFaces": 4,
+        "reorientedFaces": 0,
+        "outputFaces": 1606
+      },
+      {
+        "name": "amberwood_discovery-amberwood-478",
+        "inputFaces": 423,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 423
+      },
+      {
+        "name": "amberwood_discovery-amberwood-479",
+        "inputFaces": 2838,
+        "collapsedFaces": 42,
+        "reorientedFaces": 0,
+        "outputFaces": 2796
+      },
+      {
+        "name": "amberwood_discovery-amberwood-480",
+        "inputFaces": 1401,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1401
+      },
+      {
+        "name": "amberwood_discovery-amberwood-481",
+        "inputFaces": 1660,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1660
+      },
+      {
+        "name": "amberwood_discovery-amberwood-482",
+        "inputFaces": 644,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 644
+      },
+      {
+        "name": "amberwood_discovery-amberwood-483",
+        "inputFaces": 3996,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 3996
+      },
+      {
+        "name": "amberwood_discovery-amberwood-484",
+        "inputFaces": 2067,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2067
+      },
+      {
+        "name": "amberwood_discovery-amberwood-825",
+        "inputFaces": 813,
+        "collapsedFaces": 4,
+        "reorientedFaces": 0,
+        "outputFaces": 809
+      },
+      {
+        "name": "amberwood_door-amberwood-amber-hall-door",
+        "inputFaces": 1740,
+        "collapsedFaces": 6,
+        "reorientedFaces": 0,
+        "outputFaces": 1734
+      },
+      {
+        "name": "amberwood_door-amberwood-cinder-chapel-door",
+        "inputFaces": 11150,
+        "collapsedFaces": 40,
+        "reorientedFaces": 0,
+        "outputFaces": 11110
+      },
+      {
+        "name": "amberwood_door-amberwood-gate-undercroft-stair",
+        "inputFaces": 18291,
+        "collapsedFaces": 159,
+        "reorientedFaces": 0,
+        "outputFaces": 18132
+      },
+      {
+        "name": "amberwood_door-amberwood-motherroot-mouth",
+        "inputFaces": 3163,
+        "collapsedFaces": 32,
+        "reorientedFaces": 0,
+        "outputFaces": 3131
+      },
+      {
+        "name": "amethyst_barrens_amethyst_barrens--mirrorhold-amethyst_barrens",
+        "inputFaces": 11043,
+        "collapsedFaces": 54,
+        "reorientedFaces": 0,
+        "outputFaces": 10989
+      },
+      {
+        "name": "amethyst_barrens_amethyst_barrens--sunmane_steppe-amethyst_barrens",
+        "inputFaces": 22859,
+        "collapsedFaces": 68,
+        "reorientedFaces": 3,
+        "outputFaces": 22791
+      },
+      {
+        "name": "amethyst_barrens_amethyst_barrens--whitehorn_range-amethyst_barrens",
+        "inputFaces": 20203,
+        "collapsedFaces": 18,
+        "reorientedFaces": 0,
+        "outputFaces": 20185
+      },
+      {
+        "name": "amethyst_barrens_discovery-amethyst_barrens-1276",
+        "inputFaces": 7534,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 7522
+      },
+      {
+        "name": "amethyst_barrens_discovery-amethyst_barrens-699",
+        "inputFaces": 2196,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2196
+      },
+      {
+        "name": "amethyst_barrens_discovery-amethyst_barrens-700",
+        "inputFaces": 4413,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 4413
+      },
+      {
+        "name": "amethyst_barrens_discovery-amethyst_barrens-701",
+        "inputFaces": 4910,
+        "collapsedFaces": 14,
+        "reorientedFaces": 0,
+        "outputFaces": 4896
+      },
+      {
+        "name": "amethyst_barrens_discovery-amethyst_barrens-702",
+        "inputFaces": 1486,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1486
+      },
+      {
+        "name": "amethyst_barrens_discovery-amethyst_barrens-703",
+        "inputFaces": 25130,
+        "collapsedFaces": 88,
+        "reorientedFaces": 2,
+        "outputFaces": 25042
+      },
+      {
+        "name": "amethyst_barrens_discovery-amethyst_barrens-704",
+        "inputFaces": 342,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 342
+      },
+      {
+        "name": "amethyst_barrens_discovery-amethyst_barrens-705",
+        "inputFaces": 4506,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 4494
+      },
+      {
+        "name": "amethyst_barrens_discovery-amethyst_barrens-706",
+        "inputFaces": 2948,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2948
+      },
+      {
+        "name": "amethyst_barrens_discovery-amethyst_barrens-707",
+        "inputFaces": 2644,
+        "collapsedFaces": 50,
+        "reorientedFaces": 0,
+        "outputFaces": 2594
+      },
+      {
+        "name": "amethyst_barrens_discovery-amethyst_barrens-708",
+        "inputFaces": 1250,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1250
+      },
+      {
+        "name": "amethyst_barrens_discovery-amethyst_barrens-710",
+        "inputFaces": 894,
+        "collapsedFaces": 2,
+        "reorientedFaces": 0,
+        "outputFaces": 892
+      },
+      {
+        "name": "amethyst_barrens_door-amethyst_barrens-counting-house-door",
+        "inputFaces": 9411,
+        "collapsedFaces": 58,
+        "reorientedFaces": 0,
+        "outputFaces": 9353
+      },
+      {
+        "name": "amethyst_barrens_door-amethyst_barrens-geode-hollow-mouth",
+        "inputFaces": 12419,
+        "collapsedFaces": 44,
+        "reorientedFaces": 2,
+        "outputFaces": 12375
+      },
+      {
+        "name": "amethyst_barrens_door-amethyst_barrens-measure-house-door",
+        "inputFaces": 11737,
+        "collapsedFaces": 86,
+        "reorientedFaces": 2,
+        "outputFaces": 11651
+      },
+      {
+        "name": "amethyst_barrens_door-amethyst_barrens-resonant-vault-stair",
+        "inputFaces": 11695,
+        "collapsedFaces": 101,
+        "reorientedFaces": 1,
+        "outputFaces": 11594
+      },
+      {
+        "name": "amethyst_barrens_door-amethyst_barrens-shardworks-headframe",
+        "inputFaces": 4925,
+        "collapsedFaces": 17,
+        "reorientedFaces": 1,
+        "outputFaces": 4908
+      },
+      {
+        "name": "amethyst_barrens_door-amethyst_barrens-sour-cut-mouth",
+        "inputFaces": 17075,
+        "collapsedFaces": 76,
+        "reorientedFaces": 3,
+        "outputFaces": 16999
+      },
+      {
+        "name": "amethyst_barrens_door-amethyst_barrens-storm-barrow-stair",
+        "inputFaces": 11411,
+        "collapsedFaces": 111,
+        "reorientedFaces": 0,
+        "outputFaces": 11300
+      },
+      {
+        "name": "crownwater_crownwater--manymouth_delta-crownwater",
+        "inputFaces": 3914,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 3902
+      },
+      {
+        "name": "crownwater_crownwater--ssarathi_ruins-crownwater",
+        "inputFaces": 2276,
+        "collapsedFaces": 117,
+        "reorientedFaces": 4,
+        "outputFaces": 2159
+      },
+      {
+        "name": "crownwater_crownwater--westhaven-crownwater",
+        "inputFaces": 1930,
+        "collapsedFaces": 54,
+        "reorientedFaces": 0,
+        "outputFaces": 1876
+      },
+      {
+        "name": "crownwater_discovery-crownwater-899",
+        "inputFaces": 3011,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 3011
+      },
+      {
+        "name": "crownwater_discovery-crownwater-900",
+        "inputFaces": 569,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 569
+      },
+      {
+        "name": "crownwater_discovery-crownwater-901",
+        "inputFaces": 11959,
+        "collapsedFaces": 60,
+        "reorientedFaces": 2,
+        "outputFaces": 11899
+      },
+      {
+        "name": "crownwater_discovery-crownwater-902",
+        "inputFaces": 974,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 974
+      },
+      {
+        "name": "crownwater_discovery-crownwater-903",
+        "inputFaces": 1564,
+        "collapsedFaces": 8,
+        "reorientedFaces": 1,
+        "outputFaces": 1556
+      },
+      {
+        "name": "crownwater_discovery-crownwater-904",
+        "inputFaces": 1651,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1651
+      },
+      {
+        "name": "crownwater_discovery-crownwater-905",
+        "inputFaces": 310,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 310
+      },
+      {
+        "name": "crownwater_discovery-crownwater-906",
+        "inputFaces": 2193,
+        "collapsedFaces": 19,
+        "reorientedFaces": 0,
+        "outputFaces": 2174
+      },
+      {
+        "name": "crownwater_discovery-crownwater-907",
+        "inputFaces": 8450,
+        "collapsedFaces": 30,
+        "reorientedFaces": 0,
+        "outputFaces": 8420
+      },
+      {
+        "name": "crownwater_discovery-crownwater-908",
+        "inputFaces": 6823,
+        "collapsedFaces": 52,
+        "reorientedFaces": 2,
+        "outputFaces": 6771
+      },
+      {
+        "name": "crownwater_discovery-crownwater-909",
+        "inputFaces": 1129,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1129
+      },
+      {
+        "name": "crownwater_discovery-crownwater-910",
+        "inputFaces": 1951,
+        "collapsedFaces": 8,
+        "reorientedFaces": 0,
+        "outputFaces": 1943
+      },
+      {
+        "name": "crownwater_discovery-crownwater-911",
+        "inputFaces": 4791,
+        "collapsedFaces": 4,
+        "reorientedFaces": 0,
+        "outputFaces": 4787
+      },
+      {
+        "name": "crownwater_door-crownwater-basilica-undercroft",
+        "inputFaces": 11434,
+        "collapsedFaces": 69,
+        "reorientedFaces": 1,
+        "outputFaces": 11365
+      },
+      {
+        "name": "crownwater_door-crownwater-campanile-door",
+        "inputFaces": 13130,
+        "collapsedFaces": 17,
+        "reorientedFaces": 1,
+        "outputFaces": 13113
+      },
+      {
+        "name": "crownwater_door-crownwater-case-room-door",
+        "inputFaces": 15322,
+        "collapsedFaces": 142,
+        "reorientedFaces": 6,
+        "outputFaces": 15180
+      },
+      {
+        "name": "crownwater_door-crownwater-cistern-stair",
+        "inputFaces": 7130,
+        "collapsedFaces": 23,
+        "reorientedFaces": 3,
+        "outputFaces": 7107
+      },
+      {
+        "name": "crownwater_door-crownwater-customs-door",
+        "inputFaces": 614,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 614
+      },
+      {
+        "name": "crownwater_door-crownwater-eleventh-bell-door",
+        "inputFaces": 19728,
+        "collapsedFaces": 77,
+        "reorientedFaces": 3,
+        "outputFaces": 19651
+      },
+      {
+        "name": "crownwater_door-crownwater-grating-mouth",
+        "inputFaces": 6676,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 6664
+      },
+      {
+        "name": "four_gates_amberwood--four_gates-four_gates",
+        "inputFaces": 36761,
+        "collapsedFaces": 37,
+        "reorientedFaces": 0,
+        "outputFaces": 36724
+      },
+      {
+        "name": "four_gates_discovery-four_gates-257",
+        "inputFaces": 956,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 956
+      },
+      {
+        "name": "four_gates_discovery-four_gates-258",
+        "inputFaces": 1328,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1328
+      },
+      {
+        "name": "four_gates_discovery-four_gates-259",
+        "inputFaces": 520,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 520
+      },
+      {
+        "name": "four_gates_discovery-four_gates-260",
+        "inputFaces": 1554,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1554
+      },
+      {
+        "name": "four_gates_discovery-four_gates-261",
+        "inputFaces": 2000,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2000
+      },
+      {
+        "name": "four_gates_discovery-four_gates-262",
+        "inputFaces": 16504,
+        "collapsedFaces": 2,
+        "reorientedFaces": 0,
+        "outputFaces": 16502
+      },
+      {
+        "name": "four_gates_discovery-four_gates-263",
+        "inputFaces": 335,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 335
+      },
+      {
+        "name": "four_gates_discovery-four_gates-264",
+        "inputFaces": 2121,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2121
+      },
+      {
+        "name": "four_gates_discovery-four_gates-265",
+        "inputFaces": 8994,
+        "collapsedFaces": 2,
+        "reorientedFaces": 0,
+        "outputFaces": 8992
+      },
+      {
+        "name": "four_gates_discovery-four_gates-266",
+        "inputFaces": 620,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 620
+      },
+      {
+        "name": "four_gates_discovery-four_gates-267",
+        "inputFaces": 1764,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1764
+      },
+      {
+        "name": "four_gates_discovery-four_gates-268",
+        "inputFaces": 2680,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2680
+      },
+      {
+        "name": "four_gates_discovery-four_gates-269",
+        "inputFaces": 1550,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1550
+      },
+      {
+        "name": "four_gates_discovery-four_gates-913",
+        "inputFaces": 1260,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1260
+      },
+      {
+        "name": "four_gates_door-four_gates-interior-four-gates-deposit-four-keys",
+        "inputFaces": 5851,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 5851
+      },
+      {
+        "name": "four_gates_door-four_gates-interior-four-gates-ferrymans-rest",
+        "inputFaces": 10031,
+        "collapsedFaces": 7,
+        "reorientedFaces": 0,
+        "outputFaces": 10024
+      },
+      {
+        "name": "four_gates_door-four_gates-interior-four-gates-lantern-row",
+        "inputFaces": 5561,
+        "collapsedFaces": 24,
+        "reorientedFaces": 0,
+        "outputFaces": 5537
+      },
+      {
+        "name": "four_gates_door-four_gates-interior-four-gates-mirrorsmith-forge",
+        "inputFaces": 11731,
+        "collapsedFaces": 53,
+        "reorientedFaces": 0,
+        "outputFaces": 11678
+      },
+      {
+        "name": "four_gates_door-four_gates-interior-four-gates-reedworks",
+        "inputFaces": 6362,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 6362
+      },
+      {
+        "name": "four_gates_door-four_gates-interior-four-gates-stormglass-house",
+        "inputFaces": 10743,
+        "collapsedFaces": 49,
+        "reorientedFaces": 0,
+        "outputFaces": 10694
+      },
+      {
+        "name": "four_gates_four_gates--manymouth_delta-four_gates",
+        "inputFaces": 50781,
+        "collapsedFaces": 69,
+        "reorientedFaces": 3,
+        "outputFaces": 50712
+      },
+      {
+        "name": "four_gates_four_gates--mirrorhold-four_gates",
+        "inputFaces": 23693,
+        "collapsedFaces": 14,
+        "reorientedFaces": 0,
+        "outputFaces": 23679
+      },
+      {
+        "name": "four_gates_four_gates--westhaven-four_gates",
+        "inputFaces": 42971,
+        "collapsedFaces": 97,
+        "reorientedFaces": 1,
+        "outputFaces": 42874
+      },
+      {
+        "name": "grey_moors_amberwood--grey_moors-grey_moors",
+        "inputFaces": 34567,
+        "collapsedFaces": 101,
+        "reorientedFaces": 6,
+        "outputFaces": 34466
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-1001",
+        "inputFaces": 1199,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1199
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-1177",
+        "inputFaces": 3209,
+        "collapsedFaces": 9,
+        "reorientedFaces": 0,
+        "outputFaces": 3200
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-764",
+        "inputFaces": 1644,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 1632
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-765",
+        "inputFaces": 3864,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 3864
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-766",
+        "inputFaces": 3460,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 3448
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-767",
+        "inputFaces": 1092,
+        "collapsedFaces": 4,
+        "reorientedFaces": 0,
+        "outputFaces": 1088
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-768",
+        "inputFaces": 5553,
+        "collapsedFaces": 40,
+        "reorientedFaces": 2,
+        "outputFaces": 5513
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-769",
+        "inputFaces": 928,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 928
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-770",
+        "inputFaces": 3842,
+        "collapsedFaces": 56,
+        "reorientedFaces": 3,
+        "outputFaces": 3786
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-771",
+        "inputFaces": 4038,
+        "collapsedFaces": 41,
+        "reorientedFaces": 0,
+        "outputFaces": 3997
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-772",
+        "inputFaces": 2808,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2808
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-773",
+        "inputFaces": 2640,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2640
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-774",
+        "inputFaces": 3110,
+        "collapsedFaces": 33,
+        "reorientedFaces": 0,
+        "outputFaces": 3077
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-775",
+        "inputFaces": 2502,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2502
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-776",
+        "inputFaces": 2302,
+        "collapsedFaces": 10,
+        "reorientedFaces": 0,
+        "outputFaces": 2292
+      },
+      {
+        "name": "grey_moors_discovery-grey_moors-777",
+        "inputFaces": 525,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 525
+      },
+      {
+        "name": "grey_moors_door-grey_moors-east-crypt-stair",
+        "inputFaces": 27927,
+        "collapsedFaces": 340,
+        "reorientedFaces": 9,
+        "outputFaces": 27587
+      },
+      {
+        "name": "grey_moors_door-grey_moors-fifth-chamber-mouth",
+        "inputFaces": 22251,
+        "collapsedFaces": 171,
+        "reorientedFaces": 1,
+        "outputFaces": 22080
+      },
+      {
+        "name": "grey_moors_door-grey_moors-great-barrow-mouth",
+        "inputFaces": 23275,
+        "collapsedFaces": 276,
+        "reorientedFaces": 7,
+        "outputFaces": 22999
+      },
+      {
+        "name": "grey_moors_door-grey_moors-peat-croft-door",
+        "inputFaces": 21013,
+        "collapsedFaces": 104,
+        "reorientedFaces": 3,
+        "outputFaces": 20909
+      },
+      {
+        "name": "grey_moors_door-grey_moors-south-crypt-stair",
+        "inputFaces": 7443,
+        "collapsedFaces": 30,
+        "reorientedFaces": 1,
+        "outputFaces": 7413
+      },
+      {
+        "name": "grey_moors_door-grey_moors-warm-stone-door",
+        "inputFaces": 23191,
+        "collapsedFaces": 293,
+        "reorientedFaces": 11,
+        "outputFaces": 22898
+      },
+      {
+        "name": "grey_moors_door-grey_moors-west-crypt-stair",
+        "inputFaces": 13641,
+        "collapsedFaces": 69,
+        "reorientedFaces": 1,
+        "outputFaces": 13572
+      },
+      {
+        "name": "grey_moors_grey_moors--westhaven-grey_moors",
+        "inputFaces": 30865,
+        "collapsedFaces": 128,
+        "reorientedFaces": 0,
+        "outputFaces": 30737
+      },
+      {
+        "name": "grey_moors_grey_moors--whitehorn_range-grey_moors",
+        "inputFaces": 28631,
+        "collapsedFaces": 295,
+        "reorientedFaces": 0,
+        "outputFaces": 28336
+      },
+      {
+        "name": "grey_moors_trail-grey_moors-0",
+        "inputFaces": 4968,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 4968
+      },
+      {
+        "name": "manymouth_delta_crownwater--manymouth_delta-manymouth_delta",
+        "inputFaces": 24952,
+        "collapsedFaces": 20,
+        "reorientedFaces": 0,
+        "outputFaces": 24932
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1002",
+        "inputFaces": 938,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 938
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1003",
+        "inputFaces": 1008,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1008
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1004",
+        "inputFaces": 956,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 956
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1005",
+        "inputFaces": 2297,
+        "collapsedFaces": 33,
+        "reorientedFaces": 0,
+        "outputFaces": 2264
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1006",
+        "inputFaces": 1656,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1656
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1007",
+        "inputFaces": 711,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 711
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1009",
+        "inputFaces": 1308,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1308
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1010",
+        "inputFaces": 2820,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 2808
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1011",
+        "inputFaces": 2031,
+        "collapsedFaces": 60,
+        "reorientedFaces": 5,
+        "outputFaces": 1971
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1012",
+        "inputFaces": 644,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 644
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1013",
+        "inputFaces": 23062,
+        "collapsedFaces": 8,
+        "reorientedFaces": 0,
+        "outputFaces": 23054
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1014",
+        "inputFaces": 1648,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 1636
+      },
+      {
+        "name": "manymouth_delta_discovery-manymouth_delta-1015",
+        "inputFaces": 4142,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 4142
+      },
+      {
+        "name": "manymouth_delta_door-manymouth_delta-bund-shrine-door",
+        "inputFaces": 7653,
+        "collapsedFaces": 80,
+        "reorientedFaces": 0,
+        "outputFaces": 7573
+      },
+      {
+        "name": "manymouth_delta_door-manymouth_delta-bund-warden-door",
+        "inputFaces": 37433,
+        "collapsedFaces": 232,
+        "reorientedFaces": 11,
+        "outputFaces": 37201
+      },
+      {
+        "name": "manymouth_delta_door-manymouth_delta-gate-descent",
+        "inputFaces": 7137,
+        "collapsedFaces": 14,
+        "reorientedFaces": 1,
+        "outputFaces": 7123
+      },
+      {
+        "name": "manymouth_delta_door-manymouth_delta-labyrinth-mouth",
+        "inputFaces": 18161,
+        "collapsedFaces": 15,
+        "reorientedFaces": 0,
+        "outputFaces": 18146
+      },
+      {
+        "name": "manymouth_delta_door-manymouth_delta-paddy-sump-mouth",
+        "inputFaces": 37761,
+        "collapsedFaces": 215,
+        "reorientedFaces": 5,
+        "outputFaces": 37546
+      },
+      {
+        "name": "manymouth_delta_door-manymouth_delta-temple-sanctum-door",
+        "inputFaces": 15061,
+        "collapsedFaces": 93,
+        "reorientedFaces": 3,
+        "outputFaces": 14968
+      },
+      {
+        "name": "manymouth_delta_door-manymouth_delta-tide-hall-door",
+        "inputFaces": 389,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 389
+      },
+      {
+        "name": "manymouth_delta_door-manymouth_delta-underdeck-hatch",
+        "inputFaces": 1615,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 1603
+      },
+      {
+        "name": "manymouth_delta_four_gates--manymouth_delta-manymouth_delta",
+        "inputFaces": 44179,
+        "collapsedFaces": 111,
+        "reorientedFaces": 1,
+        "outputFaces": 44068
+      },
+      {
+        "name": "manymouth_delta_manymouth_delta--verdant_stair-manymouth_delta",
+        "inputFaces": 35725,
+        "collapsedFaces": 45,
+        "reorientedFaces": 0,
+        "outputFaces": 35680
+      },
+      {
+        "name": "manymouth_delta_manymouth_delta--westhaven-manymouth_delta",
+        "inputFaces": 58695,
+        "collapsedFaces": 117,
+        "reorientedFaces": 1,
+        "outputFaces": 58578
+      },
+      {
+        "name": "mirrorhold_access-mirrorhold-north-plateau",
+        "inputFaces": 1440,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1440
+      },
+      {
+        "name": "mirrorhold_amberwood--mirrorhold-mirrorhold",
+        "inputFaces": 41357,
+        "collapsedFaces": 99,
+        "reorientedFaces": 0,
+        "outputFaces": 41258
+      },
+      {
+        "name": "mirrorhold_amethyst_barrens--mirrorhold-mirrorhold",
+        "inputFaces": 55229,
+        "collapsedFaces": 109,
+        "reorientedFaces": 0,
+        "outputFaces": 55120
+      },
+      {
+        "name": "mirrorhold_discovery-mirrorhold-606",
+        "inputFaces": 2425,
+        "collapsedFaces": 55,
+        "reorientedFaces": 0,
+        "outputFaces": 2370
+      },
+      {
+        "name": "mirrorhold_discovery-mirrorhold-607",
+        "inputFaces": 158,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 158
+      },
+      {
+        "name": "mirrorhold_discovery-mirrorhold-608",
+        "inputFaces": 292,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 292
+      },
+      {
+        "name": "mirrorhold_discovery-mirrorhold-612",
+        "inputFaces": 395,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 395
+      },
+      {
+        "name": "mirrorhold_discovery-mirrorhold-73",
+        "inputFaces": 4184,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 4184
+      },
+      {
+        "name": "mirrorhold_door-mirrorhold-cistern-door",
+        "inputFaces": 39571,
+        "collapsedFaces": 115,
+        "reorientedFaces": 0,
+        "outputFaces": 39456
+      },
+      {
+        "name": "mirrorhold_door-mirrorhold-lens-vault-stair",
+        "inputFaces": 24148,
+        "collapsedFaces": 48,
+        "reorientedFaces": 0,
+        "outputFaces": 24100
+      },
+      {
+        "name": "mirrorhold_door-mirrorhold-stair-cellars-door",
+        "inputFaces": 833,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 833
+      },
+      {
+        "name": "mirrorhold_four_gates--mirrorhold-mirrorhold",
+        "inputFaces": 53713,
+        "collapsedFaces": 86,
+        "reorientedFaces": 0,
+        "outputFaces": 53627
+      },
+      {
+        "name": "mirrorhold_mirrorhold--sunmane_steppe-mirrorhold",
+        "inputFaces": 74229,
+        "collapsedFaces": 163,
+        "reorientedFaces": 0,
+        "outputFaces": 74066
+      },
+      {
+        "name": "mirrorhold_mirrorhold--verdant_stair-mirrorhold",
+        "inputFaces": 40363,
+        "collapsedFaces": 67,
+        "reorientedFaces": 0,
+        "outputFaces": 40296
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-arrival-lane",
+        "inputFaces": 12314,
+        "collapsedFaces": 165,
+        "reorientedFaces": 0,
+        "outputFaces": 12149
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-canal-sluice-lane",
+        "inputFaces": 1068,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1068
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-cistern-yard-lane",
+        "inputFaces": 2754,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2754
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-citadel-service-road",
+        "inputFaces": 15987,
+        "collapsedFaces": 8,
+        "reorientedFaces": 0,
+        "outputFaces": 15979
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-civic-ascent",
+        "inputFaces": 8167,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 8167
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-civic-bridge-exit",
+        "inputFaces": 2804,
+        "collapsedFaces": 18,
+        "reorientedFaces": 0,
+        "outputFaces": 2786
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-east-bench-yard-link",
+        "inputFaces": 279,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 279
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-east-stair-home-yard-link",
+        "inputFaces": 328,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 328
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-east-stair-yard",
+        "inputFaces": 1054,
+        "collapsedFaces": 4,
+        "reorientedFaces": 0,
+        "outputFaces": 1050
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-east-working-road",
+        "inputFaces": 17940,
+        "collapsedFaces": 48,
+        "reorientedFaces": 0,
+        "outputFaces": 17892
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-icebore-lane",
+        "inputFaces": 1052,
+        "collapsedFaces": 14,
+        "reorientedFaces": 0,
+        "outputFaces": 1038
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-lake-north-yard-link",
+        "inputFaces": 564,
+        "collapsedFaces": 5,
+        "reorientedFaces": 0,
+        "outputFaces": 559
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-lens-vault-lane",
+        "inputFaces": 104,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 104
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-lens-yard-lane",
+        "inputFaces": 2784,
+        "collapsedFaces": 8,
+        "reorientedFaces": 0,
+        "outputFaces": 2776
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-lower-terrace-yard-link",
+        "inputFaces": 2055,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2055
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-mid-bench-yard-link",
+        "inputFaces": 3092,
+        "collapsedFaces": 21,
+        "reorientedFaces": 0,
+        "outputFaces": 3071
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-orrery-pilgrim-road",
+        "inputFaces": 4098,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 4098
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-overlook-lane",
+        "inputFaces": 2885,
+        "collapsedFaces": 2,
+        "reorientedFaces": 0,
+        "outputFaces": 2883
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-quarry-adit-lane",
+        "inputFaces": 1010,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1010
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-quarry-road",
+        "inputFaces": 3657,
+        "collapsedFaces": 11,
+        "reorientedFaces": 0,
+        "outputFaces": 3646
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-quay-descent",
+        "inputFaces": 12749,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 12749
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-reed-cut-lane",
+        "inputFaces": 274,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 274
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-rose-gallery-lane",
+        "inputFaces": 8212,
+        "collapsedFaces": 99,
+        "reorientedFaces": 0,
+        "outputFaces": 8113
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-sanctuary-causeway-approach",
+        "inputFaces": 3713,
+        "collapsedFaces": 6,
+        "reorientedFaces": 0,
+        "outputFaces": 3707
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-south-shore-yard-link",
+        "inputFaces": 3433,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 3433
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-south-watch-lane",
+        "inputFaces": 683,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 683
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-stair-town-0",
+        "inputFaces": 2052,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2052
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-stair-town-1",
+        "inputFaces": 1620,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1620
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-stair-town-2",
+        "inputFaces": 1620,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1620
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-watch-hatch-approach",
+        "inputFaces": 527,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 527
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-west-bench-yard-link",
+        "inputFaces": 1187,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1187
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-west-shore-yard-link",
+        "inputFaces": 3103,
+        "collapsedFaces": 6,
+        "reorientedFaces": 0,
+        "outputFaces": 3097
+      },
+      {
+        "name": "mirrorhold_street-mirrorhold-western-lens-lane",
+        "inputFaces": 2186,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2186
+      },
+      {
+        "name": "mirrorhold_trail-mirrorhold-0",
+        "inputFaces": 2606,
+        "collapsedFaces": 6,
+        "reorientedFaces": 0,
+        "outputFaces": 2600
+      },
+      {
+        "name": "ssarathi_ruins_crownwater--ssarathi_ruins-ssarathi_ruins",
+        "inputFaces": 1240,
+        "collapsedFaces": 71,
+        "reorientedFaces": 0,
+        "outputFaces": 1169
+      },
+      {
+        "name": "ssarathi_ruins_discovery-ssarathi_ruins-1144",
+        "inputFaces": 271,
+        "collapsedFaces": 24,
+        "reorientedFaces": 0,
+        "outputFaces": 247
+      },
+      {
+        "name": "ssarathi_ruins_discovery-ssarathi_ruins-431",
+        "inputFaces": 3446,
+        "collapsedFaces": 63,
+        "reorientedFaces": 0,
+        "outputFaces": 3383
+      },
+      {
+        "name": "ssarathi_ruins_discovery-ssarathi_ruins-432",
+        "inputFaces": 5019,
+        "collapsedFaces": 3,
+        "reorientedFaces": 0,
+        "outputFaces": 5016
+      },
+      {
+        "name": "ssarathi_ruins_discovery-ssarathi_ruins-433",
+        "inputFaces": 793,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 793
+      },
+      {
+        "name": "ssarathi_ruins_discovery-ssarathi_ruins-435",
+        "inputFaces": 385,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 385
+      },
+      {
+        "name": "ssarathi_ruins_discovery-ssarathi_ruins-436",
+        "inputFaces": 4332,
+        "collapsedFaces": 20,
+        "reorientedFaces": 0,
+        "outputFaces": 4312
+      },
+      {
+        "name": "ssarathi_ruins_discovery-ssarathi_ruins-437",
+        "inputFaces": 578,
+        "collapsedFaces": 11,
+        "reorientedFaces": 0,
+        "outputFaces": 567
+      },
+      {
+        "name": "ssarathi_ruins_discovery-ssarathi_ruins-438",
+        "inputFaces": 657,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 657
+      },
+      {
+        "name": "ssarathi_ruins_discovery-ssarathi_ruins-439",
+        "inputFaces": 2274,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2274
+      },
+      {
+        "name": "ssarathi_ruins_discovery-ssarathi_ruins-440",
+        "inputFaces": 6571,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 6559
+      },
+      {
+        "name": "ssarathi_ruins_discovery-ssarathi_ruins-441",
+        "inputFaces": 3650,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 3650
+      },
+      {
+        "name": "ssarathi_ruins_discovery-ssarathi_ruins-442",
+        "inputFaces": 917,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 917
+      },
+      {
+        "name": "ssarathi_ruins_door-ssarathi_ruins-archive-vault-door",
+        "inputFaces": 41835,
+        "collapsedFaces": 198,
+        "reorientedFaces": 0,
+        "outputFaces": 41637
+      },
+      {
+        "name": "ssarathi_ruins_door-ssarathi_ruins-cistern-shaft",
+        "inputFaces": 16537,
+        "collapsedFaces": 54,
+        "reorientedFaces": 1,
+        "outputFaces": 16483
+      },
+      {
+        "name": "ssarathi_ruins_door-ssarathi_ruins-hatchery-descent",
+        "inputFaces": 9730,
+        "collapsedFaces": 166,
+        "reorientedFaces": 0,
+        "outputFaces": 9564
+      },
+      {
+        "name": "ssarathi_ruins_door-ssarathi_ruins-lineage-house-door",
+        "inputFaces": 5806,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 5794
+      },
+      {
+        "name": "ssarathi_ruins_door-ssarathi_ruins-tenth-mouth-door",
+        "inputFaces": 33176,
+        "collapsedFaces": 146,
+        "reorientedFaces": 0,
+        "outputFaces": 33030
+      },
+      {
+        "name": "ssarathi_ruins_door-ssarathi_ruins-undercroft-mouth",
+        "inputFaces": 10156,
+        "collapsedFaces": 40,
+        "reorientedFaces": 0,
+        "outputFaces": 10116
+      },
+      {
+        "name": "ssarathi_ruins_door-ssarathi_ruins-water-gate-undercut-mouth",
+        "inputFaces": 4206,
+        "collapsedFaces": 38,
+        "reorientedFaces": 0,
+        "outputFaces": 4168
+      },
+      {
+        "name": "ssarathi_ruins_ssarathi_ruins--verdant_stair-ssarathi_ruins",
+        "inputFaces": 49669,
+        "collapsedFaces": 548,
+        "reorientedFaces": 2,
+        "outputFaces": 49121
+      },
+      {
+        "name": "amethyst_barrens--sunmane_steppe-sunmane_steppe",
+        "inputFaces": 26173,
+        "collapsedFaces": 68,
+        "reorientedFaces": 1,
+        "outputFaces": 26105
+      },
+      {
+        "name": "discovery-sunmane_steppe-301",
+        "inputFaces": 7063,
+        "collapsedFaces": 40,
+        "reorientedFaces": 0,
+        "outputFaces": 7023
+      },
+      {
+        "name": "discovery-sunmane_steppe-302",
+        "inputFaces": 848,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 848
+      },
+      {
+        "name": "discovery-sunmane_steppe-303",
+        "inputFaces": 1437,
+        "collapsedFaces": 31,
+        "reorientedFaces": 0,
+        "outputFaces": 1406
+      },
+      {
+        "name": "discovery-sunmane_steppe-304",
+        "inputFaces": 743,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 743
+      },
+      {
+        "name": "discovery-sunmane_steppe-305",
+        "inputFaces": 845,
+        "collapsedFaces": 7,
+        "reorientedFaces": 0,
+        "outputFaces": 838
+      },
+      {
+        "name": "discovery-sunmane_steppe-306",
+        "inputFaces": 1609,
+        "collapsedFaces": 6,
+        "reorientedFaces": 0,
+        "outputFaces": 1603
+      },
+      {
+        "name": "discovery-sunmane_steppe-307",
+        "inputFaces": 1754,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1754
+      },
+      {
+        "name": "discovery-sunmane_steppe-308",
+        "inputFaces": 968,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 968
+      },
+      {
+        "name": "discovery-sunmane_steppe-309",
+        "inputFaces": 1318,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1318
+      },
+      {
+        "name": "discovery-sunmane_steppe-310",
+        "inputFaces": 2257,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2257
+      },
+      {
+        "name": "discovery-sunmane_steppe-311",
+        "inputFaces": 2940,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2940
+      },
+      {
+        "name": "discovery-sunmane_steppe-312",
+        "inputFaces": 3346,
+        "collapsedFaces": 6,
+        "reorientedFaces": 0,
+        "outputFaces": 3340
+      },
+      {
+        "name": "discovery-sunmane_steppe-313",
+        "inputFaces": 2911,
+        "collapsedFaces": 17,
+        "reorientedFaces": 0,
+        "outputFaces": 2894
+      },
+      {
+        "name": "discovery-sunmane_steppe-713",
+        "inputFaces": 1286,
+        "collapsedFaces": 2,
+        "reorientedFaces": 1,
+        "outputFaces": 1284
+      },
+      {
+        "name": "door-sunmane_steppe-cave-crystal_hollow",
+        "inputFaces": 13607,
+        "collapsedFaces": 14,
+        "reorientedFaces": 1,
+        "outputFaces": 13593
+      },
+      {
+        "name": "door-sunmane_steppe-cave-wind_caves",
+        "inputFaces": 12320,
+        "collapsedFaces": 1,
+        "reorientedFaces": 0,
+        "outputFaces": 12319
+      },
+      {
+        "name": "east-gate-main-ramp",
+        "inputFaces": 1416,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 1404
+      },
+      {
+        "name": "east-gate-town-ramp",
+        "inputFaces": 415,
+        "collapsedFaces": 11,
+        "reorientedFaces": 0,
+        "outputFaces": 404
+      },
+      {
+        "name": "mirrorhold--sunmane_steppe-sunmane_steppe",
+        "inputFaces": 9849,
+        "collapsedFaces": 42,
+        "reorientedFaces": 0,
+        "outputFaces": 9807
+      },
+      {
+        "name": "sunmane_steppe--verdant_stair-sunmane_steppe",
+        "inputFaces": 17823,
+        "collapsedFaces": 37,
+        "reorientedFaces": 0,
+        "outputFaces": 17786
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-345",
+        "inputFaces": 702,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 702
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-353",
+        "inputFaces": 570,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 558
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-357",
+        "inputFaces": 23928,
+        "collapsedFaces": 4,
+        "reorientedFaces": 0,
+        "outputFaces": 23924
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-358",
+        "inputFaces": 19073,
+        "collapsedFaces": 56,
+        "reorientedFaces": 0,
+        "outputFaces": 19017
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-359",
+        "inputFaces": 3875,
+        "collapsedFaces": 71,
+        "reorientedFaces": 3,
+        "outputFaces": 3804
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-360",
+        "inputFaces": 2210,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2210
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-361",
+        "inputFaces": 2290,
+        "collapsedFaces": 48,
+        "reorientedFaces": 0,
+        "outputFaces": 2242
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-362",
+        "inputFaces": 997,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 997
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-363",
+        "inputFaces": 897,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 897
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-364",
+        "inputFaces": 3512,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 3500
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-365",
+        "inputFaces": 1320,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1320
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-366",
+        "inputFaces": 940,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 940
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-368",
+        "inputFaces": 2440,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2440
+      },
+      {
+        "name": "verdant_stair_discovery-verdant_stair-369",
+        "inputFaces": 2792,
+        "collapsedFaces": 16,
+        "reorientedFaces": 0,
+        "outputFaces": 2776
+      },
+      {
+        "name": "verdant_stair_door-verdant_stair-anchor-hollow-mouth",
+        "inputFaces": 11210,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 11210
+      },
+      {
+        "name": "verdant_stair_door-verdant_stair-banyan-hollow-arch",
+        "inputFaces": 9486,
+        "collapsedFaces": 8,
+        "reorientedFaces": 0,
+        "outputFaces": 9478
+      },
+      {
+        "name": "verdant_stair_door-verdant_stair-cenote-deeps-stair",
+        "inputFaces": 9614,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 9614
+      },
+      {
+        "name": "verdant_stair_door-verdant_stair-nine-lost-door",
+        "inputFaces": 29171,
+        "collapsedFaces": 62,
+        "reorientedFaces": 0,
+        "outputFaces": 29109
+      },
+      {
+        "name": "verdant_stair_door-verdant_stair-physick-still-door",
+        "inputFaces": 6334,
+        "collapsedFaces": 13,
+        "reorientedFaces": 0,
+        "outputFaces": 6321
+      },
+      {
+        "name": "verdant_stair_door-verdant_stair-stair-quarry-adit",
+        "inputFaces": 35876,
+        "collapsedFaces": 140,
+        "reorientedFaces": 1,
+        "outputFaces": 35736
+      },
+      {
+        "name": "verdant_stair_door-verdant_stair-temple-sanctum-door",
+        "inputFaces": 34116,
+        "collapsedFaces": 46,
+        "reorientedFaces": 0,
+        "outputFaces": 34070
+      },
+      {
+        "name": "verdant_stair_manymouth_delta--verdant_stair-verdant_stair",
+        "inputFaces": 37413,
+        "collapsedFaces": 117,
+        "reorientedFaces": 7,
+        "outputFaces": 37296
+      },
+      {
+        "name": "verdant_stair_mirrorhold--verdant_stair-verdant_stair",
+        "inputFaces": 28833,
+        "collapsedFaces": 149,
+        "reorientedFaces": 0,
+        "outputFaces": 28684
+      },
+      {
+        "name": "verdant_stair_ssarathi_ruins--verdant_stair-verdant_stair",
+        "inputFaces": 19305,
+        "collapsedFaces": 168,
+        "reorientedFaces": 0,
+        "outputFaces": 19137
+      },
+      {
+        "name": "verdant_stair_sunmane_steppe--verdant_stair-verdant_stair",
+        "inputFaces": 41993,
+        "collapsedFaces": 144,
+        "reorientedFaces": 0,
+        "outputFaces": 41849
+      },
+      {
+        "name": "westhaven_crownwater--westhaven-westhaven",
+        "inputFaces": 16768,
+        "collapsedFaces": 48,
+        "reorientedFaces": 3,
+        "outputFaces": 16720
+      },
+      {
+        "name": "westhaven_discovery-westhaven-826",
+        "inputFaces": 3636,
+        "collapsedFaces": 2,
+        "reorientedFaces": 0,
+        "outputFaces": 3634
+      },
+      {
+        "name": "westhaven_discovery-westhaven-827",
+        "inputFaces": 1774,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1774
+      },
+      {
+        "name": "westhaven_discovery-westhaven-828",
+        "inputFaces": 3278,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 3278
+      },
+      {
+        "name": "westhaven_discovery-westhaven-829",
+        "inputFaces": 1641,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1641
+      },
+      {
+        "name": "westhaven_discovery-westhaven-830",
+        "inputFaces": 985,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 985
+      },
+      {
+        "name": "westhaven_discovery-westhaven-831",
+        "inputFaces": 3418,
+        "collapsedFaces": 9,
+        "reorientedFaces": 0,
+        "outputFaces": 3409
+      },
+      {
+        "name": "westhaven_discovery-westhaven-832",
+        "inputFaces": 3533,
+        "collapsedFaces": 20,
+        "reorientedFaces": 0,
+        "outputFaces": 3513
+      },
+      {
+        "name": "westhaven_discovery-westhaven-833",
+        "inputFaces": 2582,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2582
+      },
+      {
+        "name": "westhaven_discovery-westhaven-834",
+        "inputFaces": 21079,
+        "collapsedFaces": 195,
+        "reorientedFaces": 4,
+        "outputFaces": 20884
+      },
+      {
+        "name": "westhaven_discovery-westhaven-835",
+        "inputFaces": 2416,
+        "collapsedFaces": 24,
+        "reorientedFaces": 0,
+        "outputFaces": 2392
+      },
+      {
+        "name": "westhaven_discovery-westhaven-836",
+        "inputFaces": 4223,
+        "collapsedFaces": 27,
+        "reorientedFaces": 0,
+        "outputFaces": 4196
+      },
+      {
+        "name": "westhaven_discovery-westhaven-837",
+        "inputFaces": 466,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 466
+      },
+      {
+        "name": "westhaven_discovery-westhaven-838",
+        "inputFaces": 3286,
+        "collapsedFaces": 55,
+        "reorientedFaces": 3,
+        "outputFaces": 3231
+      },
+      {
+        "name": "westhaven_discovery-westhaven-839",
+        "inputFaces": 2118,
+        "collapsedFaces": 24,
+        "reorientedFaces": 3,
+        "outputFaces": 2094
+      },
+      {
+        "name": "westhaven_door-westhaven-bonded-vaults-door",
+        "inputFaces": 6094,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 6082
+      },
+      {
+        "name": "westhaven_door-westhaven-custom-house-door",
+        "inputFaces": 9318,
+        "collapsedFaces": 53,
+        "reorientedFaces": 2,
+        "outputFaces": 9265
+      },
+      {
+        "name": "westhaven_door-westhaven-gullscar-farmhouse-door",
+        "inputFaces": 8943,
+        "collapsedFaces": 5,
+        "reorientedFaces": 0,
+        "outputFaces": 8938
+      },
+      {
+        "name": "westhaven_door-westhaven-gullstone-door",
+        "inputFaces": 20054,
+        "collapsedFaces": 57,
+        "reorientedFaces": 0,
+        "outputFaces": 19997
+      },
+      {
+        "name": "westhaven_door-westhaven-haven-undercroft-door",
+        "inputFaces": 6593,
+        "collapsedFaces": 2,
+        "reorientedFaces": 0,
+        "outputFaces": 6591
+      },
+      {
+        "name": "westhaven_door-westhaven-lamp-rock-door",
+        "inputFaces": 23320,
+        "collapsedFaces": 80,
+        "reorientedFaces": 0,
+        "outputFaces": 23240
+      },
+      {
+        "name": "westhaven_door-westhaven-salvage-hole-mouth",
+        "inputFaces": 10679,
+        "collapsedFaces": 6,
+        "reorientedFaces": 0,
+        "outputFaces": 10673
+      },
+      {
+        "name": "westhaven_four_gates--westhaven-westhaven",
+        "inputFaces": 22437,
+        "collapsedFaces": 15,
+        "reorientedFaces": 0,
+        "outputFaces": 22422
+      },
+      {
+        "name": "westhaven_grey_moors--westhaven-westhaven",
+        "inputFaces": 32063,
+        "collapsedFaces": 56,
+        "reorientedFaces": 1,
+        "outputFaces": 32007
+      },
+      {
+        "name": "westhaven_manymouth_delta--westhaven-westhaven",
+        "inputFaces": 17437,
+        "collapsedFaces": 86,
+        "reorientedFaces": 0,
+        "outputFaces": 17351
+      },
+      {
+        "name": "whitehorn_range_amberwood--whitehorn_range-whitehorn_range",
+        "inputFaces": 43895,
+        "collapsedFaces": 193,
+        "reorientedFaces": 0,
+        "outputFaces": 43702
+      },
+      {
+        "name": "whitehorn_range_amethyst_barrens--whitehorn_range-whitehorn_range",
+        "inputFaces": 55343,
+        "collapsedFaces": 178,
+        "reorientedFaces": 1,
+        "outputFaces": 55165
+      },
+      {
+        "name": "whitehorn_range_discovery-whitehorn_range-1111",
+        "inputFaces": 408,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 408
+      },
+      {
+        "name": "whitehorn_range_discovery-whitehorn_range-516",
+        "inputFaces": 512,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 512
+      },
+      {
+        "name": "whitehorn_range_discovery-whitehorn_range-528",
+        "inputFaces": 5450,
+        "collapsedFaces": 12,
+        "reorientedFaces": 0,
+        "outputFaces": 5438
+      },
+      {
+        "name": "whitehorn_range_discovery-whitehorn_range-530",
+        "inputFaces": 4088,
+        "collapsedFaces": 51,
+        "reorientedFaces": 2,
+        "outputFaces": 4037
+      },
+      {
+        "name": "whitehorn_range_discovery-whitehorn_range-531",
+        "inputFaces": 1557,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1557
+      },
+      {
+        "name": "whitehorn_range_discovery-whitehorn_range-532",
+        "inputFaces": 360,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 360
+      },
+      {
+        "name": "whitehorn_range_discovery-whitehorn_range-534",
+        "inputFaces": 8246,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 8246
+      },
+      {
+        "name": "whitehorn_range_discovery-whitehorn_range-535",
+        "inputFaces": 2644,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2644
+      },
+      {
+        "name": "whitehorn_range_discovery-whitehorn_range-537",
+        "inputFaces": 1550,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1550
+      },
+      {
+        "name": "whitehorn_range_discovery-whitehorn_range-538",
+        "inputFaces": 2316,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2316
+      },
+      {
+        "name": "whitehorn_range_discovery-whitehorn_range-539",
+        "inputFaces": 6190,
+        "collapsedFaces": 42,
+        "reorientedFaces": 1,
+        "outputFaces": 6148
+      },
+      {
+        "name": "whitehorn_range_discovery-whitehorn_range-620",
+        "inputFaces": 534,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 534
+      },
+      {
+        "name": "whitehorn_range_door-whitehorn_range-gate-store-door",
+        "inputFaces": 2127,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 2127
+      },
+      {
+        "name": "whitehorn_range_door-whitehorn_range-snowline-cell-door",
+        "inputFaces": 73389,
+        "collapsedFaces": 117,
+        "reorientedFaces": 4,
+        "outputFaces": 73272
+      },
+      {
+        "name": "whitehorn_range_door-whitehorn_range-west-watch-cave-mouth",
+        "inputFaces": 14735,
+        "collapsedFaces": 28,
+        "reorientedFaces": 0,
+        "outputFaces": 14707
+      },
+      {
+        "name": "whitehorn_range_door-whitehorn_range-whitehorn-barrow-door",
+        "inputFaces": 17613,
+        "collapsedFaces": 43,
+        "reorientedFaces": 0,
+        "outputFaces": 17570
+      },
+      {
+        "name": "whitehorn_range_door-whitehorn_range-whitehorn-glacier-temple-door",
+        "inputFaces": 48891,
+        "collapsedFaces": 76,
+        "reorientedFaces": 4,
+        "outputFaces": 48815
+      },
+      {
+        "name": "whitehorn_range_door-whitehorn_range-whitehorn-ice-cave-mouth",
+        "inputFaces": 13473,
+        "collapsedFaces": 2,
+        "reorientedFaces": 0,
+        "outputFaces": 13471
+      },
+      {
+        "name": "whitehorn_range_door-whitehorn_range-whitehorn-mine-adit",
+        "inputFaces": 46969,
+        "collapsedFaces": 24,
+        "reorientedFaces": 0,
+        "outputFaces": 46945
+      },
+      {
+        "name": "whitehorn_range_grey_moors--whitehorn_range-whitehorn_range",
+        "inputFaces": 38141,
+        "collapsedFaces": 129,
+        "reorientedFaces": 0,
+        "outputFaces": 38012
+      },
+      {
+        "name": "whitehorn_range_trail-whitehorn_range-0",
+        "inputFaces": 7686,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 7686
+      }
+    ],
     "waterMaterials": [
       {
         "id": "amber_tributary",
@@ -1722,7 +4469,7 @@
         "id": "southern_river",
         "region": "sunmane_steppe",
         "material": "authored_southern_river_water",
-        "triangles": 10495
+        "triangles": 10731
       },
       {
         "id": "horn_tributary",

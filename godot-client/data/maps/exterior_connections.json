@@ -67,6 +67,11 @@
             ],
             "walkingHeight": 168.99960327148438,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -362,
@@ -76,7 +81,8 @@
                 346,
                 360
               ]
-            }
+            },
+            "authoringSpecSha256": "c661b36ceae9c825e1ee2fe602f5ca5930240c86e393bd3cb963180c8cb01e59"
           },
           "preloadEdges": [
             [
@@ -3295,6 +3301,11 @@
             ],
             "walkingHeight": 27.01974105834961,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -224,
@@ -3304,7 +3315,8 @@
                 526,
                 326
               ]
-            }
+            },
+            "authoringSpecSha256": "810ec91bcf212911702005916d6bc24ac405bd7fdad5b41f301e2db78181f280"
           },
           "preloadEdges": [
             [
@@ -6534,6 +6546,11 @@
             ],
             "walkingHeight": 168.99960327148438,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -362,
@@ -6543,7 +6560,8 @@
                 346,
                 360
               ]
-            }
+            },
+            "authoringSpecSha256": "c661b36ceae9c825e1ee2fe602f5ca5930240c86e393bd3cb963180c8cb01e59"
           },
           "preloadEdges": [
             [
@@ -8897,6 +8915,11 @@
             ],
             "walkingHeight": 57.791343688964844,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -242,
@@ -8906,7 +8929,8 @@
                 184,
                 182
               ]
-            }
+            },
+            "authoringSpecSha256": "d5bd2c2ef68246f096cd4343ff2aefedf47e9b2fb7b586d52b761d1b3f0e4091"
           },
           "preloadEdges": [
             [
@@ -11266,6 +11290,11 @@
             ],
             "walkingHeight": 168.99960327148438,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -362,
@@ -11275,7 +11304,8 @@
                 346,
                 360
               ]
-            }
+            },
+            "authoringSpecSha256": "c661b36ceae9c825e1ee2fe602f5ca5930240c86e393bd3cb963180c8cb01e59"
           },
           "preloadEdges": [
             [
@@ -15229,6 +15259,11 @@
             ],
             "walkingHeight": 33.29356384277344,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -182,
@@ -15238,7 +15273,8 @@
                 556,
                 166
               ]
-            }
+            },
+            "authoringSpecSha256": "aa4616afdc70c02502021c4d2362de76ecc310a442a974b10e719748e4c769c5"
           },
           "preloadEdges": [
             [
@@ -19203,6 +19239,11 @@
             ],
             "walkingHeight": 27.01974105834961,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -224,
@@ -19212,7 +19253,8 @@
                 526,
                 326
               ]
-            }
+            },
+            "authoringSpecSha256": "810ec91bcf212911702005916d6bc24ac405bd7fdad5b41f301e2db78181f280"
           },
           "preloadEdges": [
             [
@@ -21866,6 +21908,11 @@
             ],
             "walkingHeight": 57.791343688964844,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -242,
@@ -21875,7 +21922,8 @@
                 184,
                 182
               ]
-            }
+            },
+            "authoringSpecSha256": "d5bd2c2ef68246f096cd4343ff2aefedf47e9b2fb7b586d52b761d1b3f0e4091"
           },
           "preloadEdges": [
             [
@@ -24530,6 +24578,11 @@
             ],
             "walkingHeight": 27.01974105834961,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -224,
@@ -24539,7 +24592,8 @@
                 526,
                 326
               ]
-            }
+            },
+            "authoringSpecSha256": "810ec91bcf212911702005916d6bc24ac405bd7fdad5b41f301e2db78181f280"
           },
           "preloadEdges": [
             [
@@ -25873,6 +25927,11 @@
             ],
             "walkingHeight": 14.555402755737305,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -174,
@@ -25882,7 +25941,8 @@
                 414,
                 244
               ]
-            }
+            },
+            "authoringSpecSha256": "34da3cd93a5876bf75e2d390ce40f9ccb3953dfcb79e967de22ac417906b1b37"
           },
           "preloadEdges": [
             [
@@ -27222,6 +27282,11 @@
             ],
             "walkingHeight": 57.791343688964844,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -242,
@@ -27231,7 +27296,8 @@
                 184,
                 182
               ]
-            }
+            },
+            "authoringSpecSha256": "d5bd2c2ef68246f096cd4343ff2aefedf47e9b2fb7b586d52b761d1b3f0e4091"
           },
           "preloadEdges": [
             [
@@ -28350,6 +28416,11 @@
             ],
             "walkingHeight": 95.35431671142578,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -208,
@@ -28359,7 +28430,8 @@
                 332,
                 350
               ]
-            }
+            },
+            "authoringSpecSha256": "47bda36d4c882def4d9d18979579722c85ea586751022be5c6627b338e07f261"
           },
           "preloadEdges": [
             [
@@ -29479,6 +29551,11 @@
             ],
             "walkingHeight": 57.791343688964844,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -242,
@@ -29488,7 +29565,8 @@
                 184,
                 182
               ]
-            }
+            },
+            "authoringSpecSha256": "d5bd2c2ef68246f096cd4343ff2aefedf47e9b2fb7b586d52b761d1b3f0e4091"
           },
           "preloadEdges": [
             [
@@ -31687,6 +31765,11 @@
             ],
             "walkingHeight": 21.69345474243164,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -310,
@@ -31696,7 +31779,8 @@
                 284,
                 164
               ]
-            }
+            },
+            "authoringSpecSha256": "f9cafcc95c58f1c059ac1eaf83112485c7f1b3e04d24fa78d74082b95b597e1f"
           },
           "preloadEdges": [
             [
@@ -33901,6 +33985,11 @@
             ],
             "walkingHeight": 95.35431671142578,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -208,
@@ -33910,7 +33999,8 @@
                 332,
                 350
               ]
-            }
+            },
+            "authoringSpecSha256": "47bda36d4c882def4d9d18979579722c85ea586751022be5c6627b338e07f261"
           },
           "preloadEdges": [
             [
@@ -35969,6 +36059,11 @@
             ],
             "walkingHeight": 33.29356384277344,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -182,
@@ -35978,7 +36073,8 @@
                 556,
                 166
               ]
-            }
+            },
+            "authoringSpecSha256": "aa4616afdc70c02502021c4d2362de76ecc310a442a974b10e719748e4c769c5"
           },
           "preloadEdges": [
             [
@@ -38033,6 +38129,11 @@
             ],
             "walkingHeight": 95.35431671142578,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -208,
@@ -38042,7 +38143,8 @@
                 332,
                 350
               ]
-            }
+            },
+            "authoringSpecSha256": "47bda36d4c882def4d9d18979579722c85ea586751022be5c6627b338e07f261"
           },
           "preloadEdges": [
             [
@@ -40336,6 +40438,11 @@
             ],
             "walkingHeight": 26.646358489990234,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -194,
@@ -40345,7 +40452,8 @@
                 598,
                 292
               ]
-            }
+            },
+            "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
           },
           "preloadEdges": [
             [
@@ -42645,6 +42753,11 @@
             ],
             "walkingHeight": 95.35431671142578,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -208,
@@ -42654,7 +42767,8 @@
                 332,
                 350
               ]
-            }
+            },
+            "authoringSpecSha256": "47bda36d4c882def4d9d18979579722c85ea586751022be5c6627b338e07f261"
           },
           "preloadEdges": [
             [
@@ -45413,6 +45527,11 @@
             ],
             "walkingHeight": 21.69345474243164,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -310,
@@ -45422,7 +45541,8 @@
                 284,
                 164
               ]
-            }
+            },
+            "authoringSpecSha256": "f9cafcc95c58f1c059ac1eaf83112485c7f1b3e04d24fa78d74082b95b597e1f"
           },
           "preloadEdges": [
             [
@@ -48182,6 +48302,11 @@
             ],
             "walkingHeight": 95.35431671142578,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -208,
@@ -48191,7 +48316,8 @@
                 332,
                 350
               ]
-            }
+            },
+            "authoringSpecSha256": "47bda36d4c882def4d9d18979579722c85ea586751022be5c6627b338e07f261"
           },
           "preloadEdges": [
             [
@@ -50385,6 +50511,11 @@
             ],
             "walkingHeight": 77.51676940917969,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -298,
@@ -50394,7 +50525,8 @@
                 404,
                 164
               ]
-            }
+            },
+            "authoringSpecSha256": "3fb281869a0ab80c56743c2cbf353859bb86503bc8015ac3e47890f02c921cb1"
           },
           "preloadEdges": [
             [
@@ -52589,6 +52721,11 @@
             ],
             "walkingHeight": 33.29356384277344,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -182,
@@ -52598,7 +52735,8 @@
                 556,
                 166
               ]
-            }
+            },
+            "authoringSpecSha256": "aa4616afdc70c02502021c4d2362de76ecc310a442a974b10e719748e4c769c5"
           },
           "preloadEdges": [
             [
@@ -57617,6 +57755,11 @@
             ],
             "walkingHeight": 26.646358489990234,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -194,
@@ -57626,7 +57769,8 @@
                 598,
                 292
               ]
-            }
+            },
+            "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
           },
           "preloadEdges": [
             [
@@ -62646,6 +62790,11 @@
             ],
             "walkingHeight": 26.646358489990234,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -194,
@@ -62655,7 +62804,8 @@
                 598,
                 292
               ]
-            }
+            },
+            "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
           },
           "preloadEdges": [
             [
@@ -66299,6 +66449,11 @@
             ],
             "walkingHeight": 77.51676940917969,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -298,
@@ -66308,7 +66463,8 @@
                 404,
                 164
               ]
-            }
+            },
+            "authoringSpecSha256": "3fb281869a0ab80c56743c2cbf353859bb86503bc8015ac3e47890f02c921cb1"
           },
           "preloadEdges": [
             [
@@ -69963,6 +70119,11 @@
             ],
             "walkingHeight": 21.69345474243164,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -310,
@@ -69972,7 +70133,8 @@
                 284,
                 164
               ]
-            }
+            },
+            "authoringSpecSha256": "f9cafcc95c58f1c059ac1eaf83112485c7f1b3e04d24fa78d74082b95b597e1f"
           },
           "preloadEdges": [
             [
@@ -72736,6 +72898,11 @@
             ],
             "walkingHeight": 14.555402755737305,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -174,
@@ -72745,7 +72912,8 @@
                 414,
                 244
               ]
-            }
+            },
+            "authoringSpecSha256": "34da3cd93a5876bf75e2d390ce40f9ccb3953dfcb79e967de22ac417906b1b37"
           },
           "preloadEdges": [
             [
@@ -75515,6 +75683,11 @@
             ],
             "walkingHeight": 21.69345474243164,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -310,
@@ -75524,7 +75697,8 @@
                 284,
                 164
               ]
-            }
+            },
+            "authoringSpecSha256": "f9cafcc95c58f1c059ac1eaf83112485c7f1b3e04d24fa78d74082b95b597e1f"
           },
           "preloadEdges": [
             [
@@ -77913,6 +78087,11 @@
             ],
             "walkingHeight": 2.200000047683716,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -208,
@@ -77922,7 +78101,8 @@
                 302,
                 310
               ]
-            }
+            },
+            "authoringSpecSha256": "184cde8deb84f6a3d9829fa8e0b9d05291a7e8120c0aebdd160f15f2c1187eb5"
           },
           "preloadEdges": [
             [
@@ -80317,6 +80497,11 @@
             ],
             "walkingHeight": 14.555402755737305,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -174,
@@ -80326,7 +80511,8 @@
                 414,
                 244
               ]
-            }
+            },
+            "authoringSpecSha256": "34da3cd93a5876bf75e2d390ce40f9ccb3953dfcb79e967de22ac417906b1b37"
           },
           "preloadEdges": [
             [
@@ -82035,6 +82221,11 @@
             ],
             "walkingHeight": 2.200000047683716,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -208,
@@ -82044,7 +82235,8 @@
                 302,
                 310
               ]
-            }
+            },
+            "authoringSpecSha256": "184cde8deb84f6a3d9829fa8e0b9d05291a7e8120c0aebdd160f15f2c1187eb5"
           },
           "preloadEdges": [
             [
@@ -83759,6 +83951,11 @@
             ],
             "walkingHeight": 2.200000047683716,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -208,
@@ -83768,7 +83965,8 @@
                 302,
                 310
               ]
-            }
+            },
+            "authoringSpecSha256": "184cde8deb84f6a3d9829fa8e0b9d05291a7e8120c0aebdd160f15f2c1187eb5"
           },
           "preloadEdges": [
             [
@@ -85342,6 +85540,11 @@
             ],
             "walkingHeight": 77.51676940917969,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -298,
@@ -85351,7 +85554,8 @@
                 404,
                 164
               ]
-            }
+            },
+            "authoringSpecSha256": "3fb281869a0ab80c56743c2cbf353859bb86503bc8015ac3e47890f02c921cb1"
           },
           "preloadEdges": [
             [
@@ -86931,6 +87135,11 @@
             ],
             "walkingHeight": 77.51676940917969,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -298,
@@ -86940,7 +87149,8 @@
                 404,
                 164
               ]
-            }
+            },
+            "authoringSpecSha256": "3fb281869a0ab80c56743c2cbf353859bb86503bc8015ac3e47890f02c921cb1"
           },
           "preloadEdges": [
             [
@@ -90449,6 +90659,11 @@
             ],
             "walkingHeight": 2.2352070808410645,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -376,
@@ -90458,7 +90673,8 @@
                 404,
                 244
               ]
-            }
+            },
+            "authoringSpecSha256": "90839428d8d44bd18f2b28688dac9d664dd4399fadf9cd25b9b69a4953ff30cc"
           },
           "preloadEdges": [
             [
@@ -93973,6 +94189,11 @@
             ],
             "walkingHeight": 168.99960327148438,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -362,
@@ -93982,7 +94203,8 @@
                 346,
                 360
               ]
-            }
+            },
+            "authoringSpecSha256": "c661b36ceae9c825e1ee2fe602f5ca5930240c86e393bd3cb963180c8cb01e59"
           },
           "preloadEdges": [
             [
@@ -95606,6 +95828,11 @@
             ],
             "walkingHeight": 95.35431671142578,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -208,
@@ -95615,7 +95842,8 @@
                 332,
                 350
               ]
-            }
+            },
+            "authoringSpecSha256": "47bda36d4c882def4d9d18979579722c85ea586751022be5c6627b338e07f261"
           },
           "preloadEdges": [
             [
@@ -97246,6 +97474,11 @@
             ],
             "walkingHeight": 27.01974105834961,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -224,
@@ -97255,7 +97488,8 @@
                 526,
                 326
               ]
-            }
+            },
+            "authoringSpecSha256": "810ec91bcf212911702005916d6bc24ac405bd7fdad5b41f301e2db78181f280"
           },
           "preloadEdges": [
             [
@@ -97929,6 +98163,11 @@
             ],
             "walkingHeight": 21.69345474243164,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -310,
@@ -97938,7 +98177,8 @@
                 284,
                 164
               ]
-            }
+            },
+            "authoringSpecSha256": "f9cafcc95c58f1c059ac1eaf83112485c7f1b3e04d24fa78d74082b95b597e1f"
           },
           "preloadEdges": [
             [
@@ -98619,6 +98859,11 @@
             ],
             "walkingHeight": 21.69345474243164,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -310,
@@ -98628,7 +98873,8 @@
                 284,
                 164
               ]
-            }
+            },
+            "authoringSpecSha256": "f9cafcc95c58f1c059ac1eaf83112485c7f1b3e04d24fa78d74082b95b597e1f"
           },
           "preloadEdges": [
             [
@@ -98722,6 +98968,11 @@
             ],
             "walkingHeight": 77.51676940917969,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -298,
@@ -98731,7 +98982,8 @@
                 404,
                 164
               ]
-            }
+            },
+            "authoringSpecSha256": "3fb281869a0ab80c56743c2cbf353859bb86503bc8015ac3e47890f02c921cb1"
           },
           "preloadEdges": [
             [
@@ -98832,6 +99084,11 @@
             ],
             "walkingHeight": 2.200000047683716,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -208,
@@ -98841,7 +99098,8 @@
                 302,
                 310
               ]
-            }
+            },
+            "authoringSpecSha256": "184cde8deb84f6a3d9829fa8e0b9d05291a7e8120c0aebdd160f15f2c1187eb5"
           },
           "preloadEdges": [
             [
@@ -100300,6 +100558,11 @@
             ],
             "walkingHeight": 2.2352070808410645,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -376,
@@ -100309,7 +100572,8 @@
                 404,
                 244
               ]
-            }
+            },
+            "authoringSpecSha256": "90839428d8d44bd18f2b28688dac9d664dd4399fadf9cd25b9b69a4953ff30cc"
           },
           "preloadEdges": [
             [
@@ -103723,6 +103987,11 @@
             ],
             "walkingHeight": 14.555402755737305,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -174,
@@ -103732,7 +104001,8 @@
                 414,
                 244
               ]
-            }
+            },
+            "authoringSpecSha256": "34da3cd93a5876bf75e2d390ce40f9ccb3953dfcb79e967de22ac417906b1b37"
           }
         },
         {
@@ -105746,6 +106016,11 @@
             ],
             "walkingHeight": 4.5,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -294,
@@ -105755,7 +106030,8 @@
                 480,
                 114
               ]
-            }
+            },
+            "authoringSpecSha256": "a3dca08cf1085c312545b17627e12ce4c4a8302714353cb09fba44b04b36a808"
           }
         }
       ]
@@ -108986,6 +109262,11 @@
             ],
             "walkingHeight": 2.200000047683716,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -208,
@@ -108995,7 +109276,8 @@
                 302,
                 310
               ]
-            }
+            },
+            "authoringSpecSha256": "184cde8deb84f6a3d9829fa8e0b9d05291a7e8120c0aebdd160f15f2c1187eb5"
           }
         },
         {
@@ -112219,6 +112501,11 @@
             ],
             "walkingHeight": 4.5,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -294,
@@ -112228,7 +112515,8 @@
                 480,
                 114
               ]
-            }
+            },
+            "authoringSpecSha256": "a3dca08cf1085c312545b17627e12ce4c4a8302714353cb09fba44b04b36a808"
           }
         }
       ]
@@ -113659,6 +113947,11 @@
             ],
             "walkingHeight": 4.5,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -294,
@@ -113668,7 +113961,8 @@
                 480,
                 114
               ]
-            }
+            },
+            "authoringSpecSha256": "a3dca08cf1085c312545b17627e12ce4c4a8302714353cb09fba44b04b36a808"
           }
         },
         {
@@ -115092,6 +115386,11 @@
             ],
             "walkingHeight": 2.2352070808410645,
             "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
             "addressableWorldBounds": {
               "min": [
                 -376,
@@ -115101,7 +115400,8 @@
                 404,
                 244
               ]
-            }
+            },
+            "authoringSpecSha256": "90839428d8d44bd18f2b28688dac9d664dd4399fadf9cd25b9b69a4953ff30cc"
           }
         }
       ]

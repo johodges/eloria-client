@@ -5,7 +5,55 @@ exported. X runs east, Z runs south, and sea level is Y = 0. Named territories
 are server and content identities. Their boundaries do not determine the
 height, water level, ground colour, or vegetation of the landscape.
 
-**QA state: published as the nineteenth publication (2026-09-18) and verified
+**QA state: verified local rebuild (2026-09-27).** Source revision
+`17d200a9d9b8d046a5f2d88ef6fbea7dbdb9e642`, master `e3a139bd73ae2be28ba66a22600bbdc39d0ef22e6cc78c9a9ab7de45db12f066`, publication
+`2e68e6285f74888071771fda100629cf7733522d17c9b5c6a53e1a008cebc064`. The normal saved-scene bake, retained libraries,
+composition, geometry, contracts, local publication and atlas chain was run on
+these bytes. This integrates the twelve partial source visual passes and the
+reviewed asset-binding, Sunmane road-approach and terrain-conforming road repairs;
+it is not a claim that every region's larger redesign is complete.
+
+Eight editable return controls now bind sixteen independent instance-definition
+exits. Find them under `Gameplay/RuntimePoints/Returns`, with IDs
+`runtime-instance-return-<region>`. Moving a marker updates its preferred exit
+target, including a one-metre edit, subject to the unchanged five-metre settlement
+limit and final standing, hub-access and no-portal-trigger checks. Existing keeper
+and portal controls retain their separate identities. All sixteen exits settle at their
+authored targets (0 m). Sunmane's final exit is 6.083 m from its previously served
+position; that historical displacement is separate from the authored-target budget.
+
+Final evidence: 2,153 placements with
+0 failures, 10,593 runtime crossing rows: 10,587 walking directions and six ferry directions, fast audit passed with zero errors and 315 roads / 21,816 stations checked, package digests
+0 changed / 0 missing,
+and static walk preparation passed for all 65 family maps, sixteen instance exits and 1,557 outdoor content objects. Border coverage is
+verified for published lanes; the 39 coarse unmatched samples (78 directions) are explained by 66 directions unreachable under actual terminal-aware transport and twelve rejected by the exact original landing rule, with zero unresolved sampled directions. This does not claim exhaustive coverage of unsampled unpublished cells; Crownwater's shore links
+retain their explicit ferry rules. The 42 authored marker identities/positions
+and twelve coordinate frames are preserved; published trigger tiles follow the
+verified runtime rows. Actual ELM/source-fold identity is exact across all twelve regions, including the sixteen actual served instance exits.
+
+The three changed source suites recorded **141 passed, 32 subtests passed, and
+one pre-existing failure**: `test_saved_runtime_edits_reach_normal_placement_with_distinct_endpoint_offsets`
+cannot load the absent historical
+`godot-client/test-artifacts/sunmane-edit-regression/before/continent-authoring.json`.
+The changed static-validator suite passed **39 tests and 19 subtests**. Its separate
+validation-only commit is `0239f372f32d880efd40729c0cef1d65d281e55a`; it did not alter
+the certified build inputs.
+
+Terrain-conforming roads materially increase geometry cost. The measured master
+is **974,735,468 bytes**, with **2,218,227 additional
+visible faces** relative to the preserved geometry before the terrain-conforming
+road repair. This is a size/count observation, not an FPS or live performance result.
+
+All testing and data generation were local. No remote game-server session,
+live deployment, live walk or database migration was run. Ownership selection and
+coordinate capability remain inactive. Changed terrain revisions mean the existing
+startup migration will reseat residents in all twelve maps when this content is
+loaded; that migration policy is unchanged and was not run against a live database.
+Develop publication is recorded by the final paired Git commits
+`530481f3d72d0c6a18973561544f3b7f1b922ac0` and the client commit containing this notice. Any later
+shaping/export change requires fresh normal certificates and validation.
+
+**Historical QA state: published as the nineteenth publication (2026-09-18) and verified
 for what it changed.** Master `461ba604cb050a275cd4275898ad5451429c060567c108626964e6d3640f1073` (the
 seventeenth's: no geometry changed), publication
 `7bf0c8514b28cfbbf4c2f043fe36b2dfeb8c87f4ad6bc5dfd9aba81e70e17f3c`. It opens the four

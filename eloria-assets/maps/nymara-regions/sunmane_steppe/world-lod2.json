@@ -66,6 +66,11 @@
     ],
     "walkingHeight": 26.646358489990234,
     "invertServerY": true,
+    "serverStorageVersion": 1,
+    "serverTileMin": [
+      0,
+      0
+    ],
     "addressableWorldBounds": {
       "min": [
         -194,
@@ -75,7 +80,8 @@
         598,
         292
       ]
-    }
+    },
+    "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a"
   },
   "spawnPoints": [
     {
@@ -853,12 +859,22 @@
       "Lee_4_1__Kit_steppe_tree_1__solid__sun_timber_dark",
       "Lee_4_1__Kit_steppe_tree_1__solid__sun_foliage"
     ],
-    "width": 1584,
-    "height": 1584,
+    "serverStorageVersion": 1,
+    "serverTileMin": [
+      0,
+      0
+    ],
+    "serverCells": [
+      792,
+      792
+    ],
     "originMetres": [
       -194.0,
       292.0
     ],
+    "authoringSpecSha256": "5085c1c327a68b81d1e0c06d6c870be2ca5f437756e7dd41fa703ef2fee7403a",
+    "width": 1584,
+    "height": 1584,
     "heightEncoding": {
       "origin": -0.6508318256483718,
       "step": 0.30084908715349884,
@@ -879,17 +895,17 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 702301,
-    "walkableFraction": 0.279906,
-    "sourceGlbSha256": "dbc9543e482240ac09d93d87ffc3a8bccfa4b327b13de7a7bab1acdee5645589",
+    "walkableCells": 705373,
+    "walkableFraction": 0.281131,
+    "sourceGlbSha256": "e2ca4b74a3b727ad9df4b63af8b3c904702c6391e9bd0e182f1a829b41497096",
     "exportStatistics": {
-      "walkMeshes": 69,
-      "structuralMeshes": 710,
-      "structuralTriangles": 141354,
-      "walkTriangles": 71385,
-      "steepCells": 23057,
-      "waterCells": 268468,
-      "structuralCells": 13318,
+      "walkMeshes": 58,
+      "structuralMeshes": 716,
+      "structuralTriangles": 143712,
+      "walkTriangles": 111574,
+      "steepCells": 15066,
+      "waterCells": 270506,
+      "structuralCells": 14636,
       "thresholdHaloCells": 152,
       "seamCollarCells": 5459
     }
@@ -2344,12 +2360,12 @@
       "reachable": true,
       "rotationDegrees": 270,
       "serverTile": [
-        202,
+        187,
         308
       ],
       "id": "Gate_East",
       "position": [
-        8.619999885559082,
+        -6.380000114440918,
         26.70745849609375,
         -16.3799991607666
       ]
@@ -2361,13 +2377,13 @@
       "reachable": true,
       "rotationDegrees": 360,
       "serverTile": [
-        177,
+        162,
         333
       ],
       "id": "Gate_North",
       "position": [
-        -16.3799991607666,
-        27.895431518554688,
+        -31.3799991607666,
+        27.867097854614258,
         -41.380001068115234
       ]
     },
@@ -2378,12 +2394,12 @@
       "reachable": true,
       "rotationDegrees": 180,
       "serverTile": [
-        177,
+        162,
         283
       ],
       "id": "Gate_South",
       "position": [
-        -16.3799991607666,
+        -31.3799991607666,
         29.08152961730957,
         8.619999885559082
       ]
@@ -2395,12 +2411,12 @@
       "reachable": true,
       "rotationDegrees": 90,
       "serverTile": [
-        152,
+        137,
         308
       ],
       "id": "Gate_West",
       "position": [
-        -41.380001068115234,
+        -56.380001068115234,
         26.286651611328125,
         -16.3799991607666
       ]
@@ -2412,14 +2428,14 @@
       "reachable": true,
       "rotationDegrees": 143.130102354,
       "serverTile": [
-        150,
-        367
+        132,
+        393
       ],
       "id": "Landmark_orun_banner_shrine_00",
       "position": [
-        -43.15778350830078,
-        27.63257598876953,
-        -75.54399871826172
+        -62.0,
+        26.8739013671875,
+        -101.0
       ]
     },
     {
@@ -2429,14 +2445,14 @@
       "reachable": true,
       "rotationDegrees": 240.524110997,
       "serverTile": [
-        247,
-        333
+        307,
+        394
       ],
       "id": "Landmark_orun_banner_shrine_01",
       "position": [
-        53.612876892089844,
-        38.771053314208984,
-        -41.723472595214844
+        113.0,
+        46.66265869140625,
+        -102.0
       ]
     },
     {
@@ -2446,14 +2462,14 @@
       "reachable": true,
       "rotationDegrees": -72.6459753637,
       "serverTile": [
-        204,
-        267
+        167,
+        213
       ],
       "id": "Landmark_orun_banner_shrine_02",
       "position": [
-        10.231109619140625,
-        30.931365966796875,
-        24.081172943115234
+        -27.0,
+        30.8729305267334,
+        79.0
       ]
     },
     {
@@ -2463,14 +2479,14 @@
       "reachable": true,
       "rotationDegrees": 49.6354634269,
       "serverTile": [
-        136,
-        255
+        84,
+        269
       ],
       "id": "Landmark_orun_banner_shrine_03",
       "position": [
-        -57.345428466796875,
-        30.725542068481445,
-        36.20738983154297
+        -110.0,
+        33.939727783203125,
+        23.0
       ]
     },
     {
@@ -2480,14 +2496,14 @@
       "reachable": true,
       "rotationDegrees": 45.8366236105,
       "serverTile": [
-        153,
-        329
+        140,
+        327
       ],
       "id": "Landmark_orun_banner_shrine_04",
       "position": [
-        -40.380001068115234,
-        27.465394973754883,
-        -37.380001068115234
+        -54.0,
+        28.44384002685547,
+        -35.0
       ]
     },
     {
@@ -2497,14 +2513,14 @@
       "reachable": true,
       "rotationDegrees": -40.1070456592,
       "serverTile": [
-        202,
-        328
+        277,
+        315
       ],
       "id": "Landmark_orun_banner_shrine_05",
       "position": [
-        8.619999885559082,
-        29.802875518798828,
-        -36.380001068115234
+        83.0,
+        42.37281799316406,
+        -23.0
       ]
     },
     {
@@ -2514,14 +2530,14 @@
       "reachable": true,
       "rotationDegrees": 131.78029288,
       "serverTile": [
-        152,
-        286
+        145,
+        267
       ],
       "id": "Landmark_orun_banner_shrine_06",
       "position": [
-        -41.380001068115234,
-        25.866846084594727,
-        5.619999885559082
+        -49.0,
+        30.133350372314453,
+        25.0
       ]
     },
     {
@@ -2531,14 +2547,14 @@
       "reachable": true,
       "rotationDegrees": -126.050714929,
       "serverTile": [
-        203,
-        284
+        296,
+        252
       ],
       "id": "Landmark_orun_banner_shrine_07",
       "position": [
-        9.619999885559082,
-        27.28411865234375,
-        7.619999885559082
+        102.0,
+        37.919158935546875,
+        40.0
       ]
     },
     {
@@ -2548,14 +2564,14 @@
       "reachable": true,
       "rotationDegrees": -4.42868976804,
       "serverTile": [
-        138,
-        373
+        104,
+        377
       ],
       "id": "Landmark_orun_round_tent_00",
       "position": [
-        -55.74321746826172,
-        27.834096908569336,
-        -81.03264617919922
+        -90.0,
+        29.334300994873047,
+        -85.0
       ]
     },
     {
@@ -2565,14 +2581,14 @@
       "reachable": true,
       "rotationDegrees": -53.1301023542,
       "serverTile": [
-        141,
-        379
+        87,
+        369
       ],
       "id": "Landmark_orun_round_tent_01",
       "position": [
-        -52.18199920654297,
-        27.72406768798828,
-        -87.51599884033203
+        -107.0,
+        30.723989486694336,
+        -77.0
       ]
     },
     {
@@ -2582,14 +2598,14 @@
       "reachable": true,
       "rotationDegrees": -101.83151494,
       "serverTile": [
-        149,
-        381
+        109,
+        356
       ],
       "id": "Landmark_orun_round_tent_02",
       "position": [
-        -44.96084213256836,
-        27.633586883544922,
-        -89.11943054199219
+        -85.0,
+        29.269609451293945,
+        -64.0
       ]
     },
     {
@@ -2599,14 +2615,14 @@
       "reachable": true,
       "rotationDegrees": -101.822698411,
       "serverTile": [
-        254,
-        344
+        282,
+        394
       ],
       "id": "Landmark_orun_round_tent_03",
       "position": [
-        60.1907844543457,
-        40.49911880493164,
-        -52.53733444213867
+        88.0,
+        48.10190200805664,
+        -102.0
       ]
     },
     {
@@ -2616,14 +2632,14 @@
       "reachable": true,
       "rotationDegrees": -150.524110997,
       "serverTile": [
-        259,
-        340
+        299,
+        376
       ],
       "id": "Landmark_orun_round_tent_04",
       "position": [
-        65.68423461914062,
-        41.65400695800781,
-        -48.520652770996094
+        105.0,
+        47.09737014770508,
+        -84.0
       ]
     },
     {
@@ -2633,14 +2649,14 @@
       "reachable": true,
       "rotationDegrees": 160.774476417,
       "serverTile": [
-        260,
-        333
+        284,
+        357
       ],
       "id": "Landmark_orun_round_tent_05",
       "position": [
-        66.29216003417969,
-        41.59719467163086,
-        -41.74258804321289
+        90.0,
+        45.96831130981445,
+        -65.0
       ]
     },
     {
@@ -2650,14 +2666,14 @@
       "reachable": true,
       "rotationDegrees": -148.65261205,
       "serverTile": [
-        216,
-        270
+        186,
+        259
       ],
       "id": "Landmark_orun_round_tent_06",
       "position": [
-        22.64778709411621,
-        32.53464126586914,
-        21.446889877319336
+        -8.0,
+        29.856950759887695,
+        33.0
       ]
     },
     {
@@ -2667,14 +2683,14 @@
       "reachable": true,
       "rotationDegrees": 162.645975364,
       "serverTile": [
-        217,
-        263
+        173,
+        244
       ],
       "id": "Landmark_orun_round_tent_07",
       "position": [
-        23.47675132751465,
-        32.797210693359375,
-        28.20148468017578
+        -21.0,
+        30.090999603271484,
+        48.0
       ]
     },
     {
@@ -2684,14 +2700,14 @@
       "reachable": true,
       "rotationDegrees": 113.944562778,
       "serverTile": [
-        212,
-        258
+        189,
+        229
       ],
       "id": "Landmark_orun_round_tent_08",
       "position": [
-        18.949256896972656,
-        32.3094482421875,
-        33.282188415527344
+        -5.0,
+        28.953109741210938,
+        63.0
       ]
     },
     {
@@ -2701,14 +2717,14 @@
       "reachable": true,
       "rotationDegrees": 89.0659491592,
       "serverTile": [
-        132,
-        243
+        110,
+        264
       ],
       "id": "Landmark_orun_round_tent_09",
       "position": [
-        -61.7545280456543,
-        31.080934524536133,
-        48.03741455078125
+        -84.0,
+        31.973270416259766,
+        28.0
       ]
     },
     {
@@ -2718,14 +2734,14 @@
       "reachable": true,
       "rotationDegrees": 40.3645365731,
       "serverTile": [
-        126,
-        246
+        90,
+        251
       ],
       "id": "Landmark_orun_round_tent_10",
       "position": [
-        -67.90782928466797,
-        31.375585556030273,
-        45.12465286254883
+        -104.0,
+        34.04344177246094,
+        41.0
       ]
     },
     {
@@ -2735,14 +2751,14 @@
       "reachable": true,
       "rotationDegrees": -8.33687601302,
       "serverTile": [
-        124,
-        253
+        110,
+        241
       ],
       "id": "Landmark_orun_round_tent_11",
       "position": [
-        -69.78519439697266,
-        31.377004623413086,
-        38.583457946777344
+        -84.0,
+        32.588260650634766,
+        51.0
       ]
     },
     {
@@ -2752,14 +2768,14 @@
       "reachable": true,
       "rotationDegrees": 20.0535228296,
       "serverTile": [
-        170,
-        302
+        147,
+        300
       ],
       "id": "Landmark_orun_seasonal_market_00",
       "position": [
-        -23.010000228881836,
-        28.65384864807129,
-        -10.920000076293945
+        -47.0,
+        29.17264175415039,
+        -8.0
       ]
     },
     {
@@ -2769,14 +2785,14 @@
       "reachable": true,
       "rotationDegrees": -18.3346494442,
       "serverTile": [
-        184,
-        302
+        178,
+        300
       ],
       "id": "Landmark_orun_seasonal_market_01",
       "position": [
-        -9.75,
-        28.948545455932617,
-        -10.529999732971191
+        -16.0,
+        28.814189910888672,
+        -8.0
       ]
     },
     {
@@ -2786,14 +2802,14 @@
       "reachable": true,
       "rotationDegrees": 6.87549354157,
       "serverTile": [
-        170,
-        295
+        147,
+        291
       ],
       "id": "Landmark_orun_seasonal_market_02",
       "position": [
-        -23.790000915527344,
-        28.300935745239258,
-        -3.9000000953674316
+        -47.0,
+        29.597000122070312,
+        1.0
       ]
     },
     {
@@ -2803,14 +2819,14 @@
       "reachable": true,
       "rotationDegrees": -8.59436692696,
       "serverTile": [
-        184,
-        295
+        178,
+        291
       ],
       "id": "Landmark_orun_seasonal_market_03",
       "position": [
-        -9.359999656677246,
-        29.158355712890625,
-        -3.509999990463257
+        -16.0,
+        29.130531311035156,
+        1.0
       ]
     },
     {
@@ -2820,14 +2836,14 @@
       "reachable": true,
       "rotationDegrees": 98.1818181818,
       "serverTile": [
-        139,
-        344
+        84,
+        388
       ],
       "id": "Landmark_sunmane_animal_pen_00",
       "position": [
-        -54.14424133300781,
-        24.631446838378906,
-        -52.9637565612793
+        -110.0,
+        30.769731521606445,
+        -96.0
       ]
     },
     {
@@ -2837,14 +2853,14 @@
       "reachable": true,
       "rotationDegrees": 229.090909091,
       "serverTile": [
-        243,
-        348
+        289,
+        330
       ],
       "id": "Landmark_sunmane_animal_pen_01",
       "position": [
-        49.83954620361328,
-        38.00104522705078,
-        -56.84639358520508
+        95.0,
+        44.386077880859375,
+        -38.0
       ]
     },
     {
@@ -2854,14 +2870,14 @@
       "reachable": true,
       "rotationDegrees": 32.7272727273,
       "serverTile": [
-        237,
-        278
+        274,
+        250
       ],
       "id": "Landmark_sunmane_animal_pen_02",
       "position": [
-        43.511680603027344,
-        35.856685638427734,
-        13.829657554626465
+        80.0,
+        38.60384750366211,
+        42.0
       ]
     },
     {
@@ -2871,14 +2887,14 @@
       "reachable": true,
       "rotationDegrees": 163.636363636,
       "serverTile": [
-        149,
-        266
+        124,
+        222
       ],
       "id": "Landmark_sunmane_animal_pen_03",
       "position": [
-        -44.58076095581055,
-        29.946582794189453,
-        25.707599639892578
+        -70.0,
+        31.880290985107422,
+        70.0
       ]
     },
     {
@@ -2888,14 +2904,14 @@
       "reachable": true,
       "rotationDegrees": 294.545454545,
       "serverTile": [
-        199,
-        270
+        154,
+        223
       ],
       "id": "Landmark_sunmane_animal_pen_04",
       "position": [
-        5.6929731369018555,
-        30.460453033447266,
-        21.703853607177734
+        -40.0,
+        29.998090744018555,
+        69.0
       ]
     },
     {
@@ -2905,14 +2921,14 @@
       "reachable": true,
       "rotationDegrees": 65.4545454545,
       "serverTile": [
-        254,
-        405
+        286,
+        408
       ],
       "id": "Landmark_sunmane_animal_pen_05",
       "position": [
-        60.8895378112793,
-        43.003021240234375,
-        -113.2139663696289
+        92.0,
+        48.44302749633789,
+        -116.0
       ]
     },
     {
@@ -2922,14 +2938,14 @@
       "reachable": true,
       "rotationDegrees": 180,
       "serverTile": [
-        177,
-        341
+        289,
+        272
       ],
       "id": "Landmark_sunmane_burial_mound_00",
       "position": [
-        -16.3799991607666,
-        27.760536193847656,
-        -49.01900100708008
+        95.0,
+        39.78096008300781,
+        20.0
       ]
     },
     {
@@ -2939,14 +2955,14 @@
       "reachable": true,
       "rotationDegrees": 37.3593185547,
       "serverTile": [
-        169,
-        344
+        294,
+        250
       ],
       "id": "Landmark_sunmane_burial_mound_01",
       "position": [
-        -24.959999084472656,
-        27.632986068725586,
-        -52.2599983215332
+        100.0,
+        37.964481353759766,
+        42.0
       ]
     },
     {
@@ -2956,14 +2972,14 @@
       "reachable": true,
       "rotationDegrees": 295.049833994,
       "serverTile": [
-        186,
-        345
+        279,
+        227
       ],
       "id": "Landmark_sunmane_burial_mound_02",
       "position": [
-        -7.800000190734863,
-        28.114627838134766,
-        -53.040000915527344
+        85.0,
+        37.781288146972656,
+        65.0
       ]
     },
     {
@@ -2973,14 +2989,14 @@
       "reachable": true,
       "rotationDegrees": 270.011406984,
       "serverTile": [
-        172,
-        350
+        274,
+        207
       ],
       "id": "Landmark_sunmane_burial_mound_03",
       "position": [
-        -21.059999465942383,
-        27.612119674682617,
-        -58.5
+        80.0,
+        36.89801025390625,
+        85.0
       ]
     },
     {
@@ -2990,14 +3006,14 @@
       "reachable": true,
       "rotationDegrees": 17.9687695841,
       "serverTile": [
-        183,
-        351
+        279,
+        187
       ],
       "id": "Landmark_sunmane_burial_mound_04",
       "position": [
-        -10.920000076293945,
-        27.910667419433594,
-        -59.279998779296875
+        85.0,
+        36.19179916381836,
+        105.0
       ]
     },
     {
@@ -3007,14 +3023,14 @@
       "reachable": true,
       "rotationDegrees": 132.596660291,
       "serverTile": [
-        174,
-        357
+        284,
+        167
       ],
       "id": "Landmark_sunmane_burial_mound_05",
       "position": [
-        -19.5,
-        27.64204216003418,
-        -65.5199966430664
+        90.0,
+        35.28266143798828,
+        125.0
       ]
     },
     {
@@ -3024,14 +3040,14 @@
       "reachable": true,
       "rotationDegrees": 180,
       "serverTile": [
-        142,
-        297
+        115,
+        339
       ],
       "id": "Landmark_sunmane_caravanserai_00",
       "position": [
-        -51.47999954223633,
-        29.04133415222168,
-        -5.099200248718262
+        -79.0,
+        28.76750946044922,
+        -47.0
       ]
     },
     {
@@ -3041,14 +3057,14 @@
       "reachable": true,
       "rotationDegrees": 180,
       "serverTile": [
-        212,
-        297
+        289,
+        302
       ],
       "id": "Landmark_sunmane_caravanserai_01",
       "position": [
-        18.719999313354492,
-        31.745662689208984,
-        -5.879199981689453
+        95.0,
+        42.16316604614258,
+        -10.0
       ]
     },
     {
@@ -3058,14 +3074,14 @@
       "reachable": true,
       "rotationDegrees": -90,
       "serverTile": [
-        198,
-        364
+        163,
+        404
       ],
       "id": "Landmark_sunmane_caravanserai_02",
       "position": [
-        4.260799884796143,
-        29.159395217895508,
-        -72.54000091552734
+        -31.0,
+        27.71613883972168,
+        -112.0
       ]
     },
     {
@@ -3075,14 +3091,14 @@
       "reachable": true,
       "rotationDegrees": 90,
       "serverTile": [
-        174,
-        273
+        139,
+        205
       ],
       "id": "Landmark_sunmane_caravanserai_03",
       "position": [
-        -19.55784797668457,
-        23.397424697875977,
-        18.95400047302246
+        -55.0,
+        32.55598068237305,
+        87.0
       ]
     },
     {
@@ -3160,14 +3176,14 @@
       "reachable": true,
       "rotationDegrees": 11.4591559026,
       "serverTile": [
-        181,
-        424
+        155,
+        410
       ],
       "id": "Landmark_sunmane_desert_station_00",
       "position": [
-        -12.50043773651123,
-        28.676790237426758,
-        -132.48248291015625
+        -39.0,
+        27.60552978515625,
+        -118.0
       ]
     },
     {
@@ -3194,14 +3210,14 @@
       "reachable": true,
       "rotationDegrees": 40.1070456592,
       "serverTile": [
-        172,
-        278
+        90,
+        255
       ],
       "id": "Landmark_sunmane_filled_well",
       "position": [
-        -21.062789916992188,
-        22.710046768188477,
-        13.340350151062012
+        -104.0,
+        33.7017707824707,
+        37.0
       ]
     },
     {
@@ -3211,14 +3227,14 @@
       "reachable": true,
       "rotationDegrees": 0,
       "serverTile": [
-        177,
-        320
+        162,
+        316
       ],
       "id": "Landmark_sunmane_great_hall",
       "position": [
-        -16.3799991607666,
-        28.193899154663086,
-        -28.3799991607666
+        -31.3799991607666,
+        28.24871826171875,
+        -24.3799991607666
       ]
     },
     {
@@ -3228,14 +3244,14 @@
       "reachable": true,
       "rotationDegrees": 35.5233832981,
       "serverTile": [
-        105,
-        272
+        224,
+        184
       ],
       "id": "Landmark_sunmane_landing_00",
       "position": [
-        -88.13999938964844,
-        32.00306701660156,
-        19.5
+        30.0,
+        23.700000762939453,
+        108.0
       ]
     },
     {
@@ -3245,14 +3261,14 @@
       "reachable": true,
       "rotationDegrees": 180,
       "serverTile": [
-        205,
-        484
+        150,
+        427
       ],
       "id": "Landmark_sunmane_march_north-track",
       "position": [
-        11.297013282775879,
-        30.775758743286133,
-        -192.27000427246094
+        -44.0,
+        26.22024917602539,
+        -135.0
       ]
     },
     {
@@ -3262,14 +3278,14 @@
       "reachable": true,
       "rotationDegrees": 90,
       "serverTile": [
-        313,
-        220
+        158,
+        170
       ],
       "id": "Landmark_sunmane_march_south-track",
       "position": [
-        119.7300033569336,
-        28.53453254699707,
-        71.74700927734375
+        -36.0,
+        30.410940170288086,
+        122.0
       ]
     },
     {
@@ -3279,14 +3295,14 @@
       "reachable": true,
       "rotationDegrees": -90,
       "serverTile": [
-        123,
-        338
+        77,
+        323
       ],
       "id": "Landmark_sunmane_march_west-landing",
       "position": [
-        -70.58999633789062,
-        29.304677963256836,
-        -46.39701461791992
+        -117.0,
+        33.53512954711914,
+        -31.0
       ]
     },
     {
@@ -3364,14 +3380,14 @@
       "reachable": true,
       "rotationDegrees": 51.5662015618,
       "serverTile": [
-        286,
-        377
+        324,
+        383
       ],
       "id": "Landmark_sunmane_outpost_04",
       "position": [
-        92.81999969482422,
-        47.52943801879883,
-        -85.0199966430664
+        130.0,
+        42.02724838256836,
+        -91.0
       ]
     },
     {
@@ -3387,7 +3403,7 @@
       "id": "Landmark_sunmane_outpost_05",
       "position": [
         -14.819999694824219,
-        28.497058868408203,
+        28.530927658081055,
         -183.3000030517578
       ]
     },
@@ -3432,14 +3448,14 @@
       "reachable": true,
       "rotationDegrees": 8.61981074856,
       "serverTile": [
-        208,
-        270
+        138,
+        398
       ],
       "id": "Landmark_sunmane_secret_steppe-banner-focus",
       "position": [
-        14.819999694824219,
-        28.421566009521484,
-        21.84000015258789
+        -56.0,
+        29.32744026184082,
+        -106.0
       ]
     },
     {
@@ -3449,14 +3465,14 @@
       "reachable": true,
       "rotationDegrees": 150.895848599,
       "serverTile": [
-        164,
-        378
+        301,
+        258
       ],
       "id": "Landmark_sunmane_secret_steppe-barrow-reliquary",
       "position": [
-        -29.499359130859375,
-        27.701824188232422,
-        -86.11920166015625
+        107.0,
+        37.82046890258789,
+        34.0
       ]
     },
     {
@@ -3466,14 +3482,14 @@
       "reachable": true,
       "rotationDegrees": 184.309905374,
       "serverTile": [
-        119,
-        285
+        125,
+        349
       ],
       "id": "Landmark_sunmane_secret_steppe-caravan-school",
       "position": [
-        -74.87999725341797,
-        30.489408493041992,
-        6.239999771118164
+        -69.0,
+        28.510730743408203,
+        -57.0
       ]
     },
     {
@@ -3483,14 +3499,14 @@
       "reachable": true,
       "rotationDegrees": 226.343772898,
       "serverTile": [
-        184,
-        430
+        333,
+        392
       ],
       "id": "Landmark_sunmane_secret_steppe-dune-eyrie",
       "position": [
-        -9.359999656677246,
-        28.83147621154785,
-        -138.83999633789062
+        139.0,
+        38.78025817871094,
+        -100.0
       ]
     },
     {
@@ -3500,14 +3516,14 @@
       "reachable": true,
       "rotationDegrees": 75.4479242994,
       "serverTile": [
-        301,
-        455
+        123,
+        213
       ],
       "id": "Landmark_sunmane_secret_steppe-fox-pit",
       "position": [
-        107.63713073730469,
-        44.68695068359375,
-        -163.7922821044922
+        -71.0,
+        32.334083557128906,
+        79.0
       ]
     },
     {
@@ -3517,14 +3533,14 @@
       "reachable": true,
       "rotationDegrees": 326.585943225,
       "serverTile": [
-        167,
-        313
+        155,
+        302
       ],
       "id": "Landmark_sunmane_secret_steppe-hall-vault",
       "position": [
-        -26.3799991607666,
-        27.889219284057617,
-        -21.3799991607666
+        -39.0,
+        28.95863151550293,
+        -10.0
       ]
     },
     {
@@ -3534,14 +3550,14 @@
       "reachable": true,
       "rotationDegrees": 217.72396215,
       "serverTile": [
-        222,
-        266
+        81,
+        269
       ],
       "id": "Landmark_sunmane_secret_steppe-mill-cache",
       "position": [
-        28.860000610351562,
-        32.47900390625,
-        25.739999771118164
+        -113.0,
+        44.54957580566406,
+        23.0
       ]
     },
     {
@@ -3551,14 +3567,14 @@
       "reachable": true,
       "rotationDegrees": 42.033867524,
       "serverTile": [
-        128,
-        412
+        333,
+        375
       ],
       "id": "Landmark_sunmane_secret_steppe-outpost-butts",
       "position": [
-        -65.5199966430664,
-        27.685218811035156,
-        -120.12000274658203
+        139.0,
+        38.07944869995117,
+        -83.0
       ]
     },
     {
@@ -3568,14 +3584,14 @@
       "reachable": true,
       "rotationDegrees": 335.205753973,
       "serverTile": [
-        177,
-        475
+        344,
+        403
       ],
       "id": "Landmark_sunmane_secret_steppe-sap-mouth",
       "position": [
-        -16.27945327758789,
-        28.242128372192383,
-        -183.07554626464844
+        150.0,
+        33.86831283569336,
+        -111.0
       ]
     },
     {
@@ -3585,14 +3601,14 @@
       "reachable": true,
       "rotationDegrees": 0,
       "serverTile": [
-        135,
-        422
+        323,
+        207
       ],
       "id": "Landmark_sunmane_secret_steppe-seed-hollow",
       "position": [
-        -58.72927474975586,
-        27.51827621459961,
-        -130.50648498535156
+        129.0,
+        23.24776840209961,
+        85.0
       ]
     },
     {
@@ -3602,14 +3618,14 @@
       "reachable": true,
       "rotationDegrees": 293.171886449,
       "serverTile": [
-        200,
-        260
+        192,
+        204
       ],
       "id": "Landmark_sunmane_secret_steppe-spring",
       "position": [
-        6.7826714515686035,
-        31.532743453979492,
-        31.085350036621094
+        -2.0,
+        30.61878776550293,
+        88.0
       ]
     },
     {
@@ -3619,14 +3635,14 @@
       "reachable": true,
       "rotationDegrees": 259.757829674,
       "serverTile": [
-        131,
-        364
+        270,
+        331
       ],
       "id": "Landmark_sunmane_secret_steppe-standing-well",
       "position": [
-        -62.088863372802734,
-        25.461416244506836,
-        -72.60478973388672
+        76.0,
+        39.48174285888672,
+        -39.0
       ]
     },
     {
@@ -3636,14 +3652,14 @@
       "reachable": true,
       "rotationDegrees": 117.481791823,
       "serverTile": [
-        265,
-        328
+        147,
+        423
       ],
       "id": "Landmark_sunmane_secret_steppe-waystone",
       "position": [
-        71.2248764038086,
-        42.11214065551758,
-        -36.927921295166016
+        -47.0,
+        28.423768997192383,
+        -131.0
       ]
     },
     {
@@ -3653,14 +3669,14 @@
       "reachable": true,
       "rotationDegrees": 108.861981075,
       "serverTile": [
-        137,
-        260
+        96,
+        258
       ],
       "id": "Landmark_sunmane_secret_steppe-well-garden",
       "position": [
-        -56.19669723510742,
-        30.61520767211914,
-        31.899377822875977
+        -98.0,
+        33.166412353515625,
+        34.0
       ]
     },
     {
@@ -3806,14 +3822,14 @@
       "reachable": true,
       "rotationDegrees": 11.4591559026,
       "serverTile": [
-        153,
-        319
+        262,
+        282
       ],
       "id": "Landmark_sunmane_standing_stone_000",
       "position": [
-        -40.00529098510742,
-        23.975648880004883,
-        -27.369590759277344
+        68.0,
+        37.53403854370117,
+        10.0
       ]
     },
     {
@@ -3823,14 +3839,14 @@
       "reachable": true,
       "rotationDegrees": -39.969415526,
       "serverTile": [
-        156,
-        312
+        275,
+        284
       ],
       "id": "Landmark_sunmane_standing_stone_001",
       "position": [
-        -37.860618591308594,
-        23.53156089782715,
-        -20.7292423248291
+        81.0,
+        39.84981918334961,
+        8.0
       ]
     },
     {
@@ -3840,14 +3856,14 @@
       "reachable": true,
       "rotationDegrees": -91.3979869545,
       "serverTile": [
-        141,
-        316
+        287,
+        288
       ],
       "id": "Landmark_sunmane_standing_stone_002",
       "position": [
-        -52.087493896484375,
-        23.89352798461914,
-        -24.348526000976562
+        93.0,
+        41.12148666381836,
+        4.0
       ]
     },
     {
@@ -3857,14 +3873,14 @@
       "reachable": true,
       "rotationDegrees": -142.826558383,
       "serverTile": [
-        137,
-        319
+        301,
+        283
       ],
       "id": "Landmark_sunmane_standing_stone_003",
       "position": [
-        -56.33053207397461,
-        24.74323272705078,
-        -27.715370178222656
+        107.0,
+        39.89400863647461,
+        9.0
       ]
     },
     {
@@ -3874,14 +3890,14 @@
       "reachable": true,
       "rotationDegrees": -194.255129812,
       "serverTile": [
-        137,
-        325
+        313,
+        277
       ],
       "id": "Landmark_sunmane_standing_stone_004",
       "position": [
-        -56.341102600097656,
-        24.128013610839844,
-        -33.091243743896484
+        119.0,
+        37.15467834472656,
+        15.0
       ]
     },
     {
@@ -3891,14 +3907,14 @@
       "reachable": true,
       "rotationDegrees": -245.68370124,
       "serverTile": [
-        151,
-        321
+        326,
+        274
       ],
       "id": "Landmark_sunmane_standing_stone_005",
       "position": [
-        -42.18734359741211,
-        23.77145767211914,
-        -29.554813385009766
+        132.0,
+        31.727170944213867,
+        18.0
       ]
     },
     {
@@ -3908,14 +3924,14 @@
       "reachable": true,
       "rotationDegrees": -297.112272669,
       "serverTile": [
-        151,
-        323
+        334,
+        260
       ],
       "id": "Landmark_sunmane_standing_stone_006",
       "position": [
-        -42.11647415161133,
-        24.120044708251953,
-        -31.77033233642578
+        140.0,
+        25.9820499420166,
+        32.0
       ]
     },
     {
@@ -3925,14 +3941,14 @@
       "reachable": true,
       "rotationDegrees": -5.72957795131,
       "serverTile": [
-        202,
-        272
+        258,
+        228
       ],
       "id": "Landmark_sunmane_standing_stone_100",
       "position": [
-        8.822380065917969,
-        30.835355758666992,
-        19.46916961669922
+        64.0,
+        35.50846862792969,
+        64.0
       ]
     },
     {
@@ -3942,14 +3958,14 @@
       "reachable": true,
       "rotationDegrees": -65.7295779513,
       "serverTile": [
-        199,
-        269
+        259,
+        214
       ],
       "id": "Landmark_sunmane_standing_stone_101",
       "position": [
-        5.081701278686523,
-        30.580678939819336,
-        22.952211380004883
+        65.0,
+        35.27375793457031,
+        78.0
       ]
     },
     {
@@ -3959,14 +3975,14 @@
       "reachable": true,
       "rotationDegrees": -125.729577951,
       "serverTile": [
-        194,
-        270
+        293,
+        203
       ],
       "id": "Landmark_sunmane_standing_stone_102",
       "position": [
-        0.12890592217445374,
-        30.18287467956543,
-        21.432350158691406
+        99.0,
+        34.782676696777344,
+        89.0
       ]
     },
     {
@@ -3976,14 +3992,14 @@
       "reachable": true,
       "rotationDegrees": -185.729577951,
       "serverTile": [
-        192,
-        275
+        300,
+        197
       ],
       "id": "Landmark_sunmane_standing_stone_103",
       "position": [
-        -1.0223803520202637,
-        30.023880004882812,
-        16.410829544067383
+        106.0,
+        32.43305969238281,
+        95.0
       ]
     },
     {
@@ -3993,14 +4009,14 @@
       "reachable": true,
       "rotationDegrees": -245.729577951,
       "serverTile": [
-        196,
-        279
+        318,
+        210
       ],
       "id": "Landmark_sunmane_standing_stone_104",
       "position": [
-        2.7182986736297607,
-        30.296735763549805,
-        12.927787780761719
+        124.0,
+        25.73219108581543,
+        82.0
       ]
     },
     {
@@ -4010,14 +4026,14 @@
       "reachable": true,
       "rotationDegrees": -305.729577951,
       "serverTile": [
-        201,
-        277
+        334,
+        225
       ],
       "id": "Landmark_sunmane_standing_stone_105",
       "position": [
-        7.671093940734863,
-        30.827184677124023,
-        14.447649955749512
+        140.0,
+        19.91339111328125,
+        67.0
       ]
     },
     {
@@ -4163,14 +4179,14 @@
       "reachable": true,
       "rotationDegrees": 11.4591559026,
       "serverTile": [
-        170,
-        296
+        147,
+        295
       ],
       "id": "Landmark_sunmane_well_00",
       "position": [
-        -23.8799991607666,
-        28.40753173828125,
-        -4.380000114440918
+        -47.0,
+        29.446090698242188,
+        -3.0
       ]
     },
     {
@@ -4180,14 +4196,14 @@
       "reachable": true,
       "rotationDegrees": 17.1887338539,
       "serverTile": [
-        151,
-        285
+        99,
+        352
       ],
       "id": "Landmark_sunmane_well_01",
       "position": [
-        -42.03636932373047,
-        27.725854873657227,
-        6.979898929595947
+        -95.0,
+        30.033700942993164,
+        -60.0
       ]
     },
     {
@@ -4197,14 +4213,14 @@
       "reachable": true,
       "rotationDegrees": -51.5662015618,
       "serverTile": [
-        214,
-        330
+        275,
+        337
       ],
       "id": "Landmark_sunmane_well_02",
       "position": [
-        20.27532958984375,
-        31.440959930419922,
-        -38.17896270751953
+        81.0,
+        43.56618118286133,
+        -45.0
       ]
     },
     {
@@ -4214,14 +4230,14 @@
       "reachable": true,
       "rotationDegrees": 97.4028251722,
       "serverTile": [
-        225,
-        291
+        186,
+        212
       ],
       "id": "Landmark_sunmane_well_03",
       "position": [
-        31.920761108398438,
-        32.54820251464844,
-        0.7180692553520203
+        -8.0,
+        29.227611541748047,
+        80.0
       ]
     },
     {
@@ -4231,14 +4247,14 @@
       "reachable": true,
       "rotationDegrees": 22.9183118052,
       "serverTile": [
-        222,
-        272
+        76,
+        300
       ],
       "id": "Landmark_sunmane_windmill_00",
       "position": [
-        28.830150604248047,
-        31.118467330932617,
-        19.429399490356445
+        -118.0,
+        33.94055938720703,
+        -8.0
       ]
     },
     {
@@ -4248,14 +4264,14 @@
       "reachable": true,
       "rotationDegrees": -34.3774677078,
       "serverTile": [
-        239,
-        263
+        83,
+        276
       ],
       "id": "Landmark_sunmane_windmill_01",
       "position": [
-        45.28327941894531,
-        35.65303039550781,
-        28.796737670898438
+        -111.0,
+        33.763999938964844,
+        16.0
       ]
     },
     {
@@ -4265,14 +4281,14 @@
       "reachable": true,
       "rotationDegrees": 68.7549354157,
       "serverTile": [
-        136,
-        313
+        67,
+        249
       ],
       "id": "Landmark_sunmane_windmill_02",
       "position": [
-        -57.79144287109375,
-        28.744958877563477,
-        -21.867774963378906
+        -127.0,
+        37.54433059692383,
+        43.0
       ]
     },
     {
@@ -4282,14 +4298,14 @@
       "reachable": true,
       "rotationDegrees": 137.509870831,
       "serverTile": [
-        217,
-        386
+        91,
+        222
       ],
       "id": "Landmark_sunmane_windmill_03",
       "position": [
-        23.348224639892578,
-        32.844390869140625,
-        -94.32347869873047
+        -103.0,
+        35.504581451416016,
+        70.0
       ]
     },
     {
@@ -4299,14 +4315,14 @@
       "reachable": true,
       "rotationDegrees": -63.0253574644,
       "serverTile": [
-        137,
-        377
+        72,
+        207
       ],
       "id": "Landmark_sunmane_windmill_04",
       "position": [
-        -56.0916862487793,
-        27.82725715637207,
-        -85.05477142333984
+        -122.0,
+        39.749778747558594,
+        85.0
       ]
     },
     {
@@ -4316,14 +4332,14 @@
       "reachable": true,
       "rotationDegrees": 51.5662015618,
       "serverTile": [
-        292,
-        333
+        103,
+        293
       ],
       "id": "Landmark_sunmane_windmill_05",
       "position": [
-        98.21995544433594,
-        44.589073181152344,
-        -41.38764572143555
+        -91.0,
+        31.55290985107422,
+        -1.0
       ]
     },
     {
@@ -4333,14 +4349,14 @@
       "name": "West Ford",
       "node": "Structure_Bridge_00",
       "serverTile": [
-        149,
-        309
+        162,
+        332
       ],
       "id": "Structure_Bridge_00",
       "position": [
-        -44.959999084472656,
-        27.277950286865234,
-        -17.3799991607666
+        -31.3799991607666,
+        28.0,
+        -40.0
       ]
     },
     {
@@ -4350,14 +4366,14 @@
       "name": "Pasture Walk",
       "node": "Structure_Bridge_01",
       "serverTile": [
-        148,
-        330
+        198,
+        368
       ],
       "id": "Structure_Bridge_01",
       "position": [
-        -45.2400016784668,
-        26.152034759521484,
-        -38.220001220703125
+        4.484453201293945,
+        29.149999618530273,
+        -76.9861831665039
       ]
     },
     {
@@ -4367,14 +4383,14 @@
       "name": "Cove Drovers Bridge",
       "node": "Structure_Bridge_02",
       "serverTile": [
-        139,
-        288
+        229,
+        217
       ],
       "id": "Structure_Bridge_02",
       "position": [
-        -54.209999084472656,
-        32.704551696777344,
-        3.119999885559082
+        35.54999923706055,
+        22.899999618530273,
+        74.43000793457031
       ]
     }
   ],
@@ -4390,14 +4406,14 @@
         -42
       ],
       "serverTile": [
-        177,
-        349
+        289,
+        280
       ],
       "id": "barrow-00",
       "position": [
-        -16.3799991607666,
-        27.876558303833008,
-        -57.01900100708008
+        95.0,
+        40.537689208984375,
+        12.0
       ]
     },
     {
@@ -4411,14 +4427,14 @@
         -46
       ],
       "serverTile": [
-        172,
-        339
+        297,
+        244
       ],
       "id": "barrow-01",
       "position": [
-        -21.015724182128906,
-        27.6693172454834,
-        -47.093502044677734
+        103.94427490234375,
+        37.18944549560547,
+        47.16649627685547
       ]
     },
     {
@@ -4432,14 +4448,14 @@
         -47
       ],
       "serverTile": [
-        181,
-        341
+        274,
+        223
       ],
       "id": "barrow-02",
       "position": [
-        -12.800000190734863,
-        28.151931762695312,
-        -49.040000915527344
+        80.0,
+        37.676048278808594,
+        69.0
       ]
     },
     {
@@ -4453,14 +4469,14 @@
         -54
       ],
       "serverTile": [
-        166,
-        350
+        267,
+        206
       ],
       "id": "barrow-03",
       "position": [
-        -27.559999465942383,
-        27.616355895996094,
-        -58.49870681762695
+        73.5,
+        36.500911712646484,
+        85.00129699707031
       ]
     },
     {
@@ -4474,14 +4490,14 @@
         -55
       ],
       "serverTile": [
-        182,
-        342
+        278,
+        177
       ],
       "id": "barrow-04",
       "position": [
-        -11.920000076293945,
-        27.940515518188477,
-        -50.279998779296875
+        84.0,
+        35.82081985473633,
+        114.00000762939453
       ]
     },
     {
@@ -4495,14 +4511,14 @@
         -63
       ],
       "serverTile": [
-        179,
-        361
+        288,
+        171
       ],
       "id": "barrow-05",
       "position": [
-        -14.715112686157227,
-        27.687732696533203,
-        -69.9194107055664
+        94.7848892211914,
+        35.023929595947266,
+        120.6005859375
       ]
     },
     {
@@ -4516,14 +4532,14 @@
         13
       ],
       "serverTile": [
-        212,
-        306
+        289,
+        311
       ],
       "id": "caravanserai-east",
       "position": [
-        18.719999313354492,
-        31.745662689208984,
-        -14.879199981689453
+        95.0,
+        43.11077117919922,
+        -19.0
       ]
     },
     {
@@ -4537,14 +4553,14 @@
         -72
       ],
       "serverTile": [
-        189,
-        364
+        154,
+        404
       ],
       "id": "caravanserai-north",
       "position": [
-        -4.739200115203857,
-        29.159395217895508,
-        -72.54000091552734
+        -40.0,
+        27.66205596923828,
+        -112.0
       ]
     },
     {
@@ -4558,14 +4574,14 @@
         51
       ],
       "serverTile": [
-        183,
-        273
+        148,
+        205
       ],
       "id": "caravanserai-south",
       "position": [
-        -10.55784797668457,
-        23.397424697875977,
-        18.95400047302246
+        -46.0,
+        30.806190490722656,
+        87.0
       ]
     },
     {
@@ -4579,14 +4595,14 @@
         14
       ],
       "serverTile": [
-        142,
-        306
+        115,
+        348
       ],
       "id": "caravanserai-west",
       "position": [
-        -51.47999954223633,
-        29.90530014038086,
-        -14.099200248718262
+        -79.0,
+        29.15610694885254,
+        -56.0
       ]
     },
     {
@@ -4696,14 +4712,14 @@
         46
       ],
       "serverTile": [
-        110,
-        271
+        232,
+        184
       ],
       "id": "cove-landing",
       "position": [
-        -83.13999938964844,
-        31.658689498901367,
-        20.5
+        38.0,
+        22.299999237060547,
+        108.0
       ]
     },
     {
@@ -4717,14 +4733,14 @@
         -149
       ],
       "serverTile": [
-        182,
-        421
+        155,
+        406
       ],
       "id": "desert-station-00",
       "position": [
-        -11.82496166229248,
-        28.676790237426758,
-        -129.15025329589844
+        -38.32452392578125,
+        27.70112419128418,
+        -114.66777038574219
       ]
     },
     {
@@ -4744,8 +4760,8 @@
       "id": "desert-station-01",
       "position": [
         109.45451354980469,
-        45.78416442871094,
-        -156.67616271972656
+        45.38728713989258,
+        -156.6761474609375
       ]
     },
     {
@@ -4759,14 +4775,14 @@
         40
       ],
       "serverTile": [
-        175,
-        276
+        92,
+        253
       ],
       "id": "fourth-well",
       "position": [
-        -18.062789916992188,
-        22.710195541381836,
-        15.340350151062012
+        -101.00000762939453,
+        33.739139556884766,
+        38.999996185302734
       ]
     },
     {
@@ -4775,13 +4791,13 @@
       "label": "East gate",
       "node": "Gate_East",
       "serverTile": [
-        202,
+        187,
         308
       ],
       "id": "gate-east",
       "position": [
-        8.619999885559082,
-        26.70745849609375,
+        -6.380000114440918,
+        29.057342529296875,
         -16.3799991607666
       ]
     },
@@ -4791,13 +4807,13 @@
       "label": "North gate",
       "node": "Gate_North",
       "serverTile": [
-        177,
+        162,
         333
       ],
       "id": "gate-north",
       "position": [
-        -16.3799991607666,
-        27.895431518554688,
+        -31.3799991607666,
+        27.977249145507812,
         -41.380001068115234
       ]
     },
@@ -4807,13 +4823,13 @@
       "label": "South gate",
       "node": "Gate_South",
       "serverTile": [
-        177,
+        162,
         283
       ],
       "id": "gate-south",
       "position": [
-        -16.3799991607666,
-        29.08152961730957,
+        -31.3799991607666,
+        29.414813995361328,
         8.619999885559082
       ]
     },
@@ -4823,13 +4839,13 @@
       "label": "West gate",
       "node": "Gate_West",
       "serverTile": [
-        152,
+        137,
         308
       ],
       "id": "gate-west",
       "position": [
-        -41.380001068115234,
-        26.286651611328125,
+        -56.380001068115234,
+        29.327030181884766,
         -16.3799991607666
       ]
     },
@@ -4844,14 +4860,14 @@
         -12
       ],
       "serverTile": [
-        177,
-        308
+        162,
+        304
       ],
       "id": "great-hall-entrance",
       "position": [
-        -16.3799991607666,
-        28.193899154663086,
-        -16.3799991607666
+        -31.3799991607666,
+        28.784194946289062,
+        -12.379999160766602
       ]
     },
     {
@@ -4865,14 +4881,14 @@
         7
       ],
       "serverTile": [
-        173,
-        300
+        149,
+        297
       ],
       "id": "market-stall-00",
       "position": [
-        -20.510000228881836,
-        28.636985778808594,
-        -8.920000076293945
+        -44.5,
+        29.269132614135742,
+        -5.999997138977051
       ]
     },
     {
@@ -4886,14 +4902,14 @@
         7.5
       ],
       "serverTile": [
-        182,
-        300
+        176,
+        297
       ],
       "id": "market-stall-01",
       "position": [
-        -11.25,
-        28.93227195739746,
-        -8.029999732971191
+        -17.5,
+        28.98194122314453,
+        -5.499999046325684
       ]
     },
     {
@@ -4907,14 +4923,14 @@
         16
       ],
       "serverTile": [
-        170,
-        292
+        147,
+        287
       ],
       "id": "market-stall-02",
       "position": [
-        -23.418893814086914,
-        28.275300979614258,
-        -0.8222935199737549
+        -46.62889099121094,
+        29.7716064453125,
+        4.077706336975098
       ]
     },
     {
@@ -4928,14 +4944,14 @@
         16.5
       ],
       "serverTile": [
-        184,
-        292
+        177,
+        287
       ],
       "id": "market-stall-03",
       "position": [
-        -9.823257446289062,
-        29.093347549438477,
-        -0.4448096752166748
+        -16.463258743286133,
+        29.35997772216797,
+        4.065190315246582
       ]
     },
     {
@@ -4945,14 +4961,14 @@
       "label": "The desert track into the Amethyst Barrens",
       "node": "Landmark_sunmane_march_north-track",
       "serverTile": [
-        205,
-        533
+        150,
+        476
       ],
       "id": "north-track",
       "position": [
-        11.297013282775879,
-        34.09162902832031,
-        -241.27000427246094
+        -44.0,
+        27.202274322509766,
+        -184.0
       ]
     },
     {
@@ -4972,8 +4988,8 @@
       "id": "outpost-00",
       "position": [
         -64.11808776855469,
-        27.64505386352539,
-        -121.48418426513672
+        27.749502182006836,
+        -121.48417663574219
       ]
     },
     {
@@ -4992,8 +5008,8 @@
       ],
       "id": "outpost-01",
       "position": [
-        100.37751770019531,
-        45.26176834106445,
+        100.37752532958984,
+        45.71247863769531,
         -165.9718475341797
       ]
     },
@@ -5014,7 +5030,7 @@
       "id": "outpost-02",
       "position": [
         136.00668334960938,
-        32.083961486816406,
+        30.658323287963867,
         12.876157760620117
       ]
     },
@@ -5035,8 +5051,8 @@
       "id": "outpost-03",
       "position": [
         -76.46143341064453,
-        31.38416290283203,
-        10.005340576171875
+        31.213335037231445,
+        10.005345344543457
       ]
     },
     {
@@ -5050,14 +5066,14 @@
         -88
       ],
       "serverTile": [
-        289,
-        374
+        326,
+        380
       ],
       "id": "outpost-04",
       "position": [
-        95.63997650146484,
-        47.59271240234375,
-        -82.7822036743164
+        132.81997680664062,
+        41.05891799926758,
+        -88.76219940185547
       ]
     },
     {
@@ -5076,9 +5092,9 @@
       ],
       "id": "outpost-05",
       "position": [
-        -13.819999694824219,
-        28.504709243774414,
-        -179.3000030517578
+        -13.820001602172852,
+        28.59130859375,
+        -179.30001831054688
       ]
     },
     {
@@ -5098,8 +5114,8 @@
       "id": "outpost-06",
       "position": [
         153.75167846679688,
-        33.00911331176758,
-        -146.95462036132812
+        31.853918075561523,
+        -146.95460510253906
       ]
     },
     {
@@ -5119,7 +5135,7 @@
       "id": "outpost-07",
       "position": [
         153.2755126953125,
-        26.550125122070312,
+        28.403146743774414,
         -58.51311492919922
       ]
     },
@@ -5134,14 +5150,14 @@
         -63
       ],
       "serverTile": [
-        147,
-        342
+        91,
+        385
       ],
       "id": "pen-00",
       "position": [
-        -46.468299865722656,
-        24.641874313354492,
-        -50.709896087646484
+        -102.32405853271484,
+        30.24776268005371,
+        -93.74613952636719
       ]
     },
     {
@@ -5155,14 +5171,14 @@
         -52
       ],
       "serverTile": [
-        251,
-        349
+        296,
+        330
       ],
       "id": "pen-01",
       "position": [
-        57.81916427612305,
-        38.00946807861328,
-        -57.41710662841797
+        102.9796142578125,
+        44.24250411987305,
+        -38.57072067260742
       ]
     },
     {
@@ -5176,14 +5192,14 @@
         39
       ],
       "serverTile": [
-        238,
-        270
+        275,
+        242
       ],
       "id": "pen-02",
       "position": [
-        44.65019989013672,
-        35.89627456665039,
-        21.748228073120117
+        81.13851928710938,
+        38.38712692260742,
+        49.9185676574707
       ]
     },
     {
@@ -5197,14 +5213,14 @@
         54
       ],
       "serverTile": [
-        153,
-        259
+        127,
+        214
       ],
       "id": "pen-03",
       "position": [
-        -40.746768951416016,
-        29.946630477905273,
-        32.72903060913086
+        -66.166015625,
+        32.02210998535156,
+        77.02143096923828
       ]
     },
     {
@@ -5218,14 +5234,14 @@
         49
       ],
       "serverTile": [
-        190,
-        270
+        145,
+        223
       ],
       "id": "pen-04",
       "position": [
-        -3.3070268630981445,
-        30.396305084228516,
-        21.703853607177734
+        -48.999996185302734,
+        30.736515045166016,
+        69.0
       ]
     },
     {
@@ -5239,14 +5255,14 @@
         -124
       ],
       "serverTile": [
-        246,
-        404
+        278,
+        407
       ],
       "id": "pen-05",
       "position": [
-        52.8895378112793,
-        43.00347137451172,
-        -112.2139663696289
+        84.00000762939453,
+        47.85188293457031,
+        -115.00000762939453
       ]
     },
     {
@@ -5266,14 +5282,14 @@
       ],
       "secret": "steppe-banner-focus",
       "serverTile": [
-        209,
-        266
+        138,
+        394
       ],
       "id": "secret-steppe-banner-focus",
       "position": [
-        15.299606323242188,
-        28.587879180908203,
-        25.003854751586914
+        -55.52039337158203,
+        27.776243209838867,
+        -102.83614349365234
       ]
     },
     {
@@ -5293,14 +5309,14 @@
       ],
       "secret": "steppe-barrow-reliquary",
       "serverTile": [
-        166,
-        380
+        302,
+        260
       ],
       "id": "secret-steppe-barrow-reliquary",
       "position": [
-        -27.942882537841797,
-        27.673858642578125,
-        -88.9151611328125
+        108.55648040771484,
+        37.95771026611328,
+        31.20404815673828
       ]
     },
     {
@@ -5319,14 +5335,14 @@
       ],
       "secret": "steppe-caravan-school",
       "serverTile": [
-        118,
-        288
+        124,
+        352
       ],
       "id": "secret-steppe-caravan-school",
       "position": [
-        -75.1204833984375,
-        31.633930206298828,
-        3.049048662185669
+        -69.24049377441406,
+        28.60196304321289,
+        -60.19095230102539
       ]
     },
     {
@@ -5345,14 +5361,14 @@
       ],
       "secret": "steppe-dune-eyrie",
       "serverTile": [
-        182,
-        433
+        330,
+        394
       ],
       "id": "secret-steppe-dune-eyrie",
       "position": [
-        -11.675183296203613,
-        29.05858612060547,
-        -141.04905700683594
+        136.684814453125,
+        39.982635498046875,
+        -102.20906066894531
       ]
     },
     {
@@ -5371,14 +5387,14 @@
       ],
       "secret": "steppe-fox-pit",
       "serverTile": [
-        304,
-        454
+        126,
+        212
       ],
       "id": "secret-steppe-fox-pit",
       "position": [
-        110.7344741821289,
-        44.88618469238281,
-        -162.98825073242188
+        -67.90265655517578,
+        32.23332977294922,
+        79.80402374267578
       ]
     },
     {
@@ -5398,14 +5414,14 @@
       ],
       "secret": "steppe-hall-vault",
       "serverTile": [
-        165,
-        310
+        153,
+        299
       ],
       "id": "secret-steppe-hall-vault",
       "position": [
-        -28.142192840576172,
-        27.884632110595703,
-        -18.70891761779785
+        -40.76219177246094,
+        29.26572036743164,
+        -7.328919887542725
       ]
     },
     {
@@ -5424,14 +5440,14 @@
       ],
       "secret": "steppe-mill-cache",
       "serverTile": [
-        220,
-        268
+        79,
+        271
       ],
       "id": "secret-steppe-mill-cache",
       "position": [
-        26.902055740356445,
-        32.111080169677734,
-        23.20890235900879
+        -114.95795440673828,
+        34.557395935058594,
+        20.468900680541992
       ]
     },
     {
@@ -5450,14 +5466,14 @@
       ],
       "secret": "steppe-outpost-butts",
       "serverTile": [
-        130,
-        409
+        335,
+        372
       ],
       "id": "secret-steppe-outpost-butts",
       "position": [
-        -63.37737274169922,
-        28.503944396972656,
-        -117.74320220947266
+        141.1426239013672,
+        37.00643539428711,
+        -80.62319946289062
       ]
     },
     {
@@ -5476,14 +5492,14 @@
       ],
       "secret": "steppe-sap-mouth",
       "serverTile": [
-        176,
-        471
+        343,
+        399
       ],
       "id": "secret-steppe-sap-mouth",
       "position": [
-        -17.27945327758789,
-        28.289939880371094,
-        -179.07554626464844
+        149.0,
+        34.36600875854492,
+        -107.00000762939453
       ]
     },
     {
@@ -5502,14 +5518,14 @@
       ],
       "secret": "steppe-seed-hollow",
       "serverTile": [
-        135,
-        418
+        323,
+        203
       ],
       "id": "secret-steppe-seed-hollow",
       "position": [
-        -58.435333251953125,
-        28.30606460571289,
-        -126.70411682128906
+        129.2939453125,
+        22.901247024536133,
+        88.8023681640625
       ]
     },
     {
@@ -5528,14 +5544,14 @@
       ],
       "secret": "steppe-spring",
       "serverTile": [
-        196,
-        259
+        188,
+        202
       ],
       "id": "secret-steppe-spring",
       "position": [
-        2.7840919494628906,
-        30.53506088256836,
-        32.08662796020508
+        -5.9985809326171875,
+        28.46708869934082,
+        89.00128173828125
       ]
     },
     {
@@ -5554,14 +5570,14 @@
       ],
       "secret": "steppe-standing-well",
       "serverTile": [
-        128,
-        365
+        266,
+        331
       ],
       "id": "secret-steppe-standing-well",
       "position": [
-        -65.23786926269531,
-        25.446224212646484,
-        -73.17378234863281
+        72.85099029541016,
+        41.35235595703125,
+        -39.56898880004883
       ]
     },
     {
@@ -5581,14 +5597,14 @@
       ],
       "secret": "steppe-waystone",
       "serverTile": [
-        268,
-        330
+        149,
+        424
       ],
       "id": "secret-steppe-waystone",
       "position": [
-        74.06378173828125,
-        42.359134674072266,
-        -38.40461349487305
+        -44.16108703613281,
+        27.520692825317383,
+        -132.47669982910156
       ]
     },
     {
@@ -5607,14 +5623,14 @@
       ],
       "secret": "steppe-well-garden",
       "serverTile": [
-        140,
-        262
+        99,
+        260
       ],
       "id": "secret-steppe-well-garden",
       "position": [
-        -53.19669723510742,
-        30.59564208984375,
-        29.899377822875977
+        -95.0,
+        32.93764877319336,
+        32.0
       ]
     },
     {
@@ -5628,14 +5644,14 @@
         -75.8
       ],
       "serverTile": [
-        152,
-        370
+        133,
+        395
       ],
       "id": "shrine-00",
       "position": [
-        -41.23778533935547,
-        27.751638412475586,
-        -78.10399627685547
+        -60.08000564575195,
+        27.81731605529785,
+        -103.55999755859375
       ]
     },
     {
@@ -5649,14 +5665,14 @@
         -32.49163176
       ],
       "serverTile": [
-        244,
-        335
+        304,
+        395
       ],
       "id": "shrine-01",
       "position": [
-        50.82707595825195,
-        38.77108383178711,
-        -43.298057556152344
+        110.21419525146484,
+        47.26969909667969,
+        -103.5745849609375
       ]
     },
     {
@@ -5670,14 +5686,14 @@
         51.8732992989
       ],
       "serverTile": [
-        202,
-        264
+        164,
+        209
       ],
       "id": "shrine-02",
       "position": [
-        8.036551475524902,
-        30.931310653686523,
-        27.207874298095703
+        -29.194555282592773,
+        30.987003326416016,
+        82.12669372558594
       ]
     },
     {
@@ -5691,14 +5707,14 @@
         67.3822667647
       ],
       "serverTile": [
-        139,
-        253
+        86,
+        266
       ],
       "id": "shrine-03",
       "position": [
-        -54.907222747802734,
-        30.725547790527344,
-        38.27986526489258
+        -107.56178283691406,
+        33.83587646484375,
+        25.07248306274414
       ]
     },
     {
@@ -5712,14 +5728,14 @@
         -21
       ],
       "serverTile": [
-        155,
-        327
+        142,
+        324
       ],
       "id": "shrine-04",
       "position": [
-        -38.0844612121582,
-        27.93696403503418,
-        -35.15053939819336
+        -51.70446014404297,
+        28.509750366210938,
+        -32.770530700683594
       ]
     },
     {
@@ -5733,14 +5749,14 @@
         -20
       ],
       "serverTile": [
-        200,
-        325
+        274,
+        312
       ],
       "id": "shrine-05",
       "position": [
-        6.558503150939941,
-        29.802278518676758,
-        -33.9325065612793
+        80.93850708007812,
+        41.99536895751953,
+        -20.552507400512695
       ]
     },
     {
@@ -5754,14 +5770,14 @@
         22
       ],
       "serverTile": [
-        155,
-        288
+        147,
+        269
       ],
       "id": "shrine-06",
       "position": [
-        -38.993743896484375,
-        25.870193481445312,
-        3.4879164695739746
+        -46.613739013671875,
+        30.17466926574707,
+        22.8679141998291
       ]
     },
     {
@@ -5775,14 +5791,14 @@
         24
       ],
       "serverTile": [
-        201,
-        286
+        293,
+        253
       ],
       "id": "shrine-07",
       "position": [
-        7.032811164855957,
-        27.284011840820312,
-        5.7367963790893555
+        99.41280364990234,
+        38.39627456665039,
+        38.116798400878906
       ]
     },
     {
@@ -5792,14 +5808,14 @@
       "label": "The shore road to the Verdant Stair",
       "node": "Landmark_sunmane_march_south-track",
       "serverTile": [
-        305,
-        210
+        150,
+        160
       ],
       "id": "south-track",
       "position": [
-        111.7300033569336,
-        28.8486328125,
-        81.24700927734375
+        -44.0,
+        31.79145622253418,
+        131.5
       ]
     },
     {
@@ -5813,14 +5829,14 @@
         -82.8880101467
       ],
       "serverTile": [
-        143,
-        372
+        109,
+        376
       ],
       "id": "tent-00",
       "position": [
-        -50.658443450927734,
-        27.684207916259766,
-        -80.63883209228516
+        -84.91522979736328,
+        29.117822647094727,
+        -84.60618591308594
       ]
     },
     {
@@ -5834,14 +5850,14 @@
         -91.2
       ],
       "serverTile": [
-        144,
-        374
+        89,
+        363
       ],
       "id": "tent-01",
       "position": [
-        -49.28199768066406,
-        27.717662811279297,
-        -82.31600189208984
+        -104.10000610351562,
+        30.64207649230957,
+        -71.80000305175781
       ]
     },
     {
@@ -5855,14 +5871,14 @@
         -93.2556797376
       ],
       "serverTile": [
-        146,
-        375
+        106,
+        350
       ],
       "id": "tent-02",
       "position": [
-        -47.3187370300293,
-        27.66291046142578,
-        -83.86375427246094
+        -87.35789489746094,
+        29.611669540405273,
+        -58.744319915771484
       ]
     },
     {
@@ -5876,14 +5892,14 @@
         -46.3555590369
       ],
       "serverTile": [
-        253,
-        339
+        280,
+        389
       ],
       "id": "tent-03",
       "position": [
-        59.145877838134766,
-        40.52834701538086,
-        -47.54552459716797
+        86.95508575439453,
+        47.92170715332031,
+        -97.00818634033203
       ]
     },
     {
@@ -5897,14 +5913,14 @@
         -41.2059657755
       ],
       "serverTile": [
-        254,
-        338
+        293,
+        373
       ],
       "id": "tent-04",
       "position": [
-        60.47367858886719,
-        41.65060806274414,
-        -46.3146858215332
+        99.78944396972656,
+        47.39918518066406,
+        -81.79402923583984
       ]
     },
     {
@@ -5918,14 +5934,14 @@
         -32.5161403029
       ],
       "serverTile": [
-        254,
-        335
+        278,
+        358
       ],
       "id": "tent-05",
       "position": [
-        60.302207946777344,
-        41.579063415527344,
-        -43.22644805908203
+        84.01004791259766,
+        45.62330627441406,
+        -66.48384857177734
       ]
     },
     {
@@ -5939,14 +5955,14 @@
         48.4960127681
       ],
       "serverTile": [
-        211,
-        268
+        180,
+        256
       ],
       "id": "tent-06",
       "position": [
-        17.61216163635254,
-        32.766075134277344,
-        23.950878143310547
+        -13.035625457763672,
+        29.907955169677734,
+        35.50398635864258
       ]
     },
     {
@@ -5960,14 +5976,14 @@
         57.1557494274
       ],
       "serverTile": [
-        211,
-        264
+        166,
+        245
       ],
       "id": "tent-07",
       "position": [
-        17.378353118896484,
-        32.56654357910156,
-        27.045734405517578
+        -27.098398208618164,
+        30.129318237304688,
+        46.8442497253418
       ]
     },
     {
@@ -5981,14 +5997,14 @@
         63.6694701013
       ],
       "serverTile": [
-        211,
-        264
+        187,
+        234
       ],
       "id": "tent-08",
       "position": [
-        17.655336380004883,
-        32.4159049987793,
-        27.61271858215332
+        -6.293919563293457,
+        29.412891387939453,
+        57.330535888671875
       ]
     },
     {
@@ -6002,14 +6018,14 @@
         82.5785941408
       ],
       "serverTile": [
-        132,
-        249
+        110,
+        269
       ],
       "id": "tent-09",
       "position": [
-        -61.671390533447266,
-        31.07307243347168,
-        42.93809127807617
+        -83.9168701171875,
+        31.93875503540039,
+        22.90067481994629
       ]
     },
     {
@@ -6023,14 +6039,14 @@
         78.8521202846
       ],
       "serverTile": [
-        131,
-        249
+        95,
+        253
       ],
       "id": "tent-10",
       "position": [
-        -62.84651184082031,
-        31.38283920288086,
-        42.27253341674805
+        -98.93868255615234,
+        33.50400161743164,
+        38.147884368896484
       ]
     },
     {
@@ -6044,14 +6060,14 @@
         70.465973662
       ],
       "serverTile": [
-        130,
-        252
+        116,
+        240
       ],
       "id": "tent-11",
       "position": [
-        -63.31699752807617,
-        31.386497497558594,
-        39.11748504638672
+        -77.53179931640625,
+        32.20983123779297,
+        51.534034729003906
       ]
     },
     {
@@ -6065,14 +6081,14 @@
         30
       ],
       "serverTile": [
-        152,
-        281
+        100,
+        348
       ],
       "id": "well-01",
       "position": [
-        -41.03636932373047,
-        28.345739364624023,
-        10.979898452758789
+        -93.99999237060547,
+        30.131742477416992,
+        -56.0
       ]
     },
     {
@@ -6086,14 +6102,14 @@
         -28
       ],
       "serverTile": [
-        211,
-        328
+        271,
+        334
       ],
       "id": "well-02",
       "position": [
-        17.27532958984375,
-        31.46167755126953,
-        -36.17896270751953
+        77.99999237060547,
+        42.909423828125,
+        -42.999996185302734
       ]
     },
     {
@@ -6107,14 +6123,14 @@
         22
       ],
       "serverTile": [
-        229,
-        291
+        190,
+        212
       ],
       "id": "well-03",
       "position": [
-        35.92076110839844,
-        32.12024688720703,
-        0.7180692553520203
+        -4.0,
+        28.280973434448242,
+        79.99999237060547
       ]
     },
     {
@@ -6128,31 +6144,31 @@
         12
       ],
       "serverTile": [
-        170,
-        292
+        147,
+        291
       ],
       "id": "well-crossroads",
       "position": [
-        -23.3799991607666,
-        28.375259399414062,
-        -0.38000011444091797
+        -46.5,
+        29.674259185791016,
+        1.0
       ]
     },
     {
       "assetId": "Landmark_sunmane_march_west-landing",
-      "destinationMap": "four_gates",
+      "destinationMap": "mirrorhold",
       "kind": "portal",
-      "label": "The causeway road to the Four Gates",
+      "label": "The west road to Mirrorhold",
       "node": "Landmark_sunmane_march_west-landing",
       "serverTile": [
-        71,
-        338
+        25,
+        323
       ],
       "id": "west-landing",
       "position": [
-        -122.58999633789062,
-        25.860685348510742,
-        -46.39701461791992
+        -169.0,
+        43.27207946777344,
+        -31.0
       ]
     },
     {
@@ -6166,14 +6182,14 @@
         46
       ],
       "serverTile": [
-        224,
-        268
+        77,
+        295
       ],
       "id": "windmill-00",
       "position": [
-        30.543590545654297,
-        31.127490997314453,
-        23.482067108154297
+        -116.28656005859375,
+        33.946502685546875,
+        -3.947333812713623
       ]
     },
     {
@@ -6187,14 +6203,14 @@
         58
       ],
       "serverTile": [
-        236,
-        259
+        80,
+        272
       ],
       "id": "windmill-01",
       "position": [
-        42.798851013183594,
-        35.65312194824219,
-        32.42821502685547
+        -113.48443603515625,
+        34.33790969848633,
+        19.631484985351562
       ]
     },
     {
@@ -6208,14 +6224,14 @@
         -7
       ],
       "serverTile": [
-        140,
-        312
+        71,
+        247
       ],
       "id": "windmill-02",
       "position": [
-        -53.69047164916992,
-        28.74855613708496,
-        -20.273401260375977
+        -122.8990249633789,
+        37.0608024597168,
+        44.594383239746094
       ]
     },
     {
@@ -6229,14 +6245,14 @@
         -100
       ],
       "serverTile": [
-        220,
-        389
+        93,
+        225
       ],
       "id": "windmill-03",
       "position": [
-        26.320262908935547,
-        32.8525276184082,
-        -97.56800842285156
+        -100.02796936035156,
+        35.014434814453125,
+        66.7554702758789
       ]
     },
     {
@@ -6250,14 +6266,14 @@
         -88
       ],
       "serverTile": [
-        133,
-        375
+        68,
+        205
       ],
       "id": "windmill-04",
       "position": [
-        -60.01300048828125,
-        27.820724487304688,
-        -83.05894470214844
+        -125.92131042480469,
+        40.83935546875,
+        86.99581909179688
       ]
     },
     {
@@ -6271,14 +6287,14 @@
         -32
       ],
       "serverTile": [
-        295,
-        330
+        106,
+        290
       ],
       "id": "windmill-05",
       "position": [
-        101.66659545898438,
-        44.589561462402344,
-        -38.65256118774414
+        -87.55335235595703,
+        31.577011108398438,
+        1.735086441040039
       ]
     }
   ],
@@ -6579,7 +6595,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "0ce92c6a3007f8f91451f61a5ca7b23bf72e18b8f9e59685f8264dbe09ea2c1e",
+      "masterSha256": "e3a139bd73ae2be28ba66a22600bbdc39d0ef22e6cc78c9a9ab7de45db12f066",
       "globalMin": [
         1010.0,
         228.0
@@ -6606,19 +6622,19 @@
         "radius": 5.6,
         "seed": 2595,
         "serverTile": [
-          254,
-          405
+          264,
+          189
         ],
         "id": "herd-barrow-paddock",
         "position": [
-          60.8895378112793,
-          43.003021240234375,
-          -113.2139663696289
+          70.0,
+          35.43014144897461,
+          103.0
         ],
         "center": [
-          60.8895378112793,
-          43.003021240234375,
-          -113.2139663696289
+          70.0,
+          35.43014144897461,
+          103.0
         ]
       },
       {
@@ -6628,19 +6644,19 @@
         "radius": 11,
         "seed": 14314,
         "serverTile": [
-          209,
-          391
+          304,
+          418
         ],
         "id": "herd-dune-margin",
         "position": [
-          15.448919296264648,
-          34.37446975708008,
-          -99.77255249023438
+          110.0,
+          47.114200592041016,
+          -126.0
         ],
         "center": [
-          15.448919296264648,
-          34.37446975708008,
-          -99.77255249023438
+          110.0,
+          47.114200592041016,
+          -126.0
         ]
       },
       {
@@ -6650,19 +6666,19 @@
         "radius": 6.2,
         "seed": 75438,
         "serverTile": [
-          149,
-          266
+          128,
+          226
         ],
         "id": "herd-duskrider-paddock",
         "position": [
-          -44.58076095581055,
-          29.946582794189453,
-          25.707599639892578
+          -66.0,
+          31.71771240234375,
+          66.0
         ],
         "center": [
-          -44.58076095581055,
-          29.946582794189453,
-          25.707599639892578
+          -66.0,
+          31.71771240234375,
+          66.0
         ]
       },
       {
@@ -6672,19 +6688,19 @@
         "radius": 5.6,
         "seed": 12857,
         "serverTile": [
-          243,
-          348
+          260,
+          252
         ],
         "id": "herd-east-paddock",
         "position": [
-          49.83954620361328,
-          38.00104904174805,
-          -56.84639358520508
+          66.0,
+          36.3876953125,
+          40.0
         ],
         "center": [
-          49.83954620361328,
-          38.00104904174805,
-          -56.84639358520508
+          66.0,
+          36.3876953125,
+          40.0
         ]
       },
       {
@@ -6694,19 +6710,19 @@
         "radius": 11,
         "seed": 24325,
         "serverTile": [
-          311,
-          389
+          340,
+          271
         ],
         "id": "herd-foothill-pasture",
         "position": [
-          117.79278564453125,
-          41.0994987487793,
-          -97.6642074584961
+          146.0,
+          24.2869930267334,
+          21.0
         ],
         "center": [
-          117.79278564453125,
-          41.0994987487793,
-          -97.6642074584961
+          146.0,
+          24.2869930267334,
+          21.0
         ]
       },
       {
@@ -6716,19 +6732,19 @@
         "radius": 5.4,
         "seed": 74190,
         "serverTile": [
-          139,
-          344
+          80,
+          387
         ],
         "id": "herd-north-pasture",
         "position": [
-          -54.14424133300781,
-          24.631446838378906,
-          -52.9637565612793
+          -114.0,
+          31.212867736816406,
+          -95.0
         ],
         "center": [
-          -54.14424133300781,
-          24.631446838378906,
-          -52.9637565612793
+          -114.0,
+          31.212867736816406,
+          -95.0
         ]
       },
       {
@@ -6738,19 +6754,19 @@
         "radius": 12,
         "seed": 94632,
         "serverTile": [
-          275,
-          287
+          329,
+          252
         ],
         "id": "herd-open-steppe-east",
         "position": [
-          81.48375701904297,
-          43.29764175415039,
-          4.886064529418945
+          135.0,
+          27.39483642578125,
+          40.0
         ],
         "center": [
-          81.48375701904297,
-          43.29764175415039,
-          4.886064529418945
+          135.0,
+          27.39483642578125,
+          40.0
         ]
       },
       {
@@ -6760,19 +6776,19 @@
         "radius": 12,
         "seed": 46592,
         "serverTile": [
-          175,
-          431
+          317,
+          410
         ],
         "id": "herd-open-steppe-north",
         "position": [
-          -18.191648483276367,
-          28.554094314575195,
-          -139.8466796875
+          123.0,
+          44.4458122253418,
+          -118.0
         ],
         "center": [
-          -18.191648483276367,
-          28.554094314575195,
-          -139.8466796875
+          123.0,
+          44.4458122253418,
+          -118.0
         ]
       },
       {
@@ -6782,19 +6798,19 @@
         "radius": 12,
         "seed": 16374,
         "serverTile": [
-          268,
-          253
+          257,
+          155
         ],
         "id": "herd-open-steppe-south",
         "position": [
-          74.0999984741211,
-          38.57841873168945,
-          38.220001220703125
+          63.0,
+          30.91810417175293,
+          137.0
         ],
         "center": [
-          74.0999984741211,
-          38.57841873168945,
-          38.220001220703125
+          63.0,
+          30.91810417175293,
+          137.0
         ]
       },
       {
@@ -6804,19 +6820,19 @@
         "radius": 13,
         "seed": 49824,
         "serverTile": [
-          123,
-          352
+          61,
+          179
         ],
         "id": "herd-open-steppe-west",
         "position": [
-          -70.14424133300781,
-          24.157039642333984,
-          -60.9637565612793
+          -133.0,
+          44.50204849243164,
+          113.0
         ],
         "center": [
-          -70.14424133300781,
-          24.157039642333984,
-          -60.9637565612793
+          -133.0,
+          44.50204849243164,
+          113.0
         ]
       },
       {
@@ -6826,19 +6842,19 @@
         "radius": 5.8,
         "seed": 23468,
         "serverTile": [
-          237,
-          278
+          150,
+          227
         ],
         "id": "herd-saltmane-paddock",
         "position": [
-          43.511680603027344,
-          35.856685638427734,
-          13.829657554626465
+          -44.0,
+          30.324054718017578,
+          65.0
         ],
         "center": [
-          43.511680603027344,
-          35.856685638427734,
-          13.829657554626465
+          -44.0,
+          30.324054718017578,
+          65.0
         ]
       },
       {
@@ -6848,19 +6864,19 @@
         "radius": 5.4,
         "seed": 32661,
         "serverTile": [
-          199,
-          270
+          128,
+          187
         ],
         "id": "herd-south-paddock",
         "position": [
-          5.6929731369018555,
-          30.460451126098633,
-          21.703853607177734
+          -66.0,
+          32.8635139465332,
+          105.0
         ],
         "center": [
-          5.6929731369018555,
-          30.460451126098633,
-          21.703853607177734
+          -66.0,
+          32.8635139465332,
+          105.0
         ]
       },
       {
@@ -6870,19 +6886,19 @@
         "radius": 2.6,
         "seed": 8626,
         "serverTile": [
-          156,
-          296
+          150,
+          278
         ],
         "id": "mounts-crossroads",
         "position": [
-          -37.380001068115234,
-          26.13495635986328,
-          -4.380000114440918
+          -44.0,
+          29.911344528198242,
+          14.0
         ],
         "center": [
-          -37.380001068115234,
-          26.13495635986328,
-          -4.380000114440918
+          -44.0,
+          29.911344528198242,
+          14.0
         ]
       },
       {
@@ -6898,12 +6914,12 @@
         "id": "mounts-dune-camp-east",
         "position": [
           128.39109802246094,
-          41.911808013916016,
+          42.61780548095703,
           -128.423828125
         ],
         "center": [
           128.39109802246094,
-          41.911808013916016,
+          42.61780548095703,
           -128.423828125
         ]
       },
@@ -6920,12 +6936,12 @@
         "id": "mounts-dune-camp-mid",
         "position": [
           97.7018051147461,
-          47.93740463256836,
+          47.055606842041016,
           -149.7627410888672
         ],
         "center": [
           97.7018051147461,
-          47.93740463256836,
+          47.055606842041016,
           -149.7627410888672
         ]
       },
@@ -6942,12 +6958,12 @@
         "id": "mounts-dune-camp-north",
         "position": [
           -32.584991455078125,
-          28.404695510864258,
+          27.681642532348633,
           -135.8330078125
         ],
         "center": [
           -32.584991455078125,
-          28.404695510864258,
+          27.681642532348633,
           -135.8330078125
         ]
       },
@@ -6964,12 +6980,12 @@
         "id": "mounts-dune-station-east",
         "position": [
           115.7018051147461,
-          46.83119201660156,
+          44.97157669067383,
           -146.7627410888672
         ],
         "center": [
           115.7018051147461,
-          46.83119201660156,
+          44.97157669067383,
           -146.7627410888672
         ]
       },
@@ -6980,19 +6996,19 @@
         "radius": 2.8,
         "seed": 35736,
         "serverTile": [
-          185,
-          420
+          166,
+          412
         ],
         "id": "mounts-dune-station-west",
         "position": [
-          -8.50043773651123,
-          28.741933822631836,
-          -128.48248291015625
+          -28.0,
+          27.937986373901367,
+          -120.0
         ],
         "center": [
-          -8.50043773651123,
-          28.741933822631836,
-          -128.48248291015625
+          -28.0,
+          27.937986373901367,
+          -120.0
         ]
       },
       {
@@ -7002,19 +7018,19 @@
         "radius": 2.2,
         "seed": 36896,
         "serverTile": [
-          212,
-          301
+          299,
+          293
         ],
         "id": "mounts-east-caravanserai",
         "position": [
-          18.719999313354492,
-          31.891979217529297,
-          -9.879199981689453
+          105.0,
+          41.11269760131836,
+          -1.0
         ],
         "center": [
-          18.719999313354492,
-          31.891979217529297,
-          -9.879199981689453
+          105.0,
+          41.11269760131836,
+          -1.0
         ]
       },
       {
@@ -7024,19 +7040,19 @@
         "radius": 2.6,
         "seed": 45277,
         "serverTile": [
-          198,
-          295
+          190,
+          298
         ],
         "id": "mounts-east-hitching",
         "position": [
-          4.619999885559082,
-          26.660293579101562,
-          -3.380000114440918
+          -4.0,
+          28.49201202392578,
+          -6.0
         ],
         "center": [
-          4.619999885559082,
-          26.660293579101562,
-          -3.380000114440918
+          -4.0,
+          28.49201202392578,
+          -6.0
         ]
       },
       {
@@ -7046,19 +7062,19 @@
         "radius": 1.8,
         "seed": 60343,
         "serverTile": [
-          157,
-          296
+          143,
+          282
         ],
         "id": "mounts-market",
         "position": [
-          -36.380001068115234,
-          26.24607276916504,
-          -4.380000114440918
+          -51.0,
+          30.077116012573242,
+          10.0
         ],
         "center": [
-          -36.380001068115234,
-          26.24607276916504,
-          -4.380000114440918
+          -51.0,
+          30.077116012573242,
+          10.0
         ]
       },
       {
@@ -7068,19 +7084,19 @@
         "radius": 2.2,
         "seed": 30941,
         "serverTile": [
-          142,
-          301
+          126,
+          331
         ],
         "id": "mounts-west-caravanserai",
         "position": [
-          -51.47999954223633,
-          29.672893524169922,
-          -9.099200248718262
+          -68.0,
+          28.92655372619629,
+          -39.0
         ],
         "center": [
-          -51.47999954223633,
-          29.672893524169922,
-          -9.099200248718262
+          -68.0,
+          28.92655372619629,
+          -39.0
         ]
       }
     ],
@@ -8299,14 +8315,14 @@
       ],
       "node": "Spawn_server_arrival",
       "serverTile": [
-        194,
-        288
+        193,
+        292
       ],
       "id": "server-arrival",
       "position": [
-        0.5,
-        26.717023849487305,
-        3.5
+        -0.5,
+        26.782915115356445,
+        -0.5
       ]
     }
   ],
@@ -8366,7 +8382,13 @@
       ]
     },
     {
+      "destinationMap": "mirrorhold",
+      "destinationTile": [
+        415,
+        315
+      ],
       "id": "road-to-mirrorhold",
+      "label": "Road to Mirrorhold",
       "name": "Road to Mirrorhold",
       "position": [
         -152.5,
@@ -8377,48 +8399,45 @@
         41,
         327
       ],
-      "destinationMap": "mirrorhold",
-      "destinationTile": [
-        415,
-        315
-      ],
       "type": "walk"
     },
     {
+      "destinationMap": "amethyst_barrens",
+      "destinationTile": [
+        331,
+        25
+      ],
       "id": "road-to-amethyst_barrens",
+      "label": "Road to Amethyst Barrens",
       "name": "Road to Amethyst Barrens",
       "position": [
         -100.5,
-        27.712074279785156,
+        27.742361068725586,
         -179.5
       ],
       "serverTile": [
         93,
         471
       ],
-      "destinationMap": "amethyst_barrens",
-      "destinationTile": [
-        331,
-        25
-      ],
       "type": "walk"
     },
     {
+      "destinationMap": "verdant_stair",
+      "destinationTile": [
+        359,
+        361
+      ],
       "id": "road-to-verdant_stair",
+      "label": "Road to Verdant Stair",
       "name": "Road to Verdant Stair",
       "position": [
         -38.5,
-        35.09055709838867,
+        34.9501838684082,
         202.5
       ],
       "serverTile": [
         155,
         89
-      ],
-      "destinationMap": "verdant_stair",
-      "destinationTile": [
-        359,
-        361
       ],
       "type": "walk"
     }
@@ -9018,143 +9037,161 @@
       "id": "amethyst-prospector",
       "position": [
         143.5,
-        36.430667877197266,
+        36.52262878417969,
         -136.5
       ]
     },
     {
+      "assetId": "Landmark_sunmane_burial_mound_00",
       "label": "Barrow warden",
+      "node": "Landmark_sunmane_burial_mound_00",
       "role": "quest",
       "serverTile": [
-        183,
-        337
+        301,
+        268
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe",
       "id": "barrow-warden",
       "position": [
-        -10.5,
-        28.067195892333984,
-        -45.5
+        107.0,
+        38.76359176635742,
+        24.0
       ]
     },
     {
+      "assetId": "Landmark_sunmane_caravanserai_01",
       "label": "East caravan master",
+      "node": "Landmark_sunmane_caravanserai_01",
       "role": "travel",
       "serverTile": [
-        211,
-        307
+        299,
+        302
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe",
       "id": "caravan-master-east",
       "position": [
-        17.5,
-        29.69723129272461,
-        -15.5
+        105.0,
+        41.868812561035156,
+        -10.0
       ]
     },
     {
+      "assetId": "Landmark_sunmane_caravanserai_00",
       "label": "West caravan master",
+      "node": "Landmark_sunmane_caravanserai_00",
       "role": "travel",
       "serverTile": [
-        146,
-        306
+        125,
+        339
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe",
       "id": "caravan-master-west",
       "position": [
-        -47.5,
-        23.663223266601562,
-        -14.5
+        -69.0,
+        28.804363250732422,
+        -47.0
       ]
     },
     {
+      "assetId": "Landmark_sunmane_landing_00",
       "label": "Cove landing factor",
+      "node": "Landmark_sunmane_landing_00",
       "role": "trade",
       "serverTile": [
-        108,
-        274
+        236,
+        187
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe",
       "id": "cove-factor",
       "position": [
-        -85.5,
-        31.792951583862305,
-        17.5
+        42.0,
+        23.606159210205078,
+        105.0
       ]
     },
     {
+      "assetId": "Landmark_sunmane_desert_station_00",
       "label": "Dune well keeper",
+      "node": "Landmark_sunmane_desert_station_00",
       "role": "service",
       "serverTile": [
-        186,
-        423
+        163,
+        411
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe",
       "id": "dune-well-keeper",
       "position": [
-        -7.5,
-        29.085546493530273,
-        -131.5
+        -31.0,
+        27.792221069335938,
+        -119.00000762939453
       ]
     },
     {
+      "assetId": "Landmark_sunmane_animal_pen_02",
       "label": "Camp horse master",
+      "node": "Landmark_sunmane_animal_pen_02",
       "role": "trade",
       "serverTile": [
-        147,
-        368
+        265,
+        248
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe",
       "id": "horse-master",
       "position": [
-        -46.5,
-        27.681751251220703,
-        -76.5
+        71.0,
+        37.347145080566406,
+        43.99999237060547
       ]
     },
     {
+      "assetId": "Landmark_sunmane_great_hall",
       "label": "Orun khan",
+      "node": "Landmark_sunmane_great_hall",
       "role": "quest",
       "serverTile": [
-        182,
-        309
+        163,
+        303
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe",
       "id": "khan-of-the-sunmane",
       "position": [
-        -11.5,
-        28.667648315429688,
-        -17.5
+        -31.0,
+        28.827917098999023,
+        -11.0
       ]
     },
     {
+      "assetId": "Landmark_orun_seasonal_market_00",
       "label": "Seasonal market broker",
+      "node": "Landmark_orun_seasonal_market_00",
       "role": "trade",
       "serverTile": [
-        174,
-        305
+        152,
+        294
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe",
       "id": "market-broker",
       "position": [
-        -19.5,
-        28.589677810668945,
-        -13.5
+        -42.0,
+        29.267452239990234,
+        -2.999997615814209
       ]
     },
     {
+      "assetId": "Landmark_sunmane_windmill_01",
       "label": "Steppe miller",
+      "node": "Landmark_sunmane_windmill_01",
       "role": "trade",
       "serverTile": [
-        221,
-        276
+        91,
+        274
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe",
       "id": "miller",
       "position": [
-        27.5,
-        32.423397064208984,
-        15.5
+        -103.0,
+        33.129459381103516,
+        17.000001907348633
       ]
     },
     {
@@ -9168,7 +9205,7 @@
       "id": "range-warden",
       "position": [
         156.5,
-        30.611520767211914,
+        30.70467185974121,
         -137.5
       ]
     },
@@ -9183,38 +9220,42 @@
       "id": "salt-factor",
       "position": [
         112.5,
-        45.32250213623047,
+        45.41489028930664,
         -149.5
       ]
     },
     {
+      "assetId": "Landmark_orun_banner_shrine_00",
       "label": "Banner shrine keeper",
+      "node": "Landmark_orun_banner_shrine_00",
       "role": "quest",
       "serverTile": [
-        152,
-        370
+        138,
+        390
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe",
       "id": "shrine-keeper",
       "position": [
-        -41.5,
-        27.61941909790039,
-        -78.5
+        -55.99999237060547,
+        27.384174346923828,
+        -98.99999237060547
       ]
     },
     {
+      "assetId": "Landmark_sunmane_well_00",
       "label": "Crossroads well keeper",
+      "node": "Landmark_sunmane_well_00",
       "role": "service",
       "serverTile": [
-        174,
-        297
+        151,
+        294
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe",
       "id": "well-keeper",
       "position": [
-        -19.5,
-        28.837310791015625,
-        -5.5
+        -43.0,
+        29.373409271240234,
+        -2.9999992847442627
       ]
     },
     {
@@ -9228,7 +9269,7 @@
       "id": "wind-cave-watch",
       "position": [
         77.5,
-        45.121036529541016,
+        45.220909118652344,
         -152.5
       ]
     }
@@ -9249,12 +9290,12 @@
       "id": "amethyst-shard-00",
       "position": [
         138.5,
-        39.04742431640625,
+        39.14776611328125,
         -99.5
       ],
       "center": [
         138.5,
-        39.04742431640625,
+        39.14776611328125,
         -99.5
       ]
     },
@@ -9273,12 +9314,12 @@
       "id": "amethyst-shard-01",
       "position": [
         139.5,
-        38.733367919921875,
+        38.85173797607422,
         -104.5
       ],
       "center": [
         139.5,
-        38.733367919921875,
+        38.85173797607422,
         -104.5
       ]
     },
@@ -9297,12 +9338,12 @@
       "id": "dune-sage-00",
       "position": [
         -30.5,
-        27.62718391418457,
+        27.727405548095703,
         -140.5
       ],
       "center": [
         -30.5,
-        27.62718391418457,
+        27.727405548095703,
         -140.5
       ]
     },
@@ -9315,19 +9356,19 @@
       "kind": "herb",
       "label": "Sage",
       "serverTile": [
-        147,
-        260
+        151,
+        421
       ],
       "id": "dune-sage-01",
       "position": [
-        -46.5,
-        30.221540451049805,
-        31.5
+        -43.0,
+        27.571073532104492,
+        -129.0
       ],
       "center": [
-        -46.5,
-        30.221540451049805,
-        31.5
+        -43.0,
+        27.571073532104492,
+        -129.0
       ]
     },
     {
@@ -9339,19 +9380,19 @@
       "kind": "mineral",
       "label": "Flint",
       "serverTile": [
-        146,
-        350
+        138,
+        417
       ],
       "id": "mesa-flint-00",
       "position": [
-        -47.5,
-        27.83002471923828,
-        -58.5
+        -56.0,
+        27.54888153076172,
+        -125.0
       ],
       "center": [
-        -47.5,
-        27.83002471923828,
-        -58.5
+        -56.0,
+        27.54888153076172,
+        -125.0
       ]
     },
     {
@@ -9369,12 +9410,12 @@
       "id": "mesa-flint-01",
       "position": [
         99.5,
-        47.07875061035156,
+        47.17632293701172,
         -78.5
       ],
       "center": [
         99.5,
-        47.07875061035156,
+        47.17632293701172,
         -78.5
       ]
     },
@@ -9393,12 +9434,12 @@
       "id": "pan-salt-00",
       "position": [
         109.5,
-        44.40568923950195,
+        44.52317810058594,
         -168.5
       ],
       "center": [
         109.5,
-        44.40568923950195,
+        44.52317810058594,
         -168.5
       ]
     },
@@ -9417,12 +9458,12 @@
       "id": "pan-salt-01",
       "position": [
         -24.5,
-        27.791460037231445,
+        27.888648986816406,
         -156.5
       ],
       "center": [
         -24.5,
-        27.791460037231445,
+        27.888648986816406,
         -156.5
       ]
     },
@@ -9441,12 +9482,12 @@
       "id": "scree-ore-00",
       "position": [
         154.5,
-        29.733896255493164,
+        29.844207763671875,
         -79.5
       ],
       "center": [
         154.5,
-        29.733896255493164,
+        29.844207763671875,
         -79.5
       ]
     },
@@ -9465,12 +9506,12 @@
       "id": "scree-ore-01",
       "position": [
         -48.5,
-        27.07883071899414,
+        27.189830780029297,
         -176.5
       ],
       "center": [
         -48.5,
-        27.07883071899414,
+        27.189830780029297,
         -176.5
       ]
     },
@@ -9483,19 +9524,19 @@
       "kind": "mineral",
       "label": "Clay",
       "serverTile": [
-        115,
-        250
+        232,
+        185
       ],
       "id": "shore-clay-00",
       "position": [
-        -78.5,
-        31.960546493530273,
-        41.5
+        38.0,
+        22.30000114440918,
+        107.0
       ],
       "center": [
-        -78.5,
-        31.960546493530273,
-        41.5
+        38.0,
+        22.30000114440918,
+        107.0
       ]
     },
     {
@@ -9507,19 +9548,19 @@
       "kind": "mineral",
       "label": "Clay",
       "serverTile": [
-        133,
-        376
+        231,
+        175
       ],
       "id": "shore-clay-01",
       "position": [
-        -60.5,
-        27.93169403076172,
-        -84.5
+        37.0,
+        24.381084442138672,
+        117.0
       ],
       "center": [
-        -60.5,
-        27.93169403076172,
-        -84.5
+        37.0,
+        24.381084442138672,
+        117.0
       ]
     },
     {
@@ -9537,12 +9578,12 @@
       "id": "steppe-herbs-00",
       "position": [
         -41.5,
-        29.992332458496094,
+        29.983558654785156,
         28.5
       ],
       "center": [
         -41.5,
-        29.992332458496094,
+        29.983558654785156,
         28.5
       ]
     },
@@ -9561,12 +9602,12 @@
       "id": "steppe-herbs-01",
       "position": [
         -75.5,
-        31.293275833129883,
+        31.391094207763672,
         19.5
       ],
       "center": [
         -75.5,
-        31.293275833129883,
+        31.391094207763672,
         19.5
       ]
     },
@@ -9585,12 +9626,12 @@
       "id": "steppe-herbs-02",
       "position": [
         -79.5,
-        31.457969665527344,
+        31.558076858520508,
         17.5
       ],
       "center": [
         -79.5,
-        31.457969665527344,
+        31.558076858520508,
         17.5
       ]
     },
@@ -9603,19 +9644,19 @@
       "kind": "crop",
       "label": "Wheat",
       "serverTile": [
-        238,
-        267
+        85,
+        307
       ],
       "id": "sunmane-wheat-00",
       "position": [
-        44.5,
-        35.6555061340332,
-        24.5
+        -109.0,
+        32.72275924682617,
+        -15.0
       ],
       "center": [
-        44.5,
-        35.6555061340332,
-        24.5
+        -109.0,
+        32.72275924682617,
+        -15.0
       ]
     },
     {
@@ -9627,19 +9668,19 @@
       "kind": "crop",
       "label": "Wheat",
       "serverTile": [
-        230,
-        268
+        91,
+        284
       ],
       "id": "sunmane-wheat-01",
       "position": [
-        36.5,
-        34.52640151977539,
-        23.5
+        -103.0,
+        32.87300109863281,
+        8.0
       ],
       "center": [
-        36.5,
-        34.52640151977539,
-        23.5
+        -103.0,
+        32.87300109863281,
+        8.0
       ]
     },
     {
@@ -9651,19 +9692,19 @@
       "kind": "crop",
       "label": "Wheat",
       "serverTile": [
-        213,
-        383
+        76,
+        256
       ],
       "id": "sunmane-wheat-02",
       "position": [
-        19.5,
-        32.00096893310547,
-        -91.5
+        -118.0,
+        35.68899154663086,
+        36.0
       ],
       "center": [
-        19.5,
-        32.00096893310547,
-        -91.5
+        -118.0,
+        35.68899154663086,
+        36.0
       ]
     },
     {
@@ -9675,19 +9716,19 @@
       "kind": "crop",
       "label": "Wheat",
       "serverTile": [
-        139,
-        320
+        95,
+        230
       ],
       "id": "sunmane-wheat-03",
       "position": [
-        -54.5,
-        24.040428161621094,
-        -28.5
+        -99.0,
+        34.64360809326172,
+        62.0
       ],
       "center": [
-        -54.5,
-        24.040428161621094,
-        -28.5
+        -99.0,
+        34.64360809326172,
+        62.0
       ]
     },
     {
@@ -9699,19 +9740,19 @@
       "kind": "crop",
       "label": "Wheat",
       "serverTile": [
-        208,
-        382
+        79,
+        216
       ],
       "id": "sunmane-wheat-04",
       "position": [
-        14.5,
-        31.136581420898438,
-        -90.5
+        -115.0,
+        37.88846206665039,
+        76.0
       ],
       "center": [
-        14.5,
-        31.136581420898438,
-        -90.5
+        -115.0,
+        37.88846206665039,
+        76.0
       ]
     }
   ],

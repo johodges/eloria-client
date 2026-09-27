@@ -7406,7 +7406,128 @@
       }
     ]
   },
-  "groundRegions": [],
+  "groundRegions": [
+    {
+      "blendWidth": 3.5,
+      "enabled": true,
+      "id": "pass1-cistern-apron",
+      "matrix": [
+        0.9702957272529602,
+        0.0,
+        0.24192190170288086,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.24192190170288086,
+        0.0,
+        0.9702957272529602,
+        0.0,
+        43.0,
+        137.99996948242188,
+        105.0,
+        1.0
+      ],
+      "opacity": 0.88,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        19.0,
+        14.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.7300000190734863,
+            0.7099999785423279,
+            0.6399999856948853,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.949999988079071,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 9.0
+      }
+    },
+    {
+      "blendWidth": 3.5,
+      "enabled": true,
+      "id": "pass1-civic-court",
+      "matrix": [
+        0.9902680516242981,
+        0.0,
+        -0.13917310535907745,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.13917310535907745,
+        0.0,
+        0.9902680516242981,
+        0.0,
+        32.0,
+        138.07601928710938,
+        97.0,
+        1.0
+      ],
+      "opacity": 0.9,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        20.0,
+        18.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.7300000190734863,
+            0.7099999785423279,
+            0.6399999856948853,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.949999988079071,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 9.0
+      }
+    }
+  ],
   "objects": [
     {
       "assetId": "mirrorhold:building-cliffhouse-0-b38c3f3d03b0",
@@ -7419,7 +7540,8 @@
       "id": "Building_CliffHouse_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_0/Building_CliffHouse_0__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_02/Building_CliffHouse_0/Building_CliffHouse_0__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -7493,7 +7615,8 @@
       "id": "Building_CliffHouse_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_1/Building_CliffHouse_1__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_12/Building_CliffHouse_1/Building_CliffHouse_1__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -7567,7 +7690,8 @@
       "id": "Building_CliffHouse_10",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_10/Building_CliffHouse_10__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_102/Building_CliffHouse_10/Building_CliffHouse_10__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -7641,7 +7765,8 @@
       "id": "Building_CliffHouse_11",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_11/Building_CliffHouse_11__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_112/Building_CliffHouse_11/Building_CliffHouse_11__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -7715,7 +7840,8 @@
       "id": "Building_CliffHouse_12",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_12/Building_CliffHouse_12__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_122/Building_CliffHouse_12/Building_CliffHouse_12__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -7789,7 +7915,8 @@
       "id": "Building_CliffHouse_13",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_13/Building_CliffHouse_13__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_132/Building_CliffHouse_13/Building_CliffHouse_13__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -7863,7 +7990,8 @@
       "id": "Building_CliffHouse_14",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_14/Building_CliffHouse_14__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_142/Building_CliffHouse_14/Building_CliffHouse_14__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -7937,7 +8065,8 @@
       "id": "Building_CliffHouse_2",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_2/Building_CliffHouse_2__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_22/Building_CliffHouse_2/Building_CliffHouse_2__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8011,7 +8140,8 @@
       "id": "Building_CliffHouse_3",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_3/Building_CliffHouse_3__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_32/Building_CliffHouse_3/Building_CliffHouse_3__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8085,7 +8215,8 @@
       "id": "Building_CliffHouse_4",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_4/Building_CliffHouse_4__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_42/Building_CliffHouse_4/Building_CliffHouse_4__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8159,7 +8290,8 @@
       "id": "Building_CliffHouse_5",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_5/Building_CliffHouse_5__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_52/Building_CliffHouse_5/Building_CliffHouse_5__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8233,7 +8365,8 @@
       "id": "Building_CliffHouse_6",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_6/Building_CliffHouse_6__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_62/Building_CliffHouse_6/Building_CliffHouse_6__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8307,7 +8440,8 @@
       "id": "Building_CliffHouse_7",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_7/Building_CliffHouse_7__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_72/Building_CliffHouse_7/Building_CliffHouse_7__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8381,7 +8515,8 @@
       "id": "Building_CliffHouse_8",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_8/Building_CliffHouse_8__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_82/Building_CliffHouse_8/Building_CliffHouse_8__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8455,7 +8590,8 @@
       "id": "Building_CliffHouse_9",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_CliffHouse_9/Building_CliffHouse_9__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_CliffHouse_92/Building_CliffHouse_9/Building_CliffHouse_9__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8529,7 +8665,8 @@
       "id": "Building_VaultEntry_cistern-door",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_VaultEntry_cistern-door/Building_VaultEntry_cistern-door__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_VaultEntry_cistern-door2/Building_VaultEntry_cistern-door/Building_VaultEntry_cistern-door__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8603,7 +8740,8 @@
       "id": "Building_VaultEntry_lens-vault-stair",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_VaultEntry_lens-vault-stair/Building_VaultEntry_lens-vault-stair__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_VaultEntry_lens-vault-stair2/Building_VaultEntry_lens-vault-stair/Building_VaultEntry_lens-vault-stair__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8677,7 +8815,8 @@
       "id": "Building_VaultEntry_stair-cellars-door",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_VaultEntry_stair-cellars-door/Building_VaultEntry_stair-cellars-door__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_VaultEntry_stair-cellars-door2/Building_VaultEntry_stair-cellars-door/Building_VaultEntry_stair-cellars-door__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8751,7 +8890,8 @@
       "id": "Building_east-bench_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_east-bench_0/Building_east-bench_0__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_east-bench_02/Building_east-bench_0/Building_east-bench_0__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8825,7 +8965,8 @@
       "id": "Building_east-bench_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_east-bench_1/Building_east-bench_1__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_east-bench_12/Building_east-bench_1/Building_east-bench_1__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8899,7 +9040,8 @@
       "id": "Building_lake-north_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_lake-north_0/Building_lake-north_0__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_lake-north_02/Building_lake-north_0/Building_lake-north_0__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8973,7 +9115,8 @@
       "id": "Building_lake-north_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_lake-north_1/Building_lake-north_1__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_lake-north_12/Building_lake-north_1/Building_lake-north_1__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9047,7 +9190,8 @@
       "id": "Building_lower-terrace_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_lower-terrace_0/Building_lower-terrace_0__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_lower-terrace_02/Building_lower-terrace_0/Building_lower-terrace_0__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9121,7 +9265,8 @@
       "id": "Building_lower-terrace_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_lower-terrace_1/Building_lower-terrace_1__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_lower-terrace_12/Building_lower-terrace_1/Building_lower-terrace_1__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9195,7 +9340,8 @@
       "id": "Building_mid-bench_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_mid-bench_0/Building_mid-bench_0__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_mid-bench_02/Building_mid-bench_0/Building_mid-bench_0__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9269,7 +9415,8 @@
       "id": "Building_mid-bench_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_mid-bench_1/Building_mid-bench_1__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_mid-bench_12/Building_mid-bench_1/Building_mid-bench_1__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9343,7 +9490,8 @@
       "id": "Building_west-bench_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_west-bench_0/Building_west-bench_0__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_west-bench_02/Building_west-bench_0/Building_west-bench_0__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9417,7 +9565,8 @@
       "id": "Building_west-bench_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_west-bench_1/Building_west-bench_1__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_west-bench_12/Building_west-bench_1/Building_west-bench_1__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9491,7 +9640,8 @@
       "id": "Building_west-shore_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_west-shore_0/Building_west-shore_0__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_west-shore_02/Building_west-shore_0/Building_west-shore_0__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9565,7 +9715,8 @@
       "id": "Building_west-shore_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Building_west-shore_1/Building_west-shore_1__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Building_west-shore_12/Building_west-shore_1/Building_west-shore_1__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9857,7 +10008,8 @@
       "id": "Landmark_Aqueduct",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Aqueduct/Landmark_Aqueduct__ashlar",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Landmark_Aqueduct2/Landmark_Aqueduct/Landmark_Aqueduct__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9891,7 +10043,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Landmark_Aqueduct/Landmark_Aqueduct__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_Aqueduct2/Landmark_Aqueduct/Landmark_Aqueduct__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10083,7 +10236,8 @@
       "id": "Landmark_Channel_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Channel_0/Landmark_Channel_0__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_Channel_02/Landmark_Channel_0/Landmark_Channel_0__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10157,7 +10311,8 @@
       "id": "Landmark_Channel_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Channel_1/Landmark_Channel_1__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_Channel_12/Landmark_Channel_1/Landmark_Channel_1__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10231,7 +10386,8 @@
       "id": "Landmark_Channel_2",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Channel_2/Landmark_Channel_2__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_Channel_22/Landmark_Channel_2/Landmark_Channel_2__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10305,7 +10461,8 @@
       "id": "Landmark_Channel_3",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Channel_3/Landmark_Channel_3__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_Channel_32/Landmark_Channel_3/Landmark_Channel_3__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10379,7 +10536,8 @@
       "id": "Landmark_Channel_4",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Channel_4/Landmark_Channel_4__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_Channel_42/Landmark_Channel_4/Landmark_Channel_4__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10453,7 +10611,8 @@
       "id": "Landmark_CitadelCourt",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_CitadelCourt/Landmark_CitadelCourt__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_CitadelCourt2/Landmark_CitadelCourt/Landmark_CitadelCourt__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10527,7 +10686,8 @@
       "id": "Landmark_CitadelHigh",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_CitadelHigh/Landmark_CitadelHigh__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_CitadelHigh2/Landmark_CitadelHigh/Landmark_CitadelHigh__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10797,7 +10957,8 @@
       "id": "Landmark_Fountain",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Fountain/Landmark_Fountain__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_Fountain2/Landmark_Fountain/Landmark_Fountain__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10872,7 +11033,8 @@
       "id": "Landmark_Gallery",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Gallery/Landmark_Gallery__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_Gallery2/Landmark_Gallery/Landmark_Gallery__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10947,7 +11109,8 @@
       "id": "Landmark_GateWall",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_GateWall/Landmark_GateWall__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_GateWall2/Landmark_GateWall/Landmark_GateWall__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11022,7 +11185,8 @@
       "id": "Landmark_GateWing_-1",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_GateWing_-1/Landmark_GateWing_-1__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_GateWing_-12/Landmark_GateWing_-1/Landmark_GateWing_-1__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11096,7 +11260,8 @@
       "id": "Landmark_GateWing_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_GateWing_1/Landmark_GateWing_1__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_GateWing_12/Landmark_GateWing_1/Landmark_GateWing_1__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11170,7 +11335,8 @@
       "id": "Landmark_LakeLink_City",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_LakeLink_City/Landmark_LakeLink_City__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_LakeLink_City2/Landmark_LakeLink_City/Landmark_LakeLink_City__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11244,7 +11410,8 @@
       "id": "Landmark_LakeLink_EastPier",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_LakeLink_EastPier/Landmark_LakeLink_EastPier__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_LakeLink_EastPier2/Landmark_LakeLink_EastPier/Landmark_LakeLink_EastPier__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11318,7 +11485,8 @@
       "id": "Landmark_LakeLink_Sanctuary",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_LakeLink_Sanctuary/Landmark_LakeLink_Sanctuary__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_LakeLink_Sanctuary2/Landmark_LakeLink_Sanctuary/Landmark_LakeLink_Sanctuary__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11392,7 +11560,8 @@
       "id": "Landmark_LakeLink_WestPier",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_LakeLink_WestPier/Landmark_LakeLink_WestPier__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_LakeLink_WestPier2/Landmark_LakeLink_WestPier/Landmark_LakeLink_WestPier__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11506,7 +11675,8 @@
       "id": "Landmark_OrreryDrum",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_OrreryDrum/Landmark_OrreryDrum__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_OrreryDrum2/Landmark_OrreryDrum/Landmark_OrreryDrum__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11580,7 +11750,8 @@
       "id": "Landmark_Overlook",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Overlook/Landmark_Overlook__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_Overlook2/Landmark_Overlook/Landmark_Overlook__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11655,7 +11826,8 @@
       "id": "Landmark_PlazaStatue_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_PlazaStatue_0",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_PlazaStatue_02/Landmark_PlazaStatue_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11729,7 +11901,8 @@
       "id": "Landmark_PlazaStatue_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_PlazaStatue_1",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_PlazaStatue_12/Landmark_PlazaStatue_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11803,7 +11976,8 @@
       "id": "Landmark_PlazaStatue_2",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_PlazaStatue_2",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_PlazaStatue_22/Landmark_PlazaStatue_2",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11877,7 +12051,8 @@
       "id": "Landmark_PlazaStatue_3",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_PlazaStatue_3",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_PlazaStatue_32/Landmark_PlazaStatue_3",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -11951,7 +12126,8 @@
       "id": "Landmark_Quay",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Quay/Landmark_Quay__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_Quay2/Landmark_Quay/Landmark_Quay__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12026,7 +12202,8 @@
       "id": "Landmark_Retaining_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Retaining_1",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_Retaining_12/Landmark_Retaining_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12100,7 +12277,8 @@
       "id": "Landmark_Retaining_3",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Retaining_3",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_Retaining_32/Landmark_Retaining_3",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12174,7 +12352,8 @@
       "id": "Landmark_Ring",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_Ring/Landmark_Ring__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_Ring2/Landmark_Ring/Landmark_Ring__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12249,7 +12428,8 @@
       "id": "Landmark_RoadWall_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_RoadWall_1",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_RoadWall_12/Landmark_RoadWall_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12362,7 +12542,8 @@
       "id": "Landmark_SouthWatch",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_SouthWatch",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_SouthWatch2/Landmark_SouthWatch",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12437,7 +12618,8 @@
       "id": "Landmark_cistern-yard",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_cistern-yard",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_cistern-yard2/Landmark_cistern-yard",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12511,7 +12693,8 @@
       "id": "Landmark_east-post",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_east-post",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_east-post2/Landmark_east-post",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12585,7 +12768,8 @@
       "id": "Landmark_east_islet",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_east_islet",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_east_islet2/Landmark_east_islet",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12659,7 +12843,8 @@
       "id": "Landmark_far-west",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_far-west",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_far-west2/Landmark_far-west",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12733,7 +12918,8 @@
       "id": "Landmark_gorge-head",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_gorge-head",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_gorge-head2/Landmark_gorge-head",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12807,7 +12993,8 @@
       "id": "Landmark_lens-works",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_lens-works",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_lens-works2/Landmark_lens-works",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12881,7 +13068,8 @@
       "id": "Landmark_lens_tower_east",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_lens_tower_east/Landmark_lens_tower_east__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_lens_tower_east2/Landmark_lens_tower_east/Landmark_lens_tower_east__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -12956,7 +13144,8 @@
       "id": "Landmark_lens_tower_west",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_lens_tower_west/Landmark_lens_tower_west__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_lens_tower_west2/Landmark_lens_tower_west/Landmark_lens_tower_west__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -13031,7 +13220,8 @@
       "id": "Landmark_north-post",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_north-post",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_north-post2/Landmark_north-post",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -13105,7 +13295,8 @@
       "id": "Landmark_quarry-shelf",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_quarry-shelf",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_quarry-shelf2/Landmark_quarry-shelf",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -13179,7 +13370,8 @@
       "id": "Landmark_upper-shrine",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_upper-shrine/Landmark_upper-shrine__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_upper-shrine2/Landmark_upper-shrine/Landmark_upper-shrine__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -13253,7 +13445,8 @@
       "id": "Landmark_west-shrine",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_west-shrine/Landmark_west-shrine__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_west-shrine2/Landmark_west-shrine/Landmark_west-shrine__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -13327,7 +13520,8 @@
       "id": "Landmark_west_islet",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_west_islet",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Landmark_west_islet2/Landmark_west_islet",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -13401,7 +13595,8 @@
       "id": "Lore_ringing_quarry",
       "materialOverrides": [
         {
-          "meshNodePath": "Lore_ringing_quarry/Lore_ringing_quarry__pale_ashlar",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Lore_ringing_quarry2/Lore_ringing_quarry/Lore_ringing_quarry__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15621,7 +15816,8 @@
       "id": "Prop_cistern-yard_bollard_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_cistern-yard_bollard_0",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_cistern-yard_bollard_02/Prop_cistern-yard_bollard_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15695,7 +15891,8 @@
       "id": "Prop_cistern-yard_bollard_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_cistern-yard_bollard_1",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_cistern-yard_bollard_12/Prop_cistern-yard_bollard_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15769,7 +15966,8 @@
       "id": "Prop_lens-works_bollard_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_lens-works_bollard_0",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_lens-works_bollard_02/Prop_lens-works_bollard_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15843,7 +16041,8 @@
       "id": "Prop_lens-works_bollard_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_lens-works_bollard_1",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_lens-works_bollard_12/Prop_lens-works_bollard_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15917,7 +16116,8 @@
       "id": "Prop_lens-works_bollard_2",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_lens-works_bollard_2",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_lens-works_bollard_22/Prop_lens-works_bollard_2",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -15991,7 +16191,8 @@
       "id": "Prop_quarry-shelf_bollard_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_quarry-shelf_bollard_1",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_quarry-shelf_bollard_12/Prop_quarry-shelf_bollard_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -16065,7 +16266,8 @@
       "id": "Prop_quarry-shelf_bollard_2",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_quarry-shelf_bollard_2",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Prop_quarry-shelf_bollard_22/Prop_quarry-shelf_bollard_2",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -16217,7 +16419,8 @@
       "id": "Secret_mirror_cistern_well",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_mirror_cistern_well/Secret_mirror_cistern_well__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_mirror_cistern_well2/Secret_mirror_cistern_well/Secret_mirror_cistern_well__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -16291,7 +16494,8 @@
       "id": "Secret_mirror_citadel_reliquary",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_mirror_citadel_reliquary/Secret_mirror_citadel_reliquary__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_mirror_citadel_reliquary2/Secret_mirror_citadel_reliquary/Secret_mirror_citadel_reliquary__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -16443,7 +16647,8 @@
       "id": "Secret_mirror_lens_garden",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_mirror_lens_garden/Secret_mirror_lens_garden__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_mirror_lens_garden2/Secret_mirror_lens_garden/Secret_mirror_lens_garden__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -16517,7 +16722,8 @@
       "id": "Secret_mirror_orrery_vault",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_mirror_orrery_vault/Secret_mirror_orrery_vault__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_mirror_orrery_vault2/Secret_mirror_orrery_vault/Secret_mirror_orrery_vault__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -16591,7 +16797,8 @@
       "id": "Secret_mirror_overlook_eyrie",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_mirror_overlook_eyrie/Secret_mirror_overlook_eyrie__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_mirror_overlook_eyrie2/Secret_mirror_overlook_eyrie/Secret_mirror_overlook_eyrie__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -16704,7 +16911,8 @@
       "id": "Secret_mirror_rose_school",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_mirror_rose_school/Secret_mirror_rose_school__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_mirror_rose_school2/Secret_mirror_rose_school/Secret_mirror_rose_school__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -16856,7 +17064,8 @@
       "id": "Secret_mirror_waystone",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_mirror_waystone/Secret_mirror_waystone__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_mirror_waystone2/Secret_mirror_waystone/Secret_mirror_waystone__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -16930,7 +17139,8 @@
       "id": "Walk_Landmark_EastStair",
       "materialOverrides": [
         {
-          "meshNodePath": "Walk_Landmark_EastStair",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_Landmark_EastStair2/Walk_Landmark_EastStair",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -96343,6 +96553,10 @@
     ]
   },
   "sources": {
+    "authoringSpec": {
+      "path": "godot-client/world_authoring/regions/mirrorhold/region-authoring-spec.json",
+      "sha256": "47bda36d4c882def4d9d18979579722c85ea586751022be5c6627b338e07f261"
+    },
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
@@ -96359,6 +96573,10 @@
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-snow-crust/alpine-snow-crust-v002.png",
         "sha256": "e8895b714d8db2ce8a19056f34d4f642ea4c9ce9a50e8265c8b7186fea569539"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+        "sha256": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
       },
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png",
@@ -96381,16 +96599,24 @@
         "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
+        "path": "godot-client/src/dev/map_authoring_region/gltf_material_binding.gd",
+        "sha256": "4d37d216212fe0ca53be4e41579b6ed44c9b52f3e7fc97cc43ef4195a6d4255f"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/ground_region_control.gd",
+        "sha256": "22b5ff872793a8e2599be7a27bfcfce3e255440be8cca81e26b92d3e87deee28"
+      },
+      {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
+        "sha256": "e70fdcf47863bc1375921ac337ac008b8d8c4c0be2cbb8f362de2c57ff552ef6"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
+        "sha256": "4a4103da29f3b4d873460d064d1ad83f2ffa17c72f31601745d7af84b8035d48"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "558bc03ab1ad43eabcb02eabb058d22cb7046e34713549234620991cd412c778"
+        "sha256": "7f55a17b606339d1a6ec77b01097f135cd6a0fd9ef87680d46745e16c69101ff"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/water_region_control.gd",
@@ -97434,11 +97660,11 @@
       },
       {
         "path": "godot-client/world_authoring/regions/mirrorhold/base-colors.rgba8",
-        "sha256": "b2c3f7a7a7c087836140962686e0ec72dc04ae6b336acdcb832041f522a4ea3d"
+        "sha256": "7cb039a29a56f76a889a92a80594c9019621e30247964ba248df139d383d63b7"
       },
       {
         "path": "godot-client/world_authoring/regions/mirrorhold/base-heights.f32le",
-        "sha256": "0511c783876d44444e27a435cb3f78f88f1f9fa2869907102cfa628aebff12ab"
+        "sha256": "06d155279da3fc2a7b4fe38c00c785fab057044bb5e4e0a98277f4ed5e2afadd"
       },
       {
         "path": "godot-client/world_authoring/regions/mirrorhold/paths/access-mirrorhold-north-plateau.tres",
@@ -97649,6 +97875,14 @@
         "sha256": "540425be9be6c9609c223c10dc3e78b9f29cbde3b34aa05361db1fe52a799b8e"
       },
       {
+        "path": "godot-client/world_authoring/regions/mirrorhold/surfaces/pass1-civic-limestone.tres",
+        "sha256": "7f5c401533b588d4d9ac7872891aa0a53c3ad0280dba9b7e8252c4e02b5c170e"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/mirrorhold/surfaces/pass1-scree-base.tres",
+        "sha256": "123e85dd3a2eb38a2487ffec772bd552ed3a2eb67f6a3f4aa1fb4c9fce08dd9e"
+      },
+      {
         "path": "godot-client/world_authoring/regions/mirrorhold/surfaces/river.tres",
         "sha256": "833dd0f056e60aa283875614ffb2960e89a7e87a03f8520649e230648595cf53"
       },
@@ -97657,34 +97891,48 @@
         "sha256": "2a6cfa248f60c0432e92e20a68bb6a2dc0ae96525d7a9c5e34e65c6ad46baa1e"
       }
     ],
+    "repositoryDependencies": [
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/legacy-colors.rgba8",
+        "sha256": "a5862f256274a35b164923e1b7d6fd4201e2e5b485aa1e5634cee110157cd145"
+      },
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+        "sha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c"
+      },
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/resolved-heights.f32le",
+        "sha256": "f8569fac42ac47e3145a68b2df54e74821021d7ae98ef06debb5fb45acebc8bd"
+      }
+    ],
     "runtimeBindingSeed": {
       "path": "godot-client/world_authoring/regions/mirrorhold/runtime-bindings.seed.json",
       "sha256": "20c282cdb16475873f6a8600f862ffb4a53c3cec25829b96ea22d828137857dd"
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/mirrorhold/mirrorhold.tscn",
-      "sha256": "dab101661e68517a1cbbe199d05f57f0402cba7692a2289e07061ac229ac168f"
+      "sha256": "751773ba1bf6aeec709ce925a5b94bc2d450bedec7a377cef026a6dbe5e87536"
     }
   },
   "terrain": {
     "baseColors": {
       "encoding": "rgba8-srgb",
       "path": "base-colors.rgba8",
-      "sha256": "b2c3f7a7a7c087836140962686e0ec72dc04ae6b336acdcb832041f522a4ea3d"
+      "sha256": "7cb039a29a56f76a889a92a80594c9019621e30247964ba248df139d383d63b7"
     },
     "baseHeights": {
       "encoding": "float32-le",
       "path": "base-heights.f32le",
-      "sha256": "0511c783876d44444e27a435cb3f78f88f1f9fa2869907102cfa628aebff12ab"
+      "sha256": "06d155279da3fc2a7b4fe38c00c785fab057044bb5e4e0a98277f4ed5e2afadd"
     },
     "baseSurface": {
       "biomeBlendEnabled": true,
       "materialMode": "surface",
       "pbrOverrides": {
         "albedoColor": [
-          1.0,
-          1.0,
-          1.0,
+          0.6200000047683716,
+          0.6499999761581421,
+          0.6800000071525574,
           1.0
         ],
         "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
@@ -97745,10 +97993,20 @@
       }
     ],
     "cellMetres": 2.0,
-    "height": 271,
+    "height": 289,
+    "migration": {
+      "globalVertexMin": [
+        316.0,
+        213.0
+      ],
+      "previousGridSha256": "0511c783876d44444e27a435cb3f78f88f1f9fa2869907102cfa628aebff12ab",
+      "revision": "global-lattice-envelope-v1",
+      "sharedFieldPath": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+      "sharedFieldSha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c"
+    },
     "origin": [
       -208.0,
-      -190.0
+      -224.0
     ],
     "patches": [],
     "previewUvMetresInverse": 0.17,
@@ -97760,7 +98018,7 @@
         "river-cuts"
       ],
       "path": "resolved-heights.f32le",
-      "sha256": "0511c783876d44444e27a435cb3f78f88f1f9fa2869907102cfa628aebff12ab"
+      "sha256": "06d155279da3fc2a7b4fe38c00c785fab057044bb5e4e0a98277f4ed5e2afadd"
     },
     "width": 271
   },

@@ -2812,6 +2812,78 @@
     "runtimeBindings": [
       {
         "aliases": [],
+        "id": "[\"config/eloria/instances/grey_moors_gauntlet_low.def\",\"grey_moors_gauntlet_low\",\"exit_x\",\"exit_y\",\"grey_moors\"]",
+        "marker": {
+          "id": "runtime-instance-return-grey_moors",
+          "section": "runtimePoints"
+        },
+        "provenance": {
+          "sourceProfileSha256": "5522493145066694742bb99495d9cd723c0c8e8834361b9e93fdc2fa4d1148e0",
+          "sourceReportSha256": "9497ba17b79780824b15ab99c25f2e278030fbc688b112b9c9fb8a3cd37e28d3"
+        },
+        "roads": "marker",
+        "role": "return",
+        "source": {
+          "amendmentReport": {
+            "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+            "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+          },
+          "fields": [
+            "exit_x",
+            "exit_y"
+          ],
+          "line": 19,
+          "oldTile": [
+            244,
+            278
+          ],
+          "path": "config/eloria/instances/grey_moors_gauntlet_low.def",
+          "recordId": "grey_moors_gauntlet_low"
+        },
+        "targetOffset": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "aliases": [],
+        "id": "[\"config/eloria/instances/grey_moors_gauntlet_mid.def\",\"grey_moors_gauntlet_mid\",\"exit_x\",\"exit_y\",\"grey_moors\"]",
+        "marker": {
+          "id": "runtime-instance-return-grey_moors",
+          "section": "runtimePoints"
+        },
+        "provenance": {
+          "sourceProfileSha256": "7ff92e24b0c7e54c27563e70c983bb63269e3cc7cde501561f62f02e9e80c5c6",
+          "sourceReportSha256": "9497ba17b79780824b15ab99c25f2e278030fbc688b112b9c9fb8a3cd37e28d3"
+        },
+        "roads": "marker",
+        "role": "return",
+        "source": {
+          "amendmentReport": {
+            "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+            "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+          },
+          "fields": [
+            "exit_x",
+            "exit_y"
+          ],
+          "line": 19,
+          "oldTile": [
+            244,
+            278
+          ],
+          "path": "config/eloria/instances/grey_moors_gauntlet_mid.def",
+          "recordId": "grey_moors_gauntlet_mid"
+        },
+        "targetOffset": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "aliases": [],
         "id": "harvesting.txt:186:47@192:110",
         "marker": {
           "id": "runtime-harvest-harvesting-txt-186-47-192-110",
@@ -9743,6 +9815,19 @@
         ]
       },
       {
+        "id": "runtime-instance-return-grey_moors",
+        "label": "Independent instance return",
+        "position": [
+          80.5,
+          97.74833679199219,
+          -117.5
+        ],
+        "serverTile": [
+          304,
+          443
+        ]
+      },
+      {
         "id": "runtime-interactive-interactives-txt-104-13-113-119",
         "label": "13",
         "position": [
@@ -11324,7 +11409,248 @@
       }
     ]
   },
-  "groundRegions": [],
+  "groundRegions": [
+    {
+      "blendWidth": 3.5,
+      "enabled": true,
+      "id": "pass1-north-causeway-heather",
+      "matrix": [
+        0.9271838665008545,
+        0.0,
+        -0.37460657954216003,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.37460657954216003,
+        0.0,
+        0.9271838665008545,
+        0.0,
+        -10.0,
+        47.18510055541992,
+        -125.0,
+        1.0
+      ],
+      "opacity": 0.84,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        24.0,
+        17.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.4000000059604645,
+            0.4300000071525574,
+            0.3499999940395355,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/moor-peat-heather/moor-peat-heather-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.949999988079071,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Moor peat heather",
+        "rotationDegrees": 9.0
+      }
+    },
+    {
+      "blendWidth": 3.5,
+      "enabled": true,
+      "id": "pass1-refuge-croft-earth",
+      "matrix": [
+        0.9563047289848328,
+        0.0,
+        0.2923716902732849,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.2923716902732849,
+        0.0,
+        0.9563047289848328,
+        0.0,
+        -48.0,
+        48.23506164550781,
+        1.0,
+        1.0
+      ],
+      "opacity": 0.9,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        22.0,
+        19.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.5099999904632568,
+            0.4300000071525574,
+            0.3199999928474426,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.949999988079071,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Worn earth",
+        "rotationDegrees": 9.0
+      }
+    },
+    {
+      "blendWidth": 3.5,
+      "enabled": true,
+      "id": "pass1-refuge-peat-yard",
+      "matrix": [
+        0.9781476259231567,
+        0.0,
+        -0.2079116851091385,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.2079116851091385,
+        0.0,
+        0.9781476259231567,
+        0.0,
+        -25.0,
+        49.25899124145508,
+        -23.0,
+        1.0
+      ],
+      "opacity": 0.9,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        25.0,
+        18.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.4000000059604645,
+            0.4300000071525574,
+            0.3499999940395355,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/moor-peat-heather/moor-peat-heather-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.949999988079071,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Moor peat heather",
+        "rotationDegrees": 9.0
+      }
+    },
+    {
+      "blendWidth": 3.5,
+      "enabled": true,
+      "id": "pass1-west-croft-heather",
+      "matrix": [
+        0.9743700623512268,
+        0.0,
+        0.22495105862617493,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.22495105862617493,
+        0.0,
+        0.9743700623512268,
+        0.0,
+        -58.0,
+        47.69600296020508,
+        -59.0,
+        1.0
+      ],
+      "opacity": 0.84,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        24.0,
+        17.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.4000000059604645,
+            0.4300000071525574,
+            0.3499999940395355,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/moor-peat-heather/moor-peat-heather-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.949999988079071,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Moor peat heather",
+        "rotationDegrees": 9.0
+      }
+    }
+  ],
   "objects": [
     {
       "assetId": "grey_moors:grove-00002-e2c74dc37ad9",
@@ -14482,7 +14808,8 @@
       "id": "Lore_breached_barrows",
       "materialOverrides": [
         {
-          "meshNodePath": "Lore_breached_barrows/Lore_breached_barrows__pale_ashlar",
+          "bakedMeshNodeIndex": 8,
+          "meshNodePath": "Lore_breached_barrows2/Lore_breached_barrows/Lore_breached_barrows__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -14516,7 +14843,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Lore_breached_barrows/Lore_breached_barrows__rubble_stone",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "Lore_breached_barrows2/Lore_breached_barrows/Lore_breached_barrows__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21200,7 +21528,8 @@
       "id": "published-grey-moors-moor-tributary-196",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_004_276_540_WorldPlacement/BridgeUnionPier_004_276_540",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_004_276_540_WorldPlacement2/BridgeUnionPier_004_276_540_WorldPlacement/BridgeUnionPier_004_276_540",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21234,7 +21563,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_004_284_540_WorldPlacement/BridgeUnionPier_004_284_540",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "BridgeUnionPier_004_284_540_WorldPlacement2/BridgeUnionPier_004_284_540_WorldPlacement/BridgeUnionPier_004_284_540",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21320,7 +21650,8 @@
       "id": "published-grey-moors-moor-tributary-62",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_001_244_412_WorldPlacement/BridgeUnionPier_001_244_412",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_001_244_412_WorldPlacement2/BridgeUnionPier_001_244_412_WorldPlacement/BridgeUnionPier_001_244_412",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -21354,7 +21685,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_001_252_412_WorldPlacement/BridgeUnionPier_001_252_412",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "BridgeUnionPier_001_252_412_WorldPlacement2/BridgeUnionPier_001_252_412_WorldPlacement/BridgeUnionPier_001_252_412",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -79866,6 +80198,10 @@
     ]
   },
   "sources": {
+    "authoringSpec": {
+      "path": "godot-client/world_authoring/regions/grey_moors/region-authoring-spec.json",
+      "sha256": "810ec91bcf212911702005916d6bc24ac405bd7fdad5b41f301e2db78181f280"
+    },
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
@@ -79904,16 +80240,24 @@
         "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
+        "path": "godot-client/src/dev/map_authoring_region/gltf_material_binding.gd",
+        "sha256": "4d37d216212fe0ca53be4e41579b6ed44c9b52f3e7fc97cc43ef4195a6d4255f"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/ground_region_control.gd",
+        "sha256": "22b5ff872793a8e2599be7a27bfcfce3e255440be8cca81e26b92d3e87deee28"
+      },
+      {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
+        "sha256": "e70fdcf47863bc1375921ac337ac008b8d8c4c0be2cbb8f362de2c57ff552ef6"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
+        "sha256": "4a4103da29f3b4d873460d064d1ad83f2ffa17c72f31601745d7af84b8035d48"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "558bc03ab1ad43eabcb02eabb058d22cb7046e34713549234620991cd412c778"
+        "sha256": "7f55a17b606339d1a6ec77b01097f135cd6a0fd9ef87680d46745e16c69101ff"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/water_region_control.gd",
@@ -81393,7 +81737,7 @@
       },
       {
         "path": "godot-client/world_authoring/regions/grey_moors/runtime-bindings.seed.json",
-        "sha256": "f4cecb52307110ea1ec3e919e26a9b1e6a2267ca9cc5612a3539a51d152ec8e9"
+        "sha256": "11015f661082c79ec75a6a1c69644cd030da805f0ee8bc0447712e2385055684"
       },
       {
         "path": "godot-client/world_authoring/regions/grey_moors/surfaces/biome-grass.tres",
@@ -81402,6 +81746,14 @@
       {
         "path": "godot-client/world_authoring/regions/grey_moors/surfaces/continental-ground.tres",
         "sha256": "b3ccb4cbdc79fbbac4122f27cef3fe27b1df7d39f4bd4e7900ed5c8f10fa4a8d"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/grey_moors/surfaces/pass1-worked-peat.tres",
+        "sha256": "16e06103fe0ab93fb547a4b9d9b0adbfbaae86849d753ba78e1a240d5b644fc8"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/grey_moors/surfaces/pass1-worn-earth.tres",
+        "sha256": "3049e3a5593d42eb211b0f98025bda65198107205edd947a4b94dc5893b686ff"
       },
       {
         "path": "godot-client/world_authoring/regions/grey_moors/surfaces/river.tres",
@@ -81414,11 +81766,11 @@
     ],
     "runtimeBindingSeed": {
       "path": "godot-client/world_authoring/regions/grey_moors/runtime-bindings.seed.json",
-      "sha256": "f4cecb52307110ea1ec3e919e26a9b1e6a2267ca9cc5612a3539a51d152ec8e9"
+      "sha256": "11015f661082c79ec75a6a1c69644cd030da805f0ee8bc0447712e2385055684"
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/grey_moors/grey_moors.tscn",
-      "sha256": "6914cb8460fdacdccd994b5aac0ce822a157d922dabf89ceef4ff66d670cf43b"
+      "sha256": "565bd2ee0dcb1032d766a96335ca0e62dd486f0273ad7770c634cb97d1b1aafa"
     }
   },
   "terrain": {

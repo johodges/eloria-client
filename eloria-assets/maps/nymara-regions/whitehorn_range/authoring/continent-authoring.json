@@ -2044,6 +2044,78 @@
     "runtimeBindings": [
       {
         "aliases": [],
+        "id": "[\"config/eloria/instances/whitehorn_gauntlet_high.def\",\"whitehorn_gauntlet_high\",\"exit_x\",\"exit_y\",\"whitehorn_range\"]",
+        "marker": {
+          "id": "runtime-instance-return-whitehorn_range",
+          "section": "runtimePoints"
+        },
+        "provenance": {
+          "sourceProfileSha256": "b427f9fac7016b5c25dbceb867bdcf3d13c126f74fb297ff3b9c112292ec1703",
+          "sourceReportSha256": "7c4fa4a19bbb89978ae2619a6368cce1f6c90c12499d196a41326e2603c7ad83"
+        },
+        "roads": "marker",
+        "role": "return",
+        "source": {
+          "amendmentReport": {
+            "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+            "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+          },
+          "fields": [
+            "exit_x",
+            "exit_y"
+          ],
+          "line": 19,
+          "oldTile": [
+            344,
+            274
+          ],
+          "path": "config/eloria/instances/whitehorn_gauntlet_high.def",
+          "recordId": "whitehorn_gauntlet_high"
+        },
+        "targetOffset": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "aliases": [],
+        "id": "[\"config/eloria/instances/whitehorn_gauntlet_low.def\",\"whitehorn_gauntlet_low\",\"exit_x\",\"exit_y\",\"whitehorn_range\"]",
+        "marker": {
+          "id": "runtime-instance-return-whitehorn_range",
+          "section": "runtimePoints"
+        },
+        "provenance": {
+          "sourceProfileSha256": "fa4e08a190552dc937e89f9487513c1169285834c14b4fc76c74980c1bd9ddde",
+          "sourceReportSha256": "7c4fa4a19bbb89978ae2619a6368cce1f6c90c12499d196a41326e2603c7ad83"
+        },
+        "roads": "marker",
+        "role": "return",
+        "source": {
+          "amendmentReport": {
+            "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+            "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+          },
+          "fields": [
+            "exit_x",
+            "exit_y"
+          ],
+          "line": 19,
+          "oldTile": [
+            344,
+            274
+          ],
+          "path": "config/eloria/instances/whitehorn_gauntlet_low.def",
+          "recordId": "whitehorn_gauntlet_low"
+        },
+        "targetOffset": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "aliases": [],
         "id": "harvesting.txt:135:35@259:288",
         "marker": {
           "id": "whitehorn-resource-35",
@@ -7783,6 +7855,19 @@
         ]
       },
       {
+        "id": "runtime-instance-return-whitehorn_range",
+        "label": "Independent instance return",
+        "position": [
+          26.5,
+          214.6747589111328,
+          -89.5
+        ],
+        "serverTile": [
+          388,
+          449
+        ]
+      },
+      {
         "id": "runtime-interactive-13",
         "label": "13",
         "position": [
@@ -8636,7 +8721,488 @@
       }
     ]
   },
-  "groundRegions": [],
+  "groundRegions": [
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "pass1-cave-scree",
+      "matrix": [
+        0.9063078165054321,
+        0.0,
+        -0.4226182699203491,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.4226182699203491,
+        0.0,
+        0.9063078165054321,
+        0.0,
+        -130.0,
+        177.14402770996094,
+        104.0,
+        1.0
+      ],
+      "opacity": 0.68,
+      "priority": 12,
+      "shape": "ellipse",
+      "size": [
+        44.0,
+        29.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.5199999809265137,
+            0.5799999833106995,
+            0.6399999856948853,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9599999785423279,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Alpine scree lichen",
+        "rotationDegrees": 11.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "pass1-cave-snow-edge",
+      "matrix": [
+        0.8480480909347534,
+        0.0,
+        0.5299192667007446,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.5299192667007446,
+        0.0,
+        0.8480480909347534,
+        0.0,
+        -150.0,
+        155.3898162841797,
+        120.0,
+        1.0
+      ],
+      "opacity": 0.47,
+      "priority": 13,
+      "shape": "ellipse",
+      "size": [
+        30.0,
+        19.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6800000071525574,
+            0.7699999809265137,
+            0.8600000143051147,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-snow-crust/alpine-snow-crust-v002.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9599999785423279,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Alpine snow crust",
+        "rotationDegrees": 11.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "pass1-gate-thaw",
+      "matrix": [
+        0.8290375471115112,
+        0.0,
+        -0.5591928958892822,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.5591928958892822,
+        0.0,
+        0.8290375471115112,
+        0.0,
+        -37.0,
+        168.96145629882813,
+        149.0,
+        1.0
+      ],
+      "opacity": 0.63,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        43.0,
+        30.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.4300000071525574,
+            0.4000000059604645,
+            0.3400000035762787,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9599999785423279,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Worn earth",
+        "rotationDegrees": 11.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "pass1-lower-refuge",
+      "matrix": [
+        0.9063078165054321,
+        0.0,
+        0.4226182699203491,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.4226182699203491,
+        0.0,
+        0.9063078165054321,
+        0.0,
+        16.0,
+        181.3057098388672,
+        113.0,
+        1.0
+      ],
+      "opacity": 0.52,
+      "priority": 10,
+      "shape": "ellipse",
+      "size": [
+        40.0,
+        31.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.4300000071525574,
+            0.4000000059604645,
+            0.3400000035762787,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9599999785423279,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Worn earth",
+        "rotationDegrees": 11.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "pass1-mine-spoil",
+      "matrix": [
+        0.9135454297065735,
+        0.0,
+        -0.4067366421222687,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.4067366421222687,
+        0.0,
+        0.9135454297065735,
+        0.0,
+        30.0,
+        214.37088012695313,
+        -66.0,
+        1.0
+      ],
+      "opacity": 0.74,
+      "priority": 12,
+      "shape": "ellipse",
+      "size": [
+        42.0,
+        32.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.5199999809265137,
+            0.5799999833106995,
+            0.6399999856948853,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9599999785423279,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Alpine scree lichen",
+        "rotationDegrees": 11.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "pass1-mine-yard-earth",
+      "matrix": [
+        0.9510565400123596,
+        0.0,
+        0.30901700258255005,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.30901700258255005,
+        0.0,
+        0.9510565400123596,
+        0.0,
+        20.0,
+        214.42449951171875,
+        -80.0,
+        1.0
+      ],
+      "opacity": 0.48,
+      "priority": 13,
+      "shape": "ellipse",
+      "size": [
+        27.0,
+        21.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.4300000071525574,
+            0.4000000059604645,
+            0.3400000035762787,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9599999785423279,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Worn earth",
+        "rotationDegrees": 11.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "pass1-temple-frost-apron",
+      "matrix": [
+        0.9205048680305481,
+        0.0,
+        0.3907311260700226,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.3907311260700226,
+        0.0,
+        0.9205048680305481,
+        0.0,
+        -89.0,
+        207.1059112548828,
+        -81.0,
+        1.0
+      ],
+      "opacity": 0.62,
+      "priority": 13,
+      "shape": "ellipse",
+      "size": [
+        38.0,
+        28.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6800000071525574,
+            0.7699999809265137,
+            0.8600000143051147,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-snow-crust/alpine-snow-crust-v002.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9599999785423279,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Alpine snow crust",
+        "rotationDegrees": 11.0
+      }
+    },
+    {
+      "blendWidth": 8.0,
+      "enabled": true,
+      "id": "pass1-temple-scree-shoulder",
+      "matrix": [
+        0.7880107760429382,
+        0.0,
+        -0.6156615018844604,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.6156615018844604,
+        0.0,
+        0.7880107760429382,
+        0.0,
+        -110.0,
+        211.72816467285156,
+        -72.0,
+        1.0
+      ],
+      "opacity": 0.5,
+      "priority": 12,
+      "shape": "ellipse",
+      "size": [
+        33.0,
+        26.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.5199999809265137,
+            0.5799999833106995,
+            0.6399999856948853,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9599999785423279,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.25,
+            0.25,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Alpine scree lichen",
+        "rotationDegrees": 11.0
+      }
+    }
+  ],
   "objects": [
     {
       "assetId": "whitehorn:landmark-bridgewatch-a111df2dd767",
@@ -8649,7 +9215,8 @@
       "id": "Landmark_BridgeWatch",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_BridgeWatch/Landmark_BridgeWatch__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_BridgeWatch2/Landmark_BridgeWatch/Landmark_BridgeWatch__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8723,7 +9290,8 @@
       "id": "Landmark_EastCamp",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_EastCamp/Landmark_EastCamp__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_EastCamp2/Landmark_EastCamp/Landmark_EastCamp__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8797,7 +9365,8 @@
       "id": "Landmark_GateStore",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_GateStore/Landmark_GateStore__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_GateStore2/Landmark_GateStore/Landmark_GateStore__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8871,7 +9440,8 @@
       "id": "Landmark_GateWorkshop",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_GateWorkshop/Landmark_GateWorkshop__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_GateWorkshop2/Landmark_GateWorkshop/Landmark_GateWorkshop__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8945,7 +9515,8 @@
       "id": "Landmark_HighOverlook",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_HighOverlook/Landmark_HighOverlook__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_HighOverlook2/Landmark_HighOverlook/Landmark_HighOverlook__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9019,7 +9590,8 @@
       "id": "Landmark_LowerCamp",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_LowerCamp/Landmark_LowerCamp__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_LowerCamp2/Landmark_LowerCamp/Landmark_LowerCamp__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9093,7 +9665,8 @@
       "id": "Landmark_MineYard",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_MineYard/Landmark_MineYard__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_MineYard2/Landmark_MineYard/Landmark_MineYard__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9167,7 +9740,8 @@
       "id": "Landmark_TemplePinnacle0",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_TemplePinnacle0/Landmark_TemplePinnacle0__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_TemplePinnacle02/Landmark_TemplePinnacle0/Landmark_TemplePinnacle0__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9241,7 +9815,8 @@
       "id": "Landmark_TemplePinnacle1",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_TemplePinnacle1/Landmark_TemplePinnacle1__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_TemplePinnacle12/Landmark_TemplePinnacle1/Landmark_TemplePinnacle1__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9315,7 +9890,8 @@
       "id": "Landmark_TemplePinnacle2",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_TemplePinnacle2/Landmark_TemplePinnacle2__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_TemplePinnacle22/Landmark_TemplePinnacle2/Landmark_TemplePinnacle2__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9389,7 +9965,8 @@
       "id": "Landmark_TempleRest",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_TempleRest/Landmark_TempleRest__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_TempleRest2/Landmark_TempleRest/Landmark_TempleRest__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9582,7 +10159,8 @@
       "id": "Landmark_glacier_temple",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_glacier_temple/Landmark_glacier_temple__ashlar",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "Landmark_glacier_temple2/Landmark_glacier_temple/Landmark_glacier_temple__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9616,7 +10194,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Landmark_glacier_temple/Landmark_glacier_temple__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_glacier_temple2/Landmark_glacier_temple/Landmark_glacier_temple__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9731,7 +10310,8 @@
       "id": "Landmark_mine_portal",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_mine_portal/Landmark_mine_portal__rubble_stone",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_mine_portal2/Landmark_mine_portal/Landmark_mine_portal__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9765,7 +10345,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Landmark_mine_portal/Walk_Landmark_mine_portal__rubble_stone",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "Landmark_mine_portal2/Landmark_mine_portal/Walk_Landmark_mine_portal__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9840,7 +10421,8 @@
       "id": "Landmark_shrine_00",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_shrine_00/Landmark_shrine_00__ashlar",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "Landmark_shrine_002/Landmark_shrine_00/Landmark_shrine_00__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9874,7 +10456,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Landmark_shrine_00/Landmark_shrine_00__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_shrine_002/Landmark_shrine_00/Landmark_shrine_00__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9949,7 +10532,8 @@
       "id": "Landmark_shrine_02",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_shrine_02/Landmark_shrine_02__ashlar",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "Landmark_shrine_022/Landmark_shrine_02/Landmark_shrine_02__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9983,7 +10567,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Landmark_shrine_02/Landmark_shrine_02__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_shrine_022/Landmark_shrine_02/Landmark_shrine_02__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10058,7 +10643,8 @@
       "id": "Landmark_south_gate",
       "materialOverrides": [
         {
-          "meshNodePath": "Landmark_south_gate/Landmark_south_gate__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Landmark_south_gate2/Landmark_south_gate/Landmark_south_gate__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10092,7 +10678,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Landmark_south_gate/Landmark_south_gate__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Landmark_south_gate2/Landmark_south_gate/Landmark_south_gate__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10167,7 +10754,8 @@
       "id": "Lore_snowline_stones",
       "materialOverrides": [
         {
-          "meshNodePath": "Lore_snowline_stones/Lore_snowline_stones__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Lore_snowline_stones2/Lore_snowline_stones/Lore_snowline_stones__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10201,7 +10789,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Lore_snowline_stones/Walk_Lore_snowline_stones__pale_ashlar",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "Lore_snowline_stones2/Lore_snowline_stones/Walk_Lore_snowline_stones__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22591,7 +23180,8 @@
       "id": "Prop_waystone_000",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_000/Prop_waystone_000__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0002/Prop_waystone_000/Prop_waystone_000__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22625,7 +23215,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_000/Prop_waystone_000__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0002/Prop_waystone_000/Prop_waystone_000__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22699,7 +23290,8 @@
       "id": "Prop_waystone_001",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_001/Prop_waystone_001__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0012/Prop_waystone_001/Prop_waystone_001__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22733,7 +23325,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_001/Prop_waystone_001__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0012/Prop_waystone_001/Prop_waystone_001__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22807,7 +23400,8 @@
       "id": "Prop_waystone_002",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_002/Prop_waystone_002__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0022/Prop_waystone_002/Prop_waystone_002__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22841,7 +23435,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_002/Prop_waystone_002__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0022/Prop_waystone_002/Prop_waystone_002__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22915,7 +23510,8 @@
       "id": "Prop_waystone_003",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_003/Prop_waystone_003__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0032/Prop_waystone_003/Prop_waystone_003__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -22949,7 +23545,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_003/Prop_waystone_003__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0032/Prop_waystone_003/Prop_waystone_003__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23023,7 +23620,8 @@
       "id": "Prop_waystone_004",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_004/Prop_waystone_004__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0042/Prop_waystone_004/Prop_waystone_004__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23057,7 +23655,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_004/Prop_waystone_004__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0042/Prop_waystone_004/Prop_waystone_004__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23131,7 +23730,8 @@
       "id": "Prop_waystone_005",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_005/Prop_waystone_005__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0052/Prop_waystone_005/Prop_waystone_005__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23165,7 +23765,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_005/Prop_waystone_005__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0052/Prop_waystone_005/Prop_waystone_005__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23239,7 +23840,8 @@
       "id": "Prop_waystone_006",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_006/Prop_waystone_006__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0062/Prop_waystone_006/Prop_waystone_006__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23273,7 +23875,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_006/Prop_waystone_006__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0062/Prop_waystone_006/Prop_waystone_006__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23347,7 +23950,8 @@
       "id": "Prop_waystone_007",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_007/Prop_waystone_007__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0072/Prop_waystone_007/Prop_waystone_007__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23381,7 +23985,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_007/Prop_waystone_007__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0072/Prop_waystone_007/Prop_waystone_007__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23455,7 +24060,8 @@
       "id": "Prop_waystone_008",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_008/Prop_waystone_008__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0082/Prop_waystone_008/Prop_waystone_008__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23489,7 +24095,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_008/Prop_waystone_008__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0082/Prop_waystone_008/Prop_waystone_008__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23563,7 +24170,8 @@
       "id": "Prop_waystone_009",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_009/Prop_waystone_009__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0092/Prop_waystone_009/Prop_waystone_009__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23597,7 +24205,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_009/Prop_waystone_009__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0092/Prop_waystone_009/Prop_waystone_009__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23671,7 +24280,8 @@
       "id": "Prop_waystone_010",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_010/Prop_waystone_010__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0102/Prop_waystone_010/Prop_waystone_010__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23705,7 +24315,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_010/Prop_waystone_010__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0102/Prop_waystone_010/Prop_waystone_010__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23779,7 +24390,8 @@
       "id": "Prop_waystone_011",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_011/Prop_waystone_011__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0112/Prop_waystone_011/Prop_waystone_011__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23813,7 +24425,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_011/Prop_waystone_011__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0112/Prop_waystone_011/Prop_waystone_011__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23887,7 +24500,8 @@
       "id": "Prop_waystone_012",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_012/Prop_waystone_012__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0122/Prop_waystone_012/Prop_waystone_012__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23921,7 +24535,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_012/Prop_waystone_012__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0122/Prop_waystone_012/Prop_waystone_012__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -23995,7 +24610,8 @@
       "id": "Prop_waystone_013",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_013/Prop_waystone_013__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0132/Prop_waystone_013/Prop_waystone_013__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24029,7 +24645,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_013/Prop_waystone_013__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0132/Prop_waystone_013/Prop_waystone_013__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24103,7 +24720,8 @@
       "id": "Prop_waystone_014",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_014/Prop_waystone_014__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0142/Prop_waystone_014/Prop_waystone_014__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24137,7 +24755,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_014/Prop_waystone_014__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0142/Prop_waystone_014/Prop_waystone_014__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24211,7 +24830,8 @@
       "id": "Prop_waystone_015",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_015/Prop_waystone_015__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0152/Prop_waystone_015/Prop_waystone_015__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24245,7 +24865,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_015/Prop_waystone_015__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0152/Prop_waystone_015/Prop_waystone_015__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24319,7 +24940,8 @@
       "id": "Prop_waystone_016",
       "materialOverrides": [
         {
-          "meshNodePath": "Prop_waystone_016/Prop_waystone_016__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Prop_waystone_0162/Prop_waystone_016/Prop_waystone_016__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24353,7 +24975,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Prop_waystone_016/Prop_waystone_016__rubble_stone",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Prop_waystone_0162/Prop_waystone_016/Prop_waystone_016__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24778,7 +25401,8 @@
       "id": "Secret_horn_shrine_school",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_horn_shrine_school/Secret_horn_shrine_school__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_horn_shrine_school2/Secret_horn_shrine_school/Secret_horn_shrine_school__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -24930,7 +25554,8 @@
       "id": "Secret_horn_temple_vault",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_horn_temple_vault/Secret_horn_temple_vault__pale_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_horn_temple_vault2/Secret_horn_temple_vault/Secret_horn_temple_vault__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25043,7 +25668,8 @@
       "id": "Structure_watch_00",
       "materialOverrides": [
         {
-          "meshNodePath": "Structure_watch_00/Structure_watch_00__pale_ashlar",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Structure_watch_002/Structure_watch_00/Structure_watch_00__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25077,7 +25703,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Structure_watch_00/Structure_watch_00__rubble_stone",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Structure_watch_002/Structure_watch_00/Structure_watch_00__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25151,7 +25778,8 @@
       "id": "Structure_watch_01",
       "materialOverrides": [
         {
-          "meshNodePath": "Structure_watch_01/Structure_watch_01__pale_ashlar",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Structure_watch_012/Structure_watch_01/Structure_watch_01__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25185,7 +25813,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Structure_watch_01/Structure_watch_01__rubble_stone",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Structure_watch_012/Structure_watch_01/Structure_watch_01__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25259,7 +25888,8 @@
       "id": "Structure_watch_02",
       "materialOverrides": [
         {
-          "meshNodePath": "Structure_watch_02/Structure_watch_02__pale_ashlar",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Structure_watch_022/Structure_watch_02/Structure_watch_02__pale_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -25293,7 +25923,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Structure_watch_02/Structure_watch_02__rubble_stone",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Structure_watch_022/Structure_watch_02/Structure_watch_02__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -104509,6 +105140,10 @@
     ]
   },
   "sources": {
+    "authoringSpec": {
+      "path": "godot-client/world_authoring/regions/whitehorn_range/region-authoring-spec.json",
+      "sha256": "c661b36ceae9c825e1ee2fe602f5ca5930240c86e393bd3cb963180c8cb01e59"
+    },
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
@@ -104531,6 +105166,10 @@
         "sha256": "e9adde18e1b92def62b1a8a83748d3ce0a32ff8c3d53753bbd363e6a9bcff951"
       },
       {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+        "sha256": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
+      },
+      {
         "path": "godot-client/src/dev/map_authoring_region/asset_control.gd",
         "sha256": "89f4693ed3de906162ae7b0fd6448dc1cd29402f0efbf26d54a2163ba505ffaf"
       },
@@ -104547,16 +105186,24 @@
         "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
+        "path": "godot-client/src/dev/map_authoring_region/gltf_material_binding.gd",
+        "sha256": "4d37d216212fe0ca53be4e41579b6ed44c9b52f3e7fc97cc43ef4195a6d4255f"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/ground_region_control.gd",
+        "sha256": "22b5ff872793a8e2599be7a27bfcfce3e255440be8cca81e26b92d3e87deee28"
+      },
+      {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
+        "sha256": "e70fdcf47863bc1375921ac337ac008b8d8c4c0be2cbb8f362de2c57ff552ef6"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
+        "sha256": "4a4103da29f3b4d873460d064d1ad83f2ffa17c72f31601745d7af84b8035d48"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "558bc03ab1ad43eabcb02eabb058d22cb7046e34713549234620991cd412c778"
+        "sha256": "7f55a17b606339d1a6ec77b01097f135cd6a0fd9ef87680d46745e16c69101ff"
       },
       {
         "path": "godot-client/world_authoring/regions/whitehorn_range/assets/prototypes/landmark-bridgewatch-a111df2dd767.glb",
@@ -106336,11 +106983,11 @@
       },
       {
         "path": "godot-client/world_authoring/regions/whitehorn_range/base-colors.rgba8",
-        "sha256": "9ec380cebc2dd7ff53a6adefd37714a2af1458aa6cb7c0db4517a0ede483ee5b"
+        "sha256": "0a1c394e0a2c271270c1fbe6efc11531fe8e875d7298e737a7f98f6fc0461cc8"
       },
       {
         "path": "godot-client/world_authoring/regions/whitehorn_range/base-heights.f32le",
-        "sha256": "6b25ba0f7bbd5ae21ff8eede5498afee207541471fd08f026842ac1d0e55fd79"
+        "sha256": "8ff5fc82584cf33344e1dbee1662c4b6df17e8e2f993ba2c979776f149b8ea0e"
       },
       {
         "path": "godot-client/world_authoring/regions/whitehorn_range/paths/amberwood-whitehorn-range-whitehorn-range.tres",
@@ -106440,7 +107087,7 @@
       },
       {
         "path": "godot-client/world_authoring/regions/whitehorn_range/runtime-bindings.seed.json",
-        "sha256": "db9435e040c6b6f3a3ed429af471b308e1d94e7d1261890acc785ecef08a1dfd"
+        "sha256": "c36f08110f9aa8eb804e48f2cd18a7b4b13cc3794f5d1d2ed061228d2a0bfb37"
       },
       {
         "path": "godot-client/world_authoring/regions/whitehorn_range/surfaces/biome-scree.tres",
@@ -106451,6 +107098,22 @@
         "sha256": "1a7c6596386623baa5dcfe5afc8d41dc6bea85b8ab82182d774a70c162467b12"
       },
       {
+        "path": "godot-client/world_authoring/regions/whitehorn_range/surfaces/pass1-base-snow.tres",
+        "sha256": "1c5452343ec0ee5bf5e2b8e470a239e58272910023d4f036e8435c51925a4ce5"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/whitehorn_range/surfaces/pass1-cold-scree.tres",
+        "sha256": "09159a7d95778d94c66d0ef499446e2b9198385df04700326ddfe635c9c165b9"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/whitehorn_range/surfaces/pass1-frost.tres",
+        "sha256": "e665a97f74a0ca12242537a5959d12d0cfd40e5bad9760d9bf0c6de959879755"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/whitehorn_range/surfaces/pass1-thaw-earth.tres",
+        "sha256": "afae526cecafc2b8ad52caa528e34f0108a695e758e77e211dd05f962e49e33f"
+      },
+      {
         "path": "godot-client/world_authoring/regions/whitehorn_range/surfaces/river.tres",
         "sha256": "1966f02cc9cf854c68177a2d50c0dddb126b886a15171fedd871a857352f83c5"
       },
@@ -106459,41 +107122,55 @@
         "sha256": "2a6cfa248f60c0432e92e20a68bb6a2dc0ae96525d7a9c5e34e65c6ad46baa1e"
       }
     ],
+    "repositoryDependencies": [
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/legacy-colors.rgba8",
+        "sha256": "a5862f256274a35b164923e1b7d6fd4201e2e5b485aa1e5634cee110157cd145"
+      },
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+        "sha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c"
+      },
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/resolved-heights.f32le",
+        "sha256": "f8569fac42ac47e3145a68b2df54e74821021d7ae98ef06debb5fb45acebc8bd"
+      }
+    ],
     "runtimeBindingSeed": {
       "path": "godot-client/world_authoring/regions/whitehorn_range/runtime-bindings.seed.json",
-      "sha256": "db9435e040c6b6f3a3ed429af471b308e1d94e7d1261890acc785ecef08a1dfd"
+      "sha256": "c36f08110f9aa8eb804e48f2cd18a7b4b13cc3794f5d1d2ed061228d2a0bfb37"
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/whitehorn_range/whitehorn_range.tscn",
-      "sha256": "41da055e67a95460efbf5719257c690159126a53d7918a3659a89deb58f408b1"
+      "sha256": "2cbe93844c8561bb76acc6dddaf83b7847747b62d7dab806a56c331d0996552b"
     }
   },
   "terrain": {
     "baseColors": {
       "encoding": "rgba8-srgb",
       "path": "base-colors.rgba8",
-      "sha256": "9ec380cebc2dd7ff53a6adefd37714a2af1458aa6cb7c0db4517a0ede483ee5b"
+      "sha256": "0a1c394e0a2c271270c1fbe6efc11531fe8e875d7298e737a7f98f6fc0461cc8"
     },
     "baseHeights": {
       "encoding": "float32-le",
       "path": "base-heights.f32le",
-      "sha256": "6b25ba0f7bbd5ae21ff8eede5498afee207541471fd08f026842ac1d0e55fd79"
+      "sha256": "8ff5fc82584cf33344e1dbee1662c4b6df17e8e2f993ba2c979776f149b8ea0e"
     },
     "baseSurface": {
       "biomeBlendEnabled": true,
       "materialMode": "surface",
       "pbrOverrides": {
         "albedoColor": [
-          1.0,
-          1.0,
-          1.0,
+          0.6000000238418579,
+          0.6700000166893005,
+          0.75,
           1.0
         ],
         "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/alpine-snow-crust/alpine-snow-crust-v002.png",
         "metallic": 0.0,
         "normalScale": 1.0,
         "normalTexture": null,
-        "roughness": 0.8799999952316284,
+        "roughness": 0.9599999785423279,
         "triplanar": false,
         "uvOffset": [
           0.5,
@@ -106548,8 +107225,18 @@
     ],
     "cellMetres": 2.0,
     "height": 289,
+    "migration": {
+      "globalVertexMin": [
+        95.0,
+        0.0
+      ],
+      "previousGridSha256": "6b25ba0f7bbd5ae21ff8eede5498afee207541471fd08f026842ac1d0e55fd79",
+      "revision": "global-lattice-envelope-v1",
+      "sharedFieldPath": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+      "sharedFieldSha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c"
+    },
     "origin": [
-      -358.0,
+      -360.0,
       -220.0
     ],
     "patches": [],
@@ -106562,9 +107249,9 @@
         "river-cuts"
       ],
       "path": "resolved-heights.f32le",
-      "sha256": "6b25ba0f7bbd5ae21ff8eede5498afee207541471fd08f026842ac1d0e55fd79"
+      "sha256": "8ff5fc82584cf33344e1dbee1662c4b6df17e8e2f993ba2c979776f149b8ea0e"
     },
-    "width": 350
+    "width": 352
   },
   "waterRegions": []
 }

@@ -1778,6 +1778,78 @@
     "runtimeBindings": [
       {
         "aliases": [],
+        "id": "[\"config/eloria/instances/ssarathi_gauntlet_high.def\",\"ssarathi_gauntlet_high\",\"exit_x\",\"exit_y\",\"ssarathi_ruins\"]",
+        "marker": {
+          "id": "runtime-instance-return-ssarathi_ruins",
+          "section": "runtimePoints"
+        },
+        "provenance": {
+          "sourceProfileSha256": "8c072f94d95139459c5d497c9bc2870cbfff0bfb945c10561d90a2a24e513b9e",
+          "sourceReportSha256": "27aadab44f53f8db304652b67935276af0456f33cca8dc4dd260c201aba10d0a"
+        },
+        "roads": "marker",
+        "role": "return",
+        "source": {
+          "amendmentReport": {
+            "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+            "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+          },
+          "fields": [
+            "exit_x",
+            "exit_y"
+          ],
+          "line": 19,
+          "oldTile": [
+            198,
+            81
+          ],
+          "path": "config/eloria/instances/ssarathi_gauntlet_high.def",
+          "recordId": "ssarathi_gauntlet_high"
+        },
+        "targetOffset": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "aliases": [],
+        "id": "[\"config/eloria/instances/ssarathi_gauntlet_mid.def\",\"ssarathi_gauntlet_mid\",\"exit_x\",\"exit_y\",\"ssarathi_ruins\"]",
+        "marker": {
+          "id": "runtime-instance-return-ssarathi_ruins",
+          "section": "runtimePoints"
+        },
+        "provenance": {
+          "sourceProfileSha256": "86bbed379f46291e1dbaf8241c0884215a0c89dcd9991aec8bf8b083dcfa188e",
+          "sourceReportSha256": "27aadab44f53f8db304652b67935276af0456f33cca8dc4dd260c201aba10d0a"
+        },
+        "roads": "marker",
+        "role": "return",
+        "source": {
+          "amendmentReport": {
+            "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+            "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+          },
+          "fields": [
+            "exit_x",
+            "exit_y"
+          ],
+          "line": 19,
+          "oldTile": [
+            198,
+            81
+          ],
+          "path": "config/eloria/instances/ssarathi_gauntlet_mid.def",
+          "recordId": "ssarathi_gauntlet_mid"
+        },
+        "targetOffset": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "aliases": [],
         "id": "harvesting.txt:273:36@258:133",
         "marker": {
           "id": "runtime-harvest-harvesting-txt-273-36-258-133",
@@ -6496,6 +6568,19 @@
         ]
       },
       {
+        "id": "runtime-instance-return-ssarathi_ruins",
+        "label": "Independent instance return",
+        "position": [
+          4.5,
+          2.759493350982666,
+          156.5
+        ],
+        "serverTile": [
+          380,
+          87
+        ]
+      },
+      {
         "id": "runtime-interactive-interactives-txt-126-13-153-110",
         "label": "13",
         "position": [
@@ -7596,7 +7681,128 @@
       }
     ]
   },
-  "groundRegions": [],
+  "groundRegions": [
+    {
+      "blendWidth": 4.5,
+      "enabled": true,
+      "id": "ssarathi_ruins-pass1-marketapron",
+      "matrix": [
+        0.9781476259231567,
+        0.0,
+        0.20791170001029968,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.20791170001029968,
+        0.0,
+        0.9781476259231567,
+        0.0,
+        93.0,
+        1.9023268222808838,
+        146.0,
+        1.0
+      ],
+      "opacity": 0.7,
+      "priority": 1,
+      "shape": "ellipse",
+      "size": [
+        26.0,
+        18.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6299999952316284,
+            0.5400000214576721,
+            0.38999998569488525,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Soil",
+        "rotationDegrees": -19.0
+      }
+    },
+    {
+      "blendWidth": 5.5,
+      "enabled": true,
+      "id": "ssarathi_ruins-pass1-marketcourt",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        104.0,
+        1.9539639949798584,
+        143.0,
+        1.0
+      ],
+      "opacity": 0.82,
+      "priority": 0,
+      "shape": "ellipse",
+      "size": [
+        42.0,
+        22.0
+      ],
+      "surface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.6700000166893005,
+            0.6499999761581421,
+            0.5199999809265137,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+          "metallic": 0.0,
+          "normalScale": 1.0,
+          "normalTexture": null,
+          "roughness": 0.9800000190734863,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Coastal limestone gravel",
+        "rotationDegrees": 13.0
+      }
+    }
+  ],
   "objects": [
     {
       "assetId": "ssarathi_ruins:axislamp-0-8b3d82485d35",
@@ -7921,7 +8127,8 @@
       "id": "Bridge_great_causeway__channel_main",
       "materialOverrides": [
         {
-          "meshNodePath": "Bridge_great_causeway__channel_main/Bridge_great_causeway__channel_main__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Bridge_great_causeway__channel_main2/Bridge_great_causeway__channel_main/Bridge_great_causeway__channel_main__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -7955,7 +8162,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Bridge_great_causeway__channel_main/Walk_Bridge_great_causeway__channel_main__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "Bridge_great_causeway__channel_main2/Bridge_great_causeway__channel_main/Walk_Bridge_great_causeway__channel_main__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8029,7 +8237,8 @@
       "id": "Bridge_great_causeway__channel_south",
       "materialOverrides": [
         {
-          "meshNodePath": "Bridge_great_causeway__channel_south/Bridge_great_causeway__channel_south__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Bridge_great_causeway__channel_south2/Bridge_great_causeway__channel_south/Bridge_great_causeway__channel_south__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8063,7 +8272,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Bridge_great_causeway__channel_south/Walk_Bridge_great_causeway__channel_south__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "Bridge_great_causeway__channel_south2/Bridge_great_causeway__channel_south/Walk_Bridge_great_causeway__channel_south__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8137,7 +8347,8 @@
       "id": "Bridge_spur_stela__channel_main",
       "materialOverrides": [
         {
-          "meshNodePath": "Bridge_spur_stela__channel_main/Bridge_spur_stela__channel_main__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Bridge_spur_stela__channel_main2/Bridge_spur_stela__channel_main/Bridge_spur_stela__channel_main__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8171,7 +8382,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Bridge_spur_stela__channel_main/Walk_Bridge_spur_stela__channel_main__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "Bridge_spur_stela__channel_main2/Bridge_spur_stela__channel_main/Walk_Bridge_spur_stela__channel_main__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8245,7 +8457,8 @@
       "id": "Bridge_street_courts__channel_main",
       "materialOverrides": [
         {
-          "meshNodePath": "Bridge_street_courts__channel_main/Bridge_street_courts__channel_main__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Bridge_street_courts__channel_main2/Bridge_street_courts__channel_main/Bridge_street_courts__channel_main__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8279,7 +8492,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Bridge_street_courts__channel_main/Walk_Bridge_street_courts__channel_main__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "Bridge_street_courts__channel_main2/Bridge_street_courts__channel_main/Walk_Bridge_street_courts__channel_main__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8353,7 +8567,8 @@
       "id": "Bridge_street_far_e__channel_east",
       "materialOverrides": [
         {
-          "meshNodePath": "Bridge_street_far_e__channel_east/Bridge_street_far_e__channel_east__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Bridge_street_far_e__channel_east2/Bridge_street_far_e__channel_east/Bridge_street_far_e__channel_east__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8387,7 +8602,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Bridge_street_far_e__channel_east/Walk_Bridge_street_far_e__channel_east__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "Bridge_street_far_e__channel_east2/Bridge_street_far_e__channel_east/Walk_Bridge_street_far_e__channel_east__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8461,7 +8677,8 @@
       "id": "CisternShaft",
       "materialOverrides": [
         {
-          "meshNodePath": "CisternShaft/CisternShaft__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "CisternShaft2/CisternShaft/CisternShaft__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8539,7 +8756,8 @@
       "id": "Colonnade_lily_court",
       "materialOverrides": [
         {
-          "meshNodePath": "Colonnade_lily_court/Colonnade_lily_court__ashlar",
+          "bakedMeshNodeIndex": 2,
+          "meshNodePath": "Colonnade_lily_court2/Colonnade_lily_court/Colonnade_lily_court__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8573,7 +8791,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Colonnade_lily_court/Colonnade_lily_court__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Colonnade_lily_court2/Colonnade_lily_court/Colonnade_lily_court__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8647,7 +8866,8 @@
       "id": "Colonnade_ritual_plaza",
       "materialOverrides": [
         {
-          "meshNodePath": "Colonnade_ritual_plaza/Colonnade_ritual_plaza__ashlar",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "Colonnade_ritual_plaza2/Colonnade_ritual_plaza/Colonnade_ritual_plaza__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8681,7 +8901,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Colonnade_ritual_plaza/Colonnade_ritual_plaza__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Colonnade_ritual_plaza2/Colonnade_ritual_plaza/Colonnade_ritual_plaza__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8755,7 +8976,8 @@
       "id": "CourtShrine_lily_court",
       "materialOverrides": [
         {
-          "meshNodePath": "CourtShrine_lily_court/CourtShrine_lily_court__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "CourtShrine_lily_court2/CourtShrine_lily_court/CourtShrine_lily_court__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8789,7 +9011,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "CourtShrine_lily_court/Walk_CourtShrine_lily_court__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "CourtShrine_lily_court2/CourtShrine_lily_court/Walk_CourtShrine_lily_court__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8864,7 +9087,8 @@
       "id": "CourtShrine_ritual_plaza",
       "materialOverrides": [
         {
-          "meshNodePath": "CourtShrine_ritual_plaza/CourtShrine_ritual_plaza__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "CourtShrine_ritual_plaza2/CourtShrine_ritual_plaza/CourtShrine_ritual_plaza__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -8898,7 +9122,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "CourtShrine_ritual_plaza/Walk_CourtShrine_ritual_plaza__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "CourtShrine_ritual_plaza2/CourtShrine_ritual_plaza/Walk_CourtShrine_ritual_plaza__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9324,7 +9549,8 @@
       "id": "DrownedColumn_0",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedColumn_0",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedColumn_02/DrownedColumn_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9398,7 +9624,8 @@
       "id": "DrownedColumn_12",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedColumn_12",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedColumn_122/DrownedColumn_12",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9472,7 +9699,8 @@
       "id": "DrownedColumn_21",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedColumn_21",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedColumn_212/DrownedColumn_21",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9546,7 +9774,8 @@
       "id": "DrownedColumn_24",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedColumn_24",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedColumn_242/DrownedColumn_24",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9620,7 +9849,8 @@
       "id": "DrownedColumn_3",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedColumn_3",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedColumn_32/DrownedColumn_3",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9694,7 +9924,8 @@
       "id": "DrownedColumn_6",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedColumn_6",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedColumn_62/DrownedColumn_6",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9768,7 +9999,8 @@
       "id": "DrownedColumn_9",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedColumn_9",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedColumn_92/DrownedColumn_9",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9842,7 +10074,8 @@
       "id": "DrownedRubble_1",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedRubble_1",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedRubble_12/DrownedRubble_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9916,7 +10149,8 @@
       "id": "DrownedRubble_11",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedRubble_11",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedRubble_112/DrownedRubble_11",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -9990,7 +10224,8 @@
       "id": "DrownedRubble_13",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedRubble_13",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedRubble_132/DrownedRubble_13",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10064,7 +10299,8 @@
       "id": "DrownedRubble_14",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedRubble_14",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedRubble_142/DrownedRubble_14",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10138,7 +10374,8 @@
       "id": "DrownedRubble_16",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedRubble_16",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedRubble_162/DrownedRubble_16",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10212,7 +10449,8 @@
       "id": "DrownedRubble_2",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedRubble_2",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedRubble_22/DrownedRubble_2",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10286,7 +10524,8 @@
       "id": "DrownedRubble_22",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedRubble_22",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedRubble_222/DrownedRubble_22",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10360,7 +10599,8 @@
       "id": "DrownedRubble_23",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedRubble_23",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedRubble_232/DrownedRubble_23",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10434,7 +10674,8 @@
       "id": "DrownedRubble_25",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedRubble_25",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedRubble_252/DrownedRubble_25",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10508,7 +10749,8 @@
       "id": "DrownedRubble_4",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedRubble_4",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedRubble_42/DrownedRubble_4",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -10582,7 +10824,8 @@
       "id": "DrownedRubble_5",
       "materialOverrides": [
         {
-          "meshNodePath": "DrownedRubble_5",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "DrownedRubble_52/DrownedRubble_5",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -26546,7 +26789,8 @@
       "id": "HatcheryColumn_-1",
       "materialOverrides": [
         {
-          "meshNodePath": "HatcheryColumn_-1/HatcheryColumn_-1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "HatcheryColumn_-12/HatcheryColumn_-1/HatcheryColumn_-1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -26620,7 +26864,8 @@
       "id": "HatcheryColumn_1",
       "materialOverrides": [
         {
-          "meshNodePath": "HatcheryColumn_1/HatcheryColumn_1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "HatcheryColumn_12/HatcheryColumn_1/HatcheryColumn_1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -26694,7 +26939,8 @@
       "id": "HatcheryDescent",
       "materialOverrides": [
         {
-          "meshNodePath": "HatcheryDescent/HatcheryDescent__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "HatcheryDescent2/HatcheryDescent/HatcheryDescent__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -26728,7 +26974,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "HatcheryDescent/Walk_HatcheryDescent__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "HatcheryDescent2/HatcheryDescent/Walk_HatcheryDescent__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -26803,7 +27050,8 @@
       "id": "House_archive-workers",
       "materialOverrides": [
         {
-          "meshNodePath": "House_archive-workers/House_archive-workers__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "House_archive-workers2/House_archive-workers/House_archive-workers__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -26887,7 +27135,8 @@
       "id": "House_lily-copyists",
       "materialOverrides": [
         {
-          "meshNodePath": "House_lily-copyists/House_lily-copyists__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "House_lily-copyists2/House_lily-copyists/House_lily-copyists__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -26971,7 +27220,8 @@
       "id": "House_lineage-house",
       "materialOverrides": [
         {
-          "meshNodePath": "House_lineage-house/House_lineage-house__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "House_lineage-house2/House_lineage-house/House_lineage-house__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27055,7 +27305,8 @@
       "id": "House_market-copyist",
       "materialOverrides": [
         {
-          "meshNodePath": "House_market-copyist/House_market-copyist__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "House_market-copyist2/House_market-copyist/House_market-copyist__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27139,7 +27390,8 @@
       "id": "House_market-poler",
       "materialOverrides": [
         {
-          "meshNodePath": "House_market-poler/House_market-poler__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "House_market-poler2/House_market-poler/House_market-poler__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27223,7 +27475,8 @@
       "id": "House_quay-stores",
       "materialOverrides": [
         {
-          "meshNodePath": "House_quay-stores/House_quay-stores__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "House_quay-stores2/House_quay-stores/House_quay-stores__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27307,7 +27560,8 @@
       "id": "MarketShrine",
       "materialOverrides": [
         {
-          "meshNodePath": "MarketShrine/MarketShrine__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "MarketShrine2/MarketShrine/MarketShrine__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27341,7 +27595,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "MarketShrine/Walk_MarketShrine__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "MarketShrine2/MarketShrine/Walk_MarketShrine__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27922,7 +28177,8 @@
       "id": "Obelisk_street_far_e_99",
       "materialOverrides": [
         {
-          "meshNodePath": "Obelisk_street_far_e_99/Obelisk_street_far_e_99__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Obelisk_street_far_e_992/Obelisk_street_far_e_99/Obelisk_street_far_e_99__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -27996,7 +28252,8 @@
       "id": "Obelisk_street_market_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Obelisk_street_market_0/Obelisk_street_market_0__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Obelisk_street_market_02/Obelisk_street_market_0/Obelisk_street_market_0__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28070,7 +28327,8 @@
       "id": "Obelisk_street_market_128",
       "materialOverrides": [
         {
-          "meshNodePath": "Obelisk_street_market_128/Obelisk_street_market_128__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Obelisk_street_market_1282/Obelisk_street_market_128/Obelisk_street_market_128__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28144,7 +28402,8 @@
       "id": "Obelisk_street_market_192",
       "materialOverrides": [
         {
-          "meshNodePath": "Obelisk_street_market_192/Obelisk_street_market_192__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Obelisk_street_market_1922/Obelisk_street_market_192/Obelisk_street_market_192__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28218,7 +28477,8 @@
       "id": "Obelisk_street_market_64",
       "materialOverrides": [
         {
-          "meshNodePath": "Obelisk_street_market_64/Obelisk_street_market_64__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Obelisk_street_market_642/Obelisk_street_market_64/Obelisk_street_market_64__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28292,7 +28552,8 @@
       "id": "Obelisk_street_north_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Obelisk_street_north_0/Obelisk_street_north_0__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Obelisk_street_north_02/Obelisk_street_north_0/Obelisk_street_north_0__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28366,7 +28627,8 @@
       "id": "Obelisk_street_north_139",
       "materialOverrides": [
         {
-          "meshNodePath": "Obelisk_street_north_139/Obelisk_street_north_139__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Obelisk_street_north_1392/Obelisk_street_north_139/Obelisk_street_north_139__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -28440,7 +28702,8 @@
       "id": "Obelisk_street_north_69",
       "materialOverrides": [
         {
-          "meshNodePath": "Obelisk_street_north_69/Obelisk_street_north_69__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Obelisk_street_north_692/Obelisk_street_north_69/Obelisk_street_north_69__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29041,7 +29304,8 @@
       "id": "QuayShelter_0",
       "materialOverrides": [
         {
-          "meshNodePath": "QuayShelter_0/QuayShelter_0__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "QuayShelter_02/QuayShelter_0/QuayShelter_0__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29115,7 +29379,8 @@
       "id": "QuayShelter_1",
       "materialOverrides": [
         {
-          "meshNodePath": "QuayShelter_1/QuayShelter_1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "QuayShelter_12/QuayShelter_1/QuayShelter_1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29267,7 +29532,8 @@
       "id": "RootArch",
       "materialOverrides": [
         {
-          "meshNodePath": "RootArch/RootArch__ashlar",
+          "bakedMeshNodeIndex": 3,
+          "meshNodePath": "RootArch2/RootArch/RootArch__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29301,7 +29567,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "RootArch/RootArch__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "RootArch2/RootArch/RootArch__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29376,7 +29643,8 @@
       "id": "Rubble_spur_arrival_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Rubble_spur_arrival_0",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Rubble_spur_arrival_02/Rubble_spur_arrival_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29450,7 +29718,8 @@
       "id": "Rubble_spur_east_shrine_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Rubble_spur_east_shrine_0",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Rubble_spur_east_shrine_02/Rubble_spur_east_shrine_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29524,7 +29793,8 @@
       "id": "Rubble_spur_south_shrine_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Rubble_spur_south_shrine_0",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Rubble_spur_south_shrine_02/Rubble_spur_south_shrine_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29598,7 +29868,8 @@
       "id": "Rubble_spur_stela_69",
       "materialOverrides": [
         {
-          "meshNodePath": "Rubble_spur_stela_69",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Rubble_spur_stela_692/Rubble_spur_stela_69",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29672,7 +29943,8 @@
       "id": "Rubble_street_courts_40",
       "materialOverrides": [
         {
-          "meshNodePath": "Rubble_street_courts_40",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Rubble_street_courts_402/Rubble_street_courts_40",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29746,7 +30018,8 @@
       "id": "Rubble_street_market_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Rubble_street_market_0",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Rubble_street_market_02/Rubble_street_market_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29820,7 +30093,8 @@
       "id": "Rubble_street_north_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Rubble_street_north_0",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Rubble_street_north_02/Rubble_street_north_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29894,7 +30168,8 @@
       "id": "Rubble_street_north_93",
       "materialOverrides": [
         {
-          "meshNodePath": "Rubble_street_north_93",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Rubble_street_north_932/Rubble_street_north_93",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -29968,7 +30243,8 @@
       "id": "RuinTower_1",
       "materialOverrides": [
         {
-          "meshNodePath": "RuinTower_1/RuinTower_1__rubble_stone",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "RuinTower_12/RuinTower_1/RuinTower_1__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30002,7 +30278,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "RuinTower_1/RuinTower_1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "RuinTower_12/RuinTower_1/RuinTower_1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30076,7 +30353,8 @@
       "id": "RuinTower_6",
       "materialOverrides": [
         {
-          "meshNodePath": "RuinTower_6/RuinTower_6__rubble_stone",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "RuinTower_62/RuinTower_6/RuinTower_6__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30110,7 +30388,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "RuinTower_6/RuinTower_6__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "RuinTower_62/RuinTower_6/RuinTower_6__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30184,7 +30463,8 @@
       "id": "Ruin_0",
       "materialOverrides": [
         {
-          "meshNodePath": "Ruin_0/Ruin_0__rubble_stone",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "Ruin_02/Ruin_0/Ruin_0__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30218,7 +30498,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Ruin_0/Ruin_0__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Ruin_02/Ruin_0/Ruin_0__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30292,7 +30573,8 @@
       "id": "Ruin_1",
       "materialOverrides": [
         {
-          "meshNodePath": "Ruin_1/Ruin_1__rubble_stone",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Ruin_12/Ruin_1/Ruin_1__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30326,7 +30608,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Ruin_1/Ruin_1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Ruin_12/Ruin_1/Ruin_1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30400,7 +30683,8 @@
       "id": "Ruin_2",
       "materialOverrides": [
         {
-          "meshNodePath": "Ruin_2/Ruin_2__rubble_stone",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "Ruin_22/Ruin_2/Ruin_2__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30434,7 +30718,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Ruin_2/Ruin_2__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Ruin_22/Ruin_2/Ruin_2__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30508,7 +30793,8 @@
       "id": "Ruin_3",
       "materialOverrides": [
         {
-          "meshNodePath": "Ruin_3/Ruin_3__rubble_stone",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Ruin_32/Ruin_3/Ruin_3__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30542,7 +30828,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Ruin_3/Ruin_3__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Ruin_32/Ruin_3/Ruin_3__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30616,7 +30903,8 @@
       "id": "Ruin_4",
       "materialOverrides": [
         {
-          "meshNodePath": "Ruin_4/Ruin_4__rubble_stone",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "Ruin_42/Ruin_4/Ruin_4__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30650,7 +30938,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Ruin_4/Ruin_4__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Ruin_42/Ruin_4/Ruin_4__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30724,7 +31013,8 @@
       "id": "Ruin_5",
       "materialOverrides": [
         {
-          "meshNodePath": "Ruin_5/Ruin_5__rubble_stone",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Ruin_52/Ruin_5/Ruin_5__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30758,7 +31048,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Ruin_5/Ruin_5__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Ruin_52/Ruin_5/Ruin_5__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30832,7 +31123,8 @@
       "id": "Ruin_6",
       "materialOverrides": [
         {
-          "meshNodePath": "Ruin_6/Ruin_6__rubble_stone",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "Ruin_62/Ruin_6/Ruin_6__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30866,7 +31158,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Ruin_6/Ruin_6__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Ruin_62/Ruin_6/Ruin_6__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30940,7 +31233,8 @@
       "id": "Ruin_7",
       "materialOverrides": [
         {
-          "meshNodePath": "Ruin_7/Ruin_7__rubble_stone",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Ruin_72/Ruin_7/Ruin_7__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -30974,7 +31268,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Ruin_7/Ruin_7__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Ruin_72/Ruin_7/Ruin_7__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -31048,7 +31343,8 @@
       "id": "Ruin_8",
       "materialOverrides": [
         {
-          "meshNodePath": "Ruin_8/Ruin_8__rubble_stone",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "Ruin_82/Ruin_8/Ruin_8__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -31082,7 +31378,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Ruin_8/Ruin_8__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Ruin_82/Ruin_8/Ruin_8__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -31156,7 +31453,8 @@
       "id": "Secret_ruins_culvert_mouth",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_ruins_culvert_mouth/Secret_ruins_culvert_mouth__verdant_terrace_stone",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_ruins_culvert_mouth2/Secret_ruins_culvert_mouth/Secret_ruins_culvert_mouth__verdant_terrace_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -31347,7 +31645,8 @@
       "id": "Secret_ruins_stela_reliquary",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_ruins_stela_reliquary/Secret_ruins_stela_reliquary__verdant_terrace_stone",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_ruins_stela_reliquary2/Secret_ruins_stela_reliquary/Secret_ruins_stela_reliquary__verdant_terrace_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -31421,7 +31720,8 @@
       "id": "Secret_ruins_temple_focus",
       "materialOverrides": [
         {
-          "meshNodePath": "Secret_ruins_temple_focus/Secret_ruins_temple_focus__verdant_terrace_stone",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Secret_ruins_temple_focus2/Secret_ruins_temple_focus/Secret_ruins_temple_focus__verdant_terrace_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -31495,7 +31795,8 @@
       "id": "SerpentColumn_0_-1",
       "materialOverrides": [
         {
-          "meshNodePath": "SerpentColumn_0_-1/SerpentColumn_0_-1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "SerpentColumn_0_-12/SerpentColumn_0_-1/SerpentColumn_0_-1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -31569,7 +31870,8 @@
       "id": "SerpentColumn_0_1",
       "materialOverrides": [
         {
-          "meshNodePath": "SerpentColumn_0_1/SerpentColumn_0_1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "SerpentColumn_0_12/SerpentColumn_0_1/SerpentColumn_0_1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -31643,7 +31945,8 @@
       "id": "SerpentColumn_1_-1",
       "materialOverrides": [
         {
-          "meshNodePath": "SerpentColumn_1_-1/SerpentColumn_1_-1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "SerpentColumn_1_-12/SerpentColumn_1_-1/SerpentColumn_1_-1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -31717,7 +32020,8 @@
       "id": "SerpentColumn_1_1",
       "materialOverrides": [
         {
-          "meshNodePath": "SerpentColumn_1_1/SerpentColumn_1_1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "SerpentColumn_1_12/SerpentColumn_1_1/SerpentColumn_1_1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -31791,7 +32095,8 @@
       "id": "SerpentColumn_2_-1",
       "materialOverrides": [
         {
-          "meshNodePath": "SerpentColumn_2_-1/SerpentColumn_2_-1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "SerpentColumn_2_-12/SerpentColumn_2_-1/SerpentColumn_2_-1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -31865,7 +32170,8 @@
       "id": "SerpentColumn_2_1",
       "materialOverrides": [
         {
-          "meshNodePath": "SerpentColumn_2_1/SerpentColumn_2_1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "SerpentColumn_2_12/SerpentColumn_2_1/SerpentColumn_2_1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -31939,7 +32245,8 @@
       "id": "SerpentGateColumn_-1",
       "materialOverrides": [
         {
-          "meshNodePath": "SerpentGateColumn_-1/SerpentGateColumn_-1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "SerpentGateColumn_-12/SerpentGateColumn_-1/SerpentGateColumn_-1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -32014,7 +32321,8 @@
       "id": "SerpentGateColumn_1",
       "materialOverrides": [
         {
-          "meshNodePath": "SerpentGateColumn_1/SerpentGateColumn_1__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "SerpentGateColumn_12/SerpentGateColumn_1/SerpentGateColumn_1__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -32088,7 +32396,8 @@
       "id": "Shrine_east_shrine",
       "materialOverrides": [
         {
-          "meshNodePath": "Shrine_east_shrine/Shrine_east_shrine__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Shrine_east_shrine2/Shrine_east_shrine/Shrine_east_shrine__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -32122,7 +32431,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Shrine_east_shrine/Walk_Shrine_east_shrine__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "Shrine_east_shrine2/Shrine_east_shrine/Walk_Shrine_east_shrine__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -32197,7 +32507,8 @@
       "id": "Shrine_south_shrine",
       "materialOverrides": [
         {
-          "meshNodePath": "Shrine_south_shrine/Shrine_south_shrine__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Shrine_south_shrine2/Shrine_south_shrine/Shrine_south_shrine__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -32231,7 +32542,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Shrine_south_shrine/Walk_Shrine_south_shrine__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "Shrine_south_shrine2/Shrine_south_shrine/Walk_Shrine_south_shrine__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -32306,7 +32618,8 @@
       "id": "Shrine_west_shrine",
       "materialOverrides": [
         {
-          "meshNodePath": "Shrine_west_shrine/Shrine_west_shrine__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Shrine_west_shrine2/Shrine_west_shrine/Shrine_west_shrine__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -32340,7 +32653,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Shrine_west_shrine/Walk_Shrine_west_shrine__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 5,
+          "meshNodePath": "Shrine_west_shrine2/Shrine_west_shrine/Walk_Shrine_west_shrine__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -32766,7 +33080,8 @@
       "id": "Structure_TempleSummitRoof",
       "materialOverrides": [
         {
-          "meshNodePath": "Structure_TempleSummitRoof/Structure_TempleSummitRoof__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Structure_TempleSummitRoof2/Structure_TempleSummitRoof/Structure_TempleSummitRoof__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -32840,7 +33155,8 @@
       "id": "SunStela",
       "materialOverrides": [
         {
-          "meshNodePath": "SunStela/SunStela__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "SunStela2/SunStela/SunStela__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -32874,7 +33190,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "SunStela/Walk_SunStela__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "SunStela2/SunStela/Walk_SunStela__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -33027,7 +33344,8 @@
       "id": "Temple_Ssarathi",
       "materialOverrides": [
         {
-          "meshNodePath": "Temple_Ssarathi/Temple_Ssarathi__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Temple_Ssarathi2/Temple_Ssarathi/Temple_Ssarathi__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -33061,7 +33379,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Temple_Ssarathi/Walk_Temple_Ssarathi__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "Temple_Ssarathi2/Temple_Ssarathi/Walk_Temple_Ssarathi__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -33136,7 +33455,8 @@
       "id": "Temple_VaultPortal",
       "materialOverrides": [
         {
-          "meshNodePath": "Temple_VaultPortal/Temple_VaultPortal__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "Temple_VaultPortal2/Temple_VaultPortal/Temple_VaultPortal__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -33170,7 +33490,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Temple_VaultPortal/Walk_Temple_VaultPortal__ssarathi_jade_paving",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "Temple_VaultPortal2/Temple_VaultPortal/Walk_Temple_VaultPortal__ssarathi_jade_paving",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -33323,7 +33644,8 @@
       "id": "UndercroftMouth",
       "materialOverrides": [
         {
-          "meshNodePath": "UndercroftMouth/UndercroftMouth__ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "UndercroftMouth2/UndercroftMouth/UndercroftMouth__ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -33357,7 +33679,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "UndercroftMouth/Walk_UndercroftMouth__rubble_stone",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "UndercroftMouth2/UndercroftMouth/Walk_UndercroftMouth__rubble_stone",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -33432,7 +33755,8 @@
       "id": "WaterGate",
       "materialOverrides": [
         {
-          "meshNodePath": "WaterGate/WaterGate__ssarathi_jade_ashlar",
+          "bakedMeshNodeIndex": 1,
+          "meshNodePath": "WaterGate2/WaterGate/WaterGate__ssarathi_jade_ashlar",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38153,7 +38477,8 @@
       "id": "published-ssarathi-ruins-ferry-quay-02",
       "materialOverrides": [
         {
-          "meshNodePath": "FerryQuay_ssarathi_ruins_02_PilesAndPosts_WorldPlacement/FerryQuay_ssarathi_ruins_02_PilesAndPosts",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_PilesAndPosts_WorldPlacement2/FerryQuay_ssarathi_ruins_02_PilesAndPosts_WorldPlacement/FerryQuay_ssarathi_ruins_02_PilesAndPosts",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38187,7 +38512,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Signpost_WorldPlacement/FerryQuay_ssarathi_ruins_02_Signpost",
+          "bakedMeshNodeIndex": 8,
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Signpost_WorldPlacement2/FerryQuay_ssarathi_ruins_02_Signpost_WorldPlacement/FerryQuay_ssarathi_ruins_02_Signpost",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38221,7 +38547,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Floor_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Floor",
+          "bakedMeshNodeIndex": 16,
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Floor_WorldPlacement2/FerryQuay_ssarathi_ruins_02_Skiff_Floor_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Floor",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38255,7 +38582,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Mast_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Mast",
+          "bakedMeshNodeIndex": 24,
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Mast_WorldPlacement2/FerryQuay_ssarathi_ruins_02_Skiff_Mast_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Mast",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38289,7 +38617,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Seat_0_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Seat_0",
+          "bakedMeshNodeIndex": 18,
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Seat_0_WorldPlacement2/FerryQuay_ssarathi_ruins_02_Skiff_Seat_0_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Seat_0",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38323,7 +38652,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Seat_1_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Seat_1",
+          "bakedMeshNodeIndex": 20,
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Seat_1_WorldPlacement2/FerryQuay_ssarathi_ruins_02_Skiff_Seat_1_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Seat_1",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38357,7 +38687,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Seat_2_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Seat_2",
+          "bakedMeshNodeIndex": 22,
+          "meshNodePath": "FerryQuay_ssarathi_ruins_02_Skiff_Seat_2_WorldPlacement2/FerryQuay_ssarathi_ruins_02_Skiff_Seat_2_WorldPlacement/FerryQuay_ssarathi_ruins_02_Skiff_Seat_2",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38391,7 +38722,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "Walk_FerryQuay_ssarathi_ruins_02_WorldPlacement/Walk_FerryQuay_ssarathi_ruins_02",
+          "bakedMeshNodeIndex": 0,
+          "meshNodePath": "Walk_FerryQuay_ssarathi_ruins_02_WorldPlacement2/Walk_FerryQuay_ssarathi_ruins_02_WorldPlacement/Walk_FerryQuay_ssarathi_ruins_02",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38589,7 +38921,8 @@
       "id": "published-ssarathi-ruins-loose-520",
       "materialOverrides": [
         {
-          "meshNodePath": "BridgeUnionPier_520_1164_1604_WorldPlacement/BridgeUnionPier_520_1164_1604",
+          "bakedMeshNodeIndex": 4,
+          "meshNodePath": "BridgeUnionPier_520_1164_1604_WorldPlacement2/BridgeUnionPier_520_1164_1604_WorldPlacement/BridgeUnionPier_520_1164_1604",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38623,7 +38956,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_520_1180_1620_WorldPlacement/BridgeUnionPier_520_1180_1620",
+          "bakedMeshNodeIndex": 6,
+          "meshNodePath": "BridgeUnionPier_520_1180_1620_WorldPlacement2/BridgeUnionPier_520_1180_1620_WorldPlacement/BridgeUnionPier_520_1180_1620",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38657,7 +38991,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_520_1204_1660_WorldPlacement/BridgeUnionPier_520_1204_1660",
+          "bakedMeshNodeIndex": 12,
+          "meshNodePath": "BridgeUnionPier_520_1204_1660_WorldPlacement2/BridgeUnionPier_520_1204_1660_WorldPlacement/BridgeUnionPier_520_1204_1660",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38691,7 +39026,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_520_1212_1660_WorldPlacement/BridgeUnionPier_520_1212_1660",
+          "bakedMeshNodeIndex": 14,
+          "meshNodePath": "BridgeUnionPier_520_1212_1660_WorldPlacement2/BridgeUnionPier_520_1212_1660_WorldPlacement/BridgeUnionPier_520_1212_1660",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38725,7 +39061,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_520_1220_1660_WorldPlacement/BridgeUnionPier_520_1220_1660",
+          "bakedMeshNodeIndex": 16,
+          "meshNodePath": "BridgeUnionPier_520_1220_1660_WorldPlacement2/BridgeUnionPier_520_1220_1660_WorldPlacement/BridgeUnionPier_520_1220_1660",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38759,7 +39096,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_520_1228_1652_WorldPlacement/BridgeUnionPier_520_1228_1652",
+          "bakedMeshNodeIndex": 10,
+          "meshNodePath": "BridgeUnionPier_520_1228_1652_WorldPlacement2/BridgeUnionPier_520_1228_1652_WorldPlacement/BridgeUnionPier_520_1228_1652",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -38793,7 +39131,8 @@
           "surfaceIndex": 0
         },
         {
-          "meshNodePath": "BridgeUnionPier_520_1236_1628_WorldPlacement/BridgeUnionPier_520_1236_1628",
+          "bakedMeshNodeIndex": 8,
+          "meshNodePath": "BridgeUnionPier_520_1236_1628_WorldPlacement2/BridgeUnionPier_520_1236_1628_WorldPlacement/BridgeUnionPier_520_1236_1628",
           "surface": {
             "materialMode": "surface",
             "pbrOverrides": {
@@ -77841,6 +78180,10 @@
     ]
   },
   "sources": {
+    "authoringSpec": {
+      "path": "godot-client/world_authoring/regions/ssarathi_ruins/region-authoring-spec.json",
+      "sha256": "90839428d8d44bd18f2b28688dac9d664dd4399fadf9cd25b9b69a4953ff30cc"
+    },
     "dependencies": [
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/map_authoring_surface.gd",
@@ -77857,6 +78200,10 @@
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/object_surfaces/weathered-limestone.tres",
         "sha256": "683f24567b4c4c814b84afe124445d80939e7b548075663ebfcdebff4f21894d"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
+        "sha256": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
       },
       {
         "path": "godot-client/src/dev/map_authoring_pilot/style/texture_packs/forest-floor-moss/forest-floor-moss-v001.png",
@@ -77895,16 +78242,24 @@
         "sha256": "4b9f79c3f2304433b569f072d8204177240f37515ae96ace8fd5d1ada6b8e8a2"
       },
       {
+        "path": "godot-client/src/dev/map_authoring_region/gltf_material_binding.gd",
+        "sha256": "4d37d216212fe0ca53be4e41579b6ed44c9b52f3e7fc97cc43ef4195a6d4255f"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/ground_region_control.gd",
+        "sha256": "22b5ff872793a8e2599be7a27bfcfce3e255440be8cca81e26b92d3e87deee28"
+      },
+      {
         "path": "godot-client/src/dev/map_authoring_region/path_control.gd",
-        "sha256": "1126a8b6cb0a0a29869cb62e54ac80bb376421990483a44cf3ec24cc7c1dd883"
+        "sha256": "e70fdcf47863bc1375921ac337ac008b8d8c4c0be2cbb8f362de2c57ff552ef6"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/region_control.gd",
-        "sha256": "d682a979783273055a9c965691782146242c4f4897f7c9cbcd28bdbde82f06d8"
+        "sha256": "4a4103da29f3b4d873460d064d1ad83f2ffa17c72f31601745d7af84b8035d48"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/terrain_control.gd",
-        "sha256": "558bc03ab1ad43eabcb02eabb058d22cb7046e34713549234620991cd412c778"
+        "sha256": "7f55a17b606339d1a6ec77b01097f135cd6a0fd9ef87680d46745e16c69101ff"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/water_region_control.gd",
@@ -81152,11 +81507,11 @@
       },
       {
         "path": "godot-client/world_authoring/regions/ssarathi_ruins/base-colors.rgba8",
-        "sha256": "cd9a4ce6b4cb5e568eeb44d12994344e17568000bdf3b70104965b640585e783"
+        "sha256": "003962e3b2aeaa8203e086dba081b6c4d81f2d7738851b1385c753b8b83db8d8"
       },
       {
         "path": "godot-client/world_authoring/regions/ssarathi_ruins/base-heights.f32le",
-        "sha256": "55e672b870767b6eab095e45e76c6fb368b078e2e37e2fd4c7c422f28021a8f2"
+        "sha256": "6dd0a358060d629a40648844da0568367c12090feeaa636af460005d98aa37a2"
       },
       {
         "path": "godot-client/world_authoring/regions/ssarathi_ruins/paths/crownwater-ssarathi-ruins-ssarathi-ruins.tres",
@@ -81244,7 +81599,7 @@
       },
       {
         "path": "godot-client/world_authoring/regions/ssarathi_ruins/runtime-bindings.seed.json",
-        "sha256": "7a9c9dfc945e94caafc11dcd8d0eaa0f028ab68bfd730503f67cd455e735d95e"
+        "sha256": "f4e33f202add0e6e74ec60839ebdd77db2f5e32d5819dea8bce9d91316239b31"
       },
       {
         "path": "godot-client/world_authoring/regions/ssarathi_ruins/surfaces/biome-forest-floor.tres",
@@ -81255,6 +81610,14 @@
         "sha256": "ff0a2b5583e9cb69ed0605c6d8c273ddccb3bdeea0c14cc104eb2733c76a5208"
       },
       {
+        "path": "godot-client/world_authoring/regions/ssarathi_ruins/surfaces/pass1-market-earth.tres",
+        "sha256": "353b713c20050f8341ad3a759f28e0f382cf76a88f2697b7f0408644720fc9fd"
+      },
+      {
+        "path": "godot-client/world_authoring/regions/ssarathi_ruins/surfaces/pass1-worn-stone.tres",
+        "sha256": "3f7484b56904f75419855d1ad3bdbb8bbdabb7c74a4dc5f0eb8440585781e3fc"
+      },
+      {
         "path": "godot-client/world_authoring/regions/ssarathi_ruins/surfaces/river.tres",
         "sha256": "965b8c2400131af3d49503a64ca59953a8e30558f255b91037229c76798e6fae"
       },
@@ -81263,25 +81626,39 @@
         "sha256": "2a6cfa248f60c0432e92e20a68bb6a2dc0ae96525d7a9c5e34e65c6ad46baa1e"
       }
     ],
+    "repositoryDependencies": [
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/legacy-colors.rgba8",
+        "sha256": "a5862f256274a35b164923e1b7d6fd4201e2e5b485aa1e5634cee110157cd145"
+      },
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+        "sha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c"
+      },
+      {
+        "path": "godot-client/world_authoring/terrain/shared-field-v1/resolved-heights.f32le",
+        "sha256": "f8569fac42ac47e3145a68b2df54e74821021d7ae98ef06debb5fb45acebc8bd"
+      }
+    ],
     "runtimeBindingSeed": {
       "path": "godot-client/world_authoring/regions/ssarathi_ruins/runtime-bindings.seed.json",
-      "sha256": "7a9c9dfc945e94caafc11dcd8d0eaa0f028ab68bfd730503f67cd455e735d95e"
+      "sha256": "f4e33f202add0e6e74ec60839ebdd77db2f5e32d5819dea8bce9d91316239b31"
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/ssarathi_ruins/ssarathi_ruins.tscn",
-      "sha256": "345aaff77ddda500be2cd49a9607bf46c3d04470fcc982c50d2da88c96c74817"
+      "sha256": "4aac5243346b236c1832c7a5cf0dc41ddae49560685a6a828936dd2334af6f39"
     }
   },
   "terrain": {
     "baseColors": {
       "encoding": "rgba8-srgb",
       "path": "base-colors.rgba8",
-      "sha256": "cd9a4ce6b4cb5e568eeb44d12994344e17568000bdf3b70104965b640585e783"
+      "sha256": "003962e3b2aeaa8203e086dba081b6c4d81f2d7738851b1385c753b8b83db8d8"
     },
     "baseHeights": {
       "encoding": "float32-le",
       "path": "base-heights.f32le",
-      "sha256": "55e672b870767b6eab095e45e76c6fb368b078e2e37e2fd4c7c422f28021a8f2"
+      "sha256": "6dd0a358060d629a40648844da0568367c12090feeaa636af460005d98aa37a2"
     },
     "baseSurface": {
       "biomeBlendEnabled": true,
@@ -81351,10 +81728,20 @@
       }
     ],
     "cellMetres": 2.0,
-    "height": 201,
+    "height": 202,
+    "migration": {
+      "globalVertexMin": [
+        363.0,
+        639.0
+      ],
+      "previousGridSha256": "55e672b870767b6eab095e45e76c6fb368b078e2e37e2fd4c7c422f28021a8f2",
+      "revision": "global-lattice-envelope-v1",
+      "sharedFieldPath": "godot-client/world_authoring/terrain/shared-field-v1/manifest.json",
+      "sharedFieldSha256": "c1b98afcf0e65851e717ad7c2487255eea46e09feb2d6199790a6e452133242c"
+    },
     "origin": [
-      -372.0,
-      -160.0
+      -374.0,
+      -162.0
     ],
     "patches": [],
     "previewUvMetresInverse": 0.17,
@@ -81366,9 +81753,9 @@
         "river-cuts"
       ],
       "path": "resolved-heights.f32le",
-      "sha256": "55e672b870767b6eab095e45e76c6fb368b078e2e37e2fd4c7c422f28021a8f2"
+      "sha256": "6dd0a358060d629a40648844da0568367c12090feeaa636af460005d98aa37a2"
     },
-    "width": 387
+    "width": 388
   },
   "waterRegions": []
 }
