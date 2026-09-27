@@ -4692,6 +4692,40 @@
       },
       "serverActorType": 787
     },
+    "sunmane_foal_dun": {
+      "scene": "res://assets/actors/native/creatures/sunmane_foal_dun.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/sunmane_foal_dun.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.65,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "sunmane_foal_grey": {
+      "scene": "res://assets/actors/native/creatures/sunmane_foal_grey.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/sunmane_foal_grey.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.65,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
     "abyssal_armored_fish": {
       "scene": "res://assets/actors/native/creatures/abyssal_armored_fish.glb",
       "animationLibrary": "res://assets/actors/native/creatures/abyssal_armored_fish.glb",
@@ -8920,7 +8954,9 @@
     "784": "air_elemental",
     "785": "sunmane_steppe_horse",
     "786": "sunmane_dun_mare",
-    "787": "sunmane_grey_pony"
+    "787": "sunmane_grey_pony",
+    "788": "sunmane_foal_dun",
+    "789": "sunmane_foal_grey"
   },
   "creationOptions": [
     {

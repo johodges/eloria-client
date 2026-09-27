@@ -12172,6 +12172,7 @@
       "tacked": false,
       "region": "sunmane_steppe",
       "note": "Authored to equine proportions on the shared creature rig by eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py.",
+      "actor_type": 785,
       "triangles": 2027,
       "joints": 21,
       "animations": 7
@@ -12185,6 +12186,7 @@
       "tacked": false,
       "region": "sunmane_steppe",
       "note": "Authored to equine proportions on the shared creature rig by eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py.",
+      "actor_type": 786,
       "triangles": 2027,
       "joints": 21,
       "animations": 7
@@ -12198,14 +12200,15 @@
       "tacked": true,
       "region": "sunmane_steppe",
       "note": "Authored to equine proportions on the shared creature rig by eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py.",
+      "actor_type": 787,
       "triangles": 2459,
       "joints": 21,
       "animations": 7
     }
   },
-  "ambientCreaturesNote": "Scenery livestock instanced by the client's ambient population system. They carry no server actor type: actor-type allocation belongs to eloria-server, and these never arrive over the wire.",
+  "ambientCreaturesNote": "The Sunmane camps' livestock: stood in pens and at hitching posts as tame creature spawns (eloria-server spawns.txt `tame` rows, eloria/livestock.py) that nobody can attack. Each carries the server actor type eloria-server's creatures.txt gives it; they replaced the client-only ambient herds.",
   "validation": {
-    "files": 2851,
+    "files": 2853,
     "results": {
       "godot-client/assets/actors/native/creatures/abyssal_armored_fish.glb": {
         "nodes": 55,
@@ -13733,6 +13736,18 @@
       },
       "godot-client/assets/actors/native/creatures/sunmane_dun_mare.glb": {
         "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/sunmane_foal_dun.glb": {
+        "nodes": 46,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/sunmane_foal_grey.glb": {
+        "nodes": 46,
         "meshes": 1,
         "skins": 1,
         "animations": 7

@@ -428,14 +428,17 @@ def roster_actor_type(index: int) -> int:
     return ROSTER_ACTOR_TYPE_BASE + index
 
 
+# The Sunmane camps' horses: (slug, label, archetype, scale, tacked, server
+# actor type). eloria-server's creatures.txt allocates the actor types and
+# stands them as tame livestock; they are no longer ambient scenery.
 AMBIENT_CREATURES = (
-    ("sunmane_steppe_horse", "Sunmane Steppe Horse", "equine", 1.25, False),
-    ("sunmane_dun_mare", "Sunmane Dun Mare", "equine", 1.2, False),
-    ("sunmane_grey_pony", "Sunmane Grey Pony", "equine", 1.1, True),
+    ("sunmane_steppe_horse", "Sunmane Steppe Horse", "equine", 1.25, False, 785),
+    ("sunmane_dun_mare", "Sunmane Dun Mare", "equine", 1.2, False, 786),
+    ("sunmane_grey_pony", "Sunmane Grey Pony", "equine", 1.1, True, 787),
 )
-AMBIENT_NOTE = ("Scenery livestock instanced by the client's ambient population "
-                "system. They carry no server actor type: actor-type allocation "
-                "belongs to eloria-server, and these never arrive over the wire.")
+AMBIENT_NOTE = ("The Sunmane camps' livestock: stood in pens and at hitching posts as tame creature "
+                "spawns (eloria-server spawns.txt `tame` rows, eloria/livestock.py) that nobody can attack. Each carries "
+                "the server actor type eloria-server's creatures.txt gives it; they replaced the client-only ambient herds.")
 AMBIENT_SOURCE_NOTE = ("Authored to equine proportions on the shared creature rig "
                        "by eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py.")
 
@@ -3351,7 +3354,7 @@ def build_model_registry() -> dict:
         }
         actor_types[str(roster_actor_type(index))] = slug
 
-    for slug, _label, _archetype, scale, _tacked in AMBIENT_CREATURES:
+    for slug, _label, _archetype, scale, _tacked, actor_type in AMBIENT_CREATURES:
         models[slug] = {
             "scene": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationLibrary": f"res://assets/actors/native/creatures/{slug}.glb",
@@ -3366,8 +3369,9 @@ def build_model_registry() -> dict:
                        "rotationDegreesY": 0, "rotationDegreesZ": 0,
                        "forwardAxisCorrectionDegreesY": 0},
             "attachments": {"head": "head", "body": "body", "neck": "neck"},
-            "serverActorType": None,
+            "serverActorType": actor_type,
         }
+        actor_types[str(actor_type)] = slug
 
     # Humanoid enemies share player rigs and gain equipment-defined silhouettes.
     enemy_models = {
@@ -3782,13 +3786,13 @@ def main() -> None:
             manifest["fitVariants"][variant["id"]]=variant
             print("variant",variant["id"],variant["triangles"],"tris")
     manifest["ambientCreatures"] = {}
-    for slug, label, archetype, _scale, tacked in AMBIENT_CREATURES:
+    for slug, label, archetype, _scale, tacked, actor_type in AMBIENT_CREATURES:
         path = args.output / "creatures" / f"{slug}.glb"
         record = {"id": slug, "name": label, "archetype": archetype,
                   "path": catalogue_path(path, repo_root),
                   "generator": "eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py",
                   "tacked": tacked, "region": "sunmane_steppe",
-                  "note": AMBIENT_SOURCE_NOTE}
+                  "note": AMBIENT_SOURCE_NOTE, "actor_type": actor_type}
         if path.exists():
             record |= glb_geometry_stats(path)
         manifest["ambientCreatures"][slug] = record

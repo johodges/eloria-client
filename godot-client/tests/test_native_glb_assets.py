@@ -140,21 +140,25 @@ class NativeGlbAssetsTest(unittest.TestCase):
                          sorted(path.relative_to(ROOT).as_posix()
                                 for path in (CLIENT / "assets/actors/native").rglob("*.glb")))
 
-    def test_ambient_creatures_are_scenery_only(self) -> None:
-        """Ambient livestock are client scenery and must not claim actor types.
+    def test_camp_livestock_claims_its_server_actor_types(self) -> None:
+        """The Sunmane camps' horses are server creatures now, not scenery.
 
-        Actor-type allocation belongs to the server. An ambient model that
-        carried one could collide with a real creature id, so the catalogue
-        keeps them in their own section and the roster count above stays exact.
+        They used to be client-only ambient herds with no actor type. The
+        server stands them as tame livestock, so each carries the actor type
+        eloria-server's creatures.txt allocates, and models.json has to agree
+        in both directions or the wire would draw some other body. They keep
+        their own catalogue section so the roster count above stays exact.
         """
         ambient = self.catalog.get("ambientCreatures", {})
-        self.assertTrue(ambient, "ambient creature section is present")
+        self.assertEqual({"sunmane_steppe_horse": 785, "sunmane_dun_mare": 786,
+                          "sunmane_grey_pony": 787},
+                         {slug: entry.get("actor_type") for slug, entry in ambient.items()})
         for slug, entry in ambient.items():
             with self.subTest(model=slug):
-                self.assertNotIn("actor_type", entry)
                 self.assertIn(slug, self.models["models"])
-                self.assertIsNone(self.models["models"][slug]["serverActorType"])
-                self.assertNotIn(slug, set(self.models["actorTypes"].values()))
+                self.assertEqual(entry["actor_type"],
+                                 self.models["models"][slug]["serverActorType"])
+                self.assertEqual(slug, self.models["actorTypes"][str(entry["actor_type"])])
                 path = ROOT / entry["path"]
                 self.assertTrue(path.is_file(), entry["path"])
                 document = glb_document(path)
