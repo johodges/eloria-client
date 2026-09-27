@@ -13,20 +13,30 @@
     },
     "profileFiles": [
       {
-        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/maps.txt",
-        "sha256": "874627beb1c09d24ea6761924e59bb9bd569848bf92658b70083ddbf3cd0c0c9"
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/harvesting.txt",
+        "sha256": "b8ad7d7e1bc89c47635f4ec772fe712a4be460de9c1fb4b3621fea2a02ef17c3"
+      },
+      {
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/instances/sunmane_gauntlet_low.def",
+        "sha256": "1cadacc33559a2193c664c0a6872ff72afb6737e5271ba27f3cb62031f55abaa",
+        "role": "immutable runtime identity profile"
+      },
+      {
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/instances/sunmane_gauntlet_mid.def",
+        "sha256": "65068b6dc1b5646c577a2e7a49d4d21e4c2832c2f0b9abd730641c6b4cea3bad",
+        "role": "immutable runtime identity profile"
       },
       {
         "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/interactives.txt",
         "sha256": "8b9ec53356bc91886b4b6ed8f3c30b3f628cd5955b0f3197dc24115efee5f8d8"
       },
       {
-        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/npcs.txt",
-        "sha256": "2a70b78fe7c48a8a953c94cb5ffe0d331bd404a9f07fd2d913a082713d973f21"
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/maps.txt",
+        "sha256": "874627beb1c09d24ea6761924e59bb9bd569848bf92658b70083ddbf3cd0c0c9"
       },
       {
-        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/harvesting.txt",
-        "sha256": "b8ad7d7e1bc89c47635f4ec772fe712a4be460de9c1fb4b3621fea2a02ef17c3"
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/npcs.txt",
+        "sha256": "2a70b78fe7c48a8a953c94cb5ffe0d331bd404a9f07fd2d913a082713d973f21"
       },
       {
         "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/spawns.txt",
@@ -40,15 +50,15 @@
     "resolvedHeightsSha256": "a7053aeacc4b1d50366c9dd4b5f268b5aa2c7684847822feda63f797f6da97e7"
   },
   "counts": {
-    "bindings": 191,
+    "bindings": 193,
     "existingMarkers": 81,
-    "runtimePoints": 110,
+    "runtimePoints": 111,
     "roles": {
       "door": 16,
       "harvest": 51,
       "interactive": 18,
       "npc": 27,
-      "return": 22,
+      "return": 24,
       "spawn": 54,
       "territory": 3
     },
@@ -63,12 +73,86 @@
       "harvest": 31,
       "interactive": 4,
       "npc": 12,
-      "return": 6,
+      "return": 8,
       "spawn": 54,
       "territory": 3
     }
   },
   "bindings": [
+    {
+      "id": "[\"config/eloria/instances/sunmane_gauntlet_low.def\",\"sunmane_gauntlet_low\",\"exit_x\",\"exit_y\",\"sunmane_steppe\"]",
+      "source": {
+        "path": "config/eloria/instances/sunmane_gauntlet_low.def",
+        "recordId": "sunmane_gauntlet_low",
+        "line": 19,
+        "fields": [
+          "exit_x",
+          "exit_y"
+        ],
+        "oldTile": [
+          183,
+          142
+        ],
+        "amendmentReport": {
+          "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+          "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+        }
+      },
+      "marker": {
+        "section": "runtimePoints",
+        "id": "runtime-instance-return-sunmane_steppe"
+      },
+      "role": "return",
+      "roads": "marker",
+      "targetOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "aliases": [],
+      "initialPosition": [
+        37.5,
+        28.901029586791992,
+        -27.5
+      ]
+    },
+    {
+      "id": "[\"config/eloria/instances/sunmane_gauntlet_mid.def\",\"sunmane_gauntlet_mid\",\"exit_x\",\"exit_y\",\"sunmane_steppe\"]",
+      "source": {
+        "path": "config/eloria/instances/sunmane_gauntlet_mid.def",
+        "recordId": "sunmane_gauntlet_mid",
+        "line": 19,
+        "fields": [
+          "exit_x",
+          "exit_y"
+        ],
+        "oldTile": [
+          183,
+          142
+        ],
+        "amendmentReport": {
+          "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+          "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+        }
+      },
+      "marker": {
+        "section": "runtimePoints",
+        "id": "runtime-instance-return-sunmane_steppe"
+      },
+      "role": "return",
+      "roads": "marker",
+      "targetOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "aliases": [],
+      "initialPosition": [
+        37.5,
+        28.901029586791992,
+        -27.5
+      ]
+    },
     {
       "id": "harvesting.txt:350:0@202:71",
       "source": {

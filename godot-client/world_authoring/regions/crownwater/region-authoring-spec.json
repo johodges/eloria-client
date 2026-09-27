@@ -117,8 +117,8 @@
     ]
   },
   "gameplay": {
-    "runtimeBindingCount": 170,
-    "runtimePointCount": 163,
+    "runtimeBindingCount": 172,
+    "runtimePointCount": 164,
     "existingMarkerBindingCount": 7
   },
   "bootstrap": {

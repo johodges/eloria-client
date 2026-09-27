@@ -93,8 +93,8 @@
     "ownedFerryConnectionIds": []
   },
   "gameplay": {
-    "runtimeBindingCount": 210,
-    "runtimePointCount": 203,
+    "runtimeBindingCount": 212,
+    "runtimePointCount": 204,
     "existingMarkerBindingCount": 7
   },
   "bootstrap": {

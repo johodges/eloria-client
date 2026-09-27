@@ -151,7 +151,7 @@ seam_anchors = [{"anchor": [-152, 41.82, -35], "blendDistance": 0, "collarDepth"
 owned_route_ids = PackedStringArray("amethyst_barrens--sunmane_steppe-sunmane_steppe", "discovery-sunmane_steppe-301", "discovery-sunmane_steppe-302", "discovery-sunmane_steppe-303", "discovery-sunmane_steppe-304", "discovery-sunmane_steppe-305", "discovery-sunmane_steppe-306", "discovery-sunmane_steppe-307", "discovery-sunmane_steppe-308", "discovery-sunmane_steppe-309", "discovery-sunmane_steppe-310", "discovery-sunmane_steppe-311", "discovery-sunmane_steppe-312", "discovery-sunmane_steppe-313", "discovery-sunmane_steppe-713", "door-sunmane_steppe-cave-crystal_hollow", "door-sunmane_steppe-cave-wind_caves", "mirrorhold--sunmane_steppe-sunmane_steppe", "sunmane_steppe--verdant_stair-sunmane_steppe")
 owned_plan_feature_ids = PackedStringArray("southern_river")
 runtime_binding_seed_path = "res://world_authoring/regions/sunmane_steppe/runtime-bindings.seed.json"
-runtime_binding_seed_sha256 = "1fa1af52b23a89f2641b0a0ba6baf1f0360f36582d855d3f8b4a4af38c3dc5a6"
+runtime_binding_seed_sha256 = "a66a9dc42a1caf713bf261c54dce0fe1bcc69ffad35782e4b4242aa672f0ea11"
 export_directory = "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/authoring"
 
 [node name="Terrain" type="Node3D" parent="."]
@@ -10934,3 +10934,20 @@ opacity = 0.48
 priority = 12
 surface = ExtResource("pass4_grass")
 
+
+[node name="runtime-instance-return-sunmane_steppe" type="Marker3D" parent="Gameplay/RuntimePoints/Returns"]
+script = ExtResource("marker")
+position = Vector3(37.5, 28.901029586791992, -27.5)
+record_id = "runtime-instance-return-sunmane_steppe"
+kind = "runtime_point"
+label = "Independent instance return"
+destination_map = ""
+destination_spawn = ""
+key_id = ""
+default_spawn = false
+facing = Vector3(0, 0, -1)
+linked_node_name = ""
+follow_asset_id = ""
+follow_asset_offset = Vector3(0, 0, 0)
+extras = {}
+runtime_bindings = [{"aliases": [], "id": "[\"config/eloria/instances/sunmane_gauntlet_low.def\",\"sunmane_gauntlet_low\",\"exit_x\",\"exit_y\",\"sunmane_steppe\"]", "provenance": {"sourceProfileSha256": "1cadacc33559a2193c664c0a6872ff72afb6737e5271ba27f3cb62031f55abaa", "sourceReportSha256": "1c8004db67e603b9f8140077a0c484138696cb4c412508a54b71f56ed2250616"}, "roads": "marker", "role": "return", "source": {"amendmentReport": {"path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json", "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"}, "fields": ["exit_x", "exit_y"], "line": 19, "oldTile": [183, 142], "path": "config/eloria/instances/sunmane_gauntlet_low.def", "recordId": "sunmane_gauntlet_low"}, "targetOffset": [0.0, 0.0, 0.0]}, {"aliases": [], "id": "[\"config/eloria/instances/sunmane_gauntlet_mid.def\",\"sunmane_gauntlet_mid\",\"exit_x\",\"exit_y\",\"sunmane_steppe\"]", "provenance": {"sourceProfileSha256": "65068b6dc1b5646c577a2e7a49d4d21e4c2832c2f0b9abd730641c6b4cea3bad", "sourceReportSha256": "1c8004db67e603b9f8140077a0c484138696cb4c412508a54b71f56ed2250616"}, "roads": "marker", "role": "return", "source": {"amendmentReport": {"path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json", "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"}, "fields": ["exit_x", "exit_y"], "line": 19, "oldTile": [183, 142], "path": "config/eloria/instances/sunmane_gauntlet_mid.def", "recordId": "sunmane_gauntlet_mid"}, "targetOffset": [0.0, 0.0, 0.0]}]

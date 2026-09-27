@@ -251,11 +251,11 @@ def verify_current_profile(server, baseline, certificate, previous, shared, publ
     content_source_tiles = publisher.content_source_tile_counts(certified_content) if certified_content else {}
     instance_entries = None
     schema = previous.get('instanceExitSchema')
-    if schema is not None and (type(schema) is not int or schema != 1):
+    if schema is not None and (type(schema) is not int or schema not in (1, 2)):
         raise ValueError('Unsupported instance exit schema in previous publication')
-    if any('instanceExitPositions' in spec for spec in specs.values()) and schema != 1:
+    if any('instanceExitPositions' in spec for spec in specs.values()) and schema not in (1, 2):
         raise ValueError('Previous instance exit table requires its explicit schema')
-    if schema == 1:
+    if schema in (1, 2):
         sources = {}
         for relative, digest in certificate['files'].items():
             if relative.startswith('config/eloria/instances/') and relative.endswith('.def'):
@@ -263,7 +263,7 @@ def verify_current_profile(server, baseline, certificate, previous, shared, publ
                         relative, (baseline / relative).read_text(encoding='utf-8'), specs).items():
                     source['sha256'] = digest
                     sources[identity] = source
-        instance_entries = publisher.validate_instance_exit_table(specs, sources)
+        instance_entries = publisher.validate_instance_exit_table(specs, sources, require_authored=schema == 2)
     regenerated = []
     for relative, expected in certificate['files'].items():
         path = server / relative
@@ -831,7 +831,12 @@ class RegionPlacement:
     def place_instance_exit(self, identity, source, previous_tile):
         """Reserve an independently identified return, never the generic tile cache."""
         old = source['originalTile']
-        expected = self.expected(old, identity=None)
+        publisher = importlib.import_module('publish_diagonal_continent')
+        binding = self.runtime_binding(identity)
+        if self.runtime_binding_region(identity) != self.region:
+            raise PlacementError(f'{identity}: instance binding belongs to another or missing region')
+        publisher.validate_instance_binding(publisher.CLIENT, identity, source, binding)
+        expected = self.expected(old, identity=identity)
         table = self.spec.setdefault('instanceExitPositions', {})
         if identity in table:
             raise PlacementError(f'{identity}: duplicate instance placement')
@@ -839,8 +844,9 @@ class RegionPlacement:
                             if entry['expectedTile'] == expected.tolist() and
                             self.valid(entry['tile'], allow_reserved=True)), None)
         tile = shared_exit
-        if tile is None and self.valid(previous_tile) and math.dist(previous_tile, expected) <= 5 + 1e-8:
-            tile = list(previous_tile)
+        preferred = list(map(int, np.rint(expected)))
+        if tile is None and self.valid(preferred):
+            tile = preferred
         if tile is None:
             tile = self.nearest(expected, 5.)
         if tile is None:
@@ -849,7 +855,16 @@ class RegionPlacement:
         tile = list(map(int, tile))
         entry = {'source': copy.deepcopy(source), 'previousTile': list(previous_tile),
                  'expectedTile': expected.tolist(), 'tile': tile, 'maximumDisplacementMetres': 5}
+        point = np.asarray(self.content.authored_runtime_points[(self.region, identity)], dtype=float)
+        entry['authoredBinding'] = copy.deepcopy(binding)
+        entry['expectedSource'] = {'bindingId': identity, 'region': self.region,
+            'marker': copy.deepcopy(binding['marker']), 'globalPosition': point.tolist(),
+            'serverOrigin': list(self.spec['serverOrigin']),
+            'translation': list(self.spec['translation'])}
         table[identity] = entry
+        self.spec.setdefault('runtimeBindings', {})[identity] = copy.deepcopy(binding)
+        self.spec.setdefault('runtimeBindingPositions', {})[identity] = list(tile)
+        self.spec.setdefault('runtimeBindingSourceTiles', {})[identity] = list(old)
         self.fixed.add(tuple(tile))
         self.reserve(tile)
         self.records.append({'region': self.region, 'record': identity, 'oldTile': list(old),
@@ -1299,7 +1314,7 @@ def export_contracts(world, content, manifests, output, server_path):
         for relative in GAMEPLAY_SOURCES if (server / relative).exists()}, 'baselineSha256': sha(baseline / 'snapshot.json')}
     publication = {'schema': 1, 'revision': REVISION, 'masterPath': exported['masterPath'],
         'masterSha256': exported['masterSha256'], 'sourceProfileSha256': fingerprints,
-        'instanceExitSchema': 1,
+        'instanceExitSchema': 2,
         'regions': {}, 'connections': copy.deepcopy(world.publication_connections),
         'visualConnections': copy.deepcopy(getattr(world, 'visual_connections', [])),
         'preloadDistance': 320, 'retainDistance': 420, 'maxResidentAdjacentMaps': 3,
@@ -1487,7 +1502,8 @@ def export_contracts(world, content, manifests, output, server_path):
                 departures[fields[1]].add(tuple(map(int, fields[start:start + 2])))
         for region, p in placements.items():
             p.validate_instance_exits(departures[region])
-        publisher.validate_instance_exit_table(instance_specs, {k: v[0] for k, v in instance_sources.items()})
+        publisher.validate_instance_exit_table(instance_specs, {k: v[0] for k, v in instance_sources.items()},
+                                               require_authored=True)
         expected_bindings = set(getattr(content, 'runtime_bindings', {}))
         binding_regions = {}
         for region, placement in placements.items():

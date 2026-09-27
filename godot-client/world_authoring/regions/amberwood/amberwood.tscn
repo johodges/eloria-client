@@ -2670,7 +2670,7 @@ owned_route_ids = PackedStringArray("amber-chapel-climb", "amber-moot-path", "am
 owned_plan_feature_ids = PackedStringArray("amber_tributary", "western_river", "whitehorn_torrent")
 owned_ferry_connection_ids = PackedStringArray()
 runtime_binding_seed_path = "res://world_authoring/regions/amberwood/runtime-bindings.seed.json"
-runtime_binding_seed_sha256 = "27b38324dd9911c5488131a878eb62fe10cdf0889a2fd0489544dc6018e5acae"
+runtime_binding_seed_sha256 = "df55ca6d23b9118d401062b73721abe79a13fab796c186f8ce2dc4ca1c8eaf94"
 export_directory = "res://../eloria-assets/maps/nymara-regions/amberwood/authoring"
 
 [node name="Terrain" type="Node3D" parent="."]
@@ -19888,3 +19888,20 @@ extras = {}
 runtime_bindings = []
 
 [node name="GeneratedPreview" type="Node3D" parent="."]
+
+[node name="runtime-instance-return-amberwood" type="Marker3D" parent="Gameplay/RuntimePoints/Returns"]
+script = ExtResource("marker")
+position = Vector3(133.5, 49.032236099243164, 102.5)
+record_id = "runtime-instance-return-amberwood"
+kind = "runtime_point"
+label = "Independent instance return"
+destination_map = ""
+destination_spawn = ""
+key_id = ""
+default_spawn = false
+facing = Vector3(0, 0, -1)
+linked_node_name = ""
+follow_asset_id = ""
+follow_asset_offset = Vector3(0, 0, 0)
+extras = {}
+runtime_bindings = [{"aliases": [], "id": "[\"config/eloria/instances/amberwood_gauntlet_low.def\",\"amberwood_gauntlet_low\",\"exit_x\",\"exit_y\",\"amberwood\"]", "provenance": {"sourceProfileSha256": "bc4b63d6cb103216e45a5e5397af9ce604c917cd2edede608e20c7a3def24d49", "sourceReportSha256": "2261db2721aa1165ec4e5ed4e0f0e01193d5218ea6ed584c87d8822b9654b268"}, "roads": "marker", "role": "return", "source": {"amendmentReport": {"path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json", "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"}, "fields": ["exit_x", "exit_y"], "line": 19, "oldTile": [329, 117], "path": "config/eloria/instances/amberwood_gauntlet_low.def", "recordId": "amberwood_gauntlet_low"}, "targetOffset": [0.0, 0.0, 0.0]}, {"aliases": [], "id": "[\"config/eloria/instances/amberwood_gauntlet_mid.def\",\"amberwood_gauntlet_mid\",\"exit_x\",\"exit_y\",\"amberwood\"]", "provenance": {"sourceProfileSha256": "e690629c583104fcc09cc39827a9d76f3ab65ee12649fbc7fba9a2c7980c0a62", "sourceReportSha256": "2261db2721aa1165ec4e5ed4e0f0e01193d5218ea6ed584c87d8822b9654b268"}, "roads": "marker", "role": "return", "source": {"amendmentReport": {"path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json", "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"}, "fields": ["exit_x", "exit_y"], "line": 19, "oldTile": [329, 117], "path": "config/eloria/instances/amberwood_gauntlet_mid.def", "recordId": "amberwood_gauntlet_mid"}, "targetOffset": [0.0, 0.0, 0.0]}]

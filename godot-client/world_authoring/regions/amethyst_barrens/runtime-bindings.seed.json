@@ -9,6 +9,16 @@
         "sha256": "b8ad7d7e1bc89c47635f4ec772fe712a4be460de9c1fb4b3621fea2a02ef17c3"
       },
       {
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/instances/amethyst_gauntlet_high.def",
+        "sha256": "2b4b65e43285bce12cd1366acf05620ed433f8c0f97e2a71f8d82c043fb1afe8",
+        "role": "immutable runtime identity profile"
+      },
+      {
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/instances/amethyst_gauntlet_low.def",
+        "sha256": "116b54b74f65e6c391ee0ce90ede2ef2a9e92fef2009a2ff8d574a2abe36bda3",
+        "role": "immutable runtime identity profile"
+      },
+      {
         "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/interactives.txt",
         "sha256": "8b9ec53356bc91886b4b6ed8f3c30b3f628cd5955b0f3197dc24115efee5f8d8"
       },
@@ -31,11 +41,85 @@
     ]
   },
   "counts": {
-    "bindings": 189,
-    "runtimePoints": 130,
+    "bindings": 191,
+    "runtimePoints": 131,
     "existingMarkerBindings": 54
   },
   "bindings": [
+    {
+      "id": "[\"config/eloria/instances/amethyst_gauntlet_high.def\",\"amethyst_gauntlet_high\",\"exit_x\",\"exit_y\",\"amethyst_barrens\"]",
+      "source": {
+        "path": "config/eloria/instances/amethyst_gauntlet_high.def",
+        "recordId": "amethyst_gauntlet_high",
+        "line": 19,
+        "fields": [
+          "exit_x",
+          "exit_y"
+        ],
+        "oldTile": [
+          50,
+          343
+        ],
+        "amendmentReport": {
+          "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+          "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+        }
+      },
+      "marker": {
+        "section": "runtimePoints",
+        "id": "runtime-instance-return-amethyst_barrens"
+      },
+      "role": "return",
+      "roads": "marker",
+      "targetOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "aliases": [],
+      "initialPosition": [
+        -75.5,
+        22.962783813476562,
+        -190.5
+      ]
+    },
+    {
+      "id": "[\"config/eloria/instances/amethyst_gauntlet_low.def\",\"amethyst_gauntlet_low\",\"exit_x\",\"exit_y\",\"amethyst_barrens\"]",
+      "source": {
+        "path": "config/eloria/instances/amethyst_gauntlet_low.def",
+        "recordId": "amethyst_gauntlet_low",
+        "line": 19,
+        "fields": [
+          "exit_x",
+          "exit_y"
+        ],
+        "oldTile": [
+          50,
+          343
+        ],
+        "amendmentReport": {
+          "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+          "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+        }
+      },
+      "marker": {
+        "section": "runtimePoints",
+        "id": "runtime-instance-return-amethyst_barrens"
+      },
+      "role": "return",
+      "roads": "marker",
+      "targetOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "aliases": [],
+      "initialPosition": [
+        -75.5,
+        22.962783813476562,
+        -190.5
+      ]
+    },
     {
       "id": "harvesting.txt:163:42@246:204",
       "source": {

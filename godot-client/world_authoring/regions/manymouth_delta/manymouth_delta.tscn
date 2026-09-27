@@ -1439,7 +1439,7 @@ owned_route_ids = PackedStringArray("crownwater--manymouth_delta-manymouth_delta
 owned_plan_feature_ids = PackedStringArray("eastern_distributary", "western_distributary")
 owned_ferry_connection_ids = PackedStringArray("crownwater--manymouth_delta")
 runtime_binding_seed_path = "res://world_authoring/regions/manymouth_delta/runtime-bindings.seed.json"
-runtime_binding_seed_sha256 = "21308fd9008331f646ffb9e0abc4677ef492c70afb99862d0a179d9ebf44b6ee"
+runtime_binding_seed_sha256 = "39dc74f3c7c4f5fc78a66954a9545335d45558f945a594b3837bd1b8e8f3917e"
 export_directory = "res://../eloria-assets/maps/nymara-regions/manymouth_delta/authoring"
 
 [node name="Terrain" type="Node3D" parent="."]
@@ -13081,3 +13081,20 @@ extras = {}
 runtime_bindings = []
 
 [node name="GeneratedPreview" type="Node3D" parent="."]
+
+[node name="runtime-instance-return-manymouth_delta" type="Marker3D" parent="Gameplay/RuntimePoints/Returns"]
+script = ExtResource("marker")
+position = Vector3(-33.5, 3.2410035133361816, -123.5)
+record_id = "runtime-instance-return-manymouth_delta"
+kind = "runtime_point"
+label = "Independent instance return"
+destination_map = ""
+destination_spawn = ""
+key_id = ""
+default_spawn = false
+facing = Vector3(0, 0, -1)
+linked_node_name = ""
+follow_asset_id = ""
+follow_asset_offset = Vector3(0, 0, 0)
+extras = {}
+runtime_bindings = [{"aliases": [], "id": "[\"config/eloria/instances/manymouth_gauntlet_high.def\",\"manymouth_gauntlet_high\",\"exit_x\",\"exit_y\",\"manymouth_delta\"]", "provenance": {"sourceProfileSha256": "3fd07c0ffb9c4995e548bc561b76581bb28514dcd0cac940c1560ddf03da7526", "sourceReportSha256": "02abd0667dcfe3fc556559fc0a9087727b51883ae68a6bb6fd7a327acc3dc8c0"}, "roads": "marker", "role": "return", "source": {"amendmentReport": {"path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json", "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"}, "fields": ["exit_x", "exit_y"], "line": 19, "oldTile": [179, 317], "path": "config/eloria/instances/manymouth_gauntlet_high.def", "recordId": "manymouth_gauntlet_high"}, "targetOffset": [0.0, 0.0, 0.0]}, {"aliases": [], "id": "[\"config/eloria/instances/manymouth_gauntlet_low.def\",\"manymouth_gauntlet_low\",\"exit_x\",\"exit_y\",\"manymouth_delta\"]", "provenance": {"sourceProfileSha256": "a4c2a67c9572a8728285a22d88b3c928e6a28ac9786fd7aa1e4c053a98ce88d2", "sourceReportSha256": "02abd0667dcfe3fc556559fc0a9087727b51883ae68a6bb6fd7a327acc3dc8c0"}, "roads": "marker", "role": "return", "source": {"amendmentReport": {"path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json", "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"}, "fields": ["exit_x", "exit_y"], "line": 19, "oldTile": [179, 317], "path": "config/eloria/instances/manymouth_gauntlet_low.def", "recordId": "manymouth_gauntlet_low"}, "targetOffset": [0.0, 0.0, 0.0]}]

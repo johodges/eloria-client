@@ -1128,7 +1128,7 @@ owned_route_ids = PackedStringArray("crownwater--manymouth_delta-crownwater", "c
 owned_plan_feature_ids = PackedStringArray("crown_isle", "harbour_isle", "outer_east", "outer_north", "outer_northeast", "outer_northwest", "outer_south", "outer_southeast", "outer_southwest", "outer_west", "pavilion_east", "pavilion_north", "pavilion_northeast", "pavilion_northwest", "pavilion_south", "pavilion_southeast", "pavilion_west")
 owned_ferry_connection_ids = PackedStringArray("crownwater--manymouth_delta", "crownwater--ssarathi_ruins", "crownwater--westhaven")
 runtime_binding_seed_path = "res://world_authoring/regions/crownwater/runtime-bindings.seed.json"
-runtime_binding_seed_sha256 = "2162111d0b871744533322e12a08edff1fb93a119a4188644c09a9b67c442e46"
+runtime_binding_seed_sha256 = "11de909a3dc57d804a518f61952972a5b5b1ac42841ec51760bf3383f27530c8"
 export_directory = "res://../eloria-assets/maps/nymara-regions/crownwater/authoring"
 
 [node name="Terrain" type="Node3D" parent="."]
@@ -9777,3 +9777,20 @@ opacity = 0.52
 priority = 10
 surface = ExtResource("pass1_garden-soil")
 
+
+[node name="runtime-instance-return-crownwater" type="Marker3D" parent="Gameplay/RuntimePoints/Returns"]
+script = ExtResource("marker")
+position = Vector3(33.5, 4.554999828338623, -9.5)
+record_id = "runtime-instance-return-crownwater"
+kind = "runtime_point"
+label = "Independent instance return"
+destination_map = ""
+destination_spawn = ""
+key_id = ""
+default_spawn = false
+facing = Vector3(0, 0, -1)
+linked_node_name = ""
+follow_asset_id = ""
+follow_asset_offset = Vector3(0, 0, 0)
+extras = {}
+runtime_bindings = [{"aliases": [], "id": "[\"config/eloria/instances/crownwater_gauntlet_low.def\",\"crownwater_gauntlet_low\",\"exit_x\",\"exit_y\",\"crownwater\"]", "provenance": {"sourceProfileSha256": "280068082e9803fc923a8ce11b09d702bc892b192ed49b87127e5b912c5a1197", "sourceReportSha256": "65fd27bb51aff089ce09ba6fe38a7da8d0ec543a5584b233a2757eb212ff075c"}, "roads": "marker", "role": "return", "source": {"amendmentReport": {"path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json", "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"}, "fields": ["exit_x", "exit_y"], "line": 19, "oldTile": [152, 122], "path": "config/eloria/instances/crownwater_gauntlet_low.def", "recordId": "crownwater_gauntlet_low"}, "targetOffset": [0.0, 0.0, 0.0]}, {"aliases": [], "id": "[\"config/eloria/instances/crownwater_gauntlet_mid.def\",\"crownwater_gauntlet_mid\",\"exit_x\",\"exit_y\",\"crownwater\"]", "provenance": {"sourceProfileSha256": "69d0f2b8ebb721cd94e32847f770da5aaa135ae471d01dd6d43659e3ff59cd8f", "sourceReportSha256": "65fd27bb51aff089ce09ba6fe38a7da8d0ec543a5584b233a2757eb212ff075c"}, "roads": "marker", "role": "return", "source": {"amendmentReport": {"path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json", "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"}, "fields": ["exit_x", "exit_y"], "line": 19, "oldTile": [152, 122], "path": "config/eloria/instances/crownwater_gauntlet_mid.def", "recordId": "crownwater_gauntlet_mid"}, "targetOffset": [0.0, 0.0, 0.0]}]

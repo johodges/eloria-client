@@ -209,7 +209,8 @@ def instance_exit_records(relative, text, regions):
         if identity in result:
             raise ValueError(f'{relative}: duplicate instance exit context {identity}')
         result[identity] = {'path': relative, 'spawnName': context['recordId'],
-                            'fields': ['exit_x', 'exit_y'], 'map': region, 'originalTile': list(old)}
+                            'fields': ['exit_x', 'exit_y'], 'map': region, 'originalTile': list(old),
+                            'line': context['sourceIndices'][0] + 1}
         return list(old)
     shared.rewrite_definition(text, {r: {'delta': [0, 0]} for r in regions}, point_mapper=observe)
     return result
@@ -231,7 +232,81 @@ def certified_instance_exit_sources(client, regions):
     return result
 
 
-def validate_instance_exit_table(specs, sources):
+def validate_instance_binding(client, identity, source, binding):
+    """Join one saved control to a coordinate-free, committed source amendment."""
+    if not isinstance(binding, dict) or binding.get('id') != identity:
+        raise ValueError(f'{identity}: exact authored instance binding is missing')
+    bound_source = binding.get('source', {})
+    wanted = {'path': source['path'], 'recordId': source['spawnName'],
+              'line': source['line'], 'fields': ['exit_x', 'exit_y'], 'oldTile': source['originalTile']}
+    if {k: v for k, v in bound_source.items() if k != 'amendmentReport'} != wanted:
+        raise ValueError(f'{identity}: authored instance source identity differs from certified definition')
+    marker = binding.get('marker', {})
+    if (binding.get('role') != 'return' or binding.get('roads') != 'marker' or binding.get('aliases') != [] or
+            binding.get('targetOffset') != [0, 0, 0] or marker.get('section') != 'runtimePoints' or
+            not isinstance(marker.get('id'), str) or not marker['id']):
+        raise ValueError(f'{identity}: instance exit needs an independent, unoffset return control')
+    if binding.get('provenance', {}).get('sourceProfileSha256') != source['sha256']:
+        raise ValueError(f'{identity}: instance source profile digest differs')
+    amendment = bound_source.get('amendmentReport', {})
+    relative = amendment.get('path', '')
+    if not isinstance(relative, str) or not relative or Path(relative).is_absolute() or '..' in Path(relative).parts:
+        raise ValueError(f'{identity}: invalid instance amendment path')
+    path = (client / relative).resolve()
+    if not path.is_relative_to(client.resolve()) or not path.is_file():
+        raise ValueError(f'{identity}: committed instance amendment is missing')
+    payload = path.read_bytes()
+    if shared.digest(payload) != amendment.get('sha256'):
+        raise ValueError(f'{identity}: committed instance amendment digest differs')
+    report = json.loads(payload)
+    if report.get('schema') != 'eloria-instance-exit-binding-amendment-v1' or not isinstance(report.get('records'), list):
+        raise ValueError(f'{identity}: unsupported instance amendment schema')
+    records = {}
+    for row in report['records']:
+        if not isinstance(row, dict) or not isinstance(row.get('id'), str) or row['id'] in records:
+            raise ValueError(f'{identity}: duplicate or invalid amendment identity')
+        records[row['id']] = row
+    wanted_row = {'id': identity, 'region': source['map'],
+                  'source': {**wanted, 'sha256': source['sha256']}, 'marker': marker}
+    if records.get(identity) != wanted_row:
+        raise ValueError(f'{identity}: amendment source/region/marker association differs')
+    return records
+
+
+def validate_authored_instance_entries(client, specs, sources, entries):
+    amendment_source = None
+    for region, spec in specs.items():
+        for identity, entry in spec['instanceExitPositions'].items():
+            binding = entry.get('authoredBinding')
+            if binding != spec.get('runtimeBindings', {}).get(identity):
+                raise ValueError(f'{identity}: independent instance binding differs from publication bindings')
+            amendment = validate_instance_binding(client, identity, sources[identity], binding)
+            reference = binding['source']['amendmentReport']
+            if amendment_source is None:
+                amendment_source = reference
+            elif reference != amendment_source:
+                raise ValueError('Authored instance exits require one identical amendment report')
+            if set(amendment) != set(sources):
+                raise ValueError('Instance amendment does not exactly cover all certified definitions')
+            if (spec.get('runtimeBindingPositions', {}).get(identity) != entry['tile'] or
+                    spec.get('runtimeBindingSourceTiles', {}).get(identity) != sources[identity]['originalTile']):
+                raise ValueError(f'{identity}: independent instance binding target/source differs')
+            expected = entry.get('expectedSource', {})
+            point = expected.get('globalPosition')
+            if (expected.get('bindingId') != identity or expected.get('region') != region or
+                    expected.get('marker') != binding['marker'] or
+                    expected.get('serverOrigin') != spec['serverOrigin'] or
+                    expected.get('translation') != spec['translation'] or
+                    not isinstance(point, list) or len(point) != 3 or
+                    any(type(v) not in (int, float) or not math.isfinite(v) for v in point)):
+                raise ValueError(f'{identity}: invalid saved instance expected-point provenance')
+            projected = [point[0] - spec['translation'][0] + spec['serverOrigin'][0] - .5,
+                         spec['serverOrigin'][1] - (point[2] - spec['translation'][2]) - .5]
+            if projected != entry['expectedTile']:
+                raise ValueError(f'{identity}: expected tile differs from its saved authored point')
+
+
+def validate_instance_exit_table(specs, sources, *, client=None, require_authored=False):
     """Require one independently placed record for every certified source exit."""
     entries = {}
     for region, spec in specs.items():
@@ -239,7 +314,11 @@ def validate_instance_exit_table(specs, sources):
         if not isinstance(table, dict):
             raise ValueError(f'{region}: missing instance exit table')
         for identity, entry in table.items():
-            if identity in entries or identity not in sources or entry.get('source') != sources[identity]:
+            expected_source = copy.deepcopy(sources.get(identity))
+            # Schema 1 predates explicit source lines and authored exit controls.
+            if not require_authored and isinstance(expected_source, dict) and 'line' not in entry.get('source', {}):
+                expected_source.pop('line', None)
+            if identity in entries or identity not in sources or entry.get('source') != expected_source:
                 raise ValueError(f'{identity}: duplicate or changed instance source provenance')
             if entry['source']['map'] != region:
                 raise ValueError(f'{identity}: instance exit is stored under the wrong region')
@@ -259,6 +338,8 @@ def validate_instance_exit_table(specs, sources):
             entries[identity] = entry
     if set(entries) != set(sources):
         raise ValueError('Instance exit table is incomplete for the certified source inventory')
+    if require_authored:
+        validate_authored_instance_entries(CLIENT if client is None else client, specs, sources, entries)
     return entries
 
 
@@ -893,12 +974,13 @@ def plan(client, server, publication_path):
     texts['maps.txt'], portal_entries = replace_crossings(texts['maps.txt'], publication['connections'], specs)
     instance_entries = None
     schema = publication.get('instanceExitSchema')
-    if schema is not None and (type(schema) is not int or schema != 1):
+    if schema is not None and (type(schema) is not int or schema not in (1, 2)):
         raise ValueError('Unsupported instance exit schema')
-    if any('instanceExitPositions' in spec for spec in current.get('placements', {}).values()) and publication.get('instanceExitSchema') != 1:
+    if (any('instanceExitPositions' in spec for spec in current.get('placements', {}).values()) and schema not in (1, 2)) or (current.get('instanceExitSchema') == 2 and schema != 2):
         raise ValueError('A revised publication cannot discard certified instance exit identities')
-    if publication.get('instanceExitSchema') == 1:
-        instance_entries = validate_instance_exit_table(specs, certified_instance_exit_sources(client, specs))
+    if schema in (1, 2):
+        instance_entries = validate_instance_exit_table(specs, certified_instance_exit_sources(client, specs),
+                                                       client=client, require_authored=schema == 2)
     elif any('instanceExitPositions' in spec for spec in specs.values()):
         raise ValueError('Instance exit table requires its explicit publication schema')
     for filename, text in texts.items():
@@ -995,6 +1077,8 @@ def plan(client, server, publication_path):
     manifest[STATE] = {'schema': 1, 'revision': publication['revision'], 'publicationSha256': publication_hash,
                       'masterSha256': publication['masterSha256'], 'placements': placements, 'collisionSha256':
                       {region: shared.digest(blob) for region, blob in blobs.items()}}
+    if schema is not None:
+        manifest[STATE]['instanceExitSchema'] = schema
     declared_storage = {region:storage_fields(spec) for region,spec in specs.items() if storage_fields(spec)}
     if declared_storage:
         manifest[STATE]['storageByRegion'] = declared_storage

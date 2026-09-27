@@ -412,5 +412,81 @@ class InstanceExitRecordTests(unittest.TestCase):
             P.validate_standing_points(regions, blobs, {}, [], {identity: entry})
 
 
+
+
+class AuthoredInstancePlanTests(unittest.TestCase):
+    fixture = PublicationTests.fixture
+    def test_authored_instance_and_portal_bindings_plan_repeat_and_successor(self):
+        with tempfile.TemporaryDirectory() as folder:
+            client, server, path = self.fixture(Path(folder))
+            publication = P.read_json(path); publication['instanceExitSchema'] = 2
+            baseline = client/'eloria-assets/maps/nymara-regions/_continent/legacy-server-profile'
+            relative = 'config/eloria/instances/arena.def'
+            definition = '[instance]\nspawn_name: arena\nmap_id: room\nexit_map: four_gates\nexit_x: 7\nexit_y: 8\n'
+            target = server/relative; target.parent.mkdir(parents=True); target.write_text(definition)
+            original = baseline/relative; original.parent.mkdir(parents=True); original.write_text(definition)
+            maps = (server/'config/eloria/maps.txt').read_bytes()
+            (baseline/'config/eloria/maps.txt').write_bytes(maps)
+            digest = P.shared.digest(original.read_bytes())
+            (baseline/'snapshot.json').write_text(json.dumps({'files': {relative:digest}}))
+            identity, source = next(iter(P.instance_exit_records(relative, definition, publication['regions']).items()))
+            source['sha256'] = digest
+            marker = {'section':'runtimePoints','id':'independent-return'}
+            report_source = {'path':relative,'recordId':'arena','line':5,'fields':['exit_x','exit_y'],'oldTile':[7,8],'sha256':digest}
+            report = {'schema':'eloria-instance-exit-binding-amendment-v1','records':[
+                {'id':identity,'region':'four_gates','source':report_source,'marker':marker}]}
+            amendment = client/'amendment.json'; amendment.write_text(json.dumps(report))
+            bound_source = {k:v for k,v in report_source.items() if k!='sha256'}
+            bound_source['amendmentReport'] = {'path':'amendment.json','sha256':P.shared.digest(amendment.read_bytes())}
+            binding = {'id':identity,'source':bound_source,'marker':marker,'role':'return','roads':'marker',
+                       'targetOffset':[0,0,0],'aliases':[],'provenance':{'sourceProfileSha256':digest}}
+            portal = {'id':'room-return','role':'return','source':{'path':'config/eloria/maps.txt','line':4,'oldTile':[7,8]},
+                      'provenance':{'sourceProfileSha256':P.shared.digest(maps)}}
+            for spec in publication['regions'].values(): spec['instanceExitPositions'] = {}
+            spec = publication['regions']['four_gates']
+            spec['runtimeBindings'] = {identity:binding,'room-return':portal}
+            spec['runtimeBindingPositions'] = {identity:[16,17],'room-return':[14,14]}
+            spec['runtimeBindingSourceTiles'] = {identity:[7,8],'room-return':[7,8]}
+            spec['portalPositions'] = {'room-return':{'oldTile':[7,8],'tile':[14,14],'runtimeBindingId':'room-return'}}
+            entry = {'source':source,'previousTile':[7,8],'expectedTile':[16.,17.],'tile':[16,17],
+                     'maximumDisplacementMetres':5,'postContent':{'standing':True,'hubAccessible':True,'noPortalTrigger':True},
+                     'authoredBinding':binding,'expectedSource':{'bindingId':identity,'region':'four_gates','marker':marker,
+                          'globalPosition':[4.5,10.,-5.5],'serverOrigin':[12,12],'translation':[0,0,0]}}
+            spec['instanceExitPositions'][identity] = entry
+            path.write_text(json.dumps(publication))
+            before,pending,first = P.plan(client,server,path)
+            self.assertEqual(target.read_text(),definition)
+            self.assertIn(b'exit_x: 16\nexit_y: 17',pending[target].replace(b'\r\n',b'\n'))
+            self.assertIn(b'room|2|3|four_gates|14|14',pending[server/'config/eloria/maps.txt'].replace(b' ',b''))
+            self.assertEqual(first['instanceExits'][identity]['tile'],[16,17])
+            P.shared.apply_plan(before,pending)
+            self.assertEqual(P.plan(client,server,path)[1],{})
+            # The next publication starts from each actual qualified record.
+            publication['sourcePublicationSha256'] = first['publicationSha256']
+            for item in publication['regions'].values():
+                item['previousServerOrigin'] = item['serverOrigin']
+                item['contentTransform'] = {'scale':1,'sourceCenter':[0,0],'targetCenter':[0,0]}
+                item['tilePositions'] = {}
+            entry.update(previousTile=[16,17],tile=[17,17],expectedTile=[17.,17.])
+            entry['expectedSource']['globalPosition'][0] = 5.5
+            spec['runtimeBindingPositions'].update({identity:[17,17],'room-return':[15,14]})
+            spec['portalPositions']['room-return'].update(oldTile=[14,14],tile=[15,14])
+            path.write_text(json.dumps(publication))
+            before,pending,second = P.plan(client,server,path)
+            self.assertIn(b'exit_x: 17\nexit_y: 17',pending[target].replace(b'\r\n',b'\n'))
+            P.shared.apply_plan(before,pending)
+            self.assertEqual(P.plan(client,server,path)[1],{})
+            current_maps=(server/'config/eloria/maps.txt').read_text()
+            self.assertIn('room|2|3|four_gates|15|14',current_maps.replace(' ',''))
+            target.write_text(target.read_text().replace('exit_x: 17','exit_x: 18'))
+            with self.assertRaisesRegex(ValueError,'certified repeated'):
+                P.plan(client,server,path)
+
+    def test_authored_table_checks_report_inventory_and_saved_point_provenance(self):
+        regions, identity, entry, _ = InstanceExitRecordTests().fixture()
+        # The authored format cannot silently accept an old unbound table.
+        with self.assertRaises(ValueError):
+            P.validate_instance_exit_table(regions,{identity:entry['source']},require_authored=True)
+
 if __name__ == '__main__':
     unittest.main()

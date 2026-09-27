@@ -78,8 +78,8 @@
     "ownedPlanFeatureIds": []
   },
   "gameplay": {
-    "runtimeBindingCount": 189,
-    "runtimePointCount": 130,
+    "runtimeBindingCount": 191,
+    "runtimePointCount": 131,
     "existingMarkerBindingCount": 54
   }
 }

@@ -1518,10 +1518,34 @@ class ContentTransformTests(unittest.TestCase):
         np.testing.assert_allclose(old, L.retained_map_xz(transform, self.PROBES), atol=1e-7)
 
 
-def test_instance_exit_placement_ignores_generic_cache_and_preserves_shared_returns():
+def bind_instance_fixture(p, tmp_path, monkeypatch, identities=('a', 'b'), old=(6, 7)):
+    monkeypatch.syspath_prepend(str(E.TOOLS))
+    import publish_diagonal_continent as publisher
+    monkeypatch.setattr(publisher, 'CLIENT', tmp_path)
+    source = {'path': 'config/eloria/instances/a.def', 'spawnName': 'arena', 'fields': ['exit_x','exit_y'],
+              'line': 5, 'originalTile': list(old), 'map': 'test', 'sha256': 'a'*64}
+    marker = {'section': 'runtimePoints', 'id': 'independent-return'}
+    report = {'schema': 'eloria-instance-exit-binding-amendment-v1', 'records': [
+        {'id': identity, 'region': 'test', 'marker': marker,
+         'source': {'path': source['path'], 'recordId': 'arena', 'fields': source['fields'],
+                    'line': 5, 'oldTile': list(old), 'sha256': source['sha256']}}
+        for identity in identities]}
+    path = tmp_path/'amendment.json'; path.write_text(json.dumps(report))
+    bindings = {identity: {'id': identity, 'role': 'return', 'roads': 'marker', 'targetOffset': [0,0,0], 'aliases': [],
+        'marker': marker, 'source': {**row['source'], 'amendmentReport': {'path': 'amendment.json', 'sha256': E.sha(path)}},
+        'provenance': {'sourceProfileSha256': source['sha256']}} for identity,row in zip(identities,report['records'])}
+    for binding in bindings.values(): binding['source'].pop('sha256')
+    p.content.runtime_bindings = bindings
+    p.content.runtime_bindings_by_region = {'test': bindings}
+    p.content.authored_runtime_points = {('test', identity): np.array([old[0]+.5-15+100, 10.,15-old[1]-.5+200]) for identity in identities}
+    p.spec['translation'] = [100.,0.,200.]
+    return source
+
+
+def test_instance_exit_placement_ignores_generic_cache_and_preserves_shared_returns(tmp_path, monkeypatch):
     p = placement(); p.reserved[:] = False
     p.spec['tilePositions']['6:7'] = [28, 28]
-    source = {'originalTile': [6, 7], 'map': 'test', 'path': 'config/eloria/instances/a.def'}
+    source = bind_instance_fixture(p, tmp_path, monkeypatch)
     generic = copy.deepcopy(p.spec['tilePositions'])
     tile = p.place_instance_exit('a', source, [28, 28])
     assert tile == [6, 7]
@@ -1535,13 +1559,15 @@ def test_instance_exit_placement_ignores_generic_cache_and_preserves_shared_retu
         p.place_instance_exit('a', source, [28, 28])
 
 
-def test_instance_exit_budget_and_postcontent_checks_are_not_waived():
+def test_instance_exit_budget_and_postcontent_checks_are_not_waived(tmp_path, monkeypatch):
     source = {'originalTile': [6, 7], 'map': 'test'}
     p = placement(); p.reserved[:] = True
+    source = bind_instance_fixture(p, tmp_path, monkeypatch)
     assert p.place_instance_exit('a', source, [28, 28]) is None
     assert p.failures[-1]['maximumDisplacementMetres'] == 5
     for kind in ('blocked', 'disconnected', 'trigger'):
         p = placement(); p.reserved[:] = False
+        source = bind_instance_fixture(p, tmp_path, monkeypatch)
         p.place_instance_exit('a', source, [6, 7])
         if kind == 'blocked': p.grid[7, 6] = 0
         if kind == 'disconnected': p.grid[10, :] = 0
@@ -1549,9 +1575,10 @@ def test_instance_exit_budget_and_postcontent_checks_are_not_waived():
             p.validate_instance_exits({(6, 7)} if kind == 'trigger' else set())
 
 
-def test_instance_exit_fixed_destination_survives_storage_and_body_policy():
+def test_instance_exit_fixed_destination_survives_storage_and_body_policy(tmp_path, monkeypatch):
     p = placement(); p.reserved[:] = False
-    p.place_instance_exit('a', {'originalTile': [6, 7], 'map': 'test'}, [6, 7])
+    source = bind_instance_fixture(p, tmp_path, monkeypatch)
+    p.place_instance_exit('a', source, [6, 7])
     assert not p.valid([6, 7])
     # A malicious later body write is caught even if it bypassed reservation.
     p.stamp_storage([[6, 7]])
@@ -1613,7 +1640,7 @@ def test_instance_guard_and_predecessor_read_exact_record_history_across_publica
         with pytest.raises(ValueError, match='beyond the previous coordinated'):
             E.verify_current_profile(server, baseline, certificate, previous, shared, publisher)
     (server/relative).write_text(definition([17,17]))
-    for invalid_schema in (None, 2, True):
+    for invalid_schema in (None, 3, True):
         previous['instanceExitSchema'] = invalid_schema
         with pytest.raises(ValueError, match='schema'):
             E.verify_current_profile(server, baseline, certificate, previous, shared, publisher)
@@ -1621,3 +1648,52 @@ def test_instance_guard_and_predecessor_read_exact_record_history_across_publica
     previous['regions']['test']['instanceExitPositions'].clear()
     with pytest.raises(ValueError, match='incomplete'):
         E.verify_current_profile(server, baseline, certificate, previous, shared, publisher)
+
+
+def test_authored_instance_binding_rejects_missing_wrong_region_and_source(tmp_path, monkeypatch):
+    for fault in ('missing', 'region', 'digest', 'line', 'name', 'marker', 'alias', 'report'):
+        p = placement(); p.reserved[:] = False
+        source = bind_instance_fixture(p, tmp_path, monkeypatch)
+        binding = p.content.runtime_bindings['a']
+        if fault == 'missing':
+            p.content.runtime_bindings = {}; p.content.runtime_bindings_by_region = {}
+        elif fault == 'region': p.content.runtime_bindings_by_region = {'other': {'a': binding}}
+        elif fault == 'digest': binding['provenance']['sourceProfileSha256'] = 'b'*64
+        elif fault == 'line': binding['source']['line'] += 1
+        elif fault == 'name': binding['source']['recordId'] = 'different'
+        elif fault == 'marker': binding['marker'] = {'section':'runtimePoints','id':'keeper'}
+        elif fault == 'alias': binding['aliases'] = ['shared-tile']
+        else: (tmp_path/'amendment.json').write_text('{}')
+        with pytest.raises(ValueError):
+            p.place_instance_exit('a', source, [6,7])
+
+
+
+
+def test_authored_instances_reject_conflicting_full_inventory_reports(tmp_path, monkeypatch):
+    p = placement(); p.reserved[:] = False
+    source = bind_instance_fixture(p, tmp_path, monkeypatch)
+    p.place_instance_exit('a', source, [6,7])
+    # Both reports contain every id and certify their own binding; the second
+    # contradicts the first binding and must not become a second authority.
+    report = json.loads((tmp_path/'amendment.json').read_text())
+    report['records'][0]['marker'] = {'section':'runtimePoints','id':'other'}
+    alternate = tmp_path/'alternate.json'; alternate.write_text(json.dumps(report))
+    p.content.runtime_bindings['b']['source']['amendmentReport'] = {'path':'alternate.json','sha256':E.sha(alternate)}
+    p.place_instance_exit('b', source, [6,7]); p.validate_instance_exits(set())
+    import publish_diagonal_continent as publisher
+    with pytest.raises(ValueError, match='one identical amendment'):
+        publisher.validate_instance_exit_table({'test':p.spec},{'a':source,'b':source},client=tmp_path,require_authored=True)
+
+
+def test_moving_authored_instance_marker_one_metre_moves_preferred_exit(tmp_path, monkeypatch):
+    p = placement(); p.reserved[:] = False
+    source = bind_instance_fixture(p, tmp_path, monkeypatch)
+    assert p.place_instance_exit('a', source, [6,7]) == [6,7]
+    p = placement(); p.reserved[:] = False
+    source = bind_instance_fixture(p, tmp_path, monkeypatch)
+    p.content.authored_runtime_points[('test','a')][0] += 1
+    assert p.place_instance_exit('a', source, [6,7]) == [7,7]
+    assert p.spec['instanceExitPositions']['a']['previousTile'] == [6,7]
+    assert p.spec['runtimeBindingPositions']['a'] == [7,7]
+    assert '6:7' not in p.spec['tilePositions']

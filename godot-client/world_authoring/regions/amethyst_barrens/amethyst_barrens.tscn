@@ -174,7 +174,7 @@ seam_anchors = [{"anchor": [-160, 89.91, -61], "blendDistance": 0, "collarDepth"
 owned_route_ids = PackedStringArray("amethyst_barrens--mirrorhold-amethyst_barrens", "amethyst_barrens--sunmane_steppe-amethyst_barrens", "amethyst_barrens--whitehorn_range-amethyst_barrens", "discovery-amethyst_barrens-1276", "discovery-amethyst_barrens-699", "discovery-amethyst_barrens-700", "discovery-amethyst_barrens-701", "discovery-amethyst_barrens-702", "discovery-amethyst_barrens-703", "discovery-amethyst_barrens-704", "discovery-amethyst_barrens-705", "discovery-amethyst_barrens-706", "discovery-amethyst_barrens-707", "discovery-amethyst_barrens-708", "discovery-amethyst_barrens-710", "door-amethyst_barrens-counting-house-door", "door-amethyst_barrens-geode-hollow-mouth", "door-amethyst_barrens-measure-house-door", "door-amethyst_barrens-resonant-vault-stair", "door-amethyst_barrens-shardworks-headframe", "door-amethyst_barrens-sour-cut-mouth", "door-amethyst_barrens-storm-barrow-stair")
 owned_plan_feature_ids = PackedStringArray()
 runtime_binding_seed_path = "res://world_authoring/regions/amethyst_barrens/runtime-bindings.seed.json"
-runtime_binding_seed_sha256 = "b082e71a4956da4466e4356e917b94011098d6025725a54ec9a6d16a8f1e6075"
+runtime_binding_seed_sha256 = "f3ef981dcbf9f81497b753b92891598f73ab58a209c42df69735885f96fcb8af"
 export_directory = "res://../eloria-assets/maps/nymara-regions/amethyst_barrens/authoring"
 
 [node name="Terrain" type="Node3D" parent="."]
@@ -7474,3 +7474,20 @@ collision_role = "none"
 metadata = {"kind": "prop", "authoringPass": "amethyst-visual-pass1", "cosmeticOnly": true}
 
 [node name="Content" parent="AuthoredAssets/Pass1_StoresAssayEast" instance=ExtResource("prototype_109")]
+
+[node name="runtime-instance-return-amethyst_barrens" type="Marker3D" parent="Gameplay/RuntimePoints/Returns"]
+script = ExtResource("marker")
+position = Vector3(-75.5, 22.962783813476562, -190.5)
+record_id = "runtime-instance-return-amethyst_barrens"
+kind = "runtime_point"
+label = "Independent instance return"
+destination_map = ""
+destination_spawn = ""
+key_id = ""
+default_spawn = false
+facing = Vector3(0, 0, -1)
+linked_node_name = ""
+follow_asset_id = ""
+follow_asset_offset = Vector3(0, 0, 0)
+extras = {}
+runtime_bindings = [{"aliases": [], "id": "[\"config/eloria/instances/amethyst_gauntlet_high.def\",\"amethyst_gauntlet_high\",\"exit_x\",\"exit_y\",\"amethyst_barrens\"]", "provenance": {"sourceProfileSha256": "2b4b65e43285bce12cd1366acf05620ed433f8c0f97e2a71f8d82c043fb1afe8", "sourceReportSha256": "31a68d6df89ca2658f821f5d4ac414c32112ff8b44e4fe25eb0af8853e1c802b"}, "roads": "marker", "role": "return", "source": {"amendmentReport": {"path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json", "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"}, "fields": ["exit_x", "exit_y"], "line": 19, "oldTile": [50, 343], "path": "config/eloria/instances/amethyst_gauntlet_high.def", "recordId": "amethyst_gauntlet_high"}, "targetOffset": [0.0, 0.0, 0.0]}, {"aliases": [], "id": "[\"config/eloria/instances/amethyst_gauntlet_low.def\",\"amethyst_gauntlet_low\",\"exit_x\",\"exit_y\",\"amethyst_barrens\"]", "provenance": {"sourceProfileSha256": "116b54b74f65e6c391ee0ce90ede2ef2a9e92fef2009a2ff8d574a2abe36bda3", "sourceReportSha256": "31a68d6df89ca2658f821f5d4ac414c32112ff8b44e4fe25eb0af8853e1c802b"}, "roads": "marker", "role": "return", "source": {"amendmentReport": {"path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json", "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"}, "fields": ["exit_x", "exit_y"], "line": 19, "oldTile": [50, 343], "path": "config/eloria/instances/amethyst_gauntlet_low.def", "recordId": "amethyst_gauntlet_low"}, "targetOffset": [0.0, 0.0, 0.0]}]

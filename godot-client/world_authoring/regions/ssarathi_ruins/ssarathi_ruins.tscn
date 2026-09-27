@@ -1727,7 +1727,7 @@ owned_route_ids = PackedStringArray("crownwater--ssarathi_ruins-ssarathi_ruins",
 owned_plan_feature_ids = PackedStringArray()
 owned_ferry_connection_ids = PackedStringArray("crownwater--ssarathi_ruins")
 runtime_binding_seed_path = "res://world_authoring/regions/ssarathi_ruins/runtime-bindings.seed.json"
-runtime_binding_seed_sha256 = "7a9c9dfc945e94caafc11dcd8d0eaa0f028ab68bfd730503f67cd455e735d95e"
+runtime_binding_seed_sha256 = "f4e33f202add0e6e74ec60839ebdd77db2f5e32d5819dea8bce9d91316239b31"
 export_directory = "res://../eloria-assets/maps/nymara-regions/ssarathi_ruins/authoring"
 
 [node name="Terrain" type="Node3D" parent="."]
@@ -15861,3 +15861,20 @@ extras = {}
 runtime_bindings = []
 
 [node name="GeneratedPreview" type="Node3D" parent="."]
+
+[node name="runtime-instance-return-ssarathi_ruins" type="Marker3D" parent="Gameplay/RuntimePoints/Returns"]
+script = ExtResource("marker")
+position = Vector3(4.5, 2.7594932317733765, 156.5)
+record_id = "runtime-instance-return-ssarathi_ruins"
+kind = "runtime_point"
+label = "Independent instance return"
+destination_map = ""
+destination_spawn = ""
+key_id = ""
+default_spawn = false
+facing = Vector3(0, 0, -1)
+linked_node_name = ""
+follow_asset_id = ""
+follow_asset_offset = Vector3(0, 0, 0)
+extras = {}
+runtime_bindings = [{"aliases": [], "id": "[\"config/eloria/instances/ssarathi_gauntlet_high.def\",\"ssarathi_gauntlet_high\",\"exit_x\",\"exit_y\",\"ssarathi_ruins\"]", "provenance": {"sourceProfileSha256": "8c072f94d95139459c5d497c9bc2870cbfff0bfb945c10561d90a2a24e513b9e", "sourceReportSha256": "27aadab44f53f8db304652b67935276af0456f33cca8dc4dd260c201aba10d0a"}, "roads": "marker", "role": "return", "source": {"amendmentReport": {"path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json", "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"}, "fields": ["exit_x", "exit_y"], "line": 19, "oldTile": [198, 81], "path": "config/eloria/instances/ssarathi_gauntlet_high.def", "recordId": "ssarathi_gauntlet_high"}, "targetOffset": [0.0, 0.0, 0.0]}, {"aliases": [], "id": "[\"config/eloria/instances/ssarathi_gauntlet_mid.def\",\"ssarathi_gauntlet_mid\",\"exit_x\",\"exit_y\",\"ssarathi_ruins\"]", "provenance": {"sourceProfileSha256": "86bbed379f46291e1dbaf8241c0884215a0c89dcd9991aec8bf8b083dcfa188e", "sourceReportSha256": "27aadab44f53f8db304652b67935276af0456f33cca8dc4dd260c201aba10d0a"}, "roads": "marker", "role": "return", "source": {"amendmentReport": {"path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json", "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"}, "fields": ["exit_x", "exit_y"], "line": 19, "oldTile": [198, 81], "path": "config/eloria/instances/ssarathi_gauntlet_mid.def", "recordId": "ssarathi_gauntlet_mid"}, "targetOffset": [0.0, 0.0, 0.0]}]

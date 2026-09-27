@@ -10,6 +10,16 @@
         "role": "immutable runtime identity profile"
       },
       {
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/instances/grey_moors_gauntlet_low.def",
+        "sha256": "5522493145066694742bb99495d9cd723c0c8e8834361b9e93fdc2fa4d1148e0",
+        "role": "immutable runtime identity profile"
+      },
+      {
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/instances/grey_moors_gauntlet_mid.def",
+        "sha256": "7ff92e24b0c7e54c27563e70c983bb63269e3cc7cde501561f62f02e9e80c5c6",
+        "role": "immutable runtime identity profile"
+      },
+      {
         "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/interactives.txt",
         "sha256": "8b9ec53356bc91886b4b6ed8f3c30b3f628cd5955b0f3197dc24115efee5f8d8",
         "role": "immutable runtime identity profile"
@@ -32,11 +42,85 @@
     ]
   },
   "counts": {
-    "bindings": 210,
-    "runtimePoints": 203,
+    "bindings": 212,
+    "runtimePoints": 204,
     "existingMarkerBindings": 7
   },
   "bindings": [
+    {
+      "id": "[\"config/eloria/instances/grey_moors_gauntlet_low.def\",\"grey_moors_gauntlet_low\",\"exit_x\",\"exit_y\",\"grey_moors\"]",
+      "source": {
+        "path": "config/eloria/instances/grey_moors_gauntlet_low.def",
+        "recordId": "grey_moors_gauntlet_low",
+        "line": 19,
+        "fields": [
+          "exit_x",
+          "exit_y"
+        ],
+        "oldTile": [
+          244,
+          278
+        ],
+        "amendmentReport": {
+          "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+          "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+        }
+      },
+      "marker": {
+        "section": "runtimePoints",
+        "id": "runtime-instance-return-grey_moors"
+      },
+      "role": "return",
+      "roads": "marker",
+      "targetOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "aliases": [],
+      "initialPosition": [
+        80.5,
+        97.74833679199219,
+        -117.5
+      ]
+    },
+    {
+      "id": "[\"config/eloria/instances/grey_moors_gauntlet_mid.def\",\"grey_moors_gauntlet_mid\",\"exit_x\",\"exit_y\",\"grey_moors\"]",
+      "source": {
+        "path": "config/eloria/instances/grey_moors_gauntlet_mid.def",
+        "recordId": "grey_moors_gauntlet_mid",
+        "line": 19,
+        "fields": [
+          "exit_x",
+          "exit_y"
+        ],
+        "oldTile": [
+          244,
+          278
+        ],
+        "amendmentReport": {
+          "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+          "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+        }
+      },
+      "marker": {
+        "section": "runtimePoints",
+        "id": "runtime-instance-return-grey_moors"
+      },
+      "role": "return",
+      "roads": "marker",
+      "targetOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "aliases": [],
+      "initialPosition": [
+        80.5,
+        97.74833679199219,
+        -117.5
+      ]
+    },
     {
       "id": "harvesting.txt:186:47@192:110",
       "source": {

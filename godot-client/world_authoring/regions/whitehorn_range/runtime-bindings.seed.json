@@ -5,8 +5,18 @@
     "sourceReportSha256": "7c4fa4a19bbb89978ae2619a6368cce1f6c90c12499d196a41326e2603c7ad83",
     "profileFiles": [
       {
-        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/maps.txt",
-        "sha256": "874627beb1c09d24ea6761924e59bb9bd569848bf92658b70083ddbf3cd0c0c9",
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/harvesting.txt",
+        "sha256": "b8ad7d7e1bc89c47635f4ec772fe712a4be460de9c1fb4b3621fea2a02ef17c3",
+        "role": "immutable runtime identity profile"
+      },
+      {
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/instances/whitehorn_gauntlet_high.def",
+        "sha256": "b427f9fac7016b5c25dbceb867bdcf3d13c126f74fb297ff3b9c112292ec1703",
+        "role": "immutable runtime identity profile"
+      },
+      {
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/instances/whitehorn_gauntlet_low.def",
+        "sha256": "fa4e08a190552dc937e89f9487513c1169285834c14b4fc76c74980c1bd9ddde",
         "role": "immutable runtime identity profile"
       },
       {
@@ -15,13 +25,13 @@
         "role": "immutable runtime identity profile"
       },
       {
-        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/npcs.txt",
-        "sha256": "2a70b78fe7c48a8a953c94cb5ffe0d331bd404a9f07fd2d913a082713d973f21",
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/maps.txt",
+        "sha256": "874627beb1c09d24ea6761924e59bb9bd569848bf92658b70083ddbf3cd0c0c9",
         "role": "immutable runtime identity profile"
       },
       {
-        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/harvesting.txt",
-        "sha256": "b8ad7d7e1bc89c47635f4ec772fe712a4be460de9c1fb4b3621fea2a02ef17c3",
+        "path": "eloria-assets/maps/nymara-regions/_continent/legacy-server-profile/config/eloria/npcs.txt",
+        "sha256": "2a70b78fe7c48a8a953c94cb5ffe0d331bd404a9f07fd2d913a082713d973f21",
         "role": "immutable runtime identity profile"
       },
       {
@@ -32,11 +42,85 @@
     ]
   },
   "counts": {
-    "bindings": 197,
-    "runtimePoints": 67,
+    "bindings": 199,
+    "runtimePoints": 68,
     "existingMarkerBindings": 125
   },
   "bindings": [
+    {
+      "id": "[\"config/eloria/instances/whitehorn_gauntlet_high.def\",\"whitehorn_gauntlet_high\",\"exit_x\",\"exit_y\",\"whitehorn_range\"]",
+      "source": {
+        "path": "config/eloria/instances/whitehorn_gauntlet_high.def",
+        "recordId": "whitehorn_gauntlet_high",
+        "line": 19,
+        "fields": [
+          "exit_x",
+          "exit_y"
+        ],
+        "oldTile": [
+          344,
+          274
+        ],
+        "amendmentReport": {
+          "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+          "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+        }
+      },
+      "marker": {
+        "section": "runtimePoints",
+        "id": "runtime-instance-return-whitehorn_range"
+      },
+      "role": "return",
+      "roads": "marker",
+      "targetOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "aliases": [],
+      "initialPosition": [
+        26.5,
+        214.6747589111328,
+        -89.5
+      ]
+    },
+    {
+      "id": "[\"config/eloria/instances/whitehorn_gauntlet_low.def\",\"whitehorn_gauntlet_low\",\"exit_x\",\"exit_y\",\"whitehorn_range\"]",
+      "source": {
+        "path": "config/eloria/instances/whitehorn_gauntlet_low.def",
+        "recordId": "whitehorn_gauntlet_low",
+        "line": 19,
+        "fields": [
+          "exit_x",
+          "exit_y"
+        ],
+        "oldTile": [
+          344,
+          274
+        ],
+        "amendmentReport": {
+          "path": "godot-client/world_authoring/instance-exit-binding-amendment-v1.json",
+          "sha256": "9cb75b254e371afb89a8a59fd32a5b08a8d7f32af32a560dec5aa7f9c0e55bbd"
+        }
+      },
+      "marker": {
+        "section": "runtimePoints",
+        "id": "runtime-instance-return-whitehorn_range"
+      },
+      "role": "return",
+      "roads": "marker",
+      "targetOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "aliases": [],
+      "initialPosition": [
+        26.5,
+        214.6747589111328,
+        -89.5
+      ]
+    },
     {
       "id": "harvesting.txt:135:35@259:288",
       "source": {
