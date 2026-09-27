@@ -8967,3 +8967,109 @@ ignore_combat: 430
 model: final
 spawn_mode: catalog_only
 [/monster]
+
+# Sunmane livestock: the camps' own horses, stood in pens and at hitching posts
+# by `tame` rows in spawns.txt (eloria/livestock.py). Nobody can attack them, so
+# the combat figures are only what a horse of the steppe would be, and
+# `spawn_mode: livestock` keeps them out of the gear the drop tables deal.
+[monster]
+type: sunmane_steppe_horse
+name: Steppe Horse
+actor_type: 785
+footprint: 2
+level: 10
+attack: 16
+defense: 15
+matter: 7
+toughness: 7
+carry: 8
+charm: 7
+reaction: 7
+perception: 6
+rationality: 6
+magic_offense: 5
+magic_defense: 5
+dexterity: 7
+ethereality: 6
+might: 8
+material_points: 80
+ethereal_points: 20
+damage_min: 2
+damage_max: 7
+armor_min: 0
+armor_max: 1
+wander_chance: 30
+time_to_respawn: 81
+combat_engage_distance: 1
+aggressive: 0
+model: final
+spawn_mode: livestock
+[/monster]
+
+[monster]
+type: sunmane_dun_mare
+name: Dun Mare
+actor_type: 786
+footprint: 2
+level: 9
+attack: 15
+defense: 15
+matter: 7
+toughness: 7
+carry: 8
+charm: 8
+reaction: 7
+perception: 7
+rationality: 6
+magic_offense: 5
+magic_defense: 5
+dexterity: 7
+ethereality: 6
+might: 7
+material_points: 76
+ethereal_points: 20
+damage_min: 2
+damage_max: 6
+armor_min: 0
+armor_max: 1
+wander_chance: 30
+time_to_respawn: 81
+combat_engage_distance: 1
+aggressive: 0
+model: final
+spawn_mode: livestock
+[/monster]
+
+[monster]
+type: sunmane_grey_pony
+name: Grey Pony
+actor_type: 787
+footprint: 2
+level: 6
+attack: 11
+defense: 12
+matter: 6
+toughness: 6
+carry: 7
+charm: 8
+reaction: 6
+perception: 6
+rationality: 5
+magic_offense: 4
+magic_defense: 4
+dexterity: 6
+ethereality: 5
+might: 6
+material_points: 60
+ethereal_points: 16
+damage_min: 1
+damage_max: 5
+armor_min: 0
+armor_max: 1
+wander_chance: 30
+time_to_respawn: 75
+combat_engage_distance: 1
+aggressive: 0
+model: final
+spawn_mode: livestock
+[/monster]

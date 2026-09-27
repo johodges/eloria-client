@@ -14,7 +14,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import protocol as p, sky, roads
+from . import livestock, protocol as p, sky, roads
 from .areas import (CHEAP_MAGIC, EXPERIENCE, FAST_READING, FAST_REGENERATION,
                     HARVEST_SPEED, NO_MAGIC, load_special_areas,
                     multiplier_at)
@@ -1787,7 +1787,8 @@ class World(MagicRuntime):
                             definition.creature)
                 continue
             self.spawn_animal(definition.creature, definition.x, definition.y,
-                              map_id=definition.map_id)
+                              map_id=definition.map_id, tame=definition.tame,
+                              leash=definition.leash)
             spawned += 1
         if spawned:
             log.info("populated %d static creature spawns across %d maps", spawned,
@@ -2332,11 +2333,14 @@ class World(MagicRuntime):
                      *, invasion: bool = False, invasion_boss: bool = False,
                      instance_name: str = "", spawn_group: str = "",
                      map_id: str = START_MAP, roll_equipment: bool = True,
-                     owner_id: int | None = None, summoned: bool = False) -> Animal:
+                     owner_id: int | None = None, summoned: bool = False,
+                     tame: bool = False, leash: int = 0) -> Animal:
         # Occasionally the creature that appears is a named version of the one
         # asked for. Rolled before anything is derived, so the whole spawn -
-        # stats, size, drop table, the tile it needs - is the variant's.
-        species = self.roll_spawn_species(species, summoned=summoned)
+        # stats, size, drop table, the tile it needs - is the variant's. A tame
+        # animal is always the one the camp keeps.
+        if not tame:
+            species = self.roll_spawn_species(species, summoned=summoned)
         spec = self.creatures[species]
         x, y = self.free_creature_tile(map_id, x, y, spec.footprint)
         # A full map can be retried repeatedly without consuming actor IDs.
@@ -2351,7 +2355,8 @@ class World(MagicRuntime):
             display_name = chr(127 + p.EL_COLOR_RED3) + spec.name
         else:
             display_name = spec.name
-        actor_kind = p.PKABLE_COMPUTER_CONTROLLED
+        # Livestock goes out as an NPC: the client offers to talk, not to fight.
+        actor_kind = p.NPC if tame else p.PKABLE_COMPUTER_CONTROLLED
         animal = Animal(aid, display_name, x, y, spec.actor_type, spec.material_points,
             spec.material_points, actor_kind, species=species,
             attack=spec.attack, defense=spec.defense, damage=spec.effective_damage_max,
@@ -2363,6 +2368,10 @@ class World(MagicRuntime):
             footprint_width=spec.footprint_width,
             footprint_depth=spec.footprint_depth,
             scale=spec.scale)
+        if tame:
+            animal.tame = True
+            animal.wander_radius = max(0, int(leash))
+            roll_equipment = False
         now = time.monotonic()
         if invasion or summoned:
             # Distribute first steps across the animation cycle so groups do
@@ -4693,8 +4702,10 @@ class World(MagicRuntime):
 
         A creature answers for the player who summoned it and a player for
         themselves, so both are reduced to the username the party is keyed by.
-        Wildlife has neither and is never an ally.
+        Wildlife has neither and is never an ally; livestock is everybody's.
         """
+        if livestock.is_tame(target):
+            return True
         if not allies:
             return False
         owner = str(getattr(target, "owner_username", "")
@@ -6655,7 +6666,8 @@ class World(MagicRuntime):
         animal = self.animals.get(target_id)
         if (not c or not animal or not animal.alive
                 or animal.map_id != c.map_id
-                or target_id not in session.visible_animals):
+                or target_id not in session.visible_animals
+                or livestock.is_tame(animal)):
             return
         if player_in_combat(session):
             await session.send(p.raw_text("You cannot range while engaged in close combat."))
@@ -7107,6 +7119,9 @@ class World(MagicRuntime):
             return
         animal = self.animals.get(target_id)
         if not c or not animal or not animal.alive or animal.map_id != c.map_id:
+            return
+        if livestock.is_tame(animal):
+            await session.send(p.raw_text(livestock.REFUSAL))
             return
         raid_actor_team = self.territory_raids.actor_teams.get(target_id)
         if (raid_actor_team
@@ -8593,7 +8608,7 @@ class World(MagicRuntime):
     async def attack(self, c: Character, target_id: int, session: Session, *,
                      announce_conflict: bool = True, approach: bool = True):
         a = self.animals.get(target_id)
-        if not a or not a.alive: return
+        if not a or not a.alive or livestock.is_tame(a): return
         if session.combat_target is not None and session.combat_target != target_id:
             # A player who clicked a second creature is told why nothing
             # happened. A loop the server started for a target that has since
@@ -12635,6 +12650,9 @@ class World(MagicRuntime):
             else:
                 await self.open_summon_behavior(session)
             return
+        if livestock.is_tame(summon) and summon.map_id == c.map_id:
+            await session.send(p.raw_text(livestock.touch_line(summon)))
+            return
         if await roads.touch(self, session, actor_id):
             return
         if await sky.touch(self, session, actor_id):
@@ -16219,6 +16237,12 @@ class World(MagicRuntime):
                             animal.wander_steps_remaining = 0
                             dx = (animal.spawn_x > animal.x) - (animal.spawn_x < animal.x)
                             dy = (animal.spawn_y > animal.y) - (animal.spawn_y < animal.y)
+                    elif animal.tame and (
+                            abs(animal.x + dx - animal.spawn_x) > animal.wander_radius
+                            or abs(animal.y + dy - animal.spawn_y) > animal.wander_radius):
+                        # Livestock keeps to its pen or its hitching post.
+                        animal.wander_steps_remaining = 0
+                        continue
                     elif (abs(animal.x + dx - animal.spawn_x) > self.settings.normal_wander_radius
                           or abs(animal.y + dy - animal.spawn_y) > self.settings.normal_wander_radius):
                         animal.wander_steps_remaining = 0

@@ -3,7 +3,7 @@
   "purpose": "Immutable pre-diagonal authored coordinate profile",
   "files": {
     "config/eloria/client_content_manifest.json": "df6eb753b8d2e914f2d8a9478e22b34bdfcc9db203e8016474c4d4c9153e0809",
-    "config/eloria/creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
+    "config/eloria/creatures.txt": "40945d689c0d8cbaf9b2da44923dc07ae12d684514c6e561b19d461056ec2108",
     "config/eloria/harvesting.txt": "b8ad7d7e1bc89c47635f4ec772fe712a4be460de9c1fb4b3621fea2a02ef17c3",
     "config/eloria/instances/amberwood_gauntlet_low.def": "bc4b63d6cb103216e45a5e5397af9ce604c917cd2edede608e20c7a3def24d49",
     "config/eloria/instances/amberwood_gauntlet_mid.def": "e690629c583104fcc09cc39827a9d76f3ab65ee12649fbc7fba9a2c7980c0a62",
@@ -34,7 +34,7 @@
     "eloria/daily_quests.py": "2b4735642d1db3a09f069b14fdf477897eb1e16492fb0a8fb5787c97a866e218",
     "eloria/pk.py": "57adf011f24b2f806ce337620504065b95cd88fb756ebe23e437e35e9075aa91",
     "eloria/walkthrough.py": "069d3adbe13012f52ad3b9072fc2867995e5ca0596753a9ff5ecffdc98f933f7",
-    "eloria/world.py": "42c6a6f266db5eab72c5b5fb1a38cde6011a12b360c5247d27519fb89b210713"
+    "eloria/world.py": "401a9f03e63c7c6a632e1a7d575354c01d37fc78aa9ba97ad491013f18347a29"
   },
   "reconciliations": [
     {
