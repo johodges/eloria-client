@@ -10,7 +10,7 @@
       "begin": "# --- Sunmane herds: runtime content amendment sunmane-herds-v1 ---",
       "end": "# --- end of the Sunmane herds ---",
       "comments": [
-        "# Wild golden plains horses on the open steppe, and tame Sunmane horses kept in",
+        "# Wild golden plains horses on the open steppe; tame Sunmane horses and foals in",
         "# the camps' pens and at their hitching posts. `tame:N` makes a creature nobody",
         "# can attack, held within N tiles of where it spawns (eloria/livestock.py). The",
         "# continent publication rewrites each position from the row's saved marker."
@@ -520,6 +520,61 @@
             "358"
           ],
           "marker": "runtime-spawn-100"
+        },
+        {
+          "fields": [
+            "spawn",
+            "sunmane_steppe",
+            "sunmane_foal_dun",
+            "329",
+            "221",
+            "tame:3"
+          ],
+          "marker": "runtime-spawn-101"
+        },
+        {
+          "fields": [
+            "spawn",
+            "sunmane_steppe",
+            "sunmane_foal_grey",
+            "133",
+            "-40",
+            "tame:3"
+          ],
+          "marker": "runtime-spawn-102"
+        },
+        {
+          "fields": [
+            "spawn",
+            "sunmane_steppe",
+            "sunmane_foal_dun",
+            "203",
+            "85",
+            "tame:3"
+          ],
+          "marker": "runtime-spawn-103"
+        },
+        {
+          "fields": [
+            "spawn",
+            "sunmane_steppe",
+            "sunmane_foal_grey",
+            "213",
+            "241",
+            "tame:3"
+          ],
+          "marker": "runtime-spawn-104"
+        },
+        {
+          "fields": [
+            "spawn",
+            "sunmane_steppe",
+            "sunmane_foal_grey",
+            "216",
+            "163",
+            "tame:3"
+          ],
+          "marker": "runtime-spawn-105"
         }
       ]
     }
