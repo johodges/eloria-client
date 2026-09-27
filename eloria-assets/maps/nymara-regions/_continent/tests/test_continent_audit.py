@@ -275,12 +275,13 @@ class RoadRuleTests(unittest.TestCase):
             doc = {'nodes': [{'name': 'placement', 'translation': [10., 0., 20.], 'children': [1]},
                              {'name': 'Walk_amberwood_local-lane_amberwood_00_00', 'mesh': 0},
                              {'name': 'Walk_amberwood_local-lane-other_amberwood_00_00', 'mesh': 1}],
+                   'accessors': [{'componentType': 5126}, {'componentType': 5125}, {'componentType': 5126}],
                    'meshes': [{'primitives': [{'attributes': {'POSITION': 0}, 'indices': 1}]},
                               {'primitives': [{'attributes': {'POSITION': 2}, 'indices': 1}]}]}
             points = np.array([[0., .055, -1.], [0., .055, 1.], [4., .055, -1.],
                                [4., .055, -1.], [0., .055, 1.], [4., .055, 1.]])
             unrelated = points.copy(); unrelated[:, 1] = 10.
-            arrays = {0: points, 1: np.arange(6), 2: unrelated}
+            arrays = {0: points.astype(np.float32), 1: np.arange(6), 2: unrelated.astype(np.float32)}
 
             def read_surfaces(document, roads, saved=snapshot, stale=False):
                 path.write_text(json.dumps(saved))
@@ -295,6 +296,15 @@ class RoadRuleTests(unittest.TestCase):
             decks, surfaces = read_surfaces(doc, [route])
             self.assertEqual(decks, [])
             np.testing.assert_allclose(A.saved_deck_height([[10., 20.], [12., 20.], [14., 20.]], surfaces['published-lane']), .055)
+            transformed = copy.deepcopy(doc); transformed['nodes'][0]['scale'] = [2., 1., 4.]
+            _, scaled = read_surfaces(transformed, [route])
+            encoded = arrays[0]
+            half_ulp = np.maximum(np.abs(np.nextafter(encoded, np.float32(np.inf)).astype(float) - encoded),
+                                  np.abs(encoded - np.nextafter(encoded, np.float32(-np.inf)).astype(float))) * .5
+            eps = np.finfo(float).eps
+            expected_error = half_ulp[:, [0, 2]] * [2., 4.]
+            expected_error += (4. * eps / (1. - 4. * eps)) * (np.abs(encoded[:, [0, 2]]) * [2., 4.] + [10., 20.])
+            np.testing.assert_array_equal(scaled['published-lane'][0][3], expected_error.reshape(2, 3, 2))
             missing = copy.deepcopy(doc); missing['nodes'][1]['name'] = 'Walk_unrelated_amberwood_00_00'
             duplicate = copy.deepcopy(doc); duplicate['nodes'].append(copy.deepcopy(duplicate['nodes'][1]))
             wrong_route = copy.deepcopy(route); wrong_route['points'][1][0] += 1.
@@ -337,6 +347,42 @@ class RoadRuleTests(unittest.TestCase):
             A.road_rule_findings([road], [], [], policy, ground, dry,
                 saved_road_groups={'saved': [group(.055, low=1.)]})
         self.assertEqual(road, original)
+
+    def test_float32_endpoint_reconciliation_is_bounded_and_never_fills_interior_gaps(self):
+        # Actual failing Manymouth endpoint and actual emitted face: its
+        # source endpoint lies 60 micrometres outside the encoded triangle.
+        triangle = np.array([[544.3297119140625, 3.2324578762054443, 1062.005126953125],
+                             [544.1556396484375, 3.190847873687744, 1060.9052734375],
+                             [543.8148803710938, 3.1908743381500244, 1061.8115234375]])
+        source = np.array([543.8148708343506, 9., 1061.8115844726562])
+        encoded = triangle.astype(np.float32)
+        error = np.maximum(np.abs(np.nextafter(encoded, np.float32(np.inf)).astype(float) - triangle),
+                           np.abs(triangle - np.nextafter(encoded, np.float32(-np.inf)).astype(float)))[:, [0, 2]] * .5
+        inside = triangle.mean(axis=0)
+        def group(tri):
+            return (tri[:, [0, 2]].min(axis=0), tri[:, [0, 2]].max(axis=0), tri[None], error[None])
+        stations = np.array([source, inside])
+        heights, accepted = A.saved_road_station_heights(stations, [group(triangle)])
+        self.assertTrue(np.isfinite(heights).all())
+        self.assertEqual(len(accepted), 1)
+        self.assertLessEqual(accepted[0]['distanceMetres'], accepted[0]['encodingBoundMetres'])
+        np.testing.assert_array_equal(stations[0], source)
+        # A displacement even just beyond the vertex encoding box must not
+        # become an endpoint exemption. A nearby interior gap is also fatal.
+        outside = source.copy(); outside[2] = triangle[2, 2] + error[2, 1] * 1.01
+        outside[0] = triangle[2, 0] - error[2, 0] * 1.01
+        self.assertFalse(np.isfinite(A.saved_road_station_heights(np.array([outside, inside]), [group(triangle)])[0][0]))
+        self.assertFalse(np.isfinite(A.saved_road_station_heights(np.array([inside, source, inside]), [group(triangle)])[0][1]))
+        # Highest eligible emitted geometry still fails the original float
+        # limit, even when a lower duplicate surface is also present.
+        raised = triangle.copy(); raised[:, 1] += 3.
+        road = {'id': 'encoded', 'points': stations.tolist()}
+        floor = lambda x, z: np.full_like(x, 3.2)
+        dry = lambda x, z: np.zeros_like(x, dtype=bool)
+        for groups in ([group(triangle), group(raised)], [group(raised), group(triangle)]):
+            result = A.road_rule_findings([road], [], [], {}, floor, dry, saved_road_groups={'encoded': groups})
+            self.assertTrue(any('above the ground' in v for v in result['violations']))
+            self.assertEqual(result['totals']['encodedRoadEndpointsReconciled'], 1)
 
     def test_saved_walk_floor_uses_certified_wrapper_and_emitted_walkable_triangles(self):
         rivers, water, ground, site, policy = rule_fixture()

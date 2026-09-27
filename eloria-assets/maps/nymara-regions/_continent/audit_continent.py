@@ -536,11 +536,60 @@ def saved_deck_height(xz, deck_groups):
     """Sample only emitted, certified walk floors whose actual bounds meet the road."""
     xz = np.asarray(xz, float).reshape(-1, 2)
     result = np.full(len(xz), -np.inf)
-    for low, high, triangles in deck_groups:
+    for low, high, triangles, *_ in deck_groups:
         nearby = np.all((xz >= low) & (xz <= high), axis=1)
         if nearby.any():
             result[nearby] = np.maximum(result[nearby], authored_deck_height(xz[nearby], triangles))
     return result
+
+
+def saved_road_station_heights(stations, groups):
+    """Reconcile only source endpoints within emitted vertex encoding error.
+
+    Interior coverage remains exact. At a missing endpoint, use the highest
+    closest face whose distance is bounded by its interpolated float32 vertex
+    error after the actual node transform. Original station XZ is never moved.
+    """
+    xz = stations[:, [0, 2]]
+    heights = saved_deck_height(xz, groups)
+    reconciled = []
+    for index in np.flatnonzero(~np.isfinite(heights)):
+        if index not in (0, len(stations) - 1):
+            continue
+        point = xz[index]
+        candidates = []
+        for _, _, triangles, *encoding in groups:
+            if not encoding:
+                continue
+            errors = encoding[0]
+            for triangle, error in zip(triangles, errors):
+                projected = triangle[:, [0, 2]]
+                ab, ac = projected[1] - projected[0], projected[2] - projected[0]
+                if abs(ab[0] * ac[1] - ab[1] * ac[0]) <= 1e-12:
+                    continue
+                a = projected
+                b = np.roll(projected, -1, axis=0)
+                delta = b - a
+                squared = (delta * delta).sum(axis=1)
+                amount = np.clip(((point - a) * delta).sum(axis=1) / np.maximum(squared, 1e-30), 0., 1.)
+                # A perpendicular edge projection can lie outside an
+                # anisotropic encoding box although its endpoint vertex is
+                # supported, so consider both edge projections and vertices.
+                for weights in (amount, np.zeros(3)):
+                    nearest = a + weights[:, None] * delta
+                    distances = np.linalg.norm(nearest - point, axis=1)
+                    for edge, weight in enumerate(weights):
+                        following = (edge + 1) % 3
+                        bound_xz = error[edge] * (1. - weight) + error[following] * weight
+                        bound = float(np.linalg.norm(bound_xz))
+                        if np.all(np.abs(nearest[edge] - point) <= bound_xz) and distances[edge] <= bound:
+                            height = triangle[edge, 1] * (1. - weight) + triangle[following, 1] * weight
+                            candidates.append((float(height), float(distances[edge]), bound))
+        if candidates:
+            height, distance, bound = max(candidates)
+            heights[index] = height
+            reconciled.append({'station': int(index), 'distanceMetres': distance, 'encodingBoundMetres': bound})
+    return heights, reconciled
 
 
 def saved_walk_surfaces(client, generated, composition, inputs, roads=()):
@@ -565,8 +614,8 @@ def saved_walk_surfaces(client, generated, composition, inputs, roads=()):
             yield index
             pending.extend(nodes[index].get('children', ()))
 
-    def triangles_of(indices, *, walkable_only=True):
-        parts = []
+    def triangles_of(indices, *, walkable_only=True, encoding_bounds=False):
+        parts, errors = [], []
         for index in indices:
             node = nodes[index]
             if 'mesh' not in node or (walkable_only and any(any(word in name.lower() for word in C.CEILINGS) for name in names[index])):
@@ -580,13 +629,29 @@ def saved_walk_surfaces(client, generated, composition, inputs, roads=()):
                          if 'indices' in primitive else np.arange(len(points)))
                 world = (matrix[:3, :3] @ points.T).T + matrix[:3, 3]
                 parts.append(world[order].reshape(-1, 3, 3))
+                if encoding_bounds:
+                    accessor = master['accessors'][primitive['attributes']['POSITION']]
+                    require(accessor['componentType'] == 5126, 'Saved road positions must use float32 encoding')
+                    encoded = points.astype(np.float32)
+                    half_ulp = np.maximum(np.abs(np.nextafter(encoded, np.float32(np.inf)).astype(float) - points),
+                                          np.abs(points - np.nextafter(encoded, np.float32(-np.inf)).astype(float))) * .5
+                    # Project the actual local vertex rounding box through the
+                    # actual node matrix; gamma4 bounds the three products/sum
+                    # and translation in the float64 coordinate evaluation.
+                    linear = np.abs(matrix[[0, 2], :3])
+                    eps = np.finfo(float).eps
+                    gamma4 = 4. * eps / (1. - 4. * eps)
+                    transformed = half_ulp @ linear.T
+                    transformed += gamma4 * (np.abs(points) @ linear.T + np.abs(matrix[[0, 2], 3]))
+                    require(np.isfinite(transformed).all(), 'Saved road encoding bounds are non-finite')
+                    errors.append(transformed[order].reshape(-1, 3, 2))
         triangles = np.concatenate(parts) if parts else np.zeros((0, 3, 3))
         if len(triangles) and walkable_only:
             normal = np.cross(triangles[:, 1] - triangles[:, 0], triangles[:, 2] - triangles[:, 0])
             length = np.linalg.norm(normal, axis=1)
             upward = 1 / np.sqrt(1 + C.MAX_GRADE ** 2) - 1e-9
             triangles = triangles[(length > 1e-9) & (normal[:, 1] > length * upward)]
-        return triangles
+        return (triangles, np.concatenate(errors)) if encoding_bounds else triangles
 
     groups, road_groups = [], {}
     records = composition.get('continentAuthoring', {}).get('regions', {})
@@ -621,11 +686,11 @@ def saved_walk_surfaces(client, generated, composition, inputs, roads=()):
             selected_names = [nodes[index]['name'] for index in selected]
             require(selected and len(selected_names) == len(set(selected_names)),
                     f'{region}: saved road {identity} missing or ambiguous in emitted master')
-            triangles = triangles_of(selected, walkable_only=False)
+            triangles, errors = triangles_of(selected, walkable_only=False, encoding_bounds=True)
             require(len(triangles) > 0 and np.isfinite(triangles).all(),
                     f'{region}: saved road {identity} has no finite emitted triangles')
             projected = triangles[:, :, [0, 2]]
-            road_groups[identity] = [(projected.min(axis=(0, 1)), projected.max(axis=(0, 1)), triangles)]
+            road_groups[identity] = [(projected.min(axis=(0, 1)), projected.max(axis=(0, 1)), triangles, errors)]
         for obj in snapshot['objects']:
             if obj.get('collisionRole') != 'walk_surface':
                 continue
@@ -701,7 +766,8 @@ def road_rule_findings(roads, sites, rivers, policy, ground_at, river_water_at, 
     curves = {key: river_curve(river) for key, river in rivers.items()}
     violations = []
     totals = {'roads': len(roads), 'stations': 0, 'overRiverWaterOutsideSitesMetres': 0., 'floatingOutsideDecksMetres': 0.,
-              'sites': len(sites), 'crossingRuns': 0, 'piers': len(piers), 'tallestPierMetres': max((p['height'] for p in piers), default=0.)}
+              'sites': len(sites), 'crossingRuns': 0, 'piers': len(piers), 'tallestPierMetres': max((p['height'] for p in piers), default=0.),
+              'encodedRoadEndpointsReconciled': 0, 'maximumRoadEndpointReconciliationMetres': 0.}
     for road in roads:
         stations = resample_stations(road['points'])
         if not len(stations):
@@ -709,8 +775,11 @@ def road_rule_findings(roads, sites, rivers, policy, ground_at, river_water_at, 
         totals['stations'] += len(stations)
         xz = stations[:, [0, 2]]
         if saved_road_groups is not None and road['id'] in saved_road_groups:
-            height = saved_deck_height(xz, saved_road_groups[road['id']])
+            height, reconciled = saved_road_station_heights(stations, saved_road_groups[road['id']])
             require(np.isfinite(height).all(), f"{road['id']}: emitted saved road does not cover every rule station")
+            totals['encodedRoadEndpointsReconciled'] += len(reconciled)
+            totals['maximumRoadEndpointReconciliationMetres'] = max(totals['maximumRoadEndpointReconciliationMetres'],
+                max((entry['distanceMetres'] for entry in reconciled), default=0.))
             # Source curve Y controls terrain shaping, not the rendered ribbon.
             # Keep the same stations/rules, measuring the actual highest road
             # triangle where consistent chunk boundaries overlap. A raised
