@@ -13,8 +13,46 @@ import struct
 import tempfile
 from types import SimpleNamespace
 import unittest
+from unittest import mock
 
 import generate_continent_walk_proof as P
+
+
+class ServedInstanceExitTests(unittest.TestCase):
+    def test_exact_served_identity_join_and_provenance_validation(self):
+        import publish_diagonal_continent as publisher
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);relative='config/eloria/instances/arena.def';path=root/relative
+            path.parent.mkdir(parents=True)
+            text='[instance]\nspawn_name: arena\nexit_map: a\nexit_x: 7\nexit_y: 8\n'
+            path.write_text(text)
+            identity=json.dumps([relative,'arena','exit_x','exit_y','a'],separators=(',',':'))
+            source=publisher.instance_exit_records(relative,text,{'a':{}})[identity]
+            source={**source,'originalTile':[1,2],'sha256':'source-sha'}
+            entry={'source':source,'tile':[7,8],
+                   'authoredBinding':{'source':{'amendmentReport':{'path':'amendment.json'}}}}
+            publication={'instanceExitSchema':2,'regions':{'a':{}}};tracked=[]
+            with mock.patch.object(publisher,'certified_instance_exit_sources',return_value={identity:source}), \
+                    mock.patch.object(publisher,'validate_instance_exit_table',return_value={identity:entry}) as validate:
+                result=P.served_instance_exits(root,root,publication,tracked.append)
+                self.assertEqual(result,{identity:entry})
+                validate.assert_called_once_with(publication['regions'],{identity:source},client=root,require_authored=True)
+                self.assertIn(path,tracked);self.assertIn(root/'amendment.json',tracked)
+                variants=[text.replace('exit_x: 7','exit_x: 9'),text.replace('spawn_name: arena','spawn_name: other'),
+                          text+text,text.replace('exit_map: a','exit_map: b'),'']
+                for bad in variants:
+                    with self.subTest(definition=bad):
+                        path.write_text(bad)
+                        with self.assertRaises(P.AuditError):P.served_instance_exits(root,root,publication,lambda _:None)
+                path.write_text(text)
+                validate.side_effect=ValueError('amendment digest differs')
+                with self.assertRaisesRegex(P.AuditError,'amendment digest differs'):
+                    P.served_instance_exits(root,root,publication,lambda _:None)
+
+    def test_no_schema_downgrade_or_missing_binding_fallback(self):
+        for schema in (None,1,True,3):
+            with self.subTest(schema=schema),self.assertRaises(P.AuditError):
+                P.served_instance_exits(Path('.'),Path('.'),{'instanceExitSchema':schema},lambda _:None)
 
 
 class ChunkGraphTests(unittest.TestCase):
@@ -597,10 +635,9 @@ class PathProofTests(unittest.TestCase):
         del world.collision_maps['b'];g.errors=[]
         self.assertFalse(g.family_portal_access()['passed'])
 
-    def test_instance_entry_needs_reachable_keeper_and_waystone_uses_actual_range_contract(self):
+    def instance_waystone_fixture(self):
         world=self.world(30,12)
-        # The decorative return stone is an isolated floor tile. Its valid
-        # interaction approach belongs to the genuine instance entry floor.
+        # Decorative stone is isolated; its approach is in the real entry floor.
         raw=bytearray(360)
         for y in range(2,9):
             for x in range(2,9):raw[y*30+x]=10
@@ -612,22 +649,65 @@ class PathProofTests(unittest.TestCase):
         g.manifest={'maps':[{'id':'a','arrival':[2,5]},{'id':'b','arrival':[3,5]}]}
         g.portals=[portal];g.audit=P.WalkAudit(world,g.portals);g.errors=[]
         g.interactives={('b',None):SimpleNamespace(role='waystone',x=11,y=5)}
-        g.instance_entries=[{'definition':'real.def','keeper':'Keeper','source':'a','keeperTile':[5,5],
-                             'destination':'b','arrival':[3,5],'exitMap':'a','exitTile':[3,5]}]
-        report=g.family_portal_access()
+        g.instance_entries=[{'definition':'real.def','exitIdentity':'bound-exit','keeper':'Keeper',
+                             'source':'a','keeperTile':[5,5],'destination':'b','arrival':[3,5],
+                             'exitMap':'a','exitTile':[4,5]}]
+        g.instance_exits={'bound-exit':{'source':{'map':'a'},'tile':[4,5]}}
+        return g
+
+    def test_instance_exit_is_independent_and_waystone_uses_real_interaction_range(self):
+        g=self.instance_waystone_fixture();report=g.family_portal_access()
         self.assertTrue(report['passed'])
         self.assertEqual(report['portalChecks'][0]['sourceApproach'],[8,5])
+        self.assertEqual(report['portalChecks'][0]['arrival'],[3,5])  # maps.txt retained separately
+        self.assertEqual(report['portalChecks'][0]['activeInstanceReturns'][0]['tile'],[4,5])
+        self.assertTrue(report['instanceExitChecks'][0]['publishedHubAccessible'])
         self.assertTrue(any(e['via']=='reachable instance keeper' for e in report['entryProvenance']))
-        g.instance_entries[0]['exitTile']=[4,5];g.errors=[]
-        self.assertFalse(g.family_portal_access()['passed'])
-        g.instance_entries[0]['exitTile']=[3,5]
-        raw=bytearray(world.collision_maps['a'].heights)
-        for y in range(12):raw[y*30+10]=0
+
+    def test_instance_exit_missing_or_mismatched_binding_fails_closed(self):
+        for mutation in ('missing','tile','map','unused'):
+            g=self.instance_waystone_fixture()
+            if mutation=='missing':g.instance_exits.clear()
+            elif mutation=='tile':g.instance_entries[0]['exitTile']=[6,5]
+            elif mutation=='map':g.instance_exits['bound-exit']['source']['map']='b'
+            else:g.instance_exits['unused']=copy.deepcopy(g.instance_exits['bound-exit'])
+            with self.subTest(mutation=mutation),self.assertRaises(P.AuditError):g.family_portal_access()
+
+    def test_actual_instance_exit_blocked_trigger_or_disconnected_fails(self):
+        for mutation in ('blocked','trigger','disconnected','no-departure'):
+            g=self.instance_waystone_fixture();world=g.world
+            if mutation=='trigger':
+                g.portals.append(self.portal('a',4,5,'b',3,5));g.audit=P.WalkAudit(world,g.portals)
+            else:
+                raw=bytearray(world.collision_maps['a'].heights)
+                if mutation=='blocked':raw[5*30+4]=0
+                elif mutation=='disconnected':
+                    for y in range(12):raw[y*30+3]=0
+                else:
+                    for y in range(4,7):
+                        for x in range(3,6):raw[y*30+x]=0
+                    raw[5*30+4]=10
+                world.collision_maps['a']=self.R['collision'].with_step_mask(self.R['collision'].CollisionMap(30,12,bytes(raw)),2)
+            with self.subTest(mutation=mutation):self.assertFalse(g.family_portal_access()['passed'])
+
+    def test_instance_keeper_approach_and_waystone_range_cannot_be_bypassed(self):
+        for mutation in ('keeper','waystone'):
+            g=self.instance_waystone_fixture();world=g.world
+            if mutation=='keeper':
+                raw=bytearray(world.collision_maps['a'].heights)
+                for y in range(12):raw[y*30+10]=0
+                world.collision_maps['a']=self.R['collision'].with_step_mask(self.R['collision'].CollisionMap(30,12,bytes(raw)),2)
+                g.instance_entries[0]['keeperTile']=[20,5]
+            else:world.settings.portal_activation_distance=2
+            with self.subTest(mutation=mutation):self.assertFalse(g.family_portal_access()['passed'])
+
+    def test_distinct_maps_row_destination_still_requires_safe_actual_floor(self):
+        g=self.instance_waystone_fixture();world=g.world
+        raw=bytearray(world.collision_maps['a'].heights);raw[5*30+3]=0
         world.collision_maps['a']=self.R['collision'].with_step_mask(self.R['collision'].CollisionMap(30,12,bytes(raw)),2)
-        g.instance_entries[0]['keeperTile']=[20,5];g.errors=[]
         report=g.family_portal_access()
         self.assertFalse(report['passed'])
-        self.assertFalse(any(e['map']=='b' for e in report['entryProvenance']))
+        self.assertTrue(any(i['reason']=='family portal destination cannot depart safely' for i in report['issues']))
 
     def test_authored_curve_merge_and_lane_cannot_fall_back_to_obstructed_straight_strip(self):
         frame={'id':'a--b','anchor':[81.5,0,-50.5],'outward':[1,0]}

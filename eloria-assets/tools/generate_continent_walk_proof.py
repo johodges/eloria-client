@@ -36,6 +36,43 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def served_instance_exits(client, server, publication, track):
+    """Join actual served definitions to independently certified authored exits."""
+    import publish_diagonal_continent as publisher
+    if type(publication.get('instanceExitSchema')) is not int or publication['instanceExitSchema'] != 2:
+        raise AuditError('Static instance proof requires authored instance exit schema 2')
+    specs = publication['regions']
+    try:
+        sources = publisher.certified_instance_exit_sources(client, specs)
+        entries = publisher.validate_instance_exit_table(specs, sources, client=client, require_authored=True)
+        found = {}
+        for relative in sorted({source['path'] for source in sources.values()}):
+            path = server / relative
+            track(path)
+            for identity, actual in publisher.instance_exit_records(relative, path.read_text(encoding='utf-8'), specs).items():
+                if identity in found or identity not in entries:
+                    raise ValueError(f'{identity}: duplicate or unexpected served instance exit')
+                source = sources[identity]
+                if ({k: actual[k] for k in ('path', 'spawnName', 'fields', 'map', 'line')} !=
+                        {k: source[k] for k in ('path', 'spawnName', 'fields', 'map', 'line')} or
+                        actual['originalTile'] != entries[identity]['tile']):
+                    raise ValueError(f'{identity}: actual served definition differs from certified instance exit')
+                found[identity] = entries[identity]
+        if set(found) != set(entries):
+            raise ValueError('Actual served instance exit inventory is incomplete')
+    except (ValueError, KeyError, OSError) as exc:
+        raise AuditError(str(exc)) from exc
+    baseline = client / 'eloria-assets/maps/nymara-regions/_continent/legacy-server-profile'
+    track(baseline / 'snapshot.json')
+    for source in sources.values():
+        track(baseline / source['path'])
+    for entry in entries.values():
+        track(client / entry['authoredBinding']['source']['amendmentReport']['path'])
+    track(Path(publisher.__file__))
+    track(Path(publisher.shared.__file__))
+    return found
+
+
 # The live harness gameplay camera: rendered_landscape_walk.gd applies pitch -60,
 # the route yaw and distance and aims 1.2 m above the actor; run_live_continent
 # launches the client at this resolution with the main scene's 50 degree FOV.
@@ -491,6 +528,8 @@ class Generator:
         world.load_configured_npcs(str(self.profile/'npcs.txt'))
         from eloria.spawn_groups import load_instance_control
         self.instance_entries=[]
+        self.instance_exits=served_instance_exits(self.client,self.server,self.publication,self.track)
+        consumed_exits=set()
         for path in sorted((self.profile/'instances').glob('*.def')):
             self.track(path);definition=load_instance_control(path)
             if not definition.is_gauntlet:continue
@@ -498,11 +537,22 @@ class Generator:
                      if npc.name.casefold()==definition.keeper.casefold() and world.npc_roles.get(identity)=='instance']
             if len(keepers)!=1:raise AuditError(f'{definition.name}: missing unique actual instance keeper')
             keeper,source=keepers[0]
+            relative=path.relative_to(self.server).as_posix()
+            matches=[(identity,entry) for identity,entry in self.instance_exits.items()
+                     if entry['source']['path']==relative and entry['source']['spawnName']==definition.name]
+            if len(matches)!=1:
+                raise AuditError(f'{relative}: missing unique certified instance exit identity')
+            identity,exit_entry=matches[0];consumed_exits.add(identity)
+            if (definition.exit_map!=exit_entry['source']['map'] or
+                    [definition.exit_x,definition.exit_y]!=exit_entry['tile']):
+                raise AuditError(f'{identity}: runtime instance parser differs from served exit record')
             for destination in definition.copies:
                 if destination in self.members:self.instance_entries.append({
-                    'definition':definition.name,'keeper':keeper.name,'source':source,'keeperTile':[keeper.x,keeper.y],
+                    'definition':definition.name,'exitIdentity':identity,'keeper':keeper.name,'source':source,'keeperTile':[keeper.x,keeper.y],
                     'destination':destination,'arrival':[definition.entry_x,definition.entry_y],
                     'exitMap':definition.exit_map,'exitTile':[definition.exit_x,definition.exit_y]})
+        if consumed_exits!=set(self.instance_exits):
+            raise AuditError('Certified instance exits are not all consumed by actual gauntlet definitions')
         self.track(self.server/'eloria/spawn_groups.py');self.track(self.server/'eloria/gauntlets.py')
         self.audit = WalkAudit(world,portals,move_seconds=settings.player_move_interval_ms/1000,max_leg=max_leg)
         self.portals,self.world = portals,world
@@ -692,11 +742,21 @@ class Generator:
         incoming portal. A return cannot bootstrap its own disconnected room.
         """
         entries={e['id']:e for e in self.manifest['maps']}
-        arrivals=[];checks=[];issues=[];departures={};reached={};entry_proof=[]
+        bound_exits=getattr(self,'instance_exits',{})
+        definitions=getattr(self,'instance_entries',[])
+        for definition in definitions:
+            bound=bound_exits.get(definition.get('exitIdentity'))
+            if (bound is None or bound['source']['map']!=definition['exitMap'] or
+                    bound['tile']!=definition['exitTile']):
+                raise AuditError('Actual instance definition lacks its exact certified exit binding')
+        if {e['exitIdentity'] for e in definitions}!=set(bound_exits):
+            raise AuditError('Certified exits and actual instance definitions differ')
+        arrivals=[];checks=[];issues=[];departures={};reached={};entry_proof=[];hub_reached={}
         for region in self.members:
             primary=tuple(entries[region]['arrival'])
             incoming={(p.destination_x,p.destination_y) for p in self.portals if p.destination==region}
             incoming.update(tuple(p['arrival']) for p in getattr(self,'instance_entries',[]) if p['destination']==region)
+            incoming.update(tuple(p['exitTile']) for p in getattr(self,'instance_entries',[]) if p['exitMap']==region)
             for point in sorted(incoming|{primary}):
                 departure=self.audit.arrival_departure(region,point)
                 valid=departure is not None;departures[(region,point)]=departure
@@ -719,17 +779,17 @@ class Generator:
                 # interaction range; leave() uses the active instance exit,
                 # never walks the actor onto the decorative stone's tile.
                 definitions=[e for e in getattr(self,'instance_entries',[]) if e['destination']==portal.source]
-                expected=(portal.destination,(portal.destination_x,portal.destination_y))
-                if (not definitions or (interactive.x,interactive.y)!=(portal.x,portal.y) or
-                    any((e['exitMap'],tuple(e['exitTile']))!=expected for e in definitions)):
-                    return False,{'activation':'instance waystone','reason':'waystone/instance return contract differs'}
+                if not definitions or (interactive.x,interactive.y)!=(portal.x,portal.y):
+                    return False,{'activation':'instance waystone','reason':'waystone/instance source association differs'}
                 radius=self.world.settings.portal_activation_distance
                 options=[(interactive.x+dx,interactive.y+dy) for dx in range(-radius,radius+1)
                          for dy in range(-radius,radius+1) if reachable(portal.source,(interactive.x+dx,interactive.y+dy))
                          and (interactive.x+dx,interactive.y+dy) not in self.audit.automatic[portal.source]]
                 point=min(options,key=lambda p:(math.dist(p,(interactive.x,interactive.y)),p),default=None)
                 return point is not None,{'activation':'instance waystone from real interaction range',
-                                          'sourceApproach':list(point) if point else None,'conditionalOnInstanceRun':True}
+                                          'sourceApproach':list(point) if point else None,'conditionalOnInstanceRun':True,
+                                           'activeInstanceReturns':[{'identity':e['exitIdentity'],'map':e['exitMap'],
+                                                                     'tile':e['exitTile']} for e in definitions]}
             return reachable(portal.source,(portal.x,portal.y)),{'activation':'walk to portal trigger'}
         expanded=set()
         def enter(region,point,provenance):
@@ -750,6 +810,22 @@ class Generator:
                       any(p['destination']==region for p in getattr(self,'instance_entries',[])))
             if region in self.specs or not incoming:
                 enter(region,tuple(entries[region]['arrival']),{'via':'published primary arrival'})
+                if region in self.specs:hub_reached[region]=bytes(reached[region])
+        exit_checks=[]
+        for identity,entry in getattr(self,'instance_exits',{}).items():
+            region=entry['source']['map'];point=tuple(entry['tile']);collision=self.world.collision_for(region)
+            standing=self.audit.standing(region,point) if collision else False
+            mask=hub_reached.get(region,b'')
+            local_access=(bool(collision) and 0<=point[0]<collision.width and 0<=point[1]<collision.height and
+                          len(mask)==collision.width*collision.height and bool(mask[point[1]*collision.width+point[0]]))
+            departure=departures.get((region,point))
+            no_trigger=not any(p.source==region and (p.x,p.y)==point for p in self.portals)
+            item={'identity':identity,'map':region,'tile':list(point),'standing':standing,
+                  'publishedHubAccessible':local_access,'noPortalTrigger':no_trigger,
+                  'departureStep':list(departure) if departure is not None else None}
+            exit_checks.append(item)
+            if not (standing and local_access and no_trigger and departure is not None):
+                issues.append({'reason':'certified instance exit lacks actual served access',**item})
         while True:
             changed=False
             for entry in getattr(self,'instance_entries',[]):
@@ -764,8 +840,17 @@ class Generator:
                      'conditionalOnInstanceStart':True})
             for portal in self.portals:
                 if portal.destination not in self.members or not source_access(portal)[0]:continue
-                changed|=enter(portal.destination,(portal.destination_x,portal.destination_y),
-                               {'via':'reachable incoming portal','source':portal.source,'sourceTile':[portal.x,portal.y]})
+                interactive=getattr(self,'interactives',{}).get((portal.source,portal.object_id))
+                if interactive is not None and interactive.role=='waystone':
+                    # Active runs use definition exits; maps.txt rows remain independently checked below.
+                    for entry in self.instance_entries:
+                        if entry['destination']==portal.source:
+                            changed|=enter(entry['exitMap'],tuple(entry['exitTile']),
+                                {'via':'reachable instance waystone','source':portal.source,'definition':entry['definition'],
+                                 'exitIdentity':entry['exitIdentity'],'conditionalOnInstanceRun':True})
+                else:
+                    changed|=enter(portal.destination,(portal.destination_x,portal.destination_y),
+                                   {'via':'reachable incoming portal','source':portal.source,'sourceTile':[portal.x,portal.y]})
             if not changed:break
         for portal in self.portals:
             if portal.source not in self.members:continue
@@ -792,7 +877,7 @@ class Generator:
                 issues.append({'reason':'external boundary reciprocal route failed',**item})
         if issues:self.errors.append({'route':'all65 family doors/arrivals','error':f'{len(issues)} family portal access failures','issues':issues})
         return {'passed':not issues,'mapCount':len(self.members),'arrivals':arrivals,'portalChecks':checks,'issues':issues,
-                'entryProvenance':entry_proof,
+                'entryProvenance':entry_proof,'instanceExitChecks':exit_checks,
                 'interiorSeedPolicy':'Only reachable incoming portal arrivals; initial automatic-return departure follows World.change_map semantics.'}
 
     @staticmethod
