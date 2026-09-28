@@ -46711,14 +46711,14 @@
         140
       ],
       "tile": [
-        334,
-        189
+        72,
+        243
       ],
       "expectedTile": [
-        334.0,
-        189.0
+        72.5,
+        243.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -46734,14 +46734,14 @@
         158
       ],
       "tile": [
-        270,
-        204
+        117,
+        103
       ],
       "expectedTile": [
-        270.0,
-        204.0
+        117.5,
+        103.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -46757,14 +46757,14 @@
         147
       ],
       "tile": [
-        320,
-        197
+        524,
+        86
       ],
       "expectedTile": [
-        320.0,
-        197.0
+        524.5,
+        86.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -46964,14 +46964,14 @@
         88
       ],
       "tile": [
-        270,
-        151
+        387,
+        78
       ],
       "expectedTile": [
-        270.0,
-        151.0
+        387.5,
+        78.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -46987,14 +46987,14 @@
         86
       ],
       "tile": [
-        261,
-        149
+        411,
+        137
       ],
       "expectedTile": [
-        261.0,
-        149.0
+        411.5,
+        137.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -47010,14 +47010,14 @@
         263
       ],
       "tile": [
-        368,
-        285
+        551,
+        222
       ],
       "expectedTile": [
-        368.0,
-        285.0
+        551.5,
+        222.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -47033,14 +47033,14 @@
         318
       ],
       "tile": [
-        432,
-        328
+        602,
+        277
       ],
       "expectedTile": [
-        432.0,
-        328.0
+        602.5,
+        277.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
@@ -47056,14 +47056,14 @@
         342
       ],
       "tile": [
-        432,
-        325
+        548,
+        168
       ],
       "expectedTile": [
-        432.0,
-        325.0
+        548.5,
+        168.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
@@ -47102,14 +47102,14 @@
         304
       ],
       "tile": [
-        266,
-        312
+        504,
+        36
       ],
       "expectedTile": [
-        266.0,
-        312.0
+        504.5,
+        36.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
@@ -47171,14 +47171,14 @@
         186
       ],
       "tile": [
-        261,
-        225
+        47,
+        154
       ],
       "expectedTile": [
-        261.0,
-        225.0
+        47.5,
+        154.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
@@ -47194,14 +47194,14 @@
         199
       ],
       "tile": [
-        405,
-        227
+        149,
+        43
       ],
       "expectedTile": [
-        405.0,
-        227.0
+        149.5,
+        43.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
@@ -47217,14 +47217,14 @@
         44
       ],
       "tile": [
-        406,
-        117
+        56,
+        274
       ],
       "expectedTile": [
-        406.0,
-        117.0
+        56.5,
+        274.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
@@ -47309,14 +47309,14 @@
         80
       ],
       "tile": [
-        244,
-        144
+        54,
+        272
       ],
       "expectedTile": [
-        244.0,
-        144.0
+        54.5,
+        272.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -47332,14 +47332,14 @@
         140
       ],
       "tile": [
-        273,
-        186
+        164,
+        278
       ],
       "expectedTile": [
-        273.0,
-        186.0
+        164.5,
+        278.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -47355,14 +47355,14 @@
         73
       ],
       "tile": [
-        258,
+        246,
         136
       ],
       "expectedTile": [
-        258.0,
-        136.0
+        246.5,
+        136.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -51691,10 +51691,10 @@
     "verdant_stair": {
       "stageFactor": 8,
       "stageMetres": 1.6,
-      "walkableServerTiles": 176643,
-      "largestComponentTiles": 173555,
+      "walkableServerTiles": 173281,
+      "largestComponentTiles": 169845,
       "reachableByStage": {
-        "8": 173555
+        "8": 169845
       },
       "storage": {
         "serverCells": [
@@ -51751,7 +51751,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 173555,
+      "hubReachableTiles": 169845,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -51760,9 +51760,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 173546,
+      "hubReachableAfterStorageTiles": 169836,
       "updatedAuthoredMarkers": 2,
-      "terrainRevision": "diagonal-spine-v1:5292e861c9b96606f0ffca8808c6fa35e1278a826f1c3fc440f343b368eb9c69",
+      "terrainRevision": "diagonal-spine-v1:ba79444873a760c5f6efd13740d3ec930d222aec932f0be91ac214794d628b72",
       "servedTileContinuity": {
         "keptServedTile": 2,
         "movedTogether": 0,
@@ -51926,7 +51926,7 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "4ca10d0cc5d6f7da4d8dc607111a92c625c6f05ee07253169aed0e3d59670966",
+    "client_content_manifest.json": "b298655b18b9813aa5fe38da74a0c11fbd8f83b708b448132e17a5db87d2e1f8",
     "creatures.txt": "f683a45b2da53f03557c7fdf45bc731a304dda241c70f64a7240f776260cde79",
     "harvesting.txt": "e93130fed2350ad6c54d79e40ecedc97a3f748110ee4137424e0075a9677abb7",
     "instances/amberwood_gauntlet_low.def": "dfa704f5be40551d8a3d926845980ae934d4e9445be20a9810c4d5c21b806b67",
@@ -51951,8 +51951,8 @@
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "13f5e558f8a8e856bbdc4134e121260b130971953221b88f2f6e12f4b939a928",
-    "spawns.txt": "e15c8d85399ad23c4015effc7c874bea2f7ac553f10691da472234b13482d041",
+    "spawn_groups/invasion/invasion_nymara.def": "1385b5c4f94383dfc5669ae903eca61be0bada8442343a1375a9808a52fbfb9e",
+    "spawns.txt": "48c8c24336fda67dc4a5e312fba47f3f99492adf20f350e1e22a44db6762e620",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "4de4708d5d139ca4c98d5d0c8297a7d108422420628300800c10b4555f56c607"
   },

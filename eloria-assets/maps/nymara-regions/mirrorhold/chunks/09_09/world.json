@@ -2937,7 +2937,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "2f65bae872458f84be112c352c43c5ebe356019f3c4b4f2bdf2b14ace8353afc",
+    "masterSha256": "58c05c7eaad40770b6738be3937271ceb944c19759b03b36a0623e79e3f046a7",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a",
     "storage": {
       "serverCells": [
@@ -3041,7 +3041,7 @@
         "id": "verdant_stair:base",
         "base": {
           "preset": "Grass",
-          "sourceSurfaceSha256": "99cd6c711d2d2c5800631777f2c483673439312e79d2f91e9d6baea9d285db20",
+          "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
           "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
           "normalTexture": null,
           "ormTexture": null,
@@ -3049,9 +3049,9 @@
             "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
           },
           "albedoColor": [
-            0.7200000286102295,
-            0.8299999833106995,
-            0.6299999952316284,
+            0.699999988079071,
+            0.9200000166893005,
+            0.5,
             1.0
           ],
           "roughness": 1.0,
@@ -3109,7 +3109,7 @@
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "2f65bae872458f84be112c352c43c5ebe356019f3c4b4f2bdf2b14ace8353afc",
+    "masterSha256": "58c05c7eaad40770b6738be3937271ceb944c19759b03b36a0623e79e3f046a7",
     "collisionSha256": "ae11bc7427a7068db09e841af168451b822f55d93a641c20f7d60abf3fc13cb7",
     "terrainRevision": "diagonal-spine-v1:233386421fd93b948fedceb397f002d0bdbdcc8404133ecdebc4dd14aa5ddfcf",
     "storage": {

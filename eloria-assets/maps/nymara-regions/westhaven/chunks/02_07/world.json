@@ -1772,7 +1772,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "2f65bae872458f84be112c352c43c5ebe356019f3c4b4f2bdf2b14ace8353afc",
+    "masterSha256": "58c05c7eaad40770b6738be3937271ceb944c19759b03b36a0623e79e3f046a7",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a",
     "storage": {
       "serverCells": [
@@ -2070,7 +2070,7 @@
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "2f65bae872458f84be112c352c43c5ebe356019f3c4b4f2bdf2b14ace8353afc",
+    "masterSha256": "58c05c7eaad40770b6738be3937271ceb944c19759b03b36a0623e79e3f046a7",
     "collisionSha256": "725630db405ec12679981f058c7f517d44d71f8f66c0e198b8ce22ca8f7b22fd",
     "terrainRevision": "diagonal-spine-v1:b5f8c388a30bc5320b490a25b684f6a8b405f53f249b39104ed818ef29ace66e",
     "storage": {

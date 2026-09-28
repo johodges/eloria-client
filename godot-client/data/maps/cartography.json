@@ -15,36 +15,36 @@
       -40
     ],
     "sources": {
-      "four_gates": "a58865c6012077f7bf802ad308b5d1a34fec24618e6d6f2c6d049a3d4a3ff845",
-      "four_gates:geometry": "28a46b1fc3faa3afa65b92bed684e9e9ef20e2a0dfddb4db32cfcfafc6f7dd09",
-      "mirrorhold": "0d699146c372d0c166de331301fb94b33c6ba60f7fb94cb7025be48d24fdbc9d",
-      "mirrorhold:geometry": "c0f232e1a2437117df2ef2184ab7ae2c11ec0833581162f0c79c707ab6b30726",
+      "four_gates": "63c887c811747ae355bba7d0c391e3a3dae13c97c1c23eb2f39ea4baf9a918d9",
+      "four_gates:geometry": "21e93ab2a28d4ad2b19f0826ac13a89911857d3915e0a68ef77fcf0e46ac94f8",
+      "mirrorhold": "7b7be0cb5c00e8c73cb50090fa22d83e541d5030e7fdad54608b22340836cc1f",
+      "mirrorhold:geometry": "ee653e80929754361496a07a27572e2cf68b02fbf774e9db8444001842237e3d",
       "crownwater": "b2f959aed9e4d3ba4f6207cb46e65cf2f73e7d2aac5251cfaa40a8d646d9b6ef",
       "crownwater:geometry": "240dc8de6fb619697ae6a44929061d28873ff061c2c88fe38168c5d94c2a07d1",
       "whitehorn_range": "cfad83e493d7b79eb004537455a16a7a0ea32998ef9678bbb8836f62a27f0c76",
       "whitehorn_range:geometry": "8b5a4ef1b49b7d79e59d3eb02415d1cc64d7b74e509937b88feaee424cec5072",
       "amethyst_barrens": "3ee441466e1220b5fad86dc9ea57e9872f8463579e9428c9d7d956e59ac33593",
       "amethyst_barrens:geometry": "55486f239246f8049fcd854d421866d3c3844351bd2c80ceca3e042bb870d2d8",
-      "sunmane_steppe": "605eec8c0462a6c6a12d379dd01d53b5227637078112238b1177c319decf48a0",
-      "sunmane_steppe:geometry": "7f56d4475febd178c8c19582ab05e51747eb300af421b42cb77a08874546b960",
+      "sunmane_steppe": "dd3f33fcdea96b2f156df4a7d220c8477af1e6ba8c62e16314154c8fce57797a",
+      "sunmane_steppe:geometry": "fb926df1cc570ade8bb742b76bbc7d95183fbcbebb91baa5cdbb7225c28bace8",
       "amberwood": "8555cd6787a24cc343f4e8ad75b8c2dbe9b968060e08827a0afef4fbc7da2760",
       "amberwood:geometry": "f687d61b9447562fb7ad122aef8af44248eca25a36f30769643a382948eeaca3",
       "grey_moors": "54ee4cb54dfbb31f4f0b9c071cd897317d661a54c6d80831d3bc3bc6115cfefe",
       "grey_moors:geometry": "3db6a16dc3615d866d938c1c56dbbcc2c81f59eeb8b6e9e38ba050f8b2a54774",
       "westhaven": "0fea9fbfdd6da62a22aab71c8f591d6ec4a850a67f71226d07212b5dea4b34c5",
       "westhaven:geometry": "ccce38d73390e5c53bc9607a5e7bae1d9c322158bd0ec13d75b16b1583777378",
-      "verdant_stair": "bcfb79b12abe2544f0d183a30350ff96f6a30e416693478881e90dff421eb048",
-      "verdant_stair:geometry": "5c9cf1bb2c02375a17a27de64d029d74c562bd7bec293d0b5b26593b9c6fb456",
-      "ssarathi_ruins": "ff43f1420d5e39c19a718ca1947514d9c0c375a0d84b6c287b5b369b3b035dca",
-      "ssarathi_ruins:geometry": "9e705dcca4f3819e369e029058274103232628f4520486f4cc01c4ea4f4acc50",
-      "manymouth_delta": "ed0e057548bfbf27470df702123aab0f3a4feb2346af54d26ae651e0dc0fc6f3",
-      "manymouth_delta:geometry": "67d2296dc2ca018fac46e8d20881a4ba80b1eabb690b22664853c37d9f057379"
+      "verdant_stair": "5e72db9e4338c831154e7768ad667f2a2c490123172cfd393ce95c13959fa393",
+      "verdant_stair:geometry": "fc7f92ff3cd507a537db990e04d047d691176f9d037b269df187ca8487122290",
+      "ssarathi_ruins": "81bfc4cd5907db8d7ccf5f89d3ee162e78ef1b86e0a007f7b1bd1c8037cd673d",
+      "ssarathi_ruins:geometry": "882b34ade793dd71880d65e7a80f0682c96df17896ca7fe8c7f76c849e767496",
+      "manymouth_delta": "af9eabd2ff4a39f0af1f5ee94036e1827077e61fca23bacf16e8388cc7f0599a",
+      "manymouth_delta:geometry": "260a142a8f95fed24c254d14c3f2530faeda7403c4d39b2cde76f7d50290bdf6"
     },
-    "geographySha256": "bb2e583129a4dff77862d89fbb026b739b3dd3d11d8b2a9fa223dc2d96647a66",
+    "geographySha256": "0f815058a2b041d5171900ad2380c3d84a0d97a12f7bfcefbcf19d78b3eef23e",
     "masterGeometry": {
-      "imageSha256": "9834215e8267e1fea955b16f52e2c009ef7bc683e555019073bf543ddda68792",
-      "masterSha256": "2f65bae872458f84be112c352c43c5ebe356019f3c4b4f2bdf2b14ace8353afc",
-      "reportSha256": "b1d6532f57cc465ae5732df05328987e5f9b4c781609a283e1eddcf589267140"
+      "imageSha256": "010919eb1aaadeb50340de1d914d0f110ddc1230ed7140f0667209f9f5cbd944",
+      "masterSha256": "58c05c7eaad40770b6738be3937271ceb944c19759b03b36a0623e79e3f046a7",
+      "reportSha256": "bd1124fae908572f1abf57d51d3f63807326b16e1e075915b0c2a07b53fdcc3e"
     }
   },
   "regions": [
