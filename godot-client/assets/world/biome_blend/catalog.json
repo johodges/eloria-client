@@ -8012,7 +8012,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -8020,9 +8020,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -8163,7 +8163,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -8171,9 +8171,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -9844,7 +9844,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -9852,9 +9852,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -10058,7 +10058,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -10066,9 +10066,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -10209,7 +10209,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -10217,9 +10217,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -10360,7 +10360,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -10368,9 +10368,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -10511,7 +10511,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -10519,9 +10519,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -11804,7 +11804,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -11812,9 +11812,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -12018,7 +12018,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -12026,9 +12026,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -12106,7 +12106,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -12114,9 +12114,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -12194,7 +12194,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -12202,9 +12202,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -12282,7 +12282,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -12290,9 +12290,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -12435,7 +12435,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -12443,9 +12443,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -14106,7 +14106,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -14114,9 +14114,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -14257,7 +14257,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -14265,9 +14265,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -14408,7 +14408,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -14416,9 +14416,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -14496,7 +14496,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -14504,9 +14504,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -14584,7 +14584,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -14592,9 +14592,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -14737,7 +14737,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -14745,9 +14745,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -15904,7 +15904,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -15912,9 +15912,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -16055,7 +16055,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -16063,9 +16063,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -16206,7 +16206,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -16214,9 +16214,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -16294,7 +16294,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -16302,9 +16302,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -16382,7 +16382,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -16390,9 +16390,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -17727,7 +17727,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -17735,9 +17735,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -17878,7 +17878,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -17886,9 +17886,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -18092,7 +18092,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -18100,9 +18100,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -18243,7 +18243,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -18251,9 +18251,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -20243,7 +20243,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -20251,9 +20251,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -20520,7 +20520,7 @@
           "id": "mirrorhold:base",
           "base": {
             "preset": "Alpine scree lichen",
-            "sourceSurfaceSha256": "6697554319c3bc47f3319058b976438d37cc5f4468fd151c38f9151efde15068",
+            "sourceSurfaceSha256": "26812e332e6f8ecfce93625afaec64d29a837414f2fd060bfbcf833d18d1066f",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/alpine-scree-lichen/alpine-scree-lichen-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -20528,9 +20528,9 @@
               "albedoTexture": "e578ca6c6df0db5bb4c9086e31905bb2708f618e16f6e2ee968a0d5109023fac"
             },
             "albedoColor": [
-              0.6200000047683716,
-              0.6499999761581421,
-              0.6800000071525574,
+              0.8399999737739563,
+              0.8500000238418579,
+              0.8399999737739563,
               1.0
             ],
             "roughness": 0.9700000286102295,

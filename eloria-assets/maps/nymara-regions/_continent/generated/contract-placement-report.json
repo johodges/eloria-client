@@ -29232,13 +29232,13 @@
       ],
       "tile": [
         184,
-        473
+        475
       ],
       "expectedTile": [
         184.0,
         473.0
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 2.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -29392,14 +29392,14 @@
         140
       ],
       "tile": [
-        245,
-        248
+        177,
+        128
       ],
       "expectedTile": [
-        245.0,
-        248.0
+        157.5,
+        101.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 32.901,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -29461,14 +29461,14 @@
         253
       ],
       "tile": [
-        230,
-        361
+        212,
+        180
       ],
       "expectedTile": [
-        230.0,
-        361.0
+        212.5,
+        180.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -29484,14 +29484,14 @@
         212
       ],
       "tile": [
-        295,
-        320
+        267,
+        89
       ],
       "expectedTile": [
-        295.0,
-        320.0
+        267.5,
+        89.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -29576,14 +29576,14 @@
         211
       ],
       "tile": [
-        243,
-        318
+        43,
+        309
       ],
       "expectedTile": [
-        243.0,
-        318.0
+        43.5,
+        309.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -29691,14 +29691,14 @@
         166
       ],
       "tile": [
-        293,
-        274
+        357,
+        451
       ],
       "expectedTile": [
-        293.0,
-        274.0
+        357.5,
+        451.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
@@ -29714,14 +29714,14 @@
         249
       ],
       "tile": [
-        314,
-        357
+        206,
+        495
       ],
       "expectedTile": [
-        314.0,
-        357.0
+        206.5,
+        495.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
@@ -29737,14 +29737,14 @@
         143
       ],
       "tile": [
-        271,
-        251
+        182,
+        453
       ],
       "expectedTile": [
-        271.0,
-        251.0
+        182.5,
+        453.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
@@ -51034,10 +51034,10 @@
     "mirrorhold": {
       "stageFactor": 15,
       "stageMetres": 3.0,
-      "walkableServerTiles": 82998,
-      "largestComponentTiles": 67282,
+      "walkableServerTiles": 82056,
+      "largestComponentTiles": 66445,
       "reachableByStage": {
-        "15": 67282
+        "15": 66445
       },
       "storage": {
         "serverCells": [
@@ -51076,7 +51076,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 67282,
+      "hubReachableTiles": 66445,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -51085,9 +51085,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 67273,
+      "hubReachableAfterStorageTiles": 66436,
       "updatedAuthoredMarkers": 1,
-      "terrainRevision": "diagonal-spine-v1:233386421fd93b948fedceb397f002d0bdbdcc8404133ecdebc4dd14aa5ddfcf",
+      "terrainRevision": "diagonal-spine-v1:d46389d4cfc442041f94df51ae7e0fdc0407327766c496b6f5a6b2802ac0c558",
       "servedTileContinuity": {
         "keptServedTile": 0,
         "movedTogether": 0,
@@ -51926,7 +51926,7 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "b298655b18b9813aa5fe38da74a0c11fbd8f83b708b448132e17a5db87d2e1f8",
+    "client_content_manifest.json": "c5df794a6994ec4eaa3184404315dcdd20473e2f0c78e8d9d419bcfa85877add",
     "creatures.txt": "f683a45b2da53f03557c7fdf45bc731a304dda241c70f64a7240f776260cde79",
     "harvesting.txt": "e93130fed2350ad6c54d79e40ecedc97a3f748110ee4137424e0075a9677abb7",
     "instances/amberwood_gauntlet_low.def": "dfa704f5be40551d8a3d926845980ae934d4e9445be20a9810c4d5c21b806b67",
@@ -51951,8 +51951,8 @@
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "1385b5c4f94383dfc5669ae903eca61be0bada8442343a1375a9808a52fbfb9e",
-    "spawns.txt": "48c8c24336fda67dc4a5e312fba47f3f99492adf20f350e1e22a44db6762e620",
+    "spawn_groups/invasion/invasion_nymara.def": "4b06d680e59ec112da717a8ef33bdecda35c5615aff2eaae7cbfccc6bf9e114a",
+    "spawns.txt": "17d56eab61a3732abd7bbb411106b1087999f16ada3c75287a06790c595d9469",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "4de4708d5d139ca4c98d5d0c8297a7d108422420628300800c10b4555f56c607"
   },
