@@ -5,15 +5,15 @@ overcast, standing stones and turf barrows over the whole of it, boardwalks and
 laid causeways across the bog, broken towers on the skyline, and a bay biting
 into the south-west corner.
 
-Current inhabited-landscape package: **384 m × 384 m**, one metre per tile,
+Current inhabited-landscape package: **384 m ï¿½ 384 m**, one metre per tile,
 with server origin **(116,116)**. The peat refuge and Great Barrow crown retain
 full dimensions while the journeys between them shorten. See
 [landscape-redesign.md](landscape-redesign.md) for authored geography and rebuild order.
 
 | Contract | Current result |
 | --- | --- |
-| exterior extent | 384 × 384 server tiles |
-| half-metre collision | 768 × 768, 92.0% walkable |
+| exterior extent | 384 ï¿½ 384 server tiles |
+| half-metre collision | 768 ï¿½ 768, 92.0% walkable |
 | full package | 33.29 MB |
 | instanced triangles including hidden receiving-scene view | 706,047 |
 | GLB validator | 0 errors, 0 warnings |
@@ -40,6 +40,33 @@ grey_moors/
     client-captures/            real Godot 4.7.2 frames through WorldLoader
     comparisons/                panel, aerial and landmark contact sheets
 ```
+
+## Editor kit
+
+`source/prepare_meshy_kit.py --input <grey moors> <verdant> <whitehorn> <mirrorhold> <four gates> <amethyst> <ssarathi models>`
+seats generated models in the territory palette's kit
+(`godot-client/world_authoring/regions/grey_moors/assets/prototypes/kit-*.glb`), beside the
+territory's published pieces. Each model is taken from the first folder that has it.
+
+- The Grey Moors set, from `work-output/grey-moors-2026-09-28/asset-prompts.md`: heather, gorse,
+  bog cotton, rushes and bracken; three standing stones, grave markers, candle stakes and a giant
+  skeleton; peat stacks, a peat barrow and a peat winch, a turf shieling, dry-stone dykes and a
+  sheepfold; a wisp lantern, a bog-oak stump, a raven snag and a ruined chapel; two bog pools; and a
+  currach, kelp wrack and weed-hung rocks.
+- Verdant Stair's mossy boulders, crags, logs and stumps, driftwood, beached rowboat, net frame and
+  reeds.
+- Whitehorn Range's windbent pine, cairn tower, windbreak, firewood shelter, trail lantern and
+  lichen rocks.
+- Mirrorhold's mountain pine, juniper and tussock grass.
+- Four Gates' golden birch, russet oak, autumn maples, split-rail fence, hay stack and fallen
+  leaves.
+- Amethyst Barrens' dead thorns and lichen stone mats.
+- Ssarathi's coastal rocks and sea stacks.
+
+Wrapper-node transforms are baked into the vertices before each model is scaled to its size in
+`SIZES` and stood on the origin. Its textures are shrunk and content-addressed into
+`assets/textures/`. `source/prepare-meshy-kit.json` records the input and output digests, and
+`--check` verifies them.
 
 ## Building it
 

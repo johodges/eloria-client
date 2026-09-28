@@ -44,7 +44,9 @@ const WALK_THROUGH_WORDS := ["shrub", "sage", "scrub", "grass", "bones", "tree",
 	"frozen-pond", "icicle-fringe", "rockfall", "net-frame", "vineyard", "rope-coils",
 	"lobster-pots", "fish-crates", "buoy", "gate-arch", "fish-weir", "water-jars", "hearth", "hammock",
 	"fish-line", "decoy", "floating-lantern", "rice-paddy", "rice-sheaves", "water-lilies", "bamboo-clump", "pergola",
-	"lamp-buoy", "diver-float", "sorting-table", "net-mending", "parasols", "statue-head", "citrus-planter"]
+	"lamp-buoy", "diver-float", "sorting-table", "net-mending", "parasols", "statue-head", "citrus-planter",
+	"heather", "gorse", "rushes", "bracken", "grave-markers", "candle-stake", "skeleton", "peat-stack",
+	"peat-barrow", "wisp-lantern", "bog-pool", "kelp"]
 
 ## The largest dimension the continent's own library extractor admits for one
 ## asset (export_map_asset_library.py); anything bigger is usually a unit slip.
