@@ -11,7 +11,9 @@ Used by `stamp_solid_landmarks.py` and `open_walk_surfaces.py`.
 """
 from __future__ import annotations
 
+import hashlib
 import json
+import re
 import struct
 from pathlib import Path
 
@@ -27,8 +29,17 @@ UPWARD = 0.55
 HEADER = struct.Struct("<4sHHII")
 
 
+# A binary part a package keeps beside its .glb, named by its own SHA-256 so the
+# .glb's JSON (and so its digest) pins the part's bytes. See `scene_io.dump_glb`.
+PART_URI = re.compile(r"^[^/\\]+\.part[0-9]+\.([0-9a-f]{64})\.bin$")
+
+
 def load(path: Path) -> tuple[dict, bytes]:
-    """(the glTF document, the binary chunk) of a .glb."""
+    """(the glTF document, the binary chunk) of a .glb.
+
+    A region master too large for one file continues its binary in part files
+    beside it; those are joined back on, so a reader always sees one buffer.
+    """
     raw = path.read_bytes()
     json_length = struct.unpack_from("<II", raw, 12)[0]
     document = json.loads(raw[20:20 + json_length].decode("utf-8"))
@@ -40,7 +51,38 @@ def load(path: Path) -> tuple[dict, bytes]:
             body = raw[offset + 8:offset + 8 + length]
             break
         offset += 8 + length
+    if len(document.get("buffers", [])) > 1:
+        return join_parts(path, document, body)
     return document, body
+
+
+def join_parts(path: Path, document: dict, body: bytes) -> tuple[dict, bytes]:
+    """One buffer from a .glb whose binary continues in content-addressed parts.
+
+    Each part must match the SHA-256 its name carries and the length the
+    document declares. Every buffer view is rebased onto the joined buffer,
+    each part starting on a 4-byte boundary as the views inside it do.
+    """
+    buffers = document["buffers"]
+    if "uri" in buffers[0]:
+        raise ValueError(f"{path}: the first buffer must be the GLB's own binary chunk")
+    joined = bytearray(body[:buffers[0].get("byteLength", len(body))])
+    starts = [0]
+    for index, buffer in enumerate(buffers[1:], 1):
+        match = PART_URI.match(buffer.get("uri", ""))
+        if not match:
+            raise ValueError(f"{path}: buffer {index} is not a part file: {buffer.get('uri')!r}")
+        data = (Path(path).parent / buffer["uri"]).read_bytes()
+        if len(data) != buffer["byteLength"] or hashlib.sha256(data).hexdigest() != match.group(1):
+            raise ValueError(f"{path}: {buffer['uri']} does not match its name and declared length")
+        joined.extend(b"\0" * ((-len(joined)) % 4))
+        starts.append(len(joined))
+        joined.extend(data)
+    for view in document["bufferViews"]:
+        view["byteOffset"] = view.get("byteOffset", 0) + starts[view.get("buffer", 0)]
+        view["buffer"] = 0
+    document["buffers"] = [{"byteLength": len(joined)}]
+    return document, bytes(joined)
 
 
 def accessor(document: dict, body: bytes, index: int) -> np.ndarray:

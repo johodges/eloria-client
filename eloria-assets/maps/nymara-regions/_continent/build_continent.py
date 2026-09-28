@@ -1156,7 +1156,7 @@ def export_geometry(world,content,output):
             entry=chunks.setdefault(name,{'roots':[],'bounds':[lo.copy(),hi.copy()],'cell':[cx,cz],'terrainCells':0})
             entry.setdefault('bridges',[]).append(bridge)
             entry['bounds']=[np.minimum(entry['bounds'][0],lo),np.maximum(entry['bounds'][1],hi)]
-        exporter=S.Exporter(root/'world.glb',shared)
+        exporter=S.Exporter(root/'world.glb',shared,part_bytes=S.PACKAGE_PART_BYTES)
         add_to_exporter(exporter,world,content,region,terrain_doc,terrain_body,[r for c in chunks.values() for r in c['roots']],objects,bridge_doc,bridge_body,bridges)
         stats=exporter.write();manifest['performance']=stats;manifest['externalResources']=stats['externalResources']
         manifest['singleContinentSource']={'revision':'diagonal-spine-v1','masterSha256':master_sha,'planSha256':digest(HERE/'diagonal-plan.json')}

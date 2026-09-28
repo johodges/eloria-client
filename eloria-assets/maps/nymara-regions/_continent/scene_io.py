@@ -18,19 +18,51 @@ import numpy as np
 from PIL import Image
 
 TOOLKIT=Path(__file__).resolve().parents[1]/'_toolkit'
+# GitHub refuses any file over 100 MiB. A region master's binary past
+# PACKAGE_PART_BYTES continues in part files, leaving room for its JSON chunk.
+PACKAGE_PART_BYTES=90*2**20
+PACKAGE_FILE_BYTES=100*2**20
 if str(TOOLKIT) not in sys.path: sys.path.insert(0,str(TOOLKIT))
 import glb_reader as GR
 
 
-def dump_glb(path, document, body):
+def dump_glb(path, document, body, part_bytes=None):
+    """Write a GLB. Given `part_bytes`, a binary larger than that keeps its first
+    part in the GLB and continues, whole buffer views at a time, in sibling files
+    `<stem>.part<n>.<sha256>.bin` (standard glTF external buffers). The name pins
+    each part's bytes, so the GLB's own digest still covers the whole package.
+    Part files beside the GLB that it no longer names are removed."""
     document=copy.deepcopy(document)
-    document['buffers']=[{'byteLength':len(body)}]
+    path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
+    parts=split_parts(document,body,part_bytes) if part_bytes and len(body)>part_bytes else [bytes(body)]
+    document['buffers']=[{'byteLength':len(parts[0])}]
+    written=set()
+    for number,data in enumerate(parts[1:],1):
+        name=f'{path.stem}.part{number}.{hashlib.sha256(data).hexdigest()}.bin'
+        (path.parent/name).write_bytes(data);written.add(name)
+        document['buffers'].append({'uri':name,'byteLength':len(data)})
+    for stale in path.parent.glob(f'{path.stem}.part*.bin'):
+        if stale.name not in written: stale.unlink()
     raw=json.dumps(document,separators=(',',':'),ensure_ascii=False).encode()
     raw+=b' '*((-len(raw))%4)
-    body=bytes(body)+b'\0'*((-len(body))%4)
+    body=parts[0]+b'\0'*((-len(parts[0]))%4)
     header=struct.pack('<4sII',b'glTF',2,12+8+len(raw)+8+len(body))
-    path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
     path.write_bytes(header+struct.pack('<II',len(raw),0x4E4F534A)+raw+struct.pack('<II',len(body),0x004E4942)+body)
+
+
+def split_parts(document, body, limit):
+    """Deal the buffer views, in buffer order, into parts of at most `limit`
+    bytes, rebasing each view onto its part at a 4-byte boundary."""
+    parts=[bytearray()]
+    for view in sorted(document['bufferViews'],key=lambda v:v.get('byteOffset',0)):
+        start=view.get('byteOffset',0);data=body[start:start+view['byteLength']]
+        if len(data)>limit: raise ValueError(f'A {len(data)}-byte buffer view cannot fit a {limit}-byte part')
+        offset=len(parts[-1])+(-len(parts[-1]))%4
+        if parts[-1] and offset+len(data)>limit: parts.append(bytearray());offset=0
+        parts[-1].extend(b'\0'*(offset-len(parts[-1])))
+        view['buffer']=len(parts)-1;view['byteOffset']=offset
+        parts[-1].extend(data)
+    return [bytes(part) for part in parts]
 
 
 def descendants(document, roots):
@@ -62,9 +94,13 @@ def subtree_bounds(document, body, root, matrices=None):
 
 
 class Exporter:
-    def __init__(self, path, shared_images=None):
+    def __init__(self, path, shared_images=None, part_bytes=None):
+        """`part_bytes` is for region masters only: the streaming client never
+        loads a master's geometry (it hashes it), while chunks and every other
+        runtime GLB must stay self-contained."""
         self.path=Path(path)
         self.shared_images=Path(shared_images) if shared_images else None
+        self.part_bytes=part_bytes
         self.doc={'asset':{'version':'2.0','generator':'Eloria shared continent partitioner'},
                   'scene':0,'scenes':[{'nodes':[]}],'nodes':[],'meshes':[],
                   'materials':[],'textures':[],'images':[],'samplers':[],
@@ -192,7 +228,9 @@ class Exporter:
         return wrappers
 
     def write(self):
-        dump_glb(self.path,self.doc,self.body)
+        dump_glb(self.path,self.doc,self.body,self.part_bytes)
+        if self.part_bytes and self.path.stat().st_size>PACKAGE_FILE_BYTES:
+            raise ValueError(f'{self.path}: {self.path.stat().st_size} bytes is over the {PACKAGE_FILE_BYTES}-byte file limit')
         return {'glbBytes':self.path.stat().st_size,'nodes':len(self.doc['nodes']),
                 'meshes':len(self.doc['meshes']),'externalResources':self.dependencies,
                 'sharedResourceResidentBytes':self.resource_bytes}

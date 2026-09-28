@@ -35,18 +35,10 @@ TYPE_COUNT = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4, "MAT4": 16}
 
 
 def load_glb(path: Path):
-    data = path.read_bytes()
-    length = struct.unpack("<I", data[12:16])[0]
-    document = json.loads(data[20:20 + length])
-    offset = 20 + length
-    binary = b""
-    while offset + 8 <= len(data):
-        chunk_length, chunk_type = struct.unpack("<II", data[offset:offset + 8])
-        if chunk_type == 0x004E4942:
-            binary = data[offset + 8:offset + 8 + chunk_length]
-            break
-        offset += 8 + chunk_length
-    return document, binary
+    """(document, binary) of a package GLB; a region master's part files are
+    joined back on (see glb_reader.load)."""
+    import glb_reader
+    return glb_reader.load(Path(path))
 
 
 def accessor(document, binary, index):

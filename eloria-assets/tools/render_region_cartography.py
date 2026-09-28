@@ -93,6 +93,9 @@ def read_glb(path):
         raise ValueError('Packaged GLB has no binary chunk')
     # The JSON chunk size is recomputed from its preceding header.
     start = 28 + struct.unpack_from('<I', raw, 12)[0]
+    if len(doc.get('buffers', [])) > 1:
+        import glb_reader                       # a region master kept in part files
+        return glb_reader.join_parts(Path(path), doc, raw[start:start + size])
     return doc, raw[start:start + size]
 
 
