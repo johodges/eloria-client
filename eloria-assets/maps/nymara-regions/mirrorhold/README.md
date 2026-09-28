@@ -87,3 +87,21 @@ migration is revision guarded; repeat builds do not compress content twice.
 - `coverage-map.md` - what occupies the region, where
 - `performance-summary.md` - the measured budget
 - `change-log.md`
+
+## Editor kit
+
+`source/prepare_meshy_kit.py --input <mirrorhold models> <verdant models>` seats the
+generated models in the territory palette's kit
+(`godot-client/world_authoring/regions/mirrorhold/assets/prototypes/kit-*.glb`):
+the Mirrorhold set from `work-output/mirrorhold-2026-09-27/asset-prompts.md`
+(alpine firs and pines, juniper, flower cushions and tussocks, snow-capped
+boulders and scree, sun mirrors, lens stands, telescopes, a mirror obelisk,
+lens-grinder bench, lens crates and sign, sundial, planters, benches, potted
+cypress, a market stall, banner poles, a drinking fountain, glassware cart,
+laundry line, a stone landing stage, rowing boat, mooring posts and a heron
+weathervane) and the Verdant Stair models this bowl shares (mossy crags and
+boulders, saplings, meadow flowers, flowering shrubs, reeds), each taken from the
+first folder that has it. Each is scaled to its size in `SIZES`, stood on the
+origin, and its textures shrunk and content-addressed into `assets/textures/`;
+`source/prepare-meshy-kit.json` records the input and output digests and `--check`
+verifies them.
