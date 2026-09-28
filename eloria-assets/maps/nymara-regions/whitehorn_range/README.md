@@ -80,6 +80,28 @@ two prefixes:
 Structural geometry is deliberately **not** a walk surface, so the grounding ray
 never snaps a character onto a lintel, a mine gantry or an icicle.
 
+## Editor kit
+
+`source/prepare_meshy_kit.py --input <whitehorn models> <mirrorhold models> <amethyst models>` seats
+the generated models in the territory palette's kit
+(`godot-client/world_authoring/regions/whitehorn_range/assets/prototypes/kit-*.glb`). Each model is
+taken from the first folder that has it.
+
+- The Whitehorn set, from `work-output/whitehorn-range-2026-09-28/asset-prompts.md`: granite spires,
+  crags, a knife ridge, boulders, a rockfall and an icicle arch; frozen waterfalls, ice shards, a
+  glacier block, frozen ponds and icicle fringes; snow-laden firs, a wind-bent pine, a frosted larch
+  and juniper; expedition tents, firewood shelters, sledges, ski racks, gear baskets, trail lanterns
+  and windbreaks; horn waystones, horn shrines, cairn towers and prayer bells and flags; snow drifts,
+  frost grass and lichen stones.
+- Mirrorhold's snow-capped boulders, snow scree, alpine firs and pines, juniper, tussock grass and
+  flower cushions.
+- Amethyst Barrens' lantern post, supply crates, ore cart, mine rails and tool rack for the mine yard.
+
+The delivery sizes its models with wrapper nodes. The prepare step bakes each mesh node's transform
+into its vertices, then scales the model to its size in `SIZES`, stands it on the origin, and shrinks
+and content-addresses its textures into `assets/textures/`. `source/prepare-meshy-kit.json` records
+the input and output digests, and `--check` verifies them.
+
 ## Verification
 
 | Check | Result |
