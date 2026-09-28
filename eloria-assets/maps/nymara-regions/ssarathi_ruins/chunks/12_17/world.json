@@ -1007,7 +1007,7 @@
       240.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:ca0e24817c9345cee48b1c595f229559bbc48b67369820fd8a3f0a4af9820c20",
+  "terrainRevision": "diagonal-spine-v1:284b61941b3bbe92fd99e4d437ff38ab107d3c38dfd5dde82b9095ae0a84571e",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -1023,7 +1023,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "007b6529c9bd08f76dbd78ea748c9eb908b8aafba1431b43487efddaedf9e9ad",
+    "masterSha256": "2f65bae872458f84be112c352c43c5ebe356019f3c4b4f2bdf2b14ace8353afc",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a",
     "storage": {
       "serverCells": [
@@ -1064,7 +1064,7 @@
         "id": "ssarathi_ruins:base",
         "base": {
           "preset": "Grass",
-          "sourceSurfaceSha256": "73d541921c194bbc0d7cc25466e06c6fac3618a7145f0bfb340e0c453ce837f6",
+          "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
           "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
           "normalTexture": null,
           "ormTexture": null,
@@ -1072,9 +1072,9 @@
             "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
           },
           "albedoColor": [
-            0.7400000095367432,
-            0.8299999833106995,
-            0.6600000262260437,
+            0.699999988079071,
+            0.9200000166893005,
+            0.5,
             1.0
           ],
           "roughness": 1.0,
@@ -1132,9 +1132,9 @@
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "007b6529c9bd08f76dbd78ea748c9eb908b8aafba1431b43487efddaedf9e9ad",
-    "collisionSha256": "9c0b436494534769b274a25a3fe4e9397360e29a6fdc7d6a4a2fc3ffd07366e6",
-    "terrainRevision": "diagonal-spine-v1:ca0e24817c9345cee48b1c595f229559bbc48b67369820fd8a3f0a4af9820c20",
+    "masterSha256": "2f65bae872458f84be112c352c43c5ebe356019f3c4b4f2bdf2b14ace8353afc",
+    "collisionSha256": "a5f0187bf910905f15a86811e99901a7c4c8514dbce908769d58703aca0ac263",
+    "terrainRevision": "diagonal-spine-v1:284b61941b3bbe92fd99e4d437ff38ab107d3c38dfd5dde82b9095ae0a84571e",
     "storage": {
       "serverCells": [
         780,

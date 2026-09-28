@@ -427,9 +427,9 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 997408,
-    "nodes": 104,
-    "meshes": 40,
+    "glbBytes": 1049176,
+    "nodes": 110,
+    "meshes": 41,
     "externalResources": {
       "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -462,7 +462,10 @@
       "../../../_continent/shared-assets/c474c4461f147188e3c6cf416f2760590dcf677fcc4fd674d94fd2587d060e56.png": "c474c4461f147188e3c6cf416f2760590dcf677fcc4fd674d94fd2587d060e56",
       "../../../_continent/shared-assets/2185d802eb347e56a329699d132e9601f8a9a7aebd81f1b966bd7b637505fa66.png": "2185d802eb347e56a329699d132e9601f8a9a7aebd81f1b966bd7b637505fa66",
       "../../../_continent/shared-assets/dc5b6721703e6b9add7d746445501d29787d64079373dd2ad5624ad9f66715e5.png": "dc5b6721703e6b9add7d746445501d29787d64079373dd2ad5624ad9f66715e5",
-      "../../../_continent/shared-assets/21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0.png": "21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0"
+      "../../../_continent/shared-assets/21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0.png": "21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0",
+      "../../../_continent/shared-assets/45432aa095587b1b1cd588d00c1c625ecafd1e67464b7240b28b4439e4b10388.jpg": "45432aa095587b1b1cd588d00c1c625ecafd1e67464b7240b28b4439e4b10388",
+      "../../../_continent/shared-assets/d0cd57335b0ef4a8c8cf9900ebd923ee1b0766cc454046d86536955c5fb52ff1.jpg": "d0cd57335b0ef4a8c8cf9900ebd923ee1b0766cc454046d86536955c5fb52ff1",
+      "../../../_continent/shared-assets/23e5da5e071a6e57584e7aca03b0af4bb0b730a8a2dad6694fae92f71cce4ebb.jpg": "23e5da5e071a6e57584e7aca03b0af4bb0b730a8a2dad6694fae92f71cce4ebb"
     },
     "sharedResourceResidentBytes": {
       "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
@@ -496,7 +499,10 @@
       "c474c4461f147188e3c6cf416f2760590dcf677fcc4fd674d94fd2587d060e56": 1398102,
       "2185d802eb347e56a329699d132e9601f8a9a7aebd81f1b966bd7b637505fa66": 349526,
       "dc5b6721703e6b9add7d746445501d29787d64079373dd2ad5624ad9f66715e5": 1398102,
-      "21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0": 349526
+      "21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0": 349526,
+      "45432aa095587b1b1cd588d00c1c625ecafd1e67464b7240b28b4439e4b10388": 1398102,
+      "d0cd57335b0ef4a8c8cf9900ebd923ee1b0766cc454046d86536955c5fb52ff1": 1398102,
+      "23e5da5e071a6e57584e7aca03b0af4bb0b730a8a2dad6694fae92f71cce4ebb": 1398102
     }
   },
   "sources": [
@@ -1051,7 +1057,7 @@
       240.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:ca0e24817c9345cee48b1c595f229559bbc48b67369820fd8a3f0a4af9820c20",
+  "terrainRevision": "diagonal-spine-v1:284b61941b3bbe92fd99e4d437ff38ab107d3c38dfd5dde82b9095ae0a84571e",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -1084,11 +1090,14 @@
     "../../../_continent/shared-assets/c474c4461f147188e3c6cf416f2760590dcf677fcc4fd674d94fd2587d060e56.png": "c474c4461f147188e3c6cf416f2760590dcf677fcc4fd674d94fd2587d060e56",
     "../../../_continent/shared-assets/2185d802eb347e56a329699d132e9601f8a9a7aebd81f1b966bd7b637505fa66.png": "2185d802eb347e56a329699d132e9601f8a9a7aebd81f1b966bd7b637505fa66",
     "../../../_continent/shared-assets/dc5b6721703e6b9add7d746445501d29787d64079373dd2ad5624ad9f66715e5.png": "dc5b6721703e6b9add7d746445501d29787d64079373dd2ad5624ad9f66715e5",
-    "../../../_continent/shared-assets/21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0.png": "21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0"
+    "../../../_continent/shared-assets/21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0.png": "21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0",
+    "../../../_continent/shared-assets/45432aa095587b1b1cd588d00c1c625ecafd1e67464b7240b28b4439e4b10388.jpg": "45432aa095587b1b1cd588d00c1c625ecafd1e67464b7240b28b4439e4b10388",
+    "../../../_continent/shared-assets/d0cd57335b0ef4a8c8cf9900ebd923ee1b0766cc454046d86536955c5fb52ff1.jpg": "d0cd57335b0ef4a8c8cf9900ebd923ee1b0766cc454046d86536955c5fb52ff1",
+    "../../../_continent/shared-assets/23e5da5e071a6e57584e7aca03b0af4bb0b730a8a2dad6694fae92f71cce4ebb.jpg": "23e5da5e071a6e57584e7aca03b0af4bb0b730a8a2dad6694fae92f71cce4ebb"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "007b6529c9bd08f76dbd78ea748c9eb908b8aafba1431b43487efddaedf9e9ad",
+    "masterSha256": "2f65bae872458f84be112c352c43c5ebe356019f3c4b4f2bdf2b14ace8353afc",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a",
     "storage": {
       "serverCells": [
@@ -1129,7 +1138,7 @@
         "id": "ssarathi_ruins:base",
         "base": {
           "preset": "Grass",
-          "sourceSurfaceSha256": "73d541921c194bbc0d7cc25466e06c6fac3618a7145f0bfb340e0c453ce837f6",
+          "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
           "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
           "normalTexture": null,
           "ormTexture": null,
@@ -1137,9 +1146,9 @@
             "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
           },
           "albedoColor": [
-            0.7400000095367432,
-            0.8299999833106995,
-            0.6600000262260437,
+            0.699999988079071,
+            0.9200000166893005,
+            0.5,
             1.0
           ],
           "roughness": 1.0,
@@ -1197,9 +1206,9 @@
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "007b6529c9bd08f76dbd78ea748c9eb908b8aafba1431b43487efddaedf9e9ad",
-    "collisionSha256": "9c0b436494534769b274a25a3fe4e9397360e29a6fdc7d6a4a2fc3ffd07366e6",
-    "terrainRevision": "diagonal-spine-v1:ca0e24817c9345cee48b1c595f229559bbc48b67369820fd8a3f0a4af9820c20",
+    "masterSha256": "2f65bae872458f84be112c352c43c5ebe356019f3c4b4f2bdf2b14ace8353afc",
+    "collisionSha256": "a5f0187bf910905f15a86811e99901a7c4c8514dbce908769d58703aca0ac263",
+    "terrainRevision": "diagonal-spine-v1:284b61941b3bbe92fd99e4d437ff38ab107d3c38dfd5dde82b9095ae0a84571e",
     "storage": {
       "serverCells": [
         780,
