@@ -1,7 +1,7 @@
 {
-  "glbBytes": 1144930512,
-  "nodes": 51522,
-  "meshes": 12987,
+  "glbBytes": 1158507452,
+  "nodes": 52635,
+  "meshes": 13067,
   "externalResources": {},
   "sharedResourceResidentBytes": {
     "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
@@ -1141,6 +1141,48 @@
     "1f71369ab4d1400d95e217d3fa020aac9776564e34c1bee1526e0b1bcb4bc32f": 349526,
     "7d0fffdd91c4ab64ad09eb5e38a1ebf88949c4effa3ac81bf8894341560dbb23": 349526,
     "f2c8d6293c8b860473c61280ac141937bf74f246d00301047cab09fe5e2aae3c": 349526,
+    "47a33a1393ba0cce63c051f9df1a4bcf2cb4535d237d37497dcb03f7dbcab08e": 1398102,
+    "7140775b6ac23d178cdfae2b9307748362bda94e8328429fecbadaa86803b8a7": 1398102,
+    "81989dfe7148aa39ce8f8c6937f52c4a7e95adc000e8dfbf53c4bb711897d969": 1398102,
+    "463949b0e502af4fc76c4a6374e53eec978ece298b3cd1234e432fccadf85945": 5592406,
+    "05aabc9a5fb12c689b0e64b20359c14941bbad77e499b507ba13164d6c9c52ac": 5592406,
+    "d7d627d5035779ed4baf0bb26f54f0665c89bc686d85430aed5b6cf6166b2a4c": 5592406,
+    "e152f24443dda5290487c7c42456fceb3f2d70073a3560462a7d5955865a35e8": 1398102,
+    "563bc5ae4db382864016df504e2e19c7b5afc36823d6d4e8a6014b51b22b4a54": 1398102,
+    "4f14bcdf3713e42c1ca2e5b7112df736f25779355cfda2355d5ab2cf443a212a": 1398102,
+    "53a744a07b00dd70311a6575d183c2f9e93faa8f7e3e4310c9ac89573ce7c63a": 5592406,
+    "6ebbb85a60cb85306ec0d3e6c55c6fc09bef3f8734c5798b5ae1f7faf870e369": 5592406,
+    "8d7aa6fc4c6209c1b473d8d38d7df0ec7fea98d37f2cc6d64028d289279a0f27": 5592406,
+    "7ba657dcee34fb55e9c906c6323a95ffa889b323f9cc53648f9fcb2b9729eba7": 5592406,
+    "5859332db90082f3d5123eb7dd75859956c579164d63867f9625349ff262d4ac": 5592406,
+    "d25451e9ed6396a397ae1420af26775f0407ddb43fcd759560f3a614f3707c56": 5592406,
+    "f5edd0099d23a5cc6a96dbc6c9fb986fae7eb695b0666b3a6348f173c440781e": 1398102,
+    "e3bbf8b7dbf320c97588be2a9e3fef8e88a0653c69536a19969f33f9cf653440": 1398102,
+    "9860eed762a53cef4b3e5c85b510a06fe3580319c5eedbbf451cd2c0d2ba0e47": 1398102,
+    "3a17543acb89f20271cff3c5ef3570f6acf263fb126ca31e4f3a8f323d7d9918": 5592406,
+    "7af9677279d67eb324e21c2b576882a77db7f06e1525d8873ed090fd8dcf7d1d": 5592406,
+    "4ab03953d45f6ae25da545c0addc771714350ae67eed0d0144aa25b5640b279e": 5592406,
+    "131fcb17bdcb1bb6f243b5874e1e81f2f1bfcfc41b8ff92ac2b3b13589f0e07f": 1398102,
+    "af1a524af07595a62b17df4238c487af977059014de4c9c735755c7e48463174": 1398102,
+    "0d7af69b1c8a88c4f04f77fdf291330875a298698cb834cc04a3d04798d68839": 1398102,
+    "9de66daa4863fdb4fd5a747d0aed510f68f349ced76d17f032b0dc5d823459a7": 1398102,
+    "5df182df6123af5d92e1be83e45a50cc8c5ede9909397a89b33a33bf695c454e": 1398102,
+    "8a5dccf39eaa0fccfa970b6e9ca8ac84e6ed84af8bf4dedb49557685e8a4cce5": 1398102,
+    "3759abfd47d04da26aa84336ee8e667faf83598ad12362105b3c986aaf49b14d": 1398102,
+    "09ac95d91259329710cba34c324f9018203a193a43197adb6a37b406a7751191": 1398102,
+    "b180f009a98d70b0489ee9c49718d5eb7c249aba90c074c3ca612a625d6e646d": 1398102,
+    "b214dc1d41b7fc7e2ebf5e4d96de0a468d7111283821ca5ff4708936326a1b58": 1398102,
+    "7e905b23224fe59fb34e142e12a82ddad7b1ea6ec6c46f7f7ebe720c2656339b": 1398102,
+    "f52e315b6a4c08db3fbed6f7785575b4415fabe0aec92c4bb0e923bf30b42240": 1398102,
+    "7875531e18d53de47fa12792e288af900686337572af448929002eacb819bb57": 1398102,
+    "85605ec7633f82839b46ccc03996ef5b2f58cafd2084e821179cada329cac558": 1398102,
+    "024b2db07b66412aee92c970723aa7ac210f2330d653ea9c961be31e7412a565": 1398102,
+    "4d6c4d6b0c3f5a51b5f147e062b956c01765219151c8638395de7a32b0cd8694": 5592406,
+    "fb031694fa7c0c578d4a154c9f441f65836ed48f981de09d939a07e30e7e23d1": 5592406,
+    "96b63c20d28b21b5be3eb69c91f50419a048beec8a116bcfee575348507b54fd": 5592406,
+    "323416ae32171c3996bde9b14f8c627ec0638716adc8962cee2ff18ccbe9f692": 5592406,
+    "ae47b0ac961cdaaa8e4db396e9998a4b0ea74815f947c8de89da014747c53130": 5592406,
+    "60a2dc7880a6467032b99dbe0b4e21708d88f12d9b34698ba5e4e2dbdf413ecf": 5592406,
     "bb351716c2ff383fedc72c284a9b5d6538607300b51bc234ed4ae1f29bba35e3": 1398102,
     "0d95704578303710b4bc077b1be05783ba23be1a8eae7482b33421386d4dce8b": 349526,
     "5c337d18c8ddf456006c8d314a95c273e490780fb53226fe8b7262c5ecbe201c": 1398102,
@@ -1280,7 +1322,7 @@
     "c75a43d9ee90b821ae02f2f845e7f2341ccf90a0331a759ea71c0fbf8a8cd67a": 5592406,
     "8d1457268f57825010c5c03b8cd75b53c56edb15b8f501eeaec8b9d395a67a26": 5592406
   },
-  "sha256": "32e1d8dffa03be362e7bc0c0bd001cc66a720d90379b78cb9cf539bb3d161aac",
+  "sha256": "3e3052190c0e2df12c58b545234b0d552d57c522a70be4e1536b56441b9f832f",
   "regions": [
     "whitehorn_range",
     "grey_moors",
@@ -1842,6 +1884,110 @@
       {
         "name": "AuthoredGround_crownwater_pass1-harbor-workyard",
         "triangles": 212
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-01",
+        "triangles": 120
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-02",
+        "triangles": 44
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-03",
+        "triangles": 126
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-04",
+        "triangles": 124
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-05",
+        "triangles": 118
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-06",
+        "triangles": 126
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-07",
+        "triangles": 126
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-08",
+        "triangles": 124
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-09",
+        "triangles": 128
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-10",
+        "triangles": 128
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-11",
+        "triangles": 122
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-12",
+        "triangles": 120
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-13",
+        "triangles": 132
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-14",
+        "triangles": 136
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-15",
+        "triangles": 132
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-16",
+        "triangles": 124
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-17",
+        "triangles": 130
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-18",
+        "triangles": 126
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-19",
+        "triangles": 118
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-20",
+        "triangles": 124
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-21",
+        "triangles": 126
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-22",
+        "triangles": 130
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-23",
+        "triangles": 136
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-24",
+        "triangles": 124
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-25",
+        "triangles": 122
+      },
+      {
+        "name": "AuthoredGround_crownwater_ground-26",
+        "triangles": 124
       },
       {
         "name": "Walk_crownwater_crownwater--manymouth_delta-crownwater",
@@ -4044,7 +4190,7 @@
         "triangles": 7686
       }
     ],
-    "triangles": 4527500,
+    "triangles": 4530690,
     "roadEncoding": [
       {
         "name": "amberwood_amber-chapel-climb",
