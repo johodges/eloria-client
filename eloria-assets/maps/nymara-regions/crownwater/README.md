@@ -41,6 +41,31 @@ does not pretend otherwise.
 | `references/comparisons/` | aerial and panel comparison sheets, contact sheet |
 | `source/` | the complete, reproducible build |
 
+## Editor kit
+
+`source/prepare_meshy_kit.py --input <crownwater> <westhaven> <four gates> <mirrorhold> <ssarathi> <verdant models>`
+seats generated models in the territory palette's kit
+(`godot-client/world_authoring/regions/crownwater/assets/prototypes/kit-*.glb`). Each model is taken
+from the first folder that has it.
+
+- The Crownwater set, from `work-output/crownwater-2026-09-28/asset-prompts.md`: a gondola, a
+  ceremonial barge, a flower barge, lamp buoys and divers' floats; bricole posts, a gondola post, a
+  water stair and a sea wall; a teal-domed gazebo, a crown fountain, balustrades, citrus planters,
+  obelisk lamps and a pergola; oyster baskets, a pearl-sorting table, a net-mending frame, market
+  parasols and a sunken statue head.
+- Westhaven's fishing boats, skiff, sloop, caravel, mooring buoy, cypress, stone pine, lemon tree,
+  bougainvillea, beach rocks, rope and fish crates.
+- Four Gates' blue-dome kiosk, topiary, urns, hedges, rose arches, reflecting pool, well and autumn
+  maples.
+- Mirrorhold's potted cypress, flower planters, drinking fountain, benches and mooring posts.
+- Ssarathi's coastal rocks, sea stacks, lotus pads and lagoon reeds.
+- Verdant Stair's meadow flowers and flowering shrubs.
+
+Wrapper-node transforms are baked into the vertices before each model is scaled to its size in
+`SIZES`. It is then stood on the origin, except the floating pieces (`WATERLINE`), which keep their
+waterline there. Its textures are shrunk and content-addressed into `assets/textures/`.
+`source/prepare-meshy-kit.json` records the input and output digests, and `--check` verifies them.
+
 ## Building it
 
 ```sh
