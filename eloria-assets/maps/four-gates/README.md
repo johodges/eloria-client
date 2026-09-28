@@ -37,6 +37,27 @@ into the shared exporter. `source/migrate_compact_server.py` produces a report b
 default; the rollout coordinator owns server writes. Served markers are restored
 through shared `contentposts`. Texture caches are disposable and ignored.
 
+## Editor kit
+
+`source/prepare_meshy_kit.py --input <sunmane models> <verdant models> <mirrorhold models>`
+seats generated models from other territories in the territory palette's kit
+(`godot-client/world_authoring/regions/four_gates/assets/prototypes/kit-*.glb`).
+Each model is taken from the first folder that has it.
+
+- Sunmane's autumn shrubs and farmyard pieces: hay feeder, feed sacks, milk churn, pail, hitching rail.
+- Verdant Stair's meadow flowers, flowering shrubs, saplings, beehives, harvest baskets, produce stall,
+  amber lantern post, lantern string, terracotta pots, herb rack, reeds, river stones, mossy boulders
+  and beached rowboat.
+- Mirrorhold's stone bench, flower planter, potted cypress, drinking fountain, laundry line, mooring
+  posts, sundial and juniper.
+
+The Four Gates set (townhouses, autumn trees, garden pieces, street and farm props) is described in
+`work-output/four-gates-2026-09-28/asset-prompts.md`.
+
+Each model is scaled to its size in `SIZES`, stood on the origin, and its textures shrunk and
+content-addressed into `assets/textures/`. `source/prepare-meshy-kit.json` records the input and
+output digests, and `--check` verifies them.
+
 ## Checks and evidence
 
 `runtime-validation.json` records grounding and manifest checks. Artifacts under
