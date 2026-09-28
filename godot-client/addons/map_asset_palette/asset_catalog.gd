@@ -38,7 +38,8 @@ const TERRITORY_STRUCTURES := "Territory kit: structures"
 ## no saved copy has given a role yet; anything else starts solid.
 const WALK_THROUGH_WORDS := ["shrub", "sage", "scrub", "grass", "bones", "tree", "scree",
 	"crystal", "rack", "fire-pit", "hitching", "earthrock", "flower", "reed", "fern", "bush",
-	"weed", "pail", "sack", "blanket", "churn", "brush", "thorn", "lichen", "mine-rail", "tripod"]
+	"weed", "pail", "sack", "blanket", "churn", "brush", "thorn", "lichen", "mine-rail", "tripod",
+	"undergrowth", "driftwood", "terracotta", "basket", "lantern-string"]
 
 ## The largest dimension the continent's own library extractor admits for one
 ## asset (export_map_asset_library.py); anything bigger is usually a unit slip.

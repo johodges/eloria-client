@@ -43,3 +43,17 @@ The shared toolkit owns the reciprocal terrain collars, exact preview subsets an
 `preservation-contract.json` records the complete baseline landmark/portal/spawn ID sets. The regression test compares those sets, casts actual exported geometry across seven lanes of all six stair flights, checks that all flight lanes stay above the actual water, preserves clear resident/door separation, and checks the exact shared portal datums. The regional access audit folds raw authored collision with the server's normal height stages and uses `World.find_path`, with no synthetic bridges, content openings or step relaxation.
 
 The old map remains visible in archived baseline evidence. Its broad tiled courts, isolated landings, repetitive canopy wall and cell-sized water notches informed this replan. Roads still have some polygonal material edges and foliage remains stylized. Actors/resources are map scoped, and cold-loading/handoff performance belongs to the combined live verification; the package alone does not prove a completely global seamless world.
+
+## Editor kit
+
+`source/prepare_meshy_kit.py --input <folder>` seats the generated models from
+`work-output/verdant-stair-2026-09-27/asset-prompts.md` in the territory palette's
+kit (`godot-client/world_authoring/regions/verdant_stair/assets/prototypes/kit-*.glb`):
+mossy limestone crags and boulders, undergrowth, flowering shrubs, tree ferns and
+saplings, mossy logs and stumps, wildflower meadow patches, river reeds and stones,
+waterfall rocks, village props (lanterns, beehives, produce, drying racks, pots and
+baskets), wayside jade shrines and beach pieces. Each is scaled to its size in
+`SIZES`, stood on the origin, and its textures shrunk and content-addressed into
+`assets/textures/`; `source/prepare-meshy-kit.json` records the input and output
+digests and `--check` verifies them. Ground cover and small props start
+walk-through in the palette by their names (`asset_catalog.gd` `WALK_THROUGH_WORDS`).
