@@ -9418,20 +9418,6 @@ metadata/map_authoring_asset_wrapper = true
 metadata/map_asset_id = "mirrorhold:kit-alpine-fir-tree-1"
 metadata/map_asset_scene = "res://world_authoring/regions/mirrorhold/assets/prototypes/kit-alpine-fir-tree-1.glb"
 
-[node name="Mossy Crag 2" type="Node3D" parent="AuthoredAssets" unique_id=2080261294]
-transform = Transform3D(-0.99132264, 0, 0.41061935, 0, 1.073, 0, -0.41061935, 0, -0.99132264, -10, 97.12253, -154)
-script = ExtResource("asset")
-asset_id = "mirrorhold-kit-mossy-crag-2-001"
-node_name = "Authored_mirrorhold_kit_mossy_crag_2_001"
-catalog_asset_id = "mirrorhold:kit-mossy-crag-2"
-scene_path = "res://world_authoring/regions/mirrorhold/assets/prototypes/kit-mossy-crag-2.glb"
-collision_role = "solid"
-metadata/map_authoring_asset_wrapper = true
-
-[node name="Content" parent="AuthoredAssets/Mossy Crag 2" unique_id=484875429 instance=ExtResource("197_kmv57")]
-metadata/map_asset_id = "mirrorhold:kit-mossy-crag-2"
-metadata/map_asset_scene = "res://world_authoring/regions/mirrorhold/assets/prototypes/kit-mossy-crag-2.glb"
-
 [node name="Snowcap Boulder 1" type="Node3D" parent="AuthoredAssets" unique_id=1675922257]
 transform = Transform3D(-1.1196163, 0, 1.4538516, 0, 1.835, 0, -1.4538516, 0, -1.1196163, -105, 149.99907, -90)
 script = ExtResource("asset")
