@@ -13011,7 +13011,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -13019,9 +13019,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -13162,7 +13162,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -13170,9 +13170,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -13439,7 +13439,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -13447,9 +13447,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -15250,7 +15250,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -15258,9 +15258,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -15338,7 +15338,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -15346,9 +15346,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -15489,7 +15489,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -15497,9 +15497,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -15640,7 +15640,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -15648,9 +15648,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -16985,7 +16985,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -16993,9 +16993,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -17073,7 +17073,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -17081,9 +17081,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -17224,7 +17224,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -17232,9 +17232,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -17375,7 +17375,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -17383,9 +17383,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -19161,7 +19161,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -19169,9 +19169,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -19249,7 +19249,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -19257,9 +19257,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -19337,7 +19337,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -19345,9 +19345,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -19488,7 +19488,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -19496,9 +19496,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -21394,7 +21394,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -21402,9 +21402,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -21482,7 +21482,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -21490,9 +21490,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -21570,7 +21570,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -21578,9 +21578,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -21658,7 +21658,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -21666,9 +21666,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -22928,7 +22928,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -22936,9 +22936,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -23016,7 +23016,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -23024,9 +23024,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -23167,7 +23167,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -23175,9 +23175,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -23318,7 +23318,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -23326,9 +23326,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -24714,7 +24714,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -24722,9 +24722,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -24865,7 +24865,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -24873,9 +24873,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,
@@ -25016,7 +25016,7 @@
           "id": "westhaven:base",
           "base": {
             "preset": "Grass",
-            "sourceSurfaceSha256": "ab0fef4925c302f631f00edf68c1d0b210c8a03dc09e2a42884022d9644dbd91",
+            "sourceSurfaceSha256": "5c5616d9cbe9734d7354df6b489e1ed5cd7d7310eb0158a715a6cab77861abb1",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -25024,9 +25024,9 @@
               "albedoTexture": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805"
             },
             "albedoColor": [
-              0.7200000286102295,
-              0.8500000238418579,
-              0.6499999761581421,
+              0.699999988079071,
+              0.9200000166893005,
+              0.5,
               1.0
             ],
             "roughness": 1.0,

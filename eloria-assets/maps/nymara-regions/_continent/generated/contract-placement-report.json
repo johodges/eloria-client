@@ -51214,10 +51214,10 @@
     "westhaven": {
       "stageFactor": 4,
       "stageMetres": 0.8,
-      "walkableServerTiles": 95095,
-      "largestComponentTiles": 91886,
+      "walkableServerTiles": 93350,
+      "largestComponentTiles": 90048,
       "reachableByStage": {
-        "4": 91886
+        "4": 90048
       },
       "storage": {
         "serverCells": [
@@ -51273,9 +51273,9 @@
           {
             "id": "ContinentalBridgeUnion_506",
             "site": null,
-            "deckTiles": 421,
+            "deckTiles": 413,
             "parts": [
-              236,
+              228,
               141,
               44
             ],
@@ -51295,19 +51295,21 @@
           {
             "id": "ContinentalBridgeUnion_504",
             "site": null,
-            "deckTiles": 324,
+            "deckTiles": 312,
             "parts": [
-              159,
               143,
-              22
+              74,
+              72,
+              22,
+              1
             ],
-            "reason": "largest walkable part holds 159 of 324 deck tiles"
+            "reason": "largest walkable part holds 143 of 312 deck tiles"
           }
         ],
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 91886,
+      "hubReachableTiles": 90048,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -51316,9 +51318,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 91877,
+      "hubReachableAfterStorageTiles": 90039,
       "updatedAuthoredMarkers": 1,
-      "terrainRevision": "diagonal-spine-v1:b5f8c388a30bc5320b490a25b684f6a8b405f53f249b39104ed818ef29ace66e",
+      "terrainRevision": "diagonal-spine-v1:aa50dbe22d1352044ee88410e19221f72ee07404d96798471d022d21420f2a99",
       "servedTileContinuity": {
         "keptServedTile": 2,
         "movedTogether": 0,
@@ -51926,7 +51928,7 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "8830dcced5c5158f404150eb87b546612e540321212042b1746d1496b756e799",
+    "client_content_manifest.json": "55e3cbd7fa2eadfd3dd8f140beaf9a6c6df9c244a8821e61edc04a28ac0b06f1",
     "creatures.txt": "f683a45b2da53f03557c7fdf45bc731a304dda241c70f64a7240f776260cde79",
     "harvesting.txt": "e93130fed2350ad6c54d79e40ecedc97a3f748110ee4137424e0075a9677abb7",
     "instances/amberwood_gauntlet_low.def": "dfa704f5be40551d8a3d926845980ae934d4e9445be20a9810c4d5c21b806b67",
@@ -51951,8 +51953,8 @@
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "6d6ef8a916a4dd65fc00a0f9a104f6c6f6b846782a7471ea06ef0f8eb9f99df5",
-    "spawns.txt": "44a95a8e6b38ab00181cd20ae247cbe058471b7f9509975db28c76736fd051dc",
+    "spawn_groups/invasion/invasion_nymara.def": "a9b25a417be33c54cf6dda87fd7b9f6b12eb1fe841fec856fc4ddc877ed4830d",
+    "spawns.txt": "3f8643bfd605e5c7be4ade7268f51ce75545c2bc2f4229f58f3993c766612f55",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "4de4708d5d139ca4c98d5d0c8297a7d108422420628300800c10b4555f56c607"
   },
