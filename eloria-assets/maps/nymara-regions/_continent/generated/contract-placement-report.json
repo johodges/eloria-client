@@ -26287,14 +26287,14 @@
         306
       ],
       "tile": [
-        371,
-        334
+        452,
+        186
       ],
       "expectedTile": [
-        371.0,
-        334.0
+        452.5,
+        186.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -26310,14 +26310,14 @@
         290
       ],
       "tile": [
-        378,
-        320
+        393,
+        262
       ],
       "expectedTile": [
-        378.0,
-        320.0
+        393.5,
+        262.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -26425,14 +26425,14 @@
         304
       ],
       "tile": [
-        364,
+        366,
         308
       ],
       "expectedTile": [
         364.0,
         308.0
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 2.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -26724,14 +26724,14 @@
         327
       ],
       "tile": [
-        376,
-        331
+        501,
+        254
       ],
       "expectedTile": [
-        376.0,
-        331.0
+        504.5,
+        246.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 8.276,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -26747,14 +26747,14 @@
         339
       ],
       "tile": [
-        361,
-        337
+        529,
+        226
       ],
       "expectedTile": [
-        361.0,
-        337.0
+        524.5,
+        231.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 7.106,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -26862,14 +26862,14 @@
         314
       ],
       "tile": [
-        352,
+        355,
         318
       ],
       "expectedTile": [
         352.0,
         318.0
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 3.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -27138,14 +27138,14 @@
         347
       ],
       "tile": [
-        355,
-        337
+        432,
+        262
       ],
       "expectedTile": [
-        355.0,
-        337.0
+        432.5,
+        262.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         4,
@@ -27161,14 +27161,14 @@
         335
       ],
       "tile": [
-        371,
-        329
+        413,
+        287
       ],
       "expectedTile": [
-        371.0,
-        329.0
+        413.5,
+        287.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         4,
@@ -27184,14 +27184,14 @@
         317
       ],
       "tile": [
-        365,
-        320
+        465,
+        157
       ],
       "expectedTile": [
-        365.0,
-        320.0
+        465.5,
+        157.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         4,
@@ -27207,14 +27207,14 @@
         343
       ],
       "tile": [
-        385,
-        336
+        519,
+        199
       ],
       "expectedTile": [
-        385.0,
-        336.0
+        519.5,
+        199.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
@@ -27230,14 +27230,14 @@
         328
       ],
       "tile": [
-        368,
-        330
+        472,
+        230
       ],
       "expectedTile": [
-        368.0,
-        330.0
+        472.5,
+        230.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
@@ -27253,14 +27253,14 @@
         351
       ],
       "tile": [
-        365,
-        332
+        491,
+        204
       ],
       "expectedTile": [
-        365.0,
-        332.0
+        491.5,
+        204.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
@@ -27276,14 +27276,14 @@
         320
       ],
       "tile": [
-        373,
-        324
+        438,
+        222
       ],
       "expectedTile": [
-        373.0,
-        324.0
+        438.5,
+        222.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -27299,14 +27299,14 @@
         339
       ],
       "tile": [
-        351,
-        339
+        390,
+        234
       ],
       "expectedTile": [
-        351.0,
-        339.0
+        390.5,
+        234.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -27322,14 +27322,14 @@
         350
       ],
       "tile": [
-        359,
-        327
+        431,
+        259
       ],
       "expectedTile": [
-        359.0,
-        327.0
+        431.5,
+        259.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -27368,14 +27368,14 @@
         328
       ],
       "tile": [
-        361,
-        329
+        497,
+        177
       ],
       "expectedTile": [
-        361.0,
-        329.0
+        497.5,
+        177.5
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 0.707,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -50990,10 +50990,10 @@
     "amethyst_barrens": {
       "stageFactor": 8,
       "stageMetres": 1.6,
-      "walkableServerTiles": 130167,
-      "largestComponentTiles": 128957,
+      "walkableServerTiles": 125137,
+      "largestComponentTiles": 123502,
       "reachableByStage": {
-        "8": 128957
+        "8": 123502
       },
       "storage": {
         "serverCells": [
@@ -51013,7 +51013,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 128957,
+      "hubReachableTiles": 123502,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -51022,9 +51022,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 128948,
+      "hubReachableAfterStorageTiles": 123493,
       "updatedAuthoredMarkers": 1,
-      "terrainRevision": "diagonal-spine-v1:b8dd7ef5ab5e2b7347692779ac7f4c57023bfd179fcabd96831b02523728a490",
+      "terrainRevision": "diagonal-spine-v1:08dab9f9c2378bf3abe9bb7de08f167fcdb0669563d256fec1482ec470db6179",
       "servedTileContinuity": {
         "keptServedTile": 0,
         "movedTogether": 0,
@@ -51926,7 +51926,7 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "286d3cb416ec4f60db1eacda401ad68b64de03411008a67eaca63ef0b0f064ae",
+    "client_content_manifest.json": "09f763a42fcccaaa97a9845f5018aa73b8c7124d52fcd5164b3a3ae19624aee1",
     "creatures.txt": "f683a45b2da53f03557c7fdf45bc731a304dda241c70f64a7240f776260cde79",
     "harvesting.txt": "e93130fed2350ad6c54d79e40ecedc97a3f748110ee4137424e0075a9677abb7",
     "instances/amberwood_gauntlet_low.def": "dfa704f5be40551d8a3d926845980ae934d4e9445be20a9810c4d5c21b806b67",
@@ -51951,8 +51951,8 @@
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "182b807005796d652d06799452e2b8bc74bee557d551d98b9742c448286992b3",
-    "spawns.txt": "ed222144f47c12e0fc4ee529dc63c7d6875ead9f93431f1219f624d0adf1f55d",
+    "spawn_groups/invasion/invasion_nymara.def": "46fd65f8c6ce8a09d1595ccb4ffb9f3731ad715a670a49c00ab3d6b233892fda",
+    "spawns.txt": "5430d2f6093c144b4f4ffb6bfbb9d55377a11eb0bb77a04278bc8bc63829a51a",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "4de4708d5d139ca4c98d5d0c8297a7d108422420628300800c10b4555f56c607"
   },
@@ -52006,13 +52006,13 @@
           "region": "whitehorn_range",
           "gateLanes": 1,
           "gateLanesMoved": 6,
-          "lanes": 370
+          "lanes": 368
         },
         {
           "region": "amethyst_barrens",
           "gateLanes": 4,
           "gateLanesMoved": 3,
-          "lanes": 371
+          "lanes": 369
         }
       ]
     },
@@ -52348,7 +52348,7 @@
   ],
   "withdrawnLanes": 148,
   "crossingArrivals": {
-    "rows": 10593,
+    "rows": 10589,
     "unreachable": 0,
     "examples": []
   },

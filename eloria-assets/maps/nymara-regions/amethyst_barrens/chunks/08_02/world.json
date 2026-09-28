@@ -100,7 +100,8 @@
     "nodeNames": [
       "Landmark_Watchtower_0",
       "Northern_Grotto_Abutment_0_-1",
-      "Northern_Grotto_Abutment_0_1"
+      "Northern_Grotto_Abutment_0_1",
+      "Authored_amethyst_kit_veined_boulder_2_021"
     ],
     "serverStorageVersion": 1,
     "serverTileMin": [
@@ -420,9 +421,9 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 852324,
-    "nodes": 19,
-    "meshes": 7,
+    "glbBytes": 1016632,
+    "nodes": 25,
+    "meshes": 9,
     "externalResources": {
       "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../../../_continent/shared-assets/9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7.png": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
@@ -437,7 +438,13 @@
       "../../../_continent/shared-assets/1b416116cedf6854f49e1d4c7365f60e193d6384cf3875ff8de99ab9808f754e.png": "1b416116cedf6854f49e1d4c7365f60e193d6384cf3875ff8de99ab9808f754e",
       "../../../_continent/shared-assets/6fff540a6fe89e81d4ad635f8feefc5f634417d37d6269f32053c446375a6343.png": "6fff540a6fe89e81d4ad635f8feefc5f634417d37d6269f32053c446375a6343",
       "../../../_continent/shared-assets/c35fd097da43f1be248f33482091876f21814feca22d5eaecd72010c2eaa3024.png": "c35fd097da43f1be248f33482091876f21814feca22d5eaecd72010c2eaa3024",
-      "../../../_continent/shared-assets/4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748.png": "4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748"
+      "../../../_continent/shared-assets/4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748.png": "4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748",
+      "../../../_continent/shared-assets/38bf7be65ffc6ad530d3aaeb1e002abbe360d2a32c2ad63827803c74534799d5.jpg": "38bf7be65ffc6ad530d3aaeb1e002abbe360d2a32c2ad63827803c74534799d5",
+      "../../../_continent/shared-assets/eaa5e17c907ffedd2d8604bbfc91ed88d27c432edaaf62719ea2edc1a43a792c.jpg": "eaa5e17c907ffedd2d8604bbfc91ed88d27c432edaaf62719ea2edc1a43a792c",
+      "../../../_continent/shared-assets/77a876793748064eaf75e704491552a9f1724fb037cc9980679660d209bcfd7a.jpg": "77a876793748064eaf75e704491552a9f1724fb037cc9980679660d209bcfd7a",
+      "../../../_continent/shared-assets/223266781968c7a3f3f31eb05d6b5e5011bac5d16e30973de292f1a80d2f3bb1.jpg": "223266781968c7a3f3f31eb05d6b5e5011bac5d16e30973de292f1a80d2f3bb1",
+      "../../../_continent/shared-assets/4e6476d0aaeed896ca9a777662e72c10cb1b4e7119c565ee1afa06c356659a5a.jpg": "4e6476d0aaeed896ca9a777662e72c10cb1b4e7119c565ee1afa06c356659a5a",
+      "../../../_continent/shared-assets/8d7d32561854f38a30b9676fe5131b9276d2698e29e9e8fcea4ab8db6d54618c.jpg": "8d7d32561854f38a30b9676fe5131b9276d2698e29e9e8fcea4ab8db6d54618c"
     },
     "sharedResourceResidentBytes": {
       "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
@@ -453,7 +460,13 @@
       "1b416116cedf6854f49e1d4c7365f60e193d6384cf3875ff8de99ab9808f754e": 349526,
       "6fff540a6fe89e81d4ad635f8feefc5f634417d37d6269f32053c446375a6343": 1398102,
       "c35fd097da43f1be248f33482091876f21814feca22d5eaecd72010c2eaa3024": 349526,
-      "4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748": 1398102
+      "4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748": 1398102,
+      "38bf7be65ffc6ad530d3aaeb1e002abbe360d2a32c2ad63827803c74534799d5": 1398102,
+      "eaa5e17c907ffedd2d8604bbfc91ed88d27c432edaaf62719ea2edc1a43a792c": 1398102,
+      "77a876793748064eaf75e704491552a9f1724fb037cc9980679660d209bcfd7a": 1398102,
+      "223266781968c7a3f3f31eb05d6b5e5011bac5d16e30973de292f1a80d2f3bb1": 5592406,
+      "4e6476d0aaeed896ca9a777662e72c10cb1b4e7119c565ee1afa06c356659a5a": 5592406,
+      "8d7d32561854f38a30b9676fe5131b9276d2698e29e9e8fcea4ab8db6d54618c": 5592406
     }
   },
   "sources": [
@@ -3024,7 +3037,7 @@
       -112.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:b8dd7ef5ab5e2b7347692779ac7f4c57023bfd179fcabd96831b02523728a490",
+  "terrainRevision": "diagonal-spine-v1:08dab9f9c2378bf3abe9bb7de08f167fcdb0669563d256fec1482ec470db6179",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7.png": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
@@ -3039,11 +3052,17 @@
     "../../../_continent/shared-assets/1b416116cedf6854f49e1d4c7365f60e193d6384cf3875ff8de99ab9808f754e.png": "1b416116cedf6854f49e1d4c7365f60e193d6384cf3875ff8de99ab9808f754e",
     "../../../_continent/shared-assets/6fff540a6fe89e81d4ad635f8feefc5f634417d37d6269f32053c446375a6343.png": "6fff540a6fe89e81d4ad635f8feefc5f634417d37d6269f32053c446375a6343",
     "../../../_continent/shared-assets/c35fd097da43f1be248f33482091876f21814feca22d5eaecd72010c2eaa3024.png": "c35fd097da43f1be248f33482091876f21814feca22d5eaecd72010c2eaa3024",
-    "../../../_continent/shared-assets/4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748.png": "4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748"
+    "../../../_continent/shared-assets/4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748.png": "4ef4f3c1fbc8871123d7d8ae329644481a4563779a1afbafea9e4b2e33602748",
+    "../../../_continent/shared-assets/38bf7be65ffc6ad530d3aaeb1e002abbe360d2a32c2ad63827803c74534799d5.jpg": "38bf7be65ffc6ad530d3aaeb1e002abbe360d2a32c2ad63827803c74534799d5",
+    "../../../_continent/shared-assets/eaa5e17c907ffedd2d8604bbfc91ed88d27c432edaaf62719ea2edc1a43a792c.jpg": "eaa5e17c907ffedd2d8604bbfc91ed88d27c432edaaf62719ea2edc1a43a792c",
+    "../../../_continent/shared-assets/77a876793748064eaf75e704491552a9f1724fb037cc9980679660d209bcfd7a.jpg": "77a876793748064eaf75e704491552a9f1724fb037cc9980679660d209bcfd7a",
+    "../../../_continent/shared-assets/223266781968c7a3f3f31eb05d6b5e5011bac5d16e30973de292f1a80d2f3bb1.jpg": "223266781968c7a3f3f31eb05d6b5e5011bac5d16e30973de292f1a80d2f3bb1",
+    "../../../_continent/shared-assets/4e6476d0aaeed896ca9a777662e72c10cb1b4e7119c565ee1afa06c356659a5a.jpg": "4e6476d0aaeed896ca9a777662e72c10cb1b4e7119c565ee1afa06c356659a5a",
+    "../../../_continent/shared-assets/8d7d32561854f38a30b9676fe5131b9276d2698e29e9e8fcea4ab8db6d54618c.jpg": "8d7d32561854f38a30b9676fe5131b9276d2698e29e9e8fcea4ab8db6d54618c"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "ce1f472e785339ade101ad86e131bac2d39fb587949ef6a37f8e30bb5bc8d1a7",
+    "masterSha256": "007b6529c9bd08f76dbd78ea748c9eb908b8aafba1431b43487efddaedf9e9ad",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a",
     "storage": {
       "serverCells": [
@@ -3147,7 +3166,7 @@
         "id": "amethyst_barrens:base",
         "base": {
           "preset": "Coastal limestone gravel",
-          "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+          "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
           "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
           "normalTexture": null,
           "ormTexture": null,
@@ -3155,9 +3174,9 @@
             "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
           },
           "albedoColor": [
-            0.30000001192092896,
-            0.25,
-            0.36000001430511475,
+            0.44999998807907104,
+            0.4399999976158142,
+            0.5,
             1.0
           ],
           "roughness": 0.9700000286102295,
@@ -3215,9 +3234,9 @@
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "ce1f472e785339ade101ad86e131bac2d39fb587949ef6a37f8e30bb5bc8d1a7",
-    "collisionSha256": "f4957cb3e423aaf5d17334505e9872de7682f35fbc6be28695b7405e9fec3a76",
-    "terrainRevision": "diagonal-spine-v1:b8dd7ef5ab5e2b7347692779ac7f4c57023bfd179fcabd96831b02523728a490",
+    "masterSha256": "007b6529c9bd08f76dbd78ea748c9eb908b8aafba1431b43487efddaedf9e9ad",
+    "collisionSha256": "7fcd56ae3fc6db46d1e72df69acb57f99c60be5cff976609e847970e87ac9517",
+    "terrainRevision": "diagonal-spine-v1:08dab9f9c2378bf3abe9bb7de08f167fcdb0669563d256fec1482ec470db6179",
     "storage": {
       "serverCells": [
         738,

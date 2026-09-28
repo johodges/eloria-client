@@ -921,7 +921,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -929,9 +929,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -1072,7 +1072,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -1080,9 +1080,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -1160,7 +1160,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -1168,9 +1168,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -1248,7 +1248,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -1256,9 +1256,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -1336,7 +1336,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -1344,9 +1344,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -1424,7 +1424,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -1432,9 +1432,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -1512,7 +1512,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -1520,9 +1520,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -1600,7 +1600,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -1608,9 +1608,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -2581,7 +2581,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -2589,9 +2589,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -2669,7 +2669,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -2677,9 +2677,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -2757,7 +2757,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -2765,9 +2765,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -2845,7 +2845,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -2853,9 +2853,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -2933,7 +2933,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -2941,9 +2941,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -3021,7 +3021,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -3029,9 +3029,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -3109,7 +3109,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -3117,9 +3117,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -3197,7 +3197,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -3205,9 +3205,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -4027,7 +4027,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -4035,9 +4035,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -4178,7 +4178,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -4186,9 +4186,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -4266,7 +4266,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -4274,9 +4274,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -4354,7 +4354,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -4362,9 +4362,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -4442,7 +4442,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -4450,9 +4450,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -4530,7 +4530,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -4538,9 +4538,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -4618,7 +4618,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -4626,9 +4626,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -4706,7 +4706,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -4714,9 +4714,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -4859,7 +4859,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -4867,9 +4867,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -5817,7 +5817,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -5825,9 +5825,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -5968,7 +5968,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -5976,9 +5976,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -6056,7 +6056,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -6064,9 +6064,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -6144,7 +6144,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -6152,9 +6152,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -6232,7 +6232,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -6240,9 +6240,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -6320,7 +6320,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -6328,9 +6328,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -6408,7 +6408,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -6416,9 +6416,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -6561,7 +6561,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -6569,9 +6569,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -7949,7 +7949,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -7957,9 +7957,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -8100,7 +8100,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -8108,9 +8108,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -8251,7 +8251,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -8259,9 +8259,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -8339,7 +8339,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -8347,9 +8347,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -8427,7 +8427,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -8435,9 +8435,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -8580,7 +8580,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -8588,9 +8588,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -9995,7 +9995,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -10003,9 +10003,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -10146,7 +10146,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -10154,9 +10154,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -10297,7 +10297,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -10305,9 +10305,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -10448,7 +10448,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -10456,9 +10456,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
@@ -10664,7 +10664,7 @@
           "id": "amethyst_barrens:base",
           "base": {
             "preset": "Coastal limestone gravel",
-            "sourceSurfaceSha256": "a36176286b6b6020ac73c5980f8bf1f1b93eb2da2d24a15750cec53485bc7357",
+            "sourceSurfaceSha256": "06bbba767f11252512aa6a674f2c030ee9705e4c072702997be173b1ae1e4080",
             "albedoTexture": "res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png",
             "normalTexture": null,
             "ormTexture": null,
@@ -10672,9 +10672,9 @@
               "albedoTexture": "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
             },
             "albedoColor": [
-              0.30000001192092896,
-              0.25,
-              0.36000001430511475,
+              0.44999998807907104,
+              0.4399999976158142,
+              0.5,
               1.0
             ],
             "roughness": 0.9700000286102295,
