@@ -18382,7 +18382,6 @@ asset_id = "verdant_stair-kit-river-stones-2-001"
 node_name = "Authored_verdant_stair_kit_river_stones_2_001"
 catalog_asset_id = "verdant_stair:kit-river-stones-2"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-2.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 2" unique_id=1244213806 instance=ExtResource("832_s038b")]
@@ -23466,7 +23465,6 @@ asset_id = "verdant_stair-kit-river-stones-2-002"
 node_name = "Authored_verdant_stair_kit_river_stones_2_002"
 catalog_asset_id = "verdant_stair:kit-river-stones-2"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-2.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 3" unique_id=323908678 instance=ExtResource("832_s038b")]
@@ -23480,7 +23478,6 @@ asset_id = "verdant_stair-kit-river-stones-1-001"
 node_name = "Authored_verdant_stair_kit_river_stones_1_001"
 catalog_asset_id = "verdant_stair:kit-river-stones-1"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-1.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 1" unique_id=1706104645 instance=ExtResource("849_emi8n")]
@@ -23494,7 +23491,6 @@ asset_id = "verdant_stair-kit-river-stones-2-003"
 node_name = "Authored_verdant_stair_kit_river_stones_2_003"
 catalog_asset_id = "verdant_stair:kit-river-stones-2"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-2.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 4" unique_id=2017003677 instance=ExtResource("832_s038b")]
@@ -23508,7 +23504,6 @@ asset_id = "verdant_stair-kit-river-stones-1-002"
 node_name = "Authored_verdant_stair_kit_river_stones_1_002"
 catalog_asset_id = "verdant_stair:kit-river-stones-1"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-1.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 5" unique_id=165011823 instance=ExtResource("849_emi8n")]
@@ -23522,7 +23517,6 @@ asset_id = "verdant_stair-kit-river-stones-2-004"
 node_name = "Authored_verdant_stair_kit_river_stones_2_004"
 catalog_asset_id = "verdant_stair:kit-river-stones-2"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-2.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 6" unique_id=140521874 instance=ExtResource("832_s038b")]
@@ -23536,7 +23530,6 @@ asset_id = "verdant_stair-kit-river-stones-1-003"
 node_name = "Authored_verdant_stair_kit_river_stones_1_003"
 catalog_asset_id = "verdant_stair:kit-river-stones-1"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-1.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 7" unique_id=210315605 instance=ExtResource("849_emi8n")]
@@ -23550,7 +23543,6 @@ asset_id = "verdant_stair-kit-river-stones-2-005"
 node_name = "Authored_verdant_stair_kit_river_stones_2_005"
 catalog_asset_id = "verdant_stair:kit-river-stones-2"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-2.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 8" unique_id=320301792 instance=ExtResource("832_s038b")]
@@ -23564,7 +23556,6 @@ asset_id = "verdant_stair-kit-river-stones-1-004"
 node_name = "Authored_verdant_stair_kit_river_stones_1_004"
 catalog_asset_id = "verdant_stair:kit-river-stones-1"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-1.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 9" unique_id=923369010 instance=ExtResource("849_emi8n")]
@@ -23578,7 +23569,6 @@ asset_id = "verdant_stair-kit-river-stones-2-006"
 node_name = "Authored_verdant_stair_kit_river_stones_2_006"
 catalog_asset_id = "verdant_stair:kit-river-stones-2"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-2.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 10" unique_id=1684468478 instance=ExtResource("832_s038b")]
@@ -23592,7 +23582,6 @@ asset_id = "verdant_stair-kit-river-stones-1-005"
 node_name = "Authored_verdant_stair_kit_river_stones_1_005"
 catalog_asset_id = "verdant_stair:kit-river-stones-1"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-1.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 11" unique_id=940880356 instance=ExtResource("849_emi8n")]
@@ -23606,7 +23595,6 @@ asset_id = "verdant_stair-kit-river-stones-2-007"
 node_name = "Authored_verdant_stair_kit_river_stones_2_007"
 catalog_asset_id = "verdant_stair:kit-river-stones-2"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-2.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 12" unique_id=131521612 instance=ExtResource("832_s038b")]
@@ -23620,7 +23608,6 @@ asset_id = "verdant_stair-kit-river-stones-1-006"
 node_name = "Authored_verdant_stair_kit_river_stones_1_006"
 catalog_asset_id = "verdant_stair:kit-river-stones-1"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-river-stones-1.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/River Stones 13" unique_id=1195805059 instance=ExtResource("849_emi8n")]
