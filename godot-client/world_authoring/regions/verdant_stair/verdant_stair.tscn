@@ -17954,7 +17954,6 @@ asset_id = "verdant_stair-kit-waterfall-rocks-1-001"
 node_name = "Authored_verdant_stair_kit_waterfall_rocks_1_001"
 catalog_asset_id = "verdant_stair:kit-waterfall-rocks-1"
 scene_path = "res://world_authoring/regions/verdant_stair/assets/prototypes/kit-waterfall-rocks-1.glb"
-collision_role = "solid"
 metadata/map_authoring_asset_wrapper = true
 
 [node name="Content" parent="AuthoredAssets/Waterfall Rocks 1" unique_id=736684300 instance=ExtResource("825_q2h5e")]
