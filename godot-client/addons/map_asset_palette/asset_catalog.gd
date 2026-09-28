@@ -41,7 +41,8 @@ const WALK_THROUGH_WORDS := ["shrub", "sage", "scrub", "grass", "bones", "tree",
 	"weed", "pail", "sack", "blanket", "churn", "brush", "thorn", "lichen", "mine-rail", "tripod",
 	"undergrowth", "driftwood", "terracotta", "basket", "lantern-string", "leaves", "pumpkin",
 	"cabbage", "scarecrow", "fence", "wheelbarrow", "rose-arch", "stook", "drift", "flag-line",
-	"frozen-pond", "icicle-fringe", "rockfall"]
+	"frozen-pond", "icicle-fringe", "rockfall", "net-frame", "vineyard", "rope-coils",
+	"lobster-pots", "fish-crates", "buoy"]
 
 ## The largest dimension the continent's own library extractor admits for one
 ## asset (export_map_asset_library.py); anything bigger is usually a unit slip.

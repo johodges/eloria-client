@@ -21,6 +21,28 @@ The first command exports main and reduced GLBs, a 792 × 792 half-metre EWCG gr
 
 Current machine measurements are in `performance.json` and `verification-report.json`. Gameplay-camera before/after views, route audits and annotated review are in `work-output/coastal-rollout/westhaven` at the workspace root. Final live path verification is recorded by the coastal integration run. Older comparison and validation documents describe the previous 576m package and are historical evidence.
 
+## Editor kit
+
+`source/prepare_meshy_kit.py --input <westhaven> <ssarathi> <verdant> <mirrorhold> <four gates models>`
+seats generated models in the territory palette's kit
+(`godot-client/world_authoring/regions/westhaven/assets/prototypes/kit-*.glb`). Each model is taken
+from the first folder that has it.
+
+- The Westhaven set, from `work-output/westhaven-2026-09-28/asset-prompts.md`: terracotta townhouses, a
+  harbour row, a merchant house and a fisher's hut; a harbour crane, cargo, rope, lobster pots, fish
+  crates, an anchor, a mooring buoy and quay steps; fishing boats, a skiff, a sloop and a caravel;
+  olives, stone pines, cypresses, lemon trees and bougainvillea; beach rocks, net frames, vineyards, a
+  windmill, a dovecote and terrace walls.
+- Ssarathi's coastal rocks, sea stacks, dune grass and beach dressing.
+- Verdant Stair's drying racks, beached rowboat, driftwood, baskets, pots and flowers.
+- Mirrorhold's rowing boat, mooring posts, benches, planters, cypress, fountain and laundry line.
+- Four Gates' barrels, crates, carts, board, urn, well and farm pieces.
+
+Wrapper-node transforms are baked into the vertices before each model is scaled to its size in
+`SIZES`. It is then stood on the origin, except the boats and the buoy (`WATERLINE`), which keep their
+waterline there. Its textures are shrunk and content-addressed into `assets/textures/`.
+`source/prepare-meshy-kit.json` records the input and output digests, and `--check` verifies them.
+
 ## Practical limits
 
 Terrain and road boundaries remain visibly polygonal at close range. The shared final guard closes unsupported, submerged or incorrectly grounded folded tiles at the actual actor centre, including the client half-tile offset. Tower galleries and sea cliffs create deliberate height discontinuities. Actors and resources remain map-scoped, and seamless static scenery does not remove map handoff costs. The reduced package drops minor ground clutter and uses smaller embedded textures.
