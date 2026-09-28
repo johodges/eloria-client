@@ -27,3 +27,19 @@ python source/write_walk_fixture.py --server SERVER --data SERVED_ELM_DIRECTORY 
 This uses the actual server pathfinder, strict height/diagonal rules, configured NPC footprints, conservative service furniture clearance and automatic portal locations. Every ordinary archive doorway walks two metres off the arrival threshold before returning. Service replies, storage, a rendered resource and a representative creature are positive live assertions. The generated occupancy audit records served file hashes; it is preparation for a real client/server run, not a claim that live traversal has already passed.
 
 Matched gameplay-camera captures and the frozen original package are stored in `work-output/southern-rollout/ssarathi-ruins`. The survey uses the normal client camera and grounding code. Overviews explain layout; they do not substitute for gameplay-camera evidence.
+
+## Editor kit
+
+`prepare_meshy_kit.py --input <ssarathi models> <verdant models>` seats the
+generated models in the territory palette's kit
+(`godot-client/world_authoring/regions/ssarathi_ruins/assets/prototypes/kit-*.glb`):
+the Ssarathi set from `work-output/ssarathi-ruins-2026-09-27/asset-prompts.md`
+(coastal rocks and sea stacks, beach palms, dune grass, flower mats and shells,
+serpent ruin fragments, mangroves, lagoon reeds and lotus pads, jungle understory,
+a stilt fishing platform, dugout canoe, fish trap, jade lantern pole, serpent
+incense brazier and prayer-banner rack) and the Verdant Stair models this jungle
+shares (mossy crags and boulders, undergrowth, flowering shrubs, tree ferns,
+reeds), each taken from the first folder that has it. Each is scaled to its size
+in `SIZES`, stood on the origin, and its textures shrunk and content-addressed
+into `assets/textures/`; `prepare-meshy-kit.json` records the input and output
+digests and `--check` verifies them.
