@@ -86,6 +86,30 @@ Note the texture cache: `preview.py` keys it on a digest of the *shared*
 `deltakit.py`. This region's own recipes are therefore generated fresh on every
 run rather than cached, which is why `register()` never reads from that cache.
 
+## Editor kit
+
+`source/prepare_meshy_kit.py --input <manymouth> <ssarathi> <verdant> <four gates> <westhaven models>`
+seats generated models in the territory palette's kit
+(`godot-client/world_authoring/regions/manymouth_delta/assets/prototypes/kit-*.glb`). Each model is
+taken from the first folder that has it.
+
+- The Manymouth set, from `work-output/manymouth-delta-2026-09-28/asset-prompts.md`: stilt houses, a
+  net shed, a spirit shrine, a stone lantern and a bamboo gate; sampans, a market boat, a reed raft and
+  floating lanterns; a banyan, a fan palm, bamboo, a flame tree, water lilies and papyrus; rice
+  paddies, sheaves, a rice store and a fish weir; water jars, a hearth, a hammock, a fish line,
+  offerings and heron decoys.
+- Ssarathi's palms, mangroves, undergrowth, lotus pads, reeds, fish traps, canoes, fishing platforms,
+  lantern poles and banners.
+- Verdant Stair's tree ferns, saplings, shrubs, reeds, drying racks, baskets, pots, lantern strings and
+  produce stall.
+- Four Gates' autumn maples, scarecrow and stooks.
+- Westhaven's fishing boat, skiff, rope, fish crates and lemon tree.
+
+Wrapper-node transforms are baked into the vertices before each model is scaled to its size in
+`SIZES`. It is then stood on the origin, except the floating pieces (`WATERLINE`), which keep their
+waterline there. Its textures are shrunk and content-addressed into `assets/textures/`.
+`source/prepare-meshy-kit.json` records the input and output digests, and `--check` verifies them.
+
 ## Coordinates
 
 Right-handed, metres, Y up, north toward `-Z`. The server's 576-cell grid maps
