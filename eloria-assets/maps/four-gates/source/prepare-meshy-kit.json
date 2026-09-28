@@ -16,7 +16,7 @@
     },
     "apple-cart-1": {
       "input": "33fca2a9d2aef0abbc88c541190b6c54dbb1b4ad622b0b9fcabf51275c003f7c",
-      "output": "a46c7dc2ae3fcc98e664494aa2a516e9803cd3c3894c6243453cd4aec018ebe7",
+      "output": "10cd75703b3feff606603f6834f5e5927b61110417e2d0888e646f00e1592b3a",
       "textures": [
         "3dbe96168112fd1d0e3434d96b8e05162d6adcc44d026917d9223c1cac7833e4.jpg",
         "5155b2de714d22e296b07ab30139838dec9fc992f97b9efb11d1d528dd0bb0e1.jpg",
@@ -28,7 +28,7 @@
     },
     "apple-tree-1": {
       "input": "9ab2501acdbd0e2bec99dbcd9d402fb3a2a2a2baa74c6300d1da53a0ec911279",
-      "output": "75b91076d8f1fc46714449aab000d59f0e1a58c2959dad567417fd2a965f0f83",
+      "output": "fbd68f9c97146c3a18f59d7077d52c5f04e04203447005dc64a1ff60d9b080a5",
       "textures": [
         "5ff5587aad7e75854997ab4e4515a05cdfafab4d962ad9a7207c8cb0a95db29e.jpg",
         "93772afc0935e2f29c2bdbd215194e4fb6e49a59d21cc98b201ddf5c43206346.jpg",
@@ -40,7 +40,7 @@
     },
     "autumn-maple-tree-1": {
       "input": "475474e3beb960330a7bb1be72257dde18f29d5e4231efa2242a2a623b9ff81c",
-      "output": "d969860e4be9f8351fafe2abb47aac08c85dd508f25b1d23c0cfd22211a730a3",
+      "output": "bb1edea15f6155ebab7e14f03d122e96fb452093f50a7fb243ca8445ed1212b4",
       "textures": [
         "08d73940e0e96468b4678383d066d5a142162a3d85e6bc1dfcdf453bee618f85.jpg",
         "8019fbf2debc2f4e92c56cd2f00adf799a711f6f1522b0d4b4eda0330893f30c.jpg",
@@ -52,7 +52,7 @@
     },
     "autumn-maple-tree-2": {
       "input": "7df3c5b958fcb20e8b133f819b1f2b28c6b284969e522066447a975ca42ffa7b",
-      "output": "8bea8bbdea8a388367872bd931fabfd29e5c25b7e66ee9efa65b2d1ba6d84040",
+      "output": "a58ea54b3abe1393b1ee84617cfee8e153033e3622d5f9a327095f7c3f4e826c",
       "textures": [
         "810e5f0c0f68a001ab64e5a2b7f3580d2565f9967747b6c5a69416a8fb8bec03.jpg",
         "a3573c081e24f38bf5b8eb354abef0d4aa3d20240ec3b7a4f7e3479ee29915bd.jpg",
@@ -100,7 +100,7 @@
     },
     "barrel-stack-1": {
       "input": "40b5b36e6d4de5693c933f450fee9afc3ca6eb8c5b50dfb1ffd2d646693c3e35",
-      "output": "14922c56d581421e24a8e7b877e6c6d5f6f09cac83270ff14870e2741da85534",
+      "output": "b8ddcc4290aef938261eb33cb2f3e5f72db077d376d924ce4a378f50d804f90f",
       "textures": [
         "3a1ccf5d4200647c3223fc52d8b6ecf82fddb65440ee0e004d10667f12136912.jpg",
         "96df8262bfe841e68d628584c8260a67da67742df05c990578e86e4caf529b13.jpg",
@@ -136,7 +136,7 @@
     },
     "blue-dome-kiosk-1": {
       "input": "0d2215a6d5b93ee1965332dc7439d5453a33bf208998c4f0078f563deed696c5",
-      "output": "2993a9ae7a5fe215282f6758bcf36a70cd9999a8344f29811eb8dfff9e172d14",
+      "output": "e292e5cf564066021fb6e91ed8a5a6f0d847025b8c4d8154d373058d27fb47ce",
       "textures": [
         "2a0776ab65a1cfa47ffc7122d110b83dc306515dfbfdafab7dea60aac3bf6bb8.jpg",
         "352bcfa484f863a017829d00d395af1e3ce47fe83eb080599d33dbbc1ae33f1f.jpg",
@@ -148,7 +148,7 @@
     },
     "cabbage-rows-1": {
       "input": "30c356985b6cde3a75d06fa1b1d5f329a62edf38d4cc2d440e7b60fe7c6a7f9a",
-      "output": "0f913b179909e1ceeac65cdd156f2af2cb520f476b22762379af30cd4b442df4",
+      "output": "1e793fabec6125523c30153066a766bf1937b838867dc66a41e164a43fcb193d",
       "textures": [
         "3d393d896f7ec29852315b5b95d74e549ca077784838e1a9568bc6c49d74669a.jpg",
         "c8d01750b3967ea0fab76ed4760d82782fed30579d4b0b4735776bd0efdd89ca.jpg",
@@ -160,7 +160,7 @@
     },
     "corner-shop-1": {
       "input": "5491ed60c731aca171f4fe891c396803e5ab37b1346a162dabffc0449c835e82",
-      "output": "cea484575780ff4a67924b5932083d420e8f3e082d43ff1fa41c78052df3d1cc",
+      "output": "64cdb99952dedf590fd0bfc7479c9953498b237b729693932cc8b03d3ab17241",
       "textures": [
         "0e098b660f8816c0daeeb0e659cfd5dfbca2d416fa6e1df58b54ff91cd1a0894.jpg",
         "1cfc6e52a374c00d142860a40d7fe36125c638ff4a571b8d9a75d8d04e8ccbca.jpg",
@@ -172,7 +172,7 @@
     },
     "crate-stack-1": {
       "input": "c02c6dd54cf9eb873d5aaae68607cd246162c407c31566ff95497a27dbc77ddb",
-      "output": "ee34bf1aabe6c5855092d10eb0bec7e1cb96a0aade828df70d7ee4aa91640e5e",
+      "output": "b9dcbe5239b26fb7590b4c807b6a22f15c0d7a0f3df0fcdf3fac4c2cef0794ea",
       "textures": [
         "492c7cb0564c7973b4b8bc31f1910014b11380225b61577a0171c8ab34138193.jpg",
         "6f528d4c943ca80efafb8373007355ec3c98c32574a8245852277e0825d7934a.jpg",
@@ -196,7 +196,7 @@
     },
     "fallen-leaves-1": {
       "input": "afd98d11dfb9d720928d052a6cf937bc503f1690fd8380da62e152153804c79c",
-      "output": "d77772c9f311d99bf434fd23f58499d34e4c4789ebc84f9186e7cf20fca35ca6",
+      "output": "c1856fbc517abe78cd4ada38376cdf0aef2c507b97fd8d45d98e890139163c90",
       "textures": [
         "2cebfd348304d82371241ed99a38442c0a3513b13f762b08730d55796b358e8f.jpg",
         "b02f286d2013d718500e7b3e631ada1ef96e83d4fadbd985957bbcb21cd8b72a.jpg",
@@ -208,7 +208,7 @@
     },
     "fallen-leaves-2": {
       "input": "8f6dc444da5de27e438d8c32d001b9a1914bc802de8ddebf4acd642768f469d1",
-      "output": "a330fec127fa20ea7434428121d41fedfdbf83e83d22a7bd4506d101d5f9dfd0",
+      "output": "962676d804402338976f0a663a36a56a9ce9be73dc82d891f32ef81cdcf532ec",
       "textures": [
         "1f5686cc0a695a118b052b62866293101d2cb50cd8e72c7bb3c5d43570e115b3.jpg",
         "2b7f08083604520edb8ac530b165e28c85b946c615cabe89dfa9070f0eaafd15.jpg",
@@ -232,7 +232,7 @@
     },
     "flower-cart-1": {
       "input": "e8d494d072fafe7c079eb5d124aa098318fb8fdeed5d8712f10efb4ab35d8869",
-      "output": "a97e3ab5c7a2984c559f7bf74979a4d594bab20f14407a9ae36452def04dfcea",
+      "output": "ba05a98397f0d4009192fb5abce82e4ccf34e1ac9d68e3cec66310936ac23f9a",
       "textures": [
         "7f790cfe965458adca3510f08ed9e0562df04452c5c1673957c85d3a87a01cc5.jpg",
         "84c2fc96bb5e82b1b2df85c62849eb983db52131a8d15711f1ea48fcedf5242c.jpg",
@@ -340,7 +340,7 @@
     },
     "four-gates-banner-pole-1": {
       "input": "5ec1bac78f356046edbcc4789bac2ab3c163f4612b79138db5d821389b0b8c36",
-      "output": "feda74ec912ee2836fd85b1a800af0177c8abf766a1fceda100ba4bd2c6e0bf8",
+      "output": "5d6c03d63bb3079881ce16b42cc1b282f652ccdccceaf469ea680f9785cb4ec5",
       "textures": [
         "6221a40af35b55446e93147e2bea3bc7f8e930e8673d1435a427cd063606694b.jpg",
         "698ef069720ad7e0bd0e8a83717b978f0836293342fb53b7c0cf3b4712f138e2.jpg",
@@ -352,7 +352,7 @@
     },
     "garden-hedge-1": {
       "input": "e0101b35026213cc37efb65f3a3792aa40d48408bf34164428ef648b223bbfab",
-      "output": "01f3730e7ecf4e90199f2f16afa0c9395768624693320ad8289418470da5cc43",
+      "output": "1644e2caae9f1ecdf8e9b43e49335d40af5542083e3ad5cb862c8dab291f4086",
       "textures": [
         "219b25b42b35f06d717643be4a7969eff1681f42ea5a17a1edc7e915a47c50bb.jpg",
         "64d1e9debfa15c242bf8161bf838efdbab6b03059d9a26adf09fec4765a23cca.jpg",
@@ -364,7 +364,7 @@
     },
     "garden-urn-1": {
       "input": "bc930433d4d003cadf04f055c9f6d901b975760c568028f7a1b4a4d91b8844ab",
-      "output": "61c159eb02f6a63240ac45ef435ef0f93fc56d8299d8955e5cc4b50399f31f34",
+      "output": "6098732c1918d93c285cc3ba798fe25bc34ea3a01be7ee393146c8204fda36a9",
       "textures": [
         "7166c9f6d62fa0947f0c8e8ef74ad98d086159d0925548c96d5a11882fb582df.jpg",
         "8b316faa0e28e44844590dd43d60569a505fe3d566f02da05bd13a7b8eeb185d.jpg",
@@ -376,7 +376,7 @@
     },
     "gates-townhouse-1": {
       "input": "6b00ce89330ceebe35f51cc64ae1aff62a4fd8491ced939e053bac3945eca7ca",
-      "output": "3d7d4783817840aa9399936e58a922f8df89d33e5286759c6039df26f5bba824",
+      "output": "cc0d79bac874123563347fcc7f3012ff16d1b6f3d3ae80027df4b80bb2620b7c",
       "textures": [
         "439a8357393f6e3b1615842628b785345213495574aaec68105140e8e70d35d8.jpg",
         "d31b7a1e7cc8e317e5e467357ca14c467c6867f4260aa2b8a28e0c15e76b668b.jpg",
@@ -388,7 +388,7 @@
     },
     "gates-townhouse-2": {
       "input": "2c4b479c94d98f958eab9e1c4d18c87e4b31b585377e3d388881aced7e0c030a",
-      "output": "63a1bd396461fd51780149fb6caddc76e50f10ec16933c66affc8c2c7bd1105b",
+      "output": "ffeb29b8ef4a300101d443da4cdcd60206f397c84e6b03fb7541bdeeccc718a0",
       "textures": [
         "3dd24da715e54d6eed8367fe1522c37e6f8fbc5c13ab9842f0dfcf6d1e4ccfd4.jpg",
         "896b401a0a12c8002a0daa0f8d5c720d04cdaac27e89767a6d3f45bafddc726d.jpg",
@@ -400,7 +400,7 @@
     },
     "gates-townhouse-3": {
       "input": "3006c3950c9396c89ac84a6c74b72631f1bb4b28e459c4232fe9ac5f122bb55f",
-      "output": "891363b852894aa95de0673e9653c9dfda6ad6a2a10708ade6adf5dfd9a1fda8",
+      "output": "280e96b4aca9ceaaf7b03f4690dd90fee470407dd6fdb936af277de3f0799eda",
       "textures": [
         "6b8404b5a3e97e975e2b9ec3ade8c57e7d8823283e5d5dbcf6e104563159b967.jpg",
         "7a609c7f8aeffebdb092e7f71b91edb9c6f6fb9e5bf8991ff11927985b1d0865.jpg",
@@ -412,7 +412,7 @@
     },
     "golden-birch-tree-1": {
       "input": "624833403319992a87ff884a4cb54b79b0b373d9fbac90b811eb6832a621e4e8",
-      "output": "661369f3585f023e6576ddc4fc066c994d89911908f99ccf858e6d36732a0ee3",
+      "output": "e226b75d3e65cd9c9c950cb83005fc2ffc5f73eda529b7045b4348d07a7ea662",
       "textures": [
         "447e61fbad3b39aa9ec9cb49494fa0789113819c02a4a33237e4a9071509bf24.jpg",
         "9dbad07ad8fde66fa260eed56905ead6d80e9b787186684783bf447b89d9c34c.jpg",
@@ -448,7 +448,7 @@
     },
     "hay-stack-1": {
       "input": "178d4a7170cda49468d86d94be044af12132655e51eddd6279bc0f6d88987166",
-      "output": "acb92cfefbd9c63ef048f3c8e6ddd869c2e32eb9c05e75f25c266bdb4a64078b",
+      "output": "e578a212f2acdd19e661d0d7369ea334b4de334285f5c869547ef57273762136",
       "textures": [
         "9838228a628ca9b47afe3f913b064404da517778b9e93b38077652ee7fe8704c.jpg",
         "bac5e9f11382e86b67c382664979ee024110d05031c0564736973fab867b854f.jpg",
@@ -568,7 +568,7 @@
     },
     "notice-board-1": {
       "input": "7dc71a75df902a6bb6a6327e97823e24d7ea05c230f3133083041204029807ef",
-      "output": "01fb80461f3ef2cd42528fa5da364217a9fdb994154c510ef85909a94c6337e1",
+      "output": "4e739454e7d250eb69c518001ea395267e5358f27fa079293d0154a7f97ec5d2",
       "textures": [
         "264d57341c880c20f188e3738d9ac99fbcbdf3d655854f54e2df020643836ffb.jpg",
         "66831bdb1fe9289edbf8b5ef6209bca29edfee86d5747575d28ec6633410b40f.jpg",
@@ -616,7 +616,7 @@
     },
     "pumpkin-patch-1": {
       "input": "2a124ca0cbc8751f7c284e09d782df38bb7ea8cb63cf384d640fb210c53c3f1a",
-      "output": "ab09a55d0048cd34d69886be46904219982f0135f84f4f226f2e5def2e2fcb67",
+      "output": "26fdd8125e1c76f8bfa0c609254a9b1e45da177d0c46a784752f031d6d551dd4",
       "textures": [
         "0c6cf21b3ba10bd8bd3e23caf3a66950b509ada7bc76730876fc4bc3791fda20.jpg",
         "82d1c12c39265377e12557818d50f741d35f6400df9e472a8854177a169af8ca.jpg",
@@ -628,7 +628,7 @@
     },
     "reflecting-pool-1": {
       "input": "b96551e0ee90a81029e8c332e708f56b65b7a082fc16d9ef16c71b4e142631ca",
-      "output": "cc8fdab461336edda7547fef811458fbbf9b41fc858215b09ee619a0e5f7b6f7",
+      "output": "bc30833c4afd071de16f515dd3094f542d398bf76edb87e2ed620176c5381cca",
       "textures": [
         "2626f4c6fe2499e48bd4f0704ba74804fe9109539fef3ad7e27613d4de83ca2c.jpg",
         "6d530e9bcb3744023ed0c00abba9d72d295ac41f46142f2be69b19b8ea49a130.jpg",
@@ -676,7 +676,7 @@
     },
     "rose-arch-1": {
       "input": "b585fda57e539c47528929aa6ca0e21714835db477bb222b1dbe434420d469a2",
-      "output": "b61a157b43cabd2ec8a9737b6dca759fa39a1461053116679bd01d9e909fa5af",
+      "output": "5208d251822c2915ba3bf8a523e077ef19fc92e45969850ae928b9eb8fc2e36d",
       "textures": [
         "339de4c1288b4574f498b91c4cf4a2237a87e7a358b8ca3881eb8f31af706690.jpg",
         "59a8a0bea60efaf1a65ea2fc930a704fb7364434dadd34560a672adb42153ded.jpg",
@@ -688,7 +688,7 @@
     },
     "russet-oak-tree-1": {
       "input": "1a3c9d3b035625f7e9194edc0efb19fb5dff84bdffb5e64735975d8cf48ca72b",
-      "output": "acbd335564ff7f37b99c2cb58971fed6bdad550bcd7d043d6137d25a070b8538",
+      "output": "7f383287668ef55dcb4bfb773e798ad5190b7ab92061c40fad773ffe79cd2f5c",
       "textures": [
         "2be72eba518625cab07a406b9ce6433486a14c1bb8c4758e0ba0cc4b2f3ecd87.jpg",
         "8cd15d915fe0093a37a7b1b4966bde0f49d2ad4c52e8300fe4f73e1712027f82.jpg",
@@ -724,7 +724,7 @@
     },
     "scarecrow-1": {
       "input": "f74cd8c55f13947a2486b52a4e9c6b97a43366fc6a7f088f0c7d9654ffaa6012",
-      "output": "8266f7c04aa8bc9a75cf28f93bdc6111312dfac845c145a9a8c64fefa764360f",
+      "output": "375dd0a6ed08da85b1787a243d8b159b801fcf35273cd894475a12bd797e17f9",
       "textures": [
         "5b7c97ef4cdf7e3ba892f2f649f591e1a219450f422c5249cdab0fe5747c70c6.jpg",
         "6dca00cd582ab4e6b9e9f371df8d683dacbfc75a6941ba4aef83c9fa9c5bb9cf.jpg",
@@ -736,7 +736,7 @@
     },
     "split-rail-fence-1": {
       "input": "a5cf8ec6dc381489a61676ebe1c3496b291528aca90b97ad217dda5cfe762353",
-      "output": "c525a413e583b8d23cfaa3140695198b629ec1adfc63af0d666b2bafb13c6b8f",
+      "output": "76c8fbcd2be2f31e6cfd72fcce1dbeffff81c9e276814babda1745b535d05516",
       "textures": [
         "06d9fc7e56438152c23b4265d57c8923bc6e8355a0076a77d7f0b5c95dff3cb3.jpg",
         "de069abf3d8891e06e85059ea2ae0463f4e0d11a2d31e0f8c42a144fadb9c05f.jpg",
@@ -760,7 +760,7 @@
     },
     "stone-well-1": {
       "input": "243e1917bb251e3016fbd248d447af3bfa0a9fda5954d692328111ac0614e8fa",
-      "output": "d437db8b837be975930983484281253cef51fb6910e62268c414a5063b9a61e7",
+      "output": "82e39eec93d62718b58b567fa54106b955984c7fa33c10c4894e60b80d887523",
       "textures": [
         "31db00aa3c6f85dcc9cfe9124c3c1deaab8480480e8ecc87c412b7ac3674e014.jpg",
         "768c85d7e1d93fbeb8dbdda049124558aa654920fa4b4bcca9269277fcd97973.jpg",
@@ -796,7 +796,7 @@
     },
     "topiary-cone-1": {
       "input": "a39280412a04a42ddd661e99234488ff0d216ac0cb834658d1136c23a2294740",
-      "output": "9f4b3a30efec580d6ca2256467233f09c2c9dee062c3d9a080b5ec403ccf243b",
+      "output": "8b52478d2b83fa349598eaf98915a667445b34be3e4091b8581fd3b92ec787dd",
       "textures": [
         "09ff74411eafa4bb7436b5e80e606d0660416054919b1e1e1722e4c335382853.jpg",
         "a4165f8c57fa4bafc710df5feb212586bad1f74a8d610e32e1b43c7a760334c0.jpg",
@@ -808,7 +808,7 @@
     },
     "wallside-rowhouse-1": {
       "input": "79e55bb37cbeb8ae3325532ce72ad72da102039169c80432daede6080d6df931",
-      "output": "71cc78fe70072d42bd1cfd30d3b5e060790007fc3c1f3ba9595977b142f57047",
+      "output": "b3e47bfe53bc39a8269ab9b81126a5f31cded600504422dfbf6cf60b46e96a34",
       "textures": [
         "1a3d2b6458c6f483e3264dd84358f03aa110c8599aa9be3a95a4af09af76964b.jpg",
         "73b0fd5d74dda688bad83dd31ca5064e6c25999a2298741e078d0795d98a8ff8.jpg",
@@ -820,7 +820,7 @@
     },
     "wheat-stooks-1": {
       "input": "74a30ad8a177e38357d0fceb259d20b45a47195ec2f81865f9b89662b02beec1",
-      "output": "eb595b2c88187b2a075c093e7a68c6b1b961329ebba95b5774607181bd36913b",
+      "output": "7fa8dbb3eeee08445f3578c7d11de0326a385bccfefa2bd79e4f507c0b314990",
       "textures": [
         "38f7948154662b2ad434aaeb568336ca3078b9506ea556e7a06ea05c5aad8e6a.jpg",
         "3bc224e2dc9fa006be6a7ac40bf9773433a26e7bd0b67ebc31aa18abfbda14b1.jpg",
@@ -832,7 +832,7 @@
     },
     "wheelbarrow-1": {
       "input": "7c8e1e09c6f7b98da8315c4355afbebf77d2b3221fe036905e5e052a465399ca",
-      "output": "c9b3e969b5de4be07159d6949e2160df1098cd0296dcd9fe8d9bd20d72bf9305",
+      "output": "7bcab8e6edd368edd9582e42183270b2b267b78811698ed4939227ddec25154a",
       "textures": [
         "7ebd0b5e25ead169407e27e52c4f4a6b161aa12be67f8e3277fb6c626916d571.jpg",
         "8028151c09afa979d1c8e90630d993d761a2b721147cc9d6e46fa811b8064f4d.jpg",

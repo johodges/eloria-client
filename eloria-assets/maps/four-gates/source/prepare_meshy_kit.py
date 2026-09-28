@@ -15,7 +15,9 @@ prototypes/`): scaled so its height (or its length, for pieces that lie flat) is
 the one in SIZES, moved so the centre of its base stands on the origin, textures
 shrunk to 1024 or 512 px and written once, content-addressed, to the territory's
 `assets/textures/` and referenced by URI, and non-metallic unless it is metal.
-Geometry is otherwise left exactly as generated. It is Sunmane's
+Geometry is otherwise left exactly as generated. Node
+transforms are baked into the vertices first: the Four Gates delivery sizes its
+models with wrapper nodes rather than in their vertices. It is Sunmane's
 `prepare_meshy_kit.py` with this kit's sizes, reading several folders.
 
 `python prepare_meshy_kit.py --input <folder> [<folder> ...]` writes the kit and
@@ -129,10 +131,82 @@ def _texture(payload: bytes, mime: str, size: int) -> tuple[bytes, str]:
     return out.getvalue(), mime
 
 
+def _local_matrix(node: dict) -> np.ndarray:
+    if "matrix" in node:
+        return np.array(node["matrix"], dtype=np.float64).reshape(4, 4).T
+    x, y, z, w = node.get("rotation", [0.0, 0.0, 0.0, 1.0])
+    rotation = np.array([
+        [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+        [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+        [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]])
+    out = np.eye(4)
+    out[:3, :3] = rotation * np.array(node.get("scale", [1.0, 1.0, 1.0]), dtype=np.float64)
+    out[:3, 3] = node.get("translation", [0.0, 0.0, 0.0])
+    return out
+
+
+def _bake_node_transforms(document: dict, binary: bytes) -> bytes:
+    """Moves every mesh node's world transform into its vertices (positions, and normals and tangents
+    by the matching linear maps) and leaves every node untransformed. Some deliveries size a model with
+    wrapper nodes rather than in its vertices; baked, every model is measured as it looks."""
+    world: dict[int, np.ndarray] = {}
+
+    def visit(index: int, parent: np.ndarray) -> None:
+        world[index] = parent @ _local_matrix(document["nodes"][index])
+        for child in document["nodes"][index].get("children", []):
+            visit(child, world[index])
+
+    for root in document["scenes"][document.get("scene", 0)]["nodes"]:
+        visit(root, np.eye(4))
+    out = bytearray(binary)
+    done: dict[int, int] = {}
+    for index, node in enumerate(document["nodes"]):
+        if "mesh" not in node:
+            continue
+        matrix = world.get(index, np.eye(4))
+        if np.array_equal(matrix, np.eye(4)):
+            continue                                  # nothing to bake; leave the arrays untouched
+        linear = matrix[:3, :3]
+        normal_map = np.linalg.inv(linear).T
+        for primitive in document["meshes"][node["mesh"]]["primitives"]:
+            for key, accessor_index in primitive["attributes"].items():
+                if key not in ("POSITION", "NORMAL", "TANGENT"):
+                    continue
+                if accessor_index in done:
+                    if done[accessor_index] != index:
+                        raise ValueError("a vertex array shared by two mesh nodes cannot be baked")
+                    continue
+                done[accessor_index] = index
+                accessor = document["accessors"][accessor_index]
+                view = document["bufferViews"][accessor["bufferView"]]
+                columns = 4 if key == "TANGENT" else 3
+                if accessor.get("componentType") != 5126 or view.get("byteStride"):
+                    raise ValueError(f"expected tightly packed float {key}")
+                start = view.get("byteOffset", 0) + accessor.get("byteOffset", 0)
+                values = np.frombuffer(bytes(out[start:start + accessor["count"] * columns * 4]),
+                                       dtype="<f4").reshape(-1, columns).astype(np.float64)
+                if key == "POSITION":
+                    values = values @ linear.T + matrix[:3, 3]
+                    accessor["min"] = [float(v) for v in values.min(axis=0)]
+                    accessor["max"] = [float(v) for v in values.max(axis=0)]
+                else:
+                    turned = values[:, :3] @ (normal_map if key == "NORMAL" else linear).T
+                    turned /= np.maximum(np.linalg.norm(turned, axis=1, keepdims=True), 1e-12)
+                    values[:, :3] = turned
+                    if key == "TANGENT" and np.linalg.det(linear) < 0:
+                        values[:, 3] = -values[:, 3]
+                out[start:start + values.size * 4] = values.astype("<f4").tobytes()
+    for node in document["nodes"]:
+        for key in ("matrix", "translation", "rotation", "scale"):
+            node.pop(key, None)
+    return bytes(out)
+
+
 def prepare(source: Path, name: str) -> tuple[bytes, dict[str, bytes]]:
     """The prototype's bytes, and the texture files it references by name."""
     measure, metres, texture_size = SIZES[name]
     document, binary = _read(source)
+    binary = _bake_node_transforms(document, binary)
     position_accessors = sorted({primitive["attributes"]["POSITION"]
                                  for mesh in document["meshes"] for primitive in mesh["primitives"]})
     points = np.concatenate([_positions(document, binary, index) for index in position_accessors])
