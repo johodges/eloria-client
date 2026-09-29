@@ -484,19 +484,19 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 232288,
-    "walkableFraction": 0.319998,
-    "sourceGlbSha256": "ea6db7cbfb06b457a100c569fdd4c2667555896c161f2b5916d644ed451c67f7",
+    "walkableCells": 231884,
+    "walkableFraction": 0.319442,
+    "sourceGlbSha256": "39640da8a48f45769f1e3b133c08458be2f4058120d7cfa4332bca8901917ea5",
     "exportStatistics": {
-      "walkMeshes": 109,
+      "walkMeshes": 112,
       "structuralMeshes": 678,
       "structuralTriangles": 451546,
-      "walkTriangles": 202867,
-      "steepCells": 61313,
+      "walkTriangles": 207694,
+      "steepCells": 61734,
       "waterCells": 25278,
-      "structuralCells": 24118,
+      "structuralCells": 24091,
       "thresholdHaloCells": 296,
-      "seamCollarCells": 3178
+      "seamCollarCells": 3168
     }
   },
   "navigation": {
@@ -4130,7 +4130,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "729916fbb93a70b65644b3594b9b4cc10be08811aa323f025e24ade2596c3026",
+      "masterSha256": "09c0f06cc093218f821473b2ad674c850b84432645f5b73a699825aebfdb7aad",
       "globalMin": [
         272.0,
         422.0
@@ -4149,9 +4149,9 @@
     }
   },
   "performance": {
-    "glbBytes": 75062308,
-    "nodes": 6268,
-    "meshes": 1692,
+    "glbBytes": 75850628,
+    "nodes": 6274,
+    "meshes": 1695,
     "externalResources": {
       "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
       "../_continent/shared-assets/8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805.png": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805",
@@ -6189,7 +6189,7 @@
       178.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:2478b1d35c936a0d558ffd708a96f7d37bf27cb0f467f949f97d5e2f9ec2e3f4",
+  "terrainRevision": "diagonal-spine-v1:b3a39c938681933bba0cb4a8cbd5e9bc8be4b33078693bb9f8fc3368bfb44469",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805.png": "8d151b32044978bf84083d557696ee7e97c3ef575d3071e7d48d3896fa47b805",
@@ -6463,7 +6463,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "729916fbb93a70b65644b3594b9b4cc10be08811aa323f025e24ade2596c3026",
+    "masterSha256": "09c0f06cc093218f821473b2ad674c850b84432645f5b73a699825aebfdb7aad",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a",
     "storage": {
       "serverCells": [
@@ -7535,9 +7535,9 @@
             137.657386763104
           ]
         },
-        "estimatedResidentBytes": 409804844,
-        "glbBytes": 13979388,
-        "geometryResidentBytes": 69896940,
+        "estimatedResidentBytes": 412534164,
+        "glbBytes": 14525252,
+        "geometryResidentBytes": 72626260,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -7687,9 +7687,9 @@
             162.0
           ]
         },
-        "estimatedResidentBytes": 130058730,
-        "glbBytes": 2349616,
-        "geometryResidentBytes": 11748080,
+        "estimatedResidentBytes": 131274310,
+        "glbBytes": 2592732,
+        "geometryResidentBytes": 12963660,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -8186,13 +8186,13 @@
       ],
       "authoringSpecSha256": "d5bd2c2ef68246f096cd4343ff2aefedf47e9b2fb7b586d52b761d1b3f0e4091"
     },
-    "terrainRevision": "diagonal-spine-v1:2478b1d35c936a0d558ffd708a96f7d37bf27cb0f467f949f97d5e2f9ec2e3f4"
+    "terrainRevision": "diagonal-spine-v1:b3a39c938681933bba0cb4a8cbd5e9bc8be4b33078693bb9f8fc3368bfb44469"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "729916fbb93a70b65644b3594b9b4cc10be08811aa323f025e24ade2596c3026",
-    "collisionSha256": "5a31b9c4ceec01bef090be83e29ee339ebd886182493918263087bac9bf69d0d",
-    "terrainRevision": "diagonal-spine-v1:2478b1d35c936a0d558ffd708a96f7d37bf27cb0f467f949f97d5e2f9ec2e3f4",
+    "masterSha256": "09c0f06cc093218f821473b2ad674c850b84432645f5b73a699825aebfdb7aad",
+    "collisionSha256": "8c74d9a6fb58d7d1eec2992a5c403483b098b899266431209293e64a5a57400c",
+    "terrainRevision": "diagonal-spine-v1:b3a39c938681933bba0cb4a8cbd5e9bc8be4b33078693bb9f8fc3368bfb44469",
     "storage": {
       "serverCells": [
         426,

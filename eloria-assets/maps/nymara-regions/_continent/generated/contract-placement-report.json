@@ -22262,14 +22262,14 @@
         118
       ],
       "tile": [
-        249,
+        250,
         70
       ],
       "expectedTile": [
         249.0,
         70.0
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 1.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -24079,14 +24079,14 @@
         270
       ],
       "tile": [
-        229,
-        57
+        226,
+        58
       ],
       "expectedTile": [
         229.0,
         57.0
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 3.162,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
@@ -24126,13 +24126,13 @@
       ],
       "tile": [
         246,
-        62
+        61
       ],
       "expectedTile": [
         246.0,
         62.0
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 1.0,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
@@ -24217,14 +24217,14 @@
         278
       ],
       "tile": [
-        245,
-        64
+        246,
+        63
       ],
       "expectedTile": [
         245.0,
         64.0
       ],
-      "displacementMetres": 0.0,
+      "displacementMetres": 1.414,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -50891,10 +50891,10 @@
     "amberwood": {
       "stageFactor": 9,
       "stageMetres": 1.8,
-      "walkableServerTiles": 55507,
-      "largestComponentTiles": 51831,
+      "walkableServerTiles": 55364,
+      "largestComponentTiles": 51692,
       "reachableByStage": {
-        "9": 51831
+        "9": 51692
       },
       "storage": {
         "serverCells": [
@@ -50969,7 +50969,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 51831,
+      "hubReachableTiles": 51692,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -50978,9 +50978,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 51822,
+      "hubReachableAfterStorageTiles": 51683,
       "updatedAuthoredMarkers": 1,
-      "terrainRevision": "diagonal-spine-v1:2478b1d35c936a0d558ffd708a96f7d37bf27cb0f467f949f97d5e2f9ec2e3f4",
+      "terrainRevision": "diagonal-spine-v1:b3a39c938681933bba0cb4a8cbd5e9bc8be4b33078693bb9f8fc3368bfb44469",
       "servedTileContinuity": {
         "keptServedTile": 3,
         "movedTogether": 0,
@@ -51141,10 +51141,10 @@
     "four_gates": {
       "stageFactor": 4,
       "stageMetres": 0.8,
-      "walkableServerTiles": 93960,
-      "largestComponentTiles": 82836,
+      "walkableServerTiles": 90540,
+      "largestComponentTiles": 80510,
       "reachableByStage": {
-        "4": 82836
+        "4": 80510
       },
       "storage": {
         "serverCells": [
@@ -51193,7 +51193,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 82836,
+      "hubReachableTiles": 80510,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -51202,9 +51202,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 82827,
+      "hubReachableAfterStorageTiles": 80501,
       "updatedAuthoredMarkers": 2,
-      "terrainRevision": "diagonal-spine-v1:140121cd7e19c4ad8c628682f8267935d5daed72e4b2b1a4b8d655ed57c311e3",
+      "terrainRevision": "diagonal-spine-v1:3889c6f86056359285d567a04b6b42e2472714c74cdc2ef869c97dbdc68b8d8a",
       "servedTileContinuity": {
         "keptServedTile": 13,
         "movedTogether": 0,
@@ -51331,10 +51331,10 @@
       "stageFactor": 3,
       "stageMetres": 0.6000000000000001,
       "walkableServerTiles": 107649,
-      "largestComponentTiles": 105638,
+      "largestComponentTiles": 105771,
       "reachableByStage": {
-        "3": 105638,
-        "4": 105667
+        "3": 105771,
+        "4": 105800
       },
       "storage": {
         "serverCells": [
@@ -51447,7 +51447,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 105638,
+      "hubReachableTiles": 105771,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -51456,9 +51456,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 105629,
+      "hubReachableAfterStorageTiles": 105762,
       "updatedAuthoredMarkers": 1,
-      "terrainRevision": "diagonal-spine-v1:40ba399f0ba967a4f9f4b441aaa50ee848092311c5f0de323e0865e6fd45ce74",
+      "terrainRevision": "diagonal-spine-v1:b87a68733a42184d6701fd5a5f9a6a330d5ad5483eccbdf79d83f076ce7d0e8b",
       "servedTileContinuity": {
         "keptServedTile": 2,
         "movedTogether": 0,
@@ -51928,7 +51928,7 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "a37814012df30008a7a1019f02fd163f5f1652d4cd47cdcef0a377a4ef84ea8d",
+    "client_content_manifest.json": "08e06de210e72d5f549720cc0f71bc7484d29d2a75067ee6d4e233eaa6029c95",
     "creatures.txt": "f683a45b2da53f03557c7fdf45bc731a304dda241c70f64a7240f776260cde79",
     "harvesting.txt": "e93130fed2350ad6c54d79e40ecedc97a3f748110ee4137424e0075a9677abb7",
     "instances/amberwood_gauntlet_low.def": "dfa704f5be40551d8a3d926845980ae934d4e9445be20a9810c4d5c21b806b67",
@@ -51953,7 +51953,7 @@
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "18057c9e50833f45b96e41fd794fe9a0ed5e69ba621eac59f314f6f58673b860",
+    "spawn_groups/invasion/invasion_nymara.def": "abdd4b3d8b6b8d9fc2c963e028dfb7ed12741aac22a96006ae62e755f519b12f",
     "spawns.txt": "08dfb6b2b2cf689b568d1ab79272c80b00b3d7135cc4bd907aa382814d770b07",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "97c0a9ddb86271a1567998c1274b9c8f7b5466732b8c1a17106f8d6a7576bc9c"

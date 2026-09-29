@@ -11,7 +11,93 @@
     "y": "up",
     "z": "south"
   },
-  "bridges": [],
+  "bridges": [
+    {
+      "arch": 0.3,
+      "collisionRole": "walk_surface",
+      "deckSurface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.47999998927116394,
+            0.5600000023841858,
+            0.5600000023841858,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/stone-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 0.7200000286102295,
+          "normalTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/stone-normal.png",
+          "ormTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/stone-orm.png",
+          "roughness": 1.0,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Stone",
+        "rotationDegrees": 0.0
+      },
+      "deckTextureRotationDegrees": 0.0,
+      "end": [
+        44.0,
+        10.699999809265137,
+        -133.5
+      ],
+      "id": "manymouth-mirrorwater-bridge",
+      "metadata": {
+        "purpose": "south highway over the Mirrorwater",
+        "source": "four-gates-highways-2026-09-29"
+      },
+      "replacesRouteId": null,
+      "start": [
+        44.0,
+        10.369999885559082,
+        -147.5
+      ],
+      "supportSurface": {
+        "materialMode": "surface",
+        "pbrOverrides": {
+          "albedoColor": [
+            0.47999998927116394,
+            0.5600000023841858,
+            0.5600000023841858,
+            1.0
+          ],
+          "albedoTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/stone-basecolor.png",
+          "metallic": 0.0,
+          "normalScale": 0.7200000286102295,
+          "normalTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/stone-normal.png",
+          "ormTexture": "godot-client/src/dev/map_authoring_pilot/style/textures/stone-orm.png",
+          "roughness": 1.0,
+          "triplanar": false,
+          "uvOffset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "uvScale": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "worldTriplanar": false
+        },
+        "preset": "Stone",
+        "rotationDegrees": 0.0
+      },
+      "waterClearance": 0.85,
+      "width": 8.0
+    }
+  ],
   "continentTranslation": [
     520.0,
     0.0,
@@ -91640,6 +91726,484 @@
     },
     {
       "closed": false,
+      "id": "highway-manymouth_delta-four_gates",
+      "kind": "road",
+      "points": [
+        {
+          "position": [
+            44.0,
+            10.699999809265137,
+            -133.5
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            44.108238220214844,
+            10.657424926757813,
+            -132.5258331298828
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            44.216819763183594,
+            10.614718437194824,
+            -131.54864501953125
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            44.32524490356445,
+            10.57206916809082,
+            -130.57276916503906
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            44.433677673339844,
+            10.529417991638184,
+            -129.5968780517578
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            44.54212188720703,
+            10.486763954162598,
+            -128.6208953857422
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            44.650550842285156,
+            10.444119453430176,
+            -127.64509582519531
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            44.758975982666016,
+            10.401469230651855,
+            -126.6692123413086
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            44.86740493774414,
+            10.358819961547852,
+            -125.69334411621094
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            44.975826263427734,
+            10.31617259979248,
+            -124.71755981445313
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            45.08427047729492,
+            10.273520469665527,
+            -123.74156188964844
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            45.19270324707031,
+            10.23087215423584,
+            -122.76570892333984
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            45.301124572753906,
+            10.188223838806152,
+            -121.78985595703125
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            45.40971374511719,
+            10.14551067352295,
+            -120.81255340576172
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            45.5,
+            10.109999656677246,
+            -120.0
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            45.544891357421875,
+            10.102787971496582,
+            -119.8397216796875
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            45.811279296875,
+            10.06019401550293,
+            -118.89321899414063
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            46.0755615234375,
+            10.01791000366211,
+            -117.95354461669922
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            46.341407775878906,
+            9.975375175476074,
+            -117.00833129882813
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            46.60725021362305,
+            9.932838439941406,
+            -116.06310272216797
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            46.873146057128906,
+            9.890298843383789,
+            -115.11772918701172
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            47.13894271850586,
+            9.847769737243652,
+            -114.17263793945313
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            47.40478515625,
+            9.8052339553833,
+            -113.2274398803711
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            47.67062759399414,
+            9.762700080871582,
+            -112.28221893310547
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            47.93647384643555,
+            9.720163345336914,
+            -111.33699035644531
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            48.20231246948242,
+            9.677630424499512,
+            -110.39177703857422
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            48.4681396484375,
+            9.63509750366211,
+            -109.44662475585938
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            48.733985900878906,
+            9.592561721801758,
+            -108.50137329101563
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            48.99977493286133,
+            9.550036430358887,
+            -107.55632781982422
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            49.26567077636719,
+            9.50749397277832,
+            -106.6109619140625
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            49.53154754638672,
+            9.464953422546387,
+            -105.6656265258789
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            49.797637939453125,
+            9.422378540039063,
+            -104.71951293945313
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            50.0,
+            9.390000343322754,
+            -104.0
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            50.079986572265625,
+            9.379778861999512,
+            -103.7778091430664
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            50.41134262084961,
+            9.337440490722656,
+            -102.85739135742188
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            50.74398422241211,
+            9.29493522644043,
+            -101.93338012695313
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            51.0765380859375,
+            9.25244426727295,
+            -101.0096435546875
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            51.40913772583008,
+            9.209941864013672,
+            -100.08572387695313
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            51.741703033447266,
+            9.167448997497559,
+            -99.16194915771484
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            52.07432174682617,
+            9.124946594238281,
+            -98.23800659179688
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            52.40687942504883,
+            9.082454681396484,
+            -97.3142318725586
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            52.739463806152344,
+            9.039958000183105,
+            -96.39038848876953
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            53.072044372558594,
+            8.997461318969727,
+            -95.46658325195313
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            53.404624938964844,
+            8.954963684082031,
+            -94.5427017211914
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            53.737205505371094,
+            8.912467956542969,
+            -93.6188735961914
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            54.0698127746582,
+            8.86996841430664,
+            -92.69496154785156
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            54.40234375,
+            8.82747745513916,
+            -91.771240234375
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            54.73490524291992,
+            8.78498363494873,
+            -90.84749603271484
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            55.065433502197266,
+            8.74275016784668,
+            -89.92935180664063
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            55.400001525878906,
+            8.699999809265137,
+            -89.0
+          ],
+          "width": 8.0
+        }
+      ],
+      "properties": {
+        "terrainConform": true,
+        "terrainFeather": 2
+      },
+      "replacesPlanFeatureId": null,
+      "replacesRouteId": null,
+      "routingRole": "required",
+      "surface": {
+        "materialMode": "road",
+        "preset": "Worn earth",
+        "roadOverrides": {
+          "edgeFeather": 0.16,
+          "normalStrength": 0.72,
+          "roughnessMultiplier": 1.0,
+          "textureScale": 1.0,
+          "wornTint": [
+            0.6000000238418579,
+            0.47999998927116394,
+            0.3100000023841858,
+            1.0
+          ]
+        },
+        "rotationDegrees": 0.0
+      }
+    },
+    {
+      "closed": false,
+      "id": "highway-manymouth_delta-four_gates-border",
+      "kind": "road",
+      "points": [
+        {
+          "position": [
+            44.0,
+            10.430000305175781,
+            -147.9499969482422
+          ],
+          "width": 8.0
+        },
+        {
+          "position": [
+            44.0,
+            10.369999885559082,
+            -147.5
+          ],
+          "width": 8.0
+        }
+      ],
+      "properties": {
+        "terrainConform": false,
+        "terrainFeather": 2
+      },
+      "replacesPlanFeatureId": null,
+      "replacesRouteId": null,
+      "routingRole": "required",
+      "surface": {
+        "materialMode": "road",
+        "preset": "Worn earth",
+        "roadOverrides": {
+          "edgeFeather": 0.16,
+          "normalStrength": 0.72,
+          "roughnessMultiplier": 1.0,
+          "textureScale": 1.0,
+          "wornTint": [
+            0.6000000238418579,
+            0.47999998927116394,
+            0.3100000023841858,
+            1.0
+          ]
+        },
+        "rotationDegrees": 0.0
+      }
+    },
+    {
+      "closed": false,
       "id": "manymouth_delta--verdant_stair-manymouth_delta",
       "kind": "road",
       "points": [
@@ -106191,6 +106755,10 @@
         "sha256": "ea239b8c8f86d900f3a82d2b5665d73b8e1b955657626987be7ef40320ffbab5"
       },
       {
+        "path": "godot-client/src/dev/map_authoring_pilot/style/textures/stone-basecolor.png",
+        "sha256": "ccada634290b55490b333393c4213a30b597ed8474a08060332921e371b38760"
+      },
+      {
         "path": "godot-client/src/dev/map_authoring_pilot/style/textures/stone-normal.png",
         "sha256": "1bd5132efaa99527f1873c902c7416430c7a97b31fd90c1dd3c42ea6677226ac"
       },
@@ -106213,6 +106781,10 @@
       {
         "path": "godot-client/src/dev/map_authoring_region/biome_palette_entry.gd",
         "sha256": "5d1e213929e31f2dec1e2987808aa02a173ac76f949857a396ea5b8dac2c81c5"
+      },
+      {
+        "path": "godot-client/src/dev/map_authoring_region/bridge_control.gd",
+        "sha256": "5fcac2d5c093e755cfccd327128ba7246a78ab00e8c365ba481c5f6302e83e8f"
       },
       {
         "path": "godot-client/src/dev/map_authoring_region/gameplay_marker.gd",
@@ -109139,7 +109711,7 @@
     },
     "scene": {
       "path": "godot-client/world_authoring/regions/manymouth_delta/manymouth_delta.tscn",
-      "sha256": "a9c9cae2dffcd0ad0bdfc6aa2c115c402c3aa76373bf3c1adc04220e79f3f05c"
+      "sha256": "b9193ceb613055d9cd4aa938b155a243648ba2000c7c059a5dbc05d646cafc9d"
     }
   },
   "terrain": {
@@ -109246,7 +109818,7 @@
         "river-cuts"
       ],
       "path": "resolved-heights.f32le",
-      "sha256": "e75799d15f64c185f5381ac78ea874a59b3c634f2da22bb9ee783c6930aa31f7"
+      "sha256": "c55271ed328592bae8fb59131e10f138c14546f772b5df7a2245b979b41554ce"
     },
     "width": 253
   },

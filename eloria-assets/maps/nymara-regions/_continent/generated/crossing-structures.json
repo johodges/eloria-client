@@ -1,13 +1,13 @@
 {
   "bridges": {
-    "components": 41,
-    "visibleCells": 7394,
-    "visibleTriangles": 140,
-    "wetCells": 4532,
+    "components": 42,
+    "visibleCells": 7430,
+    "visibleTriangles": 196,
+    "wetCells": 4533,
     "siteCells": 0,
-    "looseWetCells": 4532,
+    "looseWetCells": 4533,
     "riverWaterOutsideSites": {
-      "cells": 1386,
+      "cells": 1387,
       "at": [
         [
           482.5,
@@ -110,127 +110,127 @@
           674.5
         ],
         [
-          357.5,
+          356.5,
           784.5
         ],
         [
-          356.5,
+          355.5,
           788.5
         ],
         [
-          358.5,
+          357.5,
           790.5
         ],
         [
-          356.5,
-          792.5
+          1225.5,
+          791.5
         ],
         [
-          365.5,
+          364.5,
           793.5
         ],
         [
-          1220.5,
+          1219.5,
           794.5
         ],
         [
-          366.5,
+          365.5,
           796.5
         ],
         [
-          835.5,
+          834.5,
           838.5
         ],
         [
-          838.5,
+          836.5,
           842.5
         ],
         [
-          464.5,
+          463.5,
           1032.5
         ],
         [
-          464.5,
+          463.5,
           1035.5
         ],
         [
-          464.5,
+          463.5,
           1038.5
         ],
         [
-          465.5,
+          464.5,
           1041.5
         ],
         [
-          465.5,
+          464.5,
           1044.5
         ],
         [
-          512.5,
+          511.5,
           1054.5
         ],
         [
-          524.5,
+          523.5,
           1055.5
         ],
         [
-          516.5,
+          515.5,
           1057.5
         ],
         [
-          509.5,
-          1059.5
+          524.5,
+          1058.5
         ],
         [
-          519.5,
+          518.5,
           1060.5
         ],
         [
-          1240.5,
-          1142.5
+          1242.5,
+          1141.5
         ],
         [
-          1244.5,
+          577.5,
           1146.5
         ],
         [
-          572.5,
+          571.5,
           1150.5
         ],
         [
-          575.5,
+          574.5,
           1152.5
         ],
         [
-          571.5,
-          1155.5
+          577.5,
+          1154.5
         ],
         [
-          1179.5,
+          1178.5,
           1232.5
         ],
         [
-          455.5,
+          454.5,
           1268.5
         ],
         [
-          464.5,
+          463.5,
           1269.5
         ],
         [
-          457.5,
+          456.5,
           1271.5
         ],
         [
-          1167.5,
-          1420.5
+          1169.5,
+          1419.5
         ],
         [
-          1164.5,
+          1163.5,
           1424.5
         ],
         [
-          1255.5,
+          1254.5,
           1593.5
         ]
       ]
@@ -347,6 +347,14 @@
       {
         "component": 510,
         "sites": [],
+        "cells": 36,
+        "bankErrorMetres": 0.249,
+        "dryLiftOverLimitVertices": 0,
+        "maximumDryLiftMetres": 0.269
+      },
+      {
+        "component": 511,
+        "sites": [],
         "cells": 163,
         "bankErrorMetres": 0.907,
         "dryLiftOverLimitVertices": 17,
@@ -357,7 +365,7 @@
         ]
       },
       {
-        "component": 511,
+        "component": 512,
         "sites": [],
         "cells": 74,
         "bankErrorMetres": 1.88,
@@ -369,7 +377,7 @@
         ]
       },
       {
-        "component": 512,
+        "component": 513,
         "sites": [],
         "cells": 81,
         "bankErrorMetres": 9.046,
@@ -381,7 +389,7 @@
         ]
       },
       {
-        "component": 513,
+        "component": 514,
         "sites": [],
         "cells": 490,
         "bankErrorMetres": 1.906,
@@ -393,7 +401,7 @@
         ]
       },
       {
-        "component": 514,
+        "component": 515,
         "sites": [],
         "cells": 232,
         "bankErrorMetres": 0.67,
@@ -405,7 +413,7 @@
         ]
       },
       {
-        "component": 515,
+        "component": 516,
         "sites": [],
         "cells": 162,
         "bankErrorMetres": 0.879,
@@ -417,7 +425,7 @@
         ]
       },
       {
-        "component": 516,
+        "component": 517,
         "sites": [],
         "cells": 50,
         "bankErrorMetres": 0.356,
@@ -429,7 +437,7 @@
         ]
       },
       {
-        "component": 517,
+        "component": 518,
         "sites": [],
         "cells": 499,
         "bankErrorMetres": 2.32,
@@ -441,7 +449,7 @@
         ]
       },
       {
-        "component": 518,
+        "component": 519,
         "sites": [],
         "cells": 593,
         "bankErrorMetres": 2.173,
@@ -453,7 +461,7 @@
         ]
       },
       {
-        "component": 519,
+        "component": 520,
         "sites": [],
         "cells": 24,
         "bankErrorMetres": 3.131,
@@ -465,7 +473,7 @@
         ]
       },
       {
-        "component": 520,
+        "component": 521,
         "sites": [],
         "cells": 613,
         "bankErrorMetres": 2.776,
@@ -477,7 +485,7 @@
         ]
       },
       {
-        "component": 521,
+        "component": 522,
         "sites": [],
         "cells": 86,
         "bankErrorMetres": 0.138,
@@ -485,7 +493,7 @@
         "maximumDryLiftMetres": 0.242
       },
       {
-        "component": 522,
+        "component": 523,
         "sites": [],
         "cells": 163,
         "bankErrorMetres": 0.033,
@@ -493,7 +501,7 @@
         "maximumDryLiftMetres": 0.033
       },
       {
-        "component": 523,
+        "component": 524,
         "sites": [],
         "cells": 84,
         "bankErrorMetres": 0.025,
@@ -501,7 +509,7 @@
         "maximumDryLiftMetres": 0.025
       },
       {
-        "component": 524,
+        "component": 525,
         "sites": [],
         "cells": 183,
         "bankErrorMetres": 0.025,
@@ -509,7 +517,7 @@
         "maximumDryLiftMetres": 0.025
       },
       {
-        "component": 525,
+        "component": 526,
         "sites": [],
         "cells": 446,
         "bankErrorMetres": 2.047,
@@ -521,7 +529,7 @@
         ]
       },
       {
-        "component": 526,
+        "component": 527,
         "sites": [],
         "cells": 90,
         "bankErrorMetres": 0.341,
@@ -533,7 +541,7 @@
         ]
       },
       {
-        "component": 527,
+        "component": 528,
         "sites": [],
         "cells": 207,
         "bankErrorMetres": 0.7,
@@ -545,7 +553,7 @@
         ]
       },
       {
-        "component": 528,
+        "component": 529,
         "sites": [],
         "cells": 82,
         "bankErrorMetres": 1.9,
@@ -557,7 +565,7 @@
         ]
       },
       {
-        "component": 529,
+        "component": 530,
         "sites": [],
         "cells": 107,
         "bankErrorMetres": 1.263,
@@ -569,7 +577,7 @@
         ]
       },
       {
-        "component": 530,
+        "component": 531,
         "sites": [],
         "cells": 35,
         "bankErrorMetres": 1.859,
@@ -581,7 +589,7 @@
         ]
       },
       {
-        "component": 531,
+        "component": 532,
         "sites": [],
         "cells": 12,
         "bankErrorMetres": 0.025,
@@ -589,7 +597,7 @@
         "maximumDryLiftMetres": 0.025
       },
       {
-        "component": 532,
+        "component": 533,
         "sites": [],
         "cells": 1,
         "bankErrorMetres": 0.212,
@@ -597,7 +605,7 @@
         "maximumDryLiftMetres": 0.212
       },
       {
-        "component": 533,
+        "component": 534,
         "sites": [],
         "cells": 23,
         "bankErrorMetres": 1.334,
@@ -609,7 +617,7 @@
         ]
       },
       {
-        "component": 534,
+        "component": 535,
         "sites": [],
         "cells": 24,
         "bankErrorMetres": 3.382,
@@ -621,7 +629,7 @@
         ]
       },
       {
-        "component": 535,
+        "component": 536,
         "sites": [],
         "cells": 58,
         "bankErrorMetres": 1.027,
@@ -633,7 +641,7 @@
         ]
       },
       {
-        "component": 536,
+        "component": 537,
         "sites": [],
         "cells": 9,
         "bankErrorMetres": 1.265,
@@ -645,7 +653,7 @@
         ]
       },
       {
-        "component": 537,
+        "component": 538,
         "sites": [],
         "cells": 202,
         "bankErrorMetres": 0.435,
@@ -657,7 +665,7 @@
         ]
       },
       {
-        "component": 538,
+        "component": 539,
         "sites": [],
         "cells": 94,
         "bankErrorMetres": 0.025,
@@ -665,7 +673,7 @@
         "maximumDryLiftMetres": 0.025
       },
       {
-        "component": 539,
+        "component": 540,
         "sites": [],
         "cells": 258,
         "bankErrorMetres": 0.674,
@@ -677,7 +685,7 @@
         ]
       },
       {
-        "component": 540,
+        "component": 541,
         "sites": [],
         "cells": 875,
         "bankErrorMetres": 0.472,
@@ -801,6 +809,64 @@
     "precisionCleanupAreaSquareMetres": 0,
     "supports": [],
     "authored": [
+      {
+        "id": "four_gates__four-gates-amberwater-bridge",
+        "length": 13.51925109132262,
+        "segments": 14,
+        "width": 8.0,
+        "arch": 0.2,
+        "waterClearance": 0.85,
+        "uniformClearanceLift": 0.0,
+        "supports": [
+          {
+            "station": 0.3333333333333333,
+            "position": [
+              503.8666667938233,
+              701.1000010172527
+            ],
+            "bottom": 17.48866204223315,
+            "top": 18.257777650621204
+          },
+          {
+            "station": 0.6666666666666666,
+            "position": [
+              502.2333335876465,
+              696.8999989827473
+            ],
+            "bottom": 16.234111742885368,
+            "top": 18.057777523464626
+          }
+        ]
+      },
+      {
+        "id": "manymouth_delta__manymouth-mirrorwater-bridge",
+        "length": 14.0,
+        "segments": 14,
+        "width": 8.0,
+        "arch": 0.3,
+        "waterClearance": 0.85,
+        "uniformClearanceLift": 0.0,
+        "supports": [
+          {
+            "station": 0.3333333333333333,
+            "position": [
+              564.0,
+              997.1666666666667
+            ],
+            "bottom": 9.617655595143617,
+            "top": 10.526666526794434
+          },
+          {
+            "station": 0.6666666666666666,
+            "position": [
+              564.0,
+              1001.8333333333334
+            ],
+            "bottom": 10.24363279342655,
+            "top": 10.63666650136312
+          }
+        ]
+      },
       {
         "id": "continental-bridge-008",
         "length": 34.163570468382446,
@@ -955,7 +1021,8 @@
       537,
       538,
       539,
-      540
+      540,
+      541
     ],
     "policy": "Decks only at claimed crossing sites (span plus landings) and over deep water crossed away from a site; disjoint road capsule union clipped onto one common floor; unchanged terrain; exact ownership by cell; piers only over water; timber fascia below the floor."
   },

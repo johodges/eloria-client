@@ -1,7 +1,7 @@
 {
-  "glbBytes": 1193211728,
-  "nodes": 57289,
-  "meshes": 13373,
+  "glbBytes": 1195913352,
+  "nodes": 57223,
+  "meshes": 13400,
   "externalResources": {},
   "sharedResourceResidentBytes": {
     "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
@@ -1469,7 +1469,7 @@
     "c75a43d9ee90b821ae02f2f845e7f2341ccf90a0331a759ea71c0fbf8a8cd67a": 5592406,
     "8d1457268f57825010c5c03b8cd75b53c56edb15b8f501eeaec8b9d395a67a26": 5592406
   },
-  "sha256": "729916fbb93a70b65644b3594b9b4cc10be08811aa323f025e24ade2596c3026",
+  "sha256": "09c0f06cc093218f821473b2ad674c850b84432645f5b73a699825aebfdb7aad",
   "regions": [
     "whitehorn_range",
     "grey_moors",
@@ -1991,6 +1991,14 @@
       {
         "name": "Walk_amberwood_door-amberwood-motherroot-mouth",
         "triangles": 3131
+      },
+      {
+        "name": "Walk_amberwood_highway-amberwood-four_gates",
+        "triangles": 3999
+      },
+      {
+        "name": "Walk_amberwood_highway-amberwood-four_gates-border",
+        "triangles": 828
       },
       {
         "name": "AuthoredGround_amethyst_barrensBase",
@@ -2615,6 +2623,22 @@
       {
         "name": "Walk_four_gates_four_gates--westhaven-four_gates",
         "triangles": 42874
+      },
+      {
+        "name": "Walk_four_gates_highway-four_gates-north",
+        "triangles": 1659
+      },
+      {
+        "name": "Walk_four_gates_highway-four_gates-north-border",
+        "triangles": 52
+      },
+      {
+        "name": "Walk_four_gates_highway-four_gates-south",
+        "triangles": 4514
+      },
+      {
+        "name": "Walk_four_gates_highway-four_gates-south-border",
+        "triangles": 1458
       },
       {
         "name": "AuthoredGround_grey_moorsBase",
@@ -3407,6 +3431,14 @@
       {
         "name": "Walk_manymouth_delta_four_gates--manymouth_delta-manymouth_delta",
         "triangles": 44068
+      },
+      {
+        "name": "Walk_manymouth_delta_highway-manymouth_delta-four_gates",
+        "triangles": 3405
+      },
+      {
+        "name": "Walk_manymouth_delta_highway-manymouth_delta-four_gates-border",
+        "triangles": 36
       },
       {
         "name": "Walk_manymouth_delta_manymouth_delta--verdant_stair-manymouth_delta",
@@ -4805,7 +4837,7 @@
         "triangles": 7686
       }
     ],
-    "triangles": 4554274,
+    "triangles": 4570225,
     "roadEncoding": [
       {
         "name": "amberwood_amber-chapel-climb",
@@ -5023,6 +5055,20 @@
         "collapsedFaces": 32,
         "reorientedFaces": 0,
         "outputFaces": 3131
+      },
+      {
+        "name": "amberwood_highway-amberwood-four_gates",
+        "inputFaces": 3999,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 3999
+      },
+      {
+        "name": "amberwood_highway-amberwood-four_gates-border",
+        "inputFaces": 828,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 828
       },
       {
         "name": "amethyst_barrens_amethyst_barrens--mirrorhold-amethyst_barrens",
@@ -5508,6 +5554,34 @@
         "outputFaces": 42874
       },
       {
+        "name": "four_gates_highway-four_gates-north",
+        "inputFaces": 1659,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1659
+      },
+      {
+        "name": "four_gates_highway-four_gates-north-border",
+        "inputFaces": 52,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 52
+      },
+      {
+        "name": "four_gates_highway-four_gates-south",
+        "inputFaces": 4514,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 4514
+      },
+      {
+        "name": "four_gates_highway-four_gates-south-border",
+        "inputFaces": 1458,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 1458
+      },
+      {
         "name": "grey_moors_amberwood--grey_moors-grey_moors",
         "inputFaces": 34567,
         "collapsedFaces": 101,
@@ -5856,6 +5930,20 @@
         "collapsedFaces": 111,
         "reorientedFaces": 1,
         "outputFaces": 44068
+      },
+      {
+        "name": "manymouth_delta_highway-manymouth_delta-four_gates",
+        "inputFaces": 3405,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 3405
+      },
+      {
+        "name": "manymouth_delta_highway-manymouth_delta-four_gates-border",
+        "inputFaces": 36,
+        "collapsedFaces": 0,
+        "reorientedFaces": 0,
+        "outputFaces": 36
       },
       {
         "name": "manymouth_delta_manymouth_delta--verdant_stair-manymouth_delta",
@@ -7018,7 +7106,7 @@
         "id": "amber_tributary",
         "region": "amberwood",
         "material": "authored_amberwood_amber_tributary_water",
-        "triangles": 1670
+        "triangles": 1660
       },
       {
         "id": "western_river",
@@ -7054,7 +7142,7 @@
         "id": "mirror_outlet",
         "region": "mirrorhold",
         "material": "authored_mirrorhold_mirror_outlet_water",
-        "triangles": 2188
+        "triangles": 2176
       },
       {
         "id": "southern_river",

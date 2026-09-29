@@ -2860,12 +2860,12 @@
     "regions": {
       "amberwood": {
         "snapshotSchema": "eloria-continent-authoring-v1",
-        "snapshotSha256": "b6656d84afd59f78f52ca1853237330567a12520d76f87ea39d7961cf43312b9",
+        "snapshotSha256": "6406c01f23fbff1d448928b571c351d2097affeb4e340b4f4b4ec3dd116bce69",
         "sources": {
           "eloria-assets/maps/nymara-regions/amberwood/authoring/base-colors.rgba8": "bbac7eae86a2f8886ae30919baa34c95fef8dd0f8c1ba0ea4d1a83ac60d1ddc6",
           "eloria-assets/maps/nymara-regions/amberwood/authoring/base-heights.f32le": "571d151e1e166595066a8c3cdfeaae400ce1fd9c10cea8020b061cc759403b59",
-          "eloria-assets/maps/nymara-regions/amberwood/authoring/continent-authoring.json": "b6656d84afd59f78f52ca1853237330567a12520d76f87ea39d7961cf43312b9",
-          "eloria-assets/maps/nymara-regions/amberwood/authoring/resolved-heights.f32le": "571d151e1e166595066a8c3cdfeaae400ce1fd9c10cea8020b061cc759403b59",
+          "eloria-assets/maps/nymara-regions/amberwood/authoring/continent-authoring.json": "6406c01f23fbff1d448928b571c351d2097affeb4e340b4f4b4ec3dd116bce69",
+          "eloria-assets/maps/nymara-regions/amberwood/authoring/resolved-heights.f32le": "39d09fce2c78badf5391b4c49e98149a87cfb90fdd63e6b882770e5774b2e4f4",
           "godot-client/addons/map_asset_palette/asset_catalog.gd": "6dac38582b882300798732d9875403c84ec59f9422456863d0542600227beaa4",
           "godot-client/addons/map_asset_palette/map_asset_dock.gd": "4de408d1e7e0e598fc5169228cda08ad046d0046ada57a1c2ff4c0f78ad24762",
           "godot-client/addons/map_asset_palette/marker_library.gd": "66bc5834b31f5c47a5dc0a4333f83cab48fa577419bb751e8c4456fb4f4c51f3",
@@ -2940,7 +2940,7 @@
           "godot-client/src/dev/map_authoring_region/terrain_sculpt_brush.gd": "f9c85dacde8f52a8b784aa56760a85526042999cd20f3fe45a898bb64b68e6b1",
           "godot-client/src/dev/map_authoring_region/terrain_sculpt_layer.gd": "dafcd5ef89b830e61f0c93fa844b3a0e26c22446b4a7917906bcf41e2d9c3e05",
           "godot-client/src/dev/map_authoring_region/water_region_control.gd": "471bc74f2119254e2d86fca59ada9b88dbad5879c0865ce9fccb4c195329f59b",
-          "godot-client/world_authoring/regions/amberwood/amberwood.tscn": "0a698aaabf4843594ead61297ce174c0b7f0b67ed3a162dc989fe9f6f792663d",
+          "godot-client/world_authoring/regions/amberwood/amberwood.tscn": "3515f4061733e8379162b5257d36db7b923843806dd028670361c4ec545ab0e7",
           "godot-client/world_authoring/regions/amberwood/assets/prototypes/barrel-kelp-landing-01-75dd70a0e072.glb": "d3cb1b7415274dca341ff11323876de98eb9a557c7d445270c2c0e14946f9a2d",
           "godot-client/world_authoring/regions/amberwood/assets/prototypes/barrel-kelp-landing-02-5342e16fdef7.glb": "122e309af9b21bf6adcc4caa79d33f2c85e156d828a08b2fef74180e48a6738c",
           "godot-client/world_authoring/regions/amberwood/assets/prototypes/barrel-kelp-landing-03-05b46561cfc0.glb": "854fa2bf2dca9a38e0eca208d5878574254d035f0a596ed60e38e001700d297b",
@@ -4134,7 +4134,7 @@
             "door-amberwood-gate-undercroft-stair",
             "door-amberwood-motherroot-mouth"
           ],
-          "authoredRoutes": 31,
+          "authoredRoutes": 33,
           "removedProceduralRoutes": 0,
           "suppressedProceduralBridgeSiteIds": []
         },
@@ -5508,12 +5508,12 @@
       },
       "four_gates": {
         "snapshotSchema": "eloria-continent-authoring-v1",
-        "snapshotSha256": "d7bb596c2577248db01b34c52f57cf04a35c7e7ee18bf890ce3492b458a35a28",
+        "snapshotSha256": "79115f7376eb6e81544a12f13b9a4d910e706abc05f7718a2da914e95109d62c",
         "sources": {
           "eloria-assets/maps/four-gates/authoring/base-colors.rgba8": "fa0db940a7683ec40af05a8b91cfaefb3e2d8c3af16697465d4e96b21a89e465",
           "eloria-assets/maps/four-gates/authoring/base-heights.f32le": "ef4054f7e98dbb80637658664eed150073ceedb6d22141c854bca6622d1bf017",
-          "eloria-assets/maps/four-gates/authoring/continent-authoring.json": "d7bb596c2577248db01b34c52f57cf04a35c7e7ee18bf890ce3492b458a35a28",
-          "eloria-assets/maps/four-gates/authoring/resolved-heights.f32le": "ef4054f7e98dbb80637658664eed150073ceedb6d22141c854bca6622d1bf017",
+          "eloria-assets/maps/four-gates/authoring/continent-authoring.json": "79115f7376eb6e81544a12f13b9a4d910e706abc05f7718a2da914e95109d62c",
+          "eloria-assets/maps/four-gates/authoring/resolved-heights.f32le": "4c32c6bb87111d47067fa0c29d9c60b0761afb7b28283b0940d7f6521e06524d",
           "godot-client/addons/map_asset_palette/asset_catalog.gd": "6dac38582b882300798732d9875403c84ec59f9422456863d0542600227beaa4",
           "godot-client/addons/map_asset_palette/map_asset_dock.gd": "4de408d1e7e0e598fc5169228cda08ad046d0046ada57a1c2ff4c0f78ad24762",
           "godot-client/addons/map_asset_palette/marker_library.gd": "66bc5834b31f5c47a5dc0a4333f83cab48fa577419bb751e8c4456fb4f4c51f3",
@@ -6239,7 +6239,7 @@
           "godot-client/world_authoring/regions/four_gates/assets/textures/fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046.png": "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046",
           "godot-client/world_authoring/regions/four_gates/base-colors.rgba8": "fa0db940a7683ec40af05a8b91cfaefb3e2d8c3af16697465d4e96b21a89e465",
           "godot-client/world_authoring/regions/four_gates/base-heights.f32le": "ef4054f7e98dbb80637658664eed150073ceedb6d22141c854bca6622d1bf017",
-          "godot-client/world_authoring/regions/four_gates/four_gates.tscn": "ef049c104a97953b252bbec605c8546109e2f700be0f7c410c256382f9a5e85f",
+          "godot-client/world_authoring/regions/four_gates/four_gates.tscn": "893716a9817bf3f3486a5a8f6ad662148e9ed6f95183474d7f9bce33bff2f5a6",
           "godot-client/world_authoring/regions/four_gates/region-authoring-spec.json": "f9cafcc95c58f1c059ac1eaf83112485c7f1b3e04d24fa78d74082b95b597e1f",
           "godot-client/world_authoring/regions/four_gates/runtime-bindings.seed.json": "58f69be285072709290d902ac0adf47d77ebed0c7531437b666891f61b6e1b00",
           "godot-client/world_authoring/terrain/shared-field-v1/legacy-colors.rgba8": "a5862f256274a35b164923e1b7d6fd4201e2e5b485aa1e5634cee110157cd145",
@@ -6318,7 +6318,7 @@
             "four_gates--mirrorhold-four_gates",
             "four_gates--westhaven-four_gates"
           ],
-          "authoredRoutes": 24,
+          "authoredRoutes": 28,
           "removedProceduralRoutes": 0,
           "suppressedProceduralBridgeSiteIds": []
         },
@@ -7149,12 +7149,12 @@
       },
       "manymouth_delta": {
         "snapshotSchema": "eloria-continent-authoring-v1",
-        "snapshotSha256": "373479de6878a771a5eaacbf2901bdf48716edb57dfd195f035d0371b64517ef",
+        "snapshotSha256": "997ea48dfc5e357f9cffec6601aded2a8055f5f45098333c10e9507715913c14",
         "sources": {
           "eloria-assets/maps/nymara-regions/manymouth_delta/authoring/base-colors.rgba8": "bf3d89404bbb0086314bdca38493e5e980c5867c7f24f67bb2115eaa8344e30d",
           "eloria-assets/maps/nymara-regions/manymouth_delta/authoring/base-heights.f32le": "e75799d15f64c185f5381ac78ea874a59b3c634f2da22bb9ee783c6930aa31f7",
-          "eloria-assets/maps/nymara-regions/manymouth_delta/authoring/continent-authoring.json": "373479de6878a771a5eaacbf2901bdf48716edb57dfd195f035d0371b64517ef",
-          "eloria-assets/maps/nymara-regions/manymouth_delta/authoring/resolved-heights.f32le": "e75799d15f64c185f5381ac78ea874a59b3c634f2da22bb9ee783c6930aa31f7",
+          "eloria-assets/maps/nymara-regions/manymouth_delta/authoring/continent-authoring.json": "997ea48dfc5e357f9cffec6601aded2a8055f5f45098333c10e9507715913c14",
+          "eloria-assets/maps/nymara-regions/manymouth_delta/authoring/resolved-heights.f32le": "c55271ed328592bae8fb59131e10f138c14546f772b5df7a2245b979b41554ce",
           "godot-client/addons/map_asset_palette/asset_catalog.gd": "6dac38582b882300798732d9875403c84ec59f9422456863d0542600227beaa4",
           "godot-client/addons/map_asset_palette/map_asset_dock.gd": "4de408d1e7e0e598fc5169228cda08ad046d0046ada57a1c2ff4c0f78ad24762",
           "godot-client/addons/map_asset_palette/marker_library.gd": "66bc5834b31f5c47a5dc0a4333f83cab48fa577419bb751e8c4456fb4f4c51f3",
@@ -7950,7 +7950,7 @@
           "godot-client/world_authoring/regions/manymouth_delta/assets/textures/fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046.png": "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046",
           "godot-client/world_authoring/regions/manymouth_delta/base-colors.rgba8": "bf3d89404bbb0086314bdca38493e5e980c5867c7f24f67bb2115eaa8344e30d",
           "godot-client/world_authoring/regions/manymouth_delta/base-heights.f32le": "e75799d15f64c185f5381ac78ea874a59b3c634f2da22bb9ee783c6930aa31f7",
-          "godot-client/world_authoring/regions/manymouth_delta/manymouth_delta.tscn": "a9c9cae2dffcd0ad0bdfc6aa2c115c402c3aa76373bf3c1adc04220e79f3f05c",
+          "godot-client/world_authoring/regions/manymouth_delta/manymouth_delta.tscn": "b9193ceb613055d9cd4aa938b155a243648ba2000c7c059a5dbc05d646cafc9d",
           "godot-client/world_authoring/regions/manymouth_delta/region-authoring-spec.json": "184cde8deb84f6a3d9829fa8e0b9d05291a7e8120c0aebdd160f15f2c1187eb5",
           "godot-client/world_authoring/regions/manymouth_delta/runtime-bindings.seed.json": "39dc74f3c7c4f5fc78a66954a9545335d45558f945a594b3837bd1b8e8f3917e",
           "godot-client/world_authoring/terrain/shared-field-v1/legacy-colors.rgba8": "a5862f256274a35b164923e1b7d6fd4201e2e5b485aa1e5634cee110157cd145",
@@ -8030,7 +8030,7 @@
             "manymouth_delta--verdant_stair-manymouth_delta",
             "manymouth_delta--westhaven-manymouth_delta"
           ],
-          "authoredRoutes": 25,
+          "authoredRoutes": 27,
           "removedProceduralRoutes": 0,
           "suppressedProceduralBridgeSiteIds": []
         },
@@ -13593,13 +13593,13 @@
   "library": {
     "whitehorn_range": "d87597eb0d727774b2357d2be3b14c9953d230a3e08be78dbcb76b7d0a3a45f7",
     "grey_moors": "6a70c6d87bb140af295fddc8bd14ce1a0afbe992093612e5c6c7f4900196e3a9",
-    "amberwood": "778b9c3ab6a273ddedf82653e708b3b8909b6d33d2155817cdf4c0ee5ccc1407",
+    "amberwood": "1c3473e0d48291d558fb0d3cbb5a499d354c1fba4b179285e14d6a00297ae842",
     "amethyst_barrens": "90cc83685e03bac3ad0926e530327a3d61578947b5f344bbd2b220d1d104baff",
     "mirrorhold": "adc285bd1df6c8830e57204905b51e1d7782a47c98ce654d53bb47974ce7adbd",
     "sunmane_steppe": "57965f727932dc7ec0260e77767d58e7bad343a96227e59898d2d9e2827e2569",
-    "four_gates": "72b3d0eccf6dc5ae8eefd0103cd5cf9547adf4bcafca4a04958f9261ba0fb83f",
+    "four_gates": "0b37f546922e60dc70c36697b8cf03ac3353d20b0afbc9251aec82ad590d9af7",
     "westhaven": "f7e66b7afa55ff9d8f3f26ecf9ba7c7f2f28a825df6e8728a8365de1aa019987",
-    "manymouth_delta": "a78e729ff5ee5226a3bc5fe4233502f980f47f0be03ee50f0663ae0baf62827d",
+    "manymouth_delta": "d62dfde635ba72d6d5f21388c08e5dbb324127a5a4b8fde47e40d3abe9d0b26d",
     "crownwater": "21292d1ac2afdd04afd3f25b2fb4a54c6db3d64422d330a20e205957d2306bcf",
     "verdant_stair": "41cc2a3c9786cbdb52c4552c22011cb6c78398799abac9a07aa773a7a38b6a24",
     "ssarathi_ruins": "d59bc41b149c64a8dd528b3654d68ef3c6bb66e3dfa87743103c8a4808c9b92c"
@@ -13672,8 +13672,8 @@
     "eloria-assets/maps/nymara-regions/_northern/requirements.txt": "35dd02e1045a2d03670812fb5096130a323d6b7bde7119a867ffb3b0db67a620",
     "eloria-assets/maps/nymara-regions/amberwood/authoring/base-colors.rgba8": "bbac7eae86a2f8886ae30919baa34c95fef8dd0f8c1ba0ea4d1a83ac60d1ddc6",
     "eloria-assets/maps/nymara-regions/amberwood/authoring/base-heights.f32le": "571d151e1e166595066a8c3cdfeaae400ce1fd9c10cea8020b061cc759403b59",
-    "eloria-assets/maps/nymara-regions/amberwood/authoring/continent-authoring.json": "b6656d84afd59f78f52ca1853237330567a12520d76f87ea39d7961cf43312b9",
-    "eloria-assets/maps/nymara-regions/amberwood/authoring/resolved-heights.f32le": "571d151e1e166595066a8c3cdfeaae400ce1fd9c10cea8020b061cc759403b59",
+    "eloria-assets/maps/nymara-regions/amberwood/authoring/continent-authoring.json": "6406c01f23fbff1d448928b571c351d2097affeb4e340b4f4b4ec3dd116bce69",
+    "eloria-assets/maps/nymara-regions/amberwood/authoring/resolved-heights.f32le": "39d09fce2c78badf5391b4c49e98149a87cfb90fdd63e6b882770e5774b2e4f4",
     "godot-client/addons/map_asset_palette/asset_catalog.gd": "6dac38582b882300798732d9875403c84ec59f9422456863d0542600227beaa4",
     "godot-client/addons/map_asset_palette/map_asset_dock.gd": "4de408d1e7e0e598fc5169228cda08ad046d0046ada57a1c2ff4c0f78ad24762",
     "godot-client/addons/map_asset_palette/marker_library.gd": "66bc5834b31f5c47a5dc0a4333f83cab48fa577419bb751e8c4456fb4f4c51f3",
@@ -13748,7 +13748,7 @@
     "godot-client/src/dev/map_authoring_region/terrain_sculpt_brush.gd": "f9c85dacde8f52a8b784aa56760a85526042999cd20f3fe45a898bb64b68e6b1",
     "godot-client/src/dev/map_authoring_region/terrain_sculpt_layer.gd": "dafcd5ef89b830e61f0c93fa844b3a0e26c22446b4a7917906bcf41e2d9c3e05",
     "godot-client/src/dev/map_authoring_region/water_region_control.gd": "471bc74f2119254e2d86fca59ada9b88dbad5879c0865ce9fccb4c195329f59b",
-    "godot-client/world_authoring/regions/amberwood/amberwood.tscn": "0a698aaabf4843594ead61297ce174c0b7f0b67ed3a162dc989fe9f6f792663d",
+    "godot-client/world_authoring/regions/amberwood/amberwood.tscn": "3515f4061733e8379162b5257d36db7b923843806dd028670361c4ec545ab0e7",
     "godot-client/world_authoring/regions/amberwood/assets/prototypes/barrel-kelp-landing-01-75dd70a0e072.glb": "d3cb1b7415274dca341ff11323876de98eb9a557c7d445270c2c0e14946f9a2d",
     "godot-client/world_authoring/regions/amberwood/assets/prototypes/barrel-kelp-landing-02-5342e16fdef7.glb": "122e309af9b21bf6adcc4caa79d33f2c85e156d828a08b2fef74180e48a6738c",
     "godot-client/world_authoring/regions/amberwood/assets/prototypes/barrel-kelp-landing-03-05b46561cfc0.glb": "854fa2bf2dca9a38e0eca208d5878574254d035f0a596ed60e38e001700d297b",
@@ -15792,8 +15792,8 @@
     "godot-client/world_authoring/regions/crownwater/runtime-bindings.seed.json": "11de909a3dc57d804a518f61952972a5b5b1ac42841ec51760bf3383f27530c8",
     "eloria-assets/maps/four-gates/authoring/base-colors.rgba8": "fa0db940a7683ec40af05a8b91cfaefb3e2d8c3af16697465d4e96b21a89e465",
     "eloria-assets/maps/four-gates/authoring/base-heights.f32le": "ef4054f7e98dbb80637658664eed150073ceedb6d22141c854bca6622d1bf017",
-    "eloria-assets/maps/four-gates/authoring/continent-authoring.json": "d7bb596c2577248db01b34c52f57cf04a35c7e7ee18bf890ce3492b458a35a28",
-    "eloria-assets/maps/four-gates/authoring/resolved-heights.f32le": "ef4054f7e98dbb80637658664eed150073ceedb6d22141c854bca6622d1bf017",
+    "eloria-assets/maps/four-gates/authoring/continent-authoring.json": "79115f7376eb6e81544a12f13b9a4d910e706abc05f7718a2da914e95109d62c",
+    "eloria-assets/maps/four-gates/authoring/resolved-heights.f32le": "4c32c6bb87111d47067fa0c29d9c60b0761afb7b28283b0940d7f6521e06524d",
     "godot-client/world_authoring/regions/four_gates/assets/prototypes/avenue-standard-0-e50d9319bd52.glb": "ab6fb3adbd75db42f72e8b0433e2e67b852f2a42ccb6a837a0872becf1b50850",
     "godot-client/world_authoring/regions/four_gates/assets/prototypes/avenue-standard-1-05658479ec68.glb": "1aa4b22288d9ecbebd556c69a72c9ffd02f983e01ea518024b8f066977824925",
     "godot-client/world_authoring/regions/four_gates/assets/prototypes/avenue-standard-2-87bc69165197.glb": "dad50381c8cc686b46c3ed58e95b173a9ea24d0ff43e69d5a7312051901c0762",
@@ -16446,7 +16446,7 @@
     "godot-client/world_authoring/regions/four_gates/assets/textures/fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046.png": "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046",
     "godot-client/world_authoring/regions/four_gates/base-colors.rgba8": "fa0db940a7683ec40af05a8b91cfaefb3e2d8c3af16697465d4e96b21a89e465",
     "godot-client/world_authoring/regions/four_gates/base-heights.f32le": "ef4054f7e98dbb80637658664eed150073ceedb6d22141c854bca6622d1bf017",
-    "godot-client/world_authoring/regions/four_gates/four_gates.tscn": "ef049c104a97953b252bbec605c8546109e2f700be0f7c410c256382f9a5e85f",
+    "godot-client/world_authoring/regions/four_gates/four_gates.tscn": "893716a9817bf3f3486a5a8f6ad662148e9ed6f95183474d7f9bce33bff2f5a6",
     "godot-client/world_authoring/regions/four_gates/region-authoring-spec.json": "f9cafcc95c58f1c059ac1eaf83112485c7f1b3e04d24fa78d74082b95b597e1f",
     "godot-client/world_authoring/regions/four_gates/runtime-bindings.seed.json": "58f69be285072709290d902ac0adf47d77ebed0c7531437b666891f61b6e1b00",
     "eloria-assets/maps/nymara-regions/grey_moors/authoring/base-colors.rgba8": "c29a4a763355c295b4b5e5d090b2c6b0e490999b473000805afacb06ae47b737",
@@ -17043,8 +17043,8 @@
     "godot-client/world_authoring/regions/grey_moors/runtime-bindings.seed.json": "11015f661082c79ec75a6a1c69644cd030da805f0ee8bc0447712e2385055684",
     "eloria-assets/maps/nymara-regions/manymouth_delta/authoring/base-colors.rgba8": "bf3d89404bbb0086314bdca38493e5e980c5867c7f24f67bb2115eaa8344e30d",
     "eloria-assets/maps/nymara-regions/manymouth_delta/authoring/base-heights.f32le": "e75799d15f64c185f5381ac78ea874a59b3c634f2da22bb9ee783c6930aa31f7",
-    "eloria-assets/maps/nymara-regions/manymouth_delta/authoring/continent-authoring.json": "373479de6878a771a5eaacbf2901bdf48716edb57dfd195f035d0371b64517ef",
-    "eloria-assets/maps/nymara-regions/manymouth_delta/authoring/resolved-heights.f32le": "e75799d15f64c185f5381ac78ea874a59b3c634f2da22bb9ee783c6930aa31f7",
+    "eloria-assets/maps/nymara-regions/manymouth_delta/authoring/continent-authoring.json": "997ea48dfc5e357f9cffec6601aded2a8055f5f45098333c10e9507715913c14",
+    "eloria-assets/maps/nymara-regions/manymouth_delta/authoring/resolved-heights.f32le": "c55271ed328592bae8fb59131e10f138c14546f772b5df7a2245b979b41554ce",
     "godot-client/src/dev/map_authoring_pilot/style/texture_packs/delta-silt/delta-silt-v001.png": "21895b5643263cd4041cef57994c269f39dfdc941cca9bc7203241d21c855ba3",
     "godot-client/src/dev/map_authoring_pilot/style/texture_packs/jade-masonry/jade-masonry-v001.png": "12c8a17228d73ebd97911bd7e6ba4f02122bbfb854b2c86813b974675c1bd82a",
     "godot-client/world_authoring/regions/manymouth_delta/assets/prototypes/arch-platform-fac0983b4cad.glb": "502c572659f6ab408f9f032b2c50e21f231b6d8314b20a74b3b2c7fe0b32dec8",
@@ -17766,7 +17766,7 @@
     "godot-client/world_authoring/regions/manymouth_delta/assets/textures/fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046.png": "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046",
     "godot-client/world_authoring/regions/manymouth_delta/base-colors.rgba8": "bf3d89404bbb0086314bdca38493e5e980c5867c7f24f67bb2115eaa8344e30d",
     "godot-client/world_authoring/regions/manymouth_delta/base-heights.f32le": "e75799d15f64c185f5381ac78ea874a59b3c634f2da22bb9ee783c6930aa31f7",
-    "godot-client/world_authoring/regions/manymouth_delta/manymouth_delta.tscn": "a9c9cae2dffcd0ad0bdfc6aa2c115c402c3aa76373bf3c1adc04220e79f3f05c",
+    "godot-client/world_authoring/regions/manymouth_delta/manymouth_delta.tscn": "b9193ceb613055d9cd4aa938b155a243648ba2000c7c059a5dbc05d646cafc9d",
     "godot-client/world_authoring/regions/manymouth_delta/region-authoring-spec.json": "184cde8deb84f6a3d9829fa8e0b9d05291a7e8120c0aebdd160f15f2c1187eb5",
     "godot-client/world_authoring/regions/manymouth_delta/runtime-bindings.seed.json": "39dc74f3c7c4f5fc78a66954a9545335d45558f945a594b3837bd1b8e8f3917e",
     "eloria-assets/maps/nymara-regions/mirrorhold/authoring/base-colors.rgba8": "7cb039a29a56f76a889a92a80594c9019621e30247964ba248df139d383d63b7",
@@ -22080,8 +22080,8 @@
     "godot-client/world_authoring/regions/whitehorn_range/runtime-bindings.seed.json": "c36f08110f9aa8eb804e48f2cd18a7b4b13cc3794f5d1d2ed061228d2a0bfb37",
     "godot-client/world_authoring/regions/whitehorn_range/whitehorn_range.tscn": "a440cf9b1891196acc2f640ec8f9bcc3f180f4ba568a6abe652b9d2af9e75dc3"
   },
-  "objects": 10746,
-  "roads": 315,
+  "objects": 10712,
+  "roads": 323,
   "assemblies": {},
   "mirrorLakeSupport": {
     "region": "mirrorhold",
@@ -22539,9 +22539,9 @@
       "claimIds": [],
       "selectedRoadIds": [],
       "mode": "saved-scene-authority",
-      "authorityWetCells": 4532,
+      "authorityWetCells": 4533,
       "preparedWetCells": 0,
-      "fallbackWetCells": 4532
+      "fallbackWetCells": 4533
     }
   },
   "claimedBridgeProgress": [],
@@ -24010,6 +24010,12 @@
         "metres": 4
       },
       {
+        "road": "highway-amberwood-four_gates-border",
+        "region": "amberwood",
+        "node": "Prop_Ruin_042",
+        "metres": 4
+      },
+      {
         "road": "manymouth_delta--verdant_stair-verdant_stair",
         "region": "verdant_stair",
         "node": "Building_TownHall",
@@ -24706,6 +24712,18 @@
         "metres": 1
       },
       {
+        "road": "highway-amberwood-four_gates",
+        "region": "amberwood",
+        "node": "Prop_Cart_189",
+        "metres": 1
+      },
+      {
+        "road": "highway-amberwood-four_gates",
+        "region": "amberwood",
+        "node": "Prop_Ruin_042",
+        "metres": 1
+      },
+      {
         "road": "street-mirrorhold-citadel-service-road",
         "region": "mirrorhold",
         "node": "Prop_OverlookRail_0",
@@ -24725,5 +24743,5 @@
       }
     ]
   },
-  "elapsedSeconds": 1530.51
+  "elapsedSeconds": 1681.11
 }

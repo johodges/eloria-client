@@ -4806,7 +4806,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "729916fbb93a70b65644b3594b9b4cc10be08811aa323f025e24ade2596c3026",
+      "masterSha256": "09c0f06cc093218f821473b2ad674c850b84432645f5b73a699825aebfdb7aad",
       "globalMin": [
         1010.0,
         228.0
@@ -8411,7 +8411,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "729916fbb93a70b65644b3594b9b4cc10be08811aa323f025e24ade2596c3026",
+    "masterSha256": "09c0f06cc093218f821473b2ad674c850b84432645f5b73a699825aebfdb7aad",
     "planSha256": "54ddec547568e83ae87fcc568ac2a87ce05317cd824522a5eeeee0b477ccb97a",
     "storage": {
       "serverCells": [
@@ -10301,7 +10301,7 @@
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "729916fbb93a70b65644b3594b9b4cc10be08811aa323f025e24ade2596c3026",
+    "masterSha256": "09c0f06cc093218f821473b2ad674c850b84432645f5b73a699825aebfdb7aad",
     "collisionSha256": "0438e9e643c7b4b9427f3c1337503bfa228a8e697431cf4de1c1715a54d5084f",
     "terrainRevision": "diagonal-spine-v1:fbfd00f06795c870df3209501c1b2fef232a008d62eba411d30f2bed24773979",
     "storage": {

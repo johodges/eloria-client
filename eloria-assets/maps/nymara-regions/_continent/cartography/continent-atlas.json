@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-  "masterSha256": "729916fbb93a70b65644b3594b9b4cc10be08811aa323f025e24ade2596c3026",
+  "masterSha256": "09c0f06cc093218f821473b2ad674c850b84432645f5b73a699825aebfdb7aad",
   "inputs": {
-    "res://../eloria-assets/maps/nymara-regions/continent-geography.json": "c0477b23dc43855510394753f6a0a16523022d37364cd9bbc4422d871cdde9a3",
+    "res://../eloria-assets/maps/nymara-regions/continent-geography.json": "7faa83ebb043b350e8c2d306f0cc9773971a33c46b2e54a4481dca12adbf553c",
     "res://../eloria-assets/maps/nymara-regions/_continent/atlas_export.py": "a19b270692eb12e5bba7e8a63dc10888134d48b807af22afbc7a1ed6305f6799",
     "res://../eloria-assets/tools/render_region_cartography.py": "d4d0f9f87970da38cbcf108eaf78c81cddfa365a1e57c21aceb3df2997d11292",
     "res://../eloria-assets/tools/build_continent_map.py": "671b2aa920739e7e259ac5f4a382c1a681ad97fc4bc4159e6e78ebf98533fc38",
@@ -79,8 +79,9 @@
     "res://../eloria-assets/maps/nymara-regions/_continent/runtime-content-amendments.json": "6ac57b3ef271425d3d7f0503f2a7a8e80ca5f2519cbb4ad99622e6ed10305534",
     "res://../eloria-assets/maps/nymara-regions/_continent/saved-seam-grey-whitehorn-v1.json": "f58917640653672e921f7a87e5158fad0f47003b662597fe751c83974d53a4e5",
     "res://../eloria-assets/maps/nymara-regions/_continent/saved-seam-post-support-v1.json": "9916ca43d6d75038f83bc7b8b4464b61518dc6fbe0283dd1e17544254d4a1b55",
-    "res://../eloria-assets/maps/four-gates/world.glb": "87776808c5e0bbdf3a7e41ab4bf5843c621e6198d4b08679d376042b609c052f",
+    "res://../eloria-assets/maps/four-gates/world.glb": "40126c30dcd49eedc0250056f3e17a85aa1a96f5d13761c78a46eeb31a7a5ac2",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/0073757b588e5ae30db454aa954775521d44c1e2fc84c126c473f23021630175.jpg": "0073757b588e5ae30db454aa954775521d44c1e2fc84c126c473f23021630175",
+    "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630.png": "0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/01300e168e2edc0d77115560a01872fd2c6844d0bbce53894344b1ce828703ac.jpg": "01300e168e2edc0d77115560a01872fd2c6844d0bbce53894344b1ce828703ac",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/03c747fb9ba6a29991344d4643d0c282aa98ca120ee7d2250f7610744c496666.png": "03c747fb9ba6a29991344d4643d0c282aa98ca120ee7d2250f7610744c496666",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/042f0e29b90e8221845244f3ce2a85d6767b233627f5f5399dd4cde981aec233.jpg": "042f0e29b90e8221845244f3ce2a85d6767b233627f5f5399dd4cde981aec233",
@@ -105,6 +106,7 @@
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a.png": "14b18073cc2e0bd937a0f63cf6aee7fed2b85b2eba457850cd79aa9d3832792a",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/186f105da32e7473343e2842e0b2c12950e22c335dd09a9ed65aec7dcc4344a2.png": "186f105da32e7473343e2842e0b2c12950e22c335dd09a9ed65aec7dcc4344a2",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/1a3d2b6458c6f483e3264dd84358f03aa110c8599aa9be3a95a4af09af76964b.jpg": "1a3d2b6458c6f483e3264dd84358f03aa110c8599aa9be3a95a4af09af76964b",
+    "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/1bd5132efaa99527f1873c902c7416430c7a97b31fd90c1dd3c42ea6677226ac.png": "1bd5132efaa99527f1873c902c7416430c7a97b31fd90c1dd3c42ea6677226ac",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/1bdc68fa6b82f67217872ddb064ee2770e938c0189eeca59e1d6b65d7996b8a6.jpg": "1bdc68fa6b82f67217872ddb064ee2770e938c0189eeca59e1d6b65d7996b8a6",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/1cfc6e52a374c00d142860a40d7fe36125c638ff4a571b8d9a75d8d04e8ccbca.jpg": "1cfc6e52a374c00d142860a40d7fe36125c638ff4a571b8d9a75d8d04e8ccbca",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/1d081298f165977ff2d99ff644947a7c1b6053edab80b38ed96c352e92ffea44.png": "1d081298f165977ff2d99ff644947a7c1b6053edab80b38ed96c352e92ffea44",
@@ -331,6 +333,7 @@
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864.png": "cc0ccd6e58725a31a53fd4df950a7e7aef7ed92912f5e6702a43bb2646d2a864",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/cc8ac0140dca759aff1b684d7524bf5067d3ad7847c2b31ddaa9a85f3d04206c.jpg": "cc8ac0140dca759aff1b684d7524bf5067d3ad7847c2b31ddaa9a85f3d04206c",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/cca841c11340479d714ac5b677df1513b92a74a3d55b7b7750718f3280a834bc.jpg": "cca841c11340479d714ac5b677df1513b92a74a3d55b7b7750718f3280a834bc",
+    "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/ccada634290b55490b333393c4213a30b597ed8474a08060332921e371b38760.png": "ccada634290b55490b333393c4213a30b597ed8474a08060332921e371b38760",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/cd2a8334650dbac4db07bed7230ed11fc366a19d963d5a27815193c8a6d8b785.jpg": "cd2a8334650dbac4db07bed7230ed11fc366a19d963d5a27815193c8a6d8b785",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/cdb8129af7e653be1fc0e989c598d7064a068e6898fc742984f6f8b378ade2d3.png": "cdb8129af7e653be1fc0e989c598d7064a068e6898fc742984f6f8b378ade2d3",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/cf457a889d87cb836c7b6a8316389e517f19768a7112325ba9a73b5abdc87c63.png": "cf457a889d87cb836c7b6a8316389e517f19768a7112325ba9a73b5abdc87c63",
@@ -380,7 +383,6 @@
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247.png": "ffba82620cd47918727ce5fa95e57a325611200780bad2dfb883aad77acc4247",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046.png": "fff53fa5537fd4c5ffed4bbc725c64755c0f1f9ef4aebbd720865a196af7f046",
     "res://../eloria-assets/maps/nymara-regions/mirrorhold/world.glb": "5ebd4cd09c580216a1d37e2124bf4ba0616431665a655d6fdfd6842161fb78eb",
-    "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630.png": "0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/018671435a95b7c86b0d29b83763ea7fa04f36d1850ba3cbaf9c625ab6730aab.png": "018671435a95b7c86b0d29b83763ea7fa04f36d1850ba3cbaf9c625ab6730aab",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/03754c590375758c75d7cca626b10b72005162132d0155adc750e37541c28c76.jpg": "03754c590375758c75d7cca626b10b72005162132d0155adc750e37541c28c76",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/03c2234095a38316f35c3777f04bff5ed61f72124f836bd969e13723f65b968e.jpg": "03c2234095a38316f35c3777f04bff5ed61f72124f836bd969e13723f65b968e",
@@ -401,7 +403,6 @@
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/194d53207e4faab6fc813f052bb3d4fa647e9fe4f0ad638735600de89b3298d8.jpg": "194d53207e4faab6fc813f052bb3d4fa647e9fe4f0ad638735600de89b3298d8",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/1b416116cedf6854f49e1d4c7365f60e193d6384cf3875ff8de99ab9808f754e.png": "1b416116cedf6854f49e1d4c7365f60e193d6384cf3875ff8de99ab9808f754e",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/1bbd93ca23294663ee7a807fc8e80bf9fe4b5e452117062cc834ed1b01ee9cce.jpg": "1bbd93ca23294663ee7a807fc8e80bf9fe4b5e452117062cc834ed1b01ee9cce",
-    "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/1bd5132efaa99527f1873c902c7416430c7a97b31fd90c1dd3c42ea6677226ac.png": "1bd5132efaa99527f1873c902c7416430c7a97b31fd90c1dd3c42ea6677226ac",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/1f8babd868058447817f7db335e6e439e763599b4db3763e712ffd6cebefa93a.png": "1f8babd868058447817f7db335e6e439e763599b4db3763e712ffd6cebefa93a",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/204d827d084003925109481cf0f20f54718c6b61604369a3f7f03187805a002e.jpg": "204d827d084003925109481cf0f20f54718c6b61604369a3f7f03187805a002e",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0.png": "21225f71b302e0dfdf8556d7157955c7b5631f44932e9e7e724efa9ea9374fa0",
@@ -712,7 +713,6 @@
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/bcfa1f748f8242d1d883d0cd12b86a18d1c149ae0b5f637346ff60a9f071c6b0.png": "bcfa1f748f8242d1d883d0cd12b86a18d1c149ae0b5f637346ff60a9f071c6b0",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/c4e15544bdb4aef8c8248e7789cbdbab3db5a2db8d1b4b876240669c087647c9.jpg": "c4e15544bdb4aef8c8248e7789cbdbab3db5a2db8d1b4b876240669c087647c9",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/ca5cf4e27a679e519c4fd1fadb3d36248ddf6a5eb7ff65a1fcbd6f9226c7d53e.jpg": "ca5cf4e27a679e519c4fd1fadb3d36248ddf6a5eb7ff65a1fcbd6f9226c7d53e",
-    "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/ccada634290b55490b333393c4213a30b597ed8474a08060332921e371b38760.png": "ccada634290b55490b333393c4213a30b597ed8474a08060332921e371b38760",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/ce9d2449e291dd0437d97cdb14a02053de34190b9887ecf66e1cae450779d0df.jpg": "ce9d2449e291dd0437d97cdb14a02053de34190b9887ecf66e1cae450779d0df",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/d0585caaa796ef5fbc6dbf302c5b6628ea6a3680d9749eedc0c1e81c4d89a097.jpg": "d0585caaa796ef5fbc6dbf302c5b6628ea6a3680d9749eedc0c1e81c4d89a097",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/d346b4093e37318f7c9b51aa4dc0bcec241ab3a97440a635a6800d48654bc320.jpg": "d346b4093e37318f7c9b51aa4dc0bcec241ab3a97440a635a6800d48654bc320",
@@ -995,7 +995,7 @@
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/f939ab15d5a53bf71f59250439785cdca72f2446455d2088e2d5b62d8918df07.png": "f939ab15d5a53bf71f59250439785cdca72f2446455d2088e2d5b62d8918df07",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/fb2267513cc71685566f1091d73efa7bc102867341d2ed82e3c4630a406b55e0.png": "fb2267513cc71685566f1091d73efa7bc102867341d2ed82e3c4630a406b55e0",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/fc8103be70bab19c686d65e67ba3627cde3241837f2b562f76746d8f979b360f.jpg": "fc8103be70bab19c686d65e67ba3627cde3241837f2b562f76746d8f979b360f",
-    "res://../eloria-assets/maps/nymara-regions/amberwood/world.glb": "ea6db7cbfb06b457a100c569fdd4c2667555896c161f2b5916d644ed451c67f7",
+    "res://../eloria-assets/maps/nymara-regions/amberwood/world.glb": "39640da8a48f45769f1e3b133c08458be2f4058120d7cfa4332bca8901917ea5",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/01598995c8b9d70f6acc3753f8950f97852911efc25af38294c4d1e618efe03e.jpg": "01598995c8b9d70f6acc3753f8950f97852911efc25af38294c4d1e618efe03e",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/0654f88d04399ef6ad7e604cc1e61d07ebe4ce6dcbe1cf0c229783fc91751faf.jpg": "0654f88d04399ef6ad7e604cc1e61d07ebe4ce6dcbe1cf0c229783fc91751faf",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/06ba8b35e21111fca99742f167db5d48ee3b8e52ac82dff35fed704f027cf233.jpg": "06ba8b35e21111fca99742f167db5d48ee3b8e52ac82dff35fed704f027cf233",
@@ -1455,7 +1455,7 @@
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/f24491424f043a67083bfaddde80e1067e6860d539ad6d908caf5c48472fc6e0.jpg": "f24491424f043a67083bfaddde80e1067e6860d539ad6d908caf5c48472fc6e0",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/f7f1c4a381b70577c73c11e8e5f7ebb85763c59b2b8132afeb6fb5da6e3070c6.jpg": "f7f1c4a381b70577c73c11e8e5f7ebb85763c59b2b8132afeb6fb5da6e3070c6",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/faa458b17899aefd58b5e7a19fe4e75651fe4c29d0e6564878f91db98d542540.jpg": "faa458b17899aefd58b5e7a19fe4e75651fe4c29d0e6564878f91db98d542540",
-    "res://../eloria-assets/maps/nymara-regions/manymouth_delta/world.glb": "ae1abf699dd6f9c499ce51a775df14fdcf0e01b4a1a1d1acc806bcb38012f3ad",
+    "res://../eloria-assets/maps/nymara-regions/manymouth_delta/world.glb": "a268180937a1512fccb5de78ef9171044ce50db443884053840fbe4d1fe00282",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/04f980902a57a161d0e960202b27ca36a22c78b8521068fac9e786d7f5818d35.jpg": "04f980902a57a161d0e960202b27ca36a22c78b8521068fac9e786d7f5818d35",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/05ee41b2968efa46ccba0212ddf4d4603fc75227b0b7a861aa2821a4f06abe9e.jpg": "05ee41b2968efa46ccba0212ddf4d4603fc75227b0b7a861aa2821a4f06abe9e",
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/07e38ab39f66435847c6f600fa4cbc469cb870d5c19abcf0787d4556eee8e286.jpg": "07e38ab39f66435847c6f600fa4cbc469cb870d5c19abcf0787d4556eee8e286",
@@ -1557,7 +1557,7 @@
     "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets/ff498420802974b6afdbb53041884282ddc9f086c8457d6878735ff2fedf3592.jpg": "ff498420802974b6afdbb53041884282ddc9f086c8457d6878735ff2fedf3592"
   },
   "territoryContracts": {
-    "res://../eloria-assets/maps/four-gates/world.json": "d305d27abdbd228bfa1eb5da5af4ef8cf0de53985ec0e6e7561a17a6fe990e66",
+    "res://../eloria-assets/maps/four-gates/world.json": "31e62f8d1bd522edb5e45369a69ef18eee9903fd591cb3ad0b00582852f8e54d",
     "res://../eloria-assets/maps/nymara-regions/mirrorhold/world.json": "54721d37a902e5889858aee0c8f152b5101259d50e2101595948dd0e78d6a5b0",
     "res://../eloria-assets/maps/nymara-regions/crownwater/world.json": "2f4926af5f64b6db4aea79602fcb0c0f2eca032b3eefc8b064852384bbe8ce29",
     "res://../eloria-assets/maps/nymara-regions/whitehorn_range/world.json": "6edd1515fff1f5aaa8426c4c07d8d318a91bbe284e1e39b4302f3f766cefd797",
@@ -1568,7 +1568,7 @@
     "res://../eloria-assets/maps/nymara-regions/westhaven/world.json": "1f79b07207f41ae947d1778c07e746387091a10b835efe5f1640966d804e3083",
     "res://../eloria-assets/maps/nymara-regions/verdant_stair/world.json": "cf708ec3d15bed418443be40487f5d59546dbbafe74b7d17767f848b7e25b1a5",
     "res://../eloria-assets/maps/nymara-regions/ssarathi_ruins/world.json": "a6337d0aa33573cfd707a53b0d9ef79af75b6223bd7e7ef5a08b1fca910d793d",
-    "res://../eloria-assets/maps/nymara-regions/manymouth_delta/world.json": "cd0c311844f729e638d70e9e0fc06c667833c4ea56b6698fe32ba885fb5d9a3b"
+    "res://../eloria-assets/maps/nymara-regions/manymouth_delta/world.json": "9a344340f46ed4c776960887202e1305d2e251335e5725345cb49245a3f676a8"
   },
   "layout": {
     "originMetres": [
@@ -1581,12 +1581,12 @@
     ],
     "metresPerPixel": 2
   },
-  "imageSha256": "cdbaf631369484e5c1a70a2f8c29632bdf485b27e66aa6e50b4ea5efeac23b66",
+  "imageSha256": "656567056791b712851935307b9db5ea55c5432be27b6ce13cdcc8d68314f4bf",
   "pixelsPerMetre": 1.0,
   "supersample": 2,
   "projection": "orthographic, -Z north, +X east; one shared world pixel lattice",
   "optionalReviewInputs": {
-    "res://../eloria-assets/maps/nymara-regions/_continent/generated/continent.glb": "729916fbb93a70b65644b3594b9b4cc10be08811aa323f025e24ade2596c3026"
+    "res://../eloria-assets/maps/nymara-regions/_continent/generated/continent.glb": "09c0f06cc093218f821473b2ad674c850b84432645f5b73a699825aebfdb7aad"
   },
   "reviewMaster": "Verified while rendering; when absent, freshness checks verify tracked named GLBs, shared textures and authored generation inputs."
 }
