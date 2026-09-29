@@ -50883,18 +50883,18 @@
       "updatedAuthoredMarkers": 2,
       "terrainRevision": "diagonal-spine-v1:c931baa70b69561be6c3828aa5de12719169238b968772dde6567610ea55e606",
       "servedTileContinuity": {
-        "keptServedTile": 1,
+        "keptServedTile": 2,
         "movedTogether": 0,
-        "movedFromServedTile": 1
+        "movedFromServedTile": 0
       }
     },
     "amberwood": {
       "stageFactor": 9,
       "stageMetres": 1.8,
-      "walkableServerTiles": 55972,
-      "largestComponentTiles": 52251,
+      "walkableServerTiles": 55507,
+      "largestComponentTiles": 51831,
       "reachableByStage": {
-        "9": 52251
+        "9": 51831
       },
       "storage": {
         "serverCells": [
@@ -50969,7 +50969,7 @@
         "climbLimit": 2,
         "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
-      "hubReachableTiles": 52251,
+      "hubReachableTiles": 51831,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -50978,9 +50978,9 @@
         ],
         "displacementMetres": 0.0
       },
-      "hubReachableAfterStorageTiles": 52242,
+      "hubReachableAfterStorageTiles": 51822,
       "updatedAuthoredMarkers": 1,
-      "terrainRevision": "diagonal-spine-v1:c48eb73693dffd5e78fe731a57b4ca04581fbc2e6d779e4e16c32313002b9a96",
+      "terrainRevision": "diagonal-spine-v1:2478b1d35c936a0d558ffd708a96f7d37bf27cb0f467f949f97d5e2f9ec2e3f4",
       "servedTileContinuity": {
         "keptServedTile": 3,
         "movedTogether": 0,
@@ -51928,7 +51928,7 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "89920196898671a87c3764c639f06a740e9c377696779bac2e2039bda7c83b6d",
+    "client_content_manifest.json": "a37814012df30008a7a1019f02fd163f5f1652d4cd47cdcef0a377a4ef84ea8d",
     "creatures.txt": "f683a45b2da53f03557c7fdf45bc731a304dda241c70f64a7240f776260cde79",
     "harvesting.txt": "e93130fed2350ad6c54d79e40ecedc97a3f748110ee4137424e0075a9677abb7",
     "instances/amberwood_gauntlet_low.def": "dfa704f5be40551d8a3d926845980ae934d4e9445be20a9810c4d5c21b806b67",
@@ -51953,10 +51953,10 @@
     "questlines.txt": "adc0a688110a4405266df91551ce2adb283d0da0bbbb69293a0b1b5cec1b7607",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "3956b2bfef50f0be0f635d76da392618dd0691823f09b8885b118c876ffd0504",
+    "spawn_groups/invasion/invasion_nymara.def": "18057c9e50833f45b96e41fd794fe9a0ed5e69ba621eac59f314f6f58673b860",
     "spawns.txt": "08dfb6b2b2cf689b568d1ab79272c80b00b3d7135cc4bd907aa382814d770b07",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
-    "territories.txt": "4de4708d5d139ca4c98d5d0c8297a7d108422420628300800c10b4555f56c607"
+    "territories.txt": "97c0a9ddb86271a1567998c1274b9c8f7b5466732b8c1a17106f8d6a7576bc9c"
   },
   "sourceCodeSha256": {
     "eloria/daily_quests.py": "a1c0d6449662bc2a0061bb3dad293920a5cd8b1ac84d84af3e873445c67ac3b4",
