@@ -2253,7 +2253,7 @@ preview_uv_metres_inverse = 0.17
 
 [node name="Patches" type="Node3D" parent="Terrain" unique_id=1094202469]
 
-[node name="four-gates-amberwood-highway-causeway" type="Marker3D" parent="Terrain/Patches" unique_id=211346584]
+[node name="four-gates-amberwood-highway-causeway" type="Marker3D" parent="Terrain/Patches" unique_id=348495939]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 17.9, -153)
 script = ExtResource("7_o5sg3")
 patch_id = "four-gates-amberwood-highway-causeway"
@@ -3049,7 +3049,7 @@ default_width = 8.0
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 surface = SubResource("Resource_pg3cp")
 
-[node name="highway-four_gates-north" type="Path3D" parent="Roads" unique_id=2064446346]
+[node name="highway-four_gates-north" type="Path3D" parent="Roads" unique_id=356868046]
 curve = SubResource("Curve3D_8nyoa")
 script = ExtResource("path")
 path_id = "highway-four_gates-north"
@@ -3061,7 +3061,7 @@ default_width = 8.0
 point_widths = PackedFloat32Array(0, 0, 0, 0)
 surface = SubResource("Resource_xtye0")
 
-[node name="highway-four_gates-north-border" type="Path3D" parent="Roads" unique_id=2018362456]
+[node name="highway-four_gates-north-border" type="Path3D" parent="Roads" unique_id=1448359881]
 curve = SubResource("Curve3D_dyolv")
 script = ExtResource("path")
 path_id = "highway-four_gates-north-border"
@@ -3073,7 +3073,7 @@ default_width = 8.0
 point_widths = PackedFloat32Array(0, 0)
 surface = SubResource("Resource_scfyq")
 
-[node name="highway-four_gates-south" type="Path3D" parent="Roads" unique_id=544418292]
+[node name="highway-four_gates-south" type="Path3D" parent="Roads" unique_id=39780556]
 curve = SubResource("Curve3D_wso77")
 script = ExtResource("path")
 path_id = "highway-four_gates-south"
@@ -3085,7 +3085,7 @@ default_width = 8.0
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0)
 surface = SubResource("Resource_rbs60")
 
-[node name="highway-four_gates-south-border" type="Path3D" parent="Roads" unique_id=321265054]
+[node name="highway-four_gates-south-border" type="Path3D" parent="Roads" unique_id=2074026311]
 curve = SubResource("Curve3D_jm3ba")
 script = ExtResource("path")
 path_id = "highway-four_gates-south-border"
@@ -3101,16 +3101,23 @@ surface = SubResource("Resource_ya0sj")
 
 [node name="WaterRegions" type="Node3D" parent="." unique_id=2142946620]
 
-[node name="FourGatesMoat" type="Node3D" parent="WaterRegions" unique_id=335802222]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 9.7, -1.5)
+[node name="FourGatesMoat" type="Node3D" parent="WaterRegions" unique_id=1197768032]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 9.7, -5.5)
 script = ExtResource("14_jh2sg")
 water_id = "four_gates_moat"
 display_name = "Four Gates moat"
-radii = Vector2(114, 135)
+radii = Vector2(102, 132)
+
+[node name="FourGatesMoatSoutheast" type="Node3D" parent="WaterRegions" unique_id=1558217566]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 9.7, 20)
+script = ExtResource("14_jh2sg")
+water_id = "four_gates_moat_southeast"
+display_name = "Four Gates moat, south-east arc"
+radii = Vector2(100, 110)
 
 [node name="Bridges" type="Node3D" parent="." unique_id=1094784772]
 
-[node name="FourGatesAmberwaterBridge" type="Node3D" parent="Bridges" unique_id=788775813]
+[node name="FourGatesAmberwaterBridge" type="Node3D" parent="Bridges" unique_id=452162373]
 script = ExtResource("15_robbe")
 bridge_id = "four-gates-amberwater-bridge"
 metadata = {
@@ -3123,10 +3130,10 @@ water_clearance = 0.85
 deck_surface = SubResource("Resource_a81pt")
 support_surface = SubResource("Resource_ogvsb")
 
-[node name="Start" type="Marker3D" parent="Bridges/FourGatesAmberwaterBridge" unique_id=291144305]
+[node name="Start" type="Marker3D" parent="Bridges/FourGatesAmberwaterBridge" unique_id=773836083]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 18.5, -134.7)
 
-[node name="End" type="Marker3D" parent="Bridges/FourGatesAmberwaterBridge" unique_id=876820631]
+[node name="End" type="Marker3D" parent="Bridges/FourGatesAmberwaterBridge" unique_id=2001805085]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.4, 17.9, -147.3)
 
 [node name="AuthoredAssets" type="Node3D" parent="." unique_id=1493508376]
