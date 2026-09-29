@@ -135,10 +135,24 @@ func _test_framed_cells_outlast_budget() -> void:
 		var span: Array = cells[identity]
 		stream.entries.append({"id":identity, "estimatedResidentBytes":400 if identity != "lead" else 8,
 			"bounds":{"min":[span[0][0],0,span[0][1]],"max":[span[1][0],1,span[1][1]]}})
-	var selected := stream.selection(Vector3.ZERO).map(func(entry: Dictionary) -> String: return str(entry.id))
+	var chosen := stream.selection(Vector3.ZERO)
+	var selected := chosen.map(func(entry: Dictionary) -> String: return str(entry.id))
 	_expect(selected == ["under_a", "under_b", "beside"],
 		"every framed cell stays selected when each alone outgrows the byte budget")
 	_expect(not selected.has("lead"), "a cheap cell beyond the framed ground still waits for budget")
+	var beyond := chosen.map(func(entry: Dictionary) -> bool: return bool(entry.beyond_budget))
+	_expect(beyond == [false, true, true],
+		"cells past the budget are marked so an arrival leaves the framed neighbour to the worker")
+	# Both under_* cells cover the origin. The Amberwood deep grove lay under a
+	# resident neighbour's overhanging props while its own ground cell was
+	# missing, and the actor grounded on nothing 19 m above the canopy deck.
+	stream.cells = {"under_b": {}}
+	_expect(not stream.arrival_resident(Vector3.ZERO),
+		"a resident overlapping neighbour does not stand in for the missing ground cell")
+	_expect(stream.arrival_resident(Vector3(30, 0, 0)), "a position only one resident cell covers is ready")
+	stream.cells = {"under_a": {}, "under_b": {}}
+	_expect(stream.arrival_resident(Vector3.ZERO), "the arrival is ready once every covering cell is resident")
+	_expect(not stream.arrival_resident(Vector3(0, 0, 45)), "a position no cell covers is never reported as ready")
 	stream.free()
 
 func _run() -> void:

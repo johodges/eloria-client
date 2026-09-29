@@ -78,9 +78,13 @@ only. Before first grounding the local actor, it primes chunks around that
 actor's actual tile. A neighbor preload instead receives the player/camera focus
 transformed into the destination's coordinate frame. It does not load the
 neighbor's default spawn. A teleport within an already loaded territory also
-primes its new destination before grounding if no resident chunk covers it.
+primes its new destination before grounding unless every chunk whose bounds
+cover it is resident. Bounds include overhanging props, so neighbours overlap;
+one resident neighbour covering the tile does not mean its ground is loaded.
 Normal movement remains asynchronous; the synchronous path handles arrival or
-a missed preload before the actor can sample missing terrain.
+a missed preload before the actor can sample missing terrain. Priming imports
+synchronously only the chunks the byte budget admits plus every chunk under
+the arrival; framed chunks beyond the budget follow on the worker.
 
 Each resident root selects chunks by distance to their full XZ bounds. Retention
 uses a wider radius to prevent oscillation. One chunk worker per resident root
@@ -92,9 +96,8 @@ budget cannot deliberately omit the arrival ground. So is every chunk within
 oversize chunk must not leave its neighbours, or a second chunk under the
 focus, unloaded. The byte budget trims only the lead beyond that radius.
 Estimates are conservative accounting inputs, not measurements of GPU driver
-allocation. Retirement debt
-is drained before another load is dispatched; an already in-flight result may
-temporarily coexist with retiring nodes.
+allocation. Retirement debt is drained before another load is dispatched; an
+already in-flight result may temporarily coexist with retiring nodes.
 
 When `geometryResidentBytes` is supplied, selection adds that decoded geometry
 estimate to the unique SHA256 entries in `sharedResourceResidentBytes`. Multiple

@@ -152,15 +152,21 @@ func selection(position: Vector3, retain := false) -> Array[Dictionary]:
 		# and every framed cell so one oversize cell cannot starve its
 		# neighbours (candidates are nearest-first, so framed cells lead).
 		var framed := float(candidate.distance) <= FRAMED_RADIUS
-		if selected.size() >= maximum_chunks or (not selected.is_empty() and not framed
-				and estimated + cost > maximum_resident_bytes):
+		var over_budget := not selected.is_empty() and estimated + cost > maximum_resident_bytes
+		if selected.size() >= maximum_chunks or (over_budget and not framed):
 			break
+		# Admitted for the frame, not by the budget: prime() leaves these to
+		# the worker unless they hold the arrival itself.
+		candidate.beyond_budget = over_budget
 		selected.append(candidate)
 		estimated += cost
 	return selected
 
 ## Called before the first actor grounding, with the server's actual arrival.
 ## No default-spawn cells are read when the client is waiting for that packet.
+## Loads synchronously only what the byte budget admits plus every cell under
+## the arrival; framed cells beyond the budget stream in on the worker, so an
+## arrival costs no more blocking import than it did before FRAMED_RADIUS.
 func prime(position: Vector3) -> void:
 	if has_focus:
 		return
@@ -171,16 +177,30 @@ func prime(position: Vector3) -> void:
 	for entry: Dictionary in selection(position):
 		if cells.has(str(entry.id)):
 			continue
+		if bool(entry.get("beyond_budget", false)) and float(entry.distance) > .01:
+			continue
 		var builder := WorldLoader.prepare_detached(str(entry.path), _cache_enabled)
 		_install(entry, builder)
+
+## True when every cell whose bounds hold the position is resident. Bounds
+## include the props that overhang a cell, so neighbours overlap: a resident
+## neighbour can cover a destination whose own ground cell is still missing,
+## and an actor grounded then stands on whatever the neighbour has there.
+func arrival_resident(position: Vector3) -> bool:
+	var covering := 0
+	for entry: Dictionary in entries:
+		if bounds_distance(position, entry.bounds) <= .01:
+			covering += 1
+			if not cells.has(str(entry.id)):
+				return false
+	return covering > 0
 
 func ensure_position(position: Vector3) -> bool:
 	if not has_focus:
 		prime(position)
 		return true
-	for resident: Dictionary in cells.values():
-		if bounds_distance(position, resident.entry.bounds) <= .01:
-			return false
+	if arrival_resident(position):
+		return false
 	var wanted := selection(position)
 	if wanted.is_empty():
 		return false
