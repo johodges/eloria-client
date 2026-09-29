@@ -87,8 +87,12 @@ uses a wider radius to prevent oscillation. One chunk worker per resident root
 performs subsequent imports; there is no full-continent scene hidden in memory.
 Count and decoded-byte estimates bound the selected set. The nearest chunk is
 allowed even if it alone exceeds a configured byte budget, so an undersized
-budget cannot deliberately omit the arrival ground. Estimates are conservative
-accounting inputs, not measurements of GPU driver allocation. Retirement debt
+budget cannot deliberately omit the arrival ground. So is every chunk within
+`FRAMED_RADIUS` (64 m) of the focus, the ground the camera frames: a single
+oversize chunk must not leave its neighbours, or a second chunk under the
+focus, unloaded. The byte budget trims only the lead beyond that radius.
+Estimates are conservative accounting inputs, not measurements of GPU driver
+allocation. Retirement debt
 is drained before another load is dispatched; an already in-flight result may
 temporarily coexist with retiring nodes.
 

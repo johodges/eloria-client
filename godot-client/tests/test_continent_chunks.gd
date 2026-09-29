@@ -94,9 +94,11 @@ func _test_shared_memory_accounting() -> void:
 	var stream := ContinentChunkStream.new()
 	stream.maximum_resident_bytes = 100
 	stream.maximum_chunks = 3
-	var bounds := {"min":[-10,0,-10],"max":[10,1,10]}
+	# b and c lie beyond the framed radius, where the byte budget decides.
+	var near := {"min":[-10,0,-10],"max":[10,1,10]}
+	var lead := {"min":[100,0,-10],"max":[120,1,10]}
 	for identity: String in ["a", "b", "c"]:
-		var entry := {"id":identity, "bounds":bounds, "estimatedResidentBytes":80,
+		var entry := {"id":identity, "bounds":near if identity == "a" else lead, "estimatedResidentBytes":80,
 			"geometryResidentBytes":20, "sharedResourceResidentBytes":{"a".repeat(64):60}}
 		if identity == "c":
 			entry.sharedResourceResidentBytes = {"b".repeat(64):60}
@@ -121,8 +123,27 @@ func _test_shared_memory_accounting() -> void:
 	_expect(stream.selection(Vector3.ZERO).size() == 1, "one oversized nearest cell preserves arrival ground")
 	stream.free()
 
+## The Amberwood life pass made single cells cost more than the whole budget.
+## The nearest-first prefix then kept one cell and dropped a second cell under
+## the focus and the neighbour beside it, which rendered as flat planes.
+func _test_framed_cells_outlast_budget() -> void:
+	var stream := ContinentChunkStream.new()
+	stream.maximum_resident_bytes = 256
+	var cells := {"under_a":[[-40,-40],[5,40]], "under_b":[[-5,-40],[40,40]],
+		"beside":[[-40,50],[40,100]], "lead":[[-40,150],[40,200]]}
+	for identity: String in cells:
+		var span: Array = cells[identity]
+		stream.entries.append({"id":identity, "estimatedResidentBytes":400 if identity != "lead" else 8,
+			"bounds":{"min":[span[0][0],0,span[0][1]],"max":[span[1][0],1,span[1][1]]}})
+	var selected := stream.selection(Vector3.ZERO).map(func(entry: Dictionary) -> String: return str(entry.id))
+	_expect(selected == ["under_a", "under_b", "beside"],
+		"every framed cell stays selected when each alone outgrows the byte budget")
+	_expect(not selected.has("lead"), "a cheap cell beyond the framed ground still waits for budget")
+	stream.free()
+
 func _run() -> void:
 	_test_shared_memory_accounting()
+	_test_framed_cells_outlast_budget()
 	DirAccess.make_dir_recursive_absolute(SCRATCH)
 	var config := _manifest("fixture_territory")
 	config.streamingChunks = {"schemaVersion":"1.0","coordinateSpace":"territory-local",

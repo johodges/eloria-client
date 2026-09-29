@@ -10,6 +10,15 @@ const DEFAULT_MAXIMUM_CHUNKS := 64
 const DEFAULT_RESIDENT_BYTES := 268435456
 const RETIRE_NODES_PER_FRAME := 64
 const RETIRE_BUDGET_USEC := 2000
+## Cells whose bounds come this close to the focus are the ground the camera
+## is framing, and they are admitted whatever the byte budget says; the budget
+## only trims the lead beyond them. The default rig (26 m at -60 degrees
+## through the 50 degree lens, 16:10) frames ground out to about 35 m from the
+## focus and a lowered view looks well past that. The life passes made single
+## Amberwood and Four Gates cells cost 250-480 MiB against the 256 MiB budget,
+## so a nearest-first prefix kept one cell and left its framed neighbours -
+## sometimes a second cell under the focus itself - as bare flat planes.
+const FRAMED_RADIUS := 64.0
 
 signal cell_ready(identity: String, imported: Node3D)
 signal cell_retiring(identity: String, imported: Node3D)
@@ -139,8 +148,12 @@ func selection(position: Vector3, retain := false) -> Array[Dictionary]:
 	for candidate: Dictionary in candidates:
 		var cost := incremental_cost(candidate, shared)
 		# Never substitute a farther cheap cell for the nearest terrain. Allow
-		# one oversize cell so a low budget cannot remove the arrival surface.
-		if selected.size() >= maximum_chunks or (not selected.is_empty() and estimated + cost > maximum_resident_bytes):
+		# one oversize cell so a low budget cannot remove the arrival surface,
+		# and every framed cell so one oversize cell cannot starve its
+		# neighbours (candidates are nearest-first, so framed cells lead).
+		var framed := float(candidate.distance) <= FRAMED_RADIUS
+		if selected.size() >= maximum_chunks or (not selected.is_empty() and not framed
+				and estimated + cost > maximum_resident_bytes):
 			break
 		selected.append(candidate)
 		estimated += cost
