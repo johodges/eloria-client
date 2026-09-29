@@ -2223,7 +2223,7 @@ source_material = SubResource("ShaderMaterial_1tciu")
 [sub_resource type="Curve3D" id="Curve3D_kkbxh"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 48, 11, -147.95, 0, 0, 0, 0, 0, 0, 48.1, 10.9, -146.7),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 44, 10.43, -147.95, 0, 0, 0, 0, 0, 0, 44, 10.37, -147.5),
 "tilts": PackedFloat32Array(0, 0)
 }
 point_count = 2
@@ -2251,10 +2251,10 @@ source_material = SubResource("ShaderMaterial_40rhf")
 [sub_resource type="Curve3D" id="Curve3D_xqqcp"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 52.1, 10.9, -134.8, 0, 0, 0, 0, 0, 0, 53.5, 9.2, -112, 0, 0, 0, 0, 0, 0, 55.4, 8.7, -89),
-"tilts": PackedFloat32Array(0, 0, 0)
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 44, 10.7, -133.5, 0, 0, 0, 0, 0, 0, 45.5, 10.11, -120, 0, 0, 0, 0, 0, 0, 50, 9.39, -104, 0, 0, 0, 0, 0, 0, 55.4, 8.7, -89),
+"tilts": PackedFloat32Array(0, 0, 0, 0)
 }
-point_count = 3
+point_count = 4
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bodcj"]
 render_priority = 1
@@ -6005,19 +6005,19 @@ default_width = 8.0
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 surface = SubResource("Resource_7dtpb")
 
-[node name="highway-manymouth_delta-four_gates-landing" type="Path3D" parent="Roads" unique_id=979404210]
+[node name="highway-manymouth_delta-four_gates-border" type="Path3D" parent="Roads" unique_id=1280219123]
 curve = SubResource("Curve3D_kkbxh")
 script = ExtResource("path")
-path_id = "highway-manymouth_delta-four_gates-landing"
+path_id = "highway-manymouth_delta-four_gates-border"
 properties = {
-"terrainConform": true,
+"terrainConform": false,
 "terrainFeather": 2
 }
 default_width = 8.0
 point_widths = PackedFloat32Array(0, 0)
 surface = SubResource("Resource_otljh")
 
-[node name="highway-manymouth_delta-four_gates" type="Path3D" parent="Roads" unique_id=354128074]
+[node name="highway-manymouth_delta-four_gates" type="Path3D" parent="Roads" unique_id=1762196060]
 curve = SubResource("Curve3D_xqqcp")
 script = ExtResource("path")
 path_id = "highway-manymouth_delta-four_gates"
@@ -6026,7 +6026,7 @@ properties = {
 "terrainFeather": 2
 }
 default_width = 8.0
-point_widths = PackedFloat32Array(0, 0, 0)
+point_widths = PackedFloat32Array(0, 0, 0, 0)
 surface = SubResource("Resource_apylj")
 
 [node name="Rivers" type="Node3D" parent="." unique_id=1572005603]
@@ -6079,7 +6079,7 @@ surface = SubResource("Resource_xsyj6")
 
 [node name="Bridges" type="Node3D" parent="." unique_id=1945253176]
 
-[node name="ManymouthMirrorwaterBridge" type="Node3D" parent="Bridges" unique_id=654367306]
+[node name="ManymouthMirrorwaterBridge" type="Node3D" parent="Bridges" unique_id=1334194498]
 script = ExtResource("16_fdtr4")
 bridge_id = "manymouth-mirrorwater-bridge"
 metadata = {
@@ -6092,11 +6092,11 @@ water_clearance = 0.85
 deck_surface = SubResource("Resource_ws207")
 support_surface = SubResource("Resource_gt6ta")
 
-[node name="Start" type="Marker3D" parent="Bridges/ManymouthMirrorwaterBridge" unique_id=746868989]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.1, 10.9, -146.7)
+[node name="Start" type="Marker3D" parent="Bridges/ManymouthMirrorwaterBridge" unique_id=1715672669]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 10.37, -147.5)
 
-[node name="End" type="Marker3D" parent="Bridges/ManymouthMirrorwaterBridge" unique_id=133388453]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.1, 10.9, -134.8)
+[node name="End" type="Marker3D" parent="Bridges/ManymouthMirrorwaterBridge" unique_id=1960026691]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 10.7, -133.5)
 
 [node name="AuthoredAssets" type="Node3D" parent="." unique_id=1765239389]
 

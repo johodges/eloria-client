@@ -4,15 +4,16 @@
 [ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/ground-basecolor.png" id="4_jjbej"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/biome_palette_entry.gd" id="5_wp5tk"]
 [ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/texture_packs/coastal-limestone-gravel/coastal-limestone-gravel-v001.png" id="6_4fsne"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_patch.gd" id="7_o5sg3"]
 [ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/texture_packs/forest-floor-moss/forest-floor-moss-v001.png" id="8_kcrkm"]
 [ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/ground-normal.png" id="9_n57q0"]
 [ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/ground-orm.png" id="10_o5sg3"]
 [ext_resource type="Shader" path="res://src/dev/map_authoring_pilot/style/worn_path.gdshader" id="12_jh2sg"]
-[ext_resource type="Script" path="res://src/dev/map_authoring_region/water_region_control.gd" id="13_n57q0"]
-[ext_resource type="Script" path="res://src/dev/map_authoring_region/bridge_control.gd" id="14_o5sg3"]
-[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/stone-basecolor.png" id="15_jh2sg"]
-[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/stone-normal.png" id="16_robbe"]
-[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/stone-orm.png" id="17_j745f"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/water_region_control.gd" id="14_jh2sg"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/bridge_control.gd" id="15_robbe"]
+[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/stone-basecolor.png" id="16_j745f"]
+[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/stone-normal.png" id="17_nyuvp"]
+[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/stone-orm.png" id="18_wc7vt"]
 [ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/texture_packs/weathered-limestone-masonry/weathered-limestone-masonry-v001.png" id="217_robbe"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/four_gates/assets/prototypes/kit-gates-townhouse-1.glb" id="306_j745f"]
 [ext_resource type="PackedScene" path="res://world_authoring/regions/four_gates/assets/prototypes/kit-gates-townhouse-2.glb" id="307_nyuvp"]
@@ -375,7 +376,7 @@
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
 [ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nyuvp"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3fgbi"]
 cull_mode = 2
 vertex_color_use_as_albedo = true
 albedo_color = Color(0.7, 0.92, 0.5, 1)
@@ -384,14 +385,14 @@ uv1_scale = Vector3(1.4705882, 1.4705882, 1)
 uv1_offset = Vector3(0.8, 0.5, 0)
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_wc7vt"]
+[sub_resource type="Resource" id="Resource_non7r"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Grass"
-source_material = SubResource("StandardMaterial3D_nyuvp")
+source_material = SubResource("StandardMaterial3D_3fgbi")
 biome_blend_enabled = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3fgbi"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4adnd"]
 cull_mode = 2
 vertex_color_use_as_albedo = true
 albedo_texture = ExtResource("6_4fsne")
@@ -399,34 +400,18 @@ roughness = 0.94
 uv1_scale = Vector3(1.4705882, 1.4705882, 1)
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_non7r"]
+[sub_resource type="Resource" id="Resource_8sjbq"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Coastal limestone gravel"
-source_material = SubResource("StandardMaterial3D_3fgbi")
+source_material = SubResource("StandardMaterial3D_4adnd")
 
-[sub_resource type="Resource" id="Resource_4adnd"]
+[sub_resource type="Resource" id="Resource_7h1u3"]
 resource_local_to_scene = true
 script = ExtResource("5_wp5tk")
 id = "coastal-gravel"
 role = "limestone"
-surface = SubResource("Resource_non7r")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8sjbq"]
-resource_local_to_scene = true
-cull_mode = 2
-albedo_color = Color(0.8, 0.73, 0.61, 1)
-albedo_texture = ExtResource("6_4fsne")
-roughness = 0.98
-uv1_scale = Vector3(0.72, 0.72, 1)
-texture_filter = 5
-
-[sub_resource type="Resource" id="Resource_7h1u3"]
-resource_local_to_scene = true
-script = ExtResource("3_7sc8j")
-texture_preset = "Coastal limestone gravel"
-rotation_degrees = 13.0
-source_material = SubResource("StandardMaterial3D_8sjbq")
+surface = SubResource("Resource_8sjbq")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3chdu"]
 resource_local_to_scene = true
@@ -447,7 +432,7 @@ source_material = SubResource("StandardMaterial3D_3chdu")
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gdf1h"]
 resource_local_to_scene = true
 cull_mode = 2
-albedo_color = Color(0.68, 0.62, 0.51, 1)
+albedo_color = Color(0.8, 0.73, 0.61, 1)
 albedo_texture = ExtResource("6_4fsne")
 roughness = 0.98
 uv1_scale = Vector3(0.72, 0.72, 1)
@@ -511,17 +496,17 @@ source_material = SubResource("StandardMaterial3D_0wofh")
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grd4f"]
 resource_local_to_scene = true
 cull_mode = 2
-albedo_color = Color(0.6, 0.44, 0.3, 1)
-albedo_texture = ExtResource("4_jjbej")
+albedo_color = Color(0.68, 0.62, 0.51, 1)
+albedo_texture = ExtResource("6_4fsne")
 roughness = 0.98
-uv1_scale = Vector3(0.75, 0.75, 1)
+uv1_scale = Vector3(0.72, 0.72, 1)
 texture_filter = 5
 
 [sub_resource type="Resource" id="Resource_41cf8"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
-texture_preset = "Soil"
-rotation_degrees = -19.0
+texture_preset = "Coastal limestone gravel"
+rotation_degrees = 13.0
 source_material = SubResource("StandardMaterial3D_grd4f")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wlj3x"]
@@ -575,17 +560,17 @@ source_material = SubResource("StandardMaterial3D_5s4pn")
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l0y0w"]
 resource_local_to_scene = true
 cull_mode = 2
-albedo_color = Color(0.5, 0.47, 0.28, 1)
-albedo_texture = ExtResource("8_kcrkm")
+albedo_color = Color(0.6, 0.44, 0.3, 1)
+albedo_texture = ExtResource("4_jjbej")
 roughness = 0.98
-uv1_scale = Vector3(0.95, 0.95, 1)
+uv1_scale = Vector3(0.75, 0.75, 1)
 texture_filter = 5
 
 [sub_resource type="Resource" id="Resource_43fbu"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
-texture_preset = "Forest floor moss"
-rotation_degrees = 27.0
+texture_preset = "Soil"
+rotation_degrees = -19.0
 source_material = SubResource("StandardMaterial3D_l0y0w")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4kc8x"]
@@ -604,22 +589,21 @@ texture_preset = "Forest floor moss"
 rotation_degrees = 27.0
 source_material = SubResource("StandardMaterial3D_4kc8x")
 
-[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_4gtnj"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4gtnj"]
+resource_local_to_scene = true
 cull_mode = 2
-albedo_color = Color(1, 0.66, 0.36, 1)
+albedo_color = Color(0.5, 0.47, 0.28, 1)
 albedo_texture = ExtResource("8_kcrkm")
-orm_texture = ExtResource("10_o5sg3")
-normal_enabled = true
-normal_scale = 0.65
-normal_texture = ExtResource("9_n57q0")
-uv1_scale = Vector3(0.25, 0.25, 0.25)
+roughness = 0.98
+uv1_scale = Vector3(0.95, 0.95, 1)
 texture_filter = 5
 
 [sub_resource type="Resource" id="Resource_3dyo6"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Forest floor moss"
-source_material = SubResource("ORMMaterial3D_4gtnj")
+rotation_degrees = 27.0
+source_material = SubResource("StandardMaterial3D_4gtnj")
 
 [sub_resource type="ORMMaterial3D" id="ORMMaterial3D_4rb76"]
 cull_mode = 2
@@ -878,19 +862,19 @@ source_material = SubResource("ORMMaterial3D_4ffdb")
 
 [sub_resource type="ORMMaterial3D" id="ORMMaterial3D_4430v"]
 cull_mode = 2
-albedo_color = Color(0.86, 0.66, 0.46, 1)
-albedo_texture = ExtResource("4_jjbej")
+albedo_color = Color(1, 0.66, 0.36, 1)
+albedo_texture = ExtResource("8_kcrkm")
 orm_texture = ExtResource("10_o5sg3")
 normal_enabled = true
-normal_scale = 0.72
+normal_scale = 0.65
 normal_texture = ExtResource("9_n57q0")
-uv1_scale = Vector3(0.24, 0.24, 0.24)
+uv1_scale = Vector3(0.25, 0.25, 0.25)
 texture_filter = 5
 
 [sub_resource type="Resource" id="Resource_6sm5y"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
-texture_preset = "Soil"
+texture_preset = "Forest floor moss"
 source_material = SubResource("ORMMaterial3D_4430v")
 
 [sub_resource type="ORMMaterial3D" id="ORMMaterial3D_ul8a8"]
@@ -1046,7 +1030,24 @@ script = ExtResource("3_7sc8j")
 texture_preset = "Soil"
 source_material = SubResource("ORMMaterial3D_37l5a")
 
-[sub_resource type="Curve3D" id="Curve3D_i2cm7"]
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_i2cm7"]
+cull_mode = 2
+albedo_color = Color(0.86, 0.66, 0.46, 1)
+albedo_texture = ExtResource("4_jjbej")
+orm_texture = ExtResource("10_o5sg3")
+normal_enabled = true
+normal_scale = 0.72
+normal_texture = ExtResource("9_n57q0")
+uv1_scale = Vector3(0.24, 0.24, 0.24)
+texture_filter = 5
+
+[sub_resource type="Resource" id="Resource_sv1jh"]
+resource_local_to_scene = true
+script = ExtResource("3_7sc8j")
+texture_preset = "Soil"
+source_material = SubResource("ORMMaterial3D_i2cm7")
+
+[sub_resource type="Curve3D" id="Curve3D_i0kfw"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 21.693455, 0, 0, 0, 0, 0, 0, 0, 0.57402515, 21.693455, 1.3858193, 0, 0, 0, 0, 0, 0, 1.1480503, 21.693455, 2.7716386, 0, 0, 0, 0, 0, 0, 1.7220755, 21.693455, 4.157458, 0, 0, 0, 0, 0, 0, 2.2961006, 21.693455, 5.5432773, 0, 0, 0, 0, 0, 0, 1.2220755, 21.693455, 7.157458, 0, 0, 0, 0, 0, 0, 0.1480503, 21.693455, 8.771639, 0, 0, 0, 0, 0, 0, -0.92597485, 21.693455, 10.385819, 0, 0, 0, 0, 0, 0, -2, 21.693455, 12, 0, 0, 0, 0, 0, 0, -3.067466, 21.693455, 13.488713, 0, 0, 0, 0, 0, 0, -4.134932, 21.693455, 14.9774275, 0, 0, 0, 0, 0, 0, -5.202398, 21.693455, 16.46614, 0, 0, 0, 0, 0, 0, -6.2698636, 21.693455, 17.954855, 0, 0, 0, 0, 0, 0, -7.2119493, 21.693455, 19.292042, 0, 0, 0, 0, 0, 0, -8.154035, 21.693455, 20.62923, 0, 0, 0, 0, 0, 0, -9.09612, 21.693455, 21.96642, 0, 0, 0, 0, 0, 0, -10.038206, 21.693455, 23.303606, 0, 0, 0, 0, 0, 0, -11.028654, 21.693455, 24.977705, 0, 0, 0, 0, 0, 0, -12.019103, 21.693455, 26.651804, 0, 0, 0, 0, 0, 0, -13.009551, 21.693455, 28.325901, 0, 0, 0, 0, 0, 0, -14, 21.693455, 30, 0, 0, 0, 0, 0, 0, -16, 21.693455, 30, 0, 0, 0, 0, 0, 0, -18, 21.693455, 30, 0, 0, 0, 0, 0, 0, -20, 21.693455, 30, 0, 0, 0, 0, 0, 0, -22, 21.693455, 30, 0, 0, 0, 0, 0, 0, -24, 21.693455, 30, 0, 0, 0, 0, 0, 0, -26, 21.693455, 30, 0, 0, 0, 0, 0, 0, -28, 21.693455, 30, 0, 0, 0, 0, 0, 0, -30, 21.693455, 30, 0, 0, 0, 0, 0, 0, -32, 21.693455, 30, 0, 0, 0, 0, 0, 0, -33.2, 21.693455, 28.662178, 0, 0, 0, 0, 0, 0, -34.4, 21.693455, 27.324356, 0, 0, 0, 0, 0, 0, -35.6, 21.693455, 25.986534, 0, 0, 0, 0, 0, 0, -36.8, 21.693455, 24.648712, 0, 0, 0, 0, 0, 0, -38, 21.693455, 23.31089, 0, 0, 0, 0, 0, 0, -39.2, 21.693455, 22.248713, 0, 0, 0, 0, 0, 0, -40.4, 21.693455, 21.186535, 0, 0, 0, 0, 0, 0, -41.6, 21.693455, 20.124355, 0, 0, 0, 0, 0, 0, -42.8, 21.693455, 19.062178, 0, 0, 0, 0, 0, 0, -44, 21.693455, 18, 0, 0, 0, 0, 0, 0, -45.2, 21.693455, 16.937687, 0, 0, 0, 0, 0, 0, -46.4, 21.693455, 15.875373, 0, 0, 0, 0, 0, 0, -47.6, 21.693455, 14.813059, 0, 0, 0, 0, 0, 0, -48.8, 21.693455, 13.750746, 0, 0, 0, 0, 0, 0, -50, 21.693455, 12.688432, 0, 0, 0, 0, 0, 0, -51.5, 21.693455, 11.689093, 0, 0, 0, 0, 0, 0, -53, 21.693455, 10.689753, 0, 0, 0, 0, 0, 0, -54.5, 21.693455, 9.690413, 0, 0, 0, 0, 0, 0, -56, 21.693455, 8.691073, 0, 0, 0, 0, 0, 0, -57.5, 21.693455, 8.166659, 0, 0, 0, 0, 0, 0, -59, 21.693455, 7.642246, 0, 0, 0, 0, 0, 0, -60.5, 21.693455, 7.1178317, 0, 0, 0, 0, 0, 0, -62, 21.693455, 6.5934176, 0, 0, 0, 0, 0, 0, -63.5, 21.693455, 6.2988906, 0, 0, 0, 0, 0, 0, -65, 21.693455, 6.004364, 0, 0, 0, 0, 0, 0, -66.5, 21.693455, 5.709837, 0, 0, 0, 0, 0, 0, -68, 21.693455, 5.4153104, 0, 0, 0, 0, 0, 0, -69.5, 21.693455, 4.9146495, 0, 0, 0, 0, 0, 0, -71, 21.693455, 4.413989, 0, 0, 0, 0, 0, 0, -72.5, 21.693455, 3.913329, 0, 0, 0, 0, 0, 0, -74, 21.693455, 3.4126685, 0, 0, 0, 0, 0, 0, -75.5, 21.693455, 2.559586, 0, 0, 0, 0, 0, 0, -77, 21.693455, 1.7065036, 0, 0, 0, 0, 0, 0, -78.5, 21.69065, 0.8534212, 0, 0, 0, 0, 0, 0, -80, 21.628025, 0.0003388159, 0, 0, 0, 0, 0, 0, -81.5, 21.543106, -0.8508157, 0, 0, 0, 0, 0, 0, -83, 21.427114, -1.7019702, 0, 0, 0, 0, 0, 0, -84.5, 21.32176, -2.5531247, 0, 0, 0, 0, 0, 0, -86, 21.230156, -3.4042792, 0, 0, 0, 0, 0, 0, -87.5, 21.139547, -3.8810167, 0, 0, 0, 0, 0, 0, -89, 21.050203, -4.357754, 0, 0, 0, 0, 0, 0, -90.5, 20.961575, -4.8344917, 0, 0, 0, 0, 0, 0, -92, 20.872946, -5.311229, 0, 0, 0, 0, 0, 0, -93.5, 20.784603, -5.457486, 0, 0, 0, 0, 0, 0, -95, 20.69626, -5.6037436, 0, 0, 0, 0, 0, 0, -96.5, 20.607918, -5.7500005, 0, 0, 0, 0, 0, 0, -98, 20.519571, -5.896258, 0, 0, 0, 0, 0, 0, -99.5, 20.431335, -5.920096, 0, 0, 0, 0, 0, 0, -101, 20.343098, -5.9439344, 0, 0, 0, 0, 0, 0, -102.5, 20.254858, -5.9677725, 0, 0, 0, 0, 0, 0, -104, 20.166622, -5.991611, 0, 0, 0, 0, 0, 0, -105.5, 20.078402, -5.9936237, 0, 0, 0, 0, 0, 0, -107, 19.990183, -5.995636, 0, 0, 0, 0, 0, 0, -108.5, 19.901966, -5.9976487, 0, 0, 0, 0, 0, 0, -110, 19.813751, -5.999661, 0, 0, 0, 0, 0, 0, -111.5, 19.725534, -5.9998307, 0, 0, 0, 0, 0, 0, -113, 19.540945, -6, 0, 0, 0, 0, 0, 0, -114.5, 19.308838, -6.0001693, 0, 0, 0, 0, 0, 0, -116, 19.07807, -6.000339, 0, 0, 0, 0, 0, 0, -117.5, 18.8473, -6.0023513, 0, 0, 0, 0, 0, 0, -119, 18.616531, -6.004364, 0, 0, 0, 0, 0, 0, -120.5, 18.385761, -6.0063763, 0, 0, 0, 0, 0, 0, -122, 18.154993, -6.008389, 0, 0, 0, 0, 0, 0, -123.49983, 17.92425, -6.032312, 0, 0, 0, 0, 0, 0, -124.999664, 17.693506, -6.056235, 0, 0, 0, 0, 0, 0, -126.49949, 17.462763, -6.080158, 0, 0, 0, 0, 0, 0, -127.99932, 17.23202, -6.104081, 0, 0, 0, 0, 0, 0, -129.49538, 17.001858, -6.252351, 0, 0, 0, 0, 0, 0, -130.99144, 16.771694, -6.4006205, 0, 0, 0, 0, 0, 0, -132.4875, 16.507177, -6.54889, 0, 0, 0, 0, 0, 0, -133.98357, 16.044994, -6.69716, 0, 0, 0, 0, 0, 0, -135.4378, 15.541233, -7.19782, 0, 0, 0, 0, 0, 0, -136.89206, 14.9897585, -7.6984806, 0, 0, 0, 0, 0, 0, -138.34631, 14.403548, -8.1991415, 0, 0, 0, 0, 0, 0, -139.80057, 13.772614, -8.699801, 0, 0, 0, 0, 0, 0, -141.02989, 13.206673, -9.699073, 0, 0, 0, 0, 0, 0, -142.2592, 12.645426, -10.698344, 0, 0, 0, 0, 0, 0, -143.48853, 12.123764, -11.697615, 0, 0, 0, 0, 0, 0, -144.71785, 11.622684, -12.696886, 0, 0, 0, 0, 0, 0, -145.38736, 11.280745, -14.047297, 0, 0, 0, 0, 0, 0, -146.05688, 10.812246, -15.397708, 0, 0, 0, 0, 0, 0, -146.7264, 10.320139, -16.74812, 0, 0, 0, 0, 0, 0, -147.39592, 9.882242, -18.09853, 0, 0, 0, 0, 0, 0, -147.58115, 9.509385, -20.050156, 0, 0, 0, 0, 0, 0, -147.76637, 9.296119, -22.00178, 0, 0, 0, 0, 0, 0, -147.95161, 9.197819, -23.953405, 0, 0, 0, 0, 0, 0, -148.32263, 9.214921, -25.896507, 0, 0, 0, 0, 0, 0, -148.69365, 9.308544, -27.83961, 0, 0, 0, 0, 0, 0, -149.06468, 9.44953, -29.78271, 0, 0, 0, 0, 0, 0, -149.79851, 9.581487, -31.337032, 0, 0, 0, 0, 0, 0, -150.53233, 9.679709, -32.891354, 0, 0, 0, 0, 0, 0, -151.26617, 9.740034, -34.44568, 0, 0, 0, 0, 0, 0, -152, 9.769837, -36, 0, 0, 0, 0, 0, 0, -152.65839, 9.752728, -37.15027, 0, 0, 0, 0, 0, 0, -154.23601, 9.677114, -38.296417, 0, 0, 0, 0, 0, 0, -155.81361, 9.596024, -39.442566, 0, 0, 0, 0, 0, 0, -157.39122, 9.493066, -40.58871, 0, 0, 0, 0, 0, 0, -158.96883, 9.439683, -41.73486, 0, 0, 0, 0, 0, 0, -160.54643, 9.347667, -42.88101, 0, 0, 0, 0, 0, 0, -162.12404, 10.274088, -44.027157, 0, 0, 0, 0, 0, 0, -163.70164, 10.27339, -45.1733, 0, 0, 0, 0, 0, 0, -165.27925, 10.273241, -46.31945, 0, 0, 0, 0, 0, 0, -166.85686, 10.273238, -47.4656, 0, 0, 0, 0, 0, 0, -168.43446, 10.273238, -48.611748, 0, 0, 0, 0, 0, 0, -170.01207, 10.273238, -49.757893, 0, 0, 0, 0, 0, 0, -171.58968, 10.273238, -50.90404, 0, 0, 0, 0, 0, 0, -173.1673, 10.273239, -52.05019, 0, 0, 0, 0, 0, 0, -174.7449, 10.273214, -53.19634, 0, 0, 0, 0, 0, 0, -176.32251, 9.267875, -54.342484, 0, 0, 0, 0, 0, 0, -177.90012, 9.411971, -55.488632, 0, 0, 0, 0, 0, 0, -179.47772, 9.459306, -56.63478, 0, 0, 0, 0, 0, 0, -181.05533, 9.581001, -57.78093, 0, 0, 0, 0, 0, 0, -182.63293, 9.711954, -58.927074, 0, 0, 0, 0, 0, 0, -184.21054, 10.005076, -60.073223, 0, 0, 0, 0, 0, 0, -186.10527, 10.165405, -60.036613, 0, 0, 0, 0, 0, 0, -188, 10.382976, -60, 0, 0, 0, 0, 0, 0, -186.722, 10.464266, -61.265774, 0, 0, 0, 0, 0, 0, -185.444, 10.515034, -62.53155, 0, 0, 0, 0, 0, 0, -184.16599, 10.5223055, -63.797325, 0, 0, 0, 0, 0, 0, -182.88799, 10.481368, -65.0631, 0, 0, 0, 0, 0, 0, -181.60999, 10.429999, -66.32887, 0, 0, 0, 0, 0, 0, -181.00612, 10.423836, -68.21216, 0, 0, 0, 0, 0, 0, -180.40225, 10.405779, -70.09545, 0, 0, 0, 0, 0, 0, -179.7984, 10.394964, -71.97874, 0, 0, 0, 0, 0, 0, -179.19208, 10.411264, -73.79041, 0, 0, 0, 0, 0, 0, -178.58577, 10.455806, -75.6021, 0, 0, 0, 0, 0, 0, -177.97946, 10.50969, -77.41377, 0, 0, 0, 0, 0, 0, -176.92407, 10.5730295, -78.939064, 0, 0, 0, 0, 0, 0, -175.86868, 10.642118, -80.464355, 0, 0, 0, 0, 0, 0, -174.8133, 10.703746, -81.989655, 0, 0, 0, 0, 0, 0, -173.56212, 10.739602, -82.96898, 0, 0, 0, 0, 0, 0, -172.31096, 10.771729, -83.9483, 0, 0, 0, 0, 0, 0, -171.05978, 10.804839, -84.92763, 0, 0, 0, 0, 0, 0, -169.80861, 10.847503, -85.90695, 0, 0, 0, 0, 0, 0, -168.35243, 10.889408, -86.93013, 0, 0, 0, 0, 0, 0, -166.89626, 10.932148, -87.95331, 0, 0, 0, 0, 0, 0, -165.44008, 10.977215, -88.97649, 0, 0, 0, 0, 0, 0, -163.9839, 11.023911, -89.999664, 0, 0, 0, 0, 0, 0, -162.48776, 11.073732, -91.020996, 0, 0, 0, 0, 0, 0, -160.99161, 11.123807, -92.04233, 0, 0, 0, 0, 0, 0, -159.49547, 11.173333, -93.06367, 0, 0, 0, 0, 0, 0, -157.99933, 11.221835, -94.085, 0, 0, 0, 0, 0, 0, -156.4995, 11.267958, -95.0425, 0, 0, 0, 0, 0, 0, -154.99966, 11.313458, -96, 0, 0, 0, 0, 0, 0, -153.49983, 11.358746, -96.9575, 0, 0, 0, 0, 0, 0, -152, 11.404391, -97.915, 0, 0, 0, 0, 0, 0, -150.5, 11.452142, -98.93633, 0, 0, 0, 0, 0, 0, -149, 11.501118, -99.95767, 0, 0, 0, 0, 0, 0, -147.5, 11.551662, -100.979004, 0, 0, 0, 0, 0, 0, -146, 11.603136, -102.000336, 0, 0, 0, 0, 0, 0, -144.50021, 11.656046, -103.02353, 0, 0, 0, 0, 0, 0, -143.00043, 11.709153, -104.04672, 0, 0, 0, 0, 0, 0, -141.50064, 11.762338, -105.069916, 0, 0, 0, 0, 0, 0, -140.00085, 11.815461, -106.09311, 0, 0, 0, 0, 0, 0, -138.50575, 11.869356, -107.072754, 0, 0, 0, 0, 0, 0, -137.01065, 11.924563, -108.0524, 0, 0, 0, 0, 0, 0, -135.51556, 11.982914, -109.03205, 0, 0, 0, 0, 0, 0, -134.02046, 12.044337, -110.011696, 0, 0, 0, 0, 0, 0, -132.57726, 12.1166315, -111.15901, 0, 0, 0, 0, 0, 0, -131.13405, 12.19495, -112.306335, 0, 0, 0, 0, 0, 0, -129.69083, 12.282075, -113.45366, 0, 0, 0, 0, 0, 0, -128.24762, 12.430261, -114.600975, 0, 0, 0, 0, 0, 0, -127.082405, 12.586989, -115.97335, 0, 0, 0, 0, 0, 0, -125.9172, 12.815898, -117.34572, 0, 0, 0, 0, 0, 0, -124.75199, 13.036767, -118.71809, 0, 0, 0, 0, 0, 0, -123.58678, 13.259268, -120.090454, 0, 0, 0, 0, 0, 0, -122.06942, 13.43494, -121.27237, 0, 0, 0, 0, 0, 0, -120.55207, 13.625129, -122.45428, 0, 0, 0, 0, 0, 0, -119.03471, 13.844206, -123.636185, 0, 0, 0, 0, 0, 0, -117.51736, 14.120978, -124.81809, 0, 0, 0, 0, 0, 0, -116, 14.347467, -126, 0, 0, 0, 0, 0, 0, -117.5, 14.702257, -127.166664, 0, 0, 0, 0, 0, 0, -119, 15.021369, -128.33333, 0, 0, 0, 0, 0, 0, -120.5, 15.324908, -129.5, 0, 0, 0, 0, 0, 0, -122, 15.548931, -130.66667, 0, 0, 0, 0, 0, 0, -123.5, 15.757633, -131.83333, 0, 0, 0, 0, 0, 0, -125, 15.907762, -133, 0, 0, 0, 0, 0, 0, -125, 16.064186, -134.66667, 0, 0, 0, 0, 0, 0, -125, 16.040468, -136.33333, 0, 0, 0, 0, 0, 0, -125, 15.9353285, -138, 0, 0, 0, 0, 0, 0, -125, 15.959216, -140, 0, 0, 0, 0, 0, 0, -125, 15.975913, -142, 0, 0, 0, 0, 0, 0, -125, 15.994188, -144, 0, 0, 0, 0, 0, 0, -125, 16.010986, -146),
@@ -1054,7 +1055,7 @@ _data = {
 }
 point_count = 214
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_sv1jh"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k0jmh"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1067,14 +1068,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_i0kfw"]
+[sub_resource type="Resource" id="Resource_d3nhd"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_sv1jh")
+source_material = SubResource("ShaderMaterial_k0jmh")
 
-[sub_resource type="Curve3D" id="Curve3D_k0jmh"]
+[sub_resource type="Curve3D" id="Curve3D_yy56d"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, -9.09612, 21.693455, 21.96642, 0, 0, 0, 0, 0, 0, -8.730747, 21.693455, 20.64428, 0, 0, 0, 0, 0, 0, -8.365374, 21.693455, 19.32214, 0, 0, 0, 0, 0, 0, -8, 21.693455, 18, 0, 0, 0, 0, 0, 0, -9.7, 21.693455, 17.381382, 0, 0, 0, 0, 0, 0, -11.4, 21.693455, 16.762762, 0, 0, 0, 0, 0, 0, -13.1, 21.693455, 16.144144, 0, 0, 0, 0, 0, 0, -14.8, 21.693455, 15.525525, 0, 0, 0, 0, 0, 0, -16.5, 21.693455, 14.906906, 0, 0, 0, 0, 0, 0, -18.5, 21.693455, 14.906906),
@@ -1082,7 +1083,7 @@ _data = {
 }
 point_count = 10
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_d3nhd"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_awtn1"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1095,14 +1096,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_yy56d"]
+[sub_resource type="Resource" id="Resource_kjtm0"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_d3nhd")
+source_material = SubResource("ShaderMaterial_awtn1")
 
-[sub_resource type="Curve3D" id="Curve3D_awtn1"]
+[sub_resource type="Curve3D" id="Curve3D_mwygp"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, -77.45, 21.693455, 29.406906, 0, 0, 0, 0, 0, 0, -75.725, 21.693455, 28.703453, 0, 0, 0, 0, 0, 0, -74, 21.693455, 28, 0, 0, 0, 0, 0, 0, -72.725, 21.693455, 28.703453, 0, 0, 0, 0, 0, 0, -71.45, 21.693455, 29.406906, 0, 0, 0, 0, 0, 0, -71.46, 21.693455, 31.306906, 0, 0, 0, 0, 0, 0, -71.47, 21.693455, 33.206905, 0, 0, 0, 0, 0, 0, -71.48, 21.693455, 35.106907, 0, 0, 0, 0, 0, 0, -71.49, 21.693455, 37.006905, 0, 0, 0, 0, 0, 0, -71.5, 21.693455, 38.906906, 0, 0, 0, 0, 0, 0, -73.5, 21.693455, 38.906906, 0, 0, 0, 0, 0, 0, -75.5, 21.693455, 38.906906),
@@ -1110,7 +1111,7 @@ _data = {
 }
 point_count = 12
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_kjtm0"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ffdsu"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1123,14 +1124,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_mwygp"]
+[sub_resource type="Resource" id="Resource_14l63"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_kjtm0")
+source_material = SubResource("ShaderMaterial_ffdsu")
 
-[sub_resource type="Curve3D" id="Curve3D_ffdsu"]
+[sub_resource type="Curve3D" id="Curve3D_g7sn3"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, -74.23452, 21.693455, -40.748993, 0, 0, 0, 0, 0, 0, -75.28761, 21.693455, -39.417812, 0, 0, 0, 0, 0, 0, -76.34071, 21.693455, -38.08663, 0, 0, 0, 0, 0, 0, -77.39381, 21.693455, -36.755455, 0, 0, 0, 0, 0, 0, -78.44691, 21.693455, -35.424274, 0, 0, 0, 0, 0, 0, -79.5, 21.693455, -34.093094),
@@ -1138,7 +1139,7 @@ _data = {
 }
 point_count = 6
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_14l63"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rfwkk"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1151,14 +1152,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_g7sn3"]
+[sub_resource type="Resource" id="Resource_htatf"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_14l63")
+source_material = SubResource("ShaderMaterial_rfwkk")
 
-[sub_resource type="Curve3D" id="Curve3D_rfwkk"]
+[sub_resource type="Curve3D" id="Curve3D_mmhlo"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, -35, 21.693455, 68.3569, 0, 0, 0, 0, 0, 0, -34.666668, 21.693455, 66.9046, 0, 0, 0, 0, 0, 0, -34.333332, 21.693455, 65.4523, 0, 0, 0, 0, 0, 0, -34, 21.693455, 64, 0, 0, 0, 0, 0, 0, -35.35382, 21.693455, 62.988625, 0, 0, 0, 0, 0, 0, -36.707645, 21.693455, 61.977245, 0, 0, 0, 0, 0, 0, -38.061466, 21.693455, 60.96587, 0, 0, 0, 0, 0, 0, -36.5461, 21.693455, 60.724403, 0, 0, 0, 0, 0, 0, -35.030735, 21.693455, 60.482933, 0, 0, 0, 0, 0, 0, -33.515366, 21.693455, 60.241467, 0, 0, 0, 0, 0, 0, -32, 21.693455, 60, 0, 0, 0, 0, 0, 0, -30.5, 21.693455, 60.302303, 0, 0, 0, 0, 0, 0, -29, 21.693455, 60.604603, 0, 0, 0, 0, 0, 0, -27.5, 21.693455, 60.906906, 0, 0, 0, 0, 0, 0, -27.5, 21.693455, 62.906906, 0, 0, 0, 0, 0, 0, -27.5, 21.693455, 64.906906),
@@ -1166,7 +1167,7 @@ _data = {
 }
 point_count = 16
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_htatf"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wmp5s"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1179,14 +1180,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_mmhlo"]
+[sub_resource type="Resource" id="Resource_tr5uo"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_htatf")
+source_material = SubResource("ShaderMaterial_wmp5s")
 
-[sub_resource type="Curve3D" id="Curve3D_wmp5s"]
+[sub_resource type="Curve3D" id="Curve3D_w8q2b"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 55, 21.693455, -85.54309, 0, 0, 0, 0, 0, 0, 55.612293, 21.693455, -84.06489, 0, 0, 0, 0, 0, 0, 56.224586, 21.693455, -82.58668, 0, 0, 0, 0, 0, 0, 56.83688, 21.693455, -81.108475, 0, 0, 0, 0, 0, 0, 57.449173, 21.693455, -79.630264, 0, 0, 0, 0, 0, 0, 58.061466, 21.693455, -78.15206, 0, 0, 0, 0, 0, 0, 56.849174, 21.693455, -76.921646, 0, 0, 0, 0, 0, 0, 55.63688, 21.693455, -75.69124, 0, 0, 0, 0, 0, 0, 54.424587, 21.693455, -74.46082, 0, 0, 0, 0, 0, 0, 53.21229, 21.693455, -73.230415, 0, 0, 0, 0, 0, 0, 52, 21.693455, -72, 0, 0, 0, 0, 0, 0, 50.606148, 21.693455, -73.27952, 0, 0, 0, 0, 0, 0, 49.21229, 21.693455, -74.55903, 0, 0, 0, 0, 0, 0, 47.81844, 21.693455, -75.83855, 0, 0, 0, 0, 0, 0, 46.424587, 21.693455, -77.11806, 0, 0, 0, 0, 0, 0, 45.030735, 21.693455, -78.397575, 0, 0, 0, 0, 0, 0, 44.265366, 21.693455, -80.24534, 0, 0, 0, 0, 0, 0, 43.5, 21.693455, -82.093094),
@@ -1194,7 +1195,7 @@ _data = {
 }
 point_count = 18
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_tr5uo"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iq1de"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1207,14 +1208,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_w8q2b"]
+[sub_resource type="Resource" id="Resource_ix3q3"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_tr5uo")
+source_material = SubResource("ShaderMaterial_iq1de")
 
-[sub_resource type="Curve3D" id="Curve3D_iq1de"]
+[sub_resource type="Curve3D" id="Curve3D_rkq1q"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 64, 21.693455, 67.3569, 0, 0, 0, 0, 0, 0, 63, 21.693455, 65.67845, 0, 0, 0, 0, 0, 0, 62, 21.693455, 64, 0, 0, 0, 0, 0, 0, 61.543293, 21.693455, 62.529526, 0, 0, 0, 0, 0, 0, 61.086582, 21.693455, 61.059055, 0, 0, 0, 0, 0, 0, 60.629875, 21.693455, 59.58858, 0, 0, 0, 0, 0, 0, 60.173164, 21.693455, 58.11811, 0, 0, 0, 0, 0, 0, 58.538532, 21.693455, 57.294487, 0, 0, 0, 0, 0, 0, 56.9039, 21.693455, 56.470867, 0, 0, 0, 0, 0, 0, 55.269268, 21.693455, 55.647243, 0, 0, 0, 0, 0, 0, 53.634632, 21.693455, 54.823624, 0, 0, 0, 0, 0, 0, 52, 21.693455, 54, 0, 0, 0, 0, 0, 0, 50, 21.693455, 54, 0, 0, 0, 0, 0, 0, 48, 21.693455, 54, 0, 0, 0, 0, 0, 0, 46, 21.693455, 54, 0, 0, 0, 0, 0, 0, 44.805256, 21.693455, 55.352566, 0, 0, 0, 0, 0, 0, 43.610508, 21.693455, 56.705135, 0, 0, 0, 0, 0, 0, 42.415764, 21.693455, 58.0577, 0, 0, 0, 0, 0, 0, 41.221016, 21.693455, 59.41027, 0, 0, 0, 0, 0, 0, 40.02627, 21.693455, 60.762836, 0, 0, 0, 0, 0, 0, 38.821533, 21.693455, 61.83219, 0, 0, 0, 0, 0, 0, 37.616795, 21.693455, 62.901546, 0, 0, 0, 0, 0, 0, 36.412056, 21.693455, 63.970898, 0, 0, 0, 0, 0, 0, 35.207317, 21.693455, 65.04025, 0, 0, 0, 0, 0, 0, 34.00258, 21.693455, 66.109604, 0, 0, 0, 0, 0, 0, 32.802155, 21.693455, 67.289406, 0, 0, 0, 0, 0, 0, 31.60173, 21.693455, 68.469215, 0, 0, 0, 0, 0, 0, 30.401308, 21.693455, 69.64902, 0, 0, 0, 0, 0, 0, 29.200884, 21.693455, 70.82882, 0, 0, 0, 0, 0, 0, 28.000462, 21.693455, 72.00862, 0, 0, 0, 0, 0, 0, 26.802048, 21.693455, 73.20696, 0, 0, 0, 0, 0, 0, 25.603632, 21.693455, 74.40531, 0, 0, 0, 0, 0, 0, 24.405218, 21.693455, 75.60365, 0, 0, 0, 0, 0, 0, 23.206804, 21.693455, 76.801994, 0, 0, 0, 0, 0, 0, 22.008389, 21.693455, 78.000336, 0, 0, 0, 0, 0, 0, 20.827528, 21.693455, 79.20027, 0, 0, 0, 0, 0, 0, 19.646666, 21.693455, 80.4002, 0, 0, 0, 0, 0, 0, 18.465805, 21.693455, 81.600136, 0, 0, 0, 0, 0, 0, 17.284943, 21.693455, 82.800064, 0, 0, 0, 0, 0, 0, 16.10408, 21.693455, 84, 0, 0, 0, 0, 0, 0, 15.0226965, 21.693455, 85.2, 0, 0, 0, 0, 0, 0, 13.941313, 21.693455, 86.4, 0, 0, 0, 0, 0, 0, 12.859928, 21.693455, 87.6, 0, 0, 0, 0, 0, 0, 11.778544, 21.637016, 88.8, 0, 0, 0, 0, 0, 0, 10.69716, 21.361427, 90, 0, 0, 0, 0, 0, 0, 9.697821, 21.03737, 91.5, 0, 0, 0, 0, 0, 0, 8.698481, 20.636295, 93, 0, 0, 0, 0, 0, 0, 7.699141, 20.294409, 94.5, 0, 0, 0, 0, 0, 0, 6.699802, 20.12742, 96, 0, 0, 0, 0, 0, 0, 6.199226, 20.033354, 97.5, 0, 0, 0, 0, 0, 0, 5.6986504, 19.943846, 99, 0, 0, 0, 0, 0, 0, 5.1980743, 19.857199, 100.5, 0, 0, 0, 0, 0, 0, 4.697499, 19.771053, 102, 0, 0, 0, 0, 0, 0, 4.5512414, 19.643343, 103.5, 0, 0, 0, 0, 0, 0, 4.4049845, 19.447655, 105, 0, 0, 0, 0, 0, 0, 4.258727, 19.217264, 106.5, 0, 0, 0, 0, 0, 0, 4.11247, 18.986734, 108, 0, 0, 0, 0, 0, 0, 4.11247, 18.679094, 110, 0, 0, 0, 0, 0, 0, 4.11247, 18.371456, 112, 0, 0, 0, 0, 0, 0, 4.11247, 18.063816, 114, 0, 0, 0, 0, 0, 0, 4.258727, 17.833149, 115.499916, 0, 0, 0, 0, 0, 0, 4.4049845, 17.602674, 116.99983, 0, 0, 0, 0, 0, 0, 4.5512414, 17.372337, 118.49975, 0, 0, 0, 0, 0, 0, 4.697499, 17.142138, 119.999664, 0, 0, 0, 0, 0, 0, 5.1980743, 16.913034, 121.49757, 0, 0, 0, 0, 0, 0, 5.6986504, 16.684229, 122.99547, 0, 0, 0, 0, 0, 0, 6.199226, 16.451956, 124.49337, 0, 0, 0, 0, 0, 0, 6.699802, 16.07489, 125.99127, 0, 0, 0, 0, 0, 0, 7.699141, 15.856649, 127.46542, 0, 0, 0, 0, 0, 0, 8.698481, 15.599149, 128.93958, 0, 0, 0, 0, 0, 0, 9.697821, 15.478368, 130.41373, 0, 0, 0, 0, 0, 0, 10.69716, 15.498583, 131.88786, 0, 0, 0, 0, 0, 0, 12.04889, 15.5, 133.2176, 0, 0, 0, 0, 0, 0, 13.40062, 15.5, 134.54733, 0, 0, 0, 0, 0, 0, 14.752351, 15.5, 135.87708, 0, 0, 0, 0, 0, 0, 16.10408, 15.5, 137.2068, 0, 0, 0, 0, 0, 0, 17.580158, 15.5, 138.07979, 0, 0, 0, 0, 0, 0, 19.056234, 15.5, 138.95277, 0, 0, 0, 0, 0, 0, 20.532312, 15.5, 139.82574, 0, 0, 0, 0, 0, 0, 22.008389, 15.5, 140.69873, 0, 0, 0, 0, 0, 0, 23.506376, 15.5, 140.82317, 0, 0, 0, 0, 0, 0, 25.004364, 15.489157, 140.94759, 0, 0, 0, 0, 0, 0, 26.502352, 15.239396, 141.07202, 0, 0, 0, 0, 0, 0, 28.00034, 14.56827, 141.19646, 0, 0, 0, 0, 0, 0, 29.500254, 13.873101, 140.69978, 0, 0, 0, 0, 0, 0, 31.00017, 13.181083, 140.20313, 0, 0, 0, 0, 0, 0, 32.500084, 12.506473, 139.70645, 0, 0, 0, 0, 0, 0, 34, 11.860293, 139.2098, 0, 0, 0, 0, 0, 0, 35.5, 11.305032, 138.40459, 0, 0, 0, 0, 0, 0, 37, 10.839878, 137.59938, 0, 0, 0, 0, 0, 0, 38.5, 10.433435, 136.79417, 0, 0, 0, 0, 0, 0, 40, 10.122237, 135.98897, 0, 0, 0, 0, 0, 0, 41.5, 10.022359, 135.01556, 0, 0, 0, 0, 0, 0, 43, 10.044748, 134.04216, 0, 0, 0, 0, 0, 0, 44.5, 10.181527, 133.06876, 0, 0, 0, 0, 0, 0, 46, 10.363319, 132.09535, 0, 0, 0, 0, 0, 0, 47.5, 10.59907, 131.22237, 0, 0, 0, 0, 0, 0, 49, 10.8308735, 130.3494, 0, 0, 0, 0, 0, 0, 50.5, 11.039341, 129.47641, 0, 0, 0, 0, 0, 0, 52, 11.220164, 128.60344, 0, 0, 0, 0, 0, 0, 53.5, 11.363743, 128.12283, 0, 0, 0, 0, 0, 0, 55, 11.498075, 127.64224, 0, 0, 0, 0, 0, 0, 56.5, 11.625698, 127.16165, 0, 0, 0, 0, 0, 0, 58, 11.749871, 126.68106, 0, 0, 0, 0, 0, 0, 59.5, 11.862256, 126.512726, 0, 0, 0, 0, 0, 0, 61, 11.9724455, 126.34438, 0, 0, 0, 0, 0, 0, 62.5, 12.081591, 126.17605, 0, 0, 0, 0, 0, 0, 64, 12.194557, 126.00771, 0, 0, 0, 0, 0, 0, 65.5, 12.309441, 125.85751, 0, 0, 0, 0, 0, 0, 67, 12.424002, 125.70731, 0, 0, 0, 0, 0, 0, 68.5, 12.5394745, 125.55712, 0, 0, 0, 0, 0, 0, 70, 12.64701, 125.40692, 0, 0, 0, 0, 0, 0, 71.5, 12.7568035, 125.028595, 0, 0, 0, 0, 0, 0, 73, 12.862976, 124.65027, 0, 0, 0, 0, 0, 0, 74.5, 12.965511, 124.27194, 0, 0, 0, 0, 0, 0, 76, 13.0661745, 123.893616, 0, 0, 0, 0, 0, 0, 77.5, 13.174963, 123.24658, 0, 0, 0, 0, 0, 0, 79, 13.285873, 122.59955, 0, 0, 0, 0, 0, 0, 80.5, 13.397579, 121.952515, 0, 0, 0, 0, 0, 0, 82, 13.50957, 121.30548, 0, 0, 0, 0, 0, 0, 83.499916, 13.632431, 120.45243, 0, 0, 0, 0, 0, 0, 84.99983, 13.75426, 119.59938, 0, 0, 0, 0, 0, 0, 86.49975, 13.876885, 118.74633, 0, 0, 0, 0, 0, 0, 87.999664, 14.000942, 117.89328, 0, 0, 0, 0, 0, 0, 89.497734, 14.135154, 116.76959, 0, 0, 0, 0, 0, 0, 90.995804, 14.269298, 115.645905, 0, 0, 0, 0, 0, 0, 92.49388, 14.40272, 114.52222, 0, 0, 0, 0, 0, 0, 93.99195, 14.538901, 113.39853, 0, 0, 0, 0, 0, 0, 95.17438, 14.66267, 112.29961, 0, 0, 0, 0, 0, 0, 96.356804, 14.787666, 111.20068, 0, 0, 0, 0, 0, 0, 97.53923, 14.913446, 110.10176, 0, 0, 0, 0, 0, 0, 98.72166, 15.037329, 109.00283, 0, 0, 0, 0, 0, 0, 99.90408, 15.160871, 107.90391, 0, 0, 0, 0, 0, 0, 101.00351, 15.282509, 106.72129, 0, 0, 0, 0, 0, 0, 102.102936, 15.403627, 105.538666, 0, 0, 0, 0, 0, 0, 103.20236, 15.525963, 104.35605, 0, 0, 0, 0, 0, 0, 104.30179, 15.648009, 103.17343, 0, 0, 0, 0, 0, 0, 105.401215, 15.769579, 101.990814, 0, 0, 0, 0, 0, 0, 106.5322, 15.896891, 100.49074, 0, 0, 0, 0, 0, 0, 107.66319, 16.004053, 98.99066, 0, 0, 0, 0, 0, 0, 108.79418, 16.089283, 97.490585, 0, 0, 0, 0, 0, 0, 109.92517, 16.155115, 95.99051, 0, 0, 0, 0, 0, 0, 110.81967, 16.193743, 94.491714, 0, 0, 0, 0, 0, 0, 111.71417, 16.237158, 92.99293, 0, 0, 0, 0, 0, 0, 112.60867, 16.302996, 91.49414, 0, 0, 0, 0, 0, 0, 113.503174, 16.393038, 89.995346, 0, 0, 0, 0, 0, 0, 114.62738, 16.510866, 88.49651, 0, 0, 0, 0, 0, 0, 115.75159, 16.613338, 86.99767, 0, 0, 0, 0, 0, 0, 116.87579, 16.66315, 85.49884, 0, 0, 0, 0, 0, 0, 118, 16.662924, 84, 0, 0, 0, 0, 0, 0, 118.5, 16.54503, 82.225, 0, 0, 0, 0, 0, 0, 119, 16.385754, 80.45, 0, 0, 0, 0, 0, 0, 119.5, 16.167425, 78.675, 0, 0, 0, 0, 0, 0, 120, 15.961916, 76.9),
@@ -1222,7 +1223,7 @@ _data = {
 }
 point_count = 154
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ix3q3"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kxg4y"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1235,14 +1236,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_rkq1q"]
+[sub_resource type="Resource" id="Resource_d0ard"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_ix3q3")
+source_material = SubResource("ShaderMaterial_kxg4y")
 
-[sub_resource type="Curve3D" id="Curve3D_kxg4y"]
+[sub_resource type="Curve3D" id="Curve3D_ga78e"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 10, 21.693455, 12, 0, 0, 0, 0, 0, 0, 11.625, 21.693455, 11.226727, 0, 0, 0, 0, 0, 0, 13.25, 21.693455, 10.453453, 0, 0, 0, 0, 0, 0, 14.875, 21.693455, 9.68018, 0, 0, 0, 0, 0, 0, 16.5, 21.693455, 8.906906),
@@ -1250,7 +1251,7 @@ _data = {
 }
 point_count = 5
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_d0ard"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h2mv7"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1263,14 +1264,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_ga78e"]
+[sub_resource type="Resource" id="Resource_tsc5a"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_d0ard")
+source_material = SubResource("ShaderMaterial_h2mv7")
 
-[sub_resource type="Curve3D" id="Curve3D_h2mv7"]
+[sub_resource type="Curve3D" id="Curve3D_k7d61"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 64, 21.693455, 67.3569, 0, 0, 0, 0, 0, 0, 63, 21.693455, 65.67845, 0, 0, 0, 0, 0, 0, 62, 21.693455, 64, 0, 0, 0, 0, 0, 0, 61.543293, 21.693455, 62.529526, 0, 0, 0, 0, 0, 0, 61.086582, 21.693455, 61.059055, 0, 0, 0, 0, 0, 0, 60.629875, 21.693455, 59.58858, 0, 0, 0, 0, 0, 0, 60.173164, 21.693455, 58.11811, 0, 0, 0, 0, 0, 0, 61.448776, 21.693455, 56.745407, 0, 0, 0, 0, 0, 0, 62.72439, 21.693455, 55.372704, 0, 0, 0, 0, 0, 0, 64, 21.693455, 54, 0, 0, 0, 0, 0, 0, 65.48771, 21.693455, 54.903175, 0, 0, 0, 0, 0, 0, 66.97541, 21.693455, 55.806347, 0, 0, 0, 0, 0, 0, 68.46312, 21.693455, 56.709522, 0, 0, 0, 0, 0, 0, 69.95083, 21.693455, 57.612694, 0, 0, 0, 0, 0, 0, 71.43853, 21.693455, 58.51587, 0, 0, 0, 0, 0, 0, 72.05083, 21.693455, 59.994076, 0, 0, 0, 0, 0, 0, 72.66312, 21.693455, 61.472282, 0, 0, 0, 0, 0, 0, 73.27541, 21.693455, 62.950493, 0, 0, 0, 0, 0, 0, 73.8877, 21.693455, 64.428696, 0, 0, 0, 0, 0, 0, 74.5, 21.693455, 65.906906),
@@ -1278,7 +1279,7 @@ _data = {
 }
 point_count = 20
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_tsc5a"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_w8cw2"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1291,14 +1292,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_k7d61"]
+[sub_resource type="Resource" id="Resource_8oifj"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_tsc5a")
+source_material = SubResource("ShaderMaterial_w8cw2")
 
-[sub_resource type="Curve3D" id="Curve3D_w8cw2"]
+[sub_resource type="Curve3D" id="Curve3D_neaik"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, -199.30411, 9.526616, -47.866264, 0, 0, 0, 0, 0, 0, -200.97809, 9.587743, -47.8997, 0, 0, 0, 0, 0, 0, -202.65205, 9.735153, -47.933132, 0, 0, 0, 0, 0, 0, -204.32603, 9.959394, -47.966568, 0, 0, 0, 0, 0, 0, -206, 10.272623, -48, 0, 0, 0, 0, 0, 0, -207.20706, 10.60205, -46.915974, 0, 0, 0, 0, 0, 0, -208.41412, 10.947416, -45.831944, 0, 0, 0, 0, 0, 0, -209.62117, 11.3382435, -44.747917, 0, 0, 0, 0, 0, 0, -210.82823, 11.717579, -43.663887, 0, 0, 0, 0, 0, 0, -212.0353, 11.938258, -42.57986, 0, 0, 0, 0, 0, 0, -213.52579, 12.351434, -42.083954, 0, 0, 0, 0, 0, 0, -215.0163, 12.766117, -41.588043, 0, 0, 0, 0, 0, 0, -216.50679, 13.165968, -41.092136, 0, 0, 0, 0, 0, 0, -217.99728, 13.552796, -40.59623, 0, 0, 0, 0, 0, 0, -219.49782, 14.004426, -40.61866, 0, 0, 0, 0, 0, 0, -220.99835, 14.428558, -40.64109, 0, 0, 0, 0, 0, 0, -222.49887, 14.809174, -40.66352, 0, 0, 0, 0, 0, 0, -223.9994, 15.164419, -40.68595, 0, 0, 0, 0, 0, 0, -225.49954, 15.513323, -40.892128, 0, 0, 0, 0, 0, 0, -226.99968, 15.849028, -41.0983, 0, 0, 0, 0, 0, 0, -228.49982, 16.07198, -41.304478, 0, 0, 0, 0, 0, 0, -229.99995, 16.212252, -41.510654, 0, 0, 0, 0, 0, 0, -231.49997, 16.336987, -41.611168, 0, 0, 0, 0, 0, 0, -232.99998, 16.457123, -41.711678, 0, 0, 0, 0, 0, 0, -234.49998, 16.574799, -41.812187, 0, 0, 0, 0, 0, 0, -236, 16.689833, -41.912697, 0, 0, 0, 0, 0, 0, -237.5, 16.801243, -41.93268, 0, 0, 0, 0, 0, 0, -239, 16.910082, -41.952663, 0, 0, 0, 0, 0, 0, -240.5, 17.016787, -41.972645, 0, 0, 0, 0, 0, 0, -242, 17.121456, -41.992626, 0, 0, 0, 0, 0, 0, -243.5, 17.222801, -41.996483, 0, 0, 0, 0, 0, 0, -245, 17.322437, -42.00034, 0, 0, 0, 0, 0, 0, -246.5, 17.420425, -42.004196, 0, 0, 0, 0, 0, 0, -248, 17.51683, -42.00805, 0, 0, 0, 0, 0, 0, -249.5, 17.610617, -42.03206, 0, 0, 0, 0, 0, 0, -251, 17.703167, -42.056065, 0, 0, 0, 0, 0, 0, -252.5, 17.794605, -42.080074, 0, 0, 0, 0, 0, 0, -254, 17.88554, -42.10408, 0, 0, 0, 0, 0, 0, -255.49983, 17.974361, -42.252266, 0, 0, 0, 0, 0, 0, -256.99966, 18.063229, -42.40045, 0, 0, 0, 0, 0, 0, -258.49948, 18.152105, -42.548637, 0, 0, 0, 0, 0, 0, -259.99933, 18.246725, -42.69682, 0, 0, 0, 0, 0, 0, -261.4953, 18.33144, -43.19547, 0, 0, 0, 0, 0, 0, -262.99127, 18.422956, -43.69412, 0, 0, 0, 0, 0, 0, -264.48724, 18.516163, -44.192764, 0, 0, 0, 0, 0, 0, -265.98322, 18.645426, -44.691414, 0, 0, 0, 0, 0, 0, -267.43536, 18.943556, -45.66683, 0, 0, 0, 0, 0, 0, -268.88754, 19.38512, -46.642246, 0, 0, 0, 0, 0, 0, -270.3397, 19.83444, -47.61766, 0, 0, 0, 0, 0, 0, -271.79184, 20.3039, -48.59308, 0, 0, 0, 0, 0, 0, -272.9953, 20.473719, -49.79654, 0, 0, 0, 0, 0, 0, -274.19876, 20.606714, -51, 0, 0, 0, 0, 0, 0, -275.40222, 20.76884, -52.20346, 0, 0, 0, 0, 0, 0, -276.60568, 20.986353, -53.40692, 0, 0, 0, 0, 0, 0, -277.2708, 21.282928, -54.70759, 0, 0, 0, 0, 0, 0, -277.93594, 21.622654, -56.00826, 0, 0, 0, 0, 0, 0, -278.60107, 21.886051, -57.308926, 0, 0, 0, 0, 0, 0, -277.61142, 22.151403, -58.310078, 0, 0, 0, 0, 0, 0, -276.6218, 22.432468, -59.31123, 0, 0, 0, 0, 0, 0, -275.0756, 22.584309, -59.538025, 0, 0, 0, 0, 0, 0, -273.52942, 22.71586, -59.764816, 0, 0, 0, 0, 0, 0, -271.98322, 22.81836, -59.99161, 0, 0, 0, 0, 0, 0, -270.3786, 23.264313, -60.189304, 0, 0, 0, 0, 0, 0, -268.774, 23.750256, -60.386997, 0, 0, 0, 0, 0, 0, -267.16937, 24.274904, -60.58469, 0, 0, 0, 0, 0, 0, -265.587, 24.990286, -61.293495, 0, 0, 0, 0, 0, 0, -264.0046, 25.719145, -62.002304, 0, 0, 0, 0, 0, 0, -262.99966, 26.272497, -62.999832, 0, 0, 0, 0, 0, 0, -261.99472, 26.825848, -63.997356, 0, 0, 0, 0, 0, 0, -260.40427, 27.485909, -64.70214, 0, 0, 0, 0, 0, 0, -258.81384, 28.088593, -65.40692, 0, 0, 0, 0, 0, 0, -257.14542, 28.575546, -65.57268, 0, 0, 0, 0, 0, 0, -255.47697, 28.995228, -65.73843, 0, 0, 0, 0, 0, 0, -253.80853, 29.34727, -65.90418, 0, 0, 0, 0, 0, 0, -251.86646, 29.531734, -65.93243, 0, 0, 0, 0, 0, 0, -249.92436, 29.568453, -65.96068, 0, 0, 0, 0, 0, 0, -247.98227, 29.578672, -65.98893, 0, 0, 0, 0, 0, 0, -245.98297, 29.576853, -65.98053, 0, 0, 0, 0, 0, 0, -243.98367, 29.565924, -65.97213, 0, 0, 0, 0, 0, 0, -241.98438, 29.543188, -65.96373, 0, 0, 0, 0, 0, 0, -240.47815, 29.496578, -65.91712, 0, 0, 0, 0, 0, 0, -238.97192, 29.424616, -65.870514, 0, 0, 0, 0, 0, 0, -237.4657, 29.324533, -65.823906, 0, 0, 0, 0, 0, 0, -235.95947, 29.194614, -65.7773, 0, 0, 0, 0, 0, 0, -233.97298, 29.01239, -65.85153, 0, 0, 0, 0, 0, 0, -231.9865, 28.786936, -65.925766, 0, 0, 0, 0, 0, 0, -230, 28.51534, -66, 0, 0, 0, 0, 0, 0, -228.13425, 28.203262, -65.43675, 0, 0, 0, 0, 0, 0, -226.2685, 27.87931, -64.8735, 0, 0, 0, 0, 0, 0, -224.40276, 27.526855, -64.31025, 0, 0, 0, 0, 0, 0, -222.537, 27.08241, -63.747),
@@ -1306,7 +1307,7 @@ _data = {
 }
 point_count = 91
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_8oifj"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0bx1y"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1319,14 +1320,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_neaik"]
+[sub_resource type="Resource" id="Resource_j6suc"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_8oifj")
+source_material = SubResource("ShaderMaterial_0bx1y")
 
-[sub_resource type="Curve3D" id="Curve3D_0bx1y"]
+[sub_resource type="Curve3D" id="Curve3D_36sik"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, -52.775414, 21.693455, -78.67806, 0, 0, 0, 0, 0, 0, -51.15078, 21.693455, -79.007996, 0, 0, 0, 0, 0, 0, -49.526146, 21.693455, -79.33793, 0, 0, 0, 0, 0, 0, -47.90151, 21.693455, -79.66786, 0, 0, 0, 0, 0, 0, -46.276875, 21.693455, -79.997795, 0, 0, 0, 0, 0, 0, -44.65224, 21.693455, -80.32773, 0, 0, 0, 0, 0, 0, -46.5, 21.693455, -81.093094),
@@ -1334,7 +1335,7 @@ _data = {
 }
 point_count = 7
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_j6suc"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cagkj"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1347,14 +1348,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_36sik"]
+[sub_resource type="Resource" id="Resource_xi13a"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_j6suc")
+source_material = SubResource("ShaderMaterial_cagkj")
 
-[sub_resource type="Curve3D" id="Curve3D_cagkj"]
+[sub_resource type="Curve3D" id="Curve3D_1uqt8"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 66.4, 21.693455, 15.537755, 0, 0, 0, 0, 0, 0, 67.12, 21.693455, 17.230204, 0, 0, 0, 0, 0, 0, 67.84, 21.693455, 18.922653, 0, 0, 0, 0, 0, 0, 68.56, 21.693455, 20.615103, 0, 0, 0, 0, 0, 0, 69.28, 21.693455, 22.30755, 0, 0, 0, 0, 0, 0, 70, 21.693455, 24, 0, 0, 0, 0, 0, 0, 72, 21.693455, 24, 0, 0, 0, 0, 0, 0, 74, 21.693455, 24, 0, 0, 0, 0, 0, 0, 76, 21.693455, 24, 0, 0, 0, 0, 0, 0, 77.416664, 21.693455, 25.151152, 0, 0, 0, 0, 0, 0, 78.833336, 21.693455, 26.302301, 0, 0, 0, 0, 0, 0, 80.25, 21.693455, 27.453453, 0, 0, 0, 0, 0, 0, 81.666664, 21.693455, 28.604605, 0, 0, 0, 0, 0, 0, 83.083336, 21.693455, 29.755754, 0, 0, 0, 0, 0, 0, 84.5, 21.693455, 30.906906, 0, 0, 0, 0, 0, 0, 84.5, 21.693455, 32.906906, 0, 0, 0, 0, 0, 0, 84.5, 21.693455, 34.906906),
@@ -1362,7 +1363,7 @@ _data = {
 }
 point_count = 17
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_xi13a"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yvhls"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1375,14 +1376,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_1uqt8"]
+[sub_resource type="Resource" id="Resource_1p2y1"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_xi13a")
+source_material = SubResource("ShaderMaterial_yvhls")
 
-[sub_resource type="Curve3D" id="Curve3D_yvhls"]
+[sub_resource type="Curve3D" id="Curve3D_ej62c"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 116.5, 19.001146, -9.492218, 0, 0, 0, 0, 0, 0, 115, 19.231916, -10.328145, 0, 0, 0, 0, 0, 0, 113.5, 19.462685, -11.164073, 0, 0, 0, 0, 0, 0, 112, 19.693455, -12, 0, 0, 0, 0, 0, 0, 110.61127, 19.77291, -12.612927, 0, 0, 0, 0, 0, 0, 109.222534, 19.85208, -13.225855, 0, 0, 0, 0, 0, 0, 107.8338, 19.932291, -13.838781, 0, 0, 0, 0, 0, 0, 106.44507, 19.983799, -14.451709, 0, 0, 0, 0, 0, 0, 105.18796, 20.052284, -15.851772, 0, 0, 0, 0, 0, 0, 103.93085, 20.440403, -17.251835, 0, 0, 0, 0, 0, 0, 102.67373, 20.960562, -18.651897, 0, 0, 0, 0, 0, 0, 102.038826, 21.609585, -20.445852, 0, 0, 0, 0, 0, 0, 101.403915, 21.693455, -22.239805, 0, 0, 0, 0, 0, 0, 100.769005, 21.693455, -24.03376, 0, 0, 0, 0, 0, 0, 100.70062, 21.693455, -25.869564, 0, 0, 0, 0, 0, 0, 100.63224, 21.693455, -27.70537, 0, 0, 0, 0, 0, 0, 100.56385, 21.693455, -29.541176, 0, 0, 0, 0, 0, 0, 100.42289, 21.693455, -31.155882, 0, 0, 0, 0, 0, 0, 100.28193, 21.693455, -32.770588, 0, 0, 0, 0, 0, 0, 100.14096, 21.693455, -34.385292, 0, 0, 0, 0, 0, 0, 100, 21.693455, -36, 0, 0, 0, 0, 0, 0, 101.55075, 21.693455, -36.77591, 0, 0, 0, 0, 0, 0, 103.101494, 21.6639, -37.55182, 0, 0, 0, 0, 0, 0, 104.652245, 21.647877, -38.32773, 0, 0, 0, 0, 0, 0, 105.57612, 21.657173, -38.71041, 0, 0, 0, 0, 0, 0, 106.5, 21.657286, -39.093094),
@@ -1390,7 +1391,7 @@ _data = {
 }
 point_count = 26
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_1p2y1"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ukrnc"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1403,14 +1404,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_ej62c"]
+[sub_resource type="Resource" id="Resource_btdb3"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_1p2y1")
+source_material = SubResource("ShaderMaterial_ukrnc")
 
-[sub_resource type="Curve3D" id="Curve3D_ukrnc"]
+[sub_resource type="Curve3D" id="Curve3D_6nj5j"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 25.646566, 21.693455, 39.534325, 0, 0, 0, 0, 0, 0, 24.917252, 21.693455, 41.22746, 0, 0, 0, 0, 0, 0, 24.187939, 21.693455, 42.920593, 0, 0, 0, 0, 0, 0, 23.458626, 21.693455, 44.61373, 0, 0, 0, 0, 0, 0, 22.729313, 21.693455, 46.306866, 0, 0, 0, 0, 0, 0, 22, 21.693455, 48, 0, 0, 0, 0, 0, 0, 20, 21.693455, 48, 0, 0, 0, 0, 0, 0, 18, 21.693455, 48, 0, 0, 0, 0, 0, 0, 16, 21.693455, 48, 0, 0, 0, 0, 0, 0, 14.785714, 21.693455, 49.272415, 0, 0, 0, 0, 0, 0, 13.571428, 21.693455, 50.54483, 0, 0, 0, 0, 0, 0, 12.357142, 21.693455, 51.817245, 0, 0, 0, 0, 0, 0, 11.142858, 21.693455, 53.08966, 0, 0, 0, 0, 0, 0, 9.928572, 21.693455, 54.362076, 0, 0, 0, 0, 0, 0, 8.714286, 21.693455, 55.63449, 0, 0, 0, 0, 0, 0, 7.5, 21.693455, 56.906906),
@@ -1418,7 +1419,7 @@ _data = {
 }
 point_count = 16
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_btdb3"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h2rki"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1431,14 +1432,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_6nj5j"]
+[sub_resource type="Resource" id="Resource_ndhjs"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_btdb3")
+source_material = SubResource("ShaderMaterial_h2rki")
 
-[sub_resource type="Curve3D" id="Curve3D_h2rki"]
+[sub_resource type="Curve3D" id="Curve3D_pko6l"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, -107, 19.990183, -5.995636, 0, 0, 0, 0, 0, 0, -107.75, 19.945782, -4.496727, 0, 0, 0, 0, 0, 0, -108.5, 19.831089, -2.997818, 0, 0, 0, 0, 0, 0, -109.25, 19.575823, -1.498909, 0, 0, 0, 0, 0, 0, -110, 19.109997, 0, 0, 0, 0, 0, 0, 0, -110, 18.52566, 2, 0, 0, 0, 0, 0, 0, -110, 18.462685, 4, 0, 0, 0, 0, 0, 0, -110, 18.462685, 6, 0, 0, 0, 0, 0, 0, -109.72855, 18.462685, 7.623173, 0, 0, 0, 0, 0, 0, -109.45711, 18.462685, 9.246346, 0, 0, 0, 0, 0, 0, -109.18566, 18.462685, 10.869519, 0, 0, 0, 0, 0, 0, -108.914215, 18.462685, 12.492692, 0, 0, 0, 0, 0, 0, -108.20711, 18.462685, 13.199799, 0, 0, 0, 0, 0, 0, -107.5, 18.747004, 13.906906),
@@ -1446,7 +1447,7 @@ _data = {
 }
 point_count = 14
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ndhjs"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mvovj"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1459,14 +1460,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_pko6l"]
+[sub_resource type="Resource" id="Resource_g37wp"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_ndhjs")
+source_material = SubResource("ShaderMaterial_mvovj")
 
-[sub_resource type="Curve3D" id="Curve3D_mvovj"]
+[sub_resource type="Curve3D" id="Curve3D_31gu2"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 21.693455, 0, 0, 0, 0, 0, 0, 0, 0.57402515, 21.693455, 1.3858193, 0, 0, 0, 0, 0, 0, 1.1480503, 21.693455, 2.7716386, 0, 0, 0, 0, 0, 0, 1.7220755, 21.693455, 4.157458, 0, 0, 0, 0, 0, 0, 2.2961006, 21.693455, 5.5432773, 0, 0, 0, 0, 0, 0, 1.2220755, 21.693455, 7.157458, 0, 0, 0, 0, 0, 0, 0.1480503, 21.693455, 8.771639, 0, 0, 0, 0, 0, 0, -0.92597485, 21.693455, 10.385819, 0, 0, 0, 0, 0, 0, -2, 21.693455, 12, 0, 0, 0, 0, 0, 0, -3.067466, 21.693455, 13.488713, 0, 0, 0, 0, 0, 0, -4.134932, 21.693455, 14.9774275, 0, 0, 0, 0, 0, 0, -5.202398, 21.693455, 16.46614, 0, 0, 0, 0, 0, 0, -6.2698636, 21.693455, 17.954855, 0, 0, 0, 0, 0, 0, -7.2119493, 21.693455, 19.292128, 0, 0, 0, 0, 0, 0, -8.154035, 21.693455, 20.6294, 0, 0, 0, 0, 0, 0, -9.09612, 21.693455, 21.966673, 0, 0, 0, 0, 0, 0, -10.038206, 21.693455, 23.303946, 0, 0, 0, 0, 0, 0, -11.028654, 21.693455, 24.977959, 0, 0, 0, 0, 0, 0, -12.019103, 21.693455, 26.651972, 0, 0, 0, 0, 0, 0, -13.009551, 21.693455, 28.325987, 0, 0, 0, 0, 0, 0, -14, 21.693455, 30, 0, 0, 0, 0, 0, 0, -16, 21.693455, 30, 0, 0, 0, 0, 0, 0, -18, 21.693455, 30, 0, 0, 0, 0, 0, 0, -20, 21.693455, 30, 0, 0, 0, 0, 0, 0, -22, 21.693455, 30, 0, 0, 0, 0, 0, 0, -24, 21.693455, 30, 0, 0, 0, 0, 0, 0, -26, 21.693455, 30, 0, 0, 0, 0, 0, 0, -28, 21.693455, 30, 0, 0, 0, 0, 0, 0, -30, 21.693455, 30, 0, 0, 0, 0, 0, 0, -32, 21.693455, 30, 0, 0, 0, 0, 0, 0, -33.5, 21.693455, 29.499254, 0, 0, 0, 0, 0, 0, -35, 21.693455, 28.99851, 0, 0, 0, 0, 0, 0, -36.5, 21.693455, 28.497765, 0, 0, 0, 0, 0, 0, -38, 21.693455, 27.997019, 0, 0, 0, 0, 0, 0, -39.499966, 21.693455, 27.4985, 0, 0, 0, 0, 0, 0, -40.999928, 21.693455, 26.999983, 0, 0, 0, 0, 0, 0, -42.499893, 21.693455, 26.501465, 0, 0, 0, 0, 0, 0, -43.999855, 21.693455, 26.002947, 0, 0, 0, 0, 0, 0, -45.49895, 21.693455, 25.652294, 0, 0, 0, 0, 0, 0, -46.998047, 21.693455, 25.30164, 0, 0, 0, 0, 0, 0, -48.497143, 21.693455, 24.950987, 0, 0, 0, 0, 0, 0, -49.99624, 21.693455, 24.600334, 0, 0, 0, 0, 0, 0, -51.98114, 21.693455, 24.460863, 0, 0, 0, 0, 0, 0, -53.96604, 21.693455, 24.321394, 0, 0, 0, 0, 0, 0, -55.950943, 21.693455, 24.181925, 0, 0, 0, 0, 0, 0, -57.848583, 21.693455, 24.302118, 0, 0, 0, 0, 0, 0, -59.74622, 21.693455, 24.422312, 0, 0, 0, 0, 0, 0, -61.64386, 21.693455, 24.542503, 0, 0, 0, 0, 0, 0, -63.232895, 21.693455, 24.406878, 0, 0, 0, 0, 0, 0, -64.82193, 21.693455, 24.271252, 0, 0, 0, 0, 0, 0, -66.410965, 21.693455, 24.135626, 0, 0, 0, 0, 0, 0, -68, 21.693455, 24, 0, 0, 0, 0, 0, 0, -68.8625, 21.693455, 25.351727, 0, 0, 0, 0, 0, 0, -69.725, 21.693455, 26.703453, 0, 0, 0, 0, 0, 0, -70.5875, 21.693455, 28.05518, 0, 0, 0, 0, 0, 0, -71.45, 21.693455, 29.406906, 0, 0, 0, 0, 0, 0, -72.725, 21.693455, 28.703453, 0, 0, 0, 0, 0, 0, -74, 21.693455, 28, 0, 0, 0, 0, 0, 0, -75.725, 21.693455, 28.703453, 0, 0, 0, 0, 0, 0, -77.45, 21.693455, 29.406906),
@@ -1474,7 +1475,7 @@ _data = {
 }
 point_count = 60
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_g37wp"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yhqnj"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1487,14 +1488,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_31gu2"]
+[sub_resource type="Resource" id="Resource_bv74m"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_g37wp")
+source_material = SubResource("ShaderMaterial_yhqnj")
 
-[sub_resource type="Curve3D" id="Curve3D_yhqnj"]
+[sub_resource type="Curve3D" id="Curve3D_31evi"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 21.693455, 0, 0, 0, 0, 0, 0, 0, 0.57402515, 21.693455, 1.3858193, 0, 0, 0, 0, 0, 0, 1.1480503, 21.693455, 2.7716386, 0, 0, 0, 0, 0, 0, 1.7220755, 21.693455, 4.157458, 0, 0, 0, 0, 0, 0, 2.2961006, 21.693455, 5.5432773, 0, 0, 0, 0, 0, 0, 1.2220755, 21.693455, 7.157458, 0, 0, 0, 0, 0, 0, 0.1480503, 21.693455, 8.771639, 0, 0, 0, 0, 0, 0, -0.92597485, 21.693455, 10.385819, 0, 0, 0, 0, 0, 0, -2, 21.693455, 12, 0, 0, 0, 0, 0, 0, -3.067466, 21.693455, 13.488713, 0, 0, 0, 0, 0, 0, -4.134932, 21.693455, 14.9774275, 0, 0, 0, 0, 0, 0, -5.202398, 21.693455, 16.46614, 0, 0, 0, 0, 0, 0, -6.2698636, 21.693455, 17.954855, 0, 0, 0, 0, 0, 0, -7.2119493, 21.693455, 19.292042, 0, 0, 0, 0, 0, 0, -8.154035, 21.693455, 20.62923, 0, 0, 0, 0, 0, 0, -9.09612, 21.693455, 21.96642, 0, 0, 0, 0, 0, 0, -10.038206, 21.693455, 23.303606, 0, 0, 0, 0, 0, 0, -11.028654, 21.693455, 24.977705, 0, 0, 0, 0, 0, 0, -12.019103, 21.693455, 26.651804, 0, 0, 0, 0, 0, 0, -13.009551, 21.693455, 28.325901, 0, 0, 0, 0, 0, 0, -14, 21.693455, 30, 0, 0, 0, 0, 0, 0, -16, 21.693455, 30, 0, 0, 0, 0, 0, 0, -18, 21.693455, 30, 0, 0, 0, 0, 0, 0, -20, 21.693455, 30, 0, 0, 0, 0, 0, 0, -22, 21.693455, 30, 0, 0, 0, 0, 0, 0, -24, 21.693455, 30, 0, 0, 0, 0, 0, 0, -26, 21.693455, 30, 0, 0, 0, 0, 0, 0, -28, 21.693455, 30, 0, 0, 0, 0, 0, 0, -30, 21.693455, 30, 0, 0, 0, 0, 0, 0, -32, 21.693455, 30, 0, 0, 0, 0, 0, 0, -33.180794, 21.693455, 28.6605, 0, 0, 0, 0, 0, 0, -34.361588, 21.693455, 27.321001, 0, 0, 0, 0, 0, 0, -35.54238, 21.693455, 25.9815, 0, 0, 0, 0, 0, 0, -36.723175, 21.693455, 24.642, 0, 0, 0, 0, 0, 0, -37.90397, 21.693455, 23.302502, 0, 0, 0, 0, 0, 0, -39.277695, 21.693455, 21.950855, 0, 0, 0, 0, 0, 0, -40.65142, 21.693455, 20.59921, 0, 0, 0, 0, 0, 0, -42.025146, 21.693455, 19.247564, 0, 0, 0, 0, 0, 0, -43.398872, 21.693455, 17.89592, 0, 0, 0, 0, 0, 0, -44.524487, 21.693455, 16.419842, 0, 0, 0, 0, 0, 0, -45.6501, 21.693455, 14.943765, 0, 0, 0, 0, 0, 0, -46.775715, 21.693455, 13.467688, 0, 0, 0, 0, 0, 0, -47.90133, 21.693455, 11.991611, 0, 0, 0, 0, 0, 0, -48.776375, 21.693455, 10.493624, 0, 0, 0, 0, 0, 0, -49.65142, 21.693455, 8.995636, 0, 0, 0, 0, 0, 0, -50.526466, 21.693455, 7.4976487, 0, 0, 0, 0, 0, 0, -51.401512, 21.693455, 5.999661, 0, 0, 0, 0, 0, 0, -52.174736, 21.693455, 4.499746, 0, 0, 0, 0, 0, 0, -52.94796, 21.693455, 2.9998305, 0, 0, 0, 0, 0, 0, -53.721184, 21.693455, 1.4999152, 0, 0, 0, 0, 0, 0, -54.494408, 21.693455, 0, 0, 0, 0, 0, 0, 0, -55.24502, 21.693455, -1.5, 0, 0, 0, 0, 0, 0, -55.995636, 21.693455, -3, 0, 0, 0, 0, 0, 0, -56.74625, 21.693455, -4.5, 0, 0, 0, 0, 0, 0, -57.496864, 21.693455, -6, 0, 0, 0, 0, 0, 0, -58.24636, 21.693455, -7.499999, 0, 0, 0, 0, 0, 0, -58.995857, 21.693455, -8.999998, 0, 0, 0, 0, 0, 0, -59.74535, 21.693455, -10.499997, 0, 0, 0, 0, 0, 0, -60.494846, 21.693455, -11.999996, 0, 0, 0, 0, 0, 0, -61.22413, 21.693455, -13.499891, 0, 0, 0, 0, 0, 0, -61.953407, 21.693455, -14.999786, 0, 0, 0, 0, 0, 0, -62.68269, 21.693455, -16.499681, 0, 0, 0, 0, 0, 0, -63.41197, 21.693455, -17.999577, 0, 0, 0, 0, 0, 0, -64.065384, 21.693455, -19.49733, 0, 0, 0, 0, 0, 0, -64.718796, 21.693455, -20.995085, 0, 0, 0, 0, 0, 0, -65.37221, 21.693455, -22.49284, 0, 0, 0, 0, 0, 0, -66.02562, 21.693455, -23.990595, 0, 0, 0, 0, 0, 0, -66.561516, 21.693455, -25.46535, 0, 0, 0, 0, 0, 0, -67.097404, 21.693455, -26.940105, 0, 0, 0, 0, 0, 0, -67.6333, 21.693455, -28.414862, 0, 0, 0, 0, 0, 0, -68.1692, 21.693455, -29.889616, 0, 0, 0, 0, 0, 0, -68.1269, 21.693455, -31.417212, 0, 0, 0, 0, 0, 0, -68.084595, 21.693455, -32.94481, 0, 0, 0, 0, 0, 0, -68.0423, 21.693455, -34.472404, 0, 0, 0, 0, 0, 0, -68, 21.693455, -36, 0, 0, 0, 0, 0, 0, -69.55863, 21.693455, -37.18725, 0, 0, 0, 0, 0, 0, -71.117256, 21.693455, -38.374496, 0, 0, 0, 0, 0, 0, -72.67589, 21.693455, -39.561745, 0, 0, 0, 0, 0, 0, -74.23452, 21.693455, -40.748993, 0, 0, 0, 0, 0, 0, -75.793144, 21.693455, -41.93624, 0, 0, 0, 0, 0, 0, -76.896576, 21.693455, -42.96812, 0, 0, 0, 0, 0, 0, -78, 21.693455, -44, 0, 0, 0, 0, 0, 0, -79.15, 21.693455, -45.197697, 0, 0, 0, 0, 0, 0, -80.3, 21.693455, -46.395397, 0, 0, 0, 0, 0, 0, -81.45, 21.693455, -47.593094),
@@ -1502,7 +1503,7 @@ _data = {
 }
 point_count = 85
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_bv74m"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_if5ke"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1515,14 +1516,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_31evi"]
+[sub_resource type="Resource" id="Resource_hkigr"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_bv74m")
+source_material = SubResource("ShaderMaterial_if5ke")
 
-[sub_resource type="Curve3D" id="Curve3D_if5ke"]
+[sub_resource type="Curve3D" id="Curve3D_rmpim"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 21.693455, 0, 0, 0, 0, 0, 0, 0, 0.57402515, 21.693455, 1.3858193, 0, 0, 0, 0, 0, 0, 1.1480503, 21.693455, 2.7716386, 0, 0, 0, 0, 0, 0, 1.7220755, 21.693455, 4.157458, 0, 0, 0, 0, 0, 0, 2.2961006, 21.693455, 5.5432773, 0, 0, 0, 0, 0, 0, 1.2220755, 21.693455, 7.157458, 0, 0, 0, 0, 0, 0, 0.1480503, 21.693455, 8.771639, 0, 0, 0, 0, 0, 0, -0.92597485, 21.693455, 10.385819, 0, 0, 0, 0, 0, 0, -2, 21.693455, 12, 0, 0, 0, 0, 0, 0, -3.067466, 21.693455, 13.512636, 0, 0, 0, 0, 0, 0, -4.134932, 21.693455, 15.025273, 0, 0, 0, 0, 0, 0, -5.202398, 21.693455, 16.53791, 0, 0, 0, 0, 0, 0, -6.2698636, 21.693455, 18.050547, 0, 0, 0, 0, 0, 0, -7.2119493, 21.693455, 19.51225, 0, 0, 0, 0, 0, 0, -8.154035, 21.693455, 20.973955, 0, 0, 0, 0, 0, 0, -9.09612, 21.693455, 22.43566, 0, 0, 0, 0, 0, 0, -10.038206, 21.693455, 23.897364, 0, 0, 0, 0, 0, 0, -11.028654, 21.693455, 25.423021, 0, 0, 0, 0, 0, 0, -12.019103, 21.693455, 26.94868, 0, 0, 0, 0, 0, 0, -13.009551, 21.693455, 28.47434, 0, 0, 0, 0, 0, 0, -14, 21.693455, 30, 0, 0, 0, 0, 0, 0, -15.52185, 21.693455, 30.851063, 0, 0, 0, 0, 0, 0, -17.0437, 21.693455, 31.702127, 0, 0, 0, 0, 0, 0, -18.56555, 21.693455, 32.55319, 0, 0, 0, 0, 0, 0, -20.087399, 21.693455, 33.404255, 0, 0, 0, 0, 0, 0, -21.541542, 21.693455, 34.053204, 0, 0, 0, 0, 0, 0, -22.995686, 21.693455, 34.702152, 0, 0, 0, 0, 0, 0, -24.44983, 21.693455, 35.351105, 0, 0, 0, 0, 0, 0, -25.903973, 21.693455, 36.000053, 0, 0, 0, 0, 0, 0, -27.42798, 21.693455, 36.000042, 0, 0, 0, 0, 0, 0, -28.951986, 21.693455, 36.000027, 0, 0, 0, 0, 0, 0, -30.475994, 21.693455, 36.000015, 0, 0, 0, 0, 0, 0, -32, 21.693455, 36, 0, 0, 0, 0, 0, 0, -32.825294, 21.693455, 37.673946, 0, 0, 0, 0, 0, 0, -33.65059, 21.693455, 39.347893, 0, 0, 0, 0, 0, 0, -34.475883, 21.693455, 41.02184, 0, 0, 0, 0, 0, 0, -35.301178, 21.693455, 42.695786, 0, 0, 0, 0, 0, 0, -35.970425, 21.693455, 44.495567, 0, 0, 0, 0, 0, 0, -36.63967, 21.693455, 46.295353, 0, 0, 0, 0, 0, 0, -37.308914, 21.693455, 48.095135, 0, 0, 0, 0, 0, 0, -37.539276, 21.693455, 50.063423, 0, 0, 0, 0, 0, 0, -37.769638, 21.693455, 52.03171, 0, 0, 0, 0, 0, 0, -38, 21.693455, 54, 0, 0, 0, 0, 0, 0, -38.015366, 21.693455, 55.741467, 0, 0, 0, 0, 0, 0, -38.030735, 21.693455, 57.482933, 0, 0, 0, 0, 0, 0, -38.0461, 21.693455, 59.224403, 0, 0, 0, 0, 0, 0, -38.061466, 21.693455, 60.96587, 0, 0, 0, 0, 0, 0, -38.030735, 21.693455, 62.482933, 0, 0, 0, 0, 0, 0, -38, 21.693455, 64, 0, 0, 0, 0, 0, 0, -37, 21.693455, 65.4523, 0, 0, 0, 0, 0, 0, -36, 21.693455, 66.9046, 0, 0, 0, 0, 0, 0, -35, 21.693455, 68.3569),
@@ -1530,7 +1531,7 @@ _data = {
 }
 point_count = 52
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_hkigr"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bo83x"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1543,14 +1544,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_rmpim"]
+[sub_resource type="Resource" id="Resource_i4koq"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_hkigr")
+source_material = SubResource("ShaderMaterial_bo83x")
 
-[sub_resource type="Curve3D" id="Curve3D_bo83x"]
+[sub_resource type="Curve3D" id="Curve3D_rsbl4"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 21.693455, 0, 0, 0, 0, 0, 0, 0, 0.57402515, 21.693455, 1.3858193, 0, 0, 0, 0, 0, 0, 1.1480503, 21.693455, 2.7716386, 0, 0, 0, 0, 0, 0, 1.7220755, 21.693455, 4.157458, 0, 0, 0, 0, 0, 0, 2.2961006, 21.693455, 5.5432773, 0, 0, 0, 0, 0, 0, 3.5800838, 21.693455, 6.6193976, 0, 0, 0, 0, 0, 0, 4.864067, 21.693455, 7.695518, 0, 0, 0, 0, 0, 0, 6.1480503, 21.693455, 8.771639, 0, 0, 0, 0, 0, 0, 7.4320335, 21.693455, 9.847759, 0, 0, 0, 0, 0, 0, 8.716017, 21.693455, 10.92388, 0, 0, 0, 0, 0, 0, 10, 21.693455, 12, 0, 0, 0, 0, 0, 0, 9.978552, 21.693455, 13.984952, 0, 0, 0, 0, 0, 0, 9.957105, 21.693455, 15.969903, 0, 0, 0, 0, 0, 0, 9.935657, 21.693455, 17.954855, 0, 0, 0, 0, 0, 0, 10.816083, 21.693455, 19.737772, 0, 0, 0, 0, 0, 0, 11.696508, 21.693455, 21.520689, 0, 0, 0, 0, 0, 0, 12.576935, 21.693455, 23.303606, 0, 0, 0, 0, 0, 0, 13.432701, 21.693455, 24.977705, 0, 0, 0, 0, 0, 0, 14.288467, 21.693455, 26.651804, 0, 0, 0, 0, 0, 0, 15.144234, 21.693455, 28.325901, 0, 0, 0, 0, 0, 0, 16, 21.693455, 30, 0, 0, 0, 0, 0, 0, 18, 21.693455, 30, 0, 0, 0, 0, 0, 0, 20, 21.693455, 30, 0, 0, 0, 0, 0, 0, 22, 21.693455, 30, 0, 0, 0, 0, 0, 0, 24, 21.693455, 30, 0, 0, 0, 0, 0, 0, 26, 21.693455, 30, 0, 0, 0, 0, 0, 0, 28, 21.693455, 30, 0, 0, 0, 0, 0, 0, 30, 21.693455, 30, 0, 0, 0, 0, 0, 0, 32, 21.693455, 30, 0, 0, 0, 0, 0, 0, 34, 21.693455, 30, 0, 0, 0, 0, 0, 0, 35.2, 21.693455, 28.8, 0, 0, 0, 0, 0, 0, 36.4, 21.693455, 27.6, 0, 0, 0, 0, 0, 0, 37.6, 21.693455, 26.4, 0, 0, 0, 0, 0, 0, 38.8, 21.693455, 25.2, 0, 0, 0, 0, 0, 0, 40, 21.693455, 24, 0, 0, 0, 0, 0, 0, 39.82571, 21.693455, 22.47398, 0, 0, 0, 0, 0, 0, 39.65142, 21.693455, 20.94796, 0, 0, 0, 0, 0, 0, 39.47713, 21.693455, 19.42194, 0, 0, 0, 0, 0, 0, 39.30284, 21.693455, 17.89592, 0, 0, 0, 0, 0, 0, 39.500534, 21.693455, 15.927816, 0, 0, 0, 0, 0, 0, 39.698227, 21.693455, 13.959714, 0, 0, 0, 0, 0, 0, 39.89592, 21.693455, 11.991611, 0, 0, 0, 0, 0, 0, 39.92793, 21.693455, 9.994294, 0, 0, 0, 0, 0, 0, 39.959938, 21.693455, 7.996978, 0, 0, 0, 0, 0, 0, 39.99195, 21.693455, 5.999661, 0, 0, 0, 0, 0, 0, 39.99732, 21.693455, 3.9997742, 0, 0, 0, 0, 0, 0, 40.00268, 21.693455, 1.9998871, 0, 0, 0, 0, 0, 0, 40.00805, 21.693455, 0, 0, 0, 0, 0, 0, 0, 40.03206, 21.693455, -1.5, 0, 0, 0, 0, 0, 0, 40.056065, 21.693455, -3, 0, 0, 0, 0, 0, 0, 40.080074, 21.693455, -4.5, 0, 0, 0, 0, 0, 0, 40.10408, 21.693455, -6, 0, 0, 0, 0, 0, 0, 40.25235, 21.693455, -7.5, 0, 0, 0, 0, 0, 0, 40.40062, 21.693455, -9, 0, 0, 0, 0, 0, 0, 40.54889, 21.693455, -10.5, 0, 0, 0, 0, 0, 0, 40.69716, 21.693455, -12, 0, 0, 0, 0, 0, 0, 41.197735, 21.693455, -13.5, 0, 0, 0, 0, 0, 0, 41.69831, 21.693455, -15, 0, 0, 0, 0, 0, 0, 42.198887, 21.693455, -16.5, 0, 0, 0, 0, 0, 0, 42.699463, 21.693455, -18, 0, 0, 0, 0, 0, 0, 43.69679, 21.693455, -19.5, 0, 0, 0, 0, 0, 0, 44.69412, 21.693455, -21, 0, 0, 0, 0, 0, 0, 45.691444, 21.693455, -22.5, 0, 0, 0, 0, 0, 0, 46.68877, 21.693455, -24, 0, 0, 0, 0, 0, 0, 47.75102, 21.693455, -25.2, 0, 0, 0, 0, 0, 0, 48.813263, 21.693455, -26.4, 0, 0, 0, 0, 0, 0, 49.875507, 21.693455, -27.6, 0, 0, 0, 0, 0, 0, 50.937756, 21.693455, -28.8, 0, 0, 0, 0, 0, 0, 52, 21.693455, -30, 0, 0, 0, 0, 0, 0, 53.062244, 21.693455, -31.2, 0, 0, 0, 0, 0, 0, 54.124493, 21.693455, -32.4, 0, 0, 0, 0, 0, 0, 55.186737, 21.693455, -33.6, 0, 0, 0, 0, 0, 0, 56.24898, 21.693455, -34.8, 0, 0, 0, 0, 0, 0, 57.31123, 21.693455, -36, 0, 0, 0, 0, 0, 0, 58.30847, 21.693455, -37.5, 0, 0, 0, 0, 0, 0, 59.305714, 21.693455, -39, 0, 0, 0, 0, 0, 0, 60.302956, 21.693455, -40.5, 0, 0, 0, 0, 0, 0, 61.300198, 21.693455, -42, 0, 0, 0, 0, 0, 0, 61.798847, 21.693455, -43.500004, 0, 0, 0, 0, 0, 0, 62.297497, 21.693455, -45.000004, 0, 0, 0, 0, 0, 0, 62.796146, 21.693455, -46.500008, 0, 0, 0, 0, 0, 0, 63.294792, 21.693455, -48.000008, 0, 0, 0, 0, 0, 0, 63.421173, 21.693455, -49.499973, 0, 0, 0, 0, 0, 0, 63.54755, 21.693455, -50.999935, 0, 0, 0, 0, 0, 0, 63.67393, 21.693455, -52.4999, 0, 0, 0, 0, 0, 0, 63.80031, 21.693455, -53.999866, 0, 0, 0, 0, 0, 0, 63.70011, 21.693455, -55.49841, 0, 0, 0, 0, 0, 0, 63.59991, 21.693455, -56.996952, 0, 0, 0, 0, 0, 0, 63.49971, 21.693455, -58.495495, 0, 0, 0, 0, 0, 0, 63.399513, 21.693455, -59.994038, 0, 0, 0, 0, 0, 0, 63.050407, 21.693455, -61.473263, 0, 0, 0, 0, 0, 0, 62.701305, 21.693455, -62.95249, 0, 0, 0, 0, 0, 0, 62.3522, 21.693455, -64.431725, 0, 0, 0, 0, 0, 0, 62.003094, 21.693455, -65.91095, 0, 0, 0, 0, 0, 0, 61.002323, 21.693455, -67.43321, 0, 0, 0, 0, 0, 0, 60.00155, 21.693455, -68.955475, 0, 0, 0, 0, 0, 0, 59.000774, 21.693455, -70.47774, 0, 0, 0, 0, 0, 0, 58, 21.693455, -72, 0, 0, 0, 0, 0, 0, 58.015366, 21.693455, -73.53802, 0, 0, 0, 0, 0, 0, 58.030735, 21.693455, -75.07603, 0, 0, 0, 0, 0, 0, 58.0461, 21.693455, -76.614044, 0, 0, 0, 0, 0, 0, 58.061466, 21.693455, -78.15206, 0, 0, 0, 0, 0, 0, 57.449173, 21.693455, -79.630264, 0, 0, 0, 0, 0, 0, 56.83688, 21.693455, -81.108475, 0, 0, 0, 0, 0, 0, 56.224586, 21.693455, -82.58668, 0, 0, 0, 0, 0, 0, 55.612293, 21.693455, -84.06489, 0, 0, 0, 0, 0, 0, 55, 21.693455, -85.54309),
@@ -1558,7 +1559,7 @@ _data = {
 }
 point_count = 107
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_i4koq"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m4hg6"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1571,14 +1572,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_rsbl4"]
+[sub_resource type="Resource" id="Resource_nw72l"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_i4koq")
+source_material = SubResource("ShaderMaterial_m4hg6")
 
-[sub_resource type="Curve3D" id="Curve3D_m4hg6"]
+[sub_resource type="Curve3D" id="Curve3D_ry8xy"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 21.693455, 0, 0, 0, 0, 0, 0, 0, 0.57402515, 21.693455, 1.3858193, 0, 0, 0, 0, 0, 0, 1.1480503, 21.693455, 2.7716386, 0, 0, 0, 0, 0, 0, 1.7220755, 21.693455, 4.157458, 0, 0, 0, 0, 0, 0, 2.2961006, 21.693455, 5.5432773, 0, 0, 0, 0, 0, 0, 3.5800838, 21.693455, 6.6193976, 0, 0, 0, 0, 0, 0, 4.864067, 21.693455, 7.695518, 0, 0, 0, 0, 0, 0, 6.1480503, 21.693455, 8.771639, 0, 0, 0, 0, 0, 0, 7.4320335, 21.693455, 9.847759, 0, 0, 0, 0, 0, 0, 8.716017, 21.693455, 10.92388, 0, 0, 0, 0, 0, 0, 10, 21.693455, 12, 0, 0, 0, 0, 0, 0, 9.983914, 21.693455, 13.514734, 0, 0, 0, 0, 0, 0, 9.967828, 21.693455, 15.029468, 0, 0, 0, 0, 0, 0, 9.951742, 21.693455, 16.5442, 0, 0, 0, 0, 0, 0, 9.935657, 21.693455, 18.058935, 0, 0, 0, 0, 0, 0, 10.595976, 21.693455, 19.544477, 0, 0, 0, 0, 0, 0, 11.256296, 21.693455, 21.03002, 0, 0, 0, 0, 0, 0, 11.9166155, 21.693455, 22.515562, 0, 0, 0, 0, 0, 0, 12.576935, 21.693455, 24.001104, 0, 0, 0, 0, 0, 0, 13.432701, 21.693455, 25.500828, 0, 0, 0, 0, 0, 0, 14.288467, 21.693455, 27.000553, 0, 0, 0, 0, 0, 0, 15.144234, 21.693455, 28.500277, 0, 0, 0, 0, 0, 0, 16, 21.693455, 30, 0, 0, 0, 0, 0, 0, 17.22073, 21.693455, 31.198317, 0, 0, 0, 0, 0, 0, 18.441458, 21.693455, 32.396633, 0, 0, 0, 0, 0, 0, 19.662188, 21.693455, 33.59495, 0, 0, 0, 0, 0, 0, 20.882917, 21.693455, 34.793266, 0, 0, 0, 0, 0, 0, 22.103645, 21.693455, 35.991585, 0, 0, 0, 0, 0, 0, 23.284618, 21.693455, 37.172497, 0, 0, 0, 0, 0, 0, 24.465591, 21.693455, 38.353413, 0, 0, 0, 0, 0, 0, 25.646566, 21.693455, 39.534325, 0, 0, 0, 0, 0, 0, 26.82754, 21.693455, 40.715237, 0, 0, 0, 0, 0, 0, 28.008512, 21.693455, 41.896152, 0, 0, 0, 0, 0, 0, 29.207392, 21.693455, 42.978596, 0, 0, 0, 0, 0, 0, 30.406273, 21.693455, 44.06104, 0, 0, 0, 0, 0, 0, 31.605154, 21.693455, 45.14348, 0, 0, 0, 0, 0, 0, 32.804035, 21.693455, 46.22592, 0, 0, 0, 0, 0, 0, 34.002914, 21.693455, 47.308365, 0, 0, 0, 0, 0, 0, 35.508755, 21.693455, 48.322742, 0, 0, 0, 0, 0, 0, 37.01459, 21.693455, 49.33712, 0, 0, 0, 0, 0, 0, 38.52043, 21.693455, 50.351498, 0, 0, 0, 0, 0, 0, 40.02627, 21.693455, 51.365875, 0, 0, 0, 0, 0, 0, 41.547386, 21.693455, 51.95188, 0, 0, 0, 0, 0, 0, 43.0685, 21.693455, 52.537888, 0, 0, 0, 0, 0, 0, 44.589615, 21.693455, 53.123894, 0, 0, 0, 0, 0, 0, 46.11073, 21.693455, 53.7099, 0, 0, 0, 0, 0, 0, 48.07382, 21.693455, 53.8066, 0, 0, 0, 0, 0, 0, 50.03691, 21.693455, 53.9033, 0, 0, 0, 0, 0, 0, 52, 21.693455, 54, 0, 0, 0, 0, 0, 0, 53.634632, 21.693455, 54.823624, 0, 0, 0, 0, 0, 0, 55.269268, 21.693455, 55.647243, 0, 0, 0, 0, 0, 0, 56.9039, 21.693455, 56.470867, 0, 0, 0, 0, 0, 0, 58.538532, 21.693455, 57.294487, 0, 0, 0, 0, 0, 0, 60.173164, 21.693455, 58.11811, 0, 0, 0, 0, 0, 0, 60.629875, 21.693455, 59.58858, 0, 0, 0, 0, 0, 0, 61.086582, 21.693455, 61.059055, 0, 0, 0, 0, 0, 0, 61.543293, 21.693455, 62.529526, 0, 0, 0, 0, 0, 0, 62, 21.693455, 64, 0, 0, 0, 0, 0, 0, 63, 21.693455, 65.67845, 0, 0, 0, 0, 0, 0, 64, 21.693455, 67.3569),
@@ -1586,7 +1587,7 @@ _data = {
 }
 point_count = 60
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_nw72l"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_25b6a"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1599,14 +1600,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_ry8xy"]
+[sub_resource type="Resource" id="Resource_8um6x"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_nw72l")
+source_material = SubResource("ShaderMaterial_25b6a")
 
-[sub_resource type="Curve3D" id="Curve3D_25b6a"]
+[sub_resource type="Curve3D" id="Curve3D_al4rv"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 21.693455, 0, 0, 0, 0, 0, 0, 0, 0.57402515, 21.693455, 1.3858193, 0, 0, 0, 0, 0, 0, 1.1480503, 21.693455, 2.7716386, 0, 0, 0, 0, 0, 0, 1.7220755, 21.693455, 4.157458, 0, 0, 0, 0, 0, 0, 2.2961006, 21.693455, 5.5432773, 0, 0, 0, 0, 0, 0, 1.2220755, 21.693455, 7.157458, 0, 0, 0, 0, 0, 0, 0.1480503, 21.693455, 8.771639, 0, 0, 0, 0, 0, 0, -0.92597485, 21.693455, 10.385819, 0, 0, 0, 0, 0, 0, -2, 21.693455, 12, 0, 0, 0, 0, 0, 0, -3.067466, 21.693455, 13.488713, 0, 0, 0, 0, 0, 0, -4.134932, 21.693455, 14.9774275, 0, 0, 0, 0, 0, 0, -5.202398, 21.693455, 16.46614, 0, 0, 0, 0, 0, 0, -6.2698636, 21.693455, 17.954855, 0, 0, 0, 0, 0, 0, -7.2119493, 21.693455, 19.292042, 0, 0, 0, 0, 0, 0, -8.154035, 21.693455, 20.62923, 0, 0, 0, 0, 0, 0, -9.09612, 21.693455, 21.96642, 0, 0, 0, 0, 0, 0, -10.038206, 21.693455, 23.303606, 0, 0, 0, 0, 0, 0, -11.028654, 21.693455, 24.977705, 0, 0, 0, 0, 0, 0, -12.019103, 21.693455, 26.651804, 0, 0, 0, 0, 0, 0, -13.009551, 21.693455, 28.325901, 0, 0, 0, 0, 0, 0, -14, 21.693455, 30, 0, 0, 0, 0, 0, 0, -16, 21.693455, 30, 0, 0, 0, 0, 0, 0, -18, 21.693455, 30, 0, 0, 0, 0, 0, 0, -20, 21.693455, 30, 0, 0, 0, 0, 0, 0, -22, 21.693455, 30, 0, 0, 0, 0, 0, 0, -24, 21.693455, 30, 0, 0, 0, 0, 0, 0, -26, 21.693455, 30, 0, 0, 0, 0, 0, 0, -28, 21.693455, 30, 0, 0, 0, 0, 0, 0, -30, 21.693455, 30, 0, 0, 0, 0, 0, 0, -32, 21.693455, 30, 0, 0, 0, 0, 0, 0, -33.2, 21.693455, 28.8, 0, 0, 0, 0, 0, 0, -34.4, 21.693455, 27.6, 0, 0, 0, 0, 0, 0, -35.6, 21.693455, 26.4, 0, 0, 0, 0, 0, 0, -36.8, 21.693455, 25.2, 0, 0, 0, 0, 0, 0, -38, 21.693455, 24, 0, 0, 0, 0, 0, 0, -37.82571, 21.693455, 22.47398, 0, 0, 0, 0, 0, 0, -37.65142, 21.693455, 20.94796, 0, 0, 0, 0, 0, 0, -37.47713, 21.693455, 19.42194, 0, 0, 0, 0, 0, 0, -37.30284, 21.693455, 17.89592, 0, 0, 0, 0, 0, 0, -37.500534, 21.693455, 15.927816, 0, 0, 0, 0, 0, 0, -37.698227, 21.693455, 13.959714, 0, 0, 0, 0, 0, 0, -37.89592, 21.693455, 11.991611, 0, 0, 0, 0, 0, 0, -37.927814, 21.693455, 9.994294, 0, 0, 0, 0, 0, 0, -37.959713, 21.693455, 7.996978, 0, 0, 0, 0, 0, 0, -37.99161, 21.693455, 5.999661, 0, 0, 0, 0, 0, 0, -37.994293, 21.693455, 3.9997742, 0, 0, 0, 0, 0, 0, -37.99698, 21.693455, 1.9998871, 0, 0, 0, 0, 0, 0, -37.99966, 21.693455, 0, 0, 0, 0, 0, 0, 0, -37.999744, 21.693455, -1.5, 0, 0, 0, 0, 0, 0, -37.999832, 21.693455, -3, 0, 0, 0, 0, 0, 0, -37.999916, 21.693455, -4.5, 0, 0, 0, 0, 0, 0, -38, 21.693455, -6, 0, 0, 0, 0, 0, 0, -38, 21.693455, -8, 0, 0, 0, 0, 0, 0, -38, 21.693455, -10, 0, 0, 0, 0, 0, 0, -38, 21.693455, -12, 0, 0, 0, 0, 0, 0, -38, 21.693455, -13.5, 0, 0, 0, 0, 0, 0, -38, 21.693455, -15, 0, 0, 0, 0, 0, 0, -38, 21.693455, -16.5, 0, 0, 0, 0, 0, 0, -38, 21.693455, -18, 0, 0, 0, 0, 0, 0, -38, 21.693455, -20, 0, 0, 0, 0, 0, 0, -38, 21.693455, -22, 0, 0, 0, 0, 0, 0, -38, 21.693455, -24, 0, 0, 0, 0, 0, 0, -38, 21.693455, -26, 0, 0, 0, 0, 0, 0, -38, 21.693455, -28, 0, 0, 0, 0, 0, 0, -38, 21.693455, -30, 0, 0, 0, 0, 0, 0, -38.000084, 21.693455, -31.5, 0, 0, 0, 0, 0, 0, -38.000168, 21.693455, -33, 0, 0, 0, 0, 0, 0, -38.000256, 21.693455, -34.5, 0, 0, 0, 0, 0, 0, -38.00034, 21.693455, -36, 0, 0, 0, 0, 0, 0, -38.00235, 21.693455, -37.5, 0, 0, 0, 0, 0, 0, -38.004364, 21.693455, -39, 0, 0, 0, 0, 0, 0, -38.00638, 21.693455, -40.5, 0, 0, 0, 0, 0, 0, -38.00839, 21.693455, -42, 0, 0, 0, 0, 0, 0, -38.032276, 21.693455, -43.500034, 0, 0, 0, 0, 0, 0, -38.056164, 21.693455, -45.000065, 0, 0, 0, 0, 0, 0, -38.08005, 21.693455, -46.5001, 0, 0, 0, 0, 0, 0, -38.10394, 21.693455, -48.000134, 0, 0, 0, 0, 0, 0, -38.25131, 21.693455, -49.5008, 0, 0, 0, 0, 0, 0, -38.39868, 21.693455, -51.001472, 0, 0, 0, 0, 0, 0, -38.546055, 21.693455, -52.50214, 0, 0, 0, 0, 0, 0, -38.693424, 21.693455, -54.00281, 0, 0, 0, 0, 0, 0, -39.18283, 21.693455, -55.509373, 0, 0, 0, 0, 0, 0, -39.672237, 21.693455, -57.01593, 0, 0, 0, 0, 0, 0, -40.161644, 21.693455, -58.52249, 0, 0, 0, 0, 0, 0, -40.65105, 21.693455, -60.029053, 0, 0, 0, 0, 0, 0, -41.57402, 21.693455, -61.55378, 0, 0, 0, 0, 0, 0, -42.496986, 21.693455, -63.07851, 0, 0, 0, 0, 0, 0, -43.419956, 21.693455, -64.60324, 0, 0, 0, 0, 0, 0, -44.342926, 21.693455, -66.12797, 0, 0, 0, 0, 0, 0, -45.47434, 21.693455, -67.302376, 0, 0, 0, 0, 0, 0, -46.605755, 21.693455, -68.47678, 0, 0, 0, 0, 0, 0, -47.73717, 21.693455, -69.651184, 0, 0, 0, 0, 0, 0, -48.868584, 21.693455, -70.82559, 0, 0, 0, 0, 0, 0, -50, 21.693455, -72, 0, 0, 0, 0, 0, 0, -50.69385, 21.693455, -73.66952, 0, 0, 0, 0, 0, 0, -51.387707, 21.693455, -75.33903, 0, 0, 0, 0, 0, 0, -52.08156, 21.693455, -77.008545, 0, 0, 0, 0, 0, 0, -52.775414, 21.693455, -78.67806, 0, 0, 0, 0, 0, 0, -53.469265, 21.693455, -80.34757, 0, 0, 0, 0, 0, 0, -54.234634, 21.693455, -82.195335, 0, 0, 0, 0, 0, 0, -55, 21.693455, -84.04309),
@@ -1614,7 +1615,7 @@ _data = {
 }
 point_count = 101
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_8um6x"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_l6bn4"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1627,14 +1628,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_al4rv"]
+[sub_resource type="Resource" id="Resource_2ni4f"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_8um6x")
+source_material = SubResource("ShaderMaterial_l6bn4")
 
-[sub_resource type="Curve3D" id="Curve3D_l6bn4"]
+[sub_resource type="Curve3D" id="Curve3D_n2rjl"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 21.693455, 0, 0, 0, 0, 0, 0, 0, 0.57402515, 21.693455, 1.3858193, 0, 0, 0, 0, 0, 0, 1.1480503, 21.693455, 2.7716386, 0, 0, 0, 0, 0, 0, 1.7220755, 21.693455, 4.157458, 0, 0, 0, 0, 0, 0, 2.2961006, 21.693455, 5.5432773, 0, 0, 0, 0, 0, 0, 1.2220755, 21.693455, 7.157458, 0, 0, 0, 0, 0, 0, 0.1480503, 21.693455, 8.771639, 0, 0, 0, 0, 0, 0, -0.92597485, 21.693455, 10.385819, 0, 0, 0, 0, 0, 0, -2, 21.693455, 12, 0, 0, 0, 0, 0, 0, -3.067466, 21.693455, 13.488713, 0, 0, 0, 0, 0, 0, -4.134932, 21.693455, 14.9774275, 0, 0, 0, 0, 0, 0, -5.202398, 21.693455, 16.46614, 0, 0, 0, 0, 0, 0, -6.2698636, 21.693455, 17.954855, 0, 0, 0, 0, 0, 0, -7.2119493, 21.693455, 19.292128, 0, 0, 0, 0, 0, 0, -8.154035, 21.693455, 20.6294, 0, 0, 0, 0, 0, 0, -9.09612, 21.693455, 21.966673, 0, 0, 0, 0, 0, 0, -10.038206, 21.693455, 23.303946, 0, 0, 0, 0, 0, 0, -11.028654, 21.693455, 24.977959, 0, 0, 0, 0, 0, 0, -12.019103, 21.693455, 26.651972, 0, 0, 0, 0, 0, 0, -13.009551, 21.693455, 28.325987, 0, 0, 0, 0, 0, 0, -14, 21.693455, 30, 0, 0, 0, 0, 0, 0, -16, 21.693455, 30, 0, 0, 0, 0, 0, 0, -18, 21.693455, 30, 0, 0, 0, 0, 0, 0, -20, 21.693455, 30, 0, 0, 0, 0, 0, 0, -22, 21.693455, 30, 0, 0, 0, 0, 0, 0, -24, 21.693455, 30, 0, 0, 0, 0, 0, 0, -26, 21.693455, 30, 0, 0, 0, 0, 0, 0, -28, 21.693455, 30, 0, 0, 0, 0, 0, 0, -30, 21.693455, 30, 0, 0, 0, 0, 0, 0, -32, 21.693455, 30, 0, 0, 0, 0, 0, 0, -33.5, 21.693455, 29.497158, 0, 0, 0, 0, 0, 0, -35, 21.693455, 28.994316, 0, 0, 0, 0, 0, 0, -36.5, 21.693455, 28.491472, 0, 0, 0, 0, 0, 0, -38, 21.693455, 27.98863, 0, 0, 0, 0, 0, 0, -39.5, 21.693455, 27.466112, 0, 0, 0, 0, 0, 0, -41, 21.693455, 26.943596, 0, 0, 0, 0, 0, 0, -42.5, 21.693455, 26.421078, 0, 0, 0, 0, 0, 0, -44, 21.693455, 25.898561, 0, 0, 0, 0, 0, 0, -45.5, 21.693455, 25.3979, 0, 0, 0, 0, 0, 0, -47, 21.693455, 24.89724, 0, 0, 0, 0, 0, 0, -48.5, 21.693455, 24.39658, 0, 0, 0, 0, 0, 0, -50, 21.693455, 23.89592, 0, 0, 0, 0, 0, 0, -51.5, 21.693455, 23.270912, 0, 0, 0, 0, 0, 0, -53, 21.693455, 22.645905, 0, 0, 0, 0, 0, 0, -54.5, 21.693455, 22.020897, 0, 0, 0, 0, 0, 0, -56, 21.693455, 21.395891, 0, 0, 0, 0, 0, 0, -57.5, 21.693455, 20.374725, 0, 0, 0, 0, 0, 0, -59, 21.693455, 19.35356, 0, 0, 0, 0, 0, 0, -60.5, 21.693455, 18.332394, 0, 0, 0, 0, 0, 0, -62, 21.693455, 17.31123, 0, 0, 0, 0, 0, 0, -63.2, 21.693455, 16.229912, 0, 0, 0, 0, 0, 0, -64.4, 21.693455, 15.148596, 0, 0, 0, 0, 0, 0, -65.6, 21.693455, 14.06728, 0, 0, 0, 0, 0, 0, -66.8, 21.693455, 12.985963, 0, 0, 0, 0, 0, 0, -68, 21.693455, 11.904647, 0, 0, 0, 0, 0, 0, -69.2, 21.693455, 10.742856, 0, 0, 0, 0, 0, 0, -70.4, 21.693455, 9.581065, 0, 0, 0, 0, 0, 0, -71.6, 21.693455, 8.419274, 0, 0, 0, 0, 0, 0, -72.8, 21.693455, 7.257483, 0, 0, 0, 0, 0, 0, -74, 21.693455, 6.095692, 0, 0, 0, 0, 0, 0, -75.2, 21.693455, 5.015918, 0, 0, 0, 0, 0, 0, -76.4, 21.693455, 3.9361436, 0, 0, 0, 0, 0, 0, -77.6, 21.693455, 2.8563695, 0, 0, 0, 0, 0, 0, -78.8, 21.688969, 1.7765952, 0, 0, 0, 0, 0, 0, -80, 21.64691, 0.6968211, 0, 0, 0, 0, 0, 0, -81.5, 21.559517, -0.30243376, 0, 0, 0, 0, 0, 0, -83, 21.445738, -1.3016887, 0, 0, 0, 0, 0, 0, -84.5, 21.3228, -2.3009434, 0, 0, 0, 0, 0, 0, -86, 21.230719, -3.3001983, 0, 0, 0, 0, 0, 0, -87.5, 21.140099, -3.8008587, 0, 0, 0, 0, 0, 0, -89, 21.050253, -4.3015194, 0, 0, 0, 0, 0, 0, -90.5, 20.961603, -4.80218, 0, 0, 0, 0, 0, 0, -92, 20.872952, -5.30284, 0, 0, 0, 0, 0, 0, -93.5, 20.784609, -5.45111, 0, 0, 0, 0, 0, 0, -95, 20.696264, -5.5993795, 0, 0, 0, 0, 0, 0, -96.5, 20.60792, -5.747649, 0, 0, 0, 0, 0, 0, -98, 20.519571, -5.895919, 0, 0, 0, 0, 0, 0, -99.5, 20.431335, -5.919842, 0, 0, 0, 0, 0, 0, -101, 20.343098, -5.943765, 0, 0, 0, 0, 0, 0, -102.5, 20.254858, -5.967688, 0, 0, 0, 0, 0, 0, -104, 20.166622, -5.991611, 0, 0, 0, 0, 0, 0, -105.5, 20.078402, -5.9936237, 0, 0, 0, 0, 0, 0, -107, 19.990183, -5.995636, 0, 0, 0, 0, 0, 0, -108.5, 19.901966, -5.9976487, 0, 0, 0, 0, 0, 0, -110, 19.813751, -5.999661, 0, 0, 0, 0, 0, 0, -111.5, 19.725534, -5.9998307, 0, 0, 0, 0, 0, 0, -113, 19.540945, -6, 0, 0, 0, 0, 0, 0, -114.5, 19.308838, -6.0001693, 0, 0, 0, 0, 0, 0, -116, 19.07807, -6.000339, 0, 0, 0, 0, 0, 0, -117.5, 18.8473, -6.0023513, 0, 0, 0, 0, 0, 0, -119, 18.616531, -6.004364, 0, 0, 0, 0, 0, 0, -120.5, 18.385761, -6.0063763, 0, 0, 0, 0, 0, 0, -122, 18.154993, -6.008389, 0, 0, 0, 0, 0, 0, -123.49983, 17.92425, -6.032312, 0, 0, 0, 0, 0, 0, -124.999664, 17.693506, -6.056235, 0, 0, 0, 0, 0, 0, -126.49949, 17.462763, -6.080158, 0, 0, 0, 0, 0, 0, -127.99932, 17.23202, -6.104081, 0, 0, 0, 0, 0, 0, -129.49538, 17.001858, -6.252351, 0, 0, 0, 0, 0, 0, -130.99144, 16.771694, -6.4006205, 0, 0, 0, 0, 0, 0, -132.4875, 16.507177, -6.54889, 0, 0, 0, 0, 0, 0, -133.98357, 16.044994, -6.69716, 0, 0, 0, 0, 0, 0, -135.4378, 15.541233, -7.19782, 0, 0, 0, 0, 0, 0, -136.89206, 14.9897585, -7.6984806, 0, 0, 0, 0, 0, 0, -138.34631, 14.403548, -8.1991415, 0, 0, 0, 0, 0, 0, -139.80057, 13.772614, -8.699801, 0, 0, 0, 0, 0, 0, -141.02989, 13.206673, -9.699073, 0, 0, 0, 0, 0, 0, -142.2592, 12.645426, -10.698344, 0, 0, 0, 0, 0, 0, -143.48853, 12.123764, -11.697615, 0, 0, 0, 0, 0, 0, -144.71785, 11.622684, -12.696886, 0, 0, 0, 0, 0, 0, -145.38736, 11.280745, -14.047297, 0, 0, 0, 0, 0, 0, -146.05688, 10.812246, -15.397708, 0, 0, 0, 0, 0, 0, -146.7264, 10.320139, -16.74812, 0, 0, 0, 0, 0, 0, -147.39592, 9.882242, -18.09853, 0, 0, 0, 0, 0, 0, -147.58115, 9.509385, -20.050156, 0, 0, 0, 0, 0, 0, -147.76637, 9.296119, -22.00178, 0, 0, 0, 0, 0, 0, -147.95161, 9.197819, -23.953405, 0, 0, 0, 0, 0, 0, -148.32286, 9.21491, -25.89628, 0, 0, 0, 0, 0, 0, -148.6941, 9.308517, -27.839157, 0, 0, 0, 0, 0, 0, -149.06535, 9.449493, -29.782032, 0, 0, 0, 0, 0, 0, -149.79901, 9.581465, -31.336525, 0, 0, 0, 0, 0, 0, -150.53268, 9.679689, -32.891018, 0, 0, 0, 0, 0, 0, -151.26634, 9.7400255, -34.445507, 0, 0, 0, 0, 0, 0, -152, 9.769837, -36, 0, 0, 0, 0, 0, 0, -152.65839, 9.752728, -37.15027, 0, 0, 0, 0, 0, 0, -154.23601, 9.677114, -38.296417, 0, 0, 0, 0, 0, 0, -155.81361, 9.596024, -39.442566, 0, 0, 0, 0, 0, 0, -157.39122, 9.493066, -40.58871, 0, 0, 0, 0, 0, 0, -158.96883, 9.439683, -41.73486, 0, 0, 0, 0, 0, 0, -160.54643, 9.347667, -42.88101, 0, 0, 0, 0, 0, 0, -162.12404, 10.274088, -44.027157, 0, 0, 0, 0, 0, 0, -163.70164, 10.27339, -45.1733, 0, 0, 0, 0, 0, 0, -165.27925, 10.273241, -46.31945, 0, 0, 0, 0, 0, 0, -166.85686, 10.273238, -47.4656, 0, 0, 0, 0, 0, 0, -168.43446, 10.273238, -48.611748, 0, 0, 0, 0, 0, 0, -170.01207, 10.273238, -49.757893, 0, 0, 0, 0, 0, 0, -171.58968, 10.273238, -50.90404, 0, 0, 0, 0, 0, 0, -173.1673, 10.273239, -52.05019, 0, 0, 0, 0, 0, 0, -174.7449, 10.273214, -53.19634, 0, 0, 0, 0, 0, 0, -176.32251, 9.267875, -54.342484, 0, 0, 0, 0, 0, 0, -177.90012, 9.411971, -55.488632, 0, 0, 0, 0, 0, 0, -179.47772, 9.459306, -56.63478, 0, 0, 0, 0, 0, 0, -181.05533, 9.581001, -57.78093, 0, 0, 0, 0, 0, 0, -182.63293, 9.711954, -58.927074, 0, 0, 0, 0, 0, 0, -184.21054, 10.005076, -60.073223, 0, 0, 0, 0, 0, 0, -186.10527, 10.165405, -60.036613, 0, 0, 0, 0, 0, 0, -188, 10.382976, -60, 0, 0, 0, 0, 0, 0, -189.1428, 10.206615, -58.58852, 0, 0, 0, 0, 0, 0, -190.28563, 10.072933, -57.177044, 0, 0, 0, 0, 0, 0, -191.42844, 9.974363, -55.765564, 0, 0, 0, 0, 0, 0, -192.57126, 9.817333, -54.354084, 0, 0, 0, 0, 0, 0, -193.71407, 9.703548, -52.942604, 0, 0, 0, 0, 0, 0, -195.11157, 9.629354, -51.67352, 0, 0, 0, 0, 0, 0, -196.5091, 9.580876, -50.404434, 0, 0, 0, 0, 0, 0, -197.9066, 9.545758, -49.13535, 0, 0, 0, 0, 0, 0, -199.30411, 9.526616, -47.866264, 0, 0, 0, 0, 0, 0, -200.30351, 9.477759, -46.397305, 0, 0, 0, 0, 0, 0, -201.30292, 9.474614, -44.92834, 0, 0, 0, 0, 0, 0, -202.30232, 9.536806, -43.459377, 0, 0, 0, 0, 0, 0, -203.30173, 9.7015705, -41.990414, 0, 0, 0, 0, 0, 0, -203.80203, 9.813593, -40.49273, 0, 0, 0, 0, 0, 0, -204.30234, 9.897963, -38.99504, 0, 0, 0, 0, 0, 0, -204.80266, 9.974905, -37.497353, 0, 0, 0, 0, 0, 0, -205.30296, 10.064077, -35.999664, 0, 0, 0, 0, 0, 0, -205.4512, 10.161975, -34.49975, 0, 0, 0, 0, 0, 0, -205.59944, 10.0363455, -32.999832, 0, 0, 0, 0, 0, 0, -205.74768, 9.799188, -31.499916, 0, 0, 0, 0, 0, 0, -205.89592, 9.561229, -30, 0, 0, 0, 0, 0, 0, -205.91985, 9.304053, -28.5, 0, 0, 0, 0, 0, 0, -205.94377, 9.130549, -27, 0, 0, 0, 0, 0, 0, -205.96768, 9.026282, -25.5, 0, 0, 0, 0, 0, 0, -205.99161, 8.98824, -24, 0, 0, 0, 0, 0, 0, -205.99355, 8.954224, -22.5, 0, 0, 0, 0, 0, 0, -205.99547, 8.9215145, -21, 0, 0, 0, 0, 0, 0, -205.99739, 8.889436, -19.5, 0, 0, 0, 0, 0, 0, -205.99933, 8.857306, -18, 0, 0, 0, 0, 0, 0, -205.99748, 8.821849, -16.5, 0, 0, 0, 0, 0, 0, -205.99564, 8.783005, -15, 0, 0, 0, 0, 0, 0, -205.99379, 8.740523, -13.5, 0, 0, 0, 0, 0, 0, -205.99194, 8.694157, -12, 0, 0, 0, 0, 0, 0, -205.97003, 8.65626, -10.5, 0, 0, 0, 0, 0, 0, -205.94814, 8.618326, -9, 0, 0, 0, 0, 0, 0, -205.92622, 8.5815935, -7.5, 0, 0, 0, 0, 0, 0, -205.90431, 8.547081, -6, 0, 0, 0, 0, 0, 0, -205.77988, 8.519357, -4.5, 0, 0, 0, 0, 0, 0, -205.65544, 8.496822, -3, 0, 0, 0, 0, 0, 0, -205.53102, 8.478716, -1.5, 0, 0, 0, 0, 0, 0, -205.40659, 8.461287, 0, 0, 0, 0, 0, 0, 0, -205.05226, 8.443782, 1.5, 0, 0, 0, 0, 0, 0, -204.69795, 8.414438, 3, 0, 0, 0, 0, 0, 0, -204.34363, 8.361969, 4.5, 0, 0, 0, 0, 0, 0, -203.9893, 8.276851, 6, 0, 0, 0, 0, 0, 0, -203.46863, 8.231625, 7.5, 0, 0, 0, 0, 0, 0, -202.94795, 8.185878, 9, 0, 0, 0, 0, 0, 0, -202.42729, 8.160342, 10.5, 0, 0, 0, 0, 0, 0, -201.90662, 8.0960245, 12, 0, 0, 0, 0, 0, 0, -201.42795, 8.146206, 13.5, 0, 0, 0, 0, 0, 0, -200.94928, 8.133328, 15, 0, 0, 0, 0, 0, 0, -200.47061, 8.07189, 16.5, 0, 0, 0, 0, 0, 0, -199.99194, 8.012774, 18, 0, 0, 0, 0, 0, 0, -199.49321, 8.073915, 19.5, 0, 0, 0, 0, 0, 0, -198.99449, 8.069733, 21, 0, 0, 0, 0, 0, 0, -198.49576, 8.061296, 22.5, 0, 0, 0, 0, 0, 0, -197.99702, 8.184201, 24, 0, 0, 0, 0, 0, 0, -197.35007, 8.301047, 25.5, 0, 0, 0, 0, 0, 0, -196.70313, 8.334305, 27, 0, 0, 0, 0, 0, 0, -196.05617, 8.326502, 28.5, 0, 0, 0, 0, 0, 0, -195.40923, 8.320044, 30, 0, 0, 0, 0, 0, 0, -194.67868, 8.302311, 31.5, 0, 0, 0, 0, 0, 0, -193.94814, 8.3580475, 33, 0, 0, 0, 0, 0, 0, -193.21758, 8.455226, 34.5, 0, 0, 0, 0, 0, 0, -192.48703, 8.561894, 36, 0, 0, 0, 0, 0, 0, -191.71758, 8.555848, 37.5, 0, 0, 0, 0, 0, 0, -190.94814, 8.536084, 39, 0, 0, 0, 0, 0, 0, -190.17868, 8.522089, 40.5, 0, 0, 0, 0, 0, 0, -189.40923, 8.53367, 42, 0, 0, 0, 0, 0, 0, -188.55617, 8.618073, 43.5, 0, 0, 0, 0, 0, 0, -187.70313, 8.569954, 45, 0, 0, 0, 0, 0, 0, -186.85007, 8.3617935, 46.5, 0, 0, 0, 0, 0, 0, -185.99702, 7.9659495, 48, 0, 0, 0, 0, 0, 0, -184.99576, 7.5462546, 49.5, 0, 0, 0, 0, 0, 0, -183.99449, 7.2148294, 51, 0, 0, 0, 0, 0, 0, -182.99321, 7.111246, 52.5, 0, 0, 0, 0, 0, 0, -181.99194, 7.0704265, 54, 0, 0, 0, 0, 0, 0, -180.97061, 7.0317755, 55.5, 0, 0, 0, 0, 0, 0, -179.94928, 6.994541, 57, 0, 0, 0, 0, 0, 0, -178.92795, 6.9583197, 58.5, 0, 0, 0, 0, 0, 0, -177.90662, 6.9231143, 60, 0, 0, 0, 0, 0, 0, -176.92729, 6.8885655, 61.5, 0, 0, 0, 0, 0, 0, -175.94795, 6.8541274, 63, 0, 0, 0, 0, 0, 0, -174.96863, 6.8197374, 64.5, 0, 0, 0, 0, 0, 0, -173.9893, 6.7856364, 66, 0, 0, 0, 0, 0, 0, -172.84363, 6.7494473, 67.5, 0, 0, 0, 0, 0, 0, -171.69795, 6.7172194, 69, 0, 0, 0, 0, 0, 0, -170.55226, 6.6680555, 70.5, 0, 0, 0, 0, 0, 0, -169.40659, 6.6446934, 72, 0, 0, 0, 0, 0, 0, -168.30612, 6.609319, 73.2, 0, 0, 0, 0, 0, 0, -167.20567, 6.5812273, 74.4, 0, 0, 0, 0, 0, 0, -166.10522, 6.5458317, 75.6, 0, 0, 0, 0, 0, 0, -165.00476, 6.52562, 76.8, 0, 0, 0, 0, 0, 0, -163.90431, 6.48127, 78, 0, 0, 0, 0, 0, 0, -162.72183, 6.4726353, 79.2, 0, 0, 0, 0, 0, 0, -161.53937, 6.4288597, 80.4, 0, 0, 0, 0, 0, 0, -160.35689, 6.3910027, 81.6, 0, 0, 0, 0, 0, 0, -159.17442, 6.3817825, 82.8, 0, 0, 0, 0, 0, 0, -157.99194, 6.303301, 84, 0, 0, 0, 0, 0, 0, -156.79349, 6.308634, 85.2, 0, 0, 0, 0, 0, 0, -155.59503, 6.2503443, 86.4, 0, 0, 0, 0, 0, 0, -154.39658, 6.216826, 87.6, 0, 0, 0, 0, 0, 0, -153.19812, 6.1947827, 88.8, 0, 0, 0, 0, 0, 0, -151.99966, 6.141594, 90, 0, 0, 0, 0, 0, 0, -150.79973, 6.133956, 91.2, 0, 0, 0, 0, 0, 0, -149.5998, 6.099845, 92.4, 0, 0, 0, 0, 0, 0, -148.39987, 6.077363, 93.6, 0, 0, 0, 0, 0, 0, -147.19994, 6.0591435, 94.8, 0, 0, 0, 0, 0, 0, -146, 6.040397, 96, 0, 0, 0, 0, 0, 0, -144.8, 6.0225525, 97.199936, 0, 0, 0, 0, 0, 0, -143.6, 6.006981, 98.399864, 0, 0, 0, 0, 0, 0, -142.4, 5.98854, 99.5998, 0, 0, 0, 0, 0, 0, -141.2, 5.9699454, 100.79973, 0, 0, 0, 0, 0, 0, -140, 5.951136, 101.999664, 0, 0, 0, 0, 0, 0, -138.8, 5.9320784, 103.19812, 0, 0, 0, 0, 0, 0, -137.6, 5.912663, 104.396576, 0, 0, 0, 0, 0, 0, -136.4, 5.892794, 105.59503, 0, 0, 0, 0, 0, 0, -135.2, 5.872549, 106.793495, 0, 0, 0, 0, 0, 0, -134, 5.852168, 107.99195, 0, 0, 0, 0, 0, 0, -132.8, 5.8320065, 109.17442, 0, 0, 0, 0, 0, 0, -131.6, 5.8119745, 110.356895, 0, 0, 0, 0, 0, 0, -130.4, 5.7919707, 111.53937, 0, 0, 0, 0, 0, 0, -129.2, 5.771975, 112.72184, 0, 0, 0, 0, 0, 0, -128, 5.752022, 113.904305, 0, 0, 0, 0, 0, 0, -126.8, 5.732011, 115.00476, 0, 0, 0, 0, 0, 0, -125.6, 5.7114863, 116.10522, 0, 0, 0, 0, 0, 0, -124.4, 5.689852, 117.20567, 0, 0, 0, 0, 0, 0, -123.2, 5.666259, 118.30613, 0, 0, 0, 0, 0, 0, -122, 5.6410446, 119.406586, 0, 0, 0, 0, 0, 0, -120.5, 5.609933, 120.55226, 0, 0, 0, 0, 0, 0, -119, 5.5746074, 121.697945, 0, 0, 0, 0, 0, 0, -117.5, 5.536549, 122.84363, 0, 0, 0, 0, 0, 0, -116, 5.4966097, 123.98931, 0, 0, 0, 0, 0, 0, -114.500015, 5.456256, 124.96857, 0, 0, 0, 0, 0, 0, -113.00003, 5.416795, 125.947815, 0, 0, 0, 0, 0, 0, -111.500046, 5.3814926, 126.92707, 0, 0, 0, 0, 0, 0, -110.00005, 5.3391566, 127.90633, 0, 0, 0, 0, 0, 0, -108.500465, 5.311655, 128.92598, 0, 0, 0, 0, 0, 0, -107.00087, 5.272613, 129.94562, 0, 0, 0, 0, 0, 0, -105.501274, 5.2410073, 130.96526, 0, 0, 0, 0, 0, 0, -104.00168, 5.206319, 131.98491, 0, 0, 0, 0, 0, 0, -102.50735, 4.941127, 132.96599, 0, 0, 0, 0, 0, 0, -101.01301, 4.7989717, 133.94707, 0, 0, 0, 0, 0, 0, -99.51868, 4.7641125, 134.92815, 0, 0, 0, 0, 0, 0, -98.02434, 4.723341, 135.90923, 0, 0, 0, 0, 0, 0, -96.568985, 4.585106, 136.63675, 0, 0, 0, 0, 0, 0, -95.11363, 4.6208835, 137.36426, 0, 0, 0, 0, 0, 0, -93.65828, 4.684443, 138.09178, 0, 0, 0, 0, 0, 0, -92.20293, 4.7134676, 138.8193, 0, 0, 0, 0, 0, 0, -90.96234, 4.701875, 139.85544, 0, 0, 0, 0, 0, 0, -89.721756, 4.6299934, 140.89159, 0, 0, 0, 0, 0, 0, -88.48117, 4.4598956, 141.92772, 0, 0, 0, 0, 0, 0, -87.240585, 4.3851366, 142.96387, 0, 0, 0, 0, 0, 0, -86, 4.381374, 144, 0, 0, 0, 0, 0, 0, -84.75, 4.398144, 142.75, 0, 0, 0, 0, 0, 0, -83.5, 4.447906, 141.5, 0, 0, 0, 0, 0, 0, -82.25, 4.547156, 140.25, 0, 0, 0, 0, 0, 0, -81, 4.542129, 139, 0, 0, 0, 0, 0, 0, -81, 4.5543942, 140.66667, 0, 0, 0, 0, 0, 0, -81, 4.532119, 142.33333, 0, 0, 0, 0, 0, 0, -81, 4.4890785, 144, 0, 0, 0, 0, 0, 0, -81, 4.330466, 146, 0, 0, 0, 0, 0, 0, -81, 4.186342, 148, 0, 0, 0, 0, 0, 0, -81, 4.2086577, 150, 0, 0, 0, 0, 0, 0, -81, 4.243986, 152),
@@ -1642,7 +1643,7 @@ _data = {
 }
 point_count = 311
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_2ni4f"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k20hi"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1655,14 +1656,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_n2rjl"]
+[sub_resource type="Resource" id="Resource_68ck6"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_2ni4f")
+source_material = SubResource("ShaderMaterial_k20hi")
 
-[sub_resource type="Curve3D" id="Curve3D_k20hi"]
+[sub_resource type="Curve3D" id="Curve3D_hkd47"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 21.693455, 0, 0, 0, 0, 0, 0, 0, 0.57402515, 21.693455, 1.3858193, 0, 0, 0, 0, 0, 0, 1.1480503, 21.693455, 2.7716386, 0, 0, 0, 0, 0, 0, 1.7220755, 21.693455, 4.157458, 0, 0, 0, 0, 0, 0, 2.2961006, 21.693455, 5.5432773, 0, 0, 0, 0, 0, 0, 3.5800838, 21.693455, 6.6193976, 0, 0, 0, 0, 0, 0, 4.864067, 21.693455, 7.695518, 0, 0, 0, 0, 0, 0, 6.1480503, 21.693455, 8.771639, 0, 0, 0, 0, 0, 0, 7.4320335, 21.693455, 9.847759, 0, 0, 0, 0, 0, 0, 8.716017, 21.693455, 10.92388, 0, 0, 0, 0, 0, 0, 10, 21.693455, 12, 0, 0, 0, 0, 0, 0, 9.978552, 21.693455, 13.984952, 0, 0, 0, 0, 0, 0, 9.957105, 21.693455, 15.969903, 0, 0, 0, 0, 0, 0, 9.935657, 21.693455, 17.954855, 0, 0, 0, 0, 0, 0, 10.816083, 21.693455, 19.737885, 0, 0, 0, 0, 0, 0, 11.696508, 21.693455, 21.520914, 0, 0, 0, 0, 0, 0, 12.576935, 21.693455, 23.303946, 0, 0, 0, 0, 0, 0, 13.432701, 21.693455, 24.977959, 0, 0, 0, 0, 0, 0, 14.288467, 21.693455, 26.651972, 0, 0, 0, 0, 0, 0, 15.144234, 21.693455, 28.325987, 0, 0, 0, 0, 0, 0, 16, 21.693455, 30, 0, 0, 0, 0, 0, 0, 18, 21.693455, 30, 0, 0, 0, 0, 0, 0, 20, 21.693455, 30, 0, 0, 0, 0, 0, 0, 22, 21.693455, 30, 0, 0, 0, 0, 0, 0, 24, 21.693455, 30, 0, 0, 0, 0, 0, 0, 26, 21.693455, 30, 0, 0, 0, 0, 0, 0, 28, 21.693455, 30, 0, 0, 0, 0, 0, 0, 30, 21.693455, 30, 0, 0, 0, 0, 0, 0, 32, 21.693455, 30, 0, 0, 0, 0, 0, 0, 34, 21.693455, 30, 0, 0, 0, 0, 0, 0, 35.5, 21.693455, 29.973894, 0, 0, 0, 0, 0, 0, 37, 21.693455, 29.94779, 0, 0, 0, 0, 0, 0, 38.5, 21.693455, 29.921684, 0, 0, 0, 0, 0, 0, 40, 21.693455, 29.89558, 0, 0, 0, 0, 0, 0, 41.5, 21.693455, 29.747395, 0, 0, 0, 0, 0, 0, 43, 21.693455, 29.59921, 0, 0, 0, 0, 0, 0, 44.5, 21.693455, 29.451025, 0, 0, 0, 0, 0, 0, 46, 21.693455, 29.30284, 0, 0, 0, 0, 0, 0, 47.5, 21.693455, 28.80218, 0, 0, 0, 0, 0, 0, 49, 21.693455, 28.30152, 0, 0, 0, 0, 0, 0, 50.5, 21.693455, 27.80086, 0, 0, 0, 0, 0, 0, 52, 21.693455, 27.300198, 0, 0, 0, 0, 0, 0, 53.5, 21.693455, 26.30086, 0, 0, 0, 0, 0, 0, 55, 21.693455, 25.30152, 0, 0, 0, 0, 0, 0, 56.5, 21.693455, 24.30218, 0, 0, 0, 0, 0, 0, 58, 21.693455, 23.30284, 0, 0, 0, 0, 0, 0, 59.2, 21.693455, 22.221523, 0, 0, 0, 0, 0, 0, 60.4, 21.693455, 21.140207, 0, 0, 0, 0, 0, 0, 61.6, 21.693455, 20.058891, 0, 0, 0, 0, 0, 0, 62.8, 21.693455, 18.977573, 0, 0, 0, 0, 0, 0, 64, 21.693455, 17.896257, 0, 0, 0, 0, 0, 0, 65.2, 21.693455, 16.717007, 0, 0, 0, 0, 0, 0, 66.4, 21.693455, 15.537755, 0, 0, 0, 0, 0, 0, 67.6, 21.693455, 14.358503, 0, 0, 0, 0, 0, 0, 68.8, 21.693455, 13.179252, 0, 0, 0, 0, 0, 0, 70, 21.693455, 12, 0, 0, 0, 0, 0, 0, 71.2, 21.693455, 10.820748, 0, 0, 0, 0, 0, 0, 72.4, 21.693455, 9.641497, 0, 0, 0, 0, 0, 0, 73.6, 21.693455, 8.462245, 0, 0, 0, 0, 0, 0, 74.8, 21.693455, 7.282994, 0, 0, 0, 0, 0, 0, 76, 21.693455, 6.103742, 0, 0, 0, 0, 0, 0, 77.2, 21.693455, 5.0224257, 0, 0, 0, 0, 0, 0, 78.4, 21.693125, 3.9411092, 0, 0, 0, 0, 0, 0, 79.6, 21.687061, 2.8597927, 0, 0, 0, 0, 0, 0, 80.8, 21.662323, 1.7784764, 0, 0, 0, 0, 0, 0, 82, 21.587019, 0.6971599, 0, 0, 0, 0, 0, 0, 83.5, 21.456522, -0.30226436, 0, 0, 0, 0, 0, 0, 85, 21.327763, -1.3016887, 0, 0, 0, 0, 0, 0, 86.5, 21.206997, -2.301113, 0, 0, 0, 0, 0, 0, 88, 21.114136, -3.300537, 0, 0, 0, 0, 0, 0, 89.5, 21.022463, -3.8031254, 0, 0, 0, 0, 0, 0, 91, 20.932629, -4.3057137, 0, 0, 0, 0, 0, 0, 92.5, 20.843977, -4.808302, 0, 0, 0, 0, 0, 0, 94, 20.755325, -5.31089, 0, 0, 0, 0, 0, 0, 95.5, 20.66696, -5.4810705, 0, 0, 0, 0, 0, 0, 97, 20.578596, -5.651251, 0, 0, 0, 0, 0, 0, 98.5, 20.490232, -5.8214307, 0, 0, 0, 0, 0, 0, 100, 20.401867, -5.991611, 0, 0, 0, 0, 0, 0, 101.5, 20.313522, -6.1398807, 0, 0, 0, 0, 0, 0, 103, 20.225178, -6.2881503, 0, 0, 0, 0, 0, 0, 104.5, 20.136833, -6.43642, 0, 0, 0, 0, 0, 0, 106, 20.048489, -6.5846896, 0, 0, 0, 0, 0, 0, 107.5, 19.959967, -6.939008, 0, 0, 0, 0, 0, 0, 109, 19.871443, -7.293327, 0, 0, 0, 0, 0, 0, 110.5, 19.78292, -7.6476455, 0, 0, 0, 0, 0, 0, 112, 19.694399, -8.001965, 0, 0, 0, 0, 0, 0, 113.5, 19.462921, -8.498715, 0, 0, 0, 0, 0, 0, 115, 19.231916, -8.995466, 0, 0, 0, 0, 0, 0, 116.5, 19.001146, -9.492218, 0, 0, 0, 0, 0, 0, 118, 18.770378, -9.988969, 0, 0, 0, 0, 0, 0, 119.499916, 18.539621, -10.317606, 0, 0, 0, 0, 0, 0, 120.99983, 18.30873, -10.646243, 0, 0, 0, 0, 0, 0, 122.49975, 18.086351, -10.97488, 0, 0, 0, 0, 0, 0, 123.999664, 17.880016, -11.303517, 0, 0, 0, 0, 0, 0, 125.99698, 17.723217, -11.276987, 0, 0, 0, 0, 0, 0, 127.99429, 17.716663, -11.250457, 0, 0, 0, 0, 0, 0, 129.99161, 17.770214, -11.223927, 0, 0, 0, 0, 0, 0, 131.46768, 17.91733, -10.793022, 0, 0, 0, 0, 0, 0, 132.94377, 18.046452, -10.362118, 0, 0, 0, 0, 0, 0, 134.41985, 18.259777, -9.931214, 0, 0, 0, 0, 0, 0, 135.89592, 18.489868, -9.50031, 0, 0, 0, 0, 0, 0, 137.24765, 18.668177, -8.7994375, 0, 0, 0, 0, 0, 0, 138.59938, 18.866009, -8.098565, 0, 0, 0, 0, 0, 0, 139.95111, 19.076544, -7.397693, 0, 0, 0, 0, 0, 0, 141.30284, 19.30286, -6.696821, 0, 0, 0, 0, 0, 0, 142.6353, 19.476925, -6.2297215, 0, 0, 0, 0, 0, 0, 143.96774, 19.605988, -5.762622, 0, 0, 0, 0, 0, 0, 145.3002, 19.862566, -5.295522, 0, 0, 0, 0, 0, 0, 146.30151, 20.08251, -6.3407264, 0, 0, 0, 0, 0, 0, 147.30284, 20.37018, -7.3859305, 0, 0, 0, 0, 0, 0, 147.50053, 20.593372, -8.993228, 0, 0, 0, 0, 0, 0, 147.69823, 20.824009, -10.600526, 0, 0, 0, 0, 0, 0, 147.89592, 21.010715, -12.207823, 0, 0, 0, 0, 0, 0, 147.92781, 21.376045, -14.144141, 0, 0, 0, 0, 0, 0, 147.95972, 21.914577, -16.08046, 0, 0, 0, 0, 0, 0, 147.99161, 22.455175, -18.016779, 0, 0, 0, 0, 0, 0, 147.99419, 23.00759, -20.011412, 0, 0, 0, 0, 0, 0, 147.99675, 23.557924, -22.006044, 0, 0, 0, 0, 0, 0, 147.99933, 24.104069, -24.000677, 0, 0, 0, 0, 0, 0, 147.99673, 24.644499, -26.000433, 0, 0, 0, 0, 0, 0, 147.99414, 25.176456, -28.000189, 0, 0, 0, 0, 0, 0, 147.99156, 25.697823, -29.999943, 0, 0, 0, 0, 0, 0, 147.95934, 26.201992, -31.999403, 0, 0, 0, 0, 0, 0, 147.92712, 26.691315, -33.99886, 0, 0, 0, 0, 0, 0, 147.89491, 27.136042, -35.998318, 0, 0, 0, 0, 0, 0, 147.74501, 27.354048, -37.492657, 0, 0, 0, 0, 0, 0, 147.5951, 27.580912, -38.98699, 0, 0, 0, 0, 0, 0, 147.44519, 27.808931, -40.481327, 0, 0, 0, 0, 0, 0, 147.29529, 27.993689, -41.975662, 0, 0, 0, 0, 0, 0, 146.79782, 28.130991, -43.431015, 0, 0, 0, 0, 0, 0, 146.30035, 28.346317, -44.886368, 0, 0, 0, 0, 0, 0, 145.8029, 28.630783, -46.34172, 0, 0, 0, 0, 0, 0, 145.30544, 28.954426, -47.797073, 0, 0, 0, 0, 0, 0, 144.47908, 29.285053, -49.347805, 0, 0, 0, 0, 0, 0, 143.65271, 29.544739, -50.898537, 0, 0, 0, 0, 0, 0, 142.82635, 29.710001, -52.44927, 0, 0, 0, 0, 0, 0, 142, 29.79026, -54, 0, 0, 0, 0, 0, 0, 140.6, 29.773932, -55, 0, 0, 0, 0, 0, 0, 139.2, 29.766457, -56, 0, 0, 0, 0, 0, 0, 137.8, 29.695633, -57, 0, 0, 0, 0, 0, 0, 136.4, 29.61442, -58, 0, 0, 0, 0, 0, 0, 135, 28.549421, -59, 0, 0, 0, 0, 0, 0, 136.66667, 29.665829, -59, 0, 0, 0, 0, 0, 0, 138.33333, 29.790932, -59, 0, 0, 0, 0, 0, 0, 140, 29.79286, -59, 0, 0, 0, 0, 0, 0, 142, 29.804255, -59, 0, 0, 0, 0, 0, 0, 144, 29.80307, -59, 0, 0, 0, 0, 0, 0, 146, 29.797386, -59, 0, 0, 0, 0, 0, 0, 148, 29.79939, -59),
@@ -1670,7 +1671,7 @@ _data = {
 }
 point_count = 149
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_68ck6"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0hpfo"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1683,14 +1684,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_hkd47"]
+[sub_resource type="Resource" id="Resource_y78lk"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_68ck6")
+source_material = SubResource("ShaderMaterial_0hpfo")
 
-[sub_resource type="Curve3D" id="Curve3D_0hpfo"]
+[sub_resource type="Curve3D" id="Curve3D_2bhto"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 21.693455, 0, 0, 0, 0, 0, 0, 0, 0.57402515, 21.693455, 1.3858193, 0, 0, 0, 0, 0, 0, 1.1480503, 21.693455, 2.7716386, 0, 0, 0, 0, 0, 0, 1.7220755, 21.693455, 4.157458, 0, 0, 0, 0, 0, 0, 2.2961006, 21.693455, 5.5432773, 0, 0, 0, 0, 0, 0, 1.2220755, 21.693455, 7.157458, 0, 0, 0, 0, 0, 0, 0.1480503, 21.693455, 8.771639, 0, 0, 0, 0, 0, 0, -0.92597485, 21.693455, 10.385819, 0, 0, 0, 0, 0, 0, -2, 21.693455, 12, 0, 0, 0, 0, 0, 0, -3.067466, 21.693455, 13.488713, 0, 0, 0, 0, 0, 0, -4.134932, 21.693455, 14.9774275, 0, 0, 0, 0, 0, 0, -5.202398, 21.693455, 16.46614, 0, 0, 0, 0, 0, 0, -6.2698636, 21.693455, 17.954855, 0, 0, 0, 0, 0, 0, -7.2119493, 21.693455, 19.292128, 0, 0, 0, 0, 0, 0, -8.154035, 21.693455, 20.6294, 0, 0, 0, 0, 0, 0, -9.09612, 21.693455, 21.966673, 0, 0, 0, 0, 0, 0, -10.038206, 21.693455, 23.303946, 0, 0, 0, 0, 0, 0, -11.028654, 21.693455, 24.977959, 0, 0, 0, 0, 0, 0, -12.019103, 21.693455, 26.651972, 0, 0, 0, 0, 0, 0, -13.009551, 21.693455, 28.325987, 0, 0, 0, 0, 0, 0, -14, 21.693455, 30, 0, 0, 0, 0, 0, 0, -16, 21.693455, 30, 0, 0, 0, 0, 0, 0, -18, 21.693455, 30, 0, 0, 0, 0, 0, 0, -20, 21.693455, 30, 0, 0, 0, 0, 0, 0, -22, 21.693455, 30, 0, 0, 0, 0, 0, 0, -24, 21.693455, 30, 0, 0, 0, 0, 0, 0, -26, 21.693455, 30, 0, 0, 0, 0, 0, 0, -28, 21.693455, 30, 0, 0, 0, 0, 0, 0, -30, 21.693455, 30, 0, 0, 0, 0, 0, 0, -32, 21.693455, 30, 0, 0, 0, 0, 0, 0, -33.5, 21.693455, 29.497158, 0, 0, 0, 0, 0, 0, -35, 21.693455, 28.994316, 0, 0, 0, 0, 0, 0, -36.5, 21.693455, 28.491472, 0, 0, 0, 0, 0, 0, -38, 21.693455, 27.98863, 0, 0, 0, 0, 0, 0, -39.5, 21.693455, 27.466112, 0, 0, 0, 0, 0, 0, -41, 21.693455, 26.943596, 0, 0, 0, 0, 0, 0, -42.5, 21.693455, 26.421078, 0, 0, 0, 0, 0, 0, -44, 21.693455, 25.898561, 0, 0, 0, 0, 0, 0, -45.5, 21.693455, 25.3979, 0, 0, 0, 0, 0, 0, -47, 21.693455, 24.89724, 0, 0, 0, 0, 0, 0, -48.5, 21.693455, 24.39658, 0, 0, 0, 0, 0, 0, -50, 21.693455, 23.89592, 0, 0, 0, 0, 0, 0, -51.5, 21.693455, 23.270912, 0, 0, 0, 0, 0, 0, -53, 21.693455, 22.645905, 0, 0, 0, 0, 0, 0, -54.5, 21.693455, 22.020897, 0, 0, 0, 0, 0, 0, -56, 21.693455, 21.395891, 0, 0, 0, 0, 0, 0, -57.5, 21.693455, 20.374725, 0, 0, 0, 0, 0, 0, -59, 21.693455, 19.35356, 0, 0, 0, 0, 0, 0, -60.5, 21.693455, 18.332394, 0, 0, 0, 0, 0, 0, -62, 21.693455, 17.31123, 0, 0, 0, 0, 0, 0, -63.2, 21.693455, 16.229912, 0, 0, 0, 0, 0, 0, -64.4, 21.693455, 15.148596, 0, 0, 0, 0, 0, 0, -65.6, 21.693455, 14.06728, 0, 0, 0, 0, 0, 0, -66.8, 21.693455, 12.985963, 0, 0, 0, 0, 0, 0, -68, 21.693455, 11.904647, 0, 0, 0, 0, 0, 0, -69.2, 21.693455, 10.742856, 0, 0, 0, 0, 0, 0, -70.4, 21.693455, 9.581065, 0, 0, 0, 0, 0, 0, -71.6, 21.693455, 8.419274, 0, 0, 0, 0, 0, 0, -72.8, 21.693455, 7.257483, 0, 0, 0, 0, 0, 0, -74, 21.693455, 6.095692, 0, 0, 0, 0, 0, 0, -75.2, 21.693455, 5.015918, 0, 0, 0, 0, 0, 0, -76.4, 21.693455, 3.9361436, 0, 0, 0, 0, 0, 0, -77.6, 21.693455, 2.8563695, 0, 0, 0, 0, 0, 0, -78.8, 21.688969, 1.7765952, 0, 0, 0, 0, 0, 0, -80, 21.64691, 0.6968211, 0, 0, 0, 0, 0, 0, -81.5, 21.559517, -0.30243376, 0, 0, 0, 0, 0, 0, -83, 21.445738, -1.3016887, 0, 0, 0, 0, 0, 0, -84.5, 21.3228, -2.3009434, 0, 0, 0, 0, 0, 0, -86, 21.230719, -3.3001983, 0, 0, 0, 0, 0, 0, -87.5, 21.140099, -3.8008587, 0, 0, 0, 0, 0, 0, -89, 21.050253, -4.3015194, 0, 0, 0, 0, 0, 0, -90.5, 20.961603, -4.80218, 0, 0, 0, 0, 0, 0, -92, 20.872952, -5.30284, 0, 0, 0, 0, 0, 0, -93.5, 20.784609, -5.45111, 0, 0, 0, 0, 0, 0, -95, 20.696264, -5.5993795, 0, 0, 0, 0, 0, 0, -96.5, 20.60792, -5.747649, 0, 0, 0, 0, 0, 0, -98, 20.519571, -5.895919, 0, 0, 0, 0, 0, 0, -99.5, 20.431335, -5.919842, 0, 0, 0, 0, 0, 0, -101, 20.343098, -5.943765, 0, 0, 0, 0, 0, 0, -102.5, 20.254858, -5.967688, 0, 0, 0, 0, 0, 0, -104, 20.166622, -5.991611, 0, 0, 0, 0, 0, 0, -105.5, 20.078402, -5.9936237, 0, 0, 0, 0, 0, 0, -107, 19.990183, -5.995636, 0, 0, 0, 0, 0, 0, -108.5, 19.901966, -5.9976487, 0, 0, 0, 0, 0, 0, -110, 19.813751, -5.999661, 0, 0, 0, 0, 0, 0, -111.5, 19.725534, -5.9998307, 0, 0, 0, 0, 0, 0, -113, 19.540945, -6, 0, 0, 0, 0, 0, 0, -114.5, 19.308838, -6.0001693, 0, 0, 0, 0, 0, 0, -116, 19.07807, -6.000339, 0, 0, 0, 0, 0, 0, -117.5, 18.8473, -6.0023513, 0, 0, 0, 0, 0, 0, -119, 18.616531, -6.004364, 0, 0, 0, 0, 0, 0, -120.5, 18.385761, -6.0063763, 0, 0, 0, 0, 0, 0, -122, 18.154993, -6.008389, 0, 0, 0, 0, 0, 0, -123.49983, 17.92425, -6.032312, 0, 0, 0, 0, 0, 0, -124.999664, 17.693506, -6.056235, 0, 0, 0, 0, 0, 0, -126.49949, 17.462763, -6.080158, 0, 0, 0, 0, 0, 0, -127.99932, 17.23202, -6.104081, 0, 0, 0, 0, 0, 0, -129.49538, 17.001858, -6.252351, 0, 0, 0, 0, 0, 0, -130.99144, 16.771694, -6.4006205, 0, 0, 0, 0, 0, 0, -132.4875, 16.507177, -6.54889, 0, 0, 0, 0, 0, 0, -133.98357, 16.044994, -6.69716, 0, 0, 0, 0, 0, 0, -135.4378, 15.541233, -7.19782, 0, 0, 0, 0, 0, 0, -136.89206, 14.9897585, -7.6984806, 0, 0, 0, 0, 0, 0, -138.34631, 14.403548, -8.1991415, 0, 0, 0, 0, 0, 0, -139.80057, 13.772614, -8.699801, 0, 0, 0, 0, 0, 0, -141.02989, 13.206673, -9.699073, 0, 0, 0, 0, 0, 0, -142.2592, 12.645426, -10.698344, 0, 0, 0, 0, 0, 0, -143.48853, 12.123764, -11.697615, 0, 0, 0, 0, 0, 0, -144.71785, 11.622684, -12.696886, 0, 0, 0, 0, 0, 0, -145.38736, 11.280745, -14.047297, 0, 0, 0, 0, 0, 0, -146.05688, 10.812246, -15.397708, 0, 0, 0, 0, 0, 0, -146.7264, 10.320139, -16.74812, 0, 0, 0, 0, 0, 0, -147.39592, 9.882242, -18.09853, 0, 0, 0, 0, 0, 0, -147.58115, 9.509385, -20.050156, 0, 0, 0, 0, 0, 0, -147.76637, 9.296119, -22.00178, 0, 0, 0, 0, 0, 0, -147.95161, 9.197819, -23.953405, 0, 0, 0, 0, 0, 0, -148.32286, 9.21491, -25.89628, 0, 0, 0, 0, 0, 0, -148.6941, 9.308517, -27.839157, 0, 0, 0, 0, 0, 0, -149.06535, 9.449493, -29.782032, 0, 0, 0, 0, 0, 0, -149.79901, 9.581465, -31.336525, 0, 0, 0, 0, 0, 0, -150.53268, 9.679689, -32.891018, 0, 0, 0, 0, 0, 0, -151.26634, 9.7400255, -34.445507, 0, 0, 0, 0, 0, 0, -152, 9.769837, -36, 0, 0, 0, 0, 0, 0, -152.65839, 9.752728, -37.15027, 0, 0, 0, 0, 0, 0, -154.23601, 9.677114, -38.296417, 0, 0, 0, 0, 0, 0, -155.81361, 9.596024, -39.442566, 0, 0, 0, 0, 0, 0, -157.39122, 9.493066, -40.58871, 0, 0, 0, 0, 0, 0, -158.96883, 9.439683, -41.73486, 0, 0, 0, 0, 0, 0, -160.54643, 9.347667, -42.88101, 0, 0, 0, 0, 0, 0, -162.12404, 10.274088, -44.027157, 0, 0, 0, 0, 0, 0, -163.70164, 10.27339, -45.1733, 0, 0, 0, 0, 0, 0, -165.27925, 10.273241, -46.31945, 0, 0, 0, 0, 0, 0, -166.85686, 10.273238, -47.4656, 0, 0, 0, 0, 0, 0, -168.43446, 10.273238, -48.611748, 0, 0, 0, 0, 0, 0, -170.01207, 10.273238, -49.757893, 0, 0, 0, 0, 0, 0, -171.58968, 10.273238, -50.90404, 0, 0, 0, 0, 0, 0, -173.1673, 10.273239, -52.05019, 0, 0, 0, 0, 0, 0, -174.7449, 10.273214, -53.19634, 0, 0, 0, 0, 0, 0, -176.32251, 9.267875, -54.342484, 0, 0, 0, 0, 0, 0, -177.90012, 9.411971, -55.488632, 0, 0, 0, 0, 0, 0, -179.47772, 9.459306, -56.63478, 0, 0, 0, 0, 0, 0, -181.05533, 9.581001, -57.78093, 0, 0, 0, 0, 0, 0, -182.63293, 9.711954, -58.927074, 0, 0, 0, 0, 0, 0, -184.21054, 10.005076, -60.073223, 0, 0, 0, 0, 0, 0, -186.10527, 10.165405, -60.036613, 0, 0, 0, 0, 0, 0, -188, 10.382976, -60, 0, 0, 0, 0, 0, 0, -189.1428, 10.206615, -58.58852, 0, 0, 0, 0, 0, 0, -190.28563, 10.072933, -57.177044, 0, 0, 0, 0, 0, 0, -191.42844, 9.974363, -55.765564, 0, 0, 0, 0, 0, 0, -192.57126, 9.817333, -54.354084, 0, 0, 0, 0, 0, 0, -193.71407, 9.703548, -52.942604, 0, 0, 0, 0, 0, 0, -195.11157, 9.629354, -51.67352, 0, 0, 0, 0, 0, 0, -196.5091, 9.580876, -50.404434, 0, 0, 0, 0, 0, 0, -197.9066, 9.545758, -49.13535, 0, 0, 0, 0, 0, 0, -199.30411, 9.526616, -47.866264, 0, 0, 0, 0, 0, 0, -200.30351, 9.477759, -46.397305, 0, 0, 0, 0, 0, 0, -201.30292, 9.474614, -44.92834, 0, 0, 0, 0, 0, 0, -202.30232, 9.536806, -43.459377, 0, 0, 0, 0, 0, 0, -203.30173, 9.7015705, -41.990414, 0, 0, 0, 0, 0, 0, -203.80203, 9.813593, -40.49273, 0, 0, 0, 0, 0, 0, -204.30234, 9.897963, -38.99504, 0, 0, 0, 0, 0, 0, -204.80266, 9.974905, -37.497353, 0, 0, 0, 0, 0, 0, -205.30296, 10.064077, -35.999664, 0, 0, 0, 0, 0, 0, -205.4512, 10.161975, -34.49975, 0, 0, 0, 0, 0, 0, -205.59944, 10.0363455, -32.999832, 0, 0, 0, 0, 0, 0, -205.74768, 9.799188, -31.499916, 0, 0, 0, 0, 0, 0, -205.89592, 9.561229, -30, 0, 0, 0, 0, 0, 0, -205.91985, 9.304053, -28.5, 0, 0, 0, 0, 0, 0, -205.94377, 9.130549, -27, 0, 0, 0, 0, 0, 0, -205.96768, 9.026282, -25.5, 0, 0, 0, 0, 0, 0, -205.99161, 8.98824, -24, 0, 0, 0, 0, 0, 0, -205.99362, 8.954224, -22.5, 0, 0, 0, 0, 0, 0, -205.99564, 8.9215145, -21, 0, 0, 0, 0, 0, 0, -205.99765, 8.889436, -19.5, 0, 0, 0, 0, 0, 0, -205.99966, 8.857306, -18, 0, 0, 0, 0, 0, 0, -205.99974, 8.821849, -16.5, 0, 0, 0, 0, 0, 0, -205.99983, 8.783002, -15, 0, 0, 0, 0, 0, 0, -205.99991, 8.74051, -13.5, 0, 0, 0, 0, 0, 0, -206, 8.694118, -12, 0, 0, 0, 0, 0, 0, -206, 8.643447, -10, 0, 0, 0, 0, 0, 0, -206, 8.593122, -8, 0, 0, 0, 0, 0, 0, -206, 8.54784, -6, 0, 0, 0, 0, 0, 0, -206, 8.51219, -4, 0, 0, 0, 0, 0, 0, -206, 8.489309, -2, 0, 0, 0, 0, 0, 0, -206, 8.480355, 0, 0, 0, 0, 0, 0, 0, -206, 8.485121, 2, 0, 0, 0, 0, 0, 0, -206, 8.503562, 4, 0, 0, 0, 0, 0, 0, -206, 8.537514, 6, 0, 0, 0, 0, 0, 0, -206, 8.591623, 8, 0, 0, 0, 0, 0, 0, -206, 8.67263, 10, 0, 0, 0, 0, 0, 0, -206, 8.769236, 12, 0, 0, 0, 0, 0, 0, -206, 8.938582, 14, 0, 0, 0, 0, 0, 0, -206, 9.126852, 16, 0, 0, 0, 0, 0, 0, -206, 9.29197, 18, 0, 0, 0, 0, 0, 0, -206, 9.398425, 20, 0, 0, 0, 0, 0, 0, -206, 9.516087, 22, 0, 0, 0, 0, 0, 0, -206, 9.640345, 24, 0, 0, 0, 0, 0, 0, -206, 10.081915, 26, 0, 0, 0, 0, 0, 0, -206, 10.213035, 28, 0, 0, 0, 0, 0, 0, -206, 10.3459, 30, 0, 0, 0, 0, 0, 0, -206, 10.47995, 32, 0, 0, 0, 0, 0, 0, -206, 10.61581, 34, 0, 0, 0, 0, 0, 0, -206, 11.052971, 36, 0, 0, 0, 0, 0, 0, -205.99991, 11.171475, 37.5, 0, 0, 0, 0, 0, 0, -205.99983, 11.277695, 39, 0, 0, 0, 0, 0, 0, -205.99974, 11.370111, 40.5, 0, 0, 0, 0, 0, 0, -205.99966, 11.447207, 42, 0, 0, 0, 0, 0, 0, -205.99765, 11.728111, 43.5, 0, 0, 0, 0, 0, 0, -205.99564, 11.841839, 45, 0, 0, 0, 0, 0, 0, -205.99362, 11.950033, 46.5, 0, 0, 0, 0, 0, 0, -205.99161, 12.214339, 48, 0, 0, 0, 0, 0, 0, -205.96768, 12.463944, 49.5, 0, 0, 0, 0, 0, 0, -205.94377, 12.710623, 51, 0, 0, 0, 0, 0, 0, -205.91985, 12.955066, 52.5, 0, 0, 0, 0, 0, 0, -205.89592, 13.197997, 54, 0, 0, 0, 0, 0, 0, -205.74765, 13.254449, 55.5, 0, 0, 0, 0, 0, 0, -205.59938, 13.307467, 57, 0, 0, 0, 0, 0, 0, -205.45111, 13.334866, 58.5, 0, 0, 0, 0, 0, 0, -205.30284, 13.339412, 60, 0, 0, 0, 0, 0, 0, -204.80219, 13.3381, 61.5, 0, 0, 0, 0, 0, 0, -204.30151, 13.331785, 63, 0, 0, 0, 0, 0, 0, -203.80086, 13.320249, 64.5, 0, 0, 0, 0, 0, 0, -203.3002, 13.301362, 66, 0, 0, 0, 0, 0, 0, -202.30086, 13.276349, 67.5, 0, 0, 0, 0, 0, 0, -201.30151, 13.244799, 69, 0, 0, 0, 0, 0, 0, -200.30219, 13.2076025, 70.5, 0, 0, 0, 0, 0, 0, -199.30284, 13.163878, 72, 0, 0, 0, 0, 0, 0, -198.22153, 13.121137, 73.2, 0, 0, 0, 0, 0, 0, -197.14021, 13.073925, 74.4, 0, 0, 0, 0, 0, 0, -196.05888, 13.024646, 75.6, 0, 0, 0, 0, 0, 0, -194.97757, 12.973792, 76.8, 0, 0, 0, 0, 0, 0, -193.89626, 12.921614, 78, 0, 0, 0, 0, 0, 0, -192.717, 12.868816, 79.19999, 0, 0, 0, 0, 0, 0, -191.53773, 12.816302, 80.39998, 0, 0, 0, 0, 0, 0, -190.35847, 12.764692, 81.59997, 0, 0, 0, 0, 0, 0, -189.1792, 12.71438, 82.79996, 0, 0, 0, 0, 0, 0, -187.99994, 12.665482, 83.99995, 0, 0, 0, 0, 0, 0, -186.82043, 12.618066, 85.199615, 0, 0, 0, 0, 0, 0, -185.64093, 12.571374, 86.39929, 0, 0, 0, 0, 0, 0, -184.46141, 12.525332, 87.59897, 0, 0, 0, 0, 0, 0, -183.2819, 12.480053, 88.798645, 0, 0, 0, 0, 0, 0, -182.1024, 12.43577, 89.99832, 0, 0, 0, 0, 0, 0, -181.01816, 12.393053, 91.19379, 0, 0, 0, 0, 0, 0, -179.93393, 12.35191, 92.38926, 0, 0, 0, 0, 0, 0, -178.84969, 12.312184, 93.584724, 0, 0, 0, 0, 0, 0, -177.76544, 12.274012, 94.7802, 0, 0, 0, 0, 0, 0, -176.68121, 12.238914, 95.97566, 0, 0, 0, 0, 0, 0, -175.66115, 12.202878, 97.431015, 0, 0, 0, 0, 0, 0, -174.64108, 12.170862, 98.88637, 0, 0, 0, 0, 0, 0, -173.62102, 12.1421585, 100.34172, 0, 0, 0, 0, 0, 0, -172.60095, 12.117526, 101.79707, 0, 0, 0, 0, 0, 0, -171.95071, 12.0967455, 103.3478, 0, 0, 0, 0, 0, 0, -171.30048, 12.080853, 104.89854, 0, 0, 0, 0, 0, 0, -170.65024, 12.070045, 106.449265, 0, 0, 0, 0, 0, 0, -170, 12.065177, 108, 0, 0, 0, 0, 0, 0, -169.66667, 12.071711, 109.666664, 0, 0, 0, 0, 0, 0, -169.33333, 12.091069, 111.333336, 0, 0, 0, 0, 0, 0, -169, 12.129498, 113, 0, 0, 0, 0, 0, 0, -170.66667, 12.150764, 113, 0, 0, 0, 0, 0, 0, -172.33333, 12.244231, 113, 0, 0, 0, 0, 0, 0, -174, 12.32265, 113, 0, 0, 0, 0, 0, 0, -176, 12.408955, 113, 0, 0, 0, 0, 0, 0, -178, 12.493894, 113, 0, 0, 0, 0, 0, 0, -180, 12.569445, 113, 0, 0, 0, 0, 0, 0, -182, 12.706322, 113),
@@ -1698,7 +1699,7 @@ _data = {
 }
 point_count = 265
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_y78lk"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_msbrt"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1711,14 +1712,14 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_2bhto"]
+[sub_resource type="Resource" id="Resource_pg3cp"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_y78lk")
+source_material = SubResource("ShaderMaterial_msbrt")
 
-[sub_resource type="Curve3D" id="Curve3D_msbrt"]
+[sub_resource type="Curve3D" id="Curve3D_8nyoa"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 18.46, -128.6, 0, 0, 0, 0, 0, 0, -8, 18.5, -131.8, 0, 0, 0, 0, 0, 0, -18, 18.5, -133.4, 0, 0, 0, 0, 0, 0, -24.5, 18.5, -134.7),
@@ -1726,7 +1727,7 @@ _data = {
 }
 point_count = 4
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_pg3cp"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y0s4y"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1739,22 +1740,22 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_8nyoa"]
+[sub_resource type="Resource" id="Resource_xtye0"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_pg3cp")
+source_material = SubResource("ShaderMaterial_y0s4y")
 
-[sub_resource type="Curve3D" id="Curve3D_y0s4y"]
+[sub_resource type="Curve3D" id="Curve3D_dyolv"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -29.4, 17.5, -147.3, 0, 0, 0, 0, 0, 0, -29.42, 17.4, -147.95),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -29.4, 17.9, -147.3, 0, 0, 0, 0, 0, 0, -29.4, 17.9, -147.95),
 "tilts": PackedFloat32Array(0, 0)
 }
 point_count = 2
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_xtye0"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_swdu4"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1767,22 +1768,22 @@ shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
 
-[sub_resource type="Resource" id="Resource_dyolv"]
+[sub_resource type="Resource" id="Resource_scfyq"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 material_mode = 1
 texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_xtye0")
+source_material = SubResource("ShaderMaterial_swdu4")
 
-[sub_resource type="Curve3D" id="Curve3D_swdu4"]
+[sub_resource type="Curve3D" id="Curve3D_wso77"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 18.46, 111.4, 0, 0, 0, 0, 0, 0, 0.3, 17.2, 125, 0, 0, 0, 0, 0, 0, 0.45, 15.5, 138.5, 0, 0, 0, 0, 0, 0, 10, 15.5, 143, 0, 0, 0, 0, 0, 0, 23, 15.5, 144.8, 0, 0, 0, 0, 0, 0, 37.8, 11, 149.4, 0, 0, 0, 0, 0, 0, 38, 11, 151.95),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 18.46, 111.4, 0, 0, 0, 0, 0, 0, 0.3, 17.2, 125, 0, 0, 0, 0, 0, 0, 0.45, 15.5, 138.5, 0, 0, 0, 0, 0, 0, 10, 15.5, 137, 0, 0, 0, 0, 0, 0, 20, 15.5, 137, 0, 0, 0, 0, 0, 0, 38, 10.67, 138),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0)
 }
-point_count = 7
+point_count = 6
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_scfyq"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rtxin"]
 render_priority = 1
 shader = ExtResource("12_jh2sg")
 shader_parameter/ground_albedo = ExtResource("4_jjbej")
@@ -1794,335 +1795,363 @@ shader_parameter/roughness_multiplier = 1.0
 shader_parameter/normal_strength = 0.72
 shader_parameter/edge_feather = 0.16
 shader_parameter/texture_rotation_radians = null
-
-[sub_resource type="Resource" id="Resource_wso77"]
-resource_local_to_scene = true
-script = ExtResource("3_7sc8j")
-material_mode = 1
-texture_preset = "Worn earth"
-source_material = SubResource("ShaderMaterial_scfyq")
-
-[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_rtxin"]
-cull_mode = 2
-albedo_color = Color(0.48, 0.56, 0.56, 1)
-albedo_texture = ExtResource("15_jh2sg")
-orm_texture = ExtResource("17_j745f")
-normal_enabled = true
-normal_scale = 0.72
-normal_texture = ExtResource("16_robbe")
-uv1_scale = Vector3(0.8, 0.8, 0.8)
-texture_filter = 5
 
 [sub_resource type="Resource" id="Resource_rbs60"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
-texture_preset = "Stone"
-source_material = SubResource("ORMMaterial3D_rtxin")
+material_mode = 1
+texture_preset = "Worn earth"
+source_material = SubResource("ShaderMaterial_rtxin")
 
-[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_jm3ba"]
+[sub_resource type="Curve3D" id="Curve3D_jm3ba"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 38, 10.67, 138, 0, 0, 0, 0, 0, 0, 37.5, 10.83, 139.74, 0, 0, 0, 0, 0, 0, 37, 11.03, 141.49, 0, 0, 0, 0, 0, 0, 36.5, 10.84, 143.23, 0, 0, 0, 0, 0, 0, 36, 10.7, 144.98, 0, 0, 0, 0, 0, 0, 35.5, 10.74, 146.72, 0, 0, 0, 0, 0, 0, 35, 10.71, 148.46, 0, 0, 0, 0, 0, 0, 34.5, 10.61, 150.21, 0, 0, 0, 0, 0, 0, 34, 10.45, 151.95),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 9
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iy4xb"]
+render_priority = 1
+shader = ExtResource("12_jh2sg")
+shader_parameter/ground_albedo = ExtResource("4_jjbej")
+shader_parameter/ground_normal = ExtResource("9_n57q0")
+shader_parameter/ground_orm = ExtResource("10_o5sg3")
+shader_parameter/worn_tint = Color(0.6, 0.48, 0.31, 1)
+shader_parameter/texture_scale = 1.0
+shader_parameter/roughness_multiplier = 1.0
+shader_parameter/normal_strength = 0.72
+shader_parameter/edge_feather = 0.16
+shader_parameter/texture_rotation_radians = null
+
+[sub_resource type="Resource" id="Resource_ya0sj"]
+resource_local_to_scene = true
+script = ExtResource("3_7sc8j")
+material_mode = 1
+texture_preset = "Worn earth"
+source_material = SubResource("ShaderMaterial_iy4xb")
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_co7tw"]
 cull_mode = 2
 albedo_color = Color(0.48, 0.56, 0.56, 1)
-albedo_texture = ExtResource("15_jh2sg")
-orm_texture = ExtResource("17_j745f")
+albedo_texture = ExtResource("16_j745f")
+orm_texture = ExtResource("18_wc7vt")
 normal_enabled = true
 normal_scale = 0.72
-normal_texture = ExtResource("16_robbe")
+normal_texture = ExtResource("17_nyuvp")
 uv1_scale = Vector3(0.8, 0.8, 0.8)
 texture_filter = 5
 
-[sub_resource type="Resource" id="Resource_iy4xb"]
+[sub_resource type="Resource" id="Resource_a81pt"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Stone"
-source_material = SubResource("ORMMaterial3D_jm3ba")
+source_material = SubResource("ORMMaterial3D_co7tw")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ya0sj"]
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_xhjhi"]
+cull_mode = 2
+albedo_color = Color(0.48, 0.56, 0.56, 1)
+albedo_texture = ExtResource("16_j745f")
+orm_texture = ExtResource("18_wc7vt")
+normal_enabled = true
+normal_scale = 0.72
+normal_texture = ExtResource("17_nyuvp")
+uv1_scale = Vector3(0.8, 0.8, 0.8)
+texture_filter = 5
+
+[sub_resource type="Resource" id="Resource_ogvsb"]
+resource_local_to_scene = true
+script = ExtResource("3_7sc8j")
+texture_preset = "Stone"
+source_material = SubResource("ORMMaterial3D_xhjhi")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ugq2j"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_co7tw"]
+[sub_resource type="Resource" id="Resource_bjlss"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_ya0sj")
+source_material = SubResource("StandardMaterial3D_ugq2j")
 
 [sub_resource type="Resource" id="object_material_0000"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "Secret_gates_civic_focus2/Secret_gates_civic_focus/Secret_gates_civic_focus__Secret_gates_civic_focus__solid__ashlar"
-surface = SubResource("Resource_co7tw")
+surface = SubResource("Resource_bjlss")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a81pt"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k7fxu"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_xhjhi"]
+[sub_resource type="Resource" id="Resource_wqagk"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_a81pt")
+source_material = SubResource("StandardMaterial3D_k7fxu")
 
 [sub_resource type="Resource" id="object_material_0001"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "Secret_gates_deposit_vault2/Secret_gates_deposit_vault/Secret_gates_deposit_vault__Secret_gates_deposit_vault__solid__ashlar"
-surface = SubResource("Resource_xhjhi")
+surface = SubResource("Resource_wqagk")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ogvsb"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i7imj"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_ugq2j"]
+[sub_resource type="Resource" id="Resource_ulkf1"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_ogvsb")
+source_material = SubResource("StandardMaterial3D_i7imj")
 
 [sub_resource type="Resource" id="object_material_0002"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "Secret_gates_drain_mouth2/Secret_gates_drain_mouth/Secret_gates_drain_mouth__Secret_gates_drain_mouth__solid__ashlar"
-surface = SubResource("Resource_ugq2j")
+surface = SubResource("Resource_ulkf1")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bjlss"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ru8nc"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_k7fxu"]
+[sub_resource type="Resource" id="Resource_70354"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_bjlss")
+source_material = SubResource("StandardMaterial3D_ru8nc")
 
 [sub_resource type="Resource" id="object_material_0003"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "Secret_gates_mirrorsmith_well2/Secret_gates_mirrorsmith_well/Secret_gates_mirrorsmith_well__Secret_gates_mirrorsmith_well__solid__ashlar"
-surface = SubResource("Resource_k7fxu")
+surface = SubResource("Resource_70354")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wqagk"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p15v0"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_i7imj"]
+[sub_resource type="Resource" id="Resource_tqqq7"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_wqagk")
+source_material = SubResource("StandardMaterial3D_p15v0")
 
 [sub_resource type="Resource" id="object_material_0004"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "Secret_gates_otter_pit2/Secret_gates_otter_pit/Secret_gates_otter_pit__Secret_gates_otter_pit__solid__ashlar"
-surface = SubResource("Resource_i7imj")
+surface = SubResource("Resource_tqqq7")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ulkf1"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dc78x"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_ru8nc"]
+[sub_resource type="Resource" id="Resource_uhknw"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_ulkf1")
+source_material = SubResource("StandardMaterial3D_dc78x")
 
 [sub_resource type="Resource" id="object_material_0005"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "Secret_gates_plaza_spring2/Secret_gates_plaza_spring/Secret_gates_plaza_spring__Secret_gates_plaza_spring__solid__ashlar"
-surface = SubResource("Resource_ru8nc")
+surface = SubResource("Resource_uhknw")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_70354"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wigpa"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_p15v0"]
+[sub_resource type="Resource" id="Resource_i4xt8"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_70354")
+source_material = SubResource("StandardMaterial3D_wigpa")
 
 [sub_resource type="Resource" id="object_material_0006"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "Secret_gates_reedworks_garden2/Secret_gates_reedworks_garden/Secret_gates_reedworks_garden__Secret_gates_reedworks_garden__solid__ashlar"
-surface = SubResource("Resource_p15v0")
+surface = SubResource("Resource_i4xt8")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tqqq7"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xghl1"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_dc78x"]
+[sub_resource type="Resource" id="Resource_a7eyg"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_tqqq7")
+source_material = SubResource("StandardMaterial3D_xghl1")
 
 [sub_resource type="Resource" id="object_material_0007"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "Secret_gates_sanctuary_reliquary2/Secret_gates_sanctuary_reliquary/Secret_gates_sanctuary_reliquary__Secret_gates_sanctuary_reliquary__solid__ashlar"
-surface = SubResource("Resource_dc78x")
+surface = SubResource("Resource_a7eyg")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uhknw"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ij00u"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_wigpa"]
+[sub_resource type="Resource" id="Resource_dp6o3"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_uhknw")
+source_material = SubResource("StandardMaterial3D_ij00u")
 
 [sub_resource type="Resource" id="object_material_0008"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "Secret_gates_stormglass_school2/Secret_gates_stormglass_school/Secret_gates_stormglass_school__Secret_gates_stormglass_school__solid__ashlar"
-surface = SubResource("Resource_wigpa")
+surface = SubResource("Resource_dp6o3")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i4xt8"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kddoj"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_xghl1"]
+[sub_resource type="Resource" id="Resource_cbaed"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_i4xt8")
+source_material = SubResource("StandardMaterial3D_kddoj")
 
 [sub_resource type="Resource" id="object_material_0009"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "Secret_gates_sunleaf_hollow2/Secret_gates_sunleaf_hollow/Secret_gates_sunleaf_hollow__Secret_gates_sunleaf_hollow__solid__ashlar"
-surface = SubResource("Resource_xghl1")
+surface = SubResource("Resource_cbaed")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a7eyg"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eswlo"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_ij00u"]
+[sub_resource type="Resource" id="Resource_ihsuj"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_a7eyg")
+source_material = SubResource("StandardMaterial3D_eswlo")
 
 [sub_resource type="Resource" id="object_material_0010"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "Secret_gates_wall_eyrie2/Secret_gates_wall_eyrie/Secret_gates_wall_eyrie__Secret_gates_wall_eyrie__solid__ashlar"
-surface = SubResource("Resource_ij00u")
+surface = SubResource("Resource_ihsuj")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dp6o3"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lrkno"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_kddoj"]
+[sub_resource type="Resource" id="Resource_cl53i"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_dp6o3")
+source_material = SubResource("StandardMaterial3D_lrkno")
 
 [sub_resource type="Resource" id="object_material_0011"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "Secret_gates_waystone2/Secret_gates_waystone/Secret_gates_waystone__Secret_gates_waystone__solid__ashlar"
-surface = SubResource("Resource_kddoj")
+surface = SubResource("Resource_cl53i")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cbaed"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ygscy"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_eswlo"]
+[sub_resource type="Resource" id="Resource_wgkv3"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_cbaed")
+source_material = SubResource("StandardMaterial3D_ygscy")
 
 [sub_resource type="Resource" id="object_material_0012"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "SouthOuter_Foundation_-12/SouthOuter_Foundation_-1/SouthOuter_Foundation_-1__SouthOuter_Foundation_-1__solid__rubble_stone"
-surface = SubResource("Resource_eswlo")
+surface = SubResource("Resource_wgkv3")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ihsuj"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g84ra"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_lrkno"]
+[sub_resource type="Resource" id="Resource_7r1rx"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_ihsuj")
+source_material = SubResource("StandardMaterial3D_g84ra")
 
 [sub_resource type="Resource" id="object_material_0013"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "SouthOuter_Foundation_12/SouthOuter_Foundation_1/SouthOuter_Foundation_1__SouthOuter_Foundation_1__solid__rubble_stone"
-surface = SubResource("Resource_lrkno")
+surface = SubResource("Resource_7r1rx")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cl53i"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h1mpb"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_ygscy"]
+[sub_resource type="Resource" id="Resource_v3qo2"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_cl53i")
+source_material = SubResource("StandardMaterial3D_h1mpb")
 
 [sub_resource type="Resource" id="object_material_0014"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "BridgeUnionPier_007_356_788_WorldPlacement2/BridgeUnionPier_007_356_788_WorldPlacement/BridgeUnionPier_007_356_788"
-surface = SubResource("Resource_ygscy")
+surface = SubResource("Resource_v3qo2")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wgkv3"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7ioec"]
 cull_mode = 2
 albedo_texture = ExtResource("217_robbe")
 roughness = 0.92
 texture_filter = 4
 
-[sub_resource type="Resource" id="Resource_g84ra"]
+[sub_resource type="Resource" id="Resource_nci7p"]
 resource_local_to_scene = true
 script = ExtResource("3_7sc8j")
 texture_preset = "Weathered limestone masonry"
-source_material = SubResource("StandardMaterial3D_wgkv3")
+source_material = SubResource("StandardMaterial3D_7ioec")
 
 [sub_resource type="Resource" id="object_material_0015"]
 resource_local_to_scene = true
 script = ExtResource("asset_override_script")
 mesh_node_path = "BridgeUnionPier_007_364_796_WorldPlacement2/BridgeUnionPier_007_364_796_WorldPlacement/BridgeUnionPier_007_364_796"
-surface = SubResource("Resource_g84ra")
+surface = SubResource("Resource_nci7p")
 
 [node name="FourGates" type="Node3D" unique_id=964833379 groups=["map_authoring_region"]]
 script = ExtResource("region")
@@ -2218,11 +2247,20 @@ origin = Vector2(-306, -222)
 grid_size = Vector2i(292, 203)
 base_heights_path = "res://world_authoring/regions/four_gates/base-heights.f32le"
 base_colors_path = "res://world_authoring/regions/four_gates/base-colors.rgba8"
-base_surface = SubResource("Resource_wc7vt")
-biome_palette = Array[Resource]([SubResource("Resource_4adnd")])
+base_surface = SubResource("Resource_non7r")
+biome_palette = Array[Resource]([SubResource("Resource_7h1u3")])
 preview_uv_metres_inverse = 0.17
 
 [node name="Patches" type="Node3D" parent="Terrain" unique_id=1094202469]
+
+[node name="four-gates-amberwood-highway-causeway" type="Marker3D" parent="Terrain/Patches" unique_id=211346584]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 17.9, -153)
+script = ExtResource("7_o5sg3")
+patch_id = "four-gates-amberwood-highway-causeway"
+shape = 1
+operation = 1
+size = Vector2(6, 16)
+feather = 0.0
 
 [node name="Ground" type="Node3D" parent="." unique_id=681263263]
 
@@ -2237,7 +2275,7 @@ enabled = true
 size = Vector2(50, 42)
 blend_width = 6.0
 opacity = 0.96
-surface = SubResource("Resource_7h1u3")
+surface = SubResource("Resource_qv7xb")
 
 [node name="Pass1_CrystalSouth" type="Marker3D" parent="Ground/Regions" unique_id=697352313]
 transform = Transform3D(0.95105654, 0, 0.309017, 0, 1, 0, -0.309017, 0, 0.95105654, -5, 21.693455, 14)
@@ -2249,7 +2287,7 @@ size = Vector2(50, 40)
 blend_width = 7.0
 opacity = 0.92
 priority = 1
-surface = SubResource("Resource_qv7xb")
+surface = SubResource("Resource_b1t27")
 
 [node name="Pass1_EastForecourt" type="Marker3D" parent="Ground/Regions" unique_id=1140564936]
 transform = Transform3D(0.9961947, 0, 0.08715574, 0, 1, 0, -0.08715574, 0, 0.9961947, 94, 20.75213, -9)
@@ -2261,7 +2299,7 @@ size = Vector2(25, 35)
 blend_width = 8.0
 opacity = 0.81
 priority = 2
-surface = SubResource("Resource_b1t27")
+surface = SubResource("Resource_4uak3")
 
 [node name="Pass1_WestForecourt" type="Marker3D" parent="Ground/Regions" unique_id=575779321]
 transform = Transform3D(0.99026805, 0, -0.1391731, 0, 1, 0, 0.1391731, 0, 0.99026805, -96, 20.636236, -7)
@@ -2273,7 +2311,7 @@ size = Vector2(25, 34)
 blend_width = 8.0
 opacity = 0.74
 priority = 3
-surface = SubResource("Resource_4uak3")
+surface = SubResource("Resource_smi37")
 
 [node name="Pass1_SouthForecourt" type="Marker3D" parent="Ground/Regions" unique_id=1503847581]
 transform = Transform3D(0.9961947, 0, -0.08715574, 0, 1, 0, 0.08715574, 0, 0.9961947, 2, 20.539438, 89)
@@ -2285,7 +2323,7 @@ size = Vector2(37, 22)
 blend_width = 7.26
 opacity = 0.83
 priority = 4
-surface = SubResource("Resource_smi37")
+surface = SubResource("Resource_viqxv")
 
 [node name="Pass1_NorthForecourt" type="Marker3D" parent="Ground/Regions" unique_id=1396669868]
 transform = Transform3D(0.99026805, 0, 0.1391731, 0, 1, 0, -0.1391731, 0, 0.99026805, 1, 20.492441, -107)
@@ -2297,7 +2335,7 @@ size = Vector2(32, 22)
 blend_width = 7.26
 opacity = 0.73
 priority = 5
-surface = SubResource("Resource_viqxv")
+surface = SubResource("Resource_41cf8")
 
 [node name="Pass1_MarketApron" type="Marker3D" parent="Ground/Regions" unique_id=1357599584]
 transform = Transform3D(0.95105654, 0, -0.309017, 0, 1, 0, 0.309017, 0, 0.95105654, -45, 21.693455, 60)
@@ -2309,7 +2347,7 @@ size = Vector2(26, 19)
 blend_width = 6.27
 opacity = 0.68
 priority = 6
-surface = SubResource("Resource_41cf8")
+surface = SubResource("Resource_0yobj")
 
 [node name="Pass1_EastMarketApron" type="Marker3D" parent="Ground/Regions" unique_id=789094519]
 transform = Transform3D(0.90630776, 0, 0.42261827, 0, 1, 0, -0.42261827, 0, 0.90630776, 55, 21.693455, 51)
@@ -2321,7 +2359,7 @@ size = Vector2(27, 19)
 blend_width = 6.27
 opacity = 0.7
 priority = 7
-surface = SubResource("Resource_0yobj")
+surface = SubResource("Resource_bac3y")
 
 [node name="Pass1_ForgeApron" type="Marker3D" parent="Ground/Regions" unique_id=1036781039]
 transform = Transform3D(0.9702957, 0, -0.2419219, 0, 1, 0, 0.2419219, 0, 0.9702957, 49, 21.693455, -78)
@@ -2333,7 +2371,7 @@ size = Vector2(26, 19)
 blend_width = 6.27
 opacity = 0.69
 priority = 8
-surface = SubResource("Resource_bac3y")
+surface = SubResource("Resource_m8t3u")
 
 [node name="Pass1_DepositYard" type="Marker3D" parent="Ground/Regions" unique_id=1318945759]
 transform = Transform3D(0.9781476, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.9781476, -68, 21.693455, 30)
@@ -2345,7 +2383,7 @@ size = Vector2(24, 20)
 blend_width = 6.6
 opacity = 0.64
 priority = 9
-surface = SubResource("Resource_m8t3u")
+surface = SubResource("Resource_43fbu")
 
 [node name="Pass1_GardenMargin" type="Marker3D" parent="Ground/Regions" unique_id=493654721]
 transform = Transform3D(0.90630776, 0, -0.42261827, 0, 1, 0, 0.42261827, 0, 0.90630776, 48, 21.692469, 89)
@@ -2357,7 +2395,7 @@ size = Vector2(29, 21)
 blend_width = 6.93
 opacity = 0.65
 priority = 10
-surface = SubResource("Resource_43fbu")
+surface = SubResource("Resource_r6fiu")
 
 [node name="Pass1_GardenFootpath" type="Marker3D" parent="Ground/Regions" unique_id=451176765]
 transform = Transform3D(0.95105654, 0, 0.309017, 0, 1, 0, -0.309017, 0, 0.95105654, 35, 21.671867, 97)
@@ -2369,7 +2407,7 @@ size = Vector2(24, 13)
 blend_width = 4.29
 opacity = 0.48
 priority = 11
-surface = SubResource("Resource_r6fiu")
+surface = SubResource("Resource_3dyo6")
 
 [node name="ground-01" type="Marker3D" parent="Ground/Regions" unique_id=2090656235]
 transform = Transform3D(0.85202485, 0, -0.52350134, 0, 1, 0, 0.52350134, 0, 0.85202485, 78, 21.693455, -47)
@@ -2381,7 +2419,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_3dyo6")
+surface = SubResource("Resource_pynq7")
 
 [node name="ground-02" type="Marker3D" parent="Ground/Regions" unique_id=465189590]
 transform = Transform3D(0.9934628, 0, -0.11415638, 0, 1, 0, 0.11415638, 0, 0.9934628, 7, 21.390182, -92)
@@ -2393,7 +2431,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_pynq7")
+surface = SubResource("Resource_5excb")
 
 [node name="ground-03" type="Marker3D" parent="Ground/Regions" unique_id=191930819]
 transform = Transform3D(0.9887373, 0, 0.14966172, 0, 1, 0, -0.14966172, 0, 0.9887373, -50, 21.693455, 6)
@@ -2405,7 +2443,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_5excb")
+surface = SubResource("Resource_bbkpg")
 
 [node name="ground-04" type="Marker3D" parent="Ground/Regions" unique_id=1005304808]
 transform = Transform3D(0.8633281, 0, 0.504643, 0, 1, 0, -0.504643, 0, 0.8633281, -2, 21.693455, -48)
@@ -2417,7 +2455,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_bbkpg")
+surface = SubResource("Resource_qo4ym")
 
 [node name="ground-05" type="Marker3D" parent="Ground/Regions" unique_id=500085036]
 transform = Transform3D(0.8755265, 0, -0.48317018, 0, 1, 0, 0.48317018, 0, 0.8755265, 3, 21.693455, 54)
@@ -2429,7 +2467,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_qo4ym")
+surface = SubResource("Resource_eeuey")
 
 [node name="ground-06" type="Marker3D" parent="Ground/Regions" unique_id=402924255]
 transform = Transform3D(0.8522569, 0, 0.52312344, 0, 1, 0, -0.52312344, 0, 0.8522569, -45, 21.693455, -30)
@@ -2441,7 +2479,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_eeuey")
+surface = SubResource("Resource_eotb7")
 
 [node name="ground-07" type="Marker3D" parent="Ground/Regions" unique_id=921490031]
 transform = Transform3D(0.9558653, 0, -0.29380524, 0, 1, 0, 0.29380524, 0, 0.9558653, 45, 21.693455, -31)
@@ -2453,7 +2491,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_eotb7")
+surface = SubResource("Resource_43rbq")
 
 [node name="ground-08" type="Marker3D" parent="Ground/Regions" unique_id=1205298585]
 transform = Transform3D(0.84854096, 0, 0.52912974, 0, 1, 0, -0.52912974, 0, 0.84854096, 64, 21.693455, 54)
@@ -2465,7 +2503,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_43rbq")
+surface = SubResource("Resource_6nlsf")
 
 [node name="ground-09" type="Marker3D" parent="Ground/Regions" unique_id=1313144800]
 transform = Transform3D(0.8340608, 0, 0.5516725, 0, 1, 0, -0.5516725, 0, 0.8340608, 51, 21.693455, 4)
@@ -2477,7 +2515,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_6nlsf")
+surface = SubResource("Resource_s78le")
 
 [node name="ground-10" type="Marker3D" parent="Ground/Regions" unique_id=447428575]
 transform = Transform3D(0.8682597, 0, 0.49610987, 0, 1, 0, -0.49610987, 0, 0.8682597, 52, 21.693455, -81)
@@ -2489,7 +2527,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_s78le")
+surface = SubResource("Resource_a81mc")
 
 [node name="ground-11" type="Marker3D" parent="Ground/Regions" unique_id=930175835]
 transform = Transform3D(0.8247734, 0, -0.5654635, 0, 1, 0, 0.5654635, 0, 0.8247734, -22, 21.693455, -15)
@@ -2501,7 +2539,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_a81mc")
+surface = SubResource("Resource_yiy8g")
 
 [node name="ground-12" type="Marker3D" parent="Ground/Regions" unique_id=653214359]
 transform = Transform3D(0.87574595, 0, -0.48277226, 0, 1, 0, 0.48277226, 0, 0.87574595, -33, 21.693455, -98)
@@ -2513,7 +2551,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_yiy8g")
+surface = SubResource("Resource_5xg68")
 
 [node name="ground-13" type="Marker3D" parent="Ground/Regions" unique_id=1094556567]
 transform = Transform3D(0.9982902, 0, -0.05845256, 0, 1, 0, 0.05845256, 0, 0.9982902, -79, 21.693455, -37)
@@ -2525,7 +2563,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_5xg68")
+surface = SubResource("Resource_ya0sa")
 
 [node name="ground-14" type="Marker3D" parent="Ground/Regions" unique_id=833927115]
 transform = Transform3D(0.94713783, 0, -0.32082692, 0, 1, 0, 0.32082692, 0, 0.94713783, 3, 21.693455, 14)
@@ -2537,7 +2575,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_ya0sa")
+surface = SubResource("Resource_p108d")
 
 [node name="ground-15" type="Marker3D" parent="Ground/Regions" unique_id=1039545356]
 transform = Transform3D(0.8507048, 0, -0.52564377, 0, 1, 0, 0.52564377, 0, 0.8507048, 34, 21.693455, 33)
@@ -2549,7 +2587,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_p108d")
+surface = SubResource("Resource_h7nph")
 
 [node name="ground-16" type="Marker3D" parent="Ground/Regions" unique_id=953060329]
 transform = Transform3D(0.9158383, 0, 0.40154728, 0, 1, 0, -0.40154728, 0, 0.9158383, -58, 21.693455, -77)
@@ -2561,7 +2599,7 @@ size = Vector2(22, 16)
 blend_width = 7.0
 opacity = 0.7
 priority = 12
-surface = SubResource("Resource_h7nph")
+surface = SubResource("Resource_6sm5y")
 
 [node name="ground-17" type="Marker3D" parent="Ground/Regions" unique_id=798575760]
 transform = Transform3D(0.9899457, 0, 0.14144796, 0, 1, 0, -0.14144796, 0, 0.9899457, -91.42189, 5.827786, 85.51103)
@@ -2573,7 +2611,7 @@ size = Vector2(11, 7)
 blend_width = 1.5
 opacity = 0.9
 priority = 13
-surface = SubResource("Resource_6sm5y")
+surface = SubResource("Resource_8mftl")
 
 [node name="ground-18" type="Marker3D" parent="Ground/Regions" unique_id=1359990585]
 transform = Transform3D(0.87236565, 0, 0.48885393, 0, 1, 0, -0.48885393, 0, 0.87236565, -115.17684, 4.752677, 60.80727)
@@ -2585,7 +2623,7 @@ size = Vector2(11, 7)
 blend_width = 1.5
 opacity = 0.9
 priority = 13
-surface = SubResource("Resource_8mftl")
+surface = SubResource("Resource_yxn84")
 
 [node name="ground-19" type="Marker3D" parent="Ground/Regions" unique_id=686138487]
 transform = Transform3D(0.9950924, 0, 0.098949954, 0, 1, 0, -0.098949954, 0, 0.9950924, -136.86475, 5.498465, 88.04772)
@@ -2597,7 +2635,7 @@ size = Vector2(11, 7)
 blend_width = 1.5
 opacity = 0.9
 priority = 13
-surface = SubResource("Resource_yxn84")
+surface = SubResource("Resource_ip5iw")
 
 [node name="ground-20" type="Marker3D" parent="Ground/Regions" unique_id=1791627454]
 transform = Transform3D(0.9648089, 0, 0.26295215, 0, 1, 0, -0.26295215, 0, 0.9648089, -162.75482, 6.1786203, 61.35609)
@@ -2609,7 +2647,7 @@ size = Vector2(11, 7)
 blend_width = 1.5
 opacity = 0.9
 priority = 13
-surface = SubResource("Resource_ip5iw")
+surface = SubResource("Resource_upn6x")
 
 [node name="ground-21" type="Marker3D" parent="Ground/Regions" unique_id=1398229696]
 transform = Transform3D(0.8116006, 0, 0.58421266, 0, 1, 0, -0.58421266, 0, 0.8116006, 143.6424, 19.036833, 88.85258)
@@ -2621,7 +2659,7 @@ size = Vector2(11, 7)
 blend_width = 1.5
 opacity = 0.9
 priority = 13
-surface = SubResource("Resource_upn6x")
+surface = SubResource("Resource_2ga3w")
 
 [node name="ground-22" type="Marker3D" parent="Ground/Regions" unique_id=1987265070]
 transform = Transform3D(0.99991137, 0, -0.013311619, 0, 1, 0, 0.013311619, 0, 0.99991137, 97.750374, 5.6128793, -97.00732)
@@ -2633,7 +2671,7 @@ size = Vector2(11, 7)
 blend_width = 1.5
 opacity = 0.9
 priority = 13
-surface = SubResource("Resource_2ga3w")
+surface = SubResource("Resource_i7d0u")
 
 [node name="ground-23" type="Marker3D" parent="Ground/Regions" unique_id=1832570004]
 transform = Transform3D(0.9314113, 0, -0.3639683, 0, 1, 0, 0.3639683, 0, 0.9314113, 76.97597, 21.700207, -87.85789)
@@ -2645,7 +2683,7 @@ size = Vector2(11, 7)
 blend_width = 1.5
 opacity = 0.9
 priority = 13
-surface = SubResource("Resource_i7d0u")
+surface = SubResource("Resource_c24dw")
 
 [node name="ground-24" type="Marker3D" parent="Ground/Regions" unique_id=1324613569]
 transform = Transform3D(0.9999453, 0, -0.010460921, 0, 1, 0, 0.010460921, 0, 0.9999453, 91, 21.693455, -40)
@@ -2657,7 +2695,7 @@ size = Vector2(11, 7)
 blend_width = 1.5
 opacity = 0.9
 priority = 13
-surface = SubResource("Resource_c24dw")
+surface = SubResource("Resource_hoaxi")
 
 [node name="ground-25" type="Marker3D" parent="Ground/Regions" unique_id=204323021]
 transform = Transform3D(0.9452752, 0, -0.3262741, 0, 1, 0, 0.3262741, 0, 0.9452752, 100, 21.693455, 22)
@@ -2669,7 +2707,7 @@ size = Vector2(11, 7)
 blend_width = 1.5
 opacity = 0.9
 priority = 13
-surface = SubResource("Resource_hoaxi")
+surface = SubResource("Resource_rrsjo")
 
 [node name="ground-26" type="Marker3D" parent="Ground/Regions" unique_id=780954260]
 transform = Transform3D(0.8508094, 0, 0.5254744, 0, 1, 0, -0.5254744, 0, 0.8508094, -100, 21.693455, -55)
@@ -2681,12 +2719,12 @@ size = Vector2(11, 7)
 blend_width = 1.5
 opacity = 0.9
 priority = 13
-surface = SubResource("Resource_rrsjo")
+surface = SubResource("Resource_sv1jh")
 
 [node name="Roads" type="Node3D" parent="." unique_id=1400290131]
 
 [node name="amberwood--four_gates-four_gates" type="Path3D" parent="Roads" unique_id=69172742]
-curve = SubResource("Curve3D_i2cm7")
+curve = SubResource("Curve3D_i0kfw")
 script = ExtResource("path")
 path_id = "amberwood--four_gates-four_gates"
 replaces_route_id = "amberwood--four_gates-four_gates"
@@ -2696,10 +2734,10 @@ properties = {
 }
 default_width = 8.0
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_i0kfw")
+surface = SubResource("Resource_d3nhd")
 
 [node name="discovery-four_gates-257" type="Path3D" parent="Roads" unique_id=1930094447]
-curve = SubResource("Curve3D_k0jmh")
+curve = SubResource("Curve3D_yy56d")
 script = ExtResource("path")
 path_id = "discovery-four_gates-257"
 routing_role = "decorative"
@@ -2710,10 +2748,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_yy56d")
+surface = SubResource("Resource_kjtm0")
 
 [node name="discovery-four_gates-258" type="Path3D" parent="Roads" unique_id=1391424845]
-curve = SubResource("Curve3D_awtn1")
+curve = SubResource("Curve3D_mwygp")
 script = ExtResource("path")
 path_id = "discovery-four_gates-258"
 routing_role = "decorative"
@@ -2724,10 +2762,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_mwygp")
+surface = SubResource("Resource_14l63")
 
 [node name="discovery-four_gates-259" type="Path3D" parent="Roads" unique_id=853606914]
-curve = SubResource("Curve3D_ffdsu")
+curve = SubResource("Curve3D_g7sn3")
 script = ExtResource("path")
 path_id = "discovery-four_gates-259"
 routing_role = "decorative"
@@ -2738,10 +2776,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_g7sn3")
+surface = SubResource("Resource_htatf")
 
 [node name="discovery-four_gates-260" type="Path3D" parent="Roads" unique_id=681073418]
-curve = SubResource("Curve3D_rfwkk")
+curve = SubResource("Curve3D_mmhlo")
 script = ExtResource("path")
 path_id = "discovery-four_gates-260"
 routing_role = "decorative"
@@ -2752,10 +2790,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_mmhlo")
+surface = SubResource("Resource_tr5uo")
 
 [node name="discovery-four_gates-261" type="Path3D" parent="Roads" unique_id=1535304986]
-curve = SubResource("Curve3D_wmp5s")
+curve = SubResource("Curve3D_w8q2b")
 script = ExtResource("path")
 path_id = "discovery-four_gates-261"
 routing_role = "decorative"
@@ -2766,10 +2804,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_w8q2b")
+surface = SubResource("Resource_ix3q3")
 
 [node name="discovery-four_gates-262" type="Path3D" parent="Roads" unique_id=1118834878]
-curve = SubResource("Curve3D_iq1de")
+curve = SubResource("Curve3D_rkq1q")
 script = ExtResource("path")
 path_id = "discovery-four_gates-262"
 routing_role = "decorative"
@@ -2780,10 +2818,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_rkq1q")
+surface = SubResource("Resource_d0ard")
 
 [node name="discovery-four_gates-263" type="Path3D" parent="Roads" unique_id=1935686884]
-curve = SubResource("Curve3D_kxg4y")
+curve = SubResource("Curve3D_ga78e")
 script = ExtResource("path")
 path_id = "discovery-four_gates-263"
 routing_role = "decorative"
@@ -2794,10 +2832,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0)
-surface = SubResource("Resource_ga78e")
+surface = SubResource("Resource_tsc5a")
 
 [node name="discovery-four_gates-264" type="Path3D" parent="Roads" unique_id=1955270153]
-curve = SubResource("Curve3D_h2mv7")
+curve = SubResource("Curve3D_k7d61")
 script = ExtResource("path")
 path_id = "discovery-four_gates-264"
 routing_role = "decorative"
@@ -2808,10 +2846,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_k7d61")
+surface = SubResource("Resource_8oifj")
 
 [node name="discovery-four_gates-265" type="Path3D" parent="Roads" unique_id=1090446737]
-curve = SubResource("Curve3D_w8cw2")
+curve = SubResource("Curve3D_neaik")
 script = ExtResource("path")
 path_id = "discovery-four_gates-265"
 routing_role = "decorative"
@@ -2822,10 +2860,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_neaik")
+surface = SubResource("Resource_j6suc")
 
 [node name="discovery-four_gates-266" type="Path3D" parent="Roads" unique_id=1140670565]
-curve = SubResource("Curve3D_0bx1y")
+curve = SubResource("Curve3D_36sik")
 script = ExtResource("path")
 path_id = "discovery-four_gates-266"
 routing_role = "decorative"
@@ -2836,10 +2874,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_36sik")
+surface = SubResource("Resource_xi13a")
 
 [node name="discovery-four_gates-267" type="Path3D" parent="Roads" unique_id=1672103577]
-curve = SubResource("Curve3D_cagkj")
+curve = SubResource("Curve3D_1uqt8")
 script = ExtResource("path")
 path_id = "discovery-four_gates-267"
 routing_role = "decorative"
@@ -2850,10 +2888,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_1uqt8")
+surface = SubResource("Resource_1p2y1")
 
 [node name="discovery-four_gates-268" type="Path3D" parent="Roads" unique_id=231989475]
-curve = SubResource("Curve3D_yvhls")
+curve = SubResource("Curve3D_ej62c")
 script = ExtResource("path")
 path_id = "discovery-four_gates-268"
 routing_role = "decorative"
@@ -2864,10 +2902,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_ej62c")
+surface = SubResource("Resource_btdb3")
 
 [node name="discovery-four_gates-269" type="Path3D" parent="Roads" unique_id=647207517]
-curve = SubResource("Curve3D_ukrnc")
+curve = SubResource("Curve3D_6nj5j")
 script = ExtResource("path")
 path_id = "discovery-four_gates-269"
 routing_role = "decorative"
@@ -2878,10 +2916,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_6nj5j")
+surface = SubResource("Resource_ndhjs")
 
 [node name="discovery-four_gates-913" type="Path3D" parent="Roads" unique_id=1791552035]
-curve = SubResource("Curve3D_h2rki")
+curve = SubResource("Curve3D_pko6l")
 script = ExtResource("path")
 path_id = "discovery-four_gates-913"
 routing_role = "decorative"
@@ -2892,10 +2930,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_pko6l")
+surface = SubResource("Resource_g37wp")
 
 [node name="door-four_gates-interior-four-gates-deposit-four-keys" type="Path3D" parent="Roads" unique_id=1131293578]
-curve = SubResource("Curve3D_mvovj")
+curve = SubResource("Curve3D_31gu2")
 script = ExtResource("path")
 path_id = "door-four_gates-interior-four-gates-deposit-four-keys"
 replaces_route_id = "door-four_gates-interior-four-gates-deposit-four-keys"
@@ -2905,10 +2943,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_31gu2")
+surface = SubResource("Resource_bv74m")
 
 [node name="door-four_gates-interior-four-gates-ferrymans-rest" type="Path3D" parent="Roads" unique_id=2051392895]
-curve = SubResource("Curve3D_yhqnj")
+curve = SubResource("Curve3D_31evi")
 script = ExtResource("path")
 path_id = "door-four_gates-interior-four-gates-ferrymans-rest"
 replaces_route_id = "door-four_gates-interior-four-gates-ferrymans-rest"
@@ -2918,10 +2956,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_31evi")
+surface = SubResource("Resource_hkigr")
 
 [node name="door-four_gates-interior-four-gates-lantern-row" type="Path3D" parent="Roads" unique_id=78361575]
-curve = SubResource("Curve3D_if5ke")
+curve = SubResource("Curve3D_rmpim")
 script = ExtResource("path")
 path_id = "door-four_gates-interior-four-gates-lantern-row"
 replaces_route_id = "door-four_gates-interior-four-gates-lantern-row"
@@ -2931,10 +2969,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_rmpim")
+surface = SubResource("Resource_i4koq")
 
 [node name="door-four_gates-interior-four-gates-mirrorsmith-forge" type="Path3D" parent="Roads" unique_id=2026886704]
-curve = SubResource("Curve3D_bo83x")
+curve = SubResource("Curve3D_rsbl4")
 script = ExtResource("path")
 path_id = "door-four_gates-interior-four-gates-mirrorsmith-forge"
 replaces_route_id = "door-four_gates-interior-four-gates-mirrorsmith-forge"
@@ -2944,10 +2982,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_rsbl4")
+surface = SubResource("Resource_nw72l")
 
 [node name="door-four_gates-interior-four-gates-reedworks" type="Path3D" parent="Roads" unique_id=1631676811]
-curve = SubResource("Curve3D_m4hg6")
+curve = SubResource("Curve3D_ry8xy")
 script = ExtResource("path")
 path_id = "door-four_gates-interior-four-gates-reedworks"
 replaces_route_id = "door-four_gates-interior-four-gates-reedworks"
@@ -2957,10 +2995,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_ry8xy")
+surface = SubResource("Resource_8um6x")
 
 [node name="door-four_gates-interior-four-gates-stormglass-house" type="Path3D" parent="Roads" unique_id=1905164450]
-curve = SubResource("Curve3D_25b6a")
+curve = SubResource("Curve3D_al4rv")
 script = ExtResource("path")
 path_id = "door-four_gates-interior-four-gates-stormglass-house"
 replaces_route_id = "door-four_gates-interior-four-gates-stormglass-house"
@@ -2970,10 +3008,10 @@ properties = {
 }
 default_width = 3.3
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_al4rv")
+surface = SubResource("Resource_2ni4f")
 
 [node name="four_gates--manymouth_delta-four_gates" type="Path3D" parent="Roads" unique_id=1356196264]
-curve = SubResource("Curve3D_l6bn4")
+curve = SubResource("Curve3D_n2rjl")
 script = ExtResource("path")
 path_id = "four_gates--manymouth_delta-four_gates"
 replaces_route_id = "four_gates--manymouth_delta-four_gates"
@@ -2983,10 +3021,10 @@ properties = {
 }
 default_width = 8.0
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_n2rjl")
+surface = SubResource("Resource_68ck6")
 
 [node name="four_gates--mirrorhold-four_gates" type="Path3D" parent="Roads" unique_id=166479685]
-curve = SubResource("Curve3D_k20hi")
+curve = SubResource("Curve3D_hkd47")
 script = ExtResource("path")
 path_id = "four_gates--mirrorhold-four_gates"
 replaces_route_id = "four_gates--mirrorhold-four_gates"
@@ -2996,10 +3034,10 @@ properties = {
 }
 default_width = 8.0
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_hkd47")
+surface = SubResource("Resource_y78lk")
 
 [node name="four_gates--westhaven-four_gates" type="Path3D" parent="Roads" unique_id=1228183082]
-curve = SubResource("Curve3D_0hpfo")
+curve = SubResource("Curve3D_2bhto")
 script = ExtResource("path")
 path_id = "four_gates--westhaven-four_gates"
 replaces_route_id = "four_gates--westhaven-four_gates"
@@ -3009,10 +3047,10 @@ properties = {
 }
 default_width = 8.0
 point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_2bhto")
+surface = SubResource("Resource_pg3cp")
 
-[node name="highway-four_gates-north" type="Path3D" parent="Roads" unique_id=1379531415]
-curve = SubResource("Curve3D_msbrt")
+[node name="highway-four_gates-north" type="Path3D" parent="Roads" unique_id=2064446346]
+curve = SubResource("Curve3D_8nyoa")
 script = ExtResource("path")
 path_id = "highway-four_gates-north"
 properties = {
@@ -3021,22 +3059,22 @@ properties = {
 }
 default_width = 8.0
 point_widths = PackedFloat32Array(0, 0, 0, 0)
-surface = SubResource("Resource_8nyoa")
+surface = SubResource("Resource_xtye0")
 
-[node name="highway-four_gates-north-landing" type="Path3D" parent="Roads" unique_id=274668077]
-curve = SubResource("Curve3D_y0s4y")
+[node name="highway-four_gates-north-border" type="Path3D" parent="Roads" unique_id=2018362456]
+curve = SubResource("Curve3D_dyolv")
 script = ExtResource("path")
-path_id = "highway-four_gates-north-landing"
+path_id = "highway-four_gates-north-border"
 properties = {
-"terrainConform": true,
+"terrainConform": false,
 "terrainFeather": 2
 }
 default_width = 8.0
 point_widths = PackedFloat32Array(0, 0)
-surface = SubResource("Resource_dyolv")
+surface = SubResource("Resource_scfyq")
 
-[node name="highway-four_gates-south" type="Path3D" parent="Roads" unique_id=442224389]
-curve = SubResource("Curve3D_swdu4")
+[node name="highway-four_gates-south" type="Path3D" parent="Roads" unique_id=544418292]
+curve = SubResource("Curve3D_wso77")
 script = ExtResource("path")
 path_id = "highway-four_gates-south"
 properties = {
@@ -3044,40 +3082,52 @@ properties = {
 "terrainFeather": 2
 }
 default_width = 8.0
-point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
-surface = SubResource("Resource_wso77")
+point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0)
+surface = SubResource("Resource_rbs60")
+
+[node name="highway-four_gates-south-border" type="Path3D" parent="Roads" unique_id=321265054]
+curve = SubResource("Curve3D_jm3ba")
+script = ExtResource("path")
+path_id = "highway-four_gates-south-border"
+properties = {
+"terrainConform": false,
+"terrainFeather": 2
+}
+default_width = 8.0
+point_widths = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0)
+surface = SubResource("Resource_ya0sj")
 
 [node name="Rivers" type="Node3D" parent="." unique_id=1125229142]
 
 [node name="WaterRegions" type="Node3D" parent="." unique_id=2142946620]
 
-[node name="FourGatesMoat" type="Node3D" parent="WaterRegions" unique_id=1043588573]
+[node name="FourGatesMoat" type="Node3D" parent="WaterRegions" unique_id=335802222]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 9.7, -1.5)
-script = ExtResource("13_n57q0")
+script = ExtResource("14_jh2sg")
 water_id = "four_gates_moat"
 display_name = "Four Gates moat"
 radii = Vector2(114, 135)
 
 [node name="Bridges" type="Node3D" parent="." unique_id=1094784772]
 
-[node name="FourGatesAmberwaterBridge" type="Node3D" parent="Bridges" unique_id=1873320880]
-script = ExtResource("14_o5sg3")
+[node name="FourGatesAmberwaterBridge" type="Node3D" parent="Bridges" unique_id=788775813]
+script = ExtResource("15_robbe")
 bridge_id = "four-gates-amberwater-bridge"
 metadata = {
 "purpose": "north highway over the Amberwater",
 "source": "four-gates-highways-2026-09-29"
 }
 width = 8.0
-arch = 0.3
+arch = 0.2
 water_clearance = 0.85
-deck_surface = SubResource("Resource_rbs60")
-support_surface = SubResource("Resource_iy4xb")
+deck_surface = SubResource("Resource_a81pt")
+support_surface = SubResource("Resource_ogvsb")
 
-[node name="Start" type="Marker3D" parent="Bridges/FourGatesAmberwaterBridge" unique_id=409081001]
+[node name="Start" type="Marker3D" parent="Bridges/FourGatesAmberwaterBridge" unique_id=291144305]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 18.5, -134.7)
 
-[node name="End" type="Marker3D" parent="Bridges/FourGatesAmberwaterBridge" unique_id=425830849]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.4, 17.5, -147.3)
+[node name="End" type="Marker3D" parent="Bridges/FourGatesAmberwaterBridge" unique_id=876820631]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.4, 17.9, -147.3)
 
 [node name="AuthoredAssets" type="Node3D" parent="." unique_id=1493508376]
 
