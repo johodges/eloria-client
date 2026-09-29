@@ -24,6 +24,29 @@ This directory is the runtime package plus everything needed to rebuild it.
 | `verification-report.json` | Runtime contract report: grounding, navigation, collision and spawn checks. |
 | `performance-summary.md` | Triangle, node, texture and package budgets. |
 
+## Editor kit
+
+`source/prepare_meshy_kit.py --input <amberwood> <four gates> <verdant> <sunmane> <grey moors models>`
+seats generated models in the territory palette's kit
+(`godot-client/world_authoring/regions/amberwood/assets/prototypes/kit-*.glb`), beside the territory's
+published pieces. Each model is taken from the first folder that has it.
+
+- The Amberwood set, from `work-output/amberwood-2026-09-28/asset-prompts.md`: a great amber oak, a
+  copper beech, a crimson maple, a golden larch, aspens, a sweet chestnut and a dark fir; autumn ferns, a
+  toadstool ring, a bramble and a leaf pile; a resin-tapped pine, an amber drying rack, a woodcutter's
+  block, a sawhorse, a hunter's hide, a forest shrine, a mushroom basket and a cider press; two amber
+  cottages, a treehouse and a watermill (its wheel on the model's +X side).
+- Four Gates' autumn maples, russet oak, golden birch, apple tree, fallen leaves, farm plots, stooks,
+  scarecrow, hay stack, fence, wheelbarrow, apple cart and notice board.
+- Verdant Stair's mossy logs, stumps and boulders, hollow log, undergrowth, saplings, stream stones,
+  waterfall rocks, reeds, baskets, skeps and herb rack.
+- Sunmane's autumn shrubs, feed sacks, milk churn and pails.
+- Grey Moors' bracken.
+
+Wrapper-node transforms are baked into the vertices before each model is scaled to its size in `SIZES`
+and stood on the origin. Its textures are shrunk and content-addressed into `assets/textures/`.
+`source/prepare-meshy-kit.json` records the input and output digests, and `--check` verifies them.
+
 ## Source
 
 `source/` holds the complete authoring toolkit and the build entry points. It is
