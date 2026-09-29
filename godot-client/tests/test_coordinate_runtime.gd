@@ -232,6 +232,21 @@ func run() -> void:
 	expect(not invalid_network.configure_coordinate_profiles({}, {}, {"offset": {"coordinateTransform": {"serverTileMin": [-1, 0]}}}).ok, "locally declared offset requires published profile")
 	expect(invalid_network.login("fixture", "fixture") != OK and invalid_network.sent.is_empty(), "invalid registry blocks login before credentials sent")
 	invalid_network.free()
+	# The registry is JSON, so its numbers arrive as floats: an explicit [0, 0] is no offset,
+	# and a real one still needs its published profile.
+	var json_network = load("res://tests/helpers/coordinate_capture_network.gd").new()
+	var json_maps: Dictionary = JSON.parse_string('{"origin": {"coordinateTransform": {"serverTileMin": [0, 0]}}}')
+	expect(json_network.configure_coordinate_profiles({}, {}, json_maps).ok, "a registry's explicit JSON [0, 0] is no offset")
+	json_maps = JSON.parse_string('{"offset": {"coordinateTransform": {"serverTileMin": [-1, 0]}}}')
+	expect(not json_network.configure_coordinate_profiles({}, {}, json_maps).ok, "a registry's JSON offset still requires a published profile")
+	json_network.free()
+	# The shipped registry must configure, or every login is refused before credentials are sent.
+	var shipped: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/registry.json"))
+	var shipped_network = load("res://tests/helpers/coordinate_capture_network.gd").new()
+	var shipped_result: Dictionary = shipped_network.configure_coordinate_profiles(
+		shipped.get("coordinateProfiles", {}), shipped.get("coordinateMapNames", {}), shipped.get("maps", {}))
+	expect(shipped_result.ok, "the shipped map registry configures (%s)" % str(shipped_result.get("error", "")))
+	shipped_network.free()
 	expect(not "map_storage_coords_v1" in Wire.CLIENT_CAPABILITIES, "runtime integration does not advertise incomplete transport")
 	# Signed consumer seams have no dependency on imported scenery.
 	var stream = load("res://src/world/exterior_region_stream.gd").new()

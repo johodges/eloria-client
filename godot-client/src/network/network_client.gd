@@ -28,11 +28,26 @@ func configure_coordinate_profiles(catalog: Variant, names: Variant = {}, regist
 				var transform: Variant = entry.get("coordinateTransform", {})
 				if not transform is Dictionary:
 					continue
-				var minimum: Variant = transform.get("serverTileMin", [0, 0])
-				if minimum != [0, 0] and (not coordinates.expected.has(map_id) or coordinates.expected[map_id].serverTileMin != minimum):
+				var minimum: Variant = _registry_tile_min(transform.get("serverTileMin", [0, 0]))
+				if minimum == null or minimum != [0, 0] and (not coordinates.expected.has(map_id) or coordinates.expected[map_id].serverTileMin != minimum):
 					result = {"ok": false, "error": "coordinate_catalog_offset_missing_or_mismatched"}
 					break
 	coordinate_registry_error = "" if result.ok else str(result.error)
+	return result
+
+## A registry map's serverTileMin as integers, as the published profiles hold it
+## (CoordinateProfile.from_registry). The registry is read with JSON.parse_string,
+## which makes every number a float, and Godot compares arrays element by element
+## including type, so a registry's [0.0, 0.0] is not [0, 0]. Null for anything
+## that is not two integral numbers.
+static func _registry_tile_min(value: Variant) -> Variant:
+	if not value is Array or value.size() != 2:
+		return null
+	var result: Array = []
+	for item: Variant in value:
+		if not typeof(item) in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(item)) or floor(float(item)) != float(item):
+			return null
+		result.append(int(item))
 	return result
 
 func clear_coordinate_intents() -> void:
