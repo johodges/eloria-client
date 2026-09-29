@@ -4171,6 +4171,9 @@ func _apply_day_night() -> void:
 	_day_night_active = DayNightBinder.apply(lighting,
 		world_environment, world_sun, AppState.continuous_game_minute(), world_moon)
 	_sync_map_environment()
+	# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): re-grade what the
+	# binders just rewrote. After the map copy, so the maps stay ungraded.
+	LookGrade.apply(lighting, world_environment, world_sun)
 
 func _update_border_lighting() -> void:
 	var lighting := exterior_stream.lighting_manifest(camera_rig.focus)
@@ -4186,6 +4189,9 @@ func _update_border_lighting() -> void:
 		environment.fog_density = float(declared.get("fog", {}).get("density", environment.fog_density))
 		environment.adjustment_saturation = float(declared.get("saturation", 1))
 	DayNightBinder.apply(lighting, world_environment, world_sun, AppState.continuous_game_minute(), world_moon)
+	# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): the lines above undo
+	# the grade's fog and saturation every 100 ms, so it is re-applied here.
+	LookGrade.apply(lighting, world_environment, world_sun)
 
 ## The maps are navigation aids, not scenery. Rendered through the world's own
 ## environment they went as dark as the world did, and a minimap nobody can
