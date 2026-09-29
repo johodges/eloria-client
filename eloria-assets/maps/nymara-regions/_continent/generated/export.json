@@ -1,6 +1,6 @@
 {
   "masterPath": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\_continent\\generated\\continent.glb",
-  "masterSha256": "3e3052190c0e2df12c58b545234b0d552d57c522a70be4e1536b56441b9f832f",
+  "masterSha256": "eefbcaf4753771a901cc97ec78cb3dd034989af82817283e0db43bcc5737b28d",
   "geometrySources": {
     "build_continent.py": "ca2e393c4d73182436ebba721985830d9bc2594f8c9a6db2e0541ef9024b96dd",
     "scene_io.py": "34be80a84b7a3761c77655381c7980d5a288c4e7b86348579c25c19fc845019d",
@@ -29,7 +29,7 @@
     "shapely": "2.1.2",
     "geos": "3.13.1"
   },
-  "compositionSha256": "461c17631f9a7cf5b095c960e09facd1415263949c292ab26b778d89b00bc454",
+  "compositionSha256": "660d49248f6f789d931cadaa35145f488bed991b694a5b852e688f7df4eea6c4",
   "greyCrossingLandmarks": [
     {
       "id": "grey-boardwalk-0",
@@ -70,19 +70,19 @@
   ],
   "sharedTerrainImageCompaction": {
     "schema": 2,
-    "images": 1794,
+    "images": 2043,
     "uniqueImagePayloads": 15,
-    "aliasedImageBufferViews": 1779,
-    "bufferViews": 16284,
-    "uniqueBufferViewPayloads": 13474,
-    "aliasedBufferViews": 2810,
-    "beforeBinaryBytes": 2291425648,
-    "afterBinaryBytes": 780944704,
-    "savedPayloadBytes": 1510477264,
-    "beforeBytes": 2295986008,
-    "afterBytes": 785484308,
-    "beforeSha256": "30eadd3857b64ca0c8300c2d156ec4fdc4f2a38a38df3d0c7ead2c238d2c69d2",
-    "afterSha256": "e80df3c0ccc6c1ab39ef1416870792c5e6649cb2802cc0037d8ab9e1db4d9730"
+    "aliasedImageBufferViews": 2028,
+    "bufferViews": 17271,
+    "uniqueBufferViewPayloads": 14105,
+    "aliasedBufferViews": 3166,
+    "beforeBinaryBytes": 2477031996,
+    "afterBinaryBytes": 783654572,
+    "savedPayloadBytes": 1693373230,
+    "beforeBytes": 2481872916,
+    "afterBytes": 788473140,
+    "beforeSha256": "616c135e9708baf2d040c353357f1b643cd5cc25e77664209aba7a53e153d012",
+    "afterSha256": "4b7b4f6c8b00206a15fbfa755f2a2686098357e8b89e59c68bc8f8a3b8c3b0ea"
   },
   "regions": {
     "whitehorn_range": {
@@ -108,7 +108,7 @@
     },
     "grey_moors": {
       "world": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\sunmane-herds-2026-09-27\\client-build\\eloria-assets\\maps\\nymara-regions\\grey_moors\\world.json",
-      "glbSha256": "a91e84b69b8b35a39ffaa56c7f7359e4f58bbcba2ec31a2a25448d2227658a09",
+      "glbSha256": "9284a239a2b36e85145dfe73f3854a1694595f957a405ca954ac6bd2604d3f30",
       "chunks": 31,
       "storage": {
         "serverOrigin": [
