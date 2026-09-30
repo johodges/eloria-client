@@ -64,15 +64,17 @@ func configure(manifest: WorldManifest, world_root: Node3D) -> int:
 	_last_yaw = INF
 	return _always_hidden.size() + _walls.size()
 
-## Restores everything this instance hid. Safe to call on a freed scene.
+## Restores everything this instance hid. Safe to call on a freed scene: a
+## node is checked before it is cast, because casting a freed object to
+## Node3D is an error (it fired on every back-to-back Four Gates interior load).
 func reset() -> void:
-	for node: Node3D in _always_hidden:
-		if is_instance_valid(node):
-			node.visible = true
+	for value: Variant in _always_hidden:
+		if is_instance_valid(value):
+			(value as Node3D).visible = true
 	for wall: Dictionary in _walls:
-		var node: Node3D = wall.get("node") as Node3D
-		if is_instance_valid(node):
-			node.visible = true
+		var value: Variant = wall.get("node")
+		if is_instance_valid(value):
+			(value as Node3D).visible = true
 	_always_hidden.clear()
 	_walls.clear()
 	_last_yaw = INF
@@ -90,9 +92,10 @@ func update(camera_yaw_degrees: float, force: bool = false) -> void:
 	var yaw := deg_to_rad(camera_yaw_degrees)
 	var to_camera := Vector3(sin(yaw), 0.0, cos(yaw))
 	for wall: Dictionary in _walls:
-		var node: Node3D = wall.get("node") as Node3D
-		if not is_instance_valid(node):
+		var value: Variant = wall.get("node")
+		if not is_instance_valid(value):
 			continue
+		var node := value as Node3D
 		var outward: Vector3 = wall.get("outward") as Vector3
 		# A wall whose outside faces the camera is between the camera and the
 		# room, so it is the one to drop.
