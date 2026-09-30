@@ -316,12 +316,22 @@ func _check_consumer_mutations() -> void:
 	glass.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	glass.albedo_color = Color(1.0, 1.0, 1.0, 0.35)
 	fade_me.set_surface_override_material(0, glass)
+	# The look pass paints a static batch of crowns through its whole-mesh
+	# override, which has no surfaces to record.
+	var batch: MultiMeshInstance3D = _first_batch()
+	var painted := StandardMaterial3D.new()
+	painted.albedo_color = Color(1.0, 0.0, 1.0)
+	var batch_name := ""
+	if batch != null:
+		batch_name = batch.name
+		batch.material_override = painted
 
 	await _settle_for_the_write(_loader.cache_file)
 	# The client's own state is its own: the loader borrowed the tree for the
 	# length of the pack and gave it back exactly as it found it.
 	_expect(not hide_me.visible and lifted.visible
-			and fade_me.get_surface_override_material(0) == glass,
+			and fade_me.get_surface_override_material(0) == glass
+			and (batch == null or batch.material_override == painted),
 		"packing leaves the client's view of the region alone")
 
 	await _load("read back after a consumer touched it")
@@ -338,6 +348,18 @@ func _check_consumer_mutations() -> void:
 	_expect(restored_faded != null
 			and restored_faded.get_surface_override_material(0) == null,
 		"a rock the fade had turned to glass is solid again")
+	if _expect(not batch_name.is_empty(), "the fixture has a static batch to paint"):
+		var restored_batch := _loader.world_root.find_child(batch_name, true, false) \
+			as MultiMeshInstance3D
+		_expect(restored_batch != null and restored_batch.material_override == null,
+			"a batch the look had painted draws the loader's own material again")
+
+## The first static batch the loader made, or null.
+func _first_batch() -> MultiMeshInstance3D:
+	for node: Node in _loader.world_root.find_children("StaticBatch_*", "MultiMeshInstance3D",
+			true, false):
+		return node as MultiMeshInstance3D
+	return null
 
 ## The first mesh instance in the tree with the visibility asked for, skipping
 ## `except`. Deliberately the first rather than a chosen one: any mesh will do,

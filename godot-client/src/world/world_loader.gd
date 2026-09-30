@@ -337,6 +337,9 @@ var _cache_write_countdown := 0
 var _cache_nodes: Array[Node] = []
 var _cache_visible := PackedByteArray()
 var _cache_overrides: Dictionary = {}
+## The loader's own `material_override` by node index, for the nodes that had
+## one (see `_snapshot_for_cache`).
+var _cache_material_overrides: Dictionary = {}
 
 ## Reads the region back from the cache, if there is an entry for exactly this
 ## package and this format version. Returns true when the world is in the tree
@@ -427,20 +430,28 @@ func _resolve_batch_links() -> int:
 ## player. Baking any of those in would make the cached region quietly
 ## different from a fresh one - a rock that is permanently glass.
 ##
-## So the two things a consumer can change are recorded here, while nothing but
-## the loader has touched the tree, and put back for the length of the pack.
-## Nodes a consumer *adds* need no handling: `PackedScene.pack` only stores
-## nodes owned by the packed root, the owners are set from this list, and
-## anything not in it is left out for free.
+## So the things a consumer can change are recorded here, while nothing but
+## the loader has touched the tree, and put back for the length of the pack:
+## visibility, surface overrides, and whole-mesh overrides. The last is the
+## look pass's (a painted crown or a kept colour goes onto a static batch's
+## `material_override`, which has no surfaces), and baked in, a client with
+## the look switched off read painted batches back out of a cache written with
+## it on. Nodes a consumer *adds* need no handling: `PackedScene.pack` only
+## stores nodes owned by the packed root, the owners are set from this list,
+## and anything not in it is left out for free.
 func _snapshot_for_cache() -> void:
 	_cache_nodes = world_root.find_children("*", "", true, false)
 	var count: int = _cache_nodes.size()
 	_cache_visible.resize(count)
 	_cache_overrides.clear()
+	_cache_material_overrides.clear()
 	for index: int in count:
 		var node: Node = _cache_nodes[index]
 		var spatial: Node3D = node as Node3D
 		_cache_visible[index] = 1 if spatial == null or spatial.visible else 0
+		var geometry: GeometryInstance3D = node as GeometryInstance3D
+		if geometry != null and geometry.material_override != null:
+			_cache_material_overrides[index] = geometry.material_override
 		var mesh_instance: MeshInstance3D = node as MeshInstance3D
 		if mesh_instance == null:
 			continue
@@ -455,6 +466,7 @@ func _snapshot_for_cache() -> void:
 
 func _release_snapshot() -> void:
 	_cache_nodes.clear()
+	_cache_material_overrides.clear()
 	_cache_visible.resize(0)
 	_cache_overrides.clear()
 
@@ -553,6 +565,12 @@ func _restore_pristine() -> Array:
 			if spatial.visible != wanted:
 				undo.append([spatial, "visible", spatial.visible])
 				spatial.visible = wanted
+		var geometry: GeometryInstance3D = node as GeometryInstance3D
+		if geometry != null:
+			var own_override: Material = _cache_material_overrides.get(index) as Material
+			if geometry.material_override != own_override:
+				undo.append([geometry, "material_override", geometry.material_override])
+				geometry.material_override = own_override
 		var mesh_instance: MeshInstance3D = node as MeshInstance3D
 		if mesh_instance == null:
 			continue
@@ -574,7 +592,9 @@ func _undo_pristine(undo: Array) -> void:
 		var node: Node = entry[0] as Node
 		if not is_instance_valid(node):
 			continue
-		if entry[1] is String:
+		if entry[1] is String and str(entry[1]) == "material_override":
+			(node as GeometryInstance3D).material_override = entry[2] as Material
+		elif entry[1] is String:
 			(node as Node3D).visible = bool(entry[2])
 		else:
 			(node as MeshInstance3D).set_surface_override_material(
