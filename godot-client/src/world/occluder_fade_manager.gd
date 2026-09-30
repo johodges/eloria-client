@@ -45,6 +45,12 @@ func reset() -> void:
 	for identity: int in _worlds.keys():
 		_remove(identity)
 
+## Every root's faded meshes back to rest at once, the indexes kept (see
+## OccluderFade.release).
+func release() -> void:
+	for entry: Dictionary in _worlds.values():
+		entry.fade.release()
+
 func is_enabled() -> bool:
 	return _enabled
 

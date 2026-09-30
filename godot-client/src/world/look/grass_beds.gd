@@ -3,8 +3,8 @@ extends Node3D
 ## Look pass layer L4: grass beds in the wind. Grows procedural tufts over
 ## the grassy ground around the camera's focus - along every road's verge and
 ## in slow beds across open grass, with bare ground between them - and never
-## on a road, paving, a yard, water, under a wall or up a cliff. Does nothing
-## unless LookProfile.enabled().
+## on a road, paving, a yard, water, under a wall or up a cliff. Grows nothing
+## unless LookProfile.enabled() and the graphics quality has grass (`tend`).
 ##
 ## Where grass may grow is read off the ground itself, not guessed from names
 ## alone. Every candidate spot casts one ray down the walk collision (the
@@ -123,19 +123,40 @@ var _classified_region := ""
 ## Grows, extends and trims the grass beds around `focus` (global) on the map
 ## `active` was loaded from. Called every frame by main while the game view
 ## is up; `residents` is ExteriorRegionStream.residents, the neighbours
-## streamed beside the map. Does nothing unless LookProfile.enabled().
+## streamed beside the map. Grows nothing unless LookProfile.enabled() and
+## the graphics quality has grass, and takes away a bed already grown the
+## frame either stops being true, so the settings window's switch and quality
+## reach the grass with nothing else to call.
 static func tend(parent: Node3D, active: Node3D, manifest: WorldManifest,
 		residents: Dictionary, focus: Vector3) -> void:
-	if not LookProfile.enabled() or parent == null:
-		return
-	if OS.get_environment(LookProfile.GRASS_DEBUG_VARIABLE) == "none":
+	if parent == null:
 		return
 	var beds := parent.get_node_or_null(NODE_NAME) as LookGrassBeds
+	if not LookProfile.enabled() or not bool(LookProfile.quality_value("grass")) \
+			or OS.get_environment(LookProfile.GRASS_DEBUG_VARIABLE) == "none":
+		if beds != null:
+			clear(parent)
+		return
 	if beds == null:
 		beds = LookGrassBeds.new()
 		beds.name = NODE_NAME
 		parent.add_child(beds)
 	beds.update(active, manifest, residents, focus)
+
+## Takes every grass bed out of `parent` at once and frees it: out of the tree
+## this frame, so the next `tend` can never find a bed on its way out and grow
+## a second one beside it. Returns how many went.
+static func clear(parent: Node) -> int:
+	if parent == null:
+		return 0
+	var removed := 0
+	var beds := parent.get_node_or_null(NODE_NAME)
+	while beds != null:
+		parent.remove_child(beds)
+		beds.queue_free()
+		removed += 1
+		beds = parent.get_node_or_null(NODE_NAME)
+	return removed
 
 ## The tuft mesh for `variant` (0 verge, 1 bed, 2 tall scatter): its
 ## LookProfile.GRASS_TUFTS blades, each a tapered strip of two segments that

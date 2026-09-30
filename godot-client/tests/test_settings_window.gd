@@ -6,6 +6,8 @@ extends SceneTree
 ## gameplay tab sends the server's own commands rather than deciding anything,
 ## and nothing else leaves the client.
 
+const SETTINGS_PATH := "user://eloria_hud.cfg"
+
 var failures := 0
 
 func _init() -> void:
@@ -13,6 +15,15 @@ func _init() -> void:
 
 func _run() -> void:
 	root.size = Vector2i(1280, 720)
+	# Every switch below is saved to the player's own settings file; it is
+	# copied here and put back at the end.
+	var had_settings := FileAccess.file_exists(SETTINGS_PATH)
+	var saved_settings := FileAccess.get_file_as_bytes(SETTINGS_PATH) if had_settings \
+		else PackedByteArray()
+	var saved_look := OS.get_environment(LookProfile.ENABLE_VARIABLE)
+	var saved_quality := OS.get_environment(LookProfile.QUALITY_VARIABLE)
+	OS.unset_environment(LookProfile.ENABLE_VARIABLE)
+	OS.unset_environment(LookProfile.QUALITY_VARIABLE)
 	var main: Control = (load("res://src/app/main.tscn") as PackedScene).instantiate() as Control
 	root.add_child(main)
 	await process_frame
@@ -36,6 +47,7 @@ func _run() -> void:
 		and not rect.intersects(resource_rail.get_global_rect()),
 		"it fits 1280x720 clear of the resource rail: %s" % rect)
 	_test_fps_limit(main, window)
+	await _test_look_and_quality(main, window, panel, resource_rail)
 
 	# The map cache row. It is the only setting in this window that spends the
 	# player's disk, so it carries three controls rather than one: the switch,
@@ -188,7 +200,94 @@ func _run() -> void:
 		"PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()
 	await process_frame
+	if had_settings:
+		var file := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
+		file.store_buffer(saved_settings)
+		file.close()
+	else:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(SETTINGS_PATH))
+	for pair: Array in [[LookProfile.ENABLE_VARIABLE, saved_look],
+			[LookProfile.QUALITY_VARIABLE, saved_quality]]:
+		if str(pair[1]).is_empty():
+			OS.unset_environment(str(pair[0]))
+		else:
+			OS.set_environment(str(pair[0]), str(pair[1]))
 	quit(failures)
+
+## The painted look's switch and the graphics quality: both on the graphics
+## tab, opening on what the client has, applied and saved the moment they
+## change, and greyed out (still showing the player's own choice) while the
+## environment variable decides for the session.
+func _test_look_and_quality(main: Control, window: Control, panel: PanelContainer,
+		resource_rail: Control) -> void:
+	var look: CheckBox = window.find_child("look", true, false) as CheckBox
+	var quality: OptionButton = window.find_child("quality", true, false) as OptionButton
+	if not _expect(look != null and quality != null,
+			"the graphics tab offers the painted look and the graphics quality"):
+		return
+	var tabs: TabContainer = window.get("tabs") as TabContainer
+	tabs.current_tab = tabs.get_tab_idx_from_control(look.get_parent().get_parent() as Control)
+	await process_frame
+	var rect: Rect2 = panel.get_global_rect()
+	_expect(tabs.get_current_tab_control() == look.get_parent().get_parent()
+		and rect.end.y <= 720.0 and not rect.intersects(resource_rail.get_global_rect()),
+		"the graphics tab with its two new rows still fits 1280x720: %s" % rect)
+	_expect(quality.item_count == 3 and quality.get_item_text(0) == "Low"
+		and quality.get_item_text(1) == "Medium" and quality.get_item_text(2) == "High"
+		and quality.get_item_id(0) == LookProfile.Quality.LOW
+		and quality.get_item_id(2) == LookProfile.Quality.HIGH,
+		"the quality reads Low, Medium, High, each its LookProfile.Quality")
+	_expect(look.button_pressed == LookProfile.player_look()
+		and quality.get_selected_id() == LookProfile.player_quality()
+		and not look.disabled and not quality.disabled,
+		"both open showing what the client has")
+	var original_look := LookProfile.player_look()
+	var original_quality := LookProfile.player_quality()
+	var path: String = str(main.get("SETTINGS_PATH"))
+
+	look.button_pressed = false
+	await process_frame
+	var stored := ConfigFile.new()
+	_expect(not LookProfile.enabled() and stored.load(path) == OK
+		and stored.get_value("graphics", "look", true) == false,
+		"turning the look off turns it off at once and saves it")
+	look.button_pressed = true
+	await process_frame
+	stored.load(path)
+	_expect(LookProfile.enabled() and stored.get_value("graphics", "look", false) == true,
+		"and back on")
+	for level: int in [LookProfile.Quality.LOW, LookProfile.Quality.MEDIUM, LookProfile.Quality.HIGH]:
+		quality.select(quality.get_item_index(level))
+		quality.item_selected.emit(quality.selected)
+		stored.load(path)
+		_expect(LookProfile.quality() == level
+			and str(stored.get_value("graphics", "quality", "")) == LookProfile.quality_name(level),
+			"choosing %s applies it and saves it by name" % LookProfile.quality_name(level))
+
+	# The variables decide for the session; the window says so and keeps the
+	# player's own choice on show.
+	LookProfile.set_player_look(false)
+	main.call("_save_hud_settings")
+	OS.set_environment(LookProfile.ENABLE_VARIABLE, "1")
+	OS.set_environment(LookProfile.QUALITY_VARIABLE, "low")
+	main.call("_load_hud_settings")
+	_expect(look.disabled and not look.button_pressed and LookProfile.enabled()
+		and look.tooltip_text.contains(LookProfile.ENABLE_VARIABLE),
+		"with ELORIA_LOOK set the switch is greyed out, says why, and shows the player's Off")
+	_expect(quality.disabled and quality.get_selected_id() == LookProfile.Quality.HIGH
+		and LookProfile.quality() == LookProfile.Quality.LOW
+		and quality.tooltip_text.contains(LookProfile.QUALITY_VARIABLE),
+		"with ELORIA_LOOK_QUALITY set the quality is greyed out and shows the player's own")
+	OS.unset_environment(LookProfile.ENABLE_VARIABLE)
+	OS.unset_environment(LookProfile.QUALITY_VARIABLE)
+	main.call("_load_hud_settings")
+	_expect(not look.disabled and not quality.disabled and not LookProfile.enabled(),
+		"unset, the player's choice decides again and both can be changed")
+
+	main.call("_on_client_setting_changed", "Graphics", "look", original_look)
+	main.call("_on_client_setting_changed", "Graphics", "quality", original_quality)
+	main.call("_load_hud_settings")
+	tabs.current_tab = 0
 
 func _test_fps_limit(main: Control, window: Control) -> void:
 	var option: OptionButton = window.find_child("fps_limit", true, false) as OptionButton

@@ -43,6 +43,17 @@ func _run() -> void:
 	var fps_option: OptionButton = first_settings.find_child("fps_limit", true, false) as OptionButton
 	fps_option.select(fps_option.get_item_index(120))
 	fps_option.item_selected.emit(fps_option.selected)
+	# The painted look and the graphics quality: a new installation has the
+	# look on at High, and what the player picks is what the next session reads.
+	var first_look: CheckBox = first_settings.find_child("look", true, false) as CheckBox
+	var first_quality: OptionButton = first_settings.find_child("quality", true, false) as OptionButton
+	_expect(LookProfile.enabled() and LookProfile.quality() == LookProfile.Quality.HIGH
+		and first_look.button_pressed
+		and first_quality.get_selected_id() == LookProfile.Quality.HIGH,
+		"a new installation has the painted look on at High quality")
+	first_look.button_pressed = false
+	first_quality.select(first_quality.get_item_index(LookProfile.Quality.LOW))
+	first_quality.item_selected.emit(first_quality.selected)
 	first.queue_free()
 	await process_frame
 	Engine.max_fps = 0
@@ -58,6 +69,21 @@ func _run() -> void:
 		"a new session applies the saved FPS limit and restores the dropdown before login")
 	restored_fps.select(restored_fps.get_item_index(0))
 	restored_fps.item_selected.emit(restored_fps.selected)
+	# The switch lives in LookProfile for the whole process, so it is put back
+	# to the defaults first: what the second session shows has to come from
+	# the file.
+	LookProfile.set_player_look(true)
+	LookProfile.set_player_quality(LookProfile.Quality.HIGH)
+	second.call("_load_hud_settings")
+	var second_look: CheckBox = second_settings.find_child("look", true, false) as CheckBox
+	var second_quality: OptionButton = second_settings.find_child("quality", true, false) as OptionButton
+	_expect(not LookProfile.enabled() and LookProfile.quality() == LookProfile.Quality.LOW
+		and not second_look.button_pressed
+		and second_quality.get_selected_id() == LookProfile.Quality.LOW,
+		"a new session reads the painted look off and Low quality back, and the window shows them")
+	second_look.button_pressed = true
+	second_quality.select(second_quality.get_item_index(LookProfile.Quality.MEDIUM))
+	second_quality.item_selected.emit(second_quality.selected)
 	var second_minimap: Control = second.get_node("GameView/MinimapFrame") as Control
 	_expect(bool(second.get("_minimap_visible")),
 		"a new session loads the remembered minimap visibility")
@@ -113,6 +139,25 @@ func _run() -> void:
 	var unlimited_fps: OptionButton = third_settings.find_child("fps_limit", true, false) as OptionButton
 	_expect(Engine.max_fps == 0 and unlimited_fps.get_selected_id() == 0,
 		"Unlimited also survives a new session and removes the engine frame cap")
+	_expect(LookProfile.enabled() and LookProfile.quality() == LookProfile.Quality.MEDIUM,
+		"switching the look back on at Medium survives a new session too")
+	# A file from an older client has neither key; a hand-edited one may hold
+	# anything. Both leave the defaults.
+	for written: Array in [[null, null], ["maybe", "ultra"], [0, 2]]:
+		var edited := ConfigFile.new()
+		edited.load(SETTINGS_PATH)
+		for pair: Array in [["look", written[0]], ["quality", written[1]]]:
+			if pair[1] == null:
+				if edited.has_section_key("graphics", str(pair[0])):
+					edited.erase_section_key("graphics", str(pair[0]))
+			else:
+				edited.set_value("graphics", str(pair[0]), pair[1])
+		edited.save(SETTINGS_PATH)
+		LookProfile.set_player_look(false)
+		LookProfile.set_player_quality(LookProfile.Quality.LOW)
+		third.call("_load_hud_settings")
+		_expect(LookProfile.enabled() and LookProfile.quality() == LookProfile.Quality.HIGH,
+			"a settings file holding %s falls back to the look on at High" % str(written))
 	var third_overlay: Control = third.get("minimap_marker_overlay") as Control
 	_expect(str(third.get("_minimap_shape")) == "square"
 		and str(third.get("_minimap_orientation")) == "north_up"

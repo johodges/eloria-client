@@ -35,7 +35,9 @@ extends RefCounted
 ## the pass on holds the loader's own materials and a client started without
 ## it reads develop's ground. A batched mesh is skipped: its MultiMesh draws
 ## the mesh's own material and the ground carries collision, which the batcher
-## refuses anyway.
+## refuses anyway. Every material made names the one it stands in for
+## (LookProfile.SOURCE_META), so LookSwitch can put the loader's own back when
+## the player switches the look off.
 ##
 ## Continent maps are painted where the loader finishes them, which covers the
 ## active territory's chunks, every neighbour region and their chunks, on the
@@ -117,9 +119,11 @@ static var _biome_uniforms := PackedStringArray()
 ## Paints a continent map's root as the loader finishes it. Maps outside the
 ## continent wait for `paint_bound`. Returns the surfaces painted.
 static func paint_loaded(root: Node, manifest: WorldManifest) -> int:
-	if not LookProfile.enabled() or root == null or manifest == null:
+	if root == null or manifest == null or not manifest.data.has("continentGeography"):
 		return 0
-	if not manifest.data.has("continentGeography"):
+	# Asked against the root, so a switch that lands while a worker paints it
+	# marks it for main to put right (LookProfile.enabled_for).
+	if not LookProfile.enabled_for(root):
 		return 0
 	decode_continent_sea(root)
 	# One tint for the whole continent: its rivers run on across the regions'
@@ -148,6 +152,7 @@ static func decode_continent_sea(root: Node) -> int:
 				continue
 			var decoded := sea.duplicate() as ShaderMaterial
 			decoded.set_meta(PAINTED_META, true)
+			decoded.set_meta(LookProfile.SOURCE_META, sea)
 			decoded.set_shader_parameter(&"look_decode_albedo", true)
 			decoded.set_shader_parameter(&"look_sea_value", LookProfile.CONTINENT_SEA_VALUE)
 			decoded.set_shader_parameter(&"look_sea_chroma", LookProfile.CONTINENT_SEA_CHROMA)
@@ -185,6 +190,7 @@ static func decode_inland_water(root: Node, region := "") -> int:
 			if not made.has(key):
 				var decoded := source.duplicate() as BaseMaterial3D
 				decoded.set_meta(PAINTED_META, true)
+				decoded.set_meta(LookProfile.SOURCE_META, source)
 				var colour := source.albedo_color
 				decoded.albedo_color = Color(colour.r * tint.r, colour.g * tint.g,
 					colour.b * tint.b, colour.a)
@@ -218,9 +224,11 @@ static func water_named(material_name: String) -> bool:
 ## script has set its materials up. Interiors are left alone, as the grade
 ## leaves them. Returns the surfaces painted.
 static func paint_bound(root: Node, manifest: WorldManifest) -> int:
-	if not LookProfile.enabled() or root == null or manifest == null:
+	if root == null or manifest == null:
 		return 0
 	if manifest.data.has("continentGeography") or not outdoor(manifest):
+		return 0
+	if not LookProfile.enabled_for(root):
 		return 0
 	decode_water(root, region_of(manifest))
 	decode_inland_water(root, region_of(manifest))
@@ -476,6 +484,7 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
 	var has_colour: bool = (mesh.surface_get_format(surface) & Mesh.ARRAY_FORMAT_COLOR) != 0
 	var painted := ShaderMaterial.new()
 	painted.resource_name = standard.resource_name
+	painted.set_meta(LookProfile.SOURCE_META, source)
 	painted.shader = shader
 	painted.render_priority = standard.render_priority
 	painted.next_pass = standard.next_pass
@@ -584,6 +593,7 @@ static func _painted_biome(source: ShaderMaterial, region: String,
 		return null
 	var painted := ShaderMaterial.new()
 	painted.resource_name = source.resource_name
+	painted.set_meta(LookProfile.SOURCE_META, source)
 	painted.shader = shader
 	painted.render_priority = source.render_priority
 	painted.next_pass = source.next_pass

@@ -133,7 +133,9 @@ static func _grade_screen_space(environment: Environment) -> void:
 		environment.ssil_enabled = LookProfile.ssil_enabled()
 		environment.ssil_radius = LookProfile.SSIL_RADIUS
 		environment.ssil_intensity = LookProfile.SSIL_INTENSITY
-	environment.glow_enabled = true
+	# Set outright either way: a lower graphics quality turns off what a higher
+	# one turned on in the same environment.
+	environment.glow_enabled = LookProfile.glow_enabled()
 	environment.glow_intensity = LookProfile.GLOW_INTENSITY
 	environment.glow_strength = LookProfile.GLOW_STRENGTH
 	environment.glow_bloom = LookProfile.GLOW_BLOOM
@@ -145,6 +147,27 @@ static func _grade_key(sun: DirectionalLight3D) -> void:
 	_set_graded(sun, &"light_color", colour * LookProfile.sun_warmth())
 	var energy: float = _ungraded(sun, &"light_energy")
 	_set_graded(sun, &"light_energy", energy * LookProfile.SUN_ENERGY_SCALE)
+
+## Gives the key light back the colour and energy the binders last gave it,
+## for LookSwitch when the look is switched off. The environment is rebound
+## from develop's own copy instead (main), but the sun is the scene's one
+## light and outlives every map, and on a map whose hour does not drive it
+## nothing else would ever rewrite the warmed values. A property a binder has
+## rewritten since the grade (it no longer holds what the grade wrote) is left
+## as it is. Safe to call on a sun the grade never touched.
+static func revert_key(sun: DirectionalLight3D) -> void:
+	if sun == null:
+		return
+	for property: StringName in [&"light_color", &"light_energy"]:
+		var graded_key := StringName("look_graded_" + property)
+		var original_key := StringName("look_ungraded_" + property)
+		if sun.has_meta(graded_key) and sun.get_meta(graded_key) == sun.get(property) \
+				and sun.has_meta(original_key):
+			sun.set(property, sun.get_meta(original_key))
+		if sun.has_meta(graded_key):
+			sun.remove_meta(graded_key)
+		if sun.has_meta(original_key):
+			sun.remove_meta(original_key)
 
 ## The value `property` had before the grade scaled it. If it still holds what
 ## the grade last wrote, nothing has rewritten it and the remembered original

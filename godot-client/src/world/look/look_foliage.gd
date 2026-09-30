@@ -39,7 +39,9 @@ extends RefCounted
 ##
 ## Every painted crown also names its dithered variant (LookFade), so a crown
 ## that stands between the camera and the player dithers out rather than
-## staying solid, which is what a ShaderMaterial would otherwise do.
+## staying solid, which is what a ShaderMaterial would otherwise do, and the
+## material it stands in for (LookProfile.SOURCE_META), so LookSwitch can put
+## that back, and clear a batch's override, when the look is switched off.
 
 const SHADER_OPAQUE := preload("res://src/world/look/painted_foliage.gdshader")
 const SHADER_CUTOUT := preload("res://src/world/look/painted_foliage_cutout.gdshader")
@@ -75,9 +77,10 @@ enum Kind { NONE = -1, CROWN = 0, KIT_TREE = 1, KIT_SHRUB = 2 }
 ## layer can paint (Lantern Reach's wind pines are one merged mesh). Returns
 ## the surfaces painted.
 static func paint_loaded(root: Node, manifest: WorldManifest) -> int:
-	if not LookProfile.enabled() or root == null or manifest == null:
+	if root == null or manifest == null or not manifest.data.has("continentGeography"):
 		return 0
-	if not manifest.data.has("continentGeography"):
+	# Against the root, as LookGround.paint_loaded asks (LookProfile.enabled_for).
+	if not LookProfile.enabled_for(root):
 		return 0
 	var painted := paint(root, LookGround.region_of(manifest))
 	keep_chroma(root, LookGround.region_of(manifest))
@@ -153,6 +156,7 @@ static func chroma_copy(source: BaseMaterial3D, chroma: float,
 	var two_sided := source.cull_mode == BaseMaterial3D.CULL_DISABLED
 	var copy := ShaderMaterial.new()
 	copy.resource_name = source.resource_name
+	copy.set_meta(LookProfile.SOURCE_META, source)
 	copy.shader = SHADER_CHROMA_TWO_SIDED if two_sided else SHADER_CHROMA
 	copy.render_priority = source.render_priority
 	copy.next_pass = source.next_pass
@@ -311,6 +315,7 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh,
 	var floor_share := LookProfile.CROWN_FLOOR if kind == Kind.KIT_TREE else 0.0
 	var painted := ShaderMaterial.new()
 	painted.resource_name = standard.resource_name
+	painted.set_meta(LookProfile.SOURCE_META, source)
 	if one_sided:
 		painted.shader = SHADER_CUTOUT_BACK if cutout else SHADER_OPAQUE_BACK
 	else:

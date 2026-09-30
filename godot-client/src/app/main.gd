@@ -466,6 +466,13 @@ var _minimap_shape := MINIMAP_DEFAULT_SHAPE
 ## Which marker types are drawn, keyed by MINIMAP_MARKER_TYPES.
 var _minimap_marker_types: Dictionary = _default_minimap_marker_types()
 var _map_environment: Environment
+## Develop's environment for the bound map: a copy taken as WorldEnvironmentBinder
+## built it, before the look painted its sky or graded it, and the manifest it
+## was bound from. The look's switch rebinds from it (`_rebind_look_environment`)
+## rather than binding the manifest again, which would re-aim a sun a seamless
+## crossing has turned with the world and spawn the map's lamps twice.
+var _unlooked_environment: Environment
+var _environment_manifest: WorldManifest
 var _minimap_dragging := false
 var _minimap_drag_offset := Vector2.ZERO
 var _inventory_scale := 1.0
@@ -1287,8 +1294,12 @@ func _process(delta: float) -> void:
 		_update_local_actor_follow()
 		if AppState.actors.has(AppState.local_actor_id):
 			exterior_stream.update_position(camera_rig.focus)
-		# Look pass (a no-op with ELORIA_LOOK=0): grow the grass beds
-		# around the camera's focus on whatever map is bound.
+		# Look pass: a chunk or neighbour finished under the switch's old
+		# answer follows the new one as it arrives, before anything fades it.
+		_reconcile_look()
+		# Look pass (a no-op with the look off, and it takes the beds away
+		# when the look or the graphics quality stops growing them): grow the
+		# grass beds around the camera's focus on whatever map is bound.
 		LookGrassBeds.tend(world_root, world_loader.world_root, world_loader.manifest,
 			exterior_stream.residents, camera_rig.focus)
 		if Time.get_ticks_msec() >= _stream_lighting_at:
@@ -4074,7 +4085,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 		world_root.add_child(lantern_scene)
 		lantern_scene.configure(world_loader.world_root, manifest)
 		lantern_scene.apply_state(AppState.lantern_tutorial)
-	# Look pass (a no-op with ELORIA_LOOK=0): paint the ground of a
+	# Look pass (a no-op with the look off): paint the ground of a
 	# map outside the continent now that its scene has set its materials up.
 	# Continent regions and chunks are painted by the loader.
 	LookGround.paint_bound(world_loader.world_root, manifest)
@@ -4085,9 +4096,14 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	# lights and camera framing. Maps that do not keep the client's previous
 	# placeholder environment unchanged.
 	if not _continuous_map_handoff:
-		WorldEnvironmentBinder.apply(manifest, world_environment, world_sun, world_root)
-		# Look pass (a no-op with ELORIA_LOOK=0): paint the sky before
-		# the map cameras take their (ungraded) copy of the environment.
+		if WorldEnvironmentBinder.apply(manifest, world_environment, world_sun, world_root) \
+				and world_environment.environment != null:
+			# Develop's own environment, for the look's switch to rebind from.
+			# A map that declares none keeps the one before it, and so does this.
+			_unlooked_environment = world_environment.environment.duplicate(true) as Environment
+		_environment_manifest = manifest
+		# Look pass (a no-op with the look off): paint the sky before the map
+		# cameras take their (ungraded) copy of the environment.
 		LookSky.install(manifest, world_environment)
 	if not _continuous_map_handoff:
 		WorldEnvironmentBinder.apply_camera(manifest, camera_rig)
@@ -4184,7 +4200,7 @@ func _apply_day_night() -> void:
 	_day_night_active = DayNightBinder.apply(lighting,
 		world_environment, world_sun, AppState.continuous_game_minute(), world_moon)
 	_sync_map_environment()
-	# Look pass (a no-op with ELORIA_LOOK=0): re-grade what the
+	# Look pass (a no-op with the look off): re-grade what the
 	# binders just rewrote. After the map copy, so the maps stay ungraded.
 	LookGrade.apply(lighting, world_environment, world_sun)
 	# Look pass: and give the painted sky and its haze the hour's colours.
@@ -4204,7 +4220,7 @@ func _update_border_lighting() -> void:
 		environment.fog_density = float(declared.get("fog", {}).get("density", environment.fog_density))
 		environment.adjustment_saturation = float(declared.get("saturation", 1))
 	DayNightBinder.apply(lighting, world_environment, world_sun, AppState.continuous_game_minute(), world_moon)
-	# Look pass (a no-op with ELORIA_LOOK=0): the lines above undo
+	# Look pass (a no-op with the look off): the lines above undo
 	# the grade's fog and saturation every 100 ms, so it is re-applied here.
 	LookGrade.apply(lighting, world_environment, world_sun)
 	# Look pass: and the sky's haze, over the border's blended colours.
@@ -5859,6 +5875,7 @@ func _load_hud_settings() -> void:
 			box.set_pressed_no_signal(bool(config.get_value(
 				"banner", banner_key, BANNER_OPTION_DEFAULTS[banner_key])))
 	_apply_fps_limit(config.get_value("graphics", "fps_limit", 0))
+	_load_look_settings(config)
 	reference_window.call("configure", console_commands,
 		settings_window.get("BINDABLE"), _player_notes, _encyclopedia_bookmarks)
 	sound_enabled.set_pressed_no_signal(bool(audio_director.enabled))
@@ -5949,6 +5966,10 @@ func _save_hud_settings() -> void:
 	config.set_value("graphics", "nameplates", _nameplates_enabled)
 	config.set_value("graphics", "name_distance", _name_distance_metres)
 	config.set_value("graphics", "fps_limit", _fps_limit)
+	# The player's own choices, not what ELORIA_LOOK or ELORIA_LOOK_QUALITY
+	# made of them for this session.
+	config.set_value("graphics", "look", LookProfile.player_look())
+	config.set_value("graphics", "quality", LookProfile.quality_name(LookProfile.player_quality()))
 	config.set_value("hud", "combat_hud",
 		bool(extension_windows.get("combat_hud_enabled")))
 	config.set_value("hud", "combat_hud_pinned",
@@ -9244,6 +9265,102 @@ func _apply_fps_limit(value: Variant) -> void:
 	Engine.max_fps = _fps_limit
 	settings_window.call("restore_fps_limit", _fps_limit)
 
+## The painted look and the graphics quality from the settings file. A file
+## from before they existed, or one holding a value this build cannot read,
+## leaves the defaults (the look on, HIGH). Main keeps no copy of either:
+## LookProfile holds the player's choice and resolves it against ELORIA_LOOK
+## and ELORIA_LOOK_QUALITY, so every layer and this file ask one place. A
+## settings file read again while a map is up (a test does) applies at once.
+func _load_look_settings(config: ConfigFile) -> void:
+	var look_value: Variant = config.get_value("graphics", "look", LookProfile.LOOK_DEFAULT)
+	var look_changed := LookProfile.set_player_look(
+		bool(look_value) if look_value is bool else LookProfile.LOOK_DEFAULT)
+	var quality_value: Variant = config.get_value("graphics", "quality",
+		LookProfile.quality_name(LookProfile.QUALITY_DEFAULT))
+	var level: int = LookProfile.quality_named(str(quality_value)) \
+		if quality_value is String else -1
+	var quality_changed := LookProfile.set_player_quality(
+		level if level >= 0 else LookProfile.QUALITY_DEFAULT)
+	settings_window.call("restore_look", LookProfile.player_look(), LookProfile.look_forced())
+	settings_window.call("restore_quality", LookProfile.player_quality(),
+		LookProfile.quality_forced())
+	# The shadows are the renderer's: set once here, before any map, whatever
+	# the switch says.
+	LookSwitch.apply_shadow_quality(world_sun)
+	if look_changed:
+		_apply_look_switch()
+	if quality_changed:
+		_apply_graphics_quality()
+
+## The painted look turned on or off in the settings window (or its file read
+## again): everything already loaded follows at once, without reloading the
+## map. The fades come to rest first, because a faded occluder holds on to the
+## resting materials the switch replaces; every loaded root (the map, each
+## chunk and neighbour) is then painted, or given its own materials back
+## (LookSwitch); the sun gives back the grade's warmth; and the environment is
+## rebound from develop's copy and graded again, or not. The grass beds follow
+## by themselves (LookGrassBeds.tend), and a root still being built follows as
+## it arrives (`_reconcile_look`).
+func _apply_look_switch() -> void:
+	var started := Time.get_ticks_usec()
+	occluder_fade.release()
+	var roots := 0
+	var surfaces := 0
+	for world: Dictionary in LookSwitch.worlds(world_loader.world_root,
+			world_loader.manifest, exterior_stream.residents):
+		surfaces += LookSwitch.sync(world.root as Node, world.manifest as WorldManifest,
+			bool(world.bound))
+		roots += 1
+	if not LookProfile.enabled():
+		LookGrade.revert_key(world_sun)
+	_rebind_look_environment()
+	_request_map_redraw()
+	print("look_switch stage=applied look=%s roots=%d surfaces=%d milliseconds=%.1f"
+		% [LookProfile.enabled(), roots, surfaces, (Time.get_ticks_usec() - started) / 1000.0])
+
+## The graphics quality changed: the shadows at once (LookSwitch), and the
+## grade's screen-space effects, glow and the sky's clouds by grading the
+## environment again. The grass beds rebuild at the new reach and density by
+## themselves (LookGrassBeds.tend).
+func _apply_graphics_quality() -> void:
+	LookSwitch.apply_shadow_quality(world_sun)
+	_apply_day_night()
+	_update_border_lighting()
+	print("look_quality stage=applied quality=", LookProfile.quality_name(LookProfile.quality()))
+
+## Puts develop's environment for the bound map back, from the copy taken as
+## it was bound, paints its sky again if the look is on, and lets the hour and
+## the border blend rewrite it and the grade follow, in the order a bind does.
+## Nothing to do before the first map, whose placeholder the look never touches.
+func _rebind_look_environment() -> void:
+	if _unlooked_environment == null or _environment_manifest == null:
+		return
+	world_environment.environment = _unlooked_environment.duplicate(true) as Environment
+	LookSky.install(_environment_manifest, world_environment)
+	_apply_day_night()
+	_update_border_lighting()
+
+## A root a loader worker finished under the look switch's old answer (a
+## chunk or neighbour that was being built as the player switched) follows the
+## new one as it arrives. Nothing is walked unless some root is stale
+## (LookProfile.any_stale), which only happens for a moment after a switch.
+func _reconcile_look() -> void:
+	if not LookProfile.any_stale():
+		return
+	var stale: Array[Dictionary] = []
+	for world: Dictionary in LookSwitch.worlds(world_loader.world_root,
+			world_loader.manifest, exterior_stream.residents):
+		if LookProfile.stale(world.root as Node):
+			stale.append(world)
+	if stale.is_empty():
+		return
+	occluder_fade.release()
+	for world: Dictionary in stale:
+		var surfaces := LookSwitch.sync(world.root as Node, world.manifest as WorldManifest,
+			bool(world.bound))
+		print("look_switch stage=reconciled root=%s look=%s surfaces=%d"
+			% [(world.root as Node).name, LookProfile.enabled(), surfaces])
+
 ## An old or hand-edited preference is held to the slider's range. The fades
 ## are worked out on the animation gate's clock, so the next frame is asked to
 ## rather than waiting out the rest of its tenth of a second.
@@ -9267,6 +9384,12 @@ func _on_client_setting_changed(section: String, key: String,
 	match key:
 		"fps_limit":
 			_apply_fps_limit(value)
+		"look":
+			if LookProfile.set_player_look(bool(value)):
+				_apply_look_switch()
+		"quality":
+			if LookProfile.set_player_quality(int(value)):
+				_apply_graphics_quality()
 		"shadows":
 			_shadows_enabled = bool(value)
 			world_sun.shadow_enabled = _shadows_enabled and world_sun.visible

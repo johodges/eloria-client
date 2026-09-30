@@ -30,6 +30,8 @@ const NAME_DISTANCE_DEFAULT := 30.0
 ## this script declares none: the global class cache is a build artifact, and
 ## this window is built before anything has forced it to be up to date.
 const MapCache := preload("res://src/world/map_scene_cache.gd")
+## The look pass's switch and quality names; preloaded for the same reason.
+const LookProfileScript := preload("res://src/world/look/look_profile.gd")
 
 ## The actions a player may rebind, grouped the way they are used. Actions the
 ## client does not own - text editing inside a LineEdit, for instance - are not
@@ -63,6 +65,8 @@ var capture_label: Label
 ## What the map cache is costing on disk, refreshed when the window opens.
 var map_cache_size: Label
 var fps_limit_option: OptionButton
+var look_toggle: CheckBox
+var quality_option: OptionButton
 var name_distance_slider: HSlider
 var name_distance_value: Label
 
@@ -289,6 +293,8 @@ func _build_graphics() -> void:
 	page.name = tr("ELORIA_SETTINGS_GRAPHICS")
 	tabs.add_child(page)
 	_add_fps_limit_row(page)
+	_add_quality_row(page)
+	_add_look_row(page)
 	_add_toggle(page, "shadows", tr("ELORIA_SETTINGS_SHADOWS"), true)
 	_add_toggle(page, "particles", tr("ELORIA_SETTINGS_PARTICLES"), true)
 	_add_toggle(page, "nameplates", tr("ELORIA_SETTINGS_NAMEPLATES"), true)
@@ -320,6 +326,57 @@ func _add_fps_limit_row(page: VBoxContainer) -> void:
 func restore_fps_limit(value: int) -> void:
 	# Selecting an item programmatically does not emit item_selected.
 	fps_limit_option.select(fps_limit_option.get_item_index(value))
+
+## Graphics quality: Low, Medium or High, each item's id its
+## LookProfile.Quality. It takes effect at once, and its hint says what it
+## changes: the shadows always, the look's costlier layers while it is on.
+func _add_quality_row(page: VBoxContainer) -> void:
+	var row := HBoxContainer.new()
+	row.name = "QualityRow"
+	page.add_child(row)
+	var caption := Label.new()
+	caption.text = tr("ELORIA_SETTINGS_QUALITY")
+	caption.custom_minimum_size = Vector2(200.0, 0.0)
+	row.add_child(caption)
+	quality_option = OptionButton.new()
+	quality_option.name = "quality"
+	quality_option.custom_minimum_size = Vector2(220.0, 0.0)
+	quality_option.tooltip_text = tr("ELORIA_SETTINGS_QUALITY_HINT")
+	# By Quality, spelled out so the translation test can see every key.
+	var labels: Array[String] = [tr("ELORIA_SETTINGS_QUALITY_LOW"),
+		tr("ELORIA_SETTINGS_QUALITY_MEDIUM"), tr("ELORIA_SETTINGS_QUALITY_HIGH")]
+	for level: int in labels.size():
+		quality_option.add_item(labels[level], level)
+	quality_option.select(quality_option.get_item_index(LookProfileScript.QUALITY_DEFAULT))
+	quality_option.item_selected.connect(func(index: int) -> void:
+		setting_changed.emit(page.name, "quality", quality_option.get_item_id(index)))
+	row.add_child(quality_option)
+
+## The painted look's switch: a checkbox like the window's other switches,
+## with a hint that says what Off draws and that it takes effect at once.
+func _add_look_row(page: VBoxContainer) -> void:
+	_add_toggle(page, "look", tr("ELORIA_SETTINGS_LOOK"), LookProfileScript.LOOK_DEFAULT)
+	look_toggle = page.find_child("look", true, false) as CheckBox
+	look_toggle.tooltip_text = tr("ELORIA_SETTINGS_LOOK_HINT")
+
+## Shows the player's switch without re-emitting it. While ELORIA_LOOK
+## decides for this session (`forced`), the box is greyed out and says so,
+## still showing the player's own choice, which is what the file keeps.
+func restore_look(value: bool, forced := false) -> void:
+	look_toggle.set_pressed_no_signal(value)
+	look_toggle.disabled = forced
+	look_toggle.tooltip_text = tr("ELORIA_SETTINGS_FORCED_HINT").format(
+		{"variable": LookProfileScript.ENABLE_VARIABLE}) if forced \
+		else tr("ELORIA_SETTINGS_LOOK_HINT")
+
+## Shows the player's quality without re-emitting it, greyed out while
+## ELORIA_LOOK_QUALITY decides (`forced`).
+func restore_quality(level: int, forced := false) -> void:
+	quality_option.select(quality_option.get_item_index(level))
+	quality_option.disabled = forced
+	quality_option.tooltip_text = tr("ELORIA_SETTINGS_FORCED_HINT").format(
+		{"variable": LookProfileScript.QUALITY_VARIABLE}) if forced \
+		else tr("ELORIA_SETTINGS_QUALITY_HINT")
 
 ## A slider with its reading beside it: unlike the camera's sensitivities, a
 ## distance is a number the player can check against the world.
