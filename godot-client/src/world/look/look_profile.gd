@@ -499,6 +499,10 @@ const KIT_TREE_WORDS := ["tree", "maple", "oak", "fir", "pine", "birch", "saplin
 const KIT_SHRUB_WORDS := ["shrub", "hedge", "fern", "undergrowth", "bramble", "bracken", "reed", "juniper"]
 ## Kit plants whose colour is the point (blossom), so their hue is not tamed.
 const KIT_UNTAMED_WORDS := ["flower"]
+## Kit props that carry a plant's word but are not plants: checked first, so
+## they are never painted as crowns (Manymouth's kit-reed-raft, a 4 m boat,
+## was lit, tamed and swayed as a shrub by its word "reed").
+const KIT_NOT_FOLIAGE_WORDS := ["raft", "boat", "basket", "cart", "bundle", "thatch"]
 ## A foliage mesh this much wider than it is tall, and wider than
 ## CROWN_MERGED_METRES, is many plants merged into one mesh (Lantern Reach's
 ## wind pines are one 74 m mesh): its bounds say nothing about any one crown,

@@ -45,6 +45,14 @@ const SHADER_OPAQUE := preload("res://src/world/look/painted_foliage.gdshader")
 const SHADER_CUTOUT := preload("res://src/world/look/painted_foliage_cutout.gdshader")
 const SHADER_OPAQUE_FADED := preload("res://src/world/look/painted_foliage_faded.gdshader")
 const SHADER_CUTOUT_FADED := preload("res://src/world/look/painted_foliage_cutout_faded.gdshader")
+## The same four for a single-sided source (culled back faces), such as the
+## Sunmane steppe's sun_foliage trees.
+const SHADER_OPAQUE_BACK := preload("res://src/world/look/painted_foliage_back.gdshader")
+const SHADER_CUTOUT_BACK := preload("res://src/world/look/painted_foliage_cutout_back.gdshader")
+const SHADER_OPAQUE_BACK_FADED := preload(
+	"res://src/world/look/painted_foliage_back_faded.gdshader")
+const SHADER_CUTOUT_BACK_FADED := preload(
+	"res://src/world/look/painted_foliage_cutout_back_faded.gdshader")
 
 ## Marks a material this layer made, so painting a root twice is harmless.
 const PAINTED_META := &"look_painted_foliage"
@@ -150,6 +158,9 @@ static func kind_of(node_name: String, material: Material, words := {}) -> Kind:
 		return Kind.NONE
 	var parts := node_name.to_lower().split("-", false)
 	for word: String in parts:
+		if word in LookProfile.KIT_NOT_FOLIAGE_WORDS:
+			return Kind.NONE
+	for word: String in parts:
 		if word in (words.tree_words as Array):
 			return Kind.KIT_TREE
 	for word: String in parts:
@@ -158,9 +169,11 @@ static func kind_of(node_name: String, material: Material, words := {}) -> Kind:
 	return Kind.NONE
 
 ## The painted stand-in for `source` on `mesh`, or null when it cannot be
-## painted faithfully (it blends, is culled one-sided, takes its colour from
+## painted faithfully (it blends, culls its front faces, takes its colour from
 ## vertex colour, uses a feature look_standard_surface does not reproduce, or
-## is many plants merged into one mesh).
+## is many plants merged into one mesh). A single-sided source keeps its
+## culling: a closed kit mesh loses nothing, where drawn two-sided it would
+## pay for its back faces.
 static func painted_for(source: Material, kind: Kind, mesh: Mesh,
 		untamed := false, seed := 0.0) -> ShaderMaterial:
 	var standard := source as BaseMaterial3D
@@ -169,9 +182,10 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh,
 	var cutout := standard.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	if standard.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and not cutout:
 		return null
-	if standard.cull_mode != BaseMaterial3D.CULL_DISABLED \
+	if standard.cull_mode == BaseMaterial3D.CULL_FRONT \
 			or standard.vertex_color_use_as_albedo or not LookFade.reproduces(standard):
 		return null
+	var one_sided := standard.cull_mode == BaseMaterial3D.CULL_BACK
 	var box := mesh.get_aabb()
 	var width := maxf(box.size.x, box.size.z)
 	if width > LookProfile.CROWN_MERGED_METRES \
@@ -180,12 +194,19 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh,
 	var floor_share := LookProfile.CROWN_FLOOR if kind == Kind.KIT_TREE else 0.0
 	var painted := ShaderMaterial.new()
 	painted.resource_name = standard.resource_name
-	painted.shader = SHADER_CUTOUT if cutout else SHADER_OPAQUE
+	if one_sided:
+		painted.shader = SHADER_CUTOUT_BACK if cutout else SHADER_OPAQUE_BACK
+	else:
+		painted.shader = SHADER_CUTOUT if cutout else SHADER_OPAQUE
 	painted.render_priority = standard.render_priority
 	painted.next_pass = standard.next_pass
 	painted.set_meta(PAINTED_META, true)
-	painted.set_meta(LookFade.FADED_SHADER_META,
-		SHADER_CUTOUT_FADED if cutout else SHADER_OPAQUE_FADED)
+	if one_sided:
+		painted.set_meta(LookFade.FADED_SHADER_META,
+			SHADER_CUTOUT_BACK_FADED if cutout else SHADER_OPAQUE_BACK_FADED)
+	else:
+		painted.set_meta(LookFade.FADED_SHADER_META,
+			SHADER_CUTOUT_FADED if cutout else SHADER_OPAQUE_FADED)
 	LookFade.copy_standard_surface(standard, painted)
 	painted.set_shader_parameter(&"alpha_scissor_threshold", standard.alpha_scissor_threshold)
 	painted.set_shader_parameter(&"look_crown_min", Vector3(box.position.x,

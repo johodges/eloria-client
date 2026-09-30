@@ -259,6 +259,19 @@ func _run() -> void:
 	_expect(_indexed(world) == _mesh_count(world) - 1,
 		"with the look on (the default) a ground patch is kept out of the fade index")
 
+	# A kit prop named for a plant is not a crown; a single-sided crown keeps
+	# its culling.
+	_expect(LookFoliage.kind_of("kit-reed-raft-3", atlas) == LookFoliage.Kind.NONE
+		and LookFoliage.kind_of("kit-reed-bed-3", atlas) == LookFoliage.Kind.KIT_SHRUB,
+		"a reed raft is a boat, not a shrub")
+	var one_sided := atlas.duplicate() as StandardMaterial3D
+	one_sided.cull_mode = BaseMaterial3D.CULL_BACK
+	var one_sided_paint := LookFoliage.painted_for(one_sided, LookFoliage.Kind.KIT_TREE,
+		_mesh(world, "kit-steppe-tree-1", one_sided, Vector3(3, 5, 3), Vector3.ZERO).mesh)
+	_expect(one_sided_paint != null and one_sided_paint.shader == LookFoliage.SHADER_OPAQUE_BACK
+		and one_sided_paint.get_meta(LookFade.FADED_SHADER_META) == LookFoliage.SHADER_OPAQUE_BACK_FADED,
+		"a single-sided crown is painted back-face culled, and fades so")
+
 	# Occluders blend as on develop on an interior, and when a hole could not
 	# open most of them; a crown and a cottage keep the hole.
 	var roof := _mesh(world, "Roof_giant_dome", bark, Vector3(40, 8, 40), Vector3(0, 20, 0))
