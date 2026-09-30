@@ -73,6 +73,11 @@ func _run() -> void:
 	_expect(reach_sky.top == Color(0.16, 0.42, 0.8) and reach_sky.horizon == Color(0.66, 0.82, 0.9)
 		and plain_sky.top == Color("3d7ec2") and plain_sky.horizon == Color("bcc9cd"),
 		"Lantern Reach's fallback sky; the binder's defaults elsewhere")
+	LookProfile.define_region("dark_cave_test", {"id": "dark_cave_test", "schema": 1,
+		"sky": {"paint": 0}})
+	_expect(not LookProfile.sky_painted("dark_cave_test")
+		and LookProfile.sky_painted("four_gates") and LookProfile.sky_painted("no_such_map"),
+		"a map may keep its own dark sky (sky.paint 0); every other map's sky is painted")
 	LookProfile.define_region("open_ground_test", {"id": "open_ground_test", "schema": 1,
 		"grass": {"open": 0.6}})
 	_expect(is_equal_approx(float(LookProfile.region_value("open_ground_test", "grass", "open",

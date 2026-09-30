@@ -1035,6 +1035,15 @@ static func sky_fallback(map_id: String) -> Dictionary:
 	return {"top": region_value(map_id, "sky", "top", SKY_FALLBACK.top),
 		"horizon": region_value(map_id, "sky", "horizon", SKY_FALLBACK.horizon)}
 
+## False when `map_id`'s region file turns the painted sky off (`sky.paint`
+## 0): an interior that declares a sun for its open-to-sky sections but whose
+## void is meant dark (the Sunmane wind caves, the Ssarathi archive, the
+## Drowned Crown), where the painted sky and haze lit the void round the rooms
+## (near-black 70 % to 0.6 % in the caves, a pale haze band where develop is
+## black). The binder's own sky and the grade stay.
+static func sky_painted(map_id: String) -> bool:
+	return float(region_value(map_id, "sky", "paint", 1.0)) > 0.0
+
 ## The haze's density at HAZE_END for a manifest's exponential density.
 static func haze_density(declared: float) -> float:
 	return clampf(HAZE_DENSITY + maxf(declared, 0.0) * HAZE_DENSITY_PER_DECLARED,
@@ -1071,7 +1080,7 @@ const REGION_SECTIONS := {
 	"ground": ["path_luma", "path_tint", "path_chroma", "verge_value_green",
 		"verge_value_earth", "verge_saturation", "verge_green_red"],
 	"grass": ["root", "tip", "value", "layers", "open"],
-	"sky": ["top", "horizon"],
+	"sky": ["top", "horizon", "paint"],
 	"water": ["decode_albedo"],
 	"foliage": ["crown_materials", "tree_words", "shrub_words", "untamed_words"],
 }
