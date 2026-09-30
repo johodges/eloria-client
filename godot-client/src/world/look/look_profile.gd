@@ -1,15 +1,20 @@
 class_name LookProfile
 extends RefCounted
-## The frame-level look pass: its one switch and every constant it tunes.
+## The frame-level look pass: its switch, the graphics quality, and every
+## constant it tunes.
 ##
-## The pass is the client's look: it is on unless the client was started with
-## ELORIA_LOOK=0, and that one switch is the whole of its off path. Every
-## layer asks `enabled()` first and does nothing when it is false, which gives
-## back the frames the client drew before the pass (the look-off renders match
-## them within run-to-run noise), for an A/B capture or to rule the pass out
-## when a frame looks wrong. Forward+ is the renderer it is tuned for; the
-## compatibility renderer (the OpenGL fallback, and CI's rendered tests) keeps
-## its own trims wherever the two light differently.
+## The pass is the client's look: it is on unless the player turns "Painted
+## look" off in the settings window, or the client was started with
+## ELORIA_LOOK=0, and that one switch (`enabled`) is the whole of its off path.
+## Every layer asks `enabled()` first and does nothing when it is false, which
+## gives back the frames the client drew before the pass (the look-off renders
+## match them within run-to-run noise), for a player who prefers them, an A/B
+## capture, or to rule the pass out when a frame looks wrong. The switch works
+## live: LookSwitch takes the pass off, or puts it back on, everything already
+## loaded. The graphics quality (`quality`, QUALITY_PRESETS) sets what the
+## shadows and the pass's costlier layers draw. Forward+ is the renderer the
+## pass is tuned for; the compatibility renderer (the OpenGL fallback, and
+## CI's rendered tests) keeps its own trims wherever the two light differently.
 ##
 ## The constants live here, not beside the code that uses them, so the whole
 ## look can be read, compared and retuned in one place. They are every map's
@@ -22,11 +27,79 @@ extends RefCounted
 ## fifths of the frame is ground, so the grade matters more than the sky; only
 ## the low views (pitch -30 and -20) reach the horizon.
 
-## The environment variable that turns the pass off: "0" and nothing else.
+## The environment variable that overrides the player's switch for a
+## developer or a test: "0" forces the pass off and "1" on, whatever the
+## settings file says; unset, or any other value, leaves the player's choice.
 const ENABLE_VARIABLE := "ELORIA_LOOK"
+## The switch before the player has touched it: on.
+const LOOK_DEFAULT := true
+## On every material the pass puts in place of another (a painted ground or
+## crown, a decoded sea or river, a kept signature colour): the material it
+## stands in for, which LookSwitch puts back when the look is switched off.
+const SOURCE_META := &"look_source"
 ## Picks another tone curve for an A/B capture ("agx", "aces" or "filmic").
 ## Unset, the pass uses TONEMAP_CURVE.
 const TONEMAP_VARIABLE := "ELORIA_LOOK_TONEMAP"
+
+# --- Graphics quality ----------------------------------------------------------
+
+## The settings window's "Graphics quality". HIGH draws everything, exactly as
+## the client drew before the setting existed; the lower two give up what costs
+## most for what it adds to a frame (QUALITY_PRESETS).
+enum Quality { LOW, MEDIUM, HIGH }
+## How each quality is written in the settings file ([graphics] quality) and in
+## QUALITY_VARIABLE, by Quality.
+const QUALITY_NAMES: Array[String] = ["low", "medium", "high"]
+const QUALITY_DEFAULT := Quality.HIGH
+## Overrides the player's quality for a developer or a test ("low", "medium" or
+## "high"; anything else leaves the player's choice).
+const QUALITY_VARIABLE := "ELORIA_LOOK_QUALITY"
+## Overrides single entries of the quality in use ("ssao=0,shadow_splits=2"),
+## for measuring what each one costs and what it adds to a frame.
+const QUALITY_TRIM_VARIABLE := "ELORIA_LOOK_QUALITY_TRIM"
+## What each quality draws. The shadows are the directional sun's: its
+## cascades (`shadow_splits`, 1, 2 or 4), the shadow atlas's side in pixels
+## (`shadow_atlas`) and the filter its edges are sampled with (`shadow_filter`,
+## RenderingServer.ShadowQuality, from 0 hard to 5 ultra). They apply whether
+## the look is on or off: they are the renderer's, and with the look off HIGH
+## is develop's own frame. The rest is the look's and applies only while it is
+## on: SSAO and SSIL (Forward+ only), glow, and the grass beds (`grass`).
+##
+## HIGH must stay the renderer's defaults (Godot's directional shadow atlas of
+## 4096 at 16 bits, soft-low filtering, four cascades; test_look_settings.gd
+## checks it against the project settings) and the pass as tuned.
+##
+## Measured, not guessed: each entry was taken away from HIGH on its own
+## (QUALITY_TRIM_VARIABLE), over the pilot's eight gameplay and low views in
+## Forward+ at 1440x900, uncapped, on an RTX 5080 laptop GPU, where HIGH's 3D
+## view costs 1.39 ms of GPU time (the review's settings notes have the
+## tables). Of that, SSIL is 0.18 ms (13 %), a 4096 atlas over a 2048 one
+## 0.18 ms (13 %), the grass 0.18 ms (13 %, and a tenth of the primitives),
+## glow 0.06, SSAO 0.05 and soft-low over hard filtering 0.03; four cascades
+## over two cost 0.04 ms of GPU but a fifth of the draw calls and a quarter of
+## the primitives, which is what a slower machine's CPU and vertex work pay.
+## Two things were measured and left out: thinning the grass (0.82 of its
+## reach at 0.7 of its density) halved its tufts but saved 0.02 ms, a tenth of
+## what the whole bed costs, so MEDIUM keeps the full beds; and the painted
+## sky's clouds cost nothing measurable even in the -15 degree horizon views,
+## so every quality keeps them.
+##
+## MEDIUM gives up SSIL, the look's costliest pass and its subtlest (bounce
+## light in the shade), and two of the cascades: about a sixth of the GPU
+## time, a fifth of the draw calls, a quarter of the primitives. LOW keeps the
+## grade, the painted ground and crowns and the painted sky, and gives up
+## every screen-space pass, the glow and the grass, and draws the shadows into
+## a 2048 atlas with hard edges: cheaper than the look off at HIGH.
+const QUALITY_PRESETS := {
+	Quality.LOW: {"shadow_splits": 2, "shadow_atlas": 2048, "shadow_filter": 0,
+		"ssao": false, "ssil": false, "glow": false, "grass": false},
+	Quality.MEDIUM: {"shadow_splits": 2, "shadow_atlas": 4096, "shadow_filter": 2,
+		"ssao": true, "ssil": false, "glow": true, "grass": true},
+	Quality.HIGH: {"shadow_splits": 4, "shadow_atlas": 4096, "shadow_filter": 2,
+		"ssao": true, "ssil": true, "glow": true, "grass": true},
+}
+## The shadow atlas's depth, which no quality changes (Godot's default).
+const SHADOW_ATLAS_16_BITS := true
 
 # --- Grade (layer L1) --------------------------------------------------------
 
@@ -1127,25 +1200,186 @@ const HAZE_SKY_AFFECT := 0.1
 ## flat, for reading what AgX and the grade make of them.
 const SKY_DEBUG_VARIABLE := "ELORIA_LOOK_SKY_DEBUG"
 
-## True unless the client was started with ELORIA_LOOK=0. Unset, empty or any
-## other value leaves the look on, so a stray value can never switch it off.
-## Read on every call, but each layer applies when a map binds or loads, so a
-## change takes effect at the next map load.
+## True while the look is on. ELORIA_LOOK decides when it is "0" (off) or "1"
+## (on), for a developer or a test; otherwise the player's own choice does
+## (`set_player_look`, the settings file's [graphics] look), and a player who
+## never chose has it on (LOOK_DEFAULT). A stray value of the variable is
+## ignored rather than read as off. Read on every call, from the loader's
+## worker threads too; LookSwitch applies a change to what is already loaded.
 static func enabled() -> bool:
-	return OS.get_environment(ENABLE_VARIABLE) != "0"
+	match OS.get_environment(ENABLE_VARIABLE):
+		"0":
+			return false
+		"1":
+			return true
+	return _player_look
+
+## True when ELORIA_LOOK decides the switch, so the player's choice is kept
+## but has no effect (the settings window greys it out and says why).
+static func look_forced() -> bool:
+	return OS.get_environment(ENABLE_VARIABLE) in ["0", "1"]
+
+## The player's own choice, whether or not ELORIA_LOOK overrides it.
+static func player_look() -> bool:
+	return _player_look
+
+## Records the player's choice. Returns true when `enabled()`'s answer changed,
+## which is when the loaded world has to follow (LookSwitch).
+static func set_player_look(on: bool) -> bool:
+	var before := enabled()
+	_player_look = on
+	return _note_switch() != before
+
+## The graphics quality in use (Quality): ELORIA_LOOK_QUALITY's when it names
+## one, otherwise the player's (`set_player_quality`, the settings file's
+## [graphics] quality), HIGH for a player who never chose.
+static func quality() -> Quality:
+	var forced := quality_named(OS.get_environment(QUALITY_VARIABLE))
+	return (forced if forced >= 0 else _player_quality) as Quality
+
+## True when ELORIA_LOOK_QUALITY decides the quality.
+static func quality_forced() -> bool:
+	return quality_named(OS.get_environment(QUALITY_VARIABLE)) >= 0
+
+## The player's own quality, whether or not ELORIA_LOOK_QUALITY overrides it.
+static func player_quality() -> Quality:
+	return _player_quality as Quality
+
+## Records the player's quality; one out of range is taken as the default.
+## Returns true when `quality()`'s answer changed.
+static func set_player_quality(level: int) -> bool:
+	var before := quality()
+	_player_quality = level if level >= 0 and level < QUALITY_NAMES.size() else QUALITY_DEFAULT
+	return quality() != before
+
+## The Quality a name stands for (QUALITY_NAMES, any case), or -1.
+static func quality_named(name: String) -> int:
+	return QUALITY_NAMES.find(name.strip_edges().to_lower())
+
+## The name a Quality is written as.
+static func quality_name(level: int) -> String:
+	return QUALITY_NAMES[clampi(level, 0, QUALITY_NAMES.size() - 1)]
+
+## `key`'s entry (QUALITY_PRESETS) for the quality in use, after any
+## ELORIA_LOOK_QUALITY_TRIM override of it.
+static func quality_value(key: String) -> Variant:
+	var value: Variant = QUALITY_PRESETS[quality()][key]
+	var trims := OS.get_environment(QUALITY_TRIM_VARIABLE)
+	if trims.is_empty():
+		return value
+	for pair: String in trims.split(",", false):
+		if pair.get_slice("=", 0).strip_edges() != key or not pair.contains("="):
+			continue
+		var raw := pair.get_slice("=", 1).strip_edges()
+		if value is bool:
+			return raw not in ["0", "false", "off", ""]
+		if value is int:
+			return raw.to_int()
+		return raw.to_float()
+	return value
+
+## The player's switch and quality as main read them from the settings file or
+## the settings window last set them. Read through `enabled` and `quality`.
+static var _player_look := LOOK_DEFAULT
+static var _player_quality: int = QUALITY_DEFAULT
+
+# The switch's generation: it counts every change of `enabled()`'s answer, so a
+# root painted (or left alone) under an older answer can be told apart from
+# one that already follows the current one. Loader workers read it too.
+static var _switch_mutex := Mutex.new()
+static var _generation := 0
+static var _generation_state := LOOK_DEFAULT
+static var _stamps: Dictionary = {}
+
+## The switch's generation now (see `stale`).
+static func switch_generation() -> int:
+	_note_switch()
+	_switch_mutex.lock()
+	var generation := _generation
+	_switch_mutex.unlock()
+	return generation
+
+## `enabled()`, recorded against `root` (a map, chunk or neighbour the loader
+## is finishing, or the map main binds): the painters ask this rather than
+## `enabled()` when they start on a root. The generation is read before the
+## switch, and only the first painter's is kept, so a toggle that lands while
+## a worker is painting leaves the root marked stale (`stale`) whichever way
+## the worker read it, and main puts it right when it adopts it.
+static func enabled_for(root: Node) -> bool:
+	var generation := switch_generation()
+	if root != null:
+		_switch_mutex.lock()
+		if not _stamps.has(root.get_instance_id()):
+			_stamps[root.get_instance_id()] = generation
+		_switch_mutex.unlock()
+	return enabled()
+
+## Marks `root` as following the switch's current answer (LookSwitch.sync).
+static func stamp(root: Node) -> void:
+	if root == null:
+		return
+	var generation := switch_generation()
+	_switch_mutex.lock()
+	_stamps[root.get_instance_id()] = generation
+	_switch_mutex.unlock()
+
+## True when `root` was painted, or left unpainted, under an older answer of
+## the switch than the current one. A root no painter has seen is not stale:
+## there is nothing of the look's on it to put right.
+static func stale(root: Node) -> bool:
+	if root == null:
+		return false
+	var generation := switch_generation()
+	_switch_mutex.lock()
+	var stamped: Variant = _stamps.get(root.get_instance_id())
+	_switch_mutex.unlock()
+	return stamped != null and int(stamped) != generation
+
+## True while some root that is still alive was painted, or left unpainted,
+## under an older answer of the switch (`stale`): main then looks for it among
+## the loaded roots. Forgets the roots that have been freed on the way, so it
+## costs a walk of the live roots' stamps and nothing more.
+static func any_stale() -> bool:
+	var generation := switch_generation()
+	var found := false
+	_switch_mutex.lock()
+	for id: int in _stamps.keys():
+		if not is_instance_id_valid(id):
+			_stamps.erase(id)
+		elif int(_stamps[id]) != generation:
+			found = true
+	_switch_mutex.unlock()
+	return found
+
+## Counts a change of `enabled()`'s answer (the player's switch, or the
+## variable in a test) into the generation; returns the answer.
+static func _note_switch() -> bool:
+	var now := enabled()
+	_switch_mutex.lock()
+	if now != _generation_state:
+		_generation_state = now
+		_generation += 1
+	_switch_mutex.unlock()
+	return now
 
 ## True when the renderer has SSAO and SSIL. Only Forward+ does; the others
 ## ignore the settings but warn about them, so they are not set there at all.
 static func screen_space_effects() -> bool:
 	return RenderingServer.get_current_rendering_method() == "forward_plus"
 
-## False when the client was started with ELORIA_LOOK_SSIL=0 (SSIL_VARIABLE).
+## False below HIGH quality, and when the client was started with
+## ELORIA_LOOK_SSIL=0 (SSIL_VARIABLE).
 static func ssil_enabled() -> bool:
-	return OS.get_environment(SSIL_VARIABLE) != "0"
+	return bool(quality_value("ssil")) and OS.get_environment(SSIL_VARIABLE) != "0"
 
-## False when the client was started with ELORIA_LOOK_SSAO=0 (SSAO_VARIABLE).
+## False at LOW quality, and when the client was started with
+## ELORIA_LOOK_SSAO=0 (SSAO_VARIABLE).
 static func ssao_enabled() -> bool:
-	return OS.get_environment(SSAO_VARIABLE) != "0"
+	return bool(quality_value("ssao")) and OS.get_environment(SSAO_VARIABLE) != "0"
+
+## False at LOW quality.
+static func glow_enabled() -> bool:
+	return bool(quality_value("glow"))
 
 ## The tone curve in use: TONEMAP_CURVE unless an A/B capture names another.
 static func tonemap_curve() -> Dictionary:
