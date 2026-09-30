@@ -83,9 +83,13 @@ const CONTRAST := 1.0
 ## at Four Gates' east gate, the coppice's dark timber and the maples' crimson
 ## shade, 5-6 % of those frames below luminance 20 once the curve's contrast
 ## was raised for Forward+) out of black without greying the mid-tones the
-## contrast is for. 0 turns it off.
-const TOE_LIFT := 0.045
-const TOE_END := 0.2
+## contrast is for. 0 turns it off. At 0.045 up to 0.2 the shade was still
+## crushed where dark ground turns from the sun: the Grey Moors' steep peat
+## facets at gm_wild came out (22, 19, 17), 12 % of the frame below luminance
+## 20 against develop's 0.1 %, and Cinderbank's timber crates black; the
+## shade is meant cool, not black.
+const TOE_LIFT := 0.06
+const TOE_END := 0.28
 ## Saturation for a map that declares none. Below 1 because the tone curve adds
 ## chroma: AgX's contrast acts on each channel apart, and at 1.0 it took
 ## Amberwood's orange leaf litter and Four Gates' lime grass most of the way to
@@ -183,9 +187,16 @@ const SSAO_DETAIL := 0.5
 ## Some occlusion reaches direct light too, or noon AO vanishes in the sun.
 ## More than this blacked out the coppice's eaves.
 const SSAO_LIGHT_AFFECT := 0.1
+## ELORIA_LOOK_SSAO=0 turns it off, for measuring its cost and its share of a
+## frame's shade (as ELORIA_LOOK_SSIL does SSIL's).
+const SSAO_VARIABLE := "ELORIA_LOOK_SSAO"
 ## Bounce light from sunlit ground into the shade beside it. Forward+ only.
+## ELORIA_LOOK_SSIL=0 turns it off, for measuring what it costs (it is the
+## grade's most expensive screen-space pass; see the review's cost notes) or
+## for a slower GPU until the client has a graphics-quality setting.
 const SSIL_RADIUS := 4.0
 const SSIL_INTENSITY := 0.6
+const SSIL_VARIABLE := "ELORIA_LOOK_SSIL"
 
 ## Only what is already brighter than white glows, and softly: sunlit pale
 ## stone and water glints, not the whole frame.
@@ -1013,7 +1024,26 @@ const SKY_FALLBACK := {"top": Color("3d7ec2"), "horizon": Color("bcc9cd")}
 const SKY_WARM := Color(1.0, 0.87, 0.68)
 const SKY_HORIZON_WARMTH := 0.12
 const SKY_HAZE_WARMTH := 0.45
-const SKY_HAZE_LIFT := 0.1
+## Lifted 0.1, the haze band was the brightest thing in a low view (197 luma
+## at gm_horizon, a paper-white wall over the tutorial islands) and pulled the
+## eye off the road and the landmark.
+const SKY_HAZE_LIFT := 0.03
+## And never brighter than this display value: the sky takes the grade's
+## exposure too, so a pale declared horizon (Whitehorn's, Crownwater's) came
+## out white over white snow or over the far palace.
+const SKY_HAZE_VALUE_MAX := 0.72
+## Only a clear sky is painted as the bright day (LookSky.clearness): a
+## declared zenith this blue (hue window in degrees, with SKY_CLEAR_HUE_EDGE
+## either side) and this saturated. Every clear map's zenith is 208-218
+## degrees at 0.6-0.8; the Amethyst Barrens' violet dusk (249 degrees) and
+## the Grey Moors' overcast (0.23) are not, and keep their own colours, with
+## clouds in their horizon's colour lifted SKY_MOODY_CLOUD_LIFT and at
+## SKY_MOODY_CLOUD_OPACITY of the clear sky's opacity.
+const SKY_CLEAR_HUE := Vector2(190.0, 235.0)
+const SKY_CLEAR_HUE_EDGE := 10.0
+const SKY_CLEAR_SATURATION := Vector2(0.3, 0.5)
+const SKY_MOODY_CLOUD_LIFT := 0.12
+const SKY_MOODY_CLOUD_OPACITY := 0.5
 ## The zenith is taken this far towards a clear, deep blue, which lifts
 ## Amberwood's murky navy (0.15, 0.25, 0.42) and deepens Four Gates' blue
 ## (0.24, 0.45, 0.73). AgX and the grade's saturation pale a blue sky a long
@@ -1072,9 +1102,13 @@ const SKY_SUN_CORE := 0.6
 ## gets more, as the grade did, so Amberwood stays mistier than the city. At
 ## 0.8 from 380 m the far Four Gates town beyond the south gate bleached into
 ## the haze at the -15 degree view: a landmark lost to hide the world's edge.
-const HAZE_BEGIN := 40.0
+## From 40 m on a curve of 1.6 the middle distance hazed too (31 % at 250 m):
+## Crownwater's palace dome went from saturation 0.34 to 0.15 at cw_horizon
+## and Mirrorhold's valley into a flat cream wall; from 80 m on 2.0 it is
+## 19 % there, and the world's edge is as hidden (52 % at 330 m, 75 % beyond).
+const HAZE_BEGIN := 80.0
 const HAZE_END := 420.0
-const HAZE_CURVE := 1.6
+const HAZE_CURVE := 2.0
 const HAZE_DENSITY := 0.75
 const HAZE_DENSITY_PER_DECLARED := 100.0
 const HAZE_DENSITY_MAX := 0.92
@@ -1098,6 +1132,14 @@ static func enabled() -> bool:
 ## ignore the settings but warn about them, so they are not set there at all.
 static func screen_space_effects() -> bool:
 	return RenderingServer.get_current_rendering_method() == "forward_plus"
+
+## False when the client was started with ELORIA_LOOK_SSIL=0 (SSIL_VARIABLE).
+static func ssil_enabled() -> bool:
+	return OS.get_environment(SSIL_VARIABLE) != "0"
+
+## False when the client was started with ELORIA_LOOK_SSAO=0 (SSAO_VARIABLE).
+static func ssao_enabled() -> bool:
+	return OS.get_environment(SSAO_VARIABLE) != "0"
 
 ## The tone curve in use: TONEMAP_CURVE unless an A/B capture names another.
 static func tonemap_curve() -> Dictionary:

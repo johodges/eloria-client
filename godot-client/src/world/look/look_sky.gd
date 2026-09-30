@@ -60,6 +60,7 @@ static func apply(lighting: WorldManifest, world_environment: WorldEnvironment,
 	_update(material, &"look_horizon", colours.painted_horizon)
 	_update(material, &"look_haze", colours.haze)
 	_update(material, &"look_cloud_lit", colours.cloud_lit)
+	_update(material, &"look_cloud_opacity", colours.cloud_opacity)
 	_update(material, &"look_debug",
 		OS.get_environment(LookProfile.SKY_DEBUG_VARIABLE).to_int())
 	_haze(environment, lighting, colours.haze)
@@ -88,16 +89,48 @@ static func sky_colours(lighting: WorldManifest, minute: float) -> Dictionary:
 		horizon = horizon.lerp(DayNightBinder.NIGHT_SKY_HORIZON, 1.0 - light) \
 			.lerp(DayNightBinder.DAWN_SUN_COLOUR, edge * 0.35)
 	# The painted sky is warmed by daylight only: at night it keeps the
-	# binder's moonlit colours.
-	var zenith := top.lerp(LookProfile.SKY_ZENITH_DEEP, LookProfile.SKY_ZENITH_DEPTH * light)
+	# binder's moonlit colours. And only a clear sky is taken towards the
+	# painted blue day: a dusk, an overcast or a storm the region declared
+	# keeps its own colours, its clouds take its horizon's and thin out.
+	var clear := clearness(lighting, declared_sky, fallback.top) * light
+	var zenith := top.lerp(LookProfile.SKY_ZENITH_DEEP, LookProfile.SKY_ZENITH_DEPTH * clear)
 	var painted_horizon := horizon.lerp(LookProfile.SKY_WARM,
-		LookProfile.SKY_HORIZON_WARMTH * light)
+		LookProfile.SKY_HORIZON_WARMTH * clear)
 	var haze := painted_horizon.lerp(LookProfile.SKY_WARM,
-		LookProfile.SKY_HAZE_WARMTH * light).lightened(LookProfile.SKY_HAZE_LIFT * light)
+		LookProfile.SKY_HAZE_WARMTH * clear).lightened(LookProfile.SKY_HAZE_LIFT * clear)
+	if haze.v > LookProfile.SKY_HAZE_VALUE_MAX:
+		haze = Color.from_hsv(haze.h, haze.s, LookProfile.SKY_HAZE_VALUE_MAX, haze.a)
+	var cloud_lit := LookProfile.SKY_CLOUD_NIGHT.lerp(LookProfile.SKY_CLOUD_LIT, light)
+	cloud_lit = cloud_lit.lerp(horizon.lightened(LookProfile.SKY_MOODY_CLOUD_LIFT),
+		(1.0 - clear) * light)
+	var cloud_opacity := LookProfile.SKY_CLOUD_OPACITY \
+		* lerpf(LookProfile.SKY_MOODY_CLOUD_OPACITY, 1.0, clear)
 	return {"top": top, "horizon": horizon, "zenith": zenith,
-		"painted_horizon": painted_horizon, "haze": haze,
-		"cloud_lit": LookProfile.SKY_CLOUD_NIGHT.lerp(LookProfile.SKY_CLOUD_LIT, light),
-		"light": light}
+		"painted_horizon": painted_horizon, "haze": haze, "cloud_lit": cloud_lit,
+		"cloud_opacity": cloud_opacity, "clear": clear, "light": light}
+
+## How clear a sky is (0..1): 1 for a saturated blue zenith, 0 for a grey
+## overcast, a violet dusk or a storm, judged on the region's declared zenith
+## (or `fallback_top`, its region file's or the binder's, where it declares
+## none) against LookProfile.SKY_CLEAR_SATURATION and SKY_CLEAR_HUE. On the
+## continent the declared colours are blended across a border, so this is
+## too; a map outside it may say outright (`sky.clear` in its region file).
+## The painted day (a deep blue zenith, warm haze, bright cumulus) replaced
+## the Amethyst Barrens' violet dusk (64, 57, 78) and the Grey Moors' overcast
+## (92, 99, 103) with one bright cloudy day.
+static func clearness(lighting: WorldManifest, declared_sky: Dictionary,
+		fallback_top: Color) -> float:
+	if not lighting.data.has("continentGeography"):
+		var own: Variant = LookProfile.region_value(lighting.asset_id(), "sky", "clear", null)
+		if own is float:
+			return clampf(own as float, 0.0, 1.0)
+	var zenith := _colour(_either(declared_sky, "topColor", "zenith"), fallback_top)
+	var hue := zenith.h * 360.0
+	var edge := LookProfile.SKY_CLEAR_HUE_EDGE
+	var blue := smoothstep(LookProfile.SKY_CLEAR_HUE.x - edge, LookProfile.SKY_CLEAR_HUE.x, hue) \
+		* (1.0 - smoothstep(LookProfile.SKY_CLEAR_HUE.y, LookProfile.SKY_CLEAR_HUE.y + edge, hue))
+	return blue * smoothstep(LookProfile.SKY_CLEAR_SATURATION.x,
+		LookProfile.SKY_CLEAR_SATURATION.y, zenith.s)
 
 ## The environment's painted sky material, installing it on first use: inside
 ## the binder's Sky in place of its procedural material, or in a new Sky on a

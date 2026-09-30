@@ -104,6 +104,26 @@ func _run() -> void:
 	var night := LookSky.sky_colours(region, 0.0)
 	_expect(night.painted_horizon == night.horizon and night.zenith == night.top,
 		"at midnight the painted sky keeps the binder's moonlit colours")
+	# Only a clear blue sky is painted as the bright day: a violet dusk and a
+	# grey overcast keep their own colours, clouds in their horizon's colour.
+	var dusk := WorldManifest.new()
+	dusk.data = {"asset": {"id": "amethyst_barrens"}, "continentGeography": {}, "environment": {
+		"sky": {"zenith": [0.1, 0.09, 0.16], "horizon": [0.34, 0.3, 0.38]},
+		"dayNight": {"enabled": false}, "sun": {"enabled": true}}}
+	var overcast := WorldManifest.new()
+	overcast.data = {"asset": {"id": "grey_moors"}, "continentGeography": {}, "environment": {
+		"sky": {"zenith": [0.2, 0.22, 0.26], "horizon": [0.44, 0.46, 0.47]},
+		"dayNight": {"enabled": false}, "sun": {"enabled": true}}}
+	var dusk_colours := LookSky.sky_colours(dusk, 720.0)
+	var overcast_colours := LookSky.sky_colours(overcast, 720.0)
+	_expect(is_zero_approx(float(dusk_colours.clear)) and is_zero_approx(float(overcast_colours.clear))
+		and dusk_colours.zenith == dusk_colours.top and overcast_colours.zenith == overcast_colours.top
+		and float(dusk_colours.cloud_opacity) < LookProfile.SKY_CLOUD_OPACITY,
+		"a violet dusk and a grey overcast keep their zenith, with thinner clouds")
+	_expect(float(colours.clear) > 0.5 and (colours.zenith as Color) != (colours.top as Color),
+		"a clear blue sky is taken towards the painted day")
+	_expect((colours.haze as Color).v <= LookProfile.SKY_HAZE_VALUE_MAX + 0.001,
+		"the haze is never paler than SKY_HAZE_VALUE_MAX")
 	var applied := _snapshot(environment)
 	for i: int in 3:
 		DayNightBinder.apply(region, world_environment, sun, 180.0)

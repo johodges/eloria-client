@@ -52,6 +52,12 @@ static func _grade_tone(environment: Environment, declared: Dictionary,
 	environment.tonemap_exposure = float(curve.exposure) \
 		* LookProfile.map_trim(map_id, "exposure", continent) * LookProfile.renderer_exposure()
 	environment.tonemap_white = float(curve.white)
+	# A map's `grade.background` scales what the camera sees behind its world
+	# (its sky or background colour): an interior whose void is meant dark
+	# but whose floor needs an exposure trim (the Ssarathi archive, 1.4) had
+	# its void lifted with the floor (luminance 48 to 71).
+	environment.background_energy_multiplier = LookProfile.map_trim(map_id, "background",
+		continent)
 	if curve.has("agx_white"):
 		environment.tonemap_agx_white = float(curve.agx_white)
 		environment.tonemap_agx_contrast = float(curve.get("agx_contrast_forward",
@@ -118,13 +124,13 @@ static func _grade_fog(environment: Environment, declared: Dictionary) -> void:
 
 static func _grade_screen_space(environment: Environment) -> void:
 	if LookProfile.screen_space_effects():
-		environment.ssao_enabled = true
+		environment.ssao_enabled = LookProfile.ssao_enabled()
 		environment.ssao_radius = LookProfile.SSAO_RADIUS
 		environment.ssao_intensity = LookProfile.SSAO_INTENSITY
 		environment.ssao_power = LookProfile.SSAO_POWER
 		environment.ssao_detail = LookProfile.SSAO_DETAIL
 		environment.ssao_light_affect = LookProfile.SSAO_LIGHT_AFFECT
-		environment.ssil_enabled = true
+		environment.ssil_enabled = LookProfile.ssil_enabled()
 		environment.ssil_radius = LookProfile.SSIL_RADIUS
 		environment.ssil_intensity = LookProfile.SSIL_INTENSITY
 	environment.glow_enabled = true
