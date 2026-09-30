@@ -1,7 +1,7 @@
 extends SceneTree
 ## Guards the look pass's painted crowns and dithered occluder fade (layer L3).
 ##
-## With ELORIA_LOOK unset the crowns keep the loader's materials and
+## With ELORIA_LOOK=0 the crowns keep the loader's materials and
 ## OccluderFade blends exactly as on develop. With it on, only crowns are
 ## painted (never trunks, ground or a merged scatter mesh), the source
 ## materials and meshes are never edited, painting twice is harmless, a
@@ -107,7 +107,7 @@ func _run() -> void:
 		"with ELORIA_LOOK=0 every mesh is indexed as on develop, ground patches included")
 
 	# On.
-	OS.set_environment(LookProfile.ENABLE_VARIABLE, "1")
+	OS.unset_environment(LookProfile.ENABLE_VARIABLE)
 	_expect(LookFoliage.paint_loaded(world, island) == 0,
 		"a map outside the continent is not painted")
 	var painted_count := LookFoliage.paint_loaded(world, continent)
@@ -257,7 +257,7 @@ func _run() -> void:
 
 	# The ground is never an occluder with the pass on.
 	_expect(_indexed(world) == _mesh_count(world) - 1,
-		"with ELORIA_LOOK=1 a ground patch is kept out of the fade index")
+		"with the look on (the default) a ground patch is kept out of the fade index")
 
 	world.queue_free()
 	if previous.is_empty():

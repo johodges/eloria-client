@@ -4,7 +4,7 @@ extends SceneTree
 ## The grade is re-applied after every binder rewrite, up to ten times a
 ## second, so it must never compound: scaling a value it already scaled would
 ## walk the sun towards orange and the ambient towards black within a minute.
-## With ELORIA_LOOK unset it must change nothing at all, and an interior, whose
+## With ELORIA_LOOK=0 it must change nothing at all, and an interior, whose
 ## lamps are its whole lighting, is never graded.
 
 var failures := 0
@@ -39,7 +39,7 @@ func _run() -> void:
 		"with ELORIA_LOOK=0 the environment and sun are exactly as bound")
 
 	# On: graded, and graded the same however often it runs.
-	OS.set_environment(LookProfile.ENABLE_VARIABLE, "1")
+	OS.unset_environment(LookProfile.ENABLE_VARIABLE)
 	_expect(LookGrade.apply(outdoor, world_environment, sun),
 		"an outdoor map is graded")
 	var environment := world_environment.environment
@@ -59,6 +59,17 @@ func _run() -> void:
 	_expect(environment.fog_mode == Environment.FOG_MODE_DEPTH
 		and is_equal_approx(environment.fog_density, LookProfile.fog_density(0.0007)),
 		"declared fog becomes depth fog")
+	var toe := environment.adjustment_color_correction as ImageTexture
+	var toe_image := toe.get_image() if toe != null else null
+	var width := toe_image.get_width() if toe_image != null else 0
+	var past := ceili(LookProfile.TOE_END * (width - 1)) + 1
+	_expect(toe_image != null and width > past
+		and absf(toe_image.get_pixel(0, 0).r - LookProfile.TOE_LIFT) < 2.0 / 255.0
+		and absf(toe_image.get_pixel(past, 0).r - float(past) / float(width - 1)) < 1.0 / 255.0
+		and absf(toe_image.get_pixel(width - 1, 0).r - 1.0) < 1.0 / 255.0,
+		"the toe lifts black to TOE_LIFT and leaves everything past TOE_END alone")
+	_expect(environment.adjustment_color_correction == LookGrade.toe_curve(),
+		"the toe is built once and shared")
 	for i: int in 5:
 		LookGrade.apply(outdoor, world_environment, sun)
 	_expect(_snapshot(environment, sun) == graded,
@@ -102,6 +113,7 @@ func _snapshot(environment: Environment, sun: DirectionalLight3D) -> Dictionary:
 		"adjusted": environment.adjustment_enabled,
 		"saturation": environment.adjustment_saturation,
 		"contrast": environment.adjustment_contrast,
+		"colour_correction": environment.adjustment_color_correction,
 		"ambient_colour": environment.ambient_light_color,
 		"ambient_energy": environment.ambient_light_energy,
 		"sky_share": environment.ambient_light_sky_contribution,

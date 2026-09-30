@@ -1,7 +1,7 @@
 extends SceneTree
 ## Guards the look pass's painted sky and haze (layer L5).
 ##
-## With ELORIA_LOOK unset the sky must stay develop's procedural one. With it
+## With ELORIA_LOOK=0 the sky must stay develop's procedural one. With it
 ## on, the painted sky must light the world exactly as develop's did: its
 ## radiance pass is drawn from the colours DayNightBinder would have given the
 ## procedural sky, so those colours are checked against the binder's own for
@@ -55,7 +55,7 @@ func _run() -> void:
 		"with ELORIA_LOOK=0 the procedural sky and the fog are exactly as bound")
 
 	# On: painted inside the bound Sky, with develop's sky kept for radiance.
-	OS.set_environment(LookProfile.ENABLE_VARIABLE, "1")
+	OS.unset_environment(LookProfile.ENABLE_VARIABLE)
 	var procedural := bound_sky.sky_material as ProceduralSkyMaterial
 	_expect(LookSky.install(region, world_environment), "an outdoor map's sky is painted")
 	var environment := world_environment.environment

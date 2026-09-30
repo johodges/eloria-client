@@ -1,7 +1,7 @@
 extends SceneTree
 ## Guards the look pass's painted ground (layer L2).
 ##
-## With ELORIA_LOOK unset the ground must be exactly what the loader built.
+## With ELORIA_LOOK=0 the ground must be exactly what the loader built.
 ## With it on, only ground is painted, one painted material is shared by every
 ## mesh that used a source material, the source materials and meshes are never
 ## edited (a map cache is packed from them), and painting twice is harmless:
@@ -74,7 +74,7 @@ func _run() -> void:
 		"with ELORIA_LOOK=0 the ground keeps the loader's materials")
 
 	# On: the entry points keep to their own maps.
-	OS.set_environment(LookProfile.ENABLE_VARIABLE, "1")
+	OS.unset_environment(LookProfile.ENABLE_VARIABLE)
 	_expect(LookGround.paint_loaded(world, island) == 0,
 		"the loader leaves a map outside the continent to the bind")
 	_expect(LookGround.paint_bound(world, continent) == 0,
@@ -177,11 +177,22 @@ func _run() -> void:
 			.get_shader_parameter(&"look_paving_count")) == 1,
 		"its road and its soil learn the paving's bounds")
 	var trims: Dictionary = LookProfile.GROUND_TRIMS["amberwood"]
+	# The default is the renderer's: GROUND_FORWARD's in Forward+ (which a
+	# headless run reports when the project names it), PATH_LUMA otherwise.
+	var default_luma := float(LookProfile.GROUND_FORWARD.get("path_luma",
+		LookProfile.PATH_LUMA)) if LookProfile.forward_plus() else LookProfile.PATH_LUMA
 	_expect(is_equal_approx(float(avenue_paint.get_shader_parameter(&"look_path_luma")),
 			float(trims["path_luma"]))
 		and is_equal_approx(float(deck_paint.get_shader_parameter(&"look_path_luma")),
-			LookProfile.PATH_LUMA),
-		"a region's road value is its own trim; other regions keep the default")
+			default_luma),
+		"a region's road value is its own trim; other regions keep the renderer's default")
+	var reach_trims: Dictionary = LookProfile.GROUND_TRIMS["lantern_reach"]
+	_expect(LookProfile.ground_value("lantern_reach", "verge_value_green", -1.0)
+			== (reach_trims["verge_value_green_forward"] if LookProfile.forward_plus()
+				else reach_trims["verge_value_green"])
+		and LookProfile.ground_value("no_such_region", "verge_value_green", -1.0)
+			== (LookProfile.GROUND_FORWARD["verge_value_green"] if LookProfile.forward_plus() else -1.0),
+		"a region's `_forward` trim wins in Forward+, and a region without one takes the renderer's default")
 
 	# An island map is painted at bind, with its scene's vertex colour.
 	var island_root := Node3D.new()

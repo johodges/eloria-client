@@ -6,15 +6,31 @@ const SETTLE := 0.5
 const SIGHT_POINT := Vector3(0, 5.5, 5)
 var failures := 0
 var checks := 0
+## Which pass is running: the look on (the default; a faded mesh takes
+## LookFade's dithered copy) or off (ELORIA_LOOK=0; a blended copy, as on
+## develop). Every check runs under both.
+var look := false
 
 func _init() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
-	_test_roots()
-	_test_oriented_box()
-	_test_main_binding()
-	await process_frame
+	var previous := OS.get_environment(LookProfile.ENABLE_VARIABLE)
+	for look_on: bool in [false, true]:
+		look = look_on
+		if look_on:
+			OS.unset_environment(LookProfile.ENABLE_VARIABLE)
+		else:
+			OS.set_environment(LookProfile.ENABLE_VARIABLE, "0")
+		_expect(LookProfile.enabled() == look_on, "the pass is switched as this run expects")
+		_test_roots()
+		_test_oriented_box()
+		_test_main_binding()
+		await process_frame
+	if previous.is_empty():
+		OS.unset_environment(LookProfile.ENABLE_VARIABLE)
+	else:
+		OS.set_environment(LookProfile.ENABLE_VARIABLE, previous)
 	print("resident occluder fade: %d checks, %d failures" % [checks, failures])
 	quit(failures)
 
@@ -78,8 +94,8 @@ func _test_roots() -> void:
 	_expect(first_fade != null and second_fade != null, "active and resident scenery both begin fading")
 	_expect(batch_prop.visible and _material(batch_prop) != null, "resident-aware probe lifts the batch source")
 	_expect(_material(actor) == null and _material(proxy) == null, "actor and collision proxy remain untouched")
-	var first_alpha := first_fade.albedo_color.a if first_fade != null else -1.0
-	var second_alpha := second_fade.albedo_color.a if second_fade != null else -1.0
+	var first_alpha := _opacity(first_fade)
+	var second_alpha := _opacity(second_fade)
 	# The resident becomes active and the previous root stays resident. All
 	# geometry, camera and player adopt the destination's translated frame.
 	var rebase := Vector3(-256, 0, 0)
@@ -92,8 +108,8 @@ func _test_roots() -> void:
 	manager.sync_worlds(second_manifest, second, residents)
 	_expect(_material(first_prop) == first_fade and _material(second_prop) == second_fade,
 		"promotion retains the exact faded materials on both actual roots")
-	_expect(first_fade != null and is_equal_approx(first_fade.albedo_color.a, first_alpha)
-		and second_fade != null and is_equal_approx(second_fade.albedo_color.a, second_alpha),
+	_expect(first_fade != null and is_equal_approx(_opacity(first_fade), first_alpha)
+		and second_fade != null and is_equal_approx(_opacity(second_fade), second_alpha),
 		"promotion does not reset partially completed fades")
 	manager.update(SETTLE, camera, player)
 	_expect(_alpha(first_prop, 0.22) and _alpha(second_prop, 0.08),
@@ -115,7 +131,7 @@ func _test_roots() -> void:
 		"unchanged membership polls do not reconfigure or replace materials")
 	manager.set_enabled(false)
 	manager.update(0.02, camera, player)
-	_expect(_material(first_prop) == first_fade and first_fade.albedo_color.a > 0.22 and first_fade.albedo_color.a < 1,
+	_expect(_material(first_prop) == first_fade and _opacity(first_fade) > 0.22 and _opacity(first_fade) < 1,
 		"disabling blends all roots back rather than snapping")
 	manager.update(SETTLE, camera, player)
 	_expect(_material(first_prop) == null and _material(second_prop) == null,
@@ -249,15 +265,29 @@ func _box(parent: Node3D, label: String, position: Vector3, size := Vector3(2, 2
 	parent.add_child(result)
 	return result
 
-func _material(node: MeshInstance3D) -> BaseMaterial3D:
-	return node.get_surface_override_material(0) as BaseMaterial3D
+## The faded copy on a test box's surface, or null while it rests.
+func _material(node: MeshInstance3D) -> Material:
+	return node.get_surface_override_material(0)
 
+## A faded copy's opacity: a blended copy's albedo alpha, or the opacity a
+## dithered look copy records (LookFade.FADE_PARAMETER); -1 for anything else.
+func _opacity(material: Material) -> float:
+	if material is BaseMaterial3D:
+		return (material as BaseMaterial3D).albedo_color.a
+	if material is ShaderMaterial:
+		var value: Variant = (material as ShaderMaterial).get_shader_parameter(LookFade.FADE_PARAMETER)
+		return float(value) if value != null else -1.0
+	return -1.0
+
+## True when the box has faded to `expected` in the way this pass fades: a
+## dithered look copy with the look on, a blended copy with it off.
 func _alpha(node: MeshInstance3D, expected: float) -> bool:
 	var material := _material(node)
-	return material != null and is_equal_approx(material.albedo_color.a, expected)
+	var kind_ok := material is ShaderMaterial if look else material is BaseMaterial3D
+	return material != null and kind_ok and is_equal_approx(_opacity(material), expected)
 
 func _expect(condition: bool, label: String) -> void:
 	checks += 1
 	if not condition:
 		failures += 1
-		push_error("FAIL: " + label)
+		push_error("FAIL (look %s): %s" % ["on" if look else "off", label])

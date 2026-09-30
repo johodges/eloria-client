@@ -8,6 +8,12 @@ extends SceneTree
 ## exactly as it was found - including a prop the loader had collapsed into a
 ## MultiMesh, which has to be lifted out for the fade and handed back after.
 ##
+## Every check runs twice: with the look pass off (ELORIA_LOOK=0), where a
+## faded obstacle takes a blended copy of its material as on develop, and with
+## it on (the variable unset, the client's default), where LookFade swaps in a
+## dithered copy that stays solid and opens a hole round the player, and a
+## wall hands its shadow to a shadow-only twin while it fades.
+##
 ## Run: Godot_v4.7.2-stable_win64.exe --headless --path . \
 ##         --script tests/test_occluder_fade.gd
 
@@ -25,6 +31,8 @@ const OFF_TO_THE_SIDE := Vector3(20.0, 5.5, 5.0)
 const SETTLE := 0.5
 
 var failures: int = 0
+## Which pass is running: the look on (the default) or off (ELORIA_LOOK=0).
+var look := false
 
 var world: Node3D
 var camera: Camera3D
@@ -39,6 +47,23 @@ func _init() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
+	var previous := OS.get_environment(LookProfile.ENABLE_VARIABLE)
+	for look_on: bool in [false, true]:
+		look = look_on
+		if look_on:
+			OS.unset_environment(LookProfile.ENABLE_VARIABLE)
+		else:
+			OS.set_environment(LookProfile.ENABLE_VARIABLE, "0")
+		_expect(LookProfile.enabled() == look_on, "the pass is switched as this run expects")
+		await _run_pass()
+	if previous.is_empty():
+		OS.unset_environment(LookProfile.ENABLE_VARIABLE)
+	else:
+		OS.set_environment(LookProfile.ENABLE_VARIABLE, previous)
+	print("occluder fade tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
+	quit(failures)
+
+func _run_pass() -> void:
 	_build_world()
 	await process_frame
 
@@ -56,16 +81,30 @@ func _run() -> void:
 	fade.update(SETTLE, camera, player)
 
 	var faded: Material = blocker.get_surface_override_material(0)
-	_expect(faded is BaseMaterial3D,
-		"an obstacle on the sight line takes a faded material of its own")
-	if faded is BaseMaterial3D:
-		var material: BaseMaterial3D = faded as BaseMaterial3D
-		_expect(material.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA,
-			"the faded material blends instead of writing depth")
-		_expect(is_equal_approx(material.albedo_color.a, OccluderFadeScript.FADED_ALPHA),
-			"the fade settles at FADED_ALPHA")
-		_expect(material != blocker.mesh.surface_get_material(0),
-			"the shared imported material is duplicated, not edited")
+	if look:
+		_expect(faded is ShaderMaterial
+				and (faded as ShaderMaterial).shader == LookFade.SHADER_STANDARD,
+			"an obstacle on the sight line takes a dithered copy of its material")
+		if faded is ShaderMaterial:
+			_expect(is_equal_approx(float((faded as ShaderMaterial).get_shader_parameter(
+					LookFade.OPEN_PARAMETER)), 1.0),
+				"the settled fade has opened its hole all the way")
+		_expect(blocker.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				and _shadow_twin(blocker) != null,
+			"the faded wall stops casting and hands its shadow to a solid twin")
+	else:
+		_expect(faded is BaseMaterial3D,
+			"an obstacle on the sight line takes a faded material of its own")
+		if faded is BaseMaterial3D:
+			_expect((faded as BaseMaterial3D).transparency == BaseMaterial3D.TRANSPARENCY_ALPHA,
+				"the faded material blends instead of writing depth")
+		_expect(blocker.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+				and _shadow_twin(blocker) == null,
+			"with the pass off the faded obstacle keeps its own shadow")
+	_expect(is_equal_approx(_opacity(faded), OccluderFadeScript.FADED_ALPHA),
+		"the fade settles at FADED_ALPHA")
+	_expect(faded != blocker.mesh.surface_get_material(0),
+		"the shared imported material is duplicated, not edited")
 	_expect(is_equal_approx(blocker.mesh.surface_get_material(0).albedo_color.a, 1.0),
 		"the material the mesh still shares with every other copy stays opaque")
 
@@ -87,6 +126,9 @@ func _run() -> void:
 	fade.update(SETTLE, camera, player)
 	_expect(blocker.get_surface_override_material(0) == null,
 		"an obstacle that clears the sight line gets its own material back")
+	_expect(blocker.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+			and _shadow_twin(blocker) == null,
+		"and its own shadow, with no twin left behind")
 	_expect(not batched.visible
 			and batched.get_surface_override_material(0) == null,
 		"the lifted prop is handed back to the batch")
@@ -110,20 +152,18 @@ func _run() -> void:
 	manifest.data = {"rendering": {"occluderFadeAlpha": 0.08}}
 	fade.configure(manifest, world)
 	fade.update(SETTLE, camera, player)
-	_expect(is_equal_approx(blocker.get_surface_override_material(0).albedo_color.a, 0.08),
+	_expect(is_equal_approx(_opacity(blocker.get_surface_override_material(0)), 0.08),
 		"layered gates use their map's readable opacity")
 	fade.configure(null, world)
 	fade.update(SETTLE, camera, player)
-	_expect(is_equal_approx(blocker.get_surface_override_material(0).albedo_color.a, OccluderFadeScript.FADED_ALPHA),
+	_expect(is_equal_approx(_opacity(blocker.get_surface_override_material(0)), OccluderFadeScript.FADED_ALPHA),
 		"the following map restores the ordinary fade opacity")
 	fade.reset()
 	_test_causeway_structures()
 	_test_authored_ground_patches()
 
-	print("occluder fade tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	world.queue_free()
 	await process_frame
-	quit(failures)
 
 ## A miniature of what the world loader leaves behind: loose meshes, a walk
 ## surface carrying navigation collision, and one prop collapsed into a batch
@@ -263,8 +303,21 @@ func _multimesh_stores_transforms() -> bool:
 	probe.set_instance_transform(0, written)
 	return probe.get_instance_transform(0).origin.is_equal_approx(written.origin)
 
+## A faded copy's opacity: a blended copy's albedo alpha, or the opacity a
+## dithered look copy records (LookFade.FADE_PARAMETER); -1 for anything else.
+func _opacity(material: Material) -> float:
+	if material is BaseMaterial3D:
+		return (material as BaseMaterial3D).albedo_color.a
+	if material is ShaderMaterial:
+		var value: Variant = (material as ShaderMaterial).get_shader_parameter(LookFade.FADE_PARAMETER)
+		return float(value) if value != null else -1.0
+	return -1.0
+
+func _shadow_twin(node: MeshInstance3D) -> Node:
+	return node.get_node_or_null(NodePath(String(LookFade.SHADOW_TWIN_NAME)))
+
 func _expect(value: bool, label: String) -> void:
 	if value:
 		return
 	failures += 1
-	push_error("FAIL: " + label)
+	push_error("FAIL (look %s): %s" % ["on" if look else "off", label])

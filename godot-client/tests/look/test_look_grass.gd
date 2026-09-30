@@ -1,7 +1,7 @@
 extends SceneTree
 ## Guards the look pass's grass beds (layer L4).
 ##
-## With ELORIA_LOOK unset nothing is grown and no node is added. With it on,
+## With ELORIA_LOOK=0 nothing is grown and no node is added. With it on,
 ## tufts grow on the grass and densest along a road's verge, never on the
 ## road itself, under a wall, on a steep bank, under water, on pale paving or
 ## where a second road deck covers the rim of the first; placement is the
@@ -113,7 +113,7 @@ func _run() -> void:
 		"with the look off no grass node is added")
 
 	# --- Look on ---------------------------------------------------------------
-	OS.set_environment(LookProfile.ENABLE_VARIABLE, "1")
+	OS.unset_environment(LookProfile.ENABLE_VARIABLE)
 	LookGrassBeds.tend(parent, world, manifest, {}, focus)
 	var beds := parent.get_node_or_null(LookGrassBeds.NODE_NAME) as LookGrassBeds
 	_expect(beds != null, "with the look on the grass node is added")
