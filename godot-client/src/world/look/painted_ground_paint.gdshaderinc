@@ -9,11 +9,12 @@
 // It works on linear albedo, before light and tone curve, in three steps:
 // a pixel is weighed as path (a walk deck, the exporter's worn-road colour in
 // the terrain's vertex colour), yard (an authored ground patch) or pale ground
-// (paving, sand, a gold trail); whatever is none of those is verge. Paths lift
-// towards a pale warm value, the verge deepens and enriches, and everything
-// carries a low-frequency variation in continent space and darkens with slope.
-// Nothing reads the screen, so it runs in the compatibility renderer and in
-// Forward+ alike.
+// (paving, sand, a gold trail); whatever is none of those is verge. Paths are
+// repainted in a set value and hue with their texture's grain, darker than the
+// paving where they run through it; the verge deepens and enriches; pale gold
+// is richened; and everything carries a low-frequency variation in continent
+// space and darkens with slope. Nothing reads the screen, so it runs in the
+// compatibility renderer and in Forward+ alike.
 //
 // The compatibility renderer shades in sRGB: its albedo arrives gamma-encoded
 // (measured: a walk deck whose linear luminance is 0.056 read above 0.2 there).
@@ -36,15 +37,36 @@ uniform float look_pale = 1.0;
 
 uniform float look_path_luma = 0.24;
 uniform float look_path_lift_max = 6.0;
-uniform vec3 look_path_warmth = vec3(1.06, 1.0, 0.86);
-uniform float look_path_saturation = 0.65;
-uniform float look_yard_luma = 0.15;
-uniform float look_yard_lift_max = 3.0;
-uniform float look_yard_saturation = 0.85;
+// The road's hue as an sRGB colour; its own luminance is divided out.
+uniform vec3 look_path_tint = vec3(1.0);
+uniform float look_path_chroma = 1.0;
+uniform float look_path_detail = 1.8;
+uniform float look_path_fine_metres = 1.5;
+uniform float look_path_fine = 0.12;
+// Pale paving in continent space (min x, min z, max x, max z), for roads that
+// run through it and are painted darker than it.
+uniform vec4 look_paving_rects[8];
+uniform int look_paving_count = 0;
+uniform float look_paving_inset = 3.0;
+uniform float look_paving_luma = 0.1;
+uniform float look_paving_chroma = 0.55;
+uniform float look_compat_chroma = 1.25;
+uniform float look_yard_luma = 0.12;
+uniform float look_yard_lift_max = 2.0;
+uniform float look_yard_saturation = 1.0;
 uniform vec2 look_pale_luma = vec2(0.16, 0.3);
-uniform float look_verge_value_green = 0.66;
+// Gold: hue window (sRGB degrees), minimum sRGB saturation, value, chroma.
+uniform vec2 look_gold_hue = vec2(35.0, 56.0);
+uniform float look_gold_saturation = 0.5;
+uniform float look_gold_value = 0.8;
+uniform float look_gold_chroma = 1.1;
+uniform float look_gold_chroma_compat = 1.5;
+uniform float look_verge_value_green = 0.6;
 uniform float look_verge_value_earth = 0.8;
 uniform float look_verge_saturation = 1.08;
+uniform float look_verge_green_red = 0.9;
+uniform float look_verge_fine_metres = 4.0;
+uniform float look_verge_fine = 0.12;
 uniform float look_variation_metres = 16.0;
 uniform float look_variation = 0.2;
 uniform float look_variation_hue = 0.06;
@@ -122,9 +144,64 @@ vec3 look_from_linear(vec3 colour) {
 #endif
 }
 
+// How much chroma a painted tint needs on this renderer to land where it
+// lands in Forward+ (see LookProfile.COMPAT_CHROMA).
+float look_renderer_chroma() {
+#if CURRENT_RENDERER == RENDERER_COMPATIBILITY
+	return look_compat_chroma;
+#else
+	return 1.0;
+#endif
+}
+
+// Hue in degrees and saturation of a linear colour as it would display, so a
+// window like the gold one reads the same as a colour picker.
+vec2 look_display_hue(vec3 linear_colour) {
+	vec3 c = pow(clamp(linear_colour, vec3(0.0), vec3(1.0)), vec3(1.0 / 2.2));
+	float high = max(c.r, max(c.g, c.b));
+	float low = min(c.r, min(c.g, c.b));
+	float range = high - low;
+	float hue = 0.0;
+	if (range > 0.00001) {
+		if (high == c.r) {
+			hue = mod((c.g - c.b) / range, 6.0);
+		} else if (high == c.g) {
+			hue = (c.b - c.r) / range + 2.0;
+		} else {
+			hue = (c.r - c.g) / range + 4.0;
+		}
+	}
+	return vec2(hue * 60.0, high > 0.0 ? range / high : 0.0);
+}
+
+// A painted tint as linear albedo of luminance 1: `display_tint` (sRGB) with
+// its chroma scaled by `chroma` as a colour picker would, around its own grey.
+// Scaled in linear light instead, a tint that is already strong there lost
+// its blue channel at 1.25 and went orange.
+vec3 look_tint(vec3 display_tint, float chroma) {
+	vec3 display = max(mix(vec3(look_luma(display_tint)), display_tint, chroma), vec3(0.0));
+	vec3 linear_tint = pow(display, vec3(2.2));
+	return linear_tint / max(look_luma(linear_tint), 0.0001);
+}
+
 // How green-dominant a colour is: grass however pale, not olive or earth.
 float look_green(vec3 colour) {
 	return smoothstep(0.02, 0.12, (colour.g - colour.r) / max(colour.g, 0.0001));
+}
+
+// How far inside the pale paving a continent position is, 0..1 over
+// look_paving_inset metres in from the paving's edge.
+float look_paving_at(vec2 xz) {
+	float paving = 0.0;
+	for (int index = 0; index < 8; index++) {
+		if (index >= look_paving_count) {
+			break;
+		}
+		vec4 rect = look_paving_rects[index];
+		vec2 inside = min(xz - rect.xy, rect.zw - xz);
+		paving = max(paving, smoothstep(0.0, look_paving_inset, min(inside.x, inside.y)));
+	}
+	return paving;
 }
 
 // The weights look_paint uses (path, yard, pale), for the debug views too.
@@ -155,18 +232,47 @@ vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float 
 	float pale = weights.z;
 	float luma = max(look_luma(reference), 0.0001);
 
+	// Verge: deeper and a little richer by hue, with a painted mottle.
 	float verge_scale = mix(look_verge_value_earth, look_verge_value_green,
 		look_green(reference));
 	vec3 verge = look_saturate(albedo * verge_scale, look_verge_saturation);
+	verge.r *= mix(1.0, look_verge_green_red, look_green(reference));
+	verge *= 1.0 + (look_value_noise(xz / look_verge_fine_metres + vec2(5.3, 2.1))
+		- 0.5) * 2.0 * look_verge_fine;
 	vec3 colour = mix(verge, albedo, pale);
+
+	// Gold, a little darker and richer so the tone curve keeps it gold. Told
+	// by hue and chroma, not by the pale weight: Lantern Reach's trail sits
+	// between the pale luminances and was only half pale.
+	vec2 hue = look_display_hue(reference);
+	float gold = look_pale * smoothstep(0.06, 0.12, luma)
+		* smoothstep(look_gold_hue.x - 4.0, look_gold_hue.x, hue.x)
+		* (1.0 - smoothstep(look_gold_hue.y, look_gold_hue.y + 4.0, hue.x))
+		* smoothstep(look_gold_saturation - 0.06, look_gold_saturation, hue.y);
+#if CURRENT_RENDERER == RENDERER_COMPATIBILITY
+	float gold_chroma = look_gold_chroma_compat;
+#else
+	float gold_chroma = look_gold_chroma;
+#endif
+	colour = mix(colour, look_saturate(albedo * look_gold_value, gold_chroma), gold);
+
+	// Yards keep their own colour and lift a little.
 	float yard_lift = clamp(look_yard_luma / luma, 1.0, look_yard_lift_max);
-	vec3 yard_colour = look_saturate(albedo * yard_lift, look_yard_saturation)
-		* look_path_warmth;
-	colour = mix(colour, yard_colour, yard);
-	float path_lift = clamp(look_path_luma / luma, 1.0, look_path_lift_max);
-	vec3 path_colour = look_saturate(albedo * path_lift, look_path_saturation)
-		* look_path_warmth;
-	colour = mix(colour, path_colour, path);
+	colour = mix(colour, look_saturate(albedo * yard_lift, look_yard_saturation), yard);
+
+	// Paths: a set value and hue, the texture's grain, a fine mottle; darker
+	// than the paving where they run through it. A yard inside the paving (a
+	// patch of bare soil in the square) is worn into the same cobble, where
+	// on its own it read as a stain.
+	float paving = look_paving_at(xz);
+	float target = min(mix(look_path_luma, look_paving_luma, paving),
+		luma * look_path_lift_max);
+	float grain = pow(max(look_luma(albedo) / luma, 0.0), look_path_detail);
+	float fine = 1.0 + (look_value_noise(xz / look_path_fine_metres + vec2(3.7, 1.9))
+		- 0.5) * 2.0 * look_path_fine;
+	vec3 tint = look_tint(look_path_tint,
+		mix(look_path_chroma, look_paving_chroma, paving) * look_renderer_chroma());
+	colour = mix(colour, tint * target * grain * fine, max(path, yard * paving));
 
 	float variation = look_variation_at(xz)
 		* mix(1.0, look_path_variation_share, max(path, max(yard, pale) * 0.5));

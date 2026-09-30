@@ -110,7 +110,7 @@ static func _grade_screen_space(environment: Environment) -> void:
 
 static func _grade_key(sun: DirectionalLight3D) -> void:
 	var colour: Color = _ungraded(sun, &"light_color")
-	_set_graded(sun, &"light_color", colour * LookProfile.SUN_WARMTH)
+	_set_graded(sun, &"light_color", colour * LookProfile.sun_warmth())
 	var energy: float = _ungraded(sun, &"light_energy")
 	_set_graded(sun, &"light_energy", energy * LookProfile.SUN_ENERGY_SCALE)
 

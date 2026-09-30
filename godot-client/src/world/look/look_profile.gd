@@ -74,8 +74,16 @@ const SATURATION_BOOST_SHARE := 0.33
 
 ## The key light is warmed, not re-aimed: the continent's regions share one
 ## sun heading and a crossing must not turn it. Multiplied into whatever colour
-## the manifest and the hour give it.
+## the manifest and the hour give it. It turns Four Gates' lime grass towards
+## chartreuse (hue 81 to 69-71 degrees); holding its blue back to 0.97 fixed
+## little of that and cooled every frame (red minus blue down 9 levels) and
+## greyed the roads, so the grass is turned back in the ground paint instead
+## (LookProfile.VERGE_GREEN_RED).
 const SUN_WARMTH := Color(1.0, 0.98, 0.94)
+## Forward+ lights in linear light and adds bounce (SSIL) from warm ground, so
+## the same warmth landed its roads rose (hue 17-29 degrees against 43 in the
+## compatibility renderer) and its grass mustard. It takes a milder warmth.
+const SUN_WARMTH_FORWARD := Color(1.0, 0.99, 0.97)
 ## A little more key than the manifests give, and no more: at 1.1 the first
 ## capture bleached Four Gates' pale stone without shading anything better.
 const SUN_ENERGY_SCALE := 1.04
@@ -101,10 +109,16 @@ const AMBIENT_ENERGY_SCALE := 1.0
 ## the continent's regions share one grade. Lantern Reach is an island reached
 ## only by boat. Its ground is saturated vertex colour that its old Filmic
 ## curve (white 1) lifted a long way; under the shared curve it went a fifth
-## darker than any other place. Its saturation is left alone: AgX already
-## pales the gold trail towards sand, and trimmed to 0.85 it went grey.
+## darker than any other place, and the ground layer's deeper verge took it
+## darker again (luminance 104 on develop, 86); 1.6 brings it back to about
+## the reference's 98. Its saturation is left alone: AgX pales the gold trail
+## towards sand, and trimmed to 0.85 it went grey. The gold is restored in the
+## ground paint instead (LookProfile.GOLD_HUE), not by the grade. Forward+
+## renders the island a quarter brighter than the compatibility renderer
+## (luminance 123 against 94 at 1.6: its sea goes pale turquoise and its
+## grass pale), so a key with a `_forward` suffix trims that renderer alone.
 const MAP_TRIMS := {
-	"lantern_reach": {"exposure": 1.35},
+	"lantern_reach": {"exposure": 1.6, "exposure_forward": 1.2},
 }
 
 ## Depth fog instead of the manifests' exponential haze. An exponential curve
@@ -157,46 +171,114 @@ const GLOW_BLEND_MODE := Environment.GLOW_BLEND_MODE_SCREEN
 ## the grade pulls chroma down by about 14 %, so they are authored a little
 ## richer than they would look in a paint program.
 ##
-## A path is lifted towards this albedo luminance, never darkened, and never
-## by more than PATH_LIFT_MAX. The worn-road decks the exporter lays over the
-## ground are a saturated orange-brown of luminance 0.056 (measured: the
-## shared ground texture under the worn tint #997a4f), below the biome grass
-## beside them (0.17). Lifted to 0.28 and stripped to half their chroma they
-## read as white concrete in every capture; 0.24 with two thirds of it is a
-## warm tan cobble, 1.23 (compatibility) to 1.31 (Forward+) times the
-## luminance of the grass at the east gate, the reference's lower margin.
+## A path is repainted rather than lifted: its texture's grain is kept, but
+## its value and colour are set outright, so a road reads the same wherever
+## the exporter's worn tint happens to sit. The worn-road decks are a
+## saturated orange-brown of luminance 0.056 (the shared ground texture under
+## the worn tint #997a4f); lifting that colour kept its red hue, which Forward+
+## lit rose and mauve and the compatibility renderer grey. PATH_LUMA is the
+## albedo luminance a road is painted at; a region whose verge is much darker
+## than Four Gates' grass trims it (GROUND_TRIMS), because the path/ground
+## ratio is what the eye reads, and 0.24 over Amberwood's floor (0.04) made its
+## paths cream decals 2.2-2.4 times the floor's luminance. Never more than
+## PATH_LIFT_MAX times the source.
 const PATH_LUMA := 0.24
 const PATH_LIFT_MAX := 6.0
-## Paths warm slightly and keep this share of their chroma as they lift, so a
-## brown track turns to warm dust rather than to orange. At 0.5 they went grey.
-const PATH_WARMTH := Color(1.06, 1.0, 0.86)
-const PATH_SATURATION := 0.65
+## The hue a road is painted in, as an sRGB colour whose own brightness is
+## ignored: warm dust and pale stone at about 36 degrees, not the red the worn
+## tint lifts to. PATH_CHROMA is how much of this colour's chroma it keeps (1
+## all of it, 0 grey).
+const PATH_TINT := Color(0.82, 0.68, 0.52)
+const PATH_CHROMA := 1.0
+## The compatibility renderer lights its gamma-encoded albedo, which washes a
+## painted colour's chroma out (the same road measured sat 0.24-0.34 there and
+## 0.4 in Forward+), so painted tints carry this much more chroma on it.
+const COMPAT_CHROMA := 1.2
+## A road keeps its texture's grain, raised to this power, so a worn track
+## reads as trodden stones and dust rather than as a poured surface (internal
+## luminance spread 9-18 against about 33 on the reference roads).
+const PATH_DETAIL := 1.8
+## And a fine mottle the size of a cart's width: this many metres across,
+## this far either side of the mean.
+const PATH_FINE_METRES := 1.5
+const PATH_FINE := 0.12
+
+## A road through pale paving (the Four Gates hub square) goes darker than the
+## paving instead of lighter: a mid-value warm cobble about 0.65 of the
+## paving's display value, as the reference city's gate road is (Y about 126
+## against its pale courts). Lifted like a country road, the hub's avenue
+## matched the plaza (168 against 178) and the square lost the dark ground its
+## monument stood on. Paving is recognised by its authored tint (see
+## PAVING_TINT_VALUE); a road counts as inside it this many metres in from the
+## paving's bounds, so it darkens as it enters the square rather than at a line.
+const ROAD_UNDER_PAVING_LUMA := 0.075
+const ROAD_UNDER_PAVING_CHROMA := 0.9
+const PAVING_INSET_METRES := 3.0
+## An authored ground patch is pale stone paving when its tint is at least this
+## bright and at most this saturated (the Four Gates crystal paving is #ccba9c,
+## value 0.8, saturation 0.24). Soil (#ffa85c), leaf litter (#f29e52), the
+## east forecourt's worn cobble (#ad9e82, value 0.68) and the yards are not.
+const PAVING_TINT_VALUE := 0.75
+const PAVING_TINT_SATURATION := 0.3
+## At most this many paving patches are handed to a root's roads, the largest
+## first; a chunk holds two or three.
+const PAVING_RECTS_MAX := 8
+
 ## The authored ground patches (yards, forecourts, market aprons, and
-## Amberwood's leaf litter) sit between the verge and the roads: lifted
-## towards a lower luminance, by less, and with most of their chroma. Their
-## albedo runs from 0.009 (a dark garden margin) to 0.24 (crystal sand); the
-## leaf litter is 0.12, so it only brightens a little and stays copper.
-const YARD_LUMA := 0.15
-const YARD_LIFT_MAX := 3.0
-const YARD_SATURATION := 0.85
+## Amberwood's leaf litter) keep their own colour and are lifted only a
+## little: towards this luminance, by at most YARD_LIFT_MAX. Their albedo runs
+## from 0.007 (a dark root margin) to 0.24 (crystal paving); the leaf litter
+## is 0.12 and stays exactly the copper the authors gave it. The first pass
+## lifted them three times, stripped a sixth of their chroma and warmed them
+## like a road, which turned the leaf litter peach and a coppice workyard rust.
+const YARD_LUMA := 0.12
+const YARD_LIFT_MAX := 2.0
+const YARD_SATURATION := 0.9
+## A patch (not paving) is a glaze over the ground beneath rather than a
+## sticker: drawn solid over its footprint, the leaf litter under the deep
+## grove's player became a saturated orange oval, the brightest shape in a dark
+## frame. Its region weights (mean 0.33) say it is meant as a wash.
+const PATCH_OPACITY := 0.78
 ## Ground whose albedo is already pale (paving, sand, the Lantern Reach gold
 ## trail) is a path's value by itself. Between these two luminances it moves
 ## from the verge treatment to being left as it is. Not for the biome blend,
 ## which is verge by definition: Four Gates mixes a pale limestone gravel into
 ## its grass, and protected as "pale" that grass stayed bright lime.
 const PALE_LUMA := Vector2(0.16, 0.3)
+## Pale ground in this hue window (sRGB degrees) and at least GOLD_SATURATION
+## saturated is gold: Lantern Reach's trail. AgX rolls a bright saturated
+## colour off towards white, which turned the island's gold thread to sand
+## (241, 202, 81 became 188, 157, 90), so gold is painted a little darker and
+## richer, where the curve leaves its chroma alone. The compatibility renderer
+## washes painted chroma out and takes more: at 1.5 in both, Forward+ drove
+## the trail to 159, 120, 15 while the compatibility renderer landed 201,
+## 166, 85.
+const GOLD_HUE := Vector2(35.0, 56.0)
+const GOLD_SATURATION := 0.5
+const GOLD_VALUE := 0.8
+const GOLD_CHROMA := 1.1
+const GOLD_CHROMA_COMPAT := 1.5
 ## Grass, moss, forest floor: deeper and a little richer, so the paths have
 ## something to stand out against. Green grass deepens most, towards the
 ## reference's deep green; earthy verge (Amberwood's olive floor and moss,
 ## already dark at 0.05) least. Chosen by hue rather than by value: deepening
 ## bright verge harder, by value, turned a 5 % lighting step at a Four Gates
 ## chunk seam into a 13 % band, because the albedo there differs by more than
-## the light shows. Hue does not change across it.
-const VERGE_VALUE_GREEN := 0.66
+## the light shows. Hue does not change across it. Four Gates' lime fields
+## sat at display value 0.6 against the reference greens' 0.33, and at the
+## first pass's 0.66 its south gate highway still read no paler than them.
+const VERGE_VALUE_GREEN := 0.42
 const VERGE_VALUE_EARTH := 0.8
 ## The biome grass is already a saturated yellow-green (0.15, 0.19, 0.02
 ## linear), so it takes little extra chroma.
 const VERGE_SATURATION := 1.08
+## Green verge loses a little red, which turns the biome's yellow-green (hue
+## about 70 degrees under the warm key, chartreuse) back towards grass green.
+const VERGE_GREEN_RED := 0.84
+## A painted mottle on the verge only, finer than the variation below: the
+## south gate's field was 64 % of its frame in one flat lime.
+const VERGE_FINE_METRES := 4.0
+const VERGE_FINE := 0.12
 ## Low-frequency painterly variation in continent space: two octaves of value
 ## noise, the coarse one this many metres across. It breaks the flat fields
 ## and the hard edges of repeated texture patches. VARIATION is the value swing
@@ -205,15 +287,39 @@ const VERGE_SATURATION := 1.08
 const VARIATION_METRES := 16.0
 const VARIATION := 0.2
 const VARIATION_HUE := 0.06
-## An authored patch's vertex alpha is its ground region's weight: the blend
-## width at its edge and the region's opacity inside. Honoured as it stands it
-## let the grass show through the Four Gates plaza, which develop draws solid,
-## so the patch is solid from this weight up and only its rim feathers. A walk
-## deck's vertex alpha is already just a rim (0 on the edge, 1 one strip in).
-const PATCH_ALPHA_FULL := 0.35
-
 ## Paths keep a third of the variation: enough to wear, not enough to blotch.
 const PATH_VARIATION_SHARE := 0.35
+
+## Where a walk deck or authored patch ends. The exporter writes each one's
+## coverage into its vertex alpha (a road: 0 on the edge, 1 one strip in; a
+## patch: its region's weight), which the imported material never read, so on
+## develop both end in hard steps along the terrain cells. Honoured as a
+## linear ramp it drew 1-3 m airbrushed rims around sharp textures, two styles
+## at once. Instead the coverage is cut at a threshold with a narrow smooth
+## step (x: threshold, y: half-width of the step) and a noise wobble (z) about
+## RIM_NOISE_METRES across, a broken brush edge rather than a feather.
+## Roads cut at the middle of their rim strip.
+const DECK_RIM := Vector3(0.5, 0.06, 0.1)
+## Patches keep their region's footprint as the exporter weighted it: the
+## east forecourt's weight is under 0.35 over half its area, which it means as
+## grass, and forcing it solid from there turned that grass into cobble.
+const PATCH_RIM := Vector3(0.42, 0.06, 0.1)
+## Paving keeps almost all of its geometry, as develop draws it: its low
+## weights are where two plaza patches meet, and cut there the grass beneath
+## showed through the square as a green veil.
+const PAVING_RIM := Vector3(0.12, 0.04, 0.05)
+const RIM_NOISE_METRES := 0.9
+## Every road is edged: on the far side of its rim, where its coverage has
+## run out but its geometry has not (vertex alpha from EDGE_BAND_FROM up to the
+## rim), whatever lies under it is darkened by EDGE_BAND (value x0.72) - the
+## dark verge that frames the reference's roads, and a curb where a road
+## meets paving. The band is drawn EDGE_BAND_PUSH_METRES behind its own plane,
+## so where two coplanar road decks overlap the other road hides it rather
+## than taking a dark line across its middle.
+const EDGE_BAND := 0.28
+const EDGE_BAND_FROM := 0.1
+const EDGE_BAND_PUSH_METRES := 0.03
+
 ## Banks and cliffs darken with slope: from this world-up component of the
 ## surface normal (about 20 degrees) to this one (about 52), down to
 ## SLOPE_SHADE of their value.
@@ -225,6 +331,25 @@ const SLOPE_SHADE := 0.72
 ## relative to its length, as road.
 const TERRAIN_ROAD_COLOUR := Color(0.2265, 0.1746, 0.0855)
 const TERRAIN_ROAD_TOLERANCE := Vector2(0.12, 0.34)
+
+## Per-region ground trims over the constants above, keyed by the region's id
+## (a continent chunk's `<region>__chunk_<x>_<z>` names its region). Unlike a
+## grade trim these are safe on the continent: they are baked into a chunk's
+## painted materials when it loads, so they change where the ground changes (at
+## the region's border, where the biome changes too), never when the player
+## crosses it.
+##
+## Amberwood's floor is moss and olive litter at albedo 0.04-0.05, a sixth of
+## Four Gates' grass, so its roads are painted a half as bright and in the
+## wood's ochre-tan rather than in pale stone. Lantern Reach's grass came out
+## of the verge treatment a deep saturated green (sat 0.77 in its ground box,
+## blue channel 17), above the reference's 0.51: it keeps more of its value
+## and none of the extra chroma.
+const GROUND_TRIMS := {
+	"amberwood": {"path_luma": 0.1, "path_tint": Color(0.74, 0.62, 0.46)},
+	"lantern_reach": {"verge_value_green": 0.82, "verge_saturation": 0.92},
+}
+
 ## ELORIA_LOOK_GROUND_DEBUG=1 draws each painted class as a flat colour
 ## (terrain red, biome blend green, authored patch blue, walk deck magenta),
 ## =2 its weights (path red, yard green, pale blue) and =3 its reference
@@ -256,10 +381,29 @@ static func saturation(declared: float) -> float:
 static func map_trim(map_id: String, key: String) -> float:
 	var trims: Variant = MAP_TRIMS.get(map_id)
 	if trims is Dictionary:
-		return float((trims as Dictionary).get(key, 1.0))
+		var map_trims := trims as Dictionary
+		if forward_plus() and map_trims.has(key + "_forward"):
+			return float(map_trims[key + "_forward"])
+		return float(map_trims.get(key, 1.0))
 	return 1.0
+
+## True in the Forward+ renderer, which some trims tell apart (see
+## SUN_WARMTH_FORWARD).
+static func forward_plus() -> bool:
+	return RenderingServer.get_current_rendering_method() == "forward_plus"
+
+## The key light's warmth for the renderer in use.
+static func sun_warmth() -> Color:
+	return SUN_WARMTH_FORWARD if forward_plus() else SUN_WARMTH
 
 ## The depth fog's density at FOG_END for a manifest's exponential density.
 static func fog_density(declared: float) -> float:
 	return clampf(FOG_DENSITY + maxf(declared, 0.0) * FOG_DENSITY_PER_DECLARED,
 		0.0, FOG_DENSITY_MAX)
+
+## A region's ground trim on `key`, or `fallback` when it has none.
+static func ground_value(region: String, key: String, fallback: Variant) -> Variant:
+	var trims: Variant = GROUND_TRIMS.get(region)
+	if trims is Dictionary:
+		return (trims as Dictionary).get(key, fallback)
+	return fallback

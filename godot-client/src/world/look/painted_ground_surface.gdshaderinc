@@ -8,11 +8,22 @@
 // the render mode the source material had (culling, and whether it blends).
 //
 // A shader that defines LOOK_GROUND_ALPHA writes alpha as the source did, and
-// multiplies in the vertex alpha when use_vertex_alpha is set. The continent
-// exporter feathers every authored ground patch and walk deck through vertex
-// alpha (the patch's blend width, the road's edge feather), but the imported
+// when use_vertex_alpha is set cuts it by the vertex alpha. The continent
+// exporter writes every authored ground patch's and walk deck's coverage into
+// vertex alpha (the patch's region weight, the road's edge), but the imported
 // StandardMaterial3D never reads vertex colour on a blended surface, so on
-// develop those edges are hard steps along the terrain cells.
+// develop those edges are hard steps along the terrain cells. Here the
+// coverage is cut at look_rim.x with a narrow step and a noise wobble: a
+// broken brush edge, not an airbrushed ramp (see LookProfile.DECK_RIM).
+//
+// A shader that also defines LOOK_GROUND_EDGE_BAND (the walk decks) darkens
+// the ground beyond that edge by look_edge_band, where the deck's geometry
+// runs on but its coverage has stopped: the dark verge edging that frames a
+// road, a curb where it meets paving. The band has to darken what lies under
+// it, so it is black with alpha look_edge_band, and it is drawn a few
+// centimetres behind the deck's own plane: road decks overlap and are
+// coplanar, and without that one road's band drew a dark line across the
+// other road's middle wherever two met.
 
 #include "res://src/world/look/painted_ground_paint.gdshaderinc"
 
@@ -21,8 +32,16 @@ uniform vec4 albedo_color : source_color = vec4(1.0);
 uniform bool use_vertex_albedo = false;
 uniform bool vertex_albedo_srgb = false;
 uniform bool use_vertex_alpha = false;
-// The vertex alpha from which the surface is solid (1 takes it as it is).
-uniform float vertex_alpha_full = 1.0;
+// How opaque the surface is inside its coverage (below 1, a glaze).
+uniform float look_opacity = 1.0;
+// Where the vertex alpha coverage is cut: threshold, half-width of the step,
+// noise wobble.
+uniform vec3 look_rim = vec3(0.5, 0.06, 0.1);
+uniform float look_rim_noise_metres = 0.9;
+// Darkening beyond a road's edge, and the vertex alpha where it begins.
+uniform float look_edge_band = 0.0;
+uniform float look_edge_band_from = 0.1;
+uniform float look_edge_band_push = 0.03;
 uniform sampler2D normal_texture : hint_normal, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform bool has_normal_texture = false;
 uniform float normal_scale = 1.0;
@@ -74,7 +93,30 @@ void fragment() {
 		NORMAL_MAP_DEPTH = normal_scale;
 	}
 #ifdef LOOK_GROUND_ALPHA
-	ALPHA = texel.a * albedo_color.a
-		* (use_vertex_alpha ? clamp(COLOR.a / vertex_alpha_full, 0.0, 1.0) : 1.0);
+	float coverage = 1.0;
+	float band = 0.0;
+	if (use_vertex_alpha) {
+		float weight = COLOR.a + (look_value_noise(look_ground_xz / look_rim_noise_metres)
+			- 0.5) * 2.0 * look_rim.z;
+		coverage = smoothstep(look_rim.x - look_rim.y, look_rim.x + look_rim.y, weight);
+		if (look_debug == 0) {
+			band = look_edge_band * (1.0 - coverage)
+				* smoothstep(look_edge_band_from, look_edge_band_from + 0.1, weight);
+		}
+	}
+	float covered = texel.a * albedo_color.a * coverage * look_opacity;
+	// The road over what lies beneath, and beyond it that ground darkened:
+	// covered * road + (1 - covered) * (1 - band) * ground.
+	ALPHA = 1.0 - (1.0 - covered) * (1.0 - band);
+	ALBEDO *= covered / max(ALPHA, 0.0001);
+#ifdef LOOK_GROUND_EDGE_BAND
+	vec3 pushed = VERTEX + normalize(VERTEX) * (band > 0.0 ? look_edge_band_push : 0.0);
+	vec4 clip = PROJECTION_MATRIX * vec4(pushed, 1.0);
+#if CURRENT_RENDERER == RENDERER_COMPATIBILITY
+	DEPTH = clip.z / clip.w * 0.5 + 0.5;
+#else
+	DEPTH = clip.z / clip.w;
+#endif
+#endif
 #endif
 }

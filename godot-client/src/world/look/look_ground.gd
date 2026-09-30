@@ -17,14 +17,18 @@ extends RefCounted
 ##   biome_blend.gdshader becomes; if the splice no longer fits, the blend is
 ##   left as it is and a warning says so.
 ## - AuthoredGround_<region>_<patch>: tinted overlays (yards, forecourts, leaf
-##   litter), lifted a little, their rims feathered through the vertex alpha
-##   the exporter wrote and the import never read.
+##   litter), lifted a little, cut to the footprint the exporter wrote into
+##   their vertex alpha (which the import never read) with a crisp, broken
+##   edge. Pale paving keeps almost all of its geometry, as develop draws it.
 ## - Walk_*: the worn-road decks, painted as paths whatever their colour and
-##   feathered at the edge the same way, so a road no longer ends in a hard
-##   step along the terrain cells.
+##   cut at their rim the same way, so a road no longer ends in a hard step
+##   along the terrain cells, with a dark edging band beyond it. A road that
+##   runs through pale paving is painted darker than the paving, not lighter.
 ##
 ## One painted material is made per source material and shared by every mesh
-## that used it (the biome blend is already one material per node). They go in
+## that used it (the biome blend is already one material per node). A root is
+## painted with its region's trims (LookProfile.GROUND_TRIMS), and its roads
+## learn where its pale paving lies from the paving patches' bounds. They go in
 ## as surface overrides, never into the shared material or the mesh, and only
 ## after the loader has taken its cache snapshot, so a map cache written with
 ## the pass on holds the loader's own materials and a client started without
@@ -42,6 +46,7 @@ const SHADER_OPAQUE := preload("res://src/world/look/painted_ground.gdshader")
 const SHADER_TWO_SIDED := preload("res://src/world/look/painted_ground_two_sided.gdshader")
 const SHADER_OVERLAY := preload("res://src/world/look/painted_ground_overlay.gdshader")
 const SHADER_BLEND := preload("res://src/world/look/painted_ground_blend.gdshader")
+const SHADER_DECK := preload("res://src/world/look/painted_ground_deck.gdshader")
 
 const BIOME_SHADER_PATH := "res://src/world/biome_blend.gdshader"
 const PAINT_INCLUDE := "res://src/world/look/painted_ground_paint.gdshaderinc"
@@ -71,7 +76,7 @@ static func paint_loaded(root: Node, manifest: WorldManifest) -> int:
 		return 0
 	if not manifest.data.has("continentGeography"):
 		return 0
-	return paint(root)
+	return paint(root, region_of(manifest))
 
 ## Paints a map outside the continent once main has bound it and its scene
 ## script has set its materials up. Interiors are left alone, as the grade
@@ -81,30 +86,39 @@ static func paint_bound(root: Node, manifest: WorldManifest) -> int:
 		return 0
 	if manifest.data.has("continentGeography") or not _outdoor(manifest):
 		return 0
-	return paint(root)
+	return paint(root, region_of(manifest))
 
-## Paints every ground surface under `root`. Safe to call again on a root it
-## has already painted.
-static func paint(root: Node) -> int:
+## The region a manifest paints as: a continent chunk's own region
+## (`<region>__chunk_<x>_<z>`), or the map itself.
+static func region_of(manifest: WorldManifest) -> String:
+	return manifest.asset_id().get_slice("__chunk_", 0)
+
+## Paints every ground surface under `root`, with `region`'s trims. Safe to
+## call again on a root it has already painted.
+static func paint(root: Node, region := "") -> int:
 	if not LookProfile.enabled() or root == null:
 		return 0
-	var made: Dictionary = {}
-	var surfaces := 0
+	var ground: Array[MeshInstance3D] = []
 	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
 		var mesh_instance := node as MeshInstance3D
 		if mesh_instance.mesh == null or mesh_instance.material_override != null \
 				or mesh_instance.has_meta(BATCH_META):
 			continue
+		if kind_of(String(mesh_instance.name)) != Kind.NONE:
+			ground.append(mesh_instance)
+	var paving := paving_rects(ground)
+	var made: Dictionary = {}
+	var surfaces := 0
+	for mesh_instance: MeshInstance3D in ground:
 		var kind := kind_of(String(mesh_instance.name))
-		if kind == Kind.NONE:
-			continue
 		for surface: int in mesh_instance.mesh.get_surface_count():
 			var source: Material = mesh_instance.get_active_material(surface)
 			if source == null or source.has_meta(PAINTED_META):
 				continue
 			var key := source.get_instance_id()
 			if not made.has(key):
-				made[key] = painted_for(source, kind, mesh_instance.mesh, surface)
+				made[key] = painted_for(source, kind, mesh_instance.mesh, surface,
+					region, paving)
 			var painted: Material = made[key]
 			if painted == null:
 				continue
@@ -132,13 +146,44 @@ static func kind_of(node_name: String) -> Kind:
 		return Kind.DECK
 	return Kind.NONE
 
+## Pale stone paving: an authored patch whose tint is bright and nearly grey
+## (LookProfile.PAVING_TINT_VALUE). Roads through it go darker than it.
+static func is_paving(material: Material) -> bool:
+	var standard := material as BaseMaterial3D
+	if standard == null or standard.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED:
+		return false
+	return standard.albedo_color.v >= LookProfile.PAVING_TINT_VALUE \
+		and standard.albedo_color.s <= LookProfile.PAVING_TINT_SATURATION
+
+## The continent-space bounds (min x, min z, max x, max z) of the pale paving
+## among `ground`, the largest first. Mesh space is the continent frame (see
+## painted_ground_surface.gdshaderinc), so a mesh's own AABB is enough and no
+## vertex has to be read back.
+static func paving_rects(ground: Array[MeshInstance3D]) -> PackedVector4Array:
+	var boxes: Array[AABB] = []
+	for mesh_instance: MeshInstance3D in ground:
+		if kind_of(String(mesh_instance.name)) != Kind.PATCH:
+			continue
+		var material := mesh_instance.get_active_material(0)
+		if material != null and not material.has_meta(PAINTED_META) and is_paving(material):
+			boxes.append(mesh_instance.get_aabb())
+	boxes.sort_custom(func(a: AABB, b: AABB) -> bool:
+		return a.size.x * a.size.z > b.size.x * b.size.z)
+	var rects := PackedVector4Array()
+	for box: AABB in boxes.slice(0, LookProfile.PAVING_RECTS_MAX):
+		rects.append(Vector4(box.position.x, box.position.z, box.end.x, box.end.z))
+	return rects
+
 ## The painted stand-in for `source`, or null when it is not ground this
 ## layer paints (water, bridge timber, an invisible threshold, a cut-out).
-static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int) -> Material:
+## `region` picks the ground trims; `paving` is where the root's pale paving
+## lies, for its roads.
+static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
+		region := "", paving := PackedVector4Array()) -> Material:
 	if source is ShaderMaterial:
 		var shader := (source as ShaderMaterial).shader
 		if shader != null and shader.resource_path == BIOME_SHADER_PATH:
-			return _painted_biome(source as ShaderMaterial)
+			return _painted_biome(source as ShaderMaterial, region)
 		return null
 	var standard := source as BaseMaterial3D
 	if standard == null or standard.albedo_color.a <= 0.01:
@@ -152,7 +197,7 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int) 
 			elif standard.cull_mode == BaseMaterial3D.CULL_DISABLED:
 				shader = SHADER_TWO_SIDED
 		BaseMaterial3D.TRANSPARENCY_ALPHA_DEPTH_PRE_PASS:
-			shader = SHADER_OVERLAY
+			shader = SHADER_DECK if kind == Kind.DECK else SHADER_OVERLAY
 			blended = true
 		BaseMaterial3D.TRANSPARENCY_ALPHA:
 			shader = SHADER_BLEND
@@ -176,8 +221,17 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int) 
 	painted.set_shader_parameter(&"vertex_albedo_srgb", standard.vertex_color_is_srgb)
 	painted.set_shader_parameter(&"use_vertex_alpha", blended and has_colour
 		and kind != Kind.TERRAIN)
-	painted.set_shader_parameter(&"vertex_alpha_full",
-		LookProfile.PATCH_ALPHA_FULL if kind == Kind.PATCH else 1.0)
+	var rim := LookProfile.DECK_RIM
+	if kind == Kind.PATCH:
+		rim = LookProfile.PAVING_RIM if is_paving(standard) else LookProfile.PATCH_RIM
+	painted.set_shader_parameter(&"look_rim", rim)
+	painted.set_shader_parameter(&"look_opacity",
+		LookProfile.PATCH_OPACITY if kind == Kind.PATCH and not is_paving(standard) else 1.0)
+	painted.set_shader_parameter(&"look_rim_noise_metres", LookProfile.RIM_NOISE_METRES)
+	painted.set_shader_parameter(&"look_edge_band",
+		LookProfile.EDGE_BAND if kind == Kind.DECK else 0.0)
+	painted.set_shader_parameter(&"look_edge_band_from", LookProfile.EDGE_BAND_FROM)
+	painted.set_shader_parameter(&"look_edge_band_push", LookProfile.EDGE_BAND_PUSH_METRES)
 	painted.set_shader_parameter(&"has_normal_texture",
 		standard.normal_enabled and standard.normal_texture != null)
 	painted.set_shader_parameter(&"normal_texture", standard.normal_texture)
@@ -193,10 +247,12 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int) 
 	if kind == Kind.PATCH and not blended:
 		class_kind = Kind.BIOME
 	_set_paint(painted, class_kind,
-		kind == Kind.TERRAIN and standard.vertex_color_use_as_albedo and has_colour)
+		kind == Kind.TERRAIN and standard.vertex_color_use_as_albedo and has_colour,
+		region, paving if kind == Kind.DECK or (kind == Kind.PATCH and blended
+			and not is_paving(standard)) else PackedVector4Array())
 	return painted
 
-static func _painted_biome(source: ShaderMaterial) -> ShaderMaterial:
+static func _painted_biome(source: ShaderMaterial, region: String) -> ShaderMaterial:
 	var shader := _biome_painted_shader()
 	if shader == null:
 		return null
@@ -207,7 +263,7 @@ static func _painted_biome(source: ShaderMaterial) -> ShaderMaterial:
 	painted.next_pass = source.next_pass
 	for uniform_name: String in _biome_uniforms:
 		painted.set_shader_parameter(uniform_name, source.get_shader_parameter(uniform_name))
-	_set_paint(painted, Kind.BIOME, false)
+	_set_paint(painted, Kind.BIOME, false, region, PackedVector4Array())
 	return painted
 
 ## The biome blend with the paint spliced onto its albedo, made once and
@@ -237,7 +293,8 @@ static func _biome_painted_shader() -> Shader:
 	_biome_mutex.unlock()
 	return result
 
-static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool) -> void:
+static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool,
+		region: String, paving: PackedVector4Array) -> void:
 	painted.set_meta(PAINTED_META, true)
 	painted.set_shader_parameter(&"look_class", int(kind))
 	painted.set_shader_parameter(&"look_debug",
@@ -249,18 +306,43 @@ static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool) -
 	var road := LookProfile.TERRAIN_ROAD_COLOUR
 	painted.set_shader_parameter(&"look_road_colour", Vector3(road.r, road.g, road.b))
 	painted.set_shader_parameter(&"look_road_tolerance", LookProfile.TERRAIN_ROAD_TOLERANCE)
-	painted.set_shader_parameter(&"look_path_luma", LookProfile.PATH_LUMA)
+	painted.set_shader_parameter(&"look_path_luma",
+		_trim(region, "path_luma", LookProfile.PATH_LUMA))
 	painted.set_shader_parameter(&"look_path_lift_max", LookProfile.PATH_LIFT_MAX)
-	var warmth := LookProfile.PATH_WARMTH
-	painted.set_shader_parameter(&"look_path_warmth", Vector3(warmth.r, warmth.g, warmth.b))
-	painted.set_shader_parameter(&"look_path_saturation", LookProfile.PATH_SATURATION)
+	var tint: Color = _trim(region, "path_tint", LookProfile.PATH_TINT)
+	painted.set_shader_parameter(&"look_path_tint", Vector3(tint.r, tint.g, tint.b))
+	painted.set_shader_parameter(&"look_path_chroma",
+		_trim(region, "path_chroma", LookProfile.PATH_CHROMA))
+	painted.set_shader_parameter(&"look_path_detail", LookProfile.PATH_DETAIL)
+	painted.set_shader_parameter(&"look_path_fine_metres", LookProfile.PATH_FINE_METRES)
+	painted.set_shader_parameter(&"look_path_fine", LookProfile.PATH_FINE)
+	var rects := paving.duplicate()
+	rects.resize(LookProfile.PAVING_RECTS_MAX)
+	painted.set_shader_parameter(&"look_paving_rects", rects)
+	painted.set_shader_parameter(&"look_paving_count", mini(paving.size(),
+		LookProfile.PAVING_RECTS_MAX))
+	painted.set_shader_parameter(&"look_paving_inset", LookProfile.PAVING_INSET_METRES)
+	painted.set_shader_parameter(&"look_paving_luma", LookProfile.ROAD_UNDER_PAVING_LUMA)
+	painted.set_shader_parameter(&"look_paving_chroma", LookProfile.ROAD_UNDER_PAVING_CHROMA)
+	painted.set_shader_parameter(&"look_compat_chroma", LookProfile.COMPAT_CHROMA)
 	painted.set_shader_parameter(&"look_yard_luma", LookProfile.YARD_LUMA)
 	painted.set_shader_parameter(&"look_yard_lift_max", LookProfile.YARD_LIFT_MAX)
 	painted.set_shader_parameter(&"look_yard_saturation", LookProfile.YARD_SATURATION)
 	painted.set_shader_parameter(&"look_pale_luma", LookProfile.PALE_LUMA)
-	painted.set_shader_parameter(&"look_verge_value_green", LookProfile.VERGE_VALUE_GREEN)
-	painted.set_shader_parameter(&"look_verge_value_earth", LookProfile.VERGE_VALUE_EARTH)
-	painted.set_shader_parameter(&"look_verge_saturation", LookProfile.VERGE_SATURATION)
+	painted.set_shader_parameter(&"look_gold_hue", LookProfile.GOLD_HUE)
+	painted.set_shader_parameter(&"look_gold_saturation", LookProfile.GOLD_SATURATION)
+	painted.set_shader_parameter(&"look_gold_value", LookProfile.GOLD_VALUE)
+	painted.set_shader_parameter(&"look_gold_chroma", LookProfile.GOLD_CHROMA)
+	painted.set_shader_parameter(&"look_gold_chroma_compat", LookProfile.GOLD_CHROMA_COMPAT)
+	painted.set_shader_parameter(&"look_verge_value_green",
+		_trim(region, "verge_value_green", LookProfile.VERGE_VALUE_GREEN))
+	painted.set_shader_parameter(&"look_verge_value_earth",
+		_trim(region, "verge_value_earth", LookProfile.VERGE_VALUE_EARTH))
+	painted.set_shader_parameter(&"look_verge_saturation",
+		_trim(region, "verge_saturation", LookProfile.VERGE_SATURATION))
+	painted.set_shader_parameter(&"look_verge_green_red", LookProfile.VERGE_GREEN_RED)
+	painted.set_shader_parameter(&"look_verge_fine_metres", LookProfile.VERGE_FINE_METRES)
+	painted.set_shader_parameter(&"look_verge_fine", LookProfile.VERGE_FINE)
 	painted.set_shader_parameter(&"look_variation_metres", LookProfile.VARIATION_METRES)
 	painted.set_shader_parameter(&"look_variation", LookProfile.VARIATION)
 	painted.set_shader_parameter(&"look_variation_hue", LookProfile.VARIATION_HUE)
@@ -268,6 +350,9 @@ static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool) -
 		LookProfile.PATH_VARIATION_SHARE)
 	painted.set_shader_parameter(&"look_slope_up", LookProfile.SLOPE_UP)
 	painted.set_shader_parameter(&"look_slope_shade", LookProfile.SLOPE_SHADE)
+
+static func _trim(region: String, key: String, fallback: Variant) -> Variant:
+	return LookProfile.ground_value(region, key, fallback)
 
 ## An outdoor map declares a sun and does not disable it, as LookGrade reads it.
 static func _outdoor(manifest: WorldManifest) -> bool:

@@ -132,6 +132,57 @@ func _run() -> void:
 		same = same and node.get_surface_override_material(0) == overrides[index]
 	_expect(same, "and leaves the painted materials in place")
 
+	# Roads are edged and cut crisply; patches are glazes cut to their footprint.
+	_expect(deck_paint != null and deck_paint.shader == LookGround.SHADER_DECK
+		and float(deck_paint.get_shader_parameter(&"look_edge_band")) == LookProfile.EDGE_BAND
+		and deck_paint.get_shader_parameter(&"look_rim") == LookProfile.DECK_RIM,
+		"a walk deck is drawn with the deck shader, a crisp rim and an edging band")
+	_expect(patch_paint != null
+		and float(patch_paint.get_shader_parameter(&"look_edge_band")) == 0.0
+		and patch_paint.get_shader_parameter(&"look_rim") == LookProfile.PATCH_RIM
+		and is_equal_approx(float(patch_paint.get_shader_parameter(&"look_opacity")),
+			LookProfile.PATCH_OPACITY),
+		"a patch has no edging band, keeps its footprint and is a glaze")
+
+	# A continent chunk is painted with its own region's trims, and the roads
+	# of a root with pale paving learn where it lies.
+	var chunk := Node3D.new()
+	root.add_child(chunk)
+	var paving_material := patch_material.duplicate() as StandardMaterial3D
+	paving_material.albedo_color = Color("ccba9c")
+	var chunk_deck_material := deck_material.duplicate() as StandardMaterial3D
+	var chunk_soil_material := patch_material.duplicate() as StandardMaterial3D
+	var paving := _mesh(chunk, "AuthoredGround_test_crystal_test_4_5", paving_material)
+	var chunk_deck := _mesh(chunk, "Walk_test_avenue_test_4_5", chunk_deck_material)
+	var chunk_soil := _mesh(chunk, "AuthoredGround_test_ground-03_test_4_5", chunk_soil_material)
+	var amberwood := WorldManifest.new()
+	amberwood.data = {"asset": {"id": "amberwood__chunk_4_5"},
+		"continentGeography": {"geometryMode": "continent-chunks-v1"}}
+	_expect(LookGround.region_of(amberwood) == "amberwood",
+		"a chunk paints as its region")
+	_expect(LookGround.paint_loaded(chunk, amberwood) == 3, "the chunk's ground is painted")
+	var paving_paint := paving.get_surface_override_material(0) as ShaderMaterial
+	_expect(LookGround.is_paving(paving_material) and not LookGround.is_paving(patch_material)
+		and paving_paint.get_shader_parameter(&"look_rim") == LookProfile.PAVING_RIM
+		and float(paving_paint.get_shader_parameter(&"look_opacity")) == 1.0
+		and int(paving_paint.get_shader_parameter(&"look_paving_count")) == 0,
+		"pale paving keeps its geometry, stays opaque and is not darkened as a road")
+	var avenue_paint := chunk_deck.get_surface_override_material(0) as ShaderMaterial
+	var box := paving.get_aabb()
+	var rects: PackedVector4Array = avenue_paint.get_shader_parameter(&"look_paving_rects")
+	_expect(int(avenue_paint.get_shader_parameter(&"look_paving_count")) == 1
+		and rects.size() == LookProfile.PAVING_RECTS_MAX
+		and rects[0] == Vector4(box.position.x, box.position.z, box.end.x, box.end.z)
+		and int((chunk_soil.get_surface_override_material(0) as ShaderMaterial)
+			.get_shader_parameter(&"look_paving_count")) == 1,
+		"its road and its soil learn the paving's bounds")
+	var trims: Dictionary = LookProfile.GROUND_TRIMS["amberwood"]
+	_expect(is_equal_approx(float(avenue_paint.get_shader_parameter(&"look_path_luma")),
+			float(trims["path_luma"]))
+		and is_equal_approx(float(deck_paint.get_shader_parameter(&"look_path_luma")),
+			LookProfile.PATH_LUMA),
+		"a region's road value is its own trim; other regions keep the default")
+
 	# An island map is painted at bind, with its scene's vertex colour.
 	var island_root := Node3D.new()
 	root.add_child(island_root)
