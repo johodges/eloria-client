@@ -51,6 +51,9 @@ const PROBES_PER_SECOND := 12.0
 ## ground slab or a distant cliff shell, and fading one of those would blank
 ## half the screen. Overridable per map as `rendering.occluderFadeMaxExtentMetres`.
 const MAX_EXTENT_METRES := 60.0
+## Node names that are ground whatever their size or collision: exported
+## terrain, walk decks, and the authored ground patches painted over them.
+const GROUND_NAME_PREFIXES: Array[String] = ["AuthoredGround_", "Terrain_", "Walk_"]
 
 ## One indexed mesh, plus whatever it takes to put it back the way it was.
 class Occluder extends RefCounted:
@@ -347,7 +350,14 @@ func _index(mesh_instance: MeshInstance3D) -> Occluder:
 		return null
 	# The ground is not an obstacle: it is under the player, and fading it would
 	# open a hole onto the sky. The loader marks walk surfaces by hanging
-	# navigation collision off them, which is a firmer signal than a name.
+	# navigation collision off them, which is a firmer signal than a name - but
+	# the continent exporter's authored ground patches (a gate forecourt, a bed
+	# of leaf litter) lie over that surface with no collision of their own and
+	# fall well inside the extent cap, so their grown box holds the player's
+	# chest whenever the player stands on one. Those are known by name.
+	for prefix: String in GROUND_NAME_PREFIXES:
+		if node_name.begins_with(prefix):
+			return null
 	if _is_walk_surface(mesh_instance):
 		return null
 	var transform: Transform3D = mesh_instance.global_transform

@@ -118,6 +118,7 @@ func _run() -> void:
 		"the following map restores the ordinary fade opacity")
 	fade.reset()
 	_test_causeway_structures()
+	_test_authored_ground_patches()
 
 	print("occluder fade tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	world.queue_free()
@@ -191,6 +192,49 @@ func _test_causeway_structures() -> void:
 		"a tall native structure still fades")
 	_expect(preview_tower.get_surface_override_material(0) != null,
 		"a tall preview structure still fades")
+	fade.reset()
+
+## The continent exporter's ground patches - the Four Gates east forecourt, an
+## Amberwood bed of leaf litter - lie over the walk surface with no collision of
+## their own and are far narrower than the extent cap. They follow the ground's
+## relief, so a patch the player stands on has a box deep enough that, grown by
+## the probe radius, it holds the player's chest: left indexed, the ground under
+## the player faded and the biome grass showed through.
+func _test_authored_ground_patches() -> void:
+	var fade: RefCounted = OccluderFadeScript.new()
+	var before: int = fade.configure(null, world)
+	var patches: Array[MeshInstance3D] = []
+	for node_name: String in [
+			"AuthoredGround_four_gates_four_gates-pass1-eastforecourt_four_gates_06_08",
+			"AuthoredGround_amberwood_ground-04_leaf_litter",
+			"StreamView_amberwood-four-gates__AuthoredGround_amberwood_ground-07_leaf_litter"]:
+		var patch := _box(node_name, PLAYER_POSITION)
+		(patch.mesh as BoxMesh).size = Vector3(28.0, 0.6, 38.0)
+		patches.append(patch)
+	# A walk surface is still known by its collision whatever it is called.
+	var deck := _box("Deck_Harbour", ON_THE_LINE)
+	var body := StaticBody3D.new()
+	body.collision_layer = WorldLoader.NAVIGATION_SURFACE_LAYER
+	deck.add_child(body)
+
+	# The patch geometry really does reach the probe; only its name saves it.
+	var grown: AABB = patches[0].get_aabb().grow(OccluderFadeScript.PROBE_RADIUS)
+	var chest: Vector3 = PLAYER_POSITION + Vector3(0.0, OccluderFadeScript.PROBE_HEIGHT, 0.0)
+	_expect(OccluderFadeScript._segment_hits_box(grown,
+			patches[0].to_local(camera.global_position), patches[0].to_local(chest)),
+		"the patch's grown box holds the player's chest")
+
+	_expect(fade.configure(null, world) == before,
+		"authored ground patches, and a walk deck known only by its collision, do not index")
+	fade.set_enabled(true)
+	fade.update(SETTLE, camera, player)
+	for patch: MeshInstance3D in patches:
+		_expect(patch.get_surface_override_material(0) == null,
+			"the ground patch under the player stays opaque: " + str(patch.name))
+	_expect(deck.get_surface_override_material(0) == null,
+		"a walk deck on the sight line stays opaque")
+	_expect(blocker.get_surface_override_material(0) != null,
+		"an obstacle standing on a ground patch still fades")
 	fade.reset()
 
 func _box(node_name: String, position: Vector3) -> MeshInstance3D:
