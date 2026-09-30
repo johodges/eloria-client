@@ -1,0 +1,15 @@
+{
+	"id": "waystone_yard",
+	"schema": 1,
+	"grade": {
+		"saturation_forward": 1.1
+	},
+	"ground": {
+		"deck_path": 0,
+		"deck_tint": [0.458, 0.957, 0.784]
+	},
+	"notes": {
+		"grade": "A tutorial map never streamed beside another, so it may take its own grade. Saturation 1.1 over SATURATION_FORWARD (0.69 to 0.76) gives back some of the chroma the shared grade takes from its props, sea and court; the court keeps its own colour (`ground`).",
+		"ground": "Its courts and yards are Walk_ decks from wall to wall, which LookGround paints as roads unless the region says otherwise: path_tint x path_luma x the texture's grain, dropping each deck's own colour. At the defaults every tutorial court came out one road beige (echo_court, wayfarer_bastion, lantern_exchange and waystone_yard drew identical frames). The migration worked round it with a path tint matched to develop's court (path_tint [0.541, 1.0, 0.666], path_luma_forward 0.093), which could give the map only one colour and dropped the flagstones' own tone variation (court world std 21 against develop's 30). deck_path 0 (integration) paints its decks as its own ground: each keeps its own colour with the yard lift, whatever its hue, and none is edged like a road. deck_tint multiplies each deck's own linear colour: the grade warms and greys a kept court (Reedway's meadow came out olive-brown, Bellwatch's cream grey), so it was solved from develop's court colour over three Forward+ renders (integration runs int_small_2 to int_small_4, ground box in boxes_small_maps). Court now (87, 119, 87) luminance 110 against develop's (86, 118, 85) 109. Forward+ only in effect: the compatibility renderer was not measured and keeps the tint too."
+	}
+}
