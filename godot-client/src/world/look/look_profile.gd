@@ -806,6 +806,12 @@ const GRASS_BARE_METRES := 24.0
 const GRASS_VERGE_DENSITY := 12.0
 const GRASS_BED_DENSITY := 9.0
 const GRASS_SCATTER_DENSITY := 0.04
+## Ground asking for fewer tufts a square metre than this grows none, so grass
+## ends in beds rather than thinning out into single tufts: the scatter and a
+## bed's thin fringe on sparse ground (Manymouth's silt, the Grey Moors' peat,
+## the verge's minimum over bare scree and snow) grew one tuft a cell here and
+## there, the speckle the reviews measured (hf95 47-58).
+const GRASS_DENSITY_FLOOR := 2.5
 const GRASS_BED_METRES := 7.0
 const GRASS_BED_EDGE := Vector2(0.47, 0.6)
 ## A tuft on thin ground (low grassiness, a bed's fringe) is scaled down
@@ -956,6 +962,13 @@ const GRASS_CHROMA_FORWARD := 1.35
 ## colour and only its end lights up) and the vertex-colour shade at the root.
 const GRASS_GRADIENT_POWER := 1.4
 const GRASS_ROOT_SHADE := 0.75
+## Every tuft keeps this share of its root-to-tip gradient about the middle
+## (0.45 of the way): the regions' palettes run from a root about a fifth of
+## the tip's luminance, and dark roots beside bright tips one or two pixels
+## apart were most of the speckle the reviews measured. Against renders with
+## no grass at all (ELORIA_LOOK_GRASS_DEBUG=none) the beds added 16-34 to hf95
+## at ss_wild, ss_grove, md_hub, cw_hub, cw_horizon and vs_road.
+const GRASS_CONTRAST := 0.6
 ## Every tuft's value moves by up to this much either way, and a slow noise
 ## (GRASS_TONE_METRES across) turns whole beds warmer or cooler by up to
 ## GRASS_WARM, so a field reads as painted patches rather than one colour. Both
@@ -1284,13 +1297,33 @@ static func grass_palette(id: String) -> Dictionary:
 	var grass := region_section(id, "grass")
 	var own := false
 	for key: String in grass:
-		own = own or not (key.begins_with("layers") or key.begins_with("open"))
+		own = own or not (key.begins_with("layers") or key.begins_with("open")
+			or key.begins_with("meadow"))
 	if not own:
 		return {}
-	var trim := float(region_value(id, "grass", "value", 1.0))
-	var root_colour: Color = region_value(id, "grass", "root", GRASS_PALETTE_DEFAULT.root)
-	var tip_colour: Color = region_value(id, "grass", "tip", GRASS_PALETTE_DEFAULT.tip)
+	var trim := float(_grass_value(id, "value", 1.0))
+	var root_colour: Color = _grass_value(id, "root", GRASS_PALETTE_DEFAULT.root)
+	var tip_colour: Color = _grass_value(id, "tip", GRASS_PALETTE_DEFAULT.tip)
 	return {"root": root_colour * trim, "tip": tip_colour * trim}
+
+## A grass palette key as `region_value` reads it, except that a region that
+## tuned its palette's colours for one renderer only lends them to the other
+## (the renderers' own value and chroma scales, GRASS_VALUE_* and
+## GRASS_CHROMA_*, are applied on top either way). Falling back to the default
+## palette instead, the compatibility renderer drew Verdant's and Westhaven's
+## beds as the dark speckle their notes measured the default at (hf95 82 at
+## vs_road, 59 at wh_border_fg, against 42 and 38 in Forward+). A `value` trim
+## is never lent: it was measured against one renderer's ground, and Verdant's
+## Forward+ 1.6 drew near-white tips in the other.
+static func _grass_value(id: String, key: String, fallback: Variant) -> Variant:
+	var entries := region_section(id, "grass")
+	var own_key := key + ("_forward" if forward_plus() else "_compat")
+	var other_key := key + ("_compat" if forward_plus() else "_forward")
+	if entries.has(own_key):
+		return entries[own_key]
+	if entries.has(key) or key == "value":
+		return entries.get(key, fallback)
+	return entries.get(other_key, fallback)
 
 ## How grassy a biome layer whose texture file is `file` (lower case) is:
 ## `id`'s own `grass.layers` words first, then GRASS_LAYER_WORDS, else

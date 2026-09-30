@@ -210,6 +210,7 @@ func _init() -> void:
 	_slot_tips.resize(LookProfile.GRASS_PALETTE_SLOTS)
 	_fill_slot(0, LookProfile.GRASS_PALETTE_DEFAULT)
 	_material.set_shader_parameter(&"look_gradient_power", LookProfile.GRASS_GRADIENT_POWER)
+	_material.set_shader_parameter(&"look_contrast", LookProfile.GRASS_CONTRAST)
 	var forward := LookProfile.forward_plus()
 	_material.set_shader_parameter(&"look_value", LookProfile.GRASS_VALUE_FORWARD
 		if forward else LookProfile.GRASS_VALUE_COMPAT)
@@ -698,7 +699,11 @@ func _classify(hit: Dictionary, up: Vector3, patches: Array[Dictionary],
 			return Vector3(Ground.PATH, 0.0, palette)
 		verge = road >= LookProfile.GRASS_TERRAIN_ROAD.x
 	verge = verge or int(cover.x) == 2
-	var grass := maxf(_biome_grass(point, cell_hash) * cover.y, cover.z) * slope
+	# A meadow patch is as grassy as its region's file says its meadows are
+	# (`grass.meadow`, 1 unless it says otherwise).
+	var meadow := cover.z * float(LookProfile.region_value(_classified_region, "grass",
+		"meadow", 1.0))
+	var grass := maxf(_biome_grass(point, cell_hash) * cover.y, meadow) * slope
 	if verge:
 		return Vector3(Ground.VERGE, maxf(grass, 0.5 * slope * _rim_grass(point, cell_hash)),
 			palette)
@@ -1079,6 +1084,11 @@ func _grow(data: Array[PackedFloat32Array], hit: Vector3, normal: Vector3, kind:
 		bed = smoothstep(LookProfile.GRASS_BED_EDGE.x, LookProfile.GRASS_BED_EDGE.y,
 			value_noise(hit.x / LookProfile.GRASS_BED_METRES, hit.z / LookProfile.GRASS_BED_METRES, 11))
 		density = (LookProfile.GRASS_BED_DENSITY * bed + LookProfile.GRASS_SCATTER_DENSITY) * grassiness
+	# Ground too thin to carry a bed carries nothing: a candidate there grew
+	# one tuft now and then, single dark or bright specks on bare silt, peat
+	# and snow (hf95 58 at md_horizon, 47 at gm_gorse).
+	if density < LookProfile.GRASS_DENSITY_FLOOR:
+		return 0
 	# Thin ground grows small grass: a bed's fringe and a verge's feathered
 	# edges shrink rather than thin out into single tufts.
 	var grown := lerpf(LookProfile.GRASS_THIN_SCALE, 1.0, clampf(grassiness, 0.0, 1.0))

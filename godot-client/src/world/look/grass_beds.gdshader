@@ -44,6 +44,9 @@ render_mode cull_disabled, depth_draw_opaque, diffuse_lambert;
 uniform vec3 look_roots[32];
 uniform vec3 look_tips[32];
 uniform float look_gradient_power = 1.4;
+// How much of the root-to-tip gradient every tuft keeps about its middle
+// (LookProfile.GRASS_CONTRAST).
+uniform float look_contrast = 1.0;
 // The palette's value and chroma in the renderer in use
 // (LookProfile.GRASS_VALUE_*, GRASS_CHROMA_*): the compatibility renderer
 // lights display-encoded albedo, Forward+ linear.
@@ -84,6 +87,7 @@ void vertex() {
 	float far = smoothstep(look_soften_metres.x, look_soften_metres.y,
 		distance(origin, INV_VIEW_MATRIX[3].xyz));
 	float gradient = mix(pow(height, look_gradient_power), 0.45, far * look_soften);
+	gradient = mix(0.45, gradient, look_contrast);
 	vec3 root = mix(look_palette(index, false), look_palette(other, false), blend);
 	vec3 tip = mix(look_palette(index, true), look_palette(other, true), blend);
 	vec3 colour = mix(root, tip, gradient) * COLOR.rgb * look_value;
