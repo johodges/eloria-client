@@ -89,6 +89,11 @@ uniform float look_variation_hue = 0.06;
 uniform float look_path_variation_share = 0.35;
 uniform vec2 look_slope_up = vec2(0.94, 0.62);
 uniform float look_slope_shade = 0.72;
+// Where the sun is, across the ground (a unit xz vector towards it; zero when
+// unknown): a bank turned towards it is spared the slope shade, as the sun
+// lights it already. Shaded regardless, a sunlit terrace bank at wh_garden
+// drew a straight dark band (93 against 109) where develop drew it brighter.
+uniform vec2 look_sun_heading = vec2(0.0);
 // The terrain's worn-road colour is road only on ground at least this level
 // (world-up normal component, fading from x to y): the exporter's road tint
 // bleeds up the cliff faces beside a lane, and painted as road it drew pale
@@ -299,8 +304,10 @@ vec3 look_weights(vec3 reference, vec3 vertex_colour, float up) {
 // reference: the same from the texture's smallest mip (its mean colour), or
 // the albedo itself where there is no single texture to average.
 // vertex_colour: the raw vertex colour (only the terrain reads it).
-// xz: continent-space position in metres. up: |world normal . up|.
-vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float up) {
+// xz: continent-space position in metres. world_normal: the surface normal
+// in world space (its up component, and which way a bank faces).
+vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, vec3 world_normal) {
+	float up = abs(world_normal.y);
 	albedo = look_to_linear(albedo);
 	reference = look_to_linear(reference);
 	vec3 weights = look_weights(reference, vertex_colour, up);
@@ -374,8 +381,10 @@ vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float 
 		* mix(1.0, look_path_variation_share, max(path, max(yard, pale) * 0.5));
 	colour *= 1.0 + variation * 2.0 * look_variation;
 	colour *= vec3(1.0) + vec3(variation, 0.0, -variation) * 2.0 * look_variation_hue;
-	colour *= mix(look_slope_shade, 1.0,
-		smoothstep(look_slope_up.y, look_slope_up.x, up));
+	float level = smoothstep(look_slope_up.y, look_slope_up.x, up);
+	float sunward = clamp(dot(world_normal.xz, look_sun_heading)
+		/ max(length(world_normal.xz), 0.0001), 0.0, 1.0);
+	colour *= mix(look_slope_shade, 1.0, max(level, sunward));
 	return look_from_linear(colour * look_surface_tint);
 }
 

@@ -89,12 +89,12 @@ void fragment() {
 		albedo *= vertex_colour;
 		reference *= vertex_colour;
 	}
-	float up = abs((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).y);
+	vec3 world_normal = (INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz;
 	if (look_debug > 0) {
 		ALBEDO = vec3(0.0);
 		EMISSION = look_debug_colour(reference, vertex_colour, look_ground_xz);
 	} else {
-		ALBEDO = look_paint(albedo, reference, vertex_colour, look_ground_xz, up);
+		ALBEDO = look_paint(albedo, reference, vertex_colour, look_ground_xz, world_normal);
 	}
 	ROUGHNESS = roughness_value;
 	METALLIC = metallic_value;

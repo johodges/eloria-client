@@ -452,7 +452,8 @@ const EDGE_BAND_PUSH_METRES := 0.03
 ## as a straight step across the frame (ten levels at the south gate). At 0.72
 ## from 31 to 53 degrees it stacked on the sun's own falloff: a sunlit
 ## terrace bank at wh_garden drew a straight-edged dark band, and the Grey
-## Moors' shaded facets went black; the light shades a slope already.
+## Moors' shaded facets went black; the light shades a slope already. A bank
+## turned towards the sun is spared it altogether (LookGround.sun_heading_of).
 const SLOPE_UP := Vector2(0.9, 0.55)
 const SLOPE_SHADE := 0.84
 ## The terrain's worn-road colour is painted as road only where the ground is

@@ -57,7 +57,7 @@ const BIOME_ALBEDO_LINE := "ALBEDO = color / total;"
 const BIOME_PAINTED_LINE := "if (look_debug > 0) { ALBEDO = vec3(0.0); " \
 	+ "EMISSION = look_debug_colour(%s, vec3(1.0), continent_xz); } " \
 	+ "else { ALBEDO = look_paint(color / total, %s, vec3(1.0), " \
-	+ "continent_xz, abs((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).y)); }"
+	+ "continent_xz, (INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz); }"
 ## The paint weighs the biome by its mean colour at a spot, its layers' mean
 ## texels (their smallest mips) mixed by the masks, as the other ground
 ## classes are weighed by their texture's mean. Weighed by each texel instead,
@@ -125,7 +125,7 @@ static func paint_loaded(root: Node, manifest: WorldManifest) -> int:
 	# One tint for the whole continent: its rivers run on across the regions'
 	# borders (Amberwood's western river crosses four of them).
 	decode_inland_water(root)
-	return paint(root, region_of(manifest))
+	return paint(root, region_of(manifest), sun_heading_of(manifest))
 
 ## Forward+ only: the continent's sea (continent_water.gdshader, which the
 ## loader puts on every sea cell) is decoded to linear albedo at
@@ -224,7 +224,7 @@ static func paint_bound(root: Node, manifest: WorldManifest) -> int:
 		return 0
 	decode_water(root, region_of(manifest))
 	decode_inland_water(root, region_of(manifest))
-	var painted := paint(root, region_of(manifest))
+	var painted := paint(root, region_of(manifest), sun_heading_of(manifest))
 	# The map's signature colours (its file's `props.keep_words`), as the
 	# continent's regions have theirs kept where their crowns are painted:
 	# after the paint, so only what it left alone is kept.
@@ -252,14 +252,38 @@ static func decode_water(root: Node, region := "") -> int:
 		changed += 1
 	return changed
 
+## Where the manifest's sun stands across the ground: a unit xz vector towards
+## it, from its declared `direction` (the way its light travels) or
+## `rotationDegrees`, as WorldEnvironmentBinder aims it; zero when it declares
+## neither. Only the heading matters, which the hour does not turn
+## (DayNightBinder moves the elevation), and every continent region and its
+## chunks declare the same one.
+static func sun_heading_of(manifest: WorldManifest) -> Vector2:
+	var environment: Variant = manifest.data.get("environment") if manifest != null else null
+	var sun: Variant = (environment as Dictionary).get("sun") if environment is Dictionary else null
+	if sun is not Dictionary:
+		return Vector2.ZERO
+	var travel := Vector3.ZERO
+	var rotation: Variant = (sun as Dictionary).get("rotationDegrees")
+	var direction: Variant = (sun as Dictionary).get("direction")
+	if rotation is Array and (rotation as Array).size() >= 3:
+		var angles := Vector3(float(rotation[0]), float(rotation[1]), float(rotation[2]))
+		travel = Basis.from_euler(angles * (PI / 180.0)) * Vector3.FORWARD
+	elif direction is Array and (direction as Array).size() >= 3:
+		travel = Vector3(float(direction[0]), float(direction[1]), float(direction[2]))
+	var across := Vector2(-travel.x, -travel.z)
+	return across.normalized() if across.length() > 0.0001 else Vector2.ZERO
+
 ## The region a manifest paints as: a continent chunk's own region
 ## (`<region>__chunk_<x>_<z>`), or the map itself.
 static func region_of(manifest: WorldManifest) -> String:
 	return manifest.asset_id().get_slice("__chunk_", 0)
 
-## Paints every ground surface under `root`, with `region`'s trims. Safe to
-## call again on a root it has already painted.
-static func paint(root: Node, region := "") -> int:
+## Paints every ground surface under `root`, with `region`'s trims, its
+## banks turned towards `sun_heading` (a unit xz vector towards the sun, from
+## `sun_heading_of`; zero, every bank shaded alike) spared the slope shade.
+## Safe to call again on a root it has already painted.
+static func paint(root: Node, region := "", sun_heading := Vector2.ZERO) -> int:
 	if not LookProfile.enabled() or root == null:
 		return 0
 	var ground: Array[MeshInstance3D] = []
@@ -284,6 +308,9 @@ static func paint(root: Node, region := "") -> int:
 			if not made.has(key):
 				made[key] = painted_for(source, kind, mesh_instance.mesh, surface,
 					region, paving, areas.get(key, Rect2()))
+				if made[key] is ShaderMaterial:
+					(made[key] as ShaderMaterial).set_shader_parameter(&"look_sun_heading",
+						sun_heading)
 			var painted: Material = made[key]
 			if painted == null:
 				continue

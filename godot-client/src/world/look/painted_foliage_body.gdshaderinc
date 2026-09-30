@@ -209,10 +209,10 @@ vec3 look_foliage_paint(vec3 albedo) {
 	vec3 hsv = look_foliage_hsv(pow(clamp(linear_colour, vec3(0.0), vec3(1.0)),
 		vec3(1.0 / 2.2)));
 	// How much of the top light's and underside's tint a texel takes: a
-	// low-chroma crown (Westhaven's silver-green olives, a frosted fir) takes
-	// only their value, where the warm top and cool underside turned the
-	// olives mauve-pink and the firs silver.
-	float tinted = smoothstep(0.12, 0.35, hsv.y);
+	// low-chroma crown (Westhaven's olives, whose atlas is a khaki of
+	// saturation 0.28; a frosted fir) takes only their value, where the warm
+	// top and cool underside turned the olives mauve-pink and the firs silver.
+	float tinted = smoothstep(0.25, 0.45, hsv.y);
 	float hue = hsv.x * 360.0;
 	float signed_hue = hue > 180.0 ? hue - 360.0 : hue;
 	float warm = smoothstep(look_tame_hue.x - 360.0 - 12.0, look_tame_hue.x - 360.0,
