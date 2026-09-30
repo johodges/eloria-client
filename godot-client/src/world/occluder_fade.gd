@@ -104,8 +104,9 @@ class Occluder extends RefCounted:
 		applied = true
 		if batch != null:
 			_lift_from_batch()
-		# Look pass (ELORIA_LOOK=1 only): the dithered mesh hands its shadow to
-		# a solid twin, taken before the faded copies go in.
+		# Look pass (ELORIA_LOOK=1 only): the faded mesh stops casting, a wall
+		# or roof handing its shadow to a solid twin, taken before the faded
+		# copies go in.
 		if LookProfile.enabled():
 			_shadow = LookFade.hold_shadow(node)
 		if node.material_override is BaseMaterial3D:
@@ -151,7 +152,7 @@ class Occluder extends RefCounted:
 	func _look_dithered(material: Material) -> ShaderMaterial:
 		if not LookProfile.enabled():
 			return null
-		var dithered := LookFade.dither_copy(material)
+		var dithered := LookFade.dither_copy(material, node)
 		if dithered != null:
 			_dithered.append(dithered)
 		return dithered
@@ -176,8 +177,9 @@ class Occluder extends RefCounted:
 		# node may already be freed with its map, and a freed object must not
 		# reach a typed parameter.
 		_dithered.clear()
-		if is_instance_valid(_shadow):
-			LookFade.release_shadow(node if is_instance_valid(node) else null, _shadow)
+		if LookProfile.enabled() or is_instance_valid(_shadow):
+			LookFade.release_shadow(node if is_instance_valid(node) else null,
+				_shadow if is_instance_valid(_shadow) else null)
 		_shadow = null
 		if batch != null:
 			_return_to_batch()
@@ -192,8 +194,9 @@ class Occluder extends RefCounted:
 			var colour: Color = material.albedo_color
 			colour.a = _opacity[index] * scale
 			material.albedo_color = colour
+		# Look pass (ELORIA_LOOK=1 only): the fade's progress opens the hole.
 		for material: ShaderMaterial in _dithered:
-			LookFade.write(material, scale)
+			LookFade.write(material, scale, fade)
 
 	## The batch holds this mesh's transform relative to its imported root, so collapsing that instance
 	## to zero scale drops it from the draw without disturbing the others.
@@ -303,6 +306,10 @@ func update(delta: float, camera: Camera3D, player: Node3D) -> void:
 		return
 	if _occluders.is_empty():
 		return
+	# Look pass (ELORIA_LOOK=1 only): the faded look materials cut their hole
+	# round the player's chest, where the probe aims.
+	if LookProfile.enabled() and is_instance_valid(player):
+		LookFade.focus = player.global_position + Vector3(0.0, PROBE_HEIGHT, 0.0)
 	_probe_countdown -= delta
 	if _probe_countdown <= 0.0:
 		_probe_countdown = 1.0 / PROBES_PER_SECOND

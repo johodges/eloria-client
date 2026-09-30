@@ -1,5 +1,5 @@
 // Look pass layer L3: a StandardMaterial3D's stand-in while OccluderFade
-// fades it, dithered out by look_fade.
+// fades it, opening a hole round the player.
 //
 // Develop fades an occluder by blending a copy of its material. The look
 // pass dithers it instead (see LookFade), and the engine's own dither for a
@@ -13,11 +13,12 @@
 // it starts to fade; LookFade leaves a material that uses anything else to
 // develop's blend.
 //
-// The painted_ground and painted_foliage shaders cut the same screen-door
-// pattern (interleaved gradient noise on FRAGCOORD), so everything that fades
-// fades alike. Only these faded copies carry the discard.
+// The painted_ground and painted_foliage shaders cut the same hole round the
+// player (look_fade_hole.gdshaderinc), so everything that fades fades alike.
+// Only these faded copies carry the discard.
 
 #include "res://src/world/look/look_standard_surface.gdshaderinc"
+#include "res://src/world/look/look_fade_hole.gdshaderinc"
 
 uniform bool use_vertex_albedo = false;
 uniform bool vertex_albedo_srgb = false;
@@ -25,6 +26,7 @@ uniform bool vertex_albedo_srgb = false;
 // becomes coverage).
 uniform int alpha_mode = 0;
 uniform float alpha_scissor_threshold = 0.5;
+// The fade's opacity, kept as a record of it; the hole is what cuts.
 uniform float look_fade = 1.0;
 
 void vertex() {
@@ -40,15 +42,15 @@ void fragment() {
 	if (use_vertex_albedo) {
 		albedo *= COLOR;
 	}
-	float coverage = look_fade;
 	if (alpha_mode == 1 && albedo.a < alpha_scissor_threshold) {
 		discard;
 	}
-	if (alpha_mode == 2) {
-		coverage *= albedo.a;
+	// A blended source's own alpha becomes coverage, cut by the same Bayer
+	// blocks as the hole's rim.
+	if (alpha_mode == 2 && albedo.a < look_fade_bayer(FRAGCOORD.xy)) {
+		discard;
 	}
-	if (fract(52.9829189 * fract(dot(FRAGCOORD.xy, vec2(0.06711056, 0.00583715))))
-			>= coverage) {
+	if (look_fade_cut(VERTEX, VIEW_MATRIX, PROJECTION_MATRIX, FRAGCOORD.xy)) {
 		discard;
 	}
 	ALBEDO = albedo.rgb;

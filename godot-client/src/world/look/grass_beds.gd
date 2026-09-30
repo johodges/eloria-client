@@ -1,10 +1,10 @@
 class_name LookGrassBeds
 extends Node3D
-## Look pass layer L4: grass beds in the wind. Scatters procedural tufts over
-## the grassy ground around the camera's focus - dense along every road's
-## verge, in slow beds across open grass, a light scatter between - and never
-## on a road, paving, water, under a wall or up a cliff. Does nothing unless
-## LookProfile.enabled().
+## Look pass layer L4: grass beds in the wind. Grows procedural tufts over
+## the grassy ground around the camera's focus - along every road's verge and
+## in slow beds across open grass, with bare ground between them - and never
+## on a road, paving, a yard, water, under a wall or up a cliff. Does nothing
+## unless LookProfile.enabled().
 ##
 ## Where grass may grow is read off the ground itself, not guessed from names
 ## alone. Every candidate spot casts one ray down the walk collision (the
@@ -18,15 +18,22 @@ extends Node3D
 ## - the continent's terrain: road where the exporter painted its worn colour
 ##   into the terrain's vertex colour; else whatever the authored patches
 ##   drawn over it say (pale paving, its seams and worn cobble: none, a yard
-##   or leaf litter: a little, their rim: verge - and a road deck's rim over
-##   paving is paving), unless water lies over it; else grass as grassy as
-##   the biome blend's layers there (grass and meadow fully, moss and heather
-##   partly, gravel barely, scree, snow and sand not at all);
+##   or leaf litter: LookProfile.GRASS_ON_PATCH, their rim: verge - and a
+##   road deck's rim over paving is paving), unless water lies over it; else
+##   grass as grassy as the biome blend's layers there (grass and meadow
+##   fully, moss and heather partly, gravel barely, scree, snow and sand not
+##   at all);
 ## - a map outside the continent colours its ground by vertex colour: a pale
 ##   trail is road, its blend into the grass is verge, green is grass;
 ## - authored collision (layer 1) above the ground: nothing.
 ## The ray's face index finds the triangle it hit, whose vertex colours are
 ## read back once per mesh and interpolated at the hit.
+##
+## A tuft is coloured from its region's palette and then takes the ground
+## paint's own mottle at its foot (the value, warmth and fine mottle that
+## painted_ground_paint.gdshaderinc lays over the verge, worked out here from
+## the same noise), so a bed darkens and lightens with the ground it grows
+## from instead of standing out of it as a flat colour.
 ##
 ## Placement is deterministic: a candidate's spot, and every tuft it carries,
 ## comes from a hash of its cell in the ground's own frame (the continent
@@ -110,6 +117,8 @@ static func tend(parent: Node3D, active: Node3D, manifest: WorldManifest,
 		residents: Dictionary, focus: Vector3) -> void:
 	if not LookProfile.enabled() or parent == null:
 		return
+	if OS.get_environment(LookProfile.GRASS_DEBUG_VARIABLE) == "none":
+		return
 	var beds := parent.get_node_or_null(NODE_NAME) as LookGrassBeds
 	if beds == null:
 		beds = LookGrassBeds.new()
@@ -187,8 +196,12 @@ func _init() -> void:
 	_material.shader = SHADER
 	for index: int in mini(LookProfile.GRASS_PALETTES.size(), 4):
 		var palette: Dictionary = LookProfile.GRASS_PALETTES[index]
-		var root_colour: Color = palette.root
-		var tip_colour: Color = palette.tip
+		# A region's own trim on the palette's value in the renderer in use,
+		# measured against its painted ground (tufts at 0.9-1.05 of it).
+		var trim := float(palette.get("value_forward" if LookProfile.forward_plus()
+			else "value_compat", 1.0))
+		var root_colour: Color = palette.root * trim
+		var tip_colour: Color = palette.tip * trim
 		_material.set_shader_parameter("look_root_%d" % index,
 			Vector3(root_colour.r, root_colour.g, root_colour.b))
 		_material.set_shader_parameter("look_tip_%d" % index,
@@ -625,9 +638,7 @@ func _classify(hit: Dictionary, up: Vector3, patches: Array[Dictionary],
 		var alpha := _vertex_colour(body, hit).a
 		if alpha >= LookProfile.GRASS_VERGE_ALPHA.y or _road_beneath(hit, collider, up):
 			return Vector3(Ground.PATH, 0.0, palette)
-		var strength := 1.0 if alpha >= LookProfile.GRASS_VERGE_ALPHA.x \
-			else LookProfile.GRASS_DECK_OUTSIDE_VERGE
-		return Vector3(Ground.VERGE, strength * slope, palette)
+		return Vector3(Ground.VERGE, verge_strength(alpha, cell_hash) * slope, palette)
 	if _under_water(point, waters):
 		return Vector3(Ground.NONE, 0.0, 0.0)
 	if kind == Surface.VERTEX:
@@ -645,6 +656,20 @@ func _classify(hit: Dictionary, up: Vector3, patches: Array[Dictionary],
 	if verge:
 		return Vector3(Ground.VERGE, maxf(grass, 0.5 * slope), palette)
 	return Vector3(Ground.GRASS, grass, palette)
+
+## How much of a verge bed a road deck's rim carries at coverage `alpha`: none
+## at the deck's outer edge (LookProfile.GRASS_VERGE_ALPHA.x), rising over
+## LookProfile.GRASS_VERGE_FEATHER with a jitter so the bed's back edge is
+## broken rather than the straight line the deck's geometry ends on, and
+## thinning again towards the road (LookProfile.GRASS_VERGE_ROADSIDE) so the
+## tufts stand back from it.
+static func verge_strength(alpha: float, cell_hash: int) -> float:
+	var jitter := (_unit(cell_hash, 5) - 0.5) * LookProfile.GRASS_VERGE_FEATHER
+	var outer := smoothstep(LookProfile.GRASS_VERGE_ALPHA.x,
+		LookProfile.GRASS_VERGE_ALPHA.x + LookProfile.GRASS_VERGE_FEATHER, alpha + jitter)
+	var roadside := smoothstep(LookProfile.GRASS_VERGE_ROADSIDE.x,
+		LookProfile.GRASS_VERGE_ALPHA.y, alpha)
+	return outer * (1.0 - roadside * LookProfile.GRASS_VERGE_ROADSIDE.y)
 
 ## True when another road deck lies within a hand's breadth under the rim of
 ## the one `hit` landed on and covers the spot: where two road decks overlap
@@ -939,6 +964,11 @@ func _grow(data: Array[PackedFloat32Array], hit: Vector3, normal: Vector3, kind:
 		bed = smoothstep(LookProfile.GRASS_BED_EDGE.x, LookProfile.GRASS_BED_EDGE.y,
 			value_noise(hit.x / LookProfile.GRASS_BED_METRES, hit.z / LookProfile.GRASS_BED_METRES, 11))
 		density = (LookProfile.GRASS_BED_DENSITY * bed + LookProfile.GRASS_SCATTER_DENSITY) * grassiness
+	# Thin ground grows small grass: a bed's fringe and a verge's feathered
+	# edges shrink rather than thin out into single tufts.
+	var grown := lerpf(LookProfile.GRASS_THIN_SCALE, 1.0, clampf(grassiness, 0.0, 1.0))
+	if kind == Ground.GRASS:
+		grown *= lerpf(LookProfile.GRASS_THIN_SCALE, 1.0, bed)
 	var expected := density * step * step
 	var tufts := mini(int(expected) + (1 if _unit(hash(cell_hash + 7), 0) < fposmod(expected, 1.0) else 0),
 		LookProfile.GRASS_TUFTS_PER_CELL)
@@ -946,6 +976,7 @@ func _grow(data: Array[PackedFloat32Array], hit: Vector3, normal: Vector3, kind:
 		return 0
 	var tone := value_noise(hit.x / LookProfile.GRASS_TONE_METRES,
 		hit.z / LookProfile.GRASS_TONE_METRES, 23) * 2.0 - 1.0
+	var ground := ground_mottle(Vector2(hit.x, hit.z))
 	var warm := LookProfile.GRASS_WARM
 	var tilt := Vector3.UP.lerp(normal, LookProfile.GRASS_GROUND_TILT).normalized()
 	var lean := Basis(Quaternion(Vector3.UP, tilt))
@@ -965,13 +996,17 @@ func _grow(data: Array[PackedFloat32Array], hit: Vector3, normal: Vector3, kind:
 			variant = 2 if pick < 0.6 else 1
 		var yaw := _unit(tuft_seed, 3) * TAU
 		var turn_seed := hash(tuft_seed)
-		var size := lerpf(LookProfile.GRASS_SCALE.x, LookProfile.GRASS_SCALE.y, _unit(turn_seed, 0))
+		var size := lerpf(LookProfile.GRASS_SCALE.x, LookProfile.GRASS_SCALE.y,
+			_unit(turn_seed, 0)) * grown
 		var turn := (lean * Basis(Vector3.UP, yaw)).scaled(Vector3.ONE * size)
 		var jitter := (_unit(turn_seed, 1) - 0.5) * 2.0 * LookProfile.GRASS_VALUE_JITTER
 		var warmth := clampf(tone + (_unit(turn_seed, 2) - 0.5) * 0.4, -1.0, 1.0)
 		var tint := Color.WHITE.lerp(warm, warmth) if warmth >= 0.0 \
 			else Color.WHITE.lerp(Color(1.0 / warm.r, 1.0 / warm.g, 1.0 / warm.b), -warmth)
 		tint *= 1.0 + jitter
+		if kind == Ground.VERGE:
+			tint *= LookProfile.GRASS_VERGE_SHADE
+		tint = Color(tint.r * ground.r, tint.g * ground.g, tint.b * ground.b)
 		var phase := fposmod((origin.x * wind.x + origin.z * wind.y)
 			/ LookProfile.GRASS_WIND_WAVE_METRES, 1.0)
 		data[variant].append_array(PackedFloat32Array([
@@ -982,6 +1017,47 @@ func _grow(data: Array[PackedFloat32Array], hit: Vector3, normal: Vector3, kind:
 			float(palette), 0.0, 0.0, phase]))
 	_count("tufts_" + GROUND_NAMES[kind], tufts)
 	return tufts
+
+## The ground paint's mottle at `xz` (the continent frame, as the paint's own
+## mesh space is) as a colour multiplier: its low-frequency value and warmth
+## variation and its fine verge mottle (painted_ground_paint.gdshaderinc,
+## look_paint), on the colour as the renderer lights it (display-encoded in
+## the compatibility renderer, linear in Forward+).
+static func ground_mottle(xz: Vector2) -> Color:
+	var coarse := xz / LookProfile.VARIATION_METRES
+	var variation := 0.65 * paint_noise(coarse) \
+		+ 0.35 * paint_noise(coarse * 2.7 + Vector2(13.1, 7.7)) - 0.5
+	var value := (1.0 + variation * 2.0 * LookProfile.VARIATION) \
+		* (1.0 + (paint_noise(xz / LookProfile.VERGE_FINE_METRES + Vector2(5.3, 2.1)) - 0.5)
+			* 2.0 * LookProfile.VERGE_FINE)
+	var warm := variation * 2.0 * LookProfile.VARIATION_HUE
+	var mottle := Color(value * (1.0 + warm), value, value * (1.0 - warm))
+	if not LookProfile.forward_plus():
+		var encode := 1.0 / 2.2
+		mottle = Color(pow(maxf(mottle.r, 0.0), encode), pow(maxf(mottle.g, 0.0), encode),
+			pow(maxf(mottle.b, 0.0), encode))
+	return mottle
+
+## The paint's value noise (look_value_noise): Dave Hoskins' hash on the
+## lattice, smoothly interpolated. Matches the shader to within its float
+## precision.
+static func paint_noise(p: Vector2) -> float:
+	var cell := p.floor()
+	var f := p - cell
+	var u := f * f * (Vector2(3.0, 3.0) - 2.0 * f)
+	var a := paint_hash(cell)
+	var b := paint_hash(cell + Vector2(1.0, 0.0))
+	var c := paint_hash(cell + Vector2(0.0, 1.0))
+	var d := paint_hash(cell + Vector2(1.0, 1.0))
+	return lerpf(lerpf(a, b, u.x), lerpf(c, d, u.x), u.y)
+
+## The paint's look_hash.
+static func paint_hash(p: Vector2) -> float:
+	var p3 := Vector3(fposmod(p.x * 0.1031, 1.0), fposmod(p.y * 0.1031, 1.0),
+		fposmod(p.x * 0.1031, 1.0))
+	var lift := p3.dot(Vector3(p3.y + 33.33, p3.z + 33.33, p3.x + 33.33))
+	p3 += Vector3(lift, lift, lift)
+	return fposmod((p3.x + p3.y) * p3.z, 1.0)
 
 ## Fills the MultiMeshes from the tiles nearest the focus until the budget.
 func _assemble(now: int) -> void:

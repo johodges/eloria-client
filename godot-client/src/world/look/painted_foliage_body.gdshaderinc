@@ -6,6 +6,10 @@
 // tint, UVs, cutout and surface (normal, roughness, metallic and occlusion
 // maps, see look_standard_surface.gdshaderinc), and painting it:
 //
+// - the crown lit as one volume: its shading normal is mostly the normal of
+//   the ellipsoid its box holds, so the sun falls across the whole crown,
+//   top-lit, instead of lighting and darkening every leaf card on its own
+//   (which drew each card's edge dark and a crown as a heap of cards);
 // - a top light across the crown's height in mesh space, warm and lifted on
 //   top, cool and deep underneath (and on the trunk below the crown);
 // - fake occlusion towards the crown's centre, so its inner leaves and the
@@ -27,8 +31,8 @@
 // mode: opaque (kit trees) or alpha-cut (LOOK_FOLIAGE_CUTOUT), and resting
 // or faded (LOOK_FOLIAGE_FADE). Only a faded copy - one OccluderFade swaps in
 // while the crown stands between the camera and the player - carries the
-// dither's discard, so a resting opaque crown keeps the engine's early depth
-// test.
+// discard that opens a hole round the player (look_fade_hole.gdshaderinc), so
+// a resting opaque crown keeps the engine's early depth test.
 //
 // The compatibility renderer shades in sRGB: albedo arrives gamma-encoded
 // there and linear in Forward+ (see painted_ground_paint.gdshaderinc). Every
@@ -38,6 +42,9 @@
 // Albedo, normal, roughness, metallic, occlusion, emission and UV scale as
 // the source material had them.
 #include "res://src/world/look/look_standard_surface.gdshaderinc"
+#ifdef LOOK_FOLIAGE_FADE
+#include "res://src/world/look/look_fade_hole.gdshaderinc"
+#endif
 
 uniform float alpha_scissor_threshold = 0.5;
 
@@ -69,9 +76,15 @@ uniform float look_tame_hue_top = 9.0;
 uniform float look_tame_hue_under = -5.0;
 uniform float look_tame_value = 0.8;
 uniform vec2 look_tame_value_from = vec2(0.5, 0.9);
+// How much of the shading normal is the crown's ellipsoid rather than the
+// leaf card's own (0 the card, 1 the ellipsoid).
+uniform float look_crown_volume = 0.7;
+uniform float look_crown_volume_lift = 0.35;
 uniform float look_sway_metres = 0.07;
 uniform float look_sway_speed = 1.1;
-// The occluder fade's opacity, driven by OccluderFade on a faded copy.
+// The occluder fade's opacity, driven by OccluderFade on a faded copy. Kept
+// as a record of the fade; the faded variants cut the hole look_fade_open
+// opens instead (look_fade_hole.gdshaderinc).
 uniform float look_fade = 1.0;
 
 // A hash of the crown's position in its region (0..1), set by LookFoliage
@@ -86,6 +99,8 @@ varying float look_crown_height;
 varying float look_crown_radial;
 varying flat float look_crown_seed;
 varying vec3 look_crown_position;
+// The crown ellipsoid's normal at the vertex, in view space.
+varying vec3 look_crown_normal;
 
 float look_foliage_hash(vec2 p) {
 	vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -147,11 +162,6 @@ vec3 look_foliage_rgb(vec3 c) {
 	return c.z * mix(vec3(1.0), clamp(p - vec3(1.0), 0.0, 1.0), c.y);
 }
 
-// Interleaved gradient noise on the screen: the screen-door the fade cuts.
-float look_foliage_dither(vec2 fragment) {
-	return fract(52.9829189 * fract(dot(fragment, vec2(0.06711056, 0.00583715))));
-}
-
 void vertex() {
 	UV = UV * uv1_scale.xy + uv1_offset.xy;
 	vec3 size = max(look_crown_max - look_crown_min, vec3(0.001));
@@ -160,6 +170,14 @@ void vertex() {
 	look_crown_radial = length((VERTEX - centre) / (size * 0.5));
 	look_crown_position = VERTEX;
 	look_crown_seed = fract(look_seed + float(INSTANCE_ID) * 0.6180339);
+	// MODELVIEW_MATRIX carries a batch instance's own transform here.
+	// The position on the crown's box, normalised, leaning up by
+	// look_crown_volume_lift: a painter's crown is lit from above, and a tall
+	// fir's true ellipsoid normals face sideways all the way up.
+	vec3 shell = (VERTEX - centre) / (size * 0.5);
+	shell.y += look_crown_volume_lift;
+	look_crown_normal = normalize((MODELVIEW_MATRIX * vec4(shell, 0.0)).xyz
+		+ vec3(0.0, 0.00001, 0.0));
 	// Sway: weighted by the square of the height above the mesh's foot.
 	float rise = clamp((VERTEX.y - look_mesh_foot)
 		/ max(look_crown_max.y - look_mesh_foot, 0.001), 0.0, 1.0);
@@ -212,7 +230,7 @@ vec3 look_foliage_paint(vec3 albedo) {
 void fragment() {
 	vec4 texel = texture(albedo_texture, UV);
 #ifdef LOOK_FOLIAGE_FADE
-	if (look_fade < 0.999 && look_foliage_dither(FRAGCOORD.xy) >= look_fade) {
+	if (look_fade_cut(VERTEX, VIEW_MATRIX, PROJECTION_MATRIX, FRAGCOORD.xy)) {
 		discard;
 	}
 #endif
@@ -221,6 +239,10 @@ void fragment() {
 	ALPHA = texel.a * albedo_color.a;
 	ALPHA_SCISSOR_THRESHOLD = alpha_scissor_threshold;
 #endif
+	// The crown's volume normal, from the crown up (a kit tree's trunk keeps
+	// its own).
+	float volume = look_crown_volume * smoothstep(-0.04, 0.04, look_crown_height);
+	NORMAL = normalize(mix(NORMAL, normalize(look_crown_normal), volume));
 	vec4 surface = look_standard_surface(UV);
 	ROUGHNESS = surface.x;
 	METALLIC = surface.y;

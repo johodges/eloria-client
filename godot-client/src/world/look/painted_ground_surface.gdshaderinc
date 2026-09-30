@@ -41,13 +41,18 @@ uniform float look_rim_noise_metres = 0.9;
 // Darkening beyond a road's edge, and the vertex alpha where it begins.
 uniform float look_edge_band = 0.0;
 uniform float look_edge_band_from = 0.1;
+// The band's strength where the road runs through pale paving: a curb.
+uniform float look_edge_band_paving = 0.0;
 uniform float look_edge_band_push = 0.03;
-// The occluder fade's opacity (LookFade): OccluderFade drives it on a faded
-// copy, which then discards the pixels a screen-door pattern puts above it.
-// With the pass on the ground is never indexed as an occluder, so this is the
-// safety net that keeps a painted ground surface from staying solid if it
-// ever is.
+// The occluder fade (LookFade): OccluderFade drives look_fade_open on a
+// faded copy, which then opens the hole round the player that every faded
+// look material cuts (look_fade_hole.gdshaderinc). With the pass on the
+// ground is never indexed as an occluder, so this is the safety net that
+// keeps a painted ground surface from staying solid if it ever is.
 uniform float look_fade = 1.0;
+#ifdef LOOK_GROUND_ALPHA
+#include "res://src/world/look/look_fade_hole.gdshaderinc"
+#endif
 uniform sampler2D normal_texture : hint_normal, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform bool has_normal_texture = false;
 uniform float normal_scale = 1.0;
@@ -99,8 +104,7 @@ void fragment() {
 		NORMAL_MAP_DEPTH = normal_scale;
 	}
 #ifdef LOOK_GROUND_ALPHA
-	if (look_fade < 0.999 && fract(52.9829189 * fract(dot(FRAGCOORD.xy,
-			vec2(0.06711056, 0.00583715)))) >= look_fade) {
+	if (look_fade_cut(VERTEX, VIEW_MATRIX, PROJECTION_MATRIX, FRAGCOORD.xy)) {
 		discard;
 	}
 	float coverage = 1.0;
@@ -110,7 +114,8 @@ void fragment() {
 			- 0.5) * 2.0 * look_rim.z;
 		coverage = smoothstep(look_rim.x - look_rim.y, look_rim.x + look_rim.y, weight);
 		if (look_debug == 0) {
-			band = look_edge_band * (1.0 - coverage)
+			band = mix(look_edge_band, look_edge_band_paving,
+					look_paving_at(look_ground_xz)) * (1.0 - coverage)
 				* smoothstep(look_edge_band_from, look_edge_band_from + 0.1, weight);
 		}
 	}

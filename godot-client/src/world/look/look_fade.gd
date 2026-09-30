@@ -1,36 +1,41 @@
 class_name LookFade
 extends RefCounted
-## Look pass layer L3: occluders dither out instead of blending. Used by
-## OccluderFade only when LookProfile.enabled(); with the pass off OccluderFade
-## blends exactly as it does on develop.
+## Look pass layer L3: occluders open a hole round the player instead of
+## blending. Used by OccluderFade only when LookProfile.enabled(); with the
+## pass off OccluderFade blends exactly as it does on develop.
 ##
 ## OccluderFade fades an obstacle by swapping in a copy of its material that
 ## alpha-blends towards FADED_ALPHA. A blended surface stops writing depth, so
 ## a faded crown's hundreds of overlapping leaf cards sort against each other
 ## and against the ground and read as a brown smear, and a roof loses its own
-## shading under the blend. A screen-door keeps both: each pixel is the
-## occluder, lit and depth-tested as always, or a hole onto what lies behind.
-## The fade's timing and opacity are OccluderFade's, unchanged; only the
-## material it swaps in differs.
+## shading under the blend. The pass first dithered the whole occluder
+## instead, a one-pixel screen-door at 35 % coverage, which read as a
+## crosshatched window screen over up to a fifth of the frame. Now the
+## occluder stays solid, lit and depth-tested as always, and a round hole
+## with a dithered rim opens where it covers the player
+## (look_fade_hole.gdshaderinc), as the reference frames' crown fade cuts one.
+## The fade's timing is OccluderFade's, unchanged: it opens the hole.
 ##
 ## - A painted look material (LookFoliage's crowns, LookGround's blended
 ##   ground) names its dithered variant in FADED_SHADER_META; the copy
-##   switches to that shader and OccluderFade drives its `look_fade`.
+##   switches to that shader and OccluderFade opens its hole.
 ## - A StandardMaterial3D is copied into look_faded_standard.gdshader, which
-##   draws what the engine would draw for it and dithers by `look_fade`. The
+##   draws what the engine would draw for it and cuts the hole. The
 ##   engine's own dither for it, hashed alpha, is ignored by the compatibility
 ##   renderer (its copies drew fully opaque there). A material using a feature
 ##   that shader does not reproduce keeps develop's blended copy.
 ## - Any other ShaderMaterial is left solid, as on develop.
 ##
-## Every one of them cuts the same screen-door (interleaved gradient noise on
-## FRAGCOORD), and only the faded copies carry its discard, so a resting
-## surface keeps the engine's early depth test.
+## Every one of them cuts the same hole, and only the faded copies carry its
+## discard, so a resting surface keeps the engine's early depth test.
 ##
-## A dithered surface would also cast a dithered shadow - a crown overhead
-## would let a third of the sun through for as long as it is faded - so while
-## a mesh fades it stops casting and a shadow-only twin with its resting
-## materials casts in its place.
+## A faded copy would cast its hole into its shadow too, so while a mesh fades
+## it stops casting. A wall or a roof hands its shadow to a shadow-only twin
+## with its resting materials, because a room lighting up as the player walks
+## in reads as a bug. A crown casts none, as develop's blended copies cast
+## none: the twin held a giant canopy's whole shadow over the player and took
+## the deep grove from luminance 80 to 64 (53 in Forward+), the darkest frame
+## of the pass, where walking under a tree on develop lights the ground.
 ##
 ## The ground never fades. Develop has no walk collision on the continent's
 ## authored ground patches, so the patch a player stands on was indexed as an
@@ -42,11 +47,18 @@ const SHADER_STANDARD_TWO_SIDED := preload("res://src/world/look/look_faded_stan
 
 ## On a painted material: the Shader its faded copy switches to.
 const FADED_SHADER_META := &"look_faded_shader"
-## On a shadow twin: the cast_shadow setting to give back to its mesh.
+## On a fading mesh: the cast_shadow setting to give back to it.
 const SHADOW_META := &"look_fade_shadow"
 const SHADOW_TWIN_NAME := &"LookFadeShadow"
-## The uniform a dithered material reads its opacity from.
+## The uniform a dithered material records its opacity in.
 const FADE_PARAMETER := &"look_fade"
+## The uniforms that open its hole, and centre it.
+const OPEN_PARAMETER := &"look_fade_open"
+const FOCUS_PARAMETER := &"look_fade_focus"
+
+## Where the holes are centred this frame: the local player's chest, handed
+## over by OccluderFade.update before it animates its fades.
+static var focus := Vector3.ZERO
 
 ## BaseMaterial3D.TextureChannel as the vector look_faded_standard dots a
 ## texel with.
@@ -58,10 +70,14 @@ static func keeps_solid(node_name: String) -> bool:
 	return LookGround.kind_of(node_name) != LookGround.Kind.NONE
 
 ## A dithered copy of `source` for OccluderFade to fade by, or null when it
-## has none (OccluderFade then does what develop does).
-static func dither_copy(source: Material) -> ShaderMaterial:
+## has none (OccluderFade then does what develop does). Its hole is sized for
+## `node`, the mesh it fades (see hole_metres).
+static func dither_copy(source: Material, node: MeshInstance3D = null) -> ShaderMaterial:
 	if source is BaseMaterial3D:
-		return _dithered_standard(source as BaseMaterial3D)
+		var standard := _dithered_standard(source as BaseMaterial3D)
+		if standard != null:
+			_size_hole(standard, node)
+		return standard
 	var painted := source as ShaderMaterial
 	if painted == null or not painted.has_meta(FADED_SHADER_META):
 		return null
@@ -70,12 +86,44 @@ static func dither_copy(source: Material) -> ShaderMaterial:
 		return null
 	var copy := painted.duplicate() as ShaderMaterial
 	copy.shader = faded_shader
-	copy.set_shader_parameter(FADE_PARAMETER, 1.0)
+	_set_hole(copy)
+	_size_hole(copy, node)
 	return copy
 
-## Sets a dithered copy's opacity (1 solid, 0 gone).
-static func write(copy: ShaderMaterial, opacity: float) -> void:
+## The hole's radius for an occluder: FADE_HOLE_METRES, or a share of a
+## larger occluder's width. A giant canopy the camera looks down through
+## covered most of the frame round a hole sized for a player, as a ceiling of
+## flat leaf cards; opened by a fifth of its width it reads as a gap in the
+## crown, with the canopy round the frame's edges.
+static func hole_metres(node: MeshInstance3D) -> float:
+	if node == null or node.mesh == null:
+		return LookProfile.FADE_HOLE_METRES
+	var size := node.mesh.get_aabb().size
+	var scale := node.transform.basis.get_scale()
+	if node.is_inside_tree():
+		scale = node.global_transform.basis.get_scale()
+	var width := maxf(size.x * absf(scale.x), size.z * absf(scale.z))
+	return clampf(width * LookProfile.FADE_HOLE_SHARE, LookProfile.FADE_HOLE_METRES,
+		LookProfile.FADE_HOLE_MAX_METRES)
+
+## Sets a dithered copy's opacity (1 solid, 0 gone), how far its hole is open
+## (the fade's progress, 0..1) and where it is centred.
+static func write(copy: ShaderMaterial, opacity: float, open := 1.0) -> void:
 	copy.set_shader_parameter(FADE_PARAMETER, clampf(opacity, 0.0, 1.0))
+	copy.set_shader_parameter(OPEN_PARAMETER, clampf(open, 0.0, 1.0))
+	copy.set_shader_parameter(FOCUS_PARAMETER, focus)
+
+## True when `node` draws a painted crown (LookFoliage): a crown fades without
+## a shadow, as develop's blended copies do.
+static func is_crown(node: MeshInstance3D) -> bool:
+	if node.material_override != null:
+		return node.material_override.has_meta(LookFoliage.PAINTED_META)
+	var surfaces := 0 if node.mesh == null else node.mesh.get_surface_count()
+	for surface: int in surfaces:
+		var material := node.get_active_material(surface)
+		if material != null and material.has_meta(LookFoliage.PAINTED_META):
+			return true
+	return false
 
 ## True when look_faded_standard draws `material` as the engine does.
 static func reproduces(material: BaseMaterial3D) -> bool:
@@ -129,8 +177,24 @@ static func _dithered_standard(source: BaseMaterial3D) -> ShaderMaterial:
 	copy.set_shader_parameter(&"vertex_albedo_srgb", source.vertex_color_is_srgb)
 	copy.set_shader_parameter(&"alpha_mode", alpha_mode)
 	copy.set_shader_parameter(&"alpha_scissor_threshold", source.alpha_scissor_threshold)
-	copy.set_shader_parameter(FADE_PARAMETER, 1.0)
+	_set_hole(copy)
 	return copy
+
+## A fresh faded copy: whole, its hole's size from LookProfile.
+static func _set_hole(copy: ShaderMaterial) -> void:
+	copy.set_shader_parameter(FADE_PARAMETER, 1.0)
+	copy.set_shader_parameter(OPEN_PARAMETER, 0.0)
+	copy.set_shader_parameter(FOCUS_PARAMETER, focus)
+	copy.set_shader_parameter(&"look_fade_hole_metres", LookProfile.FADE_HOLE_METRES)
+	copy.set_shader_parameter(&"look_fade_rim_metres", LookProfile.FADE_RIM_METRES)
+	copy.set_shader_parameter(&"look_fade_behind_metres", LookProfile.FADE_BEHIND_METRES)
+
+## Sizes a faded copy's hole, and its rim with it, for the mesh it fades.
+static func _size_hole(copy: ShaderMaterial, node: MeshInstance3D) -> void:
+	var radius := hole_metres(node)
+	copy.set_shader_parameter(&"look_fade_hole_metres", radius)
+	copy.set_shader_parameter(&"look_fade_rim_metres",
+		maxf(LookProfile.FADE_RIM_METRES, radius * LookProfile.FADE_RIM_SHARE))
 
 ## Fills the uniforms of look_standard_surface.gdshaderinc (albedo, normal,
 ## roughness, metallic, occlusion, emission, UV scale) on `target` from
@@ -161,14 +225,20 @@ static func copy_standard_surface(source: BaseMaterial3D, target: ShaderMaterial
 	target.set_shader_parameter(&"uv1_scale", source.uv1_scale)
 	target.set_shader_parameter(&"uv1_offset", source.uv1_offset)
 
-## Hands `node`'s shadow to a shadow-only twin drawing its current (resting)
-## materials, and stops `node` casting. Call before the faded copies go in.
-## Returns the twin, or null when the node casts no shadow.
+## Stops `node` casting while it fades, and hands a wall's or roof's shadow
+## to a shadow-only twin drawing its current (resting) materials; a crown gets
+## no twin (see the header). Call before the faded copies go in. Returns the
+## twin, or null when there is none.
 static func hold_shadow(node: MeshInstance3D) -> MeshInstance3D:
 	if not is_instance_valid(node) or node.mesh == null:
 		return null
 	if node.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF \
 			or node.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
+		return null
+	node.set_meta(SHADOW_META, node.cast_shadow)
+	var crown := is_crown(node)
+	node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	if crown:
 		return null
 	var twin := MeshInstance3D.new()
 	twin.name = SHADOW_TWIN_NAME
@@ -178,19 +248,19 @@ static func hold_shadow(node: MeshInstance3D) -> MeshInstance3D:
 		twin.set_surface_override_material(surface, node.get_surface_override_material(surface))
 	twin.layers = node.layers
 	twin.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
-	twin.set_meta(SHADOW_META, node.cast_shadow)
 	node.add_child(twin)
-	node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	return twin
 
-## Gives `node` its shadow back and takes the twin out of the tree at once (a
-## twin left for the frame a queue_free takes would double the shadow).
+## Gives `node` its shadow back and takes any twin out of the tree at once (a
+## twin left for the frame a queue_free takes would double the shadow). Either
+## may be null: a node freed with its map, a crown that has no twin.
 static func release_shadow(node: MeshInstance3D, twin: MeshInstance3D) -> void:
-	if twin == null or not is_instance_valid(twin):
+	if node != null and node.has_meta(SHADOW_META):
+		node.cast_shadow = int(node.get_meta(SHADOW_META)) \
+			as GeometryInstance3D.ShadowCastingSetting
+		node.remove_meta(SHADOW_META)
+	if twin == null:
 		return
-	if is_instance_valid(node):
-		node.cast_shadow = int(twin.get_meta(SHADOW_META,
-			GeometryInstance3D.SHADOW_CASTING_SETTING_ON)) as GeometryInstance3D.ShadowCastingSetting
 	var parent := twin.get_parent()
 	if parent != null:
 		parent.remove_child(twin)

@@ -6,9 +6,10 @@ extends SceneTree
 ## painted (never trunks, ground or a merged scatter mesh), the source
 ## materials and meshes are never edited, painting twice is harmless, a
 ## crown's jitter seed does not move when the world is rebased, a batch and
-## its hidden members draw the same crown, and OccluderFade dithers painted
-## and standard materials out, keeps the mesh's shadow on a twin while it
-## does, and puts everything back after.
+## its hidden members draw the same crown, and OccluderFade opens a hole round
+## the player in painted and standard materials, lets a faded crown's shadow go
+## (as develop's blended copies do) but keeps a wall's on a twin, and puts
+## everything back after.
 
 var failures := 0
 
@@ -188,18 +189,23 @@ func _run() -> void:
 	_expect(faded != null and faded.get_shader_parameter(&"look_crown_max")
 			== canopy_paint.get_shader_parameter(&"look_crown_max"),
 		"and the copy keeps the crown's paint")
-	var shadow := canopy.get_node_or_null(NodePath(String(LookFade.SHADOW_TWIN_NAME))) as MeshInstance3D
-	_expect(shadow != null
-		and shadow.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
-		and shadow.get_surface_override_material(0) == canopy_paint
+	_expect(canopy.get_node_or_null(NodePath(String(LookFade.SHADOW_TWIN_NAME))) == null
 		and canopy.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF,
-		"while it fades a twin casts its resting shadow and it casts none")
+		"while a crown fades it casts no shadow and has no twin, as on develop")
+	_expect(faded != null and is_zero_approx(float(faded.get_shader_parameter(&"look_fade_open")))
+		and is_equal_approx(float(faded.get_shader_parameter(&"look_fade_hole_metres")),
+			LookProfile.FADE_HOLE_METRES),
+		"a fresh faded copy starts whole, with the profile's hole")
+	LookFade.focus = Vector3(1.0, 2.0, 3.0)
 	fade.fade = 1.0
 	fade.write_alpha()
 	_expect(is_equal_approx(float(faded.get_shader_parameter(&"look_fade")),
-			OccluderFade.FADED_ALPHA),
-		"the fade drives the dither to FADED_ALPHA")
-	_expect(is_equal_approx(float(canopy_paint.get_shader_parameter(&"look_fade")), 1.0),
+			OccluderFade.FADED_ALPHA)
+		and is_equal_approx(float(faded.get_shader_parameter(&"look_fade_open")), 1.0)
+		and faded.get_shader_parameter(&"look_fade_focus") == Vector3(1.0, 2.0, 3.0),
+		"the fade opens the hole at the focus")
+	_expect(is_equal_approx(float(canopy_paint.get_shader_parameter(&"look_fade")), 1.0)
+		and canopy_paint.get_shader_parameter(&"look_fade_open") == null,
 		"the shared painted material is never faded")
 	fade.restore()
 	_expect(canopy.get_surface_override_material(0) == canopy_paint
@@ -217,12 +223,22 @@ func _run() -> void:
 	var standard := wood.get_surface_override_material(0) as ShaderMaterial
 	_expect(standard != null and standard.shader == LookFade.SHADER_STANDARD,
 		"a faded one-sided StandardMaterial3D dithers through look_faded_standard")
+	var wood_shadow := wood.get_node_or_null(NodePath(String(LookFade.SHADOW_TWIN_NAME))) as MeshInstance3D
+	_expect(wood_shadow != null
+		and wood_shadow.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+		and wood_shadow.get_surface_override_material(0) == null
+		and wood.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF,
+		"while a wall or trunk fades a twin casts its resting shadow and it casts none")
 	_expect(standard != null
 		and is_equal_approx(float(standard.get_shader_parameter(&"normal_scale")), 0.7)
 		and is_equal_approx(float(standard.get_shader_parameter(&"roughness_value")), 0.6)
 		and standard.get_shader_parameter(&"roughness_channel") == Vector4(0, 1, 0, 0),
 		"and carries the source's own properties")
 	wood_fade.restore()
+	_expect(wood.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		and wood.get_node_or_null(NodePath(String(LookFade.SHADOW_TWIN_NAME))) == null
+		and not wood.has_meta(LookFade.SHADOW_META),
+		"restoring gives the wall its own shadow back and drops the twin")
 	var triplanar := StandardMaterial3D.new()
 	triplanar.uv1_triplanar = true
 	_expect(LookFade.dither_copy(triplanar) == null,

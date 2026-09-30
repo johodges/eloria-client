@@ -188,7 +188,10 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh,
 	painted.set_shader_parameter(&"look_crown_light_power", LookProfile.CROWN_LIGHT_POWER)
 	painted.set_shader_parameter(&"look_crown_core", LookProfile.CROWN_CORE)
 	painted.set_shader_parameter(&"look_crown_core_edge", LookProfile.CROWN_CORE_EDGE)
-	painted.set_shader_parameter(&"look_crown_clump_metres", LookProfile.CROWN_CLUMP_METRES)
+	# The lobes are sized to the crown, in its own mesh units: a kit tree's
+	# mesh is scaled by its node, and a giant canopy has larger lobes.
+	painted.set_shader_parameter(&"look_crown_clump_metres", maxf(
+		maxf(box.size.x, box.size.z) / LookProfile.CROWN_LOBES, 0.001))
 	painted.set_shader_parameter(&"look_crown_clump", LookProfile.CROWN_CLUMP)
 	painted.set_shader_parameter(&"look_crown_jitter_hue", LookProfile.CROWN_JITTER_HUE)
 	painted.set_shader_parameter(&"look_crown_jitter_value", LookProfile.CROWN_JITTER_VALUE)
@@ -202,6 +205,8 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh,
 	painted.set_shader_parameter(&"look_tame_hue_under", LookProfile.TAME_HUE_UNDER)
 	painted.set_shader_parameter(&"look_tame_value", LookProfile.TAME_VALUE)
 	painted.set_shader_parameter(&"look_tame_value_from", LookProfile.TAME_VALUE_FROM)
+	painted.set_shader_parameter(&"look_crown_volume", LookProfile.CROWN_VOLUME)
+	painted.set_shader_parameter(&"look_crown_volume_lift", LookProfile.CROWN_VOLUME_LIFT)
 	painted.set_shader_parameter(&"look_sway_metres", LookProfile.CROWN_SWAY_METRES)
 	painted.set_shader_parameter(&"look_sway_speed", LookProfile.CROWN_SWAY_SPEED)
 	painted.set_shader_parameter(&"look_seed", seed)

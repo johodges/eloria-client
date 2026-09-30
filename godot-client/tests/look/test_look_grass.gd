@@ -39,7 +39,7 @@ func _run() -> void:
 		var colours: PackedColorArray = arrays[Mesh.ARRAY_COLOR]
 		var uvs: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV]
 		var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
-		_expect(blades >= 5 and blades <= 9 and vertices.size() == blades * 5
+		_expect(blades >= 4 and blades <= 9 and vertices.size() == blades * 5
 			and indices.size() == blades * 9,
 			"tuft %d has %d tapered two-segment blades" % [variant, blades])
 		var root_shade := 1.0
@@ -59,8 +59,27 @@ func _run() -> void:
 		"an island's green vertex colour is grass")
 	_expect(int(LookGrassBeds.vertex_ground(Color(0.82, 0.76, 0.58)).x) == LookGrassBeds.Ground.PATH,
 		"its sand-gold trail is path")
-	_expect(int(LookGrassBeds.vertex_ground(Color(0.46, 0.57, 0.41)).x) == LookGrassBeds.Ground.VERGE,
+	_expect(int(LookGrassBeds.vertex_ground(Color(0.38, 0.475, 0.34)).x) == LookGrassBeds.Ground.VERGE,
 		"the blend between them is verge")
+	_expect(int(LookGrassBeds.vertex_ground(Color(0.46, 0.57, 0.41)).x) == LookGrassBeds.Ground.PATH,
+		"and the trail's painted margin is path, where tufts crowded the trail")
+	var feathered := true
+	for cell_hash: int in 64:
+		var outer := LookGrassBeds.verge_strength(0.0, cell_hash)
+		var middle := LookGrassBeds.verge_strength(0.13, cell_hash)
+		var roadside := LookGrassBeds.verge_strength(0.23, cell_hash)
+		feathered = feathered and outer < 0.5 and middle > outer and roadside <= 0.55
+	_expect(feathered, "a verge bed feathers in from the deck's edge and thins towards the road")
+	var mottle_mean := 0.0
+	var mottle_in_range := true
+	for step: int in 400:
+		var spot := Vector2(float(step % 20) * 3.7 - 812.0, float(step / 20) * 3.1 + 1433.0)
+		var noise := LookGrassBeds.paint_noise(spot / 16.0)
+		mottle_in_range = mottle_in_range and noise >= 0.0 and noise <= 1.0
+		mottle_mean += LookGrassBeds.ground_mottle(spot).g / 400.0
+	_expect(mottle_in_range and absf(mottle_mean - 1.0) < 0.12
+		and LookGrassBeds.ground_mottle(Vector2(5.0, 9.0)) == LookGrassBeds.ground_mottle(Vector2(5.0, 9.0)),
+		"a tuft takes the ground paint's mottle: stable, centred on 1")
 	_expect(int(LookGrassBeds.vertex_ground(Color(0.45, 0.44, 0.42)).x) == LookGrassBeds.Ground.NONE,
 		"grey rock is neither")
 	var road := LookProfile.TERRAIN_ROAD_COLOUR

@@ -53,9 +53,52 @@ const PAINT_INCLUDE := "res://src/world/look/painted_ground_paint.gdshaderinc"
 ## The line of the biome blend the paint is spliced onto.
 const BIOME_ALBEDO_LINE := "ALBEDO = color / total;"
 const BIOME_PAINTED_LINE := "if (look_debug > 0) { ALBEDO = vec3(0.0); " \
-	+ "EMISSION = look_debug_colour(color / total, vec3(1.0)); } " \
-	+ "else { ALBEDO = look_paint(color / total, color / total, vec3(1.0), " \
+	+ "EMISSION = look_debug_colour(%s, vec3(1.0)); } " \
+	+ "else { ALBEDO = look_paint(color / total, %s, vec3(1.0), " \
 	+ "continent_xz, abs((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).y)); }"
+## The paint weighs the biome by its mean colour at a spot, its layers' mean
+## texels (their smallest mips) mixed by the masks, as the other ground
+## classes are weighed by their texture's mean. Weighed by each texel instead,
+## the verge's depth (chosen by how green the colour is, over a narrow range)
+## followed the grain, darkening the greener texels and sparing the browner
+## ones, and drew the south gate's field as a camouflage mottle. Spliced in
+## before fragment() because it reads the blend's own samplers and tint
+## functions; a blend that no longer has them keeps the per-texel reference.
+const BIOME_REFERENCE_NAMES := ["region_weights", "secondary_weights", "base_tint_at(",
+	"secondary_tint_at(", "base_albedo_3", "secondary_albedo_3", "void fragment()"]
+const BIOME_REFERENCE_CALL := "look_biome_reference(region_weights, secondary_weights)"
+const BIOME_REFERENCE_FUNCTION := """
+// Look pass (layer L2): the blend's mean colour here, for weighing the paint.
+vec3 look_biome_mean(int index, bool secondary) {
+	if (secondary) {
+		if (index == 0) return textureLod(secondary_albedo_0, vec2(0.5), 16.0).rgb;
+		if (index == 1) return textureLod(secondary_albedo_1, vec2(0.5), 16.0).rgb;
+		if (index == 2) return textureLod(secondary_albedo_2, vec2(0.5), 16.0).rgb;
+		return textureLod(secondary_albedo_3, vec2(0.5), 16.0).rgb;
+	}
+	if (index == 0) return textureLod(base_albedo_0, vec2(0.5), 16.0).rgb;
+	if (index == 1) return textureLod(base_albedo_1, vec2(0.5), 16.0).rgb;
+	if (index == 2) return textureLod(base_albedo_2, vec2(0.5), 16.0).rgb;
+	return textureLod(base_albedo_3, vec2(0.5), 16.0).rgb;
+}
+
+vec3 look_biome_reference(vec4 weights, vec4 secondary) {
+	vec3 mean = vec3(0.0);
+	float total = 0.0;
+	for (int index = 0; index < 4; index++) {
+		float weight = max(weights[index], 0.0);
+		if (weight <= (1.0 / 255.0)) {
+			continue;
+		}
+		vec3 base = look_biome_mean(index, false) * base_tint_at(index);
+		vec3 other = look_biome_mean(index, true) * secondary_tint_at(index);
+		mean += mix(base, other, clamp(secondary[index], 0.0, 1.0)) * weight;
+		total += weight;
+	}
+	return mean / max(total, 0.00001);
+}
+
+"""
 
 ## Marks a material this layer made, so painting a root twice is harmless.
 const PAINTED_META := &"look_painted_ground"
@@ -155,6 +198,16 @@ static func is_paving(material: Material) -> bool:
 	return standard.albedo_color.v >= LookProfile.PAVING_TINT_VALUE \
 		and standard.albedo_color.s <= LookProfile.PAVING_TINT_SATURATION
 
+## Worn cobble or stone: a patch nearly as grey as paving if not as pale (the
+## east gate's forecourt), drawn solid rather than as a glaze
+## (LookProfile.COBBLE_TINT).
+static func is_cobble(material: Material) -> bool:
+	var standard := material as BaseMaterial3D
+	if standard == null or standard.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED:
+		return false
+	return standard.albedo_color.v >= LookProfile.COBBLE_TINT.x \
+		and standard.albedo_color.s <= LookProfile.COBBLE_TINT.y
+
 ## The continent-space bounds (min x, min z, max x, max z) of the pale paving
 ## among `ground`, the largest first. Mesh space is the continent frame (see
 ## painted_ground_surface.gdshaderinc), so a mesh's own AABB is enough and no
@@ -230,10 +283,16 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
 		rim = LookProfile.PAVING_RIM if is_paving(standard) else LookProfile.PATCH_RIM
 	painted.set_shader_parameter(&"look_rim", rim)
 	painted.set_shader_parameter(&"look_opacity",
-		LookProfile.PATCH_OPACITY if kind == Kind.PATCH and not is_paving(standard) else 1.0)
+		LookProfile.PATCH_OPACITY if kind == Kind.PATCH and not is_cobble(standard) else 1.0)
+	var surface_tint := LookProfile.PAVING_SURFACE_TINT \
+		if kind == Kind.PATCH and is_paving(standard) else Color.WHITE
+	painted.set_shader_parameter(&"look_surface_tint",
+		Vector3(surface_tint.r, surface_tint.g, surface_tint.b))
 	painted.set_shader_parameter(&"look_rim_noise_metres", LookProfile.RIM_NOISE_METRES)
 	painted.set_shader_parameter(&"look_edge_band",
 		LookProfile.EDGE_BAND if kind == Kind.DECK else 0.0)
+	painted.set_shader_parameter(&"look_edge_band_paving",
+		LookProfile.EDGE_BAND_PAVING if kind == Kind.DECK else 0.0)
 	painted.set_shader_parameter(&"look_edge_band_from", LookProfile.EDGE_BAND_FROM)
 	painted.set_shader_parameter(&"look_edge_band_push", LookProfile.EDGE_BAND_PUSH_METRES)
 	painted.set_shader_parameter(&"has_normal_texture",
@@ -284,7 +343,18 @@ static func _biome_painted_shader() -> Shader:
 			push_warning("look_ground: biome_blend.gdshader no longer has the line "
 				+ "the paint is spliced onto; the biome blend is left unpainted")
 		else:
-			code = code.replace(BIOME_ALBEDO_LINE, BIOME_PAINTED_LINE)
+			var reference := "color / total"
+			var fragment := code.find("void fragment()")
+			var spliceable := true
+			for needle: String in BIOME_REFERENCE_NAMES:
+				spliceable = spliceable and code.contains(needle)
+			if spliceable and code.count("void fragment()") == 1:
+				code = code.insert(fragment, BIOME_REFERENCE_FUNCTION)
+				reference = BIOME_REFERENCE_CALL
+			else:
+				push_warning("look_ground: biome_blend.gdshader's layers are not where the "
+					+ "paint expects them; the biome is weighed texel by texel")
+			code = code.replace(BIOME_ALBEDO_LINE, BIOME_PAINTED_LINE % [reference, reference])
 			code = code.insert(header_end + 1, "\n#include \"%s\"\n" % PAINT_INCLUDE)
 			var shader := Shader.new()
 			shader.code = code
@@ -328,6 +398,9 @@ static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool,
 	painted.set_shader_parameter(&"look_paving_inset", LookProfile.PAVING_INSET_METRES)
 	painted.set_shader_parameter(&"look_paving_luma", LookProfile.ROAD_UNDER_PAVING_LUMA)
 	painted.set_shader_parameter(&"look_paving_chroma", LookProfile.ROAD_UNDER_PAVING_CHROMA)
+	var paving_tint := LookProfile.ROAD_UNDER_PAVING_TINT
+	painted.set_shader_parameter(&"look_paving_tint",
+		Vector3(paving_tint.r, paving_tint.g, paving_tint.b))
 	painted.set_shader_parameter(&"look_compat_chroma", LookProfile.COMPAT_CHROMA)
 	painted.set_shader_parameter(&"look_yard_luma", LookProfile.YARD_LUMA)
 	painted.set_shader_parameter(&"look_yard_lift_max", LookProfile.YARD_LIFT_MAX)
@@ -338,6 +411,7 @@ static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool,
 	painted.set_shader_parameter(&"look_gold_value", LookProfile.GOLD_VALUE)
 	painted.set_shader_parameter(&"look_gold_chroma", LookProfile.GOLD_CHROMA)
 	painted.set_shader_parameter(&"look_gold_chroma_compat", LookProfile.GOLD_CHROMA_COMPAT)
+	painted.set_shader_parameter(&"look_gold_value_compat", LookProfile.GOLD_VALUE_COMPAT)
 	painted.set_shader_parameter(&"look_verge_value_green",
 		_trim(region, "verge_value_green", LookProfile.VERGE_VALUE_GREEN))
 	painted.set_shader_parameter(&"look_verge_value_earth",
@@ -347,6 +421,7 @@ static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool,
 	painted.set_shader_parameter(&"look_verge_green_red", LookProfile.VERGE_GREEN_RED)
 	painted.set_shader_parameter(&"look_verge_fine_metres", LookProfile.VERGE_FINE_METRES)
 	painted.set_shader_parameter(&"look_verge_fine", LookProfile.VERGE_FINE)
+	painted.set_shader_parameter(&"look_verge_grain", LookProfile.VERGE_GRAIN)
 	painted.set_shader_parameter(&"look_variation_metres", LookProfile.VARIATION_METRES)
 	painted.set_shader_parameter(&"look_variation", LookProfile.VARIATION)
 	painted.set_shader_parameter(&"look_variation_hue", LookProfile.VARIATION_HUE)

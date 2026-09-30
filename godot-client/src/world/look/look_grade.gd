@@ -47,7 +47,7 @@ static func _grade_tone(environment: Environment, declared: Dictionary,
 	var curve: Dictionary = LookProfile.tonemap_curve()
 	environment.tonemap_mode = int(curve.mode) as Environment.ToneMapper
 	environment.tonemap_exposure = float(curve.exposure) \
-		* LookProfile.map_trim(map_id, "exposure")
+		* LookProfile.map_trim(map_id, "exposure") * LookProfile.renderer_exposure()
 	environment.tonemap_white = float(curve.white)
 	if curve.has("agx_white"):
 		environment.tonemap_agx_white = float(curve.agx_white)

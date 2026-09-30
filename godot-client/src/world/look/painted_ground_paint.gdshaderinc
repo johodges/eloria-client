@@ -50,6 +50,11 @@ uniform int look_paving_count = 0;
 uniform float look_paving_inset = 3.0;
 uniform float look_paving_luma = 0.1;
 uniform float look_paving_chroma = 0.55;
+// The hue a road through the paving is painted in: warm cobble, not the
+// country road's dust.
+uniform vec3 look_paving_tint = vec3(0.72, 0.52, 0.4);
+// A last multiplier on the whole surface: the pale paving's warm step down.
+uniform vec3 look_surface_tint = vec3(1.0);
 uniform float look_compat_chroma = 1.25;
 uniform float look_yard_luma = 0.12;
 uniform float look_yard_lift_max = 2.0;
@@ -61,12 +66,15 @@ uniform float look_gold_saturation = 0.5;
 uniform float look_gold_value = 0.8;
 uniform float look_gold_chroma = 1.1;
 uniform float look_gold_chroma_compat = 1.5;
+uniform float look_gold_value_compat = 0.8;
 uniform float look_verge_value_green = 0.6;
 uniform float look_verge_value_earth = 0.8;
 uniform float look_verge_saturation = 1.08;
 uniform float look_verge_green_red = 0.9;
 uniform float look_verge_fine_metres = 4.0;
 uniform float look_verge_fine = 0.12;
+// How much of its texture's grain the verge keeps around its mean colour.
+uniform float look_verge_grain = 1.0;
 uniform float look_variation_metres = 16.0;
 uniform float look_variation = 0.2;
 uniform float look_variation_hue = 0.06;
@@ -235,7 +243,8 @@ vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float 
 	// Verge: deeper and a little richer by hue, with a painted mottle.
 	float verge_scale = mix(look_verge_value_earth, look_verge_value_green,
 		look_green(reference));
-	vec3 verge = look_saturate(albedo * verge_scale, look_verge_saturation);
+	vec3 verge = look_saturate(mix(reference, albedo, look_verge_grain) * verge_scale,
+		look_verge_saturation);
 	verge.r *= mix(1.0, look_verge_green_red, look_green(reference));
 	verge *= 1.0 + (look_value_noise(xz / look_verge_fine_metres + vec2(5.3, 2.1))
 		- 0.5) * 2.0 * look_verge_fine;
@@ -251,10 +260,12 @@ vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float 
 		* smoothstep(look_gold_saturation - 0.06, look_gold_saturation, hue.y);
 #if CURRENT_RENDERER == RENDERER_COMPATIBILITY
 	float gold_chroma = look_gold_chroma_compat;
+	float gold_value = look_gold_value_compat;
 #else
 	float gold_chroma = look_gold_chroma;
+	float gold_value = look_gold_value;
 #endif
-	colour = mix(colour, look_saturate(albedo * look_gold_value, gold_chroma), gold);
+	colour = mix(colour, look_saturate(albedo * gold_value, gold_chroma), gold);
 
 	// Yards keep their own colour and lift a little.
 	float yard_lift = clamp(look_yard_luma / luma, 1.0, look_yard_lift_max);
@@ -270,8 +281,8 @@ vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float 
 	float grain = pow(max(look_luma(albedo) / luma, 0.0), look_path_detail);
 	float fine = 1.0 + (look_value_noise(xz / look_path_fine_metres + vec2(3.7, 1.9))
 		- 0.5) * 2.0 * look_path_fine;
-	vec3 tint = look_tint(look_path_tint,
-		mix(look_path_chroma, look_paving_chroma, paving) * look_renderer_chroma());
+	vec3 tint = mix(look_tint(look_path_tint, look_path_chroma * look_renderer_chroma()),
+		look_tint(look_paving_tint, look_paving_chroma * look_renderer_chroma()), paving);
 	colour = mix(colour, tint * target * grain * fine, max(path, yard * paving));
 
 	float variation = look_variation_at(xz)
@@ -280,7 +291,7 @@ vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float 
 	colour *= vec3(1.0) + vec3(variation, 0.0, -variation) * 2.0 * look_variation_hue;
 	colour *= mix(look_slope_shade, 1.0,
 		smoothstep(look_slope_up.y, look_slope_up.x, up));
-	return look_from_linear(colour);
+	return look_from_linear(colour * look_surface_tint);
 }
 
 // What the debug views draw as emission (ALBEDO is black): 1, the class as

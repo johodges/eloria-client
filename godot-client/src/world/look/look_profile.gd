@@ -118,8 +118,15 @@ const AMBIENT_ENERGY_SCALE := 1.0
 ## (luminance 123 against 94 at 1.6: its sea goes pale turquoise and its
 ## grass pale), so a key with a `_forward` suffix trims that renderer alone.
 const MAP_TRIMS := {
-	"lantern_reach": {"exposure": 1.6, "exposure_forward": 1.2},
+	"lantern_reach": {"exposure": 1.6, "exposure_forward": 1.07},
 }
+## Forward+ draws the continent darker than the compatibility renderer does
+## (Four Gates luminance 92 against 123, Amberwood 58 against 72, mostly its
+## SSAO and linear lighting), so it takes this much more exposure everywhere.
+## A per-map trim cannot close the gap on the continent, whose regions share
+## one grade (Amberwood streams beside Four Gates); Lantern Reach's own trim
+## is divided by it (1.2 before it, 1.07 after).
+const FORWARD_EXPOSURE := 1.12
 
 ## Depth fog instead of the manifests' exponential haze. An exponential curve
 ## at the densities declared (0.0001-0.0007) is either invisible or a uniform
@@ -205,15 +212,20 @@ const PATH_FINE_METRES := 1.5
 const PATH_FINE := 0.12
 
 ## A road through pale paving (the Four Gates hub square) goes darker than the
-## paving instead of lighter: a mid-value warm cobble about 0.65 of the
-## paving's display value, as the reference city's gate road is (Y about 126
-## against its pale courts). Lifted like a country road, the hub's avenue
-## matched the plaza (168 against 178) and the square lost the dark ground its
-## monument stood on. Paving is recognised by its authored tint (see
-## PAVING_TINT_VALUE); a road counts as inside it this many metres in from the
-## paving's bounds, so it darkens as it enters the square rather than at a line.
-const ROAD_UNDER_PAVING_LUMA := 0.075
-const ROAD_UNDER_PAVING_CHROMA := 0.9
+## paving instead of lighter: a warm brick-brown cobble about 0.55 of the
+## paving's display value, as the reference fountain court lays a warm, darker
+## floor under its pale buildings. Lifted like a country road, the hub's
+## avenue matched the plaza (168 against 178) and the square lost the dark
+## ground its monument stood on; at 0.075 in the road's dusty stone it read as
+## a taupe-grey concrete strip (Y 121, saturation 0.2) and the square went
+## greige (value spread 35 against develop's 49). ROAD_UNDER_PAVING_TINT is its
+## hue (about 22 degrees, display saturation about 0.4 after the grade).
+## Paving is recognised by its authored tint (see PAVING_TINT_VALUE); a road
+## counts as inside it this many metres in from the paving's bounds, so it
+## darkens as it enters the square rather than at a line.
+const ROAD_UNDER_PAVING_LUMA := 0.046
+const ROAD_UNDER_PAVING_CHROMA := 1.0
+const ROAD_UNDER_PAVING_TINT := Color(0.74, 0.52, 0.4)
 const PAVING_INSET_METRES := 3.0
 ## An authored ground patch is pale stone paving when its tint is at least this
 ## bright and at most this saturated (the Four Gates crystal paving is #ccba9c,
@@ -221,6 +233,16 @@ const PAVING_INSET_METRES := 3.0
 ## east forecourt's worn cobble (#ad9e82, value 0.68) and the yards are not.
 const PAVING_TINT_VALUE := 0.75
 const PAVING_TINT_SATURATION := 0.3
+## The pale paving itself steps down a little and warms, so the square's
+## floor is not the brightest thing in it (the paving came out at Y 175 under
+## a cream monument base) and the warm cobble reads as part of it.
+const PAVING_SURFACE_TINT := Color(0.87, 0.83, 0.75)
+## A patch at least this bright (display value) and at most this saturated is
+## worn cobble or stone (the east gate's forecourt, #ad9e82): drawn solid, not
+## as a PATCH_OPACITY glaze, through which the grass beneath tinted its stone
+## green-grey. The grass layer keeps cobble bare by the same test
+## (GRASS_BARE_PATCH).
+const COBBLE_TINT := Vector2(0.6, 0.35)
 ## At most this many paving patches are handed to a root's roads, the largest
 ## first; a chunk holds two or three.
 const PAVING_RECTS_MAX := 8
@@ -254,11 +276,18 @@ const PALE_LUMA := Vector2(0.16, 0.3)
 ## washes painted chroma out and takes more: at 1.5 in both, Forward+ drove
 ## the trail to 159, 120, 15 while the compatibility renderer landed 201,
 ## 166, 85.
+## After the first pass the trail still read pale sand in the compatibility
+## renderer (199, 167, 92) and dull ochre in Forward+ (152, 122, 63), and the
+## island lost the coastal gold that was its signature; the reference gold is
+## about (215, 170, 60). Both take more chroma, Forward+ at the trail's full
+## value (its exposure trim is lower); the compatibility renderer keeps it
+## under AgX's highlight roll-off, which pales a brighter gold back to sand.
 const GOLD_HUE := Vector2(35.0, 56.0)
 const GOLD_SATURATION := 0.5
-const GOLD_VALUE := 0.8
-const GOLD_CHROMA := 1.1
-const GOLD_CHROMA_COMPAT := 1.5
+const GOLD_VALUE := 1.0
+const GOLD_VALUE_COMPAT := 0.78
+const GOLD_CHROMA := 1.45
+const GOLD_CHROMA_COMPAT := 2.6
 ## Grass, moss, forest floor: deeper and a little richer, so the paths have
 ## something to stand out against. Green grass deepens most, towards the
 ## reference's deep green; earthy verge (Amberwood's olive floor and moss,
@@ -280,6 +309,13 @@ const VERGE_GREEN_RED := 0.84
 ## south gate's field was 64 % of its frame in one flat lime.
 const VERGE_FINE_METRES := 4.0
 const VERGE_FINE := 0.12
+## The verge keeps this share of its texture's grain around the texture's
+## mean colour; the painted mottle and variation carry its variety instead.
+## Kept whole, the grass texture's fine grain came through the deeper verge
+## and the AgX curve as a camouflage mottle, the frame's busiest texture
+## after the grass beds (high-frequency energy 15 against 14 here, in the
+## south gate's field).
+const VERGE_GRAIN := 0.55
 ## Low-frequency painterly variation in continent space: two octaves of value
 ## noise, the coarse one this many metres across. It breaks the flat fields
 ## and the hard edges of repeated texture patches. VARIATION is the value swing
@@ -318,13 +354,17 @@ const RIM_NOISE_METRES := 0.9
 ## so where two coplanar road decks overlap the other road hides it rather
 ## than taking a dark line across its middle.
 const EDGE_BAND := 0.28
+## Where a road runs through pale paving its band is a curb, darker.
+const EDGE_BAND_PAVING := 0.45
 const EDGE_BAND_FROM := 0.1
 const EDGE_BAND_PUSH_METRES := 0.03
 
 ## Banks and cliffs darken with slope: from this world-up component of the
-## surface normal (about 20 degrees) to this one (about 52), down to
-## SLOPE_SHADE of their value.
-const SLOPE_UP := Vector2(0.94, 0.62)
+## surface normal (about 31 degrees) to this one (about 53), down to
+## SLOPE_SHADE of their value. The terrain's facets change slope at straight
+## cell edges, so shade that began at 20 degrees drew a gentle field's rise
+## as a straight step across the frame (ten levels at the south gate).
+const SLOPE_UP := Vector2(0.86, 0.6)
 const SLOPE_SHADE := 0.72
 ## The continent exporter paints its worn roads into the terrain's vertex
 ## colour as this linear colour (0.49, 0.435, 0.315 in sRGB, over the grain
@@ -346,8 +386,11 @@ const TERRAIN_ROAD_TOLERANCE := Vector2(0.12, 0.34)
 ## of the verge treatment a deep saturated green (sat 0.77 in its ground box,
 ## blue channel 17), above the reference's 0.51: it keeps more of its value
 ## and none of the extra chroma.
+## Amberwood's earthy verge is deepened less than the default (0.9): at 0.8
+## the wood's floor sank to olive mud under its crowns.
 const GROUND_TRIMS := {
-	"amberwood": {"path_luma": 0.1, "path_tint": Color(0.74, 0.62, 0.46)},
+	"amberwood": {"path_luma": 0.1, "path_tint": Color(0.74, 0.62, 0.46),
+		"verge_value_earth": 0.9},
 	"lantern_reach": {"verge_value_green": 0.82, "verge_saturation": 0.92},
 }
 
@@ -399,21 +442,37 @@ const CROWN_FLOOR := 0.2
 ## turned the crimson maple's shaded side pink. So the value is redistributed
 ## rather than taken away, and a tamed (warm, saturated) texel's underside
 ## goes towards CROWN_UNDER_WARM, a deep red-brown, instead of blue.
+## Now that the sun falls across the crown as one volume (CROWN_VOLUME) the
+## light itself shades the underside, so the painted gradient under it is
+## milder than the first pass's 0.6.
 const CROWN_TOP := Color(1.16, 1.08, 0.92)
-const CROWN_UNDER := Color(0.6, 0.65, 0.76)
-const CROWN_UNDER_WARM := Color(0.62, 0.5, 0.46)
+const CROWN_UNDER := Color(0.78, 0.82, 0.9)
+const CROWN_UNDER_WARM := Color(0.8, 0.66, 0.62)
 const CROWN_LIGHT_POWER := 0.7
+## How much of a crown's shading normal is the ellipsoid its box holds rather
+## than the leaf card's own. Card by card, the maple read as a heap of
+## vermilion cards with dark edges, the reference's trees as a few top-lit
+## lobes. Some of the card's own normal is kept so the leaves still catch the
+## light one by one inside a lobe.
+const CROWN_VOLUME := 0.6
+## The volume normal leans this far up (added to the unit box position):
+## taken straight off the box, a tall dark fir's normals faced sideways and it
+## fell from luminance 74 to 52; leaning them all the way up (0.8) lit every
+## crown flat and the maple read as a pink blob.
+const CROWN_VOLUME_LIFT := 0.55
 ## Fake occlusion towards the crown's centre: at the centre of the crown's
 ## box the albedo is scaled by CROWN_CORE, reaching 1 at CROWN_CORE_EDGE of
 ## the way out to its shell. Leaves inside the crown and the gaps between its
 ## clumps read darker, which is what makes a clump read at all.
-const CROWN_CORE := 0.72
+const CROWN_CORE := 0.84
 const CROWN_CORE_EDGE := Vector2(0.25, 0.85)
-## Painted clumps: a value mottle in mesh space, this many metres across,
-## this far either side of the mean, so a flat-shaded blob breaks into lit
-## and shaded masses.
-const CROWN_CLUMP_METRES := 2.2
-const CROWN_CLUMP := 0.16
+## Painted clumps: a value mottle in mesh space, CROWN_LOBES of them across
+## a crown's width, this far either side of the mean, so a crown lit as one
+## volume still breaks into three to five lobes - lit masses with shaded gaps
+## between them - as the reference trees do. A fixed size in metres could not
+## do that: the kit's meshes are in their own units, scaled by their nodes.
+const CROWN_LOBES := 3.5
+const CROWN_CLUMP := 0.3
 ## Every crown is a little different: its hue turns by up to this many
 ## degrees and its value by this fraction either way, from a hash of its
 ## position in its region (not in the world, which a seam crossing rebases).
@@ -439,13 +498,17 @@ const CROWN_JITTER_VARIANTS := 8
 const TAME_HUE := Vector2(268.0, 60.0)
 const TAME_FROM := Vector2(0.4, 0.6)
 const TAME_KNEE := 0.55
-const TAME_CEILING := 0.8
+const TAME_CEILING := 0.95
 const TAME_MAGENTA_FLOOR := -2.0
-const TAME_HUE_TOP := 9.0
-const TAME_HUE_UNDER := -5.0
+## The maple's hue is held near crimson (355-5 degrees) with the value, not
+## the hue, carrying the top light: walked to 9 degrees on top it read coral.
+const TAME_HUE_TOP := 0.0
+const TAME_HUE_UNDER := -8.0
 ## Bright texels (display value from TAME_VALUE_FROM.x to .y) lose this much
 ## value, so a tamed crown's lit top stays a deep warm red or amber rather
-## than a pale neon one.
+## than a pale neon one. Lit card by card at 0.8 it took the maple from
+## luminance 92 to 78 and Amberwood with it; lit as a volume the maple's top
+## takes more sun, and above 0.8 AgX paled it to pink.
 const TAME_VALUE := 0.8
 const TAME_VALUE_FROM := Vector2(0.5, 0.9)
 
@@ -456,9 +519,24 @@ const TAME_VALUE_FROM := Vector2(0.5, 0.9)
 const CROWN_SWAY_METRES := 0.07
 const CROWN_SWAY_SPEED := 1.1
 
-## The occluder fade dithers instead of blending (LookFade). It has no
-## constants of its own: its timing and opacity stay OccluderFade's
-## (FADE_SECONDS, FADED_ALPHA and a manifest's occluderFadeAlpha).
+## The occluder fade opens a hole round the player instead of blending the
+## whole occluder (LookFade, look_fade_hole.gdshaderinc); its timing stays
+## OccluderFade's (FADE_SECONDS). The hole is FADE_HOLE_METRES in radius across
+## the view at the player's depth - at the default 26 m framing about 95
+## pixels, a player and a stride of ground either side - or FADE_HOLE_SHARE of
+## a wider occluder's width, up to FADE_HOLE_MAX_METRES (a giant canopy). Its
+## rim is dithered over FADE_RIM_METRES or FADE_RIM_SHARE of the radius,
+## whichever is wider, and it cuts only what stands in front of the player's
+## chest or at most FADE_BEHIND_METRES behind it. Dithering the whole occluder
+## at 35 % coverage covered up to a fifth of the frame in a one-pixel
+## crosshatch (high-frequency energy 51 in the deep grove against the
+## reference's 13-18).
+const FADE_HOLE_METRES := 2.6
+const FADE_HOLE_SHARE := 0.2
+const FADE_HOLE_MAX_METRES := 6.5
+const FADE_RIM_METRES := 0.4
+const FADE_RIM_SHARE := 0.15
+const FADE_BEHIND_METRES := 0.4
 
 # --- Grass beds (layer L4) ---------------------------------------------------
 
@@ -498,12 +576,23 @@ const GRASS_BARE_METRES := 24.0
 ## layer under them is.
 ## A bed has to cover its ground to read as one from the -60 degree camera:
 ## at 4.5 tufts a square metre the first capture showed single tufts, dark
-## stars on the grass, with the ground between them.
+## stars on the grass, with the ground between them. Between the beds there
+## is only a sprinkle of tall tufts: at 0.25 a square metre the scatter's lone
+## tufts were most of what the open fields showed, one- and two-pixel specks
+## that doubled the frame's high-frequency energy; with none at all the low
+## views lost the dry grass standing in their foreground. The bed's edge (the
+## noise from GRASS_BED_EDGE.x to .y) is narrow, so grass gathers into beds
+## with bare ground between them, and its fringe shrinks (GRASS_THIN_SCALE)
+## rather than thinning out.
 const GRASS_VERGE_DENSITY := 12.0
 const GRASS_BED_DENSITY := 9.0
-const GRASS_SCATTER_DENSITY := 0.25
+const GRASS_SCATTER_DENSITY := 0.04
 const GRASS_BED_METRES := 7.0
-const GRASS_BED_EDGE := Vector2(0.46, 0.68)
+const GRASS_BED_EDGE := Vector2(0.47, 0.6)
+## A tuft on thin ground (low grassiness, a bed's fringe) is scaled down
+## towards this. At 0.5 Amberwood's moss (half as grassy as a meadow) grew
+## tufts too small to read from the low views.
+const GRASS_THIN_SCALE := 0.7
 ## Most tufts a single candidate may carry, so a verge stays a bed of tufts
 ## rather than a pile of them.
 const GRASS_TUFTS_PER_CELL := 6
@@ -511,16 +600,22 @@ const GRASS_TUFTS_PER_CELL := 6
 ## from which it is verge, and from which it is road. The ground layer cuts
 ## the road at 0.5 with a 0.1 wobble, and a verge tuft's blades reach 0.4 m
 ## out from its foot, so grass stops well short of it: from 0.4 the tufts
-## covered 6-11 % of the roads' own metric boxes.
-const GRASS_VERGE_ALPHA := Vector2(0.02, 0.3)
-## Deck geometry beyond its coverage still lies within a strip of the road:
-## it counts this much as verge.
-const GRASS_DECK_OUTSIDE_VERGE := 0.6
+## covered 6-11 % of the roads' own metric boxes, and from 0.3 they still
+## stood a little way into Amberwood's pale camp deck.
+const GRASS_VERGE_ALPHA := Vector2(0.02, 0.24)
+## The verge bed feathers in over this much coverage from the deck's outer
+## edge, with as much jitter, so it does not end in the straight line the
+## deck's geometry ends on (a hard hedge edge at the east gate), and from
+## coverage GRASS_VERGE_ROADSIDE.x up to the road it thins by
+## GRASS_VERGE_ROADSIDE.y, so its tufts stand back from the road's edge.
+const GRASS_VERGE_FEATHER := 0.14
+const GRASS_VERGE_ROADSIDE := Vector2(0.12, 0.5)
 ## An authored patch (a yard, a forecourt, leaf litter) at or above
 ## LookProfile.PATCH_RIM coverage keeps this share of the grass, and its rim
 ## (from GRASS_PATCH_RIM_FROM up to PATCH_RIM) is verge. Pale paving keeps none
-## from LookProfile.PAVING_RIM up.
-const GRASS_ON_PATCH := 0.2
+## from LookProfile.PAVING_RIM up. None: dark spiky tufts on Amberwood's
+## copper leaf litter read as dirt specks, and yards are trodden ground.
+const GRASS_ON_PATCH := 0.0
 const GRASS_PATCH_RIM_FROM := 0.3
 ## A patch at least this bright (display value) and at most this saturated is
 ## worn cobble or stone, like paving if not as pale (the east gate's forecourt,
@@ -556,24 +651,37 @@ const GRASS_LAYER_DEFAULT := 0.3
 ## at 0.82, and a one-vertex blend between, which the ground layer paints as
 ## trail from about its middle). Ground at the second value or brighter is
 ## path, between the two it is the verge along it, and below the first it is
-## grass when its green leads red and blue by GRASS_VERTEX_GREEN.
-const GRASS_VERTEX_PATH_VALUE := Vector2(0.52, 0.62)
+## grass when its green leads red and blue by GRASS_VERTEX_GREEN. From 0.62
+## the tufts stood on the trail's painted margin (up to 9 % of its metric box
+## dark) and took the trail's path/ground ratio from 1.6 to 1.3; the verge is
+## now only the blend's grassy foot.
+const GRASS_VERTEX_PATH_VALUE := Vector2(0.46, 0.49)
 const GRASS_VERTEX_GREEN := 0.06
 
-## The tufts: GRASS_TUFTS blades each (5 to 9), in three sizes - short and
-## splayed for the verge, mid-height for the beds, tall and upright for the
-## scatter - each blade a tapered two-segment strip that arcs outward, so a
-## tuft still reads as a star of strokes from the -60 degree camera. Every
-## tuft is turned, scaled within GRASS_SCALE and tilted halfway to the ground.
+## The tufts: GRASS_TUFTS blades each (4 to 6), in three sizes - short and
+## splayed for the verge, mid-height for the beds, taller and upright for a
+## few in each bed - each blade a tapered two-segment strip that arcs
+## outward, so a tuft still reads as a star of strokes from the -60 degree
+## camera. Every tuft is turned, scaled within GRASS_SCALE and tilted halfway
+## to the ground. At 0.065 m a blade was one or two pixels wide at the 26 m
+## framing, which with no anti-aliasing crawls as it sways; blades are wider
+## and fewer (the three averaged 21 triangles a tuft, now 15), and the verge's
+## are about a third shorter, with more spread in length, so a verge is a low
+## bed rather than a hedge.
 const GRASS_TUFTS := [
-	{"blades": 9, "length": Vector2(0.38, 0.58), "splay": Vector2(20.0, 44.0),
-		"width": 0.065, "spread": 0.1},
-	{"blades": 7, "length": Vector2(0.5, 0.74), "splay": Vector2(16.0, 40.0),
-		"width": 0.07, "spread": 0.08},
-	{"blades": 5, "length": Vector2(0.62, 0.92), "splay": Vector2(8.0, 28.0),
-		"width": 0.065, "spread": 0.06},
+	{"blades": 6, "length": Vector2(0.2, 0.46), "splay": Vector2(20.0, 46.0),
+		"width": 0.1, "spread": 0.1},
+	{"blades": 5, "length": Vector2(0.36, 0.66), "splay": Vector2(16.0, 40.0),
+		"width": 0.1, "spread": 0.08},
+	{"blades": 4, "length": Vector2(0.52, 0.84), "splay": Vector2(8.0, 28.0),
+		"width": 0.095, "spread": 0.06},
 ]
-const GRASS_SCALE := Vector2(0.8, 1.2)
+const GRASS_SCALE := Vector2(0.7, 1.1)
+## A verge tuft stands on the road's dark edging band (EDGE_BAND), so its
+## palette is taken down this far: a verge bed at the band's value frames the
+## road, where at the open grass's value the east gate's read as a bright
+## hedge along it.
+const GRASS_VERGE_SHADE := 0.82
 const GRASS_GROUND_TILT := 0.5
 ## Each region's grass, root to tip, as display (sRGB) colours: a root darker
 ## than the verge it grows from and a tip lighter and warmer, averaging about
@@ -581,12 +689,20 @@ const GRASS_GROUND_TILT := 0.5
 ## paler carpet (roads stay the palest thing on the ground). Four Gates' lush green, Amberwood's dry straw and
 ## amber (its floor is half as bright as Four Gates' grass, so its grass is
 ## too), Lantern Reach's coastal green. The first entry is for any other map.
-## The order is the shader's palette index; at most four.
+## The order is the shader's palette index; at most four. `value_compat` and
+## `value_forward` trim a region's palette in one renderer, measured against
+## its painted ground (tufts at 0.9-1.05 of the ground under them): Lantern
+## Reach's tufts stood 1.2 times brighter than its grass in the compatibility
+## renderer and crowded the trail's value step, and 0.7 times as bright in
+## Forward+, where they read as dark speckle (Forward+ trims act on linear
+## colour: 1.7 there is about 1.3 on screen).
 const GRASS_PALETTES := [
 	{"region": "", "root": Color(0.09, 0.15, 0.06), "tip": Color(0.52, 0.6, 0.28)},
-	{"region": "four_gates", "root": Color(0.09, 0.17, 0.06), "tip": Color(0.52, 0.62, 0.28)},
+	{"region": "four_gates", "root": Color(0.09, 0.17, 0.06), "tip": Color(0.52, 0.62, 0.28),
+		"value_forward": 1.2},
 	{"region": "amberwood", "root": Color(0.13, 0.1, 0.05), "tip": Color(0.56, 0.44, 0.23)},
-	{"region": "lantern_reach", "root": Color(0.05, 0.14, 0.05), "tip": Color(0.4, 0.55, 0.22)},
+	{"region": "lantern_reach", "root": Color(0.05, 0.14, 0.05), "tip": Color(0.4, 0.55, 0.22),
+		"value_compat": 0.9, "value_forward": 1.7},
 ]
 ## The palettes' value in each renderer. The compatibility renderer lights
 ## the display-encoded colour, Forward+ its linear value with SSIL's bounce
@@ -605,10 +721,12 @@ const GRASS_GRADIENT_POWER := 1.4
 const GRASS_ROOT_SHADE := 0.75
 ## Every tuft's value moves by up to this much either way, and a slow noise
 ## (GRASS_TONE_METRES across) turns whole beds warmer or cooler by up to
-## GRASS_WARM, so a field reads as painted patches rather than one colour.
-const GRASS_VALUE_JITTER := 0.1
+## GRASS_WARM, so a field reads as painted patches rather than one colour. Both
+## are mild: a tuft also takes the ground paint's own mottle at its foot, and
+## at 0.1 the jitter alone made single tufts stand out as specks.
+const GRASS_VALUE_JITTER := 0.05
 const GRASS_TONE_METRES := 11.0
-const GRASS_WARM := Color(1.1, 1.0, 0.82)
+const GRASS_WARM := Color(1.05, 1.0, 0.9)
 const GRASS_SPECULAR := 0.15
 ## Wind: the tips lean downwind by up to GRASS_WIND_METRES and sway on a wave
 ## GRASS_WIND_WAVE_METRES long that rolls across the field, swelling and
@@ -621,7 +739,9 @@ const GRASS_GUST_SPEED := 0.37
 ## The render layer the grass draws on: the main camera's gameplay layer,
 ## which the map cameras do not render (the maps are navigation aids).
 const GRASS_RENDER_LAYER := 2
-## ELORIA_LOOK_GRASS_DEBUG=1 prints each finished build's placement census.
+## ELORIA_LOOK_GRASS_DEBUG=1 prints each finished build's placement census;
+## =none grows no grass at all, for measuring the tufts against the bare
+## painted ground under them (l4/diffpix.py).
 const GRASS_DEBUG_VARIABLE := "ELORIA_LOOK_GRASS_DEBUG"
 
 # --- Sky and haze (layer L5) -------------------------------------------------
@@ -699,13 +819,15 @@ const SKY_SUN_CORE := 0.6
 ## so wherever streaming stopped the ground ended in a hard line against the
 ## sky. This gathers from HAZE_BEGIN to HAZE_END along a smoothstep raised to
 ## HAZE_CURVE, up to HAZE_DENSITY: nothing in the default -60 degree framing
-## (its far edge is about 50 m away: under 0.1 %), 8 % at 150 m, 42 % at
-## 250 m, 73 % at 330 m and 80 % from 380 m. A map that declares denser fog
-## gets more, as the grade did, so Amberwood stays mistier than the city.
+## (its far edge is about 50 m away: under 0.1 %), 6 % at 150 m, 31 % at
+## 250 m, 59 % at 330 m and 75 % from 420 m. A map that declares denser fog
+## gets more, as the grade did, so Amberwood stays mistier than the city. At
+## 0.8 from 380 m the far Four Gates town beyond the south gate bleached into
+## the haze at the -15 degree view: a landmark lost to hide the world's edge.
 const HAZE_BEGIN := 40.0
-const HAZE_END := 380.0
+const HAZE_END := 420.0
 const HAZE_CURVE := 1.6
-const HAZE_DENSITY := 0.8
+const HAZE_DENSITY := 0.75
 const HAZE_DENSITY_PER_DECLARED := 100.0
 const HAZE_DENSITY_MAX := 0.92
 ## How much of the haze also veils the sky itself, clouds and zenith alike.
@@ -751,6 +873,10 @@ static func map_trim(map_id: String, key: String) -> float:
 ## SUN_WARMTH_FORWARD).
 static func forward_plus() -> bool:
 	return RenderingServer.get_current_rendering_method() == "forward_plus"
+
+## The exposure trim for the renderer in use (FORWARD_EXPOSURE in Forward+).
+static func renderer_exposure() -> float:
+	return FORWARD_EXPOSURE if forward_plus() else 1.0
 
 ## The key light's warmth for the renderer in use.
 static func sun_warmth() -> Color:
