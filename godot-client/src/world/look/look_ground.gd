@@ -128,7 +128,7 @@ static func paint_loaded(root: Node, manifest: WorldManifest) -> int:
 static func paint_bound(root: Node, manifest: WorldManifest) -> int:
 	if not LookProfile.enabled() or root == null or manifest == null:
 		return 0
-	if manifest.data.has("continentGeography") or not _outdoor(manifest):
+	if manifest.data.has("continentGeography") or not outdoor(manifest):
 		return 0
 	decode_water(root, region_of(manifest))
 	return paint(root, region_of(manifest))
@@ -516,7 +516,7 @@ static func _trim(region: String, key: String, fallback: Variant) -> Variant:
 	return LookProfile.ground_value(region, key, fallback)
 
 ## An outdoor map declares a sun and does not disable it, as LookGrade reads it.
-static func _outdoor(manifest: WorldManifest) -> bool:
+static func outdoor(manifest: WorldManifest) -> bool:
 	var environment: Variant = manifest.data.get("environment")
 	if environment is not Dictionary:
 		return false

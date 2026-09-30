@@ -194,7 +194,7 @@ func _look_inventory(loader: WorldLoader, target: Dictionary) -> Dictionary:
 		"look": {"region": region, "region_file": LookProfile.region_path(region),
 			"region_file_exists": FileAccess.file_exists(LookProfile.region_path(region)),
 			"continent": manifest.data.has("continentGeography"),
-			"outdoor_sun": LookGround._outdoor(manifest), "graded": graded,
+			"outdoor_sun": LookGround.outdoor(manifest), "graded": graded,
 			"sky_painted": sky_painted, "declares_sky": declared_sky,
 			"sky_fallback": {"top": "#" + (LookProfile.sky_fallback(region).top as Color).to_html(false),
 				"horizon": "#" + (LookProfile.sky_fallback(region).horizon as Color).to_html(false)}

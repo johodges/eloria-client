@@ -4078,6 +4078,8 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	# map outside the continent now that its scene has set its materials up.
 	# Continent regions and chunks are painted by the loader.
 	LookGround.paint_bound(world_loader.world_root, manifest)
+	# Look pass: on an interior every occluder fades as develop fades it.
+	LookFade.bind(manifest)
 	fallback_ground.hide()
 	# Regions and interiors may declare their own sky, sun, fog, tonemap, point
 	# lights and camera framing. Maps that do not keep the client's previous

@@ -60,6 +60,39 @@ const FOCUS_PARAMETER := &"look_fade_focus"
 ## over by OccluderFade.update before it animates its fades.
 static var focus := Vector3.ZERO
 
+## True while the bound map is an interior (see `bind`): every occluder then
+## fades as develop fades it.
+static var blend_only := false
+
+## Called as each map binds. On an interior - a map that declares no enabled
+## sun, or any map whose asset names an interiorClass (a secrets tower, a
+## gauntlet, the sunlit insides) - every occluder blends as on develop. The
+## hole was made for crowns and props seen from above the open ground; a
+## room's ceiling covers the camera's whole view of the room, so kept solid
+## round a hole it blacked out five of the six Four Gates interiors but for a
+## disc round the player (near-black 8 % to 52 % in the stormglass house),
+## and the secrets towers' domes stayed a dark cap.
+static func bind(manifest: WorldManifest) -> void:
+	blend_only = manifest != null and (not LookGround.outdoor(manifest)
+		or not str((manifest.data.get("asset", {}) as Dictionary).get("interiorClass", "")).is_empty())
+
+## True when an occluder keeps the hole: a painted crown whatever its size, or
+## anything no wider across the ground than LookProfile.FADE_SOLID_MAX_METRES
+## (a lamp, a cart, a cottage's roof). A giant dome blends as on develop: kept
+## solid round the largest hole, Crownwater's drew the player in a dark disc
+## under an opaque cap. Nothing keeps the hole on an interior (`bind`).
+static func keeps_hole(node: MeshInstance3D) -> bool:
+	if blend_only:
+		return false
+	if node == null or node.mesh == null or is_crown(node):
+		return true
+	var size := node.mesh.get_aabb().size
+	var scale := node.transform.basis.get_scale()
+	if node.is_inside_tree():
+		scale = node.global_transform.basis.get_scale()
+	return maxf(size.x * absf(scale.x), size.z * absf(scale.z)) \
+		<= LookProfile.FADE_SOLID_MAX_METRES
+
 ## BaseMaterial3D.TextureChannel as the vector look_faded_standard dots a
 ## texel with.
 const CHANNELS := [Vector4(1, 0, 0, 0), Vector4(0, 1, 0, 0), Vector4(0, 0, 1, 0),
@@ -70,9 +103,12 @@ static func keeps_solid(node_name: String) -> bool:
 	return LookGround.kind_of(node_name) != LookGround.Kind.NONE
 
 ## A dithered copy of `source` for OccluderFade to fade by, or null when it
-## has none (OccluderFade then does what develop does). Its hole is sized for
-## `node`, the mesh it fades (see hole_metres).
+## has none or `node` should blend instead (`keeps_hole`; OccluderFade then
+## does what develop does). Its hole is sized for `node`, the mesh it fades
+## (see hole_metres).
 static func dither_copy(source: Material, node: MeshInstance3D = null) -> ShaderMaterial:
+	if not keeps_hole(node):
+		return null
 	if source is BaseMaterial3D:
 		var standard := _dithered_standard(source as BaseMaterial3D)
 		if standard != null:

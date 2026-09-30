@@ -259,6 +259,26 @@ func _run() -> void:
 	_expect(_indexed(world) == _mesh_count(world) - 1,
 		"with the look on (the default) a ground patch is kept out of the fade index")
 
+	# Occluders blend as on develop on an interior, and when a hole could not
+	# open most of them; a crown and a cottage keep the hole.
+	var roof := _mesh(world, "Roof_giant_dome", bark, Vector3(40, 8, 40), Vector3(0, 20, 0))
+	var cottage := _mesh(world, "Roof_cottage", bark, Vector3(10, 4, 8), Vector3(0, 10, 0))
+	LookFade.bind(island)
+	_expect(not LookFade.keeps_hole(roof) and LookFade.keeps_hole(cottage)
+		and LookFade.keeps_hole(canopy) and LookFade.dither_copy(bark, roof) == null,
+		"outdoors a giant dome blends; a cottage's roof and a crown keep the hole")
+	var interior := WorldManifest.new()
+	interior.data = {"environment": {"sun": {"enabled": false}}}
+	LookFade.bind(interior)
+	_expect(not LookFade.keeps_hole(cottage) and not LookFade.keeps_hole(canopy),
+		"on an interior everything blends")
+	var sunlit_inside := WorldManifest.new()
+	sunlit_inside.data = {"asset": {"interiorClass": "gauntlet"},
+		"environment": {"sun": {"enabled": true}}}
+	LookFade.bind(sunlit_inside)
+	_expect(LookFade.blend_only, "a sunlit interior (an interiorClass) blends too")
+	LookFade.bind(island)
+
 	world.queue_free()
 	if previous.is_empty():
 		OS.unset_environment(LookProfile.ENABLE_VARIABLE)

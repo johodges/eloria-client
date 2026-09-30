@@ -596,6 +596,16 @@ const FADE_HOLE_MAX_METRES := 6.5
 const FADE_RIM_METRES := 0.4
 const FADE_RIM_SHARE := 0.15
 const FADE_BEHIND_METRES := 0.4
+## An occluder wider than this across the ground blends as develop blends
+## it instead of opening the hole (LookFade.keeps_hole), unless it is a
+## painted crown: it is as wide as the largest hole (FADE_HOLE_MAX_METRES)
+## can make a fifth of (FADE_HOLE_SHARE), so a hole would leave most of it
+## covering the frame. Crownwater's giant dome drew the player in a dark disc
+## under an opaque teal cap (world luminance 183 to 107) where develop showed
+## the plaza through it. A cottage's roof keeps its hole: blended, the
+## coppice's roof turned into a grey smear of the room's inside (aw_coppice,
+## 12 % of the frame). On an interior every occluder blends (LookFade.bind).
+const FADE_SOLID_MAX_METRES := FADE_HOLE_MAX_METRES / FADE_HOLE_SHARE
 
 # --- Grass beds (layer L4) ---------------------------------------------------
 
