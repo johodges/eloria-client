@@ -464,12 +464,19 @@ func _patch(node: MeshInstance3D, xform: Transform3D, rect: Rect2) -> Dictionary
 	if facts.is_empty() or not bool(facts.blended):
 		return {}
 	var tint: Color = facts.tint
+	# Paving, cobble and sand by the ground layer's own tests (LookGround), so
+	# the grass and the paint agree on what a patch is.
+	var stone := LookGround.stone_tint(tint)
+	var sand := LookGround.sand_tint(tint)
 	var paving := tint.v >= LookProfile.PAVING_TINT_VALUE \
-		and tint.s <= LookProfile.PAVING_TINT_SATURATION
-	var bare := tint.v >= LookProfile.GRASS_BARE_PATCH.x \
-		and tint.s <= LookProfile.GRASS_BARE_PATCH.y
+		and tint.s <= LookProfile.PAVING_TINT_SATURATION and stone and not sand
+	var bare := sand or (tint.v >= LookProfile.GRASS_BARE_PATCH.x \
+		and tint.s <= LookProfile.GRASS_BARE_PATCH.y and stone)
+	var grass := not paving and not bare \
+		and (tint.g - maxf(tint.r, tint.b)) / maxf(tint.g, 0.0001) >= LookProfile.GRASS_PATCH_GREEN
 	return {"inverse": xform.affine_inverse(), "rect": rect, "paving": paving, "bare": bare,
-		"surface": node.mesh.generate_triangle_mesh(), "mesh": _mesh_data(node.mesh)}
+		"grass": grass, "surface": node.mesh.generate_triangle_mesh(),
+		"mesh": _mesh_data(node.mesh)}
 
 ## A biome blend cell: its masks, where they lie in the continent, and how
 ## grassy each of its layers is (by `region`'s words first).
@@ -665,15 +672,18 @@ func _classify(hit: Dictionary, up: Vector3, patches: Array[Dictionary],
 	var palette := float(body.palette)
 	_classified_region = String(body.get("region", ""))
 	# What the authored patches drawn over the ground say here: (0 grass,
-	# 1 road or paving, 2 verge along a patch's rim; the grass share left).
-	var cover := _patch_cover(point, patches) if kind != Surface.VERTEX else Vector2(0.0, 1.0)
+	# 1 road or paving, 2 verge along a patch's rim; the grass share left;
+	# how much of a green meadow patch covers it).
+	var cover := _patch_cover(point, patches) if kind != Surface.VERTEX \
+		else Vector3(0.0, 1.0, 0.0)
 	if int(cover.x) == 1:
 		return Vector3(Ground.PATH, 0.0, palette)
 	if kind == Surface.DECK:
 		var alpha := _vertex_colour(body, hit).a
 		if alpha >= LookProfile.GRASS_VERGE_ALPHA.y or _road_beneath(hit, collider, up):
 			return Vector3(Ground.PATH, 0.0, palette)
-		return Vector3(Ground.VERGE, verge_strength(alpha, cell_hash) * slope, palette)
+		return Vector3(Ground.VERGE, verge_strength(alpha, cell_hash) * slope
+			* _rim_grass(point, cell_hash), palette)
 	if _under_water(point, waters):
 		return Vector3(Ground.NONE, 0.0, 0.0)
 	if kind == Surface.VERTEX:
@@ -687,10 +697,20 @@ func _classify(hit: Dictionary, up: Vector3, patches: Array[Dictionary],
 			return Vector3(Ground.PATH, 0.0, palette)
 		verge = road >= LookProfile.GRASS_TERRAIN_ROAD.x
 	verge = verge or int(cover.x) == 2
-	var grass := _biome_grass(point, cell_hash) * cover.y * slope
+	var grass := maxf(_biome_grass(point, cell_hash) * cover.y, cover.z) * slope
 	if verge:
-		return Vector3(Ground.VERGE, maxf(grass, 0.5 * slope), palette)
+		return Vector3(Ground.VERGE, maxf(grass, 0.5 * slope * _rim_grass(point, cell_hash)),
+			palette)
 	return Vector3(Ground.GRASS, grass, palette)
+
+## How much of its verge bed a road's or a patch's rim keeps over the biome
+## beneath it: all of it on grass, heather or moss (grassiness 0.5 and up),
+## down to LookProfile.GRASS_BARE_RIM on bare scree, snow or sand. A rim grew
+## its bed whatever lay under it, and 70 % of Mirrorhold's tufts were verge
+## beds strung along its roads across bare grey scree (hf95 27-28 against
+## develop's 14-17); Whitehorn's roads were lined with grass over the snow.
+func _rim_grass(point: Vector3, cell_hash: int) -> float:
+	return clampf(_biome_grass(point, cell_hash) * 2.0, LookProfile.GRASS_BARE_RIM, 1.0)
 
 ## How much of a verge bed a road deck's rim carries at coverage `alpha`: none
 ## at the deck's outer edge (LookProfile.GRASS_VERGE_ALPHA.x), rising over
@@ -730,25 +750,36 @@ func _road_beneath(hit: Dictionary, collider: CollisionObject3D, up: Vector3) ->
 
 ## What the authored patches over `point` make of it: (0, share) grass that
 ## keeps `share` of its tufts (a yard or leaf litter keeps GRASS_ON_PATCH),
-## (1, 0) no grass - pale paving's footprint and its seams, or worn cobble
-## where it covers the ground (thinning out towards a broken edge, see
-## LookProfile.GRASS_BARE_EDGE_*) - and (2, 1) verge along a patch's rim.
+## (1, 0) no grass - pale paving's footprint and its seams, or worn cobble or
+## sand where it covers the ground (thinning out towards a broken edge, see
+## LookProfile.GRASS_BARE_EDGE_*) - and (2, 1) verge along a patch's rim. The
+## third value is how much a green meadow patch covers the spot, as grassy
+## as it is whatever the biome beneath (LookProfile.GRASS_PATCH_GREEN).
 ## Paving is judged by its bounds rather than its coverage: its low weights
 ## are the seams between two plaza patches, where the grass beneath shows
 ## through as thin lines the grass must not pick out.
-func _patch_cover(point: Vector3, patches: Array[Dictionary]) -> Vector2:
+func _patch_cover(point: Vector3, patches: Array[Dictionary]) -> Vector3:
 	var spot := Vector2(point.x, point.z)
 	var share := 1.0
 	var rim := false
+	var green := 0.0
 	for patch: Dictionary in patches:
 		var rect: Rect2 = patch.rect
 		if bool(patch.paving):
 			if rect.grow(LookProfile.GRASS_PAVING_MARGIN).has_point(spot):
-				return Vector2(1.0, 0.0)
+				return Vector3(1.0, 0.0, 0.0)
 			continue
 		if not rect.has_point(spot):
 			continue
 		var coverage := _patch_coverage(patch, point)
+		if bool(patch.get("grass", false)):
+			# A green meadow patch is grass however bare the biome beneath it
+			# (Mirrorhold's meadows over scree, Manymouth's over silt), and its
+			# edge melts into the ground rather than growing a verge ring.
+			if coverage >= 0.0:
+				green = maxf(green, smoothstep(LookProfile.GRASS_PATCH_RIM_FROM,
+					LookProfile.PATCH_RIM.x, coverage))
+			continue
 		if bool(patch.bare) and coverage >= 0.0:
 			# Worn cobble ends along a broken line, not the exported patch's
 			# straight edge: the coverage the grass stops at wanders either
@@ -760,7 +791,7 @@ func _patch_cover(point: Vector3, patches: Array[Dictionary]) -> Vector2:
 				point.z / LookProfile.GRASS_BARE_EDGE_METRES, 31) - 0.5) \
 				* 2.0 * LookProfile.GRASS_BARE_EDGE_JITTER
 			if coverage >= edge:
-				return Vector2(1.0, 0.0)
+				return Vector3(1.0, 0.0, 0.0)
 			share = minf(share, smoothstep(edge, edge - LookProfile.GRASS_BARE_EDGE_FEATHER,
 				coverage))
 			continue
@@ -768,7 +799,7 @@ func _patch_cover(point: Vector3, patches: Array[Dictionary]) -> Vector2:
 			share = minf(share, LookProfile.GRASS_ON_PATCH)
 		elif coverage >= LookProfile.GRASS_PATCH_RIM_FROM:
 			rim = true
-	return Vector2(2.0 if rim else 0.0, share)
+	return Vector3(2.0 if rim else 0.0, share, green)
 
 ## A vertex-coloured map's ground (Lantern Reach): (Ground, grassiness). Its
 ## colour is judged as stored, which is how the island's scene draws it.
@@ -1031,7 +1062,9 @@ func _biome_grass(point: Vector3, cell_hash: int) -> float:
 			total += weight
 			grass += weight * lerpf(grass_base[layer], grass_secondary[layer], mixes[layer])
 		return grass / total if total > 0.01 else LookProfile.GRASS_LAYER_DEFAULT
-	return 1.0
+	# No biome blend here: as grassy as the region's file says its open ground
+	# is (`grass.open`, 1 unless it says otherwise).
+	return float(LookProfile.region_value(_classified_region, "grass", "open", 1.0))
 
 ## The tufts a candidate carries: none to GRASS_TUFTS_PER_CELL, as dense as
 ## its ground's class and grassiness ask, each at its own hashed spot in the

@@ -209,6 +209,23 @@ func _run() -> void:
 			== LookGround.SHADER_TWO_SIDED,
 		"an island's two-sided ground is painted at bind with the two-sided shader")
 
+	# Paving and cobble are warm or neutral stone: not grass, granite or sand.
+	var tinted := func(hex: String) -> StandardMaterial3D:
+		var material := patch_material.duplicate() as StandardMaterial3D
+		material.albedo_color = Color(hex)
+		return material
+	_expect(LookGround.is_paving(tinted.call("ccba9c")) and LookGround.is_paving(tinted.call("e6e0d1"))
+		and LookGround.is_paving(tinted.call("d1c7ab")) and LookGround.is_paving(tinted.call("c7dbb8")),
+		"the Four Gates plaza, the civic courts and a pale grey-green floor are paving")
+	_expect(not LookGround.is_paving(tinted.call("b8eba8"))
+		and not LookGround.is_paving(tinted.call("b3b5bf"))
+		and not LookGround.is_paving(tinted.call("adc4db"))
+		and not LookGround.is_paving(tinted.call("fff5d1")),
+		"a pale moor-grass patch, granite, a cave's snow and beach sand are not paving")
+	_expect(LookGround.is_cobble(tinted.call("ad9e82")) and not LookGround.is_cobble(tinted.call("b8eba8"))
+		and not LookGround.is_cobble(tinted.call("fff5d1")),
+		"worn cobble is still cobble; pale grass and sand are glazes")
+
 	OS.set_environment(LookProfile.ENABLE_VARIABLE, previous)
 	print("test_look_ground: %s (%d failures)" % [
 		"PASS" if failures == 0 else "FAIL", failures])

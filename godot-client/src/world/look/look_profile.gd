@@ -264,6 +264,27 @@ const PAVING_SURFACE_TINT := Color(0.87, 0.83, 0.75)
 ## green-grey. The grass layer keeps cobble bare by the same test
 ## (GRASS_BARE_PATCH).
 const COBBLE_TINT := Vector2(0.6, 0.35)
+## Paving and cobble must also be stone by hue: their green may lead their
+## red and blue by at most x and their blue lead their red by at most y
+## (display values). Judged by value and saturation alone, the regions' other
+## pale patches passed as paving: the Grey Moors' pale green moor-grass
+## (#b8eba8, 39 patches round its hub) had every road inside its bounds
+## painted brick-brown and grew no grass; Whitehorn's granite (#b3b5bf) put a
+## dark red-brown smudge on the roads beside its crags; the lilac scree
+## scatters and a cave's snow were drawn as paving. The Four Gates plaza
+## (#ccba9c), the civic courts (#d1c7ab, #e6e0d1), worn cobble and the
+## Sunmane steppe's pale grey-green grain-west patches (#c7dbb8, green ahead
+## by 0.08; taken for grass, one was deepened to a dark disc) keep theirs.
+const STONE_TINT_LEAD := Vector2(0.1, 0.03)
+## A patch at least this bright and at least this saturated (display value,
+## saturation) is pale beach sand, #fff5d1: the life passes' sand banks and
+## beaches (20 in Manymouth, Westhaven's, Crownwater's and Ssarathi's shores).
+## Taken for paving, a road through a bank's bounding box was repainted
+## brick-brown (Manymouth's bridge head, Westhaven's quay) and the bank drawn
+## as solid cream paving; sand is a glaze over the ground, and bare. The
+## sand shares its texture with the Four Gates plaza's paving, so its tint is
+## all that tells them apart.
+const SAND_TINT := Vector2(0.95, 0.1)
 ## At most this many paving patches are handed to a root's roads, the largest
 ## first; a chunk holds two or three.
 const PAVING_RECTS_MAX := 8
@@ -696,6 +717,18 @@ const GRASS_VERGE_ROADSIDE := Vector2(0.12, 0.5)
 ## copper leaf litter read as dirt specks, and yards are trodden ground.
 const GRASS_ON_PATCH := 0.0
 const GRASS_PATCH_RIM_FROM := 0.3
+## Except a green meadow: a patch whose tint's green leads its red and blue by
+## this share of it (the life passes' Grass preset regions, #b3eb80 and
+## #b8eba8) is grass however bare the biome under it, from
+## GRASS_PATCH_RIM_FROM coverage to full at PATCH_RIM, with no verge ring at
+## its edge. Kept to GRASS_ON_PATCH like a yard, Mirrorhold's 28 meadows over
+## scree and Manymouth's 36 over silt grew no tufts inside and a single row
+## round their rims, and the tufts stood on the bare ground around them.
+const GRASS_PATCH_GREEN := 0.06
+## A road's or a patch's rim keeps its verge bed in proportion to the biome
+## beneath it (twice its grassiness, so moss and heather keep all of it), but
+## no less than this on bare scree, snow or sand.
+const GRASS_BARE_RIM := 0.15
 ## A patch at least this bright (display value) and at most this saturated is
 ## worn cobble or stone, like paving if not as pale (the east gate's forecourt,
 ## #ad9e82): no grass where it covers the ground. Soil, dirt yards and leaf
@@ -1024,7 +1057,7 @@ const REGION_SECTIONS := {
 	"grade": ["exposure", "saturation"],
 	"ground": ["path_luma", "path_tint", "path_chroma", "verge_value_green",
 		"verge_value_earth", "verge_saturation", "verge_green_red"],
-	"grass": ["root", "tip", "value", "layers"],
+	"grass": ["root", "tip", "value", "layers", "open"],
 	"sky": ["top", "horizon"],
 	"water": ["decode_albedo"],
 	"foliage": ["crown_materials", "tree_words", "shrub_words", "untamed_words"],
@@ -1111,7 +1144,7 @@ static func grass_palette(id: String) -> Dictionary:
 	var grass := region_section(id, "grass")
 	var own := false
 	for key: String in grass:
-		own = own or not key.begins_with("layers")
+		own = own or not (key.begins_with("layers") or key.begins_with("open"))
 	if not own:
 		return {}
 	var trim := float(region_value(id, "grass", "value", 1.0))

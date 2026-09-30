@@ -73,6 +73,11 @@ func _run() -> void:
 	_expect(reach_sky.top == Color(0.16, 0.42, 0.8) and reach_sky.horizon == Color(0.66, 0.82, 0.9)
 		and plain_sky.top == Color("3d7ec2") and plain_sky.horizon == Color("bcc9cd"),
 		"Lantern Reach's fallback sky; the binder's defaults elsewhere")
+	LookProfile.define_region("open_ground_test", {"id": "open_ground_test", "schema": 1,
+		"grass": {"open": 0.6}})
+	_expect(is_equal_approx(float(LookProfile.region_value("open_ground_test", "grass", "open",
+			1.0)), 0.6) and LookProfile.grass_palette("open_ground_test").is_empty(),
+		"a region's open ground may be less grassy, which gives it no palette of its own")
 	_expect(LookProfile.water_decode_value("lantern_reach",
 			"res://src/world/lantern_water.gdshader") == 2.5
 		and LookProfile.water_decode_value("four_gates",

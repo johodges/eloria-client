@@ -214,23 +214,42 @@ static func kind_of(node_name: String) -> Kind:
 	return Kind.NONE
 
 ## Pale stone paving: an authored patch whose tint is bright and nearly grey
-## (LookProfile.PAVING_TINT_VALUE). Roads through it go darker than it.
+## (LookProfile.PAVING_TINT_VALUE), warm or neutral stone rather than grass,
+## snow or granite, and not beach sand (`stone_tint`, `sand_tint`). Roads
+## through it go darker than it.
 static func is_paving(material: Material) -> bool:
 	var standard := material as BaseMaterial3D
 	if standard == null or standard.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED:
 		return false
-	return standard.albedo_color.v >= LookProfile.PAVING_TINT_VALUE \
-		and standard.albedo_color.s <= LookProfile.PAVING_TINT_SATURATION
+	var tint := standard.albedo_color
+	return tint.v >= LookProfile.PAVING_TINT_VALUE \
+		and tint.s <= LookProfile.PAVING_TINT_SATURATION \
+		and stone_tint(tint) and not sand_tint(tint)
 
 ## Worn cobble or stone: a patch nearly as grey as paving if not as pale (the
 ## east gate's forecourt), drawn solid rather than as a glaze
-## (LookProfile.COBBLE_TINT).
+## (LookProfile.COBBLE_TINT); stone by its hue, not grass or snow, and not sand.
 static func is_cobble(material: Material) -> bool:
 	var standard := material as BaseMaterial3D
 	if standard == null or standard.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED:
 		return false
-	return standard.albedo_color.v >= LookProfile.COBBLE_TINT.x \
-		and standard.albedo_color.s <= LookProfile.COBBLE_TINT.y
+	var tint := standard.albedo_color
+	return tint.v >= LookProfile.COBBLE_TINT.x and tint.s <= LookProfile.COBBLE_TINT.y \
+		and stone_tint(tint) and not sand_tint(tint)
+
+## True when a patch's tint is warm or neutral stone: its green does not lead
+## both its red and blue (a pale grass meadow, #b8eba8, is not paving) and its
+## blue does not lead its red (granite, #b3b5bf, a cave's snow or scree, a
+## lilac scree scatter are not). LookProfile.STONE_TINT_LEAD.
+static func stone_tint(tint: Color) -> bool:
+	return tint.g - maxf(tint.r, tint.b) <= LookProfile.STONE_TINT_LEAD.x \
+		and tint.b - tint.r <= LookProfile.STONE_TINT_LEAD.y
+
+## True when a patch's tint is pale beach sand (LookProfile.SAND_TINT): the
+## life passes' sand banks and beaches, #fff5d1. A glaze over the ground
+## rather than paving, and no grass grows on it.
+static func sand_tint(tint: Color) -> bool:
+	return tint.v >= LookProfile.SAND_TINT.x and tint.s >= LookProfile.SAND_TINT.y
 
 ## The continent-space bounds (min x, min z, max x, max z) of the pale paving
 ## among `ground`, the largest first. Mesh space is the continent frame (see
