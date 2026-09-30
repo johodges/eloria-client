@@ -2,10 +2,26 @@ extends SceneTree
 ## Repeatable landscape survey in the complete client, using its actual camera,
 ## environment, static batching, ground sampler, minimap and occluder fade.
 ## ELORIA_SURVEY_SPEC points at JSON [{map,id,x,z,yaw?,distance?}].
+##
+## ELORIA_SURVEY_UNCAPPED=1 also times each view without a frame cap: once main
+## has applied the player's settings (which may cap the frame rate) it sets
+## Engine.max_fps to 0 and turns vsync off, and before each capture it reads
+## the renderer's own timers (RenderingServer's measured render time, GPU and
+## CPU) for the 3D viewport, the minimap viewport and the window over
+## UNCAPPED_FRAMES frames, and writes their medians to survey.json as
+## `render_ms`. Those timers time the renderer's work for each viewport, which
+## holds still while the desktop compositor throttles a window that is not in
+## front (the uncapped wall time, `uncapped_frame_ms`, jumps between 240, 120
+## and 60 Hz plateaus there, so it is kept only as a sanity check). They do not
+## include the scene tree's own CPU time (scripts, physics, animation), which a
+## headless run with the low-processor sleep removed measures instead.
+const UNCAPPED_VARIABLE := "ELORIA_SURVEY_UNCAPPED"
+const UNCAPPED_FRAMES := 60
 var main: Control
 var state: Node
 var out: String
 var report: Array = []
+var uncapped := false
 
 static func _override_registry(registry: Dictionary, data: Dictionary, path: String, specs: Array) -> Dictionary:
 	var entry := MapRegistry.resolve(registry, str(data.get("asset", {}).get("id", "")))
@@ -34,6 +50,14 @@ func _run() -> void:
 	main = (load("res://src/app/main.tscn") as PackedScene).instantiate()
 	root.add_child(main)
 	await process_frame
+	# main's _ready has applied the player's saved settings by now, fps cap
+	# included, so lifting the cap here is not undone by them.
+	uncapped = OS.get_environment(UNCAPPED_VARIABLE) == "1"
+	if uncapped:
+		_lift_frame_cap()
+		print("SURVEY_UNCAPPED max_fps=", Engine.max_fps, " vsync=",
+			DisplayServer.window_get_vsync_mode(), " renderer=",
+			RenderingServer.get_current_rendering_method())
 	state = root.get_node("AppState")
 	var specs: Array = JSON.parse_string(FileAccess.get_file_as_string(OS.get_environment("ELORIA_SURVEY_SPEC")))
 	# A complete composed continent can be inspected before server publication.
@@ -155,9 +179,14 @@ func _run() -> void:
 			var start := Time.get_ticks_usec()
 			await process_frame
 			times.append((Time.get_ticks_usec() - start) / 1000.0)
+		var render_timing: Dictionary = {}
+		if uncapped:
+			render_timing = await _measure_render_time()
 		RenderingServer.force_draw(false)
 		root.get_texture().get_image().save_png(out.path_join(str(spec.id) + ".png"))
 		report.append({"id":spec.id,"map":spec.map,"tile":[tile.x,tile.y],
+			"render_ms":render_timing.get("render_ms", {}),
+			"uncapped_frame_ms":render_timing.get("uncapped_frame_ms", -1.0),
 			"manifest_source":active_loader.manifest.source_path,"glb_path":active_loader.manifest.glb_path(),
 			"actor":[actor.position.x,actor.position.y,actor.position.z] if actor else [],
 			"resident_maps":stream.residents.keys(), "preload_distance":stream.preload_distance,
@@ -180,6 +209,62 @@ func _run() -> void:
 	main.queue_free()
 	await process_frame
 	quit()
+
+## Lifts every frame cap: Engine.max_fps (the player's fps_limit setting) and
+## vsync. Called again before each measurement in case a map load or a
+## settings refresh put a cap back.
+func _lift_frame_cap() -> void:
+	Engine.max_fps = 0
+	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+
+## The renderer's measured time per viewport over UNCAPPED_FRAMES frames, as
+## medians in milliseconds: {"render_ms": {<viewport>: {"gpu", "cpu"}, "total":
+## {"gpu", "cpu"}}, "uncapped_frame_ms": <median wall time>}. "main" is the 3D
+## world, "map" the minimap, "window" the root viewport's own 2D drawing (the
+## HUD and the world's texture); "total" sums them frame by frame.
+func _measure_render_time() -> Dictionary:
+	_lift_frame_cap()
+	var viewports := {"main": (main.get("main_viewport") as Viewport).get_viewport_rid(),
+		"map": (main.get("map_viewport") as Viewport).get_viewport_rid(),
+		"window": root.get_viewport_rid()}
+	for rid: RID in viewports.values():
+		RenderingServer.viewport_set_measure_render_time(rid, true)
+	# The GPU timers report a frame or two late; let them fill first.
+	for i in 8:
+		await process_frame
+	var samples := {}
+	for key: String in viewports.keys() + ["total"]:
+		samples[key] = {"gpu": [], "cpu": []}
+	var wall: Array = []
+	for i in UNCAPPED_FRAMES:
+		var start := Time.get_ticks_usec()
+		await process_frame
+		wall.append((Time.get_ticks_usec() - start) / 1000.0)
+		var gpu_total := 0.0
+		var cpu_total := 0.0
+		for key: String in viewports.keys():
+			var gpu := RenderingServer.viewport_get_measured_render_time_gpu(viewports[key])
+			var cpu := RenderingServer.viewport_get_measured_render_time_cpu(viewports[key])
+			(samples[key].gpu as Array).append(gpu)
+			(samples[key].cpu as Array).append(cpu)
+			gpu_total += gpu
+			cpu_total += cpu
+		(samples.total.gpu as Array).append(gpu_total)
+		(samples.total.cpu as Array).append(cpu_total)
+	for rid: RID in viewports.values():
+		RenderingServer.viewport_set_measure_render_time(rid, false)
+	var medians := {}
+	for key: String in samples.keys():
+		medians[key] = {"gpu": snappedf(_median(samples[key].gpu), 0.001),
+			"cpu": snappedf(_median(samples[key].cpu), 0.001)}
+	return {"render_ms": medians, "uncapped_frame_ms": snappedf(_median(wall), 0.001)}
+
+static func _median(values: Array) -> float:
+	if values.is_empty():
+		return -1.0
+	var sorted := values.duplicate()
+	sorted.sort()
+	return float(sorted[sorted.size() / 2])
 
 func _resident_chunks_ready(active: Node3D, stream: ExteriorRegionStream) -> bool:
 	var roots: Array = [active]
