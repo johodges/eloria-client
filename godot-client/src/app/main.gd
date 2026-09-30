@@ -4084,6 +4084,9 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	# placeholder environment unchanged.
 	if not _continuous_map_handoff:
 		WorldEnvironmentBinder.apply(manifest, world_environment, world_sun, world_root)
+		# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): paint the sky before
+		# the map cameras take their (ungraded) copy of the environment.
+		LookSky.install(manifest, world_environment)
 	if not _continuous_map_handoff:
 		WorldEnvironmentBinder.apply_camera(manifest, camera_rig)
 	_bind_light_markers(manifest)
@@ -4182,6 +4185,8 @@ func _apply_day_night() -> void:
 	# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): re-grade what the
 	# binders just rewrote. After the map copy, so the maps stay ungraded.
 	LookGrade.apply(lighting, world_environment, world_sun)
+	# Look pass: and give the painted sky and its haze the hour's colours.
+	LookSky.apply(lighting, world_environment, AppState.continuous_game_minute())
 
 func _update_border_lighting() -> void:
 	var lighting := exterior_stream.lighting_manifest(camera_rig.focus)
@@ -4200,6 +4205,8 @@ func _update_border_lighting() -> void:
 	# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): the lines above undo
 	# the grade's fog and saturation every 100 ms, so it is re-applied here.
 	LookGrade.apply(lighting, world_environment, world_sun)
+	# Look pass: and the sky's haze, over the border's blended colours.
+	LookSky.apply(lighting, world_environment, AppState.continuous_game_minute())
 
 ## The maps are navigation aids, not scenery. Rendered through the world's own
 ## environment they went as dark as the world did, and a minimap nobody can

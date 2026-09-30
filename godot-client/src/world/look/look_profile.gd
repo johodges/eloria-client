@@ -126,7 +126,8 @@ const MAP_TRIMS := {
 ## wash, because a -60 degree view spans only about 20-40 m of depth. Depth fog
 ## leaves the player's surroundings clear and gathers only beyond them, where
 ## the low views reach the world's edge. It only replaces fog a manifest
-## already enables.
+## already enables. The sky layer (L5) then re-shapes it as the horizon haze
+## (HAZE_BEGIN and after) on every map whose sky it paints.
 const FOG_BEGIN := 38.0
 const FOG_END := 320.0
 const FOG_CURVE := 1.4
@@ -623,6 +624,99 @@ const GRASS_RENDER_LAYER := 2
 ## ELORIA_LOOK_GRASS_DEBUG=1 prints each finished build's placement census.
 const GRASS_DEBUG_VARIABLE := "ELORIA_LOOK_GRASS_DEBUG"
 
+# --- Sky and haze (layer L5) -------------------------------------------------
+
+## The painted sky starts from the region's own declared sky colours (after
+## the hour has moved them, as DayNightBinder would), so Four Gates keeps its
+## clear blue and Amberwood its dusky autumn sky. A map that declares no sky
+## takes its colours from here; Lantern Reach declared only a dark background
+## colour, which the grade lifted to a flat pale cyan wall above its sea. Any
+## other map without a sky gets the binder's own defaults (3d7ec2, bcc9cd).
+const SKY_FALLBACKS := {
+	"lantern_reach": {"top": Color(0.16, 0.42, 0.8), "horizon": Color(0.66, 0.82, 0.9)},
+}
+## The reference skies are blue down to a thin warm pale haze at the horizon,
+## where the manifests' horizons are cool grey-blue (Four Gates) or a dull
+## warm grey (Amberwood). Daylight warms the sky's horizon colour only this far
+## towards SKY_WARM (display colours), a warm cream, and the haze band (which
+## is also the fog) SKY_HAZE_WARMTH further, lifted a little, so the far ground
+## melts into light rather than into grey. The first capture warmed the whole
+## horizon by 0.35: the sky above the haze went cream-grey, an overcast day.
+const SKY_WARM := Color(1.0, 0.87, 0.68)
+const SKY_HORIZON_WARMTH := 0.12
+const SKY_HAZE_WARMTH := 0.45
+const SKY_HAZE_LIFT := 0.1
+## The zenith is taken this far towards a clear, deep blue, which lifts
+## Amberwood's murky navy (0.15, 0.25, 0.42) and deepens Four Gates' blue
+## (0.24, 0.45, 0.73). AgX and the grade's saturation pale a blue sky a long
+## way: Four Gates' own zenith drew about (122, 166, 207), the low reference
+## skies are nearer (70, 130, 210).
+const SKY_ZENITH_DEEP := Color(0.08, 0.3, 0.78)
+const SKY_ZENITH_DEPTH := 0.45
+## The gradient from horizon to zenith: 1 - (1 - sin(elevation))^power, so the
+## zenith's blue takes over soon above the haze: two thirds of it 10 degrees
+## up. A low camera sees at most about 13 degrees of sky, and at 2.6 (a third
+## there) that sky was the pale horizon's.
+const SKY_GRADIENT_POWER := 6.0
+## The haze band: in the sky it fades from exactly the haze colour at the
+## horizon to none at this sine of elevation (about 6 degrees); below the
+## horizon, where nothing has loaded or the world has ended, it carries on and
+## gives way to the old ground colour by this sine (about 17 degrees). A map
+## camera looking straight down still sees only that ground colour.
+const SKY_HAZE_HEIGHT := 0.1
+const SKY_HAZE_DEPTH := 0.3
+## Brushed cumulus: four octaves of value noise on a flat cloud layer, the
+## noise this many cells per unit of the layer's plane (larger, smaller
+## clouds), stretched across the wind (x) by SKY_CLOUD_STRETCH so the masses
+## read as horizontal brush strokes. The noise is pushed SKY_CLOUD_CONTRAST
+## times further from its mean, then cut at SKY_CLOUD_THRESHOLD with a soft
+## edge of SKY_CLOUD_SOFTNESS either side (about a quarter of the sky covered,
+## a tenth solid), at most SKY_CLOUD_OPACITY opaque: uncut, most of the noise
+## sits inside the soft edge and the clouds were one thin grey veil. A
+## cloud is SKY_CLOUD_LIT, brighter than the sky, on its sun-facing side and
+## towards the sky behind it at SKY_CLOUD_SHADE of its value in its core and
+## underside. They fade in between the two elevations (sines) of
+## SKY_CLOUD_BAND, above the haze. Shaded half-way to the sky, the first
+## capture's clouds read as a grey overcast.
+const SKY_CLOUD_SCALE := 2.2
+const SKY_CLOUD_STRETCH := 0.5
+const SKY_CLOUD_CONTRAST := 1.8
+const SKY_CLOUD_THRESHOLD := 0.62
+const SKY_CLOUD_SOFTNESS := 0.06
+const SKY_CLOUD_OPACITY := 0.9
+const SKY_CLOUD_LIT := Color(1.0, 0.97, 0.9)
+const SKY_CLOUD_NIGHT := Color(0.3, 0.33, 0.42)
+const SKY_CLOUD_SHADE := 0.94
+const SKY_CLOUD_BAND := Vector2(0.03, 0.2)
+## A warm glow round the sun: a wide halo and a tighter core, this colour over
+## the sun's own light. At noon the sun stands 62 degrees up, out of every
+## camera framing; it matters at dawn and dusk.
+const SKY_SUN_GLOW := Color(1.0, 0.82, 0.55)
+const SKY_SUN_HALO := 0.25
+const SKY_SUN_CORE := 0.6
+## The haze is depth fog in the haze colour, and it replaces the grade's fog
+## (FOG_BEGIN and after). The grade's fog left the ground 70 % clear at 320 m,
+## so wherever streaming stopped the ground ended in a hard line against the
+## sky. This gathers from HAZE_BEGIN to HAZE_END along a smoothstep raised to
+## HAZE_CURVE, up to HAZE_DENSITY: nothing in the default -60 degree framing
+## (its far edge is about 50 m away: under 0.1 %), 8 % at 150 m, 42 % at
+## 250 m, 73 % at 330 m and 80 % from 380 m. A map that declares denser fog
+## gets more, as the grade did, so Amberwood stays mistier than the city.
+const HAZE_BEGIN := 40.0
+const HAZE_END := 380.0
+const HAZE_CURVE := 1.6
+const HAZE_DENSITY := 0.8
+const HAZE_DENSITY_PER_DECLARED := 100.0
+const HAZE_DENSITY_MAX := 0.92
+## How much of the haze also veils the sky itself, clouds and zenith alike.
+## Little: the painted sky draws its own haze where it belongs, at the horizon.
+const HAZE_SKY_AFFECT := 0.1
+## ELORIA_LOOK_SKY_DEBUG=1 draws the painted sky flat magenta above the
+## horizon and cyan below it, for counting how much of a capture is sky; =2
+## leaves the clouds out; =3 and =4 draw the zenith's and the horizon's colour
+## flat, for reading what AgX and the grade make of them.
+const SKY_DEBUG_VARIABLE := "ELORIA_LOOK_SKY_DEBUG"
+
 ## True when the client was started with ELORIA_LOOK=1.
 static func enabled() -> bool:
 	return OS.get_environment(ENABLE_VARIABLE) == "1"
@@ -666,6 +760,17 @@ static func sun_warmth() -> Color:
 static func fog_density(declared: float) -> float:
 	return clampf(FOG_DENSITY + maxf(declared, 0.0) * FOG_DENSITY_PER_DECLARED,
 		0.0, FOG_DENSITY_MAX)
+
+## The sky colours (`top`, `horizon`) for a map that declares no sky.
+static func sky_fallback(map_id: String) -> Dictionary:
+	if SKY_FALLBACKS.has(map_id):
+		return SKY_FALLBACKS[map_id]
+	return {"top": Color("3d7ec2"), "horizon": Color("bcc9cd")}
+
+## The haze's density at HAZE_END for a manifest's exponential density.
+static func haze_density(declared: float) -> float:
+	return clampf(HAZE_DENSITY + maxf(declared, 0.0) * HAZE_DENSITY_PER_DECLARED,
+		0.0, HAZE_DENSITY_MAX)
 
 ## A region's ground trim on `key`, or `fallback` when it has none.
 static func ground_value(region: String, key: String, fallback: Variant) -> Variant:
