@@ -507,7 +507,7 @@ const CROWN_FLOOR := 0.2
 ## milder than the first pass's 0.6.
 const CROWN_TOP := Color(1.16, 1.08, 0.92)
 const CROWN_UNDER := Color(0.78, 0.82, 0.9)
-const CROWN_UNDER_WARM := Color(0.8, 0.66, 0.62)
+const CROWN_UNDER_WARM := Color(0.78, 0.7, 0.68)
 const CROWN_LIGHT_POWER := 0.7
 ## How much of a crown's shading normal is the ellipsoid its box holds rather
 ## than the leaf card's own. Card by card, the maple read as a heap of
@@ -558,18 +558,25 @@ const CROWN_JITTER_VARIANTS := 8
 const TAME_HUE := Vector2(268.0, 60.0)
 const TAME_FROM := Vector2(0.4, 0.6)
 const TAME_KNEE := 0.55
-const TAME_CEILING := 0.95
+const TAME_CEILING := 0.8
 const TAME_MAGENTA_FLOOR := -2.0
-## The maple's hue is held near crimson (355-5 degrees) with the value, not
-## the hue, carrying the top light: walked to 9 degrees on top it read coral.
-const TAME_HUE_TOP := 0.0
+## The maple's hue runs from crimson underneath to copper on top, and the
+## value, not the hue, carries the top light. Walked to 9 degrees on top at
+## TAME_VALUE 0.72 it read coral; it is the top's pale value that turns a warm
+## red coral or salmon (walked to 16-22 degrees at 0.64 it read peach), so the
+## top walks further (14) only because TAME_VALUE holds it deep.
+const TAME_HUE_TOP := 14.0
 const TAME_HUE_UNDER := -8.0
 ## Bright texels (display value from TAME_VALUE_FROM.x to .y) lose this much
 ## value, so a tamed crown's lit top stays a deep warm red or amber rather
 ## than a pale neon one. Lit card by card at 0.8 it took the maple from
 ## luminance 92 to 78 and Amberwood with it; lit as a volume the maple's top
-## takes more sun, and above 0.8 AgX paled it to pink.
-const TAME_VALUE := 0.8
+## takes more sun, and above 0.8 AgX paled it to pink. At 0.72 Forward+ still
+## drew the maple's lit lobes salmon-pink over a crimson underside (crown
+## colour 167, 69, 53); at 0.5 it is a painted crimson turning copper where
+## the sun lands (129, 51, 36), as dark as develop's neon (luminance 67
+## against 68) with a fifth less chroma, and its lobes still read.
+const TAME_VALUE := 0.5
 const TAME_VALUE_FROM := Vector2(0.5, 0.9)
 
 ## Wind: a crown sways by up to this many metres at its top, weighted by the
