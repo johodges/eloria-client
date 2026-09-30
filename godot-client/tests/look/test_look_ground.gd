@@ -176,20 +176,23 @@ func _run() -> void:
 		and int((chunk_soil.get_surface_override_material(0) as ShaderMaterial)
 			.get_shader_parameter(&"look_paving_count")) == 1,
 		"its road and its soil learn the paving's bounds")
-	var trims: Dictionary = LookProfile.GROUND_TRIMS["amberwood"]
+	# The trims are the region files' (src/world/look/regions/<id>.json).
+	var trims := LookProfile.region_section("amberwood", "ground")
+	_expect(trims.has("path_luma") and trims.path_tint is Color,
+		"Amberwood's ground trims are read from its region file, its tint as a colour")
 	# The default is the renderer's: GROUND_FORWARD's in Forward+ (which a
 	# headless run reports when the project names it), PATH_LUMA otherwise.
 	var default_luma := float(LookProfile.GROUND_FORWARD.get("path_luma",
 		LookProfile.PATH_LUMA)) if LookProfile.forward_plus() else LookProfile.PATH_LUMA
 	_expect(is_equal_approx(float(avenue_paint.get_shader_parameter(&"look_path_luma")),
-			float(trims["path_luma"]))
+			float(trims.get("path_luma", -1.0)))
 		and is_equal_approx(float(deck_paint.get_shader_parameter(&"look_path_luma")),
 			default_luma),
 		"a region's road value is its own trim; other regions keep the renderer's default")
-	var reach_trims: Dictionary = LookProfile.GROUND_TRIMS["lantern_reach"]
+	var reach_trims := LookProfile.region_section("lantern_reach", "ground")
 	_expect(LookProfile.ground_value("lantern_reach", "verge_value_green", -1.0)
-			== (reach_trims["verge_value_green_forward"] if LookProfile.forward_plus()
-				else reach_trims["verge_value_green"])
+			== (reach_trims.get("verge_value_green_forward") if LookProfile.forward_plus()
+				else reach_trims.get("verge_value_green"))
 		and LookProfile.ground_value("no_such_region", "verge_value_green", -1.0)
 			== (LookProfile.GROUND_FORWARD["verge_value_green"] if LookProfile.forward_plus() else -1.0),
 		"a region's `_forward` trim wins in Forward+, and a region without one takes the renderer's default")

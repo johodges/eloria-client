@@ -27,7 +27,8 @@ extends RefCounted
 ##
 ## One painted material is made per source material and shared by every mesh
 ## that used it (the biome blend is already one material per node). A root is
-## painted with its region's trims (LookProfile.GROUND_TRIMS), and its roads
+## painted with its region's trims (the `ground` section of its region file,
+## LookProfile.ground_value), and its roads
 ## learn where its pale paving lies from the paving patches' bounds. They go in
 ## as surface overrides, never into the shared material or the mesh, and only
 ## after the loader has taken its cache snapshot, so a map cache written with
@@ -129,26 +130,27 @@ static func paint_bound(root: Node, manifest: WorldManifest) -> int:
 		return 0
 	if manifest.data.has("continentGeography") or not _outdoor(manifest):
 		return 0
-	decode_water(root)
+	decode_water(root, region_of(manifest))
 	return paint(root, region_of(manifest))
 
 ## Forward+ only: a sea whose shader's colours were picked in the
-## compatibility renderer (LookProfile.DISPLAY_ALBEDO_WATER) is told to decode
-## them to linear albedo, at that entry's value. Its scene script puts the
-## shader on as a material override, which `paint` leaves alone. Returns the
-## meshes changed.
-static func decode_water(root: Node) -> int:
+## compatibility renderer (named in `region`'s file, `water.decode_albedo`,
+## LookProfile.water_decode_value) is told to decode them to linear albedo,
+## at that entry's value. Its scene script puts the shader on as a material
+## override, which `paint` leaves alone. Returns the meshes changed.
+static func decode_water(root: Node, region := "") -> int:
 	if not LookProfile.enabled() or root == null or not LookProfile.forward_plus():
 		return 0
 	var changed := 0
 	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
 		var water := (node as MeshInstance3D).material_override as ShaderMaterial
-		if water == null or water.shader == null \
-				or not LookProfile.DISPLAY_ALBEDO_WATER.has(water.shader.resource_path):
+		if water == null or water.shader == null:
+			continue
+		var sea_value := LookProfile.water_decode_value(region, water.shader.resource_path)
+		if sea_value <= 0.0:
 			continue
 		water.set_shader_parameter(&"look_decode_albedo", true)
-		water.set_shader_parameter(&"look_sea_value",
-			float(LookProfile.DISPLAY_ALBEDO_WATER[water.shader.resource_path]))
+		water.set_shader_parameter(&"look_sea_value", sea_value)
 		changed += 1
 	return changed
 

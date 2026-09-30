@@ -8,7 +8,9 @@
 //
 //   COLOR              vertex shade x the instance's tint (its value jitter
 //                      and its bed's warmth, worked out when it is placed)
-//   INSTANCE_CUSTOM.x  palette index (0-3, LookProfile.GRASS_PALETTES)
+//   INSTANCE_CUSTOM.x  palette slot (0 the default palette, the others handed
+//                      out by LookGrassBeds as it meets regions whose region
+//                      file has a grass palette, LookProfile.grass_palette)
 //   INSTANCE_CUSTOM.w  the wind's phase at the tuft (0..1 of a wave)
 //
 // The MultiMeshes must carry instance colours even though every tint could
@@ -32,14 +34,11 @@
 shader_type spatial;
 render_mode cull_disabled, depth_draw_opaque, diffuse_lambert;
 
-uniform vec3 look_root_0 : source_color = vec3(0.13, 0.2, 0.07);
-uniform vec3 look_root_1 : source_color = vec3(0.13, 0.2, 0.07);
-uniform vec3 look_root_2 : source_color = vec3(0.13, 0.2, 0.07);
-uniform vec3 look_root_3 : source_color = vec3(0.13, 0.2, 0.07);
-uniform vec3 look_tip_0 : source_color = vec3(0.46, 0.54, 0.2);
-uniform vec3 look_tip_1 : source_color = vec3(0.46, 0.54, 0.2);
-uniform vec3 look_tip_2 : source_color = vec3(0.46, 0.54, 0.2);
-uniform vec3 look_tip_3 : source_color = vec3(0.46, 0.54, 0.2);
+// The palettes, root and tip, one per slot. The length is
+// LookProfile.GRASS_PALETTE_SLOTS; they are set as plain vectors (display
+// values, not converted to linear), as the four single uniforms before them.
+uniform vec3 look_roots[32];
+uniform vec3 look_tips[32];
 uniform float look_gradient_power = 1.4;
 // The palette's value and chroma in the renderer in use
 // (LookProfile.GRASS_VALUE_*, GRASS_CHROMA_*): the compatibility renderer
@@ -68,10 +67,8 @@ varying vec3 v_colour;
 varying vec3 v_up;
 
 vec3 look_palette(int index, bool tip) {
-	if (index == 1) return tip ? look_tip_1 : look_root_1;
-	if (index == 2) return tip ? look_tip_2 : look_root_2;
-	if (index == 3) return tip ? look_tip_3 : look_root_3;
-	return tip ? look_tip_0 : look_root_0;
+	int slot = clamp(index, 0, 31);
+	return tip ? look_tips[slot] : look_roots[slot];
 }
 
 void vertex() {

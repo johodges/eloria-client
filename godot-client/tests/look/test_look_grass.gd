@@ -97,6 +97,36 @@ func _run() -> void:
 		and absf(LookGrassBeds.grassiness(heather_texture) - 0.6) < 0.001
 		and LookGrassBeds.grassiness(null) == LookProfile.GRASS_LAYER_DEFAULT,
 		"biome layers are as grassy as their textures say")
+	# A region file's own layer words are read before every map's.
+	LookProfile.define_region("test_grass_region", {"id": "test_grass_region",
+		"grass": {"layers": {"alpine-scree": 0.4, "tussock": 0.8}}})
+	var tussock_texture := ImageTexture.new()
+	tussock_texture.resource_path = "res://tmp/steppe-tussock-v001.png"
+	_expect(is_equal_approx(LookGrassBeds.grassiness(scree_texture, "test_grass_region"), 0.4)
+		and is_equal_approx(LookGrassBeds.grassiness(tussock_texture, "test_grass_region"), 0.8)
+		and LookGrassBeds.grassiness(grass_texture, "test_grass_region") == 1.0
+		and LookGrassBeds.grassiness(tussock_texture) == LookProfile.GRASS_LAYER_DEFAULT
+		and LookProfile.grass_palette("test_grass_region").is_empty(),
+		"a region's own layer words come first and only for it; words alone are no palette")
+	# Palette slots: 0 is the default palette, a region with its own palette
+	# takes the next slot once and keeps it.
+	var slotted := LookGrassBeds.new()
+	var reach_slot: int = slotted._slot("lantern_reach")
+	var gates_slot: int = slotted._slot("four_gates")
+	var reach_palette := LookProfile.grass_palette("lantern_reach")
+	var roots_array: PackedVector3Array = slotted._material.get_shader_parameter(&"look_roots")
+	var tips_array: PackedVector3Array = slotted._material.get_shader_parameter(&"look_tips")
+	var reach_root: Color = reach_palette.get("root", Color.BLACK)
+	var reach_trim := 1.7 if LookProfile.forward_plus() else 0.9
+	_expect(reach_slot == 1 and gates_slot == 2 and slotted._slot("lantern_reach") == 1
+		and slotted._slot("no_such_region") == 0 and slotted._slot("test_grass_region") == 0
+		and roots_array.size() == LookProfile.GRASS_PALETTE_SLOTS
+		and roots_array[1] == Vector3(reach_root.r, reach_root.g, reach_root.b)
+		and reach_root.is_equal_approx(Color(0.05, 0.14, 0.05) * reach_trim)
+		and tips_array[0] == Vector3(0.52, 0.6, 0.28),
+		"regions with a palette take their own slot, with the renderer's value trim; others the default")
+	slotted.free()
+	LookProfile.reload_regions()
 	var weights := LookGrassBeds.barycentric_xz(Vector3(0.25, 5.0, 0.25),
 		Vector3.ZERO, Vector3(1, 0, 0), Vector3(0, 0, 1))
 	_expect(weights.is_equal_approx(Vector3(0.5, 0.25, 0.25)), "barycentric weights across the ground")

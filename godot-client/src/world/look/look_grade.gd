@@ -34,7 +34,8 @@ static func apply(lighting: WorldManifest, world_environment: WorldEnvironment,
 	if declared_sun is not Dictionary or not bool(
 			(declared_sun as Dictionary).get("enabled", true)):
 		return false
-	_grade_tone(environment, declared, lighting.asset_id())
+	_grade_tone(environment, declared, lighting.asset_id(),
+		lighting.data.has("continentGeography"))
 	_grade_ambient(environment)
 	_grade_fog(environment, declared)
 	_grade_screen_space(environment)
@@ -42,12 +43,14 @@ static func apply(lighting: WorldManifest, world_environment: WorldEnvironment,
 		_grade_key(sun)
 	return true
 
+## `map_id`'s region file may trim the exposure and saturation (its `grade`
+## section), unless it is a `continent` region, which shares one grade.
 static func _grade_tone(environment: Environment, declared: Dictionary,
-		map_id: String) -> void:
+		map_id: String, continent := false) -> void:
 	var curve: Dictionary = LookProfile.tonemap_curve()
 	environment.tonemap_mode = int(curve.mode) as Environment.ToneMapper
 	environment.tonemap_exposure = float(curve.exposure) \
-		* LookProfile.map_trim(map_id, "exposure") * LookProfile.renderer_exposure()
+		* LookProfile.map_trim(map_id, "exposure", continent) * LookProfile.renderer_exposure()
 	environment.tonemap_white = float(curve.white)
 	if curve.has("agx_white"):
 		environment.tonemap_agx_white = float(curve.agx_white)
@@ -62,7 +65,7 @@ static func _grade_tone(environment: Environment, declared: Dictionary,
 	environment.adjustment_color_correction = toe_curve()
 	environment.adjustment_saturation = LookProfile.saturation(
 		float(_number(declared.get("saturation"), 1.0))) \
-		* LookProfile.map_trim(map_id, "saturation")
+		* LookProfile.map_trim(map_id, "saturation", continent)
 
 ## The toe (LookProfile.TOE_LIFT, TOE_END) as the per-channel lookup the
 ## environment's colour correction applies to display values after the curve;

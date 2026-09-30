@@ -16,7 +16,8 @@ extends RefCounted
 ##   node is called. Trunks (bark_*) are left alone.
 ## - The kit's Meshy trees and shrubs are one surface with one atlas material
 ##   for crown and trunk together, recognised by the species words in their
-##   node names (LookProfile.KIT_TREE_WORDS, KIT_SHRUB_WORDS). Their crown is
+##   node names (LookProfile.KIT_TREE_WORDS, KIT_SHRUB_WORDS, and whatever a
+##   region file's `foliage` section adds for its region). Their crown is
 ##   split from their trunk inside the shader by height, at CROWN_FLOOR of the
 ##   mesh (measured on their texels; saturation alone does not separate them).
 ##
@@ -66,13 +67,15 @@ static func paint_loaded(root: Node, manifest: WorldManifest) -> int:
 		return 0
 	if not manifest.data.has("continentGeography"):
 		return 0
-	return paint(root)
+	return paint(root, LookGround.region_of(manifest))
 
-## Paints every crown under `root`. Safe to call again on a root it has
-## already painted.
-static func paint(root: Node) -> int:
+## Paints every crown under `root`, a root of `region` (whose region file may
+## name more crown materials and kit words, LookProfile.foliage_words). Safe to
+## call again on a root it has already painted.
+static func paint(root: Node, region := "") -> int:
 	if not LookProfile.enabled() or root == null:
 		return 0
+	var words := words_for(region)
 	var made: Dictionary = {}
 	var surfaces := 0
 	var batches := 0
@@ -92,12 +95,12 @@ static func paint(root: Node) -> int:
 				continue
 			batch = batch_value as MultiMeshInstance3D
 		var seed := _crown_seed(mesh_instance, root, batch)
-		var untamed := _untamed(node_name)
+		var untamed := _untamed(node_name, words)
 		for surface: int in mesh_instance.mesh.get_surface_count():
 			var source: Material = mesh_instance.get_active_material(surface)
 			if source == null or source.has_meta(PAINTED_META):
 				continue
-			var kind := kind_of(node_name, source)
+			var kind := kind_of(node_name, source, words)
 			if kind == Kind.NONE:
 				continue
 			var key := "%d:%d:%.4f" % [source.get_instance_id(),
@@ -124,22 +127,33 @@ static func paint(root: Node) -> int:
 			% [root.name, surfaces, materials, batches])
 	return surfaces
 
+## The crown materials and kit words that apply to `region`'s roots, by
+## LookProfile.FOLIAGE_DEFAULTS key: every map's plus the region file's own.
+static func words_for(region := "") -> Dictionary:
+	var words := {}
+	for key: String in LookProfile.FOLIAGE_DEFAULTS:
+		words[key] = LookProfile.foliage_words(region, key)
+	return words
+
 ## What kind of crown a surface is: an authored crown by its leaf material, a
 ## kit tree or shrub by the species words in its node's name, or none.
-static func kind_of(node_name: String, material: Material) -> Kind:
+## `words` is `words_for` a region; empty, every map's lists.
+static func kind_of(node_name: String, material: Material, words := {}) -> Kind:
 	var standard := material as BaseMaterial3D
 	if standard == null:
 		return Kind.NONE
-	if standard.resource_name in LookProfile.CROWN_MATERIALS:
+	if words.is_empty():
+		words = words_for()
+	if standard.resource_name in (words.crown_materials as Array):
 		return Kind.CROWN
 	if not node_name.begins_with("kit-"):
 		return Kind.NONE
-	var words := node_name.to_lower().split("-", false)
-	for word: String in words:
-		if word in LookProfile.KIT_TREE_WORDS:
+	var parts := node_name.to_lower().split("-", false)
+	for word: String in parts:
+		if word in (words.tree_words as Array):
 			return Kind.KIT_TREE
-	for word: String in words:
-		if word in LookProfile.KIT_SHRUB_WORDS:
+	for word: String in parts:
+		if word in (words.shrub_words as Array):
 			return Kind.KIT_SHRUB
 	return Kind.NONE
 
@@ -245,9 +259,9 @@ static func _batch_seed(batch: MultiMeshInstance3D, root: Node) -> float:
 	return _hash_seed((String(root.name) + String(batch.name)).hash())
 
 ## Blossom keeps its colour: the tame is for the autumn crowns.
-static func _untamed(node_name: String) -> bool:
+static func _untamed(node_name: String, words: Dictionary) -> bool:
 	for word: String in node_name.to_lower().split("-", false):
-		if word in LookProfile.KIT_UNTAMED_WORDS:
+		if word in (words.untamed_words as Array):
 			return true
 	return false
 

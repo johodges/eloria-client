@@ -87,7 +87,15 @@ var _frame_node: Node3D
 var _frame_retry_msec := 0
 var _signature := ""
 var _signature_msec := 0
+## Every root the grass grows on (the active map and each resident chunk or
+## neighbour), by instance id, with the region whose file it reads.
 var _roots: Dictionary = {}
+## The palette slot each region's grass was given (see `_slot`), and the
+## palettes the slots hold, as the shader's arrays take them.
+var _slots: Dictionary = {}
+var _slots_taken := 1
+var _slot_roots := PackedVector3Array()
+var _slot_tips := PackedVector3Array()
 var _surfaces: Dictionary = {}
 var _meshes: Dictionary = {}
 var _images: Dictionary = {}
@@ -194,18 +202,10 @@ func _init() -> void:
 	_material = ShaderMaterial.new()
 	_material.resource_name = "look_grass_beds"
 	_material.shader = SHADER
-	for index: int in mini(LookProfile.GRASS_PALETTES.size(), 4):
-		var palette: Dictionary = LookProfile.GRASS_PALETTES[index]
-		# A region's own trim on the palette's value in the renderer in use,
-		# measured against its painted ground (tufts at 0.9-1.05 of it).
-		var trim := float(palette.get("value_forward" if LookProfile.forward_plus()
-			else "value_compat", 1.0))
-		var root_colour: Color = palette.root * trim
-		var tip_colour: Color = palette.tip * trim
-		_material.set_shader_parameter("look_root_%d" % index,
-			Vector3(root_colour.r, root_colour.g, root_colour.b))
-		_material.set_shader_parameter("look_tip_%d" % index,
-			Vector3(tip_colour.r, tip_colour.g, tip_colour.b))
+	# Slot 0 is the default palette; the others are handed out by `_slot`.
+	_slot_roots.resize(LookProfile.GRASS_PALETTE_SLOTS)
+	_slot_tips.resize(LookProfile.GRASS_PALETTE_SLOTS)
+	_fill_slot(0, LookProfile.GRASS_PALETTE_DEFAULT)
 	_material.set_shader_parameter(&"look_gradient_power", LookProfile.GRASS_GRADIENT_POWER)
 	var forward := LookProfile.forward_plus()
 	_material.set_shader_parameter(&"look_value", LookProfile.GRASS_VALUE_FORWARD
@@ -367,24 +367,48 @@ static func _revision(root: Node3D) -> int:
 ## redone (it keeps drawing until it is).
 func _changed_ground(residents: Dictionary) -> void:
 	_roots.clear()
-	_roots[_active.get_instance_id()] = _palette(_region)
+	_roots[_active.get_instance_id()] = _region
 	for map_id: Variant in residents:
 		var resident: Variant = residents[map_id]
 		var root: Node3D = (resident as Dictionary).get("root") as Node3D \
 			if resident is Dictionary else null
 		if is_instance_valid(root):
-			_roots[root.get_instance_id()] = _palette(String(map_id).get_slice("__chunk_", 0))
+			_roots[root.get_instance_id()] = String(map_id).get_slice("__chunk_", 0)
 	_surfaces.clear()
 	_collected_at = Vector3.INF
 	for tile: Dictionary in _tiles.values():
 		tile["stale"] = true
 	_refocus = true
 
-static func _palette(region: String) -> int:
-	for index: int in mini(LookProfile.GRASS_PALETTES.size(), 4):
-		if String(LookProfile.GRASS_PALETTES[index].region) == region:
-			return index
-	return 0
+## The palette slot `region`'s grass is drawn with: 0, the default palette,
+## unless its region file has a grass palette, which takes the next free slot
+## the first time the region is met and keeps it for as long as this node
+## lives, so a slot never changes under tufts already placed. Past
+## LookProfile.GRASS_PALETTE_SLOTS the rest grow the default grass, with a
+## warning.
+func _slot(region: String) -> int:
+	if _slots.has(region):
+		return int(_slots[region])
+	var slot := 0
+	var palette := LookProfile.grass_palette(region)
+	if not palette.is_empty():
+		if _slots_taken < LookProfile.GRASS_PALETTE_SLOTS:
+			slot = _slots_taken
+			_slots_taken += 1
+			_fill_slot(slot, palette)
+		else:
+			push_warning("look grass: every palette slot is taken; %s grows the default grass"
+				% region)
+	_slots[region] = slot
+	return slot
+
+func _fill_slot(slot: int, palette: Dictionary) -> void:
+	var root_colour: Color = palette.root
+	var tip_colour: Color = palette.tip
+	_slot_roots[slot] = Vector3(root_colour.r, root_colour.g, root_colour.b)
+	_slot_tips[slot] = Vector3(tip_colour.r, tip_colour.g, tip_colour.b)
+	_material.set_shader_parameter(&"look_roots", _slot_roots)
+	_material.set_shader_parameter(&"look_tips", _slot_tips)
 
 ## Collects, around `local_focus`, the ground a ray cannot see: the authored
 ## patches drawn over the terrain, the water, and the biome blend's cells.
@@ -400,6 +424,7 @@ func _collect(local_focus: Vector3) -> void:
 		var root := instance_from_id(root_id) as Node3D
 		if not is_instance_valid(root) or not root.is_visible_in_tree():
 			continue
+		var region := String(_roots[root_id])
 		for node: Node in root.find_children("*", "MeshInstance3D", true, false):
 			var mesh_instance := node as MeshInstance3D
 			if mesh_instance.mesh == null or not mesh_instance.is_visible_in_tree():
@@ -421,7 +446,7 @@ func _collect(local_focus: Vector3) -> void:
 				_waters.append({"node": mesh_instance, "inverse": xform.affine_inverse(),
 					"rect": rect, "surface": mesh_instance.mesh.generate_triangle_mesh()})
 			elif node_name.contains("Base_"):
-				var biome := _biome(mesh_instance)
+				var biome := _biome(mesh_instance, region)
 				if not biome.is_empty():
 					_biomes.append(biome)
 			else:
@@ -444,8 +469,8 @@ func _patch(node: MeshInstance3D, xform: Transform3D, rect: Rect2) -> Dictionary
 		"surface": node.mesh.generate_triangle_mesh(), "mesh": _mesh_data(node.mesh)}
 
 ## A biome blend cell: its masks, where they lie in the continent, and how
-## grassy each of its layers is.
-func _biome(node: MeshInstance3D) -> Dictionary:
+## grassy each of its layers is (by `region`'s words first).
+func _biome(node: MeshInstance3D, region: String) -> Dictionary:
 	var material := node.get_active_material(0) as ShaderMaterial
 	if material == null:
 		return {}
@@ -463,9 +488,10 @@ func _biome(node: MeshInstance3D) -> Dictionary:
 	var grass_base := PackedFloat32Array()
 	var grass_secondary := PackedFloat32Array()
 	for layer: int in 4:
-		grass_base.append(grassiness(material.get_shader_parameter("base_albedo_%d" % layer)))
+		grass_base.append(grassiness(material.get_shader_parameter("base_albedo_%d" % layer),
+			region))
 		grass_secondary.append(grassiness(
-			material.get_shader_parameter("secondary_albedo_%d" % layer)))
+			material.get_shader_parameter("secondary_albedo_%d" % layer), region))
 	var origin: Variant = material.get_shader_parameter(&"mask_origin")
 	var metres: Variant = material.get_shader_parameter(&"mask_metres_per_pixel")
 	return {"to_local": to_continent * node.global_transform.affine_inverse(),
@@ -474,16 +500,14 @@ func _biome(node: MeshInstance3D) -> Dictionary:
 		"base": base_image, "secondary": _image(secondary),
 		"grass_base": grass_base, "grass_secondary": grass_secondary}
 
-## How grassy a biome layer is, by the words in its texture's file name
+## How grassy a biome layer is, by the words in its texture's file name:
+## `region`'s own (its region file's `grass.layers`), then every map's
 ## (LookProfile.GRASS_LAYER_WORDS).
-static func grassiness(texture: Variant) -> float:
+static func grassiness(texture: Variant, region := "") -> float:
 	if texture is not Texture2D:
 		return LookProfile.GRASS_LAYER_DEFAULT
-	var file := (texture as Texture2D).resource_path.get_file().to_lower()
-	for word: String in LookProfile.GRASS_LAYER_WORDS:
-		if file.contains(word):
-			return float(LookProfile.GRASS_LAYER_WORDS[word])
-	return LookProfile.GRASS_LAYER_DEFAULT
+	return LookProfile.grass_layer_value(region,
+		(texture as Texture2D).resource_path.get_file().to_lower())
 
 func _image(texture: Texture2D) -> Image:
 	if texture == null:
@@ -852,16 +876,16 @@ static func _material_facts(node: MeshInstance3D) -> Dictionary:
 		"vertex_albedo": standard.vertex_color_use_as_albedo,
 		"srgb": standard.vertex_color_is_srgb, "coloured": coloured}
 
-## The palette of the region the node belongs to: its nearest ancestor that
-## is the active map or a resident neighbour.
+## The palette slot of the region the node belongs to: its nearest ancestor
+## that is the active map or a resident neighbour.
 func _palette_of(node: Node) -> int:
 	var walker := node
 	while walker != null:
 		var id := walker.get_instance_id()
 		if _roots.has(id):
-			return int(_roots[id])
+			return _slot(String(_roots[id]))
 		walker = walker.get_parent()
-	return _palette(_region)
+	return _slot(_region)
 
 ## A mesh's triangles, read back once: per surface, its positions, colours
 ## and indices, and the index of its first triangle among the mesh's (the

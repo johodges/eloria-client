@@ -12,7 +12,12 @@ extends RefCounted
 ## its own trims wherever the two light differently.
 ##
 ## The constants live here, not beside the code that uses them, so the whole
-## look can be read, compared and retuned in one place. They are tuned for the
+## look can be read, compared and retuned in one place. They are every map's
+## defaults: what a map or region does differently (its grade and ground
+## trims, grass palette, fallback sky, sea, extra foliage names) lives in its
+## own file, regions/<id>.json, read through `region` and the accessors below
+## it (see regions/README.md), so one region can be retuned without touching
+## another's. They are tuned for the
 ## isometric camera's default framing (pitch -60, 26 m away). There four
 ## fifths of the frame is ground, so the grade matters more than the sky; only
 ## the low views (pitch -30 and -20) reach the horizon.
@@ -126,34 +131,18 @@ const AMBIENT_SKY_SHARE := 0.75
 ## that SSAO already darkens in Forward+; the tone curve does that job better.
 const AMBIENT_ENERGY_SCALE := 1.0
 
-## Per-map trims on the exposure and saturation above. Only for a map that is
-## never streamed beside another: a trim changes the moment the active map
-## does, which on the continent would be a visible step at every crossing, so
-## the continent's regions share one grade. Lantern Reach is an island reached
-## only by boat. Its ground is saturated vertex colour that its old Filmic
-## curve (white 1) lifted a long way; under the shared curve it went a fifth
-## darker than any other place, and the ground layer's deeper verge took it
-## darker again (luminance 104 on develop, 86); 1.6 brings it back to about
-## the reference's 98. Its saturation is left alone: AgX pales the gold trail
-## towards sand, and trimmed to 0.85 it went grey. The gold is restored in the
-## ground paint instead (LookProfile.GOLD_HUE), not by the grade. Forward+
-## renders the island a quarter brighter than the compatibility renderer
-## (luminance 123 against 94 at 1.6: its sea goes pale turquoise and its
-## grass pale), so a key with a `_forward` suffix trims that renderer alone.
-## In Forward+ the island also keeps more chroma than the continent's grade
-## gives (saturation 1.15 over SATURATION_FORWARD): at the shared 0.69 its gold
-## trail paled to straw (saturation 0.48). Its grass gives the chroma back in
-## the ground paint (GROUND_TRIMS), so the trail is the richest thing on it.
-const MAP_TRIMS := {
-	"lantern_reach": {"exposure": 1.6, "exposure_forward": 1.04,
-		"saturation_forward": 1.15},
-}
+## A map's own trims on the exposure and saturation above live in its region
+## file's `grade` section (see REGIONS_DIRECTORY; Lantern Reach's is the only
+## one). Only a map that is never streamed beside another may have them: a
+## trim changes the moment the active map does, which on the continent would
+## be a visible step at every crossing, so the continent's regions share one
+## grade and `map_trim` ignores a continent region's `grade` section.
 ## Forward+ draws the continent darker than the compatibility renderer does
 ## (Four Gates luminance 92 against 123, Amberwood 58 against 72, mostly its
 ## SSAO and linear lighting), so it takes this much more exposure everywhere.
 ## A per-map trim cannot close the gap on the continent, whose regions share
 ## one grade (Amberwood streams beside Four Gates); Lantern Reach's own trim
-## is divided by it. 1.65 (it was 1.12, then 1.42) also pays for the stronger
+## (regions/lantern_reach.json) is divided by it. 1.65 (it was 1.12, then 1.42) also pays for the stronger
 ## Forward+ curve, which darkens everything below its pivot.
 const FORWARD_EXPOSURE := 1.65
 
@@ -217,7 +206,8 @@ const GLOW_BLEND_MODE := Environment.GLOW_BLEND_MODE_SCREEN
 ## the worn tint #997a4f); lifting that colour kept its red hue, which Forward+
 ## lit rose and mauve and the compatibility renderer grey. PATH_LUMA is the
 ## albedo luminance a road is painted at; a region whose verge is much darker
-## than Four Gates' grass trims it (GROUND_TRIMS), because the path/ground
+## than Four Gates' grass trims it (its region file's `ground` section, see
+## `ground_value`), because the path/ground
 ## ratio is what the eye reads, and 0.24 over Amberwood's floor (0.04) made its
 ## paths cream decals 2.2-2.4 times the floor's luminance. Never more than
 ## PATH_LIFT_MAX times the source.
@@ -407,12 +397,10 @@ const SLOPE_SHADE := 0.72
 const TERRAIN_ROAD_COLOUR := Color(0.2265, 0.1746, 0.0855)
 const TERRAIN_ROAD_TOLERANCE := Vector2(0.12, 0.34)
 
-## Sea shaders whose colours were picked in the compatibility renderer, by
-## path, with the value their sea is drawn at in Forward+ (LookGround.decode_water).
-## Lantern Reach's sea at 2.5 is the compatibility renderer's deep blue-teal
-## (luminance 63); at 3.0 it was a little paler than the island's grass needs
-## to stand out against.
-const DISPLAY_ALBEDO_WATER := {"res://src/world/lantern_water.gdshader": 2.5}
+## A sea shader whose colours were picked in the compatibility renderer is
+## named, with the value its sea is drawn at in Forward+, in its map's region
+## file (`water.decode_albedo`, read by LookGround.decode_water): Lantern
+## Reach's lantern_water.gdshader is the only one.
 
 ## Forward+ lights the painted ground's linear albedo as linear light, where
 ## the compatibility renderer lights it display-encoded: the same verge came
@@ -425,34 +413,15 @@ const DISPLAY_ALBEDO_WATER := {"res://src/world/lantern_water.gdshader": 2.5}
 const GROUND_FORWARD := {"path_luma": 0.27, "verge_value_green": 0.55,
 	"verge_green_red": 0.66, "verge_saturation": 0.92}
 
-## Per-region ground trims over the defaults above, keyed by the region's id
-## (a continent chunk's `<region>__chunk_<x>_<z>` names its region). Unlike a
-## grade trim these are safe on the continent: they are baked into a chunk's
-## painted materials when it loads, so they change where the ground changes,
-## never when the player crosses it. They should stay where the ground itself
-## changes at the border (Amberwood's moss floor against Four Gates' grass):
-## a trim on ground that runs on unchanged into the neighbour draws the
-## region's border as a straight line. A key with a `_forward` suffix trims
-## Forward+ alone, and in Forward+ wins over the bare key.
-##
-## Amberwood's floor is moss and olive litter at albedo 0.04-0.05, a sixth of
-## Four Gates' grass, so its roads are painted a half as bright and in the
-## wood's ochre-tan rather than in pale stone. Lantern Reach's grass came out
-## of the verge treatment a deep saturated green (sat 0.77 in its ground box,
-## blue channel 17), above the reference's 0.51: it keeps more of its value
-## and none of the extra chroma; in Forward+ it keeps still more value and
-## gives up chroma, so its gold trail (the island's signature) is the most
-## saturated thing on it. Lantern Reach is an island, so its trims draw no
-## seam.
-## Amberwood's earthy verge is deepened less than the default (0.9): at 0.8
-## the wood's floor sank to olive mud under its crowns.
-const GROUND_TRIMS := {
-	"amberwood": {"path_luma": 0.1, "path_tint": Color(0.74, 0.62, 0.46),
-		"verge_value_earth": 0.9},
-	"lantern_reach": {"verge_value_green": 0.82, "verge_saturation": 0.92,
-		"verge_value_green_forward": 0.9, "verge_green_red_forward": 0.55,
-		"verge_saturation_forward": 0.85},
-}
+## A region's own ground trims over the defaults above live in its region
+## file's `ground` section (keys: path_luma, path_tint, path_chroma,
+## verge_value_green, verge_value_earth, verge_saturation, verge_green_red).
+## Unlike a grade trim these are safe on the continent: they are baked into a
+## chunk's painted materials when it loads, so they change where the ground
+## changes, never when the player crosses it. They should stay where the
+## ground itself changes at the border (Amberwood's moss floor against Four
+## Gates' grass): a trim on ground that runs on unchanged into the neighbour
+## draws the region's border as a straight line.
 
 ## ELORIA_LOOK_GROUND_DEBUG=1 draws each painted class as a flat colour
 ## (terrain red, biome blend green, authored patch blue, walk deck magenta),
@@ -470,6 +439,11 @@ const GROUND_DEBUG_VARIABLE := "ELORIA_LOOK_GROUND_DEBUG"
 ## material for crown and trunk together, so they are recognised by the
 ## species words in their node names (kit-crimson-maple-3, kit-dark-fir-12)
 ## and split inside the shader by height (see CROWN_FLOOR).
+## These lists are every map's; a region file's `foliage` section adds its
+## own names and words to them for that region's roots (`foliage_words`).
+## The authored leaf materials are the continent exporter's own and shared by
+## many regions (Four Gates, Crownwater, the Grey Moors, Westhaven and
+## Mirrorhold draw foliage_amber too), so they are listed here, not per region.
 const CROWN_MATERIALS := ["foliage_amber", "foliage_rust", "foliage_gold", "undergrowth"]
 ## Kit species with a trunk under a crown.
 const KIT_TREE_WORDS := ["tree", "maple", "oak", "fir", "pine", "birch", "sapling", "cypress"]
@@ -726,7 +700,9 @@ const GRASS_SLOPE_UP := Vector2(0.78, 0.9)
 ## blend's layers differ from cell to cell (Four Gates' grass is layer 1 in
 ## one cell, Amberwood's layer 2 in another, beside alpine scree, snow crust
 ## and moor heather), so the textures are what say which is grass. A layer
-## whose texture has none of these words counts GRASS_LAYER_DEFAULT.
+## whose texture has none of these words counts GRASS_LAYER_DEFAULT. The
+## words are every map's; a region file's `grass.layers` adds its own words
+## (or re-weighs these) for that region's blends, and is read first.
 const GRASS_LAYER_WORDS := {
 	"ground-basecolor": 1.0, "grass": 1.0, "meadow": 1.0, "lawn": 1.0,
 	"heather": 0.6, "moor": 0.6, "moss": 0.5, "forest-floor": 0.5,
@@ -771,27 +747,20 @@ const GRASS_SCALE := Vector2(0.7, 1.1)
 ## hedge along it.
 const GRASS_VERGE_SHADE := 0.82
 const GRASS_GROUND_TILT := 0.5
-## Each region's grass, root to tip, as display (sRGB) colours: a root darker
-## than the verge it grows from and a tip lighter and warmer, averaging about
-## the verge's own value, so the bed reads as depth and light rather than as a
-## paler carpet (roads stay the palest thing on the ground). Four Gates' lush green, Amberwood's dry straw and
-## amber (its floor is half as bright as Four Gates' grass, so its grass is
-## too), Lantern Reach's coastal green. The first entry is for any other map.
-## The order is the shader's palette index; at most four. `value_compat` and
-## `value_forward` trim a region's palette in one renderer, measured against
-## its painted ground (tufts at 0.9-1.05 of the ground under them): Lantern
-## Reach's tufts stood 1.2 times brighter than its grass in the compatibility
-## renderer and crowded the trail's value step, and 0.7 times as bright in
-## Forward+, where they read as dark speckle (Forward+ trims act on linear
-## colour: 1.7 there is about 1.3 on screen).
-const GRASS_PALETTES := [
-	{"region": "", "root": Color(0.09, 0.15, 0.06), "tip": Color(0.52, 0.6, 0.28)},
-	{"region": "four_gates", "root": Color(0.09, 0.17, 0.06), "tip": Color(0.52, 0.62, 0.28),
-		"value_forward": 1.2},
-	{"region": "amberwood", "root": Color(0.13, 0.1, 0.05), "tip": Color(0.56, 0.44, 0.23)},
-	{"region": "lantern_reach", "root": Color(0.05, 0.14, 0.05), "tip": Color(0.4, 0.55, 0.22),
-		"value_compat": 0.9, "value_forward": 1.7},
-]
+## The grass, root to tip, as display (sRGB) colours: a root darker than the
+## verge it grows from and a tip lighter and warmer, averaging about the
+## verge's own value, so the bed reads as depth and light rather than as a
+## paler carpet (roads stay the palest thing on the ground). This one is for
+## any map whose region file has no `grass` section; a region's own palette
+## (Four Gates' lush green, Amberwood's dry straw and amber, Lantern Reach's
+## coastal green) and its per-renderer `value` trim live in its file
+## (`grass_palette`). The shader holds GRASS_PALETTE_SLOTS palettes, slot 0
+## this one; the grass hands the others out as it meets their regions.
+const GRASS_PALETTE_DEFAULT := {"root": Color(0.09, 0.15, 0.06), "tip": Color(0.52, 0.6, 0.28)}
+## How many palettes the grass shader holds (grass_beds.gdshader's arrays).
+## A client that walks into more regions with their own palettes than this
+## grows the rest in slot 0's.
+const GRASS_PALETTE_SLOTS := 32
 ## The palettes' value in each renderer. The compatibility renderer lights
 ## the display-encoded colour, Forward+ its linear value with SSIL's bounce
 ## on top: at 1 in both, Forward+ drew Four Gates' tufts at luminance 125
@@ -837,12 +806,10 @@ const GRASS_DEBUG_VARIABLE := "ELORIA_LOOK_GRASS_DEBUG"
 ## The painted sky starts from the region's own declared sky colours (after
 ## the hour has moved them, as DayNightBinder would), so Four Gates keeps its
 ## clear blue and Amberwood its dusky autumn sky. A map that declares no sky
-## takes its colours from here; Lantern Reach declared only a dark background
-## colour, which the grade lifted to a flat pale cyan wall above its sea. Any
-## other map without a sky gets the binder's own defaults (3d7ec2, bcc9cd).
-const SKY_FALLBACKS := {
-	"lantern_reach": {"top": Color(0.16, 0.42, 0.8), "horizon": Color(0.66, 0.82, 0.9)},
-}
+## takes its colours from its region file's `sky` section (Lantern Reach
+## declared only a dark background colour, which the grade lifted to a flat
+## pale cyan wall above its sea), or else these, the binder's own defaults.
+const SKY_FALLBACK := {"top": Color("3d7ec2"), "horizon": Color("bcc9cd")}
 ## The reference skies are blue down to a thin warm pale haze at the horizon,
 ## where the manifests' horizons are cool grey-blue (Four Gates) or a dull
 ## warm grey (Amberwood). Daylight warms the sky's horizon colour only this far
@@ -951,15 +918,17 @@ static func saturation(declared: float) -> float:
 	var base := SATURATION_FORWARD if forward_plus() else SATURATION
 	return base * (1.0 + (declared - 1.0) * SATURATION_BOOST_SHARE)
 
-## A map's trim on `key` ("exposure" or "saturation"); 1 for most maps.
-static func map_trim(map_id: String, key: String) -> float:
-	var trims: Variant = MAP_TRIMS.get(map_id)
-	if trims is Dictionary:
-		var map_trims := trims as Dictionary
-		if forward_plus() and map_trims.has(key + "_forward"):
-			return float(map_trims[key + "_forward"])
-		return float(map_trims.get(key, 1.0))
-	return 1.0
+## A map's trim on `key` ("exposure" or "saturation") from its region file's
+## `grade` section; 1 for most maps. A continent region's (`continent`) is
+## ignored, with a warning, because the continent shares one grade (see
+## FORWARD_EXPOSURE's neighbour above).
+static func map_trim(map_id: String, key: String, continent := false) -> float:
+	if continent:
+		if not region_section(map_id, "grade").is_empty():
+			_warn_once("grade:" + map_id, "look region %s: a continent region's grade "
+				% map_id + "section is ignored; the continent shares one grade")
+		return 1.0
+	return float(region_value(map_id, "grade", key, 1.0))
 
 ## True in the Forward+ renderer, which some trims tell apart (see
 ## SUN_WARMTH_FORWARD).
@@ -986,28 +955,295 @@ static func fog_density(declared: float) -> float:
 	return clampf(FOG_DENSITY + maxf(declared, 0.0) * FOG_DENSITY_PER_DECLARED,
 		0.0, FOG_DENSITY_MAX)
 
-## The sky colours (`top`, `horizon`) for a map that declares no sky.
+## The sky colours (`top`, `horizon`) for a map that declares no sky: its
+## region file's `sky` section, else SKY_FALLBACK.
 static func sky_fallback(map_id: String) -> Dictionary:
-	if SKY_FALLBACKS.has(map_id):
-		return SKY_FALLBACKS[map_id]
-	return {"top": Color("3d7ec2"), "horizon": Color("bcc9cd")}
+	return {"top": region_value(map_id, "sky", "top", SKY_FALLBACK.top),
+		"horizon": region_value(map_id, "sky", "horizon", SKY_FALLBACK.horizon)}
 
 ## The haze's density at HAZE_END for a manifest's exponential density.
 static func haze_density(declared: float) -> float:
 	return clampf(HAZE_DENSITY + maxf(declared, 0.0) * HAZE_DENSITY_PER_DECLARED,
 		0.0, HAZE_DENSITY_MAX)
 
-## A region's ground trim on `key`, or the renderer's default when it has
-## none: GROUND_FORWARD's entry in Forward+, else `fallback`. In Forward+ a
-## region's `<key>_forward` entry wins over its `<key>`, as in MAP_TRIMS.
-static func ground_value(region: String, key: String, fallback: Variant) -> Variant:
-	var trims: Variant = GROUND_TRIMS.get(region)
-	if trims is Dictionary:
-		var region_trims := trims as Dictionary
-		if forward_plus() and region_trims.has(key + "_forward"):
-			return region_trims[key + "_forward"]
-		if region_trims.has(key):
-			return region_trims[key]
-	if forward_plus() and GROUND_FORWARD.has(key):
-		return GROUND_FORWARD[key]
-	return fallback
+## A region's ground trim on `key` from its region file's `ground` section,
+## or the renderer's default when it has none: GROUND_FORWARD's entry in
+## Forward+, else `fallback`. A `<key>_forward` entry wins over `<key>` in
+## Forward+ (and `<key>_compat` in the compatibility renderer), as in every
+## section (`region_value`).
+static func ground_value(region_id: String, key: String, fallback: Variant) -> Variant:
+	var renderer_default: Variant = GROUND_FORWARD[key] \
+		if forward_plus() and GROUND_FORWARD.has(key) else fallback
+	return region_value(region_id, "ground", key, renderer_default)
+
+# --- Per-map and per-region data ---------------------------------------------
+
+## Where each map's and region's own look lives: one file per id,
+## REGIONS_DIRECTORY/<id>.json, where <id> is the manifest's asset id (a
+## continent chunk, `<region>__chunk_<x>_<z>`, reads its region's file; see
+## LookGround.region_of). The constants above are every map's defaults; a file
+## says only where its map differs, and a map without one is drawn with the
+## defaults. The schema, and why each pilot value is what it is, is in
+## regions/README.md; REGION_SECTIONS is what the code reads.
+const REGIONS_DIRECTORY := "res://src/world/look/regions"
+## The sections a region file may hold and the keys each may hold. A number
+## or colour key may also carry a `_forward` or `_compat` suffix, which wins
+## over the bare key in that renderer. `grass.layers`, `water.decode_albedo`
+## and the `foliage` lists are tables, not trims, and take no suffix. `id`
+## (the file's own name), `schema` and `notes` (prose for whoever retunes the
+## region) sit beside the sections.
+const REGION_SECTIONS := {
+	"grade": ["exposure", "saturation"],
+	"ground": ["path_luma", "path_tint", "path_chroma", "verge_value_green",
+		"verge_value_earth", "verge_saturation", "verge_green_red"],
+	"grass": ["root", "tip", "value", "layers"],
+	"sky": ["top", "horizon"],
+	"water": ["decode_albedo"],
+	"foliage": ["crown_materials", "tree_words", "shrub_words", "untamed_words"],
+}
+const REGION_TABLE_KEYS := ["layers", "decode_albedo", "crown_materials", "tree_words",
+	"shrub_words", "untamed_words"]
+const REGION_META_KEYS := ["id", "schema", "notes"]
+## Keys whose values are colours: [r, g, b] display (sRGB) components, exactly
+## as a Color() constant takes them, or "#rrggbb".
+const REGION_COLOUR_KEYS := ["path_tint", "root", "tip", "top", "horizon"]
+## The lists a region's `foliage` section extends, by key.
+const FOLIAGE_DEFAULTS := {"crown_materials": CROWN_MATERIALS, "tree_words": KIT_TREE_WORDS,
+	"shrub_words": KIT_SHRUB_WORDS, "untamed_words": KIT_UNTAMED_WORDS}
+
+## Parsed region files by id ({} for an id with no file), each read once.
+## Chunks are painted on the loader's worker threads, so the cache is locked.
+static var _regions: Dictionary = {}
+static var _regions_mutex := Mutex.new()
+static var _warned: Dictionary = {}
+
+## `id`'s region file, parsed, typed (its colours are Colors, its numbers
+## floats) and kept; {} when it has none. Read-only.
+static func region(id: String) -> Dictionary:
+	_regions_mutex.lock()
+	var data: Variant = _regions.get(id)
+	if data == null:
+		data = _load_region(id)
+		_regions[id] = data
+	_regions_mutex.unlock()
+	return data
+
+## The file `id`'s look is read from.
+static func region_path(id: String) -> String:
+	return REGIONS_DIRECTORY.path_join(id + ".json")
+
+## Every id that has a region file.
+static func region_ids() -> PackedStringArray:
+	var ids := PackedStringArray()
+	for file: String in DirAccess.get_files_at(REGIONS_DIRECTORY):
+		if file.get_extension() == "json":
+			ids.append(file.get_basename())
+	ids.sort()
+	return ids
+
+## Forgets every region file read so far (and every `define_region`), so the
+## next use reads the files again.
+static func reload_regions() -> void:
+	_regions_mutex.lock()
+	_regions.clear()
+	_regions_mutex.unlock()
+
+## Uses `raw`, a region file's content, for `id` until `reload_regions`, as if
+## it had been read from `id`'s file; for tests and previews. Returns what is
+## wrong with it, as `region_problems` would.
+static func define_region(id: String, raw: Dictionary) -> PackedStringArray:
+	var problems := PackedStringArray()
+	var data := typed_region(raw, id, problems)
+	data.make_read_only()
+	_regions_mutex.lock()
+	_regions[id] = data
+	_regions_mutex.unlock()
+	return problems
+
+## Section `section` of `id`'s file; {} when it has none.
+static func region_section(id: String, section: String) -> Dictionary:
+	var value: Variant = region(id).get(section)
+	return value if value is Dictionary else {}
+
+## `key` in `id`'s `section`: `<key>_forward` in Forward+ (`<key>_compat` in
+## the compatibility renderer) wins over `<key>`; `fallback` when neither is
+## there.
+static func region_value(id: String, section: String, key: String, fallback: Variant) -> Variant:
+	var entries := region_section(id, section)
+	var renderer_key := key + ("_forward" if forward_plus() else "_compat")
+	if entries.has(renderer_key):
+		return entries[renderer_key]
+	return entries.get(key, fallback)
+
+## `id`'s grass palette: its root and tip (GRASS_PALETTE_DEFAULT's where it
+## names none) times its `value` trim for the renderer in use, measured
+## against its painted ground; {} when its file names no palette, which grows
+## the default one.
+static func grass_palette(id: String) -> Dictionary:
+	var grass := region_section(id, "grass")
+	var own := false
+	for key: String in grass:
+		own = own or not key.begins_with("layers")
+	if not own:
+		return {}
+	var trim := float(region_value(id, "grass", "value", 1.0))
+	var root_colour: Color = region_value(id, "grass", "root", GRASS_PALETTE_DEFAULT.root)
+	var tip_colour: Color = region_value(id, "grass", "tip", GRASS_PALETTE_DEFAULT.tip)
+	return {"root": root_colour * trim, "tip": tip_colour * trim}
+
+## How grassy a biome layer whose texture file is `file` (lower case) is:
+## `id`'s own `grass.layers` words first, then GRASS_LAYER_WORDS, else
+## GRASS_LAYER_DEFAULT.
+static func grass_layer_value(id: String, file: String) -> float:
+	var own: Variant = region_section(id, "grass").get("layers")
+	if own is Dictionary:
+		for word: String in own:
+			if file.contains(word):
+				return float(own[word])
+	for word: String in GRASS_LAYER_WORDS:
+		if file.contains(word):
+			return float(GRASS_LAYER_WORDS[word])
+	return GRASS_LAYER_DEFAULT
+
+## The foliage list `key` (a FOLIAGE_DEFAULTS key) for `id`'s roots: every
+## map's plus the names and words its file's `foliage` section adds.
+static func foliage_words(id: String, key: String) -> Array:
+	var own: Variant = region_section(id, "foliage").get(key)
+	return own if own is Array else FOLIAGE_DEFAULTS[key]
+
+## The value a water shader at `shader_path` is decoded to in Forward+ on
+## `id`'s map (its file's `water.decode_albedo`); 0 when it is not listed.
+static func water_decode_value(id: String, shader_path: String) -> float:
+	var table: Variant = region_section(id, "water").get("decode_albedo")
+	return float((table as Dictionary).get(shader_path, 0.0)) if table is Dictionary else 0.0
+
+## What is wrong with `id`'s file, one line each (nothing for a good file or
+## none): what `region` warned about when it read it.
+static func region_problems(id: String) -> PackedStringArray:
+	var problems := PackedStringArray()
+	var path := region_path(id)
+	if id.is_empty() or not FileAccess.file_exists(path):
+		return problems
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if parsed is not Dictionary:
+		problems.append("%s is not a JSON object" % path)
+		return problems
+	typed_region(parsed as Dictionary, id, problems)
+	return problems
+
+static func _load_region(id: String) -> Dictionary:
+	var data := {}
+	var path := region_path(id)
+	if not id.is_empty() and FileAccess.file_exists(path):
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+		var problems := PackedStringArray()
+		if parsed is Dictionary:
+			data = typed_region(parsed as Dictionary, id, problems)
+		else:
+			problems.append("%s is not a JSON object; the defaults are used" % path)
+		for problem: String in problems:
+			push_warning("look region %s: %s" % [id, problem])
+	data.make_read_only()
+	return data
+
+## A parsed region file as the code reads it: colours made Colors, numbers
+## floats (JSON gives every number as a float anyway, and an int never
+## compares equal to one inside an Array), foliage lists merged with
+## FOLIAGE_DEFAULTS. Unknown sections and keys and values of the wrong kind
+## are left out and listed in `problems`.
+static func typed_region(raw: Dictionary, id: String, problems: PackedStringArray) -> Dictionary:
+	var data := {}
+	for section_key: Variant in raw:
+		var section := str(section_key)
+		var content: Variant = raw[section_key]
+		if section in REGION_META_KEYS:
+			if section == "id" and str(content) != id:
+				problems.append("its id \"%s\" is not its file's name" % str(content))
+			data[section] = content
+			continue
+		if not REGION_SECTIONS.has(section):
+			problems.append("unknown section \"%s\"" % section)
+			continue
+		if content is not Dictionary:
+			problems.append("section \"%s\" is not an object" % section)
+			continue
+		var entries := {}
+		for entry_key: Variant in content:
+			var key := str(entry_key)
+			var bare := _bare_key(key)
+			var where := "%s.%s" % [section, key]
+			if bare not in REGION_SECTIONS[section]:
+				problems.append("unknown key \"%s\"" % where)
+				continue
+			if bare != key and bare in REGION_TABLE_KEYS:
+				problems.append("\"%s\" is a table and takes no renderer suffix" % where)
+				continue
+			var value: Variant = _typed_value(section, bare, (content as Dictionary)[entry_key])
+			if value == null:
+				problems.append("\"%s\" is not a %s" % [where, _expected(section, bare)])
+				continue
+			entries[key] = value
+		entries.make_read_only()
+		data[section] = entries
+	return data
+
+## `key` without a renderer suffix.
+static func _bare_key(key: String) -> String:
+	for suffix: String in ["_forward", "_compat"]:
+		if key.ends_with(suffix):
+			return key.trim_suffix(suffix)
+	return key
+
+static func _expected(section: String, bare: String) -> String:
+	if bare in REGION_COLOUR_KEYS:
+		return "colour ([r, g, b] or \"#rrggbb\")"
+	if bare == "layers" or bare == "decode_albedo":
+		return "table of numbers"
+	if section == "foliage":
+		return "list of strings"
+	return "number"
+
+## `value` as `section.bare` holds it, or null when it is the wrong kind.
+static func _typed_value(section: String, bare: String, value: Variant) -> Variant:
+	if bare in REGION_COLOUR_KEYS:
+		if value is String and Color.html_is_valid(value as String):
+			return Color.html(value as String)
+		if value is Array and (value as Array).size() in [3, 4]:
+			var parts := value as Array
+			for part: Variant in parts:
+				if part is not float and part is not int:
+					return null
+			return Color(float(parts[0]), float(parts[1]), float(parts[2]),
+				float(parts[3]) if parts.size() == 4 else 1.0)
+		return null
+	if bare == "layers" or bare == "decode_albedo":
+		if value is not Dictionary:
+			return null
+		var table := {}
+		for word: Variant in value:
+			var weight: Variant = (value as Dictionary)[word]
+			if weight is not float and weight is not int:
+				return null
+			table[str(word)] = float(weight)
+		table.make_read_only()
+		return table
+	if section == "foliage":
+		if value is not Array:
+			return null
+		var merged: Array = (FOLIAGE_DEFAULTS[bare] as Array).duplicate()
+		for word: Variant in value:
+			if word is not String:
+				return null
+			if word not in merged:
+				merged.append(word)
+		merged.make_read_only()
+		return merged
+	if value is float or value is int:
+		return float(value)
+	return null
+
+static func _warn_once(key: String, message: String) -> void:
+	if _warned.has(key):
+		return
+	_warned[key] = true
+	push_warning(message)
