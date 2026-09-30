@@ -18,6 +18,8 @@ extends SceneTree
 ## minute or two of loading; an interior (four-gates-mirrorsmith-forge, which
 ## the look leaves alone, or crownwater_insides, sunlit and graded but with
 ## its void kept dark) checks that the switch leaves those as they should be.
+## The shadows switch is checked on each map too: it has to hold over the
+## hour and the border blend, which rewrite the sun's flag.
 ##
 ## Run with ELORIA_LOOK and ELORIA_LOOK_QUALITY unset. The switch goes through
 ## main's settings path, which writes user://eloria_hud.cfg, so the player's
@@ -167,6 +169,16 @@ func _check_map(map_id: String) -> void:
 			and environment.ssao_enabled == LookProfile.screen_space_effects()))
 		and _beds() == 1 and sun.directional_shadow_mode == DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS,
 		"%s: and HIGH brings it all back, in the same environment" % map_id)
+
+	# The shadows switch holds over the binders, which rewrite the sun's flag
+	# on every clock packet and border update.
+	_setting("shadows", false)
+	main.call("_apply_day_night")
+	main.call("_update_border_lighting")
+	await _frames(5)
+	_expect(not sun.shadow_enabled,
+		"%s: directional shadows switched off stay off through the hour and the borders" % map_id)
+	_setting("shadows", true)
 
 	_setting("look", false)
 	await _frames(20)

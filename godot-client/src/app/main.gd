@@ -4199,12 +4199,23 @@ func _apply_day_night() -> void:
 	var lighting := exterior_stream.lighting_manifest(camera_rig.focus)
 	_day_night_active = DayNightBinder.apply(lighting,
 		world_environment, world_sun, AppState.continuous_game_minute(), world_moon)
+	_hold_shadow_switch()
 	_sync_map_environment()
 	# Look pass (a no-op with the look off): re-grade what the
 	# binders just rewrote. After the map copy, so the maps stay ungraded.
 	LookGrade.apply(lighting, world_environment, world_sun)
 	# Look pass: and give the painted sky and its haze the hour's colours.
 	LookSky.apply(lighting, world_environment, AppState.continuous_game_minute())
+
+## The Graphics tab's "Directional shadows", held over the binders. The map's
+## bind and the hour both decide whether the sun may cast (an interior's
+## hidden sun, a sun below the horizon) and wrote the flag outright, so a
+## player's Off lasted until the next clock packet or border update, and an
+## Off saved in the settings file never reached a map at all. They still
+## decide when it may cast; the switch decides whether it does.
+func _hold_shadow_switch() -> void:
+	if not _shadows_enabled:
+		world_sun.shadow_enabled = false
 
 func _update_border_lighting() -> void:
 	var lighting := exterior_stream.lighting_manifest(camera_rig.focus)
@@ -4220,6 +4231,7 @@ func _update_border_lighting() -> void:
 		environment.fog_density = float(declared.get("fog", {}).get("density", environment.fog_density))
 		environment.adjustment_saturation = float(declared.get("saturation", 1))
 	DayNightBinder.apply(lighting, world_environment, world_sun, AppState.continuous_game_minute(), world_moon)
+	_hold_shadow_switch()
 	# Look pass (a no-op with the look off): the lines above undo
 	# the grade's fog and saturation every 100 ms, so it is re-applied here.
 	LookGrade.apply(lighting, world_environment, world_sun)
@@ -9393,6 +9405,9 @@ func _on_client_setting_changed(section: String, key: String,
 		"shadows":
 			_shadows_enabled = bool(value)
 			world_sun.shadow_enabled = _shadows_enabled and world_sun.visible
+			# The hour decides whether the sun may cast at all (none below the
+			# horizon), so it is asked again rather than overruled.
+			_apply_day_night()
 		"particles":
 			_effects_enabled = bool(value)
 			for actor_value: Variant in actor_nodes.values():
