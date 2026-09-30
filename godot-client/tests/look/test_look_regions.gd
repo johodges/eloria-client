@@ -69,7 +69,7 @@ func _run() -> void:
 		and LookProfile.GRASS_PALETTE_DEFAULT.root == Color(0.09, 0.15, 0.06),
 		"a map without a palette grows the default one")
 	var reach_sky := LookProfile.sky_fallback("lantern_reach")
-	var plain_sky := LookProfile.sky_fallback("stillglass")
+	var plain_sky := LookProfile.sky_fallback("no_such_map")
 	_expect(reach_sky.top == Color(0.16, 0.42, 0.8) and reach_sky.horizon == Color(0.66, 0.82, 0.9)
 		and plain_sky.top == Color("3d7ec2") and plain_sky.horizon == Color("bcc9cd"),
 		"Lantern Reach's fallback sky; the binder's defaults elsewhere")

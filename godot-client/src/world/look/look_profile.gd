@@ -1246,13 +1246,14 @@ const REGIONS_DIRECTORY := "res://src/world/look/regions"
 ## (the file's own name), `schema` and `notes` (prose for whoever retunes the
 ## region) sit beside the sections.
 const REGION_SECTIONS := {
-	"grade": ["exposure", "saturation"],
+	"grade": ["exposure", "saturation", "background"],
 	"ground": ["path_luma", "path_tint", "path_chroma", "verge_value_green",
 		"verge_value_earth", "verge_saturation", "verge_green_red", "deck_path",
-		"deck_road_colour", "deck_tint", "deck_chroma"],
-	"grass": ["root", "tip", "value", "layers", "open"],
-	"sky": ["top", "horizon", "paint"],
-	"water": ["decode_albedo"],
+		"deck_road_colour", "deck_tint", "deck_chroma", "deck_grain", "path_detail",
+		"path_fine", "rock_value", "meadow_value", "meadow_chroma"],
+	"grass": ["root", "tip", "value", "layers", "open", "meadow"],
+	"sky": ["top", "horizon", "paint", "clear"],
+	"water": ["decode_albedo", "inland_tint"],
 	"foliage": ["crown_materials", "tree_words", "shrub_words", "untamed_words"],
 	"props": ["keep_words", "keep_chroma", "keep_tint"],
 }
@@ -1262,7 +1263,7 @@ const REGION_META_KEYS := ["id", "schema", "notes"]
 ## Keys whose values are colours: [r, g, b] display (sRGB) components, exactly
 ## as a Color() constant takes them, or "#rrggbb".
 const REGION_COLOUR_KEYS := ["path_tint", "root", "tip", "top", "horizon", "deck_road_colour",
-	"deck_tint"]
+	"deck_tint", "inland_tint", "keep_tint"]
 ## The lists a region's `foliage` section extends, by key.
 const FOLIAGE_DEFAULTS := {"crown_materials": CROWN_MATERIALS, "tree_words": KIT_TREE_WORDS,
 	"shrub_words": KIT_SHRUB_WORDS, "untamed_words": KIT_UNTAMED_WORDS}

@@ -73,16 +73,23 @@ what `LookGround.region_of` and `LookGrade` use:
 
 | Section | Key | What it does | Default |
 |---|---|---|---|
-| `grade` | `exposure`, `saturation` | Multiplies the grade's exposure and saturation (`LookGrade`). **Only for a map never streamed beside another** (an island, a tutorial map, an instance): a trim changes when the active map changes, which on the continent would step at every crossing. A continent region's `grade` section is ignored, with a warning. | 1 |
+| `grade` | `exposure`, `saturation`, `background` | Multiplies the grade's exposure and saturation (`LookGrade`), and `background` what the camera sees behind the world (its sky or background colour: an interior's void an exposure trim would lift, the Ssarathi archive's). **Only for a map never streamed beside another** (an island, a tutorial map, an instance): a trim changes when the active map changes, which on the continent would step at every crossing. A continent region's `grade` section is ignored, with a warning. | 1 |
 | `ground` | `path_luma`, `path_tint` (colour), `path_chroma`, `verge_value_green`, `verge_value_earth`, `verge_saturation`, `verge_green_red` | Trims the painted ground (`LookGround._set_paint`); baked into a chunk's materials when it loads. On the continent they fade into each neighbour's across the border (`LookBorders`, see the rules below). | Forward+: `GROUND_FORWARD`, else the `PATH_*` / `VERGE_*` constants |
-| `ground` | `deck_path` (0..1), `deck_road_colour` (colour), `deck_tint` ([r, g, b] multiplier), `deck_chroma` | How much of a road the region's `Walk_` decks are painted as. At 0 a deck is the region's own ground: it keeps its own colour whatever its hue, times `deck_tint` (a multiplier on its linear colour, not a display colour) at `deck_chroma`, and has no road edging (the tutorial maps' courts, which are decks from wall to wall). The grade warms and greys a kept court, so `deck_tint` is solved against develop's colour. `deck_road_colour` is the vertex colour (display sRGB) a deck carries where it is road: that part is painted as a road again (Reedway's cart tracks), within `DECK_ROAD_TOLERANCE`. | 1, none, [1, 1, 1], 1 |
+| `ground` | `deck_path` (0..1), `deck_road_colour` (colour), `deck_tint` ([r, g, b] multiplier), `deck_chroma`, `deck_grain` | How much of a road the region's `Walk_` decks are painted as. At 0 a deck is the region's own ground: it keeps its own colour whatever its hue, times `deck_tint` (a multiplier on its linear colour, not a display colour) at `deck_chroma`, and has no road edging (the tutorial maps' courts, which are decks from wall to wall). The grade warms and greys a kept court, so `deck_tint` is solved against develop's colour. `deck_road_colour` is the vertex colour (display sRGB) a deck carries where it is road: that part is painted as a road again (Reedway's cart tracks), within `DECK_ROAD_TOLERANCE`. `deck_grain` scales the kept deck's texture grain about its mean (Bellwatch's and Stillglass's flagstones). A tint solved in one renderer must carry that renderer's suffix (`deck_tint_forward`): bare, it ran in the compatibility renderer too and turned Echo Court purple. | 1, none, [1, 1, 1], 1, 1 |
+| `ground` | `path_detail`, `path_fine` | The power a road's texture grain is raised to and its fine mottle (`PATH_DETAIL`, `PATH_FINE`): lower flattens a texture's dark flecks (Mirrorhold's honey sand, Reedway's tracks). **Not faded across a border**, so on the continent render the border shots after changing them. | 1.8, 0.12 |
+| `ground` | `meadow_value`, `meadow_chroma` | A green meadow patch (`LookGround.is_meadow`) keeps its own colour times this value, at this chroma: the Grey Moors' pale moor grass sits under its roads at 0.62. | `MEADOW_VALUE`, `MEADOW_CHROMA(_FORWARD)` |
+| `ground` | `rock_value` | Bare rock patches (`LookGround.is_rock`: Whitehorn's granite, the Barrens' lilac scree) are drawn solid in their own colour times this. | `ROCK_VALUE` (1) |
 | `grass` | `root`, `tip` (colours), `value` | The region's grass palette, root to tip, and its value trim, measured against its painted ground (tufts at 0.9-1.05 of the ground under them). Any of the three gives the region its own palette slot; missing colours come from `GRASS_PALETTE_DEFAULT`. | `GRASS_PALETTE_DEFAULT`, value 1 |
 | `grass` | `layers` (table word to 0..1) | How grassy a biome layer is, by a word in its texture's file name, read before `GRASS_LAYER_WORDS` for this region's biome blends only. | `GRASS_LAYER_WORDS` |
 | `grass` | `open` (0..1) | How grassy the region's ground is where no biome blend covers it (the Sunmane Steppe's opaque authored base). Green meadow patches grow grass whatever this says (`GRASS_PATCH_GREEN`). | 1 |
+| `grass` | `meadow` (0..1) | How grassy its green meadow patches are, whatever lies under them (the Sunmane pastures carry half the beds, 0.5). | 1 |
 | `sky` | `top`, `horizon` (colours) | The sky painted over a map that **declares no sky** (`LookSky`). A map with its own `environment.sky` ignores this. | `SKY_FALLBACK` (the binder's 3d7ec2 / bcc9cd) |
+| `sky` | `clear` (0..1) | How far the painted sky is taken towards the bright clear day (a deep blue zenith, warm haze, white cumulus) on a map **outside the continent**. Unset, `LookSky.clearness` judges it from the declared zenith: a saturated blue is clear, a violet dusk (the Amethyst Barrens) or a grey overcast (the Grey Moors) keeps its own colours, with clouds in its horizon's colour. On the continent it is always judged from the declared (border-blended) sky, so it never steps at a crossing. | judged from the zenith |
 | `sky` | `paint` (0 or 1) | 0 leaves the map's own sky and fog alone (`LookProfile.sky_painted`): for a sunlit interior whose void is meant dark (the Sunmane wind caves, the Ssarathi archive, the Drowned Crown). The grade still runs. | 1 |
+| `water` | `inland_tint` (colour) | Forward+ only: the display multiplier the rivers, pools and small seas drawn by a StandardMaterial3D take (`LookGround.decode_inland_water`), on a map **outside the continent**; the continent has one, `INLAND_WATER_TINT`, since its rivers cross the borders. | `INLAND_WATER_TINT` |
 | `water` | `decode_albedo` (table shader path to value) | Forward+ only: a sea shader whose colours were picked in the compatibility renderer is told to decode them to linear albedo, at this value (`LookGround.decode_water`). Only maps outside the continent run it; the continent's own sea is decoded for every region at `CONTINENT_SEA_VALUE`. | none |
 | `foliage` | `crown_materials`, `tree_words`, `shrub_words`, `untamed_words` (lists of strings) | Extends `CROWN_MATERIALS`, `KIT_TREE_WORDS`, `KIT_SHRUB_WORDS` and `KIT_UNTAMED_WORDS` for this region's roots (`LookFoliage`). A crown material is an authored leaf material's name, compared exactly. The words are matched against the hyphen-separated words of a `kit-...` node name; `KIT_NOT_FOLIAGE_WORDS` (raft, boat, cart) always win. **Continent regions only**: the foliage layer does not run on any other map, so this section is never read there. | the lists in `look_profile.gd` |
+| `props` | `keep_words` (list of strings), `keep_chroma`, `keep_tint` (colour) | The region's signature materials, by a word of their material's name (lower case, contained): their albedo and emission chroma is scaled by `keep_chroma` before the grade greys it (`LookFoliage.keep_chroma`, look_chroma_standard), the Amethyst Barrens' crystals, Ssarathi's and Verdant's jade, the Drowned Crown's mosaic. `keep_tint` multiplies their tint as well, where a warm key has to be turned back rather than a grey. | none, `KEEP_CHROMA(_FORWARD)`, white |
 
 ## Rules learned on the pilot
 
@@ -120,9 +127,16 @@ what `LookGround.region_of` and `LookGrade` use:
   `is_cobble`, `sand_tint`, `stone_tint`): pale paving and cobble must be warm
   or neutral stone, so pale grass (`#b8eba8`), granite (`#b3b5bf`) and snow
   are not; the life passes' beach sand (`#fff5d1`) is a glaze, not paving,
-  and grows no grass; a green meadow patch grows grass whatever the biome
-  beneath (`GRASS_PATCH_GREEN`). The patch textures are content-addressed, so
-  their names cannot say it.
+  and grows no grass; a green meadow patch (`LookProfile.green_tint`, the one
+  test the paint, the stone test and the grass all ask) is painted solid in
+  its own green (`is_meadow`, `meadow_value`) and grows grass whatever the
+  biome beneath; a pale grey patch that is not stone paving (granite, lilac
+  scree) is bare rock, solid in its own colour (`is_rock`). The patch
+  textures are content-addressed, so their names cannot say it.
+- **A material is water by a word of its name** (`LookGround.water_named`:
+  `water` or `sea` between underscores), never by a substring: Crownwater's
+  materials all contain "water", and taken for rivers its road decks were
+  tinted and never painted.
 
 ## Seeing what the generic classifier does with a map
 
