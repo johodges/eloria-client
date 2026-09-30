@@ -53,9 +53,10 @@ func _run() -> void:
 	world.name = "ImportedWorld_test__chunk_4_5"
 	root.add_child(world)
 	var canopy := _mesh(world, "Tree_0361_pale_birch_Canopy", leaves, Vector3(8, 6, 8), Vector3(-10, 30, 5))
-	# A timber post, faded as any StandardMaterial3D; a tree's own trunk is
-	# cut near the camera with its crown.
-	var wood := _mesh(world, "Post_0361_timber", bark, Vector3(1, 8, 1), Vector3(-10, 30, 5))
+	# A timber crate, faded as any StandardMaterial3D (wide enough to keep its
+	# hole rather than vanish); a tree's own trunk is cut near the camera with
+	# its crown.
+	var wood := _mesh(world, "Crate_0361_timber", bark, Vector3(4, 3, 4), Vector3(-10, 30, 5))
 	var trunk := _mesh(world, "Tree_0362_pale_birch_Wood", bark.duplicate(), Vector3(1, 8, 1),
 		Vector3(-14, 30, 5))
 	var maple := _mesh(world, "kit-crimson-maple-3", atlas, Vector3(9, 9, 9), Vector3(20, 18, 40))
@@ -125,7 +126,7 @@ func _run() -> void:
 	_expect(maple_paint != null and maple_paint.shader == LookFoliage.SHADER_OPAQUE,
 		"a kit tree is painted with the opaque shader")
 	_expect(wood.get_surface_override_material(0) == null,
-		"a timber post is not painted")
+		"a timber crate is not painted")
 	var trunk_paint := trunk.get_surface_override_material(0) as ShaderMaterial
 	_expect(trunk_paint != null and trunk_paint.shader == LookFoliage.SHADER_CHROMA
 		and is_equal_approx(float(trunk_paint.get_shader_parameter(&"look_near_cut")),
@@ -320,6 +321,14 @@ func _run() -> void:
 		"a blended occluder keeps develop's shadow: no twin, still casting")
 	LookFade.release_shadow(pool, null)
 	_expect(not pool.has_meta(LookFade.MODE_META), "releasing forgets the fade's mode")
+	pillar.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	_expect(LookFade.hold_shadow(pillar) == null
+		and pillar.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		and pillar.get_node_or_null(NodePath(String(LookFade.SHADOW_TWIN_NAME))) == null,
+		"a vanishing occluder casts no shadow and has no twin")
+	LookFade.release_shadow(pillar, null)
+	_expect(pillar.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_ON,
+		"and casts again once it is back")
 	LookFade.focus = focus_before
 
 	# A region's signature materials keep their chroma (props.keep_words).

@@ -48,9 +48,10 @@ extends RefCounted
 ##   giant dome's pieces).
 ##
 ## A faded copy would cast its hole into its shadow too, so while a mesh fades
-## by its hole or vanishes it stops casting. A wall or a roof hands its shadow
-## to a shadow-only twin with its resting materials, because a room lighting
-## up as the player walks in reads as a bug. A crown casts none, as develop's
+## by its hole or vanishes it stops casting. A wall or a roof that keeps its
+## hole hands its shadow to a shadow-only twin with its resting materials,
+## because a room lighting up under a roof the viewer still sees reads as a
+## bug; one that vanishes casts none, as develop's blended copies cast none. A crown casts none, as develop's
 ## blended copies cast none: the twin held a giant canopy's whole shadow over
 ## the player and took the deep grove from luminance 80 to 64 (53 in Forward+),
 ## the darkest frame of the pass, where walking under a tree on develop lights
@@ -474,9 +475,18 @@ static func hold_shadow(node: MeshInstance3D) -> MeshInstance3D:
 	if not is_instance_valid(node) or node.mesh == null:
 		return null
 	# Decided here, as the fade begins: a blended occluder keeps develop's
-	# shadow exactly (see the header). A vanished roof keeps its shadow on the
-	# room under it, as a holed one does.
-	if _decide(node) == Mode.BLEND:
+	# shadow exactly (see the header), and a vanished one casts none, as
+	# develop's blended copies cast none: its shadow twin left the shadow of a
+	# mesh the viewer no longer sees, a dark disc round the player where the
+	# Grey Moors' barrow mound and a Sunmane yurt had been.
+	var mode := _decide(node)
+	if mode == Mode.BLEND:
+		return null
+	if mode == Mode.VANISH:
+		if node.cast_shadow != GeometryInstance3D.SHADOW_CASTING_SETTING_OFF \
+				and node.cast_shadow != GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
+			node.set_meta(SHADOW_META, node.cast_shadow)
+			node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		return null
 	if node.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF \
 			or node.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:

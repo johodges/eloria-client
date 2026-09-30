@@ -89,9 +89,12 @@ func _run_pass() -> void:
 			_expect(is_equal_approx(float((faded as ShaderMaterial).get_shader_parameter(
 					LookFade.OPEN_PARAMETER)), 1.0),
 				"the settled fade has opened its hole all the way")
+		# LookFade decides how it fades: a wall that keeps its hole hands its
+		# shadow to a solid twin, one that vanishes casts none.
 		_expect(blocker.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-				and _shadow_twin(blocker) != null,
-			"the faded wall stops casting and hands its shadow to a solid twin")
+				and (_shadow_twin(blocker) != null)
+					== (LookFade.mode_of(blocker) == LookFade.Mode.HOLE),
+			"the faded wall stops casting, its shadow on a twin only while it keeps a hole")
 	else:
 		_expect(faded is BaseMaterial3D,
 			"an obstacle on the sight line takes a faded material of its own")
