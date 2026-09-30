@@ -140,8 +140,13 @@ const AMBIENT_ENERGY_SCALE := 1.0
 ## renders the island a quarter brighter than the compatibility renderer
 ## (luminance 123 against 94 at 1.6: its sea goes pale turquoise and its
 ## grass pale), so a key with a `_forward` suffix trims that renderer alone.
+## In Forward+ the island also keeps more chroma than the continent's grade
+## gives (saturation 1.15 over SATURATION_FORWARD): at the shared 0.69 its gold
+## trail paled to straw (saturation 0.48). Its grass gives the chroma back in
+## the ground paint (GROUND_TRIMS), so the trail is the richest thing on it.
 const MAP_TRIMS := {
-	"lantern_reach": {"exposure": 1.6, "exposure_forward": 1.07},
+	"lantern_reach": {"exposure": 1.6, "exposure_forward": 1.04,
+		"saturation_forward": 1.15},
 }
 ## Forward+ draws the continent darker than the compatibility renderer does
 ## (Four Gates luminance 92 against 123, Amberwood 58 against 72, mostly its
@@ -308,11 +313,14 @@ const PALE_LUMA := Vector2(0.16, 0.3)
 ## about (215, 170, 60). Both take more chroma, Forward+ at the trail's full
 ## value (its exposure trim is lower); the compatibility renderer keeps it
 ## under AgX's highlight roll-off, which pales a brighter gold back to sand.
+## Forward+'s stronger curve and lower saturation (SATURATION_FORWARD) paled
+## it to straw again (193, 169, 100); it takes chroma 2.1 at value 1.2, which
+## with the island's saturation trim lands (207, 170, 85).
 const GOLD_HUE := Vector2(35.0, 56.0)
 const GOLD_SATURATION := 0.5
-const GOLD_VALUE := 1.0
+const GOLD_VALUE := 1.2
 const GOLD_VALUE_COMPAT := 0.78
-const GOLD_CHROMA := 1.45
+const GOLD_CHROMA := 2.1
 const GOLD_CHROMA_COMPAT := 2.6
 ## Grass, moss, forest floor: deeper and a little richer, so the paths have
 ## something to stand out against. Green grass deepens most, towards the
@@ -399,25 +407,51 @@ const SLOPE_SHADE := 0.72
 const TERRAIN_ROAD_COLOUR := Color(0.2265, 0.1746, 0.0855)
 const TERRAIN_ROAD_TOLERANCE := Vector2(0.12, 0.34)
 
-## Per-region ground trims over the constants above, keyed by the region's id
+## Sea shaders whose colours were picked in the compatibility renderer, by
+## path, with the value their sea is drawn at in Forward+ (LookGround.decode_water).
+## Lantern Reach's sea at 2.5 is the compatibility renderer's deep blue-teal
+## (luminance 63); at 3.0 it was a little paler than the island's grass needs
+## to stand out against.
+const DISPLAY_ALBEDO_WATER := {"res://src/world/lantern_water.gdshader": 2.5}
+
+## Forward+ lights the painted ground's linear albedo as linear light, where
+## the compatibility renderer lights it display-encoded: the same verge came
+## out darker and more mustard (hue 57 against 64 degrees in the south gate's
+## field) and the same roads duller. In Forward+ these replace the constants
+## above as the defaults every region starts from. They are renderer defaults
+## rather than a region's trims because the ground runs on across a region's
+## border: tuned as Four Gates' own trims, they drew a straight seam across
+## the south gate's field where Four Gates' grass meets its neighbour's.
+const GROUND_FORWARD := {"path_luma": 0.27, "verge_value_green": 0.55,
+	"verge_green_red": 0.66, "verge_saturation": 0.92}
+
+## Per-region ground trims over the defaults above, keyed by the region's id
 ## (a continent chunk's `<region>__chunk_<x>_<z>` names its region). Unlike a
 ## grade trim these are safe on the continent: they are baked into a chunk's
-## painted materials when it loads, so they change where the ground changes (at
-## the region's border, where the biome changes too), never when the player
-## crosses it.
+## painted materials when it loads, so they change where the ground changes,
+## never when the player crosses it. They should stay where the ground itself
+## changes at the border (Amberwood's moss floor against Four Gates' grass):
+## a trim on ground that runs on unchanged into the neighbour draws the
+## region's border as a straight line. A key with a `_forward` suffix trims
+## Forward+ alone, and in Forward+ wins over the bare key.
 ##
 ## Amberwood's floor is moss and olive litter at albedo 0.04-0.05, a sixth of
 ## Four Gates' grass, so its roads are painted a half as bright and in the
 ## wood's ochre-tan rather than in pale stone. Lantern Reach's grass came out
 ## of the verge treatment a deep saturated green (sat 0.77 in its ground box,
 ## blue channel 17), above the reference's 0.51: it keeps more of its value
-## and none of the extra chroma.
+## and none of the extra chroma; in Forward+ it keeps still more value and
+## gives up chroma, so its gold trail (the island's signature) is the most
+## saturated thing on it. Lantern Reach is an island, so its trims draw no
+## seam.
 ## Amberwood's earthy verge is deepened less than the default (0.9): at 0.8
 ## the wood's floor sank to olive mud under its crowns.
 const GROUND_TRIMS := {
 	"amberwood": {"path_luma": 0.1, "path_tint": Color(0.74, 0.62, 0.46),
 		"verge_value_earth": 0.9},
-	"lantern_reach": {"verge_value_green": 0.82, "verge_saturation": 0.92},
+	"lantern_reach": {"verge_value_green": 0.82, "verge_saturation": 0.92,
+		"verge_value_green_forward": 0.9, "verge_green_red_forward": 0.55,
+		"verge_saturation_forward": 0.85},
 }
 
 ## ELORIA_LOOK_GROUND_DEBUG=1 draws each painted class as a flat colour
@@ -935,9 +969,17 @@ static func haze_density(declared: float) -> float:
 	return clampf(HAZE_DENSITY + maxf(declared, 0.0) * HAZE_DENSITY_PER_DECLARED,
 		0.0, HAZE_DENSITY_MAX)
 
-## A region's ground trim on `key`, or `fallback` when it has none.
+## A region's ground trim on `key`, or the renderer's default when it has
+## none: GROUND_FORWARD's entry in Forward+, else `fallback`. In Forward+ a
+## region's `<key>_forward` entry wins over its `<key>`, as in MAP_TRIMS.
 static func ground_value(region: String, key: String, fallback: Variant) -> Variant:
 	var trims: Variant = GROUND_TRIMS.get(region)
 	if trims is Dictionary:
-		return (trims as Dictionary).get(key, fallback)
+		var region_trims := trims as Dictionary
+		if forward_plus() and region_trims.has(key + "_forward"):
+			return region_trims[key + "_forward"]
+		if region_trims.has(key):
+			return region_trims[key]
+	if forward_plus() and GROUND_FORWARD.has(key):
+		return GROUND_FORWARD[key]
 	return fallback

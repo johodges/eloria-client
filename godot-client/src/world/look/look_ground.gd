@@ -129,7 +129,28 @@ static func paint_bound(root: Node, manifest: WorldManifest) -> int:
 		return 0
 	if manifest.data.has("continentGeography") or not _outdoor(manifest):
 		return 0
+	decode_water(root)
 	return paint(root, region_of(manifest))
+
+## Forward+ only: a sea whose shader's colours were picked in the
+## compatibility renderer (LookProfile.DISPLAY_ALBEDO_WATER) is told to decode
+## them to linear albedo, at that entry's value. Its scene script puts the
+## shader on as a material override, which `paint` leaves alone. Returns the
+## meshes changed.
+static func decode_water(root: Node) -> int:
+	if not LookProfile.enabled() or root == null or not LookProfile.forward_plus():
+		return 0
+	var changed := 0
+	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var water := (node as MeshInstance3D).material_override as ShaderMaterial
+		if water == null or water.shader == null \
+				or not LookProfile.DISPLAY_ALBEDO_WATER.has(water.shader.resource_path):
+			continue
+		water.set_shader_parameter(&"look_decode_albedo", true)
+		water.set_shader_parameter(&"look_sea_value",
+			float(LookProfile.DISPLAY_ALBEDO_WATER[water.shader.resource_path]))
+		changed += 1
+	return changed
 
 ## The region a manifest paints as: a continent chunk's own region
 ## (`<region>__chunk_<x>_<z>`), or the map itself.
@@ -418,7 +439,8 @@ static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool,
 		_trim(region, "verge_value_earth", LookProfile.VERGE_VALUE_EARTH))
 	painted.set_shader_parameter(&"look_verge_saturation",
 		_trim(region, "verge_saturation", LookProfile.VERGE_SATURATION))
-	painted.set_shader_parameter(&"look_verge_green_red", LookProfile.VERGE_GREEN_RED)
+	painted.set_shader_parameter(&"look_verge_green_red",
+		_trim(region, "verge_green_red", LookProfile.VERGE_GREEN_RED))
 	painted.set_shader_parameter(&"look_verge_fine_metres", LookProfile.VERGE_FINE_METRES)
 	painted.set_shader_parameter(&"look_verge_fine", LookProfile.VERGE_FINE)
 	painted.set_shader_parameter(&"look_verge_grain", LookProfile.VERGE_GRAIN)
