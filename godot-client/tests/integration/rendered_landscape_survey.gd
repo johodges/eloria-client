@@ -15,8 +15,18 @@ extends SceneTree
 ## and 60 Hz plateaus there, so it is kept only as a sanity check). They do not
 ## include the scene tree's own CPU time (scripts, physics, animation), which a
 ## headless run with the low-processor sleep removed measures instead.
+##
+## ELORIA_SURVEY_LIVE_TOGGLE=1 then switches the painted look off in the
+## running client, through main's settings path as the settings window does,
+## captures <id>_live_off.png, switches it back on and captures
+## <id>_live_on.png, each after the same settling as the view's own capture,
+## and records how long each switch took. The client has to be started with
+## ELORIA_LOOK unset (the look on by its settings file), or the variable
+## decides and the switch does nothing; main saves the switch to the settings
+## file, so run it against a scratch user directory.
 const UNCAPPED_VARIABLE := "ELORIA_SURVEY_UNCAPPED"
 const UNCAPPED_FRAMES := 60
+const LIVE_TOGGLE_VARIABLE := "ELORIA_SURVEY_LIVE_TOGGLE"
 var main: Control
 var state: Node
 var out: String
@@ -198,6 +208,8 @@ func _run() -> void:
 			"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 			"primitives":Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME)})
 		print("SURVEY saved ", spec.id)
+		if OS.get_environment(LIVE_TOGGLE_VARIABLE) == "1":
+			(report.back() as Dictionary)["live_toggle"] = await _live_toggle(spec)
 	var file := FileAccess.open(out.path_join("survey.json"), FileAccess.WRITE)
 	file.store_string(JSON.stringify(report, "  "))
 	main.call("_on_disconnect_pressed")
@@ -216,6 +228,24 @@ func _run() -> void:
 func _lift_frame_cap() -> void:
 	Engine.max_fps = 0
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+
+## Switches the painted look off and back on in the running client and
+## captures each (see LIVE_TOGGLE_VARIABLE). Returns what each switch cost.
+func _live_toggle(spec: Dictionary) -> Dictionary:
+	var result := {"look_before": LookProfile.enabled()}
+	for step: Array in [["off", false], ["on", true]]:
+		var started := Time.get_ticks_usec()
+		main.call("_on_client_setting_changed", "Graphics", "look", step[1])
+		result[str(step[0]) + "_switch_ms"] = snappedf((Time.get_ticks_usec() - started) / 1000.0, 0.1)
+		result[str(step[0]) + "_look"] = LookProfile.enabled()
+		for i in 120:
+			await physics_frame
+			await process_frame
+		await create_timer(1.1).timeout
+		RenderingServer.force_draw(false)
+		root.get_texture().get_image().save_png(out.path_join("%s_live_%s.png" % [spec.id, step[0]]))
+		print("SURVEY saved ", spec.id, "_live_", step[0])
+	return result
 
 ## The renderer's measured time per viewport over UNCAPPED_FRAMES frames, as
 ## medians in milliseconds: {"render_ms": {<viewport>: {"gpu", "cpu"}, "total":
