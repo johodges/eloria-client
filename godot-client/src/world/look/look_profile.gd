@@ -616,6 +616,16 @@ const FADE_BEHIND_METRES := 0.4
 ## of single tufts.
 const GRASS_RADIUS := 34.0
 const GRASS_FADE_METRES := 8.0
+## And from GRASS_SOFTEN_METRES.x to .y from the camera a tuft loses up to
+## GRASS_SOFTEN of its root-to-tip gradient and GRASS_SOFTEN_SHRINK of its
+## size. At the default framing the frame's foot is about 22 m from the
+## camera and its top about 33-40 m, so the near ground keeps its blades and
+## the far half turns to tone: dark roots and bright tips a pixel or two apart
+## were most of the high-frequency speckle at lr_beacon and fg_south_gate
+## (p95 65 and 58 in the compatibility renderer, against a 50 target).
+const GRASS_SOFTEN_METRES := Vector2(24.0, 44.0)
+const GRASS_SOFTEN := 0.6
+const GRASS_SOFTEN_SHRINK := 0.2
 ## Placement is worked out in square tiles this many metres across, each
 ## GRASS_TILE_CELLS candidates a side (one every 0.62 m), and a tile is kept
 ## until the focus leaves it behind or the ground under it changes (a chunk
@@ -689,6 +699,17 @@ const GRASS_PATCH_RIM_FROM := 0.3
 ## #ad9e82): no grass where it covers the ground. Soil, dirt yards and leaf
 ## litter are warmer and keep GRASS_ON_PATCH.
 const GRASS_BARE_PATCH := Vector2(0.6, 0.35)
+## Where such a patch ends. The exporter's coverage runs straight along the
+## terrain cells, and the grass used to stop at PATCH_RIM with a dense verge
+## row just before it, which drew the east gate forecourt's edge as a ruled
+## line through the grass (fg_east_gate_close). Now the coverage the grass
+## stops at wanders GRASS_BARE_EDGE_JITTER either side of PATCH_RIM on a noise
+## GRASS_BARE_EDGE_METRES across, about the ground paint's own rim wobble, and
+## the tufts thin out over the last GRASS_BARE_EDGE_FEATHER of coverage before
+## it.
+const GRASS_BARE_EDGE_METRES := 1.3
+const GRASS_BARE_EDGE_JITTER := 0.2
+const GRASS_BARE_EDGE_FEATHER := 0.25
 ## No grass within pale paving's bounds, nor this many metres beyond them:
 ## judged by its coverage, the grass came up through the one-cell seams
 ## between the Four Gates plaza's patches and along the rims of the avenue

@@ -55,6 +55,14 @@ uniform float look_gust_speed = 0.37;
 // Where the bed is centred (global) and where its tufts shrink away.
 uniform vec3 look_focus = vec3(0.0);
 uniform vec2 look_fade_metres = vec2(26.0, 34.0);
+// Distance softening (LookProfile.GRASS_SOFTEN_*): between these distances
+// from the camera a tuft loses up to look_soften of its root-to-tip gradient
+// and look_soften_shrink of its size, so the far half of a -60 degree frame
+// reads as a bed's tone rather than as dark roots and bright tips a pixel or
+// two apart.
+uniform vec2 look_soften_metres = vec2(24.0, 44.0);
+uniform float look_soften = 0.0;
+uniform float look_soften_shrink = 0.0;
 
 varying vec3 v_colour;
 varying vec3 v_up;
@@ -69,14 +77,17 @@ vec3 look_palette(int index, bool tip) {
 void vertex() {
 	float height = UV.y;
 	int index = int(INSTANCE_CUSTOM.x + 0.5);
+	vec3 origin = (MODEL_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+	float far = smoothstep(look_soften_metres.x, look_soften_metres.y,
+		distance(origin, INV_VIEW_MATRIX[3].xyz));
+	float gradient = mix(pow(height, look_gradient_power), 0.45, far * look_soften);
 	vec3 colour = mix(look_palette(index, false), look_palette(index, true),
-		pow(height, look_gradient_power)) * COLOR.rgb * look_value;
+		gradient) * COLOR.rgb * look_value;
 	float luma = dot(colour, vec3(0.2126, 0.7152, 0.0722));
 	v_colour = max(mix(vec3(luma), colour, look_chroma), vec3(0.0));
 
-	vec3 origin = (MODEL_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
-	float shrink = 1.0 - smoothstep(look_fade_metres.x, look_fade_metres.y,
-		length(origin.xz - look_focus.xz));
+	float shrink = (1.0 - smoothstep(look_fade_metres.x, look_fade_metres.y,
+		length(origin.xz - look_focus.xz))) * (1.0 - far * look_soften_shrink);
 
 	// The instance basis is a turn, a tilt and a uniform scale, so its
 	// transpose over its scale squared takes a world offset into the tuft.

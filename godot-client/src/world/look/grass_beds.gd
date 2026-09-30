@@ -220,6 +220,9 @@ func _init() -> void:
 	_material.set_shader_parameter(&"look_gust_speed", LookProfile.GRASS_GUST_SPEED)
 	_material.set_shader_parameter(&"look_fade_metres", Vector2(
 		LookProfile.GRASS_RADIUS - LookProfile.GRASS_FADE_METRES, LookProfile.GRASS_RADIUS))
+	_material.set_shader_parameter(&"look_soften_metres", LookProfile.GRASS_SOFTEN_METRES)
+	_material.set_shader_parameter(&"look_soften", LookProfile.GRASS_SOFTEN)
+	_material.set_shader_parameter(&"look_soften_shrink", LookProfile.GRASS_SOFTEN_SHRINK)
 	for variant: int in VARIANTS:
 		var multimesh := MultiMesh.new()
 		multimesh.transform_format = MultiMesh.TRANSFORM_3D
@@ -696,7 +699,8 @@ func _road_beneath(hit: Dictionary, collider: CollisionObject3D, up: Vector3) ->
 ## What the authored patches over `point` make of it: (0, share) grass that
 ## keeps `share` of its tufts (a yard or leaf litter keeps GRASS_ON_PATCH),
 ## (1, 0) no grass - pale paving's footprint and its seams, or worn cobble
-## where it covers the ground - and (2, 1) verge along a patch's rim.
+## where it covers the ground (thinning out towards a broken edge, see
+## LookProfile.GRASS_BARE_EDGE_*) - and (2, 1) verge along a patch's rim.
 ## Paving is judged by its bounds rather than its coverage: its low weights
 ## are the seams between two plaza patches, where the grass beneath shows
 ## through as thin lines the grass must not pick out.
@@ -713,9 +717,22 @@ func _patch_cover(point: Vector3, patches: Array[Dictionary]) -> Vector2:
 		if not rect.has_point(spot):
 			continue
 		var coverage := _patch_coverage(patch, point)
-		if coverage >= LookProfile.PATCH_RIM.x:
-			if bool(patch.bare):
+		if bool(patch.bare) and coverage >= 0.0:
+			# Worn cobble ends along a broken line, not the exported patch's
+			# straight edge: the coverage the grass stops at wanders either
+			# side of the paint's cut with a slow noise, and the tufts thin
+			# out over the last stretch before it rather than standing in a
+			# dense row along it.
+			var edge := LookProfile.PATCH_RIM.x + (value_noise(
+				point.x / LookProfile.GRASS_BARE_EDGE_METRES,
+				point.z / LookProfile.GRASS_BARE_EDGE_METRES, 31) - 0.5) \
+				* 2.0 * LookProfile.GRASS_BARE_EDGE_JITTER
+			if coverage >= edge:
 				return Vector2(1.0, 0.0)
+			share = minf(share, smoothstep(edge, edge - LookProfile.GRASS_BARE_EDGE_FEATHER,
+				coverage))
+			continue
+		if coverage >= LookProfile.PATCH_RIM.x:
 			share = minf(share, LookProfile.GRASS_ON_PATCH)
 		elif coverage >= LookProfile.GRASS_PATCH_RIM_FROM:
 			rim = true
