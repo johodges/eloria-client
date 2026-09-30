@@ -459,6 +459,170 @@ const CROWN_SWAY_SPEED := 1.1
 ## constants of its own: its timing and opacity stay OccluderFade's
 ## (FADE_SECONDS, FADED_ALPHA and a manifest's occluderFadeAlpha).
 
+# --- Grass beds (layer L4) ---------------------------------------------------
+
+## Grass grows around the camera's focus, out to GRASS_RADIUS metres, and its
+## tufts shrink to nothing over the last GRASS_FADE_METRES, so the bed never
+## ends in a line. The default framing (pitch -60, 26 m) shows about 45 by
+## 35 m of ground, so 34 m reaches the frame's corners; the low views see past
+## it, where the grass thins out. A 44 m bed spread the same budget over two
+## thirds more ground the camera never shows, and its beds read as a scatter
+## of single tufts.
+const GRASS_RADIUS := 34.0
+const GRASS_FADE_METRES := 8.0
+## Placement is worked out in square tiles this many metres across, each
+## GRASS_TILE_CELLS candidates a side (one every 0.62 m), and a tile is kept
+## until the focus leaves it behind or the ground under it changes (a chunk
+## or a neighbour streams in or out). Every candidate casts one ray down the
+## walk collision, so a tile costs about 170 rays and 2 ms.
+const GRASS_TILE_METRES := 8.0
+const GRASS_TILE_CELLS := 13
+## The focus has to move this far before the set of tiles is looked at again.
+const GRASS_REFOCUS_METRES := 2.0
+## Never more than this many tufts: the tiles nearest the focus fill first, so
+## a budget that runs out thins the far edge, never the ground underfoot.
+const GRASS_INSTANCE_BUDGET := 12000
+## How long placement may take per frame, in microseconds: more while the
+## ground the camera frames (GRASS_BARE_METRES around the focus) is still bare
+## after a map load, a teleport or a chunk that changed under it, less while
+## the bed only extends ahead of a walking player.
+const GRASS_BUILD_USEC := 2000
+const GRASS_BUILD_USEC_BARE := 6000
+const GRASS_BARE_METRES := 24.0
+## Tufts per square metre. Verge is the strip along a road's edge where its
+## deck has run out (the edge band the ground layer darkens), the dense bed
+## that frames every road in the reference frames. Open grass carries beds
+## where a slow noise (GRASS_BED_METRES across) rises through GRASS_BED_EDGE,
+## and a light scatter everywhere else, both scaled by how grassy the ground
+## layer under them is.
+## A bed has to cover its ground to read as one from the -60 degree camera:
+## at 4.5 tufts a square metre the first capture showed single tufts, dark
+## stars on the grass, with the ground between them.
+const GRASS_VERGE_DENSITY := 12.0
+const GRASS_BED_DENSITY := 9.0
+const GRASS_SCATTER_DENSITY := 0.25
+const GRASS_BED_METRES := 7.0
+const GRASS_BED_EDGE := Vector2(0.46, 0.68)
+## Most tufts a single candidate may carry, so a verge stays a bed of tufts
+## rather than a pile of them.
+const GRASS_TUFTS_PER_CELL := 6
+## A road deck's coverage (its vertex alpha: 0 at its edge, 1 one strip in)
+## from which it is verge, and from which it is road. The ground layer cuts
+## the road at 0.5 with a 0.1 wobble, and a verge tuft's blades reach 0.4 m
+## out from its foot, so grass stops well short of it: from 0.4 the tufts
+## covered 6-11 % of the roads' own metric boxes.
+const GRASS_VERGE_ALPHA := Vector2(0.02, 0.3)
+## Deck geometry beyond its coverage still lies within a strip of the road:
+## it counts this much as verge.
+const GRASS_DECK_OUTSIDE_VERGE := 0.6
+## An authored patch (a yard, a forecourt, leaf litter) at or above
+## LookProfile.PATCH_RIM coverage keeps this share of the grass, and its rim
+## (from GRASS_PATCH_RIM_FROM up to PATCH_RIM) is verge. Pale paving keeps none
+## from LookProfile.PAVING_RIM up.
+const GRASS_ON_PATCH := 0.2
+const GRASS_PATCH_RIM_FROM := 0.3
+## A patch at least this bright (display value) and at most this saturated is
+## worn cobble or stone, like paving if not as pale (the east gate's forecourt,
+## #ad9e82): no grass where it covers the ground. Soil, dirt yards and leaf
+## litter are warmer and keep GRASS_ON_PATCH.
+const GRASS_BARE_PATCH := Vector2(0.6, 0.35)
+## No grass within pale paving's bounds, nor this many metres beyond them:
+## judged by its coverage, the grass came up through the one-cell seams
+## between the Four Gates plaza's patches and along the rims of the avenue
+## decks that cross it.
+const GRASS_PAVING_MARGIN := 0.5
+## A terrain road (the worn colour the exporter paints into the terrain's
+## vertex colour, LookProfile.TERRAIN_ROAD_COLOUR) is road from this weight
+## and verge from this one.
+const GRASS_TERRAIN_ROAD := Vector2(0.25, 0.5)
+## Grass stands on ground whose world-up normal component is at least the
+## second value and thins out down to the first (about 39 to 26 degrees).
+const GRASS_SLOPE_UP := Vector2(0.78, 0.9)
+## How grassy each biome layer is, by a word in its texture's file name. The
+## blend's layers differ from cell to cell (Four Gates' grass is layer 1 in
+## one cell, Amberwood's layer 2 in another, beside alpine scree, snow crust
+## and moor heather), so the textures are what say which is grass. A layer
+## whose texture has none of these words counts GRASS_LAYER_DEFAULT.
+const GRASS_LAYER_WORDS := {
+	"ground-basecolor": 1.0, "grass": 1.0, "meadow": 1.0, "lawn": 1.0,
+	"heather": 0.6, "moor": 0.6, "moss": 0.5, "forest-floor": 0.5,
+	"gravel": 0.12, "mud": 0.2, "scree": 0.0, "snow": 0.0, "sand": 0.0,
+	"rock": 0.0, "cliff": 0.0,
+}
+const GRASS_LAYER_DEFAULT := 0.3
+## Maps outside the continent colour their ground by vertex colour (Lantern
+## Reach's island is one mesh: green grass at value 0.45, a sand-gold trail
+## at 0.82, and a one-vertex blend between, which the ground layer paints as
+## trail from about its middle). Ground at the second value or brighter is
+## path, between the two it is the verge along it, and below the first it is
+## grass when its green leads red and blue by GRASS_VERTEX_GREEN.
+const GRASS_VERTEX_PATH_VALUE := Vector2(0.52, 0.62)
+const GRASS_VERTEX_GREEN := 0.06
+
+## The tufts: GRASS_TUFTS blades each (5 to 9), in three sizes - short and
+## splayed for the verge, mid-height for the beds, tall and upright for the
+## scatter - each blade a tapered two-segment strip that arcs outward, so a
+## tuft still reads as a star of strokes from the -60 degree camera. Every
+## tuft is turned, scaled within GRASS_SCALE and tilted halfway to the ground.
+const GRASS_TUFTS := [
+	{"blades": 9, "length": Vector2(0.38, 0.58), "splay": Vector2(20.0, 44.0),
+		"width": 0.065, "spread": 0.1},
+	{"blades": 7, "length": Vector2(0.5, 0.74), "splay": Vector2(16.0, 40.0),
+		"width": 0.07, "spread": 0.08},
+	{"blades": 5, "length": Vector2(0.62, 0.92), "splay": Vector2(8.0, 28.0),
+		"width": 0.065, "spread": 0.06},
+]
+const GRASS_SCALE := Vector2(0.8, 1.2)
+const GRASS_GROUND_TILT := 0.5
+## Each region's grass, root to tip, as display (sRGB) colours: a root darker
+## than the verge it grows from and a tip lighter and warmer, averaging about
+## the verge's own value, so the bed reads as depth and light rather than as a
+## paler carpet (roads stay the palest thing on the ground). Four Gates' lush green, Amberwood's dry straw and
+## amber (its floor is half as bright as Four Gates' grass, so its grass is
+## too), Lantern Reach's coastal green. The first entry is for any other map.
+## The order is the shader's palette index; at most four.
+const GRASS_PALETTES := [
+	{"region": "", "root": Color(0.09, 0.15, 0.06), "tip": Color(0.52, 0.6, 0.28)},
+	{"region": "four_gates", "root": Color(0.09, 0.17, 0.06), "tip": Color(0.52, 0.62, 0.28)},
+	{"region": "amberwood", "root": Color(0.13, 0.1, 0.05), "tip": Color(0.56, 0.44, 0.23)},
+	{"region": "lantern_reach", "root": Color(0.05, 0.14, 0.05), "tip": Color(0.4, 0.55, 0.22)},
+]
+## The palettes' value in each renderer. The compatibility renderer lights
+## the display-encoded colour, Forward+ its linear value with SSIL's bounce
+## on top: at 1 in both, Forward+ drew Four Gates' tufts at luminance 125
+## over grass at 83, the compatibility renderer at 99 over 118.
+const GRASS_VALUE_COMPAT := 1.3
+const GRASS_VALUE_FORWARD := 0.3
+## And their chroma: the compatibility renderer's grade drove Four Gates'
+## tufts to (64, 101, 20), a blue channel near zero, while Forward+ drew the
+## same palette a grey olive (71, 78, 46).
+const GRASS_CHROMA_COMPAT := 0.85
+const GRASS_CHROMA_FORWARD := 1.35
+## The root-to-tip blend's power (above 1, most of a blade is the root's
+## colour and only its end lights up) and the vertex-colour shade at the root.
+const GRASS_GRADIENT_POWER := 1.4
+const GRASS_ROOT_SHADE := 0.75
+## Every tuft's value moves by up to this much either way, and a slow noise
+## (GRASS_TONE_METRES across) turns whole beds warmer or cooler by up to
+## GRASS_WARM, so a field reads as painted patches rather than one colour.
+const GRASS_VALUE_JITTER := 0.1
+const GRASS_TONE_METRES := 11.0
+const GRASS_WARM := Color(1.1, 1.0, 0.82)
+const GRASS_SPECULAR := 0.15
+## Wind: the tips lean downwind by up to GRASS_WIND_METRES and sway on a wave
+## GRASS_WIND_WAVE_METRES long that rolls across the field, swelling and
+## easing with gusts. Directions are in the continent frame (x east, z south).
+const GRASS_WIND_DIRECTION := Vector2(0.8, -0.6)
+const GRASS_WIND_METRES := 0.1
+const GRASS_WIND_SPEED := 1.7
+const GRASS_WIND_WAVE_METRES := 6.5
+const GRASS_GUST_SPEED := 0.37
+## The render layer the grass draws on: the main camera's gameplay layer,
+## which the map cameras do not render (the maps are navigation aids).
+const GRASS_RENDER_LAYER := 2
+## ELORIA_LOOK_GRASS_DEBUG=1 prints each finished build's placement census.
+const GRASS_DEBUG_VARIABLE := "ELORIA_LOOK_GRASS_DEBUG"
+
 ## True when the client was started with ELORIA_LOOK=1.
 static func enabled() -> bool:
 	return OS.get_environment(ENABLE_VARIABLE) == "1"

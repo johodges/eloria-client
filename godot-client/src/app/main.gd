@@ -1287,6 +1287,10 @@ func _process(delta: float) -> void:
 		_update_local_actor_follow()
 		if AppState.actors.has(AppState.local_actor_id):
 			exterior_stream.update_position(camera_rig.focus)
+		# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): grow the grass beds
+		# around the camera's focus on whatever map is bound.
+		LookGrassBeds.tend(world_root, world_loader.world_root, world_loader.manifest,
+			exterior_stream.residents, camera_rig.focus)
 		if Time.get_ticks_msec() >= _stream_lighting_at:
 			_stream_lighting_at = Time.get_ticks_msec() + 100
 			_update_border_lighting()
