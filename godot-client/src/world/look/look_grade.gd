@@ -51,16 +51,39 @@ static func _grade_tone(environment: Environment, declared: Dictionary,
 	environment.tonemap_white = float(curve.white)
 	if curve.has("agx_white"):
 		environment.tonemap_agx_white = float(curve.agx_white)
-		environment.tonemap_agx_contrast = float(curve.agx_contrast)
+		environment.tonemap_agx_contrast = float(curve.get("agx_contrast_forward",
+			curve.agx_contrast)) if LookProfile.forward_plus() else float(curve.agx_contrast)
 	# Main's border update writes the manifest's raw saturation here every
 	# 100 ms, but nothing ever enabled the adjustment, so it has never shown.
 	# The grade enables it and replaces the raw boost with a tempered one.
 	environment.adjustment_enabled = true
 	environment.adjustment_brightness = 1.0
 	environment.adjustment_contrast = LookProfile.CONTRAST
+	environment.adjustment_color_correction = toe_curve()
 	environment.adjustment_saturation = LookProfile.saturation(
 		float(_number(declared.get("saturation"), 1.0))) \
 		* LookProfile.map_trim(map_id, "saturation")
+
+## The toe (LookProfile.TOE_LIFT, TOE_END) as the per-channel lookup the
+## environment's colour correction applies to display values after the curve;
+## null when the toe is off. Built once: the grade is re-applied every 100 ms.
+static func toe_curve() -> ImageTexture:
+	if LookProfile.TOE_LIFT <= 0.0:
+		return null
+	if _toe == null:
+		var size := 256
+		var image := Image.create_empty(size, 1, false, Image.FORMAT_RGB8)
+		for index: int in size:
+			var value := float(index) / float(size - 1)
+			var lift := 0.0
+			if value < LookProfile.TOE_END:
+				lift = LookProfile.TOE_LIFT * pow(1.0 - value / LookProfile.TOE_END, 2.0)
+			var lifted := clampf(value + lift, 0.0, 1.0)
+			image.set_pixel(index, 0, Color(lifted, lifted, lifted))
+		_toe = ImageTexture.create_from_image(image)
+	return _toe
+
+static var _toe: ImageTexture = null
 
 static func _grade_ambient(environment: Environment) -> void:
 	var colour: Color = _ungraded(environment, &"ambient_light_color")

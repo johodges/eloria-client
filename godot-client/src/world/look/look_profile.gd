@@ -46,10 +46,17 @@ const TONEMAP_CURVE := "agx"
 ## value, so an A/B compares the curves' shapes rather than their brightness.
 ## AgX's contrast is its own; the other two shape contrast by their white.
 ## AgX carries all of the grade's contrast (see CONTRAST): 1.35 against its
-## default 1.25 opens Amberwood's value spread from 26 to 33.
+## default 1.25 opens Amberwood's value spread from 26 to 33. Forward+ rolls
+## the highlights off harder than the compatibility renderer (the brightest
+## tenth of a Four Gates or Lantern Reach frame 15-25 levels lower at the same
+## mid-grey), which left its frames flat (value spread 24-37 against 40-45);
+## it takes 1.65, with SATURATION_FORWARD taking back the chroma a stronger
+## per-channel curve adds and TOE_LIFT the blacks it deepens. AgX's white
+## (agx_white) was tried as the highlight lever and changed nothing measurable.
 const TONEMAP_CURVES := {
 	"agx": {"mode": Environment.TONE_MAPPER_AGX, "exposure": 1.15,
-		"white": 1.0, "agx_white": 16.29, "agx_contrast": 1.35},
+		"white": 1.0, "agx_white": 16.29, "agx_contrast": 1.35,
+		"agx_contrast_forward": 1.65},
 	"aces": {"mode": Environment.TONE_MAPPER_ACES, "exposure": 1.0,
 		"white": 3.0},
 	"filmic": {"mode": Environment.TONE_MAPPER_FILMIC, "exposure": 1.15,
@@ -64,12 +71,24 @@ const TONEMAP_CURVES := {
 ## Raising AgX's own contrast instead gave the same value spread with those
 ## colours intact, because its curve eases into black rather than clipping.
 const CONTRAST := 1.0
+## A toe under the curve, drawn after it as a per-channel lookup on display
+## values: a display value x below TOE_END is lifted by TOE_LIFT * (1 -
+## x / TOE_END)^2, so black itself becomes TOE_LIFT and the lift has run out,
+## smoothly, by TOE_END. It keeps the darkest authored colours (the navy slate
+## at Four Gates' east gate, the coppice's dark timber and the maples' crimson
+## shade, 5-6 % of those frames below luminance 20 once the curve's contrast
+## was raised for Forward+) out of black without greying the mid-tones the
+## contrast is for. 0 turns it off.
+const TOE_LIFT := 0.045
+const TOE_END := 0.2
 ## Saturation for a map that declares none. Below 1 because the tone curve adds
 ## chroma: AgX's contrast acts on each channel apart, and at 1.0 it took
 ## Amberwood's orange leaf litter and Four Gates' lime grass most of the way to
 ## neon. At 0.9 Amberwood still measured 0.60 (the reference frames average
-## 0.51).
+## 0.51). Forward+ takes less for its stronger curve (AGX contrast 1.65): at
+## 0.8 there Lantern Reach measured 0.75 and Amberwood 0.57.
 const SATURATION := 0.86
+const SATURATION_FORWARD := 0.69
 ## How much of a manifest's own saturation boost survives. Amberwood declares
 ## 1.3, which has never been visible because nothing enabled the adjustment;
 ## at full strength it turns the red maple kit neon. A third of it warms the
@@ -129,8 +148,9 @@ const MAP_TRIMS := {
 ## SSAO and linear lighting), so it takes this much more exposure everywhere.
 ## A per-map trim cannot close the gap on the continent, whose regions share
 ## one grade (Amberwood streams beside Four Gates); Lantern Reach's own trim
-## is divided by it (1.2 before it, 1.07 after).
-const FORWARD_EXPOSURE := 1.12
+## is divided by it. 1.65 (it was 1.12, then 1.42) also pays for the stronger
+## Forward+ curve, which darkens everything below its pivot.
+const FORWARD_EXPOSURE := 1.65
 
 ## Depth fog instead of the manifests' exponential haze. An exponential curve
 ## at the densities declared (0.0001-0.0007) is either invisible or a uniform
@@ -154,8 +174,10 @@ const FOG_SKY_AFFECT := 0.25
 
 ## Contact shade under eaves, trees and props. Forward+ only (see
 ## `screen_space_effects()`), so they cost the compatibility renderer nothing.
+## At 1.4 the Forward+ frames' shade under eaves and crowns went a notch too
+## dark once the curve's contrast was raised.
 const SSAO_RADIUS := 1.6
-const SSAO_INTENSITY := 1.4
+const SSAO_INTENSITY := 1.1
 const SSAO_POWER := 1.4
 const SSAO_DETAIL := 0.5
 ## Some occlusion reaches direct light too, or noon AO vanishes in the sun.
@@ -864,7 +886,8 @@ static func tonemap_curve() -> Dictionary:
 
 ## The saturation to grade a map with, from what its manifest declares.
 static func saturation(declared: float) -> float:
-	return SATURATION * (1.0 + (declared - 1.0) * SATURATION_BOOST_SHARE)
+	var base := SATURATION_FORWARD if forward_plus() else SATURATION
+	return base * (1.0 + (declared - 1.0) * SATURATION_BOOST_SHARE)
 
 ## A map's trim on `key` ("exposure" or "saturation"); 1 for most maps.
 static func map_trim(map_id: String, key: String) -> float:
