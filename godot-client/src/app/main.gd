@@ -1287,7 +1287,7 @@ func _process(delta: float) -> void:
 		_update_local_actor_follow()
 		if AppState.actors.has(AppState.local_actor_id):
 			exterior_stream.update_position(camera_rig.focus)
-		# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): grow the grass beds
+		# Look pass (a no-op with ELORIA_LOOK=0): grow the grass beds
 		# around the camera's focus on whatever map is bound.
 		LookGrassBeds.tend(world_root, world_loader.world_root, world_loader.manifest,
 			exterior_stream.residents, camera_rig.focus)
@@ -4074,7 +4074,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 		world_root.add_child(lantern_scene)
 		lantern_scene.configure(world_loader.world_root, manifest)
 		lantern_scene.apply_state(AppState.lantern_tutorial)
-	# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): paint the ground of a
+	# Look pass (a no-op with ELORIA_LOOK=0): paint the ground of a
 	# map outside the continent now that its scene has set its materials up.
 	# Continent regions and chunks are painted by the loader.
 	LookGround.paint_bound(world_loader.world_root, manifest)
@@ -4084,7 +4084,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	# placeholder environment unchanged.
 	if not _continuous_map_handoff:
 		WorldEnvironmentBinder.apply(manifest, world_environment, world_sun, world_root)
-		# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): paint the sky before
+		# Look pass (a no-op with ELORIA_LOOK=0): paint the sky before
 		# the map cameras take their (ungraded) copy of the environment.
 		LookSky.install(manifest, world_environment)
 	if not _continuous_map_handoff:
@@ -4182,7 +4182,7 @@ func _apply_day_night() -> void:
 	_day_night_active = DayNightBinder.apply(lighting,
 		world_environment, world_sun, AppState.continuous_game_minute(), world_moon)
 	_sync_map_environment()
-	# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): re-grade what the
+	# Look pass (a no-op with ELORIA_LOOK=0): re-grade what the
 	# binders just rewrote. After the map copy, so the maps stay ungraded.
 	LookGrade.apply(lighting, world_environment, world_sun)
 	# Look pass: and give the painted sky and its haze the hour's colours.
@@ -4202,7 +4202,7 @@ func _update_border_lighting() -> void:
 		environment.fog_density = float(declared.get("fog", {}).get("density", environment.fog_density))
 		environment.adjustment_saturation = float(declared.get("saturation", 1))
 	DayNightBinder.apply(lighting, world_environment, world_sun, AppState.continuous_game_minute(), world_moon)
-	# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): the lines above undo
+	# Look pass (a no-op with ELORIA_LOOK=0): the lines above undo
 	# the grade's fog and saturation every 100 ms, so it is re-applied here.
 	LookGrade.apply(lighting, world_environment, world_sun)
 	# Look pass: and the sky's haze, over the border's blended colours.

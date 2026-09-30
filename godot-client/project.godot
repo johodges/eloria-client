@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Eloria"
 run/main_scene="res://src/app/main.tscn"
-config/features=PackedStringArray("4.7", "GL Compatibility")
+config/features=PackedStringArray("4.7", "Forward Plus")
 
 [autoload]
 
@@ -324,5 +324,5 @@ locale/translations=PackedStringArray("res://data/i18n/strings.en.translation")
 
 [rendering]
 
-renderer/rendering_method="gl_compatibility"
+renderer/rendering_method="forward_plus"
 renderer/rendering_method.mobile="gl_compatibility"

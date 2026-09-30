@@ -310,7 +310,7 @@ func load_world(manifest_path: String, arrival := Vector3.INF, wait_for_arrival 
 	if cache_status == &"miss" and not detached_build:
 		_snapshot_for_cache()
 	mark = _phase(&"cacheSnapshot", mark)
-	# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): paint the ground and
+	# Look pass (a no-op with ELORIA_LOOK=0): paint the ground and
 	# the crowns. After the cache snapshot, so the cache keeps the loader's own
 	# materials.
 	LookGround.paint_loaded(world_root, manifest)
@@ -383,7 +383,7 @@ func _load_from_cache(mark: int, began: int) -> bool:
 	cache_status = &"hit"
 	print_debug("world_load stage=cache_hit file=", cache_file,
 		" batches_relinked=", relinked)
-	# Look pass (ELORIA_LOOK=1 only): paint the ground and the crowns, as a
+	# Look pass (not with ELORIA_LOOK=0): paint the ground and the crowns, as a
 	# fresh load does.
 	LookGround.paint_loaded(world_root, manifest)
 	LookFoliage.paint_loaded(world_root, manifest)

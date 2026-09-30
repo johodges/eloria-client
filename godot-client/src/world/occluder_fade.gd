@@ -77,7 +77,7 @@ class Occluder extends RefCounted:
 	var _saved_instance: Transform3D = Transform3D.IDENTITY
 	var _faded: Array[BaseMaterial3D] = []
 	var _opacity: PackedFloat32Array = PackedFloat32Array()
-	# Look pass (ELORIA_LOOK=1 only; see LookFade): the dithered copies swapped
+	# Look pass (not with ELORIA_LOOK=0; see LookFade): the dithered copies swapped
 	# in instead of blended ones, and the twin casting the mesh's shadow while
 	# it fades. Both stay empty with the pass off.
 	var _dithered: Array[ShaderMaterial] = []
@@ -104,7 +104,7 @@ class Occluder extends RefCounted:
 		applied = true
 		if batch != null:
 			_lift_from_batch()
-		# Look pass (ELORIA_LOOK=1 only): the faded mesh stops casting, a wall
+		# Look pass (not with ELORIA_LOOK=0): the faded mesh stops casting, a wall
 		# or roof handing its shadow to a solid twin, taken before the faded
 		# copies go in.
 		if LookProfile.enabled():
@@ -112,7 +112,7 @@ class Occluder extends RefCounted:
 		if node.material_override is BaseMaterial3D:
 			var original: BaseMaterial3D = node.material_override as BaseMaterial3D
 			_saved_override = original
-			# Look pass (ELORIA_LOOK=1 only): a dithered stand-in where it has one.
+			# Look pass (not with ELORIA_LOOK=0): a dithered stand-in where it has one.
 			var dithered_override := _look_dithered(original)
 			if dithered_override != null:
 				node.material_override = dithered_override
@@ -127,7 +127,7 @@ class Occluder extends RefCounted:
 			for surface: int in surfaces:
 				_saved_surfaces.append(node.get_surface_override_material(surface))
 				var active: Material = node.get_active_material(surface)
-				# Look pass (ELORIA_LOOK=1 only): a dithered stand-in where it has one.
+				# Look pass (not with ELORIA_LOOK=0): a dithered stand-in where it has one.
 				var dithered := _look_dithered(active)
 				if dithered != null:
 					_faded.append(null)
@@ -146,7 +146,7 @@ class Occluder extends RefCounted:
 					_opacity.append(1.0)
 		write_alpha()
 
-	## Look pass (ELORIA_LOOK=1 only): the copy LookFade dithers `material` out
+	## Look pass (not with ELORIA_LOOK=0): the copy LookFade dithers `material` out
 	## with, kept for write_alpha. Null with the pass off, and for a material
 	## LookFade has no dithered copy of (it then fades as on develop).
 	func _look_dithered(material: Material) -> ShaderMaterial:
@@ -173,7 +173,7 @@ class Occluder extends RefCounted:
 		_saved_surfaces.clear()
 		_faded.clear()
 		_opacity.clear()
-		# Look pass (ELORIA_LOOK=1 only): nothing to undo with the pass off. The
+		# Look pass (not with ELORIA_LOOK=0): nothing to undo with the pass off. The
 		# node may already be freed with its map, and a freed object must not
 		# reach a typed parameter.
 		_dithered.clear()
@@ -194,7 +194,7 @@ class Occluder extends RefCounted:
 			var colour: Color = material.albedo_color
 			colour.a = _opacity[index] * scale
 			material.albedo_color = colour
-		# Look pass (ELORIA_LOOK=1 only): the fade's progress opens the hole.
+		# Look pass (not with ELORIA_LOOK=0): the fade's progress opens the hole.
 		for material: ShaderMaterial in _dithered:
 			LookFade.write(material, scale, fade)
 
@@ -306,7 +306,7 @@ func update(delta: float, camera: Camera3D, player: Node3D) -> void:
 		return
 	if _occluders.is_empty():
 		return
-	# Look pass (ELORIA_LOOK=1 only): the faded look materials cut their hole
+	# Look pass (not with ELORIA_LOOK=0): the faded look materials cut their hole
 	# round the player's chest, where the probe aims.
 	if LookProfile.enabled() and is_instance_valid(player):
 		LookFade.focus = player.global_position + Vector3(0.0, PROBE_HEIGHT, 0.0)
@@ -407,7 +407,7 @@ func _index(mesh_instance: MeshInstance3D) -> Occluder:
 			return null
 	if _is_walk_surface(mesh_instance):
 		return null
-	# Look pass (ELORIA_LOOK=1 only): nor is the rest of the ground, which
+	# Look pass (not with ELORIA_LOOK=0): nor is the rest of the ground, which
 	# develop fades under the player's feet (see LookFade).
 	if LookProfile.enabled() and LookFade.keeps_solid(node_name):
 		return null

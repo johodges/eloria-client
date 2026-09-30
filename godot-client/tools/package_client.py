@@ -540,7 +540,9 @@ Build {version}
 
 Requirements
 ------------
-Windows 10 or 11, 64-bit, and a GPU from the last decade.
+Windows 10 or 11, 64-bit, and a GPU from the last decade. The game draws with
+Vulkan; on a GPU or driver without it, it starts in a simpler OpenGL 3.3 mode
+that looks flatter but plays the same.
 
 Install
 -------
@@ -590,8 +592,9 @@ Build {version}
 Requirements
 ------------
 64-bit x86 Linux with a desktop session (X11, or Wayland with XWayland) and
-a GPU driver supporting OpenGL 3.3 - any Mesa, NVIDIA or AMD driver from the
-last decade. Nothing else needs installing.
+a GPU driver supporting Vulkan - any recent Mesa, NVIDIA or AMD driver. With
+only OpenGL 3.3 the game starts in a simpler mode that looks flatter but plays
+the same. Nothing else needs installing.
 
 Install
 -------

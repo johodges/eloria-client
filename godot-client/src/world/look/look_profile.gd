@@ -2,10 +2,14 @@ class_name LookProfile
 extends RefCounted
 ## The frame-level look pass: its one switch and every constant it tunes.
 ##
-## The pass is an experiment the owner asked to see before deciding on it, so
-## nothing it adds may change what a player gets by default. Every layer asks
-## `enabled()` first and does nothing unless the client was started with
-## ELORIA_LOOK=1. With the variable unset or 0 the client is exactly develop.
+## The pass is the client's look: it is on unless the client was started with
+## ELORIA_LOOK=0, and that one switch is the whole of its off path. Every
+## layer asks `enabled()` first and does nothing when it is false, which gives
+## back the frames the client drew before the pass (the look-off renders match
+## them within run-to-run noise), for an A/B capture or to rule the pass out
+## when a frame looks wrong. Forward+ is the renderer it is tuned for; the
+## compatibility renderer (the OpenGL fallback, and CI's rendered tests) keeps
+## its own trims wherever the two light differently.
 ##
 ## The constants live here, not beside the code that uses them, so the whole
 ## look can be read, compared and retuned in one place. They are tuned for the
@@ -13,7 +17,7 @@ extends RefCounted
 ## fifths of the frame is ground, so the grade matters more than the sky; only
 ## the low views (pitch -30 and -20) reach the horizon.
 
-## The environment variable that turns the pass on.
+## The environment variable that turns the pass off: "0" and nothing else.
 const ENABLE_VARIABLE := "ELORIA_LOOK"
 ## Picks another tone curve for an A/B capture ("agx", "aces" or "filmic").
 ## Unset, the pass uses TONEMAP_CURVE.
@@ -839,9 +843,12 @@ const HAZE_SKY_AFFECT := 0.1
 ## flat, for reading what AgX and the grade make of them.
 const SKY_DEBUG_VARIABLE := "ELORIA_LOOK_SKY_DEBUG"
 
-## True when the client was started with ELORIA_LOOK=1.
+## True unless the client was started with ELORIA_LOOK=0. Unset, empty or any
+## other value leaves the look on, so a stray value can never switch it off.
+## Read on every call, but each layer applies when a map binds or loads, so a
+## change takes effect at the next map load.
 static func enabled() -> bool:
-	return OS.get_environment(ENABLE_VARIABLE) == "1"
+	return OS.get_environment(ENABLE_VARIABLE) != "0"
 
 ## True when the renderer has SSAO and SSIL. Only Forward+ does; the others
 ## ignore the settings but warn about them, so they are not set there at all.
@@ -872,7 +879,14 @@ static func map_trim(map_id: String, key: String) -> float:
 ## True in the Forward+ renderer, which some trims tell apart (see
 ## SUN_WARMTH_FORWARD).
 static func forward_plus() -> bool:
-	return RenderingServer.get_current_rendering_method() == "forward_plus"
+	# Asked once: the renderer never changes while the client runs, and the
+	# ground is painted on the loader's worker threads too.
+	if _forward_plus < 0:
+		_forward_plus = 1 if RenderingServer.get_current_rendering_method() == "forward_plus" else 0
+	return _forward_plus == 1
+
+## forward_plus()'s answer once asked: -1 not yet, 0 no, 1 yes.
+static var _forward_plus := -1
 
 ## The exposure trim for the renderer in use (FORWARD_EXPOSURE in Forward+).
 static func renderer_exposure() -> float:
