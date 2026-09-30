@@ -436,8 +436,10 @@ func _collect(local_focus: Vector3) -> void:
 			var water := node_name.begins_with("Water_") or node_name.begins_with("Scenery_Water")
 			var ground := node_name.begins_with("AuthoredGround_")
 			if not water and not ground:
+				# By a word of its material's name, as the ground layer judges
+				# it (LookGround.water_named): "crownwater" is not water.
 				var material := mesh_instance.get_active_material(0)
-				water = material != null and material.resource_name.to_lower().contains("water")
+				water = material != null and LookGround.water_named(material.resource_name)
 				if not water:
 					continue
 			var xform := mesh_instance.global_transform
@@ -472,8 +474,7 @@ func _patch(node: MeshInstance3D, xform: Transform3D, rect: Rect2) -> Dictionary
 		and tint.s <= LookProfile.PAVING_TINT_SATURATION and stone and not sand
 	var bare := sand or (tint.v >= LookProfile.GRASS_BARE_PATCH.x \
 		and tint.s <= LookProfile.GRASS_BARE_PATCH.y and stone)
-	var grass := not paving and not bare \
-		and (tint.g - maxf(tint.r, tint.b)) / maxf(tint.g, 0.0001) >= LookProfile.GRASS_PATCH_GREEN
+	var grass := not paving and not bare and LookProfile.green_tint(tint)
 	return {"inverse": xform.affine_inverse(), "rect": rect, "paving": paving, "bare": bare,
 		"grass": grass, "surface": node.mesh.generate_triangle_mesh(),
 		"mesh": _mesh_data(node.mesh)}
@@ -777,8 +778,8 @@ func _patch_cover(point: Vector3, patches: Array[Dictionary]) -> Vector3:
 			# (Mirrorhold's meadows over scree, Manymouth's over silt), and its
 			# edge melts into the ground rather than growing a verge ring.
 			if coverage >= 0.0:
-				green = maxf(green, smoothstep(LookProfile.GRASS_PATCH_RIM_FROM,
-					LookProfile.PATCH_RIM.x, coverage))
+				green = maxf(green, smoothstep(LookProfile.MEADOW_RIM.x - LookProfile.MEADOW_RIM.y * 2.0,
+					LookProfile.MEADOW_RIM.x + LookProfile.MEADOW_RIM.y * 2.0, coverage))
 			continue
 		if bool(patch.bare) and coverage >= 0.0:
 			# Worn cobble ends along a broken line, not the exported patch's

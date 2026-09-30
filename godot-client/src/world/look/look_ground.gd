@@ -122,6 +122,9 @@ static func paint_loaded(root: Node, manifest: WorldManifest) -> int:
 	if not manifest.data.has("continentGeography"):
 		return 0
 	decode_continent_sea(root)
+	# One tint for the whole continent: its rivers run on across the regions'
+	# borders (Amberwood's western river crosses four of them).
+	decode_inland_water(root)
 	return paint(root, region_of(manifest))
 
 ## Forward+ only: the continent's sea (continent_water.gdshader, which the
@@ -147,9 +150,69 @@ static func decode_continent_sea(root: Node) -> int:
 			decoded.set_meta(PAINTED_META, true)
 			decoded.set_shader_parameter(&"look_decode_albedo", true)
 			decoded.set_shader_parameter(&"look_sea_value", LookProfile.CONTINENT_SEA_VALUE)
+			decoded.set_shader_parameter(&"look_sea_chroma", LookProfile.CONTINENT_SEA_CHROMA)
 			mesh_instance.set_surface_override_material(surface, decoded)
 			changed += 1
 	return changed
+
+## Forward+ only: the rivers, canals, lakes, pools and small seas drawn by a
+## StandardMaterial3D (the continent exporter's authored_<river>_water, the
+## tutorial islands' `sea`, a lagoon's pool) take a copy whose tint is
+## multiplied by the region's `water.inland_tint` (LookProfile.INLAND_WATER_TINT
+## where it has none), as a surface override, so the loader's cache keeps its
+## own material. Their colours were picked in the compatibility renderer:
+## lit as linear albedo in Forward+ and greyed by the grade, Manymouth's cyan
+## channels (126, 207, 229) came out milky (149, 180, 183), as pale as the
+## painted roads beside them, and Stillglass's pool went slate. Returns the
+## surfaces changed.
+static func decode_inland_water(root: Node, region := "") -> int:
+	if not LookProfile.enabled() or root == null or not LookProfile.forward_plus():
+		return 0
+	var tint: Color = LookProfile.region_value(region, "water", "inland_tint",
+		LookProfile.INLAND_WATER_TINT)
+	var made := {}
+	var changed := 0
+	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.mesh == null or mesh_instance.material_override != null:
+			continue
+		for surface: int in mesh_instance.mesh.get_surface_count():
+			var source := mesh_instance.get_active_material(surface) as BaseMaterial3D
+			if source == null or source.has_meta(PAINTED_META) \
+					or not inland_water(String(mesh_instance.name), source):
+				continue
+			var key := source.get_instance_id()
+			if not made.has(key):
+				var decoded := source.duplicate() as BaseMaterial3D
+				decoded.set_meta(PAINTED_META, true)
+				var colour := source.albedo_color
+				decoded.albedo_color = Color(colour.r * tint.r, colour.g * tint.g,
+					colour.b * tint.b, colour.a)
+				made[key] = decoded
+			mesh_instance.set_surface_override_material(surface, made[key])
+			changed += 1
+	return changed
+
+## True when a mesh is inland water drawn by a StandardMaterial3D: its node is
+## a Water_ mesh, or its material is named for water or is a map's `sea`
+## (never sea foam, nor a sea rock).
+static func inland_water(node_name: String, material: BaseMaterial3D) -> bool:
+	var material_name := material.resource_name.to_lower()
+	if material_name.contains("foam") or material_name.contains("rock"):
+		return false
+	return node_name.begins_with("Water_") or node_name.begins_with("Scenery_Water") \
+		or water_named(material_name)
+
+## True when a material's name says it is water: "water" or "sea" as a word of
+## it (water_pool, authored_amberwood_western_river_water, a map's `sea`), not
+## inside another word. Crownwater's own materials (authored_crownwater_...,
+## crownwater_marble) contain "water": taken for it, every road deck in the
+## region was tinted as a river and never painted.
+static func water_named(material_name: String) -> bool:
+	for word: String in material_name.to_lower().split("_", false):
+		if word == "water" or word == "sea":
+			return true
+	return false
 
 ## Paints a map outside the continent once main has bound it and its scene
 ## script has set its materials up. Interiors are left alone, as the grade
@@ -160,7 +223,13 @@ static func paint_bound(root: Node, manifest: WorldManifest) -> int:
 	if manifest.data.has("continentGeography") or not outdoor(manifest):
 		return 0
 	decode_water(root, region_of(manifest))
-	return paint(root, region_of(manifest))
+	decode_inland_water(root, region_of(manifest))
+	var painted := paint(root, region_of(manifest))
+	# The map's signature colours (its file's `props.keep_words`), as the
+	# continent's regions have theirs kept where their crowns are painted:
+	# after the paint, so only what it left alone is kept.
+	LookFoliage.keep_chroma(root, region_of(manifest))
+	return painted
 
 ## Forward+ only: a sea whose shader's colours were picked in the
 ## compatibility renderer (named in `region`'s file, `water.decode_albedo`,
@@ -272,7 +341,33 @@ static func is_cobble(material: Material) -> bool:
 ## lilac scree scatter are not). LookProfile.STONE_TINT_LEAD.
 static func stone_tint(tint: Color) -> bool:
 	return tint.g - maxf(tint.r, tint.b) <= LookProfile.STONE_TINT_LEAD.x \
-		and tint.b - tint.r <= LookProfile.STONE_TINT_LEAD.y
+		and tint.b - tint.r <= LookProfile.STONE_TINT_LEAD.y \
+		and not LookProfile.green_tint(tint)
+
+## A green meadow or pasture: a blended patch whose tint is green by
+## LookProfile.green_tint (the life passes' Grass preset regions, Sunmane's
+## pastures, Verdant's lime clearing). Painted as its own colour at
+## LookProfile.MEADOW_VALUE and MEADOW_CHROMA, solid inside its coverage, and
+## grown with grass (LookGrassBeds reads the same test).
+static func is_meadow(material: Material) -> bool:
+	var standard := material as BaseMaterial3D
+	return standard != null and standard.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED \
+		and LookProfile.green_tint(standard.albedo_color)
+
+## Bare rock: a blended patch in a pale, nearly grey tint that is not stone
+## paving or cobble by its hue (LookProfile.ROCK_TINT): Whitehorn's granite
+## crags (#b3b5bf), the Amethyst Barrens' lilac scree. Drawn solid in its own
+## colour, as develop draws it: as a PATCH_OPACITY yard glaze over the snow
+## beneath, Whitehorn's granite read as dirty snow (luminance 166 against
+## the snow's 197, develop 135 against 237) and lost its texture.
+static func is_rock(material: Material) -> bool:
+	var standard := material as BaseMaterial3D
+	if standard == null or standard.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED:
+		return false
+	var tint := standard.albedo_color
+	return tint.v >= LookProfile.ROCK_TINT.x and tint.s <= LookProfile.ROCK_TINT.y \
+		and not LookProfile.green_tint(tint) and not sand_tint(tint) \
+		and not is_paving(standard) and not is_cobble(standard)
 
 ## True when a patch's tint is pale beach sand (LookProfile.SAND_TINT): the
 ## life passes' sand banks and beaches, #fff5d1. A glaze over the ground
@@ -368,12 +463,19 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
 	painted.set_shader_parameter(&"vertex_albedo_srgb", standard.vertex_color_is_srgb)
 	painted.set_shader_parameter(&"use_vertex_alpha", blended and has_colour
 		and kind != Kind.TERRAIN)
+	var meadow := kind == Kind.PATCH and is_meadow(standard)
+	var rock := kind == Kind.PATCH and not meadow and is_rock(standard)
 	var rim := LookProfile.DECK_RIM
 	if kind == Kind.PATCH:
-		rim = LookProfile.PAVING_RIM if is_paving(standard) else LookProfile.PATCH_RIM
+		rim = LookProfile.PAVING_RIM if is_paving(standard) \
+			else LookProfile.MEADOW_RIM if meadow else LookProfile.PATCH_RIM
 	painted.set_shader_parameter(&"look_rim", rim)
-	painted.set_shader_parameter(&"look_opacity",
-		LookProfile.PATCH_OPACITY if kind == Kind.PATCH and not is_cobble(standard) else 1.0)
+	var opacity := 1.0
+	if meadow:
+		opacity = LookProfile.MEADOW_OPACITY
+	elif kind == Kind.PATCH and not is_cobble(standard) and not rock:
+		opacity = LookProfile.PATCH_OPACITY
+	painted.set_shader_parameter(&"look_opacity", opacity)
 	var surface_tint := LookProfile.PAVING_SURFACE_TINT \
 		if kind == Kind.PATCH and is_paving(standard) else Color.WHITE
 	painted.set_shader_parameter(&"look_surface_tint",
@@ -407,7 +509,27 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
 		and (kind == Kind.TERRAIN or (kind == Kind.DECK and deck_road_of(region) != null))
 	_set_paint(painted, class_kind, road_detect,
 		region, paving if kind == Kind.DECK or (kind == Kind.PATCH and blended
-			and not is_paving(standard)) else PackedVector4Array(), area)
+			and not is_paving(standard) and not meadow) else PackedVector4Array(), area)
+	if meadow:
+		# A meadow keeps its own green, at the meadow's value and chroma,
+		# rather than the yard glaze: glazed at PATCH_OPACITY and taken for
+		# soil where its texture leads red, Sunmane's pastures went khaki with
+		# grey-lilac blotches (hue 58 to 43) and Mirrorhold's hub meadow the
+		# scree's grey (saturation 0.57 to 0.16).
+		painted.set_shader_parameter(&"look_yard", 0.0)
+		painted.set_shader_parameter(&"look_keep", 1.0)
+		var value := float(_trim(region, "meadow_value", LookProfile.MEADOW_VALUE))
+		painted.set_shader_parameter(&"look_keep_tint", Vector3(value, value, value))
+		painted.set_shader_parameter(&"look_keep_chroma", float(_trim(region, "meadow_chroma",
+			LookProfile.MEADOW_CHROMA_FORWARD if LookProfile.forward_plus()
+				else LookProfile.MEADOW_CHROMA)))
+	elif rock:
+		# Rock keeps its own texture and colour at its region's rock value.
+		painted.set_shader_parameter(&"look_yard", 0.0)
+		painted.set_shader_parameter(&"look_keep", 1.0)
+		var rock_value := float(_trim(region, "rock_value", LookProfile.ROCK_VALUE))
+		painted.set_shader_parameter(&"look_keep_tint", Vector3(rock_value, rock_value, rock_value))
+		painted.set_shader_parameter(&"look_keep_chroma", 1.0)
 	return painted
 
 ## How much of a road the region's walk decks are painted as
@@ -500,6 +622,11 @@ static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool,
 	painted.set_shader_parameter(&"look_keep_tint", Vector3(keep_tint.r, keep_tint.g, keep_tint.b))
 	painted.set_shader_parameter(&"look_keep_chroma",
 		float(LookProfile.region_value(region, "ground", "deck_chroma", 1.0)))
+	# And its texture's grain about its mean, scaled (`ground.deck_grain`): a
+	# pale court tinted up towards AgX's shoulder lost its flagstones' tone
+	# blocks (Bellwatch's and Stillglass's court spread 25 to 11).
+	painted.set_shader_parameter(&"look_keep_grain",
+		float(LookProfile.region_value(region, "ground", "deck_grain", 1.0)))
 	painted.set_shader_parameter(&"look_pale", 0.0 if kind == Kind.BIOME else 1.0)
 	painted.set_shader_parameter(&"look_road_detect", 1.0 if road_detect else 0.0)
 	var road := LookProfile.TERRAIN_ROAD_COLOUR
@@ -518,9 +645,16 @@ static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool,
 	painted.set_shader_parameter(&"look_path_tint", Vector3(tint.r, tint.g, tint.b))
 	painted.set_shader_parameter(&"look_path_chroma",
 		_trim(region, "path_chroma", LookProfile.PATH_CHROMA))
-	painted.set_shader_parameter(&"look_path_detail", LookProfile.PATH_DETAIL)
+	# A region may flatten its roads' grain (`ground.path_detail`, the power
+	# the texture's grain is raised to, and `ground.path_fine`, the mottle):
+	# at the defaults a honey-sand or cart-track texture's dark flecks read as
+	# a leopard mottle (Mirrorhold, Reedway). Baked per chunk and not faded
+	# across a border, so only for grain a neighbour's road does not share.
+	painted.set_shader_parameter(&"look_path_detail",
+		_trim(region, "path_detail", LookProfile.PATH_DETAIL))
 	painted.set_shader_parameter(&"look_path_fine_metres", LookProfile.PATH_FINE_METRES)
-	painted.set_shader_parameter(&"look_path_fine", LookProfile.PATH_FINE)
+	painted.set_shader_parameter(&"look_path_fine",
+		_trim(region, "path_fine", LookProfile.PATH_FINE))
 	var rects := paving.duplicate()
 	rects.resize(LookProfile.PAVING_RECTS_MAX)
 	painted.set_shader_parameter(&"look_paving_rects", rects)
@@ -560,6 +694,7 @@ static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool,
 	painted.set_shader_parameter(&"look_path_variation_share",
 		LookProfile.PATH_VARIATION_SHARE)
 	painted.set_shader_parameter(&"look_slope_up", LookProfile.SLOPE_UP)
+	painted.set_shader_parameter(&"look_road_slope", LookProfile.ROAD_SLOPE_UP)
 	painted.set_shader_parameter(&"look_slope_shade", LookProfile.SLOPE_SHADE)
 
 ## Hands a painted material the region borders near it and each neighbour's

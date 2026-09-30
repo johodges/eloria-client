@@ -11,9 +11,11 @@ uniform bool has_wave_texture = false;
 // renderer, which lights display-encoded albedo. Forward+ lights the same
 // numbers as linear albedo, which drew the sea a milky pale turquoise as
 // bright as the roads; decoded, it is the deep sea they were picked as, and
-// look_sea_value sets its brightness.
+// look_sea_value sets its brightness and look_sea_chroma its chroma (the
+// decode crushes the small red channel, which drove the sea teal).
 uniform bool look_decode_albedo = false;
 uniform float look_sea_value = 1.0;
+uniform float look_sea_chroma = 1.0;
 varying vec2 continent_position;
 
 void vertex() {
@@ -41,6 +43,7 @@ void fragment() {
 	}
 	if (look_decode_albedo) {
 		ALBEDO = pow(max(ALBEDO, vec3(0.0)), vec3(2.2)) * look_sea_value;
+		ALBEDO = mix(vec3(dot(ALBEDO, vec3(.2126, .7152, .0722))), ALBEDO, look_sea_chroma);
 	}
 	// All exterior frames are translation-only, so these continent-space
 	// ripple normals also agree across differently authored water primitives.

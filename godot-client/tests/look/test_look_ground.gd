@@ -112,10 +112,19 @@ func _run() -> void:
 		"the biome blend is painted through its own spliced copy, parameters intact")
 	_expect(threshold.get_surface_override_material(0) == null
 		and bridge.get_surface_override_material(0) == null
-		and water.get_surface_override_material(0) == null
 		and tree.get_surface_override_material(0) == null
 		and batched.get_surface_override_material(0) == null,
-		"thresholds, bridge timber, water, trees and batched meshes are left alone")
+		"thresholds, bridge timber, trees and batched meshes are left alone")
+	# Inland water is not ground: in Forward+ it only takes its decoded tint.
+	var water_paint := water.get_surface_override_material(0) as BaseMaterial3D
+	if LookProfile.forward_plus():
+		var tint := LookProfile.INLAND_WATER_TINT
+		_expect(water_paint != null and water_paint != water_material
+			and water_paint.albedo_color == Color(tint.r, tint.g, tint.b, 1.0)
+			and water_material.albedo_color == Color.WHITE,
+			"inland water takes a decoded copy in Forward+, its source untouched")
+	else:
+		_expect(water_paint == null, "inland water is left alone in the compatibility renderer")
 	var untouched := true
 	for node: MeshInstance3D in sources:
 		untouched = untouched and node.mesh.surface_get_material(0) == sources[node]
@@ -215,8 +224,16 @@ func _run() -> void:
 		material.albedo_color = Color(hex)
 		return material
 	_expect(LookGround.is_paving(tinted.call("ccba9c")) and LookGround.is_paving(tinted.call("e6e0d1"))
-		and LookGround.is_paving(tinted.call("d1c7ab")) and LookGround.is_paving(tinted.call("c7dbb8")),
-		"the Four Gates plaza, the civic courts and a pale grey-green floor are paving")
+		and LookGround.is_paving(tinted.call("d1c7ab")),
+		"the Four Gates plaza and the civic courts are paving")
+	_expect(not LookGround.is_paving(tinted.call("c7dbb8")) and LookGround.is_meadow(tinted.call("c7dbb8"))
+		and LookGround.is_meadow(tinted.call("9cad66")) and LookGround.is_meadow(tinted.call("b3eb80"))
+		and not LookGround.is_meadow(tinted.call("9ea169")) and not LookGround.is_meadow(tinted.call("ffa85c")),
+		"green patches are meadows, whatever their value (Sunmane's grain and pasture, a Grass preset), not paving")
+	_expect(LookGround.is_rock(tinted.call("b3b5bf")) and LookGround.is_rock(tinted.call("8a858f"))
+		and not LookGround.is_rock(tinted.call("ccba9c")) and not LookGround.is_rock(tinted.call("fff5d1"))
+		and not LookGround.is_rock(tinted.call("b8eba8")) and not LookGround.is_rock(tinted.call("666e59")),
+		"granite and lilac scree are rock; paving, sand, meadow and dark heather are not")
 	_expect(not LookGround.is_paving(tinted.call("b8eba8"))
 		and not LookGround.is_paving(tinted.call("b3b5bf"))
 		and not LookGround.is_paving(tinted.call("adc4db"))

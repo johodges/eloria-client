@@ -38,6 +38,8 @@ uniform float look_yard = 0.0;
 uniform float look_keep = 0.0;
 uniform vec3 look_keep_tint = vec3(1.0);
 uniform float look_keep_chroma = 1.0;
+// And its texture's grain about the texture's mean, scaled by this.
+uniform float look_keep_grain = 1.0;
 // How much pale ground is spared the verge treatment (0 for the biome blend).
 uniform float look_pale = 1.0;
 
@@ -87,6 +89,11 @@ uniform float look_variation_hue = 0.06;
 uniform float look_path_variation_share = 0.35;
 uniform vec2 look_slope_up = vec2(0.94, 0.62);
 uniform float look_slope_shade = 0.72;
+// The terrain's worn-road colour is road only on ground at least this level
+// (world-up normal component, fading from x to y): the exporter's road tint
+// bleeds up the cliff faces beside a lane, and painted as road it drew pale
+// gravel blotches up the Whitehorn crags at gm_border_wh.
+uniform vec2 look_road_slope = vec2(0.72, 0.84);
 
 // The region's border, where its trims above fade into its neighbours'
 // (LookBorders, LookProfile.BORDER_*): up to 32 segments in continent space
@@ -276,9 +283,10 @@ vec4 look_border_weights(vec2 xz) {
 // The weights look_paint uses (path, yard, pale), for the debug views too.
 // `reference` is the surface's mean albedo, linear: classing and lifting by
 // the mean rather than by each texel keeps the texture's own grain.
-vec3 look_weights(vec3 reference, vec3 vertex_colour) {
+vec3 look_weights(vec3 reference, vec3 vertex_colour, float up) {
 	float luma = look_luma(reference);
-	float road = look_road_detect > 0.0 ? look_road_weight(vertex_colour) : 0.0;
+	float road = look_road_detect > 0.0 ? look_road_weight(vertex_colour)
+		* smoothstep(look_road_slope.x, look_road_slope.y, up) : 0.0;
 	float path = max(look_path_force, road);
 	float green = look_green(reference);
 	float pale = smoothstep(look_pale_luma.x, look_pale_luma.y, luma) * (1.0 - green)
@@ -295,7 +303,7 @@ vec3 look_weights(vec3 reference, vec3 vertex_colour) {
 vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float up) {
 	albedo = look_to_linear(albedo);
 	reference = look_to_linear(reference);
-	vec3 weights = look_weights(reference, vertex_colour);
+	vec3 weights = look_weights(reference, vertex_colour, up);
 	float path = weights.x;
 	float yard = weights.y;
 	float pale = weights.z;
@@ -345,7 +353,8 @@ vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float 
 	// Yards keep their own colour and lift a little.
 	float yard_lift = clamp(look_yard_luma / luma, 1.0, look_yard_lift_max);
 	colour = mix(colour, look_saturate(albedo * yard_lift, look_yard_saturation), yard);
-	colour = mix(colour, look_saturate(albedo * look_keep_tint, look_keep_chroma), look_keep);
+	vec3 kept = max(reference + (albedo - reference) * look_keep_grain, vec3(0.0));
+	colour = mix(colour, look_saturate(kept * look_keep_tint, look_keep_chroma), look_keep);
 
 	// Paths: a set value and hue, the texture's grain, a fine mottle; darker
 	// than the paving where they run through it. A yard inside the paving (a
@@ -385,7 +394,7 @@ vec3 look_debug_colour(vec3 reference, vec3 vertex_colour, vec2 xz) {
 	}
 	reference = look_to_linear(reference);
 	if (look_debug == 2) {
-		return look_weights(reference, vertex_colour) * 0.5;
+		return look_weights(reference, vertex_colour, 1.0) * 0.5;
 	}
 	if (look_debug == 3) {
 		float luma = look_luma(reference);

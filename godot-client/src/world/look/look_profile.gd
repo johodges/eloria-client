@@ -305,6 +305,30 @@ const PAVING_RECTS_MAX := 8
 const YARD_LUMA := 0.12
 const YARD_LIFT_MAX := 2.0
 const YARD_SATURATION := 0.9
+## A green meadow or pasture patch (LookGround.is_meadow: its tint's green
+## leads its red and blue by GRASS_PATCH_GREEN of itself, `green_tint`) is not
+## a yard: it keeps its own colour at MEADOW_VALUE (a linear multiplier) and
+## MEADOW_CHROMA (MEADOW_CHROMA_FORWARD in Forward+), drawn at MEADOW_OPACITY
+## and faded in over its coverage by MEADOW_RIM rather than cut: the
+## exporter's weights fall off across most of a meadow (Mirrorhold's hub
+## meadow is under 0.42 over half its vertices, Sunmane's pastures dip to 0.1
+## inside), and cut at a threshold they drew the earth beneath as pale
+## blotches through the grass. Glazed as soil, Sunmane's pastures went khaki
+## (hue 58 to 43) and Mirrorhold's hub meadow the scree's grey (saturation
+## 0.57 to 0.16). Forward+ lights an already saturated grass texture under a
+## green tint into lime: at chroma 1.35 Manymouth's meadow drew (124, 133,
+## 25) against develop's (149, 165, 115).
+const MEADOW_VALUE := 1.0
+const MEADOW_CHROMA := 1.0
+const MEADOW_CHROMA_FORWARD := 0.8
+const MEADOW_OPACITY := 1.0
+const MEADOW_RIM := Vector3(0.14, 0.12, 0.04)
+## A patch at least this bright (display value) and at most this saturated,
+## and not paving, cobble, sand or green, is bare rock (LookGround.is_rock):
+## Whitehorn's granite, the Amethyst Barrens' lilac scree. Drawn solid in its
+## own colour times ROCK_VALUE (a region's `ground.rock_value`).
+const ROCK_TINT := Vector2(0.5, 0.12)
+const ROCK_VALUE := 1.0
 ## A patch (not paving) is a glaze over the ground beneath rather than a
 ## sticker: drawn solid over its footprint, the leaf litter under the deep
 ## grove's player became a saturated orange oval, the brightest shape in a dark
@@ -411,12 +435,21 @@ const EDGE_BAND_FROM := 0.1
 const EDGE_BAND_PUSH_METRES := 0.03
 
 ## Banks and cliffs darken with slope: from this world-up component of the
-## surface normal (about 31 degrees) to this one (about 53), down to
+## surface normal (about 26 degrees) to this one (about 57), down to
 ## SLOPE_SHADE of their value. The terrain's facets change slope at straight
 ## cell edges, so shade that began at 20 degrees drew a gentle field's rise
-## as a straight step across the frame (ten levels at the south gate).
-const SLOPE_UP := Vector2(0.86, 0.6)
-const SLOPE_SHADE := 0.72
+## as a straight step across the frame (ten levels at the south gate). At 0.72
+## from 31 to 53 degrees it stacked on the sun's own falloff: a sunlit
+## terrace bank at wh_garden drew a straight-edged dark band, and the Grey
+## Moors' shaded facets went black; the light shades a slope already.
+const SLOPE_UP := Vector2(0.9, 0.55)
+const SLOPE_SHADE := 0.84
+## The terrain's worn-road colour is painted as road only where the ground is
+## at least this level (world-up normal component, from about 44 degrees of
+## slope to 33): the exporter's road tint bleeds up the faces beside a lane,
+## and painted as road it laid pale gravel blotches up the crags at
+## gm_border_wh.
+const ROAD_SLOPE_UP := Vector2(0.72, 0.84)
 ## The continent exporter paints its worn roads into the terrain's vertex
 ## colour as this linear colour (0.49, 0.435, 0.315 in sRGB, over the grain
 ## divisor 0.92). The terrain shader treats vertex colour this close to it,
@@ -443,6 +476,19 @@ const DECK_ROAD_TOLERANCE := Vector2(0.05, 0.15)
 ## harbour and Westhaven's quays the same). At 4 Ssarathi's shore measures
 ## luminance 51, develop's; 2.5, Lantern Reach's value, left it at 39.
 const CONTINENT_SEA_VALUE := 4.0
+## And its chroma after the decode, around its own luminance: decoded whole,
+## the small red channel went to nothing and the sea read a saturated teal
+## (11, 62, 76 against develop's 37, 72, 87; md_border_cw's frame saturation
+## 0.63, over the 0.52 ceiling).
+const CONTINENT_SEA_CHROMA := 0.7
+## Inland water drawn by a StandardMaterial3D (rivers, canals, lagoons, the
+## tutorial islands' seas and pools) is tinted by this display multiplier in
+## Forward+ (LookGround.decode_inland_water): value down and red down most,
+## so the grade's greying lands it near the cyan develop drew and clearly
+## below the painted roads. A map outside the continent may set its own in its
+## region file (`water.inland_tint`); the continent has one, since its rivers
+## cross the regions' borders.
+const INLAND_WATER_TINT := Color(0.55, 0.8, 0.9)
 
 ## Forward+ lights the painted ground's linear albedo as linear light, where
 ## the compatibility renderer lights it display-encoded: the same verge came
@@ -1063,6 +1109,15 @@ static func map_trim(map_id: String, key: String, continent := false) -> float:
 				% map_id + "section is ignored; the continent shares one grade")
 		return 1.0
 	return float(region_value(map_id, "grade", key, 1.0))
+
+## True when a patch tint (display colour) is green: its green leads its red
+## and blue by at least GRASS_PATCH_GREEN of itself. The ground paint's meadow
+## class (LookGround.is_meadow), its stone test and the grass's green patches
+## (LookGrassBeds) all ask this one question, so they agree: judged apart (an
+## absolute lead of 0.1 for stone, a relative 0.06 for grass), Sunmane's pale
+## grain patches (#c7dbb8) were painted as paving and grew grass at once.
+static func green_tint(tint: Color) -> bool:
+	return (tint.g - maxf(tint.r, tint.b)) / maxf(tint.g, 0.0001) >= GRASS_PATCH_GREEN
 
 ## True in the Forward+ renderer, which some trims tell apart (see
 ## SUN_WARMTH_FORWARD).
