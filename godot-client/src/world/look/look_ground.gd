@@ -214,6 +214,10 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
 	painted.shader = shader
 	painted.render_priority = standard.render_priority
 	painted.next_pass = standard.next_pass
+	# A blended painted surface dithers itself out if OccluderFade fades it
+	# (layer L3, LookFade); it already carries the dither.
+	if blended:
+		painted.set_meta(LookFade.FADED_SHADER_META, shader)
 	painted.set_shader_parameter(&"albedo_texture", standard.albedo_texture)
 	painted.set_shader_parameter(&"albedo_color", standard.albedo_color)
 	painted.set_shader_parameter(&"use_vertex_albedo",

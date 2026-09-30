@@ -357,6 +357,108 @@ const GROUND_TRIMS := {
 ## is measuring and what the shader sees.
 const GROUND_DEBUG_VARIABLE := "ELORIA_LOOK_GROUND_DEBUG"
 
+# --- Foliage and fade (layer L3) ---------------------------------------------
+
+## What counts as a crown. The authored trees split crown and trunk into
+## separate nodes (Tree_<n>_<species>_Canopy / _Wood), and every crown there
+## draws with one of these alpha-cut leaf materials; the trunks' bark is never
+## painted. The kit's Meshy trees and shrubs are one surface with one atlas
+## material for crown and trunk together, so they are recognised by the
+## species words in their node names (kit-crimson-maple-3, kit-dark-fir-12)
+## and split inside the shader by height (see CROWN_FLOOR).
+const CROWN_MATERIALS := ["foliage_amber", "foliage_rust", "foliage_gold", "undergrowth"]
+## Kit species with a trunk under a crown.
+const KIT_TREE_WORDS := ["tree", "maple", "oak", "fir", "pine", "birch", "sapling", "cypress"]
+## Kit plants that are foliage from the ground up.
+const KIT_SHRUB_WORDS := ["shrub", "hedge", "fern", "undergrowth", "bramble", "bracken", "reed", "juniper"]
+## Kit plants whose colour is the point (blossom), so their hue is not tamed.
+const KIT_UNTAMED_WORDS := ["flower"]
+## A foliage mesh this much wider than it is tall, and wider than
+## CROWN_MERGED_METRES, is many plants merged into one mesh (Lantern Reach's
+## wind pines are one 74 m mesh): its bounds say nothing about any one crown,
+## so it is left as it is.
+const CROWN_MERGED_RATIO := 2.5
+const CROWN_MERGED_METRES := 20.0
+
+## Where a kit tree's crown begins, as a fraction of the mesh's height. Below
+## it is trunk. Measured by sampling each kit tree's atlas at its vertices: the
+## crimson maple's lowest fifth is bark (saturation 0.25, value 0.36) and the
+## rest crown (0.8-0.93, 0.71-0.81); the great amber oak, the autumn maple and
+## the dark fir split at the same fifth. Saturation alone does not split
+## them: the resin-tapped pine's bark is as saturated (0.52) as its needles
+## (0.45). Shrubs are crown from the ground up.
+const CROWN_FLOOR := 0.2
+## The painted top light: a crown's top is warmed and lifted, its underside
+## (and the trunk beneath it) cooled and deepened, across the crown's height
+## in mesh space, eased by CROWN_LIGHT_POWER (below 1, the light holds most of
+## the crown and falls off towards its underside). Linear multipliers on
+## albedo, before the sun; the grade adds its own warm key and cool shade on
+## top. The first capture (under 0.5, 0.56, 0.68; core 0.62; power 0.8) took
+## the dark firs from luminance 83 to 51 and, by adding blue under a red crown,
+## turned the crimson maple's shaded side pink. So the value is redistributed
+## rather than taken away, and a tamed (warm, saturated) texel's underside
+## goes towards CROWN_UNDER_WARM, a deep red-brown, instead of blue.
+const CROWN_TOP := Color(1.16, 1.08, 0.92)
+const CROWN_UNDER := Color(0.6, 0.65, 0.76)
+const CROWN_UNDER_WARM := Color(0.62, 0.5, 0.46)
+const CROWN_LIGHT_POWER := 0.7
+## Fake occlusion towards the crown's centre: at the centre of the crown's
+## box the albedo is scaled by CROWN_CORE, reaching 1 at CROWN_CORE_EDGE of
+## the way out to its shell. Leaves inside the crown and the gaps between its
+## clumps read darker, which is what makes a clump read at all.
+const CROWN_CORE := 0.72
+const CROWN_CORE_EDGE := Vector2(0.25, 0.85)
+## Painted clumps: a value mottle in mesh space, this many metres across,
+## this far either side of the mean, so a flat-shaded blob breaks into lit
+## and shaded masses.
+const CROWN_CLUMP_METRES := 2.2
+const CROWN_CLUMP := 0.16
+## Every crown is a little different: its hue turns by up to this many
+## degrees and its value by this fraction either way, from a hash of its
+## position in its region (not in the world, which a seam crossing rebases).
+const CROWN_JITTER_HUE := 7.0
+const CROWN_JITTER_VALUE := 0.1
+## The jitter comes in this many variants, so the copies of one kit tree
+## share that many painted materials rather than one each.
+const CROWN_JITTER_VARIANTS := 8
+
+## The autumn crowns' tame. The kit's crimson maple is saturation 0.9 at hue
+## 300-349 (magenta, not crimson) and its great amber oak 0.9 at hue 25: flat
+## neon blobs beside the painted canopies (0.45-0.6). A warm, saturated texel
+## (hue in the window below, in sRGB degrees, above TAME_FROM saturation) has
+## its saturation compressed past TAME_KNEE towards TAME_CEILING, its magenta
+## pulled towards crimson (no bluer than TAME_MAGENTA_FLOOR degrees, i.e.
+## 358), and its hue walked across the crown: towards scarlet and amber at the
+## top (TAME_HUE_TOP degrees) and towards maroon underneath (TAME_HUE_UNDER).
+## Hues are judged on display-encoded colour in both renderers. Compressed to
+## 0.68 at the same value, the maple went salmon (luminance 92 to 100,
+## saturation 0.80 to 0.67): the tame keeps more chroma and takes value off
+## the bright texels instead, which is what a painter deepening a neon red
+## would do.
+const TAME_HUE := Vector2(268.0, 60.0)
+const TAME_FROM := Vector2(0.4, 0.6)
+const TAME_KNEE := 0.55
+const TAME_CEILING := 0.8
+const TAME_MAGENTA_FLOOR := -2.0
+const TAME_HUE_TOP := 9.0
+const TAME_HUE_UNDER := -5.0
+## Bright texels (display value from TAME_VALUE_FROM.x to .y) lose this much
+## value, so a tamed crown's lit top stays a deep warm red or amber rather
+## than a pale neon one.
+const TAME_VALUE := 0.8
+const TAME_VALUE_FROM := Vector2(0.5, 0.9)
+
+## Wind: a crown sways by up to this many metres at its top, weighted by the
+## square of the height within the mesh, so the trunk's foot never moves; one
+## cycle takes about 2 pi / CROWN_SWAY_SPEED seconds, each crown on its own
+## phase. Gentle: the camera is 26 m away.
+const CROWN_SWAY_METRES := 0.07
+const CROWN_SWAY_SPEED := 1.1
+
+## The occluder fade dithers instead of blending (LookFade). It has no
+## constants of its own: its timing and opacity stay OccluderFade's
+## (FADE_SECONDS, FADED_ALPHA and a manifest's occluderFadeAlpha).
+
 ## True when the client was started with ELORIA_LOOK=1.
 static func enabled() -> bool:
 	return OS.get_environment(ENABLE_VARIABLE) == "1"

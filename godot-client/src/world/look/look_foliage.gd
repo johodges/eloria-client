@@ -1,0 +1,253 @@
+class_name LookFoliage
+extends RefCounted
+## Look pass layer L3: paints the crowns - top-lit, clumped, cooler and deeper
+## underneath, each a little different from its neighbours, the autumn reds
+## and oranges tamed into a painted range, swaying a little in the wind - by
+## giving each crown a painted material as its region, chunk or neighbour is
+## finished. Does nothing unless LookProfile.enabled().
+##
+## Two families of crown come out of the exporters (see the look inventory,
+## tests/look/probe_materials.gd):
+##
+## - Authored trees are split into Tree_<n>_<species>_Canopy and _Wood nodes.
+##   The canopy draws with an alpha-cut leaf material (foliage_amber, _rust,
+##   _gold, and undergrowth); those materials are what is painted, so every
+##   canopy, grove and landmark crown that uses them is found whatever its
+##   node is called. Trunks (bark_*) are left alone.
+## - The kit's Meshy trees and shrubs are one surface with one atlas material
+##   for crown and trunk together, recognised by the species words in their
+##   node names (LookProfile.KIT_TREE_WORDS, KIT_SHRUB_WORDS). Their crown is
+##   split from their trunk inside the shader by height, at CROWN_FLOOR of the
+##   mesh (measured on their texels; saturation alone does not separate them).
+##
+## A painted material needs its crown's box, which lives in the mesh, and its
+## crown's jitter seed, hashed from the node's position in its region (which a
+## seam crossing's rebase does not move). So one is made per source material,
+## mesh and seed, and the seeds are rounded to CROWN_JITTER_VARIANTS: a kit
+## tree's copies share one mesh and a few materials. The seed is a material
+## uniform, not an instance uniform: the compatibility renderer gives instance
+## uniforms 16 slots per instance out of 4096, so they ran out at about 256
+## crowns ("Too many instances using shader instance variables").
+##
+## Crowns go in as surface overrides, never into the shared material or mesh,
+## and after the loader's cache snapshot, as the ground's do. The loader's
+## static batches draw their members through one MultiMesh, so a batch whose
+## mesh is a crown gets the painted material as its override, and its hidden
+## members get it too: OccluderFade lifts a member out of the batch to fade it,
+## and it must then draw the same crown.
+##
+## Every painted crown also names its dithered variant (LookFade), so a crown
+## that stands between the camera and the player dithers out rather than
+## staying solid, which is what a ShaderMaterial would otherwise do.
+
+const SHADER_OPAQUE := preload("res://src/world/look/painted_foliage.gdshader")
+const SHADER_CUTOUT := preload("res://src/world/look/painted_foliage_cutout.gdshader")
+const SHADER_OPAQUE_FADED := preload("res://src/world/look/painted_foliage_faded.gdshader")
+const SHADER_CUTOUT_FADED := preload("res://src/world/look/painted_foliage_cutout_faded.gdshader")
+
+## Marks a material this layer made, so painting a root twice is harmless.
+const PAINTED_META := &"look_painted_foliage"
+## WorldLoader.BATCH_META: the node is hidden and this MultiMesh draws it.
+const BATCH_META := &"static_batch"
+## WorldLoader.BATCH_INDEX_META: the member's instance in its batch.
+const BATCH_INDEX_META := &"static_batch_index"
+## How far apart a batch's instances' seeds are (the golden ratio, as in
+## painted_foliage_body.gdshaderinc).
+const INSTANCE_SEED_STEP := 0.6180339
+
+enum Kind { NONE = -1, CROWN = 0, KIT_TREE = 1, KIT_SHRUB = 2 }
+
+## Paints a continent map's root as the loader finishes it, like
+## LookGround.paint_loaded. The maps outside the continent have no crowns this
+## layer can paint (Lantern Reach's wind pines are one merged mesh). Returns
+## the surfaces painted.
+static func paint_loaded(root: Node, manifest: WorldManifest) -> int:
+	if not LookProfile.enabled() or root == null or manifest == null:
+		return 0
+	if not manifest.data.has("continentGeography"):
+		return 0
+	return paint(root)
+
+## Paints every crown under `root`. Safe to call again on a root it has
+## already painted.
+static func paint(root: Node) -> int:
+	if not LookProfile.enabled() or root == null:
+		return 0
+	var made: Dictionary = {}
+	var surfaces := 0
+	var batches := 0
+	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.mesh == null or mesh_instance.material_override != null:
+			continue
+		var node_name := _plain_name(String(mesh_instance.name))
+		if LookGround.kind_of(node_name) != LookGround.Kind.NONE:
+			continue
+		var batch: MultiMeshInstance3D = null
+		if mesh_instance.has_meta(BATCH_META):
+			var batch_value: Variant = mesh_instance.get_meta(BATCH_META)
+			# A batch has one override for every surface it draws.
+			if batch_value is not MultiMeshInstance3D \
+					or mesh_instance.mesh.get_surface_count() != 1:
+				continue
+			batch = batch_value as MultiMeshInstance3D
+		var seed := _crown_seed(mesh_instance, root, batch)
+		var untamed := _untamed(node_name)
+		for surface: int in mesh_instance.mesh.get_surface_count():
+			var source: Material = mesh_instance.get_active_material(surface)
+			if source == null or source.has_meta(PAINTED_META):
+				continue
+			var kind := kind_of(node_name, source)
+			if kind == Kind.NONE:
+				continue
+			var key := "%d:%d:%.4f" % [source.get_instance_id(),
+				mesh_instance.mesh.get_instance_id(), seed]
+			if not made.has(key):
+				made[key] = painted_for(source, kind, mesh_instance.mesh, untamed, seed)
+			var painted: Material = made[key]
+			if painted == null:
+				continue
+			mesh_instance.set_surface_override_material(surface, painted)
+			surfaces += 1
+			if batch != null and batch.material_override == null:
+				var batch_key := "batch:%d" % batch.get_instance_id()
+				made[batch_key] = painted_for(source, kind, mesh_instance.mesh, untamed,
+					_batch_seed(batch, root))
+				batch.material_override = made[batch_key]
+				batches += 1
+	var materials := 0
+	for value: Variant in made.values():
+		if value != null:
+			materials += 1
+	if surfaces > 0:
+		print("look_foliage stage=painted root=%s surfaces=%d materials=%d batches=%d"
+			% [root.name, surfaces, materials, batches])
+	return surfaces
+
+## What kind of crown a surface is: an authored crown by its leaf material, a
+## kit tree or shrub by the species words in its node's name, or none.
+static func kind_of(node_name: String, material: Material) -> Kind:
+	var standard := material as BaseMaterial3D
+	if standard == null:
+		return Kind.NONE
+	if standard.resource_name in LookProfile.CROWN_MATERIALS:
+		return Kind.CROWN
+	if not node_name.begins_with("kit-"):
+		return Kind.NONE
+	var words := node_name.to_lower().split("-", false)
+	for word: String in words:
+		if word in LookProfile.KIT_TREE_WORDS:
+			return Kind.KIT_TREE
+	for word: String in words:
+		if word in LookProfile.KIT_SHRUB_WORDS:
+			return Kind.KIT_SHRUB
+	return Kind.NONE
+
+## The painted stand-in for `source` on `mesh`, or null when it cannot be
+## painted faithfully (it blends, is culled one-sided, takes its colour from
+## vertex colour, uses a feature look_standard_surface does not reproduce, or
+## is many plants merged into one mesh).
+static func painted_for(source: Material, kind: Kind, mesh: Mesh,
+		untamed := false, seed := 0.0) -> ShaderMaterial:
+	var standard := source as BaseMaterial3D
+	if standard == null or kind == Kind.NONE or mesh == null:
+		return null
+	var cutout := standard.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	if standard.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and not cutout:
+		return null
+	if standard.cull_mode != BaseMaterial3D.CULL_DISABLED \
+			or standard.vertex_color_use_as_albedo or not LookFade.reproduces(standard):
+		return null
+	var box := mesh.get_aabb()
+	var width := maxf(box.size.x, box.size.z)
+	if width > LookProfile.CROWN_MERGED_METRES \
+			and width > box.size.y * LookProfile.CROWN_MERGED_RATIO:
+		return null
+	var floor_share := LookProfile.CROWN_FLOOR if kind == Kind.KIT_TREE else 0.0
+	var painted := ShaderMaterial.new()
+	painted.resource_name = standard.resource_name
+	painted.shader = SHADER_CUTOUT if cutout else SHADER_OPAQUE
+	painted.render_priority = standard.render_priority
+	painted.next_pass = standard.next_pass
+	painted.set_meta(PAINTED_META, true)
+	painted.set_meta(LookFade.FADED_SHADER_META,
+		SHADER_CUTOUT_FADED if cutout else SHADER_OPAQUE_FADED)
+	LookFade.copy_standard_surface(standard, painted)
+	painted.set_shader_parameter(&"alpha_scissor_threshold", standard.alpha_scissor_threshold)
+	painted.set_shader_parameter(&"look_crown_min", Vector3(box.position.x,
+		box.position.y + box.size.y * floor_share, box.position.z))
+	painted.set_shader_parameter(&"look_crown_max", box.end)
+	painted.set_shader_parameter(&"look_mesh_foot", box.position.y)
+	var top := LookProfile.CROWN_TOP
+	var under := LookProfile.CROWN_UNDER
+	var under_warm := LookProfile.CROWN_UNDER_WARM
+	painted.set_shader_parameter(&"look_crown_top", Vector3(top.r, top.g, top.b))
+	painted.set_shader_parameter(&"look_crown_under", Vector3(under.r, under.g, under.b))
+	painted.set_shader_parameter(&"look_crown_under_warm",
+		Vector3(under_warm.r, under_warm.g, under_warm.b))
+	painted.set_shader_parameter(&"look_crown_light_power", LookProfile.CROWN_LIGHT_POWER)
+	painted.set_shader_parameter(&"look_crown_core", LookProfile.CROWN_CORE)
+	painted.set_shader_parameter(&"look_crown_core_edge", LookProfile.CROWN_CORE_EDGE)
+	painted.set_shader_parameter(&"look_crown_clump_metres", LookProfile.CROWN_CLUMP_METRES)
+	painted.set_shader_parameter(&"look_crown_clump", LookProfile.CROWN_CLUMP)
+	painted.set_shader_parameter(&"look_crown_jitter_hue", LookProfile.CROWN_JITTER_HUE)
+	painted.set_shader_parameter(&"look_crown_jitter_value", LookProfile.CROWN_JITTER_VALUE)
+	painted.set_shader_parameter(&"look_tame", 0.0 if untamed else 1.0)
+	painted.set_shader_parameter(&"look_tame_hue", LookProfile.TAME_HUE)
+	painted.set_shader_parameter(&"look_tame_from", LookProfile.TAME_FROM)
+	painted.set_shader_parameter(&"look_tame_knee", LookProfile.TAME_KNEE)
+	painted.set_shader_parameter(&"look_tame_ceiling", LookProfile.TAME_CEILING)
+	painted.set_shader_parameter(&"look_tame_magenta_floor", LookProfile.TAME_MAGENTA_FLOOR)
+	painted.set_shader_parameter(&"look_tame_hue_top", LookProfile.TAME_HUE_TOP)
+	painted.set_shader_parameter(&"look_tame_hue_under", LookProfile.TAME_HUE_UNDER)
+	painted.set_shader_parameter(&"look_tame_value", LookProfile.TAME_VALUE)
+	painted.set_shader_parameter(&"look_tame_value_from", LookProfile.TAME_VALUE_FROM)
+	painted.set_shader_parameter(&"look_sway_metres", LookProfile.CROWN_SWAY_METRES)
+	painted.set_shader_parameter(&"look_sway_speed", LookProfile.CROWN_SWAY_SPEED)
+	painted.set_shader_parameter(&"look_seed", seed)
+	painted.set_shader_parameter(&"look_fade", 1.0)
+	return painted
+
+## The crown's jitter seed (0..1): a hash of its position in `root`, walked up
+## through the local transforms because a chunk is painted before it joins
+## the tree, and because the world's global frame moves at every seam crossing.
+static func seed_of(node: Node3D, root: Node) -> float:
+	var place := node.transform
+	var parent := node.get_parent()
+	while parent != null and parent != root:
+		if parent is Node3D:
+			place = (parent as Node3D).transform * place
+		parent = parent.get_parent()
+	return _hash_seed(hash(Vector2i(roundi(place.origin.x * 4.0),
+		roundi(place.origin.z * 4.0))))
+
+static func _hash_seed(value: int) -> float:
+	return float(posmod(value, 65521)) / 65521.0
+
+## The seed a crown's painted material carries. A crown drawn by its own node
+## takes one of CROWN_JITTER_VARIANTS seeds, so the copies of a kit tree share
+## a handful of materials instead of one each. A batch member takes exactly
+## the seed its batch's shader gives its instance, so lifting it out of the
+## batch to fade it does not change its colour.
+static func _crown_seed(node: MeshInstance3D, root: Node, batch: MultiMeshInstance3D) -> float:
+	if batch != null:
+		var index := int(node.get_meta(BATCH_INDEX_META, 0))
+		return fposmod(_batch_seed(batch, root) + float(index) * INSTANCE_SEED_STEP, 1.0)
+	var variants := float(LookProfile.CROWN_JITTER_VARIANTS)
+	return floorf(seed_of(node, root) * variants) / variants
+
+static func _batch_seed(batch: MultiMeshInstance3D, root: Node) -> float:
+	return _hash_seed((String(root.name) + String(batch.name)).hash())
+
+## Blossom keeps its colour: the tame is for the autumn crowns.
+static func _untamed(node_name: String) -> bool:
+	for word: String in node_name.to_lower().split("-", false):
+		if word in LookProfile.KIT_UNTAMED_WORDS:
+			return true
+	return false
+
+## A neighbour's preview copy is named StreamView_<n>__<original>.
+static func _plain_name(node_name: String) -> String:
+	if node_name.begins_with("StreamView_"):
+		return node_name.get_slice("__", 1)
+	return node_name

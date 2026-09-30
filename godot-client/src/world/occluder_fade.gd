@@ -77,6 +77,11 @@ class Occluder extends RefCounted:
 	var _saved_instance: Transform3D = Transform3D.IDENTITY
 	var _faded: Array[BaseMaterial3D] = []
 	var _opacity: PackedFloat32Array = PackedFloat32Array()
+	# Look pass (ELORIA_LOOK=1 only; see LookFade): the dithered copies swapped
+	# in instead of blended ones, and the twin casting the mesh's shadow while
+	# it fades. Both stay empty with the pass off.
+	var _dithered: Array[ShaderMaterial] = []
+	var _shadow: MeshInstance3D
 
 	## True while the mesh is actually drawing. A collision proxy is hidden for
 	## good and an interior wall is hidden by the cutaway while the camera looks
@@ -99,20 +104,35 @@ class Occluder extends RefCounted:
 		applied = true
 		if batch != null:
 			_lift_from_batch()
+		# Look pass (ELORIA_LOOK=1 only): the dithered mesh hands its shadow to
+		# a solid twin, taken before the faded copies go in.
+		if LookProfile.enabled():
+			_shadow = LookFade.hold_shadow(node)
 		if node.material_override is BaseMaterial3D:
 			var original: BaseMaterial3D = node.material_override as BaseMaterial3D
 			_saved_override = original
-			var single := _fade_copy(original)
-			_faded.append(single)
-			_opacity.append(original.albedo_color.a)
-			node.material_override = single
+			# Look pass (ELORIA_LOOK=1 only): a dithered stand-in where it has one.
+			var dithered_override := _look_dithered(original)
+			if dithered_override != null:
+				node.material_override = dithered_override
+			else:
+				var single := _fade_copy(original)
+				_faded.append(single)
+				_opacity.append(original.albedo_color.a)
+				node.material_override = single
 		else:
 			var mesh: Mesh = node.mesh
 			var surfaces: int = 0 if mesh == null else mesh.get_surface_count()
 			for surface: int in surfaces:
 				_saved_surfaces.append(node.get_surface_override_material(surface))
 				var active: Material = node.get_active_material(surface)
-				if active is BaseMaterial3D:
+				# Look pass (ELORIA_LOOK=1 only): a dithered stand-in where it has one.
+				var dithered := _look_dithered(active)
+				if dithered != null:
+					_faded.append(null)
+					_opacity.append(1.0)
+					node.set_surface_override_material(surface, dithered)
+				elif active is BaseMaterial3D:
 					var copy := _fade_copy(active as BaseMaterial3D)
 					_faded.append(copy)
 					_opacity.append((active as BaseMaterial3D).albedo_color.a)
@@ -124,6 +144,17 @@ class Occluder extends RefCounted:
 					_faded.append(null)
 					_opacity.append(1.0)
 		write_alpha()
+
+	## Look pass (ELORIA_LOOK=1 only): the copy LookFade dithers `material` out
+	## with, kept for write_alpha. Null with the pass off, and for a material
+	## LookFade has no dithered copy of (it then fades as on develop).
+	func _look_dithered(material: Material) -> ShaderMaterial:
+		if not LookProfile.enabled():
+			return null
+		var dithered := LookFade.dither_copy(material)
+		if dithered != null:
+			_dithered.append(dithered)
+		return dithered
 
 	## Puts the original materials back, and hands a batched mesh back to the
 	## MultiMesh that owns it.
@@ -141,6 +172,13 @@ class Occluder extends RefCounted:
 		_saved_surfaces.clear()
 		_faded.clear()
 		_opacity.clear()
+		# Look pass (ELORIA_LOOK=1 only): nothing to undo with the pass off. The
+		# node may already be freed with its map, and a freed object must not
+		# reach a typed parameter.
+		_dithered.clear()
+		if is_instance_valid(_shadow):
+			LookFade.release_shadow(node if is_instance_valid(node) else null, _shadow)
+		_shadow = null
 		if batch != null:
 			_return_to_batch()
 
@@ -154,6 +192,8 @@ class Occluder extends RefCounted:
 			var colour: Color = material.albedo_color
 			colour.a = _opacity[index] * scale
 			material.albedo_color = colour
+		for material: ShaderMaterial in _dithered:
+			LookFade.write(material, scale)
 
 	## The batch holds this mesh's transform relative to its imported root, so collapsing that instance
 	## to zero scale drops it from the draw without disturbing the others.
@@ -359,6 +399,10 @@ func _index(mesh_instance: MeshInstance3D) -> Occluder:
 		if node_name.begins_with(prefix):
 			return null
 	if _is_walk_surface(mesh_instance):
+		return null
+	# Look pass (ELORIA_LOOK=1 only): nor is the rest of the ground, which
+	# develop fades under the player's feet (see LookFade).
+	if LookProfile.enabled() and LookFade.keeps_solid(node_name):
 		return null
 	var transform: Transform3D = mesh_instance.global_transform
 	var local_box: AABB = mesh_instance.get_aabb()

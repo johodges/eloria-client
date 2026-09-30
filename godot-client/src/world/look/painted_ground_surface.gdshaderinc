@@ -42,6 +42,12 @@ uniform float look_rim_noise_metres = 0.9;
 uniform float look_edge_band = 0.0;
 uniform float look_edge_band_from = 0.1;
 uniform float look_edge_band_push = 0.03;
+// The occluder fade's opacity (LookFade): OccluderFade drives it on a faded
+// copy, which then discards the pixels a screen-door pattern puts above it.
+// With the pass on the ground is never indexed as an occluder, so this is the
+// safety net that keeps a painted ground surface from staying solid if it
+// ever is.
+uniform float look_fade = 1.0;
 uniform sampler2D normal_texture : hint_normal, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform bool has_normal_texture = false;
 uniform float normal_scale = 1.0;
@@ -93,6 +99,10 @@ void fragment() {
 		NORMAL_MAP_DEPTH = normal_scale;
 	}
 #ifdef LOOK_GROUND_ALPHA
+	if (look_fade < 0.999 && fract(52.9829189 * fract(dot(FRAGCOORD.xy,
+			vec2(0.06711056, 0.00583715)))) >= look_fade) {
+		discard;
+	}
 	float coverage = 1.0;
 	float band = 0.0;
 	if (use_vertex_alpha) {
