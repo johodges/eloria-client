@@ -1031,8 +1031,9 @@ const SKY_HAZE_WARMTH := 0.45
 const SKY_HAZE_LIFT := 0.03
 ## And never brighter than this display value: the sky takes the grade's
 ## exposure too, so a pale declared horizon (Whitehorn's, Crownwater's) came
-## out white over white snow or over the far palace.
-const SKY_HAZE_VALUE_MAX := 0.72
+## out white over white snow or over the far palace. 0.72 still left it near
+## white (198); 0.66.
+const SKY_HAZE_VALUE_MAX := 0.66
 ## Only a clear sky is painted as the bright day (LookSky.clearness): a
 ## declared zenith this blue (hue window in degrees, with SKY_CLEAR_HUE_EDGE
 ## either side) and this saturated. Every clear map's zenith is 208-218
@@ -1061,8 +1062,12 @@ const SKY_GRADIENT_POWER := 6.0
 ## horizon to none at this sine of elevation (about 6 degrees); below the
 ## horizon, where nothing has loaded or the world has ended, it carries on and
 ## gives way to the old ground colour by this sine (about 17 degrees). A map
-## camera looking straight down still sees only that ground colour.
-const SKY_HAZE_HEIGHT := 0.1
+## camera looking straight down still sees only that ground colour. At 0.1
+## the band filled most of what a low view sees of the sky, and over
+## Whitehorn's snow it read as white sky meeting white ground (wr_horizon's
+## sky 198 against develop's 151); at 0.07 (about 4 degrees) the zenith's
+## blue comes down to it.
+const SKY_HAZE_HEIGHT := 0.07
 const SKY_HAZE_DEPTH := 0.3
 ## Brushed cumulus: four octaves of value noise on a flat cloud layer, the
 ## noise this many cells per unit of the layer's plane (larger, smaller
