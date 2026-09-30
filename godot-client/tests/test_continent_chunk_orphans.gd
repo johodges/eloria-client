@@ -67,6 +67,27 @@ func _run() -> void:
 		await process_frame
 	third._release_worker(Vector3.ZERO, true)
 	_expect(third._thread == null and ContinentChunkStream.orphans_pending() == 0, "a finished worker is joined without orphaning")
+	# 5. A script that quits the tree itself drains first: a stream's live
+	# worker and an orphan both finish across frames, and the stream is paused
+	# so it requests nothing more. Quitting under either crashed the process.
+	var fourth := ContinentChunkStream.new()
+	root.add_child(fourth)
+	fourth._pending = _pending("live-at-quit")
+	fourth._thread = Thread.new()
+	_expect(fourth._thread.start(_slow_worker) == OK, "worker live at quit started")
+	var fifth := ContinentChunkStream.new()
+	root.add_child(fifth)
+	fifth._pending = _pending("orphaned-at-quit")
+	fifth._thread = Thread.new()
+	_expect(fifth._thread.start(_slow_worker) == OK, "worker orphaned at quit started")
+	fifth.free()
+	var frames_before := Engine.get_process_frames()
+	var drained: bool = await ContinentChunkStream.drain_workers(self, 4000)
+	_expect(drained and fourth._thread == null and ContinentChunkStream.orphans_pending() == 0,
+		"draining leaves no live worker and no orphan behind")
+	_expect(fourth._paused, "a drained stream is paused")
+	_expect(Engine.get_process_frames() - frames_before > 1, "draining waited across frames instead of joining")
+	fourth.free()
 	third.free()
 	second.free()
 	print("orphan worker test: %d failures" % failures)

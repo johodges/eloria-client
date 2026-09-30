@@ -84,7 +84,12 @@ one resident neighbour covering the tile does not mean its ground is loaded.
 Normal movement remains asynchronous; the synchronous path handles arrival or
 a missed preload before the actor can sample missing terrain. Priming imports
 synchronously only the chunks the byte budget admits plus every chunk under
-the arrival; framed chunks beyond the budget follow on the worker.
+the arrival; framed chunks beyond the budget follow on the worker. A script
+that quits the SceneTree itself (the rendered tests) therefore usually has a
+worker importing when it finishes; it awaits
+`ContinentChunkStream.drain_workers(tree)` before `quit()`, as the client's
+own close waits for its exterior stream, because a worker still running when
+the process exits crashes it at teardown and joining it would deadlock.
 
 Each resident root selects chunks by distance to their full XZ bounds. Retention
 uses a wider radius to prevent oscillation. One chunk worker per resident root

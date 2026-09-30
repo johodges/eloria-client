@@ -62,7 +62,7 @@ func _run() -> void:
 	while _loader.world_root == null and Time.get_ticks_msec() < deadline:
 		await process_frame
 	if not _expect(_loader.world_root != null, "Whitehorn Range loads"):
-		_finish()
+		await _finish()
 		return
 	WorldEnvironmentBinder.apply(_loader.manifest, environment, sun)
 	for node: Node in _loader.world_root.find_children(
@@ -88,7 +88,7 @@ func _run() -> void:
 	_actor.set_selected(true)
 	_ring = _actor.get_node_or_null("SelectionRing") as MeshInstance3D
 	if not _expect(_ring != null, "the selected actor carries a ground marker"):
-		_finish()
+		await _finish()
 		return
 
 	var shares: Array[float] = []
@@ -144,7 +144,7 @@ func _run() -> void:
 		"the ground never swallows the marker (worst %.3f of it drawn)" % lowest)
 	_expect(biggest_jump <= 0.05,
 		"and what is drawn does not jump between steps (worst %.3f)" % biggest_jump)
-	_finish()
+	await _finish()
 
 func _frame_on(target: Vector3) -> void:
 	var pitch := deg_to_rad(CAMERA_PITCH)
@@ -181,4 +181,7 @@ func _expect(value: bool, label: String) -> bool:
 
 func _finish() -> void:
 	print("rendered ground markers: ", "PASS" if _failures == 0 else "FAIL (%d)" % _failures)
+	# Whitehorn streams its framed chunks on a worker; quitting under a live
+	# one crashes the process at exit (ContinentChunkStream.drain_workers).
+	await ContinentChunkStream.drain_workers(self)
 	quit(_failures)

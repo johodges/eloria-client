@@ -45,6 +45,7 @@ func _run() -> void:
 	while loader.world_root == null and Time.get_ticks_msec() < deadline:
 		await process_frame
 	if not _expect(loader.world_root != null, "the Four Gates package loaded"):
+		await ContinentChunkStream.drain_workers(self)
 		quit(_failures)
 		return
 	for _settle: int in range(30):
@@ -88,6 +89,9 @@ func _run() -> void:
 	await process_frame
 	print("rendered day night: ",
 		"PASS" if _failures == 0 else "FAIL (%d)" % _failures)
+	# Four Gates streams its framed chunks on a worker; quitting under a live
+	# one crashes the process at exit (ContinentChunkStream.drain_workers).
+	await ContinentChunkStream.drain_workers(self)
 	quit(_failures)
 
 func _aim(camera: Camera3D) -> void:

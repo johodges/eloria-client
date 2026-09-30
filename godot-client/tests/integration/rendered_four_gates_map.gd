@@ -18,7 +18,7 @@ func _run() -> void:
 	var scene_resource: Resource = load("res://src/dev/world_validation.tscn")
 	_expect(scene_resource is PackedScene, "Four Gates validation scene loads")
 	if not scene_resource is PackedScene:
-		_finish()
+		await _finish()
 		return
 	var scene: Node3D = (scene_resource as PackedScene).instantiate() as Node3D
 	root.add_child(scene)
@@ -27,7 +27,7 @@ func _run() -> void:
 		return loader.world_root != null
 	_expect(await _wait_for(ready, 30.0), "Four Gates GLB imports into the rendered scene")
 	if loader.world_root == null:
-		_finish()
+		await _finish()
 		return
 
 	var environment_node: WorldEnvironment = scene.get_node("Environment") as WorldEnvironment
@@ -55,7 +55,7 @@ func _run() -> void:
 	camera.position = Vector3(285.0, 115.0, 465.0)
 	camera.look_at(Vector3(170.0, 5.0, 365.0), Vector3.UP)
 	await _capture("four-gates-waterfall-detail.png")
-	_finish()
+	await _finish()
 
 func _wait_for(predicate: Callable, timeout_seconds: float) -> bool:
 	var deadline_msec: int = Time.get_ticks_msec() + roundi(timeout_seconds * 1000.0)
@@ -89,4 +89,7 @@ func _expect(condition: bool, message: String) -> void:
 
 func _finish() -> void:
 	print("rendered Four Gates map: ", "PASS" if _failures == 0 else "FAIL")
+	# Four Gates streams its framed chunks on a worker; quitting under a live
+	# one crashes the process at exit (ContinentChunkStream.drain_workers).
+	await ContinentChunkStream.drain_workers(self)
 	quit(_failures)

@@ -74,6 +74,35 @@ static func reap_orphans() -> int:
 	_orphans = remaining
 	return _orphans.size()
 
+## For a script that quits the SceneTree itself, such as a rendered test:
+## pauses every chunk stream in `tree`, then lets frames run until none has a
+## live import worker and every orphan is reaped. main.gd's _close_client
+## waits the same way for its exterior stream. A worker still importing when
+## the process exits crashes it at teardown ("Please call wait_to_finish()",
+## 0xC0000005), and joining one here would deadlock (see _orphans). Since
+## FRAMED_RADIUS leaves the framed cells beyond the budget to the worker, a
+## test that quits soon after a load usually has one running. Returns false
+## if the workers are still busy after `timeout_msec`.
+static func drain_workers(tree: SceneTree, timeout_msec := 30000) -> bool:
+	var streams: Array[ContinentChunkStream] = []
+	for node: Node in tree.root.find_children("*", "", true, false):
+		if node is ContinentChunkStream:
+			var stream := node as ContinentChunkStream
+			stream.pause_streaming()
+			streams.append(stream)
+	var deadline := Time.get_ticks_msec() + timeout_msec
+	while true:
+		var busy := reap_orphans() > 0
+		for stream: ContinentChunkStream in streams:
+			if is_instance_valid(stream) and not stream.can_retire():
+				busy = true
+		if not busy:
+			return true
+		if Time.get_ticks_msec() >= deadline:
+			return false
+		await tree.process_frame
+	return false
+
 func _release_worker(position: Vector3, install_if_near: bool) -> void:
 	if _thread == null:
 		return
