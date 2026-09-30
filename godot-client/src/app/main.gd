@@ -4070,6 +4070,10 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 		world_root.add_child(lantern_scene)
 		lantern_scene.configure(world_loader.world_root, manifest)
 		lantern_scene.apply_state(AppState.lantern_tutorial)
+	# Look pass (ELORIA_LOOK=1 only, otherwise a no-op): paint the ground of a
+	# map outside the continent now that its scene has set its materials up.
+	# Continent regions and chunks are painted by the loader.
+	LookGround.paint_bound(world_loader.world_root, manifest)
 	fallback_ground.hide()
 	# Regions and interiors may declare their own sky, sun, fog, tonemap, point
 	# lights and camera framing. Maps that do not keep the client's previous
