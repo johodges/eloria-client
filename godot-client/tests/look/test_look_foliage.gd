@@ -53,7 +53,11 @@ func _run() -> void:
 	world.name = "ImportedWorld_test__chunk_4_5"
 	root.add_child(world)
 	var canopy := _mesh(world, "Tree_0361_pale_birch_Canopy", leaves, Vector3(8, 6, 8), Vector3(-10, 30, 5))
-	var wood := _mesh(world, "Tree_0361_pale_birch_Wood", bark, Vector3(1, 8, 1), Vector3(-10, 30, 5))
+	# A timber post, faded as any StandardMaterial3D; a tree's own trunk is
+	# cut near the camera with its crown.
+	var wood := _mesh(world, "Post_0361_timber", bark, Vector3(1, 8, 1), Vector3(-10, 30, 5))
+	var trunk := _mesh(world, "Tree_0362_pale_birch_Wood", bark.duplicate(), Vector3(1, 8, 1),
+		Vector3(-14, 30, 5))
 	var maple := _mesh(world, "kit-crimson-maple-3", atlas, Vector3(9, 9, 9), Vector3(20, 18, 40))
 	var maple_twin := MeshInstance3D.new()
 	maple_twin.name = "kit-crimson-maple-4"
@@ -121,7 +125,14 @@ func _run() -> void:
 	_expect(maple_paint != null and maple_paint.shader == LookFoliage.SHADER_OPAQUE,
 		"a kit tree is painted with the opaque shader")
 	_expect(wood.get_surface_override_material(0) == null,
-		"a trunk is not painted")
+		"a timber post is not painted")
+	var trunk_paint := trunk.get_surface_override_material(0) as ShaderMaterial
+	_expect(trunk_paint != null and trunk_paint.shader == LookFoliage.SHADER_CHROMA
+		and is_equal_approx(float(trunk_paint.get_shader_parameter(&"look_near_cut")),
+			LookProfile.CROWN_NEAR_FADE_METRES.x)
+		and is_equal_approx(float(trunk_paint.get_shader_parameter(&"look_chroma")), 1.0)
+		and trunk_paint.get_meta(LookFade.FADED_SHADER_META) == LookFade.SHADER_STANDARD,
+		"a tree's trunk is drawn as its bark is, and cut near the camera where its crown is")
 	_expect(litter.get_surface_override_material(0) == null,
 		"fallen leaves on the ground are not a crown")
 	_expect(pines.get_surface_override_material(0) == null
@@ -150,7 +161,7 @@ func _run() -> void:
 		"every painted crown names its dithered variant")
 	_expect(LookFoliage.paint(world) == 0 and canopy.get_surface_override_material(0) == canopy_paint,
 		"painting a root twice changes nothing")
-	_expect(painted_count == 7, "seven crown surfaces are painted (got %d)" % painted_count)
+	_expect(painted_count == 8, "seven crown surfaces and a trunk are painted (got %d)" % painted_count)
 
 	# Seeds: from the position in the region, not the world, and in variants.
 	var seed_a := LookFoliage.seed_of(maple, world)
@@ -280,11 +291,66 @@ func _run() -> void:
 	_expect(not LookFade.keeps_hole(roof) and LookFade.keeps_hole(cottage)
 		and LookFade.keeps_hole(canopy) and LookFade.dither_copy(bark, roof) == null,
 		"outdoors a giant dome blends; a cottage's roof and a crown keep the hole")
+	# How the rest fade: a roof beside the player keeps its hole and vanishes
+	# once the player is under it; a pillar and a wall vanish; water blends.
+	var focus_before := LookFade.focus
+	LookFade.focus = Vector3(60, 1.5, -60)
+	_expect(LookFade.mode_of(cottage) == LookFade.Mode.HOLE
+		and LookFade.mode_of(canopy) == LookFade.Mode.HOLE,
+		"a roof beside the player and a crown keep the hole")
+	LookFade.focus = Vector3(1, 1.5, 1)
+	_expect(LookFade.mode_of(cottage) == LookFade.Mode.VANISH
+		and LookFade.mode_of(canopy) == LookFade.Mode.HOLE,
+		"a roof over the player vanishes; a crown over the player keeps its hole")
+	var pillar := _mesh(world, "Gate_pillar", bark, Vector3(1.5, 9, 1.5), Vector3(30, 0, 30))
+	var wall := _mesh(world, "Wall_run", bark, Vector3(12, 5, 1), Vector3(-30, 0, -30))
+	var pool := _mesh(world, "Water_BogPool_1", bark, Vector3(20, 0.1, 20), Vector3(-60, 0, 60))
+	_expect(LookFade.mode_of(pillar) == LookFade.Mode.VANISH
+		and LookFade.mode_of(wall) == LookFade.Mode.VANISH
+		and LookFade.mode_of(pool) == LookFade.Mode.BLEND,
+		"a pillar and a wall vanish; water blends as on develop")
+	var vanished := LookFade.dither_copy(bark, pillar)
+	_expect(vanished != null
+		and float(vanished.get_shader_parameter(LookFade.WHOLE_PARAMETER)) == 1.0,
+		"a vanishing copy dissolves the whole mesh")
+	pool.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	_expect(LookFade.hold_shadow(pool) == null
+		and pool.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		and not pool.has_meta(LookFade.SHADOW_META),
+		"a blended occluder keeps develop's shadow: no twin, still casting")
+	LookFade.release_shadow(pool, null)
+	_expect(not pool.has_meta(LookFade.MODE_META), "releasing forgets the fade's mode")
+	LookFade.focus = focus_before
+
+	# A region's signature materials keep their chroma (props.keep_words).
+	LookProfile.define_region("chroma_test", {"id": "chroma_test", "schema": 1,
+		"props": {"keep_words": ["crystal"]}})
+	var crystal_material := StandardMaterial3D.new()
+	crystal_material.resource_name = "amethyst_crystal"
+	crystal_material.albedo_color = Color(0.6, 0.4, 0.8)
+	var crystal := _mesh(world, "Prop_crystal_1", crystal_material, Vector3(1, 2, 1),
+		Vector3(5, 0, 5))
+	_expect(LookFoliage.keep_chroma(world, "no_such_map") == 0
+		and crystal.get_surface_override_material(0) == null,
+		"a region that names no signature materials keeps none")
+	_expect(LookFoliage.keep_chroma(world, "chroma_test") == 1,
+		"only the material named with a keep word is kept")
+	var kept := crystal.get_surface_override_material(0) as ShaderMaterial
+	var expected_chroma := LookProfile.KEEP_CHROMA_FORWARD if LookProfile.forward_plus() \
+		else LookProfile.KEEP_CHROMA
+	_expect(kept != null and kept.shader == LookFoliage.SHADER_CHROMA
+		and is_equal_approx(float(kept.get_shader_parameter(&"look_chroma")), expected_chroma)
+		and kept.get_shader_parameter(&"albedo_color") == Color(0.6, 0.4, 0.8)
+		and kept.get_meta(LookFade.FADED_SHADER_META) == LookFade.SHADER_STANDARD
+		and crystal_material.albedo_color == Color(0.6, 0.4, 0.8),
+		"a kept material is drawn by the chroma stand-in and fades as a standard one")
+	LookProfile.reload_regions()
 	var interior := WorldManifest.new()
 	interior.data = {"environment": {"sun": {"enabled": false}}}
 	LookFade.bind(interior)
-	_expect(not LookFade.keeps_hole(cottage) and not LookFade.keeps_hole(canopy),
-		"on an interior everything blends")
+	_expect(not LookFade.keeps_hole(cottage)
+		and LookFade.mode_of(canopy) == LookFade.Mode.VANISH,
+		"on an interior everything blends, but a look stand-in, which has no blended copy, dissolves")
 	var sunlit_inside := WorldManifest.new()
 	sunlit_inside.data = {"asset": {"interiorClass": "gauntlet"},
 		"environment": {"sun": {"enabled": true}}}

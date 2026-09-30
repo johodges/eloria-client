@@ -16,6 +16,12 @@
 // The painted_ground and painted_foliage shaders cut the same hole round the
 // player (look_fade_hole.gdshaderinc), so everything that fades fades alike.
 // Only these faded copies carry the discard.
+//
+// A shader that defines LOOK_STANDARD_RESTING (look_chroma_standard*) is the
+// same stand-in at rest, with no hole: the signature-colour layer
+// (LookFoliage.keep_chroma) puts it on a region's signature materials to
+// scale their chroma by look_chroma, and names the faded variant for
+// OccluderFade, which keeps the chroma.
 
 #include "res://src/world/look/look_standard_surface.gdshaderinc"
 #include "res://src/world/look/look_fade_hole.gdshaderinc"
@@ -28,6 +34,18 @@ uniform int alpha_mode = 0;
 uniform float alpha_scissor_threshold = 0.5;
 // The fade's opacity, kept as a record of it; the hole is what cuts.
 uniform float look_fade = 1.0;
+// The albedo's and emission's chroma, scaled about their own luminance (1
+// leaves them as the source material has them).
+uniform float look_chroma = 1.0;
+// Cut away nearer than this view depth from a perspective camera (0 never):
+// an authored tree's trunk and boughs, cut where its crown is
+// (painted_foliage_body, LookProfile.CROWN_NEAR_FADE_METRES).
+uniform float look_near_cut = 0.0;
+
+vec3 look_standard_chroma(vec3 colour) {
+	return max(mix(vec3(dot(colour, vec3(0.2126, 0.7152, 0.0722))), colour, look_chroma),
+		vec3(0.0));
+}
 
 void vertex() {
 	UV = UV * uv1_scale.xy + uv1_offset.xy;
@@ -50,10 +68,15 @@ void fragment() {
 	if (alpha_mode == 2 && albedo.a < look_fade_bayer(FRAGCOORD.xy)) {
 		discard;
 	}
+#ifndef LOOK_STANDARD_RESTING
 	if (look_fade_cut(VERTEX, VIEW_MATRIX, PROJECTION_MATRIX, FRAGCOORD.xy)) {
 		discard;
 	}
-	ALBEDO = albedo.rgb;
+#endif
+	if (look_near_cut > 0.0 && PROJECTION_MATRIX[3][3] < 0.5 && -VERTEX.z < look_near_cut) {
+		discard;
+	}
+	ALBEDO = look_chroma == 1.0 ? albedo.rgb : look_standard_chroma(albedo.rgb);
 	vec4 surface = look_standard_surface(UV);
 	ROUGHNESS = surface.x;
 	METALLIC = surface.y;
@@ -67,6 +90,7 @@ void fragment() {
 		NORMAL_MAP_DEPTH = normal_scale;
 	}
 	if (has_emission) {
-		EMISSION = look_standard_emission(UV);
+		EMISSION = look_chroma == 1.0 ? look_standard_emission(UV)
+			: look_standard_chroma(look_standard_emission(UV));
 	}
 }

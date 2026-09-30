@@ -86,6 +86,17 @@ uniform float look_sway_speed = 1.1;
 // as a record of the fade; the faded variants cut the hole look_fade_open
 // opens instead (look_fade_hole.gdshaderinc).
 uniform float look_fade = 1.0;
+// A crown fades out by its own distance from a perspective camera: gone
+// nearer than x metres, dithered in between, whole beyond y; cut clean at x
+// when y is x (LookProfile.CROWN_NEAR_FADE_METRES; 0, 0 never). The banyans, palms and
+// canopies that rise between the -60 degree camera and the ground drew as
+// opaque leaf cards over a third of the frame, dark where their undersides
+// faced it (vs_road, cw_border_ss, aw_deep_grove); develop blended them.
+uniform vec2 look_near_fade = vec2(0.0);
+// LookProfile.FOLIAGE_DEBUG_VARIABLE: 1 draws every painted crown flat by its
+// view depth (red nearer than 10 m, yellow to 15, green to 20, blue beyond),
+// with no near fade, for finding which crowns a frame's canopy is.
+uniform int look_debug = 0;
 
 // A hash of the crown's position in its region (0..1), set by LookFoliage
 // per material. A batch draws many crowns with one material, so its
@@ -197,6 +208,11 @@ vec3 look_foliage_paint(vec3 albedo) {
 	// Hue and saturation, on the colour as it displays.
 	vec3 hsv = look_foliage_hsv(pow(clamp(linear_colour, vec3(0.0), vec3(1.0)),
 		vec3(1.0 / 2.2)));
+	// How much of the top light's and underside's tint a texel takes: a
+	// low-chroma crown (Westhaven's silver-green olives, a frosted fir) takes
+	// only their value, where the warm top and cool underside turned the
+	// olives mauve-pink and the firs silver.
+	float tinted = smoothstep(0.12, 0.35, hsv.y);
 	float hue = hsv.x * 360.0;
 	float signed_hue = hue > 180.0 ? hue - 360.0 : hue;
 	float warm = smoothstep(look_tame_hue.x - 360.0 - 12.0, look_tame_hue.x - 360.0,
@@ -218,13 +234,21 @@ vec3 look_foliage_paint(vec3 albedo) {
 
 	// Value: top light, core occlusion, clumps, jitter.
 	vec3 under = mix(look_crown_under, look_crown_under_warm, tame);
-	vec3 light = mix(under, look_crown_top, pow(height, look_crown_light_power) * crown);
+	vec3 luma_weights = vec3(0.2126, 0.7152, 0.0722);
+	under = mix(vec3(dot(under, luma_weights)), under, tinted);
+	vec3 top = mix(vec3(dot(look_crown_top, luma_weights)), look_crown_top, tinted);
+	vec3 light = mix(under, top, pow(height, look_crown_light_power) * crown);
 	float core = mix(look_crown_core, 1.0,
 		smoothstep(look_crown_core_edge.x, look_crown_core_edge.y, look_crown_radial));
 	float clump = 1.0 + (look_foliage_noise(look_crown_position / look_crown_clump_metres)
 		- 0.5) * 2.0 * look_crown_clump * crown;
 	float value = core * clump * (1.0 + jitter_value * look_crown_jitter_value);
 	return look_foliage_encode(linear_colour * light * value);
+}
+
+// Interleaved gradient noise: a one-pixel dither threshold (0..1).
+float look_near_noise(vec2 fragment) {
+	return fract(52.9829189 * fract(dot(floor(fragment), vec2(0.06711056, 0.00583715))));
 }
 
 void fragment() {
@@ -234,6 +258,19 @@ void fragment() {
 		discard;
 	}
 #endif
+	// Near the camera the crown dissolves (look_near_fade). Only for a
+	// perspective camera: a directional light's shadow pass is orthographic
+	// and must keep the crown's whole shadow, and the map cameras look down
+	// from far above.
+	if (look_debug == 0 && look_near_fade.y > 0.0 && PROJECTION_MATRIX[3][3] < 0.5) {
+		float depth = -VERTEX.z;
+		if (look_near_fade.y > look_near_fade.x + 0.001
+				? smoothstep(look_near_fade.x, look_near_fade.y, depth)
+					< look_near_noise(FRAGCOORD.xy)
+				: depth < look_near_fade.x) {
+			discard;
+		}
+	}
 	ALBEDO = look_foliage_paint(texel.rgb * albedo_color.rgb);
 #ifdef LOOK_FOLIAGE_CUTOUT
 	ALPHA = texel.a * albedo_color.a;
@@ -257,5 +294,11 @@ void fragment() {
 	}
 	if (has_emission) {
 		EMISSION = look_standard_emission(UV);
+	}
+	if (look_debug == 1) {
+		float depth = -VERTEX.z;
+		ALBEDO = vec3(0.0);
+		EMISSION = depth < 10.0 ? vec3(2.0, 0.0, 0.0) : depth < 15.0 ? vec3(2.0, 2.0, 0.0)
+			: depth < 20.0 ? vec3(0.0, 2.0, 0.0) : vec3(0.0, 0.0, 2.0);
 	}
 }

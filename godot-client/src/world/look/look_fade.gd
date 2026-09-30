@@ -29,13 +29,34 @@ extends RefCounted
 ## Every one of them cuts the same hole, and only the faded copies carry its
 ## discard, so a resting surface keeps the engine's early depth test.
 ##
+## How an occluder fades is decided per occluder as its fade begins (`mode_of`):
+##
+## - HOLE: a painted crown, and a mid-sized prop, roof or wall that covers
+##   little of the view - a round hole opens round the player, the rest stays.
+## - VANISH: the dithered copy dissolves the whole mesh as the fade opens and
+##   draws none of it once open. For what a hole cannot leave readable: a roof
+##   or tent whose footprint holds the player (a Sunmane yurt drew a straw
+##   cone over them with a porthole in it), a thin post, pillar, beam or wall
+##   (Whitehorn's gate pillars and Verdant's hub gate kept a solid bar across
+##   the frame), and anything that covers more than FADE_VANISH_COVERAGE of
+##   the view (the Grey Moors' turf roof, a quarter of the frame, near-black
+##   round a hole). Blended instead, as develop does, a roof over a room read
+##   as a grey smear of the room (aw_coppice); gone, the room reads.
+## - BLEND: develop's own fade (OccluderFade's alpha-blended copies), for
+##   interiors (`bind`), water (`is_water`), and anything wider across the
+##   ground than FADE_SOLID_MAX_METRES, or part of a structure that is (a
+##   giant dome's pieces).
+##
 ## A faded copy would cast its hole into its shadow too, so while a mesh fades
-## it stops casting. A wall or a roof hands its shadow to a shadow-only twin
-## with its resting materials, because a room lighting up as the player walks
-## in reads as a bug. A crown casts none, as develop's blended copies cast
-## none: the twin held a giant canopy's whole shadow over the player and took
-## the deep grove from luminance 80 to 64 (53 in Forward+), the darkest frame
-## of the pass, where walking under a tree on develop lights the ground.
+## by its hole or vanishes it stops casting. A wall or a roof hands its shadow
+## to a shadow-only twin with its resting materials, because a room lighting
+## up as the player walks in reads as a bug. A crown casts none, as develop's
+## blended copies cast none: the twin held a giant canopy's whole shadow over
+## the player and took the deep grove from luminance 80 to 64 (53 in Forward+),
+## the darkest frame of the pass, where walking under a tree on develop lights
+## the ground. A blended occluder keeps develop's shadow exactly: a twin there
+## laid the Sunmane gauntlet's canyon walls' full shadows beside the player as
+## hard dark quads under walls the viewer sees as ghosts.
 ##
 ## The ground never fades. Develop has no walk collision on the continent's
 ## authored ground patches, so the patch a player stands on was indexed as an
@@ -55,6 +76,16 @@ const FADE_PARAMETER := &"look_fade"
 ## The uniforms that open its hole, and centre it.
 const OPEN_PARAMETER := &"look_fade_open"
 const FOCUS_PARAMETER := &"look_fade_focus"
+## The uniform that dissolves the whole mesh rather than a hole (Mode.VANISH).
+const WHOLE_PARAMETER := &"look_fade_whole"
+## On a fading mesh: the Mode its fade was given when it began (`hold_shadow`
+## decides, `dither_copy` reads, `release_shadow` forgets).
+const MODE_META := &"look_fade_mode"
+## ELORIA_LOOK_FADE_DEBUG=1 prints every fade's mode and what decided it, and
+## the mesh's first material, for finding what an occluder in a frame is.
+const DEBUG_VARIABLE := "ELORIA_LOOK_FADE_DEBUG"
+
+enum Mode { HOLE, VANISH, BLEND }
 
 ## Where the holes are centred this frame: the local player's chest, handed
 ## over by OccluderFade.update before it animates its fades.
@@ -76,22 +107,179 @@ static func bind(manifest: WorldManifest) -> void:
 	blend_only = manifest != null and (not LookGround.outdoor(manifest)
 		or not str((manifest.data.get("asset", {}) as Dictionary).get("interiorClass", "")).is_empty())
 
-## True when an occluder keeps the hole: a painted crown whatever its size, or
-## anything no wider across the ground than LookProfile.FADE_SOLID_MAX_METRES
-## (a lamp, a cart, a cottage's roof). A giant dome blends as on develop: kept
-## solid round the largest hole, Crownwater's drew the player in a dark disc
-## under an opaque cap. Nothing keeps the hole on an interior (`bind`).
+## True when an occluder fades by a dithered look copy (a hole, or vanishing)
+## rather than by develop's blend: see `mode_of`.
 static func keeps_hole(node: MeshInstance3D) -> bool:
-	if blend_only:
-		return false
+	return mode_of(node) != Mode.BLEND
+
+## How `node` fades (see the header), as decided when its fade began, or now:
+##
+## - BLEND on an interior (`bind`), and for a mesh wider across the ground
+##   than LookProfile.FADE_SOLID_MAX_METRES or part of a structure that is
+##   (`assembly_width`): kept solid round the largest hole, Crownwater's giant
+##   dome drew the player in a dark disc under an opaque cap.
+## - HOLE for a painted crown whatever its size: a painted crown has no
+##   blended copy (OccluderFade would leave it solid), its leaf cards would
+##   sort into a smear if it had, and it never vanishes (a tree the player
+##   walks under stays a tree). The crowns nearest the camera fade by their
+##   own distance (painted_foliage_body, LookProfile.CROWN_NEAR_FADE_METRES).
+## - VANISH for a mesh whose footprint holds the player under its top, a thin
+##   one (LookProfile.FADE_THIN_METRES across, or a post or pillar at least
+##   FADE_PILLAR_RATIO times as tall as it is wide), and one whose box covers
+##   more than LookProfile.FADE_VANISH_COVERAGE of the view from `camera`
+##   (the current camera when null).
+## - HOLE for everything else: a cart, a lamp, a cottage beside the path.
+##
+## A mesh drawn by a look stand-in (a kept signature colour, a tree's trunk)
+## that would blend dissolves instead, or keeps a hole if it is a trunk: a
+## stand-in has no blended copy, and OccluderFade would leave it solid.
+static func mode_of(node: MeshInstance3D, camera: Camera3D = null) -> Mode:
+	if node != null and node.has_meta(MODE_META):
+		return int(node.get_meta(MODE_META)) as Mode
+	var mode := _mode(node, camera)
+	# A look stand-in (a kept signature colour, a tree's trunk) has no blended
+	# copy: OccluderFade would leave it solid. It dissolves instead, or keeps a
+	# hole under its crown if it is a trunk.
+	if mode == Mode.BLEND and node != null and _stands_in(node):
+		return Mode.HOLE if LookFoliage.is_tree_wood(String(node.name)) else Mode.VANISH
+	return mode
+
+## True when one of `node`'s surfaces draws with a look stand-in that names
+## its dithered variant.
+static func _stands_in(node: MeshInstance3D) -> bool:
+	if node.material_override != null:
+		return node.material_override.has_meta(FADED_SHADER_META)
+	var surfaces := 0 if node.mesh == null else node.mesh.get_surface_count()
+	for surface: int in surfaces:
+		var material := node.get_active_material(surface)
+		if material is ShaderMaterial and material.has_meta(FADED_SHADER_META):
+			return true
+	return false
+
+static func _mode(node: MeshInstance3D, camera: Camera3D) -> Mode:
+	if blend_only or (node != null and is_water(node)):
+		return Mode.BLEND
 	if node == null or node.mesh == null or is_crown(node):
-		return true
-	var size := node.mesh.get_aabb().size
-	var scale := node.transform.basis.get_scale()
-	if node.is_inside_tree():
-		scale = node.global_transform.basis.get_scale()
-	return maxf(size.x * absf(scale.x), size.z * absf(scale.z)) \
-		<= LookProfile.FADE_SOLID_MAX_METRES
+		return Mode.HOLE
+	var box := world_box(node)
+	if maxf(box.size.x, box.size.z) > LookProfile.FADE_SOLID_MAX_METRES \
+			or assembly_width(node) > LookProfile.FADE_SOLID_MAX_METRES:
+		return Mode.BLEND
+	if over_focus(box) or thin(box) \
+			or screen_coverage(box, camera if camera != null else _camera_of(node)) \
+				> LookProfile.FADE_VANISH_COVERAGE:
+		return Mode.VANISH
+	return Mode.HOLE
+
+## `node`'s bounds in world space (in its parent chain's space before it has
+## joined the tree).
+static func world_box(node: MeshInstance3D) -> AABB:
+	if node == null or node.mesh == null:
+		return AABB()
+	var place := node.global_transform if node.is_inside_tree() else node.transform
+	return place * node.mesh.get_aabb()
+
+## The width across the ground of the structure `node` belongs to: the
+## merged bounds of the meshes under its parent, when that parent is a
+## landmark's own node (its name is not a map's or chunk's root and it holds
+## at most LookProfile.FADE_ASSEMBLY_PIECES_MAX meshes); 0 otherwise. A giant
+## dome is exported as a landmark node holding its shell's pieces, each far
+## narrower than the dome.
+static func assembly_width(node: MeshInstance3D) -> float:
+	if node == null or not node.is_inside_tree():
+		return 0.0
+	var parent := node.get_parent() as Node3D
+	if parent == null or parent.get_child_count() < 2 \
+			or parent.get_child_count() > LookProfile.FADE_ASSEMBLY_PIECES_MAX:
+		return 0.0
+	var parent_name := String(parent.name)
+	for prefix: String in LookProfile.FADE_ASSEMBLY_PREFIXES:
+		if parent_name.begins_with(prefix):
+			var merged := AABB()
+			var first := true
+			for child: Node in parent.get_children():
+				var piece := child as MeshInstance3D
+				if piece == null or piece.mesh == null:
+					continue
+				var box := world_box(piece)
+				merged = box if first else merged.merge(box)
+				first = false
+			return 0.0 if first else maxf(merged.size.x, merged.size.z)
+	return 0.0
+
+## True when `box` stands over the player: its footprint (shrunk by
+## FADE_OVER_INSET_METRES) holds the focus and its top is above the player's
+## chest - a roof, a tent, an awning the player is under.
+static func over_focus(box: AABB) -> bool:
+	var inset := LookProfile.FADE_OVER_INSET_METRES
+	return focus.x > box.position.x + inset and focus.x < box.end.x - inset \
+		and focus.z > box.position.z + inset and focus.z < box.end.z - inset \
+		and box.end.y > focus.y
+
+## True for a thin occluder: a wall, a fence, a beam (at most FADE_THIN_METRES
+## across one way), or a post, pillar or obelisk (FADE_PILLAR_RATIO times as
+## tall as it is wide, and taller than FADE_PILLAR_METRES).
+static func thin(box: AABB) -> bool:
+	var narrow := minf(box.size.x, box.size.z)
+	var wide := maxf(box.size.x, box.size.z)
+	return narrow <= LookProfile.FADE_THIN_METRES \
+		or (box.size.y >= wide * LookProfile.FADE_PILLAR_RATIO
+			and box.size.y >= LookProfile.FADE_PILLAR_METRES)
+
+## The share of `camera`'s view (0..1) that `box`'s projected bounds cover; 1
+## when part of it is behind the camera, 0 without a camera.
+static func screen_coverage(box: AABB, camera: Camera3D) -> float:
+	if camera == null or not camera.is_inside_tree():
+		return 0.0
+	var view := camera.get_viewport().get_visible_rect().size
+	if view.x <= 0.0 or view.y <= 0.0:
+		return 0.0
+	var low := Vector2(INF, INF)
+	var high := Vector2(-INF, -INF)
+	for corner: int in 8:
+		var point := box.get_endpoint(corner)
+		if camera.is_position_behind(point):
+			return 1.0
+		var on_screen := camera.unproject_position(point)
+		low = low.min(on_screen)
+		high = high.max(on_screen)
+	low = low.clamp(Vector2.ZERO, view)
+	high = high.clamp(Vector2.ZERO, view)
+	return maxf(high.x - low.x, 0.0) * maxf(high.y - low.y, 0.0) / (view.x * view.y)
+
+static func _camera_of(node: Node) -> Camera3D:
+	if node == null or not node.is_inside_tree():
+		return null
+	return node.get_viewport().get_camera_3d()
+
+## Decides `node`'s fade as it begins and keeps the answer until
+## `release_shadow`, so its shadow and its materials agree.
+static func _decide(node: MeshInstance3D) -> Mode:
+	if node.has_meta(MODE_META):
+		node.remove_meta(MODE_META)
+	var mode := mode_of(node)
+	node.set_meta(MODE_META, mode)
+	if OS.get_environment(DEBUG_VARIABLE) == "1":
+		_print_decision(node, mode)
+	return mode
+
+static func _print_decision(node: MeshInstance3D, mode: Mode) -> void:
+	var box := world_box(node)
+	var material := node.get_active_material(0) if node.mesh != null \
+		and node.mesh.get_surface_count() > 0 else null
+	var described := "none"
+	if material is BaseMaterial3D:
+		var standard := material as BaseMaterial3D
+		var texture := standard.albedo_texture
+		described = "%s albedo=%s texture=%s" % [standard.resource_name,
+			standard.albedo_color.to_html(), "none" if texture == null
+			else "%s %dx%d" % [texture.resource_path, texture.get_width(), texture.get_height()]]
+	elif material != null:
+		described = "%s %s" % [material.get_class(), material.resource_name]
+	print("look_fade mode=%s node=%s parent=%s size=%s coverage=%.3f over=%s thin=%s crown=%s assembly=%.1f material=%s"
+		% [Mode.keys()[mode], node.name, node.get_parent().name if node.get_parent() else "",
+			box.size, screen_coverage(box, _camera_of(node)), over_focus(box), thin(box),
+			is_crown(node), assembly_width(node), described])
 
 ## BaseMaterial3D.TextureChannel as the vector look_faded_standard dots a
 ## texel with.
@@ -102,28 +290,42 @@ const CHANNELS := [Vector4(1, 0, 0, 0), Vector4(0, 1, 0, 0), Vector4(0, 0, 1, 0)
 static func keeps_solid(node_name: String) -> bool:
 	return LookGround.kind_of(node_name) != LookGround.Kind.NONE
 
+## True for water (a Water_ or Scenery_Water mesh): it fades as develop fades
+## it. Develop fades a bog pool or a river whose box holds the player's chest
+## as if it stood between them and the camera, which shows the bed through
+## it; the Grey Moors' bog water is authored near black (its texture averages
+## 11 of 255), so kept solid round a hole, or not faded at all, it drew a
+## flat black sheet over a quarter of gm_road.
+static func is_water(node: MeshInstance3D) -> bool:
+	var node_name := String(node.name)
+	if node_name.begins_with("StreamView_"):
+		node_name = node_name.get_slice("__", 1)
+	return node_name.begins_with("Water_") or node_name.begins_with("Scenery_Water")
+
 ## A dithered copy of `source` for OccluderFade to fade by, or null when it
-## has none or `node` should blend instead (`keeps_hole`; OccluderFade then
-## does what develop does). Its hole is sized for `node`, the mesh it fades
-## (see hole_metres).
+## has none or `node` should blend instead (`mode_of`; OccluderFade then does
+## what develop does). Its hole is sized for `node`, the mesh it fades (see
+## hole_metres), or it dissolves all of it (Mode.VANISH).
 static func dither_copy(source: Material, node: MeshInstance3D = null) -> ShaderMaterial:
-	if not keeps_hole(node):
+	var mode := mode_of(node)
+	if mode == Mode.BLEND:
 		return null
+	var copy: ShaderMaterial = null
 	if source is BaseMaterial3D:
-		var standard := _dithered_standard(source as BaseMaterial3D)
-		if standard != null:
-			_size_hole(standard, node)
-		return standard
-	var painted := source as ShaderMaterial
-	if painted == null or not painted.has_meta(FADED_SHADER_META):
-		return null
-	var faded_shader := painted.get_meta(FADED_SHADER_META) as Shader
-	if faded_shader == null:
-		return null
-	var copy := painted.duplicate() as ShaderMaterial
-	copy.shader = faded_shader
-	_set_hole(copy)
-	_size_hole(copy, node)
+		copy = _dithered_standard(source as BaseMaterial3D)
+	else:
+		var painted := source as ShaderMaterial
+		if painted == null or not painted.has_meta(FADED_SHADER_META):
+			return null
+		var faded_shader := painted.get_meta(FADED_SHADER_META) as Shader
+		if faded_shader == null:
+			return null
+		copy = painted.duplicate() as ShaderMaterial
+		copy.shader = faded_shader
+		_set_hole(copy)
+	if copy != null:
+		_size_hole(copy, node)
+		copy.set_shader_parameter(WHOLE_PARAMETER, 1.0 if mode == Mode.VANISH else 0.0)
 	return copy
 
 ## The hole's radius for an occluder: FADE_HOLE_METRES, or a share of a
@@ -139,6 +341,9 @@ static func hole_metres(node: MeshInstance3D) -> float:
 	if node.is_inside_tree():
 		scale = node.global_transform.basis.get_scale()
 	var width := maxf(size.x * absf(scale.x), size.z * absf(scale.z))
+	if is_crown(node):
+		return clampf(width * LookProfile.CROWN_HOLE_SHARE, LookProfile.FADE_HOLE_METRES,
+			LookProfile.CROWN_HOLE_MAX_METRES)
 	return clampf(width * LookProfile.FADE_HOLE_SHARE, LookProfile.FADE_HOLE_METRES,
 		LookProfile.FADE_HOLE_MAX_METRES)
 
@@ -268,6 +473,11 @@ static func copy_standard_surface(source: BaseMaterial3D, target: ShaderMaterial
 static func hold_shadow(node: MeshInstance3D) -> MeshInstance3D:
 	if not is_instance_valid(node) or node.mesh == null:
 		return null
+	# Decided here, as the fade begins: a blended occluder keeps develop's
+	# shadow exactly (see the header). A vanished roof keeps its shadow on the
+	# room under it, as a holed one does.
+	if _decide(node) == Mode.BLEND:
+		return null
 	if node.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF \
 			or node.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
 		return null
@@ -291,6 +501,8 @@ static func hold_shadow(node: MeshInstance3D) -> MeshInstance3D:
 ## twin left for the frame a queue_free takes would double the shadow). Either
 ## may be null: a node freed with its map, a crown that has no twin.
 static func release_shadow(node: MeshInstance3D, twin: MeshInstance3D) -> void:
+	if node != null and node.has_meta(MODE_META):
+		node.remove_meta(MODE_META)
 	if node != null and node.has_meta(SHADOW_META):
 		node.cast_shadow = int(node.get_meta(SHADOW_META)) \
 			as GeometryInstance3D.ShadowCastingSetting

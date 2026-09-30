@@ -53,6 +53,10 @@ const SHADER_OPAQUE_BACK_FADED := preload(
 	"res://src/world/look/painted_foliage_back_faded.gdshader")
 const SHADER_CUTOUT_BACK_FADED := preload(
 	"res://src/world/look/painted_foliage_cutout_back_faded.gdshader")
+## A signature material's stand-in at rest (`keep_chroma`).
+const SHADER_CHROMA := preload("res://src/world/look/look_chroma_standard.gdshader")
+const SHADER_CHROMA_TWO_SIDED := preload(
+	"res://src/world/look/look_chroma_standard_two_sided.gdshader")
 
 ## Marks a material this layer made, so painting a root twice is harmless.
 const PAINTED_META := &"look_painted_foliage"
@@ -75,7 +79,102 @@ static func paint_loaded(root: Node, manifest: WorldManifest) -> int:
 		return 0
 	if not manifest.data.has("continentGeography"):
 		return 0
-	return paint(root, LookGround.region_of(manifest))
+	var painted := paint(root, LookGround.region_of(manifest))
+	keep_chroma(root, LookGround.region_of(manifest))
+	return painted
+
+## The signature-colour layer: a region's own colours that the shared grade
+## would grey out keep their chroma. Every surface under `root` whose
+## StandardMaterial3D is named with one of its region file's
+## `props.keep_words` (the Amethyst Barrens' crystals, Ssarathi's and Verdant's
+## jade) takes a copy drawn by look_chroma_standard, which lights as the
+## source does with its albedo's and emission's chroma scaled by
+## `props.keep_chroma` (LookProfile.KEEP_CHROMA_FORWARD / KEEP_CHROMA where it
+## sets none), undoing the grade's saturation on them alone. Under
+## SATURATION_FORWARD the Barrens' crystals, its namesake, went from
+## saturation 0.46 to 0.22, pale lilac rubble on grey scree, and Ssarathi's
+## jade court and Verdant's jade stair went grey. The copy names its faded
+## variant, so it fades as any stand-in does and keeps its colour while it
+## does. Returns the surfaces changed.
+static func keep_chroma(root: Node, region := "") -> int:
+	if not LookProfile.enabled() or root == null:
+		return 0
+	var words := LookProfile.keep_words(region)
+	if words.is_empty():
+		return 0
+	var chroma := float(LookProfile.region_value(region, "props", "keep_chroma",
+		LookProfile.KEEP_CHROMA_FORWARD if LookProfile.forward_plus() else LookProfile.KEEP_CHROMA))
+	var tint: Color = LookProfile.region_value(region, "props", "keep_tint", Color.WHITE)
+	var made := {}
+	var surfaces := 0
+	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.mesh == null or mesh_instance.material_override != null:
+			continue
+		var batch: MultiMeshInstance3D = null
+		if mesh_instance.has_meta(BATCH_META):
+			var batch_value: Variant = mesh_instance.get_meta(BATCH_META)
+			if batch_value is not MultiMeshInstance3D \
+					or mesh_instance.mesh.get_surface_count() != 1:
+				continue
+			batch = batch_value as MultiMeshInstance3D
+		for surface: int in mesh_instance.mesh.get_surface_count():
+			# Painted ground and crowns are ShaderMaterials by now and pass;
+			# a floor the ground layer leaves alone (an interior's mosaic
+			# deck) can be kept.
+			var source := mesh_instance.get_active_material(surface) as BaseMaterial3D
+			if source == null or not _named_with(source.resource_name, words):
+				continue
+			var key := source.get_instance_id()
+			if not made.has(key):
+				made[key] = chroma_copy(source, chroma, tint)
+			var copy: ShaderMaterial = made[key]
+			if copy == null:
+				continue
+			mesh_instance.set_surface_override_material(surface, copy)
+			if batch != null and batch.material_override == null:
+				batch.material_override = copy
+			surfaces += 1
+	if surfaces > 0:
+		print("look_foliage stage=kept_chroma root=%s surfaces=%d materials=%d"
+			% [root.name, surfaces, made.size()])
+	return surfaces
+
+## `source` drawn by look_chroma_standard with its chroma scaled by `chroma`
+## and its tint multiplied by `tint` (a region's `props.keep_tint`), or null
+## when that shader cannot draw it as the engine does (it blends, or uses a
+## feature look_standard_surface does not reproduce).
+static func chroma_copy(source: BaseMaterial3D, chroma: float,
+		tint := Color.WHITE) -> ShaderMaterial:
+	var cutout := source.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	if (source.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and not cutout) \
+			or not LookFade.reproduces(source):
+		return null
+	var two_sided := source.cull_mode == BaseMaterial3D.CULL_DISABLED
+	var copy := ShaderMaterial.new()
+	copy.resource_name = source.resource_name
+	copy.shader = SHADER_CHROMA_TWO_SIDED if two_sided else SHADER_CHROMA
+	copy.render_priority = source.render_priority
+	copy.next_pass = source.next_pass
+	copy.set_meta(LookFade.FADED_SHADER_META,
+		LookFade.SHADER_STANDARD_TWO_SIDED if two_sided else LookFade.SHADER_STANDARD)
+	LookFade.copy_standard_surface(source, copy)
+	copy.set_shader_parameter(&"use_vertex_albedo", source.vertex_color_use_as_albedo)
+	copy.set_shader_parameter(&"vertex_albedo_srgb", source.vertex_color_is_srgb)
+	copy.set_shader_parameter(&"alpha_mode", 1 if cutout else 0)
+	copy.set_shader_parameter(&"alpha_scissor_threshold", source.alpha_scissor_threshold)
+	copy.set_shader_parameter(&"look_chroma", chroma)
+	var colour := source.albedo_color
+	copy.set_shader_parameter(&"albedo_color",
+		Color(colour.r * tint.r, colour.g * tint.g, colour.b * tint.b, colour.a))
+	return copy
+
+static func _named_with(material_name: String, words: Array) -> bool:
+	var lowered := material_name.to_lower()
+	for word: Variant in words:
+		if lowered.contains(str(word)):
+			return true
+	return false
 
 ## Paints every crown under `root`, a root of `region` (whose region file may
 ## name more crown materials and kit words, LookProfile.foliage_words). Safe to
@@ -109,11 +208,22 @@ static func paint(root: Node, region := "") -> int:
 			if source == null or source.has_meta(PAINTED_META):
 				continue
 			var kind := kind_of(node_name, source, words)
-			if kind == Kind.NONE:
-				continue
 			var key := "%d:%d:%.4f" % [source.get_instance_id(),
 				mesh_instance.mesh.get_instance_id(), seed]
-			if not made.has(key):
+			if kind == Kind.NONE:
+				# An authored tree's trunk and boughs are cut near the camera
+				# where its crown is, or they stood alone as a dark tangle of
+				# limbs across the frame (cw_border_ss's oak).
+				if not is_tree_wood(node_name) or source is not BaseMaterial3D:
+					continue
+				key = "wood:%d" % source.get_instance_id()
+				if not made.has(key):
+					var wood := chroma_copy(source as BaseMaterial3D, 1.0)
+					if wood != null:
+						wood.set_shader_parameter(&"look_near_cut",
+							LookProfile.CROWN_NEAR_FADE_METRES.x)
+					made[key] = wood
+			elif not made.has(key):
 				made[key] = painted_for(source, kind, mesh_instance.mesh, untamed, seed)
 			var painted: Material = made[key]
 			if painted == null:
@@ -122,8 +232,9 @@ static func paint(root: Node, region := "") -> int:
 			surfaces += 1
 			if batch != null and batch.material_override == null:
 				var batch_key := "batch:%d" % batch.get_instance_id()
-				made[batch_key] = painted_for(source, kind, mesh_instance.mesh, untamed,
-					_batch_seed(batch, root))
+				# A batched trunk shares its members' copy: it has no seed.
+				made[batch_key] = painted if kind == Kind.NONE else painted_for(source, kind,
+					mesh_instance.mesh, untamed, _batch_seed(batch, root))
 				batch.material_override = made[batch_key]
 				batches += 1
 	var materials := 0
@@ -134,6 +245,12 @@ static func paint(root: Node, region := "") -> int:
 		print("look_foliage stage=painted root=%s surfaces=%d materials=%d batches=%d"
 			% [root.name, surfaces, materials, batches])
 	return surfaces
+
+## True for an authored tree's trunk and boughs: Tree_<n>_<species>_Wood, and
+## a giant's Landmark_Giant_<n>_Wood.
+static func is_tree_wood(node_name: String) -> bool:
+	return node_name.ends_with("_Wood") \
+		and (node_name.begins_with("Tree_") or node_name.begins_with("Landmark_Giant"))
 
 ## The crown materials and kit words that apply to `region`'s roots, by
 ## LookProfile.FOLIAGE_DEFAULTS key: every map's plus the region file's own.
@@ -246,6 +363,9 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh,
 	painted.set_shader_parameter(&"look_sway_speed", LookProfile.CROWN_SWAY_SPEED)
 	painted.set_shader_parameter(&"look_seed", seed)
 	painted.set_shader_parameter(&"look_fade", 1.0)
+	painted.set_shader_parameter(&"look_near_fade", LookProfile.CROWN_NEAR_FADE_METRES)
+	painted.set_shader_parameter(&"look_debug",
+		clampi(OS.get_environment(LookProfile.FOLIAGE_DEBUG_VARIABLE).to_int(), 0, 1))
 	return painted
 
 ## The crown's jitter seed (0..1): a hash of its position in `root`, walked up

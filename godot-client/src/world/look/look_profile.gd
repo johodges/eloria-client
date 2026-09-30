@@ -94,6 +94,12 @@ const TOE_END := 0.2
 ## 0.8 there Lantern Reach measured 0.75 and Amberwood 0.57.
 const SATURATION := 0.86
 const SATURATION_FORWARD := 0.69
+## A region's signature materials (its file's `props.keep_words`: crystals,
+## jade) have their chroma scaled by this before the grade takes it back
+## (LookFoliage.keep_chroma), about the inverse of the saturation above, so
+## they land near the colour develop drew them.
+const KEEP_CHROMA := 1.15
+const KEEP_CHROMA_FORWARD := 1.45
 ## How much of a manifest's own saturation boost survives. Amberwood declares
 ## 1.3, which has never been visible because nothing enabled the adjustment;
 ## at full strength it turns the red maple kit neon. A third of it warms the
@@ -617,6 +623,25 @@ const TAME_VALUE_FROM := Vector2(0.5, 0.9)
 ## phase. Gentle: the camera is 26 m away.
 const CROWN_SWAY_METRES := 0.07
 const CROWN_SWAY_SPEED := 1.1
+## A crown dissolves near the camera: gone nearer than x metres of view
+## depth, dithered one pixel at a time up to y, whole beyond. At the default
+## framing (pitch -60, 26 m) the player stands 26 m deep, a crown 20 m up over
+## them about 9 m, and one rising between the camera and them nearer still:
+## those drew as opaque leaf cards over a third of vs_road, cw_border_ss and
+## aw_deep_grove (measured with the depth debug view: the banyans and palms
+## in vs_road's and sr_border's upper frame at 10-15 m, cw_border_ss's oak
+## nearer than 10 m). A 12 m tree beside the player tops out about 15.5 m
+## deep and stays whole, and the low views (pitch -30 and -20) see the trees
+## round the player 18 m deep or more. The cut is clean, x equal to y: a
+## dithered band from 13 to 15.5 m drew the crowns in it as one-pixel grain
+## (hf95 15 to 84 at cw_border_ss, 34 to 64 at sr_border), the window-screen
+## look the first fade had; cut at one depth, the leaf cards end in their own
+## ragged edges.
+const CROWN_NEAR_FADE_METRES := Vector2(14.5, 14.5)
+## ELORIA_LOOK_FOLIAGE_DEBUG=1 draws every painted crown flat by its view
+## depth (red nearer than 10 m, yellow to 15, green to 20, blue beyond) with
+## no near fade, for telling which crowns a frame's canopy is and how far.
+const FOLIAGE_DEBUG_VARIABLE := "ELORIA_LOOK_FOLIAGE_DEBUG"
 
 ## The occluder fade opens a hole round the player instead of blending the
 ## whole occluder (LookFade, look_fade_hole.gdshaderinc); its timing stays
@@ -629,13 +654,42 @@ const CROWN_SWAY_SPEED := 1.1
 ## chest or at most FADE_BEHIND_METRES behind it. Dithering the whole occluder
 ## at 35 % coverage covered up to a fifth of the frame in a one-pixel
 ## crosshatch (high-frequency energy 51 in the deep grove against the
-## reference's 13-18).
+## reference's 13-18). A rim of 0.4 m on a 2 x 2 pixel Bayer read as a
+## checker band about 15 pixels wide round the player (Whitehorn's gate
+## pillars, the Verdant hub gate): now one-pixel noise over 0.25 m, about 9.
 const FADE_HOLE_METRES := 2.6
 const FADE_HOLE_SHARE := 0.2
 const FADE_HOLE_MAX_METRES := 6.5
-const FADE_RIM_METRES := 0.4
-const FADE_RIM_SHARE := 0.15
+## A crown opens a wider hole, CROWN_HOLE_SHARE of its width up to
+## CROWN_HOLE_MAX_METRES: a crown never vanishes, and under Amberwood's giant
+## canopies (37-52 m across) a 6.5 m hole left a ceiling of orange leaf cards
+## over half of aw_deep_grove.
+const CROWN_HOLE_SHARE := 0.25
+const CROWN_HOLE_MAX_METRES := 11.0
+const FADE_RIM_METRES := 0.25
+const FADE_RIM_SHARE := 0.08
 const FADE_BEHIND_METRES := 0.4
+## Which occluders dissolve whole instead of opening a hole (LookFade
+## Mode.VANISH): one whose box, projected, covers more than
+## FADE_VANISH_COVERAGE of the view (the Grey Moors' turf roof held a quarter
+## of gm_road near-black round its hole, Sunmane's tent 40 % of ss_road); a
+## thin one, at most FADE_THIN_METRES across the ground one way (a wall, a
+## fence, a beam), or at least FADE_PILLAR_RATIO times as tall as it is wide
+## and FADE_PILLAR_METRES tall (Whitehorn's gate pillars, Verdant's hub
+## obelisk); and one whose footprint, shrunk by FADE_OVER_INSET_METRES, holds
+## the player under its top (a roof, a yurt: at ss_wild a straw cone sat over
+## the player with a porthole in it).
+const FADE_VANISH_COVERAGE := 0.1
+const FADE_THIN_METRES := 2.0
+const FADE_PILLAR_RATIO := 2.0
+const FADE_PILLAR_METRES := 4.0
+const FADE_OVER_INSET_METRES := 0.3
+## A mesh under a node whose name starts with one of these, holding at most
+## FADE_ASSEMBLY_PIECES_MAX meshes, is a piece of one structure, and the
+## structure's width decides whether it blends (LookFade.assembly_width): each
+## piece of Crownwater's dome is narrower than FADE_SOLID_MAX_METRES.
+const FADE_ASSEMBLY_PREFIXES: Array[String] = ["Landmark_"]
+const FADE_ASSEMBLY_PIECES_MAX := 48
 ## An occluder wider than this across the ground blends as develop blends
 ## it instead of opening the hole (LookFade.keeps_hole), unless it is a
 ## painted crown: it is as wide as the largest hole (FADE_HOLE_MAX_METRES)
@@ -1090,9 +1144,10 @@ const REGION_SECTIONS := {
 	"sky": ["top", "horizon", "paint"],
 	"water": ["decode_albedo"],
 	"foliage": ["crown_materials", "tree_words", "shrub_words", "untamed_words"],
+	"props": ["keep_words", "keep_chroma", "keep_tint"],
 }
 const REGION_TABLE_KEYS := ["layers", "decode_albedo", "crown_materials", "tree_words",
-	"shrub_words", "untamed_words"]
+	"shrub_words", "untamed_words", "keep_words"]
 const REGION_META_KEYS := ["id", "schema", "notes"]
 ## Keys whose values are colours: [r, g, b] display (sRGB) components, exactly
 ## as a Color() constant takes them, or "#rrggbb".
@@ -1202,6 +1257,13 @@ static func foliage_words(id: String, key: String) -> Array:
 	var own: Variant = region_section(id, "foliage").get(key)
 	return own if own is Array else FOLIAGE_DEFAULTS[key]
 
+## The words naming `id`'s signature materials (its file's `props.keep_words`,
+## lower case), whose chroma the grade must not grey (LookFoliage.keep_chroma);
+## empty for most regions.
+static func keep_words(id: String) -> Array:
+	var words: Variant = region_section(id, "props").get("keep_words")
+	return words if words is Array else []
+
 ## The value a water shader at `shader_path` is decoded to in Forward+ on
 ## `id`'s map (its file's `water.decode_albedo`); 0 when it is not listed.
 static func water_decode_value(id: String, shader_path: String) -> float:
@@ -1290,7 +1352,7 @@ static func _expected(section: String, bare: String) -> String:
 		return "colour ([r, g, b] or \"#rrggbb\")"
 	if bare == "layers" or bare == "decode_albedo":
 		return "table of numbers"
-	if section == "foliage":
+	if section == "foliage" or bare == "keep_words":
 		return "list of strings"
 	return "number"
 
@@ -1318,6 +1380,16 @@ static func _typed_value(section: String, bare: String, value: Variant) -> Varia
 			table[str(word)] = float(weight)
 		table.make_read_only()
 		return table
+	if bare == "keep_words":
+		if value is not Array:
+			return null
+		var words: Array = []
+		for word: Variant in value:
+			if word is not String:
+				return null
+			words.append((word as String).to_lower())
+		words.make_read_only()
+		return words
 	if section == "foliage":
 		if value is not Array:
 			return null

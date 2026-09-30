@@ -17,9 +17,15 @@
 //   OccluderFade's FADE_SECONDS) rather than popping;
 // - only what stands in front of the player is cut, so a wall or the far half
 //   of a crown behind them stays whole;
-// - its last look_fade_rim_metres are a dithered rim, not a hard circle: a
-//   4 x 4 Bayer pattern on 2 x 2 pixel blocks, which makes no diagonal lines
-//   and is coarse enough to read as a soft brush edge rather than a mesh.
+// - its last look_fade_rim_metres are a narrow dithered rim, not a hard
+//   circle. It was a 4 x 4 Bayer on 2 x 2 pixel blocks over 0.4 m, which read
+//   as a checker band 15 pixels wide round the player, fixed to the screen
+//   while the world slid under it. It is now interleaved gradient noise, one
+//   pixel fine and a few pixels deep: a grainy brush edge, not a pattern.
+//
+// A copy LookFade gives look_fade_whole (Mode.VANISH: a roof over the player,
+// a pillar, anything filling the view) dissolves all of itself as the fade
+// opens instead, and draws nothing once it is open: no rim is left to read.
 //
 // Nothing here reads the screen, so it runs in the compatibility renderer
 // and in Forward+ alike. A faded copy never casts its own shadow (LookFade
@@ -33,18 +39,15 @@ uniform vec3 look_fade_focus = vec3(0.0);
 // The hole's radius and its dithered rim, in metres across the view at the
 // focus's depth, and how far behind the focus the cut still reaches.
 uniform float look_fade_hole_metres = 2.4;
-uniform float look_fade_rim_metres = 0.4;
+uniform float look_fade_rim_metres = 0.25;
 uniform float look_fade_behind_metres = 0.4;
+// 1: the whole mesh dissolves as the fade opens (LookFade Mode.VANISH).
+uniform float look_fade_whole = 0.0;
 
-// The 4 x 4 Bayer threshold (0..1) of the 2 x 2 pixel block a fragment lies
-// in: two interleaved 2 x 2 Bayer matrices, (0 2 / 3 1).
+// Interleaved gradient noise (Jimenez 2014): a one-pixel threshold (0..1)
+// with no low-frequency structure, so a dithered edge reads as grain.
 float look_fade_bayer(vec2 fragment) {
-	ivec2 cell = ivec2(floor(fragment * 0.5));
-	int x = cell.x & 3;
-	int y = cell.y & 3;
-	int fine = 2 * ((x & 1) ^ (y & 1)) + (y & 1);
-	int coarse = 2 * (((x >> 1) & 1) ^ ((y >> 1) & 1)) + ((y >> 1) & 1);
-	return (float(4 * fine + coarse) + 0.5) / 16.0;
+	return fract(52.9829189 * fract(dot(floor(fragment), vec2(0.06711056, 0.00583715))));
 }
 
 // True where the faded occluder is cut away. `view_vertex` is the fragment's
@@ -52,6 +55,9 @@ float look_fade_bayer(vec2 fragment) {
 bool look_fade_cut(vec3 view_vertex, mat4 view_matrix, mat4 projection, vec2 fragment) {
 	if (look_fade_open <= 0.001) {
 		return false;
+	}
+	if (look_fade_whole > 0.5) {
+		return look_fade_bayer(fragment) < look_fade_open;
 	}
 	vec3 focus = (view_matrix * vec4(look_fade_focus, 1.0)).xyz;
 	// View space looks down -z: a fragment further away than the focus (and
