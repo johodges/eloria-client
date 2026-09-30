@@ -105,6 +105,34 @@ what `LookGround.region_of` and `LookGrade` use:
   an enabled sun. A handful do: `sunmane_insides`, `crownwater_insides`,
   `ssarathi_insides`, and the Sunmane gauntlet.
 
+## Seeing what the generic classifier does with a map
+
+`tests/look/probe_look_classes.gd` loads maps as the client does, with the
+look on, and writes JSON describing what happened to each surface:
+
+- which ground surfaces were painted, and as what: terrain, biome verge,
+  pale paving, worn cobble, a glaze patch, or a road deck;
+- which ground surfaces were left alone, and why: a bridge's timber, a water
+  shader, a threshold, and so on;
+- how grassy each biome layer texture counts;
+- what the grass beds grew;
+- which foliage-looking meshes were painted as crowns and which were not,
+  with the reason;
+- the water materials;
+- points on the painted roads, for placing survey shots.
+
+Read it before writing a region file. Anything listed as "no crown material
+or kit word" is what `foliage` can add, and a biome texture that "matched
+default" is what `grass.layers` can weigh. Run it like this:
+
+```
+ELORIA_PROBE_TARGETS=targets.json ELORIA_INVENTORY_OUT=out.json ELORIA_NO_MAP_CACHE=1 \
+  Godot --audio-driver Dummy --path godot-client --script res://tests/look/probe_look_classes.gd
+```
+
+`targets.json` is `[{"map": "<registry id>", "x": 0, "z": 0}]`. The point is
+where the actor stands, in the map's own frame.
+
 ## The pilot files
 
 | File | What it holds |
