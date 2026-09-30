@@ -54,7 +54,7 @@ const PAINT_INCLUDE := "res://src/world/look/painted_ground_paint.gdshaderinc"
 ## The line of the biome blend the paint is spliced onto.
 const BIOME_ALBEDO_LINE := "ALBEDO = color / total;"
 const BIOME_PAINTED_LINE := "if (look_debug > 0) { ALBEDO = vec3(0.0); " \
-	+ "EMISSION = look_debug_colour(%s, vec3(1.0)); } " \
+	+ "EMISSION = look_debug_colour(%s, vec3(1.0), continent_xz); } " \
 	+ "else { ALBEDO = look_paint(color / total, %s, vec3(1.0), " \
 	+ "continent_xz, abs((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).y)); }"
 ## The paint weighs the biome by its mean colour at a spot, its layers' mean
@@ -173,6 +173,7 @@ static func paint(root: Node, region := "") -> int:
 		if kind_of(String(mesh_instance.name)) != Kind.NONE:
 			ground.append(mesh_instance)
 	var paving := paving_rects(ground)
+	var areas := material_areas(ground)
 	var made: Dictionary = {}
 	var surfaces := 0
 	for mesh_instance: MeshInstance3D in ground:
@@ -184,7 +185,7 @@ static func paint(root: Node, region := "") -> int:
 			var key := source.get_instance_id()
 			if not made.has(key):
 				made[key] = painted_for(source, kind, mesh_instance.mesh, surface,
-					region, paving)
+					region, paving, areas.get(key, Rect2()))
 			var painted: Material = made[key]
 			if painted == null:
 				continue
@@ -250,16 +251,34 @@ static func paving_rects(ground: Array[MeshInstance3D]) -> PackedVector4Array:
 		rects.append(Vector4(box.position.x, box.position.z, box.end.x, box.end.z))
 	return rects
 
+## Where each source material among `ground` lies: the continent-space
+## rectangle (x, z) its meshes cover, by the material's instance id. Mesh
+## space is the continent frame, so the meshes' own AABBs are enough. A
+## painted material is handed the region borders near this area (LookBorders).
+static func material_areas(ground: Array[MeshInstance3D]) -> Dictionary:
+	var areas := {}
+	for mesh_instance: MeshInstance3D in ground:
+		var box := mesh_instance.get_aabb()
+		var area := Rect2(box.position.x, box.position.z, box.size.x, box.size.z)
+		for surface: int in mesh_instance.mesh.get_surface_count():
+			var source: Material = mesh_instance.get_active_material(surface)
+			if source == null:
+				continue
+			var key := source.get_instance_id()
+			areas[key] = (areas[key] as Rect2).merge(area) if areas.has(key) else area
+	return areas
+
 ## The painted stand-in for `source`, or null when it is not ground this
 ## layer paints (water, bridge timber, an invisible threshold, a cut-out).
 ## `region` picks the ground trims; `paving` is where the root's pale paving
-## lies, for its roads.
+## lies, for its roads; `area` is where its meshes lie, for the borders its
+## trims fade across (none when empty).
 static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
-		region := "", paving := PackedVector4Array()) -> Material:
+		region := "", paving := PackedVector4Array(), area := Rect2()) -> Material:
 	if source is ShaderMaterial:
 		var shader := (source as ShaderMaterial).shader
 		if shader != null and shader.resource_path == BIOME_SHADER_PATH:
-			return _painted_biome(source as ShaderMaterial, region)
+			return _painted_biome(source as ShaderMaterial, region, area)
 		return null
 	var standard := source as BaseMaterial3D
 	if standard == null or standard.albedo_color.a <= 0.01:
@@ -335,10 +354,11 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
 	_set_paint(painted, class_kind,
 		kind == Kind.TERRAIN and standard.vertex_color_use_as_albedo and has_colour,
 		region, paving if kind == Kind.DECK or (kind == Kind.PATCH and blended
-			and not is_paving(standard)) else PackedVector4Array())
+			and not is_paving(standard)) else PackedVector4Array(), area)
 	return painted
 
-static func _painted_biome(source: ShaderMaterial, region: String) -> ShaderMaterial:
+static func _painted_biome(source: ShaderMaterial, region: String,
+		area := Rect2()) -> ShaderMaterial:
 	var shader := _biome_painted_shader()
 	if shader == null:
 		return null
@@ -349,7 +369,7 @@ static func _painted_biome(source: ShaderMaterial, region: String) -> ShaderMate
 	painted.next_pass = source.next_pass
 	for uniform_name: String in _biome_uniforms:
 		painted.set_shader_parameter(uniform_name, source.get_shader_parameter(uniform_name))
-	_set_paint(painted, Kind.BIOME, false, region, PackedVector4Array())
+	_set_paint(painted, Kind.BIOME, false, region, PackedVector4Array(), area)
 	return painted
 
 ## The biome blend with the paint spliced onto its albedo, made once and
@@ -391,11 +411,13 @@ static func _biome_painted_shader() -> Shader:
 	return result
 
 static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool,
-		region: String, paving: PackedVector4Array) -> void:
+		region: String, paving: PackedVector4Array, area := Rect2()) -> void:
 	painted.set_meta(PAINTED_META, true)
 	painted.set_shader_parameter(&"look_class", int(kind))
 	painted.set_shader_parameter(&"look_debug",
-		clampi(OS.get_environment(LookProfile.GROUND_DEBUG_VARIABLE).to_int(), 0, 3))
+		clampi(OS.get_environment(LookProfile.GROUND_DEBUG_VARIABLE).to_int(), 0, 4))
+	_set_border(painted, LookBorders.near(region, area, LookProfile.BORDER_FEATHER_METRES)
+		if area.has_area() else {})
 	painted.set_shader_parameter(&"look_path_force", 1.0 if kind == Kind.DECK else 0.0)
 	painted.set_shader_parameter(&"look_yard", 1.0 if kind == Kind.PATCH else 0.0)
 	painted.set_shader_parameter(&"look_pale", 0.0 if kind == Kind.BIOME else 1.0)
@@ -453,6 +475,42 @@ static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool,
 		LookProfile.PATH_VARIATION_SHARE)
 	painted.set_shader_parameter(&"look_slope_up", LookProfile.SLOPE_UP)
 	painted.set_shader_parameter(&"look_slope_shade", LookProfile.SLOPE_SHADE)
+
+## Hands a painted material the region borders near it and each neighbour's
+## trims, for the paint to fade its own into (LookBorders; `border` is
+## LookBorders.near's answer, empty away from every border).
+static func _set_border(painted: ShaderMaterial, border: Dictionary) -> void:
+	var segments: PackedVector4Array = border.get("segments", PackedVector4Array())
+	var slots: PackedFloat32Array = border.get("slots", PackedFloat32Array())
+	var neighbours: PackedStringArray = border.get("neighbours", PackedStringArray())
+	var count := segments.size()
+	segments = segments.duplicate()
+	slots = slots.duplicate()
+	segments.resize(LookProfile.BORDER_SEGMENTS_MAX)
+	slots.resize(LookProfile.BORDER_SEGMENTS_MAX)
+	painted.set_shader_parameter(&"look_border_segments", segments)
+	painted.set_shader_parameter(&"look_border_neighbour", slots)
+	painted.set_shader_parameter(&"look_border_count", count)
+	painted.set_shader_parameter(&"look_border_feather", LookProfile.BORDER_FEATHER_METRES)
+	var lumas := PackedFloat32Array()
+	var tints := PackedVector3Array()
+	var chromas := PackedFloat32Array()
+	var verges := PackedVector4Array()
+	for slot: int in LookProfile.BORDER_NEIGHBOURS_MAX:
+		var neighbour := neighbours[slot] if slot < neighbours.size() else ""
+		lumas.append(float(_trim(neighbour, "path_luma", LookProfile.PATH_LUMA)))
+		var tint: Color = _trim(neighbour, "path_tint", LookProfile.PATH_TINT)
+		tints.append(Vector3(tint.r, tint.g, tint.b))
+		chromas.append(float(_trim(neighbour, "path_chroma", LookProfile.PATH_CHROMA)))
+		verges.append(Vector4(
+			float(_trim(neighbour, "verge_value_green", LookProfile.VERGE_VALUE_GREEN)),
+			float(_trim(neighbour, "verge_value_earth", LookProfile.VERGE_VALUE_EARTH)),
+			float(_trim(neighbour, "verge_saturation", LookProfile.VERGE_SATURATION)),
+			float(_trim(neighbour, "verge_green_red", LookProfile.VERGE_GREEN_RED))))
+	painted.set_shader_parameter(&"look_border_path_luma", lumas)
+	painted.set_shader_parameter(&"look_border_path_tint", tints)
+	painted.set_shader_parameter(&"look_border_path_chroma", chromas)
+	painted.set_shader_parameter(&"look_border_verge", verges)
 
 static func _trim(region: String, key: String, fallback: Variant) -> Variant:
 	return LookProfile.ground_value(region, key, fallback)

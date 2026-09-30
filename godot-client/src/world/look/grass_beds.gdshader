@@ -11,6 +11,10 @@
 //   INSTANCE_CUSTOM.x  palette slot (0 the default palette, the others handed
 //                      out by LookGrassBeds as it meets regions whose region
 //                      file has a grass palette, LookProfile.grass_palette)
+//   INSTANCE_CUSTOM.y  a neighbouring region's palette slot, and
+//   INSTANCE_CUSTOM.z  how much of it the tuft takes: near a region border the
+//                      grass fades into the neighbour's, as the ground paint's
+//                      trims do (LookBorders); 0 elsewhere
 //   INSTANCE_CUSTOM.w  the wind's phase at the tuft (0..1 of a wave)
 //
 // The MultiMeshes must carry instance colours even though every tint could
@@ -74,12 +78,15 @@ vec3 look_palette(int index, bool tip) {
 void vertex() {
 	float height = UV.y;
 	int index = int(INSTANCE_CUSTOM.x + 0.5);
+	int other = int(INSTANCE_CUSTOM.y + 0.5);
+	float blend = clamp(INSTANCE_CUSTOM.z, 0.0, 1.0);
 	vec3 origin = (MODEL_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
 	float far = smoothstep(look_soften_metres.x, look_soften_metres.y,
 		distance(origin, INV_VIEW_MATRIX[3].xyz));
 	float gradient = mix(pow(height, look_gradient_power), 0.45, far * look_soften);
-	vec3 colour = mix(look_palette(index, false), look_palette(index, true),
-		gradient) * COLOR.rgb * look_value;
+	vec3 root = mix(look_palette(index, false), look_palette(other, false), blend);
+	vec3 tip = mix(look_palette(index, true), look_palette(other, true), blend);
+	vec3 colour = mix(root, tip, gradient) * COLOR.rgb * look_value;
 	float luma = dot(colour, vec3(0.2126, 0.7152, 0.0722));
 	v_colour = max(mix(vec3(luma), colour, look_chroma), vec3(0.0));
 

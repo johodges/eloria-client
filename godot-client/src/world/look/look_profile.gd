@@ -418,10 +418,28 @@ const GROUND_FORWARD := {"path_luma": 0.27, "verge_value_green": 0.55,
 ## verge_value_green, verge_value_earth, verge_saturation, verge_green_red).
 ## Unlike a grade trim these are safe on the continent: they are baked into a
 ## chunk's painted materials when it loads, so they change where the ground
-## changes, never when the player crosses it. They should stay where the
-## ground itself changes at the border (Amberwood's moss floor against Four
-## Gates' grass): a trim on ground that runs on unchanged into the neighbour
-## draws the region's border as a straight line.
+## changes, never when the player crosses it.
+##
+## Near a border they fade into the neighbour's (LookBorders): baked at a
+## chunk's edge, a trim on ground that runs on unchanged into the neighbour
+## drew the region's border as a straight or cell-stepped line (Four Gates'
+## verge trims across the south gate field, 13 levels; Ssarathi's laterite
+## road against Verdant's cream, 128 against 150; a Whitehorn snow trim
+## against the same snow in Amberwood's blend), and the migration's region
+## agents had to drop their own roads to avoid it. Now a painted material near
+## a border blends its trims towards each neighbour's by the signed distance
+## to the border: the two meet at their mean on the border line and each is
+## wholly its own BORDER_FEATHER_METRES inside. The default framing shows
+## about 45 by 35 m of ground, so the blend is spread wider than a frame and
+## reads as a change of country rather than as a band. The borders are
+## simplified to within BORDER_SIMPLIFY_METRES of the ownership polygons'
+## 2 m staircase, and a material takes the BORDER_SEGMENTS_MAX segments and
+## BORDER_NEIGHBOURS_MAX neighbours nearest its meshes (a chunk touches one or
+## two; a neighbour's whole-region preview more, from farther away).
+const BORDER_FEATHER_METRES := 24.0
+const BORDER_SIMPLIFY_METRES := 2.0
+const BORDER_SEGMENTS_MAX := 32
+const BORDER_NEIGHBOURS_MAX := 4
 
 ## ELORIA_LOOK_GROUND_DEBUG=1 draws each painted class as a flat colour
 ## (terrain red, biome blend green, authored patch blue, walk deck magenta),

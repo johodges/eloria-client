@@ -116,6 +116,9 @@ var _material: ShaderMaterial
 var _multimeshes: Array[MultiMesh] = []
 var _census: Dictionary = {}
 var _built_once := false
+## The region of the ground the last `_classify` looked at, for the border
+## blend of the grass it grows (LookBorders).
+var _classified_region := ""
 
 ## Grows, extends and trims the grass beds around `focus` (global) on the map
 ## `active` was loaded from. Called every frame by main while the game view
@@ -612,6 +615,10 @@ func _place_tile(key: Vector2i) -> void:
 		if (water.rect as Rect2).intersects(tile_rect):
 			waters.append(water)
 	var count := 0
+	# The region borders near this tile, per region, for the palette blend.
+	var area := Rect2(key.x * LookProfile.GRASS_TILE_METRES, key.y * LookProfile.GRASS_TILE_METRES,
+		LookProfile.GRASS_TILE_METRES, LookProfile.GRASS_TILE_METRES)
+	var borders := {}
 	for i: int in cells:
 		for j: int in cells:
 			var cell := Vector2i(key.x * cells + i, key.y * cells + j)
@@ -634,7 +641,7 @@ func _place_tile(key: Vector2i) -> void:
 			var local_hit := inverse * (hit.position as Vector3)
 			var local_normal := (inverse.basis * (hit.normal as Vector3)).normalized()
 			count += _grow(data, local_hit, local_normal, kind, ground.y, int(ground.z),
-				cell, cell_hash, step)
+				cell, cell_hash, step, _border_blend(_classified_region, area, borders, local_hit))
 	tile["count"] = count
 
 ## What the ground is where `hit` landed: (Ground, grassiness 0..1, palette).
@@ -656,6 +663,7 @@ func _classify(hit: Dictionary, up: Vector3, patches: Array[Dictionary],
 		return Vector3(Ground.NONE, 0.0, 0.0)
 	var point: Vector3 = hit.position
 	var palette := float(body.palette)
+	_classified_region = String(body.get("region", ""))
 	# What the authored patches drawn over the ground say here: (0 grass,
 	# 1 road or paving, 2 verge along a patch's rim; the grass share left).
 	var cover := _patch_cover(point, patches) if kind != Surface.VERTEX else Vector2(0.0, 1.0)
@@ -846,7 +854,7 @@ func _surface_of(collider: CollisionObject3D) -> Dictionary:
 			kind = Surface.TERRAIN if _continent else Surface.VERTEX
 		if kind != Surface.NONE:
 			info = {"kind": kind, "mesh": _mesh_data(node.mesh), "node": node,
-				"palette": _palette_of(node),
+				"palette": _palette_of(node), "region": _region_of(node),
 				"srgb": bool(facts.get("srgb", false)),
 				"road_detect": bool(facts.get("vertex_albedo", false))}
 	_surfaces[id] = info
@@ -879,13 +887,44 @@ static func _material_facts(node: MeshInstance3D) -> Dictionary:
 ## The palette slot of the region the node belongs to: its nearest ancestor
 ## that is the active map or a resident neighbour.
 func _palette_of(node: Node) -> int:
+	return _slot(_region_of(node))
+
+## The region the node belongs to: that of its nearest ancestor that is the
+## active map or a resident neighbour.
+func _region_of(node: Node) -> String:
 	var walker := node
 	while walker != null:
 		var id := walker.get_instance_id()
 		if _roots.has(id):
-			return _slot(String(_roots[id]))
+			return String(_roots[id])
 		walker = walker.get_parent()
-	return _slot(_region)
+	return _region
+
+## Near a region border the grass fades into the neighbour's palette as the
+## ground paint's trims do (LookBorders): (the neighbour's palette slot, how
+## much of it), for the neighbour whose share is largest at `local_hit` (the
+## grass frame is the continent frame). `borders` caches the tile's borders
+## per region. (0, 0) away from every border and off the continent.
+func _border_blend(region: String, area: Rect2, borders: Dictionary,
+		local_hit: Vector3) -> Vector2:
+	if not _continent or region.is_empty():
+		return Vector2.ZERO
+	if not borders.has(region):
+		borders[region] = LookBorders.near(region, area, LookProfile.BORDER_FEATHER_METRES)
+	var selection: Dictionary = borders[region]
+	var neighbours: PackedStringArray = selection.neighbours
+	if neighbours.is_empty():
+		return Vector2.ZERO
+	var weights := LookBorders.weights(Vector2(local_hit.x, local_hit.z), selection)
+	var best := -1
+	var weight := 0.001
+	for slot: int in weights.size():
+		if weights[slot] > weight:
+			weight = weights[slot]
+			best = slot
+	if best < 0:
+		return Vector2.ZERO
+	return Vector2(_slot(neighbours[best]), weight)
 
 ## A mesh's triangles, read back once: per surface, its positions, colours
 ## and indices, and the index of its first triangle among the mesh's (the
@@ -998,7 +1037,8 @@ func _biome_grass(point: Vector3, cell_hash: int) -> float:
 ## its ground's class and grassiness ask, each at its own hashed spot in the
 ## cell, turned, scaled and tilted halfway to the ground. Returns the count.
 func _grow(data: Array[PackedFloat32Array], hit: Vector3, normal: Vector3, kind: int,
-		grassiness: float, palette: int, cell: Vector2i, cell_hash: int, step: float) -> int:
+		grassiness: float, palette: int, cell: Vector2i, cell_hash: int, step: float,
+		blend := Vector2.ZERO) -> int:
 	var bed := 0.0
 	var density := LookProfile.GRASS_VERGE_DENSITY * grassiness
 	if kind == Ground.GRASS:
@@ -1055,7 +1095,7 @@ func _grow(data: Array[PackedFloat32Array], hit: Vector3, normal: Vector3, kind:
 			turn.x.y, turn.y.y, turn.z.y, origin.y,
 			turn.x.z, turn.y.z, turn.z.z, origin.z,
 			tint.r, tint.g, tint.b, 1.0,
-			float(palette), 0.0, 0.0, phase]))
+			float(palette), blend.x, blend.y, phase]))
 	_count("tufts_" + GROUND_NAMES[kind], tufts)
 	return tufts
 

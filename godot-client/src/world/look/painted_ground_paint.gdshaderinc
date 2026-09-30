@@ -82,7 +82,22 @@ uniform float look_path_variation_share = 0.35;
 uniform vec2 look_slope_up = vec2(0.94, 0.62);
 uniform float look_slope_shade = 0.72;
 
-// 0 paints; 1-3 are the debug views (see look_debug_colour).
+// The region's border, where its trims above fade into its neighbours'
+// (LookBorders, LookProfile.BORDER_*): up to 32 segments in continent space
+// (a.x, a.z, b.x, b.z), each oriented with this region on its left, and the
+// neighbour (0-3) each belongs to; and each neighbour's own trims. None away
+// from a border and off the continent.
+uniform vec4 look_border_segments[32];
+uniform float look_border_neighbour[32];
+uniform int look_border_count = 0;
+uniform float look_border_feather = 24.0;
+uniform float look_border_path_luma[4];
+uniform vec3 look_border_path_tint[4];
+uniform float look_border_path_chroma[4];
+// verge_value_green, verge_value_earth, verge_saturation, verge_green_red
+uniform vec4 look_border_verge[4];
+
+// 0 paints; 1-4 are the debug views (see look_debug_colour).
 uniform int look_debug = 0;
 // 0 terrain, 1 biome blend, 2 authored patch, 3 walk deck. Only for debug.
 uniform int look_class = 0;
@@ -212,6 +227,42 @@ float look_paving_at(vec2 xz) {
 	return paving;
 }
 
+// How much of each neighbour's trims (0-3) the paint takes at a continent
+// position: per neighbour, 1 - smoothstep(-feather, feather, the signed
+// distance to its border, positive on this region's side), scaled down
+// together where they add up to more than 1. The neighbour's own material
+// sees the same segments reversed, so the two meet exactly (LookBorders).
+vec4 look_border_weights(vec2 xz) {
+	float best[4] = float[4](1e9, 1e9, 1e9, 1e9);
+	float side[4] = float[4](1.0, 1.0, 1.0, 1.0);
+	for (int index = 0; index < 32; index++) {
+		if (index >= look_border_count) {
+			break;
+		}
+		vec4 segment = look_border_segments[index];
+		vec2 a = segment.xy;
+		vec2 ab = segment.zw - a;
+		vec2 ap = xz - a;
+		float t = clamp(dot(ap, ab) / max(dot(ab, ab), 0.000001), 0.0, 1.0);
+		float gap = length(ap - ab * t);
+		int slot = clamp(int(look_border_neighbour[index] + 0.5), 0, 3);
+		if (gap < best[slot]) {
+			best[slot] = gap;
+			side[slot] = (ab.x * ap.y - ab.y * ap.x) >= 0.0 ? 1.0 : -1.0;
+		}
+	}
+	float taken[4] = float[4](0.0, 0.0, 0.0, 0.0);
+	for (int slot = 0; slot < 4; slot++) {
+		if (best[slot] < 1e8) {
+			taken[slot] = 1.0 - smoothstep(-look_border_feather, look_border_feather,
+				side[slot] * best[slot]);
+		}
+	}
+	vec4 weights = vec4(taken[0], taken[1], taken[2], taken[3]);
+	float total = weights.x + weights.y + weights.z + weights.w;
+	return total > 1.0 ? weights / total : weights;
+}
+
 // The weights look_paint uses (path, yard, pale), for the debug views too.
 // `reference` is the surface's mean albedo, linear: classing and lifting by
 // the mean rather than by each texel keeps the texture's own grain.
@@ -240,12 +291,26 @@ vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float 
 	float pale = weights.z;
 	float luma = max(look_luma(reference), 0.0001);
 
+	// This region's trims, faded into its neighbours' near a border.
+	vec4 border = look_border_count > 0 ? look_border_weights(xz) : vec4(0.0);
+	float own = 1.0 - (border.x + border.y + border.z + border.w);
+	float path_luma = look_path_luma * own + dot(border, vec4(look_border_path_luma[0],
+		look_border_path_luma[1], look_border_path_luma[2], look_border_path_luma[3]));
+	vec3 path_tint = look_path_tint * own + look_border_path_tint[0] * border.x
+		+ look_border_path_tint[1] * border.y + look_border_path_tint[2] * border.z
+		+ look_border_path_tint[3] * border.w;
+	float path_chroma = look_path_chroma * own + dot(border, vec4(look_border_path_chroma[0],
+		look_border_path_chroma[1], look_border_path_chroma[2], look_border_path_chroma[3]));
+	vec4 verge_trims = vec4(look_verge_value_green, look_verge_value_earth,
+			look_verge_saturation, look_verge_green_red) * own
+		+ look_border_verge[0] * border.x + look_border_verge[1] * border.y
+		+ look_border_verge[2] * border.z + look_border_verge[3] * border.w;
+
 	// Verge: deeper and a little richer by hue, with a painted mottle.
-	float verge_scale = mix(look_verge_value_earth, look_verge_value_green,
-		look_green(reference));
+	float verge_scale = mix(verge_trims.y, verge_trims.x, look_green(reference));
 	vec3 verge = look_saturate(mix(reference, albedo, look_verge_grain) * verge_scale,
-		look_verge_saturation);
-	verge.r *= mix(1.0, look_verge_green_red, look_green(reference));
+		verge_trims.z);
+	verge.r *= mix(1.0, verge_trims.w, look_green(reference));
 	verge *= 1.0 + (look_value_noise(xz / look_verge_fine_metres + vec2(5.3, 2.1))
 		- 0.5) * 2.0 * look_verge_fine;
 	vec3 colour = mix(verge, albedo, pale);
@@ -276,12 +341,12 @@ vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float 
 	// patch of bare soil in the square) is worn into the same cobble, where
 	// on its own it read as a stain.
 	float paving = look_paving_at(xz);
-	float target = min(mix(look_path_luma, look_paving_luma, paving),
+	float target = min(mix(path_luma, look_paving_luma, paving),
 		luma * look_path_lift_max);
 	float grain = pow(max(look_luma(albedo) / luma, 0.0), look_path_detail);
 	float fine = 1.0 + (look_value_noise(xz / look_path_fine_metres + vec2(3.7, 1.9))
 		- 0.5) * 2.0 * look_path_fine;
-	vec3 tint = mix(look_tint(look_path_tint, look_path_chroma * look_renderer_chroma()),
+	vec3 tint = mix(look_tint(path_tint, path_chroma * look_renderer_chroma()),
 		look_tint(look_paving_tint, look_paving_chroma * look_renderer_chroma()), paving);
 	colour = mix(colour, tint * target * grain * fine, max(path, yard * paving));
 
@@ -298,8 +363,15 @@ vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float 
 // a flat colour (terrain red, biome blend green, patch blue, walk deck
 // magenta); 2, the weights, path in red, yard in green and pale in blue;
 // 3, the reference luminance in steps (red above 0.08, green above 0.12,
-// blue above 0.2).
-vec3 look_debug_colour(vec3 reference, vec3 vertex_colour) {
+// blue above 0.2); 4, the border blend: how much of the neighbours' trims the
+// paint takes in red (a half on the border line), over a faint blue on every
+// material that was handed a border.
+vec3 look_debug_colour(vec3 reference, vec3 vertex_colour, vec2 xz) {
+	if (look_debug == 4) {
+		vec4 border = look_border_count > 0 ? look_border_weights(xz) : vec4(0.0);
+		return vec3(border.x + border.y + border.z + border.w, 0.0,
+			look_border_count > 0 ? 0.15 : 0.0);
+	}
 	reference = look_to_linear(reference);
 	if (look_debug == 2) {
 		return look_weights(reference, vertex_colour) * 0.5;

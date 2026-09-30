@@ -92,7 +92,7 @@ void fragment() {
 	float up = abs((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).y);
 	if (look_debug > 0) {
 		ALBEDO = vec3(0.0);
-		EMISSION = look_debug_colour(reference, vertex_colour);
+		EMISSION = look_debug_colour(reference, vertex_colour, look_ground_xz);
 	} else {
 		ALBEDO = look_paint(albedo, reference, vertex_colour, look_ground_xz, up);
 	}
