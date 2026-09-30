@@ -164,7 +164,8 @@ func _look_inventory(loader: WorldLoader, target: Dictionary) -> Dictionary:
 			if not looks_like_foliage and not painted:
 				continue
 			var foliage_row := _foliage_row(mesh_instance, node_name,
-				words if own else LookFoliage.words_for(scan_region), scan_region)
+				words if own else LookFoliage.words_for(scan_region), scan_region,
+				manifest.data.has("continentGeography"))
 			_tally(foliage, "%s|%s|%s" % [scan_region, _pattern(node_name), ",".join(names)],
 				foliage_row, node_name)
 	var environment: Environment = (main.get("world_environment") as WorldEnvironment).environment
@@ -357,7 +358,7 @@ func _foliage_painted(mesh_instance: MeshInstance3D) -> bool:
 	return false
 
 func _foliage_row(mesh_instance: MeshInstance3D, node_name: String, words: Dictionary,
-		region: String) -> Dictionary:
+		region: String, continent := true) -> Dictionary:
 	var kinds: Array = []
 	var reasons: Array = []
 	var painted := _foliage_painted(mesh_instance)
@@ -368,7 +369,11 @@ func _foliage_row(mesh_instance: MeshInstance3D, node_name: String, words: Dicti
 		kinds.append(["none", "authored crown", "kit tree", "kit shrub"][int(kind) + 1])
 		if painted:
 			continue
-		if kind == LookFoliage.Kind.NONE:
+		if not continent:
+			# LookFoliage.paint_loaded paints continent roots only; a region
+			# file's foliage section is never read for this map.
+			reasons.append("the foliage layer does not run off the continent")
+		elif kind == LookFoliage.Kind.NONE:
 			reasons.append("no crown material or kit word (%s)" % (source.resource_name
 				if source != null else "no material"))
 		elif mesh_instance.material_override != null:

@@ -74,22 +74,31 @@ what `LookGround.region_of` and `LookGrade` use:
 | Section | Key | What it does | Default |
 |---|---|---|---|
 | `grade` | `exposure`, `saturation` | Multiplies the grade's exposure and saturation (`LookGrade`). **Only for a map never streamed beside another** (an island, a tutorial map, an instance): a trim changes when the active map changes, which on the continent would step at every crossing. A continent region's `grade` section is ignored, with a warning. | 1 |
-| `ground` | `path_luma`, `path_tint` (colour), `path_chroma`, `verge_value_green`, `verge_value_earth`, `verge_saturation`, `verge_green_red` | Trims the painted ground (`LookGround._set_paint`); baked into a chunk's materials when it loads. | Forward+: `GROUND_FORWARD`, else the `PATH_*` / `VERGE_*` constants |
+| `ground` | `path_luma`, `path_tint` (colour), `path_chroma`, `verge_value_green`, `verge_value_earth`, `verge_saturation`, `verge_green_red` | Trims the painted ground (`LookGround._set_paint`); baked into a chunk's materials when it loads. On the continent they fade into each neighbour's across the border (`LookBorders`, see the rules below). | Forward+: `GROUND_FORWARD`, else the `PATH_*` / `VERGE_*` constants |
+| `ground` | `deck_path` (0..1), `deck_road_colour` (colour), `deck_tint` ([r, g, b] multiplier), `deck_chroma` | How much of a road the region's `Walk_` decks are painted as. At 0 a deck is the region's own ground: it keeps its own colour whatever its hue, times `deck_tint` (a multiplier on its linear colour, not a display colour) at `deck_chroma`, and has no road edging (the tutorial maps' courts, which are decks from wall to wall). The grade warms and greys a kept court, so `deck_tint` is solved against develop's colour. `deck_road_colour` is the vertex colour (display sRGB) a deck carries where it is road: that part is painted as a road again (Reedway's cart tracks), within `DECK_ROAD_TOLERANCE`. | 1, none, [1, 1, 1], 1 |
 | `grass` | `root`, `tip` (colours), `value` | The region's grass palette, root to tip, and its value trim, measured against its painted ground (tufts at 0.9-1.05 of the ground under them). Any of the three gives the region its own palette slot; missing colours come from `GRASS_PALETTE_DEFAULT`. | `GRASS_PALETTE_DEFAULT`, value 1 |
 | `grass` | `layers` (table word to 0..1) | How grassy a biome layer is, by a word in its texture's file name, read before `GRASS_LAYER_WORDS` for this region's biome blends only. | `GRASS_LAYER_WORDS` |
+| `grass` | `open` (0..1) | How grassy the region's ground is where no biome blend covers it (the Sunmane Steppe's opaque authored base). Green meadow patches grow grass whatever this says (`GRASS_PATCH_GREEN`). | 1 |
 | `sky` | `top`, `horizon` (colours) | The sky painted over a map that **declares no sky** (`LookSky`). A map with its own `environment.sky` ignores this. | `SKY_FALLBACK` (the binder's 3d7ec2 / bcc9cd) |
-| `water` | `decode_albedo` (table shader path to value) | Forward+ only: a sea shader whose colours were picked in the compatibility renderer is told to decode them to linear albedo, at this value (`LookGround.decode_water`). Only maps outside the continent run it. | none |
-| `foliage` | `crown_materials`, `tree_words`, `shrub_words`, `untamed_words` (lists of strings) | Extends `CROWN_MATERIALS`, `KIT_TREE_WORDS`, `KIT_SHRUB_WORDS` and `KIT_UNTAMED_WORDS` for this region's roots (`LookFoliage`). A crown material is an authored leaf material's name, compared exactly. The words are matched against the hyphen-separated words of a `kit-...` node name. | the lists in `look_profile.gd` |
+| `sky` | `paint` (0 or 1) | 0 leaves the map's own sky and fog alone (`LookProfile.sky_painted`): for a sunlit interior whose void is meant dark (the Sunmane wind caves, the Ssarathi archive, the Drowned Crown). The grade still runs. | 1 |
+| `water` | `decode_albedo` (table shader path to value) | Forward+ only: a sea shader whose colours were picked in the compatibility renderer is told to decode them to linear albedo, at this value (`LookGround.decode_water`). Only maps outside the continent run it; the continent's own sea is decoded for every region at `CONTINENT_SEA_VALUE`. | none |
+| `foliage` | `crown_materials`, `tree_words`, `shrub_words`, `untamed_words` (lists of strings) | Extends `CROWN_MATERIALS`, `KIT_TREE_WORDS`, `KIT_SHRUB_WORDS` and `KIT_UNTAMED_WORDS` for this region's roots (`LookFoliage`). A crown material is an authored leaf material's name, compared exactly. The words are matched against the hyphen-separated words of a `kit-...` node name; `KIT_NOT_FOLIAGE_WORDS` (raft, boat, cart) always win. **Continent regions only**: the foliage layer does not run on any other map, so this section is never read there. | the lists in `look_profile.gd` |
 
 ## Rules learned on the pilot
 
-- A **ground trim on ground that runs on unchanged into the neighbour draws
-  the region's border as a straight seam**. Four Gates' Forward+ verge trims
-  did this across the south gate field, a 13-level step. Trim a region only
-  where its ground itself changes at the border, as Amberwood's moss floor
-  does against Four Gates' grass. Renderer-wide changes belong in
-  `GROUND_FORWARD`, not in a region. After adding a ground trim, render a
-  shot across each border.
+- A **continent region's ground trims and grass palette fade into each
+  neighbour's across the border** (`LookBorders`): on the border line the two
+  meet at their mean, and each is wholly its own `BORDER_FEATHER_METRES`
+  (24 m) inside. Baked at the chunk's edge instead, a trim on ground that runs
+  on unchanged into the neighbour drew the border as a straight or
+  cell-stepped line (Four Gates' old verge trims across the south gate field,
+  13 levels; Ssarathi's laterite road against Verdant's cream), and the
+  migration's region agents dropped their own roads to avoid it. A region may
+  now keep its own roads and verge; still render a shot across each border,
+  because a big difference reads as a change of country over about 50 m.
+  Renderer-wide changes still belong in `GROUND_FORWARD`. The borders come
+  from the ownership polygons in the regions' manifests
+  (`continentGeography.ownershipPolygon`), read once.
 - **Grass palettes are per region, not per chunk.** The shader holds
   `GRASS_PALETTE_SLOTS` (32) palettes. Slot 0 is the default. A region with
   its own palette takes the next slot the first time the client meets it,
@@ -103,7 +112,17 @@ what `LookGround.region_of` and `LookGrade` use:
   neighbour's file lists it too.
 - **Interiors are never graded or painted**, unless their manifest declares
   an enabled sun. A handful do: `sunmane_insides`, `crownwater_insides`,
-  `ssarathi_insides`, and the Sunmane gauntlet.
+  `ssarathi_insides`, and the Sunmane gauntlet. On every interior (no enabled
+  sun, or an `asset.interiorClass`) occluders fade as develop fades them
+  (`LookFade.bind`), because a ceiling kept solid round the player's hole
+  blacked out the room.
+- **What a patch is, is decided by its tint** (`LookGround.is_paving`,
+  `is_cobble`, `sand_tint`, `stone_tint`): pale paving and cobble must be warm
+  or neutral stone, so pale grass (`#b8eba8`), granite (`#b3b5bf`) and snow
+  are not; the life passes' beach sand (`#fff5d1`) is a glaze, not paving,
+  and grows no grass; a green meadow patch grows grass whatever the biome
+  beneath (`GRASS_PATCH_GREEN`). The patch textures are content-addressed, so
+  their names cannot say it.
 
 ## Seeing what the generic classifier does with a map
 
