@@ -109,7 +109,7 @@ func _run() -> void:
 	off_fade.restore()
 	_expect(wood.get_surface_override_material(0) == null, "and is put back after")
 	_expect(_indexed(world) == _mesh_count(world),
-		"with ELORIA_LOOK=0 every mesh is indexed as on develop, ground patches included")
+		"with ELORIA_LOOK=0 the look keeps nothing out of the index: every mesh develop weighs is indexed")
 
 	# On.
 	OS.unset_environment(LookProfile.ENABLE_VARIABLE)
@@ -268,7 +268,7 @@ func _run() -> void:
 		"any other ShaderMaterial stays solid, as on develop")
 
 	# The ground is never an occluder with the pass on.
-	_expect(_indexed(world) == _mesh_count(world) - 1,
+	_expect(_indexed(world) == _mesh_count(world, true) and not _is_indexed(world, patch),
 		"with the look on (the default) a ground patch is kept out of the fade index")
 
 	# A kit prop named for a plant is not a crown; a single-sided crown keeps
@@ -412,12 +412,33 @@ func _indexed(world: Node3D) -> int:
 	var fade := OccluderFade.new()
 	return fade.configure(null, world)
 
-## Meshes OccluderFade would weigh at all: visible and narrower than its cap.
-func _mesh_count(world: Node3D) -> int:
+func _is_indexed(world: Node3D, node: MeshInstance3D) -> bool:
+	var fade := OccluderFade.new()
+	fade.configure(null, world)
+	for occluder: OccluderFade.Occluder in fade._occluders:
+		if occluder.node == node:
+			return true
+	return false
+
+## Meshes OccluderFade would weigh at all: visible, narrower than its cap, and
+## not ground by OccluderFade's own name test - nor, with `look_ground`, by
+## the look's (LookFade.keeps_solid). Develop's a2072c3aa ("Keep authored
+## ground patches from fading under the player") adds that name test as
+## OccluderFade.GROUND_NAME_PREFIXES; before it, every ground patch was
+## weighed. The constant is read from the script, not named, so this count
+## is develop's on either side of that merge.
+func _mesh_count(world: Node3D, look_ground := false) -> int:
+	var fade_script: Script = load("res://src/world/occluder_fade.gd")
+	var ground_prefixes: Array = fade_script.get_script_constant_map().get("GROUND_NAME_PREFIXES", [])
 	var count := 0
 	for node: Node in world.find_children("*", "MeshInstance3D", true, false):
 		var mesh_instance := node as MeshInstance3D
-		if String(mesh_instance.name) == String(LookFade.SHADOW_TWIN_NAME):
+		var node_name := String(mesh_instance.name)
+		if node_name == String(LookFade.SHADOW_TWIN_NAME):
+			continue
+		if ground_prefixes.any(func(prefix: Variant) -> bool: return node_name.begins_with(str(prefix))):
+			continue
+		if look_ground and LookFade.keeps_solid(node_name):
 			continue
 		var box := mesh_instance.get_aabb()
 		if maxf(box.size.x, box.size.z) <= OccluderFade.MAX_EXTENT_METRES:
