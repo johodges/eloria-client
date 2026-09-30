@@ -226,6 +226,27 @@ func _run() -> void:
 		and not LookGround.is_cobble(tinted.call("fff5d1")),
 		"worn cobble is still cobble; pale grass and sand are glazes")
 
+	# A region whose decks are its ground (the tutorial courts) keeps their
+	# own colour; a deck elsewhere is a road.
+	LookProfile.define_region("deck_ground_test", {"id": "deck_ground_test", "schema": 1,
+		"ground": {"deck_path": 0, "deck_road_colour": [1.0, 0.922, 0.792]}})
+	var court_material := deck_material.duplicate() as StandardMaterial3D
+	court_material.vertex_color_use_as_albedo = true
+	var court := LookGround.painted_for(court_material, LookGround.Kind.DECK,
+		(deck.mesh as Mesh), 0, "deck_ground_test") as ShaderMaterial
+	_expect(court != null and float(court.get_shader_parameter(&"look_path_force")) == 0.0
+		and float(court.get_shader_parameter(&"look_keep")) == 1.0
+		and float(court.get_shader_parameter(&"look_edge_band")) == 0.0,
+		"a deck its region calls ground keeps its own colour and no road edging")
+	_expect(court != null and float(court.get_shader_parameter(&"look_road_detect")) == 1.0
+		and court.get_shader_parameter(&"look_road_tolerance") == LookProfile.DECK_ROAD_TOLERANCE,
+		"and finds its tracks by the vertex colour its region names")
+	_expect(float(deck_paint.get_shader_parameter(&"look_path_force")) == 1.0
+		and float(deck_paint.get_shader_parameter(&"look_keep")) == 0.0
+		and float(deck_paint.get_shader_parameter(&"look_road_detect")) == 0.0,
+		"any other deck is a road")
+	LookProfile.reload_regions()
+
 	# The continent's sea is decoded in Forward+ as a copy, never in place.
 	var sea_root := Node3D.new()
 	root.add_child(sea_root)

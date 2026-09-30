@@ -32,6 +32,12 @@ uniform vec3 look_road_colour = vec3(0.2265, 0.1746, 0.0855);
 uniform vec2 look_road_tolerance = vec2(0.12, 0.34);
 // Authored ground patches: how much of the yard lift they take.
 uniform float look_yard = 0.0;
+// How much of the surface keeps its own colour whatever its hue, times this
+// linear multiplier and at this chroma: a walk deck that its region paints as
+// ground, not road (LookGround.deck_path_of).
+uniform float look_keep = 0.0;
+uniform vec3 look_keep_tint = vec3(1.0);
+uniform float look_keep_chroma = 1.0;
 // How much pale ground is spared the verge treatment (0 for the biome blend).
 uniform float look_pale = 1.0;
 
@@ -339,6 +345,7 @@ vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, float 
 	// Yards keep their own colour and lift a little.
 	float yard_lift = clamp(look_yard_luma / luma, 1.0, look_yard_lift_max);
 	colour = mix(colour, look_saturate(albedo * yard_lift, look_yard_saturation), yard);
+	colour = mix(colour, look_saturate(albedo * look_keep_tint, look_keep_chroma), look_keep);
 
 	// Paths: a set value and hue, the texture's grain, a fine mottle; darker
 	// than the paving where they run through it. A yard inside the paving (a

@@ -417,6 +417,12 @@ const SLOPE_SHADE := 0.72
 ## relative to its length, as road.
 const TERRAIN_ROAD_COLOUR := Color(0.2265, 0.1746, 0.0855)
 const TERRAIN_ROAD_TOLERANCE := Vector2(0.12, 0.34)
+## A walk deck whose region names the colour its roads carry in its vertex
+## colour (`ground.deck_road_colour`, Reedway's cart tracks) finds them within
+## this relative distance: tighter than the terrain's, because the ground
+## beside them is the same deck in another vertex colour (Reedway's meadow is
+## 0.26 from its tracks, which the terrain's tolerance takes for a third road).
+const DECK_ROAD_TOLERANCE := Vector2(0.05, 0.15)
 
 ## A sea shader whose colours were picked in the compatibility renderer is
 ## named, with the value its sea is drawn at in Forward+, in its map's region
@@ -1078,7 +1084,8 @@ const REGIONS_DIRECTORY := "res://src/world/look/regions"
 const REGION_SECTIONS := {
 	"grade": ["exposure", "saturation"],
 	"ground": ["path_luma", "path_tint", "path_chroma", "verge_value_green",
-		"verge_value_earth", "verge_saturation", "verge_green_red"],
+		"verge_value_earth", "verge_saturation", "verge_green_red", "deck_path",
+		"deck_road_colour", "deck_tint", "deck_chroma"],
 	"grass": ["root", "tip", "value", "layers", "open"],
 	"sky": ["top", "horizon", "paint"],
 	"water": ["decode_albedo"],
@@ -1089,7 +1096,8 @@ const REGION_TABLE_KEYS := ["layers", "decode_albedo", "crown_materials", "tree_
 const REGION_META_KEYS := ["id", "schema", "notes"]
 ## Keys whose values are colours: [r, g, b] display (sRGB) components, exactly
 ## as a Color() constant takes them, or "#rrggbb".
-const REGION_COLOUR_KEYS := ["path_tint", "root", "tip", "top", "horizon"]
+const REGION_COLOUR_KEYS := ["path_tint", "root", "tip", "top", "horizon", "deck_road_colour",
+	"deck_tint"]
 ## The lists a region's `foliage` section extends, by key.
 const FOLIAGE_DEFAULTS := {"crown_materials": CROWN_MATERIALS, "tree_words": KIT_TREE_WORDS,
 	"shrub_words": KIT_SHRUB_WORDS, "untamed_words": KIT_UNTAMED_WORDS}

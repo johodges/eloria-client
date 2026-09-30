@@ -379,10 +379,12 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
 	painted.set_shader_parameter(&"look_surface_tint",
 		Vector3(surface_tint.r, surface_tint.g, surface_tint.b))
 	painted.set_shader_parameter(&"look_rim_noise_metres", LookProfile.RIM_NOISE_METRES)
-	painted.set_shader_parameter(&"look_edge_band",
-		LookProfile.EDGE_BAND if kind == Kind.DECK else 0.0)
+	# A deck painted as its own colour (deck_path below 1) keeps as little
+	# of the road's edging as of its paint.
+	var deck_path := deck_path_of(region) if kind == Kind.DECK else 0.0
+	painted.set_shader_parameter(&"look_edge_band", LookProfile.EDGE_BAND * deck_path)
 	painted.set_shader_parameter(&"look_edge_band_paving",
-		LookProfile.EDGE_BAND_PAVING if kind == Kind.DECK else 0.0)
+		LookProfile.EDGE_BAND_PAVING * deck_path)
 	painted.set_shader_parameter(&"look_edge_band_from", LookProfile.EDGE_BAND_FROM)
 	painted.set_shader_parameter(&"look_edge_band_push", LookProfile.EDGE_BAND_PUSH_METRES)
 	painted.set_shader_parameter(&"has_normal_texture",
@@ -399,11 +401,32 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
 	var class_kind := kind
 	if kind == Kind.PATCH and not blended:
 		class_kind = Kind.BIOME
-	_set_paint(painted, class_kind,
-		kind == Kind.TERRAIN and standard.vertex_color_use_as_albedo and has_colour,
+	# A road deck finds a road in its own vertex colour only where its region
+	# names that colour (`ground.deck_road_colour`); the terrain always does.
+	var road_detect := standard.vertex_color_use_as_albedo and has_colour \
+		and (kind == Kind.TERRAIN or (kind == Kind.DECK and deck_road_of(region) != null))
+	_set_paint(painted, class_kind, road_detect,
 		region, paving if kind == Kind.DECK or (kind == Kind.PATCH and blended
 			and not is_paving(standard)) else PackedVector4Array(), area)
 	return painted
+
+## How much of a road the region's walk decks are painted as
+## (`ground.deck_path`): 1, every deck a road whatever its colour, unless the
+## region says its decks are its ground. The tutorial maps' courts and yards
+## are Walk_ decks from wall to wall, told apart by their own colours: painted
+## as roads they all came out one road-beige (four maps identical frames),
+## and a region tint could give each map only one colour (Reedway's cart
+## tracks lost in its meadow, Bellwatch's packed road the court's cream,
+## Cinderbank's brick and timber the pavers' khaki).
+static func deck_path_of(region: String) -> float:
+	return clampf(float(LookProfile.region_value(region, "ground", "deck_path", 1.0)),
+		0.0, 1.0)
+
+## The colour (display sRGB) a region's walk decks carry in their vertex
+## colour where they are road (`ground.deck_road_colour`), or null.
+static func deck_road_of(region: String) -> Variant:
+	var colour: Variant = LookProfile.region_value(region, "ground", "deck_road_colour", null)
+	return colour if colour is Color else null
 
 static func _painted_biome(source: ShaderMaterial, region: String,
 		area := Rect2()) -> ShaderMaterial:
@@ -466,13 +489,28 @@ static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool,
 		clampi(OS.get_environment(LookProfile.GROUND_DEBUG_VARIABLE).to_int(), 0, 4))
 	_set_border(painted, LookBorders.near(region, area, LookProfile.BORDER_FEATHER_METRES)
 		if area.has_area() else {})
-	painted.set_shader_parameter(&"look_path_force", 1.0 if kind == Kind.DECK else 0.0)
+	var deck_path := deck_path_of(region) if kind == Kind.DECK else 0.0
+	painted.set_shader_parameter(&"look_path_force", deck_path)
 	painted.set_shader_parameter(&"look_yard", 1.0 if kind == Kind.PATCH else 0.0)
+	# A deck that is not a road keeps its own colour, whatever its hue, times
+	# its region's tint and at its chroma: the grade warms and greys a pale
+	# court (Bellwatch's cream went grey, Reedway's meadow olive-brown).
+	painted.set_shader_parameter(&"look_keep", 1.0 - deck_path if kind == Kind.DECK else 0.0)
+	var keep_tint: Color = LookProfile.region_value(region, "ground", "deck_tint", Color.WHITE)
+	painted.set_shader_parameter(&"look_keep_tint", Vector3(keep_tint.r, keep_tint.g, keep_tint.b))
+	painted.set_shader_parameter(&"look_keep_chroma",
+		float(LookProfile.region_value(region, "ground", "deck_chroma", 1.0)))
 	painted.set_shader_parameter(&"look_pale", 0.0 if kind == Kind.BIOME else 1.0)
 	painted.set_shader_parameter(&"look_road_detect", 1.0 if road_detect else 0.0)
 	var road := LookProfile.TERRAIN_ROAD_COLOUR
+	var tolerance := LookProfile.TERRAIN_ROAD_TOLERANCE
+	var deck_road: Variant = deck_road_of(region) if kind == Kind.DECK else null
+	if deck_road is Color:
+		# The shader divides by the terrain exporter's grain divisor (0.92).
+		road = (deck_road as Color).srgb_to_linear() * 0.92
+		tolerance = LookProfile.DECK_ROAD_TOLERANCE
 	painted.set_shader_parameter(&"look_road_colour", Vector3(road.r, road.g, road.b))
-	painted.set_shader_parameter(&"look_road_tolerance", LookProfile.TERRAIN_ROAD_TOLERANCE)
+	painted.set_shader_parameter(&"look_road_tolerance", tolerance)
 	painted.set_shader_parameter(&"look_path_luma",
 		_trim(region, "path_luma", LookProfile.PATH_LUMA))
 	painted.set_shader_parameter(&"look_path_lift_max", LookProfile.PATH_LIFT_MAX)
