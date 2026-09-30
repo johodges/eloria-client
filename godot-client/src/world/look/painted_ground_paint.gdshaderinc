@@ -207,9 +207,13 @@ vec3 look_tint(vec3 display_tint, float chroma) {
 	return linear_tint / max(look_luma(linear_tint), 0.0001);
 }
 
-// How green-dominant a colour is: grass however pale, not olive or earth.
+// How green-dominant a colour is: grass however pale, not olive or earth, and
+// not snow. Green has to lead blue as well as red: led by red alone, the
+// bluish-white snow crust (linear 0.47, 0.57, 0.76 under Whitehorn's tint)
+// counted as grass and was deepened and stripped of red like it, pale
+// cyan-grey snow at luminance 174-176 against develop's 236-242.
 float look_green(vec3 colour) {
-	return smoothstep(0.02, 0.12, (colour.g - colour.r) / max(colour.g, 0.0001));
+	return smoothstep(0.02, 0.12, (colour.g - max(colour.r, colour.b)) / max(colour.g, 0.0001));
 }
 
 // How far inside the pale paving a continent position is, 0..1 over
