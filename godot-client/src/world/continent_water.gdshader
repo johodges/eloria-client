@@ -6,6 +6,14 @@ render_mode cull_disabled;
 uniform mat4 water_to_continent;
 uniform sampler2D wave_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform bool has_wave_texture = false;
+// Look pass (LookGround sets it in Forward+ on a copy; never with
+// ELORIA_LOOK=0): the colours below were picked in the compatibility
+// renderer, which lights display-encoded albedo. Forward+ lights the same
+// numbers as linear albedo, which drew the sea a milky pale turquoise as
+// bright as the roads; decoded, it is the deep sea they were picked as, and
+// look_sea_value sets its brightness.
+uniform bool look_decode_albedo = false;
+uniform float look_sea_value = 1.0;
 varying vec2 continent_position;
 
 void vertex() {
@@ -30,6 +38,9 @@ void fragment() {
 		ALBEDO *= .7 + detail * 1.6;
 	} else {
 		ALBEDO += vec3(.012, .022, .025) * smoothstep(.82, .98, crest) * broken;
+	}
+	if (look_decode_albedo) {
+		ALBEDO = pow(max(ALBEDO, vec3(0.0)), vec3(2.2)) * look_sea_value;
 	}
 	// All exterior frames are translation-only, so these continent-space
 	// ripple normals also agree across differently authored water primitives.

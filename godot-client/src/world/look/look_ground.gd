@@ -50,6 +50,7 @@ const SHADER_BLEND := preload("res://src/world/look/painted_ground_blend.gdshade
 const SHADER_DECK := preload("res://src/world/look/painted_ground_deck.gdshader")
 
 const BIOME_SHADER_PATH := "res://src/world/biome_blend.gdshader"
+const CONTINENT_WATER_PATH := "res://src/world/continent_water.gdshader"
 const PAINT_INCLUDE := "res://src/world/look/painted_ground_paint.gdshaderinc"
 ## The line of the biome blend the paint is spliced onto.
 const BIOME_ALBEDO_LINE := "ALBEDO = color / total;"
@@ -120,7 +121,35 @@ static func paint_loaded(root: Node, manifest: WorldManifest) -> int:
 		return 0
 	if not manifest.data.has("continentGeography"):
 		return 0
+	decode_continent_sea(root)
 	return paint(root, region_of(manifest))
+
+## Forward+ only: the continent's sea (continent_water.gdshader, which the
+## loader puts on every sea cell) is decoded to linear albedo at
+## LookProfile.CONTINENT_SEA_VALUE, as a copy put in as the surface's
+## override, so the loader's cache keeps the loader's own material. One value
+## for the whole continent: the sea runs on across every region's border.
+## Returns the surfaces changed.
+static func decode_continent_sea(root: Node) -> int:
+	if not LookProfile.enabled() or root == null or not LookProfile.forward_plus():
+		return 0
+	var changed := 0
+	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.mesh == null:
+			continue
+		for surface: int in mesh_instance.get_surface_override_material_count():
+			var sea := mesh_instance.get_surface_override_material(surface) as ShaderMaterial
+			if sea == null or sea.shader == null or sea.has_meta(PAINTED_META) \
+					or sea.shader.resource_path != CONTINENT_WATER_PATH:
+				continue
+			var decoded := sea.duplicate() as ShaderMaterial
+			decoded.set_meta(PAINTED_META, true)
+			decoded.set_shader_parameter(&"look_decode_albedo", true)
+			decoded.set_shader_parameter(&"look_sea_value", LookProfile.CONTINENT_SEA_VALUE)
+			mesh_instance.set_surface_override_material(surface, decoded)
+			changed += 1
+	return changed
 
 ## Paints a map outside the continent once main has bound it and its scene
 ## script has set its materials up. Interiors are left alone, as the grade

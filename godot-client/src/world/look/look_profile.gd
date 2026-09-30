@@ -422,6 +422,15 @@ const TERRAIN_ROAD_TOLERANCE := Vector2(0.12, 0.34)
 ## named, with the value its sea is drawn at in Forward+, in its map's region
 ## file (`water.decode_albedo`, read by LookGround.decode_water): Lantern
 ## Reach's lantern_water.gdshader is the only one.
+##
+## The continent's sea (continent_water.gdshader) is the same case and is
+## decoded everywhere at this value in Forward+ (LookGround.decode_continent_sea):
+## it runs on across every region's border, so it cannot be a region's. Lit as
+## linear albedo it drew a milky pale turquoise as bright as the painted roads
+## (Ssarathi's shore luminance 110-127 against develop's 51-52, Crownwater's
+## harbour and Westhaven's quays the same). At 4 Ssarathi's shore measures
+## luminance 51, develop's; 2.5, Lantern Reach's value, left it at 39.
+const CONTINENT_SEA_VALUE := 4.0
 
 ## Forward+ lights the painted ground's linear albedo as linear light, where
 ## the compatibility renderer lights it display-encoded: the same verge came

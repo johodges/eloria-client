@@ -226,6 +226,24 @@ func _run() -> void:
 		and not LookGround.is_cobble(tinted.call("fff5d1")),
 		"worn cobble is still cobble; pale grass and sand are glazes")
 
+	# The continent's sea is decoded in Forward+ as a copy, never in place.
+	var sea_root := Node3D.new()
+	root.add_child(sea_root)
+	var sea := ShaderMaterial.new()
+	sea.shader = load(LookGround.CONTINENT_WATER_PATH) as Shader
+	var sea_mesh := _mesh(sea_root, "Water_test_1_2", null)
+	sea_mesh.set_surface_override_material(0, sea)
+	var decoded := LookGround.decode_continent_sea(sea_root)
+	var decoded_sea := sea_mesh.get_surface_override_material(0) as ShaderMaterial
+	if LookProfile.forward_plus():
+		_expect(decoded == 1 and decoded_sea != sea
+			and decoded_sea.get_shader_parameter(&"look_decode_albedo") == true
+			and sea.get_shader_parameter(&"look_decode_albedo") != true,
+			"the continent sea is decoded on a copy in Forward+")
+	else:
+		_expect(decoded == 0 and decoded_sea == sea,
+			"the continent sea is left alone in the compatibility renderer")
+
 	OS.set_environment(LookProfile.ENABLE_VARIABLE, previous)
 	print("test_look_ground: %s (%d failures)" % [
 		"PASS" if failures == 0 else "FAIL", failures])
