@@ -9398,6 +9398,9 @@ func _unlooked_environment_copy() -> Environment:
 ## chunk or neighbour that was being built as the player switched) follows the
 ## new one as it arrives. Nothing is walked unless some root is stale
 ## (LookProfile.any_stale), which only happens for a moment after a switch.
+## The fades are left alone: a stale root is a new arrival this frame, which
+## `_update_occluder_fade` has not probed yet, so nothing of it is faded, and
+## releasing every fade would only snap the walls around the player solid.
 func _reconcile_look() -> void:
 	if not LookProfile.any_stale():
 		return
@@ -9408,7 +9411,6 @@ func _reconcile_look() -> void:
 			stale.append(world)
 	if stale.is_empty():
 		return
-	occluder_fade.release()
 	for world: Dictionary in stale:
 		var surfaces := LookSwitch.sync(world.root as Node, world.manifest as WorldManifest,
 			bool(world.bound))

@@ -425,9 +425,12 @@ func _index(mesh_instance: MeshInstance3D) -> Occluder:
 			return null
 	if _is_walk_surface(mesh_instance):
 		return null
-	# Look pass (not with the look off): nor is the rest of the ground, which
-	# develop fades under the player's feet (see LookFade).
-	if LookProfile.enabled() and LookFade.keeps_solid(node_name):
+	# Look pass: nor is the rest of the ground the look paints, which develop
+	# faded under the player's feet (see LookFade). Asked with the look off
+	# too: the index outlives a switch (`release`), so it must not depend on
+	# the look. Every name LookGround knows today is caught by the prefixes
+	# above already; this keeps a ground name it learns later solid either way.
+	if LookFade.keeps_solid(node_name):
 		return null
 	var transform: Transform3D = mesh_instance.global_transform
 	var local_box: AABB = mesh_instance.get_aabb()
