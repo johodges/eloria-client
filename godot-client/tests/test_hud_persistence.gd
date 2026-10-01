@@ -17,6 +17,12 @@ func _run() -> void:
 	root.size = Vector2i(1280, 720)
 	var saved: Dictionary = _read_settings()
 	var original_max_fps: int = Engine.max_fps
+	# The look's variables outrank the settings file (LookProfile), and this
+	# proves the file: a run with ELORIA_LOOK=0 set would read the variable back.
+	var saved_variables := {}
+	for variable: String in [LookProfile.ENABLE_VARIABLE, LookProfile.QUALITY_VARIABLE]:
+		saved_variables[variable] = OS.get_environment(variable)
+		OS.unset_environment(variable)
 	# The first instance is a new installation: no settings file at all. The
 	# saved copy is written back at the end.
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(SETTINGS_PATH))
@@ -180,6 +186,11 @@ func _run() -> void:
 
 	_restore_settings(saved)
 	Engine.max_fps = original_max_fps
+	for variable: String in saved_variables:
+		if str(saved_variables[variable]).is_empty():
+			OS.unset_environment(variable)
+		else:
+			OS.set_environment(variable, str(saved_variables[variable]))
 	print("hud persistence tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)
 
