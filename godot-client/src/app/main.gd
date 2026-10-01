@@ -471,7 +471,15 @@ var _map_environment: Environment
 ## was bound from. The look's switch rebinds from it (`_rebind_look_environment`)
 ## rather than binding the manifest again, which would re-aim a sun a seamless
 ## crossing has turned with the world and spawn the map's lamps twice.
+## The copy holds no Sky of its own (`_unlooked_sky` keeps what one is made of):
+## the renderer allocates a live Sky's radiance maps whether anything draws it
+## or not, which cost every player 37 MiB of video memory on every map with a
+## sky, look on or off.
 var _unlooked_environment: Environment
+## The sky of `_unlooked_environment` as its material, radiance size and process
+## mode, assembled into a Sky again only when the switch restores it; empty on a
+## map whose background is a colour.
+var _unlooked_sky: Dictionary = {}
 var _environment_manifest: WorldManifest
 var _minimap_dragging := false
 var _minimap_drag_offset := Vector2.ZERO
@@ -4100,7 +4108,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 				and world_environment.environment != null:
 			# Develop's own environment, for the look's switch to rebind from.
 			# A map that declares none keeps the one before it, and so does this.
-			_unlooked_environment = world_environment.environment.duplicate(true) as Environment
+			_keep_unlooked_environment(world_environment.environment)
 		_environment_manifest = manifest
 		# Look pass (a no-op with the look off): paint the sky before the map
 		# cameras take their (ungraded) copy of the environment.
@@ -9347,10 +9355,44 @@ func _apply_graphics_quality() -> void:
 func _rebind_look_environment() -> void:
 	if _unlooked_environment == null or _environment_manifest == null:
 		return
-	world_environment.environment = _unlooked_environment.duplicate(true) as Environment
+	world_environment.environment = _unlooked_environment_copy()
 	LookSky.install(_environment_manifest, world_environment)
 	_apply_day_night()
 	_update_border_lighting()
+
+## Keeps a copy of develop's environment as the binder built it, with its Sky
+## taken apart (`_unlooked_sky`) so the copy costs no radiance maps. The Sky the
+## deep copy made is released before any frame is drawn, so the renderer never
+## allocates for it.
+func _keep_unlooked_environment(environment: Environment) -> void:
+	_unlooked_environment = environment.duplicate(true) as Environment
+	_unlooked_sky = {}
+	var sky: Sky = _unlooked_environment.sky
+	if sky == null:
+		return
+	_unlooked_sky = {
+		"material": sky.sky_material,
+		"radiance_size": sky.radiance_size,
+		"process_mode": sky.process_mode,
+	}
+	_unlooked_environment.sky = null
+
+## A fresh environment from develop's copy, with a new Sky assembled from the
+## kept parts. The material is copied again because the hour recolours a
+## procedural sky's material in place (DayNightBinder), and the kept one has to
+## stay as the binder made it for the next switch.
+func _unlooked_environment_copy() -> Environment:
+	var environment := _unlooked_environment.duplicate(true) as Environment
+	if _unlooked_sky.is_empty():
+		return environment
+	var sky := Sky.new()
+	var material: Material = _unlooked_sky.material
+	if material != null:
+		sky.sky_material = material.duplicate(true) as Material
+	sky.radiance_size = _unlooked_sky.radiance_size
+	sky.process_mode = _unlooked_sky.process_mode
+	environment.sky = sky
+	return environment
 
 ## A root a loader worker finished under the look switch's old answer (a
 ## chunk or neighbour that was being built as the player switched) follows the
