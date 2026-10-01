@@ -22,11 +22,14 @@ extends SceneTree
 ## <id>_live_on.png, each after the same settling as the view's own capture,
 ## and records how long each switch took. The client has to be started with
 ## ELORIA_LOOK unset (the look on by its settings file), or the variable
-## decides and the switch does nothing; main saves the switch to the settings
-## file, so run it against a scratch user directory.
+## decides and the switch does nothing. Main saves the switch to the settings
+## file, as it does for a player, so each toggle copies the file first and
+## puts it back once both captures are taken: a run by hand outside a scratch
+## user directory leaves the player's own settings as they were.
 const UNCAPPED_VARIABLE := "ELORIA_SURVEY_UNCAPPED"
 const UNCAPPED_FRAMES := 60
 const LIVE_TOGGLE_VARIABLE := "ELORIA_SURVEY_LIVE_TOGGLE"
+const SETTINGS_PATH := "user://eloria_hud.cfg"
 var main: Control
 var state: Node
 var out: String
@@ -233,6 +236,9 @@ func _lift_frame_cap() -> void:
 ## captures each (see LIVE_TOGGLE_VARIABLE). Returns what each switch cost.
 func _live_toggle(spec: Dictionary) -> Dictionary:
 	var result := {"look_before": LookProfile.enabled()}
+	var had_settings := FileAccess.file_exists(SETTINGS_PATH)
+	var saved_settings := FileAccess.get_file_as_bytes(SETTINGS_PATH) if had_settings \
+		else PackedByteArray()
 	for step: Array in [["off", false], ["on", true]]:
 		var started := Time.get_ticks_usec()
 		main.call("_on_client_setting_changed", "Graphics", "look", step[1])
@@ -245,6 +251,12 @@ func _live_toggle(spec: Dictionary) -> Dictionary:
 		RenderingServer.force_draw(false)
 		root.get_texture().get_image().save_png(out.path_join("%s_live_%s.png" % [spec.id, step[0]]))
 		print("SURVEY saved ", spec.id, "_live_", step[0])
+	if had_settings:
+		var file := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
+		file.store_buffer(saved_settings)
+		file.close()
+	else:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(SETTINGS_PATH))
 	return result
 
 ## The renderer's measured time per viewport over UNCAPPED_FRAMES frames, as
