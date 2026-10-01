@@ -293,8 +293,10 @@ func _build_graphics() -> void:
 	page.name = tr("ELORIA_SETTINGS_GRAPHICS")
 	tabs.add_child(page)
 	_add_fps_limit_row(page)
-	_add_quality_row(page)
+	# The look above the quality: whether it is on decides most of what the
+	# quality changes.
 	_add_look_row(page)
+	_add_quality_row(page)
 	_add_toggle(page, "shadows", tr("ELORIA_SETTINGS_SHADOWS"), true)
 	_add_toggle(page, "particles", tr("ELORIA_SETTINGS_PARTICLES"), true)
 	_add_toggle(page, "nameplates", tr("ELORIA_SETTINGS_NAMEPLATES"), true)
