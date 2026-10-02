@@ -10,6 +10,7 @@ var lantern_guide: Control
 var lantern_scene: Node3D
 
 const AppearanceChoices = preload("res://src/actors/appearance_choices.gd")
+const OldcraftEntryStyleScript = preload("res://src/ui/oldcraft_entry_style.gd")
 
 @onready var login_panel: Control = %LoginPanel
 @onready var game_view: Control = %GameView
@@ -399,7 +400,10 @@ var preview_yaw := PI + 0.28
 ## of the disc it is meant to be standing on.
 var preview_focus := Vector3(0.0, 1.0, 0.0)
 var preview_pitch := 0.12
-var preview_distance := 2.65
+## Character creation is a hero stage, not a distant model viewer. This fills
+## most of the preview height at the default zoom while retaining wheel room in
+## both directions.
+var preview_distance := 1.95
 var inventory_slot_buttons: Array[Button] = []
 var inventory_quantity_labels: Array[Label] = []
 var equipment_slot_buttons: Array[Button] = []
@@ -1603,13 +1607,15 @@ func _refresh_creation_preview() -> void:
 	# Building the dto by hand here would preview a different wardrobe from the
 	# one the character spawns wearing.
 	var dto := _presentation_dto({"actor_id": 0, "x": 0, "y": 0, "rotation": 0,
-		"actor_type": actor_type, "kind": 1, "name": "Preview",
+		"actor_type": actor_type, "kind": 1, "name": "",
 		"appearance": appearance})
 	var model_id := _model_for_actor(dto)
 	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
 	var errors := preview_actor.configure(dto,
 		CoordinateAdapter.new({"walkingHeight": 0.0}), model_config,
 		_animation_for_model(model_config), equipment_config)
+	preview_actor.set_nameplate_visible(false)
+	preview_actor.apply_render_quality(LookProfile.quality(), true)
 	_frame_preview_actor()
 	if not errors.is_empty():
 		create_status.text = "Preview warnings: " + "; ".join(errors)
@@ -1681,7 +1687,7 @@ func _on_character_preview_gui_input(event: InputEvent) -> void:
 		if not mouse_button.pressed:
 			return
 		if mouse_button.button_index == MOUSE_BUTTON_WHEEL_UP:
-			preview_distance = maxf(1.8, preview_distance - 0.3)
+			preview_distance = maxf(1.5, preview_distance - 0.3)
 		elif mouse_button.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			preview_distance = minf(7.0, preview_distance + 0.3)
 		else:
@@ -1708,6 +1714,9 @@ func _frame_preview_actor() -> void:
 	var ground: Node3D = preview_root.get_node_or_null("PreviewGround") as Node3D
 	if ground != null:
 		ground.position = Vector3(stand.x, ground.position.y, stand.z)
+	var styled_stage: Node3D = preview_root.get_node_or_null("OldcraftStage") as Node3D
+	if styled_stage != null:
+		styled_stage.position = Vector3(stand.x, 0.0, stand.z)
 	_update_preview_camera()
 
 func _update_preview_camera() -> void:
@@ -3853,11 +3862,17 @@ func _on_state_changed(path: StringName) -> void:
 			_update_console_location()
 			# Markers survive a map change; which of them belong here does not.
 			_sync_map_markers()
-		&"actors", &"local_actor":
+		&"actors":
 			# A busy map emits this once per actor packet. Rebuilding the whole
 			# actor presentation for each of them repeated the same work many
 			# times inside a single frame; coalescing collapses a burst into one
 			# pass without delaying anything past the frame it arrived in.
+			_queue_world_sync()
+		&"local_actor":
+			# YOU_ARE can arrive after this actor was already built as a remote
+			# one. Refresh the role once here so LOW/MEDIUM keep this cape without
+			# paying for a mesh walk on every ordinary actor packet.
+			_apply_actor_render_quality()
 			_queue_world_sync()
 		&"actor_footprints":
 			# The table arrives after login - the server can only send it once
@@ -4457,6 +4472,7 @@ func _spawn_actor(id: Variant) -> void:
 	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
 	var errors := node.configure(dto, actor_adapter, model_config,
 		_animation_for_model(model_config), equipment_config)
+	node.apply_render_quality(LookProfile.quality(), int(id) == AppState.local_actor_id)
 	if not errors.is_empty():
 		push_warning("Actor %d: %s" % [id, "; ".join(errors)])
 	node.apply_server_state(dto, actor_adapter, true)
@@ -9299,7 +9315,7 @@ func _load_look_settings(config: ConfigFile) -> void:
 		LookProfile.quality_name(LookProfile.QUALITY_DEFAULT))
 	var level: int = LookProfile.quality_named(str(quality_value)) \
 		if quality_value is String else -1
-	var quality_changed := LookProfile.set_player_quality(
+	LookProfile.set_player_quality(
 		level if level >= 0 else LookProfile.QUALITY_DEFAULT)
 	settings_window.call("restore_look", LookProfile.player_look(), LookProfile.look_forced())
 	settings_window.call("restore_quality", LookProfile.player_quality(),
@@ -9309,8 +9325,10 @@ func _load_look_settings(config: ConfigFile) -> void:
 	LookSwitch.apply_shadow_quality(world_sun)
 	if look_changed:
 		_apply_look_switch()
-	if quality_changed:
-		_apply_graphics_quality()
+	# Apply even when the player's stored value stayed the same. A developer or
+	# test can change ELORIA_LOOK_QUALITY before this reload, in which case
+	# set_player_quality's before and after effective values are already equal.
+	_apply_graphics_quality()
 
 ## The painted look turned on or off in the settings window (or its file read
 ## again): everything already loaded follows at once, without reloading the
@@ -9338,15 +9356,29 @@ func _apply_look_switch() -> void:
 	print("look_switch stage=applied look=%s roots=%d surfaces=%d milliseconds=%.1f"
 		% [LookProfile.enabled(), roots, surfaces, (Time.get_ticks_usec() - started) / 1000.0])
 
-## The graphics quality changed: the shadows at once (LookSwitch), and the
-## grade's screen-space effects, glow and the sky's clouds by grading the
-## environment again. The grass beds rebuild at the new reach and density by
-## themselves (LookGrassBeds.tend).
+## The graphics quality changed: the shadows at once (LookSwitch), the actor
+## meshes and cape solvers, and the grade's screen-space effects, glow and the
+## sky's clouds by grading the environment again. The grass beds rebuild at the
+## new reach and density by themselves (LookGrassBeds.tend).
 func _apply_graphics_quality() -> void:
 	LookSwitch.apply_shadow_quality(world_sun)
+	_apply_actor_render_quality()
 	_apply_day_night()
 	_update_border_lighting()
 	print("look_quality stage=applied quality=", LookProfile.quality_name(LookProfile.quality()))
+
+## Existing actors change in place; new world and preview actors receive the
+## same resolved quality immediately after configure.  Pass local status on
+## every update because cape simulation deliberately keeps the player's cape.
+func _apply_actor_render_quality() -> void:
+	var level: int = LookProfile.quality()
+	for raw_id: Variant in actor_nodes:
+		var actor_value: Variant = actor_nodes[raw_id]
+		if actor_value is ReplicatedActor3D and is_instance_valid(actor_value):
+			(actor_value as ReplicatedActor3D).apply_render_quality(
+				level, int(raw_id) == AppState.local_actor_id)
+	if is_instance_valid(preview_actor):
+		preview_actor.apply_render_quality(level, true)
 
 ## Puts develop's environment for the bound map back, from the copy taken as
 ## it was bound, paints its sky again if the look is on, and lets the hour and
@@ -11630,6 +11662,9 @@ func _apply_eloria_theme() -> void:
 	for row_spec: Array in BANNER_ROWS:
 		_style_banner_meter(_banner_row(str(row_spec[0])).get_node("Bar") as ProgressBar)
 	_style_actor_hud_menu(panel)
+	# Login and creation keep their own heavier fantasy frame and moonlit
+	# preview stage rather than inheriting the compact in-game HUD chrome.
+	OldcraftEntryStyleScript.apply(self)
 
 ## The right rail used to be six separate boxes with gaps between them, so its
 ## left edge was six short lines rather than one. One panel now spans the whole

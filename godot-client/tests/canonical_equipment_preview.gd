@@ -68,6 +68,12 @@ func run() -> void:
 		config["hairFit"] = JSON.parse_string(FileAccess.get_file_as_string(args["hair-fit"]))
 	if args.get("hair", "yes") == "no":
 		config["hairStyles"] = []
+	# Generated import products are intentionally absent from lean worktrees.
+	# Keep the authored face material for visual QA instead of applying a
+	# missing region mask that would make the entire face render black.
+	if config.has("faceAppearance") and not ResourceLoader.exists(
+			str((config.faceAppearance as Dictionary).get("mask", ""))):
+		config.erase("faceAppearance")
 	var animation: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/animations/luminous.json"))
 	var equipment: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(args.get("equipment", "res://data/actors/equipment.json")))
 	var appearance := {"skin": 0, "eyes": 0, "hair": 0, "shirt": 0, "pants": 0, "boots": 0, "head": 0}

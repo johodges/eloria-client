@@ -9,6 +9,9 @@ extends SceneTree
 var failures := 0
 
 func _init() -> void:
+	call_deferred("_run")
+
+func _run() -> void:
 	var config_file := FileAccess.open(
 		"res://data/animations/luminous.json", FileAccess.READ)
 	var resolver := AnimationResolver.new(
@@ -67,6 +70,43 @@ func _init() -> void:
 		player.advance(player.get_animation(stand_clip).length * 2.5)
 		_expect(not player.is_playing(),
 			"a stand transition still finishes so idle can take over")
+
+	# Exercise the actor's production import path with a deliberately narrow
+	# action map. Passing an empty wanted-clip list to the importer would rebuild
+	# the entire shared library here instead of the one clip this actor can use.
+	var actor := ReplicatedActor3D.new()
+	root.add_child(actor)
+	var actor_errors := actor.configure({
+		"actor_id": 902,
+		"x": 0,
+		"y": 0,
+		"rotation": 0,
+		"kind": 1,
+		"name": "",
+		"appearance": {},
+		"equipment_visuals": {},
+	}, CoordinateAdapter.new({"walkingHeight": 0.0}), {
+		"scene": "res://assets/actors/native/races/luminous_male.glb",
+		"animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+		"boneAliases": {"head": "Head"},
+		"import": {
+			"scale": 1.0,
+			"forwardAxisCorrectionDegreesY": 180.0,
+		},
+	}, {
+		"fallbackAction": "idle",
+		"actions": {"idle": "Idle_A"},
+		"loopingClips": ["Idle_A"],
+	})
+	_expect(actor_errors.is_empty(),
+		"the production actor path imports its narrow action map: "
+		+ ",".join(actor_errors))
+	if actor.animation_player != null:
+		var actor_clips := actor.animation_player.get_animation_list()
+		_expect(actor_clips.size() == 2 and actor_clips.has("Idle_A")
+			and actor_clips.has("RESET"),
+			"the production actor path imports only its required clip and RESET, got: "
+			+ ",".join(actor_clips))
 	NativeAnimationImporter.clear()
 	print("animation looping tests: ",
 		"PASS" if failures == 0 else "FAIL (%d)" % failures)
