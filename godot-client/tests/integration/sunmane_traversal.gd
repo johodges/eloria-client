@@ -38,7 +38,7 @@ func _run() -> void:
 	while _loader.world_root == null and Time.get_ticks_msec() < deadline:
 		await process_frame
 	if not _expect(_loader.world_root != null, "world loads"):
-		_finish()
+		await _finish()
 		return
 	for unused: int in range(6):
 		await physics_frame
@@ -52,7 +52,7 @@ func _run() -> void:
 	_test_world_boundary()
 	_test_portal_approaches()
 	_test_minimap_accuracy()
-	_finish()
+	await _finish()
 
 # ---------------------------------------------------------------- coordinates
 func _test_coordinate_round_trip() -> void:
@@ -338,4 +338,8 @@ func _expect(condition: bool, message: String) -> bool:
 
 func _finish() -> void:
 	print("sunmane traversal: ", "PASS" if _failures == 0 else "FAIL")
+	# Sunmane streams the cells beyond the arrival's budget on a worker;
+	# quitting under a live import crashes (or hangs) the process at exit
+	# (ContinentChunkStream.drain_workers).
+	await ContinentChunkStream.drain_workers(self)
 	quit(_failures)
