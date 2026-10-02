@@ -1,11 +1,15 @@
 extends SceneTree
 
 ## Map images: prepared once, with their mip chain, before GLTFDocument
-## uploads them (src/world/vram_textures.gd, map_image_extension.gd).
+## uploads them, and uploaded as their pre-compressed sidecars when the
+## package has them (src/world/vram_textures.gd, map_image_extension.gd).
 ##
 ## Uses the committed package in tests/fixtures/vram (see make_fixture.py):
 ## six external, content-addressed images in every role plus one embedded
-## image the client must leave to GLTFDocument.
+## image the client must leave to GLTFDocument, and the sidecars
+## tools/build_vram_textures.py made for four of them (base, base with alpha,
+## ORM, normal; the role conflict and the 62 px image are excluded).
+## Fallback cases run on copies under user://.
 ##
 ## Run: Godot_v4.7.2-stable_win64_console.exe --headless --path . \
 ##         --script res://tests/test_vram_textures.gd
@@ -14,8 +18,14 @@ const VramTextures := preload("res://src/world/vram_textures.gd")
 const ExternalTexturePool := preload("res://src/world/external_texture_pool.gd")
 
 const FIXTURE := "res://tests/fixtures/vram"
+const SCRATCH := "user://vram-textures-test"
 const EXTERNAL_IMAGES := 6
 const EMBEDDED_INDEX := 6
+## glTF image index -> the format its sidecar uploads as (fixture order:
+## opaque base, MASK base, normal, ORM, 62 px base, role conflict).
+const SIDECAR_FORMATS := {0: Image.FORMAT_BPTC_RGBA, 1: Image.FORMAT_BPTC_RGBA,
+	2: Image.FORMAT_RGTC_RG, 3: Image.FORMAT_DXT1}
+const SIDECARS := 4
 
 var failures := 0
 
@@ -37,10 +47,28 @@ func _run() -> void:
 	VramTextures.ensure_registered()
 	_check_sniff()
 	_check_untouched_without_plan()
+
+	# Sidecars off: the preparation alone, which must equal develop's path.
+	_set_mode("0")
 	_check_prepared_matches_legacy()
 	_check_serial_equals_parallel()
 	await _check_pool_sharing()
 	await _check_worker_load()
+
+	# Sidecars on, whatever a headless renderer reports.
+	_set_mode("force")
+	_check_sidecars_upload_compressed()
+	_check_serial_equals_parallel()
+	_check_no_mipmap_rebuilds()
+	await _check_pool_sharing()
+	await _check_worker_load()
+	_check_fallbacks()
+	_check_unusable_formats()
+	_check_index_rejected()
+	_check_self_test()
+
+	_set_mode("")
+	_remove_tree(SCRATCH)
 	print("vram textures tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(1 if failures > 0 else 0)
 
@@ -48,17 +76,21 @@ func _run() -> void:
 # Helpers
 # --------------------------------------------------------------------------
 
-func _manifest() -> Dictionary:
-	return JSON.parse_string(FileAccess.get_file_as_string(FIXTURE.path_join("world.json")))
+func _set_mode(value: String) -> void:
+	OS.set_environment(VramTextures.ENVIRONMENT, value)
+	VramTextures.reconfigure()
 
-## Parses the fixture GLB. With `plan`, the way WorldLoader does.
-func _parse(plan: bool) -> GLTFState:
+func _manifest(directory := FIXTURE) -> Dictionary:
+	return JSON.parse_string(FileAccess.get_file_as_string(directory.path_join("world.json")))
+
+## Parses a fixture GLB. With `plan`, the way WorldLoader does.
+func _parse(plan: bool, directory := FIXTURE) -> GLTFState:
 	var document := GLTFDocument.new()
 	var state := GLTFState.new()
 	if plan:
-		state.set_additional_data(VramTextures.PLAN_KEY, VramTextures.plan_for(_manifest()))
-	_expect(document.append_from_file(FIXTURE.path_join("world.glb"), state) == OK,
-		"the fixture parses (plan=%s)" % plan)
+		state.set_additional_data(VramTextures.PLAN_KEY, VramTextures.plan_for(_manifest(directory)))
+	_expect(document.append_from_file(directory.path_join("world.glb"), state) == OK,
+		"the fixture parses (plan=%s, mode=%s)" % [plan, VramTextures.mode_name()])
 	return state
 
 ## Develop's path for one parsed image: read it back and build the chain.
@@ -83,8 +115,69 @@ func _done(state: GLTFState) -> Dictionary:
 	var value: Variant = state.get_additional_data(VramTextures.DONE_KEY)
 	return value if value is Dictionary else {}
 
+func _formats(state: GLTFState) -> Array:
+	var formats := []
+	for texture: Texture2D in state.get_images():
+		formats.append(texture.get_image().get_format())
+	return formats
+
+## A copy of the fixture under user://, for the cases that break files.
+func _copy_fixture(name: String) -> String:
+	var target := SCRATCH.path_join(name)
+	_remove_tree(target)
+	for relative: String in ["", "shared-assets", "shared-assets/vram"]:
+		DirAccess.make_dir_recursive_absolute(target.path_join(relative))
+		for file: String in DirAccess.get_files_at(FIXTURE.path_join(relative)):
+			DirAccess.copy_absolute(FIXTURE.path_join(relative).path_join(file),
+				target.path_join(relative).path_join(file))
+	return target
+
+func _remove_tree(path: String) -> void:
+	if not DirAccess.dir_exists_absolute(path):
+		return
+	for directory: String in DirAccess.get_directories_at(path):
+		_remove_tree(path.path_join(directory))
+	for file: String in DirAccess.get_files_at(path):
+		DirAccess.remove_absolute(path.path_join(file))
+	DirAccess.remove_absolute(path)
+
+func _index_path(directory: String) -> String:
+	return directory.path_join("shared-assets/vram/index.json")
+
+func _read_index(directory: String) -> Dictionary:
+	return JSON.parse_string(FileAccess.get_file_as_string(_index_path(directory)))
+
+func _write_index(directory: String, index: Dictionary) -> void:
+	var file := FileAccess.open(_index_path(directory), FileAccess.WRITE)
+	file.store_string(JSON.stringify(index, " "))
+	file.close()
+
+func _sha256(bytes: PackedByteArray) -> String:
+	var hashing := HashingContext.new()
+	hashing.start(HashingContext.HASH_SHA256)
+	hashing.update(bytes)
+	return hashing.finish().hex_encode()
+
+## Rewrites one sidecar and records its new hash, so the check after the
+## hash check is the one that has to catch it.
+func _rewrite_sidecar(directory: String, recipe: String, bytes_of: Callable) -> String:
+	var index := _read_index(directory)
+	for sha: String in index.images:
+		var entry: Dictionary = index.images[sha]
+		if entry.recipe != recipe:
+			continue
+		var path := directory.path_join("shared-assets/vram").path_join(entry.file)
+		var bytes: PackedByteArray = bytes_of.call(FileAccess.get_file_as_bytes(path))
+		var file := FileAccess.open(path, FileAccess.WRITE)
+		file.store_buffer(bytes)
+		file.close()
+		entry.sha256 = _sha256(bytes)
+		_write_index(directory, index)
+		return sha
+	return ""
+
 # --------------------------------------------------------------------------
-# Cases
+# The preparation (sidecars off)
 # --------------------------------------------------------------------------
 
 func _check_sniff() -> void:
@@ -112,8 +205,10 @@ func _check_prepared_matches_legacy() -> void:
 	var stats := _stats(planned)
 	var done := _done(planned)
 	_expect(int(stats.get("imagesPrepared", -1)) == EXTERNAL_IMAGES
+		and int(stats.get("imagesDecoded", -1)) == EXTERNAL_IMAGES
+		and int(stats.get("imagesSidecar", -1)) == 0
 		and int(stats.get("imagesFailed", -1)) == 0 and int(stats.get("imagesPooled", -1)) == 0,
-		"every external image is prepared before the parse: %s" % [stats])
+		"=0: every external image is decoded before the parse, none from a sidecar: %s" % [stats])
 	_expect(int(stats.get("imagesPreparedOnMainThread", -1)) == 0,
 		"the preparation ran on the WorkerThreadPool, not the main thread")
 	_expect(done.size() == EXTERNAL_IMAGES and not done.has(EMBEDDED_INDEX),
@@ -132,7 +227,7 @@ func _check_prepared_matches_legacy() -> void:
 		if mine.has_mipmaps() and _same_image(mine, _legacy_image(legacy_images[index])):
 			equal += 1
 	_expect(equal == EXTERNAL_IMAGES,
-		"prepared images equal develop's decode + mip chain in format, size, mips and bytes (%d/%d)"
+		"=0: images equal develop's decode + mip chain in format, size, mips and bytes (%d/%d)"
 		% [equal, EXTERNAL_IMAGES])
 	_expect(not planned_images[EMBEDDED_INDEX].get_image().has_mipmaps(),
 		"the embedded image is still GLTFDocument's (the loader adds its chain later)")
@@ -143,16 +238,18 @@ func _check_serial_equals_parallel() -> void:
 	var images: Array = planned.get_json().images
 	var equal := 0
 	for index: int in EXTERNAL_IMAGES:
-		var job := {"sha": str(resources[images[index].uri]),
-			"source": ProjectSettings.globalize_path(FIXTURE.path_join(images[index].uri))}
+		var source := FIXTURE.path_join(images[index].uri)
+		var job := {"sha": str(resources[images[index].uri]), "source": source,
+			"sidecar": VramTextures.sidecar_entry(str(resources[images[index].uri]), source.get_base_dir())}
 		VramTextures.prepare(job)
 		if _same_image(job.image, planned.get_images()[index].get_image()):
 			equal += 1
 	_expect(equal == EXTERNAL_IMAGES,
-		"a serial preparation gives the same images as the parallel one (%d/%d)" % [equal, EXTERNAL_IMAGES])
+		"mode=%s: a serial preparation gives the same images as the parallel one (%d/%d)"
+		% [VramTextures.mode_name(), equal, EXTERNAL_IMAGES])
 
 ## A second load while the first is resident: every external image comes from
-## the pool, nothing is decoded, and no 1x1 placeholder survives share().
+## the pool, nothing is prepared, and no 1x1 placeholder survives share().
 func _check_pool_sharing() -> void:
 	var first := WorldLoader.new()
 	root.add_child(first)
@@ -163,7 +260,8 @@ func _check_pool_sharing() -> void:
 	var builder := WorldLoader.prepare_detached(FIXTURE.path_join("world.json"), false)
 	_expect(int(builder.load_phases.get(&"imagesPooled", -1)) == EXTERNAL_IMAGES
 		and int(builder.load_phases.get(&"imagesPrepared", -1)) == 0,
-		"a second load takes every external image from the pool: %s" % [builder.load_phases])
+		"mode=%s: a second load takes every external image from the pool: %s"
+		% [VramTextures.mode_name(), builder.load_phases])
 	var first_textures := _textures(first.world_root)
 	var second_textures := _textures(builder.world_root)
 	var shared := 0
@@ -206,8 +304,163 @@ func _check_worker_load() -> void:
 	var builder: WorldLoader = thread.wait_to_finish()
 	_expect(int(builder.load_phases.get(&"imagesPrepared", -1)) == EXTERNAL_IMAGES
 		and int(builder.load_phases.get(&"imagesPreparedOnMainThread", -1)) == 0,
-		"a load from a Thread prepares its images and none on the main thread: %s" % [builder.load_phases])
+		"mode=%s: a load from a Thread prepares its images and none on the main thread: %s"
+		% [VramTextures.mode_name(), builder.load_phases])
 	var resident: Dictionary = builder.release_world()
 	builder.free()
 	if resident.root != null:
 		(resident.root as Node).free()
+
+# --------------------------------------------------------------------------
+# Sidecars (mode=force)
+# --------------------------------------------------------------------------
+
+func _check_sidecars_upload_compressed() -> void:
+	var planned := _parse(true)
+	var stats := _stats(planned)
+	_expect(int(stats.get("imagesSidecar", -1)) == SIDECARS
+		and int(stats.get("imagesDecoded", -1)) == EXTERNAL_IMAGES - SIDECARS
+		and int(stats.get("sidecarRejected", -1)) == 0,
+		"listed images come from their sidecars, the excluded ones are decoded: %s" % [stats])
+	var formats := _formats(planned)
+	var right := 0
+	for index: int in SIDECAR_FORMATS:
+		var image := planned.get_images()[index].get_image()
+		if image.get_format() == SIDECAR_FORMATS[index] and image.get_mipmap_count() == 6:
+			right += 1
+	_expect(right == SIDECARS, "BC7 base, BC7 cutout, BC5 normal and BC1 ORM, each with its 6 mips: %s"
+		% [formats])
+	_expect(formats[4] == Image.FORMAT_RGB8 and formats[5] == Image.FORMAT_RGB8,
+		"the excluded 62 px and role-conflict images are decoded as before: %s" % [formats])
+	_expect(formats[EMBEDDED_INDEX] == Image.FORMAT_RGB8, "the embedded image is untouched")
+
+func _check_no_mipmap_rebuilds() -> void:
+	var planned := _parse(true)
+	var loader := WorldLoader.new()
+	var rebuilt: int = loader._build_texture_mipmaps(planned)
+	loader.free()
+	_expect(rebuilt == 1, "only the embedded image needs the loader's mip pass (%d rebuilt)" % rebuilt)
+
+func _case(name: String, mutate: Callable, recipe: String, reason: String) -> void:
+	VramTextures.reconfigure()
+	var directory := _copy_fixture(name)
+	var sha: String = mutate.call(directory)
+	var planned := _parse(true, directory)
+	var stats := _stats(planned)
+	var resources: Dictionary = _manifest(directory).externalResources
+	var images: Array = planned.get_json().images
+	var fell_back := false
+	for index: int in EXTERNAL_IMAGES:
+		if str(resources[images[index].uri]) == sha:
+			fell_back = not planned.get_images()[index].get_image().is_compressed() \
+				and planned.get_images()[index].get_image().has_mipmaps()
+	_expect(fell_back and int(stats.get("imagesSidecar", -1)) == SIDECARS - 1
+		and int(stats.get("sidecarRejected", -1)) == 1 and int(stats.get("imagesFailed", -1)) == 0,
+		"%s: the %s image falls back to its decode, the rest keep their sidecars (%s): %s"
+		% [name, recipe, reason, stats])
+
+func _check_fallbacks() -> void:
+	_case("corrupt_header", _break_header, "base", "header")
+	_case("truncated_zstd", _truncate_zstd, "normal", "size")
+	_case("wrong_size_dds", _misstate_size, "orm", "mismatch")
+	_case("missing_file", _delete_sidecar, "base_alpha", "missing")
+	_case("tampered_bytes", _flip_last_byte, "base", "sha256")
+
+func _break_header(directory: String) -> String:
+	return _rewrite_sidecar(directory, "base", func(bytes: PackedByteArray) -> PackedByteArray:
+		bytes.encode_u8(0, 0x58)
+		return bytes)
+
+func _truncate_zstd(directory: String) -> String:
+	return _rewrite_sidecar(directory, "normal", func(bytes: PackedByteArray) -> PackedByteArray:
+		return bytes.slice(0, bytes.size() - 64))
+
+func _sha_of_recipe(index: Dictionary, recipe: String) -> String:
+	for sha: String in index.images:
+		if index.images[sha].recipe == recipe:
+			return sha
+	return ""
+
+func _misstate_size(directory: String) -> String:
+	var index := _read_index(directory)
+	var sha := _sha_of_recipe(index, "orm")
+	index.images[sha].width = 128
+	_write_index(directory, index)
+	return sha
+
+func _delete_sidecar(directory: String) -> String:
+	var index := _read_index(directory)
+	var sha := _sha_of_recipe(index, "base_alpha")
+	DirAccess.remove_absolute(directory.path_join("shared-assets/vram").path_join(index.images[sha].file))
+	return sha
+
+## Changed bytes with the index's old hash: caught by the hash check.
+func _flip_last_byte(directory: String) -> String:
+	var index := _read_index(directory)
+	var sha := _sha_of_recipe(index, "base")
+	var path := directory.path_join("shared-assets/vram").path_join(index.images[sha].file)
+	var bytes := FileAccess.get_file_as_bytes(path)
+	bytes.encode_u8(bytes.size() - 1, bytes[bytes.size() - 1] ^ 0xFF)
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	file.store_buffer(bytes)
+	file.close()
+	return sha
+
+func _check_unusable_formats() -> void:
+	VramTextures.reconfigure()
+	VramTextures.force_formats(VramTextures.FORMAT_BITS.bc1 | VramTextures.FORMAT_BITS.bc5)
+	var planned := _parse(true)
+	var stats := _stats(planned)
+	var formats := _formats(planned)
+	_expect(int(stats.get("imagesSidecar", -1)) == 2 and formats[0] == Image.FORMAT_RGB8
+		and formats[2] == Image.FORMAT_RGTC_RG and formats[3] == Image.FORMAT_DXT1,
+		"a renderer without BC7 decodes the BC7 images and keeps BC5/BC1: %s %s" % [stats, formats])
+	VramTextures.reconfigure()
+	VramTextures.force_formats(0)
+	stats = _stats(_parse(true))
+	_expect(int(stats.get("imagesSidecar", -1)) == 0 and int(stats.get("imagesDecoded", -1)) == EXTERNAL_IMAGES,
+		"a renderer with no BC format decodes everything: %s" % [stats])
+	VramTextures.reconfigure()
+
+func _check_index_rejected() -> void:
+	for change: Array in [["schema", 2], ["recipeVersion", 9]]:
+		VramTextures.reconfigure()
+		var directory := _copy_fixture("index_" + str(change[0]))
+		var index := _read_index(directory)
+		index[change[0]] = change[1]
+		_write_index(directory, index)
+		var stats := _stats(_parse(true, directory))
+		var info := VramTextures.index_for_directory(directory.path_join("shared-assets"))
+		_expect(int(stats.get("imagesSidecar", -1)) == 0 and int(stats.get("imagesDecoded", -1)) == EXTERNAL_IMAGES
+			and str(info.status).begins_with("rejected:"),
+			"an index with %s %s is refused whole (%s) and every image decodes" % [change[0], change[1], info.status])
+	VramTextures.reconfigure()
+	var directory := _copy_fixture("index_garbage")
+	var file := FileAccess.open(_index_path(directory), FileAccess.WRITE)
+	file.store_string("{ not json")
+	file.close()
+	var stats := _stats(_parse(true, directory))
+	_expect(int(stats.get("imagesSidecar", -1)) == 0 and int(stats.get("imagesDecoded", -1)) == EXTERNAL_IMAGES,
+		"an unreadable index decodes every image")
+	VramTextures.reconfigure()
+	directory = _copy_fixture("index_missing")
+	DirAccess.remove_absolute(_index_path(directory))
+	stats = _stats(_parse(true, directory))
+	_expect(int(stats.get("imagesSidecar", -1)) == 0 and int(stats.get("imagesDecoded", -1)) == EXTERNAL_IMAGES
+		and VramTextures.index_for_directory(directory.path_join("shared-assets")).status == "missing",
+		"no index (a checkout that never ran the tool) decodes every image")
+	VramTextures.reconfigure()
+
+func _check_self_test() -> void:
+	var line := VramTextures.self_test(FIXTURE.path_join("shared-assets"))
+	_expect(line.begins_with("vram_textures self_test ok entries=4 format="), line)
+	var directory := _copy_fixture("self_test_broken")
+	for entry: String in DirAccess.get_files_at(directory.path_join("shared-assets/vram")):
+		if entry.ends_with(".evt"):
+			DirAccess.remove_absolute(directory.path_join("shared-assets/vram").path_join(entry))
+	VramTextures.reconfigure()
+	line = VramTextures.self_test(directory.path_join("shared-assets"))
+	_expect(line.begins_with("vram_textures self_test failed"), line)
+	VramTextures.reconfigure()
+	_expect(VramTextures.status_line().begins_with("vram_textures mode=force formats=bc1+bc5+bc7 index="),
+		VramTextures.status_line())

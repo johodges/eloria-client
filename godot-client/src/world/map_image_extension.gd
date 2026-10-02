@@ -12,8 +12,13 @@ extends GLTFDocumentExtension
 ##              strong reference and the image becomes a 1x1 placeholder that
 ##              ExternalTexturePool.share swaps for the pooled texture. No
 ##              decode, no upload.
-##   prepared - read, decoded by its magic bytes and given its mip chain on a
-##              WorkerThreadPool group task, then handed to GLTFDocument as is.
+##   sidecar  - the package's pre-compressed copy (vram/<sha>.<recipe>.evt,
+##              BC7 / BC5 / BC1 with its whole mip chain) when the index lists
+##              it and the renderer samples its format; checked, then handed
+##              to GLTFDocument as is, so the texture stays compressed on the
+##              GPU. Any failed check falls back to the next line.
+##   prepared - read, decoded by its magic bytes and given its mip chain.
+##   (Both run on a WorkerThreadPool group task, never on the RenderingServer.)
 ##   failed   - left to GLTFDocument, with the mimeType its bytes declare.
 ##
 ## The image's URI is pointed at a one-byte data URI with a private mimeType
@@ -56,7 +61,9 @@ func _import_preflight(state: GLTFState, _extensions: PackedStringArray) -> Erro
 			continue
 		var job: Dictionary = by_sha.get(sha, {})
 		if job.is_empty():
-			job = {"sha": sha, "source": base.path_join(uri.uri_file_decode()).simplify_path()}
+			var source := base.path_join(uri.uri_file_decode()).simplify_path()
+			job = {"sha": sha, "source": source,
+				"sidecar": VramTextures.sidecar_entry(sha, source.get_base_dir())}
 			by_sha[sha] = job
 			jobs.append(job)
 		assigned[index] = job
@@ -72,15 +79,21 @@ func _import_preflight(state: GLTFState, _extensions: PackedStringArray) -> Erro
 			func(job_index: int) -> void: VramTextures.prepare(jobs[job_index]),
 			jobs.size(), -1, on_main, "Eloria map images")
 		WorkerThreadPool.wait_for_group_task_completion(task)
-	var stats := {"imagesPrepared": 0, "imagesDecoded": 0, "imagesFailed": 0,
-		"imagesPooled": pooled.size(), "imagesPreparedOnMainThread": 0,
+	var stats := {"imagesPrepared": 0, "imagesSidecar": 0, "imagesDecoded": 0, "imagesFailed": 0,
+		"sidecarRejected": 0, "imagesPooled": pooled.size(), "imagesPreparedOnMainThread": 0,
 		"prepareWaitUs": Time.get_ticks_usec() - began}
 	for job: Dictionary in jobs:
-		if job.get("image") != null:
-			stats.imagesPrepared += 1
-			stats.imagesDecoded += 1
-		else:
-			stats.imagesFailed += 1
+		match str(job.get("kind", "failed")):
+			"sidecar":
+				stats.imagesPrepared += 1
+				stats.imagesSidecar += 1
+			"decoded":
+				stats.imagesPrepared += 1
+				stats.imagesDecoded += 1
+			_:
+				stats.imagesFailed += 1
+		if job.has("rejected"):
+			stats.sidecarRejected += 1
 		if bool(job.get("onMainThread", false)):
 			stats.imagesPreparedOnMainThread += 1
 
