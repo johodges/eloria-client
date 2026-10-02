@@ -20,6 +20,8 @@ const RETIRE_BUDGET_USEC := 2000
 ## sometimes a second cell under the focus itself - as bare flat planes.
 const FRAMED_RADIUS := 64.0
 const VramTextures := preload("res://src/world/vram_textures.gd")
+## Where configure() keeps a chunk's shared image figures as published.
+const PUBLISHED_SHARED_KEY := "publishedSharedResourceResidentBytes"
 
 signal cell_ready(identity: String, imported: Node3D)
 signal cell_retiring(identity: String, imported: Node3D)
@@ -142,8 +144,11 @@ func configure(source: WorldManifest, cache_enabled: bool) -> void:
 		# The publisher counts each shared image as RGBA8 with mips. One this
 		# client uploads from its VRAM-compressed sidecar holds a quarter or
 		# an eighth of that; count what it really holds (vram_textures.gd).
+		# The published figures are kept: they still decide what an arrival
+		# loads synchronously (see prime).
 		var shared: Variant = entry.get("sharedResourceResidentBytes")
 		if shared is Dictionary:
+			entry[PUBLISHED_SHARED_KEY] = (shared as Dictionary).duplicate()
 			for identity: String in shared:
 				shared[identity] = VramTextures.resident_bytes(identity, int(shared[identity]))
 		entries.append(entry)
@@ -155,14 +160,18 @@ static func bounds_distance(position: Vector3, bounds: Dictionary) -> float:
 	var dz := maxf(float(lower[2]) - position.z, maxf(0, position.z - float(upper[2])))
 	return Vector2(dx, dz).length()
 
-static func incremental_cost(entry: Dictionary, shared: Dictionary) -> int:
+## `key` names the image figures to count: the ones configure() corrected to
+## what this client really holds (the default), or PUBLISHED_SHARED_KEY.
+static func incremental_cost(entry: Dictionary, shared: Dictionary,
+		key := "sharedResourceResidentBytes") -> int:
 	# Decoded textures are pooled by content hash. Count each hash once across
 	# the prospective resident set, while keeping legacy all-in estimates valid.
 	if not entry.has("geometryResidentBytes"):
 		return int(entry.estimatedResidentBytes)
 	var cost := maxi(1, int(entry.geometryResidentBytes))
-	for identity: String in entry.get("sharedResourceResidentBytes", {}):
-		var bytes := maxi(0, int(entry.sharedResourceResidentBytes[identity]))
+	var images: Dictionary = entry.get(key, entry.get("sharedResourceResidentBytes", {}))
+	for identity: String in images:
+		var bytes := maxi(0, int(images[identity]))
 		var previous := int(shared.get(identity, 0))
 		cost += maxi(0, bytes - previous)
 		shared[identity] = maxi(previous, bytes)
@@ -182,8 +191,15 @@ func selection(position: Vector3, retain := false) -> Array[Dictionary]:
 	var selected: Array[Dictionary] = []
 	var estimated := 0
 	var shared: Dictionary = {}
+	# The same walk on the published figures, which is develop's estimate:
+	# the corrected costs are never larger, so this selection is a superset
+	# of develop's in the same order, and `blocking` marks exactly the cells
+	# develop's budget admitted (prime() loads only those synchronously).
+	var published_estimated := 0
+	var published_shared: Dictionary = {}
 	for candidate: Dictionary in candidates:
 		var cost := incremental_cost(candidate, shared)
+		var published_cost := incremental_cost(candidate, published_shared, PUBLISHED_SHARED_KEY)
 		# Never substitute a farther cheap cell for the nearest terrain. Allow
 		# one oversize cell so a low budget cannot remove the arrival surface,
 		# and every framed cell so one oversize cell cannot starve its
@@ -195,8 +211,11 @@ func selection(position: Vector3, retain := false) -> Array[Dictionary]:
 		# Admitted for the frame, not by the budget: prime() leaves these to
 		# the worker unless they hold the arrival itself.
 		candidate.beyond_budget = over_budget
+		var within_published := published_estimated + published_cost <= maximum_resident_bytes
+		candidate.blocking = selected.is_empty() or within_published
 		selected.append(candidate)
 		estimated += cost
+		published_estimated += published_cost
 	return selected
 
 ## Called before the first actor grounding, with the server's actual arrival.
@@ -204,6 +223,11 @@ func selection(position: Vector3, retain := false) -> Array[Dictionary]:
 ## Loads synchronously only what the byte budget admits plus every cell under
 ## the arrival; framed cells beyond the budget stream in on the worker, so an
 ## arrival costs no more blocking import than it did before FRAMED_RADIUS.
+## The synchronous part is judged on the published figures (`blocking`), not
+## on the VRAM-corrected ones: the correction admits more cells to residency,
+## and every one of those would otherwise lengthen the arrival freeze (the
+## build is mostly geometry and scene work, which compressed textures do not
+## shorten). The extra cells stream in on the worker like any framed cell.
 func prime(position: Vector3) -> void:
 	if has_focus:
 		return
@@ -214,7 +238,8 @@ func prime(position: Vector3) -> void:
 	for entry: Dictionary in selection(position):
 		if cells.has(str(entry.id)):
 			continue
-		if bool(entry.get("beyond_budget", false)) and float(entry.distance) > .01:
+		var blocking := not bool(entry.get("beyond_budget", false)) and bool(entry.get("blocking", true))
+		if not blocking and float(entry.distance) > .01:
 			continue
 		var builder := WorldLoader.prepare_detached(str(entry.path), _cache_enabled)
 		_install(entry, builder)

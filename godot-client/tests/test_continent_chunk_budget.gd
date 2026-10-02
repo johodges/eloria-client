@@ -96,6 +96,37 @@ func _territory() -> WorldManifest:
 		"maximumResidentBytes": 40000, "chunks": chunks}}
 	return manifest
 
+## The cells an arrival loads synchronously: prime() keeps develop's set (the
+## published figures' budget) even when the real figures admit more, so the
+## arrival freeze is no longer than develop's; the extra cells go to the worker.
+func _blocking(mode: String, read_index := true) -> Array:
+	_set_mode(mode, read_index)
+	var stream := ContinentChunkStream.new()
+	stream.configure(_territory(), false)
+	var ids := []
+	for entry: Dictionary in stream.selection(Vector3.ZERO):
+		if not bool(entry.get("beyond_budget", false)) and bool(entry.get("blocking", true)):
+			ids.append(str(entry.id))
+	stream.free()
+	return ids
+
+func _check_blocking() -> void:
+	var develop := _blocking("0")
+	_expect(develop == ["c0"], "develop's budget loads one cell synchronously: %s" % [develop])
+	var corrected := _blocking("force")
+	_expect(corrected == develop,
+		"with the real figures the arrival still loads only develop's cells synchronously: %s" % [corrected])
+	# A budget the published figures also clear: every admitted cell blocks.
+	_set_mode("force")
+	var stream := ContinentChunkStream.new()
+	stream.configure(_territory(), false)
+	stream.maximum_resident_bytes = 1 << 30
+	var all_blocking := true
+	for entry: Dictionary in stream.selection(Vector3.ZERO):
+		all_blocking = all_blocking and bool(entry.blocking)
+	stream.free()
+	_expect(all_blocking, "under a budget that admits everything as published, every cell blocks as before")
+
 func _selected(mode: String, read_index := true) -> Array:
 	_set_mode(mode, read_index)
 	var stream := ContinentChunkStream.new()
@@ -115,7 +146,8 @@ func _check_selection() -> void:
 	# No index for these images: exactly today's selection.
 	var unindexed := _selected("force", false)
 	_expect(unindexed == published, "with no index the selection is develop's exactly: %s" % [unindexed])
-	VramTextures.index_for_directory(FIXTURE.path_join("shared-assets"))
+	_check_blocking()
+	_set_mode("force")
 	VramTextures.force_formats(0)
 	var stream := ContinentChunkStream.new()
 	stream.configure(_territory(), false)
