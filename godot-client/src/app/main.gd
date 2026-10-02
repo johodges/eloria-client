@@ -368,6 +368,7 @@ var npc_looks: Dictionary = {}
 var creation_options: Array = []
 var selected_creation_class := 0
 var creation_class_gear_visible := true
+var _creation_appearance_rng := RandomNumberGenerator.new()
 var animation_config: Dictionary = {}
 var animation_configs: Dictionary = {}
 var map_registry: Dictionary = {}
@@ -1183,6 +1184,8 @@ func _ready() -> void:
 	_populate_creation_sexes()
 	_populate_creation_choices()
 	_configure_creation_classes()
+	_creation_appearance_rng.randomize()
+	_randomize_creation_appearance()
 	_update_preview_camera()
 	_apply_eloria_art()
 	_configure_banner_menu()
@@ -1541,14 +1544,21 @@ func _on_new_character_pressed() -> void:
 	if AppState.connection_state != "connected":
 		status_label.text = "Connect to the server before creating a character."
 		return
-	login_panel.hide()
+	_set_login_screen_visible(false)
 	creation_panel.show()
 	_refresh_creation_preview()
 
 func _on_creation_back_pressed() -> void:
 	_clear_pending_creation()
 	creation_panel.hide()
-	login_panel.show()
+	_set_login_screen_visible(true)
+
+## The painted waygate and its shader belong only to the login screen. Hiding
+## both together means the ambient pass has no draw cost during creation or in
+## crowded gameplay scenes.
+func _set_login_screen_visible(value: bool) -> void:
+	login_panel.visible = value
+	login_background.visible = value
 
 func _on_create_race_item_selected(_index: int) -> void:
 	_populate_creation_sexes()
@@ -1560,6 +1570,25 @@ func _on_create_gender_item_selected(_index: int) -> void:
 	_refresh_creation_preview()
 
 func _on_create_appearance_changed(_value: float) -> void:
+	_refresh_creation_preview()
+
+func _on_randomize_creation_pressed() -> void:
+	_randomize_creation_appearance()
+
+## Rolls only the seven appearance selectors. Identity, calling and account
+## fields deliberately live outside this list, and selecting without emitting
+## each control's signal lets the completed look rebuild the preview once.
+## Tests can pass a seeded generator without changing the generator used by the
+## live button or the one-time initial roll.
+func _randomize_creation_appearance(rng: RandomNumberGenerator = null) -> void:
+	var source := rng if rng != null else _creation_appearance_rng
+	var selectors: Array[OptionButton] = [
+		%CreateSkin, %CreateHair, %CreateHairColor, %CreateEyes,
+		%CreateShirt, %CreatePants, %CreateBoots,
+	]
+	for selector: OptionButton in selectors:
+		if selector.item_count > 0:
+			selector.select(source.randi_range(0, selector.item_count - 1))
 	_refresh_creation_preview()
 
 func _on_create_pressed() -> void:
@@ -1597,7 +1626,7 @@ func _on_character_created() -> void:
 	if error != OK:
 		create_status.text = "Created, but login failed to send: " + error_string(error)
 		creation_panel.hide()
-		login_panel.show()
+		_set_login_screen_visible(true)
 
 func _on_character_creation_failed(message: String) -> void:
 	create_status.text = "Creation failed: " + message
@@ -2805,7 +2834,7 @@ func _on_login_succeeded() -> void:
 		else:
 			AppState.append_local_message(
 				"Reconnected. Rebuilding world state from the server.", 3)
-	login_panel.hide()
+	_set_login_screen_visible(false)
 	creation_panel.hide()
 	_hide_chat_input()
 	game_view.show()
@@ -2838,7 +2867,7 @@ func _on_connection_state_changed(value: String) -> void:
 	if value == "disconnected" and was_in_world:
 		_clear_world_presentation()
 		game_view.hide()
-		login_panel.show()
+		_set_login_screen_visible(true)
 		status_label.text = "Disconnected"
 	if value == "connected" and _resync_after_reconnect:
 		# The socket came back on its own. The password was never retained, so
@@ -9442,8 +9471,23 @@ func _apply_graphics_quality() -> void:
 	LookSwitch.apply_shadow_quality(world_sun)
 	_apply_actor_render_quality()
 	_apply_day_night()
+	_apply_login_backdrop_quality()
 	_update_border_lighting()
 	print("look_quality stage=applied quality=", LookProfile.quality_name(LookProfile.quality()))
+
+## Keep the entry scene inside the same Low / Medium / High contract as actor
+## meshes. Low is a static painting, Medium retains a restrained breath, and
+## High enables the full (still single-sample) parallax and portal pulse.
+func _apply_login_backdrop_quality() -> void:
+	var backdrop_material := login_background.material as ShaderMaterial
+	if backdrop_material == null:
+		return
+	var level := clampi(int(LookProfile.quality()), 0, 2)
+	var animation_strengths: Array[float] = [0.0, 0.55, 1.0]
+	var motion_amounts: Array[float] = [0.0, 0.0012, 0.0024]
+	backdrop_material.set_shader_parameter("animation_strength",
+		animation_strengths[level])
+	backdrop_material.set_shader_parameter("motion_amount", motion_amounts[level])
 
 ## Existing actors change in place; new world and preview actors receive the
 ## same resolved quality immediately after configure.  Pass local status on
@@ -11589,7 +11633,8 @@ func _cursor_context_at(viewport_position: Vector2) -> Dictionary:
 	return context
 
 func _apply_eloria_art() -> void:
-	login_background.texture = _external_texture("res://assets/ui/eloria_login_background.jpg")
+	login_background.texture = _external_texture(
+		"res://assets/ui/eloria_login_waygate_background.jpg")
 	%CreationBackdrop.texture = _external_texture(
 		"res://assets/ui/eloria_character_creation_background.jpg")
 	var logo_texture: Texture2D = _external_texture("res://assets/ui/eloria_logo_master.png")

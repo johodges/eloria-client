@@ -14,7 +14,7 @@ const CLASSES: Array[Dictionary] = [
 		"tagline": "Hold the line",
 		"description": "A steady front-line adventurer equipped to meet danger face to face.",
 		"starting_items": "Militia sword, round shield and guard cape",
-		"equipment_visuals": {0: 114, 1: 106, 2: 105, 4: 219, 5: 208, 6: 248},
+		"equipment_visuals": {0: 114, 1: 106, 2: 105, 4: 222, 5: 211, 6: 251},
 	},
 	{
 		"id": 1,

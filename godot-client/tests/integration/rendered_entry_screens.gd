@@ -43,7 +43,8 @@ func _run() -> void:
 	# fills missing review art so the capture remains useful in that checkout.
 	var background := main.get_node("%LoginBackground") as TextureRect
 	if background.texture == null:
-		background.texture = _direct_texture("res://assets/ui/eloria_login_background.jpg")
+		background.texture = _direct_texture(
+			"res://assets/ui/eloria_login_waygate_background.jpg")
 	var logo := main.get_node("%LoginLogo") as TextureRect
 	if logo.texture == null:
 		logo.texture = _direct_texture("res://assets/ui/eloria_logo_master.png")
@@ -76,6 +77,11 @@ func _run() -> void:
 	if sex.item_count > 1:
 		sex.select(1)
 		sex.item_selected.emit(1)
+	# Production deliberately starts from a random appearance. Keep visual QA
+	# reproducible while still exercising the exact randomization path.
+	var capture_rng := RandomNumberGenerator.new()
+	capture_rng.seed = 1729
+	main.call("_randomize_creation_appearance", capture_rng)
 	main.set("preview_yaw", PI + 0.16)
 	main.set("preview_pitch", 0.035)
 	main.set("preview_distance", 1.95)

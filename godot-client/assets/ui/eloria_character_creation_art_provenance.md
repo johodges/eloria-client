@@ -1,8 +1,40 @@
-# Character creation art provenance
+# Entry-screen art provenance
 
 These original Eloria assets were generated with the OpenAI ImageGen tool on
 2026-10-02. They were made for this project rather than copied from the World
 of Oldcraft reference build. No Meshy model credits were used.
+
+## `eloria_login_waygate_background.jpg`
+
+Generated source: `exec-7c14c342-bc7e-413e-adf9-06c866af483d.png`
+
+Exact prompt:
+
+```text
+Use case: stylized-concept
+Asset type: production-ready 16:9 fantasy MMORPG login key art, original artwork for a game world named Eloria.
+Primary request: Paint an original high-fantasy login scene that feels alive and theatrical: a monumental ancient waygate in a lived-in twilight citadel, with a luminous turquoise-and-gold portal, warm braziers, drifting sparks, hanging oxblood banners, layered mist, small distant traveler silhouettes, and birds high in the sky. Evoke the inviting readability, broad forms, and hand-painted charm of a classic early-2000s fantasy MMORPG, without copying any existing game's gate, statues, symbols, layout, logo, or characters.
+Composition: exact 16:9 landscape. Put the large portal arch at about 68 percent of the frame width. Its darker inner opening should form a quiet vertical oval/rectangle around x 0.68, y 0.50, suitable for overlaying a compact login card. Keep the upper-left open and comparatively dark for an Eloria logo. Keep the left half rich with a receding city street, roofs, banners, and distant life, but no dominant faces. Preserve readable silhouettes at 1280 by 720. Do not bake a UI frame into the art.
+Style: original painterly fantasy concept art, chunky readable stone architecture, stylized rather than photorealistic, grounded medieval fantasy, broad brushwork, crisp foreground silhouettes, atmospheric depth.
+Lighting and mood: deep midnight-blue and violet sky, cool teal portal light, warm amber torchlight, subtle mist, welcoming but mysterious.
+Constraints: no readable text, letters, logos, watermark, interface controls, frames, copied heraldry, giant hooded statues flanking the portal, close-up characters, or modern objects. Keep the portal interior dark enough for overlaid cream text and burgundy controls.
+```
+
+Lighter-tone edit source: `exec-0912ad48-2d57-40ad-9b1c-d1b2037eac1c.png`
+
+Exact edit prompt:
+
+```text
+Use case: image edit for production game UI backdrop.
+Edit the supplied Eloria login backdrop, preserving the exact 16:9 composition, camera, architecture, portal position, stairs, banners, distant city, figures, silhouettes, and every usable negative-space region. This is a lighting and color-grade revision, not a redesign.
+Make the overall tone visibly lighter and more welcoming so it matches a colorful painterly fantasy game: change deep midnight into luminous early blue hour just after sunset, lift shadow detail across the city and stonework, brighten the cobalt and soft violet sky, add a restrained peach-gold horizon glow, and let warm lantern light softly illuminate more of the street. Keep the turquoise-and-gold portal magical and vibrant, with its inner center still dark enough for a nearly opaque login card. Preserve broad hand-painted forms and atmospheric depth.
+Do not add, remove, or relocate objects. Do not alter the portal silhouette or UI-safe composition. No text, letters, logos, watermark, controls, UI frames, photorealism, or new heraldry.
+```
+
+The edited 1672×941 RGB source was resized and center-cropped with Pillow's
+Lanczos filter to 1920×1080, then encoded as a progressive JPEG at quality 92
+with 4:2:2 chroma subsampling. Both generated sources remain in the Codex
+generated-image library.
 
 ## `eloria_character_creation_background.jpg`
 
@@ -22,9 +54,21 @@ Lighting: cool moon key with soft warm rim light from the right, cinematic but n
 Constraints: no people, no humanoids, no creatures, no weapons, no text, no letters, no logos, no watermark, no UI panels, no decorative border, no icon frames. The scene must work as a background behind live UI and a transparent 3D viewport.
 ```
 
-The generated 1672×941 RGB source was resized with Pillow's Lanczos filter to
-1920×1080 and encoded as a progressive JPEG at quality 92 with 4:2:2 chroma
-subsampling. No generative edits were applied after the source was returned.
+Lighter-tone edit source: `exec-55dcdadd-6fa6-49f2-9760-06393d08a769.png`
+
+Exact edit prompt:
+
+```text
+Use case: image edit for production game UI backdrop.
+Edit the supplied Eloria character-creation backdrop, preserving the exact 16:9 composition, camera, architecture, foreground circular character platform, arches, banners, moon, distant citadel, waterfalls, and all UI-safe regions. This is a lighting and color-grade revision, not a redesign.
+Make the overall tone visibly lighter, clearer, and more welcoming so it matches a colorful painterly fantasy game: move the scene from deep night toward luminous early blue hour, lift the dark foreground and arch shadows, reveal readable warm-grey stone texture, brighten the sky to clear cobalt and soft periwinkle, add gentle peach-gold dawn light on clouds, mountain edges, citadel roofs, and the platform, and soften the blackest values without washing out the live character silhouette. Keep the moon and warm braziers, with cool/warm fantasy contrast and broad hand-painted shapes.
+Do not add, remove, or relocate objects. Do not alter the central platform silhouette or UI-safe composition. No people, creatures, text, letters, logos, watermark, controls, UI frames, photorealism, or new heraldry.
+```
+
+The edited 1672×941 RGB source was resized and center-cropped with Pillow's
+Lanczos filter to 1920×1080, then encoded as a progressive JPEG at quality 92
+with 4:2:2 chroma subsampling. Both generated sources remain in the Codex
+generated-image library.
 
 ## `eloria_creation_class_icons.png`
 

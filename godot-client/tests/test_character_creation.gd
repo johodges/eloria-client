@@ -29,15 +29,64 @@ func run() -> void:
 	var skin := main.get_node("%CreateSkin") as OptionButton
 	var hair := main.get_node("%CreateHair") as OptionButton
 	var eyes := main.get_node("%CreateEyes") as OptionButton
+	var hair_color := main.get_node("%CreateHairColor") as OptionButton
+	var shirt := main.get_node("%CreateShirt") as OptionButton
+	var pants := main.get_node("%CreatePants") as OptionButton
+	var boots := main.get_node("%CreateBoots") as OptionButton
 	expect(race.item_count == 8 and sex.item_count == 2, "eight races and two separate sex choices")
 	expect(race.get_item_text(race.selected) == "Human" and sex.get_selected_id() == 0, "Human replaces Luminous and retains the initial female actor")
-	expect(skin.get_selected_id() == 1, "Human retains its pale beige default")
+	for selector: OptionButton in [skin, hair, hair_color, eyes, shirt, pants, boots]:
+		expect(selector.selected >= 0 and selector.selected < selector.item_count,
+			"initial appearance randomization selects a valid option")
 	var class_buttons: Array[Button] = [main.get_node("%ClassChoice0"),
 		main.get_node("%ClassChoice1"), main.get_node("%ClassChoice2"),
 		main.get_node("%ClassChoice3")]
 	expect(class_buttons.size() == 4 and (main.get_node("%ClassTitle") as Label).text ==
 		"Vanguard", "four illustrated classes default to Vanguard")
-	main.call("_refresh_creation_preview")
+	expect(main.get("preview_actor") is ReplicatedActor3D,
+		"the one-time initial appearance roll builds the preview")
+	var vanguard_loadout: Dictionary = main.call("_creation_class_loadout")
+	expect(vanguard_loadout == {0: 114, 1: 106, 2: 105, 4: 222, 5: 211, 6: 251},
+		"Vanguard previews the slimmer militia mail set")
+	var original_race := race.get_selected_id()
+	var original_sex := sex.get_selected_id()
+	var original_class := int(main.get("selected_creation_class"))
+	main.get_node("%CreateName").text = "Seeded Hero"
+	main.get_node("%CreatePassword").text = "secret"
+	main.get_node("%CreateConfirm").text = "secret"
+	var preview_root := main.get_node("%PreviewRoot") as Node3D
+	var preview_children_before := preview_root.get_child_count()
+	var first_rng := RandomNumberGenerator.new()
+	first_rng.seed = 1729
+	main.call("_randomize_creation_appearance", first_rng)
+	var seeded_appearance: Dictionary = main.call("_creation_appearance")
+	expect(preview_root.get_child_count() == preview_children_before + 1,
+		"one randomized roll rebuilds the preview exactly once")
+	var second_rng := RandomNumberGenerator.new()
+	second_rng.seed = 1729
+	main.call("_randomize_creation_appearance", second_rng)
+	expect(main.call("_creation_appearance") == seeded_appearance,
+		"the same seed produces the same complete appearance")
+	var button_rng := main.get("_creation_appearance_rng") as RandomNumberGenerator
+	button_rng.seed = 1729
+	(main.get_node("%RandomizeAppearance") as Button).pressed.emit()
+	expect(main.call("_creation_appearance") == seeded_appearance,
+		"the Randomize appearance button uses the testable RNG seam")
+	expect(race.get_selected_id() == original_race and sex.get_selected_id() == original_sex and
+		int(main.get("selected_creation_class")) == original_class,
+		"appearance randomization preserves race, sex and class")
+	expect(main.get_node("%CreateName").text == "Seeded Hero" and
+		main.get_node("%CreatePassword").text == "secret" and
+		main.get_node("%CreateConfirm").text == "secret",
+		"appearance randomization preserves name and credentials")
+	var app_state := root.get_node("AppState")
+	var connection_before := str(app_state.get("connection_state"))
+	app_state.set("connection_state", "connected")
+	main.call("_on_creation_back_pressed")
+	main.call("_on_new_character_pressed")
+	expect(main.call("_creation_appearance") == seeded_appearance,
+		"reopening creation preserves the rolled appearance")
+	app_state.set("connection_state", connection_before)
 	main.call("_set_creation_class", -1)
 	expect(int(main.get("selected_creation_class")) == 3 and
 		(main.get_node("%ClassTitle") as Label).text == "Warden",

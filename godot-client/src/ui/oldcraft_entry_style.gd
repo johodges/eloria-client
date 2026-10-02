@@ -46,6 +46,7 @@ static func apply(main: Control) -> void:
 	_style_panel(main.get_node_or_null("%CreationPanel") as PanelContainer, true)
 	_style_controls(main.get_node_or_null("%LoginPanel") as Control)
 	_style_controls(main.get_node_or_null("%CreationPanel") as Control)
+	_style_login_layout(main)
 	_style_creation_layout(main)
 	_style_titles(main)
 	_style_preview(main)
@@ -113,6 +114,42 @@ static func _style_controls(root: Control) -> void:
 		label.add_theme_constant_override("outline_size", 2)
 
 
+static func _style_login_layout(main: Control) -> void:
+	var login_panel := main.get_node_or_null("%LoginPanel") as PanelContainer
+	if login_panel != null:
+		# The compact panel sits inside the painted waygate rather than masking the
+		# whole scene. Its slight transparency lets the portal light breathe.
+		var portal_frame := _flat_box(Color(0.045, 0.047, 0.06, 0.88),
+			GOLD_DARK, 5, 5, 18.0)
+		portal_frame.shadow_color = Color(0.0, 0.0, 0.0, 0.88)
+		portal_frame.shadow_size = 16
+		portal_frame.shadow_offset = Vector2(0.0, 6.0)
+		login_panel.add_theme_stylebox_override("panel", portal_frame)
+	var content := main.get_node_or_null("LoginPanel/Content") as VBoxContainer
+	if content != null:
+		content.add_theme_constant_override("separation", 7)
+	var secondary_normal := _flat_box(Color(0.075, 0.075, 0.09, 0.94),
+		GOLD_DARK, 1, 4, 7.0)
+	var secondary_hover := _flat_box(STONE_RAISED, GOLD_BRIGHT, 2, 4, 7.0)
+	for node_name: StringName in [&"Connect", &"NewCharacter"]:
+		var secondary := main.get_node_or_null("%" + str(node_name)) as Button
+		if secondary == null:
+			continue
+		secondary.add_theme_stylebox_override("normal", secondary_normal)
+		secondary.add_theme_stylebox_override("hover", secondary_hover)
+		secondary.add_theme_stylebox_override("focus", secondary_hover)
+		secondary.add_theme_color_override("font_color", GOLD)
+	var port := main.get_node_or_null("%Port") as SpinBox
+	if port != null:
+		var port_field := port.get_line_edit()
+		port_field.add_theme_stylebox_override("normal", _flat_box(FIELD,
+			GOLD_DARK, 2, 3, 8.0))
+		port_field.add_theme_stylebox_override("focus", _flat_box(
+			Color(0.018, 0.019, 0.026, 1.0), GOLD, 2, 3, 8.0))
+		port_field.add_theme_color_override("font_color", WARM_TEXT)
+		port_field.add_theme_color_override("caret_color", GOLD_BRIGHT)
+
+
 static func _style_creation_layout(main: Control) -> void:
 	var rail := main.get_node_or_null("%ClassRail") as PanelContainer
 	if rail != null:
@@ -139,16 +176,60 @@ static func _style_creation_layout(main: Control) -> void:
 		class_button.add_theme_stylebox_override("hover_pressed", class_selected)
 	var form_panel := main.get_node_or_null("%FormPanel") as PanelContainer
 	if form_panel != null:
-		var parchment_box := _flat_box(Color(PARCHMENT, 0.965),
-			Color(0.43, 0.26, 0.095, 1.0), 4, 3, 14.0)
-		parchment_box.shadow_color = Color(0.0, 0.0, 0.0, 0.75)
-		parchment_box.shadow_size = 10
-		form_panel.add_theme_stylebox_override("panel", parchment_box)
+		var form_frame := _flat_box(Color(0.055, 0.06, 0.075, 0.96),
+			GOLD_DARK, 3, 4, 24.0)
+		form_frame.shadow_color = Color(0.0, 0.0, 0.0, 0.78)
+		form_frame.shadow_size = 10
+		form_frame.shadow_offset = Vector2(0.0, 4.0)
+		form_panel.add_theme_stylebox_override("panel", form_frame)
 		for value: Node in form_panel.find_children("*", "Label", true, false):
 			var label := value as Label
 			label.add_theme_color_override("font_color", Color(0.22, 0.14, 0.07, 1.0))
 			label.add_theme_color_override("font_outline_color", Color.TRANSPARENT)
 			label.add_theme_constant_override("outline_size", 0)
+	var parchment := main.get_node_or_null("%FormParchment") as Panel
+	if parchment != null:
+		# Expanding the painted insert beyond the shared content rectangle gives
+		# the form a true inset margin without changing any established node path.
+		var parchment_box := _flat_box(Color(PARCHMENT, 0.975),
+			Color(0.43, 0.26, 0.095, 1.0), 2, 2, 0.0)
+		parchment_box.expand_margin_left = 10.0
+		parchment_box.expand_margin_top = 10.0
+		parchment_box.expand_margin_right = 10.0
+		parchment_box.expand_margin_bottom = 10.0
+		parchment.add_theme_stylebox_override("panel", parchment_box)
+	var option_normal := _flat_box(Color(0.055, 0.047, 0.042, 0.98),
+		GOLD_DARK, 2, 3, 6.0)
+	var option_hover := _flat_box(Color(0.09, 0.072, 0.054, 1.0),
+		GOLD_BRIGHT, 2, 3, 6.0)
+	for node_name: StringName in [&"CreateRace", &"CreateGender", &"CreateSkin",
+			&"CreateHair", &"CreateEyes", &"CreateHairColor", &"CreateShirt",
+			&"CreatePants", &"CreateBoots"]:
+		var option := main.get_node_or_null("%" + str(node_name)) as OptionButton
+		if option == null:
+			continue
+		option.add_theme_stylebox_override("normal", option_normal)
+		option.add_theme_stylebox_override("hover", option_hover)
+		option.add_theme_stylebox_override("pressed", option_hover)
+		option.add_theme_stylebox_override("focus", option_hover)
+		option.add_theme_color_override("font_color", WARM_TEXT)
+		option.add_theme_color_override("font_hover_color", GOLD_BRIGHT)
+	var randomize := main.get_node_or_null("%RandomizeAppearance") as Button
+	if randomize != null:
+		randomize.add_theme_stylebox_override("normal", _flat_box(
+			Color(0.105, 0.095, 0.09, 0.98), GOLD_DARK, 2, 4, 6.0))
+		randomize.add_theme_stylebox_override("hover", _flat_box(
+			Color(0.16, 0.125, 0.08, 1.0), GOLD_BRIGHT, 2, 4, 6.0))
+		randomize.add_theme_color_override("font_color", GOLD_BRIGHT)
+	for path: String in [
+			"CreationPanel/Columns/FormPanel/Form/AccountSection",
+			"CreationPanel/Columns/FormPanel/Form/IdentitySection",
+			"CreationPanel/Columns/FormPanel/Form/AppearanceSection"]:
+		var section := main.get_node_or_null(path) as Label
+		if section == null:
+			continue
+		section.add_theme_color_override("font_color", BURGUNDY_PRESSED)
+		section.add_theme_font_size_override("font_size", 12)
 	var class_header := main.get_node_or_null("CreationPanel/Columns/ClassRail/ClassContent/ClassHeader") as Label
 	if class_header != null:
 		class_header.add_theme_color_override("font_color", GOLD_BRIGHT)

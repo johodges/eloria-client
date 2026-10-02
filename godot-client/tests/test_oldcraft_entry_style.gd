@@ -42,8 +42,21 @@ func _run() -> void:
 		"selected class gets an unmistakable bright brass frame")
 	var form_frame := (main.get_node("%FormPanel") as PanelContainer).get_theme_stylebox(
 		"panel") as StyleBoxFlat
-	_expect(form_frame != null and form_frame.bg_color.is_equal_approx(
-		Color(EntryStyle.PARCHMENT, 0.965)), "creation form uses parchment chrome")
+	_expect(form_frame != null and form_frame.bg_color.r < 0.1 and
+		form_frame.border_color.is_equal_approx(EntryStyle.GOLD_DARK),
+		"creation form echoes the class rail with carved stone and brass")
+	var parchment_frame := (main.get_node("%FormParchment") as Panel).get_theme_stylebox(
+		"panel") as StyleBoxFlat
+	_expect(parchment_frame != null and parchment_frame.bg_color.is_equal_approx(
+		Color(EntryStyle.PARCHMENT, 0.975)) and parchment_frame.expand_margin_left >= 10.0,
+		"creation form keeps an inset parchment writing surface")
+	var randomize := main.get_node_or_null("%RandomizeAppearance") as Button
+	_expect(randomize != null and randomize.text == "Randomize Appearance" and
+		randomize.get_theme_color("font_color").is_equal_approx(EntryStyle.GOLD_BRIGHT),
+		"creation exposes a clearly styled appearance randomizer")
+	_expect(randomize != null and randomize.pressed.is_connected(
+		Callable(main, "_on_randomize_creation_pressed")),
+		"appearance randomizer is wired to the creation controller")
 	var login_button := main.get_node("%Login") as Button
 	var normal := login_button.get_theme_stylebox("normal") as StyleBoxFlat
 	_expect(normal != null and normal.bg_color.r > normal.bg_color.g * 4.0,
@@ -55,6 +68,34 @@ func _run() -> void:
 		"entry fields are inset and bordered")
 	_expect((main.get_node("LoginPanel/Content/Subtitle") as Label).text ==
 		"ENTER THE WORLD OF ELORIA", "Eloria identity is retained")
+	_expect(is_equal_approx(login.anchor_left, 0.68) and
+		is_equal_approx(login.anchor_right, 0.68) and login.size.x <= 430.0,
+		"compact login card aligns with the painted waygate")
+	var login_material := (main.get_node("%LoginBackground") as TextureRect).material \
+		as ShaderMaterial
+	_expect(login_material != null and float(login_material.get_shader_parameter(
+		"animation_strength")) > 0.0,
+		"login painting has a low-cost adjustable ambient motion pass")
+	var login_background := main.get_node("%LoginBackground") as TextureRect
+	main.call("_set_login_screen_visible", false)
+	_expect(not login.visible and not login_background.visible,
+		"leaving login removes the backdrop shader from the draw pass")
+	main.call("_set_login_screen_visible", true)
+	_expect(login.visible and login_background.visible,
+		"returning to login restores the card and painted backdrop together")
+	if not LookProfile.quality_forced():
+		var saved_quality := LookProfile.player_quality()
+		for quality_and_strength: Array in [
+				[LookProfile.Quality.LOW, 0.0],
+				[LookProfile.Quality.MEDIUM, 0.55],
+				[LookProfile.Quality.HIGH, 1.0]]:
+			LookProfile.set_player_quality(int(quality_and_strength[0]))
+			main.call("_apply_login_backdrop_quality")
+			_expect(is_equal_approx(float(login_material.get_shader_parameter(
+				"animation_strength")), float(quality_and_strength[1])),
+				"login motion follows the shared Low / Medium / High quality setting")
+		LookProfile.set_player_quality(saved_quality)
+		main.call("_apply_login_backdrop_quality")
 	var environment := (main.get_node(
 		"CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot/PreviewEnvironment") \
 		as WorldEnvironment).environment

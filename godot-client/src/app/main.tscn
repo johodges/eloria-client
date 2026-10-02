@@ -1,8 +1,17 @@
-[gd_scene load_steps=10 format=3 uid="uid://bfmrbcawfltal"]
+[gd_scene load_steps=12 format=3 uid="uid://bfmrbcawfltal"]
 
 [ext_resource type="Script" uid="uid://dbhj8rl6i8dyi" path="res://src/app/main.gd" id="1"]
 [ext_resource type="Script" uid="uid://dbpi40yl6pryr" path="res://src/camera/isometric_camera_controller.gd" id="2"]
 [ext_resource type="Script" uid="uid://dqdcovlp0tml2" path="res://src/world/world_loader.gd" id="3"]
+
+[sub_resource type="Shader" id="Shader_login_waygate"]
+code = "shader_type canvas_item;\nrender_mode unshaded;\n\nuniform float animation_strength : hint_range(0.0, 1.0) = 1.0;\nuniform float motion_amount : hint_range(0.0, 0.01) = 0.0024;\nuniform vec2 portal_center = vec2(0.68, 0.48);\n\nvoid fragment() {\n\tfloat slow_wave = sin(TIME * 0.12);\n\tfloat slow_lift = cos(TIME * 0.09);\n\tfloat zoom = 1.008 + (0.002 * sin(TIME * 0.07) * animation_strength);\n\tvec2 sample_uv = (UV - vec2(0.5)) * zoom + vec2(0.5);\n\tsample_uv += vec2(slow_wave, slow_lift) * motion_amount * animation_strength;\n\tvec4 painted_scene = texture(TEXTURE, clamp(sample_uv, vec2(0.001), vec2(0.999)));\n\n\tvec2 portal_delta = (UV - portal_center) / vec2(0.17, 0.34);\n\tfloat portal_mask = exp(-dot(portal_delta, portal_delta) * 2.2);\n\tfloat pulse = (0.5 + (0.5 * sin(TIME * 0.83))) * 0.055 * animation_strength;\n\tvec3 living_light = vec3(0.08, 0.48, 0.62) * portal_mask * pulse;\n\tCOLOR = vec4(painted_scene.rgb + living_light, painted_scene.a);\n}\n"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_login_waygate"]
+shader = SubResource("Shader_login_waygate")
+shader_parameter/animation_strength = 1.0
+shader_parameter/motion_amount = 0.0024
+shader_parameter/portal_center = Vector2(0.68, 0.48)
 
 [sub_resource type="Environment" id="Environment_world"]
 background_mode = 1
@@ -83,6 +92,7 @@ color = Color(0.035, 0.055, 0.08, 1)
 
 [node name="LoginBackground" type="TextureRect" parent="." unique_id=2073448342]
 unique_name_in_owner = true
+material = SubResource("ShaderMaterial_login_waygate")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -3078,15 +3088,25 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(430, 0)
 layout_mode = 2
 
+[node name="FormParchment" type="Panel" parent="CreationPanel/Columns/FormPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+
 [node name="Form" type="VBoxContainer" parent="CreationPanel/Columns/FormPanel" unique_id=381403297]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="CreationPanel/Columns/FormPanel/Form" unique_id=1115436561]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "CREATE YOUR ELORIA CHARACTER"
 horizontal_alignment = 1
+
+[node name="AccountSection" type="Label" parent="CreationPanel/Columns/FormPanel/Form"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "ACCOUNT CREDENTIALS"
 
 [node name="CreateName" type="LineEdit" parent="CreationPanel/Columns/FormPanel/Form" unique_id=1963432485]
 unique_name_in_owner = true
@@ -3107,6 +3127,11 @@ layout_mode = 2
 placeholder_text = "Confirm password"
 max_length = 72
 secret = true
+
+[node name="IdentitySection" type="Label" parent="CreationPanel/Columns/FormPanel/Form"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "HERITAGE"
 
 [node name="IdentityRow" type="HBoxContainer" parent="CreationPanel/Columns/FormPanel/Form"]
 layout_mode = 2
@@ -3139,6 +3164,11 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
+
+[node name="AppearanceSection" type="Label" parent="CreationPanel/Columns/FormPanel/Form"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "APPEARANCE"
 
 [node name="AppearanceGrid" type="GridContainer" parent="CreationPanel/Columns/FormPanel/Form" unique_id=1087399755]
 layout_mode = 2
@@ -3214,6 +3244,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
 
+[node name="RandomizeAppearance" type="Button" parent="CreationPanel/Columns/FormPanel/Form"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+text = "Randomize Appearance"
+tooltip_text = "Try another complete character look"
+
 [node name="CreateStatus" type="Label" parent="CreationPanel/Columns/FormPanel/Form" unique_id=147417984]
 unique_name_in_owner = true
 layout_mode = 2
@@ -3238,15 +3275,14 @@ text = "Create Character"
 [node name="LoginPanel" type="PanelContainer" parent="." unique_id=1880397975]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
+anchor_left = 0.68
 anchor_top = 0.5
-anchor_right = 0.5
+anchor_right = 0.68
 anchor_bottom = 0.5
-offset_left = -250.0
-offset_top = -310.0
-offset_right = 250.0
-offset_bottom = 310.0
+offset_left = -215.0
+offset_top = -285.0
+offset_right = 215.0
+offset_bottom = 285.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -3256,7 +3292,7 @@ theme_override_constants/separation = 8
 
 [node name="LoginLogo" type="TextureRect" parent="LoginPanel/Content" unique_id=2145300785]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(420, 92)
+custom_minimum_size = Vector2(360, 78)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
@@ -3395,6 +3431,7 @@ horizontal_alignment = 1
 [connection signal="item_selected" from="CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateShirt" to="." method="_on_create_appearance_changed"]
 [connection signal="item_selected" from="CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreatePants" to="." method="_on_create_appearance_changed"]
 [connection signal="item_selected" from="CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateBoots" to="." method="_on_create_appearance_changed"]
+[connection signal="pressed" from="CreationPanel/Columns/FormPanel/Form/RandomizeAppearance" to="." method="_on_randomize_creation_pressed"]
 [connection signal="pressed" from="CreationPanel/Columns/FormPanel/Form/Actions/Back" to="." method="_on_creation_back_pressed"]
 [connection signal="pressed" from="CreationPanel/Columns/FormPanel/Form/Actions/Create" to="." method="_on_create_pressed"]
 [connection signal="text_submitted" from="LoginPanel/Content/Password" to="." method="_on_login_submitted"]
