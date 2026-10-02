@@ -167,6 +167,8 @@ jobs:
           godot --headless --path godot-client --script res://tests/test_vram_textures.gd 2>&1 | tee vram-textures.log
           ! grep -q "SCRIPT ERROR" vram-textures.log
           grep -q "vram textures tests: PASS" vram-textures.log
+      - name: Continent chunk budget fixtures
+        run: godot --headless --path godot-client --script res://tests/test_continent_chunk_budget.gd
       - name: Continent map fixtures
         run: godot --headless --path godot-client --script res://tests/test_continent_map.gd
       - name: Animation gate fixtures

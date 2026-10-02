@@ -19,6 +19,7 @@ const RETIRE_BUDGET_USEC := 2000
 ## so a nearest-first prefix kept one cell and left its framed neighbours -
 ## sometimes a second cell under the focus itself - as bare flat planes.
 const FRAMED_RADIUS := 64.0
+const VramTextures := preload("res://src/world/vram_textures.gd")
 
 signal cell_ready(identity: String, imported: Node3D)
 signal cell_retiring(identity: String, imported: Node3D)
@@ -138,6 +139,13 @@ func configure(source: WorldManifest, cache_enabled: bool) -> void:
 		# not a claim that GPU/driver allocations can be measured from a manifest.
 		entry.estimatedResidentBytes = maxi(1, int(entry.get("estimatedResidentBytes",
 			maxi(1048576, int(entry.get("byteLength", 1048576)) * 12))))
+		# The publisher counts each shared image as RGBA8 with mips. One this
+		# client uploads from its VRAM-compressed sidecar holds a quarter or
+		# an eighth of that; count what it really holds (vram_textures.gd).
+		var shared: Variant = entry.get("sharedResourceResidentBytes")
+		if shared is Dictionary:
+			for identity: String in shared:
+				shared[identity] = VramTextures.resident_bytes(identity, int(shared[identity]))
 		entries.append(entry)
 
 static func bounds_distance(position: Vector3, bounds: Dictionary) -> float:

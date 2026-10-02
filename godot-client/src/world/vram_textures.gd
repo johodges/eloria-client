@@ -331,6 +331,24 @@ static func lookup(sha: String) -> Dictionary:
 	_mutex.unlock()
 	return entry
 
+## What one shared image really holds on the GPU once resident, for
+## ContinentChunkStream's budget. The publisher writes every image as RGBA8
+## with mips (scene_io.py: w*h*4*4/3), which is what a decoded image costs and
+## stays the answer whenever this client would decode it: sidecars off, no
+## index entry, or a format the renderer lacks. An image uploaded from its
+## sidecar costs the sidecar's GPU bytes (a quarter for BC7/BC5, an eighth for
+## BC1). Per sha, not a factor, because only the client knows which of those
+## applies to each image; and here rather than in the publisher, so no map is
+## republished and an older client or a fallback machine never under-counts.
+static func resident_bytes(sha: String, published: int) -> int:
+	if mode() == Mode.OFF:
+		return published
+	index_for_directory(SHARED_ASSETS)
+	var entry := lookup(sha)
+	if entry.is_empty() or not (usable_formats() & int(FORMAT_BITS[entry.format])):
+		return published
+	return int(entry.gpuBytes)
+
 # --------------------------------------------------------------------------
 # Preparing one image
 # --------------------------------------------------------------------------
