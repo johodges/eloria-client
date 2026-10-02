@@ -295,39 +295,89 @@ placeholder_text = "Chat, /name private message, or // reply"
 [node name="DialoguePanel" type="PanelContainer" parent="GameView" unique_id=1594192884]
 unique_name_in_owner = true
 visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -290.0
-offset_top = -210.0
-offset_right = 290.0
-offset_bottom = 210.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 0
+offset_left = 32.0
+offset_top = 128.0
+offset_right = 592.0
+offset_bottom = 688.0
 
 [node name="DialogueContent" type="VBoxContainer" parent="GameView/DialoguePanel" unique_id=1434935607]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
+
+[node name="DialogueKicker" type="Label" parent="GameView/DialoguePanel/DialogueContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "A VOICE OF ELORIA"
+horizontal_alignment = 1
 
 [node name="DialogueName" type="Label" parent="GameView/DialoguePanel/DialogueContent" unique_id=288768166]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 text = "NPC"
 horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DialogueDivider" type="HSeparator" parent="GameView/DialoguePanel/DialogueContent"]
+unique_name_in_owner = true
+layout_mode = 2
 
 [node name="DialogueText" type="RichTextLabel" parent="GameView/DialoguePanel/DialogueContent" unique_id=1140118479]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(540, 180)
+custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
-fit_content = true
+size_flags_vertical = 3
 
-[node name="DialogueOptions" type="VBoxContainer" parent="GameView/DialoguePanel/DialogueContent" unique_id=291149601]
+[node name="DialogueInstruction" type="Label" parent="GameView/DialoguePanel/DialogueContent"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "CHOOSE YOUR RESPONSE"
+
+[node name="DialogueOptionsScroll" type="ScrollContainer" parent="GameView/DialoguePanel/DialogueContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="DialogueOptions" type="VBoxContainer" parent="GameView/DialoguePanel/DialogueContent/DialogueOptionsScroll" unique_id=291149601]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="DialogueFooter" type="Label" parent="GameView/DialoguePanel/DialogueContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "ESC  Close"
+horizontal_alignment = 2
+
+[node name="DialogueFrameTexture" type="TextureRect" parent="GameView"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 32.0
+offset_top = 128.0
+offset_right = 592.0
+offset_bottom = 688.0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="DialogueBackdrop" type="Panel" parent="GameView"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 82.0
+offset_top = 178.0
+offset_right = 542.0
+offset_bottom = 638.0
+mouse_filter = 2
 
 [node name="PopupPanel" type="PanelContainer" parent="GameView" unique_id=1090442391]
 unique_name_in_owner = true

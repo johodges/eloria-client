@@ -11,6 +11,7 @@ var lantern_scene: Node3D
 
 const AppearanceChoices = preload("res://src/actors/appearance_choices.gd")
 const OldcraftEntryStyleScript = preload("res://src/ui/oldcraft_entry_style.gd")
+const OldcraftDialogueStyleScript = preload("res://src/ui/oldcraft_dialogue_style.gd")
 const CreationArchetypes = preload("res://src/ui/creation_archetypes.gd")
 const CreationClassIcons = preload("res://src/ui/creation_class_icons.gd")
 
@@ -755,7 +756,7 @@ const RANGE_WEAPON_LAST := 68
 const BANNER_INSTANCE_LIFT_ROWS := 5.0
 ## World metres between the top of your head and the foot of your own banner.
 const BANNER_HEAD_CLEARANCE := 0.15
-const SPEECH_BUBBLE_MSEC := 6000
+const SPEECH_BUBBLE_MSEC := 5000
 
 const CHAT_FADE_DELAY_MSEC := 7000
 const CHAT_FADE_DURATION_MSEC := 1800
@@ -2964,6 +2965,7 @@ func _clear_world_presentation() -> void:
 	manufacturing_panel.hide()
 	item_lists_panel.hide()
 	dialogue_panel.hide()
+	OldcraftDialogueStyleScript.sync_visibility(self, false)
 	console_panel.hide()
 	_close_settings()
 	minimap_frame.hide()
@@ -8756,6 +8758,7 @@ func _on_window_size_changed() -> void:
 		maxi(1, roundi(viewport_container.size.y * maxf(render_scale.y, 0.01))))
 	if main_viewport.size != target_size:
 		main_viewport.size = target_size
+	OldcraftDialogueStyleScript.layout(self)
 
 func _sync_hud_button_states(force := false) -> void:
 	if _hud_icon_regions.is_empty():
@@ -11154,29 +11157,38 @@ func _send_popup_reply(answers: Dictionary) -> void:
 func _sync_dialogue() -> void:
 	var dialogue: Dictionary = AppState.npc_dialogue
 	dialogue_panel.visible = bool(dialogue.get("open", false))
+	OldcraftDialogueStyleScript.sync_visibility(self, dialogue_panel.visible)
 	if not dialogue_panel.visible:
 		return
 	# Dialogue the server flagged as belonging to a quest is marked as such,
 	# which is the whole point of the flag: a player could not previously tell
 	# a quest line from small talk, and neither could this client.
 	var quest_id: int = int(dialogue.get("quest_id", 0))
+	var is_quest: bool = bool(dialogue.get("quest", false))
 	dialogue_name.text = ("%s  [Quest %d]" % [str(dialogue.get("name", "NPC")),
-		quest_id] if bool(dialogue.get("quest", false)) and quest_id > 0
+		quest_id] if is_quest and quest_id > 0
 		else str(dialogue.get("name", "NPC")))
 	dialogue_text.text = str(dialogue.get("text", ""))
 	for child: Node in dialogue_options.get_children():
 		child.queue_free()
 	var raw_options: Variant = dialogue.get("options", [])
+	var valid_options: Array[Dictionary] = []
 	if raw_options is Array:
 		for raw_option: Variant in raw_options:
 			if not raw_option is Dictionary:
 				continue
-			var option: Dictionary = raw_option as Dictionary
-			var button: Button = Button.new()
-			button.text = str(option.get("label", "Continue"))
-			button.pressed.connect(_on_dialogue_option.bind(
-				int(option.get("actor_id", -1)), int(option.get("response_id", -1))))
-			dialogue_options.add_child(button)
+			valid_options.append(raw_option as Dictionary)
+	OldcraftDialogueStyleScript.update_state(self, is_quest, quest_id,
+		not valid_options.is_empty())
+	for option_index: int in range(valid_options.size()):
+		var option: Dictionary = valid_options[option_index]
+		var button: Button = Button.new()
+		button.text = OldcraftDialogueStyleScript.option_label(
+			str(option.get("label", "Continue")), is_quest)
+		OldcraftDialogueStyleScript.style_option(button, is_quest, option_index)
+		button.pressed.connect(_on_dialogue_option.bind(
+			int(option.get("actor_id", -1)), int(option.get("response_id", -1))))
+		dialogue_options.add_child(button)
 
 func _on_dialogue_option(actor_id: int, response_id: int) -> void:
 	if actor_id < 0 or response_id < 0:
@@ -11794,6 +11806,10 @@ func _apply_eloria_theme() -> void:
 	# Login and creation keep their own heavier fantasy frame and moonlit
 	# preview stage rather than inheriting the compact in-game HUD chrome.
 	OldcraftEntryStyleScript.apply(self)
+	# NPC communication uses the same forged Eloria materials, but its inset
+	# parchment and speaker plaque follow the reference game's readable quest
+	# hierarchy. The helper only applies static styles; no actor update pays it.
+	OldcraftDialogueStyleScript.apply(self)
 
 ## The right rail used to be six separate boxes with gaps between them, so its
 ## left edge was six short lines rather than one. One panel now spans the whole

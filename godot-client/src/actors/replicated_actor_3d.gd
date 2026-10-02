@@ -339,7 +339,7 @@ const NAMEPLATE_CLEARANCE := 0.6
 const OVERHEAD_PIXEL := 0.0012953
 const NAMEPLATE_FONT_SIZE := 12
 const HEALTH_NUMBER_FONT_SIZE := 11
-const SPEECH_BUBBLE_FONT_SIZE := 11
+const SPEECH_BUBBLE_FONT_SIZE := 15
 const OVERHEAD_OUTLINE_SIZE := 4
 
 # The rest of the block, in those same pixels, measured downwards from the
@@ -353,8 +353,10 @@ const HEALTH_BAR_DROP := 16.0
 const HEALTH_LABEL_DROP := 32.0
 ## The speech bubble sits above the name instead, and wraps well short of the
 ## screen it is now measured against.
-const SPEECH_BUBBLE_RISE := 20.0
-const SPEECH_BUBBLE_WIDTH := 220.0
+const SPEECH_BUBBLE_RISE := 28.0
+const SPEECH_BUBBLE_WIDTH := 270.0
+const SPEECH_BUBBLE_TEXT := Color(0.96, 0.91, 0.78, 1.0)
+const SPEECH_BUBBLE_SURROUND := Color(0.035, 0.026, 0.018, 0.94)
 ## The worn title, a line above the name in the same pixels as the rest of the
 ## block. Above rather than below because below is where the health bar and
 ## its numbers already are, and smaller than the name because a title is what
@@ -1169,10 +1171,15 @@ func show_speech_bubble(speech: String, duration_msec: int) -> void:
 		label.fixed_size = true
 		label.pixel_size = OVERHEAD_PIXEL
 		label.font_size = SPEECH_BUBBLE_FONT_SIZE
-		label.outline_size = OVERHEAD_OUTLINE_SIZE
+		# Oldcraft's ambient lines use cream lettering over a compact dark
+		# translucent bubble. Label3D cannot draw a nine-patch panel without a
+		# viewport per speaker, so the wider dark surround gives the same visual
+		# separation for a fraction of the memory and draw-call cost.
+		label.outline_size = 6
+		label.outline_modulate = SPEECH_BUBBLE_SURROUND
 		label.width = SPEECH_BUBBLE_WIDTH
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.modulate = Color(0.86, 1.0, 0.86, 1.0)
+		label.modulate = SPEECH_BUBBLE_TEXT
 		label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 		add_child(label)
 		_speech_bubble = label
