@@ -384,6 +384,61 @@ reading.
   batching that took a region from 9 237 draw calls to 335 does not apply to
   skinned bodies; whether it can be made to is the next rendering question.
 
+## Map textures: prepared once, uploaded VRAM-compressed
+
+Every content-addressed map image (the `externalResources` of a map package,
+all under `nymara-regions/_continent/shared-assets`) used to be decoded on the
+importing thread, uploaded without mips, read back from the GPU, given its mip
+chain and uploaded again, and it sat on the GPU as RGBA8: 4 bytes a pixel and a
+third more for mips. A dressed hub held 460-600 MiB of map textures against the
+chunk stream's 256 MiB budget, so the stream refused most of its neighbours.
+
+* **Preparation** (`src/world/map_image_extension.gd`, `vram_textures.gd`). A
+  `GLTFDocumentExtension` prepares a package's external images before the parse,
+  in one WorkerThreadPool group task: decoded by their magic bytes (no more
+  "Not a PNG file" for every `.jpg`) and given the mip chain the client always
+  built, or taken from `ExternalTexturePool` when another map holds them. The
+  texture GLTFDocument creates is the finished one; nothing is read back. Only
+  states that carry WorldLoader's plan are touched, so actor GLBs and embedded
+  images keep GLTFDocument's own path. `load_phases` reports `imagesPrepared`,
+  `imagesSidecar`, `imagesDecoded`, `imagesPooled`, `imagesFailed`,
+  `sidecarRejected`, `imagesPreparedOnMainThread` and `prepareWaitUs`.
+* **Sidecars.** `tools/build_vram_textures.py` writes `<image dir>/vram/` at
+  package time: `<sha>.<recipe>.evt` (EVT1 header + zstd DDS with the full mip
+  chain) and `index.json`. BC7 for base colour (alpha only where a MASK/BLEND
+  material uses it), BC1 for ORM (BC7 when BC1 falls under the ORM floor), BC5
+  for normals; images under a quality floor, in conflicting roles or not a
+  multiple of 4 are listed as excluded and decode as before. The client uploads
+  a sidecar as it is when the renderer samples its format (RenderingDevice on
+  Forward+/Mobile, the GL driver on Compatibility) and falls back to decoding,
+  image by image, on any doubt. The client never compresses anything: the
+  export templates have no BC encoder.
+* **Budget.** `ContinentChunkStream.configure` counts each shared image at its
+  sidecar's GPU bytes when it will be uploaded from one, the published RGBA8
+  figure otherwise (`VramTextures.resident_bytes`). No map is republished.
+* **Cache.** `CACHE_FORMAT_VERSION` 8, and a package with external images folds
+  `VramTextures.cache_token` (mode, usable formats, index hash) into its key.
+* **Switch.** `ELORIA_VRAM_TEXTURES=0` turns sidecars (and the budget
+  correction) off; `force` uses them whatever the renderer says (tests). The
+  client logs `vram_textures mode=... formats=... index=...` once at startup;
+  with `ELORIA_VRAM_SELF_TEST=1` it also decodes one sidecar and logs
+  `vram_textures self_test ok|failed`, which the package smoke launch requires.
+
+The sidecars are not tracked. A dev checkout has none until the tool has run
+(`index=missing` in the startup line, every image decoded as before), so run it
+before a live test or a measurement of this path:
+
+    python godot-client/tools/build_vram_textures.py
+
+It needs the Godot 4.7.2 editor binary (found beside the checkout, or
+`--godot` / `ELORIA_GODOT`) plus numpy and Pillow, takes about two and a half
+minutes cold for the 1 464 shared images and seconds warm (its encode cache is
+`.vram-encode-cache/`, ignored). `tools/package_client.py` runs it into the
+package stage, checks every staged image has a sidecar or a reason, and
+`--no-vram-textures` leaves them out. Tests: `tests/test_vram_textures.gd`,
+`tests/test_continent_chunk_budget.gd`, `tests/test_build_vram_textures.py`,
+`tests/test_package_vram.py`.
+
 ## Checking a change
 
 `tests/test_runtime_performance.gd` guards the viewport scheduling, the surface

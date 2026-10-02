@@ -61,6 +61,8 @@ jobs:
         run: python3 godot-client/tests/test_map_crossings.py -v
       - name: Validate the VRAM texture sidecar tool
         run: python3 godot-client/tests/test_build_vram_textures.py -v
+      - name: Validate the packager's VRAM sidecar stage and check
+        run: python3 godot-client/tests/test_package_vram.py -v
       - name: Validate the continent cartography
         run: python3 -m pytest godot-client/tests/test_cartography.py -q
       - name: Boat portal hover and click fixtures
