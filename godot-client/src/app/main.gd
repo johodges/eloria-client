@@ -11,6 +11,8 @@ var lantern_scene: Node3D
 
 const AppearanceChoices = preload("res://src/actors/appearance_choices.gd")
 const OldcraftEntryStyleScript = preload("res://src/ui/oldcraft_entry_style.gd")
+const CreationArchetypes = preload("res://src/ui/creation_archetypes.gd")
+const CreationClassIcons = preload("res://src/ui/creation_class_icons.gd")
 
 @onready var login_panel: Control = %LoginPanel
 @onready var game_view: Control = %GameView
@@ -22,6 +24,12 @@ const OldcraftEntryStyleScript = preload("res://src/ui/oldcraft_entry_style.gd")
 @onready var create_race: OptionButton = %CreateRace
 @onready var create_gender: OptionButton = %CreateGender
 @onready var create_status: Label = %CreateStatus
+@onready var creation_class_title: Label = %ClassTitle
+@onready var creation_class_tagline: Label = %ClassTagline
+@onready var creation_class_description: Label = %ClassDescription
+@onready var creation_class_page: Label = %ClassPage
+@onready var creation_class_starting_items: Label = %ClassStartingItems
+@onready var show_creation_class_gear: CheckBox = %ShowClassGear
 @onready var preview_container: SubViewportContainer = %CharacterPreview
 @onready var preview_viewport: SubViewport = $CreationPanel/Columns/CharacterPreview/Viewport
 @onready var preview_root: Node3D = %PreviewRoot
@@ -358,6 +366,8 @@ var models: Dictionary = {}
 var actor_type_models: Dictionary = {}
 var npc_looks: Dictionary = {}
 var creation_options: Array = []
+var selected_creation_class := 0
+var creation_class_gear_visible := true
 var animation_config: Dictionary = {}
 var animation_configs: Dictionary = {}
 var map_registry: Dictionary = {}
@@ -1172,6 +1182,7 @@ func _ready() -> void:
 	_populate_creation_races()
 	_populate_creation_sexes()
 	_populate_creation_choices()
+	_configure_creation_classes()
 	_update_preview_camera()
 	_apply_eloria_art()
 	_configure_banner_menu()
@@ -1568,7 +1579,8 @@ func _on_create_pressed() -> void:
 	create_status.text = "Creating character…"
 	var appearance: Dictionary = _creation_appearance()
 	appearance["actor_type"] = create_gender.get_selected_id()
-	var error := Network.create_character(username, password, appearance)
+	var error := Network.create_character(username, password, appearance,
+		CreationArchetypes.id_at(selected_creation_class))
 	if error != OK:
 		create_status.text = "Creation request failed: " + error_string(error)
 		_clear_pending_creation()
@@ -1609,6 +1621,12 @@ func _refresh_creation_preview() -> void:
 	var dto := _presentation_dto({"actor_id": 0, "x": 0, "y": 0, "rotation": 0,
 		"actor_type": actor_type, "kind": 1, "name": "",
 		"appearance": appearance})
+	# A class is authoritative for starting inventory but remains independent of
+	# race and sex.  Its creation-screen equipment is a representative preview;
+	# the same selected class id is sent separately from the eight appearance
+	# bytes when the player creates the character.
+	dto["equipment_visuals"] = (_creation_class_loadout()
+		if creation_class_gear_visible else {})
 	var model_id := _model_for_actor(dto)
 	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
 	var errors := preview_actor.configure(dto,
@@ -1620,7 +1638,8 @@ func _refresh_creation_preview() -> void:
 	if not errors.is_empty():
 		create_status.text = "Preview warnings: " + "; ".join(errors)
 	else:
-		create_status.text = "Drag the preview to rotate; use the mouse wheel to zoom."
+		create_status.text = "%s starting items will be granted for any race. Drag to rotate." % \
+			creation_class_title.text
 
 func _populate_creation_races() -> void:
 	var races: Dictionary = {}
@@ -1666,6 +1685,65 @@ func _populate_creation_choices(reset_skin := false) -> void:
 	AppearanceChoices.populate(%CreateShirt, AppearanceChoices.options("wardrobe", culture, AppearanceVariants.PART_SHIRT))
 	AppearanceChoices.populate(%CreatePants, AppearanceChoices.options("wardrobe", culture, AppearanceVariants.PART_PANTS))
 	AppearanceChoices.populate(%CreateBoots, AppearanceChoices.options("wardrobe", culture, AppearanceVariants.PART_BOOTS))
+
+func _creation_class_buttons() -> Array[Button]:
+	var buttons: Array[Button] = [
+		%ClassChoice0, %ClassChoice1, %ClassChoice2, %ClassChoice3]
+	return buttons
+
+func _configure_creation_classes() -> void:
+	show_creation_class_gear.set_pressed_no_signal(creation_class_gear_visible)
+	var buttons := _creation_class_buttons()
+	for index: int in range(buttons.size()):
+		var entry: Dictionary = CreationArchetypes.at(index)
+		var button: Button = buttons[index]
+		button.tooltip_text = "%s — %s" % [
+			str(entry.get("label", "Class")), str(entry.get("tagline", ""))]
+		button.icon = CreationClassIcons.icon_for(str(entry.get("key", "")))
+		button.text = ("" if button.icon != null
+			else str(entry.get("label", "?")).left(1))
+	_update_creation_class_ui()
+
+func _update_creation_class_ui() -> void:
+	selected_creation_class = posmod(selected_creation_class,
+		CreationArchetypes.count())
+	var entry: Dictionary = CreationArchetypes.at(selected_creation_class)
+	creation_class_title.text = str(entry.get("label", "Adventurer"))
+	creation_class_tagline.text = str(entry.get("tagline", ""))
+	creation_class_description.text = str(entry.get("description", ""))
+	creation_class_starting_items.text = str(entry.get("starting_items", ""))
+	creation_class_page.text = "%d / %d" % [
+		selected_creation_class + 1, CreationArchetypes.count()]
+	var buttons := _creation_class_buttons()
+	for index: int in range(buttons.size()):
+		buttons[index].set_pressed_no_signal(index == selected_creation_class)
+
+func _creation_class_loadout() -> Dictionary:
+	return CreationArchetypes.loadout_at(selected_creation_class)
+
+func _on_creation_class_chosen(index: int) -> void:
+	_set_creation_class(index)
+
+func _on_creation_class_rotated(direction: int) -> void:
+	_set_creation_class(selected_creation_class + direction)
+
+func _set_creation_class(index: int) -> void:
+	selected_creation_class = posmod(index, CreationArchetypes.count())
+	_update_creation_class_ui()
+	if is_instance_valid(preview_actor):
+		preview_actor.apply_equipment_visuals(_creation_class_loadout()
+			if creation_class_gear_visible else {})
+		_frame_preview_actor()
+	create_status.text = "%s selected. These starting items apply to every race." % \
+		creation_class_title.text
+
+func _on_creation_class_gear_toggled(enabled: bool) -> void:
+	creation_class_gear_visible = enabled
+	if is_instance_valid(preview_actor):
+		preview_actor.apply_equipment_visuals(_creation_class_loadout() if enabled else {})
+		_frame_preview_actor()
+	create_status.text = ("Class gear preview shown."
+		if enabled else "Class gear hidden so you can inspect wardrobe colours.")
 
 func _creation_appearance() -> Dictionary:
 	return {
@@ -11512,6 +11590,8 @@ func _cursor_context_at(viewport_position: Vector2) -> Dictionary:
 
 func _apply_eloria_art() -> void:
 	login_background.texture = _external_texture("res://assets/ui/eloria_login_background.jpg")
+	%CreationBackdrop.texture = _external_texture(
+		"res://assets/ui/eloria_character_creation_background.jpg")
 	var logo_texture: Texture2D = _external_texture("res://assets/ui/eloria_logo_master.png")
 	login_logo.texture = logo_texture
 	# The master leaves 76 transparent pixels down each side of its 512-wide
@@ -11557,6 +11637,10 @@ func _apply_eloria_art() -> void:
 	if hud_atlas != null:
 		%ClockFace.texture = _atlas_region(hud_atlas, Rect2(0, 128, 64, 64))
 		%CompassFace.texture = _atlas_region(hud_atlas, Rect2(32, 192, 64, 64))
+	# Refresh once after imports are available. The helper caches both the one
+	# shared sheet and its four AtlasTextures, so selecting a class allocates no
+	# textures and performs no image decoding.
+	_configure_creation_classes()
 
 static func _atlas_region(atlas: Texture2D, region: Rect2) -> AtlasTexture:
 	var texture: AtlasTexture = AtlasTexture.new()

@@ -2874,33 +2874,168 @@ vertical_alignment = 2
 [node name="CreationPanel" type="PanelContainer" parent="." unique_id=1808525772]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -460.0
-offset_top = -310.0
-offset_right = 460.0
-offset_bottom = 310.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="CreationBackdrop" type="TextureRect" parent="CreationPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="CreationShade" type="ColorRect" parent="CreationPanel"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.015, 0.02, 0.035, 0.22)
+
 [node name="Columns" type="HBoxContainer" parent="CreationPanel" unique_id=1052155099]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 14
+
+[node name="ClassRail" type="PanelContainer" parent="CreationPanel/Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(178, 0)
+layout_mode = 2
+
+[node name="ClassContent" type="VBoxContainer" parent="CreationPanel/Columns/ClassRail"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ClassHeader" type="Label" parent="CreationPanel/Columns/ClassRail/ClassContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "CHOOSE A CLASS"
+horizontal_alignment = 1
+
+[node name="ClassButtons" type="GridContainer" parent="CreationPanel/Columns/ClassRail/ClassContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 2
+
+[node name="ClassChoice0" type="Button" parent="CreationPanel/Columns/ClassRail/ClassContent/ClassButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(76, 76)
+layout_mode = 2
+toggle_mode = true
+expand_icon = true
+icon_max_width = 62
+
+[node name="ClassChoice1" type="Button" parent="CreationPanel/Columns/ClassRail/ClassContent/ClassButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(76, 76)
+layout_mode = 2
+toggle_mode = true
+expand_icon = true
+icon_max_width = 62
+
+[node name="ClassChoice2" type="Button" parent="CreationPanel/Columns/ClassRail/ClassContent/ClassButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(76, 76)
+layout_mode = 2
+toggle_mode = true
+expand_icon = true
+icon_max_width = 62
+
+[node name="ClassChoice3" type="Button" parent="CreationPanel/Columns/ClassRail/ClassContent/ClassButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(76, 76)
+layout_mode = 2
+toggle_mode = true
+expand_icon = true
+icon_max_width = 62
+
+[node name="ClassTitle" type="Label" parent="CreationPanel/Columns/ClassRail/ClassContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Vanguard"
+horizontal_alignment = 1
+
+[node name="ClassTagline" type="Label" parent="CreationPanel/Columns/ClassRail/ClassContent"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Hold the line"
+horizontal_alignment = 1
+
+[node name="ClassDescription" type="Label" parent="CreationPanel/Columns/ClassRail/ClassContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+text = "A steady front-line adventurer."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ClassNav" type="HBoxContainer" parent="CreationPanel/Columns/ClassRail/ClassContent"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ClassPrevious" type="Button" parent="CreationPanel/Columns/ClassRail/ClassContent/ClassNav"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "‹"
+tooltip_text = "Previous class"
+
+[node name="ClassPage" type="Label" parent="CreationPanel/Columns/ClassRail/ClassContent/ClassNav"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1 / 4"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ClassNext" type="Button" parent="CreationPanel/Columns/ClassRail/ClassContent/ClassNav"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "›"
+tooltip_text = "Next class"
+
+[node name="ShowClassGear" type="CheckBox" parent="CreationPanel/Columns/ClassRail/ClassContent"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Preview class gear"
+
+[node name="StartingHeader" type="Label" parent="CreationPanel/Columns/ClassRail/ClassContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "STARTING ITEMS"
+
+[node name="ClassStartingItems" type="Label" parent="CreationPanel/Columns/ClassRail/ClassContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "Sword, shield and guard supplies"
+autowrap_mode = 2
+
+[node name="ProgressionHint" type="Label" parent="CreationPanel/Columns/ClassRail/ClassContent"]
+layout_mode = 2
+size_flags_vertical = 10
+text = "Your class grants starting items. Every race keeps access to Eloria's open-ended skills."
+vertical_alignment = 2
+autowrap_mode = 2
 
 [node name="CharacterPreview" type="SubViewportContainer" parent="CreationPanel/Columns" unique_id=879978873]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(420, 520)
+custom_minimum_size = Vector2(420, 620)
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 tooltip_text = "Drag to rotate; mouse wheel to zoom"
 stretch = true
 
 [node name="Viewport" type="SubViewport" parent="CreationPanel/Columns/CharacterPreview" unique_id=1568543517]
 own_world_3d = true
 handle_input_locally = false
-size = Vector2i(420, 620)
+size = Vector2i(560, 680)
+transparent_bg = true
 render_target_update_mode = 4
 
 [node name="PreviewRoot" type="Node3D" parent="CreationPanel/Columns/CharacterPreview/Viewport" unique_id=1055949710]
@@ -2938,158 +3073,164 @@ rotation_degrees = Vector3(28, 205, 0)
 light_color = Color(1, 1, 1, 1)
 light_energy = 0.2
 
-[node name="Form" type="VBoxContainer" parent="CreationPanel/Columns" unique_id=381403297]
-custom_minimum_size = Vector2(440, 0)
+[node name="FormPanel" type="PanelContainer" parent="CreationPanel/Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(430, 0)
+layout_mode = 2
+
+[node name="Form" type="VBoxContainer" parent="CreationPanel/Columns/FormPanel" unique_id=381403297]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Title" type="Label" parent="CreationPanel/Columns/Form" unique_id=1115436561]
+[node name="Title" type="Label" parent="CreationPanel/Columns/FormPanel/Form" unique_id=1115436561]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "CREATE YOUR ELORIA CHARACTER"
 horizontal_alignment = 1
 
-[node name="CreateName" type="LineEdit" parent="CreationPanel/Columns/Form" unique_id=1963432485]
+[node name="CreateName" type="LineEdit" parent="CreationPanel/Columns/FormPanel/Form" unique_id=1963432485]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Character name (3–20 characters)"
 max_length = 20
 
-[node name="CreatePassword" type="LineEdit" parent="CreationPanel/Columns/Form" unique_id=623348386]
+[node name="CreatePassword" type="LineEdit" parent="CreationPanel/Columns/FormPanel/Form" unique_id=623348386]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Password (minimum 4 characters)"
 max_length = 72
 secret = true
 
-[node name="CreateConfirm" type="LineEdit" parent="CreationPanel/Columns/Form" unique_id=1665344537]
+[node name="CreateConfirm" type="LineEdit" parent="CreationPanel/Columns/FormPanel/Form" unique_id=1665344537]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Confirm password"
 max_length = 72
 secret = true
 
-[node name="IdentityRow" type="HBoxContainer" parent="CreationPanel/Columns/Form"]
+[node name="IdentityRow" type="HBoxContainer" parent="CreationPanel/Columns/FormPanel/Form"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="RaceColumn" type="VBoxContainer" parent="CreationPanel/Columns/Form/IdentityRow"]
+[node name="RaceColumn" type="VBoxContainer" parent="CreationPanel/Columns/FormPanel/Form/IdentityRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="RaceLabel" type="Label" parent="CreationPanel/Columns/Form/IdentityRow/RaceColumn"]
+[node name="RaceLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/IdentityRow/RaceColumn"]
 layout_mode = 2
 text = "Race"
 
-[node name="CreateRace" type="OptionButton" parent="CreationPanel/Columns/Form/IdentityRow/RaceColumn"]
+[node name="CreateRace" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/IdentityRow/RaceColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
 
-[node name="SexColumn" type="VBoxContainer" parent="CreationPanel/Columns/Form/IdentityRow"]
+[node name="SexColumn" type="VBoxContainer" parent="CreationPanel/Columns/FormPanel/Form/IdentityRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SexLabel" type="Label" parent="CreationPanel/Columns/Form/IdentityRow/SexColumn" unique_id=1136646209]
+[node name="SexLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/IdentityRow/SexColumn" unique_id=1136646209]
 layout_mode = 2
 text = "Sex"
 
-[node name="CreateGender" type="OptionButton" parent="CreationPanel/Columns/Form/IdentityRow/SexColumn" unique_id=49062652]
+[node name="CreateGender" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/IdentityRow/SexColumn" unique_id=49062652]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
 
-[node name="AppearanceGrid" type="GridContainer" parent="CreationPanel/Columns/Form" unique_id=1087399755]
+[node name="AppearanceGrid" type="GridContainer" parent="CreationPanel/Columns/FormPanel/Form" unique_id=1087399755]
 layout_mode = 2
 columns = 4
 
-[node name="SkinLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=391669437]
+[node name="SkinLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=391669437]
 layout_mode = 2
 text = "Skin"
 
-[node name="CreateSkin" type="OptionButton" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247239]
+[node name="CreateSkin" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247239]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
 
-[node name="HairLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=265946802]
+[node name="HairLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=265946802]
 layout_mode = 2
 text = "Hair style"
 
-[node name="CreateHair" type="OptionButton" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=742634566]
+[node name="CreateHair" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=742634566]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
 
-[node name="EyesLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=2141837957]
+[node name="EyesLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=2141837957]
 layout_mode = 2
 text = "Eyes"
 
-[node name="CreateEyes" type="OptionButton" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1416915646]
+[node name="CreateEyes" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1416915646]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
 
-[node name="HairColorLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1865317685]
+[node name="HairColorLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1865317685]
 layout_mode = 2
 text = "Hair color"
 
-[node name="CreateHairColor" type="OptionButton" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1621312374]
+[node name="CreateHairColor" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1621312374]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
 
-[node name="ShirtLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247301]
+[node name="ShirtLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247301]
 layout_mode = 2
 text = "Shirt"
 
-[node name="CreateShirt" type="OptionButton" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247302]
+[node name="CreateShirt" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247302]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
 
-[node name="PantsLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247303]
+[node name="PantsLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247303]
 layout_mode = 2
 text = "Trousers"
 
-[node name="CreatePants" type="OptionButton" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247304]
+[node name="CreatePants" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247304]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
 
-[node name="BootsLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247305]
+[node name="BootsLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247305]
 layout_mode = 2
 text = "Boots"
 
-[node name="CreateBoots" type="OptionButton" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247306]
+[node name="CreateBoots" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247306]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
 
-[node name="CreateStatus" type="Label" parent="CreationPanel/Columns/Form" unique_id=147417984]
+[node name="CreateStatus" type="Label" parent="CreationPanel/Columns/FormPanel/Form" unique_id=147417984]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 10
 text = "Choose appearance, then create your character."
+vertical_alignment = 2
 autowrap_mode = 2
 
-[node name="Actions" type="HBoxContainer" parent="CreationPanel/Columns/Form" unique_id=956235979]
+[node name="Actions" type="HBoxContainer" parent="CreationPanel/Columns/FormPanel/Form" unique_id=956235979]
 layout_mode = 2
 
-[node name="Back" type="Button" parent="CreationPanel/Columns/Form/Actions" unique_id=1682763350]
+[node name="Back" type="Button" parent="CreationPanel/Columns/FormPanel/Form/Actions" unique_id=1682763350]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Back"
 
-[node name="Create" type="Button" parent="CreationPanel/Columns/Form/Actions" unique_id=438089216]
+[node name="Create" type="Button" parent="CreationPanel/Columns/FormPanel/Form/Actions" unique_id=438089216]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Create Character"
@@ -3238,17 +3379,24 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagDrop" to="." method="_on_ground_bag_drop_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/GroundBagHeader/GroundBagClose" to="." method="_on_ground_bag_close_pressed"]
 [connection signal="gui_input" from="CreationPanel/Columns/CharacterPreview" to="." method="_on_character_preview_gui_input"]
-[connection signal="item_selected" from="CreationPanel/Columns/Form/IdentityRow/RaceColumn/CreateRace" to="." method="_on_create_race_item_selected"]
-[connection signal="item_selected" from="CreationPanel/Columns/Form/IdentityRow/SexColumn/CreateGender" to="." method="_on_create_gender_item_selected"]
-[connection signal="item_selected" from="CreationPanel/Columns/Form/AppearanceGrid/CreateSkin" to="." method="_on_create_appearance_changed"]
-[connection signal="item_selected" from="CreationPanel/Columns/Form/AppearanceGrid/CreateHair" to="." method="_on_create_appearance_changed"]
-[connection signal="item_selected" from="CreationPanel/Columns/Form/AppearanceGrid/CreateEyes" to="." method="_on_create_appearance_changed"]
-[connection signal="item_selected" from="CreationPanel/Columns/Form/AppearanceGrid/CreateHairColor" to="." method="_on_create_appearance_changed"]
-[connection signal="item_selected" from="CreationPanel/Columns/Form/AppearanceGrid/CreateShirt" to="." method="_on_create_appearance_changed"]
-[connection signal="item_selected" from="CreationPanel/Columns/Form/AppearanceGrid/CreatePants" to="." method="_on_create_appearance_changed"]
-[connection signal="item_selected" from="CreationPanel/Columns/Form/AppearanceGrid/CreateBoots" to="." method="_on_create_appearance_changed"]
-[connection signal="pressed" from="CreationPanel/Columns/Form/Actions/Back" to="." method="_on_creation_back_pressed"]
-[connection signal="pressed" from="CreationPanel/Columns/Form/Actions/Create" to="." method="_on_create_pressed"]
+[connection signal="pressed" from="CreationPanel/Columns/ClassRail/ClassContent/ClassButtons/ClassChoice0" to="." method="_on_creation_class_chosen" binds= [0]]
+[connection signal="pressed" from="CreationPanel/Columns/ClassRail/ClassContent/ClassButtons/ClassChoice1" to="." method="_on_creation_class_chosen" binds= [1]]
+[connection signal="pressed" from="CreationPanel/Columns/ClassRail/ClassContent/ClassButtons/ClassChoice2" to="." method="_on_creation_class_chosen" binds= [2]]
+[connection signal="pressed" from="CreationPanel/Columns/ClassRail/ClassContent/ClassButtons/ClassChoice3" to="." method="_on_creation_class_chosen" binds= [3]]
+[connection signal="pressed" from="CreationPanel/Columns/ClassRail/ClassContent/ClassNav/ClassPrevious" to="." method="_on_creation_class_rotated" binds= [-1]]
+[connection signal="pressed" from="CreationPanel/Columns/ClassRail/ClassContent/ClassNav/ClassNext" to="." method="_on_creation_class_rotated" binds= [1]]
+[connection signal="toggled" from="CreationPanel/Columns/ClassRail/ClassContent/ShowClassGear" to="." method="_on_creation_class_gear_toggled"]
+[connection signal="item_selected" from="CreationPanel/Columns/FormPanel/Form/IdentityRow/RaceColumn/CreateRace" to="." method="_on_create_race_item_selected"]
+[connection signal="item_selected" from="CreationPanel/Columns/FormPanel/Form/IdentityRow/SexColumn/CreateGender" to="." method="_on_create_gender_item_selected"]
+[connection signal="item_selected" from="CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateSkin" to="." method="_on_create_appearance_changed"]
+[connection signal="item_selected" from="CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateHair" to="." method="_on_create_appearance_changed"]
+[connection signal="item_selected" from="CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateEyes" to="." method="_on_create_appearance_changed"]
+[connection signal="item_selected" from="CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateHairColor" to="." method="_on_create_appearance_changed"]
+[connection signal="item_selected" from="CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateShirt" to="." method="_on_create_appearance_changed"]
+[connection signal="item_selected" from="CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreatePants" to="." method="_on_create_appearance_changed"]
+[connection signal="item_selected" from="CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateBoots" to="." method="_on_create_appearance_changed"]
+[connection signal="pressed" from="CreationPanel/Columns/FormPanel/Form/Actions/Back" to="." method="_on_creation_back_pressed"]
+[connection signal="pressed" from="CreationPanel/Columns/FormPanel/Form/Actions/Create" to="." method="_on_create_pressed"]
 [connection signal="text_submitted" from="LoginPanel/Content/Password" to="." method="_on_login_submitted"]
 [connection signal="pressed" from="LoginPanel/Content/Connect" to="." method="_on_connect_pressed"]
 [connection signal="pressed" from="LoginPanel/Content/Login" to="." method="_on_login_pressed"]

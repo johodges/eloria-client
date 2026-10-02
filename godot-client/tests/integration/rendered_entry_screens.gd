@@ -2,6 +2,7 @@ extends SceneTree
 ## Captures the production login and character-creation layouts for visual QA.
 
 const SCREEN_SIZE := Vector2i(1280, 720)
+const CreationClassIcons := preload("res://src/ui/creation_class_icons.gd")
 
 var failures := 0
 var artifact_directory := ""
@@ -46,6 +47,15 @@ func _run() -> void:
 	var logo := main.get_node("%LoginLogo") as TextureRect
 	if logo.texture == null:
 		logo.texture = _direct_texture("res://assets/ui/eloria_logo_master.png")
+	var creation_background := main.get_node("%CreationBackdrop") as TextureRect
+	if creation_background.texture == null:
+		creation_background.texture = _direct_texture(
+			"res://assets/ui/eloria_character_creation_background.jpg")
+	var class_sheet := _direct_texture(
+		"res://assets/ui/eloria_creation_class_icons.png")
+	if (main.get_node("%ClassChoice0") as Button).icon == null and class_sheet != null:
+		CreationClassIcons.set_sheet_override(class_sheet)
+		main.call("_configure_creation_classes")
 	(main.get_node("%GameView") as Control).hide()
 	(main.get_node("%CreationPanel") as Control).hide()
 	(main.get_node("%LoginPanel") as Control).show()
@@ -74,8 +84,13 @@ func _run() -> void:
 	for unused: int in range(12):
 		await process_frame
 	await _capture("character-creation-screen.png")
+	main.call("_set_creation_class", 2)
+	for unused: int in range(12):
+		await process_frame
+	await _capture("character-creation-arcanist.png")
 	main.queue_free()
 	await process_frame
+	CreationClassIcons.set_sheet_override(null)
 	NativeAnimationImporter.clear()
 	print("rendered entry screens: ", "PASS" if failures == 0 else "FAIL")
 	quit(failures)

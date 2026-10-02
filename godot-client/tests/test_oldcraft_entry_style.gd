@@ -31,6 +31,19 @@ func _run() -> void:
 		"login uses a heavy stone frame")
 	_expect(creation_frame != null and creation_frame.border_color.is_equal_approx(
 		EntryStyle.GOLD_DARK), "creation uses the same forged frame")
+	var rail_frame := (main.get_node("%ClassRail") as PanelContainer).get_theme_stylebox(
+		"panel") as StyleBoxFlat
+	_expect(rail_frame != null and rail_frame.border_width_left == 3,
+		"creation class icons sit in a compact stone rail")
+	var selected_class_frame := (main.get_node("%ClassChoice0") as Button).get_theme_stylebox(
+		"pressed") as StyleBoxFlat
+	_expect(selected_class_frame != null and selected_class_frame.border_width_left == 4 and
+		selected_class_frame.border_color.is_equal_approx(EntryStyle.GOLD_BRIGHT),
+		"selected class gets an unmistakable bright brass frame")
+	var form_frame := (main.get_node("%FormPanel") as PanelContainer).get_theme_stylebox(
+		"panel") as StyleBoxFlat
+	_expect(form_frame != null and form_frame.bg_color.is_equal_approx(
+		Color(EntryStyle.PARCHMENT, 0.965)), "creation form uses parchment chrome")
 	var login_button := main.get_node("%Login") as Button
 	var normal := login_button.get_theme_stylebox("normal") as StyleBoxFlat
 	_expect(normal != null and normal.bg_color.r > normal.bg_color.g * 4.0,
@@ -46,7 +59,13 @@ func _run() -> void:
 		"CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot/PreviewEnvironment") \
 		as WorldEnvironment).environment
 	_expect(environment.background_color.is_equal_approx(EntryStyle.PREVIEW_SKY),
-		"creation preview uses the moonlit stage palette")
+		"creation preview keeps transparent moonlit ambient lighting")
+	_expect((main.get_node(
+		"CreationPanel/Columns/CharacterPreview/Viewport") as SubViewport).transparent_bg,
+		"live character is composited over the painted stage")
+	_expect(main.get_node_or_null("%CreationBackdrop") is TextureRect and
+		main.get_node_or_null("%ClassChoice3") is Button,
+		"creation exposes a scenic backdrop and four-class icon rail")
 	var stage := main.get_node_or_null("%PreviewRoot/OldcraftStage")
 	_expect(stage != null and stage.get_child_count() == 2,
 		"creation preview has a lightweight two-piece plinth")

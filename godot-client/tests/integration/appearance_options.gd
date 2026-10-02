@@ -48,7 +48,7 @@ func run() -> void:
 			unique[hair] = true
 			var look := {"hair": hair, "head": 0, "skin": 6, "eyes": 4, "actor_type": actor_types[(style * 20 + color) % 16]}
 			var packet := EloriaProtocol.create_character("Hair%03d" % (style * 20 + color), "secret", look)
-			var tail := packet.slice(packet.size() - 8)
+			var tail := packet.slice(packet.size() - 9)
 			var decoded := AppearanceVariants.hair_from_wire(tail[1], tail[6])
 			expect(AppearanceVariants.hair_style(decoded) == style and AppearanceVariants.hair_color_index(decoded) == color, "creation bytes preserve style and color")
 			fixtures.append({"style": style, "color": color, "packet": packet.hex_encode()})

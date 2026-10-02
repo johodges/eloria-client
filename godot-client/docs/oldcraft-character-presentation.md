@@ -70,8 +70,8 @@ adding more runtime modifiers:
 
 ## Entry-screen contract
 
-Login and character creation keep Eloria's identity and existing background,
-but use the reference's visual hierarchy:
+Login and character creation keep Eloria's identity but use the reference's
+visual hierarchy:
 
 - dark carved-stone framing (`#1E1E22` / `#333338`),
 - brass edging (`#F4C542` / `#B88A3B`),
@@ -80,8 +80,41 @@ but use the reference's visual hierarchy:
 - a cool moonlit preview with a warm key, teal rim, and stone/brass pedestal.
 
 The login remains lightweight procedural UI over Eloria's existing painted
-world image. Character creation keeps one live 3D actor and a procedural stage;
-it does not add extra animated scenery or texture residency to gameplay.
+world image. Character creation uses one original 1920×1080 painted stage, one
+512×128 four-icon atlas, one live 3D actor, a stone class rail, and a parchment
+form. The SubViewport has a transparent background so the actor reads as part
+of the painting instead of inside a black box. No extra actors or animated
+scenery are created, and the existing viewport gate disables preview rendering
+as soon as character creation is hidden. The two UI textures are not referenced
+by gameplay scenes.
+
+## Creation class and starter-item contract
+
+Creation offers four open-ended starting callings: Vanguard (`0`), Ranger
+(`1`), Arcanist (`2`), and Warden (`3`). The calling is independent of the
+selected race and sex. It grants an initial inventory but never restricts
+attributes, skills, equipment, or later progression.
+
+The server-owned starter grants are intentionally light enough to leave room
+for tutorial rewards: Vanguard gets a militia sword, round shield and guard
+cape; Ranger gets an Amberwood longbow, 20 arrows and a Bonehook jerkin;
+Arcanist gets an arcane focus wand, Warded tabard and three mana potions; and
+Warden gets a fighting quarterstaff, Bark jerkin and leaf cape. The fuller
+head-to-toe looks shown in the live preview communicate class silhouette only;
+the adjacent text names the items actually granted.
+
+The legacy `CREATE_CHAR` payload keeps its original eight appearance bytes in
+the original order. Eloria appends one `class_id` byte after them. Updated
+servers validate that byte against their own immutable starter-kit table and
+select inventory using only the class id; `actor_type` remains a separate
+visual choice. A missing ninth byte defaults to Vanguard, which keeps old
+clients valid, and legacy servers ignore the trailing byte.
+
+The client class table owns only presentation: label, description, icon key,
+and representative equipment visual ids. The server owns the actual item
+names and quantities. Switching race rebuilds the same selected loadout on the
+new body. Players can temporarily hide class gear to inspect hair and wardrobe
+colours without changing the selected class or the items creation will grant.
 
 ## Asset-generation decision
 

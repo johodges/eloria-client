@@ -32,6 +32,32 @@ func run() -> void:
 	expect(race.item_count == 8 and sex.item_count == 2, "eight races and two separate sex choices")
 	expect(race.get_item_text(race.selected) == "Human" and sex.get_selected_id() == 0, "Human replaces Luminous and retains the initial female actor")
 	expect(skin.get_selected_id() == 1, "Human retains its pale beige default")
+	var class_buttons: Array[Button] = [main.get_node("%ClassChoice0"),
+		main.get_node("%ClassChoice1"), main.get_node("%ClassChoice2"),
+		main.get_node("%ClassChoice3")]
+	expect(class_buttons.size() == 4 and (main.get_node("%ClassTitle") as Label).text ==
+		"Vanguard", "four illustrated classes default to Vanguard")
+	main.call("_refresh_creation_preview")
+	main.call("_set_creation_class", -1)
+	expect(int(main.get("selected_creation_class")) == 3 and
+		(main.get_node("%ClassTitle") as Label).text == "Warden",
+		"class carousel wraps backwards")
+	main.call("_on_creation_class_rotated", 1)
+	expect(int(main.get("selected_creation_class")) == 0,
+		"class carousel wraps forwards")
+	main.call("_set_creation_class", 2)
+	var class_loadout: Dictionary = main.call("_creation_class_loadout")
+	var class_actor := main.get("preview_actor") as ReplicatedActor3D
+	expect((class_actor.equipment_diagnostics().visuals as Dictionary) == class_loadout,
+		"selecting Arcanist updates the live equipment preview")
+	(main.get_node("%ShowClassGear") as CheckBox).set_pressed_no_signal(false)
+	main.call("_on_creation_class_gear_toggled", false)
+	expect((class_actor.equipment_diagnostics().visuals as Dictionary).is_empty(),
+		"class gear can be hidden while editing the base wardrobe")
+	(main.get_node("%ShowClassGear") as CheckBox).set_pressed_no_signal(true)
+	main.call("_on_creation_class_gear_toggled", true)
+	expect((class_actor.equipment_diagnostics().visuals as Dictionary) == class_loadout,
+		"class gear toggle restores the selected loadout")
 	var human_index := race.selected
 	var models: Dictionary = main.get("models")
 	var options: Array = main.get("creation_options")
@@ -40,6 +66,10 @@ func run() -> void:
 	for race_index in range(race.item_count):
 		choose(race, race_index)
 		var culture := str(race.get_selected_metadata())
+		expect(int(main.get("selected_creation_class")) == 2 and
+			((main.get("preview_actor") as ReplicatedActor3D).equipment_diagnostics().visuals
+			as Dictionary) == class_loadout,
+			"class selection and starting-kit preview survive race switch: " + culture)
 		expect(str(sex.get_selected_metadata()) == previous_sex, "changing race preserves sex: " + culture)
 		var expected_skin := 1 if culture == "luminous" else 0
 		expect(skin.get_selected_id() == expected_skin, "race switch selects its default skin: " + culture)
@@ -57,8 +87,13 @@ func run() -> void:
 			var look: Dictionary = main.call("_creation_appearance")
 			look["actor_type"] = actor_type
 			var packet := EloriaProtocol.create_character("Preview", "secret", look)
-			var tail := packet.slice(packet.size() - 8)
+			var tail := packet.slice(packet.size() - 9)
 			expect(tail[0] == expected_skin and tail[5] == actor_type, "creation bytes preserve race, sex and default skin")
+			var class_packet := EloriaProtocol.create_character(
+				"Preview", "secret", look, int(main.get("selected_creation_class")))
+			var class_tail := class_packet.slice(class_packet.size() - 9)
+			expect(class_tail.slice(0, 8) == tail.slice(0, 8) and class_tail[8] == 2,
+				"class is an independent ninth byte and never replaces race appearance")
 			var materials: Dictionary = actor.get("_skin_materials")
 			expect(not materials.is_empty(), "preview has real skin materials")
 			for material: ShaderMaterial in materials.values():
@@ -92,6 +127,7 @@ func run() -> void:
 		var sex_rect := sex.get_global_rect()
 		expect(is_equal_approx(race_rect.position.y, sex_rect.position.y) and race_rect.end.x <= sex_rect.position.x, "race and sex boxes sit side by side")
 		expect(main.get_global_rect().encloses(race_rect) and main.get_global_rect().encloses(sex_rect), "both selectors fit the window")
+	main.call("_set_creation_class", 0)
 	await capture("character-creation-ui")
 	main.queue_free()
 	await process_frame

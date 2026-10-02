@@ -5,8 +5,9 @@ extends RefCounted
 ## The screens keep Eloria's logo, world painting, controls and navigation.
 ## This helper supplies the visual language: dark carved-stone panels, warm
 ## brass edges, burgundy action buttons, inset fields and a moonlit preview
-## stage.  Everything is generated from built-in UI/mesh resources, so the
-## login path adds no downloaded art, texture memory or gameplay cost.
+## stage.  Character creation adds one shared painted backdrop and one compact
+## class-icon atlas; both exist only on the entry screen and add no gameplay
+## or on-screen crowd cost.
 
 ## Sampled from the shipped reference UI rather than eyeballed from a concept:
 ## brass #F4C542/#B88A3B, carved stone #1E1E22/#333338, parchment
@@ -23,7 +24,7 @@ const FIELD := Color(0.025, 0.026, 0.032, 0.96)
 const BURGUNDY := Color(0.557, 0.106, 0.071, 0.98)
 const BURGUNDY_HOVER := Color(0.722, 0.169, 0.102, 1.0)
 const BURGUNDY_PRESSED := Color(0.31, 0.045, 0.028, 1.0)
-const PREVIEW_SKY := Color(0.018, 0.035, 0.075, 1.0)
+const PREVIEW_SKY := Color(0.018, 0.035, 0.075, 0.0)
 const STYLE_META := &"eloria_oldcraft_entry_style"
 
 
@@ -45,6 +46,7 @@ static func apply(main: Control) -> void:
 	_style_panel(main.get_node_or_null("%CreationPanel") as PanelContainer, true)
 	_style_controls(main.get_node_or_null("%LoginPanel") as Control)
 	_style_controls(main.get_node_or_null("%CreationPanel") as Control)
+	_style_creation_layout(main)
 	_style_titles(main)
 	_style_preview(main)
 	main.set_meta(STYLE_META, true)
@@ -111,6 +113,53 @@ static func _style_controls(root: Control) -> void:
 		label.add_theme_constant_override("outline_size", 2)
 
 
+static func _style_creation_layout(main: Control) -> void:
+	var rail := main.get_node_or_null("%ClassRail") as PanelContainer
+	if rail != null:
+		var rail_box := _flat_box(Color(0.055, 0.06, 0.075, 0.94),
+			GOLD_DARK, 3, 4, 10.0)
+		rail_box.shadow_color = Color(0.0, 0.0, 0.0, 0.72)
+		rail_box.shadow_size = 8
+		rail.add_theme_stylebox_override("panel", rail_box)
+	# Toggle buttons keep their pressed style after selection. A broad bright
+	# brass edge makes the current class legible even when two icon silhouettes
+	# have similar values or the player is using a dim display.
+	var class_normal := _flat_box(BURGUNDY, GOLD_DARK, 2, 4, 5.0)
+	var class_hover := _flat_box(BURGUNDY_HOVER, GOLD_BRIGHT, 3, 4, 5.0)
+	var class_selected := _flat_box(Color(0.36, 0.055, 0.03, 1.0),
+		GOLD_BRIGHT, 4, 4, 5.0)
+	for node_name: StringName in [&"ClassChoice0", &"ClassChoice1",
+			&"ClassChoice2", &"ClassChoice3"]:
+		var class_button := main.get_node_or_null("%" + str(node_name)) as Button
+		if class_button == null:
+			continue
+		class_button.add_theme_stylebox_override("normal", class_normal)
+		class_button.add_theme_stylebox_override("hover", class_hover)
+		class_button.add_theme_stylebox_override("pressed", class_selected)
+		class_button.add_theme_stylebox_override("hover_pressed", class_selected)
+	var form_panel := main.get_node_or_null("%FormPanel") as PanelContainer
+	if form_panel != null:
+		var parchment_box := _flat_box(Color(PARCHMENT, 0.965),
+			Color(0.43, 0.26, 0.095, 1.0), 4, 3, 14.0)
+		parchment_box.shadow_color = Color(0.0, 0.0, 0.0, 0.75)
+		parchment_box.shadow_size = 10
+		form_panel.add_theme_stylebox_override("panel", parchment_box)
+		for value: Node in form_panel.find_children("*", "Label", true, false):
+			var label := value as Label
+			label.add_theme_color_override("font_color", Color(0.22, 0.14, 0.07, 1.0))
+			label.add_theme_color_override("font_outline_color", Color.TRANSPARENT)
+			label.add_theme_constant_override("outline_size", 0)
+	var class_header := main.get_node_or_null("CreationPanel/Columns/ClassRail/ClassContent/ClassHeader") as Label
+	if class_header != null:
+		class_header.add_theme_color_override("font_color", GOLD_BRIGHT)
+	var class_title := main.get_node_or_null("%ClassTitle") as Label
+	if class_title != null:
+		class_title.add_theme_color_override("font_color", GOLD_BRIGHT)
+	var class_tagline := main.get_node_or_null("%ClassTagline") as Label
+	if class_tagline != null:
+		class_tagline.add_theme_color_override("font_color", GOLD)
+
+
 static func _style_titles(main: Control) -> void:
 	var login_title := main.get_node_or_null("LoginPanel/Content/Subtitle") as Label
 	if login_title != null:
@@ -119,18 +168,18 @@ static func _style_titles(main: Control) -> void:
 		login_title.add_theme_font_size_override("font_size", 21)
 		login_title.add_theme_constant_override("outline_size", 4)
 	var creation_title := main.get_node_or_null(
-		"CreationPanel/Columns/Form/Title") as Label
+		"CreationPanel/Columns/FormPanel/Form/Title") as Label
 	if creation_title != null:
 		creation_title.text = "FORGE YOUR HERO"
-		creation_title.add_theme_color_override("font_color", GOLD_BRIGHT)
+		creation_title.add_theme_color_override("font_color", BURGUNDY_PRESSED)
 		creation_title.add_theme_font_size_override("font_size", 27)
-		creation_title.add_theme_constant_override("outline_size", 4)
+		creation_title.add_theme_constant_override("outline_size", 0)
 	var status := main.get_node_or_null("%Status") as Label
 	if status != null:
 		status.add_theme_color_override("font_color", MUTED)
 	var create_status := main.get_node_or_null("%CreateStatus") as Label
 	if create_status != null:
-		create_status.add_theme_color_override("font_color", MUTED)
+		create_status.add_theme_color_override("font_color", Color(0.31, 0.22, 0.13, 1.0))
 
 
 static func _style_preview(main: Control) -> void:
@@ -144,6 +193,10 @@ static func _style_preview(main: Control) -> void:
 		world_environment.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 		world_environment.environment.ambient_light_color = Color(0.34, 0.42, 0.56, 1.0)
 		world_environment.environment.ambient_light_energy = 0.95
+	var preview_viewport := main.get_node_or_null(
+		"CreationPanel/Columns/CharacterPreview/Viewport") as SubViewport
+	if preview_viewport != null:
+		preview_viewport.transparent_bg = true
 	var key := main.get_node_or_null("%KeyLight") as DirectionalLight3D
 	if key != null:
 		key.light_color = Color(1.0, 0.78, 0.48, 1.0)
