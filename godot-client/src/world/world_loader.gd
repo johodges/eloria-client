@@ -6,6 +6,7 @@ const NAVIGATION_SURFACE_LAYER := 8
 const ExternalTexturePool := preload("res://src/world/external_texture_pool.gd")
 const BiomeBlendMaterial := preload("res://src/world/biome_blend_material.gd")
 const ObjectMaterialRefresh := preload("res://src/world/object_material_refresh.gd")
+const VramTextures := preload("res://src/world/vram_textures.gd")
 
 # Static-instance batching. A region such as Four Gates imports ~1700 mesh
 # nodes that between them reference only 42 meshes, so almost every draw call
@@ -245,6 +246,13 @@ func load_world(manifest_path: String, arrival := Vector3.INF, wait_for_arrival 
 
 	var document: GLTFDocument = GLTFDocument.new()
 	var state: GLTFState = GLTFState.new()
+	# The map image extension prepares the package's external images (decode
+	# and mip chain, once, on the WorkerThreadPool) before the parse uploads
+	# them; see vram_textures.gd. Registration is a no-op after the first.
+	VramTextures.ensure_registered()
+	var image_plan: Dictionary = VramTextures.plan_for(manifest.data)
+	if not image_plan.is_empty():
+		state.set_additional_data(VramTextures.PLAN_KEY, image_plan)
 	var error: Error = document.append_from_file(resolved_glb_path, state)
 	if error != OK:
 		push_error("world_load stage=glb_import error=%s path=%s" % [
@@ -253,6 +261,10 @@ func load_world(manifest_path: String, arrival := Vector3.INF, wait_for_arrival 
 		return
 	print_debug("world_load stage=glb_imported path=", resolved_glb_path)
 	mark = _phase(&"parse", mark)
+	var image_stats: Variant = state.get_additional_data(VramTextures.STATS_KEY)
+	if image_stats is Dictionary:
+		for counter: String in image_stats:
+			load_phases[StringName(counter)] = int(image_stats[counter])
 	ExternalTexturePool.share(state, manifest.data.get("externalResources", {}))
 	var mipped: int = _build_texture_mipmaps(state)
 	print_debug("world_load stage=texture_mipmaps rebuilt=", mipped)
@@ -706,10 +718,18 @@ func _index_import() -> Dictionary:
 ## the camera moved. The images the state carries are the same objects the
 ## generated materials will reference, so rebuilding them here reaches the
 ## whole map. Must run before generate_scene().
+##
+## Images the map image extension produced (VramTextures.DONE_KEY) already
+## have their chain and are skipped without reading them back from the GPU.
 func _build_texture_mipmaps(state: GLTFState) -> int:
 	var rebuilt := 0
-	for texture_value: Variant in state.get_images():
-		var texture: ImageTexture = texture_value as ImageTexture
+	var done_value: Variant = state.get_additional_data(VramTextures.DONE_KEY)
+	var done: Dictionary = done_value if done_value is Dictionary else {}
+	var images: Array[Texture2D] = state.get_images()
+	for index: int in images.size():
+		if done.has(index):
+			continue
+		var texture: ImageTexture = images[index] as ImageTexture
 		if texture == null:
 			continue
 		var image: Image = texture.get_image()
