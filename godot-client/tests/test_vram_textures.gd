@@ -16,6 +16,7 @@ extends SceneTree
 
 const VramTextures := preload("res://src/world/vram_textures.gd")
 const ExternalTexturePool := preload("res://src/world/external_texture_pool.gd")
+const MapCache := preload("res://src/world/map_scene_cache.gd")
 
 const FIXTURE := "res://tests/fixtures/vram"
 const SCRATCH := "user://vram-textures-test"
@@ -66,6 +67,7 @@ func _run() -> void:
 	_check_unusable_formats()
 	_check_index_rejected()
 	_check_self_test()
+	await _check_warm_cache()
 
 	_set_mode("")
 	_remove_tree(SCRATCH)
@@ -464,3 +466,67 @@ func _check_self_test() -> void:
 	VramTextures.reconfigure()
 	_expect(VramTextures.status_line().begins_with("vram_textures mode=force formats=bc1+bc5+bc7 index="),
 		VramTextures.status_line())
+
+# --------------------------------------------------------------------------
+# The map cache
+# --------------------------------------------------------------------------
+
+## The textures of a loaded fixture by role, from its "opaque" material.
+func _opaque_textures(world: Node) -> Dictionary:
+	for node: Node in world.find_children("*", "MeshInstance3D", true, false):
+		var mesh := (node as MeshInstance3D).mesh
+		for surface: int in mesh.get_surface_count():
+			var material := mesh.surface_get_material(surface) as StandardMaterial3D
+			if material != null and material.resource_name == "opaque":
+				return {"base": material.albedo_texture, "normal": material.normal_texture,
+					"orm": material.roughness_texture}
+	return {}
+
+func _load_and_wait(loader: WorldLoader) -> void:
+	loader.load_world(FIXTURE.path_join("world.json"))
+	for frame: int in 12:
+		await process_frame
+
+## A cache written from sidecar textures reads back BC with every mip, and a
+## client whose texture formats differ (here: sidecars off) never reads it.
+func _check_warm_cache() -> void:
+	OS.set_environment("ELORIA_NO_MAP_CACHE", "")
+	MapCache.forget_setting()
+	if not _expect(MapCache.is_enabled(), "the map cache is enabled for this case"):
+		return
+	_set_mode("force")
+	var loader := WorldLoader.new()
+	root.add_child(loader)
+	await _load_and_wait(loader)
+	var digest := loader.package_digest
+	_expect(loader.cache_status == &"miss" and FileAccess.file_exists(loader.cache_file),
+		"a first load writes the cache entry (%s)" % loader.cache_status)
+	_expect(loader.cache_file != MapCache.cache_path("vram_fixture", digest),
+		"a package with external images keys its entry with the texture token")
+	var written := loader.cache_file
+	loader.unload_world()
+	await process_frame
+	await _load_and_wait(loader)
+	var textures := _opaque_textures(loader.world_root)
+	var formats := []
+	var mips := []
+	for role: String in ["base", "normal", "orm"]:
+		var image: Image = (textures[role] as Texture2D).get_image() if textures.get(role) != null else null
+		formats.append(image.get_format() if image != null else -1)
+		mips.append(image.get_mipmap_count() if image != null else -1)
+	_expect(loader.cache_status == &"hit" and formats == [Image.FORMAT_BPTC_RGBA, Image.FORMAT_RGTC_RG,
+		Image.FORMAT_DXT1] and mips == [6, 6, 6],
+		"a cache hit keeps the sidecar formats and their mips: %s %s %s" % [loader.cache_status, formats, mips])
+	loader.unload_world()
+	await process_frame
+	_set_mode("0")
+	await _load_and_wait(loader)
+	var base: Texture2D = _opaque_textures(loader.world_root).get("base")
+	_expect(loader.cache_file != written and loader.cache_status == &"miss"
+		and base != null and base.get_image().get_format() == Image.FORMAT_RGB8,
+		"with sidecars off the same package misses that entry and decodes (%s)" % loader.cache_status)
+	loader.unload_world()
+	loader.queue_free()
+	await process_frame
+	MapCache.prune("vram_fixture", "")
+	OS.set_environment("ELORIA_NO_MAP_CACHE", "1")

@@ -55,7 +55,9 @@ extends RefCounted
 ## 5 - continent-owned scenery uses shared-cell grouping and hidden thresholds.
 ## 6 - shared-continent chunks, external textures and opaque vertex colours.
 ## 7 - shared elevated/sloping drainage uses the common continent water shader.
-const CACHE_FORMAT_VERSION := 7
+## 8 - map textures may be VRAM-compressed sidecars; a package with external
+##     images also folds VramTextures.cache_token into its key (`cache_path`).
+const CACHE_FORMAT_VERSION := 8
 
 ## Wrapped into the digest so the hash of a package cannot be confused with the
 ## hash of anything else, and so the digest itself can be revised without
@@ -180,19 +182,29 @@ static func _sha256_text(text: String) -> String:
 	return context.finish().hex_encode()
 
 ## The file name a package's digest maps to under the current format version.
-static func cache_key(digest: String) -> String:
-	return cache_key_for(digest, CACHE_FORMAT_VERSION)
+##
+## `token` is what else decides the tree the loader builds from the same
+## bytes: VramTextures.cache_token, which names the texture formats a package
+## with external images was built with (sidecars on or off, which formats the
+## renderer samples, which index). A cache keeps the textures it was packed
+## with, so an entry built from decoded images must not be read once sidecars
+## apply, nor the reverse. Empty for every other package, whose key it leaves
+## as it was.
+static func cache_key(digest: String, token := "") -> String:
+	return cache_key_for(digest, CACHE_FORMAT_VERSION, token)
 
 ## The same, under a stated format version. Split out so a test can ask what
 ## the next version's key would be and prove that a bump misses every entry on
 ## disk rather than reading one the previous loader wrote.
-static func cache_key_for(digest: String, version: int) -> String:
+static func cache_key_for(digest: String, version: int, token := "") -> String:
 	if digest.is_empty():
 		return ""
-	return _sha256_text("%s\n%d\n" % [digest, version]).substr(0, KEY_CHARACTERS)
+	if token.is_empty():
+		return _sha256_text("%s\n%d\n" % [digest, version]).substr(0, KEY_CHARACTERS)
+	return _sha256_text("%s\n%d\n%s\n" % [digest, version, token]).substr(0, KEY_CHARACTERS)
 
-static func cache_path(map_id: String, digest: String) -> String:
-	var key: String = cache_key(digest)
+static func cache_path(map_id: String, digest: String, token := "") -> String:
+	var key: String = cache_key(digest, token)
 	if key.is_empty():
 		return ""
 	return "%s/%s-%s%s" % [

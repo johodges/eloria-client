@@ -214,7 +214,11 @@ func load_world(manifest_path: String, arrival := Vector3.INF, wait_for_arrival 
 	package_digest = MapSceneCache.package_digest(manifest_path, resolved_glb_path)
 	if not detached_build:
 		MapSceneCache.note_local_digest(manifest.asset_id(), package_digest)
-	cache_file = MapSceneCache.cache_path(manifest.asset_id(), package_digest)
+	# The token names the texture formats a package with external images is
+	# built with (VramTextures.cache_token); empty, and the key unchanged, for
+	# any other package.
+	cache_file = MapSceneCache.cache_path(manifest.asset_id(), package_digest,
+		VramTextures.cache_token(manifest.data, resolved_glb_path.get_base_dir()))
 	mark = _phase(&"digest", mark)
 	if manifest.has_streaming_chunks():
 		# A partially resident territory must never be packed/read as a complete

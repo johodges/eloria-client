@@ -324,6 +324,28 @@ static func sidecar_entry(sha: String, source_directory: String) -> Dictionary:
 		return {}
 	return entry
 
+## What MapSceneCache's key must also carry for a package with external
+## images: a cached map keeps the textures it was packed with, so an entry
+## built from decoded images must not be read once sidecars apply, nor the
+## reverse. The mode, the usable formats and each image directory's index
+## (its status and the sha256 of its bytes). Empty for a package without
+## external images, whose key it leaves unchanged.
+static func cache_token(manifest_data: Dictionary, glb_directory: String) -> String:
+	var resources: Variant = manifest_data.get("externalResources", {})
+	if not resources is Dictionary or (resources as Dictionary).is_empty():
+		return ""
+	var parts := PackedStringArray(["vram", mode_name(), str(usable_formats())])
+	if mode() != Mode.OFF:
+		var directories: Dictionary = {}
+		for uri: Variant in resources:
+			directories[_normalise(glb_directory.path_join(str(uri)).get_base_dir())] = true
+		var sorted: Array = directories.keys()
+		sorted.sort()
+		for directory: String in sorted:
+			var info := index_for_directory(directory)
+			parts.append("%s:%s" % [str(info.status), str(info.sha256)])
+	return "|".join(parts)
+
 ## Any index's entry for `sha` (empty when no index read so far lists it).
 static func lookup(sha: String) -> Dictionary:
 	_mutex.lock()
