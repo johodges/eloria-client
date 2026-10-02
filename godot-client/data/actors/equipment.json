@@ -23751,8 +23751,8 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.05194,
-          -0.00242,
+          -0.064,
+          0.012,
           0.00037
         ],
         "rotationDegrees": [
@@ -24283,8 +24283,8 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.05194,
-          -0.00242,
+          -0.064,
+          0.018,
           0.00037
         ],
         "rotationDegrees": [
@@ -24682,8 +24682,8 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.05194,
-          -0.00242,
+          -0.064,
+          0.018,
           0.00037
         ],
         "rotationDegrees": [

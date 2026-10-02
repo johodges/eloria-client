@@ -1,13 +1,13 @@
 class_name OldcraftEntryStyle
 extends RefCounted
-## Low-cost entry-screen styling inspired by Oldcraft's heavy fantasy frames.
+## Low-cost entry-screen styling inspired by Oldcraft's fantasy materials and
+## open, scenic login composition.
 ##
 ## The screens keep Eloria's logo, world painting, controls and navigation.
-## This helper supplies the visual language: dark carved-stone panels, warm
-## brass edges, burgundy action buttons, inset fields and a moonlit preview
-## stage.  Character creation adds one shared painted backdrop and one compact
-## class-icon atlas; both exist only on the entry screen and add no gameplay
-## or on-screen crowd cost.
+## This helper supplies the visual language: a restrained floating login card,
+## warm brass edges, burgundy action buttons, inset fields and a moonlit
+## preview stage. Character creation keeps its heavier carved-stone treatment.
+## Both screens exist only during entry and add no gameplay or crowd cost.
 
 ## Sampled from the shipped reference UI rather than eyeballed from a concept:
 ## brass #F4C542/#B88A3B, carved stone #1E1E22/#333338, parchment
@@ -117,37 +117,99 @@ static func _style_controls(root: Control) -> void:
 static func _style_login_layout(main: Control) -> void:
 	var login_panel := main.get_node_or_null("%LoginPanel") as PanelContainer
 	if login_panel != null:
-		# The compact panel sits inside the painted waygate rather than masking the
-		# whole scene. Its slight transparency lets the portal light breathe.
-		var portal_frame := _flat_box(Color(0.045, 0.047, 0.06, 0.88),
-			GOLD_DARK, 5, 5, 18.0)
-		portal_frame.shadow_color = Color(0.0, 0.0, 0.0, 0.88)
-		portal_frame.shadow_size = 16
-		portal_frame.shadow_offset = Vector2(0.0, 6.0)
-		login_panel.add_theme_stylebox_override("panel", portal_frame)
+		# The scenery remains the hero. This is intentionally closer to a smoky
+		# glass control cluster than a modal window: enough contrast for the form,
+		# but no large slab competing with the castle painting.
+		var floating_card := _flat_box(Color(0.025, 0.028, 0.037, 0.64),
+			Color(GOLD_DARK, 0.72), 2, 16, 12.0)
+		floating_card.shadow_color = Color(0.0, 0.0, 0.0, 0.48)
+		floating_card.shadow_size = 8
+		floating_card.shadow_offset = Vector2(0.0, 4.0)
+		login_panel.add_theme_stylebox_override("panel", floating_card)
 	var content := main.get_node_or_null("LoginPanel/Content") as VBoxContainer
 	if content != null:
-		content.add_theme_constant_override("separation", 7)
-	var secondary_normal := _flat_box(Color(0.075, 0.075, 0.09, 0.94),
-		GOLD_DARK, 1, 4, 7.0)
-	var secondary_hover := _flat_box(STONE_RAISED, GOLD_BRIGHT, 2, 4, 7.0)
+		content.add_theme_constant_override("separation", 4)
+	var field_normal := _flat_box(Color(0.018, 0.021, 0.028, 0.76),
+		Color(GOLD_DARK, 0.82), 1, 8, 7.0)
+	var field_focus := _flat_box(Color(0.014, 0.017, 0.024, 0.91),
+		GOLD, 2, 8, 7.0)
+	for value: Node in login_panel.find_children("*", "LineEdit", true, false):
+		var field := value as LineEdit
+		field.add_theme_stylebox_override("normal", field_normal)
+		field.add_theme_stylebox_override("focus", field_focus)
+		field.custom_minimum_size.y = maxf(field.custom_minimum_size.y, 36.0)
+	var secure := main.get_node_or_null("%Secure") as CheckBox
+	if secure != null:
+		# Connection security is a quiet utility choice, not a destructive red
+		# action. A faint translucent row leaves the check glyph clear without
+		# competing with Log In.
+		var secure_normal := _flat_box(Color(0.02, 0.024, 0.032, 0.20),
+			Color(GOLD_DARK, 0.28), 1, 8, 4.0)
+		var secure_hover := _flat_box(Color(0.055, 0.058, 0.07, 0.42),
+			Color(GOLD_DARK, 0.56), 1, 8, 4.0)
+		var secure_disabled := _flat_box(Color(0.02, 0.022, 0.028, 0.12),
+			Color(GOLD_DARK, 0.18), 1, 8, 4.0)
+		secure.add_theme_stylebox_override("normal", secure_normal)
+		secure.add_theme_stylebox_override("hover", secure_hover)
+		secure.add_theme_stylebox_override("pressed", secure_hover)
+		secure.add_theme_stylebox_override("hover_pressed", secure_hover)
+		secure.add_theme_stylebox_override("focus", secure_hover)
+		secure.add_theme_stylebox_override("disabled", secure_disabled)
+		secure.add_theme_color_override("font_color", WARM_TEXT)
+		secure.add_theme_color_override("font_hover_color", GOLD_BRIGHT)
+		secure.custom_minimum_size.y = maxf(secure.custom_minimum_size.y, 36.0)
+	var secondary_normal := _flat_box(Color(0.045, 0.046, 0.058, 0.48),
+		Color(GOLD_DARK, 0.76), 1, 9, 6.0)
+	var secondary_hover := _flat_box(Color(0.12, 0.115, 0.12, 0.82),
+		GOLD_BRIGHT, 2, 9, 6.0)
+	var secondary_pressed := _flat_box(Color(0.035, 0.036, 0.045, 0.88),
+		Color(0.72, 0.48, 0.16, 1.0), 2, 9, 6.0)
+	var secondary_disabled := _flat_box(Color(0.025, 0.027, 0.034, 0.34),
+		Color(GOLD_DARK, 0.30), 1, 9, 6.0)
 	for node_name: StringName in [&"Connect", &"NewCharacter"]:
 		var secondary := main.get_node_or_null("%" + str(node_name)) as Button
 		if secondary == null:
 			continue
 		secondary.add_theme_stylebox_override("normal", secondary_normal)
 		secondary.add_theme_stylebox_override("hover", secondary_hover)
+		secondary.add_theme_stylebox_override("pressed", secondary_pressed)
+		secondary.add_theme_stylebox_override("hover_pressed", secondary_pressed)
 		secondary.add_theme_stylebox_override("focus", secondary_hover)
+		secondary.add_theme_stylebox_override("disabled", secondary_disabled)
 		secondary.add_theme_color_override("font_color", GOLD)
+		secondary.custom_minimum_size.y = maxf(
+			secondary.custom_minimum_size.y, 36.0)
+	var login := main.get_node_or_null("%Login") as Button
+	if login != null:
+		var login_hover := _flat_box(BURGUNDY_HOVER, GOLD_BRIGHT, 2, 9, 6.0)
+		var login_pressed := _flat_box(BURGUNDY_PRESSED,
+			Color(0.72, 0.48, 0.16, 1.0), 2, 9, 6.0)
+		var login_disabled := _flat_box(Color(0.12, 0.055, 0.045, 0.48),
+			Color(GOLD_DARK, 0.34), 1, 9, 6.0)
+		login.add_theme_stylebox_override("normal", _flat_box(
+			Color(BURGUNDY, 0.92), Color(GOLD_DARK, 0.92), 2, 9, 6.0))
+		login.add_theme_stylebox_override("hover", login_hover)
+		login.add_theme_stylebox_override("pressed", login_pressed)
+		login.add_theme_stylebox_override("hover_pressed", login_pressed)
+		login.add_theme_stylebox_override("focus", login_hover)
+		login.add_theme_stylebox_override("disabled", login_disabled)
+		login.custom_minimum_size.y = maxf(login.custom_minimum_size.y, 36.0)
 	var port := main.get_node_or_null("%Port") as SpinBox
 	if port != null:
 		var port_field := port.get_line_edit()
-		port_field.add_theme_stylebox_override("normal", _flat_box(FIELD,
-			GOLD_DARK, 2, 3, 8.0))
-		port_field.add_theme_stylebox_override("focus", _flat_box(
-			Color(0.018, 0.019, 0.026, 1.0), GOLD, 2, 3, 8.0))
+		port_field.add_theme_stylebox_override("normal", field_normal)
+		port_field.add_theme_stylebox_override("focus", field_focus)
 		port_field.add_theme_color_override("font_color", WARM_TEXT)
 		port_field.add_theme_color_override("caret_color", GOLD_BRIGHT)
+		port_field.custom_minimum_size.y = maxf(
+			port_field.custom_minimum_size.y, 36.0)
+		port.custom_minimum_size.y = maxf(port.custom_minimum_size.y, 36.0)
+	var logo := main.get_node_or_null("%LoginLogo") as TextureRect
+	if logo != null:
+		# The crest is an independent corner mark, not part of the form. It remains
+		# mouse-transparent so it never creates a dead region over the backdrop.
+		logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		logo.modulate = Color(1.0, 0.98, 0.91, 0.96)
 
 
 static func _style_creation_layout(main: Control) -> void:
@@ -246,8 +308,8 @@ static func _style_titles(main: Control) -> void:
 	if login_title != null:
 		login_title.text = "ENTER THE WORLD OF ELORIA"
 		login_title.add_theme_color_override("font_color", GOLD_BRIGHT)
-		login_title.add_theme_font_size_override("font_size", 21)
-		login_title.add_theme_constant_override("outline_size", 4)
+		login_title.add_theme_font_size_override("font_size", 18)
+		login_title.add_theme_constant_override("outline_size", 3)
 	var creation_title := main.get_node_or_null(
 		"CreationPanel/Columns/FormPanel/Form/Title") as Label
 	if creation_title != null:

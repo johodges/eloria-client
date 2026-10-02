@@ -1191,6 +1191,11 @@ func _ready() -> void:
 	_apply_eloria_art()
 	_configure_banner_menu()
 	_apply_eloria_theme()
+	# The crest is deliberately outside the compact login card so the painted
+	# scene can breathe. Keep that detached overlay coupled to the card even in
+	# tests and utility flows that call LoginPanel.hide() directly.
+	login_panel.visibility_changed.connect(_sync_login_logo_visibility)
+	_sync_login_logo_visibility()
 	_configure_window_layers()
 	_configure_cartography()
 	_load_hud_settings()
@@ -1560,6 +1565,11 @@ func _on_creation_back_pressed() -> void:
 func _set_login_screen_visible(value: bool) -> void:
 	login_panel.visible = value
 	login_background.visible = value
+	login_logo.visible = value
+
+
+func _sync_login_logo_visibility() -> void:
+	login_logo.visible = login_panel.visible
 
 func _on_create_race_item_selected(_index: int) -> void:
 	_populate_creation_sexes()
@@ -1576,13 +1586,20 @@ func _on_create_appearance_changed(_value: float) -> void:
 func _on_randomize_creation_pressed() -> void:
 	_randomize_creation_appearance()
 
-## Rolls only the seven appearance selectors. Identity, calling and account
+## Rolls race and sex before the seven appearance selectors so every press can
+## produce a genuinely different character silhouette. Calling and account
 ## fields deliberately live outside this list, and selecting without emitting
 ## each control's signal lets the completed look rebuild the preview once.
 ## Tests can pass a seeded generator without changing the generator used by the
 ## live button or the one-time initial roll.
 func _randomize_creation_appearance(rng: RandomNumberGenerator = null) -> void:
 	var source := rng if rng != null else _creation_appearance_rng
+	if create_race.item_count > 0:
+		create_race.select(source.randi_range(0, create_race.item_count - 1))
+		_populate_creation_sexes()
+	if create_gender.item_count > 0:
+		create_gender.select(source.randi_range(0, create_gender.item_count - 1))
+	_populate_creation_choices(true)
 	var selectors: Array[OptionButton] = [
 		%CreateSkin, %CreateHair, %CreateHairColor, %CreateEyes,
 		%CreateShirt, %CreatePants, %CreateBoots,
@@ -11650,7 +11667,11 @@ func _apply_eloria_art() -> void:
 	%CreationBackdrop.texture = _external_texture(
 		"res://assets/ui/eloria_character_creation_background.jpg")
 	var logo_texture: Texture2D = _external_texture("res://assets/ui/eloria_logo_master.png")
-	login_logo.texture = logo_texture
+	# The master canvas carries wide transparent gutters for general-purpose
+	# placement. Crop them on entry so the free-standing corner crest has the
+	# same visual weight as its rectangle without making that rectangle larger.
+	login_logo.texture = (null if logo_texture == null else
+		_atlas_region(logo_texture, Rect2(76, 0, 360, 256)))
 	# The master leaves 76 transparent pixels down each side of its 512-wide
 	# canvas. Drawn whole into the rail's 62-pixel frame the crest came out at
 	# three quarters width with the frame looking half empty, so the HUD copy

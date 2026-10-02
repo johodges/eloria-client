@@ -24,6 +24,34 @@ func run() -> void:
 		check(errors.is_empty(), "%s: %s" % [option.model, errors])
 		check(actor.combat_presentation != null, "player rig has combat presentation")
 		actor.set_physics_process(false)
+		actor.apply_equipment_visuals({0: 164})
+		actor.combat_presentation.update_pose()
+		var idle_bow := actor.combat_presentation.bow
+		var idle_visual := idle_bow.bow as Node3D
+		var idle_string := idle_bow.get("_string_node") as MeshInstance3D
+		check(idle_bow.visible and idle_visual != null and idle_string != null,
+			"Ranger class bow replaces the hidden registry prop: " + str(option.model))
+		check(idle_visual.global_transform.is_equal_approx(idle_string.global_transform),
+			"idle Ranger bow and live string share one fitted transform: " + str(option.model))
+		var left_hand := actor.get_skeleton().find_bone("hand_l")
+		var left_palm := actor.combat_presentation.hand_position(left_hand)
+		var bow_right := idle_bow.global_basis.x.normalized()
+		var grip_delta := idle_visual.global_position - left_palm
+		var grip_along := grip_delta.dot(bow_right)
+		var grip_orthogonal := grip_delta - bow_right * grip_along
+		var expected_grip_offset := RangerBow3D.IDLE_PALM_OFFSET.x * \
+			idle_bow.global_basis.x.length()
+		check(absf(grip_along - expected_grip_offset) < 0.002 and
+			grip_orthogonal.length() < 0.002,
+			"idle Ranger bow grip is centred through the left palm: " + str(option.model))
+		var root_up := idle_bow.global_basis.y.normalized()
+		var visual_up := idle_visual.global_basis.y.normalized()
+		var cant_degrees := rad_to_deg(acos(clampf(root_up.dot(visual_up), -1.0, 1.0)))
+		var root_forward := -idle_bow.global_basis.z.normalized()
+		var visual_forward := -idle_visual.global_basis.z.normalized()
+		check(absf(cant_degrees - 12.0) < 0.25 and
+			root_forward.dot(visual_forward) > 0.999,
+			"idle Ranger bow has a 12-degree cant without changing aim: " + str(option.model))
 		for effect_id: int in [2, 84, 83, 85, 0, 86, 10, 79, 19, 18, 75]:
 			actor.set_spell_variant(effect_id)
 			var action := SpellPresentation.action_for_effect(effect_id)
@@ -46,6 +74,10 @@ func run() -> void:
 		actor.play_action(&"ranged_draw")
 		actor.animation_player.advance(0.7)
 		check(actor.current_action == &"ranged_hold", "draw transitions to hold")
+		actor.combat_presentation.update_pose()
+		check(idle_visual.transform.is_equal_approx(Transform3D.IDENTITY) and
+			idle_string.transform.is_equal_approx(Transform3D.IDENTITY),
+			"active Ranger draw clears the idle-only palm fit: " + str(option.model))
 		for tick: int in 60:
 			actor.animation_player.advance(1.0 / 60.0)
 		actor._advance_facing_offset(1.0)

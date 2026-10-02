@@ -143,12 +143,13 @@ func run() -> void:
 		cam.position = focus + direction
 		cam.look_at(focus)
 		await process_frame
-	if args.get("region", "full") == "hand":
+	if args.get("region", "full") in ["hand", "left-hand"]:
 		var skeleton := actor.get_skeleton()
-		var hand := skeleton.find_bone("hand_r")
+		var hand_name := "hand_l" if args.get("region") == "left-hand" else "hand_r"
+		var hand := skeleton.find_bone(hand_name)
 		var focus := (skeleton.global_transform * skeleton.get_bone_global_pose(hand)).origin
 		cam.size = .36
-		cam.position = focus + Vector3(.3, .1, .7)
+		cam.position = focus + Vector3(-.3 if hand_name == "hand_l" else .3, .1, .7)
 		cam.look_at(focus)
 		await process_frame
 	if args.get("region", "full") in ["hips", "back"]:

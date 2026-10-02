@@ -3197,9 +3197,11 @@ text = "Race"
 
 [node name="CreateRace" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/IdentityRow/RaceColumn"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(190, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
+clip_text = true
 
 [node name="SexColumn" type="VBoxContainer" parent="CreationPanel/Columns/FormPanel/Form/IdentityRow"]
 layout_mode = 2
@@ -3211,9 +3213,11 @@ text = "Sex"
 
 [node name="CreateGender" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/IdentityRow/SexColumn" unique_id=49062652]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(190, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
+clip_text = true
 
 [node name="AppearanceSection" type="Label" parent="CreationPanel/Columns/FormPanel/Form"]
 layout_mode = 2
@@ -3230,9 +3234,11 @@ text = "Skin"
 
 [node name="CreateSkin" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247239]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
+clip_text = true
 
 [node name="HairLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=265946802]
 layout_mode = 2
@@ -3240,9 +3246,11 @@ text = "Hair style"
 
 [node name="CreateHair" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=742634566]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
+clip_text = true
 
 [node name="EyesLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=2141837957]
 layout_mode = 2
@@ -3250,9 +3258,11 @@ text = "Eyes"
 
 [node name="CreateEyes" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1416915646]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
+clip_text = true
 
 [node name="HairColorLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1865317685]
 layout_mode = 2
@@ -3260,9 +3270,11 @@ text = "Hair color"
 
 [node name="CreateHairColor" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1621312374]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
+clip_text = true
 
 [node name="ShirtLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247301]
 layout_mode = 2
@@ -3270,9 +3282,11 @@ text = "Shirt"
 
 [node name="CreateShirt" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247302]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
+clip_text = true
 
 [node name="PantsLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247303]
 layout_mode = 2
@@ -3280,9 +3294,11 @@ text = "Trousers"
 
 [node name="CreatePants" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247304]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
+clip_text = true
 
 [node name="BootsLabel" type="Label" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247305]
 layout_mode = 2
@@ -3290,9 +3306,11 @@ text = "Boots"
 
 [node name="CreateBoots" type="OptionButton" parent="CreationPanel/Columns/FormPanel/Form/AppearanceGrid" unique_id=1006247306]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
+clip_text = true
 
 [node name="RandomizeAppearance" type="Button" parent="CreationPanel/Columns/FormPanel/Form"]
 unique_name_in_owner = true
@@ -3322,30 +3340,34 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Create Character"
 
+[node name="LoginLogo" type="TextureRect" parent="." unique_id=2145300785]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 28.0
+offset_top = 22.0
+offset_right = 310.0
+offset_bottom = 198.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="LoginPanel" type="PanelContainer" parent="." unique_id=1880397975]
 unique_name_in_owner = true
 layout_mode = 1
-anchor_left = 0.68
-anchor_top = 0.5
-anchor_right = 0.68
-anchor_bottom = 0.5
-offset_left = -215.0
-offset_top = -285.0
-offset_right = 215.0
-offset_bottom = 285.0
+anchor_left = 0.77
+anchor_top = 0.52
+anchor_right = 0.77
+anchor_bottom = 0.52
+offset_left = -180.0
+offset_top = -208.0
+offset_right = 180.0
+offset_bottom = 205.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Content" type="VBoxContainer" parent="LoginPanel" unique_id=1600697510]
 layout_mode = 2
 theme_override_constants/separation = 8
-
-[node name="LoginLogo" type="TextureRect" parent="LoginPanel/Content" unique_id=2145300785]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(360, 78)
-layout_mode = 2
-expand_mode = 1
-stretch_mode = 5
 
 [node name="Title" type="Label" parent="LoginPanel/Content" unique_id=32813430]
 visible = false

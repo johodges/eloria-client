@@ -96,10 +96,10 @@ selected race and sex. It grants an initial inventory but never restricts
 attributes, skills, equipment, or later progression.
 
 The server-owned starter grants are intentionally light enough to leave room
-for tutorial rewards: Vanguard gets a militia sword, round shield and guard
-cape; Ranger gets an Amberwood longbow, 20 arrows and a Bonehook jerkin;
-Arcanist gets an arcane focus wand, Warded tabard and three mana potions; and
-Warden gets a fighting quarterstaff, Bark jerkin and leaf cape. The fuller
+for tutorial rewards: Vanguard gets a militia sword, round shield, guard cape
+and Studded Jack; Ranger gets an Amberwood longbow, 20 arrows and Scout Vest;
+Arcanist gets an arcane focus wand, Glowline Coat and three mana potions; and
+Warden gets a fighting quarterstaff, Furtrim Coat and leaf cape. The fuller
 head-to-toe looks shown in the live preview communicate class silhouette only;
 the adjacent text names the items actually granted.
 

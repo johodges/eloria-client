@@ -3,10 +3,20 @@ extends Node3D
 ## Shared native prop meshes; string and nocked arrow follow both posed hands.
 const ARROW_PATH := "res://assets/actors/native/equipment/ranger_arrow.glb"
 const DEFAULT_BOW := "res://assets/actors/native/equipment/amberwood_ranger_bow.glb"
+# The ranged bow replaces the registry hand prop, so its own root needs the
+# small presentation fit that places the handle through the relaxed palm.
+# This transform is toggled only when entering or leaving idle; draw/release
+# geometry stays in the authored aiming basis.
+const IDLE_PALM_OFFSET := Vector3(-0.018, 0.0, 0.0)
+const IDLE_CANT_RADIANS := deg_to_rad(-12.0)
+const IDLE_FIT_TRANSFORM := Transform3D(
+	Basis(Vector3.BACK, IDLE_CANT_RADIANS), IDLE_PALM_OFFSET)
 var bow: Node3D
 var arrow: Node3D
 var _string: ImmediateMesh
 var _string_material: StandardMaterial3D
+var _string_node: MeshInstance3D
+var _idle_fit_enabled := false
 var _tip_y := 0.68
 var _tip_z := 0.18
 var _path := ""
@@ -22,11 +32,11 @@ func _init() -> void:
 	_string = ImmediateMesh.new()
 	_string_material = CombatEffectMesh.material()
 	_string_material.blend_mode = BaseMaterial3D.BLEND_MODE_MIX
-	var string_node := MeshInstance3D.new()
-	string_node.name = "LiveBowstring"
-	string_node.mesh = _string
-	string_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	add_child(string_node)
+	_string_node = MeshInstance3D.new()
+	_string_node.name = "LiveBowstring"
+	_string_node.mesh = _string
+	_string_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(_string_node)
 	arrow = GlbSceneCache.instantiate(ARROW_PATH)
 	if arrow != null:
 		arrow.name = "NockedArrow"
@@ -47,6 +57,7 @@ func set_asset(path: String) -> void:
 	_tip_y = 0.64 if path.contains("sunmane") else 0.68
 	_tip_z = 0.16 if path.contains("sunmane") else 0.18
 	add_child(bow)
+	bow.transform = IDLE_FIT_TRANSFORM if _idle_fit_enabled else Transform3D.IDENTITY
 	var rest_string := bow.find_child("RestString", true, false) as Node3D
 	if rest_string != null:
 		rest_string.hide()
@@ -60,6 +71,16 @@ func set_asset(path: String) -> void:
 		elif String(limb.name).begins_with("Lower"):
 			_lower_limbs.append(limb as Node3D)
 	_local_geometry_valid = false
+
+func set_idle_fit(enabled: bool) -> void:
+	if enabled == _idle_fit_enabled:
+		return
+	_idle_fit_enabled = enabled
+	var fit := IDLE_FIT_TRANSFORM if enabled else Transform3D.IDENTITY
+	if bow != null:
+		bow.transform = fit
+	if _string_node != null:
+		_string_node.transform = fit
 
 func pose(grip: Vector3, draw_hand: Vector3, up: Vector3, forward: Vector3,
 		is_drawing: bool, release_time: float, size: float, arrow_size := 1.0) -> void:
