@@ -354,11 +354,12 @@ The route is the one the server would take:
 
 - **Grid.** The server walks one-metre tiles. Its grid is folded from the territory's published package (`collision.bin`): a tile is blocked when any of its four half-metre cells is, otherwise it takes the highest, and heights become codes at the map's stage (1.4 m on Sunmane, 4.8 m on Whitehorn). The walker repeats that fold; on 26 September 2026 it matched the server's grids byte for byte on all twelve territories.
   - The stage is chosen the server's way. It tries the stages its ladder allows and keeps the smallest whose largest connected area is within 1% of the best. A low-relief map can therefore get a coarser stage than its relief alone needs.
-- **Steps.** Neighbours are tried N, NE, E, SE, S, SW, W, NW. A step needs both tiles walkable and a code change of at most 2 (`max_walk_height_change`); a diagonal also needs both of its orthogonal steps. The search gives up after 100 000 tiles, a route is at most 512 steps (click again to go on), and a click on a blocked tile goes to the nearest walkable tile within 19.
+- **Served grid (continent-v2 maps).** A territory whose `world.json` declares `collision.servedGrid` publishes the server's grid itself: `served-grid.escg.gz`, one 16-bit code per tile, 50 mm a code above the continent datum (−100 m), with the climb in its own header (1.0 m). The server vendors that file byte for byte, so the walker loads it rather than folding `collision.bin` (`served_grid.gd`; the format is eloria-server's `docs/served-grid.md`). The file's SHA-256 must equal `servedGrid.sha256`, and the header its stated unit, climb and datum, or the play test refuses to start. Older territories keep the folded grid above.
+- **Steps.** Neighbours are tried N, NE, E, SE, S, SW, W, NW. A step needs both tiles walkable and a code change of at most the map's climb: 2 codes (`max_walk_height_change`) on a folded grid, 20 codes (1.0 m) on a served grid, where any non-zero code is walkable (a folded grid keeps the server's `code & 0x3F`). A diagonal also needs both of its orthogonal steps. The search gives up after 100 000 tiles, a route is at most 512 steps (click again to go on), and a click on a blocked tile goes to the nearest walkable tile within 19.
 - **Pace.** 600 ms a metre walking and 200 ms running, times √2 on a diagonal.
-- **Heights.** The walker stands on the terrain, or on the published deck height where a bridge or floor is higher.
+- **Heights.** The walker stands on the terrain, or on the published deck height where a bridge or floor is higher (on a served grid, the tile's own 50 mm height).
 
-A territory that has never been published uses the live walkability suggestion with the same rules; those routes are estimates. The live server also accounts for other players and creatures, doors and portals, storage-body footprints and a few legacy floors, which the walker does not. Loading the grid takes about 0.1 s on Sunmane; routes take 30–600 ms, and up to about a second when the search runs out.
+A territory that has never been published uses the live walkability suggestion with the same rules; those routes are estimates. One whose manifest declares a served grid it does not ship is estimated with the served rules (heights rounded half up to 50 mm codes, 1.0 m climb). The live server also accounts for other players and creatures, doors and portals, storage-body footprints and a few legacy floors, which the walker does not. Loading the grid takes about 0.1 s on Sunmane; routes take 30–600 ms, and up to about a second when the search runs out.
 
 **When a route fails**, the reachable area is tinted: blue where the walker can go, orange for walkable ground cut off from it. **V** shows or hides the tint at any time. The message says whether the goal lies in the walker's area but beyond the server's search, or is fenced, walled, too steep a climb or cut off.
 
@@ -571,6 +572,12 @@ The focused editor test builds a disposable 41×41 region fixture under `res://t
 The test waits for the editor to finish its first scan before opening the fixture, and restores every Editor Settings value it changes.
 
 `tests/test_continent_authoring_framework.gd` also checks that a review-notes file beside a scene leaves its snapshot and sidecar files unchanged.
+
+`tests/test_map_authoring_served_grid.gd` (headless, no editor) checks the served-grid reader and the walker on it against eloria-server's golden fixture, whose byte copy is `tests/fixtures/served_grid_golden.escg.gz` with its description beside it. The fixture's SHA-256 is a literal in this test and in the server's `tests/test_served_grid_format.py`, so a fixture changed on one side alone fails that side. It checks the header, the decoded codes and sample tiles; the reach from four seeds through the walker's flood and reach tint; the server's route through the fixture's corridor; codes 64, 128, 4,096 and 32,704 walking through every walk path; the 1.0 m climb (20 codes legal, 21 not) and the corner rule; every header and payload refusal; a tampered file; a package's `servedGrid` block (hash, unit, climb, datum, a missing file); the live estimate's half-up quantisation; and the decode time of a 2046 × 2046 grid.
+
+```powershell
+& 'C:/Users/User/Desktop/eloria-project/eloria-client/godot-client/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script res://tests/test_map_authoring_served_grid.gd
+```
 
 `tests/test_terrain_sculpt_editor.gd` now uses an isolated catalog, manifest and authoring spec under `test-artifacts/terrain-sculpt/`, checks that the edited scene is exactly its fixture before any input or save, and stops without saving otherwise.
 

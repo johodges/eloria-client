@@ -14,9 +14,19 @@ extends RefCounted
 ## walker repeats that fold; on 2026-09-26 it reproduced the server's
 ## tools/collision/<id>.escg.gz byte for byte for all twelve territories.
 ##
+## A continent-v2 territory publishes its served grid instead
+## (collision.servedGrid in world.json, served-grid.escg.gz beside it): one
+## 16-bit code per tile, 50 mm a code above the continent datum, with the climb
+## in its own header (1.0 m, 20 codes). The walker loads that file as the
+## server vendors it (served_grid.gd, SHA-256 checked against the manifest)
+## rather than folding, and walks it with the header's climb and a tile
+## walkable whenever its code is not 0. Version 1 grids keep the byte rule
+## below: walkable when code & 0x3F is not 0, a climb of 2 codes.
+##
 ## Routes use the server's search (World.find_path): neighbours tried N, NE, E,
 ## SE, S, SW, W, NW; a step needs both tiles walkable and a code change of at
-## most max_walk_height_change (2); a diagonal also needs both orthogonal steps
+## most the map's climb (max_walk_height_change, 2, on a version 1 map; the
+## header's on a version 2 map); a diagonal also needs both orthogonal steps
 ## from the same tile; costs 10 and 14 with a Chebyshev estimate; it gives up
 ## after 100 000 tiles, and a route is at most 512 steps. A click on a blocked
 ## tile goes to the nearest walkable tile within 19, as the server does. Steps
@@ -30,18 +40,28 @@ extends RefCounted
 ## the published package lists. When a route fails, V (or the failure itself)
 ## tints what the walker can reach, to show where the ground is cut off. An
 ## unpublished territory uses the live walkability estimate with the same
-## rules, so its routes are estimates too.
+## rules, so its routes are estimates too (a territory whose manifest declares
+## a served grid it does not ship is estimated with the version 2 rules).
 ## The walker and its route are editor-only helpers and are never saved.
+##
+## Codes are a PackedInt32Array for both versions. Grids built elsewhere may
+## still hand over a version 1 PackedByteArray; it is widened once on use.
 
 const Walkability := preload("res://addons/map_authoring_usability/walkability_overlay.gd")
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
 const TimeOfDay := preload("res://addons/map_authoring_usability/time_of_day_preview.gd")
+const ServedGrid := preload("res://addons/map_authoring_usability/served_grid.gd")
 const NODE_NAME := "__MapAuthoringPlaytest"
 ## eloria-server settings: player_move_interval_ms, player_run_interval_ms,
-## max_walk_height_change; World.find_path limits.
+## max_walk_height_change; World.find_path limits. MAX_HEIGHT_CHANGE is the
+## version 1 climb; a version 2 grid carries its own.
 const WALK_SECONDS := 0.6
 const RUN_SECONDS := 0.2
 const MAX_HEIGHT_CHANGE := 2
+## The walk test as a mask: version 1 is the server's `h & 0x3F`, version 2
+## any non-zero code (0x3F would block 64, 128, 4,096 ...).
+const WALK_BITS_V1 := 0x3F
+const WALK_BITS_V2 := 0xFFFF
 const SEARCH_LIMIT := 100000
 const MAX_ROUTE_STEPS := 512
 const FREE_TILE_RADIUS := 20
@@ -167,6 +187,12 @@ func node() -> Node3D:
 func grid_description() -> String:
 	if _grid.is_empty():
 		return ""
+	if int(_grid.get("format", 1)) == 2:
+		var rule := "16-bit heights, %d mm a code, climb %.2f m" % [roundi(float(_grid.unit_metres) *
+			1000.0), float(_grid.climb) * float(_grid.unit_metres)]
+		if String(_grid.source) == "live":
+			return "Play test on the live (unpublished) grid, an estimate of the next publish (%s)." % rule
+		return "Play test on the server's served grid from the published package (%s)." % rule
 	var stage := "stage %.1f m" % float(_grid.stage_metres)
 	if String(_grid.source) == "live":
 		return "Play test on the live (unpublished) grid, an estimate of the next publish (%s)." % stage
@@ -298,12 +324,24 @@ func advance(delta: float) -> void:
 # Grid ----------------------------------------------------------------------
 
 ## The server's tile grid for the territory:
-## {source, codes (0 blocked, 1-63 heights), width, rows, origin (serverOrigin
-##  tiles), stage_factor, stage_metres, and for display either the published
-##  half-metre bytes and their height encoding or "root" for terrain heights}.
+## {source, format (1 or 2), codes (PackedInt32Array: 0 blocked, else the
+##  height code), width, rows, origin (serverOrigin tiles), climb (the codes a
+##  step may change), walk_bits (the walk test's mask), stage_factor and
+##  stage_metres (version 1), unit_metres and datum_metres (version 2), and for
+##  display either the published half-metre bytes and their height encoding,
+##  the version 2 codes' own heights, or "root" for terrain heights}.
 static func load_grid(root: Node3D) -> Dictionary:
 	var origin: Vector2i = root.get("server_origin") if root.get("server_origin") is Vector2i \
 		else Vector2i.ZERO
+	var served := load_served_grid(TimeOfDay.manifest_path_for(String(root.get("region_id"))), origin)
+	if bool(served.get("missing", false)):
+		# The package declares a version 2 grid it does not ship: estimate one.
+		var estimate := Walkability.compute_live(root)
+		if estimate.has("error"):
+			return {"error": "No walk grid: %s" % String(estimate.error)}
+		return fold_live(estimate, origin, root, 2)
+	if not served.is_empty():
+		return served
 	var published := Walkability.published_grid(root)
 	if not published.has("error") and not is_nan(float(published.get("height_step", NAN))):
 		var folded := fold_published(published, origin)
@@ -318,6 +356,29 @@ static func load_grid(root: Node3D) -> Dictionary:
 	if live.has("error"):
 		return {"error": "No walk grid: %s" % String(live.error)}
 	return fold_live(live, origin, root)
+
+
+## A published version 2 served grid as the walker's tiles, read as the
+## server's sync vendors it: {} when the manifest declares none (a version 1
+## territory), {error} when the file is refused, {error, missing} when the
+## package does not ship it. Its tiles are the server's own, so unlike
+## collision.bin it needs no fold and no frame.
+static func load_served_grid(manifest_path: String, origin: Vector2i) -> Dictionary:
+	if manifest_path.is_empty() or not FileAccess.file_exists(manifest_path):
+		return {}
+	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))
+	if not manifest is Dictionary or ServedGrid.declared(manifest).is_empty():
+		return {}
+	var served := ServedGrid.load_declared(manifest_path, manifest)
+	if served.has("error"):
+		return {"error": "The published served grid is refused: %s." % String(served.error),
+			"missing": bool(served.get("missing", false))}
+	var unit := float(served.unit_mm) / 1000.0
+	return {"source": "published", "format": 2, "codes": served.codes, "width": int(served.width),
+		"rows": int(served.height), "origin": origin, "climb": int(served.climb_units),
+		"walk_bits": WALK_BITS_V2, "unit_metres": unit, "datum_metres": float(served.datum_mm) / 1000.0,
+		"stage_metres": unit, "crossings": published_crossings(manifest, origin),
+		"served_grid": String(served.path), "sha256": String(served.sha256)}
 
 
 ## Folds a published half-metre EWCG grid onto one-metre server tiles exactly
@@ -360,29 +421,33 @@ static func fold_published(published: Dictionary, origin: Vector2i) -> Dictionar
 	var table := _stage_table(func(code: int) -> float: return float(code) * step + height_origin,
 		lowest, highest)
 	var units: PackedInt32Array = table.units
-	var codes_for := func(factor: int) -> PackedByteArray:
-		var lookup := PackedByteArray()
+	var codes_for := func(factor: int) -> PackedInt32Array:
+		var lookup := PackedInt32Array()
 		lookup.resize(256)
 		for code in range(1, 256):
 			lookup[code] = _coarsen(units[code], factor)
-		var result := PackedByteArray()
+		var result := PackedInt32Array()
 		result.resize(folded.size())
 		for index in folded.size():
 			result[index] = lookup[folded[index]]
 		return result
 	var factor := choose_factor(units[highest] - units[lowest] if highest > 0 else 0, codes_for,
 		width, rows)
-	var codes: PackedByteArray = codes_for.call(factor)
-	return {"source": "published", "codes": codes, "width": width, "rows": rows,
-		"origin": origin, "stage_factor": factor,
-		"stage_metres": float(factor) * UNIT_METRES, "crossings": {},
+	var codes: PackedInt32Array = codes_for.call(factor)
+	return {"source": "published", "format": 1, "codes": codes, "width": width, "rows": rows,
+		"origin": origin, "climb": MAX_HEIGHT_CHANGE, "walk_bits": WALK_BITS_V1,
+		"stage_factor": factor, "stage_metres": float(factor) * UNIT_METRES, "crossings": {},
 		"display_bytes": bytes, "display_width": cells_x, "height_step": step,
 		"height_origin": height_origin}
 
 
 ## The live estimate on the same tiles and rules: walkable live tiles, with
-## terrain heights re-expressed like a published grid.
-static func fold_live(live: Dictionary, origin: Vector2i, root: Node3D) -> Dictionary:
+## terrain heights re-expressed like a published grid. Format 1 requantises
+## them as the version 1 sync does (0.2 m units above the lowest tile, numpy's
+## half-to-even rounding, then the stage ladder); format 2 as the version 2
+## codec does (50 mm codes above the continent datum, rounded half up, climb
+## from the codec's constants).
+static func fold_live(live: Dictionary, origin: Vector2i, root: Node3D, format := 1) -> Dictionary:
 	var classes: PackedByteArray = live.classes
 	var owned: PackedByteArray = (live.owned as Image).get_data()
 	var tile := float(live.tile)
@@ -418,7 +483,23 @@ static func fold_live(live: Dictionary, origin: Vector2i, root: Node3D) -> Dicti
 			var ty := floori(float(origin.y) - z)
 			metres[ty * width + tx] = height
 			lowest = minf(lowest, height)
-	var codes := PackedByteArray()
+	if format == 2:
+		var served := PackedInt32Array()
+		served.resize(width * rows)
+		for index in metres.size():
+			if is_nan(metres[index]):
+				continue
+			var code := ServedGrid.quantise_mm(metres[index] * 1000.0)
+			if code < 1 or code > ServedGrid.MAX_CODE:
+				return {"error": "A live height of %.2f m lies outside the served grid's range." %
+					metres[index]}
+			served[index] = code
+		var unit := float(ServedGrid.UNIT_MM) / 1000.0
+		return {"source": "live", "format": 2, "codes": served, "width": width, "rows": rows,
+			"origin": origin, "climb": ServedGrid.CLIMB_MM / ServedGrid.UNIT_MM,
+			"walk_bits": WALK_BITS_V2, "unit_metres": unit,
+			"datum_metres": float(ServedGrid.DATUM_MM) / 1000.0, "stage_metres": unit, "root": root}
+	var codes := PackedInt32Array()
 	codes.resize(width * rows)
 	var highest_units := 1
 	var units := PackedInt32Array()
@@ -428,8 +509,8 @@ static func fold_live(live: Dictionary, origin: Vector2i, root: Node3D) -> Dicti
 			continue
 		units[index] = int(round_half_even((metres[index] - lowest) / UNIT_METRES)) + MIN_CODE
 		highest_units = maxi(highest_units, units[index])
-	var codes_for := func(stage: int) -> PackedByteArray:
-		var result := PackedByteArray()
+	var codes_for := func(stage: int) -> PackedInt32Array:
+		var result := PackedInt32Array()
 		result.resize(units.size())
 		for index in units.size():
 			if units[index] > 0:
@@ -437,9 +518,9 @@ static func fold_live(live: Dictionary, origin: Vector2i, root: Node3D) -> Dicti
 		return result
 	var factor := choose_factor(highest_units - MIN_CODE, codes_for, width, rows)
 	codes = codes_for.call(factor)
-	return {"source": "live", "codes": codes, "width": width, "rows": rows,
-		"origin": origin, "stage_factor": factor, "stage_metres": float(factor) * UNIT_METRES,
-		"root": root}
+	return {"source": "live", "format": 1, "codes": codes, "width": width, "rows": rows,
+		"origin": origin, "climb": MAX_HEIGHT_CHANGE, "walk_bits": WALK_BITS_V1,
+		"stage_factor": factor, "stage_metres": float(factor) * UNIT_METRES, "root": root}
 
 
 ## The smallest stage (in 0.2 m units) that fits `relief` units into 63 codes;
@@ -473,22 +554,39 @@ static func choose_factor(relief: int, codes_for: Callable, width: int, rows: in
 	return ladder[ladder.size() - 1]
 
 
-## The size of the largest set of tiles that can all reach each other.
-static func largest_component(codes: PackedByteArray, width: int, rows: int) -> int:
+## The size of the largest set of tiles that can all reach each other. `codes`
+## is a PackedInt32Array, or a version 1 PackedByteArray; `climb` and
+## `walk_bits` are the grid's (version 1 by default).
+static func largest_component(codes: Variant, width: int, rows: int,
+		climb := MAX_HEIGHT_CHANGE, walk_bits := WALK_BITS_V1) -> int:
+	var tiles := as_codes(codes)
 	var seen := PackedByteArray()
-	seen.resize(codes.size())
+	seen.resize(tiles.size())
 	var best := 0
 	var queue := PackedInt32Array()
-	for index in codes.size():
-		if codes[index] == 0 or seen[index] != 0:
+	for index in tiles.size():
+		if tiles[index] & walk_bits == 0 or seen[index] != 0:
 			continue
-		best = maxi(best, _flood(codes, width, rows, index, seen, queue, 1))
+		best = maxi(best, _flood(tiles, width, rows, index, seen, queue, 1, climb, walk_bits))
 	return best
 
 
+## Codes as the walker's one code type: a PackedInt32Array is used as it is,
+## a version 1 PackedByteArray (or an Array) is widened.
+static func as_codes(codes: Variant) -> PackedInt32Array:
+	if codes is PackedInt32Array:
+		return codes
+	if codes is PackedByteArray:
+		return PackedInt32Array(Array(codes))
+	if codes is Array:
+		return PackedInt32Array(codes)
+	return PackedInt32Array()
+
+
 ## Marks every tile reachable from `start` with `mark` in `seen`; returns how many.
-static func _flood(codes: PackedByteArray, width: int, rows: int, start: int,
-		seen: PackedByteArray, queue: PackedInt32Array, mark: int) -> int:
+static func _flood(codes: PackedInt32Array, width: int, rows: int, start: int,
+		seen: PackedByteArray, queue: PackedInt32Array, mark: int, climb: int,
+		walk_bits: int) -> int:
 	var count := codes.size()
 	queue.resize(0)
 	queue.append(start)
@@ -506,11 +604,12 @@ static func _flood(codes: PackedByteArray, width: int, rows: int, start: int,
 			if nx < 0 or ny < 0 or nx >= width or ny >= rows:
 				continue
 			var next := ny * width + nx
-			if seen[next] != 0 or not _step_ok(codes, width, count, cx, cy, nx, ny, here):
+			if seen[next] != 0 or not _step_ok(codes, width, count, cx, cy, nx, ny, here, climb,
+					walk_bits):
 				continue
 			if direction.x != 0 and direction.y != 0 and (
-					not _step_ok(codes, width, count, cx, cy, nx, cy, here) or
-					not _step_ok(codes, width, count, cx, cy, cx, ny, here)):
+					not _step_ok(codes, width, count, cx, cy, nx, cy, here, climb, walk_bits) or
+					not _step_ok(codes, width, count, cx, cy, cx, ny, here, climb, walk_bits)):
 				continue
 			seen[next] = mark
 			queue.append(next)
@@ -569,19 +668,41 @@ func _inside(tile: Vector2i) -> bool:
 
 
 func code_at(tile: Vector2i) -> int:
-	return (_grid.codes as PackedByteArray)[tile.y * int(_grid.width) + tile.x] \
-		if _inside(tile) else 0
+	return _codes()[tile.y * int(_grid.width) + tile.x] if _inside(tile) else 0
+
+
+## The grid's codes as a PackedInt32Array; a version 1 PackedByteArray set by
+## other code is widened once and kept.
+func _codes() -> PackedInt32Array:
+	var codes: Variant = _grid.get("codes")
+	if codes is PackedInt32Array:
+		return codes
+	var widened := as_codes(codes)
+	_grid["codes"] = widened
+	return widened
+
+
+## The codes a step may change: the header's on a version 2 grid, 2 otherwise.
+func grid_climb() -> int:
+	return int(_grid.get("climb", MAX_HEIGHT_CHANGE))
+
+
+## The walk test's mask: any non-zero code on version 2, `& 0x3F` on version 1.
+func grid_walk_bits() -> int:
+	return int(_grid.get("walk_bits", WALK_BITS_V1))
 
 
 func is_walkable(tile: Vector2i) -> bool:
-	return code_at(tile) & 0x3F != 0
+	return code_at(tile) & grid_walk_bits() != 0
 
 
-## CollisionMap.can_step: both tiles walkable and the code change within the limit.
+## CollisionMap.can_step: both tiles walkable and the code change within the
+## map's climb (CollisionMap.climb_for).
 func can_step(from: Vector2i, to: Vector2i) -> bool:
 	var start := code_at(from)
 	var end := code_at(to)
-	return start & 0x3F != 0 and end & 0x3F != 0 and absi(end - start) <= MAX_HEIGHT_CHANGE
+	var bits := grid_walk_bits()
+	return start & bits != 0 and end & bits != 0 and absi(end - start) <= grid_climb()
 
 
 ## World.step_allowed for a single step, corners included.
@@ -613,12 +734,22 @@ func cell_point(tile: Vector2i) -> Vector3:
 	var z := float(origin.y) - float(tile.y) - 0.5
 	var ground := _terrain_height(Vector2(x, z))
 	var y := ground
-	if _grid.has("display_bytes"):
+	var served := String(_grid.get("source", "")) == "published" and int(_grid.get("format", 1)) == 2
+	if _grid.has("display_bytes") or served:
 		# The published grid knows decks and floors the terrain does not.
-		var deck := _published_height(tile)
+		var deck := _served_height(tile) if served else _published_height(tile)
 		if not is_nan(deck) and (is_nan(ground) or deck > ground + 0.5):
 			y = deck
 	return Vector3(x, y if not is_nan(y) else 0.0, z)
+
+
+## A version 2 tile's own height: the highest of its four half-metre cells, to
+## 50 mm (datum + code * unit), or NAN where it is blocked.
+func _served_height(tile: Vector2i) -> float:
+	var code := code_at(tile)
+	if code == 0:
+		return NAN
+	return float(_grid.datum_metres) + float(code) * float(_grid.unit_metres)
 
 
 func _published_height(tile: Vector2i) -> float:
@@ -687,7 +818,9 @@ func find_route(from_local: Vector3, to_local: Vector3) -> PackedVector3Array:
 ## or empty when the search fails.
 func search(start: Vector2i, target: Vector2i) -> Array[Vector2i]:
 	var width := int(_grid.width)
-	var codes: PackedByteArray = _grid.codes
+	var codes := _codes()
+	var climb_codes := grid_climb()
+	var bits := grid_walk_bits()
 	var count := width * int(_grid.rows)
 	var cost := PackedInt32Array()
 	cost.resize(count)
@@ -718,11 +851,11 @@ func search(start: Vector2i, target: Vector2i) -> Array[Vector2i]:
 		for direction: Vector2i in DIRECTIONS:
 			var nx := cx + direction.x
 			var ny := cy + direction.y
-			if not _step_ok(codes, width, count, cx, cy, nx, ny, here):
+			if not _step_ok(codes, width, count, cx, cy, nx, ny, here, climb_codes, bits):
 				continue
 			if direction.x != 0 and direction.y != 0 and (
-					not _step_ok(codes, width, count, cx, cy, nx, cy, here) or
-					not _step_ok(codes, width, count, cx, cy, cx, ny, here)):
+					not _step_ok(codes, width, count, cx, cy, nx, cy, here, climb_codes, bits) or
+					not _step_ok(codes, width, count, cx, cy, cx, ny, here, climb_codes, bits)):
 				continue
 			var next := ny * width + nx
 			var new_cost := cost[current] + (14 if direction.x != 0 and direction.y != 0 else 10)
@@ -806,16 +939,18 @@ func show_reachable(visible: bool, from: Vector2i = Vector2i(-1, -1)) -> bool:
 		return false
 	var width := int(_grid.width)
 	var rows := int(_grid.rows)
-	var codes: PackedByteArray = _grid.codes
+	var codes := _codes()
+	var bits := grid_walk_bits()
 	var seen := PackedByteArray()
 	seen.resize(codes.size())
-	_flood(codes, width, rows, start.y * width + start.x, seen, PackedInt32Array(), 1)
+	_flood(codes, width, rows, start.y * width + start.x, seen, PackedInt32Array(), 1, grid_climb(),
+		bits)
 	var classes := PackedByteArray()
 	classes.resize(codes.size())
 	for index in codes.size():
 		if seen[index] != 0:
 			classes[index] = 1
-		elif codes[index] != 0:
+		elif codes[index] & bits != 0:
 			classes[index] = 2
 	_grid["reach_classes"] = classes
 	_grid["reach_seen"] = seen
@@ -867,12 +1002,14 @@ func _show_reach_texture(classes: PackedByteArray, width: int, rows: int) -> voi
 	_reach.visible = true
 
 
-static func _step_ok(codes: PackedByteArray, width: int, count: int, x: int, y: int,
-		nx: int, ny: int, here: int) -> bool:
+## One step's walk test (CollisionMap.can_step): both tiles walkable under
+## `walk_bits` and the code change within `climb`.
+static func _step_ok(codes: PackedInt32Array, width: int, count: int, x: int, y: int,
+		nx: int, ny: int, here: int, climb: int, walk_bits: int) -> bool:
 	if nx < 0 or ny < 0 or nx >= width or ny * width + nx >= count:
 		return false
 	var there := codes[ny * width + nx]
-	return here & 0x3F != 0 and there & 0x3F != 0 and absi(there - here) <= MAX_HEIGHT_CHANGE
+	return here & walk_bits != 0 and there & walk_bits != 0 and absi(there - here) <= climb
 
 
 static func _heap_push(heap: PackedInt64Array, key: int) -> void:
