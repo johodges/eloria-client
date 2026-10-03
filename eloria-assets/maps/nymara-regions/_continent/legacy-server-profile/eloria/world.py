@@ -746,6 +746,15 @@ PATH_SEARCHES_PER_TICK = 24
 # invasion_max_path_length in config/server.txt is what makes each search
 # cheaper; this is what stops them overrunning the tick regardless.
 PATH_TICK_FRACTION = 0.4
+# A wild creature a chase carried past its spawn row's `leash:N` is routed
+# home (World.leash_home_step). One that finds no route waits this long before
+# searching again, so a creature behind a long wall does not spend an A*
+# search - the expensive, unreachable kind - on every step...
+LEASH_ROUTE_RETRY_SECONDS = 2.0
+# ...and after this long outside its leash with nobody watching, it is put
+# back at its spawn the way a respawn puts it there: a way home longer than a
+# bounded search can see (a long shore, a deep bay) must not hold it for good.
+LEASH_STRANDED_SECONDS = 60.0
 # Fraction of a tick's players whose creature view is fully recomputed. The
 # rest still receive movement for what they already see, so a creature enters
 # or leaves view up to this many ticks late and never mid-animation.
@@ -2368,9 +2377,12 @@ class World(MagicRuntime):
             footprint_width=spec.footprint_width,
             footprint_depth=spec.footprint_depth,
             scale=spec.scale)
+        # The spawn row's leash: livestock keeps to its pen by it, and a wild
+        # row's `leash:N` holds a huntable creature near its ground instead of
+        # the server-wide normal_wander_radius. 0 is no leash of its own.
+        animal.wander_radius = max(0, int(leash))
         if tame:
             animal.tame = True
-            animal.wander_radius = max(0, int(leash))
             roll_equipment = False
         now = time.monotonic()
         if invasion or summoned:
@@ -15753,6 +15765,89 @@ class World(MagicRuntime):
             return None
         return path[0][0] - animal.x, path[0][1] - animal.y
 
+    def leash_home_step(self, animal: Animal, occupied: set[tuple[int, int]],
+                        now: float) -> tuple[int, int] | None:
+        """One routed step back toward a wild creature's leash, or None.
+
+        A creature outside its `leash:N` - a chase took it there - used to
+        walk straight home, and a wall or a shore wider than its few detours
+        across that line held it against the obstacle for good. This routes
+        it instead: one bounded A* to the square ring the leash draws round
+        the spawn, which every way back inside has to cross. A creature
+        further out than a search reaches aims at a nearer ring, half a
+        search closer, so each search stays short and each step still closes
+        on home. None when the creature is inside its leash, when this tick's
+        search allowance is spent, or while it waits after finding no route;
+        the caller then takes the greedy step home.
+        """
+        if now < animal.leash_route_retry_at:
+            return None
+        radius = animal.wander_radius
+        sx, sy = animal.spawn_x, animal.spawn_y
+        x, y = animal.x, animal.y
+        excursion = max(abs(x - sx), abs(y - sy))
+        if excursion <= radius:
+            return None
+        max_steps = self.settings.invasion_max_path_length
+        ring = max(radius, excursion - max(1, max_steps // 2))
+        # Only the ring's tiles a bounded search could reach at all: the
+        # whole ring of a far creature is thousands of tiles.
+        low_x, high_x = max(sx - ring, x - max_steps), min(sx + ring, x + max_steps)
+        low_y, high_y = max(sy - ring, y - max_steps), min(sy + ring, y + max_steps)
+        targets: set[tuple[int, int]] = set()
+        for edge_x in (sx - ring, sx + ring):
+            if abs(edge_x - x) <= max_steps:
+                targets.update((edge_x, ty) for ty in range(low_y, high_y + 1))
+        for edge_y in (sy - ring, sy + ring):
+            if abs(edge_y - y) <= max_steps:
+                targets.update((tx, edge_y) for tx in range(low_x, high_x + 1))
+        if not targets or not self.spend_path_budget():
+            return None
+        start = (x, y)
+        shape = footprint_of(animal)
+        path = self.find_path_to_any(
+            animal.map_id, start, targets,
+            self.blocked_anchors(occupied, start, shape, max_steps),
+            max_steps, shape)
+        if not path:
+            animal.leash_route_retry_at = now + LEASH_ROUTE_RETRY_SECONDS
+            return None
+        return path[0][0] - x, path[0][1] - y
+
+    def return_to_leash(self, animal: Animal,
+                        occupied: set[tuple[int, int]], now: float) -> bool:
+        """Put a creature stranded outside its leash back at its spawn, unseen.
+
+        The last resort behind leash_home_step, for a way home no bounded
+        search can find. Only while no client shows the creature, so nobody
+        sees it vanish; a watched one keeps trying and is returned once it is
+        out of sight. The tile is the one a respawn would give it. True when
+        it moved.
+        """
+        if self.animal_viewers.get(animal.actor_id):
+            return False
+        shape = footprint_of(animal)
+        try:
+            x, y = self.free_creature_tile(
+                animal.map_id, animal.spawn_x, animal.spawn_y, shape)
+        except NoFreeCreatureTile:
+            return False
+        for tile in shape.tiles(animal.x, animal.y):
+            occupied.discard(tile)
+        for tile in shape.tiles(x, y):
+            occupied.add(tile)
+        animal.x, animal.y = x, y
+        animal.wander_steps_remaining = 0
+        animal.leash_outside_since = 0.0
+        if max(abs(x - animal.spawn_x), abs(y - animal.spawn_y)) > animal.wander_radius:
+            # Nothing walkable inside the leash at all (a row stood in water):
+            # the respawn tile is as close as it can get. Stop searching for
+            # a way in that does not exist, and ask again only rarely.
+            animal.leash_outside_since = now
+            animal.leash_route_retry_at = now + LEASH_STRANDED_SECONDS
+        self.invalidate_creature_index(animal.map_id)
+        return True
+
     async def animal_loop(self):
         """Random wandering plus hostile invasion pursuit and attacks."""
         tick = 0
@@ -16205,6 +16300,9 @@ class World(MagicRuntime):
                     # Waiting is an ordinary independent AI choice. Staggered
                     # deadlines prevent whole waves from pausing together.
                     continue
+                # Set when a wild leash turns this step toward the spawn, so a
+                # blocked step home edges round the obstacle (below).
+                homing = False
                 if not pursuing:
                     summoner = players_by_actor.get(animal.owner_id) if animal.summoned else None
                     if summoner is not None and summoner.map_id == animal.map_id:
@@ -16243,15 +16341,60 @@ class World(MagicRuntime):
                         # Livestock keeps to its pen or its hitching post.
                         animal.wander_steps_remaining = 0
                         continue
+                    elif (animal.wander_radius and not animal.tame
+                          and not animal.invasion and not animal.summoned):
+                        # A wild spawn row's `leash:N` (spawns.py): the
+                        # creature's own radius, per axis around its spawn.
+                        # A step that would leave it turns home instead of
+                        # being refused, so a creature a chase carried past
+                        # its leash walks back rather than standing there.
+                        routed = None
+                        outside = max(abs(animal.x - animal.spawn_x),
+                                      abs(animal.y - animal.spawn_y)) > animal.wander_radius
+                        if outside:
+                            if not animal.leash_outside_since:
+                                animal.leash_outside_since = now
+                            elif (now - animal.leash_outside_since >= LEASH_STRANDED_SECONDS
+                                    and self.return_to_leash(animal, occupied, now)):
+                                continue
+                            # Routed while outside, not only once the greedy
+                            # step is blocked: a greedy step taken between
+                            # routed ones undoes them along a wall.
+                            routed = self.leash_home_step(animal, occupied, now)
+                        else:
+                            animal.leash_outside_since = 0.0
+                        if routed is not None:
+                            animal.wander_steps_remaining = 0
+                            homing = True
+                            dx, dy = routed
+                        else:
+                            home_dx, home_dy = leashed_wander_step(
+                                animal.x, animal.y, dx, dy,
+                                animal.spawn_x, animal.spawn_y, animal.wander_radius)
+                            # Outside, the step is a step home even when the
+                            # random one already pointed there, and is given
+                            # the same fallbacks when it is blocked.
+                            if outside or (home_dx, home_dy) != (dx, dy):
+                                animal.wander_steps_remaining = 0
+                                homing = True
+                            dx, dy = home_dx, home_dy
                     elif (abs(animal.x + dx - animal.spawn_x) > self.settings.normal_wander_radius
                           or abs(animal.y + dy - animal.spawn_y) > self.settings.normal_wander_radius):
                         animal.wander_steps_remaining = 0
                         continue
+                elif animal.leash_outside_since:
+                    # A chase is not a stranding: the clock that returns a
+                    # leashed creature to its spawn starts when the chase ends.
+                    animal.leash_outside_since = 0.0
                 candidates = [(dx, dy)]
-                if (animal.invasion or animal.summoned or pursuing) and dx and dy:
+                if (animal.invasion or animal.summoned or pursuing or homing) and dx and dy:
                     # If a diagonal pursuit/leash step is obstructed, keep moving
                     # around the obstacle instead of idling for another tick.
                     candidates.extend(((dx, 0), (0, dy)))
+                elif homing and (dx or dy):
+                    # A straight step home that is blocked edges round the
+                    # obstacle on either diagonal, still closing on the spawn.
+                    candidates.extend(((dx or 1, dy or 1), (dx or -1, dy or -1)))
                 shape = footprint_of(animal)
                 here = (animal.x, animal.y)
                 step_mask = self.step_mask_at(
