@@ -14,7 +14,11 @@
    "gpuBytes": 2744,
    "rawBytes": 2872,
    "fileBytes": 2326,
-   "sha256": "0e15cf1d15c4b04ec856f5c20ca8461138fc3273303440ccf4e1753ff835f371"
+   "sha256": "0e15cf1d15c4b04ec856f5c20ca8461138fc3273303440ccf4e1753ff835f371",
+   "roles": [
+    "occlusion",
+    "orm"
+   ]
   },
   "5168b5c2d5238b41c0b8b9626b2987775d00fe27f953b84aa9bb8bc7f11349ab": {
    "file": "5168b5c2d5238b41c0b8b9626b2987775d00fe27f953b84aa9bb8bc7f11349ab.normal.evt",
@@ -26,7 +30,10 @@
    "gpuBytes": 5488,
    "rawBytes": 5616,
    "fileBytes": 5220,
-   "sha256": "e3ca954ea4cd01b9f088d970b2e4c106e184901fa9ae06fb045168ab74a87f8c"
+   "sha256": "e3ca954ea4cd01b9f088d970b2e4c106e184901fa9ae06fb045168ab74a87f8c",
+   "roles": [
+    "normal"
+   ]
   },
   "90c51de41c0f4fffd8a6c225f67472eb77d262a183e2fcae827383d3e10d32f4": {
    "file": "90c51de41c0f4fffd8a6c225f67472eb77d262a183e2fcae827383d3e10d32f4.base.evt",
@@ -38,7 +45,10 @@
    "gpuBytes": 5488,
    "rawBytes": 5636,
    "fileBytes": 5511,
-   "sha256": "d29028988c3a9a82f83bbf5730c6772d426f668d5f0743081b7c6db6426bc0ba"
+   "sha256": "d29028988c3a9a82f83bbf5730c6772d426f668d5f0743081b7c6db6426bc0ba",
+   "roles": [
+    "base"
+   ]
   },
   "b48124c90b62f2a02746ddf40ca7f6d2f41097d57e4f282856a9bf066043438e": {
    "file": "b48124c90b62f2a02746ddf40ca7f6d2f41097d57e4f282856a9bf066043438e.base_alpha.evt",
@@ -50,7 +60,10 @@
    "gpuBytes": 5488,
    "rawBytes": 5636,
    "fileBytes": 5195,
-   "sha256": "53532b21860e770f207b3e0d7da912832e79357fd65f955b97217e79ac292acb"
+   "sha256": "53532b21860e770f207b3e0d7da912832e79357fd65f955b97217e79ac292acb",
+   "roles": [
+    "base_cutout"
+   ]
   }
  },
  "excluded": {

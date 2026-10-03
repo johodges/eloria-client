@@ -15,8 +15,8 @@ tool writes, beside each directory of such images, a vram/ folder:
                                already block compressed
   vram/index.json              schema, recipeVersion, encoder, and per source
                                sha: file, recipe, format, width, height,
-                               mipmaps, gpuBytes, rawBytes, fileBytes, sha256;
-                               plus every excluded sha with its reason
+                               mipmaps, gpuBytes, rawBytes, fileBytes, sha256,
+                               roles; plus every excluded sha with its reason
   vram/report.json             the per-image quality numbers (not shipped)
 
 The client (src/world/vram_textures.gd) uploads a sidecar as it is when the
@@ -32,6 +32,13 @@ Recipes, from every glTF material slot that samples the image in any map:
   orm_bc7     an ORM map below its floor as BC1      -> BC7 (one second chance:
               BC1 shares endpoints across channels that ORM keeps unrelated)
   normal      normalTexture                          -> BC5 (Godot rebuilds Z)
+
+`roles` lists every slot the encode was chosen for, as the client names them
+(base, base_cutout for a base colour in a MASK/BLEND material, emissive,
+normal, orm, occlusion). The client uses a sidecar only where the map it is
+loading samples the image in those roles, so an index left over from before a
+content change (a base colour that became a cutout, an ORM map now sampled as
+colour) makes that image decode instead of rendering wrong.
 
 Excluded (the client decodes them as before): an image used in two
 incompatible roles (role_conflict), one no material samples
@@ -143,6 +150,14 @@ def image_roles(document: dict) -> dict[int, set[tuple[str, str]]]:
     for material in document.get("materials", []):
         walk(material, material.get("alphaMode", "OPAQUE"))
     return roles
+
+
+def role_names(roles: set[tuple[str, str]]) -> list[str]:
+    """The roles an index entry records, as the client (vram_textures.gd
+    image_roles) names them: a base colour sampled by a MASK or BLEND
+    material is base_cutout."""
+    return sorted({"base_cutout" if role == "base" and alpha in ("MASK", "BLEND") else role
+                   for role, alpha in roles})
 
 
 def inventory(maps_roots: list[Path]) -> dict[str, dict]:
@@ -409,7 +424,7 @@ def build(maps_roots: list[Path], out_root: Path | None, cache: Path, godot: Pat
         if recipe is None:
             plan["excluded"][sha] = reason
         else:
-            plan["images"][sha] = {"recipe": recipe, "path": record["path"]}
+            plan["images"][sha] = {"recipe": recipe, "path": record["path"], "roles": role_names(record["roles"])}
 
     used_keys: set[str] = set()
     counts = {"encoded": 0, "cached": 0, "encodeSeconds": 0.0}
@@ -468,7 +483,8 @@ def build(maps_roots: list[Path], out_root: Path | None, cache: Path, godot: Pat
     retry = []
     for item in primary:
         meta = meta_of(item)
-        if item["recipe"] in SECOND_CHANCE and "error" not in meta                 and verdict(item["recipe"], meta["quality"], floors):
+        if (item["recipe"] in SECOND_CHANCE and "error" not in meta
+                and verdict(item["recipe"], meta["quality"], floors)):
             retry.append(dict(item, recipe=SECOND_CHANCE[item["recipe"]], first=item))
     if retry:
         ensure(retry)
@@ -505,7 +521,7 @@ def build(maps_roots: list[Path], out_root: Path | None, cache: Path, godot: Pat
                                     "width": meta["width"], "height": meta["height"],
                                     "mipmaps": meta["mipmaps"], "gpuBytes": meta["gpuBytes"],
                                     "rawBytes": meta["rawBytes"], "fileBytes": meta["fileBytes"],
-                                    "sha256": meta["sha256"]}
+                                    "sha256": meta["sha256"], "roles": item["roles"]}
         index["excluded"] = dict(sorted(index["excluded"].items()))
         wanted = {entry["file"] for entry in index["images"].values()}
         stale = [p for p in target.glob("*.evt") if p.name not in wanted]

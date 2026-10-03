@@ -51,11 +51,15 @@ func _import_preflight(state: GLTFState, _extensions: PackedStringArray) -> Erro
 		return ERR_SKIP
 	var resources: Dictionary = (plan as Dictionary).get("resources", {})
 	var images: Array = state.get_json().get("images", [])
+	# The roles this document samples each image in: a sidecar (prepared here
+	# or pooled by another map) is used only where it was encoded for them.
+	var document_roles := VramTextures.image_roles(state.get_json())
 	var base := state.get_base_path()
 	var jobs: Array[Dictionary] = []
 	var by_sha: Dictionary = {}
 	var assigned: Dictionary = {}
 	var pooled: Dictionary = {}
+	var private: Dictionary = {}
 	for index: int in images.size():
 		var descriptor: Variant = images[index]
 		if not descriptor is Dictionary or not (descriptor as Dictionary).has("uri"):
@@ -66,20 +70,40 @@ func _import_preflight(state: GLTFState, _extensions: PackedStringArray) -> Erro
 		var sha := str(resources[uri])
 		if sha.length() != 64:
 			continue
+		var roles: Dictionary = document_roles.get(index, {})
+		var source := base.path_join(uri.uri_file_decode()).simplify_path()
 		var shared := ExternalTexturePool._published(sha)
 		if shared != null:
-			pooled[index] = shared
-			continue
+			if VramTextures.pooled_fits(shared, sha, source.get_base_dir(), roles):
+				pooled[index] = shared
+				continue
+			# Another map's sidecar, encoded for other roles: this map decodes
+			# its own copy, which share() neither replaces nor publishes.
+			private[index] = true
 		var job: Dictionary = by_sha.get(sha, {})
 		if job.is_empty():
-			var source := base.path_join(uri.uri_file_decode()).simplify_path()
-			job = {"sha": sha, "source": source,
+			job = {"sha": sha, "source": source, "roles": {},
 				"sidecar": VramTextures.sidecar_entry(sha, source.get_base_dir())}
 			by_sha[sha] = job
 			jobs.append(job)
+		(job.roles as Dictionary).merge(roles)
+		if private.has(index):
+			job["private"] = true
 		assigned[index] = job
 	if assigned.is_empty() and pooled.is_empty():
 		return ERR_SKIP
+	var role_mismatches := 0
+	for job: Dictionary in jobs:
+		var sidecar: Dictionary = job.sidecar
+		if sidecar.is_empty():
+			continue
+		if bool(job.get("private", false)) or not VramTextures.sidecar_fits(sidecar, job.roles):
+			job["sidecar"] = {}
+			role_mismatches += 1
+			VramTextures.note_decoded_instead(str(job.sha))
+			VramTextures._warn_once(str(job.sha), "vram_textures: %s is sampled as %s here, which sidecar %s (%s) was not encoded for; decoding it" % [
+				str(job.source).get_file(), "+".join(PackedStringArray((job.roles as Dictionary).keys())),
+				str(sidecar.file), "+".join(PackedStringArray(sidecar.get("roles", VramTextures.RECIPE_ROLES.get(str(sidecar.recipe), []))))])
 
 	var began := Time.get_ticks_usec()
 	if not jobs.is_empty():
@@ -94,7 +118,8 @@ func _import_preflight(state: GLTFState, _extensions: PackedStringArray) -> Erro
 		WorkerThreadPool.wait_for_group_task_completion(task)
 	var stats := {"imagesPrepared": 0, "imagesSidecar": 0, "imagesDecoded": 0, "imagesFailed": 0,
 		"sidecarRejected": 0, "imagesPooled": pooled.size(), "imagesPreparedOnMainThread": 0,
-		"prepareWaitUs": Time.get_ticks_usec() - began, "prepareThreads": 0}
+		"prepareWaitUs": Time.get_ticks_usec() - began, "prepareThreads": 0,
+		"sidecarRoleMismatch": role_mismatches, "imagesPrivate": private.size()}
 	var threads: Dictionary = {}
 	for job: Dictionary in jobs:
 		threads[job.get("thread", 0)] = true
@@ -136,6 +161,7 @@ func _import_preflight(state: GLTFState, _extensions: PackedStringArray) -> Erro
 	state.set_additional_data(ORIGINALS_KEY, originals)
 	state.set_additional_data(PREPARED_KEY, prepared)
 	state.set_additional_data(VramTextures.POOLED_KEY, pooled)
+	state.set_additional_data(VramTextures.PRIVATE_KEY, private)
 	state.set_additional_data(VramTextures.DONE_KEY, {})
 	state.set_additional_data(VramTextures.STATS_KEY, stats)
 	return OK

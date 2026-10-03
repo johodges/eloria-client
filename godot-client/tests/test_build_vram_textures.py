@@ -104,6 +104,13 @@ class Recipes(unittest.TestCase):
         self.assertEqual(self._recipe({("orm", "OPAQUE"), ("occlusion", "OPAQUE")}), ("orm", ""))
         self.assertEqual(self._recipe({("normal", "MASK")}), ("normal", ""))
 
+    def test_role_names_are_the_clients(self):
+        # vram_textures.gd SLOT_ROLES / image_roles name them the same way.
+        self.assertEqual(tool.role_names({("base", "OPAQUE"), ("emissive", "MASK")}), ["base", "emissive"])
+        self.assertEqual(tool.role_names({("base", "MASK"), ("base", "BLEND")}), ["base_cutout"])
+        self.assertEqual(tool.role_names({("base", "OPAQUE"), ("base", "MASK")}), ["base", "base_cutout"])
+        self.assertEqual(tool.role_names({("orm", "OPAQUE"), ("occlusion", "MASK")}), ["occlusion", "orm"])
+
     def test_conflicts_and_unused_are_excluded(self):
         self.assertEqual(self._recipe({("base", "OPAQUE"), ("normal", "OPAQUE")}),
                          (None, "role_conflict: base+normal"))
@@ -134,9 +141,13 @@ class CommittedFixture(unittest.TestCase):
                          {"base", "base_alpha", "orm", "normal"})
         for entry in self.index["images"].values():
             self.assertEqual(set(entry), {"file", "recipe", "format", "width", "height", "mipmaps",
-                                          "gpuBytes", "rawBytes", "fileBytes", "sha256"})
+                                          "gpuBytes", "rawBytes", "fileBytes", "sha256", "roles"})
             self.assertEqual(entry["format"], tool.FORMAT_OF[entry["recipe"]])
             self.assertEqual(entry["mipmaps"], 6, "64 px carries its whole chain")
+        # The roles each encode was chosen for, as the fixture's materials use them.
+        self.assertEqual({e["recipe"]: e["roles"] for e in self.index["images"].values()},
+                         {"base": ["base"], "base_alpha": ["base_cutout"], "normal": ["normal"],
+                          "orm": ["occlusion", "orm"]})
 
     def test_exclusions_have_reasons(self):
         reasons = sorted(self.index["excluded"].values())
@@ -178,7 +189,7 @@ class Build(unittest.TestCase):
         built = self._index()
         committed = json.loads((SIDECARS / "index.json").read_text(encoding="utf-8"))
         self.assertEqual(built["excluded"], committed["excluded"])
-        fields = ("file", "recipe", "format", "width", "height", "mipmaps", "gpuBytes", "rawBytes")
+        fields = ("file", "recipe", "format", "width", "height", "mipmaps", "gpuBytes", "rawBytes", "roles")
         self.assertEqual({sha: {k: e[k] for k in fields} for sha, e in built["images"].items()},
                          {sha: {k: e[k] for k in fields} for sha, e in committed["images"].items()})
         self.assertEqual(sorted(p.name for p in self.out.glob("*.evt")),

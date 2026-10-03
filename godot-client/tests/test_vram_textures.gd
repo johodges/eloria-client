@@ -67,6 +67,9 @@ func _run() -> void:
 	_check_fallbacks()
 	_check_unusable_formats()
 	_check_index_rejected()
+	_check_stale_roles()
+	await _check_pooled_roles()
+	_check_index_without_roles()
 	_check_self_test()
 	await _check_warm_cache()
 
@@ -86,14 +89,15 @@ func _set_mode(value: String) -> void:
 func _manifest(directory := FIXTURE) -> Dictionary:
 	return JSON.parse_string(FileAccess.get_file_as_string(directory.path_join("world.json")))
 
-## Parses a fixture GLB. With `plan`, the way WorldLoader does.
-func _parse(plan: bool, directory := FIXTURE) -> GLTFState:
+## Parses a fixture GLB (`name`.glb, world or stale_roles). With `plan`, the
+## way WorldLoader does.
+func _parse(plan: bool, directory := FIXTURE, name := "world") -> GLTFState:
 	var document := GLTFDocument.new()
 	var state := GLTFState.new()
 	if plan:
 		state.set_additional_data(VramTextures.PLAN_KEY, VramTextures.plan_for(_manifest(directory)))
-	_expect(document.append_from_file(directory.path_join("world.glb"), state) == OK,
-		"the fixture parses (plan=%s, mode=%s)" % [plan, VramTextures.mode_name()])
+	_expect(document.append_from_file(directory.path_join(name + ".glb"), state) == OK,
+		"the fixture %s parses (plan=%s, mode=%s)" % [name, plan, VramTextures.mode_name()])
 	return state
 
 ## Develop's path for one parsed image: read it back and build the chain.
@@ -458,6 +462,101 @@ func _check_index_rejected() -> void:
 	_expect(int(stats.get("imagesSidecar", -1)) == 0 and int(stats.get("imagesDecoded", -1)) == EXTERNAL_IMAGES
 		and VramTextures.index_for_directory(directory.path_join("shared-assets")).status == "missing",
 		"no index (a checkout that never ran the tool) decodes every image")
+	VramTextures.reconfigure()
+
+# --------------------------------------------------------------------------
+# Roles: a sidecar serves only what it was encoded for
+# --------------------------------------------------------------------------
+
+## The sha of the fixture's `image_index`-th glTF image (from the GLB's JSON
+## chunk; parsing it would decode every image).
+func _image_sha(image_index: int) -> String:
+	var bytes := FileAccess.get_file_as_bytes(FIXTURE.path_join("world.glb"))
+	var document: Dictionary = JSON.parse_string(bytes.slice(20, 20 + bytes.decode_u32(12)).get_string_from_utf8())
+	return str(_manifest().externalResources[document.images[image_index].uri])
+
+## stale_roles.glb: materials changed after the index was made. Its opaque
+## base (image 0) is now also a MASK cutout, and its ORM map (image 3) also a
+## base colour. Uploading their sidecars would draw the cutout as a solid quad
+## (an opaque base has alpha 255) and the colour from a BC1 ORM encode.
+func _check_stale_roles() -> void:
+	VramTextures.reconfigure()
+	var state := _parse(true, FIXTURE, "stale_roles")
+	var stats := _stats(state)
+	var formats := _formats(state)
+	_expect(int(stats.get("sidecarRoleMismatch", -1)) == 2 and int(stats.get("imagesSidecar", -1)) == 2
+		and int(stats.get("sidecarRejected", -1)) == 0 and int(stats.get("imagesFailed", -1)) == 0,
+		"a map sampling two images in roles their sidecars were not encoded for decodes those two: %s" % [stats])
+	var mipped := state.get_images()[0].get_image().has_mipmaps() and state.get_images()[3].get_image().has_mipmaps()
+	_expect(formats[0] == Image.FORMAT_RGB8 and formats[3] == Image.FORMAT_RGB8 and mipped
+		and formats[1] == Image.FORMAT_BPTC_RGBA and formats[2] == Image.FORMAT_RGTC_RG,
+		"the opaque base now a cutout and the ORM now a colour are decoded with mips; the cutout and normal keep BC7/BC5: %s"
+		% [formats])
+	var published := 64 * 64 * 4 * 4 / 3
+	_expect(VramTextures.resident_bytes(_image_sha(0), published) == published
+		and VramTextures.resident_bytes(_image_sha(3), published) == published,
+		"and the chunk budget counts those two at their published figure")
+	VramTextures.reconfigure()
+	_expect(int(_stats(_parse(true)).get("sidecarRoleMismatch", -1)) == 0,
+		"the package the index was made from has no mismatch")
+
+## The pool holds the first map's textures; the stale map samples two of its
+## sidecars in other roles: it decodes its own copies, keeps them out of the
+## pool and leaves the first map's textures alone. The other four (the BC7
+## cutout, the BC5 normal and the two decoded images) come from the pool.
+func _check_pooled_roles() -> void:
+	VramTextures.reconfigure()
+	var first := WorldLoader.new()
+	root.add_child(first)
+	first.load_world(FIXTURE.path_join("world.json"))
+	var pooled_base := ExternalTexturePool._published(_image_sha(0))
+	var builder := WorldLoader.prepare_detached(FIXTURE.path_join("stale_roles.json"), false)
+	var phases := builder.load_phases
+	_expect(int(phases.get(&"imagesPrivate", -1)) == 2 and int(phases.get(&"imagesPooled", -1)) == 4
+		and int(phases.get(&"sidecarRoleMismatch", -1)) == 2,
+		"a pooled sidecar encoded for other roles is not taken: 2 private copies, 4 pooled: %s" % [phases])
+	var stale := _textures(builder.world_root)
+	var cutout: Texture2D = stale.get("became_cutout")
+	_expect(cutout != null and cutout != pooled_base and cutout.get_image().get_format() == Image.FORMAT_RGB8
+		and cutout.get_image().has_mipmaps(),
+		"the stale map's cutout samples its own decoded texture with mips")
+	_expect(ExternalTexturePool._published(_image_sha(0)) == pooled_base
+		and pooled_base.get_image().get_format() == Image.FORMAT_BPTC_RGBA
+		and _textures(first.world_root).get("opaque") == pooled_base,
+		"the pool and the first map keep their BC7 texture")
+	var resident: Dictionary = builder.release_world()
+	builder.free()
+	(resident.root as Node).free()
+	first.unload_world()
+	first.queue_free()
+	pooled_base = null
+	cutout = null
+	stale.clear()
+	for frame: int in 3:
+		await process_frame
+	_expect(ExternalTexturePool._published(_image_sha(0)) == null, "and the pool lets them go with the maps")
+
+## An index written before entries listed their roles: the recipe decides.
+## An opaque base recipe never serves a cutout.
+func _check_index_without_roles() -> void:
+	VramTextures.reconfigure()
+	var directory := _copy_fixture("index_without_roles")
+	var index := _read_index(directory)
+	for sha: String in index.images:
+		(index.images[sha] as Dictionary).erase("roles")
+	_write_index(directory, index)
+	var stats := _stats(_parse(true, directory))
+	_expect(int(stats.get("imagesSidecar", -1)) == SIDECARS and int(stats.get("sidecarRoleMismatch", -1)) == 0,
+		"without roles in the index each recipe serves its own roles: %s" % [stats])
+	VramTextures.reconfigure()
+	var cutout := _sha_of_recipe(index, "base_alpha")
+	index.images[cutout].recipe = "base"
+	_write_index(directory, index)
+	var state := _parse(true, directory)
+	stats = _stats(state)
+	_expect(int(stats.get("imagesSidecar", -1)) == SIDECARS - 1 and int(stats.get("sidecarRoleMismatch", -1)) == 1
+		and _formats(state)[1] == Image.FORMAT_RGBA8,
+		"and an opaque-base recipe offered for a MASK material decodes it with its alpha: %s" % [stats])
 	VramTextures.reconfigure()
 
 func _check_self_test() -> void:

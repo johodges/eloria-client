@@ -15,11 +15,21 @@ Writes, beside this script:
       material and as a normal map in another (PNG, a role conflict), and a
       data image no material samples (PNG)
 
+  stale_roles.glb, .json        a second package over the same images whose
+                               materials changed after the sidecars were made:
+                               the opaque base is now a MASK cutout and the
+                               ORM map is also sampled as base colour. It is
+                               not named world.json, so the tool never sees it
+                               (the index stays as the tool made it from
+                               world.glb) and the client must refuse those two
+                               sidecars for it. `--stale-roles` rewrites only
+                               this package, from the committed world.glb.
+
 The sidecars under shared-assets/vram/ are made by the real tool afterwards:
 
     python godot-client/tools/build_vram_textures.py \
         --maps godot-client/tests/fixtures/vram \
-        --out godot-client/tests/fixtures/vram/shared-assets/vram
+        --cache <a scratch directory> --no-prune
 
 The folder holds a .gdignore so the editor never imports it; the tests read
 it with FileAccess and GLTFDocument like any map package. Needs numpy and
@@ -181,7 +191,56 @@ def main():
         json.dump(manifest, handle, indent=2)
         handle.write("\n")
     print(json.dumps({key: value[1][:12] for key, value in images.items()}, indent=1))
+    write_stale_roles()
+
+
+def read_glb(path):
+    with open(path, "rb") as handle:
+        data = handle.read()
+    length = struct.unpack_from("<I", data, 12)[0]
+    document = json.loads(data[20:20 + length].decode("utf-8"))
+    blob_length = struct.unpack_from("<I", data, 20 + length)[0]
+    return document, data[20 + length + 8:20 + length + 8 + blob_length]
+
+
+def write_glb(path, document, blob):
+    body = pad4(json.dumps(document, separators=(",", ":")).encode("utf-8"), b" ")
+    glb = struct.pack("<4sII", b"glTF", 2, 12 + 8 + len(body) + 8 + len(blob))
+    glb += struct.pack("<I4s", len(body), b"JSON") + body + struct.pack("<I4s", len(blob), b"BIN\0") + blob
+    with open(path, "wb") as handle:
+        handle.write(glb)
+
+
+def write_stale_roles():
+    """world.glb's images and geometry, with materials a later content pass
+    changed: the opaque base (image 0) is also a MASK cutout's base colour,
+    and the ORM map (image 3) is also sampled as base colour."""
+    document, blob = read_glb(os.path.join(HERE, "world.glb"))
+    keep = [m for m in document["materials"] if m["name"] in ("opaque", "cutout")]
+    keep.append({"name": "became_cutout", "alphaMode": "MASK", "alphaCutoff": 0.5,
+                 "pbrMetallicRoughness": {"baseColorTexture": {"index": 0}}})
+    keep.append({"name": "orm_as_colour", "pbrMetallicRoughness": {"baseColorTexture": {"index": 3}}})
+    attributes = {"POSITION": 0, "NORMAL": 1, "TEXCOORD_0": 2}
+    document["materials"] = keep
+    document["meshes"] = [{"name": "Fixture_" + m["name"], "primitives": [
+        {"attributes": attributes, "indices": 3, "material": index}]} for index, m in enumerate(keep)]
+    document["nodes"] = [{"name": "Fixture_" + m["name"], "mesh": index, "translation": [index * 2.5, 0, 0]}
+                         for index, m in enumerate(keep)]
+    document["scenes"] = [{"nodes": list(range(len(keep)))}]
+    write_glb(os.path.join(HERE, "stale_roles.glb"), document, blob)
+    with open(os.path.join(HERE, "world.json"), encoding="utf-8") as handle:
+        manifest = json.load(handle)
+    manifest["asset"]["id"] = "vram_fixture_stale_roles"
+    manifest["asset"]["glb"] = "stale_roles.glb"
+    with open(os.path.join(HERE, "stale_roles.json"), "w", encoding="utf-8", newline="\n") as handle:
+        json.dump(manifest, handle, indent=2)
+        handle.write("\n")
+    print("wrote stale_roles.glb / stale_roles.json")
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    if "--stale-roles" in sys.argv:
+        write_stale_roles()
+    else:
+        main()

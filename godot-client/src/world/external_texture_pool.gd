@@ -62,9 +62,13 @@ static func share(state: GLTFState, resources: Dictionary) -> int:
 	var done: Dictionary = done_value if done_value is Dictionary else {}
 	var pooled_value: Variant = state.get_additional_data(VramTextures.POOLED_KEY)
 	var pooled: Dictionary = pooled_value if pooled_value is Dictionary else {}
+	# Decoded for this map alone: the pool holds a sidecar of this hash that was
+	# encoded for other roles (VramTextures.pooled_fits). Keep it, publish nothing.
+	var private_value: Variant = state.get_additional_data(VramTextures.PRIVATE_KEY)
+	var private: Dictionary = private_value if private_value is Dictionary else {}
 	for index: int in mini(descriptors.size(), images.size()):
 		var uri := str(descriptors[index].get("uri", ""))
-		if not resources.has(uri) or not images[index] is ImageTexture:
+		if not resources.has(uri) or not images[index] is ImageTexture or private.has(index):
 			continue
 		var key := str(resources[uri])
 		var current := images[index] as ImageTexture

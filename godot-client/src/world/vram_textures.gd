@@ -29,9 +29,11 @@ extends RefCounted
 ## uploaded as it is: no decode, no mips to build, a quarter (BC7, BC5) or an
 ## eighth (BC1) of the memory. Any doubt - no index, a schema or recipe
 ## version this client does not know, a missing or corrupt file, a size or
-## format that disagrees with the index, a format the GPU lacks - and that
-## image is decoded from its JPEG/PNG as before, so a package without sidecars
-## (a dev checkout that never ran the tool) behaves exactly as develop did.
+## format that disagrees with the index, a format the GPU lacks, a material
+## role the sidecar was not encoded for (an index older than the maps) - and
+## that image is decoded from its JPEG/PNG as before, so a package without
+## sidecars (a dev checkout that never ran the tool) behaves exactly as
+## develop did.
 ##
 ## The client never compresses anything itself: the export templates have no
 ## BC encoder (tests/test_build_vram_textures.py holds that line).
@@ -61,6 +63,10 @@ const PLAN_KEY := &"eloria_map_plan"
 const DONE_KEY := &"eloria_vram_done"
 ## Image index -> the pooled texture that replaces its 1x1 placeholder.
 const POOLED_KEY := &"eloria_vram_pooled"
+## Image index -> true for an image this map decodes for itself although the
+## pool holds a texture of its sha: a sidecar encoded for other roles. Its
+## texture is neither replaced by the pooled one nor published.
+const PRIVATE_KEY := &"eloria_vram_private"
 ## Counters copied into `WorldLoader.load_phases`.
 const STATS_KEY := &"eloria_vram_stats"
 
@@ -86,6 +92,17 @@ const IMAGE_FORMATS := {"bc1": Image.FORMAT_DXT1, "bc5": Image.FORMAT_RGTC_RG,
 	"bc7": Image.FORMAT_BPTC_RGBA}
 
 const _PNG := [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
+
+## The glTF material slots that sample an image, named as
+## tools/build_vram_textures.py names them in an index entry's `roles`; a base
+## colour in a MASK or BLEND material is "base_cutout" (its alpha is sampled).
+const SLOT_ROLES := {"baseColorTexture": "base", "emissiveTexture": "emissive",
+	"normalTexture": "normal", "metallicRoughnessTexture": "orm", "occlusionTexture": "occlusion"}
+## The roles each recipe's encode serves, for an index entry that does not
+## list its own: an opaque base (RGB, alpha 255) never serves a cutout, a BC5
+## normal or a BC1/BC7 ORM never serves colour.
+const RECIPE_ROLES := {"base": ["base", "emissive"], "base_alpha": ["base", "base_cutout", "emissive"],
+	"normal": ["normal"], "orm": ["orm", "occlusion"], "orm_bc7": ["orm", "occlusion"]}
 
 static var _mutex := Mutex.new()
 static var _registered := false
@@ -329,6 +346,14 @@ static func _read_index(directory: String) -> Dictionary:
 			"rawBytes": int(source.get("rawBytes", 0)), "fileBytes": int(source.get("fileBytes", 0)),
 			"sha256": str(source.get("sha256", "")),
 			"path": directory.path_join(SIDECAR_DIRECTORY).path_join(file)}
+		# The roles the encode was chosen for; without them (an older index)
+		# sidecar_fits falls back to what the recipe serves.
+		var roles: Variant = source.get("roles")
+		if roles is Array:
+			var names: Array[String] = []
+			for role: Variant in roles:
+				names.append(str(role))
+			entry["roles"] = names
 		images[str(sha)] = entry
 	if skipped > 0:
 		push_warning("vram_textures: %d entries of %s are incomplete; those images decode as before" % [skipped, path])
@@ -354,6 +379,80 @@ static func sidecar_entry(sha: String, source_directory: String) -> Dictionary:
 	if entry.is_empty() or not (usable_formats() & int(FORMAT_BITS[entry.format])):
 		return {}
 	return entry
+
+## glTF image index -> {role: true} for every material slot of a glTF JSON
+## `document` that samples it (SLOT_ROLES; a base colour in a MASK or BLEND
+## material is "base_cutout"). The same walk as the tool's image_roles: every
+## slot key anywhere in a material, extensions included; a texture's source
+## may come from a texture extension.
+static func image_roles(document: Dictionary) -> Dictionary:
+	var sources: Array = []
+	for texture: Variant in document.get("textures", []):
+		var source: Variant = null
+		if texture is Dictionary:
+			source = (texture as Dictionary).get("source")
+			var extensions: Variant = (texture as Dictionary).get("extensions")
+			if extensions is Dictionary:
+				for extension: Variant in (extensions as Dictionary).values():
+					if extension is Dictionary and (extension as Dictionary).has("source"):
+						source = extension.source
+		sources.append(source)
+	var roles: Dictionary = {}
+	for material: Variant in document.get("materials", []):
+		if material is Dictionary:
+			var cutout := str((material as Dictionary).get("alphaMode", "OPAQUE")) in ["MASK", "BLEND"]
+			_walk_roles(material, cutout, sources, roles)
+	return roles
+
+static func _walk_roles(item: Variant, cutout: bool, sources: Array, roles: Dictionary) -> void:
+	if item is Dictionary:
+		for key: Variant in item:
+			var value: Variant = item[key]
+			if SLOT_ROLES.has(key) and value is Dictionary and typeof((value as Dictionary).get("index")) in [TYPE_INT, TYPE_FLOAT]:
+				var texture := int(value.index)
+				if texture >= 0 and texture < sources.size() and typeof(sources[texture]) in [TYPE_INT, TYPE_FLOAT]:
+					var image := int(sources[texture])
+					var role: String = SLOT_ROLES[key]
+					if role == "base" and cutout:
+						role = "base_cutout"
+					if not roles.has(image):
+						roles[image] = {}
+					roles[image][role] = true
+			else:
+				_walk_roles(value, cutout, sources, roles)
+	elif item is Array:
+		for value: Variant in item:
+			_walk_roles(value, cutout, sources, roles)
+
+## Whether a sidecar can stand for an image this map samples in `roles`
+## ({role: true}): every role must be one its index entry lists, or, for an
+## index written before entries listed them, one its recipe serves. An index
+## left from before a content change - a base colour that became a cutout, an
+## ORM map now sampled as colour - must not upload an encode made for
+## something else (an opaque base has alpha 255: the cutout would draw as
+## solid quads); that image decodes instead.
+static func sidecar_fits(entry: Dictionary, roles: Dictionary) -> bool:
+	var allowed: Variant = entry.get("roles")
+	if not allowed is Array:
+		allowed = RECIPE_ROLES.get(str(entry.get("recipe", "")), [])
+	for role: Variant in roles:
+		if not (allowed as Array).has(role):
+			return false
+	return true
+
+## Whether a texture another map put in ExternalTexturePool for `sha` can
+## serve `roles` here. A decoded one serves any role; one uploaded from a
+## sidecar only the roles that sidecar fits, judged by the index of the
+## image's own directory (`source_directory`, read here if it was not yet).
+static func pooled_fits(texture: Texture2D, sha: String, source_directory: String, roles: Dictionary) -> bool:
+	if roles.is_empty() or not texture is ImageTexture:
+		return true
+	if not IMAGE_FORMATS.values().has((texture as ImageTexture).get_format()):
+		return true
+	var entry: Dictionary = (index_for_directory(source_directory).images as Dictionary).get(sha, {})
+	if entry.is_empty():
+		entry = lookup(sha)
+	return not entry.is_empty() and sidecar_fits(entry, roles)
 
 ## What MapSceneCache's key must also carry for a package with external
 ## images: a cached map keeps the textures it was packed with, so an entry

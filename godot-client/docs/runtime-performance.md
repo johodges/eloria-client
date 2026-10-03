@@ -404,8 +404,8 @@ chunk stream's 256 MiB budget, so the stream refused most of its neighbours.
   states that carry WorldLoader's plan are touched, so actor GLBs and embedded
   images keep GLTFDocument's own path. `load_phases` reports `imagesPrepared`,
   `imagesSidecar`, `imagesDecoded`, `imagesPooled`, `imagesFailed`,
-  `sidecarRejected`, `imagesPreparedOnMainThread`, `prepareThreads` and
-  `prepareWaitUs`.
+  `sidecarRejected`, `sidecarRoleMismatch`, `imagesPrivate`,
+  `imagesPreparedOnMainThread`, `prepareThreads` and `prepareWaitUs`.
 * **Sidecars.** `tools/build_vram_textures.py` writes `<image dir>/vram/` at
   package time: `<sha>.<recipe>.evt` (EVT1 header + zstd DDS with the full mip
   chain) and `index.json`. BC7 for base colour (alpha only where a MASK/BLEND
@@ -414,8 +414,13 @@ chunk stream's 256 MiB budget, so the stream refused most of its neighbours.
   multiple of 4 are listed as excluded and decode as before. The client uploads
   a sidecar as it is when the renderer samples its format (RenderingDevice on
   Forward+/Mobile, the GL driver on Compatibility) and falls back to decoding,
-  image by image, on any doubt. The client never compresses anything: the
-  export templates have no BC encoder.
+  image by image, on any doubt. Each index entry lists the material roles its
+  encode was chosen for (`base`, `base_cutout`, `emissive`, `normal`, `orm`,
+  `occlusion`); a map that samples the image in another role - an index left
+  from before a content pass, say an opaque base that became a cutout - decodes
+  it (`sidecarRoleMismatch`), and a pooled sidecar from another map is not
+  reused for such a role (`imagesPrivate`). The client never compresses
+  anything: the export templates have no BC encoder.
 * **Budget.** `ContinentChunkStream.configure` reads the sidecar indexes of the
   images its territory manifest names (wherever they live), then counts each
   shared image at its sidecar's GPU bytes when it will be uploaded from one, the
