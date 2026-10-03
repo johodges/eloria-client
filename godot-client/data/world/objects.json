@@ -457,6 +457,58 @@
         "sha256": "9510feeca04fb2c41b8b8df28175704a01ed6d93059027b130b51a43db1000c3",
         "imported": true,
         "source": "Meshy H2; leaves, crate and trunk graded to 0.55-0.60, lemons 0.85; continent-v2 harvest ship run 3, 2026-10-02"
+      },
+      "isle_flint": {
+        "scene": "res://assets/world/harvestables/isle_flint.glb",
+        "label": "Flint",
+        "kind": "mineral",
+        "tier": "common",
+        "vertices": 2432,
+        "triangles": 2264,
+        "alphaTested": false,
+        "height": 1.0,
+        "sha256": "4f7d9ee6f2ba7bc375390896100832606aab3984dd929889055c870664f63598",
+        "imported": true,
+        "source": "Meshy H3 with flint nodules on the back face and a glassy sheen on the flint; warm baseColorFactor 0.31/0.25/0.19; continent-v2 harvest ship run 3, 2026-10-02"
+      },
+      "isle_sage": {
+        "scene": "res://assets/world/harvestables/isle_sage.glb",
+        "label": "Sage",
+        "kind": "herb",
+        "tier": "common",
+        "vertices": 2366,
+        "triangles": 1152,
+        "alphaTested": false,
+        "height": 0.7,
+        "sha256": "3c82504566291c0c5c50da6dfe535d8bdb361d7aaecbc93fd743ab57aa7e3225",
+        "imported": true,
+        "source": "Meshy H4 with its spikes desaturated toward lilac-grey; leaves graded to 0.22, spikes kept light; continent-v2 harvest ship run 3, 2026-10-02"
+      },
+      "isle_resin": {
+        "scene": "res://assets/world/harvestables/isle_resin.glb",
+        "label": "Resin",
+        "kind": "resin",
+        "tier": "uncommon",
+        "vertices": 2535,
+        "triangles": 2568,
+        "alphaTested": false,
+        "height": 1.6,
+        "sha256": "285f9347ca8692214c90008dc6810903a732600c67e3fd5ef4ae887dbfe48366",
+        "imported": true,
+        "source": "Meshy H5; bark graded to 0.30, the cut top repainted weathered with amber beads and drips, the tapping panel painted on the back face; continent-v2 harvest ship run 3, 2026-10-02"
+      },
+      "isle_shell": {
+        "scene": "res://assets/world/harvestables/isle_shell.glb",
+        "label": "Shell",
+        "kind": "mineral",
+        "tier": "common",
+        "vertices": 1991,
+        "triangles": 1633,
+        "alphaTested": false,
+        "height": 0.572,
+        "sha256": "1ad940561516fad1b78606d637d049d64a52b986bc89f848100bd3b3fe7e6a02",
+        "imported": true,
+        "source": "Meshy H6; sand plate cut to a 0.60 m radius with its rim lowered to the ground, sand graded to 0.55; continent-v2 harvest ship run 3, 2026-10-02"
       }
     },
     "resources": {
