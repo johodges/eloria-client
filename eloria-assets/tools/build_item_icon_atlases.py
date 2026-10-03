@@ -8,7 +8,8 @@ is the other half of that contract, the one that makes those ids resolve to
 pixels.  The icons themselves are rendered from the same meshes by
 ``generate_models/equipment_icons`` and ``generate_models/weapon_icons``
 (siblings of this repository), one 50px cell per piece, already framed like
-the painted set; the potion shelf has no meshes and is painted here.
+the painted set; the potion shelf and the island crops have no meshes and
+are painted here.
 Everything that knows the atlas shape is written here so it cannot drift --
 
   the pixels    godot-client/assets/ui/items/items*.png
@@ -32,6 +33,7 @@ from pathlib import Path
 
 from PIL import Image
 
+import crop_icons
 import import_generated_equipment as ige
 import import_generated_weapons as igw
 import potion_icons
@@ -150,6 +152,11 @@ def main() -> int:
 
     potions = potion_icons.roster()
     pieces.extend(potions)
+    # The fifth set: the island crops, painted like the shelf, from 594.
+    crops = crop_icons.roster()
+    pieces.extend(crops)
+    painters = {**{p.image_id: potion_icons.paint for p in potions},
+                **{p.image_id: crop_icons.paint for p in crops}}
 
     image_count = max(p.image_id for p in pieces) + 1
     atlas_count = (image_count + PER_ATLAS - 1) // PER_ATLAS
@@ -169,7 +176,7 @@ def main() -> int:
             if icon.size != (CELL, CELL):
                 icon = icon.resize((CELL, CELL), Image.LANCZOS)
         else:
-            icon = potion_icons.paint(piece)
+            icon = painters[piece.image_id](piece)
         row, column = divmod(piece.image_id % PER_ATLAS, COLUMNS)
         atlases[piece.image_id // PER_ATLAS].paste(
             icon, (column * CELL, row * CELL))
@@ -193,9 +200,10 @@ def main() -> int:
         "sets' per-piece icons -- armour from 118 and weapons from 374 in "
         "their import roster orders, the painted potion shelf from %d "
         "(potion_icons roster order), the torso concept designs from %d "
-        "(torso_designs order) -- ending at %d."
+        "(torso_designs order), the island crops from %d (crop_icons roster "
+        "order) -- ending at %d."
         % (potion_icons.FIRST_IMAGE_ID, torso_items.FIRST_IMAGE_ID,
-           image_count - 1))
+           crop_icons.FIRST_IMAGE_ID, image_count - 1))
     LAYOUT.write_text(json.dumps(layout, indent=1) + "\n", encoding="utf-8")
     print("wrote %s" % LAYOUT)
     return 0
