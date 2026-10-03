@@ -94,17 +94,17 @@ IMPORTED_HARVESTABLES = (
         "Meshy H2; leaves, crate and trunk graded to 0.55-0.60, lemons 0.85; "
         "continent-v2 harvest ship run 3, 2026-10-02"),
     ImportedHarvestable(
-        "isle_flint", "Flint", "mineral", "common", False, "sunstone_flint",
+        "isle_flint", "Flint", "mineral", "common", True, "sunstone_flint",
         "Meshy H3 with flint nodules on the back face and a glassy sheen on "
         "the flint; warm baseColorFactor 0.31/0.25/0.19; continent-v2 harvest "
         "ship run 3, 2026-10-02"),
     ImportedHarvestable(
-        "isle_sage", "Sage", "herb", "common", False, "wayside_sage",
+        "isle_sage", "Sage", "herb", "common", True, "wayside_sage",
         "Meshy H4 with its spikes desaturated toward lilac-grey; leaves "
         "graded to 0.22, spikes kept light; continent-v2 harvest ship run 3, "
         "2026-10-02"),
     ImportedHarvestable(
-        "isle_resin", "Resin", "resin", "uncommon", False, "amber_resin",
+        "isle_resin", "Resin", "resin", "uncommon", True, "amber_resin",
         "Meshy H5; bark graded to 0.30, the cut top repainted weathered with "
         "amber beads and drips, the tapping panel painted on the back face; "
         "continent-v2 harvest ship run 3, 2026-10-02"),

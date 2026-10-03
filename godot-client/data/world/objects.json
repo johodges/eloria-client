@@ -469,7 +469,8 @@
         "height": 1.0,
         "sha256": "4f7d9ee6f2ba7bc375390896100832606aab3984dd929889055c870664f63598",
         "imported": true,
-        "source": "Meshy H3 with flint nodules on the back face and a glassy sheen on the flint; warm baseColorFactor 0.31/0.25/0.19; continent-v2 harvest ship run 3, 2026-10-02"
+        "source": "Meshy H3 with flint nodules on the back face and a glassy sheen on the flint; warm baseColorFactor 0.31/0.25/0.19; continent-v2 harvest ship run 3, 2026-10-02",
+        "replaces": "sunstone_flint"
       },
       "isle_sage": {
         "scene": "res://assets/world/harvestables/isle_sage.glb",
@@ -482,7 +483,8 @@
         "height": 0.7,
         "sha256": "3c82504566291c0c5c50da6dfe535d8bdb361d7aaecbc93fd743ab57aa7e3225",
         "imported": true,
-        "source": "Meshy H4 with its spikes desaturated toward lilac-grey; leaves graded to 0.22, spikes kept light; continent-v2 harvest ship run 3, 2026-10-02"
+        "source": "Meshy H4 with its spikes desaturated toward lilac-grey; leaves graded to 0.22, spikes kept light; continent-v2 harvest ship run 3, 2026-10-02",
+        "replaces": "wayside_sage"
       },
       "isle_resin": {
         "scene": "res://assets/world/harvestables/isle_resin.glb",
@@ -495,7 +497,8 @@
         "height": 1.6,
         "sha256": "285f9347ca8692214c90008dc6810903a732600c67e3fd5ef4ae887dbfe48366",
         "imported": true,
-        "source": "Meshy H5; bark graded to 0.30, the cut top repainted weathered with amber beads and drips, the tapping panel painted on the back face; continent-v2 harvest ship run 3, 2026-10-02"
+        "source": "Meshy H5; bark graded to 0.30, the cut top repainted weathered with amber beads and drips, the tapping panel painted on the back face; continent-v2 harvest ship run 3, 2026-10-02",
+        "replaces": "amber_resin"
       },
       "isle_shell": {
         "scene": "res://assets/world/harvestables/isle_shell.glb",
@@ -527,8 +530,8 @@
       "Venom Bulb": "verdant_venom_bulb",
       "Geode": "voltaic_geode",
       "Silverleaf": "whitehorn_silverleaf",
-      "Resin": "amber_resin",
-      "Sage": "wayside_sage",
+      "Resin": "isle_resin",
+      "Sage": "isle_sage",
       "Wheat": "steppe_wheat",
       "Riverflax": "riverflax",
       "Moorcotton": "moorcotton",
@@ -541,7 +544,7 @@
       "Bog Iron": "bogiron_nodule",
       "Coal": "emberseam_coal",
       "Quartz": "pale_quartz",
-      "Flint": "sunstone_flint",
+      "Flint": "isle_flint",
       "Thistle": "indigo_thistle",
       "Watercress": "cenote_watercress",
       "Sunleaf": "sunleaf",
