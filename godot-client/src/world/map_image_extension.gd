@@ -33,6 +33,17 @@ const MIME_PREFIX := "image/x-eloria-map;"
 const PLACEHOLDER_URI := "data:application/octet-stream;base64,AA=="
 const ORIGINALS_KEY := &"eloria_vram_originals"
 const PREPARED_KEY := &"eloria_vram_prepared"
+## Pool threads one chunk worker's images may use at once. Uncapped (-1: as
+## many low-priority threads as Godot's low_priority_thread_ratio allows) the
+## preparation of a streamed cell slowed every frame while cells streamed in:
+## median 4.6-10.9 ms against develop's 2.2-3.4, also with the sidecars off,
+## where the only change from develop is this parallel preparation. Develop
+## decoded on the chunk worker alone; one or two threads keep about that
+## footprint and still drop the readback and the second upload.
+const WORKER_IMPORT_TASKS_MAX := 2
+
+static func worker_import_tasks() -> int:
+	return clampi(floori(OS.get_processor_count() / 8.0), 1, WORKER_IMPORT_TASKS_MAX)
 
 func _import_preflight(state: GLTFState, _extensions: PackedStringArray) -> Error:
 	var plan: Variant = state.get_additional_data(VramTextures.PLAN_KEY)
@@ -72,17 +83,21 @@ func _import_preflight(state: GLTFState, _extensions: PackedStringArray) -> Erro
 
 	var began := Time.get_ticks_usec()
 	if not jobs.is_empty():
-		# High priority only when the main thread is the one waiting (a primed
-		# cell or a whole-map load); a chunk worker's images queue behind it.
+		# When the main thread is the one waiting (a primed cell or a whole-map
+		# load), every pool thread at high priority. A chunk worker's import is
+		# background work: at most WORKER_IMPORT_TASKS_MAX low-priority threads,
+		# so streaming does not take the CPU the frames need (see that constant).
 		var on_main := OS.get_thread_caller_id() == OS.get_main_thread_id()
 		var task := WorkerThreadPool.add_group_task(
 			func(job_index: int) -> void: VramTextures.prepare(jobs[job_index]),
-			jobs.size(), -1, on_main, "Eloria map images")
+			jobs.size(), -1 if on_main else worker_import_tasks(), on_main, "Eloria map images")
 		WorkerThreadPool.wait_for_group_task_completion(task)
 	var stats := {"imagesPrepared": 0, "imagesSidecar": 0, "imagesDecoded": 0, "imagesFailed": 0,
 		"sidecarRejected": 0, "imagesPooled": pooled.size(), "imagesPreparedOnMainThread": 0,
-		"prepareWaitUs": Time.get_ticks_usec() - began}
+		"prepareWaitUs": Time.get_ticks_usec() - began, "prepareThreads": 0}
+	var threads: Dictionary = {}
 	for job: Dictionary in jobs:
+		threads[job.get("thread", 0)] = true
 		match str(job.get("kind", "failed")):
 			"sidecar":
 				stats.imagesPrepared += 1
@@ -96,6 +111,7 @@ func _import_preflight(state: GLTFState, _extensions: PackedStringArray) -> Erro
 			stats.sidecarRejected += 1
 		if bool(job.get("onMainThread", false)):
 			stats.imagesPreparedOnMainThread += 1
+	stats.prepareThreads = threads.size()
 
 	var originals: Dictionary = {}
 	var prepared: Dictionary = {}

@@ -390,6 +390,7 @@ static func plan_for(manifest_data: Dictionary) -> Dictionary:
 ## mip chain, or null), `kind` ("sidecar", "decoded" or "failed"), `mime`,
 ## `rejected` (why a sidecar was not used) and `onMainThread`.
 static func prepare(job: Dictionary) -> void:
+	job["thread"] = OS.get_thread_caller_id()
 	job["onMainThread"] = OS.get_thread_caller_id() == OS.get_main_thread_id()
 	var sidecar: Dictionary = job.get("sidecar", {})
 	if not sidecar.is_empty():

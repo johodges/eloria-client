@@ -17,6 +17,7 @@ extends SceneTree
 const VramTextures := preload("res://src/world/vram_textures.gd")
 const ExternalTexturePool := preload("res://src/world/external_texture_pool.gd")
 const MapCache := preload("res://src/world/map_scene_cache.gd")
+const MapImageExtension := preload("res://src/world/map_image_extension.gd")
 
 const FIXTURE := "res://tests/fixtures/vram"
 const SCRATCH := "user://vram-textures-test"
@@ -308,6 +309,10 @@ func _check_worker_load() -> void:
 		and int(builder.load_phases.get(&"imagesPreparedOnMainThread", -1)) == 0,
 		"mode=%s: a load from a Thread prepares its images and none on the main thread: %s"
 		% [VramTextures.mode_name(), builder.load_phases])
+	var threads := int(builder.load_phases.get(&"prepareThreads", -1))
+	_expect(threads >= 1 and threads <= MapImageExtension.WORKER_IMPORT_TASKS_MAX,
+		"a worker's images take at most %d pool threads, not the whole pool (%d)"
+		% [MapImageExtension.WORKER_IMPORT_TASKS_MAX, threads])
 	var resident: Dictionary = builder.release_world()
 	builder.free()
 	if resident.root != null:

@@ -395,14 +395,17 @@ chunk stream's 256 MiB budget, so the stream refused most of its neighbours.
 
 * **Preparation** (`src/world/map_image_extension.gd`, `vram_textures.gd`). A
   `GLTFDocumentExtension` prepares a package's external images before the parse,
-  in one WorkerThreadPool group task: decoded by their magic bytes (no more
-  "Not a PNG file" for every `.jpg`) and given the mip chain the client always
+  in one WorkerThreadPool group task (every pool thread when the main thread
+  waits for it; at most two low-priority threads for a streaming chunk worker,
+  whose import must not take the CPU the frames need): decoded by their magic
+  bytes (no more "Not a PNG file" for every `.jpg`) and given the mip chain the client always
   built, or taken from `ExternalTexturePool` when another map holds them. The
   texture GLTFDocument creates is the finished one; nothing is read back. Only
   states that carry WorldLoader's plan are touched, so actor GLBs and embedded
   images keep GLTFDocument's own path. `load_phases` reports `imagesPrepared`,
   `imagesSidecar`, `imagesDecoded`, `imagesPooled`, `imagesFailed`,
-  `sidecarRejected`, `imagesPreparedOnMainThread` and `prepareWaitUs`.
+  `sidecarRejected`, `imagesPreparedOnMainThread`, `prepareThreads` and
+  `prepareWaitUs`.
 * **Sidecars.** `tools/build_vram_textures.py` writes `<image dir>/vram/` at
   package time: `<sha>.<recipe>.evt` (EVT1 header + zstd DDS with the full mip
   chain) and `index.json`. BC7 for base colour (alpha only where a MASK/BLEND
