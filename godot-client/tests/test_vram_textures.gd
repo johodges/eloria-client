@@ -510,6 +510,10 @@ func _check_warm_cache() -> void:
 		"a first load writes the cache entry (%s)" % loader.cache_status)
 	_expect(loader.cache_file != MapCache.cache_path("vram_fixture", digest),
 		"a package with external images keys its entry with the texture token")
+	var plain := _manifest()
+	plain.erase("externalResources")
+	_expect(VramTextures.cache_token(plain, FIXTURE) == "" and MapCache.CACHE_FORMAT_VERSION == 7,
+		"a package without external images adds nothing to its key at format 7: players keep develop's entries")
 	var written := loader.cache_file
 	loader.unload_world()
 	await process_frame

@@ -425,8 +425,12 @@ chunk stream's 256 MiB budget, so the stream refused most of its neighbours.
   its format's top level holds, is not used; a sidecar refused at load sends
   its image back to the published figure for the rest of the session (the
   stream re-corrects and logs `... rechecked`).
-* **Cache.** `CACHE_FORMAT_VERSION` 8, and a package with external images folds
-  `VramTextures.cache_token` (mode, usable formats, index hash) into its key.
+* **Cache.** A package with external images folds `VramTextures.cache_token`
+  (mode, usable formats, index hash) into its key, so its entries never mix
+  with ones built from decoded images; `CACHE_FORMAT_VERSION` stays 7, because
+  every other package builds exactly as before and keeps its players' entries.
+  Live continent chunks are detached builds and never write the cache, so the
+  sidecar formats reach it through whole-map loads only.
 * **Switch.** `ELORIA_VRAM_TEXTURES=0` turns sidecars (and the budget
   correction) off; `force` uses them whatever the renderer says (tests). The
   client logs `vram_textures mode=... formats=... index=...` once at startup;

@@ -55,9 +55,15 @@ extends RefCounted
 ## 5 - continent-owned scenery uses shared-cell grouping and hidden thresholds.
 ## 6 - shared-continent chunks, external textures and opaque vertex colours.
 ## 7 - shared elevated/sloping drainage uses the common continent water shader.
-## 8 - map textures may be VRAM-compressed sidecars; a package with external
-##     images also folds VramTextures.cache_token into its key (`cache_path`).
-const CACHE_FORMAT_VERSION := 8
+##
+## VRAM-compressed sidecar textures did not bump it: they change the tree only
+## for a package with external images, and such a package folds
+## VramTextures.cache_token into its key (`cache_path`), so its entries are
+## already apart from the ones a client without sidecars wrote, in both
+## directions. Every other package builds exactly as before and keeps its
+## entry. (Live continent chunks are detached builds, which read the cache but
+## never write it, so this reaches whole-map loads today.)
+const CACHE_FORMAT_VERSION := 7
 
 ## Wrapped into the digest so the hash of a package cannot be confused with the
 ## hash of anything else, and so the digest itself can be revised without
