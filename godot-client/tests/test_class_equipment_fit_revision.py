@@ -16,12 +16,21 @@ import revise_class_equipment_fit as revision
 import torso_remap
 
 
+CUFF_MANIFEST = ROOT / "eloria-assets/qa/luminous-female-cuff-fit.json"
+CUFF_CONSUMED_OUTPUTS = {
+    "variants/luminous_female/arcane_leg_armor_01.glb": "arcanistLegs",
+    "variants/luminous_female/arcane_fantasy_boots_01.glb": "arcanistBoots",
+}
+
+
 def _manifest() -> dict:
     return json.loads(revision.DEFAULT_MANIFEST.read_text(encoding="utf-8"))
 
 
 def test_manifest_roster_and_installed_outputs_are_exact():
     manifest = _manifest()
+    cuff_manifest = json.loads(CUFF_MANIFEST.read_text(encoding="utf-8"))
+    assert cuff_manifest["status"] == "installed-production"
     assert manifest["shoulderRevision"] == {
         "profileVersion": 2,
         "lockTravel": torso_remap.SLEEVE_PROFILE_LOCK_T,
@@ -63,7 +72,19 @@ def test_manifest_roster_and_installed_outputs_are_exact():
     for relative, expected_hash in manifest["output"].items():
         installed = (ROOT / "godot-client/assets/actors/native/equipment"
                      / Path(relative))
-        assert revision.digest(installed) == expected_hash, relative
+        if relative in CUFF_CONSUMED_OUTPUTS:
+            cuff_key = CUFF_CONSUMED_OUTPUTS[relative]
+            cuff_input = cuff_manifest["inputs"][cuff_key]
+            assert cuff_input["sourceSHA256"] == expected_hash, relative
+            provenance = cuff_input["provenance"]
+            assert provenance == {
+                "kind": "producer-manifest-output",
+                "manifest": "eloria-assets/qa/class-equipment-fit-baseline.json",
+                "section": "output",
+                "key": relative,
+            }
+        else:
+            assert revision.digest(installed) == expected_hash, relative
         installed_paths.append(installed)
         if relative.endswith(tuple(
                 slug + ".glb" for slug in revision.TORSOS.values())):

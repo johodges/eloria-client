@@ -23754,8 +23754,8 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.0357,
-          0.0,
+          -0.0757,
+          -0.05,
           0.0
         ],
         "rotationDegrees": [
@@ -24286,8 +24286,8 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.0357,
-          0.0,
+          -0.0757,
+          -0.05,
           0.0
         ],
         "rotationDegrees": [
@@ -24685,8 +24685,8 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          0.02008,
-          -0.08784,
+          -0.02,
+          -0.09,
           -0.07955
         ],
         "rotationDegrees": [
@@ -24704,9 +24704,9 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.05194,
-          -0.00242,
-          0.00037
+          -0.08,
+          -0.04,
+          -0.08
         ],
         "rotationDegrees": [
           42.18961,

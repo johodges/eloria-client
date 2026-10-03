@@ -4,8 +4,8 @@
   "pipeline": "build_native_nymara_glbs.py",
   "races": {
     "luminous_female": {
-      "vertices": 24911,
-      "triangles": 35750,
+      "vertices": 24684,
+      "triangles": 35449,
       "joints": 77,
       "feature": "none",
       "wardrobe": "skinned",
@@ -19,7 +19,7 @@
       "path": "godot-client/assets/actors/native/races/luminous_female.glb",
       "source": "luminous_human_female_tpose.glb",
       "sourceSHA256": "f5ebfc9e753d1120190863187753ed76b8b614a959e9a8efe5608194ad387d35",
-      "sha256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
+      "sha256": "b95921cd99da9f69009c5bc8295bae164ccf84189aefcaab6b6b13cb693a5552",
       "surfaces": [
         "body",
         "eyes",
@@ -98,8 +98,8 @@
       }
     },
     "votary_female": {
-      "vertices": 30951,
-      "triangles": 41216,
+      "vertices": 30724,
+      "triangles": 40915,
       "joints": 77,
       "feature": "horns",
       "wardrobe": "skinned",
@@ -113,7 +113,7 @@
       "path": "godot-client/assets/actors/native/races/votary_female.glb",
       "source": "whitehorn_votary_female_tpose.glb",
       "sourceSHA256": "a0601f6b651b363f793c997c1821fd483f6a017a836b07c58cffa3ee6214d154",
-      "sha256": "6a59f021bd3a69468c834d737281d852163e618f482dbfd42246bf8ef0b8ab6e",
+      "sha256": "1e25f34203feb96ac1e541f24c852996752ce0837513e6a0990f717fd6d2d5b6",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -216,8 +216,8 @@
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },
     "glasswarden_female": {
-      "vertices": 27889,
-      "triangles": 41360,
+      "vertices": 27662,
+      "triangles": 41059,
       "joints": 77,
       "feature": "crystal",
       "wardrobe": "skinned",
@@ -231,7 +231,7 @@
       "path": "godot-client/assets/actors/native/races/glasswarden_female.glb",
       "source": "glasswarden_female_tpose.glb",
       "sourceSHA256": "bcc56ed1bacd5f5bd8988e841d2cd9075fc2de8cf4d1bb65650483e7e46b9a6d",
-      "sha256": "1b34c79d89f9ef077ec3236fe5213d30bbebf53dbd3145cd587753bfcb17832b",
+      "sha256": "789d51e34e143732805749e3f00ed2ee1c3638d069f577347aade6743d267044",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -348,8 +348,8 @@
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },
     "orun_female": {
-      "vertices": 30672,
-      "triangles": 41038,
+      "vertices": 30445,
+      "triangles": 40737,
       "joints": 77,
       "feature": "none",
       "wardrobe": "skinned",
@@ -363,7 +363,7 @@
       "path": "godot-client/assets/actors/native/races/orun_female.glb",
       "source": "orun_female_tpose.glb",
       "sourceSHA256": "f7152380fa5ff5bfd7330e7548631d68b114acebecc753af1e2fde87c4833cc9",
-      "sha256": "84de9a4a6f261c872957c4e8cd9b949c9f3b686047e76d6818034d3a74e2f244",
+      "sha256": "cb547d406c26228c99e8cc5707192a40c1a8ab8b56b410c394a9cc935d502903",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -466,8 +466,8 @@
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },
     "greyhaven_female": {
-      "vertices": 30424,
-      "triangles": 40690,
+      "vertices": 30197,
+      "triangles": 40389,
       "joints": 77,
       "feature": "none",
       "wardrobe": "skinned",
@@ -481,7 +481,7 @@
       "path": "godot-client/assets/actors/native/races/greyhaven_female.glb",
       "source": "greyhaven_female_tpose.glb",
       "sourceSHA256": "1a3b9be948faa6427c0bac616bc2b85aa1094605f11a15fd3fb1b118847187f5",
-      "sha256": "a08af3496700a674cf8af2d2179256f575f145289f3bad57c5bdda1b8d617d11",
+      "sha256": "583c48a20a1e437fdc6038a248b396d635273e61af0f7ecd4830b4b06954853c",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -584,8 +584,8 @@
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },
     "ssarathi_female": {
-      "vertices": 36945,
-      "triangles": 47808,
+      "vertices": 36718,
+      "triangles": 47507,
       "joints": 77,
       "feature": "scaled",
       "wardrobe": "skinned",
@@ -599,7 +599,7 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_female.glb",
       "source": "ssarathi_female_tpose.glb",
       "sourceSHA256": "c87560e8fe71372682314da2c4ec960e489a7fa50fccb90cb92f2a9459e4c3d6",
-      "sha256": "663ba89e85e7b5b5038a4daeb1f51826a3e46f73ff9050f7dfcf93bf7357d228",
+      "sha256": "f084e009872678aae4970a552410fd7eafa7c8532ece3875db32032014f69855",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -730,8 +730,8 @@
       }
     },
     "stoneborn_female": {
-      "vertices": 31466,
-      "triangles": 40518,
+      "vertices": 31239,
+      "triangles": 40217,
       "joints": 77,
       "feature": "stone",
       "wardrobe": "skinned",
@@ -745,7 +745,7 @@
       "path": "godot-client/assets/actors/native/races/stoneborn_female.glb",
       "source": "stoneborn_female_tpose.glb",
       "sourceSHA256": "4e7ba138db2251d33144b60ee710f95a8f2cacd0ae9852461af429954e6fc529",
-      "sha256": "1c69c690093b16dc35e5fad49187071691afbdb765701435d99b1b750a2c83f5",
+      "sha256": "6840b6df0b690dfdcee777a02c41b35f6126319453300a56245c286400e44e89",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -848,8 +848,8 @@
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },
     "mycelari_female": {
-      "vertices": 30454,
-      "triangles": 40854,
+      "vertices": 30227,
+      "triangles": 40553,
       "joints": 77,
       "feature": "fungal",
       "wardrobe": "skinned",
@@ -863,7 +863,7 @@
       "path": "godot-client/assets/actors/native/races/mycelari_female.glb",
       "source": "mycelari_female_tpose.glb",
       "sourceSHA256": "36a041b00f9bb18f23312a2c3c58334c01e8bc3f0509003717d0ce28139a4991",
-      "sha256": "5889ca15c74f291a34d728920f1a0a336291fc2d3f45f95e5e2271a864613142",
+      "sha256": "86a0b972971c9f7bf6ee1992c089a28a5aba2aef5c6e177b4cbb69ccf77a1c37",
       "surfaces": [
         "body",
         "wardrobe_shirt",

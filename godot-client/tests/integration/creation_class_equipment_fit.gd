@@ -249,9 +249,9 @@ func _check_hand_socket(actor: ReplicatedActor3D, label: String,
 		# character-space placement.
 		if class_label != "Ranger":
 			var socket_offsets := {
-				"Vanguard": Vector3(-0.0357, 0.0, 0.0),
-				"Arcanist": Vector3(-0.0357, 0.0, 0.0),
-				"Warden": Vector3(0.02008, -0.08784, -0.07955),
+				"Vanguard": Vector3(-0.0757, -0.05, 0.0),
+				"Arcanist": Vector3(-0.0757, -0.05, 0.0),
+				"Warden": Vector3(-0.02, -0.09, -0.07955),
 			}
 			var socket_offset: Vector3 = socket_offsets[class_label]
 			var expected_local := actor.get_skeleton().get_bone_global_rest(hand).basis.inverse() * \

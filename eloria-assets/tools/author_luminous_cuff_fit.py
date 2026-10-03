@@ -52,7 +52,7 @@ def digest(path: Path) -> str:
 
 def load_manifest(path: Path = DEFAULT_MANIFEST) -> dict:
     manifest = json.loads(path.read_text(encoding="utf-8"))
-    if manifest.get("schema") != "eloria-luminous-female-cuff-fit-v1":
+    if manifest.get("schema") != "eloria-luminous-female-cuff-fit-v2":
         raise ValueError(f"Unexpected cuff-fit manifest schema: {path}")
     return manifest
 
@@ -63,10 +63,19 @@ def _hash_field(value: str, hasher: "hashlib._Hash") -> None:
     hasher.update(raw)
 
 
-def semantic_mesh_contract(document: dict, binary: bytes, name: str) -> dict:
-    """Hash one named runtime surface independently of GLB packing/layout."""
-    item = mesh(document, name)
-    primitive = item["primitives"][0]
+def semantic_mesh_contract(document: dict, binary: bytes, name: str, *,
+                           primitive_index: int | None = None) -> dict:
+    """Hash one runtime primitive independently of GLB packing/layout."""
+    item = named_mesh(document, name)
+    if primitive_index is None:
+        if len(item.get("primitives", [])) != 1:
+            raise ValueError(
+                f"Expected one primitive on {name!r}; select one explicitly")
+        primitive_index = 0
+    if not 0 <= primitive_index < len(item.get("primitives", [])):
+        raise ValueError(
+            f"Primitive {primitive_index} does not exist on {name!r}")
+    primitive = item["primitives"][primitive_index]
     hasher = hashlib.sha256()
     _hash_field(name, hasher)
     hasher.update(struct.pack("<I", int(primitive.get("mode", 4))))
@@ -126,6 +135,29 @@ def _require_semantic_contracts(actual: dict[str, dict],
                     f"{actual[name].get(field)!r} != {expected[name].get(field)!r}")
 
 
+def validate_body_provenance_record(provenance: dict, body_spec: dict, *,
+                                    actual_hash: str) -> None:
+    """Validate canonical lineage without requiring the historical body bytes."""
+    accepted = {value.lower() for value in body_spec["acceptedSourceSHA256"]}
+    if provenance.get("schema") != "eloria-canonical-body-provenance-v1":
+        raise ValueError("Unexpected canonical body provenance schema")
+    if provenance.get("canonicalRace") != body_spec["canonicalRace"]:
+        raise ValueError("Canonical body provenance names the wrong race")
+    if provenance.get("assetSHA256", "").lower() != actual_hash.lower():
+        raise ValueError("Canonical body provenance asset hash mismatch")
+    if provenance.get("canonicalSourceSHA256", "").lower() not in accepted:
+        raise ValueError("Canonical body provenance source is not pinned")
+    inherited = provenance.get("inheritedSemanticMeshes", {})
+    expected_hashes = {
+        name: value["sha256"]
+        for name, value in body_spec["semanticMeshes"].items()
+    }
+    if inherited != expected_hashes:
+        raise ValueError("Canonical body provenance surface roster changed")
+    if not str(provenance.get("producer", "")).strip():
+        raise ValueError("Canonical body provenance has no producer")
+
+
 def validate_body_source(body: Path, body_spec: dict, *,
                          expected_sha256: str | None = None,
                          provenance_path: Path | None = None) -> dict:
@@ -147,21 +179,8 @@ def validate_body_source(body: Path, body_spec: dict, *,
     elif provenance_path is not None:
         provenance = json.loads(
             provenance_path.read_text(encoding="utf-8"))
-        if provenance.get("schema") != "eloria-canonical-body-provenance-v1":
-            raise ValueError("Unexpected canonical body provenance schema")
-        if provenance.get("canonicalRace") != body_spec["canonicalRace"]:
-            raise ValueError("Canonical body provenance names the wrong race")
-        if provenance.get("assetSHA256", "").lower() != actual_hash:
-            raise ValueError("Canonical body provenance asset hash mismatch")
-        if provenance.get("canonicalSourceSHA256", "").lower() not in accepted:
-            raise ValueError("Canonical body provenance source is not pinned")
-        inherited = provenance.get("inheritedSemanticMeshes", {})
-        expected_hashes = {name: value["sha256"]
-                           for name, value in expected_surfaces.items()}
-        if inherited != expected_hashes:
-            raise ValueError("Canonical body provenance surface roster changed")
-        if not str(provenance.get("producer", "")).strip():
-            raise ValueError("Canonical body provenance has no producer")
+        validate_body_provenance_record(
+            provenance, body_spec, actual_hash=actual_hash)
         route = "explicit-canonical-provenance"
     else:
         raise ValueError(
@@ -213,13 +232,18 @@ def validate_output_path(output: Path) -> Path:
     return output
 
 
-def mesh(document: dict, name: str) -> dict:
+def named_mesh(document: dict, name: str) -> dict:
     found = [value for value in document["meshes"] if value.get("name") == name]
     if len(found) != 1:
         raise ValueError(f"Expected exactly one mesh {name!r}, found {len(found)}")
-    if len(found[0].get("primitives", [])) != 1:
-        raise ValueError(f"Expected one primitive on {name!r}")
     return found[0]
+
+
+def mesh(document: dict, name: str) -> dict:
+    found = named_mesh(document, name)
+    if len(found.get("primitives", [])) != 1:
+        raise ValueError(f"Expected one primitive on {name!r}")
+    return found
 
 
 def authority_report(path: Path, specification: dict) -> dict:
@@ -869,11 +893,16 @@ def write_glb(document: dict, binary: bytes, target: Path) -> None:
 
 def clipped_copy(source: Path, target: Path, trouser_mesh: str,
                  boot_source: Path, boot_mesh: str, *, cap: bool = False,
-                 restrict_to_boot_interior: bool = False) -> dict:
+                 restrict_to_boot_interior: bool = False,
+                 preserve_additional_trouser_primitives: bool = False) -> dict:
     document, binary = ea.read_glb(source)
     boot_document, boot_binary = ea.read_glb(boot_source)
     profiles = cuff_profiles(boot_document, boot_binary, boot_mesh)
-    item = mesh(document, trouser_mesh)
+    item = named_mesh(document, trouser_mesh)
+    additional_primitives = len(item.get("primitives", [])) - 1
+    if additional_primitives and not preserve_additional_trouser_primitives:
+        raise ValueError(
+            f"Unexpected additional primitives on {trouser_mesh!r}")
     primitive = item["primitives"][0]
     arrays = {name: ea.accessor_array(document, binary, index)
               for name, index in primitive["attributes"].items()}
@@ -890,7 +919,7 @@ def clipped_copy(source: Path, target: Path, trouser_mesh: str,
         restrict_to_boot_interior=restrict_to_boot_interior)
     out_document = copy.deepcopy(document)
     out_binary = bytearray(binary)
-    out_primitive = mesh(out_document, trouser_mesh)["primitives"][0]
+    out_primitive = named_mesh(out_document, trouser_mesh)["primitives"][0]
     out_primitive["attributes"] = {
         "POSITION": append_accessor(out_document, out_binary,
                                      clipped["POSITION"].astype("<f4"),
@@ -913,10 +942,13 @@ def clipped_copy(source: Path, target: Path, trouser_mesh: str,
         5125, "SCALAR")
     write_glb(out_document, bytes(out_binary), target)
     roundtrip, roundtrip_binary = ea.read_glb(target)
-    revised = mesh(roundtrip, trouser_mesh)["primitives"][0]
+    revised_item = named_mesh(roundtrip, trouser_mesh)
+    revised = revised_item["primitives"][0]
     if ea.accessor_array(roundtrip, roundtrip_binary,
                          revised["attributes"]["POSITION"]).shape != clipped["POSITION"].shape:
         raise ValueError("Candidate did not round-trip")
+    if len(revised_item["primitives"]) != len(item["primitives"]):
+        raise ValueError("Candidate changed the trouser primitive roster")
     profile_report = {}
     for side, value in profiles.items():
         profile_report[side] = {
@@ -931,6 +963,8 @@ def clipped_copy(source: Path, target: Path, trouser_mesh: str,
         "bootSource": str(boot_source), "bootSourceSHA256": digest(boot_source),
         "output": str(target), "outputSHA256": digest(target),
         "trouserMesh": trouser_mesh, "bootMesh": boot_mesh,
+        "targetPrimitiveIndex": 0,
+        "preservedAdditionalPrimitives": additional_primitives,
         "drawsBefore": sum(len(value["primitives"]) for value in document["meshes"]),
         "drawsAfter": sum(len(value["primitives"]) for value in roundtrip["meshes"]),
         "materialsBefore": len(document.get("materials", [])),

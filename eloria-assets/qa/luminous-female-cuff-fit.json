@@ -1,6 +1,6 @@
 {
-  "schema": "eloria-luminous-female-cuff-fit-v1",
-  "status": "reviewed-authoring-contract-production-install-deferred",
+  "schema": "eloria-luminous-female-cuff-fit-v2",
+  "status": "installed-production",
   "reviewedAt": "2026-10-03",
   "authority": {
     "fileName": "human_female_components.glb",
@@ -17,10 +17,16 @@
   "inputs": {
     "body": {
       "canonicalRace": "luminous_female",
-      "path": "godot-client/assets/actors/native/races/luminous_female.glb",
+      "pathAtCapture": "godot-client/assets/actors/native/races/luminous_female.glb",
       "acceptedSourceSHA256": [
         "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7"
       ],
+      "provenance": {
+        "kind": "git-tree-snapshot",
+        "commit": "dc2839be93d7b87b62ba665f103f4b7207828d81",
+        "path": "godot-client/assets/actors/native/races/luminous_female.glb",
+        "blobOID": "01b08fe18c8d0b5f7fd38555a75b6e5682d69500"
+      },
       "semanticMeshes": {
         "wardrobe_pants": {
           "sha256": "d84bb1ebbc1a25b40c92e02e9bd6e2520515f52130888572a5840d7415cec1e2",
@@ -37,8 +43,14 @@
       }
     },
     "arcanistLegs": {
-      "path": "godot-client/assets/actors/native/equipment/variants/luminous_female/arcane_leg_armor_01.glb",
+      "pathAtCapture": "godot-client/assets/actors/native/equipment/variants/luminous_female/arcane_leg_armor_01.glb",
       "sourceSHA256": "d327a783f54888a7797a3e7c8340324f7da5e49ceef9c8fe590d6fae2defdd51",
+      "provenance": {
+        "kind": "producer-manifest-output",
+        "manifest": "eloria-assets/qa/class-equipment-fit-baseline.json",
+        "section": "output",
+        "key": "variants/luminous_female/arcane_leg_armor_01.glb"
+      },
       "mesh": "Warded Legguards",
       "semanticMesh": {
         "sha256": "34f91c0769c61cfc5789b8d5ced9cb40c5953f17e0d5c7e5c2ad530bad88b312",
@@ -48,8 +60,14 @@
       }
     },
     "arcanistBoots": {
-      "path": "godot-client/assets/actors/native/equipment/variants/luminous_female/arcane_fantasy_boots_01.glb",
+      "pathAtCapture": "godot-client/assets/actors/native/equipment/variants/luminous_female/arcane_fantasy_boots_01.glb",
       "sourceSHA256": "b5eeab7ac31cf5ceaf9c5d7644108db6d0eb0c0c7872a7c05ec4d2efd05d7131",
+      "provenance": {
+        "kind": "producer-manifest-output",
+        "manifest": "eloria-assets/qa/class-equipment-fit-baseline.json",
+        "section": "output",
+        "key": "variants/luminous_female/arcane_fantasy_boots_01.glb"
+      },
       "mesh": "Warded Boots",
       "semanticMesh": {
         "sha256": "58b7cc21b87323a42d736534926cb7ecf16683c53882cc1719e38b865d95415a",
@@ -59,8 +77,14 @@
       }
     },
     "rangerLegs": {
-      "path": "godot-client/assets/actors/native/equipment/variants/luminous_female/rugged_ranger_legwear_04.glb",
+      "pathAtCapture": "godot-client/assets/actors/native/equipment/variants/luminous_female/rugged_ranger_legwear_04.glb",
       "sourceSHA256": "8996903ddee50a4e1fe1dde58f298f2d998860bcb8db9b70b670e0c012144b30",
+      "provenance": {
+        "kind": "git-tree-snapshot",
+        "commit": "dc2839be93d7b87b62ba665f103f4b7207828d81",
+        "path": "godot-client/assets/actors/native/equipment/variants/luminous_female/rugged_ranger_legwear_04.glb",
+        "blobOID": "0e378eb9c3edb803761f556ccb782cc781009315"
+      },
       "semanticMeshes": {
         "Sidelace Breeches": {
           "sha256": "667eb83fce89f2b31ee6ab21ef47f966be326c9a217c8fcdd46ca9ab8719baf6",
@@ -83,8 +107,14 @@
       }
     },
     "rangerBoots": {
-      "path": "godot-client/assets/actors/native/equipment/variants/luminous_female/frontier_boots_01.glb",
+      "pathAtCapture": "godot-client/assets/actors/native/equipment/variants/luminous_female/frontier_boots_01.glb",
       "sourceSHA256": "33ae5bb3a6a04ddcf14129900cefdf4031d4bb99c793ad07f922e65f8abee6ff",
+      "provenance": {
+        "kind": "git-tree-snapshot",
+        "commit": "dc2839be93d7b87b62ba665f103f4b7207828d81",
+        "path": "godot-client/assets/actors/native/equipment/variants/luminous_female/frontier_boots_01.glb",
+        "blobOID": "d38c00b92212a0de61db28e8dd06d4da14fb7f5a"
+      },
       "semanticMeshes": {
         "Ankle Boots": {
           "sha256": "72ee2b6a3a4122bd28261e4c95c331691c06bf926f60d93bc0fe243b5cd794d8",
@@ -121,6 +151,47 @@
     "additionalMaterials": 0,
     "additionalBones": 0,
     "perFrameOperations": 0
+  },
+  "installation": {
+    "mode": "reviewed-byte-copy",
+    "inputsAreHistorical": true,
+    "productionConfigChanged": false,
+    "mappings": [
+      {
+        "inputKey": "body",
+        "reviewedOutputKey": "body",
+        "targetPath": "godot-client/assets/actors/native/races/luminous_female.glb"
+      },
+      {
+        "inputKey": "arcanistLegs",
+        "reviewedOutputKey": "arcanistLegs",
+        "targetPath": "godot-client/assets/actors/native/equipment/variants/luminous_female/arcane_leg_armor_01.glb"
+      },
+      {
+        "inputKey": "arcanistBoots",
+        "reviewedOutputKey": "arcanistBoots",
+        "targetPath": "godot-client/assets/actors/native/equipment/variants/luminous_female/arcane_fantasy_boots_01.glb"
+      },
+      {
+        "inputKey": "rangerLegs",
+        "reviewedOutputKey": "rangerLegs",
+        "targetPath": "godot-client/assets/actors/native/equipment/variants/luminous_female/rugged_ranger_legwear_04.glb"
+      },
+      {
+        "inputKey": "rangerBoots",
+        "reviewedOutputKey": "rangerBoots",
+        "targetPath": "godot-client/assets/actors/native/equipment/variants/luminous_female/frontier_boots_01.glb"
+      }
+    ]
+  },
+  "authoringEvidence": {
+    "toolPath": "eloria-assets/tools/author_luminous_cuff_fit.py",
+    "producerToolGitCommit": "5d856c982c81889e19c2ecccb1d811303f37a7f6",
+    "producerToolGitBlob": "fa5bf59cb1560fa66549bc9a4752695c7e017c1d",
+    "producerToolSHA256": "61e783a8ccb531f3f143d19ecb5d5222348e72340a1036c8b5aac579b1b1e3e2",
+    "verifierToolCanonicalLfSHA256": "cda283eb19040b4d118e54d2640cf084ae6a6bbf0b6846c0e451c1d2968dcb6e",
+    "deterministicRuns": 2,
+    "byteIdentical": true
   },
   "reviewedOutputs": {
     "body": {

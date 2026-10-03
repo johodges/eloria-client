@@ -178,7 +178,14 @@ func run() -> void:
 		var hand := skeleton.find_bone(hand_name)
 		var focus := (skeleton.global_transform * skeleton.get_bone_global_pose(hand)).origin
 		cam.size = .36
-		cam.position = focus + Vector3(-.3 if hand_name == "hand_l" else .3, .1, .7)
+		var direction := Vector3(-.3 if hand_name == "hand_l" else .3, .1, .7)
+		if args.get("angle", "front") == "side":
+			direction = Vector3(.7, .1, 0)
+		elif args.get("angle", "front") == "back":
+			direction = Vector3(.3 if hand_name == "hand_l" else -.3, .1, -.7)
+		elif args.get("angle", "front") == "back-quarter":
+			direction = Vector3(-.55, .12, -.55)
+		cam.position = focus + direction
 		cam.look_at(focus)
 		await process_frame
 	if args.get("region", "full") in ["hips", "back"]:
@@ -229,12 +236,15 @@ func run() -> void:
 	report["quality_lod_bias_scale"] = ActorRenderQuality.lod_bias_scale(quality_level)
 	report["hair_fit"] = config.get("hairFit", {})
 	report["socket_placements"] = {}
+	report["socket_grip_distances"] = {}
 	for piece in actor._equipment_nodes.values():
 		for attachment: Node in piece:
 			if attachment is BoneAttachment3D:
 				var prop := attachment.get_child(0) as Node3D
 				var t := prop.transform
 				report["socket_placements"][str(attachment.name)] = [t.basis.x.x,t.basis.x.y,t.basis.x.z,t.basis.y.x,t.basis.y.y,t.basis.y.z,t.basis.z.x,t.basis.z.y,t.basis.z.z,t.origin.x,t.origin.y,t.origin.z]
+				report["socket_grip_distances"][str(attachment.name)] = \
+					prop.global_position.distance_to(attachment.global_position)
 	report["facing_offset_degrees"] = rad_to_deg(actor._facing_offset)
 	report["bone_poses"] = {}
 	for bone_name: String in ["pelvis", "spine_03", "Head", "upperarm_l", "upperarm_r", "foot_l", "foot_r"]:
