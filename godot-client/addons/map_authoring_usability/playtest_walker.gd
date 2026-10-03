@@ -330,10 +330,16 @@ func advance(delta: float) -> void:
 ##  stage_metres (version 1), unit_metres and datum_metres (version 2), and for
 ##  display either the published half-metre bytes and their height encoding,
 ##  the version 2 codes' own heights, or "root" for terrain heights}.
-static func load_grid(root: Node3D) -> Dictionary:
+## In order: a served grid the manifest declares (refused outright if it is
+## bad); the version 2 live estimate when the package does not ship it; the
+## folded collision.bin; the version 1 live estimate. The manifest is the one
+## TimeOfDay finds for the territory, or `manifest_path` when given (tests).
+static func load_grid(root: Node3D, manifest_path := "") -> Dictionary:
 	var origin: Vector2i = root.get("server_origin") if root.get("server_origin") is Vector2i \
 		else Vector2i.ZERO
-	var served := load_served_grid(TimeOfDay.manifest_path_for(String(root.get("region_id"))), origin)
+	if manifest_path.is_empty():
+		manifest_path = TimeOfDay.manifest_path_for(String(root.get("region_id")))
+	var served := load_served_grid(manifest_path, origin)
 	if bool(served.get("missing", false)):
 		# The package declares a version 2 grid it does not ship: estimate one.
 		var estimate := Walkability.compute_live(root)
@@ -342,10 +348,9 @@ static func load_grid(root: Node3D) -> Dictionary:
 		return fold_live(estimate, origin, root, 2)
 	if not served.is_empty():
 		return served
-	var published := Walkability.published_grid(root)
+	var published := Walkability.published_grid(root, manifest_path)
 	if not published.has("error") and not is_nan(float(published.get("height_step", NAN))):
 		var folded := fold_published(published, origin)
-		var manifest_path := TimeOfDay.manifest_path_for(String(root.get("region_id")))
 		var manifest: Variant = null
 		if not manifest_path.is_empty():
 			manifest = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))

@@ -12,6 +12,8 @@ extends SceneTree
 const ServedGrid := preload("res://addons/map_authoring_usability/served_grid.gd")
 const Walker := preload("res://addons/map_authoring_usability/playtest_walker.gd")
 const Walkability := preload("res://addons/map_authoring_usability/walkability_overlay.gd")
+const REGION := preload("res://src/dev/map_authoring_region/region_control.gd")
+const TERRAIN := preload("res://src/dev/map_authoring_region/terrain_control.gd")
 ## Byte copies of eloria-server tests/fixtures/served_grid_golden.escg.gz, its
 ## description and the odd fixtures it lists. The SHA-256 of the .gz and of the
 ## JSON are literals here and in the server's tests/test_served_grid_format.py;
@@ -23,8 +25,11 @@ const GOLDEN_JSON_PATH := "res://tests/fixtures/served_grid_golden.json"
 const GOLDEN_SHA256 := "7e4522023885486b2a47298826b3fad1d30ba6d660dcc80249c8690d30e66c12"
 const GOLDEN_JSON_SHA256 := "2b213842cba146059f59dcddba7ecb590b625d0aa70260fc5f5d3bcdc5b48eae"
 const PACKAGE_DIR := "res://test-artifacts/served-grid"
+const ORDER_DIR := "res://test-artifacts/served-grid-order"
 ## The size of a 2 km continent-v2 map, for the decode timing (target < 2 s).
 const LARGE := 2046
+## Set to time the walker's flood over that map too (about 3-7 s, no assertion).
+const FLOOD_TIMING_ENV := "ELORIA_SERVED_GRID_FLOOD_TIMING"
 
 var failures := 0
 
@@ -54,6 +59,7 @@ func _run() -> void:
 	_test_walk_paths()
 	_test_refusals(blob)
 	_test_declared_package(blob)
+	_test_load_grid_order(blob)
 	_test_live_estimate()
 	_test_large_grid()
 	_finish()
@@ -383,7 +389,8 @@ func _test_live_estimate() -> void:
 		"the live estimate quantises half up to 50 mm codes for version 2 and keeps version 1 apart")
 
 
-## Decode time for a 2 km map's grid (plan target: under 2 s), and one flood.
+## Decode time for a 2 km map's grid (plan target: under 2 s); the walker's
+## flood over it only when FLOOD_TIMING_ENV is set.
 func _test_large_grid() -> void:
 	var codes := PackedInt32Array()
 	codes.resize(LARGE * LARGE)
@@ -398,17 +405,81 @@ func _test_large_grid() -> void:
 	var decoded := ServedGrid.decode_file(blob, sha)
 	var decode_ms := float(Time.get_ticks_usec() - started) / 1000.0
 	var same: bool = not decoded.has("error") and decoded.codes == codes
-	started = Time.get_ticks_usec()
-	var seen := PackedByteArray()
-	seen.resize(codes.size())
-	var reached := Walker._flood(codes, LARGE, LARGE, LARGE + 1, seen, PackedInt32Array(), 1, 20,
-		Walker.WALK_BITS_V2)
-	var flood_ms := float(Time.get_ticks_usec() - started) / 1000.0
+	var flood := "walker flood not timed (set %s=1)" % FLOOD_TIMING_ENV
+	if not OS.get_environment(FLOOD_TIMING_ENV).is_empty():
+		started = Time.get_ticks_usec()
+		var seen := PackedByteArray()
+		seen.resize(codes.size())
+		var reached := Walker._flood(codes, LARGE, LARGE, LARGE + 1, seen, PackedInt32Array(), 1, 20,
+			Walker.WALK_BITS_V2)
+		flood = "walker flood of %d tiles %.0f ms" % [reached,
+			float(Time.get_ticks_usec() - started) / 1000.0]
 	print("served grid %d x %d: %d KiB gzipped, decode %.0f ms (SHA-256, gunzip, row delta, CRC), " %
-		[LARGE, LARGE, blob.size() / 1024, decode_ms] + "walker flood of %d tiles %.0f ms" % [reached,
-		flood_ms])
+		[LARGE, LARGE, blob.size() / 1024, decode_ms] + flood)
 	_expect(same and decode_ms < 2000.0,
 		"a %d x %d grid decodes exactly in %.0f ms (target under 2 s)" % [LARGE, LARGE, decode_ms])
+
+
+## load_grid's order, driven through its manifest path on a small region root:
+## a declared served grid wins; a refused one stops the play test rather than
+## falling back; one the package does not ship is estimated with the version
+## 2 rules; a manifest with no servedGrid is a version 1 territory.
+func _test_load_grid_order(blob: PackedByteArray) -> void:
+	var directory := ProjectSettings.globalize_path(ORDER_DIR)
+	DirAccess.make_dir_recursive_absolute(directory)
+	var heights_path := ORDER_DIR + "/heights.f32le"
+	var heights := FileAccess.open(heights_path, FileAccess.WRITE)
+	for index in 9 * 7:
+		heights.store_float(0.125)
+	heights.close()
+	var root: Node3D = REGION.new()
+	root.name = "ServedGridOrderFixture"
+	root.set("region_id", "served_grid_order_fixture")
+	root.set("metres_per_tile", 1.0)
+	root.set("server_origin", Vector2i(5, 7))
+	var terrain: Node3D = TERRAIN.new()
+	terrain.name = "Terrain"
+	terrain.set("origin", Vector2.ZERO)
+	terrain.set("grid_size", Vector2i(9, 7))
+	terrain.set("cell_metres", 1.0)
+	terrain.set("base_heights_path", heights_path)
+	terrain.set("preview_enabled", false)
+	root.add_child(terrain)
+	for container in ["Roads", "Rivers", "Bridges", "AuthoredAssets", "Gameplay", "GeneratedPreview"]:
+		var node := Node3D.new()
+		node.name = container
+		root.add_child(node)
+	get_root().add_child(root)
+	var manifest_path := ORDER_DIR + "/world.json"
+	var spec := {"binary": "served-grid.escg.gz", "format": "ESCG-v2", "sha256": GOLDEN_SHA256}
+	_write_bytes(ORDER_DIR + "/served-grid.escg.gz", blob)
+	_write_json(manifest_path, {"collision": {"servedGrid": spec}})
+	var served := Walker.load_grid(root, manifest_path)
+	_write_json(manifest_path, {"collision": {"servedGrid": spec.merged({"sha256": "0".repeat(64)}, true)}})
+	var refused := Walker.load_grid(root, manifest_path)
+	_write_json(manifest_path, {"collision": {"servedGrid": spec.merged({"binary": "absent.escg.gz"},
+		true)}})
+	var estimated := Walker.load_grid(root, manifest_path)
+	_write_json(manifest_path, {"collision": {"binary": "collision.bin"}})
+	var version_one := Walker.load_grid(root, manifest_path)
+	root.free()
+	for name in ["world.json", "served-grid.escg.gz", "heights.f32le"]:
+		DirAccess.remove_absolute(directory.path_join(name))
+	DirAccess.remove_absolute(directory)
+	var codes: PackedInt32Array = estimated.get("codes", PackedInt32Array())
+	_expect(String(served.get("source", "")) == "published" and int(served.get("format", 0)) == 2 and
+		int(served.get("width", 0)) == 24 and
+		"SHA-256" in String(refused.get("error", "")) and not refused.has("format") and
+		String(estimated.get("source", "")) == "live" and int(estimated.get("format", 0)) == 2 and
+		int(estimated.get("climb", 0)) == 20 and codes.count(2003) > 0 and
+		codes.count(2003) + codes.count(0) == codes.size() and
+		String(version_one.get("source", "")) == "live" and int(version_one.get("format", 0)) == 1 and
+		int(version_one.get("climb", 0)) == 2,
+		"load_grid takes the served grid, refuses a bad one, estimates a missing one with the version 2 rules, and keeps version 1 without one (%s; %s; %s; %s)" % [
+			String(served.get("source", served.get("error", "?"))), String(refused.get("error", "accepted")),
+			String(estimated.get("error", "format %d, %d codes of 2003" % [int(estimated.get("format", 0)),
+				codes.count(2003)])),
+			String(version_one.get("error", "format %d" % int(version_one.get("format", 0))))])
 
 
 func _walker(grid: Dictionary) -> Walker:
