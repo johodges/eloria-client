@@ -116,7 +116,8 @@ static func read_header(raw: PackedByteArray) -> Dictionary:
 
 
 ## A served-grid file (gzipped, or its uncompressed content). When
-## `expected_sha256` is given, the file's bytes must hash to it first.
+## `expected_sha256` is given, the file's bytes must hash to it first, exactly
+## (lowercase hex), as the server's sync compares it.
 ##
 ## The gzip is inflated in one call sized from the member's own length field
 ## (its last four bytes), never with decompress_dynamic: in Godot 4.7 that call
@@ -129,7 +130,7 @@ static func read_header(raw: PackedByteArray) -> Dictionary:
 static func decode_file(blob: PackedByteArray, expected_sha256 := "", verify_crc := true) -> Dictionary:
 	if not expected_sha256.is_empty():
 		var digest := sha256_hex(blob)
-		if digest != expected_sha256.to_lower():
+		if digest != expected_sha256:
 			return {"error": "the served grid's SHA-256 is %s, the package declares %s" % [digest,
 				expected_sha256]}
 	var raw := blob
@@ -145,8 +146,12 @@ static func decode_file(blob: PackedByteArray, expected_sha256 := "", verify_crc
 
 
 ## The grid a published package declares in world.json's collision.servedGrid,
-## checked as the server's sync checks it: the format, the file's SHA-256, the
-## header, and the metres world.json states against the header's millimetres.
+## checked as the server's sync checks it: the format, a named binary, the
+## file's SHA-256, the header, and the metres world.json states against the
+## header's millimetres. (The walker checks the size against the package's
+## frame. The sync's last check, the walkable mask against collision.bin's
+## all-four fold, is not repeated: it costs seconds in GDScript on a 2 km map,
+## and a package that fails it is never vendored.)
 ## Returns the decode_file result plus {path, sha256}; {} when the manifest
 ## declares no served grid; {error, missing: true} when it names a file the
 ## package does not hold.
@@ -160,8 +165,10 @@ static func load_declared(manifest_path: String, manifest: Dictionary) -> Dictio
 	var sha := String(spec.get("sha256", ""))
 	if sha.is_empty():
 		return {"error": "servedGrid declares no sha256"}
-	var path := manifest_path.get_base_dir().path_join(String(spec.get("binary",
-		"served-grid.escg.gz")))
+	var binary := String(spec.get("binary", ""))
+	if binary.is_empty():
+		return {"error": "servedGrid names no binary"}
+	var path := manifest_path.get_base_dir().path_join(binary)
 	if not FileAccess.file_exists(path):
 		return {"error": "the published served grid is missing: %s" % path, "missing": true}
 	var result := decode_file(FileAccess.get_file_as_bytes(path), sha)
@@ -173,7 +180,7 @@ static func load_declared(manifest_path: String, manifest: Dictionary) -> Dictio
 			return {"error": "servedGrid %s %s disagrees with the grid header's %d mm" % [pair[0],
 				str(spec[pair[0]]), int(pair[1])]}
 	result["path"] = path
-	result["sha256"] = sha.to_lower()
+	result["sha256"] = sha
 	return result
 
 

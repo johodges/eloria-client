@@ -303,6 +303,18 @@ func _test_declared_package(blob: PackedByteArray) -> void:
 	var missing := Walker.load_served_grid(manifest_path, Vector2i.ZERO)
 	_write_json(manifest_path, {"collision": {"binary": "collision.bin"}})
 	var version_one := Walker.load_served_grid(manifest_path, Vector2i.ZERO)
+	# As strict as the sync: a binary must be named, and the hash compares
+	# exactly (the sync's hexdigest is lowercase).
+	var unnamed := spec.duplicate()
+	unnamed.erase("binary")
+	_write_json(manifest_path, {"collision": {"servedGrid": unnamed}})
+	var no_binary := Walker.load_served_grid(manifest_path, Vector2i.ZERO)
+	_write_json(manifest_path, {"collision": {"servedGrid": spec.merged({"sha256": GOLDEN_SHA256.to_upper()},
+		true)}})
+	var upper := Walker.load_served_grid(manifest_path, Vector2i.ZERO)
+	_expect("names no binary" in String(no_binary.get("error", "")) and
+		not bool(no_binary.get("missing", false)) and "SHA-256" in String(upper.get("error", "")),
+		"a servedGrid naming no binary, or an uppercase hash, is refused as the sync refuses it")
 	_expect("SHA-256" in String(wrong_hash.get("error", "")) and
 		"climbMetres" in String(wrong_climb.get("error", "")) and
 		bool(missing.get("missing", false)) and version_one.is_empty(),
