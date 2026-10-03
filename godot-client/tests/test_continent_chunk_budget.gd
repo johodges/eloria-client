@@ -87,13 +87,15 @@ func _check_resident_bytes() -> void:
 ## 40 000-byte budget the published (RGBA8) figures admit one cell; the real
 ## ones admit the four whose images have sidecars and stop at the excluded one.
 ## With `images_in`, the territory manifest names the fixture images it holds
-## (externalResources, as published territories do) in that directory.
-func _territory(images_in := "") -> WorldManifest:
+## (externalResources, as published territories do) in that directory. With
+## `loadable`, every cell's manifest is the fixture package itself, so prime()
+## really imports the cells it loads.
+func _territory(images_in := "", loadable := false) -> WorldManifest:
 	var chunks := []
 	var shas: Array = [_by_recipe.base, _by_recipe.base_alpha, _by_recipe.normal, _by_recipe.orm, _excluded[0]]
 	for index: int in shas.size():
 		var x := 100.0 + 20.0 * index if index > 0 else 0.0
-		chunks.append({"id": "c%d" % index, "manifest": "c%d/world.json" % index,
+		chunks.append({"id": "c%d" % index, "manifest": "world.json" if loadable else "c%d/world.json" % index,
 			"bounds": {"min": [x, 0, -1], "max": [x + 1, 1, 1]},
 			"estimatedResidentBytes": GEOMETRY + PUBLISHED, "geometryResidentBytes": GEOMETRY,
 			"sharedResourceResidentBytes": {shas[index]: PUBLISHED}})
@@ -107,36 +109,32 @@ func _territory(images_in := "") -> WorldManifest:
 			images_in.path_join("world.json"))).externalResources
 	return manifest
 
-## The cells an arrival loads synchronously: prime() keeps develop's set (the
-## published figures' budget) even when the real figures admit more, so the
-## arrival freeze is no longer than develop's; the extra cells go to the worker.
-func _blocking(mode: String, read_index := true) -> Array:
-	_set_mode(mode, read_index)
+## The cells an arrival loads synchronously, from prime() itself (every cell
+## is the fixture package, so prime() really imports what it blocks on). It
+## keeps develop's set, the published figures' budget, even when the real
+## figures admit more, so the arrival freeze is no longer than develop's; the
+## extra cells go to the worker.
+func _primed(mode: String, budget := 0) -> Array:
+	_set_mode(mode)
 	var stream := ContinentChunkStream.new()
-	stream.configure(_territory(), false)
-	var ids := []
-	for entry: Dictionary in stream.selection(Vector3.ZERO):
-		if not bool(entry.get("beyond_budget", false)) and bool(entry.get("blocking", true)):
-			ids.append(str(entry.id))
+	stream.configure(_territory("", true), false)
+	if budget > 0:
+		stream.maximum_resident_bytes = budget
+	stream.prime(Vector3.ZERO)
+	var ids: Array = stream.cells.keys()
+	ids.sort()
 	stream.free()
 	return ids
 
 func _check_blocking() -> void:
-	var develop := _blocking("0")
-	_expect(develop == ["c0"], "develop's budget loads one cell synchronously: %s" % [develop])
-	var corrected := _blocking("force")
+	var develop := _primed("0")
+	_expect(develop == ["c0"], "develop's budget: prime() imports one cell synchronously: %s" % [develop])
+	var corrected := _primed("force")
 	_expect(corrected == develop,
-		"with the real figures the arrival still loads only develop's cells synchronously: %s" % [corrected])
-	# A budget the published figures also clear: every admitted cell blocks.
-	_set_mode("force")
-	var stream := ContinentChunkStream.new()
-	stream.configure(_territory(), false)
-	stream.maximum_resident_bytes = 1 << 30
-	var all_blocking := true
-	for entry: Dictionary in stream.selection(Vector3.ZERO):
-		all_blocking = all_blocking and bool(entry.blocking)
-	stream.free()
-	_expect(all_blocking, "under a budget that admits everything as published, every cell blocks as before")
+		"with the real figures (four cells in budget) prime() still imports only develop's cells: %s" % [corrected])
+	var everything := _primed("force", 1 << 30)
+	_expect(everything == ["c0", "c1", "c2", "c3", "c4"],
+		"under a budget that admits everything as published, prime() imports every cell as before: %s" % [everything])
 
 func _selected(mode: String, read_index := true) -> Array:
 	_set_mode(mode, read_index)
