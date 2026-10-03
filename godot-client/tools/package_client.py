@@ -395,6 +395,20 @@ def stage_eloria_assets(build_dir: Path, stage: Path) -> list[str]:
                 errors.append(f"{manifest} {key} -> {target} is not in the commit")
             elif is_world:
                 warnings.append(f"{manifest} {key} -> {target} not found")
+        # externalResources names its files as keys (URI -> sha256), relative
+        # to the GLB, so the value walk above never sees them: the continent's
+        # shared images (_continent/shared-assets, in no package folder of
+        # their own) were left out, and the client refuses a chunk whose
+        # external images are missing (WorldManifest.verify_external_resources).
+        resources = data.get("externalResources") if is_world and isinstance(data, dict) else None
+        if isinstance(resources, dict):
+            glb_dir = base / PurePosixPath(str(data.get("asset", {}).get("glb", "world.glb"))).parent
+            for uri in resources:
+                target = os.path.normpath(str(glb_dir / str(uri))).replace("\\", "/")
+                if target in all_tracked:
+                    wanted.add(target)
+                else:
+                    errors.append(f"{manifest} externalResources -> {target} is not in the commit")
 
     if errors:
         raise PackageError("missing map files:\n  " + "\n  ".join(errors[:40]))
@@ -479,8 +493,9 @@ def stage_vram_textures(build_dir: Path, stage: Path, godot: Path, cache: Path, 
 
 
 def check_vram_textures(stage: Path) -> None:
-    """Every staged external map image has a sidecar or a reason it has none,
-    and every staged sidecar is the file its index names, byte for byte."""
+    """Every external map image a staged manifest names is staged, has a
+    sidecar or a reason it has none, and every staged sidecar is the file its
+    index names, byte for byte."""
     import hashlib
     problems: list[str] = []
     indexes: dict[Path, dict] = {}
@@ -497,6 +512,7 @@ def check_vram_textures(stage: Path) -> None:
         for uri, sha in resources.items():
             image = (base / uri).resolve()
             if not image.is_file():
+                problems.append(f"{manifest_path.relative_to(stage)}: external image {uri} is not in the package")
                 continue
             if image.parent not in indexes:
                 index_path = image.parent / "vram" / "index.json"

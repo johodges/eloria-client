@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -72,10 +73,58 @@ class Check(unittest.TestCase):
         with self.assertRaisesRegex(packager.PackageError, "not named by the index"):
             packager.check_vram_textures(self.stage)
 
+    def test_an_unstaged_external_image_fails(self):
+        manifest = json.loads((self.stage / MAP / "world.json").read_text(encoding="utf-8"))
+        uri = next(iter(manifest["externalResources"]))
+        (self.stage / MAP / uri).unlink()
+        with self.assertRaisesRegex(packager.PackageError, "is not in the package"):
+            packager.check_vram_textures(self.stage)
+
     def test_no_index_at_all_fails(self):
         shutil.rmtree(self.vram)
         with self.assertRaisesRegex(packager.PackageError, "no sidecar and no exclusion reason"):
             packager.check_vram_textures(self.stage)
+
+
+class StageExternalResources(unittest.TestCase):
+    """externalResources names its files as keys, relative to the GLB: the
+    continent's shared images live outside every package folder and used to
+    be left out of the package, so every chunk failed its resource check."""
+
+    def setUp(self):
+        self.repo = Path(tempfile.mkdtemp(prefix="vram-package-stage-ext-"))
+        chunk = self.repo / "eloria-assets" / "maps" / "region" / "chunks" / "a"
+        shared = self.repo / "eloria-assets" / "maps" / "_continent" / "shared-assets"
+        chunk.mkdir(parents=True)
+        shared.mkdir(parents=True)
+        (shared / "abc.png").write_bytes(b"\x89PNG fixture")
+        (chunk / "world.glb").write_bytes(b"glTF")
+        self.manifest = {"asset": {"glb": "world.glb"},
+                         "externalResources": {"../../../_continent/shared-assets/abc.png": "0" * 64}}
+        (chunk / "world.json").write_text(json.dumps(self.manifest), encoding="utf-8")
+        git = ["git", "-C", str(self.repo), "-c", "user.name=test", "-c", "user.email=test@example.invalid"]
+        subprocess.run(git[:3] + ["init", "-q"], check=True)
+        subprocess.run(git + ["add", "-A"], check=True)
+        subprocess.run(git + ["commit", "-q", "-m", "fixture"], check=True)
+        self.stage = self.repo.parent / (self.repo.name + "-stage")
+
+    def tearDown(self):
+        shutil.rmtree(self.repo, ignore_errors=True)
+        shutil.rmtree(self.stage, ignore_errors=True)
+
+    def test_shared_images_are_staged(self):
+        packager.stage_eloria_assets(self.repo, self.stage)
+        self.assertTrue((self.stage / "eloria-assets/maps/_continent/shared-assets/abc.png").is_file())
+        self.assertTrue((self.stage / "eloria-assets/maps/region/chunks/a/world.glb").is_file())
+
+    def test_an_untracked_external_image_fails_the_stage(self):
+        chunk = self.repo / "eloria-assets" / "maps" / "region" / "chunks" / "a"
+        self.manifest["externalResources"]["../../../_continent/shared-assets/missing.png"] = "1" * 64
+        (chunk / "world.json").write_text(json.dumps(self.manifest), encoding="utf-8")
+        subprocess.run(["git", "-C", str(self.repo), "-c", "user.name=test", "-c", "user.email=test@example.invalid",
+                        "commit", "-q", "-am", "missing"], check=True)
+        with self.assertRaisesRegex(packager.PackageError, "externalResources -> .*missing.png is not in the commit"):
+            packager.stage_eloria_assets(self.repo, self.stage)
 
 
 class SelfTestLine(unittest.TestCase):
