@@ -45,6 +45,8 @@ func _run() -> void:
 	_check_resident_bytes()
 	_check_selection()
 	_check_territory_indexes()
+	_check_untrusted_entries()
+	_check_rejection_feedback()
 	_set_mode("")
 	_remove_tree(SCRATCH)
 	print("continent chunk budget tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
@@ -199,6 +201,63 @@ func _check_territory_indexes() -> void:
 	ids = _ids(stream)
 	stream.free()
 	_expect(ids == ["c0"] and VramTextures._indexes.is_empty(), "=0 reads no index and keeps develop's selection: %s" % [ids])
+
+## An index entry the client cannot trust is not used: that image decodes and
+## the budget keeps its published figure, never less.
+func _check_untrusted_entries() -> void:
+	var directory := _copy_fixture("untrusted")
+	var index_path := directory.path_join("shared-assets/vram/index.json")
+	var index: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(index_path))
+	var base: String = _by_recipe.base
+	var normal: String = _by_recipe.normal
+	var orm: String = _by_recipe.orm
+	index.images[base].erase("gpuBytes")
+	index.images[normal].gpuBytes = 100
+	index.images[orm].erase("sha256")
+	var file := FileAccess.open(index_path, FileAccess.WRITE)
+	file.store_string(JSON.stringify(index, " "))
+	file.close()
+	_set_mode("force", false)
+	var info := VramTextures.index_for_directory(directory.path_join("shared-assets"))
+	_expect(int(info.get("skipped", -1)) == 3 and int(info.entries) == 1,
+		"entries without gpuBytes, with fewer gpuBytes than mip 0 holds, or without a hash are skipped: %s of %s"
+		% [info.get("skipped"), int(info.entries) + int(info.get("skipped", 0))])
+	_expect(VramTextures.resident_bytes(base, PUBLISHED) == PUBLISHED
+		and VramTextures.resident_bytes(normal, PUBLISHED) == PUBLISHED
+		and VramTextures.resident_bytes(orm, PUBLISHED) == PUBLISHED,
+		"and keep the published figure in the budget")
+	_expect(VramTextures.sidecar_entry(base, directory.path_join("shared-assets")).is_empty(),
+		"and are never uploaded from their sidecar")
+
+## A sidecar refused at load is uploaded as RGBA8: the stream's budget must
+## count that image at its published figure from then on, not the sidecar's.
+func _check_rejection_feedback() -> void:
+	var directory := _copy_fixture("rejected")
+	var index: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(
+		directory.path_join("shared-assets/vram/index.json")))
+	var base: String = _by_recipe.base
+	var cutout: String = _by_recipe.base_alpha
+	for sha: String in [base, cutout]:
+		DirAccess.remove_absolute(directory.path_join("shared-assets/vram").path_join(index.images[sha].file))
+	_set_mode("force", false)
+	var stream := ContinentChunkStream.new()
+	stream.configure(_territory(directory), false)
+	var before := _ids(stream)
+	var builder := WorldLoader.prepare_detached(directory.path_join("world.json"), false)
+	var rejected := int(builder.load_phases.get(&"sidecarRejected", -1))
+	var resident: Dictionary = builder.release_world()
+	builder.free()
+	if resident.root != null:
+		(resident.root as Node).free()
+	var after := _ids(stream)
+	var figure := int((stream.entries[0].sharedResourceResidentBytes as Dictionary).get(base, -1))
+	stream.free()
+	_expect(before == ["c0", "c1", "c2", "c3"] and rejected == 2,
+		"before the load the missing sidecars still count at BC7 size (%s); the load refuses both (%d)" % [before, rejected])
+	_expect(figure == PUBLISHED and after == ["c0"],
+		"after it, the budget counts them at the published RGBA8 figure (%d) and admits less: %s" % [figure, after])
+	_expect(VramTextures.resident_bytes(_by_recipe.normal, PUBLISHED) == _gpu("normal"),
+		"images whose sidecars loaded keep their sidecar figure")
 
 ## A copy of the fixture package (manifest, GLB, images, sidecars) under user://.
 func _copy_fixture(name: String) -> String:

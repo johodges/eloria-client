@@ -49,6 +49,8 @@ var _retiring: Array[Dictionary] = []
 var _next_update := 0
 var _physics_enabled := true
 var _preview_enabled := false
+## VramTextures.budget_generation() when the entries were last corrected.
+var _corrected_generation := -1
 ## Import workers whose owner left the tree or re-primed before they finished.
 ## A worker may be waiting on rendering-server commands that only the main
 ## thread services, so joining it synchronously deadlocks the client; the
@@ -165,6 +167,7 @@ func configure(source: WorldManifest, cache_enabled: bool) -> void:
 ## Candidates and resident cells hold the same dictionaries (shallow copies),
 ## so they see it too. Returns (images at sidecar size, images counted).
 func _correct_entries() -> Vector2i:
+	_corrected_generation = VramTextures.budget_generation()
 	var counted: Dictionary = {}
 	var at_sidecar: Dictionary = {}
 	for entry: Dictionary in entries:
@@ -179,6 +182,15 @@ func _correct_entries() -> Vector2i:
 			if bytes != int(published[identity]):
 				at_sidecar[identity] = true
 	return Vector2i(at_sidecar.size(), counted.size())
+
+## Re-corrects when an answer of VramTextures.resident_bytes may have changed
+## since: a sidecar refused at load (or not used for a role) uploads RGBA8,
+## and from then on that image must count its published figure again.
+func _refresh_corrections() -> void:
+	if VramTextures.budget_generation() != _corrected_generation:
+		var counted := _correct_entries()
+		print("vram_textures budget %s rechecked: %d of %d images at sidecar size" % [
+			territory.asset_id() if territory != null else "", counted.x, counted.y])
 
 static func bounds_distance(position: Vector3, bounds: Dictionary) -> float:
 	var lower: Array = bounds.min
@@ -205,6 +217,7 @@ static func incremental_cost(entry: Dictionary, shared: Dictionary,
 	return cost
 
 func selection(position: Vector3, retain := false) -> Array[Dictionary]:
+	_refresh_corrections()
 	var candidates: Array[Dictionary] = []
 	for entry: Dictionary in entries:
 		var distance := bounds_distance(position, entry.bounds)
@@ -435,6 +448,7 @@ func _drain_retired() -> void:
 			_update_resident_bytes()
 
 func _update_resident_bytes() -> void:
+	_refresh_corrections()
 	resident_bytes = 0
 	var shared: Dictionary = {}
 	for resident: Dictionary in cells.values():

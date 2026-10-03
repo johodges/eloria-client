@@ -421,7 +421,10 @@ chunk stream's 256 MiB budget, so the stream refused most of its neighbours.
   shared image at its sidecar's GPU bytes when it will be uploaded from one, the
   published RGBA8 figure otherwise (`VramTextures.resident_bytes`), and logs
   `vram_textures budget <territory>: N of M images at sidecar size`. No map is
-  republished.
+  republished. An index entry missing a field, or claiming fewer GPU bytes than
+  its format's top level holds, is not used; a sidecar refused at load sends
+  its image back to the published figure for the rest of the session (the
+  stream re-corrects and logs `... rechecked`).
 * **Cache.** `CACHE_FORMAT_VERSION` 8, and a package with external images folds
   `VramTextures.cache_token` (mode, usable formats, index hash) into its key.
 * **Switch.** `ELORIA_VRAM_TEXTURES=0` turns sidecars (and the budget

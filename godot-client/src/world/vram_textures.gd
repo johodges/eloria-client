@@ -103,6 +103,15 @@ static var _indexes: Dictionary = {}
 static var _by_sha: Dictionary = {}
 ## Sidecar shas already warned about, so a broken file says so once.
 static var _warned: Dictionary = {}
+## Source shas an index lists that this client decoded after all (a sidecar
+## refused at load, or the map samples the image in a role the sidecar was not
+## encoded for): uploaded as RGBA8, so the budget must count the published
+## figure for them, not the sidecar's.
+static var _decoded_instead: Dictionary = {}
+## Bumped whenever a resident_bytes answer may have changed (a sha added to
+## _decoded_instead, or `reconfigure`), so a chunk stream knows its corrected
+## figures are stale (ContinentChunkStream._refresh_corrections).
+static var _budget_generation := 0
 
 # --------------------------------------------------------------------------
 # Mode, formats, registration
@@ -228,6 +237,8 @@ static func reconfigure() -> void:
 	_indexes.clear()
 	_by_sha.clear()
 	_warned.clear()
+	_decoded_instead.clear()
+	_budget_generation += 1
 	_mutex.unlock()
 
 ## Test hook: pretend the renderer samples exactly `mask` (FORMAT_BITS).
@@ -291,27 +302,46 @@ static func _read_index(directory: String) -> Dictionary:
 		push_warning("vram_textures: ignoring %s (%s); map images decode as before" % [path, reason])
 		return info
 	var images: Dictionary = {}
+	var skipped := 0
 	var listed: Dictionary = (parsed as Dictionary).images
 	for sha: Variant in listed:
 		var raw: Variant = listed[sha]
 		if not raw is Dictionary or str(sha).length() != 64:
+			skipped += 1
 			continue
 		var source: Dictionary = raw
 		var format := str(source.get("format", ""))
 		var file := str(source.get("file", ""))
-		if not FORMAT_BITS.has(format) or file.is_empty() or "/" in file or "\\" in file or ".." in file:
+		var width := int(source.get("width", 0))
+		var height := int(source.get("height", 0))
+		var gpu_bytes := int(source.get("gpuBytes", 0))
+		# An entry the client cannot trust is no entry: that image decodes and
+		# the budget counts its published figure. In particular gpuBytes must
+		# be at least the format's mip 0, or the budget would under-count it.
+		if not FORMAT_BITS.has(format) or file.is_empty() or "/" in file or "\\" in file or ".." in file \
+				or width <= 0 or height <= 0 or int(source.get("mipmaps", -1)) < 0 \
+				or gpu_bytes < _mip0_bytes(format, width, height) or str(source.get("sha256", "")).length() != 64:
+			skipped += 1
 			continue
-		images[str(sha)] = {"sha": str(sha), "file": file, "format": format,
-			"recipe": str(source.get("recipe", "")),
-			"width": int(source.get("width", 0)), "height": int(source.get("height", 0)),
-			"mipmaps": int(source.get("mipmaps", 0)), "gpuBytes": int(source.get("gpuBytes", 0)),
+		var entry := {"sha": str(sha), "file": file, "format": format,
+			"recipe": str(source.get("recipe", "")), "width": width, "height": height,
+			"mipmaps": int(source.get("mipmaps", 0)), "gpuBytes": gpu_bytes,
 			"rawBytes": int(source.get("rawBytes", 0)), "fileBytes": int(source.get("fileBytes", 0)),
 			"sha256": str(source.get("sha256", "")),
 			"path": directory.path_join(SIDECAR_DIRECTORY).path_join(file)}
+		images[str(sha)] = entry
+	if skipped > 0:
+		push_warning("vram_textures: %d entries of %s are incomplete; those images decode as before" % [skipped, path])
 	info.status = "ok"
 	info.entries = images.size()
+	info.skipped = skipped
 	info.images = images
 	return info
+
+## The bytes of a block-compressed format's top level: 8 (BC1) or 16 (BC5,
+## BC7) per 4x4 block.
+static func _mip0_bytes(format: String, width: int, height: int) -> int:
+	return ceili(width / 4.0) * ceili(height / 4.0) * (8 if format == "bc1" else 16)
 
 ## The sidecar entry for `sha` in `source_directory`'s index, when this client
 ## would upload it: the mode is not off and the renderer samples its format.
@@ -396,7 +426,26 @@ static func resident_bytes(sha: String, published: int) -> int:
 	var entry := lookup(sha)
 	if entry.is_empty() or not (usable_formats() & int(FORMAT_BITS[entry.format])):
 		return published
-	return int(entry.gpuBytes)
+	_mutex.lock()
+	var decoded := _decoded_instead.has(sha)
+	_mutex.unlock()
+	return published if decoded else int(entry.gpuBytes)
+
+## Records that an indexed image was decoded after all (see _decoded_instead),
+## so the chunk budget counts it at the published figure from now on.
+static func note_decoded_instead(sha: String) -> void:
+	_mutex.lock()
+	if not _decoded_instead.has(sha):
+		_decoded_instead[sha] = true
+		_budget_generation += 1
+	_mutex.unlock()
+
+## Changes whenever a resident_bytes answer may have changed.
+static func budget_generation() -> int:
+	_mutex.lock()
+	var generation := _budget_generation
+	_mutex.unlock()
+	return generation
 
 # --------------------------------------------------------------------------
 # Preparing one image
@@ -428,6 +477,7 @@ static func prepare(job: Dictionary) -> void:
 			job["mime"] = "image/vnd-ms.dds"
 			return
 		job["rejected"] = loaded.reason
+		note_decoded_instead(str(job.sha))
 		_warn_once(str(job.sha), "vram_textures: sidecar %s unusable (%s); decoding %s" % [
 			str(sidecar.file), loaded.reason, str(job.source).get_file()])
 	var decoded := decode_source(str(job.source))

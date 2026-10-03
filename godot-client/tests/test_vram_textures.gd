@@ -388,10 +388,12 @@ func _sha_of_recipe(index: Dictionary, recipe: String) -> String:
 			return sha
 	return ""
 
+## The index claims 32 px for a 64 px DDS: a self-consistent entry (its GPU
+## bytes still cover a 32 px top level) that the DDS check must catch at load.
 func _misstate_size(directory: String) -> String:
 	var index := _read_index(directory)
 	var sha := _sha_of_recipe(index, "orm")
-	index.images[sha].width = 128
+	index.images[sha].width = 32
 	_write_index(directory, index)
 	return sha
 
