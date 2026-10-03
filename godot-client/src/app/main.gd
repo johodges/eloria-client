@@ -63,6 +63,7 @@ const GuildWindowScript := preload("res://src/ui/guild_window.gd")
 const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
 const ReferenceWindowScript := preload("res://src/ui/reference_window.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
+const VramTextures := preload("res://src/world/vram_textures.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 ## On a secrets map, only the secret the player stands in is drawn; the rest
 ## of the map (and so the minimap and full map, which render the same world)
@@ -953,6 +954,9 @@ const EXPERIENCE_SKILLS: Array[String] = [
 	"ranging", "overall"]
 
 func _ready() -> void:
+	# Before any map load, and on the main thread: registering the map image
+	# extension edits a list that a worker import iterates (vram_textures.gd).
+	VramTextures.ensure_registered()
 	lantern_guide = LanternGuideScript.new()
 	add_child(lantern_guide)
 	lantern_guide.configure(self)

@@ -18,7 +18,7 @@ func _run() -> void:
 	var scene_resource: Resource = load("res://src/app/main.tscn")
 	_expect(scene_resource is PackedScene, "main HUD scene loads")
 	if not scene_resource is PackedScene:
-		_finish()
+		await _finish()
 		return
 	var main: Control = (scene_resource as PackedScene).instantiate() as Control
 	root.add_child(main)
@@ -139,7 +139,7 @@ func _run() -> void:
 	main.call("_toggle_console")
 	main.call("_on_options_pressed")
 	await _capture("legacy-hud-settings.png")
-	_finish()
+	await _finish()
 
 func _capture(file_name: String) -> void:
 	for unused_frame: int in range(4):
@@ -180,4 +180,20 @@ func _finish() -> void:
 		(app_state.get("inventory") as Dictionary).clear()
 		(app_state.get("chat_lines") as Array).clear()
 	print("rendered legacy HUD: ", "PASS" if _failures == 0 else "FAIL")
+	# The HUD's map streams its neighbours and their chunks on workers.
+	# Quitting under a live import tears the scripts down beneath it: a crash
+	# at exit, or script errors from the half-built map. Stop the exterior
+	# stream and let every import finish first, as main.gd's _close_client
+	# does (never join one: ContinentChunkStream.drain_workers).
+	# Collected first: clearing a stream frees nodes this walk would visit.
+	var streams: Array[ExteriorRegionStream] = []
+	for node: Node in root.find_children("*", "", true, false):
+		if node is ExteriorRegionStream:
+			streams.append(node as ExteriorRegionStream)
+	for stream: ExteriorRegionStream in streams:
+		stream.clear()
+		var deadline := Time.get_ticks_msec() + 30000
+		while is_instance_valid(stream) and not stream.is_idle() and Time.get_ticks_msec() < deadline:
+			await process_frame
+	await ContinentChunkStream.drain_workers(self)
 	quit(_failures)

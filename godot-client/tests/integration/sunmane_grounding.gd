@@ -27,7 +27,7 @@ func _run() -> void:
 		await process_frame
 	_expect(_loader.world_root != null, "world.glb imports through WorldLoader")
 	if _loader.world_root == null:
-		_finish()
+		await _finish()
 		return
 	_expect(_loader.manifest.errors.is_empty(),
 		"manifest validates: " + str(_loader.manifest.errors))
@@ -49,7 +49,7 @@ func _run() -> void:
 	_probe_datum()
 	_probe_portals()
 	_probe_grid()
-	_finish()
+	await _finish()
 
 func _server_to_world(tile_x: float, tile_y: float) -> Vector2:
 	return Vector2((tile_x - SERVER_ORIGIN.x) * METRES_PER_TILE,
@@ -113,4 +113,8 @@ func _expect(condition: bool, message: String) -> void:
 
 func _finish() -> void:
 	print("sunmane grounding: ", "PASS" if _failures == 0 else "FAIL")
+	# Sunmane streams the cells beyond the arrival's budget on a worker;
+	# quitting under a live import crashes (or hangs) the process at exit
+	# (ContinentChunkStream.drain_workers).
+	await ContinentChunkStream.drain_workers(self)
 	quit(_failures)
