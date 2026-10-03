@@ -2919,8 +2919,10 @@ static func decode_lantern(payload: PackedByteArray, logical_coordinates := fals
 	if value.has("tutorial") and value.tutorial not in ["second_bell", "borrowed_sky", "followup", "signed_ashore"]:
 		return {"type":"invalid", "error":"tutorial_kind"}
 	# Signed Ashore, the landing isle's chapter: its four countersigns
-	# (grove/temple/gate/light) stand in for the Lantern's flags below.
-	if value.get("tutorial", "") == "signed_ashore" and bool(value.active) and value.get("chapter") != "SIGNED ASHORE":
+	# (grove/temple/gate/light) stand in for the Lantern's flags below. The
+	# type test comes first: != between a String and a number, array,
+	# dictionary or bool is a script error, not false.
+	if value.get("tutorial", "") == "signed_ashore" and bool(value.active) and not (value.get("chapter") is String and value.chapter == "SIGNED ASHORE"):
 		return {"type":"invalid", "error":"signed_ashore_chapter"}
 	if value.get("tutorial", "") == "followup" and bool(value.active):
 		for key in ["adventure", "guide"]:

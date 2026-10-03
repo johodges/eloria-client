@@ -87,7 +87,8 @@ func _init() -> void:
 	expect(decode(ashore).get("type")=="lantern_tutorial","Signed Ashore uses the native guide protocol")
 	expect(decode(ashore).get("state",{}).get("chapter")=="SIGNED ASHORE","Signed Ashore state keeps its chapter")
 	expect(EloriaProtocol.CLIENT_CAPABILITIES.has("signed_ashore_v1"),"Signed Ashore capability declared")
-	for chapter: Variant in ["THE LAST LANTERN", "THE SECOND BELL", "signed ashore", "", null]:
+	# A chapter that is not text at all is refused as invalid, not a script error.
+	for chapter: Variant in ["THE LAST LANTERN", "THE SECOND BELL", "signed ashore", "", null, 1, 1.5, [], {}, true]:
 		var wrong: Dictionary=ashore.duplicate(true)
 		wrong.chapter=chapter
 		expect(decode(wrong).get("type")=="invalid","reject Signed Ashore under chapter "+str(chapter))
