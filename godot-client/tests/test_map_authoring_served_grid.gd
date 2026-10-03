@@ -226,6 +226,18 @@ func _test_refusals(blob: PackedByteArray) -> void:
 	_expect(after_stream == 4 and Time.get_ticks_msec() - started < 2000,
 		"padding, garbage or a second member after the gzip stream, and a cut stream, are refused at once (%d of 4, %d ms)" % [
 			after_stream, Time.get_ticks_msec() - started])
+	# Dimensions whose product passes 2^63 wrapped negative and slipped past the
+	# size checks into an out-of-bounds write and a script error in the caller.
+	var huge := raw.slice(0, ServedGrid.HEADER_SIZE)
+	huge.encode_u32(8, 2147516416)
+	huge.encode_u32(12, 4294901761)
+	var payload := PackedByteArray()
+	payload.resize(65536)
+	huge.append_array(payload)
+	var wrapped := ServedGrid.decode(huge)
+	_expect("truncated" in String(wrapped.get("error", "")),
+		"dimensions whose product overflows are refused as a truncated payload (%s)" % String(
+			wrapped.get("error", "accepted")))
 	var raw_filter := ServedGrid.decode(_encode(PackedInt32Array([64, 4096, 0, 32704, 128, 1]), 3, 2, 0))
 	_expect(not raw_filter.has("error") and int(raw_filter.filter) == 0 and
 		raw_filter.codes == PackedInt32Array([64, 4096, 0, 32704, 128, 1]),

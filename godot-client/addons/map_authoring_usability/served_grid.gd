@@ -62,6 +62,10 @@ static func decode(raw: PackedByteArray, verify_crc := true) -> Dictionary:
 		return header
 	var width := int(header.width)
 	var height := int(header.height)
+	# Two u32 dimensions can multiply past int64 and wrap negative, which would
+	# pass the size checks below. Bound them by the payload's bytes first.
+	if height > (raw.size() - HEADER_SIZE) / 2 / width:
+		return {"error": "the served grid's payload is truncated"}
 	var count := width * height
 	if raw.size() < HEADER_SIZE + 2 * count:
 		return {"error": "the served grid's payload is truncated"}
