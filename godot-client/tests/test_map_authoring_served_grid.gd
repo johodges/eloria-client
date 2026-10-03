@@ -12,13 +12,16 @@ extends SceneTree
 const ServedGrid := preload("res://addons/map_authoring_usability/served_grid.gd")
 const Walker := preload("res://addons/map_authoring_usability/playtest_walker.gd")
 const Walkability := preload("res://addons/map_authoring_usability/walkability_overlay.gd")
-## A byte copy of eloria-server tests/fixtures/served_grid_golden.escg.gz and
-## its description. The SHA-256 is a literal here and in the server's
-## tests/test_served_grid_format.py; neither test reads the other checkout, so a
-## fixture changed on one side alone fails that side's suite.
+## Byte copies of eloria-server tests/fixtures/served_grid_golden.escg.gz, its
+## description and the odd fixtures it lists. The SHA-256 of the .gz and of the
+## JSON are literals here and in the server's tests/test_served_grid_format.py;
+## neither test reads the other checkout, so a fixture or its answers changed on
+## one side alone fail that side's suite. .gitattributes keeps the bytes exact.
+const FIXTURES := "res://tests/fixtures"
 const GOLDEN_PATH := "res://tests/fixtures/served_grid_golden.escg.gz"
 const GOLDEN_JSON_PATH := "res://tests/fixtures/served_grid_golden.json"
 const GOLDEN_SHA256 := "7e4522023885486b2a47298826b3fad1d30ba6d660dcc80249c8690d30e66c12"
+const GOLDEN_JSON_SHA256 := "2b213842cba146059f59dcddba7ecb590b625d0aa70260fc5f5d3bcdc5b48eae"
 const PACKAGE_DIR := "res://test-artifacts/served-grid"
 ## The size of a 2 km continent-v2 map, for the decode timing (target < 2 s).
 const LARGE := 2046
@@ -39,6 +42,7 @@ func _run() -> void:
 		_finish()
 		return
 	_test_pin(blob, description)
+	_test_odd_fixtures(description)
 	var grid := ServedGrid.decode_file(blob, GOLDEN_SHA256)
 	_expect(not grid.has("error"), "the golden fixture decodes (%s)" % String(grid.get("error", "ok")))
 	if grid.has("error"):
@@ -59,6 +63,33 @@ func _test_pin(blob: PackedByteArray, description: Dictionary) -> void:
 	_expect(ServedGrid.sha256_hex(blob) == GOLDEN_SHA256 and
 		String(description.get("sha256", "")) == GOLDEN_SHA256,
 		"the client's copy of the golden fixture is the server's, by its pinned SHA-256")
+	_expect(ServedGrid.sha256_hex(FileAccess.get_file_as_bytes(GOLDEN_JSON_PATH)) == GOLDEN_JSON_SHA256,
+		"and so is its description, byte for byte (LF, as .gitattributes keeps it)")
+
+
+## The server codec's own 5 x 7 files: an odd number of codes (the reader stops
+## half way through its last 32-bit word) and row deltas that wrap both ways,
+## gzipped with filter 1 and raw with filter 0 as an ELM block holds it.
+func _test_odd_fixtures(description: Dictionary) -> void:
+	var entries: Array = description.get("oddFixtures", [])
+	var matching := 0
+	var filters := {}
+	for entry: Dictionary in entries:
+		var data := FileAccess.get_file_as_bytes(FIXTURES.path_join(String(entry.file)))
+		var grid := ServedGrid.decode_file(data, String(entry.sha256))
+		if grid.has("error"):
+			push_error("%s: %s" % [String(entry.file), String(grid.error)])
+			continue
+		var expected := PackedInt32Array(entry.codes)
+		if (int(grid.width) == 5 and int(grid.height) == 7 and grid.codes == expected and
+				int(grid.filter) == int(entry.filter) and expected.size() % 2 == 1 and
+				ServedGrid.sha256_hex(ServedGrid.payload_bytes(grid.codes)) ==
+					String(entry.decodedPayloadSha256)):
+			matching += 1
+			filters[int(grid.filter)] = true
+	_expect(entries.size() == 2 and matching == 2 and filters.has(0) and filters.has(1),
+		"the server's odd-sized fixtures decode to its codes with both filters (%d of %d)" % [matching,
+			entries.size()])
 
 
 func _test_decode(grid: Dictionary, description: Dictionary) -> void:

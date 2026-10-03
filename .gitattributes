@@ -44,3 +44,9 @@ eloria-assets/qa/canonical-equipment/** -text
 
 # Keep evidence hashes stable across Git newline settings.
 eloria-assets/qa/shared-equipment/** -text
+
+# eloria-server's served-grid fixtures, byte copies pinned by SHA-256 in both
+# repos' tests: keep their bytes exact on every checkout.
+godot-client/tests/fixtures/*.escg binary
+godot-client/tests/fixtures/*.escg.gz binary
+godot-client/tests/fixtures/served_grid_golden.json -text
