@@ -57,6 +57,7 @@ func _run() -> void:
 	_test_reach(grid, description)
 	_test_route(grid, description)
 	_test_walk_paths()
+	_test_flood_matches_the_step_rule()
 	_test_refusals(blob)
 	_test_declared_package(blob)
 	_test_load_grid_order(blob)
@@ -213,6 +214,67 @@ func _test_walk_paths() -> void:
 		not corner.step_allowed(Vector2i(0, 0), Vector2i(1, 1)) and
 		corner.search(Vector2i(0, 0), Vector2i(1, 1)) == round_corner,
 		"a diagonal past a ledge corner is refused and the route goes round it")
+
+
+## The flood writes the step test out inline for speed; it must reach exactly
+## what _step_ok and the corner rule allow, on both versions' walk tests, with
+## ledges at the climb and one past it, blocked tiles and one-way corners.
+func _test_flood_matches_the_step_rule() -> void:
+	var random := RandomNumberGenerator.new()
+	random.seed = 20261003
+	var agree := 0
+	var cases := 0
+	for trial in 24:
+		var width := random.randi_range(1, 23)
+		var rows := random.randi_range(1, 17)
+		var version_two := trial % 2 == 0
+		var climb := 20 if version_two else 2
+		var bits := Walker.WALK_BITS_V2 if version_two else Walker.WALK_BITS_V1
+		var codes := PackedInt32Array()
+		codes.resize(width * rows)
+		for index in codes.size():
+			if random.randf() < 0.2:
+				continue
+			codes[index] = (4000 + random.randi_range(0, 3) * (climb / 2 + random.randi_range(0, 1))) \
+				if version_two else random.randi_range(1, 7) * (64 if random.randf() < 0.1 else 1)
+		for start in [0, codes.size() / 2, codes.size() - 1]:
+			cases += 1
+			var seen := PackedByteArray()
+			seen.resize(codes.size())
+			var count := Walker._flood(codes, width, rows, start, seen, PackedInt32Array(), 1, climb, bits)
+			var expected := _plain_flood(codes, width, rows, start, climb, bits)
+			if seen == expected and count == expected.count(1):
+				agree += 1
+	_expect(agree == cases,
+		"the flood reaches exactly what the step rule and the corner rule allow (%d of %d)" % [agree, cases])
+
+
+## The flood as the step rule reads: every direction through _step_ok, a
+## diagonal also through both orthogonal steps from its start.
+func _plain_flood(codes: PackedInt32Array, width: int, rows: int, start: int, climb: int,
+		bits: int) -> PackedByteArray:
+	var seen := PackedByteArray()
+	seen.resize(codes.size())
+	seen[start] = 1
+	var queue: Array[int] = [start]
+	while not queue.is_empty():
+		var current: int = queue.pop_back()
+		var cx := current % width
+		var cy := current / width
+		for direction: Vector2i in Walker.DIRECTIONS:
+			var nx := cx + direction.x
+			var ny := cy + direction.y
+			if nx < 0 or ny < 0 or nx >= width or ny >= rows or seen[ny * width + nx] != 0:
+				continue
+			var here := codes[current]
+			var ok := Walker._step_ok(codes, width, codes.size(), cx, cy, nx, ny, here, climb, bits)
+			if ok and direction.x != 0 and direction.y != 0:
+				ok = Walker._step_ok(codes, width, codes.size(), cx, cy, nx, cy, here, climb, bits) and \
+					Walker._step_ok(codes, width, codes.size(), cx, cy, cx, ny, here, climb, bits)
+			if ok:
+				seen[ny * width + nx] = 1
+				queue.append(ny * width + nx)
+	return seen
 
 
 func _test_refusals(blob: PackedByteArray) -> void:

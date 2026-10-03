@@ -629,35 +629,94 @@ static func as_codes(codes: Variant) -> PackedInt32Array:
 
 
 ## Marks every tile reachable from `start` with `mark` in `seen`; returns how many.
+## The step test is _step_ok's (both tiles walkable under `walk_bits`, the code
+## change within `climb`) with the corner rule, written out inline: each of the
+## four orthogonal steps is tested once and reused for the two diagonals beside
+## it. A 2 km version 2 map has 4.2 M tiles, and the reach tint floods it on the
+## main thread after every failed route.
 static func _flood(codes: PackedInt32Array, width: int, rows: int, start: int,
 		seen: PackedByteArray, queue: PackedInt32Array, mark: int, climb: int,
 		walk_bits: int) -> int:
-	var count := codes.size()
 	queue.resize(0)
 	queue.append(start)
 	seen[start] = mark
 	var head := 0
+	var last_x := width - 1
+	var last_y := rows - 1
+	var there := 0
+	var next := 0
 	while head < queue.size():
 		var current := queue[head]
 		head += 1
+		var here := codes[current]
+		if here & walk_bits == 0:
+			continue
+		var low := here - climb
+		var high := here + climb
 		var cx := current % width
 		var cy := current / width
-		var here := codes[current]
-		for direction: Vector2i in DIRECTIONS:
-			var nx := cx + direction.x
-			var ny := cy + direction.y
-			if nx < 0 or ny < 0 or nx >= width or ny >= rows:
-				continue
-			var next := ny * width + nx
-			if seen[next] != 0 or not _step_ok(codes, width, count, cx, cy, nx, ny, here, climb,
-					walk_bits):
-				continue
-			if direction.x != 0 and direction.y != 0 and (
-					not _step_ok(codes, width, count, cx, cy, nx, cy, here, climb, walk_bits) or
-					not _step_ok(codes, width, count, cx, cy, cx, ny, here, climb, walk_bits)):
-				continue
-			seen[next] = mark
-			queue.append(next)
+		var y_up := false
+		var x_up := false
+		var y_down := false
+		var x_down := false
+		if cy < last_y:
+			there = codes[current + width]
+			y_up = there & walk_bits != 0 and there >= low and there <= high
+		if cx < last_x:
+			there = codes[current + 1]
+			x_up = there & walk_bits != 0 and there >= low and there <= high
+		if cy > 0:
+			there = codes[current - width]
+			y_down = there & walk_bits != 0 and there >= low and there <= high
+		if cx > 0:
+			there = codes[current - 1]
+			x_down = there & walk_bits != 0 and there >= low and there <= high
+		# DIRECTIONS order: (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1),
+		# (-1, 0), (-1, 1). A diagonal needs both orthogonal steps it cuts.
+		if y_up:
+			next = current + width
+			if seen[next] == 0:
+				seen[next] = mark
+				queue.append(next)
+			if x_up:
+				next = current + width + 1
+				there = codes[next]
+				if seen[next] == 0 and there & walk_bits != 0 and there >= low and there <= high:
+					seen[next] = mark
+					queue.append(next)
+		if x_up:
+			next = current + 1
+			if seen[next] == 0:
+				seen[next] = mark
+				queue.append(next)
+			if y_down:
+				next = current - width + 1
+				there = codes[next]
+				if seen[next] == 0 and there & walk_bits != 0 and there >= low and there <= high:
+					seen[next] = mark
+					queue.append(next)
+		if y_down:
+			next = current - width
+			if seen[next] == 0:
+				seen[next] = mark
+				queue.append(next)
+			if x_down:
+				next = current - width - 1
+				there = codes[next]
+				if seen[next] == 0 and there & walk_bits != 0 and there >= low and there <= high:
+					seen[next] = mark
+					queue.append(next)
+		if x_down:
+			next = current - 1
+			if seen[next] == 0:
+				seen[next] = mark
+				queue.append(next)
+			if y_up:
+				next = current + width - 1
+				there = codes[next]
+				if seen[next] == 0 and there & walk_bits != 0 and there >= low and there <= high:
+					seen[next] = mark
+					queue.append(next)
 	return head
 
 
