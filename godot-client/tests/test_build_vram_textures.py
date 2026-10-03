@@ -111,6 +111,37 @@ class Recipes(unittest.TestCase):
         self.assertEqual(tool.role_names({("base", "OPAQUE"), ("base", "MASK")}), ["base", "base_cutout"])
         self.assertEqual(tool.role_names({("orm", "OPAQUE"), ("occlusion", "MASK")}), ["occlusion", "orm"])
 
+    def test_cutoffs_come_from_the_materials(self):
+        document = {"textures": [{"source": 0}, {"source": 1}, {"source": 2}],
+                    "materials": [
+                        {"alphaMode": "MASK", "alphaCutoff": 0.45, "pbrMetallicRoughness": {"baseColorTexture": {"index": 0}}},
+                        {"alphaMode": "MASK", "pbrMetallicRoughness": {"baseColorTexture": {"index": 0}}},
+                        {"alphaMode": "BLEND", "pbrMetallicRoughness": {"baseColorTexture": {"index": 1}}},
+                        {"pbrMetallicRoughness": {"baseColorTexture": {"index": 2}}},
+                        {"alphaMode": "MASK", "alphaCutoff": 0.3, "normalTexture": {"index": 2}}]}
+        self.assertEqual(tool.image_cutoffs(document), {0: {0.45, 0.5}, 1: {0.5}},
+                         "each MASK material's cutoff (glTF default 0.5), 0.5 for BLEND, none for opaque or a normal map")
+
+    def test_mip_floors(self):
+        floors = tool.FLOORS
+        self.assertEqual(tool.verdict("base", {"psnr": 40.0, "psnr_mips": [40.0, 35.0, 31.0, 30.5, 20.0]}, floors), "",
+                         "mip 4 is reported, not gated")
+        self.assertEqual(tool.verdict("base", {"psnr": 40.0, "psnr_mips": [40.0, 35.0, 29.9, 31.0]}, floors),
+                         "quality: psnr 29.9 < 30.0 at mip 2")
+        self.assertEqual(tool.verdict("base", {"psnr": 40.0, "psnr_mips": [40.0, 35.0, 20.0, 20.0], "size": [64, 64]},
+                                      floors), "", "a 64 px image's 16 and 8 px mips are reported, not gated")
+        self.assertEqual(tool.verdict("base", {"psnr": 40.0, "psnr_mips": [40.0, 29.0, 40.0], "size": [64, 64]},
+                                      floors), "quality: psnr 29.0 < 30.0 at mip 1")
+        flips = {"psnr": 45.0, "psnr_mips": [45.0] * 5, "alpha_flip_mip0": 0.0, "alpha_flip_mip2": 0.0,
+                 "alpha_flip_max": [0.0, 0.001, 0.004, 0.009, 0.0166]}
+        self.assertEqual(tool.verdict("base_alpha", flips, floors), "")
+        flips["alpha_flip_max"][4] = 0.021
+        self.assertEqual(tool.verdict("base_alpha", flips, floors), "quality: alpha flips 0.021 > 0.02 at mip 4")
+        normal = {"mean_deg": 0.8, "p99_deg": 2.0, "mean_deg_mips": [0.8, 1.2, 1.6], "p99_deg_mips": [2.0, 3.0, 3.0]}
+        self.assertEqual(tool.verdict("normal", normal, floors), "quality: normal error 1.6 / 3.0 deg at mip 2")
+        orm = {"psnr_rgb": [40.0, 40.0, 40.0], "psnr_rgb_mips": [[40.0] * 3, [35.0, 27.5, 40.0], [40.0] * 3]}
+        self.assertEqual(tool.verdict("orm", orm, floors), "quality: channel psnr 27.5 < 28.0 at mip 1")
+
     def test_conflicts_and_unused_are_excluded(self):
         self.assertEqual(self._recipe({("base", "OPAQUE"), ("normal", "OPAQUE")}),
                          (None, "role_conflict: base+normal"))
@@ -228,6 +259,34 @@ class Build(unittest.TestCase):
         directory = next(iter(pruned["directories"].values()))
         self.assertEqual(directory["staleRemoved"], 1)
         self.assertNotIn(normal, self._index(maps / "shared-assets" / "vram")["images"])
+
+    def test_report_has_every_measured_mip(self):
+        self.assertEqual(self.code, 0, self.output[-2000:])
+        report = json.loads((self.out / "report.json").read_text(encoding="utf-8"))
+        by_recipe = {e["recipe"]: e for e in report.values()}
+        self.assertEqual(len(by_recipe["base"]["psnr_mips"]), tool.MEASURED_MIPS["base"] + 1)
+        self.assertEqual(len(by_recipe["normal"]["p99_deg_mips"]), tool.MEASURED_MIPS["normal"] + 1)
+        self.assertEqual(len(by_recipe["orm"]["psnr_rgb_mips"]), tool.MEASURED_MIPS["orm"] + 1)
+        cutout = by_recipe["base_alpha"]
+        self.assertEqual(cutout["cutoffs"], [0.5], "the fixture's cutout material cuts at 0.5")
+        self.assertEqual(len(cutout["alpha_flips"]["0.5"]), tool.MEASURED_MIPS["base_alpha"] + 1)
+        self.assertTrue(all(e["qualityVersion"] == tool.QUALITY_VERSION for e in report.values()))
+
+    @unittest.skipIf(tool._zstd() is None, "zstandard missing: stale measurements re-encode instead")
+    def test_stale_measurements_are_taken_again_without_encoding(self):
+        maps = self.scratch / "remeasure"
+        shutil.copytree(self.maps, maps, ignore=shutil.ignore_patterns("vram"))
+        cache = self.scratch / "cache-remeasure"
+        shutil.copytree(self.cache, cache)
+        metas = sorted(cache.glob("*.json"))
+        stale = json.loads(metas[0].read_text(encoding="utf-8"))
+        stale["quality"].pop("qualityVersion", None)
+        metas[0].write_text(json.dumps(stale), encoding="utf-8")
+        code, summary, output = _run_tool(maps, cache, "--no-prune")
+        self.assertEqual(code, 0, output[-2000:])
+        self.assertEqual((summary["encoded"], summary["remeasured"]), (0, 1), "measured again, not encoded")
+        self.assertEqual(json.loads(metas[0].read_text(encoding="utf-8"))["quality"]["qualityVersion"],
+                         tool.QUALITY_VERSION)
 
     def test_quality_floor_excludes(self):
         maps = self.scratch / "floors"

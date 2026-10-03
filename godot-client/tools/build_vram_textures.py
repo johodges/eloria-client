@@ -45,10 +45,22 @@ incompatible roles (role_conflict), one no material samples
 (no_material_role), a size that is not a multiple of 4, and any encode below
 its quality floor:
 
-  base / base_alpha  PSNR >= 36 dB (RGB, mip 0); alpha flips at 0.5 <= 1.0 %
-                     at mip 0 and <= 1.5 % at mip 2
-  normal             angular error mean <= 1.0 deg, p99 <= 3 deg (Z rebuilt)
-  orm                PSNR >= 33 dB per channel
+  base / base_alpha  PSNR >= 36 dB (RGB) at mip 0, >= 30 dB at mips 1-3
+  base_alpha         alpha flips <= 1.0 % at mip 0 and <= 2.0 % at mips 1-4,
+                     at every alphaCutoff a MASK material cuts it at (0.45 on
+                     every cutout today; 0.5 stands in for BLEND)
+  normal             angular error mean <= 1.0 deg, p99 <= 3 deg at mip 0;
+                     <= 1.5 / 4.5 deg at mips 1-2 (Z rebuilt from XY)
+  orm                PSNR >= 33 dB per channel at mip 0, >= 28 dB at mips 1-2
+
+  (a mip under 32 px on its shorter side is reported, not gated)
+
+The game camera (-60 deg, 26 m) samples mips 1-4 of most map textures, where
+block error grows, hence the per-mip floors. Mips are compared with the 2x2
+average of the source (Image.generate_mipmaps). JPEG sources are decoded by
+Pillow here and by Godot in the client; any difference between those two
+decoders counts against the encode here, so the numbers err on the strict
+side. report.json (not shipped) keeps every measured mip.
 
 Encoding runs headless on the Godot 4.7.2 EDITOR binary (tools/vram_encode.gd)
 in --procs processes; the export templates cannot encode. The mip chain is
@@ -59,7 +71,10 @@ never by output: BC7 output is not bit-for-bit reproducible. The cache must be
 a directory git ignores (the default, <repo>/.vram-encode-cache, is); entries
 this run did not use are pruned unless --no-prune.
 
-Needs numpy and Pillow (the quality check decodes the DDS with Pillow).
+Needs numpy and Pillow (the quality check decodes the DDS with Pillow). With
+the zstandard module, a cached encode whose measurement is out of date
+(QUALITY_VERSION, or other alpha cutoffs) is measured again from its cached
+sidecar; without it, it is encoded again.
 """
 from __future__ import annotations
 
@@ -88,6 +103,10 @@ SCHEMA = 1
 # set or mip rule): it is part of every cache key, so nothing old is reused,
 # and the client refuses an index whose recipeVersion it does not know.
 RECIPE_VERSION = 1
+# Raise when measure() changes what it records: cached encodes are measured
+# again from their cached sidecar (never re-encoded; needs the zstandard
+# module, else they are encoded afresh).
+QUALITY_VERSION = 2
 CONTAINER = "EVT1 header + zstd(19) DDS with the full mip chain"
 SIDECAR_DIR = "vram"
 HEADER = struct.Struct("<4sIII")
@@ -99,7 +118,19 @@ FORMAT_OF = {"base": "bc7", "base_alpha": "bc7", "orm": "bc1", "orm_bc7": "bc7",
 SECOND_CHANCE = {"orm": "orm_bc7"}
 FLOORS = {"base_psnr": 36.0, "base_psnr_median": 42.0, "alpha_flip_mip0": 0.010,
           "alpha_flip_mip2": 0.015, "normal_mean_deg": 1.0, "normal_p99_deg": 3.0,
-          "orm_psnr": 33.0}
+          "orm_psnr": 33.0,
+          # The game camera (-60 deg, 26 m) samples mips 1-4 of most map
+          # textures, where block error grows: floors for the smaller mips.
+          "base_psnr_mips": 30.0, "alpha_flip_mips": 0.020, "normal_mean_deg_mips": 1.5,
+          "normal_p99_deg_mips": 4.5, "orm_psnr_mips": 28.0}
+# Mips measured per recipe (0 = full size); the per-mip floors gate mips
+# 1..GATED_MIPS[recipe], alpha flips 1..ALPHA_GATED_MIPS.
+MEASURED_MIPS = {"base": 4, "base_alpha": 4, "normal": 2, "orm": 2, "orm_bc7": 2}
+GATED_MIPS = {"base": 3, "base_alpha": 3, "normal": 2, "orm": 2, "orm_bc7": 2}
+ALPHA_GATED_MIPS = 4
+# A mip smaller than this (its shorter side, in pixels) is reported, not
+# gated: a handful of blocks makes PSNR and flip shares jump by whole steps.
+MIN_GATED_MIP = 32
 DDS_BLOCK_BYTES = {"bc1": 8, "bc5": 16, "bc7": 16}
 PILLOW_BCN = {"bc1": ("RGBA", 1), "bc5": ("RGB", 5), "bc7": ("RGBA", 7)}
 
@@ -152,6 +183,43 @@ def image_roles(document: dict) -> dict[int, set[tuple[str, str]]]:
     return roles
 
 
+def image_cutoffs(document: dict) -> dict[int, set[float]]:
+    """glTF image index -> the alpha thresholds its alpha is cut at: each MASK
+    material's alphaCutoff (glTF default 0.5) for its base colour, and 0.5 as
+    a stand-in for a BLEND material's. Godot's glTF import makes alphaCutoff
+    the material's alpha_scissor_threshold, and the look's painted foliage
+    keeps it (look_foliage.gd)."""
+    sources = []
+    for texture in document.get("textures", []):
+        source = texture.get("source")
+        for extension in (texture.get("extensions") or {}).values():
+            if isinstance(extension, dict) and "source" in extension:
+                source = extension["source"]
+        sources.append(source)
+    cutoffs: dict[int, set[float]] = {}
+
+    def walk(item, cutoff):
+        if isinstance(item, dict):
+            for key, value in item.items():
+                if key == "baseColorTexture" and isinstance(value, dict) and isinstance(value.get("index"), int):
+                    index = value["index"]
+                    if 0 <= index < len(sources) and sources[index] is not None:
+                        cutoffs.setdefault(sources[index], set()).add(cutoff)
+                elif key not in SLOTS:
+                    walk(value, cutoff)
+        elif isinstance(item, list):
+            for value in item:
+                walk(value, cutoff)
+
+    for material in document.get("materials", []):
+        mode = material.get("alphaMode", "OPAQUE")
+        if mode == "MASK":
+            walk(material, round(float(material.get("alphaCutoff", 0.5)), 4))
+        elif mode == "BLEND":
+            walk(material, 0.5)
+    return cutoffs
+
+
 def role_names(roles: set[tuple[str, str]]) -> list[str]:
     """The roles an index entry records, as the client (vram_textures.gd
     image_roles) names them: a base colour sampled by a MASK or BLEND
@@ -178,7 +246,7 @@ def inventory(maps_roots: list[Path]) -> dict[str, dict]:
             if "streamingChunks" in manifest:
                 for uri, sha in resources.items():
                     path = (manifest_path.parent / str(manifest.get("asset", {}).get("glb", "world.glb"))).parent / uri
-                    found.setdefault(sha, {"path": path.resolve(), "roles": set(), "maps": set()})
+                    found.setdefault(sha, {"path": path.resolve(), "roles": set(), "maps": set(), "cutoffs": set()})
                 continue
             glb = manifest_path.parent / str(manifest.get("asset", {}).get("glb", "world.glb"))
             try:
@@ -187,15 +255,18 @@ def inventory(maps_roots: list[Path]) -> dict[str, dict]:
                 continue
             manifests += 1
             roles = image_roles(document)
+            cutoffs = image_cutoffs(document)
             by_uri = {str(image.get("uri")): index for index, image in enumerate(document.get("images", []))
                       if image.get("uri")}
             for uri, sha in resources.items():
                 if not isinstance(sha, str) or len(sha) != 64:
                     continue
-                record = found.setdefault(sha, {"path": (glb.parent / uri).resolve(), "roles": set(), "maps": set()})
+                record = found.setdefault(sha, {"path": (glb.parent / uri).resolve(), "roles": set(), "maps": set(),
+                                                 "cutoffs": set()})
                 index = by_uri.get(uri)
                 if index is not None:
                     record["roles"] |= roles.get(index, set())
+                    record["cutoffs"] |= cutoffs.get(index, set())
                     record["maps"].add(str(manifest_path.parent.relative_to(root)))
     log(f"inventory: {len(found)} content-addressed images from {manifests} map packages")
     return found
@@ -337,52 +408,108 @@ def _psnr(a, b) -> float:
     return 99.0 if mse == 0 else 10 * np.log10(255.0 ** 2 / mse)
 
 
+def _unit_normals(array):
+    import numpy as np
+    xy = array[..., :2] / 255.0 * 2 - 1
+    z = np.sqrt(np.clip(1 - (xy ** 2).sum(-1), 0, 1))
+    vector = np.dstack([xy, z])
+    return vector / np.maximum(np.linalg.norm(vector, axis=-1, keepdims=True), 1e-6)
+
+
 def measure(task: tuple) -> dict:
-    """Quality of one encode against the source (Pillow decode + box mips)."""
+    """Quality of one encode against the source (Pillow decode + box mips, the
+    2x2 average Image.generate_mipmaps builds), per mip 0..MEASURED_MIPS:
+
+      base, base_alpha  psnr / psnr_mips (RGB), bias (mip 0, per channel)
+      base_alpha        alpha_flips {cutoff: [share per mip]} at every cutoff
+                        a material cuts it at, and alpha_flip_max per mip
+      normal            mean_deg / p99_deg and *_mips (Z rebuilt from XY)
+      orm, orm_bc7      psnr_rgb / psnr_rgb_mips (per channel)
+    """
     import numpy as np
     from PIL import Image
-    source, dds_path, recipe, fmt, width, height = task
+    source, dds_path, recipe, fmt, width, height, mipmaps, cutoffs = task
     dds = Path(dds_path).read_bytes()
     with Image.open(source) as image:
         reference = np.asarray(image.convert("RGBA")).astype(np.float64)
-    decoded = _dds_level(dds, fmt, width, height, 0)
-    metrics: dict = {}
+    levels = min(MEASURED_MIPS[recipe], int(mipmaps))
+    references = _box_mips(reference, levels)
+    decoded = [_dds_level(dds, fmt, width, height, level) for level in range(levels + 1)]
+    metrics: dict = {"qualityVersion": QUALITY_VERSION, "size": [int(width), int(height)]}
     if recipe in ("base", "base_alpha"):
-        metrics["psnr"] = round(_psnr(reference[..., :3], decoded[..., :3]), 2)
-        bias = (decoded[..., :3] - reference[..., :3]).mean(axis=(0, 1))
+        metrics["psnr_mips"] = [round(_psnr(r[..., :3], d[..., :3]), 2) for r, d in zip(references, decoded)]
+        metrics["psnr"] = metrics["psnr_mips"][0]
+        bias = (decoded[0][..., :3] - reference[..., :3]).mean(axis=(0, 1))
         metrics["bias"] = [round(float(v), 3) for v in bias]
         if recipe == "base_alpha":
-            metrics["alpha_flip_mip0"] = round(float(((reference[..., 3] >= 127.5) != (decoded[..., 3] >= 127.5)).mean()), 5)
-            reference2 = _box_mips(reference[..., 3], 2)[2]
-            decoded2 = _dds_level(dds, fmt, width, height, 2)[..., 3]
-            metrics["alpha_flip_mip2"] = round(float(((reference2 >= 127.5) != (decoded2 >= 127.5)).mean()), 5)
+            flips = {}
+            for cutoff in sorted(cutoffs or [0.5]):
+                threshold = float(cutoff) * 255.0
+                flips[f"{float(cutoff):g}"] = [round(float(((r[..., 3] >= threshold) != (d[..., 3] >= threshold)).mean()), 5)
+                                              for r, d in zip(references, decoded)]
+            metrics["cutoffs"] = sorted(float(c) for c in (cutoffs or [0.5]))
+            metrics["alpha_flips"] = flips
+            metrics["alpha_flip_max"] = [max(per[m] for per in flips.values()) for m in range(levels + 1)]
+            metrics["alpha_flip_mip0"] = metrics["alpha_flip_max"][0]
+            metrics["alpha_flip_mip2"] = metrics["alpha_flip_max"][min(2, levels)]
     elif recipe == "normal":
-        def unit(array):
-            xy = array[..., :2] / 255.0 * 2 - 1
-            z = np.sqrt(np.clip(1 - (xy ** 2).sum(-1), 0, 1))
-            vector = np.dstack([xy, z])
-            return vector / np.maximum(np.linalg.norm(vector, axis=-1, keepdims=True), 1e-6)
-        angle = np.degrees(np.arccos(np.clip((unit(reference) * unit(decoded)).sum(-1), -1, 1)))
-        metrics["mean_deg"] = round(float(angle.mean()), 3)
-        metrics["p99_deg"] = round(float(np.percentile(angle, 99)), 3)
+        means, p99s = [], []
+        for r, d in zip(references, decoded):
+            angle = np.degrees(np.arccos(np.clip((_unit_normals(r) * _unit_normals(d)).sum(-1), -1, 1)))
+            means.append(round(float(angle.mean()), 3))
+            p99s.append(round(float(np.percentile(angle, 99)), 3))
+        metrics.update({"mean_deg": means[0], "p99_deg": p99s[0], "mean_deg_mips": means, "p99_deg_mips": p99s})
     elif recipe in ("orm", "orm_bc7"):
-        metrics["psnr_rgb"] = [round(_psnr(reference[..., c], decoded[..., c]), 2) for c in range(3)]
+        metrics["psnr_rgb_mips"] = [[round(_psnr(r[..., c], d[..., c]), 2) for c in range(3)]
+                                    for r, d in zip(references, decoded)]
+        metrics["psnr_rgb"] = metrics["psnr_rgb_mips"][0]
     return metrics
 
 
+def _gated(recipe: str, values: list, metrics: dict, last: int | None = None) -> list[tuple[int, object]]:
+    """(mip, value) for the mips 1..last (GATED_MIPS[recipe]) that were
+    measured and are at least MIN_GATED_MIP pixels on their shorter side."""
+    side = min(metrics.get("size") or [1 << 30])
+    last = GATED_MIPS[recipe] if last is None else last
+    return [(mip, values[mip]) for mip in range(1, min(last, len(values) - 1) + 1)
+            if side >> mip >= MIN_GATED_MIP]
+
+
 def verdict(recipe: str, metrics: dict, floors: dict) -> str:
-    if recipe in ("base", "base_alpha") and metrics["psnr"] < floors["base_psnr"]:
-        return f"quality: psnr {metrics['psnr']} < {floors['base_psnr']}"
+    if recipe in ("base", "base_alpha"):
+        if metrics["psnr"] < floors["base_psnr"]:
+            return f"quality: psnr {metrics['psnr']} < {floors['base_psnr']}"
+        if floors.get("base_psnr_mips") is not None:
+            for mip, value in _gated(recipe, metrics.get("psnr_mips", []), metrics):
+                if value < floors["base_psnr_mips"]:
+                    return f"quality: psnr {value} < {floors['base_psnr_mips']} at mip {mip}"
     if recipe == "base_alpha":
-        if metrics["alpha_flip_mip0"] > floors["alpha_flip_mip0"]:
-            return f"quality: alpha flips {metrics['alpha_flip_mip0']} > {floors['alpha_flip_mip0']} at mip 0"
-        if metrics["alpha_flip_mip2"] > floors["alpha_flip_mip2"]:
-            return f"quality: alpha flips {metrics['alpha_flip_mip2']} > {floors['alpha_flip_mip2']} at mip 2"
-    if recipe == "normal" and (metrics["mean_deg"] > floors["normal_mean_deg"]
-                               or metrics["p99_deg"] > floors["normal_p99_deg"]):
-        return f"quality: normal error {metrics['mean_deg']} / {metrics['p99_deg']} deg"
-    if recipe in ("orm", "orm_bc7") and min(metrics["psnr_rgb"]) < floors["orm_psnr"]:
-        return f"quality: channel psnr {min(metrics['psnr_rgb'])} < {floors['orm_psnr']}"
+        flips = metrics.get("alpha_flip_max", [metrics["alpha_flip_mip0"]])
+        if flips[0] > floors["alpha_flip_mip0"]:
+            return f"quality: alpha flips {flips[0]} > {floors['alpha_flip_mip0']} at mip 0"
+        limit = floors.get("alpha_flip_mips")
+        if limit is None:
+            if metrics["alpha_flip_mip2"] > floors["alpha_flip_mip2"]:
+                return f"quality: alpha flips {metrics['alpha_flip_mip2']} > {floors['alpha_flip_mip2']} at mip 2"
+        else:
+            for mip, value in _gated(recipe, flips, metrics, ALPHA_GATED_MIPS):
+                if value > limit:
+                    return f"quality: alpha flips {value} > {limit} at mip {mip}"
+    if recipe == "normal":
+        if metrics["mean_deg"] > floors["normal_mean_deg"] or metrics["p99_deg"] > floors["normal_p99_deg"]:
+            return f"quality: normal error {metrics['mean_deg']} / {metrics['p99_deg']} deg"
+        if floors.get("normal_mean_deg_mips") is not None:
+            for (mip, mean), (_, p99) in zip(_gated(recipe, metrics.get("mean_deg_mips", []), metrics),
+                                            _gated(recipe, metrics.get("p99_deg_mips", []), metrics)):
+                if mean > floors["normal_mean_deg_mips"] or p99 > floors["normal_p99_deg_mips"]:
+                    return f"quality: normal error {mean} / {p99} deg at mip {mip}"
+    if recipe in ("orm", "orm_bc7"):
+        if min(metrics["psnr_rgb"]) < floors["orm_psnr"]:
+            return f"quality: channel psnr {min(metrics['psnr_rgb'])} < {floors['orm_psnr']}"
+        if floors.get("orm_psnr_mips") is not None:
+            for mip, value in _gated(recipe, metrics.get("psnr_rgb_mips", []), metrics):
+                if min(value) < floors["orm_psnr_mips"]:
+                    return f"quality: channel psnr {min(value)} < {floors['orm_psnr_mips']} at mip {mip}"
     return ""
 
 
@@ -398,6 +525,15 @@ def ensure_ignored(path: Path) -> None:
     if ignored.returncode != 0:
         raise BuildError(f"the encode cache {path} is inside a git worktree and not ignored; "
                          "pass --cache outside it or add it to .gitignore")
+
+
+def _zstd():
+    """The zstandard module, or None (then stale measurements re-encode)."""
+    try:
+        import zstandard
+    except ImportError:
+        return None
+    return zstandard
 
 
 def cache_key(sha: str, recipe: str, version: str) -> str:
@@ -424,25 +560,44 @@ def build(maps_roots: list[Path], out_root: Path | None, cache: Path, godot: Pat
         if recipe is None:
             plan["excluded"][sha] = reason
         else:
-            plan["images"][sha] = {"recipe": recipe, "path": record["path"], "roles": role_names(record["roles"])}
+            plan["images"][sha] = {"recipe": recipe, "path": record["path"], "roles": role_names(record["roles"]),
+                                   "cutoffs": sorted(record.get("cutoffs") or [])}
 
     used_keys: set[str] = set()
-    counts = {"encoded": 0, "cached": 0, "encodeSeconds": 0.0}
+    counts = {"encoded": 0, "cached": 0, "remeasured": 0, "encodeSeconds": 0.0}
+
+    def cutoffs_of(item: dict) -> list[float]:
+        # Only a cutout's alpha is gated, at the thresholds its materials use.
+        return [float(c) for c in item.get("cutoffs") or [0.5]] if item["recipe"] == "base_alpha" else []
 
     def ensure(items: list[dict]) -> None:
-        """Encodes and measures every item whose cache entry is missing."""
-        jobs = []
+        """Encodes and measures every item whose cache entry is missing, and
+        measures again (from the cached sidecar) every entry whose numbers an
+        older measure() or other alpha cutoffs produced."""
+        jobs, remeasure = [], []
         for item in items:
             key = cache_key(item["sha"], item["recipe"], version)
             item["key"] = key
             used_keys.add(key)
-            if not ((cache / f"{key}.json").is_file() and (cache / f"{key}.evt").is_file()):
-                jobs.append({"sha": item["sha"], "src": str(item["path"]), "recipe": item["recipe"],
-                             "evt": str(cache / f"{key}.evt"), "dds": str(cache / "_work" / f"{key}.dds"),
-                             "key": key})
-        counts["cached"] += len(items) - len(jobs)
+            meta_path, evt_path = cache / f"{key}.json", cache / f"{key}.evt"
+            if meta_path.is_file() and evt_path.is_file():
+                meta = json.loads(meta_path.read_text(encoding="utf-8"))
+                quality = meta.get("quality", {})
+                if "error" in meta or (quality.get("qualityVersion") == QUALITY_VERSION
+                                       and quality.get("cutoffs", []) == cutoffs_of(item)):
+                    continue
+                if _zstd() is not None:
+                    remeasure.append((item, meta))
+                    continue
+            jobs.append({"sha": item["sha"], "src": str(item["path"]), "recipe": item["recipe"],
+                         "evt": str(cache / f"{key}.evt"), "dds": str(cache / "_work" / f"{key}.dds"),
+                         "key": key, "cutoffs": cutoffs_of(item)})
+        cached = len(items) - len(jobs) - len(remeasure)
+        counts["cached"] += cached
         counts["encoded"] += len(jobs)
-        log(f"{len(items)} sidecars wanted: {len(items) - len(jobs)} cached, {len(jobs)} to encode")
+        counts["remeasured"] += len(remeasure)
+        log(f"{len(items)} sidecars wanted: {cached} cached, {len(remeasure)} to measure again, "
+            f"{len(jobs)} to encode")
         began = time.time()
         results = run_encoders(godot, cache, jobs, max(1, min(procs, len(jobs))))
         counts["encodeSeconds"] += time.time() - began
@@ -454,16 +609,25 @@ def build(maps_roots: list[Path], out_root: Path | None, cache: Path, godot: Pat
                 (cache / f"{job['key']}.json").write_text(json.dumps(meta), encoding="utf-8")
                 Path(job["evt"]).touch()
                 continue
-            tasks.append((job, result))
+            tasks.append((job, {key: result[key] for key in ("format", "width", "height", "mipmaps", "gpuBytes",
+                                                            "rawBytes", "fileBytes", "sha256", "encodeMs")}))
+        work = cache / "_work"
+        work.mkdir(parents=True, exist_ok=True)
+        for item, meta in remeasure:
+            dds = work / f"{item['key']}.dds"
+            data = (cache / f"{item['key']}.evt").read_bytes()
+            dds.write_bytes(_zstd().ZstdDecompressor().decompress(data[HEADER.size:],
+                                                                  max_output_size=HEADER.unpack_from(data)[1]))
+            meta.pop("quality", None)
+            tasks.append(({"sha": item["sha"], "src": str(item["path"]), "recipe": item["recipe"], "dds": str(dds),
+                           "key": item["key"], "cutoffs": cutoffs_of(item)}, meta))
         if not tasks:
             return
         with futures.ProcessPoolExecutor(max_workers=max(1, min(os.cpu_count() or 4, 16))) as pool:
-            quality = list(pool.map(measure, [(job["src"], job["dds"], job["recipe"], result["format"],
-                                               result["width"], result["height"]) for job, result in tasks],
-                                    chunksize=4))
-        for (job, result), metrics in zip(tasks, quality):
-            meta = {key: result[key] for key in ("format", "width", "height", "mipmaps", "gpuBytes",
-                                                 "rawBytes", "fileBytes", "sha256", "encodeMs")}
+            quality = list(pool.map(measure, [(job["src"], job["dds"], job["recipe"], meta["format"], meta["width"],
+                                               meta["height"], meta["mipmaps"], job["cutoffs"])
+                                              for job, meta in tasks], chunksize=4))
+        for (job, meta), metrics in zip(tasks, quality):
             meta["quality"] = metrics
             (cache / f"{job['key']}.json").write_text(json.dumps(meta), encoding="utf-8")
             Path(job["dds"]).unlink(missing_ok=True)
@@ -493,7 +657,7 @@ def build(maps_roots: list[Path], out_root: Path | None, cache: Path, godot: Pat
                 plans[item["path"].parent]["images"][item["sha"]] = item
 
     summary = {"encoder": f"godot {version} editor: Image.compress_from_channels (BPTC cvtt, S3TC etcpak)",
-               "encoded": counts["encoded"], "cached": counts["cached"],
+               "encoded": counts["encoded"], "cached": counts["cached"], "remeasured": counts["remeasured"],
                "encodeSeconds": round(counts["encodeSeconds"], 1), "directories": {}}
     base_psnr = []
     for source_dir, plan in sorted(plans.items()):
