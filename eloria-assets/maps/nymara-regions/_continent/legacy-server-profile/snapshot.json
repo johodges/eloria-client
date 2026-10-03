@@ -76,7 +76,7 @@
     },
     {
       "date": "2026-10-03",
-      "developCommit": "SERVER_SHA",
+      "developCommit": "b76171131eec57cfadeb7e198aee84350744a5c9",
       "fromCommit": "ff6132467f47466399857f7d59d77f8ab7a8ace5",
       "files": [
         "config/eloria/creatures.txt",
