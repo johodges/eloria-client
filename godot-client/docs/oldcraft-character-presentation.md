@@ -34,6 +34,24 @@ tint, transparency, emission, metal masks, and normal textures while
 softening plastic-looking highlights with a roughness floor, restrained
 dielectric specular, and a bounded normal-map strength.
 
+## Source-model intake contract
+
+The canonical 77-joint Eloria rig remains the only runtime player rig. For the
+supplied female reference set, the separated high-poly model is the authority
+for proportions, component boundaries, and equipment fit. A low-poly model may
+donate geometry or LODs offline only after its UVs and materials are preserved
+or cleanly rebaked and its skin is transferred to the canonical skeleton.
+Mixamo rigs and animation clips are import/alignment references, never runtime
+retargeting sources.
+
+Preferred future source packages provide the exact canonical rest pose,
+separated body and wardrobe components, clean UVs with base-colour and normal
+textures, no more than four joint weights per vertex, and one material per
+piece. Target 18–22k body triangles plus 3–4k hair for High, 8–12k plus 1–2k
+hair for Medium, and 3–6k silhouette-preserving body triangles for Low. Fit,
+skin transfer, and LOD conversion are baked and validated offline, avoiding
+any added per-actor runtime cost.
+
 ## Player-selectable character quality
 
 The existing Graphics Quality setting now also controls actor presentation.
@@ -51,6 +69,11 @@ remain in force as well: nearby actors animate at full rate, farther visible
 actors update at half rate, off-screen animation pauses, and actors outside the
 draw radius are hidden. Changing quality is live and does not re-import or
 duplicate actor resources.
+
+When torso coverage rebuilds a body surface, it filters every imported LOD
+index chain through the same face predicate as the full-detail surface. This
+keeps Low/Medium/High selection intact without adding a quality-specific mesh
+cache or any per-frame geometry work.
 
 Packaged clients include the imported actor `PackedScene` resources as well as
 the loose source GLBs needed by animation and raw fallbacks. Packaging now
@@ -98,10 +121,11 @@ attributes, skills, equipment, or later progression.
 The server-owned starter grants are intentionally light enough to leave room
 for tutorial rewards: Vanguard gets a militia sword, round shield, guard cape
 and Studded Jack; Ranger gets an Amberwood longbow, 20 arrows and Scout Vest;
-Arcanist gets an arcane focus wand, Glowline Coat and three mana potions; and
-Warden gets a fighting quarterstaff, Furtrim Coat and leaf cape. The fuller
-head-to-toe looks shown in the live preview communicate class silhouette only;
-the adjacent text names the items actually granted.
+Arcanist gets an arcane focus wand, Warded Tabard and three mana potions; and
+Warden gets a fighting quarterstaff, Furtrim Coat and leaf cape. The live
+preview combines those starter pieces with each race's native lower wardrobe
+to communicate a coherent class silhouette; the adjacent text names the items
+actually granted.
 
 The legacy `CREATE_CHAR` payload keeps its original eight appearance bytes in
 the original order. Eloria appends one `class_id` byte after them. Updated
@@ -115,6 +139,31 @@ and representative equipment visual ids. The server owns the actual item
 names and quantities. Switching race rebuilds the same selected loadout on the
 new body. Players can temporarily hide class gear to inspect hair and wardrobe
 colours without changing the selected class or the items creation will grant.
+
+The reviewed class-equipment geometry is reproducible with
+`eloria-assets/tools/revise_class_equipment_fit.py`. It consumes an explicit,
+unmodified packed baseline plus the fresh canonical torso-refit output, writes
+only to a new review directory, and refuses to install anything. The finalizer
+preserves packed GLB metadata, materials, UVs, skinning, and draw counts. Its
+torso path performs an audited reference-topology rebuild that removes hidden,
+oversized upper-arm faces, while the Arcanist leg/boot cuff path changes only
+POSITION/NORMAL accessors and preserves topology. Its orientation gate rejects
+folded or newly degenerate triangles before a candidate can be reviewed in-client.
+`eloria-assets/qa/class-equipment-fit-baseline.json` pins every baseline,
+torso-reference, rig, and accepted-output SHA-256. All input validation
+completes before the output directory is created, so a prior result cannot be
+double-baked. Each generated GLB is then required to match its accepted-output
+hash.
+
+To reproduce the inputs in a clean build-kit checkout, extract
+`sourceGitPath` at `sourceGitCommit` and the two luminous body GLBs under
+`anatomyGitPath` at `anatomyGitCommit`, using the exact revisions recorded in
+that manifest. Run `build_class_equipment_fit_references.py` with `--anatomy`
+and a fresh `--output` to rebuild and hash-check the eight torso references
+from the existing local authoring sources; it performs no network or generation
+call. Then pass the extracted packed baseline and the printed reference root to
+`revise_class_equipment_fit.py`. Every external texture is content-addressed,
+verified before output creation, and included in the final provenance report.
 
 ## Asset-generation decision
 

@@ -38,7 +38,15 @@ jobs:
       - name: Validate garment fit registry
         run: python3 godot-client/tests/test_equipment_fit.py -v
       - name: Validate original-source equipment mapping
-        run: python3 -m pytest godot-client/tests/test_torso_remap.py godot-client/tests/test_limb_head_remap.py godot-client/tests/test_canonical_equipment.py -q
+        run: |
+          python3 -m pytest \
+            godot-client/tests/test_torso_remap.py \
+            godot-client/tests/test_limb_head_remap.py \
+            godot-client/tests/test_canonical_equipment.py \
+            godot-client/tests/test_class_equipment_fit_revision.py \
+            godot-client/tests/test_luminous_cuff_fit_authoring.py \
+            godot-client/tests/test_orun_neck_apron_mask.py \
+            -q
       - name: Validate canonical equipment and animation paths
         run: |
           godot --headless --path godot-client --script res://tests/test_animation_looping.gd
@@ -47,8 +55,10 @@ jobs:
           godot --headless --path godot-client --script res://tests/test_golem_ground_pound.gd
           godot --headless --path godot-client --script res://tests/test_spell_flights.gd
           godot --headless --path godot-client --script res://tests/test_magic_book_ui.gd
+          godot --headless --path godot-client --script res://tests/test_torso_body_cover_lods.gd
           godot --headless --path godot-client --script res://tests/integration/torso_body_cover.gd
           godot --headless --path godot-client --script res://tests/integration/armour_body_cover.gd
+          godot --headless --path godot-client --script res://tests/integration/creation_class_equipment_fit.gd
           godot --headless --path godot-client --script res://tests/integration/wardrobe_replication.gd
           godot --headless --path godot-client --script res://tests/integration/equipment_fit_profiles.gd
       - name: Validate held prop registry

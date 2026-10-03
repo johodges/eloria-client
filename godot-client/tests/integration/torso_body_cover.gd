@@ -25,6 +25,7 @@ func run() -> void:
 		var fit := skeleton.get_bone_global_rest(skeleton.find_bone("Head")).origin.y / 1.5684900288581848
 		var removed := 0
 		var retained := 0
+		var bridge_surfaces := 0
 		for node: Node in body.find_children("*", "MeshInstance3D", true, false):
 			var mesh := node as MeshInstance3D
 			if mesh.skin == null:
@@ -32,25 +33,53 @@ func run() -> void:
 			var original := mesh.mesh
 			var transform := skeleton.global_transform.affine_inverse() * mesh.global_transform
 			TorsoBodyCover.apply(mesh, true, transform, fit)
+			var covered_mesh := mesh.mesh
 			expect(mesh.mesh != original, path + " has a private covered mesh")
 			expect(mesh.mesh.get_surface_count() == original.get_surface_count(), "surface numbering survives")
 			for surface: int in range(original.get_surface_count()):
 				var before := original.surface_get_arrays(surface)
 				var after := mesh.mesh.surface_get_arrays(surface)
+				var material := original.surface_get_material(surface)
+				var bridge_surface := (material != null
+					and material.resource_name == "Shared neck bridge")
+				if mesh.name.to_lower() in ["body", "char1", "mesh_node"] and bridge_surface:
+					bridge_surfaces += 1
 				expect(before[Mesh.ARRAY_VERTEX] == after[Mesh.ARRAY_VERTEX], "positions stay intact")
 				expect(before[Mesh.ARRAY_BONES] == after[Mesh.ARRAY_BONES], "bones stay intact")
 				expect(before[Mesh.ARRAY_WEIGHTS] == after[Mesh.ARRAY_WEIGHTS], "weights stay intact")
-				var vertices: PackedVector3Array = after[Mesh.ARRAY_VERTEX]
+				expect(original.surface_get_material(surface) == mesh.mesh.surface_get_material(surface),
+					"surface material stays intact")
+				var vertices: PackedVector3Array = before[Mesh.ARRAY_VERTEX]
+				var source: PackedInt32Array = before[Mesh.ARRAY_INDEX]
+				if source.is_empty():
+					for index: int in range(vertices.size()):
+						source.append(index)
+				var expected := PackedInt32Array()
+				for i: int in range(0, source.size(), 3):
+					var center := (transform * ((vertices[source[i]] + vertices[source[i + 1]]
+						+ vertices[source[i + 2]]) / 3.0)) / fit
+					var covered := independently_covered(mesh.name.to_lower(), center)
+					if independently_retained(mesh, before, source, i, center,
+							bridge_surface, covered):
+						expected.append_array(source.slice(i, i + 3))
+				if expected.is_empty():
+					expected = PackedInt32Array([0, 0, 0])
 				var indices: PackedInt32Array = after[Mesh.ARRAY_INDEX]
-				removed += (before[Mesh.ARRAY_INDEX] as PackedInt32Array).size() - indices.size()
+				expect(indices == expected,
+					path + " " + str(mesh.name) + " surface " + str(surface)
+					+ " retains the independently reconstructed face set")
+				removed += source.size() - indices.size()
 				for i: int in range(0, indices.size(), 3):
 					if indices[i] == indices[i + 1]:
 						continue
-					var c := (vertices[indices[i]] + vertices[indices[i + 1]] + vertices[indices[i + 2]]) / 3.0
-					expect(protected_face(mesh, after, indices, i) or not TorsoBodyCover.covers((transform * c) / fit), "only uncovered body and protected head/neck triangles remain")
 					retained += 1
+			TorsoBodyCover.apply(mesh, true, transform, fit)
+			expect(mesh.mesh == covered_mesh, "identical coverage reuses its cached mesh")
 			TorsoBodyCover.apply(mesh, false, transform, fit)
 			expect(mesh.mesh == original, "unequip restores the exact body resource")
+		var expected_bridge_surfaces := 0 if path.begins_with("luminous_") else 2
+		expect(bridge_surfaces == expected_bridge_surfaces,
+			path + " imports the authored Shared neck bridge surface contract")
 		expect(removed > 100, path + " removes covered clothing")
 		expect(retained > 100, path + " preserves uncovered body")
 		races += 1
@@ -91,15 +120,24 @@ func run() -> void:
 	print("TORSO EQUIP/UNEQUIP: %d failures" % failures)
 	quit(1 if failures else 0)
 
-func protected_face(instance: MeshInstance3D, arrays: Array, ids: PackedInt32Array, start: int) -> bool:
+func independently_covered(instance_name: String, point: Vector3) -> bool:
+	var covered := (point.y > .95 and point.y < 1.535 and absf(point.x) < .665)
+	if instance_name == "wardrobe_shirt":
+		covered = covered or (point.y > 1.40 and point.y < 1.65 and absf(point.x) < .20)
+	return covered
+
+func independently_retained(instance: MeshInstance3D, arrays: Array,
+		ids: PackedInt32Array, start: int, center: Vector3,
+		bridge_surface: bool, covered: bool) -> bool:
 	if instance.name.to_lower() not in ["body", "char1", "mesh_node"] or instance.skin == null:
-		return false
+		return not covered
 	var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
 	var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	var stride: int = bones.size()/vertices.size()
-	var total := 0.0
+	var mean_weight := 0.0
 	for corner: int in range(3):
+		var corner_weight := 0.0
 		for slot: int in range(stride):
 			var offset := ids[start+corner]*stride+slot
 			var bone_name := instance.skin.get_bind_name(bones[offset])
@@ -107,8 +145,11 @@ func protected_face(instance: MeshInstance3D, arrays: Array, ids: PackedInt32Arr
 				var skeleton := instance.get_node(instance.skeleton) as Skeleton3D
 				bone_name = skeleton.get_bone_name(instance.skin.get_bind_bone(bones[offset]))
 			if bone_name in [&"Head", &"neck_01"]:
-				total += weights[offset]
-	var center := (vertices[ids[start]]+vertices[ids[start+1]]+vertices[ids[start+2]])/3.
-	var skeleton := instance.get_node(instance.skeleton) as Skeleton3D
-	center = skeleton.global_transform.affine_inverse()*instance.global_transform*center
-	return total > 1.5 or (center.y > 1.40 and absf(center.x) < .11)
+				corner_weight += weights[offset]
+		mean_weight += corner_weight / 3.0
+	var neck_envelope := (covered
+		and center.y > TorsoBodyCover.NECK_ENVELOPE_MIN_Y
+		and absf(center.x) < TorsoBodyCover.NECK_ENVELOPE_HALF_WIDTH)
+	if neck_envelope:
+		return bridge_surface or mean_weight > .5
+	return mean_weight > .5 or not covered

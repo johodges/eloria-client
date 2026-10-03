@@ -31,6 +31,8 @@ func run() -> void:
 		var idle_string := idle_bow.get("_string_node") as MeshInstance3D
 		check(idle_bow.visible and idle_visual != null and idle_string != null,
 			"Ranger class bow replaces the hidden registry prop: " + str(option.model))
+		check(RangerBow3D.IDLE_PALM_OFFSET.is_equal_approx(Vector3(0.003, 0.0, 0.0)),
+			"Ranger relaxed bow keeps its reviewed left-palm offset: " + str(option.model))
 		check(idle_visual.global_transform.is_equal_approx(idle_string.global_transform),
 			"idle Ranger bow and live string share one fitted transform: " + str(option.model))
 		var left_hand := actor.get_skeleton().find_bone("hand_l")
@@ -52,6 +54,12 @@ func run() -> void:
 		check(absf(cant_degrees - 12.0) < 0.25 and
 			root_forward.dot(visual_forward) > 0.999,
 			"idle Ranger bow has a 12-degree cant without changing aim: " + str(option.model))
+		for relaxed_action: StringName in [&"idle", &"combat_idle"]:
+			actor.play_action(relaxed_action, true)
+			actor.animation_player.advance(0.05)
+			actor.combat_presentation.update_pose()
+			check(idle_visual.transform.is_equal_approx(RangerBow3D.IDLE_FIT_TRANSFORM),
+				"Ranger bow retains its palm fit in %s: %s" % [relaxed_action, option.model])
 		for effect_id: int in [2, 84, 83, 85, 0, 86, 10, 79, 19, 18, 75]:
 			actor.set_spell_variant(effect_id)
 			var action := SpellPresentation.action_for_effect(effect_id)

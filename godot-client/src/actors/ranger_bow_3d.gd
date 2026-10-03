@@ -7,7 +7,7 @@ const DEFAULT_BOW := "res://assets/actors/native/equipment/amberwood_ranger_bow.
 # small presentation fit that places the handle through the relaxed palm.
 # This transform is toggled only when entering or leaving idle; draw/release
 # geometry stays in the authored aiming basis.
-const IDLE_PALM_OFFSET := Vector3(-0.018, 0.0, 0.0)
+const IDLE_PALM_OFFSET := Vector3(0.003, 0.0, 0.0)
 const IDLE_CANT_RADIANS := deg_to_rad(-12.0)
 const IDLE_FIT_TRANSFORM := Transform3D(
 	Basis(Vector3.BACK, IDLE_CANT_RADIANS), IDLE_PALM_OFFSET)

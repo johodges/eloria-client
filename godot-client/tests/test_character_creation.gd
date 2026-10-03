@@ -49,8 +49,18 @@ func run() -> void:
 	expect(main.get("preview_actor") is ReplicatedActor3D,
 		"the one-time initial appearance roll builds the preview")
 	var vanguard_loadout: Dictionary = main.call("_creation_class_loadout")
-	expect(vanguard_loadout == {0: 114, 1: 106, 2: 105, 4: 220, 5: 209, 6: 224},
-		"Vanguard previews the fitted studded field set")
+	expect(vanguard_loadout == {0: 114, 1: 106, 2: 105, 5: 209},
+		"Vanguard previews its studded field set over the clean native lower wardrobe")
+	expect(CreationArchetypes.loadout_at(1) ==
+		{0: 164, 4: 230, 5: 225, 6: 224},
+		"Ranger previews rotated-fit Sidelace Breeches with Ankle Boots")
+	expect(CreationArchetypes.loadout_at(2) ==
+		{0: 142, 4: 179, 5: 216, 6: 192} and
+		str(CreationArchetypes.at(2).get("starting_items", "")).contains("Warded Tabard"),
+		"Arcanist previews the coherent Warded set and describes its tabard")
+	expect(CreationArchetypes.loadout_at(3) ==
+		{0: 163, 2: 100, 5: 189},
+		"Warden previews its Furtrim Coat over the clean native lower wardrobe")
 	var original_class := int(main.get("selected_creation_class"))
 	main.get_node("%CreateName").text = "Seeded Hero"
 	main.get_node("%CreatePassword").text = "secret"
@@ -132,6 +142,14 @@ func run() -> void:
 	expect(ranger_bow != null and not ranger_bow.visible and
 		int((class_actor.equipment_diagnostics().visuals as Dictionary).get(0, -1)) == 142,
 		"leaving Ranger removes its bow before showing the next class weapon")
+	for non_ranger_class: int in [0, 3]:
+		main.call("_set_creation_class", non_ranger_class)
+		class_actor = main.get("preview_actor") as ReplicatedActor3D
+		expect(ranger_bow != null and not ranger_bow.visible,
+			"Ranger bow stays hidden for class %d" % non_ranger_class)
+	main.call("_set_creation_class", 2)
+	class_loadout = main.call("_creation_class_loadout")
+	class_actor = main.get("preview_actor") as ReplicatedActor3D
 	(main.get_node("%ShowClassGear") as CheckBox).set_pressed_no_signal(false)
 	main.call("_on_creation_class_gear_toggled", false)
 	expect((class_actor.equipment_diagnostics().visuals as Dictionary).is_empty(),

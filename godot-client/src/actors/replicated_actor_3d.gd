@@ -1742,7 +1742,8 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 				model_config.get("tint", []) as Array,
 				str(model_config.get("authoredFor", "")),
 				str(model_config.get("skinRegion", "")),
-				str(model_config.get("fitProfile", ""))))
+				str(model_config.get("fitProfile", "")),
+				bool(model_config.get("suppressGeneratedBacking", false))))
 		else:
 			var socket: Dictionary = _equipment_socket(part, model_config)
 			var attachment: BoneAttachment3D = _attach_socketed_equipment(
@@ -1931,10 +1932,12 @@ func _refresh_wardrobe_cover() -> void:
 					fitted_boots = true
 	for piece: Node in _equipment_nodes.get(6, []):
 		if is_instance_valid(piece) and piece.has_meta("boot_backing_with_legs"):
-			(piece as MeshInstance3D).visible = bool(piece.get_meta("boot_backing_with_legs")) == fitted_legs
+			(piece as MeshInstance3D).visible = not piece.has_meta("suppress_generated_backing") and \
+				bool(piece.get_meta("boot_backing_with_legs")) == fitted_legs
 	for piece: Node in _equipment_nodes.get(4, []):
 		if is_instance_valid(piece) and piece.has_meta("leg_backing_with_boots"):
-			(piece as MeshInstance3D).visible = bool(piece.get_meta("leg_backing_with_boots")) == fitted_boots
+			(piece as MeshInstance3D).visible = not piece.has_meta("suppress_generated_backing") and \
+				bool(piece.get_meta("leg_backing_with_boots")) == fitted_boots
 	for node_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
 		if mesh_node.has_meta("native_equipment"):
@@ -1945,7 +1948,8 @@ func _refresh_wardrobe_cover() -> void:
 		if _native_skeleton != null and mesh_node.skin != null and is_body_surface:
 			TorsoBodyCover.apply(mesh_node, not cover_regions.is_empty(),
 				_native_skeleton.global_transform.affine_inverse() * mesh_node.global_transform,
-				rig_fit_scale(), cover_regions, rig_name().begins_with("ssarathi_"))
+				rig_fit_scale(), cover_regions, rig_name().begins_with("ssarathi_"),
+				_model_config.get("torsoBodyCover", {}) as Dictionary)
 		if not SHIRT_SURFACES.has(mesh_node.name.to_lower()):
 			continue
 		if not mesh_node.has_meta("wardrobe_color"):
@@ -2117,7 +2121,8 @@ func _attach_socketed_equipment(socket: Dictionary, scene_path: String,
 
 func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		tint: Array = [], author_rig: String = "",
-		skin_region: String = "", fit_profile: String = "") -> Array[Node]:
+		skin_region: String = "", fit_profile: String = "",
+		suppress_generated_backing: bool = false) -> Array[Node]:
 	# The garment ships with the shared joint hierarchy so it is a valid skinned
 	# glTF on its own. Replacing its bind poses with this skeleton's rest poses
 	# retargets the garment and applies the rig fit scale in one step.
@@ -2160,6 +2165,14 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		_native_skeleton.add_child(clone)
 		clone.skeleton = NodePath("..")
 		clone.set_meta("native_equipment", true)
+		var generated_backing: bool = str(piece.get("name", "")).begins_with("Generated")
+		if suppress_generated_backing and generated_backing:
+			# Some generated backing surfaces are useful only as authoring-time body
+			# cover envelopes. Keep the node and its metadata so the native wardrobe
+			# is still clipped, but skip the redundant draw when the authored shell is
+			# already closed on its own.
+			clone.set_meta("suppress_generated_backing", true)
+			clone.visible = false
 		if part == BODY_PART and str(piece.get("name", "")) == TorsoBodyCover.BACKING_NAME:
 			clone.set_meta("replaces_torso_body", true)
 			var cover: Array = piece.get("body_cover", []) as Array

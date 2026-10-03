@@ -447,6 +447,7 @@
       "name": "Warded Boots",
       "attach": "skinned",
       "skinRegion": "boots",
+      "suppressGeneratedBacking": true,
       "kind": "boots",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",
@@ -5727,6 +5728,7 @@
       "name": "Warded Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
+      "suppressGeneratedBacking": true,
       "kind": "legs",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",
@@ -21439,6 +21441,7 @@
       "name": "Warded Tabard",
       "attach": "skinned",
       "skinRegion": "torso",
+      "suppressGeneratedBacking": true,
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",
@@ -23751,9 +23754,9 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.064,
-          0.012,
-          0.00037
+          -0.0357,
+          0.0,
+          0.0
         ],
         "rotationDegrees": [
           42.18961,
@@ -24283,9 +24286,9 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.064,
-          0.018,
-          0.00037
+          -0.0357,
+          0.0,
+          0.0
         ],
         "rotationDegrees": [
           42.18961,
@@ -24682,9 +24685,9 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.064,
-          0.018,
-          0.00037
+          0.02008,
+          -0.08784,
+          -0.07955
         ],
         "rotationDegrees": [
           42.18961,

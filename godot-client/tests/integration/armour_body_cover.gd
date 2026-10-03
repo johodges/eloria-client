@@ -5,6 +5,18 @@ extends SceneTree
 var failures := 0
 var checks := 0
 
+const FACE_DEFAULT := 0
+const FACE_RETAIN := 1
+const FACE_REMOVE := -1
+const ORUN_PROFILE_SURFACE := 3
+const ORUN_PROFILE_FACES := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+	14, 15, 16, 17, 18, 20, 21, 27, 28, 36, 37, 50, 51, 57, 63, 64, 67,
+	68, 69, 71, 86, 88, 89, 95, 101, 109, 112, 125, 128, 129, 151, 152,
+	160, 192, 213, 219, 220, 249, 251, 278, 342, 343, 344, 346, 387, 409,
+	414, 415, 432, 433, 443, 453, 461, 462, 467, 468, 470, 490, 491, 492,
+	504, 508, 509, 510, 512, 517, 523, 524, 525, 526, 531, 537, 538, 545,
+	546]
+
 func _init() -> void:
 	call_deferred("run")
 
@@ -46,6 +58,11 @@ func verify_body(actor: ReplicatedActor3D, active: Dictionary, label: String) ->
 	var changed := 0
 	var removed := 0
 	var retained := 0
+	var profile_removed := 0
+	var collar_cover := false
+	for region: Vector3 in regions:
+		collar_cover = collar_cover or (TorsoBodyCover.NECK_ENVELOPE_MIN_Y > region.x
+			and TorsoBodyCover.NECK_ENVELOPE_MIN_Y < region.y and region.z > 0.0)
 	for node: Node in actor.find_children("*", "MeshInstance3D", true, false):
 		var instance := node as MeshInstance3D
 		if instance.name.to_lower() in ["hair", "eyes"]:
@@ -61,6 +78,9 @@ func verify_body(actor: ReplicatedActor3D, active: Dictionary, label: String) ->
 		for surface: int in range(original.get_surface_count()):
 			var before := original.surface_get_arrays(surface)
 			var after := instance.mesh.surface_get_arrays(surface)
+			var material := original.surface_get_material(surface)
+			var bridge_surface := (material != null
+				and material.resource_name == "Shared neck bridge")
 			for field: int in [Mesh.ARRAY_VERTEX, Mesh.ARRAY_TEX_UV, Mesh.ARRAY_BONES, Mesh.ARRAY_WEIGHTS]:
 				expect(before[field] == after[field], label + " preserves vertex data " + str(field))
 			# ArrayMesh repacks octahedral normals when rebuilding an index buffer.
@@ -76,7 +96,6 @@ func verify_body(actor: ReplicatedActor3D, active: Dictionary, label: String) ->
 			var indices: PackedInt32Array = before[Mesh.ARRAY_INDEX]
 			for i: int in range(0, indices.size(), 3):
 				var center := transform * ((vertices[indices[i]] + vertices[indices[i + 1]] + vertices[indices[i + 2]]) / 3.0)
-				var body_center := center
 				center /= actor.rig_fit_scale()
 				var covered := false
 				for region: Vector3 in regions:
@@ -85,16 +104,31 @@ func verify_body(actor: ReplicatedActor3D, active: Dictionary, label: String) ->
 				# few tips above the chest band's upper bound.
 				if active.has(5) and instance.name.to_lower() == "wardrobe_shirt":
 					covered = covered or (center.y > 1.40 and center.y < 1.65 and absf(center.x) < .20)
-				if protected_face(instance, before, indices, i):
+				var disposition := protected_face_disposition(instance, before, indices, i,
+					transform, actor.rig_fit_scale(), collar_cover, bridge_surface, covered)
+				if disposition == FACE_RETAIN:
 					covered = false
+				elif disposition == FACE_REMOVE:
+					covered = true
+				# Independent literal oracle for the data-selected Orun rear-neck
+				# profile. It applies only while a torso/collar region is active;
+				# bare, leg-only and boot-only states preserve the closed source.
+				if (actor.rig_name() == "orun_male" and collar_cover
+						and instance.name.to_lower() in ["body", "char1", "mesh_node"]
+						and surface == ORUN_PROFILE_SURFACE
+						and ORUN_PROFILE_FACES.has(i / 3)):
+					covered = true
+					profile_removed += 1
 				if actor.rig_name().begins_with("ssarathi_") and TorsoBodyCover.is_tail(center):
 					covered = false
 				# Independent anatomical sentinel: the posterior tail core must
 				# survive every outfit/removal order, regardless of band metadata.
 				if actor.rig_name().begins_with("ssarathi_") and center.z < -.35 and center.y < .90:
 					expect(not covered, label + " preserves the posterior tail core")
-				if instance.name.to_lower() == "body" and body_center.y > 1.425 and absf(body_center.x) < .09:
-					expect(not covered, label + " preserves the chin and throat inside an open collar")
+				if instance.name.to_lower() == "body" and not collar_cover \
+						and center.y > TorsoBodyCover.NECK_ENVELOPE_MIN_Y \
+						and absf(center.x) < TorsoBodyCover.NECK_ENVELOPE_HALF_WIDTH:
+					expect(not covered, label + " leaves the neck intact without torso coverage")
 				if covered:
 					removed += 1
 				else:
@@ -105,6 +139,10 @@ func verify_body(actor: ReplicatedActor3D, active: Dictionary, label: String) ->
 			expect(after[Mesh.ARRAY_INDEX] == expected, label + " retains exactly the uncovered triangles")
 	if not regions.is_empty():
 		expect(changed > 0 and removed > 20 and retained > 20, label + " has active, bounded clothing replacement")
+	var expected_profile_removed := (ORUN_PROFILE_FACES.size()
+		if actor.rig_name() == "orun_male" and collar_cover else 0)
+	expect(profile_removed == expected_profile_removed,
+		label + " applies the exact coverage-active Orun profile rows")
 
 func run() -> void:
 	var models: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/actors/models.json"))["models"]
@@ -175,15 +213,18 @@ func run() -> void:
 	print("ARMOUR COVER: %d races, %d transitions, %d checks, %d failures" % [races, transitions, checks, failures])
 	quit(1 if failures else 0)
 
-func protected_face(instance: MeshInstance3D, arrays: Array, ids: PackedInt32Array, start: int) -> bool:
+func protected_face_disposition(instance: MeshInstance3D, arrays: Array,
+		ids: PackedInt32Array, start: int, transform: Transform3D, fit: float,
+		collar_cover: bool, bridge_surface: bool, covered: bool) -> int:
 	if instance.name.to_lower() not in ["body", "char1", "mesh_node"] or instance.skin == null:
-		return false
+		return FACE_DEFAULT
 	var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
 	var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	var stride: int = bones.size()/vertices.size()
-	var total := 0.0
+	var mean_weight := 0.0
 	for corner: int in range(3):
+		var corner_weight := 0.0
 		for slot: int in range(stride):
 			var offset := ids[start+corner]*stride+slot
 			var bone_name := instance.skin.get_bind_name(bones[offset])
@@ -191,8 +232,15 @@ func protected_face(instance: MeshInstance3D, arrays: Array, ids: PackedInt32Arr
 				var skeleton := instance.get_node(instance.skeleton) as Skeleton3D
 				bone_name = skeleton.get_bone_name(instance.skin.get_bind_bone(bones[offset]))
 			if bone_name in [&"Head", &"neck_01"]:
-				total += weights[offset]
-	var center := (vertices[ids[start]]+vertices[ids[start+1]]+vertices[ids[start+2]])/3.
-	var skeleton := instance.get_node(instance.skeleton) as Skeleton3D
-	center = skeleton.global_transform.affine_inverse()*instance.global_transform*center
-	return total > 1.5 or (center.y > 1.40 and absf(center.x) < .11)
+				corner_weight += weights[offset]
+		mean_weight += corner_weight / 3.0
+	var center := (vertices[ids[start]] + vertices[ids[start+1]]
+		+ vertices[ids[start+2]]) / 3.0
+	center = (transform * center) / fit
+	var neck_envelope := (collar_cover
+		and covered
+		and center.y > TorsoBodyCover.NECK_ENVELOPE_MIN_Y
+		and absf(center.x) < TorsoBodyCover.NECK_ENVELOPE_HALF_WIDTH)
+	if neck_envelope:
+		return FACE_RETAIN if bridge_surface or mean_weight > .5 else FACE_REMOVE
+	return FACE_RETAIN if mean_weight > .5 else FACE_DEFAULT

@@ -30,6 +30,239 @@ def test_limb_rotation_preserves_lengths_and_handedness():
                                target / np.linalg.norm(target), atol=1e-12)
 
 
+def test_arm_silhouette_is_baked_radially_and_caps_stay_rigid(rig):
+    root = rig.origin('upperarm_l')
+    wrist = rig.origin('hand_l')
+    axis = wrist - root
+    axis /= np.linalg.norm(axis)
+    radial = np.array([0.0, 0.12, 0.0])
+    sleeve = np.vstack([root + axis * t + radial for t in (0.08, 0.4, 0.9)])
+    cap = np.array([[.24, 1.42, -.12], [.31, 1.46, -.08],
+                    [.27, 1.51, -.03]])
+    points = np.vstack((sleeve, cap))
+    before = points.copy()
+    share = np.zeros((len(points), 2))
+    share[:len(sleeve), 0] = 1.0
+    cap_side = np.r_[np.full(len(sleeve), -1), np.zeros(len(cap), dtype=int)]
+    report = remap.tighten_arm_silhouette(points, rig, share, cap_side)
+    before_travel = (before[:3] - root) @ axis
+    after_travel = (points[:3] - root) @ axis
+    np.testing.assert_allclose(after_travel, before_travel, atol=1e-12)
+    assert np.all(np.linalg.norm(points[:3] - root - after_travel[:, None] * axis,
+                                 axis=1) < np.linalg.norm(radial))
+    np.testing.assert_allclose(points[3:] - points[3], before[3:] - before[3])
+    np.testing.assert_allclose(points[3:, 0], before[3:, 0]
+                               - remap.SHOULDER_CAP_INSET * rig.fit_scale)
+    assert report['movedVertices'] == len(points)
+    assert report['maximumMove'] > 0.0
+
+
+def test_reviewed_arm_profiles_lock_elbow_and_cuff_to_previous_bytes():
+    locked = remap.SLEEVE_PROFILE_T >= remap.SLEEVE_PROFILE_LOCK_T
+    for source, revised in remap.ARM_FIT_OVERRIDES.items():
+        baseline = remap.REVIEWED_ARM_FIT_BASELINES[source]
+        np.testing.assert_array_equal(
+            revised['radial_scale'][locked], baseline['radial_scale'][locked])
+        assert revised['cap_inset'] >= baseline['cap_inset']
+    for profile in remap.PACKED_BACKING_RELATIVE_PROFILES.values():
+        np.testing.assert_array_equal(profile[locked], np.ones(locked.sum()))
+
+
+def test_reviewed_arm_profile_rosters_are_exactly_the_four_class_torsos():
+    """A stray torso must not inherit these narrowly reviewed fit deltas."""
+    source_roster = {
+        'Militia_torso_armor_concept_sheet__r01_c02.glb',
+        'Eight_leather_ranger_torso_designs__r01_c02.glb',
+        'Eloria_Arcane_Armor_Design_Sheet__r01_c01.glb',
+        'Amberwood_Woodland_Armor_Concept_Sheet__r02_c02.glb',
+    }
+    packed_roster = {
+        'militia_torso_armor_02',
+        'leather_ranger_torso_02',
+        'eloria_arcane_armor_01',
+        'amberwood_woodland_cuirass_06',
+    }
+    assert set(remap.ARM_FIT_OVERRIDES) == source_roster
+    assert set(remap.REVIEWED_ARM_FIT_BASELINES) == source_roster
+    assert set(remap.PACKED_BACKING_RELATIVE_PROFILES) == packed_roster
+
+
+def test_packed_arm_profile_never_assigns_locked_rows(rig):
+    root = rig.origin('upperarm_l')
+    wrist = rig.origin('hand_l')
+    axis = wrist - root
+    radial = np.array([0., .05, .025])
+    radial -= axis * (radial @ axis) / (axis @ axis)
+    travel = np.array([.2, .61, .62, .8])
+    points = root + travel[:, None] * axis + radial
+    before = points.copy()
+    share = np.zeros((len(points), 2))
+    share[:3, 0] = 1.
+    cap_side = np.array([-1, -1, -1, 0])
+    report = remap.tighten_arm_silhouette(
+        points, rig, share, cap_side,
+        radial_scale=remap.PACKED_BACKING_RELATIVE_PROFILES[
+            'militia_torso_armor_02'],
+        cap_inset=.02, locked_from=remap.SLEEVE_PROFILE_LOCK_T)
+    assert np.any(points[:2] != before[:2])
+    np.testing.assert_array_equal(points[2:], before[2:])
+    assert report['lockedVertices'] == 1
+    assert report['capVertices'] == 0
+    assert report['lockedCapVertices'] == 1
+
+
+def test_authoring_profile_keeps_baseline_tail_but_locks_far_caps(rig):
+    root = rig.origin('upperarm_l')
+    wrist = rig.origin('hand_l')
+    axis = wrist - root
+    radial = np.array([0., .05, .025])
+    radial -= axis * (radial @ axis) / (axis @ axis)
+    travel = np.array([.2, .8])
+    points = root + travel[:, None] * axis + radial
+    before = points.copy()
+    share = np.zeros((len(points), 2))
+    share[0, 0] = 1.
+    report = remap.tighten_arm_silhouette(
+        points, rig, share, np.array([-1, 0]),
+        radial_scale=remap.SLEEVE_PROFILE_SCALE,
+        cap_inset=.02, cap_locked_from=remap.SLEEVE_PROFILE_LOCK_T)
+    assert np.any(points[0] != before[0])
+    np.testing.assert_array_equal(points[1], before[1])
+    assert report['lockedVertices'] == 0
+    assert report['lockedCapVertices'] == 1
+
+
+def test_visible_sleeve_clearance_recesses_only_covered_unlocked_backing(rig):
+    root = rig.origin('upperarm_l')
+    wrist = rig.origin('hand_l')
+    axis = wrist - root
+    axis /= np.linalg.norm(axis)
+    helper = np.array([0., 1., 0.])
+    if abs(helper @ axis) > .9:
+        helper = np.array([0., 0., 1.])
+    first = np.cross(axis, helper)
+    first /= np.linalg.norm(first)
+    second = np.cross(axis, first)
+    angles = np.linspace(0., 2*np.pi, 24, endpoint=False)
+    rings = []
+    for travel in (-.1, .9):
+        centre = root + travel * (wrist - root)
+        rings.append(np.array([
+            centre + .08 * (np.cos(a)*first + np.sin(a)*second)
+            for a in angles]))
+    visible = np.vstack(rings)
+    triangles = []
+    count = len(angles)
+    for index in range(count):
+        following = (index + 1) % count
+        triangles.extend([[index, following, count + following],
+                          [index, count + following, count + index]])
+    visible_faces = visible[np.asarray(triangles)]
+    direction = np.cos(.13)*first + np.sin(.13)*second
+    travel = np.array([.2, .4, .7])
+    points = (root + travel[:, None] * (wrist - root)
+              + .078 * direction)
+    before = points.copy()
+    share = np.zeros((len(points), 2))
+    share[:, 0] = 1.
+    report = remap.seat_arm_backing_inside_visible(
+        points, rig, share, [visible_faces, np.empty((0, 3, 3))])
+    centres = root + travel[:, None] * (wrist - root)
+    radius = np.linalg.norm(points - centres, axis=1)
+    assert np.all(radius[:2] < np.linalg.norm(before[:2] - centres[:2], axis=1))
+    np.testing.assert_array_equal(points[2], before[2])
+    assert report['minimumClearanceAfter'] >= (
+        remap.SLEEVE_BACKING_CLEARANCE * rig.fit_scale - 1e-9)
+    assert report['lockedVertices'] == 1
+
+
+def test_position_only_revision_preserves_packed_resources_and_topology(tmp_path):
+    source, out = tmp_path / 'source.glb', tmp_path / 'revised.glb'
+    points = np.array([[-.3, .2, -.1], [.3, .2, -.1], [0., .8, .1]], dtype=np.float32)
+    glb = ea.EquipmentGLB()
+    primitive = glb.primitive(points, np.ones_like(points), np.zeros((3, 2)),
+                              np.array([0, 1, 2], dtype=np.uint16), 0)
+    glb.doc['materials'] = [{'name': 'Existing packed material'}]
+    glb.doc['images'] = [{'uri': 'textures/existing.jpg', 'mimeType': 'image/jpeg'}]
+    glb.mesh('Existing mesh', [primitive])
+    glb.write(source)
+    before_doc, before_binary = ea.read_glb(source)
+    position = primitive['attributes']['POSITION']
+    tightened = points.copy()
+    tightened[:, 0] *= .8
+    report = remap.position_only_revision(source, out, {position: tightened})
+    after_doc, after_binary = ea.read_glb(out)
+    assert source.stat().st_size == out.stat().st_size
+    assert after_doc == before_doc
+    assert after_doc['images'] == [{'uri': 'textures/existing.jpg',
+                                    'mimeType': 'image/jpeg'}]
+    assert report['documentPreserved'] and report['changedBytes'] > 0
+    for index in range(len(before_doc['accessors'])):
+        before = ea.accessor_array(before_doc, before_binary, index)
+        after = ea.accessor_array(after_doc, after_binary, index)
+        if index == position:
+            np.testing.assert_array_equal(after, tightened)
+        else:
+            np.testing.assert_array_equal(after, before)
+
+
+def test_deformation_transports_all_incident_normals_without_stale_lighting():
+    original = np.array([[0., 0., 0.], [1., 0., 0.], [0., 1., 0.]])
+    revised = original.copy()
+    revised[2, 2] = .5
+    authored = np.tile([0., 0., 1.], (3, 1))
+    triangles = np.array([[0, 1, 2]])
+    normals, report = remap.transport_normals_across_deformation(
+        original, revised, authored, triangles)
+    expected = np.cross(revised[1] - revised[0], revised[2] - revised[0])
+    expected /= np.linalg.norm(expected)
+    np.testing.assert_allclose(normals, np.tile(expected, (3, 1)), atol=1e-12)
+    assert report['incidentFaces'] == 1
+    assert report['movedNormals'] == 3
+    assert report['maximumAlignmentDelta'] == pytest.approx(0., abs=1e-12)
+
+    unchanged, unchanged_report = remap.transport_normals_across_deformation(
+        original, original, authored, triangles)
+    np.testing.assert_array_equal(unchanged, authored)
+    assert unchanged_report['movedNormals'] == 0
+
+
+def test_packed_deformation_gate_rejects_folded_and_collapsed_faces():
+    original = np.array([[0., 0., 0.], [1., 0., 0.], [0., 1., 0.]])
+    triangles = np.array([[0, 1, 2]])
+    safe = original.copy()
+    safe[2] = [.1, .7, .2]
+    report = remap.require_safe_deformation(original, safe, triangles)
+    assert report['minimumCosine'] > .1
+    assert report['newlyDegenerateFaces'] == []
+    assert report['unsafeOrientationFaces'] == []
+
+    folded = original.copy()
+    folded[2] = [0., -1., 0.]
+    with pytest.raises(ValueError, match='orientation faces'):
+        remap.require_safe_deformation(original, folded, triangles)
+
+    collapsed = original.copy()
+    collapsed[2] = [.5, 0., 0.]
+    with pytest.raises(ValueError, match='newly degenerate faces'):
+        remap.require_safe_deformation(original, collapsed, triangles)
+
+
+def test_packed_deformation_limiter_is_local_safe_and_uv_split_coherent():
+    original = np.array([[0., 0., 0.], [1., 0., 0.], [0., 1., 0.],
+                         [0., 1., 0.], [-1., 0., 0.]])
+    desired = original.copy()
+    desired[[2, 3], 1] = -1.
+    triangles = np.array([[0, 1, 2], [0, 3, 4]])
+    revised, limiter = remap.constrain_deformation_orientation(
+        original, desired, triangles)
+    report = remap.require_safe_deformation(original, revised, triangles)
+    assert limiter['iterations'] > 0
+    assert limiter['limitedVertices'] > 0
+    assert report['minimumCosine'] > .1
+    np.testing.assert_array_equal(revised[2], revised[3])
+
+
 def test_uv_split_positions_receive_identical_mapping_and_weights(rig):
     # A closed little sleeve island, split at every texture seam, plus torso
     # landmarks. Changing UV topology must never shear coincident positions.

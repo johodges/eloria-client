@@ -2966,6 +2966,7 @@ func _clear_world_presentation() -> void:
 	animation_gate.reset()
 	# The parsed model and animation caches are only worth holding for the
 	# session they were built in.
+	TorsoBodyCover.clear()
 	GlbSceneCache.clear()
 	NativeAnimationImporter.clear()
 	occluder_fade.reset()

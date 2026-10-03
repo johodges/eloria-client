@@ -14,7 +14,7 @@ const CLASSES: Array[Dictionary] = [
 		"tagline": "Hold the line",
 		"description": "A steady front-line adventurer equipped to meet danger face to face.",
 		"starting_items": "Militia sword, round shield, guard cape and Studded Jack",
-		"equipment_visuals": {0: 114, 1: 106, 2: 105, 4: 220, 5: 209, 6: 224},
+		"equipment_visuals": {0: 114, 1: 106, 2: 105, 5: 209},
 	},
 	{
 		"id": 1,
@@ -23,7 +23,7 @@ const CLASSES: Array[Dictionary] = [
 		"tagline": "Choose the distant path",
 		"description": "A mobile hunter who reads the land and strikes before danger closes in.",
 		"starting_items": "Amberwood longbow, 20 arrows and Scout Vest",
-		"equipment_visuals": {0: 164, 4: 227, 5: 225, 6: 224},
+		"equipment_visuals": {0: 164, 4: 230, 5: 225, 6: 224},
 	},
 	{
 		"id": 2,
@@ -31,8 +31,8 @@ const CLASSES: Array[Dictionary] = [
 		"label": "Arcanist",
 		"tagline": "Shape the unseen",
 		"description": "A student of sigils and ether prepared to solve threats with careful magic.",
-		"starting_items": "Arcane focus wand, Glowline Coat and 3 mana potions",
-		"equipment_visuals": {0: 142, 4: 179, 5: 217, 6: 224},
+		"starting_items": "Arcane focus wand, Warded Tabard and 3 mana potions",
+		"equipment_visuals": {0: 142, 4: 179, 5: 216, 6: 192},
 	},
 	{
 		"id": 3,
@@ -41,7 +41,7 @@ const CLASSES: Array[Dictionary] = [
 		"tagline": "Guard the old roads",
 		"description": "A resilient trail-keeper who pairs practical arms with woodland craft.",
 		"starting_items": "Fighting quarterstaff, leaf cape and Furtrim Coat",
-		"equipment_visuals": {0: 163, 2: 100, 4: 171, 5: 189, 6: 224},
+		"equipment_visuals": {0: 163, 2: 100, 5: 189},
 	},
 ]
 

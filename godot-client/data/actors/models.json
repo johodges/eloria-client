@@ -822,6 +822,11 @@
       },
       "hairFit": {},
       "bodyTemplate": "luminous_male",
+      "torsoBodyCover": {
+        "id": "orun-male-rear-neck-v1",
+        "version": 1,
+        "sourceSHA256": "9044aebf2ea13cf82a9bdb40641481115e25521ec02e8a78df760a9b01299fd8"
+      },
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt",
