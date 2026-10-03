@@ -20,6 +20,10 @@ func _init() -> void:
 		"flags":{"crafted":false,"prepared":false,"repaired":false,"lit":false}}
 	expect(decode(valid).get("type")=="lantern_tutorial","server guide decodes")
 	expect(decode({"version":1,"active":false}).state.active==false,"completion removes guide")
+	for version: Variant in [2, "1", [], true, null]:
+		var broken: Dictionary=valid.duplicate(true)
+		broken.version=version
+		expect(decode(broken).get("type")=="invalid","bad version "+var_to_str(version))
 	for key in ["stage","total","scene","count","required","hint","target","flags"]:
 		var broken: Dictionary=valid.duplicate(true)
 		broken.erase(key)
@@ -46,6 +50,10 @@ func _init() -> void:
 		var bad: Dictionary=bell.duplicate(true)
 		bad[field]="untrusted"
 		expect(decode(bad).get("type")=="invalid","reject malformed Bellwatch "+field)
+	for chapter: Variant in [1, [], true]:
+		var bad: Dictionary=bell.duplicate(true)
+		bad.chapter=chapter
+		expect(decode(bad).get("type")=="invalid","reject Bellwatch chapter "+str(chapter))
 	var bad_gate: Dictionary=bell.duplicate(true)
 	bad_gate.flags.west=1
 	expect(decode(bad_gate).get("type")=="invalid","gate flags are authoritative booleans")

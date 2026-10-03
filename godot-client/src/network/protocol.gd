@@ -2912,7 +2912,7 @@ static func decode_lantern(payload: PackedByteArray, logical_coordinates := fals
 	var value: Dictionary = parsed
 	if value.has("event"):
 		return decode_tutorial_experience(value)
-	if value.get("version") != 1 or not value.get("active") is bool:
+	if typeof(value.get("version")) not in [TYPE_INT, TYPE_FLOAT] or value.version != 1 or not value.get("active") is bool:
 		return {"type":"invalid", "error":"lantern_version"}
 	if value.has("ring_training") and not value.ring_training is bool:
 		return {"type":"invalid", "error":"ring_training"}
@@ -2929,7 +2929,7 @@ static func decode_lantern(payload: PackedByteArray, logical_coordinates := fals
 			if not value.get(key) is String:
 				return {"type":"invalid", "error":"adventure_text"}
 	if value.get("tutorial", "") in ["second_bell", "borrowed_sky"] and bool(value.active):
-		if value.get("chapter") != ("THE BORROWED SKY" if value.tutorial == "borrowed_sky" else "THE SECOND BELL") or not value.get("pending") is bool or not value.get("assisted") is bool:
+		if not (value.get("chapter") is String and value.chapter == ("THE BORROWED SKY" if value.tutorial == "borrowed_sky" else "THE SECOND BELL")) or not value.get("pending") is bool or not value.get("assisted") is bool:
 			return {"type":"invalid", "error":"bell_state"}
 		var remaining: Variant = value.get("remaining")
 		if typeof(remaining) not in [TYPE_FLOAT, TYPE_INT] or not is_finite(float(remaining)) or remaining < 0 or remaining > 500 or int(remaining) != remaining:
