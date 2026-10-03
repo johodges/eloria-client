@@ -33,13 +33,14 @@ const MIME_PREFIX := "image/x-eloria-map;"
 const PLACEHOLDER_URI := "data:application/octet-stream;base64,AA=="
 const ORIGINALS_KEY := &"eloria_vram_originals"
 const PREPARED_KEY := &"eloria_vram_prepared"
-## Pool threads one chunk worker's images may use at once. Uncapped (-1: as
-## many low-priority threads as Godot's low_priority_thread_ratio allows) the
-## preparation of a streamed cell slowed every frame while cells streamed in:
-## median 4.6-10.9 ms against develop's 2.2-3.4, also with the sidecars off,
-## where the only change from develop is this parallel preparation. Develop
-## decoded on the chunk worker alone; one or two threads keep about that
-## footprint and still drop the readback and the second upload.
+## Pool threads one chunk worker's images may use at once. Uncapped (-1) a
+## streamed cell's preparation could take as many low-priority threads as
+## Godot's low_priority_thread_ratio allows for the whole streaming window;
+## develop decoded on the chunk worker alone, and one or two threads keep about
+## that background footprint on any core count. Measured on 24 threads the cap
+## changed neither the streaming frames nor the settle time: frames are slower
+## while cells stream in because the same main-thread work now lands in a
+## window 2-3x shorter (no readback per image), not because of this group.
 const WORKER_IMPORT_TASKS_MAX := 2
 
 static func worker_import_tasks() -> int:
