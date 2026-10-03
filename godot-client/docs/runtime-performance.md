@@ -416,9 +416,12 @@ chunk stream's 256 MiB budget, so the stream refused most of its neighbours.
   Forward+/Mobile, the GL driver on Compatibility) and falls back to decoding,
   image by image, on any doubt. The client never compresses anything: the
   export templates have no BC encoder.
-* **Budget.** `ContinentChunkStream.configure` counts each shared image at its
-  sidecar's GPU bytes when it will be uploaded from one, the published RGBA8
-  figure otherwise (`VramTextures.resident_bytes`). No map is republished.
+* **Budget.** `ContinentChunkStream.configure` reads the sidecar indexes of the
+  images its territory manifest names (wherever they live), then counts each
+  shared image at its sidecar's GPU bytes when it will be uploaded from one, the
+  published RGBA8 figure otherwise (`VramTextures.resident_bytes`), and logs
+  `vram_textures budget <territory>: N of M images at sidecar size`. No map is
+  republished.
 * **Cache.** `CACHE_FORMAT_VERSION` 8, and a package with external images folds
   `VramTextures.cache_token` (mode, usable formats, index hash) into its key.
 * **Switch.** `ELORIA_VRAM_TEXTURES=0` turns sidecars (and the budget

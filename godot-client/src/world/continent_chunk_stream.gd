@@ -133,6 +133,10 @@ func configure(source: WorldManifest, cache_enabled: bool) -> void:
 	retain_distance = maxf(preload_distance, float(config.get("retainDistance", DEFAULT_RETAIN_DISTANCE)))
 	maximum_chunks = maxi(1, int(config.get("maximumLoadedChunks", DEFAULT_MAXIMUM_CHUNKS)))
 	maximum_resident_bytes = maxi(1, int(config.get("maximumResidentBytes", DEFAULT_RESIDENT_BYTES)))
+	# The sidecar indexes of every image this territory names, read before any
+	# figure is corrected: the budget must not depend on a chunk import having
+	# read them first, nor on where the shared images live.
+	var indexes := VramTextures.read_indexes_for(source.data, source.glb_path().get_base_dir())
 	for value: Dictionary in config.chunks:
 		var entry := value.duplicate(true)
 		entry.path = source.source_path.get_base_dir().path_join(str(entry.manifest))
@@ -143,15 +147,38 @@ func configure(source: WorldManifest, cache_enabled: bool) -> void:
 			maxi(1048576, int(entry.get("byteLength", 1048576)) * 12))))
 		# The publisher counts each shared image as RGBA8 with mips. One this
 		# client uploads from its VRAM-compressed sidecar holds a quarter or
-		# an eighth of that; count what it really holds (vram_textures.gd).
-		# The published figures are kept: they still decide what an arrival
-		# loads synchronously (see prime).
+		# an eighth of that; _correct_entries counts what it really holds
+		# (vram_textures.gd) from the published figures kept here, which also
+		# still decide what an arrival loads synchronously (see prime).
 		var shared: Variant = entry.get("sharedResourceResidentBytes")
 		if shared is Dictionary:
 			entry[PUBLISHED_SHARED_KEY] = (shared as Dictionary).duplicate()
-			for identity: String in shared:
-				shared[identity] = VramTextures.resident_bytes(identity, int(shared[identity]))
 		entries.append(entry)
+	var counted := _correct_entries()
+	if VramTextures.mode() != VramTextures.Mode.OFF:
+		print("vram_textures budget %s: %d of %d images at sidecar size; indexes %d of %d read (%d entries)" % [
+			source.asset_id(), counted.x, counted.y, int(indexes.ok), int(indexes.directories),
+			int(indexes.entries)])
+
+## Rewrites every entry's shared image figures, in place, to what this client
+## really holds for each (VramTextures.resident_bytes of the published one).
+## Candidates and resident cells hold the same dictionaries (shallow copies),
+## so they see it too. Returns (images at sidecar size, images counted).
+func _correct_entries() -> Vector2i:
+	var counted: Dictionary = {}
+	var at_sidecar: Dictionary = {}
+	for entry: Dictionary in entries:
+		var published: Variant = entry.get(PUBLISHED_SHARED_KEY)
+		var shared: Variant = entry.get("sharedResourceResidentBytes")
+		if not published is Dictionary or not shared is Dictionary:
+			continue
+		for identity: String in published:
+			var bytes := VramTextures.resident_bytes(identity, int(published[identity]))
+			shared[identity] = bytes
+			counted[identity] = true
+			if bytes != int(published[identity]):
+				at_sidecar[identity] = true
+	return Vector2i(at_sidecar.size(), counted.size())
 
 static func bounds_distance(position: Vector3, bounds: Dictionary) -> float:
 	var lower: Array = bounds.min

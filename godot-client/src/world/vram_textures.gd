@@ -74,9 +74,10 @@ const HEADER_BYTES := 16
 const FLAG_ZSTD := 1
 ## A header claiming more than this is corrupt, not a texture.
 const MAX_RAW_BYTES := 268435456
-## The directory every shipped map's shared images live in. Its index is read
-## at registration for the startup line and the chunk budget; others are read
-## when a map first names an image in them.
+## The directory every shipped map's shared images live in today. Its index is
+## read at registration for the startup line and the package self-test only;
+## the chunk budget reads the indexes its territory's manifest names, and a
+## map load the ones its own images live in, wherever they are.
 const SHARED_ASSETS := "res://../eloria-assets/maps/nymara-regions/_continent/shared-assets"
 
 const FORMAT_BITS := {"bc1": 1, "bc5": 2, "bc7": 4}
@@ -336,15 +337,40 @@ static func cache_token(manifest_data: Dictionary, glb_directory: String) -> Str
 		return ""
 	var parts := PackedStringArray(["vram", mode_name(), str(usable_formats())])
 	if mode() != Mode.OFF:
-		var directories: Dictionary = {}
-		for uri: Variant in resources:
-			directories[_normalise(glb_directory.path_join(str(uri)).get_base_dir())] = true
-		var sorted: Array = directories.keys()
-		sorted.sort()
-		for directory: String in sorted:
+		for directory: String in image_directories(manifest_data, glb_directory):
 			var info := index_for_directory(directory)
 			parts.append("%s:%s" % [str(info.status), str(info.sha256)])
 	return "|".join(parts)
+
+## The directories (normalised, sorted) holding a package's external images,
+## from its manifest's `externalResources`: each has its own index. URIs are
+## relative to the package's GLB directory.
+static func image_directories(manifest_data: Dictionary, glb_directory: String) -> PackedStringArray:
+	var directories: Dictionary = {}
+	var resources: Variant = manifest_data.get("externalResources", {})
+	if resources is Dictionary:
+		for uri: Variant in resources:
+			directories[_normalise(glb_directory.path_join(str(uri)).get_base_dir())] = true
+	var sorted := PackedStringArray(directories.keys())
+	sorted.sort()
+	return sorted
+
+## Reads the index of every directory a manifest's images live in, for the
+## chunk budget: a territory manifest lists all its chunks' images, so its
+## stream can correct every cell's figures before the first chunk import
+## would otherwise have read the index. Wherever the shared images live.
+## Returns {directories, ok, entries} (nothing read with sidecars off).
+static func read_indexes_for(manifest_data: Dictionary, glb_directory: String) -> Dictionary:
+	var summary := {"directories": 0, "ok": 0, "entries": 0}
+	if mode() == Mode.OFF:
+		return summary
+	for directory: String in image_directories(manifest_data, glb_directory):
+		var info := index_for_directory(directory)
+		summary.directories += 1
+		if info.status == "ok":
+			summary.ok += 1
+			summary.entries += int(info.entries)
+	return summary
 
 ## Any index's entry for `sha` (empty when no index read so far lists it).
 static func lookup(sha: String) -> Dictionary:
@@ -362,10 +388,11 @@ static func lookup(sha: String) -> Dictionary:
 ## BC1). Per sha, not a factor, because only the client knows which of those
 ## applies to each image; and here rather than in the publisher, so no map is
 ## republished and an older client or a fallback machine never under-counts.
+## Only indexes already read count (the stream reads its territory's with
+## `read_indexes_for` first); an unknown sha keeps the published figure.
 static func resident_bytes(sha: String, published: int) -> int:
 	if mode() == Mode.OFF:
 		return published
-	index_for_directory(SHARED_ASSETS)
 	var entry := lookup(sha)
 	if entry.is_empty() or not (usable_formats() & int(FORMAT_BITS[entry.format])):
 		return published
