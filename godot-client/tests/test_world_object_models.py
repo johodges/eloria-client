@@ -21,12 +21,21 @@ from __future__ import annotations
 import json
 import os
 import re
-import struct
+import shutil
+import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
 CLIENT = Path(__file__).resolve().parents[1]
 REGISTRY = CLIENT / "data/world/objects.json"
+TOOLS = CLIENT.parent / "eloria-assets" / "tools"
+GENERATOR = TOOLS / "build_native_world_object_glbs.py"
+# The imported-model table and the bands it is held to. Imported once, here,
+# so every check below reads the same table the generator writes from.
+sys.path.insert(0, str(TOOLS))
+import imported_world_objects as imported  # noqa: E402
 # The server repository beside this one. The main checkouts are `eloria-client`
 # and `eloria-server`, but a feature is usually worked in a pair of worktrees
 # named `<something>` and `<something>-server`, and this test was silently
@@ -54,19 +63,13 @@ def server_root() -> Path | None:
 
 
 def glb_triangle_count(path: Path) -> int:
-    """Parse the GLB header and JSON chunk far enough to count triangles."""
-    raw = path.read_bytes()
-    magic, version, _total = struct.unpack_from("<4sII", raw)
-    assert magic == b"glTF" and version == 2, path
-    length, kind = struct.unpack_from("<II", raw, 12)
-    assert kind == 0x4E4F534A, f"{path}: first chunk is not JSON"
-    document = json.loads(raw[20:20 + length].decode("utf-8"))
-    triangles = 0
-    for mesh in document["meshes"]:
-        for primitive in mesh["primitives"]:
-            accessor = document["accessors"][primitive["indices"]]
-            triangles += accessor["count"] // 3
-    return triangles
+    """Triangles the GLB's default scene draws.
+
+    The generator's own count, so the registry and this check cannot define a
+    triangle differently (a mesh instanced twice, a primitive with no index
+    list) and disagree about a model neither got wrong.
+    """
+    return imported.triangle_count(path)
 
 
 class WorldObjectModelTest(unittest.TestCase):
@@ -92,13 +95,120 @@ class WorldObjectModelTest(unittest.TestCase):
 
         A node the player walks up to and stares at through a harvest loop is
         held to the refined kit's budget, not to the placeholder budget the
-        bootstrap scenery was built at.
+        bootstrap scenery was built at. A modelled node imported from the
+        reviewed kits has the wider band the owner set for them, and only a
+        model the imported table lists may use it.
         """
+        listed = {row.model_id for row in imported.IMPORTED_HARVESTABLES}
         for section in (self.harvestables, self.interactives):
             for model_id, entry in section["models"].items():
                 with self.subTest(model=model_id):
-                    self.assertGreaterEqual(entry["triangles"], 90)
-                    self.assertLessEqual(entry["triangles"], 424)
+                    wide = section is self.harvestables and model_id in listed
+                    low, high = (imported.IMPORTED_TRIANGLE_BAND if wide
+                                 else imported.PROCEDURAL_TRIANGLE_BAND)
+                    self.assertGreaterEqual(entry["triangles"], low)
+                    self.assertLessEqual(entry["triangles"], high)
+
+    def test_the_imported_band_is_the_one_the_owner_set(self) -> None:
+        """About 2,600 triangles for imported nodes (2026-10-02, item 17)."""
+        self.assertEqual(imported.IMPORTED_TRIANGLE_BAND, (90, 2600))
+        self.assertEqual(imported.PROCEDURAL_TRIANGLE_BAND, (90, 424))
+
+    def test_imported_models_are_exactly_the_imported_table(self) -> None:
+        """Each imported entry is the table's row, measured off its own file.
+
+        A model claiming `imported` without a row would take the wide band on
+        its own say-so, and a GLB swapped in without regenerating the registry
+        would draw something other than what the registry measured.
+        """
+        claimed = {model_id for model_id, entry in self.harvestables["models"].items()
+                   if entry.get("imported")}
+        rows = {row.model_id: row for row in imported.IMPORTED_HARVESTABLES}
+        self.assertEqual(claimed, set(rows))
+        for model_id, row in rows.items():
+            with self.subTest(model=model_id):
+                entry = self.harvestables["models"][model_id]
+                path = CLIENT / entry["scene"].removeprefix("res://")
+                measured = imported.measure_glb(path)
+                for key, value in measured.items():
+                    self.assertEqual(entry[key], value, key)
+                self.assertEqual((entry["label"], entry["kind"], entry["tier"]),
+                                 (row.label, row.kind, row.tier))
+                answered = self.harvestables["resources"].get(row.label)
+                if row.answers_label:
+                    self.assertEqual(answered, model_id,
+                                     f"{row.label} should resolve to {model_id}")
+                else:
+                    self.assertNotEqual(answered, model_id,
+                                        f"{row.label} is not swapped to {model_id} yet")
+
+    def test_a_swapped_label_keeps_the_model_it_replaced(self) -> None:
+        """The procedural model a swap displaces stays registered and on disk.
+
+        Map packages bake that geometry into their own scenery, and undoing the
+        swap is the row's flag plus a regeneration.
+        """
+        for model_id, entry in self.harvestables["models"].items():
+            if "replaces" not in entry:
+                continue
+            with self.subTest(model=model_id):
+                replaced = entry["replaces"]
+                self.assertIn(replaced, self.harvestables["models"])
+                self.assertFalse(self.harvestables["models"][replaced].get("imported"))
+                self.assertEqual(self.harvestables["models"][replaced]["label"],
+                                 entry["label"])
+
+    def test_imported_models_are_graded_to_the_procedural_kit(self) -> None:
+        """No imported node draws far brighter, or darker, than its peer.
+
+        Every procedural node multiplies its texture by a palette colour; a
+        model textured elsewhere has none until it is graded, and the first
+        Meshy nodes drew 2-4 times brighter than the models they replaced -
+        chalk-white flint, white sage - which only the in-game shots showed.
+        Each row names the procedural model it was graded against, and its
+        mean surface albedo must stay inside the table's band of that one's.
+        """
+        try:
+            import PIL  # noqa: F401
+        except ImportError:
+            self.skipTest("Pillow is needed to decode the textures")
+        models = self.harvestables["models"]
+        low, high = imported.GRADE_RATIO_BAND
+        for row in imported.IMPORTED_HARVESTABLES:
+            with self.subTest(model=row.model_id):
+                self.assertIn(row.graded_against, models)
+                self.assertFalse(models[row.graded_against].get("imported"))
+                peer = imported.surface_albedo(
+                    CLIENT / models[row.graded_against]["scene"].removeprefix("res://"))
+                own = imported.surface_albedo(
+                    CLIENT / models[row.model_id]["scene"].removeprefix("res://"))
+                self.assertGreaterEqual(own / peer, low, f"{own:.3f} against {peer:.3f}")
+                self.assertLessEqual(own / peer, high, f"{own:.3f} against {peer:.3f}")
+
+    def test_regenerating_the_registry_keeps_the_imported_models(self) -> None:
+        """The generator writes the registry whole; this is what it writes.
+
+        Run it into a scratch client that holds only the imported GLBs, and the
+        registry it writes must be the committed one - imported nodes, swapped
+        labels and all. Before the imported table existed a regeneration
+        silently dropped every model it had not authored itself.
+        """
+        with tempfile.TemporaryDirectory() as scratch:
+            root = Path(scratch)
+            for row in imported.IMPORTED_HARVESTABLES:
+                source = CLIENT / "assets/world/harvestables" / f"{row.model_id}.glb"
+                target = root / "assets/world/harvestables" / source.name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(source, target)
+            result = subprocess.run(
+                [sys.executable, str(GENERATOR), "--client", str(root)],
+                capture_output=True, text=True)
+            # The generator's own message says why it stopped (a GLB missing,
+            # a band or a shadowed id); a bare exit status would not.
+            self.assertEqual(result.returncode, 0, result.stderr)
+            written = json.loads((root / "data/world/objects.json").read_text(
+                encoding="utf-8"))
+        self.assertEqual(written, self.registry)
 
     def test_models_stand_at_a_human_scale(self) -> None:
         """Metres, not tile units: a reed bed reaches a person's waist."""

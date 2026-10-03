@@ -13,6 +13,15 @@ extends RefCounted
 ## goes through `material_override`, so sharing the source materials cannot leak
 ## one actor's appearance into another.
 
+## World objects (harvest nodes, interactives) also come through here, and
+## GLTFDocument builds their textures at runtime with no mip chain. Seen from the
+## gameplay camera a node's 256-512 px texture is minified several times over, so
+## without mips it aliases and swims as the camera moves - the reason
+## world_loader rebuilds the chains of every map chunk. Models under this root
+## get the same chains and the same anisotropic filter as the map around them.
+## Actors are left as they were: their load time is why this cache exists.
+const WORLD_ASSET_ROOT := "res://assets/world/"
+
 static var _scenes: Dictionary = {}
 static var _failed: Dictionary = {}
 
@@ -70,12 +79,17 @@ static func _build(path: String) -> PackedScene:
 	var state: GLTFState = GLTFState.new()
 	if document.append_from_file(path, state) != OK:
 		return null
+	var world_asset := is_world_asset(path)
+	if world_asset:
+		build_texture_mipmaps(state)
 	var generated: Node = document.generate_scene(state)
 	if generated == null:
 		return null
 	if generated is not Node3D:
 		generated.free()
 		return null
+	if world_asset:
+		_filter_anisotropic(generated)
 	_claim(generated, generated)
 	var packed: PackedScene = PackedScene.new()
 	var packed_error: Error = packed.pack(generated)
@@ -85,6 +99,38 @@ static func _build(path: String) -> PackedScene:
 			path, error_string(packed_error)])
 		return null
 	return packed
+
+static func is_world_asset(path: String) -> bool:
+	return _canonical_path(path).begins_with(ProjectSettings.globalize_path(WORLD_ASSET_ROOT))
+
+## Gives every image the state carries a mip chain. The images are the objects
+## the generated materials will reference, so this must run before
+## generate_scene(). Returns how many images were rebuilt.
+static func build_texture_mipmaps(state: GLTFState) -> int:
+	var rebuilt := 0
+	for texture_value: Variant in state.get_images():
+		var texture: ImageTexture = texture_value as ImageTexture
+		if texture == null:
+			continue
+		var image: Image = texture.get_image()
+		if image == null or image.is_empty() or image.has_mipmaps():
+			continue
+		if image.is_compressed() and image.decompress() != OK:
+			continue
+		image.generate_mipmaps()
+		texture.set_image(image)
+		rebuilt += 1
+	return rebuilt
+
+static func _filter_anisotropic(root: Node) -> void:
+	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh: Mesh = (node as MeshInstance3D).mesh
+		if mesh == null:
+			continue
+		for surface: int in range(mesh.get_surface_count()):
+			var material := mesh.surface_get_material(surface) as BaseMaterial3D
+			if material != null:
+				material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 
 # PackedScene.pack() only stores nodes owned by the packed root.
 static func _claim(node: Node, scene_owner: Node) -> void:

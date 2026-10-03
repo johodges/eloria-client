@@ -34,6 +34,15 @@ func _run() -> void:
 	_expect(ring != null and not ring.visible,
 		"and does not draw the ring that stands in for a missing model")
 	_expect(not node.model_id.is_empty(), "and remembers which model it placed")
+	# GLTFDocument builds runtime textures with no mip chain; a node's texture
+	# minified at the gameplay camera would alias and swim without one.
+	var texture := _albedo_texture(node.get_node_or_null("Model"))
+	_expect(texture != null and texture.get_image() != null and texture.get_image().has_mipmaps(),
+		"and its texture carries a mip chain: " + known)
+	var material := _first_material(node.get_node_or_null("Model"))
+	_expect(material != null and material.texture_filter ==
+		BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC,
+		"and is sampled anisotropically, like the map around it: " + known)
 
 	var role: String = roles.keys()[0]
 	var built := _object(adapter, catalog, EloriaProtocol.MAP_OBJECT_INTERACTIVE, role, 2)
@@ -66,6 +75,7 @@ func _run() -> void:
 	_expect(seam.get_node_or_null("MapMarker") != null, "Authored resources keep their map markers")
 	var pick: CylinderShape3D = seam.get_node("PickShape").shape
 	_expect(is_equal_approx(pick.height,1.9) and is_equal_approx(pick.radius,1.25), "Pick volume matches the authored resource")
+	_check_imported_models(adapter, catalog, resources)
 	var crossing := MapObject3D.new()
 	root.add_child(crossing)
 	crossing.configure({"object_id": 23, "kind": EloriaProtocol.MAP_OBJECT_INTERACTIVE,
@@ -78,6 +88,64 @@ func _run() -> void:
 
 	print("world object placement tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)
+
+## The imported harvest nodes (the reviewed Meshy kits that
+## `imported_world_objects.py` lists) are not the generator's own GLBs: they
+## carry an embedded JPEG texture and ten times the triangles. Every label the
+## registry hands to one must stand that model through the same runtime parse,
+## textured and mip-mapped, with its ring hidden and a pick shape as tall as
+## the model. Which labels those are is read from the registry, so a swap or
+## its undoing is the table's flag and a regeneration, never an edit here.
+func _check_imported_models(adapter: CoordinateAdapter, catalog: Dictionary,
+		resources: Dictionary) -> void:
+	var models: Dictionary = (catalog.get("harvestables", {}) as Dictionary).get(
+		"models", {}) as Dictionary
+	var answered := 0
+	var object_id := 500
+	for resource_label: String in resources:
+		var model_key := str(resources[resource_label])
+		var described: Dictionary = models.get(model_key, {}) as Dictionary
+		if not bool(described.get("imported", false)):
+			continue
+		answered += 1
+		object_id += 1
+		var placed := _object(adapter, catalog, EloriaProtocol.MAP_OBJECT_HARVEST,
+			resource_label, object_id)
+		var model: Node3D = placed.get_node_or_null("Model") as Node3D
+		_expect(model != null and placed.model_id == model_key,
+			"an imported node stands its own model: %s -> %s" % [resource_label, model_key])
+		if model == null:
+			continue
+		_expect(not (placed.get_node("Ring") as MeshInstance3D).visible,
+			"and hides the ring under it: " + resource_label)
+		var texture := _albedo_texture(model)
+		_expect(texture != null, "and draws its embedded texture: " + resource_label)
+		_expect(texture != null and texture.get_image() != null and texture.get_image().has_mipmaps(),
+			"and that texture carries a mip chain: " + resource_label)
+		var pick: CylinderShape3D = placed.get_node("PickShape").shape
+		var standing := maxf(float(described.get("height", 0.0)) * model.scale.y, 1.2)
+		_expect(is_equal_approx(pick.height, standing),
+			"and is picked over the height the registry measured: " + resource_label)
+	# Olive and Lemon are the isle's own crops: no procedural model serves them,
+	# so they must always resolve to an imported one.
+	for expected: String in ["Olive", "Lemon"]:
+		var key := str(resources.get(expected, ""))
+		_expect(bool((models.get(key, {}) as Dictionary).get("imported", false)),
+			"%s resolves to an imported model" % expected)
+	_expect(answered >= 2, "at least the two crops stand imported models")
+
+static func _first_material(model: Node) -> BaseMaterial3D:
+	if model == null:
+		return null
+	for node: Node in [model] + model.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node := node as MeshInstance3D
+		if mesh_node != null and mesh_node.mesh != null and mesh_node.mesh.get_surface_count() > 0:
+			return mesh_node.get_active_material(0) as BaseMaterial3D
+	return null
+
+static func _albedo_texture(model: Node) -> Texture2D:
+	var material := _first_material(model)
+	return material.albedo_texture if material != null else null
 
 func _object(adapter: CoordinateAdapter, catalog: Dictionary, kind: int,
 		label: String, object_id: int) -> MapObject3D:

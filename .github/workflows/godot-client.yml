@@ -102,6 +102,10 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_world_input.gd
       - name: Harvest sparkle fixtures
         run: godot --headless --path godot-client --script res://tests/test_harvest_sparkle.gd
+      - name: World object placement and asset palette fixtures
+        run: |
+          godot --headless --path godot-client --script res://tests/test_world_object_placement.gd
+          godot --headless --path godot-client --script res://tests/test_map_asset_catalog.gd
       - name: Viewport click and tile mapping fixtures
         run: godot --headless --path godot-client --script res://tests/test_click_mapping.gd
       - name: Minimap marker draw order fixtures

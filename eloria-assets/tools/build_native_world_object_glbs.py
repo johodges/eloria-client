@@ -25,6 +25,13 @@ Two conversions matter:
 * foliage declares `alphaMode: MASK` and `doubleSided`, which is what the leaf
   cards need for the same reason `3d_objects.c` enables alpha test and disables
   back-face culling for them - a one-sided leaf card disappears from behind.
+
+The registry is written whole, so a harvest node modelled anywhere else (the
+reviewed Meshy nodes) is listed in `imported_world_objects.py`. Those GLBs are
+not written here: the table is checked before anything is written, then each
+GLB is measured where it sits (and refused outside the imported triangle
+band), added beside the procedural models, and given its resource label when
+its row says it answers it.
 """
 from __future__ import annotations
 
@@ -39,6 +46,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import harvestables as H
 from build_native_nymara_glbs import GLB
+from imported_world_objects import check_rows, merge_imported
 from png_writer import png
 
 CLIENT_HARVESTABLE_DIR = "assets/world/harvestables"
@@ -375,7 +383,12 @@ def main() -> int:
     scratch.parent.mkdir(parents=True, exist_ok=True)
     (client / CLIENT_INTERACTIVE_DIR).mkdir(parents=True, exist_ok=True)
 
-    harvest = build_harvestables(client, scratch)
+    # The imported table is checked before any GLB is written: a row that
+    # shadowed a procedural id would otherwise see its committed GLB
+    # overwritten by the procedural one before the clash was noticed.
+    check_rows({rid for rid, *_rest in harvest_entries()})
+    harvest = merge_imported(build_harvestables(client, scratch), client,
+                             CLIENT_HARVESTABLE_DIR)
     interactive = build_interactives(client, scratch)
     registry = {
         "schemaVersion": 1,
@@ -386,13 +399,17 @@ def main() -> int:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8")
 
-    triangles = sum(m["triangles"] for m in harvest["models"].values())
-    print(f"{len(harvest['models'])} harvest node models, "
+    imported = [m for m in harvest["models"].values() if m.get("imported")]
+    triangles = sum(m["triangles"] for m in harvest["models"].values()
+                    if not m.get("imported"))
+    print(f"{len(harvest['models']) - len(imported)} harvest node models, "
           f"{triangles} triangles total")
+    print(f"{len(imported)} imported harvest node models, "
+          f"{sum(m['triangles'] for m in imported)} triangles total")
     print(f"{len(interactive['models'])} interactive props, "
           f"{sum(m['triangles'] for m in interactive['models'].values())} "
           "triangles total")
-    print(f"registry: {path.relative_to(repo_root)}")
+    print(f"registry: {path}")
     return 0
 
 
