@@ -707,20 +707,7 @@ func _index_import() -> Dictionary:
 ## generated materials will reference, so rebuilding them here reaches the
 ## whole map. Must run before generate_scene().
 func _build_texture_mipmaps(state: GLTFState) -> int:
-	var rebuilt := 0
-	for texture_value: Variant in state.get_images():
-		var texture: ImageTexture = texture_value as ImageTexture
-		if texture == null:
-			continue
-		var image: Image = texture.get_image()
-		if image == null or image.is_empty() or image.has_mipmaps():
-			continue
-		if image.is_compressed() and image.decompress() != OK:
-			continue
-		image.generate_mipmaps()
-		texture.set_image(image)
-		rebuilt += 1
-	return rebuilt
+	return GlbSceneCache.build_texture_mipmaps(state)
 
 ## The two material passes a freshly imported map needs, over one list of its
 ## mesh instances. Each is described below; a material is touched once by

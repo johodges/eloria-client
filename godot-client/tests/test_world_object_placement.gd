@@ -34,6 +34,15 @@ func _run() -> void:
 	_expect(ring != null and not ring.visible,
 		"and does not draw the ring that stands in for a missing model")
 	_expect(not node.model_id.is_empty(), "and remembers which model it placed")
+	# GLTFDocument builds runtime textures with no mip chain; a node's texture
+	# minified at the gameplay camera would alias and swim without one.
+	var texture := _albedo_texture(node.get_node_or_null("Model"))
+	_expect(texture != null and texture.get_image() != null and texture.get_image().has_mipmaps(),
+		"and its texture carries a mip chain: " + known)
+	var material := _first_material(node.get_node_or_null("Model"))
+	_expect(material != null and material.texture_filter ==
+		BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC,
+		"and is sampled anisotropically, like the map around it: " + known)
 
 	var role: String = roles.keys()[0]
 	var built := _object(adapter, catalog, EloriaProtocol.MAP_OBJECT_INTERACTIVE, role, 2)
@@ -78,6 +87,19 @@ func _run() -> void:
 
 	print("world object placement tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)
+
+static func _first_material(model: Node) -> BaseMaterial3D:
+	if model == null:
+		return null
+	for node: Node in [model] + model.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node := node as MeshInstance3D
+		if mesh_node != null and mesh_node.mesh != null and mesh_node.mesh.get_surface_count() > 0:
+			return mesh_node.get_active_material(0) as BaseMaterial3D
+	return null
+
+static func _albedo_texture(model: Node) -> Texture2D:
+	var material := _first_material(model)
+	return material.albedo_texture if material != null else null
 
 func _object(adapter: CoordinateAdapter, catalog: Dictionary, kind: int,
 		label: String, object_id: int) -> MapObject3D:
