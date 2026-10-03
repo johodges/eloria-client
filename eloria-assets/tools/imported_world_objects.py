@@ -80,7 +80,20 @@ class ImportedHarvestable:
 
 
 #: Append only. Each row's GLB is `assets/world/harvestables/<model_id>.glb`.
-IMPORTED_HARVESTABLES = ()
+#: The south-west isle's Meshy nodes as shipped by run 3 of the continent-v2
+#: harvest work: graded in linear light for the Godot look against the model
+#: named, 512 px textures.
+IMPORTED_HARVESTABLES = (
+    ImportedHarvestable(
+        "isle_olive", "Olive", "crop", "common", True, "blueberries",
+        "Meshy H1 with the local readability fix (olive clusters, a larger "
+        "basket); leaves graded to 0.28, fruit and basket kept light; "
+        "continent-v2 harvest ship run 3, 2026-10-02"),
+    ImportedHarvestable(
+        "isle_lemon", "Lemon", "crop", "common", True, "blueberries",
+        "Meshy H2; leaves, crate and trunk graded to 0.55-0.60, lemons 0.85; "
+        "continent-v2 harvest ship run 3, 2026-10-02"),
+)
 
 
 # ---------------------------------------------------------------------------

@@ -431,6 +431,32 @@
         "triangles": 232,
         "alphaTested": false,
         "height": 0.68
+      },
+      "isle_olive": {
+        "scene": "res://assets/world/harvestables/isle_olive.glb",
+        "label": "Olive",
+        "kind": "crop",
+        "tier": "common",
+        "vertices": 3569,
+        "triangles": 2396,
+        "alphaTested": false,
+        "height": 1.301,
+        "sha256": "d1e00f13d1ebee6a1943202116d9386f7131ac474633e3999616cff99967713c",
+        "imported": true,
+        "source": "Meshy H1 with the local readability fix (olive clusters, a larger basket); leaves graded to 0.28, fruit and basket kept light; continent-v2 harvest ship run 3, 2026-10-02"
+      },
+      "isle_lemon": {
+        "scene": "res://assets/world/harvestables/isle_lemon.glb",
+        "label": "Lemon",
+        "kind": "crop",
+        "tier": "common",
+        "vertices": 2608,
+        "triangles": 1144,
+        "alphaTested": false,
+        "height": 1.5,
+        "sha256": "9510feeca04fb2c41b8b8df28175704a01ed6d93059027b130b51a43db1000c3",
+        "imported": true,
+        "source": "Meshy H2; leaves, crate and trunk graded to 0.55-0.60, lemons 0.85; continent-v2 harvest ship run 3, 2026-10-02"
       }
     },
     "resources": {
@@ -476,7 +502,9 @@
       "Moss": "grave_moss",
       "Blueberries": "blueberries",
       "Iron Ore": "iron_ore",
-      "Sulfur": "sulfur"
+      "Sulfur": "sulfur",
+      "Olive": "isle_olive",
+      "Lemon": "isle_lemon"
     }
   },
   "interactives": {
