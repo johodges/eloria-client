@@ -362,7 +362,8 @@ static func load_grid(root: Node3D) -> Dictionary:
 ## server's sync vendors it: {} when the manifest declares none (a version 1
 ## territory), {error} when the file is refused, {error, missing} when the
 ## package does not ship it. Its tiles are the server's own, so unlike
-## collision.bin it needs no fold and no frame.
+## collision.bin it needs no fold; but the scene's server_origin must be the
+## frame the package was exported in (served_frame_error).
 static func load_served_grid(manifest_path: String, origin: Vector2i) -> Dictionary:
 	if manifest_path.is_empty() or not FileAccess.file_exists(manifest_path):
 		return {}
@@ -373,12 +374,51 @@ static func load_served_grid(manifest_path: String, origin: Vector2i) -> Diction
 	if served.has("error"):
 		return {"error": "The published served grid is refused: %s." % String(served.error),
 			"missing": bool(served.get("missing", false))}
+	var frame := served_frame_error(manifest, origin, int(served.width), int(served.height))
+	if not frame.is_empty():
+		return {"error": "The published served grid is refused: %s." % frame}
 	var unit := float(served.unit_mm) / 1000.0
 	return {"source": "published", "format": 2, "codes": served.codes, "width": int(served.width),
 		"rows": int(served.height), "origin": origin, "climb": int(served.climb_units),
 		"walk_bits": WALK_BITS_V2, "unit_metres": unit, "datum_metres": float(served.datum_mm) / 1000.0,
 		"stage_metres": unit, "crossings": published_crossings(manifest, origin),
 		"served_grid": String(served.path), "sha256": String(served.sha256)}
+
+
+## Why the scene and the package disagree on the served grid's tiles, or "".
+## The grid is indexed by server tile and the walker maps the scene's
+## territory-local points onto it with the scene's server_origin, so the frame
+## the package states under coordinateTransform must be the scene's: the same
+## serverOrigin, serverCells equal to the grid's size, one metre a tile, and
+## the server's y running against the scene's z. A stale scene would otherwise
+## walk every route on the wrong tiles (D2b moved sw_isle's served origin by
+## 30 tiles). The version 1 fold refuses the same misalignment through
+## collision.originMetres. A manifest that states no transform is not checked.
+static func served_frame_error(manifest: Dictionary, origin: Vector2i, width: int,
+		rows: int) -> String:
+	var transform: Variant = manifest.get("coordinateTransform")
+	if not transform is Dictionary:
+		return ""
+	var frame: Dictionary = transform
+	if frame.has("serverOrigin") and _pair(frame.serverOrigin) != origin:
+		return "the package's serverOrigin %s is not the scene's server_origin %s" % [
+			str(_pair(frame.serverOrigin)), str(origin)]
+	if frame.has("serverCells") and _pair(frame.serverCells) != Vector2i(width, rows):
+		return "the served grid is %d x %d tiles, the package's serverCells %s" % [width, rows,
+			str(_pair(frame.serverCells))]
+	if frame.has("metresPerTile") and not is_equal_approx(float(frame.metresPerTile), 1.0):
+		return "the package's metresPerTile is %s, not 1" % str(frame.metresPerTile)
+	if frame.has("invertServerY") and not bool(frame.invertServerY):
+		return "the package's invertServerY is false"
+	return ""
+
+
+## A JSON [x, y] pair (its numbers parse as floats) as tiles; (-1, -1) for
+## anything else.
+static func _pair(value: Variant) -> Vector2i:
+	if value is Array and (value as Array).size() == 2:
+		return Vector2i(int(value[0]), int(value[1]))
+	return Vector2i(-1, -1)
 
 
 ## Folds a published half-metre EWCG grid onto one-metre server tiles exactly

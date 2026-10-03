@@ -271,6 +271,29 @@ func _test_declared_package(blob: PackedByteArray) -> void:
 		is_equal_approx(walker.cell_point(Vector2i(1, 1)).y, -100.0 + 4032 * 0.05) and
 		"served grid" in description and "climb 1.00 m" in description,
 		"the walker stands on the tile's own 50 mm height and says which grid it walks (%s)" % description)
+	# The frame the package states must be the scene's: a stale server_origin
+	# (D2b moved sw_isle's by 30 tiles) or another size is refused, not walked.
+	var frame := {"serverOrigin": [5, 7], "serverCells": [24, 16], "metresPerTile": 1.0,
+		"invertServerY": true}
+	var framed := manifest.duplicate(true)
+	framed["coordinateTransform"] = frame
+	_write_json(manifest_path, framed)
+	var aligned := Walker.load_served_grid(manifest_path, Vector2i(5, 7))
+	var stale := Walker.load_served_grid(manifest_path, Vector2i(5, 37))
+	var refusals := {}
+	for change: Dictionary in [{"serverCells": [2046, 2046]}, {"metresPerTile": 2.0},
+			{"invertServerY": false}]:
+		framed["coordinateTransform"] = frame.merged(change, true)
+		_write_json(manifest_path, framed)
+		refusals[change.keys()[0]] = Walker.load_served_grid(manifest_path, Vector2i(5, 7))
+	_expect(int(aligned.get("format", 0)) == 2 and not aligned.has("error") and
+		"serverOrigin" in String(stale.get("error", "")) and "(5, 37)" in String(stale.get("error", "")) and
+		not bool(stale.get("missing", false)) and
+		"24 x 16" in String((refusals.serverCells as Dictionary).get("error", "")) and
+		"metresPerTile" in String((refusals.metresPerTile as Dictionary).get("error", "")) and
+		"invertServerY" in String((refusals.invertServerY as Dictionary).get("error", "")),
+		"a package framed as the scene loads; a stale server_origin, another size, scale or y sense is refused (%s)" %
+			String(stale.get("error", "accepted")))
 	_write_json(manifest_path, {"collision": {"servedGrid": spec.merged({"sha256": "0".repeat(64)}, true)}})
 	var wrong_hash := Walker.load_served_grid(manifest_path, Vector2i.ZERO)
 	_write_json(manifest_path, {"collision": {"servedGrid": spec.merged({"climbMetres": 1.2}, true)}})
