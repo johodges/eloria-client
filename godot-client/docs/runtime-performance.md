@@ -455,7 +455,9 @@ minutes cold for the 1 464 shared images and seconds warm (its encode cache is
 package stage, checks every staged image has a sidecar or a reason, and
 `--no-vram-textures` leaves them out. Tests: `tests/test_vram_textures.gd`,
 `tests/test_continent_chunk_budget.gd`, `tests/test_build_vram_textures.py`,
-`tests/test_package_vram.py`.
+`tests/test_package_vram.py`, and on a real renderer (windowed; CI runs it on
+Compatibility under xvfb) `tests/integration/rendered_vram_textures.gd`, which
+checks the formats the GPU really holds and draws the fixture both ways.
 
 ## Checking a change
 

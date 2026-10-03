@@ -64,6 +64,7 @@ func _run() -> void:
 	_check_no_mipmap_rebuilds()
 	await _check_pool_sharing()
 	await _check_worker_load()
+	await _check_concurrent_loads()
 	_check_fallbacks()
 	_check_unusable_formats()
 	_check_index_rejected()
@@ -321,6 +322,56 @@ func _check_worker_load() -> void:
 	builder.free()
 	if resident.root != null:
 		(resident.root as Node).free()
+
+## A chunk worker's import (low-priority group, at most two threads) and a
+## main-thread load (high priority, every thread) of the same images at once,
+## as a primed cell during streaming does: both finish, the worker prepares
+## nothing on the main thread, both bind full textures (no placeholder left),
+## and the two maps end up sharing one texture per image. On a CI runner's few
+## cores this is also the small-pool case.
+func _check_concurrent_loads() -> void:
+	var thread := Thread.new()
+	thread.start(WorldLoader.prepare_detached.bind(FIXTURE.path_join("world.json"), false))
+	var main_load := WorldLoader.new()
+	root.add_child(main_load)
+	main_load.load_world(FIXTURE.path_join("world.json"))
+	var deadline := Time.get_ticks_msec() + 20000
+	while thread.is_alive() and Time.get_ticks_msec() < deadline:
+		await process_frame
+	if not _expect(not thread.is_alive() and main_load.world_root != null,
+			"mode=%s: a worker load and a main-thread load at once both finish" % VramTextures.mode_name()):
+		return
+	var builder: WorldLoader = thread.wait_to_finish()
+	var counts := []
+	var placeholders := 0
+	for phases: Dictionary in [builder.load_phases, main_load.load_phases]:
+		counts.append(int(phases.get(&"imagesPrepared", 0)) + int(phases.get(&"imagesPooled", 0)))
+	for world: Node in [builder.world_root, main_load.world_root]:
+		for texture: Texture2D in _textures(world).values():
+			if texture.get_width() <= 1:
+				placeholders += 1
+	_expect(counts == [EXTERNAL_IMAGES, EXTERNAL_IMAGES] and placeholders == 0
+		and int(builder.load_phases.get(&"imagesPreparedOnMainThread", -1)) == 0,
+		"mode=%s: each prepared or pooled all %d images, the worker none on the main thread, no placeholder left: %s %d"
+		% [VramTextures.mode_name(), EXTERNAL_IMAGES, counts, placeholders])
+	var resident: Dictionary = builder.release_world()
+	builder.free()
+	if resident.root != null:
+		(resident.root as Node).free()
+	resident.clear()
+	main_load.unload_world()
+	main_load.queue_free()
+	thread = null
+	var left := EXTERNAL_IMAGES
+	for frame: int in 60:
+		await process_frame
+		left = 0
+		for sha: String in _manifest().externalResources.values():
+			if ExternalTexturePool._published(sha) != null:
+				left += 1
+		if left == 0:
+			break
+	_expect(left == 0, "and both maps' textures leave the pool once they are gone (%d left)" % left)
 
 # --------------------------------------------------------------------------
 # Sidecars (mode=force)

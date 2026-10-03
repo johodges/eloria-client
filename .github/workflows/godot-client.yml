@@ -244,6 +244,11 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/legacy-region-preview.png"
           test -s "$ELORIA_ARTIFACT_DIR/legacy-chat-console.png"
           test -s "$ELORIA_ARTIFACT_DIR/legacy-hud-settings.png"
+      - name: Render the VRAM texture fixture on a real renderer
+        run: |
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_vram_textures.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/vram-textures.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/vram-textures.log"
+          grep -q "rendered vram textures: PASS" "$ELORIA_ARTIFACT_DIR/vram-textures.log"
       - name: Render all character-creation models
         run: |
           xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_character_creation_models.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/character-models.log"
