@@ -113,6 +113,15 @@ static func read_header(raw: PackedByteArray) -> Dictionary:
 
 ## A served-grid file (gzipped, or its uncompressed content). When
 ## `expected_sha256` is given, the file's bytes must hash to it first.
+##
+## The gzip is inflated in one call sized from the member's own length field
+## (its last four bytes), never with decompress_dynamic: in Godot 4.7 that call
+## does not return when any byte follows the gzip stream. A file with padding,
+## garbage or a second member after its stream has a length field that is not
+## its content's length, so it is refused at once, as the server refuses it.
+## (One file the server refuses still reads here: a member followed by an exact
+## copy of itself, whose length field is the first member's. Only the first is
+## read, it is the same grid, and the server's sync refuses to vendor it.)
 static func decode_file(blob: PackedByteArray, expected_sha256 := "", verify_crc := true) -> Dictionary:
 	if not expected_sha256.is_empty():
 		var digest := sha256_hex(blob)
@@ -121,8 +130,12 @@ static func decode_file(blob: PackedByteArray, expected_sha256 := "", verify_crc
 				expected_sha256]}
 	var raw := blob
 	if blob.size() >= 2 and blob[0] == 0x1f and blob[1] == 0x8b:
-		raw = blob.decompress_dynamic(MAX_FILE_BYTES, FileAccess.COMPRESSION_GZIP)
-		if raw.is_empty():
+		# 10 header bytes, a deflate stream, then CRC-32 and length (RFC 1952).
+		var expected := blob.decode_u32(blob.size() - 4) if blob.size() >= 18 else 0
+		if expected < HEADER_SIZE or expected > MAX_FILE_BYTES:
+			return {"error": "the served grid is not a readable gzip file"}
+		raw = blob.decompress(expected, FileAccess.COMPRESSION_GZIP)
+		if raw.size() != expected:
 			return {"error": "the served grid is not a readable gzip file"}
 	return decode(raw, verify_crc)
 

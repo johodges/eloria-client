@@ -186,7 +186,7 @@ func _test_refusals(blob: PackedByteArray) -> void:
 		"a tampered file is refused by its SHA-256 (%s)" % String(refused.get("error", "accepted")))
 	_expect(ServedGrid.decode_file(tampered).has("error"),
 		"and refused without a declared hash too, by the gzip or the grid's own CRC")
-	var raw := blob.decompress_dynamic(ServedGrid.MAX_FILE_BYTES, FileAccess.COMPRESSION_GZIP)
+	var raw := blob.decompress(blob.decode_u32(blob.size() - 4), FileAccess.COMPRESSION_GZIP)
 	var keywords := ["not a served grid", "version", "header size", "filter", "flags", "reserved",
 		"does not divide", "dimensions", "CRC"]
 	var refusals := 0
@@ -207,6 +207,25 @@ func _test_refusals(blob: PackedByteArray) -> void:
 		"exceeds" in String(high.get("error", "")),
 		"the header, payload and CRC refusals of the server's reader all hold%s" % (
 			"" if notes.is_empty() else " except " + ", ".join(notes)))
+	# Bytes after the gzip stream. decompress_dynamic never returned on these in
+	# Godot 4.7 (the editor froze when the play test started); the reader now
+	# sizes its inflate from the member's length field and refuses them at once,
+	# as the server's reader does.
+	var padded := blob.duplicate()
+	padded.append_array(PackedByteArray([0, 0, 0, 0]))
+	var garbage := blob.duplicate()
+	garbage.append_array("garbage!".to_ascii_buffer())
+	var two_members := PackedByteArray([1, 2, 3]).compress(FileAccess.COMPRESSION_GZIP)
+	two_members.append_array(blob)
+	var cut := blob.slice(0, blob.size() - 9)
+	var started := Time.get_ticks_msec()
+	var after_stream := 0
+	for bad: PackedByteArray in [padded, garbage, two_members, cut]:
+		if "gzip" in String(ServedGrid.decode_file(bad).get("error", "")):
+			after_stream += 1
+	_expect(after_stream == 4 and Time.get_ticks_msec() - started < 2000,
+		"padding, garbage or a second member after the gzip stream, and a cut stream, are refused at once (%d of 4, %d ms)" % [
+			after_stream, Time.get_ticks_msec() - started])
 	var raw_filter := ServedGrid.decode(_encode(PackedInt32Array([64, 4096, 0, 32704, 128, 1]), 3, 2, 0))
 	_expect(not raw_filter.has("error") and int(raw_filter.filter) == 0 and
 		raw_filter.codes == PackedInt32Array([64, 4096, 0, 32704, 128, 1]),
