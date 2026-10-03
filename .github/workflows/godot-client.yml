@@ -115,6 +115,7 @@ jobs:
       - name: Native tutorial and recovery fixtures
         run: |
           godot --headless --path godot-client --script res://tests/test_lantern_protocol.gd
+          godot --headless --path godot-client --script res://tests/test_signed_ashore_guide.gd
           godot --headless --path godot-client --script res://tests/test_lantern_gate_grounding.gd
           godot --headless --path godot-client --script res://tests/test_bell_state.gd
           godot --headless --path godot-client --script res://tests/test_tutorial_companion_interaction.gd

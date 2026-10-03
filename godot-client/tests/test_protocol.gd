@@ -32,6 +32,7 @@ func _init() -> void:
 		"second_bell_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
 		"borrowed_sky_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
 		"followup_tutorials_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
+		"signed_ashore_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
 		"magic_book_v2": EloriaProtocol.ServerMessage.ELORIA_MAGIC_STATE,
 		"actor16_v1": EloriaProtocol.ServerMessage.ADD_NEW_ACTOR_EXTENDED,
 		"actor_wardrobe_v1": EloriaProtocol.ServerMessage.ADD_NEW_ENHANCED_ACTOR,
@@ -153,13 +154,27 @@ func _init() -> void:
 		EloriaProtocol.ServerMessage.ELORIA_STORAGE_STATE:
 			"000100" + "0000000001000000010000000041004200",
 		EloriaProtocol.ServerMessage.ELORIA_ALMANAC_STATE: "010101000064004f7264696e61727920446179004e6f7468696e6720697320696e20666f7263652e0000000000"}
+	# Probes for one capability where several share a command: 207's own probe
+	# is the inactive frame every chapter decodes, which says nothing about the
+	# chapter's shape. Signed Ashore's is its first card, live, carrying the
+	# four countersigns in place of the Lantern's flags.
+	var capability_specific_probes: Dictionary = {
+		"signed_ashore_v1": ('{"version":1,"active":true,"tutorial":"signed_ashore",'
+			+ '"chapter":"SIGNED ASHORE","stage":1,"total":10,"scene":1,"key":"signed_in",'
+			+ '"title":"Follow Nesh\'s lantern","hint":"Click Wayfinder Nesh to talk.",'
+			+ '"control":"world","item":"","map":"sw_isle","target_id":"wayfinder_nesh",'
+			+ '"target":[592,883],"count":0,"required":1,'
+			+ '"flags":{"grove":false,"temple":false,"gate":false,"light":false}}'
+			).to_utf8_buffer().hex_encode()}
 	for capability: String in EloriaProtocol.CLIENT_CAPABILITIES:
 		_expect(decoded_extensions.has(capability),
 			"advertised capability %s is one this suite knows the client decodes"
 				% capability)
 		if decoded_extensions.has(capability):
 			var command: int = int(decoded_extensions[capability])
-			var body: PackedByteArray = (_hex(str(capability_probes[command]))
+			var body: PackedByteArray = (_hex(str(capability_specific_probes[capability]))
+				if capability_specific_probes.has(capability)
+				else _hex(str(capability_probes[command]))
 				if capability_probes.has(command) else _actor_bytes_extended())
 			var probe: Dictionary = EloriaProtocol.decode_server(command, body)
 			_expect(probe.type != "unknown" and probe.type != "invalid",

@@ -240,6 +240,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"borrowed_sky_v1",
 	"spell_ring_v1",
 	"followup_tutorials_v1",
+	"signed_ashore_v1",
 	"actor16_v1",
 	"adjacent_actors_v1",
 	"almanac_v1",
@@ -2915,8 +2916,12 @@ static func decode_lantern(payload: PackedByteArray, logical_coordinates := fals
 		return {"type":"invalid", "error":"lantern_version"}
 	if value.has("ring_training") and not value.ring_training is bool:
 		return {"type":"invalid", "error":"ring_training"}
-	if value.has("tutorial") and value.tutorial not in ["second_bell", "borrowed_sky", "followup"]:
+	if value.has("tutorial") and value.tutorial not in ["second_bell", "borrowed_sky", "followup", "signed_ashore"]:
 		return {"type":"invalid", "error":"tutorial_kind"}
+	# Signed Ashore, the landing isle's chapter: its four countersigns
+	# (grove/temple/gate/light) stand in for the Lantern's flags below.
+	if value.get("tutorial", "") == "signed_ashore" and bool(value.active) and value.get("chapter") != "SIGNED ASHORE":
+		return {"type":"invalid", "error":"signed_ashore_chapter"}
 	if value.get("tutorial", "") == "followup" and bool(value.active):
 		for key in ["adventure", "guide"]:
 			if not value.get(key) is String:
@@ -2949,7 +2954,9 @@ static func decode_lantern(payload: PackedByteArray, logical_coordinates := fals
 		for coordinate: Variant in value.target:
 			if typeof(coordinate) not in [TYPE_FLOAT, TYPE_INT] or not is_finite(float(coordinate)) or coordinate < (-2147483648 if logical_coordinates else 0) or coordinate > (2147483647 if logical_coordinates else 65535) or int(coordinate)!=coordinate:
 				return {"type":"invalid", "error":"lantern_target"}
-		var required_flags: Array = ["north","east","south","west"] if value.get("tutorial", "") == "followup" else ["crafted","prepared","repaired","lit"]
+		var required_flags: Array = ["north","east","south","west"] if value.get("tutorial", "") == "followup" \
+			else ["grove","temple","gate","light"] if value.get("tutorial", "") == "signed_ashore" \
+			else ["crafted","prepared","repaired","lit"]
 		for key in required_flags:
 			if not value.flags.get(key) is bool:
 				return {"type":"invalid", "error":"lantern_flags"}

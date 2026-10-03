@@ -76,5 +76,37 @@ func _init() -> void:
 		expect(decode(road).get("type")=="invalid", "Workshop outcome requires boolean: "+flag)
 		road.flags[flag]=false
 	expect(decode({"version":1,"active":false,"tutorial":"followup"}).get("type")=="lantern_tutorial","leaving removes adventure guide")
+	# Signed Ashore, the landing isle's chapter: the Lantern's frame with its
+	# own chapter name and four countersigns instead of the Lantern's flags.
+	var ashore: Dictionary=valid.duplicate(true)
+	ashore.tutorial="signed_ashore";ashore.chapter="SIGNED ASHORE";ashore.map="sw_isle"
+	ashore.stage=2;ashore.total=10;ashore.scene=2;ashore.key="grove";ashore.title="The Palace Grove"
+	ashore.hint="Click an olive bush once.";ashore.control="world";ashore.item="Olive"
+	ashore.target_id="olive_grove";ashore.target=[574,920];ashore.required=5;ashore.count=2
+	ashore.flags={"grove":false,"temple":false,"gate":false,"light":false}
+	expect(decode(ashore).get("type")=="lantern_tutorial","Signed Ashore uses the native guide protocol")
+	expect(decode(ashore).get("state",{}).get("chapter")=="SIGNED ASHORE","Signed Ashore state keeps its chapter")
+	expect(EloriaProtocol.CLIENT_CAPABILITIES.has("signed_ashore_v1"),"Signed Ashore capability declared")
+	for chapter: Variant in ["THE LAST LANTERN", "THE SECOND BELL", "signed ashore", "", null]:
+		var wrong: Dictionary=ashore.duplicate(true)
+		wrong.chapter=chapter
+		expect(decode(wrong).get("type")=="invalid","reject Signed Ashore under chapter "+str(chapter))
+	var unnamed: Dictionary=ashore.duplicate(true)
+	unnamed.erase("chapter")
+	expect(decode(unnamed).get("type")=="invalid","Signed Ashore requires its chapter")
+	for countersign in ["grove","temple","gate","light"]:
+		for bad: Variant in ["true", 1, null]:
+			var unsigned: Dictionary=ashore.duplicate(true)
+			unsigned.flags[countersign]=bad
+			expect(decode(unsigned).get("type")=="invalid","countersign "+countersign+" requires a boolean, not "+str(bad))
+		var missing: Dictionary=ashore.duplicate(true)
+		missing.flags.erase(countersign)
+		expect(decode(missing).get("type")=="invalid","countersign "+countersign+" is required")
+	var lantern_flags: Dictionary=ashore.duplicate(true)
+	lantern_flags.flags={"crafted":false,"prepared":false,"repaired":false,"lit":false}
+	expect(decode(lantern_flags).get("type")=="invalid","the Lantern's flags do not stand in for the countersigns")
+	ashore.flags.grove=true
+	expect(decode(ashore).get("type")=="lantern_tutorial","a signed countersign decodes")
+	expect(decode({"version":1,"active":false,"tutorial":"signed_ashore"}).get("type")=="lantern_tutorial","leaving removes the Signed Ashore guide")
 	print("Lantern protocol: %d checks, %d failures" % [checks,failures])
 	quit(failures)
