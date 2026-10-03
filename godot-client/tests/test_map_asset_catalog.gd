@@ -63,6 +63,15 @@ func _test_valid_unique_entries(entries: Array[Dictionary]) -> void:
 	_expect(valid, "every entry has a unique ID, nonempty label, and existing res path")
 	_expect(not ids.has("quartz"),
 		"the uncataloged legacy quartz duplicate is not invented as an entry")
+	# An imported node registered beside the procedural model of the same label
+	# must not list as a second identical entry.
+	var harvest_labels := {}
+	var distinct := true
+	for entry: Dictionary in Catalog.filter_entries(entries, "", "Harvestables"):
+		var shown := String(entry.get("label", ""))
+		distinct = distinct and not harvest_labels.has(shown)
+		harvest_labels[shown] = true
+	_expect(distinct, "no two harvest models list under the same palette label")
 
 
 func _test_source_nodes(entries: Array[Dictionary]) -> void:
