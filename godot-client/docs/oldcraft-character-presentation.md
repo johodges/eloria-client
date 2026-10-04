@@ -75,10 +75,17 @@ index chain through the same face predicate as the full-detail surface. This
 keeps Low/Medium/High selection intact without adding a quality-specific mesh
 cache or any per-frame geometry work.
 
-Packaged clients include the imported actor `PackedScene` resources as well as
-the loose source GLBs needed by animation and raw fallbacks. Packaging now
-fails before export if any actor scene is missing its generated-LOD import,
-preventing Low or Medium from silently shipping as full-detail geometry.
+The generated LOD chains are reached through `GlbSceneCache`'s imported-scene
+route, which only an editor checkout takes. An exported client has no resource
+path: `ProjectSettings.globalize_path("res://assets/...")` returns a path
+relative to the game folder, `localize_path()` cannot map it back to `res://`,
+and every actor glTF is parsed from its loose file with `GLTFDocument`, as it
+was before this work. Packaged clients therefore ship the actor glTF folders
+loose only and the face masks (the actor files the client `load()`s) in the
+PCK only; a packaged actor carries no LOD chains, so Low and Medium change
+shadows, cape simulation and LOD bias but not mesh detail there. Giving
+packages the LODs needs the runtime to resolve those paths back to `res://`
+(and the packager to ship the imported scenes instead of the loose GLBs).
 
 For future authored assets, use the following review targets rather than
 adding more runtime modifiers:
