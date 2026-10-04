@@ -19,11 +19,19 @@ What goes in, and why it is more than an export:
       The Godot export. Scripts, scenes, UI art and data. Linux needs the
       official 4.7.2 export templates installed beside the Windows ones.
   app/assets, app/data, app/schemas
-      Loose copies. Actor models are imported into the PCK so ResourceLoader
-      can use Godot's generated mesh LODs, compression and texture mip chains.
-      The original GLBs stay loose as well: metadata readers and the raw
-      GLTFDocument fallback use globalized filesystem paths, and equipment
-      GLBs reference their textures by relative URI from that folder.
+      Loose copies, and every actor file ships once. Actor models, hair and
+      equipment (and the textures equipment GLBs name by relative URI) are
+      opened with GLTFDocument from ProjectSettings.globalize_path(
+      "res://assets/..."). An exported build has no resource path, so that is
+      a path relative to the folder the game starts in, which ResourceLoader
+      never maps back into the pack: GlbSceneCache's imported-scene route is
+      only taken in an editor checkout, and an imported copy in the PCK would
+      never be read. Those folders therefore ship loose only, and the build
+      worktree gets a .gdignore in each, so they are neither imported nor
+      exported (which also keeps ~4 GB out of the import). The one actor
+      folder the game reads through ResourceLoader - the face masks, which
+      models.json names and replicated_actor_3d.gd load()s - is imported and
+      ships in the PCK only.
   eloria-assets/maps, eloria-assets/concepts
       "res://../eloria-assets/..." resolves beside app/. Every map package (a
       folder holding world.json) ships without its references, captures,
@@ -89,14 +97,20 @@ MAP_LOD_PACKAGE = re.compile(r"^(world-lod\d+|build-statistics-lod\d+)\b")
 # Manifest keys that describe provenance, or files the client never opens.
 MANIFEST_SKIPPED_KEYS = {"sources", "provenance", "knownLimitations", "lodGroups"}
 FILE_LIKE = re.compile(r"^[^:*?\"<>|\s]+\.(glb|gltf|bin|json|webp|png|jpg|jpeg|gz|escg|ogg|wav)$", re.I)
+# "Can't open file" is GLTFDocument's error when a loose actor GLB is missing.
 SMOKE_FAILURES = ("SCRIPT ERROR", "Parse Error", "Failed to load script",
-                  "No loader found", "Cannot open file", "Failed loading resource")
+                  "No loader found", "Cannot open file", "Can't open file",
+                  "Failed loading resource")
+
+ACTOR_ROOT = "godot-client/assets/actors/native"
+ACTOR_CATALOGS = ("godot-client/data/actors/models.json", "godot-client/data/actors/equipment.json")
+GLTF_SUFFIXES = (".glb", ".gltf")
 
 # The export preset is not tracked, so the build writes its own. The pack
 # leaves out dev material, including the map editor's review notes
 # (<region>.editor-notes.json beside each region scene): editor-only, never read
-# by the game. Actor resources deliberately remain in the export in addition
-# to their loose copies; the imported PackedScenes carry generated mesh LODs.
+# by the game. The loose-only actor folders are kept out by their .gdignore
+# (see actor_shipping), not by a filter, so the face masks still import.
 EXPORT_PRESETS = """[preset.0]
 
 name="Windows Desktop"
@@ -203,6 +217,63 @@ def tracked(tree: Path, *pathspecs: str) -> list[str]:
     return [p for p in out.decode("utf-8").split("\0") if p]
 
 
+def _catalog_strings(value):
+    if isinstance(value, dict):
+        for child in value.values():
+            yield from _catalog_strings(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from _catalog_strings(child)
+    elif isinstance(value, str):
+        yield value
+
+
+def actor_shipping(build_dir: Path) -> dict:
+    """Decide, per actor folder, whether it ships in the PCK or loose - never both.
+
+    The client reaches actor files two ways. glTF files (models, hair,
+    equipment, animation libraries, held props) go through GlbSceneCache and
+    NativeAnimationImporter with ProjectSettings.globalize_path(), which in an
+    exported build is relative to the working folder: they are read loose,
+    with the files they name by URI, and a PCK copy would never be read. Any
+    other actor file the catalogs name by res:// path (today the face masks)
+    is load()ed through ResourceLoader and must be in the PCK.
+
+    The unit is a folder under assets/actors/native, because a .gdignore keeps
+    a whole folder out of the import and the export. Returns
+    {"pck_folders", "loose_folders"} (repository paths) and "loose" (the
+    tracked files staged into app/). A folder holding both kinds stops the
+    build: it could ship one of them nowhere.
+    """
+    actor_files = tracked(build_dir, ACTOR_ROOT)
+    folders: dict[str, list[str]] = {}
+    for relative in actor_files:
+        parts = PurePosixPath(relative).relative_to(ACTOR_ROOT).parts
+        if len(parts) < 2:
+            raise PackageError(f"{relative} sits outside an actor folder; it would ship nowhere")
+        folders.setdefault(f"{ACTOR_ROOT}/{parts[0]}", []).append(relative)
+    loaded: set[str] = set()
+    for catalog in ACTOR_CATALOGS:
+        document = json.loads((build_dir / catalog).read_text(encoding="utf-8"))
+        for value in _catalog_strings(document):
+            if value.startswith("res://assets/actors/") and not value.lower().endswith(GLTF_SUFFIXES):
+                loaded.add("godot-client/" + value[len("res://"):])
+    tracked_set = set(actor_files)
+    missing = sorted(loaded - tracked_set)
+    if missing:
+        raise PackageError("actor resources the catalogs load are not in the commit:\n  "
+                           + "\n  ".join(missing[:40]))
+    pck_folders = {folder for folder, files in folders.items() if loaded.intersection(files)}
+    for folder in sorted(pck_folders):
+        gltf = [f for f in folders[folder] if f.lower().endswith(GLTF_SUFFIXES)]
+        if gltf:
+            raise PackageError(f"{folder} holds load()ed resources and glTF files read loose "
+                               f"({gltf[0]}); split the folder")
+    loose_folders = set(folders) - pck_folders
+    return {"pck_folders": pck_folders, "loose_folders": loose_folders,
+            "loose": {f for folder in loose_folders for f in folders[folder]}}
+
+
 def find_godot(explicit: str | None) -> Path:
     candidates = [Path(explicit)] if explicit else [
         CLIENT / GODOT_EXE, PROJECT / "eloria-client" / "godot-client" / GODOT_EXE]
@@ -239,10 +310,15 @@ def prepare_build_tree(build_dir: Path, sha: str) -> Path:
         git("clean", "-ffd", "-q", cwd=build_dir)
     project = build_dir / "godot-client"
     (project / "export_presets.cfg").write_text(EXPORT_PRESETS, encoding="utf-8", newline="\n")
-    # Older package builds left this ignored file in the persistent worktree;
-    # git clean intentionally preserves ignored files. Remove it explicitly so
-    # Godot imports actor scenes and the exporter can pack their generated LODs.
+    # The loose-only actor folders are neither imported nor exported. git
+    # clean preserves ignored files, so set every marker explicitly: an older
+    # build's assets/actors/.gdignore would also hide the face masks.
+    shipping = actor_shipping(build_dir)
     (project / "assets" / "actors" / ".gdignore").unlink(missing_ok=True)
+    for folder in shipping["pck_folders"]:
+        (build_dir / folder / ".gdignore").unlink(missing_ok=True)
+    for folder in shipping["loose_folders"]:
+        (build_dir / folder / ".gdignore").write_text("", encoding="utf-8")
     return project
 
 
@@ -278,41 +354,44 @@ def import_project(godot: Path, project: Path, logs: Path) -> None:
 
 
 def check_actor_imports(project: Path) -> None:
-    """Require every actor glTF to have a generated-LOD PackedScene.
+    """Require every actor resource that ships in the PCK to be imported.
 
-    Exporting all resources then writes these imported scenes and their remaps
-    into the PCK. This pre-export check turns a stale ``.gdignore`` or a partial
-    import into a packaging failure instead of silently shipping actors that
-    can only take the raw, no-LOD fallback.
+    The PCK-only actor folders (the face masks) are load()ed through
+    ResourceLoader, which in an export finds them only as imported resources.
+    A stale .gdignore or a partial import would otherwise ship a client whose
+    faces render without their masks. Called on the build worktree, so the
+    repository root is the project's parent.
     """
-    actors = project / "assets" / "actors"
-    sources = sorted((*actors.rglob("*.glb"), *actors.rglob("*.gltf")))
+    build_dir = project.parent
+    shipping = actor_shipping(build_dir)
     failures: list[str] = []
-    for source in sources:
-        sidecar = source.with_name(source.name + ".import")
-        relative = source.relative_to(project).as_posix()
-        if not sidecar.is_file():
-            failures.append(f"{relative}: missing .import remap")
-            continue
-        text = sidecar.read_text(encoding="utf-8", errors="replace")
-        if not re.search(r"(?m)^type=\"PackedScene\"\s*$", text):
-            failures.append(f"{relative}: import is not a PackedScene")
-            continue
-        if not re.search(r"(?m)^meshes/generate_lods=true\s*$", text):
-            failures.append(f"{relative}: mesh LOD generation is disabled")
-            continue
-        match = re.search(r'(?m)^path="res://([^"\r\n]+\.scn)"\s*$', text)
-        if match is None:
-            failures.append(f"{relative}: PackedScene destination is missing")
-            continue
-        imported = project / PurePosixPath(match.group(1))
-        if not imported.is_file() or imported.stat().st_size == 0:
-            failures.append(f"{relative}: imported PackedScene is missing")
-    if not sources:
-        failures.append("assets/actors: no glTF sources found")
+    checked = 0
+    for folder in sorted(shipping["pck_folders"]):
+        if (build_dir / folder / ".gdignore").exists():
+            failures.append(f"{folder}: .gdignore keeps it out of the import")
+        for relative in tracked(build_dir, folder):
+            local = PurePosixPath(relative).relative_to("godot-client").as_posix()
+            if local.endswith((".json", ".bin")):
+                continue  # exported as plain files by the include filter
+            checked += 1
+            sidecar = project / (local + ".import")
+            if not sidecar.is_file():
+                failures.append(f"{local}: missing .import remap")
+                continue
+            text = sidecar.read_text(encoding="utf-8", errors="replace")
+            match = re.search(r"(?m)^dest_files=\[(.*)\]\s*$", text)
+            products = re.findall(r'"res://([^"]+)"', match.group(1)) if match else []
+            if not products or any(not (project / PurePosixPath(p)).is_file()
+                                   or (project / PurePosixPath(p)).stat().st_size == 0
+                                   for p in products):
+                failures.append(f"{local}: imported resource is missing")
+    if not shipping["pck_folders"]:
+        failures.append("no actor folder ships in the PCK; the face masks would be missing")
     if failures:
-        raise PackageError("actor LOD imports are incomplete:\n  " + "\n  ".join(failures[:40]))
-    log(f"checked {len(sources)} imported actor scenes with generated LODs")
+        raise PackageError("PCK actor imports are incomplete:\n  " + "\n  ".join(failures[:40]))
+    log(f"checked {checked} imported actor resources in "
+        f"{', '.join(PurePosixPath(f).name for f in sorted(shipping['pck_folders']))}; "
+        f"{len(shipping['loose_folders'])} actor folders ship loose only")
 
 
 def export_project(godot: Path, project: Path, app_dir: Path, logs: Path, platform: dict) -> None:
@@ -335,13 +414,83 @@ def copy_file(source: Path, target: Path) -> int:
 
 
 def stage_loose_client_files(build_dir: Path, app_dir: Path) -> None:
-    total = 0
+    # Actor files ship once: the PCK-only folders (face masks) stay out of app/.
+    loose_actors = actor_shipping(build_dir)["loose"]
+    total = staged = pck_only = 0
     files = tracked(build_dir, "godot-client/assets", "godot-client/data", "godot-client/schemas")
     for relative in files:
         if relative.endswith((".import", ".report.json")):
             continue
+        if relative.startswith(ACTOR_ROOT + "/") and relative not in loose_actors:
+            pck_only += 1
+            continue
         total += copy_file(build_dir / relative, app_dir / PurePosixPath(relative).relative_to("godot-client"))
-    log(f"staged {len(files)} loose client files ({total / 1e9:.2f} GB)")
+        staged += 1
+    log(f"staged {staged} loose client files ({total / 1e9:.2f} GB); "
+        f"{pck_only} actor files ship in the PCK only")
+
+
+def pck_paths(pck: Path) -> set[str]:
+    """Every path in a Godot 4 PCK's directory (formats 2 to 4), without res://."""
+    with open(pck, "rb") as handle:
+        if handle.read(4) != b"GDPC":
+            raise PackageError(f"{pck} is not a Godot PCK")
+        version = struct.unpack("<4I", handle.read(16))[0]
+        flags = 0
+        directory = None
+        if version >= 2:
+            flags, = struct.unpack("<I", handle.read(4))
+            handle.read(8)  # file base
+        if version >= 3:
+            directory, = struct.unpack("<Q", handle.read(8))
+        handle.read(16 * 4)
+        if directory is not None:
+            handle.seek(directory)
+        if flags & 1:
+            raise PackageError(f"{pck} has an encrypted directory")
+        count, = struct.unpack("<I", handle.read(4))
+        paths = set()
+        for _ in range(count):
+            length, = struct.unpack("<I", handle.read(4))
+            name = handle.read(length).rstrip(b"\0").decode("utf-8", "replace")
+            handle.read(16 + 16 + (4 if version >= 2 else 0))  # offset, size, md5, flags
+            paths.add(name.removeprefix("res://"))
+    return paths
+
+
+def check_actor_pack(build_dir: Path, app_dir: Path) -> None:
+    """Each actor file is in exactly one place: the PCK or app/assets.
+
+    The PCK must hold every PCK-only actor resource (as its .import remap or,
+    for .json/.bin, the file itself) and nothing from a loose-only folder;
+    app/assets must hold every loose-only file and nothing from a PCK folder.
+    """
+    shipping = actor_shipping(build_dir)
+    paths = pck_paths(app_dir / "Eloria.pck")
+    problems: list[str] = []
+    in_pck = 0
+    for folder in sorted(shipping["pck_folders"]):
+        for relative in tracked(build_dir, folder):
+            local = PurePosixPath(relative).relative_to("godot-client").as_posix()
+            entry = local if local.endswith((".json", ".bin")) else local + ".import"
+            if entry not in paths:
+                problems.append(f"{local}: not in the PCK")
+            if (app_dir / local).exists():
+                problems.append(f"{local}: also staged loose")
+            in_pck += 1
+    loose_prefixes = tuple(PurePosixPath(f).relative_to("godot-client").as_posix() + "/"
+                           for f in shipping["loose_folders"])
+    # An imported file reaches the PCK with its remap under its own path, so a
+    # loose-only folder that leaked into the import shows up by prefix.
+    leaked = sorted(p for p in paths if p.startswith(loose_prefixes))
+    problems.extend(f"{p}: a loose-only actor file is in the PCK" for p in leaked[:20])
+    for relative in sorted(shipping["loose"]):
+        if not (app_dir / PurePosixPath(relative).relative_to("godot-client")).is_file():
+            problems.append(f"{relative}: not staged loose")
+    if problems:
+        raise PackageError(f"{len(problems)} actor files are not shipped exactly once:\n  "
+                           + "\n  ".join(problems[:40]))
+    log(f"checked actor files: {in_pck} in the PCK only, {len(shipping['loose'])} loose only")
 
 
 def is_shipped_map_file(relative: PurePosixPath) -> bool:
@@ -957,6 +1106,7 @@ def main() -> int:
         app_dir = stage / "app"
         export_project(godot, project, app_dir, logs, platform)
         stage_loose_client_files(build_dir, app_dir)
+        check_actor_pack(build_dir, app_dir)
         warnings = stage_eloria_assets(build_dir, stage)
         if not options.no_vram_textures:
             stage_vram_textures(build_dir, stage, godot, options.vram_cache.resolve(), logs)

@@ -1,6 +1,14 @@
-"""Packaging contract for imported actor LODs and loose raw fallbacks."""
+"""Packaging contract for actor files: each ships once, where the exported game reads it.
+
+glTF actors are read loose (GlbSceneCache and the animation importer open
+globalized paths, which an export resolves beside the executable, never in
+the pack); the face masks are load()ed through ResourceLoader and must be
+imported into the PCK.
+"""
 import importlib.util
+import json
 from pathlib import Path
+import struct
 import sys
 
 import pytest
@@ -12,26 +20,53 @@ package = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = package
 SPEC.loader.exec_module(package)
 
-
-def _write_actor_import(project: Path, *, lods: bool = True, artifact: bool = True) -> None:
-    source = project / "assets/actors/native/races/hero.glb"
-    source.parent.mkdir(parents=True)
-    source.write_bytes(b"glTF")
-    imported = project / ".godot/imported/hero.glb-test.scn"
-    imported.parent.mkdir(parents=True)
-    if artifact:
-        imported.write_bytes(b"RSRC imported scene")
-    source.with_name(source.name + ".import").write_text(
-        "[remap]\n\n"
-        'type="PackedScene"\n'
-        'path="res://.godot/imported/hero.glb-test.scn"\n\n'
-        "[params]\n\n"
-        f"meshes/generate_lods={'true' if lods else 'false'}\n",
-        encoding="utf-8",
-    )
+NATIVE = "godot-client/assets/actors/native"
+RACE = f"{NATIVE}/races/hero.glb"
+LIBRARY = f"{NATIVE}/shared/library.glb"
+CLOTH = f"{NATIVE}/equipment/cloth.glb"
+CLOTH_TEXTURE = f"{NATIVE}/equipment/textures/cloth.jpg"
+MASK = f"{NATIVE}/face_masks/hero.png"
+MASK_MANIFEST = f"{NATIVE}/face_masks/manifest.json"
 
 
-def test_export_presets_pack_actor_resources_for_resource_loader():
+def _write_tree(build: Path, *, extra: tuple[str, ...] = ()) -> list[str]:
+    """A build tree whose catalogs name one race, its library, one garment and a mask."""
+    files = [RACE, LIBRARY, CLOTH, CLOTH_TEXTURE, MASK, MASK_MANIFEST, *extra]
+    for relative in files:
+        (build / relative).parent.mkdir(parents=True, exist_ok=True)
+        (build / relative).write_bytes(b"x")
+    models = {"models": {"hero": {
+        "scene": "res://" + RACE.removeprefix("godot-client/"),
+        "animationLibrary": "res://" + LIBRARY.removeprefix("godot-client/"),
+        "faceAppearance": {"mask": "res://" + MASK.removeprefix("godot-client/")}}}}
+    equipment = {"models": {"4:1": {"scene": "res://" + CLOTH.removeprefix("godot-client/")}}}
+    for name, document in (("models.json", models), ("equipment.json", equipment)):
+        path = build / "godot-client/data/actors" / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(document), encoding="utf-8")
+    return files + list(package.ACTOR_CATALOGS)
+
+
+def _track(monkeypatch, files: list[str]) -> None:
+    monkeypatch.setattr(package, "tracked", lambda _tree, *specs: [
+        f for f in files if any(f == s or f.startswith(s.rstrip("/") + "/") for s in specs)])
+
+
+def _import_mask(build: Path, *, product: bool = True) -> None:
+    project = build / "godot-client"
+    imported = project / ".godot/imported/hero.png-test.ctex"
+    imported.parent.mkdir(parents=True, exist_ok=True)
+    if product:
+        imported.write_bytes(b"GST2 imported texture")
+    (build / (MASK + ".import")).write_text(
+        "[remap]\n\nimporter=\"texture\"\ntype=\"CompressedTexture2D\"\n"
+        'path="res://.godot/imported/hero.png-test.ctex"\n\n[deps]\n\n'
+        'dest_files=["res://.godot/imported/hero.png-test.ctex"]\n', encoding="utf-8")
+
+
+def test_export_presets_never_filter_out_the_actor_tree():
+    # A blanket assets/actors exclusion would drop the face masks again; the
+    # loose-only folders are kept out by .gdignore instead.
     actor_exclusions = [
         line for line in package.EXPORT_PRESETS.splitlines()
         if line.startswith("exclude_filter=") and "assets/actors" in line
@@ -40,27 +75,72 @@ def test_export_presets_pack_actor_resources_for_resource_loader():
     assert package.EXPORT_PRESETS.count('export_filter="all_resources"') == 2
 
 
-def test_prepare_build_tree_removes_stale_actor_gdignore(tmp_path, monkeypatch):
+def test_glTF_folders_ship_loose_and_load_folders_ship_in_the_pck(tmp_path, monkeypatch):
+    build = tmp_path / "build"
+    _track(monkeypatch, _write_tree(build))
+
+    shipping = package.actor_shipping(build)
+
+    assert shipping["pck_folders"] == {f"{NATIVE}/face_masks"}
+    assert shipping["loose_folders"] == {f"{NATIVE}/races", f"{NATIVE}/shared",
+                                         f"{NATIVE}/equipment"}
+    assert shipping["loose"] == {RACE, LIBRARY, CLOTH, CLOTH_TEXTURE}
+
+
+def test_a_folder_mixing_loaded_and_glTF_files_stops_the_package(tmp_path, monkeypatch):
+    build = tmp_path / "build"
+    _track(monkeypatch, _write_tree(build, extra=(f"{NATIVE}/face_masks/bust.glb",)))
+    with pytest.raises(package.PackageError, match="split the folder"):
+        package.actor_shipping(build)
+
+
+def test_a_loaded_resource_missing_from_the_commit_stops_the_package(tmp_path, monkeypatch):
+    build = tmp_path / "build"
+    files = _write_tree(build)
+    _track(monkeypatch, [f for f in files if f != MASK])
+    with pytest.raises(package.PackageError, match="catalogs load are not in the commit"):
+        package.actor_shipping(build)
+
+
+def test_prepare_build_tree_sets_the_import_barriers_per_folder(tmp_path, monkeypatch):
     build = tmp_path / "client-src"
     (build / ".git").mkdir(parents=True)
-    barrier = build / "godot-client/assets/actors/.gdignore"
-    barrier.parent.mkdir(parents=True)
-    barrier.write_text("", encoding="utf-8")
+    _track(monkeypatch, _write_tree(build))
+    stale_root = build / "godot-client/assets/actors/.gdignore"
+    stale_mask = build / NATIVE / "face_masks/.gdignore"
+    stale_root.write_text("", encoding="utf-8")
+    stale_mask.write_text("", encoding="utf-8")
     monkeypatch.setattr(package, "git", lambda *_args, **_kwargs: "")
 
     project = package.prepare_build_tree(build, "a" * 40)
 
     assert project == build / "godot-client"
-    assert not barrier.exists()
+    assert not stale_root.exists() and not stale_mask.exists()
+    for folder in ("races", "shared", "equipment"):
+        assert (build / NATIVE / folder / ".gdignore").is_file()
     assert "assets/actors" not in (project / "export_presets.cfg").read_text()
 
 
-def test_actor_import_check_accepts_generated_lod_packed_scene(tmp_path):
-    _write_actor_import(tmp_path)
-    package.check_actor_imports(tmp_path)
+def test_actor_import_check_accepts_an_imported_face_mask(tmp_path, monkeypatch):
+    build = tmp_path / "client-src"
+    _track(monkeypatch, _write_tree(build))
+    _import_mask(build)
+    package.check_actor_imports(build / "godot-client")
 
 
-def test_packaging_stops_before_export_when_actor_lod_imports_are_absent(
+@pytest.mark.parametrize("product,barrier", [(False, False), (True, True)])
+def test_actor_import_check_rejects_a_mask_the_pck_would_lack(tmp_path, monkeypatch,
+                                                              product, barrier):
+    build = tmp_path / "client-src"
+    _track(monkeypatch, _write_tree(build))
+    _import_mask(build, product=product)
+    if barrier:
+        (build / NATIVE / "face_masks/.gdignore").write_text("", encoding="utf-8")
+    with pytest.raises(package.PackageError, match="PCK actor imports are incomplete"):
+        package.check_actor_imports(build / "godot-client")
+
+
+def test_packaging_stops_before_export_when_pck_actor_imports_are_absent(
         tmp_path, monkeypatch):
     project = tmp_path / "client-src/godot-client"
     project.mkdir(parents=True)
@@ -75,32 +155,76 @@ def test_packaging_stops_before_export_when_actor_lod_imports_are_absent(
     monkeypatch.setattr(package, "import_project", lambda *_args: None)
     monkeypatch.setattr(
         package, "check_actor_imports",
-        lambda _project: (_ for _ in ()).throw(package.PackageError("actor LOD imports are incomplete")),
+        lambda _project: (_ for _ in ()).throw(package.PackageError("PCK actor imports are incomplete")),
     )
     monkeypatch.setattr(
         package, "export_project",
-        lambda *_args: pytest.fail("export must not run without actor LOD imports"),
+        lambda *_args: pytest.fail("export must not run without the face-mask imports"),
     )
 
     assert package.main() == 1
 
 
-@pytest.mark.parametrize("lods,artifact", [(False, True), (True, False)])
-def test_actor_import_check_rejects_missing_packaged_lod_inputs(tmp_path, lods, artifact):
-    _write_actor_import(tmp_path, lods=lods, artifact=artifact)
-    with pytest.raises(package.PackageError, match="actor LOD imports are incomplete"):
-        package.check_actor_imports(tmp_path)
-
-
-def test_loose_actor_glb_is_still_staged_for_metadata_and_raw_fallback(tmp_path, monkeypatch):
+def test_only_loose_actor_folders_are_staged_beside_the_executable(tmp_path, monkeypatch):
     build = tmp_path / "build"
     app = tmp_path / "app"
-    relative = "godot-client/assets/actors/native/races/hero.glb"
-    source = build / relative
-    source.parent.mkdir(parents=True)
-    source.write_bytes(b"raw actor glb")
-    monkeypatch.setattr(package, "tracked", lambda *_args: [relative])
+    _track(monkeypatch, _write_tree(build))
 
     package.stage_loose_client_files(build, app)
 
-    assert (app / "assets/actors/native/races/hero.glb").read_bytes() == b"raw actor glb"
+    staged = sorted(p.relative_to(app).as_posix() for p in app.rglob("*") if p.is_file())
+    assert staged == [
+        "assets/actors/native/equipment/cloth.glb",
+        "assets/actors/native/equipment/textures/cloth.jpg",
+        "assets/actors/native/races/hero.glb",
+        "assets/actors/native/shared/library.glb",
+        "data/actors/equipment.json",
+        "data/actors/models.json",
+    ]
+
+
+def _write_pck(path: Path, names: list[str]) -> None:
+    """A Godot 4.7 (format 4) PCK directory listing empty files with these names."""
+    header = b"GDPC" + struct.pack("<4I", 4, 4, 7, 2) + struct.pack("<I", 2)
+    reserved = b"\0" * 64
+    directory_offset = len(header) + 8 + 8 + len(reserved)
+    directory = struct.pack("<I", len(names))
+    for name in names:
+        raw = name.encode("utf-8")
+        raw += b"\0" * (-len(raw) % 4)
+        directory += struct.pack("<I", len(raw)) + raw
+        directory += struct.pack("<QQ", 0, 0) + b"\0" * 16 + struct.pack("<I", 0)
+    path.write_bytes(header + struct.pack("<QQ", 0, directory_offset) + reserved + directory)
+
+
+def test_pck_directory_is_read_from_a_godot_47_pack(tmp_path):
+    pck = tmp_path / "Eloria.pck"
+    _write_pck(pck, ["assets/actors/native/face_masks/hero.png.import", "res://project.binary"])
+    assert package.pck_paths(pck) == {
+        "assets/actors/native/face_masks/hero.png.import", "project.binary"}
+
+
+GOOD_PCK = ["assets/actors/native/face_masks/hero.png.import",
+            "assets/actors/native/face_masks/manifest.json"]
+
+
+@pytest.mark.parametrize("names,remove,message", [
+    (GOOD_PCK[1:], None, "hero.png: not in the PCK"),
+    (GOOD_PCK + ["assets/actors/native/races/hero.glb.import"], None,
+     "a loose-only actor file is in the PCK"),
+    (GOOD_PCK, "assets/actors/native/races/hero.glb", "not staged loose"),
+])
+def test_actor_pack_check_holds_each_file_to_one_place(tmp_path, monkeypatch,
+                                                       names, remove, message):
+    build = tmp_path / "build"
+    app = tmp_path / "app"
+    _track(monkeypatch, _write_tree(build))
+    package.stage_loose_client_files(build, app)
+    _write_pck(app / "Eloria.pck", GOOD_PCK)
+    package.check_actor_pack(build, app)
+
+    _write_pck(app / "Eloria.pck", names)
+    if remove:
+        (app / remove).unlink()
+    with pytest.raises(package.PackageError, match=message):
+        package.check_actor_pack(build, app)
