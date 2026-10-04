@@ -12,7 +12,8 @@ whole harvestable layer did before the registry existed.
 
 This reads the registry the asset generator writes, checks every model file it
 names is a real GLB, and checks the server's own harvesting profile and
-interactive table resolve through it. The server repository is optional: the
+interactive table - with the continent-v2 overlay's rows appended, as the
+server serves them - resolve through it. The server repository is optional: the
 model-side checks run either way, and the two cross-repository checks skip with
 a message rather than failing when it is not checked out beside the client.
 """
@@ -47,6 +48,12 @@ SERVER_CANDIDATES = (NEIGHBOURS / (CLIENT.parents[0].name + "-server"),
 # The interactive roles the server can state. `map_object_entries` sends
 # `role.replace("_", " ").title()`, so this is the label as well as the role.
 ROLE_LABEL = re.compile(r"^[a-z_]+$")
+# The continent-v2 overlay beside the profile's own tables. The server serves
+# the landing isles from it: each content loader reads the file of the same
+# name there and appends its rows after the profile's, so a resource or a role
+# declared only there - Olive and Lemon are - reaches the client exactly as a
+# profile one does. A server from before the isles has no such directory.
+OVERLAY = "config/eloria/continent-v2"
 
 
 def server_root() -> Path | None:
@@ -60,6 +67,21 @@ def server_root() -> Path | None:
         if (candidate / "config/eloria/harvesting.txt").is_file():
             return candidate
     return None
+
+
+def served_table_lines(root: Path, name: str) -> list[str]:
+    """The profile's table, then the continent-v2 overlay's table of that name.
+
+    The order the server loads them in. The overlay is read whether or not
+    the checkout's own settings switch it on: the switch is a deployment
+    setting, and any server holding these files can be started with it on.
+    """
+    lines = (root / "config/eloria" / name).read_text(
+        encoding="utf-8").splitlines()
+    overlay = root / OVERLAY / name
+    if overlay.is_file():
+        lines += overlay.read_text(encoding="utf-8").splitlines()
+    return lines
 
 
 def glb_triangle_count(path: Path) -> int:
@@ -234,8 +256,7 @@ class WorldObjectModelTest(unittest.TestCase):
             self.skipTest("eloria-server is not checked out beside the client")
         resources = [
             line.split("|")[1].strip()
-            for line in (root / "config/eloria/harvesting.txt").read_text(
-                encoding="utf-8").splitlines()
+            for line in served_table_lines(root, "harvesting.txt")
             if line.startswith("resource")]
         self.assertTrue(resources)
         for resource in resources:
@@ -247,8 +268,7 @@ class WorldObjectModelTest(unittest.TestCase):
         if root is None:
             self.skipTest("eloria-server is not checked out beside the client")
         roles = set()
-        for line in (root / "config/eloria/interactives.txt").read_text(
-                encoding="utf-8").splitlines():
+        for line in served_table_lines(root, "interactives.txt"):
             if line.startswith("#") or "|" not in line:
                 continue
             role = line.split("|")[4].strip()
