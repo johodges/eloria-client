@@ -231,6 +231,19 @@ SHA256 under `shared-assets/`. Chunk manifests declare their image dependencies
 and separate geometry memory from image memory; the client counts identical
 images once per territory and pools their GPU textures.
 
+Chunk manifests carry no `minimap` block. The map picture belongs to the
+territory: its own `minimap` block frames the HUD minimap and the Tab map,
+and its `minimap.webp` is the picture `godot-client/data/maps/cartography.json`
+names. `export_geometry` still deep-copies the territory block into each
+chunk, naming a `chunks/<x>_<z>/minimap.webp` that no stage writes, and the
+client packager refuses a manifest that names a missing file. The published
+chunk manifests were stripped as data, because `build_continent.py` is pinned
+by `cartography/continent-atlas.json` and `generated/export.json`: at the next
+geometry export, add `'minimap'` to the keys `export_geometry` pops from each
+chunk copy. Until then `StageCommittedMaps` in
+`godot-client/tests/test_package_vram.py` fails when an export brings the
+block back. Do not commit pictures beside the chunks instead.
+
 `continent_chunk_stream.gd` loads independent cells around the real focus;
 current manifests request 240 metres of preload and retain to 320 metres,
 subject to 64 cells and an estimated 256 MiB resident budget per territory
