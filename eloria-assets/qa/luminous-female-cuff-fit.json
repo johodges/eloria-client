@@ -201,9 +201,24 @@
     "producerToolGitCommit": "5d856c982c81889e19c2ecccb1d811303f37a7f6",
     "producerToolGitBlob": "fa5bf59cb1560fa66549bc9a4752695c7e017c1d",
     "producerToolSHA256": "61e783a8ccb531f3f143d19ecb5d5222348e72340a1036c8b5aac579b1b1e3e2",
-    "verifierToolCanonicalLfSHA256": "f1d61bfa306e81e37dd245886b0e568062b35a70f0864902597482018fba072b",
+    "verifierToolCanonicalLfSHA256": "d9009d2b3168402ebbb7e4de61a4539d583ece68e4ceb3ec26ed602119cb6b8b",
     "deterministicRuns": 2,
-    "byteIdentical": true
+    "byteIdentical": true,
+    "revisions": [
+      {
+        "revisedAt": "2026-10-04",
+        "reviewedOutputKey": "rangerLegs",
+        "mesh": "GeneratedLegBackingWithBoots",
+        "reason": "The cuff cut opened the boot-paired lining's leg tubes; a generated lining is one closed solid (test_equipment_fit LegwearSeamTest). The cut is now sealed in its own plane, 3 mm below the boot rim, inside the boot shaft. The visible breeches keep their open hidden cut.",
+        "previousOutputSHA256": "8cf5b088655df8fae22ca0049073e62926ac43e2a00d9451b5468849138a980f",
+        "producerToolCanonicalLfSHA256": "d9009d2b3168402ebbb7e4de61a4539d583ece68e4ceb3ec26ed602119cb6b8b",
+        "producerToolGitBlob": "c8746cc99ffaf67348114885ee94a8358b99cc9b",
+        "inputsUnchanged": true,
+        "otherReviewedOutputsByteIdentical": ["body", "arcanistLegs", "arcanistBoots", "rangerBoots"],
+        "deterministicRuns": 2,
+        "byteIdentical": true
+      }
+    ]
   },
   "reviewedOutputs": {
     "body": {
@@ -260,7 +275,7 @@
       "removedComponentLabels": [413, 834]
     },
     "rangerLegs": {
-      "outputSHA256": "8cf5b088655df8fae22ca0049073e62926ac43e2a00d9451b5468849138a980f",
+      "outputSHA256": "5068ab6ea0ae85b4ab96f9c7cc9c136b28e0d67755c7a5e7620dea4cb19d2fff",
       "semanticMeshes": {
         "Sidelace Breeches": {
           "sha256": "b7cf2a8f25c0a136e7bb1333e33d40b246c34591665fe081d9f107f9e54de908",
@@ -275,9 +290,9 @@
           "material": "Sidelace Breeches Backing"
         },
         "GeneratedLegBackingWithBoots": {
-          "sha256": "d343f758b08b7265d91a06f4ca046ee98a77230d4ed03a1ac752f6615b6567fb",
-          "vertices": 5428,
-          "triangles": 10543,
+          "sha256": "c085d025b0b97d3fc32ee0705d156dff9fc8f0114b0a54df95008e2a9180eece",
+          "vertices": 5762,
+          "triangles": 10870,
           "material": "Sidelace Breeches Backing"
         }
       },
@@ -292,11 +307,16 @@
         },
         "pairedLegBacking": {
           "sourceVertices": 5492,
-          "outputVertices": 5428,
+          "outputVertices": 5762,
           "sourceTriangles": 10992,
-          "outputTriangles": 10543,
-          "boundaryEdges": 327,
-          "boundaryVertices": 327
+          "outputTriangles": 10870,
+          "boundaryEdges": 0,
+          "boundaryVertices": 0,
+          "cutBoundaryEdges": 327,
+          "cutBoundaryVertices": 327,
+          "sealedCutLoops": 10,
+          "sealVertices": 334,
+          "sealTriangles": 327
         }
       }
     },

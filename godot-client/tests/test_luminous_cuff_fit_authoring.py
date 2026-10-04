@@ -238,11 +238,38 @@ def test_installed_outputs_match_reviewed_hashes_and_semantic_contracts():
     assert reviewed["arcanistLegs"]["geometry"]["boundaryEdges"] == 36
     assert reviewed["rangerLegs"]["geometry"]["visibleBreeches"][
         "boundaryVertices"] == 70
-    assert reviewed["rangerLegs"]["geometry"]["pairedLegBacking"][
-        "boundaryVertices"] == 327
+    # The cut opens 327 lining boundary vertices; all of them are sealed in
+    # the cut plane so the paired lining stays one closed solid.
+    lining = reviewed["rangerLegs"]["geometry"]["pairedLegBacking"]
+    assert lining["cutBoundaryVertices"] == 327
+    assert lining["boundaryEdges"] == lining["boundaryVertices"] == 0
+    assert lining["sealTriangles"] == lining["cutBoundaryEdges"] == 327
     assert reviewed["rangerBoots"]["geometry"]["pairedBootBacking"][
         "boundaryVertices"] == 215
     assert reviewed["rangerBoots"]["removedComponentLabels"] == []
+
+
+def _open_welded_edges(path: Path, mesh_name: str) -> int:
+    document, binary = cuff.ea.read_glb(path)
+    primitive = cuff.mesh(document, mesh_name)["primitives"][0]
+    points = cuff.ea.accessor_array(
+        document, binary, primitive["attributes"]["POSITION"])
+    faces = cuff.ea.accessor_array(
+        document, binary, primitive["indices"]).astype(int).reshape(-1, 3)
+    _, welded = cuff.np.unique(points, axis=0, return_inverse=True)
+    welded = welded.reshape(-1)[faces]
+    edges = cuff.Counter(
+        tuple(sorted((int(a), int(b))))
+        for tri in welded for a, b in ((tri[0], tri[1]), (tri[1], tri[2]),
+                                       (tri[2], tri[0])))
+    return sum(1 for count in edges.values() if count % 2)
+
+
+def test_ranger_lining_is_sealed_while_the_breeches_keep_their_hidden_cut():
+    installed = INSTALLED["rangerLegs"]
+    assert _open_welded_edges(installed, "GeneratedLegBackingWithBoots") == 0
+    assert _open_welded_edges(installed, "Sidelace Breeches") > 0
+    assert cuff.SEALED_RANGER_LININGS == ("GeneratedLegBackingWithBoots",)
 
 
 def test_installed_body_metadata_tracks_the_installed_bytes():

@@ -30,10 +30,20 @@
   },
   "authoringEvidence": {
     "toolPath": "eloria-assets/tools/author_luminous_cuff_fit.py",
-    "toolCanonicalLfSHA256": "f1d61bfa306e81e37dd245886b0e568062b35a70f0864902597482018fba072b",
+    "toolCanonicalLfSHA256": "d9009d2b3168402ebbb7e4de61a4539d583ece68e4ceb3ec26ed602119cb6b8b",
     "deterministicRuns": 2,
     "byteIdentical": true,
-    "reviewBundle": "godot-client/test-artifacts/luminous-cuff-derived-authoring-v1"
+    "reviewBundle": "godot-client/test-artifacts/luminous-cuff-derived-authoring-v1",
+    "revalidations": [
+      {
+        "revalidatedAt": "2026-10-04",
+        "reason": "The tool gained the Ranger lining seal; the derived wardrobe-pants cut path is unchanged.",
+        "previousToolCanonicalLfSHA256": "f1d61bfa306e81e37dd245886b0e568062b35a70f0864902597482018fba072b",
+        "toolCanonicalLfSHA256": "d9009d2b3168402ebbb7e4de61a4539d583ece68e4ceb3ec26ed602119cb6b8b",
+        "method": "clipped_copy from each sourceGitBlob with this contract, under both tool versions",
+        "outputsMatchingOutputSHA256": 7
+      }
+    ]
   },
   "sourceGitCommit": "5d856c982c81889e19c2ecccb1d811303f37a7f6",
   "assets": {

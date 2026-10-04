@@ -11,7 +11,10 @@ The runtime assets keep their own silhouettes and skinning: their actual open
 boot rim is measured, and the trouser hem is clipped 3 mm below that local rim.
 The rim profile is followed around each calf, avoiding both the old 100+ mm
 double layer and the exposed band caused by a single flat cut through a sloped
-boot cuff.  A final body with a revised neck may be supplied only when its
+boot cuff.  Visible trouser cuts stay open and hidden inside the boot; a
+generated lining cut at the cuff (the Ranger's boot-paired leg backing) is
+sealed again in the cut plane, because a lining is one closed solid.  A final
+body with a revised neck may be supplied only when its
 whole-file hash is expected or an explicit canonical-provenance sidecar proves
 that the pinned lower-body semantic surfaces were inherited unchanged.
 """
@@ -44,6 +47,10 @@ PRODUCTION_ROOTS = (
 TARGET_STATURE_M = 1.67
 HIDDEN_OVERLAP_M = .003
 RADIAL_INSET_M = .0015
+# Generated linings are closed solids (hip plus both leg tubes); the Ranger's
+# boot-paired lining is cut at the cuff and must be sealed again in the cut
+# plane.  The visible breeches keep their deliberately open, hidden cut.
+SEALED_RANGER_LININGS = ("GeneratedLegBackingWithBoots",)
 
 
 def digest(path: Path) -> str:
@@ -896,6 +903,157 @@ def clip_above_cuff(arrays: dict[str, np.ndarray], faces: np.ndarray,
     return compact, new_faces, report
 
 
+def seal_cut_lining(arrays: dict[str, np.ndarray], faces: np.ndarray
+                    ) -> tuple[dict[str, np.ndarray], np.ndarray, dict]:
+    """Close the loops a cuff cut leaves open in a generated lining.
+
+    A generated leg lining is one closed solid: the hip and both leg tubes in
+    one shell (``test_equipment_fit`` requires it).  Clipping the lining at
+    the boot cuff removes the tube ends and leaves every wall open at the cut
+    plane.  The visible trousers keep their deliberately open cut, because a
+    cap there would draw a dark disc between trouser and boot.  The lining is
+    drawn inside the trousers, so its cut is closed where it lies: in the cut
+    plane, 3 mm below the boot rim and inside the boot shaft.
+
+    Vertices are welded by exact position.  Each open loop of the welded
+    boundary is fanned from its centroid, and every cap triangle runs its
+    boundary edge opposite to the wall face that owns it, so the lining keeps
+    one consistent winding: outer walls cap downward and the inner walls of
+    the double-walled lining cap upward.  Cap vertices are new rows carrying
+    the boundary vertex's UV and skin and a vertical hard normal; no authored
+    or clipped wall row changes.
+    """
+    positions = np.asarray(arrays["POSITION"])
+    faces = np.asarray(faces, dtype=np.uint32).reshape(-1, 3)
+    _, welded = np.unique(positions, axis=0, return_inverse=True)
+    welded = welded.reshape(-1)
+    representative: dict[int, int] = {}
+    for row, value in enumerate(welded):
+        representative.setdefault(int(value), row)
+    directed = [(int(a), int(b))
+                for tri in welded[faces]
+                for a, b in ((tri[0], tri[1]), (tri[1], tri[2]), (tri[2], tri[0]))]
+    counts = Counter(tuple(sorted(edge)) for edge in directed)
+    if any(count % 2 and count > 1 for count in counts.values()):
+        raise ValueError("Lining cut has an odd non-manifold edge; cannot seal")
+    boundary = [edge for edge in directed if counts[tuple(sorted(edge))] == 1]
+    if not boundary:
+        raise ValueError("Lining cut left no open boundary to seal")
+    adjacency: dict[int, set[int]] = defaultdict(set)
+    for a, b in boundary:
+        adjacency[a].add(b)
+        adjacency[b].add(a)
+    loops: list[set[int]] = []
+    seen: set[int] = set()
+    for start in sorted(adjacency):
+        if start in seen:
+            continue
+        stack, component = [start], set()
+        seen.add(start)
+        while stack:
+            here = stack.pop()
+            component.add(here)
+            for there in adjacency[here]:
+                if there not in seen:
+                    seen.add(there)
+                    stack.append(there)
+        loops.append(component)
+    additions = {name: [] for name in arrays}
+    cap_faces = []
+    loop_reports = []
+    base = len(positions)
+    for component in loops:
+        ring = sorted(component)
+        edges = [edge for edge in boundary if edge[0] in component]
+        ring_points = np.asarray([positions[representative[value]] for value in ring],
+                                 dtype=np.float64)
+        heights = ring_points[:, 1]
+        if float(np.ptp(heights)) > 1e-6:
+            raise ValueError("Lining cut loop is not planar; cannot seal it flat")
+        centre = ring_points.mean(axis=0)
+        fan = np.asarray([
+            np.cross(positions[representative[b]].astype(np.float64) - centre,
+                     positions[representative[a]].astype(np.float64) - centre)
+            for a, b in edges])
+        facing = 1. if float(fan[:, 1].sum()) >= 0. else -1.
+        start = base + len(additions["POSITION"])
+        local = {value: start + column for column, value in enumerate(ring)}
+        for value in ring:
+            row = representative[value]
+            additions["POSITION"].append(positions[row])
+            additions["NORMAL"].append(np.array([0., facing, 0.], dtype=np.float32))
+            additions["TEXCOORD_0"].append(arrays["TEXCOORD_0"][row])
+            additions["JOINTS_0"].append(arrays["JOINTS_0"][row])
+            additions["WEIGHTS_0"].append(arrays["WEIGHTS_0"][row])
+        totals: dict[int, float] = defaultdict(float)
+        for value in ring:
+            row = representative[value]
+            for joint, weight in zip(arrays["JOINTS_0"][row], arrays["WEIGHTS_0"][row]):
+                totals[int(joint)] += float(weight) / len(ring)
+        chosen = sorted(totals.items(), key=lambda pair: (-pair[1], pair[0]))[:4]
+        centre_joints = np.zeros(4, dtype=np.uint16)
+        centre_weights = np.zeros(4, dtype=np.float32)
+        for column, (joint, weight) in enumerate(chosen):
+            centre_joints[column], centre_weights[column] = joint, weight
+        centre_weights /= centre_weights.sum()
+        centre_index = start + len(ring)
+        additions["POSITION"].append(centre.astype(np.float32))
+        additions["NORMAL"].append(np.array([0., facing, 0.], dtype=np.float32))
+        additions["TEXCOORD_0"].append(np.mean(
+            [arrays["TEXCOORD_0"][representative[value]] for value in ring], axis=0))
+        additions["JOINTS_0"].append(centre_joints)
+        additions["WEIGHTS_0"].append(centre_weights)
+        for a, b in edges:
+            cap_faces.append((centre_index, local[b], local[a]))
+        loop_reports.append({
+            "boundaryEdges": len(edges),
+            "boundaryVertices": len(ring),
+            "cutPlaneYM": float(heights.mean()),
+            "facing": "down" if facing < 0 else "up",
+            "foldedFanTriangles": int(np.count_nonzero(fan[:, 1] * facing <= 0.)),
+        })
+    sealed = {name: np.concatenate(
+        (np.asarray(arrays[name]),
+         np.asarray(additions[name], dtype=np.asarray(arrays[name]).dtype)), axis=0)
+        for name in arrays}
+    sealed_faces = np.vstack((faces, np.asarray(cap_faces, dtype=np.uint32)))
+    # Audit: the sealed lining has no open welded edge left, and nothing new
+    # is degenerate or carries more than four normalised influences.
+    _, rewelded = np.unique(sealed["POSITION"], axis=0, return_inverse=True)
+    rewelded = rewelded.reshape(-1)[sealed_faces]
+    after = Counter(tuple(sorted((int(a), int(b))))
+                    for tri in rewelded
+                    for a, b in ((tri[0], tri[1]), (tri[1], tri[2]), (tri[2], tri[0])))
+    open_after = sum(1 for count in after.values() if count % 2)
+    cap_points = sealed["POSITION"][np.asarray(cap_faces, dtype=np.int64)].astype(np.float64)
+    doubled_area = np.linalg.norm(np.cross(cap_points[:, 1] - cap_points[:, 0],
+                                           cap_points[:, 2] - cap_points[:, 0]), axis=1)
+    if open_after:
+        raise ValueError(f"Sealed lining still has {open_after} open edges")
+    if np.any(doubled_area <= 1e-12):
+        raise ValueError("Lining seal produced a degenerate triangle")
+    report = {
+        "method": "welded-boundary-loop-centroid-fan",
+        "loops": len(loops),
+        "boundaryEdges": len(boundary),
+        "capVertices": int(len(additions["POSITION"])),
+        "capTriangles": len(cap_faces),
+        "downwardLoops": sum(1 for value in loop_reports if value["facing"] == "down"),
+        "upwardLoops": sum(1 for value in loop_reports if value["facing"] == "up"),
+        "foldedFanTriangles": sum(value["foldedFanTriangles"] for value in loop_reports),
+        "openEdgesAfterSeal": open_after,
+        "degenerateTriangles": 0,
+        "minimumCapTriangleAreaM2": float(.5 * doubled_area.min()),
+        "maximumWeightSumError": float(np.abs(
+            sealed["WEIGHTS_0"].astype(np.float64).sum(axis=1) - 1.).max(initial=0.)),
+        "cutPlaneYM": sorted({round(value["cutPlaneYM"], 9) for value in loop_reports}),
+        "outputVertices": int(len(sealed["POSITION"])),
+        "outputTriangles": int(len(sealed_faces)),
+        "loopDetail": loop_reports,
+    }
+    return sealed, sealed_faces, report
+
+
 def append_accessor(document: dict, payload: bytearray, values: np.ndarray,
                     component_type: int, accessor_type: str,
                     *, bounds: bool = False, normalized: bool = False) -> int:
@@ -1039,8 +1197,13 @@ def _clip_mesh_into_document(source_document: dict, source_binary: bytes,
                              mesh_name: str,
                              profiles: dict[str, CuffProfile], *,
                              keep_above: bool,
-                             boundary_offset_m: float = 0.) -> dict:
-    """Replace one primitive in an in-memory GLB copy with an audited clip."""
+                             boundary_offset_m: float = 0.,
+                             seal_cut: bool = False) -> dict:
+    """Replace one primitive in an in-memory GLB copy with an audited clip.
+
+    ``seal_cut`` closes the cut again in its own plane (see
+    ``seal_cut_lining``); only a hidden generated lining may ask for it.
+    """
     primitive = mesh(source_document, mesh_name)["primitives"][0]
     arrays = {name: ea.accessor_array(source_document, source_binary, index)
               for name, index in primitive["attributes"].items()}
@@ -1058,6 +1221,11 @@ def _clip_mesh_into_document(source_document: dict, source_binary: bytes,
     clipped, clipped_faces, clip_report = clip_above_cuff(
         arrays, faces, profiles, cap=False, keep_above=keep_above,
         boundary_offset_m=boundary_offset_m)
+    if seal_cut:
+        if not mesh_name.startswith("Generated"):
+            raise ValueError(f"Only a hidden generated lining may be sealed: {mesh_name}")
+        clipped, clipped_faces, clip_report["seal"] = seal_cut_lining(
+            clipped, clipped_faces)
     out_primitive = mesh(output_document, mesh_name)["primitives"][0]
     out_primitive["attributes"] = {
         "POSITION": append_accessor(output_document, output_binary,
@@ -1144,9 +1312,12 @@ def ranger_cuffed_copies(legs_source: Path, boots_source: Path,
     out_legs_binary = bytearray(legs_binary)
     legs_clips = {}
     for mesh_name in ("Sidelace Breeches", "GeneratedLegBackingWithBoots"):
+        # The breeches keep an open cut hidden 3 mm inside the boot rim; the
+        # paired lining is sealed in that plane so it stays a closed solid.
         legs_clips[mesh_name] = _clip_mesh_into_document(
             legs_document, legs_binary, out_legs, out_legs_binary,
-            mesh_name, profiles, keep_above=True)
+            mesh_name, profiles, keep_above=True,
+            seal_cut=mesh_name in SEALED_RANGER_LININGS)
     write_glb(out_legs, bytes(out_legs_binary), legs_target)
 
     out_boots = copy.deepcopy(boots_document)
@@ -1347,6 +1518,17 @@ def validate_ranger_contract(report: dict, contract: dict) -> None:
                 or clip["unsafeOrientationTriangles"]
                 or clip["maximumInfluences"] > contract["maximumInfluences"]):
             raise ValueError(f"Ranger leg cuff contract failed on {mesh_name}")
+        seal = clip.get("seal")
+        if mesh_name in SEALED_RANGER_LININGS:
+            if (seal is None
+                    or seal["openEdgesAfterSeal"]
+                    or seal["degenerateTriangles"]
+                    or seal["capTriangles"] != seal["boundaryEdges"]
+                    or seal["boundaryEdges"] != boundary["boundaryEdges"]
+                    or seal["maximumWeightSumError"] > 1e-5):
+                raise ValueError(f"Ranger lining seal contract failed on {mesh_name}")
+        elif seal is not None:
+            raise ValueError(f"Visible Ranger legwear must keep its open cut: {mesh_name}")
     boot_clip = report["boots"]["clip"]
     boundary = boot_clip["openBoundaryAudit"]
     if (not np.allclose(
