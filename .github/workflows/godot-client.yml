@@ -80,6 +80,8 @@ jobs:
         run: python3 godot-client/tests/test_build_vram_textures.py -v
       - name: Validate the packager's VRAM sidecar stage and check
         run: python3 godot-client/tests/test_package_vram.py -v
+      - name: Validate the packager's imported actor LODs
+        run: python3 -m pytest godot-client/tests/test_package_client_actor_lods.py -q
       - name: Validate the continent cartography
         run: python3 -m pytest godot-client/tests/test_cartography.py -q
       - name: Boat portal hover and click fixtures
@@ -88,6 +90,8 @@ jobs:
         run: python3 godot-client/tests/test_subject_icon_atlas.py -v
       - name: Validate the perk emblem atlas
         run: python3 godot-client/tests/test_perk_icon_atlas.py -v
+      - name: Validate the creation class emblem atlas
+        run: python3 godot-client/tests/test_creation_class_icon_atlas.py -v
       - name: Simulate and time the cape cloth
         run: |
           godot --headless --path godot-client --script res://tests/test_cape_cloth.gd
@@ -131,6 +135,15 @@ jobs:
         run: |
           godot --headless --path godot-client --script res://tests/test_character_creation.gd
           godot --headless --path godot-client --script res://tests/integration/appearance_options.gd
+      - name: Oldcraft actor, entry and dialogue style fixtures
+        run: |
+          godot --headless --path godot-client --script res://tests/test_oldcraft_actor_style.gd
+          godot --headless --path godot-client --script res://tests/test_oldcraft_entry_style.gd
+          godot --headless --path godot-client --script res://tests/test_oldcraft_dialogue_style.gd
+          godot --headless --path godot-client --script res://tests/test_actor_render_quality.gd
+          godot --headless --path godot-client --script res://tests/test_imported_actor_lods.gd
+          godot --headless --path godot-client --script res://tests/test_wardrobe_shirt_fit.gd
+          godot --headless --path godot-client --script res://tests/test_creature_nameplate_height.gd
       - name: Manifest lighting rig fixtures
         run: godot --headless --path godot-client --script res://tests/test_world_lighting.gd
       - name: Connection lifecycle fixtures
