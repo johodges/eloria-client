@@ -257,9 +257,11 @@ func _all_low(meshes: Array[MeshInstance3D]) -> bool:
 
 ## Keep the two creation seams and the live update loop explicit. Runtime actor
 ## coverage above owns their behavior; these assertions keep a later spawn-path
-## refactor from silently omitting the call.
+## refactor from silently omitting the call. The source is compared with LF line
+## endings, because a Windows checkout with core.autocrlf writes main.gd as CRLF
+## and the multi-line needles below would then never match.
 func _check_main_wiring() -> void:
-	var source := FileAccess.get_file_as_string("res://src/app/main.gd")
+	var source := FileAccess.get_file_as_string("res://src/app/main.gd").replace("\r\n", "\n")
 	_expect(source.contains(
 		"preview_actor.apply_render_quality(LookProfile.quality(), true)"),
 		"new creation previews receive the resolved quality")
