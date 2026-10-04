@@ -16,6 +16,13 @@ jobs:
       image: barichello/godot-ci:4.7.2
     steps:
       - uses: actions/checkout@v4
+      # git runs as the container's root user, but the runner owns the
+      # checkout, so git refuses it ("detected dubious ownership"):
+      # actions/checkout trusts it only under a HOME of its own. Steps that
+      # run git in the checkout (test_package_vram.py StageCommittedMaps)
+      # need it trusted here.
+      - name: Let git read the checkout inside the container
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Import project
         run: godot --headless --path godot-client --editor --quit
       - name: Install Python asset validator

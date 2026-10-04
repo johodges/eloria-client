@@ -11,7 +11,11 @@ the Godot 4.7.2 editor binary plus numpy and Pillow; without them it skips.
 StageCommittedMaps walks this checkout's committed maps the way the packager
 does, so a manifest naming a file that is not in the commit fails here in
 seconds instead of after the packager's half-hour import and export. CI runs
-that class on its own, as the package-map-walk job.
+it twice: with the rest of this file in the protocol-tests job, and on its own
+as the package-map-walk job, which no failing protocol-tests step can skip. It
+runs git in the checkout, so protocol-tests first marks the checkout a safe
+directory: in that job's container git runs as root, the runner owns the
+checkout, and git refuses a repository someone else owns.
 """
 from __future__ import annotations
 
@@ -135,7 +139,11 @@ class StageExternalResources(unittest.TestCase):
 
 
 def _git(*args: str, data: bytes | None = None) -> bytes:
-    return subprocess.run(["git", *args], cwd=CHECKOUT, input=data, capture_output=True, check=True).stdout
+    result = subprocess.run(["git", *args], cwd=CHECKOUT, input=data, capture_output=True)
+    if result.returncode != 0:
+        raise AssertionError(f"git {' '.join(args)} failed in {CHECKOUT}:\n"
+                             + result.stderr.decode("utf-8", errors="replace"))
+    return result.stdout
 
 
 def _batch_contents(output: bytes):
@@ -161,6 +169,12 @@ class StageCommittedMaps(unittest.TestCase):
     territory's minimap block, naming a chunks/<x>_<z>/minimap.webp that no tool
     writes and nothing reads (the client frames and draws the map from the
     territory's own block and picture)."""
+
+    @classmethod
+    def setUpClass(cls):
+        # packager.tracked() would fail with a bare CalledProcessError; say why
+        # git cannot read the checkout (in a CI container: dubious ownership).
+        _git("rev-parse", "--verify", "-q", "HEAD")
 
     def test_chunk_manifests_carry_no_minimap_block(self):
         # build_continent.py export_geometry still copies the block into each
