@@ -1284,8 +1284,11 @@ func _init() -> void:
 			# only ever said "somebody wrote a hex string down", and when
 			# items.txt was renumbered and the catalog regenerated it went
 			# stale along with every fixture below. What the catalog was built
-			# from is now asserted where both halves are visible - the
-			# server's client_content_manifest.json and its content-sync test.
+			# from is now asserted where both halves are visible: the
+			# server's content-sync test holds client_content_manifest.json's
+			# catalog_sources to its tables, and tests/test_catalog_sources.py
+			# holds this catalog's sources to that manifest whenever a server
+			# checkout is found.
 			# 540: the forty-two hand-authored recipes, which stay first in
 			# the file and so stay first here, and the 498 the
 			# crafting ladder generates below them.
