@@ -246,36 +246,6 @@
       "sun.direction is the direction the light travels, so its Y is negative. See _environment() in source/build_whitehorn.py."
     ]
   },
-  "minimap": {
-    "file": "minimap.webp",
-    "image": "minimap.webp",
-    "bounds": {
-      "min": [
-        -358.0,
-        -22.997499465942383,
-        -220.0
-      ],
-      "max": [
-        340.0,
-        344.1594543457031,
-        356.0
-      ]
-    },
-    "northUp": true,
-    "worldMin": [
-      -358.0,
-      -220.0
-    ],
-    "worldMax": [
-      340.0,
-      356.0
-    ],
-    "imageSize": [
-      698,
-      576
-    ],
-    "pixelsPerMetre": 1
-  },
   "performance": {
     "glbBytes": 5125048,
     "nodes": 34,

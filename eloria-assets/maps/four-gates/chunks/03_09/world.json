@@ -234,36 +234,6 @@
       }
     ]
   },
-  "minimap": {
-    "file": "minimap.webp",
-    "image": "minimap.webp",
-    "bounds": {
-      "min": [
-        -306.0,
-        -22.997499465942383,
-        -150.0
-      ],
-      "max": [
-        276.0,
-        344.1594543457031,
-        160.0
-      ]
-    },
-    "northUp": true,
-    "worldMin": [
-      -306.0,
-      -150.0
-    ],
-    "worldMax": [
-      276.0,
-      160.0
-    ],
-    "imageSize": [
-      582,
-      310
-    ],
-    "pixelsPerMetre": 1
-  },
   "collision": {
     "format": "EWCG",
     "formatVersion": 2,

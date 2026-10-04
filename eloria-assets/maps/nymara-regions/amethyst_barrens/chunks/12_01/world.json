@@ -385,36 +385,6 @@
       }
     ]
   },
-  "minimap": {
-    "file": "minimap.webp",
-    "image": "minimap.webp",
-    "bounds": {
-      "min": [
-        -178.0,
-        -22.997499465942383,
-        -400.0
-      ],
-      "max": [
-        550.0,
-        344.1594543457031,
-        162.0
-      ]
-    },
-    "northUp": true,
-    "worldMin": [
-      -178.0,
-      -400.0
-    ],
-    "worldMax": [
-      550.0,
-      162.0
-    ],
-    "imageSize": [
-      728,
-      562
-    ],
-    "pixelsPerMetre": 1
-  },
   "performance": {
     "glbBytes": 915188,
     "nodes": 6,

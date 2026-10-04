@@ -431,36 +431,6 @@
   "lighting": {
     "lights": []
   },
-  "minimap": {
-    "file": "minimap.webp",
-    "image": "minimap.webp",
-    "bounds": {
-      "min": [
-        -190.0,
-        -22.997499465942383,
-        -492.0
-      ],
-      "max": [
-        300.0,
-        344.1594543457031,
-        288.0
-      ]
-    },
-    "northUp": true,
-    "worldMin": [
-      -190.0,
-      -492.0
-    ],
-    "worldMax": [
-      300.0,
-      288.0
-    ],
-    "imageSize": [
-      490,
-      780
-    ],
-    "pixelsPerMetre": 1
-  },
   "ambientPopulation": {
     "groups": [],
     "note": "Scenery livestock instanced by the client's ambient population system. They carry no actor id and no collision, and are deliberately not baked into the world mesh."
