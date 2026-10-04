@@ -555,3 +555,17 @@ jobs:
           name: rendered-server-session
           path: godot-client/test-artifacts
           if-no-files-found: error
+
+  package-map-walk:
+    # The packager's map walk over the committed maps (test_package_vram.py
+    # StageCommittedMaps): every file a shipped map manifest names is in the
+    # commit, and no chunk manifest carries a minimap block. The packager runs
+    # the same walk only after its half-hour import and export. Its own job,
+    # on the runner with no container: standard-library Python and git only,
+    # and no failing protocol-tests step can skip it.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Every file a shipped map manifest names is committed
+        run: python3 godot-client/tests/test_package_vram.py -v StageCommittedMaps

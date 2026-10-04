@@ -7,6 +7,11 @@
 The check cases run on a scratch stage holding a copy of tests/fixtures/vram
 with its committed sidecars. The staging case runs the real tool, which needs
 the Godot 4.7.2 editor binary plus numpy and Pillow; without them it skips.
+
+StageCommittedMaps walks this checkout's committed maps the way the packager
+does, so a manifest naming a file that is not in the commit fails here in
+seconds instead of after the packager's half-hour import and export. CI runs
+that class on its own, as the package-map-walk job.
 """
 from __future__ import annotations
 
@@ -17,9 +22,11 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 TESTS = Path(__file__).resolve().parent
 CLIENT = TESTS.parent
+CHECKOUT = CLIENT.parent
 FIXTURE = TESTS / "fixtures" / "vram"
 sys.path.insert(0, str(CLIENT / "tools"))
 sys.path.insert(0, str(TESTS))
@@ -125,6 +132,78 @@ class StageExternalResources(unittest.TestCase):
                         "commit", "-q", "-am", "missing"], check=True)
         with self.assertRaisesRegex(packager.PackageError, "externalResources -> .*missing.png is not in the commit"):
             packager.stage_eloria_assets(self.repo, self.stage)
+
+
+def _git(*args: str, data: bytes | None = None) -> bytes:
+    return subprocess.run(["git", *args], cwd=CHECKOUT, input=data, capture_output=True, check=True).stdout
+
+
+def _batch_contents(output: bytes):
+    """The object contents in `git cat-file --batch` output, in request order."""
+    at = 0
+    while at < len(output):
+        end = output.index(b"\n", at)
+        header = output[at:end].split()
+        if len(header) != 3:
+            raise AssertionError(f"git cat-file --batch: {output[at:end]!r}")
+        size = int(header[2])
+        yield output[end + 1:end + 1 + size]
+        at = end + 1 + size + 1
+
+
+@unittest.skipUnless((CHECKOUT / ".git").exists(), "needs the client's git checkout")
+class StageCommittedMaps(unittest.TestCase):
+    """The packager's map walk over this checkout's committed maps: every file a
+    shipped manifest names must be in the commit. The packager itself runs this
+    walk only after its half-hour import and export.
+
+    396 legacy chunk manifests once stopped it there: each carried a copy of its
+    territory's minimap block, naming a chunks/<x>_<z>/minimap.webp that no tool
+    writes and nothing reads (the client frames and draws the map from the
+    territory's own block and picture)."""
+
+    def test_chunk_manifests_carry_no_minimap_block(self):
+        # build_continent.py export_geometry still copies the block into each
+        # chunk: pop "minimap" there at the next geometry export, when the
+        # certificates that pin that file are re-issued anyway. Do not commit
+        # pictures beside the chunks instead.
+        # Read from the index, so a sparse checkout still checks every chunk.
+        listing = _git("ls-files", "-s", "-z", "--", "eloria-assets/maps").decode("utf-8")
+        chunks = [(meta.split()[1], path) for meta, path in (line.split("\t", 1) for line in listing.split("\0") if line)
+                  if path.endswith("/world.json") and path.split("/")[-3] == "chunks"]
+        self.assertTrue(chunks, "the checkout has no chunk manifests")
+        blobs = _git("cat-file", "--batch", data="".join(f"{sha}\n" for sha, _ in chunks).encode("ascii"))
+        carrying = [path for (_, path), text in zip(chunks, _batch_contents(blobs)) if "minimap" in json.loads(text)]
+        self.assertEqual(carrying[:5], [], f"{len(carrying)} chunk manifests copy their territory's minimap block")
+
+    def test_every_file_a_shipped_manifest_names_is_committed(self):
+        manifests = [path for path in packager.tracked(CHECKOUT, "eloria-assets/maps") if path.endswith("/world.json")]
+        absent = [path for path in manifests if not (CHECKOUT / path).is_file()]
+        if absent:
+            # The walk skips a manifest it cannot read, so it would pass here
+            # without checking it.
+            self.skipTest(f"{len(absent)} map manifests are not checked out (a sparse checkout?), e.g. {absent[0]}")
+        registry = json.loads((CLIENT / "data" / "maps" / "registry.json").read_text(encoding="utf-8"))
+        stage = Path(tempfile.mkdtemp(prefix="package-committed-maps-"))
+        staged: set[str] = set()
+
+        def copy_file(source: Path, target: Path) -> int:
+            staged.add(target.relative_to(stage).as_posix())
+            return 0
+
+        try:
+            with mock.patch.object(packager, "copy_file", copy_file), mock.patch.object(packager, "log"):
+                packager.stage_eloria_assets(CHECKOUT, stage)
+        except packager.PackageError as error:
+            self.fail(str(error))
+        finally:
+            shutil.rmtree(stage, ignore_errors=True)
+        # A walk that read nothing would pass as well: every map manifest the
+        # registry names must have been staged.
+        named = {match.group(1) for entry in registry.get("maps", {}).values() if isinstance(entry, dict)
+                 for match in [packager.ASSET_REF.search(str(entry.get("manifest", "")))] if match}
+        self.assertTrue(named, "the registry names no map manifests")
+        self.assertEqual(sorted(named - staged)[:5], [], f"{len(named - staged)} registry manifests were not staged")
 
 
 class SelfTestLine(unittest.TestCase):
