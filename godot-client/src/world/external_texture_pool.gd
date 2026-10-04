@@ -1,5 +1,7 @@
 extends RefCounted
 
+const VramTextures := preload("res://src/world/vram_textures.gd")
+
 ## External PNGs are immutable, content-addressed build products. Weak entries
 ## share actual GPU textures across separately imported chunks without keeping
 ## a continent's textures alive after its last resident cell is retired.
@@ -53,19 +55,34 @@ static func share(state: GLTFState, resources: Dictionary) -> int:
 	var images: Array[Texture2D] = state.get_images()
 	var replacements: Dictionary = {}
 	var reused := 0
+	# Images map_image_extension.gd produced already carry their mip chain
+	# (nothing to read back), and the ones it found in this pool are 1x1
+	# placeholders it holds the pooled texture for.
+	var done_value: Variant = state.get_additional_data(VramTextures.DONE_KEY)
+	var done: Dictionary = done_value if done_value is Dictionary else {}
+	var pooled_value: Variant = state.get_additional_data(VramTextures.POOLED_KEY)
+	var pooled: Dictionary = pooled_value if pooled_value is Dictionary else {}
+	# Decoded for this map alone: the pool holds a sidecar of this hash that was
+	# encoded for other roles (VramTextures.pooled_fits). Keep it, publish nothing.
+	var private_value: Variant = state.get_additional_data(VramTextures.PRIVATE_KEY)
+	var private: Dictionary = private_value if private_value is Dictionary else {}
 	for index: int in mini(descriptors.size(), images.size()):
 		var uri := str(descriptors[index].get("uri", ""))
-		if not resources.has(uri) or not images[index] is ImageTexture:
+		if not resources.has(uri) or not images[index] is ImageTexture or private.has(index):
 			continue
 		var key := str(resources[uri])
 		var current := images[index] as ImageTexture
-		var shared := _published(key)
+		# The held reference, never a fresh lookup: a placeholder must not be
+		# published as the texture for its hash.
+		var shared: ImageTexture = pooled.get(index) as ImageTexture
+		if shared == null:
+			shared = _published(key)
 		if shared == null:
 			# Finish the mip chain before publishing an immutable shared texture.
 			# Parallel region builders must never resize a texture another uses.
 			# This uploads through the rendering server, so it happens outside
 			# the lock; a concurrent publisher of the same hash wins below.
-			var image := current.get_image()
+			var image: Image = null if done.has(index) else current.get_image()
 			if image != null and not image.is_empty() and not image.has_mipmaps():
 				if not image.is_compressed() or image.decompress() == OK:
 					image.generate_mipmaps()

@@ -69,6 +69,10 @@ jobs:
         run: python3 godot-client/tests/test_map_surface_materials.py -v
       - name: Validate map crossings
         run: python3 godot-client/tests/test_map_crossings.py -v
+      - name: Validate the VRAM texture sidecar tool
+        run: python3 godot-client/tests/test_build_vram_textures.py -v
+      - name: Validate the packager's VRAM sidecar stage and check
+        run: python3 godot-client/tests/test_package_vram.py -v
       - name: Validate the continent cartography
         run: python3 -m pytest godot-client/tests/test_cartography.py -q
       - name: Boat portal hover and click fixtures
@@ -108,6 +112,10 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_world_input.gd
       - name: Harvest sparkle fixtures
         run: godot --headless --path godot-client --script res://tests/test_harvest_sparkle.gd
+      - name: World object placement and asset palette fixtures
+        run: |
+          godot --headless --path godot-client --script res://tests/test_world_object_placement.gd
+          godot --headless --path godot-client --script res://tests/test_map_asset_catalog.gd
       - name: Viewport click and tile mapping fixtures
         run: godot --headless --path godot-client --script res://tests/test_click_mapping.gd
       - name: Minimap marker draw order fixtures
@@ -170,6 +178,13 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_runtime_performance.gd
       - name: Map cache fixtures
         run: godot --headless --path godot-client --script res://tests/test_map_cache.gd
+      - name: Map image preparation and VRAM texture fixtures
+        run: |
+          godot --headless --path godot-client --script res://tests/test_vram_textures.gd 2>&1 | tee vram-textures.log
+          ! grep -q "SCRIPT ERROR" vram-textures.log
+          grep -q "vram textures tests: PASS" vram-textures.log
+      - name: Continent chunk budget fixtures
+        run: godot --headless --path godot-client --script res://tests/test_continent_chunk_budget.gd
       - name: Continent map fixtures
         run: godot --headless --path godot-client --script res://tests/test_continent_map.gd
       - name: Animation gate fixtures
@@ -243,6 +258,11 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/legacy-region-preview.png"
           test -s "$ELORIA_ARTIFACT_DIR/legacy-chat-console.png"
           test -s "$ELORIA_ARTIFACT_DIR/legacy-hud-settings.png"
+      - name: Render the VRAM texture fixture on a real renderer
+        run: |
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_vram_textures.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/vram-textures.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/vram-textures.log"
+          grep -q "rendered vram textures: PASS" "$ELORIA_ARTIFACT_DIR/vram-textures.log"
       - name: Render all character-creation models
         run: |
           xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_character_creation_models.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/character-models.log"

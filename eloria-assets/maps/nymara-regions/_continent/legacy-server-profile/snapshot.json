@@ -3,7 +3,7 @@
   "purpose": "Immutable pre-diagonal authored coordinate profile",
   "files": {
     "config/eloria/client_content_manifest.json": "df6eb753b8d2e914f2d8a9478e22b34bdfcc9db203e8016474c4d4c9153e0809",
-    "config/eloria/creatures.txt": "f683a45b2da53f03557c7fdf45bc731a304dda241c70f64a7240f776260cde79",
+    "config/eloria/creatures.txt": "52e12b56a549164b6bd930492d8f0f3a932f0c3426ee16fb06f7e1ee0289b1aa",
     "config/eloria/harvesting.txt": "b8ad7d7e1bc89c47635f4ec772fe712a4be460de9c1fb4b3621fea2a02ef17c3",
     "config/eloria/instances/amberwood_gauntlet_low.def": "bc4b63d6cb103216e45a5e5397af9ce604c917cd2edede608e20c7a3def24d49",
     "config/eloria/instances/amberwood_gauntlet_mid.def": "e690629c583104fcc09cc39827a9d76f3ab65ee12649fbc7fba9a2c7980c0a62",
@@ -34,7 +34,7 @@
     "eloria/daily_quests.py": "2b4735642d1db3a09f069b14fdf477897eb1e16492fb0a8fb5787c97a866e218",
     "eloria/pk.py": "57adf011f24b2f806ce337620504065b95cd88fb756ebe23e437e35e9075aa91",
     "eloria/walkthrough.py": "069d3adbe13012f52ad3b9072fc2867995e5ca0596753a9ff5ecffdc98f933f7",
-    "eloria/world.py": "401a9f03e63c7c6a632e1a7d575354c01d37fc78aa9ba97ad491013f18347a29"
+    "eloria/world.py": "3c42466c3bf26607a3131c4483fa82c6a5bbe39a47a4ae0f9ebc719bafe3feaf"
   },
   "reconciliations": [
     {
@@ -73,6 +73,16 @@
       ],
       "previousPublicationSha256": "6d4542aad61e81cd24e20265f5c75801b2ab71c6b709a614ecb6321de921e325",
       "reason": "Reconcile the accepted signed-storage runtime groundwork and incoming game-clock changes into the legacy-frame world.py. Preserve the certified TUTORIAL_ROUTE_MARKERS and TUTORIAL_HARVESTS legacy coordinate values; all remaining source is the accepted develop implementation. Rewriting this source through the previous publication reproduces current server world.py exactly under the existing text normalization. No config, other gameplay source, current server code, or immutable coordinate authority is replaced."
+    },
+    {
+      "date": "2026-10-03",
+      "developCommit": "b76171131eec57cfadeb7e198aee84350744a5c9",
+      "fromCommit": "ff6132467f47466399857f7d59d77f8ab7a8ace5",
+      "files": [
+        "config/eloria/creatures.txt",
+        "eloria/world.py"
+      ],
+      "reason": "feature/v2-spawn-prereqs adds a per-spawn wild leash (eloria/spawns.py, eloria/world.py) and makes the landing isle's eighteen expansion species spawnable (config/eloria/creatures.txt spawn_mode lines). The baseline world.py carries the branch's code with the certified TUTORIAL_ROUTE_MARKERS and TUTORIAL_HARVESTS legacy coordinate values kept; creatures.txt is the branch's file byte for byte. No authored coordinates are touched."
     }
   ]
 }

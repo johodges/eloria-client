@@ -414,6 +414,15 @@ static func _append_native_group(result: Array[Dictionary], catalog: Dictionary,
 	var role_names := {}
 	for role_label: String in roles:
 		role_names[String(roles[role_label])] = role_label
+	# Two models can share a label: an imported harvest node registered beside
+	# the procedural one it replaces (or may replace). The label alone would
+	# list two identical "Flint" entries, so each of those names its model and
+	# says which one the server's label does not draw.
+	var resources := group.get("resources", {}) as Dictionary
+	var label_counts := {}
+	for model_id: String in models:
+		var shared := String((models[model_id] as Dictionary).get("label", model_id))
+		label_counts[shared] = int(label_counts.get(shared, 0)) + 1
 	var sorted_models: Array[Dictionary] = []
 	for model_id: String in models:
 		var model := models[model_id] as Dictionary
@@ -433,8 +442,15 @@ static func _append_native_group(result: Array[Dictionary], catalog: Dictionary,
 				model_id, scene_path])
 			continue
 		var label := String(model.get("label", model_id))
+		var imported := bool(model.get("imported", false))
+		if int(label_counts.get(label, 0)) > 1:
+			var note := model_id
+			if String(resources.get(label, "")) != model_id:
+				note += ", not swapped in" if imported else ", replaced"
+			label = "%s (%s)" % [label, note]
 		var search_fields := [String(model.get("kind", "")),
-			String(role_names.get(model_id, "")), group_name]
+			String(role_names.get(model_id, "")), group_name,
+			"imported" if imported else "procedural"]
 		result.append(_entry(model_id, label, category, scene_path, "",
 			float(model.get("height", 0.0)), " ".join(search_fields)))
 

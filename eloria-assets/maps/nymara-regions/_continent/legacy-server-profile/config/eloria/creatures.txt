@@ -5122,6 +5122,10 @@ model: final
 # --- end of the gauntlet bosses ---
 
 # --- Basic Creature Expansion 100: reviewed Revision 15; catalog only ---
+# Eighteen of them carry `spawn_mode: starter_isle` instead: the wildlife the
+# continent-v2 landing isle's spawn plan places. They may stand in spawns.txt
+# (none does yet); like catalog_only they stay out of tools/generate_drops.py's
+# gear deal, so making them spawnable reshuffles no other creature's loot.
 
 # Direct rabbit counterpart; minimum explicit damage for server combat.
 [monster]
@@ -5158,7 +5162,7 @@ time_to_respawn: 49
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Direct beaver counterpart; small defensive bite.
@@ -5196,7 +5200,7 @@ time_to_respawn: 49
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Direct skunk counterpart; weak close combat.
@@ -5272,7 +5276,7 @@ time_to_respawn: 49
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Small agile prey slightly harder to hit than a rat.
@@ -5310,7 +5314,7 @@ time_to_respawn: 49
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Tiny harmless prey below rabbit durability.
@@ -5348,7 +5352,7 @@ time_to_respawn: 49
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Rat-level bite with less health.
@@ -5386,7 +5390,7 @@ time_to_respawn: 49
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Small predator below a fox.
@@ -5424,7 +5428,7 @@ time_to_respawn: 69
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Nimble snake hunter slightly above a fox.
@@ -6227,7 +6231,7 @@ time_to_respawn: 73
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Smaller and weaker than a raven.
@@ -6265,7 +6269,7 @@ time_to_respawn: 65
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Low-threat waterfowl near beaver difficulty.
@@ -6303,7 +6307,7 @@ time_to_respawn: 49
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Defensive waterfowl with a modest bite.
@@ -6341,7 +6345,7 @@ time_to_respawn: 69
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Larger and stronger than a goose.
@@ -6493,7 +6497,7 @@ time_to_respawn: 57
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Large flightless bird with a dangerous kick.
@@ -6607,7 +6611,7 @@ time_to_respawn: 81
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Agile parrot with a strong beak for its size.
@@ -6722,7 +6726,7 @@ time_to_respawn: 61
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Tiny evasive lizard.
@@ -6760,7 +6764,7 @@ time_to_respawn: 49
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Defensive medium lizard below dangerous snakes.
@@ -6798,7 +6802,7 @@ time_to_respawn: 77
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Sturdy herbivorous lizard.
@@ -6912,7 +6916,7 @@ time_to_respawn: 49
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Strong defensive bite and a protective shell.
@@ -8110,7 +8114,7 @@ time_to_respawn: 73
 combat_engage_distance: 1
 aggressive: 0
 model: final
-spawn_mode: catalog_only
+spawn_mode: starter_isle
 [/monster]
 
 # Strong benevolent mythical beast; chimeran tier avoids the reference unicorn's extreme immunity stats.

@@ -2,7 +2,7 @@
   "cellSize": [50, 50],
   "columns": 5,
   "imagesPerAtlas": 25,
-  "imageCount": 594,
+  "imageCount": 596,
   "fallbackImageId": 117,
   "aliases": {
     "397": 41,

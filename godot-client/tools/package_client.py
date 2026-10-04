@@ -30,6 +30,11 @@ What goes in, and why it is more than an export:
       sources, reports and unused world-lod2.glb; any other file a shipped
       manifest or the map registry names is pulled in even if the filter
       dropped it.
+  eloria-assets/maps/.../shared-assets/vram
+      VRAM-compressed (BC7/BC5/BC1) copies of the shared map images, made at
+      package time by tools/build_vram_textures.py (they are not tracked), so
+      the client uploads them as they are instead of decoding each image to
+      RGBA8. Checked against their index; --no-vram-textures leaves them out.
 
 Only files tracked at the commit are shipped. Before zipping, the package is
 checked - every registry manifest, the files each manifest names, and every
@@ -430,6 +435,20 @@ def stage_eloria_assets(build_dir: Path, stage: Path) -> list[str]:
                 errors.append(f"{manifest} {key} -> {target} is not in the commit")
             elif is_world:
                 warnings.append(f"{manifest} {key} -> {target} not found")
+        # externalResources names its files as keys (URI -> sha256), relative
+        # to the GLB, so the value walk above never sees them: the continent's
+        # shared images (_continent/shared-assets, in no package folder of
+        # their own) were left out, and the client refuses a chunk whose
+        # external images are missing (WorldManifest.verify_external_resources).
+        resources = data.get("externalResources") if is_world and isinstance(data, dict) else None
+        if isinstance(resources, dict):
+            glb_dir = base / PurePosixPath(str(data.get("asset", {}).get("glb", "world.glb"))).parent
+            for uri in resources:
+                target = os.path.normpath(str(glb_dir / str(uri))).replace("\\", "/")
+                if target in all_tracked:
+                    wanted.add(target)
+                else:
+                    errors.append(f"{manifest} externalResources -> {target} is not in the commit")
 
     if errors:
         raise PackageError("missing map files:\n  " + "\n  ".join(errors[:40]))
@@ -472,18 +491,117 @@ def check_registry(build_dir: Path, stage: Path) -> None:
     log(f"checked {len(registry.get('maps', {}))} registry maps")
 
 
+VRAM_SELF_TEST_OK = "vram_textures self_test ok"
+
+
+def stage_vram_textures(build_dir: Path, stage: Path, godot: Path, cache: Path, logs: Path,
+                        tool: Path | None = None) -> dict:
+    """Build the VRAM-compressed sidecars of the shared map images into the stage.
+
+    The sidecars are not tracked (eloria-assets/maps/**/shared-assets/vram/ is
+    ignored), so stage_eloria_assets never copies them: they are made here, by
+    the commit's own tools/build_vram_textures.py, from the build worktree's
+    images, straight into <stage>/eloria-assets/maps/.../vram, with a
+    persistent encode cache outside every repository. Only index.json and the
+    .evt files ship; the quality report goes to the logs.
+    """
+    tool = tool or build_dir / "godot-client" / "tools" / "build_vram_textures.py"
+    log("building VRAM texture sidecars")
+    cache.mkdir(parents=True, exist_ok=True)
+    started = time.time()
+    with open(logs / "vram-textures.log", "w", encoding="utf-8", errors="replace") as handle:
+        result = subprocess.run([sys.executable, str(tool), "--maps", str(build_dir / "eloria-assets" / "maps"),
+                                 "--out-root", str(stage / "eloria-assets" / "maps"), "--cache", str(cache),
+                                 "--godot", str(godot)],
+                                stdout=handle, stderr=subprocess.STDOUT, timeout=3600,
+                                env=dict(os.environ, PYTHONIOENCODING="utf-8"))
+    text = (logs / "vram-textures.log").read_text(encoding="utf-8", errors="replace")
+    if result.returncode != 0:
+        raise PackageError(f"build_vram_textures.py failed; log: {logs / 'vram-textures.log'}\n{text[-2000:]}")
+    files = 0
+    size = 0
+    for report in (stage / "eloria-assets").rglob("vram/report.json"):
+        target = logs / ("vram-report-" + report.parent.parent.name + ".json")
+        shutil.move(str(report), target)
+    for path in (stage / "eloria-assets").rglob("vram/*"):
+        if path.is_file():
+            files += 1
+            size += path.stat().st_size
+    log(f"staged {files} VRAM sidecar files ({size / 1e6:.0f} MB, already zstd: the zip grows by about "
+        f"as much) in {time.time() - started:.0f} s")
+    return {"files": files, "bytes": size}
+
+
+def check_vram_textures(stage: Path) -> None:
+    """Every external map image a staged manifest names is staged, has a
+    sidecar or a reason it has none, and every staged sidecar is the file its
+    index names, byte for byte."""
+    import hashlib
+    problems: list[str] = []
+    indexes: dict[Path, dict] = {}
+    checked = 0
+    for manifest_path in (stage / "eloria-assets").rglob("world.json"):
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
+        except (OSError, ValueError):
+            continue
+        resources = manifest.get("externalResources") or {}
+        if not isinstance(resources, dict) or "streamingChunks" in manifest:
+            continue
+        base = (manifest_path.parent / str(manifest.get("asset", {}).get("glb", "world.glb"))).parent
+        for uri, sha in resources.items():
+            image = (base / uri).resolve()
+            if not image.is_file():
+                problems.append(f"{manifest_path.relative_to(stage)}: external image {uri} is not in the package")
+                continue
+            if image.parent not in indexes:
+                index_path = image.parent / "vram" / "index.json"
+                indexes[image.parent] = (json.loads(index_path.read_text(encoding="utf-8"))
+                                         if index_path.is_file() else {})
+            index = indexes[image.parent]
+            checked += 1
+            if sha not in index.get("images", {}) and sha not in index.get("excluded", {}):
+                problems.append(f"{image.relative_to(stage)}: no sidecar and no exclusion reason")
+    sidecars = 0
+    for directory, index in indexes.items():
+        for sha, entry in index.get("images", {}).items():
+            path = directory / "vram" / entry["file"]
+            if not path.is_file():
+                problems.append(f"{path.relative_to(stage)}: listed in the index but missing")
+                continue
+            sidecars += 1
+            if hashlib.sha256(path.read_bytes()).hexdigest() != entry["sha256"]:
+                problems.append(f"{path.relative_to(stage)}: sha256 differs from the index")
+        listed = {entry["file"] for entry in index.get("images", {}).values()}
+        for path in (directory / "vram").glob("*"):
+            if path.name != "index.json" and path.name not in listed:
+                problems.append(f"{path.relative_to(stage)}: not named by the index")
+    if problems:
+        raise PackageError(f"{len(problems)} VRAM sidecar problems:\n  " + "\n  ".join(problems[:40]))
+    log(f"checked VRAM sidecars: {checked} external image references, {sidecars} sidecars")
+
+
 def wsl_path(path: Path) -> str:
     resolved = path.resolve()
     return f"/mnt/{resolved.drive[0].lower()}{resolved.as_posix()[2:]}"
 
 
-def smoke_launch(app_dir: Path, logs: Path, platform: dict) -> None:
+def smoke_launch(app_dir: Path, logs: Path, platform: dict, vram_textures: bool = False) -> None:
     # The launch must leave the package exactly as it was: a user:// that
     # falls back to a relative path writes settings and caches into app/,
     # and they would ship in the archive.
+    #
+    # With sidecars staged it also proves the shipped binary decodes one: the
+    # client logs VramTextures.self_test() when ELORIA_VRAM_SELF_TEST=1. The
+    # launch is headless, so this covers the decode, not the GPU upload.
     before = {p for p in app_dir.parent.rglob("*")}
     try:
-        _launch(app_dir, logs, platform)
+        text = _launch(app_dir, logs, platform, vram_textures)
+        if vram_textures and text is not None and VRAM_SELF_TEST_OK not in text:
+            lines = [line for line in text.splitlines() if "vram_textures" in line]
+            raise PackageError("the exported client did not decode a VRAM sidecar:\n  "
+                               + "\n  ".join(lines[:10] or ["(no vram_textures line)"])
+                               + f"\nfull log: {logs / 'smoke.log'}")
     finally:
         added = sorted(p for p in app_dir.parent.rglob("*") if p not in before)
         if added:
@@ -491,12 +609,15 @@ def smoke_launch(app_dir: Path, logs: Path, platform: dict) -> None:
                                + "\n  ".join(str(p.relative_to(app_dir.parent)) for p in added[:20]))
 
 
-def _launch(app_dir: Path, logs: Path, platform: dict) -> None:
+def _launch(app_dir: Path, logs: Path, platform: dict, vram_textures: bool = False) -> str | None:
+    self_test = "ELORIA_VRAM_SELF_TEST=1 " if vram_textures else ""
     if platform["binary"].endswith(".exe"):
         log("smoke launch (headless)")
         with tempfile.TemporaryDirectory(prefix="eloria-smoke-") as appdata:
             # A throwaway APPDATA keeps user:// away from the real client settings.
             env = dict(os.environ, APPDATA=appdata, LOCALAPPDATA=appdata)
+            if vram_textures:
+                env["ELORIA_VRAM_SELF_TEST"] = "1"
             text = run_godot(app_dir / platform["binary"], ["--headless", "--quit-after", "600"],
                              logs / "smoke.log", timeout=300, env=env)
     else:
@@ -505,10 +626,10 @@ def _launch(app_dir: Path, logs: Path, platform: dict) -> None:
         if not wsl or subprocess.run([wsl, "-d", WSL_DISTRO, "--exec", "true"],
                                      capture_output=True).returncode != 0:
             log(f"smoke launch skipped: WSL distribution {WSL_DISTRO} is not available")
-            return
+            return None
         log(f"smoke launch (headless, WSL {WSL_DISTRO})")
         command = (f'home=$(mktemp -d) && cd "{wsl_path(app_dir)}" && '
-                   f'HOME="$home" XDG_DATA_HOME="$home" XDG_CONFIG_HOME="$home" '
+                   f'HOME="$home" XDG_DATA_HOME="$home" XDG_CONFIG_HOME="$home" {self_test}'
                    f'./{platform["binary"]} --headless --quit-after 600; '
                    f'status=$?; rm -rf "$home"; exit $status')
         # --exec, not --: "--" hands the line to the distro's login shell
@@ -519,6 +640,7 @@ def _launch(app_dir: Path, logs: Path, platform: dict) -> None:
     if hits:
         raise PackageError("the exported client reported errors at startup:\n  "
                            + "\n  ".join(hits[:30]) + f"\nfull log: {logs / 'smoke.log'}")
+    return text
 
 
 def default_server(build_dir: Path) -> tuple[str, str]:
@@ -790,6 +912,10 @@ def main() -> int:
     parser.add_argument("--server", help="bake HOST[:PORT] into the launchers instead of the login default")
     parser.add_argument("--force", action="store_true", help="replace an existing package for this commit")
     parser.add_argument("--no-smoke", action="store_true", help="skip the headless launch check")
+    parser.add_argument("--no-vram-textures", action="store_true",
+                        help="ship no VRAM-compressed map texture sidecars (the client decodes every image)")
+    parser.add_argument("--vram-cache", type=Path, default=DIST / ".build" / "vram-cache",
+                        help="encode cache for the sidecars (default dist/.build/vram-cache)")
     parser.add_argument("--no-zip", action="store_true", help="leave the folder unarchived")
     parser.add_argument("--installer", action="store_true", help="also build an Inno Setup installer")
     parser.add_argument("--iscc", help="path to Inno Setup's ISCC.exe")
@@ -832,11 +958,14 @@ def main() -> int:
         export_project(godot, project, app_dir, logs, platform)
         stage_loose_client_files(build_dir, app_dir)
         warnings = stage_eloria_assets(build_dir, stage)
+        if not options.no_vram_textures:
+            stage_vram_textures(build_dir, stage, godot, options.vram_cache.resolve(), logs)
+            check_vram_textures(stage)
         check_registry(build_dir, stage)
         check_glb_textures(app_dir)
         launch_args = write_launchers(stage, options.server, build_dir, version, platform)
         if not options.no_smoke:
-            smoke_launch(app_dir, logs, platform)
+            smoke_launch(app_dir, logs, platform, vram_textures=not options.no_vram_textures)
 
         outputs = [stage]
         if not options.no_zip:

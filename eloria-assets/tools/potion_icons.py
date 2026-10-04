@@ -285,11 +285,23 @@ SHELF_BEFORE_SABATONS = 38
 #: The distillates' first id and icon. Item ids leave the practice items room.
 DISTILLATE_ITEM_ID = 1850
 DISTILLATE_IMAGE_ID = 584
+#: Where the shelf stopped the third time: the island crops (crop_icons.py)
+#: took icons 594-595 directly after the distillates, and the server stream
+#: gives their items the ids after Magic Distillate (crop_icons.SERVER_ITEM_IDS,
+#: proposed 1860-1861). A distillate appended past this point would otherwise
+#: be handed exactly those ids. Frozen for the same reason as the others.
+SHELF_BEFORE_CROPS = 48
+#: The first id and icon after the crops.
+AFTER_CROPS_ITEM_ID = 1862
+AFTER_CROPS_IMAGE_ID = 596
 
 for index, potion in enumerate(SHELF):
     if index < SHELF_BEFORE_TORSO:
         potion.item_id = FIRST_ITEM_ID + index
         potion.image_id = FIRST_IMAGE_ID + index
+    elif index >= SHELF_BEFORE_CROPS:
+        potion.item_id = AFTER_CROPS_ITEM_ID + index - SHELF_BEFORE_CROPS
+        potion.image_id = AFTER_CROPS_IMAGE_ID + index - SHELF_BEFORE_CROPS
     elif index >= SHELF_BEFORE_SABATONS:
         potion.item_id = DISTILLATE_ITEM_ID + index - SHELF_BEFORE_SABATONS
         potion.image_id = DISTILLATE_IMAGE_ID + index - SHELF_BEFORE_SABATONS

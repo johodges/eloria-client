@@ -24,17 +24,20 @@ FIRST_GENERATED_IMAGE_ID = 118
 
 
 def generated_piece_count() -> int:
-    # All four generated sets: the armour from 118, the weapons and shields
-    # after it, the painted potion shelf after those, and the sixty-four torso
-    # concept designs after those again, handed out from one run of numbers so
-    # the painted prefix stays contiguous.  Counting only some of them would
-    # leave the others' cells looking like a gap the atlas had failed to fill.
+    # All five generated sets: the armour from 118, the weapons and shields
+    # after it, the painted potion shelf after those, the sixty-four torso
+    # concept designs after those again, and the island crops from 594, handed
+    # out from one run of numbers so the painted prefix stays contiguous.
+    # Counting only some of them would leave the others' cells looking like a
+    # gap the atlas had failed to fill.
+    import crop_icons
     import import_generated_equipment as armour
     import import_generated_weapons as weapons
     import potion_icons
     import torso_items
     return (len(armour.roster()) + len(weapons.roster())
-            + len(potion_icons.roster()) + len(torso_items.roster()))
+            + len(potion_icons.roster()) + len(torso_items.roster())
+            + len(crop_icons.roster()))
 
 ROOT = Path(__file__).resolve().parents[2]
 CLIENT = ROOT / "godot-client"
@@ -128,6 +131,42 @@ class ItemIconAtlasTest(unittest.TestCase):
         for path in self.config["atlases"]:
             with self.subTest(atlas=path):
                 self.assertTrue((CLIENT / path.removeprefix("res://")).is_file())
+
+    def test_the_island_crops_take_the_icons_after_the_distillates(self) -> None:
+        """Olive and Lemon are 594 and 595, the ids the server's items name.
+
+        The crops are the one set whose items the client does not define:
+        the server appends Olive and Lemon to items.txt with these image ids,
+        so they are pinned here rather than only counted.
+        """
+        import numpy as np
+        import crop_icons
+        import potion_icons
+        crops = {crop.name: crop.image_id for crop in crop_icons.roster()}
+        self.assertEqual(crops, {"Olive": 594, "Lemon": 595})
+        self.assertEqual(min(crops.values()),
+                         max(p.image_id for p in potion_icons.roster()) + 1)
+        # The potion shelf writes item ids into the server's fence; a
+        # distillate appended after Magic Distillate would have been handed
+        # 1860 and icon 594, the crops' own. It continues after them now.
+        potions = potion_icons.roster()
+        self.assertEqual(sum(p.image_id < min(crops.values()) for p in potions),
+                         potion_icons.SHELF_BEFORE_CROPS)
+        self.assertEqual(potion_icons.AFTER_CROPS_IMAGE_ID, max(crops.values()) + 1)
+        self.assertEqual(potion_icons.AFTER_CROPS_ITEM_ID,
+                         max(crop_icons.SERVER_ITEM_IDS.values()) + 1)
+        self.assertEqual(set(crop_icons.SERVER_ITEM_IDS), set(crops))
+        self.assertFalse({p.item_id for p in potions} & set(crop_icons.SERVER_ITEM_IDS.values()))
+        plate = read_png(potion_icons.TEMPLATE) if potion_icons.TEMPLATE.is_file() else None
+        for name, image_id in crops.items():
+            with self.subTest(crop=name):
+                self.assertLess(image_id, self.config["imageCount"])
+                if plate is None:
+                    self.skipTest("the empty-slot plate is not beside this checkout")
+                # A crop on the plate, not the bare plate: the distillate
+                # phials beside them change about a tenth of the cell.
+                changed = (np.abs(self.cell_for(image_id) - plate).max(axis=2) > 24).mean()
+                self.assertGreater(changed, .12)
 
 
 if __name__ == "__main__":

@@ -55,6 +55,14 @@ extends RefCounted
 ## 5 - continent-owned scenery uses shared-cell grouping and hidden thresholds.
 ## 6 - shared-continent chunks, external textures and opaque vertex colours.
 ## 7 - shared elevated/sloping drainage uses the common continent water shader.
+##
+## VRAM-compressed sidecar textures did not bump it: they change the tree only
+## for a package with external images, and such a package folds
+## VramTextures.cache_token into its key (`cache_path`), so its entries are
+## already apart from the ones a client without sidecars wrote, in both
+## directions. Every other package builds exactly as before and keeps its
+## entry. (Live continent chunks are detached builds, which read the cache but
+## never write it, so this reaches whole-map loads today.)
 const CACHE_FORMAT_VERSION := 7
 
 ## Wrapped into the digest so the hash of a package cannot be confused with the
@@ -180,19 +188,29 @@ static func _sha256_text(text: String) -> String:
 	return context.finish().hex_encode()
 
 ## The file name a package's digest maps to under the current format version.
-static func cache_key(digest: String) -> String:
-	return cache_key_for(digest, CACHE_FORMAT_VERSION)
+##
+## `token` is what else decides the tree the loader builds from the same
+## bytes: VramTextures.cache_token, which names the texture formats a package
+## with external images was built with (sidecars on or off, which formats the
+## renderer samples, which index). A cache keeps the textures it was packed
+## with, so an entry built from decoded images must not be read once sidecars
+## apply, nor the reverse. Empty for every other package, whose key it leaves
+## as it was.
+static func cache_key(digest: String, token := "") -> String:
+	return cache_key_for(digest, CACHE_FORMAT_VERSION, token)
 
 ## The same, under a stated format version. Split out so a test can ask what
 ## the next version's key would be and prove that a bump misses every entry on
 ## disk rather than reading one the previous loader wrote.
-static func cache_key_for(digest: String, version: int) -> String:
+static func cache_key_for(digest: String, version: int, token := "") -> String:
 	if digest.is_empty():
 		return ""
-	return _sha256_text("%s\n%d\n" % [digest, version]).substr(0, KEY_CHARACTERS)
+	if token.is_empty():
+		return _sha256_text("%s\n%d\n" % [digest, version]).substr(0, KEY_CHARACTERS)
+	return _sha256_text("%s\n%d\n%s\n" % [digest, version, token]).substr(0, KEY_CHARACTERS)
 
-static func cache_path(map_id: String, digest: String) -> String:
-	var key: String = cache_key(digest)
+static func cache_path(map_id: String, digest: String, token := "") -> String:
+	var key: String = cache_key(digest, token)
 	if key.is_empty():
 		return ""
 	return "%s/%s-%s%s" % [
