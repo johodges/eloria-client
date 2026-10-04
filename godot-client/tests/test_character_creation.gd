@@ -24,15 +24,146 @@ func run() -> void:
 	await process_frame
 	main.get_node("%LoginPanel").hide()
 	main.get_node("%CreationPanel").show()
+	await process_frame
 	var race := main.get_node("%CreateRace") as OptionButton
 	var sex := main.get_node("%CreateGender") as OptionButton
 	var skin := main.get_node("%CreateSkin") as OptionButton
 	var hair := main.get_node("%CreateHair") as OptionButton
 	var eyes := main.get_node("%CreateEyes") as OptionButton
+	var hair_color := main.get_node("%CreateHairColor") as OptionButton
+	var shirt := main.get_node("%CreateShirt") as OptionButton
+	var pants := main.get_node("%CreatePants") as OptionButton
+	var boots := main.get_node("%CreateBoots") as OptionButton
 	expect(race.item_count == 8 and sex.item_count == 2, "eight races and two separate sex choices")
-	expect(race.get_item_text(race.selected) == "Human" and sex.get_selected_id() == 0, "Human replaces Luminous and retains the initial female actor")
-	expect(skin.get_selected_id() == 1, "Human retains its pale beige default")
-	var human_index := race.selected
+	expect(race.selected >= 0 and race.selected < race.item_count and
+		sex.selected >= 0 and sex.selected < sex.item_count,
+		"the initial complete-character roll selects a valid race and sex")
+	for selector: OptionButton in [skin, hair, hair_color, eyes, shirt, pants, boots]:
+		expect(selector.selected >= 0 and selector.selected < selector.item_count,
+			"initial appearance randomization selects a valid option")
+	var class_buttons: Array[Button] = [main.get_node("%ClassChoice0"),
+		main.get_node("%ClassChoice1"), main.get_node("%ClassChoice2"),
+		main.get_node("%ClassChoice3")]
+	expect(class_buttons.size() == 4 and (main.get_node("%ClassTitle") as Label).text ==
+		"Vanguard", "four illustrated classes default to Vanguard")
+	expect(main.get("preview_actor") is ReplicatedActor3D,
+		"the one-time initial appearance roll builds the preview")
+	var vanguard_loadout: Dictionary = main.call("_creation_class_loadout")
+	expect(vanguard_loadout == {0: 114, 1: 106, 2: 105, 5: 209},
+		"Vanguard previews its studded field set over the clean native lower wardrobe")
+	expect(CreationArchetypes.loadout_at(1) ==
+		{0: 164, 4: 230, 5: 225, 6: 224},
+		"Ranger previews rotated-fit Sidelace Breeches with Ankle Boots")
+	expect(CreationArchetypes.loadout_at(2) ==
+		{0: 142, 4: 179, 5: 216, 6: 192} and
+		str(CreationArchetypes.at(2).get("starting_items", "")).contains("Warded Tabard"),
+		"Arcanist previews the coherent Warded set and describes its tabard")
+	expect(CreationArchetypes.loadout_at(3) ==
+		{0: 163, 2: 100, 5: 189},
+		"Warden previews its Furtrim Coat over the clean native lower wardrobe")
+	var original_class := int(main.get("selected_creation_class"))
+	main.get_node("%CreateName").text = "Seeded Hero"
+	main.get_node("%CreatePassword").text = "secret"
+	main.get_node("%CreateConfirm").text = "secret"
+	var preview_root := main.get_node("%PreviewRoot") as Node3D
+	var preview_children_before := preview_root.get_child_count()
+	var form_panel := main.get_node("%FormPanel") as PanelContainer
+	var form_rect_before := form_panel.get_global_rect()
+	var selector_sizes_before: Array[Vector2] = []
+	for selector: OptionButton in [race, sex, skin, hair, hair_color, eyes, shirt, pants, boots]:
+		selector_sizes_before.append(selector.size)
+	var first_rng := RandomNumberGenerator.new()
+	first_rng.seed = 1729
+	var expected_rng := RandomNumberGenerator.new()
+	expected_rng.seed = 1729
+	var expected_race_index := expected_rng.randi_range(0, race.item_count - 1)
+	var expected_sex_index := expected_rng.randi_range(0, sex.item_count - 1)
+	main.call("_randomize_creation_appearance", first_rng)
+	var seeded_appearance: Dictionary = main.call("_creation_appearance")
+	var seeded_race := race.selected
+	var seeded_sex := sex.selected
+	expect(preview_root.get_child_count() == preview_children_before + 1,
+		"one randomized roll rebuilds the preview exactly once")
+	expect(seeded_race == expected_race_index and seeded_sex == expected_sex_index,
+		"appearance randomization includes the seeded race and sex rolls")
+	for frame in range(2):
+		await process_frame
+	var form_rect_after := form_panel.get_global_rect()
+	expect(form_rect_after.position.is_equal_approx(form_rect_before.position) and
+		form_rect_after.size.is_equal_approx(form_rect_before.size),
+		"randomized option text does not move or resize the creation form")
+	var selectors: Array[OptionButton] = [race, sex, skin, hair, hair_color, eyes, shirt, pants, boots]
+	for index: int in range(selectors.size()):
+		expect(selectors[index].size.is_equal_approx(selector_sizes_before[index]),
+			"randomized option text keeps selector %d at a fixed width" % index)
+	var second_rng := RandomNumberGenerator.new()
+	second_rng.seed = 1729
+	main.call("_randomize_creation_appearance", second_rng)
+	expect(main.call("_creation_appearance") == seeded_appearance and
+		race.selected == seeded_race and sex.selected == seeded_sex,
+		"the same seed produces the same complete race, sex and appearance")
+	var button_rng := main.get("_creation_appearance_rng") as RandomNumberGenerator
+	button_rng.seed = 1729
+	(main.get_node("%RandomizeAppearance") as Button).pressed.emit()
+	expect(main.call("_creation_appearance") == seeded_appearance,
+		"the Randomize appearance button uses the testable RNG seam")
+	expect(race.selected == seeded_race and sex.selected == seeded_sex and
+		int(main.get("selected_creation_class")) == original_class,
+		"appearance randomization changes identity independently of class")
+	expect(main.get_node("%CreateName").text == "Seeded Hero" and
+		main.get_node("%CreatePassword").text == "secret" and
+		main.get_node("%CreateConfirm").text == "secret",
+		"appearance randomization preserves name and credentials")
+	var app_state := root.get_node("AppState")
+	var connection_before := str(app_state.get("connection_state"))
+	app_state.set("connection_state", "connected")
+	main.call("_on_creation_back_pressed")
+	main.call("_on_new_character_pressed")
+	expect(main.call("_creation_appearance") == seeded_appearance,
+		"reopening creation preserves the rolled appearance")
+	app_state.set("connection_state", connection_before)
+	main.call("_set_creation_class", -1)
+	expect(int(main.get("selected_creation_class")) == 3 and
+		(main.get_node("%ClassTitle") as Label).text == "Warden",
+		"class carousel wraps backwards")
+	main.call("_on_creation_class_rotated", 1)
+	expect(int(main.get("selected_creation_class")) == 0,
+		"class carousel wraps forwards")
+	main.call("_set_creation_class", 1)
+	var ranger_actor := main.get("preview_actor") as ReplicatedActor3D
+	var ranger_bow := ranger_actor.combat_presentation.bow
+	expect(ranger_bow != null and ranger_bow.visible,
+		"Ranger selection shows its equipped bow")
+	main.call("_set_creation_class", 2)
+	var class_loadout: Dictionary = main.call("_creation_class_loadout")
+	var class_actor := main.get("preview_actor") as ReplicatedActor3D
+	expect((class_actor.equipment_diagnostics().visuals as Dictionary) == class_loadout,
+		"selecting Arcanist updates the live equipment preview")
+	expect(ranger_bow != null and not ranger_bow.visible and
+		int((class_actor.equipment_diagnostics().visuals as Dictionary).get(0, -1)) == 142,
+		"leaving Ranger removes its bow before showing the next class weapon")
+	for non_ranger_class: int in [0, 3]:
+		main.call("_set_creation_class", non_ranger_class)
+		class_actor = main.get("preview_actor") as ReplicatedActor3D
+		expect(ranger_bow != null and not ranger_bow.visible,
+			"Ranger bow stays hidden for class %d" % non_ranger_class)
+	main.call("_set_creation_class", 2)
+	class_loadout = main.call("_creation_class_loadout")
+	class_actor = main.get("preview_actor") as ReplicatedActor3D
+	(main.get_node("%ShowClassGear") as CheckBox).set_pressed_no_signal(false)
+	main.call("_on_creation_class_gear_toggled", false)
+	expect((class_actor.equipment_diagnostics().visuals as Dictionary).is_empty(),
+		"class gear can be hidden while editing the base wardrobe")
+	(main.get_node("%ShowClassGear") as CheckBox).set_pressed_no_signal(true)
+	main.call("_on_creation_class_gear_toggled", true)
+	expect((class_actor.equipment_diagnostics().visuals as Dictionary) == class_loadout,
+		"class gear toggle restores the selected loadout")
+	var human_index := -1
+	for race_index in range(race.item_count):
+		if race.get_item_text(race_index) == "Human":
+			human_index = race_index
+			break
+	expect(human_index >= 0, "Human remains available after randomized initialization")
 	var models: Dictionary = main.get("models")
 	var options: Array = main.get("creation_options")
 	var actor_types: Dictionary = {}
@@ -40,6 +171,10 @@ func run() -> void:
 	for race_index in range(race.item_count):
 		choose(race, race_index)
 		var culture := str(race.get_selected_metadata())
+		expect(int(main.get("selected_creation_class")) == 2 and
+			((main.get("preview_actor") as ReplicatedActor3D).equipment_diagnostics().visuals
+			as Dictionary) == class_loadout,
+			"class selection and starting-kit preview survive race switch: " + culture)
 		expect(str(sex.get_selected_metadata()) == previous_sex, "changing race preserves sex: " + culture)
 		var expected_skin := 1 if culture == "luminous" else 0
 		expect(skin.get_selected_id() == expected_skin, "race switch selects its default skin: " + culture)
@@ -57,8 +192,13 @@ func run() -> void:
 			var look: Dictionary = main.call("_creation_appearance")
 			look["actor_type"] = actor_type
 			var packet := EloriaProtocol.create_character("Preview", "secret", look)
-			var tail := packet.slice(packet.size() - 8)
+			var tail := packet.slice(packet.size() - 9)
 			expect(tail[0] == expected_skin and tail[5] == actor_type, "creation bytes preserve race, sex and default skin")
+			var class_packet := EloriaProtocol.create_character(
+				"Preview", "secret", look, int(main.get("selected_creation_class")))
+			var class_tail := class_packet.slice(class_packet.size() - 9)
+			expect(class_tail.slice(0, 8) == tail.slice(0, 8) and class_tail[8] == 2,
+				"class is an independent ninth byte and never replaces race appearance")
 			var materials: Dictionary = actor.get("_skin_materials")
 			expect(not materials.is_empty(), "preview has real skin materials")
 			for material: ShaderMaterial in materials.values():
@@ -92,6 +232,7 @@ func run() -> void:
 		var sex_rect := sex.get_global_rect()
 		expect(is_equal_approx(race_rect.position.y, sex_rect.position.y) and race_rect.end.x <= sex_rect.position.x, "race and sex boxes sit side by side")
 		expect(main.get_global_rect().encloses(race_rect) and main.get_global_rect().encloses(sex_rect), "both selectors fit the window")
+	main.call("_set_creation_class", 0)
 	await capture("character-creation-ui")
 	main.queue_free()
 	await process_frame

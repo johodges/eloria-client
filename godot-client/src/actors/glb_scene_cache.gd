@@ -1,12 +1,12 @@
 class_name GlbSceneCache
 extends RefCounted
-## Parses each external .glb exactly once and hands out instances of the cached
+## Loads each glTF scene exactly once and hands out instances of the cached
 ## result.
 ##
-## Every actor that entered view used to run GLTFDocument.append_from_file() for
-## its 2.3 MB race mesh, again for its hair variant, and again for each native
-## equipment model. Parsing is the dominant cost of bringing an actor into the
-## world and the result is identical every time, so it is cached here.
+## In-project actor assets prefer Godot's imported PackedScene. Besides avoiding
+## a runtime parse, that path retains the importer's generated mesh LODs, shadow
+## meshes, compression and texture mip chains. External authoring/test files and
+## lean checkouts without an import cache keep the raw GLTFDocument fallback.
 ##
 ## Instances share their mesh, skin and material resources, which also removes
 ## the duplicate GPU uploads the per-actor parse produced. Per-actor tinting
@@ -75,6 +75,27 @@ static func _canonical_path(path: String) -> String:
 	return ProjectSettings.globalize_path(path) if path.begins_with("res://") else path
 
 static func _build(path: String) -> PackedScene:
+	var imported := _imported_actor_scene(path)
+	if imported != null:
+		return imported
+	return _build_raw(path)
+
+## ResourceLoader resolves the `.import` remap in an editor checkout and the
+## equivalent remap in an exported PCK. Restricting this preference to actor
+## assets leaves the world-authoring cache's external-file semantics unchanged.
+static func _imported_actor_scene(path: String) -> PackedScene:
+	var resource_path := ProjectSettings.localize_path(path)
+	if not resource_path.begins_with("res://assets/actors/"):
+		return null
+	var extension := resource_path.get_extension().to_lower()
+	if extension != "glb" and extension != "gltf":
+		return null
+	if not ResourceLoader.exists(resource_path, "PackedScene"):
+		return null
+	return ResourceLoader.load(resource_path, "PackedScene",
+		ResourceLoader.CACHE_MODE_REUSE) as PackedScene
+
+static func _build_raw(path: String) -> PackedScene:
 	var document: GLTFDocument = GLTFDocument.new()
 	var state: GLTFState = GLTFState.new()
 	if document.append_from_file(path, state) != OK:

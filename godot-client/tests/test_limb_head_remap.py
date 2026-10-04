@@ -133,6 +133,116 @@ def test_lining_boundary_preserves_all_coincident_body_seams(rig):
     assert all(tuple(point) in actual for point in required)
 
 
+def test_fitted_garment_backing_clips_exactly_at_the_cuff_band(rig):
+    points, faces = boots()
+    mapped, _, _ = remap.boot_frame(points, faces, rig)
+    low, high = 0.19 * rig.fit_scale, 0.36 * rig.fit_scale
+    lining, normal, _, indices, _, _ = remap.backing(
+        rig, mapped, faces, "boots", low, high,
+        join_default_clothing=False, exact_low=True, exact_high=True)
+    # Thickening offsets along the surface normal by at most three mm; the
+    # old uncut body triangles overshot these planes by roughly fifty mm.
+    tolerance = 0.0031 * rig.fit_scale
+    assert lining[:, 1].min() >= low - tolerance
+    assert lining[:, 1].max() <= high + tolerance
+    primitives = coverage.components(lining, indices.reshape(-1, 3))
+    assert primitives and all(shell.closed and shell.volume > 0 for shell in primitives)
+
+
+def test_sheet_band_interpolates_boundary_instead_of_dropping_crossing_faces():
+    points = np.array([[-.1, .1, 0.], [.1, .1, 0.], [0., .3, 0.]])
+    clipped, faces = remap.clip_sheet_band(points, np.array([[0, 1, 2]]), low=.2)
+    assert len(faces) == 1
+    assert clipped[:, 1].min() == pytest.approx(.2)
+    assert clipped[:, 1].max() == pytest.approx(.3)
+
+
+@pytest.mark.parametrize(
+    ("bound", "points"),
+    [
+        ({"low": .2}, np.array([[-.1, .2, 0.], [.1, .3, 0.], [0., .1, 0.]])),
+        ({"high": .2}, np.array([[-.1, .2, 0.], [.1, .1, 0.], [0., .3, 0.]])),
+    ],
+)
+def test_sheet_band_reuses_exact_on_plane_endpoint_without_degenerate_face(
+    bound, points
+):
+    clipped, faces = remap.clip_sheet_band(
+        points, np.array([[0, 1, 2]]), **bound
+    )
+    assert len(faces) == 1
+    assert len(np.unique(faces[0])) == 3
+    triangle = clipped[faces[0]]
+    assert np.linalg.norm(np.cross(
+        triangle[1] - triangle[0], triangle[2] - triangle[0]
+    )) > 1e-12
+    assert np.count_nonzero(np.isclose(triangle[:, 1], .2)) == 2
+
+
+def test_sheet_band_drops_an_exact_on_plane_line_instead_of_emitting_a_face():
+    points = np.array([[-.1, .2, 0.], [.1, .2, 0.], [0., .1, 0.]])
+    clipped, faces = remap.clip_sheet_band(
+        points, np.array([[0, 1, 2]]), low=.2
+    )
+    assert clipped.shape == (0, 3)
+    assert faces.shape == (0, 3)
+
+
+def test_sheet_band_preserves_weighted_side_when_left_foot_crosses_center():
+    # Positive X is normally the left side, but a broad left foot can extend
+    # across the centre line. Its bone weights, not its X coordinate, own the
+    # clipped cuff. The signed values model left_share - right_share.
+    points = np.array([
+        [-.08, .10, -.04], [-.04, .30, -.04], [.03, .30, .05],
+    ])
+    left_ownership = np.array([.92, .86, .74])
+    clipped, faces, ownership = remap.clip_sheet_band(
+        points, np.array([[0, 1, 2]]), low=.20,
+        vertex_values=left_ownership)
+    assert len(faces) == 2
+    assert (clipped[:, 0] < 0).any()
+    assert (ownership >= 0).all(), (
+        "left-foot cuff vertices must stay on the left bone chain")
+
+
+@pytest.mark.parametrize(('keep_above', 'seam'), [(True, .19), (False, .19)])
+def test_packed_cuff_compression_preserves_topology_order_and_far_edge(keep_above, seam):
+    y = np.linspace(.04, .36, 17)
+    points = np.column_stack((np.linspace(-.2, .2, len(y)), y, np.zeros(len(y))))
+    fitted = remap.compress_cuff_band(points, seam, keep_above)
+    assert fitted.shape == points.shape
+    assert np.all(np.diff(fitted[:, 1]) >= 0)
+    if keep_above:
+        assert fitted[:, 1].min() == pytest.approx(seam)
+        assert fitted[:, 1].max() == pytest.approx(points[:, 1].max())
+    else:
+        assert fitted[:, 1].max() == pytest.approx(seam)
+        assert fitted[:, 1].min() == pytest.approx(points[:, 1].min())
+
+
+def test_packed_fitted_backings_meet_at_one_canonical_cuff():
+    seam = remap.FITTED_BOOT_CUFF_SEAM
+    y = np.linspace(.04, .36, 17)
+    points = np.column_stack((np.linspace(-.2, .2, len(y)), y, np.zeros(len(y))))
+    legs = remap.compress_cuff_band(points, seam, keep_above=True)
+    boots = remap.compress_cuff_band(points, seam, keep_above=False)
+    assert legs[:, 1].min() == pytest.approx(seam)
+    assert boots[:, 1].max() == pytest.approx(seam)
+
+
+def test_packed_cuff_orientation_is_checked_before_normal_transport():
+    # A monotonic seam map can still fold a coarse, diagonally triangulated
+    # sheet when its overshoot is compressed too abruptly.  Packed candidates
+    # therefore use the same face-orientation gate as torso silhouettes.
+    points = np.array([[0., .04, 0.], [1., .18, 0.], [0., .36, 1.]])
+    triangles = np.array([[0, 1, 2]])
+    fitted = remap.compress_cuff_band(points, .19, keep_above=True)
+    report = remap.torso_remap.require_safe_deformation(
+        points, fitted, triangles)
+    assert report['newlyDegenerateFaces'] == []
+    assert report['unsafeOrientationFaces'] == []
+
+
 @pytest.mark.parametrize("kind", ["legs", "boots", "helm"])
 def test_original_source_writer_bypasses_old_fit_and_preserves_texture(
     tmp_path, rig, monkeypatch, kind

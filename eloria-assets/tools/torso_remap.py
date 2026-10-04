@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import struct
 from io import BytesIO
 from pathlib import Path
 
@@ -30,6 +31,382 @@ COLLAR_LIFT = {
     'Eight_leather_ranger_torso_designs__r02_c01.glb': .045,
     'Amberwood_Woodland_Armor_Concept_Sheet__r01_c04.glb': .045,
 }
+
+# The source sheets deliberately exaggerate cloth volume.  Keeping that
+# volume after the hanging sleeves have been rotated into the T pose makes a
+# canonical actor read as if its upper arms are nearly as wide as its chest.
+# This is an authoring profile, not a runtime transform: the fitted vertices,
+# normals and skin are written once into the GLB.
+SLEEVE_PROFILE_T = np.array([0.0, 0.12, 0.40, 0.52, 0.62, 0.75, 1.05])
+# The two added knots make the reviewed upper-arm edit return exactly to the
+# previously shipped curve at t=.62.  That is before the elbow/cuff domain, so
+# a shoulder revision cannot shorten an arm or resize its hand opening.
+SLEEVE_PROFILE_SCALE = np.array([
+    0.90, 0.82, 0.803030303030303, 0.804666666666667,
+    0.811333333333333, 0.82, 0.86,
+])
+SHOULDER_CAP_INSET = 0.012
+SLEEVE_PROFILE_LOCK_T = 0.62
+SLEEVE_BACKING_CLEARANCE = 0.006
+# Profiles used by the installed class silhouettes before the final shoulder
+# review.  They are retained as data so tests can prove every new curve is
+# byte-stable from the lock knot through the cuff.
+REVIEWED_ARM_FIT_BASELINES = {
+    'Militia_torso_armor_concept_sheet__r01_c02.glb': {
+        'radial_scale': SLEEVE_PROFILE_SCALE.copy(), 'cap_inset': .012,
+    },
+    'Eight_leather_ranger_torso_designs__r01_c02.glb': {
+        'radial_scale': SLEEVE_PROFILE_SCALE.copy(), 'cap_inset': .012,
+    },
+    'Eloria_Arcane_Armor_Design_Sheet__r01_c01.glb': {
+        'radial_scale': np.array([
+            .88, .77, .761515151515152, .767, .777333333333333, .79, .84]),
+        'cap_inset': .020,
+    },
+    'Amberwood_Woodland_Armor_Concept_Sheet__r02_c02.glb': {
+        'radial_scale': np.array([
+            .86, .72, .711515151515152, .721666666666667,
+            .738333333333333, .76, .82]),
+        'cap_inset': .024,
+    },
+}
+ARM_FIT_OVERRIDES = {
+    # Fur and plated cap islands sit outside the welded sleeve assignment.
+    # Their concept-sheet silhouettes need the stronger, still restrained,
+    # authored fit requested by the in-client side-view review.
+    'Amberwood_Woodland_Armor_Concept_Sheet__r02_c02.glb': {
+        'radial_scale': np.array([
+            .7912, .6408, .633248484848485, .678366666666667,
+            .738333333333333, .76, .82]),
+        'cap_inset': .034,
+    },
+    'Eloria_Arcane_Armor_Design_Sheet__r01_c01.glb': {
+        'radial_scale': np.array([
+            .7744, .6545, .639672727272727, .71331,
+            .777333333333333, .79, .84]),
+        'cap_inset': .048,
+    },
+    'Eight_leather_ranger_torso_designs__r01_c02.glb': {
+        'radial_scale': np.array([
+            .873, .7708, .754848484848485, .788573333333333,
+            .811333333333333, .82, .86]),
+        'cap_inset': .022,
+    },
+    'Militia_torso_armor_concept_sheet__r01_c02.glb': {
+        'radial_scale': np.array([
+            .819, .7216, .706666666666667, .756386666666667,
+            .811333333333333, .82, .86]),
+        'cap_inset': .018,
+    },
+}
+
+# These factors are applied to the already packed generated backing.  Unlike
+# the absolute authoring profiles above they are deltas from the reviewed
+# production asset, and therefore become exactly one at the lock knot.
+PACKED_BACKING_RELATIVE_PROFILES = {
+    'militia_torso_armor_02': np.array([.91, .88, .88, .94, 1., 1., 1.]),
+    'leather_ranger_torso_02': np.array([.97, .94, .94, .98, 1., 1., 1.]),
+    'eloria_arcane_armor_01': np.array([.88, .85, .84, .93, 1., 1., 1.]),
+    'amberwood_woodland_cuirass_06': np.array([.92, .89, .89, .94, 1., 1., 1.]),
+}
+
+
+def position_only_revision(source, out, updates):
+    """Copy a packed GLB while changing selected float VEC3 byte ranges.
+
+    Canonical equipment deliberately shares external image resources.  A full
+    rebuild can accidentally externalize a second copy of those images even
+    when the requested revision is geometric.  This narrow writer retains the
+    original JSON chunk byte-for-byte and overwrites fixed-size POSITION and
+    NORMAL accessors inside the existing BIN chunk.  The old bounds must still
+    contain the revised values, which lets the JSON remain exact as well.
+    """
+    source, out = Path(source), Path(out)
+    document, binary = ea.read_glb(source)
+    raw = bytearray(source.read_bytes())
+    total = struct.unpack_from('<I', raw, 8)[0]
+    offset, binary_start, binary_length = 12, None, None
+    while offset < total:
+        length, kind = struct.unpack_from('<II', raw, offset)
+        if kind == 0x004E4942:
+            if binary_start is not None:
+                raise ValueError('VEC3 accessor revision requires one BIN chunk')
+            binary_start, binary_length = offset + 8, length
+        offset += 8 + length
+    if binary_start is None or binary_length != len(binary):
+        raise ValueError('Could not identify the packed GLB BIN chunk')
+
+    changed = 0
+    updated = set()
+    for index, values in updates.items():
+        index = int(index)
+        if index in updated:
+            raise ValueError(f'Duplicate accessor update: {index}')
+        updated.add(index)
+        spec = document['accessors'][index]
+        if spec['componentType'] != 5126 or spec['type'] != 'VEC3':
+            raise ValueError(f'Accessor {index} is not a float VEC3')
+        values = np.ascontiguousarray(values, dtype='<f4')
+        if values.shape != (spec['count'], 3) or not np.isfinite(values).all():
+            raise ValueError(f'Invalid replacement shape or value for accessor {index}')
+        if 'min' in spec and np.any(values.min(axis=0) < np.asarray(spec['min']) - 1e-6):
+            raise ValueError(f'Accessor {index} escapes its retained minimum bound')
+        if 'max' in spec and np.any(values.max(axis=0) > np.asarray(spec['max']) + 1e-6):
+            raise ValueError(f'Accessor {index} escapes its retained maximum bound')
+        view = document['bufferViews'][spec['bufferView']]
+        stride = view.get('byteStride', 12)
+        start = binary_start + view.get('byteOffset', 0) + spec.get('byteOffset', 0)
+        packed = values.view(np.uint8).reshape(len(values), 12)
+        for row in range(len(values)):
+            target = start + row * stride
+            before = raw[target:target + 12]
+            replacement = packed[row].tobytes()
+            changed += sum(a != b for a, b in zip(before, replacement))
+            raw[target:target + 12] = replacement
+
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_bytes(raw)
+    revised_document, revised_binary = ea.read_glb(out)
+    if revised_document != document or len(raw) != source.stat().st_size:
+        raise ValueError('VEC3 accessor revision changed the GLB document or size')
+    for index in range(len(document.get('accessors', []))):
+        before = ea.accessor_array(document, binary, index)
+        after = ea.accessor_array(revised_document, revised_binary, index)
+        if index in updated:
+            if not np.array_equal(after, np.asarray(updates[index], dtype=np.float32)):
+                raise ValueError(f'Accessor {index} replacement did not round-trip')
+        elif not np.array_equal(before, after):
+            raise ValueError(f'Unrelated accessor {index} changed')
+    return {'accessors': sorted(updated), 'changedBytes': changed,
+            'bytes': len(raw), 'documentPreserved': True}
+
+
+def _area_weighted_normals(points, triangles):
+    points = np.asarray(points, dtype=float)
+    triangles = np.asarray(triangles, dtype=np.int64).reshape(-1, 3)
+    normals = np.zeros_like(points)
+    if len(triangles):
+        face_normals = np.cross(
+            points[triangles[:, 1]] - points[triangles[:, 0]],
+            points[triangles[:, 2]] - points[triangles[:, 0]])
+        for corner in range(3):
+            np.add.at(normals, triangles[:, corner], face_normals)
+    lengths = np.linalg.norm(normals, axis=1)
+    valid = lengths > 1e-12
+    normals[valid] /= lengths[valid, None]
+    return normals, valid
+
+
+def deformation_orientation_report(
+        original_points, revised_points, triangles, minimum_cosine=.1):
+    """Audit moved triangle orientation before writing a packed revision.
+
+    POSITION-only silhouette edits are allowed to rotate a surface, but they
+    must not fold an incident triangle through itself or collapse it.  The
+    check is deliberately geometric and independent of authored NORMAL data;
+    normals are transported only after the revised positions pass this gate.
+    Existing source degeneracies are reported but excluded from the gate.
+    """
+    original_points = np.asarray(original_points, dtype=float)
+    revised_points = np.asarray(revised_points, dtype=float)
+    triangles = np.asarray(triangles, dtype=np.int64).reshape(-1, 3)
+    if (original_points.shape != revised_points.shape
+            or original_points.ndim != 2
+            or original_points.shape[1:] != (3,)):
+        raise ValueError('Expected matching original and revised POSITION VEC3 arrays')
+    if len(triangles) and (triangles.min() < 0
+                           or triangles.max() >= len(original_points)):
+        raise ValueError('Triangle index escapes POSITION accessor')
+
+    moved = np.any(original_points != revised_points, axis=1)
+    incident = (moved[triangles].any(axis=1)
+                if len(triangles) else np.zeros(0, dtype=bool))
+    old_face = np.cross(
+        original_points[triangles[:, 1]] - original_points[triangles[:, 0]],
+        original_points[triangles[:, 2]] - original_points[triangles[:, 0]])
+    new_face = np.cross(
+        revised_points[triangles[:, 1]] - revised_points[triangles[:, 0]],
+        revised_points[triangles[:, 2]] - revised_points[triangles[:, 0]])
+    old_area = np.linalg.norm(old_face, axis=1)
+    new_area = np.linalg.norm(new_face, axis=1)
+    # GLB metres make 1e-12 a conservative absolute floor.  The relative
+    # floor also catches a newly collapsed large source face.
+    source_valid = old_area > 1e-12
+    audited = incident & source_valid
+    newly_degenerate = audited & (
+        (new_area <= 1e-12) | (new_area <= old_area * 1e-6))
+    cosine = np.ones(len(triangles), dtype=float)
+    comparable = audited & ~newly_degenerate
+    cosine[comparable] = np.einsum(
+        'ij,ij->i', old_face[comparable], new_face[comparable]) / (
+            old_area[comparable] * new_area[comparable])
+    cosine[comparable] = np.clip(cosine[comparable], -1., 1.)
+    unsafe = comparable & (cosine <= float(minimum_cosine))
+    area_ratio = np.ones(len(triangles), dtype=float)
+    area_ratio[audited] = new_area[audited] / old_area[audited]
+    considered_cosines = cosine[comparable]
+    return {
+        'incidentFaces': int(incident.sum()),
+        'auditedFaces': int(audited.sum()),
+        'sourceDegenerateIncidentFaces': np.flatnonzero(
+            incident & ~source_valid).astype(int).tolist(),
+        'newlyDegenerateFaces': np.flatnonzero(
+            newly_degenerate).astype(int).tolist(),
+        'unsafeOrientationFaces': np.flatnonzero(unsafe).astype(int).tolist(),
+        'minimumCosine': float(considered_cosines.min(initial=1.)),
+        'minimumAreaRatio': float(area_ratio[audited].min(initial=1.)),
+        'minimumAllowedCosine': float(minimum_cosine),
+    }
+
+
+def require_safe_deformation(
+        original_points, revised_points, triangles, minimum_cosine=.1):
+    """Return an orientation report or reject a folded packed deformation."""
+    report = deformation_orientation_report(
+        original_points, revised_points, triangles, minimum_cosine)
+    if report['newlyDegenerateFaces'] or report['unsafeOrientationFaces']:
+        raise ValueError(
+            'Unsafe packed deformation: '
+            f"newly degenerate faces {report['newlyDegenerateFaces'][:8]}, "
+            f"orientation faces {report['unsafeOrientationFaces'][:8]}, "
+            f"minimum cosine {report['minimumCosine']:.6f}")
+    return report
+
+
+def constrain_deformation_orientation(
+        original_points, desired_points, triangles, minimum_cosine=.1,
+        maximum_iterations=16):
+    """Locally ease a baked edit until every incident face stays oriented.
+
+    A handful of very coarse inner-sheet triangles can straddle a cuff or an
+    arm-profile transition.  Discarding the whole silhouette edit for those
+    faces would undo visible fit work.  Instead, halve motion on the unsafe
+    face, its one-ring neighbours, and every coincident UV-split copy.  The
+    operation is deterministic, topology preserving, and converges to the
+    original (therefore safe) geometry if necessary.
+    """
+    original = np.asarray(original_points, dtype=float)
+    desired = np.asarray(desired_points, dtype=float)
+    triangles = np.asarray(triangles, dtype=np.int64).reshape(-1, 3)
+    if original.shape != desired.shape:
+        raise ValueError('Expected matching original and desired POSITION arrays')
+    blend = np.ones(len(original), dtype=float)
+    # Packed equipment uses split vertices along texture seams.  Quantization
+    # is much tighter than the smallest authored feature and keeps those
+    # copies moving identically without relying on UV topology.
+    _, coincident = np.unique(
+        np.round(original / 1e-6).astype(np.int64), axis=0,
+        return_inverse=True)
+    iterations = 0
+    limited = np.zeros(len(original), dtype=bool)
+    while True:
+        revised = original + (desired - original) * blend[:, None]
+        report = deformation_orientation_report(
+            original, revised, triangles, minimum_cosine)
+        bad_faces = np.asarray(
+            report['newlyDegenerateFaces'] + report['unsafeOrientationFaces'],
+            dtype=np.int64)
+        if not len(bad_faces):
+            break
+        if iterations >= maximum_iterations:
+            raise ValueError(
+                'Could not constrain packed deformation orientation after '
+                f'{maximum_iterations} iterations')
+        affected = np.zeros(len(original), dtype=bool)
+        affected[triangles[bad_faces].ravel()] = True
+        # Ease a one-ring patch, not three isolated corners.  This avoids a
+        # visible crease and prevents the next face across the edge becoming
+        # the new limiting face on the following iteration.
+        neighbour_faces = affected[triangles].any(axis=1)
+        affected[triangles[neighbour_faces].ravel()] = True
+        affected = np.isin(coincident, np.unique(coincident[affected]))
+        blend[affected] *= .5
+        limited |= affected
+        iterations += 1
+    motion = np.linalg.norm(desired - original, axis=1)
+    residual = np.linalg.norm(revised - original, axis=1)
+    return revised, {
+        'iterations': iterations,
+        'limitedVertices': int(limited.sum()),
+        'minimumBlend': float(blend[limited].min(initial=1.)),
+        'maximumSuppressedMove': float((motion - residual).max(initial=0.)),
+        'orientation': report,
+    }
+
+
+def transport_normals_across_deformation(
+        original_points, revised_points, normals, triangles):
+    """Rotate authored normals with the local geometric surface deformation.
+
+    Only vertices incident to a moved face are touched.  Applying the minimal
+    rotation between old and new area-weighted geometric normals preserves
+    deliberate authored smoothing (including inner-sheet orientation) while
+    preventing stale lighting on baked silhouette and cuff edits.
+    """
+    original_points = np.asarray(original_points, dtype=float)
+    revised_points = np.asarray(revised_points, dtype=float)
+    original_normals = np.asarray(normals, dtype=float)
+    triangles = np.asarray(triangles, dtype=np.int64).reshape(-1, 3)
+    if (original_points.shape != revised_points.shape
+            or original_points.shape != original_normals.shape
+            or original_points.ndim != 2
+            or original_points.shape[1:] != (3,)):
+        raise ValueError('Expected matching POSITION/NORMAL VEC3 arrays')
+    moved = np.any(original_points != revised_points, axis=1)
+    incident_mask = (moved[triangles].any(axis=1)
+                     if len(triangles) else np.zeros(0, dtype=bool))
+    vertices = (np.unique(triangles[incident_mask])
+                if incident_mask.any() else np.empty(0, dtype=int))
+    revised_normals = original_normals.copy()
+    if not len(vertices):
+        return revised_normals, {
+            'incidentFaces': 0, 'movedNormals': 0, 'maximumRotationDegrees': 0.,
+            'maximumAlignmentDelta': 0., 'vertexIndices': []}
+
+    old_geometric, old_valid = _area_weighted_normals(
+        original_points, triangles)
+    new_geometric, new_valid = _area_weighted_normals(
+        revised_points, triangles)
+    valid = old_valid[vertices] & new_valid[vertices]
+    if not valid.all():
+        raise ValueError('Deformation creates a degenerate incident normal')
+    source, target = old_geometric[vertices], new_geometric[vertices]
+    axes_sine = np.cross(source, target)
+    cosine = np.clip(np.einsum('ij,ij->i', source, target), -1., 1.)
+    sine_squared = np.einsum('ij,ij->i', axes_sine, axes_sine)
+    rotated = original_normals[vertices].copy()
+    regular = sine_squared > 1e-20
+    if regular.any():
+        first = np.cross(axes_sine[regular], rotated[regular])
+        second = np.cross(axes_sine[regular], first)
+        rotated[regular] += first + second * (
+            (1. - cosine[regular]) / sine_squared[regular])[:, None]
+    opposite = (~regular) & (cosine < 0.)
+    for row in np.flatnonzero(opposite):
+        basis = np.zeros(3)
+        basis[int(np.argmin(np.abs(source[row])))] = 1.
+        axis = np.cross(source[row], basis)
+        axis /= np.linalg.norm(axis)
+        rotated[row] = 2. * axis * np.dot(axis, rotated[row]) - rotated[row]
+    lengths = np.linalg.norm(rotated, axis=1)
+    if np.any(lengths <= 1e-12):
+        raise ValueError('Normal transport produced a zero-length normal')
+    rotated /= lengths[:, None]
+    revised_normals[vertices] = rotated
+    old_alignment = np.einsum(
+        'ij,ij->i', original_normals[vertices], source)
+    new_alignment = np.einsum('ij,ij->i', rotated, target)
+    normal_cosine = np.clip(np.einsum(
+        'ij,ij->i', original_normals[vertices], rotated), -1., 1.)
+    return revised_normals, {
+        'incidentFaces': int(incident_mask.sum()),
+        'movedNormals': int(len(vertices)),
+        'maximumRotationDegrees': float(np.degrees(
+            np.arccos(normal_cosine)).max(initial=0.)),
+        'maximumAlignmentDelta': float(np.max(
+            np.abs(new_alignment - old_alignment), initial=0.)),
+        'vertexIndices': vertices.astype(int).tolist(),
+    }
 
 
 def rotation_between(a, b):
@@ -140,7 +517,261 @@ def long_sleeve_island(block, centroid, root, wrist, height):
             and block[:, 1].max() > root[1]-.10*height and distance < .08*height)
 
 
-def remap(points, triangles, rig, collar_lift=0., parts_out=None):
+def tighten_arm_silhouette(points, rig, arm_share, cap_side,
+                           radial_scale=None, cap_inset=None,
+                           locked_from=None, cap_locked_from=None):
+    """Bake a restrained heroic arm profile into the fitted torso artwork.
+
+    ``remap`` has already put each sleeve on the canonical shoulder-to-hand
+    axis.  Scaling only the component perpendicular to that axis keeps cuff
+    length, UVs and the hand opening unchanged while removing the inflated
+    upper-arm silhouette inherited from the concept-sheet pose.  When
+    ``locked_from`` is supplied, skinned sleeve vertices at or beyond that
+    normalized arm travel are not reassigned at all; this keeps their packed
+    float bytes exact rather than merely recomputing the same values.
+    ``cap_locked_from`` independently protects detached cap rows.  The split
+    matters for fresh authoring builds: their sleeve tail still needs the
+    previously reviewed absolute profile, while cap islands past the lock
+    must not inherit a stronger shoulder inset.  Detached shoulder plates
+    otherwise remain rigid and are only seated slightly inboard; their
+    authored relief is not flattened.
+    """
+    radial_scale = (SLEEVE_PROFILE_SCALE if radial_scale is None
+                    else np.asarray(radial_scale, dtype=float))
+    if radial_scale.shape != SLEEVE_PROFILE_SCALE.shape:
+        raise ValueError('Arm radial profile must match SLEEVE_PROFILE_T')
+    cap_inset = SHOULDER_CAP_INSET if cap_inset is None else float(cap_inset)
+    if locked_from is not None:
+        locked_from = float(locked_from)
+    if cap_locked_from is None:
+        cap_locked_from = locked_from
+    elif cap_locked_from is not None:
+        cap_locked_from = float(cap_locked_from)
+    moved = 0
+    caps = 0
+    locked = 0
+    locked_caps = 0
+    maximum = 0.0
+    for col, (side, sign) in enumerate((('l', 1.0), ('r', -1.0))):
+        root = rig.origin('upperarm_' + side)
+        wrist = rig.origin('hand_' + side)
+        axis = wrist - root
+        length2 = float(axis @ axis)
+        own = arm_share[:, col] > .5
+        if own.any() and length2 > 1e-10:
+            indices = np.flatnonzero(own)
+            before = points[indices].copy()
+            travel = (before - root) @ axis / length2
+            centre_line = root + travel[:, None] * axis
+            radial = before - centre_line
+            scale = np.interp(np.clip(travel, SLEEVE_PROFILE_T[0],
+                                      SLEEVE_PROFILE_T[-1]),
+                              SLEEVE_PROFILE_T, radial_scale)
+            active = (np.ones(len(indices), dtype=bool)
+                      if locked_from is None else travel < locked_from)
+            revised = centre_line + radial * scale[:, None]
+            points[indices[active]] = revised[active]
+            locked += int((~active).sum())
+            motion = np.linalg.norm(points[indices] - before, axis=1)
+            moved += int(np.count_nonzero(motion > 1e-8))
+            maximum = max(maximum, float(motion.max(initial=0.0)))
+        cap = cap_side == col
+        if cap.any():
+            if cap_locked_from is not None and length2 > 1e-10:
+                cap_indices = np.flatnonzero(cap)
+                cap_travel = ((points[cap_indices] - root) @ axis / length2)
+                cap_active = cap_travel < cap_locked_from
+                locked_caps += int((~cap_active).sum())
+                cap = np.zeros(len(points), dtype=bool)
+                cap[cap_indices[cap_active]] = True
+            # Earlier revisions pushed every cap 25 mm outboard.  Once the
+            # source sleeve is mapped to the real shoulder that allowance is
+            # no longer needed, and is the principal cause of shelf-like
+            # shoulders.  Translate whole islands so plate proportions and
+            # texture seams remain exact.  The elbow/cuff lock applies to cap
+            # rows too: decorative islands can extend beyond the shoulder and
+            # must not bypass the byte-stable tail invariant.
+        if cap.any():
+            points[cap, 0] -= sign * cap_inset * rig.fit_scale
+            caps += int(np.count_nonzero(cap))
+            moved += int(np.count_nonzero(cap))
+            maximum = max(maximum, cap_inset * rig.fit_scale)
+    return {'name': 'restrained_arm_silhouette', 'movedVertices': moved,
+            'capVertices': caps, 'maximumMove': maximum,
+            'radialScale': radial_scale.tolist(),
+            'capInset': cap_inset * rig.fit_scale,
+            'lockedFrom': locked_from,
+            'capLockedFrom': cap_locked_from,
+            'lockedVertices': locked,
+            'lockedCapVertices': locked_caps}
+
+
+def seat_arm_backing_inside_visible(
+        points, rig, arm_share, visible_faces_by_side,
+        clearance=SLEEVE_BACKING_CLEARANCE,
+        locked_from=SLEEVE_PROFILE_LOCK_T, enforce=True, triangles=None):
+    """Recess packed sleeve backing beneath the visible authored shell.
+
+    A radial ray is measured from each canonical arm axis through each backing
+    vertex.  Only rays that actually meet the corresponding skinned visible
+    sleeve are constrained, so deliberately exposed lining remains authored
+    rather than being mistaken for a clearance failure.  The elbow/cuff tail
+    is an exact no-write region.
+    """
+    points = np.asarray(points)
+    arm_share = np.asarray(arm_share, dtype=float)
+    if arm_share.shape != (len(points), 2):
+        raise ValueError('Expected one left/right arm-share pair per vertex')
+    if len(visible_faces_by_side) != 2:
+        raise ValueError('Expected visible sleeve faces for left and right')
+    clearance_distance = float(clearance) * rig.fit_scale
+    moved = 0
+    covered = 0
+    locked = 0
+    minimum_before = np.inf
+    minimum_after = np.inf
+    maximum_move = 0.0
+    ignored_near_axis = 0
+    ignored_exposed = 0
+    required = np.zeros(len(points), dtype=float)
+    active = np.zeros(len(points), dtype=bool)
+    centres = np.zeros_like(points, dtype=float)
+    radial_vectors = np.zeros_like(points, dtype=float)
+    radii = np.zeros(len(points), dtype=float)
+    hits = np.full(len(points), np.inf)
+    covered_rows = np.zeros(len(points), dtype=bool)
+    travels = np.full(len(points), np.inf)
+    arm_columns = np.full(len(points), -1, dtype=int)
+    for column, side in enumerate(('l', 'r')):
+        faces = np.asarray(visible_faces_by_side[column], dtype=float)
+        if not len(faces):
+            continue
+        root = rig.origin('upperarm_' + side)
+        wrist = rig.origin('hand_' + side)
+        axis = wrist - root
+        length2 = float(axis @ axis)
+        indices = np.flatnonzero(arm_share[:, column] > .5)
+        for index in indices:
+            offset = points[index] - root
+            travel = float(offset @ axis / length2)
+            if travel >= locked_from:
+                locked += 1
+                continue
+            centre = root + travel * axis
+            radial = points[index] - centre
+            radius = float(np.linalg.norm(radial))
+            if radius <= 1e-10:
+                continue
+            active[index] = True
+            travels[index] = travel
+            arm_columns[index] = column
+            centres[index] = centre
+            radial_vectors[index] = radial
+            radii[index] = radius
+            hit, _ = io.cast(centre, radial / radius, faces)
+            if not np.isfinite(hit):
+                continue
+            # A triangle crossing the arm axis is not an enclosing sleeve
+            # wall.  Treat that incidental bridge/inner flap as uncovered;
+            # there is physically no room for an arm backing inside it.
+            if hit <= max(clearance_distance + 1e-6,
+                          .012 * rig.fit_scale):
+                ignored_near_axis += 1
+                continue
+            # If the lining is already outside the first visible hit, that
+            # authored sector is exposed backing rather than a covered sleeve.
+            # Pulling it through the shell would create a local fold and would
+            # falsely turn an intentional quilted panel into hidden lining.
+            if hit + 1e-6 < radius:
+                ignored_exposed += 1
+                continue
+            covered += 1
+            covered_rows[index] = True
+            hits[index] = hit
+            minimum_before = min(minimum_before, hit - radius)
+            target = hit - clearance_distance
+            if target <= 1e-6:
+                raise ValueError(
+                    'Visible sleeve cannot contain the required backing '
+                    f'clearance at vertex {index}')
+            required[index] = max(0., radius - target)
+    applied_profiles = []
+    if enforce:
+        knots = SLEEVE_PROFILE_T[SLEEVE_PROFILE_T <= locked_from]
+        for column in range(2):
+            values = np.ones(len(knots), dtype=float)
+            rows = np.flatnonzero(covered_rows & (arm_columns == column)
+                                  & (required > 0.))
+            # Solve a monotone set of interpolation upper bounds.  A single
+            # travel profile moves all angular sectors coherently, avoiding
+            # the folds created by independent per-ray offsets.
+            for _ in range(12):
+                changed = False
+                for index in rows:
+                    travel = travels[index]
+                    interval = int(np.searchsorted(knots, travel, side='right') - 1)
+                    interval = int(np.clip(interval, 0, len(knots) - 2))
+                    span = knots[interval + 1] - knots[interval]
+                    right = np.clip((travel - knots[interval]) / span, 0., 1.)
+                    left = 1. - right
+                    limit = ((hits[index] - clearance_distance)
+                             / radii[index])
+                    current = left*values[interval] + right*values[interval + 1]
+                    if current <= limit + 1e-12:
+                        continue
+                    excess = current - limit
+                    if interval + 1 == len(knots) - 1:
+                        if left <= 1e-8:
+                            raise ValueError(
+                                'Required backing clearance reaches the '
+                                'immutable cuff boundary')
+                        values[interval] -= excess / left
+                    else:
+                        values[interval] -= excess
+                        values[interval + 1] -= excess
+                    changed = True
+                if not changed:
+                    break
+            if np.any(values[:-1] <= .25):
+                raise ValueError('Backing clearance requires an unsafe arm scale')
+            values[-1] = 1.
+            applied_profiles.append(values.tolist())
+            indices = np.flatnonzero(active & (arm_columns == column))
+            scales = np.interp(travels[indices], knots, values)
+            revised_radius = radii[indices] * scales
+            points[indices] = (centres[indices] + radial_vectors[indices]
+                               * scales[:, None])
+            motion = radii[indices] - revised_radius
+            moved += int(np.count_nonzero(motion > 1e-10))
+            maximum_move = max(maximum_move, float(motion.max(initial=0.)))
+            radii[indices] = revised_radius
+    for index in np.flatnonzero(covered_rows):
+        minimum_after = min(minimum_after, hits[index] - radii[index])
+    if covered and minimum_after + 1e-9 < clearance_distance:
+        raise ValueError(
+            f'Backing clearance {minimum_after:.9f} is below '
+            f'{clearance_distance:.9f}')
+    return {
+        'name': 'visible_sleeve_backing_clearance',
+        'coveredRays': covered,
+        'movedVertices': moved,
+        'lockedVertices': locked,
+        'ignoredNearAxisRays': ignored_near_axis,
+        'ignoredExposedRays': ignored_exposed,
+        'lockedFrom': float(locked_from),
+        'requiredClearance': clearance_distance,
+        'minimumClearanceBefore': (None if not covered
+                                   else float(minimum_before)),
+        'minimumClearanceAfter': (None if not covered
+                                  else float(minimum_after)),
+        'maximumMove': maximum_move,
+        'enforced': bool(enforce),
+        'radialProfiles': applied_profiles,
+    }
+
+
+def remap(points, triangles, rig, collar_lift=0., parts_out=None,
+          arm_fit=None):
     canon, edges, count = io._weld(points, triangles)
     labels = io._components(edges, count)[canon]
     source = source_skeleton(points)
@@ -234,7 +865,6 @@ def remap(points, triangles, rig, collar_lift=0., parts_out=None):
                          'scale': float(limb_scale), 'caps': caps, 'tubes': tubes}
         own = cap_side == col
         if own.any():
-            out[own, 0] += sign * .025 * rig.fit_scale
             block = out[own]
             skin = rig._region(list(ea.TORSO_BONES) + ['upperarm_' + side])
             near = skin[(skin[:, 0] * sign > .10 * rig.fit_scale)
@@ -247,6 +877,11 @@ def remap(points, triangles, rig, collar_lift=0., parts_out=None):
                 out[own, 2] = ((block[:, 2] - (have_hi + have_lo)/2) * depth_scale
                                + (want_hi + want_lo)/2)
                 out[own, 1] += max(0., target_root[1] + .025 * rig.fit_scale - float(np.median(block[:, 1])))
+    arm_fit = arm_fit or {}
+    arm_profile = tighten_arm_silhouette(out, rig, arm_share, cap_side,
+                                         arm_fit.get('radial_scale'),
+                                         arm_fit.get('cap_inset'),
+                                         cap_locked_from=SLEEVE_PROFILE_LOCK_T)
     trunk_share = (1 - arm_share.sum(axis=1)) * (cap_side < 0)
     before_cage = out.copy()
     _clear_trunk(out, triangles, rig, trunk_share, labels)
@@ -315,6 +950,7 @@ def remap(points, triangles, rig, collar_lift=0., parts_out=None):
              'maximumMove': float(cage_motion.max()), 'meanMove': float(cage_motion.mean())},
             {'name': 'raised_collar', 'lift': collar_lift * rig.fit_scale,
              'movedVertices': collar_vertices},
+            arm_profile,
             {'name': 'open_fused_sleeve_seams', 'triangles': int((~keep).sum())}]}
 
 
@@ -573,7 +1209,10 @@ def clip_lining_neckline(points, faces, scale):
     Intersections lie on original triangle edges. Nothing is flattened or
     pushed through a closed shell: thickness and binding are added afterwards.
     """
-    height = np.minimum(1.485, 1.40 + .85 * np.maximum(0., np.abs(points[:, 0]) / scale - .08)) * scale
+    height = np.minimum(
+        1.485,
+        1.40 + .85 * np.maximum(0., np.abs(points[:, 0]) / scale - .08),
+    ) * scale
     signed = points[:, 1] - height
     inside = signed <= 0.
     output = list(points)
@@ -639,7 +1278,9 @@ def lining(rig, armour, triangles, binding_rig=None):
                 # Fill the shoulder seam just inside the artwork. Recessing this
                 # to 75% of the inner radius exposed a deep underarm cavity.
                 # This is a new open sheet; give it thickness only after fitting.
-                inside = max(.015 * rig.fit_scale, hit - .004 * rig.fit_scale)
+                inside = max(
+                    .015 * rig.fit_scale,
+                    hit - SLEEVE_BACKING_CLEARANCE * rig.fit_scale)
                 shoulder = np.clip((.35 - t[row]) / .25, 0., 1.)
                 shoulder = shoulder * shoulder * (3 - 2 * shoulder)
                 want[row] = min(want[row], inside) * (1 - shoulder) + inside * shoulder
@@ -694,8 +1335,10 @@ def lining(rig, armour, triangles, binding_rig=None):
     # Bind the fitted lining, not the loose shirt positions it came from.
     j, w = (binding_rig or rig).weights_for(points, list(ea.TORSO_BONES) + ['neck_01',
         'upperarm_l', 'upperarm_r', 'lowerarm_l', 'lowerarm_r'])
-    j, w = equipment_seams.smooth_skin(points, faces, j, w, len(rig.joint_names), strength=2.)
-    return equipment_seams.thickened_sheets(outer, inner, normals, faces, j, w)
+    j, w = equipment_seams.smooth_skin(
+        points, faces, j, w, len(rig.joint_names), strength=2.)
+    return equipment_seams.thickened_sheets(
+        outer, inner, normals, faces, j, w)
 
 
 def backing_colour(surface, texture):
@@ -743,7 +1386,8 @@ def source_coordinates(points, joints, weights, source_points, report, rig):
     return out
 
 
-def build(source, out, rig, kind='cuirass', label='Remapped armour', anatomy_reference=None):
+def build(source, out, rig, kind='cuirass', label='Remapped armour',
+          anatomy_reference=None):
     # The shared neck adds new samples to a localized anatomical transition.
     # Those samples must not change already approved shoulder/plate bindings.
     # Use the verified canonical template for original-art fitting and skin
@@ -760,7 +1404,10 @@ def build(source, out, rig, kind='cuirass', label='Remapped armour', anatomy_ref
     raw = surface.positions.copy()
     original_faces = surface.indices.reshape(-1, 3).copy()
     lift = COLLAR_LIFT.get(source.name.removesuffix('.orig'), 0.)
-    points, joints, weights, keep, report = remap(raw, surface.indices.reshape(-1, 3), design_rig, lift)
+    arm_fit = ARM_FIT_OVERRIDES.get(source.name.removesuffix('.orig'))
+    points, joints, weights, keep, report = remap(
+        raw, surface.indices.reshape(-1, 3), design_rig, lift,
+        arm_fit=arm_fit)
     surface.indices = surface.indices.reshape(-1, 3)[keep].reshape(-1)
     surface.positions = points
     canon, _, _ = io._weld(points, surface.indices.reshape(-1, 3))
@@ -795,7 +1442,8 @@ def build(source, out, rig, kind='cuirass', label='Remapped armour', anatomy_ref
     # The source can fuse a hanging sleeve along its entire flank. Capping
     # that long boundary creates a cone outside the sleeve when the arm bends.
     # The continuous fitted lining closes the opened underarm instead.
-    p, n, uv, idx, j, w = lining(rig, points, triangles, design_rig)
+    p, n, uv, idx, j, w = lining(
+        rig, points, triangles, design_rig)
     liner_mat = len(glb.doc['materials'])
     glb.doc['materials'].append({'name': label + ' Backing', 'pbrMetallicRoughness': {
         'baseColorFactor': cloth_colour, 'metallicFactor': 0., 'roughnessFactor': 1.}})

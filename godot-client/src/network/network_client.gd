@@ -428,8 +428,10 @@ func mix_request(recipe_index: int, wanted: int, from_storage: bool) -> Error:
 func tool_request(name: String) -> Error:
 	return send_frame(EloriaProtocol.tool_request(name))
 
-func create_character(username: String, password: String, appearance: Dictionary) -> Error:
-	return send_frame(EloriaProtocol.create_character(username, password, appearance), true)
+func create_character(username: String, password: String, appearance: Dictionary,
+		class_id := 0) -> Error:
+	return send_frame(EloriaProtocol.create_character(
+		username, password, appearance, class_id), true)
 
 func _process(_delta: float) -> void:
 	if _reconnect_at_msec > 0 and Time.get_ticks_msec() >= _reconnect_at_msec:

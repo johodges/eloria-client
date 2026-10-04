@@ -179,7 +179,8 @@ static func login(username: String, password: String) -> PackedByteArray:
 	payload.append(0)
 	return encode(ClientMessage.LOG_IN, payload)
 
-static func create_character(username: String, password: String, appearance: Dictionary) -> PackedByteArray:
+static func create_character(username: String, password: String, appearance: Dictionary,
+		class_id := 0) -> PackedByteArray:
 	var payload := (username + " " + password).to_utf8_buffer()
 	payload.append(0)
 	# Exact legacy order: skin, hair, shirt, pants, boots, actor type, head, eyes.
@@ -189,6 +190,10 @@ static func create_character(username: String, password: String, appearance: Dic
 	wire["hair"] = hair & 0xff
 	for key in ["skin", "hair", "shirt", "pants", "boots", "actor_type", "head", "eyes"]:
 		payload.append(clampi(int(wire.get(key, 0)), 0, 255))
+	# Eloria extension: a ninth byte selects a server-owned starter kit. Legacy
+	# servers ignore trailing create bytes; updated servers default an absent
+	# byte to Vanguard, so old clients and servers remain wire-compatible.
+	payload.append(clampi(class_id, 0, 255))
 	return encode(ClientMessage.CREATE_CHAR, payload)
 
 static func version(protocol_major: int, protocol_minor: int,

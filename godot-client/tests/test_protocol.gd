@@ -314,8 +314,13 @@ func _init() -> void:
 		EloriaProtocol.create_character("Test", "secret",
 			{"skin": 1, "hair": 2, "shirt": 3, "pants": 4, "boots": 5,
 			"actor_type": 0, "head": 2, "eyes": 6}),
-		PackedByteArray([141, 21, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114,
-			101, 116, 0, 1, 2, 3, 4, 5, 0, 2, 6]))
+		PackedByteArray([141, 22, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114,
+			101, 116, 0, 1, 2, 3, 4, 5, 0, 2, 6, 0]))
+	_expect_bytes("create character class fixture",
+		EloriaProtocol.create_character("Test", "secret",
+			{"skin": 1, "actor_type": 37}, 3),
+		PackedByteArray([141, 22, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114,
+			101, 116, 0, 1, 0, 0, 0, 0, 37, 0, 0, 3]))
 	# Creation choices are skinned actor surfaces, never rigid attachments.
 	# AppearanceVariants no longer exposes a function that says so by returning
 	# an empty dictionary; the refusal lives at the one call site that built

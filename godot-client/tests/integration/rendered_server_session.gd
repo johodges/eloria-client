@@ -52,11 +52,11 @@ func _run() -> void:
 
 	main.call("_on_new_character_pressed")
 	var name_edit: LineEdit = main.get_node(
-		"CreationPanel/Columns/Form/CreateName") as LineEdit
+		"CreationPanel/Columns/FormPanel/Form/CreateName") as LineEdit
 	var password_edit: LineEdit = main.get_node(
-		"CreationPanel/Columns/Form/CreatePassword") as LineEdit
+		"CreationPanel/Columns/FormPanel/Form/CreatePassword") as LineEdit
 	var confirm_edit: LineEdit = main.get_node(
-		"CreationPanel/Columns/Form/CreateConfirm") as LineEdit
+		"CreationPanel/Columns/FormPanel/Form/CreateConfirm") as LineEdit
 	name_edit.text = username
 	password_edit.text = password
 	confirm_edit.text = password

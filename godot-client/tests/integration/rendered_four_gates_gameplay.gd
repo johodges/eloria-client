@@ -73,9 +73,9 @@ func _run() -> void:
 		"client opened a real TCP session to the local test server")
 
 	_main.call("_on_new_character_pressed")
-	(_main.get_node("CreationPanel/Columns/Form/CreateName") as LineEdit).text = username
-	(_main.get_node("CreationPanel/Columns/Form/CreatePassword") as LineEdit).text = password
-	(_main.get_node("CreationPanel/Columns/Form/CreateConfirm") as LineEdit).text = password
+	(_main.get_node("CreationPanel/Columns/FormPanel/Form/CreateName") as LineEdit).text = username
+	(_main.get_node("CreationPanel/Columns/FormPanel/Form/CreatePassword") as LineEdit).text = password
+	(_main.get_node("CreationPanel/Columns/FormPanel/Form/CreateConfirm") as LineEdit).text = password
 	_main.call("_on_create_pressed")
 	_expect(await _wait(func() -> bool:
 		return bool(_app_state.get("authenticated")), TIMEOUT),

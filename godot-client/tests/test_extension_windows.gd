@@ -114,6 +114,38 @@ func _run() -> void:
 	_expect(windows.quest_detail.text.contains("Defeat 3 rats")
 		and windows.quest_detail.text.contains("Four Gates"),
 		"selecting a quest shows its objective and location")
+	var quest_frame := windows.quest_panel.get_theme_stylebox("panel") as StyleBoxTexture
+	var quest_page_panel := windows.quest_panel.get_node(
+		"Body/QuestColumns/QuestDetailSide/QuestParchment") as PanelContainer
+	var quest_page := quest_page_panel.get_theme_stylebox("panel") as StyleBoxFlat
+	var quest_page_texture := (quest_page_panel.get_node("ParchmentTexture")
+		as PanelContainer).get_theme_stylebox("panel") as StyleBoxTexture
+	_expect(str(windows.quest_panel.get_meta(&"visual_style", ""))
+			== "eloria_field_journal"
+		and quest_frame != null and quest_page != null
+		and quest_page_texture != null
+		and quest_frame.texture == windows.QUEST_CARVED_FRAME_TEXTURE
+		and quest_page_texture.texture == windows.QUEST_PARCHMENT_TEXTURE
+		and (windows.quest_panel.get_node("JournalBackdrop") as ColorRect).color
+			.get_luminance() < 0.1,
+		"the quest journal uses a carved brass frame around textured parchment")
+	var quest_close := windows.quest_panel.get_node("Body/Header/Close") as Button
+	var close_normal := quest_close.get_theme_stylebox("normal") as StyleBoxFlat
+	var track_normal := windows.quest_track_button.get_theme_stylebox(
+		"normal") as StyleBoxFlat
+	_expect(close_normal != null and track_normal != null
+		and close_normal.corner_radius_top_left >= 8
+		and track_normal.corner_radius_top_left >= 8
+		and close_normal.shadow_size >= 2 and track_normal.shadow_size >= 2,
+		"the oxblood quest controls are rounded and raised rather than flat")
+	_expect(windows.quest_panel.size.y >= 620.0
+		and windows.quest_panel.position.x <= 32.0
+		and windows.quest_count.text == "1 ACTIVE",
+		"the quest log is a tall left-side journal with a live count")
+	_expect(windows.quest_detail.text.contains("QUEST OBJECTIVES")
+		and windows.quest_detail.text.contains("LOCATION")
+		and windows.quest_detail.text.contains("PROGRESS"),
+		"the parchment gives objective, location, and progress distinct hierarchy")
 
 	# Tracking a quest. Which quest to watch is the player's own choice about
 	# their screen; everything shown about it is the server's journal entry.
@@ -131,6 +163,34 @@ func _run() -> void:
 	_expect(tracked_rect.position.x >= 0.0 and tracked_rect.end.y <= 720.0
 		and not tracked_rect.intersects(resource_rail.get_global_rect()),
 		"the tracked readout fits 1280x720 clear of the resource rail")
+	var tracker_page_panel := windows.tracked_quest.get_node(
+		"TrackerParchment") as PanelContainer
+	var tracker_page := tracker_page_panel.get_theme_stylebox("panel") as StyleBoxFlat
+	var tracker_page_texture := (tracker_page_panel.get_node("ParchmentTexture")
+		as PanelContainer).get_theme_stylebox("panel") as StyleBoxTexture
+	_expect(str(windows.tracked_quest.get_meta(&"visual_style", ""))
+			== "eloria_quest_tracker"
+		and tracker_page != null and tracker_page_texture != null
+		and tracker_page_texture.texture == windows.QUEST_PARCHMENT_TEXTURE,
+		"the pinned tracker is a compact textured parchment note")
+	_expect(tracked_rect.position.x >= 1280.0 * 0.5
+		and tracked_rect.end.x <= 1280.0 - windows.RESERVED_RIGHT_RAIL,
+		"the tracked parchment sits upper-right immediately left of the resource rail")
+	var short_tracker_height: float = windows.tracked_quest.size.y
+	var long_quest: Dictionary = (app_state.get("quest_journal") as Array)[0].duplicate(true)
+	long_quest["objective"] = ("Search the fallen waystones along the northern road.\n"
+		+ "Ask the three wardens what they saw.\n"
+		+ "Return with the recovered sigil before nightfall.")
+	app_state.set("quest_journal", [long_quest])
+	windows.call("_sync_tracked_quest")
+	await process_frame
+	await process_frame
+	_expect(windows.tracked_quest.size.y > short_tracker_height
+		and windows.tracked_quest.size.y <= windows.QUEST_TRACKER_MAX_HEIGHT,
+		"the tracker grows once per changed objective and clamps before covering the HUD"
+			+ " (short %.1f, long %.1f, content %.1f)" % [short_tracker_height,
+				windows.tracked_quest.size.y,
+				windows.tracked_quest_text.get_content_height()])
 	# The server restates the journal with the quest ready to turn in.
 	app_state.call("_on_packet", 224, _hex(
 		"01000103000000030000004b696c6c205468656d20416c6c00446566656174203"

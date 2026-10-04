@@ -98,7 +98,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
+        "sourceSHA256": "b95921cd99da9f69009c5bc8295bae164ccf84189aefcaab6b6b13cb693a5552",
         "references": {
           "body": [
             [
@@ -317,7 +317,7 @@
       "hairAllowsProtrusions": true,
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "6a59f021bd3a69468c834d737281d852163e618f482dbfd42246bf8ef0b8ab6e",
+        "sourceSHA256": "1e25f34203feb96ac1e541f24c852996752ce0837513e6a0990f717fd6d2d5b6",
         "references": {
           "body": [
             [
@@ -524,7 +524,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "1b34c79d89f9ef077ec3236fe5213d30bbebf53dbd3145cd587753bfcb17832b",
+        "sourceSHA256": "789d51e34e143732805749e3f00ed2ee1c3638d069f577347aade6743d267044",
         "references": {
           "body": [
             [
@@ -731,7 +731,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "84de9a4a6f261c872957c4e8cd9b949c9f3b686047e76d6818034d3a74e2f244",
+        "sourceSHA256": "cb547d406c26228c99e8cc5707192a40c1a8ab8b56b410c394a9cc935d502903",
         "references": {
           "body": [
             [
@@ -822,6 +822,11 @@
       },
       "hairFit": {},
       "bodyTemplate": "luminous_male",
+      "torsoBodyCover": {
+        "id": "orun-male-rear-neck-v1",
+        "version": 1,
+        "sourceSHA256": "9044aebf2ea13cf82a9bdb40641481115e25521ec02e8a78df760a9b01299fd8"
+      },
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt",
@@ -937,7 +942,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "a08af3496700a674cf8af2d2179256f575f145289f3bad57c5bdda1b8d617d11",
+        "sourceSHA256": "583c48a20a1e437fdc6038a248b396d635273e61af0f7ecd4830b4b06954853c",
         "references": {
           "body": [
             [
@@ -1143,7 +1148,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "296e97507321a22b64f93957c7b4c413ed2b1c0edd9e563ce267e0c45e50ecd9",
+        "sourceSHA256": "f084e009872678aae4970a552410fd7eafa7c8532ece3875db32032014f69855",
         "references": {
           "body": [
             [
@@ -1370,7 +1375,7 @@
       "hairAllowsProtrusions": true,
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "1c69c690093b16dc35e5fad49187071691afbdb765701435d99b1b750a2c83f5",
+        "sourceSHA256": "6840b6df0b690dfdcee777a02c41b35f6126319453300a56245c286400e44e89",
         "references": {
           "body": [
             [
@@ -1577,7 +1582,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "5889ca15c74f291a34d728920f1a0a336291fc2d3f45f95e5e2271a864613142",
+        "sourceSHA256": "86a0b972971c9f7bf6ee1992c089a28a5aba2aef5c6e177b4cbb69ccf77a1c37",
         "references": {
           "body": [
             [

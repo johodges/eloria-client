@@ -45,7 +45,9 @@ const TONEMAP_VARIABLE := "ELORIA_LOOK_TONEMAP"
 
 ## The settings window's "Graphics quality". HIGH draws everything, exactly as
 ## the client drew before the setting existed; the lower two give up what costs
-## most for what it adds to a frame (QUALITY_PRESETS).
+## most for what it adds to a frame (QUALITY_PRESETS). ActorRenderQuality uses
+## the same enum order for mesh LOD, actor shadows and cape cloth, so this one
+## player-facing setting controls world and character cost together.
 enum Quality { LOW, MEDIUM, HIGH }
 ## How each quality is written in the settings file ([graphics] quality) and in
 ## QUALITY_VARIABLE, by Quality.

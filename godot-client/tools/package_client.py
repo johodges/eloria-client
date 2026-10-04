@@ -19,13 +19,11 @@ What goes in, and why it is more than an export:
       The Godot export. Scripts, scenes, UI art and data. Linux needs the
       official 4.7.2 export templates installed beside the Windows ones.
   app/assets, app/data, app/schemas
-      Loose copies. Actor models are read with GLTFDocument from
-      ProjectSettings.globalize_path("res://assets/..."), which in an exported
-      build is the folder the exe sits in, not the pack - and the equipment
-      GLBs reference ~1,500 textures by relative URI from that folder. None of
-      it can live in the pack. (That is also why the build worktree gets a
-      .gdignore in assets/actors: nothing imports those files, and skipping
-      them takes the 4 GB out of the import.)
+      Loose copies. Actor models are imported into the PCK so ResourceLoader
+      can use Godot's generated mesh LODs, compression and texture mip chains.
+      The original GLBs stay loose as well: metadata readers and the raw
+      GLTFDocument fallback use globalized filesystem paths, and equipment
+      GLBs reference their textures by relative URI from that folder.
   eloria-assets/maps, eloria-assets/concepts
       "res://../eloria-assets/..." resolves beside app/. Every map package (a
       folder holding world.json) ships without its references, captures,
@@ -95,9 +93,10 @@ SMOKE_FAILURES = ("SCRIPT ERROR", "Parse Error", "Failed to load script",
                   "No loader found", "Cannot open file", "Failed loading resource")
 
 # The export preset is not tracked, so the build writes its own. The pack
-# leaves out assets/actors (read loose, see above) along with dev material,
-# including the map editor's review notes (<region>.editor-notes.json beside
-# each region scene): editor-only, never read by the game.
+# leaves out dev material, including the map editor's review notes
+# (<region>.editor-notes.json beside each region scene): editor-only, never read
+# by the game. Actor resources deliberately remain in the export in addition
+# to their loose copies; the imported PackedScenes carry generated mesh LODs.
 EXPORT_PRESETS = """[preset.0]
 
 name="Windows Desktop"
@@ -108,7 +107,7 @@ dedicated_server=false
 custom_features=""
 export_filter="all_resources"
 include_filter="*.json,*.bin"
-exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,*.md,assets/actors/*,*.editor-notes.json"
+exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,*.md,*.editor-notes.json"
 export_path=""
 patches=PackedStringArray()
 encryption_include_filters=""
@@ -153,7 +152,7 @@ dedicated_server=false
 custom_features=""
 export_filter="all_resources"
 include_filter="*.json,*.bin"
-exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,*.md,assets/actors/*,*.editor-notes.json"
+exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,*.md,*.editor-notes.json"
 export_path=""
 patches=PackedStringArray()
 encryption_include_filters=""
@@ -240,7 +239,10 @@ def prepare_build_tree(build_dir: Path, sha: str) -> Path:
         git("clean", "-ffd", "-q", cwd=build_dir)
     project = build_dir / "godot-client"
     (project / "export_presets.cfg").write_text(EXPORT_PRESETS, encoding="utf-8", newline="\n")
-    (project / "assets" / "actors" / ".gdignore").write_text("", encoding="utf-8")
+    # Older package builds left this ignored file in the persistent worktree;
+    # git clean intentionally preserves ignored files. Remove it explicitly so
+    # Godot imports actor scenes and the exporter can pack their generated LODs.
+    (project / "assets" / "actors" / ".gdignore").unlink(missing_ok=True)
     return project
 
 
@@ -273,6 +275,44 @@ def import_project(godot: Path, project: Path, logs: Path) -> None:
             return
         previous = count
     raise PackageError("import never settled after 6 passes; see import-*.log")
+
+
+def check_actor_imports(project: Path) -> None:
+    """Require every actor glTF to have a generated-LOD PackedScene.
+
+    Exporting all resources then writes these imported scenes and their remaps
+    into the PCK. This pre-export check turns a stale ``.gdignore`` or a partial
+    import into a packaging failure instead of silently shipping actors that
+    can only take the raw, no-LOD fallback.
+    """
+    actors = project / "assets" / "actors"
+    sources = sorted((*actors.rglob("*.glb"), *actors.rglob("*.gltf")))
+    failures: list[str] = []
+    for source in sources:
+        sidecar = source.with_name(source.name + ".import")
+        relative = source.relative_to(project).as_posix()
+        if not sidecar.is_file():
+            failures.append(f"{relative}: missing .import remap")
+            continue
+        text = sidecar.read_text(encoding="utf-8", errors="replace")
+        if not re.search(r"(?m)^type=\"PackedScene\"\s*$", text):
+            failures.append(f"{relative}: import is not a PackedScene")
+            continue
+        if not re.search(r"(?m)^meshes/generate_lods=true\s*$", text):
+            failures.append(f"{relative}: mesh LOD generation is disabled")
+            continue
+        match = re.search(r'(?m)^path="res://([^"\r\n]+\.scn)"\s*$', text)
+        if match is None:
+            failures.append(f"{relative}: PackedScene destination is missing")
+            continue
+        imported = project / PurePosixPath(match.group(1))
+        if not imported.is_file() or imported.stat().st_size == 0:
+            failures.append(f"{relative}: imported PackedScene is missing")
+    if not sources:
+        failures.append("assets/actors: no glTF sources found")
+    if failures:
+        raise PackageError("actor LOD imports are incomplete:\n  " + "\n  ".join(failures[:40]))
+    log(f"checked {len(sources)} imported actor scenes with generated LODs")
 
 
 def export_project(godot: Path, project: Path, app_dir: Path, logs: Path, platform: dict) -> None:
@@ -913,6 +953,7 @@ def main() -> int:
         build_dir = options.build_dir.resolve()
         project = prepare_build_tree(build_dir, sha)
         import_project(godot, project, logs)
+        check_actor_imports(project)
         app_dir = stage / "app"
         export_project(godot, project, app_dir, logs, platform)
         stage_loose_client_files(build_dir, app_dir)

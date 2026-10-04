@@ -68,6 +68,12 @@ func run() -> void:
 		config["hairFit"] = JSON.parse_string(FileAccess.get_file_as_string(args["hair-fit"]))
 	if args.get("hair", "yes") == "no":
 		config["hairStyles"] = []
+	# Generated import products are intentionally absent from lean worktrees.
+	# Keep the authored face material for visual QA instead of applying a
+	# missing region mask that would make the entire face render black.
+	if config.has("faceAppearance") and not ResourceLoader.exists(
+			str((config.faceAppearance as Dictionary).get("mask", ""))):
+		config.erase("faceAppearance")
 	var animation: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/animations/luminous.json"))
 	var equipment: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(args.get("equipment", "res://data/actors/equipment.json")))
 	var appearance := {"skin": 0, "eyes": 0, "hair": 0, "shirt": 0, "pants": 0, "boots": 0, "head": 0}
@@ -93,6 +99,13 @@ func run() -> void:
 				return
 			outfit[int(pair.get_slice(":", 0))] = int(pair.get_slice(":", 1))
 		actor.apply_equipment_visuals(outfit)
+	var quality_name := str(args.get("quality", "high")).to_lower()
+	var quality_level := ActorRenderQuality.QUALITY_NAMES.find(quality_name)
+	if quality_level < 0:
+		push_error("Unknown actor quality: " + quality_name)
+		quit(1)
+		return
+	actor.apply_render_quality(quality_level, false)
 	actor.global_position = Vector3.ZERO
 	# Keep the client's import adapter and face the existing gameplay camera.
 	actor.rotation.y = PI
@@ -129,6 +142,8 @@ func run() -> void:
 			direction = Vector3(1, .08, 0)
 		elif args.get("angle", "front") == "back":
 			direction = Vector3(0, .08, -1)
+		elif args.get("angle", "front") == "back-quarter":
+			direction = Vector3(-.65, .12, -.8)
 		elif args.get("angle", "front") == "gameplay":
 			direction = Vector3(.55, .12, 1)
 		cam.size = .60 if args.get("region") == "head" else .40
@@ -137,18 +152,63 @@ func run() -> void:
 		cam.position = focus + direction
 		cam.look_at(focus)
 		await process_frame
-	if args.get("region", "full") == "hand":
+	if args.get("region", "full") in ["shoulder", "shoulders"]:
 		var skeleton := actor.get_skeleton()
-		var hand := skeleton.find_bone("hand_r")
+		var upperarm := skeleton.find_bone("upperarm_l")
+		var spine := skeleton.find_bone("spine_03")
+		var upperarm_origin := (skeleton.global_transform
+			* skeleton.get_bone_global_pose(upperarm)).origin
+		var spine_origin := (skeleton.global_transform
+			* skeleton.get_bone_global_pose(spine)).origin
+		var focus := spine_origin.lerp(upperarm_origin, .72)
+		var direction := Vector3(0, .06, 1)
+		if args.get("angle", "front") == "side":
+			direction = Vector3(1, .06, 0)
+		elif args.get("angle", "front") == "back":
+			direction = Vector3(0, .06, -1)
+		elif args.get("angle", "front") == "back-quarter":
+			direction = Vector3(-.65, .10, -.8)
+		cam.size = .45
+		cam.position = focus + direction
+		cam.look_at(focus)
+		await process_frame
+	if args.get("region", "full") in ["hand", "left-hand"]:
+		var skeleton := actor.get_skeleton()
+		var hand_name := "hand_l" if args.get("region") == "left-hand" else "hand_r"
+		var hand := skeleton.find_bone(hand_name)
 		var focus := (skeleton.global_transform * skeleton.get_bone_global_pose(hand)).origin
 		cam.size = .36
-		cam.position = focus + Vector3(.3, .1, .7)
+		var direction := Vector3(-.3 if hand_name == "hand_l" else .3, .1, .7)
+		if args.get("angle", "front") == "side":
+			direction = Vector3(.7, .1, 0)
+		elif args.get("angle", "front") == "back":
+			direction = Vector3(.3 if hand_name == "hand_l" else -.3, .1, -.7)
+		elif args.get("angle", "front") == "back-quarter":
+			direction = Vector3(-.55, .12, -.55)
+		cam.position = focus + direction
 		cam.look_at(focus)
 		await process_frame
 	if args.get("region", "full") in ["hips", "back"]:
 		var focus := Vector3(0, .88, 0) if args["region"] == "hips" else Vector3(0, 1.35, 0)
 		var direction := Vector3(0, .1, 1) if args["region"] == "hips" else Vector3(-.4, .2, -1)
+		if args["region"] == "hips" and args.get("angle", "front") == "side":
+			direction = Vector3(1, .1, 0)
+		elif args["region"] == "hips" and args.get("angle", "front") == "back-quarter":
+			direction = Vector3(-.65, .15, -.8)
 		cam.size = .65
+		cam.position = focus + direction
+		cam.look_at(focus)
+		await process_frame
+	if args.get("region", "full") == "boots":
+		var focus := Vector3(0, .27, 0)
+		var direction := Vector3(0, .08, 1)
+		if args.get("angle", "front") == "side":
+			direction = Vector3(1, .08, 0)
+		elif args.get("angle", "front") == "back":
+			direction = Vector3(0, .08, -1)
+		elif args.get("angle", "front") == "back-quarter":
+			direction = Vector3(-.65, .15, -.8)
+		cam.size = .55
 		cam.position = focus + direction
 		cam.look_at(focus)
 		await process_frame
@@ -172,14 +232,19 @@ func run() -> void:
 		report["runtime_sha256"][source] = FileAccess.get_sha256(source)
 	report["equipment_config_sha256"] = FileAccess.get_sha256(args.get("equipment", "res://data/actors/equipment.json"))
 	report["library_sha256"] = FileAccess.get_sha256(str(config["animationLibrary"]))
+	report["quality"] = quality_name
+	report["quality_lod_bias_scale"] = ActorRenderQuality.lod_bias_scale(quality_level)
 	report["hair_fit"] = config.get("hairFit", {})
 	report["socket_placements"] = {}
+	report["socket_grip_distances"] = {}
 	for piece in actor._equipment_nodes.values():
 		for attachment: Node in piece:
 			if attachment is BoneAttachment3D:
 				var prop := attachment.get_child(0) as Node3D
 				var t := prop.transform
 				report["socket_placements"][str(attachment.name)] = [t.basis.x.x,t.basis.x.y,t.basis.x.z,t.basis.y.x,t.basis.y.y,t.basis.y.z,t.basis.z.x,t.basis.z.y,t.basis.z.z,t.origin.x,t.origin.y,t.origin.z]
+				report["socket_grip_distances"][str(attachment.name)] = \
+					prop.global_position.distance_to(attachment.global_position)
 	report["facing_offset_degrees"] = rad_to_deg(actor._facing_offset)
 	report["bone_poses"] = {}
 	for bone_name: String in ["pelvis", "spine_03", "Head", "upperarm_l", "upperarm_r", "foot_l", "foot_r"]:
@@ -188,7 +253,12 @@ func run() -> void:
 	for n: Node in actor.find_children("*", "MeshInstance3D", true, false):
 		var mesh := n as MeshInstance3D
 		var mat := mesh.material_override as StandardMaterial3D
-		report.meshes.append({"name": str(mesh.name), "visible": mesh.visible, "material_override": mat != null, "tint": str(mat.albedo_color) if mat != null else "", "grow": mat.grow_amount if mat != null and mat.grow else 0.0})
+		report.meshes.append({"name": str(mesh.name), "visible": mesh.visible,
+			"material_override": mat != null,
+			"tint": str(mat.albedo_color) if mat != null else "",
+			"grow": mat.grow_amount if mat != null and mat.grow else 0.0,
+			"mesh_resource_id": mesh.mesh.get_instance_id() if mesh.mesh != null else 0,
+			"lod_bias": mesh.lod_bias, "cast_shadow": mesh.cast_shadow})
 	if args.has("hide"):
 		report["neck_diagnostic"] = []
 		for n: Node in actor.find_children("*", "MeshInstance3D", true, false):

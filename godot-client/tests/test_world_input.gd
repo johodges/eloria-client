@@ -1593,9 +1593,9 @@ func _run() -> void:
 	_expect(host.text == "18.235.240.60", "development server is the default endpoint")
 	var creation_panel: Control = main.get_node("CreationPanel") as Control
 	var create_button: Button = main.get_node(
-		"CreationPanel/Columns/Form/Actions/Create") as Button
+		"CreationPanel/Columns/FormPanel/Form/Actions/Create") as Button
 	var back_button: Button = main.get_node(
-		"CreationPanel/Columns/Form/Actions/Back") as Button
+		"CreationPanel/Columns/FormPanel/Form/Actions/Back") as Button
 	login_panel.hide()
 	creation_panel.show()
 	await process_frame

@@ -43,10 +43,18 @@ func configure(owner_actor: ReplicatedActor3D) -> void:
 
 func set_equipped_bow(path: String) -> void:
 	_equipped_bow = not path.is_empty()
-	if bow == null and not _equipped_bow:
+	if not _equipped_bow:
+		# Unequipping while already idle used to leave the previous class bow
+		# visible: update_pose's idle fast path only hid it when the action also
+		# changed. Hide it as part of the equipment transition itself so class
+		# previews and live equipment swaps cannot retain a stale ranged prop.
+		if bow != null:
+			bow.hide()
+		if actor != null:
+			actor.set_hand_props_visible(true)
 		return
 	_ensure_bow()
-	bow.set_asset(path if _equipped_bow else RangerBow3D.DEFAULT_BOW)
+	bow.set_asset(path)
 	update_pose()
 
 func _ensure_bow() -> void:
@@ -97,6 +105,10 @@ func update_pose() -> void:
 	if bow != null:
 		bow.visible = ranging or _equipped_bow
 	if bow != null and bow.visible:
+		# The visible ranged-animation bow replaces the registry socket prop.
+		# Keep its relaxed grip fit on the cached visual roots only; active
+		# draw/release poses retain their authored aiming transform.
+		bow.set_idle_fit(not ranging)
 		var skeleton_size := actor.get_skeleton().global_basis.get_scale().y
 		bow.pose(left, right, actor.global_basis.y.normalized(), -actor.global_basis.z.normalized(),
 			drawing, time if action == &"ranged_attack" else -1.0, actor.rig_fit_scale()*skeleton_size, skeleton_size)

@@ -271,6 +271,18 @@
       "name": "Furtrim Coat",
       "attach": "skinned",
       "skinRegion": "torso",
+      "wardrobeOnly": true,
+      "wardrobeColor": [
+        92,
+        94,
+        59
+      ],
+      "wardrobeTrimColor": [
+        174,
+        142,
+        76
+      ],
+      "hides": [],
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",
@@ -447,6 +459,7 @@
       "name": "Warded Boots",
       "attach": "skinned",
       "skinRegion": "boots",
+      "suppressGeneratedBacking": true,
       "kind": "boots",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",
@@ -5727,6 +5740,7 @@
       "name": "Warded Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
+      "suppressGeneratedBacking": true,
       "kind": "legs",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",
@@ -21327,6 +21341,18 @@
       "name": "Studded Jack",
       "attach": "skinned",
       "skinRegion": "torso",
+      "wardrobeOnly": true,
+      "wardrobeColor": [
+        126,
+        49,
+        45
+      ],
+      "wardrobeTrimColor": [
+        189,
+        144,
+        82
+      ],
+      "hides": [],
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",
@@ -21439,6 +21465,18 @@
       "name": "Warded Tabard",
       "attach": "skinned",
       "skinRegion": "torso",
+      "wardrobeOnly": true,
+      "wardrobeColor": [
+        65,
+        55,
+        108
+      ],
+      "wardrobeTrimColor": [
+        125,
+        155,
+        190
+      ],
+      "hides": [],
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",
@@ -21583,6 +21621,18 @@
       "name": "Scout Vest",
       "attach": "skinned",
       "skinRegion": "torso",
+      "wardrobeOnly": true,
+      "wardrobeColor": [
+        48,
+        91,
+        61
+      ],
+      "wardrobeTrimColor": [
+        139,
+        101,
+        58
+      ],
+      "hides": [],
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",
@@ -23751,9 +23801,9 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.05194,
-          -0.00242,
-          0.00037
+          -0.0757,
+          -0.05,
+          0.0
         ],
         "rotationDegrees": [
           42.18961,
@@ -24283,9 +24333,9 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.05194,
-          -0.00242,
-          0.00037
+          -0.0757,
+          -0.05,
+          0.0
         ],
         "rotationDegrees": [
           42.18961,
@@ -24682,9 +24732,9 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.05194,
-          -0.00242,
-          0.00037
+          -0.02,
+          -0.09,
+          -0.07955
         ],
         "rotationDegrees": [
           42.18961,
@@ -24701,9 +24751,9 @@
       "socket": {
         "bone": "hand_r",
         "offset": [
-          -0.05194,
-          -0.00242,
-          0.00037
+          -0.08,
+          -0.04,
+          -0.08
         ],
         "rotationDegrees": [
           42.18961,

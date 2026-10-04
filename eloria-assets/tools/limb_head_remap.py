@@ -16,6 +16,41 @@ import torso_remap
 from trim_generated_boots import clip
 
 
+# Alternate leg linings are used only when fitted boots are also present.  A
+# common cuff hand-off keeps the leg and boot underlayers from occupying the
+# whole shin together (which used to reveal trouser cloth from the front and
+# boot cloth from the rear through openings in the authored shells).  The
+# visible source art is untouched; only the hidden, generated backing starts
+# here, and its radial section is still derived from that garment's artwork.
+FITTED_BOOT_CUFF_SEAM = 0.190
+
+
+def compress_cuff_band(points, seam, keep_above):
+    """Move an existing backing inside a cuff without changing topology.
+
+    Fresh authoring clips the hidden sheet at the measured cuff.  For already
+    reviewed packed assets, however, a clip adds vertices and indices.  This
+    affine height compression is the POSITION-only equivalent: it preserves
+    every triangle and draw call, keeps the far garment edge exact, and moves
+    the old overshoot wholly inside the adjacent fitted garment.  One affine
+    scale across the complete hidden sheet avoids a fold at a blend boundary.
+    """
+    out = np.asarray(points, dtype=float).copy()
+    if not len(out):
+        return out
+    y = out[:, 1].copy()
+    low, high = float(y.min()), float(y.max())
+    if high - low <= 1e-12:
+        return out
+    if keep_above:
+        if low < seam < high:
+            out[:, 1] = seam + (y - low) * (high - seam) / (high - low)
+    else:
+        if low < seam < high:
+            out[:, 1] = low + (y - low) * (seam - low) / (high - low)
+    return out
+
+
 def components(points, triangles):
     canonical, edges, count = io._weld(points, triangles)
     return io._components(edges, count)[canonical]
@@ -358,7 +393,97 @@ def shaft_sections(points, faces, low, high, sign):
     return np.asarray(rows), np.asarray(sections)
 
 
-def backing(rig, armour, faces, region, low, high, join_default_clothing=True, join_lower=True):
+def clip_sheet_band(points, faces, low=None, high=None, vertex_values=None):
+    """Clip an open triangle sheet to exact Y planes before thickening it.
+
+    The body triangles used to seed a backing straddle its requested band.
+    Keeping those uncut triangles made the alternate leg lining reach down
+    into the foot and the alternate boot lining climb above its measured cuff.
+    Edge interpolation preserves the surface and creates a clean boundary;
+    ``thickened_sheets`` subsequently closes that boundary.
+
+    Optional per-vertex values follow the same edge interpolation and vertex
+    compaction as positions.  The backing passes its signed, weight-derived
+    leg ownership here: a broad left foot may cross ``x == 0`` without becoming
+    attached to the right-leg bone chain at the new cuff vertices.
+    """
+    result_points = np.asarray(points, dtype=float).copy()
+    result_faces = np.asarray(faces, dtype=np.int64)
+    result_values = (None if vertex_values is None
+                     else np.asarray(vertex_values, dtype=float))
+    if result_values is not None and len(result_values) != len(result_points):
+        raise ValueError('Per-vertex clip values must match the point count')
+    for plane, keep_above in ((low, True), (high, False)):
+        if plane is None or not len(result_faces):
+            continue
+        signed = result_points[:, 1] - float(plane)
+        on_plane = np.abs(signed) <= 1e-12
+        result_points[on_plane, 1] = float(plane)
+        signed[on_plane] = 0.0
+        inside = signed >= -1e-12 if keep_above else signed <= 1e-12
+        output = list(result_points)
+        output_values = list(result_values) if result_values is not None else None
+        cache = {}
+        kept = []
+
+        def intersection(i, j):
+            # Reuse a vertex already on the clipping plane. Creating a second
+            # index at the same position makes the fan below emit a zero-area
+            # triangle when the other endpoint is outside the kept half-space.
+            if signed[i] == 0.0:
+                return int(i)
+            if signed[j] == 0.0:
+                return int(j)
+            key = tuple(sorted((int(i), int(j))))
+            if key not in cache:
+                denominator = signed[i] - signed[j]
+                t = signed[i] / denominator if abs(denominator) > 1e-12 else 0.5
+                point = result_points[i] * (1.0 - t) + result_points[j] * t
+                point[1] = float(plane)
+                cache[key] = len(output)
+                output.append(point)
+                if output_values is not None:
+                    output_values.append(
+                        result_values[i] * (1.0 - t) + result_values[j] * t)
+            return cache[key]
+
+        for face in result_faces:
+            polygon = []
+
+            def append_vertex(index):
+                index = int(index)
+                if not polygon or polygon[-1] != index:
+                    polygon.append(index)
+
+            for i, j in zip(face, np.roll(face, -1)):
+                if inside[i]:
+                    append_vertex(i)
+                if inside[i] != inside[j]:
+                    append_vertex(intersection(i, j))
+            if len(polygon) > 1 and polygon[0] == polygon[-1]:
+                polygon.pop()
+            if len(set(polygon)) >= 3:
+                kept.extend([[polygon[0], polygon[k], polygon[k + 1]]
+                             for k in range(1, len(polygon) - 1)])
+        if not kept:
+            empty = (np.empty((0, 3)),
+                     np.empty((0, 3), dtype=np.int64))
+            if result_values is None:
+                return empty
+            return (*empty, np.empty((0, *result_values.shape[1:])))
+        kept = np.asarray(kept, dtype=np.int64)
+        used, inverse = np.unique(kept, return_inverse=True)
+        result_points = np.asarray(output)[used]
+        if output_values is not None:
+            result_values = np.asarray(output_values)[used]
+        result_faces = inverse.reshape(-1, 3)
+    if result_values is None:
+        return result_points, result_faces
+    return result_points, result_faces, result_values
+
+
+def backing(rig, armour, faces, region, low, high, join_default_clothing=True,
+            join_lower=True, exact_low=False, exact_high=False):
     """A closed stocking/trouser lining inside the artwork, with body weights."""
     p, f = rig.positions, ea.garment_faces(rig)
     c = p[f].mean(axis=1)
@@ -385,7 +510,12 @@ def backing(rig, armour, faces, region, low, high, join_default_clothing=True, j
     right_share = (rig.weights[used] * np.isin(rig.joints[used], right_bones)).sum(axis=1)
     # Broad feet can cross x=0. The original weighted chain owns their lining;
     # projecting a vertex onto a new shaft must never switch it to the other leg.
-    own_left = np.where(left_share + right_share > 0.25, left_share >= right_share, p[:, 0] >= 0)
+    side_ownership = np.where(
+        left_share + right_share > 0.25,
+        left_share - right_share,
+        np.where(p[:, 0] >= 0, 1.0, -1.0),
+    )
+    own_left = side_ownership >= 0.0
     _, unique = np.unique(np.sort(f, axis=1), axis=0, return_index=True)
     f = f[unique]
     art = armour[faces]
@@ -429,8 +559,16 @@ def backing(rig, armour, faces, region, low, high, join_default_clothing=True, j
     # resource and original armour remain intact.
     if join_default_clothing:
         p[boundary] = original_positions[boundary]
+    if exact_low or exact_high:
+        p, f, side_ownership = clip_sheet_band(
+            p, f, low if exact_low else None, high if exact_high else None,
+            side_ownership)
+        # Exact cuff cuts are alternate fitted-garment joins, so no retained
+        # default-clothing boundary normal is applicable after interpolation.
+        boundary = np.zeros(len(p), dtype=bool)
+        own_left = side_ownership >= 0.0
     n = normals(p, f)
-    if join_default_clothing:
+    if join_default_clothing and not (exact_low or exact_high):
         n[boundary] = normals(original_positions, f)[boundary]
     outer, inner = p + n * 0.003 * rig.fit_scale, p + n * 0.001 * rig.fit_scale
     import equipment_seams
@@ -620,17 +758,28 @@ def build(source, out, rig, kind, label, span=None):
         if region == "boots":
             # Default pants need a cuff transition. Fitted legwear already
             # supplies that join: use the stocking inside the original boot
-            # instead, so the default pants' bulky calf cannot flare outside it.
+            # instead, so the default pants' bulky calf cannot flare outside
+            # it. Both fitted-garment alternates terminate at the same
+            # canonical cuff; using the authored boot shaft height here left a
+            # boot backing visible behind fitted trousers.
+            cuff_seam = max(lower, FITTED_BOOT_CUFF_SEAM * rig.fit_scale)
             b, n, uv, idx, j, w = backing(
-                rig, p, f, region, lower, upper, join_default_clothing=False
+                rig, p, f, region, lower, cuff_seam,
+                join_default_clothing=False, exact_high=True
             )
             lining = glb.primitive(
                 b, n, uv, idx, mat, joints=j, weights=w, weight_floats=True
             )
             glb.mesh("GeneratedBootBackingWithLegs", [lining], skin=0)
         else:
+            # Fitted footwear supplies the lower transition. Start this
+            # alternate trouser backing at the shared cuff hand-off and clip
+            # the seed body triangles there exactly; the visible trouser art
+            # remains at its authored hem and overlaps the boot normally.
+            cuff_seam = max(lower, FITTED_BOOT_CUFF_SEAM * rig.fit_scale)
             b, n, uv, idx, j, w = backing(
-                rig, p, f, region, lower, upper, join_lower=False
+                rig, p, f, region, cuff_seam, upper,
+                join_lower=False, exact_low=True
             )
             lining = glb.primitive(
                 b, n, uv, idx, mat, joints=j, weights=w, weight_floats=True

@@ -2,6 +2,10 @@ class_name ReplicatedActor3D
 extends CharacterBody3D
 
 const REBOUND_SKIN_POOL := preload("res://src/actors/rebound_skin_pool.gd")
+const ACTOR_RENDER_QUALITY := preload("res://src/actors/actor_render_quality.gd")
+const OLDCRAFT_ACTOR_STYLE := preload("res://src/actors/oldcraft_actor_style.gd")
+const GLB_MESH_EXTRAS := preload("res://src/actors/glb_mesh_extras.gd")
+const WARDROBE_SHIRT_FIT := preload("res://src/actors/wardrobe_shirt_fit.gd")
 
 @export var walk_presentation_speed := 6.0
 @export var run_presentation_speed := 9.0
@@ -264,6 +268,12 @@ var _silhouette: OccludedSilhouette
 ## paused body has to put it to sleep too and wake it with the body.
 var _animation_tier: int = AnimationGate.Tier.FULL
 var _cape_cloth_worn := false
+## The resolved graphics quality and whether this is the player's own actor.
+## Main supplies both after configure; keeping them here makes appearance and
+## equipment created later inherit the same policy without rebuilding either
+## resource cache.
+var _render_quality: int = ACTOR_RENDER_QUALITY.QUALITY_DEFAULT
+var _render_quality_local_actor := false
 
 # Visual layer 2. The gameplay camera renders layers 1 and 2; the full-map
 # camera renders layers 1 and 3, and the minimap camera renders layer 1 alone.
@@ -330,7 +340,7 @@ const NAMEPLATE_CLEARANCE := 0.6
 const OVERHEAD_PIXEL := 0.0012953
 const NAMEPLATE_FONT_SIZE := 12
 const HEALTH_NUMBER_FONT_SIZE := 11
-const SPEECH_BUBBLE_FONT_SIZE := 11
+const SPEECH_BUBBLE_FONT_SIZE := 15
 const OVERHEAD_OUTLINE_SIZE := 4
 
 # The rest of the block, in those same pixels, measured downwards from the
@@ -344,8 +354,10 @@ const HEALTH_BAR_DROP := 16.0
 const HEALTH_LABEL_DROP := 32.0
 ## The speech bubble sits above the name instead, and wraps well short of the
 ## screen it is now measured against.
-const SPEECH_BUBBLE_RISE := 20.0
-const SPEECH_BUBBLE_WIDTH := 220.0
+const SPEECH_BUBBLE_RISE := 28.0
+const SPEECH_BUBBLE_WIDTH := 270.0
+const SPEECH_BUBBLE_TEXT := Color(0.96, 0.91, 0.78, 1.0)
+const SPEECH_BUBBLE_SURROUND := Color(0.035, 0.026, 0.018, 0.94)
 ## The worn title, a line above the name in the same pixels as the rest of the
 ## block. Above rather than below because below is where the health bar and
 ## its numbers already are, and smaller than the name because a title is what
@@ -449,6 +461,12 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 			errors.append("Skeleton3D missing")
 		else:
 			_native_skeleton = skeleton
+			# Only playable humanoids declare a culture/style profile. Creature
+			# rigs can reuse names such as Head, hand_l or thigh_l without sharing
+			# the canonical 77-joint proportions, so never infer a human profile.
+			if OLDCRAFT_ACTOR_STYLE.has_profile(model_config):
+				OLDCRAFT_ACTOR_STYLE.apply_skeleton(skeleton,
+					str(model_config.culture))
 			if model_config.has("culture"):
 				_weapon_carry = (load("res://src/actors/weapon_carry_pose.gd") as Script).new()
 				_weapon_carry.name = "WeaponCarryPose"
@@ -460,7 +478,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 			var animation_path := _external_path(str(model_config.get("animationLibrary", "")))
 			var imported := NativeAnimationImporter.import_library(self,
 					animation_path, skeleton, model_config.get("boneAliases", {}),
-					PackedStringArray(), resolver.looping_clips)
+					resolver.required_clips(), resolver.looping_clips)
 			animation_player = imported.player
 			errors.append_array(Array(imported.errors))
 			if animation_player != null:
@@ -503,12 +521,14 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 			_tint_mesh(mesh_node, hair_tint)
 		elif mesh_name == "scalp":
 			_apply_skin_materials(mesh_node, skin_tint)
-		elif mesh_name == "wardrobe_shirt":
+		elif mesh_name in SHIRT_SURFACES:
 			# Kept on the node so equipping and unequipping a cuirass can put
 			# the character's own colour back without the appearance dictionary.
 			var shirt_color: Color = AppearanceVariants.wardrobe_color(
 				culture, AppearanceVariants.PART_SHIRT,
 				int(appearance.get("shirt", 0)))
+			if mesh_name == "wardrobe_shirt_trim":
+				shirt_color = shirt_color.lightened(0.18)
 			mesh_node.set_meta("wardrobe_color", shirt_color)
 			_set_mesh_color(mesh_node, shirt_color)
 		elif mesh_name == "wardrobe_pants":
@@ -534,6 +554,8 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 		int(appearance.get("hair", 0))), hair_tint)
 	_refresh_body_surface_visibility()
 	_refresh_wardrobe_cover()
+	_apply_render_quality_to_visuals()
+	OLDCRAFT_ACTOR_STYLE.apply_surface_finish(native_model)
 
 func _set_appearance_visible(mesh_node: MeshInstance3D, visible_by_style: bool) -> void:
 	# Appearance owns whether a wardrobe surface exists at all; equipment only
@@ -766,6 +788,8 @@ func _add_hair_variant(style: int, color: Color) -> void:
 			mesh.name = str(piece.get("name", "NativeHair"))
 			mesh.mesh = piece.get("mesh") as Mesh
 			mesh.skin = skin
+			mesh.transform = piece.get("transform", Transform3D.IDENTITY)
+			_restore_piece_render_state(mesh, piece)
 			holder.add_child(mesh)
 			mesh.skeleton = NodePath("../..")
 			_tint_mesh(mesh, color)
@@ -813,6 +837,23 @@ func render_diagnostics() -> Dictionary:
 		"native_model_transform": native_model.transform if native_model != null else Transform3D.IDENTITY,
 		"meshes": meshes,
 	}
+
+## Applies the player-selected actor quality to body, hair, and equipment.
+## Selection rings, map dots and overhead UI are siblings of NativeModel, so
+## they are deliberately outside this walk. The missing-model capsule is the
+## one body-level fallback and follows explicitly.
+func apply_render_quality(level: int, is_local_actor: bool = false) -> void:
+	_render_quality = ACTOR_RENDER_QUALITY.normalized_quality(level)
+	_render_quality_local_actor = is_local_actor
+	_apply_render_quality_to_visuals()
+	_refresh_cape_cloth_activity(true)
+
+func _apply_render_quality_to_visuals() -> void:
+	if is_instance_valid(_native_model):
+		ACTOR_RENDER_QUALITY.apply_actor(_native_model, _render_quality)
+	var fallback := get_node_or_null("MissingModelFallback") as MeshInstance3D
+	if fallback != null:
+		ACTOR_RENDER_QUALITY.apply_mesh(fallback, _render_quality)
 
 func _add_fallback_visual(dto: Dictionary) -> void:
 	var mesh_instance: MeshInstance3D = MeshInstance3D.new()
@@ -1133,10 +1174,15 @@ func show_speech_bubble(speech: String, duration_msec: int) -> void:
 		label.fixed_size = true
 		label.pixel_size = OVERHEAD_PIXEL
 		label.font_size = SPEECH_BUBBLE_FONT_SIZE
-		label.outline_size = OVERHEAD_OUTLINE_SIZE
+		# Oldcraft's ambient lines use cream lettering over a compact dark
+		# translucent bubble. Label3D cannot draw a nine-patch panel without a
+		# viewport per speaker, so the wider dark surround gives the same visual
+		# separation for a fraction of the memory and draw-call cost.
+		label.outline_size = 6
+		label.outline_modulate = SPEECH_BUBBLE_SURROUND
 		label.width = SPEECH_BUBBLE_WIDTH
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.modulate = Color(0.86, 1.0, 0.86, 1.0)
+		label.modulate = SPEECH_BUBBLE_TEXT
 		label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 		add_child(label)
 		_speech_bubble = label
@@ -1601,6 +1647,9 @@ func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) ->
 	# has to be built again against what the actor is now made of.
 	if _silhouette != null and _silhouette.is_enabled():
 		_silhouette.rebuild()
+	_apply_render_quality_to_visuals()
+	if is_instance_valid(_native_model):
+		OLDCRAFT_ACTOR_STYLE.apply_surface_finish(_native_model)
 
 ## Whether `visuals` asks for exactly what is already worn. The part loop's own
 ## skip condition, taken over the whole request: the same visual id for every
@@ -1691,12 +1740,24 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	var created: Array[Node] = []
 	if not model_config.is_empty():
 		var scene_path: String = str(model_config.get("scene", ""))
-		if str(model_config.get("attach", "socket")) == "skinned":
+		if bool(model_config.get("wardrobeOnly", false)):
+			# Starter looks can deliberately use the actor's own fitted wardrobe
+			# instead of drawing a second skinned torso.  A lightweight marker keeps
+			# the ordinary equipment lifecycle and diagnostics intact without adding
+			# another mesh or skin to every actor in a crowded scene.
+			var marker := Node3D.new()
+			marker.name = "WardrobeVisual_%d_%d" % [part, visual_id]
+			marker.set_meta("native_equipment", true)
+			marker.set_meta("wardrobe_only", true)
+			_native_skeleton.add_child(marker)
+			created.append(marker)
+		elif str(model_config.get("attach", "socket")) == "skinned":
 			created.append_array(_attach_skinned_equipment(scene_path, part, visual_id,
 				model_config.get("tint", []) as Array,
 				str(model_config.get("authoredFor", "")),
 				str(model_config.get("skinRegion", "")),
-				str(model_config.get("fitProfile", ""))))
+				str(model_config.get("fitProfile", "")),
+				bool(model_config.get("suppressGeneratedBacking", false))))
 		else:
 			var socket: Dictionary = _equipment_socket(part, model_config)
 			var attachment: BoneAttachment3D = _attach_socketed_equipment(
@@ -1721,6 +1782,8 @@ func _worn_torso_scene() -> String:
 	if visual == 0:
 		return ""
 	var model: Dictionary = _equipment_model_config(BODY_PART, visual)
+	if bool(model.get("wardrobeOnly", false)):
+		return ""
 	if str(model.get("attach", "socket")) != "skinned":
 		return ""
 	return str(model.get("scene", ""))
@@ -1770,14 +1833,28 @@ func _attach_cape_cloth(skeleton: Skeleton3D) -> void:
 	_cape_cloth = cloth
 
 func _set_cape_cloth_active(enabled: bool) -> void:
+	_cape_cloth_worn = enabled
 	if _cape_cloth == null:
 		return
-	_cape_cloth_worn = enabled
 	if enabled:
 		_tell_cloth_what_is_worn()
-	if enabled and not _cape_cloth.active:
+	_refresh_cape_cloth_activity(true)
+
+## Cape cloth is enabled only when all three owners agree: equipment says a
+## cape is worn, the animation gate has not paused this actor, and the actor
+## quality permits cloth for this local/non-local role. Re-enabling after a
+## quality change resets stale solver points; animation-tier wakes preserve the
+## previous behavior and resume them where they slept.
+func _refresh_cape_cloth_activity(reset_when_enabled: bool = false) -> void:
+	if _cape_cloth == null:
+		return
+	var enabled := (_cape_cloth_worn
+		and _animation_tier != AnimationGate.Tier.PAUSED
+		and ACTOR_RENDER_QUALITY.cape_enabled(
+			_render_quality, _render_quality_local_actor))
+	if enabled and reset_when_enabled and not _cape_cloth.active:
 		_cape_cloth.call("reset")
-	_cape_cloth.active = enabled and _animation_tier != AnimationGate.Tier.PAUSED
+	_cape_cloth.active = enabled
 
 ## How far the worn torso reaches from each of the solver's capsules. The
 ## solver knows the skeleton and nothing else; the equipment is only known
@@ -1853,10 +1930,22 @@ func _refresh_wardrobe_cover() -> void:
 	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
 	if native_model == null:
 		return
-	var covered: bool = int(_equipment_visuals.get(BODY_PART, 0)) != 0
+	var torso_visual: int = int(_equipment_visuals.get(BODY_PART, 0))
+	var covered: bool = torso_visual != 0
+	var torso_model := {}
+	if covered:
+		torso_model = _equipment_model_config(BODY_PART, torso_visual)
+	var wardrobe_only := false
+	for piece: Node in _equipment_nodes.get(BODY_PART, []):
+		if is_instance_valid(piece) and bool(piece.get_meta("wardrobe_only", false)):
+			wardrobe_only = true
+			break
 	var cover_regions: Array = []
 	var fitted_legs := false
 	var fitted_boots := false
+	var ranger_paired_lower := (
+		int(_equipment_visuals.get(4, 0)) == 230
+		and int(_equipment_visuals.get(6, 0)) == 224)
 	for part: int in [BODY_PART, 4, 6]:
 		for piece: Node in _equipment_nodes.get(part, []):
 			if not is_instance_valid(piece):
@@ -1871,10 +1960,17 @@ func _refresh_wardrobe_cover() -> void:
 					fitted_boots = true
 	for piece: Node in _equipment_nodes.get(6, []):
 		if is_instance_valid(piece) and piece.has_meta("boot_backing_with_legs"):
-			(piece as MeshInstance3D).visible = bool(piece.get_meta("boot_backing_with_legs")) == fitted_legs
+			# The Ranger trousers already provide the continuous leg-to-boot
+			# lining. Drawing the paired boot lining as well puts a second shell
+			# through the toe and vamp. Scope the suppression to this reviewed
+			# 230+224 pairing so the same ankle boots still back other outfits.
+			(piece as MeshInstance3D).visible = not ranger_paired_lower \
+				and not piece.has_meta("suppress_generated_backing") and \
+				bool(piece.get_meta("boot_backing_with_legs")) == fitted_legs
 	for piece: Node in _equipment_nodes.get(4, []):
 		if is_instance_valid(piece) and piece.has_meta("leg_backing_with_boots"):
-			(piece as MeshInstance3D).visible = bool(piece.get_meta("leg_backing_with_boots")) == fitted_boots
+			(piece as MeshInstance3D).visible = not piece.has_meta("suppress_generated_backing") and \
+				bool(piece.get_meta("leg_backing_with_boots")) == fitted_boots
 	for node_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
 		if mesh_node.has_meta("native_equipment"):
@@ -1882,16 +1978,36 @@ func _refresh_wardrobe_cover() -> void:
 		var surface_name: String = mesh_node.name.to_lower()
 		var is_body_surface: bool = (surface_name in ["body", "char1", "mesh_node"]
 			or surface_name.begins_with("wardrobe_"))
+		if surface_name == "wardrobe_shirt":
+			# Every body-cover pass starts from the authored shirt. The fitted
+			# wardrobe-only variant is presentation state, applied again below.
+			WARDROBE_SHIRT_FIT.restore(mesh_node)
 		if _native_skeleton != null and mesh_node.skin != null and is_body_surface:
-			TorsoBodyCover.apply(mesh_node, not cover_regions.is_empty(),
+			var mask_to_wardrobe_neckline := (wardrobe_only
+				and surface_name in ["body", "char1", "mesh_node"])
+			# The fitted native shirt owns its shaped opening. Mask only the body
+			# beneath that opening; shirt/trim surfaces stay on the ordinary path.
+			TorsoBodyCover.apply(mesh_node,
+				not cover_regions.is_empty() or mask_to_wardrobe_neckline,
 				_native_skeleton.global_transform.affine_inverse() * mesh_node.global_transform,
-				rig_fit_scale(), cover_regions, rig_name().begins_with("ssarathi_"))
+				rig_fit_scale(), cover_regions,
+				rig_name().begins_with("ssarathi_"),
+				_model_config.get("torsoBodyCover", {}) as Dictionary,
+				mask_to_wardrobe_neckline)
+		if wardrobe_only and surface_name == "wardrobe_shirt" \
+				and _native_skeleton != null:
+			WARDROBE_SHIRT_FIT.apply(mesh_node, _native_skeleton)
 		if not SHIRT_SURFACES.has(mesh_node.name.to_lower()):
 			continue
 		if not mesh_node.has_meta("wardrobe_color"):
 			continue
-		var want: Color = (COVERED_SHIRT if covered
-			else mesh_node.get_meta("wardrobe_color") as Color)
+		var wardrobe_color := mesh_node.get_meta("wardrobe_color") as Color
+		var want: Color = COVERED_SHIRT if covered else wardrobe_color
+		if wardrobe_only:
+			var color_key := ("wardrobeTrimColor" if
+				surface_name == "wardrobe_shirt_trim" else "wardrobeColor")
+			want = _tint_colour(torso_model.get(color_key,
+				torso_model.get("wardrobeColor", [])), wardrobe_color)
 		if mesh_node.mesh.get_surface_count() > 1:
 			for surface in range(mesh_node.mesh.get_surface_count()):
 				var part_material := mesh_node.get_surface_override_material(surface) as StandardMaterial3D
@@ -1943,6 +2059,8 @@ func set_occlusion_silhouette_enabled(enabled: bool) -> void:
 			return
 		_silhouette = OccludedSilhouette.new(self, _native_skeleton)
 	_silhouette.set_enabled(enabled)
+	if enabled:
+		_apply_render_quality_to_visuals()
 
 func occlusion_silhouette_enabled() -> bool:
 	return _silhouette != null and _silhouette.is_enabled()
@@ -2055,7 +2173,8 @@ func _attach_socketed_equipment(socket: Dictionary, scene_path: String,
 
 func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		tint: Array = [], author_rig: String = "",
-		skin_region: String = "", fit_profile: String = "") -> Array[Node]:
+		skin_region: String = "", fit_profile: String = "",
+		suppress_generated_backing: bool = false) -> Array[Node]:
 	# The garment ships with the shared joint hierarchy so it is a valid skinned
 	# glTF on its own. Replacing its bind poses with this skeleton's rest poses
 	# retargets the garment and applies the rig fit scale in one step.
@@ -2092,10 +2211,20 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 			str(piece.get("name", "Mesh"))]
 		clone.mesh = _draped_over(worn, scene_path, piece)
 		clone.skin = rebound
+		clone.transform = piece.get("transform", Transform3D.IDENTITY)
+		_restore_piece_render_state(clone, piece)
 		_tint_surfaces(clone, tint)
 		_native_skeleton.add_child(clone)
 		clone.skeleton = NodePath("..")
 		clone.set_meta("native_equipment", true)
+		var generated_backing: bool = str(piece.get("name", "")).begins_with("Generated")
+		if suppress_generated_backing and generated_backing:
+			# Some generated backing surfaces are useful only as authoring-time body
+			# cover envelopes. Keep the node and its metadata so the native wardrobe
+			# is still clipped, but skip the redundant draw when the authored shell is
+			# already closed on its own.
+			clone.set_meta("suppress_generated_backing", true)
+			clone.visible = false
 		if part == BODY_PART and str(piece.get("name", "")) == TorsoBodyCover.BACKING_NAME:
 			clone.set_meta("replaces_torso_body", true)
 			var cover: Array = piece.get("body_cover", []) as Array
@@ -2124,8 +2253,24 @@ func _equipment_instance(scene_path: String) -> Node3D:
 		mesh_node.name = str(piece.get("name", "Mesh"))
 		mesh_node.mesh = piece.get("mesh") as Mesh
 		mesh_node.transform = piece.get("transform", Transform3D.IDENTITY)
+		_restore_piece_render_state(mesh_node, piece)
 		holder.add_child(mesh_node)
 	return holder
+
+static func _restore_piece_render_state(mesh_node: MeshInstance3D,
+		piece: Dictionary) -> void:
+	# Imported per-node presentation does not live on ArrayMesh itself. Carry it
+	# across when equipment is rebound/reparented so using the LOD-capable mesh
+	# does not silently discard authored material overrides or LOD bias.
+	mesh_node.material_override = piece.get("material_override") as Material
+	mesh_node.lod_bias = float(piece.get("lod_bias", 1.0))
+	mesh_node.cast_shadow = int(piece.get("cast_shadow",
+		GeometryInstance3D.SHADOW_CASTING_SETTING_ON)) as GeometryInstance3D.ShadowCastingSetting
+	var surface_overrides: Array = piece.get("surface_overrides", []) as Array
+	for surface: int in mini(surface_overrides.size(),
+			mesh_node.mesh.get_surface_count() if mesh_node.mesh != null else 0):
+		mesh_node.set_surface_override_material(surface,
+			surface_overrides[surface] as Material)
 
 const TINT_SLOTS := {"base": 0, "trim": 1, "detail": 2}
 
@@ -2943,8 +3088,7 @@ func set_animation_tier(tier: int, gate: AnimationGate) -> void:
 	gate.apply(animation_player, tier)
 	if _weapon_carry != null:
 		_weapon_carry.call("update_activity")
-	if _cape_cloth != null:
-		_cape_cloth.active = _cape_cloth_worn and tier != AnimationGate.Tier.PAUSED
+	_refresh_cape_cloth_activity()
 
 func animation_tier() -> int:
 	return _animation_tier
@@ -2982,49 +3126,63 @@ static var _draped_capes: Dictionary = {}
 static var _torso_reaches: Dictionary = {}
 
 static func _equipment_pieces(path: String) -> Array:
-	# One parse per scene per session. The generic tier means every actor now
-	# wears a shirt, leggings and boots by default, so re-importing a GLB for
-	# each actor would cost hundreds of parses on a populated map.
+	# One cached scene instance per equipment model. In production this comes
+	# from Godot's imported PackedScene and therefore retains generated LODs;
+	# external test candidates and lean checkouts use GlbSceneCache's raw fallback.
 	if _equipment_pieces_cache.has(path):
 		return _equipment_pieces_cache[path] as Array
 	var pieces: Array = []
-	var document: GLTFDocument = GLTFDocument.new()
-	var state: GLTFState = GLTFState.new()
-	if document.append_from_file(_external_path(path), state) == OK:
-		var body_covers: Dictionary = {}
-		var hair_covers: Dictionary = {}
-		for mesh_data: Dictionary in state.json.get("meshes", []):
-			body_covers[str(mesh_data.get("name", ""))] = mesh_data.get("extras", {}).get("bodyCover", [])
-			hair_covers[str(mesh_data.get("name", ""))] = mesh_data.get("extras", {}).get("coversHair", false)
-		var generated: Node = document.generate_scene(state)
-		var root: Node3D = generated as Node3D
-		if root != null:
-			var skeleton: Skeleton3D = null
-			for node_value: Node in root.find_children("*", "Skeleton3D", true, false):
-				skeleton = node_value as Skeleton3D
-				break
-			for node_value: Node in root.find_children("*", "MeshInstance3D", true, false):
-				var mesh_node: MeshInstance3D = node_value as MeshInstance3D
-				if mesh_node.mesh == null:
-					continue
-				pieces.append({
-					"mesh": mesh_node.mesh,
-					"name": str(mesh_node.name),
-					"body_cover": body_covers.get(str(mesh_node.name), []),
-					"covers_hair": hair_covers.get(str(mesh_node.name), false),
-					"transform": _relative_transform(mesh_node, root),
-					"bones": _skin_bone_names(mesh_node.skin, skeleton),
-					"binds": _skin_bind_poses(mesh_node.skin),
-				})
-		if generated != null:
-			generated.free()
+	var imported := GlbSceneCache.instantiate(path)
+	if imported == null:
+		return pieces
+	var mesh_nodes: Array[MeshInstance3D] = []
+	var embedded_extras := false
+	for node_value: Node in imported.find_children("*", "MeshInstance3D", true, false):
+		var found := node_value as MeshInstance3D
+		if found.mesh == null:
+			continue
+		mesh_nodes.append(found)
+		embedded_extras = embedded_extras or found.mesh.has_meta(&"extras")
+	# Godot preserves glTF mesh extras as ArrayMesh metadata in its imported
+	# PackedScene, including in an exported PCK where the raw source GLB may be
+	# omitted. The JSON-only reader is the fallback for importers/candidates that
+	# do not carry that metadata; it never performs a second geometry import.
+	var extras_by_name: Dictionary = ({}
+		if embedded_extras else GLB_MESH_EXTRAS.read(path))
+	var skeleton: Skeleton3D = null
+	for node_value: Node in imported.find_children("*", "Skeleton3D", true, false):
+		skeleton = node_value as Skeleton3D
+		break
+	for mesh_node: MeshInstance3D in mesh_nodes:
+		var extras: Dictionary = mesh_node.mesh.get_meta(&"extras", {}) as Dictionary
+		if not embedded_extras:
+			extras = extras_by_name.get(str(mesh_node.name), {}) as Dictionary
+			if extras.is_empty() and not mesh_node.mesh.resource_name.is_empty():
+				extras = extras_by_name.get(mesh_node.mesh.resource_name, {}) as Dictionary
+		var surface_overrides: Array[Material] = []
+		for surface: int in mesh_node.mesh.get_surface_count():
+			surface_overrides.append(mesh_node.get_surface_override_material(surface))
+		pieces.append({
+			"mesh": mesh_node.mesh,
+			"name": str(mesh_node.name),
+			"body_cover": extras.get("bodyCover", []),
+			"covers_hair": extras.get("coversHair", false),
+			"transform": _relative_transform(mesh_node, imported),
+			"bones": _skin_bone_names(mesh_node.skin, skeleton),
+			"binds": _skin_bind_poses(mesh_node.skin),
+			"material_override": mesh_node.material_override,
+			"surface_overrides": surface_overrides,
+			"lod_bias": mesh_node.lod_bias,
+			"cast_shadow": mesh_node.cast_shadow,
+		})
+	imported.free()
 	if not pieces.is_empty():
 		_equipment_pieces_cache[path] = pieces
 	return pieces
 
 static func _relative_transform(node: Node3D, root: Node3D) -> Transform3D:
 	# Accumulated by hand: global_transform is only meaningful inside the tree,
-	# and the imported scene is parsed without ever being added to one.
+	# and the cached instance is inspected without ever being added to one.
 	var accumulated: Transform3D = Transform3D.IDENTITY
 	var walker: Node3D = node
 	while walker != null and walker != root:

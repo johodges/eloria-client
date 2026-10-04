@@ -1,8 +1,6 @@
 extends SceneTree
 
 const SCREEN_SIZE := Vector2i(1280, 720)
-const PREVIEW_SIZE := Vector2i(420, 612)
-
 var _artifact_directory := ""
 var _failures := 0
 var _results: Array[Dictionary] = []
@@ -32,6 +30,8 @@ func _run() -> void:
 	(main.get_node("LoginPanel") as Control).hide()
 	(main.get_node("GameView") as Control).hide()
 	(main.get_node("CreationPanel") as Control).show()
+	(main.get_node("%ShowClassGear") as CheckBox).set_pressed_no_signal(false)
+	main.call("_on_creation_class_gear_toggled", false)
 	# Capture a close three-quarter view so face, hair, clothing fit, and
 	# culture features are large enough for the CI artifact to review.
 	main.set("preview_yaw", PI + 0.28)
@@ -44,27 +44,27 @@ func _run() -> void:
 		"CreationPanel/Columns/CharacterPreview/Viewport") as SubViewport
 	var spin_names: Array[String] = ["CreateSkin", "CreateEyes",
 		"CreateShirt", "CreatePants", "CreateBoots"]
-	var hair := main.get_node("CreationPanel/Columns/Form/AppearanceGrid/CreateHair") as OptionButton
-	var hair_color := main.get_node("CreationPanel/Columns/Form/AppearanceGrid/CreateHairColor") as OptionButton
+	var hair := main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateHair") as OptionButton
+	var hair_color := main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateHairColor") as OptionButton
 	_expect(hair.item_count == 10 and hair_color.item_count == 20, "independent named hairstyle and color choices")
-	_expect(main.get_node_or_null("CreationPanel/Columns/Form/AppearanceGrid/CreateHead") == null, "broken head control removed")
+	_expect(main.get_node_or_null("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateHead") == null, "broken head control removed")
 	hair.select(0)
 	hair_color.select(0)
 	# The shared bodies expose native wardrobe dye surfaces. Exercise their
 	# existing controls alongside the hair choices, including the bald default.
 	for garment: String in ["CreateShirt", "CreatePants", "CreateBoots"]:
 		_expect(main.get_node_or_null(
-			"CreationPanel/Columns/Form/AppearanceGrid/" + garment) is OptionButton,
+			"CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + garment) is OptionButton,
 			"creation offers native wardrobe dye " + garment)
 	for spin_name: String in spin_names:
-		(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).select((main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).get_item_index(1 if spin_name == "CreateSkin" else 0))
+		(main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + spin_name) as OptionButton).select((main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + spin_name) as OptionButton).get_item_index(1 if spin_name == "CreateSkin" else 0))
 
 	var creation_options: Array = main.get("creation_options")
 	for index: int in range(creation_options.size()):
 		var option: Dictionary = creation_options[index]
 		_select_actor_type(main, int(option.actorType))
 		for choice_name: String in spin_names + ["CreateHair", "CreateHairColor"]:
-			var choice := main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + choice_name) as OptionButton
+			var choice := main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + choice_name) as OptionButton
 			var seen: Dictionary = {}
 			for item: int in range(choice.item_count):
 				var label_text := choice.get_item_text(item)
@@ -85,7 +85,7 @@ func _run() -> void:
 		hair.select(hair.get_item_index(style))
 		hair_color.select(hair_color.get_item_index(style))
 		for spin_name: String in spin_names:
-			(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).select(mini(style, (main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).item_count - 1))
+			(main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + spin_name) as OptionButton).select(mini(style, (main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + spin_name) as OptionButton).item_count - 1))
 		main.call("_refresh_creation_preview")
 		for unused_frame: int in range(10):
 			await process_frame
@@ -96,7 +96,7 @@ func _run() -> void:
 	# Changing colour must leave the selected mesh alone, and changing style
 	# must keep its colour. Exercise the real controls/materials and wire value.
 	for spin_name: String in spin_names:
-		(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).select((main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).get_item_index(1 if spin_name == "CreateSkin" else 0))
+		(main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + spin_name) as OptionButton).select((main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + spin_name) as OptionButton).get_item_index(1 if spin_name == "CreateSkin" else 0))
 	for model_index: int in [0, 1]:
 		selector.select(selector.get_item_index(model_index))
 		main.call("_populate_creation_choices")
@@ -142,6 +142,8 @@ func _run() -> void:
 	hair.select(hair.get_item_index(1))
 	hair_color.select(hair_color.get_item_index(3))
 	main.call("_refresh_creation_preview")
+	(main.get_node("%ShowClassGear") as CheckBox).set_pressed_no_signal(true)
+	main.call("_on_creation_class_gear_toggled", true)
 	for unused_frame: int in range(4):
 		await process_frame
 
@@ -179,8 +181,9 @@ func _capture_preview(viewport: SubViewport, file_name: String) -> void:
 	if image == null:
 		_expect(false, "rendered preview image is available")
 		return
-	_expect(not image.is_empty() and image.get_size() == PREVIEW_SIZE,
-		"rendered preview has reference dimensions")
+	_expect(not image.is_empty() and image.get_size() == viewport.size and
+		image.get_width() >= 420 and image.get_height() >= 620,
+		"rendered preview fills the responsive centre stage")
 	var sampled_colors: Dictionary = {}
 	for y: int in range(0, image.get_height(), 16):
 		for x: int in range(0, image.get_width(), 16):

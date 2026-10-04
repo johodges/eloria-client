@@ -12,11 +12,29 @@ extends Control
 ##
 ## They live in one script because they share one seam - the fork's extension
 ## protocol - and because main.gd is already long enough that nine more windows
-## would make it unreadable. The layout is deliberately plain: these are data
-## windows, and the artwork budget belongs to the world.
+## would make it unreadable. The quest surfaces use retained shared textures
+## and style resources: their fantasy chrome is built once and has no
+## actor-count cost.
 
 const RESERVED_RIGHT_RAIL := 96.0
 const PANEL_SIZE := Vector2(560.0, 380.0)
+const QUEST_JOURNAL_SIZE := Vector2(540.0, 650.0)
+const QUEST_TRACKER_SIZE := Vector2(292.0, 124.0)
+const QUEST_TRACKER_MAX_HEIGHT := 320.0
+const QUEST_STONE := Color(0.135, 0.125, 0.12, 0.98)
+const QUEST_STONE_RAISED := Color(0.205, 0.18, 0.145, 1.0)
+const QUEST_BRASS := Color(0.72, 0.54, 0.23, 1.0)
+const QUEST_BRASS_BRIGHT := Color(0.96, 0.77, 0.26, 1.0)
+const QUEST_PARCHMENT_DARK := Color(0.34, 0.20, 0.08, 1.0)
+const QUEST_INK := Color(0.17, 0.105, 0.055, 1.0)
+const QUEST_WARM_TEXT := Color(0.96, 0.93, 0.84, 1.0)
+const QUEST_MUTED_TEXT := Color(0.68, 0.62, 0.52, 1.0)
+const QUEST_BURGUNDY := Color(0.45, 0.075, 0.045, 1.0)
+const QUEST_BURGUNDY_HOVER := Color(0.62, 0.12, 0.065, 1.0)
+const QUEST_PARCHMENT_TEXTURE: Texture2D = preload(
+	"res://assets/ui/oldcraft_inspired/eloria_parchment.png")
+const QUEST_CARVED_FRAME_TEXTURE: Texture2D = preload(
+	"res://assets/ui/oldcraft_inspired/eloria_carved_frame.png")
 ## The combat box. It reports one fight and then has nothing to say, so it
 ## holds for this long after the last thing that happened and fades out - it
 ## used to sit there after the target was already dead.
@@ -55,6 +73,7 @@ var quest_detail: RichTextLabel
 var quest_track_button: Button
 var quest_active_button: Button
 var quest_done_button: Button
+var quest_count: Label
 ## Which half of the journal is showing. The player's choice about their own
 ## window, so it is kept here; both lists are the server's own state.
 var _quest_showing_archive := false
@@ -107,6 +126,7 @@ var _merchant_mode := "buy"
 ## every 224, and a tracked quest the server stops sending simply stops being
 ## tracked.
 var _tracked_quest_title := ""
+var _tracked_quest_layout_revision := 0
 
 func _ready() -> void:
 	name = "ExtensionWindows"
@@ -355,6 +375,8 @@ func _sync_quests() -> void:
 	quest_active_button.button_pressed = not _quest_showing_archive
 	quest_done_button.button_pressed = _quest_showing_archive
 	quest_done_button.text = "Completed (%d)" % AppState.quest_archive.size()
+	quest_count.text = ("%d COMPLETE" % AppState.quest_archive.size()
+		if _quest_showing_archive else "%d ACTIVE" % AppState.quest_journal.size())
 	if _quest_showing_archive:
 		_sync_quest_archive()
 		return
@@ -365,9 +387,13 @@ func _sync_quests() -> void:
 		var current: int = int(entry.get("current", 0))
 		var status: String = ("ready" if bool(entry.get("ready", false))
 			else ("%d/%d" % [current, target] if target > 0 else "in progress"))
-		quest_list.add_item("%s  [%s]" % [str(entry.get("title", "")), status])
+		quest_list.add_item("◆  %s  [%s]" % [str(entry.get("title", "")), status])
+		var row: int = quest_list.item_count - 1
+		quest_list.set_item_custom_fg_color(row, QUEST_BRASS_BRIGHT
+			if bool(entry.get("ready", false)) else QUEST_WARM_TEXT)
 	if AppState.quest_journal.is_empty():
-		quest_detail.text = "[center]%s[/center]" % tr("ELORIA_QUEST_NONE")
+		quest_detail.text = ("[center][color=#7c5a34][font_size=16]"
+			+ "%s[/font_size][/color][/center]" % tr("ELORIA_QUEST_NONE"))
 		quest_track_button.disabled = true
 		_sync_tracked_quest()
 		return
@@ -387,11 +413,14 @@ func _sync_quest_archive() -> void:
 	var selected: int = _selected_index(quest_list)
 	quest_list.clear()
 	for entry: Dictionary in AppState.quest_archive:
-		quest_list.add_item("%s  [%s]" % [str(entry.get("title", "")),
+		quest_list.add_item("✓  %s  [%s]" % [str(entry.get("title", "")),
 			str(entry.get("location", ""))])
+		quest_list.set_item_custom_fg_color(quest_list.item_count - 1,
+			QUEST_MUTED_TEXT)
 	quest_track_button.disabled = true
 	if AppState.quest_archive.is_empty():
-		quest_detail.text = "[center]You have not finished any quests yet.[/center]"
+		quest_detail.text = ("[center][color=#7c5a34][font_size=16]"
+			+ "You have not finished any quests yet.[/font_size][/color][/center]")
 		return
 	var index: int = clampi(selected, 0, AppState.quest_archive.size() - 1)
 	quest_list.select(index)
@@ -429,22 +458,53 @@ func _sync_tracked_quest() -> void:
 			break
 	if tracked.is_empty():
 		_tracked_quest_title = ""
+		_tracked_quest_layout_revision += 1
 		tracked_quest.hide()
 		quest_track_button.text = "Track"
 		return
 	var target: int = int(tracked.get("target", 0))
-	var lines: Array[String] = ["[b]%s[/b]" % str(tracked.get("title", ""))]
-	lines.append(str(tracked.get("objective", "")))
+	var lines: Array[String] = [
+		"[center][font_size=20][color=#8f6425][b]QUEST TRACKER[/b][/color][/font_size][/center]",
+		"[font_size=17][color=#592b18]◆  [b]%s[/b][/color][/font_size]"
+			% str(tracked.get("title", "")),
+		"[indent][font_size=15][color=#2b1a0e]%s[/color][/font_size][/indent]"
+			% str(tracked.get("objective", ""))]
 	if bool(tracked.get("ready", false)):
-		lines.append("[color=#8fdc8f]Ready to turn in at %s[/color]"
+		lines.append("[indent][font_size=15][color=#946c1d][b]Ready to turn in[/b][/color]"
+			+ "[color=#5e4b35] at %s[/color][/font_size][/indent]"
 			% str(tracked.get("location", "unknown")))
 	elif target > 0:
-		lines.append("%d of %d  -  %s" % [int(tracked.get("current", 0)),
-			target, str(tracked.get("location", "unknown"))])
+		lines.append(("[indent][font_size=15][color=#70491d]%d of %d[/color]"
+			+ "[color=#5e4b35]  ·  %s[/color][/font_size][/indent]") % [
+				int(tracked.get("current", 0)), target,
+				str(tracked.get("location", "unknown"))])
 	else:
-		lines.append(str(tracked.get("location", "unknown")))
+		lines.append("[indent][font_size=15][color=#5e4b35]%s[/color][/font_size][/indent]"
+			% str(tracked.get("location", "unknown")))
+	# Let the label report its natural wrapped height for this one update. The
+	# event-driven fitter turns this back off after applying the bounded size.
+	tracked_quest.custom_minimum_size.y = QUEST_TRACKER_SIZE.y
+	tracked_quest.size.y = QUEST_TRACKER_SIZE.y
+	tracked_quest_text.fit_content = true
 	tracked_quest_text.text = "\n".join(lines)
 	tracked_quest.show()
+	# RichTextLabel resolves wrapped line height after its container settles.
+	# Fit only when the server changes the quest, never from `_process()`.
+	_tracked_quest_layout_revision += 1
+	_fit_tracked_quest_to_content(_tracked_quest_layout_revision)
+
+func _fit_tracked_quest_to_content(revision: int) -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if revision != _tracked_quest_layout_revision or not tracked_quest.visible:
+		return
+	var content_height := tracked_quest_text.get_content_height()
+	tracked_quest_text.fit_content = false
+	var desired_height := clampf(content_height + 32.0,
+		QUEST_TRACKER_SIZE.y, QUEST_TRACKER_MAX_HEIGHT)
+	tracked_quest.custom_minimum_size.y = desired_height
+	tracked_quest.size.y = desired_height
+	tracked_quest_text.scroll_active = content_height + 32.0 > QUEST_TRACKER_MAX_HEIGHT
 
 ## One list serves both halves of the window, so a selection has to be read
 ## against whichever half is showing - against the other one it would either
@@ -459,22 +519,33 @@ func _show_archived_quest(index: int) -> void:
 	if index < 0 or index >= AppState.quest_archive.size():
 		return
 	var entry: Dictionary = AppState.quest_archive[index]
-	quest_detail.text = "[b]%s[/b]\n[i]%s[/i]\n\n%s" % [
-		str(entry.get("title", "")), str(entry.get("location", "")),
-		str(entry.get("detail", ""))]
+	quest_detail.text = ("[font_size=22][color=#592b18][b]%s[/b][/color][/font_size]"
+		+ "\n[color=#9b682d][font_size=11][b]COMPLETED IN[/b][/font_size][/color]"
+		+ "\n[color=#2b1a0e]%s[/color]\n\n"
+		+ "[color=#9b682d][font_size=11][b]CHRONICLE[/b][/font_size][/color]"
+		+ "\n[color=#2b1a0e]%s[/color]") % [str(entry.get("title", "")),
+			str(entry.get("location", "")), str(entry.get("detail", ""))]
 
 func _show_quest(index: int) -> void:
 	if index < 0 or index >= AppState.quest_journal.size():
 		return
 	var entry: Dictionary = AppState.quest_journal[index]
 	var target: int = int(entry.get("target", 0))
-	var lines: Array[String] = ["[b]%s[/b]" % str(entry.get("title", ""))]
-	lines.append(str(entry.get("objective", "")))
-	lines.append("Location: %s" % str(entry.get("location", "unknown")))
+	var lines: Array[String] = [
+		"[font_size=22][color=#592b18][b]%s[/b][/color][/font_size]"
+			% str(entry.get("title", "")),
+		"[color=#9b682d][font_size=11][b]QUEST OBJECTIVES[/b][/font_size][/color]",
+		"[color=#2b1a0e]◆  %s[/color]" % str(entry.get("objective", "")),
+		"",
+		"[color=#9b682d][font_size=11][b]LOCATION[/b][/font_size][/color]",
+		"[color=#2b1a0e]%s[/color]" % str(entry.get("location", "unknown"))]
 	if bool(entry.get("ready", false)):
-		lines.append("[color=#8fdc8f]%s[/color]" % tr("ELORIA_QUEST_READY"))
+		lines.append("\n[color=#946c1d][b]%s[/b][/color]"
+			% tr("ELORIA_QUEST_READY"))
 	elif target > 0:
-		lines.append("Progress: %d of %d" % [int(entry.get("current", 0)), target])
+		lines.append("\n[color=#9b682d][font_size=11][b]PROGRESS[/b][/font_size][/color]")
+		lines.append("[color=#2b1a0e]%d of %d complete[/color]"
+			% [int(entry.get("current", 0)), target])
 	quest_detail.text = "\n".join(lines)
 
 # --- mail --------------------------------------------------------------------
@@ -964,9 +1035,31 @@ func _build() -> void:
 	events_text.fit_content = true
 	events_panel.add_child(events_text)
 
-	quest_panel = _window("QuestJournal", "Quest journal")
+	quest_panel = _window("QuestJournal", "QUEST JOURNAL")
+	quest_panel.custom_minimum_size = QUEST_JOURNAL_SIZE
+	quest_panel.size = QUEST_JOURNAL_SIZE
+	quest_panel.position = Vector2(24.0,
+		(720.0 - QUEST_JOURNAL_SIZE.y) * 0.5)
+	quest_panel.set_meta(&"visual_style", "eloria_field_journal")
+	var quest_backdrop := ColorRect.new()
+	quest_backdrop.name = "JournalBackdrop"
+	quest_backdrop.color = Color(0.035, 0.03, 0.027, 0.985)
+	quest_backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	quest_panel.add_child(quest_backdrop)
+	quest_panel.move_child(quest_backdrop, 0)
+	var quest_header := _window_body(quest_panel).get_node("Header") as HBoxContainer
+	var quest_close := quest_header.get_node("Close") as Button
+	quest_count = Label.new()
+	quest_count.name = "QuestCount"
+	quest_count.text = "0 ACTIVE"
+	quest_count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	quest_count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	quest_header.add_child(quest_count)
+	quest_header.move_child(quest_count, quest_close.get_index())
 	var quest_views := HBoxContainer.new()
 	quest_views.name = "QuestViews"
+	quest_views.alignment = BoxContainer.ALIGNMENT_CENTER
+	quest_views.add_theme_constant_override("separation", 8)
 	_window_body(quest_panel).add_child(quest_views)
 	quest_active_button = Button.new()
 	quest_active_button.name = "QuestActive"
@@ -981,34 +1074,78 @@ func _build() -> void:
 	quest_done_button.toggle_mode = true
 	quest_done_button.pressed.connect(_on_quest_view.bind(true))
 	quest_views.add_child(quest_done_button)
-	var quest_columns := HSplitContainer.new()
+	var quest_columns := VBoxContainer.new()
+	quest_columns.name = "QuestColumns"
 	quest_columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	quest_columns.add_theme_constant_override("separation", 10)
 	_window_body(quest_panel).add_child(quest_columns)
 	quest_list = ItemList.new()
 	quest_list.name = "QuestList"
-	quest_list.custom_minimum_size = Vector2(240.0, 0.0)
+	quest_list.custom_minimum_size = Vector2(0.0, 170.0)
 	quest_list.item_selected.connect(_on_quest_selected)
 	quest_columns.add_child(quest_list)
 	var quest_side := VBoxContainer.new()
+	quest_side.name = "QuestDetailSide"
+	quest_side.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	quest_side.add_theme_constant_override("separation", 8)
 	quest_columns.add_child(quest_side)
+	var quest_record_heading := Label.new()
+	quest_record_heading.name = "QuestRecordHeading"
+	quest_record_heading.text = "ADVENTURER'S RECORD"
+	quest_side.add_child(quest_record_heading)
+	var quest_parchment := PanelContainer.new()
+	quest_parchment.name = "QuestParchment"
+	quest_parchment.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	quest_parchment.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	quest_side.add_child(quest_parchment)
+	var quest_parchment_surface := PanelContainer.new()
+	quest_parchment_surface.name = "ParchmentTexture"
+	quest_parchment_surface.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	quest_parchment_surface.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	quest_parchment.add_child(quest_parchment_surface)
 	quest_detail = RichTextLabel.new()
 	quest_detail.name = "QuestDetail"
 	quest_detail.bbcode_enabled = true
+	quest_detail.scroll_active = true
+	quest_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	quest_detail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	quest_detail.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	quest_side.add_child(quest_detail)
+	quest_parchment_surface.add_child(quest_detail)
 	quest_track_button = Button.new()
 	quest_track_button.name = "QuestTrack"
 	quest_track_button.text = "Track"
 	quest_track_button.pressed.connect(_on_quest_track_pressed)
 	quest_side.add_child(quest_track_button)
+	_style_quest_journal(quest_views, quest_parchment,
+		quest_parchment_surface, quest_record_heading)
 
-	tracked_quest = _panel("TrackedQuest", Vector2(12.0, 250.0),
-		Vector2(300.0, 96.0), Control.PRESET_TOP_LEFT)
+	# This is a pinned HUD note, not another modal window. It sits immediately
+	# left of the fixed 96-pixel resource rail and leaves the centre view clear.
+	tracked_quest = _panel("TrackedQuest",
+		Vector2(-RESERVED_RIGHT_RAIL - QUEST_TRACKER_SIZE.x - 12.0, 18.0),
+		QUEST_TRACKER_SIZE, Control.PRESET_TOP_RIGHT)
+	tracked_quest.z_index = 20
+	tracked_quest.clip_contents = true
+	tracked_quest.set_meta(&"visual_style", "eloria_quest_tracker")
+	var tracker_parchment := PanelContainer.new()
+	tracker_parchment.name = "TrackerParchment"
+	tracker_parchment.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tracker_parchment.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tracked_quest.add_child(tracker_parchment)
+	var tracker_parchment_surface := PanelContainer.new()
+	tracker_parchment_surface.name = "ParchmentTexture"
+	tracker_parchment_surface.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tracker_parchment_surface.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tracker_parchment.add_child(tracker_parchment_surface)
 	tracked_quest_text = RichTextLabel.new()
 	tracked_quest_text.name = "TrackedQuestText"
 	tracked_quest_text.bbcode_enabled = true
-	tracked_quest_text.fit_content = true
-	tracked_quest.add_child(tracked_quest_text)
+	tracked_quest_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	tracked_quest_text.scroll_active = false
+	tracked_quest_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tracked_quest_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tracker_parchment_surface.add_child(tracked_quest_text)
+	_style_quest_tracker(tracker_parchment, tracker_parchment_surface)
 
 	mail_panel = _window("MailWindow", "Mail")
 	var mail_columns := HSplitContainer.new()
@@ -1186,6 +1323,141 @@ func _build() -> void:
 	achievements_status.name = "AchievementsStatus"
 	achievements_body.add_child(achievements_status)
 	achievements_panel.hide()
+
+## Low-cost, retained quest chrome. The two source textures are preloaded once,
+## and these StyleBoxes are built once with the windows; tracking a quest only
+## changes label text and visibility, so a busy scene pays no repeating
+## decoration cost.
+func _quest_box(background: Color, border: Color, width: int,
+		corner: int, margin: float) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = background
+	box.border_color = border
+	box.set_border_width_all(width)
+	box.set_corner_radius_all(corner)
+	box.set_content_margin_all(margin)
+	return box
+
+func _quest_texture_box(texture: Texture2D, margin: float,
+		modulation := Color.WHITE) -> StyleBoxTexture:
+	var box := StyleBoxTexture.new()
+	box.texture = texture
+	box.modulate_color = modulation
+	box.set_content_margin_all(margin)
+	return box
+
+func _style_quest_button(button: Button, primary: bool) -> void:
+	var normal_background := QUEST_BURGUNDY if primary else QUEST_STONE
+	var hover_background := QUEST_BURGUNDY_HOVER if primary else QUEST_STONE_RAISED
+	var normal := _quest_box(normal_background, QUEST_BRASS, 2, 9, 7.0)
+	var hover := _quest_box(hover_background, QUEST_BRASS_BRIGHT, 3, 10, 7.0)
+	var pressed := _quest_box(QUEST_BURGUNDY, QUEST_BRASS_BRIGHT, 3, 8, 7.0)
+	var disabled := _quest_box(Color(0.09, 0.08, 0.07, 0.92),
+		Color(0.3, 0.27, 0.22, 0.9), 1, 9, 7.0)
+	for raised: StyleBoxFlat in [normal, hover, disabled]:
+		raised.border_blend = true
+		raised.shadow_color = Color(0.015, 0.01, 0.008, 0.88)
+		raised.shadow_size = 3
+		raised.shadow_offset = Vector2(0.0, 2.0)
+	pressed.border_blend = true
+	pressed.shadow_color = Color(0.015, 0.01, 0.008, 0.82)
+	pressed.shadow_size = 1
+	pressed.shadow_offset = Vector2(0.0, 1.0)
+	button.add_theme_stylebox_override("normal", normal)
+	button.add_theme_stylebox_override("hover", hover)
+	button.add_theme_stylebox_override("pressed", pressed)
+	button.add_theme_stylebox_override("hover_pressed", pressed)
+	button.add_theme_stylebox_override("focus", hover)
+	button.add_theme_stylebox_override("disabled", disabled)
+	button.add_theme_color_override("font_color", QUEST_WARM_TEXT)
+	button.add_theme_color_override("font_hover_color", QUEST_BRASS_BRIGHT)
+	button.add_theme_color_override("font_pressed_color", QUEST_BRASS_BRIGHT)
+	button.add_theme_color_override("font_disabled_color", QUEST_MUTED_TEXT)
+	button.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.9))
+	button.add_theme_constant_override("outline_size", 2)
+	button.custom_minimum_size.y = maxf(button.custom_minimum_size.y, 38.0)
+
+func _style_quest_journal(quest_views: HBoxContainer,
+		parchment: PanelContainer, parchment_surface: PanelContainer,
+		record_heading: Label) -> void:
+	# The transparent centre of the carved frame reveals JournalBackdrop while
+	# its opaque perimeter supplies all of the tactile stone and aged brass.
+	var frame := _quest_texture_box(QUEST_CARVED_FRAME_TEXTURE, 56.0)
+	quest_panel.add_theme_stylebox_override("panel", frame)
+	var body := _window_body(quest_panel)
+	body.add_theme_constant_override("separation", 10)
+	var header := body.get_node("Header") as HBoxContainer
+	header.add_theme_constant_override("separation", 10)
+	var title := header.get_node("Title") as Label
+	title.add_theme_color_override("font_color", QUEST_BRASS_BRIGHT)
+	title.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.95))
+	title.add_theme_constant_override("outline_size", 3)
+	title.add_theme_font_size_override("font_size", 22)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	quest_count.add_theme_color_override("font_color", QUEST_BRASS_BRIGHT)
+	quest_count.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.95))
+	quest_count.add_theme_constant_override("outline_size", 2)
+	quest_count.add_theme_font_size_override("font_size", 12)
+	quest_count.custom_minimum_size.x = 92.0
+	_style_quest_button(header.get_node("Close") as Button, true)
+	for child: Node in quest_views.get_children():
+		if child is Button:
+			var tab := child as Button
+			tab.custom_minimum_size.x = 142.0
+			tab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			_style_quest_button(tab, false)
+	var list_panel := _quest_box(Color(0.055, 0.05, 0.048, 0.98),
+		QUEST_BRASS, 2, 3, 8.0)
+	quest_list.add_theme_stylebox_override("panel", list_panel)
+	var selected := _quest_box(QUEST_BURGUNDY, QUEST_BRASS_BRIGHT, 2, 2, 4.0)
+	for state: String in ["cursor", "cursor_unfocused", "selected",
+			"selected_focus", "hovered_selected"]:
+		quest_list.add_theme_stylebox_override(state, selected)
+	quest_list.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+	quest_list.add_theme_color_override("font_color", QUEST_WARM_TEXT)
+	quest_list.add_theme_color_override("font_selected_color", QUEST_BRASS_BRIGHT)
+	quest_list.add_theme_color_override("font_hovered_selected_color",
+		QUEST_BRASS_BRIGHT)
+	quest_list.add_theme_color_override("guide_color", Color(QUEST_BRASS, 0.22))
+	quest_list.add_theme_font_size_override("font_size", 14)
+	quest_list.add_theme_constant_override("line_separation", 8)
+	record_heading.add_theme_color_override("font_color", QUEST_BRASS_BRIGHT)
+	record_heading.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.9))
+	record_heading.add_theme_constant_override("outline_size", 2)
+	record_heading.add_theme_font_size_override("font_size", 12)
+	var page := _quest_box(Color(0.14, 0.075, 0.025, 1.0),
+		QUEST_PARCHMENT_DARK, 2, 5, 4.0)
+	page.shadow_color = Color(0.0, 0.0, 0.0, 0.38)
+	page.shadow_size = 5
+	page.shadow_offset = Vector2(0.0, 3.0)
+	parchment.add_theme_stylebox_override("panel", page)
+	parchment_surface.add_theme_stylebox_override("panel",
+		_quest_texture_box(QUEST_PARCHMENT_TEXTURE, 14.0,
+			Color(0.94, 0.88, 0.76, 1.0)))
+	quest_detail.add_theme_color_override("default_color", QUEST_INK)
+	quest_detail.add_theme_color_override("font_selected_color", QUEST_INK)
+	quest_detail.add_theme_color_override("selection_color", Color(0.55, 0.35, 0.12, 0.28))
+	quest_detail.add_theme_font_size_override("normal_font_size", 15)
+	_style_quest_button(quest_track_button, true)
+	quest_track_button.custom_minimum_size.x = 154.0
+	quest_track_button.size_flags_horizontal = Control.SIZE_SHRINK_END
+
+func _style_quest_tracker(parchment: PanelContainer,
+		parchment_surface: PanelContainer) -> void:
+	# The pinned tracker is the torn page from the larger journal, not another
+	# heavy window. The parchment itself supplies the edge and small shadow.
+	tracked_quest.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	var page := _quest_box(Color(0.14, 0.075, 0.025, 0.98),
+		QUEST_PARCHMENT_DARK, 2, 5, 3.0)
+	page.shadow_color = Color(0.0, 0.0, 0.0, 0.62)
+	page.shadow_size = 6
+	page.shadow_offset = Vector2(0.0, 3.0)
+	parchment.add_theme_stylebox_override("panel", page)
+	parchment_surface.add_theme_stylebox_override("panel",
+		_quest_texture_box(QUEST_PARCHMENT_TEXTURE, 9.0,
+			Color(0.96, 0.90, 0.78, 0.985)))
+	tracked_quest_text.add_theme_color_override("default_color", QUEST_INK)
+	tracked_quest_text.add_theme_font_size_override("normal_font_size", 13)
 
 func _bar(bar_name: String, colour: Color) -> ProgressBar:
 	var bar := ProgressBar.new()

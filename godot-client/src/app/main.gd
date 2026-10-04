@@ -10,6 +10,11 @@ var lantern_guide: Control
 var lantern_scene: Node3D
 
 const AppearanceChoices = preload("res://src/actors/appearance_choices.gd")
+const OldcraftEntryStyleScript = preload("res://src/ui/oldcraft_entry_style.gd")
+const OldcraftDialogueStyleScript = preload("res://src/ui/oldcraft_dialogue_style.gd")
+const CreationArchetypes = preload("res://src/ui/creation_archetypes.gd")
+const CreationClassIcons = preload("res://src/ui/creation_class_icons.gd")
+const WardrobeShirtFitScript = preload("res://src/actors/wardrobe_shirt_fit.gd")
 
 @onready var login_panel: Control = %LoginPanel
 @onready var game_view: Control = %GameView
@@ -21,6 +26,12 @@ const AppearanceChoices = preload("res://src/actors/appearance_choices.gd")
 @onready var create_race: OptionButton = %CreateRace
 @onready var create_gender: OptionButton = %CreateGender
 @onready var create_status: Label = %CreateStatus
+@onready var creation_class_title: Label = %ClassTitle
+@onready var creation_class_tagline: Label = %ClassTagline
+@onready var creation_class_description: Label = %ClassDescription
+@onready var creation_class_page: Label = %ClassPage
+@onready var creation_class_starting_items: Label = %ClassStartingItems
+@onready var show_creation_class_gear: CheckBox = %ShowClassGear
 @onready var preview_container: SubViewportContainer = %CharacterPreview
 @onready var preview_viewport: SubViewport = $CreationPanel/Columns/CharacterPreview/Viewport
 @onready var preview_root: Node3D = %PreviewRoot
@@ -358,6 +369,9 @@ var models: Dictionary = {}
 var actor_type_models: Dictionary = {}
 var npc_looks: Dictionary = {}
 var creation_options: Array = []
+var selected_creation_class := 0
+var creation_class_gear_visible := true
+var _creation_appearance_rng := RandomNumberGenerator.new()
 var animation_config: Dictionary = {}
 var animation_configs: Dictionary = {}
 var map_registry: Dictionary = {}
@@ -400,7 +414,10 @@ var preview_yaw := PI + 0.28
 ## of the disc it is meant to be standing on.
 var preview_focus := Vector3(0.0, 1.0, 0.0)
 var preview_pitch := 0.12
-var preview_distance := 2.65
+## Character creation is a hero stage, not a distant model viewer. This fills
+## most of the preview height at the default zoom while retaining wheel room in
+## both directions.
+var preview_distance := 1.95
 var inventory_slot_buttons: Array[Button] = []
 var inventory_quantity_labels: Array[Label] = []
 var equipment_slot_buttons: Array[Button] = []
@@ -741,7 +758,7 @@ const RANGE_WEAPON_LAST := 68
 const BANNER_INSTANCE_LIFT_ROWS := 5.0
 ## World metres between the top of your head and the foot of your own banner.
 const BANNER_HEAD_CLEARANCE := 0.15
-const SPEECH_BUBBLE_MSEC := 6000
+const SPEECH_BUBBLE_MSEC := 5000
 
 const CHAT_FADE_DELAY_MSEC := 7000
 const CHAT_FADE_DURATION_MSEC := 1800
@@ -1172,10 +1189,18 @@ func _ready() -> void:
 	_populate_creation_races()
 	_populate_creation_sexes()
 	_populate_creation_choices()
+	_configure_creation_classes()
+	_creation_appearance_rng.randomize()
+	_randomize_creation_appearance()
 	_update_preview_camera()
 	_apply_eloria_art()
 	_configure_banner_menu()
 	_apply_eloria_theme()
+	# The crest is deliberately outside the compact login card so the painted
+	# scene can breathe. Keep that detached overlay coupled to the card even in
+	# tests and utility flows that call LoginPanel.hide() directly.
+	login_panel.visibility_changed.connect(_sync_login_logo_visibility)
+	_sync_login_logo_visibility()
 	_configure_window_layers()
 	_configure_cartography()
 	_load_hud_settings()
@@ -1530,14 +1555,26 @@ func _on_new_character_pressed() -> void:
 	if AppState.connection_state != "connected":
 		status_label.text = "Connect to the server before creating a character."
 		return
-	login_panel.hide()
+	_set_login_screen_visible(false)
 	creation_panel.show()
 	_refresh_creation_preview()
 
 func _on_creation_back_pressed() -> void:
 	_clear_pending_creation()
 	creation_panel.hide()
-	login_panel.show()
+	_set_login_screen_visible(true)
+
+## The painted waygate and its shader belong only to the login screen. Hiding
+## both together means the ambient pass has no draw cost during creation or in
+## crowded gameplay scenes.
+func _set_login_screen_visible(value: bool) -> void:
+	login_panel.visible = value
+	login_background.visible = value
+	login_logo.visible = value
+
+
+func _sync_login_logo_visibility() -> void:
+	login_logo.visible = login_panel.visible
 
 func _on_create_race_item_selected(_index: int) -> void:
 	_populate_creation_sexes()
@@ -1549,6 +1586,32 @@ func _on_create_gender_item_selected(_index: int) -> void:
 	_refresh_creation_preview()
 
 func _on_create_appearance_changed(_value: float) -> void:
+	_refresh_creation_preview()
+
+func _on_randomize_creation_pressed() -> void:
+	_randomize_creation_appearance()
+
+## Rolls race and sex before the seven appearance selectors so every press can
+## produce a genuinely different character silhouette. Calling and account
+## fields deliberately live outside this list, and selecting without emitting
+## each control's signal lets the completed look rebuild the preview once.
+## Tests can pass a seeded generator without changing the generator used by the
+## live button or the one-time initial roll.
+func _randomize_creation_appearance(rng: RandomNumberGenerator = null) -> void:
+	var source := rng if rng != null else _creation_appearance_rng
+	if create_race.item_count > 0:
+		create_race.select(source.randi_range(0, create_race.item_count - 1))
+		_populate_creation_sexes()
+	if create_gender.item_count > 0:
+		create_gender.select(source.randi_range(0, create_gender.item_count - 1))
+	_populate_creation_choices(true)
+	var selectors: Array[OptionButton] = [
+		%CreateSkin, %CreateHair, %CreateHairColor, %CreateEyes,
+		%CreateShirt, %CreatePants, %CreateBoots,
+	]
+	for selector: OptionButton in selectors:
+		if selector.item_count > 0:
+			selector.select(source.randi_range(0, selector.item_count - 1))
 	_refresh_creation_preview()
 
 func _on_create_pressed() -> void:
@@ -1568,7 +1631,8 @@ func _on_create_pressed() -> void:
 	create_status.text = "Creating character…"
 	var appearance: Dictionary = _creation_appearance()
 	appearance["actor_type"] = create_gender.get_selected_id()
-	var error := Network.create_character(username, password, appearance)
+	var error := Network.create_character(username, password, appearance,
+		CreationArchetypes.id_at(selected_creation_class))
 	if error != OK:
 		create_status.text = "Creation request failed: " + error_string(error)
 		_clear_pending_creation()
@@ -1585,7 +1649,7 @@ func _on_character_created() -> void:
 	if error != OK:
 		create_status.text = "Created, but login failed to send: " + error_string(error)
 		creation_panel.hide()
-		login_panel.show()
+		_set_login_screen_visible(true)
 
 func _on_character_creation_failed(message: String) -> void:
 	create_status.text = "Creation failed: " + message
@@ -1607,18 +1671,27 @@ func _refresh_creation_preview() -> void:
 	# Building the dto by hand here would preview a different wardrobe from the
 	# one the character spawns wearing.
 	var dto := _presentation_dto({"actor_id": 0, "x": 0, "y": 0, "rotation": 0,
-		"actor_type": actor_type, "kind": 1, "name": "Preview",
+		"actor_type": actor_type, "kind": 1, "name": "",
 		"appearance": appearance})
+	# A class is authoritative for starting inventory but remains independent of
+	# race and sex.  Its creation-screen equipment is a representative preview;
+	# the same selected class id is sent separately from the eight appearance
+	# bytes when the player creates the character.
+	dto["equipment_visuals"] = (_creation_class_loadout()
+		if creation_class_gear_visible else {})
 	var model_id := _model_for_actor(dto)
 	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
 	var errors := preview_actor.configure(dto,
 		CoordinateAdapter.new({"walkingHeight": 0.0}), model_config,
 		_animation_for_model(model_config), equipment_config)
+	preview_actor.set_nameplate_visible(false)
+	preview_actor.apply_render_quality(LookProfile.quality(), true)
 	_frame_preview_actor()
 	if not errors.is_empty():
 		create_status.text = "Preview warnings: " + "; ".join(errors)
 	else:
-		create_status.text = "Drag the preview to rotate; use the mouse wheel to zoom."
+		create_status.text = "%s starting items will be granted for any race. Drag to rotate." % \
+			creation_class_title.text
 
 func _populate_creation_races() -> void:
 	var races: Dictionary = {}
@@ -1665,6 +1738,65 @@ func _populate_creation_choices(reset_skin := false) -> void:
 	AppearanceChoices.populate(%CreatePants, AppearanceChoices.options("wardrobe", culture, AppearanceVariants.PART_PANTS))
 	AppearanceChoices.populate(%CreateBoots, AppearanceChoices.options("wardrobe", culture, AppearanceVariants.PART_BOOTS))
 
+func _creation_class_buttons() -> Array[Button]:
+	var buttons: Array[Button] = [
+		%ClassChoice0, %ClassChoice1, %ClassChoice2, %ClassChoice3]
+	return buttons
+
+func _configure_creation_classes() -> void:
+	show_creation_class_gear.set_pressed_no_signal(creation_class_gear_visible)
+	var buttons := _creation_class_buttons()
+	for index: int in range(buttons.size()):
+		var entry: Dictionary = CreationArchetypes.at(index)
+		var button: Button = buttons[index]
+		button.tooltip_text = "%s — %s" % [
+			str(entry.get("label", "Class")), str(entry.get("tagline", ""))]
+		button.icon = CreationClassIcons.icon_for(str(entry.get("key", "")))
+		button.text = ("" if button.icon != null
+			else str(entry.get("label", "?")).left(1))
+	_update_creation_class_ui()
+
+func _update_creation_class_ui() -> void:
+	selected_creation_class = posmod(selected_creation_class,
+		CreationArchetypes.count())
+	var entry: Dictionary = CreationArchetypes.at(selected_creation_class)
+	creation_class_title.text = str(entry.get("label", "Adventurer"))
+	creation_class_tagline.text = str(entry.get("tagline", ""))
+	creation_class_description.text = str(entry.get("description", ""))
+	creation_class_starting_items.text = str(entry.get("starting_items", ""))
+	creation_class_page.text = "%d / %d" % [
+		selected_creation_class + 1, CreationArchetypes.count()]
+	var buttons := _creation_class_buttons()
+	for index: int in range(buttons.size()):
+		buttons[index].set_pressed_no_signal(index == selected_creation_class)
+
+func _creation_class_loadout() -> Dictionary:
+	return CreationArchetypes.loadout_at(selected_creation_class)
+
+func _on_creation_class_chosen(index: int) -> void:
+	_set_creation_class(index)
+
+func _on_creation_class_rotated(direction: int) -> void:
+	_set_creation_class(selected_creation_class + direction)
+
+func _set_creation_class(index: int) -> void:
+	selected_creation_class = posmod(index, CreationArchetypes.count())
+	_update_creation_class_ui()
+	if is_instance_valid(preview_actor):
+		preview_actor.apply_equipment_visuals(_creation_class_loadout()
+			if creation_class_gear_visible else {})
+		_frame_preview_actor()
+	create_status.text = "%s selected. These starting items apply to every race." % \
+		creation_class_title.text
+
+func _on_creation_class_gear_toggled(enabled: bool) -> void:
+	creation_class_gear_visible = enabled
+	if is_instance_valid(preview_actor):
+		preview_actor.apply_equipment_visuals(_creation_class_loadout() if enabled else {})
+		_frame_preview_actor()
+	create_status.text = ("Class gear preview shown."
+		if enabled else "Class gear hidden so you can inspect wardrobe colours.")
+
 func _creation_appearance() -> Dictionary:
 	return {
 		"skin": %CreateSkin.get_selected_id(),
@@ -1685,7 +1817,7 @@ func _on_character_preview_gui_input(event: InputEvent) -> void:
 		if not mouse_button.pressed:
 			return
 		if mouse_button.button_index == MOUSE_BUTTON_WHEEL_UP:
-			preview_distance = maxf(1.8, preview_distance - 0.3)
+			preview_distance = maxf(1.5, preview_distance - 0.3)
 		elif mouse_button.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			preview_distance = minf(7.0, preview_distance + 0.3)
 		else:
@@ -1712,6 +1844,9 @@ func _frame_preview_actor() -> void:
 	var ground: Node3D = preview_root.get_node_or_null("PreviewGround") as Node3D
 	if ground != null:
 		ground.position = Vector3(stand.x, ground.position.y, stand.z)
+	var styled_stage: Node3D = preview_root.get_node_or_null("OldcraftStage") as Node3D
+	if styled_stage != null:
+		styled_stage.position = Vector3(stand.x, 0.0, stand.z)
 	_update_preview_camera()
 
 func _update_preview_camera() -> void:
@@ -2722,7 +2857,7 @@ func _on_login_succeeded() -> void:
 		else:
 			AppState.append_local_message(
 				"Reconnected. Rebuilding world state from the server.", 3)
-	login_panel.hide()
+	_set_login_screen_visible(false)
 	creation_panel.hide()
 	_hide_chat_input()
 	game_view.show()
@@ -2755,7 +2890,7 @@ func _on_connection_state_changed(value: String) -> void:
 	if value == "disconnected" and was_in_world:
 		_clear_world_presentation()
 		game_view.hide()
-		login_panel.show()
+		_set_login_screen_visible(true)
 		status_label.text = "Disconnected"
 	if value == "connected" and _resync_after_reconnect:
 		# The socket came back on its own. The password was never retained, so
@@ -2836,6 +2971,8 @@ func _clear_world_presentation() -> void:
 	animation_gate.reset()
 	# The parsed model and animation caches are only worth holding for the
 	# session they were built in.
+	TorsoBodyCover.clear()
+	WardrobeShirtFitScript.clear()
 	GlbSceneCache.clear()
 	NativeAnimationImporter.clear()
 	occluder_fade.reset()
@@ -2852,6 +2989,7 @@ func _clear_world_presentation() -> void:
 	manufacturing_panel.hide()
 	item_lists_panel.hide()
 	dialogue_panel.hide()
+	OldcraftDialogueStyleScript.sync_visibility(self, false)
 	console_panel.hide()
 	_close_settings()
 	minimap_frame.hide()
@@ -3857,11 +3995,17 @@ func _on_state_changed(path: StringName) -> void:
 			_update_console_location()
 			# Markers survive a map change; which of them belong here does not.
 			_sync_map_markers()
-		&"actors", &"local_actor":
+		&"actors":
 			# A busy map emits this once per actor packet. Rebuilding the whole
 			# actor presentation for each of them repeated the same work many
 			# times inside a single frame; coalescing collapses a burst into one
 			# pass without delaying anything past the frame it arrived in.
+			_queue_world_sync()
+		&"local_actor":
+			# YOU_ARE can arrive after this actor was already built as a remote
+			# one. Refresh the role once here so LOW/MEDIUM keep this cape without
+			# paying for a mesh walk on every ordinary actor packet.
+			_apply_actor_render_quality()
 			_queue_world_sync()
 		&"actor_footprints":
 			# The table arrives after login - the server can only send it once
@@ -4461,6 +4605,7 @@ func _spawn_actor(id: Variant) -> void:
 	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
 	var errors := node.configure(dto, actor_adapter, model_config,
 		_animation_for_model(model_config), equipment_config)
+	node.apply_render_quality(LookProfile.quality(), int(id) == AppState.local_actor_id)
 	if not errors.is_empty():
 		push_warning("Actor %d: %s" % [id, "; ".join(errors)])
 	node.apply_server_state(dto, actor_adapter, true)
@@ -8637,6 +8782,7 @@ func _on_window_size_changed() -> void:
 		maxi(1, roundi(viewport_container.size.y * maxf(render_scale.y, 0.01))))
 	if main_viewport.size != target_size:
 		main_viewport.size = target_size
+	OldcraftDialogueStyleScript.layout(self)
 
 func _sync_hud_button_states(force := false) -> void:
 	if _hud_icon_regions.is_empty():
@@ -9303,7 +9449,7 @@ func _load_look_settings(config: ConfigFile) -> void:
 		LookProfile.quality_name(LookProfile.QUALITY_DEFAULT))
 	var level: int = LookProfile.quality_named(str(quality_value)) \
 		if quality_value is String else -1
-	var quality_changed := LookProfile.set_player_quality(
+	LookProfile.set_player_quality(
 		level if level >= 0 else LookProfile.QUALITY_DEFAULT)
 	settings_window.call("restore_look", LookProfile.player_look(), LookProfile.look_forced())
 	settings_window.call("restore_quality", LookProfile.player_quality(),
@@ -9313,8 +9459,10 @@ func _load_look_settings(config: ConfigFile) -> void:
 	LookSwitch.apply_shadow_quality(world_sun)
 	if look_changed:
 		_apply_look_switch()
-	if quality_changed:
-		_apply_graphics_quality()
+	# Apply even when the player's stored value stayed the same. A developer or
+	# test can change ELORIA_LOOK_QUALITY before this reload, in which case
+	# set_player_quality's before and after effective values are already equal.
+	_apply_graphics_quality()
 
 ## The painted look turned on or off in the settings window (or its file read
 ## again): everything already loaded follows at once, without reloading the
@@ -9342,15 +9490,44 @@ func _apply_look_switch() -> void:
 	print("look_switch stage=applied look=%s roots=%d surfaces=%d milliseconds=%.1f"
 		% [LookProfile.enabled(), roots, surfaces, (Time.get_ticks_usec() - started) / 1000.0])
 
-## The graphics quality changed: the shadows at once (LookSwitch), and the
-## grade's screen-space effects, glow and the sky's clouds by grading the
-## environment again. The grass beds rebuild at the new reach and density by
-## themselves (LookGrassBeds.tend).
+## The graphics quality changed: the shadows at once (LookSwitch), the actor
+## meshes and cape solvers, and the grade's screen-space effects, glow and the
+## sky's clouds by grading the environment again. The grass beds rebuild at the
+## new reach and density by themselves (LookGrassBeds.tend).
 func _apply_graphics_quality() -> void:
 	LookSwitch.apply_shadow_quality(world_sun)
+	_apply_actor_render_quality()
 	_apply_day_night()
+	_apply_login_backdrop_quality()
 	_update_border_lighting()
 	print("look_quality stage=applied quality=", LookProfile.quality_name(LookProfile.quality()))
+
+## Keep the entry scene inside the same Low / Medium / High contract as actor
+## meshes. Low is a static painting, Medium retains a restrained breath, and
+## High enables the full (still single-sample) parallax and portal pulse.
+func _apply_login_backdrop_quality() -> void:
+	var backdrop_material := login_background.material as ShaderMaterial
+	if backdrop_material == null:
+		return
+	var level := clampi(int(LookProfile.quality()), 0, 2)
+	var animation_strengths: Array[float] = [0.0, 0.55, 1.0]
+	var motion_amounts: Array[float] = [0.0, 0.0012, 0.0024]
+	backdrop_material.set_shader_parameter("animation_strength",
+		animation_strengths[level])
+	backdrop_material.set_shader_parameter("motion_amount", motion_amounts[level])
+
+## Existing actors change in place; new world and preview actors receive the
+## same resolved quality immediately after configure.  Pass local status on
+## every update because cape simulation deliberately keeps the player's cape.
+func _apply_actor_render_quality() -> void:
+	var level: int = LookProfile.quality()
+	for raw_id: Variant in actor_nodes:
+		var actor_value: Variant = actor_nodes[raw_id]
+		if actor_value is ReplicatedActor3D and is_instance_valid(actor_value):
+			(actor_value as ReplicatedActor3D).apply_render_quality(
+				level, int(raw_id) == AppState.local_actor_id)
+	if is_instance_valid(preview_actor):
+		preview_actor.apply_render_quality(level, true)
 
 ## Puts develop's environment for the bound map back, from the copy taken as
 ## it was bound, paints its sky again if the look is on, and lets the hour and
@@ -11004,29 +11181,38 @@ func _send_popup_reply(answers: Dictionary) -> void:
 func _sync_dialogue() -> void:
 	var dialogue: Dictionary = AppState.npc_dialogue
 	dialogue_panel.visible = bool(dialogue.get("open", false))
+	OldcraftDialogueStyleScript.sync_visibility(self, dialogue_panel.visible)
 	if not dialogue_panel.visible:
 		return
 	# Dialogue the server flagged as belonging to a quest is marked as such,
 	# which is the whole point of the flag: a player could not previously tell
 	# a quest line from small talk, and neither could this client.
 	var quest_id: int = int(dialogue.get("quest_id", 0))
+	var is_quest: bool = bool(dialogue.get("quest", false))
 	dialogue_name.text = ("%s  [Quest %d]" % [str(dialogue.get("name", "NPC")),
-		quest_id] if bool(dialogue.get("quest", false)) and quest_id > 0
+		quest_id] if is_quest and quest_id > 0
 		else str(dialogue.get("name", "NPC")))
 	dialogue_text.text = str(dialogue.get("text", ""))
 	for child: Node in dialogue_options.get_children():
 		child.queue_free()
 	var raw_options: Variant = dialogue.get("options", [])
+	var valid_options: Array[Dictionary] = []
 	if raw_options is Array:
 		for raw_option: Variant in raw_options:
 			if not raw_option is Dictionary:
 				continue
-			var option: Dictionary = raw_option as Dictionary
-			var button: Button = Button.new()
-			button.text = str(option.get("label", "Continue"))
-			button.pressed.connect(_on_dialogue_option.bind(
-				int(option.get("actor_id", -1)), int(option.get("response_id", -1))))
-			dialogue_options.add_child(button)
+			valid_options.append(raw_option as Dictionary)
+	OldcraftDialogueStyleScript.update_state(self, is_quest, quest_id,
+		not valid_options.is_empty())
+	for option_index: int in range(valid_options.size()):
+		var option: Dictionary = valid_options[option_index]
+		var button: Button = Button.new()
+		button.text = OldcraftDialogueStyleScript.option_label(
+			str(option.get("label", "Continue")), is_quest)
+		OldcraftDialogueStyleScript.style_option(button, is_quest, option_index)
+		button.pressed.connect(_on_dialogue_option.bind(
+			int(option.get("actor_id", -1)), int(option.get("response_id", -1))))
+		dialogue_options.add_child(button)
 
 func _on_dialogue_option(actor_id: int, response_id: int) -> void:
 	if actor_id < 0 or response_id < 0:
@@ -11483,9 +11669,16 @@ func _cursor_context_at(viewport_position: Vector2) -> Dictionary:
 	return context
 
 func _apply_eloria_art() -> void:
-	login_background.texture = _external_texture("res://assets/ui/eloria_login_background.jpg")
+	login_background.texture = _external_texture(
+		"res://assets/ui/eloria_login_waygate_background.jpg")
+	%CreationBackdrop.texture = _external_texture(
+		"res://assets/ui/eloria_character_creation_background.jpg")
 	var logo_texture: Texture2D = _external_texture("res://assets/ui/eloria_logo_master.png")
-	login_logo.texture = logo_texture
+	# The master canvas carries wide transparent gutters for general-purpose
+	# placement. Crop them on entry so the free-standing corner crest has the
+	# same visual weight as its rectangle without making that rectangle larger.
+	login_logo.texture = (null if logo_texture == null else
+		_atlas_region(logo_texture, Rect2(76, 0, 360, 256)))
 	# The master leaves 76 transparent pixels down each side of its 512-wide
 	# canvas. Drawn whole into the rail's 62-pixel frame the crest came out at
 	# three quarters width with the frame looking half empty, so the HUD copy
@@ -11529,6 +11722,10 @@ func _apply_eloria_art() -> void:
 	if hud_atlas != null:
 		%ClockFace.texture = _atlas_region(hud_atlas, Rect2(0, 128, 64, 64))
 		%CompassFace.texture = _atlas_region(hud_atlas, Rect2(32, 192, 64, 64))
+	# Refresh once after imports are available. The helper caches both the one
+	# shared sheet and its four AtlasTextures, so selecting a class allocates no
+	# textures and performs no image decoding.
+	_configure_creation_classes()
 
 static func _atlas_region(atlas: Texture2D, region: Rect2) -> AtlasTexture:
 	var texture: AtlasTexture = AtlasTexture.new()
@@ -11634,6 +11831,13 @@ func _apply_eloria_theme() -> void:
 	for row_spec: Array in BANNER_ROWS:
 		_style_banner_meter(_banner_row(str(row_spec[0])).get_node("Bar") as ProgressBar)
 	_style_actor_hud_menu(panel)
+	# Login and creation keep their own heavier fantasy frame and moonlit
+	# preview stage rather than inheriting the compact in-game HUD chrome.
+	OldcraftEntryStyleScript.apply(self)
+	# NPC communication uses the same forged Eloria materials, but its inset
+	# parchment and speaker plaque follow the reference game's readable quest
+	# hierarchy. The helper only applies static styles; no actor update pays it.
+	OldcraftDialogueStyleScript.apply(self)
 
 ## The right rail used to be six separate boxes with gaps between them, so its
 ## left edge was six short lines rather than one. One panel now spans the whole
