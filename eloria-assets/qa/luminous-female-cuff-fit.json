@@ -138,7 +138,19 @@
     },
     "equipmentConfig": {
       "path": "godot-client/data/actors/equipment.json",
-      "sourceSHA256": "0ec6117ee7be83be48b2b5e9929e19a5e9f1926331d723587a03f066aa3d01e1"
+      "sourceSHA256": "0ec6117ee7be83be48b2b5e9929e19a5e9f1926331d723587a03f066aa3d01e1",
+      "provenance": {
+        "kind": "git-tree-snapshot",
+        "commit": "5d856c982c81889e19c2ecccb1d811303f37a7f6",
+        "path": "godot-client/data/actors/equipment.json",
+        "blobOID": "30c6585b669858e47747e6e9d6f306c41f9a38fb"
+      },
+      "semanticBindings": {
+        "4:179": "res://assets/actors/native/equipment/variants/luminous_female/arcane_leg_armor_01.glb",
+        "6:192": "res://assets/actors/native/equipment/variants/luminous_female/arcane_fantasy_boots_01.glb",
+        "4:230": "res://assets/actors/native/equipment/variants/luminous_female/rugged_ranger_legwear_04.glb",
+        "6:224": "res://assets/actors/native/equipment/variants/luminous_female/frontier_boots_01.glb"
+      }
     }
   },
   "contract": {
@@ -189,7 +201,7 @@
     "producerToolGitCommit": "5d856c982c81889e19c2ecccb1d811303f37a7f6",
     "producerToolGitBlob": "fa5bf59cb1560fa66549bc9a4752695c7e017c1d",
     "producerToolSHA256": "61e783a8ccb531f3f143d19ecb5d5222348e72340a1036c8b5aac579b1b1e3e2",
-    "verifierToolCanonicalLfSHA256": "cda283eb19040b4d118e54d2640cf084ae6a6bbf0b6846c0e451c1d2968dcb6e",
+    "verifierToolCanonicalLfSHA256": "f1d61bfa306e81e37dd245886b0e568062b35a70f0864902597482018fba072b",
     "deterministicRuns": 2,
     "byteIdentical": true
   },

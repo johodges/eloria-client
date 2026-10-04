@@ -21,6 +21,9 @@ CUFF_CONSUMED_OUTPUTS = {
     "variants/luminous_female/arcane_leg_armor_01.glb": "arcanistLegs",
     "variants/luminous_female/arcane_fantasy_boots_01.glb": "arcanistBoots",
 }
+WARDED_BOOT_MANIFEST = (
+    ROOT / "eloria-assets/qa/canonical-warded-boots-fit.json")
+WARDED_BOOT_CONSUMED_OUTPUTS = {"arcane_fantasy_boots_01.glb"}
 
 
 def _manifest() -> dict:
@@ -30,7 +33,10 @@ def _manifest() -> dict:
 def test_manifest_roster_and_installed_outputs_are_exact():
     manifest = _manifest()
     cuff_manifest = json.loads(CUFF_MANIFEST.read_text(encoding="utf-8"))
+    warded_boot_manifest = json.loads(
+        WARDED_BOOT_MANIFEST.read_text(encoding="utf-8"))
     assert cuff_manifest["status"] == "installed-production"
+    assert warded_boot_manifest["status"] == "installed-production"
     assert manifest["shoulderRevision"] == {
         "profileVersion": 2,
         "lockTravel": torso_remap.SLEEVE_PROFILE_LOCK_T,
@@ -83,6 +89,19 @@ def test_manifest_roster_and_installed_outputs_are_exact():
                 "section": "output",
                 "key": relative,
             }
+        elif relative in WARDED_BOOT_CONSUMED_OUTPUTS:
+            source = warded_boot_manifest["source"]
+            assert source["sha256"] == expected_hash, relative
+            assert source["provenance"] == {
+                "kind": "producer-manifest-output",
+                "manifest": "eloria-assets/qa/class-equipment-fit-baseline.json",
+                "section": "output",
+                "key": relative,
+            }
+            output = warded_boot_manifest["output"]
+            assert output["path"] == (
+                "godot-client/assets/actors/native/equipment/" + relative)
+            assert revision.digest(installed) == output["sha256"], relative
         else:
             assert revision.digest(installed) == expected_hash, relative
         installed_paths.append(installed)

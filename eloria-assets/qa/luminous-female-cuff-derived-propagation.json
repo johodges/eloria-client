@@ -30,7 +30,7 @@
   },
   "authoringEvidence": {
     "toolPath": "eloria-assets/tools/author_luminous_cuff_fit.py",
-    "toolCanonicalLfSHA256": "cda283eb19040b4d118e54d2640cf084ae6a6bbf0b6846c0e451c1d2968dcb6e",
+    "toolCanonicalLfSHA256": "f1d61bfa306e81e37dd245886b0e568062b35a70f0864902597482018fba072b",
     "deterministicRuns": 2,
     "byteIdentical": true,
     "reviewBundle": "godot-client/test-artifacts/luminous-cuff-derived-authoring-v1"

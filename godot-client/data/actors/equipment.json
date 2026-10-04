@@ -271,6 +271,18 @@
       "name": "Furtrim Coat",
       "attach": "skinned",
       "skinRegion": "torso",
+      "wardrobeOnly": true,
+      "wardrobeColor": [
+        92,
+        94,
+        59
+      ],
+      "wardrobeTrimColor": [
+        174,
+        142,
+        76
+      ],
+      "hides": [],
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",
@@ -21329,6 +21341,18 @@
       "name": "Studded Jack",
       "attach": "skinned",
       "skinRegion": "torso",
+      "wardrobeOnly": true,
+      "wardrobeColor": [
+        126,
+        49,
+        45
+      ],
+      "wardrobeTrimColor": [
+        189,
+        144,
+        82
+      ],
+      "hides": [],
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",
@@ -21441,7 +21465,18 @@
       "name": "Warded Tabard",
       "attach": "skinned",
       "skinRegion": "torso",
-      "suppressGeneratedBacking": true,
+      "wardrobeOnly": true,
+      "wardrobeColor": [
+        65,
+        55,
+        108
+      ],
+      "wardrobeTrimColor": [
+        125,
+        155,
+        190
+      ],
+      "hides": [],
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",
@@ -21586,6 +21621,18 @@
       "name": "Scout Vest",
       "attach": "skinned",
       "skinRegion": "torso",
+      "wardrobeOnly": true,
+      "wardrobeColor": [
+        48,
+        91,
+        61
+      ],
+      "wardrobeTrimColor": [
+        139,
+        101,
+        58
+      ],
+      "hides": [],
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "fitProfile": "canonical",

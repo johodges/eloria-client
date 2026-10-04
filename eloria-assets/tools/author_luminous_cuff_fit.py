@@ -221,6 +221,50 @@ def validate_pinned_asset(path: Path, spec: dict, label: str) -> dict:
             "semanticMeshes": actual}
 
 
+def validate_equipment_bindings(document: dict, expected_bindings: dict) -> dict:
+    """Return the selected live scenes, rejecting a missing or changed one."""
+    actual_bindings = {}
+    changed = []
+    for slot, expected_scene in expected_bindings.items():
+        try:
+            scene = document["models"][slot]["variants"][
+                "canonical_luminous_female"]["scene"]
+        except (KeyError, TypeError) as error:
+            raise ValueError(
+                "Equipment preview binding is missing for "
+                f"{slot}/canonical_luminous_female") from error
+        actual_bindings[slot] = scene
+        if scene != expected_scene:
+            changed.append(f"{slot}: {scene!r} != {expected_scene!r}")
+    if changed:
+        raise ValueError(
+            "Equipment preview bindings no longer match the cuff manifest: "
+            + "; ".join(changed))
+    return actual_bindings
+
+
+def validate_equipment_config(path: Path, spec: dict) -> dict:
+    """Validate only equipment bindings that affect this cuff authoring pass.
+
+    ``sourceSHA256`` remains the immutable hash of the historical authoring
+    snapshot.  The live equipment catalog may legitimately change elsewhere
+    (for example, hand-socket tuning), so reruns pin the four Luminous-female
+    leg and boot scenes instead of requiring byte identity for the whole file.
+    """
+    path = path.resolve()
+    actual_hash = digest(path)
+    document = json.loads(path.read_text(encoding="utf-8"))
+    actual_bindings = validate_equipment_bindings(
+        document, spec["semanticBindings"])
+    return {
+        "path": str(path),
+        "sha256": actual_hash,
+        "historicalSHA256": spec["sourceSHA256"],
+        "matchesHistoricalSHA256": actual_hash == spec["sourceSHA256"],
+        "semanticBindings": actual_bindings,
+    }
+
+
 def validate_output_path(output: Path) -> Path:
     output = output.resolve()
     for production in PRODUCTION_ROOTS:
@@ -1441,9 +1485,8 @@ def main() -> None:
     ranger_boots_validation = validate_pinned_asset(
         ranger_boots_source, manifest["inputs"]["rangerBoots"],
         "Ranger boots")
-    equipment_hash = digest(equipment_source_path)
-    if equipment_hash != manifest["inputs"]["equipmentConfig"]["sourceSHA256"]:
-        raise ValueError("Equipment preview config no longer matches the manifest")
+    equipment_validation = validate_equipment_config(
+        equipment_source_path, manifest["inputs"]["equipmentConfig"])
     output = validate_output_path(args.output)
     resource_prefix = args.resource_prefix.rstrip("/")
     if (not resource_prefix.startswith("res://")
@@ -1556,10 +1599,7 @@ def main() -> None:
             "arcanistBoots": boots_validation,
             "rangerLegs": ranger_legs_validation,
             "rangerBoots": ranger_boots_validation,
-            "equipmentConfig": {
-                "path": str(equipment_source_path),
-                "sha256": equipment_hash,
-            },
+            "equipmentConfig": equipment_validation,
         },
         "body": body_report,
         "arcanist": {

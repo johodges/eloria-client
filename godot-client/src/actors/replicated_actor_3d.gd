@@ -5,6 +5,7 @@ const REBOUND_SKIN_POOL := preload("res://src/actors/rebound_skin_pool.gd")
 const ACTOR_RENDER_QUALITY := preload("res://src/actors/actor_render_quality.gd")
 const OLDCRAFT_ACTOR_STYLE := preload("res://src/actors/oldcraft_actor_style.gd")
 const GLB_MESH_EXTRAS := preload("res://src/actors/glb_mesh_extras.gd")
+const WARDROBE_SHIRT_FIT := preload("res://src/actors/wardrobe_shirt_fit.gd")
 
 @export var walk_presentation_speed := 6.0
 @export var run_presentation_speed := 9.0
@@ -520,12 +521,14 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 			_tint_mesh(mesh_node, hair_tint)
 		elif mesh_name == "scalp":
 			_apply_skin_materials(mesh_node, skin_tint)
-		elif mesh_name == "wardrobe_shirt":
+		elif mesh_name in SHIRT_SURFACES:
 			# Kept on the node so equipping and unequipping a cuirass can put
 			# the character's own colour back without the appearance dictionary.
 			var shirt_color: Color = AppearanceVariants.wardrobe_color(
 				culture, AppearanceVariants.PART_SHIRT,
 				int(appearance.get("shirt", 0)))
+			if mesh_name == "wardrobe_shirt_trim":
+				shirt_color = shirt_color.lightened(0.18)
 			mesh_node.set_meta("wardrobe_color", shirt_color)
 			_set_mesh_color(mesh_node, shirt_color)
 		elif mesh_name == "wardrobe_pants":
@@ -1737,7 +1740,18 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	var created: Array[Node] = []
 	if not model_config.is_empty():
 		var scene_path: String = str(model_config.get("scene", ""))
-		if str(model_config.get("attach", "socket")) == "skinned":
+		if bool(model_config.get("wardrobeOnly", false)):
+			# Starter looks can deliberately use the actor's own fitted wardrobe
+			# instead of drawing a second skinned torso.  A lightweight marker keeps
+			# the ordinary equipment lifecycle and diagnostics intact without adding
+			# another mesh or skin to every actor in a crowded scene.
+			var marker := Node3D.new()
+			marker.name = "WardrobeVisual_%d_%d" % [part, visual_id]
+			marker.set_meta("native_equipment", true)
+			marker.set_meta("wardrobe_only", true)
+			_native_skeleton.add_child(marker)
+			created.append(marker)
+		elif str(model_config.get("attach", "socket")) == "skinned":
 			created.append_array(_attach_skinned_equipment(scene_path, part, visual_id,
 				model_config.get("tint", []) as Array,
 				str(model_config.get("authoredFor", "")),
@@ -1768,6 +1782,8 @@ func _worn_torso_scene() -> String:
 	if visual == 0:
 		return ""
 	var model: Dictionary = _equipment_model_config(BODY_PART, visual)
+	if bool(model.get("wardrobeOnly", false)):
+		return ""
 	if str(model.get("attach", "socket")) != "skinned":
 		return ""
 	return str(model.get("scene", ""))
@@ -1914,10 +1930,22 @@ func _refresh_wardrobe_cover() -> void:
 	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
 	if native_model == null:
 		return
-	var covered: bool = int(_equipment_visuals.get(BODY_PART, 0)) != 0
+	var torso_visual: int = int(_equipment_visuals.get(BODY_PART, 0))
+	var covered: bool = torso_visual != 0
+	var torso_model := {}
+	if covered:
+		torso_model = _equipment_model_config(BODY_PART, torso_visual)
+	var wardrobe_only := false
+	for piece: Node in _equipment_nodes.get(BODY_PART, []):
+		if is_instance_valid(piece) and bool(piece.get_meta("wardrobe_only", false)):
+			wardrobe_only = true
+			break
 	var cover_regions: Array = []
 	var fitted_legs := false
 	var fitted_boots := false
+	var ranger_paired_lower := (
+		int(_equipment_visuals.get(4, 0)) == 230
+		and int(_equipment_visuals.get(6, 0)) == 224)
 	for part: int in [BODY_PART, 4, 6]:
 		for piece: Node in _equipment_nodes.get(part, []):
 			if not is_instance_valid(piece):
@@ -1932,7 +1960,12 @@ func _refresh_wardrobe_cover() -> void:
 					fitted_boots = true
 	for piece: Node in _equipment_nodes.get(6, []):
 		if is_instance_valid(piece) and piece.has_meta("boot_backing_with_legs"):
-			(piece as MeshInstance3D).visible = not piece.has_meta("suppress_generated_backing") and \
+			# The Ranger trousers already provide the continuous leg-to-boot
+			# lining. Drawing the paired boot lining as well puts a second shell
+			# through the toe and vamp. Scope the suppression to this reviewed
+			# 230+224 pairing so the same ankle boots still back other outfits.
+			(piece as MeshInstance3D).visible = not ranger_paired_lower \
+				and not piece.has_meta("suppress_generated_backing") and \
 				bool(piece.get_meta("boot_backing_with_legs")) == fitted_legs
 	for piece: Node in _equipment_nodes.get(4, []):
 		if is_instance_valid(piece) and piece.has_meta("leg_backing_with_boots"):
@@ -1945,17 +1978,36 @@ func _refresh_wardrobe_cover() -> void:
 		var surface_name: String = mesh_node.name.to_lower()
 		var is_body_surface: bool = (surface_name in ["body", "char1", "mesh_node"]
 			or surface_name.begins_with("wardrobe_"))
+		if surface_name == "wardrobe_shirt":
+			# Every body-cover pass starts from the authored shirt. The fitted
+			# wardrobe-only variant is presentation state, applied again below.
+			WARDROBE_SHIRT_FIT.restore(mesh_node)
 		if _native_skeleton != null and mesh_node.skin != null and is_body_surface:
-			TorsoBodyCover.apply(mesh_node, not cover_regions.is_empty(),
+			var mask_to_wardrobe_neckline := (wardrobe_only
+				and surface_name in ["body", "char1", "mesh_node"])
+			# The fitted native shirt owns its shaped opening. Mask only the body
+			# beneath that opening; shirt/trim surfaces stay on the ordinary path.
+			TorsoBodyCover.apply(mesh_node,
+				not cover_regions.is_empty() or mask_to_wardrobe_neckline,
 				_native_skeleton.global_transform.affine_inverse() * mesh_node.global_transform,
-				rig_fit_scale(), cover_regions, rig_name().begins_with("ssarathi_"),
-				_model_config.get("torsoBodyCover", {}) as Dictionary)
+				rig_fit_scale(), cover_regions,
+				rig_name().begins_with("ssarathi_"),
+				_model_config.get("torsoBodyCover", {}) as Dictionary,
+				mask_to_wardrobe_neckline)
+		if wardrobe_only and surface_name == "wardrobe_shirt" \
+				and _native_skeleton != null:
+			WARDROBE_SHIRT_FIT.apply(mesh_node, _native_skeleton)
 		if not SHIRT_SURFACES.has(mesh_node.name.to_lower()):
 			continue
 		if not mesh_node.has_meta("wardrobe_color"):
 			continue
-		var want: Color = (COVERED_SHIRT if covered
-			else mesh_node.get_meta("wardrobe_color") as Color)
+		var wardrobe_color := mesh_node.get_meta("wardrobe_color") as Color
+		var want: Color = COVERED_SHIRT if covered else wardrobe_color
+		if wardrobe_only:
+			var color_key := ("wardrobeTrimColor" if
+				surface_name == "wardrobe_shirt_trim" else "wardrobeColor")
+			want = _tint_colour(torso_model.get(color_key,
+				torso_model.get("wardrobeColor", [])), wardrobe_color)
 		if mesh_node.mesh.get_surface_count() > 1:
 			for surface in range(mesh_node.mesh.get_surface_count()):
 				var part_material := mesh_node.get_surface_override_material(surface) as StandardMaterial3D

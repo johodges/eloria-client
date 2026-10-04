@@ -26,6 +26,11 @@ EQUIPMENT = ROOT / "godot-client/data/actors/equipment.json"
 CATALOG = ROOT / "godot-client/data/actors/native_asset_catalog.json"
 MODELS = ROOT / "godot-client/data/actors/models.json"
 FACE_MASKS = ROOT / "godot-client/assets/actors/native/face_masks/manifest.json"
+CANONICAL_WARDED_BOOTS = (
+    ROOT / "godot-client/assets/actors/native/equipment/"
+    "arcane_fantasy_boots_01.glb")
+CANONICAL_WARDED_BOOTS_MANIFEST = (
+    ROOT / "eloria-assets/qa/canonical-warded-boots-fit.json")
 INSTALLED = {
     "body": ROOT / "godot-client/assets/actors/native/races/luminous_female.glb",
     "arcanistLegs": (
@@ -67,6 +72,34 @@ def _primary_geometry_signature(path: Path, mesh_name: str):
     faces = cuff.ea.accessor_array(
         document, binary, primitive["indices"]).astype(int).reshape(-1, 3)
     return signatures(arrays, faces, GEOMETRY_FIELDS)
+
+
+def test_canonical_warded_boots_drop_the_detached_upper_shin_guards():
+    manifest = json.loads(
+        CANONICAL_WARDED_BOOTS_MANIFEST.read_text(encoding="utf-8"))
+    assert cuff.digest(CANONICAL_WARDED_BOOTS) == manifest["output"]["sha256"]
+    assert manifest["contract"]["additionalPerFrameOperations"] == 0
+    assert manifest["contract"]["drawsBefore"] == manifest["contract"]["drawsAfter"]
+    assert manifest["contract"]["materialsBefore"] == manifest["contract"]["materialsAfter"]
+    assert manifest["contract"]["jointsBefore"] == manifest["contract"]["jointsAfter"]
+
+    document, binary = cuff.ea.read_glb(CANONICAL_WARDED_BOOTS)
+    primitive = cuff.mesh(document, "Warded Boots")["primitives"][0]
+    points = cuff.ea.accessor_array(
+        document, binary, primitive["attributes"]["POSITION"]).astype(float)
+    faces = cuff.ea.accessor_array(
+        document, binary, primitive["indices"]).astype(int).reshape(-1, 3)
+    _, labels = cuff.component_labels(points, faces)
+    detached_guards = []
+    for label in cuff.np.unique(labels):
+        own = labels == label
+        low = float(points[own, 1].min())
+        high = float(points[own, 1].max())
+        if int(own.sum()) >= 200 and low > .20 and high > .40:
+            detached_guards.append(int(label))
+    assert detached_guards == []
+    assert len(points) == manifest["output"]["outputVertices"]
+    assert len(faces) == manifest["output"]["outputTriangles"]
 
 
 def test_manifest_preserves_historical_inputs_and_zero_runtime_cost():
@@ -131,8 +164,47 @@ def test_manifest_preserves_historical_inputs_and_zero_runtime_cost():
         assert class_manifest[provenance["section"]][provenance["key"]] == (
             source["sourceSHA256"])
 
-    assert cuff.digest(EQUIPMENT) == (
-        inputs["equipmentConfig"]["sourceSHA256"])
+    equipment_spec = inputs["equipmentConfig"]
+    assert equipment_spec["sourceSHA256"] == (
+        "0ec6117ee7be83be48b2b5e9929e19a5e9f1926331d723587a03f066aa3d01e1")
+    assert equipment_spec["provenance"] == {
+        "kind": "git-tree-snapshot",
+        "commit": "5d856c982c81889e19c2ecccb1d811303f37a7f6",
+        "path": "godot-client/data/actors/equipment.json",
+        "blobOID": "30c6585b669858e47747e6e9d6f306c41f9a38fb",
+    }
+    expected_bindings = {
+        "4:179": (
+            "res://assets/actors/native/equipment/variants/luminous_female/"
+            "arcane_leg_armor_01.glb"),
+        "6:192": (
+            "res://assets/actors/native/equipment/variants/luminous_female/"
+            "arcane_fantasy_boots_01.glb"),
+        "4:230": (
+            "res://assets/actors/native/equipment/variants/luminous_female/"
+            "rugged_ranger_legwear_04.glb"),
+        "6:224": (
+            "res://assets/actors/native/equipment/variants/luminous_female/"
+            "frontier_boots_01.glb"),
+    }
+    assert equipment_spec["semanticBindings"] == expected_bindings
+    validation = cuff.validate_equipment_config(EQUIPMENT, equipment_spec)
+    assert validation["semanticBindings"] == expected_bindings
+    assert validation["sha256"] == cuff.digest(EQUIPMENT)
+    assert validation["historicalSHA256"] == equipment_spec["sourceSHA256"]
+    assert validation["matchesHistoricalSHA256"] is (
+        validation["sha256"] == validation["historicalSHA256"])
+
+
+def test_equipment_validation_rejects_cuff_binding_drift():
+    manifest = _manifest()
+    equipment = json.loads(EQUIPMENT.read_text(encoding="utf-8"))
+    equipment["models"]["4:179"]["variants"][
+        "canonical_luminous_female"]["scene"] = "res://wrong/legs.glb"
+    with pytest.raises(ValueError, match="4:179"):
+        cuff.validate_equipment_bindings(
+            equipment,
+            manifest["inputs"]["equipmentConfig"]["semanticBindings"])
 
 
 def test_installed_outputs_match_reviewed_hashes_and_semantic_contracts():

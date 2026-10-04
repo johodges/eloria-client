@@ -81,6 +81,9 @@ func verify_body(actor: ReplicatedActor3D, active: Dictionary, label: String) ->
 			var material := original.surface_get_material(surface)
 			var bridge_surface := (material != null
 				and material.resource_name == "Shared neck bridge")
+			var profile_driven_bridge := (actor.rig_name() == "orun_male"
+				and collar_cover and bridge_surface
+				and surface == ORUN_PROFILE_SURFACE)
 			for field: int in [Mesh.ARRAY_VERTEX, Mesh.ARRAY_TEX_UV, Mesh.ARRAY_BONES, Mesh.ARRAY_WEIGHTS]:
 				expect(before[field] == after[field], label + " preserves vertex data " + str(field))
 			# ArrayMesh repacks octahedral normals when rebuilding an index buffer.
@@ -105,7 +108,8 @@ func verify_body(actor: ReplicatedActor3D, active: Dictionary, label: String) ->
 				if active.has(5) and instance.name.to_lower() == "wardrobe_shirt":
 					covered = covered or (center.y > 1.40 and center.y < 1.65 and absf(center.x) < .20)
 				var disposition := protected_face_disposition(instance, before, indices, i,
-					transform, actor.rig_fit_scale(), collar_cover, bridge_surface, covered)
+					transform, actor.rig_fit_scale(), collar_cover, bridge_surface,
+					profile_driven_bridge, covered)
 				if disposition == FACE_RETAIN:
 					covered = false
 				elif disposition == FACE_REMOVE:
@@ -215,7 +219,8 @@ func run() -> void:
 
 func protected_face_disposition(instance: MeshInstance3D, arrays: Array,
 		ids: PackedInt32Array, start: int, transform: Transform3D, fit: float,
-		collar_cover: bool, bridge_surface: bool, covered: bool) -> int:
+		collar_cover: bool, bridge_surface: bool,
+		profile_driven_bridge: bool, covered: bool) -> int:
 	if instance.name.to_lower() not in ["body", "char1", "mesh_node"] or instance.skin == null:
 		return FACE_DEFAULT
 	var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
@@ -223,6 +228,7 @@ func protected_face_disposition(instance: MeshInstance3D, arrays: Array,
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	var stride: int = bones.size()/vertices.size()
 	var mean_weight := 0.0
+	var all_corners_protected := true
 	for corner: int in range(3):
 		var corner_weight := 0.0
 		for slot: int in range(stride):
@@ -234,6 +240,11 @@ func protected_face_disposition(instance: MeshInstance3D, arrays: Array,
 			if bone_name in [&"Head", &"neck_01"]:
 				corner_weight += weights[offset]
 		mean_weight += corner_weight / 3.0
+		all_corners_protected = all_corners_protected and corner_weight > .5
+	# The generic shared bridge is authoring geometry, not visible neck skin.
+	# Only Orun's fingerprint-pinned face profile owns a reviewed subset of it.
+	if collar_cover and bridge_surface and not profile_driven_bridge:
+		return FACE_REMOVE
 	var center := (vertices[ids[start]] + vertices[ids[start+1]]
 		+ vertices[ids[start+2]]) / 3.0
 	center = (transform * center) / fit
@@ -241,6 +252,8 @@ func protected_face_disposition(instance: MeshInstance3D, arrays: Array,
 		and covered
 		and center.y > TorsoBodyCover.NECK_ENVELOPE_MIN_Y
 		and absf(center.x) < TorsoBodyCover.NECK_ENVELOPE_HALF_WIDTH)
+	var protected_face := (bridge_surface or mean_weight > .5
+		if profile_driven_bridge else all_corners_protected)
 	if neck_envelope:
-		return FACE_RETAIN if bridge_surface or mean_weight > .5 else FACE_REMOVE
-	return FACE_RETAIN if mean_weight > .5 else FACE_DEFAULT
+		return FACE_RETAIN if protected_face else FACE_REMOVE
+	return FACE_RETAIN if protected_face else FACE_DEFAULT

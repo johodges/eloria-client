@@ -25,9 +25,18 @@ func run() -> void:
 		"res://data/actors/equipment.json"))
 	var equipment_models: Dictionary = equipment.get("models", {}) as Dictionary
 	var suppressed_backing_models: Array[String] = []
+	var wardrobe_only_models: Array[String] = []
 	for model_key_value: Variant in equipment_models:
 		var model_key := str(model_key_value)
 		var equipment_model := equipment_models[model_key_value] as Dictionary
+		if bool(equipment_model.get("wardrobeOnly", false)):
+			wardrobe_only_models.append(model_key)
+			expect((equipment_model.get("hides", []) as Array).is_empty(),
+				model_key + " keeps the fitted native shirt visible")
+			expect((equipment_model.get("wardrobeColor", []) as Array).size() == 3,
+				model_key + " has a three-channel class colour")
+			expect((equipment_model.get("wardrobeTrimColor", []) as Array).size() == 3,
+				model_key + " has a three-channel class trim colour")
 		if not equipment_model.has("suppressGeneratedBacking"):
 			continue
 		expect(equipment_model["suppressGeneratedBacking"] is bool and
@@ -35,8 +44,11 @@ func run() -> void:
 			model_key + " backing suppression is an explicit true boolean")
 		suppressed_backing_models.append(model_key)
 	suppressed_backing_models.sort()
-	expect(suppressed_backing_models == ["4:179", "5:216", "6:192"],
-		"only the visually verified Warded set suppresses generated backing draws")
+	expect(suppressed_backing_models == ["4:179", "6:192"],
+		"only the visually verified Warded leg and boot pieces suppress backing")
+	wardrobe_only_models.sort()
+	expect(wardrobe_only_models == ["5:189", "5:209", "5:216", "5:225"],
+		"only the four creation torsos use the fitted native wardrobe")
 	var body_templates: Dictionary = equipment.get("bodyTemplates", {}) as Dictionary
 	var slugs: Array = body_templates.keys()
 	slugs.sort()
@@ -91,6 +103,7 @@ func run() -> void:
 				var nodes: Array = actor._equipment_nodes.get(part, []) as Array
 				expect(not nodes.is_empty(), "%s creates equipment part %d" % [label, part])
 			_check_skin_contract(actor, label, loadout)
+			_check_wardrobe_class_torso(actor, label, loadout)
 			_check_fitted_backings(actor, label, loadout)
 			_check_hand_socket(actor, label, str(entry.get("label", "class")))
 		var mixed_backing_loadouts: Array[Dictionary] = [
@@ -119,6 +132,47 @@ func run() -> void:
 	quit(1 if failures else 0)
 
 
+func _check_wardrobe_class_torso(actor: ReplicatedActor3D, label: String,
+		loadout: Dictionary) -> void:
+	var visual := int(loadout.get(ReplicatedActor3D.BODY_PART, -1))
+	if visual < 0:
+		return
+	var model := actor._equipment_model_config(ReplicatedActor3D.BODY_PART, visual)
+	expect(bool(model.get("wardrobeOnly", false)),
+		label + " uses the actor's fitted native wardrobe torso")
+	var torso_nodes := actor._equipment_nodes.get(ReplicatedActor3D.BODY_PART, []) as Array
+	expect(torso_nodes.size() == 1 and (torso_nodes[0] as Node).has_meta("wardrobe_only"),
+		label + " represents the torso with one mesh-free wardrobe marker")
+	var torso_meshes := 0
+	for node_value: Variant in torso_nodes:
+		if node_value is MeshInstance3D:
+			torso_meshes += 1
+	expect(torso_meshes == 0,
+		label + " adds no duplicate skinned torso mesh")
+	var visible_shirts := 0
+	var fitted_shirts := 0
+	var masked_bodies := 0
+	var native_model := actor.get_node_or_null("NativeModel") as Node3D
+	for node_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node := node_value as MeshInstance3D
+		if mesh_node.name.to_lower() in ["body", "char1", "mesh_node"] \
+				and mesh_node.has_meta("uncovered_body_mesh") \
+				and mesh_node.mesh != (mesh_node.get_meta("uncovered_body_mesh") as Mesh):
+			masked_bodies += 1
+		if ReplicatedActor3D.SHIRT_SURFACES.has(mesh_node.name.to_lower()) and mesh_node.visible:
+			visible_shirts += 1
+		if mesh_node.name.to_lower() == "wardrobe_shirt":
+			expect(mesh_node.has_meta("wardrobe_shirt_fitted_mesh")
+				and mesh_node.mesh == (mesh_node.get_meta(
+					"wardrobe_shirt_fitted_mesh") as Mesh),
+				label + " activates the cached shoulder fit")
+			fitted_shirts += 1
+	expect(masked_bodies > 0,
+		label + " masks the body to the fitted wardrobe neckline")
+	expect(visible_shirts > 0, label + " keeps a fitted native shirt visible")
+	expect(fitted_shirts == 1, label + " fits exactly one native shirt")
+
+
 func _check_skin_contract(actor: ReplicatedActor3D, label: String,
 		loadout: Dictionary) -> void:
 	var skeleton := actor.get_skeleton()
@@ -136,7 +190,8 @@ func _check_skin_contract(actor: ReplicatedActor3D, label: String,
 			for bind: int in range(skin.get_bind_count()):
 				expect(skeleton.find_bone(skin.get_bind_name(bind)) >= 0,
 					label + " retains every named equipment bind")
-	var expected_minimum := 6 if loadout.has(4) or loadout.has(6) else 2
+	var expected_minimum := 4 if loadout.has(4) or loadout.has(6) else (
+		1 if loadout.has(2) else 0)
 	expect(skinned >= expected_minimum,
 		label + " has every skinned garment required by its preview loadout")
 
@@ -146,7 +201,6 @@ func _check_fitted_backings(actor: ReplicatedActor3D, label: String,
 	var suppressed_parts := 0
 	var expected_suppressed_parts := 0
 	var reviewed_suppressed_visuals := {
-		ReplicatedActor3D.BODY_PART: 216,
 		4: 179,
 		6: 192,
 	}
@@ -183,10 +237,12 @@ func _check_fitted_backings(actor: ReplicatedActor3D, label: String,
 			if piece.has_meta("boot_backing_with_legs") and (piece as MeshInstance3D).visible:
 				visible_boot_backings += 1
 		var boot_model := actor._equipment_model_config(6, int(loadout[6]))
-		var expected_boot_backings := 0 if bool(boot_model.get(
-			"suppressGeneratedBacking", false)) else 1
+		var ranger_paired_lower := (int(loadout.get(4, 0)) == 230
+			and int(loadout.get(6, 0)) == 224)
+		var expected_boot_backings := 0 if (ranger_paired_lower or bool(
+			boot_model.get("suppressGeneratedBacking", false))) else 1
 		expect(visible_boot_backings == expected_boot_backings,
-			label + " uses one boot lining against its trousers")
+			label + " draws no overlapping boot lining against its trousers")
 	if loadout.has(4):
 		var visible_leg_backings := 0
 		for piece_value: Variant in actor._equipment_nodes.get(4, []) as Array:
@@ -219,6 +275,12 @@ func _check_native_body_restored(actor: ReplicatedActor3D, label: String) -> voi
 	var restored := 0
 	for mesh_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node := mesh_value as MeshInstance3D
+		if mesh_node.name.to_lower() == "wardrobe_shirt":
+			expect(mesh_node.has_meta("wardrobe_shirt_unfitted_mesh")
+				and mesh_node.mesh == (mesh_node.get_meta(
+					"wardrobe_shirt_unfitted_mesh") as Mesh)
+				and not mesh_node.has_meta("wardrobe_shirt_fitted_mesh"),
+				label + " removes the class-only shoulder fit after unequip")
 		if not mesh_node.has_meta("uncovered_body_mesh"):
 			continue
 		restored += 1

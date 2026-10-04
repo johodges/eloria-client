@@ -14,6 +14,7 @@ const OldcraftEntryStyleScript = preload("res://src/ui/oldcraft_entry_style.gd")
 const OldcraftDialogueStyleScript = preload("res://src/ui/oldcraft_dialogue_style.gd")
 const CreationArchetypes = preload("res://src/ui/creation_archetypes.gd")
 const CreationClassIcons = preload("res://src/ui/creation_class_icons.gd")
+const WardrobeShirtFitScript = preload("res://src/actors/wardrobe_shirt_fit.gd")
 
 @onready var login_panel: Control = %LoginPanel
 @onready var game_view: Control = %GameView
@@ -2967,6 +2968,7 @@ func _clear_world_presentation() -> void:
 	# The parsed model and animation caches are only worth holding for the
 	# session they were built in.
 	TorsoBodyCover.clear()
+	WardrobeShirtFitScript.clear()
 	GlbSceneCache.clear()
 	NativeAnimationImporter.clear()
 	occluder_fade.reset()
