@@ -346,6 +346,34 @@ def test_other_settings_are_rewritten(tmp_path, monkeypatch, key, value):
 
     assert counts == {"texture": 1, "normal_map": 0, "kept": 0}
     assert _params(tmp_path / (ALBEDO + ".import")) == dict(package.URI_TEXTURE_IMPORT_PARAMS)
+    # The texture keeps its uid, so the scenes that name it by uid still find it.
+    assert package.IMPORT_UID.findall((tmp_path / (ALBEDO + ".import")).read_text(encoding="utf-8")) == [
+        "uid://da8msg64hip2d"]
+
+
+def test_a_rewritten_import_keeps_the_uid_it_had_and_gets_none_otherwise(tmp_path):
+    # Without its uid line Godot 4.7.2 gave 107 rewritten textures of the long-lived build worktree new uids
+    # (a fresh worktree derives the same uid as every checkout); the region scenes and imported glTF scenes
+    # name them by the old one.
+    old = tmp_path / (ALBEDO + ".import")
+    old.parent.mkdir(parents=True)
+    old.write_text(EDITOR_IMPORT.format(params="compress/mode=0\n"), encoding="utf-8")
+    new = tmp_path / (NORMAL + ".import")
+
+    counts = package.write_scene_texture_import_settings(tmp_path, {ALBEDO: False, NORMAL: True})
+
+    assert counts == {"texture": 2, "normal_map": 1, "kept": 0}
+    text = old.read_text(encoding="utf-8")
+    assert package.IMPORT_UID.findall(text) == ["uid://da8msg64hip2d"]
+    assert package._import_settings(old) == ("texture", dict(package.URI_TEXTURE_IMPORT_PARAMS))
+    assert text.index('uid="uid://da8msg64hip2d"') < text.index("[params]")
+    assert package.IMPORT_UID.findall(new.read_text(encoding="utf-8")) == []
+    assert package._import_settings(new) == ("texture", dict(package.NORMAL_MAP_IMPORT_PARAMS))
+    # A uid in another section is not the texture's.
+    old.write_text('[remap]\n\nimporter="texture"\n\n[deps]\n\nuid="uid://notmine"\n\n[params]\n\n'
+                   "compress/mode=0\n", encoding="utf-8")
+    package.write_scene_texture_import_settings(tmp_path, {ALBEDO: False})
+    assert package.IMPORT_UID.findall(old.read_text(encoding="utf-8")) == []
 
 
 def _imported(build: Path, relative: str, product: str | None, normal_map: bool = False,

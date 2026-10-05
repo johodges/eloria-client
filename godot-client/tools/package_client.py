@@ -1038,17 +1038,28 @@ def write_actor_import_settings(build_dir: Path, shipping: dict) -> dict:
     return counts
 
 
+IMPORT_UID = re.compile(r'^uid="(uid://[0-9a-z]+)"\s*$', re.M)
+
+
 def _write_texture_import(sidecar: Path, params: tuple[tuple[str, str], ...]) -> bool:
     """Give a texture these import settings; False when its .import already has them.
 
     A .import that says what is wanted is left alone: Godot rewrites it with
     the imported product's paths, and rewriting it here would import again.
+    A rewritten .import keeps the texture's uid. Without it Godot 4.7.2 gives
+    the texture a new uid in a tree whose cache already knows the texture (a
+    fresh tree gets the same uid as every other checkout), and a scene that
+    names the texture by its old uid then warns and falls back to the path.
     """
+    uid = None
     if sidecar.is_file():
         importer, current = _import_settings(sidecar)
         if importer == "texture" and all(current.get(k) == v for k, v in params):
             return False
-    sidecar.write_text('[remap]\n\nimporter="texture"\ntype="CompressedTexture2D"\n\n[params]\n\n'
+        match = IMPORT_UID.search(sidecar.read_text(encoding="utf-8", errors="replace").split("\n[", 1)[0])
+        uid = match.group(1) if match else None
+    sidecar.write_text('[remap]\n\nimporter="texture"\ntype="CompressedTexture2D"\n'
+                       + (f'uid="{uid}"\n' if uid else "") + "\n[params]\n\n"
                        + "".join(f"{k}={v}\n" for k, v in params), encoding="utf-8", newline="\n")
     return True
 
