@@ -19,19 +19,24 @@ What goes in, and why it is more than an export:
       The Godot export. Scripts, scenes, UI art and data. Linux needs the
       official 4.7.2 export templates installed beside the Windows ones.
   app/assets, app/data, app/schemas
-      Loose copies, and every actor file ships once. Actor models, hair and
-      equipment (and the textures equipment GLBs name by relative URI) are
-      opened with GLTFDocument from ProjectSettings.globalize_path(
-      "res://assets/..."). An exported build has no resource path, so that is
-      a path relative to the folder the game starts in, which ResourceLoader
-      never maps back into the pack: GlbSceneCache's imported-scene route is
-      only taken in an editor checkout, and an imported copy in the PCK would
-      never be read. Those folders therefore ship loose only, and the build
-      worktree gets a .gdignore in each, so they are neither imported nor
-      exported (which also keeps ~4 GB out of the import). The one actor
-      folder the game reads through ResourceLoader - the face masks, which
-      models.json names and replicated_actor_3d.gd load()s - is imported and
-      ships in the PCK only.
+      Loose copies, and every actor file ships once. Actor
+      models, hair and equipment are opened with GLTFDocument from
+      ProjectSettings.globalize_path("res://assets/..."). An exported build
+      has no resource path, so that is a path relative to the folder the game
+      starts in, which ResourceLoader never maps back into the pack:
+      GlbSceneCache's imported-scene route is only taken in an editor
+      checkout, and an imported scene in the PCK would never be read. The
+      glTF files therefore ship loose only and are never imported (a folder
+      with nothing for the PCK gets a .gdignore, which also keeps ~4 GB out of
+      the import; elsewhere each glTF gets a "skip" import). Two kinds of
+      actor file are read through ResourceLoader and ship in the PCK only:
+      the face masks, which models.json names and replicated_actor_3d.gd
+      load()s, and the textures the equipment glTFs name by relative URI.
+      GLTFDocument tries ResourceLoader first for an external image, and a
+      relative path resolves to res://, so the packager writes those
+      textures' import settings (VRAM-compressed, mipmapped: what the editor
+      gives a texture it sees used in 3D) and the game uploads the imported
+      texture instead of decoding the JPEG with no mip chain.
   eloria-assets/maps, eloria-assets/concepts
       "res://../eloria-assets/..." resolves beside app/. Every map package (a
       folder holding world.json) ships without its references, captures,
@@ -63,6 +68,7 @@ import argparse
 import datetime
 import json
 import os
+import posixpath
 import re
 import shutil
 import struct
@@ -73,6 +79,7 @@ import tempfile
 import time
 import zipfile
 from pathlib import Path, PurePosixPath
+from urllib.parse import unquote
 
 CLIENT = Path(__file__).resolve().parents[1]
 REPO = CLIENT.parent
@@ -113,12 +120,42 @@ SMOKE_FAILURES = ("SCRIPT ERROR", "Parse Error", "Failed to load script",
 ACTOR_ROOT = "godot-client/assets/actors/native"
 ACTOR_CATALOGS = ("godot-client/data/actors/models.json", "godot-client/data/actors/equipment.json")
 GLTF_SUFFIXES = (".glb", ".gltf")
+# Files the export's include filter packs whether or not they are imported.
+PLAIN_EXPORT_SUFFIXES = (".json", ".bin")
+
+# Actor folders whose glTF files' URI-named textures are imported into the
+# PCK (owner call, 2026-10-05: "keep equipment textures imported", +95 MB).
+# GLTFDocument asks ResourceLoader for an external image before it reads the
+# file, and the relative path an export globalizes to resolves to res://, so
+# the 384 equipment textures load VRAM-compressed with mip chains, as the
+# stage-1 package (every actor imported) loaded them, rather than as raw JPEG
+# decodes without mips. Other folders' URI images (the 12 the shared
+# Superhero glTFs name; no catalog names those glTFs) stay loose, as before.
+IMPORTED_URI_TEXTURE_FOLDERS = ("equipment",)
+# The import settings those textures get: what the editor's 3D detection
+# writes for a texture a material uses (VRAM Compressed - S3TC/BPTC in the
+# preset - plus mipmaps). Godot reads [params] from an existing .import, and
+# imports again only when they change, so a rebuild keeps its imports.
+URI_TEXTURE_IMPORT_PARAMS = (
+    ("compress/mode", "2"), ("compress/high_quality", "false"), ("compress/lossy_quality", "0.7"),
+    ("compress/uastc_level", "0"), ("compress/rdo_quality_loss", "0.0"),
+    ("compress/hdr_compression", "1"), ("compress/normal_map", "0"), ("compress/channel_pack", "0"),
+    ("mipmaps/generate", "true"), ("mipmaps/limit", "-1"), ("roughness/mode", "0"),
+    ("roughness/src_normal", '""'), ("process/channel_remap/red", "0"),
+    ("process/channel_remap/green", "1"), ("process/channel_remap/blue", "2"),
+    ("process/channel_remap/alpha", "3"), ("process/fix_alpha_border", "true"),
+    ("process/premult_alpha", "false"), ("process/normal_map_invert_y", "false"),
+    ("process/hdr_as_srgb", "false"), ("process/hdr_clamp_exposure", "false"),
+    ("process/size_limit", "0"), ("detect_3d/compress_to", "0"),
+)
+SKIP_IMPORT = '[remap]\n\nimporter="skip"\n'
 
 # The export preset is not tracked, so the build writes its own. The pack
 # leaves out dev material, including the map editor's review notes
 # (<region>.editor-notes.json beside each region scene): editor-only, never read
-# by the game. The loose-only actor folders are kept out by their .gdignore
-# (see actor_shipping), not by a filter, so the face masks still import.
+# by the game. Actor files are kept out of the import, and so out of the pack,
+# by a .gdignore per folder or a "skip" import per file (see actor_shipping),
+# not by a filter, so the face masks and equipment textures still import.
 EXPORT_PRESETS = """[preset.0]
 
 name="Windows Desktop"
@@ -236,22 +273,55 @@ def _catalog_strings(value):
         yield value
 
 
-def actor_shipping(build_dir: Path) -> dict:
-    """Decide, per actor folder, whether it ships in the PCK or loose - never both.
+def gltf_image_uris(path: Path) -> list[str]:
+    """The relative image URIs a .glb/.gltf names (decoded; data: URIs left out).
 
-    The client reaches actor files two ways. glTF files (models, hair,
+    Reads only the JSON chunk. A file that is not glTF names nothing.
+    """
+    try:
+        if path.suffix.lower() == ".glb":
+            with open(path, "rb") as handle:
+                header = handle.read(20)
+                if len(header) < 20 or header[:4] != b"glTF":
+                    return []
+                length = struct.unpack("<I", header[12:16])[0]
+                document = json.loads(handle.read(length).rstrip(b"\0 ").decode("utf-8"))
+        else:
+            document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError, struct.error):
+        return []
+    uris = []
+    for image in document.get("images", []) if isinstance(document, dict) else []:
+        uri = image.get("uri") if isinstance(image, dict) else None
+        if isinstance(uri, str) and uri and not uri.startswith("data:"):
+            uris.append(unquote(uri))
+    return uris
+
+
+def _resolve(base: str, relative: str) -> str:
+    return posixpath.normpath(posixpath.join(posixpath.dirname(base), relative.replace("\\", "/")))
+
+
+def actor_shipping(build_dir: Path) -> dict:
+    """Decide, per actor file, whether it ships in the PCK or loose - never both.
+
+    The client reaches actor files three ways. glTF files (models, hair,
     equipment, animation libraries, held props) go through GlbSceneCache and
     NativeAnimationImporter with ProjectSettings.globalize_path(), which in an
     exported build is relative to the working folder: they are read loose,
-    with the files they name by URI, and a PCK copy would never be read. Any
-    other actor file the catalogs name by res:// path (today the face masks)
-    is load()ed through ResourceLoader and must be in the PCK.
+    and a PCK copy would never be read. An actor file the catalogs name by
+    res:// path (today the face masks) is load()ed through ResourceLoader
+    and must be in the PCK. And the images a glTF names
+    by relative URI are asked of ResourceLoader first, at that relative path,
+    which resolves to res://: in IMPORTED_URI_TEXTURE_FOLDERS they are
+    imported into the PCK; elsewhere they are read loose beside their glTF.
 
-    The unit is a folder under assets/actors/native, because a .gdignore keeps
-    a whole folder out of the import and the export. Returns
-    {"pck_folders", "loose_folders"} (repository paths) and "loose" (the
-    tracked files staged into app/). A folder holding both kinds stops the
-    build: it could ship one of them nowhere.
+    A folder under assets/actors/native with nothing for the PCK gets a
+    .gdignore (neither imported nor exported); in a folder that has, each
+    other importable file gets a "skip" import, and its .json/.bin files are
+    packed by the export's include filter, so they ship in the PCK. Returns
+    {"pck", "loose"} (tracked files), "uri_textures" (the imported
+    URI textures, a subset of "pck") and {"pck_folders", "loose_folders"}.
     """
     actor_files = tracked(build_dir, ACTOR_ROOT)
     folders: dict[str, list[str]] = {}
@@ -260,26 +330,45 @@ def actor_shipping(build_dir: Path) -> dict:
         if len(parts) < 2:
             raise PackageError(f"{relative} sits outside an actor folder; it would ship nowhere")
         folders.setdefault(f"{ACTOR_ROOT}/{parts[0]}", []).append(relative)
+    tracked_set = set(actor_files)
     loaded: set[str] = set()
     for catalog in ACTOR_CATALOGS:
         document = json.loads((build_dir / catalog).read_text(encoding="utf-8"))
         for value in _catalog_strings(document):
             if value.startswith("res://assets/actors/") and not value.lower().endswith(GLTF_SUFFIXES):
                 loaded.add("godot-client/" + value[len("res://"):])
-    tracked_set = set(actor_files)
     missing = sorted(loaded - tracked_set)
     if missing:
         raise PackageError("actor resources the catalogs load are not in the commit:\n  "
                            + "\n  ".join(missing[:40]))
-    pck_folders = {folder for folder, files in folders.items() if loaded.intersection(files)}
+    uri_named: dict[str, str] = {}
+    for relative in actor_files:
+        if relative.lower().endswith(GLTF_SUFFIXES):
+            for uri in gltf_image_uris(build_dir / relative):
+                target = _resolve(relative, uri)
+                if target in tracked_set:
+                    uri_named.setdefault(target, relative)
+
+    def folder_name(relative: str) -> str:
+        return PurePosixPath(relative).relative_to(ACTOR_ROOT).parts[0]
+
+    uri_textures = {f for f in uri_named
+                    if folder_name(f) in IMPORTED_URI_TEXTURE_FOLDERS and f not in loaded}
+    pck_folders = {folder for folder, files in folders.items()
+                   if (loaded | uri_textures).intersection(files)}
     for folder in sorted(pck_folders):
-        gltf = [f for f in folders[folder] if f.lower().endswith(GLTF_SUFFIXES)]
+        # A .gltf reads its .bin buffers loose, but the include filter would
+        # pack them (a .glb carries its own).
+        gltf = [f for f in folders[folder] if f.lower().endswith(".gltf")]
         if gltf:
-            raise PackageError(f"{folder} holds load()ed resources and glTF files read loose "
-                               f"({gltf[0]}); split the folder")
+            raise PackageError(f"{folder} ships files in the PCK and holds {gltf[0]}, whose "
+                               "buffers the export would pack instead of shipping beside it; "
+                               "split the folder")
+    pck = loaded | uri_textures | {f for folder in pck_folders for f in folders[folder]
+                                   if f.lower().endswith(PLAIN_EXPORT_SUFFIXES)}
     loose_folders = set(folders) - pck_folders
-    return {"pck_folders": pck_folders, "loose_folders": loose_folders,
-            "loose": {f for folder in loose_folders for f in folders[folder]}}
+    return {"pck": pck, "uri_textures": uri_textures, "loose": tracked_set - pck,
+            "pck_folders": pck_folders, "loose_folders": loose_folders}
 
 
 def find_godot(explicit: str | None) -> Path:
@@ -327,7 +416,92 @@ def prepare_build_tree(build_dir: Path, sha: str) -> Path:
         (build_dir / folder / ".gdignore").unlink(missing_ok=True)
     for folder in shipping["loose_folders"]:
         (build_dir / folder / ".gdignore").write_text("", encoding="utf-8")
+    write_actor_import_settings(build_dir, shipping)
     return project
+
+
+def _import_settings(sidecar: Path) -> tuple[str, dict[str, str]]:
+    """(importer, [params]) of a .import file, as raw text values."""
+    importer = ""
+    params: dict[str, str] = {}
+    section = ""
+    for line in sidecar.read_text(encoding="utf-8", errors="replace").splitlines():
+        line = line.strip()
+        if line.startswith("[") and line.endswith("]"):
+            section = line[1:-1]
+        elif "=" in line:
+            key, _, value = line.partition("=")
+            if section == "remap" and key == "importer":
+                importer = value.strip('"')
+            elif section == "params":
+                params[key] = value
+    return importer, params
+
+
+def pck_folder_others(build_dir: Path, shipping: dict) -> list[str]:
+    """Every file on disk in an actor folder the PCK draws on that must not be imported.
+
+    Not only the tracked loose files: the build worktree keeps ignored files,
+    and an earlier import's extracted images (equipment/*_0.jpg, gitignored)
+    sit there too. Godot imports whatever it finds in a folder without a
+    .gdignore, so each of them needs its "skip" as much as a tracked glTF
+    does. A .json or .bin that is not a PCK file stops the build: the
+    export's include filter would pack it whatever its import says.
+    """
+    others: list[str] = []
+    for folder in sorted(shipping["pck_folders"]):
+        for path in sorted((build_dir / folder).rglob("*")):
+            relative = path.relative_to(build_dir).as_posix()
+            if not path.is_file() or path.name == ".gdignore" or path.suffix in {".import", ".uid"}:
+                continue
+            if relative in shipping["pck"]:
+                continue
+            if relative.lower().endswith(PLAIN_EXPORT_SUFFIXES):
+                raise PackageError(f"{relative} is not a PCK file, but the export would pack it "
+                                   "from a folder the PCK draws on; remove it from the build worktree")
+            others.append(relative)
+    return others
+
+
+def write_actor_import_settings(build_dir: Path, shipping: dict) -> dict:
+    """Write the import settings of every file in an actor folder the PCK draws on.
+
+    The URI textures get URI_TEXTURE_IMPORT_PARAMS and every other file there
+    a "skip" import (glTF scenes would never be read from the PCK); a
+    load()ed resource keeps the editor's
+    defaults, so a "skip" left by an older build is removed. A .import that
+    already says what is wanted is left alone - Godot rewrites it with the
+    imported product's paths, and rewriting it here would import again.
+    Returns counts of what was written.
+    """
+    counts = {"texture": 0, "skip": 0, "default": 0, "kept": 0}
+    wanted = dict(URI_TEXTURE_IMPORT_PARAMS)
+    for relative in sorted(shipping["uri_textures"]):
+        sidecar = build_dir / (relative + ".import")
+        if sidecar.is_file():
+            importer, params = _import_settings(sidecar)
+            if importer == "texture" and all(params.get(k) == v for k, v in wanted.items()):
+                counts["kept"] += 1
+                continue
+        sidecar.write_text('[remap]\n\nimporter="texture"\ntype="CompressedTexture2D"\n\n[params]\n\n'
+                           + "".join(f"{k}={v}\n" for k, v in URI_TEXTURE_IMPORT_PARAMS),
+                           encoding="utf-8", newline="\n")
+        counts["texture"] += 1
+    for relative in pck_folder_others(build_dir, shipping):
+        sidecar = build_dir / (relative + ".import")
+        if sidecar.is_file() and _import_settings(sidecar)[0] == "skip":
+            counts["kept"] += 1
+            continue
+        sidecar.write_text(SKIP_IMPORT, encoding="utf-8", newline="\n")
+        counts["skip"] += 1
+    for relative in sorted(shipping["pck"] - shipping["uri_textures"]):
+        sidecar = build_dir / (relative + ".import")
+        if sidecar.is_file() and _import_settings(sidecar)[0] == "skip":
+            sidecar.unlink()
+            counts["default"] += 1
+    log(f"actor import settings: {counts['texture']} URI textures and {counts['skip']} skipped files "
+        f"written, {counts['default']} skips removed, {counts['kept']} already right")
+    return counts
 
 
 def run_godot(godot: Path, args: list[str], log_file: Path, timeout: int,
@@ -361,14 +535,23 @@ def import_project(godot: Path, project: Path, logs: Path) -> None:
     raise PackageError("import never settled after 6 passes; see import-*.log")
 
 
-def check_actor_imports(project: Path) -> None:
-    """Require every actor resource that ships in the PCK to be imported.
+def _import_products(sidecar: Path) -> list[str]:
+    text = sidecar.read_text(encoding="utf-8", errors="replace")
+    match = re.search(r"(?m)^dest_files=\[(.*)\]\s*$", text)
+    return re.findall(r'"res://([^"]+)"', match.group(1)) if match else []
 
-    The PCK-only actor folders (the face masks) are load()ed through
-    ResourceLoader, which in an export finds them only as imported resources.
-    A stale .gdignore or a partial import would otherwise ship a client whose
-    faces render without their masks. Called on the build worktree, so the
-    repository root is the project's parent.
+
+def check_actor_imports(project: Path) -> None:
+    """Require every actor resource that ships in the PCK to be imported, as intended.
+
+    The PCK-only actor files (the face masks, the equipment URI textures) are
+    read through ResourceLoader, which in an export finds them only as
+    imported resources. A stale .gdignore or a partial import would otherwise
+    ship a client whose faces render without their masks, or whose equipment
+    falls back to raw JPEG decodes; a URI texture imported without VRAM
+    compression or mipmaps, or a glTF imported after all, would ship the wrong
+    thing. Called on the build worktree, so the repository root is the
+    project's parent.
     """
     build_dir = project.parent
     shipping = actor_shipping(build_dir)
@@ -377,29 +560,43 @@ def check_actor_imports(project: Path) -> None:
     for folder in sorted(shipping["pck_folders"]):
         if (build_dir / folder / ".gdignore").exists():
             failures.append(f"{folder}: .gdignore keeps it out of the import")
-        for relative in tracked(build_dir, folder):
-            local = PurePosixPath(relative).relative_to("godot-client").as_posix()
-            if local.endswith((".json", ".bin")):
-                continue  # exported as plain files by the include filter
-            checked += 1
-            sidecar = project / (local + ".import")
-            if not sidecar.is_file():
-                failures.append(f"{local}: missing .import remap")
-                continue
-            text = sidecar.read_text(encoding="utf-8", errors="replace")
-            match = re.search(r"(?m)^dest_files=\[(.*)\]\s*$", text)
-            products = re.findall(r'"res://([^"]+)"', match.group(1)) if match else []
-            if not products or any(not (project / PurePosixPath(p)).is_file()
-                                   or (project / PurePosixPath(p)).stat().st_size == 0
-                                   for p in products):
-                failures.append(f"{local}: imported resource is missing")
+    wanted = dict(URI_TEXTURE_IMPORT_PARAMS)
+    for relative in sorted(shipping["pck"]):
+        local = PurePosixPath(relative).relative_to("godot-client").as_posix()
+        if local.endswith(PLAIN_EXPORT_SUFFIXES):
+            continue  # exported as plain files by the include filter
+        checked += 1
+        sidecar = project / (local + ".import")
+        if not sidecar.is_file():
+            failures.append(f"{local}: missing .import remap")
+            continue
+        products = _import_products(sidecar)
+        if not products or any(not (project / PurePosixPath(p)).is_file()
+                               or (project / PurePosixPath(p)).stat().st_size == 0
+                               for p in products):
+            failures.append(f"{local}: imported resource is missing")
+        if relative in shipping["uri_textures"]:
+            importer, params = _import_settings(sidecar)
+            wrong = [k for k in ("compress/mode", "mipmaps/generate") if params.get(k) != wanted[k]]
+            if importer != "texture" or wrong:
+                failures.append(f"{local}: imported as {importer or '?'} with "
+                                f"{', '.join(f'{k}={params.get(k)}' for k in wrong) or 'other settings'}, "
+                                "not a VRAM-compressed, mipmapped texture")
+    skipped = 0
+    for relative in pck_folder_others(build_dir, shipping):
+        local = PurePosixPath(relative).relative_to("godot-client").as_posix()
+        sidecar = project / (local + ".import")
+        if sidecar.is_file() and _import_settings(sidecar)[0] == "skip":
+            skipped += 1
+        else:
+            failures.append(f"{local}: imported, but it ships loose")
     if not shipping["pck_folders"]:
         failures.append("no actor folder ships in the PCK; the face masks would be missing")
     if failures:
         raise PackageError("PCK actor imports are incomplete:\n  " + "\n  ".join(failures[:40]))
-    log(f"checked {checked} imported actor resources in "
-        f"{', '.join(PurePosixPath(f).name for f in sorted(shipping['pck_folders']))}; "
-        f"{len(shipping['loose_folders'])} actor folders ship loose only")
+    log(f"checked {checked} imported actor resources ({len(shipping['uri_textures'])} URI textures) in "
+        f"{', '.join(PurePosixPath(f).name for f in sorted(shipping['pck_folders']))}, "
+        f"{skipped} files there skipped; {len(shipping['loose_folders'])} actor folders ship loose only")
 
 
 def export_project(godot: Path, project: Path, app_dir: Path, logs: Path, platform: dict) -> None:
@@ -422,7 +619,8 @@ def copy_file(source: Path, target: Path) -> int:
 
 
 def stage_loose_client_files(build_dir: Path, app_dir: Path) -> None:
-    # Actor files ship once: the PCK-only folders (face masks) stay out of app/.
+    # Actor files ship once: the PCK-only ones (face masks, equipment URI
+    # textures) stay out of app/.
     loose_actors = actor_shipping(build_dir)["loose"]
     total = staged = pck_only = 0
     files = tracked(build_dir, "godot-client/assets", "godot-client/data", "godot-client/schemas")
@@ -469,36 +667,42 @@ def pck_paths(pck: Path) -> set[str]:
 def check_actor_pack(build_dir: Path, app_dir: Path) -> None:
     """Each actor file is in exactly one place: the PCK or app/assets.
 
-    The PCK must hold every PCK-only actor resource (as its .import remap or,
-    for .json/.bin, the file itself) and nothing from a loose-only folder;
-    app/assets must hold every loose-only file and nothing from a PCK folder.
+    The PCK must hold every PCK-only actor resource (as its .import remap and
+    the imported product it names or, for .json/.bin, the file itself) and no
+    other actor entry; app/assets must hold every loose file and no other
+    actor file.
     """
     shipping = actor_shipping(build_dir)
     paths = pck_paths(app_dir / "Eloria.pck")
+    project = build_dir / "godot-client"
     problems: list[str] = []
-    in_pck = 0
-    for folder in sorted(shipping["pck_folders"]):
-        for relative in tracked(build_dir, folder):
-            local = PurePosixPath(relative).relative_to("godot-client").as_posix()
-            entry = local if local.endswith((".json", ".bin")) else local + ".import"
-            if entry not in paths:
-                problems.append(f"{local}: not in the PCK")
-            if (app_dir / local).exists():
-                problems.append(f"{local}: also staged loose")
-            in_pck += 1
-    loose_prefixes = tuple(PurePosixPath(f).relative_to("godot-client").as_posix() + "/"
-                           for f in shipping["loose_folders"])
-    # An imported file reaches the PCK with its remap under its own path, so a
-    # loose-only folder that leaked into the import shows up by prefix.
-    leaked = sorted(p for p in paths if p.startswith(loose_prefixes))
-    problems.extend(f"{p}: a loose-only actor file is in the PCK" for p in leaked[:20])
+    expected: set[str] = set()
+    for relative in sorted(shipping["pck"]):
+        local = PurePosixPath(relative).relative_to("godot-client").as_posix()
+        entry = local if local.endswith(PLAIN_EXPORT_SUFFIXES) else local + ".import"
+        expected.add(entry)
+        if entry not in paths:
+            problems.append(f"{local}: not in the PCK")
+        elif entry.endswith(".import"):
+            sidecar = project / entry
+            products = _import_products(sidecar) if sidecar.is_file() else []
+            if not products or any(p not in paths for p in products):
+                problems.append(f"{local}: its imported product is not in the PCK")
+        if (app_dir / local).exists():
+            problems.append(f"{local}: also staged loose")
+    # An imported file reaches the PCK with its remap under its own path, so
+    # anything else under assets/actors in the PCK leaked into the import.
+    actor_prefix = PurePosixPath(ACTOR_ROOT).relative_to("godot-client").as_posix() + "/"
+    leaked = sorted(p for p in paths if p.startswith(actor_prefix) and p not in expected)
+    problems.extend(f"{p}: an actor file that ships loose is in the PCK" for p in leaked[:20])
     for relative in sorted(shipping["loose"]):
         if not (app_dir / PurePosixPath(relative).relative_to("godot-client")).is_file():
             problems.append(f"{relative}: not staged loose")
     if problems:
         raise PackageError(f"{len(problems)} actor files are not shipped exactly once:\n  "
                            + "\n  ".join(problems[:40]))
-    log(f"checked actor files: {in_pck} in the PCK only, {len(shipping['loose'])} loose only")
+    log(f"checked actor files: {len(shipping['pck'])} in the PCK only "
+        f"({len(shipping['uri_textures'])} URI textures), {len(shipping['loose'])} loose only")
 
 
 def is_shipped_map_file(relative: PurePosixPath) -> bool:
@@ -616,24 +820,29 @@ def stage_eloria_assets(build_dir: Path, stage: Path) -> list[str]:
 
 
 def check_glb_textures(app_dir: Path) -> None:
+    """Every image a shipped glTF names by URI is loose beside it or imported in the PCK.
+
+    GLTFDocument asks ResourceLoader for the image at the glTF's relative
+    path first (res:// in an export, so the PCK's import), then reads the
+    file there.
+    """
+    pck = app_dir / "Eloria.pck"
+    packed = pck_paths(pck) if pck.is_file() else set()
     missing: list[str] = []
-    count = 0
-    for glb in (app_dir / "assets").rglob("*.glb"):
-        with open(glb, "rb") as handle:
-            header = handle.read(20)
-            if len(header) < 20 or header[:4] != b"glTF":
-                continue
-            length, _ = struct.unpack("<II", header[12:20])
-            document = json.loads(handle.read(length))
-        for image in document.get("images", []):
-            uri = image.get("uri")
-            if uri and not uri.startswith("data:"):
-                count += 1
-                if not (glb.parent / uri).is_file():
-                    missing.append(f"{glb.relative_to(app_dir)} -> {uri}")
+    count = imported = 0
+    for gltf in sorted((*(app_dir / "assets").rglob("*.glb"), *(app_dir / "assets").rglob("*.gltf"))):
+        for uri in gltf_image_uris(gltf):
+            count += 1
+            target = gltf.parent / uri
+            local = posixpath.normpath(target.relative_to(app_dir).as_posix())
+            if local + ".import" in packed:
+                imported += 1
+            elif not target.is_file():
+                missing.append(f"{gltf.relative_to(app_dir).as_posix()} -> {uri}")
     if missing:
-        raise PackageError(f"{len(missing)} GLB textures missing:\n  " + "\n  ".join(missing[:40]))
-    log(f"checked {count} external GLB textures")
+        raise PackageError(f"{len(missing)} glTF textures missing:\n  " + "\n  ".join(missing[:40]))
+    log(f"checked {count} external glTF textures: {imported} imported in the PCK, "
+        f"{count - imported} loose")
 
 
 def check_registry(build_dir: Path, stage: Path) -> None:

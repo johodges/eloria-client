@@ -80,9 +80,14 @@ route, which only an editor checkout takes. An exported client has no resource
 path: `ProjectSettings.globalize_path("res://assets/...")` returns a path
 relative to the game folder, `localize_path()` cannot map it back to `res://`,
 and every actor glTF is parsed from its loose file with `GLTFDocument`, as it
-was before this work. Packaged clients therefore ship the actor glTF folders
+was before this work. Packaged clients therefore ship the actor glTF files
 loose only and the face masks (the actor files the client `load()`s) in the
-PCK only; a packaged actor carries no LOD chains, so Low and Medium change
+PCK only. The textures the equipment glTFs name by relative URI ship in the
+PCK too: `GLTFDocument` asks `ResourceLoader` for an external image before it
+reads the file, a relative path resolves to `res://`, and the packager writes
+their import settings (VRAM-compressed, mipmapped), so packaged equipment
+uploads the imported textures rather than decoding each JPEG without mips. A
+packaged actor still carries no LOD chains, so Low and Medium change
 shadows, cape simulation and LOD bias but not mesh detail there. Giving
 packages the LODs needs the runtime to resolve those paths back to `res://`
 (and the packager to ship the imported scenes instead of the loose GLBs).
