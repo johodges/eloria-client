@@ -82,6 +82,8 @@ jobs:
         run: python3 godot-client/tests/test_package_vram.py -v
       - name: Validate the packager's imported actor LODs
         run: python3 -m pytest godot-client/tests/test_package_client_actor_lods.py -q
+      - name: Validate the packager's 3D scene texture imports
+        run: python3 -m pytest godot-client/tests/test_package_client_scene_textures.py -q
       - name: Validate what the packager ships of a served continent-v2 map
         run: python3 godot-client/tests/test_package_client.py -v
       - name: Validate the continent-v2 isles' links in the streaming graph

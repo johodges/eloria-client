@@ -18,6 +18,12 @@ What goes in, and why it is more than an export:
   app/Eloria.exe (Windows) or app/Eloria.x86_64 (Linux), app/Eloria.pck
       The Godot export. Scripts, scenes, UI art and data. Linux needs the
       official 4.7.2 export templates installed beside the Windows ones.
+      The textures the world's 3D scenes sample (see scene_textures) are
+      imported VRAM-compressed with mipmaps, normal maps red-green. The
+      editor gives a texture those settings only once it has drawn a
+      material using it, and a headless import draws nothing, so the
+      packager writes them: a fresh build worktree ships what one an editor
+      session touched does, not lossless textures without mipmaps.
   app/assets, app/data, app/schemas
       Loose copies, and every actor file ships once (or not at all). Actor
       models, hair and equipment are opened with GLTFDocument from
@@ -200,7 +206,36 @@ URI_TEXTURE_IMPORT_PARAMS = (
     ("process/hdr_as_srgb", "false"), ("process/hdr_clamp_exposure", "false"),
     ("process/size_limit", "0"), ("detect_3d/compress_to", "0"),
 )
+# The same for a texture sampled as a normal map: the editor's normal-map
+# detection adds red-green compression (RGTC), as for the continent's normals.
+NORMAL_MAP_IMPORT_PARAMS = tuple((k, "1" if k == "compress/normal_map" else v)
+                                 for k, v in URI_TEXTURE_IMPORT_PARAMS)
 SKIP_IMPORT = '[remap]\n\nimporter="skip"\n'
+# Where the textures the world's 3D scenes sample live (scene_textures). The
+# editor imports a texture VRAM-compressed with mipmaps only after drawing a
+# material that uses it, which a headless --import never does: a package of
+# 70402924f built in a fresh worktree shipped 184 of them lossless without
+# mipmaps (continent, harvestables, interactives, the map-authoring pilot)
+# where the long-lived build worktree, touched by editor sessions, shipped
+# them compressed, and no build had compressed the six landing-isle
+# harvestables. world_authoring - the map editor's region sources, which only
+# the editor plugins and src/dev load - is left to the editor, as before.
+SCENE_TEXTURE_ROOTS = ("godot-client/assets/world", "godot-client/src/dev")
+# Folders a script loads 3D material textures from by a built path no scene or
+# glTF names: MapAuthoringTexturePresets (src/dev/map_authoring_pilot/style/
+# texture_presets.gd) loads _TEXTURE_ROOT + "<family>-<basecolor|normal|orm>.png".
+RUNTIME_SCENE_TEXTURE_FOLDERS = ("godot-client/src/dev/map_authoring_pilot/style/textures",)
+RUNTIME_NORMAL_MAP = re.compile(r"-normal\.\w+$", re.I)
+# BaseMaterial3D slots sampled as normal maps (hint_normal, hint_roughness_normal).
+NORMAL_MAP_PROPERTIES = {"normal_texture", "detail_normal", "bent_normal_texture"}
+SCENE_EXT_RESOURCE = re.compile(r"^\[ext_resource\b([^\]]*)\]", re.M)
+SCENE_SECTION = re.compile(r"^\[(gd_resource|sub_resource|resource|node)\b([^\]]*)\]", re.M)
+SCENE_ATTRIBUTE = re.compile(r'(\w+)="([^"]*)"')
+SCENE_PROPERTY = re.compile(r"^([\w/]+)\s*=\s*(.*)$", re.M)
+SHADER_TYPE = re.compile(r"\bshader_type\s+(\w+)")
+SHADER_SAMPLER = re.compile(r"\buniform\s+sampler2D\s+(\w+)\s*(?::([^;=]*))?")
+# Characters String.validate_filename() turns into "_" in an extracted image's name.
+INVALID_FILENAME = re.compile(r'[:/\\?*"|%<>]')
 # Actor folders whose unnamed images ship nowhere (owner call, 2026-10-05:
 # "verify, then drop", ~116 MB). In these folders an image that no actor glTF
 # names by URI, no catalog names and no client source names is never read by
@@ -337,25 +372,31 @@ def _catalog_strings(value):
         yield value
 
 
-def gltf_image_uris(path: Path) -> list[str]:
-    """The relative image URIs a .glb/.gltf names (decoded; data: URIs left out).
-
-    Reads only the JSON chunk. A file that is not glTF names nothing.
-    """
+def gltf_document(path: Path) -> dict:
+    """The JSON of a .glb/.gltf (a .glb's JSON chunk only); {} for a file that is not glTF."""
     try:
         if path.suffix.lower() == ".glb":
             with open(path, "rb") as handle:
                 header = handle.read(20)
                 if len(header) < 20 or header[:4] != b"glTF":
-                    return []
+                    return {}
                 length = struct.unpack("<I", header[12:16])[0]
                 document = json.loads(handle.read(length).rstrip(b"\0 ").decode("utf-8"))
         else:
             document = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, ValueError, struct.error):
-        return []
+        return {}
+    return document if isinstance(document, dict) else {}
+
+
+def gltf_image_uris(path: Path) -> list[str]:
+    """The relative image URIs a .glb/.gltf names (decoded; data: URIs left out).
+
+    Reads only the JSON chunk. A file that is not glTF names nothing.
+    """
+    document = gltf_document(path)
     uris = []
-    for image in document.get("images", []) if isinstance(document, dict) else []:
+    for image in document.get("images", []):
         uri = image.get("uri") if isinstance(image, dict) else None
         if isinstance(uri, str) and uri and not uri.startswith("data:"):
             uris.append(unquote(uri))
@@ -632,6 +673,172 @@ def actor_shipping(build_dir: Path) -> dict:
             "pck_folders": pck_folders, "loose_folders": loose_folders}
 
 
+def _gltf_normal_images(document: dict) -> set[int]:
+    """The images a glTF's materials sample as normal maps (by index)."""
+    sources: list[set] = []
+    for texture in document.get("textures", []):
+        texture = texture if isinstance(texture, dict) else {}
+        found = {texture.get("source")}
+        for extension in (texture.get("extensions") or {}).values():  # EXT_texture_webp and the like
+            if isinstance(extension, dict):
+                found.add(extension.get("source"))
+        sources.append({s for s in found if isinstance(s, int)})
+    normals: set[int] = set()
+    for material in document.get("materials", []):
+        normal = material.get("normalTexture") if isinstance(material, dict) else None
+        index = normal.get("index") if isinstance(normal, dict) else None
+        if isinstance(index, int) and 0 <= index < len(sources):
+            normals |= sources[index]
+    return normals
+
+
+def _extracted_image_names(document: dict) -> list[str | None]:
+    """Per image, the name the editor extracts an embedded glTF image under (None for a URI image).
+
+    GLTFDocument (4.7) names an image by its "name" - file part, extension
+    dropped, made a valid file name - or else its index, made unique with
+    "_<index>", and the scene import saves it beside the glTF as
+    "<glTF stem>_<name>.png" (or .jpg ...). The import then reads that file,
+    so the imported scene samples it like any other texture.
+    """
+    names: list[str | None] = []
+    used: set[str] = set()
+    for index, image in enumerate(document.get("images", [])):
+        image = image if isinstance(image, dict) else {}
+        if "name" in image:
+            name = PurePosixPath(str(image["name"]).replace("\\", "/")).name
+            name = INVALID_FILENAME.sub("_", (name.rsplit(".", 1)[0] if "." in name else name).strip())
+        else:
+            name = str(index)
+        while name in used:
+            name += f"_{index}"
+        used.add(name)
+        names.append(None if image.get("uri") else name)
+    return names
+
+
+def _material_textures(text: str, shader_code) -> list[tuple[str, bool]]:
+    """(res:// path, sampled as a normal map) of each image a 3D material in a .tscn/.tres names.
+
+    A StandardMaterial3D or ORMMaterial3D samples every texture slot in 3D,
+    the normal-map slots as normal maps; a ShaderMaterial does so when its
+    shader is a spatial one, each sampler2D parameter a normal map when its
+    hint says so. shader_code(path) reads an external shader.
+    """
+    resources = {}
+    for match in SCENE_EXT_RESOURCE.finditer(text):
+        attributes = dict(SCENE_ATTRIBUTE.findall(match.group(1)))
+        resources[attributes.get("id")] = attributes.get("path", "")
+    sections = list(SCENE_SECTION.finditer(text))
+    header_type = ""
+    bodies: list[tuple[str, str, str]] = []
+    for index, match in enumerate(sections):
+        attributes = dict(SCENE_ATTRIBUTE.findall(match.group(2)))
+        if match.group(1) == "gd_resource":
+            header_type = attributes.get("type", "")
+            continue
+        end = sections[index + 1].start() if index + 1 < len(sections) else len(text)
+        kind = header_type if match.group(1) == "resource" else attributes.get("type", "")
+        bodies.append((kind, attributes.get("id", ""), text[match.end():end]))
+    inline_shaders = {resource_id: body for kind, resource_id, body in bodies if kind == "Shader"}
+    found: list[tuple[str, bool]] = []
+    for kind, _resource_id, body in bodies:
+        samplers = None
+        if kind == "ShaderMaterial":
+            shader = re.search(r'^shader\s*=\s*(Ext|Sub)Resource\("([^"]+)"\)', body, re.M)
+            if not shader:
+                continue
+            code = (shader_code(resources.get(shader.group(2), "")) if shader.group(1) == "Ext"
+                    else inline_shaders.get(shader.group(2), ""))
+            shader_type = SHADER_TYPE.search(code)
+            if not shader_type or shader_type.group(1) != "spatial":
+                continue
+            samplers = dict(SHADER_SAMPLER.findall(code))
+        elif kind not in ("StandardMaterial3D", "ORMMaterial3D"):
+            continue
+        for prop, value in SCENE_PROPERTY.findall(body):
+            for reference in re.findall(r'ExtResource\("([^"]+)"\)', value):
+                path = resources.get(reference, "")
+                if not path.lower().endswith(IMAGE_SUFFIXES):
+                    continue
+                if samplers is None:
+                    found.append((path, prop in NORMAL_MAP_PROPERTIES))
+                elif prop.startswith("shader_parameter/") and prop[17:] in samplers:
+                    hints = samplers[prop[17:]] or ""
+                    found.append((path, re.search(r"\bhint_(roughness_)?normal\b", hints) is not None))
+    return found
+
+
+def scene_textures(build_dir: Path) -> dict[str, bool]:
+    """The textures the world's 3D scenes sample: {repository path: sampled as a normal map}.
+
+    Tracked images under SCENE_TEXTURE_ROOTS that
+      * a glTF the package carries names by URI (outside the actor tree,
+        which actor_shipping decides), or that the editor extracted from one
+        of its embedded images (<stem>_<image name>.png beside it);
+      * a 3D material in a .tscn/.tres the package carries names (a region
+        scene in world_authoring samples the map-authoring pilot's textures);
+      * sit in RUNTIME_SCENE_TEXTURE_FOLDERS, the preset library's built paths
+        (its "-normal" maps are normal maps).
+    The editor gives each of them VRAM compression and mipmaps once it draws
+    a material using it (and red-green compression to a normal map); a
+    headless import draws nothing, so the packager writes those settings
+    (scene_texture_import_params). A texture whose .import the commit tracks
+    keeps the settings committed with it (the biome masks).
+    """
+    tracked_files = tracked(build_dir, "godot-client")
+    tracked_set = set(tracked_files)
+    roots = tuple(root + "/" for root in SCENE_TEXTURE_ROOTS)
+    images = {p for p in tracked_files if p.startswith(roots) and p.lower().endswith(IMAGE_SUFFIXES)}
+    by_stem: dict[str, list[str]] = {}
+    for image in images:
+        by_stem.setdefault(image.rsplit(".", 1)[0], []).append(image)
+    found: dict[str, bool] = {}
+
+    def add(path: str, normal_map: bool) -> None:
+        if path in images:
+            found[path] = found.get(path, False) or normal_map
+
+    for relative in shipped_client_files(build_dir, GLTF_SUFFIXES):
+        if relative.startswith(ACTOR_ROOT + "/"):
+            continue
+        document = gltf_document(build_dir / relative)
+        normals = _gltf_normal_images(document)
+        stem = relative.rsplit(".", 1)[0]
+        for index, (image, name) in enumerate(zip(document.get("images", []),
+                                                  _extracted_image_names(document))):
+            uri = image.get("uri") if isinstance(image, dict) else None
+            if isinstance(uri, str) and uri and not uri.startswith("data:"):
+                add(_resolve(relative, unquote(uri)), index in normals)
+            elif name is not None:
+                for extracted in by_stem.get(f"{stem}_{name}", ()):
+                    add(extracted, index in normals)
+    shaders: dict[str, str] = {}
+
+    def shader_code(path: str) -> str:
+        if path not in shaders:
+            source = build_dir / "godot-client" / path.removeprefix("res://")
+            shaders[path] = (source.read_text(encoding="utf-8", errors="replace")
+                             if path.startswith("res://") and source.is_file() else "")
+        return shaders[path]
+
+    for relative in shipped_client_files(build_dir, (".tscn", ".tres")):
+        text = (build_dir / relative).read_text(encoding="utf-8", errors="replace")
+        if "Material" in text:
+            for path, normal_map in _material_textures(text, shader_code):
+                if path.startswith("res://"):
+                    add("godot-client/" + path[len("res://"):], normal_map)
+    for folder in RUNTIME_SCENE_TEXTURE_FOLDERS:
+        for image in images:
+            if image.startswith(folder + "/"):
+                add(image, RUNTIME_NORMAL_MAP.search(image) is not None)
+    return {p: normal for p, normal in found.items() if p + ".import" not in tracked_set}
+
+
+def scene_texture_import_params(normal_map: bool) -> tuple[tuple[str, str], ...]:
+    return NORMAL_MAP_IMPORT_PARAMS if normal_map else URI_TEXTURE_IMPORT_PARAMS
+
+
 def find_godot(explicit: str | None) -> Path:
     candidates = [Path(explicit)] if explicit else [
         CLIENT / GODOT_EXE, PROJECT / "eloria-client" / "godot-client" / GODOT_EXE]
@@ -678,6 +885,7 @@ def prepare_build_tree(build_dir: Path, sha: str) -> Path:
     for folder in shipping["loose_folders"]:
         (build_dir / folder / ".gdignore").write_text("", encoding="utf-8")
     write_actor_import_settings(build_dir, shipping)
+    write_scene_texture_import_settings(build_dir, scene_textures(build_dir))
     for image, where in sorted(shipping["kept"].items()):
         log(f"kept loose, named outside the catalogs: {image} ({'; '.join(sorted(where)[:3])})")
     return project
@@ -738,18 +946,11 @@ def write_actor_import_settings(build_dir: Path, shipping: dict) -> dict:
     Returns counts of what was written.
     """
     counts = {"texture": 0, "skip": 0, "default": 0, "kept": 0}
-    wanted = dict(URI_TEXTURE_IMPORT_PARAMS)
     for relative in sorted(shipping["uri_textures"]):
-        sidecar = build_dir / (relative + ".import")
-        if sidecar.is_file():
-            importer, params = _import_settings(sidecar)
-            if importer == "texture" and all(params.get(k) == v for k, v in wanted.items()):
-                counts["kept"] += 1
-                continue
-        sidecar.write_text('[remap]\n\nimporter="texture"\ntype="CompressedTexture2D"\n\n[params]\n\n'
-                           + "".join(f"{k}={v}\n" for k, v in URI_TEXTURE_IMPORT_PARAMS),
-                           encoding="utf-8", newline="\n")
-        counts["texture"] += 1
+        if _write_texture_import(build_dir / (relative + ".import"), URI_TEXTURE_IMPORT_PARAMS):
+            counts["texture"] += 1
+        else:
+            counts["kept"] += 1
     for relative in pck_folder_others(build_dir, shipping):
         sidecar = build_dir / (relative + ".import")
         if sidecar.is_file() and _import_settings(sidecar)[0] == "skip":
@@ -764,6 +965,41 @@ def write_actor_import_settings(build_dir: Path, shipping: dict) -> dict:
             counts["default"] += 1
     log(f"actor import settings: {counts['texture']} URI textures and {counts['skip']} skipped files "
         f"written, {counts['default']} skips removed, {counts['kept']} already right")
+    return counts
+
+
+def _write_texture_import(sidecar: Path, params: tuple[tuple[str, str], ...]) -> bool:
+    """Give a texture these import settings; False when its .import already has them.
+
+    A .import that says what is wanted is left alone: Godot rewrites it with
+    the imported product's paths, and rewriting it here would import again.
+    """
+    if sidecar.is_file():
+        importer, current = _import_settings(sidecar)
+        if importer == "texture" and all(current.get(k) == v for k, v in params):
+            return False
+    sidecar.write_text('[remap]\n\nimporter="texture"\ntype="CompressedTexture2D"\n\n[params]\n\n'
+                       + "".join(f"{k}={v}\n" for k, v in params), encoding="utf-8", newline="\n")
+    return True
+
+
+def write_scene_texture_import_settings(build_dir: Path, textures: dict[str, bool]) -> dict:
+    """Write the import settings of the textures the world's 3D scenes sample (scene_textures).
+
+    Every setting is compared, so a texture an editor session imported with
+    other settings is imported once more: its roughness detection (Godot
+    4.7.2 takes the material's last texture slot) writes roughness modes 1
+    and 8, which change no pixel but differ from a fresh worktree's.
+    """
+    counts = {"texture": 0, "normal_map": 0, "kept": 0}
+    for relative, normal_map in sorted(textures.items()):
+        if _write_texture_import(build_dir / (relative + ".import"), scene_texture_import_params(normal_map)):
+            counts["texture"] += 1
+            counts["normal_map"] += normal_map
+        else:
+            counts["kept"] += 1
+    log(f"scene texture import settings: {counts['texture']} written ({counts['normal_map']} normal "
+        f"maps), {counts['kept']} already right")
     return counts
 
 
@@ -860,6 +1096,41 @@ def check_actor_imports(project: Path) -> None:
     log(f"checked {checked} imported actor resources ({len(shipping['uri_textures'])} URI textures) in "
         f"{', '.join(PurePosixPath(f).name for f in sorted(shipping['pck_folders']))}, "
         f"{skipped} files there skipped; {len(shipping['loose_folders'])} actor folders ship loose only")
+
+
+def check_scene_texture_imports(project: Path) -> None:
+    """Require every texture the world's 3D scenes sample to be imported VRAM-compressed with mipmaps.
+
+    The settings are written before the import (scene_textures), but a
+    .import Godot never re-read, or an import that did not run again, would
+    still name the lossless product of an earlier import. Normal maps must be
+    red-green compressed. Called on the build worktree.
+    """
+    textures = scene_textures(project.parent)
+    failures: list[str] = []
+    for relative, normal_map in sorted(textures.items()):
+        local = PurePosixPath(relative).relative_to("godot-client").as_posix()
+        sidecar = project / (local + ".import")
+        if not sidecar.is_file():
+            failures.append(f"{local}: missing .import remap")
+            continue
+        importer, params = _import_settings(sidecar)
+        wanted = dict(scene_texture_import_params(normal_map))
+        wrong = [k for k in ("compress/mode", "mipmaps/generate", "compress/normal_map")
+                 if params.get(k) != wanted[k]]
+        if importer != "texture" or wrong:
+            failures.append(f"{local}: imported as {importer or '?'} with "
+                            f"{', '.join(f'{k}={params.get(k)}' for k in wrong) or 'other settings'}")
+        products = _import_products(sidecar)
+        if not any(".s3tc." in p for p in products) or any(
+                not (project / PurePosixPath(p)).is_file() or (project / PurePosixPath(p)).stat().st_size == 0
+                for p in products):
+            failures.append(f"{local}: no VRAM-compressed import product ({', '.join(products) or 'none'})")
+    if failures:
+        raise PackageError(f"{len(failures)} scene textures are not imported for 3D:\n  "
+                           + "\n  ".join(failures[:40]))
+    log(f"checked {len(textures)} scene textures ({sum(textures.values())} normal maps): "
+        "VRAM-compressed with mipmaps")
 
 
 def export_project(godot: Path, project: Path, app_dir: Path, logs: Path, platform: dict) -> None:
@@ -976,6 +1247,25 @@ def check_actor_pack(build_dir: Path, app_dir: Path) -> None:
     log(f"checked actor files: {len(shipping['pck'])} in the PCK only "
         f"({len(shipping['uri_textures'])} URI textures), {len(shipping['loose'])} loose only, "
         f"{len(shipping['dropped'])} dropped")
+
+
+def check_scene_texture_pack(build_dir: Path, app_dir: Path) -> None:
+    """Every scene texture is in the PCK as its .import remap and the VRAM product it names."""
+    paths = pck_paths(app_dir / "Eloria.pck")
+    project = build_dir / "godot-client"
+    textures = scene_textures(build_dir)
+    problems: list[str] = []
+    for relative in sorted(textures):
+        local = PurePosixPath(relative).relative_to("godot-client").as_posix()
+        products = _import_products(project / (local + ".import"))
+        if local + ".import" not in paths:
+            problems.append(f"{local}: not in the PCK")
+        elif not products or any(p not in paths for p in products):
+            problems.append(f"{local}: its imported product is not in the PCK")
+    if problems:
+        raise PackageError(f"{len(problems)} scene textures are missing from the PCK:\n  "
+                           + "\n  ".join(problems[:40]))
+    log(f"checked {len(textures)} scene textures in the PCK")
 
 
 def is_shipped_map_file(relative: PurePosixPath) -> bool:
@@ -1822,10 +2112,12 @@ def main() -> int:
         served = read_served_v2_packages(build_dir)
         import_project(godot, project, logs)
         check_actor_imports(project)
+        check_scene_texture_imports(project)
         app_dir = stage / "app"
         export_project(godot, project, app_dir, logs, platform)
         stage_loose_client_files(build_dir, app_dir)
         check_actor_pack(build_dir, app_dir)
+        check_scene_texture_pack(build_dir, app_dir)
         warnings = stage_eloria_assets(build_dir, stage, previews, served)
         check_served_packages(stage, served)
         if not options.no_vram_textures:
