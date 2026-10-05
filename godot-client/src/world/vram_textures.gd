@@ -54,7 +54,7 @@ const MODE_NAMES: Array[String] = ["auto", "off", "force"]
 ## Set to "1", the client logs `self_test()`'s line at startup: the package
 ## smoke launch reads it to prove the shipped binary decodes a sidecar.
 const SELF_TEST_ENVIRONMENT := "ELORIA_VRAM_SELF_TEST"
-## Set to a source directory (res://../eloria-assets/...), the client also logs
+## Set to a pool's source directory, such as SHARED_ASSETS, the client also logs
 ## `self_test_pool()`'s line: the smoke launch of a package whose index names
 ## sidecars another pool ships ("pool") proves the binary finds and decodes one.
 const SELF_TEST_POOL_ENVIRONMENT := "ELORIA_VRAM_SELF_TEST_POOL"
