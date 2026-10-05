@@ -8,8 +8,11 @@ the ferry, two harvest nodes, the five re-homed people and one new one, Signed A
 post), the packages export_collision.py wrote (and their manifests), the content tables and crossings_v2.py's
 crossings.json. The server fixture is a copy of the server checkout named by ELORIA_SERVER_ROOT (its code, its base
 tables, Crownwater's vendored grid and the vendored manifest) whose generate_nymara_maps.py registers the two
-fixture isles, as the server workflow will before the real --apply. Each test runs the publisher as a command, the
-way it is run for real, so the server's own sync vendors the grids.
+fixture isles, as the server workflow will before the real --apply. The copy is the tree the serve plan's stages
+start from, whichever stage the checkout has reached: it leaves out M2's eloria/landing.py and M3's eloria/home.py
+(chapter_code adds a stand-in for the first), and takes M1's publication of the isles back out of the copied content
+and collision manifests. Each test runs the publisher as a command, the way it is run for real, so the server's own
+sync vendors the grids.
 
 Without ELORIA_SERVER_ROOT these tests skip.
 """
@@ -88,11 +91,39 @@ REGIONS = REGIONS + ("sw_isle", "tollholms")
 MAP_TILES_WIDE_BY_NAME.update({"sw_isle": 12, "tollholms": 12})
 ARRIVAL_TILES.update(%s)
 """
+# The code a later stage brings (publish_server.STAGE_CODE): the fixture server is copied without it.
+LATER_STAGE_CODE = ("landing.py", "home.py")
+
+
+def manifest_bytes(data):
+    """client_content_manifest.json as the publisher writes it (and requires it to re-serialize)."""
+    return (json.dumps(data, indent=2, ensure_ascii=False) + "\n").encode("utf-8").replace(b"\n", b"\r\n")
+
+
+def unpublish(root):
+    """Take M1's publication of the isles back out of the copied server tree: the maps the manifest's continentV2
+    block names and the block itself, and those maps' entries in the vendored collision manifest (whose grids are not
+    copied). A checkout the isles were never published into is left as it is."""
+    content = root / "config" / "eloria" / "client_content_manifest.json"
+    raw = content.read_bytes()
+    data = json.loads(raw)
+    assert manifest_bytes(data) == raw, "the server's manifest no longer re-serializes as the publisher writes it"
+    block = data.pop(P.MANIFEST_BLOCK, None)
+    if block is None:
+        return
+    isles = set(block["maps"])
+    data["maps"] = [entry for entry in data["maps"] if entry.get("id") not in isles]
+    content.write_bytes(manifest_bytes(data))
+    collision = root / "tools" / "collision" / "manifest.json"
+    vendored = json.loads(collision.read_text(encoding="utf-8"))
+    vendored["maps"] = [entry for entry in vendored["maps"] if entry.get("map") not in isles]
+    collision.write_text(json.dumps(vendored, indent=2) + "\n", encoding="utf-8")   # as the server's sync writes it
 
 
 def make_server(root, arrivals, register=True):
     real = Path(SERVER)
-    shutil.copytree(real / "eloria", root / "eloria", ignore=shutil.ignore_patterns("__pycache__"))
+    shutil.copytree(real / "eloria", root / "eloria",
+                    ignore=shutil.ignore_patterns("__pycache__", *LATER_STAGE_CODE))
     (root / "tools" / "collision").mkdir(parents=True)
     for path in (real / "tools").glob("*.py"):
         shutil.copy2(path, root / "tools" / path.name)
@@ -101,6 +132,7 @@ def make_server(root, arrivals, register=True):
     (root / "config" / "eloria").mkdir(parents=True)
     for name in PROFILE_FILES:
         shutil.copy2(real / "config" / "eloria" / name, root / "config" / "eloria" / name)
+    unpublish(root)
     if register:
         maps = root / "tools" / "generate_nymara_maps.py"
         maps.write_text(maps.read_text(encoding="utf-8") + REGISTER % repr(arrivals), encoding="utf-8")
