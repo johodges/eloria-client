@@ -322,10 +322,6 @@ quick_spell_12={
 
 locale/translations=PackedStringArray("res://data/i18n/strings.en.translation")
 
-[map_authoring]
-
-territory_catalog_path="res://world_authoring/continent-v2/territories.json"
-
 [rendering]
 
 renderer/rendering_method="forward_plus"
