@@ -39,6 +39,9 @@ def test_pristine_asset_and_runtime_registry_match_reviewed_manifest():
         "runtimeSurfaceFingerprintSHA256": (
             "580ab6ee1d57c3cc98369636e872556bbe2a6e1d290c86270c31fcf985dd5446"
         ),
+        "rawRuntimeSurfaceFingerprintSHA256": (
+            "adadf7459870edb2824a2010e68656f7272c382d76621c216594cba95dedf07b"
+        ),
         "permanentAssetMutation": False,
     }
 
@@ -67,6 +70,7 @@ const PROFILE_REGISTRY := {
             "expectedVertexCount": 999,
             "expectedIndexCount": 999,
             "surfaceFingerprintSHA256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "rawSurfaceFingerprintSHA256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "faces": [999],
         }],
     },
@@ -80,6 +84,7 @@ const PROFILE_REGISTRY := {
             "expectedVertexCount": 1701,
             "expectedIndexCount": 1701,
             "surfaceFingerprintSHA256": "580ab6ee1d57c3cc98369636e872556bbe2a6e1d290c86270c31fcf985dd5446",
+            "rawSurfaceFingerprintSHA256": "adadf7459870edb2824a2010e68656f7272c382d76621c216594cba95dedf07b",
             "faces": [0, 14, 546],
         }],
     },
@@ -94,6 +99,9 @@ const PROFILE_REGISTRY := {
         "baseFaceCount": 567,
         "surfaceFingerprintSHA256": (
             "580ab6ee1d57c3cc98369636e872556bbe2a6e1d290c86270c31fcf985dd5446"
+        ),
+        "rawSurfaceFingerprintSHA256": (
+            "adadf7459870edb2824a2010e68656f7272c382d76621c216594cba95dedf07b"
         ),
         "faces": [0, 14, 546],
     }

@@ -9,6 +9,9 @@ const ORUN_RACE := "orun_male"
 const ORUN_PROFILE_ID := "orun-male-rear-neck-v1"
 const ORUN_SURFACE := 3
 const ORUN_SOURCE_FINGERPRINT := "580ab6ee1d57c3cc98369636e872556bbe2a6e1d290c86270c31fcf985dd5446"
+## The same surface as GLTFDocument parses it from the loose GLB, which is
+## how an exported client (no resource path) builds every actor.
+const ORUN_RAW_FINGERPRINT := "adadf7459870edb2824a2010e68656f7272c382d76621c216594cba95dedf07b"
 const ORUN_MASKED_FACES := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14,
 	15, 16, 17, 18, 20, 21, 27, 28, 36, 37, 50, 51, 57, 63, 64, 67, 68, 69,
 	71, 86, 88, 89, 95, 101, 109, 112, 125, 128, 129, 151, 152, 160, 192,
@@ -31,6 +34,7 @@ func _run() -> void:
 	_check_cache_reset_and_rebuild()
 	_check_imported_actor_lods_and_quality()
 	_check_orun_runtime_profile()
+	_check_orun_shipped_route_profile()
 	TorsoBodyCover.clear()
 	GlbSceneCache.clear()
 	print("torso body cover LODs: %s (%d checks)" % [
@@ -369,6 +373,65 @@ func _check_orun_runtime_profile() -> void:
 		arrays, source, true).is_empty(),
 		"a surface-fingerprint mismatch fails closed without applying ordinals")
 	first.free()
+
+
+## An exported client has no resource path, so GlbSceneCache cannot map the
+## globalized scene path back to res:// and parses the loose GLB with
+## GLTFDocument instead of loading the imported scene. That mesh lists the
+## same faces in the same order but lays each face's corners out differently,
+## so it has its own fingerprint; before the registry named it, every packaged
+## Orun warned "surface fingerprint drifted" and dropped the whole shared-neck
+## bridge. Build Orun the way the package does and require the reviewed rows.
+func _check_orun_shipped_route_profile() -> void:
+	GlbSceneCache.clear()
+	TorsoBodyCover.clear()
+	var models: Dictionary = JSON.parse_string(
+		FileAccess.get_file_as_string("res://data/actors/models.json"))["models"]
+	var equipment: Dictionary = JSON.parse_string(
+		FileAccess.get_file_as_string("res://data/actors/equipment.json"))
+	var config: Dictionary = models[ORUN_RACE]
+	var animations: Dictionary = JSON.parse_string(
+		FileAccess.get_file_as_string(config["animationMap"]))
+	var scene_path := ProjectSettings.globalize_path(str(config["scene"]))
+	var parsed := GlbSceneCache._build_raw(scene_path)
+	_expect(parsed != null, "the loose Orun GLB parses through GLTFDocument")
+	if parsed == null:
+		return
+	GlbSceneCache.install_prepared({scene_path: parsed})
+	var actor := _actor(6203, config, animations, equipment, ORUN_RACE)
+	if actor == null:
+		GlbSceneCache.clear()
+		return
+	var body := _body(actor)
+	_expect(body != null, "the parsed Orun actor exposes its body mesh")
+	if body == null:
+		actor.free()
+		GlbSceneCache.clear()
+		return
+	var arrays: Array = body.mesh.surface_get_arrays(ORUN_SURFACE)
+	var source: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+	_expect(source.size() == 1701
+		and _surface_fingerprint(arrays, source) == ORUN_RAW_FINGERPRINT,
+		"the shipped route's Orun shared-neck surface is the pinned raw parse")
+	for visual: int in [209, 225, 216, 189]:
+		actor.apply_equipment_visuals({5: visual})
+		var covered_source: PackedInt32Array = body.mesh.surface_get_arrays(
+			ORUN_SURFACE)[Mesh.ARRAY_INDEX]
+		var diff := _subsequence_diff(source, covered_source)
+		_expect(diff["removed"] == ORUN_MASKED_FACES
+			and (diff["unmatched"] as Array).is_empty()
+			and covered_source.size() / 3 == 567 - ORUN_MASKED_FACES.size(),
+			"on the shipped route torso %d keeps 479 bridge faces, removing the 88 reviewed rows" % visual)
+		actor.apply_equipment_visuals({})
+		_expect((body.mesh.surface_get_arrays(ORUN_SURFACE)[Mesh.ARRAY_INDEX]
+			as PackedInt32Array) == source,
+			"on the shipped route torso %d unequip restores the parsed mesh" % visual)
+	_expect(TorsoBodyCover._profile_warnings.is_empty(),
+		"the shipped route ignores no torso cover profile: %s" % str(
+			TorsoBodyCover._profile_warnings.keys()))
+	actor.free()
+	GlbSceneCache.clear()
+	TorsoBodyCover.clear()
 
 
 func _actor(id: int, config: Dictionary, animations: Dictionary,

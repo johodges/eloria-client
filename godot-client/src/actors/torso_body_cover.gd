@@ -25,6 +25,15 @@ const FRONT_APRON_MIN_Z := .005
 ## Immutable masks live once here rather than in every actor's deep-copied
 ## model config. The model selects one profile by compact id/version; strict
 ## surface fingerprints below prevent face ordinals from drifting silently.
+##
+## A mask names two fingerprints because the same GLB reaches the game by two
+## routes. An editor checkout loads the imported scene; an exported client has
+## no resource path, so GlbSceneCache parses the loose GLB with GLTFDocument
+## (`_build_raw`). The two meshes list the same faces in the same order (all
+## 567 of Orun's bridge faces were matched by corner position and UV), but
+## the importer re-lays each face's corners, so the bytes - and the
+## fingerprint - differ. `rawSurfaceFingerprintSHA256` pins the parsed mesh,
+## so the reviewed ordinals apply on either route and on nothing else.
 const PROFILE_REGISTRY := {
 	"orun-male-rear-neck-v1": {
 		"id": "orun-male-rear-neck-v1",
@@ -38,6 +47,7 @@ const PROFILE_REGISTRY := {
 			"expectedVertexCount": 1701,
 			"expectedIndexCount": 1701,
 			"surfaceFingerprintSHA256": "580ab6ee1d57c3cc98369636e872556bbe2a6e1d290c86270c31fcf985dd5446",
+			"rawSurfaceFingerprintSHA256": "adadf7459870edb2824a2010e68656f7272c382d76621c216594cba95dedf07b",
 			"faces": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15,
 				16, 17, 18, 20, 21, 27, 28, 36, 37, 50, 51, 57, 63, 64, 67,
 				68, 69, 71, 86, 88, 89, 95, 101, 109, 112, 125, 128, 129,
@@ -271,8 +281,10 @@ static func _profile_mask(profile: Dictionary, surface: int, arrays: Array,
 			_warn_profile_once(profile_id, "surface index count drifted")
 			return {}
 		var expected_fingerprint := str(entry.get("surfaceFingerprintSHA256", ""))
+		var raw_fingerprint := str(entry.get("rawSurfaceFingerprintSHA256", ""))
 		var actual_fingerprint := _surface_fingerprint(arrays, source)
-		if expected_fingerprint.is_empty() or actual_fingerprint != expected_fingerprint:
+		if expected_fingerprint.is_empty() or (actual_fingerprint != expected_fingerprint
+				and (raw_fingerprint.is_empty() or actual_fingerprint != raw_fingerprint)):
 			_warn_profile_once(profile_id, "surface fingerprint drifted (%s)" % actual_fingerprint)
 			return {}
 		var faces := {}

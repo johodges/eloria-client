@@ -7,6 +7,11 @@ the reviewed rows only to TorsoBodyCover's cached covered mesh.
 
 This verifier pins the pristine asset, GLB primitive/face order, compact model
 selector, single runtime registry and dependent metadata.  It is read-only.
+
+The runtime registry carries two surface fingerprints: the editor's imported
+scene and the raw GLTFDocument parse an exported client uses.  Both list the
+same faces in the same order (``runtimeRoutes`` in the manifest), so one face
+list serves both.
 """
 from __future__ import annotations
 
@@ -165,6 +170,9 @@ def _runtime_registry(source: str, manifest: dict) -> dict:
     fingerprint = _required_string(mask_source, "surfaceFingerprintSHA256")
     if not re.fullmatch(r"[0-9a-f]{64}", fingerprint):
         raise ValueError("runtime surface fingerprint is invalid")
+    raw_fingerprint = _required_string(mask_source, "rawSurfaceFingerprintSHA256")
+    if not re.fullmatch(r"[0-9a-f]{64}", raw_fingerprint):
+        raise ValueError("runtime raw surface fingerprint is invalid")
     faces_source = _named_container(mask_source, "faces", "[", "]")
     faces = [int(value) for value in re.findall(r"\d+", faces_source)]
     return {
@@ -175,6 +183,7 @@ def _runtime_registry(source: str, manifest: dict) -> dict:
         "indexCount": _required_int(mask_source, "expectedIndexCount"),
         "baseFaceCount": _required_int(mask_source, "baseFaceCount"),
         "surfaceFingerprintSHA256": fingerprint,
+        "rawSurfaceFingerprintSHA256": raw_fingerprint,
         "faces": faces,
     }
 
@@ -250,6 +259,8 @@ def verify(root: Path = ROOT, manifest_path: Path = DEFAULT_MANIFEST) -> dict:
         "baseFaceCount": manifest["baseFaceCount"],
         "surfaceFingerprintSHA256": manifest["profile"][
             "runtimeSurfaceFingerprintSHA256"],
+        "rawSurfaceFingerprintSHA256": manifest["profile"][
+            "rawRuntimeSurfaceFingerprintSHA256"],
         "faces": manifest["maskedFaces"],
     }
     if runtime != expected_runtime:
@@ -262,6 +273,8 @@ def verify(root: Path = ROOT, manifest_path: Path = DEFAULT_MANIFEST) -> dict:
         "unmatchedCopies": attributes["unmatchedCopies"],
         "runtimeSurfaceFingerprintSHA256": runtime[
             "surfaceFingerprintSHA256"],
+        "rawRuntimeSurfaceFingerprintSHA256": runtime[
+            "rawSurfaceFingerprintSHA256"],
         "permanentAssetMutation": False,
     }
 

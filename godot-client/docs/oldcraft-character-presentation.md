@@ -87,6 +87,15 @@ shadows, cape simulation and LOD bias but not mesh detail there. Giving
 packages the LODs needs the runtime to resolve those paths back to `res://`
 (and the packager to ship the imported scenes instead of the loose GLBs).
 
+Anything pinned to a mesh's bytes must therefore pin the parsed mesh too. The
+importer lays out each face's corners differently from `GLTFDocument`, so the
+Orun male's reviewed rear-neck mask (`TorsoBodyCover.PROFILE_REGISTRY`) names
+two fingerprints for one face list: the imported scene's and the raw parse's
+(`rawSurfaceFingerprintSHA256`). With only the first, every packaged Orun
+ignored the profile and dropped the whole shared-neck bridge.
+`tests/test_torso_body_cover_lods.gd` builds Orun through `_build_raw`, the
+route a package takes.
+
 For future authored assets, use the following review targets rather than
 adding more runtime modifiers:
 

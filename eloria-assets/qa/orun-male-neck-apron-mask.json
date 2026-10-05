@@ -7,9 +7,26 @@
   "profile": {
     "id": "orun-male-rear-neck-v1",
     "version": 1,
-    "runtimeSurfaceFingerprintSHA256": "580ab6ee1d57c3cc98369636e872556bbe2a6e1d290c86270c31fcf985dd5446"
+    "runtimeSurfaceFingerprintSHA256": "580ab6ee1d57c3cc98369636e872556bbe2a6e1d290c86270c31fcf985dd5446",
+    "rawRuntimeSurfaceFingerprintSHA256": "adadf7459870edb2824a2010e68656f7272c382d76621c216594cba95dedf07b"
   },
   "installMode": "coverage-active-runtime-index-filter",
+  "runtimeRoutes": {
+    "imported": {
+      "loader": "ResourceLoader imported PackedScene (editor checkout)",
+      "surfaceFingerprintSHA256": "580ab6ee1d57c3cc98369636e872556bbe2a6e1d290c86270c31fcf985dd5446"
+    },
+    "raw": {
+      "loader": "GLTFDocument parse of the loose GLB (GlbSceneCache._build_raw; exported clients)",
+      "surfaceFingerprintSHA256": "adadf7459870edb2824a2010e68656f7272c382d76621c216594cba95dedf07b",
+      "vertexCount": 1701,
+      "indexCount": 1701,
+      "faceOrderMatchesImported": 567,
+      "matchedBy": "sorted corner positions and UVs at 1e-4",
+      "difference": "the importer re-lays each face's corners; face order and face set are unchanged",
+      "measured": "2026-10-04, Godot 4.7.2"
+    }
+  },
   "permanentAssetMutation": false,
   "rejectedPermanentCandidate": {
     "sha256": "d52a79cb1a571eb163c882076ca4d989c1ed98b62b02dbbaa8e69d0993b8b13a",
