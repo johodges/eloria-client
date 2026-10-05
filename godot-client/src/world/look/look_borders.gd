@@ -38,6 +38,10 @@ static var _mutex := Mutex.new()
 static var _loaded := false
 ## Region id -> PackedVector2Array: its ownership polygon, continent metres.
 static var _polygons: Dictionary = {}
+## Region id -> its registry geography's continent frame ("" for the
+## twelve-territory continent): regions in different frames share continent
+## coordinates but never a border.
+static var _frames: Dictionary = {}
 ## Region id -> Array of {"neighbour": String, "segments": PackedVector4Array
 ## (a.x, a.z, b.x, b.z)}, each segment oriented so the region lies on its
 ## left (cross(b - a, p - a) > 0).
@@ -150,12 +154,15 @@ static func neighbours_of(region: String) -> PackedStringArray:
 	return result
 
 ## Uses `polygons` (region id -> Array of [x, z] points, continent metres)
-## instead of the manifests' until `reload`; for tests.
-static func define(polygons: Dictionary) -> void:
+## instead of the manifests' until `reload`, each in the continent frame
+## `frames` names for it (none: the twelve-territory continent); for tests.
+static func define(polygons: Dictionary, frames := {}) -> void:
 	_mutex.lock()
 	_polygons.clear()
+	_frames.clear()
 	for id: Variant in polygons:
 		_polygons[String(id)] = _points(polygons[id])
+		_frames[String(id)] = str(frames.get(id, ""))
 	_build()
 	_loaded = true
 	_mutex.unlock()
@@ -165,6 +172,7 @@ static func reload() -> void:
 	_mutex.lock()
 	_loaded = false
 	_polygons.clear()
+	_frames.clear()
 	_borders.clear()
 	_mutex.unlock()
 
@@ -205,6 +213,7 @@ static func _load_polygons() -> void:
 		var id := str((asset as Dictionary).get("id", ""))
 		if polygon.size() >= 3 and not id.is_empty():
 			_polygons[id] = polygon
+			_frames[id] = str(((entry as Dictionary).get("continentGeography") as Dictionary).get("frame", ""))
 
 static func _points(raw: Variant) -> PackedVector2Array:
 	var points := PackedVector2Array()
@@ -233,7 +242,10 @@ static func _build() -> void:
 			for step: int in count:
 				var start := a.lerp(b, float(step) / count)
 				var end := a.lerp(b, float(step + 1) / count)
-				var key := _key((start + end) * 0.5)
+				var key: Variant = _key((start + end) * 0.5)
+				var frame := str(_frames.get(id, ""))
+				if not frame.is_empty():
+					key = "%s|%s" % [frame, str(key)]
 				if not owners.has(key):
 					owners[key] = []
 				(owners[key] as Array).append(id)

@@ -95,3 +95,7 @@ godot-client/native/native_crowd/build/
 godot-client/native/native_crowd/.deps/
 godot-client/bin/native_crowd*
 godot-client/bin/**/native_crowd*
+
+# A checkout's own project-settings override. The continent-v2 viewer launcher and the editor-pass runners
+# write godot-client/override.cfg to bind the v2 territory catalog there (serve plan CV12a).
+godot-client/override.cfg

@@ -24,7 +24,15 @@ renderer can sample its format, and decodes the JPEG/PNG otherwise. Nothing
 here changes a map package: manifests, GLBs and digests are untouched, and a
 sidecar is keyed by the source's own sha.
 
-Recipes, from every glTF material slot that samples the image in any map:
+Every directory is planned on its own. Two pools may hold the same bytes
+(continent-v2's _continent_v2/shared-assets shares 315 images with
+nymara-regions/_continent/shared-assets): each copy gets a sidecar in its own
+directory's vram/, with the roles of the maps that name that copy, so a
+directory's index is the same whether or not the other pool is in the tree.
+Copies share one cached encode.
+
+Recipes, from every glTF material slot that samples the image in any map
+naming that copy:
 
   base        base colour / emissive, alpha unused  -> BC7 (sRGB view)
   base_alpha  base colour of a MASK/BLEND material whose alpha is used -> BC7
@@ -228,10 +236,23 @@ def role_names(roles: set[tuple[str, str]]) -> list[str]:
                    for role, alpha in roles})
 
 
-def inventory(maps_roots: list[Path]) -> dict[str, dict]:
-    """sha -> {path, roles: {(role, alphaMode)}, maps: set}"""
-    found: dict[str, dict] = {}
+def inventory(maps_roots: list[Path]) -> dict[tuple[Path, str], dict]:
+    """(image directory, sha) -> {path, roles: {(role, alphaMode)}, maps: set, cutoffs: set}
+
+    One record per COPY of an image: two pools can hold the same bytes (the
+    continent-v2 pool shares 315 images with nymara-regions/_continent's), and
+    each directory gets its own vram/ index. A copy's roles and cutoffs come
+    only from the manifests whose URIs resolve to that copy, so one pool's index
+    is what it would be if the other pool were not in the tree: keyed by sha
+    alone, the first manifest found named every shared image's directory, the
+    other pool's index lost them and an in-place run deleted their sidecars."""
+    found: dict[tuple[Path, str], dict] = {}
     manifests = 0
+
+    def record_for(path: Path, sha: str) -> dict:
+        path = path.resolve()
+        return found.setdefault((path.parent, sha), {"path": path, "roles": set(), "maps": set(), "cutoffs": set()})
+
     for root in maps_roots:
         for manifest_path in sorted(root.rglob("world.json")):
             try:
@@ -245,8 +266,9 @@ def inventory(maps_roots: list[Path]) -> dict[str, dict]:
             # a review file the client never loads; the chunks carry the roles.
             if "streamingChunks" in manifest:
                 for uri, sha in resources.items():
-                    path = (manifest_path.parent / str(manifest.get("asset", {}).get("glb", "world.glb"))).parent / uri
-                    found.setdefault(sha, {"path": path.resolve(), "roles": set(), "maps": set(), "cutoffs": set()})
+                    if isinstance(sha, str) and len(sha) == 64:
+                        record_for((manifest_path.parent / str(manifest.get("asset", {}).get("glb", "world.glb")))
+                                   .parent / uri, sha)
                 continue
             glb = manifest_path.parent / str(manifest.get("asset", {}).get("glb", "world.glb"))
             try:
@@ -261,14 +283,15 @@ def inventory(maps_roots: list[Path]) -> dict[str, dict]:
             for uri, sha in resources.items():
                 if not isinstance(sha, str) or len(sha) != 64:
                     continue
-                record = found.setdefault(sha, {"path": (glb.parent / uri).resolve(), "roles": set(), "maps": set(),
-                                                 "cutoffs": set()})
+                record = record_for(glb.parent / uri, sha)
                 index = by_uri.get(uri)
                 if index is not None:
                     record["roles"] |= roles.get(index, set())
                     record["cutoffs"] |= cutoffs.get(index, set())
                     record["maps"].add(str(manifest_path.parent.relative_to(root)))
-    log(f"inventory: {len(found)} content-addressed images from {manifests} map packages")
+    shas = {sha for _, sha in found}
+    log(f"inventory: {len(shas)} content-addressed images ({len(found)} copies in "
+        f"{len({directory for directory, _ in found})} directories) from {manifests} map packages")
     return found
 
 
@@ -336,7 +359,7 @@ def encoder_project(cache: Path) -> Path:
     return project
 
 
-def run_encoders(godot: Path, cache: Path, jobs: list[dict], procs: int) -> dict[str, dict]:
+def run_encoders(godot: Path, cache: Path, jobs: list[dict], procs: int) -> dict[tuple[str, str], dict]:
     if not jobs:
         return {}
     project = encoder_project(cache)
@@ -358,17 +381,19 @@ def run_encoders(godot: Path, cache: Path, jobs: list[dict], procs: int) -> dict
                                    stdout=log_file, stderr=subprocess.STDOUT,
                                    env=dict(env, VRAM_JOBS=str(jobs_file)))
         running.append((process, log_file, work / f"encode{index}.log"))
-    results: dict[str, dict] = {}
+    # Keyed by (sha, recipe): one image can be encoded for two recipes in one
+    # batch when two pools sample it in different roles.
+    results: dict[tuple[str, str], dict] = {}
     for process, log_file, log_path in running:
         process.wait(timeout=3600)
         log_file.close()
         for line in log_path.read_text(encoding="utf-8", errors="replace").splitlines():
             if line.startswith("VRAM_RESULT "):
                 result = json.loads(line[len("VRAM_RESULT "):])
-                results[result["sha"]] = result
+                results[(result["sha"], result["recipe"])] = result
         if process.returncode != 0:
             raise BuildError(f"the encoder exited {process.returncode}; log: {log_path}")
-    missing = [job["sha"] for job in jobs if job["sha"] not in results]
+    missing = [job["sha"] for job in jobs if (job["sha"], job["recipe"]) not in results]
     if missing:
         raise BuildError(f"the encoder gave no result for {len(missing)} images, e.g. {missing[:3]}")
     return results
@@ -466,6 +491,24 @@ def measure(task: tuple) -> dict:
     return metrics
 
 
+def for_cutoffs(metrics: dict, cutoffs: list[float]) -> dict:
+    """A base_alpha measurement as one directory's materials cut the image:
+    an encode two pools share is measured at the union of their cutoffs, and
+    each pool's verdict and report read only the cutoffs its own materials use
+    (as a run without the other pool would have measured them)."""
+    flips = metrics.get("alpha_flips")
+    keys = sorted({f"{float(c):g}" for c in cutoffs}, key=float)
+    if not flips or not keys or set(keys) == set(flips) or any(k not in flips for k in keys):
+        return metrics
+    kept = {k: flips[k] for k in keys}
+    levels = len(next(iter(kept.values())))
+    out = dict(metrics, cutoffs=[float(k) for k in keys], alpha_flips=kept)
+    out["alpha_flip_max"] = [max(per[m] for per in kept.values()) for m in range(levels)]
+    out["alpha_flip_mip0"] = out["alpha_flip_max"][0]
+    out["alpha_flip_mip2"] = out["alpha_flip_max"][min(2, levels - 1)]
+    return out
+
+
 def _gated(recipe: str, values: list, metrics: dict, last: int | None = None) -> list[tuple[int, object]]:
     """(mip, value) for the mips 1..last (GATED_MIPS[recipe]) that were
     measured and are at least MIN_GATED_MIP pixels on their shorter side."""
@@ -549,8 +592,7 @@ def build(maps_roots: list[Path], out_root: Path | None, cache: Path, godot: Pat
     found = inventory(maps_roots)
     # Group by source directory: each gets its own vram/ folder.
     plans: dict[Path, dict] = {}
-    for sha, record in sorted(found.items()):
-        source_dir = record["path"].parent
+    for (source_dir, sha), record in sorted(found.items()):
         if not record["path"].is_file():
             continue
         if hashlib.sha256(record["path"].read_bytes()).hexdigest() != sha:
@@ -575,10 +617,19 @@ def build(maps_roots: list[Path], out_root: Path | None, cache: Path, godot: Pat
         measures again (from the cached sidecar) every entry whose numbers an
         older measure() or other alpha cutoffs produced."""
         jobs, remeasure = [], []
+        # Two directories' copies of one image share one encode (the cache key
+        # is the source sha and the recipe): it is queued once and measured at
+        # every cutoff any copy's materials cut it at; each directory's verdict
+        # then reads only its own cutoffs (for_cutoffs).
+        distinct: dict[str, dict] = {}
         for item in items:
             key = cache_key(item["sha"], item["recipe"], version)
             item["key"] = key
             used_keys.add(key)
+            first = distinct.setdefault(key, dict(item, cutoffs=[]))
+            first["cutoffs"] = sorted(set(first["cutoffs"]) | set(cutoffs_of(item)))
+        for item in distinct.values():
+            key = item["key"]
             meta_path, evt_path = cache / f"{key}.json", cache / f"{key}.evt"
             if meta_path.is_file() and evt_path.is_file():
                 meta = json.loads(meta_path.read_text(encoding="utf-8"))
@@ -592,18 +643,19 @@ def build(maps_roots: list[Path], out_root: Path | None, cache: Path, godot: Pat
             jobs.append({"sha": item["sha"], "src": str(item["path"]), "recipe": item["recipe"],
                          "evt": str(cache / f"{key}.evt"), "dds": str(cache / "_work" / f"{key}.dds"),
                          "key": key, "cutoffs": cutoffs_of(item)})
-        cached = len(items) - len(jobs) - len(remeasure)
+        cached = len(distinct) - len(jobs) - len(remeasure)
         counts["cached"] += cached
         counts["encoded"] += len(jobs)
         counts["remeasured"] += len(remeasure)
-        log(f"{len(items)} sidecars wanted: {cached} cached, {len(remeasure)} to measure again, "
+        shared = f" ({len(distinct)} distinct encodes)" if len(distinct) != len(items) else ""
+        log(f"{len(items)} sidecars wanted{shared}: {cached} cached, {len(remeasure)} to measure again, "
             f"{len(jobs)} to encode")
         began = time.time()
         results = run_encoders(godot, cache, jobs, max(1, min(procs, len(jobs))))
         counts["encodeSeconds"] += time.time() - began
         tasks = []
         for job in jobs:
-            result = results[job["sha"]]
+            result = results[(job["sha"], job["recipe"])]
             if "error" in result:
                 meta = {"error": result["error"], "width": result.get("width"), "height": result.get("height")}
                 (cache / f"{job['key']}.json").write_text(json.dumps(meta), encoding="utf-8")
@@ -659,7 +711,9 @@ def build(maps_roots: list[Path], out_root: Path | None, cache: Path, godot: Pat
     summary = {"encoder": f"godot {version} editor: Image.compress_from_channels (BPTC cvtt, S3TC etcpak)",
                "encoded": counts["encoded"], "cached": counts["cached"], "remeasured": counts["remeasured"],
                "encodeSeconds": round(counts["encodeSeconds"], 1), "directories": {}}
-    base_psnr = []
+    # one PSNR per distinct encode: the copies of a shared image in two pools are one encode, and counting each copy
+    # would weigh shared images twice in the set-level median (and make it depend on which pools are in the tree)
+    base_psnr, psnr_keys = [], set()
     for source_dir, plan in sorted(plans.items()):
         target = (out_root / source_dir.relative_to(common_root(maps_roots, source_dir)) / SIDECAR_DIR
                   if out_root else source_dir / SIDECAR_DIR)
@@ -672,12 +726,15 @@ def build(maps_roots: list[Path], out_root: Path | None, cache: Path, godot: Pat
             if "error" in meta:
                 index["excluded"][sha] = meta["error"]
                 continue
-            reason = verdict(item["recipe"], meta["quality"], floors)
-            report[sha] = {"recipe": item["recipe"], "width": meta["width"], **meta["quality"]}
+            quality = for_cutoffs(meta["quality"], cutoffs_of(item)) if item["recipe"] == "base_alpha" \
+                else meta["quality"]
+            reason = verdict(item["recipe"], quality, floors)
+            report[sha] = {"recipe": item["recipe"], "width": meta["width"], **quality}
             if reason:
                 index["excluded"][sha] = reason
                 continue
-            if item["recipe"] in ("base", "base_alpha"):
+            if item["recipe"] in ("base", "base_alpha") and item["key"] not in psnr_keys:
+                psnr_keys.add(item["key"])
                 base_psnr.append(meta["quality"]["psnr"])
             name = f"{sha}.{item['recipe']}.evt"
             shutil.copyfile(cache / f"{item['key']}.evt", target / name)
@@ -706,6 +763,7 @@ def build(maps_roots: list[Path], out_root: Path | None, cache: Path, godot: Pat
         base_psnr.sort()
         median = base_psnr[len(base_psnr) // 2]
         summary["basePsnrMedian"] = median
+        summary["basePsnrEncodes"] = len(base_psnr)
         # A set-level gate: meaningless on a handful of test images.
         if len(base_psnr) >= 20 and median < floors["base_psnr_median"]:
             raise BuildError(f"median base-colour PSNR {median} is under {floors['base_psnr_median']} dB")

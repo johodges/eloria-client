@@ -57,6 +57,20 @@ What goes in, and why it is more than an export:
       the client uploads them as they are instead of decoding each image to
       RGBA8. Checked against their index; --no-vram-textures leaves them out.
 
+A map whose registry row is a client preview (PREVIEW_MAP_STATUSES: a
+rebuilt-continent territory, a chunk-streamed package of up to 1.2 GB, with no
+server map yet) is left out: its row is dropped from the build tree's registry
+before the export, and its map folder is never staged.
+
+A continent-v2 map the server serves (SERVED_V2_STATUSES) ships its client
+package - the territory world.json, its chunks and the shared images they name
+- and nothing the server alone reads: its collision.bin and served-grid.escg.gz
+(SERVER_ONLY_FILES; the client never opens either, and sw_isle's collision.bin
+alone is 16.7 MB) are not staged, the collision block of its manifests is not
+followed for files, and the territory folder around the package (the editor's
+stub world.json, the server content tables) is left out. Staged, the package
+is checked for exactly that (check_served_packages).
+
 Only files tracked at the commit are shipped. Before zipping, the package is
 checked - every registry manifest, the files each manifest names, and every
 external texture a GLB references must be present - and the exported game is
@@ -109,6 +123,13 @@ MAP_EXCLUDED_SUFFIXES = {".py", ".md", ".gd", ".c", ".txt", ".gitignore"}
 # their manifests and statistics. Manifests list them under lodGroups and the
 # registry names Sunmane's under "lod2", but no client code loads either.
 MAP_LOD_PACKAGE = re.compile(r"^(world-lod\d+|build-statistics-lod\d+)\b")
+# Registry rows with these statuses are previews: never shipped (see the module notes).
+PREVIEW_MAP_STATUSES = {"continent-v2-client-preview"}
+# Registry rows with these statuses are continent-v2 maps the server serves: their client package ships without the
+# files only the server reads (see the module notes).
+SERVED_V2_STATUSES = {"continent-v2-served"}
+SERVER_ONLY_FILES = {"collision.bin", "served-grid.escg.gz"}
+REGISTRY_FILE = "godot-client/data/maps/registry.json"
 # Manifest keys that describe provenance, or files the client never opens.
 MANIFEST_SKIPPED_KEYS = {"sources", "provenance", "knownLimitations", "lodGroups"}
 FILE_LIKE = re.compile(r"^[^:*?\"<>|\s]+\.(glb|gltf|bin|json|webp|png|jpg|jpeg|gz|escg|ogg|wav)$", re.I)
@@ -490,7 +511,10 @@ def shipped_text_names(build_dir: Path, candidates: set[str]) -> dict[str, set[s
         if hits:
             note(hits, where, token)
 
-    map_files = sorted(shipped_eloria_assets(build_dir)[0])
+    # Of a served continent-v2 map only its client package ships, not the
+    # territory's editor stub or the server's content tables.
+    served = read_served_v2_packages(build_dir) if (build_dir / REGISTRY_FILE).is_file() else []
+    map_files = sorted(shipped_eloria_assets(build_dir, served=served)[0])
     json_files = shipped_client_files(build_dir, (".json",)) + [
         p for p in map_files if p.lower().endswith(".json")]
     for relative in json_files:
@@ -977,13 +1001,89 @@ def json_strings(value, skip: set[str], key: str = ""):
         yield key, value
 
 
-def shipped_eloria_assets(build_dir: Path) -> tuple[set[str], list[str], list[str]]:
+def preview_map_folders(registry: dict) -> list[str]:
+    """The map folders of the registry's preview rows (PREVIEW_MAP_STATUSES): the folder its manifest names, or its
+    parent when that folder is the region's client/ package (the editor stub beside it is not shipped either)."""
+    folders = []
+    for entry in registry.get("maps", {}).values():
+        if not isinstance(entry, dict) or entry.get("status") not in PREVIEW_MAP_STATUSES:
+            continue
+        match = ASSET_REF.search(str(entry.get("manifest", "")))
+        if not match:
+            continue
+        folder = PurePosixPath(match.group(1)).parent
+        if folder.name == "client":
+            folder = folder.parent
+        folders.append(str(folder))
+    return sorted(set(folders))
+
+
+def drop_preview_maps(build_dir: Path) -> list[str]:
+    """Removes the preview rows from the build tree's registry (a detached worktree of the packaged commit; the export
+    reads it from there) and returns their map folders, which stage_eloria_assets leaves out."""
+    path = build_dir / REGISTRY_FILE
+    registry = json.loads(path.read_text(encoding="utf-8"))
+    folders = preview_map_folders(registry)
+    previews = [key for key, entry in registry.get("maps", {}).items()
+                if isinstance(entry, dict) and entry.get("status") in PREVIEW_MAP_STATUSES]
+    if previews:
+        for key in previews:
+            del registry["maps"][key]
+        path.write_text(json.dumps(registry, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+        log(f"left out {len(previews)} preview maps ({', '.join(previews)}): {', '.join(folders)}")
+    return folders
+
+
+def served_v2_packages(registry: dict) -> list[tuple[str, str]]:
+    """(package folder, territory folder) of each registry row a continent-v2 server map has (SERVED_V2_STATUSES):
+    the folder its manifest names, and the territory folder that holds it when it is the territory's client/ package
+    (else the package folder itself)."""
+    packages = []
+    for entry in registry.get("maps", {}).values():
+        if not isinstance(entry, dict) or entry.get("status") not in SERVED_V2_STATUSES:
+            continue
+        match = ASSET_REF.search(str(entry.get("manifest", "")))
+        if not match:
+            continue
+        folder = PurePosixPath(match.group(1)).parent
+        territory = folder.parent if folder.name == "client" else folder
+        packages.append((str(folder), str(territory)))
+    return sorted(set(packages))
+
+
+def read_served_v2_packages(build_dir: Path) -> list[tuple[str, str]]:
+    """served_v2_packages of the build tree's registry."""
+    return served_v2_packages(json.loads((build_dir / REGISTRY_FILE).read_text(encoding="utf-8")))
+
+
+def _under(path: str, folder: str) -> bool:
+    return path == folder or path.startswith(folder + "/")
+
+
+def _ships_asset(path: str, excluded: list[str] = (), served: list[tuple[str, str]] = ()) -> bool:
+    """Whether a package may ship the eloria-assets file `path`: nothing under an `excluded` map folder, and of a
+    `served` continent-v2 map (served_v2_packages) only its client package, without SERVER_ONLY_FILES."""
+    if any(_under(path, folder) for folder in excluded):
+        return False
+    for package, territory in served:
+        if _under(path, package):
+            return PurePosixPath(path).name not in SERVER_ONLY_FILES
+        if _under(path, territory):
+            return False
+    return True
+
+
+def shipped_eloria_assets(build_dir: Path, excluded: list[str] = (),
+                          served: list[tuple[str, str]] = ()) -> tuple[set[str], list[str], list[str]]:
     """The eloria-assets files a package ships: (files, errors, warnings).
 
     Every map package's shipped files, every file the client names, and the
-    closure of the files those manifests name.
+    closure of the files those manifests name - none under an `excluded` map
+    folder, and of a `served` continent-v2 map (served_v2_packages) only its
+    client package, without SERVER_ONLY_FILES (_ships_asset).
     """
-    all_tracked = set(tracked(build_dir, "eloria-assets"))
+    served_folders = [package for package, _ in served]
+    all_tracked = {p for p in tracked(build_dir, "eloria-assets") if _ships_asset(p, excluded, served)}
     wanted: set[str] = set()
     package_dirs = {str(PurePosixPath(p).parent) for p in all_tracked
                     if p.startswith("eloria-assets/maps/") and p.endswith("/world.json")}
@@ -1027,7 +1127,13 @@ def shipped_eloria_assets(build_dir: Path) -> tuple[set[str], list[str], list[st
             continue
         base = PurePosixPath(manifest).parent
         is_world = manifest.endswith("/world.json")
-        for key, value in json_strings(data, MANIFEST_SKIPPED_KEYS):
+        # A served continent-v2 package's collision block names what only the server reads, and its territory
+        # manifest streams chunks and has no master GLB: asset.glb names none the client opens (its map digest is
+        # empty without one, map_scene_cache.package_digest).
+        served_manifest = any(_under(manifest, folder) for folder in served_folders)
+        skipped = MANIFEST_SKIPPED_KEYS | {"collision"} if served_manifest else MANIFEST_SKIPPED_KEYS
+        chunk_streamed = served_manifest and isinstance(data, dict) and "streamingChunks" in data
+        for key, value in json_strings(data, skipped):
             match = ASSET_REF.search(value)
             if match:
                 target = match.group(1)
@@ -1042,6 +1148,8 @@ def shipped_eloria_assets(build_dir: Path) -> tuple[set[str], list[str], list[st
                     wanted.add(target)
                     if target.endswith(".json"):
                         queue.append(target)
+            elif chunk_streamed and key == "glb":
+                continue
             elif is_world and key in {"glb", "binary", "image", "file"}:
                 errors.append(f"{manifest} {key} -> {target} is not in the commit")
             elif is_world:
@@ -1064,17 +1172,20 @@ def shipped_eloria_assets(build_dir: Path) -> tuple[set[str], list[str], list[st
     return wanted, errors, warnings
 
 
-def stage_eloria_assets(build_dir: Path, stage: Path) -> list[str]:
-    """Copy map packages and every eloria-assets file the client names.
+def stage_eloria_assets(build_dir: Path, stage: Path, excluded: list[str] = (),
+                        served: list[tuple[str, str]] = ()) -> list[str]:
+    """Copy map packages and every eloria-assets file the client names, none under an `excluded` map folder, and
+    of a `served` continent-v2 map (served_v2_packages) only its client package, without SERVER_ONLY_FILES
+    (shipped_eloria_assets).
 
     Returns warnings; raises when a reference the client will open is missing.
     """
-    wanted, errors, warnings = shipped_eloria_assets(build_dir)
+    wanted, errors, warnings = shipped_eloria_assets(build_dir, excluded, served)
     if errors:
         raise PackageError("missing map files:\n  " + "\n  ".join(errors[:40]))
     total = sum(copy_file(build_dir / p, stage / p) for p in sorted(wanted))
     package_dirs = {str(PurePosixPath(p).parent) for p in tracked(build_dir, "eloria-assets/maps")
-                    if p.endswith("/world.json")}
+                    if p.endswith("/world.json") and _ships_asset(p, excluded, served)}
     log(f"staged {len(wanted)} eloria-assets files from {len(package_dirs)} map packages "
         f"({total / 1e9:.2f} GB)")
     return warnings
@@ -1106,6 +1217,43 @@ def check_glb_textures(app_dir: Path) -> None:
         f"{count - imported} loose")
 
 
+def check_served_packages(stage: Path, served: list[tuple[str, str]]) -> None:
+    """Each served continent-v2 map (served_v2_packages) ships its client package and nothing only the server reads:
+    its territory manifest and every chunk its streamingChunks lists are staged; no SERVER_ONLY_FILES and nothing of
+    the territory folder outside the package is; and no staged chunk manifest names a collision binary or a served
+    grid (publish_client.py keeps them out of the chunks; a chunk naming one would mean an unchecked package)."""
+    problems: list[str] = []
+    for package, territory in served:
+        root = stage / package
+        manifest_path = root / "world.json"
+        if not manifest_path.is_file():
+            problems.append(f"{package}/world.json is not staged")
+            continue
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
+        chunks = (manifest.get("streamingChunks") or {}).get("chunks") or []
+        for chunk in chunks:
+            chunk_path = root / str(chunk.get("manifest", ""))
+            if not chunk_path.is_file():
+                problems.append(f"{package}: chunk {chunk.get('id')} ({chunk.get('manifest')}) is not staged")
+                continue
+            collision = json.loads(chunk_path.read_text(encoding="utf-8-sig")).get("collision") or {}
+            if "binary" in collision or "servedGrid" in collision:
+                problems.append(f"{chunk_path.relative_to(stage).as_posix()} names a collision binary")
+        if (stage / territory).is_dir():
+            for path in (stage / territory).rglob("*"):
+                if not path.is_file():
+                    continue
+                relative = path.relative_to(stage).as_posix()
+                if path.name in SERVER_ONLY_FILES:
+                    problems.append(f"{relative} is read by the server only, and is staged")
+                elif not _under(relative, package):
+                    problems.append(f"{relative} lies outside the client package {package}, and is staged")
+    if problems:
+        raise PackageError(f"{len(problems)} served continent-v2 package problems:\n  " + "\n  ".join(problems[:40]))
+    if served:
+        log(f"checked {len(served)} served continent-v2 packages: {', '.join(p for p, _ in served)}")
+
+
 def check_registry(build_dir: Path, stage: Path) -> None:
     registry = json.loads((build_dir / "godot-client/data/maps/registry.json").read_text(encoding="utf-8"))
     missing = []
@@ -1119,6 +1267,7 @@ def check_registry(build_dir: Path, stage: Path) -> None:
 
 
 VRAM_SELF_TEST_OK = "vram_textures self_test ok"
+VRAM_SELF_TEST_POOL_OK = "vram_textures self_test pool ok"
 
 
 def stage_vram_textures(build_dir: Path, stage: Path, godot: Path, cache: Path, logs: Path,
@@ -1148,8 +1297,17 @@ def stage_vram_textures(build_dir: Path, stage: Path, godot: Path, cache: Path, 
     files = 0
     size = 0
     for report in (stage / "eloria-assets").rglob("vram/report.json"):
-        target = logs / ("vram-report-" + report.parent.parent.name + ".json")
+        # Named after the pool's path: more than one pool is called shared-assets.
+        pool = report.parent.parent.relative_to(stage / "eloria-assets")
+        target = logs / ("vram-report-" + "__".join(pool.parts) + ".json")
         shutil.move(str(report), target)
+    shared = {"files": 0, "bytes": 0, "directories": []}
+    if client_reads_pooled_sidecars(build_dir):
+        shared = share_identical_sidecars(stage)
+    else:
+        log("the packaged client does not read pooled sidecars (INDEX_FEATURES): every pool ships its own")
+    if shared["files"]:
+        log(f"shipped {shared['files']} sidecar files once that two pools hold ({shared['bytes'] / 1e6:.0f} MB)")
     for path in (stage / "eloria-assets").rglob("vram/*"):
         if path.is_file():
             files += 1
@@ -1192,14 +1350,15 @@ def check_vram_textures(stage: Path) -> None:
     sidecars = 0
     for directory, index in indexes.items():
         for sha, entry in index.get("images", {}).items():
-            path = directory / "vram" / entry["file"]
+            # A "pool" entry's file is the one another pool ships (share_identical_sidecars).
+            path = Path(os.path.normpath(directory / entry.get("pool", ".") / "vram" / entry["file"]))
             if not path.is_file():
                 problems.append(f"{path.relative_to(stage)}: listed in the index but missing")
                 continue
             sidecars += 1
             if hashlib.sha256(path.read_bytes()).hexdigest() != entry["sha256"]:
                 problems.append(f"{path.relative_to(stage)}: sha256 differs from the index")
-        listed = {entry["file"] for entry in index.get("images", {}).values()}
+        listed = {entry["file"] for entry in index.get("images", {}).values() if "pool" not in entry}
         for path in (directory / "vram").glob("*"):
             if path.name != "index.json" and path.name not in listed:
                 problems.append(f"{path.relative_to(stage)}: not named by the index")
@@ -1208,12 +1367,82 @@ def check_vram_textures(stage: Path) -> None:
     log(f"checked VRAM sidecars: {checked} external image references, {sidecars} sidecars")
 
 
+# The pool of every legacy map's images (vram_textures.gd SHARED_ASSETS): its sidecars are never moved or rewritten.
+PRIMARY_SIDECAR_POOL = "eloria-assets/maps/nymara-regions/_continent/shared-assets"
+# What must agree between two index entries before one file serves both.
+SHARED_SIDECAR_KEYS = ("file", "sha256", "recipe", "format", "width", "height", "mipmaps", "gpuBytes")
+# The packaged client's declaration that it reads an index entry's "pool" (vram_textures.gd INDEX_FEATURES).
+POOL_FEATURE = re.compile(r'const INDEX_FEATURES\b[^\n]*"pool"')
+
+
+def client_reads_pooled_sidecars(build_dir: Path) -> bool:
+    """True when the commit being packaged has a client that reads "pool" entries. The share step runs from the
+    packager invoked, whatever --ref it packages (the sidecars themselves come from the commit's own
+    build_vram_textures.py); a client without the feature would miss every shared file and decode those images."""
+    script = build_dir / "godot-client" / "src" / "world" / "vram_textures.gd"
+    return script.is_file() and POOL_FEATURE.search(script.read_text(encoding="utf-8")) is not None
+
+
+def share_identical_sidecars(stage: Path, primary: str = PRIMARY_SIDECAR_POOL) -> dict:
+    """Ships each sidecar file once. build_vram_textures.py plans every image
+    directory on its own, so an image two pools hold gets the same .evt file in
+    both vram/ folders (continent-v2's _continent_v2/shared-assets shares 308
+    encodes, 124.7 MiB, with the primary pool). For each other pool's index
+    entry whose file is byte for byte the primary pool's entry for that sha
+    (SHARED_SIDECAR_KEYS agree and the bytes are equal), the staged copy is
+    removed and the entry names the primary pool instead: "pool" is the primary
+    source directory relative to the entry's own, where vram_textures.gd reads
+    the file and still checks its sha256. The entry keeps its own roles. The
+    primary pool's index and files are never touched, so a legacy map loads
+    exactly what it loaded before. Returns the files and bytes removed and the
+    source directories (stage-relative) whose index now names the primary pool."""
+    shared = {"files": 0, "bytes": 0, "directories": []}
+    primary_dir = stage / primary
+    primary_index = primary_dir / "vram" / "index.json"
+    if not primary_index.is_file():
+        return shared
+    twins = json.loads(primary_index.read_text(encoding="utf-8")).get("images", {})
+    for index_path in sorted((stage / "eloria-assets").rglob("vram/index.json")):
+        directory = index_path.parent.parent
+        if os.path.samefile(directory, primary_dir):
+            continue
+        index = json.loads(index_path.read_text(encoding="utf-8"))
+        changed = False
+        for sha, entry in index.get("images", {}).items():
+            twin = twins.get(sha)
+            if not twin or "pool" in entry or any(twin.get(key) != entry.get(key) for key in SHARED_SIDECAR_KEYS):
+                continue
+            mine, theirs = index_path.parent / entry["file"], primary_index.parent / twin["file"]
+            if not mine.is_file() or not theirs.is_file() or mine.read_bytes() != theirs.read_bytes():
+                continue
+            shared["files"] += 1
+            shared["bytes"] += mine.stat().st_size
+            mine.unlink()
+            entry["pool"] = Path(os.path.relpath(primary_dir, directory)).as_posix()
+            changed = True
+        if changed:
+            index_path.write_text(json.dumps(index, indent=1) + "\n", encoding="utf-8", newline="\n")
+            shared["directories"].append(directory.relative_to(stage).as_posix())
+    return shared
+
+
+def pooled_sidecar_directory(stage: Path) -> str | None:
+    """The first staged image directory (stage-relative) whose sidecar index names another pool's file ("pool"), for
+    the smoke launch's pooled decode; None when nothing was shared."""
+    for index_path in sorted((stage / "eloria-assets").rglob("vram/index.json")):
+        index = json.loads(index_path.read_text(encoding="utf-8"))
+        if any("pool" in entry for entry in index.get("images", {}).values()):
+            return index_path.parent.parent.relative_to(stage).as_posix()
+    return None
+
+
 def wsl_path(path: Path) -> str:
     resolved = path.resolve()
     return f"/mnt/{resolved.drive[0].lower()}{resolved.as_posix()[2:]}"
 
 
-def smoke_launch(app_dir: Path, logs: Path, platform: dict, vram_textures: bool = False) -> None:
+def smoke_launch(app_dir: Path, logs: Path, platform: dict, vram_textures: bool = False,
+                 pool_test: str | None = None) -> None:
     # The launch must leave the package exactly as it was: a user:// that
     # falls back to a relative path writes settings and caches into app/,
     # and they would ship in the archive.
@@ -1221,14 +1450,18 @@ def smoke_launch(app_dir: Path, logs: Path, platform: dict, vram_textures: bool 
     # With sidecars staged it also proves the shipped binary decodes one: the
     # client logs VramTextures.self_test() when ELORIA_VRAM_SELF_TEST=1. The
     # launch is headless, so this covers the decode, not the GPU upload.
+    # pool_test (a stage-relative source directory whose index names another
+    # pool's sidecars) makes it also decode one of those, from where it ships.
     before = {p for p in app_dir.parent.rglob("*")}
     try:
-        text = _launch(app_dir, logs, platform, vram_textures)
-        if vram_textures and text is not None and VRAM_SELF_TEST_OK not in text:
-            lines = [line for line in text.splitlines() if "vram_textures" in line]
-            raise PackageError("the exported client did not decode a VRAM sidecar:\n  "
-                               + "\n  ".join(lines[:10] or ["(no vram_textures line)"])
-                               + f"\nfull log: {logs / 'smoke.log'}")
+        text = _launch(app_dir, logs, platform, vram_textures, pool_test)
+        for wanted, what in ((VRAM_SELF_TEST_OK, "a VRAM sidecar"),
+                             (VRAM_SELF_TEST_POOL_OK if pool_test else None, "a sidecar another pool ships")):
+            if wanted and vram_textures and text is not None and wanted not in text:
+                lines = [line for line in text.splitlines() if "vram_textures" in line]
+                raise PackageError(f"the exported client did not decode {what}:\n  "
+                                   + "\n  ".join(lines[:10] or ["(no vram_textures line)"])
+                                   + f"\nfull log: {logs / 'smoke.log'}")
     finally:
         added = sorted(p for p in app_dir.parent.rglob("*") if p not in before)
         if added:
@@ -1236,8 +1469,12 @@ def smoke_launch(app_dir: Path, logs: Path, platform: dict, vram_textures: bool 
                                + "\n  ".join(str(p.relative_to(app_dir.parent)) for p in added[:20]))
 
 
-def _launch(app_dir: Path, logs: Path, platform: dict, vram_textures: bool = False) -> str | None:
+def _launch(app_dir: Path, logs: Path, platform: dict, vram_textures: bool = False,
+            pool_test: str | None = None) -> str | None:
     self_test = "ELORIA_VRAM_SELF_TEST=1 " if vram_textures else ""
+    pool_dir = f"res://../{pool_test}" if vram_textures and pool_test else ""
+    if pool_dir:
+        self_test += f"ELORIA_VRAM_SELF_TEST_POOL={pool_dir} "
     if platform["binary"].endswith(".exe"):
         log("smoke launch (headless)")
         with tempfile.TemporaryDirectory(prefix="eloria-smoke-") as appdata:
@@ -1245,6 +1482,8 @@ def _launch(app_dir: Path, logs: Path, platform: dict, vram_textures: bool = Fal
             env = dict(os.environ, APPDATA=appdata, LOCALAPPDATA=appdata)
             if vram_textures:
                 env["ELORIA_VRAM_SELF_TEST"] = "1"
+            if pool_dir:
+                env["ELORIA_VRAM_SELF_TEST_POOL"] = pool_dir
             text = run_godot(app_dir / platform["binary"], ["--headless", "--quit-after", "600"],
                              logs / "smoke.log", timeout=300, env=env)
     else:
@@ -1579,13 +1818,16 @@ def main() -> int:
 
         build_dir = options.build_dir.resolve()
         project = prepare_build_tree(build_dir, sha)
+        previews = drop_preview_maps(build_dir)
+        served = read_served_v2_packages(build_dir)
         import_project(godot, project, logs)
         check_actor_imports(project)
         app_dir = stage / "app"
         export_project(godot, project, app_dir, logs, platform)
         stage_loose_client_files(build_dir, app_dir)
         check_actor_pack(build_dir, app_dir)
-        warnings = stage_eloria_assets(build_dir, stage)
+        warnings = stage_eloria_assets(build_dir, stage, previews, served)
+        check_served_packages(stage, served)
         if not options.no_vram_textures:
             stage_vram_textures(build_dir, stage, godot, options.vram_cache.resolve(), logs)
             check_vram_textures(stage)
@@ -1593,7 +1835,8 @@ def main() -> int:
         check_glb_textures(app_dir)
         launch_args = write_launchers(stage, options.server, build_dir, version, platform)
         if not options.no_smoke:
-            smoke_launch(app_dir, logs, platform, vram_textures=not options.no_vram_textures)
+            smoke_launch(app_dir, logs, platform, vram_textures=not options.no_vram_textures,
+                         pool_test=pooled_sidecar_directory(stage))
 
         outputs = [stage]
         if not options.no_zip:

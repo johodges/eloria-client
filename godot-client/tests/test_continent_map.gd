@@ -48,13 +48,19 @@ func _run() -> void:
 	var continent_path: String = str(continent.get("texture", ""))
 	_expect(continent_path.ends_with("continent-map.webp") and not continent_path.contains("concept"),
 		"the continent is the composed tab maps, not the concept painting")
-	_expect(regions.size() == 12, "every exterior region is on the continent")
+	# The rebuilt continent's isles have rows of their own frame, with no
+	# rectangle on this picture, after every row that has one.
+	var on_picture: int = 0
+	for region_value: Variant in regions:
+		if str((region_value as Dictionary).get("frame", "")).is_empty():
+			on_picture += 1
+	_expect(on_picture == 12, "every exterior region is on the continent")
 	_expect(not main.has_node("GameView/FullMap/MapLayout/ContinentView/RegionButtons"),
 		"the region button list is gone; the continent itself is the index")
 	var overlay: Control = main.get_node(
 		"GameView/FullMap/MapLayout/ContinentView/ContinentMap") as Control
-	_expect(overlay != null and int(overlay.call("region_count")) == regions.size(),
-		"the continent overlay knows every region")
+	_expect(overlay != null and int(overlay.call("region_count")) == on_picture,
+		"the continent overlay knows every region on its picture")
 	var wrapped: PackedStringArray = overlay.call("_label_lines", overlay.get_theme_default_font(), "Amethyst Barrens", 90.0)
 	_expect(wrapped.size() == 2 and wrapped[0] == "Amethyst" and wrapped[1] == "Barrens",
 		"long adjacent-region labels wrap without truncation")
@@ -70,6 +76,9 @@ func _run() -> void:
 		_expect(FileAccess.file_exists(ProjectSettings.globalize_path(texture_path)),
 			name + "'s tab map exists on disk")
 		var rect: Array = region.get("continentRect", []) as Array
+		if not str(region.get("frame", "")).is_empty():
+			_expect(rect.is_empty(), name + " of another frame has no rectangle on this picture")
+			continue
 		_expect(rect.size() == 4 and int(rect[0]) >= 0 and int(rect[1]) >= 0
 			and int(rect[0]) + int(rect[2]) <= int(image_size[0])
 			and int(rect[1]) + int(rect[3]) <= int(image_size[1]),

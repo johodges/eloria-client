@@ -45,6 +45,7 @@ GRAPH = REGIONS / "region-connections.json"
 PACKAGES = {"four_gates": ASSETS / "maps" / "four-gates"}
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import secret_doors as SD  # noqa: E402
+from legacy_content import read_base_only  # noqa: E402
 
 # region -> (insides package directory, the map id the server serves it as)
 INSIDES = {
@@ -131,6 +132,9 @@ def load_composed_arrivals(package: str) -> dict[str, dict[str, tuple[int, int]]
 
 
 def load_collision(server: Path, maps_dir: Path, map_id: str):
+    # The legacy crossing block is laid from the base map table only, never the continent-v2 overlay (serve plan
+    # CV13): an isle portal arriving on a legacy map is not one of this tool's links.
+    read_base_only(server)
     sys.path.insert(0, str(server))
     from eloria.collision import load_elm_collision, with_step_mask
     from eloria.maps import load_maps

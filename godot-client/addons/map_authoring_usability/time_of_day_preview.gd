@@ -142,14 +142,49 @@ func _load_manifest(root: Node3D) -> WorldManifest:
 	return fallback
 
 
+## The territory's entry in the catalog the editor reads (the project setting
+## map_authoring/territory_catalog_path, see territory_catalog.gd), else in the
+## shared catalog; {} when neither lists it.
+static func catalog_entry(region_id: String) -> Dictionary:
+	if region_id.is_empty():
+		return {}
+	var catalogs: Array[String] = []
+	var configured := String(ProjectSettings.get_setting(
+		"map_authoring/territory_catalog_path", "")).strip_edges()
+	if not configured.is_empty() and configured != CATALOG_PATH:
+		catalogs.append(configured)
+	catalogs.append(CATALOG_PATH)
+	for catalog in catalogs:
+		if not FileAccess.file_exists(catalog):
+			continue
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(catalog))
+		if not parsed is Dictionary:
+			continue
+		for value: Variant in (parsed as Dictionary).get("entries", []):
+			if value is Dictionary and String((value as Dictionary).get("id", "")) == region_id:
+				return value
+	return {}
+
+
+## The territory's manifest: its catalog entry's manifestPath. For a legacy
+## territory that is its published package; for a continent-v2 territory it is
+## the bootstrap's stub (frame, ownership, environment), which never carries a
+## served grid, a collision block or a minimap. "" when the file is missing.
 static func manifest_path_for(region_id: String) -> String:
-	if region_id.is_empty() or not FileAccess.file_exists(CATALOG_PATH):
-		return ""
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(CATALOG_PATH))
-	if not parsed is Dictionary:
-		return ""
-	for value: Variant in (parsed as Dictionary).get("entries", []):
-		if value is Dictionary and String((value as Dictionary).get("id", "")) == region_id:
-			var path := String((value as Dictionary).get("manifestPath", ""))
-			return path if not path.is_empty() and FileAccess.file_exists(path) else ""
-	return ""
+	return _existing(String(catalog_entry(region_id).get("manifestPath", "")))
+
+
+## The territory's published package: its catalog entry's publishedManifestPath
+## when it names one (a continent-v2 territory's client/world.json, where
+## _continent_v2/publish_client.py writes the served grid, the collision block
+## and the minimap), else its manifestPath (a legacy manifest is its package).
+## "" when that file is missing: an unpublished territory has no package yet.
+static func published_manifest_path_for(region_id: String) -> String:
+	var entry := catalog_entry(region_id)
+	if entry.has("publishedManifestPath"):
+		return _existing(String(entry.publishedManifestPath))
+	return _existing(String(entry.get("manifestPath", "")))
+
+
+static func _existing(path: String) -> String:
+	return path if not path.is_empty() and FileAccess.file_exists(path) else ""

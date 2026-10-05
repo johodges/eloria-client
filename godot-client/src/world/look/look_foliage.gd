@@ -278,8 +278,14 @@ static func kind_of(node_name: String, material: Material, words := {}) -> Kind:
 	if not node_name.begins_with("kit-"):
 		return Kind.NONE
 	var parts := node_name.to_lower().split("-", false)
+	# Props that carry a plant's word but are not painted as plants: every
+	# map's (LookProfile.KIT_NOT_FOLIAGE_WORDS) plus a region's
+	# `foliage.plain_words` (sw_isle's clipped garden hedges and flower shrubs
+	# keep their own texture: painted as crowns they read as pale grey-green
+	# cards and dark slabs).
+	var plain: Array = words.get("plain_words", LookProfile.KIT_NOT_FOLIAGE_WORDS)
 	for word: String in parts:
-		if word in LookProfile.KIT_NOT_FOLIAGE_WORDS:
+		if word in plain:
 			return Kind.NONE
 	for word: String in parts:
 		if word in (words.tree_words as Array):

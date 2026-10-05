@@ -497,6 +497,10 @@ def test_packaging_stops_before_export_when_pck_actor_imports_are_absent(
         tmp_path, monkeypatch):
     project = tmp_path / "client-src/godot-client"
     project.mkdir(parents=True)
+    # main() reads the build tree's map registry (drop_preview_maps,
+    # read_served_v2_packages) before the import.
+    (tmp_path / "client-src" / package.REGISTRY_FILE).parent.mkdir(parents=True)
+    (tmp_path / "client-src" / package.REGISTRY_FILE).write_text('{"maps": {}}', encoding="utf-8")
     monkeypatch.setattr(sys, "argv", [
         str(SOURCE), "--no-fetch", "--no-zip", "--no-smoke",
         "--build-dir", str(tmp_path / "client-src"),

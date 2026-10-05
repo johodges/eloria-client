@@ -15,7 +15,8 @@ extends RefCounted
 ## tools/collision/<id>.escg.gz byte for byte for all twelve territories.
 ##
 ## A continent-v2 territory publishes its served grid instead
-## (collision.servedGrid in world.json, served-grid.escg.gz beside it): one
+## (collision.servedGrid in its client package's world.json, the catalog
+## entry's publishedManifestPath; served-grid.escg.gz beside it): one
 ## 16-bit code per tile, 50 mm a code above the continent datum, with the climb
 ## in its own header (1.0 m, 20 codes). The walker loads that file as the
 ## server vendors it (served_grid.gd, SHA-256 checked against the manifest)
@@ -332,13 +333,15 @@ func advance(delta: float) -> void:
 ##  the version 2 codes' own heights, or "root" for terrain heights}.
 ## In order: a served grid the manifest declares (refused outright if it is
 ## bad); the version 2 live estimate when the package does not ship it; the
-## folded collision.bin; the version 1 live estimate. The manifest is the one
-## TimeOfDay finds for the territory, or `manifest_path` when given (tests).
+## folded collision.bin; the version 1 live estimate. The manifest is the
+## territory's published package as TimeOfDay finds it (published_manifest_path_for:
+## a continent-v2 catalog entry's publishedManifestPath, not its stub), or
+## `manifest_path` when given (tests).
 static func load_grid(root: Node3D, manifest_path := "") -> Dictionary:
 	var origin: Vector2i = root.get("server_origin") if root.get("server_origin") is Vector2i \
 		else Vector2i.ZERO
 	if manifest_path.is_empty():
-		manifest_path = TimeOfDay.manifest_path_for(String(root.get("region_id")))
+		manifest_path = TimeOfDay.published_manifest_path_for(String(root.get("region_id")))
 	var served := load_served_grid(manifest_path, origin)
 	if bool(served.get("missing", false)):
 		# The package declares a version 2 grid it does not ship: estimate one.

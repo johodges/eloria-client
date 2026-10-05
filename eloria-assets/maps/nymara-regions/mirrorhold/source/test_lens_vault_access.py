@@ -83,6 +83,12 @@ class EmittedContract(unittest.TestCase):
     @unittest.skipUnless(ARGS.server and ARGS.maps,'Pass paired server/data root for production occupancy and return proof')
     def test_actual_occupied_world_reaches_trigger_and_publisher_return(self):
         S=ARGS.server;sys.path[:0]=[str(S),str(S/'tools'),str(REG.parents[1]/'tools')]
+        try:  # base content tables only, never the continent-v2 overlay (serve plan CV13)
+            from eloria import content_overlay
+        except ImportError:  # an older server checkout has no continent-v2 overlay, so nothing to switch off
+            pass
+        else:
+            content_overlay.configure(False)
         from collision_sources import Source
         from sync_authored_collision import choose_stage,rescale
         from eloria.collision import CollisionMap,with_step_mask,with_storage_collision,load_elm_collision

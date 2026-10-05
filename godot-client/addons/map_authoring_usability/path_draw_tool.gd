@@ -120,7 +120,7 @@ func handle_input(camera: Camera3D, event: InputEvent, undo_redo: EditorUndoRedo
 		if Settings.matches("path_narrower", key) or Settings.matches("path_wider", key):
 			var factor := 1.05 if key.shift_pressed else 1.25
 			width = clampf(width * (1.0 / factor if Settings.matches("path_narrower", key)
-				else factor), 0.5, 16.0)
+				else factor), MapAuthoringWidthPath.MIN_WIDTH, MapAuthoringWidthPath.MAX_WIDTH)
 			_redraw()
 			return EditorPlugin.AFTER_GUI_INPUT_STOP
 		if Settings.matches("toggle_snap", key) and not key.echo:

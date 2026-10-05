@@ -15,6 +15,12 @@ PORTAL_APPROACH_STARTS={'cistern-stair':(78,211)}
 
 def fixtures(server,data):
     sys.path[:0]=[str(server)]
+    try:  # base content tables only, never the continent-v2 overlay (serve plan CV13)
+        from eloria import content_overlay
+    except ImportError:  # an older server checkout has no continent-v2 overlay, so nothing to switch off
+        pass
+    else:
+        content_overlay.configure(False)
     from eloria.collision import load_elm_collision,with_step_mask
     from eloria.footprint import footprint_of
     from eloria.interactives import load_interactives

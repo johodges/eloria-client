@@ -82,6 +82,11 @@ func _run() -> void:
 		"a tuft takes the ground paint's mottle: stable, centred on 1")
 	_expect(int(LookGrassBeds.vertex_ground(Color(0.45, 0.44, 0.42)).x) == LookGrassBeds.Ground.NONE,
 		"grey rock is neither")
+	_expect(LookGrassBeds.open_green(Color8(66, 90, 42), true) > 0.99
+		and LookGrassBeds.open_green(Color8(212, 190, 140), true) < 0.01
+		and LookGrassBeds.open_green(Color8(100, 97, 90), true) < 0.01
+		and LookGrassBeds.open_green(Color8(66, 90, 42).srgb_to_linear(), false) > 0.99,
+		"open ground is as grassy as its colour is green: lawn green yes, sand and rock no")
 	var road := LookProfile.TERRAIN_ROAD_COLOUR
 	_expect(LookGrassBeds.road_weight(Color(road.r / 0.92, road.g / 0.92, road.b / 0.92), false) > 0.99
 		and LookGrassBeds.road_weight(Color(0.1, 0.3, 0.05), false) < 0.01,

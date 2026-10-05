@@ -274,6 +274,10 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"spell_visuals_v1",
 	"special_events_v1",
 	"storage_window_v1",
+	# Draws the continent-v2 maps (registry status continent-v2-served: the
+	# isles' chunk-streamed packages). The server sends CHANGE_MAP onto one only
+	# to a client that claims this, and moves a client that does not off it.
+	"continent_v2_maps_v1",
 ]
 
 ## `#clientcaps` is an ordinary chat command; the server parses it out of

@@ -1784,7 +1784,7 @@ func refresh_minimap() -> Dictionary:
 ## Pixels the published image does not cover are transparent. Returns
 ## {"image", "note"} or {"note"} when there is nothing to show.
 static func published_minimap(root: Node3D, framing: Dictionary) -> Dictionary:
-	var manifest_path := TimeOfDay.manifest_path_for(String(root.get("region_id")))
+	var manifest_path := TimeOfDay.published_manifest_path_for(String(root.get("region_id")))
 	if manifest_path.is_empty():
 		return {"note": "No published package for this territory."}
 	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))

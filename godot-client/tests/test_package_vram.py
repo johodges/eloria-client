@@ -19,6 +19,7 @@ checkout, and git refuses a repository someone else owns.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 import subprocess
@@ -95,6 +96,186 @@ class Check(unittest.TestCase):
         shutil.rmtree(self.vram)
         with self.assertRaisesRegex(packager.PackageError, "no sidecar and no exclusion reason"):
             packager.check_vram_textures(self.stage)
+
+
+class SharedPools(unittest.TestCase):
+    """share_identical_sidecars: a sidecar two pools hold ships once, from the
+    primary pool, and the other pool's index names it there ("pool")."""
+
+    PRIMARY = "eloria-assets/maps/vram_fixture/shared-assets"
+
+    def setUp(self):
+        self.stage = Path(tempfile.mkdtemp(prefix="vram-package-shared-"))
+        for name in ("vram_fixture", "second"):
+            shutil.copytree(FIXTURE, self.stage / "eloria-assets" / "maps" / name,
+                            ignore=shutil.ignore_patterns("*.py", "report.json"))
+        self.primary = self.stage / self.PRIMARY / "vram"
+        self.second = self.stage / "eloria-assets" / "maps" / "second" / "shared-assets" / "vram"
+
+    def tearDown(self):
+        shutil.rmtree(self.stage, ignore_errors=True)
+
+    def snapshot(self, folder):
+        return {p.name: p.read_bytes() for p in folder.iterdir()}
+
+    def test_the_second_pool_names_the_primary_files(self):
+        before = self.snapshot(self.primary)
+        index = json.loads((self.second / "index.json").read_text(encoding="utf-8"))
+        shared = packager.share_identical_sidecars(self.stage, self.PRIMARY)
+        self.assertEqual(shared["files"], 4)
+        self.assertEqual(shared["directories"], ["eloria-assets/maps/second/shared-assets"])
+        self.assertEqual(shared["bytes"], sum(len(data) for name, data in before.items() if name != "index.json"))
+        self.assertEqual(self.snapshot(self.primary), before, "the primary pool is never touched")
+        self.assertEqual(sorted(p.name for p in self.second.iterdir()), ["index.json"])
+        after = json.loads((self.second / "index.json").read_text(encoding="utf-8"))
+        for sha, entry in after["images"].items():
+            self.assertEqual(entry.pop("pool"), "../../vram_fixture/shared-assets")
+            self.assertEqual(entry, index["images"][sha], "the entry keeps everything else, its roles too")
+        self.assertEqual(after["excluded"], index["excluded"])
+        packager.check_vram_textures(self.stage)
+        self.assertEqual(packager.share_identical_sidecars(self.stage, self.PRIMARY)["files"], 0, "idempotent")
+
+    def test_only_the_same_encode_is_shared(self):
+        index = json.loads((self.second / "index.json").read_text(encoding="utf-8"))
+        sha, entry = next(iter(index["images"].items()))
+        path = self.second / entry["file"]
+        data = bytearray(path.read_bytes())
+        data[-1] ^= 0xFF
+        path.write_bytes(bytes(data))
+        entry["sha256"] = hashlib.sha256(bytes(data)).hexdigest()
+        other_sha, other = list(index["images"].items())[1]
+        other["roles"] = other.get("roles", []) + ["emissive"]
+        (self.second / "index.json").write_text(json.dumps(index), encoding="utf-8")
+        shared = packager.share_identical_sidecars(self.stage, self.PRIMARY)
+        after = json.loads((self.second / "index.json").read_text(encoding="utf-8"))
+        self.assertEqual(shared["files"], 3)
+        self.assertNotIn("pool", after["images"][sha])
+        self.assertTrue(path.is_file(), "a different encode keeps its own file")
+        self.assertIn("pool", after["images"][other_sha], "other roles still share the bytes")
+        self.assertEqual(after["images"][other_sha]["roles"], other["roles"])
+        packager.check_vram_textures(self.stage)
+
+    def test_a_changed_primary_file_fails_the_check(self):
+        packager.share_identical_sidecars(self.stage, self.PRIMARY)
+        victim = next(p for p in self.primary.iterdir() if p.suffix == ".evt")
+        data = bytearray(victim.read_bytes())
+        data[-1] ^= 0xFF
+        victim.write_bytes(bytes(data))
+        with self.assertRaisesRegex(packager.PackageError, "sha256 differs"):
+            packager.check_vram_textures(self.stage)
+
+    def test_without_the_primary_pool_nothing_moves(self):
+        shutil.rmtree(self.primary)
+        before = self.snapshot(self.second)
+        self.assertEqual(packager.share_identical_sidecars(self.stage, self.PRIMARY),
+                         {"files": 0, "bytes": 0, "directories": []})
+        self.assertEqual(self.snapshot(self.second), before)
+
+    def test_packager_and_client_agree_on_the_key(self):
+        client = (CLIENT / "src" / "world" / "vram_textures.gd").read_text(encoding="utf-8")
+        self.assertIn('source.has("pool")', client)
+        self.assertEqual(packager.PRIMARY_SIDECAR_POOL,
+                         "eloria-assets/" + client.split('const SHARED_ASSETS := "res://../eloria-assets/')[1]
+                         .split('"')[0])
+
+
+# Stands in for tools/build_vram_textures.py in StagePooled: copies the fixture's committed sidecars into every
+# pool of --out-root, as the real tool encodes the same images to the same files.
+FAKE_TOOL = """
+import shutil, sys
+from pathlib import Path
+out = Path(sys.argv[sys.argv.index("--out-root") + 1])
+for pool in sorted(out.rglob("shared-assets")):
+    shutil.copytree(sys.argv[-1], pool / "vram", dirs_exist_ok=True)
+    (pool / "vram" / "report.json").write_text(pool.as_posix(), encoding="utf-8")
+"""
+
+
+class StagePooled(unittest.TestCase):
+    """The share step follows the commit being packaged: it runs only when that commit's client declares that it
+    reads "pool" entries (vram_textures.gd INDEX_FEATURES); packaging an older client ships every pool's own files.
+    The smoke launch then also decodes one pooled sidecar from where it ships."""
+
+    def setUp(self):
+        self.scratch = Path(tempfile.mkdtemp(prefix="vram-package-pooled-"))
+        self.build = self.scratch / "build"
+        self.stage = self.scratch / "stage"
+        self.logs = self.scratch / "logs"
+        self.logs.mkdir()
+        for pool in (packager.PRIMARY_SIDECAR_POOL, "eloria-assets/maps/second/shared-assets"):
+            shutil.copytree(FIXTURE / "shared-assets", self.stage / pool, ignore=shutil.ignore_patterns("vram"))
+        self.tool = self.scratch / "fake_build_vram_textures.py"
+        self.tool.write_text(FAKE_TOOL, encoding="utf-8")
+        self.client = self.build / "godot-client" / "src" / "world" / "vram_textures.gd"
+        self.client.parent.mkdir(parents=True)
+
+    def tearDown(self):
+        shutil.rmtree(self.scratch, ignore_errors=True)
+
+    def stage_with(self, client_text):
+        self.client.write_text(client_text, encoding="utf-8")
+        original = packager.subprocess.run
+
+        def run(command, **kwargs):
+            return original(command + [str(FIXTURE / "shared-assets" / "vram")], **kwargs)
+        packager.subprocess.run = run
+        try:
+            return packager.stage_vram_textures(self.build, self.stage, Path("godot"), self.scratch / "cache",
+                                                self.logs, tool=self.tool)
+        finally:
+            packager.subprocess.run = original
+
+    def second_index(self):
+        path = self.stage / "eloria-assets/maps/second/shared-assets/vram/index.json"
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    def test_the_current_client_declares_the_feature(self):
+        text = (CLIENT / "src" / "world" / "vram_textures.gd").read_text(encoding="utf-8")
+        self.assertIsNotNone(packager.POOL_FEATURE.search(text))
+
+    def test_a_client_that_reads_pool_entries_gets_them(self):
+        self.stage_with((CLIENT / "src" / "world" / "vram_textures.gd").read_text(encoding="utf-8"))
+        self.assertEqual(packager.pooled_sidecar_directory(self.stage), "eloria-assets/maps/second/shared-assets")
+        self.assertTrue(all("pool" in entry for entry in self.second_index()["images"].values()))
+        packager.check_vram_textures(self.stage)
+        reports = sorted(p.name for p in self.logs.glob("vram-report-*.json"))
+        self.assertEqual(reports, ["vram-report-maps__nymara-regions___continent__shared-assets.json",
+                                   "vram-report-maps__second__shared-assets.json"],
+                         "each pool's quality report keeps its own log file")
+
+    def test_an_older_client_gets_every_pool_whole(self):
+        old = 'const SHARED_ASSETS := "res://../eloria-assets/maps/vram_fixture/shared-assets"\n'
+        staged = self.stage_with(old)
+        self.assertIsNone(packager.pooled_sidecar_directory(self.stage))
+        self.assertFalse(any("pool" in entry for entry in self.second_index()["images"].values()))
+        self.assertEqual(staged["files"], 10, "both pools ship their index and four sidecars")
+        packager.check_vram_textures(self.stage)
+
+    def test_the_smoke_launch_asks_for_and_requires_the_pool_line(self):
+        seen = {}
+        lines = {"text": packager.VRAM_SELF_TEST_OK + " entries=4\n"}
+
+        def fake_godot(binary, args, log_path, timeout=0, env=None):
+            seen["env"] = dict(env or {})
+            return lines["text"]
+        original = packager.run_godot
+        packager.run_godot = fake_godot
+        app = self.scratch / "pkg" / "app"
+        app.mkdir(parents=True)
+        platform = {"binary": "Eloria.exe"}
+        try:
+            packager.smoke_launch(app, self.logs, platform, vram_textures=True)
+            self.assertNotIn("ELORIA_VRAM_SELF_TEST_POOL", seen["env"])
+            with self.assertRaisesRegex(packager.PackageError, "a sidecar another pool ships"):
+                packager.smoke_launch(app, self.logs, platform, vram_textures=True,
+                                      pool_test="eloria-assets/maps/second/shared-assets")
+            self.assertEqual(seen["env"]["ELORIA_VRAM_SELF_TEST_POOL"],
+                             "res://../eloria-assets/maps/second/shared-assets")
+            lines["text"] += packager.VRAM_SELF_TEST_POOL_OK + " pooled=4 of 4 format=bc7\n"
+            packager.smoke_launch(app, self.logs, platform, vram_textures=True,
+                                  pool_test="eloria-assets/maps/second/shared-assets")
+        finally:
+            packager.run_godot = original
 
 
 class StageExternalResources(unittest.TestCase):
@@ -197,23 +378,41 @@ class StageCommittedMaps(unittest.TestCase):
             # The walk skips a manifest it cannot read, so it would pass here
             # without checking it.
             self.skipTest(f"{len(absent)} map manifests are not checked out (a sparse checkout?), e.g. {absent[0]}")
-        registry = json.loads((CLIENT / "data" / "maps" / "registry.json").read_text(encoding="utf-8"))
-        stage = Path(tempfile.mkdtemp(prefix="package-committed-maps-"))
+        # Stage the maps as main() does on this branch. drop_preview_maps first
+        # rewrites the build tree's registry without its preview rows, and the
+        # walk then reads that registry as a client source, so run it on a
+        # scratch copy and show the walk the copy. Each served continent-v2 map
+        # stages as its client package only (its territory manifest names no
+        # master GLB).
+        scratch = Path(tempfile.mkdtemp(prefix="package-committed-maps-"))
+        stage = scratch / "stage"
+        registry_file = CHECKOUT / packager.REGISTRY_FILE
+        dropped_file = scratch / "build" / packager.REGISTRY_FILE
+        dropped_file.parent.mkdir(parents=True)
+        shutil.copyfile(registry_file, dropped_file)
+        read_text = Path.read_text
         staged: set[str] = set()
 
         def copy_file(source: Path, target: Path) -> int:
             staged.add(target.relative_to(stage).as_posix())
             return 0
 
+        def read_dropped_registry(path: Path, *args, **kwargs) -> str:
+            return read_text(dropped_file if path == registry_file else path, *args, **kwargs)
+
         try:
             with mock.patch.object(packager, "copy_file", copy_file), mock.patch.object(packager, "log"):
-                packager.stage_eloria_assets(CHECKOUT, stage)
+                previews = packager.drop_preview_maps(scratch / "build")
+                served = packager.read_served_v2_packages(scratch / "build")
+                with mock.patch.object(Path, "read_text", read_dropped_registry):
+                    packager.stage_eloria_assets(CHECKOUT, stage, previews, served)
+            registry = json.loads(dropped_file.read_text(encoding="utf-8"))
         except packager.PackageError as error:
             self.fail(str(error))
         finally:
-            shutil.rmtree(stage, ignore_errors=True)
+            shutil.rmtree(scratch, ignore_errors=True)
         # A walk that read nothing would pass as well: every map manifest the
-        # registry names must have been staged.
+        # packaged registry names must have been staged.
         named = {match.group(1) for entry in registry.get("maps", {}).values() if isinstance(entry, dict)
                  for match in [packager.ASSET_REF.search(str(entry.get("manifest", "")))] if match}
         self.assertTrue(named, "the registry names no map manifests")
@@ -225,6 +424,8 @@ class SelfTestLine(unittest.TestCase):
         client = (CLIENT / "src" / "world" / "vram_textures.gd").read_text(encoding="utf-8")
         self.assertIn(packager.VRAM_SELF_TEST_OK, client)
         self.assertIn("ELORIA_VRAM_SELF_TEST", client)
+        self.assertIn(packager.VRAM_SELF_TEST_POOL_OK, client)
+        self.assertIn('SELF_TEST_POOL_ENVIRONMENT := "ELORIA_VRAM_SELF_TEST_POOL"', client)
 
 
 @unittest.skipIf(SKIP_ENCODE, SKIP_ENCODE or "")

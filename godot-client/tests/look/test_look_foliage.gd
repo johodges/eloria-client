@@ -276,6 +276,15 @@ func _run() -> void:
 	_expect(LookFoliage.kind_of("kit-reed-raft-3", atlas) == LookFoliage.Kind.NONE
 		and LookFoliage.kind_of("kit-reed-bed-3", atlas) == LookFoliage.Kind.KIT_SHRUB,
 		"a reed raft is a boat, not a shrub")
+	LookProfile.define_region("plain_test", {"id": "plain_test", "schema": 1,
+		"foliage": {"plain_words": ["hedge"]}})
+	_expect(LookFoliage.kind_of("kit-garden-hedge-1", atlas,
+			LookFoliage.words_for("plain_test")) == LookFoliage.Kind.NONE
+		and LookFoliage.kind_of("kit-garden-hedge-1", atlas) == LookFoliage.Kind.KIT_SHRUB
+		and LookFoliage.kind_of("kit-reed-raft-3", atlas,
+			LookFoliage.words_for("plain_test")) == LookFoliage.Kind.NONE,
+		"a region's plain words keep its hedges out of the crowns, and every map's still apply")
+	LookProfile.reload_regions()
 	var one_sided := atlas.duplicate() as StandardMaterial3D
 	one_sided.cull_mode = BaseMaterial3D.CULL_BACK
 	var one_sided_paint := LookFoliage.painted_for(one_sided, LookFoliage.Kind.KIT_TREE,
@@ -329,6 +338,36 @@ func _run() -> void:
 	LookFade.release_shadow(pillar, null)
 	_expect(pillar.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_ON,
 		"and casts again once it is back")
+	# A landmark the bound region names (props.hole_words) keeps a hole where
+	# it would vanish; the same mesh vanishes on a map whose file names none.
+	LookProfile.define_region("hole_test", {"id": "hole_test", "schema": 1,
+		"props": {"hole_words": ["kit-sw-palace-keep"]}})
+	var landmark_map := WorldManifest.new()
+	landmark_map.data = {"asset": {"id": "hole_test"}, "environment": {"sun": {"enabled": true}}}
+	var keep_tower := _mesh(world, "kit-sw-palace-keep", bark, Vector3(10, 30, 10), Vector3(0, 0, 0))
+	LookFade.bind(landmark_map)
+	var kept_mode := LookFade.mode_of(keep_tower)
+	var kept_preview := LookFade.keeps_named_hole("StreamView_3__kit-sw-palace-keep")
+	# ...unless it fills the view: a camera right behind it still loses it.
+	var close_camera := Camera3D.new()
+	world.add_child(close_camera)
+	close_camera.position = Vector3(0, 12, 9)
+	close_camera.look_at(Vector3(0, 10, 0), Vector3.UP)
+	var far_camera := Camera3D.new()
+	world.add_child(far_camera)
+	far_camera.position = Vector3(0, 60, 220)
+	far_camera.look_at(Vector3(0, 10, 0), Vector3.UP)
+	var filling_mode := LookFade.mode_of(keep_tower, close_camera)
+	var far_mode := LookFade.mode_of(keep_tower, far_camera)
+	close_camera.queue_free()
+	far_camera.queue_free()
+	LookFade.bind(island)
+	_expect(kept_mode == LookFade.Mode.HOLE and kept_preview
+		and LookFade.mode_of(keep_tower) == LookFade.Mode.VANISH
+		and not LookFade.keeps_named_hole("kit-sw-palace-keep"),
+		"a landmark its region names keeps a hole over the player; unnamed, it vanishes")
+	_expect(filling_mode == LookFade.Mode.VANISH and far_mode == LookFade.Mode.HOLE,
+		"a named landmark that fills the camera's view still vanishes; seen from afar it keeps its hole")
 	LookFade.focus = focus_before
 
 	# A region's signature materials keep their chroma (props.keep_words).

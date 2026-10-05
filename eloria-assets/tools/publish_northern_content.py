@@ -7,12 +7,16 @@ import json
 from pathlib import Path
 import sys
 
+from legacy_content import read_base_only
+
 CLIENT = Path(__file__).resolve().parents[2]
 REGIONS = CLIENT/'eloria-assets/maps/nymara-regions'
 EXTERIORS = ('amberwood', 'whitehorn_range', 'grey_moors', 'mirrorhold', 'amethyst_barrens')
 
 
 def publish(server, regions=EXTERIORS):
+    # The legacy rosters come from the base content tables only, never the continent-v2 overlay (serve plan CV13).
+    read_base_only(server)
     sys.path[:0] = [str(server), str(REGIONS/'_toolkit')]
     from eloria.npcs import load_npcs
     from eloria.harvesting import load_harvesting

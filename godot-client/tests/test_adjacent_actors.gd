@@ -323,10 +323,17 @@ func _state_and_main() -> void:
 	# current one flagged; the first point of a polygon converts through the continent frame.
 	var boundaries: Array = main.call("_map_boundaries")
 	var regions: Array = main.get("cartography_regions")
-	_expect(boundaries.size() == regions.size() and boundaries.size() > 0, "one boundary a region (%d)" % boundaries.size())
+	# Only the regions of mirrorhold's own continent frame: the rebuilt continent's
+	# isles share the picture's pixel lattice but no ground with it.
+	var same_frame: int = 0
+	for region_value: Variant in regions:
+		if str((region_value as Dictionary).get("frame", "")).is_empty():
+			same_frame += 1
+	_expect(boundaries.size() == same_frame and boundaries.size() > 0 and same_frame < regions.size(),
+		"one boundary a region of this continent (%d of %d rows)" % [boundaries.size(), regions.size()])
 	var continent: Dictionary = (main.get("cartography") as Dictionary).get("continent", {})
 	var current_index: int = main.call("_region_index_for_map", "mirrorhold")
-	if current_index >= 0 and boundaries.size() == regions.size():
+	if current_index >= 0 and boundaries.size() == same_frame:
 		var mirror: Dictionary = regions[current_index]
 		var first: Array = (regions[0] as Dictionary).get("continentPolygon", [[0, 0]])[0]
 		var expected := Vector3(float(continent.originMetres[0]) + float(first[0]) * float(continent.metresPerPixel) - float(mirror.globalTranslation[0]), 0,

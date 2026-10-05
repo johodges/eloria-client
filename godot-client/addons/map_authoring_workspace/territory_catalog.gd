@@ -3,9 +3,21 @@ extends RefCounted
 
 const SCHEMA := "eloria-map-authoring-territories-v1"
 const CATALOG_PATH := "res://world_authoring/territories.json"
+## A project setting that names another territory catalog for the editor. A
+## branch that authors a different continent (continent v2 keeps its territories
+## in world_authoring/continent-v2/territories.json) sets it in project.godot;
+## without it the editor uses the shared catalog.
+const CATALOG_SETTING := "map_authoring/territory_catalog_path"
 const OWNERSHIP := preload("res://src/dev/map_authoring_region/ownership_source.gd")
 
 var errors: PackedStringArray = []
+
+
+## The catalog the editor reads: the project setting when it names one, else
+## the shared catalog.
+static func configured_path() -> String:
+	var value := String(ProjectSettings.get_setting(CATALOG_SETTING, "")).strip_edges()
+	return value if not value.is_empty() else CATALOG_PATH
 
 
 func entries(ownership_project_directory: String = "", catalog_path: String = CATALOG_PATH) -> Array[Dictionary]:

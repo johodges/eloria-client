@@ -22,6 +22,14 @@ const FRAMED_RADIUS := 64.0
 const VramTextures := preload("res://src/world/vram_textures.gd")
 ## Where configure() keeps a chunk's shared image figures as published.
 const PUBLISHED_SHARED_KEY := "publishedSharedResourceResidentBytes"
+## The geometry figure develop's exporters publish per GLB byte
+## (build_continent.py: 5 x glbBytes). The walk that marks `blocking` (what
+## prime() imports synchronously) never counts less than that: a publisher
+## that counts geometry nearer the GPU's real figure (continent-v2: 1 x
+## glbBytes) admits more cells to residency, but those stream in on the
+## worker instead of lengthening the arrival. Every legacy cell already
+## publishes exactly this figure, so its walk is unchanged.
+const BLOCKING_GEOMETRY_PER_GLB_BYTE := 5
 
 signal cell_ready(identity: String, imported: Node3D)
 signal cell_retiring(identity: String, imported: Node3D)
@@ -207,7 +215,10 @@ static func incremental_cost(entry: Dictionary, shared: Dictionary,
 	# the prospective resident set, while keeping legacy all-in estimates valid.
 	if not entry.has("geometryResidentBytes"):
 		return int(entry.estimatedResidentBytes)
-	var cost := maxi(1, int(entry.geometryResidentBytes))
+	var geometry := int(entry.geometryResidentBytes)
+	if key == PUBLISHED_SHARED_KEY and entry.has("glbBytes"):
+		geometry = maxi(geometry, BLOCKING_GEOMETRY_PER_GLB_BYTE * int(entry.glbBytes))
+	var cost := maxi(1, geometry)
 	var images: Dictionary = entry.get(key, entry.get("sharedResourceResidentBytes", {}))
 	for identity: String in images:
 		var bytes := maxi(0, int(images[identity]))

@@ -5,7 +5,9 @@ extends Node3D
 ## One saved bridge span. Move this node to move the whole bridge, or move its
 ## Start and End markers to place each bank landing independently.
 
-@export_range(1.5, 6.0, 0.1) var width := 3.0
+## The slider covers footbridges; wider decks (the 10-12 m causeways of continent
+## v2) are typed in, and the Inspector keeps them instead of clamping to 6 m.
+@export_range(1.5, 6.0, 0.1, "or_greater") var width := 3.0
 @export_range(0.0, 2.0, 0.05) var arch := 0.6
 @export_range(0.85, 2.0, 0.05) var water_clearance := 0.9
 @export_range(-360.0, 360.0, 1.0, "or_less", "or_greater") var deck_texture_rotation_degrees := 0.0

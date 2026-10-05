@@ -71,7 +71,10 @@ func _init() -> void:
 		"spell_power_v1": EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER,
 		"spell_visuals_v1": EloriaProtocol.ServerMessage.SEND_SPECIAL_EFFECT,
 		"special_events_v1": EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE,
-		"storage_window_v1": EloriaProtocol.ServerMessage.ELORIA_STORAGE_STATE}
+		"storage_window_v1": EloriaProtocol.ServerMessage.ELORIA_STORAGE_STATE,
+		# No packet of its own: the stock change-map message naming a
+		# continent-v2 map, which this client can draw (checked below).
+		"continent_v2_maps_v1": EloriaProtocol.ServerMessage.CHANGE_MAP}
 	var capability_probes: Dictionary = {
 		EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE: '{"version":1,"active":false}'.to_utf8_buffer().hex_encode(),
 		EloriaProtocol.ServerMessage.ELORIA_ADJACENT_MAPS: "010100" + "whitehorn_range".to_utf8_buffer().hex_encode() + "00",
@@ -148,6 +151,8 @@ func _init() -> void:
 			+ "62617400",
 		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
 		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
+		# The server names a map by its id: the landing isle.
+		EloriaProtocol.ServerMessage.CHANGE_MAP: "sw_isle".to_utf8_buffer().hex_encode() + "00",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE: "00",
 		# Category 0 holding one described row: "A", worn on "B".
@@ -180,6 +185,20 @@ func _init() -> void:
 			_expect(probe.type != "unknown" and probe.type != "invalid",
 				"the packet behind %s actually decodes (%s)" % [capability,
 					str(probe.get("error", probe.type))])
+	# continent_v2_maps_v1 claims the maps, not a packet: the change-map
+	# message naming sw_isle must resolve to a served continent-v2 row whose
+	# client package is on disk, or the claim would send a player to a map
+	# this client cannot draw.
+	var change_map: Dictionary = EloriaProtocol.decode_server(EloriaProtocol.ServerMessage.CHANGE_MAP,
+		_hex("sw_isle".to_utf8_buffer().hex_encode() + "00"))
+	var shipped_maps: Dictionary = (JSON.parse_string(FileAccess.get_file_as_string(
+		"res://data/maps/registry.json")) as Dictionary).get("maps", {}) as Dictionary
+	var isle: Dictionary = MapRegistry.resolve(shipped_maps, str(change_map.get("map_name", "")))
+	_expect(change_map.type == "change_map" and str(change_map.map_name) == "sw_isle",
+		"the change-map message names the landing isle by its map id")
+	_expect(str(isle.get("status", "")) == "continent-v2-served"
+		and FileAccess.file_exists(ProjectSettings.globalize_path(str(isle.get("manifest", "")))),
+		"the isle a continent_v2_maps_v1 client is sent to is a served map with its package on disk")
 	# Command 209: which map package the server was built against. Two
 	# NUL-terminated strings, and nothing else - a mismatched install is
 	# something to be told about, not a negotiation.

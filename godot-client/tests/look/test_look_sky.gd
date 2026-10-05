@@ -104,6 +104,17 @@ func _run() -> void:
 	var night := LookSky.sky_colours(region, 0.0)
 	_expect(night.painted_horizon == night.horizon and night.zenith == night.top,
 		"at midnight the painted sky keeps the binder's moonlit colours")
+	# A region may keep its haze cooler (`sky.haze_warmth`): its chunks read it too.
+	LookProfile.define_region("haze_test", {"id": "haze_test", "schema": 1, "sky": {"haze_warmth": 0.0}})
+	var cool := WorldManifest.new()
+	cool.data = region.data.duplicate(true)
+	cool.data["asset"] = {"id": "haze_test__chunk_3_4"}
+	var cool_colours := LookSky.sky_colours(cool, 180.0)
+	var cool_haze := cool_colours.haze as Color
+	var warm_haze := colours.haze as Color
+	_expect(cool_haze.b - cool_haze.r > warm_haze.b - warm_haze.r,
+		"a region's own haze warmth keeps its far haze cooler than the shared warmth does")
+	LookProfile.reload_regions()
 	# Only a clear blue sky is painted as the bright day: a violet dusk and a
 	# grey overcast keep their own colours, clouds in their horizon's colour.
 	var dusk := WorldManifest.new()

@@ -83,6 +83,9 @@ uniform float look_verge_fine_metres = 4.0;
 uniform float look_verge_fine = 0.12;
 // How much of its texture's grain the verge keeps around its mean colour.
 uniform float look_verge_grain = 1.0;
+// How much of the texture's grain a steep face keeps (1: as much as flat ground). A planar-mapped detail
+// tile streaks down a cliff (sw_isle's gorge walls); a region may calm it there (ground.verge_grain_steep).
+uniform float look_verge_grain_steep = 1.0;
 uniform float look_variation_metres = 16.0;
 uniform float look_variation = 0.2;
 uniform float look_variation_hue = 0.06;
@@ -331,14 +334,17 @@ vec3 look_paint(vec3 albedo, vec3 reference, vec3 vertex_colour, vec2 xz, vec3 w
 		+ look_border_verge[0] * border.x + look_border_verge[1] * border.y
 		+ look_border_verge[2] * border.z + look_border_verge[3] * border.w;
 
+	// A steep face keeps look_verge_grain_steep of its texture's grain.
+	vec3 grained = mix(reference, albedo, mix(look_verge_grain_steep, 1.0, smoothstep(0.55, 0.8, up)));
+
 	// Verge: deeper and a little richer by hue, with a painted mottle.
 	float verge_scale = mix(verge_trims.y, verge_trims.x, look_green(reference));
-	vec3 verge = look_saturate(mix(reference, albedo, look_verge_grain) * verge_scale,
+	vec3 verge = look_saturate(mix(reference, grained, look_verge_grain) * verge_scale,
 		verge_trims.z);
 	verge.r *= mix(1.0, verge_trims.w, look_green(reference));
 	verge *= 1.0 + (look_value_noise(xz / look_verge_fine_metres + vec2(5.3, 2.1))
 		- 0.5) * 2.0 * look_verge_fine;
-	vec3 colour = mix(verge, albedo, pale);
+	vec3 colour = mix(verge, grained, pale);
 
 	// Gold, a little darker and richer so the tone curve keeps it gold. Told
 	// by hue and chroma, not by the pale weight: Lantern Reach's trail sits

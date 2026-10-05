@@ -54,6 +54,15 @@ const MODE_NAMES: Array[String] = ["auto", "off", "force"]
 ## Set to "1", the client logs `self_test()`'s line at startup: the package
 ## smoke launch reads it to prove the shipped binary decodes a sidecar.
 const SELF_TEST_ENVIRONMENT := "ELORIA_VRAM_SELF_TEST"
+## Set to a source directory (res://../eloria-assets/...), the client also logs
+## `self_test_pool()`'s line: the smoke launch of a package whose index names
+## sidecars another pool ships ("pool") proves the binary finds and decodes one.
+const SELF_TEST_POOL_ENVIRONMENT := "ELORIA_VRAM_SELF_TEST_POOL"
+## Index entry keys beyond schema 1 that this client reads. The packager
+## (tools/package_client.py) writes such a key into a packaged index only when
+## the packaged commit's client lists it here: a client without "pool" would
+## look for a shared sidecar in its own pool, miss it and decode the image.
+const INDEX_FEATURES: Array[String] = ["pool"]
 
 ## GLTFState additional-data keys. WorldLoader writes the plan; the extension
 ## writes the rest; ExternalTexturePool and WorldLoader read DONE and POOLED.
@@ -228,6 +237,9 @@ static func ensure_registered() -> bool:
 		print(status_line())
 		if OS.get_environment(SELF_TEST_ENVIRONMENT) == "1":
 			print(self_test())
+		var pool_test := OS.get_environment(SELF_TEST_POOL_ENVIRONMENT)
+		if not pool_test.is_empty():
+			print(self_test_pool(pool_test))
 	return true
 
 static func is_registered() -> bool:
@@ -340,12 +352,26 @@ static func _read_index(directory: String) -> Dictionary:
 				or gpu_bytes < _mip0_bytes(format, width, height) or str(source.get("sha256", "")).length() != 64:
 			skipped += 1
 			continue
+		# `pool`, written only by the packager (tools/package_client.py
+		# share_identical_sidecars): the sidecar is the byte-identical file the
+		# package already ships in another pool's vram/, named by that pool's
+		# source directory relative to this one. Its sha256 is still checked at
+		# load, so a pool that is missing or differs decodes the image as any
+		# broken sidecar does. An index without the key reads as it always has.
+		var sidecar_directory := directory
+		if source.has("pool"):
+			var pool: Variant = source.pool
+			if not pool is String or (pool as String).is_empty() or not (pool as String).is_relative_path() \
+					or "\\" in pool or ":" in pool:
+				skipped += 1
+				continue
+			sidecar_directory = directory.path_join(str(pool)).simplify_path()
 		var entry := {"sha": str(sha), "file": file, "format": format,
 			"recipe": str(source.get("recipe", "")), "width": width, "height": height,
 			"mipmaps": int(source.get("mipmaps", 0)), "gpuBytes": gpu_bytes,
 			"rawBytes": int(source.get("rawBytes", 0)), "fileBytes": int(source.get("fileBytes", 0)),
 			"sha256": str(source.get("sha256", "")),
-			"path": directory.path_join(SIDECAR_DIRECTORY).path_join(file)}
+			"path": sidecar_directory.path_join(SIDECAR_DIRECTORY).path_join(file)}
 		# The roles the encode was chosen for; without them (an older index)
 		# sidecar_fits falls back to what the recipe serves.
 		var roles: Variant = source.get("roles")
@@ -682,3 +708,27 @@ static func self_test(source_directory := SHARED_ASSETS) -> String:
 	var image: Image = loaded.image
 	return "vram_textures self_test ok entries=%d format=%s mips=%d" % [int(info.entries),
 		str(smallest.format), image.get_mipmap_count()]
+
+## Decodes the smallest sidecar that `source_directory`'s index names in
+## another pool (an entry with "pool"), for the package smoke launch: the
+## shipped binary must find a sidecar the packager shipped once, elsewhere.
+static func self_test_pool(source_directory: String) -> String:
+	var info := index_for_directory(source_directory)
+	if info.status != "ok":
+		return "vram_textures self_test pool failed index=%s" % str(info.status)
+	var own := _normalise(source_directory).path_join(SIDECAR_DIRECTORY)
+	var smallest: Dictionary = {}
+	var pooled := 0
+	for entry: Dictionary in (info.images as Dictionary).values():
+		if str(entry.path).get_base_dir() == own:
+			continue
+		pooled += 1
+		if smallest.is_empty() or int(entry.fileBytes) < int(smallest.fileBytes):
+			smallest = entry
+	if smallest.is_empty():
+		return "vram_textures self_test pool failed pooled=0 of %d" % int(info.entries)
+	var loaded := decode_sidecar(smallest)
+	if loaded.image == null:
+		return "vram_textures self_test pool failed %s %s" % [str(smallest.file), loaded.reason]
+	return "vram_textures self_test pool ok pooled=%d of %d format=%s" % [pooled, int(info.entries),
+		str(smallest.format)]

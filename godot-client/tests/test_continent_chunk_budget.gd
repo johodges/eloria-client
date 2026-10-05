@@ -136,6 +136,62 @@ func _check_blocking() -> void:
 	_expect(everything == ["c0", "c1", "c2", "c3", "c4"],
 		"under a budget that admits everything as published, prime() imports every cell as before: %s" % [everything])
 
+## Five cells nearest-first sharing one image, each with a GLB of GLB_BYTES:
+## `factor` x those bytes is the geometry each publishes (5 for develop's
+## exporters, 1 for continent-v2 since the owner call of 2026-10-03). Returns
+## [selected ids, the ids marked blocking] under a 40 000-byte budget with
+## the published (RGBA8) image figures.
+const GLB_BYTES := 3000
+
+func _geometry_walk(factor: int, with_glb := true) -> Array:
+	_set_mode("0")
+	var chunks := []
+	for index: int in 5:
+		var x := 100.0 + 20.0 * index if index > 0 else 0.0
+		var cell := {"id": "c%d" % index, "manifest": "c%d/world.json" % index,
+			"bounds": {"min": [x, 0, -1], "max": [x + 1, 1, 1]},
+			"estimatedResidentBytes": factor * GLB_BYTES + PUBLISHED, "geometryResidentBytes": factor * GLB_BYTES,
+			"sharedResourceResidentBytes": {_by_recipe.base: PUBLISHED}}
+		if with_glb:
+			cell["glbBytes"] = GLB_BYTES
+		chunks.append(cell)
+	var manifest := WorldManifest.new()
+	manifest.source_path = FIXTURE.path_join("territory.json")
+	manifest.data = {"streamingChunks": {"schemaVersion": "1.0", "coordinateSpace": "territory-local",
+		"maximumResidentBytes": 40000, "chunks": chunks}}
+	var stream := ContinentChunkStream.new()
+	stream.configure(manifest, false)
+	var ids := []
+	var blocking := []
+	for entry: Dictionary in stream.selection(Vector3.ZERO):
+		ids.append(str(entry.id))
+		if bool(entry.get("blocking", true)) and not bool(entry.get("beyond_budget", false)):
+			blocking.append(str(entry.id))
+	stream.free()
+	return [ids, blocking]
+
+## A cell published at 1 x its GLB is admitted to residency at that figure,
+## but what an arrival imports synchronously is still judged at 5 x (develop's
+## figure), so the arrival freeze does not grow; a legacy cell (5 x) and one
+## without glbBytes walk exactly as before.
+func _check_blocking_geometry() -> void:
+	var legacy := _geometry_walk(5)
+	_expect(legacy == [["c0"], ["c0"]], "a 5 x cell: one cell resident, one blocking: %s" % [legacy])
+	var v2 := _geometry_walk(1)
+	_expect(v2[0] == ["c0", "c1", "c2", "c3", "c4"],
+		"a 1 x cell: all five resident under the same budget: %s" % [v2[0]])
+	_expect(v2[1] == legacy[1], "a 1 x cell: prime() still blocks on the 5 x set only: %s" % [v2[1]])
+	var bare := _geometry_walk(1, false)
+	_expect(bare == [v2[0], v2[0]], "a cell without glbBytes keeps its own figure in both walks: %s" % [bare])
+	var cell := {"geometryResidentBytes": 700, "glbBytes": 700, "sharedResourceResidentBytes": {}}
+	cell[ContinentChunkStream.PUBLISHED_SHARED_KEY] = {}
+	_expect(ContinentChunkStream.incremental_cost(cell, {}) == 700
+		and ContinentChunkStream.incremental_cost(cell, {}, ContinentChunkStream.PUBLISHED_SHARED_KEY) == 3500,
+		"incremental_cost: residency counts the published geometry, the blocking walk 5 x the GLB")
+	cell.geometryResidentBytes = 3500
+	_expect(ContinentChunkStream.incremental_cost(cell, {}, ContinentChunkStream.PUBLISHED_SHARED_KEY) == 3500
+		and ContinentChunkStream.incremental_cost(cell, {}) == 3500, "a legacy 5 x cell costs the same in both walks")
+
 func _selected(mode: String, read_index := true) -> Array:
 	_set_mode(mode, read_index)
 	var stream := ContinentChunkStream.new()
@@ -156,6 +212,7 @@ func _check_selection() -> void:
 	var unindexed := _selected("force", false)
 	_expect(unindexed == published, "with no index the selection is develop's exactly: %s" % [unindexed])
 	_check_blocking()
+	_check_blocking_geometry()
 	_set_mode("force")
 	VramTextures.force_formats(0)
 	var stream := ContinentChunkStream.new()

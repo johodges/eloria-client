@@ -28,6 +28,12 @@ from eloria.collision import CollisionMap,with_step_mask,with_storage_collision
 from eloria.world import World
 from eloria.npcs import load_npcs
 from eloria.interactives import load_interactives
+try:  # base content tables only, never the continent-v2 overlay (serve plan CV13)
+    from eloria import content_overlay
+except ImportError:  # an older server checkout has no continent-v2 overlay, so nothing to switch off
+    pass
+else:
+    content_overlay.configure(False)
 
 
 class GeodeWorkingAccess(unittest.TestCase):

@@ -17,9 +17,10 @@ const SCULPT_RING_COLORS := [Color(0.22, 0.94, 0.79), Color(1.0, 0.55, 0.25),
 	Color(0.45, 0.65, 1.0), Color(1.0, 0.86, 0.35)]
 
 var _catalog := Catalog.new()
-## The territory catalog Refresh sources reads. Only tests point it elsewhere
-## (an isolated fixture catalog); the editor always uses the shared catalog.
-var catalog_path := Catalog.CATALOG_PATH
+## The territory catalog Refresh sources reads: the shared catalog, or the one
+## the project setting map_authoring/territory_catalog_path names (see
+## territory_catalog.gd). Tests point it at an isolated fixture catalog.
+var catalog_path := Catalog.configured_path()
 var _entries: Array[Dictionary] = []
 var _dock: EditorDock
 var _host: MapAuthoringReferencePreview

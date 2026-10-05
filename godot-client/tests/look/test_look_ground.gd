@@ -264,6 +264,76 @@ func _run() -> void:
 		"any other deck is a road")
 	LookProfile.reload_regions()
 
+	# A region may name decorative inlays (`ground.keep_patches`, words in the
+	# patch material's name) that keep their own colour instead of their tint
+	# class: a blue ring inside paving is otherwise a yard worn into cobble.
+	LookProfile.define_region("inlay_test", {"id": "inlay_test", "schema": 1,
+		"ground": {"keep_patches": ["Rosette"]}})
+	var inlay_material := patch_material.duplicate() as StandardMaterial3D
+	inlay_material.albedo_color = Color(0.62, 0.68, 0.84)
+	inlay_material.resource_name = "authored_inlay_test_plaza-rosette"
+	var yard_material := inlay_material.duplicate() as StandardMaterial3D
+	yard_material.resource_name = "authored_inlay_test_yard-3"
+	var some_paving := PackedVector4Array([Vector4(-50, -50, 50, 50)])
+	var inlay := LookGround.painted_for(inlay_material, LookGround.Kind.PATCH,
+		(patch.mesh as Mesh), 0, "inlay_test", some_paving) as ShaderMaterial
+	var yard := LookGround.painted_for(yard_material, LookGround.Kind.PATCH,
+		(patch.mesh as Mesh), 0, "inlay_test", some_paving) as ShaderMaterial
+	var elsewhere := LookGround.painted_for(inlay_material, LookGround.Kind.PATCH,
+		(patch.mesh as Mesh), 0, "no_such_region", some_paving) as ShaderMaterial
+	_expect(LookGround.is_kept_patch(inlay_material, "inlay_test")
+		and not LookGround.is_kept_patch(yard_material, "inlay_test")
+		and not LookGround.is_kept_patch(inlay_material, "no_such_region"),
+		"a patch is an inlay only where its region names it, by a word of its material's name")
+	_expect(inlay != null and float(inlay.get_shader_parameter(&"look_keep")) == 1.0
+		and float(inlay.get_shader_parameter(&"look_yard")) == 0.0
+		and float(inlay.get_shader_parameter(&"look_opacity")) == 1.0
+		and int(inlay.get_shader_parameter(&"look_paving_count")) == 0,
+		"a named inlay is drawn solid in its own colour and never worn into the paving's cobble")
+	_expect(yard != null and float(yard.get_shader_parameter(&"look_keep")) == 0.0
+		and float(yard.get_shader_parameter(&"look_opacity")) == LookProfile.PATCH_OPACITY
+		and int(yard.get_shader_parameter(&"look_paving_count")) == 1
+		and elsewhere != null and float(elsewhere.get_shader_parameter(&"look_keep")) == 0.0,
+		"an unnamed patch, or the same patch in another region, is still a yard glaze")
+	LookProfile.define_region("meadow_tint_test", {"id": "meadow_tint_test", "schema": 1,
+		"ground": {"meadow_value": 0.5, "meadow_tint": [0.8, 1.0, 0.6]}})
+	var lawn_material := patch_material.duplicate() as StandardMaterial3D
+	lawn_material.albedo_color = Color(0.7, 0.86, 0.58)
+	var tinted_lawn := LookGround.painted_for(lawn_material, LookGround.Kind.PATCH,
+		(patch.mesh as Mesh), 0, "meadow_tint_test") as ShaderMaterial
+	var plain_lawn := LookGround.painted_for(lawn_material, LookGround.Kind.PATCH,
+		(patch.mesh as Mesh), 0, "no_such_region") as ShaderMaterial
+	_expect(tinted_lawn != null and (tinted_lawn.get_shader_parameter(&"look_keep_tint") as Vector3)
+			.is_equal_approx(Vector3(0.4, 0.5, 0.3))
+		and plain_lawn != null and (plain_lawn.get_shader_parameter(&"look_keep_tint") as Vector3)
+			.is_equal_approx(Vector3.ONE * LookProfile.MEADOW_VALUE),
+		"a meadow keeps its colour times its region's meadow value and tint; white elsewhere")
+	LookProfile.define_region("paving_tint_test", {"id": "paving_tint_test", "schema": 1,
+		"ground": {"paving_tint": [0.7, 0.6, 0.5]}})
+	var own_paving := LookGround.painted_for(paving_material, LookGround.Kind.PATCH,
+		(patch.mesh as Mesh), 0, "paving_tint_test") as ShaderMaterial
+	var shared_paving := LookGround.painted_for(paving_material, LookGround.Kind.PATCH,
+		(patch.mesh as Mesh), 0, "no_such_region") as ShaderMaterial
+	var shared_tint := LookProfile.PAVING_SURFACE_TINT
+	_expect(own_paving != null and (own_paving.get_shader_parameter(&"look_surface_tint") as Vector3)
+			.is_equal_approx(Vector3(0.7, 0.6, 0.5))
+		and shared_paving != null and (shared_paving.get_shader_parameter(&"look_surface_tint") as Vector3)
+			.is_equal_approx(Vector3(shared_tint.r, shared_tint.g, shared_tint.b)),
+		"pale paving takes its region's paving tint; the shared one elsewhere")
+	LookProfile.define_region("verge_grain_test", {"id": "verge_grain_test", "schema": 1,
+		"ground": {"verge_grain": 1.0, "verge_grain_steep": 0.3}})
+	var grained := LookGround.painted_for(patch_material, LookGround.Kind.PATCH,
+		(patch.mesh as Mesh), 0, "verge_grain_test") as ShaderMaterial
+	var default_grain := LookGround.painted_for(patch_material, LookGround.Kind.PATCH,
+		(patch.mesh as Mesh), 0, "no_such_region") as ShaderMaterial
+	_expect(grained != null and float(grained.get_shader_parameter(&"look_verge_grain")) == 1.0
+		and default_grain != null
+		and is_equal_approx(float(default_grain.get_shader_parameter(&"look_verge_grain")), LookProfile.VERGE_GRAIN)
+		and is_equal_approx(float(grained.get_shader_parameter(&"look_verge_grain_steep")), 0.3)
+		and float(default_grain.get_shader_parameter(&"look_verge_grain_steep")) == 1.0,
+		"a region may keep all of its verge's texture grain; VERGE_GRAIN elsewhere")
+	LookProfile.reload_regions()
+
 	# The continent's sea is decoded in Forward+ as a copy, never in place.
 	var sea_root := Node3D.new()
 	root.add_child(sea_root)
@@ -278,6 +348,23 @@ func _run() -> void:
 			and decoded_sea.get_shader_parameter(&"look_decode_albedo") == true
 			and sea.get_shader_parameter(&"look_decode_albedo") != true,
 			"the continent sea is decoded on a copy in Forward+")
+		_expect(float(decoded_sea.get_shader_parameter(&"look_sea_value")) == LookProfile.CONTINENT_SEA_VALUE
+			and (decoded_sea.get_shader_parameter(&"look_sea_tint") as Vector3).is_equal_approx(Vector3.ONE),
+			"a region that names no sea of its own is decoded at the shared value")
+		LookProfile.define_region("sea_test", {"id": "sea_test", "schema": 1,
+			"water": {"sea_value": 9.0, "sea_chroma": 1.2, "sea_tint": [0.5, 1.0, 1.1]}})
+		var own_sea_root := Node3D.new()
+		root.add_child(own_sea_root)
+		var own_sea_mesh := _mesh(own_sea_root, "Water_test_1_3", null)
+		own_sea_mesh.set_surface_override_material(0, sea)
+		LookGround.decode_continent_sea(own_sea_root, "sea_test")
+		var own_sea := own_sea_mesh.get_surface_override_material(0) as ShaderMaterial
+		_expect(own_sea != sea and float(own_sea.get_shader_parameter(&"look_sea_value")) == 9.0
+			and float(own_sea.get_shader_parameter(&"look_sea_chroma")) == 1.2
+			and (own_sea.get_shader_parameter(&"look_sea_tint") as Vector3)
+				.is_equal_approx(Vector3(0.5, 1.0, 1.1)),
+			"a region's own sea value, chroma and tint reach its decoded sea")
+		LookProfile.reload_regions()
 	else:
 		_expect(decoded == 0 and decoded_sea == sea,
 			"the continent sea is left alone in the compatibility renderer")

@@ -79,6 +79,16 @@ func _run() -> void:
 	_expect(worst < 0.0001, "a staircase border blends the same from both sides (worst %.5f)"
 		% worst)
 
+	# --- Regions in different continent frames never share a border ---------
+	LookBorders.define({
+		"west": [[0, 0], [100, 0], [100, 100], [0, 100]],
+		"east": [[100, 0], [100, 100], [200, 100], [200, 0]],
+		"v2_east": [[100, 0], [100, 100], [200, 100], [200, 0]],
+	}, {"v2_east": "continent-v2"})
+	_expect(LookBorders.neighbours_of("west") == PackedStringArray(["east"])
+		and LookBorders.neighbours_of("v2_east").is_empty(),
+		"a region of another continent frame on the same ground borders nothing there")
+
 	# --- The continent's own regions ----------------------------------------
 	LookBorders.reload()
 	var neighbours := LookBorders.neighbours_of("four_gates")
@@ -90,6 +100,19 @@ func _run() -> void:
 		"Verdant Stair borders Ssarathi")
 	_expect(LookBorders.neighbours_of("lantern_reach").is_empty(),
 		"Lantern Reach, an island off the continent, borders nothing")
+	# The continent-v2 island group: sw_isle borders its second map, The Tollholms (task A3), across the seam at
+	# x 2437, and its third, The Gull Skerries (task A3b), along z 8259 and x 399; the two new maps do not touch, and
+	# none of the three borders the old continent's regions (another frame).
+	var isle := LookBorders.neighbours_of("sw_isle")
+	isle.sort()
+	_expect(isle == PackedStringArray(["gull_skerries", "tollholms"])
+		and not LookBorders.neighbours_of("westhaven").has("sw_isle"),
+		"sw_isle, in the continent-v2 frame, borders The Gull Skerries and The Tollholms and none of the old "
+		+ "continent's regions (%s)" % ", ".join(isle))
+	_expect(LookBorders.neighbours_of("tollholms") == PackedStringArray(["sw_isle"]),
+		"The Tollholms border sw_isle only (%s)" % ", ".join(LookBorders.neighbours_of("tollholms")))
+	_expect(LookBorders.neighbours_of("gull_skerries") == PackedStringArray(["sw_isle"]),
+		"The Gull Skerries border sw_isle only (%s)" % ", ".join(LookBorders.neighbours_of("gull_skerries")))
 
 	print("test_look_borders: %s (%d failures)" % ["PASS" if failures == 0 else "FAIL", failures])
 	quit(1 if failures > 0 else 0)

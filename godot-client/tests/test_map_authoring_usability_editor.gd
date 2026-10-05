@@ -2273,6 +2273,14 @@ func _test_territory_picker() -> void:
 	if not _expect(workspace != null, "the Territories plugin is active for the map picker"):
 		return
 	var dock: Object = workspace.get("_dock")
+	# The picker test is about the shared twelve-territory catalog. A branch can point the editor at another
+	# catalog (project setting map_authoring/territory_catalog_path), so the shared one is pinned here and the
+	# configured one put back afterwards.
+	var configured := String(workspace.get("catalog_path"))
+	var shared := "res://world_authoring/territories.json"
+	if configured != shared:
+		workspace.set("catalog_path", shared)
+		workspace.call("_reload_sources")
 	var items: Array = dock.call("picker_items")
 	var thumbnails := items.filter(func(item: Dictionary) -> bool:
 		return item.thumbnail is Texture2D).size()
@@ -2298,6 +2306,9 @@ func _test_territory_picker() -> void:
 		dock.connect("open_requested", handler)
 	_expect(index >= 0 and opened.size() == 1 and opened[0].ends_with(".tscn"),
 		"clicking a territory thumbnail asks to open its authored scene")
+	if configured != shared:
+		workspace.set("catalog_path", configured)
+		workspace.call("_reload_sources")
 
 
 func _test_asset_intake(palette: Object) -> void:

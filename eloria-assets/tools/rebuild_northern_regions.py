@@ -11,6 +11,8 @@ from pathlib import Path
 import subprocess
 import sys
 
+from legacy_content import read_base_only
+
 CLIENT = Path(__file__).resolve().parents[2]
 REGIONS = CLIENT / 'eloria-assets/maps/nymara-regions'
 EXTERIORS = ('amberwood', 'whitehorn_range', 'grey_moors', 'mirrorhold', 'amethyst_barrens')
@@ -154,6 +156,9 @@ def main():
     parser.add_argument('--stage', choices=('all', 'collision', 'content', 'publish'), default='all')
     args = parser.parse_args()
     server, data = args.server.resolve(), args.data.resolve()
+    # Legacy content only: every loader this run calls reads the base tables, never the continent-v2 overlay (serve
+    # plan CV13). The tools it runs as subprocesses switch themselves off the same way.
+    read_base_only(server)
     if not args.skip_build:
         for region in EXTERIORS:
             source = REGIONS/region/'source'

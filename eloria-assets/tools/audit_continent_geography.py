@@ -13,6 +13,7 @@ import sys
 import time
 import numpy as np
 import continent_approaches as APPROACH
+from legacy_content import read_base_only
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'maps/nymara-regions/_toolkit'))
 import glb_reader as GLB
@@ -195,6 +196,9 @@ def missing_stream_members(manifest, document):
 
 
 def run(client, report_path, server=None, maps=None, selected=None):
+    if server is not None:
+        # The audit is of the legacy continent: base content tables only, no continent-v2 overlay (serve plan CV13).
+        read_base_only(server)
     started=time.time();base=client/'eloria-assets/maps/nymara-regions';plan_path=base/'continent-geography.json'
     plan=json.loads(plan_path.read_text(encoding='utf-8'));regions=plan['regions']
     if plan.get('geometryMode') == 'continent-chunks-v1':

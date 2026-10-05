@@ -336,7 +336,9 @@ func _abort(reason: String) -> void:
 
 func _cleanup() -> void:
 	if _plugin != null and is_instance_valid(_plugin):
-		_plugin.set("catalog_path", "res://world_authoring/territories.json")
+		# Back to the catalog the editor reads (the shared one unless the project names another).
+		_plugin.set("catalog_path",
+			load("res://addons/map_authoring_workspace/territory_catalog.gd").configured_path())
 		_plugin.call("_reload_sources")
 	for path: String in [SCENE_PATH, HEIGHT_PATH, CATALOG_PATH, MANIFEST_PATH, SPEC_PATH]:
 		if FileAccess.file_exists(path):

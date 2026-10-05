@@ -312,11 +312,11 @@ static func _grade(data: Dictionary, x: float, z: float) -> float:
 	return sqrt(dx * dx + dz * dz)
 
 
-## The published grid of the open territory, from its manifest's collision block
-## (the manifest TimeOfDay finds for the territory, or `manifest_override`).
+## The published grid of the open territory, from its package's collision block
+## (the published package TimeOfDay finds for the territory, or `manifest_override`).
 static func published_grid(root: Node3D, manifest_override := "") -> Dictionary:
 	var manifest_path := manifest_override if not manifest_override.is_empty() else \
-		TimeOfDay.manifest_path_for(String(root.get("region_id")))
+		TimeOfDay.published_manifest_path_for(String(root.get("region_id")))
 	if manifest_path.is_empty():
 		return {"error": "No published manifest for this territory, so no published grid."}
 	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))

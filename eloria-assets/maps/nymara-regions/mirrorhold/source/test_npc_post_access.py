@@ -59,6 +59,12 @@ class StewardPost(unittest.TestCase):
     @unittest.skipUnless(ARGS.server and ARGS.maps,'Pass the paired server and actual ELM data root for production access proof')
     def test_occupied_world_reaches_the_exact_post_without_an_automatic_door(self):
         sys.path[:0]=[str(ARGS.server.resolve()/'tools'),str(ARGS.server.resolve())]
+        try:  # base content tables only, never the continent-v2 overlay (serve plan CV13)
+            from eloria import content_overlay
+        except ImportError:  # an older server checkout has no continent-v2 overlay, so nothing to switch off
+            pass
+        else:
+            content_overlay.configure(False)
         from eloria.maps import load_maps
         from eloria.settings import load_settings
         from eloria.interactives import load_interactives
@@ -127,6 +133,12 @@ class CitadelStaffPosts(unittest.TestCase):
     @unittest.skipUnless(ARGS.server and ARGS.maps,'Pass final served ELMs for simultaneous occupied World proof')
     def test_both_seated_staff_and_lens_roundtrip_keep_real_public_access(self):
         sys.path[:0]=[str(ARGS.server.resolve()/'tools'),str(ARGS.server.resolve())]
+        try:  # base content tables only, never the continent-v2 overlay (serve plan CV13)
+            from eloria import content_overlay
+        except ImportError:  # an older server checkout has no continent-v2 overlay, so nothing to switch off
+            pass
+        else:
+            content_overlay.configure(False)
         from eloria.maps import load_maps
         from eloria.settings import load_settings
         from eloria.interactives import load_interactives

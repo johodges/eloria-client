@@ -125,7 +125,7 @@ static func paint_loaded(root: Node, manifest: WorldManifest) -> int:
 	# marks it for main to put right (LookProfile.enabled_for).
 	if not LookProfile.enabled_for(root):
 		return 0
-	decode_continent_sea(root)
+	decode_continent_sea(root, region_of(manifest))
 	# One tint for the whole continent: its rivers run on across the regions'
 	# borders (Amberwood's western river crosses four of them).
 	decode_inland_water(root)
@@ -135,11 +135,19 @@ static func paint_loaded(root: Node, manifest: WorldManifest) -> int:
 ## loader puts on every sea cell) is decoded to linear albedo at
 ## LookProfile.CONTINENT_SEA_VALUE, as a copy put in as the surface's
 ## override, so the loader's cache keeps the loader's own material. One value
-## for the whole continent: the sea runs on across every region's border.
+## for the whole continent: the sea runs on across every region's border. A
+## region whose sea meets no other's may name its own (`water.sea_value`,
+## `sea_chroma`, and `sea_tint`, a multiplier on the decoded linear colour):
+## sw_isle's lagoon sea read navy-teal where its concept paints turquoise.
 ## Returns the surfaces changed.
-static func decode_continent_sea(root: Node) -> int:
+static func decode_continent_sea(root: Node, region := "") -> int:
 	if not LookProfile.enabled() or root == null or not LookProfile.forward_plus():
 		return 0
+	var value := float(LookProfile.region_value(region, "water", "sea_value",
+		LookProfile.CONTINENT_SEA_VALUE))
+	var chroma := float(LookProfile.region_value(region, "water", "sea_chroma",
+		LookProfile.CONTINENT_SEA_CHROMA))
+	var tint: Color = LookProfile.region_value(region, "water", "sea_tint", Color.WHITE)
 	var changed := 0
 	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
 		var mesh_instance := node as MeshInstance3D
@@ -154,8 +162,9 @@ static func decode_continent_sea(root: Node) -> int:
 			decoded.set_meta(PAINTED_META, true)
 			decoded.set_meta(LookProfile.SOURCE_META, sea)
 			decoded.set_shader_parameter(&"look_decode_albedo", true)
-			decoded.set_shader_parameter(&"look_sea_value", LookProfile.CONTINENT_SEA_VALUE)
-			decoded.set_shader_parameter(&"look_sea_chroma", LookProfile.CONTINENT_SEA_CHROMA)
+			decoded.set_shader_parameter(&"look_sea_value", value)
+			decoded.set_shader_parameter(&"look_sea_chroma", chroma)
+			decoded.set_shader_parameter(&"look_sea_tint", Vector3(tint.r, tint.g, tint.b))
 			mesh_instance.set_surface_override_material(surface, decoded)
 			changed += 1
 	return changed
@@ -404,6 +413,24 @@ static func is_rock(material: Material) -> bool:
 		and not LookProfile.green_tint(tint) and not sand_tint(tint) \
 		and not is_paving(standard) and not is_cobble(standard)
 
+## True when `region`'s file names this blended patch as a decorative inlay
+## (`ground.keep_patches`: words contained in its material's name, which the
+## continent exporter writes as authored_<region>_<patch id>). It is drawn
+## solid in its own colour, at the region's signature chroma, instead of being
+## classed by its tint: sw_isle's arrival rosette (a cobalt ring round a gilt
+## centre on the limestone plaza) was a yard and a sand glaze by tint, and a
+## yard inside pale paving is worn into its cobble, so the rosette at the spawn
+## read as a brown stain.
+static func is_kept_patch(material: Material, region: String) -> bool:
+	var standard := material as BaseMaterial3D
+	if standard == null or standard.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED:
+		return false
+	var material_name := String(standard.resource_name).to_lower()
+	for word: Variant in LookProfile.keep_patches(region):
+		if material_name.contains(str(word)):
+			return true
+	return false
+
 ## True when a patch's tint is pale beach sand (LookProfile.SAND_TINT): the
 ## life passes' sand banks and beaches, #fff5d1. A glaze over the ground
 ## rather than paving, and no grass grows on it.
@@ -500,20 +527,24 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
 	painted.set_shader_parameter(&"use_vertex_alpha", blended and has_colour
 		and kind != Kind.TERRAIN)
 	var meadow := kind == Kind.PATCH and is_meadow(standard)
-	var rock := kind == Kind.PATCH and not meadow and is_rock(standard)
+	var kept := kind == Kind.PATCH and not meadow and is_kept_patch(standard, region)
+	var rock := kind == Kind.PATCH and not meadow and not kept and is_rock(standard)
 	var rim := LookProfile.DECK_RIM
 	if kind == Kind.PATCH:
-		rim = LookProfile.PAVING_RIM if is_paving(standard) \
+		rim = LookProfile.PAVING_RIM if is_paving(standard) and not kept \
 			else LookProfile.MEADOW_RIM if meadow else LookProfile.PATCH_RIM
 	painted.set_shader_parameter(&"look_rim", rim)
 	var opacity := 1.0
 	if meadow:
 		opacity = LookProfile.MEADOW_OPACITY
-	elif kind == Kind.PATCH and not is_cobble(standard) and not rock:
+	elif kind == Kind.PATCH and not is_cobble(standard) and not rock and not kept:
 		opacity = LookProfile.PATCH_OPACITY
 	painted.set_shader_parameter(&"look_opacity", opacity)
-	var surface_tint := LookProfile.PAVING_SURFACE_TINT \
-		if kind == Kind.PATCH and is_paving(standard) else Color.WHITE
+	# `ground.paving_tint` names a region's own (sw_isle's limestone courts read
+	# near-white, L0.72 s0.20, at the shared one).
+	var surface_tint: Color = LookProfile.region_value(region, "ground", "paving_tint",
+		LookProfile.PAVING_SURFACE_TINT) \
+		if kind == Kind.PATCH and is_paving(standard) and not kept else Color.WHITE
 	painted.set_shader_parameter(&"look_surface_tint",
 		Vector3(surface_tint.r, surface_tint.g, surface_tint.b))
 	painted.set_shader_parameter(&"look_rim_noise_metres", LookProfile.RIM_NOISE_METRES)
@@ -545,7 +576,7 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
 		and (kind == Kind.TERRAIN or (kind == Kind.DECK and deck_road_of(region) != null))
 	_set_paint(painted, class_kind, road_detect,
 		region, paving if kind == Kind.DECK or (kind == Kind.PATCH and blended
-			and not is_paving(standard) and not meadow) else PackedVector4Array(), area)
+			and not is_paving(standard) and not meadow and not kept) else PackedVector4Array(), area)
 	if meadow:
 		# A meadow keeps its own green, at the meadow's value and chroma,
 		# rather than the yard glaze: glazed at PATCH_OPACITY and taken for
@@ -554,11 +585,26 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
 		# scree's grey (saturation 0.57 to 0.16).
 		painted.set_shader_parameter(&"look_yard", 0.0)
 		painted.set_shader_parameter(&"look_keep", 1.0)
+		# `ground.meadow_tint` turns its hue as well (a multiplier on the
+		# linear colour, as deck_tint is): sw_isle's lawns kept their own
+		# olive at hue 60-64 where its editor and concept draw them 66-75.
 		var value := float(_trim(region, "meadow_value", LookProfile.MEADOW_VALUE))
-		painted.set_shader_parameter(&"look_keep_tint", Vector3(value, value, value))
+		var meadow_tint: Color = LookProfile.region_value(region, "ground", "meadow_tint", Color.WHITE)
+		painted.set_shader_parameter(&"look_keep_tint",
+			Vector3(meadow_tint.r, meadow_tint.g, meadow_tint.b) * value)
 		painted.set_shader_parameter(&"look_keep_chroma", float(_trim(region, "meadow_chroma",
 			LookProfile.MEADOW_CHROMA_FORWARD if LookProfile.forward_plus()
 				else LookProfile.MEADOW_CHROMA)))
+	elif kept:
+		# A named inlay keeps its own texture and colour, its chroma raised
+		# as the region's signature props are (`props.keep_chroma`) so the
+		# grade does not grey it.
+		painted.set_shader_parameter(&"look_yard", 0.0)
+		painted.set_shader_parameter(&"look_keep", 1.0)
+		painted.set_shader_parameter(&"look_keep_tint", Vector3.ONE)
+		painted.set_shader_parameter(&"look_keep_chroma", float(LookProfile.region_value(region,
+			"props", "keep_chroma", LookProfile.KEEP_CHROMA_FORWARD if LookProfile.forward_plus()
+				else LookProfile.KEEP_CHROMA)))
 	elif rock:
 		# Rock keeps its own texture and colour at its region's rock value.
 		painted.set_shader_parameter(&"look_yard", 0.0)
@@ -724,7 +770,14 @@ static func _set_paint(painted: ShaderMaterial, kind: Kind, road_detect: bool,
 		_trim(region, "verge_green_red", LookProfile.VERGE_GREEN_RED))
 	painted.set_shader_parameter(&"look_verge_fine_metres", LookProfile.VERGE_FINE_METRES)
 	painted.set_shader_parameter(&"look_verge_fine", LookProfile.VERGE_FINE)
-	painted.set_shader_parameter(&"look_verge_grain", LookProfile.VERGE_GRAIN)
+	# `ground.verge_grain`: how much of its texture's grain the verge keeps (a
+	# region whose base is one vertex colour per 2 m and a detail tile, sw_isle,
+	# needs all of it, or its ground reads as smooth vertex colour).
+	painted.set_shader_parameter(&"look_verge_grain",
+		float(LookProfile.region_value(region, "ground", "verge_grain", LookProfile.VERGE_GRAIN)))
+	# `ground.verge_grain_steep`: how much of it a steep face keeps (1: all).
+	painted.set_shader_parameter(&"look_verge_grain_steep",
+		float(LookProfile.region_value(region, "ground", "verge_grain_steep", 1.0)))
 	painted.set_shader_parameter(&"look_variation_metres", LookProfile.VARIATION_METRES)
 	painted.set_shader_parameter(&"look_variation", LookProfile.VARIATION)
 	painted.set_shader_parameter(&"look_variation_hue", LookProfile.VARIATION_HUE)

@@ -4,12 +4,14 @@ extends Path3D
 
 ## Full path width in metres. A point override of 0 inherits the surrounding
 ## width profile; newly inserted curve points therefore keep the old taper.
+## MAX_WIDTH allows the rivers of the 8 km continent v2, whose creek mouths are
+## 26-58 m wide (it was 16 m, which drew them as narrow ribbons in carved beds).
 
 const HISTORY_LIMIT := 24
 const MIN_WIDTH := 0.5
-const MAX_WIDTH := 16.0
+const MAX_WIDTH := 64.0
 
-@export_range(0.5, 16.0, 0.1) var default_width := 2.5:
+@export_range(0.5, 64.0, 0.1) var default_width := 2.5:
 	set(value):
 		default_width = clampf(value, MIN_WIDTH, MAX_WIDTH)
 		_update_current_history()

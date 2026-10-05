@@ -55,6 +55,20 @@ SKIP_ENCODE = ("no Godot 4.7.2 editor binary (set ELORIA_GODOT)" if GODOT is Non
 FIXTURE_SHAS = set(json.loads((FIXTURE / "world.json").read_text(encoding="utf-8"))["externalResources"].values())
 
 
+def _two_pools(maps: Path) -> tuple[Path, Path]:
+    """A maps tree with two packages, each beside its own copy of the fixture's images: a_first is the fixture,
+    b_second (sorted after it) samples the same images in the stale-roles package's materials. Returns the two
+    image directories, resolved."""
+    first, second = maps / "a_first", maps / "b_second"
+    shutil.copytree(FIXTURE, first, ignore=shutil.ignore_patterns("vram", "*.py", "stale_roles.*"))
+    shutil.copytree(FIXTURE / "shared-assets", second / "shared-assets", ignore=shutil.ignore_patterns("vram"))
+    shutil.copyfile(FIXTURE / "stale_roles.glb", second / "world.glb")
+    manifest = json.loads((FIXTURE / "stale_roles.json").read_text(encoding="utf-8"))
+    manifest["asset"]["glb"] = "world.glb"
+    (second / "world.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
+    return (first / "shared-assets").resolve(), (second / "shared-assets").resolve()
+
+
 def _run_tool(maps: Path, cache: Path, *extra: str) -> tuple[int, dict, str]:
     env = dict(os.environ, PYTHONIOENCODING="utf-8")
     if GODOT is not None:
@@ -151,11 +165,39 @@ class Recipes(unittest.TestCase):
 
     def test_fixture_inventory_names_every_role(self):
         found = tool.inventory([FIXTURE])
-        self.assertEqual(set(found), FIXTURE_SHAS)
-        roles = {sha: {role for role, _ in record["roles"]} for sha, record in found.items()}
+        self.assertEqual({sha for _, sha in found}, FIXTURE_SHAS)
+        self.assertEqual({directory for directory, _ in found}, {(FIXTURE / "shared-assets").resolve()})
+        roles = {sha: {role for role, _ in record["roles"]} for (_, sha), record in found.items()}
         self.assertIn({"orm", "occlusion"}, roles.values())
         self.assertIn({"base", "normal"}, roles.values())
         self.assertIn(set(), roles.values())
+
+    def test_each_copy_of_a_shared_image_keeps_its_own_roles(self):
+        # Two pools holding the same bytes, as continent-v2's and nymara-regions' do: the pool whose maps sort
+        # first must not take the other's images, and each copy's roles come from the maps that name it.
+        with tempfile.TemporaryDirectory() as tmp:
+            maps = Path(tmp) / "maps"
+            first, second = _two_pools(maps)
+            found = tool.inventory([maps])
+            directories = {directory for directory, _ in found}
+            self.assertEqual(directories, {first, second})
+            for directory in directories:
+                self.assertEqual({sha for d, sha in found if d == directory}, FIXTURE_SHAS, directory)
+            alone = tool.inventory([maps / "b_second"])
+            self.assertEqual({sha: (r["roles"], r["cutoffs"]) for (d, sha), r in found.items() if d == second},
+                             {sha: (r["roles"], r["cutoffs"]) for (_, sha), r in alone.items()},
+                             "a pool's records are the same with or without the other pool in the tree")
+            fixture = {sha: r["roles"] for (_, sha), r in tool.inventory([FIXTURE]).items()}
+            self.assertEqual({sha: r["roles"] for (d, sha), r in found.items() if d == first}, fixture)
+            # The stale-roles materials: the opaque JPEG base is a MASK cutout there, the ORM map also colour.
+            committed = json.loads((SIDECARS / "index.json").read_text(encoding="utf-8"))["images"]
+            by_recipe = {entry["recipe"]: sha for sha, entry in committed.items()}
+            second_roles = {sha: tool.role_names(r["roles"]) for (d, sha), r in found.items() if d == second}
+            first_roles = {sha: tool.role_names(r["roles"]) for (d, sha), r in found.items() if d == first}
+            self.assertEqual((first_roles[by_recipe["base"]], second_roles[by_recipe["base"]]),
+                             (["base"], ["base", "base_cutout"]))
+            self.assertEqual((first_roles[by_recipe["orm"]], second_roles[by_recipe["orm"]]),
+                             (["occlusion", "orm"], ["base", "occlusion", "orm"]))
 
 
 class CommittedFixture(unittest.TestCase):
@@ -321,6 +363,55 @@ class Build(unittest.TestCase):
         self.assertEqual(code, 0, output[-2000:])
         reason = self._index(maps / "shared-assets" / "vram")["excluded"].get(orm, "")
         self.assertTrue(reason.startswith("quality: channel psnr"), reason)
+
+    def test_each_pool_gets_its_own_index(self):
+        # The whole-tree run package_client makes, over two pools that share images: each directory's index names
+        # every image its own maps use, an in-place run deletes no sidecar of the other pool, and the second pool's
+        # index is byte for byte the one a run without the first pool writes (MapSceneCache keys hash it).
+        self.assertEqual(self.code, 0, self.output[-2000:])
+        tree = self.scratch / "pools"
+        first, second = _two_pools(tree / "maps")
+        cache = tree / "cache"
+        shutil.copytree(self.cache, cache)
+        code, summary, output = _run_tool(tree / "maps", cache, "--no-prune")
+        self.assertEqual(code, 0, output[-2000:])
+        self.assertEqual(summary["encoded"], 0, "the second copy of an image reuses the first copy's encode")
+        self.assertIn("distinct encodes", output)
+        indexes = {d: self._index(d / "vram") for d in (first, second)}
+        for directory, index in indexes.items():
+            self.assertEqual(set(index["images"]) | set(index["excluded"]), FIXTURE_SHAS, directory)
+            self.assertEqual(sorted(p.name for p in (directory / "vram").glob("*.evt")),
+                             sorted(e["file"] for e in index["images"].values()))
+        committed = json.loads((SIDECARS / "index.json").read_text(encoding="utf-8"))
+        fields = ("file", "recipe", "format", "width", "height", "mipmaps", "gpuBytes", "rawBytes", "roles")
+        self.assertEqual({sha: {k: e[k] for k in fields} for sha, e in indexes[first]["images"].items()},
+                         {sha: {k: e[k] for k in fields} for sha, e in committed["images"].items()})
+        by_recipe = {entry["recipe"]: sha for sha, entry in committed["images"].items()}
+        self.assertEqual(indexes[second]["excluded"].get(by_recipe["orm"]), "role_conflict: base+occlusion+orm")
+        self.assertEqual(indexes[second]["images"][by_recipe["base"]]["roles"], ["base", "base_cutout"])
+        # The same pool alone, from the same cache.
+        alone = tree / "alone"
+        shutil.copytree(tree / "maps" / "b_second", alone / "b_second", ignore=shutil.ignore_patterns("vram"))
+        code, _, output = _run_tool(alone, cache, "--no-prune")
+        self.assertEqual(code, 0, output[-2000:])
+        self.assertEqual((second / "vram" / "index.json").read_bytes(),
+                         (alone / "b_second" / "shared-assets" / "vram" / "index.json").read_bytes())
+
+    def test_psnr_median_counts_each_encode_once(self):
+        # Two pools holding the same images under the same materials are one set of encodes: the set-level median
+        # gate and the reported basePsnrMedian are the single pool's, whatever else is in the tree.
+        self.assertEqual(self.code, 0, self.output[-2000:])
+        self.assertIn("basePsnrEncodes", self.summary)
+        tree = self.scratch / "twins"
+        for name in ("a_first", "b_twin"):
+            shutil.copytree(FIXTURE, tree / "maps" / name, ignore=shutil.ignore_patterns("vram", "*.py"))
+        cache = tree / "cache"
+        shutil.copytree(self.cache, cache)
+        code, summary, output = _run_tool(tree / "maps", cache, "--no-prune")
+        self.assertEqual(code, 0, output[-2000:])
+        self.assertEqual(summary["encoded"], 0)
+        self.assertEqual(summary["basePsnrEncodes"], self.summary["basePsnrEncodes"])
+        self.assertEqual(summary["basePsnrMedian"], self.summary["basePsnrMedian"])
 
     def test_cache_inside_a_worktree_must_be_ignored(self):
         repo = self.scratch / "repo"

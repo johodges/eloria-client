@@ -348,7 +348,9 @@ const PAVING_TINT_VALUE := 0.75
 const PAVING_TINT_SATURATION := 0.3
 ## The pale paving itself steps down a little and warms, so the square's
 ## floor is not the brightest thing in it (the paving came out at Y 175 under
-## a cream monument base) and the warm cobble reads as part of it.
+## a cream monument base) and the warm cobble reads as part of it. A region
+## file may name its own (`ground.paving_tint`): sw_isle's limestone courts
+## read near-white at this one.
 const PAVING_SURFACE_TINT := Color(0.87, 0.83, 0.75)
 ## A patch at least this bright (display value) and at most this saturated is
 ## worn cobble or stone (the east gate's forecourt, #ad9e82): drawn solid, not
@@ -561,7 +563,11 @@ const DECK_ROAD_TOLERANCE := Vector2(0.05, 0.15)
 ## linear albedo it drew a milky pale turquoise as bright as the painted roads
 ## (Ssarathi's shore luminance 110-127 against develop's 51-52, Crownwater's
 ## harbour and Westhaven's quays the same). At 4 Ssarathi's shore measures
-## luminance 51, develop's; 2.5, Lantern Reach's value, left it at 39.
+## luminance 51, develop's; 2.5, Lantern Reach's value, left it at 39. A
+## region whose sea meets no other region's (sw_isle, an island in the
+## continent-v2 frame) may name its own value, chroma and tint
+## (`water.sea_value`, `sea_chroma`, `sea_tint`, a multiplier on the decoded
+## linear colour).
 const CONTINENT_SEA_VALUE := 4.0
 ## And its chroma after the decode, around its own luminance: decoded whole,
 ## the small red channel went to nothing and the sea read a saturated teal
@@ -813,6 +819,12 @@ const FADE_BEHIND_METRES := 0.4
 ## the player under its top (a roof, a yurt: at ss_wild a straw cone sat over
 ## the player with a porthole in it).
 const FADE_VANISH_COVERAGE := 0.1
+## A landmark a region names to keep its hole (`props.hole_words`) still
+## vanishes when its box covers more than this of the view: from the camera's
+## low limit behind sw_isle's 32 m keep (coverage 1.0: its box reaches behind the
+## camera), a hole left the frame one wall. The west gatehouse seen from the game
+## camera with the player in its passage covers 0.90 and keeps its hole.
+const FADE_NAMED_HOLE_MAX_COVERAGE := 0.95
 const FADE_THIN_METRES := 2.0
 const FADE_PILLAR_RATIO := 2.0
 const FADE_PILLAR_METRES := 4.0
@@ -994,6 +1006,11 @@ const GRASS_LAYER_DEFAULT := 0.3
 ## now only the blend's grassy foot.
 const GRASS_VERTEX_PATH_VALUE := Vector2(0.46, 0.49)
 const GRASS_VERTEX_GREEN := 0.06
+## Where a region's file asks for it (`grass.open_green`), open terrain with no
+## biome blend grows grass as its vertex colour's green leads its red and blue
+## (display): none at or under x, all of it from y (sw_isle's graded meadow
+## green leads by about 0.09, its dry meadow 0.02, sand and rock not at all).
+const GRASS_OPEN_GREEN := Vector2(-0.01, 0.05)
 
 ## The tufts: GRASS_TUFTS blades each (4 to 6), in three sizes - short and
 ## splayed for the verge, mid-height for the beds, taller and upright for a
@@ -1100,6 +1117,8 @@ const SKY_FALLBACK := {"top": Color("3d7ec2"), "horizon": Color("bcc9cd")}
 const SKY_WARM := Color(1.0, 0.87, 0.68)
 const SKY_HORIZON_WARMTH := 0.12
 const SKY_HAZE_WARMTH := 0.45
+## A region's file may name its own (`sky.haze_warmth`, LookSky.sky_colours):
+## sw_isle's lagoon fog is blue, and warmed by 0.45 its far views read cream.
 ## Lifted 0.1, the haze band was the brightest thing in a low view (197 luma
 ## at gm_horizon, a paper-white wall over the tutorial islands) and pulled the
 ## eye off the road and the landmark.
@@ -1492,23 +1511,25 @@ const REGION_SECTIONS := {
 	"ground": ["path_luma", "path_tint", "path_chroma", "verge_value_green",
 		"verge_value_earth", "verge_saturation", "verge_green_red", "deck_path",
 		"deck_road_colour", "deck_tint", "deck_chroma", "deck_grain", "path_detail",
-		"path_fine", "rock_value", "meadow_value", "meadow_chroma"],
-	"grass": ["root", "tip", "value", "layers", "open", "meadow"],
-	"sky": ["top", "horizon", "paint", "clear"],
-	"water": ["decode_albedo", "inland_tint"],
-	"foliage": ["crown_materials", "tree_words", "shrub_words", "untamed_words"],
-	"props": ["keep_words", "keep_chroma", "keep_tint"],
+		"path_fine", "rock_value", "meadow_value", "meadow_chroma", "meadow_tint", "keep_patches",
+		"paving_tint", "verge_grain", "verge_grain_steep"],
+	"grass": ["root", "tip", "value", "layers", "open", "meadow", "open_green"],
+	"sky": ["top", "horizon", "paint", "clear", "haze_warmth"],
+	"water": ["decode_albedo", "inland_tint", "sea_value", "sea_chroma", "sea_tint"],
+	"foliage": ["crown_materials", "tree_words", "shrub_words", "untamed_words", "plain_words"],
+	"props": ["keep_words", "keep_chroma", "keep_tint", "hole_words"],
 }
 const REGION_TABLE_KEYS := ["layers", "decode_albedo", "crown_materials", "tree_words",
-	"shrub_words", "untamed_words", "keep_words"]
+	"shrub_words", "untamed_words", "plain_words", "keep_words", "keep_patches", "hole_words"]
 const REGION_META_KEYS := ["id", "schema", "notes"]
 ## Keys whose values are colours: [r, g, b] display (sRGB) components, exactly
 ## as a Color() constant takes them, or "#rrggbb".
 const REGION_COLOUR_KEYS := ["path_tint", "root", "tip", "top", "horizon", "deck_road_colour",
-	"deck_tint", "inland_tint", "keep_tint"]
+	"deck_tint", "inland_tint", "keep_tint", "meadow_tint", "paving_tint", "sea_tint"]
 ## The lists a region's `foliage` section extends, by key.
 const FOLIAGE_DEFAULTS := {"crown_materials": CROWN_MATERIALS, "tree_words": KIT_TREE_WORDS,
-	"shrub_words": KIT_SHRUB_WORDS, "untamed_words": KIT_UNTAMED_WORDS}
+	"shrub_words": KIT_SHRUB_WORDS, "untamed_words": KIT_UNTAMED_WORDS,
+	"plain_words": KIT_NOT_FOLIAGE_WORDS}
 
 ## Parsed region files by id ({} for an id with no file), each read once.
 ## Chunks are painted on the loader's worker threads, so the cache is locked.
@@ -1637,6 +1658,22 @@ static func keep_words(id: String) -> Array:
 	var words: Variant = region_section(id, "props").get("keep_words")
 	return words if words is Array else []
 
+## The words naming `id`'s decorative ground patches (its file's
+## `ground.keep_patches`, lower case, contained in the patch material's
+## name): an inlay drawn in its own colour (LookGround.painted_for) rather
+## than taken for a yard by its tint; empty for most regions.
+static func keep_patches(id: String) -> Array:
+	var words: Variant = region_section(id, "ground").get("keep_patches")
+	return words if words is Array else []
+
+## The words naming `id`'s landmarks that keep a hole round the player when
+## they fade, never vanishing whole (its file's `props.hole_words`, lower
+## case, contained in the occluding mesh's node name; LookFade.mode_of);
+## empty for most regions.
+static func hole_words(id: String) -> Array:
+	var words: Variant = region_section(id, "props").get("hole_words")
+	return words if words is Array else []
+
 ## The value a water shader at `shader_path` is decoded to in Forward+ on
 ## `id`'s map (its file's `water.decode_albedo`); 0 when it is not listed.
 static func water_decode_value(id: String, shader_path: String) -> float:
@@ -1725,7 +1762,7 @@ static func _expected(section: String, bare: String) -> String:
 		return "colour ([r, g, b] or \"#rrggbb\")"
 	if bare == "layers" or bare == "decode_albedo":
 		return "table of numbers"
-	if section == "foliage" or bare == "keep_words":
+	if section == "foliage" or bare == "keep_words" or bare == "keep_patches" or bare == "hole_words":
 		return "list of strings"
 	return "number"
 
@@ -1753,7 +1790,7 @@ static func _typed_value(section: String, bare: String, value: Variant) -> Varia
 			table[str(word)] = float(weight)
 		table.make_read_only()
 		return table
-	if bare == "keep_words":
+	if bare == "keep_words" or bare == "keep_patches" or bare == "hole_words":
 		if value is not Array:
 			return null
 		var words: Array = []

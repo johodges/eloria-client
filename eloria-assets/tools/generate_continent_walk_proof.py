@@ -26,6 +26,7 @@ import textwrap
 from sync_geographic_family import CLIENT, family, resolve, LOD_CONTENT
 from sync_package_content import digest_for
 import continent_approaches as approaches
+from legacy_content import read_base_only
 
 
 def read(path):
@@ -175,8 +176,13 @@ def travel_route(connections, source, destination):
 
 
 def runtime(server):
-    """Load the paired production modules without constructing a live World."""
+    """Load the paired production modules without constructing a live World.
+
+    The proof is of the legacy publication, so the loaders read the base content tables only, never the continent-v2
+    overlay (legacy_content.read_base_only); this tool, publish_interior_staff and their tests all load through here.
+    """
     server = Path(server).resolve()
+    read_base_only(server)
     sys.path[:0] = [str(server/'tools'), str(server)]
     previous = Path.cwd()
     try:

@@ -26,7 +26,22 @@ extends SceneTree
 ## file, as it does for a player, so each toggle copies the file first and
 ## puts it back once both captures are taken: a run by hand outside a scratch
 ## user directory leaves the player's own settings as they were.
+##
+## ELORIA_SURVEY_CHUNK_WAIT_S raises the 90 s the survey waits for the
+## selected geometry chunks of a view (a render-only manifest that keeps a
+## whole territory resident streams hundreds of cells one by one).
+##
+## A spec with `"top": {"size", "height", "far", "haze", "tiles": [[x, z],
+## ...]}` is a whole-territory overview instead of a rig view: once its chunks
+## are ready, an orthographic camera looks straight down (north up) from
+## `height` over each tile centre, `size` metres of frame height, and the 3D
+## viewport alone (no HUD) is saved as <id>_<nn>.png; survey.json lists each
+## tile's centre, size and pixels for the mosaic. `"haze": false` draws the
+## tiles without the depth fog, which is keyed to the game camera's depth and
+## would veil ground seen from hundreds of metres up. The rig, its focus and
+## the streaming focus stay where the spec put them.
 const UNCAPPED_VARIABLE := "ELORIA_SURVEY_UNCAPPED"
+const CHUNK_WAIT_VARIABLE := "ELORIA_SURVEY_CHUNK_WAIT_S"
 const UNCAPPED_FRAMES := 60
 const LIVE_TOGGLE_VARIABLE := "ELORIA_SURVEY_LIVE_TOGGLE"
 const SETTINGS_PATH := "user://eloria_hud.cfg"
@@ -176,7 +191,10 @@ func _run() -> void:
 					push_error("Neighbor failed to preload for survey")
 					quit(2)
 					return
-		var chunk_deadline := Time.get_ticks_msec() + 90000
+		var chunk_wait_ms := 90000
+		if not OS.get_environment(CHUNK_WAIT_VARIABLE).is_empty():
+			chunk_wait_ms = int(float(OS.get_environment(CHUNK_WAIT_VARIABLE)) * 1000.0)
+		var chunk_deadline := Time.get_ticks_msec() + chunk_wait_ms
 		while not _resident_chunks_ready(active_loader.world_root, stream) and Time.get_ticks_msec() < chunk_deadline:
 			await process_frame
 		if not _resident_chunks_ready(active_loader.world_root, stream):
@@ -186,6 +204,15 @@ func _run() -> void:
 		# A cold neighbor import can finish after the initial settling period.
 		# Let the HUD's one-second FPS window expire before a steady-view capture.
 		await create_timer(1.1).timeout
+		if spec.has("top"):
+			var tiles := await _capture_top(spec)
+			report.append({"id":spec.id,"map":spec.map,"tile":[tile.x,tile.y],"top":tiles,
+				"manifest_source":active_loader.manifest.source_path,
+				"chunkResidents":_chunk_report(active_loader.world_root, stream),
+				"videoMemoryBytes":Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED),
+				"textureMemoryBytes":Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED)})
+			print("SURVEY saved ", spec.id, " tiles=", tiles.size())
+			continue
 		var actor: Node3D = main.get("actor_nodes").get(1)
 		var times: Array = []
 		for i in 30:
@@ -224,6 +251,46 @@ func _run() -> void:
 	main.queue_free()
 	await process_frame
 	quit()
+
+## The orthographic overview tiles of a `top` spec (see the header). Returns
+## one record per tile: file, centre (x, z), frame height and pixel size.
+func _capture_top(spec: Dictionary) -> Array:
+	var top: Dictionary = spec.top
+	var viewport: SubViewport = main.get("main_viewport")
+	var rig: Node3D = main.get("camera_rig")
+	var rig_camera: Camera3D = rig.get("camera")
+	var camera := Camera3D.new()
+	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	camera.size = float(top.get("size", 300.0))
+	camera.near = 1.0
+	camera.far = float(top.get("far", 1000.0))
+	rig.get_parent().add_child(camera)
+	if not bool(top.get("haze", true)):
+		var environment := (main.get("world_environment") as WorldEnvironment).environment
+		if environment != null:
+			# Shallow: shares the Sky, so no second radiance map is allocated.
+			var clear := environment.duplicate(false) as Environment
+			clear.fog_enabled = false
+			clear.volumetric_fog_enabled = false
+			camera.environment = clear
+	camera.make_current()
+	var tiles: Array = []
+	var centres: Array = top.get("tiles", [])
+	for index in centres.size():
+		var centre: Array = centres[index]
+		camera.global_transform = Transform3D(Basis.looking_at(Vector3.DOWN, Vector3.FORWARD),
+			Vector3(float(centre[0]), float(top.get("height", 400.0)), float(centre[1])))
+		for i in 30:
+			await process_frame
+		RenderingServer.force_draw(false)
+		var image := viewport.get_texture().get_image()
+		var file := "%s_%02d.png" % [str(spec.id), index]
+		image.save_png(out.path_join(file))
+		tiles.append({"file": file, "x": float(centre[0]), "z": float(centre[1]), "size": camera.size,
+			"pixels": [image.get_width(), image.get_height()]})
+	rig_camera.make_current()
+	camera.queue_free()
+	return tiles
 
 ## Lifts every frame cap: Engine.max_fps (the player's fps_limit setting) and
 ## vsync. Called again before each measurement in case a map load or a

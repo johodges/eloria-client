@@ -28,6 +28,13 @@ const BIOME_CATALOG_PATH := "res://assets/world/biome_blend/catalog.json"
 @export var biome_palette: Array[Resource] = []
 @export var preview_enabled := true
 @export_range(0.01, 2.0, 0.01) var preview_uv_metres_inverse := 0.24
+## Viewer-only preview clips, as continent x, z polygons (the region's continent translation plus the preview's own
+## coordinates). With three or more points in preview_clip_inside the preview draws only the cells whose centre lies
+## inside it; a cell whose centre lies inside any polygon of preview_clip_outside is not drawn. Neither changes the
+## heights, the bake, the sculpt or any other tool: a viewer wrapper uses them so that maps sharing one grid (the
+## continent-v2 isle group, whose crops share sw_isle's vertices) each draw their own ground once.
+@export var preview_clip_inside := PackedVector2Array()
+@export var preview_clip_outside: Array[PackedVector2Array] = []
 
 var _base_heights := PackedFloat32Array()
 var _effective_heights := PackedFloat32Array()
@@ -43,6 +50,8 @@ var _bound_sculpt_layer: Resource
 var _bound_palette_entries: Array[Resource] = []
 var last_error := ""
 var preview_revision := 0
+## 1 for each grid cell the preview draws (see preview_clip_inside); empty when nothing is clipped.
+var _clip_mask := PackedByteArray()
 
 
 func _ready() -> void:
@@ -90,6 +99,7 @@ func refresh_preview() -> bool:
 	_apply_patches()
 	_apply_path_effects()
 	_preview_signature = _current_signature()
+	_clip_mask = preview_clip_mask()
 	if preview_enabled:
 		_build_preview_mesh()
 		_build_ground_region_previews()
@@ -578,6 +588,8 @@ func _build_preview_mesh() -> void:
 				preview_uv_metres_inverse
 	for z_index in grid_size.y - 1:
 		for x_index in grid_size.x - 1:
+			if not _cell_drawn(x_index, z_index):
+				continue
 			var index := z_index * grid_size.x + x_index
 			indices.append_array(PackedInt32Array([index, index + 1,
 				index + grid_size.x, index + 1, index + grid_size.x + 1, index + grid_size.x]))
@@ -660,6 +672,8 @@ func _build_chunked_preview_mesh(mesh: ArrayMesh, vertices: PackedVector3Array,
 		groups[index] = []
 	for z_index in grid_size.y - 1:
 		for x_index in grid_size.x - 1:
+			if not _cell_drawn(x_index, z_index):
+				continue
 			var assignment := assignments[z_index * (grid_size.x - 1) + x_index]
 			groups[assignment + 1].append(Vector2i(x_index, z_index))
 	for group_index in groups.size():
@@ -678,7 +692,8 @@ func _preview_arrays_for_all(vertices: PackedVector3Array,
 	var cells: Array = []
 	for z_index in grid_size.y - 1:
 		for x_index in grid_size.x - 1:
-			cells.append(Vector2i(x_index, z_index))
+			if _cell_drawn(x_index, z_index):
+				cells.append(Vector2i(x_index, z_index))
 	return _preview_arrays_for_cells(cells, vertices, normals, uvs)
 
 
@@ -796,6 +811,8 @@ func _build_ground_region_previews() -> void:
 		var indices := PackedInt32Array()
 		for z_index in range(z0, z1 + 1):
 			for x_index in range(x0, x1 + 1):
+				if not _cell_drawn(x_index, z_index):
+					continue
 				var p00 := _point(x_index, z_index) + Vector3.UP * 0.008
 				var p10 := _point(x_index + 1, z_index) + Vector3.UP * 0.008
 				var p01 := _point(x_index, z_index + 1) + Vector3.UP * 0.008
@@ -840,6 +857,54 @@ func _build_ground_region_previews() -> void:
 			region.blend_width, region.opacity, -128 + region_index)
 		if instance.material_override != null:
 			container.add_child(instance)
+
+
+## The preview's cell mask (1 = drawn) from preview_clip_inside and preview_clip_outside, one byte per grid cell in
+## row-major order; empty when nothing is clipped. Each row is scanned once per polygon (even-odd crossings of the
+## row's cell-centre line), so a whole-group grid is masked in a few milliseconds.
+func preview_clip_mask() -> PackedByteArray:
+	var mask := PackedByteArray()
+	var inside_used := preview_clip_inside.size() >= 3
+	var outside_used := false
+	for polygon in preview_clip_outside:
+		outside_used = outside_used or polygon.size() >= 3
+	if not inside_used and not outside_used:
+		return mask
+	var columns := grid_size.x - 1
+	var rows := grid_size.y - 1
+	mask.resize(columns * rows)
+	mask.fill(0 if inside_used else 1)
+	var translation := _continent_translation()
+	var x0 := origin.x + translation.x + 0.5 * cell_metres
+	var z0 := origin.y + translation.z + 0.5 * cell_metres
+	if inside_used:
+		_mark_polygon(mask, preview_clip_inside, x0, z0, columns, rows, 1)
+	for polygon in preview_clip_outside:
+		if polygon.size() >= 3:
+			_mark_polygon(mask, polygon, x0, z0, columns, rows, 0)
+	return mask
+
+
+func _mark_polygon(mask: PackedByteArray, polygon: PackedVector2Array, x0: float, z0: float, columns: int,
+		rows: int, value: int) -> void:
+	for z_index in rows:
+		var z := z0 + float(z_index) * cell_metres
+		var crossings: Array[float] = []
+		for i in polygon.size():
+			var a := polygon[i]
+			var b := polygon[(i + 1) % polygon.size()]
+			if (a.y > z) != (b.y > z):
+				crossings.append(a.x + (z - a.y) * (b.x - a.x) / (b.y - a.y))
+		crossings.sort()
+		for pair in range(0, crossings.size() - 1, 2):
+			var first := maxi(0, ceili((crossings[pair] - x0) / cell_metres))
+			var last := mini(columns - 1, ceili((crossings[pair + 1] - x0) / cell_metres) - 1)
+			for x_index in range(first, last + 1):
+				mask[z_index * columns + x_index] = value
+
+
+func _cell_drawn(x_index: int, z_index: int) -> bool:
+	return _clip_mask.is_empty() or _clip_mask[z_index * (grid_size.x - 1) + x_index] == 1
 
 
 func _clear_preview() -> void:
@@ -933,7 +998,7 @@ func _current_signature() -> Array:
 			if FileAccess.file_exists(ProjectSettings.globalize_path(
 				BIOME_CATALOG_PATH)) else "",
 		preview_enabled,
-		preview_uv_metres_inverse, patches, paths, grounds]
+		preview_uv_metres_inverse, patches, paths, grounds, preview_clip_inside, preview_clip_outside]
 
 
 func _region_paths() -> Array:

@@ -5,6 +5,11 @@ extends Node3D
 ## Only surveyed reciprocal neighbors are displayed simultaneously. The
 ## server still selects the map and is the sole owner of actors/interactions.
 const CONNECTIONS := "res://data/maps/exterior_connections.json"
+## The rebuilt continent's land links (eloria-assets/maps/continent-v2/
+## _continent_v2/publish_links.py), kept apart from CONNECTIONS: the legacy
+## continent publisher writes that file whole, and its checks hold it equal to
+## the server's own copy. Its links join only continent-v2 maps.
+const CONTINENT_V2_CONNECTIONS := "res://data/maps/exterior_connections-continent-v2.json"
 const PREVIEW_SURFACE_LAYER := 16
 const DEFAULT_PRELOAD_DISTANCE := 240.0
 const DEFAULT_RETAIN_DISTANCE := 320.0
@@ -56,6 +61,10 @@ func configure(maps: Dictionary) -> void:
 		preload_distance = maxf(0, float(raw.get("preloadDistance", DEFAULT_PRELOAD_DISTANCE)))
 		retain_distance = maxf(preload_distance, float(raw.get("retainDistance", DEFAULT_RETAIN_DISTANCE)))
 		maximum_neighbours = clampi(int(raw.get("maximumNeighbours", MAXIMUM_NEIGHBOURS)), 0, MAXIMUM_NEIGHBOURS)
+	if FileAccess.file_exists(CONTINENT_V2_CONNECTIONS):
+		var v2: Variant = JSON.parse_string(FileAccess.get_file_as_string(CONTINENT_V2_CONNECTIONS))
+		if v2 is Dictionary:
+			links.append_array((v2 as Dictionary).get("connections", []))
 
 func activate(map_id: String, imported: Node3D, manifest: WorldManifest) -> void:
 	active_map = MapRegistry.normalize_server_map_id(map_id)
@@ -640,14 +649,23 @@ func _continent_translation(map_id: String) -> Variant:
 		return null
 	return Vector3(float(translation[0]), float(translation[1]), float(translation[2]))
 
-## Every exterior region the registry places on the continent, the active map last.
+## The continent frame a region's geography names (`continentGeography.frame`):
+## empty for the twelve-territory continent, "continent-v2" for the rebuilt one,
+## whose regions share continent coordinates with nothing in the old frame.
+func continent_frame(map_id: String) -> String:
+	var geography: Dictionary = MapRegistry.resolve(registry, map_id).get("continentGeography", {}) as Dictionary
+	return str(geography.get("frame", ""))
+
+## Every exterior region the registry places on the active map's continent (its
+## frame), the active map last.
 func continent_maps() -> Array[String]:
 	var result: Array[String] = []
+	var frame := continent_frame(active_map)
 	for key: Variant in registry.keys():
 		var map_id: String = MapRegistry.normalize_server_map_id(str(key))
 		if map_id == active_map or result.has(map_id):
 			continue
-		if _continent_translation(map_id) is Vector3:
+		if _continent_translation(map_id) is Vector3 and continent_frame(map_id) == frame:
 			result.append(map_id)
 	return result
 

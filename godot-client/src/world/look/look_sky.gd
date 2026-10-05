@@ -96,8 +96,11 @@ static func sky_colours(lighting: WorldManifest, minute: float) -> Dictionary:
 	var zenith := top.lerp(LookProfile.SKY_ZENITH_DEEP, LookProfile.SKY_ZENITH_DEPTH * clear)
 	var painted_horizon := horizon.lerp(LookProfile.SKY_WARM,
 		LookProfile.SKY_HORIZON_WARMTH * clear)
+	# `sky.haze_warmth` names a region's own (sw_isle's blue lagoon fog).
+	var haze_warmth := float(LookProfile.region_value(lighting.asset_id().get_slice("__chunk_", 0), "sky",
+		"haze_warmth", LookProfile.SKY_HAZE_WARMTH))
 	var haze := painted_horizon.lerp(LookProfile.SKY_WARM,
-		LookProfile.SKY_HAZE_WARMTH * clear).lightened(LookProfile.SKY_HAZE_LIFT * clear)
+		haze_warmth * clear).lightened(LookProfile.SKY_HAZE_LIFT * clear)
 	if haze.v > LookProfile.SKY_HAZE_VALUE_MAX:
 		haze = Color.from_hsv(haze.h, haze.s, LookProfile.SKY_HAZE_VALUE_MAX, haze.a)
 	var cloud_lit := LookProfile.SKY_CLOUD_NIGHT.lerp(LookProfile.SKY_CLOUD_LIT, light)

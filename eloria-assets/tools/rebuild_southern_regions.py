@@ -10,6 +10,7 @@ import re
 import sys
 
 import rebuild_northern_regions as shared
+from legacy_content import read_base_only
 
 CLIENT = Path(__file__).resolve().parents[2]
 MAPS = CLIENT / 'eloria-assets/maps'
@@ -175,6 +176,8 @@ def main():
     parser.add_argument('--stage', choices=('all', 'prepare', 'collision', 'content', 'publish'), default='all')
     args = parser.parse_args()
     server, data = args.server.resolve(), args.data.resolve()
+    # Legacy content only: base tables, never the continent-v2 overlay (serve plan CV13; see legacy_content.py).
+    read_base_only(server)
     if not args.skip_build:
         for region in EXTERIORS:
             rebuild_geometry(region)

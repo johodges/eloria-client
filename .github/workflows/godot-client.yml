@@ -82,8 +82,14 @@ jobs:
         run: python3 godot-client/tests/test_package_vram.py -v
       - name: Validate the packager's imported actor LODs
         run: python3 -m pytest godot-client/tests/test_package_client_actor_lods.py -q
+      - name: Validate what the packager ships of a served continent-v2 map
+        run: python3 godot-client/tests/test_package_client.py -v
+      - name: Validate the continent-v2 isles' links in the streaming graph
+        run: python3 -m pytest godot-client/tests/test_continent_v2_links.py -q
       - name: Validate the continent cartography
         run: python3 -m pytest godot-client/tests/test_cartography.py -q
+      - name: Validate the continent-v2 isles' tab maps
+        run: python3 -m pytest godot-client/tests/test_continent_v2_cartography.py -q
       - name: Boat portal hover and click fixtures
         run: godot --headless --path godot-client --script res://tests/test_boat_portals.gd
       - name: Validate the shared subject icon atlas

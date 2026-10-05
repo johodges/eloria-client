@@ -1064,7 +1064,8 @@ func _ready() -> void:
 	invasion_assistant_window.command_requested.connect(
 		_on_invasion_assistant_command_requested)
 	cartography = _json("res://data/maps/cartography.json")
-	cartography_regions = cartography.get("regions", []) as Array
+	cartography_regions = (cartography.get("regions", []) as Array).duplicate()
+	cartography_regions.append_array(_continent_v2_tab_maps(cartography))
 	_region_polygons.clear()
 	equipment_config = preload(
 		"res://src/actors/equipment_registry_snapshot_cache.gd").prepare(
@@ -3779,12 +3780,22 @@ func _map_owning_point(point: Vector3) -> String:
 		return ""
 	var pixel := Vector2((point.x + float(translation[0]) - float(origin[0])) / metres_per_pixel,
 		(point.z + float(translation[2]) - float(origin[1])) / metres_per_pixel)
+	var frame: String = _cartography_frame(region_index)
 	for index: int in range(cartography_regions.size()):
+		if _cartography_frame(index) != frame:
+			continue
 		var polygon: PackedVector2Array = _region_polygon(index)
 		if polygon.size() >= 3 and Geometry2D.is_point_in_polygon(pixel, polygon):
 			return MapRegistry.normalize_server_map_id(str(
 				(cartography_regions[index] as Dictionary).get("serverMap", "")))
 	return ""
+
+## The continent frame a cartography row belongs to: empty for the continent
+## the picture shows, "continent-v2" for the rebuilt one's territories. Their
+## outlines share the picture's pixel lattice but no ground with it, so outlines
+## are compared and drawn only within one frame.
+func _cartography_frame(index: int) -> String:
+	return str((cartography_regions[index] as Dictionary).get("frame", ""))
 
 ## A region's outline in continent picture pixels, built once per cartography.
 func _region_polygon(index: int) -> PackedVector2Array:
@@ -4798,7 +4809,10 @@ func _map_boundaries() -> Array[Dictionary]:
 	if origin.size() != 2 or metres_per_pixel <= 0.0 or translation.size() != 3:
 		return result
 	var height: float = adapter.walking_height if adapter != null else 0.0
+	var frame: String = _cartography_frame(region_index)
 	for index: int in range(cartography_regions.size()):
+		if _cartography_frame(index) != frame:
+			continue
 		var region: Dictionary = cartography_regions[index] as Dictionary
 		var polygon: Array = region.get("continentPolygon", []) as Array
 		if polygon.size() < 3:
@@ -5718,6 +5732,9 @@ func _configure_cartography() -> void:
 	var continent: Dictionary = cartography.get("continent", {}) as Dictionary
 	var image_size: Array = continent.get("imageSize", []) as Array
 	var rects: Array[Dictionary] = []
+	# A row of another continent's frame (the rebuilt continent's isles) has no
+	# rectangle on this picture; those rows are appended after every row that
+	# has one, so the overlay's indices stay the cartography's.
 	for region_value: Variant in cartography_regions:
 		if not region_value is Dictionary:
 			continue
@@ -12040,6 +12057,20 @@ func _animation_for_model(model_config: Dictionary) -> Dictionary:
 	if not animation_configs.has(path):
 		animation_configs[path] = _json(path)
 	return animation_configs[path] as Dictionary
+
+## The rebuilt continent's tab maps (cartography-continent-v2.json, written by
+## eloria-assets/maps/continent-v2/_continent_v2/publish_cartography.py): rows
+## of cartography.json's shape, on their own frame and with no rectangle on its
+## picture, appended after its regions. Their outlines are in its pixel lattice;
+## a file written for another lattice is left out rather than misplaced.
+static func _continent_v2_tab_maps(legacy: Dictionary) -> Array:
+	var tab_maps: Dictionary = _json("res://data/maps/cartography-continent-v2.json")
+	var lattice: Dictionary = tab_maps.get("lattice", {}) as Dictionary
+	var continent: Dictionary = legacy.get("continent", {}) as Dictionary
+	if (str(lattice.get("originMetres", [])) != str(continent.get("originMetres", []))
+			or float(lattice.get("metresPerPixel", 0.0)) != float(continent.get("metresPerPixel", -1.0))):
+		return []
+	return tab_maps.get("regions", []) as Array
 
 static func _json(path: String) -> Dictionary:
 	var file := FileAccess.open(path, FileAccess.READ)

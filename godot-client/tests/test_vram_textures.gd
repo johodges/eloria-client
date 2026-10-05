@@ -68,6 +68,7 @@ func _run() -> void:
 	_check_fallbacks()
 	_check_unusable_formats()
 	_check_index_rejected()
+	_check_shared_pool()
 	_check_stale_roles()
 	await _check_pooled_roles()
 	_check_index_without_roles()
@@ -513,6 +514,71 @@ func _check_index_rejected() -> void:
 	_expect(int(stats.get("imagesSidecar", -1)) == 0 and int(stats.get("imagesDecoded", -1)) == EXTERNAL_IMAGES
 		and VramTextures.index_for_directory(directory.path_join("shared-assets")).status == "missing",
 		"no index (a checkout that never ran the tool) decodes every image")
+	VramTextures.reconfigure()
+
+## A package ships a sidecar two pools hold once (tools/package_client.py
+## share_identical_sidecars): the second pool's index names the first pool's
+## directory in `pool` and keeps its own entry. The file is read there, its
+## sha256 still checked; a pool that lacks it decodes, and a `pool` that is
+## not a relative path makes the entry no entry.
+func _check_shared_pool() -> void:
+	VramTextures.reconfigure()
+	var first := _copy_fixture("pool_first")
+	var second := _copy_fixture("pool_second")
+	var index := _read_index(second)
+	for sha: String in index.images:
+		index.images[sha]["pool"] = "../../pool_first/shared-assets"
+		DirAccess.remove_absolute(second.path_join("shared-assets/vram").path_join(index.images[sha].file))
+	_write_index(second, index)
+	var state := _parse(true, second)
+	var stats := _stats(state)
+	var formats := _formats(state)
+	var right := 0
+	for image: int in SIDECAR_FORMATS:
+		if formats[image] == SIDECAR_FORMATS[image]:
+			right += 1
+	var sha := _sha_of_recipe(index, "base")
+	var entry := VramTextures.sidecar_entry(sha, second.path_join("shared-assets"))
+	var expected := ProjectSettings.globalize_path(first.path_join("shared-assets/vram")).replace("\\", "/") \
+		.simplify_path().path_join(str(index.images[sha].file))
+	_expect(int(stats.get("imagesSidecar", -1)) == SIDECARS and int(stats.get("sidecarRejected", -1)) == 0
+		and right == SIDECARS and str(entry.get("path", "")) == expected,
+		"a pooled entry uploads the other pool's file (%s, %s): %s" % [entry.get("path", ""), formats, stats])
+	_expect(VramTextures.resident_bytes(sha, 999999999) == int(index.images[sha].gpuBytes),
+		"and the budget counts its sidecar's GPU bytes")
+	var line := VramTextures.self_test_pool(second.path_join("shared-assets"))
+	_expect(line.begins_with("vram_textures self_test pool ok pooled=%d of %d" % [SIDECARS, SIDECARS]),
+		"the smoke launch's pool test decodes a pooled sidecar: " + line)
+	line = VramTextures.self_test_pool(first.path_join("shared-assets"))
+	_expect(line.begins_with("vram_textures self_test pool failed pooled=0"),
+		"and fails on an index that names no other pool: " + line)
+	VramTextures.reconfigure()
+	var absent := _copy_fixture("pool_absent")
+	index = _read_index(absent)
+	for key: String in index.images:
+		index.images[key]["pool"] = "../../pool_nowhere/shared-assets"
+		DirAccess.remove_absolute(absent.path_join("shared-assets/vram").path_join(index.images[key].file))
+	_write_index(absent, index)
+	stats = _stats(_parse(true, absent))
+	_expect(int(stats.get("imagesSidecar", -1)) == 0 and int(stats.get("sidecarRejected", -1)) == SIDECARS
+		and int(stats.get("imagesDecoded", -1)) == EXTERNAL_IMAGES and int(stats.get("imagesFailed", -1)) == 0,
+		"a pool without the file decodes those images: %s" % [stats])
+	_expect(VramTextures.self_test_pool(absent.path_join("shared-assets")).begins_with(
+		"vram_textures self_test pool failed"), "and the smoke launch's pool test fails there")
+	for pool: Variant in ["", "/pool_first/shared-assets", "C:/pool_first/shared-assets",
+			"..\\..\\pool_first\\shared-assets", 7]:
+		VramTextures.reconfigure()
+		var refused := _copy_fixture("pool_refused")
+		index = _read_index(refused)
+		for key: String in index.images:
+			index.images[key]["pool"] = pool
+		_write_index(refused, index)
+		stats = _stats(_parse(true, refused))
+		var info := VramTextures.index_for_directory(refused.path_join("shared-assets"))
+		_expect(info.status == "ok" and int(info.entries) == 0 and int(info.skipped) == SIDECARS
+			and int(stats.get("imagesSidecar", -1)) == 0 and int(stats.get("imagesDecoded", -1)) == EXTERNAL_IMAGES,
+			"a pool %s is no pool: the entries are skipped and the images decode (%s)" % [JSON.stringify(pool),
+			stats])
 	VramTextures.reconfigure()
 
 # --------------------------------------------------------------------------

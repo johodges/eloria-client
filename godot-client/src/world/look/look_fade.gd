@@ -107,6 +107,14 @@ static var blend_only := false
 static func bind(manifest: WorldManifest) -> void:
 	blend_only = manifest != null and (not LookGround.outdoor(manifest)
 		or not str((manifest.data.get("asset", {}) as Dictionary).get("interiorClass", "")).is_empty())
+	hole_words = [] if manifest == null else LookProfile.hole_words(LookGround.region_of(manifest))
+
+## The bound map's landmarks that keep a hole rather than vanish (its region
+## file's `props.hole_words`, contained in the occluding mesh's node name):
+## sw_isle's palace keep vanished whole from its own town's view at the
+## player's maximum zoom, and its west gatehouse left a curtain-wall stub and
+## a floating floor slab while the player stood in the gate passage.
+static var hole_words: Array = []
 
 ## True when an occluder fades by a dithered look copy (a hole, or vanishing)
 ## rather than by develop's blend: see `mode_of`.
@@ -134,6 +142,12 @@ static func keeps_hole(node: MeshInstance3D) -> bool:
 ## A mesh drawn by a look stand-in (a kept signature colour, a tree's trunk)
 ## that would blend dissolves instead, or keeps a hole if it is a trunk: a
 ## stand-in has no blended copy, and OccluderFade would leave it solid.
+##
+## A landmark the bound map's region names (`hole_words`) keeps a hole
+## wherever it would vanish, unless it covers more than
+## LookProfile.FADE_NAMED_HOLE_MAX_COVERAGE of the view: a town's keep or gate
+## stays standing round the player instead of disappearing from its own view,
+## but a wall that fills a low camera's frame still goes.
 static func mode_of(node: MeshInstance3D, camera: Camera3D = null) -> Mode:
 	if node != null and node.has_meta(MODE_META):
 		return int(node.get_meta(MODE_META)) as Mode
@@ -142,8 +156,23 @@ static func mode_of(node: MeshInstance3D, camera: Camera3D = null) -> Mode:
 	# copy: OccluderFade would leave it solid. It dissolves instead, or keeps a
 	# hole under its crown if it is a trunk.
 	if mode == Mode.BLEND and node != null and _stands_in(node):
-		return Mode.HOLE if LookFoliage.is_tree_wood(String(node.name)) else Mode.VANISH
+		mode = Mode.HOLE if LookFoliage.is_tree_wood(String(node.name)) else Mode.VANISH
+	if mode == Mode.VANISH and node != null and keeps_named_hole(String(node.name)) 			and screen_coverage(world_box(node), camera if camera != null else _camera_of(node)) 				<= LookProfile.FADE_NAMED_HOLE_MAX_COVERAGE:
+		return Mode.HOLE
 	return mode
+
+## True when `node_name` (a neighbour's preview copy's original name) holds
+## one of the bound region's `hole_words`.
+static func keeps_named_hole(node_name: String) -> bool:
+	if hole_words.is_empty():
+		return false
+	if node_name.begins_with("StreamView_"):
+		node_name = node_name.get_slice("__", 1)
+	var lowered := node_name.to_lower()
+	for word: Variant in hole_words:
+		if lowered.contains(str(word)):
+			return true
+	return false
 
 ## True when one of `node`'s surfaces draws with a look stand-in that names
 ## its dithered variant.

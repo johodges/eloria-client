@@ -44,6 +44,12 @@ def main():
     run(server,CLIENT/'eloria-assets/tools/continent_portals.py','--server',server,'--maps',data,'--region','amberwood','--apply')
     run(server,server/'tools/author_region_content.py','all','--maps',data,'--client',CLIENT,'--region','amberwood','--apply')
     sys.path[:0]=[str(server/'tools'),str(server)]
+    try:  # base content tables only, never the continent-v2 overlay (serve plan CV13)
+        from eloria import content_overlay
+    except ImportError:  # an older server checkout has no continent-v2 overlay, so nothing to switch off
+        pass
+    else:
+        content_overlay.configure(False)
     import relocate_map_content as relocate
     profile=server/'config/eloria'
     maps,portals=relocate.load_maps(profile/'maps.txt');cache={}

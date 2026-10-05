@@ -77,6 +77,8 @@ const GROUND_NAMES := ["none", "path", "verge", "grass"]
 ## with coverage, a bridge or solid deck (road throughout), an invisible walk
 ## threshold (the ground beneath shows), or a vertex-coloured island.
 enum Surface { NONE = 0, TERRAIN = 1, DECK = 2, BRIDGE = 3, THRESHOLD = 4, VERTEX = 5 }
+## How many invisible thresholds a candidate's ray looks through for the ground beneath.
+const THRESHOLD_DEPTH := 2
 
 static var _tuft_meshes: Array[ArrayMesh] = []
 
@@ -676,7 +678,7 @@ func _place_tile(key: Vector2i) -> void:
 
 ## What the ground is where `hit` landed: (Ground, grassiness 0..1, palette).
 func _classify(hit: Dictionary, up: Vector3, patches: Array[Dictionary],
-		waters: Array[Dictionary], cell_hash: int) -> Vector3:
+		waters: Array[Dictionary], cell_hash: int, depth := 0) -> Vector3:
 	var collider := hit.collider as CollisionObject3D
 	if collider == null:
 		return Vector3(Ground.NONE, 0.0, 0.0)
@@ -687,6 +689,18 @@ func _classify(hit: Dictionary, up: Vector3, patches: Array[Dictionary],
 	var kind := int(body.get("kind", Surface.NONE))
 	if kind == Surface.NONE or kind == Surface.BRIDGE:
 		return Vector3(Ground.PATH if kind == Surface.BRIDGE else Ground.NONE, 0.0, 0.0)
+	if kind == Surface.THRESHOLD:
+		# An invisible walk threshold: the ground beneath shows, so the ground
+		# beneath decides (nothing beneath, or water, grows nothing). Judged at
+		# the threshold itself, the grass took it for open ground and grew a bed
+		# on sw_isle's pier, whose bridge deck is drawn by a kit span over the
+		# sea (its framework slab is alpha 0).
+		if depth >= THRESHOLD_DEPTH:
+			return Vector3(Ground.NONE, 0.0, 0.0)
+		var beneath := _beneath(hit, collider, up)
+		if beneath.is_empty():
+			return Vector3(Ground.NONE, 0.0, 0.0)
+		return _classify(beneath, up, patches, waters, cell_hash, depth + 1)
 	var slope := smoothstep(LookProfile.GRASS_SLOPE_UP.x, LookProfile.GRASS_SLOPE_UP.y,
 		(hit.normal as Vector3).dot(up))
 	if slope <= 0.0:
@@ -724,7 +738,14 @@ func _classify(hit: Dictionary, up: Vector3, patches: Array[Dictionary],
 	# (`grass.meadow`, 1 unless it says otherwise).
 	var meadow := cover.z * float(LookProfile.region_value(_classified_region, "grass",
 		"meadow", 1.0))
-	var grass := maxf(_biome_grass(point, cell_hash) * cover.y, meadow) * slope
+	var open := _biome_grass(point, cell_hash)
+	# `grass.open_green`: where no biome blend covers the terrain, open ground
+	# is as grassy as its vertex colour is green (sw_isle's opaque base also
+	# covers its beaches and grey cut faces, which grew tufts at grass.open).
+	var green_share := float(LookProfile.region_value(_classified_region, "grass", "open_green", 0.0))
+	if green_share > 0.0 and kind == Surface.TERRAIN and not _has_biome(point):
+		open *= lerpf(1.0, open_green(_vertex_colour(body, hit), bool(body.srgb)), green_share)
+	var grass := maxf(open * cover.y, meadow) * slope
 	if verge:
 		return Vector3(Ground.VERGE, maxf(grass, 0.5 * slope * _rim_grass(point, cell_hash)),
 			palette)
@@ -752,6 +773,15 @@ static func verge_strength(alpha: float, cell_hash: int) -> float:
 	var roadside := smoothstep(LookProfile.GRASS_VERGE_ROADSIDE.x,
 		LookProfile.GRASS_VERGE_ALPHA.y, alpha)
 	return outer * (1.0 - roadside * LookProfile.GRASS_VERGE_ROADSIDE.y)
+
+## The walk surface under `hit` (the collider it landed on left out), or {}
+## when there is none within RAY_METRES.
+func _beneath(hit: Dictionary, collider: CollisionObject3D, up: Vector3) -> Dictionary:
+	var point: Vector3 = hit.position
+	_below.from = point - up * 0.01
+	_below.to = point - up * RAY_METRES
+	_below.exclude = [collider.get_rid()]
+	return _space.intersect_ray(_below)
 
 ## True when another road deck lies within a hand's breadth under the rim of
 ## the one `hit` landed on and covers the spot: where two road decks overlap
@@ -1064,6 +1094,28 @@ static func barycentric_xz(point: Vector3, a: Vector3, b: Vector3, c: Vector3) -
 ## How grassy the biome blend is at `point` (global): its layers' weights
 ## there, each layer counted as grassy as its texture says. A spot outside
 ## every collected cell counts as grass.
+## How green a terrain vertex colour is for the open ground's grass
+## (`grass.open_green`): 0 for sand, grey rock and earth (green not leading
+## red and blue), 1 for a lawn green, from its display colour.
+static func open_green(colour: Color, srgb: bool) -> float:
+	var display := colour if srgb else colour.linear_to_srgb()
+	return smoothstep(LookProfile.GRASS_OPEN_GREEN.x, LookProfile.GRASS_OPEN_GREEN.y,
+		display.g - maxf(display.r, display.b))
+
+## True when a biome blend covers `point` (the ground's own layers decide its
+## grass there, not `grass.open`).
+func _has_biome(point: Vector3) -> bool:
+	for biome: Dictionary in _biomes:
+		var continent: Vector3 = (biome.to_local as Transform3D) * point
+		var origin: Vector2 = biome.origin
+		var metres: float = biome.metres
+		var base: Image = biome.base
+		var texel := Vector2i(floori((continent.x - origin.x) / metres + 0.5),
+			floori((continent.z - origin.y) / metres + 0.5))
+		if texel.x >= 0 and texel.y >= 0 and texel.x < base.get_width() and texel.y < base.get_height():
+			return true
+	return false
+
 func _biome_grass(point: Vector3, cell_hash: int) -> float:
 	for biome: Dictionary in _biomes:
 		var to_local: Transform3D = biome.to_local
