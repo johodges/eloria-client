@@ -12,7 +12,10 @@ never loads them. From main.tscn, the autoloads and every res:// path the
 game's data names, it follows every path literal, scene reference and global
 class name; no file it reaches lies under world_authoring or names it. The
 editor plugins ([editor_plugins] in project.godot) are not roots: an exported
-game never loads them.
+game never loads them. Nor is a setting of the project's own until a file the
+game reaches reads it: an isles editor session binds [map_authoring]
+territory_catalog_path to world_authoring (continent-v2/sw-island commits it),
+and only the editor plugins read that.
 """
 import fnmatch
 import importlib.util
@@ -112,6 +115,11 @@ EXT_RESOURCE = re.compile(r'\[ext_resource[^\]]*\bpath="([^"]+)"')
 INCLUDE = re.compile(r'#include\s+"([^"]+)"')
 IDENTIFIER = re.compile(r"\b[A-Z]\w*\b")
 NAMED_FILE = TEXT_SUFFIXES + (".png", ".jpg", ".jpeg", ".webp", ".glb", ".gltf", ".ogg", ".wav", ".bin")
+# project.godot sections: the engine's own, which the exported game reads, and the editor's, which it never does.
+ENGINE_SECTIONS = {"application", "audio", "autoload", "debug", "display", "gui", "input", "input_devices",
+                   "internationalization", "layer_names", "navigation", "network", "physics", "rendering",
+                   "shader_globals", "global_group", "threading", "xr", "accessibility", "animation", "memory"}
+EDITOR_SECTIONS = {"editor", "editor_plugins", "importer_defaults", "filesystem", "dotnet"}
 
 
 def _gdscript(source: str) -> tuple[str, list[str]]:
@@ -195,28 +203,42 @@ def runtime_closure(files: list[str], read) -> dict[str, tuple[str | None, str]]
         return found
 
     roots: list[tuple[str, str]] = []
+    # A project's own setting ([map_authoring] territory_catalog_path, which an isles editor session binds to
+    # world_authoring) is a root only once a file the game reaches names it.
+    settings: dict[str, list[str]] = {}
     section = ""
     for line in text("project.godot").splitlines():
         header = re.match(r"^\[(\w+)\]", line)
         if header:
             section = header.group(1)
-        elif section != "editor_plugins":
-            roots += [(t, f"project.godot [{section}]") for r in RES_PATH.findall(line) for t in resolve(r, "")]
+            continue
+        targets = [t for r in RES_PATH.findall(line) for t in resolve(r, "")]
+        if section in ENGINE_SECTIONS:
+            roots += [(t, f"project.godot [{section}]") for t in targets]
+        elif section not in EDITOR_SECTIONS and targets and "=" in line:
+            settings[f"{section}/{line.split('=', 1)[0].strip()}"] = targets
     for path in files:
         if path.startswith(("data/", "schemas/", "assets/")) and not path.endswith((".gd", ".tscn", ".tres")):
             roots += [(t, f"data {path}") for r in RES_PATH.findall(text(path)) for t in resolve(r, path)]
     reached: dict[str, tuple[str | None, str]] = {}
     queue = []
-    for target, why in roots:
-        if target not in reached:
-            reached[target] = (None, why)
-            queue.append(target)
-    while queue:
-        current = queue.pop()
-        for target, why in edges(current):
+
+    def visit(targets: list[tuple[str, str]], via: str | None) -> None:
+        for target, why in targets:
             if target not in reached:
-                reached[target] = (current, why)
+                reached[target] = (via, why)
                 queue.append(target)
+
+    visit(roots, None)
+    while queue:
+        while queue:
+            current = queue.pop()
+            visit(edges(current), current)
+        for key, targets in list(settings.items()):
+            reader = next((p for p in reached if key in text(p)), None)
+            if reader is not None:
+                del settings[key]
+                visit([(t, f"project.godot setting {key}, read by {reader}") for t in targets], None)
     return reached
 
 
@@ -237,11 +259,13 @@ def _chain(reached: dict, path: str) -> str:
 
 
 def test_the_closure_follows_what_a_script_can_load():
-    # Teeth: a preload, a built path and a global class each reach a region source from main.tscn.
+    # Teeth: a preload, a built path, a global class and a project setting the game reads each reach a region
+    # source from main.tscn; the editor plugins and a setting only they read do not.
     sources = {
         "project.godot": '[application]\nrun/main_scene="res://src/app/main.tscn"\n'
                          '[autoload]\nState="*res://src/state.gd"\n'
-                         '[editor_plugins]\nenabled=PackedStringArray("res://addons/tool/plugin.cfg")\n',
+                         '[editor_plugins]\nenabled=PackedStringArray("res://addons/tool/plugin.cfg")\n'
+                         '[map_authoring]\ncatalog_path="res://world_authoring/territories.json"\n',
         "src/app/main.tscn": '[ext_resource type="Script" path="res://src/app/main.gd" id="1"]\n',
         "src/app/main.gd": 'const Surface := preload("surface.gd")\nfunc _ready():\n\tRegionReader.new()\n',
         "src/app/surface.gd": 'class_name Surface\n',
@@ -249,7 +273,8 @@ def test_the_closure_follows_what_a_script_can_load():
                                     'func path(id): return "res://world_authoring/regions/%s/spec.json" % id\n',
         "src/state.gd": '# res://world_authoring/in-a-comment.json\nvar x := 1\n',
         "addons/tool/plugin.cfg": '[plugin]\nscript="plugin.gd"\n',
-        "addons/tool/plugin.gd": 'const C := "res://world_authoring/territories.json"\n',
+        "addons/tool/plugin.gd": 'const C := "res://world_authoring/territories.json"\n'
+                                 'var catalog = ProjectSettings.get_setting("map_authoring/catalog_path")\n',
         "world_authoring/territories.json": "{}",
         "world_authoring/regions/vale/spec.json": "{}",
     }
@@ -259,6 +284,10 @@ def test_the_closure_follows_what_a_script_can_load():
     assert [p for p in reached if p.startswith("world_authoring/")] == []
     assert [p for p in sorted(reached) if names_world_authoring(p, sources.get(p, ""))] == [
         "src/dev/region_reader.gd"]
+    # A project setting of the project's own is followed once something the game runs reads it.
+    sources["src/state.gd"] = 'var catalog = ProjectSettings.get_setting("map_authoring/catalog_path")\n'
+    reached = runtime_closure(sorted(sources), sources.get)
+    assert "world_authoring/territories.json" in reached
     sources["src/state.gd"] = 'const SPEC := preload("res://world_authoring/regions/vale/spec.json")\n'
     reached = runtime_closure(sorted(sources), sources.get)
     assert "world_authoring/regions/vale/spec.json" in reached
@@ -295,3 +324,11 @@ def test_nothing_the_game_runs_reaches_world_authoring():
         if source and names_world_authoring(path, source):
             naming.append(_chain(reached, path))
     assert naming == []
+    # The isles' editor binding (continent-v2/sw-island's project.godot, or an editor session's own edit) is read
+    # by the editor plugins only, so it changes nothing.
+    binding = '\n[map_authoring]\nterritory_catalog_path="res://world_authoring/continent-v2/territories.json"\n'
+
+    def read_bound(path: str) -> str | None:
+        return (read(path) or "") + binding if path == "project.godot" else read(path)
+
+    assert sorted(runtime_closure(files, read_bound)) == sorted(reached)
