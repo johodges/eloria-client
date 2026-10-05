@@ -64,6 +64,28 @@ def _import_mask(build: Path, *, product: bool = True) -> None:
         'dest_files=["res://.godot/imported/hero.png-test.ctex"]\n', encoding="utf-8")
 
 
+@pytest.mark.parametrize("line", [
+    "WARNING: Ignoring torso cover profile orun-male-rear-neck-v1: surface fingerprint "
+    "drifted (adadf7459870edb2824a2010e68656f7272c382d76621c216594cba95dedf07b)",
+    "WARNING: glb cache: pack failed for assets/actors/native/races/hero.glb (Unconfigured)",
+    "WARNING: Native hairstyle failed to load: res://assets/actors/native/hair/a.glb",
+    "WARNING: Fitted hairstyle has an incompatible skeleton: res://assets/actors/native/hair/a.glb",
+])
+def test_the_smoke_launch_fails_on_an_actor_part_that_fell_back(tmp_path, monkeypatch, line):
+    """A fallback is a warning, not a load error, and the packaged Orun male's
+    dropped neck surface passed the smoke launch that way."""
+    monkeypatch.setattr(package, "run_godot",
+                        lambda *_args, **_kwargs: "Godot Engine v4.7.2\n" + line + "\n")
+    with pytest.raises(package.PackageError, match="reported errors at startup"):
+        package._launch(tmp_path / "app", tmp_path, {"binary": "Eloria.exe"})
+
+
+def test_the_smoke_launch_passes_a_clean_start(tmp_path, monkeypatch):
+    clean = "Godot Engine v4.7.2\nWARNING: 231 ObjectDB instances were leaked at exit\n"
+    monkeypatch.setattr(package, "run_godot", lambda *_args, **_kwargs: clean)
+    assert package._launch(tmp_path / "app", tmp_path, {"binary": "Eloria.exe"}) == clean
+
+
 def test_export_presets_never_filter_out_the_actor_tree():
     # A blanket assets/actors exclusion would drop the face masks again; the
     # loose-only folders are kept out by .gdignore instead.

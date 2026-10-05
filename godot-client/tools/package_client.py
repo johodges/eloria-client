@@ -98,9 +98,17 @@ MAP_LOD_PACKAGE = re.compile(r"^(world-lod\d+|build-statistics-lod\d+)\b")
 MANIFEST_SKIPPED_KEYS = {"sources", "provenance", "knownLimitations", "lodGroups"}
 FILE_LIKE = re.compile(r"^[^:*?\"<>|\s]+\.(glb|gltf|bin|json|webp|png|jpg|jpeg|gz|escg|ogg|wav)$", re.I)
 # "Can't open file" is GLTFDocument's error when a loose actor GLB is missing.
+# The last four are WARNING-level: an actor part that fell back rather than
+# failed. A torso cover profile whose fingerprint does not match drops a whole
+# reviewed surface (the packaged Orun male did, for every class loadout), and
+# a scene that cannot be packed or a hairstyle that cannot be bound simply
+# goes missing. None of them is a load error, so the old list let them pass.
 SMOKE_FAILURES = ("SCRIPT ERROR", "Parse Error", "Failed to load script",
                   "No loader found", "Cannot open file", "Can't open file",
-                  "Failed loading resource")
+                  "Failed loading resource",
+                  "Ignoring torso cover profile", "glb cache: pack failed",
+                  "Native hairstyle failed to load",
+                  "Fitted hairstyle has an incompatible skeleton")
 
 ACTOR_ROOT = "godot-client/assets/actors/native"
 ACTOR_CATALOGS = ("godot-client/data/actors/models.json", "godot-client/data/actors/equipment.json")
