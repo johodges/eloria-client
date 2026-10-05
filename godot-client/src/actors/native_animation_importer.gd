@@ -85,6 +85,13 @@ static func clear() -> void:
 ## finds the scene ready instead of paying for the parse on the main thread
 ## the moment it arrives. Nothing is parsed twice: a path already parsed, or
 ## already parsing, is left alone.
+##
+## The library must name no image by URI that a package imports (the equipment
+## textures): GLTFDocument reads such a texture back through the
+## RenderingServer, which from a worker waits for the main thread, and
+## `_source_scene` joins this worker from the main thread - a deadlock. No
+## library names one today; the packaging tests check every animationLibrary
+## in models.json.
 static func prewarm(source_path: String) -> void:
 	if source_path.is_empty() or _sources.has(source_path) or _prewarming.has(source_path):
 		return

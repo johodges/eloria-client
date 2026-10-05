@@ -8,8 +8,9 @@ imported into the PCK; actor images nothing names ship nowhere.
 """
 import importlib.util
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import struct
+import subprocess
 import sys
 
 import pytest
@@ -615,3 +616,74 @@ def test_glTF_texture_check_takes_an_import_in_the_pck_or_a_loose_file(tmp_path)
     _write_pck(app / "Eloria.pck", [])
     with pytest.raises(package.PackageError, match="2 glTF textures missing"):
         package.check_glb_textures(app)
+
+
+# --- the real tree ---------------------------------------------------------------
+# GLTFDocument reads a URI texture it got from ResourceLoader back with
+# get_image(), a RenderingServer call that, from a worker thread, waits for the
+# main thread. A package imports the equipment glTFs' URI textures, so no glTF
+# that names one may be parsed on a worker the main thread joins: the animation
+# libraries main.gd prewarms (NativeAnimationImporter joins that worker) and
+# the visual scenes a map preloader builds (GlbSceneCache.prepare) must not.
+
+def _repo_tracked(*specs: str) -> list[str]:
+    try:
+        return package.tracked(package.REPO, *specs)
+    except (OSError, subprocess.CalledProcessError) as error:
+        pytest.skip(f"git cannot list this checkout: {error}")
+
+
+def _imported_folder(target: str) -> bool:
+    if not target.startswith(package.ACTOR_ROOT + "/"):
+        return False
+    return PurePosixPath(target).relative_to(package.ACTOR_ROOT).parts[0] in package.IMPORTED_URI_TEXTURE_FOLDERS
+
+
+def test_prewarmed_animation_libraries_name_no_imported_texture():
+    models = json.loads((package.CLIENT / "data/actors/models.json").read_text(encoding="utf-8"))
+    libraries = sorted({str(model["animationLibrary"]) for model in models["models"].values()
+                        if isinstance(model, dict) and model.get("animationLibrary")})
+    assert libraries
+    absent, imported = [], []
+    for library in libraries:
+        relative = "godot-client/" + library.removeprefix("res://")
+        if not (package.REPO / relative).is_file():
+            absent.append(relative)
+            continue
+        for uri in package.gltf_image_uris(package.REPO / relative):
+            target = package._resolve(relative, uri)
+            if _imported_folder(target):
+                imported.append(f"{relative} -> {target}")
+    if absent:
+        pytest.skip(f"{len(absent)} animation libraries are not checked out, e.g. {absent[0]}")
+    assert imported == []
+
+
+def _values_named(value, key: str):
+    if isinstance(value, dict):
+        for child_key, child in value.items():
+            if child_key == key:
+                yield child
+            yield from _values_named(child, key)
+    elif isinstance(value, list):
+        for child in value:
+            yield from _values_named(child, key)
+
+
+def test_worker_preloaded_visual_scenes_name_no_actor_file():
+    files = [p for p in _repo_tracked("eloria-assets", "godot-client")
+             if p.lower().endswith(".json") and not p.startswith(package.UNSHIPPED_CLIENT_DIRS)]
+    assert files
+    actor = []
+    for relative in files:
+        path = package.REPO / relative
+        if not path.is_file():
+            continue
+        data = path.read_bytes()
+        if b'"visualScenes"' not in data:
+            continue
+        for scenes in _values_named(json.loads(data.decode("utf-8-sig")), "visualScenes"):
+            for scene in scenes if isinstance(scenes, list) else [scenes]:
+                if package.ACTOR_PATH_IN_TEXT.search(str(scene).replace("\\", "/")):
+                    actor.append(f"{relative}: {scene}")
+    assert actor == []

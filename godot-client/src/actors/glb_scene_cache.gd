@@ -12,6 +12,18 @@ extends RefCounted
 ## the duplicate GPU uploads the per-actor parse produced. Per-actor tinting
 ## goes through `material_override`, so sharing the source materials cannot leak
 ## one actor's appearance into another.
+##
+## Threads: parse an equipment glTF on the main thread only, or on a worker the
+## main thread never waits on. A packaged client imports the textures the
+## equipment glTFs name by URI (tools/package_client.py), and GLTFDocument
+## takes such a texture through ResourceLoader and then reads it back with
+## get_image(). Outside the editor that is a RenderingServer texture read: on
+## the main thread it stalls the GPU once per image, and on a worker it waits
+## for the main thread to serve it, so a main thread that joins the worker
+## (wait_to_finish) never returns. Today only the main thread parses equipment:
+## `prepare` runs on a map preloader's worker for the exterior links'
+## visualScenes, which name no actor file, and the packaging tests hold them
+## and the prewarmed animation libraries to that.
 
 ## World objects (harvest nodes, interactives) also come through here, and
 ## GLTFDocument builds their textures at runtime with no mip chain. Seen from the
@@ -35,6 +47,7 @@ static func missing(paths: PackedStringArray) -> PackedStringArray:
 
 static func prepare(paths: PackedStringArray) -> Dictionary:
 	# Worker-owned resources. The main thread publishes them only on arrival.
+	# Never an equipment glTF: see "Threads" above.
 	var result: Dictionary = {}
 	for path: String in paths:
 		path = _canonical_path(path)

@@ -89,7 +89,11 @@ their import settings (VRAM-compressed, mipmapped), so packaged equipment
 uploads the imported textures rather than decoding each JPEG without mips.
 Actor images nothing names (the editor's extracted copies of embedded glTF
 images, the race and neck texture sources) are left out of a package; one
-that any other shipped text names (data, scenes, map manifests) ships loose. A
+that any other shipped text names (data, scenes, map manifests) ships loose.
+`GLTFDocument` reads each imported texture back with `get_image()`, a
+RenderingServer call that a worker thread can only make by waiting for the
+main thread, so equipment glTFs are parsed on the main thread only, never in
+`NativeAnimationImporter.prewarm` or a map preloader's `GlbSceneCache.prepare`. A
 packaged actor still carries no LOD chains, so Low and Medium change
 shadows, cape simulation and LOD bias but not mesh detail there. Giving
 packages the LODs needs the runtime to resolve those paths back to `res://`

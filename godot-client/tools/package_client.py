@@ -36,11 +36,15 @@ What goes in, and why it is more than an export:
       relative path resolves to res://, so the packager writes those
       textures' import settings (VRAM-compressed, mipmapped: what the editor
       gives a texture it sees used in 3D) and the game uploads the imported
-      texture instead of decoding the JPEG with no mip chain. Actor images
-      that nothing names - no glTF URI, no catalog, no client source,
-      no other text the package carries; the editor's extracted copies of
-      embedded glTF images and the race and neck texture sources the race
-      models were built from - ship nowhere.
+      texture instead of decoding the JPEG with no mip chain. GLTFDocument
+      then reads each such texture back with get_image(), a RenderingServer
+      call: it stalls the GPU on the main thread and, from a worker, waits
+      for the main thread, so an equipment glTF must never be parsed on a
+      worker the main thread joins (GlbSceneCache, NativeAnimationImporter).
+      Actor images that nothing names - no glTF URI, no catalog, no client
+      source, no other text the package carries; the editor's extracted
+      copies of embedded glTF images and the race and neck texture sources
+      the race models were built from - ship nowhere.
   eloria-assets/maps, eloria-assets/concepts
       "res://../eloria-assets/..." resolves beside app/. Every map package (a
       folder holding world.json) ships without its references, captures,
