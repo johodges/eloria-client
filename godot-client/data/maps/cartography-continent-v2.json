@@ -1,0 +1,203 @@
+{
+  "schema": "eloria-cartography-continent-v2-v1",
+  "generator": "eloria-assets/maps/continent-v2/_continent_v2/publish_cartography.py",
+  "note": "The continent-v2 territories' tab maps, appended by the client after cartography.json's regions. Generated: run the generator after a map picture, a frame or a polygon changes.",
+  "frame": "continent-v2",
+  "lattice": {
+    "originMetres": [
+      -40,
+      -40
+    ],
+    "metresPerPixel": 2.0
+  },
+  "sources": {
+    "sw_isle": "53c1492adb82d9382113f375d04dbf38c53c1f4afe178cead291244b8bf657ee",
+    "tollholms": "33ab1dd0ac9570fddb87b72e49319b5b1bc94145e130d1b3e994a1143ed19afb",
+    "gull_skerries": "0a83f8cf69476f85498e6d947b74786db4f4b15d1e308607065b8d07b6ead5ed"
+  },
+  "regions": [
+    {
+      "name": "Landfall",
+      "serverMap": "sw_isle",
+      "frame": "continent-v2",
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/continent-v2/sw_isle/client/minimap.webp",
+        "region": [
+          0,
+          0,
+          2038,
+          2038
+        ],
+        "worldMin": [
+          -1019.0,
+          -1049.0
+        ],
+        "worldMax": [
+          1019.0,
+          989.0
+        ]
+      },
+      "continentPolygon": [
+        [
+          219.5,
+          3130.5
+        ],
+        [
+          1238.5,
+          3130.5
+        ],
+        [
+          1238.5,
+          4149.5
+        ],
+        [
+          219.5,
+          4149.5
+        ]
+      ],
+      "continentLabel": [
+        729.0,
+        3640.0
+      ],
+      "globalTranslation": [
+        1418.0,
+        0.0,
+        7270.0
+      ]
+    },
+    {
+      "name": "The Tollholms",
+      "serverMap": "tollholms",
+      "frame": "continent-v2",
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/continent-v2/tollholms/client/minimap.webp",
+        "region": [
+          0,
+          0,
+          724,
+          1890
+        ],
+        "worldMin": [
+          -363.0,
+          -945.0
+        ],
+        "worldMax": [
+          361.0,
+          945.0
+        ]
+      },
+      "continentPolygon": [
+        [
+          1238.5,
+          3246.5
+        ],
+        [
+          1278.5,
+          3269.5
+        ],
+        [
+          1338.5,
+          3275.5
+        ],
+        [
+          1378.5,
+          3293.5
+        ],
+        [
+          1418.5,
+          3333.5
+        ],
+        [
+          1458.5,
+          3376.5
+        ],
+        [
+          1498.5,
+          3418.5
+        ],
+        [
+          1538.5,
+          3451.5
+        ],
+        [
+          1600.5,
+          3499.5
+        ],
+        [
+          1600.5,
+          4191.5
+        ],
+        [
+          1238.5,
+          4191.5
+        ]
+      ],
+      "continentLabel": [
+        1409.747,
+        3768.143
+      ],
+      "globalTranslation": [
+        2800.0,
+        0.0,
+        7398.0
+      ]
+    },
+    {
+      "name": "The Gull Skerries",
+      "serverMap": "gull_skerries",
+      "frame": "continent-v2",
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/continent-v2/gull_skerries/client/minimap.webp",
+        "region": [
+          0,
+          0,
+          1132,
+          1550
+        ],
+        "worldMin": [
+          -567.0,
+          -775.0
+        ],
+        "worldMax": [
+          565.0,
+          775.0
+        ]
+      },
+      "continentPolygon": [
+        [
+          184.5,
+          3570.5
+        ],
+        [
+          219.5,
+          3570.5
+        ],
+        [
+          219.5,
+          4149.5
+        ],
+        [
+          750.5,
+          4149.5
+        ],
+        [
+          750.5,
+          4345.5
+        ],
+        [
+          184.5,
+          4345.5
+        ]
+      ],
+      "continentLabel": [
+        426.491,
+        4187.648
+      ],
+      "globalTranslation": [
+        896.0,
+        0.0,
+        7876.0
+      ]
+    }
+  ]
+}

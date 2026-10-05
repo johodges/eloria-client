@@ -2145,6 +2145,177 @@
         "invertServerY": true
       },
       "status": "private-followup-tutorial"
+    },
+    "sw_isle": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/sw_isle/client/world.json",
+      "label": "Landfall",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          1023,
+          993
+        ],
+        "serverCells": [
+          2046,
+          2046
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 121.49400329589844,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -1023,
+            -1053
+          ],
+          "max": [
+            1023,
+            993
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          1418.0,
+          0.0,
+          7270.0
+        ],
+        "frame": "continent-v2",
+        "geometryMode": "continent-chunks-v1",
+        "serverCells": [
+          2046,
+          2046
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "tollholms": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/tollholms/client/world.json",
+      "label": "The Tollholms",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          367,
+          949
+        ],
+        "serverCells": [
+          1902,
+          1902
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 54.249000549316406,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -367,
+            -953
+          ],
+          "max": [
+            1535,
+            949
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          2800.0,
+          0.0,
+          7398.0
+        ],
+        "frame": "continent-v2",
+        "geometryMode": "continent-chunks-v1",
+        "serverCells": [
+          1902,
+          1902
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "gull_skerries": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/gull_skerries/client/world.json",
+      "label": "The Gull Skerries",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          571,
+          779
+        ],
+        "serverCells": [
+          1560,
+          1560
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 133.04600524902344,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -571,
+            -781
+          ],
+          "max": [
+            989,
+            779
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          896.0,
+          0.0,
+          7876.0
+        ],
+        "frame": "continent-v2",
+        "geometryMode": "continent-chunks-v1",
+        "serverCells": [
+          1560,
+          1560
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
     }
   }
 }

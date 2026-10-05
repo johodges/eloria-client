@@ -1,0 +1,494 @@
+{
+  "schema": 1,
+  "preloadDistance": 320,
+  "retainDistance": 420,
+  "maximumNeighbours": 3,
+  "generator": "eloria-assets/maps/continent-v2/_continent_v2/publish_links.py",
+  "connections": [
+    {
+      "id": "sw_isle--tollholms",
+      "seamless": true,
+      "ends": [
+        {
+          "map": "sw_isle",
+          "portal": "road-to-tollholms",
+          "position": [
+            1019.5,
+            87.5,
+            -454.5
+          ],
+          "frame": {
+            "id": "sw_isle--tollholms",
+            "portal": "road-to-tollholms",
+            "destination": "tollholms",
+            "anchor": [
+              1019.0,
+              87.5,
+              -454.42389497980366
+            ],
+            "globalAnchor": [
+              2437.0,
+              87.5,
+              6815.576105020196
+            ],
+            "globalTranslation": [
+              1418.0,
+              0,
+              7270.0
+            ],
+            "outward": [
+              1.0,
+              0.0
+            ],
+            "uvSign": 1,
+            "preloadDistance": 320,
+            "retainDistance": 420,
+            "blendDistance": 0,
+            "collarDepth": 2,
+            "halfWidthTiles": 3,
+            "viewHalfWidth": 240,
+            "viewDepth": 320,
+            "geometryMode": "continent-chunks-v1",
+            "sceneNodes": []
+          },
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              1023,
+              993
+            ],
+            "serverCells": [
+              2046,
+              2046
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "walkingHeight": 121.49400329589844,
+            "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
+            "addressableWorldBounds": {
+              "min": [
+                -1023,
+                -1053
+              ],
+              "max": [
+                1023,
+                993
+              ]
+            }
+          },
+          "preloadEdges": [
+            [
+              [
+                1019.0,
+                -817.0
+              ],
+              [
+                1019.0,
+                989.0
+              ]
+            ]
+          ],
+          "crossingRuns": {
+            "axis": "y",
+            "runs": [
+              [
+                2042,
+                326,
+                335
+              ],
+              [
+                2042,
+                908,
+                947
+              ],
+              [
+                2042,
+                1312,
+                1465
+              ],
+              [
+                2042,
+                1470,
+                1566
+              ],
+              [
+                2042,
+                1568,
+                1569
+              ],
+              [
+                2042,
+                1573,
+                1576
+              ],
+              [
+                2042,
+                1578,
+                1583
+              ]
+            ]
+          }
+        },
+        {
+          "map": "tollholms",
+          "portal": "road-to-sw_isle",
+          "position": [
+            -363.5,
+            87.5,
+            -582.5
+          ],
+          "frame": {
+            "id": "sw_isle--tollholms",
+            "portal": "road-to-sw_isle",
+            "destination": "sw_isle",
+            "anchor": [
+              -363.0,
+              87.5,
+              -582.4238949798037
+            ],
+            "globalAnchor": [
+              2437.0,
+              87.5,
+              6815.576105020196
+            ],
+            "globalTranslation": [
+              2800.0,
+              0,
+              7398.0
+            ],
+            "outward": [
+              -1.0,
+              -0.0
+            ],
+            "uvSign": 1,
+            "preloadDistance": 320,
+            "retainDistance": 420,
+            "blendDistance": 0,
+            "collarDepth": 2,
+            "halfWidthTiles": 3,
+            "viewHalfWidth": 240,
+            "viewDepth": 320,
+            "geometryMode": "continent-chunks-v1",
+            "sceneNodes": []
+          },
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              367,
+              949
+            ],
+            "serverCells": [
+              1902,
+              1902
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "walkingHeight": 54.249000549316406,
+            "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
+            "addressableWorldBounds": {
+              "min": [
+                -367,
+                -953
+              ],
+              "max": [
+                1535,
+                949
+              ]
+            }
+          },
+          "preloadEdges": [
+            [
+              [
+                -363.0,
+                -945.0
+              ],
+              [
+                -363.0,
+                861.0
+              ]
+            ]
+          ],
+          "crossingRuns": {
+            "axis": "y",
+            "runs": [
+              [
+                3,
+                410,
+                419
+              ],
+              [
+                3,
+                992,
+                1031
+              ],
+              [
+                3,
+                1396,
+                1549
+              ],
+              [
+                3,
+                1554,
+                1650
+              ],
+              [
+                3,
+                1652,
+                1653
+              ],
+              [
+                3,
+                1657,
+                1660
+              ],
+              [
+                3,
+                1662,
+                1667
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "border--sw_isle--gull_skerries",
+      "seamless": true,
+      "ends": [
+        {
+          "map": "sw_isle",
+          "portal": "border-to-gull_skerries",
+          "position": [
+            -328.5,
+            126.7,
+            989.5
+          ],
+          "frame": {
+            "id": "border--sw_isle--gull_skerries",
+            "portal": "border-to-gull_skerries",
+            "destination": "gull_skerries",
+            "anchor": [
+              -1019.0,
+              0.0,
+              699.5
+            ],
+            "globalAnchor": [
+              399.0,
+              0.0,
+              7969.5
+            ],
+            "globalTranslation": [
+              1418.0,
+              0,
+              7270.0
+            ],
+            "outward": [
+              -0.6526427812267985,
+              0.7576657575161684
+            ],
+            "uvSign": 1,
+            "preloadDistance": 320,
+            "retainDistance": 420,
+            "blendDistance": 0,
+            "collarDepth": 2,
+            "halfWidthTiles": 3,
+            "viewHalfWidth": 240,
+            "viewDepth": 320,
+            "geometryMode": "continent-chunks-v1",
+            "sceneNodes": []
+          },
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              1023,
+              993
+            ],
+            "serverCells": [
+              2046,
+              2046
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "walkingHeight": 121.49400329589844,
+            "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
+            "addressableWorldBounds": {
+              "min": [
+                -1023,
+                -1053
+              ],
+              "max": [
+                1023,
+                993
+              ]
+            }
+          },
+          "preloadEdges": [
+            [
+              [
+                -1019.0,
+                989.0
+              ],
+              [
+                -1019.0,
+                -169.0
+              ]
+            ],
+            [
+              [
+                43.0,
+                989.0
+              ],
+              [
+                -1019.0,
+                989.0
+              ]
+            ]
+          ],
+          "crossingRuns": {
+            "axis": "x",
+            "runs": [
+              [
+                3,
+                694,
+                935
+              ]
+            ]
+          }
+        },
+        {
+          "map": "gull_skerries",
+          "portal": "border-to-sw_isle",
+          "position": [
+            193.5,
+            127.1,
+            382.5
+          ],
+          "frame": {
+            "id": "border--sw_isle--gull_skerries",
+            "portal": "border-to-sw_isle",
+            "destination": "sw_isle",
+            "anchor": [
+              -497.0,
+              0.0,
+              93.5
+            ],
+            "globalAnchor": [
+              399.0,
+              0.0,
+              7969.5
+            ],
+            "globalTranslation": [
+              896.0,
+              0,
+              7876.0
+            ],
+            "outward": [
+              0.6526427812267985,
+              -0.7576657575161684
+            ],
+            "uvSign": 1,
+            "preloadDistance": 320,
+            "retainDistance": 420,
+            "blendDistance": 0,
+            "collarDepth": 2,
+            "halfWidthTiles": 3,
+            "viewHalfWidth": 240,
+            "viewDepth": 320,
+            "geometryMode": "continent-chunks-v1",
+            "sceneNodes": []
+          },
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              571,
+              779
+            ],
+            "serverCells": [
+              1560,
+              1560
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "walkingHeight": 133.04600524902344,
+            "invertServerY": true,
+            "serverStorageVersion": 1,
+            "serverTileMin": [
+              0,
+              0
+            ],
+            "addressableWorldBounds": {
+              "min": [
+                -571,
+                -781
+              ],
+              "max": [
+                989,
+                779
+              ]
+            }
+          },
+          "preloadEdges": [
+            [
+              [
+                -497.0,
+                383.0
+              ],
+              [
+                -497.0,
+                -775.0
+              ]
+            ],
+            [
+              [
+                565.0,
+                383.0
+              ],
+              [
+                -497.0,
+                383.0
+              ]
+            ]
+          ],
+          "crossingRuns": {
+            "axis": "x",
+            "runs": [
+              [
+                396,
+                764,
+                1005
+              ]
+            ]
+          }
+        }
+      ],
+      "road": false
+    }
+  ]
+}
