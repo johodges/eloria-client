@@ -71,6 +71,8 @@ from .interactives import load_interactives
 from .stats import max_level_for, next_level_experience, post_cap_points
 from . import walkthrough as wt
 from . import lantern, bell
+from . import landing, landing_runtime
+from . import home
 from .territory_raids import Territory, TerritoryRaidService, load_territories
 from .recipes import load_recipes, roll_mix_outcome
 from .spawns import load_spawns
@@ -1753,6 +1755,7 @@ class World(MagicRuntime):
         lantern.initialize(self, harvesting_path)
         bell.initialize(self, harvesting_path)
         sky.initialize(self, harvesting_path)
+        landing_runtime.initialize(self, harvesting_path)
 
     def configure_coordinate_catalog(self, catalog) -> None:
         """Install a verified startup snapshot without changing map coordinates.
@@ -3822,13 +3825,12 @@ class World(MagicRuntime):
         if 0 < actor_id <= MAX_ACTOR_ID:
             self._retired_actor_ids.append((time.monotonic(), actor_id))
 
-    def tutorial_return_destination(self) -> tuple[str, int, int]:
-        """Return beside the guide so another adventure is within talking range."""
-        guide = next((row[0] for row in self.npcs.values()
-                      if row[1] == wt.HOME_MAP and row[0].name == wt.GUIDE_NPC), None)
-        x, y = (guide.x, guide.y) if guide else wt.SPAWN
-        x, y = self.free_creature_tile(wt.HOME_MAP, x, y)
-        return wt.HOME_MAP, x, y
+    def tutorial_return_destination(self, session: Session | None = None) -> tuple[str, int, int]:
+        """Return beside the guide so another adventure is within talking range.
+
+        The guide stands at the home (eloria/home.py): Four Gates by default.
+        """
+        return home.tutorial_return(self, session)
 
     def free_player_tile(self, map_id: str, x: int, y: int, *, exclude=None,
                          shape: Footprint = SINGLE) -> tuple[int, int]:
@@ -4678,6 +4680,7 @@ class World(MagicRuntime):
             # reach may not be any more. The catalogue carries the refusals,
             # so it is restated rather than left for the client to recompute.
             await self.send_perk_catalog(session)
+            await landing_runtime.tip(self, session, "first_level")
             await self.send_attribute_state(session)
         if level_ups:
             # Skill milestones are levels rather than counts, so this is the
@@ -5001,8 +5004,12 @@ class World(MagicRuntime):
         lantern.prepare(self, character)
         await bell.prepare(self, character)
         self.reconcile_research(character)
+        # No session: #clientcaps follows LOG_IN_OK, so the client has not
+        # said what it draws yet. The home's own beam; the #clientcaps gate
+        # moves a client that cannot draw it.
         destination = ((character.map_id, character.x, character.y)
-                       if character.map_id in self.maps else BEAM_RESPAWN)
+                       if character.map_id in self.maps
+                       else home.point(self, "beam"))
         map_id, x, y = destination
         x, y = self.free_player_tile(map_id, x, y, exclude=character)
         self.require_coordinate_destination(session, map_id, x, y)
@@ -5092,6 +5099,7 @@ class World(MagicRuntime):
             await bell.ensure_phase(self, session)
             await bell.event(self, session, "state")
             await bell.sync(self, session)
+        await landing_runtime.login(self, session)
 
     async def resync_actors(self, session: Session) -> None:
         """Rebuild the actor list after the stock client requests a resync."""
@@ -5628,6 +5636,8 @@ class World(MagicRuntime):
                 await bell.event(self, session, "reach")
             if session and lantern.on_island(c):
                 await lantern.event(self, session, "reach")
+            if session and landing.on_map(c):
+                await landing_runtime.event(self, session, "reach")
             if session and c.map_id == wt.HOME_MAP:
                 panel = wt.panel_for(c) if wt.is_active(c) else None
                 if panel and panel.marker and max(
@@ -5889,6 +5899,8 @@ class World(MagicRuntime):
                 return
             if await lantern.use_object(self, session, interactive):
                 return
+            if await landing_runtime.use_object(self, session, interactive):
+                return
             if interactive.role == "storage":
                 await session.send(p.raw_text(interactive.text))
                 await self.open_storage(session)
@@ -6006,8 +6018,10 @@ class World(MagicRuntime):
                     or (bell.active(character) and getattr(self, 'bell_layout', None)
                         and not bell.flag(character, 'paused'))):
                 require_private_support(session)
+        # The home's own beam, as in enter: nothing is declared at login.
         destination = ((character.map_id, character.x, character.y)
-                       if character.map_id in self.maps else BEAM_RESPAWN)
+                       if character.map_id in self.maps
+                       else home.point(self, "beam"))
         self.require_coordinate_destination(session, *destination)
         if session.coordinate_state is not None:
             session.coordinate_state.prepare_activation(destination[0],
@@ -6135,6 +6149,7 @@ class World(MagicRuntime):
             lantern.cleanup(self, c)
         if lantern.active(c):
             await lantern.sync(self, session)
+        await landing_runtime.arrived(self, session, old_map)
 
     def resolve_map(self, value: str) -> str | None:
         normalized = value.casefold().replace(" ", "").replace("_", "")
@@ -8285,6 +8300,7 @@ class World(MagicRuntime):
         c.health -= damage
         await self.broadcast_actor(c, p.actor_damage(c.actor_id, damage))
         if c.health > 0:
+            await landing_runtime.hurt(self, session)
             return False
         await self.player_died(session, cause=cause)
         return True
@@ -8410,10 +8426,11 @@ class World(MagicRuntime):
             if await lantern.rescue(self, session):
                 return
             await self._respawn_after_death(session, c, cause)
+            await landing_runtime.death(self, session)
         finally:
             session.dying = False
 
-    def _coordinate_death_destination(self, c):
+    def _coordinate_death_destination(self, c, session: Session | None = None):
         destination = gauntlets.death_exit(self, c)
         if destination is not None:
             return destination
@@ -8422,11 +8439,12 @@ class World(MagicRuntime):
         if raid and not raid.finished and team:
             spawn = raid.attacker_entry if team == raid.aggressor.key else raid.defender.defender_spawn
             return raid.defender.map_id, *spawn
-        return BEAM_RESPAWN if c.skills['overall'] < NEW_PLAYER_DEATH_LEVEL else UNDERWORLD_RESPAWN
+        return home.point(self, "respawn" if c.skills['overall'] < NEW_PLAYER_DEATH_LEVEL
+                          else "underworld", session)
 
     async def _respawn_after_death(self, session: Session, c: Character,
                                    cause: str) -> None:
-        destination = self._coordinate_death_destination(c)
+        destination = self._coordinate_death_destination(c, session)
         self.require_coordinate_destination(session, *destination)
         source_map = c.map_id
         token = session.coordinate_token() if session.coordinate_state is not None else None
@@ -9783,6 +9801,7 @@ class World(MagicRuntime):
         await self._move_inventory_item(session, source, destination)
         await lantern.event(self, session, "equipment")
         await bell.event(self, session, "equipment")
+        await landing_runtime.event(self, session, "equipment")
 
     async def _move_inventory_item(self, session: Session, source: int, destination: int):
         """Equip/unequip using the client's eight generic wear positions (36-43)."""
@@ -10361,6 +10380,18 @@ class World(MagicRuntime):
             return {}
         return character.storage if session.mix_from_storage else character.inventory
 
+    def return_mix_ingredients(self, c: Character, stock: dict[str, int], recipe) -> None:
+        """Put a mix's ingredients back on the pile they were taken from.
+
+        Straight back, as they were taken: not through `add_inventory`, whose
+        capacity check made a pack already over its capacity (a newcomer whose
+        allowance has ended) lose them, and which put a storage mix's
+        ingredients in the pack instead of the box.
+        """
+        for name, quantity in recipe.ingredients:
+            stock[name] = stock.get(name, 0) + quantity
+        self.sync_inventory_slots(c)
+
     async def _mix_loop(self, session: Session, recipe, attempts: int):
         c = session.character
         if bell.on_map(c) or sky.on_map(c):
@@ -10458,6 +10489,7 @@ class World(MagicRuntime):
                             session.inventory_slots))
                     await session.send(p.item_description(*session.mix_status))
                     await self.send_stats(session, force=True)
+                    await landing_runtime.tip(self, session, "mix_failed")
                     break
                 rare_result = roll_rare_mix(
                     self.rare_mixes.get(recipe.output),
@@ -10466,21 +10498,24 @@ class World(MagicRuntime):
                     chance_multiplier=rare_mix_multiplier(c))
                 mixed_output = rare_result or recipe.output
                 # Recycler: now and then the bench gives everything back.
-                if random.random() >= recycler_chance(c):
+                # Then nothing was taken, and a mix that cannot finish has
+                # nothing to return either.
+                taken = random.random() >= recycler_chance(c)
+                if taken:
                     for name, quantity in recipe.ingredients:
                         stock[name] -= quantity
                         if stock[name] <= 0: del stock[name]
                 if summon_rule:
                     animal = await self.spawn_summon(session, summon_rule.creature)
                     if not animal:
-                        for name, quantity in recipe.ingredients:
-                            self.add_inventory(c, name, quantity)
+                        if taken:
+                            self.return_mix_ingredients(c, stock, recipe)
                         break
                 elif not self.add_inventory(
                         c, mixed_output, 1, source=f"mix:{recipe.output}",
                         creator=c.username):
-                    for name, quantity in recipe.ingredients:
-                        self.add_inventory(c, name, quantity)
+                    if taken:
+                        self.return_mix_ingredients(c, stock, recipe)
                     await session.send(p.item_description(
                         "You do not have enough carry capacity for the result."))
                     break
@@ -10604,6 +10639,7 @@ class World(MagicRuntime):
                 item = ITEMS.get(resource.name)
                 if not item or not self.can_add_inventory(c, [(resource.name, 1)]):
                     await session.send(p.raw_text("You cannot carry any more."))
+                    await landing_runtime.tip(self, session, "pack_full")
                     return
                 self.add_inventory(c, resource.name, 1)
                 # Register 020, Gatherer. A second item from the same swing,
@@ -10739,6 +10775,8 @@ class World(MagicRuntime):
                     await self.broadcast_map(c.map_id, p.special_effect(14, c.actor_id))
                     await self.send_stats(session, force=True)
                     return
+            if started and session.aggressors:
+                await landing_runtime.tip(self, session, "harvest_stopped")
         except asyncio.CancelledError:
             pass
         finally:
@@ -10770,6 +10808,7 @@ class World(MagicRuntime):
             entries.append(("The Second Bell", "Bellwatch is safe. " +
                 ("Completed with assistance." if bell.flag(c, "assisted") else "Completed the independent departure encounter."),
                 "Four Gates", len(bell.STEPS), len(bell.STEPS), True))
+        entries.extend(landing_runtime.journal_entries(self, c))
         if lantern.active(c):
             step = lantern.current(c)
             entries.append(("The Last Lantern", step.title + ": " + step.hint,
@@ -10852,6 +10891,7 @@ class World(MagicRuntime):
         entries: list[tuple] = []
         if "Keeper of the First Light" in c.achievements:
             entries.append(("The Last Lantern", "Lantern Reach", "You restored the beacon and guided the boat home."))
+        entries.extend(landing_runtime.archive_entries(c))
         if "Beginner Tutorial" in c.achievements:
             entries.append(("Beginner Tutorial", "Four Gates",
                             "You learned to move, fight, gather and mix."))
@@ -11110,9 +11150,15 @@ class World(MagicRuntime):
             await session.send(p.raw_text(f"  {title} ({location}) - {detail}"))
 
     async def tutorial_main_menu(self, session: Session, actor_id: int,
-                                 text: str | None = None) -> None:
+                                 text: str | None = None, *, ladder: bool = True) -> None:
+        """The ladder guide's menu; `ladder` False offers none of the ladder.
+
+        Without it the guide says who he is and heals newcomers (1000, 1002)
+        and nothing else, whatever stage the player's ladder is at, and
+        leaves the ladder's markers, which stand at Four Gates, as they are.
+        """
         c = session.character
-        stage = int(c.quest_state.get("beginner_tutorial", 0))
+        stage = int(c.quest_state.get("beginner_tutorial", 0)) if ladder else 0
         if stage > TUTORIAL_FINAL_STAGE:
             if "Beginner Tutorial" in c.achievements:
                 await session.send(p.npc_text("You have completed the Beginner Tutorial."))
@@ -11125,7 +11171,8 @@ class World(MagicRuntime):
         if stage in {3, 5}:
             self.prepare_tutorial_stage(c, stage)
             self.db.save(c)
-        await self.sync_tutorial_markers(session)
+        if ladder:
+            await self.sync_tutorial_markers(session)
         # A tutorial NPC is giving quest dialogue whenever the player is in
         # one, which is what the flag is for.
         if stage:
@@ -11135,7 +11182,8 @@ class World(MagicRuntime):
             f'you guess this is a tutorial NPC designed to help you. He says: "Hello, {c.name}. Do you need any help?"'))
         options = [(1000, "Who are you?")]
         if stage == 0:
-            options.append((1001, "Tutorials"))
+            if ladder:
+                options.append((1001, "Tutorials"))
         elif stage == 1:
             options.append((1003, "What's my current task?"))
         elif stage == 2:
@@ -11154,7 +11202,9 @@ class World(MagicRuntime):
                 options.append((801, f"{title} completed"))
             else:
                 options.append((1003, "What's my current task?"))
-        options.extend([(1002, "Heal me"), (1003, "What's my current task?"), (900, "Bye")])
+        options.extend([(1002, "Heal me")]
+                       + ([(1003, "What's my current task?")] if ladder else [])
+                       + [(900, "Bye")])
         # Preserve order while removing a duplicate current-task option.
         await session.send(p.npc_options(actor_id, list(dict.fromkeys(options))))
 
@@ -11200,11 +11250,28 @@ class World(MagicRuntime):
             if not lines:
                 lines.append("Nothing here but the road, I am afraid.")
         elif response_id == 711:
+            # One line per destination, by its portal nearest the asker, in
+            # the order the table first lists it. An object portal says its
+            # own row's text (the isle's ferry names the boat, where it goes
+            # and who keeps it); a secret door is a thing to find, not a road.
+            nearest: dict[str, tuple] = {}
             for portal in portals_leaving(self, c.map_id):
-                destination = self.maps.get(portal.destination)
-                name = destination.name if destination else portal.destination
-                lines.append(f"{name} lies through the gate "
-                             f"{self.bearing_from(here, (portal.x, portal.y))} of here.")
+                entry = (self.interactives.get((c.map_id, portal.object_id))
+                         if portal.object_id is not None else None)
+                if entry is not None and entry.role == "secret":
+                    continue
+                distance = (portal.x - here[0]) ** 2 + (portal.y - here[1]) ** 2
+                known = nearest.get(portal.destination)
+                if known is None or distance < known[0]:
+                    nearest[portal.destination] = (distance, portal, entry)
+            for _, portal, entry in nearest.values():
+                bearing = self.bearing_from(here, (portal.x, portal.y))
+                if entry is not None and entry.role == "portal":
+                    lines.append(f"{entry.text} It is {bearing} of here.")
+                else:
+                    destination = self.maps.get(portal.destination)
+                    name = destination.name if destination else portal.destination
+                    lines.append(f"{name} lies {bearing} of here.")
             if not lines:
                 lines.append("No road leaves from here.")
         else:
@@ -11232,7 +11299,7 @@ class World(MagicRuntime):
         return wt.HOME_MAP in self.maps
 
     def walkthrough_chapter(self, c: Character) -> wt.Chapter | None:
-        return wt.active_chapter(c) if self.walkthrough_available and not lantern.active(c) and not bell.on_map(c) and not sky.on_map(c) else None
+        return wt.active_chapter(c) if self.walkthrough_available and not lantern.active(c) and not bell.on_map(c) and not sky.on_map(c) and not landing.active(c) else None
 
     def walkthrough_marker_target(self, c: Character,
                                   panel: wt.Panel) -> tuple[int, int] | None:
@@ -11334,7 +11401,7 @@ class World(MagicRuntime):
     async def offer_walkthrough(self, session: Session) -> bool:
         """Show the opening panel on a character's first arrival in Nymara."""
         c = session.character
-        if not c or not self.walkthrough_available or lantern.active(c) or bell.on_map(c) or sky.on_map(c):
+        if not c or not self.walkthrough_available or lantern.active(c) or bell.on_map(c) or sky.on_map(c) or landing.active(c):
             return False
         if wt.roads_ready(c):
             # Chapter one is behind them and the long roads are affordable.
@@ -11494,6 +11561,7 @@ class World(MagicRuntime):
         await bell.event(self, session, event, detail, amount)
         roads.emit(self, session, event, detail, amount)
         await sky.event(self, session, event, detail, amount)
+        await landing_runtime.event(self, session, event, detail, amount)
         c = session.character
         chapter = self.walkthrough_chapter(c) if c else None
         if not chapter or not chapter.is_active(c):
@@ -11812,6 +11880,8 @@ class World(MagicRuntime):
         await session.send(stats_packet(c))
         await self.show_shop_main(session, actor_id, message)
         roads.emit(self,session,"purchase" if mode=="buy" else "sale",entry.name,quantity)
+        await landing_runtime.event(self, session, "purchase" if mode == "buy" else "sale",
+                                    entry.name, quantity, npc=shop.npc_name)
         if shop.npc_name == "Stillglass fittings" and mode == "buy":
             await sky.event(self, session, "purchase", entry.name, quantity)
         if shop.npc_name == lantern.GALLEY:
@@ -11941,6 +12011,7 @@ class World(MagicRuntime):
                                for key, old in before_attributes.items())
         if attribute_points > 0:
             await lantern.event(self, session, "attribute", value, attribute_points)
+            await landing_runtime.event(self, session, "attribute", value, attribute_points)
         return True, message
 
     async def complete_wraith_choice(self, session: Session, actor_id: int) -> None:
@@ -12448,9 +12519,24 @@ class World(MagicRuntime):
     # is now instead of against a stale menu.
 
     def quest_offers(self, c: Character, npc_name: str) -> list:
-        """Lines this NPC can start for this character, in profile order."""
+        """Lines this NPC can start for this character, in profile order.
+
+        A person standing on more than one map (the landing isle's cast
+        before the home migration) offers a line only from the copy in the
+        line's own region: the isle's errands are not handed out at Four
+        Gates. A line whose giver stands nowhere in its region is offered
+        wherever the giver is, as before.
+        """
         return [quest for quest in ql.offered_by(self.questlines, npc_name)
-                if ql.available(c, quest, self.questlines)]
+                if ql.available(c, quest, self.questlines)
+                and (c.map_id == quest.region
+                     or not self.stands_on(quest.start, quest.region))]
+
+    def stands_on(self, npc_name: str, map_id: str) -> bool:
+        """Whether someone of this name stands on that map."""
+        folded = npc_name.casefold()
+        return any(row[1] == map_id and row[0].name.casefold() == folded
+                   for row in self.npcs.values())
 
     def quest_business(self, c: Character, npc_name: str) -> list:
         """Lines this NPC can move forward now: (quest, stage or None)."""
@@ -12462,7 +12548,9 @@ class World(MagicRuntime):
 
         Which topics those are depends on what this session has already been
         told: a thread opens as it is walked, so the menu is built from the
-        conversation rather than from the file.
+        conversation rather than from the file. A topic that names a map is
+        raised only on it (eloria/npc_dialogue.py); the player stands on the
+        NPC's map whenever a menu is built.
         """
         c = session.character
         options: list[tuple[int, str]] = []
@@ -12484,7 +12572,8 @@ class World(MagicRuntime):
             options.append((QUEST_OFFER_BASE + index, f"Is there work? ({quest.title})"))
         entry = self.npc_lore.get(npc_name.casefold())
         if entry:
-            options.extend(entry.options(session.conversation, c.quest_state))
+            options.extend(entry.options(session.conversation, c.quest_state,
+                                         place=c.map_id))
         return options
 
     def npc_greeting(self, actor_id: int, npc_name: str) -> str:
@@ -12675,8 +12764,18 @@ class World(MagicRuntime):
         npc, _, price, sold = record
         if await lantern.touch(self, session, actor_id):
             return
+        if await landing_runtime.touch(self, session, actor_id):
+            return
         if await bell.touch(self, session, actor_id):
             return
+        # The Four Gates walkthrough, its tour and the Eternal Lands ladder are
+        # Four Gates' own: their markers stand there. A copy of one of its
+        # people elsewhere (the landing isle's cast) offers none of them.
+        # Once the home has moved one of them away (nobody of the name is left
+        # at Four Gates), a save already under way still finishes with them;
+        # the tour and a fresh ladder are still offered only at Four Gates.
+        starts_here = record[1] == wt.HOME_MAP
+        at_home = starts_here or not self.stands_on(npc.name, wt.HOME_MAP)
         # NPCs replicate map-wide so their map dots never fade, which lets the
         # client send a touch for one standing anywhere on the map. Talking
         # range stays what replication used to imply: the perception/light
@@ -12707,7 +12806,7 @@ class World(MagicRuntime):
             await session.send(p.npc_info(npc.name, 0))
             await self.show_kane_dialogue(session, actor_id)
             return
-        if (npc.name.casefold() == TUTORIAL_ROUTE_NPC.casefold()
+        if (at_home and npc.name.casefold() == TUTORIAL_ROUTE_NPC.casefold()
                 and c.quest_state.get("beginner_tutorial") == 1):
             c.quest_state["beginner_tutorial"] = 2
             levels = award_combat_xp(c, 400, 400)
@@ -12727,8 +12826,11 @@ class World(MagicRuntime):
         if role == "tutorial":
             stage = int(c.quest_state.get("beginner_tutorial", 0))
             await session.send(p.npc_info(npc.name, 0))
-            if stage == 0:
-                await self.tutorial_main_menu(session, actor_id)
+            if stage == 0 or not at_home:
+                # The ladder's offer at Four Gates. A copy of the guide elsewhere,
+                # and the moved guide to someone who never started it, offer none
+                # of it, but still say who he is and heal newcomers.
+                await self.tutorial_main_menu(session, actor_id, ladder=starts_here)
             elif stage == 1:
                 await self.tutorial_main_menu(
                     session, actor_id,
@@ -12769,14 +12871,15 @@ class World(MagicRuntime):
                 + self.conversation_options(session, npc.name) + [(900, "Goodbye")]))
             return
         if role == "guide":
-            await self.walkthrough_event(session, "talk", npc.name)
+            if at_home:
+                await self.walkthrough_event(session, "talk", npc.name)
             await self.questline_event(session, "talk", npc.name)
             await session.send(p.npc_info(npc.name, 0))
             await session.send(p.npc_text(self.npc_greeting(actor_id, npc.name)))
             options = [(710, "Where do I find things here?"),
                        (711, "Where do the roads go?"),
                        (712, "What work is there?")]
-            if self.walkthrough_available and not wt.is_active(c)                     and wt.stage_of(c) != wt.DONE:
+            if starts_here and self.walkthrough_available and not wt.is_active(c)                     and wt.stage_of(c) != wt.DONE:
                 options.append((713, "Show me around Four Gates."))
             options.extend(self.conversation_options(session, npc.name))
             await session.send(p.npc_options(actor_id, options + [(900, "Goodbye")]))
@@ -12814,7 +12917,8 @@ class World(MagicRuntime):
         entry = self.npc_lore.get(npc_name.casefold())
         topic = entry.topic_for(response_id) if entry else None
         if topic is not None:
-            if topic not in entry.visible(session.conversation, c.quest_state):
+            if topic not in entry.visible(session.conversation, c.quest_state,
+                                          place=c.map_id):
                 # An option from a menu built before the thread moved on. The
                 # menu is reopened rather than the topic answered, so a replayed
                 # id can never reach past a gate the player has not opened.
@@ -13003,7 +13107,18 @@ class World(MagicRuntime):
             return
         if await lantern.respond(self, session, actor_id, response_id):
             return
+        if await landing_runtime.respond(self, session, actor_id, response_id):
+            return
         role = self.npc_roles.get(actor_id, "dialogue")
+        starts_here = record[1] == wt.HOME_MAP
+        at_home = starts_here or not self.stands_on(record[0].name, wt.HOME_MAP)
+        if role == "tutorial" and response_id not in (1000, 1002) and not (
+                at_home and (starts_here or c.quest_state.get("beginner_tutorial"))):
+            # The ladder is Four Gates' (see touch_actor): a copy of its guide
+            # elsewhere answers as an ordinary person, replayed ids included,
+            # and so does the moved guide to someone who never started it,
+            # beyond who he is and the newcomers' heal.
+            role = "dialogue"
         # Conversation and quest options are appended to every role's menu, so
         # they are answered before the role gets a look at the number.
         if await self.answer_conversation(
@@ -13227,7 +13342,7 @@ class World(MagicRuntime):
         if 710 <= response_id <= 712 and role == "guide":
             await self.answer_guide_question(session, actor_id, response_id)
             return
-        if response_id == 713 and role == "guide":
+        if response_id == 713 and role == "guide" and starts_here:
             await session.send(p.packet(p.CLOSE_NPC_MENU))
             await self.restart_walkthrough(session)
             return
@@ -14514,7 +14629,7 @@ class World(MagicRuntime):
         token = session.coordinate_token() if session.coordinate_state is not None else None
         spell = self.spells.get(sigils)
         if spell and spell.spell_id == 9:
-            self.require_coordinate_destination(session, *BEAM_RESPAWN)
+            self.require_coordinate_destination(session, *home.point(self, "beam", session))
         if spell and spell.effect:
             try:
                 return await self.begin_book_spell(session, spell, power)
@@ -14836,7 +14951,7 @@ class World(MagicRuntime):
         elif spell.spell_id == 9:
             # Gatecall. The long teleport: Blinkstep moves a mage fifteen
             # tiles, this brings them home from anywhere.
-            await self.change_map(session, *BEAM_RESPAWN)
+            await self.change_map(session, *home.point(self, "beam", session))
         if spell.spell_id == 12:
             # The other two thirds of Wellspring. Nothing else in the game
             # undoes a drained skill or cross attribute, and the poison purge
@@ -15049,6 +15164,8 @@ class World(MagicRuntime):
             c.food = max(-30, c.food - (random.randint(0, 5) if below_level_harvesting else 1))
             if c.food <= -30:
                 await self.disable_speed_hax(session)
+            if c.food < landing.LOW_FOOD:
+                await landing_runtime.tip(self, session, "food_low")
             temporary_changed = False
             for values, actual in ((c.temporary_skills, c.skills),
                                    (c.temporary_attributes, c.attributes)):

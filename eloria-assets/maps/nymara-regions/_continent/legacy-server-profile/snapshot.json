@@ -34,7 +34,7 @@
     "eloria/daily_quests.py": "2b4735642d1db3a09f069b14fdf477897eb1e16492fb0a8fb5787c97a866e218",
     "eloria/pk.py": "57adf011f24b2f806ce337620504065b95cd88fb756ebe23e437e35e9075aa91",
     "eloria/walkthrough.py": "069d3adbe13012f52ad3b9072fc2867995e5ca0596753a9ff5ecffdc98f933f7",
-    "eloria/world.py": "3c42466c3bf26607a3131c4483fa82c6a5bbe39a47a4ae0f9ebc719bafe3feaf"
+    "eloria/world.py": "850c95ac03f6d85f1180f48a41fc26109d180333e5d1effb77353eac6b9df7bd"
   },
   "reconciliations": [
     {
@@ -83,6 +83,15 @@
         "eloria/world.py"
       ],
       "reason": "feature/v2-spawn-prereqs adds a per-spawn wild leash (eloria/spawns.py, eloria/world.py) and makes the landing isle's eighteen expansion species spawnable (config/eloria/creatures.txt spawn_mode lines). The baseline world.py carries the branch's code with the certified TUTORIAL_ROUTE_MARKERS and TUTORIAL_HARVESTS legacy coordinate values kept; creatures.txt is the branch's file byte for byte. No authored coordinates are touched."
+    },
+    {
+      "date": "2026-10-05",
+      "developCommit": "0e06e3e99a0a4cb92373f3fc2b8edf10ad5d3fdf",
+      "fromCommit": "b76171131eec57cfadeb7e198aee84350744a5c9",
+      "files": [
+        "eloria/world.py"
+      ],
+      "reason": "feature/landing-isle M2 and M3, merged together. M2: Signed Ashore, the landing isle's chapter for new players, hooks into eloria/world.py: World start, login, steps, map objects, map changes, hurt and death, equipment, the walkthrough events, sales, attribute points, the journal and archive, and its one-shot tips, all as calls into the uncertified eloria/landing_runtime.py. Until the home moves, only the testers named by landing_preview and landing_testers can start it. The isle copies of the five Four Gates people are kept from Four-Gates-only offers (Ilyon's tour 713, Nesh's ladder 1001, Caldus's scouting hand-in) by a gate on the NPC's own map; the isle copy of Nesh still says who he is and heals newcomers (1000, 1002). A mix that cannot finish (the result does not fit, or the summon does not come) gives what it took back to the pile it took it from, pack or storage, instead of through the capacity-checked add_inventory, which lost the ingredients of a pack already over its capacity. M3: the home migration, deployed dark, sends world.py's home points through the uncertified eloria/home.py: the login fallback for a saved map that is not loaded, death respawn, Gatecall and the tutorial return. A person the home moves away from Four Gates still finishes a ladder, hand-in or walkthrough talk already under way, and a moved Nesh still heals newcomers. Under the default home_map = four_gates every call returns what the constant it replaces held, so nothing changes until the host names another home. Topics that name a map are offered on that map only, and the guide's roads answer (711) names each place a crossing or a ferry leaves for once, by its nearest portal. The baseline world.py carries both diffs with the certified TUTORIAL_ROUTE_MARKERS and TUTORIAL_HARVESTS legacy coordinate values kept. No authored coordinates change."
     }
   ]
 }
