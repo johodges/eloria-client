@@ -4,7 +4,7 @@ glTF actors are read loose (GlbSceneCache and the animation importer open
 globalized paths, which an export resolves beside the executable, never in
 the pack); the face masks are load()ed through ResourceLoader and the
 equipment glTFs' URI textures are asked of ResourceLoader first, so both are
-imported into the PCK.
+imported into the PCK; actor images nothing names ship nowhere.
 """
 import importlib.util
 import json
@@ -35,6 +35,7 @@ CREATURE_EXTRACTED = f"{NATIVE}/creatures/fox_Fur Base Color.png"
 RACE_SOURCE = f"{NATIVE}/race_textures/hero/body_basecolor.png"
 NECK = f"{NATIVE}/neck_textures/hero.png"
 NECK_MANIFEST = f"{NATIVE}/neck_textures/manifest.json"
+DROPPED = {CLOTH_EXTRACTED, CREATURE_EXTRACTED, RACE_SOURCE, NECK}
 
 
 def _glb(images: list[str]) -> bytes:
@@ -49,7 +50,7 @@ def _glb(images: list[str]) -> bytes:
 def _write_tree(build: Path, *, extra: tuple[str, ...] = (), models_extra: dict | None = None,
                 sources: dict[str, str] | None = None) -> list[str]:
     """A build tree whose catalogs name one race, its library, one garment (whose GLBs
-    name a texture by URI), a creature and a mask; plus images nothing names."""
+    name a texture by URI), a creature and a mask; plus an image of each dropped kind."""
     files = [RACE, LIBRARY, CLOTH, CLOTH_VARIANT, CLOTH_TEXTURE, CLOTH_EXTRACTED, MASK,
              MASK_MANIFEST, CREATURE, CREATURE_EXTRACTED, RACE_SOURCE, NECK, NECK_MANIFEST, *extra]
     for relative in files:
@@ -150,7 +151,7 @@ def test_export_presets_never_filter_out_the_actor_tree():
     assert package.EXPORT_PRESETS.count('export_filter="all_resources"') == 2
 
 
-def test_each_actor_file_ships_in_the_pck_or_loose(tmp_path, monkeypatch):
+def test_each_actor_file_ships_in_the_pck_loose_or_nowhere(tmp_path, monkeypatch):
     build = tmp_path / "build"
     _track(monkeypatch, _write_tree(build))
 
@@ -158,8 +159,8 @@ def test_each_actor_file_ships_in_the_pck_or_loose(tmp_path, monkeypatch):
 
     assert shipping["uri_textures"] == {CLOTH_TEXTURE}
     assert shipping["pck"] == {MASK, MASK_MANIFEST, CLOTH_TEXTURE}
-    assert shipping["loose"] == {RACE, LIBRARY, CLOTH, CLOTH_VARIANT, CREATURE, NECK_MANIFEST,
-                                 CLOTH_EXTRACTED, CREATURE_EXTRACTED, RACE_SOURCE, NECK}
+    assert shipping["loose"] == {RACE, LIBRARY, CLOTH, CLOTH_VARIANT, CREATURE, NECK_MANIFEST}
+    assert shipping["dropped"] == DROPPED
     assert shipping["pck_folders"] == {f"{NATIVE}/face_masks", f"{NATIVE}/equipment"}
     assert shipping["loose_folders"] == {f"{NATIVE}/{folder}" for folder in (
         "races", "shared", "creatures", "race_textures", "neck_textures")}
@@ -178,6 +179,38 @@ def test_uri_textures_outside_the_imported_folders_stay_loose(tmp_path, monkeypa
 
     assert hair in shipping["loose"] and hair not in shipping["pck"]
     assert f"{NATIVE}/shared" in shipping["loose_folders"]
+
+
+def test_a_catalog_or_source_name_keeps_an_image_out_of_the_drop(tmp_path, monkeypatch):
+    # models.json naming a neck texture (faceAppearance.neckTexture) makes it a
+    # load()ed resource; so does a client literal naming a race texture.
+    build = tmp_path / "build"
+    source = "godot-client/src/actors/skin.gd"
+    _track(monkeypatch, _write_tree(
+        build, models_extra={"neckTexture": "res://" + NECK.removeprefix("godot-client/")},
+        sources={source: 'const BODY := "res://' + RACE_SOURCE.removeprefix("godot-client/") + '"\n'}))
+
+    shipping = package.actor_shipping(build)
+
+    assert {NECK, RACE_SOURCE} <= shipping["pck"]
+    assert shipping["dropped"] == {CLOTH_EXTRACTED, CREATURE_EXTRACTED}
+    assert {f"{NATIVE}/neck_textures", f"{NATIVE}/race_textures"} <= shipping["pck_folders"]
+
+
+@pytest.mark.parametrize("line,kept", [
+    ('var path := "res://assets/actors/native/race_textures/" + slug + "/body_basecolor.png"', True),
+    ('var path := "res://assets/actors/native/race_textures/%s/body_basecolor.png" % slug', True),
+    ('var path := "res://assets/actors/native/".path_join(folder)', True),
+    ('if not path.begins_with("res://assets/actors/"):', False),
+])
+def test_a_runtime_built_actor_path_keeps_the_images_it_can_reach(tmp_path, monkeypatch, line, kept):
+    build = tmp_path / "build"
+    _track(monkeypatch, _write_tree(build, sources={"godot-client/src/actors/skin.gd": line + "\n"}))
+
+    shipping = package.actor_shipping(build)
+
+    assert (RACE_SOURCE in shipping["loose"]) is kept
+    assert (RACE_SOURCE in shipping["dropped"]) is not kept
 
 
 def test_a_gltf_in_a_folder_the_pck_draws_on_stops_the_package(tmp_path, monkeypatch):
@@ -244,7 +277,7 @@ def test_untracked_files_in_a_pck_folder_are_skipped_too(tmp_path, monkeypatch):
     assert package._import_settings(build / NATIVE / "equipment/cloth_1.jpg.import")[0] == "skip"
     package.check_actor_imports(build / "godot-client")
     (build / NATIVE / "equipment/cloth_1.jpg.import").unlink()
-    with pytest.raises(package.PackageError, match="cloth_1.jpg: imported, but it ships loose"):
+    with pytest.raises(package.PackageError, match="cloth_1.jpg: imported, but it ships loose or nowhere"):
         package.check_actor_imports(build / "godot-client")
 
 
@@ -366,13 +399,9 @@ def test_only_loose_actor_files_are_staged_beside_the_executable(tmp_path, monke
     staged = sorted(p.relative_to(app).as_posix() for p in app.rglob("*") if p.is_file())
     assert staged == [
         "assets/actors/native/creatures/fox.glb",
-        "assets/actors/native/creatures/fox_Fur Base Color.png",
         "assets/actors/native/equipment/cloth.glb",
-        "assets/actors/native/equipment/cloth_0.png",
         "assets/actors/native/equipment/variants/hero/cloth.glb",
-        "assets/actors/native/neck_textures/hero.png",
         "assets/actors/native/neck_textures/manifest.json",
-        "assets/actors/native/race_textures/hero/body_basecolor.png",
         "assets/actors/native/races/hero.glb",
         "assets/actors/native/shared/library.glb",
         "data/actors/equipment.json",
@@ -413,11 +442,13 @@ GOOD_PCK = ["assets/actors/native/face_masks/hero.png.import",
     ([n for n in GOOD_PCK if not n.endswith("s3tc.ctex")], None,
      "cloth.jpg: its imported product is not in the PCK"),
     (GOOD_PCK + ["assets/actors/native/races/hero.glb.import"], None,
-     "races/hero.glb.import: an actor file that ships loose is in the PCK"),
+     "races/hero.glb.import: an actor file that ships loose or nowhere is in the PCK"),
     (GOOD_PCK + ["assets/actors/native/equipment/cloth_0.png.import"], None,
-     "cloth_0.png.import: an actor file that ships loose is in the PCK"),
+     "cloth_0.png.import: an actor file that ships loose or nowhere is in the PCK"),
     (GOOD_PCK, ("remove", "assets/actors/native/races/hero.glb"), "not staged loose"),
     (GOOD_PCK, ("add", "assets/actors/native/equipment/textures/cloth.jpg"), "also staged loose"),
+    (GOOD_PCK, ("add", "assets/actors/native/race_textures/hero/body_basecolor.png"),
+     "a dropped image was staged loose"),
 ])
 def test_actor_pack_check_holds_each_file_to_one_place(tmp_path, monkeypatch,
                                                        names, change, message):

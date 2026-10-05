@@ -86,7 +86,9 @@ PCK only. The textures the equipment glTFs name by relative URI ship in the
 PCK too: `GLTFDocument` asks `ResourceLoader` for an external image before it
 reads the file, a relative path resolves to `res://`, and the packager writes
 their import settings (VRAM-compressed, mipmapped), so packaged equipment
-uploads the imported textures rather than decoding each JPEG without mips. A
+uploads the imported textures rather than decoding each JPEG without mips.
+Actor images nothing names (the editor's extracted copies of embedded glTF
+images, the race and neck texture sources) are left out of a package. A
 packaged actor still carries no LOD chains, so Low and Medium change
 shadows, cape simulation and LOD bias but not mesh detail there. Giving
 packages the LODs needs the runtime to resolve those paths back to `res://`
