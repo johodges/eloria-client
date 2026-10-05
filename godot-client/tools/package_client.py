@@ -24,6 +24,11 @@ What goes in, and why it is more than an export:
       material using it, and a headless import draws nothing, so the
       packager writes them: a fresh build worktree ships what one an editor
       session touched does, not lossless textures without mipmaps.
+      The map editor's region sources (world_authoring: the region scenes,
+      their prototype models and textures, the territory catalogs) are not
+      exported. Only the editor and its plugins open them, never the game,
+      and they were 1.77 GB of the 2.11 GB PCK once the isles joined them
+      (EDITOR_ONLY_PCK_DIRS, check_editor_sources_unpacked).
   app/assets, app/data, app/schemas
       Loose copies, and every actor file ships once (or not at all). Actor
       models, hair and equipment are opened with GLTFDocument from
@@ -160,9 +165,11 @@ IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg", ".webp")
 PLAIN_EXPORT_SUFFIXES = (".json", ".bin")
 # Client files whose string literals may name an actor file the game opens:
 # the scripts, scenes, resources, shaders and settings the export packs from
-# anywhere in the project (src, addons, world_authoring, assets), and the
-# native extension's sources. The export's exclude filter keeps docs, tests
-# and tools out of a package, so nothing a package runs is written there.
+# anywhere in the project (src, addons, assets), and the native extension's
+# sources. The export's exclude filter keeps docs, tests and tools out of a
+# package, so nothing a package runs is written there. It keeps the map
+# editor's region sources (world_authoring) out too, but they are still read
+# here and by scene_textures: a name there only keeps a file, never drops one.
 SOURCE_SUFFIXES = (".gd", ".tscn", ".tres", ".gdshader", ".gdshaderinc", ".godot", ".cfg",
                    ".gdextension", ".cpp", ".h")
 UNSHIPPED_CLIENT_DIRS = ("godot-client/docs/", "godot-client/tests/", "godot-client/tools/",
@@ -219,7 +226,12 @@ SKIP_IMPORT = '[remap]\n\nimporter="skip"\n'
 # where the long-lived build worktree, touched by editor sessions, shipped
 # them compressed, and no build had compressed the six landing-isle
 # harvestables. world_authoring - the map editor's region sources, which only
-# the editor plugins and src/dev load - is left to the editor, as before.
+# the editor plugins and src/dev's editor tools load - is not exported at all
+# (EDITOR_ONLY_PCK_DIRS), and its own textures are left to the editor. Its
+# region scenes are still read for the materials they hold: they are the only
+# 3D materials that name six of the texture packs the game's biome-blend
+# terrain samples (assets/world/biome_blend/catalog.json), so without them
+# those six would ship lossless again.
 SCENE_TEXTURE_ROOTS = ("godot-client/assets/world", "godot-client/src/dev")
 # Folders a script loads 3D material textures from by a built path no scene or
 # glTF names: MapAuthoringTexturePresets (src/dev/map_authoring_pilot/style/
@@ -252,9 +264,14 @@ UNREFERENCED_IMAGE_FOLDERS = ("creatures", "equipment", "neck_textures", "race_t
 # The export preset is not tracked, so the build writes its own. The pack
 # leaves out dev material, including the map editor's review notes
 # (<region>.editor-notes.json beside each region scene): editor-only, never read
-# by the game. Actor files are kept out of the import, and so out of the pack,
-# by a .gdignore per folder or a "skip" import per file (see actor_shipping),
-# not by a filter, so the face masks and equipment textures still import.
+# by the game. So are the region sources themselves (world_authoring, owner
+# call 2026-10-05: "exclude them now"): main.tscn, the autoloads and the data
+# the game reads reach no file there, and the 2.11 GB PCK of 4755dfd16 held
+# 1.77 GB of them. A filter leaves them in the import, so the scene textures
+# their materials name are still found (scene_textures). Actor files are kept
+# out of the import, and so out of the pack, by a .gdignore per folder or a
+# "skip" import per file (see actor_shipping), not by a filter, so the face
+# masks and equipment textures still import.
 EXPORT_PRESETS = """[preset.0]
 
 name="Windows Desktop"
@@ -265,7 +282,7 @@ dedicated_server=false
 custom_features=""
 export_filter="all_resources"
 include_filter="*.json,*.bin"
-exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,*.md,*.editor-notes.json"
+exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,world_authoring/*,*.md,*.editor-notes.json"
 export_path=""
 patches=PackedStringArray()
 encryption_include_filters=""
@@ -310,7 +327,7 @@ dedicated_server=false
 custom_features=""
 export_filter="all_resources"
 include_filter="*.json,*.bin"
-exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,*.md,*.editor-notes.json"
+exclude_filter="Godot_v*.exe,docs/*,tests/*,tools/*,test-artifacts/*,world_authoring/*,*.md,*.editor-notes.json"
 export_path=""
 patches=PackedStringArray()
 encryption_include_filters=""
@@ -331,6 +348,10 @@ texture_format/etc2_astc=false
 binary_format/architecture="x86_64"
 ssh_remote_deploy/enabled=false
 """
+
+# What the export's exclude filter keeps out of the PCK that a package must never carry
+# (check_editor_sources_unpacked): the map editor's region sources.
+EDITOR_ONLY_PCK_DIRS = ("world_authoring/",)
 
 PLATFORMS = {
     "windows": {"preset": "Windows Desktop", "binary": "Eloria.exe", "folder": "Eloria-Windows"},
@@ -408,7 +429,11 @@ def _resolve(base: str, relative: str) -> str:
 
 
 def shipped_client_files(build_dir: Path, suffixes: tuple[str, ...]) -> list[str]:
-    """Tracked godot-client files with these suffixes that a package carries (not docs/tests/tools)."""
+    """Tracked godot-client files with these suffixes that a package carries (not docs/tests/tools).
+
+    world_authoring is listed although the export leaves it out (EDITOR_ONLY_PCK_DIRS): what its
+    sources name only keeps a file loose or imported for 3D, never drops one (SOURCE_SUFFIXES).
+    """
     return [p for p in tracked(build_dir, "godot-client")
             if p.lower().endswith(suffixes) and not p.startswith(UNSHIPPED_CLIENT_DIRS)
             and not p.lower().endswith(".md")]
@@ -1268,6 +1293,20 @@ def check_scene_texture_pack(build_dir: Path, app_dir: Path) -> None:
     log(f"checked {len(textures)} scene textures in the PCK")
 
 
+def check_editor_sources_unpacked(app_dir: Path) -> None:
+    """The PCK holds nothing of the map editor's sources (EDITOR_ONLY_PCK_DIRS).
+
+    The export's exclude filter keeps them out; this catches a preset written
+    without it. Their imported products sit under .godot and are packed only
+    with the remap of a source the export keeps, so the remaps tell.
+    """
+    stray = sorted(p for p in pck_paths(app_dir / "Eloria.pck") if p.startswith(EDITOR_ONLY_PCK_DIRS))
+    if stray:
+        raise PackageError(f"{len(stray)} files of the map editor's sources are in the PCK:\n  "
+                           + "\n  ".join(stray[:40]))
+    log(f"checked the PCK: nothing under {', '.join(EDITOR_ONLY_PCK_DIRS)}")
+
+
 def is_shipped_map_file(relative: PurePosixPath) -> bool:
     if any(part in MAP_EXCLUDED_DIRS for part in relative.parts[:-1]):
         return False
@@ -2118,6 +2157,7 @@ def main() -> int:
         stage_loose_client_files(build_dir, app_dir)
         check_actor_pack(build_dir, app_dir)
         check_scene_texture_pack(build_dir, app_dir)
+        check_editor_sources_unpacked(app_dir)
         warnings = stage_eloria_assets(build_dir, stage, previews, served)
         check_served_packages(stage, served)
         if not options.no_vram_textures:
