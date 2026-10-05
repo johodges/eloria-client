@@ -227,16 +227,28 @@ SKIP_IMPORT = '[remap]\n\nimporter="skip"\n'
 # them compressed, and no build had compressed the six landing-isle
 # harvestables. world_authoring - the map editor's region sources, which only
 # the editor plugins and src/dev's editor tools load - is not exported at all
-# (EDITOR_ONLY_PCK_DIRS), and its own textures are left to the editor. Its
-# region scenes are still read for the materials they hold: they are the only
-# 3D materials that name six of the texture packs the game's biome-blend
-# terrain samples (assets/world/biome_blend/catalog.json), so without them
-# those six would ship lossless again.
+# (EDITOR_ONLY_PCK_DIRS), and scene_textures does not read it either: what the
+# game samples decides a texture's import, not what the editor draws.
 SCENE_TEXTURE_ROOTS = ("godot-client/assets/world", "godot-client/src/dev")
 # Folders a script loads 3D material textures from by a built path no scene or
 # glTF names: MapAuthoringTexturePresets (src/dev/map_authoring_pilot/style/
 # texture_presets.gd) loads _TEXTURE_ROOT + "<family>-<basecolor|normal|orm>.png".
 RUNTIME_SCENE_TEXTURE_FOLDERS = ("godot-client/src/dev/map_authoring_pilot/style/textures",)
+# Scripts that name 3D material textures by res:// literal, outside any scene
+# or glTF: MapAuthoringTexturePresets' albedo_path entries are the texture
+# packs (style/texture_packs) its materials sample. The biome-blend terrain
+# loads the same files by the res:// path its map data records: BiomeBlend-
+# Material._apply_palette reads each palette record's "albedoTexture" from
+# assets/world/biome_blend/catalog.json and the chunks' world.json, so those
+# values count too (RUNTIME_TEXTURE_DATA_ROOTS, RUNTIME_TEXTURE_KEYS). Until
+# 2026-10-05 only world_authoring's region scenes named six of those packs in
+# a material.
+RUNTIME_SCENE_TEXTURE_SOURCES = ("godot-client/src/dev/map_authoring_pilot/style/texture_presets.gd",)
+RES_IMAGE_LITERAL = re.compile(r"""["']res://([^"'\s]+\.(?:png|jpe?g|webp))["']""", re.I)
+# Where the game reads map data that names 3D material textures by res:// path,
+# and the keys that hold them (only those: map data names 2D pictures too).
+RUNTIME_TEXTURE_DATA_ROOTS = ("godot-client/assets/world", "eloria-assets/maps")
+RUNTIME_TEXTURE_KEYS = {"albedoTexture"}
 RUNTIME_NORMAL_MAP = re.compile(r"-normal\.\w+$", re.I)
 # BaseMaterial3D slots sampled as normal maps (hint_normal, hint_roughness_normal).
 NORMAL_MAP_PROPERTIES = {"normal_texture", "detail_normal", "bent_normal_texture"}
@@ -267,8 +279,9 @@ UNREFERENCED_IMAGE_FOLDERS = ("creatures", "equipment", "neck_textures", "race_t
 # by the game. So are the region sources themselves (world_authoring, owner
 # call 2026-10-05: "exclude them now"): main.tscn, the autoloads and the data
 # the game reads reach no file there, and the 2.11 GB PCK of 4755dfd16 held
-# 1.77 GB of them. A filter leaves them in the import, so the scene textures
-# their materials name are still found (scene_textures). Actor files are kept
+# 1.77 GB of them. A filter leaves them in the import, where the editor plugins
+# still read them, but no packaging decision rests on them: the scene textures
+# are found from what the game samples (scene_textures). Actor files are kept
 # out of the import, and so out of the pack, by a .gdignore per folder or a
 # "skip" import per file (see actor_shipping), not by a filter, so the face
 # masks and equipment textures still import.
@@ -352,6 +365,11 @@ ssh_remote_deploy/enabled=false
 # What the export's exclude filter keeps out of the PCK that a package must never carry
 # (check_editor_sources_unpacked): the map editor's region sources.
 EDITOR_ONLY_PCK_DIRS = ("world_authoring/",)
+# Map files that name those sources as provenance only: each legacy map's
+# authoring/continent-authoring.json records the region scene and prototypes it
+# was published from. They ship, but no file the game reaches opens them
+# (scene_textures).
+EDITOR_SOURCE_PROVENANCE = re.compile(r"(^|/)authoring/continent-authoring\.json$")
 
 PLATFORMS = {
     "windows": {"preset": "Windows Desktop", "binary": "Eloria.exe", "folder": "Eloria-Windows"},
@@ -432,7 +450,8 @@ def shipped_client_files(build_dir: Path, suffixes: tuple[str, ...]) -> list[str
     """Tracked godot-client files with these suffixes that a package carries (not docs/tests/tools).
 
     world_authoring is listed although the export leaves it out (EDITOR_ONLY_PCK_DIRS): what its
-    sources name only keeps a file loose or imported for 3D, never drops one (SOURCE_SUFFIXES).
+    sources name only keeps an actor file loose, never drops one (SOURCE_SUFFIXES); scene_textures
+    skips it.
     """
     return [p for p in tracked(build_dir, "godot-client")
             if p.lower().endswith(suffixes) and not p.startswith(UNSHIPPED_CLIENT_DIRS)
@@ -801,16 +820,22 @@ def scene_textures(build_dir: Path) -> dict[str, bool]:
       * a glTF the package carries names by URI (outside the actor tree,
         which actor_shipping decides), or that the editor extracted from one
         of its embedded images (<stem>_<image name>.png beside it);
-      * a 3D material in a .tscn/.tres the package carries names (a region
-        scene in world_authoring samples the map-authoring pilot's textures);
+      * a 3D material in a .tscn/.tres the package carries names;
       * sit in RUNTIME_SCENE_TEXTURE_FOLDERS, the preset library's built paths
-        (its "-normal" maps are normal maps).
+        (its "-normal" maps are normal maps);
+      * a script in RUNTIME_SCENE_TEXTURE_SOURCES names by res:// literal, or
+        the map data under RUNTIME_TEXTURE_DATA_ROOTS records under one of
+        RUNTIME_TEXTURE_KEYS (the texture packs the presets and the
+        biome-blend terrain sample).
+    The map editor's region sources (world_authoring, EDITOR_ONLY_PCK_DIRS) are
+    not read: the package leaves them out, and the game never draws them.
     The editor gives each of them VRAM compression and mipmaps once it draws
     a material using it (and red-green compression to a normal map); a
     headless import draws nothing, so the packager writes those settings
     (scene_texture_import_params). A texture whose .import the commit tracks
     keeps the settings committed with it (the biome masks).
     """
+    editor_sources = tuple("godot-client/" + folder for folder in EDITOR_ONLY_PCK_DIRS)
     tracked_files = tracked(build_dir, "godot-client")
     tracked_set = set(tracked_files)
     roots = tuple(root + "/" for root in SCENE_TEXTURE_ROOTS)
@@ -825,7 +850,7 @@ def scene_textures(build_dir: Path) -> dict[str, bool]:
             found[path] = found.get(path, False) or normal_map
 
     for relative in shipped_client_files(build_dir, GLTF_SUFFIXES):
-        if relative.startswith(ACTOR_ROOT + "/"):
+        if relative.startswith((ACTOR_ROOT + "/", *editor_sources)):
             continue
         document = gltf_document(build_dir / relative)
         normals = _gltf_normal_images(document)
@@ -848,6 +873,8 @@ def scene_textures(build_dir: Path) -> dict[str, bool]:
         return shaders[path]
 
     for relative in shipped_client_files(build_dir, (".tscn", ".tres")):
+        if relative.startswith(editor_sources):
+            continue
         text = (build_dir / relative).read_text(encoding="utf-8", errors="replace")
         if "Material" in text:
             for path, normal_map in _material_textures(text, shader_code):
@@ -857,6 +884,24 @@ def scene_textures(build_dir: Path) -> dict[str, bool]:
         for image in images:
             if image.startswith(folder + "/"):
                 add(image, RUNTIME_NORMAL_MAP.search(image) is not None)
+    for relative in RUNTIME_SCENE_TEXTURE_SOURCES:
+        if relative in tracked_set:
+            text = (build_dir / relative).read_text(encoding="utf-8", errors="replace")
+            for literal in RES_IMAGE_LITERAL.findall(text):
+                add("godot-client/" + literal, RUNTIME_NORMAL_MAP.search(literal) is not None)
+    for relative in tracked(build_dir, *RUNTIME_TEXTURE_DATA_ROOTS) if RUNTIME_TEXTURE_DATA_ROOTS else ():
+        if not relative.lower().endswith(".json") or EDITOR_SOURCE_PROVENANCE.search(relative):
+            continue
+        try:
+            raw = (build_dir / relative).read_bytes()
+            if not any(key.encode("utf-8") in raw for key in RUNTIME_TEXTURE_KEYS):
+                continue
+            data = json.loads(raw.decode("utf-8-sig"))
+        except (OSError, ValueError):
+            continue
+        for key, value in json_strings(data, set()):
+            if key in RUNTIME_TEXTURE_KEYS and value.startswith("res://"):
+                add("godot-client/" + value[len("res://"):], RUNTIME_NORMAL_MAP.search(value) is not None)
     return {p: normal for p, normal in found.items() if p + ".import" not in tracked_set}
 
 

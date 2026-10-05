@@ -172,7 +172,7 @@ uniform sampler2D ground_orm : filter_linear_mipmap_anisotropic, repeat_enable;
 
 def test_3d_materials_in_scenes_and_resources_name_scene_textures(tmp_path, monkeypatch):
     files = _write(tmp_path, {
-        REGION: REGION_SCENE, f"{PILOT}/style/worn_path.gdshader": WORN_PATH,
+        f"{WORLD}/vale.tscn": REGION_SCENE, f"{PILOT}/style/worn_path.gdshader": WORN_PATH,
         GROUND: b"x", GROUND_NORMAL: b"x", GROUND_ORM: b"x", PROTOTYPE_TEXTURE: b"x",
         f"{WORLD}/ui_only.png": b"x", f"{WORLD}/canvas_only.png": b"x",
         f"{WORLD}/path_normal.png": b"x", f"{WORLD}/rock_orm.png": b"x",
@@ -207,6 +207,59 @@ def test_the_preset_library_folder_is_sampled_in_3d(tmp_path, monkeypatch):
                               f"{PILOT}/style/texture_packs/delta-silt/delta-silt-v001.png": b"x"})
     _track(monkeypatch, files)
     assert package.scene_textures(tmp_path) == {GROUND: False, GROUND_NORMAL: True, GROUND_ORM: False}
+
+
+def test_the_map_editor_region_sources_are_not_read(tmp_path, monkeypatch):
+    # world_authoring leaves the package (owner call 2026-10-05), so what its scenes and prototypes draw
+    # decides nothing: only what the game samples does.
+    files = _write(tmp_path, {
+        REGION: REGION_SCENE, f"{PILOT}/style/worn_path.gdshader": WORN_PATH,
+        PROTOTYPE: _material_glb([{"uri": "../../../../../src/dev/map_authoring_pilot/style/textures/ground-orm.png"}]),
+        GROUND: b"x", GROUND_NORMAL: b"x", GROUND_ORM: b"x", PROTOTYPE_TEXTURE: b"x"})
+    monkeypatch.setattr(package, "RUNTIME_SCENE_TEXTURE_FOLDERS", ())
+    _track(monkeypatch, files)
+    assert package.scene_textures(tmp_path) == {}
+    # The same scene outside world_authoring counts.
+    files += _write(tmp_path, {f"{PILOT}/vale.tscn": REGION_SCENE})
+    _track(monkeypatch, files)
+    assert package.scene_textures(tmp_path) == {GROUND: False, GROUND_NORMAL: True, GROUND_ORM: False}
+
+
+PACKS = f"{PILOT}/style/texture_packs"
+PRESET_SCRIPT = f"""const _TEXTURE_ROOT := "res://src/dev/map_authoring_pilot/style/textures/"
+const _PRESETS := {{
+	"Delta silt": {{"albedo_path": "res://src/dev/map_authoring_pilot/style/texture_packs/delta-silt/delta-silt-v001.png"}},
+	"Reed thatch": {{'albedo_path': 'res://src/dev/map_authoring_pilot/style/texture_packs/reed-thatch/reed-thatch-v001.png'}},
+}}
+"""
+
+
+def test_textures_the_presets_or_the_map_data_name_are_scene_textures(tmp_path, monkeypatch):
+    # The biome-blend terrain loads the texture packs by the res:// path the map data records, which the
+    # editor published from MapAuthoringTexturePresets' albedo_path entries; no shipped scene names them.
+    silt, thatch, moss, scree, snow = (f"{PACKS}/{name}/{name}-v001.png" for name in (
+        "delta-silt", "reed-thatch", "forest-floor-moss", "alpine-scree-lichen", "alpine-snow-crust"))
+    picture = f"{WORLD}/cartography/four_gates.png"
+
+    def res(path: str) -> str:
+        return "res://" + path.removeprefix("godot-client/")
+
+    files = _write(tmp_path, {
+        package.RUNTIME_SCENE_TEXTURE_SOURCES[0]: PRESET_SCRIPT,
+        f"{WORLD}/biome_blend/catalog.json": json.dumps({"chunks": [{"base": [{"albedoTexture": res(scree)}]}]}),
+        "eloria-assets/maps/four-gates/chunks/02_07/world.json": json.dumps(
+            {"biomeBlend": {"palette": [{"albedoTexture": res(moss)}]}, "minimap": res(picture)}),
+        # Provenance names textures the game never loads; one outside the scene roots is not a scene texture.
+        "eloria-assets/maps/four-gates/authoring/continent-authoring.json": json.dumps({"surfaces": [
+            {"albedoTexture": res(snow)}, {"albedoTexture": "res://world_authoring/regions/vale/assets/textures/rock.jpg"}]}),
+        silt: b"x", thatch: b"x", moss: b"x", scree: b"x", snow: b"x", picture: b"x", PROTOTYPE_TEXTURE: b"x"})
+    monkeypatch.setattr(package, "RUNTIME_SCENE_TEXTURE_FOLDERS", ())
+    _track(monkeypatch, files)
+    # The map's 2D picture is named under another key, and is left alone.
+    assert package.scene_textures(tmp_path) == {silt: False, thatch: False, moss: False, scree: False}
+    # A script the commit does not track names nothing.
+    _track(monkeypatch, [f for f in files if f != package.RUNTIME_SCENE_TEXTURE_SOURCES[0]])
+    assert set(package.scene_textures(tmp_path)) == {moss, scree}
 
 
 def test_a_texture_whose_import_the_commit_tracks_keeps_it(tmp_path, monkeypatch):
@@ -399,6 +452,27 @@ def test_the_preset_library_builds_its_paths_in_a_declared_folder():
     root = re.search(r'const _TEXTURE_ROOT := "res://([^"]+)"', presets.read_text(encoding="utf-8"))
     assert root, "texture_presets.gd no longer declares _TEXTURE_ROOT"
     assert "godot-client/" + root.group(1).rstrip("/") in package.RUNTIME_SCENE_TEXTURE_FOLDERS
+
+
+def test_every_texture_pack_the_game_samples_is_a_scene_texture():
+    # No scene a package carries names six of the packs the biome-blend terrain samples; only the map
+    # editor's region scenes did, and scene_textures no longer reads those. The presets and the map data
+    # name them by res:// path, and so must keep them VRAM-compressed with mipmaps.
+    sources = [package.REPO / package.RUNTIME_SCENE_TEXTURE_SOURCES[0],
+               package.CLIENT / "assets/world/biome_blend/catalog.json"]
+    absent = [s for s in sources if not s.is_file()]
+    if absent:
+        pytest.skip(f"{absent[0]} is not checked out")
+    tracked = set(_repo_tracked("godot-client"))
+    roots = tuple(root + "/" for root in package.SCENE_TEXTURE_ROOTS)
+    named = {"godot-client/" + literal for source in sources
+             for literal in package.RES_IMAGE_LITERAL.findall(source.read_text(encoding="utf-8"))}
+    named = {p for p in named if p.startswith(roots) and p in tracked and p + ".import" not in tracked}
+    packs = {p for p in named if "/style/texture_packs/" in p}
+    assert len(packs) >= 10, sorted(packs)
+    found = package.scene_textures(package.REPO)
+    assert sorted(named - set(found)) == []
+    assert not any(found[p] for p in packs)
 
 
 def test_every_embedded_world_image_is_committed_beside_its_glTF():
