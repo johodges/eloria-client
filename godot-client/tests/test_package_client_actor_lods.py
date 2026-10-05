@@ -200,8 +200,18 @@ def test_a_catalog_or_source_name_keeps_an_image_out_of_the_drop(tmp_path, monke
 @pytest.mark.parametrize("line,kept", [
     ('var path := "res://assets/actors/native/race_textures/" + slug + "/body_basecolor.png"', True),
     ('var path := "res://assets/actors/native/race_textures/%s/body_basecolor.png" % slug', True),
+    ('var path := "res://assets/actors/native/race_textures/{0}/body_basecolor.png".format([slug])', True),
     ('var path := "res://assets/actors/native/".path_join(folder)', True),
+    # A directory kept in a const and joined later, where the literal itself
+    # is followed by nothing that says so.
+    ('const ROOT := "res://assets/actors/native/race_textures"\nvar path := ROOT.path_join(slug)', True),
+    ('const NATIVE := "res://assets/actors/native"\nvar path := NATIVE.path_join("race_textures")', True),
+    ("var path := 'res://assets/actors/native/race_textures/' + slug", True),
+    ('var path := "/".join(["res://assets/actors/native/race_textures", slug, "body.png"])', True),
+    ('var path := "".join(["res://assets/actors/native/race_textures/hero/body_basecolor.png", ext])',
+     True),
     ('if not path.begins_with("res://assets/actors/"):', False),
+    ("if not path.begins_with('res://assets/actors/native/race_textures'):", False),
 ])
 def test_a_runtime_built_actor_path_keeps_the_images_it_can_reach(tmp_path, monkeypatch, line, kept):
     build = tmp_path / "build"
@@ -211,6 +221,124 @@ def test_a_runtime_built_actor_path_keeps_the_images_it_can_reach(tmp_path, monk
 
     assert (RACE_SOURCE in shipping["loose"]) is kept
     assert (RACE_SOURCE in shipping["dropped"]) is not kept
+
+
+@pytest.mark.parametrize("source,kept", [
+    ("godot-client/addons/kit/skin.gd", True),
+    ("godot-client/world_authoring/kit/skin.tscn", True),
+    ("godot-client/assets/ui/skin.tres", True),
+    ("godot-client/native/native_crowd/src/skin.cpp", True),
+    # Never in a package: the export leaves docs, tests and tools out.
+    ("godot-client/tests/test_skin.gd", False),
+    ("godot-client/tools/skin.gd", False),
+])
+def test_a_built_path_anywhere_a_package_runs_keeps_its_images(tmp_path, monkeypatch, source, kept):
+    build = tmp_path / "build"
+    line = 'var path := "res://assets/actors/native/race_textures/" + slug\n'
+    _track(monkeypatch, _write_tree(build, sources={source: line}))
+
+    shipping = package.actor_shipping(build)
+
+    assert (RACE_SOURCE in shipping["loose"]) is kept
+    assert (RACE_SOURCE in shipping["dropped"]) is not kept
+
+
+def test_a_single_quoted_file_literal_is_a_resource_the_game_loads(tmp_path, monkeypatch):
+    build = tmp_path / "build"
+    line = "const BODY := 'res://" + RACE_SOURCE.removeprefix("godot-client/") + "'\n"
+    _track(monkeypatch, _write_tree(build, sources={"godot-client/world_authoring/kit/skin.gd": line}))
+
+    shipping = package.actor_shipping(build)
+
+    assert RACE_SOURCE in shipping["pck"]
+    assert f"{NATIVE}/race_textures" in shipping["pck_folders"]
+
+
+MAP_MANIFEST = "eloria-assets/maps/isle/world.json"
+
+
+@pytest.mark.parametrize("relative,content,image", [
+    ("godot-client/data/world/objects.json",
+     {"icon": "res://" + RACE_SOURCE.removeprefix("godot-client/")}, RACE_SOURCE),
+    ("godot-client/data/actors/native_asset_catalog.json",
+     {"x": {"texture": "race_textures/hero/body_basecolor.png"}}, RACE_SOURCE),
+    ("godot-client/data/ui/icons.json", {"body_basecolor.png": 1}, RACE_SOURCE),
+    ("godot-client/data/actors/necks.json", {"root": "res://assets/actors/native/neck_textures"}, NECK),
+    ("godot-client/data/actors/necks.json",
+     {"pattern": "res://assets/actors/native/neck_textures/%s.png"}, NECK),
+    ("godot-client/world_authoring/kit/props.json",
+     {"skin": "C:\\Eloria\\app\\assets\\actors\\native\\creatures\\fox_Fur Base Color.png"},
+     CREATURE_EXTRACTED),
+    (MAP_MANIFEST, {"actors": ["res://assets/actors/native/neck_textures/hero.png"]}, NECK),
+    ("godot-client/data/world/creatures.json", {"skin": "creatures/fox_Fur%20Base%20Color.png"},
+     CREATURE_EXTRACTED),
+    ("godot-client/data/i18n/strings.csv", "key,en\nicon,cloth_0.png\n", CLOTH_EXTRACTED),
+    ("godot-client/addons/kit/kit.gd", "var name := 'fox_Fur Base Color.png'\n", CREATURE_EXTRACTED),
+])
+def test_other_shipped_text_naming_an_image_keeps_it_loose(tmp_path, monkeypatch, relative, content, image):
+    # The drop is decided from the catalogs, source literals and glTF URIs;
+    # any other text a package carries that names the image keeps it, loose,
+    # as every actor image shipped before the drop.
+    build = tmp_path / "build"
+    text = content if isinstance(content, str) else json.dumps(content)
+    sources = {relative: text}
+    if relative != MAP_MANIFEST:
+        sources[MAP_MANIFEST] = "{}"
+    _track(monkeypatch, _write_tree(build, sources=sources))
+
+    shipping = package.actor_shipping(build)
+
+    assert image in shipping["loose"] and image not in shipping["dropped"]
+    assert any(where.startswith(relative + ": ") for where in shipping["kept"][image])
+    assert shipping["dropped"] == DROPPED - {image}
+
+
+@pytest.mark.parametrize("relative,content", [
+    # Text no package carries names nothing a package reads.
+    ("godot-client/tests/fixtures/necks.json", {"root": "res://assets/actors/native/neck_textures"}),
+    ("godot-client/docs/necks.json", {"root": "res://assets/actors/native/neck_textures"}),
+    ("eloria-assets/qa/fit-baseline.json", {"root": "godot-client/assets/actors/native/neck_textures"}),
+    ("eloria-assets/maps/isle/qa/report.json", {"root": "godot-client/assets/actors/native/neck_textures"}),
+    # A face mask's path, and a model key, are not the neck texture of that name.
+    ("godot-client/data/actors/keys.json", {"hero": "res://" + MASK.removeprefix("godot-client/")}),
+])
+def test_text_that_ships_nowhere_or_names_a_namesake_keeps_nothing(tmp_path, monkeypatch, relative, content):
+    build = tmp_path / "build"
+    _track(monkeypatch, _write_tree(build, sources={relative: json.dumps(content), MAP_MANIFEST: "{}"}))
+
+    shipping = package.actor_shipping(build)
+
+    assert shipping["dropped"] == DROPPED
+    assert shipping["kept"] == {}
+
+
+def test_a_glTF_outside_the_actor_tree_naming_an_image_keeps_it(tmp_path, monkeypatch):
+    build = tmp_path / "build"
+    rock = "godot-client/assets/world/rock.glb"
+    files = _write_tree(build, extra=(rock,))
+    (build / rock).write_bytes(_glb(["../actors/native/creatures/fox_Fur%20Base%20Color.png"]))
+    _track(monkeypatch, files)
+
+    shipping = package.actor_shipping(build)
+
+    assert CREATURE_EXTRACTED in shipping["loose"]
+    assert shipping["kept"][CREATURE_EXTRACTED] == {f"{rock}: ../actors/native/creatures/fox_Fur Base Color.png"}
+
+
+def test_a_kept_image_is_staged_loose_and_passes_the_pack_check(tmp_path, monkeypatch):
+    build = tmp_path / "build"
+    app = tmp_path / "app"
+    _track(monkeypatch, _write_tree(build, sources={
+        "godot-client/data/world/objects.json": json.dumps({"icon": "body_basecolor.png"})}))
+    _import_mask(build)
+    _import_cloth_texture(build)
+
+    package.stage_loose_client_files(build, app)
+    _write_pck(app / "Eloria.pck", GOOD_PCK)
+    package.check_actor_pack(build, app)
+
+    assert (app / RACE_SOURCE.removeprefix("godot-client/")).is_file()
+    assert not (app / NECK.removeprefix("godot-client/")).exists()
 
 
 def test_a_gltf_in_a_folder_the_pck_draws_on_stops_the_package(tmp_path, monkeypatch):

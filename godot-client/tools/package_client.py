@@ -37,9 +37,10 @@ What goes in, and why it is more than an export:
       textures' import settings (VRAM-compressed, mipmapped: what the editor
       gives a texture it sees used in 3D) and the game uploads the imported
       texture instead of decoding the JPEG with no mip chain. Actor images
-      that nothing names - no glTF URI, no catalog, no client source; the
-      editor's extracted copies of embedded glTF images and the race and neck
-      texture sources the race models were built from - ship nowhere.
+      that nothing names - no glTF URI, no catalog, no client source,
+      no other text the package carries; the editor's extracted copies of
+      embedded glTF images and the race and neck texture sources the race
+      models were built from - ship nowhere.
   eloria-assets/maps, eloria-assets/concepts
       "res://../eloria-assets/..." resolves beside app/. Every map package (a
       folder holding world.json) ships without its references, captures,
@@ -126,9 +127,28 @@ GLTF_SUFFIXES = (".glb", ".gltf")
 IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg", ".webp")
 # Files the export's include filter packs whether or not they are imported.
 PLAIN_EXPORT_SUFFIXES = (".json", ".bin")
-# Client files whose string literals may name an actor file the game loads.
-SOURCE_SUFFIXES = (".gd", ".tscn", ".tres", ".gdshader", ".godot", ".cfg")
-SOURCE_LITERAL = re.compile(r'"([^"\\\n]*assets/actors/[^"\\\n]*)"')
+# Client files whose string literals may name an actor file the game opens:
+# the scripts, scenes, resources, shaders and settings the export packs from
+# anywhere in the project (src, addons, world_authoring, assets), and the
+# native extension's sources. The export's exclude filter keeps docs, tests
+# and tools out of a package, so nothing a package runs is written there.
+SOURCE_SUFFIXES = (".gd", ".tscn", ".tres", ".gdshader", ".gdshaderinc", ".godot", ".cfg",
+                   ".gdextension", ".cpp", ".h")
+UNSHIPPED_CLIENT_DIRS = ("godot-client/docs/", "godot-client/tests/", "godot-client/tools/",
+                         "godot-client/test-artifacts/")
+# Data the game reads as text beside its JSON (the localisation table).
+PLAIN_TEXT_SUFFIXES = (".csv", ".txt")
+# A string literal in either quote style (GDScript takes both).
+SOURCE_LITERAL = re.compile(r"""(["'])((?:(?!\1)[^\\\n])*)\1""")
+# Where a string names a path under the actor tree: "res://assets/actors/...",
+# "assets/actors", ".../godot-client/assets/actors/..." - not eloria-assets/actors.
+ACTOR_PATH_IN_TEXT = re.compile(r"(?<![\w.-])assets/actors(?=/|$)", re.I)
+# A path literal compared against another path reaches nothing.
+COMPARED_BEFORE = re.compile(r"(begins_with|ends_with|contains|find|rfind|==|!=)\(?\s*$")
+# A literal joined to more text builds a path from its start.
+JOINED_AFTER = re.compile(r"\s*(\+|%|\.path_join|\.plus_file|\.format)")
+# A literal inside a "/".join([...]) list is one piece of a built path.
+JOIN_LIST_BEFORE = re.compile(r"\.join\(\s*\[[^\]\)]*$")
 
 # Actor folders whose glTF files' URI-named textures are imported into the
 # PCK (owner call, 2026-10-05: "keep equipment textures imported", +95 MB).
@@ -321,41 +341,182 @@ def _resolve(base: str, relative: str) -> str:
     return posixpath.normpath(posixpath.join(posixpath.dirname(base), relative.replace("\\", "/")))
 
 
+def shipped_client_files(build_dir: Path, suffixes: tuple[str, ...]) -> list[str]:
+    """Tracked godot-client files with these suffixes that a package carries (not docs/tests/tools)."""
+    return [p for p in tracked(build_dir, "godot-client")
+            if p.lower().endswith(suffixes) and not p.startswith(UNSHIPPED_CLIENT_DIRS)
+            and not p.lower().endswith(".md")]
+
+
+def _actor_path(literal: str) -> str | None:
+    """The repository path an actor path string names or starts, or None.
+
+    Takes res://, repository, project and absolute forms ("res://assets/actors/
+    native/x", "assets/actors", ".../godot-client/assets/actors/...").
+    """
+    text = literal.replace("\\", "/")
+    match = ACTOR_PATH_IN_TEXT.search(text)
+    return "godot-client/" + text[match.start():] if match else None
+
+
+def _actor_prefix(build_dir: Path, path: str) -> str | None:
+    """The start of the actor paths `path` builds at runtime, or None when it names one file.
+
+    A format placeholder (%s, {0}) builds from the text before it; a path
+    ending in "/", "_" or "-", or naming a directory (its last part has no
+    suffix, or it is one in the tree), is joined to more at runtime.
+    """
+    placeholder = re.search(r"%|\{", path)
+    if placeholder:
+        return path[:placeholder.start()]
+    if path.endswith(("/", "_", "-")) or not PurePosixPath(path).suffix or (build_dir / path).is_dir():
+        return path
+    return None
+
+
 def source_actor_literals(build_dir: Path) -> tuple[set[str], set[str]]:
     """Actor paths the client source names: (files, prefixes) as repository paths.
 
-    A literal naming a tracked actor file is a file the game may open. A
-    literal that is only the start of actor paths - ending in "/" or "_", or
-    joined to more text (+, %, path_join, format) - builds paths at runtime,
-    so it can reach any file under it; one compared against a path
-    (begins_with and the like) reaches nothing.
+    Every string literal, in either quote style, in every source file a
+    package carries (SOURCE_SUFFIXES outside docs/tests/tools: src, addons,
+    world_authoring, the native extension, project.godot). A literal naming an
+    actor file is a file the game may open. A literal that is only the start
+    of actor paths builds paths at runtime, so it can reach any file under it:
+    one that names a directory ("res://assets/actors/native", "...race_textures"
+    kept in a const and path_join()ed later), ends in "/", "_" or "-", holds a
+    format placeholder, is joined to more text (+, %, path_join, format) or
+    sits in a "/".join([...]) list. One compared against a path (begins_with
+    and the like) reaches nothing. Paths built with no literal naming
+    assets/actors at all are beyond this: shipped_text_names() and the
+    packaged-route checks are the net under it.
     """
     files: set[str] = set()
     prefixes: set[str] = set()
-    sources = [p for p in tracked(build_dir, "godot-client/src", "godot-client/project.godot")
-               if p.endswith(SOURCE_SUFFIXES)]
-    for relative in sources:
+    for relative in shipped_client_files(build_dir, SOURCE_SUFFIXES):
         text = (build_dir / relative).read_text(encoding="utf-8", errors="replace")
+        if not ACTOR_PATH_IN_TEXT.search(text):
+            continue
         for match in SOURCE_LITERAL.finditer(text):
-            literal = match.group(1)
-            if literal.startswith("res://"):
-                path = "godot-client/" + literal[len("res://"):]
-            elif literal.startswith("assets/"):
-                path = "godot-client/" + literal
-            else:
+            path = _actor_path(match.group(2))
+            if path is None:
                 continue
-            before = text[max(0, match.start() - 16):match.start()]
+            before = text[max(0, match.start() - 200):match.start()]
             after = text[match.end():match.end() + 16]
-            if re.search(r"(begins_with|ends_with|contains|find|==|!=)\(?\s*$", before):
+            if COMPARED_BEFORE.search(before[-16:]):
                 continue
-            placeholder = re.search(r"%|\{", path)
-            if placeholder:  # a format string: the path is built from its start
-                prefixes.add(path[:placeholder.start()])
-            elif literal.endswith(("/", "_")) or re.match(r"\s*(\+|%|\.path_join|\.format)", after):
+            prefix = _actor_prefix(build_dir, path)
+            if prefix is not None:
+                prefixes.add(prefix)
+            elif JOINED_AFTER.match(after) or JOIN_LIST_BEFORE.search(before):
                 prefixes.add(path)
             else:
                 files.add(path)
     return files, prefixes
+
+
+def _json_strings(value):
+    """Every key and string value in a JSON document."""
+    if isinstance(value, dict):
+        for key, child in value.items():
+            yield key
+            yield from _json_strings(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from _json_strings(child)
+    elif isinstance(value, str):
+        yield value
+
+
+def shipped_text_names(build_dir: Path, candidates: set[str]) -> dict[str, set[str]]:
+    """Which of `candidates` (actor images about to be dropped) shipped text names, and where.
+
+    The drop is decided from the actor catalogs, the client source's actor
+    path literals and the actor glTFs' URIs. This is the wider net under that
+    decision - the scan the stage-2b static proof made - so that an image some
+    other shipped text names is kept rather than silently left out:
+
+      * every JSON a package carries, keys and values: godot-client outside
+        docs/tests/tools (data, schemas, assets, world_authoring, the actor
+        manifests) and the eloria-assets files that ship (shipped_eloria_assets:
+        provenance, QA and review records stay out of a package, and their
+        paths name nothing the game reads), plus the plain-text data (the
+        localisation CSV);
+      * every string literal, either quote style, in the source files a package
+        carries (see source_actor_literals);
+      * the image URIs of every other glTF a package carries.
+
+    A string names a candidate when it is the image's path or a tail of it -
+    its bare file name, "race_textures/x/body.png", a res://, repository or
+    absolute path - or when, holding assets/actors, it is a directory, a path
+    prefix or a format string the image lies under (JSON and plain text only;
+    source prefixes are source_actor_literals', which knows a comparison from
+    a built path). A bare stem ("orun_male") is not a name: stems are model
+    keys and face-mask names, and a path built from a stem needs a folder,
+    which these rules look for. Returns {candidate: {"<file>: <string>", ...}}.
+    """
+    if not candidates:
+        return {}
+    tails: dict[str, set[str]] = {}
+    for candidate in candidates:
+        parts = candidate.lower().split("/")
+        for index in range(len(parts)):
+            tails.setdefault("/".join(parts[index:]), set()).add(candidate)
+    lowered = sorted((c.lower(), c) for c in candidates)
+    named: dict[str, set[str]] = {}
+
+    def note(hits, where: str, token: str) -> None:
+        for hit in hits:
+            named.setdefault(hit, set()).add(f"{where}: {token[:160]}")
+
+    def visit(token: str, where: str, prefixes: bool) -> None:
+        original = unquote(token).replace("\\", "/").strip()
+        if not original or len(original) > 1024:
+            return
+        if original[:6].lower() == "res://":
+            original = original[6:]
+        original = original.removeprefix("./")
+        hits = set(tails.get(original.lower(), ()))
+        path = _actor_path(original)
+        if path is not None:
+            hits |= tails.get(path.lower(), set())
+            prefix = _actor_prefix(build_dir, path) if prefixes else None
+            if prefix is not None:
+                prefix = prefix.lower()
+                hits |= {c for low, c in lowered if low.startswith(prefix)}
+        if hits:
+            note(hits, where, token)
+
+    map_files = sorted(shipped_eloria_assets(build_dir)[0])
+    json_files = shipped_client_files(build_dir, (".json",)) + [
+        p for p in map_files if p.lower().endswith(".json")]
+    for relative in json_files:
+        try:
+            document = json.loads((build_dir / relative).read_text(encoding="utf-8-sig"))
+        except (OSError, ValueError):
+            text = (build_dir / relative).read_text(encoding="utf-8", errors="replace")
+            for match in SOURCE_LITERAL.finditer(text):
+                visit(match.group(2), relative, True)
+            continue
+        for value in _json_strings(document):
+            visit(value, relative, True)
+    for relative in shipped_client_files(build_dir, PLAIN_TEXT_SUFFIXES):
+        text = (build_dir / relative).read_text(encoding="utf-8", errors="replace")
+        for token in re.split(r"[\s\"',;=()\[\]{}<>|]+", text):
+            visit(token, relative, True)
+    for relative in shipped_client_files(build_dir, SOURCE_SUFFIXES):
+        text = (build_dir / relative).read_text(encoding="utf-8", errors="replace")
+        for match in SOURCE_LITERAL.finditer(text):
+            visit(match.group(2), relative, False)
+    gltf_files = [p for p in shipped_client_files(build_dir, GLTF_SUFFIXES) + map_files
+                  if p.lower().endswith(GLTF_SUFFIXES) and not p.startswith(ACTOR_ROOT + "/")]
+    for relative in gltf_files:
+        for uri in gltf_image_uris(build_dir / relative):
+            target = _resolve(relative, uri)
+            if target in candidates:
+                note({target}, relative, uri)
+            elif ACTOR_PATH_IN_TEXT.search(uri):
+                visit(uri, relative, False)
+    return named
 
 
 def actor_shipping(build_dir: Path) -> dict:
@@ -372,14 +533,17 @@ def actor_shipping(build_dir: Path) -> dict:
     which resolves to res://: in IMPORTED_URI_TEXTURE_FOLDERS they are
     imported into the PCK; elsewhere they are read loose beside their glTF.
     An image in UNREFERENCED_IMAGE_FOLDERS that none of these names, and no
-    runtime-built source path can reach, ships nowhere.
+    runtime-built source path can reach, ships nowhere - unless any other text
+    a package carries names it (shipped_text_names), which keeps it loose,
+    as every actor image shipped before the drop.
 
     A folder under assets/actors/native with nothing for the PCK gets a
     .gdignore (neither imported nor exported); in a folder that has, each
     other importable file gets a "skip" import, and its .json/.bin files are
     packed by the export's include filter, so they ship in the PCK. Returns
     {"pck", "loose", "dropped"} (tracked files), "uri_textures" (the imported
-    URI textures, a subset of "pck") and {"pck_folders", "loose_folders"}.
+    URI textures, a subset of "pck"), "kept" ({image: where it is named} for
+    the images the wider scan kept loose) and {"pck_folders", "loose_folders"}.
     """
     actor_files = tracked(build_dir, ACTOR_ROOT)
     folders: dict[str, list[str]] = {}
@@ -416,9 +580,12 @@ def actor_shipping(build_dir: Path) -> dict:
                     if folder_name(f) in IMPORTED_URI_TEXTURE_FOLDERS and f not in loaded}
     reached = tuple(p for p in source_prefixes if p.startswith(ACTOR_ROOT + "/")
                     or (ACTOR_ROOT + "/").startswith(p))
-    dropped = {f for f in actor_files
+    unnamed = {f for f in actor_files
                if f.lower().endswith(IMAGE_SUFFIXES) and folder_name(f) in UNREFERENCED_IMAGE_FOLDERS
                and f not in uri_named and f not in loaded and not f.startswith(reached)}
+    # Any other shipped text that names one keeps it, loose, as before the drop.
+    kept = shipped_text_names(build_dir, unnamed)
+    dropped = unnamed - set(kept)
     pck_folders = {folder for folder, files in folders.items()
                    if (loaded | uri_textures).intersection(files)}
     for folder in sorted(pck_folders):
@@ -432,7 +599,7 @@ def actor_shipping(build_dir: Path) -> dict:
     pck = loaded | uri_textures | {f for folder in pck_folders for f in folders[folder]
                                    if f.lower().endswith(PLAIN_EXPORT_SUFFIXES)}
     loose_folders = set(folders) - pck_folders
-    return {"pck": pck, "uri_textures": uri_textures, "dropped": dropped,
+    return {"pck": pck, "uri_textures": uri_textures, "dropped": dropped, "kept": kept,
             "loose": tracked_set - pck - dropped,
             "pck_folders": pck_folders, "loose_folders": loose_folders}
 
@@ -483,6 +650,8 @@ def prepare_build_tree(build_dir: Path, sha: str) -> Path:
     for folder in shipping["loose_folders"]:
         (build_dir / folder / ".gdignore").write_text("", encoding="utf-8")
     write_actor_import_settings(build_dir, shipping)
+    for image, where in sorted(shipping["kept"].items()):
+        log(f"kept loose, named outside the catalogs: {image} ({'; '.join(sorted(where)[:3])})")
     return project
 
 
@@ -804,10 +973,11 @@ def json_strings(value, skip: set[str], key: str = ""):
         yield key, value
 
 
-def stage_eloria_assets(build_dir: Path, stage: Path) -> list[str]:
-    """Copy map packages and every eloria-assets file the client names.
+def shipped_eloria_assets(build_dir: Path) -> tuple[set[str], list[str], list[str]]:
+    """The eloria-assets files a package ships: (files, errors, warnings).
 
-    Returns warnings; raises when a reference the client will open is missing.
+    Every map package's shipped files, every file the client names, and the
+    closure of the files those manifests name.
     """
     all_tracked = set(tracked(build_dir, "eloria-assets"))
     wanted: set[str] = set()
@@ -887,9 +1057,20 @@ def stage_eloria_assets(build_dir: Path, stage: Path) -> list[str]:
                 else:
                     errors.append(f"{manifest} externalResources -> {target} is not in the commit")
 
+    return wanted, errors, warnings
+
+
+def stage_eloria_assets(build_dir: Path, stage: Path) -> list[str]:
+    """Copy map packages and every eloria-assets file the client names.
+
+    Returns warnings; raises when a reference the client will open is missing.
+    """
+    wanted, errors, warnings = shipped_eloria_assets(build_dir)
     if errors:
         raise PackageError("missing map files:\n  " + "\n  ".join(errors[:40]))
     total = sum(copy_file(build_dir / p, stage / p) for p in sorted(wanted))
+    package_dirs = {str(PurePosixPath(p).parent) for p in tracked(build_dir, "eloria-assets/maps")
+                    if p.endswith("/world.json")}
     log(f"staged {len(wanted)} eloria-assets files from {len(package_dirs)} map packages "
         f"({total / 1e9:.2f} GB)")
     return warnings
