@@ -1,0 +1,37 @@
+{
+ "schema": "eloria-continent-v2-server-tables-v1",
+ "about": "The continent-v2 server rows that belong to no single marker: each map's served row (its alias and ELM file; its name is the territory catalog's label), the harvest resources the isles add, the rows the B14 pocket holds back, and which scene points are the home's and the chapter's. publish_server.py reads this beside server-rows.json (the per-marker fields) and the scene markers (every position). No field may hold '|', '#' or a line break.",
+ "maps": [
+  {"id": "sw_isle", "alias": "SWI", "file": "maps/nymara/sw_isle.elm",
+   "note": "the name is the catalog label, 'Landfall': the owner's name for the isle (2026-10-04; serve plan call 5)"},
+  {"id": "tollholms", "alias": "TH", "file": "maps/nymara/tollholms.elm"},
+  {"id": "gull_skerries", "alias": "GS", "file": "maps/nymara/gull_skerries.elm"}
+ ],
+ "resources": [
+  {"name": "Olive", "level": 1, "experience": 6, "seconds": 3.5, "tool": "-", "item": 1860,
+   "source": "review/serve_inputs/harvest/server_rows_draft.txt; item 1860 is on the server since feature/landing-isle S4"},
+  {"name": "Lemon", "level": 4, "experience": 9, "seconds": 3.5, "tool": "-", "item": 1861,
+   "source": "review/serve_inputs/harvest/server_rows_draft.txt; item 1861 is on the server since feature/landing-isle S4"}
+ ],
+ "holdBack": {
+  "why": "the B14 pocket: AC-3 on bake a1_seams found these 19 rows on 22,488 tiles of the north-east bay that the causeway's west end reached only by a 2.9 m drop. CV3 (ff8662651) graded a ramp into the bay. publish_server.py serves them only when every one of them passes every check; if any fails, all 19 are held back (left out and recorded) instead of being served stranded, and any other failure refuses the publish",
+  "map": "sw_isle",
+  "spawns": ["sw-spawn-0432", "sw-spawn-0433", "sw-spawn-0434", "sw-spawn-0435", "sw-spawn-0436", "sw-spawn-0437",
+             "sw-spawn-0438", "sw-spawn-0439"],
+  "nodes": [281, 282, 283, 284, 289, 290, 291, 292, 318, 319, 320]
+ },
+ "homes": {
+  "sw_isle": {"arrival": "sw-isle-arrival", "beam": "runtime-home-beam", "respawn": "runtime-home-respawn",
+              "underworld": "runtime-home-respawn",
+              "note": "arrival is the scene's default spawn point; underworld (a death at overall 20 or more) wakes at the respawn point too (owner decision 30)"}
+ },
+ "landing": {
+  "map": "sw_isle",
+  "arrival": "runtime-home-beam",
+  "register": "obj-landing-register-desk",
+  "ferry": "obj-ferry-n10",
+  "ferryPoint": "runtime-ferry-n10",
+  "targetRoles": ["tutorial-target", "tutorial-option"],
+  "note": "targets are every runtime point of those roles, keyed by its `target`; the cast is every NPC marker of group re-homed in server-rows.json"
+ }
+}

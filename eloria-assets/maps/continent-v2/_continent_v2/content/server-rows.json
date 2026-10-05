@@ -1,0 +1,129 @@
+{
+ "schema": "eloria-continent-v2-server-rows-v1",
+ "about": "The fields of the continent-v2 server rows that are not coordinates, keyed by the scene marker record_id (the marker gives the position and the tile, through _continent_v2/frames.py). publish_server.py joins the two; a marker of kind npc_marker or interactive without an entry here is refused. No field may hold '|', '#' or a line break: the server's npcs.txt and interactives.txt loaders split on the pipe and do not strip inline comments.",
+ "maps": {
+  "sw_isle": {
+   "npcs": {
+    "npc-bettany-orl": {
+     "name": "Bettany Orl",
+     "group": "re-homed",
+     "role": "shop",
+     "actorType": 303,
+     "greeting": "Bread, broth, and whatever the last boat was willing to say out loud. The broth is better.",
+     "greetingSource": "the owner's pick, 2026-10-04 (continent-v2/review/isle_greetings_and_names.md section 2, the recommended line); the Four Gates line stays in the server's npcs.txt and npc_dialogue.txt for the rollback",
+     "servedFrom": "M3 home_npcs.txt; said only after the flip (home_map = sw_isle, eloria/home.py reword_greetings). Before it, the isle copy landing_install_isle_cast stands from M2 says the Four Gates line, and so does the rollback"
+    },
+    "npc-ferryman-caldus": {
+     "name": "Ferryman Caldus",
+     "group": "re-homed",
+     "role": "dialogue",
+     "actorType": 310,
+     "greeting": "I keep the ferry under the green light. My lantern marks the channel when the mist closes in.",
+     "greetingSource": "the owner's pick, 2026-10-04 (continent-v2/review/isle_greetings_and_names.md section 2, the recommended line); the Four Gates line stays in the server's npcs.txt and npc_dialogue.txt for the rollback",
+     "servedFrom": "M3 home_npcs.txt; said only after the flip (home_map = sw_isle, eloria/home.py reword_greetings). Before it, the isle copy landing_install_isle_cast stands from M2 says the Four Gates line, and so does the rollback"
+    },
+    "npc-gate-warden-ilyon": {
+     "name": "Gate Warden Ilyon",
+     "group": "re-homed",
+     "role": "guide",
+     "actorType": 308,
+     "greeting": "Every people keeps a post on this isle. Keep your weapons low and your purpose clear, and we will get on.",
+     "greetingSource": "the owner's pick, 2026-10-04 (continent-v2/review/isle_greetings_and_names.md section 2, the recommended line); the Four Gates line stays in the server's npcs.txt and npc_dialogue.txt for the rollback",
+     "servedFrom": "M3 home_npcs.txt; said only after the flip (home_map = sw_isle, eloria/home.py reword_greetings). Before it, the isle copy landing_install_isle_cast stands from M2 says the Four Gates line, and so does the rollback"
+    },
+    "npc-grove-keeper-ammet-sorrel": {
+     "name": "Grove-Keeper Ammet Sorrel",
+     "group": "new",
+     "role": "dialogue",
+     "actorType": 376,
+     "greeting": "Pick from the low branches. The high ones belong to the palace, and the palace has not looked up in two hundred years.",
+     "greetingSource": "tutorial/npc_dialogue_draft.txt (Part A)",
+     "servedFrom": "M1 npcs.txt"
+    },
+    "npc-light-keeper-marta-quell": {
+     "name": "Light-Keeper Marta Quell",
+     "group": "new",
+     "role": "dialogue",
+     "actorType": 342,
+     "greeting": "The red light is the oldest on the isle and the cheapest to insure. Mind the dog; he is the expensive part.",
+     "greetingSource": "tutorial/npc_dialogue_draft.txt (Part A)",
+     "servedFrom": "M1 npcs.txt"
+    },
+    "npc-register-clerk-hemmen": {
+     "name": "Register Clerk Hemmen",
+     "group": "re-homed",
+     "role": "dialogue",
+     "actorType": 312,
+     "greeting": "The Landing Register is the only document all eight peoples ever agreed to sign. Mind how you write in it.",
+     "greetingSource": "the owner's pick, 2026-10-04 (continent-v2/review/isle_greetings_and_names.md section 2, the recommended line); the Four Gates line stays in the server's npcs.txt and npc_dialogue.txt for the rollback",
+     "servedFrom": "M3 home_npcs.txt; said only after the flip (home_map = sw_isle, eloria/home.py reword_greetings). Before it, the isle copy landing_install_isle_cast stands from M2 says the Four Gates line, and so does the rollback"
+    },
+    "npc-sluice-keeper-odo-fenn": {
+     "name": "Sluice-Keeper Odo Fenn",
+     "group": "new",
+     "role": "dialogue",
+     "actorType": 360,
+     "greeting": "This brook feeds the castle, the grove and the lake, in that order. The beavers would like to change the order.",
+     "greetingSource": "tutorial/npc_dialogue_draft.txt (Part A)",
+     "servedFrom": "M1 npcs.txt"
+    },
+    "npc-tavi-unhar": {
+     "name": "Tavi Unhar",
+     "group": "new",
+     "role": "dialogue",
+     "actorType": 338,
+     "greeting": "Forty-one hulls since dawn. I am not hiding. I am counting.",
+     "greetingSource": "tutorial/npc_dialogue_draft.txt (Part A)",
+     "servedFrom": "M1 npcs.txt"
+    },
+    "npc-temple-warden-ostrid-hollin": {
+     "name": "Temple Warden Ostrid Hollin",
+     "group": "new",
+     "role": "dialogue",
+     "actorType": 315,
+     "greeting": "Whoever falls on this isle wakes by the beacon, a stone's throw from my door. I count them in. I have not yet had to count anyone out.",
+     "greetingSource": "tutorial/npc_dialogue_draft.txt (Part A)",
+     "servedFrom": "M1 npcs.txt"
+    },
+    "npc-wayfinder-nesh": {
+     "name": "Wayfinder Nesh",
+     "group": "re-homed",
+     "role": "tutorial",
+     "actorType": 307,
+     "greeting": "New ashore? Then start where everyone does, and I will not have to fish you out of the lake.",
+     "greetingSource": "the owner's pick, 2026-10-04 (continent-v2/review/isle_greetings_and_names.md section 2, the recommended line); the Four Gates line stays in the server's npcs.txt and npc_dialogue.txt for the rollback",
+     "servedFrom": "M3 home_npcs.txt; said only after the flip (home_map = sw_isle, eloria/home.py reword_greetings). Before it, the isle copy landing_install_isle_cast stands from M2 says the Four Gates line, and so does the rollback"
+    }
+   },
+   "interactives": {
+    "obj-landing-register-desk": {
+     "objectId": 20,
+     "role": "information",
+     "target": "register",
+     "text": "The Landing Register lies open on its desk: name, road, date, and four empty lines for the countersigns.",
+     "source": "serve plan S5 (B3 notes section 7)"
+    },
+    "obj-ferry-n10": {
+     "objectId": 21,
+     "role": "portal",
+     "target": "maps.txt",
+     "text": "The Landfall ferry rides at the green light's quay, bound for Crownwater. Ferryman Caldus keeps the gangplank.",
+     "portal": {
+      "destinationMap": "crownwater",
+      "oneWay": true,
+      "landing": "derived by publish_server.py: the server's eloria/continent_geography.py MAPS[destination].arrival, cross-checked against the server manifest's maps[] entry and continentGeography region and the client's legacy publication, refused unless it and its eight neighbours are walkable and steppable on the destination's vendored grid; never typed here"
+     },
+     "source": "serve plan S5 (B3 notes section 3.2); owner call 2 default: one way"
+    }
+   }
+  },
+  "tollholms": {
+   "npcs": {},
+   "interactives": {}
+  },
+  "gull_skerries": {
+   "npcs": {},
+   "interactives": {}
+  }
+ }
+}

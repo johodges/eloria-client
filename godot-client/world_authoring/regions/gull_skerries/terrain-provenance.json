@@ -1,0 +1,61 @@
+{
+ "schema": "eloria-continent-v2-terrain-provenance-v1",
+ "regionId": "gull_skerries",
+ "sourceData": {
+  "manifest": "work-output/continent-v2/source-data/source-manifest.json",
+  "manifestSha256": "f9ccb111215257aeba499d085c3adb58f431617e7e0e925934685cc06a91ad37",
+  "inputs": "as sw_isle's terrain-provenance.json"
+ },
+ "crop": {
+  "parent": "sw_isle",
+  "row0": 439,
+  "col0": 0,
+  "rows": 820,
+  "cols": 612,
+  "parentBaseHeightsSha256": "71a63cc52563c71202b39bba1ab1eeff2af05179f288c5d4214982695255999d",
+  "parentBaseColorsSha256": "35b67bacbf9c562375f5fa00a2cb57c895cebc95b0258901b00af6edad2974c4",
+  "why": "the island group's three maps share one conditioned base (adjacent-map design s. 2 and 4): a crop of it keeps every vertex this territory shares with sw_isle bit-identical, and changes nothing in sw_isle's base, so its sculpt layer stays bound"
+ },
+ "frame": {
+  "continentTranslation": [
+   896.0,
+   0.0,
+   7876.0
+  ],
+  "cellMetres": 2.0,
+  "vertices": [
+   612,
+   820
+  ],
+  "firstVertexContinent": [
+   299.0,
+   7041.0
+  ],
+  "lattice": "vertex (i, j) is sw_isle's base vertex (i + 0, j + 439), the island product's cell centre (201 + 2 (i + 49), 6061 + 2 (j + 490)); no resampling"
+ },
+ "vertical": {
+  "A": 259.0078328433769,
+  "u0": 259.0078328433769,
+  "peakMetres": 350.0,
+  "gainAtSea": 1.0
+ },
+ "heights": {
+  "file": "base-heights.f32le",
+  "encoding": "float32 little-endian, row-major, x fastest",
+  "sha256": "16271840456529a430a475f62d799da8b79e0050751cf4c384b19777acb4ef38",
+  "rule": "a byte crop of sw_isle's base-heights.f32le (the conditioned 8 km island product over the whole group grid; sw_isle's terrain-provenance.json has the inputs and the rules). This territory's own terrain fixes go in its sculpt layer, patches and paths, never into this file",
+  "stats": {
+   "heightRangeMetres": [
+    -16.0,
+    194.724
+   ]
+  }
+ },
+ "colors": {
+  "file": "base-colors.rgba8",
+  "encoding": "RGBA8, linear (sRGB albedo decoded), alpha 255",
+  "sha256": "053004ad05d0df7d8dc62394387ec3cc928e0ec3f86211447d2e313627259104",
+  "rule": "a byte crop of sw_isle's base-colors.rgba8"
+ },
+ "tool": "godot-client/tools/bootstrap_continent_v2_territory.py"
+}
