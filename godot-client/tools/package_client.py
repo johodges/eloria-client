@@ -368,7 +368,7 @@ EDITOR_ONLY_PCK_DIRS = ("world_authoring/",)
 # Map files that name those sources as provenance only: each legacy map's
 # authoring/continent-authoring.json records the region scene and prototypes it
 # was published from. They ship, but no file the game reaches opens them
-# (scene_textures).
+# (check_map_data_names_no_editor_sources, scene_textures).
 EDITOR_SOURCE_PROVENANCE = re.compile(r"(^|/)authoring/continent-authoring\.json$")
 
 PLATFORMS = {
@@ -1639,6 +1639,53 @@ def check_served_packages(stage: Path, served: list[tuple[str, str]]) -> None:
         log(f"checked {len(served)} served continent-v2 packages: {', '.join(p for p, _ in served)}")
 
 
+def _gltf_json_bytes(path: Path) -> bytes:
+    """A .gltf's bytes, or a .glb's JSON chunk (b"" for a file that is not glTF)."""
+    if path.suffix.lower() != ".glb":
+        return path.read_bytes()
+    with open(path, "rb") as handle:
+        header = handle.read(20)
+        if len(header) < 20 or header[:4] != b"glTF":
+            return b""
+        return handle.read(struct.unpack("<I", header[12:16])[0])
+
+
+def check_map_data_names_no_editor_sources(stage: Path) -> None:
+    """No staged map file names a file of the map editor's sources (EDITOR_ONLY_PCK_DIRS) by res:// path.
+
+    The game loads what the map data names by res:// path from the PCK (the
+    biome-blend records' "albedoTexture", BiomeBlendMaterial._apply_palette, is
+    a terrain base material's texture path as the editor published it), and the
+    PCK leaves the editor's sources out: such a path would fail to load in the
+    package while every check of the import and the PCK passed. The legacy maps'
+    provenance files (EDITOR_SOURCE_PROVENANCE) are the exception; no file the
+    game reaches opens them. JSON and .gltf files are read whole, a .glb's JSON
+    chunk only.
+    """
+    needles = [b"res://" + folder.encode("utf-8") for folder in EDITOR_ONLY_PCK_DIRS]
+    problems: list[str] = []
+    provenance = scanned = 0
+    for path in sorted((stage / "eloria-assets").rglob("*")):
+        if not path.is_file() or path.suffix.lower() not in (".json", ".gltf", ".glb"):
+            continue
+        relative = path.relative_to(stage).as_posix()
+        data = path.read_bytes() if path.suffix.lower() == ".json" else _gltf_json_bytes(path)
+        scanned += 1
+        if not any(needle in data for needle in needles):
+            continue
+        if EDITOR_SOURCE_PROVENANCE.search(relative):
+            provenance += 1
+            continue
+        first = min(data.find(needle) for needle in needles if needle in data)
+        named = data[first:first + 160].split(b'"')[0].decode("utf-8", "replace")
+        problems.append(f"{relative} names {named}")
+    if problems:
+        raise PackageError(f"{len(problems)} staged map files name the map editor's sources, which the package "
+                           "leaves out:\n  " + "\n  ".join(problems[:40]))
+    log(f"checked {scanned} staged map files: none names {', '.join(EDITOR_ONLY_PCK_DIRS)} "
+        f"({provenance} provenance files aside)")
+
+
 def check_registry(build_dir: Path, stage: Path) -> None:
     registry = json.loads((build_dir / "godot-client/data/maps/registry.json").read_text(encoding="utf-8"))
     missing = []
@@ -2216,6 +2263,7 @@ def main() -> int:
         check_editor_sources_unpacked(app_dir)
         warnings = stage_eloria_assets(build_dir, stage, previews, served)
         check_served_packages(stage, served)
+        check_map_data_names_no_editor_sources(stage)
         if not options.no_vram_textures:
             stage_vram_textures(build_dir, stage, godot, options.vram_cache.resolve(), logs)
             check_vram_textures(stage)

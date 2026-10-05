@@ -5,7 +5,9 @@ prototype models and textures and the territory catalogs. Only the editor and
 its plugins open them, never the game, yet the export packed them all: 1.77 GB
 of the 2.11 GB PCK of 4755dfd16. Both export presets now leave world_authoring/*
 out, and check_editor_sources_unpacked stops a build whose PCK still holds any
-of it.
+of it. The map data a package stages may not name a res://world_authoring/ path
+either (check_map_data_names_no_editor_sources): the game loads what it names by
+res:// path from the PCK, so such a path would fail only in the package.
 
 The real-tree guard at the end is the static half of the proof that the game
 never loads them. From main.tscn, the autoloads and every res:// path the
@@ -19,6 +21,7 @@ and only the editor plugins read that.
 """
 import fnmatch
 import importlib.util
+import json
 from pathlib import Path, PurePosixPath
 import re
 import struct
@@ -102,6 +105,49 @@ def test_the_build_checks_the_pack_after_the_export():
     export = body.index("export_project(godot, project, app_dir")
     check = body.index("check_editor_sources_unpacked(app_dir)")
     assert export < check < body.index("make_zip(stage)")
+    staged = body.index("stage_eloria_assets(build_dir, stage")
+    assert staged < body.index("check_map_data_names_no_editor_sources(stage)") < body.index("make_zip(stage)")
+
+
+def _glb(document: dict) -> bytes:
+    raw = json.dumps({"asset": {"version": "2.0"}, **document}).encode("utf-8")
+    raw += b" " * (-len(raw) % 4)
+    return b"glTF" + struct.pack("<II", 2, 20 + len(raw)) + struct.pack("<II", len(raw), 0x4E4F534A) + raw
+
+
+def test_the_map_data_check_refuses_a_path_into_the_region_sources(tmp_path):
+    # The biome-blend records carry a terrain base material's texture path as the editor published it; one
+    # under world_authoring would not load from a package that leaves world_authoring out.
+    stage = tmp_path / "Eloria-Windows-x"
+    maps = stage / "eloria-assets" / "maps"
+    good = {
+        "four-gates/chunks/02_07/world.json": json.dumps({"biomeBlend": {"palette": [{"albedoTexture":
+            "res://src/dev/map_authoring_pilot/style/texture_packs/delta-silt/delta-silt-v001.png"}]}}),
+        # The legacy maps' provenance names the region sources; nothing the game runs opens it.
+        "four-gates/authoring/continent-authoring.json": json.dumps({"scene":
+            "res://world_authoring/regions/four_gates/four_gates.tscn"}),
+        "four-gates/world.glb": _glb({"images": [{"uri": "textures/a.png"}]}),
+        # Binary data is not read.
+        "four-gates/collision.escg": b"\0res://world_authoring/regions/x.png\0",
+    }
+    for relative, content in good.items():
+        (maps / relative).parent.mkdir(parents=True, exist_ok=True)
+        (maps / relative).write_bytes(content if isinstance(content, bytes) else content.encode("utf-8"))
+    package.check_map_data_names_no_editor_sources(stage)
+    bad = {
+        "four-gates/chunks/02_08/world.json": json.dumps({"biomeBlend": {"palette": [{"albedoTexture":
+            "res://world_authoring/regions/four_gates/assets/textures/ground.png"}]}}),
+        "nymara-regions/vale/world.glb": _glb({"extras": {"material": "res://world_authoring/regions/vale/m.tres"}}),
+        "nymara-regions/vale/model.gltf": json.dumps({"extras": {"x": "res://world_authoring/territories.json"}}),
+    }
+    for relative, content in bad.items():
+        (maps / relative).parent.mkdir(parents=True, exist_ok=True)
+        (maps / relative).write_bytes(content if isinstance(content, bytes) else content.encode("utf-8"))
+        with pytest.raises(package.PackageError, match="1 staged map files name the map editor's sources") as error:
+            package.check_map_data_names_no_editor_sources(stage)
+        assert relative in str(error.value) and "res://world_authoring/" in str(error.value)
+        (maps / relative).unlink()
+    package.check_map_data_names_no_editor_sources(stage)
 
 
 # --- what the game can reach ---------------------------------------------------------
@@ -235,7 +281,10 @@ def runtime_closure(files: list[str], read) -> dict[str, tuple[str | None, str]]
             current = queue.pop()
             visit(edges(current), current)
         for key, targets in list(settings.items()):
-            reader = next((p for p in reached if key in text(p)), None)
+            # Read by its name, or by one built from its section ("map_authoring/" + key, as the editor's
+            # usability settings do).
+            section = key.split("/", 1)[0] + "/"
+            reader = next((p for p in reached if key in text(p) or section in text(p)), None)
             if reader is not None:
                 del settings[key]
                 visit([(t, f"project.godot setting {key}, read by {reader}") for t in targets], None)
@@ -286,6 +335,11 @@ def test_the_closure_follows_what_a_script_can_load():
         "src/dev/region_reader.gd"]
     # A project setting of the project's own is followed once something the game runs reads it.
     sources["src/state.gd"] = 'var catalog = ProjectSettings.get_setting("map_authoring/catalog_path")\n'
+    reached = runtime_closure(sorted(sources), sources.get)
+    assert "world_authoring/territories.json" in reached
+    # So is one read by a name built from its section.
+    sources["src/state.gd"] = ('const PREFIX := "map_authoring/"\n'
+                               'var catalog = ProjectSettings.get_setting(PREFIX + "catalog_path")\n')
     reached = runtime_closure(sorted(sources), sources.get)
     assert "world_authoring/territories.json" in reached
     sources["src/state.gd"] = 'const SPEC := preload("res://world_authoring/regions/vale/spec.json")\n'
