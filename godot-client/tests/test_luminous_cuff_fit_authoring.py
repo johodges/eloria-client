@@ -295,8 +295,8 @@ def test_installed_body_metadata_tracks_the_installed_bytes():
     assert race["sha256"] == installed_hash
     # The regenerated body (2026-10-05): vertices are the ones its surfaces
     # actually use, since all seven body surfaces share one position buffer.
-    assert race["vertices"] == 17406
-    assert race["triangles"] == 22577
+    assert race["vertices"] == 18198
+    assert race["triangles"] == 23491
     models = json.loads(MODELS.read_text(encoding="utf-8"))
     assert models["models"]["luminous_female"]["skinPalette"][
         "sourceSHA256"] == installed_hash

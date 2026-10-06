@@ -4,8 +4,8 @@
   "pipeline": "build_native_nymara_glbs.py",
   "races": {
     "luminous_female": {
-      "vertices": 17406,
-      "triangles": 22577,
+      "vertices": 18198,
+      "triangles": 23491,
       "joints": 77,
       "feature": "none",
       "wardrobe": "skinned",
@@ -19,7 +19,7 @@
       "path": "godot-client/assets/actors/native/races/luminous_female.glb",
       "source": "luminous_female.glb",
       "sourceSHA256": "6316da8288c310bcfa79c24249e1b804c3e076766c56419db397743d47466f1a",
-      "sha256": "c3814266a65f7688d8903d31532acdddfa1e44d024b73f5408b0e7a03ef33717",
+      "sha256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
       "surfaces": [
         "body",
         "eyes",
@@ -51,8 +51,8 @@
       }
     },
     "luminous_male": {
-      "vertices": 15847,
-      "triangles": 15423,
+      "vertices": 16196,
+      "triangles": 15875,
       "joints": 77,
       "feature": "none",
       "wardrobe": "skinned",
@@ -66,7 +66,7 @@
       "path": "godot-client/assets/actors/native/races/luminous_male.glb",
       "source": "luminous_male.glb",
       "sourceSHA256": "0cb1a7f78c15712872e3e9f6a1a458273a179b8d8cd8461d792ca5b915559c86",
-      "sha256": "d30a505fe2666f4019efbcafceaf856ab5ee698757bf52e563b009479d50e10b",
+      "sha256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
       "surfaces": [
         "body",
         "eyes",
