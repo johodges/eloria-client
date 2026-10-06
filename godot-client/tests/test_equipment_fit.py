@@ -181,11 +181,21 @@ class EquipmentFitTest(unittest.TestCase):
             self.assertNotIn(label, self.races, f"authoring label {label} shadows a race")
             for table in tables:
                 self.assertNotIn(label, table, f"authoring label {label} is measured, so it is refitted")
+        # A race rebased onto that body (sharedBodyShape.version >= 3 with it
+        # as the template) carries it byte for byte below the neck, which
+        # test_native_glb_assets proves, so it may wear the piece unfitted too.
+        catalog = json.loads((CLIENT / "data" / "actors" / "native_asset_catalog.json").read_text())["races"]
+
+        def shares_below_neck(slug: str, body: str) -> bool:
+            shape = catalog.get(slug, {}).get("sharedBodyShape", {})
+            return shape.get("version", 0) >= 3 and shape.get("template") == body
         for key, model in self.models.items():
             for group, variant in (model.get("variants") or {}).items():
                 author = str(variant.get("authoredFor", ""))
                 if author in aliases:
-                    self.assertEqual({aliases[author]}, self._members(group),
+                    members = self._members(group)
+                    self.assertIn(aliases[author], members, f"{key} variant {group} is not worn by its own body")
+                    self.assertEqual(set(), {m for m in members - {aliases[author]} if not shares_below_neck(m, aliases[author])},
                                      f"{key} variant {group} is worn unfitted by another body")
 
     def test_every_group_member_can_reach_its_variants(self) -> None:

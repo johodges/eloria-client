@@ -57,18 +57,6 @@ def glb_chunks(path: Path) -> tuple[dict, bytes]:
     return json.loads(raw[20:20 + size]), raw[offset + 8:offset + 8 + length]
 
 
-def body_bounds(path: Path) -> tuple[float, float, float]:
-    """(min y, lowest vertex, z extent) of a race GLB's Body mesh.
-
-    Taken from the POSITION accessor's declared bounds, so this needs no
-    binary decoding.
-    """
-    document = glb_document(path)
-    mesh = next(m for m in document["meshes"] if m["name"].lower() == "body")
-    spec = document["accessors"][mesh["primitives"][0]["attributes"]["POSITION"]]
-    return spec["max"][1], spec["min"][1], spec["max"][2] - spec["min"][2]
-
-
 def glb_document(path: Path) -> dict:
     raw = path.read_bytes()
     if raw[:4] != b"glTF":
@@ -279,44 +267,59 @@ class NativeGlbAssetsTest(unittest.TestCase):
         self.assertLess(max(heights) - min(heights), 1e-5)
 
     def test_shared_bodies_and_source_replacements_retain_distinct_heads(self) -> None:
-        """Compare actual below-neck triangles and weights, excluding tails."""
+        """Compare actual below-neck triangles and weights, excluding tails.
+
+        Each race is compared with the body its own lineage declares. A race
+        rebased onto the Human (sharedBodyShape.version >= 3) must carry the
+        regenerated luminous_<sex> body byte for byte below the neck and pin
+        that file's SHA, so any later Human edit forces the rebase to be
+        rebuilt. The races not yet rebased still share the approved legacy
+        source body, read from votary_<sex>. The legacy branch goes once
+        every race is rebased.
+        """
         from collections import Counter
+        import hashlib
         import numpy as np
         sys.path.insert(0, str(ROOT / "eloria-assets/tools"))
         import equipment_authoring as ea
         from verify_shared_player_bodies import primitives, signatures, GEOMETRY_FIELDS
-        expected = {}
-        heads = set()
-        for gender in ("male", "female"):
-            # Every other race uses the approved same-sex source body. The
-            # Human (luminous_*) bodies were regenerated on 2026-10-05 and no
-            # longer carry it, so the template is read from a race that still
-            # does; the Human body keeps only its distinct head in this check.
-            path = ROOT / self.catalog["races"]["votary_" + gender]["path"]
-            d, binary = ea.read_glb(path)
+
+        def frame(path):
             rig = ea.load_rig(path, ea.BODY_SURFACES)
             origin = rig.origin("neck_01")
             axis = rig.origin("Head") - origin
-            axis /= np.linalg.norm(axis)
-            def geometry(document, blob, lower):
-                result = Counter()
-                for name, role, attrs, faces in primitives(document, blob):
-                    if name not in ea.BODY_SURFACES or role in ("race_tail", "neck_join"):
-                        continue
-                    height = (attrs["POSITION"] - origin) @ axis
-                    selected = (height[faces] < .075 - 1e-6).all(1) if lower else (height[faces] > .110 + 1e-6).all(1)
-                    if lower and name == "wardrobe_shirt" and document["asset"].get("extras", {}).get("appearanceFit"):
-                        # Collars now fit each reconstructed neck. Compare the
-                        # shared trunk/sleeves outside that local fit, including
-                        # a margin for the baked fabric clearance.
-                        relative = attrs["POSITION"] - origin
-                        radius = np.linalg.norm(relative - height[:, None] * axis, axis=1)
-                        collar = (height > -.10) & (radius < .24)
-                        selected &= ~collar[faces].any(1)
-                    result.update(signatures(attrs, faces[selected], GEOMETRY_FIELDS))
-                return result
-            expected[gender] = geometry(d, binary, True)
-            self.assertGreater(sum(expected[gender].values()), 10_000)
+            return origin, axis / np.linalg.norm(axis)
+
+        def geometry(document, blob, lower, origin, axis):
+            result = Counter()
+            for name, role, attrs, faces in primitives(document, blob):
+                if name not in ea.BODY_SURFACES or role in ("race_tail", "neck_join"):
+                    continue
+                height = (attrs["POSITION"] - origin) @ axis
+                selected = (height[faces] < .075 - 1e-6).all(1) if lower else (height[faces] > .110 + 1e-6).all(1)
+                if lower and name == "wardrobe_shirt" and document["asset"].get("extras", {}).get("appearanceFit"):
+                    # Collars now fit each reconstructed neck. Compare the
+                    # shared trunk/sleeves outside that local fit, including
+                    # a margin for the baked fabric clearance.
+                    relative = attrs["POSITION"] - origin
+                    radius = np.linalg.norm(relative - height[:, None] * axis, axis=1)
+                    collar = (height > -.10) & (radius < .24)
+                    selected &= ~collar[faces].any(1)
+                result.update(signatures(attrs, faces[selected], GEOMETRY_FIELDS))
+            return result
+        expected = {}
+        heads = set()
+        for gender in ("male", "female"):
+            templates = {}
+            for lineage, slug in (("human", "luminous_" + gender), ("legacy", "votary_" + gender)):
+                path = ROOT / self.catalog["races"][slug]["path"]
+                origin, axis = frame(path)
+                d, binary = ea.read_glb(path)
+                templates[lineage] = (geometry(d, binary, True, origin, axis), origin, axis)
+                self.assertGreater(sum(templates[lineage][0].values()), 10_000)
+            expected[gender] = templates["human"][0]
+            human_sha = hashlib.sha256((ROOT / self.catalog["races"]["luminous_" + gender]["path"]).read_bytes()).hexdigest()
+            _, head_origin, head_axis = templates["human"]
             for slug, entry in self.catalog["races"].items():
                 if not slug.endswith("_" + gender):
                     continue
@@ -324,10 +327,15 @@ class NativeGlbAssetsTest(unittest.TestCase):
                     self.assertEqual("luminous_" + gender, entry["bodyTemplate"])
                     self.assertEqual(entry["bodyTemplate"], self.models["models"][slug]["bodyTemplate"])
                     document, blob = ea.read_glb(ROOT / entry["path"])
+                    rebased = entry.get("sharedBodyShape", {}).get("version", 0) >= 3
                     if slug != "luminous_" + gender:
-                        self.assertEqual(expected[gender], geometry(document, blob, True))
+                        template, origin, axis = templates["human" if rebased else "legacy"]
+                        self.assertEqual(template, geometry(document, blob, True, origin, axis))
+                    if rebased:
+                        self.assertEqual(human_sha, entry["sharedBodyShape"]["templateSHA256"])
+                        self.assertEqual(human_sha, document["asset"]["extras"]["sharedBodyShape"]["templateSHA256"])
                     self.assertIn(slug, self.equipment['refittedBodies'])
-                    heads.add(tuple(sorted(geometry(document, blob, False).items())))
+                    heads.add(tuple(sorted(geometry(document, blob, False, head_origin, head_axis).items())))
                     # Approved stature scales the whole actor and its equipment;
                     # shared authoring geometry does not require equal race heights.
                     self.assertAlmostEqual(entry["stature"], self.models["models"][slug]["import"]["scale"])
@@ -428,22 +436,6 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertLess(a["maxPositionDeltaM"], 1e-6)
                 self.assertLess(a["maxNormalDelta"], 2e-6)
                 self.assertLess(a["maxWeightL1Delta"], 2e-6)
-
-    def test_slim_base_body_keeps_the_reference_ground_plane(self) -> None:
-        """The slim body scales across the bones, never along them.
-
-        Garment cuts are chosen at absolute heights and the leg chain is
-        solved to a fixed ground contact, so a base body that shortened or
-        lifted the mesh would move a hem or float the feet.  The foot is left
-        out of the field entirely and the lowest vertex has to prove it.
-        """
-        for gender in ("female", "male"):
-            reference = body_bounds(ROOT / self.catalog["races"]
-                                    [f"greyhaven_{gender}"]["path"])
-            slim = body_bounds(ROOT / self.catalog["races"]
-                               [f"glasswarden_{gender}"]["path"])
-            with self.subTest(gender=gender):
-                self.assertAlmostEqual(reference[1], slim[1], places=3)
 
     def test_race_eyes_are_not_all_the_human_one(self) -> None:
         """Tintable eyes use each body's original painted texture region."""

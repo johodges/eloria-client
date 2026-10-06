@@ -3,6 +3,14 @@
 Calibration is area weighted, excludes protected eye/brow pixels, and does not
 modify source textures, geometry or animation. Each skin material retains its
 own lighting detail while all characters use the same named target colors.
+
+Race bodies rebased onto the Human body (sharedBodyShape version 3, see
+rebase_race_body.py) join four skin surfaces along seams: shared_body,
+shared_neck, neck_join and race_head. Their per-surface references come from
+different texels, so equal texels either side of a seam would dye
+differently. When any adjacent pair differs by more than 2% in linear
+luminance, every body reference takes the face reference, and
+skinPalette.bodySeams records the calibrated values and the reason.
 """
 import argparse
 import json
@@ -11,6 +19,10 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 from shared_player_bodies import g, material_image, sample_image, digest
+
+LUMA = np.array([.2126, .7152, .0722])
+SEAM_PAIRS = (('shared_body', 'shared_neck'), ('shared_neck', 'neck_join'), ('neck_join', 'race_head'))
+SEAM_TOLERANCE = .02
 
 
 def weighted_median(values, weights):
@@ -21,12 +33,37 @@ def weighted_median(values, weights):
     return result
 
 
-def run(root):
+def linear_luminance(rgb):
+    c = np.asarray(rgb, float)
+    return float(np.where(c <= .04045, c / 12.92, ((c + .055) / 1.055) ** 2.4) @ LUMA)
+
+
+def unify_rebased_seams(document, refs, face_surface):
+    """Rebased bodies: one body reference when an adjacent seam pair differs."""
+    if document['asset'].get('extras', {}).get('sharedBodyShape', {}).get('version', 0) < 3:
+        return None
+    body = next(mesh for mesh in document['meshes'] if mesh['name'] == 'body')
+    roles = [primitive.get('extras', {}).get('sourceRole') for primitive in body['primitives']]
+    lum = [linear_luminance(value) for value in refs['body']]
+    ratios = {f'{a}/{b}': lum[roles.index(a)] / lum[roles.index(b)] for a, b in SEAM_PAIRS}
+    seams = {'roles': roles, 'calibrated': [list(value) for value in refs['body']],
+             'linearLuminanceRatios': ratios, 'tolerance': SEAM_TOLERANCE,
+             'unified': any(abs(ratio - 1) > SEAM_TOLERANCE for ratio in ratios.values())}
+    if seams['unified']:
+        refs['body'] = [list(refs['body'][face_surface]) for _ in refs['body']]
+        seams['reason'] = ('an adjacent skin-surface pair differed by more than 2% in linear luminance, so equal '
+                           'texels either side of that seam would dye differently; every body reference takes the '
+                           'face (race_head) reference')
+    return seams
+
+
+def calibrate(root, slugs=None):
+    """The calibrated models.json document and its path; nothing is written."""
     client = root / 'godot-client'
     path = client / 'data/actors/models.json'
     models = json.loads(path.read_text())
     for slug, config in models['models'].items():
-        if 'bodyTemplate' not in config:
+        if 'bodyTemplate' not in config or (slugs is not None and slug not in slugs):
             continue
         model = client / config['scene'][6:]
         document, binary = g.read(model)
@@ -61,12 +98,22 @@ def run(root):
         for part in ('eyes', 'eyebrows', 'scalp'):
             if part in refs:
                 refs[part] = [face for _ in refs[part]]
+        seams = unify_rebased_seams(document, refs, spec['sourceSurface'])
         config['skinPalette'] = {'version': 1, 'sourceSHA256': digest(model), 'references': refs}
+        if seams is not None:
+            config['skinPalette']['bodySeams'] = seams
         print(slug, np.round(face, 3).tolist(), flush=True)
+    return models, path
+
+
+def run(root, slugs=None):
+    models, path = calibrate(root, slugs)
     path.write_text(json.dumps(models, indent=2) + '\n')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, required=True)
-    run(parser.parse_args().root)
+    parser.add_argument('--slugs', nargs='+', help='Recalibrate only these models; others keep their palettes')
+    args = parser.parse_args()
+    run(args.root, set(args.slugs) if args.slugs else None)

@@ -309,8 +309,10 @@ def test_derived_female_cuffs_preserve_shared_body_and_cultural_surfaces():
     assert propagation["schema"] == (
         "eloria-luminous-female-cuff-derived-propagation-v1")
     assert propagation["status"] == "installed-production"
+    # greyhaven_female left this propagation when it was rebased onto the
+    # regenerated Human body (rebase_race_body.py, sharedBodyShape v3).
     expected_races = {
-        "glasswarden_female", "greyhaven_female", "mycelari_female",
+        "glasswarden_female", "mycelari_female",
         "orun_female", "ssarathi_female", "stoneborn_female",
         "votary_female",
     }

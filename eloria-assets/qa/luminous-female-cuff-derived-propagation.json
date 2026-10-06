@@ -64,23 +64,6 @@
       "joints": 77,
       "preservedAdditionalPantsPrimitiveSHA256": []
     },
-    "greyhaven_female": {
-      "path": "godot-client/assets/actors/native/races/greyhaven_female.glb",
-      "sourceSHA256": "a08af3496700a674cf8af2d2179256f575f145289f3bad57c5bdda1b8d617d11",
-      "sourceGitBlob": "0e50666b6508724eaaa577458d50ee7123517c55",
-      "outputSHA256": "583c48a20a1e437fdc6038a248b396d635273e61af0f7ecd4830b4b06954853c",
-      "sourceVertices": 30424,
-      "outputVertices": 30197,
-      "sourceTriangles": 40690,
-      "outputTriangles": 40389,
-      "inputPantsSemanticSHA256": "d84bb1ebbc1a25b40c92e02e9bd6e2520515f52130888572a5840d7415cec1e2",
-      "outputPantsSemanticSHA256": "318477d09a732d50c68ea2b8289f76a1a2a148a9f7857e9004bdb9ffa842cebb",
-      "bootsSemanticSHA256": "0bc2ed61dbe444a66cdee295ae3535643ce82a2d5f44905af7694c0afce6bcd9",
-      "draws": 12,
-      "materials": 7,
-      "joints": 77,
-      "preservedAdditionalPantsPrimitiveSHA256": []
-    },
     "mycelari_female": {
       "path": "godot-client/assets/actors/native/races/mycelari_female.glb",
       "sourceSHA256": "5889ca15c74f291a34d728920f1a0a336291fc2d3f45f95e5e2271a864613142",

@@ -466,8 +466,8 @@
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },
     "greyhaven_female": {
-      "vertices": 30197,
-      "triangles": 40389,
+      "vertices": 25748,
+      "triangles": 36791,
       "joints": 77,
       "feature": "none",
       "wardrobe": "skinned",
@@ -481,7 +481,7 @@
       "path": "godot-client/assets/actors/native/races/greyhaven_female.glb",
       "source": "greyhaven_female_tpose.glb",
       "sourceSHA256": "1a3b9be948faa6427c0bac616bc2b85aa1094605f11a15fd3fb1b118847187f5",
-      "sha256": "583c48a20a1e437fdc6038a248b396d635273e61af0f7ecd4830b4b06954853c",
+      "sha256": "ab223406a5506696174c03b48c487d472ae51b09ab2e2d1cf13617d7f49f88d3",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -495,7 +495,7 @@
       ],
       "bodyTemplate": "luminous_female",
       "retainedTailTriangles": 0,
-      "neckAdaptorTriangles": 750,
+      "neckAdaptorTriangles": 1120,
       "highResolutionHead": {
         "original": "greyhaven_female_tpose.glb",
         "originalSHA256": "1a3b9be948faa6427c0bac616bc2b85aa1094605f11a15fd3fb1b118847187f5",
@@ -509,24 +509,77 @@
         ]
       },
       "sharedBodyShape": {
-        "version": 2,
+        "version": 3,
+        "template": "luminous_female",
+        "templateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+        "headSource": "greyhaven_female.glb",
+        "headSourceSHA256": "583c48a20a1e437fdc6038a248b396d635273e61af0f7ecd4830b4b06954853c",
+        "headTextureSHA256": "04b03c7e5c72b8a453e7deddcd3a8c9d3f250b4d3bf765dad05a09417c4e9479",
+        "skeleton": "headSource",
+        "lowerCutM": 0.075,
+        "upperCutM": 0.11,
+        "bodyCutMode": "neck-plane",
         "neckBase": {
           "startM": -0.06,
           "radiusM": 0.15
         },
-        "template": "luminous_female",
-        "templateSHA256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
-        "headSourceSHA256": "a4d97b259e99f057f2e1ca0da038fe51b54903ae8da63ac1e43ba39da28b1ea9",
-        "lowerCutM": 0.075,
-        "upperCutM": 0.11,
-        "bodyCutMode": "neck-plane",
-        "toolSHA256": "d4f48be593f6ad9fa16949982ac20c69150879a817aea77a40d11ef89a19ea3f"
+        "neckProfile": "boundary-tangent",
+        "skinRecolour": {
+          "space": "linear",
+          "detailMix": 0.2,
+          "referenceRGB": [
+            0.8186418129208302,
+            0.6366042388550337,
+            0.5327725279564951
+          ],
+          "targetRGB": [
+            0.7116288824798227,
+            0.4844743936929304,
+            0.33167317924546325
+          ],
+          "texels": 359465,
+          "excludedTexels": 8240,
+          "exclusionRule": {
+            "chromaDistanceMAD": 10,
+            "logLuminanceMAD": 10,
+            "sides": "both",
+            "fill": "dilation from neighbouring dyed skin texels"
+          }
+        },
+        "headAtlas": {
+          "size": [
+            1024,
+            1024
+          ],
+          "pxPerCm": 19.999955341954607,
+          "facePxPerCm": 20.080713112466235,
+          "sourcePxPerCm": 12.56119724478838,
+          "sourceFacePxPerCm": 12.611908762407397,
+          "islands": 34,
+          "gutterPx": 4,
+          "sourceSize": 2048
+        },
+        "neckAtlas": {
+          "size": [
+            1024,
+            512
+          ],
+          "bridgeTexture": "rim blend + mirrored skin grain"
+        },
+        "cleanup": {
+          "fragmentsRemoved": 0,
+          "fragmentTriangles": 0,
+          "innerShellRemoved": 0,
+          "hiddenHeadFraction": 0.0,
+          "visibilityDirections": 60
+        },
+        "toolSHA256": "6e8f30a74fbc5e93cdff1b472ca9bd11b9c98fbb97ee3edf6c67bd130dccca03"
       },
-      "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
+      "pipeline": "eloria-assets/tools/rebase_race_body.py"
     },
     "greyhaven_male": {
-      "vertices": 32904,
-      "triangles": 47380,
+      "vertices": 23080,
+      "triangles": 29664,
       "joints": 77,
       "feature": "none",
       "wardrobe": "skinned",
@@ -540,7 +593,7 @@
       "path": "godot-client/assets/actors/native/races/greyhaven_male.glb",
       "source": "greyhaven_male_tpose.glb",
       "sourceSHA256": "0091fb6ffb2e277105967a7c25bd392008ffb799c2de4e8f50f3c212830d412c",
-      "sha256": "ca3b23bd7916e41833570a941dbfb02446d441a0955cf35c5c07582ac7e52a7f",
+      "sha256": "3e0171de8dfa5f0b29e8af2a2b18f8404548e2d9f1af02199509607ae9900703",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -554,7 +607,7 @@
       ],
       "bodyTemplate": "luminous_male",
       "retainedTailTriangles": 0,
-      "neckAdaptorTriangles": 723,
+      "neckAdaptorTriangles": 1077,
       "highResolutionHead": {
         "original": "greyhaven_male_tpose.glb",
         "originalSHA256": "0091fb6ffb2e277105967a7c25bd392008ffb799c2de4e8f50f3c212830d412c",
@@ -568,20 +621,73 @@
         ]
       },
       "sharedBodyShape": {
-        "version": 2,
+        "version": 3,
+        "template": "luminous_male",
+        "templateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+        "headSource": "greyhaven_male.glb",
+        "headSourceSHA256": "ca3b23bd7916e41833570a941dbfb02446d441a0955cf35c5c07582ac7e52a7f",
+        "headTextureSHA256": "21d938a84e58ac54443fedbf7047d30ed5fc617befcbe78db982761c5cb2e512",
+        "skeleton": "headSource",
+        "lowerCutM": 0.075,
+        "upperCutM": 0.11,
+        "bodyCutMode": "neck-plane",
         "neckBase": {
           "startM": -0.06,
           "radiusM": 0.15
         },
-        "template": "luminous_male",
-        "templateSHA256": "66c1602c274ab9e61ab0f6263296b827af0f15e2ac0bd36486fdbeec07c0c087",
-        "headSourceSHA256": "555b385f7b9b194142c8f6ab75bc31f24cb83428f25b6a384a405210f136b8d1",
-        "lowerCutM": 0.075,
-        "upperCutM": 0.11,
-        "bodyCutMode": "neck-plane",
-        "toolSHA256": "d4f48be593f6ad9fa16949982ac20c69150879a817aea77a40d11ef89a19ea3f"
+        "neckProfile": "boundary-tangent",
+        "skinRecolour": {
+          "space": "linear",
+          "detailMix": 0.2,
+          "referenceRGB": [
+            0.8562770696247326,
+            0.6476308650643543,
+            0.5241247270167004
+          ],
+          "targetRGB": [
+            0.720386965241697,
+            0.497957634562241,
+            0.2939818750474442
+          ],
+          "texels": 211406,
+          "excludedTexels": 4349,
+          "exclusionRule": {
+            "chromaDistanceMAD": 10,
+            "logLuminanceMAD": 10,
+            "sides": "both",
+            "fill": "dilation from neighbouring dyed skin texels"
+          }
+        },
+        "headAtlas": {
+          "size": [
+            1024,
+            1024
+          ],
+          "pxPerCm": 17.147489782549957,
+          "facePxPerCm": 15.387598275029474,
+          "sourcePxPerCm": 11.308262249662137,
+          "sourceFacePxPerCm": 10.147638576258755,
+          "islands": 28,
+          "gutterPx": 4,
+          "sourceSize": 2048
+        },
+        "neckAtlas": {
+          "size": [
+            1024,
+            512
+          ],
+          "bridgeTexture": "rim blend + mirrored skin grain"
+        },
+        "cleanup": {
+          "fragmentsRemoved": 0,
+          "fragmentTriangles": 0,
+          "innerShellRemoved": 0,
+          "hiddenHeadFraction": 0.0,
+          "visibilityDirections": 60
+        },
+        "toolSHA256": "6e8f30a74fbc5e93cdff1b472ca9bd11b9c98fbb97ee3edf6c67bd130dccca03"
       },
-      "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
+      "pipeline": "eloria-assets/tools/rebase_race_body.py"
     },
     "ssarathi_female": {
       "vertices": 36718,
