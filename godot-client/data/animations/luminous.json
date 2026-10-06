@@ -12,6 +12,14 @@
     "ranged_hold": -18.4,
     "ranged_attack": -18.4
   },
+  "atEaseActions": [
+    "idle",
+    "turn",
+    "alternate_idle",
+    "emote_agree",
+    "emote_nod",
+    "emote_reel"
+  ],
   "loopingClips": [
     "Dance_Simple",
     "Fighting_Idle",

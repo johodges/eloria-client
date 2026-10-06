@@ -65,6 +65,13 @@ const PACE_CONFIRM_SPREAD := 1.15
 ## Crossfade between two clips. Playing them cold snapped the whole skeleton
 ## into the new pose, which is what a walk/idle flicker looked like.
 @export var action_blend_seconds := 0.15
+## How long, in seconds of real time, the crossfade into the current action
+## takes: what play_action actually gave it, scaled by the playback speed the
+## clip runs at, and zero when a restart dropped the old clip outright - as
+## every fresh swing and every hit does. Anything that has to change with the
+## pose, like the grip WeaponCarryPose eases a held weapon into, follows this
+## rather than action_blend_seconds, or it arrives after the pose it belongs to.
+var action_crossfade_seconds := 0.15
 
 var actor_id := -1
 var server_target := Vector3.ZERO
@@ -2153,17 +2160,49 @@ func _attach_socketed_equipment(socket: Dictionary, scene_path: String,
 	var rest: Transform3D = _native_skeleton.get_bone_global_rest(bone_index)
 	var fit: float = rig_fit_scale(str(model_config.get("fitProfile", "")))
 	var scale: float = fit * float(model_config.get("scale", 1.0))
-	var placement: Transform3D = Transform3D(
-		Basis.from_euler(_vector3(socket.get("rotationDegrees", []),
-			Vector3.ZERO) * (PI / 180.0)).scaled(Vector3.ONE * scale),
-		rest.origin + _vector3(socket.get("offset", []), Vector3.ZERO) * fit)
 	# The socket is authored in character space; cancelling the bone rest keeps
 	# it readable while still riding the bone once the clip plays.
-	native_model.transform = rest.affine_inverse() * placement
+	native_model.transform = rest.affine_inverse() * _socket_placement(
+		socket, rest, fit, scale)
+	# A weapon is held two ways. The socket is the fighting grip: the combat
+	# idle and every swing close the fingers into a fist, and the blade has to
+	# leave that fist the way the clip was animated around. Standing at ease
+	# the hand hangs open by the thigh, and the same grip there points the
+	# blade forward like a lance, so a weapon that names an idle socket is laid
+	# down along the leg or stood upright beside it instead. Both are resolved
+	# here, once, against this body's rest; WeaponCarryPose blends between them
+	# as the action changes, and reads the fighting grip back from the meta
+	# because the node itself is moved while it does.
+	# The idle socket also says how the piece rests ("style": a staff planted
+	# on its butt or a blade leant on its tip keeps that end where it was set
+	# down), which of its points the idle brings nearest the floor
+	# ("floorPoint", in the piece's own space) and, for a weapon in the off
+	# hand the idle rests on the thigh, how many degrees that arm is held out
+	# to give it room ("armSpread").
+	var idle_socket: Dictionary = model_config.get("idleSocket", {}) as Dictionary
+	if not idle_socket.is_empty() and str(idle_socket.get("bone", bone)) == bone:
+		native_model.set_meta(&"fighting_grip", native_model.transform)
+		native_model.set_meta(&"idle_grip", rest.affine_inverse() * _socket_placement(
+			idle_socket, rest, fit, scale))
+		native_model.set_meta(&"idle_style", StringName(str(idle_socket.get("style", ""))))
+		native_model.set_meta(&"idle_arm_spread", float(idle_socket.get("armSpread", 0.0)))
+		if idle_socket.has("floorPoint"):
+			native_model.set_meta(&"idle_floor_point", _vector3(idle_socket.get("floorPoint", []), Vector3.ZERO))
 	_tint_equipment(native_model, model_config.get("tint", []) as Array)
 	attachment.add_child(native_model)
 	attachment.set_meta("native_equipment", true)
 	return attachment
+
+## Where `socket` puts a prop in character space: its rotation, scaled to the
+## piece and this body, at the bone's rest position moved by the authored
+## offset. The offset is in the units the piece was fitted in, so it scales
+## with the body the same way the piece does.
+func _socket_placement(socket: Dictionary, bone_rest: Transform3D, fit: float,
+		scale: float) -> Transform3D:
+	return Transform3D(
+		Basis.from_euler(_vector3(socket.get("rotationDegrees", []),
+			Vector3.ZERO) * (PI / 180.0)).scaled(Vector3.ONE * scale),
+		bone_rest.origin + _vector3(socket.get("offset", []), Vector3.ZERO) * fit)
 
 func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		tint: Array = [], author_rig: String = "",
@@ -2646,6 +2685,10 @@ func play_action(action: StringName, restart := false) -> void:
 	if restart:
 		animation_player.stop(true)
 	animation_player.play(clip, blend)
+	# Stopped, the player has nothing left to fade from, so a restarted clip
+	# snaps in at its first frame; otherwise the fade runs at playback speed.
+	action_crossfade_seconds = 0.0 if restart else blend / maxf(
+		absf(animation_player.speed_scale), 0.01)
 	# Retarget the facing correction to this action and ease to it over the same
 	# crossfade the clips blend across, so the body's turn tracks the pose change
 	# rather than snapping ahead of or behind it.
@@ -2766,8 +2809,17 @@ func weapon_trail_tip() -> Variant:
 			var b := a
 			a[axis] = bounds.position[axis]
 			b[axis] = bounds.end[axis]
-			var wrist := (prop as Node3D).global_position
-			_trail_weapon_tip = a if (mesh_node.global_transform*a).distance_squared_to(wrist) > (mesh_node.global_transform*b).distance_squared_to(wrist) else b
+			# The tip is the end farther from the piece's own origin, which a
+			# held prop is authored at or near its grip (the quarterstaff's
+			# sits a hand's width below it). Not the end farther from the wrist:
+			# a staff stood at the idle grip is held at its middle, and a swing
+			# that asks for its first trail point while the grip is still
+			# easing out of that would pick either end.
+			var grip := (prop as Node3D).global_position
+			if prop.get_child_count() > 0 and prop.get_child(0) is Node3D:
+				grip = (prop.get_child(0) as Node3D).global_position
+			grip = mesh_node.global_transform.affine_inverse() * grip
+			_trail_weapon_tip = a if a.distance_squared_to(grip) > b.distance_squared_to(grip) else b
 			_trail_weapon_mesh = mesh_node
 			longest = length
 	if is_instance_valid(_trail_weapon_mesh):

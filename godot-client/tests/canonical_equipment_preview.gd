@@ -115,12 +115,19 @@ func run() -> void:
 	for marker: Node in actor.find_children("MapDot*", "MeshInstance3D", true, false):
 		(marker as MeshInstance3D).hide()
 	var clip: String = args.get("clip", "Walk")
-	if clip == "Walk":
-		actor.play_action(&"walk")
-	elif clip == "Run_Female":
-		actor.play_action(&"run")
-	elif clip == "Fighting_Idle":
-		actor.play_action(&"combat_idle")
+	# Play the action the clip belongs to, not just the clip: how a held weapon
+	# sits follows the action (WeaponCarryPose lays it in its idle grip only
+	# while the actor idles, and aims it ahead only while it travels), so a
+	# swing captured under the idle action would show the resting grip.
+	# --action names one outright when a clip serves several.
+	var action := StringName(args.get("action", ""))
+	if action == &"":
+		for candidate: String in (animation.get("actions", {}) as Dictionary):
+			if str(animation["actions"][candidate]) == clip:
+				action = StringName(candidate)
+				break
+	if action != &"":
+		actor.play_action(action)
 	# Physics is paused for deterministic captures; finish the runtime facing blend.
 	actor._advance_facing_offset(1.0)
 	actor.animation_player.play(clip)

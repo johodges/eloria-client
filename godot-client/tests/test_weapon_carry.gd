@@ -77,17 +77,39 @@ func run() -> void:
 		actor.animation_player.advance(0.2)
 		await create_timer(actor.action_blend_seconds + 0.05).timeout
 		check(is_zero_approx(float(carry.get("_weight"))), "carry releases on stopping")
+		# At ease the off hand's arm alone is held out from the thigh, by the
+		# spread its weapon's idle socket names (WeaponCarryPose._spread):
+		# turned at the shoulder, with the rest of the body as the clip has it.
+		var skeleton := actor.get_skeleton()
+		var spread := float((equipment.models["1:160"].get("idleSocket", {}) as Dictionary).get("armSpread", 0.0))
+		var held_out := {}
+		if spread > 0.0:
+			for bone: int in skeleton.get_bone_count():
+				var walk := bone
+				while walk >= 0 and skeleton.get_bone_name(walk) != "upperarm_l":
+					walk = skeleton.get_bone_parent(walk)
+				if walk >= 0:
+					held_out[bone] = true
 		for action: StringName in [&"idle", &"attack_primary", &"ranged_draw", &"cast_aggressive", &"death"]:
 			actor.play_action(action, true)
 			actor.animation_player.advance(0.15)
-			var skeleton := actor.get_skeleton()
 			var before: Array[Transform3D] = []
 			for bone: int in skeleton.get_bone_count():
 				before.append(skeleton.get_bone_global_pose(bone))
 			carry.call("_process_modification_with_delta", 1.0)
 			for bone: int in skeleton.get_bone_count():
+				if action == &"idle" and held_out.has(bone):
+					continue
 				check(before[bone].is_equal_approx(skeleton.get_bone_global_pose(bone)),
 					"non-travel pose is unchanged: %s %s" % [option.model, action])
+			if action == &"idle" and spread > 0.0:
+				var shoulder := skeleton.find_bone("upperarm_l")
+				var hand := skeleton.find_bone("hand_l")
+				var hung := before[hand].origin - before[shoulder].origin
+				var held := skeleton.get_bone_global_pose(hand).origin - skeleton.get_bone_global_pose(shoulder).origin
+				check(skeleton.get_bone_global_pose(shoulder).origin.is_equal_approx(before[shoulder].origin)
+						and absf(rad_to_deg(hung.angle_to(held)) - spread) < 0.5,
+					"%s idle holds only the off hand's arm out, by its spread" % option.model)
 		actor.current_action = &"idle"
 		actor.play_action(&"run", true)
 		actor.animation_player.advance(0.01)

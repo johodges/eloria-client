@@ -20,6 +20,13 @@ var looping_clips: PackedStringArray
 ## travel; this puts it back. Absent for poses meant to face off (a bladed
 ## combat idle, a lunge), which are left as authored.
 var facing_offsets: Dictionary
+## The actions a held weapon is carried at ease through rather than in the
+## fist: the standing idle and the turn on the spot that plays it, and the
+## idles and emotes that keep the hand hanging open where the idle has it - a
+## nod, a reel, a yes. In those the fist's grip pointed the blade ahead like a
+## lance (WeaponCarryPose). Absent from the map, the actions that play the
+## fallback action's own clip.
+var at_ease_actions: PackedStringArray
 var fallback_action: StringName
 
 func _init(config: Dictionary) -> void:
@@ -30,6 +37,13 @@ func _init(config: Dictionary) -> void:
 	looping_clips = PackedStringArray(config.get("loopingClips", []))
 	facing_offsets = config.get("facingOffsets", {}).duplicate(true)
 	fallback_action = StringName(config.get("fallbackAction", "idle"))
+	if config.has("atEaseActions"):
+		at_ease_actions = PackedStringArray(config.get("atEaseActions", []))
+	else:
+		var resting := clip_for_action(fallback_action)
+		for action: Variant in action_to_clip:
+			if StringName(str(action_to_clip[action])) == resting:
+				at_ease_actions.append(str(action))
 
 func action_for_command(command: int, combat_mode := false) -> StringName:
 	var key := str(command)
@@ -48,6 +62,9 @@ func playback_speed_for_action(action: StringName) -> float:
 ## the fixed playback speed instead.
 func stride_speed_for_action(action: StringName) -> float:
 	return maxf(0.0, float(stride_speeds.get(String(action), 0.0)))
+
+func is_at_ease(action: StringName) -> bool:
+	return at_ease_actions.has(String(action))
 
 ## Degrees to turn the body while this action plays, zero unless the action map
 ## names a correction for it.
