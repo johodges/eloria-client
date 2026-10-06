@@ -7,8 +7,7 @@ var assertions := 0
 
 
 func _init() -> void:
-	_test_profiles()
-	_test_skeleton_application()
+	_test_no_skeleton_styling()
 	_test_painted_finish()
 	if failures == 0:
 		print("oldcraft actor style: PASS (%d assertions)" % assertions)
@@ -26,49 +25,15 @@ func _expect(condition: bool, message: String) -> void:
 		push_error(message)
 
 
-func _test_profiles() -> void:
-	_expect(OldcraftActorStyleScript.has_profile({"culture": "luminous"})
-		and not OldcraftActorStyleScript.has_profile({})
-		and not OldcraftActorStyleScript.has_profile({"culture": "unprofiled"}),
-		"only explicitly profiled player cultures receive humanoid deformation")
-	var human: Dictionary = OldcraftActorStyleScript.pose_scales("luminous")
-	var orc: Dictionary = OldcraftActorStyleScript.pose_scales("orun")
-	var elf: Dictionary = OldcraftActorStyleScript.pose_scales("glasswarden")
-	_expect(human.has("Head") and human.has("hand_l") and human.has("foot_r"),
-		"profile covers the readable head, hand and foot landmarks")
-	_expect((orc.spine_03 as Vector3).x > (human.spine_03 as Vector3).x,
-		"Orun keeps the heavier Oldcraft orc trunk")
-	_expect((elf.spine_03 as Vector3).x < (human.spine_03 as Vector3).x,
-		"Glasswarden keeps the long-limbed Oldcraft elf read")
-	_expect((orc.hand_l as Vector3).x > 1.2,
-		"heavy profiles keep oversized readable hands")
-
-
-func _test_skeleton_application() -> void:
-	var skeleton := Skeleton3D.new()
-	var bones := ["spine_02", "spine_03", "neck_01", "upperarm_l",
-		"upperarm_r", "lowerarm_l", "lowerarm_r", "hand_l", "hand_r",
-		"thigh_l", "thigh_r", "calf_l", "calf_r", "foot_l", "foot_r", "Head"]
-	for bone: String in bones:
-		skeleton.add_bone(bone)
-	var count := OldcraftActorStyleScript.apply_skeleton(skeleton, "luminous")
-	_expect(count == bones.size(), "every available style bone is applied")
-	var head := skeleton.find_bone("Head")
-	var hand := skeleton.find_bone("hand_l")
-	var spine := skeleton.find_bone("spine_03")
-	_expect(skeleton.get_bone_pose_scale(head).x > 1.0, "head is enlarged")
-	_expect(skeleton.get_bone_pose_scale(hand).x >
-		skeleton.get_bone_pose_scale(head).x, "hands are the stronger landmark")
-	_expect(is_equal_approx(skeleton.get_bone_pose_scale(spine).y, 0.985),
-		"chest is slightly compressed without shortening limbs")
-	var first_hand := skeleton.get_bone_pose_scale(hand)
-	OldcraftActorStyleScript.apply_skeleton(skeleton, "luminous")
-	_expect(skeleton.get_bone_pose_scale(hand).is_equal_approx(first_hand),
-		"re-applying style does not compound pose scale")
-	OldcraftActorStyleScript.restore_skeleton(skeleton)
-	_expect(skeleton.get_bone_pose_scale(hand).is_equal_approx(Vector3.ONE),
-		"authored pose scale can be restored")
-	skeleton.free()
+func _test_no_skeleton_styling() -> void:
+	# Owner call 2026-10-05: no runtime bone growth on player bodies.
+	for name: String in ["pose_scales", "apply_skeleton", "restore_skeleton", "has_profile"]:
+		_expect(not (OldcraftActorStyleScript as Script).get_script_method_list().any(
+			func(m: Dictionary) -> bool: return m.name == name),
+			"the style no longer offers %s" % name)
+	var source := FileAccess.get_file_as_string("res://src/actors/replicated_actor_3d.gd")
+	_expect(not source.contains("apply_skeleton") and not source.contains("set_bone_pose_scale"),
+		"actors never scale their skeleton's bones")
 
 
 func _test_painted_finish() -> void:

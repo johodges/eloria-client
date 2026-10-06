@@ -461,12 +461,6 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 			errors.append("Skeleton3D missing")
 		else:
 			_native_skeleton = skeleton
-			# Only playable humanoids declare a culture/style profile. Creature
-			# rigs can reuse names such as Head, hand_l or thigh_l without sharing
-			# the canonical 77-joint proportions, so never infer a human profile.
-			if OLDCRAFT_ACTOR_STYLE.has_profile(model_config):
-				OLDCRAFT_ACTOR_STYLE.apply_skeleton(skeleton,
-					str(model_config.culture))
 			if model_config.has("culture"):
 				_weapon_carry = (load("res://src/actors/weapon_carry_pose.gd") as Script).new()
 				_weapon_carry.name = "WeaponCarryPose"
