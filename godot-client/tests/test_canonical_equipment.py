@@ -32,7 +32,14 @@ def test_weighted_soles_do_not_follow_the_tail_or_the_other_foot():
     rig.positions=np.vstack([rig.positions,[0.,-50.,-2.]])
     rig.joints=np.vstack([rig.joints,[pelvis]*4]);rig.weights=np.vstack([rig.weights,[1.,0.,0.,0.]])
     assert [ea.weighted_sole(rig,side) for side in ('l','r')]==original
-    assert abs(original[0]-original[1])>.001
+    # Each foot is measured on its own. The regenerated Human soles are level
+    # to 0.1 mm, so probe directly instead of relying on an asymmetric body: a
+    # vertex wholly on foot_r far below the floor moves the right sole only.
+    foot_r=rig.joint_names.index('foot_r')
+    rig.positions=np.vstack([rig.positions,[-.1,-1.,0.]])
+    rig.joints=np.vstack([rig.joints,[foot_r]*4]);rig.weights=np.vstack([rig.weights,[1.,0.,0.,0.]])
+    assert ea.weighted_sole(rig,'l')==original[0]
+    assert ea.weighted_sole(rig,'r')==-1.
 
 
 def test_tail_core_is_excluded_from_backing_but_foot_is_preserved():

@@ -80,9 +80,10 @@ func run() -> void:
 				var original_faces := _face_count(original)
 				TorsoBodyCover.apply(mesh, true, transform, fit, [], false, {}, true)
 				var masked_faces := _face_count(mesh.mesh)
-				var expected_removed := 113 if path.begins_with("luminous_female") else 10
-				expect(original_faces - masked_faces >= expected_removed,
-					path + " wardrobe neckline removes the detached shell and narrow apron: %d faces"
+				# The 2026-10-05 Human bodies close the collar: no detached shell is
+				# left to strip, only the narrow apron under the wardrobe neckline.
+				expect(original_faces - masked_faces > 0,
+					path + " wardrobe neckline removes the narrow apron: %d faces"
 					% (original_faces - masked_faces))
 				for surface: int in range(original.get_surface_count()):
 					var before := original.surface_get_arrays(surface)
@@ -103,7 +104,7 @@ func run() -> void:
 								or detached_neck_vertices.has(source[source_index + 1])
 								or detached_neck_vertices.has(source[source_index + 2])):
 							detached_faces += 1
-					var expected_detached := 113 if path.begins_with("luminous_female") else 10
+					var expected_detached := 0
 					expect(detached_faces == expected_detached,
 						path + " identifies exactly %d detached collar faces, got %d"
 						% [expected_detached, detached_faces])

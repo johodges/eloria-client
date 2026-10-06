@@ -72,9 +72,14 @@ def test_boots_use_foot_length_and_preserve_each_shell(rig):
         assert mapped[offset : offset + 8, 1].min() == pytest.approx(
             ea.weighted_sole(rig, foot["side"]) - 0.004 * rig.fit_scale
         )
-    assert (
-        np.ptp(mapped[:8, 1]) > 0.5
-    )  # a tall shaft is not flattened to the old 333 mm span
+    # The shaft keeps its full height at the foot-length scale; a tall shaft
+    # is not flattened to the old 333 mm span. The regenerated Human foot is
+    # 282 mm (the Oldcraft-sized 341 mm foot is gone), so a 1 m shaft maps to
+    # about 490 mm rather than the 0.5+ m of the previous body.
+    assert np.ptp(mapped[:8, 1]) == pytest.approx(
+        np.ptp(points[:8, 1]) * report["feet"][0]["scale"]
+    )
+    assert np.ptp(mapped[:8, 1]) > 0.40
     assert cuff > 0.45
 
 

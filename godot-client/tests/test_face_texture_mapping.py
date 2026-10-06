@@ -16,14 +16,18 @@ sys.path.insert(0, str(ROOT/'eloria-assets/tools'))
 from build_face_masks import g, source_image
 
 # Painted iris centres in canonical rest coordinates, measured from source
-# renders; independent of the polygons used by the mask baker.
+# renders; independent of the polygons used by the mask baker. The Human
+# (luminous_*) heads were regenerated on 2026-10-05: theirs are re-measured
+# from an orthographic front ray-cast of the installed body's own base-colour
+# atlas (iris = the low-saturation dark disc inside the eye opening), and agree
+# with the split's calibration (Head joint y 1.5685 + eye_y .0727 / .0682).
 LANDMARKS = {
     'glasswarden_female': [(-.037, 1.643), (.037, 1.643)],
     'glasswarden_male': [(-.035, 1.653), (.036, 1.653)],
     'greyhaven_female': [(-.035, 1.613), (.035, 1.613)],
     'greyhaven_male': [(-.032, 1.624), (.032, 1.624)],
-    'luminous_female': [(-.033, 1.628), (.033, 1.628)],
-    'luminous_male': [(-.030, 1.624), (.030, 1.624)],
+    'luminous_female': [(-.036, 1.637), (.036, 1.637)],
+    'luminous_male': [(-.032, 1.641), (.032, 1.641)],
     'mycelari_female': [(-.038, 1.628), (.038, 1.628)],
     'mycelari_male': [(-.036, 1.637), (.038, 1.637)],
     'orun_female': [(-.038, 1.631), (.038, 1.631)],
@@ -56,10 +60,12 @@ def atlas_uv(d, b, part):
 class FaceTextureMappingTest(unittest.TestCase):
     def test_humanoid_faces_have_two_brows_above_the_eyes(self):
         # Independently measured brow centres, rather than the baker's curves.
+        # luminous_*: centroid of the painted brow in the same front ray-cast
+        # of the regenerated Human heads' atlas as LANDMARKS above.
         centres = {
             'glasswarden_female': (.047, 1.667), 'glasswarden_male': (.040, 1.667),
             'greyhaven_female': (.041, 1.639), 'greyhaven_male': (.042, 1.642),
-            'luminous_female': (.040, 1.650), 'luminous_male': (.037, 1.644),
+            'luminous_female': (.034, 1.658), 'luminous_male': (.033, 1.658),
             'mycelari_female': (.050, 1.655), 'mycelari_male': (.040, 1.650),
             'orun_female': (.047, 1.650), 'orun_male': (.043, 1.650),
             'votary_female': (.035, 1.622), 'votary_male': (.029, 1.613),

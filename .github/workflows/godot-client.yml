@@ -106,6 +106,7 @@ jobs:
         run: |
           godot --headless --path godot-client --script res://tests/test_cape_cloth.gd
           godot --headless --path godot-client --script res://tests/test_cape_idle.gd
+          godot --headless --path godot-client --script res://tests/test_cape_drape.gd
       - name: Validate creature rigs, skinning and animation
         run: |
           python3 eloria-assets/tools/validate_creature_glbs.py \

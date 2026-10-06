@@ -15,10 +15,20 @@ space at the atlas's resolution; each texel's rest position is projected into
 the front mask and sampled.  Only forward-facing head texels take a value, and
 the result is padded a few texels into empty atlas so mip/bilinear filtering
 never darkens a chart edge.
+
+With --manifest (normally godot-client/assets/actors/native/face_masks/
+manifest.json) the run also writes the mask's entry there, keyed by --slug
+(default: the body file's stem): the body and mask hashes, the source
+material, the atlas size, the texels above 0.1 per channel and the UV groups
+it was baked in.  The baker samples each part's raw TEXCOORD_0, so every
+group is scale 1, offset 0.  Bake from the packed body exactly as it will be
+installed: modelSHA256 pins those bytes.  manifest_entry() recomputes an entry
+from an installed body and mask without re-baking.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import io
 import json
 import sys
@@ -100,6 +110,43 @@ def bake(body: Path, front: Path, centre_x: float, centre_y: float, mpp: float):
         'atlas': [w, h], 'texels': {k: int((out[..., i] > 0.1).sum()) for i, k in enumerate('RGB')}}
 
 
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def manifest_entry(body: Path, mask: Path) -> dict:
+    """The face_masks/manifest.json entry for a baked mask, from the files themselves.
+
+    Same fields as build_face_masks.py writes for the other races; the pixel
+    counts are taken from the saved mask, so re-deriving an entry from the
+    installed files gives the bake's own numbers.
+    """
+    gltf, blob = g.read(body)
+    meshes = {gltf['meshes'][n['mesh']]['name']: gltf['meshes'][n['mesh']] for n in gltf['nodes'] if 'mesh' in n}
+    material = meshes['body']['primitives'][0]['material']
+    pixels = np.asarray(Image.open(mask).convert('RGB')).astype(np.float32) / 255.0
+    w, h = atlas_size(gltf, blob, material)
+    if pixels.shape[:2] != (h, w):
+        raise ValueError(f'{mask} is {pixels.shape[1]}x{pixels.shape[0]}, the body atlas is {w}x{h}')
+    return {
+        'modelSHA256': _sha256(body),
+        'maskSHA256': _sha256(mask),
+        'sourceMaterial': material,
+        'size': [w, h],
+        'pixelsPerChannel': (pixels > 0.1).sum((0, 1)).tolist(),
+        'sourceUVGroups': {part: {'uvScale': [1.0, 1.0], 'uvOffset': [0.0, 0.0]}
+                           for part in PARTS if part in meshes},
+    }
+
+
+def write_manifest_entry(manifest: Path, slug: str, entry: dict) -> None:
+    """Replace (or add) one race's entry, keeping every other entry and the key order."""
+    data = json.loads(manifest.read_text(encoding='utf-8')) if manifest.exists() else {}
+    data[slug] = entry
+    with open(manifest, 'w', encoding='utf-8', newline='\n') as handle:
+        handle.write(json.dumps(data, indent=2) + '\n')
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('body', type=Path)
@@ -108,10 +155,16 @@ def main() -> int:
     ap.add_argument('--centre-x', type=float, default=0.0)
     ap.add_argument('--centre-y', type=float, required=True)
     ap.add_argument('--metres-per-pixel', type=float, required=True)
+    ap.add_argument('--manifest', type=Path, help='face_masks/manifest.json to write this mask\'s entry into')
+    ap.add_argument('--slug', help='manifest key (default: the body file\'s stem, e.g. luminous_male)')
     args = ap.parse_args()
     pixels, report = bake(args.body, args.front, args.centre_x, args.centre_y, args.metres_per_pixel)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     Image.fromarray(pixels).save(args.out, optimize=True)
+    if args.manifest:
+        slug = args.slug or args.body.stem
+        write_manifest_entry(args.manifest, slug, manifest_entry(args.body, args.out))
+        report['manifest'] = {'path': str(args.manifest), 'slug': slug}
     print(json.dumps(report))
     return 0
 

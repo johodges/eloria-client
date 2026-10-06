@@ -468,13 +468,8 @@ EQUIPMENT = (
     ("orun_sun_shield", "Orun Sun Shield", 1, 103, "roundshield", (151, 76, 34), (219, 163, 62)),
     ("ssarathi_shell_shield", "Ssarathi Shell Shield", 1, 104, "shell", (43, 111, 89), (187, 151, 67)),
     ("four_gates_guard_shield_native", "Four Gates Guardian Shield", 1, 105, "kite", (39, 112, 124), (219, 190, 101)),
-    # part 2: capes
-    ("amberwood_leaf_cape", "Amberwood Leaf Cape", 2, 100, "cape", (59, 91, 49), (180, 100, 41)),
-    ("glasswarden_crystal_cape", "Glasswarden Crystal Cape", 2, 101, "cape", (75, 55, 113), (88, 185, 212)),
-    ("greyhaven_storm_cape", "Greyhaven Storm Cape", 2, 102, "cape", (44, 62, 76), (139, 160, 161)),
-    ("orun_rider_cape", "Orun Rider Cape", 2, 103, "cape", (128, 66, 32), (206, 148, 59)),
-    ("ssarathi_frond_cape", "Ssarathi Frond Cape", 2, 104, "cape", (36, 100, 79), (80, 147, 94)),
-    ("four_gates_guard_cape_native", "Four Gates Guardian Cape", 2, 105, "cape", (33, 93, 109), (214, 183, 95)),
+    # part 2: capes - none here since 2026-10; 2:100-105 are tints of the
+    # shared sculpted cape (equipment_authoring.GENERIC_EQUIPMENT, generic_cape).
     # part 3: helmets
     ("amberwood_ranger_hood", "Amberwood Ranger Hood", 3, 100, "hood", (55, 87, 50), (143, 104, 50)),
     ("glasswarden_helm", "Glasswarden Crystal Helm", 3, 101, "helm", (75, 58, 116), (92, 202, 217)),
@@ -3216,6 +3211,32 @@ def build_hair(source_dir: Path, output: Path, style: str, gender: str) -> dict:
                        "max": positions.max(axis=0).round(5).tolist()}}
 
 
+# Generic pieces that are sculpted rather than generated, and the asset extra
+# that marks the sculpted file. The shared cape (2026-10) is a Meshy cape fitted
+# in Blender and packed by build_shared_cape.py; the procedural sheet this
+# module used to write would replace it, so an existing sculpted file is kept
+# and only its numbers are recorded.
+SCULPTED_GENERIC = {"generic_cape": "eloriaSharedCape"}
+
+
+def sculpted_generic(path: Path, piece) -> dict | None:
+    marker = SCULPTED_GENERIC.get(piece.slug)
+    if marker is None or not path.exists():
+        return None
+    raw = path.read_bytes()
+    json_length = struct.unpack_from("<II", raw, 12)[0]
+    doc = json.loads(raw[20:20 + json_length])
+    if marker not in doc.get("asset", {}).get("extras", {}):
+        return None
+    vertices = sum(doc["accessors"][primitive["attributes"]["POSITION"]]["count"]
+                   for mesh in doc.get("meshes", []) for primitive in mesh["primitives"])
+    stats = glb_geometry_stats(path)
+    return {"id": piece.slug, "name": piece.label, "kind": piece.kind,
+            "finish": piece.finish, "attach": "skinned", "skinRegion": "cape",
+            "vertices": vertices, "triangles": stats["triangles"],
+            "joints": stats["joints"], "bytes": len(raw)}
+
+
 def glb_geometry_stats(path: Path) -> dict:
     """Triangle, joint and clip counts read back out of a finished GLB."""
     raw = path.read_bytes()
@@ -3773,6 +3794,14 @@ def main() -> None:
     manifest["genericEquipment"]={}
     for piece in equipment_authoring.GENERIC_EQUIPMENT:
         path=args.output/"equipment"/f"{piece.slug}.glb"
+        info=sculpted_generic(path,piece)
+        if info is not None:
+            manifest["genericEquipment"][piece.slug]=info|{
+                "part":piece.part,
+                "visuals":[visual for visual,_n,_b,_a in piece.variants],
+                "path":catalogue_path(path, repo_root)}
+            print("generic (sculpted, kept)",piece.slug)
+            continue
         info=equipment_authoring.build_equipment_piece(
             path,rig,piece.slug,piece.label,piece.kind,piece.base,piece.accent,
             finish=piece.finish)

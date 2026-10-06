@@ -31,8 +31,16 @@ CANONICAL_WARDED_BOOTS = (
     "arcane_fantasy_boots_01.glb")
 CANONICAL_WARDED_BOOTS_MANIFEST = (
     ROOT / "eloria-assets/qa/canonical-warded-boots-fit.json")
+# The installed Human female body. The cuff pass produced it until the
+# 2026-10-05 Human regeneration replaced it with a new Meshy body
+# (eloria-assets/tools/pack_human_body.py); the manifest now records that
+# mapping under installation.retiredMappings, so it is not in INSTALLED.
+HUMAN_FEMALE_BODY = (
+    ROOT / "godot-client/assets/actors/native/races/luminous_female.glb")
+# The seven derived female races still carry the cuffed template's pants and
+# boots; any one of them is the reference for that shared geometry now.
+DERIVED_REFERENCE_RACE = "votary_female"
 INSTALLED = {
-    "body": ROOT / "godot-client/assets/actors/native/races/luminous_female.glb",
     "arcanistLegs": (
         ROOT / "godot-client/assets/actors/native/equipment/variants/"
         "luminous_female/arcane_leg_armor_01.glb"),
@@ -210,10 +218,18 @@ def test_equipment_validation_rejects_cuff_binding_drift():
 def test_installed_outputs_match_reviewed_hashes_and_semantic_contracts():
     manifest = _manifest()
     mappings = manifest["installation"]["mappings"]
-    assert len(mappings) == len(INSTALLED) == 5
+    assert len(mappings) == len(INSTALLED) == 4
     assert {item["inputKey"] for item in mappings} == set(INSTALLED)
     assert {item["reviewedOutputKey"] for item in mappings} == set(INSTALLED)
     assert len({item["targetPath"] for item in mappings}) == len(INSTALLED)
+    # The body mapping is retired, not lost: its reviewed output stays as
+    # history and is marked as no longer installed.
+    retired = manifest["installation"]["retiredMappings"]
+    assert [item["inputKey"] for item in retired] == ["body"]
+    assert ROOT / retired[0]["targetPath"] == HUMAN_FEMALE_BODY
+    assert manifest["reviewedOutputs"]["body"]["installed"] is False
+    assert cuff.digest(HUMAN_FEMALE_BODY) != (
+        manifest["reviewedOutputs"]["body"]["outputSHA256"])
 
     reviewed = manifest["reviewedOutputs"]
     for mapping in mappings:
@@ -273,12 +289,14 @@ def test_ranger_lining_is_sealed_while_the_breeches_keep_their_hidden_cut():
 
 
 def test_installed_body_metadata_tracks_the_installed_bytes():
-    installed_hash = cuff.digest(INSTALLED["body"])
+    installed_hash = cuff.digest(HUMAN_FEMALE_BODY)
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
     race = catalog["races"]["luminous_female"]
     assert race["sha256"] == installed_hash
-    assert race["vertices"] == 24684
-    assert race["triangles"] == 35449
+    # The regenerated body (2026-10-05): vertices are the ones its surfaces
+    # actually use, since all seven body surfaces share one position buffer.
+    assert race["vertices"] == 17406
+    assert race["triangles"] == 22577
     models = json.loads(MODELS.read_text(encoding="utf-8"))
     assert models["models"]["luminous_female"]["skinPalette"][
         "sourceSHA256"] == installed_hash
@@ -326,10 +344,19 @@ def test_derived_female_cuffs_preserve_shared_body_and_cultural_surfaces():
     assert propagation["template"]["embeddedTemplateSHA256Semantics"] == (
         "original body-donor lineage retained in "
         "asset.extras.sharedBodyShape by the derived head builds")
-    reference_pants = _primary_geometry_signature(
-        INSTALLED["body"], "wardrobe_pants")
-    reference_boots = _primary_geometry_signature(
-        INSTALLED["body"], "wardrobe_boots")
+    # The Human female body was regenerated and no longer carries the cuffed
+    # template, so the shared pants/boots reference is taken from a derived
+    # race that still carries exactly the reviewed cuff output's surfaces;
+    # every other derived race must match it.
+    reviewed_body = _manifest()["reviewedOutputs"]["body"]["semanticMeshes"]
+    reference_spec = propagation["assets"][DERIVED_REFERENCE_RACE]
+    assert reference_spec["outputPantsSemanticSHA256"] == (
+        reviewed_body["wardrobe_pants"]["sha256"])
+    assert reference_spec["bootsSemanticSHA256"] == (
+        reviewed_body["wardrobe_boots"]["sha256"])
+    reference = ROOT / reference_spec["path"]
+    reference_pants = _primary_geometry_signature(reference, "wardrobe_pants")
+    reference_boots = _primary_geometry_signature(reference, "wardrobe_boots")
     for slug, spec in propagation["assets"].items():
         path = ROOT / spec["path"]
         assert cuff.digest(path) == spec["outputSHA256"]
@@ -400,7 +427,7 @@ def test_historical_body_provenance_is_valid_without_baseline_binary():
 def test_installed_outputs_are_rejected_as_second_pass_sources():
     inputs = _manifest()["inputs"]
     with pytest.raises(ValueError, match="Body semantic surface"):
-        cuff.validate_body_source(INSTALLED["body"], inputs["body"])
+        cuff.validate_body_source(HUMAN_FEMALE_BODY, inputs["body"])
     with pytest.raises(ValueError, match="Arcanist legs SHA-256 changed"):
         cuff.validate_pinned_source(
             INSTALLED["arcanistLegs"], inputs["arcanistLegs"],

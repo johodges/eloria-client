@@ -117,17 +117,20 @@ class NativeGlbAssetsTest(unittest.TestCase):
         import creature_roster
         self.assertEqual(32 + len(creature_roster.ROSTER),
                          len(self.catalog["creatures"]))
-        # 66 culture and landmark pieces, plus the concept design sets. Counted
+        # 60 culture and landmark pieces, plus the concept design sets. Counted
         # from the tables that declare them rather than restated, so adding a
         # design cannot leave this stale - which is how the creature count below
-        # came to be compared against disk instead of a literal.
+        # came to be compared against disk instead of a literal. (66 until
+        # 2026-10, when the six regional capes became tints of the one shared
+        # cape mesh.)
         import legwear_roster
         import torso_designs
-        self.assertEqual(66 + len(torso_designs.DESIGNS) + len(legwear_roster.ROSTER),
+        self.assertEqual(60 + len(torso_designs.DESIGNS) + len(legwear_roster.ROSTER),
                          len(self.catalog["equipment"]))
         # The generic tier claims the legacy visual-id space with one authored
-        # mesh per material ladder rather than one per id.
-        self.assertEqual(43, len(self.catalog["genericEquipment"]))
+        # mesh per material ladder rather than one per id. (43 until 2026-10,
+        # when the fur cape became a tint of generic_cape.)
+        self.assertEqual(42, len(self.catalog["genericEquipment"]))
         # Compare against what is actually on disk instead of a fixed number:
         # the catalogue's count had drifted stale when the ambient livestock
         # were added by a second generator without refreshing this block.
@@ -187,10 +190,17 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertEqual("retargeted", entry["anatomy"])
                 # Keep the runtime vertex budget even with source UV seams.
                 self.assertLess(entry["vertices"], 40_000)
-                self.assertGreater(entry["triangles"], 18_000)
+                document = glb_document(ROOT / entry["path"])
+                # The floor is the Meshy derivative's ~20k target. The Human
+                # bodies regenerated on 2026-10-05 (packed by
+                # pack_human_body.py) are their own Meshy runs: the male came
+                # as a thickened shell and keeps 12,961 visible triangles once
+                # the hidden inner wall is dropped (15,423 after the surface
+                # borders are cut), so they keep a floor of their own.
+                human_pack = "eloriaHumanPack" in document["asset"].get("extras", {})
+                self.assertGreater(entry["triangles"], 14_000 if human_pack else 18_000)
                 # A full retained Ssarathi tail is additional to the common
                 # roughly-20k body/head. Count that actual surface separately.
-                document = glb_document(ROOT / entry["path"])
                 tail = sum(document["accessors"][p["indices"]]["count"] // 3
                            for m in document["meshes"] for p in m["primitives"]
                            if p.get("extras", {}).get("sourceRole") == "race_tail")
@@ -278,8 +288,11 @@ class NativeGlbAssetsTest(unittest.TestCase):
         expected = {}
         heads = set()
         for gender in ("male", "female"):
-            # Every race now uses the approved same-sex source body.
-            path = ROOT / self.catalog["races"]["luminous_" + gender]["path"]
+            # Every other race uses the approved same-sex source body. The
+            # Human (luminous_*) bodies were regenerated on 2026-10-05 and no
+            # longer carry it, so the template is read from a race that still
+            # does; the Human body keeps only its distinct head in this check.
+            path = ROOT / self.catalog["races"]["votary_" + gender]["path"]
             d, binary = ea.read_glb(path)
             rig = ea.load_rig(path, ea.BODY_SURFACES)
             origin = rig.origin("neck_01")
@@ -311,7 +324,8 @@ class NativeGlbAssetsTest(unittest.TestCase):
                     self.assertEqual("luminous_" + gender, entry["bodyTemplate"])
                     self.assertEqual(entry["bodyTemplate"], self.models["models"][slug]["bodyTemplate"])
                     document, blob = ea.read_glb(ROOT / entry["path"])
-                    self.assertEqual(expected[gender], geometry(document, blob, True))
+                    if slug != "luminous_" + gender:
+                        self.assertEqual(expected[gender], geometry(document, blob, True))
                     self.assertIn(slug, self.equipment['refittedBodies'])
                     heads.add(tuple(sorted(geometry(document, blob, False).items())))
                     # Approved stature scales the whole actor and its equipment;

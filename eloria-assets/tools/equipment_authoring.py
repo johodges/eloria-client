@@ -3604,7 +3604,7 @@ GENERIC_EQUIPMENT = (
         (13, "Quiver of Bolts", (88, 70, 52), (162, 134, 88)))),
 
     # -- part 2: capes -----------------------------------------------------
-    # Twenty-two dyes over one cape, plus a fur cape that needs its own pelt.
+    # Every cape: twenty-three dyes and six regional colours over one mesh.
     GenericPiece("generic_cape", "Cape", 2, "cape", "cloth", (
         (0, "Black Cape", *dye("black")), (1, "Blue Cape", *dye("blue")),
         (2, "Blue-Gray Cape", *dye("bluegray")), (3, "Brown Cape", *dye("brown")),
@@ -3617,9 +3617,18 @@ GENERIC_EQUIPMENT = (
         (16, "Nightfall Cape", *dye("crimson")), (17, "Quiet Cape", *dye("moss")),
         (18, "Highreach Cape", *dye("slate")), (19, "Dawnward Cape", *dye("sand")),
         (20, "Sunwake Cape", *dye("wine")), (21, "Farhold Cape", *dye("ash")),
-        (22, "Learner Cape", *dye("lightbrown")))),
-    GenericPiece("generic_cape_fur", "Fur Cape", 2, "cape", "fur", (
-        (10, "Fur Cape", *FUR),)),
+        (22, "Learner Cape", *dye("lightbrown")),
+        # 2026-10: the cape is one sculpted mesh (build_shared_cape.py), so the
+        # fur cape and the six regional capes that had meshes of their own are
+        # tints of it too; the regional colours were sampled from their old
+        # textures.
+        (10, "Fur Cape", *FUR),
+        (100, "Amberwood Leaf Cape", (54, 83, 45), (179, 100, 41)),
+        (101, "Glasswarden Crystal Cape", (69, 51, 103), (88, 184, 211)),
+        (102, "Greyhaven Storm Cape", (40, 56, 70), (139, 159, 160)),
+        (103, "Orun Rider Cape", (117, 61, 29), (205, 148, 59)),
+        (104, "Ssarathi Frond Cape", (33, 92, 72), (80, 146, 94)),
+        (105, "Four Gates Guardian Cape", (30, 85, 100), (212, 182, 95)))),
 
     # -- part 3: helmets ---------------------------------------------------
     GenericPiece("generic_helm", "Helm", 3, "helm", "plate", (

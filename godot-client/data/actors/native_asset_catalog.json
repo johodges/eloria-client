@@ -4,22 +4,22 @@
   "pipeline": "build_native_nymara_glbs.py",
   "races": {
     "luminous_female": {
-      "vertices": 24684,
-      "triangles": 35449,
+      "vertices": 17406,
+      "triangles": 22577,
       "joints": 77,
       "feature": "none",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
       "capeBones": 12,
-      "baseBody": "luminous_human_female_tpose.glb",
+      "baseBody": "luminous_female.glb",
       "stature": 1.0,
       "legChainScale": 1.0,
       "hipHeight": 0.9167001247406004,
       "groundHeight": 0.0,
       "path": "godot-client/assets/actors/native/races/luminous_female.glb",
-      "source": "luminous_human_female_tpose.glb",
-      "sourceSHA256": "f5ebfc9e753d1120190863187753ed76b8b614a959e9a8efe5608194ad387d35",
-      "sha256": "b95921cd99da9f69009c5bc8295bae164ccf84189aefcaab6b6b13cb693a5552",
+      "source": "luminous_female.glb",
+      "sourceSHA256": "6316da8288c310bcfa79c24249e1b804c3e076766c56419db397743d47466f1a",
+      "sha256": "c3814266a65f7688d8903d31532acdddfa1e44d024b73f5408b0e7a03ef33717",
       "surfaces": [
         "body",
         "eyes",
@@ -51,22 +51,22 @@
       }
     },
     "luminous_male": {
-      "vertices": 23203,
-      "triangles": 35158,
+      "vertices": 15847,
+      "triangles": 15423,
       "joints": 77,
       "feature": "none",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
       "capeBones": 12,
-      "baseBody": "luminous_human_male_tpose.glb",
+      "baseBody": "luminous_male.glb",
       "stature": 1.0,
       "legChainScale": 1.0,
       "hipHeight": 0.9167001247406004,
       "groundHeight": 0.0,
       "path": "godot-client/assets/actors/native/races/luminous_male.glb",
-      "source": "luminous_human_male_tpose.glb",
-      "sourceSHA256": "5e56f9535725e0ae3d8fc9e3acb284ed75dca1010fdbfd1a9b068fe21f16ee63",
-      "sha256": "66c1602c274ab9e61ab0f6263296b827af0f15e2ac0bd36486fdbeec07c0c087",
+      "source": "luminous_male.glb",
+      "sourceSHA256": "0cb1a7f78c15712872e3e9f6a1a458273a179b8d8cd8461d792ca5b915559c86",
+      "sha256": "d30a505fe2666f4019efbcafceaf856ab5ee698757bf52e563b009479d50e10b",
       "surfaces": [
         "body",
         "eyes",
@@ -4804,96 +4804,6 @@
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/four_gates_guard_shield_native.glb"
     },
-    "amberwood_leaf_cape": {
-      "id": "amberwood_leaf_cape",
-      "name": "Amberwood Leaf Cape",
-      "kind": "cape",
-      "finish": "cloth",
-      "attach": "skinned",
-      "skinRegion": "cape",
-      "vertices": 1146,
-      "triangles": 1900,
-      "joints": 77,
-      "bytes": 119312,
-      "part": 2,
-      "visual": 100,
-      "path": "godot-client/assets/actors/native/equipment/amberwood_leaf_cape.glb"
-    },
-    "glasswarden_crystal_cape": {
-      "id": "glasswarden_crystal_cape",
-      "name": "Glasswarden Crystal Cape",
-      "kind": "cape",
-      "finish": "cloth",
-      "attach": "skinned",
-      "skinRegion": "cape",
-      "vertices": 1146,
-      "triangles": 1900,
-      "joints": 77,
-      "bytes": 119332,
-      "part": 2,
-      "visual": 101,
-      "path": "godot-client/assets/actors/native/equipment/glasswarden_crystal_cape.glb"
-    },
-    "greyhaven_storm_cape": {
-      "id": "greyhaven_storm_cape",
-      "name": "Greyhaven Storm Cape",
-      "kind": "cape",
-      "finish": "cloth",
-      "attach": "skinned",
-      "skinRegion": "cape",
-      "vertices": 1146,
-      "triangles": 1900,
-      "joints": 77,
-      "bytes": 119316,
-      "part": 2,
-      "visual": 102,
-      "path": "godot-client/assets/actors/native/equipment/greyhaven_storm_cape.glb"
-    },
-    "orun_rider_cape": {
-      "id": "orun_rider_cape",
-      "name": "Orun Rider Cape",
-      "kind": "cape",
-      "finish": "cloth",
-      "attach": "skinned",
-      "skinRegion": "cape",
-      "vertices": 1146,
-      "triangles": 1900,
-      "joints": 77,
-      "bytes": 119288,
-      "part": 2,
-      "visual": 103,
-      "path": "godot-client/assets/actors/native/equipment/orun_rider_cape.glb"
-    },
-    "ssarathi_frond_cape": {
-      "id": "ssarathi_frond_cape",
-      "name": "Ssarathi Frond Cape",
-      "kind": "cape",
-      "finish": "cloth",
-      "attach": "skinned",
-      "skinRegion": "cape",
-      "vertices": 1146,
-      "triangles": 1900,
-      "joints": 77,
-      "bytes": 119312,
-      "part": 2,
-      "visual": 104,
-      "path": "godot-client/assets/actors/native/equipment/ssarathi_frond_cape.glb"
-    },
-    "four_gates_guard_cape_native": {
-      "id": "four_gates_guard_cape_native",
-      "name": "Four Gates Guardian Cape",
-      "kind": "cape",
-      "finish": "cloth",
-      "attach": "skinned",
-      "skinRegion": "cape",
-      "vertices": 1146,
-      "triangles": 1900,
-      "joints": 77,
-      "bytes": 119336,
-      "part": 2,
-      "visual": 105,
-      "path": "godot-client/assets/actors/native/equipment/four_gates_guard_cape_native.glb"
-    },
     "amberwood_ranger_hood": {
       "id": "amberwood_ranger_hood",
       "name": "Amberwood Ranger Hood",
@@ -7894,10 +7804,10 @@
       "finish": "cloth",
       "attach": "skinned",
       "skinRegion": "cape",
-      "vertices": 1146,
-      "triangles": 1900,
+      "vertices": 11002,
+      "triangles": 6085,
       "joints": 77,
-      "bytes": 119236,
+      "bytes": 4102280,
       "part": 2,
       "visuals": [
         0,
@@ -7910,6 +7820,7 @@
         7,
         8,
         9,
+        10,
         11,
         12,
         13,
@@ -7921,26 +7832,15 @@
         19,
         20,
         21,
-        22
+        22,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105
       ],
       "path": "godot-client/assets/actors/native/equipment/generic_cape.glb"
-    },
-    "generic_cape_fur": {
-      "id": "generic_cape_fur",
-      "name": "Fur Cape",
-      "kind": "cape",
-      "finish": "fur",
-      "attach": "skinned",
-      "skinRegion": "cape",
-      "vertices": 1146,
-      "triangles": 1900,
-      "joints": 77,
-      "bytes": 128968,
-      "part": 2,
-      "visuals": [
-        10
-      ],
-      "path": "godot-client/assets/actors/native/equipment/generic_cape_fur.glb"
     },
     "generic_helm": {
       "id": "generic_helm",
@@ -12208,7 +12108,7 @@
   },
   "ambientCreaturesNote": "The Sunmane camps' livestock: stood in pens and at hitching posts as tame creature spawns (eloria-server spawns.txt `tame` rows, eloria/livestock.py) that nobody can attack. Each carries the server actor type eloria-server's creatures.txt gives it; they replaced the client-only ambient herds.",
   "validation": {
-    "files": 2853,
+    "files": 3374,
     "results": {
       "godot-client/assets/actors/native/creatures/abyssal_armored_fish.glb": {
         "nodes": 55,
@@ -14112,12 +14012,6 @@
         "skins": 0,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/amberwood_leaf_cape.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/amberwood_leafblade.glb": {
         "nodes": 1,
         "meshes": 1,
@@ -15318,12 +15212,6 @@
         "skins": 0,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/four_gates_guard_cape_native.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass.glb": {
         "nodes": 78,
         "meshes": 1,
@@ -15565,12 +15453,6 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/generic_cape.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/generic_cape_fur.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -16098,12 +15980,6 @@
         "skins": 1,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/glasswarden_crystal_cape.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/glasswarden_cuirass.glb": {
         "nodes": 78,
         "meshes": 1,
@@ -16234,12 +16110,6 @@
         "nodes": 1,
         "meshes": 1,
         "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/greyhaven_storm_cape.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/greyhaven_trousers.glb": {
@@ -18138,12 +18008,6 @@
         "skins": 1,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/orun_rider_cape.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/orun_rider_jerkin.glb": {
         "nodes": 78,
         "meshes": 1,
@@ -19426,12 +19290,6 @@
         "nodes": 1,
         "meshes": 1,
         "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ssarathi_frond_cape.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/ssarathi_glaive.glb": {
@@ -29327,6 +29185,3174 @@
         "meshes": 1,
         "skins": 1,
         "animations": 7
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/adventurer_headwear_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/adventurer_headwear_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/adventurer_headwear_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/adventurer_headwear_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/adventurer_headwear_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/adventurer_headwear_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/adventurer_headwear_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/adventurer_headwear_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_forest_helm_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_forest_helm_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_forest_helm_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_forest_helm_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_forest_helm_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_forest_helm_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_forest_helm_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_forest_helm_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_boots_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_boots_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_boots_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_boots_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_boots_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_boots_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_boots_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_boots_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_cuirass_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_cuirass_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_cuirass_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_cuirass_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_cuirass_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_cuirass_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_cuirass_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_cuirass_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_legguards_01.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_legguards_02.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_legguards_03.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_legguards_04.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_legguards_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_legguards_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_legguards_07.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/amberwood_woodland_legguards_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_ethereal_circlet_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_ethereal_circlet_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_ethereal_circlet_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_ethereal_circlet_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_ethereal_circlet_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_ethereal_circlet_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_ethereal_circlet_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_ethereal_circlet_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_fantasy_boots_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_fantasy_boots_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_fantasy_boots_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_fantasy_boots_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_fantasy_boots_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_fantasy_boots_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_fantasy_boots_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_fantasy_boots_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_leg_armor_01.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_leg_armor_02.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_leg_armor_03.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_leg_armor_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_leg_armor_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_leg_armor_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_leg_armor_07.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/arcane_leg_armor_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/ceremonial_knight_greaves_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/ceremonial_knight_greaves_02.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/ceremonial_knight_greaves_03.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/ceremonial_knight_greaves_04.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/ceremonial_knight_greaves_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/ceremonial_knight_greaves_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/ceremonial_knight_greaves_07.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/ceremonial_knight_greaves_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_arcane_armor_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_arcane_armor_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_arcane_armor_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_arcane_armor_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_arcane_armor_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_arcane_armor_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_arcane_armor_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_arcane_armor_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_frontier_shirt_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_frontier_shirt_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_frontier_shirt_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_frontier_shirt_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_frontier_shirt_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_frontier_shirt_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_frontier_shirt_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/eloria_frontier_shirt_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_boots_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_boots_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_boots_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_boots_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_boots_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_boots_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_boots_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_boots_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_hat_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_hat_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_hat_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_hat_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_hat_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_hat_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_hat_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/frontier_hat_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/humble_frontier_pants_01.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/humble_frontier_pants_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/humble_frontier_pants_03.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/humble_frontier_pants_04.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/humble_frontier_pants_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/humble_frontier_pants_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/humble_frontier_pants_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/humble_frontier_pants_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_greaves_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_greaves_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_greaves_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_greaves_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_greaves_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_greaves_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_greaves_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_greaves_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_headgear_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_headgear_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_headgear_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_headgear_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_headgear_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_headgear_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_headgear_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_headgear_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_torso_armor_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_torso_armor_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_torso_armor_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_torso_armor_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_torso_armor_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_torso_armor_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_torso_armor_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/knightly_torso_armor_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_adventurer_boots_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_adventurer_boots_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_adventurer_boots_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_adventurer_boots_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_adventurer_boots_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_adventurer_boots_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_adventurer_boots_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_adventurer_boots_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_ranger_torso_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_ranger_torso_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_ranger_torso_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_ranger_torso_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_ranger_torso_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_ranger_torso_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_ranger_torso_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/leather_ranger_torso_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_boots_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_boots_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_boots_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_boots_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_boots_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_boots_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_boots_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_boots_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_helm_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_helm_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_helm_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_helm_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_helm_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_helm_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_helm_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_eloria_helm_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_hero_cuirass_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_hero_cuirass_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_hero_cuirass_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_hero_cuirass_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_hero_cuirass_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_hero_cuirass_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_hero_cuirass_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_hero_cuirass_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_leg_armor_01.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_leg_armor_02.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_leg_armor_03.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_leg_armor_04.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_leg_armor_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_leg_armor_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_leg_armor_07.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_leg_armor_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_sabatons_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_sabatons_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_sabatons_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_sabatons_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_sabatons_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_sabatons_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_sabatons_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/legendary_sabatons_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_greaves_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_greaves_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_greaves_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_greaves_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_greaves_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_greaves_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_greaves_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_greaves_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_helmet_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_helmet_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_helmet_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_helmet_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_helmet_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_helmet_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_helmet_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_helmet_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_leg_armor_01.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_leg_armor_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_leg_armor_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_leg_armor_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_leg_armor_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_leg_armor_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_leg_armor_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_leg_armor_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_torso_armor_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_torso_armor_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_torso_armor_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_torso_armor_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_torso_armor_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_torso_armor_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_torso_armor_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/militia_torso_armor_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/rugged_ranger_legwear_01.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/rugged_ranger_legwear_02.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/rugged_ranger_legwear_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/rugged_ranger_legwear_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/rugged_ranger_legwear_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/rugged_ranger_legwear_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/rugged_ranger_legwear_07.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/rugged_ranger_legwear_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_boots_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_boots_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_boots_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_boots_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_boots_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_boots_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_boots_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_boots_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_headgear_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_headgear_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_headgear_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_headgear_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_headgear_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_headgear_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_headgear_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_headgear_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_legwear_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_legwear_02.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_legwear_03.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_legwear_04.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_legwear_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_legwear_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_legwear_07.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_legwear_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_shirt_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_shirt_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_shirt_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_shirt_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_shirt_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_shirt_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_shirt_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_female/sunmane_steppe_shirt_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/adventurer_headwear_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/adventurer_headwear_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/adventurer_headwear_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/adventurer_headwear_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/adventurer_headwear_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/adventurer_headwear_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/adventurer_headwear_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/adventurer_headwear_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_forest_helm_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_forest_helm_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_forest_helm_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_forest_helm_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_forest_helm_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_forest_helm_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_forest_helm_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_forest_helm_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_boots_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_boots_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_boots_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_boots_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_boots_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_boots_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_boots_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_boots_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_cuirass_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_cuirass_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_cuirass_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_cuirass_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_cuirass_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_cuirass_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_cuirass_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_cuirass_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_legguards_01.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_legguards_02.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_legguards_03.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_legguards_04.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_legguards_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_legguards_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_legguards_07.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/amberwood_woodland_legguards_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_ethereal_circlet_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_ethereal_circlet_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_ethereal_circlet_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_ethereal_circlet_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_ethereal_circlet_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_ethereal_circlet_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_ethereal_circlet_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_ethereal_circlet_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_fantasy_boots_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_fantasy_boots_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_fantasy_boots_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_fantasy_boots_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_fantasy_boots_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_fantasy_boots_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_fantasy_boots_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_fantasy_boots_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_leg_armor_01.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_leg_armor_02.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_leg_armor_03.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_leg_armor_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_leg_armor_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_leg_armor_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_leg_armor_07.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/arcane_leg_armor_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/ceremonial_knight_greaves_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/ceremonial_knight_greaves_02.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/ceremonial_knight_greaves_03.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/ceremonial_knight_greaves_04.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/ceremonial_knight_greaves_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/ceremonial_knight_greaves_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/ceremonial_knight_greaves_07.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/ceremonial_knight_greaves_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_arcane_armor_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_arcane_armor_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_arcane_armor_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_arcane_armor_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_arcane_armor_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_arcane_armor_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_arcane_armor_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_arcane_armor_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_frontier_shirt_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_frontier_shirt_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_frontier_shirt_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_frontier_shirt_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_frontier_shirt_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_frontier_shirt_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_frontier_shirt_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/eloria_frontier_shirt_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_boots_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_boots_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_boots_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_boots_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_boots_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_boots_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_boots_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_boots_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_hat_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_hat_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_hat_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_hat_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_hat_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_hat_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_hat_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/frontier_hat_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/humble_frontier_pants_01.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/humble_frontier_pants_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/humble_frontier_pants_03.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/humble_frontier_pants_04.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/humble_frontier_pants_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/humble_frontier_pants_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/humble_frontier_pants_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/humble_frontier_pants_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_greaves_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_greaves_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_greaves_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_greaves_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_greaves_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_greaves_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_greaves_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_greaves_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_headgear_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_headgear_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_headgear_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_headgear_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_headgear_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_headgear_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_headgear_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_headgear_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_torso_armor_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_torso_armor_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_torso_armor_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_torso_armor_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_torso_armor_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_torso_armor_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_torso_armor_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/knightly_torso_armor_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_adventurer_boots_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_adventurer_boots_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_adventurer_boots_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_adventurer_boots_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_adventurer_boots_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_adventurer_boots_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_adventurer_boots_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_adventurer_boots_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_ranger_torso_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_ranger_torso_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_ranger_torso_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_ranger_torso_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_ranger_torso_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_ranger_torso_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_ranger_torso_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/leather_ranger_torso_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_boots_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_boots_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_boots_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_boots_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_boots_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_boots_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_boots_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_boots_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_helm_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_helm_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_helm_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_helm_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_helm_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_helm_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_helm_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_eloria_helm_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_hero_cuirass_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_hero_cuirass_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_hero_cuirass_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_hero_cuirass_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_hero_cuirass_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_hero_cuirass_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_hero_cuirass_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_hero_cuirass_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_leg_armor_01.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_leg_armor_02.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_leg_armor_03.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_leg_armor_04.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_leg_armor_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_leg_armor_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_leg_armor_07.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_leg_armor_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_sabatons_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_sabatons_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_sabatons_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_sabatons_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_sabatons_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_sabatons_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_sabatons_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/legendary_sabatons_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_greaves_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_greaves_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_greaves_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_greaves_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_greaves_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_greaves_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_greaves_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_greaves_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_helmet_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_helmet_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_helmet_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_helmet_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_helmet_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_helmet_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_helmet_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_helmet_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_leg_armor_01.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_leg_armor_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_leg_armor_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_leg_armor_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_leg_armor_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_leg_armor_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_leg_armor_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_leg_armor_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_torso_armor_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_torso_armor_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_torso_armor_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_torso_armor_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_torso_armor_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_torso_armor_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_torso_armor_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/militia_torso_armor_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/rugged_ranger_legwear_01.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/rugged_ranger_legwear_02.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/rugged_ranger_legwear_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/rugged_ranger_legwear_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/rugged_ranger_legwear_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/rugged_ranger_legwear_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/rugged_ranger_legwear_07.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/rugged_ranger_legwear_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_boots_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_boots_02.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_boots_03.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_boots_04.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_boots_05.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_boots_06.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_boots_07.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_boots_08.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_headgear_01.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_headgear_02.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_headgear_03.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_headgear_04.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_headgear_05.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_headgear_06.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_headgear_07.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_headgear_08.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_legwear_01.glb": {
+        "nodes": 80,
+        "meshes": 3,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_legwear_02.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_legwear_03.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_legwear_04.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_legwear_05.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_legwear_06.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_legwear_07.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_legwear_08.glb": {
+        "nodes": 81,
+        "meshes": 4,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_shirt_01.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_shirt_02.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_shirt_03.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_shirt_04.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_shirt_05.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_shirt_06.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_shirt_07.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/variants/human_male/sunmane_steppe_shirt_08.glb": {
+        "nodes": 79,
+        "meshes": 2,
+        "skins": 1,
+        "animations": 0
       }
     }
   },
@@ -30872,37 +33898,37 @@
   "fittedHair": {
     "luminous_female:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_parted_female.glb",
-      "sha256": "5b76655635877ad55f5afbc4424d8050c00249614787b40fc658a4c72053e5b7",
+      "sha256": "6515b2af3fd9b434f26055e4ba8f7ef401dc948fdb17ab5cdbc86c4377f58ab8",
       "joints": 77,
       "triangles": 5204
     },
     "luminous_female:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_long_female.glb",
-      "sha256": "ca055b594666f206329676286e82764743420ce9d42334a9abce64df57d78659",
+      "sha256": "c8e10c89c61f3f5a49a1766e4149815ca8f7df622d227b3686338f6e2f25a7f9",
       "joints": 77,
       "triangles": 11624
     },
     "luminous_female:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_buns_female.glb",
-      "sha256": "e22f8cdec325a84582d1419aa41045d4094eae8022c8bb4c41a89f0470d36a64",
+      "sha256": "54cf921f80b7894e1da9fe70deb8d5573d0a77190f29f171679542317ac858cb",
       "joints": 77,
       "triangles": 13136
     },
     "luminous_male:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_parted_male.glb",
-      "sha256": "83757c00f31c850da4f5fa392b411387cdb79c55df21201043ccc20ef91d6206",
+      "sha256": "ab8f83e236743d324b2edc06763989ddc086d1275293ecd31181f14c6523062b",
       "joints": 77,
       "triangles": 5204
     },
     "luminous_male:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_long_male.glb",
-      "sha256": "93253735223f1e39405623d923aea66cbed54fc24d262d5136b4f21107d39450",
+      "sha256": "3dd53a4be87d76d764e8fce89ce34bd52434eb18e33eb95eed78bf7c17771325",
       "joints": 77,
       "triangles": 11624
     },
     "luminous_male:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_buns_male.glb",
-      "sha256": "a75fa06e130b4f87a2904ac7186dc179855b30b0074b8d59b43ee875f5a9ab5f",
+      "sha256": "b6af044571419ea8eb7f60197b34b4677908b00c6c5a8bc31bd8a0c090abf9b3",
       "joints": 77,
       "triangles": 13136
     },
@@ -31160,13 +34186,13 @@
     },
     "luminous_female:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_buzzed_female.glb",
-      "sha256": "7a407c4546cefc47aa7eb5ae2c1542a7d8f754d1fb6aff329b53f0e6e3c1a4a3",
+      "sha256": "aff66a736d8283927398b6f98c2f520f52998fb8a94f1a5934bffcb5db3be90f",
       "joints": 77,
       "triangles": 3320
     },
     "luminous_male:4": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_buzzed_male.glb",
-      "sha256": "a26b35a6625904b6f7083f820f265f81cf8398255f2b9707e5a5d819eb119ce6",
+      "sha256": "bccf4617e77c9a69c75c3fb4fb5d939364fb9684625665f04b98195ceb5b2145",
       "joints": 77,
       "triangles": 3320
     },
@@ -31256,61 +34282,61 @@
     },
     "luminous_female:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_bob_female.glb",
-      "sha256": "7cd412c32c0087057769a82882db95da21550b602d8bc1276195b109aa9d0632",
+      "sha256": "19f46cfa170edd5e0c7a1b39906b332241ebbf7dd8f5d35ffb9ec9a4e003b02a",
       "joints": 77,
       "triangles": 11624
     },
     "luminous_female:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_ponytail_female.glb",
-      "sha256": "a6a434cde7781a2345a65a375229074ce4a3313f8302acd10827cd33cc97f41b",
+      "sha256": "436d80361375b8f8cab6b7bb6a27e405c1a40082a40e325a7ee1087e7456525f",
       "joints": 77,
       "triangles": 12040
     },
     "luminous_female:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_braid_female.glb",
-      "sha256": "abdf79c97ca9a8f7d8e6c431f54bf9cdcf3c7f14462bf2056668dd67ce670bd9",
+      "sha256": "01642729e427a3aaf3d5dcad9ee3cb6ac29f7d2334955c8f5501016510041320",
       "joints": 77,
       "triangles": 15976
     },
     "luminous_female:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_topknot_female.glb",
-      "sha256": "af53b5bf8a0f372e3b59a81702452f07d7a4f85933ca65e45d005a1a36be6b3d",
+      "sha256": "68d33d8cc9eecdf7ee83dbbae7610974141b47d8dc80601b3d5f1d9a3253a6db",
       "joints": 77,
       "triangles": 12872
     },
     "luminous_female:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_mohawk_female.glb",
-      "sha256": "ab1018ec268fac25137343e0ef323bfb9bceb7368640fbedf81e555d61ffea36",
+      "sha256": "dec2ba55b678a6ff7eb8ead1f96265356d9a7f619e9d05ed20ba54dee2ef9a32",
       "joints": 77,
       "triangles": 8312
     },
     "luminous_male:5": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_bob_male.glb",
-      "sha256": "7cd5741fa4bbca1618c2d8e9de05573b6d14414fafbc1f83d1d5703d1419b923",
+      "sha256": "38f10cd20bae57b494a5953cd385f9c6289bd93ff25b91ce020059161afe57e5",
       "joints": 77,
       "triangles": 11624
     },
     "luminous_male:6": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_ponytail_male.glb",
-      "sha256": "aa2d2f54958362a92a22342817cd9613f18976345cacdeec215002382bfba6f7",
+      "sha256": "d3436239bea312414ea5a5676b44255c5847cf8cffe156bc75ca0f71b4892615",
       "joints": 77,
       "triangles": 12040
     },
     "luminous_male:7": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_braid_male.glb",
-      "sha256": "74fa6f150f0b32aab6e8abd2bdc538755ae97579d1d2e7adf6953e7ef2ede1b9",
+      "sha256": "38783eddb87ca9eb687f17dbd2441be149bf445df677dfd4a083f7dbefe65566",
       "joints": 77,
       "triangles": 15976
     },
     "luminous_male:8": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_topknot_male.glb",
-      "sha256": "b06acb22bb54ae2c312dba4daadaed78b7cc1c1a2072811a11bcc6c75332bb8a",
+      "sha256": "7e899bab1915bd8a9830234ee59235661b09885b8b7c3503c65aeedb8845f058",
       "joints": 77,
       "triangles": 12872
     },
     "luminous_male:9": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_mohawk_male.glb",
-      "sha256": "1ee5c25a40db234038b564ffb177785af593ace43b2c3b9c944c340b12e4a2af",
+      "sha256": "295717e58f69395abbe807d55a8a00ea17592863500a78010f5d9ec758223d8f",
       "joints": 77,
       "triangles": 8312
     },

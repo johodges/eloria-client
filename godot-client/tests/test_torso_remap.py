@@ -93,7 +93,11 @@ def test_packed_arm_profile_never_assigns_locked_rows(rig):
     axis = wrist - root
     radial = np.array([0., .05, .025])
     radial -= axis * (radial @ axis) / (axis @ axis)
-    travel = np.array([.2, .61, .62, .8])
+    # Row 2 sits on the lock (SLEEVE_PROFILE_LOCK_T = .62). Travel is
+    # recomputed from the rig's arm axis, which can land one ulp below an exact
+    # .62 (it does on the regenerated Human rig: 0.6199999999999999), so the
+    # fixture sits a hair past the lock instead of on the floating-point edge.
+    travel = np.array([.2, .61, .62 + 1e-9, .8])
     points = root + travel[:, None] * axis + radial
     before = points.copy()
     share = np.zeros((len(points), 2))

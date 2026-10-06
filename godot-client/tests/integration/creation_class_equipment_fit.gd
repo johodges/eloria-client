@@ -47,21 +47,21 @@ func run() -> void:
 	expect(suppressed_backing_models == ["4:179", "6:192"],
 		"only the visually verified Warded leg and boot pieces suppress backing")
 	wardrobe_only_models.sort()
-	expect(wardrobe_only_models == ["5:189", "5:209", "5:216", "5:225"],
-		"only the four creation torsos use the fitted native wardrobe")
+	expect(wardrobe_only_models.is_empty(),
+		"no torso stands in for the native wardrobe: the creation torsos are fitted meshes")
 	var body_templates: Dictionary = equipment.get("bodyTemplates", {}) as Dictionary
 	var slugs: Array = body_templates.keys()
 	slugs.sort()
 	expect(slugs.size() == 16, "class equipment sweep covers all sixteen player rigs")
 	expect(CreationArchetypes.count() == 4, "four creation classes are fitted")
-	expect(CreationArchetypes.loadout_at(0) == {0: 114, 1: 106, 2: 105, 5: 209},
-		"Vanguard leaves the clean native lower wardrobe visible")
-	expect(CreationArchetypes.loadout_at(1) == {0: 164, 4: 230, 5: 225, 6: 224},
-		"Ranger uses the rotated-fit Sidelace Breeches and Ankle Boots")
-	expect(CreationArchetypes.loadout_at(2) == {0: 142, 4: 179, 5: 216, 6: 192},
-		"Arcanist keeps its coherent Warded set")
-	expect(CreationArchetypes.loadout_at(3) == {0: 163, 2: 100, 5: 189},
-		"Warden leaves the clean native lower wardrobe visible")
+	expect(CreationArchetypes.loadout_at(0) == {0: 114, 1: 106, 2: 105, 3: 134, 4: 220, 5: 209, 6: 249},
+		"Vanguard previews the whole militia set")
+	expect(CreationArchetypes.loadout_at(1) == {0: 164, 3: 159, 4: 230, 5: 225, 6: 226},
+		"Ranger previews hood, vest, breeches and fieldboots")
+	expect(CreationArchetypes.loadout_at(2) == {0: 142, 3: 115, 4: 185, 5: 222, 6: 198},
+		"Arcanist previews the whole Acolyte set")
+	expect(CreationArchetypes.loadout_at(3) == {0: 163, 2: 100, 3: 122, 4: 176, 5: 189, 6: 205},
+		"Warden previews the Antler Hood and the Furtrim set")
 	for slug_value: Variant in slugs:
 		var slug := str(slug_value)
 		var model: Dictionary = models.get(slug, {}) as Dictionary
@@ -103,7 +103,7 @@ func run() -> void:
 				var nodes: Array = actor._equipment_nodes.get(part, []) as Array
 				expect(not nodes.is_empty(), "%s creates equipment part %d" % [label, part])
 			_check_skin_contract(actor, label, loadout)
-			_check_wardrobe_class_torso(actor, label, loadout)
+			_check_class_torso_mesh(actor, label, loadout)
 			_check_fitted_backings(actor, label, loadout)
 			_check_hand_socket(actor, label, str(entry.get("label", "class")))
 		var mixed_backing_loadouts: Array[Dictionary] = [
@@ -130,6 +130,25 @@ func run() -> void:
 	print("CREATION_CLASS_EQUIPMENT_FIT checks=", checks,
 		" failures=", failures, " rigs=", slugs.size())
 	quit(1 if failures else 0)
+
+
+func _check_class_torso_mesh(actor: ReplicatedActor3D, label: String,
+		loadout: Dictionary) -> void:
+	var visual := int(loadout.get(ReplicatedActor3D.BODY_PART, -1))
+	if visual < 0:
+		return
+	var model := actor._equipment_model_config(ReplicatedActor3D.BODY_PART, visual)
+	expect(not bool(model.get("wardrobeOnly", false)),
+		label + " wears a fitted torso mesh, not the native wardrobe")
+	var skinned_torsos := 0
+	for node_value: Variant in actor._equipment_nodes.get(ReplicatedActor3D.BODY_PART, []) as Array:
+		var node := node_value as Node
+		expect(not node.has_meta("wardrobe_only"),
+			label + " adds no mesh-free wardrobe marker")
+		if (node is MeshInstance3D and (node as MeshInstance3D).skin != null
+				and (node as MeshInstance3D).visible):
+			skinned_torsos += 1
+	expect(skinned_torsos >= 1, label + " draws a visible skinned torso")
 
 
 func _check_wardrobe_class_torso(actor: ReplicatedActor3D, label: String,
@@ -276,10 +295,10 @@ func _check_native_body_restored(actor: ReplicatedActor3D, label: String) -> voi
 	for mesh_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node := mesh_value as MeshInstance3D
 		if mesh_node.name.to_lower() == "wardrobe_shirt":
-			expect(mesh_node.has_meta("wardrobe_shirt_unfitted_mesh")
-				and mesh_node.mesh == (mesh_node.get_meta(
-					"wardrobe_shirt_unfitted_mesh") as Mesh)
-				and not mesh_node.has_meta("wardrobe_shirt_fitted_mesh"),
+			expect(not mesh_node.has_meta("wardrobe_shirt_fitted_mesh")
+				and (not mesh_node.has_meta("wardrobe_shirt_unfitted_mesh")
+					or mesh_node.mesh == (mesh_node.get_meta(
+						"wardrobe_shirt_unfitted_mesh") as Mesh)),
 				label + " removes the class-only shoulder fit after unequip")
 		if not mesh_node.has_meta("uncovered_body_mesh"):
 			continue

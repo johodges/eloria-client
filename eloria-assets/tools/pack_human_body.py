@@ -19,7 +19,13 @@ and changes only what the client never reads or what it pays for in memory:
   render red-only once imported);
 * names the armature root `BodyRoot`, as the shipped bodies do;
 * points eyes, eyebrows and scalp at the skin's colour material (the face
-  mask colours them per pixel; tinting their triangles painted eye patches).
+  mask colours them per pixel; tinting their triangles painted eye patches);
+* writes the race contract every shipped body carries (tag_race_contract):
+  `asset.extras.sourceSHA256` (the split this was packed from, the value
+  the catalogue's races.<slug>.sourceSHA256 pins) and
+  `extras.sourceRole = "race_head"` on the body, eyes, eyebrows and scalp
+  primitives, the surfaces the face mask is baked over and the face tests
+  sample (faceAppearance.sourceSurface 0 is the body primitive).
 """
 from __future__ import annotations
 
@@ -37,6 +43,22 @@ sys.path.insert(0, str(Path(__file__).parent / 'tpose_bodies' / 'vendor'))
 import glbkit as g  # noqa: E402
 
 DROP_TEXTURE_KEYS = ('normalTexture', 'occlusionTexture', 'emissiveTexture')
+# The surfaces the face-appearance mask covers (bake_human_face_mask.PARTS).
+HEAD_SURFACES = ('body', 'eyes', 'eyebrows', 'scalp')
+
+
+def tag_race_contract(gltf: dict, source_sha256: str) -> None:
+    """Write the JSON-only metadata the shipped race bodies carry.
+
+    Touches no accessor, view, image or skin, so applying it to an already
+    packed body changes the JSON chunk only.
+    """
+    meshes = {gltf['meshes'][n['mesh']]['name']: gltf['meshes'][n['mesh']]
+              for n in gltf['nodes'] if 'mesh' in n}
+    for part in HEAD_SURFACES:
+        for prim in meshes.get(part, {}).get('primitives', []):
+            prim.setdefault('extras', {})['sourceRole'] = 'race_head'
+    gltf.setdefault('asset', {}).setdefault('extras', {})['sourceSHA256'] = source_sha256
 
 
 def _image_bytes(gltf, blob, image):
@@ -123,9 +145,10 @@ def pack(source: Path, out: Path, size: int, quality: int = 92) -> dict:
         node = gltf['nodes'][index]
         if 'children' in node and 'mesh' not in node:
             node['name'] = 'BodyRoot'
+    source_sha256 = hashlib.sha256(source.read_bytes()).hexdigest()
     extras = gltf.setdefault('asset', {}).setdefault('extras', {})
-    extras['eloriaHumanPack'] = {'version': 1, 'maxTexture': size,
-                                 'sourceSHA256': hashlib.sha256(source.read_bytes()).hexdigest()}
+    extras['eloriaHumanPack'] = {'version': 1, 'maxTexture': size, 'sourceSHA256': source_sha256}
+    tag_race_contract(gltf, source_sha256)
     out.parent.mkdir(parents=True, exist_ok=True)
     g.write(out, gltf, bytes(new_blob))
     return {'out': str(out), 'bytes': out.stat().st_size,

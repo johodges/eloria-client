@@ -56,17 +56,17 @@
     "maskSHA256": "d65044a92558f6583fb9eac3a3a98a9e1c1895c53b5c1c291c328b1d0f349bb5"
   },
   "luminous_female": {
-    "modelSHA256": "b95921cd99da9f69009c5bc8295bae164ccf84189aefcaab6b6b13cb693a5552",
-    "maskSHA256": "52f7e2b02df69ca9ed5e61a1bb4b6e8d3ac65d48181d9c1316fe57d2daa81c1e",
+    "modelSHA256": "c3814266a65f7688d8903d31532acdddfa1e44d024b73f5408b0e7a03ef33717",
+    "maskSHA256": "64db0168cd626ee8c99087228b27cf723a8968630bad695ad4f008940f343ef0",
     "sourceMaterial": 0,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      1047,
-      454,
-      967
+      942,
+      537,
+      1649
     ],
     "sourceUVGroups": {
       "body": {
@@ -81,48 +81,48 @@
       },
       "eyes": {
         "uvScale": [
-          0.6845703125,
-          0.2216796875
+          1.0,
+          1.0
         ],
         "uvOffset": [
-          0.09228515625,
-          0.03515625
+          0.0,
+          0.0
         ]
       },
       "eyebrows": {
         "uvScale": [
-          0.5810546875,
-          0.69677734375
+          1.0,
+          1.0
         ],
         "uvOffset": [
-          0.337890625,
-          0.1845703125
+          0.0,
+          0.0
         ]
       },
       "scalp": {
         "uvScale": [
-          0.89794921875,
-          0.86572265625
+          1.0,
+          1.0
         ],
         "uvOffset": [
-          0.009765625,
-          0.123046875
+          0.0,
+          0.0
         ]
       }
     }
   },
   "luminous_male": {
-    "modelSHA256": "66c1602c274ab9e61ab0f6263296b827af0f15e2ac0bd36486fdbeec07c0c087",
-    "maskSHA256": "33d7f154359bc8cb08d1674522768fc5dd973dc86613964248e3eb8b7d7bec18",
+    "modelSHA256": "d30a505fe2666f4019efbcafceaf856ab5ee698757bf52e563b009479d50e10b",
+    "maskSHA256": "015421f0257deb641054119cf44c509483f77eec95535403f002a33743c38c84",
     "sourceMaterial": 0,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      851,
-      372,
-      788
+      3608,
+      1237,
+      8278
     ],
     "sourceUVGroups": {
       "body": {
@@ -137,32 +137,32 @@
       },
       "eyes": {
         "uvScale": [
-          0.2412109375,
-          0.052734375
+          1.0,
+          1.0
         ],
         "uvOffset": [
-          0.67138671875,
-          0.15966796875
+          0.0,
+          0.0
         ]
       },
       "eyebrows": {
         "uvScale": [
-          0.2392578125,
-          0.08056640625
+          1.0,
+          1.0
         ],
         "uvOffset": [
-          0.68505859375,
-          0.146484375
+          0.0,
+          0.0
         ]
       },
       "scalp": {
         "uvScale": [
-          0.794921875,
-          0.623046875
+          1.0,
+          1.0
         ],
         "uvOffset": [
-          0.19287109375,
-          0.00146484375
+          0.0,
+          0.0
         ]
       }
     }

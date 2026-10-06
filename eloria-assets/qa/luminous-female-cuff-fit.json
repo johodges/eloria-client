@@ -170,11 +170,6 @@
     "productionConfigChanged": false,
     "mappings": [
       {
-        "inputKey": "body",
-        "reviewedOutputKey": "body",
-        "targetPath": "godot-client/assets/actors/native/races/luminous_female.glb"
-      },
-      {
         "inputKey": "arcanistLegs",
         "reviewedOutputKey": "arcanistLegs",
         "targetPath": "godot-client/assets/actors/native/equipment/variants/luminous_female/arcane_leg_armor_01.glb"
@@ -193,6 +188,15 @@
         "inputKey": "rangerBoots",
         "reviewedOutputKey": "rangerBoots",
         "targetPath": "godot-client/assets/actors/native/equipment/variants/luminous_female/frontier_boots_01.glb"
+      }
+    ],
+    "retiredMappings": [
+      {
+        "inputKey": "body",
+        "reviewedOutputKey": "body",
+        "targetPath": "godot-client/assets/actors/native/races/luminous_female.glb",
+        "retiredAt": "2026-10-05",
+        "reason": "The 2026-10-05 Human regeneration replaced races/luminous_female.glb with a new Meshy body packed by eloria-assets/tools/pack_human_body.py; this cuff pass no longer produces the installed body, so its byte-copy mapping is retired. The reviewed output stays below as history: the seven derived female races still carry its cuffed pants and boots (luminous-female-cuff-derived-propagation.json)."
       }
     ]
   },
@@ -224,6 +228,9 @@
     "body": {
       "sourceSHA256": "963726cc3180a57d8a8921c51a8695828d77bdac633a5bcf6f075472d6890dc7",
       "outputSHA256": "b95921cd99da9f69009c5bc8295bae164ccf84189aefcaab6b6b13cb693a5552",
+      "installed": false,
+      "supersededAt": "2026-10-05",
+      "supersededBy": "2026-10-05 Human body regeneration (see installation.retiredMappings)",
       "semanticMeshes": {
         "wardrobe_pants": {
           "sha256": "318477d09a732d50c68ea2b8289f76a1a2a148a9f7857e9004bdb9ffa842cebb",

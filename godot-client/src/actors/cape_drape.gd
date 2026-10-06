@@ -54,10 +54,19 @@ const BARE_TRUNK_RADIUS := 0.205
 ## gone at the collar. What is left is the sheet over the shoulder blades,
 ## where the cape is unambiguously the outer layer and where the armour was in
 ## fact coming through.
-const DRAPE_ARC := 50.0
-const DRAPE_FADE := 65.0
-const DRAPE_SHOULDER := 1.44
-const DRAPE_COLLAR := 1.53
+##
+## The bands follow the cape's own shape. The shared cape of 2026-10 hangs
+## clear of every Human torso across the shoulder blades already, and its
+## collar slopes down to 1.43 at the sides where the old one ran level at 1.53;
+## its side edges cross the shoulder at a bearing of 40 to 50 degrees. At
+## 50/65 and 1.44/1.53 nearly all the push landed on those edges and the
+## sloping collar, and drew the trim out over the shoulder in a hook. Faded at
+## 30/45 and 1.38/1.46 the edges and collar tuck under as intended, and what
+## is still pushed is the mid-back, on the 11 of 128 Human fits that reach it.
+const DRAPE_ARC := 30.0
+const DRAPE_FADE := 45.0
+const DRAPE_SHOULDER := 1.38
+const DRAPE_COLLAR := 1.46
 ## Samples along a bone axis in the reach the cloth solver is given. Nine over
 ## the trunk is a sample every 55 mm, which follows a back plate without
 ## chasing the rivets on it.
@@ -67,6 +76,18 @@ const REACH_SAMPLES := 9
 ## and lifts it off the body every frame, and an offset baked in here would be
 ## added on top of whatever it does.
 const CAPE_BONE_PREFIX := "cape_"
+## The push one vertex wants is not limited by what the vertices beside it get.
+## Where the fades fall off, at the sides of the collar, the shoulder of a coat
+## stands 140 mm out along the same bearing as a collar vertex 30 mm from one the
+## fade has already released: the first went out 110 mm, the second 20, and the
+## edge between them drew a sliver of cloth off the shoulder on every torso in
+## the ladder. So the push may change by at most SLOPE times the cloth between
+## two vertices. A vertex is held back to what its neighbours allow, never
+## pushed further than it wanted, so this only ever lets armour show near a
+## fade, where tucking the cloth under it is the intent anyway.
+const SLOPE := 1.0
+## Relaxation sweeps; a ladder torso settles in under ten.
+const SLOPE_PASSES := 64
 
 
 static func columns() -> int:
@@ -159,7 +180,11 @@ static func drape(mesh: Mesh, bones: PackedStringArray,
 		grid: PackedFloat32Array) -> Mesh:
 	if mesh == null or grid.is_empty():
 		return mesh
-	var built := ArrayMesh.new()
+	var surfaces: Array = []
+	# Vertices the yoke rules may move, welded by position across surfaces so
+	# a trim and the cloth it borders keep one push along their seam.
+	var node_of: Dictionary = {}
+	var push: PackedFloat32Array = PackedFloat32Array()
 	var moved := false
 	for surface: int in range(mesh.get_surface_count()):
 		var arrays: Array = mesh.surface_get_arrays(surface)
@@ -169,6 +194,9 @@ static func drape(mesh: Mesh, bones: PackedStringArray,
 		var per_vertex: int = 0
 		if not vertices.is_empty() and not bone_indices.is_empty():
 			per_vertex = bone_indices.size() / vertices.size()
+		var nodes := PackedInt32Array()
+		nodes.resize(vertices.size())
+		nodes.fill(-1)
 		for index: int in range(vertices.size()):
 			var rigid: float = _rigid_share(bones, bone_indices, weights,
 				index, per_vertex)
@@ -187,19 +215,88 @@ static func drape(mesh: Mesh, bones: PackedStringArray,
 			if radius < 0.001:
 				continue
 			var wanted: float = reach(grid, bearing, point.y) + CLEARANCE
-			if wanted <= radius:
+			var out: float = maxf(0.0, (wanted - radius) * rigid * fade)
+			var key: Vector3 = point.snapped(Vector3.ONE * 0.00001)
+			var node: int = int(node_of.get(key, -1))
+			if node < 0:
+				node = push.size()
+				node_of[key] = node
+				push.append(out)
+			else:
+				push[node] = maxf(push[node], out)
+			nodes[index] = node
+			if out > 0.0:
+				moved = true
+		surfaces.append({"arrays": arrays, "nodes": nodes})
+	if not moved:
+		return mesh
+	_limit_slope(surfaces, push)
+	var built := ArrayMesh.new()
+	for surface: int in range(surfaces.size()):
+		var arrays: Array = surfaces[surface]["arrays"]
+		var nodes: PackedInt32Array = surfaces[surface]["nodes"]
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		for index: int in range(vertices.size()):
+			var node: int = nodes[index]
+			if node < 0 or push[node] <= 0.0:
 				continue
 			# Straight out along its own bearing, so the ring stays a ring.
-			var push: float = (wanted - radius) * rigid * fade / radius
-			vertices[index] = Vector3(point.x + point.x * push, point.y,
-				point.z + point.z * push)
-			moved = true
+			var point: Vector3 = vertices[index]
+			var scale: float = push[node] / Vector2(point.x, point.z).length()
+			vertices[index] = Vector3(point.x + point.x * scale, point.y,
+				point.z + point.z * scale)
 		arrays[Mesh.ARRAY_VERTEX] = vertices
 		built.add_surface_from_arrays(mesh.surface_get_primitive_type(surface),
 			arrays, [], {},
 			mesh.surface_get_format(surface) & Mesh.ARRAY_FLAG_USE_8_BONE_WEIGHTS)
 		built.surface_set_material(surface, mesh.surface_get_material(surface))
-	return built if moved else mesh
+	return built
+
+
+## Holds each push to what the cloth beside it allows: no more than SLOPE times
+## the rest length of an edge above its neighbour's. A vertex the yoke rules do
+## not move is a neighbour that stays put.
+static func _limit_slope(surfaces: Array, push: PackedFloat32Array) -> void:
+	var from := PackedInt32Array()
+	var to := PackedInt32Array()
+	var allow := PackedFloat32Array()
+	for entry: Dictionary in surfaces:
+		var arrays: Array = entry["arrays"]
+		var nodes: PackedInt32Array = entry["nodes"]
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var indices := PackedInt32Array()
+		if arrays[Mesh.ARRAY_INDEX] != null:
+			indices = arrays[Mesh.ARRAY_INDEX]
+		var count: int = vertices.size()
+		if not indices.is_empty():
+			count = indices.size()
+		for corner: int in range(0, count - 2, 3):
+			for side: int in range(3):
+				var a: int = corner + side
+				var b: int = corner + (side + 1) % 3
+				if not indices.is_empty():
+					a = indices[a]
+					b = indices[b]
+				if nodes[a] < 0 and nodes[b] < 0:
+					continue
+				from.append(nodes[a])
+				to.append(nodes[b])
+				allow.append(SLOPE * vertices[a].distance_to(vertices[b]))
+	for _pass: int in range(SLOPE_PASSES):
+		var changed := false
+		for edge: int in range(from.size()):
+			var a: int = from[edge]
+			var b: int = to[edge]
+			var at_a: float = push[a] if a >= 0 else 0.0
+			var at_b: float = push[b] if b >= 0 else 0.0
+			if a >= 0 and at_a > at_b + allow[edge]:
+				push[a] = at_b + allow[edge]
+				changed = true
+			elif b >= 0 and at_b > at_a + allow[edge]:
+				push[b] = at_a + allow[edge]
+				changed = true
+		if not changed:
+			return
 
 
 ## How much of a vertex the spine holds rather than the cloth solver.

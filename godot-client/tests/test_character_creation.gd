@@ -49,18 +49,22 @@ func run() -> void:
 	expect(main.get("preview_actor") is ReplicatedActor3D,
 		"the one-time initial appearance roll builds the preview")
 	var vanguard_loadout: Dictionary = main.call("_creation_class_loadout")
-	expect(vanguard_loadout == {0: 114, 1: 106, 2: 105, 5: 209},
-		"Vanguard previews its studded field set over the clean native lower wardrobe")
+	expect(vanguard_loadout == {0: 114, 1: 106, 2: 105, 3: 134, 4: 220, 5: 209, 6: 249},
+		"Vanguard previews the whole militia set: helm, jack, kneecops, warboots, sword and shield")
 	expect(CreationArchetypes.loadout_at(1) ==
-		{0: 164, 4: 230, 5: 225, 6: 224},
-		"Ranger previews rotated-fit Sidelace Breeches with Ankle Boots")
+		{0: 164, 3: 159, 4: 230, 5: 225, 6: 226},
+		"Ranger previews hood, vest, breeches and fieldboots with the longbow")
 	expect(CreationArchetypes.loadout_at(2) ==
-		{0: 142, 4: 179, 5: 216, 6: 192} and
-		str(CreationArchetypes.at(2).get("starting_items", "")).contains("Warded Tabard"),
-		"Arcanist previews the coherent Warded set and describes its tabard")
+		{0: 142, 3: 115, 4: 185, 5: 222, 6: 198} and
+		str(CreationArchetypes.at(2).get("starting_items", "")).contains("Acolyte"),
+		"Arcanist previews the whole Acolyte set and names it")
 	expect(CreationArchetypes.loadout_at(3) ==
-		{0: 163, 2: 100, 5: 189},
-		"Warden previews its Furtrim Coat over the clean native lower wardrobe")
+		{0: 163, 2: 100, 3: 122, 4: 176, 5: 189, 6: 205},
+		"Warden previews the Antler Hood and the Furtrim set with the quarterstaff")
+	for index in CreationArchetypes.count():
+		var parts: Dictionary = CreationArchetypes.loadout_at(index)
+		expect(parts.has(0) and parts.has(3) and parts.has(4) and parts.has(5) and parts.has(6),
+			"every calling previews a weapon and a head, body, legs and feet piece")
 	var original_class := int(main.get("selected_creation_class"))
 	main.get_node("%CreateName").text = "Seeded Hero"
 	main.get_node("%CreatePassword").text = "secret"

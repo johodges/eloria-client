@@ -10,6 +10,11 @@ also retains a legacy fit profile for existing procedural garments and props.
   variant. ``bodyTemplates`` prevent repeating a fit on identical body geometry.
 * ``fitProfiles.legacy`` preserves the old measurements and scale for items
   outside the source-equipment rebuild.
+* ``authoringRigs`` names the installed race body behind an ``authoredFor``
+  label that is deliberately not a measured rig. The Human-only variants are
+  authored for ``human_male``/``human_female``: with no girth or foot anchor
+  under that label the client wears them exactly as fitted, while the checks
+  here still measure them on the body they were fitted to.
 
 A break in either one is silent in the editor and obvious on a player, so the
 shape of the data is checked here rather than discovered in a screenshot.
@@ -41,6 +46,11 @@ REQUIRED_GIRTH_BONES = {
 
 def scene_path(res_path: str) -> Path:
     return CLIENT / res_path.removeprefix("res://") if res_path.startswith("res://") else Path(res_path)
+
+
+def authoring_rig(registry: dict, author: str) -> str:
+    """The installed race body an ``authoredFor`` label was fitted on."""
+    return str(registry.get("authoringRigs", {}).get(author, author))
 
 
 class EquipmentFitTest(unittest.TestCase):
@@ -78,9 +88,10 @@ class EquipmentFitTest(unittest.TestCase):
                         resolved.update(model["variants"][group])
                         break
                 expected = race if piece.part == 3 else templates[race]
-                self.assertEqual(expected, resolved["authoredFor"], f"{race} {piece.slug}")
+                self.assertEqual(expected, authoring_rig(self.registry, resolved["authoredFor"]),
+                                 f"{race} {piece.slug}")
                 scenes.add(resolved["scene"])
-        self.assertEqual(1424, len(scenes))
+        self.assertEqual(1824, len(scenes))
 
     def test_measurements_are_plausible(self) -> None:
         # These sixteen approved bodies lie within this measured range.
@@ -145,13 +156,37 @@ class EquipmentFitTest(unittest.TestCase):
                 path = scene_path(str(variant.get("scene", "")))
                 self.assertTrue(path.is_file(), f"{key} variant {group}: {path} missing")
                 author = str(variant.get("authoredFor", ""))
-                self.assertIn(author, self.girth,
+                rig = authoring_rig(self.registry, author)
+                self.assertIn(rig, self.girth,
                               f"{key} variant {group} names unmeasured rig {author}")
-                self.assertIn(author, self._members(group),
+                self.assertIn(rig, self._members(group),
                               f"{key} variant {group} is authored on {author},"
                               " which is not a member of that group")
         self.assertEqual(seen_groups, self._all_groups(),
                          "a fit group exists that no garment offers a variant for")
+
+    def test_authoring_labels_are_worn_only_by_their_own_body(self) -> None:
+        # An authoring label is unmeasured on purpose: the client finds no
+        # girth or foot anchor for it and wears the piece exactly as fitted.
+        # That is only right on the body it was fitted to, so the label must
+        # stay out of every measurement table and its groups must hold that
+        # one body alone.
+        aliases = self.registry.get("authoringRigs", {})
+        profiles = [self.registry, *self.registry.get("fitProfiles", {}).values()]
+        tables = [profile.get(name, {}) for profile in profiles for name in
+                  ("bodyGirth", "authoredBodyGirth", "footAnchor", "authoredFootAnchor")]
+        for label, rig in aliases.items():
+            self.assertIn(rig, self.races, f"authoring label {label} names no installed body {rig}")
+            self.assertIn(rig, self.girth, f"authoring label {label} names the unmeasured body {rig}")
+            self.assertNotIn(label, self.races, f"authoring label {label} shadows a race")
+            for table in tables:
+                self.assertNotIn(label, table, f"authoring label {label} is measured, so it is refitted")
+        for key, model in self.models.items():
+            for group, variant in (model.get("variants") or {}).items():
+                author = str(variant.get("authoredFor", ""))
+                if author in aliases:
+                    self.assertEqual({aliases[author]}, self._members(group),
+                                     f"{key} variant {group} is worn unfitted by another body")
 
     def test_every_group_member_can_reach_its_variants(self) -> None:
         # A race in a group must find a variant for every piece the group
@@ -268,7 +303,7 @@ class FootgearGroundTest(unittest.TestCase):
         seen = 0
         for path, author in sorted(set(self._footgear())):
             self.assertTrue(path.is_file(), f"{path} missing")
-            rig = _body_rig(author)
+            rig = _body_rig(authoring_rig(self.registry, author))
             doc, binary = ea.read_glb(path)
             names = [doc["nodes"][i]["name"] for i in doc["skins"][0]["joints"]]
             floors = {side: [] for side in ("l", "r")}
@@ -330,7 +365,7 @@ class LegwearSeamTest(unittest.TestCase):
             self.assertTrue(path.is_file(), f"{path} missing")
             points = _art_points(path)
             low, high = float(points[:, 1].min()), float(points[:, 1].max())
-            rig = _body_rig(author)
+            rig = _body_rig(authoring_rig(self.registry, author))
             # Full-length legwear clears the actual feet. A tail minimum and a
             # copied backing triangle cannot define the visible garment hem.
             sole = max(ea.weighted_sole(rig, side) for side in ("l", "r"))
