@@ -101,6 +101,46 @@ class HeldPropTest(unittest.TestCase):
             seen += 1
         self.assertGreater(seen, 50, "no grips were checked")
 
+    def test_a_weapon_has_an_idle_grip_in_the_same_hand(self) -> None:
+        """The socket is the fighting grip, the fist every swing closes; an
+        ``idleSocket`` lays the piece down along the leg or stands it upright
+        while the actor stands (import_generated_weapons.held_grips), and
+        WeaponCarryPose blends between the two.  A shield has the one socket,
+        and so does a bow the ranged presentation draws, whose registry prop
+        is hidden while that bow is shown."""
+        seen = 0
+        for part, visual, bone, model in self._held():
+            idle = model.get("idleSocket")
+            if (part == 1 and visual < OFFHAND_VISUAL_FIRST) or "rangedAnimationScene" in model:
+                self.assertIsNone(idle, f"{part}:{visual} ({model.get('name')}) "
+                                        "has an idle grip nothing blends to")
+                continue
+            self.assertIsInstance(idle, dict, f"{part}:{visual} ({model.get('name')}) "
+                                              "has no idle grip and idles in its fist")
+            self.assertEqual(idle.get("bone"), bone,
+                             f"{part}:{visual} rests in a different hand from the "
+                             "one it fights with")
+            self.assertEqual(len(idle.get("offset", [])), 3)
+            self.assertEqual(len(idle.get("rotationDegrees", [])), 3)
+            # How it rests, which WeaponCarryPose reads: a planted or leant
+            # piece keeps its floor end where it was set down.  Only the off
+            # hand, which the idle rests on the thigh, holds its arm out.
+            self.assertIn(idle.get("style"), {"hang", "lean", "plant", "upright", "bow"},
+                          f"{part}:{visual} does not say how it rests")
+            spread = float(idle.get("armSpread", 0.))
+            self.assertTrue(0. <= spread <= 12. and (part == 1 or spread == 0.),
+                            f"{part}:{visual} holds its arm out {spread} degrees")
+            seen += 1
+        self.assertGreater(seen, 100, "no idle grips were checked")
+
+    def test_a_ranged_bow_keeps_its_reviewed_socket(self) -> None:
+        """A bow the ranged presentation draws keeps the socket it was given:
+        its registry prop is hidden whenever that bow is shown, and the
+        Amberwood longbow's was reviewed (467fe82f3)."""
+        longbow = self.models["0:164"]["socket"]
+        self.assertEqual(longbow["offset"], [-0.08, -0.04, -0.08])
+        self.assertEqual(longbow["rotationDegrees"], [42.18961, 0.56804, 25.9186])
+
     def test_the_off_hand_bank_is_the_weapons_and_only_the_weapons(self) -> None:
         offhand = {visual: model for part, visual, _b, model in self._held()
                    if part == 1 and visual >= OFFHAND_VISUAL_FIRST}

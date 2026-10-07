@@ -50,11 +50,48 @@ grip is measured from the vertices near the socket
 
 Part 1 is **the left hand**, not "the shield". Two Handed Wielding opened it to
 a second weapon, so a one-handed weapon carries a second visual — the same mesh
-again, from `hand_l`, solved against the same idle so both blades leave the
-fists pointing forward. Off-hand visuals are the weapon's own moved into a bank
+again, from `hand_l`. Off-hand visuals are the weapon's own moved into a bank
 of their own (`import_generated_weapons.FIRST_OFFHAND_VISUAL`, 160) so the two
 ids can never drift apart; the shields sit below it and never reach it, which is
 what lets one byte on the wire mean either.
+
+### Two grips
+
+A held weapon is held two ways, and the registry gives it both
+(`import_generated_weapons.held_grips`):
+
+- **`socket`, the fighting grip.** The combat idle and every swing close the
+  fingers into a fist, and the clips were animated around a blade leaving it
+  out of the thumb side with the edge to the knuckles, so that is where every
+  weapon is held: the reviewed arming-sword palm point, turned half a turn for
+  a head that hangs the other way. The left hand's fist is the mirror image,
+  turned a few degrees within the fist where the combat idle would otherwise
+  lay the blade back into the shoulder it raises that hand beside.
+- **`idleSocket`, the resting grip.** In the standing idle the hand hangs open
+  by the thigh, and the fighting grip there points the blade ahead like a
+  lance. So at ease a one-handed weapon hangs along the leg, a staff or a
+  polearm stands planted beside the foot, a weapon longer than the hand is
+  high leans its tip to the floor, a bow stands on end with its upper limb a
+  little ahead. Its `style` says which. A left-hand weapon rests as the mirror
+  image of the same weapon in the right hand, with the arm held out from the
+  thigh the idle rests that hand on by `armSpread` degrees. Each is solved
+  clear of the floor, of every playable body and of the class kits' armour and
+  capes, through the whole idle loop.
+
+`WeaponCarryPose` moves between the two over the crossfade the clip asking for
+it was given — none for a swing restarted from its first frame — at ease in the
+actions the action map lists as `atEaseActions` (the idle, the turn, and the
+idles and emotes that leave the hand hanging where the idle has it), in the
+fist in everything else. At ease it follows the hand every frame: a planted or
+leant piece keeps the point it rests on where it was set down, anything else is
+tilted up rather than let into the floor when an emote drops the hand. The
+solve takes the best part of an hour against every body and kit, so solved
+grips are cached by a digest of everything they are solved from, and a run
+with `--only` keeps the grips the other pieces already have; `--regrip`
+solves every piece afresh. Walking and
+running keep aiming the fighting grip ahead, as before. A bow with a
+`rangedAnimationScene` keeps one socket: its prop is hidden whenever that bow
+is drawn.
 
 ## Runtime contract
 
@@ -66,7 +103,8 @@ what lets one byte on the wire mean either.
 | `sockets[part]` | Default `bone`, `offset` and `rotationDegrees` in character space |
 | `skinRegions[name]` | Bones a garment of that region may bind to |
 | `models[part:visual].attach` | `socket` or `skinned` |
-| `models[part:visual].socket` | Optional per-model socket override |
+| `models[part:visual].socket` | Optional per-model socket override; for a held weapon, its fighting grip |
+| `models[part:visual].idleSocket` | A held weapon's resting grip: `bone`, `offset`, `rotationDegrees` as a socket, its `style` (`hang`, `lean`, `plant`, `upright` or `bow`), the `floorPoint` (the vertex the grip brings nearest the floor, in the piece's own space) and, in the off hand, the `armSpread` in degrees its arm is held out at ease |
 | `models[part:visual].skinRegion` | Region for a skinned garment |
 
 `ReplicatedActor3D` resolves a socket as `bone_rest.affine_inverse() *

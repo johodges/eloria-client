@@ -311,32 +311,112 @@ func _check_native_body_restored(actor: ReplicatedActor3D, label: String) -> voi
 func _check_hand_socket(actor: ReplicatedActor3D, label: String,
 		class_label: String) -> void:
 	var attachments := 0
-	var hand := actor.get_skeleton().find_bone("hand_r")
+	var skeleton := actor.get_skeleton()
+	var hand := skeleton.find_bone("hand_r")
+	var rest := skeleton.get_bone_global_rest(hand)
+	var fit := actor.rig_fit_scale("legacy")
+	var model := actor._equipment_model_config(0, int(actor._equipment_visuals.get(0, 0)))
+	# Every class weapon is fought with in the same fist: the reviewed
+	# arming-sword grip (467fe82f3), which import_generated_weapons now closes
+	# on every weapon. The quarterstaff's source origin sits below its wrapped
+	# handle, so its fist closes 0.10 further up the staff -- the hold the
+	# reviewed Warden placement measured.
+	var fist_offset := Vector3(-0.0757, -0.05, 0.0)
+	# The Ranger's longbow keeps the socket it was reviewed in (467fe82f3):
+	# its prop is hidden whenever the ranged presentation draws its bow.
+	var socket_offsets := {
+		"Vanguard": fist_offset,
+		"Ranger": Vector3(-0.08, -0.04, -0.08),
+		"Arcanist": fist_offset,
+		"Warden": Vector3(-0.0757, -0.05, -0.1),
+	}
+	var fighting_holds := {"Warden": 0.10}
+	var fist := rest.basis.inverse() * (fist_offset * fit)
 	for piece_value: Variant in actor._equipment_nodes.get(0, []) as Array:
 		var piece := piece_value as Node
 		if piece is not BoneAttachment3D or piece.get_child_count() == 0:
 			continue
 		attachments += 1
+		var attachment := piece as BoneAttachment3D
 		var prop := piece.get_child(0) as Node3D
-		var hand_world := actor.get_skeleton().global_transform * \
-			actor.get_skeleton().get_bone_global_pose(hand).origin
-		var grip_distance := prop.global_position.distance_to(hand_world)
+		var hand_world := skeleton.global_transform * skeleton.get_bone_global_pose(hand).origin
+		# A held weapon has two grips (import_generated_weapons.held_grips):
+		# its socket, the fist every swing closes, and an idle socket the
+		# standing idle lays it down or stands it up in. The fighting grip is
+		# kept on the prop because the node itself moves to the idle grip
+		# while the actor stands, which it does here.
+		var fighting: Transform3D = prop.get_meta(&"fighting_grip", prop.transform)
+		# Where the registry's fighting grip closes on the piece: its origin,
+		# or for the quarterstaff the hold that far up the staff from it.
+		var hold := Vector3(0.0, float(fighting_holds.get(class_label, 0.0)) * fit, 0.0)
+		var grip_point := attachment.global_transform * (fighting.origin + fighting.basis.orthonormalized() * hold)
+		var grip_distance := grip_point.distance_to(hand_world)
 		expect(grip_distance >= 0.025 and grip_distance <= 0.13,
-			label + " places its weapon grip inside the palm reach")
-		# The Ranger's visible bow is a separate animated left-hand visual. The
-		# other three class props use this socket directly. Sword and wand origins
-		# are authored at the grip centre; the quarterstaff's source origin is
-		# displaced from its visible wrapped handle, so it needs its own measured
-		# character-space placement.
-		if class_label != "Ranger":
-			var socket_offsets := {
-				"Vanguard": Vector3(-0.0757, -0.05, 0.0),
-				"Arcanist": Vector3(-0.0757, -0.05, 0.0),
-				"Warden": Vector3(-0.02, -0.09, -0.07955),
-			}
-			var socket_offset: Vector3 = socket_offsets[class_label]
-			var expected_local := actor.get_skeleton().get_bone_global_rest(hand).basis.inverse() * \
-				(socket_offset * actor.rig_fit_scale("legacy"))
-			expect(prop.position.distance_to(expected_local) <= 0.0005,
-				label + " uses its reviewed right-palm socket placement")
+			label + " places its weapon grip inside the palm reach (%.3f m)" % grip_distance)
+		var socket := model.get("socket", {}) as Dictionary
+		expect(actor._vector3(socket.get("offset", []), Vector3.INF).is_equal_approx(
+				socket_offsets[class_label]),
+			label + " uses its reviewed right-palm socket placement")
+		var placed := rest.affine_inverse() * actor._socket_placement(socket, rest, fit, fit)
+		expect(fighting.is_equal_approx(placed),
+			label + " keeps the registry socket as its fighting grip")
+		# The Ranger's visible bow is a separate animated left-hand visual, so
+		# its hidden registry prop has no idle grip to stand in.
+		if class_label == "Ranger":
+			expect(not model.has("idleSocket") and not prop.has_meta(&"idle_grip"),
+				label + " leaves its idle to the ranged presentation")
+			continue
+		expect(prop.has_meta(&"idle_grip"), label + " has an idle grip to stand in")
+		var idle: Transform3D = prop.get_meta(&"idle_grip", Transform3D())
+		# A planted piece keeps its butt where it was set down and turns about
+		# it to follow the fist, so it stands near its idle grip rather than
+		# exactly in it; anything else is in it.
+		var planted := StringName(prop.get_meta(&"idle_style", &"")) in [&"plant", &"lean"]
+		var turned := rad_to_deg(prop.transform.basis.get_rotation_quaternion().angle_to(
+			idle.basis.get_rotation_quaternion()))
+		expect(prop.transform.is_equal_approx(idle) or (planted and turned < 6.0),
+			label + " holds its weapon in the idle grip while standing (%.1f degrees off)" % turned)
+		# The open hand still holds the piece: the point of it at the fist lies
+		# on its own long axis and between its ends.
+		var held := prop.transform.affine_inverse() * fist
+		var bounds := _prop_bounds(prop)
+		expect(Vector2(held.x, held.z).length() < 0.03 and held.y > bounds.position.y
+				and held.y < bounds.end.y,
+			label + " holds the weapon in the open hand, on its haft or hilt")
+		# Clear of the floor through the idle on every body, and the
+		# quarterstaff planted on it: its butt a few centimetres off at most.
+		var lowest := _prop_lowest(prop) - actor.global_position.y
+		expect(lowest > 0.0, label + " idles with its weapon clear of the floor")
+		if class_label == "Warden":
+			expect(lowest < 0.05, label + " stands the quarterstaff on its butt")
 	expect(attachments == 1, label + " has exactly one right-hand attachment")
+
+
+## The local bounds of a held prop's meshes, in the prop's own frame.
+func _prop_bounds(prop: Node3D) -> AABB:
+	var bounds := AABB()
+	var first := true
+	for mesh_value: Node in prop.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node := mesh_value as MeshInstance3D
+		if mesh_node.mesh == null:
+			continue
+		var to_prop := prop.global_transform.affine_inverse() * mesh_node.global_transform
+		var local := to_prop * mesh_node.mesh.get_aabb()
+		bounds = local if first else bounds.merge(local)
+		first = false
+	return bounds
+
+
+## The height of a held prop's lowest vertex, in world space.
+func _prop_lowest(prop: Node3D) -> float:
+	var lowest := INF
+	for mesh_value: Node in prop.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node := mesh_value as MeshInstance3D
+		if mesh_node.mesh == null:
+			continue
+		for surface: int in mesh_node.mesh.get_surface_count():
+			var vertices: PackedVector3Array = mesh_node.mesh.surface_get_arrays(surface)[Mesh.ARRAY_VERTEX]
+			for vertex: Vector3 in vertices:
+				lowest = minf(lowest, (mesh_node.global_transform * vertex).y)
+	return lowest
+
