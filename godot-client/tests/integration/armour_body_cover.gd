@@ -212,6 +212,7 @@ func run() -> void:
 			CoordinateAdapter.new({"walkingHeight": 0.0}), config, animations, equipment)
 		expect(errors.is_empty(), race + " configures: " + str(errors))
 		var initial_hair: Dictionary = {}
+		var has_feature_head := actor.find_child("race_feature_head", true, false) != null
 		for node: Node in actor.find_children("*", "MeshInstance3D", true, false):
 			if node.name.to_lower() in ["hair", "scalp"]:
 				initial_hair[node.get_instance_id()] = (node as MeshInstance3D).visible
@@ -224,10 +225,16 @@ func run() -> void:
 				actor.apply_equipment_visuals(active)
 				verify_body(actor, active, race + " " + str(active.keys()))
 				var covered_hair := active.has(3) and int(active[3]) != int(outfits[2][3])
+				# A hood whose policy shows race features hides the hair only, on a
+				# body that carries race_feature_head; any other body hides its
+				# scalp with the hair.
+				var covered_scalp := covered_hair and (not has_feature_head or str((equipment["models"]["3:%d" % int(active[3])]
+					as Dictionary).get("raceFeatures", "")) != "show")
 				for node: Node in actor.find_children("*", "MeshInstance3D", true, false):
 					var mesh := node as MeshInstance3D
 					if mesh.name.to_lower() in ["hair", "scalp"]:
-						expect(mesh.visible == (bool(initial_hair[mesh.get_instance_id()]) and not covered_hair), race + " restores sculpted hair visibility")
+						var covered := covered_scalp if mesh.name.to_lower() == "scalp" else covered_hair
+						expect(mesh.visible == (bool(initial_hair[mesh.get_instance_id()]) and not covered), race + " restores sculpted hair visibility")
 					if mesh.name.to_lower() == "eyes":
 						expect(mesh.visible, race + " preserves eyes")
 				for node: Node in actor._native_skeleton.get_children():

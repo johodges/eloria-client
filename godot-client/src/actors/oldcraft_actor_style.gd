@@ -22,6 +22,18 @@ const DIELECTRIC_SPECULAR_CEILING := 0.35
 ## the large painted value shapes. The reference shader uses 0.55; 0.65 keeps
 ## a little more of Eloria's existing equipment detail.
 const NORMAL_SCALE_CEILING := 0.65
+## Glasswarden crystals are the one actor surface meant to be glossy. Their
+## race-feature material is authored opaque, roughness about 0.2, metallic 0,
+## no emission, and named for this prefix (glTF material names survive the
+## import as the resource name); the painted floor and the specular cap would
+## turn the glass back into chalk, so they leave it as authored.
+const GLASS_MATERIAL_PREFIX := "Race feature glass"
+
+
+## Whether a material keeps its authored gloss instead of the painted finish.
+static func is_glass(material: Material) -> bool:
+	return material != null and material.resource_name.begins_with(
+		GLASS_MATERIAL_PREFIX)
 
 
 ## Applies the finish to one mesh without cloning its mesh, skin, materials or
@@ -45,9 +57,10 @@ static func apply_mesh_finish(mesh_instance: MeshInstance3D) -> int:
 				"metallic_specular": material.metallic_specular,
 				"normal_scale": material.normal_scale,
 			})
-		material.roughness = maxf(material.roughness, ROUGHNESS_FLOOR)
-		material.metallic_specular = minf(material.metallic_specular,
-			DIELECTRIC_SPECULAR_CEILING)
+		if not is_glass(material):
+			material.roughness = maxf(material.roughness, ROUGHNESS_FLOOR)
+			material.metallic_specular = minf(material.metallic_specular,
+				DIELECTRIC_SPECULAR_CEILING)
 		if material.normal_enabled and material.normal_texture != null:
 			material.normal_scale = minf(material.normal_scale,
 				NORMAL_SCALE_CEILING)

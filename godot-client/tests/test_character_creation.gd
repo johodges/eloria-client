@@ -173,8 +173,14 @@ func run() -> void:
 	var actor_types: Dictionary = {}
 	var previous_sex := str(sex.get_selected_metadata())
 	for race_index in range(race.item_count):
+		var eyes_before := eyes.get_selected_id()
 		choose(race, race_index)
 		var culture := str(race.get_selected_metadata())
+		if culture in ["orun", "mycelari"]:
+			expect(eyes.get_selected_id() == 3, "a new %s opens on Amber gold eyes" % culture)
+		else:
+			expect(eyes.get_selected_id() == eyes_before,
+				"changing race to %s keeps the chosen eyes" % culture)
 		expect(int(main.get("selected_creation_class")) == 2 and
 			((main.get("preview_actor") as ReplicatedActor3D).equipment_diagnostics().visuals
 			as Dictionary) == class_loadout,
@@ -236,6 +242,29 @@ func run() -> void:
 		var sex_rect := sex.get_global_rect()
 		expect(is_equal_approx(race_rect.position.y, sex_rect.position.y) and race_rect.end.x <= sex_rect.position.x, "race and sex boxes sit side by side")
 		expect(main.get_global_rect().encloses(race_rect) and main.get_global_rect().encloses(sex_rect), "both selectors fit the window")
+	# Orun and Mycelari are amber-eyed: a roll for either keeps to the two
+	# ambers, every other race rolls the whole palette.
+	var amber_rolls := 0
+	var other_rolls := 0
+	var other_eyes: Dictionary = {}
+	var ambers_seen: Dictionary = {}
+	for seed_value in range(60):
+		var amber_rng := RandomNumberGenerator.new()
+		amber_rng.seed = 4000 + seed_value
+		main.call("_randomize_creation_appearance", amber_rng)
+		var rolled_culture := AppearanceVariants.culture_for_actor_type(sex.get_selected_id())
+		if rolled_culture in ["orun", "mycelari"]:
+			amber_rolls += 1
+			ambers_seen[eyes.get_selected_id()] = true
+			expect(eyes.get_selected_id() in [3, 9],
+				"a rolled %s has amber eyes, got %d" % [rolled_culture, eyes.get_selected_id()])
+		else:
+			other_rolls += 1
+			other_eyes[eyes.get_selected_id()] = true
+	expect(amber_rolls > 0 and ambers_seen.size() == 2,
+		"rolls reach Orun or Mycelari and both ambers (%d rolls)" % amber_rolls)
+	expect(other_rolls > 0 and other_eyes.size() > 2,
+		"other races still roll the whole eye palette")
 	main.call("_set_creation_class", 0)
 	await capture("character-creation-ui")
 	main.queue_free()

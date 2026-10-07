@@ -372,6 +372,11 @@ var creation_options: Array = []
 var selected_creation_class := 0
 var creation_class_gear_visible := true
 var _creation_appearance_rng := RandomNumberGenerator.new()
+## Orun and Mycelari are amber-eyed (owner call, October 2026): creation opens
+## a new one on Amber gold and the Randomize roll keeps to the two ambers.
+## Appearance ids, not menu rows: 3 Amber gold, 9 Amber orange.
+const AMBER_EYED_CULTURES := ["orun", "mycelari"]
+const AMBER_EYES: Array[int] = [3, 9]
 var animation_config: Dictionary = {}
 var animation_configs: Dictionary = {}
 var map_registry: Dictionary = {}
@@ -1610,9 +1615,16 @@ func _randomize_creation_appearance(rng: RandomNumberGenerator = null) -> void:
 		%CreateSkin, %CreateHair, %CreateHairColor, %CreateEyes,
 		%CreateShirt, %CreatePants, %CreateBoots,
 	]
+	var culture := AppearanceVariants.culture_for_actor_type(create_gender.get_selected_id())
 	for selector: OptionButton in selectors:
-		if selector.item_count > 0:
-			selector.select(source.randi_range(0, selector.item_count - 1))
+		if selector.item_count <= 0:
+			continue
+		if selector == %CreateEyes and AMBER_EYED_CULTURES.has(culture):
+			# One draw either way, so a seed rolls the same sequence of choices.
+			var amber: int = AMBER_EYES[source.randi_range(0, AMBER_EYES.size() - 1)]
+			selector.select(selector.get_item_index(amber))
+			continue
+		selector.select(source.randi_range(0, selector.item_count - 1))
 	_refresh_creation_preview()
 
 func _on_create_pressed() -> void:
@@ -1733,6 +1745,10 @@ func _populate_creation_choices(reset_skin := false) -> void:
 	if reset_skin and culture != "luminous":
 		%CreateSkin.select(%CreateSkin.get_item_index(0))
 	AppearanceChoices.populate(%CreateEyes, AppearanceChoices.options("eyes"))
+	if reset_skin and AMBER_EYED_CULTURES.has(culture):
+		# A new Orun or Mycelari opens on amber eyes. Only the creation default:
+		# a stored character keeps its eye byte.
+		%CreateEyes.select(%CreateEyes.get_item_index(AMBER_EYES[0]))
 	AppearanceChoices.populate(%CreateHair, AppearanceChoices.options("hair"))
 	AppearanceChoices.populate(%CreateHairColor, AppearanceChoices.options("hair_color"))
 	AppearanceChoices.populate(%CreateShirt, AppearanceChoices.options("wardrobe", culture, AppearanceVariants.PART_SHIRT))

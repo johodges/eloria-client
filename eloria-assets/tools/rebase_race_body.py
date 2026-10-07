@@ -47,6 +47,74 @@ that the mask covers the painted brow strokes and (Stoneborn) iris colour.
 toolSHA256 (gate V16) hashes this file with CRLF folded to LF, i.e. the git
 blob, so it holds on a Windows autocrlf checkout and on an LF checkout alike.
 Any edit of this file still needs a rebuild before V16 passes again.
+sharedBodyShape.inputsSHA256 (P4, lead decision 11) also hashes every helper
+module and data file a build reads (BUILD_INPUTS: the race_* modules,
+equipment_authoring, shared_player_bodies, build_face_masks,
+calibrate_skin_palettes, glbkit, face_regions.json, the headwear race
+policy) and the per-body files the hooks name (the Mycelari growth GLB), so
+V16 also fails after an edit of any of them: freeze them all before a batch.
+
+P4 (race programme 2026-10):
+- Race features (race_features.py, decision 1): horns, crown and crystals
+  move from race_head/scalp into the race_feature_head node over welded,
+  charted caps (the last raceFeatures.caps[<mesh>] triangles of a race_head
+  primitive). V3 becomes head = v2 - cleanup - features + caps; V20 checks
+  the node, its weights and material, the caps and the feature-free crown.
+  The split runs before every texture step, so the neck tone, the bridge
+  grain and the face reference no longer sample a feature (decision 2: the
+  Stoneborn female rear spikes left the head band). The crowned
+  Glasswarden female fits her skull before clean_head (which deletes the
+  skull under the crest) and folds the head faces a first split leaves
+  hidden under its caps into the feature (race_features skullFrom,
+  foldHidden; hidden_under_caps). V7 counts what is left of the v2 head:
+  caps occlude, and at most HIDDEN_CAP_LIMIT of them may be hidden (R2).
+- Integration hooks, each the P3 behaviour while its module is absent:
+  race_tail (reroot_tail/tail_capsule at the sacrum, spec tail.collision;
+  V18 adds its v18_gate: rest checks plus leg clearance and floor over the
+  playable library clips), race_hands (project_hands in the skin recolour;
+  V22 via its v22_gate, which redoes the projection), race_growths
+  (place_growths/append_growths on the assembled Mycelari body; V21 is
+  growth_checks over the playable clips judged by race_growths.gate with
+  GROWTH_CLIP_WAIVERS bounded). `build --without tail hands growths` turns a
+  present module off (sharedBodyShape.hooks says which ran); since R2 such a
+  body fails the hook's gate. V16 also
+  hashes the per-body hook inputs: the growth GLB and the Meshy hand
+  source pair (T-pose and rigged donor). The animation library, luminous.json
+  and models.json are verify-time inputs of V18/V21 only.
+- Derived v2 heads (race_head_prepare.py scale / from-meshy, a separate CLI
+  that build never imports: scaled heads with extras.headRescale, the
+  crowned Glasswarden female head) are ordinary --head inputs; V14 moves
+  its landmarks by headRescale; V23 requires the head each race takes
+  (race_head_prepare HEAD_SCALES / V2_HEADS / MESHY_HEADS) and the carried
+  headRescale. locate_head_texture also looks in
+  generate_models/race_heads_2026-10/meshy.
+- install copies highResolutionHead into the catalog, lists the feature
+  nodes in the catalog surfaces, and with --new-head-source <slug> takes
+  that body's new catalog source/sourceSHA256 instead of refusing them.
+
+R2 (review of the P4/P6 pilot):
+- Caps go in the primitive owning most of their hole's edges (race_features
+  cap_owner; R1 gave a mixed hole to the body, so the Votary horn-root caps
+  stood as domes through 49 of the 64 hide headwear pieces). V20 checks the
+  owner of every cap and, per hide piece (rest pose), the body-cap vertices
+  outside it that the v2 body did not already put there (capHeadwear).
+- Floating head components lying on the caps of the head proper are dropped
+  (race_features floating_islands, sharedBodyShape.raceFeatures
+  .floatingIslands); V3 counts them, V7 bounds the hidden caps
+  (HIDDEN_CAP_LIMIT).
+- Every body of a FEATURES race must carry race_feature_head (V20), every
+  hook race its hook (V18 re-rooted tail, V21 growths, V22 hands): a build
+  with --without, a missing module or the wrong head no longer verifies.
+- V18 adds the class-kit check (legs and torsos gated, capes reported:
+  decision 6's cape capsule is not feasible, see TAIL_KIT_PARTS); V21 gates
+  every contact in every playable clip (race_growths.gate) with the owner
+  waivers bounded (GROWTH_CLIP_WAIVERS) and requires the growth GLB prepared
+  by the current race_growths.py; V23 pins the derived heads themselves (a
+  scaled head is redone and compared byte for byte, the crowned head matches
+  MESHY_HEADS outputSHA256).
+- install no longer writes models.json tailCollision (nothing reads it), and
+  its after-write check tells tracked files dirty before install (content
+  unchanged by it) from files install changed.
 """
 from __future__ import annotations
 
@@ -55,6 +123,7 @@ from collections import Counter
 import copy
 import datetime
 import hashlib
+import importlib
 import io
 import json
 from pathlib import Path
@@ -72,6 +141,7 @@ from scipy.sparse.csgraph import connected_components
 import equipment_authoring as ea
 import shared_player_bodies as spb
 import verify_shared_player_bodies as vspb
+import race_features as rf
 g = spb.g
 
 KEYS = ('POSITION', 'NORMAL', 'TEXCOORD_0', 'JOINTS_0', 'WEIGHTS_0')
@@ -125,25 +195,33 @@ PROGRAMME_FILES = frozenset({
     'godot-client/tests/test_torso_body_cover_lods.gd',
     'godot-client/tests/test_race_rebase.py', 'godot-client/tests/test_native_glb_assets.py',
     'godot-client/tests/test_equipment_fit.py', 'godot-client/tests/test_luminous_cuff_fit_authoring.py',
-    '.github/workflows/godot-client.yml'})
+    '.github/workflows/godot-client.yml',
+    # P4/P6 (race programme 2026-10) modules and data.
+    'eloria-assets/tools/race_features.py', 'eloria-assets/tools/race_tail.py', 'eloria-assets/tools/race_hands.py',
+    'eloria-assets/tools/race_growths.py', 'eloria-assets/tools/race_growths_blender.py',
+    'eloria-assets/tools/race_head_prepare.py', 'eloria-assets/tools/headwear_race_policy.json'})
 STARTER_HELMETS = ('3:134', '3:159', '3:115', '3:122')
 # Front ray-cast landmarks of test_face_texture_mapping.py: iris centres for
 # every race, brow centres for the races that test has brows for.
 IRISES = {
-    'glasswarden_female': [(-.037, 1.643), (.037, 1.643)], 'glasswarden_male': [(-.035, 1.653), (.036, 1.653)],
+    # glasswarden_female: measured on the crowned 2026-10 head (decision 10,
+    # race_head_prepare.CROWNED_LANDMARKS; the old head's (+-.037, 1.643) also
+    # passed on it).
+    'glasswarden_female': [(-.0365, 1.6445), (.0368, 1.6445)], 'glasswarden_male': [(-.035, 1.653), (.036, 1.653)],
     'greyhaven_female': [(-.035, 1.613), (.035, 1.613)], 'greyhaven_male': [(-.032, 1.624), (.032, 1.624)],
     'mycelari_female': [(-.038, 1.628), (.038, 1.628)], 'mycelari_male': [(-.036, 1.637), (.038, 1.637)],
     'orun_female': [(-.038, 1.631), (.038, 1.631)], 'orun_male': [(-.036, 1.635), (.036, 1.635)],
     'ssarathi_female': [(-.048, 1.680), (.048, 1.680)], 'ssarathi_male': [(-.054, 1.662), (.054, 1.662)],
     'stoneborn_female': [(-.034, 1.624), (.034, 1.624)], 'stoneborn_male': [(-.031, 1.627), (.031, 1.627)],
     'votary_female': [(-.031, 1.607), (.031, 1.607)], 'votary_male': [(-.025, 1.607), (.025, 1.607)]}
-BROWS = {'glasswarden_female': (.047, 1.667), 'glasswarden_male': (.040, 1.667),
+BROWS = {'glasswarden_female': (.042, 1.6656), 'glasswarden_male': (.040, 1.667),
          'greyhaven_female': (.041, 1.639), 'greyhaven_male': (.042, 1.642),
          'mycelari_female': (.050, 1.655), 'mycelari_male': (.040, 1.650),
          'orun_female': (.047, 1.650), 'orun_male': (.043, 1.650),
          'votary_female': (.035, 1.622), 'votary_male': (.029, 1.613)}
 # V14 painted-feature cover (painted_feature_cover): brow strokes under
-# BROW_STROKE_MIN canvas px are too faint to judge (votary_male); IRIS_COLOUR
+# BROW_STROKE_MIN canvas px are too faint to judge (votary_male; a head scaled
+# by headRescale f uses f^2 times that, and f times the windows); IRIS_COLOUR
 # races paint an iris colour the mask's eye channel must cover.
 BROW_STROKE_MIN = 100
 IRIS_COLOUR = {'stoneborn_': {'redOverGreen': 15, 'redOverBlue': 30}}
@@ -180,6 +258,59 @@ TAIL_DEPTH, TAIL_SINK_FALLOFF = .008, .12
 # emergence the weights blend to the source weights with both thigh shares
 # moved to pelvis.
 TAIL_FEATHER = {'ssarathi_male': .10, 'ssarathi_female': .10}
+# V16 inputs (lead decision 11): the sources and data a build reads, relative
+# to this folder, plus the hook modules (and their companions) of the hooks
+# that apply to the body. Text (.py, .json) hashes with CRLF folded to LF
+# (the git blob); an absent optional module hashes as None.
+BUILD_INPUTS = ('rebase_race_body.py', 'race_features.py', 'equipment_authoring.py', 'shared_player_bodies.py',
+                'verify_shared_player_bodies.py', 'build_face_masks.py', 'calibrate_skin_palettes.py',
+                'tpose_bodies/vendor/glbkit.py', 'face_regions.json', 'headwear_race_policy.json')
+TEXT_INPUTS = ('.py', '.json')
+# Optional P4 modules behind the integration hooks (build --without turns
+# one off): the P3 behaviour stays while a module is absent. A hook (and its
+# module import) applies only to the bodies in HOOK_SLUGS, so a module that
+# is mid-edit elsewhere never breaks an unrelated body's build.
+HOOK_MODULES = {'tail': 'race_tail', 'hands': 'race_hands', 'growths': 'race_growths'}
+# Decision 7: Mycelari hands are skipped.
+HOOK_SLUGS = {'tail': ('ssarathi_',), 'hands': ('stoneborn_', 'ssarathi_'), 'growths': ('mycelari_',)}
+HOOK_INPUTS = {'tail': ('race_tail.py',), 'hands': ('race_hands.py',),
+               'growths': ('race_growths.py', 'race_growths_blender.py')}
+# V21 (race_growths.gate, R2): every contact in every playable clip is gated
+# at race_growths.GATES clipDepthMm, except these clips, waived up to the
+# given depth (mm) so they cannot get worse unseen. Owner call pending: the
+# growths ride the shoulder under linear blend skinning (surface weights) and
+# still meet the raised upper arm in Jumping_Jacks (emote_drill, 10.3 mm
+# female, 12.7 mm male), Backflip (emote_tumble, 5.3 mm female, 30.5 mm male
+# at t .93, the same under R1's weights: arms overhead in the flip) and the
+# right side of Two-hand_Blast (Combat_Cast_Aggressive, 8.0 mm female), at
+# 15 fps. The runtime hides the growths under every torso (part 5), cape
+# (part 2) and mantled hood, so only a shirt-only character shows them.
+GROWTH_CLIP_WAIVERS = {'Jumping_Jacks': 15., 'Backflip': 32., 'Two-hand_Blast': 10.}
+# V18 (R2, decision 6): the re-rooted tail against the class kits (race_tail
+# CLASS_KITS, the kit clips race_tail check uses). Legs (4) and torsos (5)
+# may not cross the tail past its root band; capes (2) are reported only: a
+# pelvis-local tail capsule in cape_cloth.gd is not feasible (the native
+# kernel takes at most 4 capsules on chain points), so capes stay as they are.
+TAIL_KIT_PARTS = (4, 5)
+TAIL_KIT_CLIPS = ('Idle_Subtle', 'Walk', 'Run_Female', 'Fighting_Idle', 'Sitting_Idle', 'Death_A', 'Sword_Regular_A',
+                  'Bow_Pull_Back', 'Farm_Harvest', 'Meditate')
+TAIL_KIT_FPS = 10.
+# V7 (R2): a cap the hidden rule calls hidden is invisible, but spent; at most
+# this share of the cap triangles may be hidden.
+HIDDEN_CAP_LIMIT = .20
+# V20 capHeadwear (R2): per hide headwear piece (rest pose, socketed at the
+# Head), a body-cap position (welded at CAP_POKE_WELD_M) is a new poke when it
+# lies outside the piece (odd crossings on the segment from the skull centre)
+# by more than CAP_POKE_DEPTH_M and beyond the v2 body race_head along that
+# same ray by more than CAP_POKE_SLACK_M (where the v2 body already reached as
+# far, under the old feature, the cap adds nothing); a piece fails with more
+# than CAP_POKE_POSITIONS new pokes. R1's Votary horn-root caps make up to 257
+# on one piece; the R2 pilots at most 6.
+CAP_POKE_WELD_M, CAP_POKE_DEPTH_M, CAP_POKE_SLACK_M, CAP_POKE_POSITIONS = .0001, .002, .002, 10
+# Front-view skin probes of V14 (no eye colour there).
+SKIN_PROBES = [(0, 1.68), (0, 1.63), (-.06, 1.595), (.06, 1.595)]
+# Meshy originals the head texture may come from (highResolutionHead.original).
+HEAD_TEXTURE_DIRS = ('generate_models/eloria-races-meshy', 'generate_models/race_heads_2026-10/meshy')
 
 
 def digest(path):
@@ -193,6 +324,56 @@ def source_digest(path):
 
 def input_digests(inputs):
     return {k: (source_digest if k == 'tool' else digest)(v) for k, v in inputs.items()}
+
+
+def optional_module(name):
+    """An optional P4 module, or None while it has not landed."""
+    try:
+        return importlib.import_module(name)
+    except ModuleNotFoundError as error:
+        if error.name != name:
+            raise
+        return None
+
+
+def hook_modules(slug, without=()):
+    """{hook: module or None}: the HOOK_MODULES that apply to this body
+    (HOOK_SLUGS), imported only then, `without` ones off."""
+    return {k: (optional_module(v) if slug.startswith(HOOK_SLUGS[k]) and k not in without else None)
+            for k, v in HOOK_MODULES.items()}
+
+
+def body_inputs(root, slug, without=()):
+    """Per-body files the hooks read (hashed into V16): the Mycelari growth
+    GLB (race_growths) and the Meshy hand source pair, T-pose and rigged
+    donor (race_hands)."""
+    out = {}
+    if slug.startswith(HOOK_SLUGS['growths']) and 'growths' not in without:
+        growths = optional_module(HOOK_MODULES['growths'])
+        if growths is not None and slug in getattr(growths, 'SLUGS', ()):
+            out['growth:'+slug] = Path(growths.default_growth(slug, root))
+    if slug.startswith(HOOK_SLUGS['hands']) and 'hands' not in without:
+        hands = optional_module(HOOK_MODULES['hands'])
+        if hands is not None and slug in getattr(hands, 'RACES', ()):
+            tpose, rigged = hands.source_paths(root, slug)
+            out['handSource:'+Path(tpose).name] = Path(tpose)
+            out['handSource:'+Path(rigged).name] = Path(rigged)
+    return out
+
+
+def inputs_digest(root, slug, without=()):
+    """sharedBodyShape.inputsSHA256: {BUILD_INPUTS name, hook module or body
+    input: sha256 or None}; a hook turned off (build --without) adds nothing."""
+    here = Path(__file__).resolve().parent
+    out = {}
+    names = BUILD_INPUTS+tuple(n for k, files in HOOK_INPUTS.items()
+                               if slug.startswith(HOOK_SLUGS[k]) and k not in without for n in files)
+    for name in names:
+        path = here/name
+        out[name] = (source_digest(path) if path.suffix in TEXT_INPUTS else digest(path)) if path.exists() else None
+    for name, path in body_inputs(root, slug, without).items():
+        out[name] = digest(path) if Path(path).exists() else None
+    return out
 
 
 def rig_frame(d):
@@ -444,12 +625,18 @@ def locate_head_texture(root, slug, provenance, explicit=None):
     """The 2048 Meshy original (or the archived full-resolution install)."""
     if explicit:
         return Path(explicit), 'explicit'
+    # The 2026-10 Meshy run (the crowned Glasswarden female) reuses the old
+    # file names: the file whose sha matches wins, a name-only match raises.
+    mismatched = []
     for base in (root, *root.parents):
-        meshy = base/'generate_models/eloria-races-meshy'/provenance['original']
-        if meshy.exists():
-            if digest(meshy) != provenance['originalSHA256']:
-                raise ValueError(f'{meshy} differs from highResolutionHead.originalSHA256')
-            return meshy, 'meshy-original'
+        for folder in HEAD_TEXTURE_DIRS:
+            meshy = base/folder/provenance['original']
+            if meshy.exists():
+                if digest(meshy) == provenance['originalSHA256']:
+                    return meshy, 'meshy-original'
+                mismatched.append(meshy)
+    if mismatched:
+        raise ValueError(f'{mismatched[0]} differs from highResolutionHead.originalSHA256; pass --head-texture')
     for base in (root, *root.parents):
         archive = base/'archive/fullres-textures-2026-09-16/godot-client/assets/actors/native/races'/f'{slug}.glb'
         if archive.exists():
@@ -542,6 +729,27 @@ def robust_hidden(p, n, faces, tag):
         if len(local):
             robust[ids[local]] = dense_hidden(p, faces[ids], local)
     return hidden, robust
+
+
+def hidden_under_caps(upper, split_args, skull):
+    """race_features foldHidden: split a copy of the cleaned head, and return
+    the non-cap head faces V7's rule (robust_hidden) calls hidden there, as a
+    mask over race_features.head_parts(upper) faces, plus the measures. The
+    split never renumbers the rows of the faces it keeps, so faces match by
+    their row triples."""
+    trial = copy.deepcopy(upper)
+    _, caps = rf.split(trial, *split_args, skull=skull)
+    keys = [k for k in trial['f'] if k != rf.KEY]
+    faces = np.concatenate([trial['f'][k] for k in keys])
+    tag = np.concatenate([[k[0]]*len(trial['f'][k]) for k in keys])
+    is_cap = np.concatenate([np.arange(len(trial['f'][k])) >= len(trial['f'][k])-caps.get(k, {'count': 0})['count']
+                             for k in keys])
+    _, robust = robust_hidden(trial['a']['POSITION'].astype(float), trial['a']['NORMAL'].astype(float), faces, tag)
+    hidden = set(map(tuple, faces[robust & ~is_cap].tolist()))
+    _, original, _ = rf.head_parts(upper)
+    mask = np.array([tuple(f) in hidden for f in original.tolist()])
+    return mask, {'firstSplitHiddenFraction': float(robust.mean()), 'firstSplitHiddenCaps': int((robust & is_cap).sum()),
+                  'firstSplitHiddenHead': int((robust & ~is_cap).sum())}
 
 
 def remove_faces(group, keys, drop):
@@ -669,10 +877,13 @@ def broken_uv(upper, size, origin, axis, upper_cut):
 
 
 
-def broken_corner_colours(upper, masks, pixels):
-    """Colour of each broken face's corners where they sit on intact faces."""
+def broken_corner_colours(upper, masks, pixels, avoid=None):
+    """Colour of each broken face's corners where they sit on intact faces
+    (`avoid`: masks of faces that give no colour, default `masks`; race
+    feature faces never do)."""
     p, uv = upper['a']['POSITION'].astype(float), upper['a']['TEXCOORD_0'].astype(float)
-    good = np.unique(np.concatenate([f[~masks[k]] for k, f in upper['f'].items()]))
+    avoid = masks if avoid is None else avoid
+    good = np.unique(np.concatenate([f[~avoid[k]] for k, f in upper['f'].items() if k != rf.KEY]))
     tree = cKDTree(p[good])
     colour = spb.sample_image(np.rint(pixels*255), uv[good])
     fallback = np.median(colour, axis=0)
@@ -877,6 +1088,58 @@ def feather_tail(a, faces, lower, surface, names, feather):
             'seatThighLAtEmergence': float(seat[used][inside[used], thighs[0]].mean()) if inside[used].any() else None,
             'rule': 'inside the Human surface: the seat (4 nearest pants/shirt vertices); beyond the feather distance '
                     'along the tail surface: source weights with thigh_l/thigh_r moved to pelvis; smoothstep between'}
+
+
+def reroot_tail(module, tail, lower, names, world, slug):
+    """Hook: race_tail.reroot_tail re-roots the v2 tail at the sacrum on the
+    Human trousers (decision 6); tail_capsule gives the pelvis-local cape
+    capsule install writes as models.json tailCollision. POSITION, NORMAL,
+    JOINTS_0 and WEIGHTS_0 change; faces lose only their loose fragments."""
+    a = tail['a']
+    key = ('body', 'tail')
+    pants = np.unique(np.concatenate([f for (name, _), f in lower['f'].items() if name == 'wardrobe_pants']))
+    trouser = {k: lower['a'][k][pants] for k in ('POSITION', 'JOINTS_0', 'WEIGHTS_0')}
+    joints = {n: world[i][:3, 3] for i, n in enumerate(names)}
+    result = module.reroot_tail({**a, 'faces': tail['f'][key]}, trouser, joints, names, slug=slug,
+                                surface_tris=human_surface(lower))
+    for k in ('POSITION', 'NORMAL', 'JOINTS_0', 'WEIGHTS_0'):
+        a[k] = result[k]
+    tail['f'][key] = result['faces']
+    capsule = module.tail_capsule(result, world[names.index('pelvis')])
+    report = dict(result['report'])
+    collision = {k: capsule[k] for k in ('bone', 'from', 'to', 'radius')}
+    report['spec'] = plain({'method': f'{module.__name__}.reroot_tail', 'trianglesBefore': report['trianglesBefore'],
+                            'fragmentTriangles': report['fragmentTriangles'], 'triangles': report['triangles'],
+                            'sacrumM': report['sacrumM'], 'hangDegrees': report['hangDegrees'],
+                            'featherM': report['featherM'], 'arcLengthRatio': report['arcLengthM']['ratio'],
+                            'collision': collision})
+    report['tailCollision'] = capsule
+    return plain(report)
+
+
+def plain(value):
+    """A JSON-plain copy (numpy scalars and arrays from hook reports)."""
+    return json.loads(json.dumps(value, default=lambda o: o.tolist() if hasattr(o, 'tolist') else str(o)))
+
+
+def project_hands(module, slug, lower, skin, face_ref, names, world, root):
+    """Hook: race_hands.project_hands paints the race's Meshy hand detail (or
+    its tone) onto the recoloured Human skin atlas (decision 7); None for a
+    race the module does not treat."""
+    if slug not in getattr(module, 'RACES', ()):
+        return None
+    key = next(k for k in lower['f'] if k[0] == 'body')
+    body = {k: lower['a'][k].astype(float) for k in ('POSITION', 'NORMAL', 'TEXCOORD_0')}
+    body['faces'] = lower['f'][key]
+    joints = {n: world[i][:3, 3] for i, n in enumerate(names)}
+    source = module.load_source(*module.source_paths(root, slug))
+    occupied = module.occupancy([(body['TEXCOORD_0'], body['faces'])], skin.shape[1::-1])
+    result = module.project_hands(slug, body, joints, skin, np.asarray(face_ref, float), source, occupied)
+    report = plain(result['report'])
+    report['spec'] = {'module': module.__name__, 'mode': report.get('mode'),
+                      'sides': {s: {k: v.get(k) for k in ('mode', 'gatePassed') if k in v}
+                                for s, v in report.get('sides', {}).items()}}
+    return module.apply_hand_texels(skin, result), report
 
 
 def head_albedo_gain(hd, hb, pixels, target):
@@ -1137,17 +1400,23 @@ def ring_colour(upper, head_pixels, origin_h, axis_h, upper_cut):
     raise ValueError('Too few race neck samples for the skin colour')
 
 
-def face_reference(upper, head_pixels, region, projection):
+def face_reference(upper, head_pixels, region, projection, caps=None):
     """The race_head reference calibrate_skin_palettes will measure: the
     area-weighted median of the head's body faces at their UV centroids,
     without the eye/brow mask regions (face_regions.json, projected as
-    build_face_masks.bake projects them) and without black gutters."""
+    build_face_masks.bake projects them) and without black gutters. Feature
+    caps (race_features.split) count with the colour they are baked with."""
     from build_face_masks import projection_masks
     from scipy.ndimage import map_coordinates
     hp, huv = upper['a']['POSITION'].astype(float), upper['a']['TEXCOORD_0'].astype(float)
     hf = intact(upper, ('body', 'head'))
     centre, area = hp[hf].mean(1), area3(hp, hf)
     colour = spb.sample_image(np.rint(head_pixels*255), huv[hf].mean(1))
+    key = ('body', 'head')
+    if caps and key in caps:
+        cf = upper['f'][key][len(upper['f'][key])-caps[key]['count']:]
+        centre = np.concatenate([centre, hp[cf].mean(1)]); area = np.concatenate([area, area3(hp, cf)])
+        colour = np.concatenate([colour, caps[key]['colours'].mean(1)])
     masks = projection_masks(region)
     py = (projection['yMax']-centre[:, 1])*projection['pixelsPerMetre']
     px = (centre[:, 0]-projection['xMin'])*projection['pixelsPerMetre']
@@ -1337,7 +1606,8 @@ def band_visibility(upper, origin, axis, upper_cut, band=.05):
     face and a neck plug occluding. The detail and tone bands sample only
     these, never a leftover inner wall a few millimetres inside the skin."""
     p = upper['a']['POSITION'].astype(float)
-    faces = np.concatenate(list(upper['f'].values()))
+    # Race features (their own node) are not the head surface the neck joins.
+    faces = np.concatenate([f for k, f in upper['f'].items() if k != rf.KEY])
     head = intact(upper, ('body', 'head'))
     travel = (p-origin)@axis
     near = (travel[head].min(1) < upper_cut+band) & (travel[head].max(1) > upper_cut-1e-6)
@@ -1698,7 +1968,7 @@ def as_f4(group):
 
 
 def build(root, slug, out, head=None, head_texture=None, template=None, head_atlas=None,
-          density_max=20., neck_profile='smooth', detail_mix=.2, skin_target='face'):
+          density_max=20., neck_profile='smooth', detail_mix=.2, skin_target='face', without=()):
     root, out = Path(root).resolve(), Path(out).resolve()
     if 'godot-client' in out.parts:
         raise ValueError('Use a scratch --out outside godot-client')
@@ -1719,6 +1989,8 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
     texture_path, texture_kind = locate_head_texture(root, slug, provenance, head_texture)
     inputs = {'template': template, 'head': head, 'headTexture': texture_path, 'tool': Path(__file__)}
     hashes = input_digests(inputs)
+    tool_inputs = inputs_digest(root, slug, without)
+    modules = hook_modules(slug, without)
     head_pixels, texture_sha = head_texture_pixels(texture_path, texture_kind)
     # B0: rigs equal within 1e-5 by name; the shipped head image is its half.
     names_t, world_t, origin_t, axis_t = rig_frame(td)
@@ -1763,15 +2035,40 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
     if len(upper_rings) != 1:
         raise ValueError(f'head rim has {len(upper_rings)} rings')
     head_counts = {k[0]: len(f) for k, f in upper['f'].items()}
+    # P4 (decision 1): race features to their own node; caps close the holes.
+    # skullFrom 'uncleaned' (the crowned Glasswarden female): the skull is
+    # fitted before clean_head deletes the skull under the crest.
+    feature_spec = rf.spec_for(slug, provenance)
+    head_world = world_h[names_h.index('Head')]
+    skull = (rf.skull_fit(upper, head_world) if feature_spec and feature_spec.get('skullFrom') == 'uncleaned'
+             else None)
     cleanup = clean_head(upper, origin_h, axis_h, upper_cut)
     upper['boundary'] = plane_rim(upper, origin_h, axis_h, upper_cut)
     if len(spb.loops(upper, origin_h, axis_h)) != 1:
         raise ValueError('head rim is not one ring after cleanup')
+    features, caps = None, {}
+    if feature_spec:
+        split_args = (slug, feature_spec, head_pixels, head_world, origin_h, axis_h, upper_cut, names_h.index('Head'),
+                      head_pixels.shape[1])
+        include, folded = None, None
+        if feature_spec.get('foldHidden'):
+            include, folded = hidden_under_caps(upper, split_args, skull)
+        features, caps = rf.split(upper, *split_args, skull=skull, include=include)
+        if folded:
+            features['foldedHidden'] = {**features.get('foldedHidden', {}), **folded}
+        upper['boundary'] = plane_rim(upper, origin_h, axis_h, upper_cut)
+        if len(spb.loops(upper, origin_h, axis_h)) != 1:
+            raise ValueError('head rim is not one ring after the feature split')
     upper['broken'], source_density, broken_counts = broken_uv(upper, head_pixels.shape[1], origin_h, axis_h, upper_cut)
     broken_report = {'faces': {k[0]: int(m.sum()) for k, m in upper['broken'].items() if m.any()}, **broken_counts,
                      'rule': f'all corners on the upper cut plane (v2 inner-loop caps), or an edge over {BROKEN_UV_RATIO:g}x '
                              f'the median px/cm and over {BROKEN_UV_PX:g} source px',
                      'chart': 'own planar chart at the median density; texels interpolate the colours of their corners on intact faces'}
+    # Caps count as UV-broken (never sampled as head skin) but keep their own
+    # race_features charts and colours; chart_broken charts only the v2 ones.
+    v2_broken = {k: m.copy() for k, m in upper['broken'].items()}
+    for key, cap in caps.items():
+        upper['broken'][key][len(upper['f'][key])-cap['count']:] = True
     # B5: weld both rims.
     lower_rows = np.unique(lower['boundary']); lower_rows = lower_rows[lower_rows >= template_rows]
     used = np.unique(np.concatenate(list(upper['f'].values())))
@@ -1779,7 +2076,11 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
     weld_report = {'lower': weld_ring(lower, lower_rows), 'upper': weld_ring(upper, upper_rows)}
     # Ssarathi: the v2 tail, root sunk into the Human trousers.
     tail = tail_group(hd, hb)
-    tail_report = fit_tail(tail, lower, names_t, TAIL_FEATHER.get(slug)) if tail else None
+    tail_report = None
+    if tail and modules['tail'] is not None:
+        tail_report = reroot_tail(modules['tail'], tail, lower, names_t, world_t, slug)
+    elif tail:
+        tail_report = fit_tail(tail, lower, names_t, TAIL_FEATHER.get(slug))
     # B6: the bridge (never an automatic linear fallback).
     bridge, lr, ur = spb.neck_bridge(lower, upper, origin_t, axis_t, 4, lower, smooth_profile=neck_profile == 'smooth')
     groove = ungroove(bridge, origin_t, axis_t)
@@ -1795,7 +2096,7 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
     template_pixels = template_pixels.astype(float)/255
     regions = json.loads(Path(__file__).with_name('face_regions.json').read_text())
     ring, ring_samples = ring_colour(upper, head_pixels, origin_h, axis_h, upper_cut)
-    face_ref = face_reference(upper, head_pixels, regions['models'][slug], regions['projection'])
+    face_ref = face_reference(upper, head_pixels, regions['models'][slug], regions['projection'], caps)
     skin_colour = face_ref if skin_target == 'face' else ring
     first_pass, _ = recolour_skin(lower, template_pixels, skin_colour, origin_t, axis_t, detail_mix)
     gain, tone_report = neck_tone(lower, first_pass, upper, head_pixels, visible, origin_t, axis_t, upper_cut, h1)
@@ -1803,6 +2104,12 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
     recolour.update(targetSource=skin_target, faceReferenceRGB=face_ref.tolist(), neckRingRGB=ring.tolist(),
                     neckRingSamples=ring_samples, neckTone={**tone_report, **recolour.get('neckTone', {})},
                     bandVisibility=visible_report)
+    # Hook (decision 7): race hand detail projected onto the Human hands.
+    hands_report = None
+    if modules['hands'] is not None:
+        projected = project_hands(modules['hands'], slug, lower, skin, face_ref, names_t, world_t, root)
+        if projected is not None:
+            skin, hands_report = projected
     skin_payload = encode_jpeg(skin)
     skin_pixels = decode(skin_payload)
     # B7b/B7c: shared_neck split, cylinder UVs and the neck texture.
@@ -1818,8 +2125,11 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
     neck_atlas['streaks'] = neck_streaks(decode(neck_payload), detail, neck_atlas['bridgeTexture']['rows'])
     # B7d: head atlas.
     human_face = human_face_density(td, tb)
-    corner_colours = broken_corner_colours(upper, upper['broken'], head_pixels)
-    chart_broken(upper, upper['broken'], head_pixels.shape[1], source_density)
+    corner_colours = broken_corner_colours(upper, v2_broken, head_pixels, avoid=upper['broken'])
+    for key, cap in caps.items():
+        corner_colours[key] = (np.concatenate([corner_colours[key], cap['colours']]) if key in corner_colours
+                               else cap['colours'])
+    chart_broken(upper, v2_broken, head_pixels.shape[1], source_density)
     old_uv = upper['a']['TEXCOORD_0'].astype(float).copy()
     head_joint = world_h[names_h.index('Head')][:3, 3]
     sizes = (head_atlas,) if head_atlas else (1024, 2048)
@@ -1860,17 +2170,51 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
         spec['neckProfileRepair'] = {k: groove[k] for k in ('columns', 'maxDipBeforeM', 'maxDipAfterM')}
     if broken_report['faces']:
         spec['brokenUV'] = broken_report
-    if tail:
+    if tail and 'spec' in tail_report:
+        spec['tail'] = tail_report['spec']
+    elif tail:
         spec['tail'] = {k: tail_report[k] for k in ('trianglesBefore', 'fragmentTriangles', 'triangles')}
         spec['tail']['rootSinkM'] = {'depth': TAIL_DEPTH, 'falloff': TAIL_SINK_FALLOFF, 'maxShift': tail_report['root']['maxShiftM']}
         if 'feather' in tail_report:
             spec['tail']['featherM'] = tail_report['feather']['featherM']
+    if features:
+        spec['raceFeatures'] = {k: features[k] for k in ('node', 'role', 'kind', 'material', 'triangles', 'byPrimitive',
+                                                         'caps', 'capRule', 'components', 'skull')}
+        if 'floatingIslands' in features:
+            islands = features['floatingIslands']
+            spec['raceFeatures']['floatingIslands'] = {
+                'triangles': islands['triangles'], 'onCapM': islands['onCapM'],
+                'dropped': [c['triangles'] for c in islands['components'] if c['dropped']],
+                'kept': [c['triangles'] for c in islands['components'] if not c['dropped']]}
+    spec['inputsSHA256'] = tool_inputs
+    spec['hooks'] = {k: (m.__name__ if m is not None else None) for k, m in modules.items()}
+    if without:
+        spec['hooksWithout'] = sorted(without)
+    if hands_report is not None:
+        spec['hands'] = hands_report['spec']
     d, binary = assemble(hd, hb, td, tb, lower, upper, bridge, neck, spec,
                          head_payload, skin_payload, spb.image_bytes(td, tb, spb.material_image(td, tb, wardrobe_mat)[0]),
-                         neck_payload, template_mat, wardrobe_mat, tail)
+                         neck_payload, template_mat, wardrobe_mat, tail, features, names_h.index('Head'))
+    # Hook (decision 8): Mycelari shoulder growths on the assembled body.
+    growth_report = None
+    growths = modules['growths']
+    if growths is not None and slug in getattr(growths, 'SLUGS', ()):
+        growth = Path(growths.default_growth(slug, root))
+        if not growth.exists():
+            raise FileNotFoundError(f'{growth}: run race_growths.py prepare first (or build --without growths)')
+        placed = growths.place_growths(d, binary, growth)
+        growths.append_growths(d, binary, placed)
+        growth_report = placed['report']
+        growth_report = plain(growth_report)
+        spec['growths'] = {'node': getattr(growths, 'NODE', 'race_feature_shoulders'), 'growth': growth.name,
+                           'growthSHA256': digest(growth), 'triangles': growth_report.get('triangles')}
     d, binary = g.compact(d, bytes(binary))
     if input_digests(inputs) != hashes:
         raise ValueError('An input changed during generation')
+    # A helper or data file edited mid-build is recorded, not fatal: V16
+    # compares inputsSHA256 (taken when the build started) with the files at
+    # verify time and fails then.
+    changed_inputs = sorted(k for k, v in inputs_digest(root, slug, without).items() if tool_inputs.get(k) != v)
     out.mkdir(parents=True, exist_ok=True)
     g.write(target, d, binary)
     metrics_v3 = bridge_metrics(bridge['a']['POSITION'], bridge['f'][('body', 4)],
@@ -1887,12 +2231,19 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
               'skinRecolour': recolour, 'headAtlas': head_atlas_report, 'neckAtlas': neck_atlas,
               'bridge': {'v3': metrics_v3, 'v2': v2_bridge_metrics(hd, hb, origin_h, axis_h, upper_cut), 'groove': groove},
               'trianglesByRole': triangles_by_role(d, binary), 'sharedBodyShape': spec,
+              'inputsChangedDuringBuild': changed_inputs,
               'status': 'candidate: requires visual/animation review'}
     if tail:
         report['tail'] = tail_report
     if broken_report['faces']:
         report['brokenUV'] = broken_report
-    target.with_suffix('.json').write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
+    if features:
+        report['raceFeatures'] = features
+    if hands_report is not None:
+        report['hands'] = hands_report
+    if growth_report is not None:
+        report['growths'] = growth_report
+    target.with_suffix('.json').write_text(json.dumps(plain(report), indent=2)+'\n', encoding='utf-8')
     return report
 
 
@@ -1927,8 +2278,10 @@ def triangles_by_role(d, binary):
 
 
 def assemble(hd, hb, td, tb, lower, upper, bridge, neck, spec, head_payload, skin_payload, wardrobe_payload,
-             neck_payload, template_mat, wardrobe_mat, tail=None):
-    """Fresh document: v2 nodes, skin and mesh order; new materials/images."""
+             neck_payload, template_mat, wardrobe_mat, tail=None, features=None, head_index=None):
+    """Fresh document: v2 nodes, skin and mesh order; new materials/images.
+    Race features (race_features.split) become one more mesh and node, after
+    every v2 node, with their kind's material on the head atlas image."""
     d = {'asset': copy.deepcopy(hd['asset']), 'scene': hd.get('scene', 0), 'scenes': copy.deepcopy(hd['scenes']),
          'nodes': copy.deepcopy(hd['nodes']), 'buffers': [{'byteLength': 0}], 'bufferViews': [], 'accessors': []}
     d['asset']['generator'] = 'Eloria rebase_race_body.py'
@@ -1978,7 +2331,7 @@ def assemble(hd, hb, td, tb, lower, upper, bridge, neck, spec, head_payload, ski
     meshes = {}
     body = {'a': lower['a'], 'role': 'shared_body',
             'f': {(name, 2 if name == 'body' else 3): f for (name, _), f in lower['f'].items()}}
-    head = {'a': upper['a'], 'role': 'race_head', 'f': {(name, 1): f for (name, _), f in upper['f'].items()}}
+    head = {'a': upper['a'], 'role': 'race_head', 'f': {(name, 1): f for (name, _), f in upper['f'].items() if name != rf.NODE}}
     body_only = {'a': body['a'], 'role': 'shared_body', 'f': {k: f for k, f in body['f'].items() if k[0] == 'body'}}
     write_group_v3(d, binary, body_only, meshes)
     write_group_v3(d, binary, {'a': head['a'], 'role': 'race_head', 'f': {k: f for k, f in head['f'].items() if k[0] == 'body'}}, meshes)
@@ -1988,6 +2341,11 @@ def assemble(hd, hb, td, tb, lower, upper, bridge, neck, spec, head_payload, ski
         write_group_v3(d, binary, tail, meshes)
     write_group_v3(d, binary, {'a': body['a'], 'role': 'shared_body', 'f': {k: f for k, f in body['f'].items() if k[0] != 'body'}}, meshes)
     write_group_v3(d, binary, {'a': head['a'], 'role': 'race_head', 'f': {k: f for k, f in head['f'].items() if k[0] != 'body'}}, meshes)
+    if features:
+        # Never dyed: a separate node keeps its imported material (no dye
+        # branch for race_feature_* in replicated_actor_3d.gd).
+        d['materials'].append(rf.material(features['kind'], 0))
+        write_group_v3(d, binary, rf.feature_group(upper, head_index, len(d['materials'])-1), meshes)
     for name in ('wardrobe_head_band', 'wardrobe_head_cap'):
         node = next(n for n in hd['nodes'] if n.get('name') == name)
         prims = []
@@ -2003,6 +2361,9 @@ def assemble(hd, hb, td, tb, lower, upper, bridge, neck, spec, head_payload, ski
         if m['name'] not in meshes:
             raise ValueError(f'no primitives for {m["name"]}')
         d['meshes'].append({'name': m['name'], 'primitives': meshes.pop(m['name'])})
+    if rf.NODE in meshes:
+        d['meshes'].append({'name': rf.NODE, 'primitives': meshes.pop(rf.NODE)})
+        rf.add_node(d, len(d['meshes'])-1)
     if meshes:
         raise ValueError(f'unplaced meshes {list(meshes)}')
     return d, binary
@@ -2019,6 +2380,9 @@ def find_head(root, slug, sha, candidates=None, explicit=None):
     options += [root/'godot-client/assets/actors/native/races'/f'{slug}.glb']
     if candidates:
         options += [Path(candidates)/'pre-install'/f'{slug}.glb', Path(candidates).parent/'pre-install'/f'{slug}.glb']
+        # Derived v2 heads (race_head_prepare.py): beside the candidate or in a heads folder.
+        for base in (Path(candidates), Path(candidates).parent):
+            options += [base/slug/'head-v2.glb', *sorted((base/'heads').glob(f'{slug}.*v2.glb'))]
     for path in options:
         if path and Path(path).exists() and digest(path) == sha:
             return Path(path)
@@ -2058,6 +2422,26 @@ def small_components(parts, origin, axis):
         off += len(a['POSITION'])
     size = np.bincount(face_components(np.concatenate(p), np.concatenate(faces)))
     return sorted(int(x) for x in size[size < 20])
+
+
+def head_landmarks(d, slug):
+    """V14 landmarks on this head: IRISES/BROWS/SKIN_PROBES (the pinned v2
+    values) moved by asset.extras.headRescale when the head was scaled
+    (race_head_prepare.rescale_xy: x' = cx + f (x - cx), same for y)."""
+    rescale = d['asset'].get('extras', {}).get('headRescale')
+
+    def move(x, y):
+        if not rescale:
+            return (x, y)
+        cx, cy, f = rescale['centre'][0], rescale['centre'][1], rescale['factor']
+        return (cx+f*(x-cx), cy+f*(y-cy))
+    out = {'irises': [move(*xy) for xy in IRISES[slug]], 'probes': [move(*xy) for xy in SKIN_PROBES],
+           'rescale': rescale}
+    if slug in BROWS:
+        bx, by = BROWS[slug]
+        out['brows'] = {sign: move(sign*bx, by) for sign in (-1, 1)}
+        out['browGap'] = move(0, by)
+    return out
 
 
 def front_projection(path, mask):
@@ -2105,6 +2489,8 @@ def painted_feature_cover(path, slug, mask):
     from scipy.ndimage import label
     regions = json.loads(Path(__file__).with_name('face_regions.json').read_text())
     region, proj = regions['models'][slug], regions['projection']
+    marks = head_landmarks(g.read(Path(path))[0], slug)
+    f = marks['rescale']['factor'] if marks['rescale'] else 1.
     colour, masked, depth = front_projection(path, mask)
     valid = np.isfinite(depth)
     lum = colour@LUMA*255
@@ -2115,13 +2501,14 @@ def painted_feature_cover(path, slug, mask):
         blur = gaussian_filter(np.where(valid, lum, 0), 12)/np.maximum(gaussian_filter(valid.astype(float), 12), 1e-6)
         eye = binary_dilation(masked[..., 0] > .05, iterations=14)
         stroke = (lum < blur-25) & valid & ~eye
-        bx, by = BROWS[slug]
         for sign in (-1, 1):
+            bx, by = marks['brows'][sign]
             window = np.zeros_like(stroke)
-            window[Y(by+.008):Y(by-.008), X(sign*bx-.02):X(sign*bx+.02)] = True
+            window[Y(by+.008*f):Y(by-.008*f), X(bx-.02*f):X(bx+.02*f)] = True
             labels, count = label(stroke & window)
             size = np.bincount(labels.ravel())[1:] if count else np.zeros(0, int)
-            if not count or size.max() < BROW_STROKE_MIN:
+            # A scaled head shows its painted strokes f^2 larger.
+            if not count or size.max() < BROW_STROKE_MIN*f*f:
                 report[f'browStroke{sign:+d}'] = {'texels': int(size.max(initial=0)), 'faint': True}
                 continue
             big = labels == np.argmax(size)+1
@@ -2133,9 +2520,9 @@ def painted_feature_cover(path, slug, mask):
         rgb = colour*255
         painted = ((rgb[..., 0] > rgb[..., 1]+rule['redOverGreen']) & (rgb[..., 0] > rgb[..., 2]+rule['redOverBlue'])
                    & valid)
-        for i, (x, y) in enumerate(IRISES[slug]):
+        for i, (x, y) in enumerate(marks['irises']):
             window = np.zeros_like(painted)
-            window[Y(y)-36:Y(y)+36, X(x)-48:X(x)+48] = True
+            window[Y(y)-int(36*f):Y(y)+int(36*f), X(x)-int(48*f):X(x)+int(48*f)] = True
             sel = painted & window
             cover = float((masked[sel][:, 0] >= .8).mean()) if sel.any() else 0.
             report[f'irisColour{i}'] = {'texels': int(sel.sum()), 'coverR08': cover}
@@ -2174,25 +2561,28 @@ def eye_mask_landmarks(path, slug, mask=None, painted=False):
         xy = np.floor(((bary@uv[mesh.faces[tri[0]]]) % 1)*np.array(mask.shape[:2][::-1])).astype(int)
         return mask[xy[1], xy[0]]/255.
     report = {'maskSize': list(mask.shape[:2]), 'pixelsPerChannel': info.get('pixelsPerChannel'), 'irises': []}
+    marks = head_landmarks(d, slug)
+    if marks['rescale']:
+        report['headRescale'] = marks['rescale']
     if painted:
         cover, cover_report = painted_feature_cover(path, slug, mask)
         report['painted'] = cover_report
     checks = {}
-    for i, (x, y) in enumerate(IRISES[slug]):
+    for i, (x, y) in enumerate(marks['irises']):
         values = [v for v in (at(x+dx, y+dy) for dx in (-.001, 0, .001) for dy in (-.001, 0, .001)) if v is not None]
         r, gr = (float(max(v[0] for v in values)), float(max(v[1] for v in values))) if values else (0., 0.)
         report['irises'].append({'at': [x, y], 'R': r, 'G': gr}); checks[f'iris{i}'] = r >= .8 and gr > .15
     if slug in BROWS:
-        brow = BROWS[slug]
         for sign in (-1, 1):
-            values = np.array([v[2] for v in (at(sign*brow[0]+dx, brow[1]+dy) for dx in np.linspace(-.012, .012, 15)
+            bx, by = marks['brows'][sign]
+            values = np.array([v[2] for v in (at(bx+dx, by+dy) for dx in np.linspace(-.012, .012, 15)
                                               for dy in np.linspace(-.004, .004, 9)) if v is not None])
             report[f'brow{sign:+d}'] = {'maxB': float(values.max(initial=0)), 'over05': int((values > .05).sum())}
             checks[f'brow{sign:+d}'] = bool(values.max(initial=0) > .1 and (values > .05).sum() > 1)
-        centre = at(0, brow[1])
+        centre = at(*marks['browGap'])
         report['browGapB'] = float(centre[2]) if centre is not None else None
         checks['browGap'] = centre is not None and centre[2] < .02
-    clean = [at(x, y) for x, y in [(0, 1.68), (0, 1.63), (-.06, 1.595), (.06, 1.595)]]
+    clean = [at(x, y) for x, y in marks['probes']]
     report['skinRG'] = [float(v[:2].max()) if v is not None else None for v in clean]
     for i, v in enumerate(clean):
         checks[f'skin{i}'] = v is not None and v[:2].max() < .02
@@ -2323,7 +2713,7 @@ def tail_checks(parts, tail, v2_tail, spec, names, slug):
              for k, q, j in (('now', a, thighs[0]), ('v2', a2, thighs[0]))}
     values['thighL'] = {'v2Vertices': int((share['v2'][np.unique(f2)] > 0).sum()), 'vertices': int((share['now'][used] > 1e-6).sum()),
                         'v2Max': float(share['v2'][np.unique(f2)].max()), 'max': float(share['now'][used].max())}
-    feather = TAIL_FEATHER.get(slug)
+    feather = spec['tail'].get('featherM', TAIL_FEATHER.get(slug))
     if feather:
         from scipy.sparse.csgraph import dijkstra
         ids = weld(p)
@@ -2336,6 +2726,215 @@ def tail_checks(parts, tail, v2_tail, spec, names, slug):
         thigh = np.where(np.isin(a['JOINTS_0'].astype(int), thighs), a['WEIGHTS_0'], 0.).sum(1)
         values['freeTail'] = {'vertices': int(len(free)), 'maxThighWeight': float(thigh[free].max(initial=0)), 'featherM': feather}
         ok &= len(free) > 0 and thigh[free].max(initial=0) == 0
+    return bool(ok), values
+
+
+def tail_rise(module, d, b, root, fps=10., top=8):
+    """V18 report (no gate): per playable clip the tail's highest point above
+    the pelvis joint and its tip height. The re-rooted tail is rigid on the
+    pelvis, so prone and bent-over poses (Death_A, Farm_Harvest) lift it."""
+    tail, _, _, names, _ = module.body_arrays(d, b)
+    rows = np.unique(tail['faces'])
+    p = np.asarray(tail['POSITION'], float)[rows]
+    jj, ww = np.asarray(tail['JOINTS_0'], int)[rows], np.asarray(tail['WEIGHTS_0'], float)[rows]
+    rig = module.BodyRig(d, b)
+    library = module.ClipLibrary(root/'godot-client/assets/actors/native/shared/Universal_Animation_Library.glb')
+    pelvis = names.index('pelvis')
+    rows_out = []
+    for clip in module.action_clips(root, library):
+        rise, high = -np.inf, -np.inf
+        for time in library.times(clip, fps):
+            world = rig.pose(library.sample(clip, time))
+            q = module.skin(p, jj, ww, world@rig.ibm)
+            rise = max(rise, float(q[:, 1].max()-world[pelvis][1, 3])); high = max(high, float(q[:, 1].max()))
+        rows_out.append([clip, round(rise, 3), round(high, 3)])
+    return sorted(rows_out, key=lambda r: -r[1])[:top]
+
+
+def growth_gate(module, d, b, root, slug, spec):
+    """V21 (decision 8, R2): race_growths.growth_checks over the library
+    clips the player can play, judged by race_growths.gate (every contact in
+    every clip, GROWTH_CLIP_WAIVERS bounded); the growth node is the one build
+    recorded, from the growth GLB V16 hashes, prepared by the current
+    race_growths.py (its embedded toolSHA256)."""
+    report = plain(module.growth_checks(d, b, root, slug=slug))
+    fails = module.gate(report, waivers=GROWTH_CLIP_WAIVERS)
+    node = next((n for n in d['nodes'] if n.get('name') == module.NODE), None)
+    prim = next((p for m in d['meshes'] if m['name'] == module.NODE for p in m['primitives']), None)
+    material = d['materials'][prim['material']].get('name') if prim else None
+    growth = Path(module.default_growth(slug, root))
+    prepared = module.read_growth(growth)['extras'].get('toolSHA256') if growth.exists() else None
+    structure = {'node': bool(node) and node.get('skin') == 0, 'material': material,
+                 'role': (prim or {}).get('extras', {}).get('sourceRole'),
+                 'recordedTriangles': spec['growths'].get('triangles'), 'triangles': report['triangles'],
+                 'growthSHA256Recorded': spec['growths'].get('growthSHA256') == (digest(growth) if growth.exists() else None),
+                 'growthPreparedByThisModule': prepared == source_digest(module.__file__)}
+    ok = (not fails and structure['node'] and material == module.MATERIAL and structure['role'] == module.ROLE
+          and structure['recordedTriangles'] == report['triangles'] and structure['growthSHA256Recorded']
+          and structure['growthPreparedByThisModule'])
+    summary = {}
+    for side, s in report['sides'].items():
+        worst = sorted(((c, module.clip_worst(r)) for c, r in s['clips'].items()), key=lambda x: -x[1])[:6]
+        idle = s['clips'].get('Idle_Subtle', {})
+        summary[side] = {'baseGapMm': s['baseGapMm'], 'restPenetrationMm': s['restPenetrationMm'],
+                         'triangles': s['triangles'], 'worstContactMm': worst,
+                         'maxEdgeStretch': max(r['maxEdgeStretch'] for r in s['clips'].values()),
+                         'idleCapTiltDeg': idle.get('capTiltFromTorsoDeg')}
+    return bool(ok), {'fails': fails, 'waivedClipsMm': GROWTH_CLIP_WAIVERS, 'gates': module.GATES,
+                      'probeM': module.CHECK_PROBE, 'structure': structure, 'summary': summary,
+                      'clipsChecked': len(next(iter(report['sides'].values()))['clips']), 'report': report}
+
+
+def tail_kits(module, d, b, root, slug):
+    """V18 (R2, decision 6): the skinned tail against the class-kit pieces
+    (race_tail CLASS_KITS, the scenes the runtime picks for this body) over
+    TAIL_KIT_CLIPS: TAIL_KIT_PARTS may not cross the tail centreline past the
+    root band; capes are reported."""
+    tail, _, joints, names, _ = module.body_arrays(d, b)
+    p = np.asarray(tail['POSITION'], float)
+    ids, _, dist, _, _ = module.tail_geodesic(p, tail['faces'], joints['pelvis'])
+    library = module.ClipLibrary(root/'godot-client/assets/actors/native/shared/Universal_Animation_Library.glb')
+    equipment = json.loads((root/'godot-client/data/actors/equipment.json').read_text(encoding='utf-8'))
+    pieces, parts = {}, {}
+    for kit, loadout in module.CLASS_KITS.items():
+        for part, item in loadout.items():
+            label = f'{kit} {part}:{item}'
+            pieces[label] = module.skinned_pieces(module.kit_scene(root, slug, f'{part}:{item}', equipment))
+            parts[label] = part
+    clips = [c for c in module.action_clips(root, library) if c in TAIL_KIT_CLIPS]
+    results = module.clip_clearance(module.BodyRig(d, b), library, tail, dist[ids], clips, slug, pieces=pieces,
+                                    fps=TAIL_KIT_FPS)
+    rows = {}
+    for label in pieces:
+        per = {c: r['pieces'][label] for c, r in results.items()}
+        rows[label] = {'part': parts[label], 'gated': parts[label] in TAIL_KIT_PARTS,
+                       'crossingsBeyondRootBand': sum(v['crossingsBeyondRootBand'] for v in per.values()),
+                       'clipsCrossing': sorted(c for c, v in per.items() if v['crossingsBeyondRootBand']),
+                       'minClearanceBeyondRootBandM': min(v['minClearanceBeyondRootBandM'] for v in per.values())}
+    ok = all(r['crossingsBeyondRootBand'] == 0 for r in rows.values() if r['gated'])
+    return bool(ok), {'pieces': rows, 'clips': clips, 'fps': TAIL_KIT_FPS, 'gatedParts': list(TAIL_KIT_PARTS),
+                      'rule': 'legs and torsos may not cross the tail centreline past the root band; capes reported '
+                              '(no cape tail capsule: not feasible in the native cape kernel)'}
+
+
+def cap_headwear_pokes(root, slug, parts, head_parts, cap_counts, head_world, features):
+    """V20 capHeadwear (R2): per headwear piece that hides the scalp and the
+    race feature at runtime (equipment.json raceFeatures 'hide', or a
+    coversHair piece without 'show'), placed at the Head joint plus its
+    canonical_<slug> socket offset (rest pose, as headwear_crossings): the
+    body-cap positions outside the piece by more than CAP_POKE_DEPTH_M (odd
+    crossings on the segment from the skull centre, depth past the last
+    crossing) that also stand beyond the v2 body race_head along the same ray
+    by more than CAP_POKE_SLACK_M. A piece fails with more than
+    CAP_POKE_POSITIONS of them."""
+    import trimesh
+    n = cap_counts.get('body', 0)
+    a, f = next((a, f) for name, role, a, f in parts if name == 'body' and role == 'race_head')
+    caps = a['POSITION'].astype(float)[np.unique(f[len(f)-n:])] if n else np.zeros((0, 3))
+    if not len(caps):
+        return True, {'bodyCapPositions': 0}
+    caps = np.unique(np.round(caps/CAP_POKE_WELD_M).astype(np.int64), axis=0)*CAP_POKE_WELD_M
+    va, vf = next((q, ff) for name, role, q, ff in head_parts if name == 'body' and role == 'race_head')
+    v2 = trimesh.Trimesh(va['POSITION'].astype(float), vf, process=False)
+    skull = np.array(features['skull']['centreYZ']+features['skull']['radii'], float)
+    origin = rf.to_world(rf.skull_centre(skull)[None], head_world)[0]
+    # How far the v2 body race_head reaches along each cap position's ray.
+    rays = caps-origin; reach_cap = np.linalg.norm(rays, axis=1); rays /= reach_cap[:, None]
+    loc, ray, _ = v2.ray.intersects_location(np.repeat(origin[None], len(caps), 0), rays, multiple_hits=True)
+    reach_v2 = np.zeros(len(caps))
+    if len(loc):
+        np.maximum.at(reach_v2, ray, np.linalg.norm(loc-origin, axis=1))
+    beyond = reach_cap > reach_v2+CAP_POKE_SLACK_M
+    client = root/'godot-client'
+    equipment = json.loads((client/'data/actors/equipment.json').read_text(encoding='utf-8'))
+
+    def triangles(path):
+        dd, bb = ea.read_glb(path)
+        world = ea.global_matrices(dd)
+        out = []
+        for i, node in enumerate(dd['nodes']):
+            if 'mesh' in node:
+                m = np.array(world[i])
+                for q in dd['meshes'][node['mesh']]['primitives']:
+                    v = ea.accessor_array(dd, bb, q['attributes']['POSITION']).astype(float)@m[:3, :3].T+m[:3, 3]
+                    out.append(v[ea.accessor_array(dd, bb, q['indices']).astype(int).reshape(-1, 3)])
+        return np.concatenate(out), dd
+
+    def outside(mesh, points):
+        """Odd crossings on origin -> point, and the distance past the last."""
+        direction = points-origin; length = np.linalg.norm(direction, axis=1); direction /= length[:, None]
+        loc, ray, _ = mesh.ray.intersects_location(np.repeat(origin[None], len(points), 0), direction, multiple_hits=True)
+        count, last = np.zeros(len(points), int), np.zeros(len(points))
+        if len(loc):
+            t = np.linalg.norm(loc-origin, axis=1); hit = t < length[ray]-1e-6
+            np.add.at(count, ray[hit], 1); np.maximum.at(last, ray[hit], t[hit])
+        return count % 2 == 1, length-last
+    rows, failed = [], []
+    for key in sorted((k for k in equipment['models'] if k.startswith('3:')), key=lambda k: int(k[2:])):
+        model = equipment['models'][key]
+        variant = model.get('variants', {}).get(f'canonical_{slug}')
+        if not variant:
+            continue
+        policy = model.get('raceFeatures', '')
+        _, base = triangles(client/model['scene'].removeprefix('res://'))
+        covers = any((node.get('extras') or {}).get('coversHair') for node in base['nodes'])
+        if not (policy == 'hide' or (covers and policy != 'show')):
+            continue
+        tris, _ = triangles(client/variant['scene'].removeprefix('res://'))
+        tris = tris+head_world[:3, 3]+np.array(variant['socket']['offset'])
+        mesh = trimesh.Trimesh(tris.reshape(-1, 3), np.arange(tris.size//3).reshape(-1, 3), process=False)
+        out, depth = outside(mesh, caps)
+        if not out.any():
+            continue
+        new = out & beyond & (depth > CAP_POKE_DEPTH_M)
+        row = {'piece': key, 'name': model.get('name'), 'capPositionsOutside': int(out.sum()), 'newPokes': int(new.sum()),
+               'maxNewPokeDepthMm': round(float(depth[new].max()*1000), 2) if new.any() else 0.}
+        rows.append(row)
+        if new.sum() > CAP_POKE_POSITIONS:
+            failed.append(key)
+    return not failed, {'bodyCapPositions': int(len(caps)), 'piecesWithCapsOutside': rows, 'failedPieces': failed,
+                        'limits': {'weldM': CAP_POKE_WELD_M, 'depthM': CAP_POKE_DEPTH_M, 'slackM': CAP_POKE_SLACK_M,
+                                   'positions': CAP_POKE_POSITIONS}}
+
+
+def head_source_gate(d, hd, slug, head):
+    """V23 (decisions 9 and 10): a race with a pinned head scale
+    (race_head_prepare.HEAD_SCALES) is built from its derived head, whose
+    asset.extras.headRescale has that factor and comes from the pinned v2
+    backup (V2_HEADS); the crowned Glasswarden female from her 2026-10 Meshy
+    head (MESHY_HEADS); every other race from its v2 backup. The body carries
+    the head's headRescale unchanged (V14 and test_face_texture_mapping.py
+    move their landmarks by it)."""
+    import race_head_prepare as rhp
+    import tempfile
+    head_extras = hd['asset'].get('extras', {})
+    rescale = head_extras.get('headRescale')
+    carried = d['asset'].get('extras', {}).get('headRescale')
+    values = {'head': Path(head).name, 'headRescale': rescale, 'bodyCarriesHeadRescale': carried == rescale,
+              'headSHA256': digest(head)}
+    ok = carried == rescale
+    if slug in rhp.HEAD_SCALES:
+        values.update(expectedFactor=rhp.HEAD_SCALES[slug], pinnedV2SHA256=rhp.V2_HEADS[slug])
+        ok = (ok and bool(rescale) and abs(float(rescale['factor'])-rhp.HEAD_SCALES[slug]) < 1e-9
+              and rescale.get('derivedFromSHA256') == rhp.V2_HEADS[slug])
+        # R2: the derived head itself, redone from the pinned v2 backup.
+        root = Path(__file__).resolve().parents[2]
+        try:
+            v2 = rhp.find_v2_head(root, slug)
+            with tempfile.TemporaryDirectory() as temp:
+                redone = rhp.scale_head(root, slug, Path(temp), head=v2)['outputSHA256']
+        except (FileNotFoundError, ValueError) as error:
+            redone = f'not redone: {error}'
+        values['redoneSHA256'] = redone
+        ok = ok and redone == values['headSHA256']
+    elif slug in rhp.MESHY_HEADS:
+        wanted = rhp.MESHY_HEADS[slug]['originalSHA256']
+        pinned = rhp.MESHY_HEADS[slug].get('outputSHA256')
+        values.update(sourceSHA256=head_extras.get('sourceSHA256'), expectedSourceSHA256=wanted, pinnedOutputSHA256=pinned)
+        ok = ok and rescale is None and head_extras.get('sourceSHA256') == wanted and values['headSHA256'] == pinned
+    else:
+        values.update(headSHA256=digest(head), pinnedV2SHA256=rhp.V2_HEADS.get(slug))
+        ok = ok and rescale is None and digest(head) == rhp.V2_HEADS.get(slug)
     return bool(ok), values
 
 
@@ -2427,13 +3026,22 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
     gate('V2_below_cut_equality', geo == geo_t and not (uv-uv_t) and n_uv+n_neck == n_t and human_joints == [5121],
          triangles=n_geo, templateTriangles=n_t, uvUnchangedTriangles=n_uv, sharedNeckBelowCut=n_neck,
          humanJointComponentTypes=human_joints)
-    # V3: head bytes are a sub-multiset of the v2 head; rim rows exempt from NORMAL.
+    # V3: head bytes are a sub-multiset of the v2 head; rim rows exempt from
+    # NORMAL. With race features (P4) the caps (the last raceFeatures.caps
+    # triangles of a primitive) are set aside: head = v2 - cleanup - features.
+    features = spec.get('raceFeatures')
+    cap_counts = features['caps'] if features else {}
     head_now, head_v2, normal_now, normal_v2 = Counter(), Counter(), Counter(), Counter()
     fields = ('POSITION', 'JOINTS_0', 'WEIGHTS_0')
+    v2_position = {}
     for prims, sig, nsig in ((parts, head_now, normal_now), (head_parts, head_v2, normal_v2)):
         for name, role, a, f in prims:
             if role != 'race_head':
                 continue
+            if prims is parts and cap_counts.get(name):
+                f = f[:len(f)-cap_counts[name]]
+            if prims is head_parts:
+                v2_position.update(zip(rf.face_signatures(a, f, fields), rf.face_signatures(a, f, ('POSITION',))))
             sig.update(vspb.signatures(a, f, fields))
             rim = (np.abs((a['POSITION'].astype(float)-origin_h)@axis_h-upper_cut) < RIM_BAND)[f].any(1)
             nsig.update(vspb.signatures(a, f[~rim], fields+('NORMAL',)))
@@ -2449,10 +3057,48 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
             for p, q in zip(mine, theirs) for k in q['attributes']) and all(
             ea.accessor_array(d, b, p['indices']).tobytes() == ea.accessor_array(hd, hb, q['indices']).tobytes()
             for p, q in zip(mine, theirs)))
-    gate('V3_head_preservation', not (head_now-head_v2) and sum((head_v2-head_now).values()) == removed
+    missing = head_v2-head_now
+    split = features['triangles'] if features else 0
+    islands = (features or {}).get('floatingIslands', {}).get('triangles', 0)
+    gate('V3_head_preservation', not (head_now-head_v2) and sum(missing.values()) == removed+split+islands
          and not (normal_now-normal_v2) and all(accessories),
          headTriangles=sum(head_now.values()), v2HeadTriangles=sum(head_v2.values()), removed=removed,
-         bandCapByteEqual=accessories)
+         featureTriangles=split, floatingIslandTriangles=islands, capTriangles=sum(cap_counts.values()),
+         bandCapByteEqual=accessories, rule='head = v2 - cleanup - feature - dropped floating islands (+ caps, set aside)')
+    # V20 (P4): the race_feature_head node, its caps and the feature-free crown.
+    missing_positions = Counter()
+    for key, count in missing.items():
+        missing_positions[v2_position[key]] += count
+    ok, values = rf.verify_features(d, b, parts, slug, spec, missing_positions, world[names.index('Head')],
+                                    names.index('Head'), ea.accessor_array)
+    if values.get('nodes'):
+        # Head atlas: feature texels never land on race_head texels, and no
+        # head-atlas face is stretched across the atlas (a row two islands
+        # share is moved twice by pack_head).
+        atlas = [(name, role, a, f) for name, role, a, f in parts if role == 'race_head' or name == rf.NODE]
+        head_mesh = next(m for m in d['meshes'] if m['name'] == 'body')
+        prim = next(p for p in head_mesh['primitives'] if p.get('extras', {}).get('sourceRole') == 'race_head')
+        side = spb.material_image(d, b, prim['material'])[1].shape[1::-1]
+        counts = {}
+        for kind in ('head', 'feature'):
+            sel = [(a['TEXCOORD_0'].astype(float)[f]) for name, role, a, f in atlas if (name == rf.NODE) == (kind == 'feature')]
+            corners = np.concatenate(sel).reshape(-1, 2)
+            counts[kind] = coverage(corners, np.arange(len(corners)).reshape(-1, 3), side, tol=1e-6)[0]
+        overlap = int(((counts['head'] > 0) & (counts['feature'] > 0)).sum())
+        stretched = 0
+        for name, role, a, f in atlas:
+            p3, uvf = a['POSITION'].astype(float)[f], a['TEXCOORD_0'].astype(float)[f]
+            e3 = np.linalg.norm(p3[:, [1, 2, 0]]-p3, axis=2)*100
+            eu = np.linalg.norm((uvf[:, [1, 2, 0]]-uvf)*side, axis=2)
+            median = spec['headAtlas']['pxPerCm']
+            stretched += int(((eu > BROKEN_UV_RATIO*median*e3) & (eu > 2*BROKEN_UV_PX)).any(1).sum())
+        values.update(atlasOverlapTexels=overlap, stretchedAtlasFaces=stretched)
+        ok = ok and overlap == 0 and stretched == 0
+        if 'skull' in (spec.get('raceFeatures') or {}):
+            pokes_ok, values['capHeadwear'] = cap_headwear_pokes(root, slug, parts, head_parts, cap_counts,
+                                                                 world[names.index('Head')], spec['raceFeatures'])
+            ok = ok and pokes_ok
+    gate('V20_race_features', ok, **values)
     edges, attrs = vspb.neck_join_checks(parts)
     gate('V4_neck_join', edges['geometricEdges'] > 50 and edges['unmatchedEdges'] == 0 and attrs['unmatchedCopies'] == 0
          and attrs['boundaryCopies'] > 30 and attrs['maxPositionDeltaM'] < 1e-6 and attrs['maxNormalDelta'] < 2e-6
@@ -2473,15 +3119,25 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
     # A face counts as hidden when it fails the 60-direction centroid test
     # and the dense 4-point lattice + Fibonacci test (HIDDEN_RULE): the first
     # alone also lists faces that show through a crease or a lip slit.
+    # P4: the feature caps (the last raceFeatures.caps triangles of a
+    # race_head primitive, checked by V20) occlude but are not counted: V7
+    # measures what is left of the v2 head. A cap the rule calls hidden lies
+    # under other skin or another cap (the crowned Glasswarden female's
+    # cranium is rebuilt from many holes) and is reported.
     upper = block_roles(d, b, {'race_head'})
     keys = list(upper['f']); faces = np.concatenate([upper['f'][k] for k in keys])
     tag = np.concatenate([[k[0]]*len(upper['f'][k]) for k in keys])
+    is_cap = np.concatenate([np.arange(len(upper['f'][k])) >= len(upper['f'][k])-cap_counts.get(k[0], 0) for k in keys])
     hidden60, robust = robust_hidden(upper['a']['POSITION'].astype(float), upper['a']['NORMAL'].astype(float), faces, tag)
-    hidden, fraction = int(robust.sum()), float(robust.mean())
+    hidden, fraction = int((robust & ~is_cap).sum()), float((robust & ~is_cap).sum()/max(int((~is_cap).sum()), 1))
     whole, whole_t = hidden_body(d, b, origin_t, axis_t), hidden_body(td, tb, origin_t, axis_t)
-    gate('V7_inner_shell', fraction <= .02 and cleanup['hiddenHeadFraction'] <= .02, hiddenHeadTriangles=hidden,
-         hiddenHeadFraction=fraction, recordedFraction=cleanup['hiddenHeadFraction'],
-         hiddenHeadTriangles60=int(hidden60.sum()), hiddenHeadFraction60=float(hidden60.mean()), rule=HIDDEN_RULE,
+    cap_fraction = float((robust & is_cap).sum()/max(int(is_cap.sum()), 1))
+    gate('V7_inner_shell', fraction <= .02 and cleanup['hiddenHeadFraction'] <= .02 and cap_fraction <= HIDDEN_CAP_LIMIT,
+         hiddenHeadTriangles=hidden, hiddenHeadFraction=fraction, recordedFraction=cleanup['hiddenHeadFraction'],
+         capTriangles=int(is_cap.sum()), hiddenCapTriangles=int((robust & is_cap).sum()),
+         hiddenCapFraction=cap_fraction, hiddenCapLimit=HIDDEN_CAP_LIMIT,
+         hiddenHeadTriangles60=int((hidden60 & ~is_cap).sum()),
+         hiddenHeadFraction60=float((hidden60 & ~is_cap).sum()/max(int((~is_cap).sum()), 1)), rule=HIDDEN_RULE,
          wholeBody={'candidate': whole, 'template': whole_t,
                     'belowCutHiddenEqual': whole['belowCutHidden'] == whole_t['belowCutHidden'],
                     'note': 'report only: below the cut the body is the template byte for byte (P0-owned)'})
@@ -2517,6 +3173,10 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
     required = ('body', 'eyes', 'scalp', *wardrobe_nodes, 'wardrobe_head_band', 'wardrobe_head_cap')
     if not slug.startswith(NO_EYEBROWS):
         required += ('eyebrows',)
+    if spec.get('raceFeatures'):
+        required += (rf.NODE,)
+    if spec.get('growths'):
+        required += (spec['growths']['node'],)
 
     def eyes_image(dd, bb):
         eyes = next(m for m in dd['meshes'] if m['name'] == 'eyes')['primitives'][0]
@@ -2575,9 +3235,48 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
          limit=STREAK_LIMIT, grainAmount=amount)
     dips = profile_dips(parts, origin_t, axis_t, origin_h, axis_h, upper_cut)
     gate('V19_bridge_profile', dips['maxDipM'] <= GROOVE_LIMIT, **dips)
+    # Hooks (R2): a race a hook applies to (HOOK_SLUGS) must carry its hook;
+    # a build --without it, or a missing module, fails the gate.
     if tail or v2_tail:
         ok, values = tail_checks(parts, tail, v2_tail, spec, names, slug)
+        module = optional_module(HOOK_MODULES['tail'])
+        rerooted = 'collision' in spec.get('tail', {})
+        values['rerootRequired'] = slug.startswith(HOOK_SLUGS['tail'])
+        if module is None or not hasattr(module, 'v18_gate'):
+            ok, values['reason'] = False, f'{HOOK_MODULES["tail"]} is missing'
+        elif not rerooted:
+            ok, values['reason'] = ok and not values['rerootRequired'], 'the build did not re-root the tail'
+        else:
+            # Hook: the re-rooted tail's own V18 (rest + library clips) and
+            # the class kits.
+            more_ok, more = module.v18_gate(root=root, slug=slug, candidate=candidate, head=head)
+            more['highestTailAbovePelvisM'] = tail_rise(module, d, b, root)
+            kits_ok, more['classKits'] = tail_kits(module, d, b, root, slug)
+            ok, values = ok and more_ok and kits_ok, {**values, 'reroot': more}
         gate('V18_tail', ok, **values)
+    # Hooks: V21 (Mycelari growths), V22 (projected hands) from their modules.
+    growths = optional_module(HOOK_MODULES['growths']) if slug.startswith(HOOK_SLUGS['growths']) else None
+    if slug.startswith(HOOK_SLUGS['growths']) or 'growths' in spec:
+        if growths is None:
+            gate('V21_growths', False, reason=f'{HOOK_MODULES["growths"]} is missing')
+        elif slug in getattr(growths, 'SLUGS', ()) and 'growths' not in spec:
+            gate('V21_growths', False, reason='the build carries no growths (build --without growths?)')
+        else:
+            ok, values = growth_gate(growths, d, b, root, slug, spec)
+            gate('V21_growths', ok, **values)
+    hands = optional_module(HOOK_MODULES['hands']) if slug.startswith(HOOK_SLUGS['hands']) else None
+    if slug.startswith(HOOK_SLUGS['hands']) or 'hands' in spec:
+        if hands is None or not hasattr(hands, 'v22_gate'):
+            gate('V22_hands', False, reason=f'{HOOK_MODULES["hands"]} has no v22_gate')
+        elif slug in getattr(hands, 'RACES', ()) and 'hands' not in spec:
+            gate('V22_hands', False, reason='the build projected no hands (build --without hands?)')
+        else:
+            ok, values = hands.v22_gate(root=root, slug=slug, candidate=candidate, head=head)
+            gate('V22_hands', ok, **values)
+    # V23 (decisions 9 and 10): the head is the derived v2 head this race
+    # takes (race_head_prepare), and the body carries its headRescale.
+    ok, values = head_source_gate(d, hd, slug, head)
+    gate('V23_head_source', ok, **values)
     # V14: every landmark check the shipped v2 mask passes still passes, and
     # both irises pass (glasswarden_male and the Mycelari carry no brow mask
     # since install drops browStrokes, as the v2 installer did).
@@ -2589,13 +3288,18 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
          checks=checks, v2Checks=v2_checks, **landmarks)
     margins = [float(min((a['TEXCOORD_0'][np.unique(f)].astype(float)*size).min(),
                          (size-a['TEXCOORD_0'][np.unique(f)].astype(float)*size).min()))
-               for _, role, a, f in parts if role == 'race_head']
+               for name, role, a, f in parts if role == 'race_head' or name == rf.NODE]
     gate('V15_head_atlas_border', min(margins) >= 4-1e-3, minBorderPx=min(margins))
+    inputs_now = inputs_digest(root, slug, tuple(spec.get('hooksWithout', ())))
+    inputs_then = spec.get('inputsSHA256', {})
+    changed = sorted(k for k in set(inputs_now) | set(inputs_then) if inputs_now.get(k) != inputs_then.get(k))
     gate('V16_lineage', spec['version'] == 3 and spec['templateSHA256'] == digest(template)
-         and spec['headSourceSHA256'] == digest(head) and spec['toolSHA256'] == source_digest(__file__),
+         and spec['headSourceSHA256'] == digest(head) and spec['toolSHA256'] == source_digest(__file__) and not changed,
          templateSHA256=spec['templateSHA256'], headSourceSHA256=spec['headSourceSHA256'],
          toolSHA256=spec['toolSHA256'], builtByThisTool=spec['toolSHA256'] == source_digest(__file__),
-         toolHash='sha256 of the tool with CRLF folded to LF (the git blob)')
+         inputsChangedSinceBuild=changed,
+         toolHash='sha256 of the tool with CRLF folded to LF (the git blob); inputsSHA256 the same for every '
+                  'BUILD_INPUTS source/data file (raw sha256 for binaries) and the per-body hook inputs')
     if reports:
         built = candidate.with_suffix('.json')
         if built.exists():
@@ -2688,21 +3392,32 @@ def install_targets(root, slugs):
     return files, list(files.values())+[native/'races'/f'{s}.glb' for s in slugs]+[native/'face_masks'/f'{s}.png' for s in slugs]
 
 
-def worktree_checks(root, targets, untracked_before):
+def dirty_tracked(root):
+    """{path: sha256} of the tracked files that differ from the index."""
+    return {p: digest(Path(root)/p) if (Path(root)/p).exists() else None
+            for p in git(root, 'diff', '--name-only').split()}
+
+
+def worktree_checks(root, targets, untracked_before, dirty_before=None):
     """Tracked changes stay within the install targets and the programme files
-    (design §8); no untracked file appears that was not there before install."""
+    (design §8); no untracked file appears that was not there before install.
+    A tracked file that was already dirty before install, with the same
+    content after it, is reported (dirtyBeforeInstall), not failed (R2)."""
     allowed = {t.relative_to(root).as_posix() for t in targets} | PROGRAMME_FILES
-    changed = set(git(root, 'diff', '--name-only').split())
+    dirty_before = dirty_before or {}
+    now_dirty = dirty_tracked(root)
+    kept = {p for p, sha in now_dirty.items() if p in dirty_before and dirty_before[p] == sha}
     now = untracked(root)
     new = sorted(set(now)-set(untracked_before)-PROGRAMME_FILES)
     preexisting = sorted(p for p in set(now) & set(untracked_before) if p not in PROGRAMME_FILES)
-    return {'changedOutsideRebaseFiles': sorted(changed-allowed), 'newUntracked': new,
+    return {'changedOutsideRebaseFiles': sorted(set(now_dirty)-allowed-kept), 'newUntracked': new,
+            'dirtyBeforeInstall': sorted(kept-allowed),
             'preexistingUntracked': preexisting,
-            'preexistingNote': 'untracked before install and not written by it; stage pilot files by explicit path '
-                               'so these stay out of the commit'}
+            'preexistingNote': 'untracked or dirty before install and not changed by it; stage pilot files by explicit '
+                               'path so these stay out of the commit'}
 
 
-def install(root, candidates, slugs):
+def install(root, candidates, slugs, new_head_source=()):
     import calibrate_skin_palettes
     from build_face_masks import bake
     root, candidates = Path(root).resolve(), Path(candidates).resolve()
@@ -2712,6 +3427,7 @@ def install(root, candidates, slugs):
     if dirty.strip():
         raise ValueError('install targets are not clean:\n'+dirty)
     untracked_before = untracked(root)
+    dirty_before = dirty_tracked(root)
     checks = {}
     for slug in slugs:
         checked = json.loads((candidates/slug/f'{slug}.verify.json').read_text(encoding='utf-8'))
@@ -2752,8 +3468,21 @@ def install(root, candidates, slugs):
         for key in ('bodyGirth', 'footAnchor'):
             legacy[key][slug] = copy.deepcopy(legacy[key][f'luminous_{sex}'])
         catalog = data['catalog']['races'][slug]
-        if 'sourceIntegration' in catalog or catalog['sourceSHA256'] != d['asset']['extras']['sourceSHA256']:
+        extras = d['asset']['extras']
+        if 'sourceIntegration' in catalog:
             raise ValueError(f'{slug}: catalog provenance differs from the GLB')
+        if catalog['sourceSHA256'] != extras['sourceSHA256']:
+            if slug not in new_head_source:
+                raise ValueError(f'{slug}: catalog provenance differs from the GLB (a new head source needs '
+                                 '--new-head-source)')
+            # P6: a new Meshy head (the crowned Glasswarden female).
+            catalog.update(source=Path(extras['highResolutionHead']['original']).name, sourceSHA256=extras['sourceSHA256'])
+        if 'highResolutionHead' in extras:
+            catalog['highResolutionHead'] = copy.deepcopy(extras['highResolutionHead'])
+        nodes = [n['name'] for n in d['nodes'] if 'mesh' in n]
+        if 'surfaces' in catalog:
+            catalog['surfaces'] = [s for s in catalog['surfaces'] if s in nodes or not s.startswith('race_feature_')]
+            catalog['surfaces'] += [n for n in nodes if n.startswith('race_feature_') and n not in catalog['surfaces']]
         catalog.update(sha256=digest(path), sharedBodyShape=d['asset']['extras']['sharedBodyShape'],
                        pipeline='eloria-assets/tools/rebase_race_body.py',
                        neckAdaptorTriangles=sum(d['accessors'][p['indices']]['count']//3 for m in d['meshes']
@@ -2786,6 +3515,9 @@ def install(root, candidates, slugs):
     # fingerprint; on a rebased body it no longer matches (torso_body_cover.gd
     # then warns and falls back to the generic rule), so the selector goes.
     retired = [slug for slug in slugs if models['models'][slug].pop('torsoBodyCover', None) is not None]
+    # R2: no models.json tailCollision. The re-rooted tail's capsule stays in
+    # the GLB (sharedBodyShape.tail.collision) for a future cape solver; the
+    # native cape kernel cannot take it (decision 6), so nothing reads it.
     if retired:
         files['models'].write_text(json.dumps(models, indent=2)+'\n')
         report['retiredTorsoBodyCover'] = retired
@@ -2816,8 +3548,9 @@ def install(root, candidates, slugs):
         shutil.copy2(path, keep/path.name)
     text = files['models'].read_text(encoding='utf-8')
     report['untrackedBeforeInstall'] = untracked_before
+    report['dirtyBeforeInstall'] = dirty_before
     report['postInstall'] = {'modelsRoundTrip': json.dumps(json.loads(text), indent=2)+'\n' == text,
-                             **worktree_checks(root, targets, untracked_before)}
+                             **worktree_checks(root, targets, untracked_before, dirty_before)}
     report['dyeSeams'] = seams
     (candidates/'installation.json').write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
     post = report['postInstall']
@@ -2841,7 +3574,8 @@ def post_import(root, candidates, slugs):
                if line.startswith('!! ') and any(Path(line[3:]).name.startswith(s+'_') for s in slugs)]
     report = {'rewrittenByImport': rewritten, 'installedGLBsIntact': glbs,
               'modelsRoundTrip': json.dumps(json.loads(text), indent=2)+'\n' == text,
-              **worktree_checks(root, targets, installation['untrackedBeforeInstall']),
+              **worktree_checks(root, targets, installation['untrackedBeforeInstall'],
+                                installation.get('dirtyBeforeInstall')),
               'ignoredExtractedTextures': ignored}
     report['pass'] = (not rewritten and all(glbs.values()) and report['modelsRoundTrip']
                       and not report['changedOutsideRebaseFiles'] and not report['newUntracked'])
@@ -2865,6 +3599,8 @@ def main():
     b.add_argument('--detail-mix', type=float, default=.2)
     b.add_argument('--skin-target', choices=('face', 'ring'), default='face',
                    help='skin recolour target: the face reference (default) or the pilot neck-ring median')
+    b.add_argument('--without', nargs='+', default=(), choices=sorted(HOOK_MODULES),
+                   help='turn a present P4 hook module off (diagnostic builds; recorded in sharedBodyShape.hooks)')
     v = sub.add_parser('verify')
     v.add_argument('--root', type=Path, required=True)
     v.add_argument('--slug', required=True)
@@ -2877,17 +3613,21 @@ def main():
         i.add_argument('--root', type=Path, required=True)
         i.add_argument('--candidates', type=Path, required=True)
         i.add_argument('--slugs', nargs='+', required=True)
+        if name == 'install':
+            i.add_argument('--new-head-source', nargs='+', default=(),
+                           help='bodies whose catalog source/sourceSHA256 change with this install (P6)')
     args = ap.parse_args()
     if args.command == 'build':
         report = build(args.root, args.slug, args.out, args.head, args.head_texture, args.template,
-                       args.head_atlas, args.head_density_max, args.neck_profile, args.detail_mix, args.skin_target)
+                       args.head_atlas, args.head_density_max, args.neck_profile, args.detail_mix, args.skin_target,
+                       tuple(args.without))
         print(json.dumps({k: report[k] for k in ('outputSHA256', 'trianglesByRole', 'sharedNeck', 'headAtlas')}, indent=2))
     elif args.command == 'verify':
         result = verify(args.root, args.slug, args.candidate, args.out, args.head, reports=not args.no_reports)
         print(json.dumps({k: v['pass'] for k, v in result['gates'].items()}, indent=2))
         raise SystemExit(0 if result['pass'] else 1)
     elif args.command == 'install':
-        print(json.dumps(install(args.root, args.candidates, args.slugs), indent=2))
+        print(json.dumps(install(args.root, args.candidates, args.slugs, tuple(args.new_head_source)), indent=2))
     else:
         report = post_import(args.root, args.candidates, args.slugs)
         print(json.dumps(report, indent=2))

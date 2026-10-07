@@ -19,7 +19,11 @@ def test_high_resolution_head_and_runtime_surfaces(slug):
     d,b=g.read(ROOT/'godot-client'/MODELS[slug]['scene'].removeprefix('res://'))
     source=d['asset']['extras']['highResolutionHead']
     assert source['original'].endswith('_tpose.glb')
-    assert source['sourceTriangles'] > 1_500_000
+    # Per Meshy run (race programme decision 10): the 2026-10 run that made
+    # the crowned Glasswarden female head is a 410k-triangle source; the
+    # original race run's are over 1.5M.
+    floor = 400_000 if 'race_heads_2026-10' in source.get('originalPath', '') else 1_500_000
+    assert source['sourceTriangles'] > floor
     assert source['extractedTriangles'] > 200_000
     parts=list(primitives(d,b))
     head_faces=sum(len(f) for _,role,_,f in parts if role=='race_head')

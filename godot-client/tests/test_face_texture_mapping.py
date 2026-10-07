@@ -41,6 +41,18 @@ LANDMARKS = {
 }
 
 
+def rescaled(d, x, y):
+    """A front landmark measured on the v2 head, on a body whose head was
+    scaled uniformly about its rim centre (race programme decision 9:
+    asset.extras.headRescale, written by race_head_prepare.py scale and
+    carried by rebase_race_body.py): (cx + f(x - cx), cy + f(y - cy))."""
+    rescale = d['asset'].get('extras', {}).get('headRescale')
+    if not rescale:
+        return x, y
+    cx, cy, f = rescale['centre'][0], rescale['centre'][1], rescale['factor']
+    return cx+f*(x-cx), cy+f*(y-cy)
+
+
 def mask_at(mesh, uv, mask, x, y):
     points, _, faces = mesh.ray.intersects_location([[x, y, 1]], [[0, 0, -1]], multiple_hits=False)
     if not len(points):
@@ -88,12 +100,13 @@ class FaceTextureMappingTest(unittest.TestCase):
                 uv = np.concatenate(uvs)
                 mask = np.asarray(Image.open(CLIENT/f'assets/actors/native/face_masks/{slug}.png'))
                 for sign in [-1, 1]:
-                    values = [mask_at(mesh, uv, mask, sign*x+dx, y+dy)[2]
+                    bx, by = rescaled(d, sign*x, y)
+                    values = [mask_at(mesh, uv, mask, bx+dx, by+dy)[2]
                               for dx in np.linspace(-.012, .012, 15)
                               for dy in np.linspace(-.004, .004, 9)]
                     self.assertGreater(max(values), .1, ('missing eyebrow', sign))
                     self.assertGreater(np.count_nonzero(np.array(values) > .05), 1)
-                self.assertLess(mask_at(mesh, uv, mask, 0, y)[2], .02, 'brows join across nose')
+                self.assertLess(mask_at(mesh, uv, mask, *rescaled(d, 0, y))[2], .02, 'brows join across nose')
 
     def test_every_race_mask_matches_its_source_and_both_eyes(self):
         models = json.loads((CLIENT/'data/actors/models.json').read_text())['models']
@@ -133,7 +146,7 @@ class FaceTextureMappingTest(unittest.TestCase):
                         offset += len(v)
                 mesh = trimesh.Trimesh(np.concatenate(vertices), np.concatenate(faces), process=False)
                 uv = np.concatenate(uvs)
-                for x, y in landmarks:
+                for x, y in (rescaled(d, *xy) for xy in landmarks):
                     # A small iris patch avoids a single painted white glint.
                     values = np.array([mask_at(mesh, uv, mask, x+dx, y+dy)
                                        for dx in [-.001, 0, .001] for dy in [-.001, 0, .001]])
@@ -142,7 +155,7 @@ class FaceTextureMappingTest(unittest.TestCase):
                 # Mid-forehead, nose bridge and cheeks must never receive eye
                 # colour. These would catch the former Votary ear/Orun brow leak.
                 for x, y in [(0, 1.68), (0, 1.63), (-.06, 1.595), (.06, 1.595)]:
-                    self.assertLess(mask_at(mesh, uv, mask, x, y)[:2].max(), .02)
+                    self.assertLess(mask_at(mesh, uv, mask, *rescaled(d, x, y))[:2].max(), .02)
 
     def test_rebaked_necks_match_the_models_and_keep_the_head_boundary(self):
         models = json.loads((CLIENT/'data/actors/models.json').read_text())['models']

@@ -191,6 +191,16 @@ const COVERED_SHIRT := Color8(56, 47, 40)
 ## character's legs.
 const SHIRT_SURFACES := ["wardrobe_shirt", "wardrobe_shirt_trim"]
 
+## Race features ride on mesh nodes of their own, appended to the race body:
+## `race_feature_head` (Votary horns, Stoneborn crown, Glasswarden crystals)
+## and `race_feature_shoulders` (Mycelari growths). Being separate nodes they
+## keep their imported horn, stone or glass material - the appearance pass has
+## no branch for them, so the skin dye never reaches them - and equipment can
+## switch them off the way it switches off hair.
+const RACE_FEATURE_PREFIX := "race_feature_"
+const RACE_FEATURE_HEAD := "race_feature_head"
+const RACE_FEATURE_SHOULDERS := "race_feature_shoulders"
+
 ## Clearance for wardrobe assets that still need a material offset. Fitted
 ## shirts bake a continuous offset across UV/facet seams; growing those again
 ## would pull adjacent faces apart. Their model lists them in wardrobeBakedGrow.
@@ -512,6 +522,11 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 	for node_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
 		var mesh_name: String = mesh_node.name.to_lower()
+		if mesh_name.begins_with(RACE_FEATURE_PREFIX):
+			# Horn, stone, glass and growth are not skin: a race feature keeps
+			# its imported material under every skin, hair and eye choice. Keep
+			# this guard ahead of any generic branch added below.
+			continue
 		if mesh_name == "eyes":
 			_tint_mesh(mesh_node, eye_tint, true)
 		elif mesh_name == "eyebrows":
@@ -1898,19 +1913,68 @@ func _apply_equipment_hides(part: int, part_config: Dictionary,
 	if names_value is Array:
 		for raw_name: Variant in names_value:
 			names.append(str(raw_name).to_lower())
-	if part == 3 and not str(model_config.get("scene", "")).is_empty():
-		for piece: Dictionary in _equipment_pieces(str(model_config.get("scene", ""))):
-			if bool(piece.get("covers_hair", false)):
-				if not names.has("hair"):
-					names.append("hair")
-				if not names.has("scalp"):
-					names.append("scalp")
+	for surface: String in _race_feature_hides(part, model_config):
+		if not names.has(surface):
+			names.append(surface)
 	if names.is_empty():
 		return
 	_equipment_hides[part] = names
 	for surface: String in names:
 		_hidden_body_surfaces[surface] = int(_hidden_body_surfaces.get(surface, 0)) + 1
 	_refresh_body_surface_visibility()
+
+## The head and race-feature surfaces a worn piece hides, beyond its `hides`.
+##
+## These are added here in code rather than through the registry's `hides`
+## lists, which list the wardrobe a piece covers and are pinned to the Human
+## body's meshes. A model's `raceFeatures` ("show" or "hide") comes from
+## eloria-assets/tools/headwear_race_policy.json for headwear.
+##
+## Headwear that covers the hair always hides it. On a body that carries
+## `race_feature_head`, "show" pieces (hoods, open bands) leave the race head
+## features up and keep the scalp drawn: since the features moved to their own
+## node the scalp is a plain cranium, and hiding it under horns or a crown
+## seen through a hood would open the inside of the head. A body without the
+## node (Human, Greyhaven, Orun, Mycelari, Ssarathi, and any race body still
+## carrying its features in the scalp) hides its scalp under every
+## hair-covering piece as before: its hoods were fitted over a hidden scalp,
+## which otherwise pokes through their backs. Every other hair-covering piece
+## hides the scalp and the features with the hair, which is also the default
+## for a piece with no policy, so a new helm is safe without data. An explicit
+## "hide" hides the features even on a piece that leaves the hair alone.
+##
+## Mycelari shoulder growths go under any torso piece and any cape unless the
+## item says "show", and under headwear whose `raceShoulders` is "hide" (the
+## pieces whose mantle, scarf or neck guard reaches the growths; from the
+## policy table's `shoulders`).
+func _race_feature_hides(part: int, model_config: Dictionary) -> Array[String]:
+	var hides: Array[String] = []
+	var policy: String = str(model_config.get("raceFeatures", ""))
+	if part == 3:
+		var covers_hair := false
+		var scene: String = str(model_config.get("scene", ""))
+		if not scene.is_empty():
+			for piece: Dictionary in _equipment_pieces(scene):
+				if bool(piece.get("covers_hair", false)):
+					covers_hair = true
+					break
+		if covers_hair:
+			hides.append("hair")
+			if policy != "show" or not _has_race_feature_head():
+				hides.append("scalp")
+		if policy == "hide" or (covers_hair and policy != "show"):
+			hides.append(RACE_FEATURE_HEAD)
+		if str(model_config.get("raceShoulders", "")) == "hide":
+			hides.append(RACE_FEATURE_SHOULDERS)
+	elif part == BODY_PART or part == CAPE_PART:
+		if policy != "show":
+			hides.append(RACE_FEATURE_SHOULDERS)
+	return hides
+
+## Whether the loaded body carries the `race_feature_head` node.
+func _has_race_feature_head() -> bool:
+	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
+	return native_model != null and native_model.find_child(RACE_FEATURE_HEAD, true, false) != null
 
 func _release_equipment_hides(part: int) -> void:
 	var names_value: Variant = _equipment_hides.get(part, [])
@@ -2033,7 +2097,7 @@ func _refresh_body_surface_visibility() -> void:
 	for node_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
 		var surface: String = mesh_node.name.to_lower()
-		if surface in ["hair", "scalp"]:
+		if surface in ["hair", "scalp"] or surface.begins_with(RACE_FEATURE_PREFIX):
 			if not mesh_node.has_meta("uncovered_head_visible"):
 				mesh_node.set_meta("uncovered_head_visible", mesh_node.visible)
 			mesh_node.visible = bool(mesh_node.get_meta("uncovered_head_visible")) and not _hidden_body_surfaces.has(surface)
