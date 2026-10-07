@@ -5,6 +5,10 @@ extends SceneTree
 const Policy := preload("res://src/actors/actor_render_quality.gd")
 const RACE := "luminous_male"
 const TORSO_VISUAL := 192
+## A rebased female: its neck bridge carries the throat faces the throat rule
+## keeps, under the Furtrim Coat's open front.
+const BRIDGED_RACE := "greyhaven_female"
+const OPEN_FRONT_TORSO := 189
 
 var _checks := 0
 var _failures := 0
@@ -17,9 +21,11 @@ func _init() -> void:
 func _run() -> void:
 	_check_synthetic_lods()
 	_check_protected_neck_outside_cover()
+	_check_bridge_throat_rule()
 	_check_u32_lod_indices()
 	_check_cache_reset_and_rebuild()
 	_check_imported_actor_lods_and_quality()
+	_check_shipped_route_bridge()
 	TorsoBodyCover.clear()
 	GlbSceneCache.clear()
 	print("torso body cover LODs: %s (%d checks)" % [
@@ -118,6 +124,70 @@ func _check_protected_neck_outside_cover() -> void:
 		"protected-bind coverage retains a neck-width face above the active band")
 	_expect(_lod_indices(covered, 0).get(1.0, PackedInt32Array()) == expected_lod,
 		"protected-bind LOD coverage retains a neck-width face above the active band")
+
+
+## Under armour a "Shared neck bridge" face in front of the canonical neck_01
+## (0, 1.452, -.051) -> Head (0, 1.568, .011) axis stays while every corner
+## keeps more than a quarter of its Head/neck_01 weight. Behind the axis, on a
+## surface that is not bridge, and on the wardrobe-only neckline the whole-face
+## .5 test applies. No rebuilt bridge has a weak face behind the axis, so the
+## real bodies cannot tell the axis split apart; these hand-weighted faces can.
+func _check_bridge_throat_rule() -> void:
+	var front := Vector3(0.0, 1.50, .05) # the axis is at depth -.025 at 1.50 m
+	var behind := Vector3(0.0, 1.50, -.09)
+	var bridge := _weighted_surface([[front, .30], [behind, .30], [front, .20],
+		[behind, .80]])
+	var body := _weighted_surface([[front, .30], [front, .80]])
+	var source := ArrayMesh.new()
+	for surface: Array in [bridge, body]:
+		source.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface)
+	for index: int in range(2):
+		var material := StandardMaterial3D.new()
+		material.resource_name = (TorsoBodyCover.BRIDGE_MATERIAL if index == 0
+			else "Race body skin")
+		source.surface_set_material(index, material)
+	var armour := TorsoBodyCover.cut(source, Transform3D.IDENTITY, 1.0, [],
+		false, PackedInt32Array([7]))
+	_expect(armour.surface_get_arrays(0)[Mesh.ARRAY_INDEX]
+		== PackedInt32Array([0, 1, 2, 9, 10, 11]),
+		"under armour the bridge keeps its front .30 and behind .80 faces and "
+		+ "drops its behind .30 and front .20 faces")
+	_expect(armour.surface_get_arrays(1)[Mesh.ARRAY_INDEX]
+		== PackedInt32Array([3, 4, 5]),
+		"under armour a front .30 face off the bridge takes the whole-face test")
+	var wardrobe := TorsoBodyCover.cut(source, Transform3D.IDENTITY, 1.0, [],
+		false, PackedInt32Array([7]), true)
+	_expect(wardrobe.surface_get_arrays(0)[Mesh.ARRAY_INDEX]
+		== PackedInt32Array([9, 10, 11]),
+		"the wardrobe-only neckline keeps no bridge face below .5 Head/neck_01")
+
+
+## One surface of separate triangles, [centre, Head/neck_01 weight] each: every
+## corner binds that weight to bind 7 (the protected one) and the rest to bind 0.
+func _weighted_surface(faces: Array) -> Array:
+	var vertices := PackedVector3Array()
+	var bones := PackedInt32Array()
+	var weights := PackedFloat32Array()
+	for face: Array in faces:
+		var center: Vector3 = face[0]
+		vertices.append_array(PackedVector3Array([
+			center + Vector3(-.03, -.02, 0.0),
+			center + Vector3(.03, -.02, 0.0),
+			center + Vector3(0.0, .04, 0.0),
+		]))
+		for corner: int in range(3):
+			bones.append_array(PackedInt32Array([7, 0, 0, 0]))
+			weights.append_array(PackedFloat32Array([face[1], 1.0 - face[1], 0.0, 0.0]))
+	var indices := PackedInt32Array()
+	for index: int in range(vertices.size()):
+		indices.append(index)
+	var arrays: Array = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_INDEX] = indices
+	arrays[Mesh.ARRAY_BONES] = bones
+	arrays[Mesh.ARRAY_WEIGHTS] = weights
+	return arrays
 
 
 ## Godot stores generated LOD indices as u32 once a surface has more than
@@ -263,6 +333,100 @@ func _check_imported_actor_lods_and_quality() -> void:
 		second.apply_equipment_visuals({})
 		second.free()
 	first.free()
+
+
+## An exported client has no resource path, so GlbSceneCache parses each loose
+## actor GLB with GLTFDocument (_build_raw) instead of loading the imported
+## scene. The throat rule finds a race's neck bridge by its material name, so
+## that name must survive the raw parse: build a rebased female both ways and
+## require both to keep every bridge face under an open-front collar (the
+## throat faces with a corner below .5 included) and to cut the body alike.
+func _check_shipped_route_bridge() -> void:
+	GlbSceneCache.clear()
+	TorsoBodyCover.clear()
+	var models: Dictionary = JSON.parse_string(
+		FileAccess.get_file_as_string("res://data/actors/models.json"))["models"]
+	var equipment: Dictionary = JSON.parse_string(
+		FileAccess.get_file_as_string("res://data/actors/equipment.json"))
+	var config: Dictionary = models[BRIDGED_RACE]
+	var animations: Dictionary = JSON.parse_string(
+		FileAccess.get_file_as_string(config["animationMap"]))
+	var imported := _bridge_cut(_actor(6301, config, animations, equipment,
+		BRIDGED_RACE))
+	# install_prepared never replaces a cached scene: drop the imported one.
+	GlbSceneCache.clear()
+	TorsoBodyCover.clear()
+	var scene_path := ProjectSettings.globalize_path(str(config["scene"]))
+	var parsed := GlbSceneCache._build_raw(scene_path)
+	_expect(parsed != null, "the loose %s GLB parses through GLTFDocument" % BRIDGED_RACE)
+	if parsed == null:
+		return
+	GlbSceneCache.install_prepared({scene_path: parsed})
+	var shipped := _bridge_cut(_actor(6302, config, animations, equipment,
+		BRIDGED_RACE))
+	GlbSceneCache.clear()
+	TorsoBodyCover.clear()
+	for route: String in ["imported", "shipped"]:
+		var cut: Dictionary = imported if route == "imported" else shipped
+		_expect(int(cut.get("bridges", 0)) == 2,
+			"on the %s route the body carries two Shared neck bridge surfaces" % route)
+		_expect(int(cut.get("bridge_faces", 0)) > 0
+			and cut.get("bridge_kept") == cut.get("bridge_faces"),
+			"on the %s route torso 5:%d keeps every bridge face: %s of %s" % [route,
+				OPEN_FRONT_TORSO, cut.get("bridge_kept"), cut.get("bridge_faces")])
+	_expect(shipped.get("layout") != imported.get("layout"),
+		"the shipped-route actor carries the raw GLTFDocument parse, not the imported scene")
+	_expect(shipped.get("faces") == imported.get("faces")
+		and shipped.get("kept") == imported.get("kept"),
+		"both routes cut the body alike: imported keeps %s of %s faces, shipped %s of %s" % [
+			imported.get("kept"), imported.get("faces"), shipped.get("kept"),
+			shipped.get("faces")])
+
+
+## A bridged actor's body under torso OPEN_FRONT_TORSO: its bridge surface
+## count, bridge faces before and after, all faces before and after, and a
+## fingerprint of the uncovered mesh's vertices and face corners.
+func _bridge_cut(actor: ReplicatedActor3D) -> Dictionary:
+	if actor == null:
+		return {}
+	var meshes := _coverable_meshes(actor)
+	var body: MeshInstance3D = null
+	for path: String in meshes:
+		if (meshes[path] as MeshInstance3D).name.to_lower() in ["body", "char1", "mesh_node"]:
+			body = meshes[path] as MeshInstance3D
+	_expect(body != null, "the %s actor exposes its body mesh" % BRIDGED_RACE)
+	if body == null:
+		actor.free()
+		return {}
+	var original := body.mesh
+	actor.apply_equipment_visuals({5: OPEN_FRONT_TORSO})
+	var covered := body.mesh
+	var result := {"bridges": 0, "bridge_faces": 0, "bridge_kept": 0, "faces": 0,
+		"kept": 0}
+	var layout := HashingContext.new()
+	layout.start(HashingContext.HASH_SHA256)
+	for surface: int in range(original.get_surface_count()):
+		var source: PackedInt32Array = original.surface_get_arrays(surface)[Mesh.ARRAY_INDEX]
+		var left: PackedInt32Array = covered.surface_get_arrays(surface)[Mesh.ARRAY_INDEX]
+		var left_faces := 0
+		for index: int in range(0, left.size(), 3):
+			if not (left[index] == left[index + 1] and left[index] == left[index + 2]):
+				left_faces += 1
+		result["faces"] += source.size() / 3
+		result["kept"] += left_faces
+		layout.update((original.surface_get_arrays(surface)[Mesh.ARRAY_VERTEX]
+			as PackedVector3Array).to_byte_array())
+		layout.update(source.to_byte_array())
+		var material := original.surface_get_material(surface)
+		if material != null and material.resource_name == TorsoBodyCover.BRIDGE_MATERIAL:
+			result["bridges"] += 1
+			result["bridge_faces"] += source.size() / 3
+			result["bridge_kept"] += left_faces
+	result["layout"] = layout.finish().hex_encode()
+	actor.apply_equipment_visuals({})
+	_expect(is_same(body.mesh, original), "unequip restores the exact %s body" % BRIDGED_RACE)
+	actor.free()
+	return result
 
 
 func _actor(id: int, config: Dictionary, animations: Dictionary,

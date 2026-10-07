@@ -100,13 +100,17 @@ packages the LODs needs the runtime to resolve those paths back to `res://`
 (and the packager to ship the imported scenes instead of the loose GLBs).
 
 Anything pinned to a mesh's bytes must therefore pin the parsed mesh too. The
-importer lays out each face's corners differently from `GLTFDocument`, so the
-Orun male's reviewed rear-neck mask (`TorsoBodyCover.PROFILE_REGISTRY`) names
-two fingerprints for one face list: the imported scene's and the raw parse's
-(`rawSurfaceFingerprintSHA256`). With only the first, every packaged Orun
-ignored the profile and dropped the whole shared-neck bridge.
-`tests/test_torso_body_cover_lods.gd` builds Orun through `_build_raw`, the
-route a package takes.
+importer lays out each face's corners differently from `GLTFDocument`, so a
+fingerprint taken from the imported scene does not match the raw parse. The
+Orun male's reviewed rear-neck face mask pinned both until the race rebase
+rebuilt every race body on the Human body; it was retired with that rebuild.
+`TorsoBodyCover` now pins no face list: a race's shared-neck bridge takes the
+same face test as the rest of the body, apart from its throat
+(`FRONT_BRIDGE_MIN_WEIGHT`), so the body below the bridge is cut exactly like
+the Human's on either route. That rule finds the bridge by its material name,
+"Shared neck bridge"; `tests/test_torso_body_cover_lods.gd` builds a rebased
+female through `_build_raw`, the route a package takes, and requires the
+same cut as the imported scene.
 
 For future authored assets, use the following review targets rather than
 adding more runtime modifiers:

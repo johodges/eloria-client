@@ -1992,9 +1992,7 @@ func _refresh_wardrobe_cover() -> void:
 				not cover_regions.is_empty() or mask_to_wardrobe_neckline,
 				_native_skeleton.global_transform.affine_inverse() * mesh_node.global_transform,
 				rig_fit_scale(), cover_regions,
-				rig_name().begins_with("ssarathi_"),
-				_model_config.get("torsoBodyCover", {}) as Dictionary,
-				mask_to_wardrobe_neckline)
+				rig_name().begins_with("ssarathi_"), mask_to_wardrobe_neckline)
 		if wardrobe_only and surface_name == "wardrobe_shirt" \
 				and _native_skeleton != null:
 			WARDROBE_SHIRT_FIT.apply(mesh_node, _native_skeleton)
